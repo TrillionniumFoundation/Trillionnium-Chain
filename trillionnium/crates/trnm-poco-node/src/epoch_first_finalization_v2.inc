@@ -460,11 +460,28 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>
     /// Commit only Core's exact durable front, then persist its typed apply
     /// receipt and independently checkpoint every owner before acknowledging.
     pub fn apply_first_finalization_v2(
-        mut self,
+        self,
         budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
     ) -> Result<Self> {
+        ensure!(self.prepared.len() == 3, "first application apply phase");
+        let (owner, receipt) = self.apply_front_v5(budget, None)?;
         ensure!(
-            self.finality_observed && !self.applied && self.prepared.len() == 3,
+            receipt.is_none(),
+            "ordinary apply returned pre-handoff authority"
+        );
+        Ok(owner)
+    }
+
+    fn apply_front_v5(
+        mut self,
+        budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+        selection: Option<&trnm_native_execution_v0::ComputedLaterEpochSelectionV1>,
+    ) -> Result<AppliedEpochFrontV5<W, N>> {
+        ensure!(
+            self.finality_observed
+                && !self.applied
+                && !self.prepared.is_empty()
+                && self.prepared.len() <= 3,
             "first application apply phase"
         );
         let r = &mut self.runtime;
@@ -535,20 +552,25 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>
             &prior == first.prepared.application_parent(),
             "first apply parent changed"
         );
-        let committed =
-            r.application
-                .commit_epoch_finality_bytes_v1(&first.prepared, &proof, budget)?;
+        let committed = commit_application_front_v5(
+            &r.application,
+            &r.edge,
+            &first.prepared,
+            permit.finalization().proof(),
+            &proof,
+            selection,
+            budget,
+        )?;
         let fresh = r
             .application
             .confirm_prepared_epoch_execution_v1(&first.prepared)?;
         let current = r.application.confirmed_committed_head_v0()?;
         ensure!(
-            committed.belongs_to_application(&r.application)
-                && fresh.belongs_to_application_at_path(&r.application, r.application.path())
-                && committed.head() == &current
+            fresh.belongs_to_application_at_path(&r.application, r.application.path())
+                && committed.head == current
                 && fresh.prepared().overlay_parent_head()? == current
-                && fresh.commit_sequence() == Some(committed.commit_sequence())
-                && fresh.prepared().p_digest() == committed.p_digest()
+                && fresh.commit_sequence() == Some(committed.sequence)
+                && fresh.prepared().p_digest() == committed.p_digest
                 && fresh.artifact_checksum() == before.artifact_checksum()
                 && fresh.overlay_checksum() == before.overlay_checksum(),
             "first committed P/readback mismatch"
@@ -571,7 +593,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>
             &[
                 &fresh.prepared().p_digest(),
                 &fresh.prepared().persist_sequence().to_be_bytes(),
-                &committed.commit_sequence().to_be_bytes(),
+                &committed.sequence.to_be_bytes(),
                 &fresh.artifact_checksum(),
                 &fresh.overlay_checksum(),
                 &new_digest,
@@ -652,10 +674,10 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>
             native_store_id: config.store_id(),
             native_commit_id: *current.commit_id().as_bytes(),
             p_sequence: first.prepared.persist_sequence(),
-            p_digest: committed.p_digest(),
+            p_digest: committed.p_digest,
             artifact_digest: fresh.artifact_checksum(),
             overlay_digest: fresh.overlay_checksum(),
-            commit_sequence: committed.commit_sequence(),
+            commit_sequence: committed.sequence,
         };
         let ordinary = r
             .checkpoint
@@ -688,7 +710,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>
         );
         r.confirm_current_cut_v1()?;
         self.applied = true;
-        Ok(self)
+        Ok((self, committed.pre_handoff))
     }
 }
 

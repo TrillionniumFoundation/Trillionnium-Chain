@@ -1286,6 +1286,64 @@ fixture with a signed wrong-commitment refusal, actual C18 P/D/C and Vote, exact
 journal/node readback, unchanged committed cutoff, and phase-repetition rejection
 on the default thread stack.
 
+### Seal Votes and pre-handoff application (M15-EPOCH-PRE-HANDOFF-V5)
+
+A consuming V5 continuation accepts only V4's completed checkpoint Vote and
+retains the same private Core, original P16/P17/P18 and exact cutoff selection.
+It admits exactly the original signed S19 then S20. Each proposal must satisfy
+the shared strict runtime verifier and empty-seal geometry/body kernel against
+its actual retained parent. Core itself records the consensus-valid seal and
+creates the Vote obligation; journal9 persistence, exact fresh state readback
+and independent node checkpoint CAS precede ACK. No seal receives a native
+application P, Valid completion or execution receipt.
+
+Key-boundary provenance is an explicit private sum of application P, seal, and
+timeout. Application Votes preserve the existing mandatory P/Core-Valid join;
+timeouts keep their existing no-P rule. The seal branch requires an exact unique
+original SignedProposal in the freshly recovered journal9 boundary, the same
+private Core pending Vote, active configuration and authenticated parent, and
+strict signature/QC/TC plus scheduled height, preserved checkpoint state and
+commitment, canonical empty payload/receipts/evidence checks. It also freshly
+confirms the real checkpoint P and its durable application Valid source. These
+joins run after external callbacks both before and after the actual key call.
+A caller cannot promote a header, boolean, hash or absent P into seal authority.
+
+QC(C18) carried by the strictly authenticated S19 creates Core's genuine C16
+queue front first. The original seal remains inert private input while the
+unchanged typed application path commits P16, strict original proof and fresh
+K readback, then journal9 tag-3/node CAS/ACK. Only after that ACK is the original
+S19 delivered as a Core proposal, durably retained and voted. S20/QC(S19)
+similarly creates and applies C17 before admitting and signing S20. Core's
+prohibition on simultaneous signing and finalization outboxes remains intact.
+Selection is rederived from the retained committed cutoff and compared to its original P/head/sequence/config
+choices while the independent current application cut advances to C16/C17;
+those current heads must not be mistaken for the cutoff. Only the actual
+QC(S20) may create Core's C18 front, with original C18/S19/S20 evidence.
+
+The native owner first confirms the exact independent current C17 cut and
+explicitly invokes the existing migration to schema10, preserving its missing
+original-proof refusals for older later-edge schemas. This also handles the
+original schema4 first-handoff owner. It reconfirms the same C17 cut, then
+explicitly migrates schema10 to13; neither migration may change the application
+head or sequence. M08 receives the original Core finality, locally derived descriptor and
+cutoff choices, commits C18 through its strict pre-handoff API, and independently
+reopens the returned owner-bound receipt. That actual committed readback feeds
+the same Core-issued apply authority, exact journal9 NativeFinalizationApplied
+record, independent checkpoint CAS and ACK. C18 ends finalized/applied with no
+pending Vote, validation or application front. The retained schema13 receipt is
+unattached; neither role signature nor a successor edge has been created.
+
+Each mutable phase consumes its private owner until complete success; uncertain
+writes or failed joins fence further progress. There is no public Core or signer
+escape, recovery rebind, retirement or activation API. Genuine acceptance runs
+C15→C18→S19→S20 on the default stack, checks exact queue targets and P/K/readback
+joins, retains original signed seals, rejects wrong/nonempty seal proposals and
+wrong phase/finality, and verifies the schema13 unattached receipt while custody
+remains active. An actual external-watermark callback replaces the genuine native
+database with identical valid bytes at a different namespace identity before a
+seal key call; the seal provenance join must reject with zero key calls. Existing application and timeout signing regressions remain
+required when changing the shared key boundary.
+
 ### Concrete native live staging composition
 
 M15 composes M06's codec/recomputer with M13's verified native path and bounded

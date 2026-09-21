@@ -687,7 +687,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
                     &self.retirement,
                     &mut self.checkpoint_store,
                     &self.checkpoint,
-                    None,
+                    EpochKeyProvenanceV5::Timeout,
                 )
             },
         };
@@ -1124,8 +1124,16 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
     // phase first. This shared tail preserves the full custody/P/Valid checks
     // immediately around the actual key producer, including its callbacks.
     fn finish_pending_application_vote_v3<P: trnm_consensus_signer_journal::SignatureProducerV0>(
+        self,
+        producer: &mut P,
+    ) -> Result<(Self, trnm_consensus_core::OutboundMessage)> {
+        self.finish_pending_vote_v5(producer, None)
+    }
+
+    fn finish_pending_vote_v5<P: trnm_consensus_signer_journal::SignatureProducerV0>(
         mut self,
         producer: &mut P,
+        seal: Option<SealVoteProvenanceV5<'_>>,
     ) -> Result<(Self, trnm_consensus_core::OutboundMessage)> {
         let intent = match self.driver.state().pending_sign().cloned() {
             Some(SignIntent::Vote { .. }) => self
@@ -1147,13 +1155,20 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             } => (*authorizing_safety_revision, *view, *height, *block_id),
             SignIntent::TimeoutVote { .. } => unreachable!("Vote match above"),
         };
-        ensure!(
-            self.pending_epoch_commit
-                .as_ref()
-                .and_then(|pending| pending.prepared.header().ok().map(|header| header.id()))
-                == Some(block_id),
-            "pending Vote is not bound to the retained native P"
-        );
+        if let Some(seal) = seal {
+            ensure!(
+                self.pending_epoch_commit.is_none() && seal.proposal.block().id() == block_id,
+                "pending seal Vote provenance mismatch"
+            );
+        } else {
+            ensure!(
+                self.pending_epoch_commit
+                    .as_ref()
+                    .and_then(|pending| pending.prepared.header().ok().map(|header| header.id()))
+                    == Some(block_id),
+                "pending Vote is not bound to the retained native P"
+            );
+        }
         let canonical = CanonicalSignIntentV0::vote(
             self.driver.config().validator_set(),
             self.driver.config().local_validator(),
@@ -1182,9 +1197,16 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
                     &self.retirement,
                     &mut self.checkpoint_store,
                     &self.checkpoint,
-                    self.pending_epoch_commit
-                        .as_ref()
-                        .map(|pending| &pending.prepared),
+                    match seal {
+                        Some(seal) => EpochKeyProvenanceV5::Seal(seal),
+                        None => EpochKeyProvenanceV5::Application(
+                            &self
+                                .pending_epoch_commit
+                                .as_ref()
+                                .context("application Vote P missing")?
+                                .prepared,
+                        ),
+                    },
                 )
             },
         };
@@ -1506,10 +1528,13 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
                     &runtime.retirement,
                     &mut runtime.checkpoint_store,
                     &runtime.checkpoint,
-                    runtime
-                        .pending_epoch_commit
-                        .as_ref()
-                        .map(|pending| &pending.prepared),
+                    EpochKeyProvenanceV5::Application(
+                        &runtime
+                            .pending_epoch_commit
+                            .as_ref()
+                            .context("resumed Vote P missing")?
+                            .prepared,
+                    ),
                 )
             },
         };
@@ -1638,7 +1663,7 @@ fn confirm_key_owners_v1<W: ExternalSignerRetirementV1>(
     retirement: &ConfirmedOrdinarySignerRetirementV1,
     store: &mut SqliteEpochNodeCheckpointStoreV1,
     checkpoint: &EpochNodeCheckpointV1,
-    prepared_vote: Option<&PreparedNativeEpochExecutionV1>,
+    provenance: EpochKeyProvenanceV5<'_>,
 ) -> Result<()> {
     store.confirm_exact(checkpoint)?;
     let safety = journal.fresh_read_v1(pin)?;
@@ -1669,11 +1694,26 @@ fn confirm_key_owners_v1<W: ExternalSignerRetirementV1>(
                 .belongs_to_application_at_path_v0(application, application.path()),
         "owner changed during key-boundary confirmation"
     );
-    confirm_pending_vote_native_v2(driver, application, prepared_vote)?;
-    if let Some(prepared) = prepared_vote {
-        let header = prepared.header()?;
-        if header.block_kind() == BlockKind::EpochCheckpoint {
-            confirm_checkpoint_selection_v4(application, edge, checkpoint, &header)?;
+    match provenance {
+        EpochKeyProvenanceV5::Application(prepared) => {
+            confirm_pending_vote_native_v2(driver, application, Some(prepared))?;
+            let header = prepared.header()?;
+            if header.block_kind() == BlockKind::EpochCheckpoint {
+                confirm_checkpoint_selection_v4(application, edge, checkpoint, &header)?;
+            }
+        }
+        EpochKeyProvenanceV5::Timeout => {
+            ensure!(
+                matches!(
+                    driver.state().pending_sign(),
+                    Some(SignIntent::TimeoutVote { .. })
+                ),
+                "timeout key boundary lacks its exact obligation"
+            );
+            confirm_pending_vote_native_v2(driver, application, None)?;
+        }
+        EpochKeyProvenanceV5::Seal(seal) => {
+            confirm_seal_vote_provenance_v5(driver, application, edge, seal)?;
         }
     }
     store.confirm_exact(checkpoint)?;
@@ -1986,3 +2026,5 @@ fn confirm_native_application_cut_v3(
 }
 
 include!("epoch_checkpoint_preparation_v4.inc");
+
+include!("epoch_pre_handoff_v5.inc");

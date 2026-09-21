@@ -132,8 +132,8 @@ fn checkpoint_prepare_execute_v4(case: Box<CheckpointCaseV4>) -> Box<CheckpointC
 }
 
 #[inline(never)]
-fn checkpoint_prepare_sign_v4(case: Box<CheckpointCaseV4>) {
-    let (_directory, mut owner, mut key) = *case;
+fn checkpoint_prepare_signed_v4(case: Box<CheckpointCaseV4>) -> Box<CheckpointCaseV4> {
+    let (directory, mut owner, mut key) = *case;
     assert!(owner.prepared_checkpoint_cut_v4().is_err());
     let inner = owner.inner.as_ref().unwrap();
     let expected_header = inner
@@ -209,12 +209,15 @@ fn checkpoint_prepare_sign_v4(case: Box<CheckpointCaseV4>) {
         inner.runtime.driver.state()
     );
     inner.runtime.checkpoint_store.confirm_exact(&cut).unwrap();
+    Box::new((directory, owner, key))
+}
+
+#[inline(never)]
+fn checkpoint_prepare_sign_v4(case: Box<CheckpointCaseV4>) {
+    let (_directory, owner, mut key) = *checkpoint_prepare_signed_v4(case);
+    let calls = key.calls;
     assert!(owner.sign_checkpoint_vote_v4(&mut key).is_err());
-    assert_eq!(
-        key.calls,
-        calls + 1,
-        "duplicate phase must never call the key"
-    );
+    assert_eq!(key.calls, calls, "duplicate phase must never call the key");
 }
 
 #[test]
@@ -227,3 +230,5 @@ fn actual_epoch_checkpoint_preparation_uses_real_cutoff_before_valid_and_vote_v4
         cutoff,
     )));
 }
+
+include!("epoch_pre_handoff_v5_tests.inc");

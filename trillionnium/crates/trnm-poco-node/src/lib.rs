@@ -199,8 +199,9 @@ mod epoch_runtime_candidate_v1;
 #[cfg(feature = "epoch-runtime-candidate")]
 pub use epoch_runtime_candidate_v1::{
     CandidateEpochRuntimeV1, EpochCheckpointPreparationRuntimeV4,
-    EpochOrdinaryContinuationRuntimeV3, FirstEpochFinalizationRuntimeV2, FirstNewEpochPhaseV1,
-    PendingEpochValidationRecoveryReadbackV1, ProgressedEpochRecoveryReadbackV1,
+    EpochOrdinaryContinuationRuntimeV3, EpochPreHandoffRuntimeV5, FirstEpochFinalizationRuntimeV2,
+    FirstNewEpochPhaseV1, PendingEpochValidationRecoveryReadbackV1,
+    ProgressedEpochRecoveryReadbackV1,
 };
 mod external_node_checkpoint;
 #[cfg(feature = "epoch-runtime-candidate")]
