@@ -322,6 +322,9 @@ pub struct SqliteOldEpochSafetyJournalV1 {
     fenced: bool,
 }
 impl SqliteOldEpochSafetyJournalV1 {
+    pub(crate) fn immutable_profile_ref_v1(&self) -> [u8; 32] {
+        self.profile.profile_ref_v1()
+    }
     /// Explicitly migrate a fresh, independently pinned journal7 head. Original
     /// files stay untouched and owned; no custody retirement or external CAS is
     /// implied by creating the outgoing namespace.

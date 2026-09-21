@@ -399,6 +399,116 @@ readback yields either rejection or the exact strict inert record; none releases
 a Core or lease. The tests do not establish a complete M15 activation lease,
 repeated journal9-to-next-epoch migration, or cross-store rollback recovery.
 
+### Contextual successor journal (M03-EPOCH-JOURNAL-V2; inert persistence implemented)
+
+M02's `TRNMS14E` codec2 and complete `TRNMEP02` preparation prefix require an
+explicit journal10 consumer. Existing journal9 remains exactly codec1 and
+source-journal8 only. Neither a changed SQLite version nor successful scalar
+comparison upgrades an old owner. The V2 Core preparation and recovery types
+have no V1 candidate-host conversion.
+
+The new namespace uses application ID `0x54524541`, user_version 10 and lock
+magic `TRNMJ10E`. Its closed tables retain the same metadata/head/two-record
+roles as journal9, with an additional immutable source-kind tag: 0 is settled
+journal8/14O, 1 is journal9/14E codec1, 2 is journal10/14E codec2. Every other tag
+rejects before record decoding. Source and target records use their exact
+versioned decoders with no fallback. Unknown schema objects, malformed row
+cardinality, oversized SQL names/text, sidecar substitution, symlink/hardlink,
+foreign process or unexpected writer reject without repair.
+
+`EpochSafetyJournalProfileV2` contains the target Core configuration, limits,
+full verified epoch state and owner generation, plus one flat immediate-source
+context descriptor and its independently pinned journal profile reference.
+It never recursively embeds a preceding journal profile or all preceding
+Safety records. The descriptor remains in the independently supplied immutable
+profile; SQLite retains the exact immediate source record/transition without
+duplicating another full descriptor BLOB. The source descriptor contains its exact Core configuration,
+codec, record bounds, generation and, for 14E, its complete verified epoch
+state. Prefixes remain flat and retain M02's 32-entry/64-MiB bounds. Recreating
+a codec2 context calls the epoch state's metered `recover_preparation_v2` with
+one bounded meter for the complete prefix; its 64-MiB framing limit never
+becomes an eight-root CEV0 limit.
+
+The profile hash domain is `trnm.journal10.epoch.profile.v2`. It binds source
+kind, immediate source profile/context references, exact target codec2 context,
+generation and calculated row/database bounds. The origin and record-chain
+domains are separately `trnm.journal10.epoch.origin.v2` and
+`trnm.journal10.epoch.chain.v2`, retaining journal9's ordered u64-length-prefixed
+hash-part framing. Origin commits the target profile and new random journal
+ID together with source kind, source journal/head/record/transition pins, exact
+original source record/transition, and first target revision. Each successor
+hash additionally commits origin, previous chain hash, revision, exact target
+record and exact transition bytes. Independent expected head pins remain
+necessary to detect whole-image rollback.
+
+Initialization takes an opaque `PreparedEpochCoreActivationV2`, a real source
+journal owner of the selected kind and an independently expected source pin.
+Before namespace creation it freshly reads and strictly reconstructs that
+source, compares its actual immutable profile reference with the flat source
+descriptor, matches the preparation's exact predecessor and persistence affinity,
+and independently asks the recovered source to prepare this same target.
+Both preparations must have identical complete state, barrier and transition
+manifest. Their process-local affinities need not be equal: only the original
+preparation's opaque request may bind the destination journal.
+M02 enforces applied equals finalized at the original checkpoint, no unresolved
+sign/finalization/validation/sync/halt, exact proof/overlay, generation + 1,
+revision + 1 and exactly one appended activation with unchanged prior entry
+bytes. A codec1 source requires the first retained entry to equal its original
+eight roots; a codec2 source cannot replace its prefix or downgrade.
+
+Namespace locking, WAL `synchronous=FULL`, immediate transactions, checked
+readback and file/directory synchronization preserve the existing ordering.
+A second actual source-owner read must match before successful return. Return
+only a non-Clone owner-affine `ConfirmedEpochSafetyHeadV2`, never StorageAck,
+Core input, a signature or a custody lease. Reopened journals remain unbound;
+scalar state cannot rebind a live owner. `confirm_exact_request_v2` requires
+actual process affinity, barrier/revision, complete state and transition
+manifest to equal a fresh read. `persist_exact_v2` preserves CAS, exact retry,
+monotonic revisions and bounded two-record retention. Every fresh read audits
+the immutable source and reconstructs the same exact initial successor even
+after that target row is pruned.
+
+Source and target record limits are each at most 256 MiB; transition frames
+are at most 1 MiB. Compute SQLite row capacity from the larger exact record
+limit plus transition and fixed metadata overhead before opening a namespace;
+check all arithmetic and SQLite i32 limits. Database capacity includes bounded
+source metadata, retained target rows and WAL headroom. No recursive history
+or unbounded schema inventory is admitted. Post-write uncertainty fences the
+owner; crash recovery either rejects an incomplete namespace or reconstructs
+exact committed state. It must not guess a commit outcome or release callbacks.
+
+Until the V2 physical host join exists, a source10 progression test must use a
+private test harness producing actual opaque Core requests and actual journal
+writes. It cannot fabricate settled scalar rows or add a production activation
+shortcut solely to make that test pass.
+
+Required acceptance uses actual journal owners, genuine contextual multi-epoch
+proofs and opaque Core requests. Cover source8-to-V2, source9-to-V2 and a second
+source10-to-V2 transition; fresh reopen, exact retry, wrong affinity/pin/profile,
+valid alternative prefix, changed native artifact, generation/revision skips,
+missing/replaced sidecars, corrupt origin after pruning, and real SIGKILL before
+commit, after commit/before sync and after sync/before readback. These checks
+establish persistence only. M15 must separately join actual committed native
+checkpoint state, role-specific retired/new custody and an independent external
+watermark before any initial ACK; journal10 must not inherit journal9's existing
+trusted-host recovery shortcut.
+
+The inert journal10 implementation and private physical backend are now present
+in `epoch_journal_v2.rs` and `epoch_journal_physical_v2.rs`. The original journal9
+codec, SQL layout, hash domains and public API retain their previous behavior.
+`tests/epoch_journal_v2.rs` executes an actual native committed checkpoint and
+source8 owner, then journal10 migration, original-request retry, foreign-affinity
+rejection, source-independent cold recovery, immutable-profile/head/origin
+corruption rejection without repair, and all three real SIGKILL initialization
+cuts. These tests run with the default thread stack; an ignored child is launched
+explicitly by the parent for each death cut. The physical backend and existing
+journal8/9 regressions remain required.
+
+Actual progressed source9-to-journal10 and journal10-to-journal10 migrations,
+post-initial CAS/pruning/crash cases, role-specific custody and the live physical
+host join remain open. The implementation does not close live repeated-epoch or
+external acceptance gates.
+
 Use a single M15 owner to route ordinary Vote/Timeout, old handoff and new
 handoff requests and to hold all relevant namespaces. The existing
 `SqliteHandoffSignerJournalV1` terminal fence only protects its own

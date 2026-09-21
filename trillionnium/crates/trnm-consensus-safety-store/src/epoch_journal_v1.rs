@@ -1,6 +1,9 @@
 //! Separate journal9 for exact full-context 14E records. Initial migration
 //! consumes an opaque pending Core request plus the actual fresh journal8 cut.
 //! The store returns inert comparison receipts, never an ACK or signer lease.
+use crate::epoch_journal_physical_v2::{
+    JournalBoundsV2, JournalLayoutV2, PhysicalJournalErrorV2, PhysicalJournalV2,
+};
 use crate::epoch_preparation_sqlite_v1 as fs_owner;
 use crate::{
     decode_transition_context_v0_exact, encode_transition_context_v0,
@@ -8,10 +11,10 @@ use crate::{
     OldEpochSafetyJournalProfileV1, SafetyStoreErrorV0, SafetyTransitionContextV0,
     SqliteOldEpochSafetyJournalV1,
 };
-use fs_owner::{EpochPreparationStoreErrorV1, PinnedFileV1};
-use rusqlite::{params, Connection, TransactionBehavior};
+use fs_owner::EpochPreparationStoreErrorV1;
+use rusqlite::{params, Connection};
 use sha2::{Digest, Sha256};
-use std::{io::Write, path::Path, sync::Arc};
+use std::{path::Path, sync::Arc};
 use trnm_consensus_core::{
     decode_epoch_safety_record_v1_exact, decode_old_epoch_boundary_safety_record_v1_exact,
     encode_epoch_safety_record_v1, encode_old_epoch_boundary_safety_record_v1,
@@ -22,11 +25,8 @@ use trnm_consensus_core::{
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
 
-const APPLICATION_ID: i64 = 0x54524539;
-const LOCK_MAGIC: &[u8; 8] = b"TRNMJ9EP";
 const MAX_RECORD: usize = 256 * 1024 * 1024;
 const MAX_CONTEXT: usize = 1024 * 1024;
-const SQL: &str = include_str!("epoch_journal_v1.sql");
 
 #[derive(Debug)]
 pub enum EpochJournalErrorV1 {
@@ -88,8 +88,15 @@ fn digest(domain: &[u8], parts: &[&[u8]]) -> [u8; 32] {
     }
     h.finalize().into()
 }
-fn io(stage: &'static str, e: std::io::Error) -> EpochJournalErrorV1 {
-    EpochPreparationStoreErrorV1::Io { stage, error: e }.into()
+impl From<PhysicalJournalErrorV2> for EpochJournalErrorV1 {
+    fn from(error: PhysicalJournalErrorV2) -> Self {
+        match error {
+            PhysicalJournalErrorV2::Namespace(error) => Self::Namespace(error),
+            PhysicalJournalErrorV2::Sqlite(error) => Self::Sqlite(error),
+            PhysicalJournalErrorV2::Invalid(why) => Self::Invalid(why),
+            PhysicalJournalErrorV2::Fenced => Self::Fenced,
+        }
+    }
 }
 /// Closed profile binds the exact full 14E context and immediate journal8
 /// source context. No caller-selectable verifier or automatic codec upgrade.
@@ -167,7 +174,7 @@ impl EpochSafetyJournalProfileV1 {
             binding,
         })
     }
-    fn context(&self) -> Result<EpochSafetyStateRecordContextV1<'_>> {
+    pub(crate) fn context(&self) -> Result<EpochSafetyStateRecordContextV1<'_>> {
         Ok(EpochSafetyStateRecordContextV1::new(
             &self.config,
             self.epoch.strict_context()?,
@@ -295,7 +302,7 @@ impl ConfirmedEpochSafetyHeadV1 {
         path: &Path,
     ) -> bool {
         Arc::ptr_eq(&self.owner, &store.owner)
-            && store.database.path == path
+            && store.path_v1() == path
             && store.fresh_read_v1(self.pin).is_ok_and(|fresh| {
                 fresh.state_record_checksum_v1() == self.state_record_checksum_v1()
                     && fresh.transition_context_v1() == self.transition_context_v1()
@@ -304,20 +311,11 @@ impl ConfirmedEpochSafetyHeadV1 {
 }
 
 pub struct SqliteEpochSafetyJournalV1 {
-    // Close connections before pin handles even on errors. Successful public
-    // calls retain no SQLite connection/page cache across fresh readback.
-    connection: Option<Connection>,
-    database: PinnedFileV1,
-    lock: PinnedFileV1,
-    wal: Option<PinnedFileV1>,
-    shm: Option<PinnedFileV1>,
-    directory: PinnedFileV1,
+    physical: PhysicalJournalV2,
     profile: EpochSafetyJournalProfileV1,
     journal_id: [u8; 32],
     owner: Arc<()>,
-    pid: u32,
     binding: Option<SafetyStatePersistenceBindingV0>,
-    fenced: bool,
 }
 impl SqliteEpochSafetyJournalV1 {
     /// Explicit source8-to-journal9 migration of the exact pending activation.
@@ -390,59 +388,23 @@ impl SqliteEpochSafetyJournalV1 {
         validate_request_manifest(request, &context)?;
         validate_transition_context_against_state_v0(&context, request.state())?;
         let transition = encode_transition_context_v0(&context)?;
-        let (path, directory) = fs_owner::pin_namespace(path.as_ref())?;
-        if path == source.path_v1() || path.to_string_lossy().ends_with(".epoch.lock") {
-            return invalid("destination namespace collision");
-        }
-        let lock_path = fs_owner::auxiliary_path(&path, ".epoch.lock");
-        for p in [
-            &path,
-            &lock_path,
-            &fs_owner::auxiliary_path(&path, "-wal"),
-            &fs_owner::auxiliary_path(&path, "-shm"),
-            &fs_owner::auxiliary_path(&path, "-journal"),
-        ] {
-            fs_owner::require_absent(p)?;
-        }
-        let mut journal_id = [0; 32];
-        getrandom::getrandom(&mut journal_id)
-            .map_err(|_| EpochJournalErrorV1::Invalid("journal identity entropy"))?;
-        if journal_id == [0; 32] {
-            return invalid("zero journal identity");
-        }
-        let mut lock_file = fs_owner::private_file(&lock_path, true)?;
-        fs_owner::lock_exclusive(&lock_file)?;
-        lock_file
-            .write_all(LOCK_MAGIC)
-            .and_then(|_| lock_file.write_all(&journal_id))
-            .and_then(|_| lock_file.write_all(&profile.binding))
-            .map_err(|e| io("write journal9 lock", e))?;
-        lock_file
-            .sync_all()
-            .map_err(|e| io("sync journal9 lock", e))?;
-        let lock = PinnedFileV1::new(lock_path, lock_file, false, 72)?;
-        let database_file = fs_owner::private_file(&path, true)?;
-        fs_owner::lock_exclusive(&database_file)?;
-        let database = PinnedFileV1::new(path.clone(), database_file, false, profile.max_db)?;
-        directory
-            .file
-            .sync_all()
-            .map_err(|e| io("sync journal9 namespace", e))?;
-        let connection = fs_owner::open_connection(&path, false)?;
-        fs_owner::configure_connection(&connection, true, profile.max_row, profile.max_db)?;
+        let physical = PhysicalJournalV2::create_new(
+            path.as_ref(),
+            JournalLayoutV2::Codec1,
+            profile.binding,
+            JournalBoundsV2 {
+                max_row: profile.max_row,
+                max_db: profile.max_db,
+            },
+            Some(source.path_v1()),
+        )?;
+        let journal_id = physical.journal_id();
         let mut store = Self {
-            connection: Some(connection),
-            database,
-            lock,
-            wal: None,
-            shm: None,
-            directory,
+            physical,
             profile,
             journal_id,
             owner: Arc::new(()),
-            pid: std::process::id(),
             binding: Some(binding),
-            fenced: false,
         };
         let revision = request.state().revision();
         let origin = origin_hash(
@@ -460,22 +422,8 @@ impl SqliteEpochSafetyJournalV1 {
             chain_checksum: chain,
         };
         {
-            let tx = store
-                .connection
-                .as_mut()
-                .expect("initialization connection")
-                .transaction_with_behavior(TransactionBehavior::Immediate)?;
-            store.wal = Some(fs_owner::pin_existing(
-                &fs_owner::auxiliary_path(&path, "-wal"),
-                store.profile.max_db * 2,
-            )?);
-            store.shm = Some(fs_owner::pin_existing(
-                &fs_owner::auxiliary_path(&path, "-shm"),
-                65_536,
-            )?);
-            tx.execute_batch(SQL)?;
-            tx.pragma_update(None, "application_id", APPLICATION_ID)?;
-            tx.pragma_update(None, "user_version", 9)?;
+            let tx = store.physical.immediate_transaction()?;
+            JournalLayoutV2::Codec1.initialize_schema(&tx)?;
             tx.execute(
                 "INSERT INTO epoch_metadata VALUES(1,?1,?2,?3,?4,?5,?6,?7,?8)",
                 params![
@@ -529,40 +477,31 @@ impl SqliteEpochSafetyJournalV1 {
         profile: EpochSafetyJournalProfileV1,
         expected: EpochSafetyHeadPinV1,
     ) -> Result<Self> {
-        fs_owner::require_linux()?;
-        let (path, directory) = fs_owner::pin_namespace(path.as_ref())?;
-        let lock = fs_owner::pin_existing(&fs_owner::auxiliary_path(&path, ".epoch.lock"), 72)?;
-        fs_owner::lock_exclusive(&lock.file)?;
-        let database = fs_owner::pin_existing(&path, profile.max_db)?;
-        fs_owner::lock_exclusive(&database.file)?;
-        let wal = Some(fs_owner::pin_existing(
-            &fs_owner::auxiliary_path(&path, "-wal"),
-            profile.max_db * 2,
-        )?);
-        let shm = Some(fs_owner::pin_existing(
-            &fs_owner::auxiliary_path(&path, "-shm"),
-            65_536,
-        )?);
-        fs_owner::require_absent(&fs_owner::auxiliary_path(&path, "-journal"))?;
+        let physical = PhysicalJournalV2::open_existing(
+            path.as_ref(),
+            JournalLayoutV2::Codec1,
+            profile.binding,
+            JournalBoundsV2 {
+                max_row: profile.max_row,
+                max_db: profile.max_db,
+            },
+            expected.journal_id,
+        )?;
         let store = Self {
-            connection: None,
-            database,
-            lock,
-            wal,
-            shm,
-            directory,
+            physical,
             profile,
             journal_id: expected.journal_id,
             owner: Arc::new(()),
-            pid: std::process::id(),
             binding: None,
-            fenced: false,
         };
         store.fresh_read_v1(expected)?;
         Ok(store)
     }
     pub fn path_v1(&self) -> &Path {
-        &self.database.path
+        self.physical.path()
+    }
+    pub(crate) fn immutable_profile_ref_v1(&self) -> [u8; 32] {
+        self.profile.profile_ref_v1()
     }
 
     /// Joins a fresh journal read to Core's strict terminal evidence validator
@@ -588,19 +527,9 @@ impl SqliteEpochSafetyJournalV1 {
         &self,
         expected: EpochSafetyHeadPinV1,
     ) -> Result<ConfirmedEpochSafetyHeadV1> {
-        self.require_namespace()?;
-        let connection = fs_owner::open_connection(&self.database.path, true)?;
-        fs_owner::configure_connection(
-            &connection,
-            false,
-            self.profile.max_row,
-            self.profile.max_db,
-        )?;
+        let connection = self.physical.open_read_connection()?;
         let result = self.read_head(&connection, expected);
-        connection
-            .close()
-            .map_err(|(_, e)| EpochJournalErrorV1::Sqlite(e))?;
-        self.require_namespace()?;
+        self.physical.close_read_connection(connection)?;
         result
     }
 
@@ -750,8 +679,7 @@ impl SqliteEpochSafetyJournalV1 {
             &mut observer,
         );
         if result.is_err() {
-            self.fenced = true;
-            let _ = self.close_connection();
+            self.physical.fence();
         }
         result
     }
@@ -801,22 +729,9 @@ impl SqliteEpochSafetyJournalV1 {
             revision,
             chain_checksum: chain,
         };
-        let connection = fs_owner::open_connection(&self.database.path, false)?;
-        fs_owner::configure_connection(
-            &connection,
-            false,
-            self.profile.max_row,
-            self.profile.max_db,
-        )?;
-        connection.execute_batch("PRAGMA query_only=OFF; PRAGMA wal_autocheckpoint=0;")?;
-        connection.pragma_update(None, "max_page_count", self.profile.max_db / 4096)?;
-        self.connection = Some(connection);
+        self.physical.open_writer()?;
         {
-            let tx = self
-                .connection
-                .as_mut()
-                .expect("writer opened")
-                .transaction_with_behavior(TransactionBehavior::Immediate)?;
+            let tx = self.physical.immediate_transaction()?;
             let active: (u64, Vec<u8>) = tx.query_row(
                 "SELECT revision,chain FROM epoch_head WHERE singleton=1",
                 [],
@@ -849,90 +764,17 @@ impl SqliteEpochSafetyJournalV1 {
         self.fresh_read_v1(next)
     }
     fn require_namespace(&self) -> Result<()> {
-        if self.fenced {
-            return Err(EpochJournalErrorV1::Fenced);
-        }
-        if std::process::id() != self.pid {
-            return invalid("owner process changed");
-        }
-        for p in [&self.database, &self.lock, &self.directory] {
-            p.require_unchanged()?;
-        }
-        if let Some(p) = &self.wal {
-            p.require_unchanged()?;
-        }
-        if let Some(p) = &self.shm {
-            p.require_unchanged()?;
-        }
-        if self
-            .lock
-            .file
-            .metadata()
-            .map_err(|e| io("stat lock", e))?
-            .len()
-            != 72
-        {
-            return invalid("lock size");
-        }
-        let mut bytes = [0; 72];
-        let file = &self.lock.file;
-        // Positional read avoids a mutable shared offset between fresh reads.
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::FileExt;
-            file.read_exact_at(&mut bytes, 0)
-                .map_err(|e| io("read lock", e))?;
-        }
-        #[cfg(not(unix))]
-        {
-            use std::io::Read;
-            let mut file = file;
-            file.read_exact(&mut bytes)
-                .map_err(|e| io("read lock", e))?;
-        }
-        if &bytes[..8] != LOCK_MAGIC
-            || bytes[8..40] != self.journal_id
-            || bytes[40..] != self.profile.binding
-        {
-            return invalid("lock binding");
-        }
-        Ok(())
-    }
-    fn close_connection(&mut self) -> Result<()> {
-        if let Some(c) = self.connection.take() {
-            c.close().map_err(|(_, e)| EpochJournalErrorV1::Sqlite(e))?;
-        }
-        Ok(())
+        Ok(self.physical.require_namespace()?)
     }
     fn close_and_sync(&mut self) -> Result<()> {
-        self.require_namespace()?;
-        self.close_connection()?;
-        self.require_namespace()?;
-        for file in [
-            &self.database.file,
-            &self.lock.file,
-            &self
-                .wal
-                .as_ref()
-                .ok_or(EpochJournalErrorV1::Invalid("missing WAL"))?
-                .file,
-            &self
-                .shm
-                .as_ref()
-                .ok_or(EpochJournalErrorV1::Invalid("missing SHM"))?
-                .file,
-            &self.directory.file,
-        ] {
-            file.sync_all().map_err(|e| io("sync journal9", e))?;
-        }
-        self.require_namespace()
+        Ok(self.physical.close_and_sync()?)
     }
     fn read_head(
         &self,
         c: &Connection,
         expected: EpochSafetyHeadPinV1,
     ) -> Result<ConfirmedEpochSafetyHeadV1> {
-        check_schema(c)?;
+        self.physical.check_schema(c)?;
         // Query scalar lengths before allocating untrusted persistent blobs.
         let sizes:(i64,i64)=c.query_row("SELECT length(source_record),length(source_transition) FROM epoch_metadata WHERE singleton=1",[],|r|Ok((r.get(0)?,r.get(1)?)))?;
         if sizes.0 <= 0
@@ -1148,52 +990,7 @@ fn chain_hash(
         &[&origin, &previous, &revision.to_be_bytes(), record, context],
     )
 }
-fn check_schema(c: &Connection) -> Result<()> {
-    let app: i64 = c.query_row("PRAGMA application_id", [], |r| r.get(0))?;
-    let version: i64 = c.query_row("PRAGMA user_version", [], |r| r.get(0))?;
-    if app != APPLICATION_ID || version != 9 {
-        return invalid("journal9 application ID/schema");
-    }
-    fn inventory(
-        c: &Connection,
-    ) -> std::result::Result<Vec<(String, String, String, String)>, rusqlite::Error> {
-        let mut rows = c
-            .prepare("SELECT type,name,tbl_name,coalesce(sql,'') FROM sqlite_schema LIMIT 4")?
-            .query_map([], |r| {
-                // Inspect borrowed text before allocating attacker-controlled SQL.
-                let mut fields = Vec::with_capacity(4);
-                for (index, bound) in [16, 64, 64, 4096].into_iter().enumerate() {
-                    let value = r.get_ref(index)?.as_str()?;
-                    if value.len() > bound {
-                        return Err(rusqlite::Error::InvalidQuery);
-                    }
-                    fields.push(value.to_owned());
-                }
-                Ok((
-                    fields.remove(0),
-                    fields.remove(0),
-                    fields.remove(0),
-                    fields.remove(0),
-                ))
-            })?
-            .collect::<std::result::Result<Vec<_>, _>>()?;
-        rows.sort();
-        Ok(rows)
-    }
-    let reference = Connection::open_in_memory()?;
-    reference.execute_batch(SQL)?;
-    if inventory(c)? != inventory(&reference)? {
-        return invalid("journal9 closed schema inventory");
-    }
-    let metadata: i64 = c.query_row("SELECT count(*) FROM epoch_metadata", [], |r| r.get(0))?;
-    let heads: i64 = c.query_row("SELECT count(*) FROM epoch_head", [], |r| r.get(0))?;
-    if metadata != 1 || heads != 1 {
-        return invalid("journal9 singleton inventory");
-    }
-    Ok(())
-}
-
-fn validate_request_manifest(
+pub(crate) fn validate_request_manifest(
     request: &SafetyStatePersistenceV0,
     transition: &SafetyTransitionContextV0,
 ) -> Result<()> {

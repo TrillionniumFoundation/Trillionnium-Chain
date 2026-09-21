@@ -28,7 +28,9 @@
 //! sidecar, but a production host must still place them behind one dedicated
 //! process owner in an owner-controlled namespace.
 
+mod epoch_journal_physical_v2;
 mod epoch_journal_v1;
+mod epoch_journal_v2;
 mod epoch_preparation_sqlite_v1;
 mod old_epoch_journal_v1;
 #[cfg(feature = "test-fixtures")]
@@ -92,4 +94,10 @@ pub use transition_context::{
     NATIVE_VALID_POST_ACK_REQUEST_STANDALONE_QC_SYNC_V0,
     NATIVE_VALID_POST_ACK_REQUEST_TC_HIGH_QC_SYNC_V0,
     NATIVE_VALID_POST_ACK_SAFETY_HALTED_CONFLICT_V0, SAFETY_TRANSITION_CONTEXT_CODEC_VERSION_V0,
+};
+
+pub use epoch_journal_v2::{
+    ConfirmedEpochSafetyHeadV2, EpochJournalCutV2, EpochJournalErrorV2, EpochSafetyHeadPinV2,
+    EpochSafetyJournalProfileV2, EpochSafetyMigrationSourceV2, EpochSafetySourceKindV2,
+    EpochSafetySourceOwnerV2, EpochSafetySourcePinV2, SqliteEpochSafetyJournalV2,
 };
