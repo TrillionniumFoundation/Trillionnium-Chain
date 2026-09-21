@@ -59,6 +59,29 @@ class ModuleImplementationMatrixTests(unittest.TestCase):
         with self.assertRaises(gate.MatrixError):
             gate.validate_matrix(mutated, self.registry)
 
+    def test_direct_transition_and_untemplated_evidence_are_allowed(self) -> None:
+        mutated = self.text.replace(
+            "`AuthenticatedContext -> BoundedDecode -> SemanticValidate -> CanonicalReencode -> AdmittedValue`",
+            "`AuthenticatedContext -> AdmittedValue`",
+            1,
+        ).replace(
+            "independent vectors for every reachable CEV0/CEV1 object and parser/error review remain required.",
+            "Still pending: independent vectors for all reachable CEV0/CEV1 objects and parser/error review.",
+            1,
+        )
+        report = gate.validate_matrix(mutated, self.registry)
+        self.assertEqual(report["semantic_acceptance"], "not-assessed")
+        self.assertEqual(report["status"], "source-regression-open")
+
+    def test_absent_open_evidence_is_rejected(self) -> None:
+        mutated = self.text.replace(
+            "- **Open evidence:** independent vectors for every reachable CEV0/CEV1 object and parser/error review remain required.\n",
+            "",
+            1,
+        )
+        with self.assertRaises(gate.MatrixError):
+            gate.validate_matrix(mutated, self.registry)
+
     def test_acceptance_promotion_is_rejected(self) -> None:
         mutated = self.text.replace(
             "- **Acceptance status:** `source-regression-open`",

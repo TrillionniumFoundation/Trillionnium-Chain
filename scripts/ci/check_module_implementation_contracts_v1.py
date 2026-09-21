@@ -84,15 +84,17 @@ def validate_matrix(text: str, registry: dict[str, Any]) -> dict[str, int | str]
         _source_ref(_field(block, "Implementation source"), module + " implementation")
         _source_ref(_field(block, "Regression source"), module + " regression")
         transition = _field(block, "State transition")
-        require(" -> " in transition and transition.count(" -> ") >= 2,
-                f"{module} state transition must contain at least three ordered states")
+        states = transition.strip("`").split(" -> ")
+        require(len(states) >= 2 and all(state.strip() for state in states),
+                f"{module} state transition must name a source and target")
         requirements = _requirements(_field(block, "Acceptance requirements"), module)
         expected = row["requirement_ids"]
         require(requirements == expected, f"{module} acceptance requirements do not match registry")
         require(_field(block, "Acceptance status") == f"`{STATUS}`",
                 f"{module} cannot claim an assessed/accepted status")
-        open_evidence = _field(block, "Open evidence")
-        require(open_evidence.endswith("remain required."), f"{module} must state residual evidence")
+        # Presence is structural evidence only. Fixed prose cannot establish
+        # completeness; acceptance remains explicitly open above.
+        require(bool(_field(block, "Open evidence")), f"{module} must state residual evidence")
         requirement_count += len(requirements)
     return {"module_count": len(blocks), "requirement_count": requirement_count,
             "status": STATUS, "semantic_acceptance": "not-assessed",

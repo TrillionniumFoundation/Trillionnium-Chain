@@ -12,6 +12,12 @@ the referenced source files, and checks the named function/test symbols. It is
 deliberately lexical and source-bound; it cannot promote semantic acceptance,
 independent vectors, production authority, or external fault evidence.
 
+The gate requires an ordered transition and a nonempty open-evidence field,
+without prescribing a minimum number of intermediate states or an English
+sentence ending. A direct two-state transition is valid navigation data. The
+technical specification and its behavioral checks determine whether the
+transition actually preserves persistence, signing and recovery requirements.
+
 Each transition names the minimum owner-visible ordering. Implementations must
 also preserve the module's exact error, persistence, recovery, resource, and
 security rules in the linked technical specification. `source-regression-open`
