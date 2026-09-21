@@ -412,6 +412,8 @@ The inventory is partitioned into exactly these disjoint categories:
 * `general`: every discovered test outside the named native recovery groups;
 * `historical-install`, `historical-replay`, and `historical-receiver`: the
   corresponding `later_epoch_checkpoint_bridge` tests;
+* `later-pre-handoff`: all `later_epoch_checkpoint_bridge::tests::later_pre_handoff_`
+  tests, with an independent deadline from the remaining bridge tests;
 * `later-bridge`: remaining `later_epoch_checkpoint_bridge` tests;
 * `schema7`: schema7 incremental-owner commit tests; and
 * `poco-sigkill`: the native checkpoint SIGKILL boundary test.
@@ -421,11 +423,23 @@ once in the recorded partition. A new test name therefore enters `general`
 automatically unless it matches a reviewed recovery category. Child-process
 SIGKILL tests remain real process tests; ignored child entry points retain
 their ignored status and are not replaced by name filtering. The only permitted
-ignored tests are the three reviewed child entry points; their corresponding
+ignored tests are the four reviewed child entry points; their corresponding
 active parent drivers must be present. Before each execution, the filtered
 libtest listing must equal its partition. After execution, the final parent
 summary must match exact passed, ignored and filtered counts; child summaries
 cannot substitute for it. No test stack-size override is introduced.
+
+The pre-handoff category includes the active
+`later_pre_handoff_commits_before_joint_and_attaches_after_cold_recovery` test
+and the mandatory active
+`later_pre_handoff_sigkill_commit_and_attach_cuts_preserve_original_evidence`
+driver. Its only reviewed ignored entry is `later_pre_handoff_sigkill_child`.
+The driver must invoke that exact child for all six cuts: before commit, after
+commit and after fsync, separately for checkpoint commit and handoff attachment.
+Each child requires the exact cut marker and actual SIGKILL status within its
+90-second deadline. A missing or ignored driver, or any additional ignored
+entry, fails inventory admission before shard execution. Counts come from the
+discovered executable, not a fixed historical total.
 
 Each shard has an independent finite deadline. A timeout, nonzero exit, missing
 log, missing exit code, or incomplete inventory is a failed evidence result.

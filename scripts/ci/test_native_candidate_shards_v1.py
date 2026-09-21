@@ -20,6 +20,7 @@ import run_native_candidate_shards_v1 as runner
 NAMES = sorted([
     "ordinary::new_test", runner.BRIDGE + "historical_install_is_atomic",
     runner.BRIDGE + "historical_receiver_c33_is_strict", runner.SCHEMA7 + "selects_branch",
+    runner.PRE_HANDOFF + "commits_before_joint_and_attaches_after_cold_recovery",
     runner.POCO_SIGKILL, *runner.ALLOWED_IGNORED, *runner.REQUIRED_SIGKILL_DRIVERS,
 ])
 
@@ -43,6 +44,11 @@ args = sys.argv[1:]
 ignored = set(IGNORED)
 if case == 'extra-ignored':
     ignored.add('ordinary::new_test')
+pre_handoff_driver = 'later_epoch_checkpoint_bridge::tests::later_pre_handoff_sigkill_commit_and_attach_cuts_preserve_original_evidence'
+if case == 'missing-pre-handoff-driver':
+    NAMES.remove(pre_handoff_driver)
+if case == 'ignored-pre-handoff-driver':
+    ignored.add(pre_handoff_driver)
 skips, filters = [], []
 i = 0
 while i < len(args):
@@ -105,12 +111,14 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':'trnm_native_ex
         self.assertEqual(summary["status"], "passed")
         self.assertEqual(set(summary["shards"]), set(runner.SHARD_NAMES))
         counts = [entry["counts"] for entry in summary["shards"].values()]
-        self.assertEqual(sum(entry["passed"] for entry in counts), len(NAMES) - 3)
-        self.assertEqual(sum(entry["ignored"] for entry in counts), 3)
+        self.assertEqual(sum(entry["passed"] for entry in counts), len(NAMES) - 4)
+        self.assertEqual(sum(entry["ignored"] for entry in counts), 4)
+        pre_handoff = summary["shards"]["later-pre-handoff"]["counts"]
+        self.assertEqual((pre_handoff["passed"], pre_handoff["ignored"]), (2, 1))
         self.assertRegex(summary["executable_sha256"], r"^[0-9a-f]{64}$")
 
     def test_execution_failures_never_publish_success(self) -> None:
-        for case in ("compile-failure", "list-failure", "filtered-mismatch", "extra-ignored", "no-summary", "wrong-count", "dirty-source", "source-change", "binary-change", "wrong-source-pin"):
+        for case in ("compile-failure", "list-failure", "filtered-mismatch", "extra-ignored", "missing-pre-handoff-driver", "ignored-pre-handoff-driver", "no-summary", "wrong-count", "dirty-source", "source-change", "binary-change", "wrong-source-pin"):
             with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
                 code, summary, evidence = self.invoke(Path(directory), case)
                 self.assertNotEqual(code, 0)
@@ -120,6 +128,15 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':'trnm_native_ex
                     self.assertFalse((evidence / "compile.command").exists())
                 if case == "list-failure":
                     self.assertEqual((evidence / "inventory.exit-code").read_text().strip(), "7")
+                if case in ("missing-pre-handoff-driver", "ignored-pre-handoff-driver"):
+                    self.assertNotIn("shards", summary)
+                    expected_error = (
+                        "required SIGKILL drivers are missing or ignored"
+                        if case == "missing-pre-handoff-driver"
+                        else "ignored inventory differs from dedicated SIGKILL children"
+                    )
+                    self.assertEqual(summary["error"], expected_error)
+                    self.assertFalse(any((evidence / f"{shard}.command").exists() for shard in runner.SHARD_NAMES))
 
     def test_reusing_evidence_refuses_without_changing_previous_result(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -134,7 +151,11 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':'trnm_native_ex
 
     def test_inventory_and_summary_admission(self) -> None:
         self.assertEqual(runner.classify_test("new_module::new_test"), "general")
-        self.assertEqual(sorted(sum(runner.partition_inventory(iter(NAMES)).values(), [])), NAMES)
+        self.assertEqual(runner.classify_test(runner.PRE_HANDOFF + "future_test"), "later-pre-handoff")
+        partitions = runner.partition_inventory(iter(NAMES))
+        self.assertEqual(sorted(sum(partitions.values(), [])), NAMES)
+        self.assertEqual(partitions["later-pre-handoff"], [name for name in NAMES if name.startswith(runner.PRE_HANDOFF)])
+        self.assertFalse(any(name.startswith(runner.PRE_HANDOFF) for name in partitions["later-bridge"]))
         for raw in ("a: test\na: test\n", "", ": test\n"):
             with self.assertRaises(runner.ShardError):
                 runner.parse_test_inventory(raw)

@@ -17,18 +17,21 @@ from typing import Iterable
 PACKAGE = "trnm-native-execution-v0"
 FEATURES = "test-fixtures,incremental-epoch-candidate"
 BRIDGE = "later_epoch_checkpoint_bridge::tests::"
+PRE_HANDOFF = BRIDGE + "later_pre_handoff_"
 SCHEMA7 = "durable::incremental_owner_v1::epoch_candidate_v1::commit::tests::schema7_"
 POCO_SIGKILL = "poco_checkpoint::native_authorization_tests::epoch_sigkill_commit_boundaries_preserve_exact_prepared_chain"
-SHARD_NAMES = ("general", "historical-install", "historical-replay", "historical-receiver", "later-bridge", "schema7", "poco-sigkill")
+SHARD_NAMES = ("general", "historical-install", "historical-replay", "historical-receiver", "later-pre-handoff", "later-bridge", "schema7", "poco-sigkill")
 ALLOWED_IGNORED = {
     BRIDGE + "historical_replay_continuation_sigkill_child",
     BRIDGE + "historical_replay_install_sigkill_child",
     BRIDGE + "later_descendant_c22_sigkill_child",
+    PRE_HANDOFF + "sigkill_child",
 }
 REQUIRED_SIGKILL_DRIVERS = {
     BRIDGE + "historical_replay_continuation_sigkill_six_cuts_preserve_exact_c33",
     BRIDGE + "historical_replay_install_sigkill_cuts_recover_exact_nonempty_base",
     BRIDGE + "later_descendant_c22_sigkill_commit_cuts_recover_exact_p_and_proof",
+    PRE_HANDOFF + "sigkill_commit_and_attach_cuts_preserve_original_evidence",
 }
 
 
@@ -51,6 +54,8 @@ def classify_test(name: str) -> str:
     for suffix in ("install", "replay", "receiver"):
         if name.startswith(BRIDGE + "historical_" + suffix):
             return "historical-" + suffix
+    if name.startswith(PRE_HANDOFF):
+        return "later-pre-handoff"
     return "later-bridge" if name.startswith(BRIDGE) else "general"
 
 
@@ -112,7 +117,7 @@ def find_executable(lines: Iterable[str], workspace: Path) -> Path:
 
 
 def command_for_shard(executable: Path, shard: str, names: dict[str, list[str]]) -> list[str]:
-    filters = {"historical-install": BRIDGE + "historical_install", "historical-replay": BRIDGE + "historical_replay", "historical-receiver": BRIDGE + "historical_receiver", "later-bridge": BRIDGE, "schema7": SCHEMA7, "poco-sigkill": POCO_SIGKILL}
+    filters = {"historical-install": BRIDGE + "historical_install", "historical-replay": BRIDGE + "historical_replay", "historical-receiver": BRIDGE + "historical_receiver", "later-pre-handoff": PRE_HANDOFF, "later-bridge": BRIDGE, "schema7": SCHEMA7, "poco-sigkill": POCO_SIGKILL}
     command = [str(executable)] + ([filters[shard]] if shard != "general" else [])
     for other, values in names.items():
         if other != shard:
