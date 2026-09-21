@@ -7,8 +7,8 @@
 //! session identifier cannot be replayed across a receiver restart or
 //! reconnect. The connection freezes its run, key, validator set and counters;
 //! any I/O, authentication, replay or exhaustion ambiguity permanently poisons
-//! it. This module is a bounded transport primitive only; the consensus
-//! validator event loop does not use it yet.
+//! it. The mesh uses the legacy receive error projection; classified receive
+//! facts are available separately for explicit connection containment policy.
 
 use std::io::{Read, Write};
 
@@ -164,6 +164,8 @@ impl ConnectionSession {
     }
 }
 
+include!("transport_receive_classification_v1.inc");
+
 pub struct AuthenticatedConnection<T> {
     io: T,
     local: ValidatorId,
@@ -301,30 +303,24 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
         Ok(())
     }
 
+    /// Classifies failure origin while retaining the original strict error.
+    pub fn receive_classified_v1(
+        &mut self,
+    ) -> Result<AuthenticatedFrame, EstablishedReceiveErrorV1> {
+        receive_established_frame_v1(
+            &mut self.io,
+            &self.run_id,
+            &self.key_roles,
+            self.session,
+            &mut self.next_receive,
+            &mut self.poisoned,
+            true,
+        )
+    }
+
     pub fn receive(&mut self) -> Result<AuthenticatedFrame, FrameError> {
-        if self.poisoned {
-            return Err(FrameError::Poisoned);
-        }
-        let next_receive = self.next_receive.checked_add(1).ok_or_else(|| {
-            self.poisoned = true;
-            FrameError::Replay
-        })?;
-        let frame = match read_framed(&mut self.io, &self.run_id, &self.key_roles) {
-            Ok(frame) => frame,
-            Err(error) => {
-                self.poisoned = true;
-                return Err(error);
-            }
-        };
-        if frame.sender != self.session.remote
-            || frame.session != self.session.session
-            || frame.sequence != self.next_receive
-        {
-            self.poisoned = true;
-            return Err(FrameError::Replay);
-        }
-        self.next_receive = next_receive;
-        Ok(frame)
+        self.receive_classified_v1()
+            .map_err(EstablishedReceiveErrorV1::into_frame_error_v1)
     }
 }
 
@@ -541,34 +537,24 @@ impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
         Ok(())
     }
 
+    /// Classifies failure origin while retaining the original strict error.
+    pub fn receive_classified_v1(
+        &mut self,
+    ) -> Result<AuthenticatedFrame, EstablishedReceiveErrorV1> {
+        receive_established_frame_v1(
+            &mut self.io,
+            &self.run_id,
+            &self.key_roles,
+            self.session,
+            &mut self.next_receive,
+            &mut self.poisoned,
+            self.host_attestation_admission.is_some(),
+        )
+    }
+
     pub fn receive(&mut self) -> Result<AuthenticatedFrame, FrameError> {
-        if self.poisoned {
-            return Err(FrameError::Poisoned);
-        }
-        if self.host_attestation_admission.is_none() {
-            self.poisoned = true;
-            return Err(FrameError::ExternalIdentity(P2pIdentityErrorV1::Rejected));
-        }
-        let next_receive = self.next_receive.checked_add(1).ok_or_else(|| {
-            self.poisoned = true;
-            FrameError::Replay
-        })?;
-        let frame = match read_framed(&mut self.io, &self.run_id, &self.key_roles) {
-            Ok(frame) => frame,
-            Err(error) => {
-                self.poisoned = true;
-                return Err(error);
-            }
-        };
-        if frame.sender != self.session.remote
-            || frame.session != self.session.session
-            || frame.sequence != self.next_receive
-        {
-            self.poisoned = true;
-            return Err(FrameError::Replay);
-        }
-        self.next_receive = next_receive;
-        Ok(frame)
+        self.receive_classified_v1()
+            .map_err(EstablishedReceiveErrorV1::into_frame_error_v1)
     }
 }
 
@@ -2126,4 +2112,5 @@ mod tests {
         ));
         assert_eq!(client_io.position(), 0);
     }
+    include!("transport_receive_classification_tests_v1.inc");
 }

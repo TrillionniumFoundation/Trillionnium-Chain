@@ -30,10 +30,58 @@ The existing admission frame has a 4 MiB **payload** maximum. Unix credentials
 and local test keys do not establish cross-host validator identity. New ports
 below are planned adapters; their names do not claim current implementation.
 
+### Established G3 receive provenance (M04-ESTABLISHED-RECEIVE-CLASS-V1)
+
+The existing G3 `transport.rs` local-key and external-identity connections are
+separate candidate laboratory adapters from the proposed `dev-p2p-tls-v1`
+profile. `receive_classified_v1` returns an inert `EstablishedReceiveErrorV1`
+with private original error, authenticated `ConnectionSession`, and a closed
+class: `PeerInput(reason)`, `TransportIo`, or `Internal`. It grants no peer
+lease, Core receipt, reconnect permission, ACK, signing or recovery authority.
+The session comes from the completed receiver-challenged handshake, never from
+the rejected envelope's claimed sender/session. The mesh must independently
+join it to its exact direction and generation before any lifecycle action.
+
+Only the established receive operation may create a peer-input classification:
+bounded frame length/grammar, wrong run, unknown claimed sender, invalid frame
+signature, or a valid decoded frame whose sender/session/next sequence differs
+from the actual connection. This uses the unchanged strict framed decoder and
+immutable validated key-role registry. Socket I/O errors retain their exact
+`io::Error`; this class alone does not declare any I/O failure recoverable.
+Local already-poisoned state, absent external host-attestation admission and
+receive-counter exhaustion are `Internal`, even when the legacy enum spelling
+is shared with a peer error. Any future unclassified decoder error is internal.
+Handshake entropy, configuration and external identity errors are outside this
+established-input classification and must not be relabeled by generic matching.
+
+All failures permanently poison that one connection; no failed frame is
+returned and its next-receive sequence remains unchanged. Success increments
+exactly once after signature and complete session/sequence checks. Existing
+`receive` methods delegate the same kernel and project the original
+`FrameError` unchanged, including I/O kind/message, replay and poisoned errors.
+Send behavior, wire bytes/domains, frame allocation ceilings and handshake
+freshness remain unchanged. A connection must never resume by clearing poison
+or resetting sequence; an independent genuine handshake creates a new session.
+
+This slice supplies classification only. The existing mesh still uses the
+legacy receive interface and may stop globally; per-peer quarantine, checked
+lease/host-receipt cleanup and unavailable-session publication require the
+separate mesh consumer integration. Pre-authentication rejection, relay/barrier
+policy, durable payload replay and terminal acceptance are not changed.
+Real TCP regression must complete the authentic handshake before injecting
+bad frame bytes; verify the actual peer/session attribution, unchanged sequence,
+poisoned retry, independent healthy connection progress and legacy projection.
+It must cover both identity backends, correctly signed wrong-session/sequence/
+sender frames, invalid signature and malformed/oversized input, transport EOF,
+and local overflow/poison/host-admission failures without additional I/O or
+external signing. These are connection tests, not a claim of mesh quarantine
+or successful multi-host consensus.
+
 ### Candidate authenticated socket seam
 
-`CandidateAuthenticatedP2pTransportV0` is the only socket implementation in
-the current tree. It is compiled only by the explicit
+`CandidateAuthenticatedP2pTransportV0` is the socket seam for the candidate
+authenticated-transport profile, separate from the G3 laboratory adapters. It
+is compiled only by the explicit
 `candidate-authenticated-transport` feature (and re-exported by the host's
 `candidate-networked-authority` feature). `bind` validates the supplied
 validator set against the consensus parameters and switches the listener to
