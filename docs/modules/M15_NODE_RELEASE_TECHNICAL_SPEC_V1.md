@@ -1085,6 +1085,57 @@ older-parent waiting followed by timeout progress, and unchanged rejection of a
 valid TC paired with a substituted justify. This contract alone is not LAN
 acceptance evidence.
 
+### Leader-independent certificate delivery (M15-QUORUM-DELIVERY-V1)
+
+Every validator that locally forms a strictly verified QC or TC queues its first
+certificate for publication and application, independently of the next-view
+leader. This applies to authenticated remote votes, local votes, local timeouts
+and deferred timeout quorums whose exact QC carriers have just arrived. A
+quorum-ready validator must not discard its certificate solely because another
+validator is scheduled to lead; a lagging designated aggregator would otherwise
+prevent all ready validators from advancing despite a live quorum.
+
+Publication remains behind the existing exact local execution-readiness gate.
+A QC requires its authenticated native execution coordinate or the existing
+durably subsumed classification; a TC requires readiness for every referenced
+QC. No bare height, quorum count or leader identity substitutes for local P.
+The QC archive remains durable before publication and authority advancement;
+TC handling retains its existing authenticated owner/persistence path. The
+first-certificate collector freeze, exact-ID deduplication, first accepted TC
+per view, compatibility checks and all pending/outbox limits remain unchanged.
+Complete QC carriers are disseminated so subsequent TimeoutVote digests remain
+resolvable even when ready nodes retain different valid quorum subsets.
+
+A genuine seven-validator regression omits the scheduled aggregator from
+consensus delivery and requires the remaining five real signer/Core/native
+owners to form, queue and adopt certificates. It verifies exact publication,
+duplicate freezing and missing-execution deferral. This tests consensus
+aggregation; transport behavior with an offline peer requires separate evidence.
+Full-mesh all-validator publication has quadratic network fanout and establishes
+no throughput, offline-node or multi-host acceptance claim by itself.
+
+### Per-peer ordered delivery (M15-PEER-OUTBOX-V2)
+
+A bounded broadcast queue preserves FIFO independently for each destination.
+Each flush examines retained broadcasts oldest first and attempts at most the
+oldest unsent frame for each peer. A backpressured peer keeps its own exact frame
+pending but does not prevent other peers from receiving subsequent frames on
+later flushes. Successful enqueue to the authenticated mesh removes only that
+peer from the frame's remaining destinations. Session binding, reconnect and
+transport errors retain their existing mesh semantics; no unavailable peer is
+dropped or treated as successful delivery.
+
+A shared payload counts once toward the existing frame and byte limits until
+its last destination accepts it. Fully delivered rows may retire independently
+of an earlier row that another peer still needs. Empty-destination and capacity
+refusals leave byte accounting unchanged. Each flush is bounded by retained
+broadcast and configured-peer limits. A persistently unavailable peer can still
+exhaust the bounded queue; this change removes global head-of-line blocking but
+does not establish indefinite operation during a permanent network outage.
+Tests require healthy-peer progress, per-peer FIFO after recovery, excluded
+recipients, exact byte retirement, refusal atomicity and unchanged hard limits.
+Actual host-loss acceptance still requires the signed multi-host run evidence.
+
 ### Bounded timeout-collector diagnostics (M15-TC-DIAGNOSTIC-V1)
 
 Failure-only diagnostics may record at most the last eight timeout-vote

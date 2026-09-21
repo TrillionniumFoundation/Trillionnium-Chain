@@ -6306,14 +6306,12 @@ impl BoundedConsensusOwnerV1 {
             }
             RoutedConsensusActionV0::Vote { vote, formed_qc } => {
                 if let Some(certificate) = formed_qc {
-                    if self.is_qc_aggregator_v1(&certificate)? {
-                        self.queue_certificate_v1(PendingCertificateV1::Quorum {
-                            certificate: *certificate,
-                            publish: true,
-                        })?;
-                        self.drain_pending_certificates_v1()?;
-                        self.queue_ready_timeout_certificates_v1()?;
-                    }
+                    self.queue_locally_formed_certificate_v1(PendingCertificateV1::Quorum {
+                        certificate: *certificate,
+                        publish: true,
+                    })?;
+                    self.drain_pending_certificates_v1()?;
+                    self.queue_ready_timeout_certificates_v1()?;
                 }
                 let _ = vote;
                 Ok(true)
@@ -6322,15 +6320,13 @@ impl BoundedConsensusOwnerV1 {
                 self.timeout_diagnostics
                     .record_vote(&vote, formed_tc.is_some());
                 if let Some(certificate) = formed_tc {
-                    if self.is_tc_aggregator_v1(&certificate)? {
-                        self.queue_certificate_v1(PendingCertificateV1::Timeout {
-                            certificate: *certificate,
-                            publish: true,
-                        })?;
-                        self.timeout_diagnostics.record_queued();
-                        self.drain_pending_certificates_v1()?;
-                        self.queue_ready_timeout_certificates_v1()?;
-                    }
+                    self.queue_locally_formed_certificate_v1(PendingCertificateV1::Timeout {
+                        certificate: *certificate,
+                        publish: true,
+                    })?;
+                    self.timeout_diagnostics.record_queued();
+                    self.drain_pending_certificates_v1()?;
+                    self.queue_ready_timeout_certificates_v1()?;
                 }
                 let _ = vote;
                 Ok(true)
@@ -6366,14 +6362,12 @@ impl BoundedConsensusOwnerV1 {
             .retry_pending_timeout_certificates_v0()?;
         let mut queued = false;
         for certificate in certificates {
-            if self.is_tc_aggregator_v1(&certificate)? {
-                self.queue_certificate_v1(PendingCertificateV1::Timeout {
-                    certificate,
-                    publish: true,
-                })?;
-                self.timeout_diagnostics.record_queued();
-                queued = true;
-            }
+            self.queue_locally_formed_certificate_v1(PendingCertificateV1::Timeout {
+                certificate,
+                publish: true,
+            })?;
+            self.timeout_diagnostics.record_queued();
+            queued = true;
         }
         if queued {
             self.drain_pending_certificates_v1()?;
@@ -6504,12 +6498,10 @@ impl BoundedConsensusOwnerV1 {
             )
             .map_err(|error| anyhow!("append Vote broadcast event: {error}"))?;
         if let Some(certificate) = self.authority_v1()?.admit_local_vote_v0(vote)? {
-            if self.is_qc_aggregator_v1(&certificate)? {
-                self.queue_certificate_v1(PendingCertificateV1::Quorum {
-                    certificate,
-                    publish: true,
-                })?;
-            }
+            self.queue_locally_formed_certificate_v1(PendingCertificateV1::Quorum {
+                certificate,
+                publish: true,
+            })?;
         }
         Ok(())
     }
@@ -6547,57 +6539,37 @@ impl BoundedConsensusOwnerV1 {
             .record_vote(&vote_diagnostic, formed.is_some());
         self.pacemaker.confirm_timeout_emitted(expiry)?;
         if let Some(certificate) = formed {
-            if self.is_tc_aggregator_v1(&certificate)? {
-                self.queue_certificate_v1(PendingCertificateV1::Timeout {
-                    certificate,
-                    publish: true,
-                })?;
-                self.timeout_diagnostics.record_queued();
-                self.drain_pending_certificates_v1()?;
-            }
+            self.queue_locally_formed_certificate_v1(PendingCertificateV1::Timeout {
+                certificate,
+                publish: true,
+            })?;
+            self.timeout_diagnostics.record_queued();
+            self.drain_pending_certificates_v1()?;
         }
         Ok(true)
     }
 
+    fn queue_locally_formed_certificate_v1(
+        &mut self,
+        candidate: PendingCertificateV1,
+    ) -> Result<()> {
+        queue_locally_formed_certificate_into_v1(
+            &mut self.pending_certificates,
+            &self.applied_qcs,
+            &self.applied_tcs,
+            &self.accepted_tc_by_view,
+            candidate,
+        )
+    }
+
     fn queue_certificate_v1(&mut self, candidate: PendingCertificateV1) -> Result<()> {
-        let id = candidate.id_v1();
-        if candidate.is_quorum_v1() {
-            if self.applied_qcs.contains(&id) {
-                return Ok(());
-            }
-        } else {
-            let PendingCertificateV1::Timeout { certificate, .. } = &candidate else {
-                unreachable!("non-quorum pending certificate must be a Timeout")
-            };
-            let timed_out_view = certificate.timed_out_view().get();
-            if let Some(accepted) = self.accepted_tc_by_view.get(&timed_out_view) {
-                ensure!(
-                    timeout_certificates_compatible_v0(accepted, certificate),
-                    "conflicting QC coordinate in timeout certificate for an accepted view"
-                );
-                // The bounded standalone lane retains the first TC per view.
-                // Compatible alternatives are inert here, while a signed
-                // Proposal may carry its own exact independently verified TC.
-                // Standalone replay must not consume another phase or
-                // trigger a second rebase.
-                return Ok(());
-            }
-            if self.applied_tcs.contains(&id) {
-                return Ok(());
-            }
-        }
-        if let Some(existing) = self.pending_certificates.iter_mut().find(|existing| {
-            existing.id_v1() == id && existing.is_quorum_v1() == candidate.is_quorum_v1()
-        }) {
-            existing.merge_publish_v1(candidate.publish_v1());
-            return Ok(());
-        }
-        ensure!(
-            self.pending_certificates.len() < MAXIMUM_PENDING_CERTIFICATES_V1,
-            "pending certificate buffer exhausted"
-        );
-        self.pending_certificates.push_back(candidate);
-        Ok(())
+        queue_certificate_into_v1(
+            &mut self.pending_certificates,
+            &self.applied_qcs,
+            &self.applied_tcs,
+            &self.accepted_tc_by_view,
+            candidate,
+        )
     }
 
     fn drain_pending_certificates_v1(&mut self) -> Result<bool> {
@@ -6963,26 +6935,6 @@ impl BoundedConsensusOwnerV1 {
             )?;
         }
         Ok(())
-    }
-
-    fn is_qc_aggregator_v1(&self, certificate: &QuorumCertificate) -> Result<bool> {
-        let next_view = certificate
-            .view()
-            .get()
-            .checked_add(1)
-            .map(View::new)
-            .context("QC next view overflows")?;
-        Ok(leader_for(self.config.validator_set(), next_view) == self.config.local_validator())
-    }
-
-    fn is_tc_aggregator_v1(&self, certificate: &TimeoutCertificateV0) -> Result<bool> {
-        let next_view = certificate
-            .timed_out_view()
-            .get()
-            .checked_add(1)
-            .map(View::new)
-            .context("TC next view overflows")?;
-        Ok(leader_for(self.config.validator_set(), next_view) == self.config.local_validator())
     }
 
     fn record_proposal_first_seen_v1(&mut self, block_id: BlockId, height: u64) -> Result<()> {
@@ -7594,116 +7546,7 @@ fn observed_connectivity_fault_subject_v1(
     }
 }
 
-#[derive(Debug)]
-struct OrderedBroadcastV1 {
-    kind: FrameKind,
-    payload: Arc<[u8]>,
-    remaining_peers: BTreeSet<ValidatorId>,
-}
-
-#[derive(Debug)]
-struct OrderedConsensusOutboxV1 {
-    peers: Vec<ValidatorId>,
-    pending: VecDeque<OrderedBroadcastV1>,
-    pending_bytes: usize,
-}
-
-impl OrderedConsensusOutboxV1 {
-    fn new(peers: Vec<ValidatorId>) -> Self {
-        Self {
-            peers,
-            pending: VecDeque::new(),
-            pending_bytes: 0,
-        }
-    }
-
-    fn enqueue(&mut self, kind: FrameKind, payload: Vec<u8>) -> Result<()> {
-        self.enqueue_with_excluded_v1(kind, payload, None)
-    }
-
-    fn enqueue_except_v1(
-        &mut self,
-        kind: FrameKind,
-        payload: Vec<u8>,
-        excluded_peer: ValidatorId,
-    ) -> Result<()> {
-        self.enqueue_with_excluded_v1(kind, payload, Some(excluded_peer))
-    }
-
-    fn enqueue_with_excluded_v1(
-        &mut self,
-        kind: FrameKind,
-        payload: Vec<u8>,
-        excluded_peer: Option<ValidatorId>,
-    ) -> Result<()> {
-        ensure!(!payload.is_empty(), "consensus outbox payload is empty");
-        ensure!(
-            self.pending.len() < MAXIMUM_PENDING_BROADCASTS_V1,
-            "consensus outbox message capacity exhausted"
-        );
-        let next_bytes = self
-            .pending_bytes
-            .checked_add(payload.len())
-            .context("consensus outbox byte accounting overflows")?;
-        ensure!(
-            next_bytes <= MAXIMUM_PENDING_BROADCAST_BYTES_V1,
-            "consensus outbox byte capacity exhausted"
-        );
-        self.pending_bytes = next_bytes;
-        let mut remaining_peers = self.peers.iter().copied().collect::<BTreeSet<_>>();
-        if let Some(excluded_peer) = excluded_peer {
-            remaining_peers.remove(&excluded_peer);
-        }
-        ensure!(
-            !remaining_peers.is_empty(),
-            "consensus outbox has no eligible destination peer"
-        );
-        self.pending.push_back(OrderedBroadcastV1 {
-            kind,
-            payload: Arc::from(payload),
-            remaining_peers,
-        });
-        Ok(())
-    }
-
-    fn flush_front_v1(&mut self, mesh: &PersistentAuthenticatedPeerMeshV0) -> Result<(u64, u64)> {
-        let Some(front) = self.pending.front_mut() else {
-            return Ok((0, 0));
-        };
-        let peers = front.remaining_peers.iter().copied().collect::<Vec<_>>();
-        let mut queued_payload_bytes = 0u64;
-        let mut queued_frames = 0u64;
-        for peer in peers {
-            match mesh.send_shared_to_v0(peer, front.kind, Arc::clone(&front.payload))? {
-                crate::consensus_mesh::MeshSendDispositionV0::Queued => {
-                    front.remaining_peers.remove(&peer);
-                    queued_payload_bytes = queued_payload_bytes
-                        .checked_add(
-                            u64::try_from(front.payload.len())
-                                .context("consensus payload size does not fit u64")?,
-                        )
-                        .context("queued payload-byte counter overflows")?;
-                    queued_frames = queued_frames
-                        .checked_add(1)
-                        .context("queued frame counter overflows")?;
-                }
-                crate::consensus_mesh::MeshSendDispositionV0::Backpressured => {}
-            }
-        }
-        if front.remaining_peers.is_empty() {
-            let completed = self.pending.pop_front().expect("outbox front was observed");
-            self.pending_bytes = self
-                .pending_bytes
-                .checked_sub(completed.payload.len())
-                .expect("outbox byte accounting is monotonic");
-        }
-        Ok((queued_payload_bytes, queued_frames))
-    }
-
-    fn is_empty(&self) -> bool {
-        self.pending.is_empty() && self.pending_bytes == 0
-    }
-}
+include!("consensus_outbox_v2.inc");
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum PendingProposalDispositionV1 {
@@ -7911,6 +7754,72 @@ fn prune_finalized_proposal_timestamps_v1(
     finalized_height: u64,
 ) {
     observed.retain(|_, (height, _)| *height > finalized_height);
+}
+
+// Any local quorum holder may disseminate its complete verified carrier.
+// Readiness, persistence and publication still run in the owner's drain path.
+fn queue_locally_formed_certificate_into_v1(
+    pending_certificates: &mut VecDeque<PendingCertificateV1>,
+    applied_qcs: &BTreeSet<[u8; 32]>,
+    applied_tcs: &BTreeSet<[u8; 32]>,
+    accepted_tc_by_view: &BTreeMap<u64, TimeoutCertificateV0>,
+    mut candidate: PendingCertificateV1,
+) -> Result<()> {
+    candidate.merge_publish_v1(true);
+    queue_certificate_into_v1(
+        pending_certificates,
+        applied_qcs,
+        applied_tcs,
+        accepted_tc_by_view,
+        candidate,
+    )
+}
+
+fn queue_certificate_into_v1(
+    pending_certificates: &mut VecDeque<PendingCertificateV1>,
+    applied_qcs: &BTreeSet<[u8; 32]>,
+    applied_tcs: &BTreeSet<[u8; 32]>,
+    accepted_tc_by_view: &BTreeMap<u64, TimeoutCertificateV0>,
+    candidate: PendingCertificateV1,
+) -> Result<()> {
+    let id = candidate.id_v1();
+    if candidate.is_quorum_v1() {
+        if applied_qcs.contains(&id) {
+            return Ok(());
+        }
+    } else {
+        let PendingCertificateV1::Timeout { certificate, .. } = &candidate else {
+            unreachable!("non-quorum pending certificate must be a Timeout")
+        };
+        let timed_out_view = certificate.timed_out_view().get();
+        if let Some(accepted) = accepted_tc_by_view.get(&timed_out_view) {
+            ensure!(
+                timeout_certificates_compatible_v0(accepted, certificate),
+                "conflicting QC coordinate in timeout certificate for an accepted view"
+            );
+            // The bounded standalone lane retains the first TC per view.
+            // Compatible alternatives are inert here, while a signed
+            // Proposal may carry its own exact independently verified TC.
+            // Standalone replay must not consume another phase or
+            // trigger a second rebase.
+            return Ok(());
+        }
+        if applied_tcs.contains(&id) {
+            return Ok(());
+        }
+    }
+    if let Some(existing) = pending_certificates.iter_mut().find(|existing| {
+        existing.id_v1() == id && existing.is_quorum_v1() == candidate.is_quorum_v1()
+    }) {
+        existing.merge_publish_v1(candidate.publish_v1());
+        return Ok(());
+    }
+    ensure!(
+        pending_certificates.len() < MAXIMUM_PENDING_CERTIFICATES_V1,
+        "pending certificate buffer exhausted"
+    );
+    pending_certificates.push_back(candidate);
+    Ok(())
 }
 
 #[derive(Debug, Clone)]
@@ -11160,11 +11069,19 @@ mod tests {
     }
 
     fn real_takeover_fixture_v1(validator_count: usize) -> RealTakeoverFixtureV1 {
+        real_takeover_fixture_with_lifetime_v1(
+            validator_count,
+            ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(4, 0, 4, 0).unwrap(),
+        )
+    }
+
+    fn real_takeover_fixture_with_lifetime_v1(
+        validator_count: usize,
+        signer_lifetime: ContinuousSignerLifetimeBoundsV0,
+    ) -> RealTakeoverFixtureV1 {
         let temp = tempfile::tempdir().expect("create takeover test root");
         fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700))
             .expect("make takeover test root private");
-        let signer_lifetime =
-            ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(4, 0, 4, 0).unwrap();
         let parent_timestamp_ms = 400;
         let child_timestamp_ms = 401;
         let mut validator_set = None;
@@ -11262,6 +11179,8 @@ mod tests {
         }
         certificate.expect("focused votes reach quorum")
     }
+
+    include!("consensus_aggregation_quorum_tests_v1.inc");
 
     fn on_consensus_owner_stack_v1<T: Send + 'static>(
         body: impl FnOnce() -> T + Send + 'static,
