@@ -388,6 +388,7 @@ fn assert_native_handoff_live_sync(
         retained.terminal_header().block_kind(),
         BlockKind::EpochHandoff
     );
+    assert_native_runtime_rejects_disconnected_fork(anchor, &path, &retained);
     let bytes = app
         .export_current_native_live_v1(BlockIdV0::new(*target.id().as_bytes()).unwrap())
         .unwrap();
@@ -404,4 +405,109 @@ fn assert_native_handoff_live_sync(
     assert_eq!(historical.terminal_header(), target);
     assert_eq!(historical.snapshot_trust_path().link_count(), 9);
     assert_historical_native_live_staging(&retained, historical, &bytes);
+}
+
+#[inline(never)]
+fn assert_native_runtime_rejects_disconnected_fork(
+    anchor: &trnm_state_sync_v0::NativeTrustAnchorV1,
+    path: &crate::NativeEpochFinalityPathV1,
+    retained: &trnm_state_sync_v0::VerifiedNativeTrustPathV1,
+) {
+    use trnm_consensus_crypto::FinalityExpectationV0;
+    use trnm_state_sync_v0::{
+        verify_native_trust_path_v1, NativeTrustErrorV1, NativeTrustPathLimitsV1, NativeTrustStepV1,
+    };
+
+    let parent = retained.terminal_header();
+    let set = retained.terminal_validator_set();
+    let parameters = retained.terminal_parameters();
+    assert_eq!(parent.height().get(), 31);
+    // A different canonical C31 keeps the real roots, configuration and
+    // terminal seal. Only its timestamp changes; all fork QCs and proposer
+    // signatures below are freshly produced by the genuine fixture keys.
+    let fork_parent = checkpoint_like_header_at_view(
+        set,
+        BlockKind::EpochHandoff,
+        parent.height().get(),
+        parent.parent_id(),
+        parent.state_root(),
+        None,
+        parent.timestamp_ms() + 1,
+        parent.payload_root(),
+        parent.receipts_root(),
+        parent.evidence_root(),
+        parent.view().get(),
+    );
+    assert_ne!(fork_parent.id(), parent.id());
+    let fork32 = later_regular_header(set, &fork_parent, 32_000);
+    let fork33 = later_regular_header(set, &fork32, 33_000);
+    let fork34 = later_regular_header(set, &fork33, 34_000);
+    let proof = ordinary_later_proof(
+        &fork_parent,
+        &[fork32.clone(), fork33, fork34],
+        set,
+        parameters,
+    );
+    assert_valid_ordinary_later_proof(&proof, &fork_parent, &fork32, set, parameters);
+
+    let expected = |header: &BlockHeader, parent: &BlockHeader| FinalityExpectationV0 {
+        block_id: header.id(),
+        height: header.height(),
+        state_root: header.state_root(),
+        receipts_root: header.receipts_root(),
+        evidence_root: header.evidence_root(),
+        parent_id: parent.id(),
+        parent_height: parent.height(),
+        parent_timestamp_ms: parent.timestamp_ms(),
+    };
+    let mut steps: Vec<_> = path
+        .steps
+        .iter()
+        .map(|step| {
+            let header = decode_block_header_v0_exact(&step.header_cev0).unwrap();
+            let parent = decode_block_header_v0_exact(&step.consensus_parent_header_cev0).unwrap();
+            let expected = expected(&header, &parent);
+            match &step.epoch_evidence {
+                Some(evidence) => NativeTrustStepV1::EpochFirst {
+                    evidence: evidence.as_preimages(),
+                    proof: &step.proof,
+                    expected,
+                },
+                None => NativeTrustStepV1::Ordinary {
+                    proof: &step.proof,
+                    expected,
+                },
+            }
+        })
+        .collect();
+    let mut prefix_budget = Cev0AdmissionBudgetV0::protocol_v0();
+    prefix_budget.charge_signature_work(7).unwrap();
+    let prefix = verify_native_trust_path_v1(
+        anchor,
+        &steps,
+        NativeTrustPathLimitsV1::default(),
+        &mut prefix_budget,
+    )
+    .expect("the original C18 to C31 path must independently pass M13");
+    assert_eq!(prefix.terminal_header(), parent);
+    // Every claimed target field is true. Only the expected parent falsely
+    // names the authenticated path head instead of this valid proof's parent.
+    steps.push(NativeTrustStepV1::Ordinary {
+        proof: &proof,
+        expected: expected(&fork32, parent),
+    });
+    let mut failed_budget = Cev0AdmissionBudgetV0::protocol_v0();
+    failed_budget.charge_signature_work(7).unwrap();
+    let error = verify_native_trust_path_v1(
+        anchor,
+        &steps,
+        NativeTrustPathLimitsV1::default(),
+        &mut failed_budget,
+    )
+    .expect_err("a valid fork proof cannot extend a different authenticated parent");
+    assert!(matches!(error, NativeTrustErrorV1::DisconnectedStep));
+    assert!(
+        failed_budget.signature_work() > prefix_budget.signature_work(),
+        "the rejected fork proof must retain its charged verification work"
+    );
 }

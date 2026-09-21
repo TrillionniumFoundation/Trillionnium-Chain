@@ -1881,6 +1881,44 @@ fn validate_later_application_finality_with_read_policy(
     Ok(())
 }
 
+/// Consume only a freshly reconstructed strict activation from the retained
+/// prefix. The runtime verifies every original proof signature and authorized
+/// anchor, and this boundary preserves the complete caller target expectation.
+fn verify_retained_epoch_runtime_finality_v1(
+    activation: trnm_consensus_crypto::StrictSameVersionEpochActivationAuthorityV0,
+    proof: &[u8],
+    expected: trnm_consensus_crypto::FinalityExpectationV0,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<BlockHeader> {
+    let runtime =
+        trnm_consensus_crypto::StrictEpochRuntimeContextV1::from_activation_v1(activation)
+            .map_err(|e| anyhow::anyhow!("retained epoch runtime: {e:?}"))?;
+    let verified = runtime
+        .decode_verify_finality_v1(proof, expected.parent_timestamp_ms, budget)
+        .map_err(|e| anyhow::anyhow!("retained epoch strict finality: {e:?}"))?;
+    let header = verified.finalized_block().header();
+    if header.block_kind() == BlockKind::EpochHandoff {
+        let terminal = runtime.activation().terminal_old_header();
+        ensure!(
+            expected.parent_id == terminal.id()
+                && expected.parent_height == terminal.height()
+                && expected.parent_timestamp_ms == terminal.timestamp_ms(),
+            "retained epoch first proof expected terminal mismatch"
+        );
+    }
+    ensure!(
+        header.id() == expected.block_id
+            && header.height() == expected.height
+            && header.state_root() == expected.state_root
+            && header.receipts_root() == expected.receipts_root
+            && header.evidence_root() == expected.evidence_root
+            && header.parent_id() == expected.parent_id
+            && expected.parent_height.get().checked_add(1) == Some(header.height().get()),
+        "retained epoch finality expected target mismatch"
+    );
+    Ok(header.clone())
+}
+
 // The proof identity tuple is intentionally explicit: each field binds a
 // distinct retained edge/checkpoint relation, and collapsing it would weaken
 // the policy-aware revalidation boundary.
@@ -1902,28 +1940,17 @@ fn validate_later_application_finality_proof_v1_with_read_policy(
         predecessor_edge,
         policy,
     )?;
-    let retained = connection.query_row(
-        "SELECT checkpoint_parent_header,checkpoint_finality,anchor_kernel,
-                next_epoch_commitment,new_validator_set,new_parameters
-         FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
-        [checkpoint_block.as_slice()],
-        |row| {
-            Ok((
-                row.get::<_, Vec<u8>>(0)?,
-                row.get::<_, Vec<u8>>(1)?,
-                row.get::<_, Vec<u8>>(2)?,
-                row.get::<_, Vec<u8>>(3)?,
-                row.get::<_, Vec<u8>>(4)?,
-                row.get::<_, Vec<u8>>(5)?,
-            ))
-        },
-    )?;
-    let old_set_bytes = activation
-        .activation
-        .old_validator_set()
-        .try_cev0_bytes()
-        .map_err(|e| anyhow::anyhow!("later application old validator set: {e:?}"))?;
-    let old_parameters = activation.activation.old_consensus_parameters();
+    ensure!(
+        activation
+            .activation
+            .old_checkpoint_finality()
+            .finalized_block()
+            .header()
+            .id()
+            .as_bytes()
+            == &checkpoint_block,
+        "later application checkpoint binding"
+    );
     let header = decode_header(&p.header)?;
     let expected = trnm_consensus_crypto::FinalityExpectationV0 {
         block_id: header.id(),
@@ -1940,30 +1967,13 @@ fn validate_later_application_finality_proof_v1_with_read_policy(
             .header()
             .timestamp_ms(),
     };
-    let old_parameters_bytes = old_parameters.canonical_bytes();
-    let evidence = trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
-        old_checkpoint_finality: &retained.1,
-        next_epoch_commitment: &retained.3,
-        authorization_kernel: &retained.2,
-        old_validator_set: &old_set_bytes,
-        old_consensus_parameters: &old_parameters_bytes,
-        new_validator_set: &retained.4,
-        new_consensus_parameters: &retained.5,
-        authenticated_checkpoint_parent_header: &retained.0,
-    };
-    let verified = trnm_consensus_crypto::decode_verify_epoch_first_finality_strict_v1(
-        evidence,
+    let verified = verify_retained_epoch_runtime_finality_v1(
+        activation.activation,
         proof,
-        activation.activation.old_validator_set(),
-        old_parameters,
         expected,
         &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-    )
-    .map_err(|e| anyhow::anyhow!("later application strict finality: {e}"))?;
-    ensure!(
-        verified.proof().finalized_block().header() == &header,
-        "later application proof header binding"
-    );
+    )?;
+    ensure!(verified == header, "later application proof header binding");
     Ok(())
 }
 
@@ -2547,6 +2557,78 @@ impl DurableNativeApplicationV0 {
             application_head: metadata.head,
             entries,
         })
+    }
+
+    /// Verify original successor bytes under the owner's exact retained prefix.
+    /// This read-only adapter grants neither an edge nor a persistence receipt.
+    /// Its sole caller must freshly inspect the owner context before creating
+    /// an owner-affine checkpoint observation from these cryptographic facts.
+    pub(crate) fn verify_retained_successor_evidence_v1(
+        &self,
+        context: &LaterEpochCheckpointContextV1,
+        evidence: trnm_consensus_types::EpochActivationEvidencePreimagesV0<'_>,
+        budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+    ) -> Result<trnm_consensus_crypto::StrictSameVersionEpochActivationAuthorityV0> {
+        ensure!(
+            context.belongs_to_application(self),
+            "successor evidence foreign owner"
+        );
+        let _guard = self.lock_operation()?;
+        reject_sqlite_sidecars_v0(&self.path)?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        connection.execute_batch("BEGIN DEFERRED TRANSACTION")?;
+        verify_schema_v0(&connection)?;
+        live_export::screen_legacy_export_inputs(&connection)?;
+        let selected_schema = schema_version(&connection)?;
+        ensure!(
+            is_epoch_schema(selected_schema),
+            "successor requires explicit epoch schema"
+        );
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        ensure!(
+            metadata.head == *context.application_head(),
+            "successor evidence stale head"
+        );
+        let parent = load_p(
+            &connection,
+            context.application_head().block_id().as_bytes(),
+        )?
+        .context("successor evidence parent missing")?;
+        ensure!(
+            parent.target_head()? == *context.application_head()
+                && parent.lineage == encode_lineage(context.lineage())?
+                && context.lineage().last() == Some(&context.predecessor_edge())
+                && context.context_digest()
+                    == context_digest(
+                        self.config.store_id,
+                        context.application_head(),
+                        parent
+                            .commit_sequence
+                            .context("successor evidence parent uncommitted")?,
+                        &parent.target_set,
+                        &parent.target_parameters,
+                        &parent.lineage,
+                    ),
+            "successor evidence exact owner context"
+        );
+        let prefix = lineage_resolver::resolve(&connection, &self.config, context.lineage())?;
+        let (set, parameters) = prefix.active(&self.config);
+        ensure!(
+            set == context.old_validator_set() && parameters == context.old_parameters(),
+            "successor evidence authenticated configuration"
+        );
+        let audit = lineage_resolver::verify_successor_evidence(
+            &connection,
+            &self.config,
+            &prefix,
+            &parent,
+            evidence,
+            budget,
+        )?;
+        connection.execute_batch("ROLLBACK")?;
+        #[cfg(unix)]
+        self.confirm_namespace_identity_v1()?;
+        Ok(audit.activation)
     }
 
     /// Reconstruct the authenticated old configuration and exact geometry for
@@ -4404,6 +4486,10 @@ impl DurableNativeApplicationV0 {
         edge: Option<&crate::AuthenticatedEpochApplicationEdgeV1>,
         later_context: Option<&LaterEpochExecutionContextV1>,
     ) -> Result<()> {
+        let _guard = self.lock_operation()?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        connection.execute_batch("BEGIN DEFERRED TRANSACTION")?;
+        verify_schema_v0(&connection)?;
         let header = prepared.header()?;
         ensure!(
             header.block_kind() != BlockKind::EpochCheckpoint,
@@ -4427,100 +4513,33 @@ impl DurableNativeApplicationV0 {
                     .consensus_parent()
                     .timestamp_ms()
             } else {
-                let connection = open_immutable_connection_v0(&self.path)?;
                 let parent = load_p(&connection, prepared.row.parent.block_id().as_bytes())?
                     .context("finality parent P missing")?;
                 decode_header(&parent.header)?.timestamp_ms()
             },
         };
-        let final_header = if prepared.row.artifact_kind == 1 {
-            let verified = if let Some(context) = later_context.as_ref() {
-                let connection = open_immutable_connection_v0(&self.path)?;
-                let evidence =
-                    connection.query_row(
-                        "SELECT checkpoint_parent_header,checkpoint_header,checkpoint_finality,
-                            anchor_kernel,next_epoch_commitment,new_validator_set,new_parameters
-                     FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
-                        [prepared.row.parent.block_id().as_bytes().as_slice()],
-                        |row| {
-                            Ok(crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1 {
-                            context_digest: [0; 32],
-                            predecessor_edge: [0; 32],
-                            checkpoint_parent_header: row.get(0)?,
-                            checkpoint_header: row.get(1)?,
-                            checkpoint_finality: row.get(2)?,
-                            anchor_kernel: row.get(3)?,
-                            next_epoch_commitment: row.get(4)?,
-                            new_validator_set: row.get(5)?,
-                            new_parameters: row.get(6)?,
-                        })
-                        },
-                    )?;
-                let old_set = context.old_validator_set_v1();
-                let old_set_bytes = old_set
-                    .try_cev0_bytes()
-                    .map_err(|e| anyhow::anyhow!("later first-new old set: {e:?}"))?;
-                let evidence = trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
-                    old_checkpoint_finality: &evidence.checkpoint_finality,
-                    next_epoch_commitment: &evidence.next_epoch_commitment,
-                    authorization_kernel: &evidence.anchor_kernel,
-                    old_validator_set: &old_set_bytes,
-                    old_consensus_parameters: &context.old_parameters_v1().canonical_bytes(),
-                    new_validator_set: &evidence.new_validator_set,
-                    new_consensus_parameters: &evidence.new_parameters,
-                    authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
-                };
-                trnm_consensus_crypto::decode_verify_epoch_first_finality_strict_v1(
-                    evidence,
-                    proof_bytes,
-                    old_set,
-                    context.old_parameters_v1(),
-                    expected,
-                    budget,
-                )
-                .map_err(|e| anyhow::anyhow!("later first-new strict finality: {e}"))?
-            } else {
-                let edge = edge.as_ref().context("legacy epoch edge missing")?;
-                trnm_consensus_crypto::decode_verify_epoch_first_finality_strict_v1(
-                    edge.recovery_evidence().proof_preimages(),
-                    proof_bytes,
-                    edge.old_validator_set(),
-                    edge.old_parameters(),
-                    expected,
-                    budget,
-                )
-                .map_err(|e| anyhow::anyhow!("first-new strict finality: {e}"))?
-            };
-            verified.proof().finalized_block().header().clone()
-        } else {
-            let verified = if let Some(context) = later_context.as_ref() {
-                trnm_consensus_crypto::decode_verify_finality_proof_strict_v0(
-                    trnm_consensus_crypto::POCO_THREE_CHAIN_PROOF_CLASS_V0,
-                    proof_bytes,
-                    context.new_validator_set_v1(),
-                    context.new_parameters_v1(),
-                    expected,
-                    budget,
-                )
-                .map_err(|e| anyhow::anyhow!("later first-new strict finality: {e}"))?
-            } else {
-                let edge = edge.as_ref().context("ordinary epoch edge missing")?;
-                trnm_consensus_crypto::decode_verify_finality_proof_strict_v0(
-                    trnm_consensus_crypto::POCO_THREE_CHAIN_PROOF_CLASS_V0,
-                    proof_bytes,
-                    edge.new_validator_set(),
-                    edge.new_parameters(),
-                    expected,
-                    budget,
-                )
-                .map_err(|e| anyhow::anyhow!("ordinary sparse strict finality: {e}"))?
-            };
-            verified.proof().finalized_block().header().clone()
-        };
+        let mut prefix = lineage_resolver::resolve(
+            &connection,
+            &self.config,
+            &decode_lineage(&prepared.row.lineage)?,
+        )?;
+        let activation = prefix
+            .entries
+            .pop()
+            .context("finality epoch prefix empty")?;
+        let final_header = verify_retained_epoch_runtime_finality_v1(
+            activation.audit.activation,
+            proof_bytes,
+            expected,
+            budget,
+        )?;
         ensure!(
             final_header == header,
             "strict finality differs from complete retained header"
         );
+        connection.execute_batch("ROLLBACK")?;
+        #[cfg(unix)]
+        self.confirm_namespace_identity_v1()?;
         Ok(())
     }
 

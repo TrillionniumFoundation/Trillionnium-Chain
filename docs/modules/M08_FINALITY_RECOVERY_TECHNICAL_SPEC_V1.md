@@ -1319,6 +1319,78 @@ one genuine nonempty source fixture. `historical_continuation_sql_bounds_reject_
 checks SQL admission limits independently of malformed consensus fields. These
 local regressions do not supply multi-host or physical power-loss acceptance.
 
+## Retained contextual successor proofs (M08-SUCCESSOR-CONTEXT-V1)
+
+This primary-M08 candidate integration implements the following contract. A later checkpoint
+proof may contain a TC referring to the outgoing epoch's synthetic anchor. Its
+producer, durable commit, cold recovery, first-new/ordinary proof consumer and
+exporter must share the M01-SUCCESSOR-ACTIVATION-V1 verifier. No new wire bytes,
+schema migration, signing permission or imported-base checkpoint authority is
+introduced by this integration.
+
+The private lineage resolver authenticates predecessors in order. For a later
+checkpoint it uses the last audited strict activation and follows the exact
+checkpoint-parent P chain back to that activation's terminal seal. The terminal
+seal comes from the original verified proof; it is not an application P row.
+Every application header comes from an exact block-ID lookup, committed status,
+matching store and full lineage, canonical header/height/consensus-parent fields,
+and strictly ordered commit sequences. Never select arbitrary rows by height.
+Screen SQL type and byte length before copying header or lineage blobs. Bound
+the complete interval, including both endpoints, to 256 headers and 1 MiB.
+Read only bounded header/identity columns while walking; do not copy every
+ancestor's full snapshot and replay sets. Existing outer inventory execution,
+P digest, fork and snapshot audits remain mandatory and nonrecursive.
+
+Pass original eight-root evidence, the audited predecessor and the exact forward
+interval to M01's strict successor entrypoint. The returned private activation
+joins the same prefix used for checkpoint context, consumption, deterministic
+cutoff selection and record digests. Retain no serialized authority or alternate
+signature algorithm. Cold open rebuilds the prefix from original committed rows
+and proofs each time. Missing or modified intermediate ancestry rejects before
+any receipt. Context/configuration equality alone never connects histories.
+
+Live checkpoint verification may observe a Prepared checkpoint whose immediate
+parent is committed. It must not require the checkpoint itself to be committed
+before verification. It retains the owner-bound prepared P check, original cutoff
+selection, current context digest and fresh post-verification owner readback.
+Only the existing atomic checkpoint commit can record the proof and successor
+edge; prefix recovery of an installed successor still requires a committed
+checkpoint. No temporary metadata rewrite or public recovery recursion is allowed.
+
+First-new and ordinary proof verification consume the strict runtime context
+rebuilt from that exact lineage, preserving the exact header/parent expectation.
+The caller meter admits the submitted proof, including pre-existing work charges
+and charges retained on failure. Retained owner evidence is reverified separately
+under the existing 32-edge inventory bound, each activation's protocol meter and
+the bounded ancestry interval. The former first-new path also re-admitted the
+selected activation into the caller meter; this integration removes that duplicate
+admission and crypto work. It does not reset the submitted-proof meter or weaken
+cold prefix verification. They must not pass contextual activation evidence
+through a context-free decoder again. Commit, retry and cold proof audit use the
+same path; original proof-byte identity, CAS, fsync and fresh readback remain
+required. Retained schema10 interpretation under schema12 uses its existing
+explicit source-read policy, never the mutable imported head.
+
+Both export formats read one immutable audited transaction. The historical
+exporter copies the two original seals from its already verified prefix facts;
+it does not reparse valid contextual evidence with the v0 decoder. Exported
+activation roots and terminal proof bytes remain unchanged. M13's per-step
+consumer retains verified epoch context and the bounded authenticated header
+interval needed to verify the next activation; a starting anchor with no prior
+activation still cannot authorize an unknown synthetic reference.
+
+Required evidence is a genuine C28 checkpoint whose S30 TC references both
+QC(S29) and the verified S20/view0 anchor. Preserve the actual C25 selection and
+owner-prepared C28 header, sign S30 at the skipped view and both handoff roles,
+then exercise C28 commit/cold open, C31/C32 original proof commit/retry/reopen,
+per-step sync verification and NHR1 export/history verification. Keep the old
+no-TC regressions. Pin first-new proof-only admission with exact, one-less and
+precharged caller budgets. Canonical signature corruption, wrong anchor, missing or
+substituted committed ancestry, prepared intermediate rows and mismatched
+retained proof bytes must reject without changing head or sequence. This local
+result does not close M02 successor journals, public transport, imported-base
+next-checkpoint execution or multi-host acceptance.
+
 ## Activation boundary
 
 M08 remains candidate until the default node's real producers and consumers

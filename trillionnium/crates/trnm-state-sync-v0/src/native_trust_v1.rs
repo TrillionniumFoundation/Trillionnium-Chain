@@ -17,14 +17,15 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 use trnm_consensus_crypto::{
-    decode_verify_epoch_first_finality_strict_v1, decode_verify_finality_proof_strict_v0,
-    validate_validator_set_strict_ed25519_v0, FinalityExpectationV0, StrictFinalityErrorV0,
+    decode_verify_finality_proof_strict_v0, validate_validator_set_strict_ed25519_v0,
+    FinalityExpectationV0, StrictEpochRuntimeContextV1, StrictFinalityErrorV0,
     POCO_THREE_CHAIN_PROOF_CLASS_V0,
 };
 use trnm_consensus_types::{
     decode_block_header_v0_exact, decode_consensus_parameters_v0_exact,
-    decode_validator_set_v0_exact, BlockHeader, Cev0AdmissionBudgetV0, ConsensusParametersV0,
-    DecodeError, EpochActivationEvidencePreimagesV0, ValidationError, ValidatorSet,
+    decode_epoch_activation_evidence_v0_exact, decode_validator_set_v0_exact, BlockHeader,
+    BlockKind, Cev0AdmissionBudgetV0, ConsensusParametersV0, DecodeError,
+    EpochActivationEvidencePreimagesV0, FinalityProofV0, ValidationError, ValidatorSet,
 };
 
 pub use trnm_consensus_crypto::HistoricalAncestryLimitsV1;
@@ -264,6 +265,82 @@ fn matches_context(
         && header.consensus_parameters_hash() == params.hash()
 }
 
+fn ensure_expected_header_v1(
+    proof: &FinalityProofV0,
+    expected: FinalityExpectationV0,
+) -> Result<(), NativeTrustErrorV1> {
+    let header = proof.finalized_block().header();
+    if header.id() != expected.block_id
+        || header.height() != expected.height
+        || header.state_root() != expected.state_root
+        || header.receipts_root() != expected.receipts_root
+        || header.evidence_root() != expected.evidence_root
+        || header.parent_id() != expected.parent_id
+        || expected.parent_height.get().checked_add(1) != Some(header.height().get())
+    {
+        return Err(NativeTrustErrorV1::DisconnectedStep);
+    }
+    Ok(())
+}
+
+fn ensure_epoch_first_parent_v1(
+    runtime: &StrictEpochRuntimeContextV1,
+    expected: FinalityExpectationV0,
+) -> Result<(), NativeTrustErrorV1> {
+    let parent = runtime.activation().terminal_old_header();
+    if expected.parent_id != parent.id()
+        || expected.parent_height != parent.height()
+        || expected.parent_timestamp_ms != parent.timestamp_ms()
+    {
+        return Err(NativeTrustErrorV1::DisconnectedStep);
+    }
+    Ok(())
+}
+
+fn reset_retained_ancestry_v1(
+    runtime: &StrictEpochRuntimeContextV1,
+    header: &BlockHeader,
+) -> Result<Vec<BlockHeader>, NativeTrustErrorV1> {
+    let terminal = runtime.activation().terminal_old_header().clone();
+    let terminal_bytes = terminal
+        .try_cev0_bytes()
+        .map_err(NativeTrustErrorV1::Consensus)?;
+    let header_bytes = header
+        .try_cev0_bytes()
+        .map_err(NativeTrustErrorV1::Consensus)?;
+    if terminal_bytes.len() + header_bytes.len() > 1024 * 1024 {
+        return Err(NativeTrustErrorV1::Bounds);
+    }
+    Ok(vec![terminal, header.clone()])
+}
+
+fn append_retained_ancestry_v1(
+    ancestry: &mut Vec<BlockHeader>,
+    header: &BlockHeader,
+) -> Result<(), NativeTrustErrorV1> {
+    if ancestry.len() >= 256 {
+        return Err(NativeTrustErrorV1::Bounds);
+    }
+    let size = header
+        .try_cev0_bytes()
+        .map_err(NativeTrustErrorV1::Consensus)?
+        .len();
+    let total = ancestry.iter().try_fold(size, |sum, value| {
+        sum.checked_add(
+            value
+                .try_cev0_bytes()
+                .map_err(NativeTrustErrorV1::Consensus)?
+                .len(),
+        )
+        .ok_or(NativeTrustErrorV1::Bounds)
+    })?;
+    if total > 1024 * 1024 {
+        return Err(NativeTrustErrorV1::Bounds);
+    }
+    ancestry.push(header.clone());
+    Ok(())
+}
+
 /// All bytes/link counts are bounded before signature work. The caller supplies
 /// one mutable CEV0 work budget across the complete path; failures never refund
 /// work. No parser fallback, peer-selected trust set, clock freshness assertion,
@@ -316,6 +393,8 @@ pub fn verify_native_trust_path_v1(
     let mut previous_digest = anchor.pin;
     let mut terminal = None;
     let mut hasher = Sha256::new();
+    let mut epoch_runtime: Option<StrictEpochRuntimeContextV1> = None;
+    let mut retained_ancestry: Vec<BlockHeader> = Vec::new();
     hasher.update(b"trnm.state-sync.trust-path.v0");
     hasher.update(anchor.pin.0);
     for (step, digest) in steps.iter().zip(digests) {
@@ -331,18 +410,30 @@ pub fn verify_native_trust_path_v1(
                 {
                     return Err(NativeTrustErrorV1::DisconnectedStep);
                 }
-                let verified = decode_verify_finality_proof_strict_v0(
-                    POCO_THREE_CHAIN_PROOF_CLASS_V0,
-                    proof,
-                    &set,
-                    &parameters,
-                    expected,
-                    budget,
-                )
-                .map_err(NativeTrustErrorV1::Finality)?;
-                header = verified.proof().finalized_block().header().clone();
+                let final_header = if let Some(runtime) = epoch_runtime.as_ref() {
+                    let verified = runtime
+                        .decode_verify_finality_v1(proof, expected.parent_timestamp_ms, budget)
+                        .map_err(NativeTrustErrorV1::Consensus)?;
+                    ensure_expected_header_v1(&verified, expected)?;
+                    verified.finalized_block().header().clone()
+                } else {
+                    let verified = decode_verify_finality_proof_strict_v0(
+                        POCO_THREE_CHAIN_PROOF_CLASS_V0,
+                        proof,
+                        &set,
+                        &parameters,
+                        expected,
+                        budget,
+                    )
+                    .map_err(NativeTrustErrorV1::Finality)?;
+                    verified.proof().finalized_block().header().clone()
+                };
+                header = final_header;
                 if header.epoch() != old_epoch {
                     return Err(NativeTrustErrorV1::DisconnectedStep);
+                }
+                if epoch_runtime.is_some() {
+                    append_retained_ancestry_v1(&mut retained_ancestry, &header)?;
                 }
             }
             NativeTrustStepV1::EpochFirst {
@@ -353,24 +444,104 @@ pub fn verify_native_trust_path_v1(
                 if old_height.get().checked_add(3) != Some(expected.height.get()) {
                     return Err(NativeTrustErrorV1::DisconnectedStep);
                 }
-                let verified = decode_verify_epoch_first_finality_strict_v1(
-                    evidence,
-                    proof,
-                    &set,
-                    &parameters,
-                    expected,
-                    budget,
-                )
-                .map_err(NativeTrustErrorV1::Finality)?;
-                if verified.checkpoint_header() != &header
-                    || old_epoch.get().checked_add(1)
-                        != Some(verified.new_validator_set().epoch().get())
-                {
-                    return Err(NativeTrustErrorV1::DisconnectedStep);
+                if let Some(runtime) = epoch_runtime.as_ref() {
+                    if header.block_kind() != BlockKind::EpochCheckpoint {
+                        return Err(NativeTrustErrorV1::DisconnectedStep);
+                    }
+                    if retained_ancestry.last() != Some(&header) {
+                        return Err(NativeTrustErrorV1::DisconnectedStep);
+                    }
+                    let interval_len = retained_ancestry
+                        .len()
+                        .checked_sub(1)
+                        .ok_or(NativeTrustErrorV1::Bounds)?;
+                    let interval = &retained_ancestry[..interval_len];
+                    let successor =
+                        trnm_consensus_crypto::decode_verify_successor_epoch_activation_strict_v1(
+                            runtime.activation(),
+                            interval,
+                            evidence,
+                            budget,
+                        )
+                        .map_err(|_| NativeTrustErrorV1::DisconnectedStep)?;
+                    if successor
+                        .old_checkpoint_finality()
+                        .finalized_block()
+                        .header()
+                        != &header
+                        || old_epoch.get().checked_add(1)
+                            != Some(successor.new_validator_set().epoch().get())
+                    {
+                        return Err(NativeTrustErrorV1::DisconnectedStep);
+                    }
+                    let successor_runtime =
+                        StrictEpochRuntimeContextV1::from_activation_v1(successor)
+                            .map_err(NativeTrustErrorV1::Consensus)?;
+                    ensure_epoch_first_parent_v1(&successor_runtime, expected)?;
+                    let verified = successor_runtime
+                        .decode_verify_finality_v1(proof, expected.parent_timestamp_ms, budget)
+                        .map_err(NativeTrustErrorV1::Consensus)?;
+                    ensure_expected_header_v1(&verified, expected)?;
+                    header = verified.finalized_block().header().clone();
+                    epoch_runtime = Some(successor_runtime);
+                    retained_ancestry = reset_retained_ancestry_v1(
+                        epoch_runtime.as_ref().expect("successor runtime installed"),
+                        &header,
+                    )?;
+                } else {
+                    let old_set_for_activation = set.clone();
+                    let old_parameters_for_activation = parameters;
+                    let decoded = decode_epoch_activation_evidence_v0_exact(
+                        evidence,
+                        &old_set_for_activation,
+                        &old_parameters_for_activation,
+                        budget,
+                    )
+                    .map_err(|_| NativeTrustErrorV1::DisconnectedStep)?;
+                    let activation = trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
+                        decoded.old_checkpoint_finality(),
+                        decoded.next_epoch_commitment(),
+                        decoded.authorization_kernel(),
+                        decoded.old_validator_set(),
+                        decoded.old_consensus_parameters(),
+                        decoded.new_validator_set(),
+                        decoded.new_consensus_parameters(),
+                        decoded.authenticated_checkpoint_parent_header(),
+                    )
+                    .map_err(|_| NativeTrustErrorV1::DisconnectedStep)?;
+                    if activation
+                        .old_checkpoint_finality()
+                        .finalized_block()
+                        .header()
+                        != &header
+                        || old_epoch.get().checked_add(1)
+                            != Some(activation.new_validator_set().epoch().get())
+                    {
+                        return Err(NativeTrustErrorV1::DisconnectedStep);
+                    }
+                    epoch_runtime = Some(
+                        StrictEpochRuntimeContextV1::from_activation_v1(activation)
+                            .map_err(NativeTrustErrorV1::Consensus)?,
+                    );
+                    ensure_epoch_first_parent_v1(
+                        epoch_runtime.as_ref().expect("first runtime installed"),
+                        expected,
+                    )?;
+                    let verified = epoch_runtime
+                        .as_ref()
+                        .expect("first runtime installed")
+                        .decode_verify_finality_v1(proof, expected.parent_timestamp_ms, budget)
+                        .map_err(NativeTrustErrorV1::Consensus)?;
+                    ensure_expected_header_v1(&verified, expected)?;
+                    header = verified.finalized_block().header().clone();
+                    retained_ancestry = reset_retained_ancestry_v1(
+                        epoch_runtime.as_ref().expect("first runtime installed"),
+                        &header,
+                    )?;
                 }
-                header = verified.proof().finalized_block().header().clone();
-                set = verified.new_validator_set().clone();
-                parameters = *verified.new_consensus_parameters();
+                let active = epoch_runtime.as_ref().expect("verified runtime installed");
+                set = active.activation().new_validator_set().clone();
+                parameters = *active.activation().new_consensus_parameters();
             }
         }
         if !matches_context(&header, &set, &parameters)

@@ -3,6 +3,9 @@
 //! invokes P/inventory/public owner recovery.
 use super::*;
 
+#[path = "epoch_successor_ancestry_v1.rs"]
+mod successor_ancestry;
+
 type Audit = crate::epoch_recovery::AuditedEpochEvidenceV1;
 
 pub(super) struct Entry {
@@ -471,7 +474,6 @@ pub(super) fn verify_checkpoint(
     let header = decode_header(&p.header)?;
     let parent = load_p(connection, p.parent.block_id().as_bytes())?
         .context("later checkpoint parent P missing")?;
-    committed_identity(config, &parent)?;
     ensure!(
         p.artifact_kind == 0
             && p.parent_kind == 1
@@ -521,7 +523,11 @@ pub(super) fn verify_checkpoint(
         .try_cev0_bytes()
         .map_err(|e| anyhow::anyhow!("later recovery old set: {e:?}"))?;
     let old_parameters_bytes = old_parameters.canonical_bytes();
-    let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
+    let audit = verify_successor_evidence(
+        connection,
+        config,
+        prefix,
+        &parent,
         trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
             old_checkpoint_finality: &evidence.checkpoint_finality,
             next_epoch_commitment: &evidence.next_epoch_commitment,
@@ -532,22 +538,9 @@ pub(super) fn verify_checkpoint(
             new_consensus_parameters: &evidence.new_parameters,
             authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
         },
-        old_set,
-        old_parameters,
         &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-    )
-    .map_err(|e| anyhow::anyhow!("later recovery bounded decode: {e:?}"))?;
-    let verified = trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
-        decoded.old_checkpoint_finality(),
-        decoded.next_epoch_commitment(),
-        decoded.authorization_kernel(),
-        old_set,
-        old_parameters,
-        decoded.new_validator_set(),
-        decoded.new_consensus_parameters(),
-        decoded.authenticated_checkpoint_parent_header(),
-    )
-    .map_err(|e| anyhow::anyhow!("later recovery strict finality: {e:?}"))?;
+    )?;
+    let verified = &audit.activation;
     ensure!(
         verified
             .old_checkpoint_finality()
@@ -564,7 +557,7 @@ pub(super) fn verify_checkpoint(
     let cutoff = load_committed_p_by_height(connection, cutoff_height)?
         .context("later finality cutoff P missing")?;
     committed_identity(config, &cutoff)?;
-    let commitment = decoded.next_epoch_commitment().fields();
+    let commitment = verified.next_epoch_commitment().fields();
     ensure!(
         cutoff.status == 1
             && cutoff.lineage == p.lineage
@@ -588,12 +581,38 @@ pub(super) fn verify_checkpoint(
         .collect::<Result<Vec<_>>>()?;
     let computed = derive_poco_next_epoch_from_cutoff_p_v1(config, &cutoff, &coordinates)?;
     ensure!(
-        &computed.commitment == decoded.next_epoch_commitment()
-            && &computed.new_validator_set == decoded.new_validator_set()
-            && &computed.new_parameters == decoded.new_consensus_parameters(),
+        &computed.commitment == verified.next_epoch_commitment()
+            && &computed.new_validator_set == verified.new_validator_set()
+            && &computed.new_parameters == verified.new_consensus_parameters(),
         "later finality differs from deterministic cutoff candidate selection"
     );
-    Ok(crate::epoch_recovery::AuditedEpochEvidenceV1 {
-        activation: verified,
-    })
+    Ok(audit)
+}
+
+/// Verify original successor evidence against the exact already audited prefix.
+/// The caller retains its inventory/transaction and native checkpoint checks;
+/// this helper never resolves another prefix or manufactures persisted authority.
+#[inline(never)]
+pub(super) fn verify_successor_evidence(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    prefix: &Prefix,
+    parent: &StoredEpochPV1,
+    evidence: trnm_consensus_types::EpochActivationEvidencePreimagesV0<'_>,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<Audit> {
+    committed_identity(config, parent)?;
+    let ancestry = successor_ancestry::load(connection, config, prefix, parent)?;
+    let predecessor = prefix
+        .entries
+        .last()
+        .context("later predecessor edge missing")?;
+    let activation = trnm_consensus_crypto::decode_verify_successor_epoch_activation_strict_v1(
+        &predecessor.audit.activation,
+        &ancestry,
+        evidence,
+        budget,
+    )
+    .map_err(|e| anyhow::anyhow!("later recovery strict successor finality: {e:?}"))?;
+    Ok(Audit { activation })
 }

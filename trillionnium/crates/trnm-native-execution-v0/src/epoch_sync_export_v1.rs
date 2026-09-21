@@ -123,7 +123,7 @@ impl DurableNativeApplicationV0 {
         anchor_block: BlockIdV0,
         target_block: BlockIdV0,
     ) -> Result<NativeEpochFinalityPathV1> {
-        self.with_export_path_v1(anchor_block, target_block, |_, path| Ok(path))
+        self.with_export_path_v1(anchor_block, target_block, |_, path, _| Ok(path))
     }
 
     /// One audited immutable source transaction for each export format. The
@@ -132,7 +132,11 @@ impl DurableNativeApplicationV0 {
         &self,
         anchor_block: BlockIdV0,
         target_block: BlockIdV0,
-        finish: impl FnOnce(&Connection, NativeEpochFinalityPathV1) -> Result<T>,
+        finish: impl FnOnce(
+            &Connection,
+            NativeEpochFinalityPathV1,
+            &lineage_resolver::Prefix,
+        ) -> Result<T>,
     ) -> Result<T> {
         let _guard = self.lock_operation()?;
         ensure!(anchor_block != target_block, "finality export empty path");
@@ -317,7 +321,7 @@ impl DurableNativeApplicationV0 {
             "finality export terminal anchor P mismatch"
         );
         output.steps.reverse();
-        let output = finish(&connection, output)?;
+        let output = finish(&connection, output, &prefix)?;
         connection.execute_batch("ROLLBACK")?;
         let after = live_export::fresh_export_metadata(&self.path, &self.config)?;
         ensure!(

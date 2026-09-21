@@ -1,7 +1,9 @@
 use super::*;
 use crate::chunk_merkle_root_v0;
 use serde_json::Value;
-use trnm_consensus_crypto::recover_epoch_activation_authority_strict_v0;
+use trnm_consensus_crypto::{
+    decode_verify_epoch_first_finality_strict_v1, recover_epoch_activation_authority_strict_v0,
+};
 use trnm_consensus_types::{
     decode_epoch_activation_evidence_v0_exact, EpochActivationEvidenceBytesV0,
 };

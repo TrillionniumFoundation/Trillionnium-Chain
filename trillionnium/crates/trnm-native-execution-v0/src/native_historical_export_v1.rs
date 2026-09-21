@@ -1,9 +1,8 @@
 //! Inert, bounded history transport from a fully audited schema10 source.
 use super::*;
 use trnm_consensus_types::{
-    decode_consensus_parameters_v0_exact, decode_epoch_activation_evidence_v0_exact,
-    decode_validator_set_v0_exact, validate_root_bound_epoch_body_v1,
-    validate_root_bound_regular_body_v0, Block, Cev0AdmissionBudgetV0,
+    decode_consensus_parameters_v0_exact, decode_validator_set_v0_exact,
+    validate_root_bound_epoch_body_v1, validate_root_bound_regular_body_v0, Block,
 };
 
 const MAX_RECORDS: usize = 256;
@@ -264,7 +263,7 @@ impl DurableNativeApplicationV0 {
         anchor_block: BlockIdV0,
         target_block: BlockIdV0,
     ) -> Result<NativeHistoricalReplayV1> {
-        self.with_export_path_v1(anchor_block, target_block, |connection, path| {
+        self.with_export_path_v1(anchor_block, target_block, |connection, path, prefix| {
             let terminal_finality_cev0 = path
                 .steps
                 .last()
@@ -285,20 +284,31 @@ impl DurableNativeApplicationV0 {
                         result.activations.len() < MAX_TRANSITIONS,
                         "history transition count"
                     );
-                    // These are audited source bytes, not peer-selected trust.
-                    // Decode only to copy the original two seal header preimages.
-                    let old_set =
-                        protocol(decode_validator_set_v0_exact(&evidence.old_validator_set))?;
-                    let old_parameters = protocol(decode_consensus_parameters_v0_exact(
-                        &evidence.old_consensus_parameters,
-                    ))?;
-                    let decoded = protocol(decode_epoch_activation_evidence_v0_exact(
-                        evidence.as_preimages(),
-                        &old_set,
-                        &old_parameters,
-                        &mut Cev0AdmissionBudgetV0::protocol_v0(),
-                    ))?;
-                    let proof = decoded.old_checkpoint_finality();
+                    // Copy seals from the very same strictly audited source
+                    // prefix. Contextual evidence cannot be decoded through the
+                    // v0 context-free path, nor may stored roots replace trust.
+                    let activation = &prefix
+                        .entries
+                        .iter()
+                        .find(|entry| {
+                            entry
+                                .audit
+                                .activation
+                                .old_checkpoint_finality()
+                                .finalized_block()
+                                .header()
+                                == &previous
+                        })
+                        .context("history source activation missing")?
+                        .audit
+                        .activation;
+                    let proof = activation.old_checkpoint_finality();
+                    ensure!(
+                        protocol(proof.try_cev0_bytes())? == evidence.old_checkpoint_finality
+                            && protocol(activation.authorization_cev0_bytes())?
+                                == evidence.authorization_kernel,
+                        "history source activation evidence substitution"
+                    );
                     ensure!(
                         proof.finalized_block().header() == &previous,
                         "history checkpoint source join"

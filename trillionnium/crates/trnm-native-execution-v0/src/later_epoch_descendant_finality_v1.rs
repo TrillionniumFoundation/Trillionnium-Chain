@@ -366,19 +366,13 @@ fn validate_proof_with_read_policy(
         parent_height: parent_header.height(),
         parent_timestamp_ms: parent_header.timestamp_ms(),
     };
-    let verified = trnm_consensus_crypto::decode_verify_finality_proof_strict_v0(
-        trnm_consensus_crypto::POCO_THREE_CHAIN_PROOF_CLASS_V0,
+    let verified = verify_retained_epoch_runtime_finality_v1(
+        activation.activation,
         proof,
-        new_set,
-        new_parameters,
         expected,
         &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-    )
-    .map_err(|e| anyhow::anyhow!("later descendant strict finality: {e}"))?;
-    ensure!(
-        verified.proof().finalized_block().header() == &header,
-        "later descendant proof header binding"
-    );
+    )?;
+    ensure!(verified == header, "later descendant proof header binding");
     Ok(())
 }
 

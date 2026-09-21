@@ -133,23 +133,50 @@ fn historical_headers_from_retained_path(
     let mut activations = Vec::new();
     let mut set = anchor.validator_set().clone();
     let mut parameters = *anchor.parameters();
+    let mut runtime: Option<trnm_consensus_crypto::StrictEpochRuntimeContextV1> = None;
+    let mut interval: Vec<BlockHeader> = Vec::new();
     for step in &path.steps {
         if let Some(evidence) = &step.epoch_evidence {
-            let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
-                evidence.as_preimages(),
-                &set,
-                &parameters,
-                &mut Cev0AdmissionBudgetV0::protocol_v0(),
-            )
-            .unwrap();
-            let checkpoint = decoded.old_checkpoint_finality();
+            let next = if let Some(predecessor) = runtime.as_ref() {
+                assert!(interval.len() >= 2);
+                let authority = trnm_consensus_crypto::decode_verify_successor_epoch_activation_strict_v1(
+                    predecessor.activation(), &interval[..interval.len() - 1],
+                    evidence.as_preimages(), &mut Cev0AdmissionBudgetV0::protocol_v0(),
+                ).expect("retained original successor evidence must authenticate against exact prior headers");
+                assert_eq!(
+                    authority
+                        .old_checkpoint_finality()
+                        .finalized_block()
+                        .header(),
+                    interval.last().unwrap()
+                );
+                trnm_consensus_crypto::StrictEpochRuntimeContextV1::from_activation_v1(authority)
+                    .unwrap()
+            } else {
+                let first = strict_fixture_runtime(evidence);
+                assert_eq!(
+                    first
+                        .activation()
+                        .old_checkpoint_finality()
+                        .finalized_block()
+                        .header(),
+                    anchor.header()
+                );
+                first
+            };
+            assert_eq!(next.activation().old_validator_set(), &set);
+            assert_eq!(next.activation().old_consensus_parameters(), &parameters);
+            let checkpoint = next.activation().old_checkpoint_finality();
             headers.push(checkpoint.child().header().try_cev0_bytes().unwrap());
             headers.push(checkpoint.grandchild().header().try_cev0_bytes().unwrap());
-            set = decoded.new_validator_set().clone();
-            parameters = *decoded.new_consensus_parameters();
+            set = next.activation().new_validator_set().clone();
+            parameters = *next.activation().new_consensus_parameters();
+            interval = vec![checkpoint.grandchild().header().clone()];
+            runtime = Some(next);
             activations.push(evidence.clone());
         }
         headers.push(step.header_cev0.clone());
+        interval.push(decode_block_header_v0_exact(&step.header_cev0).unwrap());
     }
     assert_eq!(headers.last().unwrap(), &path.target_header_cev0);
     GenuineHistoricalHeaders {

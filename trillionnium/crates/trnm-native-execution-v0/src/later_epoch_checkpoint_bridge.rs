@@ -11,13 +11,12 @@
 use std::collections::BTreeSet;
 
 use anyhow::{ensure, Result};
-use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
     decode_block_header_v0_exact, decode_consensus_parameters_v0_exact,
-    decode_next_epoch_commitment_v0_exact, decode_validator_set_v0_exact,
-    verify_same_version_joint_handoff_kernel_v0, BlockHeader, BlockKind, Cev0AdmissionBudgetV0,
-    ConsensusParametersV0, EpochActivationEvidencePreimagesV0, EpochAnchorAuthorizationKernelV0,
-    FinalityProofV0, JointHandoffKernelV0, NextEpochCommitmentV0, ValidatorSet,
+    decode_next_epoch_commitment_v0_exact, decode_validator_set_v0_exact, BlockHeader, BlockKind,
+    Cev0AdmissionBudgetV0, ConsensusParametersV0, EpochActivationEvidencePreimagesV0,
+    EpochAnchorAuthorizationKernelV0, FinalityProofV0, JointHandoffKernelV0, NextEpochCommitmentV0,
+    ValidatorSet,
 };
 
 use crate::{DurableNativeApplicationV0, LaterEpochCheckpointContextV1};
@@ -273,15 +272,16 @@ impl DurableNativeApplicationV0 {
             "later checkpoint parent is not the exact durable finalized old-epoch block"
         );
 
-        // Reuse the bounded aggregate decoder so both the complete evidence size
-        // and signature work are limited before strict verification. It also
-        // binds the parent header to the checkpoint's ordinary justify QC.
+        // Reconstruct the predecessor from the owner's retained committed
+        // prefix. The strict successor verifier admits the original evidence
+        // under that complete context, including synthetic references in TCs.
         let old_set_bytes = old_validator_set
             .try_cev0_bytes()
             .map_err(|error| anyhow::anyhow!("encode later old validator set: {error:?}"))?;
         let old_parameters_bytes = old_parameters.canonical_bytes();
         let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
-        let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
+        let activation = application.verify_retained_successor_evidence_v1(
+            &context,
             EpochActivationEvidencePreimagesV0 {
                 old_checkpoint_finality: raw_checkpoint_two_seal_finality_cev0,
                 next_epoch_commitment: raw_next_epoch_commitment_cev0,
@@ -292,34 +292,15 @@ impl DurableNativeApplicationV0 {
                 new_consensus_parameters: raw_new_consensus_parameters_cev0,
                 authenticated_checkpoint_parent_header: raw_checkpoint_parent_header_cev0,
             },
-            old_validator_set,
-            old_parameters,
             &mut budget,
-        )
-        .map_err(|error| anyhow::anyhow!("decode later checkpoint joint evidence: {error:?}"))?;
-        let checkpoint_finality = decoded.old_checkpoint_finality().clone();
-        let anchor_certificate_kernel = decoded.authorization_kernel().clone();
+        )?;
+        let checkpoint_finality = activation.old_checkpoint_finality().clone();
+        let anchor_certificate_kernel = activation.authorization_kernel().clone();
         ensure!(
             checkpoint_finality.finalized_block().header() == &checkpoint_header,
             "later two-seal proof names a different checkpoint header"
         );
-        trnm_consensus_crypto::validate_validator_set_strict_ed25519_v0(old_validator_set)
-            .map_err(|error| anyhow::anyhow!("strict later old validator keys: {error:?}"))?;
-        trnm_consensus_crypto::validate_validator_set_strict_ed25519_v0(&new_validator_set)
-            .map_err(|error| anyhow::anyhow!("strict later new validator keys: {error:?}"))?;
-
-        let joint_handoff = verify_same_version_joint_handoff_kernel_v0(
-            &checkpoint_finality,
-            &commitment,
-            &anchor_certificate_kernel,
-            old_validator_set,
-            old_parameters,
-            &new_validator_set,
-            &new_parameters,
-            checkpoint_parent_header.timestamp_ms(),
-            &StrictEd25519Verifier,
-        )
-        .map_err(|error| anyhow::anyhow!("strict later joint handoff: {error}"))?;
+        let joint_handoff = *activation.joint_handoff();
         ensure!(
             joint_handoff.checkpoint_height() == context.checkpoint_height()
                 && joint_handoff.checkpoint_block_id() == checkpoint_header.id()
@@ -477,6 +458,7 @@ mod tests {
 
     include!("later_epoch_descendant_tests.rs");
     include!("later_epoch_repeated_tests.rs");
+    include!("later_epoch_contextual_tests.rs");
 
     fn key(index: usize) -> SigningKey {
         SigningKey::from_bytes(&[20 + index as u8; 32])
@@ -533,8 +515,21 @@ mod tests {
         parameters: &ConsensusParametersV0,
         parent_timestamp_ms: u64,
     ) -> trnm_consensus_types::CertifiedHeaderV0 {
+        certified_with_timeout(header, justify, set, parameters, parent_timestamp_ms, None)
+    }
+
+    fn certified_with_timeout(
+        header: BlockHeader,
+        justify: QuorumCertificate,
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        parent_timestamp_ms: u64,
+        timeout: Option<trnm_consensus_types::TimeoutCertificateV0>,
+    ) -> trnm_consensus_types::CertifiedHeaderV0 {
         let justify_ref = QcReferenceV0::ordinary(justify);
-        let root = ProposalWitnessV0::signing_root_for(&header, &justify_ref, None, None).unwrap();
+        let root =
+            ProposalWitnessV0::signing_root_for(&header, &justify_ref, timeout.as_ref(), None)
+                .unwrap();
         let proposer = set
             .validators()
             .iter()
@@ -543,7 +538,7 @@ mod tests {
         trnm_consensus_types::CertifiedHeaderV0::new(
             header.clone(),
             justify_ref,
-            None,
+            timeout,
             None,
             Signature64::from_array(key(proposer).sign(root.as_bytes()).to_bytes()),
             qc(&header, set),
@@ -686,8 +681,20 @@ mod tests {
                 decoded.authenticated_checkpoint_parent_header(),
             )
             .unwrap();
-        let set = decoded.new_validator_set();
-        let parameters = decoded.new_consensus_parameters();
+        let runtime =
+            trnm_consensus_crypto::StrictEpochRuntimeContextV1::from_activation_v1(activation)
+                .unwrap();
+        later_epoch_first_finality_from_runtime(&runtime, headers)
+    }
+
+    fn later_epoch_first_finality_from_runtime(
+        runtime: &trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+        headers: &[BlockHeader],
+    ) -> Vec<u8> {
+        let activation = runtime.activation();
+        let old_set = activation.old_validator_set();
+        let set = activation.new_validator_set();
+        let parameters = activation.new_consensus_parameters();
         let common = || {
             let mut bytes = 0u16.to_be_bytes().to_vec();
             bytes.extend(set.genesis_hash().as_bytes());
@@ -870,6 +877,7 @@ mod tests {
         validator_set: ValidatorSet,
         parameters: ConsensusParametersV0,
         predecessor: [u8; 32],
+        predecessor_runtime: trnm_consensus_crypto::StrictEpochRuntimeContextV1,
         trust_anchor: trnm_state_sync_v0::NativeTrustAnchorV1,
         other_trust_anchor: trnm_state_sync_v0::NativeTrustAnchorV1,
     }
@@ -1804,6 +1812,17 @@ mod tests {
             other_anchor_pin,
         )
         .unwrap();
+        let predecessor_evidence = trnm_consensus_types::EpochActivationEvidenceBytesV0 {
+            old_checkpoint_finality: finality_bytes,
+            next_epoch_commitment: commitment_bytes,
+            authorization_kernel: anchor_bytes,
+            old_validator_set: old_set.try_cev0_bytes().unwrap(),
+            old_consensus_parameters: old_parameters.canonical_bytes(),
+            new_validator_set: new_set_bytes,
+            new_consensus_parameters: new_parameters_bytes,
+            authenticated_checkpoint_parent_header: parent_bytes,
+        };
+        let predecessor_runtime = strict_fixture_runtime(&predecessor_evidence);
         Box::new(LaterDescendantFixture {
             application: reopened,
             prepared: c22,
@@ -1817,6 +1836,7 @@ mod tests {
             validator_set: new_set,
             parameters: old_parameters,
             predecessor: *observed.lineage().last().unwrap(),
+            predecessor_runtime,
             trust_anchor,
             other_trust_anchor,
         })

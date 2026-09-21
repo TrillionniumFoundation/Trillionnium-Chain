@@ -76,6 +76,7 @@ struct RepeatedCheckpointFixture {
     commitment: Vec<u8>,
     finality: Vec<u8>,
     anchor: Vec<u8>,
+    runtime: Option<trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
     old_checkpoint: BlockId,
     old_binding: [u8; 32],
     c22_header: BlockHeader,
@@ -97,6 +98,15 @@ fn advance_repeated_checkpoint_with_transactions(
     seed: Box<LaterDescendantFixture>,
     c25_transactions: &[Vec<u8>],
 ) -> Box<RepeatedCheckpointFixture> {
+    advance_repeated_checkpoint_variant(seed, c25_transactions, false)
+}
+
+#[inline(never)]
+fn advance_repeated_checkpoint_variant(
+    seed: Box<LaterDescendantFixture>,
+    c25_transactions: &[Vec<u8>],
+    contextual: bool,
+) -> Box<RepeatedCheckpointFixture> {
     let LaterDescendantFixture {
         application: app,
         prepared: c22,
@@ -108,6 +118,7 @@ fn advance_repeated_checkpoint_with_transactions(
         c22_proof,
         validator_set: old_set,
         parameters,
+        predecessor_runtime,
         trust_anchor,
         other_trust_anchor,
         ..
@@ -223,7 +234,7 @@ fn advance_repeated_checkpoint_with_transactions(
         payload,
         receipts,
         evidence,
-        10,
+        if contextual { 11 } else { 10 },
     );
     headers.insert(28, checkpoint.clone());
     headers.insert(29, seal1.clone());
@@ -251,12 +262,18 @@ fn advance_repeated_checkpoint_with_transactions(
         27
     );
     let parent = headers[&27].clone();
-    let finality = ordinary_later_proof(
-        &parent,
-        &[checkpoint.clone(), seal1, terminal.clone()],
-        &old_set,
-        &parameters,
-    );
+    let proof_headers = [checkpoint.clone(), seal1, terminal.clone()];
+    let finality = if contextual {
+        contextual_checkpoint_proof(
+            &predecessor_runtime,
+            &parent,
+            &proof_headers,
+            predecessor_runtime.anchor_reference(),
+            false,
+        )
+    } else {
+        ordinary_later_proof(&parent, &proof_headers, &old_set, &parameters)
+    };
     let descriptor = HandoffDescriptorV0::new(HandoffDescriptorV0Fields {
         genesis_hash: old_set.genesis_hash(),
         chain_id: old_set.chain_id(),
@@ -313,6 +330,43 @@ fn advance_repeated_checkpoint_with_transactions(
     .try_cev0_bytes()
     .unwrap();
     let commitment = commitment.try_cev0_bytes().unwrap();
+    let runtime = if contextual {
+        let evidence = trnm_consensus_types::EpochActivationEvidenceBytesV0 {
+            old_checkpoint_finality: finality.clone(),
+            next_epoch_commitment: commitment.clone(),
+            authorization_kernel: anchor.clone(),
+            old_validator_set: old_set.try_cev0_bytes().unwrap(),
+            old_consensus_parameters: parameters.canonical_bytes(),
+            new_validator_set: new_set.try_cev0_bytes().unwrap(),
+            new_consensus_parameters: parameters.canonical_bytes(),
+            authenticated_checkpoint_parent_header: parent.try_cev0_bytes().unwrap(),
+        };
+        let mut ancestry = vec![predecessor_runtime
+            .activation()
+            .terminal_old_header()
+            .clone()];
+        ancestry.extend((21..=27).map(|height| headers[&height].clone()));
+        assert_contextual_checkpoint_rejections(
+            &app,
+            &predecessor_runtime,
+            &parent,
+            &proof_headers,
+            &evidence,
+        );
+        let authority = trnm_consensus_crypto::decode_verify_successor_epoch_activation_strict_v1(
+            predecessor_runtime.activation(),
+            &ancestry,
+            evidence.as_preimages(),
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .expect("genuine C28/S30 contextual evidence must pass M01");
+        Some(
+            trnm_consensus_crypto::StrictEpochRuntimeContextV1::from_activation_v1(authority)
+                .unwrap(),
+        )
+    } else {
+        None
+    };
     let observation = app
         .verify_later_epoch_checkpoint_finality_v1(
             app.inspect_later_epoch_checkpoint_context_v1().unwrap(),
@@ -340,6 +394,7 @@ fn advance_repeated_checkpoint_with_transactions(
         commitment,
         finality,
         anchor,
+        runtime,
         old_checkpoint: old_checkpoint.id(),
         old_binding,
         c22_header,
@@ -392,6 +447,7 @@ fn complete_repeated_handoff_with_transactions(
         commitment,
         finality,
         anchor,
+        runtime,
         old_checkpoint,
         old_binding,
         c22_header,
@@ -496,26 +552,51 @@ fn complete_repeated_handoff_with_transactions(
     let (_p34, h34) =
         prepare_repeated_descendant(&app, &p33, &h33, &new_set, BlockKind::Regular, None);
     let prepared_target = h33.id();
-    let first_proof = later_epoch_first_finality(
-        &old_set,
-        &parameters,
-        &old_set.try_cev0_bytes().unwrap(),
-        &new_set.try_cev0_bytes().unwrap(),
-        &parameters.canonical_bytes(),
-        &parent.try_cev0_bytes().unwrap(),
-        &finality,
-        &anchor,
-        &commitment,
-        &[h31.clone(), h32.clone(), h33.clone()],
-    );
-    let committed = app
-        .commit_epoch_finality_bytes_v1(
-            &p31,
-            &first_proof,
-            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    let first_headers = [h31.clone(), h32.clone(), h33.clone()];
+    let first_proof = if let Some(runtime) = runtime.as_ref() {
+        later_epoch_first_finality_from_runtime(runtime, &first_headers)
+    } else {
+        later_epoch_first_finality(
+            &old_set,
+            &parameters,
+            &old_set.try_cev0_bytes().unwrap(),
+            &new_set.try_cev0_bytes().unwrap(),
+            &parameters.canonical_bytes(),
+            &parent.try_cev0_bytes().unwrap(),
+            &finality,
+            &anchor,
+            &commitment,
+            &first_headers,
         )
+    };
+    let mut first_budget = Cev0AdmissionBudgetV0::protocol_v0();
+    first_budget.charge_signature_work(7).unwrap();
+    let committed = app
+        .commit_epoch_finality_bytes_v1(&p31, &first_proof, &mut first_budget)
         .expect("C31 strict first-new finality");
     assert_eq!(committed.head().height().get(), 31);
+    let c31_sequence = committed.commit_sequence();
+    let proof_cost = first_budget.signature_work() - 7;
+    assert!(proof_cost > 0);
+    // Incoming proof admission uses the caller meter. The retained owner
+    // prefix is re-audited under its separate bounded recovery policy.
+    let mut insufficient = Cev0AdmissionBudgetV0::new(first_proof.len(), proof_cost + 6);
+    insufficient.charge_signature_work(7).unwrap();
+    assert!(app
+        .commit_epoch_finality_bytes_v1(&p31, &first_proof, &mut insufficient)
+        .is_err());
+    assert_eq!(insufficient.signature_work(), 7);
+    assert_eq!(
+        app.confirmed_committed_head_v0().unwrap(),
+        *committed.head()
+    );
+    let mut exact_budget = Cev0AdmissionBudgetV0::new(first_proof.len(), proof_cost + 7);
+    exact_budget.charge_signature_work(7).unwrap();
+    let c31_retry = app
+        .commit_epoch_finality_bytes_v1(&p31, &first_proof, &mut exact_budget)
+        .expect("C31 exact proof retry");
+    assert_eq!(exact_budget.signature_work(), proof_cost + 7);
+    assert_eq!(c31_retry.commit_sequence(), c31_sequence);
     drop(app);
     let app = DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1())
         .expect("Consumed C31 cold reopen");
@@ -541,6 +622,7 @@ fn complete_repeated_handoff_with_transactions(
         )
         .expect("C32 strict ordinary finality");
     assert_eq!(committed.head().height().get(), 32);
+    let c32_sequence = committed.commit_sequence();
     drop(app);
     let app = DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1())
         .expect("Progressed C32 cold reopen");
@@ -548,6 +630,29 @@ fn complete_repeated_handoff_with_transactions(
         app.confirmed_committed_head_v0().unwrap().height().get(),
         32
     );
+    for (header, proof, sequence) in [
+        (&h31, &first_proof, c31_sequence),
+        (&h32, &ordinary_proof, c32_sequence),
+    ] {
+        let prepared = app
+            .reopen_prepared_epoch_execution_v1(*header.id().as_bytes())
+            .unwrap();
+        let retried = app
+            .commit_epoch_finality_bytes_v1(
+                &prepared,
+                proof,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .expect("cold contextual first-new/ordinary original proof retry");
+        assert_eq!(retried.commit_sequence(), sequence);
+        assert_eq!(
+            app.confirmed_committed_head_v0()
+                .unwrap()
+                .block_id()
+                .as_bytes(),
+            h32.id().as_bytes()
+        );
+    }
     let historical = app
         .inspect_later_epoch_application_edge_requirements_v1(*old_checkpoint.as_bytes())
         .expect("historical B recovery must cross C31→C28");
@@ -596,6 +701,11 @@ fn complete_repeated_handoff_with_transactions(
         )
         .unwrap();
     assert_eq!(retained_first, first_proof);
+    let retained_checkpoint: Vec<u8> = sql.query_row(
+        "SELECT checkpoint_finality FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?",
+        [checkpoint.id().as_bytes().as_slice()], |r| r.get(0),
+    ).unwrap();
+    assert_eq!(retained_checkpoint, finality);
     let retained: Vec<u8> = sql
         .query_row(
             "SELECT proof FROM native_later_epoch_descendant_finality_v1 WHERE block_id=?",
@@ -1088,6 +1198,9 @@ fn assert_repeated_prefix_mutants(
         "jump",
         "terminal",
         "proof",
+        "missing-ancestry",
+        "prepared-ancestry",
+        "substituted-ancestry",
     ] {
         let directory = tempfile::tempdir().unwrap();
         let path = directory.path().join("mutant.sqlite3");
@@ -1101,6 +1214,35 @@ fn assert_repeated_prefix_mutants(
             )
             .unwrap();
         match mutation {
+            "missing-ancestry" | "prepared-ancestry" | "substituted-ancestry" => {
+                let block: Vec<u8> = sql
+                    .query_row(
+                        "SELECT block_id FROM native_durable_execution_p_v1 WHERE target_height=?",
+                        [26_u64.to_be_bytes().as_slice()],
+                        |r| r.get(0),
+                    )
+                    .unwrap();
+                match mutation {
+                    "missing-ancestry" => {
+                        assert_eq!(
+                            sql.execute(
+                                "DELETE FROM native_durable_execution_p_v1 WHERE block_id=?",
+                                [&block]
+                            )
+                            .unwrap(),
+                            1
+                        );
+                    }
+                    "prepared-ancestry" => {
+                        assert_eq!(sql.execute("UPDATE native_durable_execution_p_v1 SET status=0,commit_sequence=NULL,commit_id=NULL WHERE block_id=?", [&block]).unwrap(), 1);
+                    }
+                    "substituted-ancestry" => {
+                        sql.execute("UPDATE native_durable_execution_p_v1 SET header=(SELECT header FROM native_durable_execution_p_v1 WHERE target_height=?1) WHERE block_id=?2", rusqlite::params![25_u64.to_be_bytes().as_slice(),block]).unwrap();
+                        rehash_repeated_p(&sql, &block);
+                    }
+                    _ => unreachable!(),
+                }
+            }
             "prefix" | "duplicate" => {
                 let block = if mutation == "prefix" {
                     checkpoint.id()
@@ -1167,9 +1309,15 @@ fn assert_repeated_prefix_mutants(
             _ => unreachable!(),
         }
         drop(sql);
+        let before_open = std::fs::read(&path).unwrap();
         assert!(
             DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err(),
             "repeated prefix mutant {mutation} must fail cold recovery"
+        );
+        assert_eq!(
+            std::fs::read(&path).unwrap(),
+            before_open,
+            "{mutation} rejection changed retained bytes"
         );
     }
     let sql = rusqlite::Connection::open(source).unwrap();

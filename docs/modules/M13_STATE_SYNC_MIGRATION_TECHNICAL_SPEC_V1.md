@@ -954,6 +954,39 @@ independently own and audit the local replay anchor, reuse M01-HISTORY-V1 on col
 recovery, execute all application bodies through M06 and atomically install the
 derived execution base under a separate versioned owner-storage contract.
 
+## Contextual native proof steps (M13-SUCCESSOR-CONTEXT-V1)
+
+This consumer implements the matching M08-SUCCESSOR-CONTEXT-V1 contract.
+`verify_native_trust_path_v1` keeps the existing independent anchor, complete
+path byte/link preflight, target expectations, transport digests and one mutable
+signature-work meter. After a verified first activation it retains an owned
+`StrictEpochRuntimeContextV1`. Ordinary steps use that context's strict finality
+verifier, including authorized anchor references in TCs. The exact expected
+block/root/parent tuple must still match, including the proof header's actual
+parent ID and consecutive height; runtime verification alone cannot substitute
+a different target claim. A genuinely signed fork proof with a false claimed
+parent must fail after the first activation, retaining its charged work.
+
+Retain a private bounded interval from the current activation's terminal seal
+through every consecutively verified application header. At the next EpochFirst
+step the current header must be exactly the successor checkpoint, and the
+interval supplied to M01 ends at its immediate parent (exclude the checkpoint
+itself). Verify all original activation roots through the strict contextual
+successor entrypoint, then strictly verify the first-new proof under the result.
+Reset the interval to its new terminal seal and first application header. Every
+interval has at most 256 headers and 1 MiB of canonical bytes, with no recursive
+embedded context or work-meter reset. The first activation retains independently
+pinned old context and the complete v0 strict path; absent earlier evidence is
+never filled with a peer-provided anchor or an accepting fallback.
+
+The public step/projection formats and persisted snapshot-session schema remain
+unchanged. All errors issue no verified path, snapshot installation or signer
+capability. The genuine M08 C18→C32 contextual fixture must pass both per-step
+and terminal-history consumers with original signatures; existing disconnected,
+wrong-target/configuration, canonical-byte and resource-limit negatives remain
+required. Transport, replay completeness and application installation remain
+separate owners and acceptance requirements.
+
 ## Activation boundary
 
 Commissioned public synchronization needs authenticated transport, general
