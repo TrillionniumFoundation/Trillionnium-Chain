@@ -796,6 +796,58 @@ mod tests {
         .unwrap();
     }
 
+    fn assert_later_application_ledger_recovery(path: &std::path::Path) {
+        let sql = rusqlite::Connection::open(path).unwrap();
+        let (block, p_digest, sequence, edge, original, original_digest, original_record): (
+            Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>,
+        ) = sql.query_row(
+            "SELECT block_id,p_digest,commit_sequence,edge_binding,proof,proof_digest,record_digest
+             FROM native_later_epoch_application_finality_v1",
+            [],
+            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?)),
+        ).unwrap();
+        // Preserve valid framing and all local hashes while corrupting the
+        // final signature. Only strict cryptographic recovery can reject it.
+        let mut forged = original.clone();
+        *forged.last_mut().unwrap() ^= 1;
+        let forged_digest = sha2::Sha256::digest(&forged);
+        let forged_record = trnm_finality_types::hash_domain(
+            "trnm.native-application.later-epoch-application-finality.v1",
+            &[
+                &native_checkpoint_fixture_config_v1().store_id(),
+                &block,
+                &p_digest,
+                &sequence,
+                &edge,
+                &forged_digest,
+            ],
+        );
+        sql.execute(
+            "UPDATE native_later_epoch_application_finality_v1 SET proof=?,proof_digest=?,record_digest=?",
+            rusqlite::params![forged, forged_digest.as_slice(), forged_record.as_slice()],
+        ).unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_err(),
+            "a rehashed forged C+3 signature must fail cold recovery"
+        );
+        sql.execute(
+            "UPDATE native_later_epoch_application_finality_v1 SET proof=?,proof_digest=?,record_digest=?",
+            rusqlite::params![original, original_digest, original_record],
+        ).unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_ok()
+        );
+        sql.execute_batch("CREATE TEMP TABLE saved_application_finality AS SELECT * FROM native_later_epoch_application_finality_v1; DELETE FROM native_later_epoch_application_finality_v1;").unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_err(),
+            "every consumed successor requires its retained application proof"
+        );
+        sql.execute_batch("INSERT INTO native_later_epoch_application_finality_v1 SELECT * FROM saved_application_finality;").unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_ok()
+        );
+    }
+
     #[test]
     fn later_checkpoint_bridge_accepts_real_h17_c18_s19_s20_evidence() {
         let directory = tempfile::tempdir().unwrap();
@@ -1561,6 +1613,7 @@ mod tests {
             "the H17 edge cannot execute C21 after the C18 checkpoint commit"
         );
         drop(reopened);
+        assert_later_application_ledger_recovery(&path);
         let sql = rusqlite::Connection::open(&path).unwrap();
         let original_successor_record: Vec<u8> = sql
             .query_row(
