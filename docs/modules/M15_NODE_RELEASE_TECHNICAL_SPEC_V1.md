@@ -515,6 +515,15 @@ startup. Preserve original directories read-only for diagnosis. Repeated restart
 must be idempotent: the same immutable migration source/target returns the same
 receipt or a clear conflict. Health probing cannot perform migrations.
 
+When a LAN validator exits non-successfully, the runner must preserve the same
+per-validator diagnostic classes used by a successful run (report, signed runtime
+journal, start certificate, metrics, final state and bounded replay archives) before
+cleaning the owned stages. Collection is best-effort and diagnostic-only: an
+individual copy failure is recorded separately, never replaces the first process
+failure, and cleanup still runs. Preserved files remain subject to the existing
+owned-stage, regular-file, symlink, size and sealed-transport checks; partial or
+inconsistent copies are not recovery evidence.
+
 ## Resource bounds
 
 Proposed private-devnet supervisory defaults below are local operational limits,
@@ -966,7 +975,10 @@ decision; `Ready` can execute it through the M13 `SyncedNoSign` route, while a
 `receive_unbound_proposal_v1` → `vote_ready_proposal_v1` →
 `sync_late_proposal_v1` → native P/D/C/K/whole-node checkpoint → `Ready`.
 The final Core ACK is required to emit no effects, and the external signer
-watermark must be byte-identical before and after the operation.
+watermark must be byte-identical before and after the operation. A late-body
+fallback must restore the exact non-Ready owner before returning a no-op; it
+cannot discard or reconstruct a signed owner. Once a Ready owner has been
+consumed for native execution, an execution error still fences that owner.
 
 This is a concrete composition boundary, not a liveness claim. The executable
 regressions are

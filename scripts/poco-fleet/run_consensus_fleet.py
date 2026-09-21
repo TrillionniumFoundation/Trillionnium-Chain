@@ -1420,6 +1420,61 @@ def copy_replay_archive_set_v1(
     return copied
 
 
+def preserve_failure_diagnostics_v1(
+    *,
+    running: list[tuple[base.ValidatorProcess, subprocess.Popen[bytes], base.ProcessCapture, str, str, str, str, str]],
+    stages: dict[str, base.HostStage],
+    output: pathlib.Path,
+) -> list[str]:
+    """Best-effort copy of unverified runtime evidence before stage cleanup.
+
+    This path is diagnostic only: it never verifies, authorizes, or replaces the
+    original run failure. Existing successfully copied artifacts are left intact.
+    """
+    failures: list[str] = []
+    destinations = (
+        ("report", "signed-reports", ".json"),
+        ("journal", "signed-runtime-journals", ".jsonl"),
+        ("fleet-start-certificate", "fleet-start-certificates", ".bin"),
+        ("metrics", "signed-runtime-metrics", ".json"),
+        ("final-state", "signed-runtime-final-states", ".json"),
+    )
+    for process, _child, _capture, report, journal, metrics, final_state, certificate in running:
+        stage = stages.get(process.host_id)
+        if stage is None:
+            failures.append(f"{process.validator_id}: missing owned stage")
+            continue
+        sources = (report, journal, certificate, metrics, final_state)
+        for source, (label, directory, suffix) in zip(sources, destinations, strict=True):
+            target = output / directory / f"{process.validator_id}{suffix}"
+            if target.is_symlink():
+                failures.append(f"{process.validator_id}:{label}:symlink-target")
+                continue
+            if target.exists():
+                continue
+            try:
+                if not copy_observation_file(process, stage, source, target):
+                    failures.append(f"{process.validator_id}:{label}:copy-rejected")
+            except (OSError, subprocess.SubprocessError, RuntimeError, ValueError, SystemExit) as error:
+                failures.append(f"{process.validator_id}:{label}:{error}")
+        archive_targets = [
+            output / directory / f"{process.validator_id}{suffix}"
+            for _label, _source_relative, directory, suffix, _maximum in REPLAY_ARCHIVE_ARTIFACTS
+        ]
+        if any(target.is_symlink() for target in archive_targets):
+            failures.append(f"{process.validator_id}:replay-archives:symlink-target")
+        elif all(target.exists() for target in archive_targets):
+            pass
+        elif any(target.exists() for target in archive_targets):
+            failures.append(f"{process.validator_id}:replay-archives:partial-existing-set")
+        else:
+            try:
+                copy_replay_archive_set_v1(process=process, stage=stage, output=output)
+            except (OSError, subprocess.SubprocessError, RuntimeError, ValueError, SystemExit) as error:
+                failures.append(f"{process.validator_id}:replay-archives:{error}")
+    return failures
+
+
 def observer_sealed_reports_root_v1(observer_stage: base.HostStage) -> str:
     """Return the no-follow canonical path to the frozen Mac stage.
 
@@ -2692,6 +2747,7 @@ def main() -> None:
     terminal_agreement: dict[str, Any] | None = None
     failure: str | None = None
     cleanup_failures: list[str] = []
+    diagnostic_failures: list[str] = []
     observed_launch_skew_ns: int | None = None
     started_ns = time.monotonic_ns()
     try:
@@ -3026,6 +3082,17 @@ def main() -> None:
                 base.close_process_capture(capture)
             except OSError:
                 pass
+        if failure is not None:
+            try:
+                diagnostic_failures.extend(
+                    preserve_failure_diagnostics_v1(
+                        running=running, stages=stages, output=output
+                    )
+                )
+            except (OSError, subprocess.SubprocessError, RuntimeError, ValueError, SystemExit) as error:
+                # Even a collector-level failure cannot replace the original
+                # process failure or skip daemon/stage cleanup.
+                diagnostic_failures.append(f"failure-diagnostics:{error}")
         daemon_cleanup_failures = stop_peer_lease_daemons(peer_lease_daemons)
         cleanup_failures.extend(daemon_cleanup_failures)
         # Never delete a private stage while its authority may still own open
@@ -3087,6 +3154,7 @@ def main() -> None:
         "terminal_agreement": terminal_agreement,
         "failure": failure,
         "cleanup_failures": cleanup_failures,
+        "diagnostic_failures": diagnostic_failures,
         "validator_run_completed": False,
         "fault_matrix_completed": False,
         "performance_evidence": False,

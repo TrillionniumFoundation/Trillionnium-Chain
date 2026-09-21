@@ -1513,6 +1513,48 @@ def test_reduced_native_client_rejects_before_effects() -> None:
             assert not output.exists()
 
 
+def test_failure_diagnostics_are_best_effort_before_stage_cleanup() -> None:
+    process_value = process("local")
+    stage = fleet.base.HostStage("local", "local", "/stage", pathlib.Path("/stage"))
+    running = [(
+        process_value, object(), object(),
+        "/stage/report.json", "/stage/journal.jsonl", "/stage/runtime-metrics.json",
+        "/stage/runtime-final-state.json", "/stage/fleet-start-certificate.bin",
+    )]
+    with tempfile.TemporaryDirectory(prefix="poco-failure-diagnostics-") as raw:
+        output = pathlib.Path(raw)
+        for directory in (
+            "signed-reports", "signed-runtime-journals", "fleet-start-certificates",
+            "signed-runtime-metrics", "signed-runtime-final-states",
+            "signed-replay-archive-contexts", "signed-replay-archive-entries",
+            "signed-replay-archive-heads", "signed-replay-archive-terminal-seals",
+        ):
+            (output / directory).mkdir()
+        copied: list[str] = []
+
+        def copy_observation(*args, **_kwargs):
+            target = args[3]
+            copied.append(target.name)
+            if target.name == "1111111111111111111111111111111111111111111111111111111111111111.jsonl":
+                raise OSError("controlled journal copy failure")
+            target.write_bytes(b"diagnostic")
+            return True
+
+        def copy_replay(**_kwargs):
+            raise RuntimeError("controlled replay copy failure")
+
+        with mock.patch.object(fleet, "copy_observation_file", side_effect=copy_observation), \
+             mock.patch.object(fleet, "copy_replay_archive_set_v1", side_effect=copy_replay):
+            failures = fleet.preserve_failure_diagnostics_v1(
+                running=running, stages={"desktop": stage}, output=output
+            )
+        assert any("journal" in failure and "controlled" in failure for failure in failures)
+        assert any("replay-archives" in failure for failure in failures)
+        assert len(copied) == 5
+
+    source = inspect.getsource(fleet.main)
+    assert source.index("preserve_failure_diagnostics_v1") < source.index("base.clean_stages(stages)")
+
 def main() -> None:
     test_local_and_remote_commands()
     test_observer_fleet_certificate_command_and_strict_summary()
@@ -1525,8 +1567,9 @@ def main() -> None:
     test_runner_lifecycle_contract()
     test_runner_output_manifest_contract()
     test_reduced_native_client_rejects_before_effects()
+    test_failure_diagnostics_are_best_effort_before_stage_cleanup()
     print(
-        "poco_g3_consensus_fleet_test=passed positives=24 negatives=44 "
+        "poco_g3_consensus_fleet_test=passed positives=25 negatives=44 "
         "parallel_process_contract=true signed_journal_required=true "
         "reduced_native_client_pre_effect_refusal=true "
         "fleet_start_certificate_required=true "

@@ -2387,8 +2387,14 @@ impl ContinuousValidatorAuthorityV0 {
     /// method only moves a Ready runtime through the explicit `Synced` route,
     /// so the signer watermark and any prepared child remain untouched.
     pub(crate) fn sync_late_proposal_v1(&mut self, proposal: UnboundProposalV0) -> Result<bool> {
-        let Some(ContinuousAuthorityPhaseV0::Ready(runtime)) = self.phase.take() else {
-            return Ok(false);
+        let runtime = match self.phase.take() {
+            Some(ContinuousAuthorityPhaseV0::Ready(runtime)) => runtime,
+            signed_or_closed => {
+                // A late body cannot consume an already signed owner. Keep
+                // the exact owner and its pending durable effect intact.
+                self.phase = signed_or_closed;
+                return Ok(false);
+            }
         };
         let binding = runtime
             .proposal_binding_v0()
@@ -7222,6 +7228,9 @@ mod tests {
                 result.is_none(),
                 "late network proposal must not obtain a Vote"
             );
+            assert!(!harness.authorities[0]
+                .sync_late_proposal_v1(UnboundProposalV0::from_signed(&original).unwrap())
+                .expect("network fallback preserves the exact TimeoutSigned owner"));
             assert_eq!(harness.authorities[0].facts_v0().unwrap(), before);
 
             // The ignored late delivery must leave the real timeout owner
@@ -7269,10 +7278,35 @@ mod tests {
             let signed = harness.authorities[0].facts_v0().unwrap();
             assert_eq!(signed.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
             assert!(harness.authorities[0]
-                .receive_unbound_proposal_v1(wire)
+                .receive_unbound_proposal_v1(wire.clone())
                 .unwrap()
                 .is_none());
+            assert!(!harness.authorities[0]
+                .sync_late_proposal_v1(wire)
+                .expect("network fallback preserves the exact VoteSigned owner"));
             assert_eq!(harness.authorities[0].facts_v0().unwrap(), signed);
+
+            // Keep and discharge the original signed owner's real prepared
+            // child through a strict QC; no state reconstruction or re-sign.
+            let mut votes = vec![vote];
+            for authority in &mut harness.authorities[1..] {
+                votes.push(authority.vote_proposal_v0(successor.clone()).unwrap());
+            }
+            let certificate = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &successor,
+                votes.into_iter().take(3),
+            );
+            let ready = harness.authorities[0]
+                .advance_quorum_certificate_v0(certificate.clone())
+                .expect("preserved VoteSigned owner accepts original child QC");
+            assert_eq!(ready.phase_v0(), PocoNodeLabAuthorityPhaseV0::Ready);
+            assert_eq!(ready.high_qc_v0(), QcRef::from(&certificate));
+            assert_eq!(ready.proposal_parent_block_id_v0(), successor.block().id());
+            assert_eq!(
+                ready.signed_vote_intents_v0(),
+                signed.signed_vote_intents_v0()
+            );
         });
     }
 
@@ -7302,6 +7336,98 @@ mod tests {
                 after.signed_vote_intents_v0(),
                 before.signed_vote_intents_v0()
             );
+        });
+    }
+
+    #[test]
+    fn ready_synced_execution_failure_still_consumes_owner_and_fences_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let mut harness = takeover_phase_harness_v0(4);
+            let proposal = proposal_for_takeover_v0(&harness);
+            let header = proposal.block().header();
+            let wrong_state_root = StateRoot::new([0xa6; 32]);
+            assert_ne!(wrong_state_root, header.state_root());
+            let wrong_header = BlockHeader::new(
+                header.genesis_hash(),
+                header.chain_id(),
+                header.protocol_version(),
+                header.epoch(),
+                header.view(),
+                header.height(),
+                header.block_kind(),
+                header.parent_id(),
+                header.proposer_id(),
+                header.validator_set_id(),
+                header.consensus_parameters_hash(),
+                header.payload_root(),
+                wrong_state_root,
+                header.receipts_root(),
+                header.evidence_root(),
+                header.timestamp_ms(),
+                header.next_epoch_commitment_hash(),
+            )
+            .unwrap();
+            let wrong_block = Block::new(
+                wrong_header,
+                proposal.block().application_payload().to_vec(),
+                proposal.block().evidence_objects().to_vec(),
+            )
+            .unwrap();
+            let proposer = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == header.proposer_id())
+                .unwrap();
+            let signing_root = ProposalWitnessV0::signing_root_for(
+                wrong_block.header(),
+                proposal.witness().justify_qc(),
+                proposal.witness().timeout_certificate(),
+                None,
+            )
+            .unwrap();
+            let signature = SignatureBytes::from_array(
+                harness.keys[proposer]
+                    .sign(signing_root.as_bytes())
+                    .to_bytes(),
+            );
+            let witness = ProposalWitnessV0::new(
+                wrong_block.header(),
+                proposal.witness().justify_qc().clone(),
+                proposal.witness().timeout_certificate().cloned(),
+                None,
+                signature,
+                &harness.validator_set,
+                None,
+                harness.authorities[0].consensus_parameters_v0(),
+                0,
+            )
+            .unwrap();
+            let wrong = SignedProposalV0::new(
+                wrong_block,
+                witness,
+                &harness.validator_set,
+                None,
+                harness.authorities[0].consensus_parameters_v0(),
+                0,
+            )
+            .unwrap();
+            let wire = UnboundProposalV0::from_signed(&wrong).unwrap();
+            wire.verify_proposer_signature(&harness.validator_set)
+                .unwrap();
+            let error = harness.authorities[0]
+                .sync_late_proposal_v1(wire)
+                .unwrap_err();
+            assert!(
+                error
+                    .to_string()
+                    .contains("drive synced no-sign authority chain"),
+                "{error:#}"
+            );
+            assert!(harness.authorities[0].phase.is_none());
+            assert!(harness.authorities[0].facts_v0().is_err());
+            assert!(harness.authorities[0].begin_local_timeout_v0().is_err());
+            assert!(harness.authorities[0].vote_proposal_v0(proposal).is_err());
         });
     }
 
