@@ -127,6 +127,8 @@ os.execvp(args[0],args)
                 with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_TEST_MODE':'fail'}):
                     error=reject(lambda:fresh().request('status',{}),subprocess.CalledProcessError)
                     assert error.returncode==37 and error.stderr==b'original native request failure\n'
+                    assert isinstance(error,c.NativeRequestFailureV1) and error.operation=='status' and error.sequence==1
+                    assert 'native request 1 (status) exit 37' in str(error)
                 with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_SSH_MODE':'failure'}):
                     error=reject(lambda:fresh().request('status',{}),subprocess.CalledProcessError)
                     assert error.returncode==255 and error.stderr==b'original ssh failure\n'

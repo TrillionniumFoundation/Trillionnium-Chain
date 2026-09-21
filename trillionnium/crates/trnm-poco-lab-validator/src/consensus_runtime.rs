@@ -4641,14 +4641,7 @@ impl BoundedConsensusOwnerV1 {
             .authority
             .as_ref()
             .context("native client authority is unavailable")?;
-        let facts = authority.facts_v0()?;
-        if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready {
-            return Ok(false);
-        }
-        client.poll_v1(
-            authority.native_parent_timestamp_v1()?,
-            facts.finalized_height_v0(),
-        )
+        poll_native_with_authority_v1(client, authority)
     }
 
     fn maybe_propose_v1(&mut self) -> Result<bool> {
@@ -8114,6 +8107,22 @@ pub(crate) fn route_contained_direct_frame_v1(
             Ok(None)
         }
         DirectPeerFrameOutcomeV1::Quarantined => Ok(None),
+    }
+}
+
+/// Poll the actual native endpoint against phase-neutral confirmed facts.
+pub(crate) fn poll_native_with_authority_v1(
+    client: &mut crate::native_client_runtime::NativeClientRuntimeV1,
+    authority: &ContinuousValidatorAuthorityV0,
+) -> Result<bool> {
+    let facts = authority.facts_v0()?;
+    if facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready {
+        client.poll_v1(
+            authority.native_parent_timestamp_v1()?,
+            facts.finalized_height_v0(),
+        )
+    } else {
+        client.poll_read_only_v1(facts.finalized_height_v0())
     }
 }
 

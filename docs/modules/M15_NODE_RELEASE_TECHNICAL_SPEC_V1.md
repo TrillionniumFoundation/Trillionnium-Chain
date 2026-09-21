@@ -1940,3 +1940,31 @@ native attachment, independent node readback, exact retry, unchanged Safety and
 signer heads, and refusal of changed kernel/custody/source. Existing tag2/tag3
 compatibility and illegal tag4 transitions remain covered. These checks do not
 claim successor activation or crash recovery of the composite owner.
+
+### Native IPC during signed phases (M15-NATIVE-PHASE-SERVICE-V1)
+
+The actual continuous owner polls the native socket in Ready, VoteSigned and
+TimeoutSigned. Waiting for a QC/TC must not suspend existing IPC connections.
+The phase-neutral confirmed facts supply the finalized-height ceiling. Only
+Ready obtains the actual proposal-parent timestamp and permits new admission;
+the signed phases pass no parent/admission authority. Status reports accepting
+false in that temporary state without permanently stopping the native owner.
+
+Read-only status, capabilities, transaction/proof/sync queries and exact durable
+Submit retries remain available in signed phases. The unchanged proof reader
+verifies original stored proof bytes; sync queries also retain their confirmed
+finalized-height ceiling. A new Submit in a signed phase returns bounded retryable backpressure
+before WAL mutation. The same signed bytes may be retried under the caller's
+original absolute deadline; busy responses never count as admission or progress.
+No signer, Core, execution, finality or archive authority is reconstructed from
+cached scalars. Failed/consumed owners still reject through the original facts
+read. Initial activation, finality archive mutation and new proposals retain
+their original Ready guards.
+
+A genuine four-owner native transaction test drives real VoteSigned and
+TimeoutSigned owners, then routes real socket traffic through the same actor
+poll function. Require responsive status and independently verified historical
+proofs, exact committed retry identity, rejection of a distinct valid signed
+transaction with unchanged admission database and unchanged consensus/signer
+facts. The old Ready-only poll must fail this test. Keep all socket frame,
+connection, proof-worker and absolute-deadline limits unchanged.

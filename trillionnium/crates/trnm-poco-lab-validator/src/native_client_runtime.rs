@@ -478,6 +478,18 @@ impl NativeClientRuntimeV1 {
             && self.last_business_height <= finalized
     }
     pub fn poll_v1(&mut self, parent_timestamp: u64, finalized_height: u64) -> Result<bool> {
+        self.poll_with_admission_parent_v1(Some(parent_timestamp), finalized_height)
+    }
+    /// Serve bounded reads and exact durable retries while Core holds a signed
+    /// phase. No cached timestamp is used to authorize new admission.
+    pub(crate) fn poll_read_only_v1(&mut self, finalized_height: u64) -> Result<bool> {
+        self.poll_with_admission_parent_v1(None, finalized_height)
+    }
+    fn poll_with_admission_parent_v1(
+        &mut self,
+        parent_timestamp: Option<u64>,
+        finalized_height: u64,
+    ) -> Result<bool> {
         let mut progress = false;
         let mut index = 0;
         while index < self.proof_jobs.len() {
@@ -693,7 +705,7 @@ impl NativeClientRuntimeV1 {
         reply["error"] = json!({"code":code,"retryable":retryable});
         reply
     }
-    fn handle_request(&mut self, bytes: &[u8], parent: u64, finalized: u64) -> Value {
+    fn handle_request(&mut self, bytes: &[u8], parent: Option<u64>, finalized: u64) -> Value {
         let request: Request = match decode_request_v1(bytes) {
             Ok(r) => r,
             Err(_) => return self.error_reply("", "invalid_request", false),
@@ -719,7 +731,7 @@ impl NativeClientRuntimeV1 {
             }
             Request::Status { data, .. } => {
                 let _ = data;
-                self.reply(&id,json!({"accepting":self.accepting,"finalized_height":finalized.to_string(),"pending":self.ready.len()+self.admission.queued_counts().0,"in_flight":self.in_flight.len(),"proof_verified":false}))
+                self.reply(&id,json!({"accepting":self.accepting && parent.is_some(),"finalized_height":finalized.to_string(),"pending":self.ready.len()+self.admission.queued_counts().0,"in_flight":self.in_flight.len(),"proof_verified":false}))
             }
             Request::Submit { data, .. } => {
                 let bytes =
@@ -744,9 +756,9 @@ impl NativeClientRuntimeV1 {
                         }
                     }
                 }
-                if !self.accepting {
+                let Some(parent) = parent.filter(|_| self.accepting) else {
                     return self.error_reply(&id, "backpressure", true);
-                }
+                };
                 if !self
                     .profile
                     .proposal_timestamp_v1(parent, 60_000)

@@ -601,3 +601,11 @@ Rust request CLI and live native socket owner, checks the returned context, and
 requires the old pretty-printed request to fail without creating an accepted
 response. This is request compatibility evidence, not transaction finality or
 fleet performance acceptance.
+
+Native candidate campaign retries only explicit retryable `time_unready` and
+`backpressure` admission replies with the identical signed outer bytes and
+original absolute campaign deadline. It does not retry an uncertain transport
+failure as a successful admission. Original request sequence and operation are
+included in failure diagnostics. M15-NATIVE-PHASE-SERVICE-V1 defines the actual
+Ready/signed-phase distinction; diagnostic request observations are not finality
+or performance evidence.

@@ -40,8 +40,12 @@ class NativeEndpointNotReady(RuntimeError):
 
 
 class NativeRequestFailureV1(subprocess.CalledProcessError):
+    def __init__(self, returncode, cmd, output, stderr, *, operation, sequence):
+        super().__init__(returncode, cmd, output, stderr)
+        self.operation, self.sequence = operation, sequence
+
     def __str__(self) -> str:
-        return f"native request exit {self.returncode}: {(self.stderr or b'').decode('utf-8', errors='replace')}"
+        return f"native request {self.sequence} ({self.operation}) exit {self.returncode}: {(self.stderr or b'').decode('utf-8', errors='replace')}"
 
 
 def request_process_v1(processes: list[base.ValidatorProcess]) -> base.ValidatorProcess:
@@ -253,7 +257,7 @@ class NativeRequestAdapterV1:
                 raise NativeEndpointNotReady("native endpoint not ready") from error
             # CalledProcessError keeps exact exit/output; make the original
             # Linux/SSH diagnostic visible in the controller's failure summary.
-            raise NativeRequestFailureV1(error.returncode, error.cmd, error.output, error.stderr) from error
+            raise NativeRequestFailureV1(error.returncode, error.cmd, error.output, error.stderr, operation=op, sequence=sequence) from error
         self.response_bytes += len(response)
         decoded = strict_json(response, "native actual response")
         if decoded.get("request_id") != f"campaign-{sequence}":
@@ -413,7 +417,8 @@ def run_campaign(*, coordinator: pathlib.Path, deployments: pathlib.Path, manife
         outer = ssh(mac, ["cat", outer_path], timeout=remaining_timeout_v1(deadline, 30))
         submitted = time.monotonic_ns()
         ack = request("submit", {"signed_outer_hex": outer.hex()})
-        while ack.get("ok") is not True and ack.get("error", {}).get("code") == "time_unready":
+        while (ack.get("ok") is False and ack.get("error", {}).get("retryable") is True
+               and ack["error"].get("code") in ("time_unready", "backpressure")):
             time.sleep(0.25)
             ack = request("submit", {"signed_outer_hex": outer.hex()})
         ack_at = time.monotonic_ns()
