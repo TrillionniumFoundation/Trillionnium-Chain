@@ -1207,3 +1207,26 @@ races where a later external callback changes an earlier owner's local database.
 The consumer runs all callback-free local comparisons after its last external
 callback; it must not replace them with an unbounded callback/recheck cycle.
 The existing full local/external producers keep their semantics and formats.
+
+
+### Borrowed actual handoff prepare readback (M03-HANDOFF-KEY-READ-V1)
+
+A `HandoffSignatureRequestV1` carries a crate-minted borrowed guard over the
+actual schema1 owner, its exact pending head/profile/path/affinity/fence, and the
+complete original prepared intent. Its public `confirm_local_prepared_v1` only
+performs bounded local namespace/inventory/head/pending/fence/intent comparisons;
+it invokes no external service, advances no state and cannot construct a signer
+or admission. The guard cannot be independently created, stored beyond the live
+producer borrow, or rebound to another owner with matching scalar fields. The
+old sign methods and producer trait signatures remain unchanged.
+
+After original prepare fsync and external advancement, the signer kernel pins
+this actual pending cut. A composing producer first performs its external source
+checks, then calls the borrowed local readback immediately before the real key,
+with no further external callback in between. It repeats local readback after
+any post-key external source checks. The kernel also verifies the same captured
+local cut after the producer returns and before appending the signature. A failed
+check before the key makes zero key calls; failure after the key releases no
+signature and preserves the existing uncertain-key/recovery rules. Exact durable
+signature replay still bypasses the key and remains subject to the consumer's
+final local/external release checks.

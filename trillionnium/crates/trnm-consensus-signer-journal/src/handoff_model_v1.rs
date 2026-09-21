@@ -551,23 +551,46 @@ impl StrictNewSetHandoffAdmissionV1 {
     }
 }
 
+// Only the actual schema1 pending owner implements this borrowed check.
+pub(crate) trait HandoffPreparedLocalCheckV1 {
+    fn confirm_local_prepared_v1(&self) -> Result<(), HandoffSignerJournalErrorV1>;
+}
+
 /// Exact handoff request exposed to an injected key/HSM/KMS adapter only
-/// after strict admission has been checked by schema1.
-#[derive(Debug, Clone, Copy)]
+/// after strict admission and durable prepare by the actual schema1 owner.
+#[derive(Clone, Copy)]
 pub struct HandoffSignatureRequestV1<'a> {
     intent: &'a CanonicalHandoffSignIntentV1,
     signer_profile_ref: [u8; 32],
+    local_prepared: &'a dyn HandoffPreparedLocalCheckV1,
+}
+
+impl std::fmt::Debug for HandoffSignatureRequestV1<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("HandoffSignatureRequestV1")
+            .field("intent", self.intent)
+            .field("signer_profile_ref", &self.signer_profile_ref)
+            .finish_non_exhaustive()
+    }
 }
 
 impl<'a> HandoffSignatureRequestV1<'a> {
     pub(crate) const fn new(
         intent: &'a CanonicalHandoffSignIntentV1,
         signer_profile_ref: [u8; 32],
+        local_prepared: &'a dyn HandoffPreparedLocalCheckV1,
     ) -> Self {
         Self {
             intent,
             signer_profile_ref,
+            local_prepared,
         }
+    }
+
+    /// Recheck the original actual pending owner after external source I/O.
+    /// This is callback-free comparison, never signing or recovery authority.
+    pub fn confirm_local_prepared_v1(&self) -> Result<(), HandoffSignerJournalErrorV1> {
+        self.local_prepared.confirm_local_prepared_v1()
     }
 
     pub const fn intent(&self) -> &'a CanonicalHandoffSignIntentV1 {

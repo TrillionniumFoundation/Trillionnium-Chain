@@ -473,6 +473,40 @@ impl ConfirmedHandoffJournalHeadV1 {
     }
 }
 
+// The request borrows this private producer-owned pin; callers cannot supply
+// an equivalent-looking intent/hash in place of its actual owner and head.
+struct PreparedHandoffLocalReadV1<'a, W: ExternalMonotonicWatermarkV0> {
+    owner: &'a SqliteHandoffSignerJournalV1<W>,
+    head: ConfirmedHandoffJournalHeadV1,
+    prepared: &'a PreparedIntentV1,
+}
+impl<W: ExternalMonotonicWatermarkV0> PreparedHandoffLocalReadV1<'_, W> {
+    fn confirm_exact(&self) -> Result<(), HandoffSignerJournalErrorV1> {
+        self.head.confirm_local_owner_v1(self.owner)?;
+        self.owner
+            .require_owned_pending(self.prepared.fingerprint)?;
+        if self.head.pending != Some(self.prepared.fingerprint) {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::PreparedIntentPending,
+            ));
+        }
+        let actual = read_intent_v1(&self.owner.connection, self.prepared.fingerprint)?.ok_or(
+            HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                "original pending intent missing",
+            ),
+        )?;
+        require_exact_intent_v1(&actual, self.prepared)?;
+        self.owner.ensure_file_identity()
+    }
+}
+impl<W: ExternalMonotonicWatermarkV0> crate::handoff_model_v1::HandoffPreparedLocalCheckV1
+    for PreparedHandoffLocalReadV1<'_, W>
+{
+    fn confirm_local_prepared_v1(&self) -> Result<(), HandoffSignerJournalErrorV1> {
+        self.confirm_exact()
+    }
+}
+
 impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
     pub fn create_new(
         database_path: impl AsRef<Path>,
@@ -867,12 +901,23 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
     ) -> Result<SignatureBytes, HandoffSignerJournalErrorV1> {
         self.ensure_operational()?;
         self.require_owned_pending(prepared.fingerprint)?;
-        let signature = producer
-            .sign_handoff(HandoffSignatureRequestV1::new(
-                intent,
-                self.profile.signer_profile_ref(),
-            ))
-            .map_err(HandoffSignerJournalErrorV1::SignatureProducer)?;
+        let signature = {
+            let guard = PreparedHandoffLocalReadV1 {
+                owner: self,
+                head: self.read_local_head_v1()?,
+                prepared,
+            };
+            guard.confirm_exact()?;
+            let signature = producer
+                .sign_handoff(HandoffSignatureRequestV1::new(
+                    intent,
+                    self.profile.signer_profile_ref(),
+                    &guard,
+                ))
+                .map_err(HandoffSignerJournalErrorV1::SignatureProducer)?;
+            guard.confirm_exact()?;
+            signature
+        };
         let validator_set = match intent.signer_role() {
             HandoffSignerRoleV1::OldSet => self.profile.old_validator_set(),
             HandoffSignerRoleV1::NewSet => self.profile.new_validator_set(),

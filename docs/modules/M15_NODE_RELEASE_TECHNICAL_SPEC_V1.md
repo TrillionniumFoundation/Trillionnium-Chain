@@ -1727,6 +1727,18 @@ remain exact. Any uncertain or failed operation fences the consumed V7 owner.
 Exact successful role retry returns the original signature without another key
 call. No ordinary or proposal signing API escapes this owner.
 
+After each private W/N source callback group at the actual handoff key boundary,
+V7 invokes M03-HANDOFF-KEY-READ-V1 on the original borrowed pending owner. No
+external callback runs between that final local confirmation and the actual key.
+The same check follows post-key W/N confirmation. After the final role-journal
+external readback and final W/N source check, V7 uses M03-LOCAL-CUSTODY-READ-V1
+for the exact role result and both original retirement records before releasing
+any signature. Thus neither a prepared role path nor a signed role path may be
+replaced during later source callbacks and still pass. Required genuine cases
+mutate the role namespace in the retirement callback before the key (zero actual
+key calls), after the key (one call, no signature release), and after signature
+persistence (one call, no release); every owner remains fenced after restoration.
+
 V7 retains actual journals and source owners rather than scalar custody labels.
 It adds no durable layout or tag3 successor transition. Missing independent cut,
 foreign role head/profile, stale native/Safety/retirement namespace, or producer

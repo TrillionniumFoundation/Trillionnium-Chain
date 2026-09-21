@@ -1091,18 +1091,22 @@ fn prepared_producer_signature_fence_and_external_fault_windows_fail_closed() {
          BEFORE INSERT ON terminal_old_epoch_fence_v1
          BEGIN SELECT RAISE(ABORT, 'injected fence fault'); END;",
     );
-    assert!(matches!(
-        journal.sign_old_set_handoff_exact_v1(
+    let error = journal
+        .sign_old_set_handoff_exact_v1(
             &fixture.old_handoff_intent(),
             &fixture.admission(),
             &mut producer,
-        ),
-        Err(HandoffSignerJournalErrorV1::Sqlite { .. })
-    ));
+        )
+        .unwrap_err();
+    assert!(
+        matches!(error, HandoffSignerJournalErrorV1::SchemaMismatch),
+        "{error:?}"
+    );
+    assert_eq!(producer.calls(), (0, 1));
     assert_eq!(
         table_counts(&path),
         (1, 1, 0),
-        "signature event, accounting/head advance, and fence must roll back together",
+        "post-producer schema mutation must reject before signature/head/fence append",
     );
 }
 
@@ -2082,4 +2086,69 @@ fn local_retirement_comparison_preserves_affinity_without_refreshing_external_tr
     fs::rename(&path, &displaced).unwrap();
     fs::copy(&displaced, &path).unwrap();
     assert!(original.confirm_local_owner_v1(&retired).is_err());
+}
+
+struct PendingGuardProducer {
+    path: PathBuf,
+    producer: ExactProducer,
+    mutate_after_key: bool,
+}
+impl HandoffSignatureProducerV1 for PendingGuardProducer {
+    fn sign_handoff(
+        &mut self,
+        request: HandoffSignatureRequestV1<'_>,
+    ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+        request.confirm_local_prepared_v1().unwrap();
+        let signature = if self.mutate_after_key {
+            Some(self.producer.sign_handoff(request)?)
+        } else {
+            None
+        };
+        let displaced = self.path.with_extension("pending-displaced");
+        fs::rename(&self.path, &displaced).unwrap();
+        fs::copy(&displaced, &self.path).unwrap();
+        request
+            .confirm_local_prepared_v1()
+            .map_err(|_| SignatureProducerErrorV0::Rejected)?;
+        match signature {
+            Some(signature) => Ok(signature),
+            None => self.producer.sign_handoff(request),
+        }
+    }
+}
+
+#[test]
+fn borrowed_pending_guard_binds_actual_namespace_before_and_after_key() {
+    let fixture = authority_fixture();
+    for after_key in [false, true] {
+        let directory = TempDir::new().unwrap();
+        fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let path = directory.path().join("roles.db");
+        let watermark = MemoryWatermark::default();
+        let mut journal = SqliteHandoffSignerJournalV1::create_new(
+            &path,
+            fixture.role_profile(),
+            watermark.clone(),
+        )
+        .unwrap();
+        let mut producer = PendingGuardProducer {
+            path: path.clone(),
+            producer: ExactProducer::new(fixture.signing_key.clone()),
+            mutate_after_key: after_key,
+        };
+        let result = journal.sign_old_set_handoff_exact_v1(
+            &fixture.old_handoff_intent(),
+            &fixture.admission(),
+            &mut producer,
+        );
+        assert!(matches!(
+            result,
+            Err(HandoffSignerJournalErrorV1::SignatureProducer(
+                SignatureProducerErrorV0::Rejected
+            ))
+        ));
+        assert_eq!(producer.producer.calls().1, u64::from(after_key));
+        assert_eq!(watermark.snapshot().value.unwrap().sequence(), 1);
+        assert_eq!(table_counts(&path), (1, 1, 0));
+    }
 }

@@ -43,6 +43,7 @@ use trnm_native_execution_v0::{
 type WatermarkState = (Option<SignerWatermarkV0>, Option<SignerRetirementRecordV1>);
 type NativePDeletionHookV2 = Arc<Mutex<Option<(PathBuf, [u8; 32])>>>;
 type NativeProgressedReplacementHookV3 = Arc<Mutex<Option<(PathBuf, u64)>>>;
+type RoleRetirementReplacementHookV7 = Arc<Mutex<Option<(PathBuf, u64, usize)>>>;
 #[derive(Clone, Default)]
 struct Watermark(
     Arc<Mutex<WatermarkState>>,
@@ -50,6 +51,7 @@ struct Watermark(
     NativePDeletionHookV2,
     NativeProgressedReplacementHookV3,
     Arc<Mutex<Option<PathBuf>>>,
+    RoleRetirementReplacementHookV7,
 );
 impl ExternalMonotonicWatermarkV0 for Watermark {
     fn load(
@@ -121,6 +123,29 @@ impl ExternalSignerRetirementV1 for Watermark {
             let displaced = path.with_extension("retirement-callback-displaced");
             std::fs::rename(&path, &displaced).unwrap();
             std::fs::copy(&displaced, &path).unwrap();
+        }
+        let mut hook = self.5.lock().unwrap();
+        if let Some((path, expected_sequence, remaining)) = hook.as_mut() {
+            let connection = rusqlite::Connection::open_with_flags(
+                &*path,
+                rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+            )
+            .unwrap();
+            let sequence: Vec<u8> = connection
+                .query_row("SELECT active_sequence_be FROM signer_head_v1", [], |r| {
+                    r.get(0)
+                })
+                .unwrap();
+            drop(connection);
+            if u64::from_be_bytes(sequence.try_into().unwrap()) == *expected_sequence {
+                *remaining -= 1;
+                if *remaining == 0 {
+                    let displaced = path.with_extension("role-key-callback-displaced");
+                    std::fs::rename(&*path, &displaced).unwrap();
+                    std::fs::copy(&displaced, &*path).unwrap();
+                    *hook = None;
+                }
+            }
         }
         Ok(value)
     }

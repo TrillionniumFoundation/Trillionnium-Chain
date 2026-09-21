@@ -275,6 +275,14 @@ impl<
             self.retired.confirm_retired_cut_v6()? == checkpoint,
             "handoff source changed before signature release"
         );
+        fresh.confirm_local_owner_v1(&self.journal)?;
+        self.retired
+            .retirement
+            .confirm_local_owner_v1(&self.retired.retired)?;
+        self.retired
+            .source
+            .incoming_retirement
+            .confirm_local_owner_v1(&self.retired.source.incoming_retired)?;
         self.head = fresh;
         match role {
             HandoffSignerRoleV1::OldSet => self.old_signature = Some(receipt.clone()),
@@ -303,8 +311,14 @@ impl<P: HandoffSignatureProducerV1, F: FnMut() -> Result<()>> HandoffSignaturePr
             return Err(SignatureProducerErrorV0::Rejected);
         }
         (self.confirm)().map_err(|_| SignatureProducerErrorV0::Rejected)?;
+        request
+            .confirm_local_prepared_v1()
+            .map_err(|_| SignatureProducerErrorV0::Rejected)?;
         let signature = self.producer.sign_handoff(request)?;
         (self.confirm)().map_err(|_| SignatureProducerErrorV0::Rejected)?;
+        request
+            .confirm_local_prepared_v1()
+            .map_err(|_| SignatureProducerErrorV0::Rejected)?;
         Ok(signature)
     }
 }

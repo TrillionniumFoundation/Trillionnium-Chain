@@ -218,3 +218,97 @@ fn actual_epoch_retired_handoff_role_callback_native_replacement_blocks_key_v7()
         build_actual_role_source_v7(),
     ));
 }
+
+#[inline(never)]
+fn role_callback_source_v7() -> (Box<RolesCaseV7>, Watermark) {
+    let initial = build_epoch_runtime_case_v1();
+    let incoming_watermark = initial.recovery.old_watermark.clone();
+    let live = activate_actual_case_v1(initial);
+    let unsigned = first_apply_unsigned_v2(live);
+    let first = first_apply_children_v2(first_apply_start_v2(unsigned));
+    let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
+    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
+    let seal1 = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
+    let seal2 = pre_handoff_seal_and_apply_v5(seal1);
+    (
+        commission_actual_roles_v7(pre_handoff_commit_v5(seal2)),
+        incoming_watermark,
+    )
+}
+
+#[inline(never)]
+fn role_callback_refusal_v7(
+    case: Box<RolesCaseV7>,
+    incoming: Watermark,
+    sequence: u64,
+    occurrence: usize,
+    expected_key_calls: usize,
+) {
+    let (_directory, mut roles, mut key, role_watermark) = *case;
+    let calls = key.calls;
+    let original_checkpoint = roles.retired.checkpoint;
+    let path = roles.journal.path().to_path_buf();
+    *incoming.5.lock().unwrap() = Some((path.clone(), sequence, occurrence));
+    let error = roles
+        .sign_handoff_exact_v7(trnm_consensus_types::HandoffSignerRoleV1::OldSet, &mut key)
+        .unwrap_err();
+    assert!(
+        incoming.5.lock().unwrap().is_none(),
+        "real retirement callback did not run: {error:#}"
+    );
+    assert_eq!(
+        key.calls,
+        calls + expected_key_calls,
+        "wrong actual key boundary: {error:#}"
+    );
+    assert!(
+        roles.old_signature.is_none(),
+        "failed call must not release a role receipt"
+    );
+    assert!(roles.new_signature.is_none());
+    assert_eq!(
+        role_watermark.0.lock().unwrap().0.unwrap().sequence(),
+        sequence
+    );
+    assert_eq!(
+        roles.retired.checkpoint_store.load().unwrap(),
+        original_checkpoint
+    );
+    let displaced = path.with_extension("role-key-callback-displaced");
+    assert!(displaced.exists());
+    std::fs::remove_file(&path).unwrap();
+    std::fs::rename(&displaced, &path).unwrap();
+    assert!(roles
+        .sign_handoff_exact_v7(trnm_consensus_types::HandoffSignerRoleV1::OldSet, &mut key)
+        .unwrap_err()
+        .to_string()
+        .contains("owner fenced"));
+    assert_eq!(key.calls, calls + expected_key_calls);
+    let retained = roles.journal.confirm_head_exact_v1().unwrap();
+    assert_eq!(retained.exact_watermark_v1().sequence(), sequence);
+    assert_eq!(retained.pending_fingerprint_v1().is_some(), sequence == 1);
+    assert_eq!(
+        retained.terminal_fence_checksum_v1().is_some(),
+        sequence == 2
+    );
+}
+
+#[test]
+fn actual_epoch_handoff_role_pending_replacement_before_key_rejects_v7() {
+    let (case, watermark) = role_callback_source_v7();
+    role_callback_refusal_v7(case, watermark, 1, 1, 0);
+}
+
+#[test]
+fn actual_epoch_handoff_role_pending_replacement_after_key_rejects_v7() {
+    let (case, watermark) = role_callback_source_v7();
+    // Each V6 join checks incoming W twice. The third sequence1 callback is
+    // the first source check after the actual key returned.
+    role_callback_refusal_v7(case, watermark, 1, 3, 1);
+}
+
+#[test]
+fn actual_epoch_handoff_role_signed_replacement_before_release_rejects_v7() {
+    let (case, watermark) = role_callback_source_v7();
+    role_callback_refusal_v7(case, watermark, 2, 1, 1);
+}
