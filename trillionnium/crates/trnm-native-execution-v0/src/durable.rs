@@ -2322,6 +2322,8 @@ impl DurableNativeApplicationV0 {
     }
 }
 
+include!("terminal_inventory_v1.inc");
+
 impl NativeApplicationV0 for DurableNativeApplicationV0 {
     type Error = NativeApplicationExecutionErrorV0;
 
@@ -6128,6 +6130,8 @@ mod tests {
         )
         .unwrap()
     }
+
+    include!("terminal_inventory_tests_v1.inc");
 
     fn initialized(
         temporary: &TempDir,

@@ -1323,6 +1323,19 @@ impl ContinuousValidatorTerminalOwnerV0 {
     pub const fn facts_v0(&self) -> &ContinuousValidatorTerminalCutV0 {
         &self.facts
     }
+
+    /// Freshly checks the original consumed Node cut; grants no live authority.
+    pub fn confirm_terminal_cut_v1(&mut self) -> Result<&ContinuousValidatorTerminalCutV0> {
+        let node = self
+            ._node
+            .confirm_terminal_cut_v1()
+            .map_err(|error| anyhow!("reconfirm consumed Node terminal cut: {error}"))?;
+        ensure!(
+            node == &self.facts.node,
+            "continuous terminal facts differ from original Node cut"
+        );
+        Ok(&self.facts)
+    }
 }
 
 impl std::fmt::Debug for ContinuousValidatorTerminalOwnerV0 {
@@ -7734,6 +7747,7 @@ mod tests {
     }
 
     include!("continuous_ready_rebase_tests.inc");
+    include!("continuous_terminal_readback_tests_v1.inc");
 
     #[test]
     fn late_network_proposal_after_timeout_syncs_without_new_signature_v1() {

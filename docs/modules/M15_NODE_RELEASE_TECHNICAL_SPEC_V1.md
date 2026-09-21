@@ -1732,3 +1732,32 @@ must produce zero key calls. This slice ends at durably recorded local role
 signatures. Aggregating both remote quorums, native attachment, Journal9→12/Core
 V2 activation and whole-owner recovery remain separate consuming joins; none is
 claimed by a signature receipt or by reopening a schema1 journal alone.
+
+### Fresh readback of a consumed terminal owner (M15-TERMINAL-READBACK-V1)
+
+`PocoNodeLabTerminalOwnerV0::confirm_terminal_cut_v1` and its continuous-owner
+delegate revalidate the original consumed cut without reconstructing Ready,
+Core sealing/apply capabilities or any signing lease. The terminal owner keeps
+its original private retained executions and proposal-journal configuration.
+It uses the native/P-K cross-store root fence, original full Safety and signer
+head audits, exact independent checkpoint, full immutable schema3 native
+inventory and each retained P/K join. The authenticated head, durable sequence,
+Prepared count, complete signer inventory and original K aggregate must remain
+identical to the cut captured at consumption; an unchanged committed head
+alone is insufficient.
+
+Local namespaces are checked before and after the actual external signer
+watermark readback. All Safety/native/K/checkpoint comparisons are repeated
+after that callback and never adopt replacement metadata as a new trust pin.
+Any failed readback permanently fences this terminal owner. Successful calls
+return only the original inert facts, and exact repetition does not mutate a
+store or release an effect. A transport shutdown consumer must call this seam
+before publishing Park and after mesh workers have joined, before signing
+existing terminal evidence. It must still independently validate all queued
+network/lifecycle obligations. This seam neither makes a quiet observation a
+terminal certificate nor permits recovery or renewed ordinary signing.
+
+Required genuine regressions consume a real finalized/applied owner, repeat an
+unchanged exact read, then replace the native, P/K, Safety or checkpoint
+namespace or change its durable cut. Every mutation must reject and latch the
+failure; restoring original files cannot reactivate the terminal owner.

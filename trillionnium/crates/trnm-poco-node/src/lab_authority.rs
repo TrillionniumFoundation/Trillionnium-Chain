@@ -1826,6 +1826,9 @@ pub struct PocoNodeLabTerminalOwnerV0<W: ExternalMonotonicWatermarkV0> {
     _signer_journal: SqliteSignerJournalV0<W>,
     _checkpoint_store: SqliteExternalNodeCheckpointStoreV0,
     _proposal_validation_store: SqliteProposalValidationStoreV0,
+    retained_executions: BTreeMap<BlockId, PocoNodeLabRetainedExecutionV0>,
+    proposal_journal: PocoNodeLabProposalJournalConfigV0,
+    readback_fenced: bool,
     facts: PocoNodeLabTerminalCutV0,
 }
 
@@ -1834,6 +1837,8 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabTerminalOwnerV0<W> {
         &self.facts
     }
 }
+
+include!("lab_terminal_readback_v1.inc");
 
 impl<W: ExternalMonotonicWatermarkV0> fmt::Debug for PocoNodeLabTerminalOwnerV0<W> {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -2649,8 +2654,8 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             checkpoint: _,
             application_head: _,
             application_overlay: _,
-            pending_executions: _,
-            proposal_journal: _,
+            pending_executions,
+            proposal_journal,
         } = self;
         drop(seal_authority);
         drop(finalization_authority);
@@ -2661,6 +2666,9 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             _signer_journal: signer_journal,
             _checkpoint_store: checkpoint_store,
             _proposal_validation_store: proposal_validation_store,
+            retained_executions: pending_executions,
+            proposal_journal,
+            readback_fenced: false,
             facts,
         })
     }

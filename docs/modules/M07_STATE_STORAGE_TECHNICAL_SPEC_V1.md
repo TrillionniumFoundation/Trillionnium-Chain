@@ -1569,3 +1569,22 @@ new pins; these local descriptors are not an external anti-rollback service or a
 claim of arbitrary hostile-filesystem atomicity. Unix identity validation is a
 requirement of the current custody receipt path; other platforms cannot silently
 substitute pathname equality for it.
+
+### Ordinary terminal inventory readback (M07-TERMINAL-INVENTORY-V1)
+
+`DurableNativeApplicationV0::confirm_ordinary_terminal_inventory_v1` is an
+immutable schema3-only producer for the M15 terminal owner's repeated local
+cut audit. Under the existing operation/namespace guard it rejects SQLite
+sidecars, opens one immutable transaction, verifies the exact original schema
+and full metadata/P inventory, and returns the authenticated committed head,
+durable sequence and Prepared row count. The inert result retains exact owner
+and path affinity; it grants no execution, finality, replay or signing permit.
+Namespace identity is rechecked before release. A legal additional Prepared
+row changes the sequence/count even if the committed head is unchanged.
+
+Epoch/incremental schemas, including schema11, are explicitly rejected by this
+ordinary API; their current owner inventory cannot be inferred from legacy
+source rows. Existing recovery entry behavior and all storage bytes remain
+unchanged. M15 compares every returned field against the original consumed
+terminal cut, alongside the existing exact P/K, Safety, signer and independent
+checkpoint audits.
