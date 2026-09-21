@@ -6,6 +6,8 @@ use trnm_consensus_types::{
     decode_epoch_activation_evidence_v0_exact, EpochActivationEvidenceBytesV0,
 };
 
+include!("native_historical_trust_v1_tests.rs");
+
 use std::sync::{
     atomic::{AtomicBool, Ordering},
     Mutex,

@@ -265,8 +265,13 @@ fn assert_native_live_semantic_mutants(
                 changed.entries.push(crate::NativeCurrentLiveEntryV1 {
                     key: crate::stored_object_key_v0("semantic-test-object").unwrap(),
                     value: crate::AuthenticatedObjectRecordV0::new(
-                        "semantic-test-object", target.height().get() + 1, b"{}".to_vec(),
-                    ).unwrap().encode().unwrap(),
+                        "semantic-test-object",
+                        target.height().get() + 1,
+                        b"{}".to_vec(),
+                    )
+                    .unwrap()
+                    .encode()
+                    .unwrap(),
                 });
             }
             "lifecycle-key" => {
@@ -372,21 +377,31 @@ fn assert_native_handoff_live_sync(
             BlockIdV0::new(*target.id().as_bytes()).unwrap(),
         )
         .unwrap();
-    let path = trnm_poco_node_production_v0::verify_retained_native_finality_path_v1(
+    let retained = trnm_poco_node_production_v0::verify_retained_native_finality_path_v1(
         anchor,
         &m15_finality_transport_copy(&path),
         trnm_state_sync_v0::NativeTrustPathLimitsV1::default(),
         &mut Cev0AdmissionBudgetV0::protocol_v0(),
     )
     .unwrap();
-    assert_eq!(path.terminal_header().block_kind(), BlockKind::EpochHandoff);
+    assert_eq!(
+        retained.terminal_header().block_kind(),
+        BlockKind::EpochHandoff
+    );
     let bytes = app
         .export_current_native_live_v1(BlockIdV0::new(*target.id().as_bytes()).unwrap())
         .unwrap();
-    let transfer = prepare_native_live_transfer_v1(&path, &bytes).unwrap();
-    let mut session = NativeLiveStateSyncV1::begin(path, transfer.manifest).unwrap();
+    let transfer = prepare_native_live_transfer_v1(&retained, &bytes).unwrap();
+    let mut session = NativeLiveStateSyncV1::begin(retained.clone(), transfer.manifest).unwrap();
     for chunk in transfer.chunks {
         session.accept_chunk(chunk).unwrap();
     }
     assert_eq!(session.verify_complete().unwrap().binding().height, 31);
+    let (history, _) = assert_genuine_historical_export(app, anchor, &path);
+    assert_eq!(history.headers.len(), 13);
+    assert_eq!(history.activations.len(), 2);
+    let historical = verify_genuine_historical_path(anchor, &history).unwrap();
+    assert_eq!(historical.terminal_header(), target);
+    assert_eq!(historical.snapshot_trust_path().link_count(), 9);
+    assert_historical_native_live_staging(&retained, historical, &bytes);
 }

@@ -27,6 +27,11 @@ use trnm_consensus_types::{
     DecodeError, EpochActivationEvidencePreimagesV0, ValidationError, ValidatorSet,
 };
 
+pub use trnm_consensus_crypto::HistoricalAncestryLimitsV1;
+#[path = "native_historical_trust_v1.rs"]
+mod historical;
+pub use historical::verify_native_historical_trust_path_v1;
+
 /// Local admission ceilings; these allocate no consensus wire identifiers.
 pub const MAX_NATIVE_ANCHOR_BYTES_V1: usize = 4 * 1024 * 1024;
 pub const MAX_NATIVE_TRUST_PATH_BYTES_V1: usize = 64 * 1024 * 1024;
@@ -135,8 +140,10 @@ impl Default for NativeTrustPathLimitsV1 {
 }
 
 /// Only successful strict signature, exact-parent and complete epoch evidence
-/// verification can issue this result. The projection allows the existing
-/// non-destructive snapshot session to consume the same authenticated target.
+/// verification can issue this result, through either individual step proofs
+/// or terminal-proof-covered historical ancestry. The projection allows the
+/// existing non-destructive snapshot session to consume that authenticated
+/// target; it proves neither body execution nor replay completeness.
 ///
 /// ```compile_fail
 /// use trnm_state_sync_v0::VerifiedNativeTrustPathV1;
@@ -176,6 +183,7 @@ pub enum NativeTrustErrorV1 {
     Decode(DecodeError),
     Consensus(ValidationError),
     Finality(StrictFinalityErrorV0),
+    Historical(trnm_consensus_crypto::HistoricalAncestryErrorV1),
 }
 impl fmt::Display for NativeTrustErrorV1 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -191,6 +199,7 @@ impl fmt::Display for NativeTrustErrorV1 {
             Self::Decode(e) => write!(f, "native canonical decoding: {e}"),
             Self::Consensus(e) => write!(f, "native context: {e}"),
             Self::Finality(e) => write!(f, "native strict finality: {e}"),
+            Self::Historical(e) => write!(f, "native historical ancestry: {e}"),
         }
     }
 }

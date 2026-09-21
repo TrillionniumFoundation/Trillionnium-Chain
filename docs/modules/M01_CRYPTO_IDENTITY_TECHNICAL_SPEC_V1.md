@@ -401,6 +401,82 @@ join complete strict handoff evidence, actual fresh P and exact dual-parent
 overlay. The Core regression covers first-new acceptance and wrong state root,
 wrong kind and missing edge rejection with real Ed25519 signatures.
 
+## Historical header ancestry (M01-HISTORY-V1)
+
+This versioned contract authorizes a shared verification-only implementation in
+`trnm-consensus-crypto`, consumed independently by M13 admission and M08 recovery.
+It does not install application state. Frozen v0 state roots do not authenticate
+the global command-ID and signer/nonce replay sets; M06 must subsequently derive
+those sets by executing every application body from its own audited local anchor.
+
+The public `verify_historical_header_ancestry_v1` accepts an independently trusted
+decoded anchor header, its validator set and parameters, a borrowed ordered slice
+of canonical successor header bytes, ordered eight-root activation preimages,
+the original terminal finality proof, `HistoricalAncestryLimitsV1`, and one mutable
+`Cev0AdmissionBudgetV0`. Inputs are claims. The private-field, non-Clone
+`StrictHistoricalHeaderPathV1` retains decoded headers, boxed strict activation
+contexts, exact terminal proof and terminal configuration with immutable getters.
+It issues no P, execution receipt, signer permission or install capability. M08
+never depends on M13 to recreate this verification after a crash.
+
+Admission first checks positive path length, at most 256 consensus headers,
+independently at most 32 transitions, and at most 64 MiB aggregate supplied bytes.
+Caller limits can only narrow these ceilings. Headers and parameter/commitment
+roots are at most 4096 bytes, validator-set roots at most 1 MiB, other roots at
+most 8 MiB. Checked length sums precede decoding/copying. Each activation still
+obeys the existing decoder's aggregate logical-root allowance; the path ceiling
+does not enlarge an 8 MiB CEV0 root. All cryptographic decoders share the supplied
+remaining work meter; no fresh per-step budget or retry refund is allowed.
+
+The anchor must be a positive-height application header in its exact authenticated
+chain/genesis/protocol/epoch/set/parameter context. Decode successor headers
+exactly, then walk once without recursion. Require exact parent ID, height +1,
+unchanged chain/genesis/protocol, scheduled block kind and leader, positive view,
+and the existing parent-relative timestamp bound. Same-epoch views must increase;
+skipped views are permitted. At epoch change, require the next epoch and the
+scheduled EpochHandoff following EpochSeal2, never a fabricated ordinary link.
+M00's inert `validate_historical_header_link_v1` shares these structural checks;
+it does not assert an absent ancestor proposal witness or QC.
+
+Each transition consumes exactly one ordered activation bundle. Decode against
+the preceding authenticated old set/parameters and strictly verify its original
+checkpoint finality, terminal seal QC and both handoff roles. Match its checkpoint,
+seal1 and seal2 byte-exactly to the supplied chain (the checkpoint may be the
+anchor); match its checkpoint-parent header to the preceding chain header where
+present, otherwise to the pinned checkpoint's parent ID/height. The signed
+checkpoint hash authenticates that supplied parent preimage. Require the first
+new header to use the resulting configuration and authorization geometry. Do not
+use the view-1-only proposal preimage helper to reject a valid skipped-view first
+block; such a terminal uses the existing strict epoch-first proof verifier.
+Reject missing, duplicate, reordered and unused evidence. Seals preserve the
+checkpoint state/commitment and empty payload/receipt/evidence roots, and never
+create an application/replay version.
+
+Strictly verify terminal Regular/Checkpoint finality in the resulting context.
+When the path contains an activation, reuse its latest decoded evidence and
+strict authority with the existing epoch-runtime decoder/verification kernel,
+including TC references to that exact synthetic anchor. Terminal EpochHandoff
+uses the same retained activation with the existing epoch-first proof
+decoder/verifier, with work charged once. Without a crossed activation, the
+ordinary strict decoder remains fail-closed: an ordinary proof needing a
+pre-anchor synthetic handoff context cannot be admitted using only the current
+anchor header/set/parameters. Supplying that additional independently trusted
+context is subsequent adapter work, not a permissive decoder retry. Seal targets
+are rejected. The entire finalized header must equal the last chain header;
+its proof children are not replay records. Exact backward hash linkage from this
+strict target authenticates ordinary ancestors without requiring an individual
+finality proof or proposer witness for each. This is not permission to remove
+proofs required by the source owner's existing storage schema.
+
+Required cases include a genuine repeated-epoch C18 to C32 path containing four
+seals and ten application headers, C31 handoff terminal, ordinary single-epoch
+ancestry, missing/forked/reordered/trailing headers, wrong trust/configuration,
+all activation joins, terminal proof/signature substitution, exact and one-over
+byte/count limits, failed crypto retaining charged work, and external capability
+construction/Clone rejection. Header authentication alone makes no statement
+about body execution, replay completeness, snapshot installation or network
+acceptance. The genesis/wiped-node history source join remains separate work.
+
 ## Activation boundary
 
 Existing strict v0 operations remain unchanged. Planned general identity/cache

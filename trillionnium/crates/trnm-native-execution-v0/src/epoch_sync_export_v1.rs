@@ -5,6 +5,10 @@ use trnm_consensus_types::EpochActivationEvidenceBytesV0;
 
 const MAX_PATH_BYTES: usize = 64 * 1024 * 1024;
 
+#[path = "native_historical_export_v1.rs"]
+mod history;
+pub use history::{NativeHistoricalRecordV1, NativeHistoricalReplayV1};
+
 /// Untrusted transport data, not a native application or signer capability.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct NativeEpochFinalityStepV1 {
@@ -119,6 +123,17 @@ impl DurableNativeApplicationV0 {
         anchor_block: BlockIdV0,
         target_block: BlockIdV0,
     ) -> Result<NativeEpochFinalityPathV1> {
+        self.with_export_path_v1(anchor_block, target_block, |_, path| Ok(path))
+    }
+
+    /// One audited immutable source transaction for each export format. The
+    /// callback copies only inert transport facts and cannot publish authority.
+    fn with_export_path_v1<T>(
+        &self,
+        anchor_block: BlockIdV0,
+        target_block: BlockIdV0,
+        finish: impl FnOnce(&Connection, NativeEpochFinalityPathV1) -> Result<T>,
+    ) -> Result<T> {
         let _guard = self.lock_operation()?;
         ensure!(anchor_block != target_block, "finality export empty path");
         reject_sqlite_sidecars_v0(&self.path)?;
@@ -302,6 +317,7 @@ impl DurableNativeApplicationV0 {
             "finality export terminal anchor P mismatch"
         );
         output.steps.reverse();
+        let output = finish(&connection, output)?;
         connection.execute_batch("ROLLBACK")?;
         let after = live_export::fresh_export_metadata(&self.path, &self.config)?;
         ensure!(

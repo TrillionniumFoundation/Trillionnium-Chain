@@ -99,6 +99,7 @@ fn qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
     .unwrap()
 }
 
+#[allow(clippy::too_many_arguments)]
 fn header(
     set: &ValidatorSet,
     kind: BlockKind,

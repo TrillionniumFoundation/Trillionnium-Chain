@@ -22,7 +22,10 @@ mod lineage_resolver;
 mod live_export;
 #[path = "epoch_sync_export_v1.rs"]
 mod sync_export;
-pub use sync_export::{NativeEpochFinalityPathV1, NativeEpochFinalityStepV1};
+pub use sync_export::{
+    NativeEpochFinalityPathV1, NativeEpochFinalityStepV1, NativeHistoricalRecordV1,
+    NativeHistoricalReplayV1,
+};
 const MAX_P_ROWS: usize = 128;
 const MAX_PREPARED_BYTES: usize = 2 * 1024 * 1024 * 1024;
 const MAX_SNAPSHOT_BYTES: usize = 256 * 1024 * 1024;

@@ -931,6 +931,29 @@ certificate, public production state-sync protocol, epoch activation, or
 permission to sign. Cross-epoch transfer still requires the authenticated
 M08/M07 edge and the multi-host acceptance described below.
 
+## Historical ancestry consumer (M13-HISTORY-V1)
+
+`verify_native_historical_trust_path_v1` is the distinct consumer of shared
+M01-HISTORY-V1. It takes the existing independently pinned `NativeTrustAnchorV1`,
+all contiguous canonical headers including seals, ordered activation preimages,
+original terminal proof, bounded limits and the caller's shared CEV0 work meter.
+Only successful strict ancestry verification may issue the existing private
+`VerifiedNativeTrustPathV1`. The snapshot projection binds the original anchor
+pin and every supplied header/activation/proof byte in an explicitly framed
+local historical-path digest, distinct from ordinary per-step proof digests.
+Its projection contains one covered-header link per application header, skipping
+seals and retaining exact ordinary +1 and first-new +3 joins. Each coverage digest
+binds the complete ancestry transcript and that header's position; it must not
+imply that each ancestor had its own finality proof. Existing per-step admission and
+its proof requirements remain unchanged. No peer-supplied verified flag, digest,
+configuration or generic recomputer can construct this result.
+
+Native JMT staging may consume the resulting terminal facts exactly as before.
+It still grants no replay state or application installation authority. M08 must
+independently own and audit the local replay anchor, reuse M01-HISTORY-V1 on cold
+recovery, execute all application bodies through M06 and atomically install the
+derived execution base under a separate versioned owner-storage contract.
+
 ## Activation boundary
 
 Commissioned public synchronization needs authenticated transport, general

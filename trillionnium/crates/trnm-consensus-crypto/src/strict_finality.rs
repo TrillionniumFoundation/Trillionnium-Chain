@@ -299,6 +299,141 @@ pub fn decode_verify_epoch_first_finality_strict_v1(
     })
 }
 
+/// Verifies a terminal first-new proof using the exact evidence already decoded
+/// and strictly authenticated by the historical ancestry verifier. The caller's
+/// existing meter is retained; activation work is neither repeated nor refunded.
+#[inline(never)]
+pub(crate) fn decode_verify_epoch_first_finality_from_activation_v1(
+    decoded: &trnm_consensus_types::DecodedEpochActivationEvidenceV0,
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+    bytes: &[u8],
+    expected: FinalityExpectationV0,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<StrictEpochFinalityProofV1, StrictFinalityErrorV0> {
+    require_exact_decoded_activation(decoded, activation)?;
+    let proof = trnm_consensus_types::decode_epoch_first_finality_proof_v1_exact_with_budget(
+        bytes, decoded, budget,
+    )
+    .map_err(StrictFinalityErrorV0::Decode)?;
+    let target = proof.finalized_block().header();
+    if target.id() != expected.block_id
+        || target.height() != expected.height
+        || target.state_root() != expected.state_root
+        || target.receipts_root() != expected.receipts_root
+        || target.evidence_root() != expected.evidence_root
+    {
+        return Err(StrictFinalityErrorV0::TargetMismatch);
+    }
+    let parent = activation.terminal_old_header();
+    if expected.parent_id != parent.id()
+        || expected.parent_height != parent.height()
+        || expected.parent_timestamp_ms != parent.timestamp_ms()
+        || target.parent_id() != parent.id()
+    {
+        return Err(StrictFinalityErrorV0::ParentMismatch);
+    }
+    verify_epoch_finality_from_activation(activation, &proof)
+        .map_err(StrictFinalityErrorV0::Consensus)?;
+    Ok(StrictEpochFinalityProofV1 {
+        finality: StrictFinalityProofV0 { proof },
+        checkpoint_header: activation
+            .old_checkpoint_finality()
+            .finalized_block()
+            .header()
+            .clone(),
+        new_validator_set: activation.new_validator_set().clone(),
+        new_consensus_parameters: *activation.new_consensus_parameters(),
+    })
+}
+
+fn require_exact_decoded_activation(
+    decoded: &trnm_consensus_types::DecodedEpochActivationEvidenceV0,
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+) -> Result<(), StrictFinalityErrorV0> {
+    if decoded.old_checkpoint_finality() != activation.old_checkpoint_finality()
+        || decoded.next_epoch_commitment() != activation.next_epoch_commitment()
+        || decoded.authorization_kernel() != activation.authorization_kernel()
+        || decoded.old_validator_set() != activation.old_validator_set()
+        || decoded.old_consensus_parameters() != activation.old_consensus_parameters()
+        || decoded.new_validator_set() != activation.new_validator_set()
+        || decoded.new_consensus_parameters() != activation.new_consensus_parameters()
+        || decoded.authenticated_checkpoint_parent_header()
+            != activation.authenticated_checkpoint_parent_header()
+    {
+        return Err(StrictFinalityErrorV0::Consensus(
+            ValidationError::InvalidFinalityProof(
+                "decoded activation differs from strict authority",
+            ),
+        ));
+    }
+    Ok(())
+}
+
+/// Historical terminal proof admission with the latest already authenticated
+/// epoch context. Activation bytes and signatures are consumed only once by
+/// the ancestry verifier; this function charges only the terminal proof.
+#[inline(never)]
+pub(crate) fn decode_verify_historical_epoch_finality_v1(
+    decoded: &trnm_consensus_types::DecodedEpochActivationEvidenceV0,
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+    bytes: &[u8],
+    expected: FinalityExpectationV0,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<FinalityProofV0, StrictFinalityErrorV0> {
+    use trnm_consensus_types::{
+        decode_epoch_runtime_finality_proof_v1_exact_with_budget, BlockKind,
+        EpochRuntimeContextDataV1,
+    };
+    let activation_height = activation
+        .handoff_certificate()
+        .descriptor()
+        .fields()
+        .activation_height;
+    if expected.height == activation_height {
+        return decode_verify_epoch_first_finality_from_activation_v1(
+            decoded, activation, bytes, expected, budget,
+        )
+        .map(|strict| strict.finality.proof);
+    }
+    require_exact_decoded_activation(decoded, activation)?;
+    if expected.height <= activation_height
+        || expected.parent_height.get().checked_add(1) != Some(expected.height.get())
+    {
+        return Err(StrictFinalityErrorV0::ParentMismatch);
+    }
+    let context = EpochRuntimeContextDataV1::from_decoded_evidence_v1(decoded)
+        .map_err(StrictFinalityErrorV0::Consensus)?;
+    let proof = decode_epoch_runtime_finality_proof_v1_exact_with_budget(
+        bytes,
+        &context,
+        expected.parent_timestamp_ms,
+        budget,
+    )
+    .map_err(StrictFinalityErrorV0::Decode)?;
+    let target = proof.finalized_block().header();
+    if !matches!(
+        target.block_kind(),
+        BlockKind::Regular | BlockKind::EpochCheckpoint
+    ) || target.id() != expected.block_id
+        || target.height() != expected.height
+        || target.state_root() != expected.state_root
+        || target.receipts_root() != expected.receipts_root
+        || target.evidence_root() != expected.evidence_root
+    {
+        return Err(StrictFinalityErrorV0::TargetMismatch);
+    }
+    if target.parent_id() != expected.parent_id {
+        return Err(StrictFinalityErrorV0::ParentMismatch);
+    }
+    crate::epoch_runtime_v1::verify_epoch_finality_precharged_v1(
+        activation,
+        &proof,
+        expected.parent_timestamp_ms,
+    )
+    .map_err(StrictFinalityErrorV0::Consensus)?;
+    Ok(proof)
+}
+
 // This path is reachable only after the complete strict handoff verifier above.
 // Generic proposal/TC APIs keep rejecting certificate-only epoch authorization.
 fn verify_epoch_finality_from_activation(

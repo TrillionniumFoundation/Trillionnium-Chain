@@ -589,9 +589,28 @@ fn complete_repeated_handoff(path: &std::path::Path, fixture: Box<RepeatedCheckp
         prepared_target,
         &verified,
     );
+    let historical_bytes = assert_native_historical_sync(
+        &app,
+        &trust_anchor,
+        &other_trust_anchor,
+        &exported,
+        &verified,
+        &live_bytes,
+    );
     drop(app);
     let app = DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1())
         .expect("export must preserve the genuine C32 store");
+    assert_eq!(
+        app.export_historical_replay_v1(
+            BlockIdV0::new(*old_checkpoint.as_bytes()).unwrap(),
+            BlockIdV0::new(*h32.id().as_bytes()).unwrap(),
+        )
+        .unwrap()
+        .encode_v1()
+        .unwrap(),
+        historical_bytes,
+        "cold reopen must retain exact historical headers, bodies and authority bytes",
+    );
     assert_eq!(
         app.export_current_native_live_v1(BlockIdV0::new(*h32.id().as_bytes()).unwrap())
             .unwrap(),
@@ -828,6 +847,7 @@ fn m15_finality_transport_copy(
 }
 
 include!("native_live_sync_tests.rs");
+include!("native_historical_sync_tests.rs");
 
 fn rehash_repeated_successor(sql: &rusqlite::Connection, binding: &[u8]) {
     let mut fields: Vec<Vec<u8>> = sql.query_row(

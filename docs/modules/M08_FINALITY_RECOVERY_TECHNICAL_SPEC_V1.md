@@ -930,6 +930,204 @@ The existing strict proof vectors remain unchanged. Acceptance uses actual
 Core/Safety/native store/signer owners over two consecutive epochs; a fixture
 assigning a future phase or root is not a passing implementation.
 
+## Historical replay verification boundary (M08-HISTORY-V1)
+
+Historical replay uses shared M01-HISTORY-V1 with an independently audited local
+application/replay anchor, preserving the M08-to-M01 dependency direction.
+M13's verified terminal and M08's complete local replay anchor are separate
+requirements; downloaded current-live state cannot supply the missing replay
+history. Retain original headers, bodies, terminal proof and eight-root activation
+evidence and reverify them on cold recovery. Reuse M06 execution to derive every
+committed command-ID and signer/nonce entry. The current executor rejects runtime
+failures for the whole block and only constructs Success receipts; it does not
+currently commit failed application receipts. If that execution profile changes,
+replay must preserve identities for every admitted transaction regardless of its
+receipt status. Seal headers are chain records only. An imported base requires its
+own provenance and atomic owner contract; do not fabricate committed ancestor
+P records or copy the terminal proof into individual ancestor proof ledgers.
+This verification contract alone does not enable an importer or schema migration.
+
+### Read-only history export and local transport (M08-HISTORY-EXPORT-V1)
+
+`export_historical_replay_v1(anchor_block, target_block)` accepts exact committed
+schema10 epoch-P anchors/targets and returns inert `NativeHistoricalReplayV1`.
+It shares the existing retained-finality export's owner lock, immutable read
+transaction, SQL type/count/byte screens, complete source audit, bounded ancestry
+walk and fresh metadata/namespace recheck. It does not nest public exporters or
+relax the source's original per-P proof requirements. Both existing proof export
+and history export use one connection-scoped path builder. No SQL mutation occurs.
+
+The DTO contains `anchor_header_cev0`, `terminal_finality_cev0`, ordered `records`
+and ordered `activations`. `NativeHistoricalRecordV1` is either Application with
+canonical header and application-payload bytes, or Seal with canonical header.
+For each actual source P, reconstruct `ApplicationPayloadV0` from the artifact's
+exact outer transaction bytes, preserving order. Recheck payload/receipt roots,
+active block-size limit and the signed empty evidence root. This first native
+profile supports only implicit empty evidence, exactly as the native executor;
+reject unsupported evidence rather than dropping it. Obtain seal headers from
+the strictly audited original checkpoint proof, and terminal finality bytes from
+the exact target ledger. Copy the original eight activation roots in established
+order. Local P, artifact, replay sets, commit IDs and sequence numbers are absent
+from the transport authority. History does not carry per-ordinary-ancestor proofs.
+
+`encode_v1`/`decode_v1` use local framing `NHR1`, u16-BE revision1, u16-BE profile0,
+u32-length-prefixed anchor header and terminal proof, u32 record count, records
+with u8 tag0 Application/tag1 Seal followed by a framed header and (only for tag0)
+framed payload, u32 activation count, then each activation's eight framed roots.
+Root order is old checkpoint proof, next commitment, authorization kernel, old
+set, old parameters, new set, new parameters, checkpoint-parent header. Every
+frame length is u32-BE; unknown tags/revisions/profiles, incomplete frames and
+trailing bytes reject. This is neither a new consensus wire object nor a digest
+domain. Decoding a transport cannot mint any verified result.
+
+The entire framing is at most 64 MiB; require 1..256 records and independently
+0..32 activations. Source traversal remains limited to 128 application P rows.
+Headers and parameter/commitment roots are 1..4096 bytes, sets 1..1 MiB, other
+roots 1..8 MiB; application payloads are 4 bytes through 4 MiB, additionally
+subject to authenticated block-size semantics. Validate counts against remaining
+minimum framed bytes and every length against remaining input before allocation.
+Encode computes the complete checked size before allocating. Source row limits
+remain independently enforced even when the resulting export is small. The
+64 MiB bound describes encoded output, not peak process memory: the audited
+source snapshot, retained proof path and bounded artifact/body temporaries have
+their own limits. Inert transport framing also does not widen M01's stricter
+per-activation aggregate logical-root allowance.
+
+Tests must join genuine C18-to-C32 export to shared M01 and independent M13 trust,
+assert original terminal proof and transaction-byte equality, 14 consensus records
+versus ten executed bodies, and unchanged source head/sequence across cold export.
+Exercise truncation, trailing bytes, unknown tags, each count/length boundary and
+uncommitted/disconnected source targets. This suffix export does not claim the
+still-missing genesis/archive source join or an execution-ready imported base.
+
+### Planned imported execution base (M08-HISTORY-INSTALL-V1)
+
+This is the next owner-storage implementation contract, not an enabled importer.
+The first vertical is a receiver-owned genuine committed C18 schema10 source,
+verified history through C32, explicit installation, then original-finality C33
+ordinary continuation. A peer database or a peer-computed replay set cannot
+commission the receiver's anchor. Genesis/archive joining, incremental schema11
+installation, a second rebase and the next imported-base checkpoint/first-new
+writer are separate acceptance work and remain fenced in this first revision.
+
+`confirm_historical_replay_anchor_v1(expected_head, expected_sequence,
+expected_header)` returns a private-field non-Clone owner-affine
+`ConfirmedNativeReplayAnchorV1`. It requires physical schema10, an exact genuine
+committed epoch P/header, complete snapshot/replay/signer-policy audit, no pending
+P above the anchor, no unresolved source preparation-journal reservation above
+it (including a crash before its P row exists), and the pinned path/namespace
+identity. Preserve such reservations and reject admission; never erase or
+relabel them to make the anchor eligible. Retain the full head,
+source P/commit sequence, store/chain/genesis/profile and authorized signer-policy
+identities/digests, active old
+set/parameters, snapshot and both replay digests, and a typed source-inventory
+digest. Compute the latter over exact table names, sorted primary keys and framed
+typed raw columns plus required bound preparation records, after SQL size/type
+screens. Head/sequence alone is insufficient: edge installation can change the
+source inventory without advancing the metadata sequence. After installation,
+hash the explicitly reconstructed frozen logical source metadata singleton;
+the mutable current schema12 head/schema must not enter this source pin.
+
+At genuine C18, consumed prefix A and active epoch1 belong to the source P.
+Installed successor B remains phase0 with NULL consumption fields. Replay may
+authenticate and execute B and C, but must never mark this source B consumed or
+create fictitious source C21/C28/C31 P rows. At install the metadata singleton
+necessarily changes; freeze its former logical source view through the retained
+genuine source P and explicitly pinned old metadata fields. All other source
+rows and required preparation records remain exact. Later legitimate preparation
+may append records; do not freeze the entire appendable journal indefinitely.
+
+`prepare_historical_replay_base_v1(anchor, history)` verifies M01-HISTORY-V1
+from the audited local anchor, validates every Application/Seal tag against its
+authenticated header, and reexecutes all application bodies with M06. It returns
+private non-Clone `PreparedNativeReplayBaseV1` bound to owner, full source facts,
+typed inventory, exact input digest and locally computed target state/replay.
+It performs no source writes, P creation, signing or acknowledgement. M15 must
+independently join its configured M13 anchor/target to these exact facts; a
+matching downloaded digest does not establish either trust requirement.
+
+For deterministic local bookkeeping use new framed local domains
+`trnm.native.historical-replay-input.v1`, `.historical-replay-run.v1`,
+`.historical-replay-step.v1` and `.historical-replay-base.v1` (each prefixed
+`trnm.native`). The input digest covers complete canonical NHR1 bytes. The run
+digest binds store ID, full source head/sequence/inventory, target block and input
+digest. Each step's local commit ID binds run, ordinal, previous local head,
+authenticated header ID and computed artifact digest. These values never claim
+an original ancestor P/commit. The target head's commit ID is the final replay
+step's local commit ID, determined before installation; it is not the base digest.
+The base digest additionally binds the actual installation sequence and computed
+snapshot/command/nonce digests, avoiding any circular head/base dependency.
+
+Explicit schema10-to-12 installation adds exactly four STRICT tables, preserving
+all existing source tables. Non-singletons use WITHOUT ROWID and exact reference
+SQL inventories; unknown tables/views/triggers/indexes reject. H32 means an exact
+32-byte BLOB; U64 is an exact eight-byte BE BLOB; Head104 is height/block/root/local
+commit. Headers are canonical nonempty BLOBs at most4096 bytes. A scalar cannot
+be loaded through an unbounded Vec before its SQL type/length check.
+
+| New table | Required fields and invariants |
+| --- | --- |
+| `native_historical_replay_base_v1` | Singleton1, revision1, source_schema10; source sequence/head/P/commit sequence/header, old metadata identity and snapshot/command/nonce digests, active set/parameters and source-prefix bindings, typed inventory digest; exact NHR1 input digest/count and retained authority roots; target header/set/parameters/head, locally computed snapshot/replay bytes with H32 digests; installation sequence and base digest. Source fields must equal the actual retained source, not merely their own hashes. Installation sequence is source sequence+1. |
+| `native_historical_replay_input_v1` | Ordinal U64 primary key, unique block H32, canonical header, Application/Seal tag and exact payload, record digest. Exact ordinals0..count-1 cover every consensus height after source through target; Seal has no payload. Record digest binds input identity, ordinal and all framed fields. No source-local P/commit or peer replay data. |
+| `native_replay_execution_p_v1` | Block H32 primary key, base H32, unique P sequence, status0/1, parent_kind0=base/1=this-table-P, full parent Head104 and optional parent-P exactly for kind1; canonical Regular header, artifact, snapshot/replay/lifecycle and component digests, P digest, nullable commit sequence/ID exactly for status1. First revision rejects checkpoint/handoff/seal writes. |
+| `native_replay_execution_finality_v1` | Committed post-base block primary key, exact P digest and actual commit sequence, original strict finality bytes and proof/record digests. Exactly one for each committed post-base P and none for pending P; the C32 import proof cannot commit C33. |
+
+The base source fields explicitly retain the audited signer-policy digest and
+original terminal-proof bytes, ordered eight-root activations and their count.
+Reconstruct exact canonical NHR1 from this authority plus the ordered input rows
+to check the input digest and retry identity. Post-base status0 requires both
+commit columns NULL; status1 requires both non-NULL with exact widths.
+
+Post-base P/commit/finality digests use new `trnm.native.replay-execution-p.v1`,
+`trnm.native.replay-execution-commit.v1` and
+`trnm.native.replay-execution-finality.v1` domains. Never widen old parent_kind
+semantics or manufacture an old `PreparedNativeEpochExecutionV1` capability.
+Factor shared pure execution/receipt/header/snapshot checks; do not copy the
+execution engine or relax old schema10 row/proof bijections.
+
+Hard admission bounds: history1..256 consensus records, independently0..32 epoch
+transitions, complete retained canonical history/authority at most64 MiB; source
+plus new P at most128 rows and2 GiB aggregate bounded blobs; at most8 pending new P;
+snapshot at most256 MiB, each replay set at most16 MiB, lifecycle/set at most1 MiB,
+artifact at most16 MiB, individual proof at most8 MiB and post-base proofs at
+most64 MiB aggregate. Source audit, history, P, proof and temporary decoder limits
+are independent. These are resource limits, not a claimed peak-memory SLO.
+
+`install_historical_replay_base_v1(prepared)` is the only schema12 creator;
+opening a store never migrates it. Hold owner lock and namespace pin, BEGIN
+IMMEDIATE, re-audit and compare all source facts/inventory inside the transaction,
+create exact new tables/rows and replace current metadata using a full CAS,
+COMMIT, fsync database and parent directory, then perform fresh cold-equivalent
+audit before issuing `ConfirmedNativeReplayBaseV1`. A failure after COMMIT is an
+uncertain outcome requiring readback, never a fabricated rollback. Exact input
+retry identifies the existing installation byte-for-byte. After C33, retry may
+acknowledge the historical installation but cannot restore C32 metadata or issue
+a current C32 execution capability.
+
+Cold audit is one bounded nonrecursive pipeline: exact physical schema and SQL
+screens, frozen source10 audit, M01 retained-history verification, deterministic
+M06 replay, base equality, post-base P/proof audit, current metadata equality.
+Pass an explicit private source-read policy and the frozen C18 metadata to shared
+source readers. Do not globally add12 to `is_epoch_schema`/`has_later_*`, skip
+source proof ledgers on physical12, temporarily alter schema/head, create
+compatibility views or clone a temporary database to make old audits pass.
+Reuse the audited source store/prefix and sequence set once. Source sequences,
+installation sequence and new P/commit sequences must be disjoint. Persisted
+download/progress state is only a cache; restart re-verifies and reexecutes from
+the still-valid local anchor. The first bounded implementation may restart all
+256 steps rather than trust a cached private snapshot.
+
+Required acceptance: genuine receiver C18 capture before any C21 preparation;
+signed nonempty transactions before and after the anchor; exact state and replay
+equality at C32; source B remains installed/unconsumed through C33 and cold open;
+typed source rows unchanged; altered source B or deleted original source proof
+rejected even after recomputing local hashes; duplicate command/signer-nonce,
+wrong body/root/configuration, stale source CAS, alternate local parent commit,
+wrong original C33 proof and stale post-C33 import retry rejected. Exercise real
+SIGKILL before COMMIT, after COMMIT/before fsync and after fsync/before response,
+with cold recovery and exact retry. Existing schema10, anti-double-sign,
+persist-before-sign and deterministic execution tests remain mandatory.
+
 ## Activation boundary
 
 M08 remains candidate until the default node's real producers and consumers

@@ -380,6 +380,47 @@ and worker count. Zero root/receipt/fee disagreement across worker counts is
 required; it is not proof of speedup. Compare 1/2/4/8 workers on disjoint,
 shared-payer, hot-object and failure-heavy mixes before changing defaults.
 
+## Planned historical replay execution (M06-HISTORY-EXEC-V1)
+
+M08-HISTORY-INSTALL-V1 owns the local source and installation; M01-HISTORY-V1
+authenticates the complete header/configuration chain first. Execution then
+starts from the receiver's audited state and replay sets, with its own signer
+policy. Reconstruct each request from the receiver-local application head and
+the exact transported outer transaction bytes. A sender artifact's parent
+commit ID, P digest, receipt list or supplied replay set is never execution input.
+
+Ordinary/checkpoint bodies reuse `execute_complete_native_block_v0`. First-new
+bodies reuse `compute_complete_epoch_native_block_with_context_v1` and the
+existing carried-root store through a private sealed `EpochExecutionContextV1`.
+The latter binds the replay application parent, exact old seal2 consensus parent,
+first application height, authenticated old/new sets/parameters, authorization
+binding and coordinates. Do not expose or fabricate the normal owner epoch-edge
+or checkpoint-preparation capabilities. Seal19/20 and29/30 are verified chain
+records only; they produce no native state roots, replay writes or application P.
+
+C28 replay needs a private cutoff context joining the actual replayed C25 header,
+root/manifest and old parameters to C28's authenticated commitment/new context.
+Reuse the checkpoint computation and authenticated sparse-state codecs, retaining
+real C15 source and C25 replay roots. Do not require an absent individual C25
+finality proof or substitute an ordinary prepared/checkpoint permit. This context
+is internal computation data and grants no signing/activation authority.
+
+Every replayed application step must reproduce payload, evidence, state and
+receipt roots and update both replay sets using the existing executor's actual
+identity rules. Current runtime failure rejects the whole block and constructs
+no failed application receipt; record only identities from successful block
+execution. A future profile with committed failed receipts must retain every
+admitted transaction's identity regardless of receipt status. Local replay commit
+IDs use the separate M08 domains, so covered history cannot be mistaken for
+locally prepared original P records. C32 proof children C33/C34 are not replayed.
+
+Test signed nonempty transactions on both sides of the local anchor, duplicate
+command IDs and signer/nonces after import, exact raw payload ordering, unsupported
+evidence, wrong cutoff/transition context, cold replay equality and ordinary C33
+continuation through the unchanged native executor. Empty-body root agreement
+alone is insufficient replay-state acceptance. This contract defines subsequent
+implementation; the current native live-state staging API remains read-only.
+
 ## Activation boundary
 
 Only selected existing native and AI candidate operations may be invoked under

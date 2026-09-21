@@ -430,30 +430,42 @@ impl StrictEpochRuntimeContextV1 {
         proof: &FinalityProofV0,
         parent_timestamp: u64,
     ) -> Result<(), ValidationError> {
-        proof.validate(
-            self.activation.new_validator_set(),
-            Some(self.activation.old_validator_set()),
-            self.activation.new_consensus_parameters(),
-            parent_timestamp,
-        )?;
-        if proof.finalized_block().header().block_kind() == BlockKind::EpochHandoff
-            && parent_timestamp != self.activation.terminal_old_header().timestamp_ms()
-        {
-            return Err(invalid("epoch finality terminal timestamp"));
-        }
-        for certified in [proof.finalized_block(), proof.child(), proof.grandchild()] {
-            certified
-                .certifying_qc()
-                .verify(self.activation.new_validator_set(), &StrictEd25519Verifier)?;
-            crate::strict_finality::verify_epoch_proposal_witness_strict_v1(
-                &self.activation,
-                certified.header(),
-                certified.witness(),
-            )?;
-        }
-        Ok(())
+        verify_epoch_finality_precharged_v1(&self.activation, proof, parent_timestamp)
     }
 }
+
+/// Shared crypto kernel for an already charged proof and sealed activation.
+/// The caller supplies the authenticated immediate parent's timestamp.
+#[inline(never)]
+pub(crate) fn verify_epoch_finality_precharged_v1(
+    activation: &StrictSameVersionEpochActivationAuthorityV0,
+    proof: &FinalityProofV0,
+    parent_timestamp: u64,
+) -> Result<(), ValidationError> {
+    proof.validate(
+        activation.new_validator_set(),
+        Some(activation.old_validator_set()),
+        activation.new_consensus_parameters(),
+        parent_timestamp,
+    )?;
+    if proof.finalized_block().header().block_kind() == BlockKind::EpochHandoff
+        && parent_timestamp != activation.terminal_old_header().timestamp_ms()
+    {
+        return Err(invalid("epoch finality terminal timestamp"));
+    }
+    for certified in [proof.finalized_block(), proof.child(), proof.grandchild()] {
+        certified
+            .certifying_qc()
+            .verify(activation.new_validator_set(), &StrictEd25519Verifier)?;
+        crate::strict_finality::verify_epoch_proposal_witness_strict_v1(
+            activation,
+            certified.header(),
+            certified.witness(),
+        )?;
+    }
+    Ok(())
+}
+
 fn invalid(reason: &'static str) -> ValidationError {
     ValidationError::InvalidProposal(reason)
 }

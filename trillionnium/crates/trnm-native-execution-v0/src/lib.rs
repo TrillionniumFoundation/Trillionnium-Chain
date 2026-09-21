@@ -95,7 +95,8 @@ pub use durable::{
     LaterEpochCheckpointContextV1, NativeApplicationConfigV0,
     NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
     NativeEpochFinalityPathV1, NativeEpochFinalityStepV1, NativeH1StateSyncTrustedBaseRequestV0,
-    PreparedNativeEpochExecutionV1, VerifiedNativeSignerReplayFloorV1,
+    NativeHistoricalRecordV1, NativeHistoricalReplayV1, PreparedNativeEpochExecutionV1,
+    VerifiedNativeSignerReplayFloorV1,
 };
 pub use durable::{
     CommittedNativeIncrementalExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,

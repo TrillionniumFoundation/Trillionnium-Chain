@@ -20,6 +20,7 @@ mod epoch_runtime_v1;
 pub use epoch_runtime_v1::StrictEpochRuntimeContextV1;
 mod epoch_transition;
 pub use epoch_proposal_v1::{verify_first_epoch_proposal_strict_v1, StrictFirstEpochProposalV1};
+mod historical;
 mod pre_handoff;
 mod strict_finality;
 
@@ -32,11 +33,15 @@ pub use epoch_transition::{
     StrictEpochActivationBindingRefV0, StrictEpochFirstProposalHeaderV0,
     StrictSameVersionEpochActivationAuthorityV0, StrictSameVersionEpochTransitionV0,
 };
+pub use historical::{
+    verify_historical_header_ancestry_v1, HistoricalAncestryErrorV1, StrictHistoricalHeaderPathV1,
+};
 pub use strict_finality::{
     decode_verify_epoch_first_finality_strict_v1, decode_verify_finality_proof_strict_v0,
     FinalityExpectationV0, StrictEpochFinalityProofV1, StrictFinalityErrorV0,
     StrictFinalityProofV0, POCO_THREE_CHAIN_PROOF_CLASS_V0,
 };
+pub use trnm_consensus_types::HistoricalAncestryLimitsV1;
 
 /// Stateless strict Ed25519 verifier for PoCO-BFT v0 consensus roots.
 ///

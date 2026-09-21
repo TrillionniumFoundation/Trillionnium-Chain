@@ -274,6 +274,19 @@ M00 supplies bytes/errors; M01 verifies them independently; M02/M03/M13 replay
 those same cases at their actual ingress. Fuzz prefix/length arithmetic and
 nested allocation, with retained-byte/work assertions, not only no-panic checks.
 
+## Historical header context (M00-HISTORY-V1)
+
+`validate_historical_header_link_v1(header, parent, active_set, parameters)` is
+an inert structural helper for M01-HISTORY-V1. It reuses the existing exact
+header/set/parameter, leader and timestamp checks and `EpochGeometryV0` without
+allocating a new wire tag or hash domain. Parent ID and height must be exact;
+same-epoch views increase, while an epoch-change handoff starts a fresh positive
+view after the scheduled old seal2. It checks the unchanged chain identity and
+seal carried roots/commitment with empty payload/receipt/evidence roots. It does
+not claim QC, TC or proposal-signature verification and cannot authorize Core,
+signing or application execution. Strict terminal finality and original ordered
+activation evidence separately authenticate the complete linked history.
+
 ## Activation boundary
 
 The design authorizes implementation work, not new network formats. A new

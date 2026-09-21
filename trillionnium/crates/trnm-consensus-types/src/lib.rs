@@ -34,6 +34,7 @@ mod finality;
 mod genesis_application;
 mod handoff;
 mod handoff_sign_intent;
+mod historical;
 mod ids;
 mod joint_handoff;
 mod message;
@@ -124,6 +125,7 @@ pub use handoff_sign_intent::{
     HandoffSignerRoleV1, CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1,
     HANDOFF_SIGNER_PROFILE_V1,
 };
+pub use historical::{validate_historical_header_link_v1, HistoricalAncestryLimitsV1};
 pub use ids::{
     BlockId, CertificateId, ChainId, ConsensusParametersHash, ConsensusPublicKey, ConsensusString,
     Epoch, EpochTransitionId, EvidenceId, EvidenceRoot, GenesisHash, Height,
