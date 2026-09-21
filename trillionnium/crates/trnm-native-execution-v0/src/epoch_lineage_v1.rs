@@ -452,6 +452,73 @@ pub(super) fn verify_checkpoint(
                 <= MAX_EPOCH_EVIDENCE_BYTES_V1,
         "later finality aggregate byte budget"
     );
+    let native = CheckpointNativeEvidenceV1 {
+        context_digest: evidence.context_digest,
+        predecessor_edge: evidence.predecessor_edge,
+        checkpoint_parent_header: &evidence.checkpoint_parent_header,
+        checkpoint_header: &evidence.checkpoint_header,
+    };
+    let parent = checkpoint_native_parent(connection, config, p, &native, prefix)?;
+    let (old_set, old_parameters) = prefix.active(config);
+    let header = decode_header(&p.header)?;
+    let old_set_bytes = old_set
+        .try_cev0_bytes()
+        .map_err(|e| anyhow::anyhow!("later recovery old set: {e:?}"))?;
+    let old_parameters_bytes = old_parameters.canonical_bytes();
+    let audit = verify_successor_evidence(
+        connection,
+        config,
+        prefix,
+        &parent,
+        trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
+            old_checkpoint_finality: &evidence.checkpoint_finality,
+            next_epoch_commitment: &evidence.next_epoch_commitment,
+            authorization_kernel: &evidence.anchor_kernel,
+            old_validator_set: &old_set_bytes,
+            old_consensus_parameters: &old_parameters_bytes,
+            new_validator_set: &evidence.new_validator_set,
+            new_consensus_parameters: &evidence.new_parameters,
+            authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
+        },
+        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+    )?;
+    let verified = &audit.activation;
+    ensure!(
+        verified
+            .old_checkpoint_finality()
+            .finalized_block()
+            .header()
+            == &header,
+        "later recovery proof checkpoint substitution"
+    );
+    checkpoint_cutoff_matches(
+        connection,
+        config,
+        p,
+        &parent,
+        prefix,
+        verified.next_epoch_commitment(),
+        verified.new_validator_set(),
+        verified.new_consensus_parameters(),
+    )?;
+    Ok(audit)
+}
+
+/// Shared native comparison inputs, never a proof or signing capability.
+pub(super) struct CheckpointNativeEvidenceV1<'a> {
+    pub(super) context_digest: [u8; 32],
+    pub(super) predecessor_edge: [u8; 32],
+    pub(super) checkpoint_parent_header: &'a [u8],
+    pub(super) checkpoint_header: &'a [u8],
+}
+
+fn checkpoint_native_parent(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    p: &StoredEpochPV1,
+    evidence: &CheckpointNativeEvidenceV1<'_>,
+    prefix: &Prefix,
+) -> Result<StoredEpochPV1> {
     ensure!(
         p.lineage == encode_lineage(&prefix.bindings())?,
         "later checkpoint full prefix mismatch"
@@ -519,36 +586,23 @@ pub(super) fn verify_checkpoint(
             && old_set.epoch() > config.validator_set.epoch(),
         "later recovery checkpoint geometry"
     );
-    let old_set_bytes = old_set
-        .try_cev0_bytes()
-        .map_err(|e| anyhow::anyhow!("later recovery old set: {e:?}"))?;
-    let old_parameters_bytes = old_parameters.canonical_bytes();
-    let audit = verify_successor_evidence(
-        connection,
-        config,
-        prefix,
-        &parent,
-        trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
-            old_checkpoint_finality: &evidence.checkpoint_finality,
-            next_epoch_commitment: &evidence.next_epoch_commitment,
-            authorization_kernel: &evidence.anchor_kernel,
-            old_validator_set: &old_set_bytes,
-            old_consensus_parameters: &old_parameters_bytes,
-            new_validator_set: &evidence.new_validator_set,
-            new_consensus_parameters: &evidence.new_parameters,
-            authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
-        },
-        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-    )?;
-    let verified = &audit.activation;
-    ensure!(
-        verified
-            .old_checkpoint_finality()
-            .finalized_block()
-            .header()
-            == &header,
-        "later recovery proof checkpoint substitution"
-    );
+    Ok(parent)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn checkpoint_cutoff_matches(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    p: &StoredEpochPV1,
+    parent: &StoredEpochPV1,
+    prefix: &Prefix,
+    commitment: &trnm_consensus_types::NextEpochCommitmentV0,
+    new_set: &ValidatorSet,
+    new_parameters: &ConsensusParametersV0,
+) -> Result<()> {
+    let (old_set, old_parameters) = prefix.active(config);
+    let geometry = trnm_consensus_types::EpochGeometryV0::new(old_set.epoch(), old_parameters)
+        .map_err(|e| anyhow::anyhow!("later recovery geometry: {e:?}"))?;
     let cutoff_height = geometry
         .checkpoint_height()
         .get()
@@ -557,7 +611,7 @@ pub(super) fn verify_checkpoint(
     let cutoff = load_committed_p_by_height(connection, cutoff_height)?
         .context("later finality cutoff P missing")?;
     committed_identity(config, &cutoff)?;
-    let commitment = verified.next_epoch_commitment().fields();
+    let fields = commitment.fields();
     ensure!(
         cutoff.status == 1
             && cutoff.lineage == p.lineage
@@ -569,8 +623,8 @@ pub(super) fn verify_checkpoint(
                 <= parent
                     .commit_sequence
                     .context("later parent sequence missing")?
-            && commitment.snapshot_cutoff_height.get() == cutoff_height
-            && commitment.snapshot_state_root.as_bytes()
+            && fields.snapshot_cutoff_height.get() == cutoff_height
+            && fields.snapshot_state_root.as_bytes()
                 == cutoff.target_head()?.state_root().as_bytes(),
         "later finality cutoff binding"
     );
@@ -581,12 +635,67 @@ pub(super) fn verify_checkpoint(
         .collect::<Result<Vec<_>>>()?;
     let computed = derive_poco_next_epoch_from_cutoff_p_v1(config, &cutoff, &coordinates)?;
     ensure!(
-        &computed.commitment == verified.next_epoch_commitment()
-            && &computed.new_validator_set == verified.new_validator_set()
-            && &computed.new_parameters == verified.new_consensus_parameters(),
+        &computed.commitment == commitment
+            && &computed.new_validator_set == new_set
+            && &computed.new_parameters == new_parameters,
         "later finality differs from deterministic cutoff candidate selection"
     );
-    Ok(audit)
+    Ok(())
+}
+
+/// Verify old-epoch checkpoint finality without requiring future handoff signatures.
+#[allow(clippy::too_many_arguments)]
+pub(super) fn verify_pre_handoff_checkpoint(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    p: &StoredEpochPV1,
+    native: &CheckpointNativeEvidenceV1<'_>,
+    prefix: &Prefix,
+    proof: &[u8],
+    commitment: &trnm_consensus_types::NextEpochCommitmentV0,
+    descriptor: &trnm_consensus_types::HandoffDescriptorV0,
+    new_set: &ValidatorSet,
+    new_parameters: &ConsensusParametersV0,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<trnm_consensus_crypto::StrictPreHandoffContextV1> {
+    let parent = checkpoint_native_parent(connection, config, p, native, prefix)?;
+    committed_identity(config, &parent)?;
+    let ancestry = successor_ancestry::load(connection, config, prefix, &parent)?;
+    let predecessor = prefix
+        .entries
+        .last()
+        .context("pre-handoff predecessor missing")?;
+    let verified = trnm_consensus_crypto::decode_verify_successor_pre_handoff_context_strict_v1(
+        &predecessor.audit.activation,
+        &ancestry,
+        proof,
+        commitment,
+        descriptor,
+        new_set,
+        new_parameters,
+        budget,
+    )
+    .map_err(|e| anyhow::anyhow!("strict later pre-handoff: {e:?}"))?;
+    ensure!(
+        verified
+            .descriptor()
+            .fields()
+            .checkpoint_block_id
+            .as_bytes()
+            == &p.block_id,
+        "pre-handoff checkpoint substitution"
+    );
+    checkpoint_cutoff_matches(
+        connection,
+        config,
+        p,
+        &parent,
+        prefix,
+        commitment,
+        new_set,
+        new_parameters,
+    )?;
+    Ok(verified)
 }
 
 /// Verify original successor evidence against the exact already audited prefix.

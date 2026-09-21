@@ -59,8 +59,8 @@ use crate::{
 #[path = "epoch_durable.rs"]
 mod epoch_durable;
 pub use epoch_durable::{
-    CommittedNativeEpochExecutionV1, CommittedNativeReplayExecutionV1,
-    ConfirmedNativeReplayAnchorV1, ConfirmedNativeReplayBaseV1,
+    CommittedLaterEpochPreHandoffV1, CommittedNativeEpochExecutionV1,
+    CommittedNativeReplayExecutionV1, ConfirmedNativeReplayAnchorV1, ConfirmedNativeReplayBaseV1,
     ConfirmedPreparedNativeEpochExecutionV1, ConfirmedPreparedNativeReplayExecutionV1,
     EpochEdgeHistoryEntryV1, EpochEdgeHistoryV1, EpochEdgePhaseV1,
     FinalizedNativeEpochApplicationReadV1, LaterEpochApplicationEdgeRequirementsV1,
@@ -1997,6 +1997,7 @@ impl DurableNativeApplicationV0 {
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
                 | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
+                | epoch_durable::PRE_HANDOFF_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
                 | 7
@@ -2469,6 +2470,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
                 | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
+                | epoch_durable::PRE_HANDOFF_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
                 | 7
@@ -2666,6 +2668,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
                 | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
+                | epoch_durable::PRE_HANDOFF_SCHEMA_VERSION
                 | 6
                 | 7
         ) {
@@ -2869,6 +2872,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
                 | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
+                | epoch_durable::PRE_HANDOFF_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
                 | 7
@@ -2916,6 +2920,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
                 | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
+                | epoch_durable::PRE_HANDOFF_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
                 | 7
@@ -2995,6 +3000,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
                 | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
+                | epoch_durable::PRE_HANDOFF_SCHEMA_VERSION
                 | 6
                 | 7
         ) {
@@ -4159,6 +4165,7 @@ fn load_metadata_v0(
             | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
             | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
             | epoch_durable::LATER_SCHEMA_VERSION
+            | epoch_durable::PRE_HANDOFF_SCHEMA_VERSION
             | incremental_owner_v1::SCHEMA_VERSION
             | 6
             | 7
@@ -4576,6 +4583,10 @@ fn verify_schema_v0(connection: &Connection) -> DurableResult<()> {
                     .iter()
                     .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql))),
             );
+        }
+        if epoch_durable::schema_version(connection)? == epoch_durable::PRE_HANDOFF_SCHEMA_VERSION {
+            let (name, sql) = epoch_durable::PRE_HANDOFF_SCHEMA;
+            expected.push((name.to_owned(), normalize_sql_v0(sql)));
         }
         expected.sort_unstable_by(|a, b| a.0.cmp(&b.0));
     }

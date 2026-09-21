@@ -5,6 +5,58 @@ multiple-epoch/default-node integration pending; production activation not grant
 
 Primary module: M08. Producers: M02/M03/M06/M07. Consumers: M02/M03/M13/M14/M15.
 
+## Later checkpoint before joint signatures (M08-LATER-PREHANDOFF-V1)
+
+The later checkpoint must commit before either handoff signer consumes its
+role. Requiring a completed joint certificate to commit that checkpoint creates
+a cycle with signer retirement's committed-checkpoint prerequisite. The explicit
+schema13 candidate splits these durable operations; schema10 bytes and its
+existing complete-certificate entry point retain their original meaning.
+
+Migration starts only from an exactly pinned, audited schema10 owner, adds one
+closed-schema pre-handoff table, and changes no application head or sequence.
+Ordinary open never migrates. The new commit accepts the owner's genuine
+prepared checkpoint P, the original two-seal finality bytes, next-configuration
+preimages and the exact handoff descriptor. It reconstructs the authenticated
+predecessor prefix and committed C-1 ancestry from the local owner; strictly
+verifies the contextual proof through M01 with the caller's shared work meter;
+joins the full checkpoint/header/P, native roots and deterministic cutoff
+selection; then commits P, metadata, active old-epoch context and the original
+pre-handoff evidence in one parent/sequence CAS transaction. No handoff signature
+or next-epoch anchor is required or synthesized.
+
+The returned non-cloneable receipt binds owner, checkpoint P/artifact/overlay,
+commit sequence, full evidence digest and M01's strict contextual pre-handoff
+binding. It proves committed native execution and original finality, not signer
+custody, Core application acknowledgement or epoch activation. Fresh readback and
+cold recovery independently repeat these joins. A foreign owner, stale parent,
+different descriptor, proof or configuration, invalid nested signature, missing
+row, excessive allocation/work, or ambiguous committed checkpoint rejects.
+Exact retry returns the same commit sequence; conflicting retry never repairs
+or overwrites evidence. Preparation rows cannot become committed receipts.
+
+Only a later explicit attachment accepts the completed original joint kernel.
+It revalidates the retained pre-handoff evidence and both signer roles, derives
+the exact successor edge using the existing contextual verifier, and atomically
+inserts the existing finality/edge records. It does not reexecute or recommit C,
+advance the native sequence, create signatures, or acknowledge Core. An absent
+joint kernel leaves a valid committed old-epoch checkpoint with no successor
+edge. Original pre-handoff evidence remains immutable after attachment.
+
+The physical record is bounded before blob allocation: at most 32 records,
+64 MiB aggregate evidence per record, 4 KiB headers/descriptor/commitment/
+parameters, and 1 MiB validator set. M01 admission additionally enforces its
+caller-owned aggregate root limit (at most 8 MiB); the physical ceiling cannot
+enlarge that cryptographic admission budget. Cold inventory must reject a committed
+checkpoint with neither its original complete-certificate record nor an exact
+schema13 pre-handoff record, and must reject disagreement when both exist.
+Creation/commit/attachment use existing namespace, lock, rollback-journal,
+database/directory fsync and immutable readback rules. Actual tests must exercise
+commit without joint signatures, recovery before attachment, genuine attachment,
+exact retry, altered evidence, foreign ownership and real process-death cuts.
+Schema13 historical export/import and default-node activation remain separate
+consumers until explicitly joined and tested.
+
 ## Authority
 
 Resolve `docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md` first. Frozen

@@ -459,6 +459,7 @@ mod tests {
     include!("later_epoch_descendant_tests.rs");
     include!("later_epoch_repeated_tests.rs");
     include!("later_epoch_contextual_tests.rs");
+    include!("later_epoch_pre_handoff_tests.rs");
 
     fn key(index: usize) -> SigningKey {
         SigningKey::from_bytes(&[20 + index as u8; 32])
@@ -882,6 +883,21 @@ mod tests {
         other_trust_anchor: trnm_state_sync_v0::NativeTrustAnchorV1,
     }
 
+    struct LaterPreHandoffFixture {
+        application: DurableNativeApplicationV0,
+        checkpoint_prepared: crate::PreparedNativeEpochExecutionV1,
+        edge: crate::AuthenticatedEpochApplicationEdgeV1,
+        headers: Vec<BlockHeader>,
+        old_set: ValidatorSet,
+        old_parameters: ConsensusParametersV0,
+        new_set: ValidatorSet,
+        commitment: NextEpochCommitmentV0,
+        checkpoint_header: BlockHeader,
+        seal_2: BlockHeader,
+        checkpoint_finality: FinalityProofV0,
+        descriptor: HandoffDescriptorV0,
+    }
+
     // One authentic construction feeds both normal acceptance and the seeded
     // crash harness. No child reconstructs genesis/checkpoint history.
     #[inline(never)]
@@ -890,11 +906,10 @@ mod tests {
     }
 
     #[inline(never)]
-    fn build_later_descendant_fixture_with_transactions(
+    fn build_later_pre_handoff_fixture(
         path: &std::path::Path,
         h12_transactions: &[Vec<u8>],
-        receiver_c18_path: Option<&std::path::Path>,
-    ) -> Box<LaterDescendantFixture> {
+    ) -> Box<LaterPreHandoffFixture> {
         let fixture = build_native_checkpoint_fixture_v1(path);
         let app = fixture.application;
         let confirmed = app
@@ -1186,6 +1201,43 @@ mod tests {
             initial_new_view: View::new(1),
         })
         .unwrap();
+        // No role signature for this handoff has been made at this cut.
+        Box::new(LaterPreHandoffFixture {
+            application: app,
+            checkpoint_prepared: _checkpoint_p,
+            edge,
+            headers,
+            old_set,
+            old_parameters,
+            new_set,
+            commitment,
+            checkpoint_header,
+            seal_2,
+            checkpoint_finality,
+            descriptor,
+        })
+    }
+
+    #[inline(never)]
+    fn build_later_descendant_fixture_with_transactions(
+        path: &std::path::Path,
+        h12_transactions: &[Vec<u8>],
+        receiver_c18_path: Option<&std::path::Path>,
+    ) -> Box<LaterDescendantFixture> {
+        let LaterPreHandoffFixture {
+            application: app,
+            checkpoint_prepared: _checkpoint_p,
+            edge: _edge,
+            headers,
+            old_set,
+            old_parameters,
+            new_set,
+            commitment,
+            checkpoint_header,
+            seal_2,
+            checkpoint_finality,
+            descriptor,
+        } = *build_later_pre_handoff_fixture(path, h12_transactions);
         let old_root = descriptor.old_set_signing_root();
         let new_root = descriptor.new_set_signing_root();
         let shares = |set: &ValidatorSet, root: trnm_consensus_types::SigningRoot| {

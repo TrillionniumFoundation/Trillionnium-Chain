@@ -14,6 +14,11 @@ pub(super) const SCHEMA_VERSION: u64 = 4;
 pub(super) const LEGACY_LATER_SCHEMA_VERSION: u64 = 8;
 pub(super) const APPLICATION_FINALITY_SCHEMA_VERSION: u64 = 9;
 pub(super) const LATER_SCHEMA_VERSION: u64 = 10;
+pub(super) const PRE_HANDOFF_SCHEMA_VERSION: u64 = 13;
+#[path = "later_epoch_pre_handoff_v1.rs"]
+mod pre_handoff;
+pub use pre_handoff::CommittedLaterEpochPreHandoffV1;
+pub(super) const PRE_HANDOFF_SCHEMA: (&str, &str) = pre_handoff::SCHEMA;
 #[path = "later_epoch_descendant_finality_v1.rs"]
 mod descendant_finality;
 #[path = "historical_replay_owner_v1.rs"]
@@ -205,20 +210,24 @@ pub(super) const fn is_epoch_schema(version: u64) -> bool {
         || version == LEGACY_LATER_SCHEMA_VERSION
         || version == APPLICATION_FINALITY_SCHEMA_VERSION
         || version == LATER_SCHEMA_VERSION
+        || version == PRE_HANDOFF_SCHEMA_VERSION
 }
 
 pub(super) const fn has_later_schema(version: u64) -> bool {
     version == LEGACY_LATER_SCHEMA_VERSION
         || version == APPLICATION_FINALITY_SCHEMA_VERSION
         || version == LATER_SCHEMA_VERSION
+        || version == PRE_HANDOFF_SCHEMA_VERSION
 }
 
 pub(super) const fn has_later_application_finality_schema(version: u64) -> bool {
-    version == APPLICATION_FINALITY_SCHEMA_VERSION || version == LATER_SCHEMA_VERSION
+    version == APPLICATION_FINALITY_SCHEMA_VERSION
+        || version == LATER_SCHEMA_VERSION
+        || version == PRE_HANDOFF_SCHEMA_VERSION
 }
 
 pub(super) const fn has_later_descendant_finality_schema(version: u64) -> bool {
-    version == LATER_SCHEMA_VERSION
+    version == LATER_SCHEMA_VERSION || version == PRE_HANDOFF_SCHEMA_VERSION
 }
 
 #[derive(Debug, Clone)]
@@ -635,7 +644,7 @@ impl DurableNativeApplicationV0 {
                 && decode_lineage(&prepared.row.lineage)? == finality.lineage(),
             "later checkpoint P/header/lineage binding"
         );
-        self.commit_epoch_p(&prepared, Some(&preimages), None, None)
+        self.commit_epoch_p(&prepared, Some(&preimages), None, None, None)
     }
 
     pub fn preview_epoch_descendant_v1(
@@ -743,6 +752,10 @@ impl DurableNativeApplicationV0 {
                 "schema-9 committed later descendant requires retained original finality proof"
             );
         }
+        ensure!(
+            version != PRE_HANDOFF_SCHEMA_VERSION,
+            "schema13 cannot downgrade to schema10"
+        );
         if version != LATER_SCHEMA_VERSION {
             let existing = match version {
                 SCHEMA_VERSION => 0,
@@ -3536,8 +3549,13 @@ fn validate_p_with_seen_and_policy(
             params![p.block_id.as_slice(), p.p_digest.as_slice(), p.commit_sequence.context("later sequence")?.to_be_bytes().as_slice()],
             |row| row.get(0),
         )?;
+        let pre = if policy.schema(connection)? == PRE_HANDOFF_SCHEMA_VERSION {
+            pre_handoff::matching_count(connection, p)?
+        } else {
+            0
+        };
         ensure!(
-            count == 1,
+            count == 1 || pre == 1,
             "committed later checkpoint proof record missing"
         );
     }
@@ -3774,6 +3792,9 @@ pub(super) fn validate_later_inventory_v1_with_read_policy(
     policy: EpochReadPolicyV1<'_>,
 ) -> Result<()> {
     let schema = policy.schema(connection)?;
+    if schema == PRE_HANDOFF_SCHEMA_VERSION {
+        pre_handoff::audit(connection, config)?;
+    }
     if has_later_schema(schema) {
         validate_later_records_with_read_policy(connection, config, policy)?;
         // Authenticate the complete successor ledger before the application
@@ -4471,6 +4492,7 @@ impl DurableNativeApplicationV0 {
                 .as_ref()
                 .filter(|_| prepared.row.artifact_kind == 1),
             Some(proof_bytes),
+            None,
         )
     }
 
@@ -4549,6 +4571,7 @@ impl DurableNativeApplicationV0 {
         later: Option<&crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1>,
         later_application: Option<&LaterEpochApplicationEdgeV1>,
         application_proof: Option<&[u8]>,
+        pre_handoff: Option<&pre_handoff::EvidenceV1>,
     ) -> Result<CommittedNativeEpochExecutionV1> {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
@@ -4593,6 +4616,24 @@ impl DurableNativeApplicationV0 {
                 .checked_add(1)
                 .context("epoch commit sequence exhausted")?,
         );
+        if let Some(evidence) = pre_handoff {
+            ensure!(
+                later.is_none() && later_application.is_none() && application_proof.is_none(),
+                "pre-handoff commit cannot carry a successor authority"
+            );
+            ensure!(
+                schema_version(&connection)? == PRE_HANDOFF_SCHEMA_VERSION,
+                "pre-handoff commit requires explicit schema13"
+            );
+            pre_handoff::verify(
+                &connection,
+                &self.config,
+                &p,
+                evidence,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )?;
+            pre_handoff::check_capacity(&connection, &p)?;
+        }
         let later_facts = if let Some(evidence) = later {
             ensure!(
                 has_later_schema(schema_version(&connection)?),
@@ -4640,7 +4681,7 @@ impl DurableNativeApplicationV0 {
                     && facts.predecessor_edge == evidence.predecessor_edge,
                 "later successor facts differ from proof evidence"
             );
-        } else {
+        } else if pre_handoff.is_none() {
             ensure!(
                 decode_header(&p.header)?.block_kind() != BlockKind::EpochCheckpoint,
                 "later-epoch checkpoint finality bridge required"
@@ -4650,6 +4691,13 @@ impl DurableNativeApplicationV0 {
             let sequence = p
                 .commit_sequence
                 .context("committed epoch sequence missing")?;
+            if let Some(evidence) = pre_handoff {
+                ensure!(
+                    metadata.head == p.target_head()?,
+                    "pre-handoff retry is no longer current"
+                );
+                pre_handoff::check_retry(&connection, &self.config, &p, sequence, evidence)?;
+            }
             if let Some(evidence) = later {
                 ensure!(
                     metadata.head == p.target_head()?,
@@ -4789,53 +4837,14 @@ impl DurableNativeApplicationV0 {
         tx.execute("INSERT INTO native_application_epoch_context_v1 VALUES (1,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(singleton) DO UPDATE SET head_block=excluded.head_block,head_root=excluded.head_root,head_commit_id=excluded.head_commit_id,head_height=excluded.head_height,head_commit_sequence=excluded.head_commit_sequence,active_set=excluded.active_set,active_parameters=excluded.active_parameters,edge_lineage=excluded.edge_lineage,context_digest=excluded.context_digest",
             params![self.config.store_id.as_slice(),head.block_id().as_bytes().as_slice(),head.state_root().as_bytes().as_slice(),head.commit_id().as_bytes().as_slice(),head.height().get().to_be_bytes().as_slice(),
                 sequence.to_be_bytes().as_slice(),&p.target_set,&p.target_parameters,&p.lineage,context.as_slice()])?;
+        if let Some(evidence) = pre_handoff {
+            pre_handoff::insert(&tx, &self.config, &p, sequence, evidence)?;
+        }
         if let Some(evidence) = later {
             let facts = later_facts
                 .as_ref()
                 .context("later successor facts missing")?;
-            let digest =
-                later_record_digest(&self.config, &p.block_id, &p.p_digest, sequence, evidence);
-            tx.execute(
-                "INSERT INTO native_later_epoch_finality_v1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                params![
-                    p.block_id.as_slice(),
-                    p.p_digest.as_slice(),
-                    sequence.to_be_bytes().as_slice(),
-                    evidence.context_digest.as_slice(),
-                    evidence.predecessor_edge.as_slice(),
-                    &evidence.checkpoint_parent_header,
-                    &evidence.checkpoint_header,
-                    &evidence.checkpoint_finality,
-                    &evidence.anchor_kernel,
-                    &evidence.next_epoch_commitment,
-                    &evidence.new_validator_set,
-                    &evidence.new_parameters,
-                    digest.as_slice(),
-                ],
-            )?;
-            tx.execute(
-                "INSERT INTO native_later_epoch_edge_v1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                params![
-                    facts.successor_binding.as_slice(),
-                    facts.predecessor_edge.as_slice(),
-                    facts.checkpoint_block.as_slice(),
-                    facts.checkpoint_p_digest.as_slice(),
-                    facts.checkpoint_commit_sequence.to_be_bytes().as_slice(),
-                    facts.checkpoint_height.to_be_bytes().as_slice(),
-                    facts.checkpoint_root.as_slice(),
-                    facts.checkpoint_commit_id.as_slice(),
-                    facts.terminal_height.to_be_bytes().as_slice(),
-                    facts.terminal_block.as_slice(),
-                    facts.first_height.to_be_bytes().as_slice(),
-                    facts.proof_context_digest.as_slice(),
-                    facts.successor_context_digest.as_slice(),
-                    facts.authority_digest.as_slice(),
-                    0_i64,
-                    Option::<&[u8]>::None,
-                    Option::<&[u8]>::None,
-                    facts.record_digest.as_slice(),
-                ],
-            )?;
+            insert_later_records_v1(&tx, &self.config, &p, sequence, evidence, facts)?;
         }
         if let Some(later_edge) = later_application {
             let proof = application_proof.context("later application finality proof missing")?;
@@ -4883,7 +4892,9 @@ impl DurableNativeApplicationV0 {
             )?;
         }
         #[cfg(test)]
-        park_for_sigkill_commit_boundary_v0(if later_application.is_some() {
+        park_for_sigkill_commit_boundary_v0(if pre_handoff.is_some() {
+            "later_pre_handoff_before_commit"
+        } else if later_application.is_some() {
             "later_application_before_commit"
         } else if later.is_some() {
             "later_epoch_before_commit"
@@ -4894,7 +4905,9 @@ impl DurableNativeApplicationV0 {
         });
         tx.commit()?;
         #[cfg(test)]
-        park_for_sigkill_commit_boundary_v0(if later_application.is_some() {
+        park_for_sigkill_commit_boundary_v0(if pre_handoff.is_some() {
+            "later_pre_handoff_after_commit"
+        } else if later_application.is_some() {
             "later_application_after_commit"
         } else if later.is_some() {
             "later_epoch_after_commit"
@@ -4906,7 +4919,9 @@ impl DurableNativeApplicationV0 {
         drop(connection);
         sync_store_commit_boundary_v0(&self.path)?;
         #[cfg(test)]
-        park_for_sigkill_commit_boundary_v0(if later_application.is_some() {
+        park_for_sigkill_commit_boundary_v0(if pre_handoff.is_some() {
+            "later_pre_handoff_after_fsync"
+        } else if later_application.is_some() {
             "later_application_after_fsync"
         } else if later.is_some() {
             "later_epoch_after_fsync"
@@ -4936,6 +4951,59 @@ impl DurableNativeApplicationV0 {
             commit_sequence: sequence,
         })
     }
+}
+
+fn insert_later_records_v1(
+    tx: &Connection,
+    config: &NativeApplicationConfigV0,
+    p: &StoredEpochPV1,
+    sequence: u64,
+    evidence: &crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1,
+    facts: &LaterSuccessorFactsV1,
+) -> Result<()> {
+    let digest = later_record_digest(config, &p.block_id, &p.p_digest, sequence, evidence);
+    tx.execute(
+        "INSERT INTO native_later_epoch_finality_v1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        params![
+            p.block_id.as_slice(),
+            p.p_digest.as_slice(),
+            sequence.to_be_bytes().as_slice(),
+            evidence.context_digest.as_slice(),
+            evidence.predecessor_edge.as_slice(),
+            &evidence.checkpoint_parent_header,
+            &evidence.checkpoint_header,
+            &evidence.checkpoint_finality,
+            &evidence.anchor_kernel,
+            &evidence.next_epoch_commitment,
+            &evidence.new_validator_set,
+            &evidence.new_parameters,
+            digest.as_slice(),
+        ],
+    )?;
+    tx.execute(
+        "INSERT INTO native_later_epoch_edge_v1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        params![
+            facts.successor_binding.as_slice(),
+            facts.predecessor_edge.as_slice(),
+            facts.checkpoint_block.as_slice(),
+            facts.checkpoint_p_digest.as_slice(),
+            facts.checkpoint_commit_sequence.to_be_bytes().as_slice(),
+            facts.checkpoint_height.to_be_bytes().as_slice(),
+            facts.checkpoint_root.as_slice(),
+            facts.checkpoint_commit_id.as_slice(),
+            facts.terminal_height.to_be_bytes().as_slice(),
+            facts.terminal_block.as_slice(),
+            facts.first_height.to_be_bytes().as_slice(),
+            facts.proof_context_digest.as_slice(),
+            facts.successor_context_digest.as_slice(),
+            facts.authority_digest.as_slice(),
+            0_i64,
+            Option::<&[u8]>::None,
+            Option::<&[u8]>::None,
+            facts.record_digest.as_slice(),
+        ],
+    )?;
+    Ok(())
 }
 
 fn context_digest(
