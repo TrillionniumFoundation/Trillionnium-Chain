@@ -1052,6 +1052,39 @@ Acceptance uses seven real signing keys and covers ready quorum with unknown
 carriers, below-quorum waiting followed by a late carrier, known-reference
 conflict rejection, and first-TC freeze after a late carrier.
 
+### Authoritative QC and proposal witness (M15-TC-PROPOSAL-BINDING-V1)
+
+Core retains its deterministic highest QC, including the digest tie-break for
+separate valid quorum subsets at the same block/view. A verified TC may select
+another QC and still advance the view. The host must preserve that Ready owner,
+its native parent and all durable signer/checkpoint obligations. It must not
+lower Core's high QC or halt solely because the two certificate digests differ.
+
+For a direct successor view the proposal uses Core's exact QC and no TC. For a
+skipped view it uses the exact selected QC bytes from the retained verified TC,
+only if that QC certifies the same genesis/chain/protocol/epoch/validator set,
+view, height and block as the authoritative native parent QC. Synthetic anchors
+require full equality. The proposal's TC/justify relation remains exact; complete
+signature, ancestry, SafeToVote, P/Core-Valid, persistence and key guards remain
+mandatory. Incoming proposals use the same coordinate join after authenticating
+the proposer and complete carried certificates. Certificate identity is never
+used interchangeably in persistence, replay or signer records.
+
+If the selected QC is genuinely older or refers to another parent, the Ready
+owner continues authenticated ingress and local timeouts but cannot author a
+proposal. The scheduler checks witness availability before native preview or any
+proposal key call. A later compatible current-view TC can supply the witness even
+when Core reports no state change; signed owners retain their phase. Retention
+keeps Core's full QC and every referenced QC of the retained TC independently.
+A same-view conflicting certified block still reaches strict rejection.
+
+Regression evidence must use real quorum subsets, actual Core/native/Safety/
+signer owners and real timeout votes. It must cover a lower selected digest at
+the same coordinate, exact witness construction and received voting, genuine
+older-parent waiting followed by timeout progress, and unchanged rejection of a
+valid TC paired with a substituted justify. This contract alone is not LAN
+acceptance evidence.
+
 ### Bounded timeout-collector diagnostics (M15-TC-DIAGNOSTIC-V1)
 
 Failure-only diagnostics may record at most the last eight timeout-vote

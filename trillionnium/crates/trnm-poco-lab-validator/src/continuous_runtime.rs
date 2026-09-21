@@ -876,12 +876,8 @@ impl ContinuousConsensusWindowsV0 {
         let mut retain_qc_references = vec![high_qc.id()];
         if let Some(certificate) = pending_timeout_certificate {
             ensure!(
-                certificate.timed_out_view() < current_view
-                    && certificate
-                        .referenced_qcs()
-                        .iter()
-                        .any(|reference| reference.id() == high_qc.id()),
-                "pending timeout certificate does not retain the authoritative high QC"
+                certificate.timed_out_view().get().checked_add(1) == Some(current_view.get()),
+                "pending timeout certificate does not justify the current view"
             );
             retain_qc_references.extend(certificate.referenced_qcs().iter().map(QcReferenceV0::id));
         }
@@ -2080,6 +2076,68 @@ impl ContinuousValidatorAuthorityV0 {
             .map_err(|e| anyhow!("native finalized handoff recovery: {e}"))
     }
 
+    /// Core Ready does not imply that a retained TC authorizes a proposal on
+    /// the locally authenticated native parent. This read grants no key lease.
+    pub(crate) fn proposal_witness_ready_v1(&self) -> Result<bool> {
+        let runtime = self.ready_runtime_v0()?;
+        Ok(self
+            .proposal_justify_v1(runtime.facts_v0().current_view_v0())?
+            .is_some())
+    }
+
+    fn proposal_justify_v1(&self, current_view: View) -> Result<Option<&QcReferenceV0>> {
+        if current_view.get().checked_sub(1) == Some(self.justify.qc_ref().view().get()) {
+            return Ok(Some(&self.justify));
+        }
+        let Some(certificate) = self.proposal_timeout_certificate.as_ref() else {
+            return Ok(None);
+        };
+        ensure!(
+            certificate.timed_out_view().get().checked_add(1) == Some(current_view.get()),
+            "retained proposal TC does not justify the current view"
+        );
+        let selected = certificate
+            .referenced_qcs()
+            .iter()
+            .find(|reference| reference.id() == certificate.selected_high_qc_digest())
+            .context("verified proposal TC lacks its selected QC")?;
+        Ok(same_certified_parent_v1(selected, &self.justify).then_some(selected))
+    }
+
+    fn retain_proposal_timeout_certificate_v1(
+        &mut self,
+        current_view: View,
+        candidate: Option<TimeoutCertificateV0>,
+    ) -> Result<()> {
+        if current_view.get().checked_sub(1) == Some(self.justify.qc_ref().view().get()) {
+            self.proposal_timeout_certificate = None;
+            return Ok(());
+        }
+        let previous = self.proposal_timeout_certificate.take();
+        // Prefer the greatest selected QC of the verified current-view proofs.
+        // This does not alter Core's QC, signer identity or any signed witness.
+        self.proposal_timeout_certificate = candidate
+            .into_iter()
+            .chain(previous)
+            .filter(|certificate| {
+                certificate.timed_out_view().get().checked_add(1) == Some(current_view.get())
+            })
+            .max_by_key(|certificate| {
+                let selected = certificate
+                    .referenced_qcs()
+                    .iter()
+                    .find(|reference| reference.id() == certificate.selected_high_qc_digest())
+                    .expect("strictly verified TC has its selected QC")
+                    .qc_ref();
+                (selected.view(), selected.block_id(), selected.qc_digest())
+            });
+        ensure!(
+            self.proposal_timeout_certificate.is_some(),
+            "authoritative skipped view lacks its timeout certificate"
+        );
+        Ok(())
+    }
+
     pub fn proposal_preimage_v0(
         &self,
         workload: WorkloadBlockV1,
@@ -2118,7 +2176,10 @@ impl ContinuousValidatorAuthorityV0 {
         let parent = runtime
             .proposal_parent_v0()
             .map_err(|error| anyhow!("read exact proposal parent: {error}"))?;
-        let justify_ref = self.justify.qc_ref();
+        let justify = self
+            .proposal_justify_v1(binding.current_view_v0())?
+            .context("current view is waiting for a TC on the authenticated native parent")?;
+        let justify_ref = justify.qc_ref();
         ensure!(
             parent.application_head_v0().height().get() == justify_ref.height().get()
                 && parent.application_head_v0().block_id().as_bytes()
@@ -2193,14 +2254,14 @@ impl ContinuousValidatorAuthorityV0 {
         let timeout_certificate = self.proposal_timeout_certificate.clone();
         let signing_root = ProposalWitnessV0::signing_root_for(
             block.header(),
-            &self.justify,
+            justify,
             timeout_certificate.as_ref(),
             None,
         )
         .map_err(|error| anyhow!("derive proposal signing root: {error}"))?;
         Ok(ContinuousProposalPreimageV0 {
             block,
-            justify: self.justify.clone(),
+            justify: justify.clone(),
             timeout_certificate,
             validator_set: self.validator_set.clone(),
             consensus_parameters: self.consensus_parameters,
@@ -2266,10 +2327,12 @@ impl ContinuousValidatorAuthorityV0 {
             header.view() == binding.current_view_v0(),
             "proposal view differs from authoritative current_view"
         );
-        ensure!(
-            proposal.justify_qc() == binding.high_qc_v0(),
-            "proposal justify differs from authoritative high QC"
-        );
+        if !same_certified_parent_v1(proposal.justify_qc(), binding.high_qc_v0()) {
+            // Complete certificates were processed above. This host cannot
+            // execute on an older parent; retain Ready and let ingress/timers
+            // continue. This is no Vote or proposal acceptance.
+            return Ok(None);
+        }
         ensure!(
             header.parent_id().as_bytes()
                 == binding
@@ -2471,6 +2534,9 @@ impl ContinuousValidatorAuthorityV0 {
         proposal
             .verify_proposer_signature(&self.validator_set)
             .map_err(|error| anyhow!("reject unauthenticated proposer witness: {error}"))?;
+        proposal
+            .validate_certificate_relations_v1()
+            .map_err(|error| anyhow!("reject incoherent proposal certificate carrier: {error}"))?;
         if let Some(certificate) = proposal.timeout_certificate().cloned() {
             self.advance_timeout_certificate_v0(certificate)?;
         } else if let Some(certificate) = proposal.justify_qc().as_ordinary().cloned() {
@@ -2486,8 +2552,8 @@ impl ContinuousValidatorAuthorityV0 {
             "proposal view differs from authoritative current_view"
         );
         ensure!(
-            proposal.justify_qc() == binding.high_qc_v0(),
-            "proposal justify differs from authoritative high QC"
+            same_certified_parent_v1(proposal.justify_qc(), binding.high_qc_v0()),
+            "proposal justify differs from authoritative certified parent"
         );
         ensure!(
             header.parent_id().as_bytes()
@@ -2550,6 +2616,9 @@ impl ContinuousValidatorAuthorityV0 {
         proposal
             .verify_proposer_signature(&self.validator_set)
             .map_err(|error| anyhow!("reject unauthenticated proposer witness: {error}"))?;
+        proposal
+            .validate_certificate_relations_v1()
+            .map_err(|error| anyhow!("reject incoherent proposal certificate carrier: {error}"))?;
         if let Some(certificate) = proposal.timeout_certificate().cloned() {
             self.advance_timeout_certificate_v0(certificate)?;
         } else if let Some(certificate) = proposal.justify_qc().as_ordinary().cloned() {
@@ -2565,8 +2634,8 @@ impl ContinuousValidatorAuthorityV0 {
             "proposal view differs from authoritative current_view"
         );
         ensure!(
-            proposal.justify_qc() == binding.high_qc_v0(),
-            "proposal justify differs from authoritative high QC"
+            same_certified_parent_v1(proposal.justify_qc(), binding.high_qc_v0()),
+            "proposal justify differs from authoritative certified parent"
         );
         ensure!(
             header.parent_id().as_bytes()
@@ -2763,7 +2832,7 @@ impl ContinuousValidatorAuthorityV0 {
             .is_some_and(|accepted| {
                 compatible_alternative
                     && target_view == before.current_view_v0().get()
-                    && selected == high
+                    && certificate.selected_high_qc_digest() == accepted.selected_high_qc_digest()
                     && certificate
                         .referenced_qcs()
                         .iter()
@@ -2773,7 +2842,7 @@ impl ContinuousValidatorAuthorityV0 {
                             .entries()
                             .iter()
                             .find(|prior| prior.signer_id() == entry.signer_id())
-                            .is_none_or(|prior| prior == entry)
+                            .is_some_and(|prior| prior == entry)
                     })
             });
         if equivalent_accepted_projection {
@@ -2803,12 +2872,44 @@ impl ContinuousValidatorAuthorityV0 {
             return Ok(after);
         }
         if compatible_alternative
+            && self
+                .proposal_timeout_certificate
+                .as_ref()
+                .is_some_and(|accepted| {
+                    certificate
+                        .referenced_qcs()
+                        .iter()
+                        .all(|reference| accepted.referenced_qcs().contains(reference))
+                        && certificate.entries().iter().all(|entry| {
+                            accepted
+                                .entries()
+                                .iter()
+                                .find(|prior| prior.signer_id() == entry.signer_id())
+                                .is_some_and(|prior| prior == entry)
+                        })
+                })
             && (target_view < before.current_view_v0().get()
                 || (target_view == before.current_view_v0().get()
-                    && (selected.view(), selected.block_id(), selected.qc_digest())
-                        < (high.view(), high.block_id(), high.qc_digest())))
+                    && self
+                        .proposal_timeout_certificate
+                        .as_ref()
+                        .is_some_and(|accepted| {
+                            let prior = accepted
+                                .referenced_qcs()
+                                .iter()
+                                .find(|reference| {
+                                    reference.id() == accepted.selected_high_qc_digest()
+                                })
+                                .expect("verified retained TC has selected QC")
+                                .qc_ref();
+                            (selected.view(), selected.block_id(), selected.qc_digest())
+                                < (prior.view(), prior.block_id(), prior.qc_digest())
+                        })))
         {
-            // A late compatible quorum is not a replacement for a newer
+            // Only an already-observed complete QC projection can be skipped.
+            // A new lower QC or conflicting timeout statement must reach Core
+            // for evidence/halt even when it cannot improve the proposal.
+            // A late known quorum is not a replacement for a newer
             // proposal binding. In particular, do not consume the live owner
             // and then fail its skipped-view proof check on a stale TC.
             return Ok(before);
@@ -2841,6 +2942,20 @@ impl ContinuousValidatorAuthorityV0 {
                 .map_err(|error| anyhow!("reconfirm TimeoutSigned TC no-effect replay: {error}"))?,
         };
         if no_effect {
+            if matches!(self.phase, Some(ContinuousAuthorityPhaseV0::Ready(_)))
+                && target_view == before.current_view_v0().get()
+            {
+                self.retain_proposal_timeout_certificate_v1(
+                    before.current_view_v0(),
+                    Some(certificate),
+                )?;
+                self.consensus_windows
+                    .synchronize_authoritative_progress_v0(
+                        before.current_view_v0(),
+                        &self.justify,
+                        self.proposal_timeout_certificate.as_ref(),
+                    )?;
+            }
             return self.facts_v0();
         }
         let accepted_certificate = certificate.clone();
@@ -2872,28 +2987,10 @@ impl ContinuousValidatorAuthorityV0 {
             .proposal_binding_v0()
             .map_err(|error| anyhow!("read post-certificate proposal binding: {error}"))?;
         self.justify = binding.high_qc_v0().clone();
-        let next_view_is_direct = binding.current_view_v0().get().checked_sub(1)
-            == Some(binding.high_qc_v0().qc_ref().view().get());
-        if next_view_is_direct {
-            self.proposal_timeout_certificate = None;
-        } else {
-            let candidate = accepted_timeout_certificate
-                .or_else(|| self.proposal_timeout_certificate.take())
-                .ok_or_else(|| {
-                    anyhow!("authoritative skipped view lacks its exact timeout certificate")
-                })?;
-            ensure!(
-                candidate.timed_out_view().get().checked_add(1)
-                    == Some(binding.current_view_v0().get())
-                    && candidate.selected_high_qc_digest() == binding.high_qc_v0().id()
-                    && candidate
-                        .referenced_qcs()
-                        .iter()
-                        .any(|reference| reference == binding.high_qc_v0()),
-                "timeout certificate differs from the authoritative proposal binding"
-            );
-            self.proposal_timeout_certificate = Some(candidate);
-        }
+        self.retain_proposal_timeout_certificate_v1(
+            binding.current_view_v0(),
+            accepted_timeout_certificate,
+        )?;
         let minimum_retained_view = self
             .consensus_windows
             .synchronize_authoritative_progress_v0(
@@ -2976,6 +3073,25 @@ impl ContinuousValidatorAuthorityV0 {
             }
             None => bail!("continuous authority failed closed after a consumed-owner error"),
         }
+    }
+}
+
+// Certificate digests distinguish exact signed quorum subsets. Only after
+// strict verification may their identical certified parent coordinate be used
+// for native-parent binding. Synthetic trust roots retain exact equality.
+fn same_certified_parent_v1(left: &QcReferenceV0, right: &QcReferenceV0) -> bool {
+    match (left.as_ordinary(), right.as_ordinary()) {
+        (Some(left), Some(right)) => {
+            left.genesis_hash() == right.genesis_hash()
+                && left.chain_id() == right.chain_id()
+                && left.protocol_version() == right.protocol_version()
+                && left.epoch() == right.epoch()
+                && left.validator_set_id() == right.validator_set_id()
+                && left.view() == right.view()
+                && left.height() == right.height()
+                && left.block_id() == right.block_id()
+        }
+        _ => left == right,
     }
 }
 
@@ -3759,6 +3875,7 @@ mod tests {
         inner: LabEd25519SignatureProducer,
         external: RecordingSemanticWatermarkV0,
         observed_external_sequence: Arc<Mutex<Option<u64>>>,
+        observed_authorizing_revision: Arc<Mutex<Option<u64>>>,
         calls: Arc<AtomicUsize>,
     }
 
@@ -3773,6 +3890,11 @@ mod tests {
                 .observed_external_sequence
                 .lock()
                 .expect("sidecar ordering observer mutex") = self.external.sequence();
+            *self
+                .observed_authorizing_revision
+                .lock()
+                .expect("sidecar revision observer") =
+                Some(request.intent().authorizing_safety_revision());
             self.inner.sign(request)
         }
     }
@@ -3809,6 +3931,7 @@ mod tests {
             let external = RecordingSemanticWatermarkV0::fresh(scope, journal_id, capability);
             let external_observer = external.clone();
             let observed_external_sequence = Arc::new(Mutex::new(None));
+            let observed_authorizing_revision = Arc::new(Mutex::new(None));
             let calls = Arc::new(AtomicUsize::new(0));
             // Exercise the public ContinuousValidatorAuthority path.  The
             // external factory opens its sidecar only after Core-D, so the
@@ -3819,6 +3942,7 @@ mod tests {
                     inner: LabEd25519SignatureProducer::new(harness.keys[leader_index].clone()),
                     external: external_observer.clone(),
                     observed_external_sequence: Arc::clone(&observed_external_sequence),
+                    observed_authorizing_revision: Arc::clone(&observed_authorizing_revision),
                     calls: Arc::clone(&calls),
                 }));
             let vote = harness.authorities[leader_index]
@@ -3842,10 +3966,16 @@ mod tests {
                 .expect("project post-vote authority facts");
             assert_eq!(facts.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
             assert_eq!(facts.signed_vote_intents_v0(), 1);
+            let authorizing_revision = observed_authorizing_revision.lock().unwrap().unwrap();
+            assert_eq!(
+                authorizing_revision,
+                predecessor_revision.checked_add(1).unwrap(),
+                "the actual key request follows the persisted proposal obligation and Vote intent"
+            );
             assert_eq!(
                 facts.safety_revision_v0(),
-                predecessor_revision.saturating_add(1),
-                "Core Safety revision may advance independently of the external reservation sequence"
+                authorizing_revision.checked_add(1).unwrap(),
+                "SignatureReady release crosses its separate persisted Safety barrier"
             );
             assert_eq!(facts.signer_watermark_sequence_v0(), 2);
         });
@@ -7037,6 +7167,251 @@ mod tests {
     }
 
     #[test]
+    fn timeout_selected_quorum_subset_keeps_core_high_qc_and_exact_proposal_witness_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 2, 4, 2).unwrap();
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let proposal = proposal_for_takeover_v0(&harness);
+            let votes = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.vote_proposal_v0(proposal.clone()).unwrap())
+                .collect::<Vec<_>>();
+            let a = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &proposal,
+                votes[..3].iter().cloned(),
+            );
+            let b = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &proposal,
+                votes[1..].iter().cloned(),
+            );
+            let (low, high) = if a.id() < b.id() { (a, b) } else { (b, a) };
+            assert_ne!(low.id(), high.id());
+            assert!(same_certified_parent_v1(
+                &QcReferenceV0::ordinary(low.clone()),
+                &QcReferenceV0::ordinary(high.clone())
+            ));
+            for authority in &mut harness.authorities {
+                authority
+                    .advance_quorum_certificate_v0(low.clone())
+                    .unwrap();
+            }
+            let next_view = View::new(
+                harness.authorities[0]
+                    .facts_v0()
+                    .unwrap()
+                    .current_view_v0()
+                    .get()
+                    + 1,
+            );
+            let leader = leader_for(&harness.validator_set, next_view);
+            let leader_index = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|v| v.id() == leader)
+                .unwrap();
+            let timeouts = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.begin_local_timeout_v0().unwrap())
+                .collect::<Vec<_>>();
+            harness.authorities[leader_index]
+                .advance_quorum_certificate_v0(high.clone())
+                .unwrap();
+            let mut collector = ConsensusCertificateCollectorV0::new(
+                harness.validator_set.clone(),
+                MAXIMUM_COLLECTOR_COORDINATES_V0,
+            )
+            .unwrap();
+            collector
+                .register_qc_reference(QcReferenceV0::ordinary(low.clone()))
+                .unwrap();
+            for (index, vote) in timeouts.iter().enumerate() {
+                if index != leader_index {
+                    collector.admit_timeout_vote(vote.clone()).unwrap();
+                }
+            }
+            let tc = collector
+                .try_timeout_certificate(timeouts[0].view())
+                .unwrap()
+                .unwrap();
+            assert_eq!(tc.selected_high_qc_digest(), low.id());
+            let mut alternate_collector = ConsensusCertificateCollectorV0::new(
+                harness.validator_set.clone(),
+                MAXIMUM_COLLECTOR_COORDINATES_V0,
+            )
+            .unwrap();
+            alternate_collector
+                .register_qc_reference(QcReferenceV0::ordinary(low.clone()))
+                .unwrap();
+            for vote in &timeouts {
+                alternate_collector
+                    .admit_timeout_vote(vote.clone())
+                    .unwrap();
+            }
+            let alternate = alternate_collector
+                .try_timeout_certificate(timeouts[0].view())
+                .unwrap()
+                .unwrap();
+            assert_ne!(alternate.id(), tc.id());
+            assert_eq!(alternate.selected_high_qc_digest(), low.id());
+            for authority in &mut harness.authorities {
+                authority
+                    .advance_timeout_certificate_v0(tc.clone())
+                    .expect("a genuine lower selected digest must not consume and lose Ready");
+            }
+            let before = harness.authorities[leader_index].facts_v0().unwrap();
+            assert_eq!(before.current_view_v0(), next_view);
+            assert_eq!(before.high_qc_v0().qc_digest(), high.id());
+            assert!(harness.authorities[leader_index]
+                .proposal_witness_ready_v1()
+                .unwrap());
+            let (height, timestamp, transactions) = harness.workloads[1].clone();
+            let preimage = harness.authorities[leader_index]
+                .proposal_preimage_for_test_v0(height, timestamp, transactions)
+                .unwrap();
+            assert_eq!(
+                harness.authorities[leader_index].facts_v0().unwrap(),
+                before,
+                "preview cannot mutate authority or signer counters"
+            );
+            let successor = preimage
+                .seal_with_key_v0(&harness.keys[leader_index])
+                .unwrap();
+            assert_eq!(
+                successor.witness().justify_qc(),
+                &QcReferenceV0::ordinary(low.clone())
+            );
+            assert_eq!(successor.witness().timeout_certificate(), Some(&tc));
+            let target = (leader_index + 1) % 4;
+            harness.authorities[target]
+                .advance_quorum_certificate_v0(high.clone())
+                .unwrap();
+            assert_eq!(
+                harness.authorities[target]
+                    .facts_v0()
+                    .unwrap()
+                    .high_qc_v0()
+                    .qc_digest(),
+                high.id()
+            );
+            let vote = harness.authorities[target]
+                .vote_proposal_v0(successor)
+                .expect(
+                    "verified same-parent quorum subset reaches actual Core/Safety/native Vote",
+                );
+            assert_eq!(vote.height().get(), height);
+            let signed = harness.authorities[target].facts_v0().unwrap();
+            assert_eq!(signed.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
+            assert_eq!(signed.high_qc_v0().qc_digest(), high.id());
+            assert_eq!(harness.authorities[target].advance_timeout_certificate_v0(alternate).unwrap(), signed,
+                "equivalent lower-selected TC subset preserves the signed owner with higher Core QC");
+            assert_eq!(
+                harness.authorities[target]
+                    .advance_timeout_certificate_v0(tc)
+                    .unwrap(),
+                signed,
+                "exact TC replay preserves signed owner and prepared child"
+            );
+        });
+    }
+
+    #[test]
+    fn timeout_older_selected_parent_waits_without_losing_ready_or_timer_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 3, 5, 3).unwrap();
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let initial = harness.authorities[0].justify_v0().clone();
+            let proposal = proposal_for_takeover_v0(&harness);
+            let votes = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.vote_proposal_v0(proposal.clone()).unwrap())
+                .collect::<Vec<_>>();
+            let newer = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &proposal,
+                votes[..3].iter().cloned(),
+            );
+            harness.authorities[3]
+                .advance_quorum_certificate_v0(newer.clone())
+                .unwrap();
+            let build = |statements: &[TimeoutVote]| {
+                let mut collector = ConsensusCertificateCollectorV0::new(
+                    harness.validator_set.clone(),
+                    MAXIMUM_COLLECTOR_COORDINATES_V0,
+                )
+                .unwrap();
+                collector.register_qc_reference(initial.clone()).unwrap();
+                collector
+                    .register_qc_reference(QcReferenceV0::ordinary(newer.clone()))
+                    .unwrap();
+                for statement in statements {
+                    collector.admit_timeout_vote(statement.clone()).unwrap();
+                }
+                collector
+                    .try_timeout_certificate(statements[0].view())
+                    .unwrap()
+                    .unwrap()
+            };
+            let first = harness.authorities[..3]
+                .iter_mut()
+                .map(|a| a.begin_local_timeout_v0().unwrap())
+                .collect::<Vec<_>>();
+            let first_tc = build(&first);
+            for authority in &mut harness.authorities[..3] {
+                authority
+                    .advance_timeout_certificate_v0(first_tc.clone())
+                    .unwrap();
+            }
+            let mixed = harness
+                .authorities
+                .iter_mut()
+                .map(|a| a.begin_local_timeout_v0().unwrap())
+                .collect::<Vec<_>>();
+            let older_tc = build(&mixed[..3]);
+            let newer_tc = build(&mixed);
+            for authority in &mut harness.authorities {
+                authority
+                    .advance_timeout_certificate_v0(older_tc.clone())
+                    .unwrap();
+            }
+            let waiting = harness.authorities[3].facts_v0().unwrap();
+            assert_eq!(waiting.phase_v0(), PocoNodeLabAuthorityPhaseV0::Ready);
+            assert_eq!(waiting.high_qc_v0().qc_digest(), newer.id());
+            assert!(!harness.authorities[3].proposal_witness_ready_v1().unwrap());
+            let (height, timestamp, transactions) = harness.workloads[1].clone();
+            assert!(harness.authorities[3]
+                .proposal_preimage_for_test_v0(height, timestamp, transactions)
+                .is_err());
+            assert_eq!(harness.authorities[3].facts_v0().unwrap(), waiting);
+            // The compatible proof may have no Core transition: its witness
+            // still unblocks authoring on the already authenticated parent.
+            harness.authorities[3]
+                .advance_timeout_certificate_v0(newer_tc.clone())
+                .unwrap();
+            assert!(harness.authorities[3].proposal_witness_ready_v1().unwrap());
+            assert_eq!(
+                harness.authorities[3].facts_v0().unwrap().high_qc_v0(),
+                waiting.high_qc_v0()
+            );
+            let timed = harness.authorities[3]
+                .begin_local_timeout_v0()
+                .expect("the same Ready owner still owns its actual timer/signing path");
+            assert_eq!(timed.high_qc(), waiting.high_qc_v0());
+            assert_eq!(
+                harness.authorities[3].facts_v0().unwrap().phase_v0(),
+                PocoNodeLabAuthorityPhaseV0::TimeoutSigned
+            );
+        });
+    }
+
+    #[test]
     fn compatible_timeout_alternate_can_authorize_a_successor_proposal() {
         on_bounded_takeover_owner_stack_v0(|| {
             let lifetime =
@@ -7556,9 +7931,12 @@ mod tests {
             let error = harness.authorities[negative]
                 .advance_timeout_certificate_v0(alternative)
                 .expect_err("displaced checkpoint owner must fail equivalent TC revalidation");
-            assert!(error
-                .to_string()
-                .contains("reconfirm VoteSigned exact high-QC replay"));
+            assert!(
+                error
+                    .to_string()
+                    .contains("reconfirm VoteSigned TC no-effect replay"),
+                "{error:#}"
+            );
             assert_eq!(harness.authorities[negative].facts_v0().unwrap(), before);
         });
     }
@@ -7988,4 +8366,5 @@ mod tests {
     fn seven_validator_real_authorities_finalize_four_nonempty_blocks_v0() {
         run_deployed_convergent_harness_v0(7);
     }
+    include!("continuous_timeout_projection_tests_v1.inc");
 }

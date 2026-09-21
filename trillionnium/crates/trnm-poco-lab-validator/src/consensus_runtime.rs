@@ -4622,6 +4622,9 @@ impl BoundedConsensusOwnerV1 {
         if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready {
             return Ok(false);
         }
+        if !self.authority_v1()?.proposal_witness_ready_v1()? {
+            return Ok(false);
+        }
         let view = facts.current_view_v0();
         if leader_for(self.config.validator_set(), view) != self.config.local_validator()
             || self.local_proposal_views.contains(&view.get())
