@@ -1548,6 +1548,25 @@ database with identical valid bytes at a different namespace identity before a
 seal key call; the seal provenance join must reject with zero key calls. Existing application and timeout signing regressions remain
 required when changing the shared key boundary.
 
+### Pruned direct consensus ingress (M15-DIRECT-STALE-INGRESS-V1)
+
+An authenticated peer can deliver an old queued Vote, TimeoutVote, Proposal,
+QC or TC after this node has advanced its retained-view watermark. The direct
+runtime must still decode the complete bounded statement, verify its original
+signature/certificate and configured domain, and require the carried author to
+match the authenticated sender where applicable. Only after those checks may
+a view below the common ingress/relay watermark return inert `None`.
+
+An authenticated, valid but pruned frame must not stop the node, count as a
+protocol violation, populate the collector/proposal identity cache, create a
+Core input or touch Safety/signer state. Its transport sequence remains consumed
+by the original authenticated mesh. Malformed, wrong-author or bad-signature old
+frames remain errors, and an inconsistent local watermark remains an error.
+The watermark is never lowered, pruned evidence is never recreated, and frames
+inside the retained window continue through the original strict collector.
+This rule applies to direct remote admission only; local-origin reservations
+and the separate relay protocol retain their existing contracts.
+
 ### Concrete native live staging composition
 
 M15 composes M06's codec/recomputer with M13's verified native path and bounded

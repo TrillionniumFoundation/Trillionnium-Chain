@@ -708,10 +708,12 @@ impl ContinuousConsensusWindowsV0 {
             &self.consensus_parameters,
         )
         .context("preflight authenticated consensus frame")?;
-        ensure!(
-            admitted_consensus_message_view_v0(&decoded) >= self.minimum_retained_view_v0()?,
-            "direct consensus statement view was pruned"
-        );
+        // Network queues can outlive a local retained-view window. The full
+        // bounded decode and original signature checks above remain required,
+        // but an already-pruned valid statement has no remaining local action.
+        if admitted_consensus_message_view_v0(&decoded) < self.minimum_retained_view_v0()? {
+            return Ok(None);
+        }
         let action = self
             .ingress
             .admit_authenticated_frame(frame)
@@ -1825,8 +1827,9 @@ impl ContinuousValidatorAuthorityV0 {
 
     /// Routes one already transport-authenticated direct consensus frame into
     /// this authority's bounded process-local collector. `None` is an inert
-    /// exact Proposal replay, including a replay arriving in a fresh transport
-    /// session; all non-Proposal collector actions remain explicit.
+    /// exact Proposal replay or a fully verified statement below the retained
+    /// view watermark, including a replay arriving in a fresh transport session.
+    /// Neither case enters Core or changes the collector's retained evidence.
     pub fn admit_authenticated_consensus_frame_v0(
         &mut self,
         frame: &AuthenticatedFrame,
@@ -6292,10 +6295,59 @@ mod tests {
             kind: FrameKind::Vote,
             payload: payload.clone(),
         };
-        let stale_direct = windows
-            .admit_authenticated_frame_v0(&direct)
-            .expect_err("old direct Vote replay must remain stale after pruning");
-        assert!(stale_direct.to_string().contains("view was pruned"));
+        for _ in 0..2 {
+            assert!(windows
+                .admit_authenticated_frame_v0(&direct)
+                .expect("strictly verified pruned direct Vote is inert")
+                .is_none());
+        }
+        let mut corrupt = direct.clone();
+        *corrupt.payload.last_mut().unwrap() ^= 1;
+        assert!(windows.admit_authenticated_frame_v0(&corrupt).is_err());
+        let mut wrong_sender = direct.clone();
+        wrong_sender.sender = validator_set.validators()[1].id();
+        assert!(windows.admit_authenticated_frame_v0(&wrong_sender).is_err());
+
+        // A delayed full QC is verified before being discarded. It must not
+        // recreate a pruned carrier or prevent admission in the live window.
+        let mut old_collector = ConsensusCertificateCollectorV0::new(
+            validator_set.clone(),
+            MAXIMUM_COLLECTOR_COORDINATES_V0,
+        )
+        .unwrap();
+        for (index, key) in keys.iter().enumerate().take(5) {
+            old_collector
+                .admit_vote(signed_vote_v0(&validator_set, key, index, 4))
+                .unwrap();
+        }
+        let old_qc = old_collector
+            .try_quorum_certificate(old_vote.view(), old_vote.height(), old_vote.block_id())
+            .unwrap()
+            .unwrap();
+        let old_qc_frame = AuthenticatedFrame {
+            sender: validator_set.validators()[1].id(),
+            session: [0x42; 32],
+            sequence: 2,
+            kind: FrameKind::QuorumCertificate,
+            payload: crate::wire::encode_quorum_certificate(&old_qc).unwrap(),
+        };
+        assert!(windows
+            .admit_authenticated_frame_v0(&old_qc_frame)
+            .unwrap()
+            .is_none());
+        assert_eq!(windows.minimum_retained_view_v0().unwrap(), View::new(5));
+        assert!(windows.direct_proposals.is_empty());
+        let current_frame = AuthenticatedFrame {
+            sender: live_vote.author(),
+            session: [0x43; 32],
+            sequence: 3,
+            kind: FrameKind::Vote,
+            payload: encode_vote(&live_vote),
+        };
+        assert!(matches!(
+            windows.admit_authenticated_frame_v0(&current_frame).unwrap(),
+            Some(RoutedConsensusActionV0::Vote { vote, formed_qc: None }) if *vote == live_vote
+        ));
 
         let relay_envelope = ConsensusRelayEnvelopeV0::new(
             old_vote.author(),
