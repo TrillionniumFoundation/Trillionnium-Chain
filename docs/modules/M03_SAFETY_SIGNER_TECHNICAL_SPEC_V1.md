@@ -18,8 +18,10 @@ The existing old-only handoff profile remains unchanged. The explicit
 `HandoffSignerJournalProfileV1::for_epoch_handoff` profile additionally supports
 new-only and dual-role authors, with a distinct profile-binding domain.
 `StrictOldSetHandoffAdmissionV1` and `StrictNewSetHandoffAdmissionV1` consume M01's
-strict pre-certificate context. M02's durable phase record and ordinary new-epoch
-vote activation remain separate unfinished work.
+strict pre-certificate context. M02's durable full-context record, explicit
+journal9/10/11 storage and a bounded first-epoch candidate host are implemented.
+Repeated live activation, progressed codec2 host recovery and production custody
+remain separate unfinished joins; their next contracts are specified below.
 
 ## Interfaces
 
@@ -427,7 +429,8 @@ source-kind tags remain unchanged. Public V3 profile/owner/head types expose no
 V2 owner downcast. Initial scope accepts actual Journal8, Journal9 or Journal10
 owners only at an independently verified activation boundary, creating a new
 private destination; no in-place compaction, implicit upgrade, layout fallback,
-or Journal11 source adapter is permitted.
+or Journal11 source adapter is permitted by this implemented profile. The
+explicit successor-capable revision below does not change Journal11's SQL.
 
 The exact inventory is four STRICT tables: `epoch_metadata` and `epoch_head`
 retain Journal10 fields; singleton `epoch_provenance(singleton,provenance)`
@@ -476,6 +479,230 @@ actual SIGKILL cuts (three initialization, three append). This slice optimizes
 physical writes only; full logical decoding remains required, and progressed
 live-driver recovery, Journal11-to-Journal11 migration and performance claims
 remain outside its implemented scope.
+
+#### Successor source and stable physical revision (M03-EPOCH-SOURCE-V4)
+
+This is a required next design, not implemented behavior. Actual Journal11
+metadata has `source_kind CHECK(source_kind BETWEEN 0 AND 2)`, where tag2 is
+physical Journal10. Its public source-owner type is an alias to the V2 enum.
+Calling a Journal11 source Journal10 or widening that SQL under user_version11
+would change a committed physical contract. One successor-capable revision is
+therefore necessary; there must not be a new physical version for every epoch.
+
+The planned signer **Journal12**, distinct from M08's native schema12, uses
+application ID `0x54524543`, user_version12 and lock magic `TRNMJ12E`. Its public
+V4 profile/owner/head types have no V2/V3 owner downcast. It preserves Journal11's
+exact four STRICT table shapes and prefix-once grammar except the closed
+`epoch_metadata.source_kind` constraint becomes0..4: 0=Journal8/14O,
+1=Journal9/14E codec1, 2=Journal10/14E codec2, 3=Journal11/14E codec2 prefix-once,
+4=Journal12/14E codec2 prefix-once. Unknown tags reject before BLOB decoding.
+The new V4 source enum accepts each corresponding real typed owner and its
+versioned expected pin, including its own V4 owner. It is not an alias whose
+runtime tag erases the physical source. Journal8/9/10/11 APIs, source tags,
+schemas, bytes, checksums and rejection behavior stay unchanged.
+
+Reuse the private semantic journal engine and `PhysicalJournalV2` through a
+closed layout strategy. Keep a single sparse-record reader/writer and canonical
+parts validator; do not copy the complete Journal10 engine into a V4 fork.
+The V4 flat immediate-source descriptor adds the actual closed physical layout
+to existing source Core configuration, record bounds, epoch owner generation,
+independent profile/context references and full verified epoch state. For
+source kinds2/3/4 the logical decoder remains the same exact codec2 decoder;
+the live source reader must additionally verify the selected physical schema,
+application ID, lock magic, original prefix and exact stored before/after parts.
+No logical-codec success may trigger a fallback to another physical owner.
+
+The new domains are `trnm.journal12.epoch.profile.v4`,
+`trnm.journal12.epoch.origin.v4` and `trnm.journal12.epoch.chain.v4`. Use the
+existing u64-length-framed hash helper. Profile field order remains source-kind
+tag, immediate source profile reference, source context reference, target codec2
+context reference, target generation, row limit and database limit. Origin field
+order remains target profile reference, new journal ID, actual source-kind tag,
+source journal ID, source chain checksum, complete original source record,
+source transition and first target revision. Chain field order remains origin,
+previous chain checksum, revision, complete reconstructed target codec2 record
+and transition. Source revision is authenticated by the exact source record
+and pin. The distinct domain/tag/profile binds physical identity without another
+metadata copy or recursive source-descriptor blob.
+
+For a Journal11/12 source, reconstruct its original record from the actual
+singleton provenance and actual record parts, then strictly decode and compare
+M02's regenerated opaque `EpochSafetyRecordPartsV2` in all three ranges. Preserve
+the complete reconstructed source record and source transition in destination
+metadata byte for byte. Its source prefix is therefore retained, not replaced
+by a hash or trimmed to its last activation. Target provenance is the separately
+verified flat preparation with exactly one new entry and identical prior entry
+bytes/independent root. Do not concatenate preceding Safety records or embed a
+source profile recursively. Canonical source parts can be regenerated from that
+full retained record during cold audit; no redundant part-digest table is needed.
+
+Source capture may be implemented first without a new writer. Reuse
+`SqliteEpochSafetyJournalV3::prepare_recovery_v3(expected_pin)` and its strict
+`StrictEpochCoreRecoveryV2`; a private captured-source carrier additionally binds
+actual source profile/layout, namespace/owner affinity, head pin, transition,
+epoch generation and canonical original bytes. Capture reads the source twice
+and compares all fields before returning inert facts. It performs no destination
+creation, source mutation, driver binding, ACK or key call. Capturing a pending
+state is diagnostic only: `prepare_next_epoch_v2` still rejects it. Do not add
+a public scalar source constructor merely to expose this internal reuse point.
+
+Initialization takes the V4 profile, actual selected source owner/pin and
+original opaque `PreparedEpochCoreActivationV2`. Before creating any path,
+strictly reread the source and independently prepare the same target from that
+source recovery. Require exact settled source at the authenticated outgoing
+checkpoint: finalized equals applied, exact native artifact/overlay and
+checkpoint proof, no pending sign/validation/finalization/sync/halt, generation
+and revision each +1, identical complete prefix plus one activation. Only the
+original consumed driver's opaque persistence request may bind the destination;
+the independently prepared comparison request has a different process affinity
+and must not be substituted. Core's settled-state and contextual crypto checks
+remain authoritative, never a host-written SQL phase.
+
+Create a new private target namespace, never overwrite or shrink the source.
+Within one Immediate transaction persist unchanged original source bytes,
+one exact target provenance row, initial canonical parts/transition and head.
+Commit, sync files/directory, independently read the target and reread the actual
+source again before returning. Every selected source identity/state/record/part/
+transition/profile/generation and filesystem pin must still match. A changed
+source leaves the target unactivated and fences the operation; it does not
+retarget the prepared request. Only M15's consuming source-owner/custody protocol
+may select the target in the independent node checkpoint and release its ACK.
+Creating target storage alone does not retire an old signer or activate a new one.
+
+Explicit existing-target retry must reopen only the originally selected target
+path/profile and independently retained expected target pin, recheck exact
+origin/source/initial request and repeat sync/readback. A target whose ID/pin
+was not durably selected by the host's migration intent cannot be adopted by
+reading its self-reported head. No automatic deletion/recreation is allowed
+after a possibly committed initialization. In-place11→12 migration is outside
+this contract; physical12 is selected at a real activation boundary, and later
+12→12 activations reuse the same format in new namespaces. Cold target recovery
+can verify the retained full source evidence without reopening a now-offline
+source directory, but needs the independently commissioned flat source/target
+profiles and expected head pin, never database-supplied trust roots.
+
+All current bounds continue:32 flat activation entries/64MiB provenance, each
+source/target record at most256MiB and its narrower profile limit, transition
+at most1MiB, exactly one target provenance row and at most two target records.
+Screen SQL scalar types/lengths before loading any blob; a five-object schema
+sentinel rejects unexpected objects. Compute database/WAL/row capacity from
+the bounded full source record, provenance, two target parts/transition pairs
+and fixed metadata with checked arithmetic. Do not claim peak memory from file
+size: reconstruct/decode one bounded record at a time on the default stack.
+Context/prefix crypto remains metered; reuse already verified operation-local
+contexts and never reset a failed meter to accept another representation.
+Pruning removes only the obsolete target record after a successful append;
+immutable source/provenance and all still-required independent checkpoint pins
+remain. Source-journal or signer decision garbage collection is not authorized.
+
+Acceptance must use actual opaque Core requests and physical owners: source11
+capture after genuine persistence and cold reopen; a settled11→12 activation;
+then a settled12→12 activation using this same layout. Preserve source8/9/10→12
+dispatch and all old layout rejection tests. Verify original codec2 bytes and
+each part, different independently valid prefix, source kind/layout substitution,
+source mutation between reads, foreign affinity, generation/revision skip,
+wrong source pin, schema-object/resource overflow, pruning and exact retries.
+Run three real SIGKILL cuts for each new initialization and append, with
+independently captured intended pins. Initial-only/capture tests cannot claim
+settled-source or live-host acceptance; synthetic settled SQL is forbidden.
+
+#### Progressed codec2 host recovery (M03-EPOCH-RECOVERY-V1)
+
+This planned contract applies to progressed Journal10/11 and future Journal12.
+It does not relax `prepare_candidate_host_initial_recovery_v2/v3`: those methods
+must keep rejecting every progressed or outbox cut. Existing V1 first-new
+readback/resume helpers in `epoch_runtime_candidate_v1.rs` are useful concrete
+comparison patterns, not permission to downcast a codec2 owner or discard its
+complete preparation prefix. The M02 private recovery constructor and M15 physical
+consumer require their versioned producer/consumer reviews before implementation.
+
+Recovery is a consuming two-phase operation. First open the existing exact
+profile/namespace with all signing, timers, callbacks and publication disabled.
+Load the independently administered node checkpoint and signer watermarks before
+selecting local state. A private, non-Clone `PreparedEpochJournalRecoveryV1`
+owns the unbound physical journal, strict Core recovery and its comparison cut;
+it exposes neither a general Core driver nor an ACK method. The comparison cut
+frames physical kind/profile/context, source/origin, current journal ID/revision/
+record and chain checksums, transition bytes, epoch owner generation, full prefix
+identity, and actual pinned namespace/process-owner identity. The independently
+supplied profile remains the root of prefix trust. Persisted epoch generation
+does not change on restart; only process-local request affinity is recreated.
+
+M02 classifies the complete strict Safety state and exact transition into its
+actual bounded obligations: pending SignIntent, payload-validation/D completion,
+ordered finalization/apply, certified-block sync/replay or halted state. Preserve
+every obligation when several coexist; follow Core's priority/order and refuse
+unsupported combinations rather than selecting the easiest field to recover.
+Recover high/locked QC ancestry and native validation facts under the retained
+strict epoch runtime, including synthetic anchors, before permitting new votes.
+Do not create a new initial state, lower a view/lock/finalized/applied watermark,
+invent a proposal tree, clear `pending_sign`, or reconstruct pending effects from
+an external phase number. Compact codec2 bytes are not the entire live tree.
+
+The second phase consumes that carrier with actual M15 owners: native store and
+selected Prepared/Committed artifacts, current typed epoch edge, retired/new
+custody owners, and independent node-checkpoint authority. Fresh comparisons bind
+chain/genesis/epoch/author/key/set/parameters, both native and consensus parents,
+application head/P/K sequence/artifact/overlay, complete activation/prefix,
+Safety cut/transition, signer profile/intent fingerprint/local and external heads,
+and existing owner/lease generations. Namespace checks bracket this work and any
+key callback. Host-supplied booleans, recovered SQL tags and equality of a single
+root cannot create the required attestation.
+
+| Authenticated durable cut | Required reconciliation before any live effect |
+| --- | --- |
+| Stable state, no obligations | Native committed head must equal Core applied; reconcile finalized queue and all strict ancestry/validation facts. Compare independent checkpoint and custody heads. Only the consumed recovery barrier may release normal timer/input handling. |
+| Exact Safety successor persisted, ACK lost | Accept only the independent checkpoint's recorded expected predecessor or intended target and the exact transition manifest. Recreate a fresh opaque request for that same already-durable state, bind it after a second unchanged journal read, and use exact confirmation, not another append. External target CAS/readback must finish before the one ACK. An unrecorded gap is not repairable by guessing. |
+| Pending SignIntent, signer has no decision | Require exact durable Safety intent and matching independently selected pre-sign checkpoint. After recovery/ancestry barriers, use the existing signer journal's durable intent→external reservation→key→signed event→external readback sequence. No key call may precede fresh native/Safety/custody checks. |
+| Signer intent PREPARED, result absent or uncertain | Query/replay only the identical fingerprint under the same purpose/profile/key/epoch/view. External/local heads may be only the documented exact predecessor or intended successor. The injected producer must provide exact Ed25519 replay or a status API for the uncertain-key window; no different content, fresh namespace or watermark reset is allowed. |
+| Exact signed result exists, Safety release is pending | Use `read_signed_intent_exact_v1` under before/after local/external pin checks; verify the original intent/signature. Deliver only that result, then persist Core's exact durable signature-release successor and external node checkpoint before output. This advances Safety revision once; exact retry does not invoke the key again. |
+| Durable release exists, network publication unknown | Recover only the original signed bytes and request/outbox identity from the retained signer decision and independently selected release cut. If the exact message cannot be reconstructed from authenticated retained data, remain fenced. Retransmit byte-identically; publication acknowledgment cannot alter a decision, create a new Safety transition or erase replay protection. |
+| Native P exists, validation/D/ACK is pending | Reopen the exact owner-affine P and proposal/header/body binding; rerun the existing deterministic validation/readback and application-sealed Core D path for its original obligation. Never treat inclusion in a later finality proof as Core Valid. A matching root without original P/delivery identity cannot discharge it. |
+| Native K or Core applied callback may have committed | Match only the actual queue front and original strict proof. Reconcile exact native predecessor or committed target, then the tag-3 application-applied Safety transition and independent node checkpoint before ACK. Use the actual +1 or authenticated first-new +3 parent rule; never call native apply twice or skip another queue item. |
+| Pending certified-block sync, safety replay or halt | Return only the exact authenticated sync/replay obligation or existing halt. No timer/signature/new proposal permission follows merely from opening the journal. Resume live operation only through the existing strict completion path. |
+
+At most one documented missing transition may be repaired against an already
+persisted independent intent. A local or external third state, an unexplained
+multi-step gap, lost required old record, conflicting signature, ahead signer
+watermark, substituted profile/namespace or unavailable external authority
+fences recovery. If the required predecessor has been pruned beyond the two
+retained Safety records, obtain separate authenticated evidence or remain
+fenced; never widen local retention authority by trusting a checksum alone.
+The external checkpoint envelope must bind the physical kind/profile and exact
+recovery transition identity in addition to existing cut fields before this
+path can activate. Existing `EpochNodeCheckpointV1` comparison fields are not
+silently reinterpreted; M15 must explicitly version that missing consumer join.
+
+Only after fresh native/custody/external agreement, second unchanged physical
+journal read and namespace check may the journal consume the carrier, install
+one fresh process affinity and return a distinct M02 recovery-pending driver.
+Its only admissible initial input is the exact recovery barrier ACK. Persisted
+rows/revision/prefix remain unchanged by binding itself. The one ACK releases
+only the classified recovered obligation, not every deferred effect or a new
+unrelated Vote/Timeout. A native callback still requires its existing sealed
+authority, and output remains held until its own durable/external release cut.
+Failed rebinding leaves the journal unbound/fenced and returns no usable driver;
+another owner or earlier-process opaque request cannot match the new affinity.
+
+All new writes use original opaque Core requests, exact predecessor CAS, FULL
+commit, file/directory fsync, fresh readback and independent checkpoint CAS.
+On response loss, independently reread source/target before doing anything
+else. No recovery record accepts keys, copied custody leases, peer phase tags or
+caller-selected verifiers. Preserve profile record/transition/queue limits,
+one pending custody call, bounded status deadlines, and shared crypto work;
+timeout means uncertainty, not permission to forget an intent. No new Safety
+physical layout is needed solely to rebuild a process-local recovery session.
+
+Acceptance derives each cut from a real Core/native/custody execution. Kill at
+Safety before-commit/after-commit/after-sync, signer reservation/key-result/signed
+event boundaries, native K, applied Safety, external checkpoint CAS and output
+release. Independently retain the intended external cut, cold-open all owners,
+and prove byte-exact signature replay, one apply, stable nonce/command history,
+no head/view/lock rollback and no authority before final readback/ACK. Include
+foreign/old process affinity, prefix/storage-part substitution, ahead watermarks,
+external outage, restored valid old images and replacement during key callbacks.
+Use existing genuine Journal11/native first-new fixtures and default stack;
+pure Core or synthetic settled-state tests do not establish this host join.
 
 ### Contextual successor journal (M03-EPOCH-JOURNAL-V2; inert persistence implemented)
 
@@ -628,9 +855,11 @@ explicitly by the parent for each death cut. The physical backend and existing
 journal8/9 regressions remain required.
 
 Actual progressed source9-to-journal10 and journal10-to-journal10 migrations,
-post-initial CAS/pruning/crash cases, role-specific custody and the live physical
-host join remain open. The implementation does not close live repeated-epoch or
-external acceptance gates.
+role-specific custody and the repeated live physical host join remain open.
+Journal10's real post-initial timeout CAS and three process-death cuts, and
+Journal11's signature-release/pruning and six process-death cuts, are implemented
+bounded persistence tests. They do not establish a settled next-epoch source,
+progressed codec2 host recovery or external repeated-epoch acceptance.
 
 Use a single M15 owner to route ordinary Vote/Timeout, old handoff and new
 handoff requests and to hold all relevant namespaces. The existing
