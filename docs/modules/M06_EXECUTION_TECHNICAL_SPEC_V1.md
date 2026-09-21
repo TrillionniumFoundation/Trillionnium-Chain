@@ -429,6 +429,119 @@ schema7 supports multiple edge owners. A versioned edge-history record and
 lineage-aware storage/replay contract are required before the singleton guard
 or the first-new `count == 0` restriction may be relaxed.
 
+#### Required schema11 incremental checkpoint execution context
+
+This is a planned M06 producer contract for M07's **Required schema11
+incremental multiple-edge owner**. Schema11 remains closed until its owner,
+execution and recovery acceptance passes. It does not change schema7 or grant
+the full-snapshot `LaterEpochCheckpointContextV1` authority over sparse state.
+M07 defines persistence, migration, inventory limits and atomic commits; this
+section defines the missing computation and cutoff-authority join.
+
+The existing `poco_checkpoint::authenticated_cutoff_v0` opens a full-snapshot
+historical reader using the configured genesis geometry.
+`authorize_poco_scheduled_cutoff_v0` additionally requires the authenticated old
+set/parameters to equal the original owner configuration, and
+`authorize_native_checkpoint_execution_v0` uses full-snapshot finalized reads or
+preview. Preserve those entry-point fences. Passing the epoch1 set as an extra
+untrusted argument, replacing the application configuration, or presenting a
+full-snapshot receipt must not authorize an incremental C18.
+
+Only the audited schema11 owner may construct a private, non-Clone
+`IncrementalCheckpointContextV2`. Its constructor runs under the native owner
+lock and one immutable read transaction; it takes an owner-affine native parent
+capability, never a public `ni::IncrementalParentV1` as authority. It binds:
+
+- Owner affinity and namespace identity; store ID, immutable source anchor and
+  migration pin; actual metadata head, durable sequence and owner generation.
+- The complete authenticated consumed prefix, including source/phase and exact
+  old validator set and parameters from its last consumed edge. An installed
+  unconsumed tail cannot authorize a checkpoint in the following epoch.
+- The exact parent Head104, native P digest/persist identity, canonical signed
+  parent header, storage artifact/persist identity, and replay predecessor/delta.
+  A committed parent also binds its actual commit sequence. A prepared parent
+  binds its complete bounded owner-validated ancestry and has no commit receipt.
+- The actual **committed** cutoff Head104, native P digest/commit sequence,
+  storage artifact/persist identity, replay identity and exact reader root and
+  version. C18 must use C15 selected from epoch1 geometry and snapshot lead3.
+- The cutoff's authenticated PoCO projection and validator lifecycle, including
+  manifest cutoff height, entries root/count and active application validators.
+  These come from the C15 sparse reader's verified live values; caller leaves,
+  the imported C8 snapshot and another owner's projection are inadmissible.
+- Derived checkpoint/seal/first-new coordinates, chain/genesis/protocol profile,
+  and a context digest binding the parent, cutoff and full prefix according to
+  M07. All arithmetic, exact-root and canonical-configuration checks precede
+  any planning or durable preparation.
+
+Keep the reader transaction alive while loading the projection and computing
+the plan; do not carry an open reader or borrowed transaction in a returned
+capability. A returned context records authenticated identities and bounded
+canonical material. Before every mutation, reopen and revalidate its owner,
+parent/cutoff, prefix and expected sequence/generation; stale or substituted
+contexts fail closed.
+
+There is a necessary ordering distinction. C17 finality includes C18/S19
+headers, so C18 header planning cannot require C17 to be already committed.
+Permit inert checkpoint preview and native P staging over the exact authenticated
+prepared C17 ancestry while C15 is already committed. They compute the real sparse
+result and cutoff-derived selection but grant no checkpoint commit or activation
+receipt. Preserve preparation-journal reservation/readback before the header
+can enter the existing signing path. Once C16/C17 finality has committed, the
+checkpoint authority confirmation/commit boundary must reopen the actual committed
+C17 and C15 readers and revalidate the exact planned header, all four execution
+commitments, selection and native/storage/replay identities. A speculative
+parent's old context digest cannot simply be relabeled as committed authority.
+This permits the real three-chain construction without treating C18 or either
+seal as an already committed application block.
+
+Extract shared deterministic computation below the existing authorization
+wrappers. The sparse owner adapter may call the same projection decoder,
+`active_consensus_configuration`, validator-projection validation and
+`authorize_authenticated_poco_cutoff_candidate_selection_v0` selection kernel
+only after supplying a sealed cutoff authority from the context above. Factor
+the geometry/configuration comparison in `authorize_poco_scheduled_cutoff_v0`
+into a private helper whose expected old trust comes exclusively from either
+the unchanged genesis wrapper or this audited prefix. Do not expose a public
+constructor accepting arbitrary set/parameter/root triples.
+
+`AuthenticatedPocoProjectionAtV0::ensure_exact_cutoff` remains mandatory:
+both the actual reader version and projection manifest must equal C15.
+`compute_complete_native_block_v0` and its worker implementation consume the
+existing sparse `ExecutionView` at the selected parent with authenticated epoch1
+parameters. Reuse `native_execution_from_receipts_v0` to bind exact body/receipt
+bytes; extract the arithmetic/receipt binding portion of
+`authorize_native_checkpoint_execution_v0` below its owner wrapper instead of
+calling its full-snapshot read/preview branches. Any namespace point proofs
+needed by shared commitment construction must be generated from that same C15
+sparse reader. The scheduled cutoff refresh in `complete.rs` already emits the
+manifest update at the configured cutoff; acceptance must exercise it, not
+inject replacement projection bytes into SQL.
+
+The resulting kind2 checkpoint uses the ordinary executed-artifact codec and
+the exact EpochCheckpoint header. Ordinary kind0 retains its Regular-only
+fence. Checkpoint staging must atomically bind the native P, kind2 context,
+state/replay deltas and persist CAS described by M07. Strict C18/S19/S20
+verification binds the now-committed C17 timestamp/header and exact C15 tuple
+before installed edge B can exist. C21 then consumes a separate sealed
+incremental `EpochExecutionContextV1` derived from B, with application parent
+C18 and consensus parent S20; C22 uses B's new configuration and complete prefix
+`[A,B]`. Neither a header plan nor an application receipt replaces M08 finality.
+
+Acceptance extends `incremental_epoch_commit_v1::tests::setup`: preserve the real
+C11 credit and C12 transfers, commit through actual C15, plan/stage C18 over prepared
+C17, commit C16/C17 using the signed C18/S19 headers, then strictly commit
+C18 and execute/commit C21/C22. Compare roots, body and receipts through the
+same serial/worker computation; assert the C15 scheduled manifest and selected
+commitment root, immutable C8 source, zero authenticated-snapshot bytes, absence
+of S19/S20 state entries and no replay-version advance for either seal. Reopen
+installed C18, consumed C21 and
+progressed C22; reject stale/foreign parent contexts, substituted cutoff roots
+or timestamps, genesis-as-epoch1 trust and rehashed native/storage identities.
+The C11 command and C12 signer nonces must remain rejected after B. M07's six
+checkpoint/second-first-new SIGKILL cuts, exact original-proof retry and
+all-committed fork protection are required consumer checks, not evidence of
+current schema11 implementation.
+
 Schema4 now exposes the read-only `read_epoch_edge_history_v1()` contract and
 the indexed `recover_epoch_application_edge_at_index_v1()` seam. They return
 only a recursively audited, owner-affine history: every consumed P must carry

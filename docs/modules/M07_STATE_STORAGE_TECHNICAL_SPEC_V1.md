@@ -888,6 +888,292 @@ application head. Acceptance still requires measured growing-history bytes,
 SIGKILL/device-fault evidence, pruning-reference replay and a complete M13
 multi-epoch import path.
 
+### Required schema11 incremental multiple-edge owner
+
+This is the required next versioned contract, not implemented schema7 behavior.
+Primary M07; M06 produces checkpoint execution, M08 consumes finality and owns
+recovery, and M13 remains a separate consumer. Schema11 is reserved for this
+incremental owner; schema8/9/10 belong to the full-snapshot owner. The first
+vertical acceptance path is real incremental C8→C11→C18→C21→C22, with C15 as
+the actual second cutoff. The feature remains `incremental-epoch-candidate`,
+default closed. No schema11 file is accepted by a legacy schema5/6/7 writer.
+
+The current fences are material. `audit_owner` binds the singleton edge to the
+immutable schema5 source C8 and audits its old trust from genesis configuration.
+`P::validate_context` requires Regular, while descendant validation also requires
+height less than the next checkpoint. Both reject C18. `commit::load` retains
+only one first-new proof; storage `stage` requires zero preceding `ni_epoch_edge`
+rows. `audit_committed_head` assumes one configuration and one first-new ancestor.
+Finally, `retire_forks` protects only that singleton committed first block. Simply
+removing the height/count fences would therefore fail authority recovery and
+attempt to retire the earlier committed C11 storage delta.
+
+#### Closed inventory and explicit migration
+
+Schema11 preserves the exact schema7 SQL inventory and frozen codecs/domains,
+then adds exactly the five STRICT tables below. Non-singleton tables use
+`WITHOUT ROWID`. Every H32, Head104 and U64 has an exact BLOB length CHECK;
+U64 is big-endian eight bytes. Nullable fields have all-or-none checks. Kind,
+phase and revision fields are checked INTEGER enums. No extra trigger, index,
+view or table is accepted. The required primary/unique keys are part of the
+independent reference schema used by `verify_schema`; opening never creates it.
+
+`Prefix` uses the existing four-byte big-endian count followed by that many H32
+bindings: exact length 4+32*n, at most32 distinct nonzero bindings, no trailing
+bytes. `ReplayHead` is U64 version plus H32 root. These are local storage formats;
+consensus, executed-artifact and signed-header bytes do not change.
+
+| Added schema11 table | Exact ordered fields and constraints |
+| --- | --- |
+| `native_incremental_epoch_owner_v2` | Singleton `id=1`, `revision=2`, `source_anchor` H32, immutable `migration_sequence` U64, immutable `migration_digest` H32, `tip_binding` H32, `prefix` Prefix, `generation` U64, `checksum` H32. Prefix includes the installed tail if present; the active execution configuration is the new configuration of the last **consumed** edge. |
+| `native_incremental_epoch_edge_v2` | `binding` H32 primary key, `ordinal` U64 unique, nullable `predecessor` H32, `prefix` Prefix of the preceding edges, `checkpoint_head` Head104, `checkpoint_p` H32, `checkpoint_sequence` U64 unique, `context_digest` H32, `evidence_kind` INTEGER 0 or1, `evidence` nonempty BLOB at most64MiB, `phase` INTEGER 0 or1, nullable `consumed_block` H32 unique, nullable `consumed_p` H32, nullable `consumed_sequence` U64 unique, `checksum` H32. Phase0 has no consumed fields; phase1 has all three. Only the tail may have phase0. Ordinal0 is the original schema7 edge and has no predecessor. |
+| `native_incremental_epoch_p_context_v2` | `block` H32 primary key, `p_digest` H32, `kind` INTEGER 0 ordinary/1 first-new/2 checkpoint, `prefix` Prefix, nullable `cutoff_head` Head104, nullable `cutoff_p` H32, nullable `cutoff_sequence` U64, `checksum` H32. All cutoff fields exist exactly for kind2. Every retained row of `native_incremental_p_v1` (ordinary or checkpoint) and `native_incremental_epoch_p_v1` (first-new), prepared or committed, has exactly one context row, with no orphan or cross-kind duplicate. Original full-snapshot source/history rows in `native_durable_execution_p_v0` do not receive these contexts. The native P continues to bind its actual parent, header, state artifact/sequence and replay delta. |
+| `native_incremental_epoch_first_commit_v2` | `block` H32 primary key, `edge` H32 unique, `p_digest` H32, `sequence` U64 unique, `head` Head104, original `proof` nonempty BLOB at most8MiB (the CEV0 root ceiling), `proof_digest` H32, `checksum` H32. Exactly one row for each consumed edge; no row for an installed edge. |
+| `native_incremental_epoch_ordinary_commit_v2` | `block` H32 primary key, `edge` H32, `p_digest` H32, `sequence` U64 unique, `head` Head104, original `proof` nonempty BLOB at most8MiB, `proof_digest` H32, `checksum` H32. Exactly one row for each committed ordinary P. A checkpoint uses its edge evidence, never an ordinary proof row. |
+
+Evidence kind0 preserves the original `EpochRecoveryEvidenceV1::encode()` bytes.
+Kind1 is a local exact codec: bytes `NI-EP2`, followed by seven fields, each a
+four-byte big-endian length then the original bytes, in order checkpoint-parent
+header, checkpoint header, checkpoint finality, anchor authorization kernel,
+next-epoch commitment, new validator set, new parameters. Fields are nonempty;
+header/commitment/parameter limits are4096 bytes, the set limit is1MiB, and the
+complete record is at most64MiB. These match the existing M08 bounds. The old
+set/parameters are obtained from the preceding authenticated prefix, never from
+caller-supplied duplicate fields. `context_digest` binds store ID, source anchor,
+checkpoint P digest, parent Head104/P digest/actual commit sequence, complete
+preceding Prefix, authenticated old set/parameters, and the cutoff tuple. For
+the kind0 migration row it binds the retained original checkpoint/source tuple
+and empty preceding Prefix under the same distinct local domain.
+
+Use the existing framed hash helper with separate domains
+`trnm.native-application.incremental-epoch-owner.v2`,
+`trnm.native-application.incremental-epoch-edge.v2`,
+`trnm.native-application.incremental-epoch-p-context.v2`,
+`trnm.native-application.incremental-epoch-first-commit.v2`,
+`trnm.native-application.incremental-epoch-ordinary-commit.v2`,
+`trnm.native-application.incremental-epoch-context.v2` and
+`trnm.native-application.incremental-epoch-migration.v2`.
+Each row checksum frames store ID, immutable source anchor and every preceding
+field in its table order; variable evidence/proof fields contribute their
+SHA256 digest, nullable fields include a presence byte. The owner checksum also
+binds the existing base owner's current checksum and metadata Head104. Proof
+digests are SHA256 of the exact retained bytes. A locally recomputed checksum
+never substitutes for the strict signature, parent, prefix and storage joins.
+
+The only initial migration is explicit `7→11`, under the native operation lock
+and one Immediate transaction after a complete schema7 audit. It requires the
+original first-new commit to be consumed and the current head still before the
+second checkpoint; schema7 with head C is not a migration source for this slice.
+Schema3/4/5/6/8/9/10 reject. Preserve the original source anchor, imported C root,
+legacy source P/history, preparation sidecar, state/replay and all native P rows.
+Copy the original edge, first proof and every ordinary retained proof **byte for
+byte** into v2; derive context rows from the audited original edge and actual P
+ancestry, including surviving preparations. The v1 edge/commit tables then stay
+immutable and must continue to equal their exact migration projection. Never
+re-sign, reconstruct or fabricate a missing proof. Any missing/invalid committed
+proof, proof exceeding the new CEV0 root limit, ambiguous P, partial context or
+ni/native mismatch refuses migration; refusal never normalizes the original bytes.
+
+`migration_sequence` is the pre-migration metadata durable sequence.
+`migration_digest` frames the source anchor, sequence and sorted immutable
+schema7 edge/first/ordinary proof-record digests. Initialize generation0, prefix
+with the original binding and its consumed fields; CAS metadata schema7→11 with
+the expected durable sequence. Commit, fsync, reopen and independently audit
+before installing the live migration pin. Retry rechecks the exact migration
+projection and schema11 state; it returns no new activation/signing authority.
+If a previous attempt committed before returning, retry may replace only the
+still-held original edge pin after matching that exact migration projection, or
+reconfirm the already-installed migration pin; an arbitrary third pin rejects.
+The immutable migration pin replaces the singleton edge checksum as the live
+owner identity; every operation additionally audits the current prefix/owner
+checksum and uses expected head/sequence/generation CAS under the owner lock.
+Generation increases exactly once for each committed head/edge change after
+migration; preparation alone does not advance it. Arithmetic overflow refuses.
+
+#### Checkpoint and first-new execution authority
+
+For C18 planning, derive the old set/parameters from consumed edge A. Open the
+actual committed incremental reader at C15 for cutoff selection. Execution may
+use the exact owner-authenticated PREPARED C17 and its bounded state/replay
+ancestry, or committed C17; check native P/head/persist/storage/replay identity,
+exact root/version and complete preceding Prefix. A prepared parent has no
+commit receipt or invented commit sequence. Reuse M06 checkpoint computation
+and selection with these authenticated readers. Do not use the original C8
+snapshot, substitute a full-snapshot owner's receipt, accept a caller-built ni
+parent as authority, or
+relax `ensure_exact_cutoff`. A private owner-affine incremental checkpoint
+context is required; the existing full-snapshot `LaterEpochCheckpointContextV1`
+does not confer authority over this schema.
+
+The C17 three-chain proof includes C18/S19 headers, so requiring committed C17
+before C18 preview or inert preparation would create a cycle. Permit C18 header
+planning and an inert, explicitly typed checkpoint P over that authenticated
+prepared parent, using the ordinary artifact codec plus kind2 context. Validate
+exact EpochCheckpoint geometry, signed full header and all four execution
+commitments; ordinary kind0 keeps its Regular-only fence. Store state/replay
+deltas, native P/context and persist CAS together. Preserve preparation-journal
+reservation and readback before the header enters the existing signing path.
+Preview/P persistence advances neither the committed head nor edge state and
+issues no committed checkpoint or activation authority.
+
+After C16/C17 finality commits, checkpoint authority confirmation and C18 commit
+must reopen the actual committed C17 and C15 readers under the owner lock,
+revalidate the exact planned header, execution commitments, cutoff selection,
+complete prefix and native/storage/replay identities, and bind C17's actual
+commit sequence. Recompute the final edge `context_digest` from this committed
+cut; a speculative context digest cannot be relabeled as committed authority.
+The existing native P/header bytes remain exact. The head then stays C17 until
+strict C18 finality. Verify the C18/S19/S20 proof, next commitment and joint
+authorization under the authenticated epoch1 old set/parameters. Bind the actual C17 parent header/time,
+actual C15 cutoff P and root, C18 artifact/header and complete prefix `[A]`.
+Retain original kind1 preimages before acknowledging their consumption.
+
+Checkpoint commit atomically applies C18 state/replay, marks its P committed,
+inserts installed edge B and its original evidence, extends owner prefix to
+`[A,B]`, updates current base/owner/head/sequence and retires only losing pending
+branches. It does not apply S19/S20 or activate the new execution configuration.
+Fresh at-C18 confirmation is possible only while B is installed and the actual
+head is its exact checkpoint; historical edge recovery after C21 cannot issue
+that fresh receipt.
+
+First-new C21 uses a sealed incremental execution context implementing the
+existing private `EpochExecutionContextV1` contract: application parent C18,
+consensus parent S20, exact binding B and B's authenticated new configuration.
+The low-level `plan/stage/apply` already consume this context shape. Replace
+their singleton count condition only behind schema11 native authorization with
+bounded unique edge insertion and exact replay; preserve coordinates/checksums,
+ordinary/epoch separation and absent-seal checks. A staged B row may follow
+consumed A; it may not overwrite A or substitute an unrelated existing binding.
+An installed B with no staged first-new P has no ni edge yet. Once staged, its
+ni row must match phase0 and the exact coordinates; consumed B requires the
+phase1 ni row and exact selected first-new storage/native commit joins.
+
+Strict C21 commit uses the original B activation preimages and exact signed C21
+header. In one transaction apply sparse state/replay, insert its per-edge first
+proof, mark B and ni B consumed with the exact block/P/sequence, update owner and
+head CAS, and retire losing pending branches. C22 ordinary execution inherits
+`[A,B]` and epoch2 trust. State apply and native evidence never commit separately.
+Every success requires file/directory sync and fresh owner readback before the
+non-Clone receipt or application ACK. No signing or anti-double-sign journal
+step is removed by these storage changes.
+
+#### Bounded recovery, replay, retry and retention
+
+Cold open independently screens SQL types/counts/lengths before loading BLOBs;
+aggregate length expressions inspect BLOB values only. Maximum32 edges and
+32 first-commit rows; native ordinary and first-new P inventories keep their
+respective128-row/2GiB limits, with at most256 context rows. Retained edge evidence
+totals at most64MiB, first proofs total at most64MiB, ordinary proofs total at
+most64MiB, including the migration copies in each respective v2 inventory.
+The immutable v1 projection has its existing separate bounds. Both current and
+prospective write totals are checked with overflow rejection; capacity refusal
+does not delete safety records. Pending ancestry remains at most8 deltas/64MiB
+replay bytes. Individual artifact/header/replay/lifecycle limits do not change.
+Audit also rejects duplicate block ownership or native persist/commit sequence
+ownership across the combined v2 first/ordinary/checkpoint inventories; each
+table's SQL UNIQUE constraint alone is insufficient for that global join.
+
+Resolve a maximum32-edge authenticated prefix iteratively. Authenticate A using
+the retained original C8 source and preparation sidecar. For each next edge,
+use the previous authenticated new set/parameters as old trust, require the
+exact preceding Prefix, and join its checkpoint/cutoff/native/ni records before
+strict activation verification. Do not recursively invoke public recovery or
+whole-inventory audit. Reuse the resulting prefix for P-context validation,
+checkpoint observation, first/ordinary proof verification and reopen. Crypto
+frames must remain safe on the default thread stack.
+
+Walk the committed head backward with a visited set and at most256 native P
+steps. Ordinary/checkpoint transitions are exact +1 under the same authenticated
+configuration; first-new transitions are exact checkpoint→C+3 with the matching
+consumed edge, proof record, complete prefix extension and actual terminal C+2
+header. Every step joins P/commit sequence, full application Head104, storage
+artifact/persist identity and exact replay predecessor/delta. End at the immutable
+C8 source; retain and verify all intervening first proofs. In particular, C22
+recovery must traverse C21→C18→…→C11→C8 without reinterpreting epoch1 as genesis
+or requiring all later rows to use A's configuration.
+
+Replay versions count actual execution deltas, not consensus heights. Preserve
+the entire authenticated replay tree; C21 extends C18 exactly once. Never reset
+command/nonce history on B, and never create replay versions for S19/S20. A
+command or signer nonce consumed before B must still reject after C21. Schema11
+committed retries require the exact original proof/preimages, block/P/edge and
+commit sequence, return the original receipt sequence and leave advanced head
+unchanged. A different proof is a conflict in this new revision. Frozen schema7
+first-new behavior allowing another valid proof without replacing retained bytes
+is not silently changed by this contract.
+
+Fork retirement selects only uncommitted native/ni rows. Protect **every**
+committed first-new, ordinary and checkpoint P, not only `commit::load()`'s old
+singleton. Preserve pending descendants whose complete ancestry reaches the
+winner; retire losing children before parents and release only their exact
+reason1 anchor pins and matching P-context rows in that same transaction. Keep all consumed edge/proof rows,
+committed root pins, cutoff/checkpoint roots and their physical child closure.
+No seal root/value/node/pin may appear. The current schema5 node-GC owner remains
+fenced from schema11; enabling schema11 GC or value/history pruning requires a
+separate retention-authority contract. This vertical patch retains data safely
+and does not claim bounded lifetime storage growth or M13 import/export support.
+
+#### Future M13 adapter boundary
+
+Schema11 has no export or installer in this vertical patch. Its typed owner and
+schema checks must reject use through the schema10 `NativeEpochFinalityPathV1`
+producer/consumer, and reject importing schema10 local P/receipt metadata as
+incremental authority. Source anchor, migration/context/P digests and sequences
+identify local durable records only. Any future M13 transfer must still start
+from the receiver's independently configured trust anchor.
+
+A future private schema11 owner adapter may derive the eight canonical
+activation roots from a strictly authenticated kind1 edge: take its seven
+preimages, omit the standalone checkpoint header, then add the old validator
+set and old parameters from the authenticated preceding prefix. Caller-supplied
+old trust is inadmissible. Require the checkpoint-finality finalized header to
+equal the retained checkpoint header and exact C head/P, its authenticated parent
+to equal the actual C-1 header, and the first-new proof/header to equal the
+retained C+3 target with the authenticated C+2 consensus parent. These joins
+precede conversion to inert bytes; converted bytes convey no local owner powers.
+
+For an anchor before C18, the future path contains C18 as an Ordinary +1 step
+under the old set, C21 as EpochFirst +3, and C22 as Ordinary +1 under the new set.
+For an anchor exactly at C18, omit the separate C18 step while retaining the
+checkpoint finality inside C21's epoch activation evidence. The edge limit32 and
+application-link limit256 are independent caps, never `min(32, link_count)`;
+headers, proofs and evidence together remain bounded to64MiB. This is a future
+adapter contract, not an implemented export, installer or completed M13 claim.
+
+#### Implementation and acceptance joins
+
+The production cuts are `incremental_epoch_owner_v1.rs` (explicit migration,
+closed inventory and version dispatch), a private multi-edge resolver/context
+module, `incremental_epoch_commit_v1.rs` (per-edge first proof and historical
+retry), `incremental_epoch_descendant_v1.rs` (selected configuration, checkpoint
+kind, history walk and all-committed fork protection), `incremental_owner_v1.rs`
+(shared typed validation/view only; keep schema5 fences), and
+`incremental_epoch_storage_v1.rs` (authorized repeated stage). `durable.rs`
+must explicitly route schema11 open/audit/pin paths while preserving every
+schema6/7 descriptor and unsupported legacy entry-point guard. The node candidate
+owner join needs its own review; existing singleton edge APIs cannot be relabeled
+as multiple-edge capabilities or silently admit schema11.
+
+Reuse `incremental_epoch_commit_v1.rs::tests::setup` and its signed real credit,
+transfer, replay/fork and two SIGKILL harnesses. Extend those actual sparse readers
+through C15/C18, using the signing/header/activation construction in
+`later_epoch_checkpoint_bridge.rs::tests::build_later_descendant_fixture`; do not
+import that fixture's full-snapshot receipt or state as incremental authority.
+Commit C15, preview/prepare C18 over authentic PREPARED C17, use C18/S19 in the
+C16/C17 finality construction, then reconfirm C18 against committed C17/C15 before
+its strict commit. A losing or substituted prepared C17 must never promote its
+checkpoint context into committed authority.
+Require root/receipt parity, cold open at installed C18/consumed C21/progressed
+C22, historical A/B recovery, original proof-byte equality and retry at advanced
+head. Run three real kill cuts for checkpoint commit and second first-new commit:
+before SQL commit, after commit before fsync, after fsync before readback. Each
+restart admits exactly its before/after complete state, never mixed evidence,
+head, ni edge or replay state. Include rehashed wrong prefix/old trust/cutoff/
+parent timestamp/storage-sequence/consumed-proof mutants, missing original
+proofs, second-edge fork retirement, old nonce reuse, and all seal-absence checks.
+The positive matrix must run without elevated `RUST_MIN_STACK`; every failure
+path keeps persistence-before-effects and signing safety fences intact.
+
 ### Live native namespace continuity
 
 On Unix, `DurableNativeApplicationV0` retains open descriptors for its database,
