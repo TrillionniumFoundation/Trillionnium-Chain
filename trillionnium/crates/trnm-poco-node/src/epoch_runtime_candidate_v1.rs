@@ -1994,11 +1994,14 @@ fn confirm_native_application_cut_v3(
                 .belongs_to_application_at_path_v0(application, application.path(),),
             "native activation edge owner changed"
         );
-        let prepared = application.reopen_prepared_epoch_execution_v1(app.block_id)?;
-        let confirmed = application.confirm_prepared_epoch_execution_v1(&prepared)?;
+        // One complete current-head readback already joins this exact owner,
+        // retained ancestry, committed P and fresh metadata. No external callback
+        // occurs before these comparisons, so do not reopen the same history
+        // again just to revalidate the receipt this owner has just issued.
+        let confirmed = application.confirm_current_epoch_execution_v1(app.block_id)?;
+        let prepared = confirmed.prepared();
         let head = prepared.overlay_parent_head()?;
         let header = prepared.header()?;
-        let committed = application.confirmed_committed_head_v0()?;
         ensure!(
             edge.strict_activation_binding_v1()? == checkpoint.fields().phase_authority_binding
                 && confirmed.commit_sequence() == Some(app.commit_sequence)
@@ -2006,12 +2009,10 @@ fn confirm_native_application_cut_v3(
                 && confirmed.prepared().artifact_digest() == app.artifact_digest
                 && confirmed.overlay_checksum() == app.overlay_digest
                 && confirmed.prepared().persist_sequence() == app.p_sequence
-                && confirmed.belongs_to_application_at_path(application, application.path())
                 && head.block_id().as_bytes() == &app.block_id
                 && head.state_root().as_bytes() == &app.state_root
                 && head.commit_id().as_bytes() == &app.native_commit_id
                 && head.height().get() == app.height
-                && committed == head
                 && application.config_v0().store_id() == app.native_store_id
                 && header.epoch() == edge.new_validator_set().epoch()
                 && header.epoch().get() == app.epoch

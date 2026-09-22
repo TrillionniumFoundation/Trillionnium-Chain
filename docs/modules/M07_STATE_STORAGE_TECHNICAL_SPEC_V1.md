@@ -55,6 +55,20 @@ checkpoint and ordinary descendants. A later epoch checkpoint from P familyv1,
 full sparse-history proof/RPC adapters, state-sync installation and schema4→5
 incremental migration remain pending. These limitations are fail-closed.
 
+## Current epoch readback without repeated full-history audits
+
+`confirm_current_epoch_execution_v1(block)` returns the existing opaque
+confirmed-preparation receipt only after the original complete audited reopen
+proves that this exact COMMITTED row is the current native head. Prepared-only
+and historical committed rows reject. The reopened row and observed head come
+from the same locked operation, including the existing second fresh metadata
+validation, retained-prefix and ancestry checks. No verified state survives
+between calls and no signature, schema, namespace or durable check is removed.
+M15 may compare this newly owner-produced receipt directly to the independent
+checkpoint without calling another full reopen merely to ask which owner just
+issued it. The original stale-receipt revalidation APIs remain unchanged;
+readbacks on both sides of external callbacks and actual custody still run.
+
 ## Interfaces
 
 ### Implemented incremental transaction kernel and ordinary owner
