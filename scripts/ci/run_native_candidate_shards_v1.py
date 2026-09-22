@@ -12,6 +12,7 @@ import shlex
 import signal
 import subprocess
 import sys
+import time
 from typing import Iterable
 
 PACKAGE = "trnm-native-execution-v0"
@@ -181,6 +182,13 @@ def run_bounded(command: list[str], *, cwd: Path, env: dict[str, str], timeout: 
     process = subprocess.Popen(command, cwd=cwd, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, start_new_session=True)
     try:
         output, _ = process.communicate(timeout=timeout)
+        if process.returncode:
+            # A failed parent may leave descendants alive after closing stdout.
+            # Clean its original owned group before any independent shard runs.
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
         return output, process.returncode
     except subprocess.TimeoutExpired as error:
         for sig, grace in ((signal.SIGTERM, 5), (signal.SIGKILL, 2)):
@@ -230,6 +238,14 @@ def binary_digest(path: Path) -> str:
         return hashlib.file_digest(binary, "sha256").hexdigest()
 
 
+def write_summary(evidence: Path, summary: dict[str, object]) -> None:
+    # A checkpoint is diagnostic, not a durability or acceptance receipt.
+    # Atomic replacement prevents a reader from mistaking partial JSON for a result.
+    pending = evidence / "summary.json.tmp"
+    pending.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    pending.replace(evidence / "summary.json")
+
+
 def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     workspace, evidence = args.workspace.resolve(), args.evidence_dir
     env = os.environ.copy()
@@ -243,11 +259,22 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
         raise ShardError("source HEAD differs from independently expected source")
     (evidence / "HEAD").write_text(source + "\n")
     (evidence / "TREE").write_text(tree + "\n")
+    executable = None
+    digest = None
+
+    def confirm_identity() -> None:
+        if clean_source(repo_root) != (source, tree):
+            raise ShardError("source changed during the run")
+        if executable is not None and binary_digest(executable) != digest:
+            raise ShardError("native executable changed during the run")
 
     def invoke(name: str, command: list[str], timeout: int) -> tuple[str, int]:
         summary["phase"] = name
         (evidence / f"{name}.command").write_text(shlex.join(command) + "\n")
+        write_summary(evidence, summary)
+        started = time.monotonic()
         output, code = run_bounded(command, cwd=workspace, env=env, timeout=timeout)
+        summary.setdefault("command_elapsed_seconds", {})[name] = time.monotonic() - started
         (evidence / f"{name}.log").write_text(output, encoding="utf-8", errors="replace")
         (evidence / f"{name}.exit-code").write_text(str(code) + "\n")
         return output, code
@@ -255,6 +282,7 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     feature_args = ["--all-features"] if args.suite == "safety-epoch" else ["--features", features]
     target_args = ["--test", "epoch_journal_v2"] if args.suite == "safety-epoch" else ["--lib"]
     output, code = invoke("compile", ["cargo", "test", "-p", package, *feature_args, *target_args, "--locked", "--no-run", "--message-format=json"], args.deadline_seconds)
+    confirm_identity()
     if code:
         return code
     executable = find_executable(output.splitlines(), workspace, args.suite)
@@ -262,7 +290,9 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     summary.update(executable=str(executable), executable_sha256=digest)
 
     def inventory_for(name: str, command: list[str], *, allow_empty: bool = False) -> list[str]:
+        confirm_identity()
         output, code = invoke(name, command + ["--list"], 120)
+        confirm_identity()
         if code:
             raise ShardError(f"{name} inventory command failed: {code}")
         return parse_test_inventory(output, allow_empty=allow_empty)
@@ -275,26 +305,70 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
         raise ShardError("required SIGKILL drivers are missing or ignored")
     shards = partition_inventory(inventory, args.suite)
     (evidence / "inventory.json").write_text(json.dumps(shards, indent=2) + "\n")
-    summary["shards"] = outcomes = {}
+    summary["shards"] = outcomes = {
+        shard: {
+            "status": "not-run", "tests": names,
+            "deadline_seconds": shard_deadline(args.suite, names, args.deadline_seconds),
+            "planned_count": len(names), "ignored_count": len(set(names) & ignored),
+        }
+        for shard, names in shards.items()
+    }
+    summary.update(planned_shard_count=len(shards), completed_shard_count=0,
+                   failed_shards=[], first_failure=None)
+    first_code = 0
+
+    def record_failure(shard: str, code: int, error: str) -> None:
+        nonlocal first_code
+        # Preserve the original process exit separately from validation failure.
+        # Normalize POSIX signal exits only for the runner's own shell exit code.
+        code = code if code > 0 else 128 - code
+        outcomes[shard].update(status="failed", error=error)
+        summary["failed_shards"].append(shard)
+        if first_code == 0:
+            first_code = code
+            summary["first_failure"] = {"shard": shard, "tests": shards[shard], "exit_code": code}
+
+    write_summary(evidence, summary)
     for shard in shards:
         command = command_for_shard(executable, shard, shards, args.suite)
         if inventory_for(shard + ".inventory", command) != shards[shard]:
             raise ShardError(f"{shard} filtered inventory differs from planned names")
-        deadline = shard_deadline(args.suite, shards[shard], args.deadline_seconds)
-        print(f"{args.suite} shard={shard} tests={len(shards[shard])} deadline={deadline}s", flush=True)
+        outcome = outcomes[shard]
+        deadline = outcome["deadline_seconds"]
+        case = shards[shard][0] if len(shards[shard]) == 1 else "see inventory.json"
+        print(f"{args.suite} shard={shard} tests={len(shards[shard])} deadline={deadline}s case={case}", flush=True)
+        outcome["status"] = "running"
         output, code = invoke(shard, command, deadline)
-        outcome = {"deadline_seconds": deadline, "planned_count": len(shards[shard]), "ignored_count": len(set(shards[shard]) & ignored), "exit_code": code}
-        outcomes[shard] = outcome
+        outcome.update(exit_code=code, elapsed_seconds=summary["command_elapsed_seconds"][shard],
+                       status="unconfirmed")
         if code:
-            return code
-        outcome["final_test_result"] = result = final_test_result(output)
-        counts = parse_test_summary(result)
-        validate_summary(counts, planned=outcome["planned_count"], ignored=outcome["ignored_count"], total=len(inventory))
-        outcome["counts"] = counts
+            record_failure(shard, code, f"test process exited with {code}")
+        # A failing test must not bypass source verification or run the next
+        # shard against changed input. Failed inventory/identity is fatal;
+        # ordinary test failure, timeout and false summaries are not fail-fast.
+        write_summary(evidence, summary)
+        try:
+            confirm_identity()
+        except (OSError, ShardError, subprocess.SubprocessError):
+            outcome["status"] = "invalidated"
+            raise
+        if code == 0:
+            try:
+                outcome["final_test_result"] = result = final_test_result(output)
+                counts = parse_test_summary(result)
+                validate_summary(counts, planned=outcome["planned_count"],
+                                 ignored=outcome["ignored_count"], total=len(inventory))
+                outcome.update(status="passed", counts=counts)
+            except ShardError as error:
+                record_failure(shard, 2, str(error))
+        summary["completed_shard_count"] += 1
+        write_summary(evidence, summary)
+        print(f"{args.suite} shard={shard} status={outcome['status']} exit={code} "
+              f"elapsed={outcome['elapsed_seconds']:.3f}s", flush=True)
     summary["phase"] = "source-confirmation"
-    if clean_source(repo_root) != (source, tree) or binary_digest(executable) != digest:
-        raise ShardError("source or native executable changed during the run")
-    return 0
+    confirm_identity()
+    summary["source_confirmed"] = True
+    return first_code
 
 
 def run(argv: list[str]) -> int:
@@ -310,7 +384,8 @@ def run(argv: list[str]) -> int:
     if args.evidence_dir.exists() and any(args.evidence_dir.iterdir()):
         raise ShardError("evidence directory must be new or empty")
     args.evidence_dir.mkdir(parents=True, exist_ok=True)
-    summary: dict[str, object] = {"status": "failed", "phase": "source-admission"}
+    summary: dict[str, object] = {"status": "running", "phase": "source-admission", "source_confirmed": False}
+    started = time.monotonic()
     code = 2
     try:
         code = execute(args, summary)
@@ -318,8 +393,9 @@ def run(argv: list[str]) -> int:
         summary["error"] = str(error)
         print(f"native candidate shard runner failed: {error}", file=sys.stderr)
     finally:
-        summary.update(status="passed" if code == 0 else "failed", exit_code=code)
-        (args.evidence_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+        summary.update(status="passed" if code == 0 else "failed", exit_code=code,
+                       elapsed_seconds=time.monotonic() - started)
+        write_summary(args.evidence_dir, summary)
     return code
 
 
