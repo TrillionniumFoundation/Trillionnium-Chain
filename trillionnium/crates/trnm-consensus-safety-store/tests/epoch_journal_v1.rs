@@ -198,6 +198,115 @@ fn journal9_actual_source_exact_retry_strict_reopen_and_foreign_affinity() {
     assert!(reopened.fresh_read_v1(stale).is_err());
 }
 
+#[test]
+fn journal9_reused_read_context_never_reuses_live_acceptance() {
+    use sha2::{Digest, Sha256};
+
+    let dir = directory();
+    let f = actual_fixture(&dir.path().join("chain"));
+    let (profile, prepared) = prepare(&f);
+    let path = dir.path().join("epoch9.db");
+    let (journal, head) = SqliteEpochSafetyJournalV1::initialize_from_journal8_v1(
+        &path, profile, &f.journal, f.pin, &prepared,
+    )
+    .unwrap();
+    let pin = head.pin_v1();
+    assert_eq!(
+        journal.fresh_read_v1(pin).unwrap().state_v1(),
+        prepared.state()
+    );
+
+    // Keep the mutator connection alive so the negative exercises durable
+    // contents, not a WAL/SHM inode replacement caused by last-close cleanup.
+    let mut writer = rusqlite::Connection::open(&path).unwrap();
+    let (origin, source_chain): ([u8; 32], [u8; 32]) = writer
+        .query_row("SELECT origin,source_chain FROM epoch_metadata", [], |r| {
+            Ok((r.get(0)?, r.get(1)?))
+        })
+        .unwrap();
+    writer
+        .execute(
+            "UPDATE epoch_metadata SET source_chain=?1",
+            [[0x55u8; 32].as_slice()],
+        )
+        .unwrap();
+    assert!(matches!(
+        journal.fresh_read_v1(pin),
+        Err(EpochJournalErrorV1::Invalid(
+            "metadata profile/source binding"
+        ))
+    ));
+    writer
+        .execute(
+            "UPDATE epoch_metadata SET source_chain=?1",
+            [source_chain.as_slice()],
+        )
+        .unwrap();
+    assert_eq!(journal.fresh_read_v1(pin).unwrap().pin_v1(), pin);
+
+    // A valid outer hash and caller pin do not authenticate transition bytes.
+    // Recompute both to force the strict decoder, rather than just a stale-pin
+    // or checksum error, after a successful read on this same journal owner.
+    let (predecessor, record, transition): ([u8; 32], Vec<u8>, Vec<u8>) = writer
+        .query_row(
+            "SELECT predecessor,record,transition FROM epoch_records WHERE revision=?1",
+            [pin.revision],
+            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+        )
+        .unwrap();
+    let bad_transition = [0xffu8];
+    let revision = pin.revision.to_be_bytes();
+    let parts: [&[u8]; 5] = [&origin, &predecessor, &revision, &record, &bad_transition];
+    let mut hash = Sha256::new();
+    hash.update(b"trnm.journal9.epoch.chain.v1");
+    for part in parts {
+        hash.update((part.len() as u64).to_be_bytes());
+        hash.update(part);
+    }
+    let bad_chain: [u8; 32] = hash.finalize().into();
+    {
+        let tx = writer.transaction().unwrap();
+        tx.execute(
+            "UPDATE epoch_records SET chain=?1,transition=?2 WHERE revision=?3",
+            rusqlite::params![
+                bad_chain.as_slice(),
+                bad_transition.as_slice(),
+                pin.revision
+            ],
+        )
+        .unwrap();
+        tx.execute("UPDATE epoch_head SET chain=?1", [bad_chain.as_slice()])
+            .unwrap();
+        tx.commit().unwrap();
+    }
+    let bad_pin = EpochSafetyHeadPinV1 {
+        chain_checksum: bad_chain,
+        ..pin
+    };
+    assert!(matches!(
+        journal.fresh_read_v1(bad_pin),
+        Err(EpochJournalErrorV1::Source(_))
+    ));
+    {
+        let tx = writer.transaction().unwrap();
+        tx.execute(
+            "UPDATE epoch_records SET chain=?1,transition=?2 WHERE revision=?3",
+            rusqlite::params![pin.chain_checksum.as_slice(), transition, pin.revision],
+        )
+        .unwrap();
+        tx.execute(
+            "UPDATE epoch_head SET chain=?1",
+            [pin.chain_checksum.as_slice()],
+        )
+        .unwrap();
+        tx.commit().unwrap();
+    }
+    assert_eq!(
+        journal.fresh_read_v1(pin).unwrap().state_v1(),
+        prepared.state()
+    );
+}
+
 #[cfg(feature = "candidate-epoch-host-v1")]
 #[test]
 fn journal9_initial_host_recovery_fresh_binds_then_persists_real_timeout() {

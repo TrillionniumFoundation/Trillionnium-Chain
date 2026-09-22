@@ -333,3 +333,82 @@ fn direct_peer_containment_ingress_tick_is_finite_and_rejection_is_not_progress_
     .unwrap());
     assert_eq!(count, 1);
 }
+
+// A consumed node owner cannot continue admitting or originating work through
+// the public compatibility seams, even with genuinely valid signatures.
+#[test]
+fn consumed_owner_rejects_direct_consensus_admission_before_mutation_v1() {
+    let mut harness = fresh_test_harness_v0(4, 1);
+    let workload = harness.corpus.block_at_height(1).unwrap();
+    let proposal = proposal_for_workload_v0(&harness, workload);
+    let frame = containment_frame_v1(
+        proposal.block().header().proposer_id(),
+        FrameKind::Proposal,
+        UnboundProposalV0::from_signed(&proposal)
+            .unwrap()
+            .encode()
+            .unwrap(),
+    );
+    let owner = &mut harness.authorities[0];
+    let violations = owner.protocol_violations;
+    let minimum_view = owner.minimum_retained_view_v0().unwrap();
+    drop(owner.phase.take().unwrap());
+    assert!(owner.facts_v0().is_err());
+    assert!(owner
+        .admit_authenticated_consensus_frame_v0(&frame)
+        .is_err());
+    assert!(owner.consensus_windows.direct_proposals.is_empty());
+    assert!(owner.consensus_windows.relay.is_empty());
+    assert!(owner.consensus_windows.direct_peer_rejections.is_empty());
+    assert_eq!(owner.minimum_retained_view_v0().unwrap(), minimum_view);
+    assert_eq!(owner.protocol_violations, violations);
+}
+
+#[test]
+fn consumed_owner_rejects_consensus_relay_admission_before_mutation_v1() {
+    let mut harness = fresh_test_harness_v0(4, 1);
+    let vote = signed_vote_v0(&harness.validator_set, &harness.keys[1], 1, 1);
+    let relay = ConsensusRelayEnvelopeV0::new(
+        vote.author(),
+        FrameKind::Vote,
+        2,
+        encode_vote(&vote),
+        &harness.validator_set,
+        &harness.keys[1],
+    )
+    .unwrap();
+    let frame = containment_frame_v1(
+        harness.validator_set.validators()[1].id(),
+        FrameKind::ConsensusRelay,
+        relay.encode(),
+    );
+    let owner = &mut harness.authorities[0];
+    let violations = owner.protocol_violations;
+    drop(owner.phase.take().unwrap());
+    assert!(owner
+        .admit_authenticated_consensus_relay_frame_v0(&frame)
+        .is_err());
+    assert!(owner.consensus_windows.relay.is_empty());
+    assert!(owner.consensus_windows.direct_proposals.is_empty());
+    assert_eq!(owner.protocol_violations, violations);
+}
+
+#[test]
+fn consumed_owner_rejects_local_relay_reservation_before_mutation_v1() {
+    let mut harness = fresh_test_harness_v0(4, 1);
+    let vote = signed_vote_v0(&harness.validator_set, &harness.keys[0], 0, 1);
+    let relay = ConsensusRelayEnvelopeV0::new(
+        vote.author(),
+        FrameKind::Vote,
+        2,
+        encode_vote(&vote),
+        &harness.validator_set,
+        &harness.keys[0],
+    )
+    .unwrap();
+    let owner = &mut harness.authorities[0];
+    drop(owner.phase.take().unwrap());
+    assert!(owner.reserve_originated_consensus_relay_v0(&relay).is_err());
+    assert!(owner.consensus_windows.relay.is_empty());
+    assert!(owner.consensus_windows.direct_proposals.is_empty());
+}

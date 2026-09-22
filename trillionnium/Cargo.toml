@@ -82,6 +82,14 @@ consensus_dependency_policy = "native-only"
 external_consensus_dependency_count = 0
 native_poco_mainline_decision = "adopted"
 
+# Run real-owner/recovery tests with optimized control flow, while retaining
+# the test harness, debug assertions and overflow checks. This changes neither
+# release artifacts nor test deadlines, inputs, feature graphs or assertions.
+[profile.test]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
 [profile.test.package.curve25519-dalek]
 opt-level = 3
 debug-assertions = true

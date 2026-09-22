@@ -39,3 +39,29 @@ Protocol vectors, anti-double-sign, persist-before-sign, crash recovery and
 concurrent execution determinism remain required checks. See the module specs
 and plan for the Rust test commands and external acceptance requirements.
 Report security issues through [SECURITY.md](SECURITY.md).
+
+## Test execution
+
+The workspace test profile uses optimization level 1 while explicitly retaining
+both debug assertions and overflow checks. Existing cryptographic package
+profiles, feature boundaries, default thread stacks, crash drivers and test
+deadlines are unchanged. This profile affects tests, not release artifacts or
+production readiness. Record compilation and execution costs separately; a faster
+test is not a measured production throughput improvement.
+
+Journal9 reconstructs its immutable epoch verification context once per read,
+not once per retained row. Namespace, source, independently expected head,
+record bytes, transitions and successor checks remain fresh on every read.
+The real-owner regression also changes durable data after a successful read,
+including malformed transition bytes with recomputed outer checksums:
+
+```bash
+cargo test --manifest-path trillionnium/Cargo.toml --locked \
+  -p trnm-consensus-safety-store --features test-fixtures,candidate-epoch-host-v1 \
+  --test epoch_journal_v1
+```
+
+Compare V8 runs using the same machine, full test name, workload and original
+300-second deadline. Source and compiler profile are separate variables; combined
+changes cannot establish how much speed-up belongs to either one. Retain failed
+and incomplete runs without relabeling them as current-source acceptance.
