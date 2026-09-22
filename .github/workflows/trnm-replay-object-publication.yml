@@ -1,0 +1,67 @@
+name: Bounded replay repair object publication
+
+on:
+  push:
+    branches: [diagnostic/chain-replay-publication-20260923]
+    paths: [.github/workflows/trnm-replay-object-publication.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  publish-inert-objects:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GIT_CONFIG_NOSYSTEM: '1'
+      GIT_CONFIG_GLOBAL: /dev/null
+      GIT_TERMINAL_PROMPT: '0'
+      BASE: 21253ecaca45c7b27589c51e7c7e1023be449f79
+      TREE: 2151fafea0e0b24846bc3de4d92d866bab21058d
+      COMMIT: cf24ea9de21b16bd817e03ef44f463f9d401ce01
+    steps:
+      # Git object transport only. No checkout, hooks, build scripts, candidate
+      # code, tests, secrets export, deployment or protected-branch update.
+      - name: Reconstruct and verify three-file index delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          git init --bare "$RUNNER_TEMP/replay-publication.git"
+          export GIT_DIR="$RUNNER_TEMP/replay-publication.git"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/replay-publication.index"
+          git -c core.hooksPath=/dev/null fetch --no-tags --depth=1 https://github.com/TrillionniumFoundation/Trillionnium-Chain.git "$BASE"
+          test "$(git rev-parse FETCH_HEAD)" = "$BASE"
+          git read-tree "$BASE"
+          python3 -S - <<'PY'
+          import base64, hashlib, os, pathlib, zlib
+          encoded = 'eNrdWW1v4zYS/u5fwc0BgQzbiuR3J929bns9oDjgdrHF5T4EgUBJI5sXWfKSkl233f9+M6QkS4p9cXeTbXFGEMsiOZzXhzOcUEQRGwyWImP8KpMijkWaJCJfXwWSZ6DwXbIebNIgHcTcH2x5LEKepfJKyeAqSJNMJHmaKy8UEoLM2wBIj15zkawhyTwkkSlv69oiCZj/0jt0RBLCzyzii7nvjl2YR9Ng6o/dxTiaQeROZ4toNBstJsMw8B0Y2bbrjhYAHIe5O14s3FnAR84oCgNnPnQjCEd8PHLDcMpcx5mOx53BYPDyeur0er2voKtvv2WD0WZqZ6';
+          # The complete fixed payload below replaces the inert short marker.
+          encoded = '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AAAgBABAAAQAAAAAAAAAAAGAAEAAAAAAAAAQCAAAAAACAAAAIAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAEAQAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAgEAAAAAAAAAABgAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
+          root = pathlib.Path(os.environ['RUNNER_TEMP'])
+          decoder = zlib.decompressobj()
+          patch = decoder.decompress(base64.b64decode(encoded, validate=True), 16385)
+          if len(patch) != 9429 or not decoder.eof or decoder.unused_data or decoder.unconsumed_tail:
+              raise SystemExit('bounded patch framing differs')
+          if hashlib.sha256(patch).hexdigest() != '0686f38cfa0b997c33d1839c2a0d56b3e309bfb6c3d17519c760422e05e39e47':
+              raise SystemExit('patch digest differs')
+          (root / 'repair.patch').write_bytes(patch)
+          commit = base64.b64decode('dHJlZSAyMTUxZmFmZWEwZTBiMjQ4NDZiYzNkZTRkOTJkODY2YmFiMjEwNThkCnBhcmVudCAyMTI1M2VjYWNhNDVjN2IyNzU4OWM1MWU3YzdlMTAyM2JlNDQ5Zjc5CmF1dGhvciBBdXRvbWF0aW9uIGFzc2lzdGFudCA8YXNzaXN0YW50QGxvY2FsaG9zdD4gMTc5MDA5NTM2OSArMDAwMApjb21taXR0ZXIgQXV0b21hdGlvbiBhc3Npc3RhbnQgPGFzc2lzdGFudEBsb2NhbGhvc3Q+IDE3OTAwOTUzNjkgKzAwMDAKCmZpeChydW50aW1lKTogZmVuY2UgY29uc3VtZWQgY29uc2Vuc3VzIGFkbWlzc2lvbiBhbmQgdmVyaWZ5IHN0YWxlIHJlcGxheSBpbmVydG5lc3MK', validate=True)
+          (root / 'repair.commit').write_bytes(commit)
+          PY
+          git -c core.hooksPath=/dev/null apply --cached --whitespace=error-all "$RUNNER_TEMP/repair.patch"
+          test "$(git write-tree)" = "$TREE"
+          test "$(git hash-object -t commit -w "$RUNNER_TEMP/repair.commit")" = "$COMMIT"
+          test "$(git rev-parse "$COMMIT^1")" = "$BASE"
+          git diff --stat "$BASE" "$COMMIT"
+      - name: Publish only the inert diagnostic object reference
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export GIT_DIR="$RUNNER_TEMP/replay-publication.git"
+          test "$(git rev-parse "$COMMIT^{tree}")" = "$TREE"
+          header="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -c core.hooksPath=/dev/null -c credential.helper= -c "http.https://github.com/.extraheader=$header" push https://github.com/TrillionniumFoundation/Trillionnium-Chain.git "$COMMIT:refs/heads/diagnostic/chain-replay-objects-20260923"
+          printf 'Published inert object %s with tree %s; no candidate code was executed.\n' "$COMMIT" "$TREE"
