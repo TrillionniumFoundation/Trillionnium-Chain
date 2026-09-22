@@ -1,0 +1,134 @@
+name: trnm-candidate-feedback
+
+on:
+  pull_request:
+    paths:
+      - scripts/ci/run_native_candidate_shards_v1.py
+      - scripts/ci/test_native_candidate_shards_v1.py
+      - scripts/ci/test_native_candidate_shard_feedback_v1.py
+      - .github/workflows/trnm-candidate-feedback.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-candidate-feedback-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONHASHSEED: "0"
+  TZ: UTC
+  LC_ALL: C.UTF-8
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  identify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      head: ${{ steps.identity.outputs.head }}
+      main: ${{ steps.identity.outputs.main }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - id: identity
+        name: Pin one head and main before either matrix job
+        shell: bash
+        run: |
+          set -euo pipefail
+          head="$(git rev-parse --verify HEAD)"
+          test "$head" = "$TRNM_EXPECTED_SOURCE_SHA"
+          main="$(git rev-parse --verify refs/remotes/origin/main)"
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+          printf 'head=%s\nmain=%s\n' "$head" "$main" >> "$GITHUB_OUTPUT"
+
+  tooling:
+    name: candidate-feedback-${{ matrix.source }}
+    needs: identify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, main-merge]
+    defaults:
+      run:
+        shell: bash
+        working-directory: trillionnium-chain
+    env:
+      CANDIDATE_HEAD: ${{ needs.identify.outputs.head }}
+      PINNED_MAIN: ${{ needs.identify.outputs.main }}
+      SOURCE_KIND: ${{ matrix.source }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.CANDIDATE_HEAD }}
+          path: trillionnium-chain
+          fetch-depth: 0
+          persist-credentials: false
+      - id: identity
+        name: Reproduce and record exact source or ordered-parent main merge
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_HEAD"
+          test "$CANDIDATE_HEAD" = "$TRNM_EXPECTED_SOURCE_SHA"
+          git cat-file -e "$PINNED_MAIN^{commit}"
+          mkdir -p "$RUNNER_TEMP/candidate-feedback"
+          selected="$CANDIDATE_HEAD"
+          if [[ "$SOURCE_KIND" == main-merge ]]; then
+            tree="$(git merge-tree --write-tree "$PINNED_MAIN" "$CANDIDATE_HEAD")"
+            # Local deterministic test object only; no remote ref is updated.
+            export GIT_AUTHOR_NAME='TRNM merge qualification'
+            export GIT_AUTHOR_EMAIL='qualification@invalid'
+            export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+            export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+            export GIT_AUTHOR_DATE='2000-01-01T00:00:00Z'
+            export GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"
+            selected="$(printf 'TRNM candidate feedback main merge\n' | git commit-tree "$tree" -p "$PINNED_MAIN" -p "$CANDIDATE_HEAD")"
+            test "$(git show -s --format=%P "$selected")" = "$PINNED_MAIN $CANDIDATE_HEAD"
+            git checkout --detach "$selected"
+          fi
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+          printf '%s\n' "$selected" > "$RUNNER_TEMP/candidate-feedback/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$RUNNER_TEMP/candidate-feedback/TREE"
+          printf '%s\n' "$CANDIDATE_HEAD" > "$RUNNER_TEMP/candidate-feedback/CANDIDATE_HEAD"
+          printf '%s\n' "$PINNED_MAIN" > "$RUNNER_TEMP/candidate-feedback/PINNED_MAIN"
+          git show -s --format=%P HEAD > "$RUNNER_TEMP/candidate-feedback/PARENTS"
+          printf '%s\n' 'runner-controls-only; not Rust, consensus, performance or release acceptance' > "$RUNNER_TEMP/candidate-feedback/SCOPE"
+          printf 'TRNM_EXPECTED_SOURCE_SHA=%s\n' "$selected" >> "$GITHUB_ENV"
+      - name: Install preflight prerequisite
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ripgrep
+      - name: Check project boundary
+        run: bash scripts/project-preflight.sh
+      - name: Retain all original shard and process-cleanup controls
+        if: ${{ !cancelled() && steps.identity.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_native_candidate_shards_v1.py 2>&1 | tee "$RUNNER_TEMP/candidate-feedback/original-tests.log"
+      - name: Exercise failure continuation and incomplete-denominator controls
+        if: ${{ !cancelled() && steps.identity.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_native_candidate_shard_feedback_v1.py 2>&1 | tee "$RUNNER_TEMP/candidate-feedback/feedback-tests.log"
+      - name: Recheck exact identity and clean source
+        if: ${{ !cancelled() && steps.identity.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$(cat "$RUNNER_TEMP/candidate-feedback/TREE")"
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+      - name: Retain diagnostics even on failure
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-candidate-feedback-${{ matrix.source }}-${{ env.CANDIDATE_HEAD }}
+          path: ${{ runner.temp }}/candidate-feedback
+          if-no-files-found: error
+          retention-days: 7
