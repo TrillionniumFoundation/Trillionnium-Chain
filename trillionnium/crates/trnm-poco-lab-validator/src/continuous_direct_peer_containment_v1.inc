@@ -114,14 +114,22 @@ impl ContinuousConsensusWindowsV0 {
 }
 
 impl ContinuousValidatorAuthorityV0 {
+    // All direct, relay and originated-admission surfaces share this fence.
+    // Signed phases remain live; only an actually consumed owner is refused.
+    // Check before pure decode as well as any collector/replay mutation.
+    fn require_live_consensus_admission_v1(&self) -> Result<()> {
+        ensure!(
+            self.phase.is_some(),
+            "consensus admission owner is fail-closed"
+        );
+        Ok(())
+    }
+
     pub(crate) fn admit_contained_direct_frame_v1(
         &mut self,
         frame: &AuthenticatedFrame,
     ) -> Result<DirectPeerFrameOutcomeV1> {
-        ensure!(
-            self.phase.is_some(),
-            "direct admission owner is fail-closed"
-        );
+        self.require_live_consensus_admission_v1()?;
         let result = self
             .consensus_windows
             .admit_contained_direct_frame_v1(frame);

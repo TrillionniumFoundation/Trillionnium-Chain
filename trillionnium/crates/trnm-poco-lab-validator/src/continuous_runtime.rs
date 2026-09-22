@@ -1859,6 +1859,7 @@ impl ContinuousValidatorAuthorityV0 {
         &mut self,
         frame: &AuthenticatedFrame,
     ) -> Result<Option<RoutedConsensusActionV0>> {
+        self.require_live_consensus_admission_v1()?;
         let result = self.consensus_windows.admit_authenticated_frame_v0(frame);
         if let Err(error) = &result {
             self.protocol_violations.record_anyhow_v0(error)?;
@@ -1874,6 +1875,7 @@ impl ContinuousValidatorAuthorityV0 {
         &mut self,
         frame: &AuthenticatedFrame,
     ) -> Result<RoutedConsensusRelayV0> {
+        self.require_live_consensus_admission_v1()?;
         let result = self.consensus_windows.admit_consensus_relay_frame_v0(frame);
         if let Err(error) = &result {
             self.protocol_violations.record_anyhow_v0(error)?;
@@ -1888,6 +1890,7 @@ impl ContinuousValidatorAuthorityV0 {
         &mut self,
         envelope: &ConsensusRelayEnvelopeV0,
     ) -> Result<[u8; 32]> {
+        self.require_live_consensus_admission_v1()?;
         ensure!(
             envelope.origin() == self.local_validator,
             "originated relay author differs from this continuous authority"
@@ -7186,12 +7189,58 @@ mod tests {
             .consensus_windows
             .synchronize_authoritative_progress_v0(View::new(7), &high_qc, None)
             .expect("prune direct-Proposal identity tail");
-        let stale = harness.authorities[0]
-            .admit_authenticated_consensus_frame_v0(&reconnect_replay)
-            .expect_err("pruned Proposal replay must be stale, not fresh");
-        assert!(stale
-            .to_string()
-            .contains("consensus statement view was pruned"));
+        let before = harness.authorities[0].facts_v0().unwrap();
+        let inventory = harness.authorities[0]
+            .fresh_ready_signer_inventory_v1()
+            .unwrap();
+        let violations = harness.authorities[0].protocol_violations;
+        let retained = harness.authorities[0]
+            .consensus_windows
+            .direct_proposals
+            .clone();
+        assert!(
+            retained.is_empty(),
+            "the stale identity was actually pruned"
+        );
+        for _ in 0..2 {
+            assert!(harness.authorities[0]
+                .admit_authenticated_consensus_frame_v0(&reconnect_replay)
+                .expect("a verified pruned Proposal has no live action")
+                .is_none());
+        }
+        // Pruning is not permission to skip the original strict signature or
+        // sender checks. Invalid old input must not become an inert success.
+        let mut forged = reconnect_replay.clone();
+        forged.payload = unbound
+            .with_proposer_signature_for_test(SignatureBytes::from_array([0; 64]))
+            .encode()
+            .unwrap();
+        assert!(harness.authorities[0]
+            .admit_authenticated_consensus_frame_v0(&forged)
+            .is_err());
+        let mut wrong_sender = reconnect_replay;
+        wrong_sender.sender = harness
+            .validator_set
+            .validators()
+            .iter()
+            .find(|v| v.id() != proposer)
+            .unwrap()
+            .id();
+        assert!(harness.authorities[0]
+            .admit_authenticated_consensus_frame_v0(&wrong_sender)
+            .is_err());
+        assert_eq!(harness.authorities[0].facts_v0().unwrap(), before);
+        assert_eq!(
+            harness.authorities[0]
+                .fresh_ready_signer_inventory_v1()
+                .unwrap(),
+            inventory
+        );
+        assert_eq!(harness.authorities[0].protocol_violations, violations);
+        assert_eq!(
+            harness.authorities[0].consensus_windows.direct_proposals,
+            retained
+        );
     }
 
     #[test]
