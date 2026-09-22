@@ -1,0 +1,102 @@
+name: trnm-independent-rust-feedback
+
+# Transitional execution feedback only. This does not replace or rename any
+# protected required baseline job or grant production/release acceptance.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-independent-rust-feedback-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+
+jobs:
+  lanes:
+    name: rust-feedback-${{ matrix.mode }}-${{ matrix.lane }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 210
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        mode: [head, merge]
+        lane: [build, workspace, native, safety-epoch, node-epoch, contracts]
+    steps:
+      - name: Check out exact selected source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ matrix.mode == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source and ordered merge parents
+        env:
+          MODE: ${{ matrix.mode }}
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+          EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+          EXPECTED_MERGE: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          for pin in "$EXPECTED_HEAD" "$EXPECTED_BASE" "$EXPECTED_MERGE"; do
+            [[ "$pin" =~ ^[0-9a-f]{40}$ ]]
+          done
+          if [[ "$MODE" == head ]]; then
+            test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          else
+            test "$MODE" = merge
+            test "$(git rev-parse HEAD)" = "$EXPECTED_MERGE"
+            test "$(git show -s --format=%P HEAD)" = "$EXPECTED_BASE $EXPECTED_HEAD"
+          fi
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+      - name: Install repository-pinned Rust
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+      - name: Test lane failure and source binding behavior
+        run: python3 -B scripts/ci/test_independent_rust_lane_v1.py
+      - name: Execute complete independent lane
+        env:
+          MODE: ${{ matrix.mode }}
+          LANE: ${{ matrix.lane }}
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+          EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+          EXPECTED_MERGE: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/run_independent_rust_lane_v1.py \
+            --lane "$LANE" --mode "$MODE" \
+            --head "$EXPECTED_HEAD" --base "$EXPECTED_BASE" --merge "$EXPECTED_MERGE" \
+            --evidence-dir "$RUNNER_TEMP/rust-independent-evidence"
+      - name: Retain exact-source success and failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rust-feedback-${{ matrix.mode }}-${{ matrix.lane }}-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/rust-independent-evidence
+          if-no-files-found: error
+          retention-days: 7
+
+  feedback-complete:
+    name: rust-independent-feedback-complete
+    if: always()
+    needs: [lanes]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Refuse skipped, cancelled or failed execution
+        env:
+          LANES_RESULT: ${{ needs.lanes.result }}
+        run: |
+          test "$LANES_RESULT" = success
