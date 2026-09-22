@@ -75,21 +75,34 @@ fn genuine_joint_kernel_v8(
     .unwrap()
 }
 
+// Diagnostic-only monotonic timings. Keep every real owner call, negative,
+// exact retry and cold reopen below; neither time nor these labels authorizes
+// a transition or changes the runner's original per-case deadline.
+fn trace_v8_phase(phase: &str, start: std::time::Instant) {
+    eprintln!("V8_PHASE phase={phase} elapsed_ms={}", start.elapsed().as_millis());
+}
+
 #[inline(never)]
 fn prepare_joint_roles_v8(case: Box<RolesCaseV7>) -> Box<RolesCaseV7> {
     use trnm_consensus_types::HandoffSignerRoleV1;
+    let start = std::time::Instant::now();
+    trace_v8_phase("roles-start", start);
     let mut case = case;
     case.1
         .sign_handoff_exact_v7(HandoffSignerRoleV1::OldSet, &mut case.2)
         .unwrap();
+    trace_v8_phase("old-role-signed", start);
     case.1
         .sign_handoff_exact_v7(HandoffSignerRoleV1::NewSet, &mut case.2)
         .unwrap();
+    trace_v8_phase("new-role-signed", start);
     case
 }
 
 #[inline(never)]
 fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Watermark) {
+    let start = std::time::Instant::now();
+    trace_v8_phase("attachment-checks-start", start);
     let (directory, mut roles, key, watermark) = *case;
     let original = roles.retired.checkpoint;
     let calls = key.calls;
@@ -100,10 +113,12 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     let safety_before = sqlite_logical_image_v3(&safety_path);
     let role_before = sqlite_logical_image_v3(&role_path);
     let native_before = sqlite_logical_image_v3(&native_path);
+    trace_v8_phase("source-images-read", start);
     let kernel = genuine_joint_kernel_v8(&roles, false);
     let with_local = genuine_joint_kernel_v8(&roles, true);
     super::validate_joint_kernel_v8(&roles, &kernel).unwrap();
     super::validate_joint_kernel_v8(&roles, &with_local).unwrap();
+    trace_v8_phase("both-joint-quorums-verified", start);
     assert!(super::validate_joint_kernel_v8(&roles, &[]).is_err());
     let mut trailing = kernel.clone();
     trailing.push(0);
@@ -135,9 +150,12 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     roles.head = original_head;
     super::confirm_attachment_source_v8(&mut roles).unwrap();
     assert!(sqlite_logical_image_v3(&native_path) == native_before);
+    trace_v8_phase("source-and-custody-negatives-complete", start);
     let selected = roles.head.exact_watermark_v1();
     let mut attached = roles.attach_joint_handoff_v8(&kernel).unwrap();
+    trace_v8_phase("joint-attached", start);
     let checkpoint = attached.confirm_attached_cut_v8().unwrap();
+    trace_v8_phase("attached-cut-readback", start);
     assert_eq!(
         checkpoint.fields().phase,
         EpochCheckpointPhaseV1::EpochHandoffAttachedNative13
@@ -176,10 +194,12 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
         attached.confirm_joint_handoff_exact_v8(&kernel).unwrap(),
         checkpoint
     );
+    trace_v8_phase("first-exact-retry", start);
     assert_eq!(
         attached.confirm_joint_handoff_exact_v8(&kernel).unwrap(),
         checkpoint
     );
+    trace_v8_phase("second-exact-retry", start);
     assert!(sqlite_logical_image_v3(&native_path) == native_after);
     assert!(sqlite_logical_image_v3(&safety_path) == safety_before);
     assert!(sqlite_logical_image_v3(&role_path) == role_before);
@@ -193,6 +213,7 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     // comparison must catch even byte-identical namespace replacement.
     *incoming_watermark.4.lock().unwrap() = Some(role_path.clone());
     let error = attached.confirm_attached_cut_v8().unwrap_err();
+    trace_v8_phase("late-callback-replacement-rejected", start);
     assert!(
         incoming_watermark.4.lock().unwrap().is_none(),
         "actual retirement callback did not run: {error:#}"
@@ -215,9 +236,11 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     assert_eq!(key.calls, calls);
     let binding = attached.edge.successor_binding();
     drop(attached);
+    trace_v8_phase("cold-recovery-start", start);
     let application =
         DurableNativeApplicationV0::open(&native_path, native_checkpoint_fixture_config_v1())
             .unwrap();
+    trace_v8_phase("native-cold-open", start);
     let requirements = application
         .inspect_later_epoch_application_edge_requirements_v1(
             original.fields().application.block_id,
@@ -226,6 +249,7 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     let recovered = application
         .recover_later_epoch_application_edge_v1(&requirements)
         .unwrap();
+    trace_v8_phase("native-edge-recovered", start);
     assert_eq!(recovered.successor_binding(), binding);
     assert_eq!(
         recovered.checkpoint_commit_sequence(),
@@ -236,21 +260,34 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     assert_eq!(store.load().unwrap(), checkpoint);
     // This cold comparison grants no V8 owner, Core driver or new signer.
     drop((store, application, directory));
+    trace_v8_phase("all-attachment-checks-complete", start);
 }
 
 #[inline(never)]
 fn build_actual_attachment_case_v8() -> (Box<RolesCaseV7>, Watermark) {
+    let start = std::time::Instant::now();
+    trace_v8_phase("real-owner-build-start", start);
     let initial = build_epoch_runtime_case_v1();
+    trace_v8_phase("initial-owner-built", start);
     let incoming_watermark = initial.recovery.old_watermark.clone();
     let live = activate_actual_case_v1(initial);
+    trace_v8_phase("initial-owner-activated", start);
     let unsigned = first_apply_unsigned_v2(live);
     let first = first_apply_children_v2(first_apply_start_v2(unsigned));
+    trace_v8_phase("first-new-blocks-applied", start);
     let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
+    trace_v8_phase("cutoff-applied", start);
     let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
+    trace_v8_phase("checkpoint-prepared", start);
     let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
+    trace_v8_phase("first-seal-applied", start);
     let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
+    trace_v8_phase("second-seal-applied", start);
     let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
-    (prepare_joint_roles_v8(roles), incoming_watermark)
+    trace_v8_phase("pre-handoff-committed-roles-commissioned", start);
+    let signed = prepare_joint_roles_v8(roles);
+    trace_v8_phase("real-owner-build-complete", start);
+    (signed, incoming_watermark)
 }
 
 #[test]

@@ -300,4 +300,8 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
 
 
 if __name__ == "__main__":
+    # Keep one required CI entrypoint. Importing the shared fixtures does not
+    # recursively register tests; only this executable entrypoint loads both.
+    from test_native_candidate_shard_feedback_v1 import CandidateFeedbackTests
+
     unittest.main()
