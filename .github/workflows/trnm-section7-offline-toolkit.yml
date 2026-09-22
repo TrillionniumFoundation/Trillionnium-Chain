@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 25
     env:
-      SOURCE_SHA: 435c0168558d75fc70aaa11980a179b9d5980f33
+      SOURCE_SHA: a60a38baa5d4cad89a208b51e871093a2dcb6171
     steps:
       - name: Check out the immutable source without persisted credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: 435c0168558d75fc70aaa11980a179b9d5980f33
+          ref: a60a38baa5d4cad89a208b51e871093a2dcb6171
           persist-credentials: false
       - name: Prepare public offline build inputs only
         shell: bash
@@ -48,7 +48,7 @@ jobs:
       - name: Retain bounded diagnostic build inputs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: trnm-section7-offline-kit-435c0168
+          name: trnm-section7-offline-kit-a60a38b
           path: ${{ runner.temp }}/trnm-section7-offline-kit/
           retention-days: 1
           compression-level: 0
