@@ -55,7 +55,7 @@ class NativeCandidateShardTests(unittest.TestCase):
         bin_dir = base / "bin"
         bin_dir.mkdir()
         executable = bin_dir / "fake-native"
-        executable.write_text(f"#!{sys.executable}\n" + f"NAMES={names!r}\nIGNORED={sorted(ignored)!r}\n" + '''
+        executable.write_text(f"#!{sys.executable} -S\n" + f"NAMES={names!r}\nIGNORED={sorted(ignored)!r}\n" + '''
 import os, pathlib, sys
 assert 'RUST_MIN_STACK' not in os.environ
 case = os.environ.get('SHARD_TEST_CASE', '')
@@ -92,8 +92,39 @@ if '--list' in args:
         raise SystemExit(7)
     if case == 'filtered-mismatch' and skips:
         selected = selected[:-1]
+    if case == 'inventory-source-change' and selected == ['ordinary::new_test']:
+        pathlib.Path('../untracked-from-inventory').write_text('changed')
     print(''.join(name + ': test\\n' for name in selected), end='')
     raise SystemExit(0)
+execution_record = pathlib.Path(__file__).with_name('executed.jsonl')
+with execution_record.open('a') as record:
+    record.write(__import__('json').dumps(selected) + '\\n')
+if selected == ['ordinary::new_test']:
+    if case in ('first-failure', 'two-failures'):
+        print('original failure: 17', flush=True)
+        raise SystemExit(17)
+    if case == 'timeout-first':
+        print('original timeout started', flush=True)
+        __import__('time').sleep(10)
+    if case == 'source-change-failure':
+        pathlib.Path('../untracked-during-test').write_text('changed')
+        raise SystemExit(17)
+    if case == 'binary-change-failure':
+        with open(__file__, 'a') as changed:
+            changed.write('\\n# substituted executable\\n')
+        raise SystemExit(18)
+    if case == 'empty-first':
+        raise SystemExit(0)
+    if case == 'counts-first':
+        print('test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s')
+        raise SystemExit(0)
+if case == 'two-failures' and selected != ['ordinary::new_test']:
+    raise SystemExit(19)
+if case == 'checkpoint-visible':
+    snapshot = __import__('json').loads(pathlib.Path(os.environ['SHARD_TEST_EVIDENCE'], 'summary.json').read_text())
+    assert snapshot['status'] != 'passed'
+    assert snapshot['shards'][snapshot['phase']]['status'] == 'running'
+    assert snapshot['shards'][snapshot['phase']]['tests'] == selected
 if case == 'no-summary':
     print('test process exited without a final parent summary')
     raise SystemExit(0)
@@ -110,7 +141,7 @@ print(f'test result: ok. {passed} passed; 0 failed; {len(set(selected) & ignored
 ''')
         executable.chmod(0o755)
         cargo = bin_dir / "cargo"
-        cargo.write_text(f"#!{sys.executable}\n" + f"EXE={str(executable)!r}\nPACKAGE={package!r}\nTARGET_KIND={target_kind!r}\nTARGET_NAME={target_name!r}\nRELATIVE_SOURCE={relative_source!r}\n" + '''
+        cargo.write_text(f"#!{sys.executable} -S\n" + f"EXE={str(executable)!r}\nPACKAGE={package!r}\nTARGET_KIND={target_kind!r}\nTARGET_NAME={target_name!r}\nRELATIVE_SOURCE={relative_source!r}\n" + '''
 import json, os, pathlib, sys
 if os.environ.get('SHARD_TEST_CASE') == 'compile-failure':
     raise SystemExit(9)
@@ -126,7 +157,7 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
         evidence = base / "evidence"
         if case == "dirty-source":
             (repo / "untracked-before-test").write_text("untracked")
-        env = {"PATH": str(bin_dir) + os.pathsep + os.environ["PATH"], "SHARD_TEST_CASE": case, "RUST_MIN_STACK": "99999999"}
+        env = {"PATH": str(bin_dir) + os.pathsep + os.environ["PATH"], "SHARD_TEST_CASE": case, "RUST_MIN_STACK": "99999999", "SHARD_TEST_EVIDENCE": str(evidence)}
         head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
         env["TRNM_EXPECTED_SOURCE_SHA"] = "0" * 40 if case == "wrong-source-pin" else head
         with patch.dict(os.environ, env), contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
@@ -226,6 +257,84 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
                     self.assertEqual(summary["error"], expected_error)
                     self.assertFalse(any((evidence / f"{shard}.command").exists() for shard in runner.SHARD_NAMES))
 
+    def test_failed_shards_do_not_hide_remaining_execution(self) -> None:
+        for case in ("first-failure", "two-failures", "empty-first", "counts-first"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                base = Path(directory)
+                code, summary, evidence = self.invoke(base, case)
+                expected_code = 17 if case in ("first-failure", "two-failures") else 2
+                self.assertEqual(code, expected_code)
+                self.assertEqual(summary["status"], "failed")
+                executed = [json.loads(line) for line in (base / "bin/executed.jsonl").read_text().splitlines()]
+                planned = json.loads((evidence / "inventory.json").read_text())
+                self.assertEqual(executed, list(planned.values()))
+                self.assertEqual(summary["first_failure"]["shard"], "general")
+                self.assertEqual(summary["first_failure"]["exit_code"], expected_code)
+                self.assertEqual(summary["shards"]["general"]["status"], "failed")
+                self.assertTrue(summary["source_confirmed"])
+                self.assertTrue(all(row["status"] in ("passed", "failed") for row in summary["shards"].values()))
+                if case == "first-failure":
+                    self.assertEqual(summary["failed_shards"], ["general"])
+                    self.assertIn("original failure: 17", (evidence / "general.log").read_text())
+                if case in ("empty-first", "counts-first"):
+                    self.assertEqual(summary["shards"]["general"]["exit_code"], 0)
+                    self.assertIn("error", summary["shards"]["general"])
+
+    def test_timeout_keeps_original_exit_and_runs_later_shards(self) -> None:
+        actual_run = runner.run_bounded
+
+        def short_fixture_timeout(command, *, cwd, env, timeout):
+            # Accelerate only the sleeping fake parent; use real TERM/KILL cleanup.
+            if command[0].endswith("fake-native") and "--list" not in command and "--skip" in command and len(command) > 10:
+                if env.get("SHARD_TEST_CASE") == "timeout-first" and command[1] == "--skip":
+                    timeout = 1
+            return actual_run(command, cwd=cwd, env=env, timeout=timeout)
+
+        with tempfile.TemporaryDirectory() as directory, patch.object(runner, "run_bounded", side_effect=short_fixture_timeout):
+            base = Path(directory)
+            code, summary, evidence = self.invoke(base, "timeout-first")
+            self.assertEqual(code, 124)
+            self.assertEqual(summary["first_failure"]["exit_code"], 124)
+            self.assertEqual(summary["shards"]["general"]["deadline_seconds"], 30)
+            self.assertIn("TIMEOUT", (evidence / "general.log").read_text())
+            self.assertEqual(len((base / "bin/executed.jsonl").read_text().splitlines()), len(runner.SHARD_NAMES))
+            self.assertEqual(summary["failed_shards"], ["general"])
+
+    def test_source_or_binary_mutation_stops_before_the_next_shard(self) -> None:
+        for case, expected_exit in (("source-change-failure", 17), ("binary-change-failure", 18)):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                base = Path(directory)
+                code, summary, evidence = self.invoke(base, case)
+                self.assertNotEqual(code, 0)
+                self.assertFalse(summary["source_confirmed"])
+                self.assertEqual(summary["first_failure"]["exit_code"], expected_exit)
+                self.assertEqual((evidence / "general.exit-code").read_text().strip(), str(expected_exit))
+                executed = (base / "bin/executed.jsonl").read_text().splitlines()
+                self.assertEqual(len(executed), 1)
+                self.assertTrue(all(row["status"] == "not-run" for name, row in summary["shards"].items() if name != "general"))
+                self.assertIn("error", summary)
+
+    def test_inventory_mutation_never_reaches_test_execution(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            code, summary, _ = self.invoke(base, "inventory-source-change")
+            self.assertNotEqual(code, 0)
+            self.assertFalse((base / "bin/executed.jsonl").exists())
+            self.assertFalse(summary["source_confirmed"])
+
+    def test_progress_checkpoint_and_elapsed_time_are_observations_not_success(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            code, summary, evidence = self.invoke(Path(directory), "checkpoint-visible")
+            self.assertEqual(code, 0)
+            planned = json.loads((evidence / "inventory.json").read_text())
+            for name, outcome in summary["shards"].items():
+                self.assertEqual(outcome["tests"], planned[name])
+                self.assertEqual(outcome["status"], "passed")
+                self.assertGreaterEqual(outcome["elapsed_seconds"], 0)
+            self.assertEqual(summary["planned_shard_count"], len(planned))
+            self.assertEqual(summary["failed_shards"], [])
+            self.assertGreaterEqual(summary["elapsed_seconds"], 0)
+
     def test_reusing_evidence_refuses_without_changing_previous_result(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
@@ -271,10 +380,10 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
                 if close_pipes:
                     child += "fd=os.open(os.devnull,os.O_WRONLY); os.dup2(fd,1); os.dup2(fd,2); os.close(fd); "
                 child += "time.sleep(30)"
-                parent = f"import subprocess,sys,time; subprocess.Popen([sys.executable,'-c',{child!r}]); time.sleep(30)"
+                parent = f"import subprocess,sys,time; subprocess.Popen([sys.executable,'-S','-c',{child!r}]); time.sleep(30)"
                 start = time.monotonic()
                 with tempfile.TemporaryDirectory() as directory:
-                    output, code = runner.run_bounded([sys.executable, "-c", parent], cwd=Path(directory), env=os.environ.copy(), timeout=1)
+                    output, code = runner.run_bounded([sys.executable, "-S", "-c", parent], cwd=Path(directory), env=os.environ.copy(), timeout=1)
                 self.assertEqual(code, 124)
                 self.assertLess(time.monotonic() - start, 12)
                 self.assertIn("TIMEOUT", output)
@@ -286,6 +395,32 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
                     time.sleep(0.01)
                     state = process_state(child_pid)
                 self.assertIn(state, (None, "Z"), "owned child is still running")
+
+    def test_failed_parent_cannot_leave_a_pipe_closed_child_running(self) -> None:
+        child = (
+            "import os,signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); "
+            "print('READY:'+str(os.getpid()),flush=True); "
+            "fd=os.open(os.devnull,os.O_WRONLY); os.dup2(fd,1); os.dup2(fd,2); os.close(fd); time.sleep(30)"
+        )
+        parent = (
+            f"import subprocess,sys; child=subprocess.Popen([sys.executable,'-S','-c',{child!r}],stdout=subprocess.PIPE,text=True); "
+            "print(child.stdout.readline(),end='',flush=True); raise SystemExit(17)"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            output, code = runner.run_bounded([sys.executable, "-S", "-c", parent], cwd=Path(directory), env=os.environ.copy(), timeout=5)
+        self.assertEqual(code, 17)
+        child_pid = int(next(line for line in output.splitlines() if line.startswith("READY:")).split(":")[1])
+        until = time.monotonic() + 1
+        while process_state(child_pid) not in (None, "Z") and time.monotonic() < until:
+            time.sleep(0.01)
+        try:
+            self.assertIn(process_state(child_pid), (None, "Z"))
+        finally:
+            # Red-control runs must not leave the deliberately leaked fixture alive.
+            try:
+                os.kill(child_pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
 
     def test_cleanup_observation_handles_reaping_without_hiding_other_failures(self) -> None:
         for error in (FileNotFoundError(), ProcessLookupError()):
