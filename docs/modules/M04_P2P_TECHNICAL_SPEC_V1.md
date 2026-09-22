@@ -20,6 +20,8 @@ Production activation requires a separately reviewed network profile.
 | Source | Implemented responsibility | Remaining integration |
 |---|---|---|
 | `trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs` | `PeerSessionIdentityV0`, exact-next nonce, one pending frame, typed verification token | No socket, TLS, discovery or persistent backend |
+| `trillionnium/crates/trnm-poco-node/src/p2p_session_ingress.rs` | Candidate Ed25519 handshake/frame ingress, nested Vote/TimeoutVote/QC/TC verification, fsynced session and authenticated-frame replay anchor, durable frame-reservation token, child-process restart/tamper checks | No listener, TLS identity administration, Core ACK atomicity or external anti-rollback |
+| `trillionnium/crates/trnm-poco-node/src/authenticated_transport.rs` | Candidate-only bounded TCP adapter around the authenticated session; length-prefix checks before allocation, read deadlines, response bound and caller-owned replay-anchor handoff | No TLS/static peer administration, peer lease, typed transaction/sync dispatch, Core ACK, signer, proposal/finality or production activation |
 | `trillionnium/crates/trnm-poco-node-host/src/persistent_p2p_ingress_bridge.rs` | Candidate bridge to prepared Core ingress and ACK | Connect an independently authenticated listener |
 | `trillionnium/crates/trnm-poco-lab-validator/src/p2p_admission.rs` | Candidate peer-admission integration | Multi-host production authentication |
 | `trillionnium/crates/trnm-consensus-peer-lease/src/lib.rs` | Unix lease transport, append-only chain, cross-process fencing | Not consensus payload transport or host attestation |
@@ -27,6 +29,220 @@ Production activation requires a separately reviewed network profile.
 The existing admission frame has a 4 MiB **payload** maximum. Unix credentials
 and local test keys do not establish cross-host validator identity. New ports
 below are planned adapters; their names do not claim current implementation.
+
+### Established G3 receive provenance (M04-ESTABLISHED-RECEIVE-CLASS-V1)
+
+The existing G3 `transport.rs` local-key and external-identity connections are
+separate candidate laboratory adapters from the proposed `dev-p2p-tls-v1`
+profile. `receive_classified_v1` returns an inert `EstablishedReceiveErrorV1`
+with private original error, authenticated `ConnectionSession`, and a closed
+class: `PeerInput(reason)`, `TransportIo`, or `Internal`. It grants no peer
+lease, Core receipt, reconnect permission, ACK, signing or recovery authority.
+The session comes from the completed receiver-challenged handshake, never from
+the rejected envelope's claimed sender/session. The mesh must independently
+join it to its exact direction and generation before any lifecycle action.
+
+Only the established receive operation may create a peer-input classification:
+bounded frame length/grammar, wrong run, unknown claimed sender, invalid frame
+signature, or a valid decoded frame whose sender/session/next sequence differs
+from the actual connection. This uses the unchanged strict framed decoder and
+immutable validated key-role registry. Socket I/O errors retain their exact
+`io::Error`; this class alone does not declare any I/O failure recoverable.
+Local already-poisoned state, absent external host-attestation admission and
+receive-counter exhaustion are `Internal`, even when the legacy enum spelling
+is shared with a peer error. Any future unclassified decoder error is internal.
+Handshake entropy, configuration and external identity errors are outside this
+established-input classification and must not be relabeled by generic matching.
+
+All failures permanently poison that one connection; no failed frame is
+returned and its next-receive sequence remains unchanged. Success increments
+exactly once after signature and complete session/sequence checks. Existing
+`receive` methods delegate the same kernel and project the original
+`FrameError` unchanged, including I/O kind/message, replay and poisoned errors.
+Send behavior, wire bytes/domains, frame allocation ceilings and handshake
+freshness remain unchanged. A connection must never resume by clearing poison
+or resetting sequence; an independent genuine handshake creates a new session.
+
+This slice supplies classification only. The existing mesh still uses the
+legacy receive interface and may stop globally; per-peer quarantine, checked
+lease/host-receipt cleanup and unavailable-session publication require the
+separate mesh consumer integration. Pre-authentication rejection, relay/barrier
+policy, durable payload replay and terminal acceptance are not changed.
+Real TCP regression must complete the authentic handshake before injecting
+bad frame bytes; verify the actual peer/session attribution, unchanged sequence,
+poisoned retry, independent healthy connection progress and legacy projection.
+It must cover both identity backends, correctly signed wrong-session/sequence/
+sender frames, invalid signature and malformed/oversized input, transport EOF,
+and local overflow/poison/host-admission failures without additional I/O or
+external signing. These are connection tests, not a claim of mesh quarantine
+or successful multi-host consensus.
+
+### Owned ingress at shutdown (M04-SHUTDOWN-INGRESS-V1)
+
+Stopping an established mesh does not erase input which a receive worker has
+already decoded or already owns behind bounded queue backpressure. Before
+workers are joined, the shared stop flag requests finite shutdown; it does not
+classify pending work as harmless or authorize CleanStop. The existing mesh
+close API and the future terminal-barrier residual consumer retain their own
+strict acceptance rules.
+
+An `emit_event` owner observing global stop attempts exactly one nonblocking
+send into the existing bounded ingress queue. Success preserves the original
+non-cloneable event and reservation for post-join examination. Full or
+disconnected ingress records the first attributed terminal failure and returns
+an error, releasing the event reservation normally; it must not silently drop
+work, wait for a consumer that is joining, allocate a second queue, or invent a
+budget exemption. A concurrent receiver disappearance records the same failure
+even if stop becomes true between observation and `try_send`. A canceled
+superseded edge retains its existing separate discard semantics and cannot
+publish into the replacement generation. Global child teardown therefore sets
+stop rather than pretending every edge was superseded; an actual child panic
+remains a retained terminal failure even while stop is already set.
+
+The acceptor owns only its inbound child subtree. Joining that subtree must
+not release the registry-wide directed leases: a separately owned outbound
+worker may still be finishing its bounded idle revalidation or send path. The
+mesh owner releases remaining global leases only after every top-level worker
+has joined, both on normal close and failed commissioning. Individual workers
+retain their existing exact-direction release behavior. A genuinely missing or
+invalid outbound lease remains an internal failure even during stop; there is
+no stop-based exemption to fence validation. A deterministic regression holds
+a real authenticated outbound session and admitted lease across the inbound
+join, then permits its original worker-side idle check before final global
+release; a deliberately missing token must still fail the same check.
+
+A successfully decoded frame waiting for its original byte reservation remains
+subject to both peer and global ceilings. If global stop ends that wait, record
+a terminal failure before releasing that frame; do not mint an unbudgeted mesh
+owner. Superseded-edge cancellation is still separate. Inbound nontransient
+readiness or receive errors remain terminal even if global stop races their
+return. Only the existing explicitly transient I/O class caused by socket
+shutdown retains the quiet shutdown treatment. Local state, malformed/signature
+errors, mutex failures and resource accounting errors are never relabeled as
+transient to complete a campaign. A first retained failure is immutable.
+
+Regression uses completed authenticated TCP handshakes and original decoded
+frames to exercise stop with an available count slot, exhausted count capacity,
+a disconnected receiver and exhausted byte capacity. It checks exact retained
+bytes/session, finite join, unchanged budget ceilings and complete reservation
+release; nontransient errors racing stop still fail while superseded cancellation
+and explicit transient I/O retain their old behavior. This producer change alone
+does not implement peer quarantine or authorize terminal-barrier completion.
+
+### Established peer quarantine (M04-PEER-QUARANTINE-V1)
+
+The G3 mesh consumes only the closed `PeerInput` result of
+`receive_classified_v1` after its authentic handshake. A private process-local
+registry is frozen from the actual directed peer plan before workers start;
+it retains at most one immutable first rejection per admitted incoming identity,
+with the original remote/session/generation and closed reason, plus checked
+reconnect/recipient counters. It accepts neither an envelope-selected identity
+nor a string-matched generic error. Transport I/O retains its existing explicit
+transient policy. Internal/poison/resource faults and failed external lease or
+host-attestation checks remain global failures.
+
+Publication is serialized with lease admission. It first revalidates the actual
+inbound lease/host receipt and exact generation, then pins the current directed
+lease coordinates and marks that identity quarantined before any cleanup or
+lifecycle event. This mark is irreversible for that mesh incarnation. A new
+handshake cannot erase it: authenticated inbound reconnect is refused before
+replacement generation or external admission, and outbound reconnect checks the
+same closed registry inside the admission lock. Pre-authentication errors retain
+their existing policy; this is not an unauthenticated-IP deny list.
+
+The acceptor owns and joins the precise offending inbound worker and its matching
+outbound worker, interrupts only those owned sockets, and confirms release of
+each pinned external lease and independent host receipt. A stale worker cannot
+release a replacement: exact directed session/generation equality and admission
+serialization are mandatory. Completed cleanup publishes the ordinary unavailable
+session facts; absent/replaced handles, panic, poisoned mutex, stale scope or
+cleanup/RPC failure stop the whole mesh. Tokens and receipts remain available
+for the existing retry path on uncertain release. Global shutdown joins all
+remaining workers and checks outstanding cleanup; it must not silently discard a
+quarantine retirement still in flight.
+
+`MeshSendDispositionV0::Quarantined` is distinct from Queued and Backpressured.
+The ordered outbox retires only that destination's original obligation with
+separate checked counters; it does not count a queued/transmitted frame or byte,
+or claim consensus progress. Healthy destinations retain their order and their
+bounded budgets. Frames queued before publication and not already in a socket
+write are canceled by that worker's retirement, with normal reservation release. No previously recorded
+fault or unavailable-session obligation is cleared; the controlled campaign
+still cannot claim CleanStop/full participation with a quarantined validator.
+These are process-local containment observations, not equivocation/finality
+proofs or restart authority.
+
+Required regressions use three real authenticated TCP identities: bad B's
+classified frame is refused, its exact worker and leases retire, B's fresh-session
+reconnect remains refused, and healthy C continues exchanging strict frames.
+They also require exact attribution for a claimed foreign sender, bounded repeat
+counters, independent host/external release failure, a stale-generation cleanup
+refusal, genuine child panic, strict global internal failure and outbox byte/
+recipient accounting. Synthetic topology scheduling tests do not establish
+cryptographic acceptance. No full-fleet, public-network or performance claim
+follows from this local candidate containment slice.
+
+Already admitted ingress owners from that identity are canceled at the bounded
+consumer boundary (one queue owner per receive call), with checked frame/byte
+counters and their original reservation release. Same-generation session must
+match the immutable rejected owner; only genuinely older owned generations may
+also be canceled. Lifecycle unavailability is retained. Publication shares the
+existing admission lock with finite outbound queue admission and with durable
+payload-replay admission, so a peer rejection cannot manufacture an internal
+missing-lease failure. A syscall already in flight at publication is not claimed
+to be retracted. The terminal close consumer checks the quarantine registry
+after joining all producers, before accepting even otherwise valid Park residuals.
+
+A completed closed `PeerInput` classification is never erased by a concurrent
+supersession cancel. The acceptor must join the old worker before releasing its
+lease, so that worker publishes from its actual old facts; the replacement path
+then completes exact quarantine cleanup and refuses the new admission. The
+completed rejection publishes its bounded lifecycle with one nonblocking send;
+an unexpectedly full or disconnected lifecycle queue is an internal fatal
+failure, never an unbounded wait behind a worker join. A global stop racing that
+completed rejection retains a terminal failure, even when supersession was also requested. A completed closed `Internal` classification
+also always retains its original failure despite cancel/stop; poisoning, local
+cursor failure and host errors cannot be relabeled as supersession. Ordinary
+canceled reads and transient I/O keep their existing separate semantics. Every
+public close joins and attempts all remaining releases before returning the original retained internal failure;
+ordinary cleanup success alone still grants no terminal acceptance.
+
+### Candidate authenticated socket seam
+
+`CandidateAuthenticatedP2pTransportV0` is the socket seam for the candidate
+authenticated-transport profile, separate from the G3 laboratory adapters. It
+is compiled only by the explicit
+`candidate-authenticated-transport` feature (and re-exported by the host's
+`candidate-networked-authority` feature). `bind` validates the supplied
+validator set against the consensus parameters and switches the listener to
+nonblocking mode. `accept_one` polls one connection and serves it
+synchronously; it creates no worker thread and has no hidden queue. The
+configured connection cap is at most 16 and zero is rejected.
+
+Each connection reads a four-byte big-endian length before allocating. A zero
+record, a handshake over `P2P_SESSION_MAX_HANDSHAKE_BYTES_V0`, or a frame over
+`P2P_SESSION_MAX_FRAME_BYTES_V0` is rejected before the body allocation. The
+handshake has a two-second read deadline and the frame has a five-second read
+deadline. The adapter then calls `PocoNodeP2pSessionV0::open` and
+`accept_frame`; with `accept_one_with_replay_anchor`, the caller-owned replay
+anchor is used so the session/frame reservation is fsynced before the callback
+is exposed. The callback returns a bounded response (at most 8 MiB), which is
+written as another length-prefixed record.
+
+This seam deliberately has no message-kind router. The callback receives an
+authenticated consensus frame only; it cannot by itself admit a public
+transaction, download state, acknowledge Core, acquire a peer lease, invoke a
+signer, propose, or finalize. `AUTHENTICATED_TRANSPORT_PRODUCTION_ACTIVATION_V0`
+is a compile-time `false` constant. The two unit tests cover zero-length and
+oversized-prefix rejection before allocation; the existing session tests cover
+signature, replay, persistence and restart semantics. A host that uses
+`accept_frame_with_durable_reservation` receives a private
+`PocoNodeP2pDurableFrameReservationV0` only after the replay-anchor fsync; its
+peer/session/sequence/digest fields cannot be caller-constructed. This token
+is the required handoff fact for a future typed public/sync dispatcher, but it
+does not acknowledge Core. A production listener
+still requires the TLS/static-peer identity profile above, a host-owned peer
+lease, typed M05/M13 dispatch, exact ACK recovery, and multi-host acceptance.
 
 ## Interfaces
 
@@ -244,3 +460,13 @@ Production reachability requires the authenticated persistent listener, exact
 payload-to-Core ACK recovery, anti-replay authority across machines, bounded
 fault campaigns and independent security review. The proposed dev profile can
 be built without granting production signing, release or public-testnet status.
+
+## M04-DIRECT-TERMINAL-CARRIER-V1
+
+The candidate authenticated frame registry adds kind17 `TerminalBarrier` for
+the M15 direct-seven Prepare/Park shutdown protocol. Kinds1–16 and frame-v2
+signatures/nonce/session/sequence semantics are unchanged. Its bounded, closed
+inner phase codec is admitted only through the original authenticated inbound
+mesh owner. It is excluded from ordinary consensus, sparse relay and restart
+collectors; transport authentication never converts it into finality, signing
+or restart authority. M15 checks the exact fleet and local terminal state.

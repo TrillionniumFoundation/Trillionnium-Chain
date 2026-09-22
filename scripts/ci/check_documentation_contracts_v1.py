@@ -25,6 +25,13 @@ SELF = 'scripts/ci/check_documentation_contracts_v1.py'
 TEST = 'scripts/ci/test_documentation_contracts_v1.py'
 OPERATIONS = 'config/documentation-operations-v1.json'
 OPERATION_GUIDE = 'docs/modules/TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md'
+SUPPLEMENT_OPERATIONS = 'config/documentation-operations-supplement-v1.json'
+SUPPLEMENT_GUIDE = 'docs/modules/TRNM_OPERATION_CLOSURE_SUPPLEMENT_V1.md'
+SUPPLEMENT_GATE = 'scripts/ci/check_documentation_operations_supplement_v1.py'
+SUPPLEMENT_TEST = 'scripts/ci/test_documentation_operations_supplement_v1.py'
+IMPLEMENTATION_MATRIX = 'docs/modules/TRNM_MODULE_IMPLEMENTATION_ACCEPTANCE_MATRIX_V1.md'
+IMPLEMENTATION_MATRIX_GATE = 'scripts/ci/check_module_implementation_contracts_v1.py'
+IMPLEMENTATION_MATRIX_TEST = 'scripts/ci/test_module_implementation_contracts_v1.py'
 REQUIRED_FOUNDATION_OPERATIONS = {
     'M02-OP-VOTE-BARRIER', 'M02-OP-TIMEOUT-BARRIER', 'M03-OP-SIGN-EXACT',
     'M04-OP-PERSIST-INGRESS', 'M04-OP-ACK-PREPARED', 'M08-OP-COMMIT-STRICT',
@@ -535,7 +542,11 @@ def source_identity(root: Path, expected: str | None = None) -> tuple[str, str]:
 
 def validate_files(root: Path, data: dict[str, Any], manifest: dict[str, Any],
                    operation_refs: set[str] | None = None) -> dict[str, dict[str, str]]:
-    refs = {REGISTRY, GUIDE, AUTHORITY, REVIEW, PLAN, REFERENCE, MANIFEST, COVERAGE, SELF, TEST}
+    refs = {
+        REGISTRY, GUIDE, AUTHORITY, REVIEW, PLAN, REFERENCE, MANIFEST, COVERAGE, SELF, TEST,
+        SUPPLEMENT_OPERATIONS, SUPPLEMENT_GUIDE, SUPPLEMENT_GATE, SUPPLEMENT_TEST,
+        IMPLEMENTATION_MATRIX, IMPLEMENTATION_MATRIX_GATE, IMPLEMENTATION_MATRIX_TEST,
+    }
     refs.update(operation_refs or set())
     refs.update(data['pcc1_v0_imports'])
     for row in data['modules']:
@@ -565,7 +576,7 @@ def validate_files(root: Path, data: dict[str, Any], manifest: dict[str, Any],
     validate_guide(data, (root/GUIDE).read_text(encoding='utf-8'))
     plan = (root/PLAN).read_text(encoding='utf-8')
     reference = (root/REFERENCE).read_text(encoding='utf-8')
-    for path in [AUTHORITY, GUIDE, REVIEW, REGISTRY]:
+    for path in [AUTHORITY, GUIDE, REVIEW, REGISTRY, SUPPLEMENT_OPERATIONS]:
         require(path in plan, 'DOC-ENTRYPOINT', path+' missing from sole plan')
     for text in [plan, reference]:
         require('legacy-ledger-observation' in text and 'VotePublished' in text and 'ReceiptPublished' in text,
@@ -586,6 +597,14 @@ def main() -> int:
     manifest = tomllib.loads((ROOT/MANIFEST).read_text(encoding='utf-8'))
     validate_structure(data, coverage)
     operations = json.loads((ROOT/OPERATIONS).read_text(encoding='utf-8'), object_pairs_hook=strict_object)
+    from check_documentation_operations_supplement_v1 import validate as validate_supplement
+    supplemental_report = validate_supplement()
+    from check_module_implementation_contracts_v1 import load_registry as load_matrix_registry
+    from check_module_implementation_contracts_v1 import validate_matrix
+    matrix_report = validate_matrix(
+        (ROOT/IMPLEMENTATION_MATRIX).read_text(encoding='utf-8'),
+        load_matrix_registry(),
+    )
     operation_report, operation_refs = validate_operations(ROOT, operations, data, coverage)
     require(type(manifest.get('selected_successor_pull_request')) is int and
             manifest['selected_successor_pull_request'] == 0 and
@@ -609,6 +628,8 @@ def main() -> int:
         'independent_acceptance': 'absent-from-local-index-requires-authenticated-external-evidence',
         'vacant_review_domains': sorted(DOMAIN_IDS), 'production_authority': False,
         'operation_catalog': {key: value for key, value in operation_report.items() if key != 'replay_commands'},
+        'supplemental_operation_catalog': supplemental_report,
+        'implementation_matrix': matrix_report,
     }
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

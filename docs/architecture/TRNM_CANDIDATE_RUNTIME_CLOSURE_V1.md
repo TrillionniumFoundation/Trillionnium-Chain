@@ -76,7 +76,10 @@ closure:
 - a device-backed non-exportable HSM or KMS signing authority;
 - an independently administered external monotonic signer anchor;
 - host attestation;
-- cross-process authenticated-frame replay authority across process restart;
+- production/external cross-process authenticated-frame replay authority across
+  process restart (the node candidate has a local fsynced replay-anchor test,
+  but it is not wired to the live mesh, Core acknowledgement or an external
+  anti-rollback source);
 - production cross-platform transport qualification;
 - independently operated multi-host campaign evidence;
 - physical power-loss and controller-cache-loss evidence;

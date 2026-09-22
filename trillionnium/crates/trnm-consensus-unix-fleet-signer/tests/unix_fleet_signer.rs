@@ -358,12 +358,16 @@ fn durable_authority_prepares_before_signer_and_reopens_fail_closed() {
             key: SigningKey::from_bytes(&[0x4a; 32]),
         },
     );
-    assert!(matches!(
-        reopened,
-        Err(FleetRootAuthorityErrorV1::InvalidLog(
-            "unresolved prepared signing intent"
-        ))
-    ));
+    assert!(
+        matches!(
+            &reopened,
+            Err(FleetRootAuthorityErrorV1::InvalidLog(
+                "unresolved prepared signing intent"
+            ))
+        ),
+        "unresolved prepared intent must fence reopen, observed error: {:?}",
+        reopened.as_ref().err()
+    );
 }
 
 #[test]

@@ -242,6 +242,113 @@ def validate_candidate_tx_journal_boundary(packages: dict[str, Package]) -> set[
     return reached
 
 
+
+def feature_names(packages: dict[str, Package], values: Any, label: str) -> set[str]:
+    require(isinstance(values, list) and all(isinstance(value, str) for value in values),
+            f"{label}: feature list required")
+    require(len(values) == len(set(values)), f"{label}: duplicate features")
+    for value in values:
+        package, separator, feature = value.partition("/")
+        require(separator == "/" and package in packages and feature in packages[package].features,
+                f"{label}: unknown declared package feature {value}")
+    return set(values)
+
+
+def resolved_feature_names(active: dict[str, set[str]]) -> set[str]:
+    return {f"{package}/{feature}" for package, features in active.items() for feature in features}
+
+
+def is_test_feature(feature: str) -> bool:
+    return feature in {"test-fixtures", "test-support", "fixture-raw-key"} or feature.endswith(
+        ("-test-fixtures", "-test-support")
+    )
+
+
+def validate_feature_closures(
+    packages: dict[str, Package], config: dict[str, Any]
+) -> list[dict[str, Any]]:
+    rows = config.get("feature_closures")
+    require(isinstance(rows, list), "feature closure policy missing")
+    required_ids = {"node-production-features", "node-component-default-features",
+                    "outgoing-authority-features", "epoch-runtime-features",
+                    "epoch-runtime-fixture-features"}
+    require(all(isinstance(row, dict) for row in rows), "feature closure table required")
+    ids = [row.get("id") for row in rows]
+    require(all(isinstance(value, str) for value in ids) and len(ids) == len(set(ids))
+            and set(ids) == required_ids, "feature closure entrypoints missing or duplicated")
+    reports = []
+    for row in rows:
+        label = row["id"]
+        roots, selected = row.get("root_packages"), row.get("features")
+        require(isinstance(roots, list) and roots and all(isinstance(root, str) and root in packages for root in roots),
+                f"{label}: unknown root package")
+        require(len(roots) == len(set(roots)), f"{label}: duplicate root package")
+        require(isinstance(selected, list) and all(isinstance(feature, str) for feature in selected),
+                f"{label}: selected feature list required")
+        require(len(selected) == len(set(selected)), f"{label}: duplicate selected feature")
+        for root in roots:
+            for feature in selected:
+                require(feature in packages[root].features, f"{label}: unknown root feature {root}/{feature}")
+        require(type(row.get("default_features")) is bool and type(row.get("forbid_test_features")) is bool,
+                f"{label}: boolean feature policy required")
+        required = feature_names(packages, row.get("required_features"), label)
+        forbidden = feature_names(packages, row.get("forbidden_features"), label)
+        require(not required.intersection(forbidden), f"{label}: contradictory feature policy")
+        reached, active = resolve_closure(packages, roots, set(selected), row["default_features"])
+        enabled = resolved_feature_names(active)
+        require(required <= enabled, f"{label}: required features absent: {sorted(required - enabled)}")
+        require(not forbidden.intersection(enabled),
+                f"{label}: forbidden candidate features reached: {sorted(forbidden.intersection(enabled))}")
+        if label in {"node-production-features", "node-component-default-features",
+                     "outgoing-authority-features"}:
+            # Versioned APIs remain candidate authority even when a newly
+            # introduced name is not yet in the explicit historical list.
+            host_features = sorted(
+                f"{package}/{feature}"
+                for package in ("trnm-consensus-core", "trnm-consensus-safety-store")
+                for feature in active.get(package, set())
+                if feature.startswith("candidate-epoch-host-")
+            )
+            require(not host_features,
+                    f"{label}: forbidden candidate epoch host features reached: {host_features}")
+        if row["forbid_test_features"]:
+            fixtures = sorted(f"{package}/{feature}" for package, features in active.items()
+                              for feature in features if is_test_feature(feature))
+            require(not fixtures, f"{label}: test features reached runtime: {fixtures}")
+        reports.append({"id": label, "root_packages": roots, "root_features": selected,
+                        "resolved_packages": sorted(reached), "resolved_features": sorted(enabled)})
+    return reports
+
+
+def cargo_tree_workspace_features(
+    workspace_manifest: pathlib.Path, roots: list[str], features: list[str],
+    default_features: bool, packages: dict[str, Package],
+) -> set[str]:
+    enabled: set[str] = set()
+    for root in roots:
+        command = ["cargo", "tree", "--manifest-path", str(workspace_manifest), "--package", root,
+                   "--edges", "normal,build", "--prefix", "none", "--no-dedupe", "--locked",
+                   "--offline", "--format", "{p}|{f}"]
+        if not default_features:
+            command.append("--no-default-features")
+        if features:
+            command.extend(["--features", ",".join(features)])
+        try:
+            completed = subprocess.run(command, cwd=ROOT, check=True, capture_output=True, text=True)
+        except (OSError, subprocess.CalledProcessError) as error:
+            raise ClosureError(f"Cargo feature resolution failed for {root}: {error}") from error
+        for line in completed.stdout.splitlines():
+            identity, separator, values = line.rpartition("|")
+            match = re.match(r"^([A-Za-z0-9_-]+)\s+v[0-9]", identity.strip())
+            if separator and match and match[1] in packages:
+                package = match[1]
+                # Explicit manifest features are the policy surface. Implicit
+                # optional-dependency aliases cannot grant these APIs alone.
+                enabled.update(f"{package}/{value}" for value in values.split(",")
+                               if value in packages[package].features)
+    return enabled
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Resolve and verify fail-closed Trillionnium build closures."
@@ -419,8 +526,19 @@ def main() -> int:
 
     candidate_reached = validate_persistent_authority_boundary(packages, reached_by_id["node-prod-v0"])
     tx_journal_reached = validate_candidate_tx_journal_boundary(packages)
+    feature_reports = validate_feature_closures(packages, config)
 
     if args.verify_cargo_tree:
+        for row, report in zip(config["feature_closures"], feature_reports, strict=True):
+            cargo_features = cargo_tree_workspace_features(
+                workspace_manifest, row["root_packages"], row["features"], row["default_features"], packages,
+            )
+            static_features = set(report["resolved_features"])
+            require(cargo_features == static_features,
+                    f"{row['id']}: Cargo/static feature closure mismatch "
+                    f"missing_from_cargo={sorted(static_features - cargo_features)} "
+                    f"extra_from_cargo={sorted(cargo_features - static_features)}")
+
         workspace_names = set(packages)
         candidate_cargo = cargo_tree_workspace_packages(
             workspace_manifest, ["trnm-poco-node-host"],
@@ -470,6 +588,7 @@ def main() -> int:
         "workspace_package_count": len(packages),
         "closure_count": len(report_rows),
         "closures": report_rows,
+        "feature_closures": feature_reports,
         "node_default_ai_v1_dependency_count": 0,
         "node_default_candidate_adapter_count": 0,
         "persistent_candidate_owner_reachable": True,

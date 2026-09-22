@@ -469,6 +469,27 @@ impl SqliteExternalNodeCheckpointStoreV0 {
         &self.database_path
     }
 
+    /// Candidate-only exact confirmation closes the restart page-cache window:
+    /// seeing complete bytes is insufficient until their namespace is synced.
+    #[cfg(feature = "epoch-handoff-checkpoint-candidate")]
+    pub(crate) fn confirm_exact_durable_v1(
+        &mut self,
+        expected: ExternalNodeCheckpointV0,
+    ) -> Result<(), ExternalNodeCheckpointStoreErrorV0> {
+        if self.load(expected.scope())? != Some(expected) {
+            return Err(ExternalNodeCheckpointStoreErrorV0::InvalidPersistedState);
+        }
+        if sync_sqlite_checkpoint_commit_v0(&self.database_path).is_err() {
+            self.connection = None;
+            return Err(ExternalNodeCheckpointStoreErrorV0::Unavailable);
+        }
+        if self.load(expected.scope())? != Some(expected) {
+            self.connection = None;
+            return Err(ExternalNodeCheckpointStoreErrorV0::InvalidPersistedState);
+        }
+        Ok(())
+    }
+
     #[cfg(test)]
     fn report_unavailable_after_next_commit_v0(&mut self) {
         self.report_unavailable_after_next_commit = true;
@@ -494,6 +515,13 @@ impl ExternalNodeCheckpointStoreV0 for SqliteExternalNodeCheckpointStoreV0 {
                 return Err(ExternalNodeCheckpointStoreErrorV0::InvalidPersistedState);
             }
             validate_sqlite_path_identity_v0(&self.database_path, self.path_identity)?;
+            // A complete target visible after a failed commit/sync may still
+            // live only in page cache. Exact target reconciliation must retry
+            // the durability barrier before releasing its confirmation.
+            if loaded == Some(uncertain.target) {
+                sync_sqlite_checkpoint_commit_v0(&self.database_path)?;
+                validate_sqlite_path_identity_v0(&self.database_path, self.path_identity)?;
+            }
             self.connection = Some(connection);
             self.uncertain_commit = None;
             return Ok(loaded);
@@ -984,11 +1012,30 @@ fn load_sqlite_checkpoint_row_v0(
     connection: &Connection,
     requested_scope: [u8; 32],
 ) -> Result<Option<ExternalNodeCheckpointV0>, ExternalNodeCheckpointStoreErrorV0> {
+    // CHECK constraints describe the schema, not the integrity of every
+    // persisted row: a damaged image or an administrative writer using
+    // ignore_check_constraints can retain that schema with oversized blobs.
+    // Lazy nested CASE guards keep type/length inspection and value selection
+    // in this one SQLite statement/snapshot. In particular, length(TEXT) is
+    // never evaluated and an oversized BLOB is never projected into a Vec.
+    // A malformed existing row projects NULL and row.get rejects its type;
+    // it must not disappear through an extra WHERE predicate as "absent".
     let row: Option<SqliteCheckpointRowV0> = connection
         .query_row(
-            "SELECT scope, generation, checkpoint_checksum, record \
+            "SELECT \
+             CASE WHEN typeof(scope) = 'blob' THEN \
+               CASE WHEN length(scope) = 32 THEN scope END END, \
+             CASE WHEN typeof(generation) = 'blob' THEN \
+               CASE WHEN length(generation) = 8 THEN generation END END, \
+             CASE WHEN typeof(checkpoint_checksum) = 'blob' THEN \
+               CASE WHEN length(checkpoint_checksum) = 32 THEN checkpoint_checksum END END, \
+             CASE WHEN typeof(record) = 'blob' THEN \
+               CASE WHEN length(record) = ?2 THEN record END END \
              FROM trnm_external_node_checkpoint_v0 WHERE scope = ?1",
-            params![&requested_scope[..]],
+            params![
+                &requested_scope[..],
+                EXTERNAL_NODE_CHECKPOINT_RECORD_BYTES_V0 as i64
+            ],
             |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?)),
         )
         .optional()
@@ -1263,6 +1310,121 @@ where
         }
         _ => Err(NativeKNodeCheckpointAdvanceErrorV0::ThirdExternalState),
     }
+}
+
+/// Advances the independent K/checkpoint CAS for a live ordinary Synced
+/// validation whose Core post-ack action is `None`. The signer namespace is
+/// freshly confirmed and carried into the successor unchanged; no signer
+/// intent or watermark is consumed by this path.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn advance_native_k_whole_node_synced_no_sign_checkpoint_v0<V, W, S>(
+    checkpoint_store: &mut S,
+    expected_external: ExternalNodeCheckpointV0,
+    safety_store: &SqliteSafetyStateStoreV0<V>,
+    expected_safety_path: &Path,
+    application_store: &mut SqliteProposalValidationStoreV0,
+    expected_application_path: &Path,
+    binding: &ProposalValidationBindingV0,
+    signer_journal: &mut SqliteSignerJournalV0<W>,
+    expected_signer_path: &Path,
+) -> Result<ConfirmedNativeKNodeCheckpointV0, NativeKNodeCheckpointAdvanceErrorV0>
+where
+    V: SignatureVerifier,
+    W: ExternalMonotonicWatermarkV0,
+    S: ExternalNodeCheckpointStoreV0,
+{
+    let scope = expected_external.scope();
+    if checkpoint_store
+        .load(scope)
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Checkpoint)?
+        != Some(expected_external)
+    {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::ExpectedExternalMismatch);
+    }
+    let signer = signer_journal
+        .confirm_node_checkpoint_head_exact_v0()
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Signer)?;
+    if !signer.belongs_to_operational_journal_at_path_v0(signer_journal, expected_signer_path) {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::SignerOwnerMismatch);
+    }
+    let safety_head = safety_store
+        .head()
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Safety)?;
+    let safety = safety_store
+        .confirm_node_checkpoint_head_exact_v0(safety_head.state())
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Safety)?;
+    if !safety.belongs_to_store_at_path_v0(safety_store, expected_safety_path) {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::SafetyOwnerMismatch);
+    }
+    let application = application_store
+        .confirm_proposal_validation_checkpoint_facts_exact_v0(binding)
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Application)?;
+    if !application.belongs_to_store_at_path_v0(application_store, expected_application_path) {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::ApplicationOwnerMismatch);
+    }
+    validate_native_checkpoint_predecessor_v0(expected_external, &safety, &application, &signer)?;
+    validate_native_k_synced_no_sign_join_v0(&safety, &application, &signer, signer_journal)?;
+    let target =
+        native_k_checkpoint_successor_v0(expected_external, &safety, &application, &signer)?;
+    let compare_result = checkpoint_store.compare_and_advance(Some(expected_external), target);
+    let observed = checkpoint_store
+        .load(scope)
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Checkpoint)?;
+    match observed {
+        Some(value) if value == target => Ok(ConfirmedNativeKNodeCheckpointV0 {
+            checkpoint: value,
+            application_store_sequence: application.store_sequence_v0(),
+            application_row_checksum: *application.row_checksum_v0().as_bytes(),
+        }),
+        Some(value) if value == expected_external => {
+            let _ = compare_result;
+            Err(NativeKNodeCheckpointAdvanceErrorV0::CompareNotApplied)
+        }
+        _ => Err(NativeKNodeCheckpointAdvanceErrorV0::ThirdExternalState),
+    }
+}
+
+fn validate_native_k_synced_no_sign_join_v0<W: ExternalMonotonicWatermarkV0>(
+    safety: &ConfirmedSafetyNodeCheckpointFactsV0,
+    application: &ConfirmedProposalValidationCheckpointFactsV0,
+    signer: &ConfirmedSignerNodeCheckpointFactsV0,
+    signer_journal: &SqliteSignerJournalV0<W>,
+) -> Result<(), NativeKNodeCheckpointAdvanceErrorV0> {
+    let state = safety.state_v0();
+    let binding = application.binding_v0();
+    let closure = application.safety_closure_v0();
+    if binding.route() != trnm_native_application_sqlite::ProposalRouteV0::Synced
+        || closure.safety_revision() != safety.revision_v0()
+        || closure.core_delivery_digest().as_bytes() == &[0; 32]
+        || closure.safety_record_digest().as_bytes() != &safety.state_record_checksum_v0()
+        || state.pending_sign().is_some()
+        // Revision five is the authenticated ordinary-promotion cut; the
+        // anchor is retained as provenance after that cut.  Reject only an
+        // actually active h1/h2/h3 anchor state here.
+        || (state.state_sync_anchor().is_some() && state.revision() < 5)
+        || !state.payload_validation_obligations().is_empty()
+    {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::SafetyApplicationMismatch);
+    }
+    let identity = signer.identity();
+    let profile = signer_journal.profile();
+    if identity.chain_id() != state.chain_id()
+        || identity.protocol_version() != state.protocol_version()
+        || identity.epoch() != state.epoch()
+        || identity.validator_set_id() != state.validator_set_id()
+        || profile.chain_id() != state.chain_id()
+        || profile.protocol_version() != state.protocol_version()
+        || profile.epoch() != state.epoch()
+        || profile.validator_set_id() != state.validator_set_id()
+        || profile.author() != identity.author()
+        || profile.profile_checksum() != signer.profile_checksum()
+        || profile.external_watermark_scope() != identity.external_watermark_scope()
+        || signer.exact_watermark().scope() != identity.external_watermark_scope()
+        || signer.exact_watermark().journal_id() != signer.journal_id()
+    {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::SafetySignerMismatch);
+    }
+    Ok(())
 }
 
 fn validate_native_checkpoint_predecessor_v0(
@@ -3557,6 +3719,109 @@ mod tests {
     }
 
     #[test]
+    fn sqlite_checkpoint_store_rejects_oversized_rows_before_value_projection_v1() {
+        for column in ["generation", "checkpoint_checksum", "record"] {
+            for uncertain in [false, true] {
+                let root = secure_checkpoint_temp_dir_v0("bounded checkpoint projection");
+                let path = root.path().join("checkpoint.sqlite3");
+                let mut store = SqliteExternalNodeCheckpointStoreV0::initialize_new(&path).unwrap();
+                let first = checkpoint_v0(0, [0; 32], 0, 0, 0, 0);
+                let second = successor_checkpoint_v0(first, 0x61);
+                store.compare_and_advance(None, first).unwrap();
+                if uncertain {
+                    store.report_unavailable_after_next_commit_v0();
+                    assert_eq!(
+                        store.compare_and_advance(Some(first), second),
+                        Err(ExternalNodeCheckpointStoreErrorV0::Unavailable)
+                    );
+                }
+                // Real SQLite image, unchanged strict schema. Constraints can
+                // be bypassed by a separate administrative writer, so the
+                // ordinary and uncertain/reopen readers must police the row.
+                let writer = Connection::open(&path).unwrap();
+                writer
+                    .execute_batch("PRAGMA ignore_check_constraints=ON;")
+                    .unwrap();
+                writer.execute(&format!("UPDATE trnm_external_node_checkpoint_v0 SET {column}=zeroblob(4194304) WHERE scope=?1"), [&first.scope()[..]]).unwrap();
+                validate_sqlite_checkpoint_schema_v0(&writer).unwrap();
+                drop(writer);
+                assert_eq!(
+                    store.load(first.scope()),
+                    Err(ExternalNodeCheckpointStoreErrorV0::InvalidPersistedState),
+                    "oversized {column}, uncertain={uncertain} is corrupt, never absent"
+                );
+                if uncertain {
+                    assert!(store.uncertain_commit.is_some());
+                    assert_eq!(
+                        store.compare_and_advance(Some(first), second),
+                        Err(ExternalNodeCheckpointStoreErrorV0::Unavailable)
+                    );
+                } else {
+                    assert_eq!(
+                        store.compare_and_advance(Some(first), second),
+                        Err(ExternalNodeCheckpointStoreErrorV0::InvalidPersistedState)
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn sqlite_checkpoint_row_projection_rejects_wrong_types_and_short_blobs_v1() {
+        use rusqlite::types::Value;
+        // Focused row-reader fixture: a permissive table represents malformed
+        // persistent field types without weakening the operational schema.
+        let connection = Connection::open_in_memory().unwrap();
+        connection.execute_batch("CREATE TABLE trnm_external_node_checkpoint_v0 (scope, generation, checkpoint_checksum, record)").unwrap();
+        let first = checkpoint_v0(0, [0; 32], 0, 0, 0, 0);
+        let original = [
+            Value::Blob(first.scope().to_vec()),
+            Value::Blob(first.generation().to_be_bytes().to_vec()),
+            Value::Blob(first.checkpoint_checksum().to_vec()),
+            Value::Blob(first.encode_canonical().to_vec()),
+        ];
+        let insert = |values: &[Value; 4]| {
+            connection
+                .execute("DELETE FROM trnm_external_node_checkpoint_v0", [])
+                .unwrap();
+            connection
+                .execute(
+                    "INSERT INTO trnm_external_node_checkpoint_v0 VALUES(?1,?2,?3,?4)",
+                    rusqlite::params_from_iter(values),
+                )
+                .unwrap();
+        };
+        assert_eq!(
+            load_sqlite_checkpoint_row_v0(&connection, first.scope()).unwrap(),
+            None
+        );
+        insert(&original);
+        assert_eq!(
+            load_sqlite_checkpoint_row_v0(&connection, first.scope()).unwrap(),
+            Some(first)
+        );
+        for column in 1..4 {
+            for malformed in [
+                Value::Null,
+                Value::Integer(7),
+                Value::Real(1.5),
+                Value::Text("x".repeat(672)),
+                Value::Blob(Vec::new()),
+                Value::Blob(vec![0; 7]),
+            ] {
+                let mut values = original.clone();
+                values[column] = malformed;
+                insert(&values);
+                assert_eq!(
+                    load_sqlite_checkpoint_row_v0(&connection, first.scope()),
+                    Err(ExternalNodeCheckpointStoreErrorV0::InvalidPersistedState),
+                    "invalid column {column} must not become missing"
+                );
+            }
+        }
+    }
+
+    #[test]
     fn sqlite_checkpoint_store_reopens_durable_successor_v0() {
         let root = secure_checkpoint_temp_dir_v0("temporary checkpoint database namespace");
         let path = root.path().join("whole-node-checkpoint.sqlite3");
@@ -3576,6 +3841,35 @@ mod tests {
         let mut reopened = SqliteExternalNodeCheckpointStoreV0::open_existing(&path)
             .expect("reopen exact independent checkpoint database");
         assert_eq!(reopened.load([1; 32]), Ok(Some(successor)));
+    }
+
+    #[cfg(feature = "epoch-handoff-checkpoint-candidate")]
+    #[test]
+    fn sqlite_epoch_confirmation_reopens_exactly_and_rejects_stale_whole_value() {
+        let root = secure_checkpoint_temp_dir_v0("epoch confirmation");
+        let path = root.path().join("checkpoint.sqlite3");
+        let first = checkpoint_v0(0, [0; 32], 0, 0, 0, 0);
+        let second = successor_checkpoint_v0(first, 0x61);
+        {
+            let mut store = SqliteExternalNodeCheckpointStoreV0::initialize_new(&path).unwrap();
+            store.compare_and_advance(None, first).unwrap();
+            store.report_unavailable_after_next_commit_v0();
+            assert_eq!(
+                store.compare_and_advance(Some(first), second),
+                Err(ExternalNodeCheckpointStoreErrorV0::Unavailable)
+            );
+            store.confirm_exact_durable_v1(second).unwrap();
+        }
+        let mut reopened = SqliteExternalNodeCheckpointStoreV0::open_existing(&path).unwrap();
+        reopened.confirm_exact_durable_v1(second).unwrap();
+        let mut changed = *second.fields();
+        changed.application_recovery_closure_checksum = [0x88; 32];
+        let same_height_wrong_cut = ExternalNodeCheckpointV0::new(changed).unwrap();
+        assert!(reopened
+            .confirm_exact_durable_v1(same_height_wrong_cut)
+            .is_err());
+        assert!(reopened.confirm_exact_durable_v1(first).is_err());
+        assert_eq!(reopened.load(first.scope()).unwrap(), Some(second));
     }
 
     #[test]
@@ -4458,3 +4752,7 @@ mod tests {
         assert_eq!(store.advances, 0);
     }
 }
+
+#[cfg(feature = "epoch-runtime-candidate")]
+#[path = "epoch_node_checkpoint_store_v1.rs"]
+pub(crate) mod epoch_node_store_v1;

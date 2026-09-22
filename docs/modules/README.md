@@ -50,8 +50,20 @@ The [foundation operation contracts](TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md)
 and [operation catalog](../../config/documentation-operations-v1.json) retain
 selected concrete source/function/error/test bindings. The catalog is explicitly
 incomplete; extending a module design does not invent executable operation coverage.
+The [implementation acceptance matrix](TRNM_MODULE_IMPLEMENTATION_ACCEPTANCE_MATRIX_V1.md)
+adds one source/test symbol, ordered state transition, and requirement list for
+each M00–M17 row. Its companion gate checks those bindings while preserving
+`source-regression-open`; it does not claim that the referenced tests pass or
+that semantic, production, or external acceptance has occurred.
 The [native signed Vote replay contract](TRNM_NATIVE_SIGNED_VOTE_REPLAY_CONTRACT_V1.md)
 grants laboratory readback only, with no new signing/recovery authority.
+
+The [target closure design](TRNM_TARGET_CLOSURE_DESIGN_V1.md) is the
+implementation-ready cross-module index for the current E1/T1/S1/F1 work. It
+records the exact P/D/C/K/checkpoint order, durable fields, crash cuts, error
+dispositions, source symbols and acceptance evidence for each target stage.
+It is a design contract and evidence map; its status column deliberately does
+not promote a candidate into production.
 
 ## Reviewing a design change
 

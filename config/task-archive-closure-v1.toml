@@ -76,6 +76,8 @@ forbidden_tokens = []
 
 [[source_contracts]]
 path = "docs/architecture/TRNM_TASK_ARCHIVE_ADMISSION_CONTRACT_V1.md"
+# Prose reflow must not weaken or invalidate the authority contract.
+token_matching = "whitespace"
 required_tokens = [
   "candidate technical contract; no storage-deletion or activation authority",
   "hard 4,096-record bound",
@@ -86,5 +88,8 @@ required_tokens = [
 forbidden_tokens = [
   "production_candidate = true",
   "production_consensus_activation = true",
+  "public_testnet_ready = true",
   "release_ready = true",
+  "storage_deletion_authority = true",
+  "scale_campaign_complete = true",
 ]

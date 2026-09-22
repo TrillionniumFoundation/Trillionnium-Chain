@@ -5,9 +5,12 @@ from __future__ import annotations
 
 import copy
 import dataclasses
+import hashlib
+import json
 import pathlib
 import re
 import sys
+from unittest import mock
 
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -105,10 +108,104 @@ def assert_runner_pre_effect_order(path: pathlib.Path) -> None:
         assert source.index(independent_anchor) < source.index(deployment_effect)
 
 
+def test_reduced_coordinator_resources() -> None:
+    validators = [
+        Process(f"{index + 1:064x}", host, ROUTES[host])
+        for index, host in enumerate(["desktop"] * 4 + ["rog"] * 3)
+    ]
+    all_facts = facts()
+    host_facts = {host: all_facts[host] for host in ("desktop", "rog")}
+    coordinator = all_facts["local"]
+
+    def evaluate(rows=validators, observations=host_facts, local=coordinator,
+                 profile=preflight.REDUCED_PLACEMENT):
+        return preflight.evaluate_mesh_fleet_resources_v1(
+            rows, 7, observations, placement_profile=profile, coordinator_facts=local
+        )
+
+    report = evaluate()
+    assert report["schema_version"] == 2
+    assert report["profile"] == "poco-g3-mesh-host-resource-preflight-desktop4-rog3-mac-v1"
+    assert report["placement_profile"] == preflight.REDUCED_PLACEMENT
+    assert [host["host_id"] for host in report["hosts"]] == ["desktop", "rog"]
+    assert [host["validator_processes"] for host in report["hosts"]] == [4, 3]
+    assert [host["host_threads_required"] for host in report["hosts"]] == [52, 39]
+    assert sum(host["validator_processes"] for host in report["hosts"]) == 7
+    controller = report["coordinator"]
+    assert controller["host_id"] == "local-coordinator"
+    assert controller["management"] == "local"
+    assert controller["validator_processes"] == 0
+    assert controller["host_threads_required"] == 0
+    assert controller["host_open_file_fds_required"] == 0
+    assert controller["host_rss_bytes_required"] == 0
+    assert controller["coordinator_capture_fds_required"] == 142
+    assert all(host["coordinator_capture_fds_required"] == 0 for host in report["hosts"])
+    assert report["capacity_passed"] is True
+    assert report["validator_run_completed"] is False
+    assert report["g3_lan_multihost_evidence"] is False
+
+    exact_nofile = dict(coordinator, nofile_soft="142")
+    assert evaluate(local=exact_nofile)["capacity_passed"] is True
+    for field, value, message in (
+        ("nofile_soft", "141", "coordinator capture files"),
+        ("file_nr_max", "1141", "system file-handle"),
+        ("nproc_soft", "627", "UID process/thread"),
+        ("threads_max", "1127", "system thread capacity"),
+        ("epoch", str(int(coordinator["epoch"]) + 100), "epoch spread"),
+    ):
+        expect_failure(lambda: evaluate(local=dict(coordinator, **{field: value})), message)
+    missing = dict(coordinator)
+    del missing["uid_threads"]
+    expect_failure(lambda: evaluate(local=missing), "facts differ")
+    expect_failure(lambda: evaluate(local=None), "independent local coordinator facts")
+    expect_failure(lambda: evaluate(profile="unknown"), "closed profile")
+    expect_failure(lambda: evaluate(profile=preflight.CANONICAL_PLACEMENT), "exact local coordinator")
+    expect_failure(lambda: evaluate(observations={"desktop": host_facts["desktop"]}), "observations differ")
+    expect_failure(lambda: evaluate(observations=dict(host_facts, local=coordinator)), "observations differ")
+    wrong_split = list(validators)
+    wrong_split[3] = dataclasses.replace(wrong_split[3], host_id="rog", management=ROUTES["rog"])
+    expect_failure(lambda: evaluate(rows=wrong_split), "desktop4/rog3")
+    fake_local = [dataclasses.replace(row, management="local") if row.host_id == "desktop" else row for row in validators]
+    expect_failure(lambda: evaluate(rows=fake_local), "no local validator")
+    for host, field, value, message in (
+        ("desktop", "memory_available_bytes", str(999 * 1024 * 1024), "RSS capacity"),
+        ("rog", "nofile_soft", "153", "per-validator open files"),
+    ):
+        constrained = copy.deepcopy(host_facts)
+        constrained[host][field] = value
+        expect_failure(lambda: evaluate(observations=constrained), message)
+    expect_failure(
+        lambda: preflight.evaluate_mesh_fleet_resources_v1(
+            processes(), 100, facts(), coordinator_facts=coordinator
+        ),
+        "forbids a separate coordinator",
+    )
+
+    by_route = {ROUTES[host]: observation for host, observation in host_facts.items()}
+    by_route["local"] = coordinator
+    with mock.patch.object(preflight, "probe_host", side_effect=by_route.__getitem__) as probe:
+        actual = preflight.preflight_mesh_fleet_resources_v1(
+            validators, 7, placement_profile=preflight.REDUCED_PLACEMENT
+        )
+        assert actual == report
+        assert probe.call_args_list == [mock.call("p4-desktop"), mock.call("p4-rog"), mock.call("local")]
+    with mock.patch.object(preflight, "probe_host", side_effect=AssertionError("invalid placement probed")) as probe:
+        expect_failure(
+            lambda: preflight.preflight_mesh_fleet_resources_v1(validators, 7, placement_profile="unknown"),
+            "closed profile",
+        )
+        expect_failure(
+            lambda: preflight.preflight_mesh_fleet_resources_v1(wrong_split, 7, placement_profile=preflight.REDUCED_PLACEMENT),
+            "desktop4/rog3",
+        )
+        probe.assert_not_called()
+
+
 def main() -> None:
     validators = processes()
     host_facts = facts()
     report = preflight.evaluate_mesh_fleet_resources_v1(validators, 100, host_facts)
+    assert hashlib.sha256(json.dumps(report, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == "50db0e63eb0fc6e836644e377cdb95a697d58aab4695bd1b69ca03d29e032652"
     assert report["capacity_passed"] is True
     assert report["per_validator_threads"] == 17
     assert report["per_validator_socket_fds"] == 34
@@ -226,12 +323,14 @@ def main() -> None:
         lambda: preflight.parse_probe("hostname=a\nhostname=b\n"),
         "duplicate",
     )
+    test_reduced_coordinator_resources()
 
     print(
         "poco_g3_mesh_resource_preflight_v1_test=passed positives=18 negatives=11 "
         "topology=100 per_process_rlimit=distinct host_file_capacity=system-wide "
         "uid_threads=bounded system_threads=bounded rss=bounded "
         "coordinator_capture_fds=per-process-bounded inherited_rlimit=true "
+        "reduced_coordinator_separate=true reduced_capacity_controls=true canonical_bytes_preserved=true "
         "pre_effect_runners=consensus,fault "
         "ulimit_elevation=false validator_run=false g3_complete=false"
     )

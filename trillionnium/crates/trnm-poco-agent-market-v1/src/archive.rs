@@ -43,7 +43,7 @@ impl TaskArchivePolicyV1 {
         digest_value("trnm.poco-ai.task-archive-policy.candidate.v1", self)
     }
 
-    fn validate(&self) -> AgentMarketResultV1<()> {
+    pub(crate) fn validate(&self) -> AgentMarketResultV1<()> {
         if self.schema_version != TASK_ARCHIVE_SCHEMA_VERSION_V1 {
             return Err(error(
                 AgentMarketErrorCodeV1::SchemaMismatch,
@@ -103,7 +103,7 @@ impl TerminalTaskArchiveRecordV1 {
         digest_value("trnm.poco-ai.task-archive-record.candidate.v1", self)
     }
 
-    fn validate_against(
+    pub(crate) fn validate_against(
         &self,
         policy: &TaskArchivePolicyV1,
         current_height: u64,
@@ -173,7 +173,7 @@ impl TerminalTaskArchiveRecordV1 {
         Ok(())
     }
 
-    fn first_prunable_height(&self) -> AgentMarketResultV1<u64> {
+    pub(crate) fn first_prunable_height(&self) -> AgentMarketResultV1<u64> {
         self.retention_paid_through_height
             .checked_add(1)
             .ok_or_else(|| {
@@ -754,6 +754,31 @@ mod tests {
         }
     }
 
+    fn scale_record(index: usize) -> TerminalTaskArchiveRecordV1 {
+        let mut task_id = [0_u8; 32];
+        task_id[..8].copy_from_slice(&(index as u64).to_be_bytes());
+        let mut state_digest = [0_u8; 32];
+        state_digest[..8].copy_from_slice(&(index as u64 + 1).to_be_bytes());
+        let mut receipt_digest = [0_u8; 32];
+        receipt_digest[..8].copy_from_slice(&(index as u64 + 2).to_be_bytes());
+        let mut evidence_root = [0_u8; 32];
+        evidence_root[..8].copy_from_slice(&(index as u64 + 3).to_be_bytes());
+        let terminal_height = index as u64 + 1;
+        TerminalTaskArchiveRecordV1 {
+            schema_version: TASK_ARCHIVE_SCHEMA_VERSION_V1,
+            context: context(),
+            task_id: TaskIdV1(task_id),
+            terminal_height,
+            task_revision: index as u64,
+            terminal_state_digest: Hash32V1(state_digest),
+            terminal_receipt_digest: Hash32V1(receipt_digest),
+            evidence_root: Hash32V1(evidence_root),
+            encoded_bytes: 100,
+            retention_paid_through_height: terminal_height + 4,
+            retention_charge_paid: 1_000,
+        }
+    }
+
     #[test]
     fn oldest_eligible_records_are_selected_deterministically() {
         let policy = policy(2);
@@ -784,6 +809,56 @@ mod tests {
             Hash32V1([0; 32]),
         )
         .expect("deterministic replay");
+        assert_eq!(replay.archive_batch(), plan.archive_batch());
+        assert_eq!(replay.retained_records(), plan.retained_records());
+    }
+
+    #[test]
+    fn bounded_archive_planner_handles_hard_batch_scale_deterministically() {
+        let mut policy = policy(2_048);
+        policy.maximum_live_terminal_bytes = 2_048 * 100;
+        policy.maximum_archive_batch_records = MAX_TASK_ARCHIVE_BATCH_RECORDS_V1;
+        policy.maximum_archive_batch_bytes = u64::from(MAX_TASK_ARCHIVE_BATCH_RECORDS_V1) * 100;
+        let records = (0..usize::try_from(MAX_TASK_ARCHIVE_BATCH_RECORDS_V1).unwrap())
+            .map(scale_record)
+            .collect::<Vec<_>>();
+        let plan = plan_task_archive_pruning_v1(
+            &policy,
+            &records,
+            &BTreeSet::new(),
+            10_000,
+            1,
+            Hash32V1([0; 32]),
+        )
+        .expect("hard-batch archive plan");
+        let batch = plan.archive_batch().expect("capacity pressure");
+        assert_eq!(batch.records.len(), 2_048);
+        assert_eq!(plan.retained_records().len(), 2_048);
+        assert_eq!(batch.records.first().unwrap().terminal_height, 1);
+        assert_eq!(batch.records.last().unwrap().terminal_height, 2_048);
+        batch
+            .validate(&policy)
+            .expect("bounded batch remains valid");
+        for index in [0, 1_023, 2_047] {
+            let record = &batch.records[index];
+            let proof = batch
+                .inclusion_proof(&policy, record.task_id)
+                .expect("scale inclusion proof");
+            verify_task_archive_inclusion_v1(&batch.seal, record, &proof)
+                .expect("scale inclusion proof verifies");
+        }
+
+        let mut reversed = records;
+        reversed.reverse();
+        let replay = plan_task_archive_pruning_v1(
+            &policy,
+            &reversed,
+            &BTreeSet::new(),
+            10_000,
+            1,
+            Hash32V1([0; 32]),
+        )
+        .expect("deterministic hard-batch replay");
         assert_eq!(replay.archive_batch(), plan.archive_batch());
         assert_eq!(replay.retained_records(), plan.retained_records());
     }

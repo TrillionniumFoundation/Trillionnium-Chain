@@ -5454,6 +5454,30 @@ fn read_exact_events(file: &File) -> Result<Vec<SignedRuntimeEventV1>, RuntimeEv
     Ok(events)
 }
 
+/// Exercises the real journal append/read path used by the bounded-runtime
+/// failure handler.  This remains test-only so production code cannot obtain
+/// a synthetic event context or signer.
+#[cfg(test)]
+pub(crate) fn test_started_event_journal_v1() -> (tempfile::TempDir, PathBuf, RuntimeEventJournalV1)
+{
+    let (temporary, context, key) = tests::fixture();
+    let path = temporary.path().join("bounded-diagnostics-events.jsonl");
+    let journal = RuntimeEventJournalV1::start_with_context_gate(
+        &path,
+        context,
+        Box::new(LocalRuntimeEventSignatureProducerV1::new(key)),
+        ProcessStartGateV1::UnverifiedTestRestart,
+    )
+    .expect("open test event journal");
+    (temporary, path, journal)
+}
+
+#[cfg(test)]
+pub(crate) fn test_read_event_journal_v1(path: &Path) -> Vec<SignedRuntimeEventV1> {
+    read_exact_events(&File::open(path).expect("reopen test event journal"))
+        .expect("read test event journal")
+}
+
 fn domain_hash(domain: &[u8], bytes: &[u8]) -> [u8; 32] {
     let mut hasher = Sha256::new();
     hasher.update(domain);
@@ -5568,7 +5592,7 @@ mod tests {
 
     use super::*;
 
-    fn fixture() -> (TempDir, RuntimeEventContextV1, SigningKey) {
+    pub(crate) fn fixture() -> (TempDir, RuntimeEventContextV1, SigningKey) {
         let temporary = TempDir::new().unwrap();
         fs::set_permissions(temporary.path(), fs::Permissions::from_mode(0o700)).unwrap();
         let key = SigningKey::from_bytes(&[0x31; 32]);

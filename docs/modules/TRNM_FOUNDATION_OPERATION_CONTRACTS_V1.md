@@ -49,6 +49,12 @@ qualification. An input that is unavailable locally must not be described as
 Byzantine invalidity. A possibly applied operation requires exact authoritative
 readback before retry. No unspecified error, codec or platform gets a default.
 
+The implementation-ready details for every currently registered operation are in
+[`TRNM_OPERATION_GAP_DESIGN_V1.md`](TRNM_OPERATION_GAP_DESIGN_V1.md). That annex
+binds the authenticated fields, durable keys, transition order, error classes,
+crash cuts, deterministic-concurrency rules and required vectors without
+claiming that the open external obligations have passed.
+
 ## Recorded boundaries
 
 | Operation | Boundary |
@@ -105,6 +111,8 @@ real package/features, exact document headings, source selectors, actual test
 functions, exact Cargo filters and selected assertion fragments. Every referenced
 file joins the existing HEAD/tree and input-digest binding. It never executes
 commands stored or generated from the catalog.
+
+`scripts/ci/run_documentation_operation_replays_v1.py` is the separate behavioral replay step. It validates the same source-bound catalog, then executes each declared `cargo test --locked --offline` command without a shell and records the source commit/tree, catalog digest, return code, elapsed time, and stdout/stderr digests in a report outside the checkout. A passing replay report proves only that the declared repository regressions ran on that exact checkout; it does not create independently authored golden bytes, specialist appointment/findings, production authority, or semantic acceptance. Use `--limit 1` only for a smoke run; a complete report must execute every declared case with no limit.
 
 Declared Cargo test/binary `required-features` must be enabled through selected
 or default named local feature edges. Dependency-feature edges do not stand in

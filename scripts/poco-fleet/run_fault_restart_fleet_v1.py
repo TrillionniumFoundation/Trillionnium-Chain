@@ -9,10 +9,9 @@ runtime's signed FaultApplied/FaultRecovered projection.  Restart/catch-up,
 isolated negative startup, signed degraded recovery, and epoch handoff each
 require their own authority and must never be relabelled as that projection.
 
-The current authority matrix is incomplete, so active execution is rejected
-before deployment or fault effects.  `--plan-only` remains available to expose
-the exact blockers.  Such rejection is a useful fail-closed result, not G3
-evidence.
+The default full matrix remains rejected before effects. Explicit closed
+connectivity selections require their real signed transitions and seven-node
+terminal verification, without promoting full-matrix or external acceptance.
 """
 
 from __future__ import annotations
@@ -46,6 +45,7 @@ import mesh_resource_preflight_v1 as mesh_resources  # noqa: E402
 
 SCHEMA_VERSION = 1
 PROFILE = "poco-g3-seven-validator-fault-restart-campaign-v1"
+SELECTED_PROFILE = "poco-g3-seven-validator-connectivity-subset-v1"
 FAULT_ORDER = fault_semantics.FAULT_ORDER
 RESTART_FAULT = "validator_process_kill"
 CONTROL_STATUS_FILE = "runtime-control-status.json"
@@ -282,6 +282,41 @@ def fixed_fault_plan(processes: list[base.ValidatorProcess]) -> list[FaultStepV1
     return steps
 
 
+def selected_fault_plan(
+    processes: list[base.ValidatorProcess], campaign: str,
+) -> list[FaultStepV1]:
+    kinds = fault_semantics.campaign_faults(campaign)
+    # Keep the original observer assignment even for a single selected fault.
+    return [dataclasses.replace(step, ordinal=index + 1)
+            for index, step in enumerate(
+                step for step in fixed_fault_plan(processes) if step.kind in kinds)]
+
+
+def selected_placement_facts(
+    topology: dict[str, Any], processes: list[base.ValidatorProcess],
+) -> dict[str, Any]:
+    base.placement_report_fields_v1(topology)  # closed schema/profile
+    profile = topology.get("placement_profile", base.CANONICAL_PLACEMENT)
+    inventory = mesh_resources._validated_host_inventory_v1(processes, 7, profile)
+    if {row["validator_id"]: row["host_id"] for row in topology["validators"]} != {
+        process.validator_id: process.host_id for process in processes
+    } or len(topology["validators"]) != 7:
+        fail("selected campaign topology differs from exact process inventory")
+    observers = [row for row in topology["participants"] if row["host_id"] == "mac"]
+    if len(observers) != 1 or not observers[0].get("management"):
+        fail("selected campaign requires the actual Mac observer")
+    return {
+        "placement_profile": profile,
+        "linux_validator_host_count": len(inventory),
+        "validator_host_allocations": {
+            host: entry["validator_processes"] for host, entry in sorted(inventory.items())
+        },
+        "planned_participant_host_count": len(inventory) + 1,
+        "observer": {"host_id": "mac", "management": observers[0]["management"]},
+        "whole_host_failure_tolerance": False,
+    }
+
+
 def campaign_plan(
     *,
     manifest: dict[str, Any],
@@ -291,7 +326,10 @@ def campaign_plan(
     duration_seconds: int,
     max_blocks: int,
     fault_window_seconds: int,
+    campaign: str = "all",
+    topology: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    kinds = fault_semantics.campaign_faults(campaign)
     consensus.validated_run_bounds(duration_seconds, max_blocks)
     if (
         isinstance(fault_window_seconds, bool)
@@ -300,12 +338,12 @@ def campaign_plan(
         <= MAX_FAULT_WINDOW_SECONDS
     ):
         fail("fault window crosses the frozen bound")
-    if duration_seconds < len(FAULT_ORDER) * fault_window_seconds:
+    if duration_seconds < len(kinds) * fault_window_seconds:
         fail("consensus duration cannot contain the complete ordered fault matrix")
     if HEX64.fullmatch(coordinator_anchor) is None or HEX64.fullmatch(driver_sha256) is None:
         fail("campaign content address is non-canonical")
-    steps = fixed_fault_plan(processes)
-    return {
+    steps = selected_fault_plan(processes, campaign)
+    plan = {
         "schema_version": SCHEMA_VERSION,
         "profile": PROFILE,
         "run_id": manifest["run_id"],
@@ -339,6 +377,25 @@ def campaign_plan(
         "geo_wan_evidence": False,
         "production_activation": False,
     }
+    if campaign != "all":
+        if topology is None:
+            fail("selected campaign requires the validated topology")
+        facts = selected_placement_facts(topology, processes)
+        candidate = manifest.get("candidate")
+        if (not isinstance(candidate, dict)
+            or set(candidate) != {"source_tree_sha256", "linux_x86_64_sha256", "macos_arm64_sha256"}
+            or any(not isinstance(value, str) or HEX64.fullmatch(value) is None for value in candidate.values())):
+            fail("selected campaign lacks source-bound candidate identity")
+        plan.update(
+            schema_version=2, profile=SELECTED_PROFILE, campaign=campaign,
+            candidate=dict(candidate), topology_sha256=hashlib.sha256(base.canonical_json(topology)).hexdigest(),
+            fault_evidence_policy=[fault_semantics.policy_for(kind).plan_record() for kind in kinds],
+            active_campaign_supported=True, authority_blockers=[], restart_count=0,
+            full_matrix_authority_blockers=fault_semantics.active_campaign_blockers(),
+            selected_campaign_completed=False, fault_restart_profile_completed=False,
+            **facts,
+        )
+    return plan
 
 
 def safe_label(value: str) -> str:
@@ -467,13 +524,29 @@ def exact_status(
     return value
 
 
+def valid_barrier_projection_v1(value: dict[str, Any], allow_pre_start: bool) -> bool:
+    ready, started = value["fleet_ready_set_sha256"], value["fleet_start_certificate_sha256"]
+    nonzero = lambda text: isinstance(text, str) and HEX64.fullmatch(text) is not None and text != "0" * 64
+    phase = value["barrier_phase"]
+    if phase == "started":
+        return nonzero(ready) and nonzero(started)
+    if allow_pre_start and phase == "preparing":
+        return ready == "" and started == ""
+    if allow_pre_start and phase == "ready":
+        return nonzero(ready) and started == ""
+    return False
+
+
 def exact_response(
     value: object,
     *,
     status: dict[str, Any],
     nonce: int,
     verb: str,
+    allow_pre_start: bool = False,
 ) -> dict[str, Any]:
+    if allow_pre_start and verb != "status":
+        fail("pre-start observation is only available to status reads")
     if not isinstance(value, dict) or set(value) != RESPONSE_KEYS:
         fail("runtime-control response keys differ from contract")
     active = value["active_faults"]
@@ -488,16 +561,7 @@ def exact_response(
         or value["verb"] != verb
         or value["status"] != "ok"
         or value["expected_fault"] not in {"", *FAULT_ORDER}
-        or value["barrier_phase"] != "started"
-        or any(
-            not isinstance(value[field], str)
-            or HEX64.fullmatch(value[field]) is None
-            or value[field] == "0" * 64
-            for field in (
-                "fleet_ready_set_sha256",
-                "fleet_start_certificate_sha256",
-            )
-        )
+        or not valid_barrier_projection_v1(value, allow_pre_start)
         or not isinstance(active, list)
         or not isinstance(recovered, list)
         or active != sorted(set(active))
@@ -899,6 +963,7 @@ def send_control(
     fault: str,
     io_root: pathlib.Path,
     label: str,
+    allow_pre_start: bool = False,
 ) -> dict[str, Any]:
     arguments = [
         binary,
@@ -921,7 +986,7 @@ def send_control(
         strict_stdout_object(result.stdout, f"runtime-control {verb} response"),
         status=status,
         nonce=nonce,
-        verb=verb,
+        verb=verb, allow_pre_start=allow_pre_start,
     )
 
 
@@ -973,6 +1038,33 @@ def invoke_fault_driver(
         phase=phase,
     )
     return response, result
+
+
+def wait_for_started_fleet_v1(
+    processes: list[base.ValidatorProcess], stages: dict[str, base.HostStage],
+    linux_paths: dict[str, str], statuses: dict[str, dict[str, Any]],
+    read_nonces: dict[str, int], io_root: pathlib.Path,
+) -> None:
+    deadline = time.monotonic() + consensus.STARTUP_ALLOWANCE_SECONDS
+    remaining = {process.validator_id: process for process in processes}
+    while remaining:
+        for validator_id, process in list(remaining.items()):
+            nonce = read_nonces[validator_id]
+            value = send_control(
+                process=process, stage=stages[process.host_id], binary=linux_paths[process.host_id],
+                status=statuses[validator_id], nonce=nonce, verb="status", fault="",
+                io_root=io_root, label=f"fleet-started-{validator_id}-{nonce}",
+                allow_pre_start=True,
+            )
+            read_nonces[validator_id] += 1
+            if value["safety_halted"] or value["clean_stop_recorded"]:
+                raise RuntimeError("runtime halted or stopped before fault campaign start")
+            if value["barrier_phase"] == "started":
+                remaining.pop(validator_id)
+            if time.monotonic() >= deadline:
+                raise RuntimeError("fault campaign did not observe all seven started runtimes")
+        if remaining:
+            time.sleep(CONTROL_POLL_SECONDS)
 
 
 def wait_for_signed_fault_state(
@@ -1176,9 +1268,10 @@ def launch_runtime(
     max_blocks: int,
     process_io: pathlib.Path,
     process_instance: int,
+    peer_lease_socket: str | None = None,
 ) -> RuntimeProcessV1:
     command, report, journal, metrics, final_state, certificate = consensus.command_for(
-        process, stage, binary, duration_seconds, max_blocks
+        process, stage, binary, duration_seconds, max_blocks, peer_lease_socket
     )
     if stage.remote:
         # `wait` returning the dedicated successful handoff status must not be
@@ -1193,6 +1286,8 @@ def launch_runtime(
             str(max_blocks),
             report,
         ]
+        if peer_lease_socket is not None:
+            arguments.extend(("--peer-lease-socket", peer_lease_socket))
         child_command = shlex.join(arguments)
         remote = (
             "set -eu; child=''; "
@@ -1549,6 +1644,7 @@ def observer_verify(
     remote_source = exact_remote_root(
         f"{observer_stage.root}/reports/{process.validator_id}.{suffix}"
     )
+    remote_source = f"{consensus.observer_sealed_reports_root_v1(observer_stage)}/{pathlib.PurePosixPath(remote_source).name}"
     run_file_backed(
         [
             "scp",
@@ -1559,6 +1655,11 @@ def observer_verify(
         io_root=io_root,
         label=f"{label}-copy",
         timeout=60,
+    )
+    run_file_backed(
+        ["ssh", "-o", "BatchMode=yes", observer_stage.management,
+         f"chmod 600 {shlex.quote(remote_source)}"],
+        io_root=io_root, label=f"{label}-mode", timeout=30,
     )
     observer_config = exact_remote_root(
         f"{observer_root}/public/configs/{process.validator_id}.json"
@@ -1623,6 +1724,7 @@ def observer_verify_fleet_start_certificate(
     remote_source = exact_remote_root(
         f"{observer_stage.root}/reports/{process.validator_id}.fleet-start-certificate.bin"
     )
+    remote_source = f"{consensus.observer_sealed_reports_root_v1(observer_stage)}/{pathlib.PurePosixPath(remote_source).name}"
     run_file_backed(
         [
             "scp",
@@ -1640,7 +1742,7 @@ def observer_verify_fleet_start_certificate(
             "-o",
             "BatchMode=yes",
             observer_stage.management,
-            f"chmod 600 -- {shlex.quote(remote_source)}",
+            f"chmod 600 {shlex.quote(remote_source)}",
         ],
         io_root=io_root,
         label=f"{label}-chmod",
@@ -1687,6 +1789,46 @@ def observer_verify_fleet_start_certificate(
     )
 
 
+def exact_selected_journal_faults_v1(
+    raw: bytes, verified: dict[str, Any], expected: set[str],
+) -> None:
+    """Join labels in the SAME Mac-verified raw artifact, not merely its count.
+
+    This is a projection check after strict crypto replay, never a verifier.
+    The caller pins raw bytes before transport and compares them afterward.
+    """
+    if not raw or len(raw) > 32 * 1024 * 1024 or not raw.endswith(b"\n"):
+        fail("fault journal bytes exceed the original bounded artifact contract")
+    applied: set[str] = set()
+    recovered: set[str] = set()
+    count = 0
+    last = None
+    for line in raw.splitlines():
+        event = base.strict_json_bytes(line, "Mac-verified runtime journal event")
+        if not isinstance(event, dict):
+            fail("fault journal event is not an object")
+        if any(event.get(field) != verified[field] for field in (
+            "run_id", "validator_id", "coordinator_manifest_sha256", "candidate_source_sha256",
+            "binary_sha256", "config_sha256", "validator_set_sha256",
+        )) or event.get("sequence") != count:
+            fail("fault journal raw artifact differs from verified identity/sequence")
+        kind, subject = event.get("kind"), event.get("subject")
+        if kind == "fault_applied":
+            if subject not in expected or subject in applied:
+                fail("fault journal contains an unexpected or duplicate applied label")
+            applied.add(subject)
+        elif kind == "fault_recovered":
+            if subject not in applied or subject in recovered:
+                fail("fault journal contains an unmatched or duplicate recovered label")
+            recovered.add(subject)
+        count += 1
+        last = event
+    if (applied != expected or recovered != expected or count != verified["event_count"]
+        or last is None or last.get("event_sha256") != verified["runtime_event_sha256"]
+        or last.get("sequence") != verified["runtime_event_sequence"]):
+        fail("fault journal selected labels/tip differ from independently verified evidence")
+
+
 def collect_terminal_evidence(
     *,
     runtimes: dict[str, RuntimeProcessV1],
@@ -1699,7 +1841,7 @@ def collect_terminal_evidence(
     output: pathlib.Path,
     process_io: pathlib.Path,
     expected_faults: dict[str, set[str]],
-    restarted_validator_id: str,
+    restarted_validator_id: str | None,
     duration_seconds: int,
     max_blocks: int,
     validator_count: int,
@@ -1769,6 +1911,7 @@ def collect_terminal_evidence(
             io_root=process_io,
             label=f"observe-{validator_id}-certificate",
         )
+        journal_bytes = read_bounded(paths["journal"], 32 * 1024 * 1024, "runtime journal")
         raw_journal_verification = observer_verify(
             process=process,
             source=paths["journal"],
@@ -1790,6 +1933,9 @@ def collect_terminal_evidence(
             expected_faults=expected_faults[validator_id],
             restarted=validator_id == restarted_validator_id,
         )
+        if read_bounded(paths["journal"], 32 * 1024 * 1024, "runtime journal") != journal_bytes:
+            fail("runtime journal changed during independent Mac verification")
+        exact_selected_journal_faults_v1(journal_bytes, journal, expected_faults[validator_id])
         report = observer_verify(
             process=process,
             source=paths["report"],
@@ -1970,6 +2116,9 @@ def execute_campaign(
     fault_window_seconds: int,
     plan: dict[str, Any],
     stage_plan: dict[str, base.HostStage],
+    campaign: str = "all",
+    topology: dict[str, Any] | None = None,
+    anchor_snapshot: consensus.CoordinatorAnchorSnapshot | None = None,
 ) -> None:
     expected_stage_plan = base.preflight_runtime_layout(
         processes, manifest["run_id"], output
@@ -1980,12 +2129,27 @@ def execute_campaign(
     # launch, and driver pinning.  A vocabulary entry is not permission to
     # inject a fault whose authoritative observation path does not yet exist.
     try:
-        fault_semantics.require_active_campaign_supported()
+        fault_semantics.require_campaign_supported(campaign)
     except RuntimeError as error:
         fail(str(error))
+    expected_plan = campaign_plan(
+        manifest=manifest, processes=processes,
+        coordinator_anchor=plan["coordinator_manifest_sha256"],
+        driver_sha256=plan["fault_driver_sha256"], duration_seconds=duration_seconds,
+        max_blocks=max_blocks, fault_window_seconds=fault_window_seconds,
+        campaign=campaign, topology=topology,
+    )
+    if base.canonical_json(plan) != base.canonical_json(expected_plan):
+        fail("campaign plan differs from the exact selected source and topology")
+    if campaign != "all":
+        if anchor_snapshot is None or anchor_snapshot.sha256 != plan["coordinator_manifest_sha256"]:
+            fail("selected campaign requires an independent coordinator anchor")
+        consensus.verify_coordinator_anchor(anchor_snapshot)
     try:
         plan["mesh_resource_preflight"] = (
-            mesh_resources.preflight_mesh_fleet_resources_v1(processes, 7)
+            mesh_resources.preflight_mesh_fleet_resources_v1(
+                processes, 7, placement_profile=plan.get("placement_profile", base.CANONICAL_PLACEMENT)
+            )
         )
     except RuntimeError as error:
         fail(str(error))
@@ -2030,13 +2194,15 @@ def execute_campaign(
     terminal_results: list[dict[str, Any]] = []
     terminal_agreement: dict[str, Any] | None = None
     restart_launch_count = 0
+    peer_lease_daemons: list[consensus.RunningPeerLeaseDaemon] = []
     restarted_validator_id = next(
-        step["target_validator_id"]
-        for step in plan["fault_order"]
-        if step["restart"]
+        (step["target_validator_id"] for step in plan["fault_order"] if step["restart"]),
+        None,
     )
     started_ns = time.monotonic_ns()
     try:
+        if anchor_snapshot is not None:
+            consensus.verify_coordinator_anchor(anchor_snapshot)
         stages = base.create_stages(
             stage_plan, processes=processes, run_id=run_id, output=output
         )
@@ -2050,6 +2216,14 @@ def execute_campaign(
             candidate["macos_arm64_sha256"],
         )
         observer_stage = stages["mac"]
+        if campaign != "all" and (
+            observer_stage.host_id != plan["observer"]["host_id"]
+            or observer_stage.management != plan["observer"]["management"]
+        ):
+            fail("deployed Mac observer differs from the frozen placement")
+        peer_lease_paths, peer_lease_daemons = consensus.start_peer_lease_daemons(
+            stages, processes, linux_paths
+        )
         for process in processes:
             stage = stages[process.host_id]
             runtimes[process.validator_id] = launch_runtime(
@@ -2060,6 +2234,7 @@ def execute_campaign(
                 max_blocks=max_blocks,
                 process_io=process_io,
                 process_instance=1,
+                peer_lease_socket=peer_lease_paths[process.host_id].socket,
             )
         for process in processes:
             statuses[process.validator_id] = wait_control_status(
@@ -2072,7 +2247,8 @@ def execute_campaign(
                 timeout_seconds=consensus.STARTUP_ALLOWANCE_SECONDS,
             )
 
-        steps = fixed_fault_plan(processes)
+        wait_for_started_fleet_v1(processes, stages, linux_paths, statuses, read_nonces, control_io)
+        steps = selected_fault_plan(processes, campaign)
         for step in steps:
             policy = fault_semantics.policy_for(step.kind)
             process = process_by_id[step.target_validator_id]
@@ -2135,6 +2311,9 @@ def execute_campaign(
                 raise RuntimeError("runtime did not retain the exact fault expectation")
             transcript.append({"surface": "runtime-control", **expectation})
 
+            # Register the exact owned restoration obligation before invoking
+            # a driver that can fail after a partial external effect.
+            active_effects.append((step, process, stage, status))
             driver_applied, _ = invoke_fault_driver(
                 driver=fault_driver,
                 step=step,
@@ -2153,7 +2332,6 @@ def execute_campaign(
                     **driver_applied,
                 }
             )
-            active_effects.append((step, process, stage, status))
 
             applied, next_nonce = wait_for_signed_fault_state(
                 process=process,
@@ -2188,6 +2366,8 @@ def execute_campaign(
                     **driver_restored,
                 }
             )
+            if driver_restored["effect_id"] != driver_applied["effect_id"]:
+                raise RuntimeError("restored fault effect differs from the exact applied effect")
             active_effects.pop()
 
             recovered, next_nonce = wait_for_signed_fault_state(
@@ -2260,6 +2440,8 @@ def execute_campaign(
             deadline=terminal_deadline,
         )
         terminal_agreement = consensus.exact_terminal_agreement(terminal_results, 7)
+        if anchor_snapshot is not None:
+            consensus.verify_coordinator_anchor(anchor_snapshot)
     except (OSError, subprocess.SubprocessError, RuntimeError, ValueError, SystemExit) as error:
         failure = str(error)
     finally:
@@ -2273,16 +2455,17 @@ def execute_campaign(
         )
         for runtime in runtimes.values():
             stop_runtime(runtime)
+        cleanup_failures.extend(consensus.stop_peer_lease_daemons(peer_lease_daemons))
         cleanup_failures.extend(base.clean_stages(stages))
 
     success = (
         failure is None
         and not cleanup_failures
-        and len(fault_results) == 8
+        and [result["kind"] for result in fault_results] == list(fault_semantics.campaign_faults(campaign))
         and len(terminal_results) == 7
         and terminal_agreement is not None
-        and restart_launch_count == 1
-        and sum(result["restarted"] for result in terminal_results) == 1
+        and restart_launch_count == plan["restart_count"]
+        and sum(result["restarted"] for result in terminal_results) == plan["restart_count"]
     )
     summary = {
         "schema_version": 1,
@@ -2292,7 +2475,7 @@ def execute_campaign(
         "network_scope": "single-lan",
         "elapsed_monotonic_ns": time.monotonic_ns() - started_ns,
         "coordinator_manifest_sha256": coordinator_anchor,
-        "fault_order": list(FAULT_ORDER),
+        "fault_order": list(fault_semantics.campaign_faults(campaign)),
         "faults": fault_results,
         "restart_count": restart_launch_count,
         "restarted_validator_id": (
@@ -2302,7 +2485,7 @@ def execute_campaign(
         "terminal_agreement": terminal_agreement,
         "failure": failure,
         "cleanup_failures": cleanup_failures,
-        "fault_restart_profile_completed": success,
+        "fault_restart_profile_completed": success and campaign == "all",
         # The campaign result still requires the independent raw/signed bundle
         # gates before any repository truth bit can move.
         "validator_run_completed": False,
@@ -2312,6 +2495,16 @@ def execute_campaign(
         "geo_wan_evidence": False,
         "production_activation": False,
     }
+    if campaign != "all":
+        summary.update(
+            schema_version=2, profile=SELECTED_PROFILE, campaign=campaign,
+            selected_campaign_completed=success,
+            candidate=plan["candidate"], topology_sha256=plan["topology_sha256"],
+            fault_driver_sha256=plan["fault_driver_sha256"],
+            prestart_plan_sha256=base.sha256_file(output / "prestart-plan.json"),
+            participant_host_count=len({row["host_id"] for row in terminal_results} | {"mac"}) if terminal_results else 0,
+            **selected_placement_facts(topology, processes),
+        )
     base.write_new(output / "fault-restart-run-summary.json", base.canonical_json(summary))
     if not success:
         fail(
@@ -2319,7 +2512,7 @@ def execute_campaign(
             f"{failure or cleanup_failures}"
         )
     print(
-        "poco_g3_fault_restart_fleet_v1=passed validators=7 faults=8 restart=1 "
+        f"poco_g3_fault_restart_fleet_v1=passed validators=7 faults={len(fault_results)} restart={restart_launch_count} campaign={campaign} "
         "fault_driver_pinned=true signed_transitions=true "
         "signed_terminal_chain=true macos_cross_verified=true "
         "bundle_verification_required=true fault_matrix_completed=false "
@@ -2340,12 +2533,17 @@ def main() -> None:
     parser.add_argument("--duration-seconds", required=True, type=int)
     parser.add_argument("--max-blocks", required=True, type=int)
     parser.add_argument("--fault-window-seconds", type=int, default=30)
+    parser.add_argument("--campaign", choices=tuple(fault_semantics.CAMPAIGN_FAULTS), default="all")
+    parser.add_argument("--coordinator-manifest-sha256")
     parser.add_argument("--plan-only", action="store_true")
     args = parser.parse_args()
 
     coordinator = base.require_private_directory(args.coordinator_root, "coordinator root")
     deployments = base.require_private_directory(args.deployment_root, "deployment root")
-    manifest, _topology, processes = base.load_contract(coordinator, deployments, 7)
+    anchor_snapshot = None
+    if args.campaign != "all":
+        anchor_snapshot = consensus.checked_coordinator_anchor(coordinator, args.coordinator_manifest_sha256)
+    manifest, topology, processes = base.load_contract(coordinator, deployments, 7)
     output = pathlib.Path(os.path.abspath(args.output))
     stage_plan = base.preflight_runtime_layout(processes, manifest["run_id"], output)
     candidate = manifest["candidate"]
@@ -2356,7 +2554,9 @@ def main() -> None:
         args.macos_binary, candidate["macos_arm64_sha256"], "macOS binary"
     )
     fault_driver = require_fault_driver(args.fault_driver)
-    coordinator_anchor = base.sha256_file(coordinator / "manifest.json")
+    if anchor_snapshot is not None:
+        consensus.verify_coordinator_anchor(anchor_snapshot)
+    coordinator_anchor = anchor_snapshot.sha256 if anchor_snapshot is not None else base.sha256_file(coordinator / "manifest.json")
     plan = campaign_plan(
         manifest=manifest,
         processes=processes,
@@ -2365,6 +2565,7 @@ def main() -> None:
         duration_seconds=args.duration_seconds,
         max_blocks=args.max_blocks,
         fault_window_seconds=args.fault_window_seconds,
+        campaign=args.campaign, topology=topology,
     )
     if args.plan_only:
         print(json.dumps(plan, indent=2, sort_keys=True))
@@ -2377,6 +2578,8 @@ def main() -> None:
         pass
     else:
         fail("output root must remain outside the source tree")
+    if args.campaign != "all":
+        consensus.validate_output_root(output, input_paths=(coordinator, deployments, linux_binary, macos_binary, fault_driver))
     execute_campaign(
         coordinator=coordinator,
         deployments=deployments,
@@ -2390,7 +2593,8 @@ def main() -> None:
         max_blocks=args.max_blocks,
         fault_window_seconds=args.fault_window_seconds,
         plan=plan,
-        stage_plan=stage_plan,
+        stage_plan=stage_plan, campaign=args.campaign, topology=topology,
+        anchor_snapshot=anchor_snapshot,
     )
 
 

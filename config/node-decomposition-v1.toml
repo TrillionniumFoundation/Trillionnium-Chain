@@ -30,6 +30,11 @@ to = "trnm-poco-node-io"
 from = "trnm-poco-node-cli"
 to = "trnm-poco-node-host"
 
+[[candidate_runtime_edges]]
+from = "trnm-poco-node-host"
+to = "trnm-poco-node"
+feature = "candidate-networked-authority"
+
 [policy]
 composition_performs_wiring_only = true
 authority_boundary_has_no_sign_vote_finalize_api = true

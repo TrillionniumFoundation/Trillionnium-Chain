@@ -41,7 +41,20 @@ A response lost after admission is recovered through `PeerReplayRecoverySourceV0
 
 `PeerReplayRecoverySourceV0` must authenticate the durable replay record, namespace, session generation and fresh readback. Structural validity alone is insufficient. Recovery-source rejection creates no admission state.
 
-The candidate does not provide a filesystem, database, remote peer or cryptographic handshake implementation.
+The node candidate now also exposes an explicit `PocoNodeP2pReplayAnchorV0`
+path. `PocoNodeP2pSessionV0::accept_frame_with_replay_anchor` performs strict
+frame-signature and nested-semantic verification first, then appends a
+context/peer/session/sequence/full-frame-digest record to a private fsynced
+hash-chain journal before exposing the accepted frame. A fresh process can
+reopen that journal and rejects an exact old frame (`durable_frame_replay`) or
+a conflicting frame at the same `(session, sequence)` (`durable_frame_conflict`).
+The candidate test starts the compiled test executable as a child process and
+also mutates the frame journal, so this is repository process-restart evidence;
+it is not host-attestation, external anti-rollback, Core acknowledgement, or
+production listener evidence.
+
+The candidate still does not provide a filesystem/database-independent remote
+peer, TLS listener, or cryptographic key administration implementation.
 
 ## Exact-source compile qualification
 
@@ -54,7 +67,11 @@ trnm-poco-node-host --features candidate-networked-authority
 
 The guarded run then created commit `ee72c648603198e3540f11f3e27aa699dc404155` with source tree `56ece5f05f1d326c41f963847dfef7ab64f7eaa1`. The change only moved a test-only digest import, made three readback function-pointer boundaries explicit and removed a test helper shadow. The temporary write-enabled workflow removed itself in the same commit.
 
-This establishes that the pure admission state machine and P2P-to-authority bridge compile, execute and lint together on that exact tree. It does not establish durable replay storage, a listener, a live peer, production activation or full-workspace/prospective-merge acceptance. Every later source movement requires fresh qualification.
+This establishes that the pure admission state machine, candidate durable
+frame journal and P2P-to-authority bridge compile, execute and lint together
+on that exact tree. It does not establish a listener, a live peer, production
+activation or full-workspace/prospective-merge acceptance. Every later source
+movement requires fresh qualification.
 
 ## Required live integration
 
@@ -62,7 +79,9 @@ A production candidate still requires:
 
 - cross-platform listener/connect lifecycle;
 - mutually authenticated handshake and session-key/profile binding;
-- durable atomic replay state across process and host restart;
+- durable local replay state across process restart (the node candidate's
+  frame journal); host restart, external anti-rollback and atomic Core
+  acknowledgement remain open;
 - body-byte retrieval and digest verification;
 - peer lease/revocation recheck;
 - bounded connection, queue, memory, rate and file-descriptor resources;

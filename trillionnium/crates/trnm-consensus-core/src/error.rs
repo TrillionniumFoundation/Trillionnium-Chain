@@ -43,6 +43,7 @@ pub enum CoreError {
     },
     StaleInput,
     Busy(&'static str),
+    EpochActivationPersistencePending,
     UnexpectedStorageAck,
     UnexpectedFinalizationAck,
     UnexpectedSignature,
@@ -185,6 +186,9 @@ impl fmt::Display for CoreError {
             ),
             Self::StaleInput => formatter.write_str("input is stale"),
             Self::Busy(reason) => write!(formatter, "core is busy: {reason}"),
+            Self::EpochActivationPersistencePending => formatter.write_str(
+                "candidate epoch host must acknowledge the exact initial persistence barrier",
+            ),
             Self::UnexpectedStorageAck => formatter.write_str("unexpected storage acknowledgement"),
             Self::UnexpectedFinalizationAck => {
                 formatter.write_str("unexpected finalization acknowledgement")

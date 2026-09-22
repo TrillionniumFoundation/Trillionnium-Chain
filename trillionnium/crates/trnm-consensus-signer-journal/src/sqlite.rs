@@ -1,3 +1,5 @@
+#[path = "retirement_sqlite_v1.rs"]
+pub mod retirement_v1;
 use std::{
     collections::{BTreeMap, BTreeSet},
     env,
@@ -445,6 +447,40 @@ impl ConfirmedSignedIntentReadbackV1 {
 }
 
 impl ConfirmedSignerNodeCheckpointFactsV0 {
+    /// Final local comparison after the host's last external callback. This
+    /// grants no signature authority and never consults or repairs a watermark.
+    pub fn confirm_local_owner_v1<W: ExternalMonotonicWatermarkV0>(
+        &self,
+        journal: &SqliteSignerJournalV0<W>,
+    ) -> Result<(), SignerJournalErrorV0> {
+        if !Arc::ptr_eq(&self.owner_affinity, &journal.owner_affinity)
+            || self.journal_id != journal.journal_id
+            || self.profile_checksum != journal.profile.profile_checksum()
+            || self.identity != SignerNodeCheckpointIdentityV0::from_profile(&journal.profile)
+        {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        journal.ensure_file_identity()?;
+        let inventory = journal.validate_database()?;
+        let head = read_head(&journal.connection, journal.journal_id)?;
+        let capacity = read_capacity(&journal.connection)?;
+        validate_capacity(&capacity, &journal.profile)?;
+        if head != journal.observed_head
+            || journal.watermark_for(head)? != self.exact_watermark
+            || inventory != self.lifetime_inventory
+            || capacity != self.capacity
+            || read_tail_facts(&journal.connection, head)? != self.tail
+            || read_pending_intent_facts(&journal.connection)? != self.pending_intent
+        {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        journal.ensure_file_identity()
+    }
+
     pub const fn journal_id(&self) -> [u8; 32] {
         self.journal_id
     }
@@ -613,7 +649,35 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
     pub fn initialize_new(
         database_path: impl AsRef<Path>,
         profile: SignerJournalProfileV0,
+        external_watermark: W,
+    ) -> Result<Self, SignerJournalErrorV0> {
+        Self::initialize_new_inner_v1(database_path, profile, external_watermark, None)
+    }
+
+    /// Provisions a fresh semantic namespace whose independent authority is
+    /// already bound to this journal ID. The external head must still be empty;
+    /// this never adopts an existing scope or grants epoch activation.
+    pub fn initialize_new_prebound_semantic_v1(
+        database_path: impl AsRef<Path>,
+        profile: SignerJournalProfileV0,
+        external_watermark: W,
+        journal_id: [u8; 32],
+    ) -> Result<Self, SignerJournalErrorV0> {
+        if journal_id == [0; 32]
+            || !external_watermark.semantic_mode_v0()
+            || !external_watermark.semantic_signer_journal_pair_v0()
+        {
+            return Err(SignerJournalErrorV0::InvalidProfile(
+                "prebound ordinary journal requires semantic pair scope and nonzero journal ID",
+            ));
+        }
+        Self::initialize_new_inner_v1(database_path, profile, external_watermark, Some(journal_id))
+    }
+    fn initialize_new_inner_v1(
+        database_path: impl AsRef<Path>,
+        profile: SignerJournalProfileV0,
         mut external_watermark: W,
+        prebound_journal_id: Option<[u8; 32]>,
     ) -> Result<Self, SignerJournalErrorV0> {
         ensure_supported_platform()?;
         if let Some(error) = semantic_lifecycle_error_v0(&external_watermark) {
@@ -663,7 +727,10 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         )
         .map_err(|error| SignerJournalErrorV0::sqlite("open new database", error))?;
         configure_connection(&connection, true, profile.maximum_database_bytes())?;
-        let journal_id = new_journal_id()?;
+        let journal_id = match prebound_journal_id {
+            Some(id) => id,
+            None => new_journal_id()?,
+        };
         let observed_head = initialize_schema(&connection, &profile, journal_id)?;
         checkpoint_and_sync_initialization(&connection, &database_file, &directory_file)?;
         materialize_auxiliary_files(&connection)?;

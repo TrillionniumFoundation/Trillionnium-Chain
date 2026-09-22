@@ -63,23 +63,69 @@ def facts_for(host: dict, lan_ips: list[str], epoch: int) -> dict[str, str]:
     return facts
 
 
-def produce_current_document() -> dict:
+def test_local_identity_is_inventory_bound() -> None:
+    probe = load_probe()
+    probe_output = json.dumps(
+        [
+            {
+                "ifname": "wlp195s0",
+                "addr_info": [
+                    {"family": "inet", "local": "192.168.0.9"},
+                    {"family": "inet", "local": "100.119.126.104"},
+                ],
+            }
+        ]
+    )
+    completed = subprocess.CompletedProcess(
+        ["ip"], 0, stdout=probe_output, stderr=""
+    )
+    with mock.patch.object(probe.subprocess, "run", return_value=completed):
+        assert probe.local_inventory_addresses(
+            ["192.168.0.9", "192.168.0.4"], "192.168.0.9"
+        ) == {"192.168.0.9"}
+    mismatch = probe_output.replace("192.168.0.9", "192.168.0.4")
+    with mock.patch.object(
+        probe.subprocess,
+        "run",
+        return_value=subprocess.CompletedProcess(["ip"], 0, stdout=mismatch, stderr=""),
+    ):
+        try:
+            probe.local_inventory_addresses(
+                ["192.168.0.9", "192.168.0.4"], "192.168.0.9"
+            )
+        except ValueError as error:
+            assert "inventory local LAN address exactly" in str(error)
+        else:
+            raise AssertionError("local identity substitution was accepted")
+
+
+def produce_current_document(
+    *, failed_lan: bool = False, missing_builder_os: str | None = None,
+) -> dict:
     probe = load_probe()
     inventory = load_inventory()
     hosts = inventory["hosts"]
     lan_ips = [host["lan_ip"] for host in hosts]
     base_epoch = 2_000_000_000
     facts = [facts_for(host, lan_ips, base_epoch + index) for index, host in enumerate(hosts)]
+    for item in facts:
+        if failed_lan:
+            item[f"ping_{lan_ips[-1]}"] = "fail"
+        if item["os"] == missing_builder_os:
+            item["cargo"] = ""
+            item["rustc"] = ""
     local_facts = iter(item for host, item in zip(hosts, facts) if host["management"] == "local")
     remote_facts = iter(item for host, item in zip(hosts, facts) if host["management"] != "local")
 
-    def fake_local(_lan_ips: list[str]) -> dict[str, str]:
+    def fake_local(
+        _lan_ips: list[str], _expected_local_ip: str | None = None
+    ) -> dict[str, str]:
         return copy.deepcopy(next(local_facts))
 
     def fake_remote(*_args, **_kwargs) -> subprocess.CompletedProcess[str]:
         item = next(remote_facts)
         stdout = "".join(f"{key}={value}\n" for key, value in item.items())
-        return subprocess.CompletedProcess([], 0, stdout=stdout, stderr="")
+        return subprocess.CompletedProcess([], 1 if failed_lan else 0, stdout=stdout, stderr="")
 
     class FakeTime:
         @staticmethod
@@ -94,7 +140,14 @@ def produce_current_document() -> dict:
         mock.patch.object(sys, "argv", [str(PROBE), "--inventory", str(INVENTORY)]),
         contextlib.redirect_stdout(output),
     ):
-        probe.main()
+        try:
+            probe.main()
+        except SystemExit as error:
+            if not (failed_lan or missing_builder_os) or error.code != 2:
+                raise
+        else:
+            if failed_lan or missing_builder_os:
+                raise AssertionError("failed readiness must retain nonzero exit")
     document = json.loads(output.getvalue())
     if not isinstance(document, dict):
         raise AssertionError("probe_run_readiness.py did not emit a JSON object")
@@ -154,6 +207,7 @@ def clear_builders(document: dict, os_name: str) -> None:
 
 
 def main() -> None:
+    test_local_identity_is_inventory_bound()
     base = produce_current_document()
     positive = run(base)
     if positive.returncode != 0:
@@ -167,6 +221,28 @@ def main() -> None:
     )
     if any(claim not in positive.stdout for claim in false_claims):
         raise AssertionError(f"missing fail-closed claim boundary: {positive.stdout!r}")
+
+    failed = produce_current_document(failed_lan=True)
+    if failed["observations"] or len(failed["failures"]) != 6:
+        raise AssertionError("failed LAN probes must not become successful observations")
+    for failure in failed["failures"]:
+        if "LAN reachability" not in failure["error"] or not failure["facts"]["python3"]:
+            raise AssertionError("failed LAN host lost its bounded diagnostic facts")
+    failed_check = run(failed)
+    if failed_check.returncode == 0 or "contains failures" not in failed_check.stderr:
+        raise AssertionError("diagnostic facts must not close the readiness gate")
+
+    missing_builder = produce_current_document(failed_lan=True, missing_builder_os="Darwin")
+    if len(missing_builder["failures"]) != 7 or missing_builder["failures"][-1]["id"] != "fleet":
+        raise AssertionError("genuinely absent native toolchain must remain a blocker")
+    probe = load_probe()
+    try:
+        probe.parse_lines("oversize=" + "x" * probe.MAX_PROBE_BYTES)
+    except ValueError as error:
+        if "exceeds 64 KiB" not in str(error):
+            raise
+    else:
+        raise AssertionError("unbounded diagnostic output was accepted")
 
     historical_path = run_historical_path()
     if historical_path.returncode == 0 or "historical/audit-only" not in historical_path.stderr:
@@ -208,7 +284,7 @@ def main() -> None:
 
     print(
         "poco_g3_current_run_readiness_self_test=passed "
-        f"producer_positive=1 negatives={len(controls) + 2} historical_gate=false "
+        f"producer_positive=1 negatives={len(controls) + 2} producer_diagnostic_regressions=3 historical_gate=false "
         "build=false validator_run=false multihost_run=false geo_wan=false production=false"
     )
 

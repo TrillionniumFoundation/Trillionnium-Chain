@@ -197,13 +197,26 @@ impl BoundedConsensusIngressLoopV0 {
                 if let Some(certificate) = proposal.timeout_certificate() {
                     staged.register_timeout_certificate(certificate.clone())?;
                 }
-                // Do not commit the staged snapshot yet.  A Proposal may be
+                // Validate the complete staged carrier set before committing
+                // only its independently authenticated QC references. A Proposal may be
                 // buffered by the pending-proposal gate and therefore may
                 // never become an authority event; freezing its embedded
                 // carriers at ingress would suppress a later actionable
                 // standalone QC/TC.  The staged clone still performs all
                 // validation and bounded-capacity checks without mutating the
-                // live collector.
+                // live collector; only the QC references are committed below.
+                // The body may remain buffered, but these already verified
+                // QC references are independent evidence for deferred TC
+                // formation. Commit only references, never the carried TC
+                // or the staged proposal snapshot.
+                let mut carriers = self.collector.clone();
+                carriers.register_qc_reference(proposal.justify_qc().clone())?;
+                if let Some(certificate) = proposal.timeout_certificate() {
+                    for reference in certificate.referenced_qcs() {
+                        carriers.register_qc_reference(reference.clone())?;
+                    }
+                }
+                self.collector = carriers;
                 Ok(RoutedConsensusActionV0::Proposal(proposal))
             }
             AdmittedConsensusMessageV0::Vote(vote) => {
@@ -363,14 +376,18 @@ fn decoded_message_view_v0(message: &AdmittedConsensusMessageV0) -> View {
 mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     use trnm_consensus_types::{
-        BlockId, ChainId, ConsensusPublicKey, Epoch, GenesisHash, Height, ProtocolVersion, QcRef,
-        QcReferenceV0, SignatureBytes, Validator, ValidatorId, View, VotingPower,
+        ApplicationPayloadV0, Block, BlockHeader, BlockId, BlockKind, ChainId, ConsensusPublicKey,
+        Epoch, EvidenceRoot, GenesisHash, Height, ProposalWitnessV0, ProtocolVersion, QcRef,
+        QcReferenceV0, ReceiptsRoot, SignatureBytes, StateRoot, TimeoutCertificateV0,
+        TimeoutEntryV0, Validator, ValidatorId, View, VotingPower,
     };
 
     use super::*;
     use crate::{
         frame::FrameKind,
-        wire::{encode_quorum_certificate, encode_timeout_vote, encode_vote},
+        wire::{
+            encode_quorum_certificate, encode_timeout_certificate, encode_timeout_vote, encode_vote,
+        },
     };
 
     fn fixture() -> (Vec<SigningKey>, ValidatorSet, ConsensusParametersV0) {
@@ -459,6 +476,107 @@ mod tests {
             set,
         )
         .unwrap()
+    }
+
+    fn alternate_quorum_certificate(
+        keys: &[SigningKey],
+        set: &ValidatorSet,
+        block: BlockId,
+    ) -> QuorumCertificate {
+        QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(2),
+            Height::new(1),
+            block,
+            set.id(),
+            [1usize, 2, 3, 4, 5]
+                .into_iter()
+                .map(|index| vote(keys, set, index, block))
+                .collect(),
+            set,
+        )
+        .unwrap()
+    }
+
+    fn proposal_carrying_qc(
+        keys: &[SigningKey],
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        qc: &QuorumCertificate,
+    ) -> UnboundProposalV0 {
+        proposal_carrying_qc_and_tc(keys, set, parameters, qc, None)
+    }
+
+    fn proposal_carrying_qc_and_tc(
+        keys: &[SigningKey],
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        qc: &QuorumCertificate,
+        carried_tc: Option<TimeoutCertificateV0>,
+    ) -> UnboundProposalV0 {
+        let payload = ApplicationPayloadV0::new(vec![b"carrier".to_vec()]).unwrap();
+        let payload_bytes = payload.try_cev0_bytes().unwrap();
+        let proposal_view = carried_tc
+            .as_ref()
+            .map_or(3, |tc| tc.timed_out_view().get() + 1);
+        let proposer = trnm_consensus_core::leader_for(set, View::new(proposal_view));
+        let proposer_index = set
+            .validators()
+            .iter()
+            .position(|validator| validator.id() == proposer)
+            .unwrap();
+        let header = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(proposal_view),
+            Height::new(2),
+            BlockKind::Regular,
+            qc.block_id(),
+            proposer,
+            set.id(),
+            parameters.hash(),
+            payload.payload_root().unwrap(),
+            StateRoot::new([0x71; 32]),
+            ReceiptsRoot::new([0x72; 32]),
+            EvidenceRoot::new([0x73; 32]),
+            1,
+            None,
+        )
+        .unwrap();
+        let justify = QcReferenceV0::ordinary(qc.clone());
+        let signing_root =
+            ProposalWitnessV0::signing_root_for(&header, &justify, carried_tc.as_ref(), None)
+                .unwrap();
+        let witness = ProposalWitnessV0::new(
+            &header,
+            justify,
+            carried_tc,
+            None,
+            SignatureBytes::from_array(
+                keys[proposer_index]
+                    .sign(signing_root.as_bytes())
+                    .to_bytes(),
+            ),
+            set,
+            None,
+            parameters,
+            0,
+        )
+        .unwrap();
+        let signed = trnm_consensus_types::SignedProposalV0::new(
+            Block::new(header, payload_bytes, Vec::new()).unwrap(),
+            witness,
+            set,
+            None,
+            parameters,
+            0,
+        )
+        .unwrap();
+        UnboundProposalV0::from_signed(&signed).unwrap()
     }
 
     #[test]
@@ -701,6 +819,159 @@ mod tests {
             .retry_pending_timeout_certificates_v0()
             .expect("formed TC retry is idempotent")
             .is_empty());
+    }
+
+    #[test]
+    fn proposal_qc_carrier_wakes_pending_timeout_without_freezing_body() {
+        let (keys, set, parameters) = fixture();
+        let block = BlockId::new([0x65; 32]);
+        let canonical_qc = quorum_certificate(&keys, &set, block);
+        let qc = alternate_quorum_certificate(&keys, &set, block);
+        assert_ne!(canonical_qc.id(), qc.id());
+        let high_qc = QcRef::from(&qc);
+        let mut router = BoundedConsensusIngressLoopV0::new(set.clone(), parameters, 16).unwrap();
+        router
+            .seed_verified_qc_reference_v0(QcReferenceV0::ordinary(canonical_qc))
+            .unwrap();
+        for index in 0..4 {
+            let timeout = timeout_vote(&keys, &set, index, high_qc);
+            let frame = AuthenticatedFrame {
+                sender: timeout.author(),
+                session: [u8::try_from(index + 0x30).unwrap(); 32],
+                sequence: 0,
+                kind: FrameKind::TimeoutVote,
+                payload: encode_timeout_vote(&timeout),
+            };
+            router.admit_authenticated_frame(&frame).unwrap();
+        }
+        let proposal = proposal_carrying_qc(&keys, &set, &parameters, &qc);
+        let payload = proposal.encode().unwrap();
+        let frame = AuthenticatedFrame {
+            sender: trnm_consensus_core::leader_for(&set, View::new(3)),
+            session: [0x31; 32],
+            sequence: 0,
+            kind: FrameKind::Proposal,
+            payload,
+        };
+        router.admit_authenticated_frame(&frame).unwrap();
+        let formed = router.retry_pending_timeout_certificates_v0().unwrap();
+        assert_eq!(formed.len(), 1);
+        assert_eq!(formed[0].selected_high_qc_digest(), qc.id());
+
+        let mut malformed = proposal.encode().unwrap();
+        let last = malformed.last_mut().unwrap();
+        *last ^= 1;
+        let mut clean = BoundedConsensusIngressLoopV0::new(set.clone(), parameters, 16).unwrap();
+        let bad = AuthenticatedFrame {
+            sender: trnm_consensus_core::leader_for(&set, View::new(3)),
+            session: [0x32; 32],
+            sequence: 0,
+            kind: FrameKind::Proposal,
+            payload: malformed,
+        };
+        assert!(clean.admit_authenticated_frame(&bad).is_err());
+        assert!(clean
+            .collector()
+            .canonical_quorum_certificate(View::new(2), Height::new(1), block)
+            .is_none());
+    }
+
+    #[test]
+    fn proposal_carried_tc_is_not_frozen_and_malformed_carrier_is_atomic() {
+        let (keys, set, parameters) = fixture();
+        let block = BlockId::new([0x66; 32]);
+        let qc = quorum_certificate(&keys, &set, block);
+        let high_qc = QcRef::from(&qc);
+        let mut tc_collector = ConsensusCertificateCollectorV0::new(set.clone(), 16).unwrap();
+        tc_collector
+            .register_qc_reference(QcReferenceV0::ordinary(qc.clone()))
+            .unwrap();
+        for index in 0..4 {
+            tc_collector
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, high_qc))
+                .unwrap();
+        }
+        let tc = tc_collector
+            .try_timeout_certificate(View::new(3))
+            .unwrap()
+            .expect("genuine timeout certificate");
+        let proposal = proposal_carrying_qc_and_tc(&keys, &set, &parameters, &qc, Some(tc.clone()));
+        let mut router = BoundedConsensusIngressLoopV0::new(set.clone(), parameters, 16).unwrap();
+        router
+            .admit_authenticated_frame(&AuthenticatedFrame {
+                sender: trnm_consensus_core::leader_for(&set, View::new(4)),
+                session: [0x41; 32],
+                sequence: 0,
+                kind: FrameKind::Proposal,
+                payload: proposal.encode().unwrap(),
+            })
+            .unwrap();
+        assert!(router
+            .collector()
+            .canonical_timeout_certificate(View::new(3))
+            .is_none());
+
+        let standalone = AuthenticatedFrame {
+            sender: set.validators()[0].id(),
+            session: [0x42; 32],
+            sequence: 0,
+            kind: FrameKind::TimeoutCertificate,
+            payload: encode_timeout_certificate(&tc).unwrap(),
+        };
+        assert!(matches!(
+            router.admit_authenticated_frame(&standalone).unwrap(),
+            RoutedConsensusActionV0::TimeoutCertificate(_)
+        ));
+
+        // Build an internally malformed but framing-valid TC, then sign the
+        // outer Proposal over it. The wire decoder must reject the TC's bad
+        // TimeoutVote signature before any carrier reaches the live map.
+        let bad_root = TimeoutVote::signing_root_for_set(&set, View::new(3), high_qc).unwrap();
+        let bad_vote = TimeoutVote::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(3),
+            set.id(),
+            high_qc,
+            set.validators()[0].id(),
+            SignatureBytes::from_array(keys[1].sign(bad_root.as_bytes()).to_bytes()),
+            &set,
+        )
+        .unwrap();
+        let mut bad_entries = tc.entries().to_vec();
+        bad_entries[0] =
+            TimeoutEntryV0::new(bad_vote.author(), bad_vote.high_qc(), *bad_vote.signature())
+                .unwrap();
+        let bad_tc = TimeoutCertificateV0::new(
+            tc.timed_out_view(),
+            bad_entries,
+            tc.referenced_qcs().to_vec(),
+            tc.selected_high_qc_digest(),
+            &set,
+        )
+        .unwrap();
+        let malformed = proposal_carrying_qc_and_tc(&keys, &set, &parameters, &qc, Some(bad_tc));
+        malformed.verify_proposer_signature(&set).unwrap();
+        let malformed = malformed.encode().unwrap();
+        let mut clean = BoundedConsensusIngressLoopV0::new(set.clone(), parameters, 16).unwrap();
+        assert!(clean
+            .admit_authenticated_frame(&AuthenticatedFrame {
+                sender: trnm_consensus_core::leader_for(&set, View::new(4)),
+                session: [0x43; 32],
+                sequence: 0,
+                kind: FrameKind::Proposal,
+                payload: malformed,
+            })
+            .is_err());
+        assert!(clean
+            .collector()
+            .canonical_timeout_certificate(View::new(3))
+            .is_none());
+        assert!(clean
+            .collector()
+            .canonical_quorum_certificate(View::new(2), Height::new(1), block)
+            .is_none());
     }
 
     #[test]

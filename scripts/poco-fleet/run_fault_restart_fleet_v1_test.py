@@ -646,7 +646,7 @@ def main() -> None:
             fleet.base.sha256_file = original_sha256_file
         assert observed_certificate == certificate
         assert observer_calls[0][0] == "scp"
-        assert observer_calls[1][-1].startswith("chmod 600 -- ")
+        assert observer_calls[1][-1].startswith("chmod 600 /private/tmp/")
         assert "verify-fleet-start-certificate" in observer_calls[2][-1]
         assert f"/{certificate['selected_validator_id']}.json" in observer_calls[2][-1]
         assert observer_calls[2][-1].endswith(" 60 100")

@@ -192,6 +192,8 @@ struct TopologyValidatorJson {
 #[serde(deny_unknown_fields)]
 struct TopologyJson {
     schema_version: u32,
+    #[serde(default, deserialize_with = "deserialize_present_placement_profile_v1")]
+    placement_profile: Option<String>,
     fleet_id: String,
     network_scope: String,
     geo_wan_evidence: bool,
@@ -201,6 +203,16 @@ struct TopologyJson {
     test_keys_included: bool,
     participants: Vec<ParticipantJson>,
     validators: Vec<TopologyValidatorJson>,
+}
+
+fn deserialize_present_placement_profile_v1<'de, D>(
+    deserializer: D,
+) -> std::result::Result<Option<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    // Missing is the legacy default; a present null is never a schema alias.
+    String::deserialize(deserializer).map(Some)
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -275,7 +287,7 @@ fn expected_participants() -> [ExpectedParticipant; 6] {
         ExpectedParticipant {
             host_id: "mac",
             management: "p4-mac",
-            lan_ip: "192.168.0.5",
+            lan_ip: "192.168.0.10",
             os: "macos",
             arch: "arm64",
             validator_eligible: false,
@@ -319,6 +331,8 @@ impl PeerConfig {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ValidatorConfigJson {
+    #[serde(default)]
+    native_client_profile_sha256: Option<String>,
     schema_version: u32,
     run_id: String,
     validator_id: String,
@@ -378,7 +392,8 @@ pub struct LoadedValidatorConfig {
     ordinary_start_height: u64,
     workload_corpus_sha256: [u8; 32],
     workload_policy_sha256: [u8; 32],
-    workload_corpus: VerifiedWorkloadCorpusV1,
+    workload_corpus: Option<VerifiedWorkloadCorpusV1>,
+    native_client_profile: Option<crate::native_client_profile::NativeClientProfileV1>,
     verified_public_bootstrap: Option<VerifiedPublicNativeBootstrapV1>,
 }
 
@@ -408,6 +423,7 @@ pub struct PublicReportVerifierContext {
     ordinary_start_height: u64,
     workload_corpus_sha256: [u8; 32],
     workload_policy_sha256: [u8; 32],
+    native_client_profile_sha256: Option<[u8; 32]>,
     validator_config_sha256: BTreeMap<ValidatorId, [u8; 32]>,
     expected_outgoing_peers: BTreeMap<ValidatorId, BTreeSet<ValidatorId>>,
     bootstrap_initial_cut: VerifiedPublicBootstrapInitialCutV1,
@@ -523,44 +539,14 @@ impl LoadedValidatorConfig {
             &config.workload_policy_sha256,
             "config.workload_policy_sha256",
         )?;
-        require_manifest_hash(
-            &manifest,
-            "public/workload.corpus",
-            workload_corpus_sha256,
-            false,
-        )?;
-        require_manifest_hash(
-            &manifest,
-            "public/workload-policy.json",
-            workload_policy_sha256,
-            false,
-        )?;
-        let workload_corpus_path =
-            canonical_regular_file(&run_root.join("public/workload.corpus"))?;
-        let workload_policy_path =
-            canonical_regular_file(&run_root.join("public/workload-policy.json"))?;
-        require_descendant(&run_root, &workload_corpus_path, "workload corpus")?;
-        require_descendant(&run_root, &workload_policy_path, "workload policy")?;
-        let consensus_public_keys = validator_set
-            .validators()
-            .iter()
-            .map(|validator| validator.consensus_key().into_bytes())
-            .collect::<Vec<_>>();
-        let workload_corpus = VerifiedWorkloadCorpusV1::load_for_ordinary_start_height(
-            workload_corpus_path,
-            workload_policy_path,
-            workload_corpus_sha256,
-            workload_policy_sha256,
-            validator_set.chain_id().as_str(),
-            config.ordinary_start_height,
-            &consensus_public_keys,
-        )?;
-        let verified_public_bootstrap = verify_public_native_bootstrap_v1(
-            &run_root,
-            &validator_set,
-            &consensus_parameters,
-            &workload_corpus,
-        )?;
+        let (workload_corpus, native_client_profile, verified_public_bootstrap) =
+            load_application_material_v1(
+                &run_root,
+                &manifest,
+                &config,
+                &validator_set,
+                &consensus_parameters,
+            )?;
 
         let local_validator =
             ValidatorId::new(decode_hex32(&config.validator_id, "config.validator_id")?);
@@ -672,6 +658,7 @@ impl LoadedValidatorConfig {
             workload_corpus_sha256,
             workload_policy_sha256,
             workload_corpus,
+            native_client_profile,
             verified_public_bootstrap: Some(verified_public_bootstrap),
         })
     }
@@ -816,8 +803,15 @@ impl LoadedValidatorConfig {
         self.workload_policy_sha256
     }
 
-    pub const fn workload_corpus(&self) -> &VerifiedWorkloadCorpusV1 {
-        &self.workload_corpus
+    pub fn workload_corpus(&self) -> Result<&VerifiedWorkloadCorpusV1> {
+        self.workload_corpus
+            .as_ref()
+            .context("fixed workload is unavailable in the public-native profile")
+    }
+    pub fn native_client_profile_v1(
+        &self,
+    ) -> Option<&crate::native_client_profile::NativeClientProfileV1> {
+        self.native_client_profile.as_ref()
     }
 
     /// Read-only public projection of the already authenticated bootstrap cut.
@@ -832,8 +826,10 @@ impl LoadedValidatorConfig {
             .ok_or_else(|| anyhow!("verified public bootstrap was already consumed"))
     }
 
-    pub fn workload_corpus_mut(&mut self) -> &mut VerifiedWorkloadCorpusV1 {
-        &mut self.workload_corpus
+    pub fn workload_corpus_mut(&mut self) -> Result<&mut VerifiedWorkloadCorpusV1> {
+        self.workload_corpus
+            .as_mut()
+            .context("fixed workload is unavailable in the public-native profile")
     }
 
     /// Derives the exact native application configuration from manifest-bound
@@ -849,8 +845,19 @@ impl LoadedValidatorConfig {
             self.local_validator,
             self.validator_set.clone(),
             self.consensus_parameters,
-            self.workload_corpus.authorized_signers_v0()?,
-            self.workload_corpus.header().governance_signer_id.clone(),
+            if let Some(profile) = &self.native_client_profile {
+                profile.authorized_signers_v1()?
+            } else {
+                self.workload_corpus()?.authorized_signers_v0()?
+            },
+            if let Some(profile) = &self.native_client_profile {
+                profile.governance_signer_id.clone()
+            } else {
+                self.workload_corpus()?
+                    .header()
+                    .governance_signer_id
+                    .clone()
+            },
         )?;
         NativeApplicationConfigV0::from_canonical_lab_inputs_v0(inputs)
     }
@@ -1017,6 +1024,7 @@ impl PublicReportVerifierContext {
             ordinary_start_height,
             workload_corpus_sha256,
             workload_policy_sha256,
+            native_client_profile_sha256: None,
             validator_config_sha256,
             expected_outgoing_peers: BTreeMap::new(),
             bootstrap_initial_cut,
@@ -1059,6 +1067,7 @@ impl PublicReportVerifierContext {
             ordinary_start_height: campaign.request().ordinary_start_height(),
             workload_corpus_sha256: identity.workload_corpus_sha256(),
             workload_policy_sha256: identity.workload_policy_sha256(),
+            native_client_profile_sha256: identity.native_client_profile_sha256_v1(),
             validator_config_sha256,
             expected_outgoing_peers,
             bootstrap_initial_cut,
@@ -1300,7 +1309,7 @@ impl PublicReportVerifierContext {
         };
         validate_topology(&topology, &shim, manifest.validator_count)?;
 
-        let expected_public = topology
+        let mut expected_public = topology
             .validators
             .iter()
             .map(|validator| {
@@ -1319,6 +1328,11 @@ impl PublicReportVerifierContext {
                 PathBuf::from("public/observer-configs/mac.json"),
             ])
             .collect::<BTreeSet<_>>();
+        if frozen_files.contains_key(Path::new("public/native-client-profile.json")) {
+            expected_public.remove(Path::new("public/workload.corpus"));
+            expected_public.remove(Path::new("public/workload-policy.json"));
+            expected_public.insert(PathBuf::from("public/native-client-profile.json"));
+        }
         if expected_public != frozen_files.keys().cloned().collect() {
             bail!("observer-public file inventory differs from topology");
         }
@@ -1392,7 +1406,7 @@ impl PublicReportVerifierContext {
         if observer.schema_version != 2
             || observer.run_id != manifest.run_id
             || observer.host_id != "mac"
-            || observer.lan_ip != "192.168.0.5"
+            || observer.lan_ip != "192.168.0.10"
             || observer.os != "macos"
             || observer.arch != "arm64"
             || observer.run_roles
@@ -1492,26 +1506,17 @@ impl PublicReportVerifierContext {
             &config.workload_policy_sha256,
             "observer config.workload_policy_sha256",
         )?;
-        let consensus_public_keys = validator_set
-            .validators()
-            .iter()
-            .map(|validator| validator.consensus_key().into_bytes())
-            .collect::<Vec<_>>();
-        let verified_public_workload = VerifiedWorkloadCorpusV1::load_for_ordinary_start_height(
-            observer_root.join("public/workload.corpus"),
-            observer_root.join("public/workload-policy.json"),
-            workload_corpus_sha256,
-            workload_policy_sha256,
-            validator_set.chain_id().as_str(),
-            config.ordinary_start_height,
-            &consensus_public_keys,
-        )?;
-        let verified_public_bootstrap = verify_public_native_bootstrap_v1(
+        let (_, native_profile, verified_public_bootstrap) = load_application_material_v1(
             &observer_root,
+            &shim,
+            &config,
             &validator_set,
             &parameters,
-            &verified_public_workload,
         )?;
+        let native_client_profile_sha256 = native_profile
+            .as_ref()
+            .map(|profile| profile.digest_v1())
+            .transpose()?;
         let bootstrap_initial_cut = verified_public_bootstrap.initial_ordinary_cut_v1();
 
         let local_validator =
@@ -1604,6 +1609,7 @@ impl PublicReportVerifierContext {
             ordinary_start_height: config.ordinary_start_height,
             workload_corpus_sha256,
             workload_policy_sha256,
+            native_client_profile_sha256,
             validator_config_sha256,
             expected_outgoing_peers,
             bootstrap_initial_cut,
@@ -1670,6 +1676,10 @@ impl PublicReportVerifierContext {
 
     pub const fn workload_corpus_sha256(&self) -> [u8; 32] {
         self.workload_corpus_sha256
+    }
+
+    pub const fn native_client_profile_sha256_v1(&self) -> Option<[u8; 32]> {
+        self.native_client_profile_sha256
     }
 
     pub const fn workload_policy_sha256(&self) -> [u8; 32] {
@@ -1869,7 +1879,7 @@ fn validate_manifest(
     if actual_paths != paths {
         bail!("run root contains an unreferenced or missing manifest file");
     }
-    let expected_public = BTreeSet::from([
+    let mut expected_public = BTreeSet::from([
         PathBuf::from("topology.json"),
         PathBuf::from("public/validator-set.json"),
         PathBuf::from(format!("public/configs/{validator_id}.json")),
@@ -1881,6 +1891,15 @@ fn validate_manifest(
         PathBuf::from("public/bootstrap/finality-proof.cev0"),
         PathBuf::from("public/bootstrap/bootstrap.json"),
     ]);
+    if manifest
+        .public_files
+        .iter()
+        .any(|record| record.path == "public/native-client-profile.json")
+    {
+        expected_public.remove(Path::new("public/workload.corpus"));
+        expected_public.remove(Path::new("public/workload-policy.json"));
+        expected_public.insert(PathBuf::from("public/native-client-profile.json"));
+    }
     let expected_secret = ["consensus", "p2p-identity", "operator-recovery"]
         .map(|role| PathBuf::from(format!("secrets/{role}/{validator_id}.pk8")))
         .into_iter()
@@ -1896,7 +1915,7 @@ fn validate_manifest(
         .map(|record| strict_relative_path(&record.path))
         .collect::<Result<BTreeSet<_>>>()?;
     if actual_public != expected_public || actual_secret != expected_secret {
-        bail!("validator deployment must contain exactly three local role secrets and ten public inputs");
+        bail!("validator deployment must contain exactly three local role secrets and the selected profile public inputs");
     }
     if source == [0; 32] {
         bail!("manifest source digest must not be zero");
@@ -1956,22 +1975,50 @@ fn validate_topology(
     manifest: &ManifestJson,
     expected_count: usize,
 ) -> Result<()> {
+    let reduced = match (
+        topology.schema_version,
+        topology.placement_profile.as_deref(),
+    ) {
+        (1, None) => false,
+        (2, Some("desktop4-rog3-mac-v1"))
+            if expected_count == 7 && topology.weight_profile == "equal" =>
+        {
+            true
+        }
+        _ => bail!("topology schema/placement profile is outside the closed lab contract"),
+    };
+    let expected_participants: Vec<_> = expected_participants()
+        .into_iter()
+        .filter(|host| !reduced || matches!(host.host_id, "desktop" | "rog" | "mac"))
+        .collect();
+    let expected_allocations = if reduced {
+        vec![4, 3, 0]
+    } else {
+        match expected_count {
+            7 => vec![2, 1, 1, 2, 1, 0],
+            31 => vec![5, 2, 10, 13, 1, 0],
+            100 => vec![20, 3, 36, 38, 3, 0],
+            _ => bail!("topology cardinality is outside the closed lab contract"),
+        }
+    };
     let expected_degree = if expected_count == 7 { 6 } else { 8 };
-    if topology.schema_version != 1
-        || topology.fleet_id != manifest.fleet_id
+    if topology.fleet_id != manifest.fleet_id
         || topology.network_scope != "single-lan"
         || topology.geo_wan_evidence
         || topology.validator_count != expected_count
         || topology.weight_profile != manifest.weight_profile
+        || !matches!(
+            topology.weight_profile.as_str(),
+            "equal" | "bounded-unequal"
+        )
         || topology.peer_degree != expected_degree
         || topology.test_keys_included
-        || topology.participants.len() != 6
+        || topology.participants.len() != expected_participants.len()
         || topology.validators.len() != expected_count
     {
-        bail!("topology differs from the frozen six-host G3 profile");
+        bail!("topology differs from the closed G3 placement profile");
     }
-    let expected_participants = expected_participants();
-    for (actual, expected) in topology.participants.iter().zip(expected_participants) {
+    for (actual, expected) in topology.participants.iter().zip(&expected_participants) {
         if actual.host_id != expected.host_id
             || actual.management != expected.management
             || actual.lan_ip != expected.lan_ip
@@ -1985,29 +2032,41 @@ fn validate_topology(
                 .collect::<Vec<_>>()
                 != expected.run_roles
         {
-            bail!("topology participant differs from the authorized six-host fleet");
+            bail!("topology participant differs from the authorized fleet placement");
         }
     }
-    let expected_allocations: [usize; 5] = match expected_count {
-        7 => [2, 1, 1, 2, 1],
-        31 => [5, 2, 10, 13, 1],
-        100 => [20, 3, 36, 38, 3],
-        _ => unreachable!("validated topology cardinality"),
-    };
-    let mut allocations = BTreeMap::<&str, Vec<usize>>::new();
+    let expected_placements: Vec<_> = expected_participants
+        .iter()
+        .zip(expected_allocations)
+        .flat_map(|(host, count)| (0..count).map(move |local| (host.host_id, local)))
+        .collect();
     let mut ids = BTreeSet::new();
     let mut endpoints = BTreeSet::new();
     for (expected_index, validator) in topology.validators.iter().enumerate() {
+        let (expected_host, expected_local_index) = expected_placements[expected_index];
+        let expected_id = hex::encode(sha256(
+            format!("{}/validator/{expected_index:03}", topology.fleet_id).as_bytes(),
+        ));
+        let expected_weight = if topology.weight_profile == "equal" {
+            1
+        } else {
+            1 + ((expected_index * 17 + 3) % 4) as u64
+        };
         let participant = topology
             .participants
             .iter()
             .find(|value| value.host_id == validator.host_id)
             .ok_or_else(|| anyhow!("topology validator names an unknown participant"))?;
         if validator.index != expected_index
+            || validator.validator_id != expected_id
+            || validator.host_id != expected_host
+            || validator.host_local_index != expected_local_index
+            || validator.p2p_port != 31_000 + expected_index as u16
+            || validator.metrics_port != 32_000 + expected_index as u16
             || !participant.validator_eligible
             || validator.management != participant.management
             || validator.lan_ip != participant.lan_ip
-            || validator.weight == 0
+            || validator.weight != expected_weight
             || validator.peers.len() != expected_degree
             || !ids.insert(validator.validator_id.as_str())
         {
@@ -2027,20 +2086,6 @@ fn validate_topology(
             || !endpoints.insert((ip, validator.metrics_port))
         {
             bail!("topology validator endpoints are invalid or duplicated");
-        }
-        allocations
-            .entry(validator.host_id.as_str())
-            .or_default()
-            .push(validator.host_local_index);
-    }
-    for (index, participant) in topology.participants[..5].iter().enumerate() {
-        let actual = allocations
-            .get(participant.host_id.as_str())
-            .map(Vec::as_slice)
-            .unwrap_or(&[]);
-        let expected: Vec<_> = (0..expected_allocations[index]).collect();
-        if actual != expected {
-            bail!("topology host-local validator allocation is non-canonical");
         }
     }
     for validator in &topology.validators {
@@ -2095,24 +2140,38 @@ fn validate_manifest_binding(
     {
         bail!("manifest does not bind the selected validator config");
     }
-    require_manifest_hash(
-        manifest,
-        "public/workload.corpus",
-        decode_hex32(
-            &config.workload_corpus_sha256,
-            "config.workload_corpus_sha256",
-        )?,
-        false,
-    )?;
-    require_manifest_hash(
-        manifest,
-        "public/workload-policy.json",
-        decode_hex32(
-            &config.workload_policy_sha256,
-            "config.workload_policy_sha256",
-        )?,
-        false,
-    )?;
+    if let Some(profile) = &config.native_client_profile_sha256 {
+        require_manifest_hash(
+            manifest,
+            "public/native-client-profile.json",
+            decode_hex32(profile, "native client profile digest")?,
+            false,
+        )?;
+        if config.workload_corpus_sha256 != "00".repeat(32)
+            || config.workload_policy_sha256 != "00".repeat(32)
+        {
+            bail!("native profile must mark inactive workload digests as zero");
+        }
+    } else {
+        require_manifest_hash(
+            manifest,
+            "public/workload.corpus",
+            decode_hex32(
+                &config.workload_corpus_sha256,
+                "config.workload_corpus_sha256",
+            )?,
+            false,
+        )?;
+        require_manifest_hash(
+            manifest,
+            "public/workload-policy.json",
+            decode_hex32(
+                &config.workload_policy_sha256,
+                "config.workload_policy_sha256",
+            )?,
+            false,
+        )?;
+    }
     Ok(())
 }
 
@@ -2648,5 +2707,195 @@ fn is_private_lan(ip: IpAddr) -> bool {
     match ip {
         IpAddr::V4(value) => value.is_private(),
         IpAddr::V6(_) => false,
+    }
+}
+
+// Both the validator and independent observer derive the application policy
+// from the same exact manifest bytes. Native mode loads no workload corpus.
+fn load_application_material_v1(
+    root: &Path,
+    manifest: &ManifestJson,
+    config: &ValidatorConfigJson,
+    set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+) -> Result<(
+    Option<VerifiedWorkloadCorpusV1>,
+    Option<crate::native_client_profile::NativeClientProfileV1>,
+    VerifiedPublicNativeBootstrapV1,
+)> {
+    let consensus_keys = set
+        .validators()
+        .iter()
+        .map(|v| v.consensus_key().into_bytes())
+        .collect::<Vec<_>>();
+    if let Some(digest) = &config.native_client_profile_sha256 {
+        let hash = decode_hex32(digest, "native client profile digest")?;
+        require_manifest_hash(manifest, "public/native-client-profile.json", hash, false)?;
+        let path = canonical_regular_file(&root.join("public/native-client-profile.json"))?;
+        require_descendant(root, &path, "native client profile")?;
+        let profile = crate::native_client_profile::NativeClientProfileV1::load_v1(
+            &path,
+            hash,
+            set.chain_id().as_str(),
+            &consensus_keys,
+        )?;
+        let bootstrap = crate::bootstrap_material::verify_public_native_bootstrap_with_policy_v1(
+            root,
+            set,
+            parameters,
+            profile.authorized_signers_v1()?,
+            &profile.governance_signer_id,
+        )?;
+        Ok((None, Some(profile), bootstrap))
+    } else {
+        let corpus_hash = decode_hex32(&config.workload_corpus_sha256, "workload corpus digest")?;
+        let policy_hash = decode_hex32(&config.workload_policy_sha256, "workload policy digest")?;
+        require_manifest_hash(manifest, "public/workload.corpus", corpus_hash, false)?;
+        require_manifest_hash(manifest, "public/workload-policy.json", policy_hash, false)?;
+        let corpus_path = canonical_regular_file(&root.join("public/workload.corpus"))?;
+        let policy_path = canonical_regular_file(&root.join("public/workload-policy.json"))?;
+        require_descendant(root, &corpus_path, "workload corpus")?;
+        require_descendant(root, &policy_path, "workload policy")?;
+        let corpus = VerifiedWorkloadCorpusV1::load_for_ordinary_start_height(
+            corpus_path,
+            policy_path,
+            corpus_hash,
+            policy_hash,
+            set.chain_id().as_str(),
+            config.ordinary_start_height,
+            &consensus_keys,
+        )?;
+        let bootstrap = verify_public_native_bootstrap_v1(root, set, parameters, &corpus)?;
+        Ok((Some(corpus), None, bootstrap))
+    }
+}
+
+#[cfg(test)]
+mod topology_tests {
+    use super::*;
+    use serde_json::{json, Value};
+    use std::process::Command;
+
+    fn planner(count: usize, weight: &str, placement: &str) -> Value {
+        let script = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../../scripts/poco-fleet/plan_topology.py");
+        let output = Command::new("python3")
+            .arg(script)
+            .arg(count.to_string())
+            .args(["--weight-profile", weight, "--placement-profile", placement])
+            .output()
+            .expect("run actual key-free topology producer");
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        serde_json::from_slice(&output.stdout).expect("planner JSON")
+    }
+
+    fn admit(value: Value) -> Result<()> {
+        let topology: TopologyJson = serde_json::from_value(value)?;
+        // This inert shim tests the same topology gate used by validator and
+        // observer loaders. It supplies no key, bootstrap or runtime authority.
+        let manifest: ManifestJson = serde_json::from_value(json!({
+            "schema_version": 3,
+            "run_id": "poco-g3-7-20260921T000000Z-01234567",
+            "fleet_id": topology.fleet_id,
+            "validator_count": topology.validator_count,
+            "weight_profile": topology.weight_profile,
+            "network_scope": "single-lan", "geo_wan_evidence": false,
+            "candidate": {
+                "source_tree_sha256": "11".repeat(32),
+                "linux_x86_64_sha256": "22".repeat(32),
+                "macos_arm64_sha256": "33".repeat(32)
+            },
+            "material_author": {"binary_sha256": "44".repeat(32), "runtime_deployed": false},
+            "validator_set_sha256": "55".repeat(32),
+            "public_files": [], "secret_files": [], "production_activation": false
+        }))?;
+        validate_topology(&topology, &manifest, topology.validator_count)
+    }
+
+    #[test]
+    fn actual_python_planner_all_canonical_and_reduced_profiles_pass_shared_loader_gate() {
+        for count in [7, 31, 100] {
+            for weight in ["equal", "bounded-unequal"] {
+                admit(planner(count, weight, "canonical")).expect("unchanged canonical plan");
+            }
+        }
+        admit(planner(7, "equal", "desktop4-rog3-mac-v1")).expect("closed reduced plan");
+    }
+
+    #[test]
+    fn placement_presence_null_and_schema_confusion_reject() {
+        let canonical = planner(7, "equal", "canonical");
+        let reduced = planner(7, "equal", "desktop4-rog3-mac-v1");
+        for base in [&canonical, &reduced] {
+            for value in [Value::Null, json!(true), json!(2), json!([])] {
+                let mut mutant = base.clone();
+                mutant["placement_profile"] = value;
+                assert!(serde_json::from_value::<TopologyJson>(mutant).is_err());
+            }
+        }
+        let mut old_present = canonical;
+        old_present["placement_profile"] = json!("desktop4-rog3-mac-v1");
+        assert!(admit(old_present).is_err());
+        for (field, value) in [
+            ("placement_profile", json!("canonical")),
+            ("placement_profile", json!("unknown")),
+            ("schema_version", json!(1)),
+            ("schema_version", json!(3)),
+            ("validator_count", json!(31)),
+            ("validator_count", json!(100)),
+            ("weight_profile", json!("bounded-unequal")),
+        ] {
+            let mut mutant = reduced.clone();
+            mutant[field] = value;
+            assert!(admit(mutant).is_err(), "accepted {field}");
+        }
+        let mut missing = reduced;
+        missing.as_object_mut().unwrap().remove("placement_profile");
+        assert!(admit(missing).is_err());
+    }
+
+    #[test]
+    fn reduced_inventory_allocation_endpoint_identity_and_peer_substitutions_reject() {
+        let original = planner(7, "equal", "desktop4-rog3-mac-v1");
+        for (field, value) in [
+            ("host_id", json!("rog")),
+            ("management", json!("foreign-desktop")),
+            ("lan_ip", json!("192.168.0.254")),
+            ("p2p_port", json!(31007)),
+            ("metrics_port", json!(32007)),
+            ("host_local_index", json!(1)),
+            ("index", json!(1)),
+            ("weight", json!(2)),
+        ] {
+            let mut mutant = original.clone();
+            mutant["validators"][0][field] = value;
+            assert!(admit(mutant).is_err(), "accepted {field}");
+        }
+        let mut mutant = original.clone();
+        mutant["participants"][2]["management"] = json!("fake-mac");
+        assert!(admit(mutant).is_err());
+        let mut mutant = original.clone();
+        mutant["participants"].as_array_mut().unwrap().swap(0, 1);
+        assert!(admit(mutant).is_err());
+        let mut mutant = original.clone();
+        mutant["validators"][0]["peers"]
+            .as_array_mut()
+            .unwrap()
+            .reverse();
+        assert!(admit(mutant).is_err());
+        let old_id = original["validators"][0]["validator_id"].as_str().unwrap();
+        let substituted = serde_json::to_string(&original)
+            .unwrap()
+            .replace(old_id, &"fe".repeat(32));
+        assert!(admit(serde_json::from_str(&substituted).unwrap()).is_err());
+        let substituted = serde_json::to_string(&original)
+            .unwrap()
+            .replace("192.168.0.4", "192.168.0.254")
+            .replace("p4-desktop", "foreign-desktop");
+        assert!(admit(serde_json::from_str(&substituted).unwrap()).is_err());
     }
 }

@@ -14,6 +14,7 @@ import subprocess
 import sys
 import tempfile
 import types
+from unittest import mock
 
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -70,7 +71,7 @@ def process(management: str) -> object:
 
 def verification() -> dict[str, object]:
     value: dict[str, object] = {
-        "schema_version": 2,
+        "schema_version": 3,
         "status": "consensus-run-report-signature-and-semantics-verified",
         "run_id": "poco-g3-7-20260814T000000Z-1234abcd",
         "validator_id": "11" * 32,
@@ -412,7 +413,10 @@ def test_observer_fleet_certificate_command_and_strict_summary() -> None:
     assert observed == certificate
     assert calls[0][0] == "scp"
     assert calls[1][:4] == ["ssh", "-o", "BatchMode=yes", "p4-mac"]
-    assert calls[1][-1].startswith("chmod 600 -- ")
+    assert calls[1][-1] == (
+        "chmod 600 /tmp/tp3-observer/reports/"
+        f"{certificate['selected_validator_id']}.fleet-start-certificate.bin"
+    )
     assert calls[2][:4] == ["ssh", "-o", "BatchMode=yes", "p4-mac"]
     observer_command = calls[2][-1]
     assert "verify-fleet-start-certificate" in observer_command
@@ -592,6 +596,18 @@ def test_verification_profile() -> None:
         coordinator_anchor=value["coordinator_manifest_sha256"],
     )
     assert accepted is value
+
+    for version in (2, 4):
+        stale = dict(value, schema_version=version)
+        expect_failure(
+            lambda: fleet.exact_verified_summary(
+                stale,
+                run_id=value["run_id"],
+                validator_id=value["validator_id"],
+                coordinator_anchor=value["coordinator_manifest_sha256"],
+            ),
+            "crosses the accepted profile",
+        )
 
     unsafe = dict(value)
     unsafe["safety_halt_count"] = 1
@@ -1472,6 +1488,93 @@ def test_runner_output_manifest_contract() -> None:
         )
 
 
+def test_native_client_bad_placement_rejects_before_effects() -> None:
+    # Mock only the already-audited material/anchor reads. This is a runner
+    # boundary test, not consensus or native-transaction evidence.
+    with tempfile.TemporaryDirectory() as temporary:
+        workspace = pathlib.Path(temporary)
+        coordinator = workspace / "coordinator"
+        deployments = workspace / "deployments"
+        coordinator.mkdir(mode=0o700)
+        deployments.mkdir(mode=0o700)
+        output = workspace / "unused-output"
+        arguments = [
+            str(HERE / "run_consensus_fleet.py"), str(coordinator), str(deployments),
+            "--validators", "7", "--linux-binary", str(workspace / "unused-linux"),
+            "--macos-binary", str(workspace / "unused-macos"),
+            "--coordinator-manifest-sha256", "11" * 32,
+            "--output", str(output), "--duration-seconds", "1", "--max-blocks", "3",
+            "--native-client-key-root", str(workspace / "unused-client-keys"),
+        ]
+        native = {"public_files": [{"path": "public/native-client-profile.json"}]}
+        topology = {"schema_version": 2, "placement_profile": "desktop4-rog3-mac-v1"}
+        anchor = types.SimpleNamespace(sha256="11" * 32, checked_monotonic_ns=1)
+        for mode in ([], ["--plan-only"]):
+            with (
+                mock.patch.object(sys, "argv", arguments + mode),
+                mock.patch.object(fleet, "checked_coordinator_anchor", return_value=anchor),
+                mock.patch.object(fleet, "verify_coordinator_anchor"),
+                mock.patch.object(fleet.base, "load_contract", return_value=(native, topology, [process("p4-mac")])),
+                mock.patch.object(fleet.native_campaign, "key_namespace", side_effect=AssertionError("client key access before refusal")) as keys,
+                mock.patch.object(fleet.base, "require_binary", side_effect=AssertionError("binary access before refusal")) as binary,
+                mock.patch.object(fleet.base, "preflight_runtime_layout", side_effect=AssertionError("stage planning before refusal")) as layout,
+                mock.patch.object(fleet.mesh_resources, "preflight_mesh_fleet_resources_v1", side_effect=AssertionError("resource preflight before refusal")) as resources,
+                mock.patch.object(fleet.base, "create_stages", side_effect=AssertionError("stage creation before refusal")) as stages,
+                mock.patch.object(fleet.base, "run_checked", side_effect=AssertionError("command/network effect before refusal")) as command,
+            ):
+                try:
+                    fleet.main()
+                except RuntimeError as error:
+                    assert "actual Linux placement" in str(error)
+                else:
+                    raise AssertionError("invalid native placement accepted before effects")
+                for trap in (keys, binary, layout, resources, stages, command):
+                    trap.assert_not_called()
+            assert not output.exists()
+
+
+def test_failure_diagnostics_are_best_effort_before_stage_cleanup() -> None:
+    process_value = process("local")
+    stage = fleet.base.HostStage("local", "local", "/stage", pathlib.Path("/stage"))
+    running = [(
+        process_value, object(), object(),
+        "/stage/report.json", "/stage/journal.jsonl", "/stage/runtime-metrics.json",
+        "/stage/runtime-final-state.json", "/stage/fleet-start-certificate.bin",
+    )]
+    with tempfile.TemporaryDirectory(prefix="poco-failure-diagnostics-") as raw:
+        output = pathlib.Path(raw)
+        for directory in (
+            "signed-reports", "signed-runtime-journals", "fleet-start-certificates",
+            "signed-runtime-metrics", "signed-runtime-final-states",
+            "signed-replay-archive-contexts", "signed-replay-archive-entries",
+            "signed-replay-archive-heads", "signed-replay-archive-terminal-seals",
+        ):
+            (output / directory).mkdir()
+        copied: list[str] = []
+
+        def copy_observation(*args, **_kwargs):
+            target = args[3]
+            copied.append(target.name)
+            if target.name == "1111111111111111111111111111111111111111111111111111111111111111.jsonl":
+                raise OSError("controlled journal copy failure")
+            target.write_bytes(b"diagnostic")
+            return True
+
+        def copy_replay(**_kwargs):
+            raise RuntimeError("controlled replay copy failure")
+
+        with mock.patch.object(fleet, "copy_observation_file", side_effect=copy_observation), \
+             mock.patch.object(fleet, "copy_replay_archive_set_v1", side_effect=copy_replay):
+            failures = fleet.preserve_failure_diagnostics_v1(
+                running=running, stages={"desktop": stage}, output=output
+            )
+        assert any("journal" in failure and "controlled" in failure for failure in failures)
+        assert any("replay-archives" in failure for failure in failures)
+        assert len(copied) == 5
+
+    source = inspect.getsource(fleet.main)
+    assert source.index("preserve_failure_diagnostics_v1") < source.index("base.clean_stages(stages)")
+
 def main() -> None:
     test_local_and_remote_commands()
     test_observer_fleet_certificate_command_and_strict_summary()
@@ -1483,9 +1586,12 @@ def main() -> None:
     test_independent_anchor_and_output_boundary()
     test_runner_lifecycle_contract()
     test_runner_output_manifest_contract()
+    test_native_client_bad_placement_rejects_before_effects()
+    test_failure_diagnostics_are_best_effort_before_stage_cleanup()
     print(
-        "poco_g3_consensus_fleet_test=passed positives=24 negatives=44 "
+        "poco_g3_consensus_fleet_test=passed positives=25 negatives=46 "
         "parallel_process_contract=true signed_journal_required=true "
+        "native_client_bad_placement_pre_effect_refusal=true "
         "fleet_start_certificate_required=true "
         "signed_report_required=true signed_metrics_required=true "
         "signed_final_state_required=true macos_independent_verifier_required=true "

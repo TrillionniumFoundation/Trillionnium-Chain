@@ -26,14 +26,14 @@ import re
 import secrets
 import stat
 import subprocess
-import sys
 import tempfile
+import tomllib
 from typing import Any
 
+from plan_topology import CANONICAL_PLACEMENT, PLACEMENT_PROFILES, build_topology
 
 HERE = pathlib.Path(__file__).resolve().parent
 INVENTORY = HERE / "inventory.toml"
-PLANNER = HERE / "plan_topology.py"
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 RUN_ID = re.compile(r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
 ED25519_SPKI_PREFIX = bytes.fromhex("302a300506032b6570032100")
@@ -137,27 +137,11 @@ def open_exact_binary(
         raise
 
 
-def planner_output(validator_count: int, profile: str) -> dict[str, Any]:
-    result = subprocess.run(
-        [
-            sys.executable,
-            str(PLANNER),
-            str(validator_count),
-            "--inventory",
-            str(INVENTORY),
-            "--weight-profile",
-            profile,
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    topology = json.loads(result.stdout)
-    if topology.get("validator_count") != validator_count:
-        fail("topology planner returned the wrong cardinality")
-    if topology.get("test_keys_included") is not False:
-        fail("topology planner must remain key-free")
-    return topology
+def planner_output(
+    validator_count: int, profile: str, placement: str = CANONICAL_PLACEMENT
+) -> dict[str, Any]:
+    with INVENTORY.open("rb") as source:
+        return build_topology(tomllib.load(source), validator_count, profile, placement)
 
 
 KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
@@ -252,6 +236,10 @@ def ref(root: pathlib.Path, path: pathlib.Path) -> dict[str, object]:
 
 
 def prepare(args: argparse.Namespace) -> pathlib.Path:
+    topology = planner_output(
+        args.validator_count, args.weight_profile,
+        getattr(args, "placement_profile", CANONICAL_PLACEMENT),
+    )
     selected_run_id = run_id(args.validator_count, args.run_id)
     source_hash = require_hash(args.source_sha256, "--source-sha256")
     linux_hash = require_hash(args.linux_sha256, "--linux-sha256")
@@ -302,7 +290,6 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
     for role in KEY_ROLES:
         (output / "secrets" / role).mkdir(mode=0o700)
 
-    topology = planner_output(args.validator_count, args.weight_profile)
     topology_bytes = canonical_json(topology)
     topology_path = output / "topology.json"
     write_new(topology_path, topology_bytes, 0o644)
@@ -360,87 +347,110 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
     }
     validator_set_path = output / "public" / "validator-set.json"
 
-    workload_corpus_path = output / "public" / "workload.corpus"
-    workload_policy_path = output / "public" / "workload-policy.json"
-    try:
-        workload_result = subprocess.run(
-            [
-                f"/proc/self/fd/{material_builder_descriptor}",
-                "workload-corpus",
-                validator_set_template["chain_id"],
-                str(args.ordinary_start_height),
-                str(args.workload_max_height),
-                str(workload_corpus_path.resolve()),
-                str(workload_policy_path.resolve()),
-            ],
-            check=True,
-            capture_output=True,
-            text=True,
-            pass_fds=(material_builder_descriptor,),
-        )
-    except BaseException:
-        os.close(validator_binary_descriptor)
-        os.close(material_builder_descriptor)
-        raise
-    try:
-        workload_summary = json.loads(workload_result.stdout)
-    except json.JSONDecodeError as error:
-        fail(f"material builder returned invalid workload summary: {error}")
-    expected_workload_keys = {
-        "schema_version",
-        "status",
-        "corpus_sha256",
-        "policy_sha256",
-        "entry_chain_root",
-        "operator_public_key_hex",
-        "client_public_key_hex",
-        "ordinary_start_height",
-        "max_height",
-        "ordinary_entry_count",
-        "execution_preflight_height",
-        "application_private_key_retained",
-        "application_private_key_deployed",
-        "production_activation",
-    }
-    if not isinstance(workload_summary, dict) or set(workload_summary) != expected_workload_keys:
-        fail("material builder workload summary fields differ from the frozen contract")
-    for path, label in (
-        (workload_corpus_path, "workload corpus"),
-        (workload_policy_path, "workload policy"),
-    ):
-        if path.is_symlink() or not path.is_file() or path.stat().st_size <= 0:
-            fail(f"{label} was not created as one non-empty regular file")
-        os.chmod(path, 0o644)
-    workload_corpus_hash = sha256_file(workload_corpus_path)
-    workload_policy_hash = sha256_file(workload_policy_path)
-    consensus_keys = {
-        record["consensus_public_key"] for record in validators
-    }
-    application_keys = {
-        workload_summary["operator_public_key_hex"],
-        workload_summary["client_public_key_hex"],
-    }
-    if (
-        workload_summary["schema_version"] != 1
-        or workload_summary["status"] != "public-pre-signed-workload-corpus-created"
-        or workload_summary["corpus_sha256"] != workload_corpus_hash
-        or workload_summary["policy_sha256"] != workload_policy_hash
-        or not isinstance(workload_summary["entry_chain_root"], str)
-        or not HEX64.fullmatch(workload_summary["entry_chain_root"])
-        or workload_summary["ordinary_start_height"] != args.ordinary_start_height
-        or workload_summary["max_height"] != args.workload_max_height
-        or workload_summary["ordinary_entry_count"] != ordinary_entry_count
-        or isinstance(workload_summary["execution_preflight_height"], bool)
-        or not isinstance(workload_summary["execution_preflight_height"], int)
-        or workload_summary["execution_preflight_height"] != execution_preflight_height
-        or workload_summary["application_private_key_retained"] is not False
-        or workload_summary["application_private_key_deployed"] is not False
-        or workload_summary["production_activation"] is not False
-        or any(not isinstance(value, str) or not HEX64.fullmatch(value) for value in application_keys)
-        or len(application_keys) != 2
-        or application_keys & consensus_keys
-    ):
-        fail("material builder workload summary/content crosses the bounded public profile")
+    native_client = bool(getattr(args, "native_client_profile", False))
+    native_profile_path = output / "public" / "native-client-profile.json"
+    if native_client:
+        key_root = getattr(args, "client_key_root", None)
+        if key_root is None:
+            fail("--native-client-profile requires explicit --client-key-root")
+        key_root = new_output_root(key_root)
+        if key_root.is_relative_to(output) or output.is_relative_to(key_root):
+            fail("client keys must be isolated outside all validator run material")
+        result = subprocess.run([
+            f"/proc/self/fd/{material_builder_descriptor}", "native-client-profile",
+            validator_set_template["chain_id"], str(key_root),
+        ], check=True, capture_output=True, text=True, pass_fds=(material_builder_descriptor,))
+        summary = json.loads(result.stdout)
+        if set(summary) != {"profile_sha256", "profile", "production_activation"} or summary["profile"] != "native-public-candidate-v1" or summary["production_activation"] is not False:
+            fail("native client author returned an unsupported profile")
+        native_bytes = (key_root / "native-client-profile.json").read_bytes()
+        native_profile_hash = require_hash(summary["profile_sha256"], "native profile digest")
+        if sha256_bytes(native_bytes) != native_profile_hash:
+            fail("native client profile exact bytes differ from author summary")
+        write_new(native_profile_path, native_bytes, 0o644)
+        workload_corpus_hash = workload_policy_hash = "00" * 32
+    else:
+        workload_corpus_path = output / "public" / "workload.corpus"
+        workload_policy_path = output / "public" / "workload-policy.json"
+        try:
+            workload_result = subprocess.run(
+                [
+                    f"/proc/self/fd/{material_builder_descriptor}",
+                    "workload-corpus",
+                    validator_set_template["chain_id"],
+                    str(args.ordinary_start_height),
+                    str(args.workload_max_height),
+                    str(workload_corpus_path.resolve()),
+                    str(workload_policy_path.resolve()),
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+                pass_fds=(material_builder_descriptor,),
+            )
+        except BaseException:
+            os.close(validator_binary_descriptor)
+            os.close(material_builder_descriptor)
+            raise
+        try:
+            workload_summary = json.loads(workload_result.stdout)
+        except json.JSONDecodeError as error:
+            fail(f"material builder returned invalid workload summary: {error}")
+        expected_workload_keys = {
+            "schema_version",
+            "status",
+            "corpus_sha256",
+            "policy_sha256",
+            "entry_chain_root",
+            "operator_public_key_hex",
+            "client_public_key_hex",
+            "ordinary_start_height",
+            "max_height",
+            "ordinary_entry_count",
+            "execution_preflight_height",
+            "application_private_key_retained",
+            "application_private_key_deployed",
+            "production_activation",
+        }
+        if not isinstance(workload_summary, dict) or set(workload_summary) != expected_workload_keys:
+            fail("material builder workload summary fields differ from the frozen contract")
+        for path, label in (
+            (workload_corpus_path, "workload corpus"),
+            (workload_policy_path, "workload policy"),
+        ):
+            if path.is_symlink() or not path.is_file() or path.stat().st_size <= 0:
+                fail(f"{label} was not created as one non-empty regular file")
+            os.chmod(path, 0o644)
+        workload_corpus_hash = sha256_file(workload_corpus_path)
+        workload_policy_hash = sha256_file(workload_policy_path)
+        consensus_keys = {
+            record["consensus_public_key"] for record in validators
+        }
+        application_keys = {
+            workload_summary["operator_public_key_hex"],
+            workload_summary["client_public_key_hex"],
+        }
+        if (
+            workload_summary["schema_version"] != 1
+            or workload_summary["status"] != "public-pre-signed-workload-corpus-created"
+            or workload_summary["corpus_sha256"] != workload_corpus_hash
+            or workload_summary["policy_sha256"] != workload_policy_hash
+            or not isinstance(workload_summary["entry_chain_root"], str)
+            or not HEX64.fullmatch(workload_summary["entry_chain_root"])
+            or workload_summary["ordinary_start_height"] != args.ordinary_start_height
+            or workload_summary["max_height"] != args.workload_max_height
+            or workload_summary["ordinary_entry_count"] != ordinary_entry_count
+            or isinstance(workload_summary["execution_preflight_height"], bool)
+            or not isinstance(workload_summary["execution_preflight_height"], int)
+            or workload_summary["execution_preflight_height"] != execution_preflight_height
+            or workload_summary["application_private_key_retained"] is not False
+            or workload_summary["application_private_key_deployed"] is not False
+            or workload_summary["production_activation"] is not False
+            or any(not isinstance(value, str) or not HEX64.fullmatch(value) for value in application_keys)
+            or len(application_keys) != 2
+            or application_keys & consensus_keys
+        ):
+            fail("material builder workload summary/content crosses the bounded public profile")
 
     bootstrap_directory = output / "public" / "bootstrap"
     bootstrap_paths = [
@@ -457,19 +467,18 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
             template_file.write(canonical_json(validator_set_template))
             template_file.flush()
             os.fsync(template_file.fileno())
+            bootstrap_inputs = ([
+                "native-client-bootstrap", str(pathlib.Path(template_file.name).resolve()),
+                str(native_profile_path.resolve()), native_profile_hash,
+            ] if native_client else [
+                "native-only-bootstrap", str(pathlib.Path(template_file.name).resolve()),
+                str(workload_corpus_path.resolve()), workload_corpus_hash,
+                str(workload_policy_path.resolve()), workload_policy_hash,
+            ])
             bootstrap_result = subprocess.run(
-                [
-                    f"/proc/self/fd/{material_builder_descriptor}",
-                    "native-only-bootstrap",
-                    str(pathlib.Path(template_file.name).resolve()),
-                    str(workload_corpus_path.resolve()),
-                    workload_corpus_hash,
-                    str(workload_policy_path.resolve()),
-                    workload_policy_hash,
-                    str((output / "secrets" / "consensus").resolve()),
-                    str(validator_set_path.resolve()),
-                    str(bootstrap_directory.resolve()),
-                ],
+                [f"/proc/self/fd/{material_builder_descriptor}", *bootstrap_inputs,
+                 str((output / "secrets" / "consensus").resolve()),
+                 str(validator_set_path.resolve()), str(bootstrap_directory.resolve())],
                 check=True,
                 capture_output=True,
                 text=True,
@@ -588,6 +597,8 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
             "geo_wan_evidence": False,
             "production_activation": False,
         }
+        if native_client:
+            config["native_client_profile_sha256"] = native_profile_hash
         config_path = output / "public" / "configs" / f"{validator_id}.json"
         write_new(config_path, canonical_json(config), 0o644)
         config_paths.append(config_path)
@@ -638,9 +649,9 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
     public_refs = [
         ref(output, topology_path),
         ref(output, validator_set_path),
-        ref(output, workload_corpus_path),
-        ref(output, workload_policy_path),
     ]
+    public_refs.extend([ref(output, native_profile_path)] if native_client else [
+        ref(output, workload_corpus_path), ref(output, workload_policy_path)])
     public_refs.extend(ref(output, path) for path in bootstrap_paths)
     public_refs.extend(ref(output, path) for path in sorted(config_paths))
     public_refs.extend(ref(output, path) for path in sorted(observer_paths))
@@ -678,6 +689,7 @@ def main() -> None:
     parser.add_argument(
         "--weight-profile", choices=("equal", "bounded-unequal"), default="equal"
     )
+    parser.add_argument("--placement-profile", choices=PLACEMENT_PROFILES, default=CANONICAL_PLACEMENT)
     parser.add_argument("--source-sha256", required=True)
     parser.add_argument("--linux-sha256", required=True)
     parser.add_argument("--macos-sha256", required=True)
@@ -691,6 +703,8 @@ def main() -> None:
         "--workload-max-height", type=int, choices=range(1, 131_073), required=True
     )
     parser.add_argument("--run-id")
+    parser.add_argument("--native-client-profile", action="store_true")
+    parser.add_argument("--client-key-root", type=pathlib.Path)
     args = parser.parse_args()
     try:
         output = prepare(args)

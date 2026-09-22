@@ -16,6 +16,8 @@ application state.
 |---|---|---|
 | `trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs` | Pure intent/phase/receipt rules and signing/ID digests | Resolve authenticated nonce/balance/height context |
 | `trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs` | `ProductionTxCoordinatorV0`, durable journal/sign/broadcast/readback ports | Real services, proof verification and restart orchestration |
+| `trillionnium/crates/trnm-poco-node-production-v0/src/transaction_driver.rs` | `NodeOwnedTxCheckTxV0` and `ProductionTxNodeAdapterV0` bind node-owned CheckTx, M05 durable admission, signer, broadcaster and finality readback ports in one ordered session | Supply authenticated node owners and an independently reviewed listener/peer/HSM/finality implementation; this adapter does not activate them |
+| `trillionnium/crates/trnm-poco-node-production-v0/src/public_ingress.rs` | `ProductionTxPublicIngressV0` consumes a validated request ID plus exact `TxIntentV0`, rejects a chain-mismatched intent before CheckTx, dispatches into the adapter's CheckTx -> WAL path, and returns the unchanged correlation ID only after the durable receipt | Transport owner must provide wire decoding, peer/client authentication, rate limiting and lifecycle wiring; this boundary opens no listener and does not add idempotency beyond M05's exact intent/WAL identity |
 | `trillionnium/crates/trnm-tx-lifecycle-v0/src/codec.rs` | Closed durable record bytes v0 | Adapter interoperability, not a new transaction signing format |
 | `trillionnium/crates/trnm-mempool/src/lib.rs` | Bounded/lane admission queues | Bind queued work to exact durable M05 IDs |
 | `trillionnium/crates/trnm-application-tx-builder-v0/src/lib.rs` | Strict JSON/canonical application building | Explicit adapter; its object schema is not implicitly `TxIntentV0` |
@@ -135,6 +137,277 @@ bind the exact committed transaction/receipt and final block root under M13,
 without treating an intermediate transaction root as a header commitment. Until that version is implemented and reviewed, return `PROOF_UNAVAILABLE`
 for unsupported multi-transaction proof mapping; do not manufacture finality.
 
+### Planned public native candidate admission profile
+
+`native-public-candidate-v1` is the selected first live-client profile. It accepts
+exact `BuiltCanonicalTxV0::from_exact_outer_bytes_v0` bytes: canonical outer
+`SignedCommandEnvelopeV1` JSON containing canonical `CanonicalTxV1` JSON. Reject
+duplicate/unknown fields, noncanonical bytes, invalid Ed25519 signatures, wrong
+chain, unknown application signer/role/key and outer/inner sender or nonce
+mismatch. Use existing `SignedCommandEnvelopeV1::tx_hash()` as
+`native_tx_hash`: its domain binds signing bytes and the signature. Preserve the
+outer bytes without normalization. This hash is distinct from M05 `TxIdV0`;
+fee_limit/max_gas and wall-clock expiry must not be translated into invented
+fee_bid, multidimensional limits or valid_until_height. The native proof result
+may derive this native hash from its authenticated exact bytes after strict
+canonical decoding; it may not advertise an M05 intent ID.
+
+The implementation must extend `trnm-poco-node/src/tx_admission_wal.rs` and its
+`NodeOwnedTxAdmissionBoundaryV0`, then connect it to the running consensus owner.
+The existing strict CheckTx, signer/context resolvers, WAL/FULL mode, exclusive
+lock, reservation conflict and sealed native readback remain the authority.
+Neither the disconnected legacy RPC map nor the G1 process fixture is the live
+submission route. Namespace is a domain-separated commitment to genesis,
+chain ID and admission profile. Canonical signer identity comes from the pinned
+application policy, stays stable for that logical signer across key rotation,
+and is never supplied by the request.
+
+#### Canonical body durability and explicit WAL migration
+
+A new, versioned native-body record must atomically bind namespace, native hash,
+exact outer bytes, outer-byte SHA-256, existing admission metadata, receive
+sequence and profile digest to its nonce reservation before ACK. Sequence is a
+checked monotonically increasing u64 assigned in that SQLite transaction.
+Uniqueness is enforced for native hash and for canonical signer/nonce. Exact
+retry returns the original sequence/status; another envelope using the reserved
+nonce is `NONCE_CONFLICT`. Recompute native hash and metadata from retained bytes
+when opening the store, never trust the stored hash alone. No private key is stored.
+
+Schema v2 contains metadata/digests but no recoverable outer body. Opening it
+under the new profile must return `ADMISSION_MIGRATION_REQUIRED`, not create an
+empty replacement. An explicit exclusive migration to the next schema validates
+old schema/identity/receipts/tombstones first. Every nonterminal Reserved row must
+have a caller-supplied exact outer preimage that reproduces its complete stored
+metadata and signature; missing or conflicting preimages abort before mutation.
+Every HandedOff row must first be resolved by authentic application/finality
+readback under the existing recovery owner, or migration remains unavailable.
+Expired Reserved preimages may be retained for audit but cannot reenter the
+ready queue. Preserve all terminal receipts/replay tombstones. Allocate migrated
+receive sequences in deterministic signer/nonce/native-hash order (historical
+arrival order is unavailable); label this ordering in the migration record.
+Write the new body rows, schema and migration commitment in one transaction;
+crash before commit leaves v2, after commit leaves a fully validated new schema.
+Fresh isolated campaign namespaces use the new schema directly.
+
+#### Live queue, batching and finalization
+
+Candidate defaults, bounded further by authenticated parameters: at most 256
+pending transactions, 16 MiB retained pending outer bytes, 256 KiB per outer
+envelope; a proposal takes at most 64 transactions and 1 MiB total canonical
+payload bytes including CEV0 framing. Reject saturation before allocating a new
+reservation. Select by receive sequence; nonce/balance and expiry are rechecked
+against the exact speculative parent selected by Core. A deterministic invalid
+transaction receives a durable local rejection; unavailable/corrupt state pauses
+proposal work and is not mislabeled transaction invalidity. Do not silently
+change signed fees, contents or the order of an already reserved proposal batch.
+
+Before exposing a proposal, persist its selected native IDs and exact
+parent/block/view binding. Live in-flight leases owned by this process do not
+block unrelated admission; an unresolved lease recovered from a previous process
+continues to block serving until authenticated reconciliation. Competing branch,
+timeout and restart never authorize `HandedOff -> Released` from local absence
+alone. Reproposal of identical bytes requires an owner-verified current branch
+and nonce check; committed/expired/conflicting identities remain fenced. Shutdown
+retains accepted bodies and reservations rather than dropping a lease into an
+unrecorded cancellation. If effect certainty is lost, stop that owner and recover.
+
+Upon each actual finalized application commit, join exact native bytes/position,
+receipt commitment and Core finality; persist the inclusion proof and commit
+receipt before publishing `included-finalized` or collecting queue bodies.
+Recovery handles the application-committed/queue-unacknowledged cut idempotently.
+Persist historical proof/evidence bytes so a later finalized tip does not erase
+queryability. The local pending/proposed/rejected status is not a cryptographic
+execution-result field. Empty Regular successors must keep consensus advancing
+when the queue drains: a lone user transaction needs two certified descendants.
+Empty blocks have frozen empty payload/receipt roots and no user receipts or
+business-goodput credit; generated workload transactions are not a substitute.
+
+Acceptance covers exact retry after lost ACK/restart, body/hash/nonce corruption,
+v2 migration cut points, unrelated admission while a proposal is in flight,
+leader change/reproposal, deterministic rejection versus local storage failure,
+one submitted transaction plus empty successors, and durable historical proof
+query after a later commit. These are implementation obligations, not claims that
+the current native proof verifier already provides a networked lifecycle.
+
+The candidate node WAL now exposes `lookup_commit_receipt_v0(tx_digest)` after
+an authenticated native readback has committed the row. The lookup rechecks the
+namespace, committed pending-nonce row, transaction digest and canonical
+receipt commitment before returning the stored block/height/state-root and
+receipt/finality digests. It is a durable status/readback seam for a future
+public query adapter; it does not return proof bytes, verify consensus on its
+own, or publish an RPC success response. Missing rows return `None`, while a
+malformed or tampered receipt fails closed. The public network query and proof
+retention adapter remain separate M05/M13 work.
+
+### Implemented native inclusion boundary
+
+`trillionnium/crates/trnm-tx-lifecycle-v0/src/finalized_proof_v1.rs`
+implements the native-byte subset of the following contract.
+`NativeTxProofPackageV1::{encode,decode_exact}` enforces the exact schema/framing,
+nonempty required fields, no suffix and at most 32 siblings per branch.
+`verify_native_tx_inclusion_v1` combines strict Ed25519 three-chain finality
+with both ordered memberships. The target must equal the oldest finalized
+header; a valid later QC does not retarget the claim. `OrderedInclusionProofV0`
+in consensus-types shares the frozen kind/index/count/level hashes and requires
+an odd tail's duplicate sibling to equal the current digest.
+
+The separate `verify_native_tx_epoch_inclusion_v1` takes
+`NativeTxEpochProofContextV1`: independently trusted old set/parameters, complete
+eight-root epoch evidence, expected target and local limits. It calls the
+strict epoch-transition boundary, including signed timeout certificates when
+views skip. Receipt parsing and transaction-count caps use the authenticated
+new parameters returned by that boundary. Combined evidence plus package must
+fit the smaller caller budget and 4 MiB; one caller-supplied CEV0 work budget
+remains charged after rejection. The epoch proof digest binds every evidence
+preimage plus the exact package. Ordinary admission never retries a failed
+proof using the epoch route.
+
+Only these functions issue `VerifiedNativeTxInclusionV1`. Its read-only facts
+are native bytes, position/count, exact finalized header and receipt-bound
+gas/fee/events. It authenticates neither the complete M05 admission `tx_id`
+nor execution status or intermediate state roots. `SignedCommandEnvelopeV1`
+and its inner `CanonicalTxV1` still lack some canonical M05 intent fields;
+therefore `FinalizedTxClaimV1`, lifecycle promotion and public RPC publication
+remain integration work. Existing v0 finalization semantics are unchanged.
+
+`finalized_proof_v1_tests.rs` and `finalized_proof_v1_epoch_tests.rs` use real
+Ed25519 signatures and cover odd counts/positions, kind/count/index/receipt
+substitution, wrong target/trust set, exact package truncation/overflow/suffix,
+signature corruption, byte/count/work caps, complete epoch evidence and skipped
+views. The verified result cannot be constructed externally (compile-fail test).
+
+### Public submission handoff used by the current runtime (M05-PUBLIC-HANDOFF-V1)
+
+The repository contains a bounded signed-transaction WAL and a native body
+adapter. The candidate validator also has a real owner-private Unix listener
+(`NativeClientRuntimeV1`) that is polled by the same continuous consensus owner;
+the production M15 composition still has no enabled public admission listener.
+The implementation boundary is therefore explicit so a candidate socket cannot
+be mistaken for a production Internet/RPC path.
+
+The candidate wire contract is the M14 `native-public-candidate-v1` profile:
+one big-endian u32 length followed by canonical JSON, at most 528,384 request
+bytes, schema `trnm.native-client.request.v1`, and an owner-private mode-0600
+Unix socket. `submit` carries exact lowercase-hex signed outer bytes;
+`capabilities`, `status`, `transaction`, `proof`, `sync_manifest` and
+`sync_chunk` are bounded read/query operations. The owner binds chain,
+genesis, profile digest and request ID in every response. `NativeClientRuntimeV1`
+rejects unknown fields, duplicate/noncanonical bodies, malformed framing,
+oversized requests, stale socket identity and profile/chain mismatches before
+calling the admission owner.
+
+The candidate handoff is ordered as follows: decode the exact signed outer
+bytes; authenticate chain/profile/signer and the complete nonce lane; reserve
+the `(signer_id, nonce)` identity in the durable WAL; return the same receipt
+for an exact duplicate; reject a conflicting body at the same identity; and
+release a proposer-owned immutable transaction only after the WAL row is
+durable. Proposal recheck uses the authenticated parent state and may return
+local `Unavailable` under capacity pressure without changing consensus
+validity. Finalized readback records the exact target block/proof before a
+tombstone or replay-floor GC operation can remove the WAL entry.
+
+The current code anchors are
+`trnm-poco-node/src/tx_admission_wal.rs`,
+`trnm-poco-node/src/tx_admission_wal_native_body_v1.inc`,
+`trnm-poco-lab-validator/src/native_client_runtime.rs`, and
+`trnm-poco-lab-validator/src/continuous_runtime.rs`. The handoff is consumed
+by the native execution P/D/C/K path; it does not call a signer and it cannot
+choose block order. Lost replies are resolved by reopening the same WAL row,
+never by re-accepting a new nonce reservation. Capacity, malformed canonical
+bytes, nonce conflict and schema mismatch have distinct reject/unavailable/halt
+dispositions and preserve the authoritative WAL root. The consensus owner
+drains ready rows only at the committed parent-relative cadence, persists the
+selection and exact handoff, archives each finalized inclusion proof before
+committing the corresponding WAL row, and exposes historical proof queries only
+after independent proof verification.
+
+Repository candidate evidence now includes
+`actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1`,
+`native_delayed_multi_height_archive_commits_real_historical_business_v1`,
+`native_socket_rejects_duplicate_unknown_uppercase_and_noncanonical_requests_v1`,
+and the native replay/SIGKILL matrix. These tests exercise real socket framing,
+duplicate retry, proposal/finality/proof readback, delayed archive traversal,
+malformed input and a crash cut. They are candidate-process evidence only:
+`m05_intent_binding=false`, the listener is Unix-local and owner-private, and
+there is no production HSM/peer broadcaster or Internet RPC authority. Until a
+host-owned production listener and independently reviewed authority are wired,
+`TX-PROD-001` remains open and the candidate WAL must remain feature-gated.
+
+### Candidate durable signer and broadcast retry composition
+
+The lifecycle coordinator now has an executable candidate composition for the
+sign/broadcast seam. `ProductionTxCoordinatorV0::sign_and_broadcast` first
+derives `DurableTxSignIntentV0` from the verified `CoreSafetyPermitClaimV0`
+and persists that exact request through `DurableTxJournalV0` before invoking
+`NonExportableTxSignerV0`. The returned `SignedTxEnvelopeV0` is validated and
+persisted as `DurableSignedTxEnvelopeV0` before the lifecycle's
+`BroadcastIntentV0` record is appended or any `AuthenticatedTxBroadcasterV0`
+call is made. The signer request binds the transaction ID, predecessor record
+digest, Safety state, authority receipt, permit and request digest; the
+retained envelope binds the same request, signature bytes, attestation and
+envelope digest. A conflicting retry fails closed.
+
+If the transport response is lost, the coordinator poisons its in-memory
+owner. Recovery reopens the durable journal, reuses the retained sign intent
+and signed envelope, and retries the same broadcast identity; it does not call
+the signer again or mint a new permit for the post-intent record digest. The
+authenticated broadcaster remains responsible for deduplicating that exact
+envelope. `CandidateTxFileJournalV0` retains the two sidecars with private
+namespace/inode checks, fsynced publication, exact decode and tamper rejection;
+the candidate tests cover reopen equality and a lost-response retry with one
+signer call and two identical broadcast attempts.
+
+This is a real durable candidate composition, not production activation. It
+does not install a public listener, connect a live peer broadcaster, provide an
+HSM/monotonic signer attestation, or independently verify finality. The
+production `live_sign_broadcast` and `TX-PROD-001` gates therefore remain
+false until those owners and external evidence are wired and reviewed.
+
+### Node-owned composition boundary
+
+`ProductionTxNodeAdapterV0` is the explicit composition boundary for a node
+owner that is ready to supply those missing authorities. Its
+`check_tx_and_admit` method first calls `NodeOwnedTxCheckTxV0::verify_check_tx`
+on the exact `TxIntentV0`; the source returns the authenticated current height,
+and the unchanged intent then enters `ProductionTxCoordinatorV0::admit_and_persist`.
+The adapter owns the journal, permit verifier, non-exportable signer,
+authenticated broadcaster and finalized-readback source, so every subsequent
+operation uses the same owner instance. `sign_and_broadcast` therefore keeps
+the existing sign-intent and signed-envelope persistence fence, while
+`apply_finalized_readback` and `tombstone_and_collect` remain after the
+corresponding durable transitions.
+
+`ProductionTxPublicIngressV0` is the transport-neutral dispatch boundary for
+the next host integration. A host transport constructs
+`PublicTxIngressRequestV0` only after its exact wire decoder and authentication
+policy have produced a typed `TxIntentV0`; the request ID is restricted to 64
+bytes of `[A-Za-z0-9._-]` and is response correlation only. `submit` consumes
+that request, first compares `intent.chain_id` with the adapter's node-owned
+chain ID, then calls `ProductionTxNodeAdapterV0::check_tx_and_admit` with the
+same node-owned CheckTx instance, and returns the ID only after the journal's
+durable receipt has validated. A mismatch returns `ChainMismatch` before the
+transport CheckTx owner is called. It cannot bypass CheckTx, reserve a nonce
+itself, or claim finality. The integration test
+`production_tx_state_sync_e2e::finalized_readback_survives_sync_mismatch_and_exact_recovery_retry`
+exercises this dispatch against the candidate file journal; it remains
+candidate composition evidence, not a public socket or production service.
+
+When the state-sync join fails after finality is durable, recovery must call
+`bind_durable_finalized_readback_to_native_sync_v1` after reopening the exact
+journal. That method reads the finalized record from the recovered lifecycle
+and performs only a fresh state-sync snapshot read; it does not call the
+finality source again, append a journal frame, re-sign, or re-broadcast.
+
+The module has an immutable `NODE_OWNED_TX_PRODUCTION_ACTIVATION_V0 = false`
+flag. Supplying fixture implementations to the ports proves ordering and
+response-loss recovery only; it cannot make the public node live. A production
+owner still must bind the CheckTx source to its authenticated account/parent
+view, the signer to an HSM or equivalent monotonic authority, the broadcaster
+to a peer transport with authenticated receipt deduplication, and readback to
+an independently verified application/finality service. Until that owner and
+its socket/multihost evidence exist, `P2-TX-001.live_sign_broadcast` remains
+false by design.
+
 ### Planned V1 multi-transaction proof contract
 
 `FinalizedTxClaimV1` is a new candidate readback variant, not a relaxation of v0.
@@ -209,6 +482,15 @@ Persist final tombstone, verify exact retained digest, append collection/fence,
 then remove only the latest-record view. Retain collection identity to reject
 future replay; HTTP returns `TX_COLLECTED` with retained proof reference when
 available. Expiry alone does not make a nonce cryptographically unspendable.
+
+If a rejected replay-floor witness or a crash leaves a durable
+`Tombstoned(Finalized)` record, `tombstone_and_collect` must reuse its exact
+retained durable receipt and retry collection without appending another
+tombstone. This applies both within the current process and after journal
+recovery, including a lost tombstone acknowledgement. Revalidate the retained
+record digest and the supplied replay floor before deletion; an uncertain
+write still stops the coordinator until recovery. Successful recovery appends
+only the collection frame and preserves the journal's replay fence.
 
 ## Persistence and recovery
 
@@ -445,3 +727,49 @@ Production reachability requires real CheckTx/RPC ingress, production signer and
 context resolvers, durable network broadcast, exact handoff/readback recovery,
 tombstone GC and unchanged-head crash evidence. Candidate WALs and fixtures do
 not activate this boundary.
+
+### Candidate clock binding
+
+For `native-public-candidate-v1`, capabilities bind `wall_clock_epoch_ms` to the
+manifest/profile digest. Envelope validity fields and block time are milliseconds
+since that epoch, despite the frozen envelope's `unix_ms` field names. The node
+computes time using checked subtraction from its own Unix clock; clients cannot
+supply the server time. SDK signing derives the same chain-relative value and
+rejects a future epoch. Genesis remains canonical timestamp 0. M15 defines the
+parent-relative step, skew readiness, empty catch-up and drain rules. An exact
+retry returns its durable prior status even after expiry; recovery of an already
+executed body verifies its historical block time and must not re-admit it using
+a backdated clock.
+
+### Candidate parent-header proof and batched finality
+
+The ordinary public candidate proof response carries the exact canonical parent
+header beside the unchanged `NativeTxProofPackageV1`. An independent consumer
+pins its validator set, parameters and profile locally, decodes both headers,
+checks chain/genesis/epoch/set/parameter scope and consecutive heights, and
+requires the rehashed parent header ID to equal the target's signed `parent_id`.
+Only then may it derive the timestamp used by the strict three-chain verifier;
+a peer-supplied timestamp or `proof_verified` boolean is never authority. This
+route remains ordinary same-epoch only; epoch-first targets require the separate
+complete strict activation-evidence route. Native transaction hash remains
+distinct from M05 intent ID. Combined package plus parent bytes stay within the
+consumer's bounded proof budget.
+
+The native client owner keeps proof-bearing committed `Transaction` reads and
+exact `Submit` retries off the consensus poll loop. It performs the WAL lookup
+and exact-byte identity check on the owner, then dispatches only a committed
+record to the bounded two-worker query pool. The worker rereads and strictly
+verifies the durable proof before returning `proof_verified=true`; missing,
+oversized, malformed or tampered proof bytes return `recovery_required`. A full
+pool returns retryable `backpressure`, and pending/in-flight/noncommitted rows
+remain on the small inline path because they require no proof read. This
+preserves the strict proof contract while bounding owner-loop work.
+
+The actual consensus owner archives transaction proofs at each completed native
+finalization boundary. If one ingress batch or Core transition advances several
+heights, it traverses the exact signed ancestor path from the current finalized
+ID back to the last archived cut, reconstructs missing ordinary three-chains
+from the existing durable proposal/QC archive, and reads each historical native
+committed row against that proof. Missing ancestry, certificate or native row
+stops progress with recovery required; no skipped height is marked archived.
+Each proof is durable before the corresponding WAL handoff is committed.

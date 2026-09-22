@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 from check_native_workflow_contract_v1 import (
-    BASELINE, QUICK, RETIRED, ROOT, RUNTIME, ContractError, validate_contract,
+    BASELINE, QUICK, RETIRED, ROOT, RUNTIME, EPOCH_CODEC2_COMMANDS, ContractError, validate_contract,
 )
 
 
@@ -132,6 +132,55 @@ class NativeWorkflowMutants(unittest.TestCase):
     def test_workspace_pipefail_cannot_be_disabled(self) -> None:
         self.replace(BASELINE, "          timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace", "          set +o pipefail\n          timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace")
         self.rejected("workspace execution: failure masking")
+
+    def test_codec2_commands_cannot_be_commented_or_filtered(self) -> None:
+        command = "          " + EPOCH_CODEC2_COMMANDS[2]
+        self.replace(BASELINE, command, "          # " + EPOCH_CODEC2_COMMANDS[2])
+        self.rejected("Verify codec2.*complete execution commands differ")
+        self.replace(BASELINE, "          # " + EPOCH_CODEC2_COMMANDS[2], command + " nonexistent_test_filter")
+        self.rejected("Verify codec2.*complete execution commands differ")
+
+    def test_codec2_execution_cannot_skip_or_mask_failure(self) -> None:
+        marker = "      - name: Verify codec2 epoch host and journal10\n"
+        self.replace(BASELINE, marker, marker + "        if: false\n")
+        self.rejected("Verify codec2.*may not be conditional")
+        self.replace(BASELINE, "        if: false\n", "        continue-on-error: true\n")
+        self.rejected("baseline: soft failure promotion is forbidden")
+        self.replace(BASELINE, "        continue-on-error: true\n", "")
+        command = "          " + EPOCH_CODEC2_COMMANDS[0]
+        self.replace(BASELINE, command, command + " || true")
+        self.rejected("Verify codec2.*failure masking")
+
+    def test_native_candidate_shard_runner_cannot_be_removed(self) -> None:
+        self.replace(
+            BASELINE,
+            "          python3 ../scripts/ci/run_native_candidate_shards_v1.py \\",
+            "          # native shard runner omitted \\",
+        )
+        self.rejected("native candidate shard execution: missing")
+
+    def test_node_epoch_profile_cannot_be_removed_or_skipped(self) -> None:
+        self.replace(BASELINE, "--suite node-epoch", "--suite native")
+        self.rejected("node epoch shard execution: missing")
+        self.replace(BASELINE, "--suite native", "--suite node-epoch")
+        marker = "      - name: Verify default and explicit candidate ownership boundaries\n"
+        self.replace(BASELINE, marker, marker + "        if: false\n")
+        self.rejected("node epoch shard execution:.*conditional")
+
+    def test_node_epoch_failure_evidence_must_be_retained(self) -> None:
+        self.replace(BASELINE,
+            "always() && (steps.node_epoch_shards.outcome == 'success' || steps.node_epoch_shards.outcome == 'failure')",
+            "success()")
+        self.rejected("node epoch failure evidence must be retained")
+
+    def test_safety_epoch_profile_and_failure_evidence_cannot_be_omitted(self) -> None:
+        self.replace(BASELINE, "--suite safety-epoch", "--suite native")
+        self.rejected("Verify codec2.*complete execution commands differ")
+        self.replace(BASELINE, "--suite native", "--suite safety-epoch")
+        self.replace(BASELINE,
+            "always() && (steps.safety_epoch_shards.outcome == 'success' || steps.safety_epoch_shards.outcome == 'failure')",
+            "success()")
+        self.rejected("Safety epoch failure evidence must be retained")
 
     def test_runtime_matrix_cannot_skip_and_publish_success(self) -> None:
         self.replace(RUNTIME, "      - name: Run finalization-intent SIGKILL matrix\n", "      - name: Run finalization-intent SIGKILL matrix\n        if: false\n")

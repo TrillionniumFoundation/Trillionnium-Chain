@@ -1,6 +1,8 @@
 # M10 Agent, Task and Market technical specification v1
 
 Status: candidate module contract; terminal-lifecycle extension below is planned.
+The archive storage owner is implemented as a candidate local adapter; its
+external authority and production activation remain open.
 Primary module: M10. No identity, market or economic activation is granted here.
 
 ## Authority
@@ -178,6 +180,32 @@ service cursor with the same state update; restart repeats only the exact item.
 Resource release requires settlement/refund and retention obligations resolved.
 Archive proofs retain retired task IDs, nonces and terminal receipts; deleting
 active rows cannot reopen an old task or permit ID reuse.
+
+### Candidate archive storage owner
+
+`trnm-poco-agent-market-v1::TaskArchiveStoreV1` owns only the local durable
+storage step after an authenticated terminal/retention service has produced a
+`TaskArchiveBatchV1`. Initialization constructs that schema in a same-directory
+temporary inode and publishes it without replacing a competing final path. It
+persists a closed SQLite schema with policy hash,
+live-record root, generation, legal-hold snapshot, append-only seal rows and
+archived record bodies. `archive_and_delete_v1` takes an immediate transaction,
+rechecks every batch record and durable hold against the live inventory, then
+inserts archive rows, deletes live rows, advances the root/generation and seals
+the chain atomically. Reopen audits exact SQLite definitions (rejecting user
+triggers and indexes), row keys/hashes, the contiguous sequence, seal/root
+chain and archived records; it reconstructs and replays each deletion before
+an exact retry can return the original receipt. Changed batch bytes, sequence,
+roots, sidecars, database-path symlinks or SQLite settings fail closed.
+The candidate requires an owner-controlled parent directory; resistant
+dirfd/openat2-style pathname publication remains required for production
+storage-deletion qualification.
+
+This owner is deliberately not a finality source, peer-replication service,
+external legal-hold authority, production listener, HSM/power-loss guarantee or
+multi-host deletion acceptance. The planner and proof verifier remain
+side-effect free, and production deletion still requires a finalized whole-node
+permit plus independently accepted retention/scale evidence.
 
 ## Resource bounds
 

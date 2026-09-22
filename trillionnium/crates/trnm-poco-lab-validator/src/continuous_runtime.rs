@@ -28,7 +28,7 @@ use std::{
 use anyhow::{anyhow, bail, ensure, Context, Result};
 use ed25519_dalek::{Signer, SigningKey};
 use sha2::{Digest, Sha256};
-use trnm_consensus_core::leader_for;
+use trnm_consensus_core::{leader_for, Input};
 #[cfg(test)]
 use trnm_consensus_core::{CoreConfig, SafetyStateRecordLimitsV0};
 use trnm_consensus_crypto::StrictEd25519Verifier;
@@ -642,6 +642,7 @@ struct ContinuousConsensusWindowsV0 {
     ingress: BoundedConsensusIngressLoopV0,
     relay: ConsensusRelayAdmissionWindowV0,
     direct_proposals: BTreeMap<DirectProposalIdentityV0, ()>,
+    direct_peer_rejections: BTreeMap<ValidatorId, DirectPeerRejectionFactsV1>,
     preflight: ContinuousRuntimeCapacityPreflightV0,
 }
 
@@ -651,6 +652,8 @@ struct DirectProposalIdentityV0 {
     block_id: BlockId,
     canonical_payload_sha256: [u8; 32],
 }
+
+include!("continuous_direct_peer_containment_v1.inc");
 
 impl ContinuousConsensusWindowsV0 {
     fn new(
@@ -684,6 +687,7 @@ impl ContinuousConsensusWindowsV0 {
             ingress,
             relay,
             direct_proposals: BTreeMap::new(),
+            direct_peer_rejections: BTreeMap::new(),
             preflight,
         })
     }
@@ -708,10 +712,20 @@ impl ContinuousConsensusWindowsV0 {
             &self.consensus_parameters,
         )
         .context("preflight authenticated consensus frame")?;
-        ensure!(
-            admitted_consensus_message_view_v0(&decoded) >= self.minimum_retained_view_v0()?,
-            "direct consensus statement view was pruned"
-        );
+        self.admit_predecoded_direct_frame_v1(frame, decoded)
+    }
+
+    fn admit_predecoded_direct_frame_v1(
+        &mut self,
+        frame: &AuthenticatedFrame,
+        decoded: AdmittedConsensusMessageV0,
+    ) -> Result<Option<RoutedConsensusActionV0>> {
+        // Network queues can outlive a local retained-view window. The full
+        // bounded decode and original signature checks above remain required,
+        // but an already-pruned valid statement has no remaining local action.
+        if admitted_consensus_message_view_v0(&decoded) < self.minimum_retained_view_v0()? {
+            return Ok(None);
+        }
         let action = self
             .ingress
             .admit_authenticated_frame(frame)
@@ -876,12 +890,8 @@ impl ContinuousConsensusWindowsV0 {
         let mut retain_qc_references = vec![high_qc.id()];
         if let Some(certificate) = pending_timeout_certificate {
             ensure!(
-                certificate.timed_out_view() < current_view
-                    && certificate
-                        .referenced_qcs()
-                        .iter()
-                        .any(|reference| reference.id() == high_qc.id()),
-                "pending timeout certificate does not retain the authoritative high QC"
+                certificate.timed_out_view().get().checked_add(1) == Some(current_view.get()),
+                "pending timeout certificate does not justify the current view"
             );
             retain_qc_references.extend(certificate.referenced_qcs().iter().map(QcReferenceV0::id));
         }
@@ -1312,6 +1322,19 @@ pub struct ContinuousValidatorTerminalOwnerV0 {
 impl ContinuousValidatorTerminalOwnerV0 {
     pub const fn facts_v0(&self) -> &ContinuousValidatorTerminalCutV0 {
         &self.facts
+    }
+
+    /// Freshly checks the original consumed Node cut; grants no live authority.
+    pub fn confirm_terminal_cut_v1(&mut self) -> Result<&ContinuousValidatorTerminalCutV0> {
+        let node = self
+            ._node
+            .confirm_terminal_cut_v1()
+            .map_err(|error| anyhow!("reconfirm consumed Node terminal cut: {error}"))?;
+        ensure!(
+            node == &self.facts.node,
+            "continuous terminal facts differ from original Node cut"
+        );
+        Ok(&self.facts)
     }
 }
 
@@ -1829,8 +1852,9 @@ impl ContinuousValidatorAuthorityV0 {
 
     /// Routes one already transport-authenticated direct consensus frame into
     /// this authority's bounded process-local collector. `None` is an inert
-    /// exact Proposal replay, including a replay arriving in a fresh transport
-    /// session; all non-Proposal collector actions remain explicit.
+    /// exact Proposal replay or a fully verified statement below the retained
+    /// view watermark, including a replay arriving in a fresh transport session.
+    /// Neither case enters Core or changes the collector's retained evidence.
     pub fn admit_authenticated_consensus_frame_v0(
         &mut self,
         frame: &AuthenticatedFrame,
@@ -1955,7 +1979,7 @@ impl ContinuousValidatorAuthorityV0 {
             .proposal_parent_height_v0()
             .checked_add(1)
             .context("next workload height overflows")?;
-        let workload = config.workload_corpus_mut().block_at_height(height)?;
+        let workload = config.workload_corpus_mut()?.block_at_height(height)?;
         self.proposal_preimage_v0(workload)
     }
 
@@ -1967,8 +1991,213 @@ impl ContinuousValidatorAuthorityV0 {
         &mut self,
         config: &mut LoadedValidatorConfig,
     ) -> Result<SignedProposalV0> {
+        self.rebase_ready_parent_v1()?;
         let preimage = self.proposal_preimage_from_loaded_config_v0(config)?;
         preimage.seal_with_producer_v0(&mut self.proposal_producer, PROPOSAL_SIGNER_PROFILE_REF_V0)
+    }
+
+    /// Construct and sign from actual admitted outer transaction bytes. Empty
+    /// Regular descendants use the same native execution and Core authority.
+    pub fn native_proposal_preimage_v1(
+        &self,
+        transactions: Vec<Vec<u8>>,
+        timestamp_ms: u64,
+    ) -> Result<ContinuousProposalPreimageV0> {
+        let parent = self
+            .ready_runtime_v0()?
+            .proposal_parent_v0()
+            .map_err(|error| anyhow!("read native proposal parent: {error}"))?;
+        let height = parent
+            .application_head_v0()
+            .height()
+            .get()
+            .checked_add(1)
+            .context("native successor height overflows")?;
+        self.proposal_preimage_from_transactions_v0(height, timestamp_ms, transactions)
+    }
+    pub fn seal_native_proposal_v1(
+        &mut self,
+        preimage: ContinuousProposalPreimageV0,
+    ) -> Result<SignedProposalV0> {
+        self.rebase_ready_parent_v1()?;
+        let binding = self
+            .ready_runtime_v0()?
+            .proposal_binding_v0()
+            .map_err(|e| anyhow!("native proposal binding: {e}"))?;
+        ensure!(
+            preimage.block_v0().header().parent_id().as_bytes()
+                == binding
+                    .parent_v0()
+                    .application_head_v0()
+                    .block_id()
+                    .as_bytes()
+                && preimage.block_v0().header().view() == binding.current_view_v0(),
+            "native proposal preimage became stale"
+        );
+        preimage.seal_with_producer_v0(&mut self.proposal_producer, PROPOSAL_SIGNER_PROFILE_REF_V0)
+    }
+    pub fn signed_native_proposal_v1(
+        &mut self,
+        transactions: Vec<Vec<u8>>,
+        timestamp_ms: u64,
+    ) -> Result<SignedProposalV0> {
+        self.rebase_ready_parent_v1()?;
+        let preimage = self.native_proposal_preimage_v1(transactions, timestamp_ms)?;
+        self.seal_native_proposal_v1(preimage)
+    }
+    pub fn native_parent_timestamp_v1(&self) -> Result<u64> {
+        Ok(self
+            .ready_runtime_v0()?
+            .proposal_parent_v0()
+            .map_err(|e| anyhow!("native parent: {e}"))?
+            .authenticated_parent_timestamp_ms_v0())
+    }
+    pub fn native_finalized_query_v1(&self) -> Result<trnm_poco_node::PocoNodeLabFinalizedQueryV0> {
+        let runtime = self.ready_runtime_v0()?;
+        runtime
+            .read_finalized_by_height_v0(runtime.facts_v0().finalized_height_v0())
+            .map_err(|e| anyhow!("native finalized read: {e}"))
+    }
+
+    pub fn commit_native_admission_at_finalized_tip_v1(
+        &self,
+        boundary: &mut trnm_poco_node::NodeOwnedTxAdmissionBoundaryV0,
+        admission: &mut trnm_poco_node::NativePendingAdmissionV1,
+    ) -> Result<()> {
+        self.ready_runtime_v0()?
+            .commit_native_admission_at_finalized_tip_v1(boundary, admission)
+            .map_err(|e| anyhow!("native finality admission commit: {e}"))
+    }
+
+    pub fn read_native_finalized_with_finality_v1(
+        &self,
+        proof: &trnm_consensus_types::FinalityProofV0,
+        parent_timestamp: u64,
+    ) -> Result<trnm_native_execution_v0::FinalizedNativeApplicationReadV0> {
+        self.ready_runtime_v0()?
+            .read_native_finalized_with_finality_v1(proof, parent_timestamp)
+            .map_err(|e| anyhow!("native historical finalized read: {e}"))
+    }
+    pub fn commit_native_admission_with_finality_v1(
+        &self,
+        boundary: &mut trnm_poco_node::NodeOwnedTxAdmissionBoundaryV0,
+        admission: &mut trnm_poco_node::NativePendingAdmissionV1,
+        proof: &trnm_consensus_types::FinalityProofV0,
+        parent_timestamp: u64,
+    ) -> Result<()> {
+        self.ready_runtime_v0()?
+            .commit_native_admission_with_finality_v1(boundary, admission, proof, parent_timestamp)
+            .map_err(|e| anyhow!("native historical handoff commit: {e}"))
+    }
+
+    pub fn recover_native_admission_with_finality_v1(
+        &self,
+        boundary: &mut trnm_poco_node::NodeOwnedTxAdmissionBoundaryV0,
+        transaction: &trnm_application_tx_builder_v0::BuiltCanonicalTxV0,
+        proof: &trnm_consensus_types::FinalityProofV0,
+        parent_timestamp: u64,
+    ) -> Result<()> {
+        self.ready_runtime_v0()?
+            .recover_native_admission_with_finality_v1(
+                boundary,
+                transaction,
+                proof,
+                parent_timestamp,
+            )
+            .map_err(|e| anyhow!("native finalized handoff recovery: {e}"))
+    }
+
+    /// Core Ready does not imply that a retained TC authorizes a proposal on
+    /// the locally authenticated native parent. This preparation grants no key lease.
+    pub(crate) fn proposal_witness_ready_v1(&mut self) -> Result<bool> {
+        self.rebase_ready_parent_v1()?;
+        let runtime = self.ready_runtime_v0()?;
+        Ok(self
+            .proposal_justify_v1(runtime.facts_v0().current_view_v0())?
+            .is_some())
+    }
+
+    #[inline(never)]
+    fn rebase_boxed_ready_parent_v1(runtime: Box<LabRuntimeV0>) -> Result<Box<LabRuntimeV0>> {
+        Ok(Box::new(
+            (*runtime)
+                .rebase_synced_parent_to_high_qc_v1()
+                .map_err(|error| anyhow!("rebase Ready application parent: {error}"))?,
+        ))
+    }
+
+    /// Explicitly updates only a Ready owner's durable application projection.
+    /// A signed owner never enters this operation or loses its exact outbound.
+    fn rebase_ready_parent_v1(&mut self) -> Result<bool> {
+        let Some(ContinuousAuthorityPhaseV0::Ready(runtime)) = self.phase.as_ref() else {
+            return Ok(false);
+        };
+        let facts = runtime.phase_facts_v0();
+        if facts.proposal_parent_block_id_v0() == facts.high_qc_v0().block_id()
+            && facts.proposal_parent_height_v0() == facts.high_qc_v0().height().get()
+        {
+            return Ok(false);
+        }
+        let Some(ContinuousAuthorityPhaseV0::Ready(runtime)) = self.phase.take() else {
+            unreachable!("Ready projection checked above")
+        };
+        self.phase = Some(ContinuousAuthorityPhaseV0::Ready(
+            Self::rebase_boxed_ready_parent_v1(runtime)?,
+        ));
+        Ok(true)
+    }
+
+    fn proposal_justify_v1(&self, current_view: View) -> Result<Option<&QcReferenceV0>> {
+        if current_view.get().checked_sub(1) == Some(self.justify.qc_ref().view().get()) {
+            return Ok(Some(&self.justify));
+        }
+        let Some(certificate) = self.proposal_timeout_certificate.as_ref() else {
+            return Ok(None);
+        };
+        ensure!(
+            certificate.timed_out_view().get().checked_add(1) == Some(current_view.get()),
+            "retained proposal TC does not justify the current view"
+        );
+        let selected = certificate
+            .referenced_qcs()
+            .iter()
+            .find(|reference| reference.id() == certificate.selected_high_qc_digest())
+            .context("verified proposal TC lacks its selected QC")?;
+        Ok(same_certified_parent_v1(selected, &self.justify).then_some(selected))
+    }
+
+    fn retain_proposal_timeout_certificate_v1(
+        &mut self,
+        current_view: View,
+        candidate: Option<TimeoutCertificateV0>,
+    ) -> Result<()> {
+        if current_view.get().checked_sub(1) == Some(self.justify.qc_ref().view().get()) {
+            self.proposal_timeout_certificate = None;
+            return Ok(());
+        }
+        let previous = self.proposal_timeout_certificate.take();
+        // Prefer the greatest selected QC of the verified current-view proofs.
+        // This does not alter Core's QC, signer identity or any signed witness.
+        self.proposal_timeout_certificate = candidate
+            .into_iter()
+            .chain(previous)
+            .filter(|certificate| {
+                certificate.timed_out_view().get().checked_add(1) == Some(current_view.get())
+            })
+            .max_by_key(|certificate| {
+                let selected = certificate
+                    .referenced_qcs()
+                    .iter()
+                    .find(|reference| reference.id() == certificate.selected_high_qc_digest())
+                    .expect("strictly verified TC has its selected QC")
+                    .qc_ref();
+                (selected.view(), selected.block_id(), selected.qc_digest())
+            });
+        ensure!(
+            self.proposal_timeout_certificate.is_some(),
+            "authoritative skipped view lacks its timeout certificate"
+        );
+        Ok(())
     }
 
     pub fn proposal_preimage_v0(
@@ -2009,7 +2238,10 @@ impl ContinuousValidatorAuthorityV0 {
         let parent = runtime
             .proposal_parent_v0()
             .map_err(|error| anyhow!("read exact proposal parent: {error}"))?;
-        let justify_ref = self.justify.qc_ref();
+        let justify = self
+            .proposal_justify_v1(binding.current_view_v0())?
+            .context("current view is waiting for a TC on the authenticated native parent")?;
+        let justify_ref = justify.qc_ref();
         ensure!(
             parent.application_head_v0().height().get() == justify_ref.height().get()
                 && parent.application_head_v0().block_id().as_bytes()
@@ -2037,14 +2269,10 @@ impl ContinuousValidatorAuthorityV0 {
             "only the scheduled local leader may author a proposal preimage"
         );
         let payload = ApplicationPayloadV0::new(transactions.clone())
-            .map_err(|error| anyhow!("construct non-empty application payload: {error}"))?;
-        ensure!(
-            payload.transaction_count() > 0,
-            "continuous proposal payload is empty"
-        );
+            .map_err(|error| anyhow!("construct native application payload: {error}"))?;
         let (preview_parent, preview) = runtime
-            .preview_next_nonempty_v0(transactions, timestamp_ms)
-            .map_err(|error| anyhow!("preview exact workload transition: {error}"))?;
+            .preview_next_native_v1(transactions, timestamp_ms)
+            .map_err(|error| anyhow!("preview exact native transition: {error}"))?;
         ensure!(
             preview_parent == parent,
             "native preview changed the authenticated proposal parent"
@@ -2088,14 +2316,14 @@ impl ContinuousValidatorAuthorityV0 {
         let timeout_certificate = self.proposal_timeout_certificate.clone();
         let signing_root = ProposalWitnessV0::signing_root_for(
             block.header(),
-            &self.justify,
+            justify,
             timeout_certificate.as_ref(),
             None,
         )
         .map_err(|error| anyhow!("derive proposal signing root: {error}"))?;
         Ok(ContinuousProposalPreimageV0 {
             block,
-            justify: self.justify.clone(),
+            justify: justify.clone(),
             timeout_certificate,
             validator_set: self.validator_set.clone(),
             consensus_parameters: self.consensus_parameters,
@@ -2110,30 +2338,64 @@ impl ContinuousValidatorAuthorityV0 {
     /// binds the locally authenticated parent timestamp, and only then enters
     /// the Vote authority chain.
     pub fn vote_unbound_proposal_v0(&mut self, proposal: UnboundProposalV0) -> Result<Vote> {
+        self.receive_unbound_proposal_v1(proposal)?
+            .context("authenticated proposal is no longer votable in the local phase")
+    }
+
+    /// Network delivery can race a local Vote/Timeout. Authenticate the
+    /// witness and process the complete carried certificates first, then
+    /// suppress a proposal that cannot obtain a Vote in the resulting phase.
+    /// `None` attests neither body execution nor full proposal acceptance.
+    /// It never resets a signed owner or grants a new signing lease.
+    pub(crate) fn receive_unbound_proposal_v1(
+        &mut self,
+        proposal: UnboundProposalV0,
+    ) -> Result<Option<Vote>> {
         // Authenticate the proposer witness before consuming any carried
         // timeout/QC. A forged proposer signature must not be able to advance
         // view/high-QC/finality and only fail later during parent binding.
         proposal
             .verify_proposer_signature(&self.validator_set)
             .map_err(|error| anyhow!("reject unauthenticated proposer witness: {error}"))?;
+        proposal
+            .validate_certificate_relations_v1()
+            .map_err(|error| anyhow!("reject incoherent proposal certificate carrier: {error}"))?;
         if let Some(certificate) = proposal.timeout_certificate().cloned() {
             self.advance_timeout_certificate_v0(certificate)?;
         } else if let Some(certificate) = proposal.justify_qc().as_ordinary().cloned() {
             self.advance_quorum_certificate_v0(certificate)?;
         }
+        let facts = self.facts_v0()?;
+        let header = proposal.block().header();
+        if header.view() < facts.current_view_v0()
+            || (header.view() == facts.current_view_v0()
+                && matches!(
+                    facts.phase_v0(),
+                    PocoNodeLabAuthorityPhaseV0::VoteSigned
+                        | PocoNodeLabAuthorityPhaseV0::TimeoutSigned
+                ))
+        {
+            // Same-view signed owners remain live, including their exact
+            // prepared child. New/conflicting QC/TC evidence already passed
+            // through the strict certificate path above; it is not filtered
+            // merely by comparing the proposal's advertised view.
+            return Ok(None);
+        }
+        self.rebase_ready_parent_v1()?;
         let binding = self
             .ready_runtime_v0()?
             .proposal_binding_v0()
             .map_err(|error| anyhow!("read authoritative proposal binding: {error}"))?;
-        let header = proposal.block().header();
         ensure!(
             header.view() == binding.current_view_v0(),
             "proposal view differs from authoritative current_view"
         );
-        ensure!(
-            proposal.justify_qc() == binding.high_qc_v0(),
-            "proposal justify differs from authoritative high QC"
-        );
+        if !same_certified_parent_v1(proposal.justify_qc(), binding.high_qc_v0()) {
+            // Complete certificates were processed above. This host cannot
+            // execute on an older parent; retain Ready and let ingress/timers
+            // continue. This is no Vote or proposal acceptance.
+            return Ok(None);
+        }
         ensure!(
             header.parent_id().as_bytes()
                 == binding
@@ -2158,7 +2420,7 @@ impl ContinuousValidatorAuthorityV0 {
                 binding.parent_v0().authenticated_parent_timestamp_ms_v0(),
             )
             .map_err(|error| anyhow!("bind authenticated proposal parent: {error}"))?;
-        self.vote_bound_proposal_v0(proposal)
+        self.vote_bound_proposal_v0(proposal).map(Some)
     }
 
     /// Drives one verified proposal through real native execution, Safety,
@@ -2219,6 +2481,112 @@ impl ContinuousValidatorAuthorityV0 {
         )
     }
 
+    // Keep the two linear, large Node phase owners in separate call frames.
+    // Otherwise debug/default-stack builds retain both by-value phase moves
+    // while recursively validating every persisted SafetyState record.
+    #[inline(never)]
+    fn drive_boxed_vote_request_v1(
+        runtime: Box<LabRuntimeV0>,
+        proposal: SignedProposalV0,
+    ) -> Result<Box<trnm_poco_node::PocoNodeLabInertRequestOwnerV0<LabFileWatermark>>> {
+        Ok(Box::new(
+            (*runtime)
+                .drive_one_to_inert_request_v0(proposal)
+                .map_err(|error| anyhow!("drive proposal authority chain: {error}"))?,
+        ))
+    }
+
+    #[inline(never)]
+    fn drive_boxed_synced_no_sign_v1(
+        runtime: Box<LabRuntimeV0>,
+        proposal: SignedProposalV0,
+    ) -> Result<Box<LabRuntimeV0>> {
+        Ok(Box::new(
+            (*runtime)
+                .drive_one_to_synced_no_sign_v0(proposal)
+                .map_err(|error| anyhow!("drive synced no-sign authority chain: {error}"))?,
+        ))
+    }
+
+    #[inline(never)]
+    fn drive_boxed_timeout_synced_no_sign_v1(
+        signed: Box<LabSignedTimeoutOwnerV0>,
+        proposal: SignedProposalV0,
+    ) -> Result<Box<LabSignedTimeoutOwnerV0>> {
+        Ok(Box::new(
+            (*signed)
+                .drive_one_to_synced_no_sign_preserving_timeout_v1(proposal)
+                .map_err(|error| anyhow!("drive signed-timeout synced no-sign chain: {error}"))?,
+        ))
+    }
+
+    /// Executes an authenticated late body through actual Synced validation.
+    /// TimeoutSigned keeps its exact original outbound and signing phase;
+    /// VoteSigned remains untouched. No producer participates in either route.
+    pub(crate) fn sync_late_proposal_v1(&mut self, proposal: UnboundProposalV0) -> Result<bool> {
+        let header = proposal.block().header();
+        let parent = match self.phase.as_ref() {
+            Some(ContinuousAuthorityPhaseV0::Ready(runtime)) => runtime
+                .proposal_parent_v0()
+                .map_err(|error| anyhow!("read synced proposal parent: {error}"))?,
+            Some(ContinuousAuthorityPhaseV0::TimeoutSigned(signed)) => {
+                if header.view() > signed.facts_v0().view_v0()
+                    || header.view() > signed.phase_facts_v0().current_view_v0()
+                {
+                    return Ok(false);
+                }
+                signed
+                    .synced_proposal_parent_v1()
+                    .map_err(|error| anyhow!("read signed-timeout synced parent: {error}"))?
+            }
+            Some(ContinuousAuthorityPhaseV0::VoteSigned(_)) | None => return Ok(false),
+        };
+        let expected_height = parent
+            .application_head_v0()
+            .height()
+            .get()
+            .checked_add(1)
+            .context("synced proposal-parent height overflows")?;
+        if header.parent_id().as_bytes() != parent.application_head_v0().block_id().as_bytes()
+            || header.height().get() != expected_height
+        {
+            return Ok(false);
+        }
+        let proposal = proposal
+            .bind_authenticated_parent(
+                &self.validator_set,
+                &self.consensus_parameters,
+                parent.authenticated_parent_timestamp_ms_v0(),
+            )
+            .map_err(|error| anyhow!("bind synced proposal parent: {error}"))?;
+        let phase = self
+            .phase
+            .take()
+            .expect("eligible synced phase checked above");
+        self.phase = Some(match phase {
+            ContinuousAuthorityPhaseV0::Ready(runtime) => ContinuousAuthorityPhaseV0::Ready(
+                Self::drive_boxed_synced_no_sign_v1(runtime, proposal)?,
+            ),
+            ContinuousAuthorityPhaseV0::TimeoutSigned(signed) => {
+                ContinuousAuthorityPhaseV0::TimeoutSigned(
+                    Self::drive_boxed_timeout_synced_no_sign_v1(signed, proposal)?,
+                )
+            }
+            ContinuousAuthorityPhaseV0::VoteSigned(_) => unreachable!("signed Vote excluded above"),
+        });
+        Ok(true)
+    }
+
+    #[inline(never)]
+    fn sign_boxed_vote_request_v1(
+        inert: Box<trnm_poco_node::PocoNodeLabInertRequestOwnerV0<LabFileWatermark>>,
+        producer: &mut ContinuousSignatureProducerV0,
+    ) -> Result<Box<LabSignedVoteOwnerV0>> {
+        Ok(Box::new((*inert).sign_exact_vote_v0(producer).map_err(
+            |error| anyhow!("journal and release exact Vote: {error}"),
+        )?))
+    }
+
     fn vote_bound_proposal_v0(&mut self, proposal: SignedProposalV0) -> Result<Vote> {
         if !matches!(self.phase, Some(ContinuousAuthorityPhaseV0::Ready(_))) {
             bail!("continuous authority is not ready for a proposal");
@@ -2227,15 +2595,11 @@ impl ContinuousValidatorAuthorityV0 {
         let Some(ContinuousAuthorityPhaseV0::Ready(runtime)) = self.phase.take() else {
             unreachable!("phase checked above")
         };
-        let inert = (*runtime)
-            .drive_one_to_inert_request_v0(proposal)
-            .map_err(|error| anyhow!("drive proposal authority chain: {error}"))?;
-        let signed = inert
-            .sign_exact_vote_v0(&mut self.producer)
-            .map_err(|error| anyhow!("journal and release exact Vote: {error}"))?;
+        let inert = Self::drive_boxed_vote_request_v1(runtime, proposal)?;
+        let signed = Self::sign_boxed_vote_request_v1(inert, &mut self.producer)?;
         let vote = signed.outbound_v0().vote_v0().clone();
         self.signer_lifetime.record_vote_v0()?;
-        self.phase = Some(ContinuousAuthorityPhaseV0::VoteSigned(Box::new(signed)));
+        self.phase = Some(ContinuousAuthorityPhaseV0::VoteSigned(signed));
         Ok(vote)
     }
 
@@ -2254,11 +2618,15 @@ impl ContinuousValidatorAuthorityV0 {
         proposal
             .verify_proposer_signature(&self.validator_set)
             .map_err(|error| anyhow!("reject unauthenticated proposer witness: {error}"))?;
+        proposal
+            .validate_certificate_relations_v1()
+            .map_err(|error| anyhow!("reject incoherent proposal certificate carrier: {error}"))?;
         if let Some(certificate) = proposal.timeout_certificate().cloned() {
             self.advance_timeout_certificate_v0(certificate)?;
         } else if let Some(certificate) = proposal.justify_qc().as_ordinary().cloned() {
             self.advance_quorum_certificate_v0(certificate)?;
         }
+        self.rebase_ready_parent_v1()?;
         let binding = self
             .ready_runtime_v0()?
             .proposal_binding_v0()
@@ -2269,8 +2637,8 @@ impl ContinuousValidatorAuthorityV0 {
             "proposal view differs from authoritative current_view"
         );
         ensure!(
-            proposal.justify_qc() == binding.high_qc_v0(),
-            "proposal justify differs from authoritative high QC"
+            same_certified_parent_v1(proposal.justify_qc(), binding.high_qc_v0()),
+            "proposal justify differs from authoritative certified parent"
         );
         ensure!(
             header.parent_id().as_bytes()
@@ -2333,11 +2701,15 @@ impl ContinuousValidatorAuthorityV0 {
         proposal
             .verify_proposer_signature(&self.validator_set)
             .map_err(|error| anyhow!("reject unauthenticated proposer witness: {error}"))?;
+        proposal
+            .validate_certificate_relations_v1()
+            .map_err(|error| anyhow!("reject incoherent proposal certificate carrier: {error}"))?;
         if let Some(certificate) = proposal.timeout_certificate().cloned() {
             self.advance_timeout_certificate_v0(certificate)?;
         } else if let Some(certificate) = proposal.justify_qc().as_ordinary().cloned() {
             self.advance_quorum_certificate_v0(certificate)?;
         }
+        self.rebase_ready_parent_v1()?;
         let binding = self
             .ready_runtime_v0()?
             .proposal_binding_v0()
@@ -2348,8 +2720,8 @@ impl ContinuousValidatorAuthorityV0 {
             "proposal view differs from authoritative current_view"
         );
         ensure!(
-            proposal.justify_qc() == binding.high_qc_v0(),
-            "proposal justify differs from authoritative high QC"
+            same_certified_parent_v1(proposal.justify_qc(), binding.high_qc_v0()),
+            "proposal justify differs from authoritative certified parent"
         );
         ensure!(
             header.parent_id().as_bytes()
@@ -2405,6 +2777,10 @@ impl ContinuousValidatorAuthorityV0 {
         ) {
             bail!("continuous authority cannot start another local timeout");
         }
+        ensure!(
+            self.facts_v0()?.local_timeout_available_v1(),
+            "Core already retains a local timeout for the current view"
+        );
         self.signer_lifetime.require_timeout_available_v0()?;
         let phase = self
             .phase
@@ -2473,6 +2849,24 @@ impl ContinuousValidatorAuthorityV0 {
             );
             return self.facts_v0();
         }
+        let no_effect = match self
+            .phase
+            .as_mut()
+            .ok_or_else(|| anyhow!("continuous authority is fail-closed"))?
+        {
+            ContinuousAuthorityPhaseV0::Ready(runtime) => runtime
+                .reconfirm_certificate_no_effect_v0(Input::QuorumCertificate(certificate.clone()))
+                .map_err(|error| anyhow!("reconfirm Ready QC no-effect replay: {error}"))?,
+            ContinuousAuthorityPhaseV0::VoteSigned(signed) => signed
+                .reconfirm_certificate_no_effect_v0(Input::QuorumCertificate(certificate.clone()))
+                .map_err(|error| anyhow!("reconfirm VoteSigned QC no-effect replay: {error}"))?,
+            ContinuousAuthorityPhaseV0::TimeoutSigned(signed) => signed
+                .reconfirm_certificate_no_effect_v0(Input::QuorumCertificate(certificate.clone()))
+                .map_err(|error| anyhow!("reconfirm TimeoutSigned QC no-effect replay: {error}"))?,
+        };
+        if no_effect {
+            return self.facts_v0();
+        }
         let phase = self
             .phase
             .take()
@@ -2522,13 +2916,90 @@ impl ContinuousValidatorAuthorityV0 {
             .context("verified timeout lacks its selected QC")?
             .qc_ref();
         let high = before.high_qc_v0();
+        let equivalent_accepted_projection = self
+            .proposal_timeout_certificate
+            .as_ref()
+            .is_some_and(|accepted| {
+                compatible_alternative
+                    && target_view == before.current_view_v0().get()
+                    && certificate.selected_high_qc_digest() == accepted.selected_high_qc_digest()
+                    && certificate
+                        .referenced_qcs()
+                        .iter()
+                        .all(|reference| accepted.referenced_qcs().contains(reference))
+                    && certificate.entries().iter().all(|entry| {
+                        accepted
+                            .entries()
+                            .iter()
+                            .find(|prior| prior.signer_id() == entry.signer_id())
+                            .is_some_and(|prior| prior == entry)
+                    })
+            });
+        if equivalent_accepted_projection {
+            // Different honest quorum subsets can encode distinct TCs for
+            // the same accepted view and complete QC projection. A freshly
+            // prepared child is intentionally ahead of this high QC; taking
+            // its signed owner through the no-effect certificate/rebase path
+            // would lose that phase or reject the authentic child checkpoint.
+            // Reconfirm the exact durable Safety/signer/CAS and P/K cut via
+            // the phase-neutral QC path. Keep the already accepted TC bytes.
+            // A new QC preimage or conflicting overlapping timeout entry is
+            // deliberately excluded and must reach the normal Core path.
+            let authoritative = self
+                .justify
+                .as_ordinary()
+                .context("ordinary equivalent TC requires its owner-bound high QC")?
+                .clone();
+            ensure!(
+                QcRef::from(&authoritative) == high,
+                "equivalent TC differs from the owner-bound proposal high QC"
+            );
+            let after = self.advance_quorum_certificate_v0(authoritative)?;
+            ensure!(
+                after == before,
+                "equivalent TC changed the live authority cut"
+            );
+            return Ok(after);
+        }
         if compatible_alternative
+            && self
+                .proposal_timeout_certificate
+                .as_ref()
+                .is_some_and(|accepted| {
+                    certificate
+                        .referenced_qcs()
+                        .iter()
+                        .all(|reference| accepted.referenced_qcs().contains(reference))
+                        && certificate.entries().iter().all(|entry| {
+                            accepted
+                                .entries()
+                                .iter()
+                                .find(|prior| prior.signer_id() == entry.signer_id())
+                                .is_some_and(|prior| prior == entry)
+                        })
+                })
             && (target_view < before.current_view_v0().get()
                 || (target_view == before.current_view_v0().get()
-                    && (selected.view(), selected.block_id(), selected.qc_digest())
-                        < (high.view(), high.block_id(), high.qc_digest())))
+                    && self
+                        .proposal_timeout_certificate
+                        .as_ref()
+                        .is_some_and(|accepted| {
+                            let prior = accepted
+                                .referenced_qcs()
+                                .iter()
+                                .find(|reference| {
+                                    reference.id() == accepted.selected_high_qc_digest()
+                                })
+                                .expect("verified retained TC has selected QC")
+                                .qc_ref();
+                            (selected.view(), selected.block_id(), selected.qc_digest())
+                                < (prior.view(), prior.block_id(), prior.qc_digest())
+                        })))
         {
-            // A late compatible quorum is not a replacement for a newer
+            // Only an already-observed complete QC projection can be skipped.
+            // A new lower QC or conflicting timeout statement must reach Core
+            // for evidence/halt even when it cannot improve the proposal.
+            // A late known quorum is not a replacement for a newer
             // proposal binding. In particular, do not consume the live owner
             // and then fail its skipped-view proof check on a stale TC.
             return Ok(before);
@@ -2543,6 +3014,38 @@ impl ContinuousValidatorAuthorityV0 {
             .as_ref()
             .is_some_and(|accepted| accepted == &certificate)
         {
+            return self.facts_v0();
+        }
+        let no_effect = match self
+            .phase
+            .as_mut()
+            .ok_or_else(|| anyhow!("continuous authority is fail-closed"))?
+        {
+            ContinuousAuthorityPhaseV0::Ready(runtime) => runtime
+                .reconfirm_certificate_no_effect_v0(Input::TimeoutCertificate(certificate.clone()))
+                .map_err(|error| anyhow!("reconfirm Ready TC no-effect replay: {error}"))?,
+            ContinuousAuthorityPhaseV0::VoteSigned(signed) => signed
+                .reconfirm_certificate_no_effect_v0(Input::TimeoutCertificate(certificate.clone()))
+                .map_err(|error| anyhow!("reconfirm VoteSigned TC no-effect replay: {error}"))?,
+            ContinuousAuthorityPhaseV0::TimeoutSigned(signed) => signed
+                .reconfirm_certificate_no_effect_v0(Input::TimeoutCertificate(certificate.clone()))
+                .map_err(|error| anyhow!("reconfirm TimeoutSigned TC no-effect replay: {error}"))?,
+        };
+        if no_effect {
+            if matches!(self.phase, Some(ContinuousAuthorityPhaseV0::Ready(_)))
+                && target_view == before.current_view_v0().get()
+            {
+                self.retain_proposal_timeout_certificate_v1(
+                    before.current_view_v0(),
+                    Some(certificate),
+                )?;
+                self.consensus_windows
+                    .synchronize_authoritative_progress_v0(
+                        before.current_view_v0(),
+                        &self.justify,
+                        self.proposal_timeout_certificate.as_ref(),
+                    )?;
+            }
             return self.facts_v0();
         }
         let accepted_certificate = certificate.clone();
@@ -2574,28 +3077,10 @@ impl ContinuousValidatorAuthorityV0 {
             .proposal_binding_v0()
             .map_err(|error| anyhow!("read post-certificate proposal binding: {error}"))?;
         self.justify = binding.high_qc_v0().clone();
-        let next_view_is_direct = binding.current_view_v0().get().checked_sub(1)
-            == Some(binding.high_qc_v0().qc_ref().view().get());
-        if next_view_is_direct {
-            self.proposal_timeout_certificate = None;
-        } else {
-            let candidate = accepted_timeout_certificate
-                .or_else(|| self.proposal_timeout_certificate.take())
-                .ok_or_else(|| {
-                    anyhow!("authoritative skipped view lacks its exact timeout certificate")
-                })?;
-            ensure!(
-                candidate.timed_out_view().get().checked_add(1)
-                    == Some(binding.current_view_v0().get())
-                    && candidate.selected_high_qc_digest() == binding.high_qc_v0().id()
-                    && candidate
-                        .referenced_qcs()
-                        .iter()
-                        .any(|reference| reference == binding.high_qc_v0()),
-                "timeout certificate differs from the authoritative proposal binding"
-            );
-            self.proposal_timeout_certificate = Some(candidate);
-        }
+        self.retain_proposal_timeout_certificate_v1(
+            binding.current_view_v0(),
+            accepted_timeout_certificate,
+        )?;
         let minimum_retained_view = self
             .consensus_windows
             .synchronize_authoritative_progress_v0(
@@ -2678,6 +3163,25 @@ impl ContinuousValidatorAuthorityV0 {
             }
             None => bail!("continuous authority failed closed after a consumed-owner error"),
         }
+    }
+}
+
+// Certificate digests distinguish exact signed quorum subsets. Only after
+// strict verification may their identical certified parent coordinate be used
+// for native-parent binding. Synthetic trust roots retain exact equality.
+fn same_certified_parent_v1(left: &QcReferenceV0, right: &QcReferenceV0) -> bool {
+    match (left.as_ordinary(), right.as_ordinary()) {
+        (Some(left), Some(right)) => {
+            left.genesis_hash() == right.genesis_hash()
+                && left.chain_id() == right.chain_id()
+                && left.protocol_version() == right.protocol_version()
+                && left.epoch() == right.epoch()
+                && left.validator_set_id() == right.validator_set_id()
+                && left.view() == right.view()
+                && left.height() == right.height()
+                && left.block_id() == right.block_id()
+        }
+        _ => left == right,
     }
 }
 
@@ -2827,6 +3331,7 @@ pub struct ContinuousRuntimeFactsV0 {
     signed_timeout_intents: u64,
     minimum_retained_view: View,
     current_view: View,
+    last_timeout_view: Option<View>,
     high_qc: QcRef,
     pending_timeout_certificate_id: Option<CertificateId>,
     finalized_block_id: BlockId,
@@ -2865,6 +3370,7 @@ impl ContinuousRuntimeFactsV0 {
             signed_timeout_intents: signer_lifetime.signed_timeout_intents,
             minimum_retained_view,
             current_view: facts.current_view_v0(),
+            last_timeout_view: facts.last_timeout_view_v1(),
             high_qc: facts.high_qc_v0(),
             pending_timeout_certificate_id: facts.pending_timeout_certificate_id_v0(),
             finalized_block_id: facts.finalized_block_id_v0(),
@@ -2913,6 +3419,15 @@ impl ContinuousRuntimeFactsV0 {
 
     pub const fn current_view_v0(self) -> View {
         self.current_view
+    }
+
+    pub const fn last_timeout_view_v1(self) -> Option<View> {
+        self.last_timeout_view
+    }
+
+    pub(crate) fn local_timeout_available_v1(self) -> bool {
+        self.last_timeout_view
+            .is_none_or(|last| last < self.current_view)
     }
 
     pub const fn high_qc_v0(self) -> QcRef {
@@ -3330,6 +3845,34 @@ mod tests {
         }
     }
 
+    struct ForbiddenSyncedSignatureProducerV1(Arc<AtomicUsize>);
+
+    impl SignatureProducerV0 for ForbiddenSyncedSignatureProducerV1 {
+        fn sign(
+            &mut self,
+            _request: trnm_consensus_signer_journal::SignatureRequestV0<'_>,
+        ) -> std::result::Result<
+            SignatureBytes,
+            trnm_consensus_signer_journal::SignatureProducerErrorV0,
+        > {
+            self.0.fetch_add(1, Ordering::SeqCst);
+            Err(trnm_consensus_signer_journal::SignatureProducerErrorV0::Rejected)
+        }
+    }
+
+    impl ProposalSignatureProducerV0 for ForbiddenSyncedSignatureProducerV1 {
+        fn sign_proposal(
+            &mut self,
+            _request: ProposalSignatureRequestV0,
+        ) -> std::result::Result<
+            SignatureBytes,
+            trnm_consensus_signer_journal::SignatureProducerErrorV0,
+        > {
+            self.0.fetch_add(1, Ordering::SeqCst);
+            Err(trnm_consensus_signer_journal::SignatureProducerErrorV0::Rejected)
+        }
+    }
+
     /// Semantic-only test authority used by the active Vote sidecar seam.
     /// It intentionally exposes the same one-reservation CAS shape as the
     /// production adapter while keeping the test deterministic and in-memory.
@@ -3461,6 +4004,7 @@ mod tests {
         inner: LabEd25519SignatureProducer,
         external: RecordingSemanticWatermarkV0,
         observed_external_sequence: Arc<Mutex<Option<u64>>>,
+        observed_authorizing_revision: Arc<Mutex<Option<u64>>>,
         calls: Arc<AtomicUsize>,
     }
 
@@ -3475,6 +4019,11 @@ mod tests {
                 .observed_external_sequence
                 .lock()
                 .expect("sidecar ordering observer mutex") = self.external.sequence();
+            *self
+                .observed_authorizing_revision
+                .lock()
+                .expect("sidecar revision observer") =
+                Some(request.intent().authorizing_safety_revision());
             self.inner.sign(request)
         }
     }
@@ -3511,6 +4060,7 @@ mod tests {
             let external = RecordingSemanticWatermarkV0::fresh(scope, journal_id, capability);
             let external_observer = external.clone();
             let observed_external_sequence = Arc::new(Mutex::new(None));
+            let observed_authorizing_revision = Arc::new(Mutex::new(None));
             let calls = Arc::new(AtomicUsize::new(0));
             // Exercise the public ContinuousValidatorAuthority path.  The
             // external factory opens its sidecar only after Core-D, so the
@@ -3521,6 +4071,7 @@ mod tests {
                     inner: LabEd25519SignatureProducer::new(harness.keys[leader_index].clone()),
                     external: external_observer.clone(),
                     observed_external_sequence: Arc::clone(&observed_external_sequence),
+                    observed_authorizing_revision: Arc::clone(&observed_authorizing_revision),
                     calls: Arc::clone(&calls),
                 }));
             let vote = harness.authorities[leader_index]
@@ -3544,10 +4095,16 @@ mod tests {
                 .expect("project post-vote authority facts");
             assert_eq!(facts.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
             assert_eq!(facts.signed_vote_intents_v0(), 1);
+            let authorizing_revision = observed_authorizing_revision.lock().unwrap().unwrap();
+            assert_eq!(
+                authorizing_revision,
+                predecessor_revision.checked_add(1).unwrap(),
+                "the actual key request follows the persisted proposal obligation and Vote intent"
+            );
             assert_eq!(
                 facts.safety_revision_v0(),
-                predecessor_revision.saturating_add(1),
-                "Core Safety revision may advance independently of the external reservation sequence"
+                authorizing_revision.checked_add(1).unwrap(),
+                "SignatureReady release crosses its separate persisted Safety barrier"
             );
             assert_eq!(facts.signer_watermark_sequence_v0(), 2);
         });
@@ -5047,6 +5604,7 @@ mod tests {
         transactions: Vec<Vec<u8>>,
         workloads: Vec<(u64, u64, Vec<Vec<u8>>)>,
         authorities: Vec<ContinuousValidatorAuthorityV0>,
+        recovery_configs: Vec<Box<(CoreConfig, NativeApplicationConfigV0)>>,
         _temp: TempDir,
     }
 
@@ -5057,6 +5615,7 @@ mod tests {
         workloads: Vec<(u64, u64, Vec<Vec<u8>>)>,
         signing_key: SigningKey,
         authority: ContinuousValidatorAuthorityV0,
+        recovery_config: Box<(CoreConfig, NativeApplicationConfigV0)>,
     }
 
     fn commission_takeover_harness_authority_v0(
@@ -5101,6 +5660,10 @@ mod tests {
             .collect::<Vec<_>>();
         let validator_set = bundle.validator_set_v0().clone();
         let parameters = *bundle.consensus_parameters_v0();
+        let recovery_config = Box::new((
+            bundle.core_config_v0().clone(),
+            bundle.fresh_reopen_application_config_v0().unwrap(),
+        ));
         let (local, set, consensus_parameters, signing_key, start, runtime) =
             bundle.into_continuous_runtime_parts_v0();
         let authority = ContinuousValidatorAuthorityV0::from_takeover_parts_v0(
@@ -5120,6 +5683,7 @@ mod tests {
             workloads,
             signing_key,
             authority,
+            recovery_config,
         }
     }
 
@@ -5171,6 +5735,7 @@ mod tests {
         let mut workloads = None;
         let mut keys = Vec::with_capacity(validator_count);
         let mut authorities = Vec::with_capacity(validator_count);
+        let mut recovery_configs = Vec::with_capacity(validator_count);
         let handles = (0..validator_count)
             .map(|index| {
                 let authority_root = temp.path().join(format!("takeover-authority-{index:03}"));
@@ -5212,6 +5777,7 @@ mod tests {
             }
             keys.push(commissioned.signing_key);
             authorities.push(commissioned.authority);
+            recovery_configs.push(commissioned.recovery_config);
         }
 
         let workloads = workloads.expect("takeover ordinary workloads");
@@ -5227,6 +5793,7 @@ mod tests {
             transactions,
             workloads,
             authorities,
+            recovery_configs,
             _temp: temp,
         }
     }
@@ -5370,13 +5937,25 @@ mod tests {
     }
 
     fn proposal_for_takeover_v0(harness: &TakeoverPhaseHarnessV0) -> SignedProposalV0 {
-        let view = harness
+        let ready = harness
             .authorities
             .iter()
             .filter_map(|authority| authority.facts_v0().ok())
             .find(|facts| facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready)
-            .expect("at least one ready takeover authority")
-            .current_view_v0();
+            .expect("at least one ready takeover authority");
+        let view = ready.current_view_v0();
+        let next_height = ready
+            .proposal_parent_height_v0()
+            .checked_add(1)
+            .expect("takeover successor height does not overflow");
+        let (height, timestamp_ms, transactions) = harness
+            .workloads
+            .iter()
+            .find(|(height, _, _)| *height == next_height)
+            .cloned()
+            .unwrap_or_else(|| {
+                panic!("takeover workload has no successor at height {next_height}")
+            });
         let leader = leader_for(&harness.validator_set, view);
         let leader_index = harness
             .validator_set
@@ -5385,11 +5964,7 @@ mod tests {
             .position(|validator| validator.id() == leader)
             .expect("takeover leader belongs to validator set");
         harness.authorities[leader_index]
-            .proposal_preimage_for_test_v0(
-                harness.ordinary_start_height,
-                harness.timestamp_ms,
-                harness.transactions.clone(),
-            )
+            .proposal_preimage_for_test_v0(height, timestamp_ms, transactions)
             .expect("takeover leader builds exact proposal preimage")
             .seal_with_key_v0(&harness.keys[leader_index])
             .expect("takeover leader signs strict proposal witness")
@@ -5760,10 +6335,59 @@ mod tests {
             kind: FrameKind::Vote,
             payload: payload.clone(),
         };
-        let stale_direct = windows
-            .admit_authenticated_frame_v0(&direct)
-            .expect_err("old direct Vote replay must remain stale after pruning");
-        assert!(stale_direct.to_string().contains("view was pruned"));
+        for _ in 0..2 {
+            assert!(windows
+                .admit_authenticated_frame_v0(&direct)
+                .expect("strictly verified pruned direct Vote is inert")
+                .is_none());
+        }
+        let mut corrupt = direct.clone();
+        *corrupt.payload.last_mut().unwrap() ^= 1;
+        assert!(windows.admit_authenticated_frame_v0(&corrupt).is_err());
+        let mut wrong_sender = direct.clone();
+        wrong_sender.sender = validator_set.validators()[1].id();
+        assert!(windows.admit_authenticated_frame_v0(&wrong_sender).is_err());
+
+        // A delayed full QC is verified before being discarded. It must not
+        // recreate a pruned carrier or prevent admission in the live window.
+        let mut old_collector = ConsensusCertificateCollectorV0::new(
+            validator_set.clone(),
+            MAXIMUM_COLLECTOR_COORDINATES_V0,
+        )
+        .unwrap();
+        for (index, key) in keys.iter().enumerate().take(5) {
+            old_collector
+                .admit_vote(signed_vote_v0(&validator_set, key, index, 4))
+                .unwrap();
+        }
+        let old_qc = old_collector
+            .try_quorum_certificate(old_vote.view(), old_vote.height(), old_vote.block_id())
+            .unwrap()
+            .unwrap();
+        let old_qc_frame = AuthenticatedFrame {
+            sender: validator_set.validators()[1].id(),
+            session: [0x42; 32],
+            sequence: 2,
+            kind: FrameKind::QuorumCertificate,
+            payload: crate::wire::encode_quorum_certificate(&old_qc).unwrap(),
+        };
+        assert!(windows
+            .admit_authenticated_frame_v0(&old_qc_frame)
+            .unwrap()
+            .is_none());
+        assert_eq!(windows.minimum_retained_view_v0().unwrap(), View::new(5));
+        assert!(windows.direct_proposals.is_empty());
+        let current_frame = AuthenticatedFrame {
+            sender: live_vote.author(),
+            session: [0x43; 32],
+            sequence: 3,
+            kind: FrameKind::Vote,
+            payload: encode_vote(&live_vote),
+        };
+        assert!(matches!(
+            windows.admit_authenticated_frame_v0(&current_frame).unwrap(),
+            Some(RoutedConsensusActionV0::Vote { vote, formed_qc: None }) if *vote == live_vote
+        ));
 
         let relay_envelope = ConsensusRelayEnvelopeV0::new(
             old_vote.author(),
@@ -6642,6 +7266,340 @@ mod tests {
     }
 
     #[test]
+    fn stale_qc_replay_does_not_consume_signed_owner_with_prepared_child() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime = ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 2, 4, 2)
+                .expect("bounded stale-QC signer lifetime");
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let initial = harness.authorities[0]
+                .justify_v0()
+                .as_ordinary()
+                .expect("genesis ordinary reference")
+                .clone();
+            let first = proposal_for_takeover_v0(&harness);
+            let votes = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.vote_proposal_v0(first.clone()).unwrap())
+                .collect::<Vec<_>>();
+            let first_qc = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &first,
+                votes.iter().take(3).cloned(),
+            );
+            let target = 0usize;
+            harness.authorities[target]
+                .advance_quorum_certificate_v0(first_qc)
+                .expect("target adopts first QC");
+
+            // Prepare a real successor P/K while the authoritative high QC
+            // remains the first block. This is the stale replay shape: Core
+            // already subsumes the genesis QC, but the signed owner retains a
+            // child whose parent is newer than that high QC.
+            let successor_view = harness.authorities[target]
+                .facts_v0()
+                .unwrap()
+                .current_view_v0();
+            let successor_leader = leader_for(&harness.validator_set, successor_view);
+            let successor_leader_index = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == successor_leader)
+                .unwrap();
+            let (successor_height, successor_timestamp, successor_transactions) =
+                harness.workloads[1].clone();
+            let successor = harness.authorities[successor_leader_index]
+                .proposal_preimage_for_test_v0(
+                    successor_height,
+                    successor_timestamp,
+                    successor_transactions,
+                )
+                .unwrap()
+                .seal_with_key_v0(&harness.keys[successor_leader_index])
+                .unwrap();
+            harness.authorities[target]
+                .vote_proposal_v0(successor)
+                .expect("target signs successor and retains prepared child");
+            let before = harness.authorities[target]
+                .facts_v0()
+                .expect("read signed target before stale QC");
+            assert_eq!(before.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
+            assert_ne!(
+                before.proposal_parent_block_id_v0(),
+                before.high_qc_v0().block_id()
+            );
+
+            let after = harness.authorities[target]
+                .advance_quorum_certificate_v0(initial.clone())
+                .expect("stale QC replay is a verified no-effect and preserves the owner");
+            assert_eq!(
+                after, before,
+                "stale QC must preserve the signed owner and prepared child"
+            );
+            harness.authorities[target]
+                .begin_local_timeout_v0()
+                .expect("the same prepared child can enter TimeoutSigned");
+            let before_timeout = harness.authorities[target]
+                .facts_v0()
+                .expect("read TimeoutSigned target before stale QC");
+            assert_eq!(
+                before_timeout.phase_v0(),
+                PocoNodeLabAuthorityPhaseV0::TimeoutSigned
+            );
+            let after_timeout = harness.authorities[target]
+                .advance_quorum_certificate_v0(initial)
+                .expect("stale QC replay remains phase-neutral after timeout");
+            assert_eq!(after_timeout, before_timeout);
+        });
+    }
+
+    #[test]
+    fn timeout_selected_quorum_subset_keeps_core_high_qc_and_exact_proposal_witness_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 2, 4, 2).unwrap();
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let proposal = proposal_for_takeover_v0(&harness);
+            let votes = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.vote_proposal_v0(proposal.clone()).unwrap())
+                .collect::<Vec<_>>();
+            let a = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &proposal,
+                votes[..3].iter().cloned(),
+            );
+            let b = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &proposal,
+                votes[1..].iter().cloned(),
+            );
+            let (low, high) = if a.id() < b.id() { (a, b) } else { (b, a) };
+            assert_ne!(low.id(), high.id());
+            assert!(same_certified_parent_v1(
+                &QcReferenceV0::ordinary(low.clone()),
+                &QcReferenceV0::ordinary(high.clone())
+            ));
+            for authority in &mut harness.authorities {
+                authority
+                    .advance_quorum_certificate_v0(low.clone())
+                    .unwrap();
+            }
+            let next_view = View::new(
+                harness.authorities[0]
+                    .facts_v0()
+                    .unwrap()
+                    .current_view_v0()
+                    .get()
+                    + 1,
+            );
+            let leader = leader_for(&harness.validator_set, next_view);
+            let leader_index = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|v| v.id() == leader)
+                .unwrap();
+            let timeouts = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.begin_local_timeout_v0().unwrap())
+                .collect::<Vec<_>>();
+            harness.authorities[leader_index]
+                .advance_quorum_certificate_v0(high.clone())
+                .unwrap();
+            let mut collector = ConsensusCertificateCollectorV0::new(
+                harness.validator_set.clone(),
+                MAXIMUM_COLLECTOR_COORDINATES_V0,
+            )
+            .unwrap();
+            collector
+                .register_qc_reference(QcReferenceV0::ordinary(low.clone()))
+                .unwrap();
+            for (index, vote) in timeouts.iter().enumerate() {
+                if index != leader_index {
+                    collector.admit_timeout_vote(vote.clone()).unwrap();
+                }
+            }
+            let tc = collector
+                .try_timeout_certificate(timeouts[0].view())
+                .unwrap()
+                .unwrap();
+            assert_eq!(tc.selected_high_qc_digest(), low.id());
+            let mut alternate_collector = ConsensusCertificateCollectorV0::new(
+                harness.validator_set.clone(),
+                MAXIMUM_COLLECTOR_COORDINATES_V0,
+            )
+            .unwrap();
+            alternate_collector
+                .register_qc_reference(QcReferenceV0::ordinary(low.clone()))
+                .unwrap();
+            for vote in &timeouts {
+                alternate_collector
+                    .admit_timeout_vote(vote.clone())
+                    .unwrap();
+            }
+            let alternate = alternate_collector
+                .try_timeout_certificate(timeouts[0].view())
+                .unwrap()
+                .unwrap();
+            assert_ne!(alternate.id(), tc.id());
+            assert_eq!(alternate.selected_high_qc_digest(), low.id());
+            for authority in &mut harness.authorities {
+                authority
+                    .advance_timeout_certificate_v0(tc.clone())
+                    .expect("a genuine lower selected digest must not consume and lose Ready");
+            }
+            let before = harness.authorities[leader_index].facts_v0().unwrap();
+            assert_eq!(before.current_view_v0(), next_view);
+            assert_eq!(before.high_qc_v0().qc_digest(), high.id());
+            assert!(harness.authorities[leader_index]
+                .proposal_witness_ready_v1()
+                .unwrap());
+            let (height, timestamp, transactions) = harness.workloads[1].clone();
+            let preimage = harness.authorities[leader_index]
+                .proposal_preimage_for_test_v0(height, timestamp, transactions)
+                .unwrap();
+            assert_eq!(
+                harness.authorities[leader_index].facts_v0().unwrap(),
+                before,
+                "preview cannot mutate authority or signer counters"
+            );
+            let successor = preimage
+                .seal_with_key_v0(&harness.keys[leader_index])
+                .unwrap();
+            assert_eq!(
+                successor.witness().justify_qc(),
+                &QcReferenceV0::ordinary(low.clone())
+            );
+            assert_eq!(successor.witness().timeout_certificate(), Some(&tc));
+            let target = (leader_index + 1) % 4;
+            harness.authorities[target]
+                .advance_quorum_certificate_v0(high.clone())
+                .unwrap();
+            assert_eq!(
+                harness.authorities[target]
+                    .facts_v0()
+                    .unwrap()
+                    .high_qc_v0()
+                    .qc_digest(),
+                high.id()
+            );
+            let vote = harness.authorities[target]
+                .vote_proposal_v0(successor)
+                .expect(
+                    "verified same-parent quorum subset reaches actual Core/Safety/native Vote",
+                );
+            assert_eq!(vote.height().get(), height);
+            let signed = harness.authorities[target].facts_v0().unwrap();
+            assert_eq!(signed.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
+            assert_eq!(signed.high_qc_v0().qc_digest(), high.id());
+            assert_eq!(harness.authorities[target].advance_timeout_certificate_v0(alternate).unwrap(), signed,
+                "equivalent lower-selected TC subset preserves the signed owner with higher Core QC");
+            assert_eq!(
+                harness.authorities[target]
+                    .advance_timeout_certificate_v0(tc)
+                    .unwrap(),
+                signed,
+                "exact TC replay preserves signed owner and prepared child"
+            );
+        });
+    }
+
+    #[test]
+    fn timeout_older_selected_parent_waits_without_losing_ready_or_timer_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 3, 5, 3).unwrap();
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let initial = harness.authorities[0].justify_v0().clone();
+            let proposal = proposal_for_takeover_v0(&harness);
+            let votes = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.vote_proposal_v0(proposal.clone()).unwrap())
+                .collect::<Vec<_>>();
+            let newer = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &proposal,
+                votes[..3].iter().cloned(),
+            );
+            harness.authorities[3]
+                .advance_quorum_certificate_v0(newer.clone())
+                .unwrap();
+            let build = |statements: &[TimeoutVote]| {
+                let mut collector = ConsensusCertificateCollectorV0::new(
+                    harness.validator_set.clone(),
+                    MAXIMUM_COLLECTOR_COORDINATES_V0,
+                )
+                .unwrap();
+                collector.register_qc_reference(initial.clone()).unwrap();
+                collector
+                    .register_qc_reference(QcReferenceV0::ordinary(newer.clone()))
+                    .unwrap();
+                for statement in statements {
+                    collector.admit_timeout_vote(statement.clone()).unwrap();
+                }
+                collector
+                    .try_timeout_certificate(statements[0].view())
+                    .unwrap()
+                    .unwrap()
+            };
+            let first = harness.authorities[..3]
+                .iter_mut()
+                .map(|a| a.begin_local_timeout_v0().unwrap())
+                .collect::<Vec<_>>();
+            let first_tc = build(&first);
+            for authority in &mut harness.authorities[..3] {
+                authority
+                    .advance_timeout_certificate_v0(first_tc.clone())
+                    .unwrap();
+            }
+            let mixed = harness
+                .authorities
+                .iter_mut()
+                .map(|a| a.begin_local_timeout_v0().unwrap())
+                .collect::<Vec<_>>();
+            let older_tc = build(&mixed[..3]);
+            let newer_tc = build(&mixed);
+            for authority in &mut harness.authorities {
+                authority
+                    .advance_timeout_certificate_v0(older_tc.clone())
+                    .unwrap();
+            }
+            let waiting = harness.authorities[3].facts_v0().unwrap();
+            assert_eq!(waiting.phase_v0(), PocoNodeLabAuthorityPhaseV0::Ready);
+            assert_eq!(waiting.high_qc_v0().qc_digest(), newer.id());
+            assert!(!harness.authorities[3].proposal_witness_ready_v1().unwrap());
+            let (height, timestamp, transactions) = harness.workloads[1].clone();
+            assert!(harness.authorities[3]
+                .proposal_preimage_for_test_v0(height, timestamp, transactions)
+                .is_err());
+            assert_eq!(harness.authorities[3].facts_v0().unwrap(), waiting);
+            // The compatible proof may have no Core transition: its witness
+            // still unblocks authoring on the already authenticated parent.
+            harness.authorities[3]
+                .advance_timeout_certificate_v0(newer_tc.clone())
+                .unwrap();
+            assert!(harness.authorities[3].proposal_witness_ready_v1().unwrap());
+            assert_eq!(
+                harness.authorities[3].facts_v0().unwrap().high_qc_v0(),
+                waiting.high_qc_v0()
+            );
+            let timed = harness.authorities[3]
+                .begin_local_timeout_v0()
+                .expect("the same Ready owner still owns its actual timer/signing path");
+            assert_eq!(timed.high_qc(), waiting.high_qc_v0());
+            assert_eq!(
+                harness.authorities[3].facts_v0().unwrap().phase_v0(),
+                PocoNodeLabAuthorityPhaseV0::TimeoutSigned
+            );
+        });
+    }
+
+    #[test]
     fn compatible_timeout_alternate_can_authorize_a_successor_proposal() {
         on_bounded_takeover_owner_stack_v0(|| {
             let lifetime =
@@ -6741,6 +7699,36 @@ mod tests {
             assert_eq!(vote.block_id(), successor.block().id());
             let signed = harness.authorities[target].facts_v0().unwrap();
             assert_eq!(signed.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
+            // Every certificate is independently valid and the proposer
+            // signs the substituted carrier. It must still be rejected
+            // before a same-view signed-phase no-vote return can hide a QC.
+            initial
+                .as_ordinary()
+                .unwrap()
+                .verify(&harness.validator_set, &StrictEd25519Verifier)
+                .unwrap();
+            let substituted = UnboundProposalV0::from_signed(&successor)
+                .unwrap()
+                .with_justify_qc_for_test(initial.clone());
+            let root = ProposalWitnessV0::signing_root_for(
+                substituted.block().header(),
+                substituted.justify_qc(),
+                substituted.timeout_certificate(),
+                None,
+            )
+            .unwrap();
+            let substituted =
+                substituted.with_proposer_signature_for_test(SignatureBytes::from_array(
+                    harness.keys[leader_index].sign(root.as_bytes()).to_bytes(),
+                ));
+            substituted
+                .verify_proposer_signature(&harness.validator_set)
+                .unwrap();
+            let error = harness.authorities[target]
+                .receive_unbound_proposal_v1(substituted)
+                .expect_err("valid TC plus substituted valid justify is not an ignorable carrier");
+            assert!(error.to_string().contains("exact justify QC"));
+            assert_eq!(harness.authorities[target].facts_v0().unwrap(), signed);
             let replay = harness.authorities[target]
                 .advance_timeout_certificate_v0(high_tc.clone())
                 .unwrap();
@@ -6755,6 +7743,578 @@ mod tests {
                 old, signed,
                 "lower compatible TC must not replace the newer binding or consume the owner"
             );
+        });
+    }
+
+    include!("continuous_ready_rebase_tests.inc");
+    include!("continuous_terminal_readback_tests_v1.inc");
+
+    #[test]
+    fn late_network_proposal_after_timeout_syncs_without_new_signature_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 2, 4, 2).unwrap();
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let original = proposal_for_takeover_v0(&harness);
+            // Real race: a valid proposal is in flight when the receiver's
+            // local deadline fires. No Vote has been emitted for this view.
+            let first_timeout = harness.authorities[0].begin_local_timeout_v0().unwrap();
+            let before = harness.authorities[0].facts_v0().unwrap();
+            assert_eq!(
+                before.phase_v0(),
+                PocoNodeLabAuthorityPhaseV0::TimeoutSigned
+            );
+            let late = UnboundProposalV0::from_signed(&original).unwrap();
+            let forged = late
+                .clone()
+                .with_proposer_signature_for_test(SignatureBytes::from_array([0; 64]));
+            assert!(harness.authorities[0]
+                .receive_unbound_proposal_v1(forged)
+                .unwrap_err()
+                .to_string()
+                .contains("unauthenticated proposer witness"));
+            assert_eq!(harness.authorities[0].facts_v0().unwrap(), before);
+            let frame = AuthenticatedFrame {
+                sender: original.block().header().proposer_id(),
+                session: [0xb7; 32],
+                sequence: 0,
+                kind: FrameKind::Proposal,
+                payload: late.encode().unwrap(),
+            };
+            let Some(RoutedConsensusActionV0::Proposal(late)) = harness.authorities[0]
+                .admit_authenticated_consensus_frame_v0(&frame)
+                .unwrap()
+            else {
+                panic!("fresh late Proposal must reach the actual network receive seam");
+            };
+            let result = harness.authorities[0]
+                .receive_unbound_proposal_v1(*late)
+                .unwrap();
+            assert!(
+                result.is_none(),
+                "late network proposal must not obtain a Vote"
+            );
+            let key_calls = Arc::new(AtomicUsize::new(0));
+            let original_producer = std::mem::replace(
+                &mut harness.authorities[0].producer,
+                ContinuousSignatureProducerV0(Box::new(ForbiddenSyncedSignatureProducerV1(
+                    Arc::clone(&key_calls),
+                ))),
+            );
+            let original_proposal_producer = std::mem::replace(
+                &mut harness.authorities[0].proposal_producer,
+                ContinuousProposalSignatureProducerV0(Box::new(
+                    ForbiddenSyncedSignatureProducerV1(Arc::clone(&key_calls)),
+                )),
+            );
+            assert!(harness.authorities[0]
+                .sync_late_proposal_v1(UnboundProposalV0::from_signed(&original).unwrap())
+                .expect("network fallback retains TimeoutSigned through actual Synced execution"));
+            let synced = harness.authorities[0].facts_v0().unwrap();
+            assert_eq!(
+                synced.phase_v0(),
+                PocoNodeLabAuthorityPhaseV0::TimeoutSigned
+            );
+            assert_eq!(synced.current_view_v0(), before.current_view_v0());
+            assert_eq!(synced.high_qc_v0(), before.high_qc_v0());
+            assert_eq!(synced.proposal_parent_block_id_v0(), original.block().id());
+            assert_eq!(
+                synced.proposal_parent_height_v0(),
+                before.proposal_parent_height_v0() + 1
+            );
+            assert_eq!(
+                synced.signer_watermark_sequence_v0(),
+                before.signer_watermark_sequence_v0()
+            );
+            assert_eq!(
+                synced.signed_vote_intents_v0(),
+                before.signed_vote_intents_v0()
+            );
+            assert_eq!(
+                synced.signed_timeout_intents_v0(),
+                before.signed_timeout_intents_v0()
+            );
+            let Some(ContinuousAuthorityPhaseV0::TimeoutSigned(owner)) =
+                harness.authorities[0].phase.as_ref()
+            else {
+                panic!("same signed owner required")
+            };
+            assert_eq!(owner.outbound_v0().timeout_vote_v0(), &first_timeout);
+            assert_eq!(
+                owner.facts_v0().signer_exact_watermark_v0(),
+                owner.phase_facts_v0().signer_exact_watermark_v0()
+            );
+            assert!(!harness.authorities[0]
+                .sync_late_proposal_v1(UnboundProposalV0::from_signed(&original).unwrap())
+                .unwrap());
+            assert_eq!(harness.authorities[0].facts_v0().unwrap(), synced);
+            assert!(harness.authorities[0].begin_local_timeout_v0().is_err());
+            assert_eq!(key_calls.load(Ordering::SeqCst), 0);
+            harness.authorities[0].producer = original_producer;
+            harness.authorities[0].proposal_producer = original_proposal_producer;
+
+            // The real late body can now satisfy a genuine QC. The signed
+            // timeout is released only by the existing certificate path.
+            let votes = harness.authorities[1..]
+                .iter_mut()
+                .map(|authority| authority.vote_proposal_v0(original.clone()).unwrap())
+                .collect::<Vec<_>>();
+            let qc = quorum_certificate_from_votes_v0(&harness.validator_set, &original, votes);
+            for authority in &mut harness.authorities {
+                authority.advance_quorum_certificate_v0(qc.clone()).unwrap();
+            }
+            assert_eq!(
+                harness.authorities[0].facts_v0().unwrap().phase_v0(),
+                PocoNodeLabAuthorityPhaseV0::Ready
+            );
+
+            // A subsequent real timeout quorum can still select this executed
+            // parent and lead to a later-view vote.
+            let mut collector = ConsensusCertificateCollectorV0::new(
+                harness.validator_set.clone(),
+                MAXIMUM_COLLECTOR_COORDINATES_V0,
+            )
+            .unwrap();
+            collector
+                .register_qc_reference(harness.authorities[0].justify_v0().clone())
+                .unwrap();
+            let next_timeout = harness.authorities[0].begin_local_timeout_v0().unwrap();
+            collector.admit_timeout_vote(next_timeout.clone()).unwrap();
+            for authority in &mut harness.authorities[1..] {
+                collector
+                    .admit_timeout_vote(authority.begin_local_timeout_v0().unwrap())
+                    .unwrap();
+            }
+            let tc = collector
+                .try_timeout_certificate(next_timeout.view())
+                .unwrap()
+                .unwrap();
+            for authority in &mut harness.authorities {
+                authority
+                    .advance_timeout_certificate_v0(tc.clone())
+                    .unwrap();
+            }
+            let ready = harness.authorities[0].facts_v0().unwrap();
+            assert_eq!(ready.phase_v0(), PocoNodeLabAuthorityPhaseV0::Ready);
+            assert!(
+                harness.authorities[0]
+                    .receive_unbound_proposal_v1(UnboundProposalV0::from_signed(&original).unwrap())
+                    .unwrap()
+                    .is_none(),
+                "older proposal must be inert even after recovery to Ready"
+            );
+            assert_eq!(harness.authorities[0].facts_v0().unwrap(), ready);
+            let successor = proposal_for_takeover_v0(&harness);
+            let wire = UnboundProposalV0::from_signed(&successor).unwrap();
+            let vote = harness.authorities[0]
+                .receive_unbound_proposal_v1(wire.clone())
+                .unwrap()
+                .expect("later-view certificate and proposal remain actionable");
+            assert_eq!(vote.block_id(), successor.block().id());
+            let signed = harness.authorities[0].facts_v0().unwrap();
+            assert_eq!(signed.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
+            assert!(harness.authorities[0]
+                .receive_unbound_proposal_v1(wire.clone())
+                .unwrap()
+                .is_none());
+            assert!(!harness.authorities[0]
+                .sync_late_proposal_v1(wire)
+                .expect("network fallback preserves the exact VoteSigned owner"));
+            assert_eq!(harness.authorities[0].facts_v0().unwrap(), signed);
+
+            // Keep and discharge the original signed owner's real prepared
+            // child through a strict QC; no state reconstruction or re-sign.
+            let mut votes = vec![vote];
+            for authority in &mut harness.authorities[1..] {
+                votes.push(authority.vote_proposal_v0(successor.clone()).unwrap());
+            }
+            let certificate = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &successor,
+                votes.into_iter().take(3),
+            );
+            let ready = harness.authorities[0]
+                .advance_quorum_certificate_v0(certificate.clone())
+                .expect("preserved VoteSigned owner accepts original child QC");
+            assert_eq!(ready.phase_v0(), PocoNodeLabAuthorityPhaseV0::Ready);
+            assert_eq!(ready.high_qc_v0(), QcRef::from(&certificate));
+            assert_eq!(ready.proposal_parent_block_id_v0(), successor.block().id());
+            assert_eq!(
+                ready.signed_vote_intents_v0(),
+                signed.signed_vote_intents_v0()
+            );
+        });
+    }
+
+    #[test]
+    fn ready_synced_proposal_commits_without_vote_or_watermark_advance_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 2, 4, 2).unwrap();
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let proposal = proposal_for_takeover_v0(&harness);
+            let before = harness.authorities[0].facts_v0().unwrap();
+            let wire = UnboundProposalV0::from_signed(&proposal).unwrap();
+            assert!(harness.authorities[0]
+                .sync_late_proposal_v1(wire)
+                .expect("synced proposal path succeeds"));
+            let after = harness.authorities[0].facts_v0().unwrap();
+            assert_eq!(after.phase_v0(), PocoNodeLabAuthorityPhaseV0::Ready);
+            assert_eq!(
+                after.proposal_parent_height_v0(),
+                before.proposal_parent_height_v0() + 1
+            );
+            assert_eq!(
+                after.signer_watermark_sequence_v0(),
+                before.signer_watermark_sequence_v0()
+            );
+            assert_eq!(
+                after.signed_vote_intents_v0(),
+                before.signed_vote_intents_v0()
+            );
+        });
+    }
+
+    #[test]
+    fn ready_synced_execution_failure_still_consumes_owner_and_fences_v1() {
+        on_bounded_takeover_owner_stack_v0(|| assert_synced_execution_failure_fences_v1(false));
+    }
+
+    #[test]
+    fn timeout_synced_execution_failure_still_consumes_owner_and_fences_v1() {
+        on_bounded_takeover_owner_stack_v0(|| assert_synced_execution_failure_fences_v1(true));
+    }
+
+    fn assert_synced_execution_failure_fences_v1(signed_timeout: bool) {
+        let mut harness = takeover_phase_harness_v0(4);
+        let proposal = proposal_for_takeover_v0(&harness);
+        let header = proposal.block().header();
+        let wrong_state_root = StateRoot::new([0xa6; 32]);
+        assert_ne!(wrong_state_root, header.state_root());
+        let wrong_header = BlockHeader::new(
+            header.genesis_hash(),
+            header.chain_id(),
+            header.protocol_version(),
+            header.epoch(),
+            header.view(),
+            header.height(),
+            header.block_kind(),
+            header.parent_id(),
+            header.proposer_id(),
+            header.validator_set_id(),
+            header.consensus_parameters_hash(),
+            header.payload_root(),
+            wrong_state_root,
+            header.receipts_root(),
+            header.evidence_root(),
+            header.timestamp_ms(),
+            header.next_epoch_commitment_hash(),
+        )
+        .unwrap();
+        let wrong_block = Block::new(
+            wrong_header,
+            proposal.block().application_payload().to_vec(),
+            proposal.block().evidence_objects().to_vec(),
+        )
+        .unwrap();
+        let proposer = harness
+            .validator_set
+            .validators()
+            .iter()
+            .position(|validator| validator.id() == header.proposer_id())
+            .unwrap();
+        let signing_root = ProposalWitnessV0::signing_root_for(
+            wrong_block.header(),
+            proposal.witness().justify_qc(),
+            proposal.witness().timeout_certificate(),
+            None,
+        )
+        .unwrap();
+        let signature = SignatureBytes::from_array(
+            harness.keys[proposer]
+                .sign(signing_root.as_bytes())
+                .to_bytes(),
+        );
+        let witness = ProposalWitnessV0::new(
+            wrong_block.header(),
+            proposal.witness().justify_qc().clone(),
+            proposal.witness().timeout_certificate().cloned(),
+            None,
+            signature,
+            &harness.validator_set,
+            None,
+            harness.authorities[0].consensus_parameters_v0(),
+            0,
+        )
+        .unwrap();
+        let wrong = SignedProposalV0::new(
+            wrong_block,
+            witness,
+            &harness.validator_set,
+            None,
+            harness.authorities[0].consensus_parameters_v0(),
+            0,
+        )
+        .unwrap();
+        let wire = UnboundProposalV0::from_signed(&wrong).unwrap();
+        wire.verify_proposer_signature(&harness.validator_set)
+            .unwrap();
+        if signed_timeout {
+            harness.authorities[0].begin_local_timeout_v0().unwrap();
+        }
+        let key_calls = Arc::new(AtomicUsize::new(0));
+        harness.authorities[0].producer = ContinuousSignatureProducerV0(Box::new(
+            ForbiddenSyncedSignatureProducerV1(Arc::clone(&key_calls)),
+        ));
+        harness.authorities[0].proposal_producer = ContinuousProposalSignatureProducerV0(Box::new(
+            ForbiddenSyncedSignatureProducerV1(Arc::clone(&key_calls)),
+        ));
+        let error = harness.authorities[0]
+            .sync_late_proposal_v1(wire)
+            .unwrap_err();
+        assert!(
+            error.to_string().contains(if signed_timeout {
+                "drive signed-timeout synced no-sign chain"
+            } else {
+                "drive synced no-sign authority chain"
+            }),
+            "{error:#}"
+        );
+        assert_eq!(key_calls.load(Ordering::SeqCst), 0);
+        assert!(harness.authorities[0].phase.is_none());
+        assert!(harness.authorities[0].facts_v0().is_err());
+        assert!(harness.authorities[0].begin_local_timeout_v0().is_err());
+        assert!(harness.authorities[0].vote_proposal_v0(proposal).is_err());
+    }
+
+    #[test]
+    fn timeout_synced_future_view_preserves_exact_signed_owner_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 2, 4, 2).unwrap();
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let original = proposal_for_takeover_v0(&harness);
+            let next_leader = leader_for(
+                &harness.validator_set,
+                View::new(
+                    original
+                        .block()
+                        .header()
+                        .view()
+                        .get()
+                        .checked_add(1)
+                        .unwrap(),
+                ),
+            );
+            let receiver = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|v| v.id() != next_leader)
+                .unwrap();
+            let timeout = harness.authorities[receiver]
+                .begin_local_timeout_v0()
+                .unwrap();
+            assert!(harness.authorities[receiver]
+                .sync_late_proposal_v1(UnboundProposalV0::from_signed(&original).unwrap())
+                .unwrap());
+            let before = harness.authorities[receiver].facts_v0().unwrap();
+            let votes = harness
+                .authorities
+                .iter_mut()
+                .enumerate()
+                .filter(|(index, _)| *index != receiver)
+                .map(|(_, authority)| authority.vote_proposal_v0(original.clone()).unwrap())
+                .collect::<Vec<_>>();
+            let qc = quorum_certificate_from_votes_v0(&harness.validator_set, &original, votes);
+            for (index, authority) in harness.authorities.iter_mut().enumerate() {
+                if index != receiver {
+                    authority.advance_quorum_certificate_v0(qc.clone()).unwrap();
+                }
+            }
+            let future = proposal_for_takeover_v0(&harness);
+            assert_eq!(
+                future.block().header().parent_id(),
+                before.proposal_parent_block_id_v0()
+            );
+            assert_eq!(
+                future.block().header().height().get(),
+                before.proposal_parent_height_v0() + 1
+            );
+            assert!(future.block().header().view() > before.current_view_v0());
+            let wire = UnboundProposalV0::from_signed(&future).unwrap();
+            wire.verify_proposer_signature(&harness.validator_set)
+                .unwrap();
+            assert!(!harness.authorities[receiver]
+                .sync_late_proposal_v1(wire)
+                .unwrap());
+            assert_eq!(harness.authorities[receiver].facts_v0().unwrap(), before);
+            let Some(ContinuousAuthorityPhaseV0::TimeoutSigned(owner)) =
+                harness.authorities[receiver].phase.as_ref()
+            else {
+                panic!("signed phase retained")
+            };
+            assert_eq!(owner.outbound_v0().timeout_vote_v0(), &timeout);
+        });
+    }
+
+    #[test]
+    fn timeout_synced_displaced_checkpoint_fences_before_execution_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let mut harness = takeover_phase_harness_v0(4);
+            let proposal = proposal_for_takeover_v0(&harness);
+            harness.authorities[0].begin_local_timeout_v0().unwrap();
+            let checkpoint = harness
+                ._temp
+                .path()
+                .join("takeover-authority-000/checkpoint/checkpoint.sqlite3");
+            std::fs::rename(&checkpoint, checkpoint.with_extension("displaced")).unwrap();
+            let error = harness.authorities[0]
+                .sync_late_proposal_v1(UnboundProposalV0::from_signed(&proposal).unwrap())
+                .unwrap_err();
+            assert!(
+                error
+                    .to_string()
+                    .contains("drive signed-timeout synced no-sign chain"),
+                "{error:#}"
+            );
+            assert!(harness.authorities[0].phase.is_none());
+            assert!(harness.authorities[0].facts_v0().is_err());
+        });
+    }
+
+    #[test]
+    fn equivalent_timeout_quorum_preserves_prepared_signed_owner_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 2, 4, 2).unwrap();
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let initial = harness.authorities[0].justify_v0().clone();
+            let original = proposal_for_takeover_v0(&harness);
+            for authority in &mut harness.authorities {
+                authority.vote_proposal_v0(original.clone()).unwrap();
+            }
+            let timeouts = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.begin_local_timeout_v0().unwrap())
+                .collect::<Vec<_>>();
+            let build = |statements: &[TimeoutVote]| {
+                let mut collector = ConsensusCertificateCollectorV0::new(
+                    harness.validator_set.clone(),
+                    MAXIMUM_COLLECTOR_COORDINATES_V0,
+                )
+                .unwrap();
+                collector.register_qc_reference(initial.clone()).unwrap();
+                for statement in statements {
+                    collector.admit_timeout_vote(statement.clone()).unwrap();
+                }
+                collector
+                    .try_timeout_certificate(statements[0].view())
+                    .unwrap()
+                    .unwrap()
+            };
+            let first = build(&timeouts[..3]);
+            let alternative = build(&timeouts);
+            assert_ne!(first.id(), alternative.id());
+            assert_eq!(
+                first.selected_high_qc_digest(),
+                alternative.selected_high_qc_digest()
+            );
+            let next_leader = leader_for(
+                &harness.validator_set,
+                View::new(first.timed_out_view().get() + 1),
+            );
+            let next_leader_index = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == next_leader)
+                .unwrap();
+            for (index, authority) in harness.authorities.iter_mut().enumerate() {
+                authority
+                    .advance_timeout_certificate_v0(if index == next_leader_index {
+                        alternative.clone()
+                    } else {
+                        first.clone()
+                    })
+                    .unwrap();
+            }
+            let rebound = proposal_for_takeover_v0(&harness);
+            assert_eq!(rebound.witness().timeout_certificate(), Some(&alternative));
+            // Followers must also accept a proposer carrying the equivalent
+            // quorum they had not selected locally while still Ready.
+            for authority in &mut harness.authorities {
+                authority.vote_proposal_v0(rebound.clone()).unwrap();
+            }
+            let followers = (0..4)
+                .filter(|index| *index != next_leader_index)
+                .collect::<Vec<_>>();
+            harness.authorities[followers[0]]
+                .begin_local_timeout_v0()
+                .unwrap();
+            for (position, index) in followers[..2].iter().copied().enumerate() {
+                let before = harness.authorities[index].facts_v0().unwrap();
+                assert_eq!(
+                    before.phase_v0(),
+                    if position == 0 {
+                        PocoNodeLabAuthorityPhaseV0::TimeoutSigned
+                    } else {
+                        PocoNodeLabAuthorityPhaseV0::VoteSigned
+                    }
+                );
+                let after = harness.authorities[index]
+                    .advance_timeout_certificate_v0(alternative.clone())
+                    .expect("same selected QC with a distinct valid quorum is phase-neutral");
+                assert_eq!(after, before);
+                assert!(harness.authorities[index]
+                    .receive_unbound_proposal_v1(UnboundProposalV0::from_signed(&rebound).unwrap())
+                    .expect("late proposal carrying the equivalent TC is a no-vote outcome")
+                    .is_none());
+                assert_eq!(harness.authorities[index].facts_v0().unwrap(), before);
+                assert_eq!(
+                    harness.authorities[index].proposal_timeout_certificate,
+                    Some(first.clone())
+                );
+            }
+            let negative = followers[2];
+            let before = harness.authorities[negative].facts_v0().unwrap();
+            let mut entries = alternative.entries().to_vec();
+            entries[0] = trnm_consensus_types::TimeoutEntryV0::new(
+                entries[0].signer_id(),
+                entries[0].high_qc(),
+                SignatureBytes::from_array([0; 64]),
+            )
+            .unwrap();
+            let invalid = TimeoutCertificateV0::new(
+                alternative.timed_out_view(),
+                entries,
+                alternative.referenced_qcs().to_vec(),
+                alternative.selected_high_qc_digest(),
+                &harness.validator_set,
+            )
+            .unwrap();
+            assert!(harness.authorities[negative]
+                .advance_timeout_certificate_v0(invalid)
+                .is_err());
+            assert_eq!(harness.authorities[negative].facts_v0().unwrap(), before);
+
+            // The equivalent projection is not a cached-success bypass: its
+            // exact owner/CAS path must still exist at fresh readback time.
+            let checkpoint = harness._temp.path().join(format!(
+                "takeover-authority-{negative:03}/checkpoint/checkpoint.sqlite3"
+            ));
+            std::fs::rename(&checkpoint, checkpoint.with_extension("displaced")).unwrap();
+            let error = harness.authorities[negative]
+                .advance_timeout_certificate_v0(alternative)
+                .expect_err("displaced checkpoint owner must fail equivalent TC revalidation");
+            assert!(
+                error
+                    .to_string()
+                    .contains("reconfirm VoteSigned TC no-effect replay"),
+                "{error:#}"
+            );
+            assert_eq!(harness.authorities[negative].facts_v0().unwrap(), before);
         });
     }
 
@@ -7124,6 +8684,56 @@ mod tests {
         });
     }
 
+    include!("native_client_e2e_tests.inc");
+    include!("native_replay_crash_tests.inc");
+
+    #[test]
+    fn native_business_block_finalizes_with_two_empty_regular_descendants_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime = ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(3, 0, 3, 0)
+                .expect("bounded native tail signer lifetime");
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 3);
+            let (height, timestamp, transactions) = harness.workloads[0].clone();
+            let mut first_id = None;
+            for offset in 0..3u64 {
+                let view = harness.authorities[0].facts_v0().unwrap().current_view_v0();
+                let leader = leader_for(&harness.validator_set, view);
+                let index = harness
+                    .validator_set
+                    .validators()
+                    .iter()
+                    .position(|validator| validator.id() == leader)
+                    .unwrap();
+                let body = if offset == 0 {
+                    transactions.clone()
+                } else {
+                    Vec::new()
+                };
+                let proposal = harness.authorities[index]
+                    .signed_native_proposal_v1(body, timestamp + offset * 1_000)
+                    .expect("native owner signs exact business or empty Regular body");
+                assert_eq!(proposal.block().header().height().get(), height + offset);
+                if offset == 0 {
+                    first_id = Some(proposal.block().id());
+                }
+                let round =
+                    drive_parallel_deployed_authority_round_v0(&mut harness.authorities, proposal)
+                        .expect("actual Core/Safety/native owners certify native tail");
+                if offset == 2 {
+                    assert_eq!(round.common_cut_v0().finalized_height_v0(), height);
+                    assert_eq!(
+                        round.common_cut_v0().application_applied_height_v0(),
+                        height
+                    );
+                    assert_eq!(
+                        round.common_cut_v0().finalized_block_id_v0(),
+                        first_id.unwrap()
+                    );
+                }
+            }
+        });
+    }
+
     #[test]
     fn four_validator_real_authorities_finalize_four_nonempty_blocks_v0() {
         run_deployed_convergent_harness_v0(4);
@@ -7133,4 +8743,7 @@ mod tests {
     fn seven_validator_real_authorities_finalize_four_nonempty_blocks_v0() {
         run_deployed_convergent_harness_v0(7);
     }
+    include!("continuous_timeout_projection_tests_v1.inc");
+    include!("continuous_timeout_rearm_tests_v1.inc");
+    include!("continuous_direct_peer_containment_tests_v1.inc");
 }

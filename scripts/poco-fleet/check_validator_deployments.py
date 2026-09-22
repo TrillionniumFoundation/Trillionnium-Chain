@@ -13,6 +13,7 @@ import subprocess
 import sys
 
 from poco_consensus_contract import canonical_lab_genesis_hash
+from check_run_material import application_public_paths_v1
 
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -126,10 +127,11 @@ def validate(coordinator: pathlib.Path, deployments: pathlib.Path, count: int, e
     coordinator_genesis_hash = verify_chain_only_genesis(
         coordinator / "public/validator-set.json", "coordinator"
     )
-    workload_policy = json.loads(
+    application_public = application_public_paths_v1(coordinator_manifest)
+    native_client = application_public == ("public/native-client-profile.json",)
+    ordinary_start_height = 4 if native_client else json.loads(
         (coordinator / "public/workload-policy.json").read_text(encoding="utf-8")
-    )
-    ordinary_start_height = workload_policy["header"]["ordinary_start_height"]
+    )["header"]["ordinary_start_height"]
     coordinator_hash = sha256_file(coordinator_manifest_path)
     topology = json.loads((coordinator / "topology.json").read_text(encoding="utf-8"))
     validator_ids = [record["validator_id"] for record in topology["validators"]]
@@ -226,8 +228,7 @@ def validate(coordinator: pathlib.Path, deployments: pathlib.Path, count: int, e
     observer_expected = {
         "topology.json": coordinator / "topology.json",
         "public/validator-set.json": coordinator / "public/validator-set.json",
-        "public/workload.corpus": coordinator / "public/workload.corpus",
-        "public/workload-policy.json": coordinator / "public/workload-policy.json",
+        **{relative: coordinator / relative for relative in application_public},
         **{relative: coordinator / relative for relative in BOOTSTRAP_RELATIVE_PATHS},
         **{
             f"public/configs/{validator_id}.json": coordinator
@@ -386,8 +387,7 @@ def validate(coordinator: pathlib.Path, deployments: pathlib.Path, count: int, e
             "topology.json": coordinator / "topology.json",
             "public/validator-set.json": coordinator / "public/validator-set.json",
             f"public/configs/{validator_id}.json": coordinator / f"public/configs/{validator_id}.json",
-            "public/workload.corpus": coordinator / "public/workload.corpus",
-            "public/workload-policy.json": coordinator / "public/workload-policy.json",
+            **{relative: coordinator / relative for relative in application_public},
             **{relative: coordinator / relative for relative in BOOTSTRAP_RELATIVE_PATHS},
         }
         expected_secret = {
@@ -440,7 +440,7 @@ def validate(coordinator: pathlib.Path, deployments: pathlib.Path, count: int, e
         print(
             f"poco_g3_validator_deployments=passed validators={count} "
             f"ordinary_start_height={ordinary_start_height} "
-            "secrets_per_validator=3 public_workload_per_validator=true "
+            f"secrets_per_validator=3 public_workload_per_validator={str(not native_client).lower()} native_client_profile={str(native_client).lower()} "
             "public_bootstrap_bundle_per_validator=true "
             "observer_public_bundle=true coordinator_all_secrets_not_deployed=true "
             "application_private_keys=false material_author_hash_bound=true "

@@ -396,7 +396,10 @@ reservation, deadlines, checkpoint/resume, migration, cancellation, timeout,
 and refund state transitions. It cannot order blocks, sign consensus messages,
 or treat external compute as deterministic without an M11 profile.
 
-**Primary code.** `trnm-poco-agent-market-v1` and `trnm-worker-agent`.
+**Primary code.** `trnm-poco-agent-market-v1` and `trnm-worker-agent`. The
+candidate archive owner is `archive_store.rs::TaskArchiveStoreV1`; it is a
+local durable adapter and does not promote the planned terminal service to
+production authority.
 
 **Contract.** Every delegated action binds controller/session key, capability and
 session generation, exact lane/nonce/version, operation body, scope, budget, and
@@ -409,6 +412,13 @@ budget or nonce change. Stale generations, unavailable commitment carriers,
 unsupported scopes, partial multi-object transitions, and ambiguous durable
 state fail closed. Private prompts, data, weights, and outputs remain off-chain
 unless committed through declared profiles.
+
+The candidate archive owner persists a policy-bound live root, legal-hold
+snapshot, contiguous seal chain and archived terminal records. Archive/delete
+is one immediate SQLite transaction with reopen-time chain/root audit and exact
+retry receipts. It still requires an authenticated whole-node terminal/retention
+permit, external hold authority and independently accepted multi-host,
+power-loss and scale evidence before any production deletion claim.
 
 **Verification.** Capability revocation/delegation, shared-budget concurrency,
 all lifecycle terminal paths, crash recovery, conservation, wallet/RPC/SDK, and

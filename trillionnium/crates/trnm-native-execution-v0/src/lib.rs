@@ -27,6 +27,9 @@
 
 #![forbid(unsafe_code)]
 
+mod incremental_sync_transport_v2;
+pub use incremental_sync_transport_v2::*;
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use anyhow::{anyhow, ensure, Context, Result};
@@ -51,6 +54,10 @@ mod auth_tree;
 mod canonical_lab_bootstrap;
 mod complete;
 mod durable;
+mod epoch_edge;
+mod epoch_recovery;
+mod later_epoch_checkpoint_bridge;
+mod native_live_v1;
 mod pcc1_finality;
 mod poco_application;
 mod poco_checkpoint;
@@ -63,6 +70,14 @@ mod poco_semantics;
 mod poco_snapshot;
 mod poco_transition;
 mod store;
+pub use native_live_v1::{
+    native_current_live_schema_digest_v1, recompute_native_current_live_v1,
+    NativeCurrentLiveEntryV1, NativeCurrentLiveExportV1, MAX_NATIVE_CURRENT_LIVE_BYTES_V1,
+    NATIVE_CURRENT_LIVE_CODEC_VERSION_V1, NATIVE_CURRENT_LIVE_MAX_CHUNKS_V1,
+    NATIVE_CURRENT_LIVE_MAX_CHUNK_BYTES_V1, NATIVE_CURRENT_LIVE_MAX_ENTRIES_V1,
+    NATIVE_CURRENT_LIVE_MAX_KEY_BYTES_V1, NATIVE_CURRENT_LIVE_MAX_VALUE_BYTES_V1,
+};
+pub use store::incremental_store_v1;
 mod validator_lifecycle;
 
 pub use canonical_lab_bootstrap::{
@@ -74,15 +89,32 @@ pub use canonical_lab_bootstrap::{
 pub use complete::{NativeBlockPreviewRequestV0, NativeBlockPreviewV0};
 pub use durable::{
     validate_native_finalized_execution_receipts_v0, CanonicalLabNativeApplicationConfigInputsV0,
+    CommittedLaterEpochPreHandoffV1, CommittedNativeEpochExecutionV1,
+    CommittedNativeReplayExecutionV1, ComputedLaterEpochSelectionV1,
     ConfirmedDurableExecutionHistoryRowV0, ConfirmedDurableExecutionPV0,
-    ConfirmedNativeH1StateSyncTrustedBaseV0, DurableExecutionHistoryStatusV0,
-    DurableNativeApplicationV0, FinalizedNativeApplicationCommitRequestV0,
-    FinalizedNativeApplicationReadV0, NativeApplicationConfigV0,
+    ConfirmedNativeH1StateSyncTrustedBaseV0, ConfirmedNativeReplayAnchorV1,
+    ConfirmedNativeReplayBaseV1, ConfirmedNativeTerminalInventoryV1,
+    ConfirmedPreparedNativeReplayExecutionV1, DurableExecutionHistoryStatusV0,
+    DurableNativeApplicationV0, EpochEdgeHistoryEntryV1, EpochEdgeHistoryV1, EpochEdgePhaseV1,
+    FinalizedNativeApplicationCommitRequestV0, FinalizedNativeApplicationReadV0,
+    FinalizedNativeEpochApplicationReadV1, LaterEpochApplicationEdgeRequirementsV1,
+    LaterEpochApplicationEdgeV1, LaterEpochCheckpointContextV1, NativeApplicationConfigV0,
     NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
-    NativeH1StateSyncTrustedBaseRequestV0, VerifiedNativeSignerReplayFloorV1,
+    NativeEpochFinalityPathV1, NativeEpochFinalityStepV1, NativeH1StateSyncTrustedBaseRequestV0,
+    NativeHistoricalRecordV1, NativeHistoricalReplayV1, PreparedNativeEpochExecutionV1,
+    PreparedNativeReplayBaseV1, VerifiedNativeSignerReplayFloorV1,
 };
+pub use durable::{
+    CommittedNativeIncrementalExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,
+    ConfirmedPreparedNativeIncrementalExecutionV1, PreparedNativeIncrementalExecutionV1,
+};
+pub use epoch_edge::{AuthenticatedEpochApplicationEdgeV1, ConfirmedEpochApplicationEdgeV1};
+pub use later_epoch_checkpoint_bridge::LaterEpochCheckpointFinalityV1;
 pub use pcc1_finality::{PocoFinalityCommitErrorV0, PocoFinalizedApplicationReadV0};
-pub use poco_checkpoint::{ConfirmedNativePocoCheckpointV0, PreparedNativePocoCheckpointV0};
+pub use poco_checkpoint::{
+    ConfirmedNativePocoCheckpointV0, PreHandoffCheckpointReceiptV1,
+    PreparedCheckpointExecutionReceiptV1, PreparedNativePocoCheckpointV0,
+};
 pub use store::{
     authenticated_key_hash_v0, stored_object_key_v0, AuthenticatedObjectRecordV0,
     InMemoryNativeExecutionStoreV0, NativeExecutionStoreV0, NativeStateWriteV0,
@@ -698,3 +730,24 @@ mod operation_sequence_profile_boundary_tests;
 
 #[cfg(test)]
 mod tests;
+
+/// Deterministic actual-owner integration fixtures. Never enable in production.
+#[cfg(feature = "test-fixtures")]
+pub mod test_fixtures {
+    pub use crate::poco_checkpoint::native_checkpoint_fixture_v1::{
+        build_native_checkpoint_fixture_v1, epoch_first_finality,
+        native_checkpoint_fixture_config_v1, open_native_checkpoint_fixture_genesis_v1,
+        NativeCheckpointFixtureV1,
+    };
+}
+
+#[cfg(feature = "incremental-epoch-candidate")]
+pub use durable::{
+    CommittedIncrementalEpochPreHandoffV2, CommittedNativeIncrementalEpochExecutionV1,
+    CommittedNativeIncrementalEpochV2, ComputedIncrementalEpochSelectionV1,
+    ComputedIncrementalEpochSelectionV2, ConfirmedIncrementalHandoffSigningV2,
+    IncrementalEpochParentV1, IncrementalPreHandoffPreimagesV2, InstalledIncrementalEpochEdgeV2,
+    PreparedIncrementalCheckpointV2, PreparedIncrementalFirstV2,
+    PreparedNativeIncrementalEpochDescendantV1, PreparedNativeIncrementalEpochExecutionV1,
+    PreparedNativeIncrementalEpochV2,
+};

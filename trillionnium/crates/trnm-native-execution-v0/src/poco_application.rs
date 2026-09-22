@@ -20,7 +20,8 @@ mod poco_authenticated_candidate;
 pub(crate) use poco_authenticated_candidate::{
     authorize_authenticated_poco_candidate_selection_v0,
     authorize_authenticated_poco_cutoff_candidate_selection_v0,
-    AuthenticatedPocoCandidateSelectionV0, AuthenticatedPocoCutoffCandidateSelectionV0,
+    derive_poco_next_epoch_from_cutoff_v1, AuthenticatedPocoCandidateSelectionV0,
+    AuthenticatedPocoCutoffCandidateSelectionV0, ComputedPocoNextEpochV1,
 };
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -40,8 +41,9 @@ use crate::{
         MAX_POCO_SNAPSHOT_ENTRIES,
     },
     poco_transition::{
-        decode_poco_snapshot_value_parts_v0_exact, take_and_validate_production_poco_projection_v0,
-        PocoSnapshotMutationV0, ProductionPocoProjectionV0, MAX_POCO_SEMANTIC_PAYLOAD_BYTES,
+        decode_poco_snapshot_value_parts_v0_exact, encode_poco_snapshot_value_envelope_v0,
+        take_and_validate_production_poco_projection_v0, PocoSnapshotMutationV0,
+        ProductionPocoProjectionV0, MAX_POCO_SEMANTIC_PAYLOAD_BYTES,
     },
 };
 use anyhow::{bail, ensure, Context, Result};
@@ -1182,6 +1184,35 @@ pub(crate) struct AuthenticatedPocoApplicationContextV0 {
 }
 
 impl AuthenticatedPocoApplicationContextV0 {
+    /// Only an opaque, committed checkpoint plus joint handoff can authorize
+    /// the sparse C -> C+3 application step. Ordinary construction below still
+    /// requires exactly source+1; no seal receives an application version.
+    fn from_epoch_edge_v1(
+        edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+        authority_signer_commitment: [u8; 32],
+    ) -> Result<Self> {
+        edge.coordinates().validate()?;
+        let set = edge.new_validator_set();
+        let mut context = Self::new(
+            edge.consensus_parent().height().get(),
+            *edge.application_parent().state_root().as_bytes(),
+            Height::new(edge.first_application_height()),
+            set.chain_id(),
+            set.genesis_hash(),
+            set.epoch(),
+            *edge.new_parameters(),
+            authority_signer_commitment,
+        )?;
+        // The terminal height above checks the consensus successor only. The
+        // retained context always names the real authenticated JMT checkpoint.
+        context.source_version = edge.application_parent().height().get();
+        ensure!(
+            context.source_version.checked_add(3) == Some(context.target_height.get()),
+            "authenticated epoch application step is not checkpoint plus three"
+        );
+        Ok(context)
+    }
+
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
         source_version: u64,
@@ -2470,6 +2501,9 @@ pub(crate) struct PocoApplicationBlockOverlayV0 {
     overlay: PocoApplicationOverlayV0,
     raw_operations: Vec<Vec<u8>>,
     aggregate_operation_bytes: usize,
+    // Set only after exact old/new configuration admission from the opaque
+    // epoch edge. The system prefix itself requires one kind-16 successor.
+    epoch_rollover: bool,
 }
 
 impl PocoApplicationBlockOverlayV0 {
@@ -2532,7 +2566,189 @@ impl PocoApplicationBlockOverlayV0 {
             },
             raw_operations: Vec::new(),
             aggregate_operation_bytes: source_bytes,
+            epoch_rollover: false,
         })
+    }
+
+    fn install_epoch_configuration_v1(
+        &mut self,
+        old_set: &ValidatorSet,
+        old_parameters: &ConsensusParametersV0,
+        new_set: &ValidatorSet,
+        new_parameters: &ConsensusParametersV0,
+    ) -> Result<()> {
+        ensure!(
+            !self.epoch_rollover
+                && self.raw_operations.is_empty()
+                && self.overlay.mutations.is_empty(),
+            "epoch configuration must be the first and only system prefix"
+        );
+        let active = active_projection_context_v0(&self.overlay.entries)?;
+        ensure!(
+            active.validator_set == *old_set && active.parameters == *old_parameters,
+            "epoch edge differs from authenticated old application configuration"
+        );
+        ensure!(
+            old_set.epoch().get().checked_add(1) == Some(new_set.epoch().get())
+                && old_set.chain_id() == new_set.chain_id()
+                && old_set.genesis_hash() == new_set.genesis_hash()
+                && old_parameters.epoch_length_blocks() == new_parameters.epoch_length_blocks()
+                && new_set.consensus_parameters_hash() == new_parameters.hash()
+                && self.context.active_epoch == new_set.epoch()
+                && self.context.chain_id == new_set.chain_id()
+                && self.context.genesis_hash == new_set.genesis_hash()
+                && self.context.active_parameters == *new_parameters,
+            "epoch prefix configuration/context mismatch"
+        );
+        let old_geometry = EpochGeometryV0::new(old_set.epoch(), old_parameters)
+            .map_err(|error| anyhow::anyhow!("invalid old epoch prefix geometry: {error:?}"))?;
+        let new_geometry = EpochGeometryV0::new(new_set.epoch(), new_parameters)
+            .map_err(|error| anyhow::anyhow!("invalid new epoch prefix geometry: {error:?}"))?;
+        ensure!(
+            self.context.source_version == old_geometry.checkpoint_height().get()
+                && self.context.source_version.checked_add(3)
+                    == Some(self.context.target_height.get())
+                && self.context.target_height == new_geometry.epoch_start(),
+            "epoch prefix source/target is not the authenticated checkpoint-to-start edge"
+        );
+        let identity = |epoch: Epoch| {
+            let mut bytes = vec![1];
+            bytes.extend_from_slice(&epoch.get().to_be_bytes());
+            bytes
+        };
+        let old_identity = identity(old_set.epoch());
+        let new_identity = identity(new_set.epoch());
+        let new_set_bytes = new_set
+            .try_cev0_bytes()
+            .map_err(|error| anyhow::anyhow!("encode new epoch validator set: {error:?}"))?;
+        let incoming_epoch = new_set.epoch().get();
+        ensure!(
+            self.overlay
+                .authority
+                .future_candidate_registrations
+                .iter()
+                .all(|record| record.target_epoch == incoming_epoch),
+            "epoch prefix contains a candidate registration outside the consumed epoch"
+        );
+        let mut expired_governance_epochs = BTreeSet::new();
+        for target in self
+            .overlay
+            .authority
+            .pending_governance_proposals
+            .iter()
+            .map(|record| record.target_epoch)
+            .chain(
+                self.overlay
+                    .authority
+                    .finalized_governance_approvals
+                    .iter()
+                    .map(|record| record.target_epoch),
+            )
+        {
+            ensure!(
+                target == incoming_epoch,
+                "epoch prefix governance target is not consumed epoch"
+            );
+            expired_governance_epochs.insert(target);
+        }
+        let mut changes = Vec::with_capacity(4 + expired_governance_epochs.len() * 2);
+        for (kind, payload) in [
+            (
+                PocoSnapshotEntryKindV0::ValidatorConfiguration,
+                new_set_bytes,
+            ),
+            (
+                PocoSnapshotEntryKindV0::ConsensusParameters,
+                new_parameters.canonical_bytes(),
+            ),
+        ] {
+            let old_key = semantic_identity_digest_v0(kind, &old_identity).to_vec();
+            let old_value = self
+                .overlay
+                .entries
+                .get(&(kind, old_key.clone()))
+                .context("epoch prefix lacks exact old active configuration")?
+                .clone();
+            let (new_key, new_value) =
+                encode_poco_snapshot_value_envelope_v0(kind, 1, &new_identity, &payload)?;
+            ensure!(
+                !self.overlay.entries.contains_key(&(kind, new_key.clone())),
+                "epoch prefix would overwrite an existing new active configuration"
+            );
+            changes.push(OverlayMutationV0 {
+                kind,
+                logical_key: old_key,
+                expected_value: Some(old_value),
+                next_value: None,
+            });
+            changes.push(OverlayMutationV0 {
+                kind,
+                logical_key: new_key,
+                expected_value: None,
+                next_value: Some(new_value),
+            });
+        }
+        // These are one-election inputs, not historical certificate authority.
+        // Once that election's authenticated edge is consumed, the live view
+        // must not let the same approval/candidate authorize another epoch.
+        // Their exact old bytes remain available in the retained checkpoint;
+        // all permanent decision nullifiers and provider histories survive.
+        for epoch in expired_governance_epochs {
+            let mut parameters_identity = vec![2];
+            parameters_identity.extend_from_slice(&epoch.to_be_bytes());
+            for (kind, identity) in [
+                (
+                    PocoSnapshotEntryKindV0::RolloutOrGovernance,
+                    epoch.to_be_bytes().to_vec(),
+                ),
+                (
+                    PocoSnapshotEntryKindV0::ConsensusParameters,
+                    parameters_identity,
+                ),
+            ] {
+                let key = semantic_identity_digest_v0(kind, &identity).to_vec();
+                let expected_value = self
+                    .overlay
+                    .entries
+                    .get(&(kind, key.clone()))
+                    .context("epoch prefix lacks consumed governance companion")?
+                    .clone();
+                changes.push(OverlayMutationV0 {
+                    kind,
+                    logical_key: key,
+                    expected_value: Some(expected_value),
+                    next_value: None,
+                });
+            }
+        }
+        // This trusted prefix is narrower than application pruning: exactly
+        // two old role-1 entries are removed and their new role-1 successors
+        // inserted, and consumed election companions are removed. Historical
+        // certificates retain exact bytes. Failed admission above changes nothing.
+        for mutation in changes {
+            let key = (mutation.kind, mutation.logical_key.clone());
+            match &mutation.next_value {
+                Some(value) => {
+                    self.overlay.entries.insert(key.clone(), value.clone());
+                }
+                None => {
+                    self.overlay.entries.remove(&key);
+                }
+            }
+            self.overlay.mutations.insert(key, mutation);
+        }
+        self.overlay
+            .authority
+            .future_candidate_registrations
+            .clear();
+        self.overlay.authority.pending_governance_proposals.clear();
+        self.overlay
+            .authority
+            .finalized_governance_approvals
+            .clear();
+        validate_overlay_projection_bounds_before_clone_v0(&self.overlay.entries)?;
+        self.epoch_rollover = true;
+        Ok(())
     }
 
     pub(crate) fn apply_raw(&mut self, raw: &[u8]) -> Result<()> {
@@ -2922,7 +3138,7 @@ impl PocoApplicationBlockOverlayV0 {
 
     pub(crate) fn seal(mut self) -> Result<SealedPocoApplicationPlanV0> {
         ensure!(
-            !self.raw_operations.is_empty(),
+            self.epoch_rollover || !self.raw_operations.is_empty(),
             "empty application operation sequence has no authority transition"
         );
         let target_revision = self
@@ -2956,6 +3172,66 @@ impl PocoApplicationBlockOverlayV0 {
         apply_prepared_changes(&mut self.overlay, vec![authority_change], false)?;
         seal_overlay_v0(&self.context, &self.raw_operations, self.overlay)
     }
+}
+
+/// Begin the mandatory first-new-epoch system prefix before any user PoCO
+/// operation. The caller must have opened the edge's owner-affine checkpoint
+/// read view. This is a private overlay only: configuration, normalized usage,
+/// kind 16 and the manifest become durable together through the normal seal
+/// and complete-block merger. Neither seal block creates application writes.
+pub(crate) fn begin_authenticated_epoch_rollover_v1(
+    source: &ProductionPocoProjectionV0,
+    edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+    authority_signer_commitment: [u8; 32],
+) -> Result<PocoApplicationBlockOverlayV0> {
+    let context = AuthenticatedPocoApplicationContextV0::from_epoch_edge_v1(
+        edge,
+        authority_signer_commitment,
+    )?;
+    // This validates the original projection under its old epoch before
+    // compacting usage against the authenticated incoming epoch.
+    let mut block = PocoApplicationBlockOverlayV0::from_projection(context, source)?;
+    block.install_epoch_configuration_v1(
+        edge.old_validator_set(),
+        edge.old_parameters(),
+        edge.new_validator_set(),
+        edge.new_parameters(),
+    )?;
+    Ok(block)
+}
+
+/// Context-generic form used by the later successor-edge adapter.  The
+/// context is sealed and must already have been reconstructed from strict
+/// durable evidence; this function does not mint or infer transition facts.
+pub(crate) fn begin_authenticated_epoch_rollover_with_context_v1(
+    source: &ProductionPocoProjectionV0,
+    context: &dyn crate::epoch_edge::EpochExecutionContextV1,
+    authority_signer_commitment: [u8; 32],
+) -> Result<PocoApplicationBlockOverlayV0> {
+    let new_set = context.new_validator_set_v1();
+    let mut authenticated = AuthenticatedPocoApplicationContextV0::new(
+        context.consensus_parent_v1().height().get(),
+        *context.application_parent_v1().state_root().as_bytes(),
+        Height::new(context.first_application_height_v1()),
+        new_set.chain_id(),
+        new_set.genesis_hash(),
+        new_set.epoch(),
+        *context.new_parameters_v1(),
+        authority_signer_commitment,
+    )?;
+    authenticated.source_version = context.application_parent_v1().height().get();
+    ensure!(
+        authenticated.source_version.checked_add(3) == Some(authenticated.target_height.get()),
+        "authenticated context is not checkpoint plus three"
+    );
+    let mut block = PocoApplicationBlockOverlayV0::from_projection(authenticated, source)?;
+    block.install_epoch_configuration_v1(
+        context.old_validator_set_v1(),
+        context.old_parameters_v1(),
+        context.new_validator_set_v1(),
+        context.new_parameters_v1(),
+    )?;
+    Ok(block)
 }
 
 /// Plans a full block of application-authorized PoCO operations.
@@ -10288,18 +10564,18 @@ fn compact_expired_usage_v0(
             .ok()
             .is_some_and(|index| {
                 let span = meter_policies[index].rolling_epoch_span;
-                span > 0 && usage.window_epoch >= active_epoch / span
+                span > 0 && usage.window_epoch == active_epoch / span
             })
     });
     authority
         .consumer_provider_usage
-        .retain(|usage| usage.window_epoch >= active_epoch);
+        .retain(|usage| usage.window_epoch == active_epoch);
     authority
         .task_provider_usage
-        .retain(|usage| usage.window_epoch >= active_epoch);
+        .retain(|usage| usage.window_epoch == active_epoch);
     authority
         .provider_usage
-        .retain(|usage| usage.window_epoch >= active_epoch);
+        .retain(|usage| usage.window_epoch == active_epoch);
     authority.validate()
 }
 
@@ -11108,5 +11384,441 @@ impl<'a> SliceCursor<'a> {
             "semantic payload has trailing bytes"
         );
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod epoch_rollover_tests {
+    use super::*;
+    use ed25519_dalek::{Signer, SigningKey};
+    use trnm_consensus_types::{
+        ProtocolVersion, Signature64, Validator, ValidatorKeyProofOfPossessionV0,
+        ValidatorKeyProofOfPossessionV0Fields, VotingPower,
+    };
+
+    fn parameters() -> ConsensusParametersV0 {
+        let mut fields = ConsensusParametersV0::reference_shadow_v0().fields();
+        fields.epoch_length_blocks = 10;
+        fields.snapshot_lead_blocks = 3;
+        ConsensusParametersV0::new(fields).unwrap()
+    }
+
+    fn set(epoch: u64, parameters: &ConsensusParametersV0) -> ValidatorSet {
+        ValidatorSet::new(
+            GenesisHash::new([7; 32]),
+            ChainId::new("epoch-prefix-test").unwrap(),
+            ProtocolVersion::V0,
+            Epoch::new(epoch),
+            parameters.hash(),
+            (0..4)
+                .map(|i| {
+                    Validator::new(
+                        ValidatorId::from_bytes(format!("validator-{i}").as_bytes()).unwrap(),
+                        ConsensusPublicKey::new(
+                            SigningKey::from_bytes(&[20 + i; 32])
+                                .verifying_key()
+                                .to_bytes(),
+                        ),
+                        VotingPower::new(1).unwrap(),
+                    )
+                    .unwrap()
+                })
+                .collect(),
+        )
+        .unwrap()
+    }
+
+    fn entry(
+        kind: PocoSnapshotEntryKindV0,
+        identity: &[u8],
+        payload: &[u8],
+    ) -> PocoSnapshotEntryV0 {
+        let (key, value) =
+            encode_poco_snapshot_value_envelope_v0(kind, 1, identity, payload).unwrap();
+        PocoSnapshotEntryV0::new(kind, key, value).unwrap()
+    }
+
+    fn live(entries: &[PocoSnapshotEntryV0], height: u64) -> BTreeMap<Vec<u8>, Vec<u8>> {
+        let manifest = PocoSnapshotManifestV0::from_entries(Height::new(height), entries).unwrap();
+        let mut state =
+            BTreeMap::from([(poco_snapshot_manifest_key().unwrap(), manifest.encode())]);
+        state.extend(entries.iter().map(|item| {
+            (
+                poco_snapshot_entry_key(item.kind, &item.logical_key).unwrap(),
+                item.value.clone(),
+            )
+        }));
+        state
+    }
+
+    // Uses real strict PoP and production projection codecs. These kernel
+    // tests do not mint the opaque edge; the signed-checkpoint integration
+    // tests exercise that owner-affine producer separately.
+    fn source(governance: Option<GovernanceApprovalV0>) -> ProductionPocoProjectionV0 {
+        let params = parameters();
+        let old = set(0, &params);
+        let identity = [1, 0, 0, 0, 0, 0, 0, 0, 0];
+        let mut entries = vec![
+            entry(
+                PocoSnapshotEntryKindV0::ValidatorConfiguration,
+                &identity,
+                &old.try_cev0_bytes().unwrap(),
+            ),
+            entry(
+                PocoSnapshotEntryKindV0::ConsensusParameters,
+                &identity,
+                &params.canonical_bytes(),
+            ),
+        ];
+        let mut authority = PocoApplicationAuthorityStateV0::empty();
+        authority.last_target_height = 3;
+        authority.revision = 2;
+        authority.provider_usage.push(ProviderRollingUsageV0 {
+            provider_id_hex: hex::encode(b"provider"),
+            window_epoch: 0,
+            consumed_units: CanonicalU128V0::new(7),
+        });
+        let signing_key = SigningKey::from_bytes(&[70; 32]);
+        let mut proof_fields = ValidatorKeyProofOfPossessionV0Fields {
+            schema_version: SCHEMA_VERSION_V0,
+            genesis_hash: old.genesis_hash(),
+            chain_id: old.chain_id(),
+            target_epoch: Epoch::new(1),
+            validator_id: ValidatorId::from_bytes(b"new-candidate").unwrap(),
+            public_key: ConsensusPublicKey::new(signing_key.verifying_key().to_bytes()),
+            registration_nonce: 1,
+            signature: Signature64::new(vec![1; 64]).unwrap(),
+        };
+        let unsigned = ValidatorKeyProofOfPossessionV0::new(proof_fields).unwrap();
+        proof_fields.signature = Signature64::new(
+            signing_key
+                .sign(unsigned.signing_root().as_bytes())
+                .to_bytes()
+                .to_vec(),
+        )
+        .unwrap();
+        let proof = ValidatorKeyProofOfPossessionV0::new(proof_fields)
+            .unwrap()
+            .try_cev0_bytes()
+            .unwrap();
+        authority
+            .future_candidate_registrations
+            .push(FutureCandidateRegistrationV0 {
+                validator_id_hex: hex::encode(b"new-candidate"),
+                target_epoch: 1,
+                consensus_key_hex: hex::encode(proof_fields.public_key.as_bytes()),
+                registration_nonce: 1,
+                previous_registration_nonce: None,
+                predecessor_history_head_hex: hex::encode([0; 32]),
+                proof_cev0_hex: hex::encode(&proof),
+                proof_digest_hex: hex::encode(domain_hash(
+                    FUTURE_CANDIDATE_POP_DIGEST_DOMAIN,
+                    &proof,
+                )),
+                registration_decision_id_hex: hex::encode([9; 32]),
+                registration_height: 1,
+            });
+        if let Some(approval) = governance {
+            let phase = u8::from(params.rollout_phase());
+            let hash = hex::encode(params.hash().as_bytes());
+            match approval {
+                GovernanceApprovalV0::Pending => {
+                    authority
+                        .pending_governance_proposals
+                        .push(PendingGovernanceProposalV0 {
+                            target_epoch: 1,
+                            proposal_decision_id_hex: hex::encode([10; 32]),
+                            proposed_height: 1,
+                            phase,
+                            parameters_hash_hex: hash,
+                            activation_height: 11,
+                        })
+                }
+                GovernanceApprovalV0::Approved => {
+                    authority
+                        .finalized_governance_approvals
+                        .push(FinalizedGovernanceApprovalV0 {
+                            target_epoch: 1,
+                            proposal_decision_id_hex: hex::encode([10; 32]),
+                            proposed_height: 1,
+                            decision_id_hex: hex::encode([11; 32]),
+                            approval_height: 2,
+                            phase,
+                            parameters_hash_hex: hash,
+                            activation_height: 11,
+                        })
+                }
+            }
+            let mut payload = vec![phase];
+            payload.extend_from_slice(params.hash().as_bytes());
+            payload.extend_from_slice(&11u64.to_be_bytes());
+            payload.push(approval as u8);
+            entries.push(entry(
+                PocoSnapshotEntryKindV0::RolloutOrGovernance,
+                &1u64.to_be_bytes(),
+                &payload,
+            ));
+            let mut identity = vec![2];
+            identity.extend_from_slice(&1u64.to_be_bytes());
+            entries.push(entry(
+                PocoSnapshotEntryKindV0::ConsensusParameters,
+                &identity,
+                &params.canonical_bytes(),
+            ));
+        }
+        entries.push(
+            PocoSnapshotEntryV0::new(
+                PocoSnapshotEntryKindV0::ApplicationAuthorityState,
+                poco_application_authority_logical_key_v0().to_vec(),
+                encode_application_authority_envelope_v0(&authority).unwrap(),
+            )
+            .unwrap(),
+        );
+        entries.sort_by(|a, b| (a.kind, &a.logical_key).cmp(&(b.kind, &b.logical_key)));
+        take_and_validate_production_poco_projection_v0(8, &mut live(&entries, 8))
+            .unwrap()
+            .unwrap()
+    }
+
+    fn incoming_context() -> AuthenticatedPocoApplicationContextV0 {
+        let params = parameters();
+        let new = set(1, &params);
+        // Test-only construction of the kernel input; only from_epoch_edge_v1
+        // can make these coordinates in non-test code.
+        let mut context = AuthenticatedPocoApplicationContextV0::new(
+            10,
+            [5; 32],
+            Height::new(11),
+            new.chain_id(),
+            new.genesis_hash(),
+            new.epoch(),
+            params,
+            [6; 32],
+        )
+        .unwrap();
+        context.source_version = 8;
+        context
+    }
+
+    #[test]
+    fn zero_user_rollover_consumes_exact_election_cache_and_restores_atomically() {
+        for approval in [
+            None,
+            Some(GovernanceApprovalV0::Pending),
+            Some(GovernanceApprovalV0::Approved),
+        ] {
+            let source = source(approval);
+            let original = source.clone();
+            let params = parameters();
+            let mut overlay =
+                PocoApplicationBlockOverlayV0::from_projection(incoming_context(), &source)
+                    .unwrap();
+            overlay
+                .install_epoch_configuration_v1(
+                    &set(0, &params),
+                    &params,
+                    &set(1, &params),
+                    &params,
+                )
+                .unwrap();
+            assert_eq!(
+                active_projection_context_v0(&overlay.overlay.entries)
+                    .unwrap()
+                    .validator_set
+                    .epoch(),
+                Epoch::new(1)
+            );
+            assert!(overlay.overlay.authority.provider_usage.is_empty());
+            assert!(overlay
+                .overlay
+                .authority
+                .future_candidate_registrations
+                .is_empty());
+            assert!(overlay
+                .overlay
+                .authority
+                .pending_governance_proposals
+                .is_empty());
+            assert!(overlay
+                .overlay
+                .authority
+                .finalized_governance_approvals
+                .is_empty());
+            let old_nullifier = overlay.overlay.authority.nullifier_root_hex.clone();
+            let plan = overlay.seal().unwrap();
+            assert_eq!(
+                (
+                    plan.source_version(),
+                    plan.target_height().get(),
+                    plan.operation_count()
+                ),
+                (8, 11, 0)
+            );
+            assert_eq!(
+                plan.mutation_count(),
+                if approval.is_some() { 7 } else { 5 }
+            );
+            let mut state = live(source.entries(), 8);
+            for (key, value) in plan.namespace_writes() {
+                match value {
+                    Some(value) => {
+                        state.insert(key.to_vec(), value.to_vec());
+                    }
+                    None => {
+                        state.remove(key);
+                    }
+                }
+            }
+            let restored = take_and_validate_production_poco_projection_v0(11, &mut state)
+                .unwrap()
+                .unwrap();
+            assert!(state.is_empty());
+            let authority_entry = restored
+                .entries()
+                .iter()
+                .find(|e| e.kind == PocoSnapshotEntryKindV0::ApplicationAuthorityState)
+                .unwrap();
+            let parts = owned_semantic_parts(
+                authority_entry.kind,
+                &authority_entry.logical_key,
+                &authority_entry.value,
+            )
+            .unwrap();
+            let authority = PocoApplicationAuthorityStateV0::decode_exact(&parts.payload).unwrap();
+            assert_eq!((authority.revision, authority.last_target_height), (3, 11));
+            assert_eq!(authority.nullifier_root_hex, old_nullifier);
+            assert_eq!(
+                source, original,
+                "planning must never mutate the source checkpoint"
+            );
+        }
+    }
+
+    #[test]
+    fn ordinary_empty_or_sparse_context_has_no_rollover_authority() {
+        let params = parameters();
+        let old = set(0, &params);
+        assert!(AuthenticatedPocoApplicationContextV0::new(
+            8,
+            [5; 32],
+            Height::new(11),
+            old.chain_id(),
+            old.genesis_hash(),
+            Epoch::new(1),
+            params,
+            [6; 32],
+        )
+        .is_err());
+        let overlay =
+            PocoApplicationBlockOverlayV0::from_projection(incoming_context(), &source(None))
+                .unwrap();
+        assert!(
+            overlay.seal().is_err(),
+            "coordinates alone do not enable zero-user sealing"
+        );
+    }
+
+    #[test]
+    fn substituted_old_configuration_rejects_before_any_prefix_mutation() {
+        let params = parameters();
+        let mut overlay =
+            PocoApplicationBlockOverlayV0::from_projection(incoming_context(), &source(None))
+                .unwrap();
+        let entries = overlay.overlay.entries.clone();
+        assert!(overlay
+            .install_epoch_configuration_v1(&set(1, &params), &params, &set(1, &params), &params)
+            .is_err());
+        assert_eq!(entries, overlay.overlay.entries);
+        assert!(overlay.overlay.mutations.is_empty());
+        assert!(!overlay.epoch_rollover);
+    }
+
+    #[test]
+    fn normalization_retains_only_exact_current_windows_without_relabeling() {
+        let mut authority = PocoApplicationAuthorityStateV0::empty();
+        authority.last_target_height = 1;
+        authority.revision = 2;
+        authority.meter_policies.push(MeterAuthorityPolicyV0 {
+            meter_id_hex: hex::encode(b"meter"),
+            meter_version: 1,
+            task_id_hex: hex::encode(b"task"),
+            output_commitment_hex: None,
+            unit_scale: CanonicalU128V0::new(1),
+            evidence_policy: MeterEvidencePolicyV0::Optional,
+            per_certificate_cap: CanonicalU128V0::new(100),
+            rolling_cap: CanonicalU128V0::new(100),
+            rolling_epoch_span: 2,
+            retention_blocks: 1,
+            active_from_height: 1,
+            retired_at_height: None,
+        });
+        for epoch in 0..3 {
+            authority.meter_usage.push(MeterRollingUsageV0 {
+                meter_id_hex: hex::encode(b"meter"),
+                meter_version: 1,
+                window_epoch: epoch,
+                consumed_units: CanonicalU128V0::new(10 + u128::from(epoch)),
+            });
+            authority
+                .consumer_provider_usage
+                .push(ConsumerProviderRollingUsageV0 {
+                    consumer_id_hex: hex::encode(b"consumer"),
+                    provider_id_hex: hex::encode(b"provider"),
+                    window_epoch: epoch,
+                    consumed_units: CanonicalU128V0::new(20 + u128::from(epoch)),
+                });
+            authority
+                .task_provider_usage
+                .push(TaskProviderRollingUsageV0 {
+                    task_id_hex: hex::encode(b"task"),
+                    provider_id_hex: hex::encode(b"provider"),
+                    window_epoch: epoch,
+                    consumed_units: CanonicalU128V0::new(30 + u128::from(epoch)),
+                });
+            authority.provider_usage.push(ProviderRollingUsageV0 {
+                provider_id_hex: hex::encode(b"provider"),
+                window_epoch: epoch,
+                consumed_units: CanonicalU128V0::new(40 + u128::from(epoch)),
+            });
+        }
+        compact_expired_usage_v0(&mut authority, &incoming_context()).unwrap();
+        assert_eq!(authority.meter_usage.len(), 1);
+        assert_eq!(
+            (
+                authority.meter_usage[0].window_epoch,
+                authority.meter_usage[0].consumed_units.get().unwrap()
+            ),
+            (0, 10)
+        );
+        assert_eq!(
+            (
+                authority.consumer_provider_usage.len(),
+                authority.consumer_provider_usage[0].window_epoch,
+                authority.consumer_provider_usage[0]
+                    .consumed_units
+                    .get()
+                    .unwrap()
+            ),
+            (1, 1, 21)
+        );
+        assert_eq!(
+            (
+                authority.task_provider_usage.len(),
+                authority.task_provider_usage[0].window_epoch,
+                authority.task_provider_usage[0]
+                    .consumed_units
+                    .get()
+                    .unwrap()
+            ),
+            (1, 1, 31)
+        );
+        assert_eq!(
+            (
+                authority.provider_usage.len(),
+                authority.provider_usage[0].window_epoch,
+                authority.provider_usage[0].consumed_units.get().unwrap()
+            ),
+            (1, 1, 41)
+        );
     }
 }

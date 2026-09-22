@@ -37,7 +37,7 @@ use trnm_consensus_signer_journal::{
 use trnm_consensus_types::{
     BlockId, ContextAuthorizedQcV0, Epoch, Height, QcRef, QcReferenceV0, QuorumCertificate,
     RecoveryContextV1, RecoveryContextV1Fields, RecoveryModeV1, RecoveryZeroDeltaCutV1,
-    RecoveryZeroDeltaCutV1Fields, StateRoot, TimeoutCertificateV0, ValidatorId, View,
+    RecoveryZeroDeltaCutV1Fields, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorId, View,
     RECOVERY_PROCESS_INSTANCE_V1,
 };
 use trnm_consensus_unix_fleet_signer::{
@@ -65,8 +65,9 @@ use crate::{
     },
     continuous_runtime::{
         ContinuousRuntimeFactsV0, ContinuousSignerLifetimeBoundsV0, ContinuousValidatorAuthorityV0,
-        RestartSignatureProducerV1, RestartSignaturePurposeV1,
-        CONTINUOUS_RUNTIME_MAXIMUM_SIGNER_INTENTS_V0, CONTINUOUS_RUNTIME_OWNER_STACK_BYTES_V0,
+        ContinuousValidatorTerminalOwnerV0, DirectPeerFrameOutcomeV1, RestartSignatureProducerV1,
+        RestartSignaturePurposeV1, CONTINUOUS_RUNTIME_MAXIMUM_SIGNER_INTENTS_V0,
+        CONTINUOUS_RUNTIME_OWNER_STACK_BYTES_V0,
     },
     crypto::LabFileWatermark,
     fleet_barrier::{
@@ -393,6 +394,7 @@ const MESH_SETUP_TIMEOUT_V1: Duration =
     Duration::from_secs(CONSENSUS_RUNTIME_MESH_SETUP_ALLOWANCE_SECONDS_V1);
 const MESH_IO_TIMEOUT_V1: Duration = Duration::from_secs(2);
 const MESH_QUEUE_CAPACITY_V1: usize = 256;
+const MAXIMUM_INGRESS_EVENTS_PER_TICK_V1: usize = 64;
 const OWNER_POLL_INTERVAL_V1: Duration = Duration::from_millis(10);
 const PACEMAKER_BASE_TIMEOUT_V1: Duration =
     Duration::from_secs(CONSENSUS_RUNTIME_PACEMAKER_BASE_TIMEOUT_SECONDS_V1);
@@ -1997,10 +1999,12 @@ impl ConsensusRuntimePreflightV1 {
             .ordinary_start_height()
             .checked_add(max_blocks - 1)
             .context("bounded consensus target height overflows")?;
-        ensure!(
-            target_height <= config.workload_corpus().header().max_height,
-            "bounded consensus target exceeds the committed workload corpus"
-        );
+        if config.native_client_profile_v1().is_none() {
+            ensure!(
+                target_height <= config.workload_corpus()?.header().max_height,
+                "bounded consensus target exceeds the committed workload corpus"
+            );
+        }
         let signer_lifetime = ContinuousSignerLifetimeBoundsV0::from_campaign_v0(
             max_blocks,
             duration_seconds,
@@ -2351,20 +2355,36 @@ fn fleet_campaign_context_v1(
     );
     let validator_count = u32::try_from(config.validator_set().validators().len())
         .context("fleet validator count does not fit u32")?;
-    let identity = FleetCampaignIdentityV1::new(
-        config.run_id().to_owned(),
-        config.validator_set().chain_id(),
-        *config.validator_set().genesis_hash().as_bytes(),
-        *config.validator_set().id().as_bytes(),
-        config.validator_set_sha256(),
-        config.topology_sha256(),
-        config.coordinator_manifest_sha256(),
-        config.candidate_source_sha256(),
-        config.binary_sha256(),
-        config.workload_corpus_sha256(),
-        config.workload_policy_sha256(),
-        validator_count,
-    )
+    let identity = if let Some(profile) = config.native_client_profile_v1() {
+        FleetCampaignIdentityV1::new_native_v1(
+            config.run_id().to_owned(),
+            config.validator_set().chain_id(),
+            *config.validator_set().genesis_hash().as_bytes(),
+            *config.validator_set().id().as_bytes(),
+            config.validator_set_sha256(),
+            config.topology_sha256(),
+            config.coordinator_manifest_sha256(),
+            config.candidate_source_sha256(),
+            config.binary_sha256(),
+            profile.digest_v1()?,
+            validator_count,
+        )
+    } else {
+        FleetCampaignIdentityV1::new(
+            config.run_id().to_owned(),
+            config.validator_set().chain_id(),
+            *config.validator_set().genesis_hash().as_bytes(),
+            *config.validator_set().id().as_bytes(),
+            config.validator_set_sha256(),
+            config.topology_sha256(),
+            config.coordinator_manifest_sha256(),
+            config.candidate_source_sha256(),
+            config.binary_sha256(),
+            config.workload_corpus_sha256(),
+            config.workload_policy_sha256(),
+            validator_count,
+        )
+    }
     .map_err(|error| anyhow!("construct fleet campaign identity: {error}"))?;
     let transport = match preflight.transport {
         ConsensusTransportProfileV1::Direct => FleetBarrierTransportV1::Direct,
@@ -2880,6 +2900,7 @@ fn write_fleet_start_certificate_v1(
 }
 
 struct BoundedConsensusOwnerV1 {
+    native_client: Option<crate::native_client_runtime::NativeClientRuntimeV1>,
     config: LoadedValidatorConfig,
     authority: Option<ContinuousValidatorAuthorityV0>,
     mesh: Option<PersistentAuthenticatedPeerMeshV0>,
@@ -2921,19 +2942,92 @@ struct BoundedConsensusOwnerV1 {
     local_proposal_views: BTreeSet<u64>,
     unavailable_sessions: BTreeSet<(PeerDirectionV0, ValidatorId)>,
     highest_submitted_height: u64,
-    post_timeout_rebase_required_finalized_height: Option<u64>,
+    post_timeout_rebase_required_direct_qc_view: Option<u64>,
     initial_consensus_view: u64,
     maximum_archivable_view: u64,
     started_at: Instant,
     nominal_deadline: Instant,
     stopping_since: Option<Instant>,
     terminal_candidate_since: Option<Instant>,
+    terminal_barrier: Option<crate::terminal_barrier_v1::TerminalBarrierV1>,
+    terminal_prepared_snapshot: Option<RestartQuiescenceSnapshotV1>,
+    terminal_owner: Option<ContinuousValidatorTerminalOwnerV0>,
     restart_lifecycle: RestartLifecycleV1,
     prepared_normal_frame_drop_count: u64,
     os_start: RuntimeOsSampleV1,
     network_tx_bytes: u64,
     network_rx_bytes: u64,
     preflight: ConsensusRuntimePreflightV1,
+    /// Bounded diagnostics for timeout-vote collection.  This is deliberately
+    /// a tiny failure-path ring: it records coordinates and identities only,
+    /// never signed payloads or raw consensus bytes.
+    timeout_diagnostics: TimeoutDiagnosticRingV1,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct TimeoutDiagnosticEntryV1 {
+    view: u64,
+    qc_digest: [u8; 32],
+    signer: [u8; 32],
+    outcome: u8,
+}
+
+#[derive(Debug, Default)]
+struct TimeoutDiagnosticRingV1 {
+    accepted: u64,
+    formed: u64,
+    queued: u64,
+    admitted: u64,
+    entries: VecDeque<TimeoutDiagnosticEntryV1>,
+}
+
+impl TimeoutDiagnosticRingV1 {
+    const CAPACITY: usize = 8;
+
+    fn record_vote(&mut self, vote: &TimeoutVote, formed: bool) {
+        self.accepted = self.accepted.saturating_add(1);
+        if formed {
+            self.formed = self.formed.saturating_add(1);
+        }
+        if self.entries.len() == Self::CAPACITY {
+            self.entries.pop_front();
+        }
+        let mut signer = [0u8; 32];
+        signer.copy_from_slice(vote.author().as_bytes());
+        self.entries.push_back(TimeoutDiagnosticEntryV1 {
+            view: vote.view().get(),
+            qc_digest: *vote.high_qc().qc_digest().as_bytes(),
+            signer,
+            outcome: if formed { 1 } else { 0 },
+        });
+    }
+
+    fn record_queued(&mut self) {
+        self.queued = self.queued.saturating_add(1);
+    }
+
+    fn record_admitted(&mut self) {
+        self.admitted = self.admitted.saturating_add(1);
+    }
+
+    fn summary(&self) -> String {
+        let mut summary = format!(
+            "timeout-diag:accepted={}:formed={}:queued={}:admitted={}:",
+            self.accepted, self.formed, self.queued, self.admitted
+        );
+        for entry in &self.entries {
+            use std::fmt::Write as _;
+            let _ = write!(
+                summary,
+                "{}:{}:{}:{};",
+                entry.view,
+                hex::encode(entry.qc_digest),
+                hex::encode(entry.signer),
+                entry.outcome
+            );
+        }
+        summary
+    }
 }
 
 struct CompletedFleetBarrierV1 {
@@ -4155,9 +4249,10 @@ impl BoundedConsensusOwnerV1 {
         let nominal_deadline = started_at
             .checked_add(preflight.duration)
             .ok_or_else(|| anyhow!("bounded consensus deadline overflows"))?;
-        pacemaker.arm(
+        arm_pacemaker_for_facts_v1(
+            &mut pacemaker,
             config.validator_set().epoch(),
-            initial.current_view_v0(),
+            initial,
             started_at,
         )?;
         let highest_submitted_height = config
@@ -4204,7 +4299,27 @@ impl BoundedConsensusOwnerV1 {
         .map_err(|error| anyhow!("initialize restart ingress: {error}"))?;
         let restart_relay_window = RestartRelayAdmissionWindowV1::new(config.validator_set())
             .map_err(|error| anyhow!("initialize restart relay window: {error}"))?;
+        let terminal_barrier = if preflight.transport == ConsensusTransportProfileV1::Direct
+            && config.validator_set().validators().len() == 7
+        {
+            Some(crate::terminal_barrier_v1::TerminalBarrierV1::new(
+                barrier.start_certificate.digest(),
+                config.local_validator(),
+                config
+                    .validator_set()
+                    .validators()
+                    .iter()
+                    .map(|v| v.id())
+                    .collect(),
+                mesh.initial_sessions(),
+            )?)
+        } else {
+            None
+        };
+        let native_client =
+            crate::native_client_runtime::NativeClientRuntimeV1::open_v1(&config, &authority)?;
         Ok(Self {
+            native_client,
             config,
             authority: Some(authority),
             mesh: Some(mesh),
@@ -4233,19 +4348,23 @@ impl BoundedConsensusOwnerV1 {
             local_proposal_views: BTreeSet::new(),
             unavailable_sessions: BTreeSet::new(),
             highest_submitted_height,
-            post_timeout_rebase_required_finalized_height: None,
+            post_timeout_rebase_required_direct_qc_view: None,
             initial_consensus_view,
             maximum_archivable_view,
             started_at,
             nominal_deadline,
             stopping_since: None,
             terminal_candidate_since: None,
+            terminal_barrier,
+            terminal_prepared_snapshot: None,
+            terminal_owner: None,
             restart_lifecycle: RestartLifecycleV1::Running,
             prepared_normal_frame_drop_count: 0,
             os_start,
             network_tx_bytes: 0,
             network_rx_bytes: 0,
             preflight,
+            timeout_diagnostics: TimeoutDiagnosticRingV1::default(),
         })
     }
 
@@ -4262,6 +4381,13 @@ impl BoundedConsensusOwnerV1 {
 
     fn run_loop_v1(&mut self) -> Result<BoundedConsensusLoopOutcomeV1> {
         loop {
+            if self.terminal_owner.is_some() {
+                self.require_terminal_drain_deadline_v1(Instant::now())?;
+                if self.poll_parked_terminal_v1()? {
+                    return Ok(BoundedConsensusLoopOutcomeV1::NormalTerminal);
+                }
+                continue;
+            }
             if self.restart_lifecycle.selects_process1_target_handoff_v1() {
                 return Ok(BoundedConsensusLoopOutcomeV1::Process1TargetParked);
             }
@@ -4300,6 +4426,7 @@ impl BoundedConsensusOwnerV1 {
             let outbox_progress = self.flush_outbox_v1()?;
             let pending_proposal_progress = self.drain_pending_proposals_v1()?;
             let certificate_progress = self.drain_pending_certificates_v1()?;
+            let client_progress = self.poll_native_client_v1()?;
             let proposal_progress = self.maybe_propose_v1()?;
             self.refresh_stop_state_v1(Instant::now())?;
 
@@ -4320,6 +4447,7 @@ impl BoundedConsensusOwnerV1 {
                 || pending_proposal_progress
                 || certificate_progress
                 || proposal_progress
+                || client_progress
                 || ingress_progress
                 || timeout_progress
                 || restart_prepare_progress
@@ -4329,7 +4457,7 @@ impl BoundedConsensusOwnerV1 {
             }
             let now = Instant::now();
             self.refresh_stop_state_v1(now)?;
-            if self.terminal_ready_v1(now)? {
+            if self.maybe_advance_terminal_barrier_v1(now)? {
                 return Ok(BoundedConsensusLoopOutcomeV1::NormalTerminal);
             }
             if let Some(stopping_since) = self.stopping_since {
@@ -4353,17 +4481,15 @@ impl BoundedConsensusOwnerV1 {
     }
 
     fn drain_ready_ingress_v1(&mut self) -> Result<bool> {
-        let mut progressed = false;
-        loop {
+        drain_remaining_ingress_tick_v1(|| {
             let event = match self.prestarted_ingress.pop_front() {
                 Some(event) => Some(event),
                 None => self.mesh_v1()?.receive_timeout(Duration::ZERO)?,
             };
-            let Some(event) = event else {
-                return Ok(progressed);
-            };
-            progressed |= self.handle_mesh_event_v1(event)?;
-        }
+            event
+                .map(|event| self.handle_mesh_event_v1(event))
+                .transpose()
+        })
     }
 
     fn refresh_stop_state_v1(&mut self, now: Instant) -> Result<()> {
@@ -4374,13 +4500,20 @@ impl BoundedConsensusOwnerV1 {
         let positive_ordinary_finality = facts.finalized_height_v0()
             >= self.config.ordinary_start_height()
             && facts.application_applied_height_v0() == facts.finalized_height_v0();
-        let reached_height_bound = self.highest_submitted_height >= self.preflight.target_height;
         let reached_duration_bound = now >= self.nominal_deadline;
+        let native_drained = self
+            .native_client
+            .as_ref()
+            .is_none_or(|client| client.drained_v1(facts.finalized_height_v0()));
         if self.stopping_since.is_none()
             && positive_ordinary_finality
-            && (reached_height_bound || reached_duration_bound)
+            && native_drained
+            && bounded_stop_ready_v1(self.preflight.target_height, reached_duration_bound, facts)
         {
             self.stopping_since = Some(now);
+            if let Some(client) = self.native_client.as_mut() {
+                client.stop_admission_v1();
+            }
             self.pacemaker.cancel();
         }
         if reached_duration_bound && self.stopping_since.is_none() {
@@ -4389,7 +4522,7 @@ impl BoundedConsensusOwnerV1 {
                 .checked_add(TERMINAL_DRAIN_GRACE_V1)
                 .ok_or_else(|| anyhow!("positive-finality drain deadline overflows"))?;
             if now >= grace_deadline {
-                bail!("bounded duration elapsed without one positive ordinary finality cut");
+                bail!("DRAIN_INCOMPLETE: bounded duration elapsed before positive finality and accepted native work drained");
             }
         }
         Ok(())
@@ -4403,7 +4536,7 @@ impl BoundedConsensusOwnerV1 {
             || !self.pending_certificates.is_empty()
             || !self.prestarted_ingress.is_empty()
             || !self.unavailable_sessions.is_empty()
-            || self.post_timeout_rebase_required_finalized_height.is_some()
+            || self.post_timeout_rebase_required_direct_qc_view.is_some()
             || self.active_connectivity_fault.is_some()
             || self
                 .runtime_control
@@ -4428,6 +4561,10 @@ impl BoundedConsensusOwnerV1 {
             || facts.pending_timeout_certificate_id_v0().is_some()
             || facts.finalized_height_v0() < self.config.ordinary_start_height()
             || facts.application_applied_height_v0() != facts.finalized_height_v0()
+            || self
+                .native_client
+                .as_ref()
+                .is_some_and(|client| !client.drained_v1(facts.finalized_height_v0()))
         {
             self.terminal_candidate_since = None;
             return Ok(false);
@@ -4439,6 +4576,74 @@ impl BoundedConsensusOwnerV1 {
         )
     }
 
+    fn archive_native_finality_v1(&mut self) -> Result<()> {
+        let Some(client) = self.native_client.as_ref() else {
+            return Ok(());
+        };
+        let after_height = client.last_archived_finalized_height_v1();
+        let authority = self
+            .authority
+            .as_ref()
+            .context("native finality authority unavailable")?;
+        let facts = authority.facts_v0()?;
+        if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready
+            || facts.finalized_height_v0() < self.config.ordinary_start_height()
+            || facts.finalized_height_v0() <= after_height
+        {
+            return Ok(());
+        }
+        if !client.sync_prefix_ready_v1() {
+            let prefix = self
+                .replay_archive
+                .native_sync_bootstrap_v1(&self.config, self.preflight.bootstrap_initial_cut)?;
+            client.persist_sync_bootstrap_v1(&prefix)?;
+        }
+        let proofs = if facts.finalized_height_v0()
+            == after_height.max(self.config.ordinary_start_height() - 1) + 1
+        {
+            let query = authority.native_finalized_query_v1()?;
+            let proof = query.proof_v0().proof_v0().clone();
+            let parent = self
+                .replay_archive
+                .native_parent_header_v1(proof.finalized_block().header(), &self.config)?;
+            vec![(proof, parent)]
+        } else {
+            self.replay_archive.native_finality_range_v1(
+                &self.config,
+                self.preflight.bootstrap_initial_cut,
+                *facts.finalized_block_id_v0().as_bytes(),
+                after_height,
+            )?
+        };
+        let client = self
+            .native_client
+            .as_mut()
+            .expect("native client checked above");
+        for (proof, parent) in proofs {
+            client.observe_finality_evidence_v1(authority, &proof, &parent)?;
+        }
+        ensure!(
+            client.last_archived_finalized_height_v1() == facts.finalized_height_v0(),
+            "RECOVERY_REQUIRED: native finality archive did not reach the exact current cut"
+        );
+        Ok(())
+    }
+
+    fn poll_native_client_v1(&mut self) -> Result<bool> {
+        self.archive_native_finality_v1()?;
+        let Some(client) = &mut self.native_client else {
+            return Ok(false);
+        };
+        if Instant::now() >= self.nominal_deadline {
+            client.stop_admission_v1();
+        }
+        let authority = self
+            .authority
+            .as_ref()
+            .context("native client authority is unavailable")?;
+        poll_native_with_authority_v1(client, authority)
+    }
+
     fn maybe_propose_v1(&mut self) -> Result<bool> {
         if !self.restart_lifecycle.allows_local_proposal_v1() || self.stopping_since.is_some() {
             return Ok(false);
@@ -4447,6 +4652,12 @@ impl BoundedConsensusOwnerV1 {
         if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready {
             return Ok(false);
         }
+        if !self.authority_v1()?.proposal_witness_ready_v1()? {
+            return Ok(false);
+        }
+        // Witness preparation may durably rebase a late Synced native parent
+        // to Core's exact high QC. Author only from the confirmed successor.
+        let facts = self.authority_v1()?.facts_v0()?;
         let view = facts.current_view_v0();
         if leader_for(self.config.validator_set(), view) != self.config.local_validator()
             || self.local_proposal_views.contains(&view.get())
@@ -4465,8 +4676,23 @@ impl BoundedConsensusOwnerV1 {
             .authority
             .as_mut()
             .ok_or_else(|| anyhow!("continuous authority is unavailable"))?;
-        let proposal =
-            authority.signed_workload_proposal_from_loaded_config_v0(&mut self.config)?;
+        let proposal = if let Some(client) = &mut self.native_client {
+            let allow_business = next_height <= self.preflight.target_height.saturating_sub(2);
+            if !allow_business || Instant::now() >= self.nominal_deadline {
+                client.stop_admission_v1();
+            }
+            let Some(proposal) = client.maybe_proposal_v1(
+                authority,
+                allow_business,
+                self.config.consensus_parameters().max_block_time_step_ms(),
+            )?
+            else {
+                return Ok(false);
+            };
+            proposal
+        } else {
+            authority.signed_workload_proposal_from_loaded_config_v0(&mut self.config)?
+        };
         let block_id = proposal.block().id();
         let height = proposal.block().header().height().get();
         self.record_proposal_first_seen_v1(block_id, height)?;
@@ -4817,6 +5043,9 @@ impl BoundedConsensusOwnerV1 {
     fn handle_mesh_event_v1(&mut self, event: MeshIngressEventV0) -> Result<bool> {
         match event {
             MeshIngressEventV0::Frame(inbound) => {
+                if let Some(barrier) = self.terminal_barrier.as_mut() {
+                    barrier.observe_session(PeerSessionFactsV0::from_inbound_owner_v1(&inbound))?;
+                }
                 self.admit_inbound_mesh_frame_session_v1(&inbound)?;
                 let remote = inbound.remote();
                 let received = authenticated_frame_wire_bytes_v1(
@@ -4830,6 +5059,10 @@ impl BoundedConsensusOwnerV1 {
                 match self.preflight.transport {
                     ConsensusTransportProfileV1::Direct => {
                         let frame = inbound.frame();
+                        if frame.kind == FrameKind::TerminalBarrier {
+                            self.terminal_barrier_mut_v1()?.admit(&inbound)?;
+                            return Ok(false);
+                        }
                         if matches!(frame.kind, FrameKind::FleetReady | FrameKind::FleetStart) {
                             return self.admit_late_fleet_barrier_statement_v1(
                                 frame.sender,
@@ -4848,17 +5081,15 @@ impl BoundedConsensusOwnerV1 {
                                 .transpose()
                                 .map(|progress| progress.unwrap_or(false));
                         }
-                        ensure!(
-                            frame.kind != FrameKind::ConsensusRelay,
-                            "seven-validator direct runtime rejects relay frames"
-                        );
                         if self.restart_lifecycle.is_prepared_v1() {
+                            ensure!(
+                                frame.kind != FrameKind::ConsensusRelay,
+                                "seven-validator direct runtime rejects relay frames"
+                            );
                             self.record_prepared_normal_frame_drop_v1()?;
                             return Ok(true);
                         }
-                        let action = self
-                            .authority_v1()?
-                            .admit_authenticated_consensus_frame_v0(&frame)?;
+                        let action = route_contained_direct_frame_v1(self.authority_v1()?, &frame)?;
                         match action {
                             Some(action) => self.handle_routed_action_v1(action),
                             None => Ok(false),
@@ -4949,6 +5180,9 @@ impl BoundedConsensusOwnerV1 {
                 Ok(true)
             }
             MeshIngressEventV0::SessionReestablished(session) => {
+                if let Some(barrier) = self.terminal_barrier.as_mut() {
+                    barrier.observe_session(session)?;
+                }
                 let current = self.observe_inbound_mesh_reestablished_v1(session)?;
                 if session.direction() != PeerDirectionV0::Inbound || current {
                     self.unavailable_sessions
@@ -5128,9 +5362,7 @@ impl BoundedConsensusOwnerV1 {
             prestarted_ingress_count: self.prestarted_ingress.len(),
             unavailable_session_count: self.unavailable_sessions.len(),
             mesh_pending_outbound_bytes,
-            post_timeout_rebase_pending: self
-                .post_timeout_rebase_required_finalized_height
-                .is_some(),
+            post_timeout_rebase_pending: self.post_timeout_rebase_required_direct_qc_view.is_some(),
             active_connectivity_fault: self.active_connectivity_fault.is_some(),
             expected_control_fault,
             active_journal_fault_count: journal.active_faults.len(),
@@ -6102,31 +6334,38 @@ impl BoundedConsensusOwnerV1 {
         match action {
             RoutedConsensusActionV0::Proposal(proposal) => {
                 self.queue_or_vote_proposal_v1(*proposal)?;
+                // A proposal ingress may carry the exact QC/TC references
+                // needed by a deferred timeout quorum.  The proposal gate
+                // can buffer or discard the body, so retry the collector
+                // independently of the authority outcome.  This only
+                // rechecks already authenticated references; it does not
+                // admit a new authority source.
+                self.queue_ready_timeout_certificates_v1()?;
                 Ok(true)
             }
             RoutedConsensusActionV0::Vote { vote, formed_qc } => {
                 if let Some(certificate) = formed_qc {
-                    if self.is_qc_aggregator_v1(&certificate)? {
-                        self.queue_certificate_v1(PendingCertificateV1::Quorum {
-                            certificate: *certificate,
-                            publish: true,
-                        })?;
-                        self.drain_pending_certificates_v1()?;
-                        self.queue_ready_timeout_certificates_v1()?;
-                    }
+                    self.queue_locally_formed_certificate_v1(PendingCertificateV1::Quorum {
+                        certificate: *certificate,
+                        publish: true,
+                    })?;
+                    self.drain_pending_certificates_v1()?;
+                    self.queue_ready_timeout_certificates_v1()?;
                 }
                 let _ = vote;
                 Ok(true)
             }
             RoutedConsensusActionV0::TimeoutVote { vote, formed_tc } => {
+                self.timeout_diagnostics
+                    .record_vote(&vote, formed_tc.is_some());
                 if let Some(certificate) = formed_tc {
-                    if self.is_tc_aggregator_v1(&certificate)? {
-                        self.queue_certificate_v1(PendingCertificateV1::Timeout {
-                            certificate: *certificate,
-                            publish: true,
-                        })?;
-                        self.drain_pending_certificates_v1()?;
-                    }
+                    self.queue_locally_formed_certificate_v1(PendingCertificateV1::Timeout {
+                        certificate: *certificate,
+                        publish: true,
+                    })?;
+                    self.timeout_diagnostics.record_queued();
+                    self.drain_pending_certificates_v1()?;
+                    self.queue_ready_timeout_certificates_v1()?;
                 }
                 let _ = vote;
                 Ok(true)
@@ -6146,6 +6385,7 @@ impl BoundedConsensusOwnerV1 {
                     publish: false,
                 })?;
                 self.drain_pending_certificates_v1()?;
+                self.queue_ready_timeout_certificates_v1()?;
                 Ok(true)
             }
         }
@@ -6161,13 +6401,12 @@ impl BoundedConsensusOwnerV1 {
             .retry_pending_timeout_certificates_v0()?;
         let mut queued = false;
         for certificate in certificates {
-            if self.is_tc_aggregator_v1(&certificate)? {
-                self.queue_certificate_v1(PendingCertificateV1::Timeout {
-                    certificate,
-                    publish: true,
-                })?;
-                queued = true;
-            }
+            self.queue_locally_formed_certificate_v1(PendingCertificateV1::Timeout {
+                certificate,
+                publish: true,
+            })?;
+            self.timeout_diagnostics.record_queued();
+            queued = true;
         }
         if queued {
             self.drain_pending_certificates_v1()?;
@@ -6213,8 +6452,14 @@ impl BoundedConsensusOwnerV1 {
             return Ok(());
         }
         let carried_tc = proposal.timeout_certificate().cloned();
+        let sync_candidate = proposal.clone();
         let before = self.authority_v1()?.facts_v0()?;
-        let vote = self.authority_v1()?.vote_unbound_proposal_v0(proposal)?;
+        let vote = self.authority_v1()?.receive_unbound_proposal_v1(proposal)?;
+        let synced = if vote.is_none() {
+            self.authority_v1()?.sync_late_proposal_v1(sync_candidate)?
+        } else {
+            false
+        };
         let after = self.authority_v1()?.facts_v0()?;
         self.record_application_progress_v1(before, after)?;
         if made_authoritative_progress_v1(before, after) {
@@ -6222,15 +6467,31 @@ impl BoundedConsensusOwnerV1 {
             // Core view change must fence/rearm the old timer just like a
             // standalone certificate; a same-view Vote alone is not progress.
             self.rearm_after_progress_v1(before, after)?;
+        } else if vote.is_none() && before.phase_v0() != after.phase_v0() {
+            // A certificate can restore Ready without advancing the cut.
+            // Match standalone-certificate timer behavior without treating
+            // an ignored body as progress or resetting timeout backoff.
+            self.rearm_after_phase_transition_v1(after)?;
         }
         if let Some(certificate) = carried_tc {
             self.accepted_tc_by_view
                 .insert(certificate.timed_out_view().get(), certificate);
         }
-        self.record_proposal_admitted_v1(block_id, height)?;
-        self.known_executions.insert((height, *block_id.as_bytes()));
-        self.highest_submitted_height = self.highest_submitted_height.max(height);
-        self.emit_local_vote_v1(vote)?;
+        if let Some(vote) = vote {
+            self.record_proposal_admitted_v1(block_id, height)?;
+            self.known_executions.insert((height, *block_id.as_bytes()));
+            self.highest_submitted_height = self.highest_submitted_height.max(height);
+            self.emit_local_vote_v1(vote)?;
+        } else if synced {
+            self.record_proposal_admitted_v1(block_id, height)?;
+            self.known_executions.insert((height, *block_id.as_bytes()));
+            self.highest_submitted_height = self.highest_submitted_height.max(height);
+        } else {
+            // The carrier may have advanced certificates, but its late body
+            // was not executed/voted. Do not publish an execution coordinate
+            // or turn a normal network/timeout race into actor termination.
+            forget_proposal_first_seen_v1(&mut self.proposal_first_seen, block_id);
+        }
         self.drain_pending_certificates_v1()?;
         self.queue_ready_timeout_certificates_v1()?;
         Ok(())
@@ -6276,12 +6537,10 @@ impl BoundedConsensusOwnerV1 {
             )
             .map_err(|error| anyhow!("append Vote broadcast event: {error}"))?;
         if let Some(certificate) = self.authority_v1()?.admit_local_vote_v0(vote)? {
-            if self.is_qc_aggregator_v1(&certificate)? {
-                self.queue_certificate_v1(PendingCertificateV1::Quorum {
-                    certificate,
-                    publish: true,
-                })?;
-            }
+            self.queue_locally_formed_certificate_v1(PendingCertificateV1::Quorum {
+                certificate,
+                publish: true,
+            })?;
         }
         Ok(())
     }
@@ -6304,6 +6563,10 @@ impl BoundedConsensusOwnerV1 {
                 ),
             "pacemaker expiry differs from authoritative current view"
         );
+        if !facts.local_timeout_available_v1() {
+            self.pacemaker.cancel();
+            return Ok(false);
+        }
         let vote = self.authority_v1()?.begin_local_timeout_v0()?;
         self.enqueue_consensus_statement_v1(FrameKind::TimeoutVote, encode_timeout_vote(&vote))?;
         self.event_journal
@@ -6313,59 +6576,43 @@ impl BoundedConsensusOwnerV1 {
                 vote.view().get(),
             )
             .map_err(|error| anyhow!("append TimeoutVote broadcast event: {error}"))?;
+        let vote_diagnostic = vote.clone();
         let formed = self.authority_v1()?.admit_local_timeout_vote_v0(vote)?;
+        self.timeout_diagnostics
+            .record_vote(&vote_diagnostic, formed.is_some());
         self.pacemaker.confirm_timeout_emitted(expiry)?;
         if let Some(certificate) = formed {
-            if self.is_tc_aggregator_v1(&certificate)? {
-                self.queue_certificate_v1(PendingCertificateV1::Timeout {
-                    certificate,
-                    publish: true,
-                })?;
-                self.drain_pending_certificates_v1()?;
-            }
+            self.queue_locally_formed_certificate_v1(PendingCertificateV1::Timeout {
+                certificate,
+                publish: true,
+            })?;
+            self.timeout_diagnostics.record_queued();
+            self.drain_pending_certificates_v1()?;
         }
         Ok(true)
     }
 
+    fn queue_locally_formed_certificate_v1(
+        &mut self,
+        candidate: PendingCertificateV1,
+    ) -> Result<()> {
+        queue_locally_formed_certificate_into_v1(
+            &mut self.pending_certificates,
+            &self.applied_qcs,
+            &self.applied_tcs,
+            &self.accepted_tc_by_view,
+            candidate,
+        )
+    }
+
     fn queue_certificate_v1(&mut self, candidate: PendingCertificateV1) -> Result<()> {
-        let id = candidate.id_v1();
-        if candidate.is_quorum_v1() {
-            if self.applied_qcs.contains(&id) {
-                return Ok(());
-            }
-        } else {
-            let PendingCertificateV1::Timeout { certificate, .. } = &candidate else {
-                unreachable!("non-quorum pending certificate must be a Timeout")
-            };
-            let timed_out_view = certificate.timed_out_view().get();
-            if let Some(accepted) = self.accepted_tc_by_view.get(&timed_out_view) {
-                ensure!(
-                    timeout_certificates_compatible_v0(accepted, certificate),
-                    "conflicting QC coordinate in timeout certificate for an accepted view"
-                );
-                // The bounded standalone lane retains the first TC per view.
-                // Compatible alternatives are inert here, while a signed
-                // Proposal may carry its own exact independently verified TC.
-                // Standalone replay must not consume another phase or
-                // trigger a second rebase.
-                return Ok(());
-            }
-            if self.applied_tcs.contains(&id) {
-                return Ok(());
-            }
-        }
-        if let Some(existing) = self.pending_certificates.iter_mut().find(|existing| {
-            existing.id_v1() == id && existing.is_quorum_v1() == candidate.is_quorum_v1()
-        }) {
-            existing.merge_publish_v1(candidate.publish_v1());
-            return Ok(());
-        }
-        ensure!(
-            self.pending_certificates.len() < MAXIMUM_PENDING_CERTIFICATES_V1,
-            "pending certificate buffer exhausted"
-        );
-        self.pending_certificates.push_back(candidate);
-        Ok(())
+        queue_certificate_into_v1(
+            &mut self.pending_certificates,
+            &self.applied_qcs,
+            &self.applied_tcs,
+            &self.accepted_tc_by_view,
+            candidate,
+        )
     }
 
     fn drain_pending_certificates_v1(&mut self) -> Result<bool> {
@@ -6616,14 +6863,13 @@ impl BoundedConsensusOwnerV1 {
                 certificate.timed_out_view().get(),
             )
             .map_err(|error| anyhow!("append TC admission event: {error}"))?;
+        self.timeout_diagnostics.record_admitted();
         self.record_application_progress_v1(before, after)?;
         self.applied_tcs.insert(id);
         if made_authoritative_progress_v1(before, after) {
-            let required = self
-                .highest_submitted_height
-                .max(self.config.ordinary_start_height());
-            self.post_timeout_rebase_required_finalized_height = Some(
-                self.post_timeout_rebase_required_finalized_height
+            let required = after.current_view_v0().get();
+            self.post_timeout_rebase_required_direct_qc_view = Some(
+                self.post_timeout_rebase_required_direct_qc_view
                     .map_or(required, |existing| existing.max(required)),
             );
             self.rearm_after_progress_v1(before, after)?;
@@ -6685,12 +6931,6 @@ impl BoundedConsensusOwnerV1 {
                     after.finalized_height_v0(),
                 )
                 .map_err(|error| anyhow!("append finalization event: {error}"))?;
-            if self
-                .post_timeout_rebase_required_finalized_height
-                .is_some_and(|required| after.finalized_height_v0() >= required)
-            {
-                self.post_timeout_rebase_required_finalized_height = None;
-            }
         }
         if after.application_applied_height_v0() > before.application_applied_height_v0() {
             self.event_journal
@@ -6701,6 +6941,13 @@ impl BoundedConsensusOwnerV1 {
                 )
                 .map_err(|error| anyhow!("append application acknowledgement event: {error}"))?;
         }
+        if self
+            .post_timeout_rebase_required_direct_qc_view
+            .is_some_and(|required| post_timeout_direct_qc_ready_v1(required, after))
+        {
+            self.post_timeout_rebase_required_direct_qc_view = None;
+        }
+        self.archive_native_finality_v1()?;
         Ok(())
     }
 
@@ -6711,9 +6958,10 @@ impl BoundedConsensusOwnerV1 {
     ) -> Result<()> {
         update_pacemaker_after_progress_v1(&mut self.pacemaker, before, facts)?;
         if self.restart_lifecycle.is_running_v1() && self.stopping_since.is_none() {
-            self.pacemaker.arm(
+            arm_pacemaker_for_facts_v1(
+                &mut self.pacemaker,
                 self.config.validator_set().epoch(),
-                facts.current_view_v0(),
+                facts,
                 Instant::now(),
             )?;
         }
@@ -6722,33 +6970,17 @@ impl BoundedConsensusOwnerV1 {
 
     fn rearm_after_phase_transition_v1(&mut self, facts: ContinuousRuntimeFactsV0) -> Result<()> {
         if self.restart_lifecycle.is_running_v1() && self.stopping_since.is_none() {
-            self.pacemaker.arm_if_unarmed(
-                self.config.validator_set().epoch(),
-                facts.current_view_v0(),
-                Instant::now(),
-            )?;
+            if facts.local_timeout_available_v1() {
+                self.pacemaker.arm_if_unarmed(
+                    self.config.validator_set().epoch(),
+                    facts.current_view_v0(),
+                    Instant::now(),
+                )?;
+            } else {
+                self.pacemaker.cancel();
+            }
         }
         Ok(())
-    }
-
-    fn is_qc_aggregator_v1(&self, certificate: &QuorumCertificate) -> Result<bool> {
-        let next_view = certificate
-            .view()
-            .get()
-            .checked_add(1)
-            .map(View::new)
-            .context("QC next view overflows")?;
-        Ok(leader_for(self.config.validator_set(), next_view) == self.config.local_validator())
-    }
-
-    fn is_tc_aggregator_v1(&self, certificate: &TimeoutCertificateV0) -> Result<bool> {
-        let next_view = certificate
-            .timed_out_view()
-            .get()
-            .checked_add(1)
-            .map(View::new)
-            .context("TC next view overflows")?;
-        Ok(leader_for(self.config.validator_set(), next_view) == self.config.local_validator())
     }
 
     fn record_proposal_first_seen_v1(&mut self, block_id: BlockId, height: u64) -> Result<()> {
@@ -6884,7 +7116,7 @@ impl BoundedConsensusOwnerV1 {
                 && self.restart_round.pending_parked_acks.is_empty()
                 && self.restart_round.admitted_parked_acks.is_empty()
                 && self.unavailable_sessions.is_empty()
-                && self.post_timeout_rebase_required_finalized_height.is_none()
+                && self.post_timeout_rebase_required_direct_qc_view.is_none()
                 && self.active_connectivity_fault.is_none()
                 && self.stopping_since.is_none()
                 && self
@@ -6988,18 +7220,49 @@ impl BoundedConsensusOwnerV1 {
             .close()
             .context("close bounded runtime control server")?;
         self.pacemaker.cancel();
-        self.mesh
+        let mesh = self
+            .mesh
             .take()
-            .ok_or_else(|| anyhow!("consensus mesh was already consumed"))?
-            .close_if_ingress_empty_v1()
-            .context("close consensus mesh")?;
+            .context("consensus mesh was already consumed")?;
+        if self.terminal_barrier_enabled_v1() {
+            ensure!(
+                self.terminal_barrier_v1()?.complete()?
+                    && self.terminal_owner.is_some()
+                    && self.authority.is_none(),
+                "direct terminal lacks actual N/N consumed Park barrier"
+            );
+            mesh.close_with_terminal_ingress_v1(|event| {
+                let received = match &event {
+                    MeshIngressEventV0::Frame(inbound) => authenticated_frame_wire_bytes_v1(
+                        self.config.run_id(),
+                        inbound.frame().payload.len(),
+                    )?,
+                    _ => 0,
+                };
+                self.terminal_barrier_v1()?.validate_residual(event)?;
+                self.network_rx_bytes = self
+                    .network_rx_bytes
+                    .checked_add(received)
+                    .context("residual terminal receive counter overflows")?;
+                Ok(())
+            })
+            .context("close consensus mesh behind complete terminal barrier")?;
+        } else {
+            mesh.close_if_ingress_empty_v1()
+                .context("close consensus mesh")?;
+        }
         let path = {
-            let authority = self
-                .authority
-                .take()
-                .ok_or_else(|| anyhow!("continuous authority was already consumed"))?;
-            let terminal = authority.into_terminal_owner_v0()?;
-            let facts = *terminal.facts_v0();
+            let mut terminal = if let Some(terminal) = self.terminal_owner.take() {
+                terminal
+            } else {
+                self.authority
+                    .take()
+                    .context("continuous authority was already consumed")?
+                    .into_terminal_owner_v0()?
+            };
+            // Worker/P2P callbacks have all joined. Authenticate the original
+            // full durable cut again before any CleanStop or signed evidence.
+            let facts = *terminal.confirm_terminal_cut_v1()?;
             let node = facts.node_v0();
             self.event_journal
                 .record_final_tip(
@@ -7185,6 +7448,9 @@ impl BoundedConsensusOwnerV1 {
                 )?
             };
             write_runtime_final_state_v1(&self.config, &final_state)?;
+            // Evidence signers are external callbacks too. No successful run
+            // returns after any callback replaced the consumed durable cut.
+            terminal.confirm_terminal_cut_v1()?;
             path
         };
         Ok(path)
@@ -7192,6 +7458,8 @@ impl BoundedConsensusOwnerV1 {
 
     fn fail_stop_v1(&mut self) {
         self.pacemaker.cancel();
+        let blocker_mask = self.terminal_blocker_mask_v1();
+        let timeout_diagnostics = self.timeout_diagnostics.summary();
         if let Some(control) = self.runtime_control.take() {
             let _ = control.close();
         }
@@ -7201,12 +7469,97 @@ impl BoundedConsensusOwnerV1 {
         if !self.event_journal.observation().safety_halted
             && !self.event_journal.observation().clean_stop_recorded
         {
-            let _ = self.event_journal.append(
-                RuntimeEventKindV1::SafetyHalted,
-                "bounded-consensus-runtime-failed",
-                0,
+            append_failure_diagnostics_v1(
+                &mut self.event_journal,
+                blocker_mask,
+                &timeout_diagnostics,
             );
         }
+    }
+
+    /// Diagnostic-only projection of the terminal readiness gate.  It is
+    /// emitted to stderr on failure and never becomes authority or journal
+    /// input; the bit layout stays fixed so failed runs remain comparable.
+    fn terminal_blocker_mask_v1(&mut self) -> u32 {
+        let mut mask = 0u32;
+        let now = Instant::now();
+        let ordinary_start_height = self.config.ordinary_start_height();
+        if !self.restart_lifecycle.is_running_v1() {
+            mask |= 1 << 0;
+        }
+        if self.stopping_since.is_none() {
+            mask |= 1 << 1;
+        }
+        if !self.outbox.is_empty() {
+            mask |= 1 << 2;
+        }
+        if !self.pending_proposals.is_empty() {
+            mask |= 1 << 3;
+        }
+        if !self.pending_certificates.is_empty() {
+            mask |= 1 << 4;
+        }
+        if !self.prestarted_ingress.is_empty() {
+            mask |= 1 << 5;
+        }
+        if !self.unavailable_sessions.is_empty() {
+            mask |= 1 << 6;
+        }
+        if self.post_timeout_rebase_required_direct_qc_view.is_some() {
+            mask |= 1 << 7;
+        }
+        if self.active_connectivity_fault.is_some() {
+            mask |= 1 << 8;
+        }
+        if let Some(control) = self.runtime_control.as_ref() {
+            if control.expected_fault().is_some() {
+                mask |= 1 << 9;
+            }
+        }
+        match self.mesh_v1() {
+            Ok(mesh) => match mesh.pending_outbound_bytes_v1() {
+                Ok(bytes) if bytes != 0 => mask |= 1 << 10,
+                Ok(_) => {}
+                Err(_) => mask |= 1 << 15,
+            },
+            Err(_) => mask |= 1 << 15,
+        }
+        match self.authority_v1() {
+            Ok(authority) => match authority.facts_v0() {
+                Ok(facts) => {
+                    if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready {
+                        mask |= 1 << 11;
+                    }
+                    if facts.pending_timeout_certificate_id_v0().is_some() {
+                        mask |= 1 << 12;
+                    }
+                    if facts.finalized_height_v0() < ordinary_start_height {
+                        mask |= 1 << 13;
+                    }
+                    if facts.application_applied_height_v0() != facts.finalized_height_v0() {
+                        mask |= 1 << 14;
+                    }
+                }
+                Err(_) => mask |= 1 << 16,
+            },
+            Err(_) => mask |= 1 << 16,
+        }
+        if !self.event_journal.observation().active_faults.is_empty() {
+            mask |= 1 << 17;
+        }
+        if now < self.nominal_deadline {
+            mask |= 1 << 18;
+        }
+        let quiet_ready = self
+            .terminal_candidate_since
+            .is_some_and(|since| now.saturating_duration_since(since) >= TERMINAL_QUIET_PERIOD_V1);
+        if !quiet_ready {
+            mask |= 1 << 19;
+        }
+        if now.saturating_duration_since(self.started_at) < MINIMUM_METRICS_INTERVAL_V1 {
+            mask |= 1 << 20;
+        }
+        mask
     }
 
     fn authority_v1(&mut self) -> Result<&mut ContinuousValidatorAuthorityV0> {
@@ -7220,6 +7573,45 @@ impl BoundedConsensusOwnerV1 {
             .as_ref()
             .ok_or_else(|| anyhow!("consensus mesh is unavailable"))
     }
+}
+
+include!("terminal_barrier_runtime_v1.inc");
+
+// Keep the pacemaker live while a last-height Vote or TC still needs a real
+// certificate transition. The hard deadline and unchanged height cap bound it.
+fn bounded_stop_ready_v1(
+    target_height: u64,
+    reached_duration_bound: bool,
+    facts: ContinuousRuntimeFactsV0,
+) -> bool {
+    facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready
+        && facts.pending_timeout_certificate_id_v0().is_none()
+        && (facts.high_qc_v0().height().get() >= target_height || reached_duration_bound)
+}
+
+// Called only with facts returned by the actual durable authority path. A
+// speculative submitted height is not a finality or terminal obligation.
+fn post_timeout_direct_qc_ready_v1(required_view: u64, facts: ContinuousRuntimeFactsV0) -> bool {
+    facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready
+        && facts.pending_timeout_certificate_id_v0().is_none()
+        && facts.high_qc_v0().view().get() >= required_view
+        && facts.application_applied_height_v0() == facts.finalized_height_v0()
+}
+
+fn append_failure_diagnostics_v1(
+    journal: &mut RuntimeEventJournalV1,
+    blocker_mask: u32,
+    timeout_diagnostics: &str,
+) {
+    eprintln!(
+        "bounded-consensus-diagnostics blockers=0x{:08x} {}",
+        blocker_mask, timeout_diagnostics
+    );
+    let _ = journal.append(
+        RuntimeEventKindV1::SafetyHalted,
+        "bounded-consensus-runtime-failed",
+        0,
+    );
 }
 
 fn observed_connectivity_fault_subject_v1(
@@ -7257,116 +7649,7 @@ fn observed_connectivity_fault_subject_v1(
     }
 }
 
-#[derive(Debug)]
-struct OrderedBroadcastV1 {
-    kind: FrameKind,
-    payload: Arc<[u8]>,
-    remaining_peers: BTreeSet<ValidatorId>,
-}
-
-#[derive(Debug)]
-struct OrderedConsensusOutboxV1 {
-    peers: Vec<ValidatorId>,
-    pending: VecDeque<OrderedBroadcastV1>,
-    pending_bytes: usize,
-}
-
-impl OrderedConsensusOutboxV1 {
-    fn new(peers: Vec<ValidatorId>) -> Self {
-        Self {
-            peers,
-            pending: VecDeque::new(),
-            pending_bytes: 0,
-        }
-    }
-
-    fn enqueue(&mut self, kind: FrameKind, payload: Vec<u8>) -> Result<()> {
-        self.enqueue_with_excluded_v1(kind, payload, None)
-    }
-
-    fn enqueue_except_v1(
-        &mut self,
-        kind: FrameKind,
-        payload: Vec<u8>,
-        excluded_peer: ValidatorId,
-    ) -> Result<()> {
-        self.enqueue_with_excluded_v1(kind, payload, Some(excluded_peer))
-    }
-
-    fn enqueue_with_excluded_v1(
-        &mut self,
-        kind: FrameKind,
-        payload: Vec<u8>,
-        excluded_peer: Option<ValidatorId>,
-    ) -> Result<()> {
-        ensure!(!payload.is_empty(), "consensus outbox payload is empty");
-        ensure!(
-            self.pending.len() < MAXIMUM_PENDING_BROADCASTS_V1,
-            "consensus outbox message capacity exhausted"
-        );
-        let next_bytes = self
-            .pending_bytes
-            .checked_add(payload.len())
-            .context("consensus outbox byte accounting overflows")?;
-        ensure!(
-            next_bytes <= MAXIMUM_PENDING_BROADCAST_BYTES_V1,
-            "consensus outbox byte capacity exhausted"
-        );
-        self.pending_bytes = next_bytes;
-        let mut remaining_peers = self.peers.iter().copied().collect::<BTreeSet<_>>();
-        if let Some(excluded_peer) = excluded_peer {
-            remaining_peers.remove(&excluded_peer);
-        }
-        ensure!(
-            !remaining_peers.is_empty(),
-            "consensus outbox has no eligible destination peer"
-        );
-        self.pending.push_back(OrderedBroadcastV1 {
-            kind,
-            payload: Arc::from(payload),
-            remaining_peers,
-        });
-        Ok(())
-    }
-
-    fn flush_front_v1(&mut self, mesh: &PersistentAuthenticatedPeerMeshV0) -> Result<(u64, u64)> {
-        let Some(front) = self.pending.front_mut() else {
-            return Ok((0, 0));
-        };
-        let peers = front.remaining_peers.iter().copied().collect::<Vec<_>>();
-        let mut queued_payload_bytes = 0u64;
-        let mut queued_frames = 0u64;
-        for peer in peers {
-            match mesh.send_shared_to_v0(peer, front.kind, Arc::clone(&front.payload))? {
-                crate::consensus_mesh::MeshSendDispositionV0::Queued => {
-                    front.remaining_peers.remove(&peer);
-                    queued_payload_bytes = queued_payload_bytes
-                        .checked_add(
-                            u64::try_from(front.payload.len())
-                                .context("consensus payload size does not fit u64")?,
-                        )
-                        .context("queued payload-byte counter overflows")?;
-                    queued_frames = queued_frames
-                        .checked_add(1)
-                        .context("queued frame counter overflows")?;
-                }
-                crate::consensus_mesh::MeshSendDispositionV0::Backpressured => {}
-            }
-        }
-        if front.remaining_peers.is_empty() {
-            let completed = self.pending.pop_front().expect("outbox front was observed");
-            self.pending_bytes = self
-                .pending_bytes
-                .checked_sub(completed.payload.len())
-                .expect("outbox byte accounting is monotonic");
-        }
-        Ok((queued_payload_bytes, queued_frames))
-    }
-
-    fn is_empty(&self) -> bool {
-        self.pending.is_empty() && self.pending_bytes == 0
-    }
-}
+include!("consensus_outbox_v2.inc");
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum PendingProposalDispositionV1 {
@@ -7507,6 +7790,29 @@ fn proposal_disposition_v1(
     if justify == high_qc {
         return PendingProposalDispositionV1::Vote;
     }
+    // A different signer subset at the same certified parent is still a
+    // usable body. Core retains its higher certificate digest; the actual
+    // owner rechecks the full parent context before Vote/Synced execution.
+    // Synthetic references retain the exact-identity path above.
+    if proposal.justify_qc().as_ordinary().is_some()
+        && justify.epoch() == high_qc.epoch()
+        && justify.validator_set_id() == high_qc.validator_set_id()
+        && justify.view() == high_qc.view()
+        && justify.height() == high_qc.height()
+        && justify.block_id() == high_qc.block_id()
+    {
+        return if qc_reference_execution_ready_v1(
+            proposal.justify_qc(),
+            known_executions,
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        ) {
+            PendingProposalDispositionV1::Vote
+        } else {
+            PendingProposalDispositionV1::Buffer
+        };
+    }
     // Core orders QCs by view, block ID, then certificate digest. A valid
     // signer-subset variant or a later-view branch can advance that order
     // without increasing height; readiness still requires exact execution.
@@ -7574,6 +7880,72 @@ fn prune_finalized_proposal_timestamps_v1(
     finalized_height: u64,
 ) {
     observed.retain(|_, (height, _)| *height > finalized_height);
+}
+
+// Any local quorum holder may disseminate its complete verified carrier.
+// Readiness, persistence and publication still run in the owner's drain path.
+fn queue_locally_formed_certificate_into_v1(
+    pending_certificates: &mut VecDeque<PendingCertificateV1>,
+    applied_qcs: &BTreeSet<[u8; 32]>,
+    applied_tcs: &BTreeSet<[u8; 32]>,
+    accepted_tc_by_view: &BTreeMap<u64, TimeoutCertificateV0>,
+    mut candidate: PendingCertificateV1,
+) -> Result<()> {
+    candidate.merge_publish_v1(true);
+    queue_certificate_into_v1(
+        pending_certificates,
+        applied_qcs,
+        applied_tcs,
+        accepted_tc_by_view,
+        candidate,
+    )
+}
+
+fn queue_certificate_into_v1(
+    pending_certificates: &mut VecDeque<PendingCertificateV1>,
+    applied_qcs: &BTreeSet<[u8; 32]>,
+    applied_tcs: &BTreeSet<[u8; 32]>,
+    accepted_tc_by_view: &BTreeMap<u64, TimeoutCertificateV0>,
+    candidate: PendingCertificateV1,
+) -> Result<()> {
+    let id = candidate.id_v1();
+    if candidate.is_quorum_v1() {
+        if applied_qcs.contains(&id) {
+            return Ok(());
+        }
+    } else {
+        let PendingCertificateV1::Timeout { certificate, .. } = &candidate else {
+            unreachable!("non-quorum pending certificate must be a Timeout")
+        };
+        let timed_out_view = certificate.timed_out_view().get();
+        if let Some(accepted) = accepted_tc_by_view.get(&timed_out_view) {
+            ensure!(
+                timeout_certificates_compatible_v0(accepted, certificate),
+                "conflicting QC coordinate in timeout certificate for an accepted view"
+            );
+            // The bounded standalone lane retains the first TC per view.
+            // Compatible alternatives are inert here, while a signed
+            // Proposal may carry its own exact independently verified TC.
+            // Standalone replay must not consume another phase or
+            // trigger a second rebase.
+            return Ok(());
+        }
+        if applied_tcs.contains(&id) {
+            return Ok(());
+        }
+    }
+    if let Some(existing) = pending_certificates.iter_mut().find(|existing| {
+        existing.id_v1() == id && existing.is_quorum_v1() == candidate.is_quorum_v1()
+    }) {
+        existing.merge_publish_v1(candidate.publish_v1());
+        return Ok(());
+    }
+    ensure!(
+        pending_certificates.len() < MAXIMUM_PENDING_CERTIFICATES_V1,
+        "pending certificate buffer exhausted"
+    );
+    pending_certificates.push_back(candidate);
+    Ok(())
 }
 
 #[derive(Debug, Clone)]
@@ -7719,6 +8091,57 @@ fn made_authoritative_progress_v1(
         || after.application_applied_height_v0() > before.application_applied_height_v0()
 }
 
+/// Uses only the typed pure-input rejection boundary. Collector and all
+/// subsequent authority/storage errors remain errors at the runtime caller.
+pub(crate) fn route_contained_direct_frame_v1(
+    authority: &mut ContinuousValidatorAuthorityV0,
+    frame: &crate::frame::AuthenticatedFrame,
+) -> Result<Option<RoutedConsensusActionV0>> {
+    match authority.admit_contained_direct_frame_v1(frame)? {
+        DirectPeerFrameOutcomeV1::Admitted(action) => Ok(action),
+        DirectPeerFrameOutcomeV1::Rejected(facts) => {
+            eprintln!(
+                "bounded-consensus direct-peer-input rejected {}",
+                facts.diagnostic_v1()
+            );
+            Ok(None)
+        }
+        DirectPeerFrameOutcomeV1::Quarantined => Ok(None),
+    }
+}
+
+/// Poll the actual native endpoint against phase-neutral confirmed facts.
+pub(crate) fn poll_native_with_authority_v1(
+    client: &mut crate::native_client_runtime::NativeClientRuntimeV1,
+    authority: &ContinuousValidatorAuthorityV0,
+) -> Result<bool> {
+    let facts = authority.facts_v0()?;
+    if facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready {
+        client.poll_v1(
+            authority.native_parent_timestamp_v1()?,
+            facts.finalized_height_v0(),
+        )
+    } else {
+        client.poll_read_only_v1(facts.finalized_height_v0())
+    }
+}
+
+/// The loop has already received at most one event before polling its timer.
+/// A perpetually ready peer cannot keep this drain from returning to control,
+/// timer and terminal checks. Rejection alone is never counted as progress.
+pub(crate) fn drain_remaining_ingress_tick_v1(
+    mut next: impl FnMut() -> Result<Option<bool>>,
+) -> Result<bool> {
+    let mut progressed = false;
+    for _ in 1..MAXIMUM_INGRESS_EVENTS_PER_TICK_V1 {
+        match next()? {
+            Some(progress) => progressed |= progress,
+            None => break,
+        }
+    }
+    Ok(progressed)
+}
+
 pub(crate) fn update_pacemaker_after_progress_v1(
     pacemaker: &mut GenerationAwarePacemakerV0,
     before: ContinuousRuntimeFactsV0,
@@ -7731,6 +8154,22 @@ pub(crate) fn update_pacemaker_after_progress_v1(
         pacemaker.observe_progress();
     } else if after.current_view_v0() > before.current_view_v0() {
         pacemaker.observe_view_change()?;
+    }
+    Ok(())
+}
+
+/// Scheduling is subordinate to Core's durable timeout coordinate, including
+/// when a same-view certificate restored Ready or a cold owner is installed.
+pub(crate) fn arm_pacemaker_for_facts_v1(
+    pacemaker: &mut GenerationAwarePacemakerV0,
+    epoch: trnm_consensus_types::Epoch,
+    facts: ContinuousRuntimeFactsV0,
+    now: Instant,
+) -> Result<()> {
+    if facts.local_timeout_available_v1() {
+        pacemaker.arm(epoch, facts.current_view_v0(), now)?;
+    } else {
+        pacemaker.cancel();
     }
     Ok(())
 }
@@ -8233,6 +8672,72 @@ mod tests {
     };
 
     use super::*;
+
+    #[test]
+    fn timeout_diagnostic_ring_is_bounded_and_classifies_outcomes() {
+        let (keys, validator_set, _parameters, _genesis, parent_qc) =
+            synthetic_proposal_fixture_v1();
+        let high_qc = QcReferenceV0::ordinary(parent_qc).qc_ref();
+        let mut ring = TimeoutDiagnosticRingV1::default();
+        let votes = (0..(TimeoutDiagnosticRingV1::CAPACITY + 3))
+            .map(|index| {
+                let view = View::new(2 + index as u64);
+                let root = TimeoutVote::signing_root_for_set(&validator_set, view, high_qc)
+                    .expect("timeout diagnostic signing root");
+                TimeoutVote::new(
+                    validator_set.chain_id(),
+                    validator_set.protocol_version(),
+                    validator_set.epoch(),
+                    view,
+                    validator_set.id(),
+                    high_qc,
+                    validator_set.validators()[index % keys.len()].id(),
+                    SignatureBytes::from_array(
+                        keys[index % keys.len()].sign(root.as_bytes()).to_bytes(),
+                    ),
+                    &validator_set,
+                )
+                .expect("valid timeout diagnostic vote")
+            })
+            .collect::<Vec<_>>();
+        for (index, vote) in votes.iter().enumerate() {
+            ring.record_vote(vote, index % 2 == 0);
+        }
+        ring.record_queued();
+        ring.record_admitted();
+        let summary = ring.summary();
+        assert!(ring.entries.len() <= TimeoutDiagnosticRingV1::CAPACITY);
+        assert!(summary.len() <= 2048);
+        assert!(summary.starts_with("timeout-diag:accepted=11:formed=6:queued=1:admitted=1:"));
+        for (index, vote) in votes.iter().enumerate().skip(3) {
+            let outcome = u8::from(index % 2 == 0);
+            let tuple = format!(
+                "{}:{}:{}:{};",
+                vote.view().get(),
+                hex::encode(vote.high_qc().qc_digest().as_bytes()),
+                hex::encode(vote.author().as_bytes()),
+                outcome,
+            );
+            assert!(summary.contains(&tuple), "missing retained tuple {tuple}");
+        }
+        let removed = format!(
+            "{}:{}:{}:{};",
+            votes[2].view().get(),
+            hex::encode(votes[2].high_qc().qc_digest().as_bytes()),
+            hex::encode(votes[2].author().as_bytes()),
+            u8::from(2usize % 2 == 0),
+        );
+        assert!(!summary.contains(&removed));
+
+        let (_temporary, path, mut journal) = crate::process_event::test_started_event_journal_v1();
+        append_failure_diagnostics_v1(&mut journal, 0x4000, &summary);
+        drop(journal);
+        let events = crate::process_event::test_read_event_journal_v1(&path);
+        assert_eq!(events.len(), 2, "process start plus terminal event");
+        let terminal = events.last().expect("terminal event");
+        assert_eq!(terminal.kind, "safety_halted");
+        assert_eq!(terminal.subject, "bounded-consensus-runtime-failed");
+    }
     use crate::{
         collector::ConsensusCertificateCollectorV0,
         continuous_runtime::ContinuousValidatorAuthorityV0, frame::AuthenticatedFrame,
@@ -9932,11 +10437,11 @@ mod tests {
             Some(PendingProposalAdmissionV1::Vote(_))
         ));
         assert!(buffer.is_empty());
-        let stale = synthetic_future_proposal_v1(8, &keys, &set, parameters, &low);
+        let alternate = synthetic_future_proposal_v1(8, &keys, &set, parameters, &low);
         assert!(matches!(
             buffer
                 .admit_v1(
-                    stale,
+                    alternate.clone(),
                     QcRef::from(&high),
                     &known,
                     0,
@@ -9944,8 +10449,78 @@ mod tests {
                     View::new(0),
                 )
                 .unwrap(),
-            PendingProposalAdmissionV1::IgnoreStale(_)
+            PendingProposalAdmissionV1::Vote(_)
         ));
+        assert_eq!(
+            proposal_disposition_v1(
+                &alternate,
+                QcRef::from(&high),
+                &BTreeSet::new(),
+                0,
+                genesis.block_id(),
+                View::new(0)
+            ),
+            PendingProposalDispositionV1::Buffer,
+            "a same-parent signer subset cannot invent missing native P"
+        );
+        let reference = QcRef::from(&high);
+        // These are inert classifier inputs only, never Core authority. A
+        // single changed context/coordinate must not gain the new exception.
+        let mutants = [
+            QcRef::new(
+                reference.qc_digest(),
+                Epoch::new(reference.epoch().get() + 1),
+                reference.view(),
+                reference.height(),
+                reference.block_id(),
+                reference.validator_set_id(),
+            ),
+            QcRef::new(
+                reference.qc_digest(),
+                reference.epoch(),
+                reference.view(),
+                reference.height(),
+                reference.block_id(),
+                trnm_consensus_types::ValidatorSetId::new([0xe1; 32]),
+            ),
+            QcRef::new(
+                reference.qc_digest(),
+                reference.epoch(),
+                View::new(reference.view().get() + 1),
+                reference.height(),
+                reference.block_id(),
+                reference.validator_set_id(),
+            ),
+            QcRef::new(
+                reference.qc_digest(),
+                reference.epoch(),
+                reference.view(),
+                Height::new(reference.height().get() + 1),
+                reference.block_id(),
+                reference.validator_set_id(),
+            ),
+            QcRef::new(
+                reference.qc_digest(),
+                reference.epoch(),
+                reference.view(),
+                reference.height(),
+                BlockId::new([0xff; 32]),
+                reference.validator_set_id(),
+            ),
+        ];
+        for mutant in mutants {
+            assert_ne!(
+                proposal_disposition_v1(
+                    &alternate,
+                    mutant,
+                    &known,
+                    0,
+                    genesis.block_id(),
+                    View::new(0)
+                ),
+                PendingProposalDispositionV1::Vote
+            );
+        }
         assert!(matches!(
             buffer
                 .admit_v1(
@@ -10757,11 +11332,19 @@ mod tests {
     }
 
     fn real_takeover_fixture_v1(validator_count: usize) -> RealTakeoverFixtureV1 {
+        real_takeover_fixture_with_lifetime_v1(
+            validator_count,
+            ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(4, 0, 4, 0).unwrap(),
+        )
+    }
+
+    fn real_takeover_fixture_with_lifetime_v1(
+        validator_count: usize,
+        signer_lifetime: ContinuousSignerLifetimeBoundsV0,
+    ) -> RealTakeoverFixtureV1 {
         let temp = tempfile::tempdir().expect("create takeover test root");
         fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700))
             .expect("make takeover test root private");
-        let signer_lifetime =
-            ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(4, 0, 4, 0).unwrap();
         let parent_timestamp_ms = 400;
         let child_timestamp_ms = 401;
         let mut validator_set = None;
@@ -10859,6 +11442,12 @@ mod tests {
         }
         certificate.expect("focused votes reach quorum")
     }
+
+    include!("consensus_aggregation_quorum_tests_v1.inc");
+    include!("consensus_terminal_quorum_tests_v1.inc");
+    include!("consensus_same_parent_body_tests_v1.inc");
+
+    include!("consensus_terminal_barrier_tests_v1.inc");
 
     fn on_consensus_owner_stack_v1<T: Send + 'static>(
         body: impl FnOnce() -> T + Send + 'static,

@@ -422,6 +422,7 @@
       "return_type": "EpochAnchorAuthorizationKernelV0",
       "inert": true,
       "permitted_methods": [
+        "from_parts_v0",
         "terminal_old_header",
         "terminal_old_qc",
         "handoff_certificate",

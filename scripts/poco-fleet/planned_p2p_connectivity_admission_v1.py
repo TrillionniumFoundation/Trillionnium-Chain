@@ -22,9 +22,13 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from plan_topology import REDUCED_PLACEMENT, validate_topology_v1
+
 
 PROFILE = "planned-p2p-connectivity-admission-v1"
 SCHEMA_VERSION = 1
+REDUCED_PROFILE = "planned-p2p-connectivity-admission-desktop4-rog3-mac-v1"
+REDUCED_SCHEMA_VERSION = 2
 DIRECT_SEVEN_VALIDATORS = 7
 DIRECT_SEVEN_SOURCE_HOSTS = 5
 DIRECT_SEVEN_ENDPOINTS = 7
@@ -409,9 +413,27 @@ def _require_bound_reference(
         fail(f"{field} does not content-bind {path}")
 
 
-def _validate_topology_v1(raw: bytes) -> tuple[dict[str, Any], dict[str, Any]]:
+def _plan_source_host_count(value: Mapping[str, Any]) -> int:
+    """Select one closed profile; counts never select or promote a profile."""
+    schema = _exact_int(value.get("schema_version"), "schema_version")
+    if schema == SCHEMA_VERSION and value.get("profile") == PROFILE:
+        return DIRECT_SEVEN_SOURCE_HOSTS
+    if schema == REDUCED_SCHEMA_VERSION and value.get("profile") == REDUCED_PROFILE:
+        return 2
+    fail("unsupported endpoint plan schema/profile")
+
+
+def _validate_topology_v1(
+    raw: bytes, inventory: dict[str, Any]
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    decoded = strict_material_json_object_v1(raw, "topology")
+    try:
+        placement = validate_topology_v1(inventory, decoded)
+    except (KeyError, TypeError, ValueError) as error:
+        fail(f"topology inventory binding failed: {error}")
+    reduced = placement == REDUCED_PLACEMENT
     topology = _exact(
-        strict_material_json_object_v1(raw, "topology"),
+        decoded,
         {
             "schema_version",
             "fleet_id",
@@ -423,11 +445,12 @@ def _validate_topology_v1(raw: bytes) -> tuple[dict[str, Any], dict[str, Any]]:
             "test_keys_included",
             "participants",
             "validators",
-        },
+        } | ({"placement_profile"} if reduced else set()),
         "topology",
     )
     if (
-        _exact_int(topology["schema_version"], "topology.schema_version") != 1
+        _exact_int(topology["schema_version"], "topology.schema_version")
+        != (2 if reduced else 1)
         or _exact_int(topology["validator_count"], "topology.validator_count")
         != DIRECT_SEVEN_VALIDATORS
         or _exact_int(topology["peer_degree"], "topology.peer_degree") != 6
@@ -445,8 +468,8 @@ def _validate_topology_v1(raw: bytes) -> tuple[dict[str, Any], dict[str, Any]]:
         fail("topology.fleet_id is invalid")
 
     participants = topology["participants"]
-    if not isinstance(participants, list) or len(participants) != 6:
-        fail("direct-seven topology must contain six exact participants")
+    if not isinstance(participants, list) or len(participants) != (3 if reduced else 6):
+        fail("direct-seven topology participant count differs from its placement")
     participant_by_host: dict[str, dict[str, Any]] = {}
     for index, value in enumerate(participants):
         participant = _exact(
@@ -493,10 +516,11 @@ def _validate_topology_v1(raw: bytes) -> tuple[dict[str, Any], dict[str, Any]]:
         for host_id, participant in participant_by_host.items()
         if participant["validator_eligible"] is True
     }
-    if len(eligible) != DIRECT_SEVEN_SOURCE_HOSTS:
-        fail("direct-seven topology must contain five validator source hosts")
-    if sum(item["management"] == "local" for item in eligible.values()) != 1:
-        fail("direct-seven topology must contain one exact local source host")
+    if len(eligible) != (2 if reduced else DIRECT_SEVEN_SOURCE_HOSTS):
+        fail("direct-seven topology source count differs from its placement")
+    local_sources = sum(item["management"] == "local" for item in eligible.values())
+    if local_sources != (0 if reduced else 1):
+        fail("direct-seven topology local source count differs from its placement")
     if len({item["lan_ip"] for item in participant_by_host.values()}) != len(
         participant_by_host
     ):
@@ -798,19 +822,25 @@ def _validate_deployment_manifest_v3(
 
 def build_direct_seven_endpoint_plan_v1(
     *,
+    inventory: dict[str, Any],
     run_id: str,
     coordinator_manifest_sha256: str,
     topology_bytes: bytes,
     validator_config_bytes: Mapping[str, bytes],
     deployment_manifest_bytes: Mapping[str, bytes],
 ) -> dict[str, Any]:
-    """Build the deterministic direct-seven endpoint plan from verified bytes."""
+    """Bind material to an independently supplied, reviewed inventory.
+
+    The I/O boundary supplies the committed inventory, never inventory decoded
+    from the submitted topology.  This module does not read or select files.
+    """
 
     run_id = _require_run_id(run_id)
     coordinator_manifest_sha256 = _require_hex64(
         coordinator_manifest_sha256, "coordinator_manifest_sha256"
     )
-    topology, participants = _validate_topology_v1(topology_bytes)
+    topology, participants = _validate_topology_v1(topology_bytes, inventory)
+    reduced = topology["schema_version"] == 2
     topology_by_id = {
         item["validator_id"]: item for item in topology["validators"]
     }
@@ -973,15 +1003,15 @@ def build_direct_seven_endpoint_plan_v1(
         for endpoint in endpoints
     ]
     plan = {
-        "schema_version": SCHEMA_VERSION,
-        "profile": PROFILE,
+        "schema_version": REDUCED_SCHEMA_VERSION if reduced else SCHEMA_VERSION,
+        "profile": REDUCED_PROFILE if reduced else PROFILE,
         "run_id": run_id,
         "coordinator_manifest_sha256": coordinator_manifest_sha256,
         "topology_sha256": _sha256(topology_bytes),
         "validator_count": DIRECT_SEVEN_VALIDATORS,
-        "source_host_count": DIRECT_SEVEN_SOURCE_HOSTS,
+        "source_host_count": len(source_hosts),
         "endpoint_count": DIRECT_SEVEN_ENDPOINTS,
-        "physical_edge_count": DIRECT_SEVEN_PHYSICAL_EDGES,
+        "physical_edge_count": len(physical_edges),
         "logical_peer_edge_count": DIRECT_SEVEN_LOGICAL_EDGES,
         "source_hosts": source_hosts,
         "endpoints": endpoints,
@@ -1002,18 +1032,16 @@ def build_direct_seven_endpoint_plan_v1(
 
 def validate_direct_seven_endpoint_plan_v1(plan: object) -> str:
     value = _exact(plan, PLAN_KEYS, "endpoint_plan")
+    source_count = _plan_source_host_count(value)
     if (
-        _exact_int(value["schema_version"], "endpoint_plan.schema_version")
-        != SCHEMA_VERSION
-        or value["profile"] != PROFILE
-        or _exact_int(value["validator_count"], "endpoint_plan.validator_count")
+        _exact_int(value["validator_count"], "endpoint_plan.validator_count")
         != DIRECT_SEVEN_VALIDATORS
         or _exact_int(value["source_host_count"], "endpoint_plan.source_host_count")
-        != DIRECT_SEVEN_SOURCE_HOSTS
+        != source_count
         or _exact_int(value["endpoint_count"], "endpoint_plan.endpoint_count")
         != DIRECT_SEVEN_ENDPOINTS
         or _exact_int(value["physical_edge_count"], "endpoint_plan.physical_edge_count")
-        != DIRECT_SEVEN_PHYSICAL_EDGES
+        != source_count * DIRECT_SEVEN_ENDPOINTS
         or _exact_int(
             value["logical_peer_edge_count"],
             "endpoint_plan.logical_peer_edge_count",
@@ -1032,7 +1060,7 @@ def validate_direct_seven_endpoint_plan_v1(plan: object) -> str:
         _require_exact_bool(value[field], expected, f"endpoint_plan.{field}")
 
     source_hosts = value["source_hosts"]
-    if not isinstance(source_hosts, list) or len(source_hosts) != 5:
+    if not isinstance(source_hosts, list) or len(source_hosts) != source_count:
         fail("endpoint plan source host cardinality differs")
     source_by_id: dict[str, dict[str, Any]] = {}
     previous_host = ""
@@ -1058,9 +1086,14 @@ def validate_direct_seven_endpoint_plan_v1(plan: object) -> str:
                 fail("source host validator assignment is duplicated")
             source_validator_ids.add(validator_id)
         source_by_id[host_id] = source
-    if sum(item["management"] == "local" for item in source_hosts) != 1:
-        fail("endpoint plan must retain one exact local source host")
-    if len({item["lan_ip"] for item in source_hosts}) != 5:
+    if source_count == 2 and {
+        host_id: len(source["validator_ids"]) for host_id, source in source_by_id.items()
+    } != {"desktop": 4, "rog": 3}:
+        fail("reduced endpoint plan differs from exact desktop4/rog3 placement")
+    local_sources = sum(item["management"] == "local" for item in source_hosts)
+    if local_sources != (0 if source_count == 2 else 1):
+        fail("endpoint plan local source count differs from its placement")
+    if len({item["lan_ip"] for item in source_hosts}) != source_count:
         fail("endpoint plan source host LAN addresses are duplicated")
 
     endpoints = value["endpoints"]
@@ -1163,7 +1196,7 @@ def validate_direct_seven_endpoint_plan_v1(plan: object) -> str:
             f"physical_edges[{index}].destination_p2p_identity_public_key",
         )
     if physical_edges != expected_physical:
-        fail("endpoint plan physical edge set/order is not the exact 5x7 matrix")
+        fail(f"endpoint plan physical edge set/order is not the exact {source_count}x7 matrix")
 
     expected_logical = [
         {
@@ -1317,8 +1350,8 @@ def build_probe_request_frame_v1(
     nonce_hex = _require_nonce(nonce_hex)
     edge = _physical_edge(plan, source_host_id, destination_validator_id)
     value = {
-        "schema_version": SCHEMA_VERSION,
-        "profile": PROFILE,
+        "schema_version": plan["schema_version"],
+        "profile": plan["profile"],
         "kind": REQUEST_KIND,
         "endpoint_plan_sha256": plan_sha256,
         "nonce_hex": nonce_hex,
@@ -1343,8 +1376,8 @@ def parse_probe_request_frame_v1(
     )
     if (
         _exact_int(value["schema_version"], "request.schema_version")
-        != SCHEMA_VERSION
-        or value["profile"] != PROFILE
+        != plan["schema_version"]
+        or value["profile"] != plan["profile"]
         or value["kind"] != REQUEST_KIND
         or value["endpoint_plan_sha256"] != endpoint_plan_sha256_v1(plan)
     ):
@@ -1378,8 +1411,8 @@ def build_probe_ack_frame_v1(
         observed_source_lan_ip,
     )
     value = {
-        "schema_version": SCHEMA_VERSION,
-        "profile": PROFILE,
+        "schema_version": plan["schema_version"],
+        "profile": plan["profile"],
         "kind": ACK_KIND,
         "endpoint_plan_sha256": checked["endpoint_plan_sha256"],
         "nonce_hex": checked["nonce_hex"],
@@ -1410,8 +1443,8 @@ def parse_probe_ack_frame_v1(
     )
     if (
         _exact_int(value["schema_version"], "ack.schema_version")
-        != SCHEMA_VERSION
-        or value["profile"] != PROFILE
+        != plan["schema_version"]
+        or value["profile"] != plan["profile"]
         or value["kind"] != ACK_KIND
         or value["endpoint_plan_sha256"]
         != checked_request["endpoint_plan_sha256"]
@@ -1450,8 +1483,8 @@ def expected_client_result_v1(
     )
     edge = _physical_edge(plan, source_host_id, destination_validator_id)
     return {
-        "schema_version": SCHEMA_VERSION,
-        "profile": PROFILE,
+        "schema_version": plan["schema_version"],
+        "profile": plan["profile"],
         "endpoint_plan_sha256": endpoint_plan_sha256_v1(plan),
         "nonce_hex": _require_nonce(nonce_hex),
         "source_host_id": source_host_id,
@@ -1491,8 +1524,8 @@ def expected_server_observation_v1(
     )
     edge = _physical_edge(plan, source_host_id, destination_validator_id)
     return {
-        "schema_version": SCHEMA_VERSION,
-        "profile": PROFILE,
+        "schema_version": plan["schema_version"],
+        "profile": plan["profile"],
         "endpoint_plan_sha256": endpoint_plan_sha256_v1(plan),
         "nonce_hex": _require_nonce(nonce_hex),
         "source_host_id": source_host_id,
@@ -1524,8 +1557,8 @@ def expected_helper_report_v1(
     if not endpoint_ids:
         fail("helper host is outside the endpoint host set")
     return {
-        "schema_version": SCHEMA_VERSION,
-        "profile": PROFILE,
+        "schema_version": plan["schema_version"],
+        "profile": plan["profile"],
         "endpoint_plan_sha256": endpoint_plan_sha256_v1(plan),
         "nonce_hex": _require_nonce(nonce_hex),
         "host_id": host_id,
@@ -1554,8 +1587,8 @@ def expected_cleanup_report_v1(
     if not endpoint_ids:
         fail("cleanup host is outside the endpoint host set")
     return {
-        "schema_version": SCHEMA_VERSION,
-        "profile": PROFILE,
+        "schema_version": plan["schema_version"],
+        "profile": plan["profile"],
         "endpoint_plan_sha256": endpoint_plan_sha256_v1(plan),
         "nonce_hex": _require_nonce(nonce_hex),
         "host_id": host_id,
@@ -1568,14 +1601,15 @@ def expected_cleanup_report_v1(
 
 def _check_common_observation_fields(
     value: dict[str, Any],
+    plan: dict[str, Any],
     plan_sha256: str,
     nonce_hex: str,
     field: str,
 ) -> None:
     if (
         _exact_int(value["schema_version"], f"{field}.schema_version")
-        != SCHEMA_VERSION
-        or value["profile"] != PROFILE
+        != plan["schema_version"]
+        or value["profile"] != plan["profile"]
         or value["endpoint_plan_sha256"] != plan_sha256
         or value["nonce_hex"] != nonce_hex
     ):
@@ -1602,7 +1636,7 @@ def evaluate_admission_attempt_v1(
     helper_reports: Sequence[object],
     cleanup_reports: Sequence[object],
 ) -> dict[str, Any]:
-    """Validate the exact double-sided 35-edge join and return a pass report.
+    """Validate the profile's exact double-sided join and return a pass report.
 
     A green ICMP readiness bit is recorded but never substitutes for one TCP
     edge.  Any missing client acknowledgement, including an observed request
@@ -1625,12 +1659,12 @@ def evaluate_admission_attempt_v1(
         client_results, (str, bytes)
     ):
         fail("client_results must be one sequence")
-    if len(client_results) != DIRECT_SEVEN_PHYSICAL_EDGES:
+    if len(client_results) != plan["physical_edge_count"]:
         fail("TCP client result cardinality differs from the exact edge set")
     for index, item in enumerate(client_results):
         result = _exact(item, CLIENT_RESULT_KEYS, f"client_results[{index}]")
         _check_common_observation_fields(
-            result, plan_sha256, nonce_hex, f"client_results[{index}]"
+            result, plan, plan_sha256, nonce_hex, f"client_results[{index}]"
         )
         edge_key = _observation_edge_key(result, f"client_results[{index}]")
         if edge_key not in expected_edges:
@@ -1673,7 +1707,7 @@ def evaluate_admission_attempt_v1(
         server_observations, (str, bytes)
     ):
         fail("server_observations must be one sequence")
-    if len(server_observations) != DIRECT_SEVEN_PHYSICAL_EDGES:
+    if len(server_observations) != plan["physical_edge_count"]:
         fail("TCP server observation cardinality differs from the exact edge set")
     for index, item in enumerate(server_observations):
         observation = _exact(
@@ -1681,6 +1715,7 @@ def evaluate_admission_attempt_v1(
         )
         _check_common_observation_fields(
             observation,
+            plan,
             plan_sha256,
             nonce_hex,
             f"server_observations[{index}]",
@@ -1740,12 +1775,12 @@ def evaluate_admission_attempt_v1(
         helper_reports, (str, bytes)
     ):
         fail("helper_reports must be one sequence")
-    if len(helper_reports) != DIRECT_SEVEN_SOURCE_HOSTS:
+    if len(helper_reports) != plan["source_host_count"]:
         fail("helper report cardinality differs from the source host set")
     for index, item in enumerate(helper_reports):
         report = _exact(item, HELPER_REPORT_KEYS, f"helper_reports[{index}]")
         _check_common_observation_fields(
-            report, plan_sha256, nonce_hex, f"helper_reports[{index}]"
+            report, plan, plan_sha256, nonce_hex, f"helper_reports[{index}]"
         )
         host_id = _require_host_id(
             report["host_id"], f"helper_reports[{index}].host_id"
@@ -1778,12 +1813,12 @@ def evaluate_admission_attempt_v1(
         cleanup_reports, (str, bytes)
     ):
         fail("cleanup_reports must be one sequence")
-    if len(cleanup_reports) != DIRECT_SEVEN_SOURCE_HOSTS:
+    if len(cleanup_reports) != plan["source_host_count"]:
         fail("cleanup report cardinality differs from the source host set")
     for index, item in enumerate(cleanup_reports):
         report = _exact(item, CLEANUP_REPORT_KEYS, f"cleanup_reports[{index}]")
         _check_common_observation_fields(
-            report, plan_sha256, nonce_hex, f"cleanup_reports[{index}]"
+            report, plan, plan_sha256, nonce_hex, f"cleanup_reports[{index}]"
         )
         host_id = _require_host_id(
             report["host_id"], f"cleanup_reports[{index}].host_id"
@@ -1810,17 +1845,17 @@ def evaluate_admission_attempt_v1(
     ordered_helpers = [helpers[key] for key in sorted(helpers)]
     ordered_cleanups = [cleanups[key] for key in sorted(cleanups)]
     report = {
-        "schema_version": SCHEMA_VERSION,
-        "profile": PROFILE,
+        "schema_version": plan["schema_version"],
+        "profile": plan["profile"],
         "run_id": plan["run_id"],
         "coordinator_manifest_sha256": plan["coordinator_manifest_sha256"],
         "topology_sha256": plan["topology_sha256"],
         "endpoint_plan_sha256": plan_sha256,
         "nonce_hex": nonce_hex,
         "validator_count": DIRECT_SEVEN_VALIDATORS,
-        "source_host_count": DIRECT_SEVEN_SOURCE_HOSTS,
+        "source_host_count": plan["source_host_count"],
         "endpoint_count": DIRECT_SEVEN_ENDPOINTS,
-        "physical_edge_count": DIRECT_SEVEN_PHYSICAL_EDGES,
+        "physical_edge_count": plan["physical_edge_count"],
         "logical_peer_edge_count": DIRECT_SEVEN_LOGICAL_EDGES,
         "icmp_readiness_passed": icmp_readiness_passed,
         "client_results": ordered_clients,
@@ -1846,8 +1881,8 @@ def validate_admission_report_v1(
     value = _exact(report, REPORT_KEYS, "admission_report")
     if (
         _exact_int(value["schema_version"], "admission_report.schema_version")
-        != SCHEMA_VERSION
-        or value["profile"] != PROFILE
+        != plan["schema_version"]
+        or value["profile"] != plan["profile"]
         or value["run_id"] != plan["run_id"]
         or value["coordinator_manifest_sha256"]
         != plan["coordinator_manifest_sha256"]
@@ -1860,13 +1895,13 @@ def validate_admission_report_v1(
         or _exact_int(
             value["source_host_count"], "admission_report.source_host_count"
         )
-        != DIRECT_SEVEN_SOURCE_HOSTS
+        != plan["source_host_count"]
         or _exact_int(value["endpoint_count"], "admission_report.endpoint_count")
         != DIRECT_SEVEN_ENDPOINTS
         or _exact_int(
             value["physical_edge_count"], "admission_report.physical_edge_count"
         )
-        != DIRECT_SEVEN_PHYSICAL_EDGES
+        != plan["physical_edge_count"]
         or _exact_int(
             value["logical_peer_edge_count"],
             "admission_report.logical_peer_edge_count",

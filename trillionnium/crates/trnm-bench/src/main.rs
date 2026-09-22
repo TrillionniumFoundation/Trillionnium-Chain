@@ -1,4 +1,5 @@
 use clap::Parser;
+use sha2::{Digest, Sha256};
 use std::fs;
 use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
@@ -6,6 +7,8 @@ use trnm_executor::{
     auto_adaptive_decision, build_parallel_groups_profile_with_strategy, GroupingStrategy,
 };
 use trnm_types::{ObjectRef, Tx};
+
+const MAX_DETERMINISM_REPEATS: usize = 1_000;
 
 #[derive(Debug, Clone, Copy, clap::ValueEnum)]
 enum Workload {
@@ -76,10 +79,20 @@ struct Args {
     /// Print executor profiling stats
     #[arg(long, default_value_t = false)]
     profile: bool,
+
+    /// Repeat the exact deterministic grouping input in-process and fail if
+    /// any replay produces a different ordered group assignment. This checks
+    /// scheduler determinism only; it is not a throughput or consensus claim.
+    #[arg(long, default_value_t = 0)]
+    determinism_repeats: usize,
 }
 
 fn main() {
     let args = Args::parse();
+    if args.determinism_repeats > MAX_DETERMINISM_REPEATS {
+        eprintln!("--determinism-repeats exceeds bounded maximum {MAX_DETERMINISM_REPEATS}");
+        std::process::exit(2);
+    }
     let n = args.txs.max(1);
     let keys = args.keys.max(1);
 
@@ -104,6 +117,34 @@ fn main() {
     let (groups, profile) = build_parallel_groups_profile_with_strategy(&txs, args.strategy.into());
     let dt = t0.elapsed();
 
+    let input_sha256 = workload_input_digest(&txs);
+    let groups_sha256 = grouping_digest(&groups);
+    let determinism_repeats = args.determinism_repeats;
+    let determinism_replay_match = if determinism_repeats == 0 {
+        None
+    } else {
+        let mut matches = true;
+        let expected_membership: Vec<Vec<u64>> = groups
+            .iter()
+            .map(|group| group.iter().map(|tx| tx.id).collect())
+            .collect();
+        for _ in 0..determinism_repeats {
+            let (replayed, _) =
+                build_parallel_groups_profile_with_strategy(&txs, args.strategy.into());
+            let replayed_membership: Vec<Vec<u64>> = replayed
+                .iter()
+                .map(|group| group.iter().map(|tx| tx.id).collect())
+                .collect();
+            if grouping_digest(&replayed) != groups_sha256
+                || replayed_membership != expected_membership
+            {
+                matches = false;
+                break;
+            }
+        }
+        Some(matches)
+    };
+
     let grouped: usize = groups.iter().map(|g| g.len()).sum();
     let conflict_rate = 1.0f64 - (keys as f64 / n as f64).min(1.0);
 
@@ -120,7 +161,23 @@ fn main() {
         format!("groups={}", groups.len()),
         format!("grouped={}", grouped),
         format!("elapsed_ms={}", dt.as_millis()),
+        format!("determinism.input_sha256={input_sha256}"),
+        format!("determinism.groups_sha256={groups_sha256}"),
+        format!("determinism.repeats={determinism_repeats}"),
     ];
+
+    if let Some(matches) = determinism_replay_match {
+        lines.push(format!("determinism.replay_match={matches}"));
+        if !matches {
+            eprintln!(
+                "determinism replay mismatch for input {input_sha256} and strategy {:?}",
+                args.strategy
+            );
+            std::process::exit(2);
+        }
+    } else {
+        lines.push("determinism.replay_match=not-requested".to_string());
+    }
 
     if args.profile {
         let coverage_ratio = grouped as f64 / n as f64;
@@ -499,6 +556,52 @@ fn main() {
     }
 }
 
+/// Hash only canonical workload and ordered group membership, excluding wall
+/// clock and host-dependent timing. The digest is an evidence aid for repeat
+/// checks and does not authorize a production performance claim.
+fn workload_input_digest(txs: &[Tx]) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(b"TRNM-BENCH-INPUT-V1\0");
+    for tx in txs {
+        hasher.update(tx.id.to_le_bytes());
+        hasher.update((tx.read_set.len() as u64).to_le_bytes());
+        for object in &tx.read_set {
+            hasher.update(object.id.to_le_bytes());
+            hasher.update(object.version.to_le_bytes());
+        }
+        hasher.update((tx.write_set.len() as u64).to_le_bytes());
+        for object in &tx.write_set {
+            hasher.update(object.id.to_le_bytes());
+            hasher.update(object.version.to_le_bytes());
+        }
+        hasher.update((tx.payload.len() as u64).to_le_bytes());
+        hasher.update(&tx.payload);
+    }
+    hex_digest(hasher.finalize())
+}
+
+fn grouping_digest(groups: &[Vec<Tx>]) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(b"TRNM-BENCH-GROUPS-V1\0");
+    hasher.update((groups.len() as u64).to_le_bytes());
+    for (group_index, group) in groups.iter().enumerate() {
+        hasher.update((group_index as u64).to_le_bytes());
+        hasher.update((group.len() as u64).to_le_bytes());
+        for tx in group {
+            hasher.update(tx.id.to_le_bytes());
+        }
+    }
+    hex_digest(hasher.finalize())
+}
+
+fn hex_digest(bytes: impl AsRef<[u8]>) -> String {
+    bytes
+        .as_ref()
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect()
+}
+
 fn ratio(numerator: usize, denominator: usize) -> f64 {
     if denominator == 0 {
         0.0
@@ -687,7 +790,8 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
 #[cfg(test)]
 mod tests {
     use super::{
-        build_hot_streak_txs, build_mixed_txs, chrono_like_iso, persist_profile_report_into,
+        build_hot_streak_txs, build_mixed_txs, chrono_like_iso, grouping_digest,
+        persist_profile_report_into, workload_input_digest,
     };
     use std::fs;
     use std::path::PathBuf;
@@ -754,6 +858,26 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn deterministic_digests_bind_input_and_ordered_groups() {
+        let txs = build_mixed_txs(32, 7, 3, 2);
+        let (groups_a, _) = trnm_executor::build_parallel_groups_profile_with_strategy(
+            &txs,
+            trnm_executor::GroupingStrategy::AggressiveGreedy,
+        );
+        let (groups_b, _) = trnm_executor::build_parallel_groups_profile_with_strategy(
+            &txs,
+            trnm_executor::GroupingStrategy::AggressiveGreedy,
+        );
+        assert_eq!(workload_input_digest(&txs), workload_input_digest(&txs));
+        assert_eq!(grouping_digest(&groups_a), grouping_digest(&groups_b));
+        assert_ne!(workload_input_digest(&txs), grouping_digest(&groups_a));
+
+        let mut changed = txs.clone();
+        changed[0].id = 777;
+        assert_ne!(workload_input_digest(&txs), workload_input_digest(&changed));
     }
 
     #[test]

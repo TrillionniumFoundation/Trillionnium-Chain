@@ -2,9 +2,10 @@ use core::fmt;
 
 use crate::{
     BlockHeader, BlockId, BlockKind, CertificateId, CheckpointTwoSealKernelV0,
-    ConsensusParametersHash, ConsensusParametersV0, Epoch, EpochAnchorAuthorizationKernelV0,
-    FinalityProofV0, Height, NextEpochCommitmentHash, NextEpochCommitmentV0, ProtocolVersion,
-    SignatureVerifier, StateRoot, ValidationError, ValidatorSet, ValidatorSetId, View,
+    ConsensusParametersHash, ConsensusParametersV0, DecodedEpochActivationEvidenceV0, Epoch,
+    EpochAnchorAuthorizationKernelV0, EpochRuntimeContextDataV1, FinalityProofV0, Height,
+    NextEpochCommitmentHash, NextEpochCommitmentV0, ProtocolVersion, SignatureVerifier, StateRoot,
+    ValidationError, ValidatorSet, ValidatorSetId, View,
 };
 
 /// Stable failures for the B2-F same-version joint-handoff composition kernel.
@@ -158,12 +159,14 @@ impl core::error::Error for SameVersionEpochTransitionKernelError {}
 pub type SameVersionEpochTransitionKernelResult<T> =
     core::result::Result<T, SameVersionEpochTransitionKernelError>;
 
-/// Verified same-version relations across the B2-C, B2-E, and B2-B kernels.
+/// Inert same-version relations across the B2-C, B2-E, and B2-B kernels.
 ///
-/// This private-field token is deliberately inert. It records that one caller
-/// supplied verifier accepted the old checkpoint/two-seal proof, terminal old
-/// QC, and both handoff roles, and that every imported context/digest relation
-/// is exact. It does not authenticate snapshot/JMT/runtime provenance,
+/// This private-field token records exact imported context/digest relations.
+/// The verifier-based v0 entrypoint also checks the old checkpoint/two-seal
+/// proof, terminal QC and both handoff roles with its supplied verifier; the
+/// contextual structural entrypoint performs no signature verification.
+/// Possession of this token therefore never attests signature acceptance.
+/// It does not authenticate snapshot/JMT/runtime provenance,
 /// deterministic candidate or fallback construction, proof of possession,
 /// governance, or checkpoint execution. It therefore cannot construct an
 /// epoch anchor, authorize handoff signing or a first-new-epoch proposal, or
@@ -522,6 +525,124 @@ pub fn verify_same_version_joint_handoff_kernel_v0<V: SignatureVerifier>(
     authenticated_checkpoint_parent_timestamp_ms: u64,
     verifier: &V,
 ) -> JointHandoffKernelResult<JointHandoffKernelV0> {
+    validate_joint_context(
+        next_epoch_commitment,
+        old_validator_set,
+        old_consensus_parameters,
+        new_validator_set,
+        new_consensus_parameters,
+    )?;
+
+    let checkpoint = old_checkpoint_finality
+        .verify_checkpoint_two_seal_kernel(
+            old_validator_set,
+            old_consensus_parameters,
+            next_epoch_commitment,
+            authenticated_checkpoint_parent_timestamp_ms,
+            verifier,
+        )
+        .map_err(|failure| {
+            map_verification_failure(
+                failure,
+                JointHandoffKernelErrorCode::InvalidCheckpointFinality,
+            )
+        })?;
+
+    anchor_certificate_kernel
+        .verify_certificate_kernel(old_validator_set, new_validator_set, verifier)
+        .map_err(|failure| {
+            map_verification_failure(
+                failure,
+                JointHandoffKernelErrorCode::InvalidCertificateKernel,
+            )
+        })?;
+
+    derive_joint_structure(
+        &checkpoint,
+        next_epoch_commitment,
+        anchor_certificate_kernel,
+        old_validator_set,
+        old_consensus_parameters,
+        new_validator_set,
+        new_consensus_parameters,
+    )
+}
+
+/// Derives inert joint facts from complete evidence under one exact predecessor.
+///
+/// No signature is verified here. The returned token cannot create strict
+/// activation, Core, signer or application authority. A strict consumer must
+/// independently verify the predecessor, checkpoint finality, terminal QC and
+/// both handoff roles. Equal sets alone do not authorize synthetic references:
+/// every such reference must equal this complete context's exact anchor.
+pub fn derive_successor_epoch_joint_structure_v1(
+    evidence: &DecodedEpochActivationEvidenceV0,
+    predecessor_context: &EpochRuntimeContextDataV1,
+) -> JointHandoffKernelResult<JointHandoffKernelV0> {
+    let old_set = evidence.old_validator_set();
+    let old_parameters = evidence.old_consensus_parameters();
+    if old_set != predecessor_context.new_validator_set()
+        || old_parameters != predecessor_context.new_parameters()
+    {
+        return Err(error(JointHandoffKernelErrorCode::InvalidOldContext));
+    }
+    validate_joint_context(
+        evidence.next_epoch_commitment(),
+        old_set,
+        old_parameters,
+        evidence.new_validator_set(),
+        evidence.new_consensus_parameters(),
+    )?;
+    let proof = evidence.old_checkpoint_finality();
+    validate_checkpoint_parent_header_v0(proof, evidence.authenticated_checkpoint_parent_header())?;
+    proof
+        .validate(
+            old_set,
+            Some(predecessor_context.old_validator_set()),
+            old_parameters,
+            evidence
+                .authenticated_checkpoint_parent_header()
+                .timestamp_ms(),
+        )
+        .map_err(|_| error(JointHandoffKernelErrorCode::InvalidCheckpointFinality))?;
+    for certified in [proof.finalized_block(), proof.child(), proof.grandchild()] {
+        let references = core::iter::once(certified.justify_qc()).chain(
+            certified
+                .timeout_certificate()
+                .into_iter()
+                .flat_map(|certificate| certificate.referenced_qcs()),
+        );
+        for reference in references {
+            if reference.as_synthetic().is_some()
+                && reference != predecessor_context.anchor_reference()
+            {
+                return Err(error(
+                    JointHandoffKernelErrorCode::InvalidCheckpointFinality,
+                ));
+            }
+        }
+    }
+    let checkpoint = proof
+        .checkpoint_two_seal_kernel(old_set, old_parameters, evidence.next_epoch_commitment())
+        .map_err(|_| error(JointHandoffKernelErrorCode::InvalidCheckpointFinality))?;
+    derive_joint_structure(
+        &checkpoint,
+        evidence.next_epoch_commitment(),
+        evidence.authorization_kernel(),
+        old_set,
+        old_parameters,
+        evidence.new_validator_set(),
+        evidence.new_consensus_parameters(),
+    )
+}
+
+fn validate_joint_context(
+    next_epoch_commitment: &NextEpochCommitmentV0,
+    old_validator_set: &ValidatorSet,
+    old_consensus_parameters: &ConsensusParametersV0,
+    new_validator_set: &ValidatorSet,
+    new_consensus_parameters: &ConsensusParametersV0,
+) -> JointHandoffKernelResult<()> {
     let commitment = next_epoch_commitment.fields();
     if commitment.new_protocol_version != ProtocolVersion::V0
         || commitment.upgrade_plan_hash.is_some()
@@ -582,32 +703,20 @@ pub fn verify_same_version_joint_handoff_kernel_v0<V: SignatureVerifier>(
         )
         .map_err(|_| error(JointHandoffKernelErrorCode::InvalidCommitmentContext))?;
 
-    let checkpoint = old_checkpoint_finality
-        .verify_checkpoint_two_seal_kernel(
-            old_validator_set,
-            old_consensus_parameters,
-            next_epoch_commitment,
-            authenticated_checkpoint_parent_timestamp_ms,
-            verifier,
-        )
-        .map_err(|failure| {
-            map_verification_failure(
-                failure,
-                JointHandoffKernelErrorCode::InvalidCheckpointFinality,
-            )
-        })?;
+    Ok(())
+}
 
-    anchor_certificate_kernel
-        .verify_certificate_kernel(old_validator_set, new_validator_set, verifier)
-        .map_err(|failure| {
-            map_verification_failure(
-                failure,
-                JointHandoffKernelErrorCode::InvalidCertificateKernel,
-            )
-        })?;
-
+fn derive_joint_structure(
+    checkpoint: &CheckpointTwoSealKernelV0,
+    next_epoch_commitment: &NextEpochCommitmentV0,
+    anchor_certificate_kernel: &EpochAnchorAuthorizationKernelV0,
+    old_validator_set: &ValidatorSet,
+    old_consensus_parameters: &ConsensusParametersV0,
+    new_validator_set: &ValidatorSet,
+    new_consensus_parameters: &ConsensusParametersV0,
+) -> JointHandoffKernelResult<JointHandoffKernelV0> {
     validate_composition_relations(
-        &checkpoint,
+        checkpoint,
         next_epoch_commitment,
         anchor_certificate_kernel,
         old_validator_set,

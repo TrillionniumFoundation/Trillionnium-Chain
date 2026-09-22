@@ -2,6 +2,8 @@
 
 Primary module: M10. Consumers: archive exporters, proof producers and verifiers.
 Status: candidate technical contract; no storage-deletion or activation authority.
+A candidate local storage owner is now specified below, but it has no consensus
+finality or external hold authority.
 The only execution plan remains
 [Plan v2](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 The module entry remains the
@@ -15,6 +17,28 @@ validation, then returns a proof for the unique task. The public
 `verify_task_archive_batch_v1` wrapper independently retains its expiry check.
 `verify_task_archive_inclusion_v1` proves one record against its supplied seal;
 it does not establish full-batch uniqueness or accept an external hold registry.
+
+`TaskArchiveStoreV1` is the implementation seam for a single local SQLite
+archive owner. `initialize` creates a closed schema with SQLite application and
+schema identities, rollback journaling and `synchronous=FULL`; it builds the
+schema in a same-directory temporary inode and publishes it with a
+non-replacing hard-link so an initialization crash cannot leave a final path
+that looks initialized. The owner can
+install one canonical live terminal inventory, persist a complete legal-hold
+snapshot, and execute `archive_and_delete_v1` in one immediate transaction.
+That transaction revalidates the full batch against durable live rows and holds,
+appends the sealed records, deletes the selected live rows, advances the live
+root/generation and records the seal-chain roots before commit. Reopening audits
+the exact SQLite table definitions (and rejects user triggers, indexes and
+other schema objects), policy hash, live root, contiguous batch sequence, seal
+chain, archive/live row keys and hashes, and metadata. It reconstructs the
+initial inventory from archived plus live rows and replays every batch's exact
+removals to verify predecessor/successor roots. Exact retries return the
+committed receipt only after that audit; changed bytes, roots, sequences,
+sidecars, the database-path symlink or SQLite header settings fail closed.
+The candidate assumes an owner-controlled parent directory; a hostile directory
+writer can still race a pathname between reservation and SQLite open, so
+dirfd/openat2-style publication remains a production hardening requirement.
 
 The field encodings, hash domains, schema version and public signatures remain
 unchanged. Validation has no durable write set. Rejected inputs cannot grant a
@@ -38,7 +62,12 @@ Existing context, version, count, byte, minimum retention, prepaid charge,
 canonical ordering, aggregate totals, Merkle root and seal range checks remain
 mandatory. A valid root proves committed bytes, not their admissibility.
 The planner additionally honors its explicit legal-hold set and live capacity
-bounds; a supplied proof alone cannot establish those external obligations.
+bounds; a supplied proof alone cannot establish those external obligations. The
+storage owner persists a separate hold snapshot and checks it inside the same
+deletion transaction, but the caller still must bind that snapshot to an
+authenticated terminal/retention authority. The adapter does not provide
+consensus finality, peer replication, power-loss qualification, independent
+scale evidence, or a production activation flag.
 
 ## Retained regression contract
 
@@ -54,6 +83,22 @@ production and public batch verification must all reject the mutant.
 accepts the maximum representable first-prunable height before rejecting a
 one-height extension whose expiry cannot be represented.
 
+`archive::tests::bounded_archive_planner_handles_hard_batch_scale_deterministically`
+drives the planner with the hard 4,096-record batch bound, verifies the bounded
+Merkle proofs at multiple positions, and replays the same plan from reversed
+input. This is a repository scale smoke and determinism check; it does not
+claim wall-clock throughput, storage deletion, or independently operated
+long-history acceptance.
+
+`archive_store::tests::archive_delete_moves_rows_and_reopen_preserves_proof`
+exercises durable installation, atomic archive/delete, root transition,
+reopen-time audit and exact idempotent retry.
+`archive_store::tests::durable_hold_blocks_delete_before_any_archive_mutation`
+proves a durable hold rejects the batch before either archive or live rows are
+changed. The store also rejects non-contiguous batch sequences and any existing
+SQLite sidecar/database-path-symlink/header mismatch before it can serve an
+owner operation.
+
 The existing public-wrapper retention mutant retains its positive control and
 now also requires direct validation and proof construction to reject early
 archiving. Existing archive, market, wire and consumer regressions remain.
@@ -63,5 +108,8 @@ cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-agent-market-v1 
 ```
 
 These tests establish only their exercised source-local invariants. Independent
-review, exact-source consumer replay, real scale/retention campaigns, authoritative
-hold ingestion and storage-deletion qualification remain separate acceptance.
+review, exact-source consumer replay, real scale/retention campaigns,
+authoritative hold ingestion, replicated/multi-host deletion, physical
+power-loss recovery and production storage-deletion qualification remain
+separate acceptance.
+Storage-deletion qualification remain separate acceptance for production.

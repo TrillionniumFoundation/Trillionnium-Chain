@@ -6,6 +6,9 @@ candidate archive planner has bounded batches, prepaid retention charging,
 Merkle seals and independent batch/inclusion verification while requiring
 storage-deletion authority, scale evidence and every promotion flag to remain
 false.
+
+Markdown contract tokens ignore whitespace-only prose reflow. Rust source
+contracts keep exact matching; neither policy validates implementation semantics.
 """
 
 from __future__ import annotations
@@ -127,6 +130,21 @@ def main() -> int:
         seen.add(raw_path)
         path = repository_file(raw_path, f"source_contracts[{index}]")
         text = path.read_text(encoding="utf-8")
+        token_matching = row.get("token_matching", "exact")
+        require(
+            token_matching in ("exact", "whitespace"),
+            f"{raw_path}: unsupported token_matching policy",
+        )
+        require(
+            token_matching == "exact" or path.suffix == ".md",
+            f"{raw_path}: whitespace token matching is restricted to Markdown prose",
+        )
+        normalize = (
+            (lambda value: " ".join(value.split()))
+            if token_matching == "whitespace"
+            else (lambda value: value)
+        )
+        contract_text = normalize(text)
         required_tokens = string_list(
             row.get("required_tokens"), f"{raw_path}: required_tokens"
         )
@@ -136,12 +154,19 @@ def main() -> int:
             allow_empty=True,
         )
         for token in required_tokens:
-            require(token in text, f"{raw_path}: required archive contract missing: {token}")
+            require(
+                normalize(token) in contract_text,
+                f"{raw_path}: required archive contract missing: {token}",
+            )
         for token in forbidden_tokens:
-            require(token not in text, f"{raw_path}: forbidden promotion token present: {token}")
+            require(
+                normalize(token) not in contract_text,
+                f"{raw_path}: forbidden promotion token present: {token}",
+            )
         reports.append(
             {
                 "path": raw_path,
+                "token_matching": token_matching,
                 "required_tokens": len(required_tokens),
                 "forbidden_tokens": len(forbidden_tokens),
             }

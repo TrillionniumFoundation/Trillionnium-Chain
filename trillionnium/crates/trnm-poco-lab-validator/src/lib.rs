@@ -36,6 +36,10 @@ pub mod fleet_barrier_evidence;
 pub mod frame;
 pub mod key_roles;
 pub mod loop_driver;
+pub mod native_client_profile;
+pub mod native_client_runtime;
+pub mod native_client_tool;
+pub mod native_replay_sync_v1;
 pub mod network;
 /// Active D0 peer-admission helper.  This is bounded handshake/lease
 /// authority only; it does not drive consensus transport or a validator loop.
@@ -58,6 +62,7 @@ pub mod relay;
 pub mod restart_catchup;
 pub mod restart_cut;
 pub mod restart_protocol;
+mod terminal_barrier_v1;
 // Phase-bound direct-seven park aggregation is private and inert until one
 // composite durable owner is consumed by the journal-first runtime tranche.
 #[allow(dead_code)]

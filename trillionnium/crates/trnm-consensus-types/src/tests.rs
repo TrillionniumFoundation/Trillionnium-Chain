@@ -1,4 +1,4 @@
-use alloc::vec;
+use alloc::{format, vec};
 
 use super::*;
 use crate::{
@@ -19,6 +19,26 @@ use crate::{
 };
 
 const CHAIN: ChainId = ChainId::from_static("trnm-test-0");
+const SIGN_INTENT_VECTOR: &str =
+    include_str!("../../../../docs/protocol/poco-bft-v0/vectors/canonical-sign-intent-v0.json");
+
+fn sign_intent_vector_hex(section_name: &str, field_name: &str) -> &'static str {
+    let section_marker = format!("\"{section_name}\":");
+    let section_start = SIGN_INTENT_VECTOR
+        .find(&section_marker)
+        .expect("canonical sign-intent vector section");
+    let section = &SIGN_INTENT_VECTOR[section_start..];
+    let field_marker = format!("\"{field_name}\": \"");
+    let value_start = section
+        .find(&field_marker)
+        .expect("canonical sign-intent vector field")
+        + field_marker.len();
+    let value = &section[value_start..];
+    let value_end = value
+        .find('\"')
+        .expect("canonical sign-intent vector value");
+    &value[..value_end]
+}
 
 fn fixed_hex<const N: usize>(value: &str) -> [u8; N] {
     assert_eq!(value.len(), N * 2);
@@ -623,17 +643,21 @@ fn canonical_sign_intent_binds_preimage_author_and_safety_revision() {
     );
     assert_eq!(
         vote.signing_root().into_bytes(),
-        fixed_hex("73d3a516141972fe483e56e7d31818dac92bba58aa0ba52d3c894bc4c62b4873")
+        fixed_hex(sign_intent_vector_hex("vote", "signing_root_hex"))
     );
     assert_eq!(
         vote.fingerprint().into_bytes(),
-        fixed_hex("8345d9ce557b38346107fd70b392c487161b9d2d898fc0e605027678ffdb52e7")
+        fixed_hex(sign_intent_vector_hex("vote", "fingerprint_hex"))
     );
     assert_eq!(vote.canonical_bytes().unwrap().len(), 287);
     let vote_golden = fixed_hex::<287>(
         "0000000b74726e6d2d746573742d300000000000000000000000073fe4549631bce9e77683cdc7441d4f780bd112d6e8348813b180ddbd83c2e5640000000b76616c696461746f722d610000000000000011000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f000b74726e6d2d746573742d300000000000000000000000073fe4549631bce9e77683cdc7441d4f780bd112d6e8348813b180ddbd83c2e564000000000000002a010000000000000063f37dcd9417597c664d041fb1631be705c80faa21f9889dead145744ff73e888573d3a516141972fe483e56e7d31818dac92bba58aa0ba52d3c894bc4c62b48738345d9ce557b38346107fd70b392c487161b9d2d898fc0e605027678ffdb52e7",
     );
     assert_eq!(vote.canonical_bytes().unwrap(), vote_golden);
+    assert_eq!(
+        vote_golden,
+        fixed_hex::<287>(sign_intent_vector_hex("vote", "canonical_bytes_hex"))
+    );
     assert_eq!(
         decode_canonical_sign_intent_v0_exact(&vote_golden, &set).unwrap(),
         vote
@@ -673,17 +697,24 @@ fn canonical_sign_intent_binds_preimage_author_and_safety_revision() {
     );
     assert_eq!(
         timeout.signing_root().into_bytes(),
-        fixed_hex("c182b0cb4b34881ae7929b7f365d9117d0eedb8be8faa996a8afef7d70fb0efa")
+        fixed_hex(sign_intent_vector_hex("timeout_vote", "signing_root_hex"))
     );
     assert_eq!(
         timeout.fingerprint().into_bytes(),
-        fixed_hex("d9436f0d29a8ea20b98dc0c80a51ae2d0fa00c31a39a0692d1defd12d5aab96a")
+        fixed_hex(sign_intent_vector_hex("timeout_vote", "fingerprint_hex"))
     );
     assert_eq!(timeout.canonical_bytes().unwrap().len(), 335);
     let timeout_golden = fixed_hex::<335>(
         "0000000b74726e6d2d746573742d300000000000000000000000073fe4549631bce9e77683cdc7441d4f780bd112d6e8348813b180ddbd83c2e5640000000b76616c696461746f722d610000000000000013010000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f000b74726e6d2d746573742d300000000000000000000000073fe4549631bce9e77683cdc7441d4f780bd112d6e8348813b180ddbd83c2e564000000000000002a02f499b0efbdc44cb4ae5156094e012e90146cf61703805cb06455c2c6f5602370000000000000000700000000000000290000000000000062606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7fc182b0cb4b34881ae7929b7f365d9117d0eedb8be8faa996a8afef7d70fb0efad9436f0d29a8ea20b98dc0c80a51ae2d0fa00c31a39a0692d1defd12d5aab96a",
     );
     assert_eq!(timeout.canonical_bytes().unwrap(), timeout_golden);
+    assert_eq!(
+        timeout_golden,
+        fixed_hex::<335>(sign_intent_vector_hex(
+            "timeout_vote",
+            "canonical_bytes_hex"
+        ))
+    );
     assert_eq!(
         decode_canonical_sign_intent_v0_exact(&timeout_golden, &set).unwrap(),
         timeout

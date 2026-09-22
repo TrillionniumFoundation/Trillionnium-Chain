@@ -15,6 +15,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 import planned_p2p_connectivity_admission_v1 as admission  # noqa: E402
+import plan_topology  # noqa: E402
 
 
 RUN_ID = "poco-g3-7-20260821T120000Z-1234abcd"
@@ -48,76 +49,37 @@ def reference(path: str, raw: bytes) -> dict[str, Any]:
     return {"path": path, "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw)}
 
 
-def material_fixture() -> tuple[
-    bytes,
-    dict[str, bytes],
-    dict[str, bytes],
-]:
-    participants = [
+def inventory_fixture() -> dict[str, Any]:
+    hosts = [
         {
-            "host_id": host_id,
+            "id": host_id,
             "management": management,
             "lan_ip": lan_ip,
             "os": "linux",
             "arch": "x86_64",
             "validator_eligible": True,
             "run_roles": ["validator"],
+            "validator_counts": {"seven": count},
         }
-        for host_id, management, lan_ip, _count in HOSTS
+        for host_id, management, lan_ip, count in HOSTS
     ]
-    participants.append(
-        {
-            "host_id": "mac",
-            "management": "p4-mac",
-            "lan_ip": "192.168.0.5",
-            "os": "macos",
-            "arch": "arm64",
-            "validator_eligible": False,
-            "run_roles": [
-                "load-generator",
-                "evidence-collector",
-                "crypto-cross-verifier",
-            ],
-        }
+    hosts.append({
+        "id": "mac", "management": "p4-mac", "lan_ip": "192.168.0.10",
+        "os": "macos", "arch": "arm64", "validator_eligible": False,
+        "run_roles": ["load-generator", "evidence-collector", "crypto-cross-verifier"],
+        "validator_counts": {"seven": 0},
+    })
+    return {"fleet_id": "fixture-direct-seven", "hosts": hosts}
+
+
+def material_fixture(
+    placement: str = plan_topology.CANONICAL_PLACEMENT,
+    *, topology_override: dict[str, Any] | None = None, weight_profile: str = "equal",
+) -> tuple[bytes, dict[str, bytes], dict[str, bytes]]:
+    topology = topology_override if topology_override is not None else plan_topology.build_topology(
+        inventory_fixture(), 7, weight_profile, placement
     )
-    validators: list[dict[str, Any]] = []
-    index = 0
-    for host_id, management, lan_ip, count in HOSTS:
-        for host_local_index in range(count):
-            validators.append(
-                {
-                    "index": index,
-                    "validator_id": f"{index + 1:064x}",
-                    "host_id": host_id,
-                    "management": management,
-                    "lan_ip": lan_ip,
-                    "host_local_index": host_local_index,
-                    "p2p_port": 31000 + index,
-                    "metrics_port": 32000 + index,
-                    "weight": 1,
-                    "peers": [],
-                }
-            )
-            index += 1
-    assert index == 7
-    for source in validators:
-        source_index = source["index"]
-        source["peers"] = [
-            validators[(source_index + offset) % 7]["validator_id"]
-            for offset in range(1, 7)
-        ]
-    topology = {
-        "schema_version": 1,
-        "fleet_id": "fixture-direct-seven",
-        "network_scope": "single-lan",
-        "geo_wan_evidence": False,
-        "validator_count": 7,
-        "weight_profile": "equal",
-        "peer_degree": 6,
-        "test_keys_included": False,
-        "participants": participants,
-        "validators": validators,
-    }
+    validators = topology["validators"]
     topology_bytes = admission.canonical_json_bytes_v1(topology)
 
     by_id = {item["validator_id"]: item for item in validators}
@@ -182,7 +144,7 @@ def material_fixture() -> tuple[
             "run_id": RUN_ID,
             "fleet_id": topology["fleet_id"],
             "validator_count": 7,
-            "weight_profile": "equal",
+            "weight_profile": topology["weight_profile"],
             "network_scope": "single-lan",
             "geo_wan_evidence": False,
             "candidate": {
@@ -209,9 +171,10 @@ def material_fixture() -> tuple[
     return topology_bytes, configs, deployments
 
 
-def build_plan() -> dict[str, Any]:
-    topology, configs, deployments = material_fixture()
+def build_plan(placement: str = plan_topology.CANONICAL_PLACEMENT) -> dict[str, Any]:
+    topology, configs, deployments = material_fixture(placement)
     return admission.build_direct_seven_endpoint_plan_v1(
+        inventory=inventory_fixture(),
         run_id=RUN_ID,
         coordinator_manifest_sha256=COORDINATOR_SHA256,
         topology_bytes=topology,
@@ -273,9 +236,130 @@ def evaluate(
     )
 
 
+def test_reduced_profile() -> None:
+    plan = build_plan(plan_topology.REDUCED_PLACEMENT)
+    assert plan["schema_version"] == 2
+    assert plan["profile"] == admission.REDUCED_PROFILE
+    assert (plan["source_host_count"], plan["physical_edge_count"]) == (2, 14)
+    assert len(plan["endpoints"]) == 7 and len(plan["logical_peer_edges"]) == 42
+    assert {item["host_id"]: len(item["validator_ids"]) for item in plan["source_hosts"]} == {
+        "desktop": 4, "rog": 3,
+    }
+    assert all(item["management"] != "local" for item in plan["source_hosts"])
+    for edge in plan["physical_edges"]:
+        request = admission.parse_probe_request_frame_v1(
+            admission.build_probe_request_frame_v1(
+                plan, NONCE, edge["source_host_id"], edge["destination_validator_id"]
+            ), plan,
+        )
+        assert (request["schema_version"], request["profile"]) == (2, admission.REDUCED_PROFILE)
+        ack = admission.parse_probe_ack_frame_v1(
+            admission.build_probe_ack_frame_v1(request, plan, edge["source_lan_ip"]),
+            plan, request,
+        )
+        assert (ack["schema_version"], ack["profile"]) == (2, admission.REDUCED_PROFILE)
+    clients, servers = successful_observations(plan)
+    helpers, cleanups = successful_helpers(plan)
+    assert len(helpers) == len(cleanups) == 2
+    report = evaluate(plan, clients, servers, helpers, cleanups)
+    assert admission.parse_admission_report_v1(
+        admission.canonical_json_bytes_v1(report), plan, expected_nonce_hex=NONCE
+    ) == report
+    assert report["physical_edge_count"] == 14 and report["source_host_count"] == 2
+    for field in ("g3_lan_multihost_evidence", "production_activation", "validator_run_completed"):
+        assert report[field] is False
+    retry = plan["physical_edges"][0]
+    retry_clients, retry_servers = successful_observations(
+        plan, retry_edge=(retry["source_host_id"], retry["destination_validator_id"])
+    )
+    evaluate(plan, retry_clients, retry_servers, helpers, cleanups)
+
+    for key, value in (("profile", "unknown"), ("schema_version", 1)):
+        mutant = copy.deepcopy(plan)
+        mutant[key] = value
+        expect_failure(lambda: admission.validate_direct_seven_endpoint_plan_v1(mutant), "schema/profile")
+    for key, value in (("source_host_count", 5), ("physical_edge_count", 35), ("source_host_count", True)):
+        mutant = copy.deepcopy(plan)
+        mutant[key] = value
+        expect_failure(lambda: admission.validate_direct_seven_endpoint_plan_v1(mutant),
+                       "exact integer" if value is True else "fixed fields")
+    for key, value in (("source_host_count", 5), ("physical_edge_count", 35), ("profile", admission.PROFILE)):
+        mutant = copy.deepcopy(report)
+        mutant[key] = value
+        expect_failure(lambda: admission.validate_admission_report_v1(mutant, plan), "fixed fields")
+    relabeled = build_plan()
+    relabeled.update(schema_version=2, profile=admission.REDUCED_PROFILE,
+                     source_host_count=2, physical_edge_count=14)
+    expect_failure(lambda: admission.validate_direct_seven_endpoint_plan_v1(relabeled), "source host cardinality")
+    expect_failure(lambda: evaluate(plan, clients[:-1], servers, helpers, cleanups), "client result cardinality")
+    expect_failure(lambda: evaluate(plan, clients, servers[:-1], helpers, cleanups), "server observation cardinality")
+    expect_failure(lambda: evaluate(plan, clients, servers, helpers[:-1], cleanups), "helper report cardinality")
+    expect_failure(lambda: evaluate(plan, clients, servers, helpers, cleanups[:-1]), "cleanup report cardinality")
+    cross_profile = copy.deepcopy(clients)
+    cross_profile[0].update(schema_version=1, profile=admission.PROFILE)
+    expect_failure(lambda: evaluate(plan, cross_profile, servers, helpers, cleanups), "wrong attempt or plan")
+    cross_request = dict(request, schema_version=1, profile=admission.PROFILE)
+    expect_failure(lambda: admission.parse_probe_request_frame_v1(
+        admission.canonical_frame_bytes_v1(cross_request), plan), "fixed fields")
+
+    # Every config and deployment reference is rebuilt coherently. The only
+    # independent pin is the reviewed inventory/closed placement, so a digest
+    # check alone would wrongly admit these mutations.
+    original = plan_topology.build_topology(inventory_fixture(), 7, "equal", plan_topology.REDUCED_PLACEMENT)
+    mutants = []
+    mutant = copy.deepcopy(original)
+    mutant["placement_profile"] = "other-three-hosts"
+    mutants.append(mutant)
+    mutant = copy.deepcopy(original)
+    mutant["weight_profile"] = "bounded-unequal"
+    mutants.append(mutant)
+    mutant = copy.deepcopy(original)
+    mutant["participants"][0]["lan_ip"] = "192.168.0.250"
+    for validator in mutant["validators"][:4]:
+        validator["lan_ip"] = "192.168.0.250"
+    mutants.append(mutant)
+    mutant = copy.deepcopy(original)
+    mutant["participants"].reverse()
+    mutants.append(mutant)
+    mutant = copy.deepcopy(original)
+    mutant["validators"][0]["p2p_port"] += 100
+    mutants.append(mutant)
+    mutant = copy.deepcopy(original)
+    mutant["validators"][0]["peers"].reverse()
+    mutants.append(mutant)
+    mutant = copy.deepcopy(original)
+    mutant["validators"][0]["weight"] = True
+    mutants.append(mutant)
+    mutant = copy.deepcopy(original)
+    mutant["validators"][3].update(host_id="rog", management="p4-rog", lan_ip="192.168.0.6", host_local_index=0)
+    for validator in mutant["validators"][4:]:
+        validator["host_local_index"] += 1
+    mutants.append(mutant)
+    mutant = copy.deepcopy(original)
+    mutant.pop("placement_profile")
+    mutant["schema_version"] = 1
+    mutants.append(mutant)
+    for mutant in mutants:
+        topology, configs, deployments = material_fixture(topology_override=mutant)
+        expect_failure(lambda: admission.build_direct_seven_endpoint_plan_v1(
+            inventory=inventory_fixture(), run_id=RUN_ID,
+            coordinator_manifest_sha256=COORDINATOR_SHA256, topology_bytes=topology,
+            validator_config_bytes=configs, deployment_manifest_bytes=deployments,
+        ), "topology inventory binding")
+
+
 def main() -> None:
+    unequal_topology, unequal_configs, unequal_deployments = material_fixture(weight_profile="bounded-unequal")
+    unequal_plan = admission.build_direct_seven_endpoint_plan_v1(
+        inventory=inventory_fixture(), run_id=RUN_ID,
+        coordinator_manifest_sha256=COORDINATOR_SHA256, topology_bytes=unequal_topology,
+        validator_config_bytes=unequal_configs, deployment_manifest_bytes=unequal_deployments,
+    )
+    assert (unequal_plan["schema_version"], unequal_plan["profile"]) == (1, admission.PROFILE)
+    assert (unequal_plan["source_host_count"], unequal_plan["physical_edge_count"]) == (5, 35)
     topology, configs, deployments = material_fixture()
     plan = admission.build_direct_seven_endpoint_plan_v1(
+        inventory=inventory_fixture(),
         run_id=RUN_ID,
         coordinator_manifest_sha256=COORDINATOR_SHA256,
         topology_bytes=topology,
@@ -283,6 +367,9 @@ def main() -> None:
         deployment_manifest_bytes=deployments,
     )
     plan_sha256 = admission.endpoint_plan_sha256_v1(plan)
+    # Captured using the unchanged schema-1 implementation over these same
+    # inventory-derived bytes: the reduced path must not alter its wire data.
+    assert plan_sha256 == "10f6d5707283a902da4bd82151590c1b97f967820deaaf21b4c5ecb9bcc40271"
     assert len(plan_sha256) == 64
     derived_nonce = admission.derive_attempt_nonce_hex_v1(plan, b"n" * 32)
     assert derived_nonce == admission.derive_attempt_nonce_hex_v1(plan, b"n" * 32)
@@ -341,6 +428,7 @@ def main() -> None:
     report_sha256 = admission.validate_admission_report_v1(
         report, plan, expected_nonce_hex=NONCE
     )
+    assert report_sha256 == "f78c7711c1d090e2399b72aff1d704cf2a96e6f7e21b4e716468d5293d979159"
     assert len(report_sha256) == 64
     parsed_report = admission.parse_admission_report_v1(
         admission.canonical_json_bytes_v1(report),
@@ -445,6 +533,7 @@ def main() -> None:
     tampered_material[first_validator] = admission.canonical_json_bytes_v1(first_config)
     expect_failure(
         lambda: admission.build_direct_seven_endpoint_plan_v1(
+            inventory=inventory_fixture(),
             run_id=RUN_ID,
             coordinator_manifest_sha256=COORDINATOR_SHA256,
             topology_bytes=topology,
@@ -565,9 +654,11 @@ def main() -> None:
         "client result cardinality",
     )
 
+    test_reduced_profile()
     print(
         "planned_p2p_connectivity_admission_v1_test=passed "
         "source_hosts=5 endpoints=7 physical_edges=35 logical_edges=42 "
+        "reduced_sources=2 reduced_edges=14 exact_inventory_placement=true canonical_bytes_preserved=true "
         "strict_frames=true double_sided_join=true bounded_retry=true "
         "icmp_green_tcp_edge_failure=blocked helper_ttl=true rebind_cleanup=true "
         "firewall_mutated=false firewall_policy_attested=false "

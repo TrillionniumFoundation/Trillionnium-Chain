@@ -382,6 +382,23 @@ pub struct BlockIdOverlayRefV0 {
     block_id: BlockId,
     parent_block_id: BlockId,
     overlay_checksum: [u8; 32],
+    epoch_parent_v1: Option<EpochOverlayParentV1>,
+}
+
+/// Explicit extra consensus edge for an application overlay whose real parent
+/// remains checkpoint C. This inert binding is encoded only by full schema14E.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct EpochOverlayParentV1 {
+    consensus_parent: BlockId,
+    activation_binding: [u8; 32],
+}
+impl EpochOverlayParentV1 {
+    pub const fn consensus_parent(self) -> BlockId {
+        self.consensus_parent
+    }
+    pub const fn activation_binding(self) -> [u8; 32] {
+        self.activation_binding
+    }
 }
 
 impl BlockIdOverlayRefV0 {
@@ -394,6 +411,44 @@ impl BlockIdOverlayRefV0 {
             block_id,
             parent_block_id,
             overlay_checksum,
+            epoch_parent_v1: None,
+        }
+    }
+
+    pub fn for_epoch_application_v1(
+        block_id: BlockId,
+        application_parent: BlockId,
+        consensus_parent: BlockId,
+        activation_binding: [u8; 32],
+        overlay_checksum: [u8; 32],
+    ) -> Result<Self> {
+        if block_id == application_parent
+            || block_id == consensus_parent
+            || application_parent == consensus_parent
+            || activation_binding == [0; 32]
+            || overlay_checksum == [0; 32]
+        {
+            return Err(CoreError::InvalidRecovery(
+                "epoch overlay requires distinct exact dual parents",
+            ));
+        }
+        Ok(Self {
+            block_id,
+            parent_block_id: application_parent,
+            overlay_checksum,
+            epoch_parent_v1: Some(EpochOverlayParentV1 {
+                consensus_parent,
+                activation_binding,
+            }),
+        })
+    }
+    pub const fn epoch_parent_v1(self) -> Option<EpochOverlayParentV1> {
+        self.epoch_parent_v1
+    }
+    pub const fn consensus_parent_block_id_v1(self) -> BlockId {
+        match self.epoch_parent_v1 {
+            Some(parent) => parent.consensus_parent,
+            None => self.parent_block_id,
         }
     }
 
@@ -555,6 +610,28 @@ enum PayloadValidationParentCarrierV0 {
     LegacyTrustedGenesis,
     AuthenticatedGenesisApplication(AuthenticatedGenesisApplicationParentV0),
     ExactHeader(Box<BlockHeader>),
+    AuthenticatedEpochEdge(Box<EpochApplicationParentV1>),
+}
+
+/// Two distinct authenticated parents for the first new-epoch application.
+/// The checkpoint is a real committed application state; terminal_old_header
+/// is the unchanged seal2 consensus parent. Construction is private to Core.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EpochApplicationParentV1 {
+    checkpoint: BlockHeader,
+    terminal_old_header: BlockHeader,
+    activation_binding: [u8; 32],
+}
+impl EpochApplicationParentV1 {
+    pub const fn checkpoint_header(&self) -> &BlockHeader {
+        &self.checkpoint
+    }
+    pub const fn terminal_old_header(&self) -> &BlockHeader {
+        &self.terminal_old_header
+    }
+    pub const fn activation_binding(&self) -> [u8; 32] {
+        self.activation_binding
+    }
 }
 
 /// Exact Core-authenticated parent context retained by one payload request.
@@ -577,6 +654,38 @@ pub struct PayloadValidationParentV0 {
 }
 
 impl PayloadValidationParentV0 {
+    pub(crate) fn from_epoch_checkpoint_v1(epoch: &crate::EpochCoreStateV1) -> Self {
+        let checkpoint = epoch.checkpoint_header().clone();
+        let tip = crate::QualifiedFinalizedTipV1::from_header(&checkpoint).tip();
+        Self {
+            tip,
+            provenance: PayloadValidationParentProvenanceV0::Finalized,
+            carrier: PayloadValidationParentCarrierV0::AuthenticatedEpochEdge(Box::new(
+                EpochApplicationParentV1 {
+                    checkpoint,
+                    terminal_old_header: epoch.terminal_old_header().clone(),
+                    activation_binding: epoch.activation_binding(),
+                },
+            )),
+        }
+    }
+    pub fn epoch_application_parent_v1(&self) -> Option<&EpochApplicationParentV1> {
+        match &self.carrier {
+            PayloadValidationParentCarrierV0::AuthenticatedEpochEdge(edge) => Some(edge),
+            _ => None,
+        }
+    }
+    pub fn consensus_parent_tip_v1(&self) -> FinalizedTip {
+        match self.epoch_application_parent_v1() {
+            Some(edge) => FinalizedTip::new(
+                edge.terminal_old_header.height(),
+                View::new(0),
+                edge.terminal_old_header.id(),
+                edge.terminal_old_header.timestamp_ms(),
+            ),
+            None => self.tip,
+        }
+    }
     pub(crate) fn from_finalized_exact_header(header: BlockHeader) -> Self {
         let tip = FinalizedTip::new(
             header.height(),
@@ -644,6 +753,9 @@ impl PayloadValidationParentV0 {
     pub fn exact_header(&self) -> Option<&BlockHeader> {
         match &self.carrier {
             PayloadValidationParentCarrierV0::ExactHeader(header) => Some(header.as_ref()),
+            PayloadValidationParentCarrierV0::AuthenticatedEpochEdge(edge) => {
+                Some(&edge.checkpoint)
+            }
             PayloadValidationParentCarrierV0::LegacyTrustedGenesis
             | PayloadValidationParentCarrierV0::AuthenticatedGenesisApplication(_) => None,
         }
@@ -657,7 +769,8 @@ impl PayloadValidationParentV0 {
                 Some(*parent)
             }
             PayloadValidationParentCarrierV0::LegacyTrustedGenesis
-            | PayloadValidationParentCarrierV0::ExactHeader(_) => None,
+            | PayloadValidationParentCarrierV0::ExactHeader(_)
+            | PayloadValidationParentCarrierV0::AuthenticatedEpochEdge(_) => None,
         }
     }
 
@@ -708,6 +821,16 @@ impl PayloadValidationParentV0 {
                 bytes[65..97].copy_from_slice(&overlay.overlay_checksum());
                 hasher.update((bytes.len() as u64).to_be_bytes());
                 hasher.update(bytes);
+                if let Some(edge) = overlay.epoch_parent_v1() {
+                    for part in [
+                        b"epoch-overlay.v1".as_slice(),
+                        edge.consensus_parent().as_bytes().as_slice(),
+                        edge.activation_binding().as_slice(),
+                    ] {
+                        hasher.update((part.len() as u64).to_be_bytes());
+                        hasher.update(part);
+                    }
+                }
             }
         }
         match &self.carrier {
@@ -722,6 +845,20 @@ impl PayloadValidationParentV0 {
                 bytes[1..].copy_from_slice(&binding);
                 hasher.update((bytes.len() as u64).to_be_bytes());
                 hasher.update(bytes);
+            }
+            PayloadValidationParentCarrierV0::AuthenticatedEpochEdge(edge) => {
+                let checkpoint = edge.checkpoint.try_cev0_bytes()?;
+                let terminal = edge.terminal_old_header.try_cev0_bytes()?;
+                hasher.update(1u64.to_be_bytes());
+                hasher.update([3]);
+                for part in [
+                    checkpoint.as_slice(),
+                    terminal.as_slice(),
+                    edge.activation_binding.as_slice(),
+                ] {
+                    hasher.update((part.len() as u64).to_be_bytes());
+                    hasher.update(part);
+                }
             }
             PayloadValidationParentCarrierV0::ExactHeader(header) => {
                 let header = header.try_cev0_bytes()?;
@@ -906,6 +1043,7 @@ pub struct DurableFinalizationV0 {
     authenticated_parent: FinalizedTip,
     proof: FinalityProofV0,
     target_overlay_ref: BlockIdOverlayRefV0,
+    epoch_parent_v1: Option<EpochApplicationParentV1>,
 }
 
 /// Permanent proof of one exact h1 application state-sync base.
@@ -977,6 +1115,7 @@ impl DurableFinalizationV0 {
         if !finality_proof_binds_authenticated_parent_v0(&proof, authenticated_parent)?
             || target_overlay_ref.block_id() != header.id()
             || target_overlay_ref.parent_block_id() != header.parent_id()
+            || target_overlay_ref.epoch_parent_v1().is_some()
         {
             return Err(CoreError::InvalidRecovery(
                 "finality proof does not bind its authenticated direct parent and target overlay",
@@ -986,7 +1125,55 @@ impl DurableFinalizationV0 {
             authenticated_parent,
             proof,
             target_overlay_ref,
+            epoch_parent_v1: None,
         })
+    }
+
+    pub(crate) fn for_epoch_application_v1(
+        epoch: &crate::EpochCoreStateV1,
+        proof: FinalityProofV0,
+        target_overlay_ref: BlockIdOverlayRefV0,
+    ) -> Result<Self> {
+        let parent = PayloadValidationParentV0::from_epoch_checkpoint_v1(epoch);
+        let consensus_parent = parent.consensus_parent_tip_v1();
+        let header = proof.finalized_block().header();
+        if header.block_kind() != trnm_consensus_types::BlockKind::EpochHandoff
+            || !finality_proof_binds_authenticated_parent_v0(&proof, consensus_parent)?
+            || proof.finalized_block().justify_qc() != epoch.anchor_reference()
+            || target_overlay_ref.block_id() != header.id()
+            || target_overlay_ref.parent_block_id() != parent.tip().block_id()
+            || target_overlay_ref.consensus_parent_block_id_v1() != consensus_parent.block_id()
+            || target_overlay_ref
+                .epoch_parent_v1()
+                .map(|edge| edge.activation_binding())
+                != Some(epoch.activation_binding())
+        {
+            return Err(CoreError::InvalidRecovery(
+                "first epoch finality dual-parent binding",
+            ));
+        }
+        Ok(Self {
+            authenticated_parent: parent.tip(),
+            proof,
+            target_overlay_ref,
+            epoch_parent_v1: parent.epoch_application_parent_v1().cloned(),
+        })
+    }
+
+    pub const fn epoch_application_parent_v1(&self) -> Option<&EpochApplicationParentV1> {
+        self.epoch_parent_v1.as_ref()
+    }
+
+    pub fn consensus_parent_tip_v1(&self) -> FinalizedTip {
+        match &self.epoch_parent_v1 {
+            Some(edge) => FinalizedTip::new(
+                edge.terminal_old_header.height(),
+                View::new(0),
+                edge.terminal_old_header.id(),
+                edge.terminal_old_header.timestamp_ms(),
+            ),
+            None => self.authenticated_parent,
+        }
     }
 
     pub const fn authenticated_parent(&self) -> FinalizedTip {
@@ -1085,6 +1272,17 @@ pub fn native_finalization_applied_checksum_v0(
     for part in parts {
         hasher.update((part.len() as u64).to_be_bytes());
         hasher.update(part);
+    }
+    if let Some(edge) = overlay.epoch_parent_v1() {
+        let tag = b"epoch-application-parent.v1";
+        for part in [
+            tag.as_slice(),
+            edge.consensus_parent().as_bytes().as_slice(),
+            edge.activation_binding().as_slice(),
+        ] {
+            hasher.update((part.len() as u64).to_be_bytes());
+            hasher.update(part);
+        }
     }
     Ok(hasher.finalize().into())
 }
@@ -1882,6 +2080,11 @@ impl DurableValidatedBlockCommitmentsV1 {
 /// `Valid` stores only inert comparison data. `matches_live` projects a newly
 /// supplied live callback result in the same direction; no API performs the
 /// reverse conversion or grants callback, voting, or application authority.
+// This bounded 248-byte Copy projection is deliberately inline. Its Valid
+// arm contains fixed-size commitments and the exact dual-parent artifact;
+// introducing a heap owner would break the existing const/Copy callback and
+// durable-comparison API without reducing any retained variable-size payload.
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DurablePayloadValidationResultV1 {
     Valid {
@@ -1978,6 +2181,17 @@ pub fn native_valid_result_checksum_v0(
         hasher.update((part.len() as u64).to_be_bytes());
         hasher.update(part);
     }
+    if let Some(edge) = overlay.epoch_parent_v1() {
+        let tag = b"epoch-application-parent.v1";
+        for part in [
+            tag.as_slice(),
+            edge.consensus_parent().as_bytes().as_slice(),
+            edge.activation_binding().as_slice(),
+        ] {
+            hasher.update((part.len() as u64).to_be_bytes());
+            hasher.update(part);
+        }
+    }
     Some(hasher.finalize().into())
 }
 
@@ -2041,6 +2255,8 @@ impl DurablePayloadValidationCompletionV0 {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SafetyState {
     schema_version: u16,
+    old_epoch_boundary_v1: Option<crate::OldEpochBoundaryStateV1>,
+    epoch_state_v1: Option<crate::EpochCoreStateV1>,
     chain_id: ChainId,
     protocol_version: ProtocolVersion,
     epoch: Epoch,
@@ -2070,6 +2286,67 @@ pub struct SafetyState {
 }
 
 impl SafetyState {
+    pub const fn epoch_state_v1(&self) -> Option<&crate::EpochCoreStateV1> {
+        self.epoch_state_v1.as_ref()
+    }
+
+    pub fn qualified_finalized_v1(
+        &self,
+        active_set: &ValidatorSet,
+    ) -> crate::QualifiedFinalizedTipV1 {
+        self.qualify_tip_v1(active_set, self.finalized)
+    }
+    pub fn qualified_application_applied_v1(
+        &self,
+        active_set: &ValidatorSet,
+    ) -> crate::QualifiedFinalizedTipV1 {
+        self.qualify_tip_v1(active_set, self.application_applied)
+    }
+    fn qualify_tip_v1(
+        &self,
+        active_set: &ValidatorSet,
+        tip: FinalizedTip,
+    ) -> crate::QualifiedFinalizedTipV1 {
+        if let Some(epoch) = &self.epoch_state_v1 {
+            if tip.block_id() == epoch.checkpoint_header().id() {
+                return crate::QualifiedFinalizedTipV1::from_scope(epoch.old_validator_set(), tip);
+            }
+        }
+        crate::QualifiedFinalizedTipV1::from_scope(active_set, tip)
+    }
+    pub fn consensus_ancestry_base_v1(
+        &self,
+        active_set: &ValidatorSet,
+    ) -> Result<crate::ConsensusAncestryBaseV1> {
+        let finalized = self.qualified_finalized_v1(active_set);
+        match &self.epoch_state_v1 {
+            Some(epoch) => epoch.ancestry_base(finalized),
+            None => Ok(crate::ConsensusAncestryBaseV1::Finalized(finalized)),
+        }
+    }
+    pub const fn old_epoch_boundary_v1(&self) -> Option<&crate::OldEpochBoundaryStateV1> {
+        self.old_epoch_boundary_v1.as_ref()
+    }
+
+    pub(crate) fn install_old_epoch_boundary_v1(
+        &mut self,
+        boundary: crate::OldEpochBoundaryStateV1,
+    ) {
+        self.schema_version = 14;
+        self.old_epoch_boundary_v1 = Some(boundary);
+    }
+
+    pub(crate) fn install_epoch_state_v1(&mut self, epoch: crate::EpochCoreStateV1) {
+        self.schema_version = 14;
+        self.epoch_state_v1 = Some(epoch);
+    }
+
+    pub(crate) fn old_epoch_boundary_mut_v1(
+        &mut self,
+    ) -> Option<&mut crate::OldEpochBoundaryStateV1> {
+        self.old_epoch_boundary_v1.as_mut()
+    }
+
     /// Reconstructs a decoded durable state for read-only validation by
     /// [`crate::Core::validate_persisted_state_v0`].
     ///
@@ -2358,6 +2635,8 @@ impl SafetyState {
     ) -> Self {
         Self {
             schema_version,
+            old_epoch_boundary_v1: None,
+            epoch_state_v1: None,
             chain_id,
             protocol_version,
             epoch,
@@ -2414,6 +2693,8 @@ impl SafetyState {
 
         let SafetyState {
             schema_version,
+            old_epoch_boundary_v1,
+            epoch_state_v1,
             chain_id,
             protocol_version,
             epoch,
@@ -2442,6 +2723,11 @@ impl SafetyState {
             safety_halt,
         } = self;
 
+        if old_epoch_boundary_v1.is_some() || epoch_state_v1.is_some() {
+            return Err(CoreError::InvalidRecovery(
+                "epoch boundary state is not genesis commissioning",
+            ));
+        }
         if state_sync_anchor.is_some() {
             return Err(CoreError::InvalidRecovery(
                 "authenticated genesis application bootstrap and h1 state-sync bootstrap are mutually exclusive",
@@ -2677,6 +2963,60 @@ impl SafetyState {
         self.safety_halt.as_ref()
     }
 
+    pub(crate) fn from_epoch_activation_v1(
+        config: &CoreConfig,
+        epoch: crate::EpochCoreStateV1,
+        revision: u64,
+    ) -> Result<Self> {
+        let context = epoch.strict_context()?;
+        if context.structural_context().new_validator_set() != config.validator_set()
+            || context.structural_context().new_parameters() != config.consensus_parameters()
+            || revision == 0
+        {
+            return Err(CoreError::InvalidRecovery(
+                "epoch activation state context or revision",
+            ));
+        }
+        let checkpoint =
+            crate::QualifiedFinalizedTipV1::from_header(epoch.checkpoint_header()).tip();
+        let anchor = epoch.anchor_reference().clone();
+        Ok(Self {
+            schema_version: 14,
+            old_epoch_boundary_v1: Some(crate::OldEpochBoundaryStateV1::new(
+                epoch.owner_generation(),
+            )?),
+            epoch_state_v1: Some(epoch),
+            chain_id: config.validator_set().chain_id(),
+            protocol_version: config.validator_set().protocol_version(),
+            epoch: config.validator_set().epoch(),
+            validator_set_id: config.validator_set().id(),
+            genesis_block_id: config.genesis_block_id(),
+            authenticated_genesis_application_parent: config
+                .authenticated_genesis_application_parent_v0()
+                .copied(),
+            current_view: View::new(1),
+            last_voted_view: None,
+            last_timeout_view: None,
+            finalized: checkpoint,
+            locked_qc: anchor.clone(),
+            high_qc: anchor,
+            revision,
+            durable_observed_qcs: Vec::new(),
+            payload_terminal_facts: Vec::new(),
+            payload_validation_obligations: Vec::new(),
+            payload_validation_completions: Vec::new(),
+            pending_tc_high_qc_sync: None,
+            pending_standalone_qc_sync: None,
+            pending_sign: None,
+            last_finalization: None,
+            state_sync_anchor: None,
+            application_applied: checkpoint,
+            finalization_queue: Vec::new(),
+            pending_finalize: None,
+            safety_halt: None,
+        })
+    }
+
     pub(crate) fn from_genesis(
         validator_set: &ValidatorSet,
         genesis_qc: GenesisQcV0,
@@ -2687,6 +3027,8 @@ impl SafetyState {
         let genesis_reference = QcReferenceV0::genesis_anchor(genesis_qc.clone());
         Ok(Self {
             schema_version: SAFETY_STATE_SCHEMA_VERSION,
+            old_epoch_boundary_v1: None,
+            epoch_state_v1: None,
             chain_id: validator_set.chain_id(),
             protocol_version: validator_set.protocol_version(),
             epoch: validator_set.epoch(),
@@ -2758,6 +3100,8 @@ impl SafetyState {
         );
         Ok(Self {
             schema_version: SAFETY_STATE_SCHEMA_VERSION,
+            old_epoch_boundary_v1: None,
+            epoch_state_v1: None,
             chain_id: validator_set.chain_id(),
             protocol_version: validator_set.protocol_version(),
             epoch: validator_set.epoch(),
@@ -2981,6 +3325,11 @@ impl AuthorizedPayloadValidationValidV0 {
 /// Core only after an application-sealed callback presents an opaque
 /// [`ApplicationSealedValidV0`] joining the matching request permit and the
 /// separately installed Core/store seal authority.
+// This bounded 248-byte Copy projection is deliberately inline. Its Valid
+// arm contains fixed-size commitments and the exact dual-parent artifact;
+// introducing a heap owner would break the existing const/Copy callback and
+// durable-comparison API without reducing any retained variable-size payload.
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PayloadValidationResult {
     Valid(AuthorizedPayloadValidationValidV0),

@@ -35,6 +35,7 @@ pub enum BlockValidationErrorCode {
     NonCheckpointBlock = 14,
     StateRootMismatch = 15,
     NextEpochCommitmentMismatch = 16,
+    NonEpochHandoffBlock = 17,
 }
 
 impl BlockValidationErrorCode {
@@ -57,6 +58,7 @@ impl BlockValidationErrorCode {
             Self::NonCheckpointBlock => "non_checkpoint_block",
             Self::StateRootMismatch => "state_root_mismatch",
             Self::NextEpochCommitmentMismatch => "next_epoch_commitment_mismatch",
+            Self::NonEpochHandoffBlock => "non_epoch_handoff_block",
         }
     }
 }
@@ -756,11 +758,65 @@ pub fn validate_root_bound_regular_body_v0(
     active_validator_set: &ValidatorSet,
     parameters: &ConsensusParametersV0,
 ) -> BlockValidationResult<RootBoundRegularBodyV0> {
+    validate_root_bound_body_for_kind_v1(
+        block,
+        active_validator_set,
+        parameters,
+        BlockKind::Regular,
+    )
+}
+
+/// Root-bound checkpoint/handoff body bytes. This is neither application Valid
+/// nor epoch authority: state/receipts and the committed transition still need
+/// their respective execution and strict activation owners.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct RootBoundEpochBodyV1(RootBoundRegularBodyV0);
+impl RootBoundEpochBodyV1 {
+    pub const fn block_id(&self) -> BlockId {
+        self.0.block_id
+    }
+    pub const fn logical_block_size(&self) -> u64 {
+        self.0.logical_block_size
+    }
+    pub const fn transaction_count(&self) -> u32 {
+        self.0.transaction_count
+    }
+    pub const fn evidence_count(&self) -> u32 {
+        self.0.evidence_count
+    }
+}
+
+pub fn validate_root_bound_epoch_body_v1(
+    block: &crate::Block,
+    active_validator_set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+) -> BlockValidationResult<RootBoundEpochBodyV1> {
+    let kind = block.header().block_kind();
+    if !matches!(kind, BlockKind::EpochCheckpoint | BlockKind::EpochHandoff)
+        || crate::EpochGeometryV0::new(active_validator_set.epoch(), parameters)
+            .and_then(|g| g.expected_block_kind(block.header().height()))
+            .ok()
+            != Some(kind)
+    {
+        return Err(BlockValidationError::new(
+            BlockValidationErrorCode::NonCheckpointBlock,
+        ));
+    }
+    validate_root_bound_body_for_kind_v1(block, active_validator_set, parameters, kind)
+        .map(RootBoundEpochBodyV1)
+}
+
+fn validate_root_bound_body_for_kind_v1(
+    block: &crate::Block,
+    active_validator_set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+    kind: BlockKind,
+) -> BlockValidationResult<RootBoundRegularBodyV0> {
     let header = block.header();
     header.validate_shape().map_err(|_| {
         BlockValidationError::new(BlockValidationErrorCode::ParametersContextMismatch)
     })?;
-    if header.block_kind() != BlockKind::Regular {
+    if header.block_kind() != kind {
         return Err(BlockValidationError::new(
             BlockValidationErrorCode::NonRegularBlock,
         ));
@@ -869,6 +925,19 @@ pub struct ValidatedCheckpointCommitmentsV0 {
 }
 
 impl ValidatedCheckpointCommitmentsV0 {
+    /// Projects the already checked checkpoint counts into the common
+    /// application callback carrier. This remains static comparison material:
+    /// only a Core-issued request joined to the private application-store seal
+    /// can authorize a live Valid callback. It grants no epoch authority.
+    pub const fn application_commitments_v1(self) -> ValidatedBlockCommitmentsV0 {
+        ValidatedBlockCommitmentsV0 {
+            block_id: self.block_id,
+            logical_block_size: self.logical_block_size,
+            transaction_count: self.transaction_count,
+            evidence_count: self.evidence_count,
+        }
+    }
+
     pub const fn block_id(&self) -> BlockId {
         self.block_id
     }
@@ -1254,6 +1323,70 @@ impl BlockBodyV0 {
             .map(DoubleVoteEvidenceV0::try_cev0_bytes)
             .collect()
     }
+
+    /// Binds a first-new execution result to its complete canonical body and
+    /// receipt roots. This static capability does not authenticate the epoch
+    /// transition, parent application state, or durable P. Consumers must join
+    /// those independently and use the strict verifier for evidence signatures.
+    pub fn validate_epoch_handoff_commitments_v1<V: SignatureVerifier>(
+        &self,
+        header: &BlockHeader,
+        receipts: &ExecutionReceiptsV0,
+        parameters: &ConsensusParametersV0,
+        expected_state_root: StateRoot,
+        active_validator_set: &ValidatorSet,
+        verifier: &V,
+    ) -> BlockValidationResult<ValidatedBlockCommitmentsV0> {
+        header.validate_shape().map_err(|_| {
+            BlockValidationError::new(BlockValidationErrorCode::ParametersContextMismatch)
+        })?;
+        if header.block_kind() != BlockKind::EpochHandoff {
+            return Err(BlockValidationError::new(
+                BlockValidationErrorCode::NonEpochHandoffBlock,
+            ));
+        }
+        let geometry = crate::EpochGeometryV0::new(header.epoch(), parameters).map_err(|_| {
+            BlockValidationError::new(BlockValidationErrorCode::ParametersContextMismatch)
+        })?;
+        if geometry.expected_block_kind(header.height()) != Ok(BlockKind::EpochHandoff) {
+            return Err(BlockValidationError::new(
+                BlockValidationErrorCode::NonEpochHandoffBlock,
+            ));
+        }
+        if header.state_root() != expected_state_root {
+            return Err(BlockValidationError::new(
+                BlockValidationErrorCode::StateRootMismatch,
+            ));
+        }
+        self.validate_common_static_root_commitments_admission(header, receipts, parameters)?;
+        active_validator_set
+            .validate_against_parameters(parameters)
+            .map_err(|_| {
+                BlockValidationError::new(BlockValidationErrorCode::ValidatorSetContextMismatch)
+            })?;
+        if header.genesis_hash() != active_validator_set.genesis_hash()
+            || header.chain_id() != active_validator_set.chain_id()
+            || header.protocol_version() != active_validator_set.protocol_version()
+            || header.epoch() != active_validator_set.epoch()
+            || header.validator_set_id() != active_validator_set.id()
+        {
+            return Err(BlockValidationError::new(
+                BlockValidationErrorCode::ValidatorSetContextMismatch,
+            ));
+        }
+        self.verify_evidence(active_validator_set, verifier)
+            .map_err(|_| {
+                BlockValidationError::new(BlockValidationErrorCode::InvalidEvidenceSignature)
+            })?;
+        Ok(ValidatedBlockCommitmentsV0 {
+            block_id: header.id(),
+            logical_block_size: self.logical_block_size_v0(header).map_err(|_| {
+                BlockValidationError::new(BlockValidationErrorCode::LogicalBlockSizeExceeded)
+            })?,
+            transaction_count: self.application_payload.transaction_count(),
+            evidence_count: self.evidence.len() as u32,
+        })
+    }
 }
 
 fn validate_evidence_order(evidence: &[DoubleVoteEvidenceV0]) -> BlockValidationResult<()> {
@@ -1326,6 +1459,9 @@ fn block_validation_as_validation_error(error: BlockValidationError) -> Validati
         BlockValidationErrorCode::NextEpochCommitmentMismatch => {
             ValidationError::InvalidBlock("checkpoint next-epoch commitment mismatch")
         }
+        BlockValidationErrorCode::NonEpochHandoffBlock => ValidationError::InvalidBlock(
+            "first-new body-validation kernel requires an epoch-handoff block",
+        ),
     }
 }
 

@@ -157,6 +157,8 @@ pub fn load_and_verify_fleet_start_certificate_v1(
             && identity.binary_sha256() == public.binary_sha256()
             && identity.workload_corpus_sha256() == public.workload_corpus_sha256()
             && identity.workload_policy_sha256() == public.workload_policy_sha256()
+            && identity.native_client_profile_sha256_v1()
+                == public.native_client_profile_sha256_v1()
             && usize::try_from(identity.validator_count()).ok() == Some(validator_count),
         "fleet StartCertificate deployment identity differs from observer-public"
     );

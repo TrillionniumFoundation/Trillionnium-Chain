@@ -228,6 +228,7 @@ class Mutants(unittest.TestCase):
     def test_hosted_candidate_commands_and_outcomes_cannot_be_omitted(self) -> None:
         step = "Test hosted candidate process recovery with explicit features"
         for token in (*checker._workflows.CANDIDATE_TEST_COMMANDS, checker._workflows.CANDIDATE_CLIPPY_COMMAND,
+                      'id: hosted_candidate_process',
                       'timeout --signal=TERM --kill-after=10s 600s "$@"', 'exit "$rc"',
                       '--check-candidate-test-log "$root/$name.log"', 'if [[ "$kind" == "test" ]]',
                       'printf \'%s\\n\' "$rc" > "$root/$name.exit-code"', "x230_acceptance=false"):
@@ -236,8 +237,17 @@ class Mutants(unittest.TestCase):
         self.reset()
         self.replace(checker.BASELINE_WORKFLOW, "run_candidate test timeout-signing cargo", "run_candidate clippy timeout-signing cargo")
         self.rejected()
-        for token in ("if: always()", "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
+        retention = "if: always() && (steps.hosted_candidate_process.outcome == 'success' || steps.hosted_candidate_process.outcome == 'failure')"
+        for token in (retention, "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
             self.reset(); self.step_remove("Retain hosted candidate process commands and outcomes", token); self.rejected()
+        for condition in ("always()", "always() && steps.hosted_candidate_process.outcome == 'success'",
+                          "always() && steps.hosted_candidate_process.outcome == 'failure'",
+                          "always() && steps.unrelated.outcome == 'success'",
+                          "always() && steps.hosted_candidate_process.outcome == 'success' || true"):
+            with self.subTest(condition=condition):
+                self.reset()
+                self.replace(checker.BASELINE_WORKFLOW, retention, f"if: {condition}")
+                self.rejected()
 
 
 class RuntimeEvidence(unittest.TestCase):

@@ -81,6 +81,23 @@ parameter commitments, object allowlist, and authenticated preimages.
 No generic `Deserialize` path constructs M01 verified tokens. M01 consumes the
 inert object and independently supplied expected target to perform verification.
 
+### Epoch finality and ordered membership consumers
+
+The explicit `decode_epoch_first_finality_proof_v1_exact_with_budget` consumer
+accepts only a separately decoded complete eight-preimage activation context.
+It reconstructs the expected authorization bytes, admits exactly that synthetic
+new-epoch anchor, and checks C+3's kind/parent/activation coordinates before
+canonical re-encoding and exact EOF. The ordinary and genesis consumers still
+reject epoch anchors. Decoding yields inert proof data; M01 performs the strict
+signature and independently trusted context verification.
+
+Every certified header charges its proposer signature as well as QC/TC work.
+Nested failed attempts retain their charged budget. The shared
+`OrderedInclusionProofV0` generator/verifier uses the existing ordered-root
+domains and checks count/index, exact path length and canonical odd-leaf padding;
+it introduces no new consensus hash or root algorithm. M05 separately authenticates
+the root through strict finality before interpreting membership as evidence.
+
 ### Other owned foundation packages
 
 These packages have different encodings and authority boundaries. The table
@@ -256,6 +273,66 @@ Required acceptance cases, each with exact input bytes and code/offset:
 M00 supplies bytes/errors; M01 verifies them independently; M02/M03/M13 replay
 those same cases at their actual ingress. Fuzz prefix/length arithmetic and
 nested allocation, with retained-byte/work assertions, not only no-panic checks.
+
+## Historical header context (M00-HISTORY-V1)
+
+`validate_historical_header_link_v1(header, parent, active_set, parameters)` is
+an inert structural helper for M01-HISTORY-V1. It reuses the existing exact
+header/set/parameter, leader and timestamp checks and `EpochGeometryV0` without
+allocating a new wire tag or hash domain. Parent ID and height must be exact;
+same-epoch views increase, while an epoch-change handoff starts a fresh positive
+view after the scheduled old seal2. It checks the unchanged chain identity and
+seal carried roots/commitment with empty payload/receipt/evidence roots. It does
+not claim QC, TC or proposal-signature verification and cannot authorize Core,
+signing or application execution. Strict terminal finality and original ordered
+activation evidence separately authenticate the complete linked history.
+
+## Contextual successor activation (M00-SUCCESSOR-EVIDENCE-V1)
+
+For M01-SUCCESSOR-PRE-HANDOFF-V1, the narrow
+`FinalityProofV0::validate_checkpoint_two_seal_structure_v1(old_set,
+old_parameters, commitment) -> Result<()>` reuses only the existing specialized
+checkpoint/two-seal geometry, empty seal roots, carried state and commitment
+relations. It does not validate generic finality, authenticated ancestry or any
+signature, and returns no kernel or authority token. The strict consumer must
+first decode under the complete authenticated runtime context and separately
+perform strict runtime finality verification. Existing verifier-based kernel
+APIs keep their original verification semantics and frozen bytes unchanged.
+
+This candidate interface is implemented by `epoch_activation_evidence.rs` and
+`joint_handoff.rs`, with strict consumer verification in M01. Frozen v0 bytes
+and context-free decoder behavior remain unchanged. A checkpoint proof in an already
+activated epoch may contain a timeout certificate with a reference to that
+epoch's authorized synthetic anchor. The reference names the predecessor's
+terminal seal and view0; it does not name the first application block.
+
+`decode_epoch_activation_evidence_with_context_v1_exact(preimages,
+predecessor_context, budget)` uses the complete inert
+`EpochRuntimeContextDataV1` as decoding context. Its active set and parameters
+are the predecessor context's new set and parameters. Decode the same eight
+canonical roots and reuse the existing aggregate byte/work limits, parent
+binding, commitment/configuration checks and complete composition relations.
+Decode the checkpoint proof through the existing bounded runtime finality parser,
+then require the exact checkpoint/two-seal geometry, commitment and
+state-preserving empty seals. Exact reencoding and parser exhaustion are mandatory.
+Structural failure keeps the supplied meter unchanged; successful decoding reserves
+all later signature work. The old v0 entrypoint supplies no predecessor context
+and continues to reject unauthorized synthetic references.
+
+Factor checkpoint relations and joint composition into shared internal functions.
+`derive_successor_epoch_joint_structure_v1(decoded, predecessor_context)` returns
+only the existing inert joint facts after complete structural checks, including
+exact active set/parameters and exact synthetic-reference binding. It performs no
+signature verification and cannot create M01 strict authority. Its public contract
+must say so explicitly. Existing verifier-based v0 wrappers continue performing
+all their original signature checks before returning the same inert facts.
+
+M01 consumes these structural results only together with an independently verified
+predecessor and strict checkpoint, terminal-QC and both-role handoff verification.
+No bare set, kernel, peer-provided anchor or stored digest can replace that owner.
+The new decoder and structural path require real signed skipped-view checkpoint
+fixtures, changed-context/anchor negatives, all retained two-seal mutants,
+canonical-byte rejection and exact work-boundary tests.
 
 ## Activation boundary
 

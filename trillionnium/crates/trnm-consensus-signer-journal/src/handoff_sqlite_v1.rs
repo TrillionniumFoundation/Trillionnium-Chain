@@ -4,6 +4,7 @@ use std::{
     fs::{self, File, OpenOptions},
     os::fd::AsRawFd,
     path::{Path, PathBuf},
+    sync::Arc,
     time::Duration,
 };
 
@@ -28,7 +29,8 @@ use crate::{
     schema::validate_canonical_schema,
     ExternalMonotonicWatermarkV0, HandoffSignatureProducerV1, HandoffSignatureRequestV1,
     HandoffSignerJournalConflictV1, HandoffSignerJournalErrorV1, HandoffSignerJournalProfileV1,
-    SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0, StrictOldSetHandoffAdmissionV1,
+    SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0, StrictNewSetHandoffAdmissionV1,
+    StrictOldSetHandoffAdmissionV1,
 };
 
 const DEFAULT_BUSY_TIMEOUT: Duration = Duration::from_secs(5);
@@ -119,6 +121,8 @@ pub enum SignerJournalSchemaKindV1 {
     LegacyV0ReadOnly,
     /// Exact create-new schema1.
     HandoffCapableV1,
+    /// Terminal schema2: no ordinary or handoff signing owner can be opened.
+    RetiredOrdinaryV1,
 }
 
 /// Read-only exact schema classifier. It performs no migration or PRAGMA that
@@ -174,11 +178,25 @@ pub fn inspect_signer_journal_schema_read_only_v1(
         (1, 0) => {
             let auxiliary_pins = pin_checkpointed_legacy_namespace_v1(database_path)?;
             require_persisted_sqlite_journal_mode_v1(&database_file, 2, "schema0 WAL mode")?;
-            validate_canonical_schema(&connection)
-                .map_err(|_| HandoffSignerJournalErrorV1::SchemaMismatch)?;
+            let version: i64 = connection
+                .query_row("PRAGMA user_version", [], |r| r.get(0))
+                .map_err(|e| {
+                    HandoffSignerJournalErrorV1::sqlite("classify ordinary schema version", e)
+                })?;
+            if version == 2 {
+                crate::sqlite::retirement_v1::validate_retired_schema_v1(&connection)
+                    .map_err(|_| HandoffSignerJournalErrorV1::SchemaMismatch)?;
+            } else {
+                validate_canonical_schema(&connection)
+                    .map_err(|_| HandoffSignerJournalErrorV1::SchemaMismatch)?;
+            }
             auxiliary_pins.require_unchanged()?;
             require_path_identity(database_path, database_identity)?;
-            Ok(SignerJournalSchemaKindV1::LegacyV0ReadOnly)
+            Ok(if version == 2 {
+                SignerJournalSchemaKindV1::RetiredOrdinaryV1
+            } else {
+                SignerJournalSchemaKindV1::LegacyV0ReadOnly
+            })
         }
         (0, 1) => {
             require_schema1_auxiliary_namespace_absent_v1(database_path)?;
@@ -385,6 +403,108 @@ pub struct SqliteHandoffSignerJournalV1<W: ExternalMonotonicWatermarkV0> {
     observed_head: JournalHeadV1,
     owned_pending: Option<[u8; 32]>,
     owner_pid: u32,
+    owner_affinity: Arc<()>,
+}
+
+/// Read-only exact schema1 comparison facts. This is not signing admission,
+/// and a new process/open cannot adopt its private owner affinity.
+///
+/// ```compile_fail
+/// use trnm_consensus_signer_journal::ConfirmedHandoffJournalHeadV1;
+/// fn copy(v: ConfirmedHandoffJournalHeadV1) { let _ = v.clone(); }
+/// ```
+#[derive(Debug)]
+pub struct ConfirmedHandoffJournalHeadV1 {
+    owner: Arc<()>,
+    path: PathBuf,
+    profile_checksum: [u8; 32],
+    watermark: SignerWatermarkV0,
+    pending: Option<[u8; 32]>,
+    terminal_fence_checksum: Option<[u8; 32]>,
+}
+impl ConfirmedHandoffJournalHeadV1 {
+    pub const fn profile_checksum_v1(&self) -> [u8; 32] {
+        self.profile_checksum
+    }
+    pub const fn exact_watermark_v1(&self) -> SignerWatermarkV0 {
+        self.watermark
+    }
+    pub const fn pending_fingerprint_v1(&self) -> Option<[u8; 32]> {
+        self.pending
+    }
+    pub const fn terminal_fence_checksum_v1(&self) -> Option<[u8; 32]> {
+        self.terminal_fence_checksum
+    }
+    pub fn matches_exact_head_v1(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.owner, &other.owner)
+            && self.path == other.path
+            && self.profile_checksum == other.profile_checksum
+            && self.watermark == other.watermark
+            && self.pending == other.pending
+            && self.terminal_fence_checksum == other.terminal_fence_checksum
+    }
+    /// Compare only the complete local cut after other owners' external I/O.
+    /// This neither refreshes external trust nor grants signing/recovery authority.
+    pub fn confirm_local_owner_v1<W: ExternalMonotonicWatermarkV0>(
+        &self,
+        owner: &SqliteHandoffSignerJournalV1<W>,
+    ) -> Result<(), HandoffSignerJournalErrorV1> {
+        if !Arc::ptr_eq(&self.owner, &owner.owner_affinity)
+            || self.path != owner.database_path
+            || !self.matches_exact_head_v1(&owner.read_local_head_v1()?)
+        {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::CommitReadbackConflict,
+            ));
+        }
+        Ok(())
+    }
+    pub fn belongs_to_owner_at_path_v1<W: ExternalMonotonicWatermarkV0>(
+        &self,
+        owner: &mut SqliteHandoffSignerJournalV1<W>,
+        path: &Path,
+    ) -> bool {
+        Arc::ptr_eq(&self.owner, &owner.owner_affinity)
+            && self.path == path
+            && owner.database_path == path
+            && owner
+                .confirm_head_exact_v1()
+                .is_ok_and(|fresh| self.matches_exact_head_v1(&fresh))
+    }
+}
+
+// The request borrows this private producer-owned pin; callers cannot supply
+// an equivalent-looking intent/hash in place of its actual owner and head.
+struct PreparedHandoffLocalReadV1<'a, W: ExternalMonotonicWatermarkV0> {
+    owner: &'a SqliteHandoffSignerJournalV1<W>,
+    head: ConfirmedHandoffJournalHeadV1,
+    prepared: &'a PreparedIntentV1,
+}
+impl<W: ExternalMonotonicWatermarkV0> PreparedHandoffLocalReadV1<'_, W> {
+    fn confirm_exact(&self) -> Result<(), HandoffSignerJournalErrorV1> {
+        self.head.confirm_local_owner_v1(self.owner)?;
+        self.owner
+            .require_owned_pending(self.prepared.fingerprint)?;
+        if self.head.pending != Some(self.prepared.fingerprint) {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::PreparedIntentPending,
+            ));
+        }
+        let actual = read_intent_v1(&self.owner.connection, self.prepared.fingerprint)?.ok_or(
+            HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                "original pending intent missing",
+            ),
+        )?;
+        require_exact_intent_v1(&actual, self.prepared)?;
+        self.owner.ensure_file_identity()
+    }
+}
+impl<W: ExternalMonotonicWatermarkV0> crate::handoff_model_v1::HandoffPreparedLocalCheckV1
+    for PreparedHandoffLocalReadV1<'_, W>
+{
+    fn confirm_local_prepared_v1(&self) -> Result<(), HandoffSignerJournalErrorV1> {
+        self.confirm_exact()
+    }
 }
 
 impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
@@ -437,6 +557,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
             observed_head,
             owned_pending: None,
             owner_pid: std::process::id(),
+            owner_affinity: Arc::new(()),
         };
         store.audit_local(None)?;
         let initial = store.watermark_for(store.observed_head)?;
@@ -455,6 +576,47 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         profile: HandoffSignerJournalProfileV1,
         external_watermark: W,
     ) -> Result<Self, HandoffSignerJournalErrorV1> {
+        Self::open_existing_internal(database_path, profile, external_watermark, None)
+    }
+
+    /// Reopen only the exact old-role decision whose pre-certificate evidence
+    /// has been freshly revalidated by the caller. This cannot recover a vote.
+    pub fn recover_old_set_handoff_exact_v1(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+        intent: &CanonicalHandoffSignIntentV1,
+        admission: &StrictOldSetHandoffAdmissionV1,
+    ) -> Result<Self, HandoffSignerJournalErrorV1> {
+        if intent.signer_role() != HandoffSignerRoleV1::OldSet {
+            return Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable);
+        }
+        admission.require_exact(intent, &profile)?;
+        let prepared = prepare_handoff_intent_v1(&profile, intent, admission.admission_digest())?;
+        Self::open_existing_internal(database_path, profile, external_watermark, Some(prepared))
+    }
+
+    /// Recover the exact new-role decision without constructing a new journal
+    /// or replacing external authority. Complete events return their signature
+    /// on the next sign call; prepared events can retry only the same intent.
+    pub fn recover_new_set_handoff_exact_v1(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+        intent: &CanonicalHandoffSignIntentV1,
+        admission: &StrictNewSetHandoffAdmissionV1,
+    ) -> Result<Self, HandoffSignerJournalErrorV1> {
+        admission.require_exact(intent, &profile)?;
+        let prepared = prepare_handoff_intent_v1(&profile, intent, admission.admission_digest())?;
+        Self::open_existing_internal(database_path, profile, external_watermark, Some(prepared))
+    }
+
+    fn open_existing_internal(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+        recovery: Option<PreparedIntentV1>,
+    ) -> Result<Self, HandoffSignerJournalErrorV1> {
         ensure_supported_platform_v1()?;
         reject_semantic_watermark_v1(&external_watermark)?;
         let database_path = absolute_database_path(database_path.as_ref())?;
@@ -463,6 +625,9 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
                 return Err(HandoffSignerJournalErrorV1::LegacySchemaReadOnly);
             }
             SignerJournalSchemaKindV1::HandoffCapableV1 => {}
+            SignerJournalSchemaKindV1::RetiredOrdinaryV1 => {
+                return Err(HandoffSignerJournalErrorV1::SchemaMismatch)
+            }
         }
         let (directory_file, directory_identity) = open_parent_directory(&database_path)?;
         let database_file = open_existing_private_file_v1(&database_path)?;
@@ -495,10 +660,76 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
             observed_head,
             owned_pending: None,
             owner_pid: std::process::id(),
+            owner_affinity: Arc::new(()),
         };
-        store.audit_local(None)?;
-        store.require_external_exact()?;
+        if let Some(expected) = recovery {
+            let stored = read_intent_v1(&store.connection, expected.fingerprint)?.ok_or(
+                HandoffSignerJournalErrorV1::AdmissionMismatch("recovery intent is absent"),
+            )?;
+            require_exact_intent_v1(&stored, &expected)?;
+            let pending = pending_fingerprint_v1(&store.connection)?;
+            if pending.is_some_and(|actual| actual != expected.fingerprint) {
+                return Err(HandoffSignerJournalErrorV1::Conflict(
+                    HandoffSignerJournalConflictV1::PreparedIntentPending,
+                ));
+            }
+            store.owned_pending = pending;
+            store.audit_local(pending)?;
+            let target = store.watermark_for(store.observed_head)?;
+            let actual = store
+                .external_watermark
+                .load(store.profile.external_watermark_scope())
+                .map_err(|error| {
+                    HandoffSignerJournalErrorV1::external("load handoff recovery watermark", error)
+                })?;
+            if actual != Some(target) {
+                // The existing helper CASes only the exact hash-linked previous
+                // event to this target. Missing/ahead/older/foreign anchors fail.
+                // No custody call can occur before this CAS and fresh readback.
+                store.advance_external_to_observed()?;
+            }
+            store.require_external_exact()?;
+        } else {
+            store.audit_local(None)?;
+            store.require_external_exact()?;
+        }
         Ok(store)
+    }
+
+    /// Authenticate the actual local/external cut without advancing it or
+    /// releasing signing authority. Recheck local identity after external I/O.
+    pub fn confirm_head_exact_v1(
+        &mut self,
+    ) -> Result<ConfirmedHandoffJournalHeadV1, HandoffSignerJournalErrorV1> {
+        self.ensure_operational()?;
+        self.read_local_head_v1()
+    }
+
+    fn read_local_head_v1(
+        &self,
+    ) -> Result<ConfirmedHandoffJournalHeadV1, HandoffSignerJournalErrorV1> {
+        self.ensure_file_identity()?;
+        self.audit_local(self.owned_pending)?;
+        let head = self.observed_head;
+        let pending = pending_fingerprint_v1(&self.connection)?;
+        let fence = read_terminal_fence_v1(&self.connection)?;
+        if read_head_v1(&self.connection, self.journal_id)? != head
+            || pending_fingerprint_v1(&self.connection)? != pending
+            || read_terminal_fence_v1(&self.connection)? != fence
+        {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::CommitReadbackConflict,
+            ));
+        }
+        self.ensure_file_identity()?;
+        Ok(ConfirmedHandoffJournalHeadV1 {
+            owner: Arc::clone(&self.owner_affinity),
+            path: self.database_path.clone(),
+            profile_checksum: self.profile.profile_checksum(),
+            watermark: self.watermark_for(head)?,
+            pending,
+            terminal_fence_checksum: fence.map(|f| f.fence_checksum),
+        })
     }
 
     pub const fn profile(&self) -> &HandoffSignerJournalProfileV1 {
@@ -585,7 +816,32 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
             return Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable);
         }
         admission.require_exact(intent, &self.profile)?;
-        let prepared = prepare_handoff_intent_v1(&self.profile, intent, admission)?;
+        let prepared =
+            prepare_handoff_intent_v1(&self.profile, intent, admission.admission_digest())?;
+        self.sign_prepared_handoff(intent, prepared, producer)
+    }
+
+    /// New-role signing requires a distinct strict pre-certificate admission.
+    /// The role-specific decision is durable before the producer is invoked.
+    /// This does not admit ordinary new-epoch votes.
+    pub fn sign_new_set_handoff_exact_v1<P: HandoffSignatureProducerV1>(
+        &mut self,
+        intent: &CanonicalHandoffSignIntentV1,
+        admission: &StrictNewSetHandoffAdmissionV1,
+        producer: &mut P,
+    ) -> Result<SignatureBytes, HandoffSignerJournalErrorV1> {
+        admission.require_exact(intent, &self.profile)?;
+        let prepared =
+            prepare_handoff_intent_v1(&self.profile, intent, admission.admission_digest())?;
+        self.sign_prepared_handoff(intent, prepared, producer)
+    }
+
+    fn sign_prepared_handoff<P: HandoffSignatureProducerV1>(
+        &mut self,
+        intent: &CanonicalHandoffSignIntentV1,
+        prepared: PreparedIntentV1,
+        producer: &mut P,
+    ) -> Result<SignatureBytes, HandoffSignerJournalErrorV1> {
         self.ensure_operational()?;
         if let Some(stored) = read_intent_v1(&self.connection, prepared.fingerprint)? {
             require_exact_intent_v1(&stored, &prepared)?;
@@ -645,21 +901,38 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
     ) -> Result<SignatureBytes, HandoffSignerJournalErrorV1> {
         self.ensure_operational()?;
         self.require_owned_pending(prepared.fingerprint)?;
-        let signature = producer
-            .sign_handoff(HandoffSignatureRequestV1::new(
-                intent,
-                self.profile.signer_profile_ref(),
-            ))
-            .map_err(HandoffSignerJournalErrorV1::SignatureProducer)?;
-        let validator = self
-            .profile
-            .old_validator_set()
+        let signature = {
+            let guard = PreparedHandoffLocalReadV1 {
+                owner: self,
+                head: self.read_local_head_v1()?,
+                prepared,
+            };
+            guard.confirm_exact()?;
+            let signature = producer
+                .sign_handoff(HandoffSignatureRequestV1::new(
+                    intent,
+                    self.profile.signer_profile_ref(),
+                    &guard,
+                ))
+                .map_err(HandoffSignerJournalErrorV1::SignatureProducer)?;
+            guard.confirm_exact()?;
+            signature
+        };
+        let validator_set = match intent.signer_role() {
+            HandoffSignerRoleV1::OldSet => self.profile.old_validator_set(),
+            HandoffSignerRoleV1::NewSet => self.profile.new_validator_set(),
+        };
+        let validator = validator_set
             .validator(self.profile.author())
             .ok_or(HandoffSignerJournalErrorV1::MetadataMismatch)?;
         if !StrictEd25519Verifier.verify(validator, &intent.signing_root(), &signature) {
             return Err(HandoffSignerJournalErrorV1::InvalidProducedSignature);
         }
-        self.append_signature(prepared, signature, true)?;
+        self.append_signature(
+            prepared,
+            signature,
+            intent.signer_role() == HandoffSignerRoleV1::OldSet,
+        )?;
         self.owned_pending = None;
         self.advance_external_to_observed()?;
         read_persisted_signature_v1(&self.connection, prepared.fingerprint, &self.profile)?.ok_or(
@@ -891,6 +1164,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
             role,
             ref genesis_hash,
             ref validator_id,
+            descriptor_digest,
             ..
         } = &prepared.fields
         else {
@@ -920,6 +1194,26 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
                 HandoffSignerJournalErrorV1::sqlite("check schema1 handoff conflict", error)
             })?;
         if conflicting.is_some() {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::HandoffTransitionDifferentIntent {
+                    old_epoch: *old_epoch,
+                    new_epoch: *new_epoch,
+                    role: *role,
+                },
+            ));
+        }
+        let other_descriptor: Option<Vec<u8>> = self
+            .connection
+            .query_row(
+                "SELECT descriptor_digest FROM signer_intents_v1 WHERE intent_class=1 LIMIT 1",
+                [],
+                |row| row.get(0),
+            )
+            .optional()
+            .map_err(|error| {
+                HandoffSignerJournalErrorV1::sqlite("check handoff role agreement", error)
+            })?;
+        if other_descriptor.is_some_and(|digest| digest.as_slice() != descriptor_digest) {
             return Err(HandoffSignerJournalErrorV1::Conflict(
                 HandoffSignerJournalConflictV1::HandoffTransitionDifferentIntent {
                     old_epoch: *old_epoch,
@@ -1102,7 +1396,7 @@ fn prepare_consensus_intent_v1(
 fn prepare_handoff_intent_v1(
     profile: &HandoffSignerJournalProfileV1,
     intent: &CanonicalHandoffSignIntentV1,
-    admission: &StrictOldSetHandoffAdmissionV1,
+    admission_digest: [u8; 32],
 ) -> Result<PreparedIntentV1, HandoffSignerJournalErrorV1> {
     intent
         .validate(
@@ -1112,14 +1406,11 @@ fn prepare_handoff_intent_v1(
             profile.new_consensus_parameters(),
         )
         .map_err(|_| HandoffSignerJournalErrorV1::Intent("handoff transition profile"))?;
-    if intent.signer_role() != HandoffSignerRoleV1::OldSet
-        || intent.validator_id() != profile.author()
-    {
+    if !profile.permits_role(intent.signer_role()) || intent.validator_id() != profile.author() {
         return Err(HandoffSignerJournalErrorV1::Intent(
-            "only admitted old-set handoff is enabled",
+            "handoff role is not admitted by profile",
         ));
     }
-    admission.require_exact(intent, profile)?;
     let canonical_intent = intent
         .canonical_bytes()
         .map_err(|_| HandoffSignerJournalErrorV1::Intent("handoff canonical encoding"))?;
@@ -1146,7 +1437,7 @@ fn prepare_handoff_intent_v1(
         validator_id: intent.validator_id().as_bytes().to_vec(),
         descriptor_digest: *preimage.descriptor_digest().as_bytes(),
         descriptor_cev0: preimage.descriptor_bytes().to_vec(),
-        admission_digest: admission.admission_digest(),
+        admission_digest,
     };
     let mut prepared = PreparedIntentV1 {
         fingerprint: *intent.fingerprint().as_bytes(),
@@ -1421,6 +1712,21 @@ fn head_checksum_v1(journal_id: [u8; 32], head: JournalHeadV1) -> [u8; 32] {
     )
 }
 
+// The explicit role-enabled profile can have no old membership. In that
+// profile only, the retained old-key column is the all-zero absence marker;
+// it is never used as a signature verification key. Old-only profile bytes
+// and metadata validation remain unchanged. The exact new key lives in the
+// authenticated new-set preimage and is selected only for NewSet intents.
+fn old_author_public_key_v1(
+    profile: &HandoffSignerJournalProfileV1,
+) -> Result<[u8; 32], HandoffSignerJournalErrorV1> {
+    match profile.old_validator_set().validator(profile.author()) {
+        Some(validator) => Ok(*validator.consensus_key().as_bytes()),
+        None if profile.permits_role(HandoffSignerRoleV1::NewSet) => Ok([0; 32]),
+        None => Err(HandoffSignerJournalErrorV1::MetadataMismatch),
+    }
+}
+
 fn initialize_schema_v1(
     connection: &Connection,
     profile: &HandoffSignerJournalProfileV1,
@@ -1445,10 +1751,7 @@ fn initialize_schema_v1(
             .map_err(|_| HandoffSignerJournalErrorV1::MetadataMismatch)?;
         let old_parameters = profile.old_consensus_parameters().canonical_bytes();
         let new_parameters = profile.new_consensus_parameters().canonical_bytes();
-        let old_author = profile
-            .old_validator_set()
-            .validator(profile.author())
-            .ok_or(HandoffSignerJournalErrorV1::MetadataMismatch)?;
+        let old_author_public_key = old_author_public_key_v1(profile)?;
         let metadata_checksum = metadata_checksum_v1(profile, journal_id)?;
         let changed = connection
             .execute(
@@ -1514,7 +1817,7 @@ fn initialize_schema_v1(
                     old_parameters,
                     new_parameters,
                     profile.author().as_bytes(),
-                    old_author.consensus_key().as_bytes().as_slice(),
+                    old_author_public_key.as_slice(),
                     profile.signer_profile_ref().as_slice(),
                     profile.external_watermark_scope().as_slice(),
                     profile.maximum_intents().to_be_bytes().as_slice(),
@@ -1664,10 +1967,7 @@ fn read_and_validate_metadata_v1(
         .new_validator_set()
         .try_cev0_bytes()
         .map_err(|_| HandoffSignerJournalErrorV1::MetadataMismatch)?;
-    let old_author = profile
-        .old_validator_set()
-        .validator(profile.author())
-        .ok_or(HandoffSignerJournalErrorV1::MetadataMismatch)?;
+    let old_author_public_key = old_author_public_key_v1(profile)?;
     let decoded_old_set = decode_validator_set_v0_exact(&row.old_set_cev0)
         .map_err(|_| HandoffSignerJournalErrorV1::MetadataMismatch)?;
     let decoded_new_set = decode_validator_set_v0_exact(&row.new_set_cev0)
@@ -1707,7 +2007,7 @@ fn read_and_validate_metadata_v1(
         || decoded_old_parameters != *profile.old_consensus_parameters()
         || decoded_new_parameters != *profile.new_consensus_parameters()
         || row.author != profile.author().as_bytes()
-        || row.old_author_public_key != old_author.consensus_key().as_bytes()
+        || row.old_author_public_key != old_author_public_key
         || row.signer_profile_ref != profile.signer_profile_ref()
         || row.external_scope != profile.external_watermark_scope()
         || row.maximum_intents_be != profile.maximum_intents().to_be_bytes()
@@ -2580,6 +2880,12 @@ fn verify_signature_for_intent_v1(
         PreparedFieldsV1::Handoff { role, .. } if *role == HandoffSignerRoleV1::OldSet as u8 => {
             profile.old_validator_set().validator(profile.author())
         }
+        PreparedFieldsV1::Handoff { role, .. }
+            if *role == HandoffSignerRoleV1::NewSet as u8
+                && profile.permits_role(HandoffSignerRoleV1::NewSet) =>
+        {
+            profile.new_validator_set().validator(profile.author())
+        }
         PreparedFieldsV1::Handoff { .. } => {
             return Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable);
         }
@@ -2742,8 +3048,8 @@ fn validate_intent_semantics_v1(
                 )
             })?;
             if intent.class != CLASS_HANDOFF
-                || decoded.signer_role() != HandoffSignerRoleV1::OldSet
-                || *role != HandoffSignerRoleV1::OldSet as u8
+                || !profile.permits_role(decoded.signer_role())
+                || *role != decoded.signer_role() as u8
                 || decoded.validator_id() != profile.author()
                 || validator_id != profile.author().as_bytes()
                 || *genesis_hash != *decoded.preimage().genesis_hash().as_bytes()
@@ -2875,8 +3181,22 @@ fn validate_database_v1(
     validate_integrity_v1(connection)?;
 
     let intents = read_all_intents_v1(connection)?;
+    let mut transition_descriptor = None;
     for intent in intents.values() {
         validate_intent_semantics_v1(intent, profile)?;
+        if let PreparedFieldsV1::Handoff {
+            descriptor_digest, ..
+        } = &intent.fields
+        {
+            if transition_descriptor.is_some_and(|digest| digest != *descriptor_digest) {
+                return Err(
+                    HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                        "handoff roles disagree on transition descriptor",
+                    ),
+                );
+            }
+            transition_descriptor = Some(*descriptor_digest);
+        }
     }
     let events = read_all_events_v1(connection)?;
     let mut lifecycle = BTreeMap::<[u8; 32], u8>::new();
@@ -2917,6 +3237,13 @@ fn validate_database_v1(
                     return Err(
                         HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
                             "duplicate prepared lifecycle event",
+                        ),
+                    );
+                }
+                if signed_old_handoff.is_some() && intent.class == CLASS_CONSENSUS {
+                    return Err(
+                        HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                            "ordinary intent prepared after old-epoch terminal fence",
                         ),
                     );
                 }
@@ -3126,7 +3453,9 @@ fn validate_database_v1(
                 || fence.fingerprint != fingerprint
                 || fence.signature_sequence != signature_sequence
                 || fence.fence_checksum != expected_checksum
-                || signature_sequence != expected_head.sequence
+                || signature_sequence > expected_head.sequence
+                || (!profile.new_set_handoff_enabled()
+                    && signature_sequence != expected_head.sequence)
             {
                 return Err(
                     HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(

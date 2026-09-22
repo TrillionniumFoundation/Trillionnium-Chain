@@ -10,8 +10,17 @@ publish = false
 trnm-node-boundary-v0 = { path = "../trnm-node-boundary-v0", version = "=0.1.0" }
 trnm-tx-lifecycle-v0 = { path = "../trnm-tx-lifecycle-v0", version = "=0.1.0" }
 trnm-state-sync-v0 = { path = "../trnm-state-sync-v0", version = "=0.1.0" }
+trnm-native-execution-v0 = { path = "../trnm-native-execution-v0", version = "=0.1.0" }
+trnm-consensus-crypto = { path = "../trnm-consensus-crypto", version = "=0.1.0" }
+trnm-consensus-types = { path = "../trnm-consensus-types", version = "=0.1.0" }
 trnm-migration-v0 = { path = "../trnm-migration-v0", version = "=0.1.0" }
 trnm-control-plane-v0 = { path = "../trnm-control-plane-v0", version = "=0.1.0" }
+
+[dev-dependencies]
+# Candidate journal wiring is exercised only by this M15 integration test;
+# the production dependency closure remains candidate-free.
+trnm-durable-file-adapters-v0 = { path = "../trnm-durable-file-adapters-v0", version = "=0.1.0", features = ["candidate-tx-journal"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
 
 [package.metadata.trnm]
 module = "M15"

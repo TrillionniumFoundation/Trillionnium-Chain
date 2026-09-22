@@ -5,15 +5,26 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 
+[features]
+default = []
+candidate-epoch-host-v1 = ["trnm-consensus-core/candidate-epoch-host-v1"]
+candidate-epoch-host-v2 = ["trnm-consensus-core/candidate-epoch-host-v2"]
+test-fixtures = ["dep:anyhow", "dep:trnm-native-execution-v0", "dep:trnm-native-application"]
+
 [dependencies]
+anyhow = { version = "1", optional = true }
+trnm-native-execution-v0 = { version = "0.1.0", path = "../trnm-native-execution-v0", features = ["test-fixtures"], optional = true }
+trnm-native-application = { version = "0.1.0", path = "../trnm-native-application", optional = true }
 fs2 = "0.4"
 getrandom = "0.2"
 libc = "0.2"
 rusqlite = { version = "0.32", features = ["bundled"] }
 sha2 = "0.10"
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 
 [dev-dependencies]
+ed25519-dalek = { version = "2.2", default-features = false }
 serde_json = "1"
 tempfile = "3"

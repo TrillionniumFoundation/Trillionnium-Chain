@@ -1014,6 +1014,172 @@ impl SignedReplayArchiveV1 {
         Ok(archive)
     }
 
+    /// Read exact parent bytes without treating archive metadata as trust.
+    /// The caller verifies the rehashed header against the signed target ID.
+    pub(crate) fn native_parent_header_v1(
+        &mut self,
+        target: &trnm_consensus_types::BlockHeader,
+        config: &LoadedValidatorConfig,
+    ) -> Result<trnm_consensus_types::BlockHeader> {
+        self.revalidate_identity_v1()?;
+        let parent_id = target.parent_id();
+        let index = self
+            .index
+            .values()
+            .find(|entry| {
+                entry.coordinate.kind == ReplayArchiveEntryKindV1::Proposal
+                    && entry.coordinate.block_id == *parent_id.as_bytes()
+            })
+            .cloned();
+        let payload = if let Some(index) = index {
+            self.read_indexed_payload_v1(index)?
+        } else {
+            let height = target
+                .height()
+                .get()
+                .checked_sub(1)
+                .context("native parent height zero")?;
+            ensure!(
+                (1..=3).contains(&height),
+                "native parent header is absent from durable archive"
+            );
+            let file = OpenOptions::new()
+                .read(true)
+                .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
+                .open(
+                    config
+                        .run_root()
+                        .join(format!("public/bootstrap/h{height}.proposal")),
+                )?;
+            let metadata = file.metadata()?;
+            ensure!(
+                metadata.is_file() && metadata.len() <= MAX_FRAME_PAYLOAD_BYTES as u64,
+                "native bootstrap parent file exceeds public input bound"
+            );
+            let mut bytes = Vec::new();
+            file.take(MAX_FRAME_PAYLOAD_BYTES as u64 + 1)
+                .read_to_end(&mut bytes)?;
+            ensure!(
+                bytes.len() <= MAX_FRAME_PAYLOAD_BYTES,
+                "native bootstrap parent file grew"
+            );
+            bytes
+        };
+        let proposal = UnboundProposalV0::decode(
+            &payload,
+            config.validator_set(),
+            config.consensus_parameters(),
+        )
+        .map_err(|e| anyhow!("decode archived native parent: {e}"))?;
+        let header = proposal.block().header().clone();
+        ensure!(
+            header.id() == parent_id
+                && header.height().get().checked_add(1) == Some(target.height().get()),
+            "native parent header differs from target commitment"
+        );
+        self.revalidate_identity_v1()?;
+        Ok(header)
+    }
+
+    /// Reconstruct every missing ordinary proof on the exact ancestor path of
+    /// the current Core finalized ID. This is used only for a skipped range;
+    /// the usual single-step path reuses Core's already verified current proof.
+    /// Reconstruct the three finalized empty prefix rows for application-only
+    /// genesis replay, using the existing exact frozen public bootstrap verifier.
+    pub(crate) fn native_sync_bootstrap_v1(
+        &mut self,
+        config: &LoadedValidatorConfig,
+        bootstrap: VerifiedPublicBootstrapInitialCutV1,
+    ) -> Result<[FinalityProofV0; 3]> {
+        self.revalidate_identity_v1()?;
+        let profile = config
+            .native_client_profile_v1()
+            .context("sync requires native profile")?;
+        let verified = crate::bootstrap_material::verify_public_native_bootstrap_with_policy_v1(
+            config.run_root(),
+            config.validator_set(),
+            config.consensus_parameters(),
+            profile.authorized_signers_v1()?,
+            &profile.governance_signer_id,
+        )?;
+        ensure!(
+            verified.initial_ordinary_cut_v1() == bootstrap,
+            "sync bootstrap changed from pinned initial cut"
+        );
+        let (proposals, first) = verified.into_node_parts_v1();
+        let mut semantics = decode_strict_archive_semantics_v1(
+            &self.entries_file,
+            &self.index,
+            self.context.digest,
+            config.validator_set(),
+            config.consensus_parameters(),
+            config.ordinary_start_height(),
+            bootstrap,
+        )?;
+        let mut parent_time = 0;
+        for proposal in proposals {
+            let timestamp = proposal.block().header().timestamp_ms();
+            semantics.proposals.insert(
+                *proposal.block().id().as_bytes(),
+                AuthenticatedReplayProposalV1 {
+                    proposal,
+                    authenticated_parent_timestamp_ms: parent_time,
+                },
+            );
+            parent_time = timestamp;
+        }
+        for certified in [first.finalized_block(), first.child(), first.grandchild()] {
+            semantics.proof_certificates.insert(
+                *certified.certifying_qc().id().as_bytes(),
+                certified.certifying_qc().clone(),
+            );
+        }
+        let second = strict_archive_finality_proof_v1(
+            &semantics,
+            config.validator_set(),
+            config.consensus_parameters(),
+            *first.child().header().id().as_bytes(),
+        )?;
+        let third = strict_archive_finality_proof_v1(
+            &semantics,
+            config.validator_set(),
+            config.consensus_parameters(),
+            *first.grandchild().header().id().as_bytes(),
+        )?;
+        self.revalidate_identity_v1()?;
+        Ok([first, second, third])
+    }
+
+    pub(crate) fn native_finality_range_v1(
+        &mut self,
+        config: &LoadedValidatorConfig,
+        bootstrap: VerifiedPublicBootstrapInitialCutV1,
+        tip: [u8; 32],
+        after_height: u64,
+    ) -> Result<Vec<(FinalityProofV0, trnm_consensus_types::BlockHeader)>> {
+        self.revalidate_identity_v1()?;
+        let semantics = decode_strict_archive_semantics_v1(
+            &self.entries_file,
+            &self.index,
+            self.context.digest,
+            config.validator_set(),
+            config.consensus_parameters(),
+            config.ordinary_start_height(),
+            bootstrap,
+        )?;
+        let floor = after_height.max(config.ordinary_start_height() - 1);
+        let reverse = strict_native_finality_range_v1(
+            &semantics,
+            config.validator_set(),
+            config.consensus_parameters(),
+            tip,
+            floor,
+            |header| self.native_parent_header_v1(header, config),
+        )?;
+        self.revalidate_identity_v1()?;
+        Ok(reverse)
+    }
+
     pub(crate) fn facts_v1(&self) -> SignedReplayArchiveFactsV1 {
         SignedReplayArchiveFactsV1 {
             context_sha256: self.context.digest,
@@ -2471,6 +2637,74 @@ fn verify_signed_final_tip_coverage_v1(
         derived_chain_root == finalized_chain_root,
         "signed finalized Proposal differs from the CleanStop finalized chain root"
     );
+    let proof =
+        strict_archive_finality_proof_v1(semantics, validator_set, parameters, finalized_block_id)?;
+    Ok(SignedFinalTipCoverageV1 {
+        proof_id: *proof.id().as_bytes(),
+        child_block_id: *proof.child().header().id().as_bytes(),
+        grandchild_block_id: *proof.grandchild().header().id().as_bytes(),
+    })
+}
+
+fn strict_native_finality_range_v1(
+    semantics: &StrictReplayArchiveSemanticsV1,
+    set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+    tip: [u8; 32],
+    floor: u64,
+    mut parent_for: impl FnMut(
+        &trnm_consensus_types::BlockHeader,
+    ) -> Result<trnm_consensus_types::BlockHeader>,
+) -> Result<Vec<(FinalityProofV0, trnm_consensus_types::BlockHeader)>> {
+    let mut cursor = tip;
+    let mut reverse = Vec::new();
+    loop {
+        let target = semantics
+            .proposals
+            .get(&cursor)
+            .ok_or_else(|| anyhow!("RECOVERY_REQUIRED: native finalized ancestry is missing"))?;
+        let header = target.proposal.block().header();
+        if header.height().get() <= floor {
+            break;
+        }
+        ensure!(
+            reverse.len() < crate::config::DEPLOYED_CORE_MAX_BLOCKS_V1 as usize,
+            "native missing-proof range exceeds candidate bound"
+        );
+        let parent = parent_for(header)?;
+        ensure!(
+            parent.id() == header.parent_id()
+                && parent.height().get().checked_add(1) == Some(header.height().get()),
+            "native archived parent does not match target"
+        );
+        reverse.push((
+            strict_archive_finality_proof_v1(semantics, set, parameters, cursor)?,
+            parent.clone(),
+        ));
+        if parent.height().get() == floor {
+            break;
+        }
+        ensure!(
+            parent.height().get() > floor,
+            "native ancestor range skipped predecessor"
+        );
+        cursor = *parent.id().as_bytes();
+    }
+    reverse.reverse();
+    Ok(reverse)
+}
+
+fn strict_archive_finality_proof_v1(
+    semantics: &StrictReplayArchiveSemanticsV1,
+    validator_set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+    finalized_block_id: [u8; 32],
+) -> Result<FinalityProofV0> {
+    let finalized = semantics
+        .proposals
+        .get(&finalized_block_id)
+        .ok_or_else(|| anyhow!("native proof archive target is absent"))?;
+    let finalized_height = finalized.proposal.block().header().height().get();
     let child_height = finalized_height
         .checked_add(1)
         .context("finality child height overflows")?;
@@ -2569,11 +2803,7 @@ fn verify_signed_final_tip_coverage_v1(
                 {
                     continue;
                 }
-                return Ok(SignedFinalTipCoverageV1 {
-                    proof_id: *proof.id().as_bytes(),
-                    child_block_id: *child.proposal.block().id().as_bytes(),
-                    grandchild_block_id: *grandchild.proposal.block().id().as_bytes(),
-                });
+                return Ok(proof);
             }
         }
     }
@@ -5460,5 +5690,108 @@ mod tests {
                 "borrowed zero-delta audit unexpectedly exposes {forbidden}"
             );
         }
+    }
+    #[test]
+    fn native_archive_reconstructs_all_skipped_heights_and_rejects_missing_or_wrong_evidence_v1() {
+        let (set, keys, parameters, _, mut semantics, _) =
+            strict_three_chain_semantics_fixture_v1();
+        for height in 7..=8 {
+            let parent = semantics
+                .proposals
+                .values()
+                .find(|p| p.proposal.block().header().height().get() == height - 1)
+                .unwrap()
+                .proposal
+                .clone();
+            let parent_qc =
+                strict_qc_fixture_for_block_v1(&set, &keys, height - 1, parent.block().id());
+            let proposal = strict_proposal_fixture_v1(
+                &set,
+                &keys,
+                height,
+                parent.block().id(),
+                parent.block().header().timestamp_ms(),
+                parent_qc,
+                StateRoot::new([height as u8; 32]),
+            );
+            let qc = strict_qc_fixture_for_block_v1(&set, &keys, height, proposal.block().id());
+            semantics.proof_certificates.insert(*qc.id().as_bytes(), qc);
+            semantics.proposals.insert(
+                *proposal.block().id().as_bytes(),
+                AuthenticatedReplayProposalV1 {
+                    proposal,
+                    authenticated_parent_timestamp_ms: parent.block().header().timestamp_ms(),
+                },
+            );
+        }
+        let tip = *semantics
+            .proposals
+            .values()
+            .find(|p| p.proposal.block().header().height().get() == 6)
+            .unwrap()
+            .proposal
+            .block()
+            .id()
+            .as_bytes();
+        let parents = semantics
+            .proposals
+            .iter()
+            .map(|(id, p)| (*id, p.proposal.block().header().clone()))
+            .collect::<BTreeMap<_, _>>();
+        let lookup = |header: &BlockHeader| {
+            parents
+                .get(header.parent_id().as_bytes())
+                .cloned()
+                .context("missing parent")
+        };
+        let recovered =
+            strict_native_finality_range_v1(&semantics, &set, &parameters, tip, 4, lookup).unwrap();
+        assert_eq!(
+            recovered
+                .iter()
+                .map(|(proof, _)| proof.finalized_block().header().height().get())
+                .collect::<Vec<_>>(),
+            vec![5, 6]
+        );
+        for (proof, parent) in &recovered {
+            proof
+                .verify(
+                    &set,
+                    None,
+                    &parameters,
+                    parent.timestamp_ms(),
+                    &StrictEd25519Verifier,
+                )
+                .unwrap();
+            assert_eq!(proof.finalized_block().header().parent_id(), parent.id());
+        }
+        let wrong = parents
+            .values()
+            .find(|h| h.height().get() == 4)
+            .unwrap()
+            .clone();
+        assert!(
+            strict_native_finality_range_v1(&semantics, &set, &parameters, tip, 4, |_| Ok(
+                wrong.clone()
+            ))
+            .is_err()
+        );
+        semantics
+            .proof_certificates
+            .retain(|_, qc| qc.height().get() != 8);
+        assert!(
+            strict_native_finality_range_v1(&semantics, &set, &parameters, tip, 4, lookup).is_err()
+        );
+        semantics.proposals.remove(
+            parents
+                .values()
+                .find(|h| h.height().get() == 5)
+                .unwrap()
+                .id()
+                .as_bytes(),
+        );
+        assert!(
+            strict_native_finality_range_v1(&semantics, &set, &parameters, tip, 4, lookup).is_err()
+        );
     }
 }
