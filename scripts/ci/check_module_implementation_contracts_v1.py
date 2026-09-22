@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-"""Check the per-module implementation/transition/acceptance documentation.
+"""Check module navigation and report operation-level design/coverage separately.
 
-This is a source-bound documentation gate.  It proves that every registered
-module has an implementation symbol, a regression symbol, an explicit ordered
-transition, and requirement IDs that agree with the main registry.  It never
-executes the referenced tests and never promotes semantic or production
-acceptance.
+The representative matrix remains source-bound navigation, not a complete API
+inventory. The v2 supplement is checked on the same invocation used by the
+canonical documentation gate; it cannot promote semantic or production status.
 """
 from __future__ import annotations
 
@@ -35,10 +33,8 @@ def require(condition: bool, detail: str) -> None:
 def _blocks(text: str) -> list[tuple[str, str]]:
     matches = list(re.finditer(r"^### (M\d{2}) — [^\n]+$", text, re.MULTILINE))
     require(bool(matches), "matrix has no module headings")
-    return [
-        (match.group(1), text[match.start(): matches[index + 1].start() if index + 1 < len(matches) else len(text)])
-        for index, match in enumerate(matches)
-    ]
+    return [(match.group(1), text[match.start(): matches[index + 1].start() if index + 1 < len(matches) else len(text)])
+            for index, match in enumerate(matches)]
 
 
 def _field(block: str, name: str) -> str:
@@ -54,8 +50,6 @@ def _source_ref(value: str, label: str) -> tuple[str, str]:
     local = ROOT / path
     require(local.is_file(), f"{label} path does not exist: {path}")
     text = local.read_text(encoding="utf-8")
-    # The registry intentionally uses function/test symbols.  This lexical
-    # check is navigation evidence only, not a behavioral equivalence proof.
     pattern = r"(?m)^\s*(?:(?:pub(?:\([^)]*\))?|async|const|unsafe)\s+)*(?:fn|def)\s+" + re.escape(symbol) + r"\s*(?:[<(])"
     require(re.search(pattern, text) is not None, f"{label} symbol is not a function/definition: {path}::{symbol}")
     return path, symbol
@@ -74,7 +68,7 @@ def load_registry() -> dict[str, Any]:
     return data
 
 
-def validate_matrix(text: str, registry: dict[str, Any]) -> dict[str, int | str]:
+def validate_matrix(text: str, registry: dict[str, Any]) -> dict[str, Any]:
     blocks = _blocks(text)
     require([module for module, _ in blocks] == MODULES, "matrix must contain ordered M00-M17 headings exactly once")
     registry_rows = {row["id"]: row for row in registry["modules"]}
@@ -88,17 +82,22 @@ def validate_matrix(text: str, registry: dict[str, Any]) -> dict[str, int | str]
         require(len(states) >= 2 and all(state.strip() for state in states),
                 f"{module} state transition must name a source and target")
         requirements = _requirements(_field(block, "Acceptance requirements"), module)
-        expected = row["requirement_ids"]
-        require(requirements == expected, f"{module} acceptance requirements do not match registry")
+        require(requirements == row["requirement_ids"], f"{module} acceptance requirements do not match registry")
         require(_field(block, "Acceptance status") == f"`{STATUS}`",
                 f"{module} cannot claim an assessed/accepted status")
-        # Presence is structural evidence only. Fixed prose cannot establish
-        # completeness; acceptance remains explicitly open above.
         require(bool(_field(block, "Open evidence")), f"{module} must state residual evidence")
         requirement_count += len(requirements)
+    # The parent documentation checker imports this function, not main().
+    # Keep the expanded design on that actual path rather than adding a dead CLI.
+    from check_operation_design_v2 import DesignError, inventory
+    try:
+        operations = inventory(ROOT)
+    except DesignError as error:
+        raise MatrixError(str(error)) from error
     return {"module_count": len(blocks), "requirement_count": requirement_count,
             "status": STATUS, "semantic_acceptance": "not-assessed",
-            "implementation_acceptance": "not-assessed", "result": "PASS"}
+            "implementation_acceptance": "not-assessed", "result": "PASS",
+            "operation_design": {key: value for key, value in operations.items() if key != "public_declarations"}}
 
 
 def main() -> int:

@@ -2,6 +2,13 @@
 set -euo pipefail
 root=$(git rev-parse --show-toplevel); cd "$root"
 
+# Fast executable feedback precedes inherited provenance/build gates; failures
+# remain failures and none of the Rust or source-bound checks is skipped.
+PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover \
+  -s simulations/economics -p test_economic_security_v1.py -v
+PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover \
+  -s scripts/ci -p test_operation_design_v2.py -v
+
 bash scripts/ci/check_g2e_source_binding_v2.sh
 bash scripts/ci/check_settlement_conservation_model_v1.sh
 
@@ -20,6 +27,7 @@ assert v['positive']==4
 assert len(v['negative'])==11
 assert v['risk_root']=='8c9b246d0c94f0ffaf477c9385f296cc98f70951bed9316eb970efedb15d3a57'
 assert v['ordering_invariant'] is True
+assert v['identity_claims_authenticated'] is False
 for key in ('settlement_authority','governance_authority','poco_weight_eligible','production_activation'):
     assert v[key] is False, key
 print('G2E Rust/SQLite settlement, risk, concentration and collusion assurance: ok')
