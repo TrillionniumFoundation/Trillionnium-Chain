@@ -787,6 +787,34 @@ impl InMemoryNativeExecutionStoreV0 {
         Ok(())
     }
 
+    pub(crate) fn verified_raw_value_v0(
+        &self,
+        version: Version,
+        key: &[u8],
+    ) -> Result<Option<Vec<u8>>> {
+        let expected_root = self
+            .roots
+            .get(&version)
+            .copied()
+            .context("missing authenticated raw-value root")?;
+        let hash = authenticated_key_hash_v0(key)?;
+        if let Some(preimage) = self.preimages.get(&hash) {
+            ensure!(preimage == key, "authenticated raw-value preimage mismatch");
+        }
+        let (value, proof) = Sha256Jmt::new(self).get_with_proof(hash, version)?;
+        match &value {
+            Some(bytes) => {
+                ensure!(
+                    self.preimages.contains_key(&hash),
+                    "missing raw-value preimage"
+                );
+                proof.verify_existence(expected_root, hash, bytes)?;
+            }
+            None => proof.verify_nonexistence(expected_root, hash)?,
+        }
+        Ok(value)
+    }
+
     pub(crate) fn prove_raw_key_v0(
         &self,
         version: Version,
@@ -988,6 +1016,52 @@ mod snapshot_encoding_tests {
             store.committed_signer_nonces.clone(),
             &store.encode_authenticated_snapshot_v0().unwrap(),
         )
+    }
+
+    #[test]
+    fn authenticated_point_reads_preserve_history_absence_and_deletion() {
+        let mut store = historical_store();
+        for version in 0..3 {
+            assert_eq!(
+                store.verified_raw_value_v0(version, b"account").unwrap(),
+                Some(vec![version as u8; 257]),
+            );
+            assert_eq!(
+                store.verified_raw_value_v0(version, b"missing").unwrap(),
+                None
+            );
+        }
+        let plan = plan_complete_state_update_v0(
+            &store,
+            2,
+            3,
+            vec![CompleteStateWriteV0::new(b"account".to_vec(), None).unwrap()],
+        )
+        .unwrap();
+        store.apply_complete_state_plan_v0(plan).unwrap();
+        assert_eq!(store.verified_raw_value_v0(3, b"account").unwrap(), None);
+        assert_eq!(
+            store.verified_raw_value_v0(2, b"account").unwrap(),
+            Some(vec![2; 257])
+        );
+        assert!(store.verified_raw_value_v0(4, b"account").is_err());
+    }
+
+    #[test]
+    fn authenticated_point_reads_reject_wrong_root_value_and_preimage() {
+        let hash = authenticated_key_hash_v0(b"account").unwrap();
+        let mut wrong_root = historical_store();
+        wrong_root.roots.insert(0, RootHash([42; 32]));
+        assert!(wrong_root.verified_raw_value_v0(0, b"account").is_err());
+        assert!(wrong_root.verified_raw_value_v0(0, b"missing").is_err());
+        let mut wrong_value = historical_store();
+        wrong_value.values.insert((hash, 0), Some(vec![99; 257]));
+        assert!(wrong_value.verified_raw_value_v0(0, b"account").is_err());
+        let mut wrong_preimage = historical_store();
+        wrong_preimage.preimages.insert(hash, b"different".to_vec());
+        assert!(wrong_preimage.verified_raw_value_v0(0, b"account").is_err());
+        wrong_preimage.preimages.remove(&hash);
+        assert!(wrong_preimage.verified_raw_value_v0(0, b"account").is_err());
     }
 
     #[test]

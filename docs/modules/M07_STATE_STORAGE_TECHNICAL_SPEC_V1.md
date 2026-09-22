@@ -69,6 +69,18 @@ checkpoint without calling another full reopen merely to ask which owner just
 issued it. The original stale-receipt revalidation APIs remain unchanged;
 readbacks on both sides of external callbacks and actual custody still run.
 
+## Reused authenticated lifecycle point read
+
+The bounded `verified_raw_value_v0` point reader and its history/absence/deletion,
+wrong-root/value/preimage regressions are retained from the earlier source
+`8bbd4581fa3752ae96b6a8b4ee8a15647c710037`. Current legacy and epoch P recovery
+both use it after the unchanged full authenticated snapshot decoder. That decoder
+still verifies all retained roots, structure, key preimages and latest live
+values. The second lifecycle-only projection now proves the exact lifecycle
+key against the same retained root, rather than proving every live value again
+and copying the whole namespace. Missing/invalid lifecycle data still rejects;
+this is neither a partial snapshot audit nor a cache of prior verification.
+
 ## Interfaces
 
 ### Implemented incremental transaction kernel and ordinary owner

@@ -3767,8 +3767,15 @@ fn validate_p_with_seen_and_policy(
             && store.parent_root_v0()?.0 == *header.state_root().as_bytes(),
         "epoch P snapshot head"
     );
-    let live = store.verified_live_values_v0(p.target_height)?;
-    let lifecycle = load_validator_lifecycle_from_live_v0(&live, p.target_height)?;
+    // Decoding above already audits all snapshot roots and live values.
+    // Re-prove only the lifecycle key needed by this projection comparison,
+    // rather than proving/copying the complete live namespace a second time.
+    let key = crate::auth_tree::validator_state_key()?;
+    let value = store
+        .verified_raw_value_v0(p.target_height, &key)?
+        .context("authenticated epoch snapshot is missing validator lifecycle")?;
+    let lifecycle =
+        load_validator_lifecycle_from_live_v0(&BTreeMap::from([(key, value)]), p.target_height)?;
     ensure!(
         serde_json::to_vec(&lifecycle)? == p.lifecycle,
         "epoch P lifecycle snapshot mismatch"
