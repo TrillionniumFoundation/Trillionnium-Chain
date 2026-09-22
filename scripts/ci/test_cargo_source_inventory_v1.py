@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import copy
+import contextlib
+import io
+import sys
 import hashlib
 import os
 import json
@@ -51,6 +54,71 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(report['source_tree'], self.git('rev-parse', 'HEAD^{tree}'))
         self.assertEqual(report['test_acceptance'], 'not-assessed')
         self.assertIs(report['production_authority'], False)
+
+    def test_source_only_preserves_identity_without_claiming_cargo_execution(self) -> None:
+        report = inventory.validate_clean_source(self.root, self.head)
+        self.assertEqual(report['source_commit'], self.head)
+        self.assertEqual(report['source_tree'], self.git('rev-parse', 'HEAD^{tree}'))
+        self.assertEqual(report['scope'], 'source-identity-only')
+        self.assertEqual(report['test_acceptance'], 'not-assessed')
+        self.assertIs(report['production_authority'], False)
+        self.assertNotIn('packages', report)
+
+    def test_source_only_requires_an_independent_exact_pin(self) -> None:
+        for pin in (None, '', 'a' * 39, 'A' * 40, '0' * 40):
+            with self.subTest(pin=pin), self.assertRaises(inventory.InventoryError):
+                inventory.validate_clean_source(self.root, pin)
+
+    def test_source_only_rejects_all_dirty_source_classes(self) -> None:
+        target = self.package / 'src/lib.rs'
+        original = target.read_text()
+        for staged in (False, True):
+            target.write_text(original + '// changed\n')
+            if staged:
+                self.git('add', '.')
+            with self.subTest(staged=staged), self.assertRaises(inventory.InventoryError):
+                inventory.validate_clean_source(self.root, self.head)
+            self.git('reset', '--hard', self.head)
+        (self.root / 'untracked.rs').write_text('// untracked\n')
+        with self.assertRaises(inventory.InventoryError):
+            inventory.validate_clean_source(self.root, self.head)
+
+    def test_source_only_rechecks_after_head_or_worktree_mutation(self) -> None:
+        original_git = inventory.git
+        for committed in (False, True):
+            original_head = self.head
+            changed = False
+            def move_after_tree(root, *args):
+                nonlocal changed
+                result = original_git(root, *args)
+                if args == ('rev-parse', f'{original_head}^{{tree}}') and not changed:
+                    changed = True
+                    (self.package / 'src/lib.rs').write_text('// late change\n')
+                    if committed:
+                        original_git(root, 'add', '.')
+                        original_git(root, '-c', 'user.name=fixture', '-c',
+                                     'user.email=fixture@example.invalid',
+                                     'commit', '-qm', 'late source change')
+                return result
+            with mock.patch.object(inventory, 'git', side_effect=move_after_tree):
+                with self.subTest(committed=committed), self.assertRaises(inventory.InventoryError):
+                    inventory.validate_clean_source(self.root, original_head)
+            self.assertTrue(changed)
+            original_git(self.root, 'reset', '--hard', original_head)
+
+    def test_source_only_cli_does_not_execute_cargo_or_choose_its_own_pin(self) -> None:
+        original_run = subprocess.run
+        def no_cargo(command, *args, **kwargs):
+            self.assertNotEqual(command[0], 'cargo')
+            return original_run(command, *args, **kwargs)
+        arguments = ['checker', '--source-only', '--expected-commit', self.head]
+        with mock.patch.object(inventory, 'ROOT', self.root), mock.patch.object(sys, 'argv', arguments):
+            with mock.patch.object(subprocess, 'run', side_effect=no_cargo), contextlib.redirect_stdout(io.StringIO()) as output:
+                self.assertEqual(inventory.main(), 0)
+            self.assertEqual(json.loads(output.getvalue())['source_commit'], self.head)
+        with mock.patch.object(inventory, 'ROOT', self.root), mock.patch.object(sys, 'argv', ['checker', '--source-only']):
+            with mock.patch.dict(os.environ, {}, clear=True), self.assertRaises(inventory.InventoryError):
+                inventory.main()
 
     def move_fixture_to_contracts(self) -> None:
         previous = self.workspace

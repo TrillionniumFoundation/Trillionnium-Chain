@@ -405,9 +405,11 @@ jobs:
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
       - name: Bind Cargo target inventory to the exact clean source
+        id: rust_source_inventory
         run: |
           set -euo pipefail
           python3 scripts/ci/check_cargo_source_inventory_v1.py \
+            --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" \
             --output "${RUNNER_TEMP}/trnm-cargo-source-inventory-v1.json" >/dev/null
           git rev-parse HEAD 'HEAD^{tree}'
       - name: Retain source-bound Cargo inventory
@@ -417,271 +419,54 @@ jobs:
           path: ${{ runner.temp }}/trnm-cargo-source-inventory-v1.json
           if-no-files-found: error
           retention-days: 7
-      - name: Rust format
-        working-directory: trillionnium
-        run: cargo fmt --all -- --check
-      - name: Test PCC1 strict proof and durable read boundary
-        run: |
-          set -euo pipefail
-          root="${RUNNER_TEMP}/trnm-rust-execution"
-          mkdir -p "$root"
-          git rev-parse HEAD > "$root/HEAD"
-          git rev-parse 'HEAD^{tree}' > "$root/TREE"
-          set +e
-          (
-            set -euo pipefail
-            echo 'PCC1_PHASE=all-target-tests'
-            cargo test --manifest-path trillionnium/Cargo.toml \
-              -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked
-            echo 'PCC1_PHASE=doc-tests'
-            cargo test --manifest-path trillionnium/Cargo.toml \
-              -p trnm-consensus-crypto -p trnm-native-execution-v0 --doc --locked
-            echo 'PCC1_PHASE=strict-clippy'
-            cargo clippy --manifest-path trillionnium/Cargo.toml \
-              -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked -- -D warnings
-          ) >"$root/pcc1-boundary.log" 2>&1
-          rc=$?
-          set -e
-          printf '%s\n' "$rc" > "$root/pcc1-boundary.exit-code"
-          tail -n 120 "$root/pcc1-boundary.log"
-          printf 'PCC1_BOUNDARY_EXIT_CODE=%s\n' "$rc"
-          exit "$rc"
-      - name: Test native candidate shard contract
-        working-directory: trillionnium
-        run: |
-          set -euo pipefail
-          python3 ../scripts/ci/test_native_candidate_shards_v1.py
-      - name: Verify explicit incremental epoch execution candidate
-        id: native_candidate_shards
-        working-directory: trillionnium
-        run: |
-          set -euo pipefail
-          python3 ../scripts/ci/run_native_candidate_shards_v1.py \
-            --workspace "$PWD" \
-            --evidence-dir "$RUNNER_TEMP/trnm-native-candidate-shards" \
-            --deadline-seconds 900
-          cargo clippy -p trnm-native-execution-v0 \
-            --features test-fixtures,incremental-epoch-candidate \
-            --all-targets --locked -- -D warnings
-      - name: Retain exact-source native candidate shard evidence
-        if: always() && (steps.native_candidate_shards.outcome == 'success' || steps.native_candidate_shards.outcome == 'failure')
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: trnm-native-candidate-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          path: ${{ runner.temp }}/trnm-native-candidate-shards
-          if-no-files-found: error
-          retention-days: 7
       - name: Compile every active workspace target
-        working-directory: trillionnium
-        run: cargo check --workspace --all-targets --locked
-      - name: Verify codec2 epoch host and journal10
-        id: safety_epoch_shards
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
-          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --no-default-features --features candidate-epoch-host-v2 --lib candidate_host_v2 --locked
-          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --all-features --locked
-          python3 ../scripts/ci/run_native_candidate_shards_v1.py --suite safety-epoch --workspace "$PWD" --evidence-dir "$RUNNER_TEMP/trnm-safety-epoch-shards" --deadline-seconds 900
-          cargo clippy -p trnm-consensus-core -p trnm-consensus-safety-store --all-features --all-targets --locked -- -D warnings
-      - name: Retain exact-source Safety epoch shard evidence
-        if: always() && (steps.safety_epoch_shards.outcome == 'success' || steps.safety_epoch_shards.outcome == 'failure')
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          cargo check --workspace --all-targets --locked
+      - name: Test locked Cargo archive collector
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          python3 scripts/ci/test_locked_cargo_archives_v1.py
+      - name: Collect cached public Cargo inputs for offline diagnosis
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        id: cached_cargo_inputs
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          python3 scripts/ci/collect_locked_cargo_archives_v1.py \
+            --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" \
+            --output "$RUNNER_TEMP/trnm-cached-public-cargo"
+      - name: Retain checksum-matched public Cargo archives
+        if: always() && steps.cached_cargo_inputs.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: trnm-safety-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          path: ${{ runner.temp }}/trnm-safety-epoch-shards
+          name: trnm-cached-public-cargo-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-cached-public-cargo
           if-no-files-found: error
           retention-days: 7
-      - name: Verify default and explicit candidate ownership boundaries
-        id: node_epoch_shards
+      - name: Rust format
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
-          git diff --exit-code HEAD -- .
-          git ls-files -s -- crates/trnm-native-execution-v0 crates/trnm-durable-file-adapters-v0 crates/trnm-poco-node-authority crates/trnm-poco-node-host
-          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-poco-node-cli --all-targets --locked
-          cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-state-sync-v0 --no-default-features --doc --locked
-          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-durable-file-adapters-v0 --lib --locked -- --nocapture
-          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features persistent-authority-candidate --all-targets --locked -- --nocapture
-          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features epoch-join-test-fixtures --lib --locked
-          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-safety-store --features test-fixtures,candidate-epoch-host-v1 --test epoch_journal_v1 --locked
-          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- --nocapture
-          cargo clippy -p trnm-poco-node-host -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- -D warnings
-          python3 ../scripts/ci/run_native_candidate_shards_v1.py \
-            --suite node-epoch \
-            --workspace "$PWD" \
-            --evidence-dir "$RUNNER_TEMP/trnm-node-epoch-shards" \
-            --deadline-seconds 300
-          cargo test -p trnm-poco-node --features epoch-runtime-candidate --doc --locked
-          cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings
-          git diff --exit-code HEAD -- .
-      - name: Retain exact-source node epoch shard evidence
-        if: always() && (steps.node_epoch_shards.outcome == 'success' || steps.node_epoch_shards.outcome == 'failure')
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: trnm-node-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          path: ${{ runner.temp }}/trnm-node-epoch-shards
-          if-no-files-found: error
-          retention-days: 7
-      - name: Test durable transaction journal without production activation
-        working-directory: trillionnium
-        run: |
-          set -euo pipefail
-          timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-tx-lifecycle-v0 --all-targets --locked
-          timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked
-          timeout --signal=TERM --kill-after=10s 600s cargo clippy -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked -- -D warnings
-          git diff --exit-code HEAD -- .
-      - name: Test persistent peer-to-authority bridge without production activation
-        working-directory: trillionnium
-        run: |
-          set -euo pipefail
-          root="${RUNNER_TEMP}/trnm-rust-execution"
-          mkdir -p "$root"
-          git rev-parse HEAD > "$root/HEAD"
-          git rev-parse 'HEAD^{tree}' > "$root/TREE"
-          set +e
-          (
-            set -euo pipefail
-            timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-durable-file-adapters-v0 --features candidate-peer-replay --all-targets --locked
-            timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-poco-node-host --features candidate-networked-authority --all-targets --locked
-            timeout --signal=TERM --kill-after=10s 600s cargo clippy -p trnm-durable-file-adapters-v0 --features candidate-peer-replay --all-targets --locked -- -D warnings
-            timeout --signal=TERM --kill-after=10s 600s cargo clippy -p trnm-poco-node-host --features candidate-networked-authority --all-targets --locked -- -D warnings
-            git diff --exit-code HEAD -- .
-          ) >"$root/persistent-ingress.log" 2>&1
-          rc=$?
-          set -e
-          printf '%s\n' "$rc" > "$root/persistent-ingress.exit-code"
-          tail -n 120 "$root/persistent-ingress.log"
-          exit "$rc"
-      - name: Replay original-listener socket replacement without masking failure
-        working-directory: trillionnium
-        run: |
-          set -euo pipefail
-          timeout --signal=TERM --kill-after=10s 120s cargo test \
-            -p trnm-consensus-external-watermark --test authority_blackbox \
-            --locked replacing_bound_socket_path_poison_daemon_on_next_original_connection -- --exact
-      - name: Test hosted candidate process recovery with explicit features
-        id: hosted_candidate_process
-        working-directory: trillionnium
-        timeout-minutes: 85
-        run: |
-          set -euo pipefail
-          root="${RUNNER_TEMP}/trnm-hosted-candidate-process"
-          mkdir -p "$root"
-          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
-          git rev-parse HEAD > "$root/HEAD"
-          git rev-parse 'HEAD^{tree}' > "$root/TREE"
-          printf '%s\n' 'scope=hosted-candidate-regressions' 'x230_acceptance=false' 'production_activation=false' > "$root/scope.txt"
-          run_candidate() {
-            local kind="$1" name="$2" rc
-            shift 2
-            printf '%q ' "$@" > "$root/$name.command"
-            printf '\n' >> "$root/$name.command"
-            if timeout --signal=TERM --kill-after=10s 600s "$@" > "$root/$name.log" 2>&1; then
-              rc=0
-            else
-              rc=$?
-            fi
-            printf '%s\n' "$rc" > "$root/$name.exit-code"
-            tail -n 100 "$root/$name.log"
-            if [[ "$rc" -ne 0 ]]; then exit "$rc"; fi
-            if [[ "$kind" == "test" ]]; then
-              python3 ../scripts/ci/technical_convergence_workflows_v1.py \
-                --check-candidate-test-log "$root/$name.log" > "$root/$name.tests.json"
-            fi
-          }
-          run_candidate test timeout-signing cargo test -p trnm-poco-node --features recovery-process-test-support --test timeout_signing_process_kill_matrix --locked
-          run_candidate test g1-process cargo test -p trnm-poco-node --features g1-process-test-support --test g1_process_host_e2e --locked
-          run_candidate test effect-driver cargo test -p trnm-poco-node --features g1-process-test-support --test effect_driver_process_e2e --locked
-          run_candidate test external-signer cargo test -p trnm-poco-node --features external-signer-runtime --test external_signer_runtime --locked
-          run_candidate test g2-manifest cargo test -p trnm-poco-node --features ai-v1-candidate --test g2_manifest_bound_process_v2 --locked
-          run_candidate test replay-coordinator cargo test -p trnm-poco-node --features replay-to-core-coordinator-test-support --bin trnm-poco-replay-to-core-coordinator-v1 --locked
-          run_candidate test node-io cargo test -p trnm-poco-node-io --features candidate-pacemaker,candidate-authenticated-p2p --all-targets --locked
-          run_candidate clippy node-io-clippy cargo clippy -p trnm-poco-node-io --features candidate-pacemaker,candidate-authenticated-p2p --all-targets --locked -- -D warnings
-          git diff --exit-code HEAD -- .
-      - name: Retain hosted candidate process commands and outcomes
-        if: always() && (steps.hosted_candidate_process.outcome == 'success' || steps.hosted_candidate_process.outcome == 'failure')
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: trnm-hosted-candidate-process-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          path: ${{ runner.temp }}/trnm-hosted-candidate-process
-          if-no-files-found: error
-          retention-days: 7
-      - name: Test the unified workspace feature graph with a hard deadline
-        working-directory: trillionnium
-        run: |
-          set -euo pipefail
-          root="${RUNNER_TEMP}/trnm-rust-execution"
-          mkdir -p "$root"
-          git rev-parse HEAD > "$root/HEAD"
-          git rev-parse 'HEAD^{tree}' > "$root/TREE"
-          printf '%s\n' 'timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast' > "$root/workspace.command"
-          timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast 2>&1 | tee "$root/workspace.log"
-      - name: Retain exact-source workspace execution log including failure
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: trnm-workspace-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          path: ${{ runner.temp }}/trnm-rust-execution
-          if-no-files-found: error
-          retention-days: 7
-      - name: Test every active workspace package with bounded execution
-        env:
-          TRNM_PACKAGE_TEST_TIMEOUT_SECONDS: "600"
-        run: |
-          set -euo pipefail
-          root="${RUNNER_TEMP}/trnm-package-execution"
-          mkdir -p "$root"
-          git rev-parse HEAD > "$root/HEAD"
-          git rev-parse 'HEAD^{tree}' > "$root/TREE"
-          printf '%s\n' 'python3 scripts/ci/run_bounded_workspace_tests_v1.py --workspace-root trillionnium' > "$root/packages.command"
-          python3 scripts/ci/run_bounded_workspace_tests_v1.py --workspace-root trillionnium 2>&1 | tee "$root/packages.log"
-      - name: Retain exact-source package execution log including failure
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: trnm-package-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          path: ${{ runner.temp }}/trnm-package-execution
-          if-no-files-found: warn
-          retention-days: 7
-      - name: Verify production and candidate dependency closures with Cargo
-        run: |
-          set -euo pipefail
-          python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
-          python3 scripts/ci/check_node_decomposition_v1.py
-          cargo check --manifest-path trillionnium/Cargo.toml \
-            -p trnm-poco-node --no-default-features --locked
-          cargo test --manifest-path trillionnium/Cargo.toml \
-            -p trnm-poco-node --test default_build_closure --locked
-          cargo check --manifest-path trillionnium/Cargo.toml \
-            -p trnm-poco-node --no-default-features \
-            --features ai-v1-candidate --locked
-      - name: Compile, test, and lint external contract workspace
-        run: |
-          set -euo pipefail
-          root="${RUNNER_TEMP}/trnm-contract-execution"
-          mkdir -p "$root"
-          git rev-parse HEAD > "$root/HEAD"
-          git rev-parse 'HEAD^{tree}' > "$root/TREE"
-          {
-            python3 scripts/ci/check_cargo_source_inventory_v1.py \
-              --workspace-root contracts --output "$root/source-inventory.json"
-            git ls-files -s -- contracts
-            cargo check --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
-            cargo test --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
-            cargo clippy --manifest-path contracts/Cargo.toml --workspace --all-targets --locked -- -D warnings
-          } 2>&1 | tee "$root/contracts.log"
-      - name: Retain exact-source contract log including failure
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: trnm-contract-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          path: ${{ runner.temp }}/trnm-contract-execution
-          if-no-files-found: warn
-          retention-days: 7
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          cargo fmt --all -- --check
       - name: Strict Clippy for executable safety and production boundaries
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
           root="${RUNNER_TEMP}/trnm-boundary-clippy"
           mkdir -p "$root"
           git rev-parse HEAD > "$root/HEAD"
@@ -725,9 +510,404 @@ jobs:
           path: ${{ runner.temp }}/trnm-boundary-clippy
           if-no-files-found: warn
           retention-days: 7
-      - name: Prove dedicated production-shaped CLI remains fail-closed
+      - name: Test PCC1 strict proof and durable read boundary
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
         run: |
           set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          root="${RUNNER_TEMP}/trnm-rust-execution"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          set +e
+          (
+            set -euo pipefail
+            echo 'PCC1_PHASE=all-target-tests'
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked
+            echo 'PCC1_PHASE=doc-tests'
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-consensus-crypto -p trnm-native-execution-v0 --doc --locked
+            echo 'PCC1_PHASE=strict-clippy'
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked -- -D warnings
+          ) >"$root/pcc1-boundary.log" 2>&1
+          rc=$?
+          set -e
+          printf '%s\n' "$rc" > "$root/pcc1-boundary.exit-code"
+          tail -n 120 "$root/pcc1-boundary.log"
+          printf 'PCC1_BOUNDARY_EXIT_CODE=%s\n' "$rc"
+          exit "$rc"
+      - name: Test native candidate shard contract
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          python3 ../scripts/ci/test_native_candidate_shards_v1.py
+      - name: Verify explicit incremental epoch execution candidate
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        id: native_candidate_shards
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          python3 ../scripts/ci/run_native_candidate_shards_v1.py \
+            --workspace "$PWD" \
+            --evidence-dir "$RUNNER_TEMP/trnm-native-candidate-shards" \
+            --deadline-seconds 900
+      - name: Lint incremental epoch execution candidate
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          cargo clippy -p trnm-native-execution-v0 \
+            --features test-fixtures,incremental-epoch-candidate \
+            --all-targets --locked -- -D warnings
+      - name: Retain exact-source native candidate shard evidence
+        if: always() && (steps.native_candidate_shards.outcome == 'success' || steps.native_candidate_shards.outcome == 'failure')
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-native-candidate-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-native-candidate-shards
+          if-no-files-found: error
+          retention-days: 7
+      - name: Verify codec2-only epoch host
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --no-default-features --features candidate-epoch-host-v2 --lib candidate_host_v2 --locked
+      - name: Verify all-feature epoch Core
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --all-features --locked
+      - name: Verify codec2 epoch host and journal10
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        id: safety_epoch_shards
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          python3 ../scripts/ci/run_native_candidate_shards_v1.py --suite safety-epoch --workspace "$PWD" --evidence-dir "$RUNNER_TEMP/trnm-safety-epoch-shards" --deadline-seconds 900
+      - name: Lint epoch Core and Safety candidates
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          cargo clippy -p trnm-consensus-core -p trnm-consensus-safety-store --all-features --all-targets --locked -- -D warnings
+      - name: Retain exact-source Safety epoch shard evidence
+        if: always() && (steps.safety_epoch_shards.outcome == 'success' || steps.safety_epoch_shards.outcome == 'failure')
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-safety-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-safety-epoch-shards
+          if-no-files-found: error
+          retention-days: 7
+      - name: Verify default and explicit candidate ownership boundaries
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          git diff --exit-code HEAD -- .
+          git ls-files -s -- crates/trnm-native-execution-v0 crates/trnm-durable-file-adapters-v0 crates/trnm-poco-node-authority crates/trnm-poco-node-host
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-poco-node-cli --all-targets --locked
+      - name: Test ownership and state-sync compile-fail contracts
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-state-sync-v0 --no-default-features --doc --locked
+      - name: Test durable authority library
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-durable-file-adapters-v0 --lib --locked -- --nocapture
+      - name: Test persistent authority host
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features persistent-authority-candidate --all-targets --locked -- --nocapture
+      - name: Test native handoff host composition
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features epoch-join-test-fixtures --lib --locked
+      - name: Test predecessor Safety journal
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-safety-store --features test-fixtures,candidate-epoch-host-v1 --test epoch_journal_v1 --locked
+      - name: Test persistent authority coordinator
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- --nocapture
+      - name: Lint persistent authority composition
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          cargo clippy -p trnm-poco-node-host -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- -D warnings
+      - name: Verify node epoch runtime shards
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        id: node_epoch_shards
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          python3 ../scripts/ci/run_native_candidate_shards_v1.py \
+            --suite node-epoch \
+            --workspace "$PWD" \
+            --evidence-dir "$RUNNER_TEMP/trnm-node-epoch-shards" \
+            --deadline-seconds 300
+      - name: Test node epoch runtime compile-fail contracts
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          cargo test -p trnm-poco-node --features epoch-runtime-candidate --doc --locked
+      - name: Lint node epoch runtime candidates
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings
+          git diff --exit-code HEAD -- .
+      - name: Retain exact-source node epoch shard evidence
+        if: always() && (steps.node_epoch_shards.outcome == 'success' || steps.node_epoch_shards.outcome == 'failure')
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-node-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-node-epoch-shards
+          if-no-files-found: error
+          retention-days: 7
+      - name: Test durable transaction journal without production activation
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-tx-lifecycle-v0 --all-targets --locked
+          timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked
+          timeout --signal=TERM --kill-after=10s 600s cargo clippy -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked -- -D warnings
+          git diff --exit-code HEAD -- .
+      - name: Test persistent peer-to-authority bridge without production activation
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          root="${RUNNER_TEMP}/trnm-rust-execution"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          set +e
+          (
+            set -euo pipefail
+            timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-durable-file-adapters-v0 --features candidate-peer-replay --all-targets --locked
+            timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-poco-node-host --features candidate-networked-authority --all-targets --locked
+            timeout --signal=TERM --kill-after=10s 600s cargo clippy -p trnm-durable-file-adapters-v0 --features candidate-peer-replay --all-targets --locked -- -D warnings
+            timeout --signal=TERM --kill-after=10s 600s cargo clippy -p trnm-poco-node-host --features candidate-networked-authority --all-targets --locked -- -D warnings
+            git diff --exit-code HEAD -- .
+          ) >"$root/persistent-ingress.log" 2>&1
+          rc=$?
+          set -e
+          printf '%s\n' "$rc" > "$root/persistent-ingress.exit-code"
+          tail -n 120 "$root/persistent-ingress.log"
+          exit "$rc"
+      - name: Replay original-listener socket replacement without masking failure
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          timeout --signal=TERM --kill-after=10s 120s cargo test \
+            -p trnm-consensus-external-watermark --test authority_blackbox \
+            --locked replacing_bound_socket_path_poison_daemon_on_next_original_connection -- --exact
+      - name: Test hosted candidate process recovery with explicit features
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        id: hosted_candidate_process
+        working-directory: trillionnium
+        timeout-minutes: 85
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          root="${RUNNER_TEMP}/trnm-hosted-candidate-process"
+          mkdir -p "$root"
+          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          printf '%s\n' 'scope=hosted-candidate-regressions' 'x230_acceptance=false' 'production_activation=false' > "$root/scope.txt"
+          run_candidate() {
+            local kind="$1" name="$2" rc
+            shift 2
+            printf '%q ' "$@" > "$root/$name.command"
+            printf '\n' >> "$root/$name.command"
+            if timeout --signal=TERM --kill-after=10s 600s "$@" > "$root/$name.log" 2>&1; then
+              rc=0
+            else
+              rc=$?
+            fi
+            printf '%s\n' "$rc" > "$root/$name.exit-code"
+            tail -n 100 "$root/$name.log"
+            if [[ "$rc" -ne 0 ]]; then exit "$rc"; fi
+            if [[ "$kind" == "test" ]]; then
+              python3 ../scripts/ci/technical_convergence_workflows_v1.py \
+                --check-candidate-test-log "$root/$name.log" > "$root/$name.tests.json"
+            fi
+          }
+          run_candidate test timeout-signing cargo test -p trnm-poco-node --features recovery-process-test-support --test timeout_signing_process_kill_matrix --locked
+          run_candidate test g1-process cargo test -p trnm-poco-node --features g1-process-test-support --test g1_process_host_e2e --locked
+          run_candidate test effect-driver cargo test -p trnm-poco-node --features g1-process-test-support --test effect_driver_process_e2e --locked
+          run_candidate test external-signer cargo test -p trnm-poco-node --features external-signer-runtime --test external_signer_runtime --locked
+          run_candidate test g2-manifest cargo test -p trnm-poco-node --features ai-v1-candidate --test g2_manifest_bound_process_v2 --locked
+          run_candidate test replay-coordinator cargo test -p trnm-poco-node --features replay-to-core-coordinator-test-support --bin trnm-poco-replay-to-core-coordinator-v1 --locked
+          run_candidate test node-io cargo test -p trnm-poco-node-io --features candidate-pacemaker,candidate-authenticated-p2p --all-targets --locked
+          run_candidate clippy node-io-clippy cargo clippy -p trnm-poco-node-io --features candidate-pacemaker,candidate-authenticated-p2p --all-targets --locked -- -D warnings
+          git diff --exit-code HEAD -- .
+      - name: Retain hosted candidate process commands and outcomes
+        if: always() && (steps.hosted_candidate_process.outcome == 'success' || steps.hosted_candidate_process.outcome == 'failure')
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-hosted-candidate-process-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-hosted-candidate-process
+          if-no-files-found: error
+          retention-days: 7
+      - name: Test the unified workspace feature graph with a hard deadline
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          root="${RUNNER_TEMP}/trnm-rust-execution"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          printf '%s\n' 'timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast' > "$root/workspace.command"
+          timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast 2>&1 | tee "$root/workspace.log"
+      - name: Retain exact-source workspace execution log including failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-workspace-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-rust-execution
+          if-no-files-found: error
+          retention-days: 7
+      - name: Test every active workspace package with bounded execution
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        env:
+          TRNM_PACKAGE_TEST_TIMEOUT_SECONDS: "600"
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          root="${RUNNER_TEMP}/trnm-package-execution"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          printf '%s\n' 'python3 scripts/ci/run_bounded_workspace_tests_v1.py --workspace-root trillionnium' > "$root/packages.command"
+          python3 scripts/ci/run_bounded_workspace_tests_v1.py --workspace-root trillionnium 2>&1 | tee "$root/packages.log"
+      - name: Retain exact-source package execution log including failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-package-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-package-execution
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Verify production and candidate dependency closures with Cargo
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+          python3 scripts/ci/check_node_decomposition_v1.py
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --no-default-features --locked
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --test default_build_closure --locked
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --no-default-features \
+            --features ai-v1-candidate --locked
+      - name: Compile, test, and lint external contract workspace
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
+          root="${RUNNER_TEMP}/trnm-contract-execution"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          {
+            python3 scripts/ci/check_cargo_source_inventory_v1.py \
+              --workspace-root contracts --output "$root/source-inventory.json"
+            git ls-files -s -- contracts
+            cargo check --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
+            cargo test --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
+            cargo clippy --manifest-path contracts/Cargo.toml --workspace --all-targets --locked -- -D warnings
+          } 2>&1 | tee "$root/contracts.log"
+      - name: Retain exact-source contract log including failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-contract-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-contract-execution
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Prove dedicated production-shaped CLI remains fail-closed
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
           status=$(cargo run --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-node-cli --bin trnm-poco-node-cli \
             --locked -- status)
@@ -746,9 +926,12 @@ jobs:
           test "$rc" -ne 0
           grep -q 'node host start blocked' "${RUNNER_TEMP}/trnm-node-start.err"
       - name: Run critical library regressions
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 ../scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
           cargo test -p trnm-state --lib --locked
           cargo test -p trnm-consensus-types --lib --locked
           cargo test -p trnm-consensus-core --lib --locked
@@ -756,6 +939,10 @@ jobs:
           cargo test -p trnm-production-adapter-conformance-v0 --all-targets --locked
           cargo test -p trnm-durable-file-adapters-v0 --all-targets --locked
       - name: Require Rust and contract validation to leave checkout clean
+        if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}
         run: |
+          set -euo pipefail
+          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --
+          python3 scripts/ci/check_cargo_source_inventory_v1.py --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null
           git diff --exit-code -- .
           test -z "$(git status --porcelain --untracked-files=all)"

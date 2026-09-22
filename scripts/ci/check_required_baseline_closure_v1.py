@@ -105,6 +105,85 @@ def named_step(text: str, name: str) -> str:
     return tail[:end]
 
 
+RUST_FEEDBACK_GUARD = "if: ${{ !cancelled() && steps.rust_source_inventory.outcome == 'success' }}"
+RUST_FEEDBACK_STEPS = (
+    'Rust format',
+    'Test PCC1 strict proof and durable read boundary',
+    'Test native candidate shard contract',
+    'Verify explicit incremental epoch execution candidate',
+    'Compile every active workspace target',
+    'Verify codec2 epoch host and journal10',
+    'Verify default and explicit candidate ownership boundaries',
+    'Test durable transaction journal without production activation',
+    'Test persistent peer-to-authority bridge without production activation',
+    'Replay original-listener socket replacement without masking failure',
+    'Test hosted candidate process recovery with explicit features',
+    'Test the unified workspace feature graph with a hard deadline',
+    'Test every active workspace package with bounded execution',
+    'Verify production and candidate dependency closures with Cargo',
+    'Compile, test, and lint external contract workspace',
+    'Strict Clippy for executable safety and production boundaries',
+    'Prove dedicated production-shaped CLI remains fail-closed',
+    'Run critical library regressions',
+    'Require Rust and contract validation to leave checkout clean',
+    'Lint incremental epoch execution candidate',
+    'Verify codec2-only epoch host',
+    'Verify all-feature epoch Core',
+    'Lint epoch Core and Safety candidates',
+    'Test ownership and state-sync compile-fail contracts',
+    'Test durable authority library',
+    'Test persistent authority host',
+    'Test native handoff host composition',
+    'Test predecessor Safety journal',
+    'Test persistent authority coordinator',
+    'Lint persistent authority composition',
+    'Verify node epoch runtime shards',
+    'Test node epoch runtime compile-fail contracts',
+    'Lint node epoch runtime candidates',
+    'Test locked Cargo archive collector',
+    'Collect cached public Cargo inputs for offline diagnosis',
+)
+
+
+def validate_rust_feedback(workflow: str) -> None:
+    require(workflow.count("  rust-baseline:\n") == 1, "exactly one Rust baseline required")
+    body = workflow.split("  rust-baseline:\n", 1)[1]
+    body = re.split(r"(?m)^  [A-Za-z0-9_-]+:\s*$", body, maxsplit=1)[0]
+    names = re.findall(r"(?m)^      - name: (.+)$", body)
+    require(len(names) == len(set(names)), "duplicate Rust step name")
+    require("continue-on-error" not in body, "Rust failure masking is forbidden")
+    admission = named_step(body, "Bind Cargo target inventory to the exact clean source")
+    require(re.search(r"(?m)^        id: rust_source_inventory$", admission) is not None,
+            "Rust source admission identity missing")
+    require(not re.search(r"(?m)^        if:", admission), "Rust source admission may not be conditional")
+    require(admission.count("        id: rust_source_inventory\n") == 1,
+            "duplicate source admission identity")
+    require("--source-only" not in admission and
+            '          python3 scripts/ci/check_cargo_source_inventory_v1.py ' in admission and
+            '--expected-commit "$TRNM_EXPECTED_SOURCE_SHA"' in admission,
+            "initial source admission must run the full independently pinned inventory")
+    for name in RUST_FEEDBACK_STEPS:
+        step = named_step(body, name)
+        conditions = re.findall(r"(?m)^        (if: .+)$", step)
+        require(conditions == [RUST_FEEDBACK_GUARD], f"{name}: independent failure/cancellation guard changed")
+        script = "../scripts/ci/check_cargo_source_inventory_v1.py" if "working-directory: trillionnium\n" in step else "scripts/ci/check_cargo_source_inventory_v1.py"
+        # The fixed workflow checks tracked bytes before executing the mutable
+        # checkout's checker. A failed test must not replace its own fence.
+        expected = (
+            '          set -euo pipefail\n'
+            '          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --\n'
+            '          python3 ' + script
+            + ' --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null\n'
+        )
+        require("        run: |\n" + expected in step, f"{name}: initial source fence missing")
+    require(body.index("      - name: Compile every active workspace target\n")
+            < body.index("      - name: Test PCC1 strict proof and durable read boundary\n"),
+            "full compilation must precede runtime campaigns")
+    require(body.index("      - name: Strict Clippy for executable safety and production boundaries\n")
+            < body.index("      - name: Verify explicit incremental epoch execution candidate\n"),
+            "strict lint must precede slow runtime campaigns")
+
+
 def main() -> int:
     policy = load_json(POLICY)
     workflow_relative = policy.get("baseline_workflow")
@@ -118,6 +197,7 @@ def main() -> int:
         f"baseline workflow missing: {workflow_relative}",
     )
     workflow = workflow_path.read_text(encoding="utf-8")
+    validate_rust_feedback(workflow)
 
     required_checks = policy.get("required_check_names")
     require(
@@ -241,8 +321,7 @@ def main() -> int:
         native_shard_step,
         (
             "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
-            "--features test-fixtures,incremental-epoch-candidate",
-            "cargo clippy -p trnm-native-execution-v0",
+            "--deadline-seconds 900",
         ),
         "native candidate shard execution",
     )
@@ -272,16 +351,21 @@ def main() -> int:
         "Run repository security-boundary regressions",
     )
     compile_step = named_step(workflow, "Compile Python CI tooling")
-    epoch_step = named_step(workflow, "Verify default and explicit candidate ownership boundaries")
+    epoch_step = named_step(workflow, "Verify node epoch runtime shards")
     require_tokens(epoch_step, (
         "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
         "--suite node-epoch",
         "--deadline-seconds 300",
         '--evidence-dir "$RUNNER_TEMP/trnm-node-epoch-shards"',
-        "cargo test -p trnm-poco-node --features epoch-runtime-candidate --doc --locked",
-        "cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings",
-        "cargo test -p trnm-consensus-safety-store --features test-fixtures,candidate-epoch-host-v1 --test epoch_journal_v1 --locked",
     ), "explicit epoch runtime test closure")
+    # Independent execution, not merely relocated text in a failing run block.
+    for name, command in (
+        ("Lint incremental epoch execution candidate", "cargo clippy -p trnm-native-execution-v0"),
+        ("Test predecessor Safety journal", "cargo test -p trnm-consensus-safety-store --features test-fixtures,candidate-epoch-host-v1 --test epoch_journal_v1 --locked"),
+        ("Test node epoch runtime compile-fail contracts", "cargo test -p trnm-poco-node --features epoch-runtime-candidate --doc --locked"),
+        ("Lint node epoch runtime candidates", "cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings"),
+    ):
+        require_tokens(named_step(workflow, name), (command,), name)
     safety_epoch_step = named_step(workflow, "Verify codec2 epoch host and journal10")
     require_tokens(safety_epoch_step, (
         "python3 ../scripts/ci/run_native_candidate_shards_v1.py",

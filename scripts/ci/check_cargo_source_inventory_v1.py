@@ -161,6 +161,20 @@ def validate_metadata(
     }
 
 
+def validate_clean_source(root: pathlib.Path, expected_commit: str) -> dict[str, Any]:
+    """Cheap inter-stage fence. It supplies no Cargo/test acceptance."""
+    require(isinstance(expected_commit, str) and re.fullmatch(r'[0-9a-f]{40}', expected_commit) is not None,
+            'source-only requires an independently expected commit')
+    head = git(root, 'rev-parse', 'HEAD')
+    require(head == expected_commit, 'Git source does not match expected commit')
+    require(not git(root, 'status', '--porcelain', '--untracked-files=all'), 'Git source is not clean')
+    tree = git(root, 'rev-parse', f'{head}^{{tree}}')
+    require(git(root, 'rev-parse', 'HEAD') == head, 'Git source changed during source check')
+    require(not git(root, 'status', '--porcelain', '--untracked-files=all'), 'Git source became dirty during source check')
+    return {'source_commit': head, 'source_tree': tree, 'scope': 'source-identity-only',
+            'test_acceptance': 'not-assessed', 'production_authority': False, 'result': 'PASS'}
+
+
 def select_workspace(root: pathlib.Path, name: str) -> pathlib.Path:
     require(name in {'trillionnium', 'contracts'}, 'unsupported workspace selection')
     return root / name
@@ -168,6 +182,7 @@ def select_workspace(root: pathlib.Path, name: str) -> pathlib.Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--source-only', action='store_true', help='Recheck expected clean Git identity without invoking Cargo')
     parser.add_argument('--expected-commit', default=os.environ.get('TRNM_EXPECTED_SOURCE_SHA'))
     parser.add_argument('--output', type=pathlib.Path)
     parser.add_argument('--workspace-root', choices=['trillionnium', 'contracts'], default='trillionnium')
@@ -176,12 +191,15 @@ def main() -> int:
     expected = args.expected_commit or git(ROOT, 'rev-parse', 'HEAD')
     if args.output:
         require(not args.output.resolve().is_relative_to(ROOT), 'inventory output must be outside Git root')
-    completed = subprocess.run(
-        ['cargo', 'metadata', '--format-version', '1', '--no-deps', '--locked'],
-        cwd=workspace, capture_output=True, text=True, check=True, timeout=60,
-    )
-    metadata = json.loads(completed.stdout, object_pairs_hook=strict_object, parse_constant=reject_constant)
-    report = validate_metadata(ROOT, workspace, metadata, expected)
+    if args.source_only:
+        report = validate_clean_source(ROOT, args.expected_commit)
+    else:
+        completed = subprocess.run(
+            ['cargo', 'metadata', '--format-version', '1', '--no-deps', '--locked'],
+            cwd=workspace, capture_output=True, text=True, check=True, timeout=60,
+        )
+        metadata = json.loads(completed.stdout, object_pairs_hook=strict_object, parse_constant=reject_constant)
+        report = validate_metadata(ROOT, workspace, metadata, expected)
     text = json.dumps(report, indent=2, sort_keys=True) + '\n'
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
