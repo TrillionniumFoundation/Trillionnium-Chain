@@ -1,0 +1,28 @@
+name: TRNM bounded validation input 20260922
+on:
+  push:
+    branches: [fix/chain-validation-input-20260922]
+permissions:
+  contents: read
+jobs:
+  locked-public-input:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Fetch and verify locked public crate without executing repository code
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/trnm-locked-input"
+          cd "$RUNNER_TEMP/trnm-locked-input"
+          curl --proto '=https' --tlsv1.2 --connect-timeout 15 --max-time 90 --retry 2 --fail --location --output rand-0.8.6.crate https://static.crates.io/crates/rand/rand-0.8.6.crate
+          printf '%s\n' '5ca0ecfa931c29007047d1bc58e623ab12e5590e8c7cc53200d5202b69266d8a  rand-0.8.6.crate' > SHA256SUMS
+          sha256sum --check SHA256SUMS
+          printf '%s\n' 'scope=public-lockfile-input-only; no candidate code, tests, hooks, build scripts, keys or acceptance' 'source=a60a38baa5d4cad89a208b51e871093a2dcb6171' > SCOPE
+      - name: Retain verified inert public dependency
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-locked-rand-0.8.6
+          path: ${{ runner.temp }}/trnm-locked-input
+          if-no-files-found: error
+          retention-days: 1
