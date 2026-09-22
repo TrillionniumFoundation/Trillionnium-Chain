@@ -25,6 +25,26 @@ That deliverable is distinct from production activation and external acceptance.
 | `trillionnium/crates/trnm-poco-lab-validator/src/candidate_devnet.rs` | Explicit bounded candidate CLI with external Unix peer lease | Single-LAN, local test keys; no HSM or public-testnet authority |
 | `trillionnium/crates/trnm-release-bundle-v0/src/lib.rs` | Bundle validation, signatures and independent build comparison | Does not itself authorize publication |
 
+## Current epoch readback without repeated full-history audits
+
+`confirm_current_epoch_execution_v1(block)` returns the existing opaque
+confirmed-preparation receipt only after the original complete audited reopen
+proves that this exact COMMITTED row is the current native head. Prepared-only
+and historical committed rows reject. The reopened row and observed head come
+from the same locked operation, including the existing second fresh metadata
+validation, retained-prefix and ancestry checks. No verified state survives
+between calls and no signature, schema, namespace or durable check is removed.
+M15 may compare this newly owner-produced receipt directly to the independent
+checkpoint without calling another full reopen merely to ask which owner just
+issued it. The original stale-receipt revalidation APIs remain unchanged;
+readbacks on both sides of external callbacks and actual custody still run.
+The pre-first-commit branch likewise consumes its freshly issued
+`confirm_epoch_application_edge_v1` result directly. That producer already
+checks owner affinity, current head before/after strict proof, retained
+preparation and final namespace identity. No external callback occurs between
+its return and checkpoint comparisons; a previously retained receipt still
+requires the existing fresh revalidation API.
+
 ## Interfaces
 
 Existing closure names are `node-prod-v0`, `node-devnet-v0`, `ai-v1-candidate`

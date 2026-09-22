@@ -144,6 +144,39 @@ fn ordinary_cutoff_finish_v3(case: Box<OrdinaryCutoffCaseV3>) {
             .get(),
         17
     );
+    let application = &owner.inner.runtime.application;
+    let current = application
+        .confirm_current_epoch_execution_v1(*head.block_id().as_bytes())
+        .unwrap();
+    assert_eq!(
+        current.commit_sequence(),
+        Some(checkpoint.fields().application.commit_sequence)
+    );
+    assert_eq!(
+        current.prepared().p_digest(),
+        checkpoint.fields().application.p_digest
+    );
+    // A real retained prepared descendant cannot acquire current-commit status.
+    let pending = owner.inner.prepared[0].prepared.header().unwrap().id();
+    assert!(application
+        .confirm_current_epoch_execution_v1(*pending.as_bytes())
+        .is_err());
+    // Nor can an earlier genuinely committed row masquerade as the current head.
+    let history = rusqlite::Connection::open_with_flags(
+        application.path(),
+        rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+    )
+    .unwrap();
+    let prior: Vec<u8> = history.query_row(
+        "SELECT block_id FROM native_durable_execution_p_v1 WHERE target_height=?1 AND status=1",
+        [12u64.to_be_bytes().as_slice()], |row| row.get(0),
+    ).unwrap();
+    drop(history);
+    assert!(application
+        .confirm_current_epoch_execution_v1(prior.try_into().unwrap())
+        .is_err());
+    // Failed queries cannot change the live head or invalidate the original cut.
+    assert_eq!(application.confirmed_committed_head_v0().unwrap(), head);
     let paths = [
         owner.inner.runtime.application.path().to_path_buf(),
         owner.inner.runtime.journal.path_v1().to_path_buf(),

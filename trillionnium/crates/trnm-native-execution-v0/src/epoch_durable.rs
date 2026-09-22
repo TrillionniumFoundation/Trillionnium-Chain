@@ -3767,8 +3767,15 @@ fn validate_p_with_seen_and_policy(
             && store.parent_root_v0()?.0 == *header.state_root().as_bytes(),
         "epoch P snapshot head"
     );
-    let live = store.verified_live_values_v0(p.target_height)?;
-    let lifecycle = load_validator_lifecycle_from_live_v0(&live, p.target_height)?;
+    // Decoding above already audits all snapshot roots and live values.
+    // Re-prove only the lifecycle key needed by this projection comparison,
+    // rather than proving/copying the complete live namespace a second time.
+    let key = crate::auth_tree::validator_state_key()?;
+    let value = store
+        .verified_raw_value_v0(p.target_height, &key)?
+        .context("authenticated epoch snapshot is missing validator lifecycle")?;
+    let lifecycle =
+        load_validator_lifecycle_from_live_v0(&BTreeMap::from([(key, value)]), p.target_height)?;
     ensure!(
         serde_json::to_vec(&lifecycle)? == p.lifecycle,
         "epoch P lifecycle snapshot mismatch"
@@ -4357,6 +4364,30 @@ impl DurableNativeApplicationV0 {
         &self,
         block: [u8; 32],
     ) -> Result<PreparedNativeEpochExecutionV1> {
+        self.reopen_epoch_execution_with_head_v1(block)
+            .map(|(prepared, _)| prepared)
+    }
+
+    /// Fresh owner-produced current COMMITTED row. No prior receipt or claimed
+    /// head can select authority, and nothing is cached between invocations.
+    pub fn confirm_current_epoch_execution_v1(
+        &self,
+        block: [u8; 32],
+    ) -> Result<ConfirmedPreparedNativeEpochExecutionV1> {
+        let (prepared, head) = self.reopen_epoch_execution_with_head_v1(block)?;
+        ensure!(
+            prepared.row.status == 1
+                && prepared.row.commit_sequence.is_some()
+                && prepared.row.target_head()? == head,
+            "epoch readback is not the current committed head"
+        );
+        Ok(ConfirmedPreparedNativeEpochExecutionV1 { prepared })
+    }
+
+    fn reopen_epoch_execution_with_head_v1(
+        &self,
+        block: [u8; 32],
+    ) -> Result<(PreparedNativeEpochExecutionV1, ApplicationHeadV0)> {
         let _guard = self.lock_operation()?;
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
@@ -4372,10 +4403,13 @@ impl DurableNativeApplicationV0 {
             fresh_validate_v0(&self.path, &self.config)? == metadata,
             "reopened P changed during edge reconstruction"
         );
-        Ok(PreparedNativeEpochExecutionV1 {
-            owner: Arc::clone(&self.owner_affinity),
-            row,
-        })
+        Ok((
+            PreparedNativeEpochExecutionV1 {
+                owner: Arc::clone(&self.owner_affinity),
+                row,
+            },
+            metadata.head,
+        ))
     }
 
     pub fn confirm_prepared_epoch_execution_v1(

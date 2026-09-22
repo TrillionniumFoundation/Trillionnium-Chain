@@ -33,6 +33,19 @@ pub fn put_u64(out: &mut Vec<u8>, value: u64) {
 }
 
 pub fn decode_hash32(label: &str, value: &str) -> Result<Hash32> {
+    if value.len() == 64 {
+        // Common fixed-width success path: preserve decode-before-case error
+        // precedence without a temporary Vec and canonical re-encoded String.
+        let mut out = [0u8; 32];
+        hex::decode_to_slice(value, &mut out)
+            .map_err(|_| anyhow!("{label} must be lowercase hex"))?;
+        ensure!(
+            !value.bytes().any(|byte| byte.is_ascii_uppercase()),
+            "{label} must use canonical lowercase hex"
+        );
+        return Ok(out);
+    }
+    // Retain historical malformed-input versus wrong-length error precedence.
     let bytes = hex::decode(value).map_err(|_| anyhow!("{label} must be lowercase hex"))?;
     ensure!(bytes.len() == 32, "{label} must encode exactly 32 bytes");
     ensure!(
@@ -96,6 +109,57 @@ pub(crate) fn verify_hex_strict(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn original_hash_decoder(value: &str) -> Result<Hash32> {
+        let bytes = hex::decode(value).map_err(|_| anyhow!("test must be lowercase hex"))?;
+        ensure!(bytes.len() == 32, "test must encode exactly 32 bytes");
+        ensure!(
+            hex::encode(&bytes) == value,
+            "test must use canonical lowercase hex"
+        );
+        let mut out = [0; 32];
+        out.copy_from_slice(&bytes);
+        Ok(out)
+    }
+
+    fn assert_same_hash_decode(value: &str) {
+        let expected = original_hash_decoder(value).map_err(|error| error.to_string());
+        let actual = decode_hash32("test", value).map_err(|error| error.to_string());
+        assert_eq!(actual, expected, "input: {value:?}");
+    }
+
+    #[test]
+    fn fixed_hash_text_preserves_all_ascii_substitutions_and_error_precedence() {
+        for position in 0..64 {
+            for byte in 0..=127u8 {
+                let mut value = [b'0'; 64];
+                value[position] = byte;
+                assert_same_hash_decode(core::str::from_utf8(&value).unwrap());
+            }
+        }
+        for length in 0..=130 {
+            for pattern in ["0", "A", "g"] {
+                assert_same_hash_decode(&pattern.repeat(length));
+            }
+        }
+        for value in [
+            "é".repeat(32),
+            "𐀀".repeat(16),
+            format!("A{}g", "0".repeat(62)),
+        ] {
+            assert_same_hash_decode(&value);
+        }
+    }
+
+    #[test]
+    fn fixed_hash_text_reproduces_every_byte_value_without_normalization() {
+        for byte in 0..=255u8 {
+            let value = [byte; 32];
+            let encoded = hex::encode(value);
+            assert_eq!(decode_hash32("test", &encoded).unwrap(), value);
+            assert_same_hash_decode(&encoded.to_ascii_uppercase());
+        }
+    }
 
     #[test]
     fn domain_hash_is_framed_and_domain_separated() {

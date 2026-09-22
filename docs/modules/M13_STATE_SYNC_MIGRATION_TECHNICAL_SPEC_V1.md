@@ -4,6 +4,30 @@ Status: candidate implementation contract, with a native multi-epoch execution
 owner path and planned transport installation. Primary module: M13; no new
 trust anchor is issued here.
 
+## Fixed-width hash text admission
+
+The existing `trnm-finality-types::crypto::decode_hash32` accepts exactly the
+same canonical lowercase hexadecimal values and retains its historical error
+precedence. For a 64-byte input it decodes directly into the fixed 32-byte
+output and checks lowercase spelling without allocating and re-encoding two
+temporary buffers. Other lengths retain the previous decoder path, so malformed
+hex, valid-but-wrong length and noncanonical case remain distinct. This changes
+neither hash/signature algorithms, wire bytes, key verification nor trust.
+The regression compares the original decoding/error oracle across every ASCII
+substitution at every input position, Unicode, wrong lengths and valid values.
+
+## Proof-export producer verifies its retained root
+
+The earlier source `8bbd4581fa3752ae96b6a8b4ee8a15647c710037` already supplies
+an independently verifiable ICS23 export boundary. That bounded implementation
+and its membership/nonmembership, altered-root and corrupt-historical-value
+regressions are retained here rather than leaving only a self-comparison of
+the same stored root. `prove_raw_key_v0` verifies the actual generated proof,
+key and returned value against the selected retained root before encoding or
+publishing proof bytes. Historical roots use their own proof, not the latest
+healthy snapshot. Consumers must still independently authenticate consensus
+finality and verify the returned proof; this producer check grants no finality.
+
 ## Authority
 
 M13 verifies proof meaning and installs only authenticated state into bounded
