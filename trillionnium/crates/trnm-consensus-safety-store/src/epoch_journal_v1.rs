@@ -821,8 +821,11 @@ impl SqliteEpochSafetyJournalV1 {
             source.record_checksum(),
             self.profile.source_profile.owner_generation_v1(),
         )?;
-        let expected_initial =
-            source_recovery.prepare_epoch_activation_v1(&self.profile.context()?)?;
+        // Reconstruct this immutable profile once for this read only. Each
+        // retained record is still freshly decoded, checked and compared;
+        // nothing is cached across reads, external callbacks or owner changes.
+        let epoch_context = self.profile.context()?;
+        let expected_initial = source_recovery.prepare_epoch_activation_v1(&epoch_context)?;
         let source_transition = decode_transition_context_v0_exact(&m.source_transition)?;
         validate_transition_context_against_state_v0(&source_transition, source.state())?;
         if source.state().revision().checked_add(1) != Some(m.first_revision) {
@@ -881,8 +884,7 @@ impl SqliteEpochSafetyJournalV1 {
             {
                 return invalid("retained chain checksum");
             }
-            let record =
-                decode_epoch_safety_record_v1_exact(&record_bytes, &self.profile.context()?)?;
+            let record = decode_epoch_safety_record_v1_exact(&record_bytes, &epoch_context)?;
             self.profile.check_state(record.state())?;
             if record.state().revision() != revision {
                 return invalid("record revision");
@@ -932,7 +934,7 @@ impl SqliteEpochSafetyJournalV1 {
                     record: Box::new(record.clone()),
                     transition,
                     pin: expected,
-                    context_ref: self.profile.context_ref_v1()?,
+                    context_ref: epoch_safety_record_context_ref_v1(&epoch_context)?,
                     generation: self.profile.generation,
                     origin: m.origin,
                     source: EpochSafetyMigrationSourceV1 {
