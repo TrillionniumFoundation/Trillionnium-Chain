@@ -552,15 +552,58 @@ means it is absent, while a present non-zombie state still fails after the
 bounded wait. Permission errors and malformed observations remain failures.
 This observation rule does not change the actual process-group kill or deadline.
 
+All filtered inventories are admitted before the first shard runs. Once the
+source, executable and complete partition are pinned, a test failure or timeout
+must not suppress independent remaining shards. Preserve the original process
+exit separately from summary validation; an exit-zero process without the exact
+parent summary is still failed. The overall result retains the first failure
+regardless of later passes. Summaries distinguish every planned `not-run`,
+`failed` and `passed` shard, record planned/executed counts and monotonic elapsed
+time, and cannot claim success before complete execution and the final identity check.
+Recheck both the clean source and executable hash after a failed shard too.
+Any identity change stops execution immediately: results from a changed source
+must not be mixed into the original inventory. These elapsed times are
+qualification diagnostics, not chain throughput measurements.
+
+The five required hosted job identities are unchanged. Within `rust-baseline`,
+full workspace compilation and strict boundary lint precede slow runtime suites.
+Independent later execution steps use an explicit cancellation-aware condition
+requiring successful original Cargo source admission; a failed earlier test is
+not an implicit skip and is never converted to success. Each such step first
+compares tracked bytes against the expected commit using the fixed workflow
+Git command, before executing any checkout-owned checker. It then rechecks the
+independently expected clean source through the existing inventory checker's
+`--source-only` mode. An earlier failed test cannot replace that checker with an
+exit-zero program and thereby authorize continuation. That cheap recheck invokes no Cargo and supplies
+no test acceptance. Cancellation, failed initial inventory or changed source
+cannot authorize later execution. Commands remain bounded; this is sequential
+failure-independent feedback, not a parallel-job performance claim. A host-wide
+deadline can still terminate unfinished work and may never be called a pass.
+
 Each shard has an independent finite deadline. A timeout, nonzero exit, missing
 log, missing exit code, or incomplete inventory is a failed evidence result.
 The default per-shard deadline is 900 seconds. Timeout terminates the process
 group with bounded TERM/KILL grace and bounded output drain. Every admitted
 run retains a failed or passed summary with its last phase, including build,
 inventory and source-binding failures. The existing all-target strict Clippy
-command runs after all shards. The shard
+command has a separate source-fenced hosted step. It still executes after a
+failed shard campaign, preserves its own failure and never converts the
+campaign result to success. The shard
 artifact is source-bound and retained even when a shard fails, so a hosted
 runner timeout cannot be mistaken for a passing or complete native campaign.
+
+The hosted baseline also retains only already cached public crates.io archives
+whose original bytes match the checksums in the exact source's `Cargo.lock`.
+`collect_locked_cargo_archives_v1.py` performs no download, executes no crate,
+and copies no Cargo credentials, configuration or private-registry material.
+Its output is outside the checkout, source-bound and limited to 2,048 archives,
+32 MiB each and 512 MiB total. Missing target/platform archives stay explicitly
+missing; another version is never relabelled or used to repair the lockfile.
+A copy race, checksum mismatch or changed source rejects publication. These
+are offline reproduction inputs, not build/test/production evidence. The six
+real Git/file collector regressions cover missing input, corrupt or substituted
+bytes, symlinks, source changes, output replacement and byte bounds. Rust
+qualification still requires Cargo's actual locked execution on the exact source.
 
 ### Node epoch candidate execution (M17-NODE-EPOCH-SHARDS-V1)
 
@@ -597,10 +640,27 @@ and native pre-handoff settlement drivers are mandatory active inventory entries
 All existing source/binary affinity, default stack, process-group cleanup,
 evidence retention and failure propagation rules above apply. Compilation is
 bounded separately from each execution. Node doc tests and strict all-target
-Clippy remain required after complete shard success. This changes the deadline
+Clippy are separate source-fenced steps and remain required even when an
+independent shard fails. Core-only tests, all-feature Core tests, Safety shards,
+Safety lint and each existing ownership suite also have independent steps.
+Every original command, feature, timeout and negative driver is retained.
+Only test-result failure may be followed by another admitted step: failed
+initial source admission or changed source cannot authorize it. The native
+workflow and required-baseline validators consume the same exact continuation
+condition and verify the relocated execution commands, so an `if: false`,
+comment, echo, removed command or swallowed failure still rejects. This changes the deadline
 unit from an ever-growing package to a real runtime case; it does not relax any
 case's assertions, remove a crash or cryptographic check, or count a timeout as
 success. The workflow retains node shard evidence on success and failure.
+
+The V8 joint-attachment regression retains its existing 300-second deadline,
+all owner/custody joins, both exact retries, callback-substitution rejection and
+cold-recovery assertions. Test-only `TRNM_V8_STAGE` messages precede fixture
+construction, initial activation/execution, cutoff, seals, custody, attachment,
+retries and cold readback. The last marker identifies the in-progress region
+when a deadline kills the test; elapsed time is process-monotonic diagnostic
+information only. It neither establishes the timeout's root cause before an
+actual rerun nor relaxes any production or test acceptance predicate.
 
 ### Safety successor journal execution (M17-SAFETY-EPOCH-SHARDS-V1)
 

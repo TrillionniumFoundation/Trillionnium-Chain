@@ -16,6 +16,10 @@ import re
 import shlex
 import sys
 
+from check_required_baseline_closure_v1 import (
+    BaselineClosureError, RUST_FEEDBACK_GUARD, validate_rust_feedback,
+)
+
 ROOT = Path(__file__).resolve().parents[2]
 BASELINE = ".github/workflows/trnm-required-baseline.yml"
 RUNTIME = ".github/workflows/trnm-native-poco-runtime-fault-matrix-v1.yml"
@@ -140,8 +144,13 @@ def tokens(text: str, expected: tuple[str, ...], label: str) -> None:
         require(token in active, f"{label}: missing {token}")
 
 
-def hard_step(body: str, label: str) -> None:
-    require(not re.search(r"^        if:", body, re.M), f"{label}: execution may not be conditional")
+def hard_step(body: str, label: str, *, guarded: bool = False) -> None:
+    if guarded:
+        conditions = re.findall(r"^        (if: .+)$", body, re.M)
+        require(conditions == [RUST_FEEDBACK_GUARD],
+                f"{label}: exact source-admitted continuation guard required")
+    else:
+        require(not re.search(r"^        if:", body, re.M), f"{label}: execution may not be conditional")
     tokens(body, ("set -euo pipefail",), label)
     require(not re.search(r"\bset\s+\+|\|\||\bexit\s+0\b", body),
             f"{label}: failure masking is forbidden")
@@ -172,10 +181,19 @@ def reject_environment_shadowing(text: str, label: str) -> None:
 
 
 def exact_matrix_commands(body: str, expected: tuple[str, ...], name: str,
-                          working_directory: str = "trillionnium-chain") -> None:
+                          working_directory: str = "trillionnium-chain", *, guarded: bool = False) -> None:
     require(scalar(body, "working-directory", 8) == working_directory, f"{name}: working directory differs")
     require(scalar(body, "run", 8) == "|", f"{name}: expected explicit run block")
     run = body.split("        run: |", 1)[1]
+    if guarded:
+        prefix = (
+            '\n          set -euo pipefail\n'
+            '          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --\n'
+            '          python3 ../scripts/ci/check_cargo_source_inventory_v1.py'
+            ' --source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA" >/dev/null\n'
+        )
+        require(run.startswith(prefix), f"{name}: fixed source fence missing")
+        run = run[len(prefix):]
     # Join only shell line continuations; inspect complete argv of every
     # command. Echoing, commenting, filtering or deleting a test cannot pass.
     run = re.sub(r"\\[ \t]*\n[ \t]*", " ", run)
@@ -266,28 +284,49 @@ def validate_contract(root: Path) -> dict[str, object]:
     require(scalar(unchanged, "if", 8) == "always()", "offline postcheck must run on failure")
     tokens(unchanged, ("./scripts/ci/check_cargo_offline_unchanged.sh",), "offline postcheck")
     execution = step(baseline, "Test the unified workspace feature graph with a hard deadline")
-    hard_step(execution, "workspace execution")
+    hard_step(execution, "workspace execution", guarded=True)
     tokens(execution, ("cargo test --workspace --all-targets --locked --no-fail-fast", "| tee", "timeout --signal=TERM", 'git rev-parse HEAD > "$root/HEAD"', 'git rev-parse \'HEAD^{tree}\' > "$root/TREE"'), "workspace execution")
-    epoch_name = "Verify codec2 epoch host and journal10"
-    epoch = step(baseline, epoch_name)
-    hard_step(epoch, epoch_name)
-    require(not re.search(r"^        continue-on-error:", epoch, re.M),
-            f"{epoch_name}: must propagate failure")
-    exact_matrix_commands(epoch, EPOCH_CODEC2_COMMANDS, epoch_name, "trillionnium")
+    epoch_names = (
+        "Verify codec2-only epoch host", "Verify all-feature epoch Core",
+        "Verify codec2 epoch host and journal10", "Lint epoch Core and Safety candidates",
+    )
+    for epoch_name, command in zip(epoch_names, EPOCH_CODEC2_COMMANDS, strict=True):
+        epoch = step(baseline, epoch_name)
+        hard_step(epoch, epoch_name, guarded=True)
+        require(not re.search(r"^        continue-on-error:", epoch, re.M),
+                f"{epoch_name}: must propagate failure")
+        exact_matrix_commands(epoch, (command,), epoch_name, "trillionnium", guarded=True)
     candidate = step(baseline, "Verify explicit incremental epoch execution candidate")
-    hard_step(candidate, "native candidate shard execution")
+    hard_step(candidate, "native candidate shard execution", guarded=True)
     tokens(candidate, (
         "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
-        "--features test-fixtures,incremental-epoch-candidate",
-        "cargo clippy -p trnm-native-execution-v0",
+        '--evidence-dir "$RUNNER_TEMP/trnm-native-candidate-shards"',
+        "--deadline-seconds 900",
     ), "native candidate shard execution")
-    node_epoch = step(baseline, "Verify default and explicit candidate ownership boundaries")
-    hard_step(node_epoch, "node epoch shard execution")
+    native_lint = step(baseline, "Lint incremental epoch execution candidate")
+    hard_step(native_lint, "native candidate lint", guarded=True)
+    exact_matrix_commands(native_lint, (
+        "cargo clippy -p trnm-native-execution-v0 --features test-fixtures,incremental-epoch-candidate --all-targets --locked -- -D warnings",
+    ), "native candidate lint", "trillionnium", guarded=True)
+    node_epoch = step(baseline, "Verify node epoch runtime shards")
+    hard_step(node_epoch, "node epoch shard execution", guarded=True)
     tokens(node_epoch, (
         "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
         "--suite node-epoch", "--deadline-seconds 300",
         '--evidence-dir "$RUNNER_TEMP/trnm-node-epoch-shards"',
     ), "node epoch shard execution")
+    # A slow or failing shard cannot prevent the compiler contracts or lint
+    # from obtaining their own outcome. The original commands remain exact.
+    for name, command in (
+        ("Test node epoch runtime compile-fail contracts",
+         "cargo test -p trnm-poco-node --features epoch-runtime-candidate --doc --locked"),
+        ("Lint node epoch runtime candidates",
+         "cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings"),
+    ):
+        body = step(baseline, name)
+        hard_step(body, name, guarded=True)
+        expected = (command, "git diff --exit-code HEAD -- .") if name.startswith("Lint") else (command,)
+        exact_matrix_commands(body, expected, name, "trillionnium", guarded=True)
     safety_upload = step(baseline, "Retain exact-source Safety epoch shard evidence")
     require(scalar(safety_upload, "if", 8) == "always() && (steps.safety_epoch_shards.outcome == 'success' || steps.safety_epoch_shards.outcome == 'failure')", "Safety epoch failure evidence must be retained")
     require(scalar(safety_upload, "name", 10) == "trnm-safety-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}", "Safety epoch artifact source binding differs")
@@ -299,7 +338,7 @@ def validate_contract(root: Path) -> dict[str, object]:
     require(scalar(node_upload, "path", 10) == "${{ runner.temp }}/trnm-node-epoch-shards", "node epoch artifact path differs")
     require(scalar(node_upload, "if-no-files-found", 10) == "error", "node epoch artifact absence must fail")
     candidate_contract = step(baseline, "Test native candidate shard contract")
-    hard_step(candidate_contract, "native candidate shard contract tests")
+    hard_step(candidate_contract, "native candidate shard contract tests", guarded=True)
     tokens(candidate_contract, ("python3 ../scripts/ci/test_native_candidate_shards_v1.py",), "native candidate shard contract tests")
     evidence = step(runtime, "Build exact-source runtime evidence record")
     hard_step(evidence, "runtime evidence")
@@ -316,6 +355,10 @@ def validate_contract(root: Path) -> dict[str, object]:
     require(scalar(workspace_upload, "path", 10) == "${{ runner.temp }}/trnm-rust-execution", "workspace artifact path differs")
     require(scalar(workspace_upload, "if-no-files-found", 10) == "error", "workspace artifact absence must fail")
     tokens(quick, ("python3 -B scripts/ci/check_required_baseline_closure_v1.py", "python3 -B scripts/ci/check_native_workflow_contract_v1.py", "python3 -B scripts/ci/test_native_workflow_contract_v1.py"), "quick-check native contract invocation")
+    try:
+        validate_rust_feedback(baseline)
+    except BaselineClosureError as error:
+        raise ContractError(f"baseline source-bound feedback: {error}") from error
     return {"result": "PASS", "schema": "trnm-native-workflow-contract-v1", "retired_lanes_absent": len(RETIRED), "retained_guard_purposes": 7, "required_jobs": sorted(JOBS), "runtime_matrix_commands": sum(map(len, RUNTIME_MATRICES.values())), "scope": "workflow-contract-only-not-execution-or-activation"}
 
 

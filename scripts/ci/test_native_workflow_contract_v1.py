@@ -143,7 +143,7 @@ class NativeWorkflowMutants(unittest.TestCase):
     def test_codec2_execution_cannot_skip_or_mask_failure(self) -> None:
         marker = "      - name: Verify codec2 epoch host and journal10\n"
         self.replace(BASELINE, marker, marker + "        if: false\n")
-        self.rejected("Verify codec2.*may not be conditional")
+        self.rejected("Verify codec2.*continuation guard")
         self.replace(BASELINE, "        if: false\n", "        continue-on-error: true\n")
         self.rejected("baseline: soft failure promotion is forbidden")
         self.replace(BASELINE, "        continue-on-error: true\n", "")
@@ -163,9 +163,43 @@ class NativeWorkflowMutants(unittest.TestCase):
         self.replace(BASELINE, "--suite node-epoch", "--suite native")
         self.rejected("node epoch shard execution: missing")
         self.replace(BASELINE, "--suite native", "--suite node-epoch")
-        marker = "      - name: Verify default and explicit candidate ownership boundaries\n"
+        marker = "      - name: Verify node epoch runtime shards\n"
         self.replace(BASELINE, marker, marker + "        if: false\n")
-        self.rejected("node epoch shard execution:.*conditional")
+        self.rejected("node epoch shard execution:.*continuation guard")
+
+
+    def test_node_lint_and_doctests_are_independent_exact_stages(self) -> None:
+        for name, command in (
+            ("Test node epoch runtime compile-fail contracts", "cargo test -p trnm-poco-node --features epoch-runtime-candidate --doc --locked"),
+            ("Lint node epoch runtime candidates", "cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings"),
+        ):
+            with self.subTest(name=name):
+                path = self.root / BASELINE
+                original = path.read_text()
+                self.replace(BASELINE, "          " + command, "          # " + command)
+                self.rejected("complete execution commands differ")
+                path.write_text(original)
+                self.replace(BASELINE, command, "echo " + command)
+                self.rejected("complete execution commands differ")
+                path.write_text(original)
+                marker = "      - name: " + name + "\n"
+                self.replace(BASELINE, marker, marker + "        if: success()\n")
+                self.rejected("continuation guard")
+                path.write_text(original)
+
+    def test_only_the_pinned_source_continuation_is_permitted(self) -> None:
+        path = self.root / BASELINE
+        original = path.read_text()
+        for mutation in (
+            original.replace("!cancelled() && steps.rust_source_inventory.outcome == 'success'", "!cancelled()", 1),
+            original.replace('          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --\n', '', 1),
+            original.replace('--source-only --expected-commit "$TRNM_EXPECTED_SOURCE_SHA"', '--source-only', 1),
+        ):
+            with self.subTest(mutation=mutation != original):
+                self.assertNotEqual(mutation, original)
+                path.write_text(mutation)
+                self.rejected("baseline source-bound feedback")
+        path.write_text(original)
 
     def test_node_epoch_failure_evidence_must_be_retained(self) -> None:
         self.replace(BASELINE,

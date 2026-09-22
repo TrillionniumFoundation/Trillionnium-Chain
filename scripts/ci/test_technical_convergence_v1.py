@@ -5,10 +5,16 @@ from __future__ import annotations
 import importlib.util
 import json
 import pathlib
+import os
+import shlex
+import subprocess
+import textwrap
 import shutil
 import tempfile
 import unittest
 from unittest import mock
+
+import check_required_baseline_closure_v1 as baseline
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CHECKER = ROOT / "scripts/ci/check_technical_convergence_v1.py"
@@ -22,6 +28,92 @@ if binding_spec is None or binding_spec.loader is None:
     raise RuntimeError("cannot load documentation binding checker")
 binding_checker = importlib.util.module_from_spec(binding_spec)
 binding_spec.loader.exec_module(binding_checker)
+
+
+class RustFeedbackContractTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.workflow = (ROOT / '.github/workflows/trnm-required-baseline.yml').read_text()
+
+    def test_current_guard_keeps_required_failures_and_fast_feedback(self) -> None:
+        baseline.validate_rust_feedback(self.workflow)
+        rust = self.workflow.split('  rust-baseline:\n', 1)[1]
+        self.assertNotIn('continue-on-error', rust)
+        self.assertEqual(rust.count(baseline.RUST_FEEDBACK_GUARD), len(baseline.RUST_FEEDBACK_STEPS))
+
+    def test_every_execution_step_rejects_failure_masking_and_actor_guards(self) -> None:
+        for name in baseline.RUST_FEEDBACK_STEPS:
+            for replacement in ('if: success()', 'if: always()', 'if: false',
+                                "if: ${{ github.actor == 'fixture' }}"):
+                old = f'      - name: {name}\n        {baseline.RUST_FEEDBACK_GUARD}'
+                self.assertIn(old, self.workflow)
+                mutated = self.workflow.replace(old, f'      - name: {name}\n        {replacement}', 1)
+                with self.subTest(name=name, guard=replacement), self.assertRaises(baseline.BaselineClosureError):
+                    baseline.validate_rust_feedback(mutated)
+
+    def test_missing_pin_or_source_fence_cannot_resume_execution(self) -> None:
+        mutants = (
+            self.workflow.replace('        id: rust_source_inventory\n', ''),
+            self.workflow.replace('        id: rust_source_inventory\n', '        id: rust_source_inventory\n        if: always()\n'),
+            self.workflow.replace('--expected-commit "$TRNM_EXPECTED_SOURCE_SHA"', '', 1),
+            self.workflow.replace('--source-only --expected-commit', '--source-only --unbound', 1),
+            self.workflow.replace('          set -euo pipefail\n          git --no-replace-objects diff',
+                                  '          echo unsafe\n          git --no-replace-objects diff', 1),
+            self.workflow.replace('      - name: Rust format\n', '      - name: Rust format\n        continue-on-error: true\n', 1),
+        )
+        for index, mutant in enumerate(mutants):
+            self.assertNotEqual(mutant, self.workflow, index)
+            with self.subTest(index=index), self.assertRaises(baseline.BaselineClosureError):
+                baseline.validate_rust_feedback(mutant)
+
+    def test_fixed_workflow_rejects_a_replaced_source_checker_before_execution(self) -> None:
+        # Execute the actual workflow prefix against real Git/Python, not a
+        # replacement expression evaluator. No Cargo or consensus is claimed.
+        step = baseline.named_step(self.workflow, 'Compile every active workspace target')
+        prefix = textwrap.dedent(step.split('        run: |\n', 1)[1]).split('cargo check', 1)[0]
+        with tempfile.TemporaryDirectory() as directory:
+            parent = pathlib.Path(directory)
+            root = parent / 'repository'
+            (root / 'scripts/ci').mkdir(parents=True)
+            (root / 'trillionnium').mkdir()
+            checker_path = root / 'scripts/ci/check_cargo_source_inventory_v1.py'
+            checker_path.write_bytes((ROOT / 'scripts/ci/check_cargo_source_inventory_v1.py').read_bytes())
+            def git(*args):
+                return subprocess.check_output(['git', '-C', str(root), *args], text=True).strip()
+            git('init', '-q')
+            git('add', '.')
+            git('-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'fixture')
+            head = git('rev-parse', 'HEAD')
+            marker = parent / 'executed'
+            environment = dict(os.environ, TRNM_EXPECTED_SOURCE_SHA=head, PYTHONDONTWRITEBYTECODE='1')
+            command = prefix + 'touch ' + shlex.quote(str(marker)) + '\n'
+            def run_prefix():
+                return subprocess.run(['bash', '-c', command], cwd=root / 'trillionnium',
+                                      env=environment, capture_output=True, text=True, timeout=20)
+            clean = run_prefix()
+            self.assertEqual(clean.returncode, 0, clean.stderr)
+            self.assertTrue(marker.exists())
+            marker.unlink()
+            # Model an earlier test replacing the source-only checker with a
+            # program that returns success. Fixed workflow Git must run first.
+            checker_path.write_text('raise SystemExit(0)\n')
+            rejected = run_prefix()
+            self.assertNotEqual(rejected.returncode, 0)
+            self.assertFalse(marker.exists())
+            # The byte fence itself is mandatory; lexical tests cannot replace
+            # the actual negative above.
+            mutant = self.workflow.replace(
+                '          git --no-replace-objects diff --exit-code "$TRNM_EXPECTED_SOURCE_SHA" --\n', '', 1)
+            with self.assertRaises(baseline.BaselineClosureError):
+                baseline.validate_rust_feedback(mutant)
+
+    def test_duplicate_or_missing_stage_is_not_an_accepted_inventory(self) -> None:
+        for text in (
+            self.workflow.replace('      - name: Rust format\n', '      - name: Compile every active workspace target\n'),
+            self.workflow.replace('      - name: Rust format\n', '      - name: Missing format\n'),
+            self.workflow.replace('  rust-baseline:\n', '  missing-baseline:\n'),
+        ):
+            with self.assertRaises(baseline.BaselineClosureError):
+                baseline.validate_rust_feedback(text)
 
 
 class Mutants(unittest.TestCase):

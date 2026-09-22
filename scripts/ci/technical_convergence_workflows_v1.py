@@ -7,6 +7,7 @@ import re
 import argparse
 import json
 from typing import Any, Callable
+from check_required_baseline_closure_v1 import BaselineClosureError, validate_rust_feedback
 
 BASELINE = pathlib.Path(".github/workflows/trnm-required-baseline.yml")
 WORKFLOWS = pathlib.Path(".github/workflows")
@@ -237,7 +238,11 @@ def validate(root: pathlib.Path, contract: dict[str, Any], require: Callable[[bo
         "x230_acceptance=false", "production_activation=false",
     ):
         require(token in candidate, f"hosted candidate execution safeguard missing: {token}")
-    require("continue-on-error" not in candidate and "|| true" not in candidate and not re.search(r"(?m)^\s+if:", candidate), "hosted candidate failure masking forbidden")
+    require("continue-on-error" not in candidate and "|| true" not in candidate, "hosted candidate failure masking forbidden")
+    try:
+        validate_rust_feedback(baseline)
+    except (BaselineClosureError, IndexError) as error:
+        require(False, f"Rust feedback boundary: {error}")
     retained = named_step(baseline, "Retain hosted candidate process commands and outcomes", require)
     require(re.search(r"(?m)^\s+if: always\(\) && \(steps\.hosted_candidate_process\.outcome == 'success' \|\| steps\.hosted_candidate_process\.outcome == 'failure'\)$", retained) is not None, "hosted candidate artifact must retain success/failure and exclude skipped producer")
     for token in ("actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02", "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
