@@ -1,3 +1,12 @@
+// Test-only monotonic diagnostics. No key, path, proof bytes or runtime
+// authority is logged, and these timings never select a consensus transition.
+fn trace_actual_attachment_phase_v8(started: std::time::Instant, phase: &str) {
+    eprintln!(
+        "V8_PHASE phase={phase} elapsed_ms={}",
+        started.elapsed().as_millis()
+    );
+}
+
 // One genuine owner builds both independently durable local roles. Remote
 // signatures are original cryptographic peer evidence, not local custody.
 #[inline(never)]
@@ -79,17 +88,23 @@ fn genuine_joint_kernel_v8(
 fn prepare_joint_roles_v8(case: Box<RolesCaseV7>) -> Box<RolesCaseV7> {
     use trnm_consensus_types::HandoffSignerRoleV1;
     let mut case = case;
+    let started = std::time::Instant::now();
+    trace_actual_attachment_phase_v8(started, "roles.begin");
     case.1
         .sign_handoff_exact_v7(HandoffSignerRoleV1::OldSet, &mut case.2)
         .unwrap();
+    trace_actual_attachment_phase_v8(started, "roles.old-signed");
     case.1
         .sign_handoff_exact_v7(HandoffSignerRoleV1::NewSet, &mut case.2)
         .unwrap();
+    trace_actual_attachment_phase_v8(started, "roles.new-signed");
     case
 }
 
 #[inline(never)]
 fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Watermark) {
+    let started = std::time::Instant::now();
+    trace_actual_attachment_phase_v8(started, "attachment.begin");
     let (directory, mut roles, key, watermark) = *case;
     let original = roles.retired.checkpoint;
     let calls = key.calls;
@@ -100,8 +115,10 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     let safety_before = sqlite_logical_image_v3(&safety_path);
     let role_before = sqlite_logical_image_v3(&role_path);
     let native_before = sqlite_logical_image_v3(&native_path);
+    trace_actual_attachment_phase_v8(started, "attachment.source-images-read");
     let kernel = genuine_joint_kernel_v8(&roles, false);
     let with_local = genuine_joint_kernel_v8(&roles, true);
+    trace_actual_attachment_phase_v8(started, "attachment.quorums-built");
     super::validate_joint_kernel_v8(&roles, &kernel).unwrap();
     super::validate_joint_kernel_v8(&roles, &with_local).unwrap();
     assert!(super::validate_joint_kernel_v8(&roles, &[]).is_err());
@@ -133,11 +150,15 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
         .to_string()
         .contains("exact role head/fence"));
     roles.head = original_head;
+    trace_actual_attachment_phase_v8(started, "attachment.foreign-owner-rejected");
     super::confirm_attachment_source_v8(&mut roles).unwrap();
+    trace_actual_attachment_phase_v8(started, "attachment.source-confirmed");
     assert!(sqlite_logical_image_v3(&native_path) == native_before);
     let selected = roles.head.exact_watermark_v1();
     let mut attached = roles.attach_joint_handoff_v8(&kernel).unwrap();
+    trace_actual_attachment_phase_v8(started, "attachment.native-and-node-committed");
     let checkpoint = attached.confirm_attached_cut_v8().unwrap();
+    trace_actual_attachment_phase_v8(started, "attachment.cut-confirmed");
     assert_eq!(
         checkpoint.fields().phase,
         EpochCheckpointPhaseV1::EpochHandoffAttachedNative13
@@ -184,6 +205,7 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     assert!(sqlite_logical_image_v3(&safety_path) == safety_before);
     assert!(sqlite_logical_image_v3(&role_path) == role_before);
     assert_eq!(key.calls, calls, "attachment accepts no key producer");
+    trace_actual_attachment_phase_v8(started, "attachment.exact-retries-confirmed");
     assert_ne!(
         kernel, with_local,
         "independently valid quorum encodings differ"
@@ -215,9 +237,11 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     assert_eq!(key.calls, calls);
     let binding = attached.edge.successor_binding();
     drop(attached);
+    trace_actual_attachment_phase_v8(started, "attachment.callback-substitution-fenced");
     let application =
         DurableNativeApplicationV0::open(&native_path, native_checkpoint_fixture_config_v1())
             .unwrap();
+    trace_actual_attachment_phase_v8(started, "recovery.native-opened");
     let requirements = application
         .inspect_later_epoch_application_edge_requirements_v1(
             original.fields().application.block_id,
@@ -226,6 +250,7 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     let recovered = application
         .recover_later_epoch_application_edge_v1(&requirements)
         .unwrap();
+    trace_actual_attachment_phase_v8(started, "recovery.edge-recovered");
     assert_eq!(recovered.successor_binding(), binding);
     assert_eq!(
         recovered.checkpoint_commit_sequence(),
@@ -234,23 +259,37 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     let mut store =
         crate::SqliteEpochNodeCheckpointStoreV1::open_existing(&node_path, &checkpoint).unwrap();
     assert_eq!(store.load().unwrap(), checkpoint);
+    trace_actual_attachment_phase_v8(started, "recovery.node-checkpoint-confirmed");
     // This cold comparison grants no V8 owner, Core driver or new signer.
     drop((store, application, directory));
 }
 
 #[inline(never)]
 fn build_actual_attachment_case_v8() -> (Box<RolesCaseV7>, Watermark) {
+    let started = std::time::Instant::now();
+    trace_actual_attachment_phase_v8(started, "build.begin");
     let initial = build_epoch_runtime_case_v1();
+    trace_actual_attachment_phase_v8(started, "build.genesis-ready");
     let incoming_watermark = initial.recovery.old_watermark.clone();
     let live = activate_actual_case_v1(initial);
+    trace_actual_attachment_phase_v8(started, "build.activation-ready");
     let unsigned = first_apply_unsigned_v2(live);
+    trace_actual_attachment_phase_v8(started, "build.first-proposal-ready");
     let first = first_apply_children_v2(first_apply_start_v2(unsigned));
+    trace_actual_attachment_phase_v8(started, "build.first-finality-ready");
     let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
+    trace_actual_attachment_phase_v8(started, "build.cutoff-ready");
     let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
+    trace_actual_attachment_phase_v8(started, "build.checkpoint-prepared");
     let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
+    trace_actual_attachment_phase_v8(started, "build.first-seal-ready");
     let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
+    trace_actual_attachment_phase_v8(started, "build.second-seal-ready");
     let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
-    (prepare_joint_roles_v8(roles), incoming_watermark)
+    trace_actual_attachment_phase_v8(started, "build.roles-commissioned");
+    let roles = prepare_joint_roles_v8(roles);
+    trace_actual_attachment_phase_v8(started, "build.ready");
+    (roles, incoming_watermark)
 }
 
 #[test]

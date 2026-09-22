@@ -12,6 +12,7 @@ import shlex
 import signal
 import subprocess
 import sys
+import time
 from typing import Iterable
 
 PACKAGE = "trnm-native-execution-v0"
@@ -42,6 +43,7 @@ NODE_CASE_DEADLINES = {
 }
 NODE_REQUIRED_DRIVERS = {
     *NODE_CASE_DEADLINES,
+    NODE_EPOCH_PREFIX + "actual_epoch_handoff_joint_attachment_and_exact_retry_v8",
     NODE_EPOCH_PREFIX + "actual_epoch_runtime_activation_releases_timer_then_persisted_timeout_once",
     NODE_EPOCH_PREFIX + "actual_epoch_first_core_finalization_applies_three_real_native_executions_v2",
     NODE_EPOCH_PREFIX + "actual_epoch_seals_apply_original_fronts_then_commit_unattached_pre_handoff_v5",
@@ -230,6 +232,17 @@ def binary_digest(path: Path) -> str:
         return hashlib.file_digest(binary, "sha256").hexdigest()
 
 
+def checkpoint_summary(evidence: Path, summary: dict[str, object]) -> None:
+    """Retain a complete diagnostic snapshot; an interrupted run stays failed."""
+    temporary = evidence / ".summary.json.tmp"
+    with temporary.open("w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2)
+        handle.write("\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(temporary, evidence / "summary.json")
+
+
 def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     workspace, evidence = args.workspace.resolve(), args.evidence_dir
     env = os.environ.copy()
@@ -247,10 +260,22 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     def invoke(name: str, command: list[str], timeout: int) -> tuple[str, int]:
         summary["phase"] = name
         (evidence / f"{name}.command").write_text(shlex.join(command) + "\n")
-        output, code = run_bounded(command, cwd=workspace, env=env, timeout=timeout)
-        (evidence / f"{name}.log").write_text(output, encoding="utf-8", errors="replace")
-        (evidence / f"{name}.exit-code").write_text(str(code) + "\n")
-        return output, code
+        invocation = {"status": "running", "deadline_seconds": timeout, "exit_code": None}
+        summary.setdefault("invocations", {})[name] = invocation
+        checkpoint_summary(evidence, summary)
+        started = time.monotonic_ns()
+        try:
+            output, code = run_bounded(command, cwd=workspace, env=env, timeout=timeout)
+            (evidence / f"{name}.log").write_text(output, encoding="utf-8", errors="replace")
+            (evidence / f"{name}.exit-code").write_text(str(code) + "\n")
+            invocation.update(status="completed", exit_code=code)
+            return output, code
+        except (OSError, subprocess.SubprocessError) as error:
+            invocation.update(status="failed", error=str(error))
+            raise
+        finally:
+            invocation["elapsed_ms"] = (time.monotonic_ns() - started) // 1_000_000
+            checkpoint_summary(evidence, summary)
 
     feature_args = ["--all-features"] if args.suite == "safety-epoch" else ["--features", features]
     target_args = ["--test", "epoch_journal_v2"] if args.suite == "safety-epoch" else ["--lib"]
@@ -275,26 +300,72 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
         raise ShardError("required SIGKILL drivers are missing or ignored")
     shards = partition_inventory(inventory, args.suite)
     (evidence / "inventory.json").write_text(json.dumps(shards, indent=2) + "\n")
-    summary["shards"] = outcomes = {}
+    # Register every admitted test before any shard runs. A killed runner must
+    # not leave later tests indistinguishable from absent or successful tests.
+    outcomes = {
+        shard: {
+            "tests": names,
+            "status": "not-run",
+            "deadline_seconds": shard_deadline(args.suite, names, args.deadline_seconds),
+            "planned_count": len(names),
+            "ignored_count": len(set(names) & ignored),
+            "exit_code": None,
+        }
+        for shard, names in shards.items()
+    }
+    summary["shards"] = outcomes
+    checkpoint_summary(evidence, summary)
+
+    def confirm_source() -> None:
+        if clean_source(repo_root) != (source, tree) or binary_digest(executable) != digest:
+            raise ShardError("source or native executable changed during the run")
+
+    # Inventory/source failures are not ordinary test failures. Refuse the
+    # whole execution plan before running it, rather than guessing new filters.
+    commands = {}
     for shard in shards:
+        confirm_source()
         command = command_for_shard(executable, shard, shards, args.suite)
         if inventory_for(shard + ".inventory", command) != shards[shard]:
             raise ShardError(f"{shard} filtered inventory differs from planned names")
-        deadline = shard_deadline(args.suite, shards[shard], args.deadline_seconds)
+        commands[shard] = command
+    confirm_source()
+
+    first_failure = 0
+    for shard, outcome in outcomes.items():
+        confirm_source()
+        deadline = outcome["deadline_seconds"]
         print(f"{args.suite} shard={shard} tests={len(shards[shard])} deadline={deadline}s", flush=True)
-        output, code = invoke(shard, command, deadline)
-        outcome = {"deadline_seconds": deadline, "planned_count": len(shards[shard]), "ignored_count": len(set(shards[shard]) & ignored), "exit_code": code}
-        outcomes[shard] = outcome
-        if code:
-            return code
-        outcome["final_test_result"] = result = final_test_result(output)
-        counts = parse_test_summary(result)
-        validate_summary(counts, planned=outcome["planned_count"], ignored=outcome["ignored_count"], total=len(inventory))
-        outcome["counts"] = counts
+        outcome["status"] = "running"
+        output, code = invoke(shard, commands[shard], deadline)
+        outcome.update(exit_code=code, elapsed_ms=summary["invocations"][shard]["elapsed_ms"])
+        # Never run another process against source or a binary modified by the
+        # preceding one, even when its exit status already indicates failure.
+        try:
+            confirm_source()
+        except (OSError, ShardError, subprocess.SubprocessError) as error:
+            outcome.update(status="failed", error=str(error))
+            raise
+        failure = code if code >= 0 else 128 - code
+        if code == 0:
+            try:
+                outcome["final_test_result"] = result = final_test_result(output)
+                counts = parse_test_summary(result)
+                validate_summary(counts, planned=outcome["planned_count"], ignored=outcome["ignored_count"], total=len(inventory))
+                outcome["counts"] = counts
+            except ShardError as error:
+                failure = 2
+                outcome["error"] = str(error)
+        outcome["status"] = "failed" if failure else "passed"
+        if failure and not first_failure:
+            first_failure = failure
+        checkpoint_summary(evidence, summary)
+        # Each shard owns a separate bounded libtest process. Retain its first
+        # failure, but still obtain feedback from the remaining independent
+        # shards. A later success never replaces that failure.
     summary["phase"] = "source-confirmation"
-    if clean_source(repo_root) != (source, tree) or binary_digest(executable) != digest:
-        raise ShardError("source or native executable changed during the run")
-    return 0
+    confirm_source()
+    return first_failure
 
 
 def run(argv: list[str]) -> int:
@@ -319,7 +390,7 @@ def run(argv: list[str]) -> int:
         print(f"native candidate shard runner failed: {error}", file=sys.stderr)
     finally:
         summary.update(status="passed" if code == 0 else "failed", exit_code=code)
-        (args.evidence_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+        checkpoint_summary(args.evidence_dir, summary)
     return code
 
 

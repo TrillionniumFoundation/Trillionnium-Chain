@@ -55,7 +55,7 @@ class NativeCandidateShardTests(unittest.TestCase):
         bin_dir = base / "bin"
         bin_dir.mkdir()
         executable = bin_dir / "fake-native"
-        executable.write_text(f"#!{sys.executable}\n" + f"NAMES={names!r}\nIGNORED={sorted(ignored)!r}\n" + '''
+        executable.write_text(f"#!{sys.executable} -S\n" + f"NAMES={names!r}\nIGNORED={sorted(ignored)!r}\n" + '''
 import os, pathlib, sys
 assert 'RUST_MIN_STACK' not in os.environ
 case = os.environ.get('SHARD_TEST_CASE', '')
@@ -66,6 +66,8 @@ if case == 'extra-ignored':
 pre_handoff_driver = 'later_epoch_checkpoint_bridge::tests::later_pre_handoff_sigkill_commit_and_attach_cuts_preserve_original_evidence'
 if case == 'missing-safety-driver':
     NAMES.remove('journal12::journal12_six_sigkill_cuts_keep_actual_source_and_prefix')
+if case == 'missing-v8':
+    NAMES.remove('epoch_runtime_candidate_v1::tests::actual_epoch_handoff_joint_attachment_and_exact_retry_v8')
 if case == 'missing-v9-positive':
     NAMES.remove('epoch_runtime_candidate_v1::tests::actual_epoch_successor_activation_preserves_owners_and_initial_ack_v9')
 if case == 'missing-v9-callback':
@@ -94,6 +96,32 @@ if '--list' in args:
         selected = selected[:-1]
     print(''.join(name + ': test\\n' for name in selected), end='')
     raise SystemExit(0)
+if case == 'check-progress':
+    import json
+    progress = json.loads(pathlib.Path(os.environ['SHARD_EVIDENCE_DIR'], 'summary.json').read_text())
+    assert progress['status'] == 'failed'
+    rows = progress['shards']
+    assert sorted(name for row in rows.values() for name in row['tests']) == NAMES
+    current = [key for key, row in rows.items() if row['status'] == 'running']
+    assert len(current) == 1
+    assert rows[current[0]]['tests'] == selected
+    assert progress['invocations'][current[0]]['status'] == 'running'
+    assert rows[current[0]]['exit_code'] is None
+    assert all(row['exit_code'] is None for row in rows.values() if row['status'] == 'not-run')
+if selected == ['ordinary::new_test']:
+    if case == 'first-timeout':
+        import time
+        print('first-shard-before-timeout', flush=True)
+        time.sleep(30)
+    if case in ('first-failure', 'first-failure-and-source-change', 'nonzero-success-summary'):
+        if case == 'first-failure-and-source-change':
+            pathlib.Path('../untracked-during-test').write_text('changed')
+        if case == 'nonzero-success-summary':
+            print(f'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; {len(NAMES)-1} filtered out; finished in 0.02s')
+        raise SystemExit(23)
+    if case == 'first-no-summary':
+        print('no parent summary')
+        raise SystemExit(0)
 if case == 'no-summary':
     print('test process exited without a final parent summary')
     raise SystemExit(0)
@@ -110,7 +138,7 @@ print(f'test result: ok. {passed} passed; 0 failed; {len(set(selected) & ignored
 ''')
         executable.chmod(0o755)
         cargo = bin_dir / "cargo"
-        cargo.write_text(f"#!{sys.executable}\n" + f"EXE={str(executable)!r}\nPACKAGE={package!r}\nTARGET_KIND={target_kind!r}\nTARGET_NAME={target_name!r}\nRELATIVE_SOURCE={relative_source!r}\n" + '''
+        cargo.write_text(f"#!{sys.executable} -S\n" + f"EXE={str(executable)!r}\nPACKAGE={package!r}\nTARGET_KIND={target_kind!r}\nTARGET_NAME={target_name!r}\nRELATIVE_SOURCE={relative_source!r}\n" + '''
 import json, os, pathlib, sys
 if os.environ.get('SHARD_TEST_CASE') == 'compile-failure':
     raise SystemExit(9)
@@ -121,16 +149,16 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
         cargo.chmod(0o755)
         return repo, bin_dir
 
-    def invoke(self, base: Path, case: str = "", suite: str = "native") -> tuple[int, dict, Path]:
+    def invoke(self, base: Path, case: str = "", suite: str = "native", deadline: int = 30) -> tuple[int, dict, Path]:
         repo, bin_dir = self.make_workspace(base, suite)
         evidence = base / "evidence"
         if case == "dirty-source":
             (repo / "untracked-before-test").write_text("untracked")
-        env = {"PATH": str(bin_dir) + os.pathsep + os.environ["PATH"], "SHARD_TEST_CASE": case, "RUST_MIN_STACK": "99999999"}
+        env = {"PATH": str(bin_dir) + os.pathsep + os.environ["PATH"], "SHARD_TEST_CASE": case, "RUST_MIN_STACK": "99999999", "SHARD_EVIDENCE_DIR": str(evidence)}
         head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
         env["TRNM_EXPECTED_SOURCE_SHA"] = "0" * 40 if case == "wrong-source-pin" else head
         with patch.dict(os.environ, env), contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            code = runner.run(["--suite", suite, "--workspace", str(repo / "trillionnium"), "--evidence-dir", str(evidence), "--deadline-seconds", "30"])
+            code = runner.run(["--suite", suite, "--workspace", str(repo / "trillionnium"), "--evidence-dir", str(evidence), "--deadline-seconds", str(deadline)])
         return code, json.loads((evidence / "summary.json").read_text()), evidence
 
     def test_actual_fake_libtest_execution_covers_inventory_and_children(self) -> None:
@@ -174,7 +202,7 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
             self.assertEqual(runner.shard_deadline("node-epoch", [name + "_extra"], 300), 300)
         self.assertEqual(runner.shard_deadline("node-epoch", ["ordinary::new_test"], 300), 300)
         self.assertEqual(runner.shard_deadline("node-epoch", list(runner.NODE_CASE_DEADLINES), 300), 300)
-        for case in ("missing-v9-positive", "missing-v9-callback"):
+        for case in ("missing-v8", "missing-v9-positive", "missing-v9-callback"):
             with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
                 code, summary, _ = self.invoke(Path(directory), case, "node-epoch")
                 self.assertNotEqual(code, 0)
@@ -226,6 +254,71 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
                     self.assertEqual(summary["error"], expected_error)
                     self.assertFalse(any((evidence / f"{shard}.command").exists() for shard in runner.SHARD_NAMES))
 
+    def test_first_failure_retained_while_all_later_shards_execute(self) -> None:
+        for suite in ("native", "node-epoch"):
+            with self.subTest(suite=suite), tempfile.TemporaryDirectory() as directory:
+                code, summary, evidence = self.invoke(Path(directory), "first-failure", suite)
+                self.assertEqual(code, 23)
+                self.assertEqual(summary["status"], "failed")
+                self.assertEqual(summary["shards"]["general"]["status"], "failed")
+                self.assertNotIn("counts", summary["shards"]["general"])
+                for name, row in summary["shards"].items():
+                    self.assertTrue((evidence / (name + ".exit-code")).exists())
+                    self.assertGreaterEqual(row["elapsed_ms"], 0)
+                    if name != "general":
+                        self.assertEqual(row["status"], "passed")
+                        self.assertEqual(row["exit_code"], 0)
+
+    def test_zero_exit_without_summary_is_failed_but_not_a_later_test_skip(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            code, summary, _ = self.invoke(Path(directory), "first-no-summary")
+        self.assertEqual(code, 2)
+        first = summary["shards"]["general"]
+        self.assertEqual(first["exit_code"], 0)
+        self.assertEqual(first["status"], "failed")
+        self.assertEqual(first["error"], "native shard produced no top-level test result")
+        self.assertTrue(all(row["status"] == "passed" for name, row in summary["shards"].items() if name != "general"))
+
+    def test_nonzero_exit_cannot_claim_successful_counts(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            code, summary, _ = self.invoke(Path(directory), "nonzero-success-summary")
+        self.assertEqual(code, 23)
+        self.assertEqual(summary["shards"]["general"]["status"], "failed")
+        self.assertNotIn("counts", summary["shards"]["general"])
+        self.assertEqual(summary["shards"]["poco-sigkill"]["status"], "passed")
+
+    def test_actual_timeout_continues_without_changing_deadline_or_hiding_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            code, summary, evidence = self.invoke(Path(directory), "first-timeout", deadline=1)
+            self.assertIn("first-shard-before-timeout", (evidence / "general.log").read_text())
+            self.assertIn("TIMEOUT", (evidence / "general.log").read_text())
+        self.assertEqual(code, 124)
+        first = summary["shards"]["general"]
+        self.assertEqual((first["status"], first["exit_code"], first["deadline_seconds"]), ("failed", 124, 1))
+        self.assertTrue(all(row["status"] == "passed" for name, row in summary["shards"].items() if name != "general"))
+        self.assertGreaterEqual(first["elapsed_ms"], 1000)
+
+    def test_source_or_binary_change_stops_later_shards_even_after_failure(self) -> None:
+        for case in ("source-change", "binary-change", "first-failure-and-source-change"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                code, summary, evidence = self.invoke(Path(directory), case)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(summary["shards"]["general"]["status"], "failed")
+                for name, row in summary["shards"].items():
+                    if name != "general":
+                        self.assertEqual(row["status"], "not-run")
+                        self.assertIsNone(row["exit_code"])
+                        self.assertFalse((evidence / (name + ".command")).exists())
+
+    def test_checkpoint_is_failed_with_full_inventory_before_each_actual_child(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            code, summary, evidence = self.invoke(Path(directory), "check-progress")
+            self.assertFalse((evidence / ".summary.json.tmp").exists())
+        self.assertEqual(code, 0)
+        self.assertEqual(summary["status"], "passed")
+        self.assertTrue(all(row["status"] == "passed" for row in summary["shards"].values()))
+        self.assertEqual(summary["invocations"]["compile"]["exit_code"], 0)
+
     def test_reusing_evidence_refuses_without_changing_previous_result(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
@@ -271,10 +364,10 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
                 if close_pipes:
                     child += "fd=os.open(os.devnull,os.O_WRONLY); os.dup2(fd,1); os.dup2(fd,2); os.close(fd); "
                 child += "time.sleep(30)"
-                parent = f"import subprocess,sys,time; subprocess.Popen([sys.executable,'-c',{child!r}]); time.sleep(30)"
+                parent = f"import subprocess,sys,time; subprocess.Popen([sys.executable,'-S','-c',{child!r}]); time.sleep(30)"
                 start = time.monotonic()
                 with tempfile.TemporaryDirectory() as directory:
-                    output, code = runner.run_bounded([sys.executable, "-c", parent], cwd=Path(directory), env=os.environ.copy(), timeout=1)
+                    output, code = runner.run_bounded([sys.executable, "-S", "-c", parent], cwd=Path(directory), env=os.environ.copy(), timeout=1)
                 self.assertEqual(code, 124)
                 self.assertLess(time.monotonic() - start, 12)
                 self.assertIn("TIMEOUT", output)
