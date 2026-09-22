@@ -21,9 +21,9 @@ jobs:
       TREE: 2151fafea0e0b24846bc3de4d92d866bab21058d
       COMMIT: cf24ea9de21b16bd817e03ef44f463f9d401ce01
     steps:
-      # Git object transport only. No checkout, hooks, build scripts, candidate
-      # code, tests, secrets export, deployment or protected-branch update.
-      - name: Reconstruct and verify three-file index delta
+      # Inert Git data only: no checkout, hooks, candidate execution, tests,
+      # credential export, deployment, or protected-branch update.
+      - name: Reconstruct and verify exact three-file index delta
         shell: bash
         run: |
           set -euo pipefail
@@ -33,19 +33,225 @@ jobs:
           git -c core.hooksPath=/dev/null fetch --no-tags --depth=1 https://github.com/TrillionniumFoundation/Trillionnium-Chain.git "$BASE"
           test "$(git rev-parse FETCH_HEAD)" = "$BASE"
           git read-tree "$BASE"
+          cat > "$RUNNER_TEMP/repair.patch" <<'PATCH'
+          diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/continuous_direct_peer_containment_tests_v1.inc b/trillionnium/crates/trnm-poco-lab-validator/src/continuous_direct_peer_containment_tests_v1.inc
+          index fa98b141e8f6c6b4194f7ef1679f373952dcb0e3..1139eea4f7a149917ca303fdc0821fed3a431dd6 100644
+          --- a/trillionnium/crates/trnm-poco-lab-validator/src/continuous_direct_peer_containment_tests_v1.inc
+          +++ b/trillionnium/crates/trnm-poco-lab-validator/src/continuous_direct_peer_containment_tests_v1.inc
+          @@ -333,3 +333,82 @@ fn direct_peer_containment_ingress_tick_is_finite_and_rejection_is_not_progress_
+               .unwrap());
+               assert_eq!(count, 1);
+           }
+          +
+          +// A consumed node owner cannot continue admitting or originating work through
+          +// the public compatibility seams, even with genuinely valid signatures.
+          +#[test]
+          +fn consumed_owner_rejects_direct_consensus_admission_before_mutation_v1() {
+          +    let mut harness = fresh_test_harness_v0(4, 1);
+          +    let workload = harness.corpus.block_at_height(1).unwrap();
+          +    let proposal = proposal_for_workload_v0(&harness, workload);
+          +    let frame = containment_frame_v1(
+          +        proposal.block().header().proposer_id(),
+          +        FrameKind::Proposal,
+          +        UnboundProposalV0::from_signed(&proposal)
+          +            .unwrap()
+          +            .encode()
+          +            .unwrap(),
+          +    );
+          +    let owner = &mut harness.authorities[0];
+          +    let violations = owner.protocol_violations;
+          +    let minimum_view = owner.minimum_retained_view_v0().unwrap();
+          +    drop(owner.phase.take().unwrap());
+          +    assert!(owner.facts_v0().is_err());
+          +    assert!(owner
+          +        .admit_authenticated_consensus_frame_v0(&frame)
+          +        .is_err());
+          +    assert!(owner.consensus_windows.direct_proposals.is_empty());
+          +    assert!(owner.consensus_windows.relay.is_empty());
+          +    assert!(owner.consensus_windows.direct_peer_rejections.is_empty());
+          +    assert_eq!(owner.minimum_retained_view_v0().unwrap(), minimum_view);
+          +    assert_eq!(owner.protocol_violations, violations);
+          +}
+          +
+          +#[test]
+          +fn consumed_owner_rejects_consensus_relay_admission_before_mutation_v1() {
+          +    let mut harness = fresh_test_harness_v0(4, 1);
+          +    let vote = signed_vote_v0(&harness.validator_set, &harness.keys[1], 1, 1);
+          +    let relay = ConsensusRelayEnvelopeV0::new(
+          +        vote.author(),
+          +        FrameKind::Vote,
+          +        2,
+          +        encode_vote(&vote),
+          +        &harness.validator_set,
+          +        &harness.keys[1],
+          +    )
+          +    .unwrap();
+          +    let frame = containment_frame_v1(
+          +        harness.validator_set.validators()[1].id(),
+          +        FrameKind::ConsensusRelay,
+          +        relay.encode(),
+          +    );
+          +    let owner = &mut harness.authorities[0];
+          +    let violations = owner.protocol_violations;
+          +    drop(owner.phase.take().unwrap());
+          +    assert!(owner
+          +        .admit_authenticated_consensus_relay_frame_v0(&frame)
+          +        .is_err());
+          +    assert!(owner.consensus_windows.relay.is_empty());
+          +    assert!(owner.consensus_windows.direct_proposals.is_empty());
+          +    assert_eq!(owner.protocol_violations, violations);
+          +}
+          +
+          +#[test]
+          +fn consumed_owner_rejects_local_relay_reservation_before_mutation_v1() {
+          +    let mut harness = fresh_test_harness_v0(4, 1);
+          +    let vote = signed_vote_v0(&harness.validator_set, &harness.keys[0], 0, 1);
+          +    let relay = ConsensusRelayEnvelopeV0::new(
+          +        vote.author(),
+          +        FrameKind::Vote,
+          +        2,
+          +        encode_vote(&vote),
+          +        &harness.validator_set,
+          +        &harness.keys[0],
+          +    )
+          +    .unwrap();
+          +    let owner = &mut harness.authorities[0];
+          +    drop(owner.phase.take().unwrap());
+          +    assert!(owner.reserve_originated_consensus_relay_v0(&relay).is_err());
+          +    assert!(owner.consensus_windows.relay.is_empty());
+          +    assert!(owner.consensus_windows.direct_proposals.is_empty());
+          +}
+          diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/continuous_direct_peer_containment_v1.inc b/trillionnium/crates/trnm-poco-lab-validator/src/continuous_direct_peer_containment_v1.inc
+          index 56ca040d727fbe506e5e0072f7bf2f881a70be0d..dbd3eba4fb2f3df51bba05275c1d5a32e1a8ead5 100644
+          --- a/trillionnium/crates/trnm-poco-lab-validator/src/continuous_direct_peer_containment_v1.inc
+          +++ b/trillionnium/crates/trnm-poco-lab-validator/src/continuous_direct_peer_containment_v1.inc
+          @@ -114,14 +114,22 @@ impl ContinuousConsensusWindowsV0 {
+           }
+           
+           impl ContinuousValidatorAuthorityV0 {
+          +    // All direct, relay and originated-admission surfaces share this fence.
+          +    // Signed phases remain live; only an actually consumed owner is refused.
+          +    // Check before pure decode as well as any collector/replay mutation.
+          +    fn require_live_consensus_admission_v1(&self) -> Result<()> {
+          +        ensure!(
+          +            self.phase.is_some(),
+          +            "consensus admission owner is fail-closed"
+          +        );
+          +        Ok(())
+          +    }
+          +
+               pub(crate) fn admit_contained_direct_frame_v1(
+                   &mut self,
+                   frame: &AuthenticatedFrame,
+               ) -> Result<DirectPeerFrameOutcomeV1> {
+          -        ensure!(
+          -            self.phase.is_some(),
+          -            "direct admission owner is fail-closed"
+          -        );
+          +        self.require_live_consensus_admission_v1()?;
+                   let result = self
+                       .consensus_windows
+                       .admit_contained_direct_frame_v1(frame);
+          diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/continuous_runtime.rs b/trillionnium/crates/trnm-poco-lab-validator/src/continuous_runtime.rs
+          index 006ea9a46ffc90a15514946719f9ff1f3e548a7c..f9e05a889d2bb2df279c69e7d850595ee13caa5b 100644
+          --- a/trillionnium/crates/trnm-poco-lab-validator/src/continuous_runtime.rs
+          +++ b/trillionnium/crates/trnm-poco-lab-validator/src/continuous_runtime.rs
+          @@ -1859,6 +1859,7 @@ impl ContinuousValidatorAuthorityV0 {
+                   &mut self,
+                   frame: &AuthenticatedFrame,
+               ) -> Result<Option<RoutedConsensusActionV0>> {
+          +        self.require_live_consensus_admission_v1()?;
+                   let result = self.consensus_windows.admit_authenticated_frame_v0(frame);
+                   if let Err(error) = &result {
+                       self.protocol_violations.record_anyhow_v0(error)?;
+          @@ -1874,6 +1875,7 @@ impl ContinuousValidatorAuthorityV0 {
+                   &mut self,
+                   frame: &AuthenticatedFrame,
+               ) -> Result<RoutedConsensusRelayV0> {
+          +        self.require_live_consensus_admission_v1()?;
+                   let result = self.consensus_windows.admit_consensus_relay_frame_v0(frame);
+                   if let Err(error) = &result {
+                       self.protocol_violations.record_anyhow_v0(error)?;
+          @@ -1888,6 +1890,7 @@ impl ContinuousValidatorAuthorityV0 {
+                   &mut self,
+                   envelope: &ConsensusRelayEnvelopeV0,
+               ) -> Result<[u8; 32]> {
+          +        self.require_live_consensus_admission_v1()?;
+                   ensure!(
+                       envelope.origin() == self.local_validator,
+                       "originated relay author differs from this continuous authority"
+          @@ -7186,12 +7189,58 @@ mod tests {
+                       .consensus_windows
+                       .synchronize_authoritative_progress_v0(View::new(7), &high_qc, None)
+                       .expect("prune direct-Proposal identity tail");
+          -        let stale = harness.authorities[0]
+          -            .admit_authenticated_consensus_frame_v0(&reconnect_replay)
+          -            .expect_err("pruned Proposal replay must be stale, not fresh");
+          -        assert!(stale
+          -            .to_string()
+          -            .contains("consensus statement view was pruned"));
+          +        let before = harness.authorities[0].facts_v0().unwrap();
+          +        let inventory = harness.authorities[0]
+          +            .fresh_ready_signer_inventory_v1()
+          +            .unwrap();
+          +        let violations = harness.authorities[0].protocol_violations;
+          +        let retained = harness.authorities[0]
+          +            .consensus_windows
+          +            .direct_proposals
+          +            .clone();
+          +        assert!(
+          +            retained.is_empty(),
+          +            "the stale identity was actually pruned"
+          +        );
+          +        for _ in 0..2 {
+          +            assert!(harness.authorities[0]
+          +                .admit_authenticated_consensus_frame_v0(&reconnect_replay)
+          +                .expect("a verified pruned Proposal has no live action")
+          +                .is_none());
+          +        }
+          +        // Pruning is not permission to skip the original strict signature or
+          +        // sender checks. Invalid old input must not become an inert success.
+          +        let mut forged = reconnect_replay.clone();
+          +        forged.payload = unbound
+          +            .with_proposer_signature_for_test(SignatureBytes::from_array([0; 64]))
+          +            .encode()
+          +            .unwrap();
+          +        assert!(harness.authorities[0]
+          +            .admit_authenticated_consensus_frame_v0(&forged)
+          +            .is_err());
+          +        let mut wrong_sender = reconnect_replay;
+          +        wrong_sender.sender = harness
+          +            .validator_set
+          +            .validators()
+          +            .iter()
+          +            .find(|v| v.id() != proposer)
+          +            .unwrap()
+          +            .id();
+          +        assert!(harness.authorities[0]
+          +            .admit_authenticated_consensus_frame_v0(&wrong_sender)
+          +            .is_err());
+          +        assert_eq!(harness.authorities[0].facts_v0().unwrap(), before);
+          +        assert_eq!(
+          +            harness.authorities[0]
+          +                .fresh_ready_signer_inventory_v1()
+          +                .unwrap(),
+          +            inventory
+          +        );
+          +        assert_eq!(harness.authorities[0].protocol_violations, violations);
+          +        assert_eq!(
+          +            harness.authorities[0].consensus_windows.direct_proposals,
+          +            retained
+          +        );
+               }
+           
+               #[test]
+          PATCH
           python3 -S - <<'PY'
-          import base64, hashlib, os, pathlib, zlib
-          encoded = 'eNrdWW1v4zYS/u5fwc0BgQzbiuR3J929bns9oDjgdrHF5T4EgUBJI5sXWfKSkl233f9+M6QkS4p9cXeTbXFGEMsiOZzXhzOcUEQRGwyWImP8KpMijkWaJCJfXwWSZ6DwXbIebNIgHcTcH2x5LEKepfJKyeAqSJNMJHmaKy8UEoLM2wBIj15zkawhyTwkkSlv69oiCZj/0jt0RBLCzyzii7nvjl2YR9Ng6o/dxTiaQeROZ4toNBstJsMw8B0Y2bbrjhYAHIe5O14s3FnAR84oCgNnPnQjCEd8PHLDcMpcx5mOx53BYPDyeur0er2voKtvv2WD0WZqZ6';
-          # The complete fixed payload below replaces the inert short marker.
-          encoded = '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AAAgBABAAAQAAAAAAAAAAAGAAEAAAAAAAAAQCAAAAAACAAAAIAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAEAQAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAgEAAAAAAAAAABgAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
+          import base64, hashlib, os, pathlib
           root = pathlib.Path(os.environ['RUNNER_TEMP'])
-          decoder = zlib.decompressobj()
-          patch = decoder.decompress(base64.b64decode(encoded, validate=True), 16385)
-          if len(patch) != 9429 or not decoder.eof or decoder.unused_data or decoder.unconsumed_tail:
-              raise SystemExit('bounded patch framing differs')
-          if hashlib.sha256(patch).hexdigest() != '0686f38cfa0b997c33d1839c2a0d56b3e309bfb6c3d17519c760422e05e39e47':
-              raise SystemExit('patch digest differs')
-          (root / 'repair.patch').write_bytes(patch)
+          patch = (root / 'repair.patch').read_bytes()
+          if len(patch) != 9429 or hashlib.sha256(patch).hexdigest() != '0686f38cfa0b997c33d1839c2a0d56b3e309bfb6c3d17519c760422e05e39e47':
+              raise SystemExit('patch bytes differ; no publication')
           commit = base64.b64decode('dHJlZSAyMTUxZmFmZWEwZTBiMjQ4NDZiYzNkZTRkOTJkODY2YmFiMjEwNThkCnBhcmVudCAyMTI1M2VjYWNhNDVjN2IyNzU4OWM1MWU3YzdlMTAyM2JlNDQ5Zjc5CmF1dGhvciBBdXRvbWF0aW9uIGFzc2lzdGFudCA8YXNzaXN0YW50QGxvY2FsaG9zdD4gMTc5MDA5NTM2OSArMDAwMApjb21taXR0ZXIgQXV0b21hdGlvbiBhc3Npc3RhbnQgPGFzc2lzdGFudEBsb2NhbGhvc3Q+IDE3OTAwOTUzNjkgKzAwMDAKCmZpeChydW50aW1lKTogZmVuY2UgY29uc3VtZWQgY29uc2Vuc3VzIGFkbWlzc2lvbiBhbmQgdmVyaWZ5IHN0YWxlIHJlcGxheSBpbmVydG5lc3MK', validate=True)
           (root / 'repair.commit').write_bytes(commit)
           PY
