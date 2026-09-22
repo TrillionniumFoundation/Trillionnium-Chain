@@ -2,6 +2,20 @@
 
 Status: **implementation contract; evidence tooling is not self-acceptance authority**
 
+## Independent hosted feedback trust class
+
+`trnm-independent-rust-feedback.yml` is an explicitly registered, read-only
+GitHub-hosted PR workflow. It runs head and ordered-parent merge lanes without
+privileged X230 cache access, deployment secrets or release authority. Runner
+classification applies equally to worktree, staged and committed sources;
+unknown workflows remain subject to the existing privileged policy. Failure
+in one lane cannot mark another as skipped or satisfy the final aggregate.
+This feedback remains additional to the required baseline until coverage-equivalent
+migration is reviewed; it must not be mistaken for completed production evidence.
+A private Git-local `PROJECT_TOPIC` is optional. When explicitly present its
+scope is still checked; project, lane, remote, dependency and protected-branch
+checks remain mandatory regardless of that local note.
+
 ## Authority
 
 M17 instruments, tests and reports M00-M16. It cannot approve its own security

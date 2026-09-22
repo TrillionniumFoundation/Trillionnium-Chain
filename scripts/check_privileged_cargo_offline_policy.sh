@@ -294,7 +294,7 @@ done
 # validated by their own exact-source gates and do not share the offline
 # runner cache authority.
 mapfile -t workflows < <(
-  list_workflows | grep -Ev '^trnm-(required-baseline|documentation-truth)\.ya?ml$'
+  list_workflows | grep -Ev '^trnm-(required-baseline|documentation-truth|independent-rust-feedback)\.ya?ml$'
 )
 expected_workflows="$tmp/expected-workflows"
 printf '%s\n' "${!class[@]}" | cut -d: -f1 | LC_ALL=C sort -u >"$expected_workflows"
