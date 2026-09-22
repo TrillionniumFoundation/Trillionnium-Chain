@@ -12,6 +12,7 @@ import shlex
 import signal
 import subprocess
 import sys
+import time
 from typing import Iterable
 
 PACKAGE = "trnm-native-execution-v0"
@@ -42,6 +43,7 @@ NODE_CASE_DEADLINES = {
 }
 NODE_REQUIRED_DRIVERS = {
     *NODE_CASE_DEADLINES,
+    NODE_EPOCH_PREFIX + "actual_epoch_handoff_joint_attachment_and_exact_retry_v8",
     NODE_EPOCH_PREFIX + "actual_epoch_runtime_activation_releases_timer_then_persisted_timeout_once",
     NODE_EPOCH_PREFIX + "actual_epoch_first_core_finalization_applies_three_real_native_executions_v2",
     NODE_EPOCH_PREFIX + "actual_epoch_seals_apply_original_fronts_then_commit_unattached_pre_handoff_v5",
@@ -230,6 +232,14 @@ def binary_digest(path: Path) -> str:
         return hashlib.file_digest(binary, "sha256").hexdigest()
 
 
+def write_progress(evidence: Path, summary: dict[str, object]) -> None:
+    # Progress remains failed until the entire admitted denominator and source
+    # confirmation succeed. Atomic replacement prevents a truncated success file.
+    temporary = evidence / "summary.json.tmp"
+    temporary.write_text(json.dumps(summary, indent=2) + "\n")
+    temporary.replace(evidence / "summary.json")
+
+
 def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     workspace, evidence = args.workspace.resolve(), args.evidence_dir
     env = os.environ.copy()
@@ -247,9 +257,15 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     def invoke(name: str, command: list[str], timeout: int) -> tuple[str, int]:
         summary["phase"] = name
         (evidence / f"{name}.command").write_text(shlex.join(command) + "\n")
+        started = time.monotonic()
         output, code = run_bounded(command, cwd=workspace, env=env, timeout=timeout)
+        elapsed = time.monotonic() - started
+        summary.setdefault("command_timings", {})[name] = {
+            "elapsed_seconds": elapsed, "deadline_seconds": timeout, "exit_code": code,
+        }
         (evidence / f"{name}.log").write_text(output, encoding="utf-8", errors="replace")
         (evidence / f"{name}.exit-code").write_text(str(code) + "\n")
+        write_progress(evidence, summary)
         return output, code
 
     feature_args = ["--all-features"] if args.suite == "safety-epoch" else ["--features", features]
@@ -276,25 +292,62 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     shards = partition_inventory(inventory, args.suite)
     (evidence / "inventory.json").write_text(json.dumps(shards, indent=2) + "\n")
     summary["shards"] = outcomes = {}
+    summary["all_shards_completed"] = False
+    # Check the entire denominator before executing any test. A filter mismatch
+    # is an admission failure, not an ordinary failing test to continue past.
+    commands = {}
     for shard in shards:
         command = command_for_shard(executable, shard, shards, args.suite)
         if inventory_for(shard + ".inventory", command) != shards[shard]:
             raise ShardError(f"{shard} filtered inventory differs from planned names")
+        commands[shard] = command
+
+    def confirm_source() -> None:
+        if clean_source(repo_root) != (source, tree) or binary_digest(executable) != digest:
+            raise ShardError("source or native executable changed during the run")
+
+    confirm_source()
+    first_failure = 0
+    for shard, command in commands.items():
         deadline = shard_deadline(args.suite, shards[shard], args.deadline_seconds)
-        print(f"{args.suite} shard={shard} tests={len(shards[shard])} deadline={deadline}s", flush=True)
+        print(f"{args.suite} shard={shard} tests={len(shards[shard])} deadline={deadline}s names={','.join(shards[shard])}", flush=True)
         output, code = invoke(shard, command, deadline)
-        outcome = {"deadline_seconds": deadline, "planned_count": len(shards[shard]), "ignored_count": len(set(shards[shard]) & ignored), "exit_code": code}
+        outcome = {"deadline_seconds": deadline, "planned_count": len(shards[shard]), "ignored_count": len(set(shards[shard]) & ignored), "exit_code": code,
+                   "elapsed_seconds": summary["command_timings"][shard]["elapsed_seconds"],
+                   "status": "failed"}
         outcomes[shard] = outcome
-        if code:
-            return code
-        outcome["final_test_result"] = result = final_test_result(output)
-        counts = parse_test_summary(result)
-        validate_summary(counts, planned=outcome["planned_count"], ignored=outcome["ignored_count"], total=len(inventory))
-        outcome["counts"] = counts
+        result_code = code
+        if code == 0:
+            try:
+                outcome["final_test_result"] = result = final_test_result(output)
+                counts = parse_test_summary(result)
+                validate_summary(counts, planned=outcome["planned_count"], ignored=outcome["ignored_count"], total=len(inventory))
+                outcome["counts"] = counts
+                outcome["status"] = "passed"
+            except ShardError as error:
+                # Exit zero without exact parent accounting is still failure.
+                outcome["validation_error"] = str(error)
+                result_code = 2
+        outcome["result_code"] = result_code
+        if result_code:
+            if not first_failure:
+                first_failure = result_code
+                summary["first_failed_shard"] = shard
+            print(f"{args.suite} shard={shard} FAILED result={result_code} elapsed={outcome['elapsed_seconds']:.3f}s", flush=True)
+            # Show a bounded diagnostic tail, including V8 phase markers. Prefix
+            # each line so child output cannot become a workflow command.
+            for line in "\n".join(output.splitlines()[-120:])[-16384:].splitlines():
+                print("| " + line, flush=True)
+        else:
+            print(f"{args.suite} shard={shard} passed elapsed={outcome['elapsed_seconds']:.3f}s", flush=True)
+        write_progress(evidence, summary)
+        # A failed/expired test may continue only while source and executable
+        # identity are unchanged. Contamination stops before another dispatch.
+        confirm_source()
     summary["phase"] = "source-confirmation"
-    if clean_source(repo_root) != (source, tree) or binary_digest(executable) != digest:
-        raise ShardError("source or native executable changed during the run")
-    return 0
+    confirm_source()
+    summary["all_shards_completed"] = len(outcomes) == len(shards)
+    return first_failure
 
 
 def run(argv: list[str]) -> int:
@@ -319,7 +372,7 @@ def run(argv: list[str]) -> int:
         print(f"native candidate shard runner failed: {error}", file=sys.stderr)
     finally:
         summary.update(status="passed" if code == 0 else "failed", exit_code=code)
-        (args.evidence_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+        write_progress(args.evidence_dir, summary)
     return code
 
 

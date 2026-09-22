@@ -1,0 +1,198 @@
+name: trnm-v8-feedback
+
+# Bounded repair feedback on the existing epoch candidate, not a replacement
+# for the five protected baseline jobs or external acceptance.
+on:
+  pull_request:
+    branches:
+      - feature/chain-epoch-runtime-20260916
+    paths:
+      - .github/workflows/trnm-v8-feedback.yml
+      - scripts/ci/run_native_candidate_shards_v1.py
+      - scripts/ci/test_native_candidate_shards_v1.py
+      - trillionnium/crates/trnm-poco-node/src/epoch_handoff_attachment_v8_tests.inc
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-v8-feedback-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+  EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+  EXPECTED_MERGE: ${{ github.sha }}
+
+jobs:
+  runner-regressions:
+    name: runner-feedback-${{ matrix.identity }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        identity: [source, merge]
+    defaults:
+      run:
+        working-directory: trillionnium-chain
+        shell: bash
+    env:
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.identity == 'source' && github.event.pull_request.head.sha || github.sha }}
+      CHECKED_IDENTITY: ${{ matrix.identity }}
+    steps:
+      - name: Check out exact event identity
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          path: trillionnium-chain
+          persist-credentials: false
+      - name: Verify source and ordered merge parents
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+          if [[ "$CHECKED_IDENTITY" == merge ]]; then
+            test "$(git rev-parse HEAD)" = "$EXPECTED_MERGE"
+            test "$(git show -s --format=%P HEAD)" = "$EXPECTED_BASE $EXPECTED_HEAD"
+          else
+            test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          fi
+          git diff --exit-code HEAD -- .
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+          mkdir -p "$RUNNER_TEMP/v8-runner-feedback"
+          git rev-parse HEAD 'HEAD^{tree}' > "$RUNNER_TEMP/v8-runner-feedback/identity"
+      - name: Execute retained and new runner regressions
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_native_candidate_shards_v1.py -v 2>&1 | tee "$RUNNER_TEMP/v8-runner-feedback/tests.log"
+          git diff --exit-code HEAD -- .
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+      - name: Retain runner result including failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-v8-runner-${{ matrix.identity }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/v8-runner-feedback
+          if-no-files-found: error
+          retention-days: 7
+
+  v8-regression:
+    name: v8-runtime-feedback-${{ matrix.identity }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        identity: [source, merge]
+    defaults:
+      run:
+        working-directory: trillionnium-chain
+        shell: bash
+    env:
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.identity == 'source' && github.event.pull_request.head.sha || github.sha }}
+      CHECKED_IDENTITY: ${{ matrix.identity }}
+    steps:
+      - name: Check out exact event identity
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          path: trillionnium-chain
+          persist-credentials: false
+      - name: Verify source and ordered merge parents
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+          if [[ "$CHECKED_IDENTITY" == merge ]]; then
+            test "$(git rev-parse HEAD)" = "$EXPECTED_MERGE"
+            test "$(git show -s --format=%P HEAD)" = "$EXPECTED_BASE $EXPECTED_HEAD"
+          else
+            test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          fi
+          git diff --exit-code HEAD -- .
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+          mkdir -p "$RUNNER_TEMP/v8-runtime-feedback"
+          git rev-parse HEAD 'HEAD^{tree}' > "$RUNNER_TEMP/v8-runtime-feedback/identity"
+      - name: Install the unchanged pinned Rust toolchain
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+      - name: Compile the actual node epoch test binary
+        run: |
+          set -euo pipefail
+          unset RUST_MIN_STACK
+          timeout --signal=TERM --kill-after=10s 900s cargo test \
+            --manifest-path trillionnium/Cargo.toml -p trnm-poco-node \
+            --features epoch-runtime-test-fixtures --lib --locked --no-run \
+            --message-format=json \
+            > "$RUNNER_TEMP/v8-runtime-feedback/compile.jsonl" \
+            2> "$RUNNER_TEMP/v8-runtime-feedback/compile.stderr"
+      - name: Execute exact V8 with its original 300 second runtime limit
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, sys, time
+          from pathlib import Path
+          sys.path.insert(0, "scripts/ci")
+          import run_native_candidate_shards_v1 as runner
+          root = Path.cwd()
+          workspace = root / "trillionnium"
+          evidence = Path(os.environ["RUNNER_TEMP"]) / "v8-runtime-feedback"
+          def require(condition):
+              if not condition:
+                  raise runner.ShardError("V8 feedback source/inventory/identity mismatch")
+          source = runner.clean_source(root)
+          require(source[0] == os.environ["TRNM_EXPECTED_SOURCE_SHA"])
+          binary = runner.find_executable((evidence / "compile.jsonl").read_text().splitlines(), workspace, "node-epoch")
+          digest = runner.binary_digest(binary)
+          name = runner.NODE_EPOCH_PREFIX + "actual_epoch_handoff_joint_attachment_and_exact_retry_v8"
+          env = os.environ.copy()
+          env.pop("RUST_MIN_STACK", None)
+          report = dict(scope="one-v8-regression-not-complete-acceptance", status="failed", source=source[0], tree=source[1], executable_sha256=digest, test=name, deadline_seconds=300)
+          code = 2
+          try:
+              output, status = runner.run_bounded([str(binary), "--list"], cwd=workspace, env=env, timeout=120)
+              (evidence / "inventory.log").write_text(output)
+              require(status == 0)
+              inventory = runner.parse_test_inventory(output)
+              require(name in inventory)
+              output, status = runner.run_bounded([str(binary), name, "--exact", "--list"], cwd=workspace, env=env, timeout=120)
+              require(status == 0 and runner.parse_test_inventory(output) == [name])
+              command = [str(binary), name, "--exact", "--nocapture", "--test-threads=2"]
+              (evidence / "command.json").write_text(json.dumps(command))
+              started = time.monotonic()
+              output, status = runner.run_bounded(command, cwd=workspace, env=env, timeout=300)
+              report.update(elapsed_seconds=time.monotonic()-started, process_exit_code=status)
+              (evidence / "v8.log").write_text(output)
+              for line in output[-16384:].splitlines():
+                  print("| " + line)
+              require(runner.clean_source(root) == source and runner.binary_digest(binary) == digest)
+              if status:
+                  code = status
+              else:
+                  counts = runner.parse_test_summary(runner.final_test_result(output))
+                  runner.validate_summary(counts, planned=1, ignored=0, total=len(inventory))
+                  report["counts"] = counts
+                  code = 0
+          finally:
+              report.update(status="passed" if code == 0 else "failed", exit_code=code)
+              (evidence / "summary.json").write_text(json.dumps(report, indent=2)+"\n")
+          raise SystemExit(code)
+          PY
+      - name: Retain original V8 diagnostics including timeout
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-v8-runtime-${{ matrix.identity }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/v8-runtime-feedback
+          if-no-files-found: error
+          retention-days: 7
