@@ -1,8 +1,8 @@
-name: Section7 pinned offline build inputs
+name: Current candidate pinned offline build inputs
 
 on:
   push:
-    branches: [fix/chain-section7-offline-toolkit-20260913]
+    branches: [diagnostic/chain-v8-offline-inputs-20260922]
     paths: [.github/workflows/trnm-section7-offline-toolkit.yml]
 
 permissions:
@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 25
     env:
-      SOURCE_SHA: 435c0168558d75fc70aaa11980a179b9d5980f33
+      SOURCE_SHA: a60a38baa5d4cad89a208b51e871093a2dcb6171
     steps:
       - name: Check out the immutable source without persisted credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: 435c0168558d75fc70aaa11980a179b9d5980f33
+          ref: a60a38baa5d4cad89a208b51e871093a2dcb6171
           persist-credentials: false
       - name: Prepare public offline build inputs only
         shell: bash
@@ -35,8 +35,8 @@ jobs:
             --manifest-path trillionnium/Cargo.toml "$kit/vendor" > "$kit/vendor-config.txt"
           compiler="$(rustup which --toolchain 1.95.0 rustc)"
           toolchain="$(dirname "$(dirname "$compiler")")"
-          # Deliberately export only the compiler and public crate source tree.
-          # Never export HOME, CARGO_HOME, credentials, caches or runner state.
+          # Export only compiler and public crate sources, never credentials,
+          # HOME, CARGO_HOME, caches, keys or runner state. No candidate build.
           tar -C "$toolchain" -czf "$kit/rust-toolchain-1.95.0.tar.gz" .
           tar -C "$kit" -czf "$kit/vendor-source.tar.gz" vendor
           rm -rf "$kit/vendor"
@@ -48,7 +48,7 @@ jobs:
       - name: Retain bounded diagnostic build inputs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: trnm-section7-offline-kit-435c0168
+          name: trnm-v8-offline-kit-a60a38ba
           path: ${{ runner.temp }}/trnm-section7-offline-kit/
           retention-days: 1
           compression-level: 0
