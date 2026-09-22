@@ -18,6 +18,7 @@ WORKFLOW_DIR = ".github/workflows"
 SELF_HOSTED = "runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]"
 HOSTED_BASELINE = "runs-on: ubuntu-24.04"
 BASELINE = "trnm-required-baseline.yml"
+FEEDBACK = "trnm-independent-rust-feedback.yml"
 
 STANDARD_GUARD = (
     "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
@@ -254,6 +255,55 @@ def validate_baseline(name: str, text: str, jobs: dict[str, dict[str, object]]) 
     return len(jobs)
 
 
+
+def validate_feedback(name: str, text: str, jobs: dict[str, dict[str, object]]) -> int:
+    # This named, read-only hosted workflow is not an X230 authority consumer.
+    # Unknown workflows still take the privileged path; no filename wildcard
+    # can grant hosted execution or bypass the existing offline-cache policy.
+    if set(jobs) != {"lanes", "feedback-complete"}:
+        raise PolicyError(f"{name}: independent feedback job set changed")
+    if not re.search(r"(?m)^on:\n  pull_request:\s*\n", text):
+        raise PolicyError(f"{name}: feedback must use the unprivileged PR event")
+    if re.search(r"(?m)^  (push|schedule|workflow_dispatch|pull_request_target|workflow_run):", text):
+        raise PolicyError(f"{name}: unexpected feedback trigger")
+    if text.count("permissions:") != 1 or "permissions:\n  contents: read\n" not in text:
+        raise PolicyError(f"{name}: feedback permissions must be read-only contents")
+    if re.search(r"(?m)^\s*[\w-]+:\s*write\s*$", text) or re.search(
+        r"secrets\.|secrets:|(?m:^\s*(environment|container|services|continue-on-error):)", text
+    ):
+        raise PolicyError(f"{name}: privileged or failure-masking feedback configuration")
+    for job, props in jobs.items():
+        if props["uses"] or props["runs_on"] != [HOSTED_BASELINE]:
+            raise PolicyError(f"{name}: {job} must run directly on the pinned hosted runner")
+    if jobs["lanes"]["ifs"] or jobs["feedback-complete"]["guards"] != ["always()"]:
+        raise PolicyError(f"{name}: lanes must be unconditional and aggregate must always run")
+    step_guards = re.findall(r"(?m)^        if:\s*(.*)$", text)
+    if step_guards != ["always()"]:
+        raise PolicyError(f"{name}: only unconditional evidence retention may have a step guard")
+    required = (
+        "mode: [head, merge]",
+        "lane: [build, workspace, native, safety-epoch, node-epoch, contracts]",
+        "fail-fast: false", "needs: [lanes]",
+        "ref: ${{ matrix.mode == 'head' && github.event.pull_request.head.sha || github.sha }}",
+        "persist-credentials: false", "fetch-depth: 0",
+        "EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}",
+        "EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}",
+        "EXPECTED_MERGE: ${{ github.sha }}",
+        'test "$(git show -s --format=%P HEAD)" = "$EXPECTED_BASE $EXPECTED_HEAD"',
+        "python3 -B scripts/ci/run_independent_rust_lane_v1.py",
+        'test "$LANES_RESULT" = success',
+    )
+    active = "\n".join(line for line in text.splitlines() if not line.lstrip().startswith("#"))
+    for token in required:
+        if token not in active:
+            raise PolicyError(f"{name}: missing independent feedback binding: {token}")
+    uses = re.findall(r"(?m)^\s*(?:- )?uses:\s*(\S+)", text)
+    if uses != ["actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+                "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"]:
+        raise PolicyError(f"{name}: feedback actions must be the reviewed checkout/upload pair")
+    return len(jobs)
+
+
 def accepted_privileged_guards(name: str, job: str) -> set[str]:
     canonical = required_guard(name)
     variants = {canonical}
@@ -328,11 +378,14 @@ def main() -> int:
         raise PolicyError("no GitHub Actions workflows were found")
     hosted_jobs = 0
     privileged_jobs = 0
+    feedback_jobs = 0
     for name in names:
         text = read_workflow(name)
         jobs = parse_jobs(name, text)
         if name == BASELINE:
             hosted_jobs += validate_baseline(name, text, jobs)
+        elif name == FEEDBACK:
+            feedback_jobs += validate_feedback(name, text, jobs)
         else:
             privileged_jobs += validate_privileged(name, jobs)
     if hosted_jobs == 0 or privileged_jobs == 0:
@@ -341,7 +394,8 @@ def main() -> int:
         )
     print(
         "ci_runner_policy=mixed-trust "
-        f"hosted_jobs={hosted_jobs} privileged_jobs={privileged_jobs} source={MODE[2:]}"
+        f"hosted_jobs={hosted_jobs} privileged_jobs={privileged_jobs} source={MODE[2:]} "
+        f"hosted_feedback_jobs={feedback_jobs}"
     )
     return 0
 
