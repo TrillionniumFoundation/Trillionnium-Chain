@@ -38,6 +38,12 @@ M15 may compare this newly owner-produced receipt directly to the independent
 checkpoint without calling another full reopen merely to ask which owner just
 issued it. The original stale-receipt revalidation APIs remain unchanged;
 readbacks on both sides of external callbacks and actual custody still run.
+The pre-first-commit branch likewise consumes its freshly issued
+`confirm_epoch_application_edge_v1` result directly. That producer already
+checks owner affinity, current head before/after strict proof, retained
+preparation and final namespace identity. No external callback occurs between
+its return and checkpoint comparisons; a previously retained receipt still
+requires the existing fresh revalidation API.
 
 ## Interfaces
 

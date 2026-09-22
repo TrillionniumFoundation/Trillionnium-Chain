@@ -1963,6 +1963,10 @@ fn confirm_native_application_cut_v3(
 ) -> Result<()> {
     let app = checkpoint.fields().application;
     if app.block_id == *edge.application_parent().block_id().as_bytes() {
+        // Confirmation already checks this owner, both current-head reads,
+        // original preparation, strict proof and final namespace identity.
+        // Only pure field comparisons follow; the stale-receipt API would
+        // repeat that entire audit without an intervening external callback.
         let native = application.confirm_epoch_application_edge_v1(edge)?;
         let row = native.durable_checkpoint();
         let head = row.target_head_v0()?;
@@ -1978,8 +1982,7 @@ fn confirm_native_application_cut_v3(
                 && head.block_id().as_bytes() == &app.block_id
                 && head.state_root().as_bytes() == &app.state_root
                 && head.commit_id().as_bytes() == &app.native_commit_id
-                && head.height().get() == app.height
-                && native.belongs_to_application_at_path(application, application.path()),
+                && head.height().get() == app.height,
             "native activation checkpoint changed"
         );
     } else {
