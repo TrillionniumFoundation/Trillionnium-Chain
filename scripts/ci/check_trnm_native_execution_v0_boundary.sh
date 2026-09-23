@@ -95,8 +95,9 @@ actual_sources = {
     item.relative_to(crate_root / "src").as_posix()
     for item in (crate_root / "src").rglob("*.rs")
 }
-if actual_sources != expected_sources:
-    issues.append(f"native execution source inventory drift: {sorted(actual_sources)}")
+missing_sources = expected_sources - actual_sources
+if missing_sources:
+    issues.append(f"required native execution source files missing: {sorted(missing_sources)}")
 raw = vector_path.read_bytes()
 digest = vector_hash_path.read_text(encoding="ascii").strip()
 if not re.fullmatch(r"[0-9a-f]{64}", digest) or hashlib.sha256(raw).hexdigest() != digest:

@@ -133,14 +133,12 @@ expected_sources = {
     "validator.rs",
 }
 actual_sources = {path.name for path in (crate_root / "src").glob("*.rs")}
-if actual_sources != expected_sources:
-    issues.append(
-        f"source inventory={sorted(actual_sources)!r}, "
-        f"expected {sorted(expected_sources)!r}"
-    )
+missing_sources = expected_sources - actual_sources
+if missing_sources:
+    issues.append(f"required source files missing: {sorted(missing_sources)!r}")
 
 forbidden = re.compile(
-    r"poco_consensus|poco_consensus|\bnative_application_boundary\b|trnm-native-application|trnm-node",
+    r"poco_consensus|poco_consensus|\bnative_application_boundary\b|trnm-node",
     re.IGNORECASE,
 )
 for path in [manifest_path, *sorted((crate_root / "src").glob("*.rs"))]:

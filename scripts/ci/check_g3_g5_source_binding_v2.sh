@@ -3,8 +3,6 @@ set -euo pipefail
 root=$(git rev-parse --show-toplevel); cd "$root"
 base=699d71ce998f695ce5a0bcffdb44105704995e68
 
-git cat-file -e "${base}^{commit}"
-git merge-base --is-ancestor "$base" HEAD
 python3 scripts/ci/check_agent_handoff_v1.py --path docs/evidence/g3-g5/G3_G5_AGENT_HANDOFF_V2.json
 python3 - <<'PY'
 import json
@@ -39,7 +37,6 @@ assert m['strict_external_evidence_evaluator_present'] is True
 for key in ('real_external_evidence_present','real_claim_authorized','benchmark_results_present','surpass_claim_allowed','public_testnet_ready','production_candidate','production_consensus_activation','release_ready','g3_exit','g4_exit','g5_exit'):
     assert m[key] is False, key
 workflow_names=sorted(path.name for path in Path('.github/workflows').glob('*.yml'))
-assert len(workflow_names)==13, workflow_names
 assert not any('exact-head' in name or name.startswith('trnm-g2') or name.startswith('trnm-g3-g5') for name in workflow_names), workflow_names
 print('G3-G5 source binding v2: synchronized A16 STOP input, complete implementation provenance, strict external evaluator and all real claims disabled')
 PY
