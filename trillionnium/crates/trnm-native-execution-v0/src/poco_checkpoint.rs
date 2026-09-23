@@ -2615,8 +2615,254 @@ mod native_authorization_tests {
     }
 
     #[cfg(unix)]
+    struct EpochSigkillPreparedSeedV1 {
+        first: [u8; 32],
+        last: [u8; 32],
+        binding: [u8; 32],
+        last_p_digest: [u8; 32],
+        proof: Vec<u8>,
+    }
+
+    #[cfg(unix)]
+    fn build_epoch_sigkill_prepared_seed(path: &std::path::Path) -> EpochSigkillPreparedSeedV1 {
+        let app = open(path, config());
+        let ordinary_headers = ordinary_prefix(&app);
+        let prepared = preparation(&app, &ordinary_headers);
+        let header = prepared.header().clone();
+        let (checkpoint_finality, handoff_anchor) = handoff_proofs(&prepared);
+        let request = next_request(&app);
+        let preview = app.preview_block_v0(&request).unwrap();
+        let request = NativeBlockExecutionRequestV0::new(
+            request.chain_id().clone(),
+            request.genesis_hash(),
+            request.parent().clone(),
+            BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+            request.height(),
+            request.timestamp_ms(),
+            request.active_validator_set_id(),
+            request.transactions().to_vec(),
+            NativeExpectedBlockCommitmentsV0::new(
+                preview.payload_root(),
+                preview.post_state_root(),
+                preview.receipts_root(),
+                preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let NativeBlockExecutionResultV0::Valid(executed) = app.execute_block(request).unwrap()
+        else {
+            panic!("checkpoint execution invalid")
+        };
+        drop(
+            app.confirm_prepared_checkpoint_execution_v1(&prepared, &executed)
+                .unwrap(),
+        );
+        app.commit_block(NativeApplicationCommitRequestV0::new(*executed))
+            .unwrap();
+        let confirmed = app
+            .confirm_poco_checkpoint_v0(prepared, &checkpoint_finality, &handoff_anchor)
+            .unwrap();
+        let edge = confirmed.into_epoch_application_edge_v1().unwrap();
+        app.upgrade_epoch_schema_v1(edge.application_parent())
+            .unwrap();
+
+        let new_header = |height: u64,
+                          parent: trnm_consensus_types::BlockId,
+                          p: &crate::NativeBlockPreviewV0| {
+            let set = edge.new_validator_set();
+            let view = height - 10;
+            BlockHeader::new(
+                set.genesis_hash(),
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                View::new(view),
+                Height::new(height),
+                if height == 11 {
+                    BlockKind::EpochHandoff
+                } else {
+                    BlockKind::Regular
+                },
+                parent,
+                set.validators()[(view as usize - 1) % set.validators().len()].id(),
+                set.id(),
+                edge.new_parameters().hash(),
+                PayloadDigest::new(*p.payload_root().as_bytes()),
+                StateRoot::new(*p.post_state_root().as_bytes()),
+                trnm_consensus_types::ReceiptsRoot::new(*p.receipts_root().as_bytes()),
+                EvidenceRoot::new(*p.evidence_root().as_bytes()),
+                height * 1_000,
+                None,
+            )
+            .unwrap()
+        };
+
+        let epoch_request = edge.preview_request_v1(11_000, Vec::new()).unwrap();
+        let epoch_preview = app.preview_epoch_block_v1(&edge, &epoch_request).unwrap();
+        let first_header = new_header(11, edge.consensus_parent().id(), &epoch_preview);
+        let first_request = trnm_native_application::NativeEpochBlockExecutionRequestV1::new(
+            epoch_request.clone(),
+            BlockIdV0::new(*first_header.id().as_bytes()).unwrap(),
+            NativeExpectedBlockCommitmentsV0::new(
+                epoch_preview.payload_root(),
+                epoch_preview.post_state_root(),
+                epoch_preview.receipts_root(),
+                epoch_preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let mut parent_p = app
+            .execute_epoch_block_v1(&edge, first_request, &first_header)
+            .unwrap();
+        let mut headers = vec![first_header];
+
+        for height in [12, 13] {
+            let parent = parent_p.overlay_parent_head().unwrap();
+            let request = NativeBlockPreviewRequestV0::new(
+                epoch_request.chain_id().clone(),
+                epoch_request.genesis_hash(),
+                parent.clone(),
+                HeightV0::new(height),
+                height * 1_000,
+                epoch_request.active_validator_set_id(),
+                Vec::new(),
+            )
+            .unwrap();
+            let preview = app
+                .preview_epoch_descendant_v1(&parent_p, &request)
+                .unwrap();
+            let header = new_header(
+                height,
+                trnm_consensus_types::BlockId::new(*parent.block_id().as_bytes()),
+                &preview,
+            );
+            let execution = NativeBlockExecutionRequestV0::new(
+                request.chain_id().clone(),
+                request.genesis_hash(),
+                parent,
+                BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+                request.height(),
+                request.timestamp_ms(),
+                request.active_validator_set_id(),
+                Vec::new(),
+                NativeExpectedBlockCommitmentsV0::new(
+                    preview.payload_root(),
+                    preview.post_state_root(),
+                    preview.receipts_root(),
+                    preview.evidence_root(),
+                )
+                .unwrap(),
+            )
+            .unwrap();
+            parent_p = app
+                .execute_epoch_descendant_v1(&parent_p, execution, &header)
+                .unwrap();
+            headers.push(header);
+        }
+
+        // Match the original crash harness inventory exactly: one additional
+        // speculative H14 descendant is durable before first-new finality.
+        // It is not part of the three-chain proof, but it owns the next P
+        // sequence and therefore keeps the historical commit sequence stable.
+        let parent = parent_p.overlay_parent_head().unwrap();
+        let request = NativeBlockPreviewRequestV0::new(
+            epoch_request.chain_id().clone(),
+            epoch_request.genesis_hash(),
+            parent.clone(),
+            HeightV0::new(14),
+            14_000,
+            epoch_request.active_validator_set_id(),
+            Vec::new(),
+        )
+        .unwrap();
+        let preview = app
+            .preview_epoch_descendant_v1(&parent_p, &request)
+            .unwrap();
+        let header = new_header(
+            14,
+            trnm_consensus_types::BlockId::new(*parent.block_id().as_bytes()),
+            &preview,
+        );
+        let execution = NativeBlockExecutionRequestV0::new(
+            request.chain_id().clone(),
+            request.genesis_hash(),
+            parent,
+            BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+            request.height(),
+            request.timestamp_ms(),
+            request.active_validator_set_id(),
+            Vec::new(),
+            NativeExpectedBlockCommitmentsV0::new(
+                preview.payload_root(),
+                preview.post_state_root(),
+                preview.receipts_root(),
+                preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let _fourth_p = app
+            .execute_epoch_descendant_v1(&parent_p, execution, &header)
+            .unwrap();
+
+        let first = *headers[0].id().as_bytes();
+        let last = *headers[2].id().as_bytes();
+        let binding = edge.authorization_id();
+        let last_p_digest = parent_p.p_digest();
+        let proof = epoch_first_finality(&edge, &headers);
+        drop(app);
+        EpochSigkillPreparedSeedV1 {
+            first,
+            last,
+            binding,
+            last_p_digest,
+            proof,
+        }
+    }
+
+    #[cfg(unix)]
+    fn copy_epoch_sigkill_seed(source: &std::path::Path, target: &std::path::Path) {
+        std::fs::copy(source, target).unwrap();
+        std::fs::copy(
+            crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(source),
+            crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(target),
+        )
+        .unwrap();
+    }
+
+    #[cfg(unix)]
+    #[test]
+    #[ignore = "dedicated epoch commit SIGKILL subprocess entry"]
+    fn epoch_sigkill_commit_child() {
+        let path = std::path::PathBuf::from(
+            std::env::var_os("TRNM_NATIVE_EPOCH_COMMIT_SIGKILL_STORE")
+                .expect("epoch commit child store"),
+        );
+        let first: [u8; 32] = std::fs::read(path.with_extension("epoch-first"))
+            .unwrap()
+            .try_into()
+            .unwrap();
+        let proof = std::fs::read(path.with_extension("epoch-finality")).unwrap();
+        let app = DurableNativeApplicationV0::open(&path, config()).unwrap();
+        let first = app.reopen_prepared_epoch_execution_v1(first).unwrap();
+        let _committed = app
+            .commit_epoch_finality_bytes_v1(
+                &first,
+                &proof,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        panic!("epoch commit SIGKILL stage was not reached");
+    }
+
+    #[cfg(unix)]
     #[test]
     fn epoch_sigkill_commit_boundaries_preserve_exact_prepared_chain() {
+        let seed_directory = tempfile::tempdir().unwrap();
+        let seed_path = seed_directory.path().join("application.sqlite3");
+        let seed = build_epoch_sigkill_prepared_seed(&seed_path);
         for stage in [
             "epoch_before_commit",
             "epoch_after_commit",
@@ -2624,13 +2870,24 @@ mod native_authorization_tests {
         ] {
             let directory = tempfile::tempdir().unwrap();
             let path = directory.path().join("application.sqlite3");
+            copy_epoch_sigkill_seed(&seed_path, &path);
+            std::fs::write(path.with_extension("epoch-first"), seed.first).unwrap();
+            std::fs::write(path.with_extension("epoch-finality"), &seed.proof).unwrap();
+
             let marker = directory.path().join("ready");
-            let mut child=std::process::Command::new(std::env::current_exe().unwrap())
-                .args(["--exact","poco_checkpoint::native_authorization_tests::real_committed_checkpoint_and_signed_two_seals_produce_exact_handoff_readback","--nocapture"])
-                .env("TRNM_NATIVE_EPOCH_SIGKILL_STORE",&path)
-                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE",stage)
-                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER",&marker)
-                .spawn().unwrap();
+            let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--ignored",
+                    "--exact",
+                    "poco_checkpoint::native_authorization_tests::epoch_sigkill_commit_child",
+                    "--nocapture",
+                ])
+                .env_remove("RUST_MIN_STACK")
+                .env("TRNM_NATIVE_EPOCH_COMMIT_SIGKILL_STORE", &path)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE", stage)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER", &marker)
+                .spawn()
+                .unwrap();
             let deadline = std::time::Instant::now() + std::time::Duration::from_secs(45);
             while !marker.exists() && std::time::Instant::now() < deadline {
                 if child.try_wait().unwrap().is_some() {
@@ -2639,17 +2896,19 @@ mod native_authorization_tests {
                 std::thread::sleep(std::time::Duration::from_millis(10));
             }
             if !marker.exists() {
+                let status = child.try_wait().unwrap();
                 let _ = child.kill();
                 let _ = child.wait();
-                panic!("epoch child failed to reach {stage}");
+                panic!("epoch commit child failed to reach {stage}; status={status:?}");
             }
             child.kill().unwrap();
-            assert!(!child.wait().unwrap().success());
-            let ids = std::fs::read(path.with_extension("epoch-ids")).unwrap();
-            let first: [u8; 32] = ids[..32].try_into().unwrap();
-            let last: [u8; 32] = ids[32..64].try_into().unwrap();
-            let binding: [u8; 32] = ids[64..].try_into().unwrap();
-            let proof = std::fs::read(path.with_extension("epoch-finality")).unwrap();
+            use std::os::unix::process::ExitStatusExt;
+            assert_eq!(
+                child.wait().unwrap().signal(),
+                Some(9),
+                "real SIGKILL required"
+            );
+
             let app = DurableNativeApplicationV0::open(&path, config()).unwrap();
             assert_eq!(
                 app.confirmed_committed_head_v0().unwrap().height().get(),
@@ -2660,34 +2919,28 @@ mod native_authorization_tests {
                 }
             );
             assert_eq!(
-                app.recover_epoch_application_edge_v1(binding)
+                app.recover_epoch_application_edge_v1(seed.binding)
                     .unwrap()
                     .first_application_height(),
                 11
             );
-            let first = app.reopen_prepared_epoch_execution_v1(first).unwrap();
+            let first_p = app.reopen_prepared_epoch_execution_v1(seed.first).unwrap();
             let committed = app
                 .commit_epoch_finality_bytes_v1(
-                    &first,
-                    &proof,
+                    &first_p,
+                    &seed.proof,
                     &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
                 )
                 .unwrap();
             assert_eq!(committed.head().height().get(), 11);
             assert_eq!(committed.commit_sequence(), 22);
-            assert_eq!(
-                app.reopen_prepared_epoch_execution_v1(last)
-                    .unwrap()
-                    .overlay_parent_head()
-                    .unwrap()
-                    .height()
-                    .get(),
-                13
-            );
+            let last_p = app.reopen_prepared_epoch_execution_v1(seed.last).unwrap();
+            assert_eq!(last_p.p_digest(), seed.last_p_digest);
+            assert_eq!(last_p.overlay_parent_head().unwrap().height().get(), 13);
             let retried = app
                 .commit_epoch_finality_bytes_v1(
-                    &first,
-                    &proof,
+                    &first_p,
+                    &seed.proof,
                     &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
                 )
                 .unwrap();
