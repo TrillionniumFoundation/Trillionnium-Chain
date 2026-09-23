@@ -18,7 +18,13 @@ printf 'hostname=%s\n' "$(hostname)"
 printf 'kernel=%s\n' "$(uname -srm)"
 printf 'arch=%s\n' "$(uname -m)"
 if command -v nproc >/dev/null; then printf 'cpu_threads=%s\n' "$(nproc)"; else printf 'cpu_threads=%s\n' "$(sysctl -n hw.logicalcpu)"; fi
-if command -v free >/dev/null; then free -b | awk '/^Mem:/{print "memory_bytes="$2}'; else printf 'memory_bytes=%s\n' "$(sysctl -n hw.memsize)"; fi
+if [ -r /proc/meminfo ]; then
+  awk '/^MemTotal:/{printf "memory_bytes=%.0f\n",$2*1024}' /proc/meminfo
+elif command -v sysctl >/dev/null; then
+  printf 'memory_bytes=%s\n' "$(sysctl -n hw.memsize)"
+else
+  exit 67
+fi
 printf 'epoch_ns=%s\n' "$(date +%s%N 2>/dev/null || date +%s000000000)"
 '''
 
