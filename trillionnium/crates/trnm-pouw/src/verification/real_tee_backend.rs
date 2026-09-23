@@ -13017,8 +13017,43 @@ impl Default for RealTeeBackend {
     }
 }
 
+struct UnconfiguredVendorVerifierExecutor;
+
+impl VendorVerifierExecutor for UnconfiguredVendorVerifierExecutor {
+    fn verify_intel_quote_bundle(
+        &self,
+        _input: &QuoteVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+        Err(BackendExecutionError::NotConfigured {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+        })
+    }
+
+    fn verify_amd_report_bundle(
+        &self,
+        _input: &ReportVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+        Err(BackendExecutionError::NotConfigured {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+        })
+    }
+}
+
 impl RealTeeBackend {
+    /// Construct the feature backend without inventing a verifier service.
+    ///
+    /// The repository contains fixture and transport conformance harnesses, but
+    /// no commissioned production Intel/AMD verifier endpoint. Enabling the
+    /// real-tee-backend Cargo feature therefore remains fail-closed until a
+    /// caller explicitly supplies a real executor through product wiring.
     pub fn new() -> Self {
+        Self::with_executor(Arc::new(UnconfiguredVendorVerifierExecutor))
+    }
+
+    #[cfg(test)]
+    fn fixture_backed_for_tests() -> Self {
         Self::with_executor(Arc::new(
             ProviderBackedVendorVerifierExecutor::fixture_backed(),
         ))
@@ -13159,6 +13194,12 @@ pub fn register_optional_backends(registry: &mut ZkBackendRegistry) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn fixture_registry() -> VerifierRegistry {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(RealTeeBackend::fixture_backed_for_tests()));
+        VerifierRegistry::with_backends(tee_config(), Arc::new(backends))
+    }
 
     fn mock_task() -> TaskObject {
         TaskObject {
@@ -34120,8 +34161,21 @@ mod tests {
     }
 
     #[test]
-    fn real_tee_backend_accepts_valid_sgx_vector() {
+    fn real_tee_backend_feature_default_is_not_a_fixture_verifier() {
         let registry = VerifierRegistry::with_backend_config(tee_config());
+        let task = mock_task();
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
+
+        assert!(matches!(
+            registry.verify(&task, receipt),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("backend not configured")
+        ));
+    }
+
+    #[test]
+    fn real_tee_backend_accepts_valid_sgx_vector() {
+        let registry = fixture_registry();
         let task = mock_task();
         let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
 
@@ -34130,7 +34184,7 @@ mod tests {
 
     #[test]
     fn real_tee_backend_accepts_valid_tdx_vector() {
-        let registry = VerifierRegistry::with_backend_config(tee_config());
+        let registry = fixture_registry();
         let task = mock_task();
         let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-tdx-qgs-demo-v1,collateral=intel-tdx-qgs-collateral-demo-v1,cert_chain=intel-tdx-qgs-cert-chain-demo-v1,issuer=intel";
 
@@ -34139,7 +34193,7 @@ mod tests {
 
     #[test]
     fn real_tee_backend_accepts_valid_sev_snp_vector() {
-        let registry = VerifierRegistry::with_backend_config(tee_config());
+        let registry = fixture_registry();
         let task = mock_task();
         let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
 
@@ -34187,7 +34241,7 @@ mod tests {
 
     #[test]
     fn real_tee_backend_rejects_quote_metadata_mismatch_fail_closed() {
-        let registry = VerifierRegistry::with_backend_config(tee_config());
+        let registry = fixture_registry();
         let task = mock_task();
         let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-tdx-qgs-demo-v1,collateral=wrong-collateral,cert_chain=intel-tdx-qgs-cert-chain-demo-v1,issuer=intel";
 
@@ -34200,7 +34254,7 @@ mod tests {
 
     #[test]
     fn real_tee_backend_rejects_report_signer_mismatch_fail_closed() {
-        let registry = VerifierRegistry::with_backend_config(tee_config());
+        let registry = fixture_registry();
         let task = mock_task();
         let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=wrong-signer";
 
