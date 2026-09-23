@@ -18,6 +18,8 @@ assert SPEC is not None and SPEC.loader is not None
 collector = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(collector)
 
+import native_client_campaign_v1 as native_campaign
+
 
 def digest(value: str) -> str:
     return hashlib.sha256(value.encode()).hexdigest()
@@ -224,6 +226,7 @@ def native_campaign_fixture(root: pathlib.Path) -> None:
             "business_transfer_count": 1,
             "business_window_ns": window,
             "business_goodput_per_second": 1_000_000_000 / window,
+            "history_growth": native_campaign.derive_history_growth_v1(records, 1),
             "records": records,
             "candidate_only": True,
             "m05_intent_binding": False,
@@ -245,6 +248,8 @@ def test_joins_only_proof_verified_native_business_goodput() -> None:
         assert report["measurement"]["transaction_goodput_tps"] == 50.0
         assert "client-verified finalized proof" in report["measurement"]["transaction_goodput_scope"]
         assert report["measurement"]["native_campaign_sha256"] is not None
+        assert report["measurement"]["transaction_history_growth"]["first_verified_height"] == 4
+        assert report["measurement"]["transaction_history_growth"]["finality_latency_ms"]["p99"] == 20.0
         assert report["performance_evidence"] is False
         assert report["production_activation"] is False
 

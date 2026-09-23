@@ -343,6 +343,7 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
     transaction_goodput_tps = None
     transaction_goodput_scope = None
     transaction_goodput_transfers = 0
+    transaction_history_growth = None
     native_campaign_sha256 = None
     native_path = run_root / native_campaign.ARTIFACT
     if native_path.exists():
@@ -363,6 +364,7 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
             "sequential signed business transfers counted only after client-verified finalized proof; "
             "collector validates the retained campaign but does not replace independent binary re-verification"
         )
+        transaction_history_growth = native_document["history_growth"]
         native_campaign_sha256 = sha256_file(native_path, "native client campaign")
 
     return {
@@ -388,6 +390,7 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
             "transaction_goodput_tps": transaction_goodput_tps,
             "transaction_goodput_transfers": transaction_goodput_transfers,
             "transaction_goodput_scope": transaction_goodput_scope,
+            "transaction_history_growth": transaction_history_growth,
             "native_campaign_sha256": native_campaign_sha256,
         },
         "recovery": {

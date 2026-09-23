@@ -8,6 +8,7 @@ from __future__ import annotations
 import dataclasses
 import hashlib
 import json
+import math
 import os
 import pathlib
 import re
@@ -316,8 +317,68 @@ def strict_json(raw: bytes, field: str) -> dict:
     return value
 
 
+def percentile_nearest_rank_v1(values: list[float], percentile: int) -> float:
+    if not values or percentile not in (50, 95, 99):
+        raise RuntimeError("native finality percentile input differs")
+    ordered = sorted(values)
+    index = max(0, math.ceil(percentile * len(ordered) / 100) - 1)
+    return ordered[index]
+
+
+def derive_history_growth_v1(records: list[dict], transfers: int) -> dict:
+    business = records[1:]
+    if len(business) != transfers or transfers <= 0:
+        raise RuntimeError("native history-growth record count differs")
+    latencies_ms = [
+        (record["verified_monotonic_ns"] - record["submitted_monotonic_ns"]) / 1_000_000
+        for record in business
+    ]
+    heights = []
+    for record in business:
+        raw = record["mac_verification"].get("height")
+        if not isinstance(raw, str) or re.fullmatch(r"[1-9][0-9]*", raw) is None:
+            raise RuntimeError("native verified height is not canonical")
+        heights.append(int(raw))
+    if heights != sorted(heights):
+        raise RuntimeError("native verified heights regress")
+
+    split = (transfers + 1) // 2
+    first, second = business[:split], business[split:]
+    def segment(rows: list[dict]) -> dict | None:
+        if not rows:
+            return None
+        window = rows[-1]["verified_monotonic_ns"] - rows[0]["submitted_monotonic_ns"]
+        if window <= 0:
+            raise RuntimeError("native history-growth window is invalid")
+        return {
+            "transfers": len(rows),
+            "window_ns": window,
+            "goodput_per_second": len(rows) * 1_000_000_000 / window,
+            "first_height": int(rows[0]["mac_verification"]["height"]),
+            "last_height": int(rows[-1]["mac_verification"]["height"]),
+        }
+    first_summary, second_summary = segment(first), segment(second)
+    ratio = None if second_summary is None else (
+        second_summary["goodput_per_second"] / first_summary["goodput_per_second"]
+    )
+    return {
+        "first_verified_height": heights[0],
+        "last_verified_height": heights[-1],
+        "verified_height_span": heights[-1] - heights[0],
+        "finality_latency_ms": {
+            "p50": percentile_nearest_rank_v1(latencies_ms, 50),
+            "p95": percentile_nearest_rank_v1(latencies_ms, 95),
+            "p99": percentile_nearest_rank_v1(latencies_ms, 99),
+        },
+        "first_half": first_summary,
+        "second_half": second_summary,
+        "second_to_first_goodput_ratio": ratio,
+        "performance_acceptance": False,
+    }
+
+
 def validate_document(document: dict, *, run_id: str, anchor: str, validator_ids: set[str]) -> None:
-    keys = {"schema", "run_id", "coordinator_manifest_sha256", "profile_sha256", "submit_validator_id", "signing_host", "verification_host", "transport", "started_monotonic_ns", "completed_monotonic_ns", "business_transfer_count", "business_window_ns", "business_goodput_per_second", "records", "candidate_only", "m05_intent_binding", "fault_matrix_completed", "performance_acceptance", "host_attestation", "production_activation"}
+    keys = {"schema", "run_id", "coordinator_manifest_sha256", "profile_sha256", "submit_validator_id", "signing_host", "verification_host", "transport", "started_monotonic_ns", "completed_monotonic_ns", "business_transfer_count", "business_window_ns", "business_goodput_per_second", "history_growth", "records", "candidate_only", "m05_intent_binding", "fault_matrix_completed", "performance_acceptance", "host_attestation", "production_activation"}
     if set(document) != keys or document["schema"] != PROFILE or document["run_id"] != run_id or document["coordinator_manifest_sha256"] != anchor:
         raise RuntimeError("native campaign identity differs")
     if document["submit_validator_id"] not in validator_ids or document["signing_host"] != "mac" or document["verification_host"] != "mac" or document["transport"] != "ssh-private-unix-ipc":
@@ -362,6 +423,8 @@ def validate_document(document: dict, *, run_id: str, anchor: str, validator_ids
     window = document["records"][-1]["verified_monotonic_ns"] - document["records"][1]["submitted_monotonic_ns"]
     if document["business_window_ns"] != window or document["business_goodput_per_second"] != n * 1_000_000_000 / window:
         raise RuntimeError("native actual goodput denominator differs")
+    if document["history_growth"] != derive_history_growth_v1(document["records"], n):
+        raise RuntimeError("native history-growth summary differs")
 
 
 def run_campaign(*, coordinator: pathlib.Path, deployments: pathlib.Path, manifest: dict,
@@ -438,7 +501,7 @@ def run_campaign(*, coordinator: pathlib.Path, deployments: pathlib.Path, manife
         records.append({"kind": "funding" if funding else "transfer", "native_tx_hash": native_hash, "outer_hex": outer.hex(), "outer_sha256": hashlib.sha256(outer).hexdigest(), "submitted_monotonic_ns": submitted, "ack_monotonic_ns": ack_at, "verified_monotonic_ns": time.monotonic_ns(), "ack": ack, "retry_ack": retry, "proof_response": proof, "mac_verification": verified})
     completed = time.monotonic_ns()
     window = records[-1]["verified_monotonic_ns"] - records[1]["submitted_monotonic_ns"]
-    document = {"schema": PROFILE, "run_id": manifest["run_id"], "coordinator_manifest_sha256": anchor, "profile_sha256": digest, "submit_validator_id": process.validator_id, "signing_host": "mac", "verification_host": "mac", "transport": "ssh-private-unix-ipc", "started_monotonic_ns": started, "completed_monotonic_ns": completed, "business_transfer_count": transfers, "business_window_ns": window, "business_goodput_per_second": transfers * 1_000_000_000 / window, "records": records, "candidate_only": True, "m05_intent_binding": False, "fault_matrix_completed": False, "performance_acceptance": False, "host_attestation": False, "production_activation": False}
+    document = {"schema": PROFILE, "run_id": manifest["run_id"], "coordinator_manifest_sha256": anchor, "profile_sha256": digest, "submit_validator_id": process.validator_id, "signing_host": "mac", "verification_host": "mac", "transport": "ssh-private-unix-ipc", "started_monotonic_ns": started, "completed_monotonic_ns": completed, "business_transfer_count": transfers, "business_window_ns": window, "business_goodput_per_second": transfers * 1_000_000_000 / window, "history_growth": derive_history_growth_v1(records, transfers), "records": records, "candidate_only": True, "m05_intent_binding": False, "fault_matrix_completed": False, "performance_acceptance": False, "host_attestation": False, "production_activation": False}
     validate_document(document, run_id=manifest["run_id"], anchor=anchor, validator_ids={p.validator_id for p in processes})
     base.write_new(output / ARTIFACT, base.canonical_json(document))
     return document
