@@ -736,8 +736,8 @@ mod tests;
 pub mod test_fixtures {
     pub use crate::poco_checkpoint::native_checkpoint_fixture_v1::{
         build_native_checkpoint_fixture_v1, epoch_first_finality,
-        native_checkpoint_fixture_config_v1, open_native_checkpoint_fixture_genesis_v1,
-        NativeCheckpointFixtureV1,
+        epoch_first_finality_from_runtime, native_checkpoint_fixture_config_v1,
+        open_native_checkpoint_fixture_genesis_v1, NativeCheckpointFixtureV1,
     };
 }
 

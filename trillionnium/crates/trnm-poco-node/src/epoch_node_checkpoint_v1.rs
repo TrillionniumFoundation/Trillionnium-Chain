@@ -614,7 +614,9 @@ impl EpochNodeCheckpointV1 {
         }
         match (p.phase, f.phase) {
             (
-                EpochCheckpointPhaseV1::ActivationCommitted | EpochCheckpointPhaseV1::Ordinary,
+                EpochCheckpointPhaseV1::ActivationCommitted
+                | EpochCheckpointPhaseV1::Ordinary
+                | EpochCheckpointPhaseV1::SuccessorActivationNative13Journal12,
                 EpochCheckpointPhaseV1::Ordinary,
             ) => {
                 let a = f.ordinary.ok_or(EpochNodeCheckpointErrorV1::Successor)?;

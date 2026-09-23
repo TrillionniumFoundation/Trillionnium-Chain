@@ -781,6 +781,96 @@ pub fn epoch_first_finality(
     bytes
 }
 
+/// Build a first-new three-chain from an already authenticated strict epoch
+/// runtime context.  This is test-fixture only: callers cannot construct the
+/// strict context from a later edge or caller-supplied hashes.
+#[cfg(any(test, feature = "test-fixtures"))]
+pub fn epoch_first_finality_from_runtime(
+    runtime: &trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+    headers: &[BlockHeader],
+) -> Vec<u8> {
+    let activation = runtime.activation();
+    let old_set = activation.old_validator_set();
+    let set = activation.new_validator_set();
+    let parameters = activation.new_consensus_parameters();
+    let common = || {
+        let mut bytes = 0u16.to_be_bytes().to_vec();
+        bytes.extend(set.genesis_hash().as_bytes());
+        bytes.extend((set.chain_id().as_bytes().len() as u16).to_be_bytes());
+        bytes.extend(set.chain_id().as_bytes());
+        bytes.extend(set.protocol_version().get().to_be_bytes());
+        bytes.extend(set.epoch().get().to_be_bytes());
+        bytes.extend(set.id().as_bytes());
+        bytes
+    };
+    let mut bytes = common();
+    bytes.extend(parameters.hash().as_bytes());
+    let terminal = activation.authorization_kernel().terminal_old_header();
+    let mut anchor = common();
+    anchor.extend(0u64.to_be_bytes());
+    anchor.extend(terminal.height().get().to_be_bytes());
+    anchor.extend(terminal.id().as_bytes());
+    anchor.extend(0u32.to_be_bytes());
+    for (index, header) in headers.iter().enumerate() {
+        let key_index = set
+            .validators()
+            .iter()
+            .position(|v| v.id() == header.proposer_id())
+            .unwrap();
+        if index == 0 {
+            let root = trnm_consensus_types::epoch_first_proposal_signing_root_v0(
+                header,
+                activation.authorization_kernel(),
+                old_set,
+                set,
+                parameters,
+            )
+            .unwrap();
+            bytes.extend(header.try_cev0_bytes().unwrap());
+            bytes.extend(&anchor);
+            bytes.push(0);
+            bytes.push(1);
+            bytes.extend(activation.authorization_cev0_bytes().unwrap());
+            bytes.extend(key(key_index).sign(root.as_bytes()).to_bytes());
+            bytes.extend(qc(header, set).try_cev0_bytes().unwrap());
+        } else {
+            let justify = QcReferenceV0::ordinary(qc(&headers[index - 1], set));
+            let witness = ProposalWitnessV0::new(
+                header,
+                justify.clone(),
+                None,
+                None,
+                Signature64::from_array([1; 64]),
+                set,
+                None,
+                parameters,
+                headers[index - 1].timestamp_ms(),
+            )
+            .unwrap();
+            let signature = Signature64::from_array(
+                key(key_index)
+                    .sign(witness.signing_root_for_header(header).unwrap().as_bytes())
+                    .to_bytes(),
+            );
+            let certified = CertifiedHeaderV0::new(
+                header.clone(),
+                justify,
+                None,
+                None,
+                signature,
+                qc(header, set),
+                set,
+                None,
+                parameters,
+                headers[index - 1].timestamp_ms(),
+            )
+            .unwrap();
+            bytes.extend(certified.try_cev0_bytes().unwrap());
+        }
+    }
+    bytes
+}
+
 /// Build an ordinary new-set three-chain for one sparse epoch descendant.
 ///
 /// This fixture helper deliberately takes the authenticated epoch edge and
