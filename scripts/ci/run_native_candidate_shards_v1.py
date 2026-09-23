@@ -22,12 +22,6 @@ PRE_HANDOFF = BRIDGE + "later_pre_handoff_"
 SCHEMA7 = "durable::incremental_owner_v1::epoch_candidate_v1::commit::tests::schema7_"
 POCO_SIGKILL = "poco_checkpoint::native_authorization_tests::epoch_sigkill_commit_boundaries_preserve_exact_prepared_chain"
 SHARD_NAMES = ("general", "historical-install", "historical-replay", "historical-receiver", "later-pre-handoff", "later-bridge", "schema7", "poco-sigkill")
-ALLOWED_IGNORED = {
-    BRIDGE + "historical_replay_continuation_sigkill_child",
-    BRIDGE + "historical_replay_install_sigkill_child",
-    BRIDGE + "later_descendant_c22_sigkill_child",
-    PRE_HANDOFF + "sigkill_child",
-}
 REQUIRED_SIGKILL_DRIVERS = {
     BRIDGE + "historical_replay_continuation_sigkill_six_cuts_preserve_exact_c33",
     BRIDGE + "historical_replay_install_sigkill_cuts_recover_exact_nonempty_base",
@@ -48,10 +42,6 @@ NODE_REQUIRED_DRIVERS = {
     NODE_EPOCH_PREFIX + "actual_epoch_first_core_finalization_applies_three_real_native_executions_v2",
     NODE_EPOCH_PREFIX + "actual_epoch_seals_apply_original_fronts_then_commit_unattached_pre_handoff_v5",
 }
-SAFETY_IGNORED = {
-    "journal10_initialization_crash_child", "journal10_post_initial_crash_child",
-    "journal11_sigkill_child", "journal12::journal12_sigkill_child",
-}
 SAFETY_REQUIRED_DRIVERS = {
     "journal10_sigkill_initialization_cuts_never_release_an_owner",
     "journal10_sigkill_post_initial_cuts_recover_exact_independently_pinned_revision",
@@ -59,15 +49,40 @@ SAFETY_REQUIRED_DRIVERS = {
     "journal12::journal12_six_sigkill_cuts_keep_actual_source_and_prefix",
 }
 SUITES = {
-    "native": (PACKAGE, FEATURES, ALLOWED_IGNORED, REQUIRED_SIGKILL_DRIVERS),
-    "node-epoch": ("trnm-poco-node", "epoch-runtime-test-fixtures", set(), NODE_REQUIRED_DRIVERS),
-    "safety-epoch": ("trnm-consensus-safety-store", "--all-features", SAFETY_IGNORED, SAFETY_REQUIRED_DRIVERS),
+    "native": (PACKAGE, FEATURES, REQUIRED_SIGKILL_DRIVERS),
+    "node-epoch": ("trnm-poco-node", "epoch-runtime-test-fixtures", NODE_REQUIRED_DRIVERS),
+    "safety-epoch": ("trnm-consensus-safety-store", "--all-features", SAFETY_REQUIRED_DRIVERS),
 }
 
 
 class ShardError(RuntimeError):
     pass
 
+
+
+def validate_ignored_inventory(ignored: set[str], inventory: list[str]) -> None:
+    """Admit crash subprocesses by role instead of freezing their exact names.
+
+    Parent SIGKILL/recovery tests are the behavioral authority: adding another
+    dedicated child must not require editing this CI runner. A newly ignored
+    ordinary regression is still rejected because its name is not a crash-child
+    entrypoint.
+    """
+    available = set(inventory)
+    if not ignored.issubset(available):
+        raise ShardError("ignored inventory contains tests absent from the complete inventory")
+    invalid = sorted(
+        name
+        for name in ignored
+        if not (
+            (leaf := name.rsplit("::", 1)[-1]).endswith("_child")
+            and ("sigkill" in leaf or "crash" in leaf)
+        )
+    )
+    if invalid:
+        raise ShardError(
+            "ignored inventory contains non-dedicated crash tests: " + ", ".join(invalid)
+        )
 
 def parse_test_inventory(output: str, *, allow_empty: bool = False) -> list[str]:
     names = [line.strip()[:-6] for line in output.splitlines() if line.strip().endswith(": test")]
@@ -250,7 +265,7 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     env.setdefault("CARGO_TERM_COLOR", "never")
     repo_root = Path(git_output(workspace, "rev-parse", "--show-toplevel"))
     source, tree = clean_source(repo_root)
-    package, features, allowed_ignored, required_drivers = SUITES[args.suite]
+    package, features, required_drivers = SUITES[args.suite]
     summary.update(source=source, tree=tree, suite=args.suite, package=package, features=features)
     if env.get("TRNM_EXPECTED_SOURCE_SHA", source) != source:
         raise ShardError("source HEAD differs from independently expected source")
@@ -294,8 +309,7 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
 
     inventory = inventory_for("inventory", [str(executable)])
     ignored = set(inventory_for("ignored", [str(executable), "--ignored"], allow_empty=True))
-    if ignored != allowed_ignored or not ignored.issubset(inventory):
-        raise ShardError("ignored inventory differs from dedicated SIGKILL children")
+    validate_ignored_inventory(ignored, inventory)
     if not required_drivers.issubset(set(inventory) - ignored):
         raise ShardError("required SIGKILL drivers are missing or ignored")
     shards = partition_inventory(inventory, args.suite)
