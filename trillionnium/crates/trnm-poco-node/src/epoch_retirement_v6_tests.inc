@@ -151,8 +151,8 @@ fn actual_epoch_outgoing_retirement_consumes_current_signer_after_native13_v6() 
     let unsigned = first_apply_unsigned_v2(live);
     let first = first_apply_children_v2(first_apply_start_v2(unsigned));
     let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
+    let checkpoint = checkpoint_prepare_execute_positive_v4(checkpoint_prepare_begin_v4(cutoff));
+    let first_seal = pre_handoff_seal_and_apply_positive_v5(pre_handoff_begin_v5(checkpoint));
+    let second_seal = pre_handoff_seal_and_apply_positive_v5(first_seal);
     finish_actual_outgoing_retirement_v6(pre_handoff_commit_v5(second_seal), watermark);
 }

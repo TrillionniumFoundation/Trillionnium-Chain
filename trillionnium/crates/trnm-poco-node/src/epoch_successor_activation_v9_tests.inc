@@ -263,10 +263,10 @@ fn actual_epoch_successor_activation_preserves_owners_and_initial_ack_v9() {
     let unsigned = first_apply_unsigned_v2(live);
     let first = first_apply_children_v2(first_apply_start_v2(unsigned));
     let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
-    let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
+    let checkpoint = checkpoint_prepare_execute_positive_v4(checkpoint_prepare_begin_v4(cutoff));
+    let first_seal = pre_handoff_seal_and_apply_positive_v5(pre_handoff_begin_v5(checkpoint));
+    let second_seal = pre_handoff_seal_and_apply_positive_v5(first_seal);
+    let roles = commission_actual_roles_positive_v7(pre_handoff_commit_v5(second_seal));
     activate_actual_successor_v9(prepare_joint_roles_v8(roles), incoming);
 }
 
@@ -346,9 +346,9 @@ fn actual_epoch_successor_activation_after_write_callback_blocks_ack_v9() {
     let unsigned = first_apply_unsigned_v2(live);
     let first = first_apply_children_v2(first_apply_start_v2(unsigned));
     let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
-    let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
+    let checkpoint = checkpoint_prepare_execute_positive_v4(checkpoint_prepare_begin_v4(cutoff));
+    let first_seal = pre_handoff_seal_and_apply_positive_v5(pre_handoff_begin_v5(checkpoint));
+    let second_seal = pre_handoff_seal_and_apply_positive_v5(first_seal);
+    let roles = commission_actual_roles_positive_v7(pre_handoff_commit_v5(second_seal));
     reject_actual_successor_after_initial_write_v9(prepare_joint_roles_v8(roles), incoming);
 }

@@ -21,7 +21,7 @@ impl<W: ExternalSignerRetirementV1> OutgoingEpochSourceV6<W> {
         let head = self.journal.fresh_read_v1(self.pin)?;
         ensure!(
             p.phase == EpochCheckpointPhaseV1::Ordinary
-                && head.belongs_to_store_at_path_v1(&self.journal, self.journal.path_v1())
+                && head.same_live_owner_at_path_v1(&self.journal, self.journal.path_v1())
                 && head.state_v1() == state
                 && safety_cut(&head) == p.target_safety
                 && head.owner_generation_v1() == p.owner_generation

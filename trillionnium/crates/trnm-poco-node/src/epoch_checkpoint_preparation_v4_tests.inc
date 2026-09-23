@@ -12,7 +12,10 @@ fn checkpoint_prepare_begin_v4(case: Box<OrdinaryCutoffCaseV3>) -> Box<Checkpoin
 }
 
 #[inline(never)]
-fn checkpoint_prepare_execute_v4(case: Box<CheckpointCaseV4>) -> Box<CheckpointCaseV4> {
+fn checkpoint_prepare_execute_v4_inner(
+    case: Box<CheckpointCaseV4>,
+    exercise_negative_semantics: bool,
+) -> Box<CheckpointCaseV4> {
     let (directory, mut owner, key) = *case;
     let inner = owner.inner.as_ref().unwrap();
     let selection = inner
@@ -23,47 +26,49 @@ fn checkpoint_prepare_execute_v4(case: Box<CheckpointCaseV4>) -> Box<CheckpointC
     let commitment = selection.next_epoch_commitment().id();
     let wrong = trnm_consensus_types::NextEpochCommitmentHash::new([0xd5; 32]);
     assert_ne!(wrong, commitment);
-    let bad = application_child_proposal_v4(inner, Some(wrong));
-    bad.verify(
-        inner.runtime.edge.new_validator_set(),
-        None,
-        inner.runtime.edge.new_parameters(),
-        inner
-            .prepared
-            .last()
-            .unwrap()
-            .prepared
-            .header()
-            .unwrap()
-            .timestamp_ms(),
-        &trnm_consensus_crypto::StrictEd25519Verifier,
-    )
-    .unwrap();
     let good = application_child_proposal_v4(inner, Some(commitment));
     assert_eq!(good.block().header().height().get(), 18);
-    let paths = [
-        inner.runtime.application.path().to_path_buf(),
-        inner.runtime.journal.path_v1().to_path_buf(),
-        inner.runtime.ordinary.path().to_path_buf(),
-        inner.runtime.checkpoint_store.database_path().to_path_buf(),
-    ];
-    let before: Vec<_> = paths.iter().map(|p| sqlite_logical_image_v3(p)).collect();
     let calls = key.calls;
-    let error = owner.execute_checkpoint_proposal_v4(bad).unwrap_err();
-    assert!(error
-        .to_string()
-        .contains("checkpoint commitment differs from actual cutoff selection"));
-    assert_eq!(key.calls, calls);
-    assert!(
-        owner.inner.is_some(),
-        "read-only refusal must preserve the real owner"
-    );
-    for (path, expected) in paths.iter().zip(before) {
+    if exercise_negative_semantics {
+        let bad = application_child_proposal_v4(inner, Some(wrong));
+        bad.verify(
+            inner.runtime.edge.new_validator_set(),
+            None,
+            inner.runtime.edge.new_parameters(),
+            inner
+                .prepared
+                .last()
+                .unwrap()
+                .prepared
+                .header()
+                .unwrap()
+                .timestamp_ms(),
+            &trnm_consensus_crypto::StrictEd25519Verifier,
+        )
+        .unwrap();
+        let paths = [
+            inner.runtime.application.path().to_path_buf(),
+            inner.runtime.journal.path_v1().to_path_buf(),
+            inner.runtime.ordinary.path().to_path_buf(),
+            inner.runtime.checkpoint_store.database_path().to_path_buf(),
+        ];
+        let before: Vec<_> = paths.iter().map(|p| sqlite_logical_image_v3(p)).collect();
+        let error = owner.execute_checkpoint_proposal_v4(bad).unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("checkpoint commitment differs from actual cutoff selection"));
+        assert_eq!(key.calls, calls);
         assert!(
-            sqlite_logical_image_v3(path) == expected,
-            "bad commitment wrote {}",
-            path.display()
+            owner.inner.is_some(),
+            "read-only refusal must preserve the real owner"
         );
+        for (path, expected) in paths.iter().zip(before) {
+            assert!(
+                sqlite_logical_image_v3(path) == expected,
+                "bad commitment wrote {}",
+                path.display()
+            );
+        }
     }
     owner.execute_checkpoint_proposal_v4(good.clone()).unwrap();
     assert_eq!(key.calls, calls, "P/Valid is not a key call");
@@ -129,6 +134,18 @@ fn checkpoint_prepare_execute_v4(case: Box<CheckpointCaseV4>) -> Box<CheckpointC
     );
     assert_eq!(artifact.overlay().parent_block_id(), header.parent_id());
     Box::new((directory, owner, key))
+}
+
+#[inline(never)]
+fn checkpoint_prepare_execute_v4(case: Box<CheckpointCaseV4>) -> Box<CheckpointCaseV4> {
+    checkpoint_prepare_execute_v4_inner(case, true)
+}
+
+#[inline(never)]
+fn checkpoint_prepare_execute_positive_v4(
+    case: Box<CheckpointCaseV4>,
+) -> Box<CheckpointCaseV4> {
+    checkpoint_prepare_execute_v4_inner(case, false)
 }
 
 #[inline(never)]

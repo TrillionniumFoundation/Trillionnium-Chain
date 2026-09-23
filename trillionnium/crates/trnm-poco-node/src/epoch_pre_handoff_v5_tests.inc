@@ -110,7 +110,10 @@ fn genuine_seal_proposal_v5(
 }
 
 #[inline(never)]
-fn pre_handoff_pending_seal_vote_v5(case: Box<PreHandoffCaseV5>) -> Box<PreHandoffCaseV5> {
+fn pre_handoff_pending_seal_vote_v5_inner(
+    case: Box<PreHandoffCaseV5>,
+    exercise_negative_semantics: bool,
+) -> Box<PreHandoffCaseV5> {
     let (directory, mut owner, key) = *case;
     let previous = owner
         .inner
@@ -129,29 +132,34 @@ fn pre_handoff_pending_seal_vote_v5(case: Box<PreHandoffCaseV5>) -> Box<PreHando
         inner.runtime.ordinary.path().to_path_buf(),
         inner.runtime.checkpoint_store.database_path().to_path_buf(),
     ];
-    let before: Vec<_> = paths.iter().map(|p| sqlite_logical_image_v3(p)).collect();
+    let before = exercise_negative_semantics
+        .then(|| paths.iter().map(|p| sqlite_logical_image_v3(p)).collect::<Vec<_>>());
     let calls = key.calls;
-    for (nonempty, wrong_state) in [(true, false), (false, true)] {
-        let bad = genuine_seal_proposal_v5(&owner, nonempty, wrong_state);
-        assert!(owner
-            .admit_seal_proposal_v5(bad)
-            .unwrap_err()
-            .to_string()
-            .contains("seal proposal semantics"));
-        assert_eq!(key.calls, calls);
-        for (path, original) in paths.iter().zip(&before) {
-            assert!(
-                sqlite_logical_image_v3(path) == *original,
-                "rejected seal mutated {}",
-                path.display()
-            );
+    if exercise_negative_semantics {
+        for (nonempty, wrong_state) in [(true, false), (false, true)] {
+            let bad = genuine_seal_proposal_v5(&owner, nonempty, wrong_state);
+            assert!(owner
+                .admit_seal_proposal_v5(bad)
+                .unwrap_err()
+                .to_string()
+                .contains("seal proposal semantics"));
+            assert_eq!(key.calls, calls);
+            for (path, original) in paths.iter().zip(before.as_ref().unwrap()) {
+                assert!(
+                    sqlite_logical_image_v3(path) == *original,
+                    "rejected seal mutated {}",
+                    path.display()
+                );
+            }
         }
     }
     let proposal = genuine_seal_proposal_v5(&owner, false, false);
     let seal_header = proposal.block().header().clone();
     owner.admit_seal_proposal_v5(proposal.clone()).unwrap();
     assert_eq!(key.calls, calls);
-    assert!(owner.admit_seal_proposal_v5(proposal.clone()).is_err());
+    if exercise_negative_semantics {
+        assert!(owner.admit_seal_proposal_v5(proposal.clone()).is_err());
+    }
     let inner = owner.inner.as_ref().unwrap();
     assert!(inner.runtime.pending_epoch_commit.is_none());
     let state = inner.runtime.driver.state();
@@ -286,8 +294,45 @@ fn pre_handoff_pending_seal_vote_v5(case: Box<PreHandoffCaseV5>) -> Box<PreHando
 }
 
 #[inline(never)]
+fn pre_handoff_pending_seal_vote_v5(case: Box<PreHandoffCaseV5>) -> Box<PreHandoffCaseV5> {
+    pre_handoff_pending_seal_vote_v5_inner(case, true)
+}
+
+#[inline(never)]
+fn pre_handoff_pending_seal_vote_positive_v5(
+    case: Box<PreHandoffCaseV5>,
+) -> Box<PreHandoffCaseV5> {
+    pre_handoff_pending_seal_vote_v5_inner(case, false)
+}
+
+#[inline(never)]
 fn pre_handoff_seal_and_apply_v5(case: Box<PreHandoffCaseV5>) -> Box<PreHandoffCaseV5> {
     let (directory, owner, mut key) = *pre_handoff_pending_seal_vote_v5(case);
+    let seal_id = owner.seals.last().unwrap().block().id();
+    let calls = key.calls;
+    let (owner, vote) = owner.sign_seal_vote_v5(&mut key).unwrap();
+    assert_eq!(key.calls, calls + 1);
+    let trnm_consensus_core::OutboundMessage::Vote(vote) = vote else {
+        panic!("real seal Vote required")
+    };
+    assert_eq!(vote.block_id(), seal_id);
+    assert!(owner
+        .inner
+        .as_ref()
+        .unwrap()
+        .runtime
+        .driver
+        .state()
+        .pending_sign()
+        .is_none());
+    Box::new((directory, owner, key))
+}
+
+#[inline(never)]
+fn pre_handoff_seal_and_apply_positive_v5(
+    case: Box<PreHandoffCaseV5>,
+) -> Box<PreHandoffCaseV5> {
+    let (directory, owner, mut key) = *pre_handoff_pending_seal_vote_positive_v5(case);
     let seal_id = owner.seals.last().unwrap().block().id();
     let calls = key.calls;
     let (owner, vote) = owner.sign_seal_vote_v5(&mut key).unwrap();

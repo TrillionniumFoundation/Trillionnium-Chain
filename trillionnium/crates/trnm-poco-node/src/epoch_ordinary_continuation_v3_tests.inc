@@ -95,19 +95,25 @@ fn ordinary_cutoff_advance_v3(case: Box<OrdinaryCutoffCaseV3>) -> Box<OrdinaryCu
             let retained = &owner.inner.prepared[index].prepared;
             assert_eq!(retained.header().unwrap().id(), block);
             assert_eq!(retained.p_digest(), digest);
-            assert_eq!(
-                owner
-                    .inner
-                    .runtime
-                    .application
-                    .confirm_prepared_epoch_execution_v1(retained)
-                    .unwrap()
-                    .commit_sequence(),
-                None
-            );
         }
     }
     assert_eq!(key.calls, initial_calls + 4);
+    // The advancing loop already checks the retained in-memory identity after
+    // every commit. Reopen the final two retained descendants once here rather
+    // than repeating a complete SQLite/history audit eight times. Dedicated
+    // storage tests continue to cover each crash/reopen boundary separately.
+    for retained in &owner.inner.prepared {
+        assert_eq!(
+            owner
+                .inner
+                .runtime
+                .application
+                .confirm_prepared_epoch_execution_v1(&retained.prepared)
+                .unwrap()
+                .commit_sequence(),
+            None
+        );
+    }
     Box::new((directory, owner, key, last_proposal))
 }
 
