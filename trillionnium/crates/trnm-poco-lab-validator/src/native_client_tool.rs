@@ -25,7 +25,7 @@ use trnm_application_tx_builder_v0::{
 };
 const RESPONSE_LIMIT: usize = 8 * 1024 * 1024 + 16 * 1024;
 const REQUEST_LIMIT: usize = 528_384;
-const USAGE: &str = "native-client sync <observer-public-root> <config> <manifest-sha256> <private-socket> <replica-directory> <target-height> <profile-sha256> | sign <profile> <profile-sha256> <chain-id> <signer-id> <private-key> <nonce> <ttl-ms> <max-gas> <fee-limit> <command-json> <outer-output> | request <private-socket> <request-json> <response-output> <profile-sha256> <genesis-hash> | verify <observer-public-root> <config> <manifest-sha256> <response-json> <native-tx-hash> <exact-outer-file> <profile-sha256>";
+const USAGE: &str = "native-client sync-import <observer-public-root> <config> <manifest-sha256> <download-directory> <replica-directory> <target-height> <profile-sha256> | sync <observer-public-root> <config> <manifest-sha256> <private-socket> <replica-directory> <target-height> <profile-sha256> | sign <profile> <profile-sha256> <chain-id> <signer-id> <private-key> <nonce> <ttl-ms> <max-gas> <fee-limit> <command-json> <outer-output> | request <private-socket> <request-json> <response-output> <profile-sha256> <genesis-hash> | verify <observer-public-root> <config> <manifest-sha256> <response-json> <native-tx-hash> <exact-outer-file> <profile-sha256>";
 
 fn text(value: &OsString) -> Result<&str> {
     value.to_str().context("client argument is not UTF-8")
@@ -299,6 +299,20 @@ fn run_sync_v1(args: &[OsString]) -> Result<()> {
     );
     let socket = Path::new(&args[4]);
     let destination = Path::new(&args[5]);
+    if text(&args[0])? == "sync-import" {
+        let (head, digest) = crate::native_replay_sync_v1::import_download_v1(
+            socket,
+            destination,
+            configuration,
+            profile_hash,
+            target,
+        )?;
+        println!(
+            "{}",
+            json!({"candidate_only":true,"application_only":true,"signing_authority":false,"height":head.height().get(),"block_id":hex::encode(head.block_id().as_bytes()),"state_root":hex::encode(head.state_root().as_bytes()),"manifest_sha256":hex::encode(digest)})
+        );
+        return Ok(());
+    }
     let chain_id = context.validator_set().chain_id().as_str().to_owned();
     let genesis = *context.validator_set().genesis_hash().as_bytes();
     let deadline = Instant::now() + Duration::from_secs(600);
@@ -565,7 +579,7 @@ pub fn run_cli_v1(arguments: impl Iterator<Item = OsString>) -> Result<()> {
                 json!({"transport_response_received":true,"ok":decoded.ok,"proof_verified_by_client":false})
             );
         }
-        "sync" if args.len() == 8 => run_sync_v1(&args)?,
+        "sync" | "sync-import" if args.len() == 8 => run_sync_v1(&args)?,
         "verify" if args.len() == 8 => {
             let root = PathBuf::from(&args[1]);
             let config = PathBuf::from(&args[2]);
