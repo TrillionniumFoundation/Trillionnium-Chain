@@ -158,6 +158,119 @@ fn private_dir(path: &Path) -> Result<()> {
     }
     Ok(())
 }
+
+/// Consume original transferred bytes using the same authenticated executor as
+/// socket downloads. The directory and its manifest are never trust anchors.
+pub(crate) fn import_download_v1(
+    input: &Path,
+    destination: &Path,
+    configuration: impl Fn() -> Result<NativeApplicationConfigV0>,
+    profile: [u8; 32],
+    target: u64,
+) -> Result<(ApplicationHeadV0, [u8; 32])> {
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(600);
+    let held = OpenOptions::new()
+        .read(true)
+        .custom_flags(libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC)
+        .open(input)?;
+    let identity = held.metadata()?;
+    ensure!(
+        identity.is_dir()
+            && identity.uid() == rustix::process::geteuid().as_raw()
+            && identity.mode() & 0o777 == 0o700,
+        "sync download must be an owner-private directory"
+    );
+    let input = input.canonicalize()?;
+    let confirm = || -> Result<()> {
+        let named = fs::symlink_metadata(&input)?;
+        ensure!(
+            named.is_dir()
+                && !named.file_type().is_symlink()
+                && named.dev() == identity.dev()
+                && named.ino() == identity.ino()
+                && named.uid() == identity.uid()
+                && named.mode() & 0o777 == 0o700,
+            "sync download directory identity changed"
+        );
+        ensure!(
+            std::time::Instant::now() < deadline,
+            "sync download deadline expired"
+        );
+        Ok(())
+    };
+    confirm()?;
+    let destination = if destination.exists() {
+        ensure!(
+            !fs::symlink_metadata(destination)?.file_type().is_symlink(),
+            "sync destination alias"
+        );
+        destination.canonicalize()?
+    } else {
+        destination
+            .parent()
+            .context("sync destination parent")?
+            .canonicalize()?
+            .join(
+                destination
+                    .file_name()
+                    .context("sync destination filename")?,
+            )
+    };
+    ensure!(
+        !destination.starts_with(&input) && !input.starts_with(&destination),
+        "sync download and replica overlap"
+    );
+    let raw = read_bounded(&input.join("manifest.json"), MAX_MANIFEST_BYTES)?;
+    trnm_application_tx_builder_v0::validate_strict_json_structure_v0(&raw)?;
+    let manifest: ReplayManifestV1 = serde_json::from_slice(&raw)?;
+    let digest = manifest.digest()?;
+    let mut expected = std::collections::BTreeSet::from(["manifest.json".to_owned()]);
+    for (offset, record) in manifest.records.iter().enumerate() {
+        for index in 0..record.chunk_sha256.len() {
+            expected.insert(format!("chunk-{:03}-{index:03}.bin", offset + 1));
+        }
+    }
+    let mut seen = 0usize;
+    for entry in fs::read_dir(&input)? {
+        let entry = entry?;
+        seen += 1;
+        ensure!(seen <= expected.len(), "sync download inventory bound");
+        ensure!(
+            entry.file_type()?.is_file()
+                && entry
+                    .file_name()
+                    .to_str()
+                    .is_some_and(|n| expected.contains(n)),
+            "sync download unexpected file"
+        );
+    }
+    ensure!(seen == expected.len(), "sync download incomplete inventory");
+    confirm()?;
+    let mut receiver = NativeReplayReceiverV1::open(
+        &destination,
+        configuration()?,
+        profile,
+        target,
+        manifest.clone(),
+    )?;
+    for (offset, record) in manifest.records.iter().enumerate() {
+        let height = offset as u64 + 1;
+        for index in 0..record.chunk_sha256.len() {
+            confirm()?;
+            let bytes = read_bounded(
+                &input.join(format!("chunk-{height:03}-{index:03}.bin")),
+                CHUNK_BYTES,
+            )?;
+            // Exact retries also reauthenticate downloaded bytes; do not skip a
+            // poisoned input merely because its destination slot already exists.
+            receiver.accept_chunk(height, index, &bytes)?;
+        }
+    }
+    confirm()?;
+    let head = receiver.replay_and_publish(configuration()?)?;
+    confirm()?;
+    Ok((head, digest))
+}
 fn cleanup_interrupted_write(path: &Path) -> Result<()> {
     let parent = path.parent().context("sync parent")?;
     let name = path

@@ -621,6 +621,49 @@ fn verify_actual_native_replay_sync_v1(
     assert_eq!(head.height().get(),target);
     assert_eq!(hex::encode(head.block_id().as_bytes()),manifest.target_block_id);
     assert!(root.join("CURRENT").is_file()); drop(receiver);
+    // A separate consumer receives only original manifest/chunks. It has no
+    // validator socket or sender application/checkpoint/signing files.
+    let downloaded = temp.path().join("downloaded-original-replay");
+    create_private_directory_v0(&downloaded).unwrap();
+    std::fs::write(downloaded.join("manifest.json"), serde_json::to_vec(&manifest).unwrap()).unwrap();
+    for (height, index, bytes) in &transferred {
+        std::fs::write(downloaded.join(format!("chunk-{height:03}-{index:03}.bin")), bytes).unwrap();
+    }
+    let imported = temp.path().join("imported-replica");
+    let import = |input: &Path, destination: &Path| crate::native_replay_sync_v1::import_download_v1(
+        input, destination, || Ok(config()), profile_hash, target,
+    );
+    let (imported_head, digest) = import(&downloaded, &imported).unwrap();
+    assert_eq!(imported_head, head);
+    assert_eq!(digest, manifest.digest().unwrap());
+    assert_eq!(import(&downloaded, &imported).unwrap().0, head);
+    // JSON formatting is transport presentation, not a proof boundary.
+    std::fs::write(downloaded.join("manifest.json"), serde_json::to_vec_pretty(&serde_json::to_value(&manifest).unwrap()).unwrap()).unwrap();
+    assert_eq!(import(&downloaded, &imported).unwrap().0, head);
+    assert!(import(&downloaded, &downloaded.join("nested-output")).is_err());
+    let link = temp.path().join("download-symlink");
+    std::os::unix::fs::symlink(&downloaded, &link).unwrap();
+    assert!(import(&link, &temp.path().join("alias-import")).is_err());
+    let chunk = downloaded.join(format!("chunk-{:03}-{:03}.bin", transferred[0].0, transferred[0].1));
+    let original = std::fs::read(&chunk).unwrap();
+    let mut poison = original.clone(); poison[0] ^= 1;
+    std::fs::write(&chunk, poison).unwrap();
+    assert!(import(&downloaded, &imported).is_err(), "resume must recheck original input");
+    let rejected = temp.path().join("poisoned-import");
+    assert!(import(&downloaded, &rejected).is_err());
+    assert!(!rejected.join("CURRENT").exists());
+    std::fs::write(&chunk, &original).unwrap();
+    assert_eq!(import(&downloaded, &rejected).unwrap().0, head);
+    std::fs::write(downloaded.join("unexpected"), b"extra").unwrap();
+    let unexpected = temp.path().join("unexpected-import");
+    assert!(import(&downloaded, &unexpected).is_err());
+    assert!(!unexpected.exists());
+    std::fs::remove_file(downloaded.join("unexpected")).unwrap();
+    std::fs::remove_file(&chunk).unwrap();
+    let incomplete = temp.path().join("incomplete-import");
+    assert!(import(&downloaded, &incomplete).is_err());
+    assert!(!incomplete.exists());
+    std::fs::write(&chunk, &original).unwrap();
     let mut retry=NativeReplayReceiverV1::open(&root,config(),profile_hash,target,manifest.clone()).unwrap();
     assert_eq!(retry.replay_and_publish(config()).unwrap(),head); drop(retry);
     let app=trnm_native_execution_v0::DurableNativeApplicationV0::open(application_path.clone(),config()).unwrap();

@@ -952,6 +952,25 @@ are candidate transfer limits, not a hard SQLite disk quota or production SLO.
 Missing files, altered chunks, conflicting manifest, unsupported epoch, invalid proofs or execution mismatch retain the staged
 state and return an error; no invalid input is treated as an empty or virgin store.
 
+The `native-client sync-import` transport consumer takes the same independently
+pinned public manifest/configuration/profile and exact target height as `sync`.
+Its fourth path names a downloaded byte directory rather than a Unix socket.
+The directory contains only `manifest.json` and `chunk-{height:03}-{index:03}.bin`
+for every manifest coordinate. The source is an existing owner-private real
+directory, and source/destination must not overlap. Open source files with
+no-follow, single-link and bounded-length checks; reject unexpected/missing
+entries and directory replacement. Manifest JSON uses the existing strict JSON
+structure check and typed closed schema; JSON whitespace/key order has no trust
+significance, while hash and integer encodings retain their existing checks. Source bytes remain
+untrusted: every chunk passes the unchanged receiver hash checks, every original
+finality passes strict consensus verification and each signed transaction is
+reexecuted before the original durable CURRENT publication. A transport checksum
+alone grants no authority. A resumed receiver rechecks both the downloaded bytes
+and its persisted chunks. The original 600-second cooperative download deadline,
+record/chunk/aggregate limits and failure-preserving staging behavior apply.
+This enables a separate host to consume transferred originals without a local
+validator socket; no new HTTP endpoint or signing/epoch capability is issued.
+
 ### Ordinary proposal synchronization without a signing side effect (M13-ORDINARY-SYNC-V1)
 
 The live laboratory receiver has a second, deliberately narrower path for a
