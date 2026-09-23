@@ -279,13 +279,13 @@ fn build_actual_attachment_case_v8() -> (Box<RolesCaseV7>, Watermark) {
     trace_actual_attachment_phase_v8(started, "build.first-finality-ready");
     let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
     trace_actual_attachment_phase_v8(started, "build.cutoff-ready");
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
+    let checkpoint = checkpoint_prepare_execute_positive_v4(checkpoint_prepare_begin_v4(cutoff));
     trace_actual_attachment_phase_v8(started, "build.checkpoint-prepared");
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
+    let first_seal = pre_handoff_seal_and_apply_positive_v5(pre_handoff_begin_v5(checkpoint));
     trace_actual_attachment_phase_v8(started, "build.first-seal-ready");
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
+    let second_seal = pre_handoff_seal_and_apply_positive_v5(first_seal);
     trace_actual_attachment_phase_v8(started, "build.second-seal-ready");
-    let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
+    let roles = commission_actual_roles_positive_v7(pre_handoff_commit_v5(second_seal));
     trace_actual_attachment_phase_v8(started, "build.roles-commissioned");
     let roles = prepare_joint_roles_v8(roles);
     trace_actual_attachment_phase_v8(started, "build.ready");

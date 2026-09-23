@@ -310,6 +310,11 @@ fn journal9_initial_host_recovery_fresh_binds_then_persists_real_timeout() {
     reopened
         .confirm_exact_request_v1(next, request, &SafetyTransitionContextV0::ordinary())
         .unwrap();
+    // Process-local owner identity remains true after the head advances, but
+    // the strong freshness check must reject this now-stale receipt. This is
+    // the contract used by the node to avoid only an immediate duplicate
+    // fresh read; it cannot authorize a later callback or key use.
+    assert!(fresh.same_live_owner_at_path_v1(&reopened, &path));
     assert!(!fresh.belongs_to_store_at_path_v1(&reopened, &path));
     assert!(matches!(
         pending

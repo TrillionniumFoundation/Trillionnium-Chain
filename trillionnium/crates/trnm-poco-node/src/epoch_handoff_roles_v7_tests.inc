@@ -6,9 +6,9 @@ fn build_actual_role_source_v7() -> Box<PreHandoffCaseV5> {
     let unsigned = first_apply_unsigned_v2(live);
     let first = first_apply_children_v2(first_apply_start_v2(unsigned));
     let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
+    let checkpoint = checkpoint_prepare_execute_positive_v4(checkpoint_prepare_begin_v4(cutoff));
+    let first_seal = pre_handoff_seal_and_apply_positive_v5(pre_handoff_begin_v5(checkpoint));
+    let second_seal = pre_handoff_seal_and_apply_positive_v5(first_seal);
     pre_handoff_commit_v5(second_seal)
 }
 
@@ -31,7 +31,10 @@ type RolesCaseV7 = (
     Watermark,
 );
 #[inline(never)]
-fn commission_actual_roles_v7(case: Box<PreHandoffCaseV5>) -> Box<RolesCaseV7> {
+fn commission_actual_roles_v7_inner(
+    case: Box<PreHandoffCaseV5>,
+    exercise_negative_semantics: bool,
+) -> Box<RolesCaseV7> {
     use trnm_consensus_signer_journal::SqliteHandoffSignerJournalV1;
     let (directory, owner, key) = *case;
     let mut retired = owner.retire_outgoing_epoch_v6().unwrap();
@@ -51,50 +54,64 @@ fn commission_actual_roles_v7(case: Box<PreHandoffCaseV5>) -> Box<RolesCaseV7> {
     )
     .unwrap();
     super::confirm_role_profile_v7(&retired, &profile).unwrap();
-    let mut wrong = HandoffSignerJournalProfileV1::for_epoch_handoff(
-        strict.old_validator_set().clone(),
-        strict.new_validator_set().clone(),
-        *strict.old_consensus_parameters(),
-        *strict.new_consensus_parameters(),
-        profile.author(),
-        [0xff; 32],
-        [0xe8; 32],
-        64,
-        4096,
-        32 * 1024 * 1024,
-    )
-    .unwrap();
-    assert!(super::confirm_role_profile_v7(&retired, &wrong).is_err());
-    wrong = HandoffSignerJournalProfileV1::for_epoch_handoff(
-        strict.old_validator_set().clone(),
-        strict.new_validator_set().clone(),
-        *strict.old_consensus_parameters(),
-        *strict.new_consensus_parameters(),
-        profile.author(),
-        profile.signer_profile_ref(),
-        retired.retirement.record_v1().source_v1().scope(),
-        64,
-        4096,
-        32 * 1024 * 1024,
-    )
-    .unwrap();
-    assert!(super::confirm_role_profile_v7(&retired, &wrong).is_err());
+    if exercise_negative_semantics {
+        let mut wrong = HandoffSignerJournalProfileV1::for_epoch_handoff(
+            strict.old_validator_set().clone(),
+            strict.new_validator_set().clone(),
+            *strict.old_consensus_parameters(),
+            *strict.new_consensus_parameters(),
+            profile.author(),
+            [0xff; 32],
+            [0xe8; 32],
+            64,
+            4096,
+            32 * 1024 * 1024,
+        )
+        .unwrap();
+        assert!(super::confirm_role_profile_v7(&retired, &wrong).is_err());
+        wrong = HandoffSignerJournalProfileV1::for_epoch_handoff(
+            strict.old_validator_set().clone(),
+            strict.new_validator_set().clone(),
+            *strict.old_consensus_parameters(),
+            *strict.new_consensus_parameters(),
+            profile.author(),
+            profile.signer_profile_ref(),
+            retired.retirement.record_v1().source_v1().scope(),
+            64,
+            4096,
+            32 * 1024 * 1024,
+        )
+        .unwrap();
+        assert!(super::confirm_role_profile_v7(&retired, &wrong).is_err());
+    }
     let watermark = Watermark::default();
     let path = directory.path().join("outgoing-role.db");
     let mut journal =
         SqliteHandoffSignerJournalV1::create_new(&path, profile.clone(), watermark.clone())
             .unwrap();
     let selected = journal.confirm_head_exact_v1().unwrap();
-    let foreign_path = directory.path().join("foreign-role.db");
-    let mut foreign =
-        SqliteHandoffSignerJournalV1::create_new(&foreign_path, profile, Watermark::default())
-            .unwrap();
-    let foreign_facts = foreign.confirm_head_exact_v1().unwrap();
-    assert!(!foreign_facts.belongs_to_owner_at_path_v1(&mut journal, &path));
+    if exercise_negative_semantics {
+        let foreign_path = directory.path().join("foreign-role.db");
+        let mut foreign =
+            SqliteHandoffSignerJournalV1::create_new(&foreign_path, profile, Watermark::default())
+                .unwrap();
+        let foreign_facts = foreign.confirm_head_exact_v1().unwrap();
+        assert!(!foreign_facts.belongs_to_owner_at_path_v1(&mut journal, &path));
+    }
     let roles = retired.into_handoff_roles_v7(journal, selected).unwrap();
     assert_eq!(roles.retired.checkpoint, checkpoint);
     assert!(roles.old_signature.is_none() && roles.new_signature.is_none());
     Box::new((directory, roles, key, watermark))
+}
+
+#[inline(never)]
+fn commission_actual_roles_v7(case: Box<PreHandoffCaseV5>) -> Box<RolesCaseV7> {
+    commission_actual_roles_v7_inner(case, true)
+}
+
+#[inline(never)]
+fn commission_actual_roles_positive_v7(case: Box<PreHandoffCaseV5>) -> Box<RolesCaseV7> {
+    commission_actual_roles_v7_inner(case, false)
 }
 
 #[inline(never)]
@@ -227,9 +244,9 @@ fn role_callback_source_v7() -> (Box<RolesCaseV7>, Watermark) {
     let unsigned = first_apply_unsigned_v2(live);
     let first = first_apply_children_v2(first_apply_start_v2(unsigned));
     let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
-    let seal1 = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
-    let seal2 = pre_handoff_seal_and_apply_v5(seal1);
+    let checkpoint = checkpoint_prepare_execute_positive_v4(checkpoint_prepare_begin_v4(cutoff));
+    let seal1 = pre_handoff_seal_and_apply_positive_v5(pre_handoff_begin_v5(checkpoint));
+    let seal2 = pre_handoff_seal_and_apply_positive_v5(seal1);
     (
         commission_actual_roles_v7(pre_handoff_commit_v5(seal2)),
         incoming_watermark,

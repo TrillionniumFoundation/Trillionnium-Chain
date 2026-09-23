@@ -419,7 +419,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         ensure!(
             confirmed.state_record_checksum_v1() == expected.fields().target_safety.record_checksum
                 && confirmed.revision_v1() == expected.fields().target_safety.revision
-                && confirmed.belongs_to_store_at_path_v1(&journal, journal.path_v1()),
+                && confirmed.same_live_owner_at_path_v1(&journal, journal.path_v1()),
             "recovered Safety cut differs from the independent checkpoint"
         );
 
@@ -554,7 +554,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         ensure!(
             confirmed.state_record_checksum_v1() == expected.fields().target_safety.record_checksum
                 && confirmed.revision_v1() == expected.fields().target_safety.revision
-                && confirmed.belongs_to_store_at_path_v1(&journal, journal.path_v1()),
+                && confirmed.same_live_owner_at_path_v1(&journal, journal.path_v1()),
             "recovered Safety validation cut differs from the independent checkpoint"
         );
         ensure!(
@@ -878,7 +878,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         let safety = self.journal.fresh_read_v1(self.pin)?;
         ensure!(
             safety.state_v1() == self.driver.state()
-                && safety.belongs_to_store_at_path_v1(&self.journal, self.journal.path_v1()),
+                && safety.same_live_owner_at_path_v1(&self.journal, self.journal.path_v1()),
             "current Safety owner mismatch"
         );
         ensure!(
@@ -1670,7 +1670,7 @@ fn confirm_key_owners_v1<W: ExternalSignerRetirementV1>(
     ensure!(
         safety_cut(&safety) == checkpoint.fields().target_safety
             && safety.state_v1() == driver.state()
-            && safety.belongs_to_store_at_path_v1(journal, journal.path_v1()),
+            && safety.same_live_owner_at_path_v1(journal, journal.path_v1()),
         "Safety changed at key boundary"
     );
     confirm_native_application_cut_v3(application, edge, checkpoint)?;
@@ -1688,7 +1688,7 @@ fn confirm_key_owners_v1<W: ExternalSignerRetirementV1>(
     // deliberately still names the pre-signature head; only its exact two-event
     // successor can be installed after the signed journal returns.
     ensure!(
-        safety.belongs_to_store_at_path_v1(journal, journal.path_v1())
+        safety.same_live_owner_at_path_v1(journal, journal.path_v1())
             && edge
                 .durable_checkpoint()
                 .belongs_to_application_at_path_v0(application, application.path()),
@@ -1766,7 +1766,7 @@ fn join_initial<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>(
         &SafetyTransitionContextV0::ordinary(),
     )?;
     ensure!(
-        safety.belongs_to_store_at_path_v1(journal, journal.path_v1())
+        safety.same_live_owner_at_path_v1(journal, journal.path_v1())
             && safety.state_v1() == driver.state(),
         "Safety owner/state mismatch"
     );
@@ -1938,7 +1938,7 @@ fn join_initial<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>(
     ensure!(
         retirement.belongs_to_owner_v1(retired)
             && signer.belongs_to_operational_journal_at_path_v0(ordinary, ordinary.path())
-            && safety.belongs_to_store_at_path_v1(journal, journal.path_v1())
+            && safety.same_live_owner_at_path_v1(journal, journal.path_v1())
             && native.belongs_to_application_at_path(application, application.path()),
         "owners changed during activation join"
     );

@@ -308,6 +308,21 @@ impl ConfirmedEpochSafetyHeadV1 {
                     && fresh.transition_context_v1() == self.transition_context_v1()
             })
     }
+
+    /// Process-local owner/path identity only. This deliberately performs no
+    /// database read and therefore supplies no freshness or cryptographic
+    /// revalidation. It is safe only when the caller already holds this exact
+    /// ConfirmedEpochSafetyHeadV1 from a fresh read in the same synchronous
+    /// operation and needs to avoid immediately repeating that read. Any
+    /// callback, write, restart, or irreversible key use still requires the
+    /// full fresh confirmation path above.
+    pub fn same_live_owner_at_path_v1(
+        &self,
+        store: &SqliteEpochSafetyJournalV1,
+        path: &Path,
+    ) -> bool {
+        Arc::ptr_eq(&self.owner, &store.owner) && store.path_v1() == path
+    }
 }
 
 pub struct SqliteEpochSafetyJournalV1 {
