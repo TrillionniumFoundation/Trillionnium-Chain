@@ -11,14 +11,14 @@ NODE_SOURCE="$ROOT/trillionnium/crates/trnm-poco-node/src/lib.rs"
 NODE_P_HOST="$ROOT/trillionnium/crates/trnm-poco-node/src/native_proposal_p_host.rs"
 
 fail() {
-  printf TRNM native application SQLite boundary gate failed: %sn "$*" >&2
+  printf 'TRNM native application SQLite boundary gate failed: %s\n' "$*" >&2
   exit 1
 }
 
 for required in "$WORKSPACE_MANIFEST" "$MANIFEST" "$NODE_MANIFEST" "$NODE_SOURCE" "$NODE_P_HOST" \
   "$CRATE_ROOT/src/lib.rs" "$CRATE_ROOT/src/binding.rs" "$CRATE_ROOT/src/error.rs" \
   "$CRATE_ROOT/src/store.rs" "$CRATE_ROOT/src/finalization_history.rs" "$CRATE_ROOT/src/tests.rs"; do
-  [[ -f "$required" && ! -L "$required" ]] || fail "missing regular file: ${required#$ROOT/}"
+  [[ -f "$required" && ! -L "$required" ]] || fail "missing regular file: ${required#"$ROOT"/}"
 done
 
 python3 - "$WORKSPACE_MANIFEST" "$MANIFEST" "$NODE_MANIFEST" "$CRATE_ROOT" "$NODE_P_HOST" <<PY

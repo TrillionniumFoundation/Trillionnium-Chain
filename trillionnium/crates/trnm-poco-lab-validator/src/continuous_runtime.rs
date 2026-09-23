@@ -7186,12 +7186,13 @@ mod tests {
             .consensus_windows
             .synchronize_authoritative_progress_v0(View::new(7), &high_qc, None)
             .expect("prune direct-Proposal identity tail");
-        let stale = harness.authorities[0]
-            .admit_authenticated_consensus_frame_v0(&reconnect_replay)
-            .expect_err("pruned Proposal replay must be stale, not fresh");
-        assert!(stale
-            .to_string()
-            .contains("consensus statement view was pruned"));
+        assert!(
+            harness.authorities[0]
+                .admit_authenticated_consensus_frame_v0(&reconnect_replay)
+                .expect("pruned authenticated Proposal replay is an inert stale statement")
+                .is_none(),
+            "a fully verified statement below the retained-view watermark must be inert"
+        );
     }
 
     #[test]
