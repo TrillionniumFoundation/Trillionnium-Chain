@@ -164,6 +164,108 @@ def test_derives_committed_block_goodput_and_keeps_acceptance_false() -> None:
         assert report["production_activation"] is False
 
 
+
+
+def native_campaign_fixture(root: pathlib.Path) -> None:
+    summary = json.loads((root / "consensus-run-summary.json").read_text())
+    run_id = summary["run_id"]
+    anchor = summary["coordinator_manifest_sha256"]
+    validator_id = summary["processes"][0]["validator_id"]
+    records = []
+    for index in range(2):
+        native_hash = f"{index + 10:064x}"
+        response = {
+            "ok": True,
+            "profile_sha256": "77" * 32,
+            "candidate_only": True,
+            "data": {
+                "native_tx_hash": native_hash,
+                "receive_sequence": str(index + 1),
+                "status": "committed",
+            },
+        }
+        outer = b"{}"
+        records.append(
+            {
+                "kind": "funding" if index == 0 else "transfer",
+                "native_tx_hash": native_hash,
+                "outer_hex": outer.hex(),
+                "outer_sha256": hashlib.sha256(outer).hexdigest(),
+                "submitted_monotonic_ns": 1_200_000_000 + index * 200_000_000,
+                "ack_monotonic_ns": 1_210_000_000 + index * 200_000_000,
+                "verified_monotonic_ns": 1_220_000_000 + index * 200_000_000,
+                "ack": response,
+                "retry_ack": json.loads(json.dumps(response)),
+                "proof_response": json.loads(json.dumps(response)),
+                "mac_verification": {
+                    "candidate_only": True,
+                    "m05_intent_binding": False,
+                    "native_tx_hash": native_hash,
+                    "proof_verified_by_client": True,
+                    "height": "4",
+                    "index": index,
+                },
+            }
+        )
+    window = records[-1]["verified_monotonic_ns"] - records[1]["submitted_monotonic_ns"]
+    write(
+        root / "native-client-campaign.json",
+        {
+            "schema": "trnm.native-client-campaign.v1",
+            "run_id": run_id,
+            "coordinator_manifest_sha256": anchor,
+            "profile_sha256": "77" * 32,
+            "submit_validator_id": validator_id,
+            "signing_host": "mac",
+            "verification_host": "mac",
+            "transport": "ssh-private-unix-ipc",
+            "started_monotonic_ns": 1_100_000_000,
+            "completed_monotonic_ns": 1_800_000_000,
+            "business_transfer_count": 1,
+            "business_window_ns": window,
+            "business_goodput_per_second": 1_000_000_000 / window,
+            "records": records,
+            "candidate_only": True,
+            "m05_intent_binding": False,
+            "fault_matrix_completed": False,
+            "performance_acceptance": False,
+            "host_attestation": False,
+            "production_activation": False,
+        },
+    )
+
+
+def test_joins_only_proof_verified_native_business_goodput() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-candidate-performance-") as raw:
+        root = pathlib.Path(raw)
+        fixture(root)
+        native_campaign_fixture(root)
+        report = collector.collect(root)
+        assert report["measurement"]["transaction_goodput_transfers"] == 1
+        assert report["measurement"]["transaction_goodput_tps"] == 50.0
+        assert "client-verified finalized proof" in report["measurement"]["transaction_goodput_scope"]
+        assert report["measurement"]["native_campaign_sha256"] is not None
+        assert report["performance_evidence"] is False
+        assert report["production_activation"] is False
+
+
+def test_rejects_native_goodput_without_client_verified_proof() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-candidate-performance-") as raw:
+        root = pathlib.Path(raw)
+        fixture(root)
+        native_campaign_fixture(root)
+        path = root / "native-client-campaign.json"
+        campaign = json.loads(path.read_text())
+        campaign["records"][1]["mac_verification"]["proof_verified_by_client"] = False
+        write(path, campaign)
+        try:
+            collector.collect(root)
+        except RuntimeError as error:
+            assert "independent verification summary differs" in str(error)
+        else:
+            raise AssertionError("unverified native business goodput was accepted")
+
+
 def test_rejects_raw_artifact_mutation_after_runner_summary() -> None:
     with tempfile.TemporaryDirectory(prefix="trnm-candidate-performance-") as raw:
         root = pathlib.Path(raw)
@@ -251,6 +353,8 @@ def test_rejects_rehashed_terminal_state_substitution() -> None:
 
 if __name__ == "__main__":
     test_derives_committed_block_goodput_and_keeps_acceptance_false()
+    test_joins_only_proof_verified_native_business_goodput()
+    test_rejects_native_goodput_without_client_verified_proof()
     test_rejects_raw_artifact_mutation_after_runner_summary()
     test_rejects_raw_report_semantic_substitution_even_when_rehashed()
     test_rejects_duplicate_and_missing_validator_process_records()

@@ -21,6 +21,8 @@ import sys
 import tomllib
 from typing import Any
 
+import native_client_campaign_v1 as native_campaign
+
 
 HERE = pathlib.Path(__file__).resolve().parent
 INVENTORY = HERE / "inventory.toml"
@@ -337,6 +339,32 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
     topology_projection_sha256 = topology
     committed = next(iter(committed_blocks))
     finalized = next(iter(finalized_blocks))
+
+    transaction_goodput_tps = None
+    transaction_goodput_scope = None
+    transaction_goodput_transfers = 0
+    native_campaign_sha256 = None
+    native_path = run_root / native_campaign.ARTIFACT
+    if native_path.exists():
+        native_document = read_json(native_path, "native client campaign")
+        native_campaign.validate_document(
+            native_document,
+            run_id=run_id,
+            anchor=anchor,
+            validator_ids=observed_validator_ids,
+        )
+        if not started_ns <= native_document["started_monotonic_ns"] < native_document["completed_monotonic_ns"] <= ended_ns:
+            fail("native campaign timing is outside the completed validator lifetime")
+        if native_document["business_transfer_count"] <= 0:
+            fail("native campaign has no finalized business transfer")
+        transaction_goodput_tps = native_document["business_goodput_per_second"]
+        transaction_goodput_transfers = native_document["business_transfer_count"]
+        transaction_goodput_scope = (
+            "sequential signed business transfers counted only after client-verified finalized proof; "
+            "collector validates the retained campaign but does not replace independent binary re-verification"
+        )
+        native_campaign_sha256 = sha256_file(native_path, "native client campaign")
+
     return {
         "schema_version": 1,
         "profile": "candidate-committed-performance-v1",
@@ -357,7 +385,10 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
             "finalized_ordinary_blocks": finalized,
             "finalized_height": next(iter(finalized_heights)),
             "finality_cut_agreement": True,
-            "transaction_goodput_tps": None,
+            "transaction_goodput_tps": transaction_goodput_tps,
+            "transaction_goodput_transfers": transaction_goodput_transfers,
+            "transaction_goodput_scope": transaction_goodput_scope,
+            "native_campaign_sha256": native_campaign_sha256,
         },
         "recovery": {
             "recovery_evidence_present": False,
