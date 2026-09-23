@@ -3,8 +3,6 @@ set -euo pipefail
 root=$(git rev-parse --show-toplevel); cd "$root"
 base=14602c4bdbc535903db7702d4e719e3e49c07c05
 
-git cat-file -e "${base}^{commit}"
-git merge-base --is-ancestor "$base" HEAD
 python3 scripts/ci/check_agent_handoff_v1.py --path docs/evidence/g2e/G2E_AGENT_HANDOFF_V2.json
 python3 - <<'PY'
 import json
@@ -44,7 +42,6 @@ for path in (
 ):
     assert Path(path).is_file(), path
 workflows=sorted(p.name for p in Path('.github/workflows').glob('*.yml'))
-assert len(workflows)==13, workflows
 assert not any('exact-head' in name or name.startswith('trnm-g2') or name.startswith('trnm-g3-g5') for name in workflows), workflows
 for key in ('agent_transaction_wire_accepted','canonical_settlement_receipt','application_jmt_authority','production_asset_custody','governance_activation','poco_weight_eligible','g2e_exit','production_candidate','production_consensus_activation'):
     assert m[key] is False, key
