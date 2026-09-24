@@ -76,7 +76,7 @@ impl<
     }
 }
 
-fn confirm_attachment_source_v8<
+fn confirm_attachment_custody_v8<
     W: ExternalSignerRetirementV1,
     N: ExternalSignerRetirementV1,
     H: ExternalMonotonicWatermarkV0,
@@ -97,14 +97,9 @@ fn confirm_attachment_source_v8<
         "joint attachment exact role head/fence changed"
     );
     confirm_role_profile_v7(&roles.retired, roles.journal.profile())?;
-    // This recomputes the original tag3 from actual source/current-N owners.
-    // It does not read the independent node store as tag3 after its CAS to tag4.
-    ensure!(
-        roles.retired.join_target_v6()? == roles.retired.checkpoint,
-        "joint attachment original retired cut changed"
-    );
-    // No external callback follows these complete local comparisons. The
-    // native/Safety recovery and node reads below are local-only as well.
+    // These are immutable handoff/custody owners after successor activation.
+    // They remain valid historical dependencies even after the native current
+    // head advances inside the successor epoch.
     roles.head.confirm_local_owner_v1(&roles.journal)?;
     roles
         .retired
@@ -115,6 +110,24 @@ fn confirm_attachment_source_v8<
         .source
         .incoming_retirement
         .confirm_local_owner_v1(&roles.retired.source.incoming_retired)?;
+    Ok(())
+}
+
+fn confirm_attachment_source_v8<
+    W: ExternalSignerRetirementV1,
+    N: ExternalSignerRetirementV1,
+    H: ExternalMonotonicWatermarkV0,
+>(
+    roles: &mut EpochHandoffRolesRuntimeV7<W, N, H>,
+) -> Result<()> {
+    confirm_attachment_custody_v8(roles)?;
+    // Before successor activation the retired V6 cut is also the current
+    // application cut.  Do not reuse this current-cut assertion after V10 has
+    // legitimately advanced the native head.
+    ensure!(
+        roles.retired.join_target_v6()? == roles.retired.checkpoint,
+        "joint attachment original retired cut changed"
+    );
     Ok(())
 }
 
@@ -350,8 +363,8 @@ impl<
         target.validate_successor_of(&source)?;
         Ok(target)
     }
-    fn confirm_native_and_custody_v8(&mut self) -> Result<()> {
-        confirm_attachment_source_v8(&mut self.roles)?;
+    fn confirm_retained_attachment_v8(&mut self) -> Result<()> {
+        confirm_attachment_custody_v8(&mut self.roles)?;
         validate_joint_kernel_v8(&self.roles, &self.kernel)?;
         let app = &self.roles.retired.source.application;
         let requirements =
@@ -367,6 +380,14 @@ impl<
             "joint attachment target changed"
         );
         Ok(())
+    }
+
+    fn confirm_native_and_custody_v8(&mut self) -> Result<()> {
+        // V8 still requires the old retired cut to be the current application
+        // cut.  V10+ uses `confirm_retained_attachment_v8` plus its own current
+        // checkpoint/native readback instead.
+        confirm_attachment_source_v8(&mut self.roles)?;
+        self.confirm_retained_attachment_v8()
     }
     /// Fresh read-only comparison. Failure permanently fences this retained owner.
     pub fn confirm_attached_cut_v8(&mut self) -> Result<EpochNodeCheckpointV1> {

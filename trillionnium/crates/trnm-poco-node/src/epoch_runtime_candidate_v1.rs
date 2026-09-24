@@ -2042,3 +2042,5 @@ include!("epoch_handoff_attachment_v8.inc");
 include!("epoch_successor_activation_v9.inc");
 
 include!("epoch_successor_first_application_v10.inc");
+
+include!("epoch_successor_continuation_v11.inc");

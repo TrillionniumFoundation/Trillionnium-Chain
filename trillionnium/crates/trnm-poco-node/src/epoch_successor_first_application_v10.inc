@@ -609,6 +609,10 @@ impl<
             checkpoint,
             ..
         } = runtime;
+        confirm_successor_non_signer_owners_v10(
+            source, driver, journal, *pin, checkpoint, prepared,
+        )
+        .context("successor pre-key owner revalidation")?;
         let mut guarded = FreshEpochSignatureProducerV1 {
             producer,
             expected: &canonical,
@@ -795,7 +799,7 @@ fn confirm_successor_non_signer_owners_v10<
         .retired
         .checkpoint_store
         .confirm_exact(checkpoint)?;
-    source.confirm_native_and_custody_v8()?;
+    source.confirm_retained_attachment_v8()?;
     let fresh = journal.fresh_read_v4(pin)?;
     ensure!(
         fresh.belongs_to_store_at_path_v4(journal, journal.path_v4())

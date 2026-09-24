@@ -525,40 +525,203 @@ fn actual_successor_first_application_persists_executes_and_votes_v10() {
         .application()
         .reopen_prepared_epoch_execution_v1(block_id)
         .unwrap();
-    let descendants = native_epoch_descendants_v1(
-        &prepared.header().unwrap(),
-        owner.runtime.driver.config().validator_set(),
-        owner.runtime.driver.config().consensus_parameters(),
-    );
-    let mut headers = vec![prepared.header().unwrap()];
-    headers.extend(descendants);
-    let strict = owner
-        .runtime
-        .driver
-        .state()
-        .epoch_state_v1()
-        .unwrap()
-        .strict_context()
+    let confirmed = owner
+        .application()
+        .confirm_prepared_epoch_execution_v1(&prepared)
         .unwrap();
-    let proof =
-        trnm_native_execution_v0::test_fixtures::epoch_first_finality_from_runtime(
-            &strict,
-            &headers,
-        );
-    let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
-    let mut owner = owner
-        .commit_first_finality_v10(&proof, &mut budget)
-        .expect("successor first application strict finality commits native K");
-    let cut = owner.committed_checkpoint_v10().unwrap();
-    assert_eq!(cut.fields().phase, super::EpochCheckpointPhaseV1::Ordinary);
-    assert_eq!(cut.fields().application.height, owner.edge().first_application_height());
-    assert_eq!(cut.fields().application.block_id, block_id);
-    assert_eq!(cut.fields().ordinary.unwrap().sequence, 2);
+    assert_eq!(confirmed.commit_sequence(), None, "V10 must stop before native K");
+    assert_eq!(owner.runtime.checkpoint.fields().ordinary.unwrap().sequence, 2);
     assert!(owner.runtime.driver.state().pending_sign().is_none());
-    assert_eq!(
+    assert_ne!(
         owner.application().confirmed_committed_head_v0().unwrap().block_id().as_bytes(),
-        &block_id
+        &block_id,
+        "V10 Vote alone must not manufacture application finality"
     );
     assert_eq!(watermark.0.lock().unwrap().0.unwrap().sequence(), 2);
+    assert!(directory.path().is_dir());
+}
+
+
+type SuccessorFinalityCaseV11 =
+    super::SuccessorFinalizationRuntimeV11<Watermark, Watermark, Watermark, Watermark>;
+
+fn successor_child_proposal_v11(owner: &SuccessorFinalityCaseV11) -> SignedProposalV0 {
+    use ed25519_dalek::Signer;
+    let parent_header = owner
+        .prepared_headers_v11()
+        .unwrap()
+        .last()
+        .unwrap()
+        .clone();
+    let set = owner.set_v11();
+    let parameters = owner.parameters_v11();
+    let parent = owner
+        .application_v11()
+        .reopen_prepared_epoch_execution_v1(*parent_header.id().as_bytes())
+        .unwrap();
+    let request = trnm_native_execution_v0::NativeBlockPreviewRequestV0::new(
+        trnm_native_application::ChainIdV0::new(set.chain_id().as_str()).unwrap(),
+        trnm_native_application::GenesisHashV0::new(*set.genesis_hash().as_bytes()).unwrap(),
+        parent.overlay_parent_head().unwrap(),
+        trnm_native_application::HeightV0::new(parent_header.height().get() + 1),
+        parent_header.timestamp_ms() + 1,
+        trnm_native_application::ValidatorSetIdV0::new(*set.id().as_bytes()).unwrap(),
+        Vec::new(),
+    )
+    .unwrap();
+    let preview = owner
+        .application_v11()
+        .preview_epoch_descendant_v1(&parent, &request)
+        .unwrap();
+    let view = View::new(parent_header.view().get() + 1);
+    let proposer = trnm_consensus_core::leader_for(set, view);
+    let header = BlockHeader::new(
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        view,
+        trnm_consensus_types::Height::new(request.height().get()),
+        BlockKind::Regular,
+        parent_header.id(),
+        proposer,
+        set.id(),
+        parameters.hash(),
+        PayloadDigest::new(*preview.payload_root().as_bytes()),
+        StateRoot::new(*preview.post_state_root().as_bytes()),
+        ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
+        EvidenceRoot::new(*preview.evidence_root().as_bytes()),
+        request.timestamp_ms(),
+        None,
+    )
+    .unwrap();
+    let justify = QcReferenceV0::ordinary(first_apply_qc_v2(&parent_header, set));
+    let root = ProposalWitnessV0::signing_root_for(&header, &justify, None, None).unwrap();
+    let index = set
+        .validators()
+        .iter()
+        .position(|validator| validator.id() == proposer)
+        .unwrap();
+    let witness = ProposalWitnessV0::new(
+        &header,
+        justify,
+        None,
+        None,
+        SignatureBytes::from_array(
+            SigningKey::from_bytes(&[20 + index as u8; 32])
+                .sign(root.as_bytes())
+                .to_bytes(),
+        ),
+        set,
+        None,
+        parameters,
+        parent_header.timestamp_ms(),
+    )
+    .unwrap();
+    SignedProposalV0::new(
+        Block::new(
+            header,
+            trnm_consensus_types::ApplicationPayloadV0::new(Vec::new())
+                .unwrap()
+                .try_cev0_bytes()
+                .unwrap(),
+            Vec::new(),
+        )
+        .unwrap(),
+        witness,
+        set,
+        None,
+        parameters,
+        parent_header.timestamp_ms(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn actual_successor_core_finalizes_and_applies_first_new_v11() {
+    let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
+    let unsigned = first_apply_unsigned_v2(live);
+    let first = first_apply_children_v2(first_apply_start_v2(unsigned));
+    let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
+    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
+    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
+    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
+    let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
+    let (directory, owner, mut key, watermark) =
+        *activate_live_successor_v10(prepare_joint_roles_v8(roles));
+
+    let first_proposal = successor_first_proposal_v10(&owner);
+    let first_id = *first_proposal.block().id().as_bytes();
+    let owner = owner.begin_first_application_v10().unwrap();
+    let owner = owner.admit_first_proposal_v10(first_proposal).unwrap();
+    let (owner, _) = owner.execute_first_proposal_v10().unwrap();
+    let (owner, vote) = owner.sign_first_vote_v10(&mut key).unwrap();
+    assert!(matches!(vote, trnm_consensus_core::OutboundMessage::Vote(_)));
+
+    let mut owner = owner.begin_finalization_v11().unwrap();
+    for _ in 0..2 {
+        let proposal = successor_child_proposal_v11(&owner);
+        owner = owner.execute_ordinary_child_v11(proposal).unwrap();
+        let (next, vote) = owner.sign_child_vote_v11(&mut key).unwrap();
+        assert!(matches!(vote, trnm_consensus_core::OutboundMessage::Vote(_)));
+        owner = next;
+    }
+    let headers = owner.prepared_headers_v11().unwrap();
+    assert_eq!(headers.len(), 3);
+    let qc = first_apply_qc_v2(headers.last().unwrap(), owner.set_v11());
+    let owner = owner.observe_front_qc_v11(qc).unwrap();
+    let mut owner = owner
+        .apply_front_v11(&mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0())
+        .unwrap();
+    let checkpoint = owner.settled_checkpoint_v11().unwrap();
+    assert_eq!(checkpoint.fields().application.block_id, first_id);
+    assert_eq!(
+        owner
+            .application_v11()
+            .confirmed_committed_head_v0()
+            .unwrap()
+            .block_id()
+            .as_bytes(),
+        &first_id
+    );
+
+    // Keep the same live Core/native/Safety/signer owners and slide the real
+    // three-P window until the authenticated snapshot cutoff. No synthetic
+    // finality bytes or owner reset is allowed between fronts.
+    let geometry = trnm_consensus_types::EpochGeometryV0::new(
+        owner.set_v11().epoch(),
+        owner.parameters_v11(),
+    )
+    .unwrap();
+    let cutoff_height = geometry
+        .checkpoint_height()
+        .get()
+        .checked_sub(owner.parameters_v11().snapshot_lead_blocks())
+        .unwrap();
+    while owner.settled_checkpoint_v11().unwrap().fields().application.height < cutoff_height {
+        let proposal = successor_child_proposal_v11(&owner);
+        owner = owner.execute_ordinary_child_v11(proposal).unwrap();
+        let (next, vote) = owner.sign_child_vote_v11(&mut key).unwrap();
+        assert!(matches!(vote, trnm_consensus_core::OutboundMessage::Vote(_)));
+        owner = next;
+        let headers = owner.prepared_headers_v11().unwrap();
+        let qc = first_apply_qc_v2(headers.last().unwrap(), owner.set_v11());
+        owner = owner.observe_front_qc_v11(qc).unwrap();
+        owner = owner
+            .apply_front_v11(&mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0())
+            .unwrap();
+    }
+    let cutoff = owner.settled_checkpoint_v11().unwrap();
+    assert_eq!(cutoff.fields().application.height, cutoff_height);
+    assert_eq!(
+        owner.application_v11().confirmed_committed_head_v0().unwrap().height().get(),
+        cutoff_height
+    );
+    let retained = owner.prepared_headers_v11().unwrap();
+    assert_eq!(retained.len(), 2);
+    assert_eq!(retained[0].height().get(), cutoff_height + 1);
+    assert_eq!(retained[1].height().get(), cutoff_height + 2);
+    let signer_sequence = watermark.0.lock().unwrap().0.unwrap().sequence();
+    assert!(signer_sequence >= 6 && signer_sequence.is_multiple_of(2));
     assert!(directory.path().is_dir());
 }
