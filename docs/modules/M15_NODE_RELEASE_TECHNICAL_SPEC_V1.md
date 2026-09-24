@@ -766,6 +766,18 @@ End-to-end activated runtime and new lease validation remain separate acceptance
 
 ### Native candidate fleet application identity and source aliases
 
+The real fleet Ready phase shares the already-defined 630-second absolute
+startup budget (330-second mesh envelope plus 300-second commissioning bound).
+The deadline is captured before runtime effects and is not restarted when a
+fast validator finishes commissioning. Using the 30-second launch-skew bound
+for this wait incorrectly rejects slower hosts that are still within their
+commissioning allowance. After the complete N/N ReadySet, Start exchange retains
+its 30-second limit and is additionally capped by the original startup deadline.
+All signatures, exact session-generation bindings, N/N admission, stale-session
+rejection and fsynced certificate/readback checks are unchanged. These are local
+startup budgets, not protocol liveness or throughput results.
+
+
 The actual `FleetCampaignIdentityV1` legacy constructor continues to require
 nonzero corpus and policy hashes. The explicit `new_native_v1` constructor
 uses the previously invalid pair of zero workload hashes as a reserved native

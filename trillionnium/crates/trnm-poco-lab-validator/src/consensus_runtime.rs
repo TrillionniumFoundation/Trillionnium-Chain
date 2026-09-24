@@ -418,7 +418,9 @@ const RUNTIME_FINAL_STATE_FILE_V1: &str = "runtime-final-state.json";
 const FLEET_START_CERTIFICATE_FILE_V1: &str = "fleet-start-certificate.bin";
 const FLEET_START_CERTIFICATE_NEXT_FILE_V1: &str = "fleet-start-certificate.next";
 const FLEET_BARRIER_ROUND_V1: u64 = CONSENSUS_RUNTIME_FLEET_BARRIER_ROUND_V1;
-const FLEET_BARRIER_TIMEOUT_V1: Duration =
+// Once all Ready statements exist, only the original 30-second Start exchange
+// allowance remains, still capped by the absolute startup deadline.
+const FLEET_START_EXCHANGE_TIMEOUT_V1: Duration =
     Duration::from_secs(CONSENSUS_RUNTIME_FLEET_LAUNCH_SKEW_ALLOWANCE_SECONDS_V1);
 const MAXIMUM_PRESTART_ORDINARY_INGRESS_V1: usize = 256;
 const MAXIMUM_PREPARED_NORMAL_FRAME_DROPS_V1: u64 = 262_144;
@@ -1013,6 +1015,7 @@ where
         config.has_local_consensus_secret(),
         fleet_producer.is_some(),
     )?;
+    let startup_deadline = fleet_ready_deadline_v1(Instant::now())?;
     let preflight = ConsensusRuntimePreflightV1::new(&config, duration, max_blocks, &report_path)?;
     let runtime_event_producer =
         runtime_event_producer.map(SharedRuntimeEventSignatureProducerV1::new);
@@ -1171,7 +1174,7 @@ where
                 .context("write bounded runtime control locator")?;
             let barrier = match run_fleet_barrier_v1(
                 &config,
-                &authority,crate::consensus_runtime::FleetBarrierIoV1 { mesh: &mesh, event_journal: &mut event_journal, replay_archive: &replay_archive, runtime_control: &mut runtime_control },
+                &authority,crate::consensus_runtime::FleetBarrierIoV1 { mesh: &mesh, event_journal: &mut event_journal, replay_archive: &replay_archive, runtime_control: &mut runtime_control, startup_deadline },
                 &preflight,
                 fleet_producer,
             )
@@ -1948,6 +1951,28 @@ struct FleetBarrierIoV1<'a> {
     event_journal: &'a mut RuntimeEventJournalV1,
     replay_archive: &'a SignedReplayArchiveV1,
     runtime_control: &'a mut RuntimeControlServerV1,
+    startup_deadline: Instant,
+}
+
+// This is the existing total commissioning + mesh envelope, measured once
+// before runtime effects. Entering Ready late must never restart that budget.
+fn fleet_ready_deadline_v1(started_at: Instant) -> Result<Instant> {
+    started_at
+        .checked_add(Duration::from_secs(
+            CONSENSUS_RUNTIME_STARTUP_ALLOWANCE_SECONDS_V1,
+        ))
+        .context("fleet startup deadline overflows")
+}
+
+fn fleet_start_deadline_v1(startup_deadline: Instant, ready_at: Instant) -> Result<Instant> {
+    ensure!(
+        ready_at < startup_deadline,
+        "fleet startup allowance exhausted before ReadySet"
+    );
+    Ok(ready_at
+        .checked_add(FLEET_START_EXCHANGE_TIMEOUT_V1)
+        .context("fleet Start exchange deadline overflows")?
+        .min(startup_deadline))
 }
 
 fn run_fleet_barrier_v1(
@@ -1962,7 +1987,12 @@ fn run_fleet_barrier_v1(
         event_journal,
         replay_archive,
         runtime_control,
+        startup_deadline,
     } = io;
+    ensure!(
+        Instant::now() < startup_deadline,
+        "fleet startup allowance exhausted before local Ready"
+    );
     let initial_facts = authority.facts_v0()?;
     require_prestart_authority_cut_v1(initial_facts, replay_archive)?;
     let context = fleet_campaign_context_v1(config, preflight, initial_facts)?;
@@ -2007,9 +2037,9 @@ fn run_fleet_barrier_v1(
             == FleetBarrierAdmissionV1::New,
         "fresh fleet barrier treated local Ready as a replay"
     );
-    let deadline = Instant::now()
-        .checked_add(FLEET_BARRIER_TIMEOUT_V1)
-        .ok_or_else(|| anyhow!("fleet barrier deadline overflows"))?;
+    // A fast host waits for peers still performing their independently bounded
+    // real commissioning. Launch skew is not the peer commissioning allowance.
+    let deadline = startup_deadline;
     let mut barrier = FleetBarrierOwnerV1 {
         config,
         mesh,
@@ -2025,6 +2055,7 @@ fn run_fleet_barrier_v1(
     };
     barrier.enqueue_originated_v1(FrameKind::FleetReady, local_ready.encode())?;
     barrier.wait_for_ready_set_v1()?;
+    barrier.deadline = fleet_start_deadline_v1(startup_deadline, Instant::now())?;
 
     let ready_set = barrier
         .admission
@@ -2085,6 +2116,10 @@ fn run_fleet_barrier_v1(
     ensure!(
         barrier.outbox.is_empty() && barrier.mesh.pending_outbound_bytes_v1()? == 0,
         "fleet barrier acquired a late outbound obligation before FleetStarted"
+    );
+    ensure!(
+        Instant::now() < barrier.deadline,
+        "fleet Start publication exceeded startup/exchange budget"
     );
     barrier
         .event_journal
@@ -9912,6 +9947,43 @@ mod tests {
         candidate.journal_head_sequence = u64::MAX;
         candidate.journal_next_sequence = 0;
         rejects(candidate);
+    }
+
+    #[test]
+    fn fleet_ready_wait_uses_existing_startup_not_launch_skew_v1() {
+        let started = Instant::now();
+        let ready_deadline = fleet_ready_deadline_v1(started).unwrap();
+        assert_eq!(
+            ready_deadline.duration_since(started),
+            Duration::from_secs(630)
+        );
+        // Actual LAN counterexample: the first host is ready at 4s, while a
+        // slower host is ready at 37s. The old 4+30s deadline rejected it.
+        let slow_ready = started + Duration::from_secs(37);
+        assert!(slow_ready > started + Duration::from_secs(4) + FLEET_START_EXCHANGE_TIMEOUT_V1);
+        assert!(slow_ready < ready_deadline);
+        assert_eq!(
+            fleet_start_deadline_v1(ready_deadline, slow_ready).unwrap(),
+            started + Duration::from_secs(67),
+        );
+    }
+
+    #[test]
+    fn fleet_start_exchange_never_renews_absolute_startup_budget_v1() {
+        let started = Instant::now();
+        let deadline = fleet_ready_deadline_v1(started).unwrap();
+        for seconds in [0, 37, 300, 599, 600, 601, 629] {
+            let ready_at = started + Duration::from_secs(seconds);
+            let exchange = fleet_start_deadline_v1(deadline, ready_at).unwrap();
+            assert!(exchange <= deadline);
+            assert!(exchange.duration_since(ready_at) <= Duration::from_secs(30));
+        }
+        assert_eq!(
+            fleet_start_deadline_v1(deadline, started + Duration::from_secs(629)).unwrap(),
+            deadline
+        );
+        assert!(fleet_start_deadline_v1(deadline, deadline).is_err());
+        assert!(fleet_start_deadline_v1(deadline, deadline + Duration::from_nanos(1)).is_err());
     }
 
     #[test]
