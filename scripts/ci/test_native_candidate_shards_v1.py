@@ -17,7 +17,20 @@ from unittest.mock import patch
 
 import run_native_candidate_shards_v1 as runner
 
-SAFETY_NAMES = sorted(["future_journal_case", *runner.SAFETY_IGNORED, *runner.SAFETY_REQUIRED_DRIVERS])
+NATIVE_IGNORED = {
+    runner.BRIDGE + "historical_replay_continuation_sigkill_child",
+    runner.BRIDGE + "historical_replay_install_sigkill_child",
+    runner.BRIDGE + "later_descendant_c22_sigkill_child",
+    runner.PRE_HANDOFF + "sigkill_child",
+}
+SAFETY_IGNORED = {
+    "journal10_initialization_crash_child",
+    "journal10_post_initial_crash_child",
+    "journal11_sigkill_child",
+    "journal12::journal12_sigkill_child",
+}
+
+SAFETY_NAMES = sorted(["future_journal_case", *SAFETY_IGNORED, *runner.SAFETY_REQUIRED_DRIVERS])
 
 NODE_NAMES = sorted(["ordinary::new_test", runner.NODE_EPOCH_PREFIX + "future_runtime", *runner.NODE_REQUIRED_DRIVERS])
 
@@ -25,7 +38,7 @@ NAMES = sorted([
     "ordinary::new_test", runner.BRIDGE + "historical_install_is_atomic",
     runner.BRIDGE + "historical_receiver_c33_is_strict", runner.SCHEMA7 + "selects_branch",
     runner.PRE_HANDOFF + "commits_before_joint_and_attaches_after_cold_recovery",
-    runner.POCO_SIGKILL, *runner.ALLOWED_IGNORED, *runner.REQUIRED_SIGKILL_DRIVERS,
+    runner.POCO_SIGKILL, *NATIVE_IGNORED, *runner.REQUIRED_SIGKILL_DRIVERS,
 ])
 
 
@@ -41,7 +54,8 @@ def process_state(pid: int) -> str | None:
 
 class NativeCandidateShardTests(unittest.TestCase):
     def make_workspace(self, base: Path, suite: str = "native") -> tuple[Path, Path]:
-        package, _, ignored, _ = runner.SUITES[suite]
+        package, _, _ = runner.SUITES[suite]
+        ignored = {"native": NATIVE_IGNORED, "safety-epoch": SAFETY_IGNORED, "node-epoch": set()}[suite]
         names = {"node-epoch": NODE_NAMES, "safety-epoch": SAFETY_NAMES}.get(suite, NAMES)
         target_kind = "test" if suite == "safety-epoch" else "lib"
         target_name = "epoch_journal_v2" if suite == "safety-epoch" else package.replace("-", "_")
@@ -63,6 +77,9 @@ args = sys.argv[1:]
 ignored = set(IGNORED)
 if case == 'extra-ignored':
     ignored.add(next(name for name in NAMES if name not in ignored))
+if case == 'extra-dedicated-child':
+    NAMES.append('ordinary::future_sigkill_child')
+    ignored.add('ordinary::future_sigkill_child')
 pre_handoff_driver = 'later_epoch_checkpoint_bridge::tests::later_pre_handoff_sigkill_commit_and_attach_cuts_preserve_original_evidence'
 if case == 'missing-safety-driver':
     NAMES.remove('journal12::journal12_six_sigkill_cuts_keep_actual_source_and_prefix')
@@ -233,6 +250,13 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
                 self.assertNotEqual(code, 0)
                 self.assertEqual(summary["status"], "failed")
 
+    def test_new_dedicated_crash_child_does_not_require_runner_inventory_edit(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            code, summary, _ = self.invoke(Path(directory), "extra-dedicated-child")
+        self.assertEqual(code, 0)
+        self.assertEqual(summary["status"], "passed")
+        self.assertEqual(summary["shards"]["general"]["ignored_count"], 1)
+
     def test_execution_failures_never_publish_success(self) -> None:
         for case in ("compile-failure", "list-failure", "filtered-mismatch", "extra-ignored", "missing-pre-handoff-driver", "ignored-pre-handoff-driver", "no-summary", "wrong-count", "dirty-source", "source-change", "binary-change", "wrong-source-pin"):
             with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
@@ -249,7 +273,11 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
                     expected_error = (
                         "required SIGKILL drivers are missing or ignored"
                         if case == "missing-pre-handoff-driver"
-                        else "ignored inventory differs from dedicated SIGKILL children"
+                        else (
+                            "ignored inventory contains non-dedicated crash tests: "
+                            + runner.PRE_HANDOFF
+                            + "sigkill_commit_and_attach_cuts_preserve_original_evidence"
+                        )
                     )
                     self.assertEqual(summary["error"], expected_error)
                     self.assertFalse(any((evidence / f"{shard}.command").exists() for shard in runner.SHARD_NAMES))

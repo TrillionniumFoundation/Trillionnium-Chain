@@ -43,8 +43,13 @@ fn wait_for_socket(path: &Path) {
     while Instant::now() < deadline {
         if let Ok(metadata) = fs::symlink_metadata(path) {
             assert!(metadata.file_type().is_socket());
-            assert_eq!(metadata.permissions().mode() & 0o077, 0);
-            return;
+            if metadata.permissions().mode() & 0o077 == 0 {
+                return;
+            }
+            // bind(2) publishes the socket inode before the fixture applies
+            // its final 0600 mode. The private 0700 parent already blocks
+            // other UIDs; readiness means both the socket and final mode are
+            // visible, so do not race the subsequent client preflight.
         }
         thread::sleep(Duration::from_millis(10));
     }

@@ -258,16 +258,8 @@ fn confirm_successor_cold_v9(case: Box<ColdSuccessorCaseV9>) {
 
 #[test]
 fn actual_epoch_successor_activation_preserves_owners_and_initial_ack_v9() {
-    let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
-    let incoming = live.3.old_watermark.clone();
-    let unsigned = first_apply_unsigned_v2(live);
-    let first = first_apply_children_v2(first_apply_start_v2(unsigned));
-    let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
-    let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
-    activate_actual_successor_v9(prepare_joint_roles_v8(roles), incoming);
+    let (roles, incoming) = build_actual_attachment_case_v8();
+    activate_actual_successor_v9(roles, incoming);
 }
 
 #[inline(never)]
@@ -341,8 +333,313 @@ fn reject_actual_successor_after_initial_write_v9(case: Box<RolesCaseV7>, incomi
 
 #[test]
 fn actual_epoch_successor_activation_after_write_callback_blocks_ack_v9() {
+    let (roles, incoming) = build_actual_attachment_case_v8();
+    reject_actual_successor_after_initial_write_v9(roles, incoming);
+}
+
+type SuccessorCaseV10 = (
+    tempfile::TempDir,
+    super::SuccessorEpochRuntimeV9<Watermark, Watermark, Watermark, Watermark>,
+    Key,
+    Watermark,
+);
+
+#[inline(never)]
+fn activate_live_successor_v10(case: Box<RolesCaseV7>) -> Box<SuccessorCaseV10> {
+    let (directory, roles, key, _) = *case;
+    let kernel = genuine_joint_kernel_v8(&roles, false);
+    let attached = roles.attach_joint_handoff_v8(&kernel).unwrap();
+    let preparation = original_successor_preparation_v9(&attached);
+    let profile = SignerJournalProfileV0::new(
+        preparation.authority_v2().new_validator_set().clone(),
+        attached.roles.retired.retired.profile_v1().author(),
+        attached
+            .roles
+            .retired
+            .retired
+            .profile_v1()
+            .signer_profile_ref(),
+        [0xeb; 32],
+        64,
+        4096,
+        32 * 1024 * 1024,
+    )
+    .unwrap();
+    let watermark = Watermark::default();
+    let ordinary_path = directory.path().join("successor-ordinary-v10.db");
+    let ordinary =
+        SqliteSignerJournalV0::initialize_new(&ordinary_path, profile, watermark.clone()).unwrap();
+    let journal_path = directory.path().join("successor-journal12-v10.db");
+    let mut owner = attached
+        .activate_successor_v9(preparation, &journal_path, ordinary)
+        .unwrap();
+    assert!(matches!(
+        owner.take_startup_effects_v9().unwrap().as_slice(),
+        [Effect::ArmViewTimer { .. }]
+    ));
+    assert!(owner.take_startup_effects_v9().unwrap().is_empty());
+    owner.confirm_activated_cut_v9().unwrap();
+    Box::new((directory, owner, key, watermark))
+}
+
+fn successor_first_proposal_v10(
+    owner: &super::SuccessorEpochRuntimeV9<Watermark, Watermark, Watermark, Watermark>,
+) -> SignedProposalV0 {
+    use ed25519_dalek::Signer;
+    let epoch = owner.driver.state().epoch_state_v1().unwrap();
+    let strict = epoch.strict_context().unwrap();
+    let set = owner.driver.config().validator_set();
+    let params = owner.driver.config().consensus_parameters();
+    let edge = &owner.source.edge;
+    assert_eq!(strict.activation().terminal_old_header().id().as_bytes(), &edge.terminal_block());
+    let payload = trnm_consensus_types::ApplicationPayloadV0::new(Vec::new()).unwrap();
+    let body = trnm_consensus_types::BlockBodyV0::new(payload.clone(), Vec::new()).unwrap();
+    let app = owner.checkpoint.fields().application;
+    let app_parent = trnm_native_application::ApplicationHeadV0::new(
+        trnm_native_application::HeightV0::new(app.height),
+        trnm_native_application::BlockIdV0::new(app.block_id).unwrap(),
+        trnm_native_application::StateRootV0::new(app.state_root).unwrap(),
+        trnm_native_application::ApplicationCommitIdV0::new(app.native_commit_id).unwrap(),
+    );
+    let timestamp = strict
+        .activation()
+        .terminal_old_header()
+        .timestamp_ms()
+        .checked_add(1)
+        .unwrap();
+    let preview = owner
+        .source
+        .roles
+        .retired
+        .source
+        .application
+        .preview_later_epoch_block_v1(
+            edge,
+            &trnm_native_application::NativeEpochBlockPreviewRequestV1::new(
+                trnm_native_application::ChainIdV0::new(set.chain_id().as_str()).unwrap(),
+                trnm_native_application::GenesisHashV0::new(*set.genesis_hash().as_bytes())
+                    .unwrap(),
+                app_parent,
+                trnm_native_application::BlockIdV0::new(edge.terminal_block()).unwrap(),
+                trnm_native_application::HeightV0::new(edge.terminal_height()),
+                trnm_native_application::Hash32V0::new(edge.successor_binding()),
+                trnm_native_application::HeightV0::new(edge.first_application_height()),
+                timestamp,
+                trnm_native_application::ValidatorSetIdV0::new(*set.id().as_bytes()).unwrap(),
+                Vec::new(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+    let view = owner.driver.state().current_view();
+    let proposer = trnm_consensus_core::leader_for(set, view);
+    let header = BlockHeader::new(
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        view,
+        trnm_consensus_types::Height::new(edge.first_application_height()),
+        BlockKind::EpochHandoff,
+        BlockId::new(edge.terminal_block()),
+        proposer,
+        set.id(),
+        params.hash(),
+        body.payload_root().unwrap(),
+        StateRoot::new(*preview.post_state_root().as_bytes()),
+        ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
+        body.evidence_root().unwrap(),
+        timestamp,
+        None,
+    )
+    .unwrap();
+    let justify = strict.anchor_reference().clone();
+    let authorization = strict.structural_context().authorization().clone();
+    let key_index = set
+        .validators()
+        .iter()
+        .position(|validator| validator.id() == proposer)
+        .unwrap();
+    let key = SigningKey::from_bytes(&[20 + key_index as u8; 32]);
+    let root = ProposalWitnessV0::signing_root_for(
+        &header,
+        &justify,
+        None,
+        Some(&authorization),
+    )
+    .unwrap();
+    let witness = ProposalWitnessV0::new(
+        &header,
+        justify,
+        None,
+        Some(authorization),
+        SignatureBytes::from_array(key.sign(root.as_bytes()).to_bytes()),
+        set,
+        Some(strict.activation().old_validator_set()),
+        params,
+        strict.activation().terminal_old_header().timestamp_ms(),
+    )
+    .unwrap();
+    let block = Block::new(
+        header,
+        body.application_payload().try_cev0_bytes().unwrap(),
+        Vec::new(),
+    )
+    .unwrap();
+    SignedProposalV0::new(
+        block,
+        witness,
+        set,
+        Some(strict.activation().old_validator_set()),
+        params,
+        strict.activation().terminal_old_header().timestamp_ms(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn actual_successor_first_application_persists_executes_and_votes_v10() {
+    let (roles, _) = build_actual_attachment_case_v8();
+    let (directory, owner, mut key, watermark) = *activate_live_successor_v10(roles);
+    let proposal = successor_first_proposal_v10(&owner);
+    let block_id = *proposal.block().id().as_bytes();
+    let epoch = proposal.block().header().epoch();
+    let calls = key.calls;
+    let owner = owner.begin_first_application_v10().unwrap();
+    let owner = owner.admit_first_proposal_v10(proposal).unwrap();
+    assert_eq!(key.calls, calls, "admission must not call the key");
+    let (owner, effects) = owner.execute_first_proposal_v10().unwrap();
+    assert!(effects.iter().any(|effect| matches!(
+        effect,
+        trnm_consensus_core::Effect::RequestSignature { .. }
+    )));
+    assert_eq!(key.calls, calls, "P/D/C must not call the key");
+    let (owner, vote) = owner.sign_first_vote_v10(&mut key).unwrap();
+    let trnm_consensus_core::OutboundMessage::Vote(vote) = vote else {
+        panic!("successor first application returned non-Vote")
+    };
+    assert_eq!(vote.epoch(), epoch);
+    assert_eq!(vote.block_id().as_bytes(), &block_id);
+    assert_eq!(key.calls, calls + 1, "exactly one successor Vote enters the key");
+    let prepared = owner
+        .application()
+        .reopen_prepared_epoch_execution_v1(block_id)
+        .unwrap();
+    let confirmed = owner
+        .application()
+        .confirm_prepared_epoch_execution_v1(&prepared)
+        .unwrap();
+    assert_eq!(confirmed.commit_sequence(), None, "V10 must stop before native K");
+    assert_eq!(owner.runtime.checkpoint.fields().ordinary.unwrap().sequence, 2);
+    assert!(owner.runtime.driver.state().pending_sign().is_none());
+    assert_ne!(
+        owner.application().confirmed_committed_head_v0().unwrap().block_id().as_bytes(),
+        &block_id,
+        "V10 Vote alone must not manufacture application finality"
+    );
+    assert_eq!(watermark.0.lock().unwrap().0.unwrap().sequence(), 2);
+    assert!(directory.path().is_dir());
+}
+
+
+type SuccessorFinalityCaseV11 =
+    super::SuccessorFinalizationRuntimeV11<Watermark, Watermark, Watermark, Watermark>;
+
+fn successor_child_proposal_v11(owner: &SuccessorFinalityCaseV11) -> SignedProposalV0 {
+    use ed25519_dalek::Signer;
+    let parent_header = owner
+        .prepared_headers_v11()
+        .unwrap()
+        .last()
+        .unwrap()
+        .clone();
+    let set = owner.set_v11();
+    let parameters = owner.parameters_v11();
+    let parent = owner
+        .application_v11()
+        .reopen_prepared_epoch_execution_v1(*parent_header.id().as_bytes())
+        .unwrap();
+    let request = trnm_native_execution_v0::NativeBlockPreviewRequestV0::new(
+        trnm_native_application::ChainIdV0::new(set.chain_id().as_str()).unwrap(),
+        trnm_native_application::GenesisHashV0::new(*set.genesis_hash().as_bytes()).unwrap(),
+        parent.overlay_parent_head().unwrap(),
+        trnm_native_application::HeightV0::new(parent_header.height().get() + 1),
+        parent_header.timestamp_ms() + 1,
+        trnm_native_application::ValidatorSetIdV0::new(*set.id().as_bytes()).unwrap(),
+        Vec::new(),
+    )
+    .unwrap();
+    let preview = owner
+        .application_v11()
+        .preview_epoch_descendant_v1(&parent, &request)
+        .unwrap();
+    let view = View::new(parent_header.view().get() + 1);
+    let proposer = trnm_consensus_core::leader_for(set, view);
+    let header = BlockHeader::new(
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        view,
+        trnm_consensus_types::Height::new(request.height().get()),
+        BlockKind::Regular,
+        parent_header.id(),
+        proposer,
+        set.id(),
+        parameters.hash(),
+        PayloadDigest::new(*preview.payload_root().as_bytes()),
+        StateRoot::new(*preview.post_state_root().as_bytes()),
+        ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
+        EvidenceRoot::new(*preview.evidence_root().as_bytes()),
+        request.timestamp_ms(),
+        None,
+    )
+    .unwrap();
+    let justify = QcReferenceV0::ordinary(first_apply_qc_v2(&parent_header, set));
+    let root = ProposalWitnessV0::signing_root_for(&header, &justify, None, None).unwrap();
+    let index = set
+        .validators()
+        .iter()
+        .position(|validator| validator.id() == proposer)
+        .unwrap();
+    let witness = ProposalWitnessV0::new(
+        &header,
+        justify,
+        None,
+        None,
+        SignatureBytes::from_array(
+            SigningKey::from_bytes(&[20 + index as u8; 32])
+                .sign(root.as_bytes())
+                .to_bytes(),
+        ),
+        set,
+        None,
+        parameters,
+        parent_header.timestamp_ms(),
+    )
+    .unwrap();
+    SignedProposalV0::new(
+        Block::new(
+            header,
+            trnm_consensus_types::ApplicationPayloadV0::new(Vec::new())
+                .unwrap()
+                .try_cev0_bytes()
+                .unwrap(),
+            Vec::new(),
+        )
+        .unwrap(),
+        witness,
+        set,
+        None,
+        parameters,
+        parent_header.timestamp_ms(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn actual_successor_core_finalizes_and_applies_first_new_v11() {
     let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
-    let incoming = live.3.old_watermark.clone();
     let unsigned = first_apply_unsigned_v2(live);
     let first = first_apply_children_v2(first_apply_start_v2(unsigned));
     let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
@@ -350,5 +647,81 @@ fn actual_epoch_successor_activation_after_write_callback_blocks_ack_v9() {
     let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
     let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
     let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
-    reject_actual_successor_after_initial_write_v9(prepare_joint_roles_v8(roles), incoming);
+    let (directory, owner, mut key, watermark) =
+        *activate_live_successor_v10(prepare_joint_roles_v8(roles));
+
+    let first_proposal = successor_first_proposal_v10(&owner);
+    let first_id = *first_proposal.block().id().as_bytes();
+    let owner = owner.begin_first_application_v10().unwrap();
+    let owner = owner.admit_first_proposal_v10(first_proposal).unwrap();
+    let (owner, _) = owner.execute_first_proposal_v10().unwrap();
+    let (owner, vote) = owner.sign_first_vote_v10(&mut key).unwrap();
+    assert!(matches!(vote, trnm_consensus_core::OutboundMessage::Vote(_)));
+
+    let mut owner = owner.begin_finalization_v11().unwrap();
+    for _ in 0..2 {
+        let proposal = successor_child_proposal_v11(&owner);
+        owner = owner.execute_ordinary_child_v11(proposal).unwrap();
+        let (next, vote) = owner.sign_child_vote_v11(&mut key).unwrap();
+        assert!(matches!(vote, trnm_consensus_core::OutboundMessage::Vote(_)));
+        owner = next;
+    }
+    let headers = owner.prepared_headers_v11().unwrap();
+    assert_eq!(headers.len(), 3);
+    let qc = first_apply_qc_v2(headers.last().unwrap(), owner.set_v11());
+    let owner = owner.observe_front_qc_v11(qc).unwrap();
+    let mut owner = owner
+        .apply_front_v11(&mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0())
+        .unwrap();
+    let checkpoint = owner.settled_checkpoint_v11().unwrap();
+    assert_eq!(checkpoint.fields().application.block_id, first_id);
+    assert_eq!(
+        owner
+            .application_v11()
+            .confirmed_committed_head_v0()
+            .unwrap()
+            .block_id()
+            .as_bytes(),
+        &first_id
+    );
+
+    // Keep the same live Core/native/Safety/signer owners and slide the real
+    // three-P window until the authenticated snapshot cutoff. No synthetic
+    // finality bytes or owner reset is allowed between fronts.
+    let geometry = trnm_consensus_types::EpochGeometryV0::new(
+        owner.set_v11().epoch(),
+        owner.parameters_v11(),
+    )
+    .unwrap();
+    let cutoff_height = geometry
+        .checkpoint_height()
+        .get()
+        .checked_sub(owner.parameters_v11().snapshot_lead_blocks())
+        .unwrap();
+    while owner.settled_checkpoint_v11().unwrap().fields().application.height < cutoff_height {
+        let proposal = successor_child_proposal_v11(&owner);
+        owner = owner.execute_ordinary_child_v11(proposal).unwrap();
+        let (next, vote) = owner.sign_child_vote_v11(&mut key).unwrap();
+        assert!(matches!(vote, trnm_consensus_core::OutboundMessage::Vote(_)));
+        owner = next;
+        let headers = owner.prepared_headers_v11().unwrap();
+        let qc = first_apply_qc_v2(headers.last().unwrap(), owner.set_v11());
+        owner = owner.observe_front_qc_v11(qc).unwrap();
+        owner = owner
+            .apply_front_v11(&mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0())
+            .unwrap();
+    }
+    let cutoff = owner.settled_checkpoint_v11().unwrap();
+    assert_eq!(cutoff.fields().application.height, cutoff_height);
+    assert_eq!(
+        owner.application_v11().confirmed_committed_head_v0().unwrap().height().get(),
+        cutoff_height
+    );
+    let retained = owner.prepared_headers_v11().unwrap();
+    assert_eq!(retained.len(), 2);
+    assert_eq!(retained[0].height().get(), cutoff_height + 1);
+    assert_eq!(retained[1].height().get(), cutoff_height + 2);
+    let signer_sequence = watermark.0.lock().unwrap().0.unwrap().sequence();
+    assert!(signer_sequence >= 6 && signer_sequence.is_multiple_of(2));
+    assert!(directory.path().is_dir());
 }
