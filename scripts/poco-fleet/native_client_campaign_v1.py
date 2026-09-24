@@ -488,11 +488,39 @@ def validate_document(document: dict, *, run_id: str, anchor: str, validator_ids
         raise RuntimeError("native history-growth summary differs")
 
 
+def require_running_validators_v1(processes: list[base.ValidatorProcess],
+                                  children: list | None) -> None:
+    """Attribute observed exits without exposing argv or guessing a remote cause."""
+    if children is None:
+        return
+    if (not 1 <= len(processes) <= 100 or len(children) != len(processes)
+            or len({p.validator_id for p in processes}) != len(processes)
+            or any(base.VALIDATOR_ID.fullmatch(p.validator_id) is None
+                   or p.host_id not in {"local", "desktop", "rog", "x230", "j3160"}
+                   for p in processes)):
+        raise RuntimeError("native campaign child/validator attribution mismatch")
+    exited = []
+    for process, child in zip(processes, children, strict=True):
+        code = child.poll()
+        if code is not None:
+            if type(code) is not int:
+                raise RuntimeError("native campaign invalid child exit observation")
+            carrier = "local" if process.management == "local" else "ssh"
+            exited.append(f"validator={process.validator_id} host={process.host_id} "
+                          f"carrier={carrier} returncode={code}")
+    if exited:
+        details = "; ".join(exited[:8])
+        raise RuntimeError(f"validator exited before native campaign completed: "
+                           f"exited_count={len(exited)}; {details}; "
+                           "inspect preserved process stderr; SSH status is not a remote cause")
+
+
 def run_campaign(*, coordinator: pathlib.Path, deployments: pathlib.Path, manifest: dict,
                  processes: list[base.ValidatorProcess], stages: dict[str, base.HostStage],
                  linux_paths: dict[str, str], mac_binary: str, observer_root: str,
                  key_root: pathlib.Path, anchor: str, transfers: int, output: pathlib.Path,
                  duration_seconds: int, running_children: list | None = None) -> dict:
+    require_running_validators_v1(processes, running_children)
     profile_bytes = (coordinator / "public/native-client-profile.json").read_bytes()
     profile = strict_json(profile_bytes, "native profile")
     digest = hashlib.sha256(profile_bytes).hexdigest()
@@ -513,8 +541,7 @@ def run_campaign(*, coordinator: pathlib.Path, deployments: pathlib.Path, manife
     records = []
     adapter = NativeRequestAdapterV1(target, digest, genesis, deadline)
     def request(op: str, data: dict) -> dict:
-        if running_children is not None and any(child.poll() is not None for child in running_children):
-            raise RuntimeError("validator exited before native campaign completed; inspect preserved process stderr")
+        require_running_validators_v1(processes, running_children)
         return adapter.request(op, data)
     while True:
         if time.monotonic() >= deadline:

@@ -312,6 +312,56 @@ os._exit({code})
         assert len(children) == 1 and children[0].returncode is not None
         assert all(stream.closed for stream in (children[0].stdin, children[0].stdout, children[0].stderr))
 
+def test_validator_exit_attribution_v1():
+    import dataclasses
+    import subprocess
+    import sys
+    from unittest import mock
+
+    process = base.ValidatorProcess("11" * 32, "desktop", "p4-desktop",
+        pathlib.Path("/unused"), pathlib.PurePosixPath("public/config.json"), "v000")
+    local = dataclasses.replace(process, validator_id="22" * 32, host_id="local", management="local")
+    living = mock.Mock(); living.poll.return_value = None
+    c.require_running_validators_v1([process], [living])
+    for code in (0, 37, -9, 255):
+        exited = mock.Mock(); exited.poll.return_value = code
+        try:
+            c.require_running_validators_v1([process, local], [living, exited])
+        except RuntimeError as error:
+            text = str(error)
+            assert "exited_count=1" in text and "validator=" + local.validator_id in text
+            assert "host=local carrier=local returncode=" + str(code) in text
+            assert "remote cause" in text
+        else:
+            raise AssertionError("early exit was accepted")
+    for processes, children in (([process], []), ([process, process], [living, living])):
+        try:
+            c.require_running_validators_v1(processes, children)
+        except RuntimeError as error:
+            assert "attribution mismatch" in str(error)
+        else:
+            raise AssertionError("unattributed child accepted")
+    with subprocess.Popen([sys.executable, "-c", "raise SystemExit(37)"],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) as actual:
+        actual.wait(timeout=5)
+        try:
+            c.require_running_validators_v1([process], [actual])
+        except RuntimeError as error:
+            assert "host=desktop carrier=ssh returncode=37" in str(error)
+        else:
+            raise AssertionError("actual exited child accepted")
+    # Cap diagnostics independently of the deployed validator-count ceiling.
+    many = [dataclasses.replace(process, validator_id=f"{i+1:064x}") for i in range(100)]
+    dead = mock.Mock(); dead.poll.return_value = 1
+    try:
+        c.require_running_validators_v1(many, [dead] * 100)
+    except RuntimeError as error:
+        assert "exited_count=100" in str(error)
+        assert str(error).count("validator=") == 8 and len(str(error)) < 2000
+    else:
+        raise AssertionError("exited fleet accepted")
+
+
 def main():
     native={"public_files":[{"path":"public/native-client-profile.json"}]}
     legacy={"public_files":[{"path":"public/workload.corpus"},{"path":"public/workload-policy.json"}]}
@@ -376,6 +426,7 @@ def main():
         (keys/'client.key').unlink();(keys/'client.key').symlink_to(keys/'operator.key');reject(lambda:c.key_namespace(keys,coordinator,deployments,profile))
     test_request_adapter_v1()
     test_owned_command_cleanup_v1()
+    test_validator_exit_attribution_v1()
     print(f'native_campaign_structural_tests=passed negatives={rejected} cryptographic_success_claim=false real_campaign_required=true controlled_ssh_unix_transport=true bounded_io_deadline=true owned_group_cleanup=true')
 
 if __name__=='__main__':main()

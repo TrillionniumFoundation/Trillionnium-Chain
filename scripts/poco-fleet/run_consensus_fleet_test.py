@@ -1587,8 +1587,30 @@ def test_failure_diagnostics_are_best_effort_before_stage_cleanup() -> None:
     source = inspect.getsource(fleet.main)
     assert source.index("preserve_failure_diagnostics_v1") < source.index("base.clean_stages(stages)")
 
+def test_remote_exit_status_is_observed_before_errexit() -> None:
+    import subprocess
+    import tempfile
+
+    stage = fleet.base.HostStage("desktop", "p4-desktop", "/tmp/tp3-remote", None)
+    with tempfile.TemporaryDirectory() as temporary:
+        binary = pathlib.Path(temporary) / "validator"
+        for body, expected in (("exit 0", 0), ("exit 37", 37), ("kill -TERM $$", 143)):
+            binary.write_text("#!/bin/sh\n" + body + "\n")
+            binary.chmod(0o700)
+            command, *_ = fleet.command_for(process("p4-desktop"), stage, str(binary), 60, 100)
+            # Execute the actual generated remote shell without a fake network
+            # or consensus success claim. Its controlled child ignores arguments.
+            result = subprocess.run(["/bin/sh", "-c", command[-1]],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5, check=False)
+            assert result.returncode == expected, result
+            diagnostic = f"validator process exited: validator={process('p4-desktop').validator_id} host=desktop status={expected}"
+            assert diagnostic in result.stderr.decode(), result.stderr
+            assert result.stderr.decode().count("validator process exited:") == 1
+
+
 def main() -> None:
     test_local_and_remote_commands()
+    test_remote_exit_status_is_observed_before_errexit()
     test_observer_fleet_certificate_command_and_strict_summary()
     test_run_bounds()
     test_terminal_agreement()

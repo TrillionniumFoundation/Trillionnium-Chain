@@ -1342,7 +1342,11 @@ def command_for(
         "cleanup() { if test -n \"$child\"; then kill \"$child\" 2>/dev/null || true; "
         "wait \"$child\" 2>/dev/null || true; fi; }; "
         "trap cleanup EXIT HUP INT TERM; "
-        f"{command} & child=$!; wait \"$child\"; status=$?; child=''; exit \"$status\""
+        f"{command} & child=$!; "
+        "if wait \"$child\"; then status=0; else status=$?; fi; child=''; "
+        "printf 'validator process exited: validator=%s host=%s status=%s\\n' "
+        f"{shlex.quote(process.validator_id)} {shlex.quote(process.host_id)} \"$status\" >&2; "
+        "exit \"$status\""
     )
     return (
         [

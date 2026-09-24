@@ -755,3 +755,14 @@ reaper, and stopping a local SSH command does not attest remote process death.
 The existing per-host run-namespace cleanup and signed terminal evidence remain
 required. This fix does not identify the initiating cause of any previous physical
 fleet failure, create a successful campaign, or grant performance/release authority.
+
+The campaign's early-exit check binds each observed local/SSH child status to
+its exact planned validator and host before another client request. All exits,
+including zero before campaign completion, fail the campaign. Missing or duplicate
+process attribution is an error, not permission to continue. Error text retains
+at most eight exited identities plus the total count; it never includes command
+arguments or private material. The remote wrapper captures a failed `wait` before
+shell errexit can discard its status, and writes a bounded validator/host/status
+observation to stderr. Local negative return codes describe a local signal; an
+SSH status alone does not prove a remote signal or its cause. These observations
+are diagnostics, not signed finality, independent evidence or a successful run.
