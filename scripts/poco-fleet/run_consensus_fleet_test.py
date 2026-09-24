@@ -1561,6 +1561,14 @@ def test_failure_diagnostics_are_best_effort_before_stage_cleanup() -> None:
             return True
 
         def copy_replay(**_kwargs):
+            # Model a sealed copy that creates one target and then discovers an
+            # empty/changing source. Failed diagnostics must not poison the
+            # final runner-output manifest with this partial set.
+            (
+                output
+                / "signed-replay-archive-entries"
+                / f"{process_value.validator_id}.jsonl"
+            ).write_bytes(b"")
             raise RuntimeError("controlled replay copy failure")
 
         with mock.patch.object(fleet, "copy_observation_file", side_effect=copy_observation), \
@@ -1571,6 +1579,10 @@ def test_failure_diagnostics_are_best_effort_before_stage_cleanup() -> None:
         assert any("journal" in failure and "controlled" in failure for failure in failures)
         assert any("replay-archives" in failure for failure in failures)
         assert len(copied) == 5
+        assert not any(
+            (output / directory / f"{process_value.validator_id}{suffix}").exists()
+            for _label, _source, directory, suffix, _maximum in fleet.REPLAY_ARCHIVE_ARTIFACTS
+        )
 
     source = inspect.getsource(fleet.main)
     assert source.index("preserve_failure_diagnostics_v1") < source.index("base.clean_stages(stages)")
