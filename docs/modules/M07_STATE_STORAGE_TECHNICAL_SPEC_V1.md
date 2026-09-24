@@ -2,8 +2,25 @@
 
 Status: **candidate sparse-epoch computation and bounded schema-4 persistence implemented;
 ordinary schema-5 incremental owner and conservative node-only GC implemented; sparse
-migration, multiple-epoch recovery and production acceptance pending**.
+migration and repeated storage crossings exist in explicit later schemas;
+sustained whole-node multi-epoch recovery and production acceptance pending**.
 Primary module: M07. Producers: M06/M08/M13. Consumers: M02/M06/M08/M13/M14.
+
+## Current backend boundaries
+
+| Backend / consumer | Implemented source regression | Not implied |
+|---|---|---|
+| Ordinary incremental schema5 | delta preparation/commit, rollback on SQLite FULL, conservative node-only collection | Complete historical value pruning or every epoch backend |
+| Incremental schema11 | `schema11_repeated_crossing_c28_c31_c32_preserves_every_consumed_prefix` | Unlimited retained transitions, schema11 GC or live signing-owner composition |
+| Later full-snapshot/contextual path | `repeated_later_handoffs_c28_c31_c32_recover_exact_prefix`, `repeated_contextual_s30_anchor_c28_c31_c32_commit_recover_and_sync` | One universal interchangeable schema or a continuously running public node |
+
+The three later-crossing tests require `test-fixtures,incremental-epoch-candidate`
+when selecting the native execution test binary; a default-feature zero-test
+result is not an execution receipt.
+
+The older schema3/4/6/7 restrictions below remain local compatibility contracts.
+Read their schema tags literally. A passing later-storage regression is not a
+replacement for M15 bootstrap, M03 custody or an independent multi-host run.
 
 ## Authority
 

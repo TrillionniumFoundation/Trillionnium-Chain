@@ -25,6 +25,28 @@ That deliverable is distinct from production activation and external acceptance.
 | `trillionnium/crates/trnm-poco-lab-validator/src/candidate_devnet.rs` | Explicit bounded candidate CLI with external Unix peer lease | Single-LAN, local test keys; no HSM or public-testnet authority |
 | `trillionnium/crates/trnm-release-bundle-v0/src/lib.rs` | Bundle validation, signatures and independent build comparison | Does not itself authorize publication |
 
+## Current composed epoch scope
+
+The active source contains real V10/V11 owners, not only their design names.
+`epoch_runtime_candidate_v1.rs` includes `epoch_successor_first_application_v10.inc`
+and `epoch_successor_continuation_v11.inc` under the explicit
+`epoch-runtime-candidate` feature. `epoch-runtime-test-fixtures` enables their
+real-owner regression; it is not a production startup profile.
+
+| Runtime path | Current operation and consumer | Remaining boundary |
+|---|---|---|
+| `SuccessorFirstApplicationRuntimeV10` | `begin_first_application_v10`, `admit_first_proposal_v10`, `execute_first_proposal_v10`, `sign_first_vote_v10`, `commit_first_finality_v10`; native later-edge preparation and exact custody/checkpoint joins | A single first-new application path is not sustained subsequent epoch commissioning |
+| `SuccessorFinalizationRuntimeV11` | `begin_finalization_v11`, `execute_ordinary_child_v11`, `sign_child_vote_v11`, `observe_front_qc_v11`, `apply_front_v11`, `settled_checkpoint_v11`; Core's actual Finalize front authorizes the retained prepared application's commit | Independent process restart, repeated whole-node handoffs, retirement, long-history GC and public daemon composition remain distinct requirements |
+| Candidate transaction client | `continuous_runtime::tests::actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1` exercises socket, WAL, real consensus and independent historical proof verification | A candidate socket is not a production Internet listener or release acceptance |
+| Normal node entry | `trnm-poco-node` and `trnm-poco-node-cli start` retain their explicit refusal | No launch switch may substitute lab code, fixtures or a fabricated authority for actual production owners |
+
+`epoch_runtime_candidate_v1::tests::actual_successor_core_finalizes_and_applies_first_new_v11`
+is the behavioral regression for the V11 row. A retained older paragraph about
+schema6 preparation-only or a V8 attachment-only slice must be read at that
+specific feature/schema boundary, not as a statement that V11 is absent.
+Test execution reports bind the tested commit/tree; this table does not retain a
+self-referential commit hash or claim a historical result is current evidence.
+
 ## Current epoch readback without repeated full-history audits
 
 `confirm_current_epoch_execution_v1(block)` returns the existing opaque

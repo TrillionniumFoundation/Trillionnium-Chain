@@ -1,7 +1,8 @@
 # M08 Finality / Node Commit / Recovery technical specification v1
 
-Status: **strict pre-handoff receipt and bounded first-epoch durable bridge implemented;
-multiple-epoch/default-node integration pending; production activation not granted**
+Status: **strict pre-handoff, bounded later-epoch storage bridges and V11 first-new
+Core finalization/application implemented; sustained whole-node multiple-epoch and
+default-node integration pending; production activation not granted**
 
 Primary module: M08. Producers: M02/M03/M06/M07. Consumers: M02/M03/M13/M14/M15.
 

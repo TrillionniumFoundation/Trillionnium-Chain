@@ -4,6 +4,20 @@ Status: implementation contract with explicitly planned extensions; no activatio
 Primary owner: M06. Consumers: M02 proposal validation, M07 state, M08 commit,
 M10/M11 application operations, M12 fees, and M15 composition.
 
+## Current implementation selector
+
+Ordinary incremental execution uses schema5; the preparation-only limits of
+schema6 below apply to that historical slice, not to every later backend.
+Schema11 contains repeated incremental C28/C31/C32 storage crossing, while the
+later full-snapshot/contextual owners have their own explicit migrations and
+retained evidence. These are separate source paths, not interchangeable names.
+M15's `SuccessorFirstApplicationRuntimeV10` and `SuccessorFinalizationRuntimeV11`
+consume real later-edge native preparation and Core finality for a first-new
+block. Their existence does not supply a normal daemon bootstrap or sustained
+multi-epoch process lifecycle. Select the backend, feature and product caller
+before assigning implementation status; do not globally reinterpret a newer
+schema as an upgrade of every existing store.
+
 ## Authority
 
 Resolve [documentation authority](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md).
