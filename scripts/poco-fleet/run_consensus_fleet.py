@@ -1471,6 +1471,19 @@ def preserve_failure_diagnostics_v1(
             try:
                 copy_replay_archive_set_v1(process=process, stage=stage, output=output)
             except (OSError, subprocess.SubprocessError, RuntimeError, ValueError, SystemExit) as error:
+                # A failed diagnostic set is not an evidence set. Some sealed
+                # transports create the target before rejecting an empty or
+                # concurrently changing source; leaving that partial file here
+                # makes the final runner manifest fail on the diagnostic rather
+                # than preserve the original validator failure. Remove only
+                # targets created by this all-absent diagnostic attempt.
+                for target in archive_targets:
+                    if target.is_symlink():
+                        failures.append(
+                            f"{process.validator_id}:replay-archives:partial-symlink"
+                        )
+                        continue
+                    target.unlink(missing_ok=True)
                 failures.append(f"{process.validator_id}:replay-archives:{error}")
     return failures
 
