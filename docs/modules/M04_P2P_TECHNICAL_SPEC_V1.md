@@ -393,14 +393,20 @@ large certificate cannot monopolize the reserved control worker indefinitely.
 
 ## Persistence and recovery
 
-The payload replay owner pins directory identity separately from regular-file
-identity. Directory device/inode, owner/group and mode must still match the held
+The payload replay journal, body store and recovery owner pin directory identity
+separately from regular-file identity. Directory device/inode, owner/group and mode must still match the held
 descriptor and canonical pathname before and after use. Directory link counts
 may change as children are created or removed (including ordinary files on APFS),
 so they are not namespace identity. Journal, lock and head files still require
 one link and exact file identity; replacement, permission and symlink checks
 remain fail-closed. The child-publication/reopen regression exercises actual
 WAL admission and exact replay; this is not an external rollback claim.
+Recovery retains its original captured endpoint-label preimage for compatibility;
+that opaque generation label is not a live directory-metadata comparator. Child
+publication and acknowledgement must leave the label stable while the same owner
+is alive. A reopened daemon still requires its existing socket-bound handshake.
+Canonical pathname validation is unchanged: macOS qualifications use a canonical
+private temporary root rather than treating the host's /var alias as authority.
 
 Each directional lane journal binds chain/genesis, protocol/profile, peer key,
 session/generation, retained payload, pending nonce, highest acknowledged nonce,

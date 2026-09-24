@@ -523,7 +523,7 @@ impl PayloadReplayPathIdentityV1 {
 /// A directory's children may change without replacing its authority owner.
 /// Keep this distinct from regular-file identity, where nlink must remain one.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct PayloadReplayDirectoryIdentityV1 {
+pub(crate) struct PayloadReplayDirectoryIdentityV1 {
     #[cfg(unix)]
     device: u64,
     #[cfg(unix)]
@@ -539,7 +539,7 @@ struct PayloadReplayDirectoryIdentityV1 {
 }
 
 impl PayloadReplayDirectoryIdentityV1 {
-    fn from_metadata(metadata: &fs::Metadata) -> Self {
+    pub(crate) fn from_metadata(metadata: &fs::Metadata) -> Self {
         #[cfg(unix)]
         {
             Self {

@@ -83,6 +83,11 @@ mod tests {
         let mut owner =
             PayloadReplayRecoveryOwnerV1::open(&payload, &acknowledgements, namespace, target)
                 .unwrap();
+        let endpoint_label = owner.bound_endpoint_identity_digest().unwrap();
+        let child = root.path().join("independent-owner");
+        fs::create_dir(&child).unwrap();
+        assert_eq!(owner.bound_endpoint_identity_digest().unwrap(), endpoint_label);
+        fs::remove_dir(&child).unwrap();
         assert!(matches!(
             owner.status().unwrap(),
             PayloadReplayRecoveryStatusV1::AdmittedUnacknowledged { .. }
@@ -90,6 +95,7 @@ mod tests {
         let acknowledgement = PayloadReplayCoreAcknowledgementV1::new(target, 9, [11; 32]).unwrap();
         let written = owner.acknowledge_core(acknowledgement).unwrap();
         assert!(!written.idempotent_replay());
+        assert_eq!(owner.bound_endpoint_identity_digest().unwrap(), endpoint_label);
         drop(owner);
 
         let mut reopened =

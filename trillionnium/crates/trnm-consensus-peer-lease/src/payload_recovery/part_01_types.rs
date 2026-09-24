@@ -36,7 +36,7 @@ use sha2::{Digest, Sha256};
 
 use crate::{
     payload::{
-        payload_replay_generation_successor_v1, PayloadReplayDirectionV1, PayloadReplayFrameV1,
+        PayloadReplayDirectoryIdentityV1, payload_replay_generation_successor_v1, PayloadReplayDirectionV1, PayloadReplayFrameV1,
         PayloadReplayNamespaceV1, PayloadReplayReceiptV1, PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1,
         PAYLOAD_REPLAY_MAX_RECORDS_V1, PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1,
         PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1, PAYLOAD_REPLAY_MAX_WAL_BYTES_V1,
@@ -463,7 +463,7 @@ fn verify_bound_path_identity(
 fn verify_bound_directory_identity(
     path: &Path,
     directory: &File,
-    expected: AuthorityPathIdentityV1,
+    expected: PayloadReplayDirectoryIdentityV1,
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
     let descriptor_metadata = directory.metadata()?;
     let named_metadata = fs::symlink_metadata(path)?;
@@ -472,8 +472,8 @@ fn verify_bound_directory_identity(
         || !named_metadata.is_dir()
         || !private_parent_mode(&descriptor_metadata)
         || !private_parent_mode(&named_metadata)
-        || AuthorityPathIdentityV1::from_metadata(&descriptor_metadata) != expected
-        || AuthorityPathIdentityV1::from_metadata(&named_metadata) != expected
+        || PayloadReplayDirectoryIdentityV1::from_metadata(&descriptor_metadata) != expected
+        || PayloadReplayDirectoryIdentityV1::from_metadata(&named_metadata) != expected
         || fs::canonicalize(path)? != path
     {
         return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(

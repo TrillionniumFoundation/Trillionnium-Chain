@@ -29,6 +29,7 @@ use sha2::{Digest, Sha256};
 #[cfg(unix)]
 use std::os::unix::fs::MetadataExt;
 
+use crate::payload::PayloadReplayDirectoryIdentityV1;
 use crate::payload::{
     decode_head, open_private_lock, persist_head, private_file_mode, private_parent,
     private_parent_mode, read_private_head, reject_stale_head_temps, set_private_mode,
@@ -198,7 +199,7 @@ pub struct PayloadReplayBodyStoreV1 {
     path: PathBuf,
     head_path: PathBuf,
     directory: File,
-    directory_identity: BodyAuthorityPathIdentityV1,
+    directory_identity: PayloadReplayDirectoryIdentityV1,
     file: File,
     file_identity: BodyAuthorityPathIdentityV1,
     lock_path: PathBuf,
@@ -224,7 +225,8 @@ impl PayloadReplayBodyStoreV1 {
     ) -> Result<Self, PayloadReplayErrorV1> {
         let path = path.as_ref().to_path_buf();
         let (directory, parent) = private_parent(&path)?;
-        let directory_identity = body_descriptor_identity(&directory)?;
+        let directory_identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&directory.metadata()?);
         verify_body_directory_identity(&parent, &directory, directory_identity)?;
         let lock_path = sidecar_path(&path, BODY_LOCK_SUFFIX_V1)?;
         let head_path = sidecar_path(&path, BODY_HEAD_SUFFIX_V1)?;
@@ -764,7 +766,7 @@ fn verify_body_path_identity(
 fn verify_body_directory_identity(
     path: &Path,
     directory: &File,
-    expected: BodyAuthorityPathIdentityV1,
+    expected: PayloadReplayDirectoryIdentityV1,
 ) -> Result<(), PayloadReplayErrorV1> {
     let descriptor_metadata = directory.metadata()?;
     let named_metadata = fs::symlink_metadata(path)?;
@@ -773,8 +775,8 @@ fn verify_body_directory_identity(
         || !named_metadata.is_dir()
         || !private_parent_mode(&descriptor_metadata)
         || !private_parent_mode(&named_metadata)
-        || BodyAuthorityPathIdentityV1::from_metadata(&descriptor_metadata) != expected
-        || BodyAuthorityPathIdentityV1::from_metadata(&named_metadata) != expected
+        || PayloadReplayDirectoryIdentityV1::from_metadata(&descriptor_metadata) != expected
+        || PayloadReplayDirectoryIdentityV1::from_metadata(&named_metadata) != expected
         || fs::canonicalize(path)? != path
     {
         return Err(PayloadReplayErrorV1::InvalidRequest(
@@ -1235,7 +1237,10 @@ mod tests {
         let duplicate = store.admit(&first_frame, body).unwrap();
         assert!(duplicate.idempotent_replay());
         assert_eq!(duplicate.record_index(), first.record_index());
+        let child = dir.path().join("independent-owner");
+        fs::create_dir(&child).unwrap();
         let resolved = store.resolve(&first_frame, duplicate).unwrap();
+        fs::remove_dir(&child).unwrap();
         assert_eq!(resolved.body(), body);
         drop(store);
 
