@@ -1,6 +1,9 @@
+#[cfg(target_os = "linux")]
+use std::ffi::CString;
+
 use std::{
     env,
-    ffi::{CString, OsString},
+    ffi::OsString,
     fs::{self, File, OpenOptions},
     io::{self, Read, Seek, SeekFrom, Write},
     mem::ManuallyDrop,
