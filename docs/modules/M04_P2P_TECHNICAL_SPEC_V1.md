@@ -257,6 +257,11 @@ smaller diagnostics never authorize re-attribution, reconnect or acceptance.
 
 ## Interfaces
 
+Large mesh connection/signing owners and restart park/ack state variants retain
+complete owned values behind boxes.
+This is a process-memory representation change only: canonical bytes, validation,
+resource limits and linear authority consumption remain unchanged.
+
 `OpenSessionV1` produces two directional session identities plus a lane map.
 `AdmitDataV1` converts transport DATA into `AuthenticatedPeerFrameV0`, verifies
 it through `PeerFrameSourceV0`, and obtains `VerifiedPeerFrameV0` before admission.

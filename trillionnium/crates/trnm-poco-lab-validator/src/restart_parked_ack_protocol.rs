@@ -465,8 +465,8 @@ impl OriginatedRestartParkedAckV1 {
 }
 
 enum RestartParkedAckSlotV1 {
-    Admitted(AdmittedRestartParkedAckV1),
-    Originated(OriginatedRestartParkedAckV1),
+    Admitted(Box<AdmittedRestartParkedAckV1>),
+    Originated(Box<OriginatedRestartParkedAckV1>),
 }
 
 impl RestartParkedAckSlotV1 {
@@ -551,13 +551,16 @@ impl VerifiedRestartParkedAckBarrierV1 {
         let mut canonical = BTreeMap::new();
         canonical.insert(
             local_validator,
-            RestartParkedAckSlotV1::Originated(originated),
+            RestartParkedAckSlotV1::Originated(Box::new(originated)),
         );
         for statement in admitted {
             let origin = statement.statement_v1().origin();
             ensure!(
                 canonical
-                    .insert(origin, RestartParkedAckSlotV1::Admitted(statement))
+                    .insert(
+                        origin,
+                        RestartParkedAckSlotV1::Admitted(Box::new(statement))
+                    )
                     .is_none(),
                 "ParkedAck barrier repeats one authenticated origin"
             );
@@ -917,4 +920,10 @@ impl DurablyAcknowledgedRestartParkedBarrierV1 {
         );
         Ok(())
     }
+}
+
+#[cfg(test)]
+#[test]
+fn restart_owner_slot_retains_only_indirection_v1() {
+    assert!(std::mem::size_of::<RestartParkedAckSlotV1>() <= 2 * std::mem::size_of::<usize>());
 }

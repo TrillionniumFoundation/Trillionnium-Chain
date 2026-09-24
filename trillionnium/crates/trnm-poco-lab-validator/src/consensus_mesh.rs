@@ -629,13 +629,13 @@ impl P2pIdentitySignatureProducerV1 for SharedP2pIdentityProducerV1 {
 enum MeshIdentitySignerV1 {
     /// Secret-bearing fixture mode only.  Deployed external composition must
     /// use [`Self::External`].
-    Local(SigningKey),
+    Local(Box<SigningKey>),
     External(SharedP2pIdentityProducerV1),
 }
 
 enum MeshAuthenticatedConnectionV1<T> {
-    Local(AuthenticatedConnection<T>),
-    External(ExternallySignedAuthenticatedConnectionV1<T>),
+    Local(Box<AuthenticatedConnection<T>>),
+    External(Box<ExternallySignedAuthenticatedConnectionV1<T>>),
 }
 
 impl<T: Read + Write> MeshAuthenticatedConnectionV1<T> {
@@ -828,9 +828,9 @@ impl MeshIdentityV0 {
         Self {
             run_id: config.run_id.clone(),
             local: config.local,
-            p2p_identity_signer: MeshIdentitySignerV1::Local(
+            p2p_identity_signer: MeshIdentitySignerV1::Local(Box::new(
                 config.p2p_identity_signing_key.clone(),
-            ),
+            )),
             validator_set: config.validator_set.clone(),
             key_roles: config.key_roles.clone(),
             transport_context: config.transport_context,
@@ -3911,6 +3911,7 @@ fn connect_authenticated_until(
                 &identity.key_roles,
                 identity.transport_context,
             )
+            .map(Box::new)
             .map(MeshAuthenticatedConnectionV1::Local),
             MeshIdentitySignerV1::External(producer) => {
                 ExternallySignedAuthenticatedConnectionV1::connect(
@@ -3923,6 +3924,7 @@ fn connect_authenticated_until(
                     &identity.key_roles,
                     identity.transport_context,
                 )
+                .map(Box::new)
                 .map(MeshAuthenticatedConnectionV1::External)
             }
         } {
@@ -4016,6 +4018,7 @@ fn authenticate_incoming(
             &identity.key_roles,
             identity.transport_context,
         )
+        .map(Box::new)
         .map(MeshAuthenticatedConnectionV1::Local),
         MeshIdentitySignerV1::External(producer) => {
             ExternallySignedAuthenticatedConnectionV1::accept(
@@ -4027,6 +4030,7 @@ fn authenticate_incoming(
                 &identity.key_roles,
                 identity.transport_context,
             )
+            .map(Box::new)
             .map(MeshAuthenticatedConnectionV1::External)
         }
     } {
@@ -4640,6 +4644,15 @@ mod tests {
         HostAttestationRequestV1, HostAttestationTokenV1, RejectingHostAttestationAuthorityV1,
     };
 
+    #[test]
+    fn mesh_connection_owners_do_not_inline_crypto_and_session_state_v1() {
+        assert!(std::mem::size_of::<MeshIdentitySignerV1>() <= 2 * std::mem::size_of::<usize>());
+        assert!(
+            std::mem::size_of::<MeshAuthenticatedConnectionV1<std::io::Cursor<Vec<u8>>>>()
+                <= 2 * std::mem::size_of::<usize>()
+        );
+    }
+
     const TEST_RUN_ID: &str = "poco-g3-7-20260814T000000Z-mesh0001";
 
     fn authenticated_identity_fixture_v0() -> (MeshIdentityV0, MeshIdentityV0) {
@@ -4699,7 +4712,7 @@ mod tests {
             MeshIdentityV0 {
                 run_id: TEST_RUN_ID.to_owned(),
                 local: client,
-                p2p_identity_signer: MeshIdentitySignerV1::Local(client_key),
+                p2p_identity_signer: MeshIdentitySignerV1::Local(Box::new(client_key)),
                 validator_set: validator_set.clone(),
                 key_roles: key_roles.clone(),
                 transport_context: context,
@@ -4708,7 +4721,7 @@ mod tests {
             MeshIdentityV0 {
                 run_id: TEST_RUN_ID.to_owned(),
                 local: server,
-                p2p_identity_signer: MeshIdentitySignerV1::Local(server_key),
+                p2p_identity_signer: MeshIdentitySignerV1::Local(Box::new(server_key)),
                 validator_set,
                 key_roles,
                 transport_context: context,

@@ -367,7 +367,7 @@ impl OriginatedRestartCutParkV1 {
             .map_err(|_| RestartCutErrorV1::AuthenticatedOriginMismatch)?;
         let value = Self {
             reservation,
-            declared: LocalRestartCutParkStatementOwnerV1::Declared(declared),
+            declared: LocalRestartCutParkStatementOwnerV1::Declared(Box::new(declared)),
         };
         value.revalidate_v1(fleet_start_certificate, validator_set)?;
         Ok(value)
@@ -391,7 +391,7 @@ impl OriginatedRestartCutParkV1 {
             .map_err(|_| RestartCutErrorV1::AuthenticatedOriginMismatch)?;
         let value = Self {
             reservation,
-            declared: LocalRestartCutParkStatementOwnerV1::TestOnly(statement),
+            declared: LocalRestartCutParkStatementOwnerV1::TestOnly(Box::new(statement)),
         };
         value.revalidate_v1(fleet_start_certificate, validator_set)?;
         Ok(value)
@@ -438,9 +438,9 @@ impl OriginatedRestartCutParkV1 {
 }
 
 enum LocalRestartCutParkStatementOwnerV1 {
-    Declared(ContinuousRestartDeclaredParkAuthorityV1),
+    Declared(Box<ContinuousRestartDeclaredParkAuthorityV1>),
     #[cfg(test)]
-    TestOnly(RestartCutParkStatementV1),
+    TestOnly(Box<RestartCutParkStatementV1>),
 }
 
 impl LocalRestartCutParkStatementOwnerV1 {
@@ -454,7 +454,7 @@ impl LocalRestartCutParkStatementOwnerV1 {
 
     fn into_declared_authority_v1(self) -> Option<ContinuousRestartDeclaredParkAuthorityV1> {
         match self {
-            Self::Declared(value) => Some(value),
+            Self::Declared(value) => Some(*value),
             #[cfg(test)]
             Self::TestOnly(_) => None,
         }
@@ -462,8 +462,8 @@ impl LocalRestartCutParkStatementOwnerV1 {
 }
 
 enum RestartCutParkSlotV1 {
-    Admitted(AdmittedRestartCutParkV1),
-    Originated(OriginatedRestartCutParkV1),
+    Admitted(Box<AdmittedRestartCutParkV1>),
+    Originated(Box<OriginatedRestartCutParkV1>),
 }
 
 impl RestartCutParkSlotV1 {
@@ -545,6 +545,7 @@ impl VerifiedRestartCutParkCertificatesV1 {
             RestartPrepareSlotV1::Admitted(target_prepare),
             statements
                 .into_iter()
+                .map(Box::new)
                 .map(RestartCutParkSlotV1::Admitted)
                 .collect(),
             fleet_start_certificate,
@@ -561,9 +562,10 @@ impl VerifiedRestartCutParkCertificatesV1 {
     ) -> Result<Self, RestartCutErrorV1> {
         let mut statements = statements
             .into_iter()
+            .map(Box::new)
             .map(RestartCutParkSlotV1::Admitted)
             .collect::<Vec<_>>();
-        statements.push(RestartCutParkSlotV1::Originated(local_statement));
+        statements.push(RestartCutParkSlotV1::Originated(Box::new(local_statement)));
         Self::new_phase_bound_v1(
             RestartPrepareSlotV1::Originated(target_prepare),
             statements,
@@ -581,9 +583,10 @@ impl VerifiedRestartCutParkCertificatesV1 {
     ) -> Result<Self, RestartCutErrorV1> {
         let mut statements = statements
             .into_iter()
+            .map(Box::new)
             .map(RestartCutParkSlotV1::Admitted)
             .collect::<Vec<_>>();
-        statements.push(RestartCutParkSlotV1::Originated(local_statement));
+        statements.push(RestartCutParkSlotV1::Originated(Box::new(local_statement)));
         Self::new_phase_bound_v1(
             RestartPrepareSlotV1::Admitted(target_prepare),
             statements,
@@ -1555,4 +1558,14 @@ fn rebuild_certificates_v1(
     )?;
     let park_artifact_sha256 = Sha256::digest(park_certificate.encode()).into();
     Ok((cut_certificate, park_certificate, park_artifact_sha256))
+}
+
+#[cfg(test)]
+#[test]
+fn restart_owner_slot_retains_only_indirection_v1() {
+    assert!(
+        std::mem::size_of::<LocalRestartCutParkStatementOwnerV1>()
+            <= 2 * std::mem::size_of::<usize>()
+    );
+    assert!(std::mem::size_of::<RestartCutParkSlotV1>() <= 2 * std::mem::size_of::<usize>());
 }

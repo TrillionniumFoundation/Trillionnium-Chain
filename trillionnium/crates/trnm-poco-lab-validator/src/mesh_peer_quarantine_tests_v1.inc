@@ -54,7 +54,7 @@ fn quarantine_identities_v1() -> Vec<MeshIdentityV0> {
         .map(|(i, id)| MeshIdentityV0 {
             run_id: TEST_RUN_ID.to_owned(),
             local: id,
-            p2p_identity_signer: MeshIdentitySignerV1::Local(keys[i].clone()),
+            p2p_identity_signer: MeshIdentitySignerV1::Local(Box::new(keys[i].clone())),
             validator_set: set.clone(),
             key_roles: roles.clone(),
             transport_context: RunTransportContext::new(
