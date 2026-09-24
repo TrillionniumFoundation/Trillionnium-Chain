@@ -234,6 +234,8 @@ def main() -> None:
     )
     assert '["bash", "-c", REMOTE_PROBE]' in probe_source
     assert '["bash", "-lc", REMOTE_PROBE]' not in probe_source
+    assert "/proc/meminfo" in preflight.REMOTE_PROBE
+    assert "free -b" not in preflight.REMOTE_PROBE
     launch_sources = "\n".join(
         path.read_text(encoding="utf-8")
         for path in (
