@@ -639,16 +639,14 @@ fn successor_child_proposal_v11(owner: &SuccessorFinalityCaseV11) -> SignedPropo
 
 #[test]
 fn actual_successor_core_finalizes_and_applies_first_new_v11() {
-    let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
-    let unsigned = first_apply_unsigned_v2(live);
-    let first = first_apply_children_v2(first_apply_start_v2(unsigned));
-    let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
-    let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
-    let (directory, owner, mut key, watermark) =
-        *activate_live_successor_v10(prepare_joint_roles_v8(roles));
+    // V2--V8 have dedicated negative and crash regressions. V11 needs their
+    // genuine durable product output, not another replay of every historical
+    // negative probe before the second-epoch continuation can start. Reuse
+    // the same positive-only construction used by the V8 product test; it
+    // still executes every real owner transition, both handoff signatures,
+    // the joint attachment and Journal12 activation.
+    let (roles, _) = build_actual_attachment_case_v8();
+    let (directory, owner, mut key, watermark) = *activate_live_successor_v10(roles);
 
     let first_proposal = successor_first_proposal_v10(&owner);
     let first_id = *first_proposal.block().id().as_bytes();

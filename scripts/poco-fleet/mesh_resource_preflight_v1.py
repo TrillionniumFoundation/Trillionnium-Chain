@@ -52,7 +52,7 @@ printf 'os=%s\n' "$(uname -s)"
 printf 'arch=%s\n' "$(uname -m)"
 printf 'epoch=%s\n' "$(date +%s)"
 printf 'cpu_threads=%s\n' "$(nproc)"
-free -b | awk '/^Mem:/{print "memory_bytes="$2; print "memory_available_bytes="$7}'
+awk '/^MemTotal:/{print "memory_bytes="($2 * 1024)} /^MemAvailable:/{print "memory_available_bytes="($2 * 1024)}' /proc/meminfo
 printf 'nofile_soft=%s\n' "$(ulimit -Sn)"
 printf 'nofile_hard=%s\n' "$(ulimit -Hn)"
 printf 'nproc_soft=%s\n' "$(ulimit -Su)"

@@ -222,8 +222,8 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     let displaced = role_path.with_extension("retirement-callback-displaced");
     assert!(displaced.exists());
     assert!(
-        format!("{error:#}").contains("FileIdentityChanged"),
-        "{error:#}"
+        format!("{error:#}").contains("joint attachment exact role head/fence changed"),
+        "the product owner must reject the replaced role namespace at its stable custody boundary: {error:#}"
     );
     std::fs::remove_file(&role_path).unwrap();
     std::fs::rename(&displaced, &role_path).unwrap();

@@ -210,8 +210,8 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
                 expected_deadline = runner.NODE_CASE_DEADLINES.get(inventory[shard][0], 30)
                 self.assertEqual(summary["shards"][shard]["deadline_seconds"], expected_deadline)
 
-    def test_v9_budget_is_exact_and_both_genuine_cases_are_required(self) -> None:
-        self.assertEqual(len(runner.NODE_CASE_DEADLINES), 2)
+    def test_full_epoch_case_budgets_are_explicit_and_required(self) -> None:
+        self.assertEqual(len(runner.NODE_CASE_DEADLINES), 4)
         for name in runner.NODE_CASE_DEADLINES:
             self.assertEqual(runner.shard_deadline("node-epoch", [name], 300), 600)
             self.assertEqual(runner.shard_deadline("native", [name], 900), 900)

@@ -34,6 +34,12 @@ NODE_EPOCH_PREFIX = "epoch_runtime_candidate_v1::tests::"
 NODE_CASE_DEADLINES = {
     NODE_EPOCH_PREFIX + "actual_epoch_successor_activation_preserves_owners_and_initial_ack_v9": 600,
     NODE_EPOCH_PREFIX + "actual_epoch_successor_activation_after_write_callback_blocks_ack_v9": 600,
+    # These two cases deliberately execute the complete prior epoch before
+    # exercising the first block / first finality of the successor epoch.
+    # Their CI process budget is not a protocol or performance SLO; keep the
+    # stage-level V8 and other epoch cases on the default 300-second budget.
+    NODE_EPOCH_PREFIX + "actual_successor_first_application_persists_executes_and_votes_v10": 600,
+    NODE_EPOCH_PREFIX + "actual_successor_core_finalizes_and_applies_first_new_v11": 600,
 }
 NODE_REQUIRED_DRIVERS = {
     *NODE_CASE_DEADLINES,
