@@ -264,6 +264,148 @@ fn actual_joint_attachment_v8(case: Box<RolesCaseV7>, incoming_watermark: Waterm
     drop((store, application, directory));
 }
 
+// V8 is the end-to-end attachment test. The stage-specific V2--V7 tests
+// already exercise malformed proposals, wrong profiles, foreign owners and
+// redundant readbacks. Re-running those negative probes while constructing the
+// V8 source used to dominate the real happy path on slower CI hosts. These
+// helpers call the same product owners and persistence transitions, but perform
+// only the positive transition once. They do not bypass any production check.
+#[inline(never)]
+fn settle_first_positive_v8(case: Box<FirstApplyCaseV2>) -> Box<FirstApplyCaseV2> {
+    let (directory, owner, key) = *case;
+    let third = owner.prepared[2].prepared.header().unwrap();
+    let qc = first_apply_qc_v2(&third, owner.runtime.edge.new_validator_set());
+    let owner = owner.observe_first_finality_qc_v2(qc).unwrap();
+    let mut owner = owner
+        .apply_first_finalization_v2(
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    owner.settled_checkpoint_v2().unwrap();
+    Box::new((directory, owner, key))
+}
+
+#[inline(never)]
+fn ordinary_cutoff_positive_v8(case: Box<FirstApplyCaseV2>) -> Box<OrdinaryCutoffCaseV3> {
+    let (directory, settled, mut key) = *settle_first_positive_v8(case);
+    let mut owner = settled.into_ordinary_continuation_v3().unwrap();
+    for _ in 12..=15 {
+        let proposal = first_apply_child_proposal_v2(&owner.inner);
+        owner = owner.execute_ordinary_proposal_v3(proposal).unwrap();
+        let (next, _) = owner.sign_ordinary_vote_v3(&mut key).unwrap();
+        owner = next;
+        let last = owner.inner.prepared[2].prepared.header().unwrap();
+        let qc = first_apply_qc_v2(&last, owner.inner.runtime.edge.new_validator_set());
+        owner = owner.observe_ordinary_finality_qc_v3(qc).unwrap();
+        owner = owner
+            .apply_ordinary_front_v3(
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+    }
+    owner.settled_cutoff_checkpoint_v3().unwrap();
+    Box::new((directory, owner, key, None))
+}
+
+#[inline(never)]
+fn checkpoint_positive_v8(case: Box<OrdinaryCutoffCaseV3>) -> Box<CheckpointCaseV4> {
+    let (directory, owner, mut key, _) = *case;
+    let mut owner = owner.into_checkpoint_preparation_v4().unwrap();
+    let good = {
+        let inner = owner.inner.as_ref().unwrap();
+        let selection = inner
+            .runtime
+            .application
+            .compute_later_epoch_selection_v1(trnm_native_application::HeightV0::new(15))
+            .unwrap();
+        application_child_proposal_v4(inner, Some(selection.next_epoch_commitment().id()))
+    };
+    owner.execute_checkpoint_proposal_v4(good).unwrap();
+    let (mut owner, _) = owner.sign_checkpoint_vote_v4(&mut key).unwrap();
+    owner.prepared_checkpoint_cut_v4().unwrap();
+    Box::new((directory, owner, key))
+}
+
+#[inline(never)]
+fn pre_handoff_begin_positive_v8(case: Box<CheckpointCaseV4>) -> Box<PreHandoffCaseV5> {
+    let (directory, owner, key) = *case;
+    Box::new((directory, owner.into_pre_handoff_v5().unwrap(), key))
+}
+
+#[inline(never)]
+fn seal_and_apply_positive_v8(case: Box<PreHandoffCaseV5>) -> Box<PreHandoffCaseV5> {
+    let (directory, mut owner, mut key) = *case;
+    let proposal = genuine_seal_proposal_v5(&owner, false, false);
+    let seal = proposal.block().id();
+    owner.admit_seal_proposal_v5(proposal).unwrap();
+    owner = owner
+        .apply_preceding_application_v5(
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    let (owner, vote) = owner.sign_seal_vote_v5(&mut key).unwrap();
+    let trnm_consensus_core::OutboundMessage::Vote(vote) = vote else {
+        panic!("real seal Vote required")
+    };
+    assert_eq!(vote.block_id(), seal);
+    Box::new((directory, owner, key))
+}
+
+#[inline(never)]
+fn pre_handoff_commit_positive_v8(case: Box<PreHandoffCaseV5>) -> Box<PreHandoffCaseV5> {
+    let (directory, mut owner, key) = *case;
+    let terminal = owner.seals[1].block().header();
+    let qc = first_apply_qc_v2(
+        terminal,
+        owner
+            .inner
+            .as_ref()
+            .unwrap()
+            .runtime
+            .edge
+            .new_validator_set(),
+    );
+    owner.observe_terminal_qc_v5(qc).unwrap();
+    owner = owner
+        .apply_pre_handoff_checkpoint_v5(
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    owner.settled_pre_handoff_cut_v5().unwrap();
+    Box::new((directory, owner, key))
+}
+
+#[inline(never)]
+fn commission_roles_positive_v8(case: Box<PreHandoffCaseV5>) -> Box<RolesCaseV7> {
+    use trnm_consensus_signer_journal::SqliteHandoffSignerJournalV1;
+    let (directory, owner, key) = *case;
+    let mut retired = owner.retire_outgoing_epoch_v6().unwrap();
+    let checkpoint = retired.confirm_retired_cut_v6().unwrap();
+    let strict = retired.source.receipt.strict_context();
+    let profile = HandoffSignerJournalProfileV1::for_epoch_handoff(
+        strict.old_validator_set().clone(),
+        strict.new_validator_set().clone(),
+        *strict.old_consensus_parameters(),
+        *strict.new_consensus_parameters(),
+        retired.retired.profile_v1().author(),
+        retired.retired.profile_v1().signer_profile_ref(),
+        [0xe7; 32],
+        64,
+        4096,
+        32 * 1024 * 1024,
+    )
+    .unwrap();
+    super::confirm_role_profile_v7(&retired, &profile).unwrap();
+    let watermark = Watermark::default();
+    let path = directory.path().join("outgoing-role.db");
+    let mut journal =
+        SqliteHandoffSignerJournalV1::create_new(&path, profile, watermark.clone()).unwrap();
+    let selected = journal.confirm_head_exact_v1().unwrap();
+    let roles = retired.into_handoff_roles_v7(journal, selected).unwrap();
+    assert_eq!(roles.retired.checkpoint, checkpoint);
+    Box::new((directory, roles, key, watermark))
+}
+
 #[inline(never)]
 fn build_actual_attachment_case_v8() -> (Box<RolesCaseV7>, Watermark) {
     let started = std::time::Instant::now();
@@ -277,15 +419,15 @@ fn build_actual_attachment_case_v8() -> (Box<RolesCaseV7>, Watermark) {
     trace_actual_attachment_phase_v8(started, "build.first-proposal-ready");
     let first = first_apply_children_v2(first_apply_start_v2(unsigned));
     trace_actual_attachment_phase_v8(started, "build.first-finality-ready");
-    let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
+    let cutoff = ordinary_cutoff_positive_v8(first);
     trace_actual_attachment_phase_v8(started, "build.cutoff-ready");
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
+    let checkpoint = checkpoint_positive_v8(cutoff);
     trace_actual_attachment_phase_v8(started, "build.checkpoint-prepared");
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
+    let first_seal = seal_and_apply_positive_v8(pre_handoff_begin_positive_v8(checkpoint));
     trace_actual_attachment_phase_v8(started, "build.first-seal-ready");
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
+    let second_seal = seal_and_apply_positive_v8(first_seal);
     trace_actual_attachment_phase_v8(started, "build.second-seal-ready");
-    let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
+    let roles = commission_roles_positive_v8(pre_handoff_commit_positive_v8(second_seal));
     trace_actual_attachment_phase_v8(started, "build.roles-commissioned");
     let roles = prepare_joint_roles_v8(roles);
     trace_actual_attachment_phase_v8(started, "build.ready");
