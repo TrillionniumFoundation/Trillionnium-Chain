@@ -465,6 +465,16 @@ is implied. Transport credentials are distinct from consensus signing keys.
 
 ## Observability and SLO
 
+The persistent candidate mesh retains its first terminal failure before shutdown.
+That same first failure emits one bounded stderr diagnostic at the worker boundary,
+so a peer's resulting EOF and coordinator cleanup cannot erase the originating
+local reason while the node joins other workers. Direction and remote identity
+are retained; reason text is escaped and capped at 512 characters. Later failures
+do not replace or duplicate the first diagnostic. Logging failure never changes
+the retained cause or disables the stop flag. This is operational attribution,
+not signed evidence, a peer offense, or authority to relax the Ready/Start barrier.
+
+
 Record handshake/admission/ACK latency, per-lane credits, pending age, good bytes,
 rejected bytes, duplicate rate, reconnects, fsync latency and quarantine reasons.
 Use fixed peer-role/lane/reason labels; peer IDs belong in bounded diagnostic

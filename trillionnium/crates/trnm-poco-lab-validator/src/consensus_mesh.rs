@@ -4346,12 +4346,45 @@ fn set_terminal(
     stop: &AtomicBool,
     failure: MeshTerminalFailureV0,
 ) {
-    if let Ok(mut slot) = terminal.lock() {
+    set_terminal_with_diagnostic_v1(terminal, stop, failure, &mut io::stderr());
+}
+
+fn set_terminal_with_diagnostic_v1(
+    terminal: &Mutex<Option<MeshTerminalFailureV0>>,
+    stop: &AtomicBool,
+    failure: MeshTerminalFailureV0,
+    diagnostic: &mut impl Write,
+) {
+    let first = if let Ok(mut slot) = terminal.lock() {
         if slot.is_none() {
+            // Preserve the complete cause internally, but never duplicate an
+            // unbounded reason or permit injected terminal-control characters.
+            let reason: String = failure
+                .reason
+                .chars()
+                .flat_map(char::escape_default)
+                .take(512)
+                .collect();
+            let message = format!(
+                "mesh terminal: remote={} direction={} reason={}",
+                hex::encode(failure.remote.as_bytes()),
+                failure.direction.as_str(),
+                reason
+            );
             *slot = Some(failure);
+            Some(message)
+        } else {
+            None
         }
-    }
+    } else {
+        None
+    };
     stop.store(true, Ordering::Release);
+    // A best-effort diagnostic cannot replace the failure or prevent stopping.
+    // Do not hold the terminal mutex while touching the output sink.
+    if let Some(message) = first {
+        let _ = writeln!(diagnostic, "{message}");
+    }
 }
 
 fn cleanup_failed_establish(
@@ -4675,6 +4708,70 @@ mod tests {
         assert!(
             std::mem::size_of::<MeshAuthenticatedConnectionV1<std::io::Cursor<Vec<u8>>>>()
                 <= 2 * std::mem::size_of::<usize>()
+        );
+    }
+
+    #[test]
+    fn first_mesh_failure_is_bounded_and_not_replaced_by_cleanup_v1() {
+        let terminal = Mutex::new(None);
+        let stop = AtomicBool::new(false);
+        let mut output = Vec::new();
+        let failure = MeshTerminalFailureV0 {
+            remote: ValidatorId::new([0x71; 32]),
+            direction: PeerDirectionV0::Outbound,
+            reason: format!("original\n\x1b{}", "界".repeat(2048)),
+        };
+        let original = failure.reason.clone();
+        set_terminal_with_diagnostic_v1(&terminal, &stop, failure, &mut output);
+        assert!(stop.load(Ordering::Acquire));
+        assert_eq!(terminal.lock().unwrap().as_ref().unwrap().reason, original);
+        let first = output.clone();
+        let rendered = String::from_utf8(first.clone()).unwrap();
+        assert!(rendered.contains("reason=original\\n\\u{1b}"));
+        assert_eq!(rendered.lines().count(), 1);
+        assert!(rendered.len() < 1024);
+        assert!(!rendered.contains('\x1b'));
+        set_terminal_with_diagnostic_v1(
+            &terminal,
+            &stop,
+            MeshTerminalFailureV0 {
+                remote: ValidatorId::new([0x72; 32]),
+                direction: PeerDirectionV0::Inbound,
+                reason: "later cleanup error".to_owned(),
+            },
+            &mut output,
+        );
+        assert_eq!(output, first);
+        assert_eq!(terminal.lock().unwrap().as_ref().unwrap().reason, original);
+    }
+
+    #[test]
+    fn mesh_diagnostic_write_failure_cannot_erase_terminal_or_stop_v1() {
+        struct FailedOutput;
+        impl Write for FailedOutput {
+            fn write(&mut self, _: &[u8]) -> io::Result<usize> {
+                Err(io::Error::other("diagnostic unavailable"))
+            }
+            fn flush(&mut self) -> io::Result<()> {
+                Ok(())
+            }
+        }
+        let terminal = Mutex::new(None);
+        let stop = AtomicBool::new(false);
+        set_terminal_with_diagnostic_v1(
+            &terminal,
+            &stop,
+            MeshTerminalFailureV0 {
+                remote: ValidatorId::new([0x71; 32]),
+                direction: PeerDirectionV0::Outbound,
+                reason: "real lease failure".to_owned(),
+            },
+            &mut FailedOutput,
+        );
+        assert!(stop.load(Ordering::Acquire));
+        assert_eq!(
+            terminal.lock().unwrap().as_ref().unwrap().reason,
+            "real lease failure"
         );
     }
 
