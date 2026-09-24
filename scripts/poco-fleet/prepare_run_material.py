@@ -682,6 +682,17 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
     return output
 
 
+def bounded_workload_height_v1(text: str) -> int:
+    """Keep CLI diagnostics bounded without changing the selected height range."""
+    try:
+        height = int(text)
+    except ValueError:
+        raise argparse.ArgumentTypeError("height must be an integer in 1..131072") from None
+    if not 1 <= height <= 131_072:
+        raise argparse.ArgumentTypeError("height must be an integer in 1..131072")
+    return height
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("validator_count", type=int, choices=(7, 31, 100))
@@ -697,10 +708,10 @@ def main() -> None:
     parser.add_argument("--material-builder-sha256", required=True)
     parser.add_argument("--validator-binary", type=pathlib.Path, required=True)
     parser.add_argument(
-        "--ordinary-start-height", type=int, choices=range(1, 131_073), required=True
+        "--ordinary-start-height", type=bounded_workload_height_v1, metavar="1..131072", required=True
     )
     parser.add_argument(
-        "--workload-max-height", type=int, choices=range(1, 131_073), required=True
+        "--workload-max-height", type=bounded_workload_height_v1, metavar="1..131072", required=True
     )
     parser.add_argument("--run-id")
     parser.add_argument("--native-client-profile", action="store_true")

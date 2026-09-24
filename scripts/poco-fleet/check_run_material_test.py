@@ -725,7 +725,35 @@ def verify_reduced_placement(
                 if placement != "unknown" else "invalid choice" in result.stderr)
 
 
+def verify_bounded_height_cli_v1() -> None:
+    import argparse
+
+    for text, expected in (("1", 1), ("4", 4), ("131072", 131072), ("+4", 4), ("0004", 4)):
+        assert prepare_run_material.bounded_workload_height_v1(text) == expected
+    for text in ("0", "-1", "131073", "1.5", "abc", "9" * 5000):
+        try:
+            prepare_run_material.bounded_workload_height_v1(text)
+        except argparse.ArgumentTypeError as error:
+            assert str(error) == "height must be an integer in 1..131072"
+        else:
+            raise AssertionError("invalid CLI height accepted")
+
+    helped = subprocess.run([sys.executable, str(GENERATOR), "--help"],
+                            capture_output=True, timeout=5, check=True)
+    assert len(helped.stdout) + len(helped.stderr) < 12 * 1024
+    assert b"--workload-max-height 1..131072" in helped.stdout
+    assert b"--ordinary-start-height 1..131072" in helped.stdout
+    for option in ("--ordinary-start-height", "--workload-max-height"):
+        for text in ("0", "131073", "bad"):
+            rejected = subprocess.run([sys.executable, str(GENERATOR), "7", option, text],
+                                      capture_output=True, timeout=5)
+            assert rejected.returncode == 2
+            assert len(rejected.stdout) + len(rejected.stderr) < 12 * 1024
+            assert b"height must be an integer in 1..131072" in rejected.stderr
+
+
 def main() -> None:
+    verify_bounded_height_cli_v1()
     with tempfile.TemporaryDirectory(prefix="poco-g3-run-material-test-") as temporary:
         parent = pathlib.Path(temporary)
         verify_pinned_builder_inode(parent)
@@ -1099,7 +1127,7 @@ def main() -> None:
         "reduced_material_positive=true reduced_mutants=15 reduced_cli_rejections=4 "
         "reduced_validator_hosts=2 fake_material_is_consensus_evidence=false "
         "validator_hosts=5 mac_observer=true ephemeral_role_keys=three pop=true "
-        "public_workload=true ordinary_start_height=4 ordinal_height_mapping=true "
+        "public_workload=true ordinary_start_height=4 ordinal_height_mapping=true bounded_cli_diagnostics=true "
         "content_addressed=true application_private_keys=false "
         "builder_inode_pinned=true builder_path_substitution_rejected=true "
         "material_builder_validator_binary_distinct=true same_binary_fallback_rejected=true "
