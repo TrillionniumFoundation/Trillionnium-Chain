@@ -48,7 +48,7 @@ real-owner regression; it is not a production startup profile.
 | Runtime path | Current operation and consumer | Remaining boundary |
 |---|---|---|
 | `SuccessorFirstApplicationRuntimeV10` | `begin_first_application_v10`, `admit_first_proposal_v10`, `execute_first_proposal_v10`, `sign_first_vote_v10`, `commit_first_finality_v10`; native later-edge preparation and exact custody/checkpoint joins | A single first-new application path is not sustained subsequent epoch commissioning |
-| `SuccessorFinalizationRuntimeV11` | `begin_finalization_v11`, `execute_ordinary_child_v11`, `execute_checkpoint_child_v11`, `sign_child_vote_v11`, `observe_front_qc_v11`, `apply_front_v11`, `settled_checkpoint_v11`; actual ordinary/first-new application commits, two empty-seal Votes and exact next-checkpoint Core finality | Independent process restart, repeated whole-node handoffs, retirement, long-history GC and public daemon composition remain distinct requirements |
+| `SuccessorFinalizationRuntimeV11` | `begin_finalization_v11`, `execute_ordinary_child_v11`, `execute_checkpoint_child_v11`, `sign_child_vote_v11`, `observe_front_qc_v11`, `apply_front_v11`, `settled_checkpoint_v11`; actual ordinary/first-new application commits, two empty-seal Votes, exact next-checkpoint Core finality, `apply_pre_handoff_checkpoint_v11` and inert `settled_pre_handoff_cut_v11` | Independent process restart, repeated whole-node handoffs, retirement, long-history GC and public daemon composition remain distinct requirements |
 | Candidate transaction client | `continuous_runtime::tests::actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1` exercises socket, WAL, real consensus and independent historical proof verification | A candidate socket is not a production Internet listener or release acceptance |
 | Normal node entry | `trnm-poco-node` and `trnm-poco-node-cli start` retain their explicit refusal | No launch switch may substitute lab code, fixtures or a fabricated authority for actual production owners |
 
@@ -60,7 +60,7 @@ The checkpoint remains Prepared after its Vote. The existing continuation now
 owns `admit_seal_proposal_v11`, `apply_preceding_seal_front_v11`,
 `sign_seal_vote_v11` and `observe_checkpoint_finality_v11` for the original
 empty seals and Core finality. The checkpoint itself is not committed by the
-ordinary apply port; its native pre-handoff commit and retirement stay separate.
+ordinary apply port; the dedicated pre-handoff port below commits it without retiring custody.
 
 The existing Journal12/V11 owner is extended through the next checkpoint's
 original two empty seals. Before each seal Vote, the parent's QC must first
@@ -69,8 +69,26 @@ creates a native preparation, application mutation or synthetic receipt. The
 same retained cutoff selection, checkpoint P/body, strict Core context, Safety
 head and independent node checkpoint are revalidated at each custody callback.
 The terminal QC must prove exactly checkpoint -> seal1 -> seal2. Observing that
-proof is not native checkpoint commit, signer retirement or a further handoff;
-those capabilities remain unavailable until their actual owner joins exist.
+proof alone is not native checkpoint commit, signer retirement or a further handoff.
+
+`apply_pre_handoff_checkpoint_v11` consumes exactly that finality front, original
+checkpoint P, retained cutoff selection and two signed empty seals. It reuses
+V5's native schema13 pre-handoff commit helper under the current Core set and
+parameters, then advances the existing independent application checkpoint, feeds
+the actual native readback to Core and persists/acknowledges the resulting Journal12
+Safety transition. No new database, synthetic receipt, key use, timeout extension
+or schema auto-migration is introduced. Normal and preceding-seal apply ports
+remain unable to select this phase. A failure after a possible durable write
+must stop the consumed owner and be reconciled; it cannot retry from an invented
+predecessor.
+
+`settled_pre_handoff_cut_v11` is an inert readback of the joined native/Safety/
+checkpoint cut. It requires Core CheckpointApplied, no pending sign/finalize or
+payload obligation, the recovered original strict pre-handoff receipt, matching
+old/new contexts and historical cutoff identity. The old ordinary signer has
+not been retired and no new-role or handoff authority is issued. Full-process
+recovery at these joins, old-role retirement and another complete handoff remain
+separate implementation and acceptance requirements.
 
 
 `epoch_runtime_candidate_v1::tests::actual_successor_core_finalizes_and_applies_first_new_v11`

@@ -865,6 +865,7 @@ fn successor_seals_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
     let qc = first_apply_qc_v2(&terminal, owner.set_v11());
     owner = owner.observe_checkpoint_finality_v11(qc).unwrap();
     let pending = owner.inner.runtime.driver.state().pending_finalization().unwrap();
+    let original_proof = pending.proof().id();
     assert_eq!(pending.proof().finalized_block().header(), &checkpoint);
     assert_eq!(pending.proof().child().header(), owner.seals[0].block().header());
     assert_eq!(pending.proof().grandchild().header(), &terminal);
@@ -876,7 +877,38 @@ fn successor_seals_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
     assert_eq!(owner.application_v11().confirm_prepared_epoch_execution_v1(prepared)
         .unwrap().commit_sequence(), None, "Core checkpoint proof is not native commit");
     assert!(owner.settled_checkpoint_v11().is_err());
-    assert!(owner.apply_front_v11(&mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0()).is_err(),
+    assert!(owner.confirm_ordinary_apply_phase_v11().is_err(),
         "ordinary apply must not commit a checkpoint or mint retirement");
+    let before_calls = key.calls;
+    let before_mark = watermark.0.lock().unwrap().0.unwrap();
+    // The dedicated product guard rejects a different retained seal order
+    // without mutating a database or invoking custody.
+    let before: Vec<_> = paths.iter().map(|p| sqlite_logical_image_v3(p)).collect();
+    owner.seals.swap(0, 1);
+    assert!(owner.confirm_pre_handoff_phase_v11().is_err());
+    owner.seals.swap(0, 1);
+    assert_eq!(key.calls, before_calls);
+    for (path, image) in paths.iter().zip(before) {
+        assert!(sqlite_logical_image_v3(path) == image, "invalid commit phase wrote {}", path.display());
+    }
+    owner = owner.apply_pre_handoff_checkpoint_v11(
+        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0()).unwrap();
+    let joined = owner.settled_pre_handoff_cut_v11().unwrap();
+    assert_eq!(joined.fields().application.block_id, *checkpoint.id().as_bytes());
+    assert_eq!(joined.fields().application.height, checkpoint.height().get());
+    assert_eq!(key.calls, before_calls, "pre-handoff commit must not invoke a signer");
+    assert_eq!(watermark.0.lock().unwrap().0.unwrap(), before_mark);
+    assert!(owner.prepared.is_empty());
+    assert!(owner.inner.runtime.driver.state().pending_sign().is_none());
+    assert!(owner.inner.runtime.driver.state().pending_finalize().is_none());
+    let recovered = owner.application_v11().recover_later_epoch_pre_handoff_v1(
+        *checkpoint.id().as_bytes()).unwrap();
+    assert_eq!(recovered.header(), &checkpoint);
+    assert_eq!(recovered.strict_context().checkpoint_finality_proof_id(), original_proof);
+    assert_eq!(recovered.commit_sequence(), joined.fields().application.commit_sequence);
+    assert_eq!(recovered.committed_owner_cut_ref_v1(), owner.pre_handoff.as_ref().unwrap().committed_owner_cut_ref_v1());
+    assert_eq!(owner.application_v11().confirmed_committed_head_v0().unwrap(), *recovered.head());
+    assert!(owner.settled_checkpoint_v11().is_err(), "pre-handoff is not ordinary readiness");
+    assert!(owner.confirm_pre_handoff_phase_v11().is_err(), "applied checkpoint cannot be replayed as pending");
     assert!(directory.path().is_dir());
 }

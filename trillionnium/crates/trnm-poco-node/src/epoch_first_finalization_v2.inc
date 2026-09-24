@@ -554,7 +554,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>
         );
         let committed = commit_application_front_v5(
             &r.application,
-            &r.edge,
+            r.driver.config(),
             &first.prepared,
             permit.finalization().proof(),
             &proof,

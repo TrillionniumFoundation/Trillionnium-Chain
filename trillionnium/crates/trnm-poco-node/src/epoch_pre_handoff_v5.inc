@@ -523,7 +523,7 @@ struct CommittedApplicationFrontV5 {
 #[inline(never)]
 fn commit_application_front_v5(
     application: &DurableNativeApplicationV0,
-    edge: &AuthenticatedEpochApplicationEdgeV1,
+    config: &trnm_consensus_core::CoreConfig,
     prepared: &PreparedNativeEpochExecutionV1,
     proof: &trnm_consensus_types::FinalityProofV0,
     proof_bytes: &[u8],
@@ -547,7 +547,7 @@ fn commit_application_front_v5(
     confirm_retained_selection_v5(application, selection)?;
     let checkpoint = proof.finalized_block().header();
     let terminal = proof.grandchild().header();
-    let old_set = edge.new_validator_set();
+    let old_set = config.validator_set();
     let new_set = selection.new_validator_set();
     ensure!(
         checkpoint == &prepared.header()?
@@ -568,7 +568,7 @@ fn commit_application_front_v5(
             new_protocol_version: new_set.protocol_version(),
             old_validator_set_hash: old_set.id(),
             new_validator_set_hash: new_set.id(),
-            old_consensus_parameters_hash: edge.new_parameters().hash(),
+            old_consensus_parameters_hash: config.consensus_parameters().hash(),
             new_consensus_parameters_hash: selection.new_parameters().hash(),
             checkpoint_height: checkpoint.height(),
             checkpoint_block_id: checkpoint.id(),

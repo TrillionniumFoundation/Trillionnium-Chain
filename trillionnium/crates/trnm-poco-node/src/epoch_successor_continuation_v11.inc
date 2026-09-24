@@ -15,6 +15,7 @@ pub struct SuccessorFinalizationRuntimeV11<
     checkpoint_selection: Option<Box<trnm_native_execution_v0::ComputedLaterEpochSelectionV1>>,
     seals: Vec<SignedProposalV0>,
     signed_seals: usize,
+    pre_handoff: Option<Box<trnm_native_execution_v0::CommittedLaterEpochPreHandoffV1>>,
 }
 
 impl<
@@ -66,6 +67,7 @@ impl<
             checkpoint_selection: None,
             seals: Vec::new(),
             signed_seals: 0,
+            pre_handoff: None,
         })
     }
 }
@@ -390,8 +392,13 @@ impl<
         self,
         budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
     ) -> Result<Self> {
-        ensure!(self.seals.is_empty() && self.prepared.len() == 3, "successor apply phase");
+        self.confirm_ordinary_apply_phase_v11()?;
         self.apply_application_front_v11(budget)
+    }
+
+    fn confirm_ordinary_apply_phase_v11(&self) -> Result<()> {
+        ensure!(self.seals.is_empty() && self.prepared.len() == 3, "successor apply phase");
+        Ok(())
     }
 
     fn apply_application_front_v11(
@@ -401,10 +408,14 @@ impl<
         ensure!(self.finality_observed && (1..=3).contains(&self.prepared.len()),
             "successor apply phase");
         self.inner.confirm_active_cut_v10()?;
+        let header = self.prepared[0].prepared.header()?;
+        if header.block_kind() == BlockKind::EpochCheckpoint {
+            self.confirm_pre_handoff_phase_v11()?;
+        } else {
+            ensure!(matches!(header.block_kind(), BlockKind::Regular | BlockKind::EpochHandoff),
+                "successor application front is not executable");
+        }
         let first = self.prepared.remove(0);
-        let header = first.prepared.header()?;
-        ensure!(matches!(header.block_kind(), BlockKind::Regular | BlockKind::EpochHandoff),
-            "successor checkpoint requires its dedicated pre-handoff commit owner");
         let before = self
             .inner
             .application()
@@ -459,12 +470,21 @@ impl<
             &prior == first.prepared.application_parent(),
             "successor apply parent changed"
         );
-        let committed = self.inner.application().commit_epoch_finality_bytes_v1(
+        let selection = if header.block_kind() == BlockKind::EpochCheckpoint {
+            self.checkpoint_selection.as_deref()
+        } else {
+            None
+        };
+        let committed = commit_application_front_v5(
+            self.inner.application(),
+            self.inner.runtime.driver.config(),
             &first.prepared,
+            permit.finalization().proof(),
             &proof_bytes,
+            selection,
             budget,
         )?;
-        let current = committed.head().clone();
+        let current = committed.head.clone();
         let old = self.inner.runtime.checkpoint.fields().application;
         let next = EpochApplicationCutV1 {
             block_id: *current.block_id().as_bytes(),
@@ -476,10 +496,10 @@ impl<
             native_store_id: old.native_store_id,
             native_commit_id: *current.commit_id().as_bytes(),
             p_sequence: first.prepared.persist_sequence(),
-            p_digest: committed.p_digest(),
+            p_digest: committed.p_digest,
             artifact_digest: first.prepared.artifact_digest(),
             overlay_digest: first.overlay_digest,
-            commit_sequence: committed.commit_sequence(),
+            commit_sequence: committed.sequence,
         };
         let ordinary = self.inner.ordinary_cut_v10()?;
         self.inner.advance_checkpoint_v10(
@@ -492,8 +512,8 @@ impl<
             .application()
             .confirm_prepared_epoch_execution_v1(&first.prepared)?;
         ensure!(
-            fresh.commit_sequence() == Some(committed.commit_sequence())
-                && fresh.prepared().p_digest() == committed.p_digest()
+            fresh.commit_sequence() == Some(committed.sequence)
+                && fresh.prepared().p_digest() == committed.p_digest
                 && fresh.artifact_checksum() == before.artifact_checksum()
                 && fresh.overlay_checksum() == before.overlay_checksum()
                 && self.inner.application().confirmed_committed_head_v0()? == current,
@@ -517,7 +537,7 @@ impl<
             &[
                 &fresh.prepared().p_digest(),
                 &fresh.prepared().persist_sequence().to_be_bytes(),
-                &committed.commit_sequence().to_be_bytes(),
+                &committed.sequence.to_be_bytes(),
                 &fresh.artifact_checksum(),
                 &fresh.overlay_checksum(),
                 &new_digest,
@@ -627,6 +647,7 @@ impl<
         );
         self.inner.confirm_active_cut_v10()?;
         self.finality_observed = false;
+        self.pre_handoff = committed.pre_handoff;
         Ok(self)
     }
 
@@ -742,6 +763,88 @@ impl<
             && pending.proof().grandchild().header() == self.seals[1].block().header(),
             "successor checkpoint original proof changed");
         Ok(self)
+    }
+
+    fn confirm_pre_handoff_phase_v11(&self) -> Result<()> {
+        ensure!(self.finality_observed && self.prepared.len() == 1
+            && self.seals.len() == 2 && self.signed_seals == 2
+            && self.pre_handoff.is_none() && self.checkpoint_selection.is_some()
+            && self.inner.pending_epoch_commit.is_none()
+            && self.inner.pending_validation.is_none()
+            && self.inner.runtime.driver.state().pending_sign().is_none(),
+            "successor pre-handoff commit phase");
+        let checkpoint = self.prepared[0].prepared.header()?;
+        let pending = self.inner.runtime.driver.state().pending_finalization()
+            .context("successor pre-handoff Core front missing")?;
+        ensure!(checkpoint.block_kind() == BlockKind::EpochCheckpoint
+            && pending.proof().finalized_block().header() == &checkpoint
+            && pending.proof().child().header() == self.seals[0].block().header()
+            && pending.proof().grandchild().header() == self.seals[1].block().header(),
+            "successor pre-handoff original proof changed");
+        Ok(())
+    }
+
+    /// Commit the original next checkpoint through the existing native13 owner.
+    /// This does not retire the old ordinary signer or commission a new role.
+    pub fn apply_pre_handoff_checkpoint_v11(
+        self,
+        budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+    ) -> Result<Self> {
+        self.confirm_pre_handoff_phase_v11()?;
+        let mut next = self.apply_application_front_v11(budget)?;
+        next.settled_pre_handoff_cut_v11()?;
+        Ok(next)
+    }
+
+    /// Fresh comparison of real owners, not retirement/new-generation authority.
+    pub fn settled_pre_handoff_cut_v11(&mut self) -> Result<EpochNodeCheckpointV1> {
+        ensure!(!self.finality_observed && self.prepared.is_empty()
+            && self.pre_handoff.is_some() && self.seals.len() == 2
+            && self.signed_seals == 2, "successor pre-handoff is not applied");
+        let result = (|| {
+            let checkpoint = self.inner.confirm_active_cut_v10()?;
+            let receipt = self.pre_handoff.as_ref().context("successor pre-handoff receipt missing")?;
+            let selection = self.checkpoint_selection.as_ref().context("successor cutoff missing")?;
+            let state = self.inner.runtime.driver.state();
+            ensure!(state.finalized() == state.application_applied()
+                && state.application_applied().block_id().as_bytes() == &checkpoint.fields().application.block_id
+                && state.pending_sign().is_none() && state.pending_finalize().is_none()
+                && state.finalization_queue().is_empty() && state.payload_validation_obligations().is_empty()
+                && state.old_epoch_boundary_v1().is_some_and(|b| b.phase(state)
+                    == trnm_consensus_core::OldEpochBoundaryPhaseV1::CheckpointApplied),
+                "successor pre-handoff Core/Safety not settled");
+            ensure!(receipt.belongs_to_application(self.inner.application())
+                && receipt.head().block_id().as_bytes() == &checkpoint.fields().application.block_id
+                && receipt.commit_sequence() == checkpoint.fields().application.commit_sequence,
+                "successor pre-handoff native receipt changed");
+            let context = receipt.strict_context();
+            let proof = state.last_finalization_proof().context("successor original finality missing")?;
+            ensure!(context.old_validator_set() == self.inner.runtime.driver.config().validator_set()
+                && context.old_consensus_parameters() == self.inner.runtime.driver.config().consensus_parameters()
+                && context.new_validator_set() == selection.new_validator_set()
+                && context.new_consensus_parameters() == selection.new_parameters()
+                && context.next_epoch_commitment_digest() == selection.next_epoch_commitment().id()
+                && context.checkpoint_finality_proof_id() == proof.id()
+                && proof.finalized_block().header() == receipt.header()
+                && proof.child().header() == self.seals[0].block().header()
+                && proof.grandchild().header() == self.seals[1].block().header(),
+                "successor pre-handoff original configuration/proof changed");
+            // The planning API correctly refuses a committed checkpoint. Verify
+            // the original retained cutoff, not a newly planned selection.
+            let cutoff = self.inner.application().reopen_prepared_epoch_execution_v1(
+                *selection.cutoff_head().block_id().as_bytes())?;
+            let cutoff = self.inner.application().confirm_prepared_epoch_execution_v1(&cutoff)?;
+            ensure!(cutoff.prepared().overlay_parent_head()? == *selection.cutoff_head()
+                && cutoff.prepared().p_digest() == selection.cutoff_p_digest()
+                && cutoff.prepared().persist_sequence() == selection.cutoff_p_sequence()
+                && cutoff.commit_sequence() == Some(selection.cutoff_commit_sequence()),
+                "successor pre-handoff retained cutoff changed");
+            self.inner.confirm_active_cut_v10()
+        })();
+        if result.is_err() {
+            self.inner.runtime.fenced = true;
+        }
+        result
     }
 
     pub fn settled_checkpoint_v11(&mut self) -> Result<EpochNodeCheckpointV1> {
