@@ -463,6 +463,30 @@ Discovery in this dev profile is the signed static peer list only. No public
 DHT, relaying to arbitrary URLs, NAT traversal or validator membership mutation
 is implied. Transport credentials are distinct from consensus signing keys.
 
+### Candidate lease maintenance under admission pressure
+
+The existing mesh admission mutex still serializes each exact external lease,
+host receipt, reconnect and quarantine transaction. A newly admitted session
+must not consume the next authority operation while an already-admitted lease
+is due for renewal. Before minting a new host/peer receipt, service the bounded
+snapshot of due active leases in earliest-local-renewal order. Failure prevents
+the new admission; it never extends an expired lease or changes its generation.
+Cleanup must remain callable even when another lease has expired.
+
+The independent supervisor and whole-mesh health scan use the same earliest-due
+ordering, rather than validator-ID ordering. Local renewal cadence is measured
+from the start of the acquire/renew authority call, not its response completion;
+RPC latency cannot create a new TTL allowance. This local schedule grants no
+authority: the external service still checks exact token, scope, generation and
+expiry, and every physical frame still takes its existing currentness check.
+The 30-second candidate TTL and the authority operation deadlines are unchanged.
+
+Regression coverage includes a serialized seven-admission burst with a progressing
+authority clock, renewal failure before new admission, earliest-due ordering,
+non-due no-op polling, and delayed-response cadence. This bounded scheduling
+repair does not claim progress through unbounded storage stalls, an unavailable
+authority, or a successful independent multi-host campaign.
+
 ## Observability and SLO
 
 The persistent candidate mesh retains its first terminal failure before shutdown.

@@ -1446,6 +1446,10 @@ impl MeshFenceRegistryV1 {
         .map_err(|error| anyhow!("external fence scope rejected: {error}"))?;
         let request = ExternalPeerLeaseRequestV1::new(scope, self.ttl)
             .map_err(|error| anyhow!("external fence request rejected: {error}"))?;
+        // A burst of serialized handshakes must service existing due leases
+        // before taking another slow authority admission. The supervisor may
+        // itself be waiting for this lock; no mutex fairness is assumed.
+        self.renew_due_before_admission_locked_v1()?;
         // Validate the peer scope and bounded TTL before asking the host
         // authority to mint a receipt. Otherwise an invalid internal
         // generation could leave an externally live host token with no
@@ -1459,6 +1463,7 @@ impl MeshFenceRegistryV1 {
                     .map_err(|error| anyhow!("host attestation rejected session: {error}"))
             })
             .transpose()?;
+        let authority_started = Instant::now();
         let token = match self.authority.acquire(request) {
             Ok(token) => token,
             Err(error) => {
@@ -1519,7 +1524,7 @@ impl MeshFenceRegistryV1 {
             ActiveFenceEntryV1 {
                 token,
                 host_admission,
-                next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                next_renew_at: authority_started + fence_renew_interval(self.ttl),
                 external_release_confirmed: false,
                 host_release_confirmed: host_admission.is_none(),
             },
@@ -1606,6 +1611,7 @@ impl MeshFenceRegistryV1 {
                 .map_err(|error| anyhow!("host attestation revalidation failed: {error}"))?;
         }
         if Instant::now() >= entry.next_renew_at {
+            let authority_started = Instant::now();
             token = self
                 .authority
                 .renew(token)
@@ -1618,7 +1624,7 @@ impl MeshFenceRegistryV1 {
                 ActiveFenceEntryV1 {
                     token,
                     host_admission: entry.host_admission,
-                    next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                    next_renew_at: authority_started + fence_renew_interval(self.ttl),
                     external_release_confirmed: false,
                     host_release_confirmed: entry.host_release_confirmed,
                 },
@@ -1653,6 +1659,11 @@ impl MeshFenceRegistryV1 {
             .admission_lock
             .lock()
             .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        self.renew_if_due_locked_v1(key)
+    }
+
+    // Caller retains admission_lock across lookup, RPC and token replacement.
+    fn renew_if_due_locked_v1(&self, key: ActiveFenceKeyV0) -> Result<MeshFenceRenewalOutcomeV1> {
         self.retry_pending_releases_v1(key)?;
         self.retry_pending_host_releases_v1(key)?;
         let mut tokens = self
@@ -1686,6 +1697,7 @@ impl MeshFenceRegistryV1 {
                     anyhow!("host attestation revalidation before renewal failed: {error}")
                 })?;
         }
+        let authority_started = Instant::now();
         let renewed = self
             .authority
             .renew(entry.token)
@@ -1698,12 +1710,41 @@ impl MeshFenceRegistryV1 {
             ActiveFenceEntryV1 {
                 token: renewed,
                 host_admission: entry.host_admission,
-                next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                next_renew_at: authority_started + fence_renew_interval(self.ttl),
                 external_release_confirmed: false,
                 host_release_confirmed: entry.host_release_confirmed,
             },
         );
         Ok(MeshFenceRenewalOutcomeV1::Renewed)
+    }
+
+    /// Bounded scheduling order only; it conveys no lease or frame authority.
+    fn renewal_order_v1(&self) -> Result<Vec<ActiveFenceKeyV0>> {
+        let mut entries = self
+            .tokens
+            .lock()
+            .map_err(|_| anyhow!("mesh fence token map poisoned"))?
+            .iter()
+            .map(|(key, entry)| (entry.next_renew_at, *key))
+            .collect::<Vec<_>>();
+        entries.sort_unstable();
+        Ok(entries.into_iter().map(|(_, key)| key).collect())
+    }
+
+    // New admissions cannot overtake an already-due existing lease. One
+    // snapshot, one attempt per key: no unbounded catch-up or busy loop.
+    // Release paths intentionally do not depend on this maintenance succeeding.
+    fn renew_due_before_admission_locked_v1(&self) -> Result<()> {
+        for key in self.renewal_order_v1()? {
+            self.renew_if_due_locked_v1(key).with_context(|| {
+                format!(
+                    "existing lease maintenance before admission: direction={:?} remote={}",
+                    key.0,
+                    hex::encode(key.1.as_bytes()),
+                )
+            })?;
+        }
+        Ok(())
     }
 
     /// Runs the due-only path for every currently admitted edge and retains
@@ -1712,16 +1753,12 @@ impl MeshFenceRegistryV1 {
     /// here; the next generation will acquire a fresh token on reconnect.
     fn renew_due_all(&self) -> std::result::Result<(), MeshFencePeerFailureV1> {
         let keys = self
-            .tokens
-            .lock()
-            .map_err(|_| MeshFencePeerFailureV1 {
+            .renewal_order_v1()
+            .map_err(|error| MeshFencePeerFailureV1 {
                 remote: Box::new(self.local),
                 direction: PeerDirectionV0::Outbound,
-                reason: "mesh fence token map poisoned".to_owned(),
-            })?
-            .keys()
-            .copied()
-            .collect::<Vec<_>>();
+                reason: error.to_string(),
+            })?;
         for (direction, remote) in keys {
             match self.renew_if_due_inner(direction, remote) {
                 Ok(MeshFenceRenewalOutcomeV1::Missing)
@@ -1744,13 +1781,7 @@ impl MeshFenceRegistryV1 {
             .admission_lock
             .lock()
             .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
-        let keys = self
-            .tokens
-            .lock()
-            .map_err(|_| anyhow!("mesh fence token map poisoned"))?
-            .keys()
-            .copied()
-            .collect::<Vec<_>>();
+        let keys = self.renewal_order_v1()?;
         for key in keys {
             self.revalidate_locked(key)?;
         }
@@ -1790,6 +1821,7 @@ impl MeshFenceRegistryV1 {
                     anyhow!("host attestation revalidation before renewal failed: {error}")
                 })?;
         }
+        let authority_started = Instant::now();
         let renewed = self
             .authority
             .renew(entry.token)
@@ -1802,7 +1834,7 @@ impl MeshFenceRegistryV1 {
             ActiveFenceEntryV1 {
                 token: renewed,
                 host_admission: entry.host_admission,
-                next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                next_renew_at: authority_started + fence_renew_interval(self.ttl),
                 external_release_confirmed: false,
                 host_release_confirmed: entry.host_release_confirmed,
             },
@@ -4950,6 +4982,222 @@ mod tests {
         ) -> Result<[u8; 64], P2pIdentityErrorV1> {
             Err(P2pIdentityErrorV1::Unavailable)
         }
+    }
+
+    struct AdmissionClockAuthorityV1 {
+        inner: TestExternalPeerLeaseAuthorityV1,
+        acquire_calls: AtomicUsize,
+        last_rpc_start: Mutex<Option<Instant>>,
+        renew_order: Mutex<Vec<ValidatorId>>,
+        advance_per_acquire_ms: u64,
+    }
+
+    impl AdmissionClockAuthorityV1 {
+        fn new(context: PeerAdmissionContextV1, advance_per_acquire_ms: u64) -> Self {
+            Self {
+                inner: TestExternalPeerLeaseAuthorityV1::new(context),
+                acquire_calls: AtomicUsize::new(0),
+                last_rpc_start: Mutex::new(None),
+                renew_order: Mutex::new(Vec::new()),
+                advance_per_acquire_ms,
+            }
+        }
+    }
+
+    impl ExternalPeerLeaseAuthorityV1 for AdmissionClockAuthorityV1 {
+        fn preflight(&self) -> Result<(), ExternalFenceError> {
+            self.inner.preflight()
+        }
+
+        fn acquire(
+            &self,
+            request: ExternalPeerLeaseRequestV1,
+        ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+            *self.last_rpc_start.lock().unwrap() = Some(Instant::now());
+            self.acquire_calls.fetch_add(1, Ordering::AcqRel);
+            let token = self.inner.acquire(request)?;
+            // Deterministic authority time, not a sleep or a performance result.
+            self.inner.advance_clock_millis(self.advance_per_acquire_ms);
+            Ok(token)
+        }
+
+        fn renew(
+            &self,
+            token: ExternalPeerLeaseTokenV1,
+        ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+            *self.last_rpc_start.lock().unwrap() = Some(Instant::now());
+            self.renew_order
+                .lock()
+                .unwrap()
+                .push(token.scope().remote());
+            self.inner.renew(token)
+        }
+
+        fn revalidate(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+            self.inner.revalidate(token)
+        }
+
+        fn release(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+            self.inner.release(token)
+        }
+    }
+
+    #[test]
+    fn admission_pressure_services_due_leases_before_minting_another_v1() {
+        let local = ValidatorId::new([0x41; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x42; 32]).unwrap();
+        let authority = Arc::new(AdmissionClockAuthorityV1::new(context, 5_000));
+        let fences = MeshFenceRegistryV1::new(
+            authority.clone(),
+            local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+        )
+        .unwrap();
+        for index in 0..7u8 {
+            // Model the same elapsed time in the local maintenance schedule.
+            // Each serialized acquire can delay all other mutex waiters.
+            let authority_now = 1 + u64::from(index) * 5_000;
+            for entry in fences.tokens.lock().unwrap().values_mut() {
+                if entry
+                    .token
+                    .expires_at_millis()
+                    .saturating_sub(authority_now)
+                    <= 20_000
+                {
+                    entry.next_renew_at = Instant::now() - Duration::from_secs(1);
+                }
+            }
+            fences
+                .acquire(
+                    PeerDirectionV0::Outbound,
+                    ValidatorId::new([0x50 + index; 32]),
+                    [0x60 + index; 32],
+                    1,
+                )
+                .unwrap();
+        }
+        assert_eq!(authority.acquire_calls.load(Ordering::Acquire), 7);
+        assert!(
+            !authority.renew_order.lock().unwrap().is_empty(),
+            "new admissions must service already-due leases even without supervisor scheduling"
+        );
+        for entry in fences.tokens.lock().unwrap().values() {
+            authority
+                .revalidate(entry.token)
+                .expect("all original generations remain live");
+            assert_eq!(entry.token.scope().generation(), 1);
+        }
+        fences.release_all().unwrap();
+    }
+
+    #[test]
+    fn expired_due_lease_prevents_a_new_external_admission_v1() {
+        let local = ValidatorId::new([0x41; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x42; 32]).unwrap();
+        let authority = Arc::new(AdmissionClockAuthorityV1::new(context, 0));
+        let fences = MeshFenceRegistryV1::new(
+            authority.clone(),
+            local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+        )
+        .unwrap();
+        fences
+            .acquire(
+                PeerDirectionV0::Outbound,
+                ValidatorId::new([0x51; 32]),
+                [0x61; 32],
+                1,
+            )
+            .unwrap();
+        fences
+            .tokens
+            .lock()
+            .unwrap()
+            .values_mut()
+            .next()
+            .unwrap()
+            .next_renew_at = Instant::now() - Duration::from_secs(1);
+        authority.inner.advance_clock_millis(30_000);
+        assert!(
+            fences
+                .acquire(
+                    PeerDirectionV0::Outbound,
+                    ValidatorId::new([0x52; 32]),
+                    [0x62; 32],
+                    1,
+                )
+                .is_err(),
+            "expired old lease must not be hidden by a new admission"
+        );
+        assert_eq!(authority.acquire_calls.load(Ordering::Acquire), 1);
+        assert_eq!(fences.active_count().unwrap(), 1);
+    }
+
+    #[test]
+    fn due_lease_scan_prioritizes_deadline_over_validator_order_v1() {
+        let local = ValidatorId::new([0x41; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x42; 32]).unwrap();
+        let authority = Arc::new(AdmissionClockAuthorityV1::new(context, 0));
+        let fences = MeshFenceRegistryV1::new(
+            authority.clone(),
+            local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+        )
+        .unwrap();
+        let low = ValidatorId::new([0x51; 32]);
+        let high = ValidatorId::new([0x52; 32]);
+        for (remote, session) in [(low, [0x61; 32]), (high, [0x62; 32])] {
+            fences
+                .acquire(PeerDirectionV0::Outbound, remote, session, 1)
+                .unwrap();
+        }
+        fences.renew_due_all().unwrap();
+        assert!(
+            authority.renew_order.lock().unwrap().is_empty(),
+            "non-due poll makes no RPC"
+        );
+        let now = Instant::now();
+        {
+            let mut tokens = fences.tokens.lock().unwrap();
+            tokens
+                .get_mut(&(PeerDirectionV0::Outbound, low))
+                .unwrap()
+                .next_renew_at = now - Duration::from_secs(1);
+            tokens
+                .get_mut(&(PeerDirectionV0::Outbound, high))
+                .unwrap()
+                .next_renew_at = now - Duration::from_secs(2);
+        }
+        fences.renew_due_all().unwrap();
+        assert_eq!(*authority.renew_order.lock().unwrap(), [high, low]);
+        fences.release_all().unwrap();
+    }
+
+    #[test]
+    fn lease_cadence_starts_before_the_authority_response_v1() {
+        let local = ValidatorId::new([0x41; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x42; 32]).unwrap();
+        let authority = Arc::new(AdmissionClockAuthorityV1::new(context, 0));
+        let fences = MeshFenceRegistryV1::new(
+            authority.clone(),
+            local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+        )
+        .unwrap();
+        let remote = ValidatorId::new([0x51; 32]);
+        let key = (PeerDirectionV0::Outbound, remote);
+        fences.acquire(key.0, key.1, [0x61; 32], 1).unwrap();
+        let interval = fence_renew_interval(MESH_EXTERNAL_FENCE_TTL_V1);
+        let rpc_start = authority.last_rpc_start.lock().unwrap().unwrap();
+        assert!(fences.tokens.lock().unwrap()[&key].next_renew_at <= rpc_start + interval);
+        fences.renew(key.0, key.1).unwrap();
+        let rpc_start = authority.last_rpc_start.lock().unwrap().unwrap();
+        assert!(fences.tokens.lock().unwrap()[&key].next_renew_at <= rpc_start + interval);
+        fences.release_all().unwrap();
     }
 
     struct FailOnceReleaseAuthorityV1 {
