@@ -7,7 +7,7 @@
 use std::{
     collections::BTreeSet,
     env, fs,
-    path::PathBuf,
+    path::{Path, PathBuf},
     process::Command,
     sync::Arc,
     thread,
@@ -86,14 +86,14 @@ fn batch() -> (
     )
 }
 
-fn remove_sqlite_artifacts(path: &PathBuf) {
+fn remove_sqlite_artifacts(path: &Path) {
     for suffix in ["", "-wal", "-shm", "-journal"] {
         let candidate = PathBuf::from(format!("{}{}", path.display(), suffix));
         let _ = fs::remove_file(candidate);
     }
 }
 
-fn child_process_loss(path: &PathBuf, marker: &PathBuf) -> ! {
+fn child_process_loss(path: &Path, marker: &Path) -> ! {
     let (policy, records, batch) = batch();
     let store = TaskArchiveStoreV1::open_existing(path, policy).expect("child opens store");
     store
