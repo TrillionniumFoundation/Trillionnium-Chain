@@ -520,6 +520,45 @@ impl PayloadReplayPathIdentityV1 {
     }
 }
 
+/// A directory's children may change without replacing its authority owner.
+/// Keep this distinct from regular-file identity, where nlink must remain one.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct PayloadReplayDirectoryIdentityV1 {
+    #[cfg(unix)]
+    device: u64,
+    #[cfg(unix)]
+    inode: u64,
+    #[cfg(unix)]
+    uid: u32,
+    #[cfg(unix)]
+    gid: u32,
+    #[cfg(unix)]
+    mode: u32,
+    #[cfg(not(unix))]
+    is_directory: bool,
+}
+
+impl PayloadReplayDirectoryIdentityV1 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        #[cfg(unix)]
+        {
+            Self {
+                device: metadata.dev(),
+                inode: metadata.ino(),
+                uid: metadata.uid(),
+                gid: metadata.gid(),
+                mode: metadata.mode(),
+            }
+        }
+        #[cfg(not(unix))]
+        {
+            Self {
+                is_directory: metadata.is_dir(),
+            }
+        }
+    }
+}
+
 /// Node-owned append-only payload replay journal.  One exclusive lock covers
 /// the whole namespace; a second process cannot open the same owner while it
 /// is live.  Reopening replays every record and requires an exact sidecar
@@ -530,7 +569,7 @@ pub struct PayloadReplayStoreV1 {
     path: PathBuf,
     head_path: PathBuf,
     directory: File,
-    directory_identity: PayloadReplayPathIdentityV1,
+    directory_identity: PayloadReplayDirectoryIdentityV1,
     file: File,
     file_identity: PayloadReplayPathIdentityV1,
     lock_path: PathBuf,
@@ -558,7 +597,8 @@ impl PayloadReplayStoreV1 {
     ) -> Result<Self, PayloadReplayErrorV1> {
         let path = path.as_ref().to_path_buf();
         let (directory, parent) = private_parent(&path)?;
-        let directory_identity = payload_replay_descriptor_identity(&directory)?;
+        let directory_identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&directory.metadata()?);
         verify_payload_replay_directory_identity(&parent, &directory, directory_identity)?;
         let lock_path = sidecar_path(&path, "lock-v1")?;
         let head_path = sidecar_path(&path, "head-v1")?;
@@ -1141,7 +1181,7 @@ fn map_private_directory_error(error: crate::PeerLeaseErrorV1) -> PayloadReplayE
 fn verify_payload_replay_directory_identity(
     path: &Path,
     directory: &File,
-    expected: PayloadReplayPathIdentityV1,
+    expected: PayloadReplayDirectoryIdentityV1,
 ) -> Result<(), PayloadReplayErrorV1> {
     let descriptor_metadata = directory.metadata()?;
     let named_metadata = fs::symlink_metadata(path)?;
@@ -1150,8 +1190,8 @@ fn verify_payload_replay_directory_identity(
         || !named_metadata.is_dir()
         || !private_parent_mode(&descriptor_metadata)
         || !private_parent_mode(&named_metadata)
-        || PayloadReplayPathIdentityV1::from_metadata(&descriptor_metadata) != expected
-        || PayloadReplayPathIdentityV1::from_metadata(&named_metadata) != expected
+        || PayloadReplayDirectoryIdentityV1::from_metadata(&descriptor_metadata) != expected
+        || PayloadReplayDirectoryIdentityV1::from_metadata(&named_metadata) != expected
         || fs::canonicalize(path)? != path
     {
         return Err(PayloadReplayErrorV1::InvalidRequest(
@@ -1842,6 +1882,52 @@ mod tests {
             fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700)).unwrap();
         }
         directory
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn directory_owner_survives_child_publication_and_reopen_v1() {
+        let dir = private_tempdir();
+        let root = dir.path().canonicalize().unwrap();
+        let path = root.join("frames.wal");
+        let ns = namespace();
+        let mut store = PayloadReplayStoreV1::open(&path, ns).unwrap();
+        let first = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            0,
+            [10; 32],
+        );
+        let receipt = store.admit(&first).unwrap();
+        // Directory link counts are content metadata (including ordinary files
+        // on APFS), not the identity of the pinned parent namespace.
+        let child = root.join("independent-owner");
+        fs::create_dir(&child).unwrap();
+        fs::set_permissions(&child, fs::Permissions::from_mode(0o700)).unwrap();
+        fs::write(child.join("data"), b"unrelated child").unwrap();
+        assert_eq!(store.lookup_exact_v1(&first).unwrap(), Some(receipt));
+        fs::remove_file(child.join("data")).unwrap();
+        fs::remove_dir(&child).unwrap();
+        let next = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            1,
+            [11; 32],
+        );
+        store.admit(&next).unwrap();
+        drop(store);
+        let mut reopened = PayloadReplayStoreV1::open(&path, ns).unwrap();
+        assert_eq!(reopened.lookup_exact_v1(&first).unwrap(), Some(receipt));
+        assert!(matches!(
+            reopened.admit(&next),
+            Err(PayloadReplayErrorV1::Replay)
+        ));
     }
 
     #[test]

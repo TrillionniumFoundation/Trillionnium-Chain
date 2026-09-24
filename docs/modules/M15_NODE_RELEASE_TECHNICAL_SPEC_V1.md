@@ -480,6 +480,14 @@ restore a convenient older database to make the previous binary run.
 
 ## Persistence and recovery
 
+The replay archive and terminal-seal run root use a private directory-identity
+type, separate from regular-file identity. Publishing a child does not invalidate
+the retained directory owner merely by changing its link count. Device/inode,
+owner/group, mode, no-follow and pathname/descriptor equality remain required;
+regular-file hard links and unexpected archive inventory still reject. Linux
+and macOS run this same namespace contract; this does not implement the distinct
+Linux-only SafetyStore pinned-image/audit primitives or qualify a Mac validator.
+
 ### Public transaction to state-sync recovery join
 
 The public transaction adapter persists in this order: authenticated `CheckTx`,

@@ -758,6 +758,49 @@ impl FileIdentityV1 {
     }
 }
 
+// Directory link counts describe children, not the lifetime of the pinned
+// owner. Regular-file hard-link checks deliberately remain in FileIdentityV1.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct DirectoryIdentityV1 {
+    device: u64,
+    inode: u64,
+    owner: u32,
+    group: u32,
+    mode: u32,
+}
+
+impl DirectoryIdentityV1 {
+    fn from_metadata_v1(metadata: &fs::Metadata) -> Self {
+        Self {
+            device: metadata.dev(),
+            inode: metadata.ino(),
+            owner: metadata.uid(),
+            group: metadata.gid(),
+            mode: metadata.permissions().mode() & 0o7777,
+        }
+    }
+
+    fn from_file_v1(file: &File) -> Result<Self> {
+        let metadata = file.metadata().context("inspect pinned replay directory")?;
+        ensure!(
+            metadata.is_dir(),
+            "pinned replay directory is not a directory"
+        );
+        Ok(Self::from_metadata_v1(&metadata))
+    }
+
+    fn matches_metadata_v1(self, metadata: &fs::Metadata) -> bool {
+        metadata.is_dir() && Self::from_metadata_v1(metadata) == self
+    }
+
+    fn matches_file_v1(self, file: &File) -> Result<bool> {
+        let metadata = file
+            .metadata()
+            .context("reinspect pinned replay directory")?;
+        Ok(self.matches_metadata_v1(&metadata))
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct ReplayArchiveEntryIndexV1 {
     coordinate: ReplayArchiveCoordinateV1,
@@ -874,7 +917,7 @@ pub(crate) struct SignedReplayArchiveV1 {
     entries_file: File,
     context_file: File,
     head_file: File,
-    directory_identity: FileIdentityV1,
+    directory_identity: DirectoryIdentityV1,
     entries_identity: FileIdentityV1,
     context_identity: FileIdentityV1,
     head_identity: FileIdentityV1,
@@ -978,7 +1021,7 @@ impl SignedReplayArchiveV1 {
             observed_head == head_from_log,
             "replay archive head differs after recovery audit"
         );
-        let directory_identity = FileIdentityV1::from_file_v1(&directory)?;
+        let directory_identity = DirectoryIdentityV1::from_file_v1(&directory)?;
         let entries_identity = FileIdentityV1::from_file_v1(&entries_file)?;
         let context_identity = FileIdentityV1::from_file_v1(&context_file)?;
         let head_identity = FileIdentityV1::from_file_v1(&head_file)?;
@@ -1667,7 +1710,7 @@ impl SignedReplayArchiveV1 {
         signer: &mut dyn FnMut([u8; 32]) -> Result<[u8; 64]>,
     ) -> Result<PathBuf> {
         let run_directory = open_directory_pinned_v1(config.run_root())?;
-        let run_directory_identity = FileIdentityV1::from_file_v1(&run_directory)?;
+        let run_directory_identity = DirectoryIdentityV1::from_file_v1(&run_directory)?;
         ensure!(
             self.root.parent() == Some(config.run_root()),
             "terminal archive is outside the loaded private run root"
@@ -3524,7 +3567,7 @@ fn open_directory_pinned_v1(path: &Path) -> Result<File> {
         .context("inspect replay archive directory handle")?;
     validate_private_directory_metadata_v1(&metadata, "replay archive directory handle")?;
     ensure!(
-        FileIdentityV1::from_metadata_v1(&before).matches_metadata_v1(&metadata),
+        DirectoryIdentityV1::from_metadata_v1(&before).matches_metadata_v1(&metadata),
         "replay archive directory identity changed while opening"
     );
     Ok(file)
@@ -3533,7 +3576,7 @@ fn open_directory_pinned_v1(path: &Path) -> Result<File> {
 fn revalidate_directory_path_identity_v1(
     path: &Path,
     pinned: &File,
-    identity: FileIdentityV1,
+    identity: DirectoryIdentityV1,
     label: &'static str,
 ) -> Result<()> {
     ensure!(
@@ -3987,7 +4030,7 @@ mod tests {
             .as_ref()
             .map(|file| FileIdentityV1::from_file_v1(file).unwrap());
         SignedReplayArchiveV1 {
-            directory_identity: FileIdentityV1::from_file_v1(&directory).unwrap(),
+            directory_identity: DirectoryIdentityV1::from_file_v1(&directory).unwrap(),
             entries_identity: FileIdentityV1::from_file_v1(&entries_file).unwrap(),
             context_identity: FileIdentityV1::from_file_v1(&context_file).unwrap(),
             head_identity: FileIdentityV1::from_file_v1(&head_file).unwrap(),
@@ -4006,6 +4049,51 @@ mod tests {
             fail_stopped: false,
             historically_repaired,
         }
+    }
+
+    #[test]
+    fn directory_owner_survives_child_publication_v1() {
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path().canonicalize().unwrap();
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        let pinned = open_directory_pinned_v1(&root).unwrap();
+        let identity = DirectoryIdentityV1::from_file_v1(&pinned).unwrap();
+        let child = root.join("new-child");
+        fs::create_dir(&child).unwrap();
+        revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").unwrap();
+        fs::write(child.join("bytes"), b"new content").unwrap();
+        revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").unwrap();
+        fs::remove_file(child.join("bytes")).unwrap();
+        fs::remove_dir(&child).unwrap();
+        revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").unwrap();
+    }
+
+    #[test]
+    fn directory_owner_still_rejects_mode_rename_and_symlink_v1() {
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path().canonicalize().unwrap().join("owner");
+        fs::create_dir(&root).unwrap();
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        let pinned = open_directory_pinned_v1(&root).unwrap();
+        let identity = DirectoryIdentityV1::from_file_v1(&pinned).unwrap();
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o500)).unwrap();
+        assert!(
+            revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").is_err()
+        );
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").unwrap();
+        let moved = root.with_file_name("displaced");
+        fs::rename(&root, &moved).unwrap();
+        fs::create_dir(&root).unwrap();
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        assert!(
+            revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").is_err()
+        );
+        fs::remove_dir(&root).unwrap();
+        std::os::unix::fs::symlink(&moved, &root).unwrap();
+        assert!(
+            revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").is_err()
+        );
     }
 
     fn statement_v1(payload: &[u8]) -> ReplayArchiveStatementV1 {

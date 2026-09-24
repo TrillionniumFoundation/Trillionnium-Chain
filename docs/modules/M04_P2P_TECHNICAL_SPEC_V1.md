@@ -393,6 +393,15 @@ large certificate cannot monopolize the reserved control worker indefinitely.
 
 ## Persistence and recovery
 
+The payload replay owner pins directory identity separately from regular-file
+identity. Directory device/inode, owner/group and mode must still match the held
+descriptor and canonical pathname before and after use. Directory link counts
+may change as children are created or removed (including ordinary files on APFS),
+so they are not namespace identity. Journal, lock and head files still require
+one link and exact file identity; replacement, permission and symlink checks
+remain fail-closed. The child-publication/reopen regression exercises actual
+WAL admission and exact replay; this is not an external rollback claim.
+
 Each directional lane journal binds chain/genesis, protocol/profile, peer key,
 session/generation, retained payload, pending nonce, highest acknowledged nonce,
 prepared receipt and previous record digest. Use descriptor-pinned namespaces,
