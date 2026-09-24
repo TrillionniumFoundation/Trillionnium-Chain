@@ -2414,11 +2414,11 @@ impl FleetBarrierOwnerV1<'_> {
                     }
                 }
             },
-            MeshIngressEventV0::SessionUnavailable(_) => {
-                bail!("authenticated mesh session changed during fleet barrier")
+            MeshIngressEventV0::SessionUnavailable(facts) => {
+                bail!("authenticated mesh session changed during fleet barrier: remote={:?} direction={:?} generation={}", facts.remote(), facts.direction(), facts.generation())
             }
-            MeshIngressEventV0::SessionReestablished(_) => {
-                bail!("authenticated mesh session generation changed during fleet barrier")
+            MeshIngressEventV0::SessionReestablished(facts) => {
+                bail!("authenticated mesh session generation changed during fleet barrier: remote={:?} direction={:?} generation={}", facts.remote(), facts.direction(), facts.generation())
             }
         }
     }

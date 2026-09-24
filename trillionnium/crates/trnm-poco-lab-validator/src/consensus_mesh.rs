@@ -3036,6 +3036,9 @@ fn outgoing_loop(
             match connection.send(message.kind, message.payload.as_ref().to_vec()) {
                 Ok(()) => break,
                 Err(error) if transient_frame_error(&error) => {
+                    if let FrameError::Io(cause) = &error {
+                        let _ = writeln!(io::stderr(), "mesh transient: remote={remote:?} direction=Outbound generation={generation} stage=send kind={:?} os={:?}", cause.kind(), cause.raw_os_error());
+                    }
                     if stop_quarantined_sender_v1(&fences, remote, &terminal, &stop) {
                         return;
                     }
@@ -3662,6 +3665,7 @@ fn accept_loop(
                                     if !cancel.load(Ordering::Acquire)
                                         && !stop.load(Ordering::Acquire)
                                     {
+                                        let _ = writeln!(io::stderr(), "mesh transient: remote={remote:?} direction=Inbound generation={} stage=readiness kind={:?} os={:?}", facts.generation, error.kind(), error.raw_os_error());
                                         let _ = emit_inbound_lifecycle(
                                             &lifecycle_tx,
                                             InboundLifecycleV0::TransientLoss(facts),
@@ -3784,6 +3788,9 @@ fn accept_loop(
                                     if !cancel.load(Ordering::Acquire)
                                         && !stop.load(Ordering::Acquire)
                                     {
+                                        if let FrameError::Io(cause) = error.frame_error_v1() {
+                                            let _ = writeln!(io::stderr(), "mesh transient: remote={remote:?} direction=Inbound generation={} stage=frame kind={:?} os={:?}", facts.generation, cause.kind(), cause.raw_os_error());
+                                        }
                                         let _ = emit_inbound_lifecycle(
                                             &lifecycle_tx,
                                             InboundLifecycleV0::TransientLoss(facts),
