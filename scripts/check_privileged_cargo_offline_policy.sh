@@ -162,7 +162,7 @@ invalid_guard_step_lines() {
     /^            --toolchain [A-Za-z0-9._-]+[[:space:]]*\\?$/ { next }
     /^            --component (clippy|rustfmt)[[:space:]]*\\?$/ { next }
     /^            --state ".+"[[:space:]]*\\?$/ { next }
-    /^            [A-Za-z0-9_./-]+Cargo\.toml:[A-Za-z0-9_./-]+Cargo\.lock[[:space:]]*\\?$/ { next }
+    /^            [A-Za-z0-9_.\/-]+Cargo\.toml:[A-Za-z0-9_.\/-]+Cargo\.lock[[:space:]]*\\?$/ { next }
     { print NR ":" $0 }
   ' "$1"
 }
