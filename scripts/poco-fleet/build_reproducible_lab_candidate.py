@@ -387,7 +387,19 @@ def extract(candidate: pathlib.Path, destination: pathlib.Path) -> pathlib.Path:
         for member in aliases:
             resolved = validate_alias(member.name.removeprefix("source/"), member.linkname.encode("utf-8"), modes)
             target_document = destination / "source" / resolved
-            if target_document.is_symlink() or not target_document.is_file() or target_document.resolve() != target_document:
+            try:
+                target_metadata = target_document.lstat()
+            except FileNotFoundError:
+                fail("verified documentation alias target is not a regular extracted document")
+            # The candidate inventory has already proved that every component
+            # below source/ is a tracked directory or the exact regular
+            # Markdown target, and regular members are extracted before any
+            # candidate symlink is created. Do not require the host path
+            # itself to be canonical: macOS may place a trusted temporary root
+            # below a system symlink such as /var -> /private/var. lstat keeps
+            # the candidate-controlled target check non-following while
+            # allowing such ambient mount/path aliases.
+            if not stat.S_ISREG(target_metadata.st_mode):
                 fail("verified documentation alias target is not a regular extracted document")
             alias = destination / member.name
             alias.parent.mkdir(parents=True, exist_ok=True)

@@ -4,6 +4,9 @@
 from __future__ import annotations
 
 import importlib.util
+import io
+import os
+import tarfile
 import hashlib
 import json
 import pathlib
@@ -145,6 +148,41 @@ def main() -> None:
         source = root / "source"
         source.mkdir()
         builder.reject_ambient_ancestor_configs(source)
+
+        # A trusted host path alias must not be confused with a candidate
+        # documentation symlink. macOS commonly exposes temporary paths below
+        # a system-owned alias (/var -> /private/var). The archive still gets
+        # the same closed alias grammar and lstat-regular target checks.
+        real_parent = root / "real-extract-parent"
+        real_parent.mkdir()
+        trusted_parent = root / "trusted-extract-parent"
+        trusted_parent.symlink_to(real_parent, target_is_directory=True)
+        alias_archive = root / "safe-doc-alias.tar"
+        target_name = (
+            "source/docs/development/"
+            "TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+        )
+        alias_name = (
+            "source/docs/development/"
+            "TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
+        )
+        target_bytes = b"# canonical development plan\n"
+        with tarfile.open(alias_archive, "w:") as archive:
+            target_info = tarfile.TarInfo(target_name)
+            target_info.mode = 0o644
+            target_info.size = len(target_bytes)
+            archive.addfile(target_info, io.BytesIO(target_bytes))
+            alias_info = tarfile.TarInfo(alias_name)
+            alias_info.type = tarfile.SYMTYPE
+            alias_info.mode = 0o777
+            alias_info.linkname = "TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+            archive.addfile(alias_info)
+        extracted = builder.extract(alias_archive, trusted_parent / "extract")
+        if (extracted / "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md").read_bytes() != target_bytes:
+            raise AssertionError("regular alias target changed through trusted host alias")
+        observed_alias = extracted / "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
+        if not observed_alias.is_symlink() or os.readlink(observed_alias) != "TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md":
+            raise AssertionError("verified documentation alias was not reconstructed exactly")
 
         left_source = root / "left-source"
         right_source = root / "right-source"
