@@ -38,6 +38,7 @@ NODE_CASE_DEADLINES = {
 NODE_REQUIRED_DRIVERS = {
     *NODE_CASE_DEADLINES,
     NODE_EPOCH_PREFIX + "actual_epoch_handoff_joint_attachment_and_exact_retry_v8",
+    NODE_EPOCH_PREFIX + "actual_successor_first_application_persists_executes_and_votes_v10",
     NODE_EPOCH_PREFIX + "actual_epoch_runtime_activation_releases_timer_then_persisted_timeout_once",
     NODE_EPOCH_PREFIX + "actual_epoch_first_core_finalization_applies_three_real_native_executions_v2",
     NODE_EPOCH_PREFIX + "actual_epoch_seals_apply_original_fronts_then_commit_unattached_pre_handoff_v5",

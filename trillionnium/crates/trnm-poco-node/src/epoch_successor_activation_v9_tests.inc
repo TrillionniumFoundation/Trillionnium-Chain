@@ -258,16 +258,8 @@ fn confirm_successor_cold_v9(case: Box<ColdSuccessorCaseV9>) {
 
 #[test]
 fn actual_epoch_successor_activation_preserves_owners_and_initial_ack_v9() {
-    let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
-    let incoming = live.3.old_watermark.clone();
-    let unsigned = first_apply_unsigned_v2(live);
-    let first = first_apply_children_v2(first_apply_start_v2(unsigned));
-    let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
-    let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
-    activate_actual_successor_v9(prepare_joint_roles_v8(roles), incoming);
+    let (roles, incoming) = build_actual_attachment_case_v8();
+    activate_actual_successor_v9(roles, incoming);
 }
 
 #[inline(never)]
@@ -341,16 +333,8 @@ fn reject_actual_successor_after_initial_write_v9(case: Box<RolesCaseV7>, incomi
 
 #[test]
 fn actual_epoch_successor_activation_after_write_callback_blocks_ack_v9() {
-    let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
-    let incoming = live.3.old_watermark.clone();
-    let unsigned = first_apply_unsigned_v2(live);
-    let first = first_apply_children_v2(first_apply_start_v2(unsigned));
-    let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
-    let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
-    reject_actual_successor_after_initial_write_v9(prepare_joint_roles_v8(roles), incoming);
+    let (roles, incoming) = build_actual_attachment_case_v8();
+    reject_actual_successor_after_initial_write_v9(roles, incoming);
 }
 
 type SuccessorCaseV10 = (
@@ -515,16 +499,8 @@ fn successor_first_proposal_v10(
 
 #[test]
 fn actual_successor_first_application_persists_executes_and_votes_v10() {
-    let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
-    let unsigned = first_apply_unsigned_v2(live);
-    let first = first_apply_children_v2(first_apply_start_v2(unsigned));
-    let cutoff = ordinary_cutoff_advance_v3(ordinary_cutoff_begin_v3(first));
-    let checkpoint = checkpoint_prepare_execute_v4(checkpoint_prepare_begin_v4(cutoff));
-    let first_seal = pre_handoff_seal_and_apply_v5(pre_handoff_begin_v5(checkpoint));
-    let second_seal = pre_handoff_seal_and_apply_v5(first_seal);
-    let roles = commission_actual_roles_v7(pre_handoff_commit_v5(second_seal));
-    let (directory, owner, mut key, watermark) =
-        *activate_live_successor_v10(prepare_joint_roles_v8(roles));
+    let (roles, _) = build_actual_attachment_case_v8();
+    let (directory, owner, mut key, watermark) = *activate_live_successor_v10(roles);
     let proposal = successor_first_proposal_v10(&owner);
     let block_id = *proposal.block().id().as_bytes();
     let epoch = proposal.block().header().epoch();
