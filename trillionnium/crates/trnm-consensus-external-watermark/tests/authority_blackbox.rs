@@ -1447,8 +1447,7 @@ fn retirement_policy_fixture(
     b.extend_from_slice(&h.finalize());
     trnm_consensus_signer_journal::SignerRetirementRecordV1::decode_v1_exact(&b).unwrap()
 }
-#[test]
-fn retirement_terminal_event_detects_mode_only_rollback_and_conflicting_retry() {
+fn retirement_terminal_event_detects_mode_only_rollback_and_conflicting_retry_impl() {
     use trnm_consensus_external_watermark::ExternalWatermarkAuthority;
     let root = tempdir().unwrap();
     fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
@@ -1492,6 +1491,43 @@ fn retirement_terminal_event_detects_mode_only_rollback_and_conflicting_retry() 
     fs::write(&path, log).unwrap();
     assert!(ExternalWatermarkAuthority::open_semantic(&path, semantic_binding()).is_err());
 }
+
+#[test]
+fn retirement_terminal_event_mode_rollback_child() {
+    if env::var_os("TRNM_RETIREMENT_MODE_ROLLBACK_CHILD").is_none() {
+        return;
+    }
+    retirement_terminal_event_detects_mode_only_rollback_and_conflicting_retry_impl();
+}
+
+#[test]
+fn retirement_terminal_event_detects_mode_only_rollback_and_conflicting_retry() {
+    // Isolate the cold reopen sequence in its own exec'd process. The production
+    // authority intentionally uses a fail-fast lifetime flock. In a parallel
+    // Rust test process, an unrelated Command::spawn can fork while this test
+    // owns the namespace and transiently inherit that flock until exec despite
+    // O_CLOEXEC. Reopening in this multithreaded parent can therefore observe
+    // EWOULDBLOCK even after the intended owner was dropped. The isolated child
+    // has no sibling test threads/forks and exercises the unchanged production
+    // fail-fast open/rollback behavior without adding retries or timeouts.
+    let mut child = RetirementTestChild(
+        Command::new(env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "retirement_terminal_event_mode_rollback_child",
+                "--nocapture",
+            ])
+            .env("TRNM_RETIREMENT_MODE_ROLLBACK_CHILD", "1")
+            .spawn()
+            .unwrap(),
+    );
+    let status = child.0.wait().unwrap();
+    assert!(
+        status.success(),
+        "isolated mode rollback test failed: {status}"
+    );
+}
+
 #[test]
 fn retirement_pending_source_cannot_be_skipped() {
     use trnm_consensus_external_watermark::ExternalWatermarkAuthority;
