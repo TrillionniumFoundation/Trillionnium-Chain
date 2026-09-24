@@ -910,5 +910,29 @@ fn successor_seals_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
     assert_eq!(owner.application_v11().confirmed_committed_head_v0().unwrap(), *recovered.head());
     assert!(owner.settled_checkpoint_v11().is_err(), "pre-handoff is not ordinary readiness");
     assert!(owner.confirm_pre_handoff_phase_v11().is_err(), "applied checkpoint cannot be replayed as pending");
+
+    // A correctly linked independent checkpoint is not evidence that its
+    // claimed signer watermark actually exists. Advance only that owner,
+    // leaving the genuine signer journal and external watermark unchanged.
+    let mut ahead = *joined.fields();
+    ahead.generation += 1;
+    ahead.predecessor_checksum = joined.checksum();
+    let ordinary = ahead.ordinary.as_mut().unwrap();
+    ordinary.sequence += 2;
+    ordinary.chain_checksum[0] ^= 0x40;
+    let ahead = EpochNodeCheckpointV1::new(ahead).unwrap();
+    ahead.validate_successor_of(&joined).unwrap();
+    owner.inner.runtime.source.roles.retired.checkpoint_store
+        .compare_and_advance(&joined, &ahead).unwrap();
+    owner.inner.runtime.checkpoint = ahead;
+    let before_calls = key.calls;
+    let before_mark = watermark.0.lock().unwrap().0.unwrap();
+    let error = owner.settled_pre_handoff_cut_v11().unwrap_err();
+    assert!(error.to_string().contains("successor ordinary custody differs from independent checkpoint"),
+        "unexpected rejection: {error:#}");
+    assert!(owner.inner.runtime.fenced);
+    assert_eq!(key.calls, before_calls);
+    assert_eq!(watermark.0.lock().unwrap().0.unwrap(), before_mark);
+    assert!(owner.settled_pre_handoff_cut_v11().is_err(), "mismatch must stay fenced");
     assert!(directory.path().is_dir());
 }

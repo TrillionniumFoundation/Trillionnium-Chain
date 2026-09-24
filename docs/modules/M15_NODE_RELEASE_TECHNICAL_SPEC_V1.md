@@ -98,6 +98,16 @@ specific feature/schema boundary, not as a statement that V11 is absent.
 Test execution reports bind the tested commit/tree; this table does not retain a
 self-referential commit hash or claim a historical result is current evidence.
 
+The successor active-cut check compares the complete current ordinary-custody
+watermark with the independent checkpoint: scope, journal, profile, sequence and
+chain checksum must all match. A correctly linked checkpoint claiming a signer
+advance is not evidence that the real journal performed it. Either direction of
+drift fences the owner before another application admission or settled readback.
+Only the explicit signing transition may publish the newly confirmed signer cut
+through checkpoint CAS; a passive read must never adopt it. The real V11 test
+advances only the independent checkpoint and proves that unchanged actual custody
+cannot satisfy the claim, without calling a key or changing its watermark.
+
 ## Current epoch readback without repeated full-history audits
 
 `confirm_current_epoch_execution_v1(block)` returns the existing opaque

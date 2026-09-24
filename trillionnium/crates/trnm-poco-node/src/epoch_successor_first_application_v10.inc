@@ -125,7 +125,11 @@ impl<
                     && safety_cut_v9(&fresh) == self.runtime.checkpoint.fields().target_safety,
                 "successor Safety owner changed"
             );
-            let _ = self.ordinary_cut_v10()?;
+            let ordinary = self.ordinary_cut_v10()?;
+            ensure!(
+                Some(ordinary) == self.runtime.checkpoint.fields().ordinary,
+                "successor ordinary custody differs from independent checkpoint"
+            );
             let edge = self.edge();
             let app = self.runtime.checkpoint.fields().application;
             ensure!(
