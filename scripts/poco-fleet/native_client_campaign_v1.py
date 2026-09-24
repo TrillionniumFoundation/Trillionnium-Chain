@@ -34,6 +34,8 @@ STDERR_LIMIT = 64 * 1024
 MAX_REQUESTS = 4096
 MAX_REQUEST_BYTES = 64 * 1024 * 1024
 MAX_RESPONSE_BYTES = 256 * 1024 * 1024
+COMMAND_REAP_GRACE_SECONDS = 1.0
+CLEANUP_NOTE_PREFIX = "native command cleanup unconfirmed: "
 
 
 class NativeEndpointNotReady(RuntimeError):
@@ -100,13 +102,40 @@ def remaining_timeout_v1(deadline: float, cap: float = 12) -> float:
     return remaining
 
 
+def command_failure_text_v1(error: BaseException) -> str:
+    """Keep the original failure and bounded cleanup notes through request wrapping."""
+    details = [str(error)]
+    seen: set[int] = set()
+    current: BaseException | None = error
+    for _ in range(4):
+        if current is None or id(current) in seen:
+            break
+        seen.add(id(current))
+        details.extend(note for note in getattr(current, "__notes__", ())
+                       if isinstance(note, str) and note.startswith(CLEANUP_NOTE_PREFIX))
+        current = current.__cause__
+    return "\n".join(details)
+
+
 def bounded_command_v1(arguments: list[str], *, timeout: float, input_bytes: bytes = b"",
                        output_limit: int = RESPONSE_LIMIT) -> bytes:
-    """Drain all pipes concurrently with fixed byte caps and a single deadline."""
+    """Drain fairly; retain the child identity until its owned group is stopped.
+
+    This POSIX coordinator must be the sole child reaper. Group cleanup is not a
+    sandbox against a descendant that changes session or credentials, nor proof
+    that an SSH server terminated its remote command.
+    """
+    if (type(timeout) not in (int, float) or not math.isfinite(timeout) or timeout <= 0
+            or type(output_limit) is not int or not 1 <= output_limit <= RESPONSE_LIMIT):
+        raise ValueError("native command requires finite positive deadline and bounded output")
+    if (not all(hasattr(os, name) for name in ("waitid", "P_PID", "WEXITED", "WNOHANG", "WNOWAIT", "CLD_EXITED", "killpg"))
+            or signal.getsignal(signal.SIGCHLD) != signal.SIG_DFL):
+        raise RuntimeError("native command requires POSIX non-reaping child observation and sole-reaper ownership")
     deadline = time.monotonic() + timeout
     child = subprocess.Popen(arguments, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE, start_new_session=True)
     output, errors = bytearray(), bytearray()
+    primary: BaseException | None = None
     try:
         with selectors.DefaultSelector() as selector:
             for stream, label in ((child.stdout, "out"), (child.stderr, "err")):
@@ -123,36 +152,67 @@ def bounded_command_v1(arguments: list[str], *, timeout: float, input_bytes: byt
                 if remaining <= 0:
                     raise subprocess.TimeoutExpired(arguments, timeout, bytes(output), bytes(errors))
                 for key, _ in selector.select(remaining):
-                    if key.data == "in":
-                        try:
-                            sent += os.write(key.fd, input_bytes[sent:sent + 65536])
-                        except BrokenPipeError:
-                            sent = len(input_bytes)
-                        if sent == len(input_bytes):
-                            selector.unregister(key.fileobj)
-                            key.fileobj.close()
-                    else:
-                        chunk = os.read(key.fd, 65536)
-                        if not chunk:
-                            selector.unregister(key.fileobj)
-                            continue
-                        target, limit = (output, output_limit) if key.data == "out" else (errors, STDERR_LIMIT)
-                        if len(target) + len(chunk) > limit:
-                            raise RuntimeError(f"native transport {key.data} exceeded bounded output")
-                        target.extend(chunk)
-            code = child.wait(timeout=max(0.001, deadline - time.monotonic()))
-            if code:
-                raise subprocess.CalledProcessError(code, arguments, bytes(output), bytes(errors))
-            return bytes(output)
+                    try:
+                        if key.data == "in":
+                            try:
+                                sent += os.write(key.fd, input_bytes[sent:sent + 65536])
+                            except BrokenPipeError:
+                                sent = len(input_bytes)
+                            if sent == len(input_bytes):
+                                selector.unregister(key.fileobj)
+                                key.fileobj.close()
+                        else:
+                            chunk = os.read(key.fd, 65536)
+                            if not chunk:
+                                selector.unregister(key.fileobj)
+                                continue
+                            target, limit = (output, output_limit) if key.data == "out" else (errors, STDERR_LIMIT)
+                            if len(target) + len(chunk) > limit:
+                                raise RuntimeError(f"native transport {key.data} exceeded bounded output")
+                            target.extend(chunk)
+                    except (BlockingIOError, InterruptedError):
+                        continue
+            # EOF is not process completion. WNOWAIT keeps the leader PID/PGID
+            # reserved, including after natural exit, until group cleanup below.
+            while True:
+                if time.monotonic() >= deadline:
+                    raise subprocess.TimeoutExpired(arguments, timeout, bytes(output), bytes(errors))
+                observed = os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                if observed is not None:
+                    code = observed.si_status if observed.si_code == os.CLD_EXITED else -observed.si_status
+                    if code:
+                        raise subprocess.CalledProcessError(code, arguments, bytes(output), bytes(errors))
+                    return bytes(output)
+                time.sleep(min(0.01, max(0, deadline - time.monotonic())))
+    except BaseException as error:
+        primary = error
+        raise
     finally:
-        if child.poll() is None:
+        cleanup_errors = []
+        try:
+            # Do not poll()/wait() first: an exited leader may still have live
+            # descendants, and reaping it would surrender the group identity.
+            os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
             try:
                 os.killpg(child.pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
-            child.wait()
+        except OSError as error:
+            cleanup_errors.append(f"owned group: {error}")
+        try:
+            child.wait(timeout=COMMAND_REAP_GRACE_SECONDS)
+        except (OSError, subprocess.TimeoutExpired) as error:
+            cleanup_errors.append(f"leader reap: {error}")
         for stream in (child.stdin, child.stdout, child.stderr):
-            stream.close()
+            try:
+                stream.close()
+            except OSError as error:
+                cleanup_errors.append(f"pipe close: {error}")
+        if cleanup_errors:
+            note = CLEANUP_NOTE_PREFIX + "; ".join(cleanup_errors)[:1024]
+            if primary is None:
+                raise RuntimeError(note)
+            primary.add_note(note)
 
 
 # Executed on the selected Linux validator host, with no imported project code.
@@ -254,7 +314,8 @@ class NativeRequestAdapterV1:
             response = bounded_command_v1(arguments, timeout=remaining_timeout_v1(self.deadline), input_bytes=raw,
                                           output_limit=min(RESPONSE_LIMIT, MAX_RESPONSE_BYTES - self.response_bytes))
         except subprocess.CalledProcessError as error:
-            if error.returncode == 75 and error.stderr == b"native endpoint not ready\n":
+            if (error.returncode == 75 and error.stderr == b"native endpoint not ready\n"
+                    and not getattr(error, "__notes__", ())):
                 raise NativeEndpointNotReady("native endpoint not ready") from error
             # CalledProcessError keeps exact exit/output; make the original
             # Linux/SSH diagnostic visible in the controller's failure summary.

@@ -725,3 +725,33 @@ failure as a successful admission. Original request sequence and operation are
 included in failure diagnostics. M15-NATIVE-PHASE-SERVICE-V1 defines the actual
 Ready/signed-phase distinction; diagnostic request observations are not finality
 or performance evidence.
+
+
+#### Owned command completion and cleanup (M17-NATIVE-CLEANUP-V1)
+
+The existing native campaign collector drains stdout/stderr concurrently, retains
+at most the selected response cap (no greater than 8 MiB + 16 KiB) and 64 KiB of
+stderr, and uses one finite positive monotonic command deadline. EOF is not exit;
+a process that closes its streams and keeps running must still meet that deadline.
+The coordinator requires POSIX `waitid(WNOWAIT)` and sole-reaper ownership with
+the default SIGCHLD disposition. Unsupported hosts reject before launching a child.
+
+Each local transport command starts in its own process group. The collector keeps
+the leader unreaped while observing exit and while sending the group SIGKILL, on
+both successful and failed completion. An already-exited leader therefore cannot
+hide a descendant holding a pipe; killing by group never follows surrender of the
+leader's PID. Reaping has a separate one-second grace, not another command attempt
+or a reset of the original deadline. Pipes close on every path. If cleanup cannot
+be confirmed, nominal success becomes failure; an existing timeout/output/exit
+failure retains its type, captured output and original meaning, with a bounded
+cleanup note preserved in the fleet failure diagnostic. Such a failure cannot be
+reclassified as the retryable endpoint-not-ready response.
+
+Real subprocess regressions cover leader exit with inherited pipes, closed-pipe
+live descendants, early EOF without exit, stdout/stderr floods, bidirectional I/O,
+and bounded reap failures. They establish local harness behavior only. Group
+cleanup is not confinement against `setsid`, credential changes or a foreign
+reaper, and stopping a local SSH command does not attest remote process death.
+The existing per-host run-namespace cleanup and signed terminal evidence remain
+required. This fix does not identify the initiating cause of any previous physical
+fleet failure, create a successful campaign, or grant performance/release authority.

@@ -151,6 +151,12 @@ os.execvp(args[0],args)
                 fresh();waiting=c.NativeRequestAdapterV1(missing,'22'*32,'33'*32,time.monotonic()+10)
                 reject(lambda:waiting.request('status',{}),c.NativeEndpointNotReady)
                 waiting.target=target;assert waiting.request('status',{})['ok'] is True
+                # Exit 75 is not retryable after an unconfirmed owned-group cleanup.
+                unclean = subprocess.CalledProcessError(75, ["controlled"], b"", b"native endpoint not ready\n")
+                unclean.add_note(c.CLEANUP_NOTE_PREFIX + "controlled reap failure")
+                with mock.patch.object(c, "bounded_command_v1", side_effect=unclean):
+                    error = reject(lambda: fresh().request("status", {}), c.NativeRequestFailureV1)
+                    assert error.returncode == 75 and c.CLEANUP_NOTE_PREFIX in c.command_failure_text_v1(error)
                 # Tight deadline includes transport startup, rather than granting another 12 seconds.
                 with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_SSH_MODE':'delay'}):
                     adapter=fresh();adapter.deadline=time.monotonic()+0.05
@@ -176,6 +182,135 @@ os.execvp(args[0],args)
     finally:
         shutil.rmtree(root)
 
+
+
+def test_owned_command_cleanup_v1():
+    """Actual local processes; none of these peers are crypto-positive evidence."""
+    import os
+    import signal
+    import subprocess
+    import sys
+    import time
+    from unittest import mock
+
+    def reject(action, kind, text=""):
+        try:
+            action()
+        except kind as error:
+            assert text in str(error), str(error)
+            return error
+        raise AssertionError("command unexpectedly succeeded")
+
+    def live(pid):
+        # A stopped orphan may await its host init's reap. A zombie is not a
+        # running descendant; kill(pid, 0) alone cannot distinguish the two.
+        try:
+            state = pathlib.Path(f"/proc/{pid}/stat").read_text().rsplit(") ", 1)[1].split()[0]
+        except FileNotFoundError:
+            return False
+        return state not in {"Z", "X"}
+
+    with tempfile.TemporaryDirectory(prefix="trnm-command-cleanup-") as directory:
+        marker = pathlib.Path(directory) / "descendant"
+        for mode, code in (("held", 0), ("closed", 0), ("closed", 37), ("flood", 0)):
+            program = f"""import os, pathlib, time
+pid = os.fork()
+if pid == 0:
+    pathlib.Path({str(marker)!r}).write_text(str(os.getpid()))
+    if {mode!r} == 'closed':
+        for fd in (0, 1, 2): os.close(fd)
+    if {mode!r} == 'flood':
+        while True: os.write(1, b'x' * 4096)
+    time.sleep(30)
+    os._exit(0)
+while not pathlib.Path({str(marker)!r}).exists(): time.sleep(0.005)
+os.write(1, b'original-output')
+os.write(2, b'original-error')
+os._exit({code})
+"""
+            pid = None
+            started = time.monotonic()
+            try:
+                args = [sys.executable, "-I", "-S", "-c", program]
+                if mode == "held":
+                    error = reject(lambda: c.bounded_command_v1(args, timeout=2), subprocess.TimeoutExpired)
+                    assert error.output == b"original-output" and error.stderr == b"original-error"
+                elif mode == "flood":
+                    reject(lambda: c.bounded_command_v1(args, timeout=2, output_limit=1024), RuntimeError, "bounded output")
+                elif code:
+                    error = reject(lambda: c.bounded_command_v1(args, timeout=2), subprocess.CalledProcessError)
+                    assert error.returncode == code and error.output == b"original-output"
+                    assert error.stderr == b"original-error"
+                else:
+                    assert c.bounded_command_v1(args, timeout=2) == b"original-output"
+                assert time.monotonic() - started < 4
+                pid = int(marker.read_text())
+                deadline = time.monotonic() + 1
+                while live(pid) and time.monotonic() < deadline:
+                    time.sleep(0.01)
+                assert not live(pid), f"live descendant after {mode}/{code}: {pid}"
+            finally:
+                if pid is None and marker.exists():
+                    pid = int(marker.read_text())
+                if pid is not None and live(pid):
+                    try:
+                        os.kill(pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                marker.unlink(missing_ok=True)
+
+        # A process that closes both output pipes but has not exited is not done.
+        no_pipes = "import os,time;os.close(1);os.close(2);time.sleep(30)"
+        start = time.monotonic()
+        reject(lambda: c.bounded_command_v1([sys.executable, "-I", "-S", "-c", no_pipes], timeout=0.25), subprocess.TimeoutExpired)
+        assert 0.20 <= time.monotonic() - start < 2
+
+        # Output may precede stdin consumption; all three directions must drain.
+        program = "import sys;sys.stdout.buffer.write(b'o'*262144);sys.stdout.flush();sys.stderr.buffer.write(b'e'*32768);sys.stderr.flush();data=sys.stdin.buffer.read();assert data==b'i'*262144"
+        assert c.bounded_command_v1([sys.executable, "-I", "-S", "-c", program], timeout=3,
+                                    input_bytes=b"i" * 262144) == b"o" * 262144
+
+        # Shape/platform failures are inert, not a child followed by a late error.
+        with mock.patch.object(c.subprocess, "Popen", side_effect=AssertionError("unexpected spawn")):
+            for timeout in (0, -1, True, float("nan"), float("inf")):
+                reject(lambda: c.bounded_command_v1(["unused"], timeout=timeout), ValueError)
+            for bound in (0, -1, True, c.RESPONSE_LIMIT + 1):
+                reject(lambda: c.bounded_command_v1(["unused"], timeout=1, output_limit=bound), ValueError)
+            with mock.patch.object(c.signal, "getsignal", return_value=signal.SIG_IGN):
+                reject(lambda: c.bounded_command_v1(["unused"], timeout=1), RuntimeError, "sole-reaper")
+
+        # A bounded but unconfirmed reap preserves the actual exit and bytes.
+        # The injected failure happens AFTER a real reap; it leaves no test child.
+        real_wait = subprocess.Popen.wait
+        def uncertain_wait(child, timeout=None):
+            assert timeout == c.COMMAND_REAP_GRACE_SECONDS
+            real_wait(child, timeout=timeout)
+            raise subprocess.TimeoutExpired(child.args, timeout)
+        with mock.patch.object(c.subprocess.Popen, "wait", new=uncertain_wait):
+            args = [sys.executable, "-I", "-S", "-c", "import sys;sys.stderr.write('original');sys.exit(37)"]
+            error = reject(lambda: c.bounded_command_v1(args, timeout=2), subprocess.CalledProcessError)
+            assert error.returncode == 37 and error.stderr == b"original"
+            assert c.CLEANUP_NOTE_PREFIX in c.command_failure_text_v1(error)
+            wrapped = c.NativeRequestFailureV1(error.returncode, error.cmd, error.output, error.stderr,
+                                               operation="proof", sequence=3)
+            wrapped.__cause__ = error
+            text = c.command_failure_text_v1(wrapped)
+            assert "native request 3 (proof) exit 37: original" in text
+            assert c.CLEANUP_NOTE_PREFIX in text
+            reject(lambda: c.bounded_command_v1([sys.executable, "-I", "-S", "-c", "pass"], timeout=2), RuntimeError, c.CLEANUP_NOTE_PREFIX)
+
+        # Even caller cancellation must close/reap the actual child.
+        children = []
+        real_popen = subprocess.Popen
+        def remember(*args, **kwargs):
+            child = real_popen(*args, **kwargs)
+            children.append(child)
+            return child
+        with mock.patch.object(c.subprocess, "Popen", side_effect=remember):
+            with mock.patch.object(c.selectors.DefaultSelector, "select", side_effect=KeyboardInterrupt):
+                reject(lambda: c.bounded_command_v1([sys.executable, "-I", "-S", "-c", "import time;time.sleep(30)"], timeout=2), KeyboardInterrupt)
+        assert len(children) == 1 and children[0].returncode is not None
+        assert all(stream.closed for stream in (children[0].stdin, children[0].stdout, children[0].stderr))
 
 def main():
     native={"public_files":[{"path":"public/native-client-profile.json"}]}
@@ -240,6 +375,7 @@ def main():
         (keys/'client.key').chmod(0o644);reject(lambda:c.key_namespace(keys,coordinator,deployments,profile));(keys/'client.key').chmod(0o600)
         (keys/'client.key').unlink();(keys/'client.key').symlink_to(keys/'operator.key');reject(lambda:c.key_namespace(keys,coordinator,deployments,profile))
     test_request_adapter_v1()
-    print(f'native_campaign_structural_tests=passed negatives={rejected} cryptographic_success_claim=false real_campaign_required=true controlled_ssh_unix_transport=true bounded_io_deadline=true')
+    test_owned_command_cleanup_v1()
+    print(f'native_campaign_structural_tests=passed negatives={rejected} cryptographic_success_claim=false real_campaign_required=true controlled_ssh_unix_transport=true bounded_io_deadline=true owned_group_cleanup=true')
 
 if __name__=='__main__':main()

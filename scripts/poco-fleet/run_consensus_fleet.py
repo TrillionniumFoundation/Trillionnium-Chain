@@ -3078,7 +3078,7 @@ def main() -> None:
         ValueError,
         SystemExit,
     ) as error:
-        failure = str(error)
+        failure = native_campaign.command_failure_text_v1(error)
     finally:
         for (
             _process,
@@ -3123,7 +3123,7 @@ def main() -> None:
             verify_coordinator_anchor(anchor_snapshot)
         except SystemExit as error:
             if failure is None:
-                failure = str(error)
+                failure = native_campaign.command_failure_text_v1(error)
             else:
                 cleanup_failures.append(str(error))
         record_lifecycle_event(lifecycle_events, "cleanup_finished")
