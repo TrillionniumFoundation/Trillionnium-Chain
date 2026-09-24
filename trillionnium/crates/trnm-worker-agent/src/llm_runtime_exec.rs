@@ -2,11 +2,9 @@ use crate::{is_deterministic_rejection, parse_tx_hash, AdapterExecResult, RC_OK}
 use anyhow::{anyhow, Result};
 use std::{
     path::Path,
-    process::{Command as ProcCommand, Output, Stdio},
+    process::Command as ProcCommand,
     thread,
-    time::Duration,
-};
-use wait_timeout::ChildExt;
+    };
 
 use crate::llm_retry::backoff_delay_ms;
 
@@ -100,25 +98,4 @@ pub(crate) fn run_adapter_with_retry(
     })
 }
 
-pub(crate) fn run_command_with_timeout(
-    program: &str,
-    base_args: &[String],
-    extra_args: &[String],
-    timeout: Duration,
-) -> Result<Output> {
-    let mut child = ProcCommand::new(program)
-        .args(base_args)
-        .args(extra_args)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()?;
-
-    match child.wait_timeout(timeout)? {
-        Some(_) => Ok(child.wait_with_output()?),
-        None => {
-            let _ = child.kill();
-            let _ = child.wait();
-            anyhow::bail!("llm adapter timeout after {}ms", timeout.as_millis());
-        }
-    }
-}
+pub(crate) use crate::command_runtime_exec::run_command_with_timeout;

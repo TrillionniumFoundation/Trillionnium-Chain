@@ -21,6 +21,26 @@ implementation is `trillionnium/crates/trnm-poco-agent-market-v1/src/`.
 Its `types.rs`, `codec.rs`, `agent_transaction_wire_v1.rs`, and `store.rs`
 define the selected candidate layouts; they do not amend frozen bft-v0 bytes.
 
+## Worker adapter process lifetime (candidate)
+
+The real Worker CLI imports `command_runtime_exec::run_command_with_timeout`;
+no copied wait-before-read implementation is an executable alternative. On Unix,
+stdout/stderr are drained nonblocking with one combined 8 MiB capture budget and
+fair bounded reads. The caller's monotonic deadline covers leader exit and EOF,
+including inherited descendant pipes. Stdin is closed. An exceeded output budget
+or deadline returns an error, never a truncated successful response.
+
+Each invocation owns a new process group. Cleanup signals that group before
+reaping its still-pinned leader, on failure and on success, then permits at most
+one second for reaping. Failure to reap is explicitly reported, not success.
+This supports Linux/macOS process adapters, not hostile-code isolation: a child
+that deliberately escapes the group requires an external sandbox/cgroup policy.
+Non-Unix bounded adapters refuse before spawning until a native job owner exists.
+The cap is local Worker resource policy, not chain validity, token billing or
+permission to submit a transaction. Regression tests exercise the actual CLI
+module, large stdout/stderr, aggregate overflow, inherited pipes, cancellation,
+stdin EOF, nonzero exit status and zero-deadline rejection without a model call.
+
 ## Interfaces
 
 `PocoAgentMarketStoreV1::execute_order_finalized(context, command)` accepts
