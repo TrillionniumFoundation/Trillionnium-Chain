@@ -76,7 +76,7 @@ list_workflows() {
   case "$source_mode" in
     --worktree)
       find "$root/.github/workflows" -maxdepth 1 -type f \
-        \( -name '*.yml' -o -name '*.yaml' \) -printf '%f\n' | LC_ALL=C sort
+        \( -name '*.yml' -o -name '*.yaml' \) -exec basename {} \; | LC_ALL=C sort
       ;;
     --staged)
       git -C "$root" ls-files --cached -- '.github/workflows/*.yml' \
