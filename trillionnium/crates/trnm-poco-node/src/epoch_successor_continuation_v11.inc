@@ -286,6 +286,25 @@ impl<
         self.execute_child_v11(proposal, None)
     }
 
+    /// Prepare the next checkpoint from this same live successor's committed
+    /// cutoff. Selection is reproduced from the native owner before any Core
+    /// mutation; a proposed hash does not select the next validator set.
+    pub fn execute_checkpoint_child_v11(mut self, proposal: SignedProposalV0) -> Result<Self> {
+        let checkpoint = self.settled_checkpoint_v11()?;
+        ensure!(
+            self.inner.pending_epoch_commit.is_none(),
+            "successor checkpoint has a pending application obligation"
+        );
+        let commitment = confirm_checkpoint_selection_at_active_cut_v4(
+            self.inner.application(),
+            &checkpoint,
+            proposal.block().header(),
+            self.inner.runtime.driver.config().validator_set(),
+            self.inner.runtime.driver.config().consensus_parameters(),
+        )?;
+        self.execute_child_v11(proposal, Some(commitment))
+    }
+
     pub fn sign_child_vote_v11<P: trnm_consensus_signer_journal::SignatureProducerV0>(
         mut self,
         producer: &mut P,

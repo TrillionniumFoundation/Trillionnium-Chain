@@ -546,6 +546,13 @@ type SuccessorFinalityCaseV11 =
     super::SuccessorFinalizationRuntimeV11<Watermark, Watermark, Watermark, Watermark>;
 
 fn successor_child_proposal_v11(owner: &SuccessorFinalityCaseV11) -> SignedProposalV0 {
+    successor_application_proposal_v11(owner, None)
+}
+
+fn successor_application_proposal_v11(
+    owner: &SuccessorFinalityCaseV11,
+    commitment: Option<trnm_consensus_types::NextEpochCommitmentHash>,
+) -> SignedProposalV0 {
     use ed25519_dalek::Signer;
     let parent_header = owner
         .prepared_headers_v11()
@@ -582,7 +589,7 @@ fn successor_child_proposal_v11(owner: &SuccessorFinalityCaseV11) -> SignedPropo
         set.epoch(),
         view,
         trnm_consensus_types::Height::new(request.height().get()),
-        BlockKind::Regular,
+        if commitment.is_some() { BlockKind::EpochCheckpoint } else { BlockKind::Regular },
         parent_header.id(),
         proposer,
         set.id(),
@@ -592,7 +599,7 @@ fn successor_child_proposal_v11(owner: &SuccessorFinalityCaseV11) -> SignedPropo
         ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
         EvidenceRoot::new(*preview.evidence_root().as_bytes()),
         request.timestamp_ms(),
-        None,
+        commitment,
     )
     .unwrap();
     let justify = QcReferenceV0::ordinary(first_apply_qc_v2(&parent_header, set));
@@ -637,8 +644,20 @@ fn successor_child_proposal_v11(owner: &SuccessorFinalityCaseV11) -> SignedPropo
     .unwrap()
 }
 
+type SuccessorCutoffCaseV11 = (
+    tempfile::TempDir,
+    SuccessorFinalityCaseV11,
+    Key,
+    Watermark,
+);
+
 #[test]
 fn actual_successor_core_finalizes_and_applies_first_new_v11() {
+    successor_checkpoint_continuation_v11(successor_settled_cutoff_case_v11());
+}
+
+#[inline(never)]
+fn successor_settled_cutoff_case_v11() -> Box<SuccessorCutoffCaseV11> {
     // V2--V8 have dedicated negative and crash regressions. V11 needs their
     // genuine durable product output, not another replay of every historical
     // negative probe before the second-epoch continuation can start. Reuse
@@ -721,5 +740,65 @@ fn actual_successor_core_finalizes_and_applies_first_new_v11() {
     assert_eq!(retained[1].height().get(), cutoff_height + 2);
     let signer_sequence = watermark.0.lock().unwrap().0.unwrap().sequence();
     assert!(signer_sequence >= 6 && signer_sequence.is_multiple_of(2));
+
+    assert!(directory.path().is_dir());
+    Box::new((directory, owner, key, watermark))
+}
+
+// Keep the full previous-epoch fixture's stack frame out of this stage. The
+// complete, original owners move through the heap; the thread stack is unchanged.
+#[inline(never)]
+fn successor_checkpoint_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
+    let (directory, mut owner, mut key, watermark) = *case;
+    let cutoff = owner.settled_checkpoint_v11().unwrap();
+    let cutoff_height = cutoff.fields().application.height;
+    let retained = owner.prepared_headers_v11().unwrap();
+    let signer_sequence = watermark.0.lock().unwrap().0.unwrap().sequence();
+    // Continue to the actual next checkpoint without replacing any owner.
+    let selection = owner.application_v11()
+        .compute_later_epoch_selection_v1(trnm_native_application::HeightV0::new(cutoff_height))
+        .unwrap();
+    let commitment = selection.next_epoch_commitment().id();
+    let bad = successor_application_proposal_v11(
+        &owner, Some(trnm_consensus_types::NextEpochCommitmentHash::new([0xd5; 32])),
+    );
+    let good = successor_application_proposal_v11(&owner, Some(commitment));
+    let checkpoint_id = good.block().id();
+    let paths = [
+        owner.application_v11().path().to_path_buf(),
+        owner.inner.runtime.journal.path_v4().to_path_buf(),
+        owner.inner.runtime.ordinary.path().to_path_buf(),
+        owner.inner.runtime.source.roles.retired.checkpoint_store.database_path().to_path_buf(),
+    ];
+    let before: Vec<_> = paths.iter().map(|p| sqlite_logical_image_v3(p)).collect();
+    let calls = key.calls;
+    bad.verify(owner.set_v11(), None, owner.parameters_v11(),
+        retained.last().unwrap().timestamp_ms(), &trnm_consensus_crypto::StrictEd25519Verifier).unwrap();
+    let error = super::confirm_checkpoint_selection_at_active_cut_v4(
+        owner.application_v11(), &cutoff, bad.block().header(),
+        owner.set_v11(), owner.parameters_v11(),
+    ).unwrap_err();
+    assert!(error.to_string().contains("checkpoint commitment differs from actual cutoff selection"));
+    assert_eq!(key.calls, calls);
+    for (path, expected) in paths.iter().zip(before) {
+        assert!(sqlite_logical_image_v3(path) == expected, "invalid selection wrote {}", path.display());
+    }
+    owner = owner.execute_checkpoint_child_v11(good).unwrap();
+    assert_eq!(key.calls, calls, "checkpoint P/Valid must not invoke custody");
+    let pending = owner.inner.pending_epoch_commit.as_ref().unwrap();
+    assert_eq!(pending.prepared.header().unwrap().id(), checkpoint_id);
+    assert_eq!(owner.application_v11().confirm_prepared_epoch_execution_v1(&pending.prepared)
+        .unwrap().commit_sequence(), None);
+    let (owner, vote) = owner.sign_child_vote_v11(&mut key).unwrap();
+    let trnm_consensus_core::OutboundMessage::Vote(vote) = vote else { panic!("checkpoint did not vote") };
+    assert_eq!(vote.block_id(), checkpoint_id);
+    assert_eq!(key.calls, calls + 1);
+    assert_eq!(watermark.0.lock().unwrap().0.unwrap().sequence(), signer_sequence + 2);
+    let checkpoint = owner.prepared.last().unwrap();
+    let confirmed = owner.application_v11().confirm_prepared_epoch_execution_v1(&checkpoint.prepared).unwrap();
+    assert_eq!(confirmed.prepared().header().unwrap().block_kind(), BlockKind::EpochCheckpoint);
+    assert_eq!(confirmed.commit_sequence(), None, "checkpoint Vote is not finality");
+    assert_eq!(owner.application_v11().confirmed_committed_head_v0().unwrap(), *selection.cutoff_head());
+    assert_eq!(owner.inner.runtime.driver.state().application_applied(), owner.inner.runtime.driver.state().finalized());
     assert!(directory.path().is_dir());
 }

@@ -177,15 +177,33 @@ fn confirm_checkpoint_selection_v4(
     checkpoint: &EpochNodeCheckpointV1,
     header: &trnm_consensus_types::BlockHeader,
 ) -> Result<trnm_consensus_types::NextEpochCommitmentHash> {
-    let geometry = trnm_consensus_types::EpochGeometryV0::new(
-        edge.new_validator_set().epoch(),
+    confirm_checkpoint_selection_at_active_cut_v4(
+        application,
+        checkpoint,
+        header,
+        edge.new_validator_set(),
         edge.new_parameters(),
+    )
+}
+
+// Both the first and subsequent epoch owners consume this same comparison.
+// The set and parameters come from the live Core, never from the proposal.
+fn confirm_checkpoint_selection_at_active_cut_v4(
+    application: &DurableNativeApplicationV0,
+    checkpoint: &EpochNodeCheckpointV1,
+    header: &trnm_consensus_types::BlockHeader,
+    active_set: &trnm_consensus_types::ValidatorSet,
+    active_parameters: &trnm_consensus_types::ConsensusParametersV0,
+) -> Result<trnm_consensus_types::NextEpochCommitmentHash> {
+    let geometry = trnm_consensus_types::EpochGeometryV0::new(
+        active_set.epoch(),
+        active_parameters,
     )
     .map_err(|e| anyhow::anyhow!("checkpoint selection geometry: {e:?}"))?;
     let cutoff = geometry
         .checkpoint_height()
         .get()
-        .checked_sub(edge.new_parameters().snapshot_lead_blocks())
+        .checked_sub(active_parameters.snapshot_lead_blocks())
         .context("checkpoint cutoff underflow")?;
     let selection = application
         .compute_later_epoch_selection_v1(trnm_native_application::HeightV0::new(cutoff))?;
@@ -202,9 +220,9 @@ fn confirm_checkpoint_selection_v4(
             && selection.cutoff_commit_sequence() == app.commit_sequence
             && header.block_kind() == BlockKind::EpochCheckpoint
             && header.height() == geometry.checkpoint_height()
-            && header.epoch() == edge.new_validator_set().epoch()
-            && header.validator_set_id() == edge.new_validator_set().id()
-            && header.consensus_parameters_hash() == edge.new_parameters().hash(),
+            && header.epoch() == active_set.epoch()
+            && header.validator_set_id() == active_set.id()
+            && header.consensus_parameters_hash() == active_parameters.hash(),
         "checkpoint selection differs from the independent cutoff"
     );
     let commitment = selection.next_epoch_commitment().id();

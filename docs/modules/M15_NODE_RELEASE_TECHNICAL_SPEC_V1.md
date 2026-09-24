@@ -36,9 +36,16 @@ real-owner regression; it is not a production startup profile.
 | Runtime path | Current operation and consumer | Remaining boundary |
 |---|---|---|
 | `SuccessorFirstApplicationRuntimeV10` | `begin_first_application_v10`, `admit_first_proposal_v10`, `execute_first_proposal_v10`, `sign_first_vote_v10`, `commit_first_finality_v10`; native later-edge preparation and exact custody/checkpoint joins | A single first-new application path is not sustained subsequent epoch commissioning |
-| `SuccessorFinalizationRuntimeV11` | `begin_finalization_v11`, `execute_ordinary_child_v11`, `sign_child_vote_v11`, `observe_front_qc_v11`, `apply_front_v11`, `settled_checkpoint_v11`; Core's actual Finalize front authorizes the retained prepared application's commit | Independent process restart, repeated whole-node handoffs, retirement, long-history GC and public daemon composition remain distinct requirements |
+| `SuccessorFinalizationRuntimeV11` | `begin_finalization_v11`, `execute_ordinary_child_v11`, `execute_checkpoint_child_v11`, `sign_child_vote_v11`, `observe_front_qc_v11`, `apply_front_v11`, `settled_checkpoint_v11`; Core's actual Finalize front authorizes the retained prepared application's commit | Independent process restart, repeated whole-node handoffs, retirement, long-history GC and public daemon composition remain distinct requirements |
 | Candidate transaction client | `continuous_runtime::tests::actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1` exercises socket, WAL, real consensus and independent historical proof verification | A candidate socket is not a production Internet listener or release acceptance |
 | Normal node entry | `trnm-poco-node` and `trnm-poco-node-cli start` retain their explicit refusal | No launch switch may substitute lab code, fixtures or a fabricated authority for actual production owners |
+
+The same V11 owner also prepares the subsequent epoch checkpoint after reaching
+its actual committed cutoff. It shares V4's native cutoff/P/sequence/commitment
+comparison instead of accepting a caller-selected next-set hash. The Journal12
+custody guard reproduces that comparison before and around irreversible key use.
+The checkpoint remains Prepared after its Vote; its empty seals, strict checkpoint
+finality, retirement and further handoff are not granted by this operation.
 
 `epoch_runtime_candidate_v1::tests::actual_successor_core_finalizes_and_applies_first_new_v11`
 is the behavioral regression for the V11 row. A retained older paragraph about

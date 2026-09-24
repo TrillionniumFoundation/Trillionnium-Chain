@@ -819,6 +819,18 @@ fn confirm_successor_non_signer_owners_v10<
             && confirmed.prepared().persist_sequence() == prepared.persist_sequence(),
         "successor native P changed at key boundary"
     );
+    let header = confirmed.prepared().header()?;
+    if header.block_kind() == BlockKind::EpochCheckpoint {
+        // Reproduce the cutoff on every guarded key callback as well as before
+        // entering custody. A previously matched hash is not live authority.
+        confirm_checkpoint_selection_at_active_cut_v4(
+            application,
+            checkpoint,
+            &header,
+            driver.config().validator_set(),
+            driver.config().consensus_parameters(),
+        )?;
+    }
     let app = checkpoint.fields().application;
     let head = application.confirmed_committed_head_v0()?;
     ensure!(
