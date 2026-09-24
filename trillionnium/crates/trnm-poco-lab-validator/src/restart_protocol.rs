@@ -290,7 +290,7 @@ impl RestartProtocolAdmissionMapV1 {
                 return Ok(RestartProtocolAdmissionV1::ExactReplay);
             }
             return Err(RestartProtocolIngressErrorV1::Equivocation {
-                origin: message.origin,
+                origin: Box::new(message.origin),
                 phase: message.phase,
             });
         }
@@ -660,7 +660,7 @@ impl BoundedRestartProtocolIngressV1 {
         &mut self,
         phase: RestartProtocolPhaseV1,
         payload: &[u8],
-        mut relay_window: Option<&mut RestartRelayAdmissionWindowV1>,
+        relay_window: Option<&mut RestartRelayAdmissionWindowV1>,
     ) -> Result<RestartProtocolOriginReservationV1, RestartProtocolIngressErrorV1> {
         self.collector.ensure_live()?;
         if payload.is_empty() {
@@ -717,7 +717,7 @@ impl BoundedRestartProtocolIngressV1 {
         let payload_digest = message.payload_digest();
         self.collector
             .commit_preflight(&message, collector_preflight);
-        let relay_instance = match (relay_window.as_deref_mut(), relay_preflight) {
+        let relay_instance = match (relay_window, relay_preflight) {
             (Some(window), Some(admission)) => {
                 window.commit_preflight(&message, admission);
                 Some(window.instance)
@@ -1058,7 +1058,7 @@ pub enum RestartProtocolIngressErrorV1 {
     OriginReservationMismatch,
     InconsistentAdmissionState,
     Equivocation {
-        origin: ValidatorId,
+        origin: Box<ValidatorId>,
         phase: RestartProtocolPhaseV1,
     },
     Poisoned,

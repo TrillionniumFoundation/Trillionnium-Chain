@@ -244,6 +244,17 @@ does not acknowledge Core. A production listener
 still requires the TLS/static-peer identity profile above, a host-owned peer
 lease, typed M05/M13 dispatch, exact ACK recovery, and multi-host acceptance.
 
+## Bounded diagnostic ownership
+
+The established receive error retains its original class, complete authenticated
+session and source error; its large session record is heap-owned rather than
+copied into every Result stack slot. Fleet/restart equivocation errors and the
+private lease-renewal failure likewise retain the exact validator identity in a
+boxed diagnostic field. This changes only the in-memory Rust error layout, not
+peer bytes, signature domains, error classification, lease rules or quorum.
+Callers still join the error's original session with the live directed mesh;
+smaller diagnostics never authorize re-attribution, reconnect or acceptance.
+
 ## Interfaces
 
 `OpenSessionV1` produces two directional session identities plus a lane map.

@@ -1661,7 +1661,7 @@ mod tests {
     }
 
     fn process_profile(index: usize) -> EpochHandoffLocalProcessProfileV1 {
-        let process_instance = if index % 3 == 0 { 2 } else { 1 };
+        let process_instance = if index.is_multiple_of(3) { 2 } else { 1 };
         let salt = u8::try_from(index).unwrap();
         EpochHandoffLocalProcessProfileV1 {
             process_instance,

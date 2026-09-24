@@ -1195,13 +1195,10 @@ fn network_context_digest(
     hasher.update(context.candidate_source_sha256);
     hasher.update(context.binary_sha256);
     hasher.update(context.coordinator_manifest_sha256);
-    match context.validator_set_binding() {
-        Some((epoch, set_id)) => {
-            hasher.update(EPOCH_SET_BINDING_DOMAIN);
-            hasher.update(epoch.to_be_bytes());
-            hasher.update(set_id);
-        }
-        None => {}
+    if let Some((epoch, set_id)) = context.validator_set_binding() {
+        hasher.update(EPOCH_SET_BINDING_DOMAIN);
+        hasher.update(epoch.to_be_bytes());
+        hasher.update(set_id);
     }
     if let Some(config_sha256) = context.node_config_binding() {
         hasher.update(NODE_CONFIG_BINDING_DOMAIN);

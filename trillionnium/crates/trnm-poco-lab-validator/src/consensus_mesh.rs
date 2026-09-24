@@ -554,7 +554,7 @@ struct MeshTerminalFailureV0 {
 
 #[derive(Debug)]
 struct MeshFencePeerFailureV1 {
-    remote: ValidatorId,
+    remote: Box<ValidatorId>,
     direction: PeerDirectionV0,
     reason: String,
 }
@@ -1715,7 +1715,7 @@ impl MeshFenceRegistryV1 {
             .tokens
             .lock()
             .map_err(|_| MeshFencePeerFailureV1 {
-                remote: self.local,
+                remote: Box::new(self.local),
                 direction: PeerDirectionV0::Outbound,
                 reason: "mesh fence token map poisoned".to_owned(),
             })?
@@ -1729,7 +1729,7 @@ impl MeshFenceRegistryV1 {
                 | Ok(MeshFenceRenewalOutcomeV1::Renewed) => {}
                 Err(error) => {
                     return Err(MeshFencePeerFailureV1 {
-                        remote,
+                        remote: Box::new(remote),
                         direction,
                         reason: error.to_string(),
                     })
@@ -2388,7 +2388,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
                             &terminal,
                             &stop,
                             MeshTerminalFailureV0 {
-                                remote: failure.remote,
+                                remote: *failure.remote,
                                 direction: failure.direction,
                                 reason: format!(
                                     "external fence renewal supervisor failed: {}",

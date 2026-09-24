@@ -79,7 +79,7 @@ impl MessageV1 {
         let start = digest(9);
         let origin = ValidatorId::new(digest(41));
         ensure!(
-            start != [0; 32] && origin.as_bytes() != &[0; 32],
+            start != [0; 32] && origin.as_bytes() != [0; 32],
             "zero terminal context"
         );
         let body = match bytes[8] {

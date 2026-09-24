@@ -1920,7 +1920,7 @@ impl RuntimeJournalStateV1 {
                 1,
                 RuntimeRestartJournalStateV1::Prepared(RestartPreparationJournalV1::Peer(facts)),
             ) => {
-                facts.subject.target_validator.as_bytes() != &[0; 32]
+                facts.subject.target_validator.as_bytes() != [0; 32]
                     && facts.subject.body_sha256 != [0; 32]
                     && facts.subject.prepare_message_id != [0; 32]
                     && facts.shared_cut_height != 0
@@ -4022,7 +4022,7 @@ impl RuntimeEventJournalV1 {
             || cut_event.previous_event_sha256 != hex::encode(predecessor.1)
             || park_event.previous_event_sha256 != cut_event.event_sha256
             || recovered.previous_event_sha256 != park_event_sha256
-            || recovered.next_sequence != park_event.sequence.checked_add(1).unwrap_or(u64::MAX)
+            || recovered.next_sequence != park_event.sequence.saturating_add(1)
             || recovered.process_instance != self.process_instance
             || recovered.next_sequence != self.next_sequence
             || recovered.previous_event_sha256 != self.previous_event_sha256
@@ -4256,7 +4256,7 @@ impl RuntimeEventJournalV1 {
             || event.sequence != commit.restart_park_event_sequence_v1().saturating_add(1)
             || event.previous_event_sha256 != hex::encode(commit.restart_park_event_sha256_v1())
             || recovered.previous_event_sha256 != event_sha256
-            || recovered.next_sequence != event.sequence.checked_add(1).unwrap_or(u64::MAX)
+            || recovered.next_sequence != event.sequence.saturating_add(1)
             || recovered.process_instance != self.process_instance
             || recovered.next_sequence != self.next_sequence
             || recovered.previous_event_sha256 != self.previous_event_sha256

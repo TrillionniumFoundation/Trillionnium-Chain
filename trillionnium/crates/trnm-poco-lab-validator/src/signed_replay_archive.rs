@@ -2668,7 +2668,7 @@ fn strict_native_finality_range_v1(
             break;
         }
         ensure!(
-            reverse.len() < crate::config::DEPLOYED_CORE_MAX_BLOCKS_V1 as usize,
+            reverse.len() < crate::config::DEPLOYED_CORE_MAX_BLOCKS_V1,
             "native missing-proof range exceeds candidate bound"
         );
         let parent = parent_for(header)?;
@@ -3523,7 +3523,7 @@ fn read_head_v1(path: &Path, context_sha256: [u8; 32]) -> Result<ReplayArchiveHe
 
 fn read_head_from_file_v1(file: &File, context_sha256: [u8; 32]) -> Result<ReplayArchiveHeadV1> {
     let value: ReplayArchiveHeadJsonV1 =
-        read_bounded_json_v1(&file, MAXIMUM_HEAD_BYTES_V1, "archive head")?;
+        read_bounded_json_v1(file, MAXIMUM_HEAD_BYTES_V1, "archive head")?;
     ensure!(
         value.schema_version == SCHEMA_VERSION_V1,
         "wrong replay archive head schema"

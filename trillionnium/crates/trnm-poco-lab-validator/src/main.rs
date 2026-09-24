@@ -954,8 +954,7 @@ where
     ensure!(
         ready_file
             .as_ref()
-            .map_or(true, |ready| ready != &journal_lock
-                && ready != &journal_head),
+            .is_none_or(|ready| ready != &journal_lock && ready != &journal_head),
         "peer-lease ready path collides with a journal sidecar"
     );
     Ok(PeerLeaseDaemonArgsV1 {

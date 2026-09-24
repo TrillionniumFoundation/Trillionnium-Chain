@@ -2078,9 +2078,9 @@ fn sign_local_fleet_ready_v1(
     local_cut: LocalReadyCutV1,
     mesh_sessions: FleetMeshSessionSetV1,
     config: &LoadedValidatorConfig,
-    mut fleet_producer: Option<&mut (dyn FleetSignatureProducerV1 + 'static)>,
+    fleet_producer: Option<&mut (dyn FleetSignatureProducerV1 + 'static)>,
 ) -> Result<SignedFleetReadyV1> {
-    let signature = if let Some(producer) = fleet_producer.as_deref_mut() {
+    let signature = if let Some(producer) = fleet_producer {
         let signing_root = SignedFleetReadyV1::signing_root_for_parts_v1(
             &context,
             local_cut,
@@ -2126,7 +2126,7 @@ fn sign_local_fleet_start_v1(
     ready_event_sequence: u64,
     ready_event_sha256: [u8; 32],
     config: &LoadedValidatorConfig,
-    mut fleet_producer: Option<&mut (dyn FleetSignatureProducerV1 + 'static)>,
+    fleet_producer: Option<&mut (dyn FleetSignatureProducerV1 + 'static)>,
 ) -> Result<SignedFleetStartV1> {
     let signing_root = SignedFleetStartV1::signing_root_for_parts_v1(
         ready,
@@ -2136,7 +2136,7 @@ fn sign_local_fleet_start_v1(
         config.validator_set(),
     )
     .map_err(|error| anyhow!("construct local fleet Start signing root: {error}"))?;
-    let signature = if let Some(producer) = fleet_producer.as_deref_mut() {
+    let signature = if let Some(producer) = fleet_producer {
         producer
             .sign_fleet_v1(FleetSignatureRequestV1::new(
                 FleetSignaturePurposeV1::Start,
@@ -4013,7 +4013,7 @@ impl LocalRestartPreparedOwnerV1 {
         self,
         config: &LoadedValidatorConfig,
         fleet_start_certificate: &FleetStartCertificateV1,
-        mut fleet_producer: Option<&'a mut (dyn FleetSignatureProducerV1 + 'static)>,
+        fleet_producer: Option<&'a mut (dyn FleetSignatureProducerV1 + 'static)>,
     ) -> Result<LocalRestartTargetPreparedOwnerV1> {
         ensure!(
             self.facts.local_validator == config.local_validator()
@@ -4070,7 +4070,7 @@ impl LocalRestartPreparedOwnerV1 {
             config.validator_set(),
         )
         .map_err(|error| anyhow!("construct target RestartPrepare signing root: {error}"))?;
-        let declaration = if let Some(producer) = fleet_producer.as_deref_mut() {
+        let declaration = if let Some(producer) = fleet_producer {
             let signature = producer
                 .sign_fleet_v1(FleetSignatureRequestV1::new(
                     FleetSignaturePurposeV1::Restart,
@@ -5089,7 +5089,7 @@ impl BoundedConsensusOwnerV1 {
                             self.record_prepared_normal_frame_drop_v1()?;
                             return Ok(true);
                         }
-                        let action = route_contained_direct_frame_v1(self.authority_v1()?, &frame)?;
+                        let action = route_contained_direct_frame_v1(self.authority_v1()?, frame)?;
                         match action {
                             Some(action) => self.handle_routed_action_v1(action),
                             None => Ok(false),
@@ -5151,7 +5151,7 @@ impl BoundedConsensusOwnerV1 {
                         }
                         let routed = self
                             .authority_v1()?
-                            .admit_authenticated_consensus_relay_frame_v0(&frame)?;
+                            .admit_authenticated_consensus_relay_frame_v0(frame)?;
                         let mut progressed = false;
                         if let Some(forward) = routed.forward {
                             self.outbox.enqueue_except_v1(
@@ -8725,7 +8725,7 @@ mod tests {
             votes[2].view().get(),
             hex::encode(votes[2].high_qc().qc_digest().as_bytes()),
             hex::encode(votes[2].author().as_bytes()),
-            u8::from(2usize % 2 == 0),
+            u8::from(2usize.is_multiple_of(2)),
         );
         assert!(!summary.contains(&removed));
 

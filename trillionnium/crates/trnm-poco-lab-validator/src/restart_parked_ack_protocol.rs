@@ -130,7 +130,7 @@ pub(crate) fn issue_local_restart_parked_ack_v1(
     journal_commit: LocalRestartParkJournalCommitV1,
     config: &LoadedValidatorConfig,
     expected_role: RestartParkRoleV1,
-    mut restart_producer: Option<&mut dyn RestartSignatureProducerV1>,
+    restart_producer: Option<&mut dyn RestartSignatureProducerV1>,
 ) -> AnyResult<DeclaredRestartParkedAckV1> {
     stored
         .revalidate_fresh_v1()
@@ -174,7 +174,7 @@ pub(crate) fn issue_local_restart_parked_ack_v1(
         stored.validator_set_v1(),
     )
     .map_err(|error| anyhow::anyhow!("form exact ParkedAck signing digest: {error}"))?;
-    let signature = if let Some(producer) = restart_producer.as_deref_mut() {
+    let signature = if let Some(producer) = restart_producer {
         producer
             .sign_restart_v1(RestartSignaturePurposeV1::Park, digest)
             .context("produce external RestartParkedAck signature")?

@@ -2289,7 +2289,10 @@ impl FleetBarrierAdmissionMapV1 {
                 return Ok(FleetBarrierAdmissionV1::ExactReplay);
             }
             self.poisoned = true;
-            return Err(FleetBarrierErrorV1::Equivocation { origin, phase });
+            return Err(FleetBarrierErrorV1::Equivocation {
+                origin: Box::new(origin),
+                phase,
+            });
         }
         if self.entries.len() == self.maximum_entries {
             self.poisoned = true;
@@ -2468,7 +2471,7 @@ fn checked_ceil_div(numerator: u64, denominator: u64) -> Result<u64, FleetBarrie
     }
     let quotient = numerator / denominator;
     quotient
-        .checked_add(u64::from(numerator % denominator != 0))
+        .checked_add(u64::from(!numerator.is_multiple_of(denominator)))
         .ok_or(FleetBarrierErrorV1::Malformed("capacity division overflow"))
 }
 
@@ -2556,7 +2559,7 @@ pub enum FleetBarrierErrorV1 {
     Incomplete,
     Capacity,
     Equivocation {
-        origin: ValidatorId,
+        origin: Box<ValidatorId>,
         phase: FleetBarrierPhaseV1,
     },
     Poisoned,
@@ -2916,7 +2919,7 @@ mod tests {
         ready[0] = externally_produced_ready;
         let ready_set = FleetReadySetV1::new(context, ready, &set).unwrap();
         let start_root = SignedFleetStartV1::signing_root_for_parts_v1(
-            &ready_set.statement(set.validators()[0].id()).unwrap(),
+            ready_set.statement(set.validators()[0].id()).unwrap(),
             &ready_set,
             11,
             [0xd1; 32],

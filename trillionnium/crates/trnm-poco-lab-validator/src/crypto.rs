@@ -348,9 +348,8 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
                     .external
                     .as_mut()
                     .expect("external watermark presence checked");
-                let observed = external.load(target.scope()).map_err(|error| {
+                let observed = external.load(target.scope()).inspect_err(|_error| {
                     self.poisoned = true;
-                    error
                 })?;
                 if observed != expected {
                     self.poisoned = true;
@@ -456,9 +455,8 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
         if current == Some(target) {
             let observed = external
                 .load_semantic_v0(target.scope(), target.journal_id())
-                .map_err(|error| {
+                .inspect_err(|_error| {
                     self.poisoned = true;
-                    error
                 })?;
             if observed == Some((target, facts)) {
                 return Ok(());
@@ -490,9 +488,8 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
         if current == Some(target) {
             let observed = external
                 .load_semantic_v0(target.scope(), target.journal_id())
-                .map_err(|error| {
+                .inspect_err(|_error| {
                     self.poisoned = true;
-                    error
                 })?;
             if observed.is_some_and(|(watermark, _)| watermark == target) {
                 return Ok(());

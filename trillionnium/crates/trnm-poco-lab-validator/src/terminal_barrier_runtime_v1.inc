@@ -85,10 +85,9 @@ impl BoundedConsensusOwnerV1 {
             self.restart_lifecycle.is_running_v1()
                 && self.active_connectivity_fault.is_none()
                 && self.event_journal.observation().active_faults.is_empty()
-                && !self
+                && self
                     .runtime_control
-                    .as_ref()
-                    .is_some_and(|c| c.expected_fault().is_some()),
+                    .as_ref().is_none_or(|c| c.expected_fault().is_none()),
             "control work arrived after terminal Park"
         );
         self.flush_outbox_v1()?;

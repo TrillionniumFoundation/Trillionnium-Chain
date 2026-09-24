@@ -23,7 +23,7 @@ pub enum EstablishedReceiveClassV1 {
 #[derive(Debug)]
 pub struct EstablishedReceiveErrorV1 {
     class: EstablishedReceiveClassV1,
-    session: ConnectionSession,
+    session: Box<ConnectionSession>,
     original: FrameError,
 }
 
@@ -31,7 +31,7 @@ impl EstablishedReceiveErrorV1 {
     fn internal(session: ConnectionSession, original: FrameError) -> Self {
         Self {
             class: EstablishedReceiveClassV1::Internal,
-            session,
+            session: Box::new(session),
             original,
         }
     }
@@ -43,7 +43,7 @@ impl EstablishedReceiveErrorV1 {
     /// Authenticated transport facts only; direction/generation/lease still
     /// belong to the mesh owner and must be independently joined there.
     pub const fn session_v1(&self) -> ConnectionSession {
-        self.session
+        *self.session
     }
 
     pub const fn frame_error_v1(&self) -> &FrameError {
@@ -123,7 +123,7 @@ fn receive_established_frame_v1<T: Read>(
             };
             return Err(EstablishedReceiveErrorV1 {
                 class,
-                session,
+                session: Box::new(session),
                 original,
             });
         }
@@ -137,7 +137,7 @@ fn receive_established_frame_v1<T: Read>(
             class: EstablishedReceiveClassV1::PeerInput(
                 EstablishedPeerInputRejectionV1::SessionSequenceMismatch,
             ),
-            session,
+            session: Box::new(session),
             original: FrameError::Replay,
         });
     }
