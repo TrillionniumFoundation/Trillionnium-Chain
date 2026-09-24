@@ -25,6 +25,19 @@ fn genuine_seal_proposal_v5(
         .unwrap_or(&checkpoint);
     let set = inner.runtime.edge.new_validator_set();
     let parameters = inner.runtime.edge.new_parameters();
+    let kind = if owner.seals.is_empty() { BlockKind::EpochSeal1 } else { BlockKind::EpochSeal2 };
+    genuine_seal_for_parent_v5(parent, set, parameters, kind, nonempty, wrong_state)
+}
+
+#[inline(never)]
+fn genuine_seal_for_parent_v5(
+    parent: &BlockHeader,
+    set: &trnm_consensus_types::ValidatorSet,
+    parameters: &trnm_consensus_types::ConsensusParametersV0,
+    kind: BlockKind,
+    nonempty: bool,
+    wrong_state: bool,
+) -> SignedProposalV0 {
     // Consensus transports transaction bytes opaquely. The negative is valid
     // CEV0 with one opaque transaction; a seal must reject any such payload.
     let payload = trnm_consensus_types::ApplicationPayloadV0::new(if nonempty {
@@ -47,11 +60,7 @@ fn genuine_seal_proposal_v5(
         set.epoch(),
         view,
         parent.height().checked_next().unwrap(),
-        if owner.seals.is_empty() {
-            BlockKind::EpochSeal1
-        } else {
-            BlockKind::EpochSeal2
-        },
+        kind,
         parent.id(),
         proposer,
         set.id(),

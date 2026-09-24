@@ -2,6 +2,18 @@
 
 Status: **implementation contract; no release authority**
 
+## Certificate rebase and prepared-child ownership
+
+A valid QC with another quorum subset can replace Core's high-QC reference
+while a local Vote/Timeout owner retains a real uncommitted child. It is not
+an exact replay. Before a changing QC is persisted, authenticate the source
+owner and the complete Core-selected retained P/K path. QC and TC then use the
+same existing committed-application checkpoint projection, with an increasing
+checkpoint generation and unchanged signing watermark. Retain compatible
+uncommitted children; select the new proposal parent only from Core's verified
+high QC. Exact/no-effect replay remains phase-neutral. Missing or changed
+source/selected-path evidence rejects, never becomes an invented committed row.
+
 ## Authority
 
 M15 composes reviewed ports into a process, validates configuration and owns
@@ -36,7 +48,7 @@ real-owner regression; it is not a production startup profile.
 | Runtime path | Current operation and consumer | Remaining boundary |
 |---|---|---|
 | `SuccessorFirstApplicationRuntimeV10` | `begin_first_application_v10`, `admit_first_proposal_v10`, `execute_first_proposal_v10`, `sign_first_vote_v10`, `commit_first_finality_v10`; native later-edge preparation and exact custody/checkpoint joins | A single first-new application path is not sustained subsequent epoch commissioning |
-| `SuccessorFinalizationRuntimeV11` | `begin_finalization_v11`, `execute_ordinary_child_v11`, `execute_checkpoint_child_v11`, `sign_child_vote_v11`, `observe_front_qc_v11`, `apply_front_v11`, `settled_checkpoint_v11`; Core's actual Finalize front authorizes the retained prepared application's commit | Independent process restart, repeated whole-node handoffs, retirement, long-history GC and public daemon composition remain distinct requirements |
+| `SuccessorFinalizationRuntimeV11` | `begin_finalization_v11`, `execute_ordinary_child_v11`, `execute_checkpoint_child_v11`, `sign_child_vote_v11`, `observe_front_qc_v11`, `apply_front_v11`, `settled_checkpoint_v11`; actual ordinary/first-new application commits, two empty-seal Votes and exact next-checkpoint Core finality | Independent process restart, repeated whole-node handoffs, retirement, long-history GC and public daemon composition remain distinct requirements |
 | Candidate transaction client | `continuous_runtime::tests::actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1` exercises socket, WAL, real consensus and independent historical proof verification | A candidate socket is not a production Internet listener or release acceptance |
 | Normal node entry | `trnm-poco-node` and `trnm-poco-node-cli start` retain their explicit refusal | No launch switch may substitute lab code, fixtures or a fabricated authority for actual production owners |
 
@@ -44,8 +56,22 @@ The same V11 owner also prepares the subsequent epoch checkpoint after reaching
 its actual committed cutoff. It shares V4's native cutoff/P/sequence/commitment
 comparison instead of accepting a caller-selected next-set hash. The Journal12
 custody guard reproduces that comparison before and around irreversible key use.
-The checkpoint remains Prepared after its Vote; its empty seals, strict checkpoint
-finality, retirement and further handoff are not granted by this operation.
+The checkpoint remains Prepared after its Vote. The existing continuation now
+owns `admit_seal_proposal_v11`, `apply_preceding_seal_front_v11`,
+`sign_seal_vote_v11` and `observe_checkpoint_finality_v11` for the original
+empty seals and Core finality. The checkpoint itself is not committed by the
+ordinary apply port; its native pre-handoff commit and retirement stay separate.
+
+The existing Journal12/V11 owner is extended through the next checkpoint's
+original two empty seals. Before each seal Vote, the parent's QC must first
+finalize and durably apply its actual preceding application front. No seal
+creates a native preparation, application mutation or synthetic receipt. The
+same retained cutoff selection, checkpoint P/body, strict Core context, Safety
+head and independent node checkpoint are revalidated at each custody callback.
+The terminal QC must prove exactly checkpoint -> seal1 -> seal2. Observing that
+proof is not native checkpoint commit, signer retirement or a further handoff;
+those capabilities remain unavailable until their actual owner joins exist.
+
 
 `epoch_runtime_candidate_v1::tests::actual_successor_core_finalizes_and_applies_first_new_v11`
 is the behavioral regression for the V11 row. A retained older paragraph about

@@ -12,6 +12,9 @@ pub struct SuccessorFinalizationRuntimeV11<
     prepared: Vec<PendingEpochCommitV1>,
     apply_authority: trnm_consensus_core::CoreIssuedApplicationFinalizationApplyAuthorityV0,
     finality_observed: bool,
+    checkpoint_selection: Option<Box<trnm_native_execution_v0::ComputedLaterEpochSelectionV1>>,
+    seals: Vec<SignedProposalV0>,
+    signed_seals: usize,
 }
 
 impl<
@@ -60,6 +63,9 @@ impl<
             prepared: vec![first],
             apply_authority,
             finality_observed: false,
+            checkpoint_selection: None,
+            seals: Vec::new(),
+            signed_seals: 0,
         })
     }
 }
@@ -110,6 +116,8 @@ impl<
         ensure!(
             !self.finality_observed
                 && self.prepared.len() < 3
+                && self.seals.is_empty()
+                && self.checkpoint_selection.is_none()
                 && self.inner.pending_epoch_commit.is_none(),
             "successor child collection phase"
         );
@@ -302,7 +310,13 @@ impl<
             self.inner.runtime.driver.config().validator_set(),
             self.inner.runtime.driver.config().consensus_parameters(),
         )?;
-        self.execute_child_v11(proposal, Some(commitment))
+        let selection = self.inner.application().compute_later_epoch_selection_v1(
+            trnm_native_application::HeightV0::new(checkpoint.fields().application.height),
+        )?;
+        ensure!(selection.next_epoch_commitment().id() == commitment, "successor selection changed");
+        let mut owner = self.execute_child_v11(proposal, Some(commitment))?;
+        owner.checkpoint_selection = Some(Box::new(selection));
+        Ok(owner)
     }
 
     pub fn sign_child_vote_v11<P: trnm_consensus_signer_journal::SignatureProducerV0>(
@@ -310,7 +324,8 @@ impl<
         producer: &mut P,
     ) -> Result<(Self, trnm_consensus_core::OutboundMessage)> {
         ensure!(
-            !self.finality_observed && self.inner.pending_epoch_commit.is_some(),
+            !self.finality_observed && self.seals.is_empty()
+                && self.inner.pending_epoch_commit.is_some(),
             "successor child signing phase"
         );
         let (mut inner, vote) = self.inner.sign_first_vote_v10(producer)?;
@@ -324,14 +339,22 @@ impl<
     }
 
     pub fn observe_front_qc_v11(
-        mut self,
+        self,
         certificate: trnm_consensus_types::QuorumCertificate,
     ) -> Result<Self> {
-        ensure!(
-            !self.finality_observed && self.prepared.len() == 3,
-            "successor finality requires three actual P rows"
-        );
+        ensure!(self.seals.is_empty() && self.prepared.len() == 3,
+            "successor finality requires three actual P rows");
         let third = self.prepared[2].prepared.header()?;
+        self.observe_application_front_qc_v11(certificate, third)
+    }
+
+    fn observe_application_front_qc_v11(
+        mut self,
+        certificate: trnm_consensus_types::QuorumCertificate,
+        third: trnm_consensus_types::BlockHeader,
+    ) -> Result<Self> {
+        ensure!(!self.finality_observed && (1..=3).contains(&self.prepared.len()),
+            "successor application front phase");
         ensure!(certificate.block_id() == third.id(), "successor QC names another block");
         let effects = self
             .inner
@@ -364,16 +387,24 @@ impl<
     /// Commit Core's exact queue front, then feed the independently read back
     /// native result back into Core and persist the resulting Safety transition.
     pub fn apply_front_v11(
+        self,
+        budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+    ) -> Result<Self> {
+        ensure!(self.seals.is_empty() && self.prepared.len() == 3, "successor apply phase");
+        self.apply_application_front_v11(budget)
+    }
+
+    fn apply_application_front_v11(
         mut self,
         budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
     ) -> Result<Self> {
-        ensure!(
-            self.finality_observed && self.prepared.len() == 3,
-            "successor apply phase"
-        );
+        ensure!(self.finality_observed && (1..=3).contains(&self.prepared.len()),
+            "successor apply phase");
         self.inner.confirm_active_cut_v10()?;
         let first = self.prepared.remove(0);
         let header = first.prepared.header()?;
+        ensure!(matches!(header.block_kind(), BlockKind::Regular | BlockKind::EpochHandoff),
+            "successor checkpoint requires its dedicated pre-handoff commit owner");
         let before = self
             .inner
             .application()
@@ -599,9 +630,124 @@ impl<
         Ok(self)
     }
 
+    fn verify_next_seal_v11(
+        &mut self,
+        proposal: &SignedProposalV0,
+    ) -> Result<(trnm_consensus_types::QuorumCertificate, trnm_consensus_types::BlockHeader)> {
+        ensure!(!self.inner.runtime.fenced, "successor seal owner fenced");
+        ensure!(!self.finality_observed && self.seals.len() < 2
+            && self.signed_seals == self.seals.len()
+            && self.prepared.len() == 3 - self.seals.len()
+            && self.inner.pending_epoch_commit.is_none(), "successor seal proposal phase");
+        let selection = self.checkpoint_selection.as_ref().context("successor cutoff selection missing")?;
+        let checkpoint = self.prepared.last().context("successor checkpoint P missing")?.prepared.header()?;
+        ensure!(checkpoint.block_kind() == BlockKind::EpochCheckpoint,
+            "successor seal requires actual checkpoint P");
+        let parent = self.seals.last().map(|p| p.block().header()).unwrap_or(&checkpoint);
+        let expected_kind = if self.seals.is_empty() { BlockKind::EpochSeal1 } else { BlockKind::EpochSeal2 };
+        ensure!(proposal.block().header().block_kind() == expected_kind, "successor seal order");
+        let params = self.inner.runtime.driver.config().consensus_parameters();
+        trnm_consensus_types::validate_empty_epoch_seal_v1(proposal, parent, params)
+            .map_err(|e| anyhow::anyhow!("successor seal semantics: {e:?}"))?;
+        self.inner.runtime.driver.state().epoch_state_v1().context("successor epoch missing")?
+            .strict_context().map_err(|e| anyhow::anyhow!("successor seal context: {e:?}"))?
+            .verify_proposal_v1(proposal, parent,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(params))
+            .map_err(|e| anyhow::anyhow!("successor seal cryptography: {e:?}"))?;
+        confirm_retained_selection_v5(self.inner.application(), selection)?;
+        let qc = proposal.witness().justify_qc().as_ordinary()
+            .context("successor seal requires original parent QC")?.clone();
+        let parent = parent.clone();
+        // Invalid seal shape/signature is rejected without expensive durable
+        // readback. Valid input still crosses the full current-owner fence
+        // before Core can observe its certificate or create any effect.
+        self.inner.confirm_active_cut_v10()?;
+        Ok((qc, parent))
+    }
+
+    /// Retain the exact empty seal and let its carried QC expose the preceding
+    /// application front. No seal payload is executed and no key is used here.
+    pub fn admit_seal_proposal_v11(mut self, proposal: SignedProposalV0) -> Result<Self> {
+        let (qc, parent) = self.verify_next_seal_v11(&proposal)?;
+        self = self.observe_application_front_qc_v11(qc, parent)?;
+        self.seals.push(proposal);
+        Ok(self)
+    }
+
+    pub fn apply_preceding_seal_front_v11(
+        mut self,
+        budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+    ) -> Result<Self> {
+        ensure!((1..=2).contains(&self.seals.len())
+            && self.signed_seals + 1 == self.seals.len()
+            && self.prepared.len() == 4 - self.seals.len(), "successor seal preceding apply phase");
+        self = self.apply_application_front_v11(budget)?;
+        let proposal = self.seals.last().context("successor retained seal missing")?.clone();
+        let effects = self.inner.runtime.driver.step_v2(Input::Proposal(Box::new(proposal.clone())))
+            .map_err(|e| anyhow::anyhow!("successor seal after application ACK: {e:?}"))?;
+        let released = self.persist_ordinary_effects_v11(&effects)?;
+        let mut signs = 0;
+        for effect in released {
+            match effect {
+                Effect::RequestSignature { .. } => signs += 1,
+                Effect::ArmViewTimer { .. } => {},
+                _ => anyhow::bail!("successor seal released unexpected application authority"),
+            }
+        }
+        ensure!(signs == 1 && self.inner.runtime.driver.state().pending_finalize().is_none(),
+            "successor seal requires isolated Vote after durable application ACK");
+        confirm_seal_vote_at_context_v5(self.inner.runtime.driver.state(),
+            self.inner.runtime.driver.config(), self.inner.application(),
+            SealVoteProvenanceV5 {
+                proposal: &proposal,
+                checkpoint: &self.prepared.last().context("successor checkpoint missing")?.prepared,
+                selection: self.checkpoint_selection.as_ref().context("successor selection missing")?,
+            })?;
+        self.inner.confirm_active_cut_v10()?;
+        Ok(self)
+    }
+
+    pub fn sign_seal_vote_v11<P: trnm_consensus_signer_journal::SignatureProducerV0>(
+        mut self,
+        producer: &mut P,
+    ) -> Result<(Self, trnm_consensus_core::OutboundMessage)> {
+        ensure!(!self.finality_observed && (1..=2).contains(&self.seals.len())
+            && self.signed_seals + 1 == self.seals.len()
+            && self.prepared.len() == 3 - self.seals.len(), "successor seal Vote phase");
+        let provenance = SealVoteProvenanceV5 {
+            proposal: self.seals.last().context("successor seal missing")?,
+            checkpoint: &self.prepared.last().context("successor checkpoint missing")?.prepared,
+            selection: self.checkpoint_selection.as_ref().context("successor selection missing")?,
+        };
+        let (inner, vote) = self.inner.finish_pending_vote_v11(producer, Some(provenance))?;
+        self.inner = inner;
+        self.signed_seals += 1;
+        Ok((self, vote))
+    }
+
+    /// Expose Core's exact next-checkpoint finality without granting native
+    /// checkpoint commit, retirement or a new handoff/signing generation.
+    pub fn observe_checkpoint_finality_v11(
+        mut self,
+        certificate: trnm_consensus_types::QuorumCertificate,
+    ) -> Result<Self> {
+        ensure!(self.signed_seals == 2 && self.seals.len() == 2
+            && self.prepared.len() == 1, "successor terminal QC phase");
+        let terminal = self.seals[1].block().header().clone();
+        self = self.observe_application_front_qc_v11(certificate, terminal)?;
+        let pending = self.inner.runtime.driver.state().pending_finalization()
+            .context("successor checkpoint finality missing")?;
+        ensure!(pending.proof().finalized_block().header() == &self.prepared[0].prepared.header()?
+            && pending.proof().child().header() == self.seals[0].block().header()
+            && pending.proof().grandchild().header() == self.seals[1].block().header(),
+            "successor checkpoint original proof changed");
+        Ok(self)
+    }
+
     pub fn settled_checkpoint_v11(&mut self) -> Result<EpochNodeCheckpointV1> {
         ensure!(
             !self.finality_observed
+                && self.seals.is_empty()
                 && self.prepared.len() == 2
                 && self.inner.runtime.driver.state().application_applied()
                     == self.inner.runtime.driver.state().finalized(),

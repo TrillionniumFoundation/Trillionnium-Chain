@@ -41,7 +41,20 @@ fn confirm_seal_vote_provenance_v5(
     edge: &AuthenticatedEpochApplicationEdgeV1,
     source: SealVoteProvenanceV5<'_>,
 ) -> Result<()> {
-    let state = driver.state();
+    ensure!(
+        driver.config().validator_set() == edge.new_validator_set()
+            && driver.config().consensus_parameters() == edge.new_parameters(),
+        "seal active edge changed"
+    );
+    confirm_seal_vote_at_context_v5(driver.state(), driver.config(), application, source)
+}
+
+fn confirm_seal_vote_at_context_v5(
+    state: &trnm_consensus_core::SafetyState,
+    config: &trnm_consensus_core::CoreConfig,
+    application: &DurableNativeApplicationV0,
+    source: SealVoteProvenanceV5<'_>,
+) -> Result<()> {
     let header = source.proposal.block().header();
     ensure!(
         matches!(state.pending_sign(), Some(SignIntent::Vote { block_id, height, view, .. })
@@ -68,8 +81,9 @@ fn confirm_seal_vote_provenance_v5(
         .find(|p| p.block().id() == header.parent_id())
         .context("seal retained parent missing")?;
     ensure!(
-        driver.config().validator_set() == edge.new_validator_set()
-            && driver.config().consensus_parameters() == edge.new_parameters()
+        header.validator_set_id() == config.validator_set().id()
+            && header.consensus_parameters_hash() == config.consensus_parameters().hash()
+            && header.epoch() == config.validator_set().epoch()
             && state.payload_terminal_fact(header.id()).is_none()
             && !state
                 .payload_validation_completions()
@@ -84,7 +98,7 @@ fn confirm_seal_vote_provenance_v5(
     trnm_consensus_types::validate_empty_epoch_seal_v1(
         source.proposal,
         parent.block().header(),
-        edge.new_parameters(),
+        config.consensus_parameters(),
     )
     .map_err(|e| anyhow::anyhow!("seal key boundary semantics: {e:?}"))?;
     state
@@ -95,7 +109,7 @@ fn confirm_seal_vote_provenance_v5(
         .verify_proposal_v1(
             source.proposal,
             parent.block().header(),
-            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(edge.new_parameters()),
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(config.consensus_parameters()),
         )
         .map_err(|e| anyhow::anyhow!("seal key boundary cryptography: {e:?}"))?;
     let checkpoint = application.confirm_prepared_epoch_execution_v1(source.checkpoint)?;

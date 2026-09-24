@@ -3712,7 +3712,27 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
     ) -> Result<PocoNodeLabCertificateAdvanceV0<W>, PocoNodeLabAuthorityErrorV0> {
         let source_checkpoint = self.checkpoint;
         let before = self.core.safety_state().clone();
-        let is_timeout_certificate = matches!(&input, Input::TimeoutCertificate(_));
+        // A changing QC can replace an already-certified parent's reference
+        // while K retains a real child. Authenticate that source first.
+        if let Input::QuorumCertificate(certificate) = &input {
+            // Reject unauthenticated input before touching any durable owner.
+            // Core independently verifies again when applying its transition.
+            certificate
+                .verify(self.core.config().validator_set(), &StrictEd25519Verifier)
+                .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+            reconfirm_phase_neutral_owner_v0(
+                &self.core,
+                &self.safety_store,
+                &self.application,
+                &mut self.signer_journal,
+                &mut self.checkpoint_store,
+                self.checkpoint,
+                &self.application_head,
+                &self.pending_executions,
+                &self.proposal_journal,
+                None,
+            )?;
+        }
         let effects = self
             .core
             .step(input, &StrictEd25519Verifier)
@@ -3748,18 +3768,14 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
                 "certificate did not yield exactly one Safety persistence effect",
             ));
         };
-        if is_timeout_certificate {
-            // Core selects the authoritative high-QC path while applying the
-            // TC.  Audit that post-step selection before persisting Safety;
-            // joining the pre-step source checkpoint here would authenticate
-            // a stale prepared head in a separate snapshot.
-            preflight_authoritative_high_qc_retained_path_v0(
-                &self.core,
-                &self.application,
-                &self.proposal_journal,
-                &self.pending_executions,
-            )?;
-        }
+        // Authenticate the actual post-step selected P/K path for either
+        // certificate before Safety or the independent checkpoint advances.
+        preflight_authoritative_high_qc_retained_path_v0(
+            &self.core,
+            &self.application,
+            &self.proposal_journal,
+            &self.pending_executions,
+        )?;
         match self
             .safety_store
             .persist_exact_v0(request, &SafetyTransitionContextV0::ordinary())
@@ -3777,16 +3793,12 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             .signer_journal
             .confirm_node_checkpoint_head_exact_v0()
             .map_err(PocoNodeLabAuthorityErrorV0::Signer)?;
-        let target_checkpoint = if is_timeout_certificate {
-            timeout_rebase_checkpoint_successor_v0(
-                source_checkpoint,
-                &safety,
-                &signer,
-                &self.application,
-            )?
-        } else {
-            safety_checkpoint_successor_v0(source_checkpoint, &safety, &signer)?
-        };
+        let target_checkpoint = certificate_rebase_checkpoint_successor_v0(
+            source_checkpoint,
+            &safety,
+            &signer,
+            &self.application,
+        )?;
         compare_and_confirm_checkpoint_v0(
             &mut self.checkpoint_store,
             Some(source_checkpoint),
@@ -6245,7 +6257,7 @@ fn reconfirm_phase_neutral_owner_locked_v1<W: ExternalMonotonicWatermarkV0>(
 }
 
 /// Freshly authenticates the complete retained application path selected by
-/// Core before a TC can advance Safety or the independent checkpoint.
+/// Core before a QC/TC can advance Safety or the independent checkpoint.
 ///
 /// The source checkpoint may still name the timed-out proposal, so validating
 /// only that source K is insufficient: a copied scalar high-QC or an absent
@@ -7228,7 +7240,7 @@ fn safety_checkpoint_successor_v0(
         .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))
 }
 
-/// Advances the independent checkpoint for one accepted TC while replacing a
+/// Advances the independent checkpoint for one accepted QC/TC while replacing a
 /// now-detached speculative K projection with the exact committed application
 /// anchor. The selected high-QC path remains authenticated by retained P/K
 /// records and is installed in memory only after this CAS succeeds.
@@ -7239,7 +7251,7 @@ fn safety_checkpoint_successor_v0(
 /// no longer selected. This successor changes Safety and the application
 /// projection in one generation; it never rewinds the checkpoint generation,
 /// Safety revision, signer watermark, or committed application store.
-fn timeout_rebase_checkpoint_successor_v0(
+fn certificate_rebase_checkpoint_successor_v0(
     predecessor: ExternalNodeCheckpointV0,
     safety: &trnm_consensus_safety_store::ConfirmedSafetyNodeCheckpointFactsV0,
     signer: &trnm_consensus_signer_journal::ConfirmedSignerNodeCheckpointFactsV0,

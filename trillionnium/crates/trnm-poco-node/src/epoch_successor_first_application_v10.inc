@@ -545,14 +545,24 @@ impl<
 
 
     pub fn sign_first_vote_v10<P: trnm_consensus_signer_journal::SignatureProducerV0>(
-        mut self,
+        self,
         producer: &mut P,
     ) -> Result<(Self, trnm_consensus_core::OutboundMessage)> {
+        self.finish_pending_vote_v11(producer, None)
+    }
+
+    fn finish_pending_vote_v11<P: trnm_consensus_signer_journal::SignatureProducerV0>(
+        mut self,
+        producer: &mut P,
+        seal: Option<SealVoteProvenanceV5<'_>>,
+    ) -> Result<(Self, trnm_consensus_core::OutboundMessage)> {
         self.confirm_active_cut_v10()?;
-        let pending = self
-            .pending_epoch_commit
-            .as_ref()
-            .context("successor P missing")?;
+        let prepared = if let Some(source) = seal {
+            ensure!(self.pending_epoch_commit.is_none(), "seal cannot own application P");
+            source.checkpoint
+        } else {
+            &self.pending_epoch_commit.as_ref().context("successor P missing")?.prepared
+        };
         let intent = self
             .runtime
             .driver
@@ -571,8 +581,9 @@ impl<
             SignIntent::TimeoutVote { .. } => anyhow::bail!("successor pending intent is not Vote"),
         };
         ensure!(
-            pending.prepared.header()?.id() == block_id,
-            "successor Vote/P mismatch"
+            seal.map(|source| source.proposal.block().id())
+                .unwrap_or(prepared.header()?.id()) == block_id,
+            "successor Vote/provenance mismatch"
         );
         let canonical = CanonicalSignIntentV0::vote(
             self.runtime.driver.config().validator_set(),
@@ -598,7 +609,6 @@ impl<
             .runtime
             .ordinary
             .confirm_node_checkpoint_head_exact_v0()?;
-        let prepared = &pending.prepared;
         let runtime = &mut *self.runtime;
         let SuccessorEpochRuntimeV9 {
             source,
@@ -610,7 +620,7 @@ impl<
             ..
         } = runtime;
         confirm_successor_non_signer_owners_v10(
-            source, driver, journal, *pin, checkpoint, prepared,
+            source, driver, journal, *pin, checkpoint, prepared, seal,
         )
         .context("successor pre-key owner revalidation")?;
         let mut guarded = FreshEpochSignatureProducerV1 {
@@ -624,6 +634,7 @@ impl<
                     *pin,
                     checkpoint,
                     prepared,
+                    seal,
                 )
             },
         };
@@ -793,6 +804,7 @@ fn confirm_successor_non_signer_owners_v10<
     pin: EpochSafetyHeadPinV4,
     checkpoint: &EpochNodeCheckpointV1,
     prepared: &trnm_native_execution_v0::PreparedNativeEpochExecutionV1,
+    seal: Option<SealVoteProvenanceV5<'_>>,
 ) -> Result<()> {
     source
         .roles
@@ -820,7 +832,10 @@ fn confirm_successor_non_signer_owners_v10<
         "successor native P changed at key boundary"
     );
     let header = confirmed.prepared().header()?;
-    if header.block_kind() == BlockKind::EpochCheckpoint {
+    if let Some(seal) = seal {
+        ensure!(seal.checkpoint.p_digest() == prepared.p_digest(), "seal checkpoint changed");
+        confirm_seal_vote_at_context_v5(driver.state(), driver.config(), application, seal)?;
+    } else if header.block_kind() == BlockKind::EpochCheckpoint {
         // Reproduce the cutoff on every guarded key callback as well as before
         // entering custody. A previously matched hash is not live authority.
         confirm_checkpoint_selection_at_active_cut_v4(

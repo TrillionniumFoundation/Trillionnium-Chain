@@ -7288,6 +7288,17 @@ mod tests {
                 &first,
                 votes.iter().take(3).cloned(),
             );
+            let alternate_qc = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &first,
+                votes.iter().skip(1).cloned(),
+            );
+            let (first_qc, alternate_qc) = if first_qc.id() < alternate_qc.id() {
+                (first_qc, alternate_qc)
+            } else {
+                (alternate_qc, first_qc)
+            };
+            let first_id = first_qc.block_id();
             let target = 0usize;
             harness.authorities[target]
                 .advance_quorum_certificate_v0(first_qc)
@@ -7352,6 +7363,50 @@ mod tests {
                 .advance_quorum_certificate_v0(initial)
                 .expect("stale QC replay remains phase-neutral after timeout");
             assert_eq!(after_timeout, before_timeout);
+            // A different, strictly valid signer subset for this same parent
+            // advances Core's QC reference but must not confuse the retained
+            // uncommitted child with the newly selected proposal parent.
+            let alternate_id = alternate_qc.id();
+            let advanced = harness.authorities[target]
+                .advance_quorum_certificate_v0(alternate_qc.clone())
+                .expect(
+                    "higher same-parent QC must rebase from TimeoutSigned with a prepared child",
+                );
+            assert_eq!(advanced.high_qc_v0().qc_digest(), alternate_id);
+            assert_eq!(advanced.proposal_parent_block_id_v0(), first_id);
+            assert_eq!(
+                advanced.signer_exact_watermark_v1(),
+                before_timeout.signer_exact_watermark_v1()
+            );
+            assert_eq!(
+                advanced.signed_vote_intents_v0(),
+                before_timeout.signed_vote_intents_v0()
+            );
+            assert_eq!(
+                advanced.signed_timeout_intents_v0(),
+                before_timeout.signed_timeout_intents_v0()
+            );
+            assert_eq!(
+                advanced.application_applied_block_id_v0(),
+                before_timeout.application_applied_block_id_v0()
+            );
+            assert_eq!(
+                advanced.application_applied_height_v0(),
+                before_timeout.application_applied_height_v0()
+            );
+            assert_eq!(
+                advanced.finalized_block_id_v0(),
+                before_timeout.finalized_block_id_v0()
+            );
+            assert!(
+                advanced.checkpoint_generation_v0() > before_timeout.checkpoint_generation_v0()
+            );
+            assert_eq!(
+                harness.authorities[target]
+                    .advance_quorum_certificate_v0(alternate_qc)
+                    .unwrap(),
+                advanced
+            );
         });
     }
 

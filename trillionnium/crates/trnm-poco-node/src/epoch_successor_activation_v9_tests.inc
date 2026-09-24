@@ -653,7 +653,9 @@ type SuccessorCutoffCaseV11 = (
 
 #[test]
 fn actual_successor_core_finalizes_and_applies_first_new_v11() {
-    successor_checkpoint_continuation_v11(successor_settled_cutoff_case_v11());
+    successor_seals_continuation_v11(
+        successor_checkpoint_continuation_v11(successor_settled_cutoff_case_v11()),
+    );
 }
 
 #[inline(never)]
@@ -748,7 +750,7 @@ fn successor_settled_cutoff_case_v11() -> Box<SuccessorCutoffCaseV11> {
 // Keep the full previous-epoch fixture's stack frame out of this stage. The
 // complete, original owners move through the heap; the thread stack is unchanged.
 #[inline(never)]
-fn successor_checkpoint_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
+fn successor_checkpoint_continuation_v11(case: Box<SuccessorCutoffCaseV11>) -> Box<SuccessorCutoffCaseV11> {
     let (directory, mut owner, mut key, watermark) = *case;
     let cutoff = owner.settled_checkpoint_v11().unwrap();
     let cutoff_height = cutoff.fields().application.height;
@@ -800,5 +802,81 @@ fn successor_checkpoint_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
     assert_eq!(confirmed.commit_sequence(), None, "checkpoint Vote is not finality");
     assert_eq!(owner.application_v11().confirmed_committed_head_v0().unwrap(), *selection.cutoff_head());
     assert_eq!(owner.inner.runtime.driver.state().application_applied(), owner.inner.runtime.driver.state().finalized());
+    assert!(directory.path().is_dir());
+    Box::new((directory, owner, key, watermark))
+}
+
+
+#[inline(never)]
+fn successor_seals_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
+    let (directory, mut owner, mut key, watermark) = *case;
+    let checkpoint = owner.prepared.last().unwrap().prepared.header().unwrap();
+    let calls = key.calls;
+    let initial_sequence = watermark.0.lock().unwrap().0.unwrap().sequence();
+    let paths = [
+        owner.application_v11().path().to_path_buf(),
+        owner.inner.runtime.journal.path_v4().to_path_buf(),
+        owner.inner.runtime.ordinary.path().to_path_buf(),
+        owner.inner.runtime.source.roles.retired.checkpoint_store.database_path().to_path_buf(),
+    ];
+    for index in 0..2 {
+        let parent = owner.seals.last().map(|p| p.block().header()).unwrap_or(&checkpoint).clone();
+        let kind = if index == 0 { BlockKind::EpochSeal1 } else { BlockKind::EpochSeal2 };
+        // Both invalid proposals have real signatures under the current set.
+        // Rejection must precede native/Safety mutation and irreversible key use.
+        for (nonempty, wrong_state) in [(true, false), (false, true)] {
+            let bad = genuine_seal_for_parent_v5(&parent, owner.set_v11(), owner.parameters_v11(),
+                kind, nonempty, wrong_state);
+            let before: Vec<_> = paths.iter().map(|p| sqlite_logical_image_v3(p)).collect();
+            let before_calls = key.calls;
+            assert!(owner.verify_next_seal_v11(&bad).is_err());
+            assert_eq!(key.calls, before_calls);
+            for (path, image) in paths.iter().zip(before) {
+                assert!(sqlite_logical_image_v3(path) == image, "invalid seal wrote {}", path.display());
+            }
+        }
+        let proposal = genuine_seal_for_parent_v5(&parent, owner.set_v11(), owner.parameters_v11(),
+            kind, false, false);
+        let seal_id = proposal.block().id();
+        let preceding = owner.prepared[0].prepared.header().unwrap();
+        owner = owner.admit_seal_proposal_v11(proposal).unwrap();
+        assert_eq!(key.calls, calls + index);
+        assert!(owner.inner.runtime.driver.state().pending_sign().is_none());
+        assert_eq!(owner.inner.runtime.driver.state().pending_finalization().unwrap()
+            .proof().finalized_block().header(), &preceding);
+        owner = owner.apply_preceding_seal_front_v11(
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0()).unwrap();
+        assert_eq!(owner.application_v11().confirmed_committed_head_v0().unwrap()
+            .block_id().as_bytes(), preceding.id().as_bytes());
+        assert!(owner.inner.runtime.driver.state().payload_terminal_fact(seal_id).is_none());
+        assert!(owner.inner.runtime.driver.state().payload_validation_completions().iter()
+            .all(|p| p.id().block_id() != seal_id));
+        assert_eq!(key.calls, calls + index, "seal admission/apply must not use custody");
+        let (next, vote) = owner.sign_seal_vote_v11(&mut key).unwrap();
+        owner = next;
+        let trnm_consensus_core::OutboundMessage::Vote(vote) = vote else { panic!("seal did not Vote") };
+        assert_eq!(vote.block_id(), seal_id);
+        assert_eq!(key.calls, calls + index + 1);
+        assert_eq!(watermark.0.lock().unwrap().0.unwrap().sequence(), initial_sequence + 2 * (index as u64 + 1));
+        assert_eq!(owner.prepared.len(), 2 - index);
+        assert!(owner.prepared.iter().all(|p| p.prepared.header().unwrap().id() != seal_id));
+    }
+    let terminal = owner.seals[1].block().header().clone();
+    let qc = first_apply_qc_v2(&terminal, owner.set_v11());
+    owner = owner.observe_checkpoint_finality_v11(qc).unwrap();
+    let pending = owner.inner.runtime.driver.state().pending_finalization().unwrap();
+    assert_eq!(pending.proof().finalized_block().header(), &checkpoint);
+    assert_eq!(pending.proof().child().header(), owner.seals[0].block().header());
+    assert_eq!(pending.proof().grandchild().header(), &terminal);
+    assert!(owner.inner.runtime.driver.state().pending_sign().is_none());
+    assert_eq!(key.calls, calls + 2);
+    assert_eq!(owner.application_v11().confirmed_committed_head_v0().unwrap().height().get(),
+        checkpoint.height().get() - 1);
+    let prepared = &owner.prepared[0].prepared;
+    assert_eq!(owner.application_v11().confirm_prepared_epoch_execution_v1(prepared)
+        .unwrap().commit_sequence(), None, "Core checkpoint proof is not native commit");
+    assert!(owner.settled_checkpoint_v11().is_err());
+    assert!(owner.apply_front_v11(&mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0()).is_err(),
+        "ordinary apply must not commit a checkpoint or mint retirement");
     assert!(directory.path().is_dir());
 }
