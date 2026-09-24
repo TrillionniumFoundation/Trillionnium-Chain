@@ -274,6 +274,7 @@ impl NativeClientRuntimeV1 {
         )
         .map(Some)
     }
+    #[cfg(test)]
     pub(crate) fn open_parts_v1(
         run_root: &Path,
         validator_set: &ValidatorSet,

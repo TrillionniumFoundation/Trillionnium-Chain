@@ -24,10 +24,7 @@ fn shutdown_tcp_pair_v1() -> (
     let stream = TcpStream::connect(address).unwrap();
     let io = DeadlineIo::new(stream, Instant::now() + Duration::from_secs(3)).unwrap();
     let connection = AuthenticatedConnection::connect(
-        io,
-        &client.run_id,
-        client.local,
-        server_thread_remote_v0(&client.validator_set, client.local),
+        io,crate::transport::ConnectionPeerV1 { run_id: &client.run_id, local: client.local, expected_remote: server_thread_remote_v0(&client.validator_set, client.local) },
         match &client.p2p_identity_signer {
             MeshIdentitySignerV1::Local(key) => key,
             MeshIdentitySignerV1::External(_) => unreachable!("local fixture"),
@@ -61,14 +58,14 @@ fn shutdown_preserves_real_tcp_owned_event_or_records_bounded_failure_v1() {
         let peer = Arc::new(MeshQueueByteBudgetV0::new(bytes));
         let global = Arc::new(MeshQueueByteBudgetV0::new(bytes));
         let reservation = InboundQueueReservationV0::try_new(&peer, &global, bytes).unwrap();
-        let event = MeshIngressEventV0::Frame(MeshInboundFrameV0 {
+        let event = MeshIngressEventV0::Frame(Box::new(MeshInboundFrameV0 {
             remote: facts.remote,
             direction: facts.direction,
             session_id: facts.session_id,
             session_generation: facts.generation,
             frame,
             _reservation: reservation,
-        });
+        }));
         let (tx, rx) = mpsc::sync_channel(1);
         if mode == 1 {
             tx.try_send(MeshIngressEventV0::SessionUnavailable(facts))
@@ -340,14 +337,14 @@ fn shutdown_child_join_preserves_owned_tcp_event_and_real_panic_v1() {
         let bytes = frame.payload.len() + QUEUED_FRAME_OVERHEAD_BYTES;
         let peer = Arc::new(MeshQueueByteBudgetV0::new(bytes));
         let global = Arc::new(MeshQueueByteBudgetV0::new(bytes));
-        let event = MeshIngressEventV0::Frame(MeshInboundFrameV0 {
+        let event = MeshIngressEventV0::Frame(Box::new(MeshInboundFrameV0 {
             remote: facts.remote,
             direction: facts.direction,
             session_id: facts.session_id,
             session_generation: facts.generation,
             frame,
             _reservation: InboundQueueReservationV0::try_new(&peer, &global, bytes).unwrap(),
-        });
+        }));
         let stop = Arc::new(AtomicBool::new(false));
         let cancel = Arc::new(AtomicBool::new(false));
         let terminal = Arc::new(Mutex::new(None));

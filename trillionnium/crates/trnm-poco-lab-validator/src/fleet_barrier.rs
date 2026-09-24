@@ -329,18 +329,29 @@ pub struct FleetCampaignRequestV1 {
     transport: FleetBarrierTransportV1,
 }
 
+/// Explicit local campaign timing input; the request constructor retains validation.
+pub struct FleetCampaignTimingV1 {
+    pub duration_seconds: u64,
+    pub pacemaker_base_timeout_seconds: u64,
+    pub terminal_drain_allowance_seconds: u64,
+    pub timeout_view_budget_allowance_seconds: u64,
+}
+
 impl FleetCampaignRequestV1 {
     pub fn new(
         barrier_round: u64,
         ordinary_start_height: u64,
-        duration_seconds: u64,
-        pacemaker_base_timeout_seconds: u64,
-        terminal_drain_allowance_seconds: u64,
-        timeout_view_budget_allowance_seconds: u64,
+        timing: FleetCampaignTimingV1,
         maximum_blocks: u64,
         target_height: u64,
         transport: FleetBarrierTransportV1,
     ) -> Result<Self, FleetBarrierErrorV1> {
+        let FleetCampaignTimingV1 {
+            duration_seconds,
+            pacemaker_base_timeout_seconds,
+            terminal_drain_allowance_seconds,
+            timeout_view_budget_allowance_seconds,
+        } = timing;
         let value = Self {
             barrier_round,
             ordinary_start_height,
@@ -426,10 +437,12 @@ impl FleetCampaignRequestV1 {
         Self::new(
             u64::from_be_bytes(cursor.array()?),
             u64::from_be_bytes(cursor.array()?),
-            u64::from_be_bytes(cursor.array()?),
-            u64::from_be_bytes(cursor.array()?),
-            u64::from_be_bytes(cursor.array()?),
-            u64::from_be_bytes(cursor.array()?),
+            FleetCampaignTimingV1 {
+                duration_seconds: u64::from_be_bytes(cursor.array()?),
+                pacemaker_base_timeout_seconds: u64::from_be_bytes(cursor.array()?),
+                terminal_drain_allowance_seconds: u64::from_be_bytes(cursor.array()?),
+                timeout_view_budget_allowance_seconds: u64::from_be_bytes(cursor.array()?),
+            },
             u64::from_be_bytes(cursor.array()?),
             u64::from_be_bytes(cursor.array()?),
             FleetBarrierTransportV1::decode(cursor)?,
@@ -2649,10 +2662,12 @@ mod tests {
             FleetCampaignRequestV1::new(
                 1,
                 4,
-                60,
-                2,
-                30,
-                30,
+                crate::fleet_barrier::FleetCampaignTimingV1 {
+                    duration_seconds: 60,
+                    pacemaker_base_timeout_seconds: 2,
+                    terminal_drain_allowance_seconds: 30,
+                    timeout_view_budget_allowance_seconds: 30,
+                },
                 100,
                 103,
                 FleetBarrierTransportV1::Direct,

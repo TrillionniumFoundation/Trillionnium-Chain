@@ -180,7 +180,7 @@ fn ready_synced_rebase_cold_profile_keeps_actual_source_and_children_v1() {
         let checkpoint =
             ready_rebase_checkpoint_bytes_v1(&root.join("checkpoint/checkpoint.sqlite3"));
         drop(harness.authorities.remove(receiver));
-        let (core_config, application_config) = *harness.recovery_configs.remove(receiver);
+        let (core_config, application_config) = harness.recovery_configs.remove(receiver);
         assert_genuine_synced_context_pins_v1(&root, &core_config);
         let watermark_path = harness._temp.path().join(format!(
             "takeover-watermark-{receiver:03}/signer-watermark.v1"

@@ -179,22 +179,34 @@ pub struct AuthenticatedConnection<T> {
     poisoned: bool,
 }
 
+/// Expected endpoint identities supplied before authentication; not an authority.
+pub struct ConnectionPeerV1<'a> {
+    pub run_id: &'a str,
+    pub local: ValidatorId,
+    pub expected_remote: ValidatorId,
+}
+
 impl<T: Read + Write> AuthenticatedConnection<T> {
     pub fn connect(
         mut io: T,
-        run_id: &str,
-        local: ValidatorId,
-        expected_remote: ValidatorId,
+        peer: ConnectionPeerV1<'_>,
         signing_key: &SigningKey,
         validator_set: &ValidatorSet,
         key_roles: &ValidatorKeyRoleRegistryV1,
         transport_context: RunTransportContext,
     ) -> Result<Self, FrameError> {
-        let session = client_handshake(
-            &mut io,
+        let ConnectionPeerV1 {
             run_id,
             local,
             expected_remote,
+        } = peer;
+        let session = client_handshake(
+            &mut io,
+            crate::transport::ConnectionPeerV1 {
+                run_id,
+                local,
+                expected_remote,
+            },
             signing_key,
             validator_set,
             key_roles,
@@ -523,12 +535,14 @@ impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
         if let Err(error) = write_framed_with_external_identity(
             &mut self.io,
             &frame,
-            &self.run_id,
-            self.session.remote,
-            self.network_context_digest,
-            self.session.nonce_binding,
-            self.expected_public_key,
-            self.producer.as_mut(),
+            crate::frame::ExternalFrameSigningV1 {
+                run_id: &self.run_id,
+                remote: self.session.remote,
+                network_context_digest: self.network_context_digest,
+                nonce_binding: self.session.nonce_binding,
+                expected_public_key: self.expected_public_key,
+                producer: self.producer.as_mut(),
+            },
         ) {
             self.poisoned = true;
             return Err(error);
@@ -606,14 +620,17 @@ pub fn server_handshake(
 
 pub fn client_handshake(
     io: &mut (impl Read + Write),
-    run_id: &str,
-    local: ValidatorId,
-    expected_remote: ValidatorId,
+    peer: ConnectionPeerV1<'_>,
     signing_key: &SigningKey,
     validator_set: &ValidatorSet,
     key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<ConnectionSession, FrameError> {
+    let ConnectionPeerV1 {
+        run_id,
+        local,
+        expected_remote,
+    } = peer;
     transport_context.validate_validator_set_binding(validator_set)?;
     require_local_key(local, signing_key, key_roles)?;
     let challenge = read_record(io)?;
@@ -1301,6 +1318,14 @@ impl<'a> HandshakeCursor<'a> {
 }
 
 #[cfg(test)]
+struct HostSessionFixtureV1<'a> {
+    run_id: &'a str,
+    context: RunTransportContext,
+    session_id: [u8; 32],
+    generation: u64,
+}
+
+#[cfg(test)]
 mod tests {
     use std::io::{self, Cursor, Read, Write};
     use std::net::{TcpListener, TcpStream};
@@ -1427,11 +1452,14 @@ mod tests {
         p2p_key: [u8; 32],
         set: &ValidatorSet,
         key_roles: &ValidatorKeyRoleRegistryV1,
-        run_id: &str,
-        context: RunTransportContext,
-        session_id: [u8; 32],
-        generation: u64,
+        session: HostSessionFixtureV1<'_>,
     ) -> HostAttestationAdmissionV1 {
+        let HostSessionFixtureV1 {
+            run_id,
+            context,
+            session_id,
+            generation,
+        } = session;
         let binding = HostAttestationBindingV1::new(
             local,
             remote,
@@ -1482,9 +1510,11 @@ mod tests {
         let stream = TcpStream::connect(address).unwrap();
         let mut connection = AuthenticatedConnection::connect(
             stream,
-            run_id,
-            client,
-            server,
+            crate::transport::ConnectionPeerV1 {
+                run_id,
+                local: client,
+                expected_remote: server,
+            },
             &client_key,
             &set,
             &key_roles,
@@ -1531,10 +1561,12 @@ mod tests {
                 server_key_roles.p2p_identity_public_key(server).unwrap(),
                 &server_set,
                 &server_key_roles,
-                run_id,
-                TEST_TRANSPORT_CONTEXT,
-                connection.session_id(),
-                1,
+                crate::transport::HostSessionFixtureV1 {
+                    run_id,
+                    context: TEST_TRANSPORT_CONTEXT,
+                    session_id: connection.session_id(),
+                    generation: 1,
+                },
             );
             connection
                 .mark_host_attestation_admitted(admission, ExternalPeerDirectionV1::Inbound, 1)
@@ -1572,10 +1604,12 @@ mod tests {
             key_roles.p2p_identity_public_key(client).unwrap(),
             &set,
             &key_roles,
-            run_id,
-            TEST_TRANSPORT_CONTEXT,
-            connection.session_id(),
-            1,
+            crate::transport::HostSessionFixtureV1 {
+                run_id,
+                context: TEST_TRANSPORT_CONTEXT,
+                session_id: connection.session_id(),
+                generation: 1,
+            },
         );
         connection
             .mark_host_attestation_admitted(admission, ExternalPeerDirectionV1::Outbound, 1)
@@ -1668,9 +1702,11 @@ mod tests {
             let stream = TcpStream::connect(address).unwrap();
             let client_session = AuthenticatedConnection::connect(
                 stream,
-                "poco-g3-7-20260813T000000Z-1234abcd",
-                client,
-                server,
+                crate::transport::ConnectionPeerV1 {
+                    run_id: "poco-g3-7-20260813T000000Z-1234abcd",
+                    local: client,
+                    expected_remote: server,
+                },
                 &client_key,
                 &set,
                 &key_roles,
@@ -1709,9 +1745,11 @@ mod tests {
         assert!(matches!(
             AuthenticatedConnection::connect(
                 stream,
-                run_id,
-                client,
-                server,
+                crate::transport::ConnectionPeerV1 {
+                    run_id,
+                    local: client,
+                    expected_remote: server
+                },
                 &client_key,
                 &set,
                 &key_roles,
@@ -1775,9 +1813,11 @@ mod tests {
         assert!(matches!(
             AuthenticatedConnection::connect(
                 stream,
-                "poco-g3-7-20260813T000000Z-1234abcd",
-                client,
-                server,
+                crate::transport::ConnectionPeerV1 {
+                    run_id: "poco-g3-7-20260813T000000Z-1234abcd",
+                    local: client,
+                    expected_remote: server
+                },
                 &client_key,
                 &set,
                 &key_roles,
@@ -1815,9 +1855,11 @@ mod tests {
         assert!(matches!(
             AuthenticatedConnection::connect(
                 stream,
-                "poco-g3-7-20260813T000000Z-1234abcd",
-                client,
-                server,
+                crate::transport::ConnectionPeerV1 {
+                    run_id: "poco-g3-7-20260813T000000Z-1234abcd",
+                    local: client,
+                    expected_remote: server
+                },
                 &client_key,
                 &set,
                 &key_roles,
@@ -1883,9 +1925,11 @@ mod tests {
             assert!(matches!(
                 AuthenticatedConnection::connect(
                     stream,
-                    "poco-g3-7-20260813T000000Z-1234abcd",
-                    client,
-                    server,
+                    crate::transport::ConnectionPeerV1 {
+                        run_id: "poco-g3-7-20260813T000000Z-1234abcd",
+                        local: client,
+                        expected_remote: server
+                    },
                     &client_key,
                     &set,
                     &key_roles,
@@ -2095,9 +2139,11 @@ mod tests {
         assert!(matches!(
             client_handshake(
                 &mut client_io,
-                "poco-g3-7-20260813T000000Z-1234abcd",
-                client,
-                server,
+                crate::transport::ConnectionPeerV1 {
+                    run_id: "poco-g3-7-20260813T000000Z-1234abcd",
+                    local: client,
+                    expected_remote: server
+                },
                 &client_key,
                 &set,
                 &key_roles,

@@ -180,10 +180,7 @@ fn established_receive_classified_real_tcp_bad_peer_leaves_independent_peer_usab
         let stream = TcpStream::connect(address).unwrap();
         classified_tcp_deadline_v1(&stream);
         let mut bad = AuthenticatedConnection::connect(
-            stream,
-            CLASSIFIED_RUN_V1,
-            ids[0],
-            ids[1],
+            stream,crate::transport::ConnectionPeerV1 { run_id: CLASSIFIED_RUN_V1, local: ids[0], expected_remote: ids[1] },
             &keys[0],
             &set,
             &roles,
@@ -193,10 +190,7 @@ fn established_receive_classified_real_tcp_bad_peer_leaves_independent_peer_usab
         let stream = TcpStream::connect(address).unwrap();
         classified_tcp_deadline_v1(&stream);
         let mut good = AuthenticatedConnection::connect(
-            stream,
-            CLASSIFIED_RUN_V1,
-            ids[2],
-            ids[1],
+            stream,crate::transport::ConnectionPeerV1 { run_id: CLASSIFIED_RUN_V1, local: ids[2], expected_remote: ids[1] },
             &keys[2],
             &set,
             &roles,
@@ -347,12 +341,7 @@ fn established_receive_classified_external_identity_separates_host_and_peer_fail
                     ExternalPeerDirectionV1::Inbound,
                     server_roles.p2p_identity_public_key(server).unwrap(),
                     &server_set,
-                    &server_roles,
-                    CLASSIFIED_RUN_V1,
-                    TEST_TRANSPORT_CONTEXT,
-                    connection.session_id(),
-                    1,
-                );
+                    &server_roles,crate::transport::HostSessionFixtureV1 { run_id: CLASSIFIED_RUN_V1, context: TEST_TRANSPORT_CONTEXT, session_id: connection.session_id(), generation: 1, });
                 connection
                     .mark_host_attestation_admitted(admission, ExternalPeerDirectionV1::Inbound, 1)
                     .unwrap();
@@ -405,10 +394,7 @@ fn established_receive_classified_external_identity_separates_host_and_peer_fail
         let stream = TcpStream::connect(address).unwrap();
         classified_tcp_deadline_v1(&stream);
         let mut connection = AuthenticatedConnection::connect(
-            stream,
-            CLASSIFIED_RUN_V1,
-            client,
-            server,
+            stream,crate::transport::ConnectionPeerV1 { run_id: CLASSIFIED_RUN_V1, local: client, expected_remote: server },
             &client_key,
             &set,
             &roles,

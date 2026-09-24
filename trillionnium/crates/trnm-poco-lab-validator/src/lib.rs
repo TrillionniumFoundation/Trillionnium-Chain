@@ -59,6 +59,9 @@ pub mod pacemaker;
 pub mod payload_replay;
 pub mod process_event;
 pub mod relay;
+// This reference catch-up codec/assembler has no live runtime caller. Keep its
+// behavioral tests without exporting an uncomposed production-looking API.
+#[cfg(test)]
 pub mod restart_catchup;
 pub mod restart_cut;
 pub mod restart_protocol;

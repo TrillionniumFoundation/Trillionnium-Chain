@@ -231,19 +231,19 @@ fn terminal_missing_park_wrong_set_and_shutdown_residuals_remain_fail_closed_v1(
         .validate_residual(MeshIngressEventV0::SessionUnavailable(unavailable))
         .unwrap();
     barrier
-        .validate_residual(MeshIngressEventV0::Frame(inbound(
+        .validate_residual(MeshIngressEventV0::Frame(Box::new(inbound(
             barrier.local,
             missing,
             BodyV1::Park(set),
-        )))
+        ))))
         .unwrap();
     let mut ordinary = inbound(barrier.local, missing, BodyV1::Park(set)).into_frame();
     ordinary.kind = FrameKind::Vote;
     assert!(barrier
-        .validate_residual(MeshIngressEventV0::Frame(MeshInboundFrameV0::for_test(
+        .validate_residual(MeshIngressEventV0::Frame(Box::new(MeshInboundFrameV0::for_test(
             unavailable,
             ordinary
-        )))
+        ))))
         .is_err());
     assert!(barrier
         .validate_residual(MeshIngressEventV0::SessionReestablished(unavailable))

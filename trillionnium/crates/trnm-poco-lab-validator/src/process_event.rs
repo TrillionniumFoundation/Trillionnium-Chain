@@ -130,10 +130,6 @@ impl RuntimeEventContextV1 {
         }
         Ok(())
     }
-
-    fn validate(&self, key: &SigningKey) -> Result<(), RuntimeEventErrorV1> {
-        self.validate_public_key(key.verifying_key().to_bytes())
-    }
 }
 
 /// Exact domain identity handed to the runtime-event signature authority.
@@ -1048,28 +1044,6 @@ pub(crate) struct RestartParkedAckJournalFactsV1 {
     statement_count: u64,
 }
 
-impl RestartParkedAckJournalFactsV1 {
-    pub(crate) const fn role_v1(self) -> RestartParkRoleV1 {
-        self.parked.cut_park.preparation.role_v1()
-    }
-
-    pub(crate) const fn ack_artifact_sha256_v1(self) -> [u8; 32] {
-        self.subject.ack_certificate_sha256
-    }
-
-    pub(crate) const fn ack_admission_set_sha256_v1(self) -> [u8; 32] {
-        self.subject.ack_admission_set_sha256
-    }
-
-    pub(crate) const fn local_ack_statement_sha256_v1(self) -> [u8; 32] {
-        self.subject.local_ack_statement_sha256
-    }
-
-    pub(crate) const fn statement_count_v1(self) -> u64 {
-        self.statement_count
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct RecoveryZeroDeltaJournalFactsV1 {
     parked: RestartParkedJournalFactsV1,
@@ -1232,6 +1206,7 @@ impl RuntimeJournalStateV1 {
             && matches!(self.restart, RuntimeRestartJournalStateV1::ParkedAcked(_))
     }
 
+    #[cfg(test)]
     const fn restart_catchup_complete_v1(&self) -> bool {
         matches!(
             self.restart,
@@ -1241,6 +1216,7 @@ impl RuntimeJournalStateV1 {
         )
     }
 
+    #[cfg(test)]
     const fn restart_recovery_ready_v1(&self) -> bool {
         matches!(
             self.restart,
@@ -2782,24 +2758,8 @@ impl Process2JournalStartedFromRestartCutV1 {
         self.stored.stored_cut_park.park_artifact_sha256_v1()
     }
 
-    pub(crate) const fn restart_admission_set_sha256_v1(&self) -> [u8; 32] {
-        self.stored.stored_cut_park.admission_set_sha256_v1()
-    }
-
-    pub(crate) const fn restart_local_park_statement_sha256_v1(&self) -> [u8; 32] {
-        self.stored.stored_cut_park.local_park_statement_sha256_v1()
-    }
-
     pub(crate) const fn restart_cut_statement_count_v1(&self) -> usize {
         self.stored.stored_cut_park.statement_count_v1()
-    }
-
-    pub(crate) const fn stored_cut_park_v1(&self) -> &StoredRestartCutParkCertificatesV1 {
-        &self.stored.stored_cut_park
-    }
-
-    pub(crate) const fn stored_parked_ack_v1(&self) -> &StoredRestartParkedAckCertificateV1 {
-        &self.stored.stored_ack
     }
 
     pub(crate) const fn restart_parked_ack_artifact_sha256_v1(&self) -> [u8; 32] {
@@ -2813,6 +2773,7 @@ impl Process2JournalStartedFromRestartCutV1 {
     /// Exact canonical runtime-control request SHA-256 retained from the
     /// process-1 `restart_prepare` subject. This is inert identity data only;
     /// the journal owner remains the sole authority for fresh validation.
+    #[cfg(test)]
     pub(crate) const fn restart_prepare_request_sha256_v1(&self) -> [u8; 32] {
         self.restart_prepare_request_sha256
     }
@@ -2894,11 +2855,6 @@ impl Process2JournalStartedFromRestartCutV1 {
     ) -> Result<SignedRuntimeEventV1, RuntimeEventErrorV1> {
         self.journal
             .append(RuntimeEventKindV1::SafetyHalted, subject, value)
-    }
-
-    #[cfg(test)]
-    fn journal_v1(&self) -> &RuntimeEventJournalV1 {
-        &self.journal
     }
 }
 
@@ -4520,6 +4476,7 @@ impl RuntimeEventJournalV1 {
     /// Historical pair-only handoff gate retained solely to fail closed. A
     /// Cut/Park pair cannot prove that every validator durably received the
     /// barrier, even when its own stores still fresh-revalidate.
+    #[cfg(test)]
     pub(crate) fn revalidate_target_process1_parked_handoff_v1(
         &self,
         stored: &StoredRestartCutParkCertificatesV1,
@@ -5916,10 +5873,12 @@ mod tests {
             FleetCampaignRequestV1::new(
                 1,
                 4,
-                60,
-                2,
-                30,
-                30,
+                crate::fleet_barrier::FleetCampaignTimingV1 {
+                    duration_seconds: 60,
+                    pacemaker_base_timeout_seconds: 2,
+                    terminal_drain_allowance_seconds: 30,
+                    timeout_view_budget_allowance_seconds: 30,
+                },
                 100,
                 103,
                 FleetBarrierTransportV1::Direct,

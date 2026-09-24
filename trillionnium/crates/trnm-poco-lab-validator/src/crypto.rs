@@ -322,9 +322,7 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
         // the process may have crashed after a remote CAS but before its
         // local atomic rename.  In that case the journal's one-event repair
         // path replays the same external CAS and only needs local readback.
-        if (!external_installed && current != expected)
-            || (external_installed && current != expected && current != Some(target))
-        {
+        if current != expected && (!external_installed || current != Some(target)) {
             return Err(ExternalWatermarkErrorV0::CompareFailed);
         }
         match expected {
@@ -342,12 +340,8 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
                 }
             }
         }
-        if self.external.is_some() {
+        if let Some(external) = self.external.as_mut() {
             let external_result = {
-                let external = self
-                    .external
-                    .as_mut()
-                    .expect("external watermark presence checked");
                 let observed = external.load(target.scope()).inspect_err(|_error| {
                     self.poisoned = true;
                 })?;

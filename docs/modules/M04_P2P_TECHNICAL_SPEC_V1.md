@@ -257,10 +257,17 @@ smaller diagnostics never authorize re-attribution, reconnect or acceptance.
 
 ## Interfaces
 
-Large mesh connection/signing owners and restart park/ack state variants retain
-complete owned values behind boxes.
+Large mesh ingress, connection/signing owners and restart park/ack state variants
+retain complete owned values behind boxes.
 This is a process-memory representation change only: canonical bytes, validation,
 resource limits and linear authority consumption remain unchanged.
+
+`ConnectionPeerV1` groups the expected run/local/remote identities before the
+existing handshake verification. `ExternalFrameSigningV1` groups the exact role
+key, context and producer passed to the existing signature-verifying encoder.
+`FleetCampaignTimingV1` supplies the same four explicit timing fields to the
+validated campaign constructor; encode/decode order and field checks are unchanged.
+The wrapper types grant no authentication, session or signing authority themselves.
 
 `OpenSessionV1` produces two directional session identities plus a lane map.
 `AdmitDataV1` converts transport DATA into `AuthenticatedPeerFrameV0`, verifies

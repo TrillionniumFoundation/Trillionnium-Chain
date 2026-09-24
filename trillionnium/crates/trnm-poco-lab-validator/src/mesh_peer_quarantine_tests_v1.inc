@@ -87,10 +87,7 @@ fn quarantine_connect_v1(
         unreachable!()
     };
     AuthenticatedConnection::connect(
-        DeadlineIo::new(stream, deadline).unwrap(),
-        &identity.run_id,
-        identity.local,
-        remote,
+        DeadlineIo::new(stream, deadline).unwrap(),crate::transport::ConnectionPeerV1 { run_id: &identity.run_id, local: identity.local, expected_remote: remote },
         key,
         &identity.validator_set,
         &identity.key_roles,

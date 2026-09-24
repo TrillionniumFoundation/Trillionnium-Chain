@@ -31,10 +31,9 @@ use trnm_consensus_types::{
 };
 use trnm_poco_node::{
     PocoNodeDeployedLabAuthenticatedReplayFactsV0, PocoNodeDeployedLabAuthenticatedReplayOwnerV0,
-    PocoNodeDeployedLabOrdinaryRecoveryOwnerV0, PocoNodeDeployedLabProcess2CaughtUpOwnerV1,
-    PocoNodeDeployedLabProcess2RecoveryFactsV0, PocoNodeDeployedLabProcess2RecoveryOwnerV0,
-    PocoNodeDeployedLabRecoveryFactsV0, PocoNodeDeployedLabSignedReplayEntryV0,
-    PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1, PocoNodeDeployedLabZeroDeltaRestartCutV1,
+    PocoNodeDeployedLabOrdinaryRecoveryOwnerV0, PocoNodeDeployedLabProcess2RecoveryFactsV0,
+    PocoNodeDeployedLabProcess2RecoveryOwnerV0, PocoNodeDeployedLabRecoveryFactsV0,
+    PocoNodeDeployedLabSignedReplayEntryV0,
 };
 
 use crate::{
@@ -954,12 +953,17 @@ impl SignedReplayArchiveV1 {
             "replay archive context differs from loaded validator"
         );
         let mut entries_file = open_private_file_v1(&root.join(ENTRY_FILE_V1), true)?;
-        let (head_from_log, tail_predecessor, index, entries_len, _entries_sha256) =
-            audit_entry_log_v1(
-                &mut entries_file,
-                expected.digest,
-                expected.json.maximum_archive_entries,
-            )?;
+        let ReplayArchiveAuditV1 {
+            head: head_from_log,
+            tail_predecessor,
+            index,
+            entries_len,
+            ..
+        } = audit_entry_log_v1(
+            &mut entries_file,
+            expected.digest,
+            expected.json.maximum_archive_entries,
+        )?;
         require_index_within_context_capacity_v1(&index, &expected)?;
         let historically_repaired = repair_or_reject_head_v1(
             &root,
@@ -1539,7 +1543,12 @@ impl SignedReplayArchiveV1 {
             .entries_file
             .try_clone()
             .context("clone replay archive for terminal audit")?;
-        let (head, _tail_predecessor, index, entries_len, _entries_sha256) = audit_entry_log_v1(
+        let ReplayArchiveAuditV1 {
+            head,
+            index,
+            entries_len,
+            ..
+        } = audit_entry_log_v1(
             &mut entries,
             self.context.digest,
             self.context.json.maximum_archive_entries,
@@ -2225,7 +2234,13 @@ pub fn verify_replay_archive_v1(
         .file
         .try_clone()
         .context("clone read-only replay entries for full audit")?;
-    let (log_head, _tail_predecessor, index, entries_len, entries_sha256) = audit_entry_log_v1(
+    let ReplayArchiveAuditV1 {
+        head: log_head,
+        index,
+        entries_len,
+        entries_sha256,
+        ..
+    } = audit_entry_log_v1(
         &mut audit_file,
         context.digest,
         context.json.maximum_archive_entries,
@@ -2979,53 +2994,6 @@ impl ArchivedDeployedProcess2RecoveryOwnerV1 {
     pub(crate) const fn process2_facts_v1(&self) -> PocoNodeDeployedLabProcess2RecoveryFactsV0 {
         self.node.facts_v0()
     }
-
-    /// Consumes the complete archive-pinned process-2 recovery into Node's
-    /// exact, still replay-fenced zero-delta owner.  The archive identity is
-    /// freshly revalidated on both sides of the consuming Node join and is
-    /// retained in the result; no signer, timer, mesh, or activation authority
-    /// is released.
-    pub(crate) fn confirm_zero_delta_caught_up_v1(
-        self,
-        expected: PocoNodeDeployedLabZeroDeltaRestartCutV1,
-    ) -> Result<ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1> {
-        let Self {
-            _archive: archive,
-            node,
-            archive_facts,
-            recovery_facts,
-            authenticated_replay_facts,
-        } = self;
-        archive
-            .revalidate_identity_v1()
-            .context("revalidate pinned replay archive before zero-delta join")?;
-        ensure!(
-            archive.facts_v1() == archive_facts,
-            "pinned replay archive differs before zero-delta join"
-        );
-        let process2_facts = node.facts_v0();
-        let node = node
-            .into_zero_delta_caught_up_v1(expected)
-            .map_err(|error| anyhow!("confirm Node zero-delta cut: {error}"))?;
-        ensure!(
-            node.facts_v1().process2_v1() == process2_facts,
-            "Node zero-delta owner changed the process2 recovery projection"
-        );
-        archive
-            .revalidate_identity_v1()
-            .context("revalidate pinned replay archive after zero-delta join")?;
-        ensure!(
-            archive.facts_v1() == archive_facts,
-            "pinned replay archive differs after zero-delta join"
-        );
-        Ok(ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1 {
-            _archive: archive,
-            node,
-            archive_facts,
-            recovery_facts,
-            authenticated_replay_facts,
-        })
-    }
 }
 
 impl std::fmt::Debug for ArchivedDeployedProcess2RecoveryOwnerV1 {
@@ -3039,77 +3007,6 @@ impl std::fmt::Debug for ArchivedDeployedProcess2RecoveryOwnerV1 {
                 &self.authenticated_replay_facts,
             )
             .field("process2_facts", &self.node.facts_v0())
-            .finish_non_exhaustive()
-    }
-}
-
-/// Archive-pinned, replay-fenced zero-delta process-2 owner.
-///
-/// The Node owner remains opaque and non-Clone.  This wrapper exposes only
-/// descriptive facts plus fresh archive revalidation; it has no Ready/Start,
-/// activation, signer, timer, mesh, or raw-parts API.
-#[must_use = "zero-delta recovery must retain both Node and replay-archive authority"]
-pub(crate) struct ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1 {
-    _archive: SignedReplayArchiveV1,
-    node: PocoNodeDeployedLabProcess2CaughtUpOwnerV1<LabFileWatermark>,
-    archive_facts: SignedReplayArchiveFactsV1,
-    recovery_facts: PocoNodeDeployedLabRecoveryFactsV0,
-    authenticated_replay_facts: PocoNodeDeployedLabAuthenticatedReplayFactsV0,
-}
-
-impl ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1 {
-    pub(crate) fn revalidate_archive_identity_v1(&self) -> Result<()> {
-        self._archive
-            .revalidate_identity_v1()
-            .context("revalidate zero-delta pinned replay archive identity")?;
-        ensure!(
-            self._archive.facts_v1() == self.archive_facts,
-            "zero-delta pinned replay archive head differs"
-        );
-        Ok(())
-    }
-
-    /// Revalidates the pinned archive around Node's complete borrowed
-    /// zero-delta durable-head audit. No retained authority is released and
-    /// Node remains replay-fenced throughout.
-    pub(crate) fn revalidate_zero_delta_caught_up_v1(&mut self) -> Result<()> {
-        self.revalidate_archive_identity_v1()?;
-        let expected = self.node.facts_v1();
-        self.node
-            .revalidate_zero_delta_caught_up_v1()
-            .map_err(|error| anyhow!("freshly revalidate Node zero-delta owner: {error}"))?;
-        ensure!(
-            self.node.facts_v1() == expected,
-            "fresh Node zero-delta revalidation changed retained facts"
-        );
-        self.revalidate_archive_identity_v1()
-    }
-
-    pub(crate) const fn archive_facts_v1(&self) -> SignedReplayArchiveFactsV1 {
-        self.archive_facts
-    }
-
-    pub(crate) const fn prior_recovery_facts_v1(&self) -> &PocoNodeDeployedLabRecoveryFactsV0 {
-        &self.recovery_facts
-    }
-
-    pub(crate) const fn authenticated_replay_facts_v1(
-        &self,
-    ) -> PocoNodeDeployedLabAuthenticatedReplayFactsV0 {
-        self.authenticated_replay_facts
-    }
-
-    pub(crate) const fn zero_delta_facts_v1(&self) -> PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1 {
-        self.node.facts_v1()
-    }
-}
-
-impl std::fmt::Debug for ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1 {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        formatter
-            .debug_struct("ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1")
-            .field("archive_facts", &self.archive_facts)
-            .field("zero_delta_facts", &self.node.facts_v1())
             .finish_non_exhaustive()
     }
 }
@@ -3158,17 +3055,20 @@ fn require_index_within_context_capacity_v1(
     Ok(())
 }
 
+#[derive(Debug)]
+struct ReplayArchiveAuditV1 {
+    head: ReplayArchiveHeadV1,
+    tail_predecessor: Option<ReplayArchiveHeadV1>,
+    index: BTreeMap<ReplayArchiveCoordinateV1, ReplayArchiveEntryIndexV1>,
+    entries_len: u64,
+    entries_sha256: [u8; 32],
+}
+
 fn audit_entry_log_v1(
     entries: &mut File,
     context_sha256: [u8; 32],
     maximum_entries: u64,
-) -> Result<(
-    ReplayArchiveHeadV1,
-    Option<ReplayArchiveHeadV1>,
-    BTreeMap<ReplayArchiveCoordinateV1, ReplayArchiveEntryIndexV1>,
-    u64,
-    [u8; 32],
-)> {
+) -> Result<ReplayArchiveAuditV1> {
     ensure!(
         maximum_entries > 0 && maximum_entries <= MAXIMUM_ENTRY_COUNT_V1,
         "replay archive audit entry bound is invalid"
@@ -3248,13 +3148,13 @@ fn audit_entry_log_v1(
         entries.metadata()?.len() == offset,
         "replay archive length changed during audit"
     );
-    Ok((
+    Ok(ReplayArchiveAuditV1 {
         head,
         tail_predecessor,
         index,
-        offset,
-        file_hasher.finalize().into(),
-    ))
+        entries_len: offset,
+        entries_sha256: file_hasher.finalize().into(),
+    })
 }
 
 fn context_bound_entry_file_bytes_v1(maximum_entries: u64) -> Result<u64> {
@@ -4064,7 +3964,13 @@ mod tests {
             expected
         );
         let mut entries_file = open_private_file_v1(&root.join(ENTRY_FILE_V1), true).unwrap();
-        let (head, tail_predecessor, index, entries_len, _entries_sha256) = audit_entry_log_v1(
+        let ReplayArchiveAuditV1 {
+            head,
+            tail_predecessor,
+            index,
+            entries_len,
+            ..
+        } = audit_entry_log_v1(
             &mut entries_file,
             expected.digest,
             expected.json.maximum_archive_entries,
@@ -4580,7 +4486,11 @@ mod tests {
         let root = archive.root.clone();
         drop(archive);
         let mut entries = open_private_file_v1(&root.join(ENTRY_FILE_V1), false).unwrap();
-        let (log_head, predecessor, _, _, _) = audit_entry_log_v1(
+        let ReplayArchiveAuditV1 {
+            head: log_head,
+            tail_predecessor: predecessor,
+            ..
+        } = audit_entry_log_v1(
             &mut entries,
             context.digest,
             context.json.maximum_archive_entries,
@@ -4630,7 +4540,9 @@ mod tests {
         fs::remove_file(root.join(REPAIR_TOMBSTONE_FILE_V1)).unwrap();
         let reopened_after_same_uid_deletion = open_for_test_v1(&root, context);
         assert!(!reopened_after_same_uid_deletion.historically_repaired);
-        assert!(!crate::COHERENT_WHOLE_AUTHORITY_ROOT_ROLLBACK_PROTECTION);
+        const {
+            assert!(!crate::COHERENT_WHOLE_AUTHORITY_ROOT_ROLLBACK_PROTECTION);
+        };
     }
 
     #[test]
@@ -4823,7 +4735,11 @@ mod tests {
         .unwrap();
         assert!(pinned.revalidate_v1().is_err());
         let mut audit = pinned.file.try_clone().unwrap();
-        let (_, _, _, audited_length, audited_sha256) = audit_entry_log_v1(
+        let ReplayArchiveAuditV1 {
+            entries_len: audited_length,
+            entries_sha256: audited_sha256,
+            ..
+        } = audit_entry_log_v1(
             &mut audit,
             context.digest,
             context.json.maximum_archive_entries,
@@ -5657,38 +5573,33 @@ mod tests {
     }
 
     #[test]
-    fn zero_delta_borrowed_revalidation_pins_archive_around_node_audit_v1() {
-        let source = include_str!("signed_replay_archive.rs");
-        let start = source
-            .find("pub(crate) fn revalidate_zero_delta_caught_up_v1(&mut self)")
-            .expect("archive-pinned zero-delta borrowed audit remains present");
-        let end = source[start..]
-            .find("pub(crate) const fn archive_facts_v1")
-            .map(|offset| start + offset)
-            .expect("archive-pinned zero-delta borrowed audit remains bounded");
-        let audit = &source[start..end];
-        let archive_before = audit
-            .find("self.revalidate_archive_identity_v1()?")
-            .expect("archive is revalidated before Node");
-        let node = audit
-            .find(".revalidate_zero_delta_caught_up_v1()")
-            .expect("Node durable heads are freshly revalidated");
-        let archive_after = audit
-            .rfind("self.revalidate_archive_identity_v1()")
-            .expect("archive is revalidated after Node");
-        assert!(archive_before < node && node < archive_after);
-        for forbidden in [
-            "into_parts",
-            "RecoveryReady",
-            "RecoveryStart",
-            "activate",
-            "signer",
-            "mesh",
-        ] {
+    fn live_archive_readback_rejects_same_inode_tamper_without_repair_v1() {
+        for name in [CONTEXT_FILE_V1, ENTRY_FILE_V1, HEAD_FILE_V1] {
+            let temp = TempDir::new().unwrap();
+            let mut archive = initialize_for_test_v1(&temp);
+            archive
+                .append_statement_v1(statement_v1(b"proposal"))
+                .unwrap();
+            let mut qc = successor_statement_v1(b"qc");
+            qc.coordinate.kind = ReplayArchiveEntryKindV1::QuorumCertificate;
+            archive.append_statement_v1(qc).unwrap();
+            assert!(archive.fresh_terminal_snapshot_v1().is_ok());
+            let path = archive.root.join(name);
+            let before = fs::metadata(&path).unwrap();
+            let mut bytes = fs::read(&path).unwrap();
+            assert!(!bytes.is_empty());
+            bytes[0] ^= 1;
+            let mut writer = OpenOptions::new().write(true).open(&path).unwrap();
+            writer.seek(SeekFrom::Start(0)).unwrap();
+            writer.write_all(&bytes).unwrap();
+            writer.sync_all().unwrap();
+            assert_eq!(writer.metadata().unwrap().ino(), before.ino());
+            assert_eq!(writer.metadata().unwrap().len(), before.len());
             assert!(
-                !audit.contains(forbidden),
-                "borrowed zero-delta audit unexpectedly exposes {forbidden}"
+                archive.fresh_terminal_snapshot_v1().is_err(),
+                "accepted {name} mutation"
             );
+            assert_eq!(fs::read(&path).unwrap(), bytes, "readback repaired {name}");
         }
     }
     #[test]

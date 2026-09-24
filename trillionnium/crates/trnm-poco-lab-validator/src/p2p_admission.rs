@@ -1213,9 +1213,11 @@ mod tests {
         let stream = TcpStream::connect(address).unwrap();
         let connection = AuthenticatedConnection::connect(
             stream,
-            run_id,
-            client,
-            server,
+            crate::transport::ConnectionPeerV1 {
+                run_id,
+                local: client,
+                expected_remote: server,
+            },
             &client_key,
             &set,
             &key_roles,

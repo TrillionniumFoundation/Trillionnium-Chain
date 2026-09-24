@@ -69,6 +69,18 @@ requires the existing fresh revalidation API.
 
 ## Interfaces
 
+The dormant lab-only zero-delta wrapper layer has no executable caller and is
+removed; Node's canonical zero-delta recovery implementation remains. The live
+process-2 path still retains its real journal/archive owners and refuses activation
+until the authenticated RecoveryReady/RecoveryStart join exists. The restart
+catch-up reference codec/assembler remains test-only, with behavioral tests;
+normal native-client replay/import remains the implemented transfer path.
+
+The bounded validator entry family consumes `ConsensusRunRequestV1`, containing
+the loaded configuration, duration, block budget and report target. Existing
+preflight and external-role guards still validate these fields before
+commissioning. This input grouping changes no protocol or activation rule.
+
 Existing closure names are `node-prod-v0`, `node-devnet-v0`, `ai-v1-candidate`
 and `lab-and-evidence`. Resolve crates/features from `config/build-closures-v1.toml`;
 never infer production eligibility from a crate name containing `production`.

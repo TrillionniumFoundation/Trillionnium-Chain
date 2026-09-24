@@ -403,10 +403,12 @@ fn run() -> Result<ExitCode> {
                     let external_fence =
                         Arc::new(UnixExternalPeerLeaseAuthorityV1::from_client(client));
                     run_bounded_consensus_with_external_fence_v1(
-                        loaded,
-                        Duration::from_secs(duration_seconds),
-                        max_blocks,
-                        report_path,
+                        trnm_poco_lab_validator::consensus_runtime::ConsensusRunRequestV1 {
+                            config: loaded,
+                            duration: Duration::from_secs(duration_seconds),
+                            max_blocks,
+                            report_path,
+                        },
                         external_fence,
                         commission_deployed_ordinary_runtime_for_cli_v1,
                     )?
@@ -424,10 +426,12 @@ fn run() -> Result<ExitCode> {
                 }
             }
             None => run_deployed_bounded_consensus_v1(
-                loaded,
-                Duration::from_secs(duration_seconds),
-                max_blocks,
-                report_path,
+                trnm_poco_lab_validator::consensus_runtime::ConsensusRunRequestV1 {
+                    config: loaded,
+                    duration: Duration::from_secs(duration_seconds),
+                    max_blocks,
+                    report_path,
+                },
             )?,
         };
         return match outcome {
@@ -750,7 +754,7 @@ where
 }
 
 #[cfg(unix)]
-fn validate_peer_lease_socket_path_v1(path: &PathBuf) -> Result<()> {
+fn validate_peer_lease_socket_path_v1(path: &std::path::Path) -> Result<()> {
     ensure!(
         path.is_absolute(),
         "peer-lease socket path must be absolute"
@@ -769,12 +773,12 @@ fn validate_peer_lease_socket_path_v1(path: &PathBuf) -> Result<()> {
 }
 
 #[cfg(not(unix))]
-fn validate_peer_lease_socket_path_v1(_path: &PathBuf) -> Result<()> {
+fn validate_peer_lease_socket_path_v1(_path: &std::path::Path) -> Result<()> {
     bail!("peer-lease socket opt-in is supported only on Unix")
 }
 
 #[cfg(unix)]
-fn validate_private_parent_v1(path: &PathBuf, label: &str) -> Result<Metadata> {
+fn validate_private_parent_v1(path: &std::path::Path, label: &str) -> Result<Metadata> {
     let parent = path
         .parent()
         .ok_or_else(|| anyhow::anyhow!("{label} path has no parent"))?;
@@ -798,9 +802,9 @@ fn validate_private_parent_v1(path: &PathBuf, label: &str) -> Result<Metadata> {
 }
 
 #[cfg(unix)]
-fn ready_parent_components_v1(path: &PathBuf, label: &str) -> Result<Vec<PathBuf>> {
+fn ready_parent_components_v1(path: &std::path::Path, label: &str) -> Result<Vec<PathBuf>> {
     let mut missing = Vec::new();
-    let mut cursor = path.clone();
+    let mut cursor = path.to_path_buf();
     loop {
         match fs::symlink_metadata(&cursor) {
             Ok(metadata) => {
@@ -830,7 +834,7 @@ fn ready_parent_components_v1(path: &PathBuf, label: &str) -> Result<Vec<PathBuf
 }
 
 #[cfg(unix)]
-fn validate_peer_lease_ready_path_v1(path: &PathBuf, label: &str) -> Result<()> {
+fn validate_peer_lease_ready_path_v1(path: &std::path::Path, label: &str) -> Result<()> {
     ensure!(path.is_absolute(), "{label} path must be absolute");
     ensure!(
         path.components()
@@ -846,7 +850,7 @@ fn validate_peer_lease_ready_path_v1(path: &PathBuf, label: &str) -> Result<()> 
 }
 
 #[cfg(unix)]
-fn ensure_private_ready_parent_v1(path: &PathBuf, label: &str) -> Result<()> {
+fn ensure_private_ready_parent_v1(path: &std::path::Path, label: &str) -> Result<()> {
     let missing = ready_parent_components_v1(path, label)?;
     for directory in missing.iter().rev() {
         let created = match fs::create_dir(directory) {
@@ -872,7 +876,7 @@ fn ensure_private_ready_parent_v1(path: &PathBuf, label: &str) -> Result<()> {
 }
 
 #[cfg(unix)]
-fn validate_peer_lease_data_path_v1(path: &PathBuf, label: &str) -> Result<()> {
+fn validate_peer_lease_data_path_v1(path: &std::path::Path, label: &str) -> Result<()> {
     ensure!(path.is_absolute(), "{label} path must be absolute");
     ensure!(
         path.components()
@@ -884,7 +888,7 @@ fn validate_peer_lease_data_path_v1(path: &PathBuf, label: &str) -> Result<()> {
 }
 
 #[cfg(not(unix))]
-fn validate_peer_lease_data_path_v1(_path: &PathBuf, _label: &str) -> Result<()> {
+fn validate_peer_lease_data_path_v1(_path: &std::path::Path, _label: &str) -> Result<()> {
     bail!("peer-lease daemon is supported only on Unix")
 }
 

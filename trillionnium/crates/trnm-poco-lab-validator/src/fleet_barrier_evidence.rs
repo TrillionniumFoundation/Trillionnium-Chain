@@ -422,10 +422,15 @@ mod tests {
             FleetCampaignRequestV1::new(
                 CONSENSUS_RUNTIME_FLEET_BARRIER_ROUND_V1,
                 4,
-                60,
-                CONSENSUS_RUNTIME_PACEMAKER_BASE_TIMEOUT_SECONDS_V1,
-                CONSENSUS_RUNTIME_TERMINAL_DRAIN_ALLOWANCE_SECONDS_V1,
-                CONSENSUS_RUNTIME_TIMEOUT_VIEW_BUDGET_ALLOWANCE_SECONDS_V1,
+                crate::fleet_barrier::FleetCampaignTimingV1 {
+                    duration_seconds: 60,
+                    pacemaker_base_timeout_seconds:
+                        CONSENSUS_RUNTIME_PACEMAKER_BASE_TIMEOUT_SECONDS_V1,
+                    terminal_drain_allowance_seconds:
+                        CONSENSUS_RUNTIME_TERMINAL_DRAIN_ALLOWANCE_SECONDS_V1,
+                    timeout_view_budget_allowance_seconds:
+                        CONSENSUS_RUNTIME_TIMEOUT_VIEW_BUDGET_ALLOWANCE_SECONDS_V1,
+                },
                 100,
                 103,
                 FleetBarrierTransportV1::Direct,

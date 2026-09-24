@@ -739,6 +739,7 @@ impl BoundedRestartProtocolIngressV1 {
 
     /// Revalidates an already-issued reservation for an exact local retry.
     /// This borrows the sole verified owner and never mints a second one.
+    #[cfg(test)]
     pub(crate) fn verify_originated_statement_exact_retry_v1(
         &self,
         reservation: &VerifiedRestartProtocolOriginReservationV1,
@@ -949,6 +950,7 @@ impl fmt::Debug for RestartProtocolOriginReservationV1 {
 }
 
 impl RestartProtocolOriginReservationV1 {
+    #[cfg(test)]
     fn message_v1(&self) -> RestartProtocolMessageV1 {
         RestartProtocolMessageV1 {
             validator_set_id: self.validator_set_id,
@@ -1039,6 +1041,7 @@ impl VerifiedRestartProtocolOriginReservationV1 {
         self.reservation.payload_digest
     }
 
+    #[cfg(test)]
     pub(crate) const fn relay_reserved_v1(&self) -> bool {
         self.reservation.relay_instance.is_some()
     }

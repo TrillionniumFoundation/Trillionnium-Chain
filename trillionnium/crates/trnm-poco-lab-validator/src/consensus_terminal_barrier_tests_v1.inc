@@ -207,11 +207,11 @@ fn terminal_seven_real_owners_park_only_after_every_prepare_then_validate_residu
             assert!(barriers[i].complete().unwrap());
             let peer = (i + 1) % 7;
             barriers[i]
-                .validate_residual(MeshIngressEventV0::Frame(frame(
+                .validate_residual(MeshIngressEventV0::Frame(Box::new(frame(
                     terminals[i].facts_v0().local_validator_v0(),
                     terminals[peer].facts_v0().local_validator_v0(),
                     parks[peer].clone(),
-                )))
+                ))))
                 .unwrap();
             terminals[i].confirm_terminal_cut_v1().unwrap();
         }

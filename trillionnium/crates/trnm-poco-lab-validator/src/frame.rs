@@ -442,16 +442,30 @@ pub fn write_framed(
     Ok(())
 }
 
+/// Complete external frame-signing context. Encoding still verifies the returned
+/// signature against the committed role key before emitting any bytes.
+pub struct ExternalFrameSigningV1<'a> {
+    pub run_id: &'a str,
+    pub remote: ValidatorId,
+    pub network_context_digest: [u8; 32],
+    pub nonce_binding: [u8; 32],
+    pub expected_public_key: [u8; 32],
+    pub producer: &'a mut dyn P2pIdentitySignatureProducerV1,
+}
+
 pub fn write_framed_with_external_identity(
     writer: &mut impl Write,
     frame: &AuthenticatedFrame,
-    run_id: &str,
-    remote: ValidatorId,
-    network_context_digest: [u8; 32],
-    nonce_binding: [u8; 32],
-    expected_public_key: [u8; 32],
-    producer: &mut dyn P2pIdentitySignatureProducerV1,
+    signing: ExternalFrameSigningV1<'_>,
 ) -> Result<(), FrameError> {
+    let ExternalFrameSigningV1 {
+        run_id,
+        remote,
+        network_context_digest,
+        nonce_binding,
+        expected_public_key,
+        producer,
+    } = signing;
     let body = frame.encode_with_external_identity(
         run_id,
         remote,

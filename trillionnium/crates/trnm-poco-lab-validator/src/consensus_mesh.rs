@@ -508,7 +508,7 @@ impl MeshInboundFrameV0 {
 
 #[derive(Debug)]
 pub enum MeshIngressEventV0 {
-    Frame(MeshInboundFrameV0),
+    Frame(Box<MeshInboundFrameV0>),
     SessionUnavailable(PeerSessionFactsV0),
     SessionReestablished(PeerSessionFactsV0),
 }
@@ -2944,12 +2944,14 @@ fn outgoing_loop(
         remote,
         remote_addr,
         &identity,
-        initial_deadline,
-        io_timeout,
-        &stop,
-        &controls,
-        &fences,
-        1,
+        crate::consensus_mesh::MeshConnectControlV1 {
+            deadline: initial_deadline,
+            io_timeout,
+            stop: &stop,
+            controls: &controls,
+            fences: &fences,
+            generation: 1,
+        },
     ) {
         Ok(connection) => connection,
         Err(error) => {
@@ -3118,12 +3120,14 @@ fn outgoing_loop(
                             remote,
                             remote_addr,
                             &identity,
-                            deadline,
-                            io_timeout,
-                            &stop,
-                            &controls,
-                            &fences,
-                            next_generation,
+                            crate::consensus_mesh::MeshConnectControlV1 {
+                                deadline,
+                                io_timeout,
+                                stop: &stop,
+                                controls: &controls,
+                                fences: &fences,
+                                generation: next_generation,
+                            },
                         ) {
                             Ok(connection) => break connection,
                             Err(ConnectAttemptFailureV0::WindowElapsed) => continue,
@@ -3740,14 +3744,14 @@ fn accept_loop(
                                     }
                                     if emit_event(
                                         &ingress_tx,
-                                        MeshIngressEventV0::Frame(MeshInboundFrameV0 {
+                                        MeshIngressEventV0::Frame(Box::new(MeshInboundFrameV0 {
                                             remote,
                                             direction: PeerDirectionV0::Inbound,
                                             session_id: facts.session_id,
                                             session_generation: facts.generation,
                                             frame,
                                             _reservation: reservation,
-                                        }),
+                                        })),
                                         &terminal,
                                         &stop,
                                         facts,
@@ -3854,17 +3858,29 @@ fn accept_loop(
     }
 }
 
+struct MeshConnectControlV1<'a> {
+    deadline: Instant,
+    io_timeout: Duration,
+    stop: &'a AtomicBool,
+    controls: &'a ActiveControlsV0,
+    fences: &'a MeshFenceRegistryV1,
+    generation: u64,
+}
+
 fn connect_authenticated_until(
     remote: ValidatorId,
     address: SocketAddr,
     identity: &MeshIdentityV0,
-    deadline: Instant,
-    io_timeout: Duration,
-    stop: &AtomicBool,
-    controls: &ActiveControlsV0,
-    fences: &MeshFenceRegistryV1,
-    generation: u64,
+    control: MeshConnectControlV1<'_>,
 ) -> std::result::Result<MeshAuthenticatedConnectionV1<DeadlineIo>, ConnectAttemptFailureV0> {
+    let MeshConnectControlV1 {
+        deadline,
+        io_timeout,
+        stop,
+        controls,
+        fences,
+        generation,
+    } = control;
     loop {
         if fences
             .refuse_quarantined_reconnect_v1(remote)
@@ -3903,9 +3919,11 @@ fn connect_authenticated_until(
         let mut connection = match match &identity.p2p_identity_signer {
             MeshIdentitySignerV1::Local(signing_key) => AuthenticatedConnection::connect(
                 io,
-                &identity.run_id,
-                identity.local,
-                remote,
+                crate::transport::ConnectionPeerV1 {
+                    run_id: &identity.run_id,
+                    local: identity.local,
+                    expected_remote: remote,
+                },
                 signing_key,
                 &identity.validator_set,
                 &identity.key_roles,
@@ -4735,7 +4753,7 @@ mod tests {
         payload: Vec<u8>,
         reservation: InboundQueueReservationV0,
     ) -> MeshIngressEventV0 {
-        MeshIngressEventV0::Frame(MeshInboundFrameV0 {
+        MeshIngressEventV0::Frame(Box::new(MeshInboundFrameV0 {
             remote: facts.remote,
             direction: facts.direction,
             session_id: facts.session_id,
@@ -4748,7 +4766,7 @@ mod tests {
                 payload,
             },
             _reservation: reservation,
-        })
+        }))
     }
 
     #[test]
@@ -6005,9 +6023,11 @@ mod tests {
             let io = DeadlineIo::new(stream, Instant::now() + Duration::from_secs(2)).unwrap();
             let connection = AuthenticatedConnection::connect(
                 io,
-                &client.run_id,
-                client.local,
-                server_thread_remote_v0(&client.validator_set, client.local),
+                crate::transport::ConnectionPeerV1 {
+                    run_id: &client.run_id,
+                    local: client.local,
+                    expected_remote: server_thread_remote_v0(&client.validator_set, client.local),
+                },
                 match &client.p2p_identity_signer {
                     MeshIdentitySignerV1::Local(signing_key) => signing_key,
                     MeshIdentitySignerV1::External(_) => unreachable!("fixture uses local key"),

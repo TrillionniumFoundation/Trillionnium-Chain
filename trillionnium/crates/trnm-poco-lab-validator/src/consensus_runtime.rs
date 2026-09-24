@@ -36,17 +36,14 @@ use trnm_consensus_signer_journal::{
 };
 use trnm_consensus_types::{
     BlockId, ContextAuthorizedQcV0, Epoch, Height, QcRef, QcReferenceV0, QuorumCertificate,
-    RecoveryContextV1, RecoveryContextV1Fields, RecoveryModeV1, RecoveryZeroDeltaCutV1,
-    RecoveryZeroDeltaCutV1Fields, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorId, View,
-    RECOVERY_PROCESS_INSTANCE_V1,
+    StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorId, View, RECOVERY_PROCESS_INSTANCE_V1,
 };
 use trnm_consensus_unix_fleet_signer::{
     FleetRootPurposeV1, UnixFleetRootSignerConfig, UnixFleetRootSignerProducerV1,
 };
 use trnm_poco_node::{
-    validate_deployed_lab_core_record_envelope_v0, PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1,
-    PocoNodeDeployedLabZeroDeltaRestartCutFieldsV1, PocoNodeDeployedLabZeroDeltaRestartCutV1,
-    PocoNodeLabAuthorityPhaseV0, PocoNodeLabOrdinaryProposalRuntimeV0,
+    validate_deployed_lab_core_record_envelope_v0, PocoNodeLabAuthorityPhaseV0,
+    PocoNodeLabOrdinaryProposalRuntimeV0,
 };
 
 use crate::{
@@ -88,7 +85,6 @@ use crate::{
         Process2JournalStartedFromRestartCutV1, RuntimeEventErrorV1, RuntimeEventJournalV1,
         RuntimeEventKindV1, RuntimeEventSignatureProducerV1, RuntimeRestartPhaseV1,
     },
-    recovery_zero_delta_store::{persist_recovery_zero_delta_cut_v1, StoredRecoveryZeroDeltaCutV1},
     relay::{
         required_ring_relay_hops_v0, ConsensusRelayEnvelopeV0, MAX_RELAY_INNER_PAYLOAD_BYTES_V0,
     },
@@ -120,15 +116,24 @@ use crate::{
         write_runtime_metrics_v1, RuntimeFinalStateFactsV1, RuntimeMetricsFactsV1,
     },
     signed_replay_archive::{
-        ArchivedDeployedProcess2RecoveryOwnerV1, ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1,
-        ReplayArchiveQcCoordinateStateV1, SignedReplayArchiveBoundsV1, SignedReplayArchiveV1,
-        MAXIMUM_ENTRY_COUNT_V1,
+        ArchivedDeployedProcess2RecoveryOwnerV1, ReplayArchiveQcCoordinateStateV1,
+        SignedReplayArchiveBoundsV1, SignedReplayArchiveV1, MAXIMUM_ENTRY_COUNT_V1,
     },
     wire::{
         encode_quorum_certificate, encode_timeout_certificate, encode_timeout_vote, encode_vote,
         UnboundProposalV0,
     },
 };
+
+/// One owned invocation of the bounded validator. Grouping configuration and
+/// process limits does not validate them; the existing preflight and authority
+/// guards still run before opening or commissioning any owner.
+pub struct ConsensusRunRequestV1 {
+    pub config: LoadedValidatorConfig,
+    pub duration: Duration,
+    pub max_blocks: u64,
+    pub report_path: PathBuf,
+}
 
 pub const CONSENSUS_RUNTIME_COMMISSIONING_ALLOWANCE_SECONDS_V1: u64 = 300;
 /// Upper bound for the coordinator's sequential process-launch skew before
@@ -357,7 +362,7 @@ impl RestartSignatureProducerV1 for FleetRestartSignatureAdapter<'_> {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum BoundedConsensusRunOutcomeV1 {
     CompletedReport(PathBuf),
-    Process1TargetParked(Process1TargetParkedHandoffV1),
+    Process1TargetParked(Box<Process1TargetParkedHandoffV1>),
 }
 
 /// Data-only descriptor emitted after the target's process-1 control socket,
@@ -570,80 +575,6 @@ impl std::fmt::Debug for RestartCutJoinedProcess2InertOwnerV1 {
 }
 
 impl RestartCutJoinedProcess2InertOwnerV1 {
-    /// Consumes the full T3-A owner into Node's exact read-only zero-delta
-    /// confirmation while retaining the journal-start, RestartCut, and replay
-    /// archive owners.  This does not persist a recovery artifact, sign Ready,
-    /// accept Start, clear the replay fence, or activate any authority.
-    fn confirm_zero_delta_caught_up_v1(
-        self,
-        config: &LoadedValidatorConfig,
-    ) -> Result<RestartCutJoinedProcess2ZeroDeltaOwnerV1> {
-        self.started
-            .revalidate_unchanged_start_v1()
-            .map_err(|error| {
-                anyhow!("revalidate process2 journal before zero-delta join: {error}")
-            })?;
-        self.recovered
-            .revalidate_archive_identity_v1()
-            .context("revalidate replay archive before zero-delta Node join")?;
-        let state = self.started.restart_cut_body_v1().state();
-        let expected = PocoNodeDeployedLabZeroDeltaRestartCutV1::new(
-            PocoNodeDeployedLabZeroDeltaRestartCutFieldsV1 {
-                restart_cut_artifact_sha256: self.started.restart_cut_artifact_sha256_v1(),
-                local_validator: config.local_validator(),
-                validator_set_id: config.validator_set().id(),
-                epoch: state.epoch,
-                current_view: state.current_view,
-                direct_high_qc: state.direct_high_qc,
-                proposal_parent_height: state.proposal_parent_height.get(),
-                proposal_parent_block_id: state.proposal_parent_block_id,
-                finalized_height: state.finalized_height.get(),
-                finalized_block_id: state.finalized_block_id,
-                finalized_chain_root: state.finalized_chain_root,
-                application_height: state.application_height.get(),
-                application_block_id: state.application_block_id,
-                application_state_root: state.application_state_root,
-                restart_checkpoint_generation: state.external_checkpoint_generation,
-                restart_checkpoint_canonical_sha256: state.external_checkpoint_checksum,
-                restart_safety_revision: state.safety_revision,
-                restart_safety_state_record_checksum: state.safety_state_record_checksum,
-                restart_safety_chain_checksum: state.safety_record_chain_checksum,
-                signer_exact_watermark: state.signer_watermark,
-                signer_durable_vote_intent_count: state.signer_durable_vote_intent_count,
-                signer_durable_timeout_intent_count: state.signer_durable_timeout_intent_count,
-                signer_signed_vote_intent_count: state.signer_signed_vote_intent_count,
-                signer_signed_timeout_intent_count: state.signer_signed_timeout_intent_count,
-                signer_inventory_digest: state.signer_inventory_digest,
-            },
-        )
-        .map_err(|error| anyhow!("construct inert Node zero-delta RestartCut join: {error}"))?;
-        let mut recovered = self
-            .recovered
-            .confirm_zero_delta_caught_up_v1(expected)
-            .context("consume archive-pinned Node zero-delta join")?;
-        self.started
-            .revalidate_unchanged_start_v1()
-            .map_err(|error| {
-                anyhow!("revalidate process2 journal at zero-delta commit: {error}")
-            })?;
-        recovered
-            .revalidate_zero_delta_caught_up_v1()
-            .context("revalidate Node and replay archive at zero-delta join commit")?;
-        ensure!(
-            recovered
-                .zero_delta_facts_v1()
-                .restart_cut_v1()
-                .fields_v1()
-                .restart_cut_artifact_sha256
-                == self.started.restart_cut_artifact_sha256_v1(),
-            "zero-delta Node owner differs from retained RestartCut"
-        );
-        Ok(RestartCutJoinedProcess2ZeroDeltaOwnerV1 {
-            started: self.started,
-            recovered,
-        })
-    }
-
     /// Consumes the complete joined owner into the current deliberate
     /// fail-stop event.  Fresh readback and the unchanged journal-start head
     /// are checked again immediately before the only permitted effect.
@@ -680,206 +611,6 @@ impl RestartCutJoinedProcess2InertOwnerV1 {
             )
             .context("record RestartCut-joined inert process2 halt")?;
         Ok(())
-    }
-}
-
-/// Exact T3-B zero-delta owner, still replay-fenced and unable to sign Ready.
-#[must_use = "zero-delta join must retain every process2 and archive authority"]
-struct RestartCutJoinedProcess2ZeroDeltaOwnerV1 {
-    started: Process2JournalStartedFromRestartCutV1,
-    recovered: ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1,
-}
-
-impl RestartCutJoinedProcess2ZeroDeltaOwnerV1 {
-    const fn facts_v1(&self) -> PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1 {
-        self.recovered.zero_delta_facts_v1()
-    }
-
-    fn revalidate_retained_inputs_v1(&mut self) -> Result<()> {
-        self.started
-            .revalidate_unchanged_start_v1()
-            .map_err(|error| anyhow!("revalidate process2 journal at zero-delta store: {error}"))?;
-        self.recovered
-            .revalidate_zero_delta_caught_up_v1()
-            .context("revalidate Node and replay archive at zero-delta store")
-    }
-
-    /// Builds and persists the canonical zero-delta cut while retaining every
-    /// journal, RestartCut, replay archive, and Node recovery owner.  This
-    /// method is deliberately dormant: the operational process-2 branch must
-    /// not call it until it also consumes a future N/N durable park owner.
-    fn persist_zero_delta_cut_dormant_v1(
-        mut self,
-        config: &LoadedValidatorConfig,
-    ) -> Result<RestartCutJoinedProcess2PersistedZeroDeltaOwnerV1> {
-        self.revalidate_retained_inputs_v1()?;
-        let body = self.started.restart_cut_body_v1();
-        let state = body.state();
-        let facts = self.facts_v1();
-        let node_cut = facts.restart_cut_v1().fields_v1();
-        let validator_set = config.validator_set();
-        ensure!(
-            body.campaign().identity().validator_count() == 7
-                && body.validator_set_id() == *validator_set.id().as_bytes()
-                && body.validator_set_sha256() == config.validator_set_sha256()
-                && body.target_validator() == config.local_validator()
-                && body.target_config_sha256() == config.config_sha256()
-                && body.process_instance() == 1
-                && node_cut.restart_cut_artifact_sha256
-                    == self.started.restart_cut_artifact_sha256_v1()
-                && node_cut.local_validator == body.target_validator()
-                && node_cut.validator_set_id == validator_set.id()
-                && node_cut.epoch == state.epoch
-                && node_cut.finalized_height == state.finalized_height.get()
-                && node_cut.finalized_block_id == state.finalized_block_id
-                && node_cut.finalized_chain_root == state.finalized_chain_root
-                && node_cut.application_height == state.application_height.get()
-                && node_cut.application_block_id == state.application_block_id
-                && node_cut.application_state_root == state.application_state_root,
-            "zero-delta projection differs from retained direct-7 authorities"
-        );
-        let node_artifact_sha256: [u8; 32] = Sha256::digest(facts.artifact_bytes_v1()).into();
-        ensure!(
-            node_artifact_sha256 == facts.artifact_sha256_v1(),
-            "Node zero-delta helper artifact changed before canonical projection"
-        );
-
-        let cut = RecoveryZeroDeltaCutV1::new_direct7(
-            RecoveryZeroDeltaCutV1Fields {
-                campaign_context_sha256: body.campaign().digest(),
-                fleet_start_certificate_sha256: body.fleet_start_certificate_sha256(),
-                validator_set_id: validator_set.id(),
-                validator_set_artifact_sha256: body.validator_set_sha256(),
-                restart_cut_artifact_sha256: self.started.restart_cut_artifact_sha256_v1(),
-                restart_park_artifact_sha256: self.started.restart_park_artifact_sha256_v1(),
-                restart_parked_ack_artifact_sha256: self
-                    .started
-                    .restart_parked_ack_artifact_sha256_v1(),
-                restart_parked_ack_admission_set_sha256: self
-                    .started
-                    .restart_parked_ack_admission_set_sha256_v1(),
-                target_validator: body.target_validator(),
-                process_instance: RECOVERY_PROCESS_INSTANCE_V1,
-                recovery_nonce: self.started.restart_prepare_request_sha256_v1(),
-                node_facts_sha256: facts.node_facts_sha256_v1(),
-                signer_inventory_invariant_sha256: facts.signer_inventory_invariant_sha256_v1(),
-                source_epoch: state.epoch,
-                source_height: state.finalized_height,
-                source_block_id: state.finalized_block_id,
-                source_state_root: state.application_state_root,
-                source_finalized_chain_root: state.finalized_chain_root,
-                terminal_epoch: node_cut.epoch,
-                terminal_height: Height::new(node_cut.application_height),
-                terminal_block_id: node_cut.application_block_id,
-                terminal_state_root: node_cut.application_state_root,
-                terminal_finalized_chain_root: node_cut.finalized_chain_root,
-                terminal_application_commit_sha256: facts.terminal_application_commit_id_v1(),
-                terminal_checkpoint_canonical_sha256: facts
-                    .process2_checkpoint_canonical_sha256_v1(),
-            },
-            validator_set,
-        )
-        .map_err(|error| anyhow!("construct canonical zero-delta cut: {error}"))?;
-        let cut_bytes = cut
-            .try_cev1_bytes()
-            .map_err(|error| anyhow!("encode canonical zero-delta cut: {error}"))?;
-        let cut_artifact_sha256: [u8; 32] = Sha256::digest(&cut_bytes).into();
-        let cut_fields = cut.fields();
-        let context = RecoveryContextV1::new_direct7(
-            RecoveryContextV1Fields {
-                mode: RecoveryModeV1::ZeroDelta,
-                campaign_context_sha256: cut_fields.campaign_context_sha256,
-                fleet_start_certificate_sha256: cut_fields.fleet_start_certificate_sha256,
-                validator_set_id: cut_fields.validator_set_id,
-                validator_set_artifact_sha256: cut_fields.validator_set_artifact_sha256,
-                restart_cut_artifact_sha256: cut_fields.restart_cut_artifact_sha256,
-                restart_park_artifact_sha256: cut_fields.restart_park_artifact_sha256,
-                restart_parked_ack_artifact_sha256: cut_fields.restart_parked_ack_artifact_sha256,
-                restart_parked_ack_admission_set_sha256: cut_fields
-                    .restart_parked_ack_admission_set_sha256,
-                caught_up_cut_artifact_sha256: cut_artifact_sha256,
-                target_validator: cut_fields.target_validator,
-                process_instance: cut_fields.process_instance,
-                recovery_nonce: cut_fields.recovery_nonce,
-                restart_cut_epoch: cut_fields.source_epoch,
-                restart_cut_height: cut_fields.source_height,
-                restart_cut_block_id: cut_fields.source_block_id,
-                restart_cut_state_root: cut_fields.source_state_root,
-                restart_cut_chain_root: cut_fields.source_finalized_chain_root,
-                terminal_epoch: cut_fields.terminal_epoch,
-                terminal_height: cut_fields.terminal_height,
-                terminal_block_id: cut_fields.terminal_block_id,
-                terminal_state_root: cut_fields.terminal_state_root,
-                terminal_chain_root: cut_fields.terminal_finalized_chain_root,
-                node_facts_sha256: cut_fields.node_facts_sha256,
-            },
-            validator_set,
-        )
-        .map_err(|error| anyhow!("construct zero-delta recovery context: {error}"))?;
-        let persisted = persist_recovery_zero_delta_cut_v1(
-            config.run_root(),
-            cut_artifact_sha256,
-            cut,
-            &context,
-            validator_set,
-        )
-        .context("persist canonical zero-delta cut")?;
-        self.revalidate_retained_inputs_v1()?;
-        persisted
-            .revalidate_fresh_v1(validator_set)
-            .context("revalidate persisted canonical zero-delta cut at commit")?;
-        Ok(RestartCutJoinedProcess2PersistedZeroDeltaOwnerV1 {
-            joined: self,
-            persisted,
-        })
-    }
-}
-
-impl std::fmt::Debug for RestartCutJoinedProcess2ZeroDeltaOwnerV1 {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        formatter
-            .debug_struct("RestartCutJoinedProcess2ZeroDeltaOwnerV1")
-            .field("journal_start", &self.started)
-            .field(
-                "restart_cut_artifact_sha256",
-                &hex::encode(self.started.restart_cut_artifact_sha256_v1()),
-            )
-            .field(
-                "restart_park_artifact_sha256",
-                &hex::encode(self.started.restart_park_artifact_sha256_v1()),
-            )
-            .field(
-                "restart_parked_ack_artifact_sha256",
-                &hex::encode(self.started.restart_parked_ack_artifact_sha256_v1()),
-            )
-            .field(
-                "restart_parked_ack_admission_set_sha256",
-                &hex::encode(self.started.restart_parked_ack_admission_set_sha256_v1()),
-            )
-            .field("zero_delta", &self.recovered.zero_delta_facts_v1())
-            .finish_non_exhaustive()
-    }
-}
-
-/// Dormant, non-Clone owner proving that the exact Node-confirmed ZeroDelta
-/// cut crossed its private create-new store boundary.  It grants no Ready,
-/// Start, activation, signer, timer, mesh, or journal append authority.
-#[must_use = "persisted zero-delta authority must remain retained until the N/N park barrier"]
-struct RestartCutJoinedProcess2PersistedZeroDeltaOwnerV1 {
-    joined: RestartCutJoinedProcess2ZeroDeltaOwnerV1,
-    persisted: StoredRecoveryZeroDeltaCutV1,
-}
-
-impl std::fmt::Debug for RestartCutJoinedProcess2PersistedZeroDeltaOwnerV1 {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        formatter
-            .debug_struct("RestartCutJoinedProcess2PersistedZeroDeltaOwnerV1")
-            .field("joined", &self.joined)
-            .field(
-                "zero_delta_artifact_sha256",
-                &hex::encode(self.persisted.artifact_sha256_v1()),
-            )
-            .finish_non_exhaustive()
     }
 }
 
@@ -1081,10 +812,7 @@ impl RuntimeEventSignatureProducerV1 for SharedRuntimeEventSignatureProducerV1 {
 /// Normal bounded entry. The default authority remains rejecting until an
 /// operator explicitly injects a separately provisioned external fence.
 pub fn run_bounded_consensus_v1<C>(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     commission: C,
 ) -> Result<BoundedConsensusRunOutcomeV1>
 where
@@ -1095,11 +823,19 @@ where
         + Send
         + 'static,
 {
-    run_bounded_consensus_with_external_fence_v1(
+    let ConsensusRunRequestV1 {
         config,
         duration,
         max_blocks,
         report_path,
+    } = request;
+    run_bounded_consensus_with_external_fence_v1(
+        crate::consensus_runtime::ConsensusRunRequestV1 {
+            config,
+            duration,
+            max_blocks,
+            report_path,
+        },
         Arc::new(RejectingExternalPeerLeaseAuthorityV1),
         commission,
     )
@@ -1109,10 +845,7 @@ where
 /// by the mesh's `establish_with_fence` gate; no default/deployed wrapper can
 /// reach this path without an explicit caller argument.
 pub fn run_bounded_consensus_with_external_fence_v1<C>(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     commission: C,
 ) -> Result<BoundedConsensusRunOutcomeV1>
@@ -1124,11 +857,19 @@ where
         + Send
         + 'static,
 {
-    run_bounded_consensus_with_authority_builder_v1(
+    let ConsensusRunRequestV1 {
         config,
         duration,
         max_blocks,
         report_path,
+    } = request;
+    run_bounded_consensus_with_authority_builder_v1(
+        crate::consensus_runtime::ConsensusRunRequestV1 {
+            config,
+            duration,
+            max_blocks,
+            report_path,
+        },
         external_fence,
         commission,
         |config, takeover, signer_lifetime| {
@@ -1145,10 +886,7 @@ where
 /// Explicit authority-composition entry for the bounded runtime.  The legacy
 /// local runtime-event signer path remains unchanged at this boundary.
 pub fn run_bounded_consensus_with_authority_builder_v1<C, A>(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     commission: C,
     authority_builder: A,
@@ -1169,11 +907,19 @@ where
         + Send
         + 'static,
 {
-    run_bounded_consensus_with_optional_runtime_event_producer_v1(
+    let ConsensusRunRequestV1 {
         config,
         duration,
         max_blocks,
         report_path,
+    } = request;
+    run_bounded_consensus_with_optional_runtime_event_producer_v1(
+        crate::consensus_runtime::ConsensusRunRequestV1 {
+            config,
+            duration,
+            max_blocks,
+            report_path,
+        },
         external_fence,
         commission,
         authority_builder,
@@ -1188,10 +934,7 @@ where
 /// so a process-1 `RestartCutRequiredForProcess2` result can retry process 2
 /// with the same external authority/session.
 pub fn run_bounded_consensus_with_authority_builder_and_runtime_event_producer_v1<C, A>(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     commission: C,
     authority_builder: A,
@@ -1213,11 +956,19 @@ where
         + Send
         + 'static,
 {
-    run_bounded_consensus_with_optional_runtime_event_producer_v1(
+    let ConsensusRunRequestV1 {
         config,
         duration,
         max_blocks,
         report_path,
+    } = request;
+    run_bounded_consensus_with_optional_runtime_event_producer_v1(
+        crate::consensus_runtime::ConsensusRunRequestV1 {
+            config,
+            duration,
+            max_blocks,
+            report_path,
+        },
         external_fence,
         commission,
         authority_builder,
@@ -1229,10 +980,7 @@ where
 
 #[allow(clippy::too_many_arguments)]
 fn run_bounded_consensus_with_optional_runtime_event_producer_v1<C, A>(
-    mut config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     commission: C,
     authority_builder: A,
@@ -1255,6 +1003,12 @@ where
         + Send
         + 'static,
 {
+    let ConsensusRunRequestV1 {
+        mut config,
+        duration,
+        max_blocks,
+        report_path,
+    } = request;
     require_fleet_signing_authority_for_builder_v1(
         config.has_local_consensus_secret(),
         fleet_producer.is_some(),
@@ -1417,11 +1171,7 @@ where
                 .context("write bounded runtime control locator")?;
             let barrier = match run_fleet_barrier_v1(
                 &config,
-                &authority,
-                &mesh,
-                &mut event_journal,
-                &replay_archive,
-                &mut runtime_control,
+                &authority,crate::consensus_runtime::FleetBarrierIoV1 { mesh: &mesh, event_journal: &mut event_journal, replay_archive: &replay_archive, runtime_control: &mut runtime_control },
                 &preflight,
                 fleet_producer,
             )
@@ -1443,11 +1193,7 @@ where
             let os_start = RuntimeOsSampleV1::capture_v1()?;
             let mut owner = BoundedConsensusOwnerV1::new(
                 config,
-                authority,
-                mesh,
-                event_journal,
-                replay_archive,
-                runtime_control,
+                authority,crate::consensus_runtime::ConsensusOwnerIoV1 { mesh, event_journal, replay_archive, runtime_control },
                 barrier,
                 preflight,
                 os_start,
@@ -1474,15 +1220,18 @@ where
 /// external authority must use the sibling entry that carries the complete
 /// fleet signer; otherwise a split authority graph could be assembled.
 pub fn run_deployed_bounded_consensus_with_external_authority_v1(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
     producer: Box<dyn SignatureProducerV0 + Send>,
     proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
+    let ConsensusRunRequestV1 {
+        config,
+        duration,
+        max_blocks,
+        report_path,
+    } = request;
     // Do not let a caller accidentally commission a partially externalized
     // authority graph. The complete fleet-signer entry below is the executable
     // path; this compatibility-shaped API stays an explicit error.
@@ -1512,21 +1261,26 @@ pub fn run_deployed_bounded_consensus_with_external_authority_v1(
 /// signer, watermark, and proposal authority before this can be a network
 /// launch.
 pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
     producer: Box<dyn SignatureProducerV0 + Send>,
     proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
     fleet_producer: Box<dyn FleetSignatureProducerV1>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
-    compose_deployed_external_authority_with_runtime_event_producer_v1(
+    let ConsensusRunRequestV1 {
         config,
         duration,
         max_blocks,
         report_path,
+    } = request;
+    compose_deployed_external_authority_with_runtime_event_producer_v1(
+        crate::consensus_runtime::ConsensusRunRequestV1 {
+            config,
+            duration,
+            max_blocks,
+            report_path,
+        },
         external_fence,
         external_watermark,
         producer,
@@ -1547,10 +1301,7 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v
 /// until their own external producers are wired, and activation flags remain
 /// unchanged.
 pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runtime_event_producer_v1(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
     producer: Box<dyn SignatureProducerV0 + Send>,
@@ -1558,11 +1309,19 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runt
     fleet_producer: Box<dyn FleetSignatureProducerV1>,
     runtime_event_producer: Box<dyn RuntimeEventSignatureProducerV1>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
-    compose_deployed_external_authority_with_runtime_event_producer_v1(
+    let ConsensusRunRequestV1 {
         config,
         duration,
         max_blocks,
         report_path,
+    } = request;
+    compose_deployed_external_authority_with_runtime_event_producer_v1(
+        crate::consensus_runtime::ConsensusRunRequestV1 {
+            config,
+            duration,
+            max_blocks,
+            report_path,
+        },
         external_fence,
         external_watermark,
         producer,
@@ -1580,10 +1339,7 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runt
 /// activation or production truth bit.
 #[allow(clippy::too_many_arguments)]
 pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_p2p_identity_producer_v1(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
     producer: Box<dyn SignatureProducerV0 + Send>,
@@ -1591,11 +1347,19 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_p2p_
     fleet_producer: Box<dyn FleetSignatureProducerV1>,
     p2p_identity_producer: Box<dyn P2pIdentitySignatureProducerV1>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
-    compose_deployed_external_authority_with_runtime_event_producer_v1(
+    let ConsensusRunRequestV1 {
         config,
         duration,
         max_blocks,
         report_path,
+    } = request;
+    compose_deployed_external_authority_with_runtime_event_producer_v1(
+        crate::consensus_runtime::ConsensusRunRequestV1 {
+            config,
+            duration,
+            max_blocks,
+            report_path,
+        },
         external_fence,
         external_watermark,
         producer,
@@ -1610,10 +1374,7 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_p2p_
 /// identity producers explicitly supplied.
 #[allow(clippy::too_many_arguments)]
 pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runtime_event_and_p2p_identity_producer_v1(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
     producer: Box<dyn SignatureProducerV0 + Send>,
@@ -1622,11 +1383,19 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runt
     runtime_event_producer: Box<dyn RuntimeEventSignatureProducerV1>,
     p2p_identity_producer: Box<dyn P2pIdentitySignatureProducerV1>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
-    compose_deployed_external_authority_with_runtime_event_producer_v1(
+    let ConsensusRunRequestV1 {
         config,
         duration,
         max_blocks,
         report_path,
+    } = request;
+    compose_deployed_external_authority_with_runtime_event_producer_v1(
+        crate::consensus_runtime::ConsensusRunRequestV1 {
+            config,
+            duration,
+            max_blocks,
+            report_path,
+        },
         external_fence,
         external_watermark,
         producer,
@@ -1766,10 +1535,7 @@ fn secret_free_role_guard_requires_runtime_event_and_p2p_only_v1() {
 /// the API boundary.
 #[allow(clippy::too_many_arguments)]
 fn compose_deployed_external_authority_with_runtime_event_producer_v1(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
     producer: Box<dyn SignatureProducerV0 + Send>,
@@ -1778,6 +1544,12 @@ fn compose_deployed_external_authority_with_runtime_event_producer_v1(
     runtime_event_producer: Option<Box<dyn RuntimeEventSignatureProducerV1>>,
     p2p_identity_producer: Option<Box<dyn P2pIdentitySignatureProducerV1>>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
+    let ConsensusRunRequestV1 {
+        config,
+        duration,
+        max_blocks,
+        report_path,
+    } = request;
     ensure!(
         !config.has_local_consensus_secret(),
         "external-authority composition refuses a config that loaded a local consensus secret"
@@ -1811,10 +1583,12 @@ fn compose_deployed_external_authority_with_runtime_event_producer_v1(
     match runtime_event_producer {
         Some(runtime_event_producer) => {
             run_bounded_consensus_with_optional_runtime_event_producer_v1(
-                config,
-                duration,
-                max_blocks,
-                report_path,
+                crate::consensus_runtime::ConsensusRunRequestV1 {
+                    config,
+                    duration,
+                    max_blocks,
+                    report_path,
+                },
                 external_fence,
                 |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
                 authority_builder,
@@ -1824,10 +1598,12 @@ fn compose_deployed_external_authority_with_runtime_event_producer_v1(
             )
         }
         None => run_bounded_consensus_with_optional_runtime_event_producer_v1(
-            config,
-            duration,
-            max_blocks,
-            report_path,
+            crate::consensus_runtime::ConsensusRunRequestV1 {
+                config,
+                duration,
+                max_blocks,
+                report_path,
+            },
             external_fence,
             |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
             authority_builder,
@@ -1841,16 +1617,21 @@ fn compose_deployed_external_authority_with_runtime_event_producer_v1(
 /// Normal deployed entry. The once-taken bootstrap carrier is consumed by
 /// `LoadedValidatorConfig` inside the bounded owner thread.
 pub fn run_deployed_bounded_consensus_v1(
-    config: LoadedValidatorConfig,
-    duration: Duration,
-    max_blocks: u64,
-    report_path: PathBuf,
+    request: ConsensusRunRequestV1,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
-    run_bounded_consensus_v1(
+    let ConsensusRunRequestV1 {
         config,
         duration,
         max_blocks,
         report_path,
+    } = request;
+    run_bounded_consensus_v1(
+        crate::consensus_runtime::ConsensusRunRequestV1 {
+            config,
+            duration,
+            max_blocks,
+            report_path,
+        },
         |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
     )
 }
@@ -2162,16 +1943,26 @@ fn sign_local_fleet_start_v1(
     .map_err(|error| anyhow!("admit local fleet Start signature: {error}"))
 }
 
+struct FleetBarrierIoV1<'a> {
+    mesh: &'a PersistentAuthenticatedPeerMeshV0,
+    event_journal: &'a mut RuntimeEventJournalV1,
+    replay_archive: &'a SignedReplayArchiveV1,
+    runtime_control: &'a mut RuntimeControlServerV1,
+}
+
 fn run_fleet_barrier_v1(
     config: &LoadedValidatorConfig,
     authority: &ContinuousValidatorAuthorityV0,
-    mesh: &PersistentAuthenticatedPeerMeshV0,
-    event_journal: &mut RuntimeEventJournalV1,
-    replay_archive: &SignedReplayArchiveV1,
-    runtime_control: &mut RuntimeControlServerV1,
+    io: FleetBarrierIoV1<'_>,
     preflight: &ConsensusRuntimePreflightV1,
     mut fleet_producer: Option<Box<dyn FleetSignatureProducerV1>>,
 ) -> Result<CompletedFleetBarrierV1> {
+    let FleetBarrierIoV1 {
+        mesh,
+        event_journal,
+        replay_archive,
+        runtime_control,
+    } = io;
     let initial_facts = authority.facts_v0()?;
     require_prestart_authority_cut_v1(initial_facts, replay_archive)?;
     let context = fleet_campaign_context_v1(config, preflight, initial_facts)?;
@@ -2395,10 +2186,13 @@ fn fleet_campaign_context_v1(
     let request = FleetCampaignRequestV1::new(
         FLEET_BARRIER_ROUND_V1,
         config.ordinary_start_height(),
-        preflight.duration_seconds,
-        PACEMAKER_BASE_TIMEOUT_V1.as_secs(),
-        TERMINAL_DRAIN_GRACE_V1.as_secs(),
-        CONSENSUS_RUNTIME_TIMEOUT_VIEW_BUDGET_ALLOWANCE_SECONDS_V1,
+        crate::fleet_barrier::FleetCampaignTimingV1 {
+            duration_seconds: preflight.duration_seconds,
+            pacemaker_base_timeout_seconds: PACEMAKER_BASE_TIMEOUT_V1.as_secs(),
+            terminal_drain_allowance_seconds: TERMINAL_DRAIN_GRACE_V1.as_secs(),
+            timeout_view_budget_allowance_seconds:
+                CONSENSUS_RUNTIME_TIMEOUT_VIEW_BUDGET_ALLOWANCE_SECONDS_V1,
+        },
         preflight.requested_max_blocks,
         preflight.target_height,
         transport,
@@ -4203,18 +3997,28 @@ impl LocalRestartTargetPreparedOwnerV1 {
     }
 }
 
+struct ConsensusOwnerIoV1 {
+    mesh: PersistentAuthenticatedPeerMeshV0,
+    event_journal: RuntimeEventJournalV1,
+    replay_archive: SignedReplayArchiveV1,
+    runtime_control: RuntimeControlServerV1,
+}
+
 impl BoundedConsensusOwnerV1 {
     fn new(
         config: LoadedValidatorConfig,
         authority: ContinuousValidatorAuthorityV0,
-        mesh: PersistentAuthenticatedPeerMeshV0,
-        event_journal: RuntimeEventJournalV1,
-        replay_archive: SignedReplayArchiveV1,
-        runtime_control: RuntimeControlServerV1,
+        io: ConsensusOwnerIoV1,
         barrier: CompletedFleetBarrierV1,
         preflight: ConsensusRuntimePreflightV1,
         os_start: RuntimeOsSampleV1,
     ) -> Result<Self> {
+        let ConsensusOwnerIoV1 {
+            mesh,
+            event_journal,
+            replay_archive,
+            runtime_control,
+        } = io;
         ensure!(
             mesh.local_validator() == config.local_validator()
                 && authority.local_validator_v0() == config.local_validator(),
@@ -4375,6 +4179,7 @@ impl BoundedConsensusOwnerV1 {
                 .map(BoundedConsensusRunOutcomeV1::CompletedReport),
             BoundedConsensusLoopOutcomeV1::Process1TargetParked => self
                 .finish_target_process1_handoff_v1()
+                .map(Box::new)
                 .map(BoundedConsensusRunOutcomeV1::Process1TargetParked),
         }
     }
@@ -5073,7 +4878,7 @@ impl BoundedConsensusOwnerV1 {
                         if is_restart_protocol_kind_v1(frame.kind) {
                             let routed = self
                                 .restart_ingress
-                                .admit_authenticated_mesh_frame_v1(inbound)
+                                .admit_authenticated_mesh_frame_v1(*inbound)
                                 .map_err(|error| anyhow!("admit direct restart frame: {error}"))?;
                             return routed
                                 .action
@@ -5129,7 +4934,7 @@ impl BoundedConsensusOwnerV1 {
                             let (restart_ingress, restart_relay_window) =
                                 (&mut self.restart_ingress, &mut self.restart_relay_window);
                             let routed = restart_ingress
-                                .admit_restart_relay_frame(inbound, restart_relay_window)
+                                .admit_restart_relay_frame(*inbound, restart_relay_window)
                                 .map_err(|error| anyhow!("admit sparse restart relay: {error}"))?;
                             let mut progressed = false;
                             if let Some(forward) = routed.forward {
@@ -9631,56 +9436,8 @@ mod tests {
     }
 
     #[test]
-    fn zero_delta_projection_store_is_linear_dormant_and_not_an_operational_bypass_v1() {
+    fn operational_process2_does_not_bypass_missing_recovery_authority_v1() {
         let source = include_str!("consensus_runtime.rs");
-        let method_start = source
-            .find("fn persist_zero_delta_cut_dormant_v1(")
-            .expect("dormant zero-delta persistence seam remains present");
-        let method_end = source[method_start..]
-            .find("impl std::fmt::Debug for RestartCutJoinedProcess2ZeroDeltaOwnerV1")
-            .map(|offset| method_start + offset)
-            .expect("dormant zero-delta persistence seam remains bounded");
-        let method = &source[method_start..method_end];
-        for required in [
-            "self.revalidate_retained_inputs_v1()?",
-            "restart_prepare_request_sha256_v1()",
-            "RecoveryZeroDeltaCutV1::new_direct7",
-            "Sha256::digest(&cut_bytes)",
-            "caught_up_cut_artifact_sha256: cut_artifact_sha256",
-            "RecoveryContextV1::new_direct7",
-            "persist_recovery_zero_delta_cut_v1",
-            ".revalidate_fresh_v1(validator_set)",
-            "RestartCutJoinedProcess2PersistedZeroDeltaOwnerV1",
-        ] {
-            assert!(method.contains(required), "dormant seam lost {required}");
-        }
-        assert!(!method.contains("cut.digest()"));
-        let first_revalidate = method
-            .find("self.revalidate_retained_inputs_v1()?")
-            .expect("pre-persist retained-owner revalidation remains present");
-        let persist = method
-            .find("persist_recovery_zero_delta_cut_v1")
-            .expect("canonical cut persistence remains present");
-        let final_revalidate = method
-            .rfind("self.revalidate_retained_inputs_v1()?")
-            .expect("commit-point retained-owner revalidation remains present");
-        assert!(first_revalidate < persist && persist < final_revalidate);
-
-        let owner_start = source
-            .find("struct RestartCutJoinedProcess2PersistedZeroDeltaOwnerV1")
-            .expect("persisted zero-delta composite remains present");
-        let owner_declaration = source[..owner_start]
-            .rfind("#[must_use")
-            .expect("persisted zero-delta composite remains must-use");
-        let owner_end = source[owner_start..]
-            .find("impl std::fmt::Debug for RestartCutJoinedProcess2PersistedZeroDeltaOwnerV1")
-            .map(|offset| owner_start + offset)
-            .expect("persisted zero-delta composite remains bounded");
-        let owner = &source[owner_declaration..owner_end];
-        assert!(owner.contains("joined: RestartCutJoinedProcess2ZeroDeltaOwnerV1"));
-        assert!(owner.contains("persisted: StoredRecoveryZeroDeltaCutV1"));
-        assert!(!owner.contains("derive(Clone"));
-
         let branch_start = source
             .find("Err(error) if error.requires_stored_restart_cut_v1()")
             .expect("process2 operational branch remains present");
@@ -10678,7 +10435,7 @@ mod tests {
             &validator_set,
             &keys,
             2,
-            &[parent_qc.clone()],
+            std::slice::from_ref(&parent_qc),
             &[0, 1, 2],
         );
         let alternate = timeout_certificate_for_classifier_test_v1(

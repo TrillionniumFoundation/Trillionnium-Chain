@@ -1318,10 +1318,12 @@ mod tests {
             FleetCampaignRequestV1::new(
                 1,
                 4,
-                60,
-                2,
-                30,
-                30,
+                crate::fleet_barrier::FleetCampaignTimingV1 {
+                    duration_seconds: 60,
+                    pacemaker_base_timeout_seconds: 2,
+                    terminal_drain_allowance_seconds: 30,
+                    timeout_view_budget_allowance_seconds: 30,
+                },
                 100,
                 103,
                 FleetBarrierTransportV1::Direct,
@@ -1575,7 +1577,7 @@ mod tests {
             .unwrap()
             .unwrap();
         let high_qc = QcRef::from(&qc);
-        for index in 0..5 {
+        for (index, key) in keys.iter().enumerate().take(5) {
             let root = TimeoutVote::signing_root_for_set(set, View::new(13), high_qc).unwrap();
             let timeout = TimeoutVote::new(
                 set.chain_id(),
@@ -1585,7 +1587,7 @@ mod tests {
                 set.id(),
                 high_qc,
                 set.validators()[index].id(),
-                SignatureBytes::from_array(keys[index].sign(root.as_bytes()).to_bytes()),
+                SignatureBytes::from_array(key.sign(root.as_bytes()).to_bytes()),
                 set,
             )
             .unwrap();

@@ -5604,7 +5604,7 @@ mod tests {
         transactions: Vec<Vec<u8>>,
         workloads: Vec<(u64, u64, Vec<Vec<u8>>)>,
         authorities: Vec<ContinuousValidatorAuthorityV0>,
-        recovery_configs: Vec<Box<(CoreConfig, NativeApplicationConfigV0)>>,
+        recovery_configs: Vec<(CoreConfig, NativeApplicationConfigV0)>,
         _temp: TempDir,
     }
 
@@ -5777,7 +5777,7 @@ mod tests {
             }
             keys.push(commissioned.signing_key);
             authorities.push(commissioned.authority);
-            recovery_configs.push(commissioned.recovery_config);
+            recovery_configs.push(*commissioned.recovery_config);
         }
 
         let workloads = workloads.expect("takeover ordinary workloads");
