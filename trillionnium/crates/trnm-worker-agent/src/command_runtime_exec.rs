@@ -82,6 +82,26 @@ mod unix {
         Ok(progressed)
     }
 
+    // Darwin killpg1 excludes SZOMB and returns EPERM when nfound == 0,
+    // although our unreaped leader pins the group. Accept that only after
+    // waitid proved exit AND both pipes reached EOF. Live/ambiguous EPERM
+    // remains failure. This is not isolation from credential/group escapes.
+    fn cleanup_already_terminal(error: rustix::io::Errno, terminal: bool) -> bool {
+        error == rustix::io::Errno::SRCH
+            || (cfg!(target_os = "macos") && terminal && error == rustix::io::Errno::PERM)
+    }
+
+    #[test]
+    fn permission_failure_is_never_excused_for_a_live_child() {
+        assert!(!cleanup_already_terminal(rustix::io::Errno::PERM, false));
+        assert!(!cleanup_already_terminal(rustix::io::Errno::IO, true));
+        assert!(cleanup_already_terminal(rustix::io::Errno::SRCH, false));
+        assert_eq!(
+            cleanup_already_terminal(rustix::io::Errno::PERM, true),
+            cfg!(target_os = "macos")
+        );
+    }
+
     pub(super) fn run(
         program: &str,
         base_args: &[String],
@@ -146,7 +166,7 @@ mod unix {
             .context("worker adapter reap failed")?;
         if let Err(e) = group_cleanup {
             anyhow::ensure!(
-                e == rustix::io::Errno::SRCH,
+                cleanup_already_terminal(e, collected.is_ok()),
                 "worker adapter group cleanup failed: {e}; collection={:?}",
                 collected.as_ref().err()
             );
@@ -258,5 +278,27 @@ mod tests {
         )
         .expect("actual adapter caller must drain before child exit");
         assert_eq!(response.output_text.len(), 262144);
+    }
+    #[test]
+    fn successful_leader_still_cleans_descendants_that_close_their_pipes() {
+        use std::{fs, process};
+        let marker = std::env::temp_dir().join(format!(
+            "trnm-worker-success-child-{}-{}",
+            process::id(),
+            crate::now_ms()
+        ));
+        let code = format!("import os,time; p=os.fork()\nif p==0:\n os.close(1); os.close(2); time.sleep(0.8); open({:?},'w').write('escaped')\nelse:\n os._exit(0)", marker.to_str().unwrap());
+        let output = python(&code, Duration::from_secs(3))
+            .expect("zombie-only Darwin groups must not turn success into EPERM");
+        assert!(output.status.success());
+        std::thread::sleep(Duration::from_secs(1));
+        let exists = marker.exists();
+        if exists {
+            let _ = fs::remove_file(&marker);
+        }
+        assert!(
+            !exists,
+            "cleanup cannot be skipped just because the leader exited"
+        );
     }
 }

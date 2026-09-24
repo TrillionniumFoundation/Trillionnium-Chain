@@ -33,8 +33,13 @@ or deadline returns an error, never a truncated successful response.
 Each invocation owns a new process group. Cleanup signals that group before
 reaping its still-pinned leader, on failure and on success, then permits at most
 one second for reaping. Failure to reap is explicitly reported, not success.
-This supports Linux/macOS process adapters, not hostile-code isolation: a child
-that deliberately escapes the group requires an external sandbox/cgroup policy.
+Darwin excludes zombies from group signaling and can return EPERM for the
+already exited, unreaped leader. Only after verified exit and EOF on both pipes
+is that specific terminal result accepted; live or ambiguous EPERM remains an
+error. Cleanup still signals the group even when a successful leader has left
+a same-user child that closed its pipes. This supports signalable same-user
+Linux/macOS process adapters, not hostile-code isolation: a child that escapes
+the group or changes signal credentials requires an external sandbox/cgroup policy.
 Non-Unix bounded adapters refuse before spawning until a native job owner exists.
 The cap is local Worker resource policy, not chain validity, token billing or
 permission to submit a transaction. Regression tests exercise the actual CLI
