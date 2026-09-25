@@ -411,3 +411,68 @@ fn vote_timeout_client_cannot_cross_into_proposal_service() {
         .expect("proposal-only service thread")
         .expect("proposal-only request handling");
 }
+
+fn fragmented_service_response_obeys_one_deadline(fragment_header: bool) {
+    use std::{
+        io::{Read, Write},
+        os::unix::net::UnixListener,
+    };
+    let temp = tempfile::tempdir().unwrap();
+    fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let socket = temp.path().join("slow.sock");
+    let listener = UnixListener::bind(&socket).unwrap();
+    fs::set_permissions(&socket, fs::Permissions::from_mode(0o600)).unwrap();
+    let responder = thread::spawn(move || {
+        let (mut stream, _) = listener.accept().unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(2)))
+            .unwrap();
+        let mut size = [0u8; 4];
+        stream.read_exact(&mut size).unwrap();
+        let size = usize::try_from(u32::from_be_bytes(size)).unwrap();
+        assert!(size <= 8192);
+        let mut request = vec![0; size];
+        stream.read_exact(&mut request).unwrap();
+        let header = 2u32.to_be_bytes();
+        if fragment_header {
+            for byte in header {
+                thread::sleep(Duration::from_millis(80));
+                if stream.write_all(&[byte]).is_err() {
+                    return;
+                }
+            }
+            let _ = stream.write_all(&[1, 7]);
+        } else {
+            stream.write_all(&header).unwrap();
+            for byte in [1, 7] {
+                thread::sleep(Duration::from_millis(80));
+                if stream.write_all(&[byte]).is_err() {
+                    return;
+                }
+            }
+        }
+    });
+    let mut cfg = fixture_config(&socket);
+    cfg.timeout = Duration::from_millis(120);
+    let mut producer = UnixRemoteSignerProducer::new(cfg).unwrap();
+    let start = Instant::now();
+    let result = producer.sign_intent_exact(&fixture_intent(u64::from(!fragment_header)));
+    let elapsed = start.elapsed();
+    responder.join().unwrap();
+    assert!(
+        matches!(result, Err(UnixRemoteSignerError::Io { ref source, .. })
+        if source.kind() == std::io::ErrorKind::TimedOut),
+        "one 120ms budget must expire, got {result:?} after {elapsed:?}"
+    );
+    assert!(elapsed < Duration::from_secs(1));
+}
+
+#[test]
+fn vote_fragmented_header_cannot_renew_absolute_deadline() {
+    fragmented_service_response_obeys_one_deadline(true);
+}
+
+#[test]
+fn timeout_fragmented_body_cannot_renew_absolute_deadline() {
+    fragmented_service_response_obeys_one_deadline(false);
+}

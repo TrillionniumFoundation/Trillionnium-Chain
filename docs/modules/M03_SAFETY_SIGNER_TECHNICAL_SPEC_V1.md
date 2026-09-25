@@ -1286,3 +1286,17 @@ request retry. The budget bounds network I/O, not interruption of a synchronous
 HSM/disk call; an expired post-key response remains an unknown client outcome.
 Regressions exercise a half-frame, idle peer, disconnect after signing, exact
 retry and retained authority failure using the actual server and journal.
+
+### Vote/Timeout and proposal client deadlines (M03-REMOTE-IO-DEADLINE-V1)
+
+The existing UnixRemoteSignerProducer and explicit proposal-purpose producer
+share one monotonic deadline for preflight, nonblocking connect, request bytes,
+response header and response body. Progress cannot renew it. An exhausted Unix
+accept queue is not a connected socket; retrying connect within the same budget
+must not resend a signature request. Deadline/disconnect is unavailability or an
+unknown signing outcome, never permission to change the intent or nonce. The
+existing journal owns explicit retry/readback. Framing and strict original
+request/signature/profile/role binding remain unchanged. No abandoned worker
+thread, key material, new signing authority or runtime activation is introduced.
+Public-client regressions cover fragmented headers and bodies for Vote/Timeout,
+with existing cross-purpose/service/journal and malformed-response tests retained.

@@ -9,12 +9,14 @@
 #[cfg(not(unix))]
 compile_error!("trnm-consensus-unix-remote-signer requires a Unix domain socket host");
 
+mod deadline_io;
+
 use std::{
     fmt, fs,
     io::{self, Read, Write},
-    os::unix::{fs::FileTypeExt, fs::PermissionsExt, net::UnixStream},
+    os::unix::{fs::FileTypeExt, fs::PermissionsExt},
     path::PathBuf,
-    time::Duration,
+    time::{Duration, Instant},
 };
 
 use trnm_consensus_crypto::StrictEd25519Verifier;
@@ -411,25 +413,15 @@ impl UnixRemoteSignerProducer {
                 maximum: maximum_request,
             });
         }
+        let deadline = Instant::now()
+            .checked_add(self.config.timeout)
+            .ok_or(UnixRemoteSignerError::InvalidConfig("timeout overflow"))?;
         self.preflight()?;
-        let mut stream = UnixStream::connect(&self.config.socket_path).map_err(|source| {
-            UnixRemoteSignerError::Io {
-                stage: "connect",
-                source,
-            }
+        let mut stream = deadline_io::DeadlineStream::connect(&self.config.socket_path, deadline)
+            .map_err(|source| UnixRemoteSignerError::Io {
+            stage: "connect",
+            source,
         })?;
-        stream
-            .set_read_timeout(Some(self.config.timeout))
-            .map_err(|source| UnixRemoteSignerError::Io {
-                stage: "read timeout",
-                source,
-            })?;
-        stream
-            .set_write_timeout(Some(self.config.timeout))
-            .map_err(|source| UnixRemoteSignerError::Io {
-                stage: "write timeout",
-                source,
-            })?;
         write_frame(&mut stream, request_bytes)?;
         let framed = read_frame(
             &mut stream,
@@ -638,7 +630,7 @@ fn derive_proposal_request_nonce(
         .expect("bounded deterministic proposal nonce material must be valid")
 }
 
-fn write_frame(stream: &mut UnixStream, body: &[u8]) -> Result<(), UnixRemoteSignerError> {
+fn write_frame(stream: &mut impl Write, body: &[u8]) -> Result<(), UnixRemoteSignerError> {
     if body.is_empty() {
         return Err(UnixRemoteSignerError::EmptyFrame);
     }
@@ -656,7 +648,7 @@ fn write_frame(stream: &mut UnixStream, body: &[u8]) -> Result<(), UnixRemoteSig
         })
 }
 
-fn read_frame(stream: &mut UnixStream, maximum: usize) -> Result<Vec<u8>, UnixRemoteSignerError> {
+fn read_frame(stream: &mut impl Read, maximum: usize) -> Result<Vec<u8>, UnixRemoteSignerError> {
     let mut header = [0u8; FRAME_HEADER_BYTES];
     stream.read_exact(&mut header).map_err(|source| {
         if source.kind() == io::ErrorKind::UnexpectedEof {
