@@ -1975,23 +1975,30 @@ fn validate_topology(
     manifest: &ManifestJson,
     expected_count: usize,
 ) -> Result<()> {
-    let reduced = match (
+    let reduced_first_host = match (
         topology.schema_version,
         topology.placement_profile.as_deref(),
     ) {
-        (1, None) => false,
-        (2, Some("desktop4-rog3-mac-v1"))
+        (1, None) => None,
+        (2, Some(profile @ ("desktop4-rog3-mac-v1" | "local4-rog3-mac-v1")))
             if expected_count == 7 && topology.weight_profile == "equal" =>
         {
-            true
+            Some(if profile == "local4-rog3-mac-v1" {
+                "local"
+            } else {
+                "desktop"
+            })
         }
         _ => bail!("topology schema/placement profile is outside the closed lab contract"),
     };
     let expected_participants: Vec<_> = expected_participants()
         .into_iter()
-        .filter(|host| !reduced || matches!(host.host_id, "desktop" | "rog" | "mac"))
+        .filter(|host| {
+            reduced_first_host
+                .is_none_or(|first| host.host_id == first || matches!(host.host_id, "rog" | "mac"))
+        })
         .collect();
-    let expected_allocations = if reduced {
+    let expected_allocations = if reduced_first_host.is_some() {
         vec![4, 3, 0]
     } else {
         match expected_count {
@@ -2823,7 +2830,25 @@ mod topology_tests {
                 admit(planner(count, weight, "canonical")).expect("unchanged canonical plan");
             }
         }
-        admit(planner(7, "equal", "desktop4-rog3-mac-v1")).expect("closed reduced plan");
+        // Exercise every profile advertised by the actual Python producer,
+        // not a second hand-maintained list that can silently omit a new one.
+        let producer = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../scripts/poco-fleet");
+        let profiles = Command::new("python3")
+            .current_dir(producer)
+            .args([
+                "-c",
+                "import json, plan_topology; print(json.dumps(plan_topology.PLACEMENT_PROFILES))",
+            ])
+            .output()
+            .expect("read actual producer profiles");
+        assert!(profiles.status.success());
+        let profiles: Vec<String> = serde_json::from_slice(&profiles.stdout).unwrap();
+        assert!(!profiles.is_empty());
+        for profile in profiles {
+            admit(planner(7, "equal", &profile)).unwrap_or_else(|error| {
+                panic!("advertised profile {profile} failed loader: {error}")
+            });
+        }
     }
 
     #[test]
@@ -2897,5 +2922,34 @@ mod topology_tests {
             .replace("192.168.0.4", "192.168.0.254")
             .replace("p4-desktop", "foreign-desktop");
         assert!(admit(serde_json::from_str(&substituted).unwrap()).is_err());
+    }
+    #[test]
+    fn local_rog_profile_binds_inventory_and_rejects_relabeling_v1() {
+        let original = planner(7, "equal", "local4-rog3-mac-v1");
+        admit(original.clone()).expect("actual local/ROG Python plan must load");
+        for (field, value) in [
+            ("placement_profile", json!("desktop4-rog3-mac-v1")),
+            ("schema_version", json!(1)),
+            ("validator_count", json!(31)),
+            ("weight_profile", json!("bounded-unequal")),
+        ] {
+            let mut changed = original.clone();
+            changed[field] = value;
+            assert!(admit(changed).is_err(), "accepted changed {field}");
+        }
+        for (field, value) in [
+            ("host_id", json!("desktop")),
+            ("management", json!("p4-desktop")),
+            ("lan_ip", json!("192.168.0.4")),
+            ("host_local_index", json!(1)),
+            ("p2p_port", json!(true)),
+        ] {
+            let mut changed = original.clone();
+            changed["validators"][0][field] = value;
+            assert!(admit(changed).is_err(), "accepted changed {field}");
+        }
+        let mut changed = original;
+        changed["participants"].as_array_mut().unwrap().swap(0, 1);
+        assert!(admit(changed).is_err());
     }
 }

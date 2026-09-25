@@ -710,6 +710,11 @@ succeeds. `all_six_hosts_participated_v1` remains false, and the existing full-
 fleet raw-evidence gate continues to reject every noncanonical placement.
 No successful reduced run may replace the retained canonical failures or claim
 independent operators, WAN, power-loss, performance or production acceptance.
+The validator and observer Rust loaders admit the same exact profile, not only
+the Python planner. The shared-loader regression enumerates every advertised
+Python placement and consumes its actual output. Changing a profile label without
+its exact inventory, host allocation, endpoints and peer order must still reject.
+
 
 ### Actual native client candidate campaign
 
