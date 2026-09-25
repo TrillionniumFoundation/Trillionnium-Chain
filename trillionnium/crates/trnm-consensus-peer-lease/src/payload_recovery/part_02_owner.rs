@@ -124,7 +124,8 @@ impl PayloadJournalRecoveryV1 {
         }
         let (directory, parent) = private_parent(path)?;
         let directory_metadata = directory.metadata()?;
-        let directory_identity = PayloadReplayDirectoryIdentityV1::from_metadata(&directory_metadata);
+        let directory_identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&directory_metadata);
         let directory_legacy_label = AuthorityPathIdentityV1::from_metadata(&directory_metadata);
         verify_bound_directory_identity(&parent, &directory, directory_identity)?;
         let lock_path = sidecar_path(path, "lock-v1")?;
