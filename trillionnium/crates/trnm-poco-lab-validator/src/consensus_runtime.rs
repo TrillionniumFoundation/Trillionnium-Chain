@@ -1254,15 +1254,10 @@ pub fn run_deployed_bounded_consensus_with_external_authority_v1(
 /// Explicit deployed composition entry carrying the fleet Ready/Start/relay/
 /// restart signer together with the Vote/Timeout and proposal producers.
 ///
-/// Keeping this as a separate API makes the authority graph impossible to
-/// under-specify at the call site: an external watermark alone is not enough
-/// to commission a node whose fleet barrier still needs signatures.  This is
-/// the first executable external-authority composition: every fleet signing
-/// surface is handed the same producer and the default deployed wrapper below
-/// remains on its rejecting/fixture path.  The production and activation truth
-/// bits are intentionally unchanged; callers still need a real peer-fence,
-/// signer, watermark, and proposal authority before this can be a network
-/// launch.
+/// This wrapper supplies fleet signing, but omits runtime-event and P2P
+/// identity producers. Secret-free configurations therefore require the full
+/// runtime-event-and-P2P sibling below; the existing role guards reject this
+/// partial composition. Neither wrapper changes production activation.
 pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1(
     request: ConsensusRunRequestV1,
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,

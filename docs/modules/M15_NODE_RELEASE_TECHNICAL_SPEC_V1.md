@@ -2201,3 +2201,16 @@ configuration refusal, callback-induced owner mutation before ACK, and cold
 read-only canonical journal/checkpoint verification. First timeout and nonempty
 C21/C22 execution remain open until separately exercised by this same owner;
 activation alone is not their acceptance.
+
+### Secret-free configuration projection (M15-EXTERNAL-CONFIG-V1)
+
+`verify-external-config` loads and authenticates the actual public deployment
+bundle without role secrets. Its complete-composition field names the existing
+entry carrying all seven explicit roles: peer lease, monotonic watermark,
+Vote/Timeout, proposal, fleet, runtime-event and P2P identity. The shorter fleet-
+only entry is incomplete for a secret-free configuration and must not be advertised
+as the complete constructor. Restart/terminal roots remain the fleet producer's
+responsibility; this projection invents no operator key or fallback. The serialized
+projection has behavior tests, not only a source-name search. Successful config
+verification starts no runtime, proves no external service ready, and does not
+change candidate, public-testnet, economic or production activation status.
