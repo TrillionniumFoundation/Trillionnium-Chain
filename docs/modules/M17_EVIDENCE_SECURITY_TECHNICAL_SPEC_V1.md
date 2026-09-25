@@ -822,3 +822,18 @@ shell errexit can discard its status, and writes a bounded validator/host/status
 observation to stderr. Local negative return codes describe a local signal; an
 SSH status alone does not prove a remote signal or its cause. These observations
 are diagnostics, not signed finality, independent evidence or a successful run.
+
+### Native campaign receipt shape and causal context
+
+The M17 collector must reject missing/unknown success-envelope and proof fields,
+noncanonical or oversized hex before decoding, non-u64 heights/sequences,
+non-u32 transaction indexes and integer aliases for Boolean authority fields.
+Funding records receive the same checks as business records. All responses share
+one chain/genesis/profile, unique bounded request IDs and exact transaction IDs.
+A retry preserves receive sequence and cannot regress a successful admission state.
+Retained proof class, parent header and package bytes are mandatory. Server
+`proof_verified` is a typed observation, not independent verification authority.
+Derived history fields keep their exact JSON types and finite numeric values.
+These are structural rejection conditions, not cryptographic or performance
+acceptance: the actual Rust client verifier and exact-source/run binding remain
+required. Synthetic structural fixtures never become a valid proof source.

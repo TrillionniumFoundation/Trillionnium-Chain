@@ -206,7 +206,8 @@ def test_owned_command_cleanup_v1():
         # running descendant; kill(pid, 0) alone cannot distinguish the two.
         try:
             state = pathlib.Path(f"/proc/{pid}/stat").read_text().rsplit(") ", 1)[1].split()[0]
-        except FileNotFoundError:
+        except (FileNotFoundError, ProcessLookupError):
+            # Linux procfs can report ESRCH if exit races the open/read.
             return False
         return state not in {"Z", "X"}
 
@@ -376,13 +377,9 @@ def main():
     reject(lambda:c.application_selection(native,None,1))
     reject(lambda:c.application_selection(legacy,pathlib.Path('/keys'),1))
     reject(lambda:c.application_selection(native,pathlib.Path('/keys'),17))
-    records=[]
-    for i in range(2):
-        h=f'{i+1:064x}'
-        response={"ok":True,"profile_sha256":"22"*32,"candidate_only":True,"data":{"native_tx_hash":h,"receive_sequence":str(i),"status":"pending"}}
-        outer=b'{}'
-        records.append({"kind":"funding" if i==0 else "transfer","native_tx_hash":h,"outer_hex":outer.hex(),"outer_sha256":hashlib.sha256(outer).hexdigest(),"submitted_monotonic_ns":10+i*10,"ack_monotonic_ns":11+i*10,"verified_monotonic_ns":12+i*10,"ack":response,"retry_ack":copy.deepcopy(response),"proof_response":copy.deepcopy(response),"mac_verification":{"candidate_only":True,"m05_intent_binding":False,"native_tx_hash":h,"proof_verified_by_client":True,"height":"4","index":i}})
-    document={"schema":c.PROFILE,"run_id":"candidate","coordinator_manifest_sha256":"11"*32,"profile_sha256":"22"*32,"submit_validator_id":"33"*32,"signing_host":"mac","verification_host":"mac","transport":"ssh-private-unix-ipc","started_monotonic_ns":1,"completed_monotonic_ns":30,"business_transfer_count":1,"business_window_ns":2,"business_goodput_per_second":500000000.0,"history_growth":c.derive_history_growth_v1(records,1),"records":records,"candidate_only":True,"m05_intent_binding":False,"fault_matrix_completed":False,"performance_acceptance":False,"host_attestation":False,"production_activation":False}
+    from native_campaign_contract_v1_test import structural_document, run_contract_tests
+    document = structural_document()
+    records = document["records"]
     def validate(d):c.validate_document(d,run_id='candidate',anchor='11'*32,validator_ids={'33'*32})
     validate(document) # Metadata only. These dummy bytes are never a crypto-positive.
     for field,value in [('schema','fake'),('run_id','other'),('coordinator_manifest_sha256','44'*32),('submit_validator_id','55'*32),('signing_host','local'),('transport','public-http'),('business_transfer_count',2),('business_window_ns',1),('business_goodput_per_second',1),('completed_monotonic_ns',1),('started_monotonic_ns',False),('candidate_only',False),('production_activation',True),('performance_acceptance',True),('host_attestation',True),('m05_intent_binding',True),('fault_matrix_completed',True)]:
@@ -428,6 +425,7 @@ def main():
     test_owned_command_cleanup_v1()
     test_validator_exit_attribution_v1()
     test_proof_verification_failure_diagnostic_v1()
+    run_contract_tests()
     print(f'native_campaign_structural_tests=passed negatives={rejected} cryptographic_success_claim=false real_campaign_required=true controlled_ssh_unix_transport=true bounded_io_deadline=true owned_group_cleanup=true')
 
 def test_proof_verification_failure_diagnostic_v1():

@@ -460,27 +460,122 @@ def derive_history_growth_v1(records: list[dict], transfers: int) -> dict:
     }
 
 
+def _closed_fields_v1(value, fields: set[str], label: str) -> None:
+    if type(value) is not dict or set(value) != fields:
+        raise RuntimeError(f"native {label} fields differ")
+
+
+def _bounded_hex_v1(value, maximum: int, label: str, *, exact: bool = False) -> None:
+    # Bound the encoded representation before fromhex or any proof allocation.
+    if (type(value) is not str or not 0 < len(value) <= maximum * 2
+            or len(value) % 2 or (exact and len(value) != maximum * 2)
+            or re.fullmatch(r"[0-9a-f]+", value) is None):
+        raise RuntimeError(f"native {label} is not canonical bounded hex")
+
+
+def _decimal_u64_v1(value, label: str, *, positive: bool = False) -> int:
+    if (type(value) is not str or not 1 <= len(value) <= 20
+            or re.fullmatch(r"0|[1-9][0-9]*", value) is None):
+        raise RuntimeError(f"native {label} is not canonical u64")
+    parsed = int(value)
+    if parsed > (1 << 64) - 1 or (positive and parsed == 0):
+        raise RuntimeError(f"native {label} is outside u64 bounds")
+    return parsed
+
+
+def _validate_record_shape_v1(record: dict, profile: str, context, request_ids: set[str]):
+    _bounded_hex_v1(record["native_tx_hash"], 32, "transaction hash", exact=True)
+    _bounded_hex_v1(record["outer_sha256"], 32, "outer digest", exact=True)
+    _bounded_hex_v1(record["outer_hex"], 256 * 1024, "signed bytes")
+    response_fields = {"schema", "request_id", "candidate_only", "chain_id", "genesis_hash",
+                       "profile_sha256", "ok", "data"}
+    for name in ("ack", "retry_ack", "proof_response"):
+        response = record[name]
+        _closed_fields_v1(response, response_fields, "response")
+        request_id = response["request_id"]
+        if (response["schema"] != "trnm.native-client.response.v1"
+                or type(request_id) is not str or len(request_id) > 64
+                or re.fullmatch(r"[A-Za-z0-9_.:-]+", request_id) is None
+                or request_id in request_ids):
+            raise RuntimeError("native response schema/request identity differs")
+        request_ids.add(request_id)
+        chain = response["chain_id"]
+        if (type(chain) is not str or not 0 < len(chain.encode("utf-8")) <= 128
+                or any(ord(char) < 32 or ord(char) == 127 for char in chain)):
+            raise RuntimeError("native response chain is invalid")
+        _bounded_hex_v1(response["genesis_hash"], 32, "response genesis", exact=True)
+        observed = (chain, response["genesis_hash"], response["profile_sha256"])
+        if response["profile_sha256"] != profile or (context is not None and observed != context):
+            raise RuntimeError("native response chain/genesis/profile differs")
+        context = observed
+        if name == "proof_response":
+            _closed_fields_v1(response["data"], {"native_tx_hash", "proof_class", "package_hex",
+                "parent_header_hex", "proof_verified", "m05_intent_binding"}, "proof")
+            if response["data"]["proof_class"] != "poco-three-chain-v0":
+                raise RuntimeError("native proof class differs")
+            _bounded_hex_v1(response["data"]["package_hex"], 4 * 1024 * 1024, "proof package")
+            _bounded_hex_v1(response["data"]["parent_header_hex"], 16 * 1024, "proof parent")
+        else:
+            _closed_fields_v1(response["data"], {"native_tx_hash", "receive_sequence", "status",
+                "proof_verified", "m05_intent_binding"}, "admission")
+            _decimal_u64_v1(response["data"]["receive_sequence"], "receive sequence")
+            if response["data"]["status"] not in ("pending", "in_flight", "committed"):
+                raise RuntimeError("native admission status differs")
+            if response["data"]["proof_verified"] is not (response["data"]["status"] == "committed"):
+                raise RuntimeError("native admission proof observation differs")
+        if (type(response["data"]["proof_verified"]) is not bool
+                or response["data"]["m05_intent_binding"] is not False):
+            raise RuntimeError("native response proof authority differs")
+    rank = {"pending": 0, "in_flight": 1, "committed": 2}
+    if rank[record["retry_ack"]["data"]["status"]] < rank[record["ack"]["data"]["status"]]:
+        raise RuntimeError("native retry admission regressed")
+    verified = record["mac_verification"]
+    _closed_fields_v1(verified, {"candidate_only", "m05_intent_binding", "native_tx_hash",
+        "proof_verified_by_client", "height", "index"}, "client verification")
+    if (verified["candidate_only"] is not True or verified["m05_intent_binding"] is not False
+            or verified["proof_verified_by_client"] is not True
+            or type(verified["index"]) is not int or not 0 <= verified["index"] < 1 << 32):
+        raise RuntimeError("native client verification type/authority differs")
+    _decimal_u64_v1(verified["height"], "verified height", positive=True)
+    return context
+
+
 def validate_document(document: dict, *, run_id: str, anchor: str, validator_ids: set[str]) -> None:
     keys = {"schema", "run_id", "coordinator_manifest_sha256", "profile_sha256", "submit_validator_id", "signing_host", "verification_host", "transport", "started_monotonic_ns", "completed_monotonic_ns", "business_transfer_count", "business_window_ns", "business_goodput_per_second", "history_growth", "records", "candidate_only", "m05_intent_binding", "fault_matrix_completed", "performance_acceptance", "host_attestation", "production_activation"}
-    if set(document) != keys or document["schema"] != PROFILE or document["run_id"] != run_id or document["coordinator_manifest_sha256"] != anchor:
+    if type(document) is not dict or set(document) != keys or document["schema"] != PROFILE or document["run_id"] != run_id or document["coordinator_manifest_sha256"] != anchor:
         raise RuntimeError("native campaign identity differs")
     if document["submit_validator_id"] not in validator_ids or document["signing_host"] != "mac" or document["verification_host"] != "mac" or document["transport"] != "ssh-private-unix-ipc":
         raise RuntimeError("native campaign physical roles differ")
     if document["candidate_only"] is not True or any(document[k] is not False for k in ("m05_intent_binding", "fault_matrix_completed", "performance_acceptance", "host_attestation", "production_activation")):
         raise RuntimeError("native campaign exceeds candidate authority")
+    _bounded_hex_v1(document["profile_sha256"], 32, "profile", exact=True)
+    _bounded_hex_v1(anchor, 32, "coordinator anchor", exact=True)
+    if type(document["records"]) is not list:
+        raise RuntimeError("native campaign records are not an array")
     n = document["business_transfer_count"]
     if type(n) is not int or not 1 <= n <= MAX_TRANSFERS or len(document["records"]) != n + 1:
         raise RuntimeError("native campaign counts differ")
     for key in ("started_monotonic_ns", "completed_monotonic_ns", "business_window_ns"):
-        if type(document[key]) is not int or document[key] <= 0:
+        if type(document[key]) is not int or not 0 < document[key] < 1 << 64:
             raise RuntimeError("native campaign timing is invalid")
     if document["completed_monotonic_ns"] <= document["started_monotonic_ns"]:
         raise RuntimeError("native campaign timing reversed")
+    rate = document["business_goodput_per_second"]
+    if type(rate) not in (float, int) or not math.isfinite(rate) or rate <= 0:
+        raise RuntimeError("native campaign rate must be finite positive numeric data")
+    previous_height = 0
     hashes: set[str] = set()
+    request_ids: set[str] = set()
+    context = None
     previous = document["started_monotonic_ns"]
     for index, record in enumerate(document["records"]):
-        if set(record) != {"kind", "native_tx_hash", "outer_hex", "outer_sha256", "submitted_monotonic_ns", "ack_monotonic_ns", "verified_monotonic_ns", "ack", "retry_ack", "proof_response", "mac_verification"}:
+        if type(record) is not dict or set(record) != {"kind", "native_tx_hash", "outer_hex", "outer_sha256", "submitted_monotonic_ns", "ack_monotonic_ns", "verified_monotonic_ns", "ack", "retry_ack", "proof_response", "mac_verification"}:
             raise RuntimeError("native record fields differ")
+        context = _validate_record_shape_v1(record, document["profile_sha256"], context, request_ids)
+        height = _decimal_u64_v1(record["mac_verification"]["height"], "verified height", positive=True)
+        if height < previous_height:
+            raise RuntimeError("native campaign verified heights regress")
+        previous_height = height
         if record["kind"] != ("funding" if index == 0 else "transfer"):
             raise RuntimeError("native business classification differs")
         native_hash = record["native_tx_hash"]
@@ -506,7 +601,7 @@ def validate_document(document: dict, *, run_id: str, anchor: str, validator_ids
     window = document["records"][-1]["verified_monotonic_ns"] - document["records"][1]["submitted_monotonic_ns"]
     if document["business_window_ns"] != window or document["business_goodput_per_second"] != n * 1_000_000_000 / window:
         raise RuntimeError("native actual goodput denominator differs")
-    if document["history_growth"] != derive_history_growth_v1(document["records"], n):
+    if base.canonical_json(document["history_growth"]) != base.canonical_json(derive_history_growth_v1(document["records"], n)):
         raise RuntimeError("native history-growth summary differs")
 
 
