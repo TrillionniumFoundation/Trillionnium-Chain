@@ -2,7 +2,7 @@
 
 use std::{
     fs,
-    os::unix::fs::PermissionsExt,
+    os::unix::fs::{FileTypeExt, PermissionsExt},
     path::Path,
     process::{Child, Command},
     thread,
@@ -62,9 +62,15 @@ fn spawn_fixture(dir: &TempDir, mode: FixtureModeV1, count: usize) -> (Child, st
     (child, socket)
 }
 
+fn private_socket_ready(socket: &Path) -> bool {
+    fs::symlink_metadata(socket).is_ok_and(|metadata| {
+        metadata.file_type().is_socket() && metadata.permissions().mode() & 0o7777 == 0o600
+    })
+}
+
 fn wait_for_socket(socket: &Path) {
     for _ in 0..200 {
-        if socket.exists() {
+        if private_socket_ready(socket) {
             return;
         }
         thread::sleep(Duration::from_millis(5));
@@ -83,7 +89,7 @@ fn spawn_authority(dir: &TempDir, count: usize) -> (Child, std::path::PathBuf, s
         .spawn()
         .expect("spawn durable fleet authority fixture");
     for _ in 0..400 {
-        if socket.exists() {
+        if private_socket_ready(&socket) {
             return (child, socket, log);
         }
         if let Some(status) = child.try_wait().expect("poll durable fixture") {
@@ -799,4 +805,23 @@ fn server_authority_failure_is_not_isolated_as_a_peer_error() {
         Err(UnixFleetAuthorityServerErrorV1::Authority(_))
     ));
     assert!(!socket.exists());
+}
+
+#[test]
+fn fixture_readiness_rejects_broad_socket_and_symlink() {
+    use std::os::unix::{fs::symlink, net::UnixListener};
+    let dir = tempfile::tempdir().unwrap();
+    let socket = dir.path().join("ready.sock");
+    assert!(!private_socket_ready(&socket));
+    let _listener = UnixListener::bind(&socket).unwrap();
+    fs::set_permissions(&socket, fs::Permissions::from_mode(0o666)).unwrap();
+    assert!(
+        !private_socket_ready(&socket),
+        "published inode is not final readiness"
+    );
+    fs::set_permissions(&socket, fs::Permissions::from_mode(0o600)).unwrap();
+    assert!(private_socket_ready(&socket));
+    let alias = dir.path().join("alias.sock");
+    symlink(&socket, &alias).unwrap();
+    assert!(!private_socket_ready(&alias));
 }

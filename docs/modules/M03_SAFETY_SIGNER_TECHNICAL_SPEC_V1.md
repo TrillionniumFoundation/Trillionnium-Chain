@@ -1300,3 +1300,8 @@ request/signature/profile/role binding remain unchanged. No abandoned worker
 thread, key material, new signing authority or runtime activation is introduced.
 Public-client regressions cover fragmented headers and bodies for Vote/Timeout,
 with existing cross-purpose/service/journal and malformed-response tests retained.
+
+Fleet fixture readiness observes an actual non-symlink Unix socket with final
+0600 permissions, not pathname existence alone. Bind publishes an inode before
+chmod; the original finite readiness deadline is retained. Production permission
+admission remains unchanged and must still reject a broad or non-socket endpoint.
