@@ -2572,6 +2572,13 @@ impl PersistentAuthenticatedPeerMeshV0 {
                     initial_sessions.push(facts);
                 }
                 Ok(SetupEventV0::Failed(reason)) => {
+                    // A sibling may report "stopped" after the initiating
+                    // worker latched its error. Preserve the original cause.
+                    let reason = terminal
+                        .lock()
+                        .ok()
+                        .and_then(|failure| failure.as_ref().map(MeshTerminalFailureV0::render))
+                        .unwrap_or(reason);
                     cleanup_failed_establish(&stop, &controls, workers, &fences);
                     bail!("mesh setup failed: {reason}");
                 }
@@ -2987,7 +2994,19 @@ fn outgoing_loop(
     ) {
         Ok(connection) => connection,
         Err(error) => {
-            let _ = setup_tx.send(SetupEventV0::Failed(error.render()));
+            let reason = error.render();
+            // Record the initiating setup failure before the coordinator can
+            // spend time joining workers or releasing disk-backed leases.
+            set_terminal(
+                &terminal,
+                &stop,
+                MeshTerminalFailureV0 {
+                    remote,
+                    direction: PeerDirectionV0::Outbound,
+                    reason: reason.clone(),
+                },
+            );
+            let _ = setup_tx.send(SetupEventV0::Failed(reason));
             return;
         }
     };
@@ -4982,6 +5001,58 @@ mod tests {
         ) -> Result<[u8; 64], P2pIdentityErrorV1> {
             Err(P2pIdentityErrorV1::Unavailable)
         }
+    }
+
+    #[test]
+    fn outgoing_setup_failure_latches_cause_and_stop_before_cleanup_v1() {
+        let (identity, peer) = authenticated_identity_fixture_v0();
+        let context = PeerAdmissionContextV1::new(0, [0x42; 32]).unwrap();
+        let fences = MeshFenceRegistryV1::new(
+            Arc::new(TestExternalPeerLeaseAuthorityV1::new(context)),
+            identity.local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+        )
+        .unwrap();
+        let (setup_tx, setup_rx) = mpsc::channel();
+        let (ingress_tx, _ingress_rx) = mpsc::sync_channel(1);
+        let (_outgoing_tx, outgoing_rx) = mpsc::sync_channel(1);
+        let stop = Arc::new(AtomicBool::new(false));
+        let terminal = Arc::new(Mutex::new(None));
+        let controls = Arc::new(Mutex::new(BTreeMap::new()));
+        // The real worker rejects an already-ended setup window before any
+        // connection or external lease. It must publish failure before return.
+        outgoing_loop(
+            peer.local,
+            "127.0.0.1:1".parse().unwrap(),
+            identity,
+            Instant::now(),
+            Duration::from_secs(1),
+            Duration::from_secs(1),
+            setup_tx,
+            ingress_tx,
+            outgoing_rx,
+            stop.clone(),
+            terminal.clone(),
+            controls,
+            fences,
+        );
+        let SetupEventV0::Failed(reason) = setup_rx.recv_timeout(Duration::from_secs(1)).unwrap()
+        else {
+            panic!("failed worker reported readiness")
+        };
+        assert!(
+            stop.load(Ordering::Acquire),
+            "setup failure must stop peers before cleanup"
+        );
+        let state = terminal.lock().unwrap();
+        let failure = state
+            .as_ref()
+            .expect("original setup cause retained before joins");
+        assert_eq!(failure.remote, peer.local);
+        assert_eq!(failure.direction, PeerDirectionV0::Outbound);
+        assert_eq!(failure.reason, reason);
+        assert!(!reason.is_empty());
     }
 
     struct AdmissionClockAuthorityV1 {

@@ -505,6 +505,12 @@ claim that a local sidecar closes restart-time non-resurrection.
 
 ## Observability and SLO
 
+An outgoing initial-session failure latches the same first-terminal state and
+emits the bounded diagnostic before reporting setup failure or joining owners.
+The setup coordinator preserves that first cause instead of replacing it with
+a secondary stopped-worker or cleanup error. This does not reinterpret a
+failed initial session as a successful Ready/Start barrier.
+
 The persistent candidate mesh retains its first terminal failure before shutdown.
 That same first failure emits one bounded stderr diagnostic at the worker boundary,
 so a peer's resulting EOF and coordinator cleanup cannot erase the originating
