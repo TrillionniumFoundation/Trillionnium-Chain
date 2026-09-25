@@ -487,6 +487,22 @@ non-due no-op polling, and delayed-response cadence. This bounded scheduling
 repair does not claim progress through unbounded storage stalls, an unavailable
 authority, or a successful independent multi-host campaign.
 
+### Live external lease clock observations
+
+The Unix lease owner distinguishes the last durable journal time from the
+highest time observed by this live owner. Successful reads, exact retries and
+rejections also advance the live observation floor. In particular, after an
+expiry refusal a lower clock sample must not make the same token usable again.
+A rollback latches the existing fail-stop state even if a direct caller tries
+again after the clock catches up. No journal write, token renewal, generation
+change or expiry extension is created by a read-only observation.
+
+On cold open the live floor starts from the strictly replayed durable journal
+floor. Read-only observations are not durable time attestations; protecting a
+whole-process or whole-machine rollback still requires independently provisioned
+clock/frontier authority. This patch does not invent that external source or
+claim that a local sidecar closes restart-time non-resurrection.
+
 ## Observability and SLO
 
 The persistent candidate mesh retains its first terminal failure before shutdown.
