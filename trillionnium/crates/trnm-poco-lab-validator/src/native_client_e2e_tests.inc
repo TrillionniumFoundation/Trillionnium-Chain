@@ -475,6 +475,20 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
             true,
             "committed status must carry a locally reverified durable proof"
         );
+        for (op, data) in [
+            ("proof", serde_json::json!({"native_tx_hash":hex::encode(hash)})),
+            ("transaction", serde_json::json!({"native_tx_hash":hex::encode(hash)})),
+        ] {
+            let response = native_read_without_repoll_v1(
+                &mut reopened, &socket,
+                serde_json::json!({"schema":"trnm.native-client.request.v1",
+                    "request_id":"durable-no-repoll", "op":op, "data":data}),
+                facts.finalized_height_v0(),
+            );
+            assert_eq!(response["ok"], true, "{response}");
+            assert_eq!(response["data"]["proof_verified"], true);
+            assert_eq!(response["data"]["native_tx_hash"], hex::encode(hash));
+        }
         // A committed WAL row without an independently re-verified proof must
         // fail closed instead of regressing to the old false status claim.
         let proof_path = client_root
@@ -808,4 +822,51 @@ print(json.dumps([valid.decode(), invalid.decode()]))
             assert!(!output.exists(), "invalid request produced accepted response artifact");
         }
     }
+}
+
+// Once a read has been assigned, deliberately do not poll the consensus owner.
+// Response delivery must not depend on another potentially expensive transition.
+fn native_read_without_repoll_v1(
+    owner: &mut crate::native_client_runtime::NativeClientRuntimeV1,
+    socket: &Path,
+    request: serde_json::Value,
+    finalized: u64,
+) -> serde_json::Value {
+    use std::io::{Read, Write};
+    let mut peer = std::os::unix::net::UnixStream::connect(socket).unwrap();
+    let bytes = serde_json::to_vec(&request).unwrap();
+    peer.write_all(&(bytes.len() as u32).to_be_bytes()).unwrap();
+    peer.write_all(&bytes).unwrap();
+    peer.set_read_timeout(Some(Duration::from_secs(2))).unwrap();
+    owner.poll_read_only_v1(finalized).unwrap();
+    let mut prefix = [0u8; 4];
+    peer.read_exact(&mut prefix)
+        .expect("read worker must deliver without a second owner poll");
+    let count = u32::from_be_bytes(prefix) as usize;
+    assert!(count <= 8 * 1024 * 1024 + 16 * 1024);
+    let mut response = vec![0; count];
+    peer.read_exact(&mut response).unwrap();
+    serde_json::from_slice(&response).unwrap()
+}
+
+#[test]
+fn native_read_query_reply_does_not_wait_for_another_owner_poll_v1() {
+    let temp = private_temp_v0();
+    let (set, _, _) = fixture_validator_set_v0(4);
+    let profile = crate::native_client_profile::generate_isolated_native_client_profile_v1(
+        &temp.path().join("keys"), set.chain_id().as_str(),
+    ).unwrap();
+    let socket = temp.path().join("native-client-v1").join(&profile.socket_basename);
+    let mut owner = crate::native_client_runtime::NativeClientRuntimeV1::open_parts_v1(
+        temp.path(), &set, set.validators()[0].id(), profile,
+    ).unwrap();
+    let response = native_read_without_repoll_v1(
+        &mut owner, &socket,
+        serde_json::json!({"schema":"trnm.native-client.request.v1",
+            "request_id":"no-repoll", "op":"proof",
+            "data":{"native_tx_hash":hex::encode([42u8;32])}}), 1,
+    );
+    assert_eq!(response["request_id"], "no-repoll");
+    assert_eq!(response["ok"], false);
+    assert_eq!(response["error"]["code"], "proof_unavailable");
 }

@@ -244,7 +244,7 @@ pub struct NativeClientRuntimeV1 {
     listener: UnixListener,
     clients: Vec<Client>,
     next_client_id: u64,
-    proof_jobs: Vec<(u64, std::thread::JoinHandle<Value>)>,
+    proof_jobs: Vec<(u64, std::thread::JoinHandle<()>)>,
     admission: NodeOwnedTxAdmissionBoundaryV0,
     ready: VecDeque<NativePendingAdmissionV1>,
     in_flight: BTreeMap<[u8; 32], NativePendingAdmissionV1>,
@@ -499,13 +499,10 @@ impl NativeClientRuntimeV1 {
                 continue;
             }
             let (id, job) = self.proof_jobs.swap_remove(index);
-            let reply = job
-                .join()
-                .unwrap_or_else(|_| self.error_reply("", "proof_unavailable", true));
-            if let Some(client) = self.clients.iter_mut().find(|c| c.id == id) {
-                client.proof_pending = false;
-                client.reply = Some(frame_response(&reply)?);
-            }
+            // Read workers own delivery. Reaping must never write a second
+            // response or turn a peer disconnect into a consensus failure.
+            let _ = job.join();
+            self.clients.retain(|client| client.id != id);
             progress = true;
         }
         while self.clients.len() < CONNECTION_MAX {
@@ -542,6 +539,7 @@ impl NativeClientRuntimeV1 {
                     2
                 })
             {
+                let _ = client.stream.shutdown(std::net::Shutdown::Both);
                 continue;
             }
             let mut keep = true;
@@ -597,20 +595,28 @@ impl NativeClientRuntimeV1 {
                                     if self.proof_jobs.len() < 2 {
                                         let reader = self.proof_reader_v1();
                                         let request_id = request_id.to_owned();
-                                        let job = std::thread::Builder::new()
-                                            .name("native-read-query".to_owned())
-                                            .spawn(move || match record_response_with_reader_v1(
-                                                &reader, &record,
-                                            ) {
-                                                Ok(data) => reader.reply(&request_id, data),
-                                                Err(_) => reader.error_reply(
-                                                    &request_id,
-                                                    "recovery_required",
+                                        if self
+                                            .spawn_read_query_v1(&mut client, move || {
+                                                match record_response_with_reader_v1(
+                                                    &reader, &record,
+                                                ) {
+                                                    Ok(data) => reader.reply(&request_id, data),
+                                                    Err(_) => reader.error_reply(
+                                                        &request_id,
+                                                        "recovery_required",
+                                                        true,
+                                                    ),
+                                                }
+                                            })
+                                            .is_err()
+                                        {
+                                            client.reply =
+                                                Some(frame_response(&self.error_reply(
+                                                    request.context().1,
+                                                    "backpressure",
                                                     true,
-                                                ),
-                                            })?;
-                                        self.proof_jobs.push((client.id, job));
-                                        client.proof_pending = true;
+                                                ))?);
+                                        }
                                         client.bytes.clear();
                                         self.clients.push(client);
                                         handled += 1;
@@ -635,14 +641,21 @@ impl NativeClientRuntimeV1 {
                                 if query_request {
                                     if self.proof_jobs.len() < 2 {
                                         let reader = self.proof_reader_v1();
-                                        let job = std::thread::Builder::new()
-                                            .name("native-read-query".to_owned())
-                                            .spawn(move || {
+                                        let request_id = request_id.to_owned();
+                                        if self
+                                            .spawn_read_query_v1(&mut client, move || {
                                                 reader
                                                     .read_query_reply_v1(request, finalized_height)
-                                            })?;
-                                        self.proof_jobs.push((client.id, job));
-                                        client.proof_pending = true;
+                                            })
+                                            .is_err()
+                                        {
+                                            client.reply =
+                                                Some(frame_response(&self.error_reply(
+                                                    &request_id,
+                                                    "backpressure",
+                                                    true,
+                                                ))?);
+                                        }
                                         client.bytes.clear();
                                         self.clients.push(client);
                                         handled += 1;
@@ -695,6 +708,27 @@ impl NativeClientRuntimeV1 {
             }
         }
         Ok(progress)
+    }
+    fn spawn_read_query_v1(
+        &mut self,
+        client: &mut Client,
+        query: impl FnOnce() -> Value + Send + 'static,
+    ) -> io::Result<()> {
+        let mut connection = ReadQueryConnectionV1(client.stream.try_clone()?);
+        // Reuse the connection's original budget; work and writes do not reset it.
+        let deadline = client.started + Duration::from_secs(5);
+        let job = std::thread::Builder::new()
+            .name("native-read-query".to_owned())
+            .spawn(move || {
+                if Instant::now() < deadline {
+                    let reply = query();
+                    let _ = write_read_reply_v1(&mut connection.0, &reply, deadline);
+                }
+                // RAII also closes the connection if a query panics.
+            })?;
+        self.proof_jobs.push((client.id, job));
+        client.proof_pending = true;
+        Ok(())
     }
     fn reply(&self, id: &str, data: Value) -> Value {
         json!({"schema":"trnm.native-client.response.v1","request_id":id,"candidate_only":true,"chain_id":self.set.chain_id().as_str(),"genesis_hash":hex::encode(self.set.genesis_hash().as_bytes()),"profile_sha256":hex::encode(self.profile.digest_v1().expect("validated canonical profile")),"ok":true,"data":data})
@@ -948,6 +982,11 @@ impl NativeClientRuntimeV1 {
 }
 impl Drop for NativeClientRuntimeV1 {
     fn drop(&mut self) {
+        for client in &self.clients {
+            // In-flight read workers hold a clone, not authority. Close both
+            // handles' I/O before releasing the endpoint namespace.
+            let _ = client.stream.shutdown(std::net::Shutdown::Both);
+        }
         if let Ok(metadata) = fs::symlink_metadata(&self.socket) {
             if (metadata.dev(), metadata.ino()) == self.socket_identity {
                 let _ = fs::remove_file(&self.socket);
@@ -1379,4 +1418,102 @@ fn frame_response(reply: &Value) -> Result<Vec<u8>> {
     let mut framed = (bytes.len() as u32).to_be_bytes().to_vec();
     framed.extend(bytes);
     Ok(framed)
+}
+
+/// Own only this read response's socket; no mutable application or signing state.
+struct ReadQueryConnectionV1(UnixStream);
+impl Drop for ReadQueryConnectionV1 {
+    fn drop(&mut self) {
+        let _ = self.0.shutdown(std::net::Shutdown::Both);
+    }
+}
+
+fn write_read_reply_v1(stream: &mut UnixStream, reply: &Value, deadline: Instant) -> Result<()> {
+    let framed = frame_response(reply)?;
+    let mut remaining = framed.as_slice();
+    while !remaining.is_empty() {
+        ensure!(
+            Instant::now() < deadline,
+            "native read response deadline expired"
+        );
+        match stream.write(&remaining[..remaining.len().min(IO_SLICE)]) {
+            Ok(0) => return Err(anyhow!("native read response peer closed")),
+            Ok(count) => remaining = &remaining[count..],
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                let budget = deadline
+                    .checked_duration_since(Instant::now())
+                    .filter(|duration| !duration.is_zero())
+                    .context("native read response deadline expired")?;
+                let timeout = rustix::event::Timespec::try_from(budget)?;
+                let mut poll = [rustix::event::PollFd::new(
+                    &*stream,
+                    rustix::event::PollFlags::OUT,
+                )];
+                match rustix::event::poll(&mut poll, Some(&timeout)) {
+                    Ok(0) => return Err(anyhow!("native read response deadline expired")),
+                    Ok(_) => {}
+                    Err(error) if error == rustix::io::Errno::INTR => continue,
+                    Err(error) => return Err(error.into()),
+                }
+            }
+            Err(error) => return Err(error.into()),
+        }
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod read_delivery_tests {
+    use super::*;
+
+    #[test]
+    fn read_reply_expired_budget_writes_nothing_v1() {
+        let (mut writer, mut reader) = UnixStream::pair().unwrap();
+        writer.set_nonblocking(true).unwrap();
+        reader.set_nonblocking(true).unwrap();
+        assert!(write_read_reply_v1(&mut writer, &json!({"ok":true}), Instant::now()).is_err());
+        let mut byte = [0];
+        assert_eq!(
+            reader.read(&mut byte).unwrap_err().kind(),
+            io::ErrorKind::WouldBlock
+        );
+    }
+
+    #[test]
+    fn read_reply_nonreading_peer_has_one_deadline_v1() {
+        let (mut writer, _reader) = UnixStream::pair().unwrap();
+        writer.set_nonblocking(true).unwrap();
+        let reply = json!({"payload":"x".repeat(4 * 1024 * 1024)});
+        let started = Instant::now();
+        assert!(
+            write_read_reply_v1(&mut writer, &reply, started + Duration::from_millis(150)).is_err()
+        );
+        assert!(started.elapsed() < Duration::from_secs(2));
+    }
+
+    #[test]
+    fn read_reply_closed_peer_is_local_error_v1() {
+        let (mut writer, reader) = UnixStream::pair().unwrap();
+        writer.set_nonblocking(true).unwrap();
+        drop(reader);
+        assert!(write_read_reply_v1(
+            &mut writer,
+            &json!({"ok":true}),
+            Instant::now() + Duration::from_secs(1)
+        )
+        .is_err());
+    }
+
+    #[test]
+    fn read_query_connection_drop_closes_cloned_socket_v1() {
+        let (writer, mut reader) = UnixStream::pair().unwrap();
+        let retained = writer.try_clone().unwrap();
+        drop(ReadQueryConnectionV1(writer));
+        reader
+            .set_read_timeout(Some(Duration::from_secs(1)))
+            .unwrap();
+        assert_eq!(reader.read(&mut [0]).unwrap(), 0);
+        drop(retained);
+    }
 }

@@ -45,7 +45,21 @@ hex without `0x`, decimal strings for u64, no private keys. Suggested local
 budgets are 16 connections, 2 seconds to receive a request, 5 seconds to complete
 it and at most 8 queued submit requests handled per consensus event-loop turn.
 Proof queries have a separate two-worker budget and cannot occupy proposal/vote
-work. Timeout after persistence is an unknown result to the client, not rollback.
+work. The same two bounded read workers own response delivery after the
+consensus actor has admitted a read-only request. Completion must not require
+another consensus-loop poll: the owner may be occupied by a durable transition.
+Each worker retains the original five-second connection deadline across proof
+validation and all nonblocking response writes; no syscall renews the budget.
+The sixteen-connection limit includes assigned read jobs. Disconnect, write
+backpressure and deadline expiry close only that connection and do not halt the
+consensus actor. Owner shutdown closes every assigned connection; workers never
+receive a mutable WAL, Core, signer or finality authority. A successful write is
+not a new commit and a failed response leaves the original operation recoverable.
+Disk/kernel stalls are not claimed to be forcibly preempted by this I/O deadline. A native client
+connect that encounters a full Unix accept queue has not connected. It retries
+only connection establishment under the original absolute deadline; writable
+readiness and a zero socket error alone cannot authorize request transmission.
+No submitted transaction or signing request is automatically replayed here. Timeout after persistence is an unknown result to the client, not rollback.
 
 All requests have `schema`, opaque `request_id` (1..64 ASCII token bytes), `op`
 and a closed `data` object. `request_id` correlates responses only; native hash

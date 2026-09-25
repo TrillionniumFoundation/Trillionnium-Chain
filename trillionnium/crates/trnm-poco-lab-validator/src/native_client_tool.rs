@@ -430,18 +430,23 @@ fn connect_until(path: &Path, deadline: Instant) -> Result<UnixStream> {
     loop {
         remaining(deadline)?;
         match rustix::net::connect(&stream, &address) {
-            Ok(()) => return Ok(stream),
+            Ok(()) | Err(rustix::io::Errno::ISCONN) => {
+                remaining(deadline)?;
+                stream.peer_addr()?;
+                return Ok(stream);
+            }
             Err(e) if e == rustix::io::Errno::INTR => continue,
-            Err(e)
-                if [
-                    rustix::io::Errno::INPROGRESS,
-                    rustix::io::Errno::ALREADY,
-                    rustix::io::Errno::AGAIN,
-                ]
-                .contains(&e) =>
-            {
+            Err(e) if e == rustix::io::Errno::AGAIN => {
+                // AF_UNIX backlog exhaustion has not initiated a connection.
+                // POLLOUT plus SO_ERROR=0 can still describe an unconnected fd.
+                // Retry connect only, never request bytes, within this deadline.
+                std::thread::sleep(remaining(deadline)?.min(Duration::from_millis(1)));
+            }
+            Err(e) if e == rustix::io::Errno::INPROGRESS || e == rustix::io::Errno::ALREADY => {
                 wait_io(&stream, rustix::event::PollFlags::OUT, deadline)?;
                 rustix::net::sockopt::socket_error(&stream)??;
+                stream.peer_addr()?;
+                remaining(deadline)?;
                 return Ok(stream);
             }
             Err(e) => return Err(e.into()),
@@ -775,6 +780,62 @@ mod tests {
         )
         .is_err());
     }
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn native_client_full_accept_queue_never_returns_unconnected_socket_v1() {
+        let temp = tempfile::tempdir().unwrap();
+        let socket = temp.path().join("backlog.sock");
+        let listener = std::os::unix::net::UnixListener::bind(&socket).unwrap();
+        rustix::net::listen(&listener, 0).unwrap();
+        let _queued = UnixStream::connect(&socket).unwrap();
+        let started = Instant::now();
+        let result = connect_until(&socket, started + Duration::from_millis(80));
+        assert!(result.is_err(), "a saturated accept queue did not connect");
+        assert!(started.elapsed() >= Duration::from_millis(60));
+        assert!(started.elapsed() < Duration::from_secs(2));
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn native_client_accept_queue_recovery_uses_original_deadline_v1() {
+        let temp = tempfile::tempdir().unwrap();
+        let socket = temp.path().join("recover.sock");
+        let listener = std::os::unix::net::UnixListener::bind(&socket).unwrap();
+        rustix::net::listen(&listener, 0).unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let _queued = UnixStream::connect(&socket).unwrap();
+        let server = std::thread::spawn(move || {
+            std::thread::sleep(Duration::from_millis(25));
+            let _first = listener.accept().unwrap();
+            let deadline = Instant::now() + Duration::from_secs(2);
+            loop {
+                match listener.accept() {
+                    Ok((mut accepted, _)) => {
+                        accepted
+                            .set_read_timeout(Some(Duration::from_secs(1)))
+                            .unwrap();
+                        let mut payload = [0u8; 1];
+                        accepted.read_exact(&mut payload).unwrap();
+                        return payload;
+                    }
+                    Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                        assert!(Instant::now() < deadline);
+                        std::thread::sleep(Duration::from_millis(1));
+                    }
+                    Err(error) => panic!("{error}"),
+                }
+            }
+        });
+        let deadline = Instant::now() + Duration::from_secs(1);
+        let mut stream = connect_until(&socket, deadline).unwrap();
+        let sent = write_until(&mut stream, &[42], deadline);
+        assert!(
+            sent.is_ok(),
+            "must establish a connection before sending: {sent:?}"
+        );
+        assert_eq!(server.join().unwrap(), [42]);
+    }
+
     #[test]
     fn native_sync_transport_rejects_wrong_chain_context_v1() {
         let request = json!({
