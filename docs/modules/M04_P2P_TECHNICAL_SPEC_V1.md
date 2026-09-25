@@ -558,6 +558,15 @@ returns EOF, and a stalled reader/writer times out without changing store state.
 Socket write success is not application acknowledgement: after client response
 loss the exact operation must still recover the same durable result.
 
+### Preserve the actual cause of rejected lease admission
+
+When maintenance of an existing edge prevents a new inbound/outbound admission,
+the terminal diagnostic retains both the maintenance context and the nested
+authority rejection. The existing escaped first-cause size limit still applies.
+Local lock-wait, renewal lateness and failed RPC duration are monotonic diagnostic
+measurements only; they do not issue authority, prove a global failure order,
+change the thirty-second TTL or extend any admission/response deadline.
+
 ## Observability and SLO
 
 An outgoing initial-session failure latches the same first-terminal state and

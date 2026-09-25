@@ -82,6 +82,14 @@ const WORKER_POLL: Duration = Duration::from_millis(50);
 const MAX_HANDSHAKE_ATTEMPT: Duration = Duration::from_secs(2);
 const MESH_EXTERNAL_FENCE_TTL_V1: Duration = Duration::from_secs(30);
 
+fn fence_admission_failure_reason_v1(direction: PeerDirectionV0, error: &anyhow::Error) -> String {
+    let direction = match direction {
+        PeerDirectionV0::Inbound => "inbound",
+        PeerDirectionV0::Outbound => "outbound",
+    };
+    format!("external fence rejected {direction} session: {error:#}")
+}
+
 fn fence_renew_interval(ttl: Duration) -> Duration {
     // Renew well before the authority-side expiry.  The lower bound keeps a
     // short deterministic fixture TTL from turning every frame into an RPC,
@@ -1407,10 +1415,12 @@ impl MeshFenceRegistryV1 {
         generation: u64,
     ) -> Result<Option<ExternalPeerLeaseTokenV1>> {
         let key = (direction, remote);
+        let lock_started = Instant::now();
         let _admission_guard = self
             .admission_lock
             .lock()
             .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        let lock_wait = lock_started.elapsed();
         if self.refuse_quarantined_admission_locked_v1(remote)? {
             return Ok(None);
         }
@@ -1449,7 +1459,13 @@ impl MeshFenceRegistryV1 {
         // A burst of serialized handshakes must service existing due leases
         // before taking another slow authority admission. The supervisor may
         // itself be waiting for this lock; no mutex fairness is assumed.
-        self.renew_due_before_admission_locked_v1()?;
+        self.renew_due_before_admission_locked_v1()
+            .with_context(|| {
+                format!(
+                    "admission maintenance failed after lock_wait_ms={}",
+                    lock_wait.as_millis()
+                )
+            })?;
         // Validate the peer scope and bounded TTL before asking the host
         // authority to mint a receipt. Otherwise an invalid internal
         // generation could leave an externally live host token with no
@@ -1612,10 +1628,13 @@ impl MeshFenceRegistryV1 {
         }
         if Instant::now() >= entry.next_renew_at {
             let authority_started = Instant::now();
-            token = self
-                .authority
-                .renew(token)
-                .map_err(|error| anyhow!("external fence renewal failed: {error}"))?;
+            token = self.authority.renew(token).map_err(|error| {
+                anyhow!(
+                "external fence renewal failed: {error}; rpc_elapsed_ms={} renewal_late_by_ms={}",
+                authority_started.elapsed().as_millis(),
+                authority_started.saturating_duration_since(entry.next_renew_at).as_millis()
+            )
+            })?;
             if token.scope() != entry.token.scope() {
                 bail!("external fence renewal changed the lease scope")
             }
@@ -1698,10 +1717,14 @@ impl MeshFenceRegistryV1 {
                 })?;
         }
         let authority_started = Instant::now();
-        let renewed = self
-            .authority
-            .renew(entry.token)
-            .map_err(|error| anyhow!("external fence renewal failed: {error}"))?;
+        let renewed =
+            self.authority.renew(entry.token).map_err(|error| {
+                anyhow!(
+                "external fence renewal failed: {error}; rpc_elapsed_ms={} renewal_late_by_ms={}",
+                authority_started.elapsed().as_millis(),
+                authority_started.saturating_duration_since(entry.next_renew_at).as_millis()
+            )
+            })?;
         if renewed.scope() != entry.token.scope() {
             bail!("external fence renewal changed the lease scope")
         }
@@ -3567,7 +3590,10 @@ fn accept_loop(
                         MeshTerminalFailureV0 {
                             remote,
                             direction: PeerDirectionV0::Inbound,
-                            reason: format!("external fence rejected inbound session: {error}"),
+                            reason: fence_admission_failure_reason_v1(
+                                PeerDirectionV0::Inbound,
+                                &error,
+                            ),
                         },
                     );
                     join_children(children, &controls, &terminal, &stop);
@@ -4041,9 +4067,9 @@ fn connect_authenticated_until(
             }
             Err(error) => {
                 remove_control(controls, PeerDirectionV0::Outbound, remote);
-                return Err(ConnectAttemptFailureV0::Terminal(format!(
-                    "external fence rejected outbound session: {error}"
-                )));
+                return Err(ConnectAttemptFailureV0::Terminal(
+                    fence_admission_failure_reason_v1(PeerDirectionV0::Outbound, &error),
+                ));
             }
         }
         let host_attestation = fences
@@ -5191,17 +5217,22 @@ mod tests {
             .unwrap()
             .next_renew_at = Instant::now() - Duration::from_secs(1);
         authority.inner.advance_clock_millis(30_000);
-        assert!(
-            fences
-                .acquire(
-                    PeerDirectionV0::Outbound,
-                    ValidatorId::new([0x52; 32]),
-                    [0x62; 32],
-                    1,
-                )
-                .is_err(),
-            "expired old lease must not be hidden by a new admission"
-        );
+        let error = fences
+            .acquire(
+                PeerDirectionV0::Outbound,
+                ValidatorId::new([0x52; 32]),
+                [0x62; 32],
+                1,
+            )
+            .expect_err("expired old lease must not be hidden by a new admission");
+        for direction in [PeerDirectionV0::Inbound, PeerDirectionV0::Outbound] {
+            let reason = fence_admission_failure_reason_v1(direction, &error);
+            assert!(reason.contains("existing lease maintenance before admission"));
+            assert!(
+                reason.contains("external fence lease expired"),
+                "actual authority rejection was hidden: {reason}"
+            );
+        }
         assert_eq!(authority.acquire_calls.load(Ordering::Acquire), 1);
         assert_eq!(fences.active_count().unwrap(), 1);
     }
