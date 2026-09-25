@@ -182,3 +182,72 @@ fn separate_daemon_process_refuses_tampered_and_partial_journals() {
     assert!(!wait_for_exit(partial_child).success());
     assert!(!partial_ready.exists());
 }
+
+// Own every subprocess even when a new regression intentionally fails.
+struct DaemonChildGuardV1(Child);
+impl Drop for DaemonChildGuardV1 {
+    fn drop(&mut self) {
+        let _ = self.0.kill();
+        let _ = self.0.wait();
+    }
+}
+
+#[test]
+fn daemon_disconnects_do_not_revoke_other_sessions_v1() {
+    use std::{io::Write, net::Shutdown, os::unix::net::UnixStream};
+    let directory = private_tempdir();
+    let (child, socket, journal) = start_daemon(directory.path());
+    let mut child = DaemonChildGuardV1(child);
+    let client = UnixPeerLeaseClientV1::connect(&socket);
+    let token = client.acquire(scope(), [0x91; 32], 1, 30_000).unwrap();
+    let original = fs::read(&journal).unwrap();
+    let mut partial = Vec::from(*b"TPLS");
+    partial.extend_from_slice(&200u32.to_le_bytes());
+    partial.resize(40, 0);
+    for length in [0, 1, 7, 8, 40] {
+        let mut abandoned = UnixStream::connect(&socket).unwrap();
+        abandoned.write_all(&partial[..length]).unwrap();
+        abandoned.shutdown(Shutdown::Both).unwrap();
+        drop(abandoned);
+        // A real subsequent request is the ordering barrier; no test sleep
+        // or daemon restart conceals loss of the authority process.
+        assert_eq!(client.revalidate(token).unwrap(), token, "prefix={length}");
+        assert_eq!(fs::read(&journal).unwrap(), original);
+        assert!(child.0.try_wait().unwrap().is_none());
+    }
+    client.release(token).unwrap();
+    let successor = client.acquire(scope(), [0x92; 32], 2, 30_000).unwrap();
+    assert!(matches!(
+        client.revalidate(token),
+        Err(PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::Fenced))
+    ));
+    assert_eq!(client.revalidate(successor).unwrap(), successor);
+}
+
+#[test]
+fn daemon_anchor_io_failure_still_terminates_authority_v1() {
+    let directory = private_tempdir();
+    let (child, socket, _journal) = start_daemon(directory.path());
+    let mut child = DaemonChildGuardV1(child);
+    let client = UnixPeerLeaseClientV1::connect(&socket);
+    let token = client.acquire(scope(), [0x93; 32], 1, 30_000).unwrap();
+    // This test owns the entire temporary namespace. Force a real anchor
+    // publication failure after journal append, not a simulated client error.
+    let anchor = directory.path().join(".authority.log.head-v1");
+    fs::remove_file(&anchor).unwrap();
+    fs::create_dir(&anchor).unwrap();
+    assert!(client.renew(token, 30_000).is_err());
+    let deadline = Instant::now() + Duration::from_secs(5);
+    loop {
+        if let Some(status) = child.0.try_wait().unwrap() {
+            assert!(!status.success());
+            break;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "authority continued after anchor I/O failure"
+        );
+        thread::sleep(Duration::from_millis(10));
+    }
+    assert!(client.revalidate(token).is_err());
+}

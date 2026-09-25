@@ -503,6 +503,34 @@ whole-process or whole-machine rollback still requires independently provisioned
 clock/frontier authority. This patch does not invent that external source or
 claim that a local sidecar closes restart-time non-resurrection.
 
+### Lease daemon connection and authority failure isolation
+
+The existing Unix lease daemon distinguishes failures by the operation that
+produced them, not by a shared I/O error number. An EOF, truncated request,
+reset, response disconnect or socket deadline closes only that accepted
+connection. The next client must still reach the same live journal owner.
+An admitted operation whose response was lost remains committed; exact acquire
+retry recovers the original token rather than creating another reservation.
+Malformed prefixes must leave the journal and existing leases unchanged.
+
+Clock rollback, corrupt authority state and any journal/anchor I/O failure
+terminate the daemon. These failures keep priority over a simultaneous expired
+response deadline or a disconnected client: a storage timeout is not a socket
+timeout. The existing five-second operation budget, thirty-second mesh lease,
+one-request-per-connection framing and credential/expiry/generation checks are
+unchanged. This isolates client failures; it does not make storage calls
+interruptible or establish independent anti-rollback authority.
+
+### Recovery socket uses the existing directory-owner identity
+
+The optional `candidate-recovery-socket` daemon and client retain the same
+`PayloadReplayDirectoryIdentityV1` as the payload/acknowledgement owners, not
+the regular-file legacy label. Binding a socket or adding an unrelated child
+does not replace its directory owner. A changed directory inode, owner/mode,
+symlink or noncanonical path still fails the existing descriptor/path check.
+This repairs the feature's typed source integration; it changes neither wire
+identity nor the candidate endpoint's authority or activation status.
+
 ## Observability and SLO
 
 An outgoing initial-session failure latches the same first-terminal state and

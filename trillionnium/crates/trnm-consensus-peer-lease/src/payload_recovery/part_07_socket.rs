@@ -161,7 +161,8 @@ impl PayloadReplayRecoveryDaemonV1 {
             ))?
             .to_path_buf();
         let parent_file = File::open(&parent)?;
-        let parent_identity = descriptor_identity(&parent_file)?;
+        let parent_identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&parent_file.metadata()?);
         verify_bound_directory_identity(&parent, &parent_file, parent_identity)?;
         if fs::symlink_metadata(&self.socket_path).is_ok() {
             return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
@@ -338,7 +339,8 @@ impl PayloadReplayRecoveryClientV1 {
                     "recovery socket path has no parent",
                 ))?;
         let parent_file = File::open(parent)?;
-        let parent_identity = descriptor_identity(&parent_file)?;
+        let parent_identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&parent_file.metadata()?);
         verify_bound_directory_identity(parent, &parent_file, parent_identity)
             .map_err(PayloadReplayRecoverySocketErrorV1::Recovery)?;
         let metadata = fs::symlink_metadata(&self.socket_path)?;
@@ -622,7 +624,7 @@ fn verify_socket_identity(
     socket_path: &Path,
     parent: &Path,
     parent_file: &File,
-    parent_identity: AuthorityPathIdentityV1,
+    parent_identity: PayloadReplayDirectoryIdentityV1,
     expected: RecoverySocketIdentityV1,
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
     verify_bound_directory_identity(parent, parent_file, parent_identity)?;
@@ -1384,5 +1386,39 @@ mod socket_tests {
                 PayloadReplayRecoveryErrorV1::Io(ref error)
             ) if error.kind() == io::ErrorKind::TimedOut
         ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn recovery_socket_directory_pin_allows_children_but_rejects_replacement_v1() {
+        let root = tempfile::tempdir().unwrap();
+        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let parent = root.path().join("endpoint");
+        fs::create_dir(&parent).unwrap();
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o700)).unwrap();
+        let parent_file = File::open(&parent).unwrap();
+        let identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&parent_file.metadata().unwrap());
+        let socket = parent.join("owner.sock");
+        let listener = UnixListener::bind(&socket).unwrap();
+        set_recovery_socket_permissions(&socket).unwrap();
+        let expected = socket_identity(&socket).unwrap();
+        verify_socket_identity(&socket, &parent, &parent_file, identity, expected).unwrap();
+        fs::create_dir(parent.join("child")).unwrap();
+        verify_socket_identity(&socket, &parent, &parent_file, identity, expected).unwrap();
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o750)).unwrap();
+        assert!(
+            verify_socket_identity(&socket, &parent, &parent_file, identity, expected).is_err()
+        );
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o700)).unwrap();
+        verify_socket_identity(&socket, &parent, &parent_file, identity, expected).unwrap();
+        fs::rename(&parent, root.path().join("displaced")).unwrap();
+        fs::create_dir(&parent).unwrap();
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o700)).unwrap();
+        assert!(verify_bound_directory_identity(&parent, &parent_file, identity).is_err());
+        fs::remove_dir(&parent).unwrap();
+        std::os::unix::fs::symlink(root.path().join("displaced"), &parent).unwrap();
+        assert!(verify_bound_directory_identity(&parent, &parent_file, identity).is_err());
+        drop(listener);
     }
 }

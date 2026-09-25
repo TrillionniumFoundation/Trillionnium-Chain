@@ -362,30 +362,15 @@ impl UnixPeerLeaseDaemonV1 {
         for stream in listener.incoming() {
             match stream {
                 Ok(mut stream) => {
-                    if let Err(error) =
-                        serve_connection(&mut stream, &mut store, self.operation_timeout)
-                    {
-                        // A malformed request is isolated to its connection;
-                        // authority/journal errors are returned and terminate
-                        // the daemon rather than continuing unsafely.
-                        match error {
-                            PeerLeaseErrorV1::Rejected(
-                                LeaseRejectCodeV1::ClockRollback
-                                | LeaseRejectCodeV1::AuthorityCorrupt,
-                            ) => return Err(error),
-                            PeerLeaseErrorV1::Io(ref io_error)
-                                if matches!(
-                                    io_error.kind(),
-                                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
-                                ) =>
-                            {
-                                continue
-                            }
-                            PeerLeaseErrorV1::Io(_) => return Err(error),
-                            PeerLeaseErrorV1::Rejected(_)
-                            | PeerLeaseErrorV1::InvalidRequest(_)
-                            | PeerLeaseErrorV1::Protocol(_) => continue,
+                    match serve_connection(&mut stream, &mut store, self.operation_timeout) {
+                        Ok(()) => {}
+                        Err(LeaseConnectionFailureV1::Connection(error)) => {
+                            // The peer owns only this connection. In particular,
+                            // EOF/reset/broken pipe cannot destroy every lease.
+                            // Do not log unbounded client-selected failures.
+                            drop(error);
                         }
+                        Err(LeaseConnectionFailureV1::Authority(error)) => return Err(error),
                     }
                 }
                 Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
@@ -450,57 +435,67 @@ fn validate_daemon_paths_v1(
     Ok(())
 }
 
+// Error origin is authority-sensitive: a socket timeout is recoverable, a
+// storage timeout is not. Never classify them by io::ErrorKind alone.
+#[derive(Debug)]
+enum LeaseConnectionFailureV1 {
+    Connection(PeerLeaseErrorV1),
+    Authority(PeerLeaseErrorV1),
+}
+
 fn serve_connection(
     stream: &mut UnixStream,
     store: &mut PeerLeaseStoreV1,
     operation_timeout: Duration,
-) -> Result<(), PeerLeaseErrorV1> {
+) -> Result<(), LeaseConnectionFailureV1> {
+    use LeaseConnectionFailureV1::{Authority, Connection};
     let deadline = Instant::now()
         .checked_add(operation_timeout)
         .unwrap_or_else(Instant::now);
-    // On Linux, filesystem permissions are only a pathname-level guard.  The
-    // kernel-provided peer credential is checked on the already-accepted
-    // descriptor before any request bytes can reach the durable store.
     #[cfg(target_os = "linux")]
-    authorize_peer(stream)?;
-    let frame = read_frame_until(stream, deadline)?;
-    let request = decode_request(&frame)?;
-    remaining_timeout(deadline)?;
-    let now = now_ms()?;
-    remaining_timeout(deadline)?;
+    authorize_peer(stream).map_err(|error| match error {
+        PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::UnauthorizedPeer) => Connection(error),
+        // A local credential-lookup failure is not an untrusted request.
+        _ => Authority(error),
+    })?;
+    let frame = read_frame_until(stream, deadline).map_err(Connection)?;
+    let request = decode_request(&frame).map_err(Connection)?;
+    remaining_timeout(deadline).map_err(Connection)?;
+    let now = now_ms().map_err(Authority)?;
+    remaining_timeout(deadline).map_err(Connection)?;
     let result = store.apply(request, now);
-    // Applying a request may include fsyncs which cannot be interrupted by
-    // this deadline.  If they finish after the budget, do not emit a response
-    // that the caller could mistake for a timely commit; the caller must use
-    // its recovery/uncertainty path instead.
-    remaining_timeout(deadline)?;
-    let fatal_code = result.as_ref().err().and_then(|error| match error {
-        PeerLeaseErrorV1::Rejected(
-            LeaseRejectCodeV1::ClockRollback | LeaseRejectCodeV1::AuthorityCorrupt,
-        ) => match error {
-            PeerLeaseErrorV1::Rejected(code) => Some(*code),
-            _ => None,
-        },
-        _ => None,
-    });
+    finish_lease_response_v1(stream, result, deadline)
+}
+
+fn finish_lease_response_v1(
+    stream: &mut UnixStream,
+    result: Result<PeerLeaseTokenV1, PeerLeaseErrorV1>,
+    deadline: Instant,
+) -> Result<(), LeaseConnectionFailureV1> {
+    use LeaseConnectionFailureV1::{Authority, Connection};
+    // Inspect the actual authority result BEFORE checking response time. A
+    // slow fsync or disconnected peer cannot mask corruption/clock rollback.
     let response = match result {
         Ok(token) => LeaseResponseV1::Token(token),
+        Err(PeerLeaseErrorV1::Rejected(
+            code @ (LeaseRejectCodeV1::ClockRollback | LeaseRejectCodeV1::AuthorityCorrupt),
+        )) => {
+            let _ = write_all_until(
+                stream,
+                &encode_response(LeaseResponseV1::Rejected(code)),
+                deadline,
+            );
+            return Err(Authority(PeerLeaseErrorV1::Rejected(code)));
+        }
         Err(PeerLeaseErrorV1::Rejected(code)) => LeaseResponseV1::Rejected(code),
         Err(PeerLeaseErrorV1::InvalidRequest(_)) => {
-            LeaseResponseV1::Rejected(crate::protocol::LeaseRejectCodeV1::InvalidRequest)
+            LeaseResponseV1::Rejected(LeaseRejectCodeV1::InvalidRequest)
         }
-        Err(error) => return Err(error),
+        Err(error) => return Err(Authority(error)),
     };
-    let write_result = write_all_until(stream, &encode_response(response), deadline);
-    if let Some(code) = fatal_code {
-        // A fatal authority condition must terminate the daemon even when the
-        // peer disconnects before receiving its rejection.  Letting the write
-        // error escape first would classify a corrupted/rolled-back journal
-        // as a transient timeout and continue serving unsafe state.
-        return Err(PeerLeaseErrorV1::Rejected(code));
-    }
-    write_result?;
-    Ok(())
+    // An over-budget successful commit is response loss, not rollback. Each
+    // write checks the original absolute deadline; no new allowance is issued.
+    write_all_until(stream, &encode_response(response), deadline).map_err(Connection)
 }
 
 /// Establish a Unix stream without an unbounded blocking `connect(2)`.  The
@@ -862,7 +857,7 @@ mod tests {
         let (result, elapsed) = server.join().unwrap();
         assert!(matches!(
             result,
-            Err(PeerLeaseErrorV1::Io(error))
+            Err(LeaseConnectionFailureV1::Connection(PeerLeaseErrorV1::Io(error)))
                 if error.kind() == io::ErrorKind::TimedOut
         ));
         assert!(
@@ -948,5 +943,118 @@ mod tests {
                 if reason.contains("collide")
         ));
         assert!(validate_daemon_paths_v1(&journal, &journal).is_err());
+    }
+
+    fn isolated_acquire_request_v1() -> LeaseRequestV1 {
+        LeaseRequestV1 {
+            operation: LeaseOperationV1::Acquire,
+            scope: test_scope(),
+            session_id: [0x71; 32],
+            generation: 1,
+            expires_at_ms: 0,
+            ttl_ms: 30_000,
+            record_hash: [0; 32],
+        }
+    }
+
+    #[test]
+    fn lease_response_loss_retains_exact_acquire_retry_v1() {
+        use std::net::Shutdown;
+        let directory = tempfile::tempdir().unwrap();
+        fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let path = directory.path().join("lease.log");
+        let mut store = PeerLeaseStoreV1::open(&path).unwrap();
+        let request = isolated_acquire_request_v1();
+        let (mut server, mut abandoned) = UnixStream::pair().unwrap();
+        abandoned.write_all(&encode_request(request)).unwrap();
+        abandoned.shutdown(Shutdown::Both).unwrap();
+        assert!(matches!(
+            serve_connection(&mut server, &mut store, Duration::from_secs(1)),
+            Err(LeaseConnectionFailureV1::Connection(PeerLeaseErrorV1::Io(
+                _
+            )))
+        ));
+        let token = store.active_lease(request.scope).unwrap();
+        let journal = fs::read(&path).unwrap();
+        let (mut server, mut retry) = UnixStream::pair().unwrap();
+        retry.write_all(&encode_request(request)).unwrap();
+        serve_connection(&mut server, &mut store, Duration::from_secs(1)).unwrap();
+        let frame = read_frame_until(&mut retry, Instant::now() + Duration::from_secs(1)).unwrap();
+        assert_eq!(
+            decode_response(&frame).unwrap(),
+            LeaseResponseV1::Token(token)
+        );
+        assert_eq!(fs::read(&path).unwrap(), journal);
+    }
+
+    #[test]
+    fn authority_fault_keeps_priority_over_response_deadline_v1() {
+        let directory = tempfile::tempdir().unwrap();
+        fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let path = directory.path().join("lease.log");
+        let mut store = PeerLeaseStoreV1::open(&path).unwrap();
+        let request = isolated_acquire_request_v1();
+        store.apply(request, 10_000).unwrap();
+        let journal = fs::read(&path).unwrap();
+        let rollback = store.apply(request, 9_999);
+        let (mut stream, peer) = UnixStream::pair().unwrap();
+        drop(peer);
+        assert!(matches!(
+            finish_lease_response_v1(&mut stream, rollback, Instant::now()),
+            Err(LeaseConnectionFailureV1::Authority(
+                PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::ClockRollback)
+            ))
+        ));
+        let poisoned = store.apply(request, 10_001);
+        assert!(matches!(
+            finish_lease_response_v1(&mut stream, poisoned, Instant::now()),
+            Err(LeaseConnectionFailureV1::Authority(
+                PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::AuthorityCorrupt)
+            ))
+        ));
+        assert_eq!(fs::read(&path).unwrap(), journal);
+    }
+
+    #[test]
+    fn journal_io_is_fatal_even_with_a_socket_like_error_kind_v1() {
+        for kind in [
+            io::ErrorKind::TimedOut,
+            io::ErrorKind::WouldBlock,
+            io::ErrorKind::BrokenPipe,
+            io::ErrorKind::UnexpectedEof,
+        ] {
+            let (mut stream, peer) = UnixStream::pair().unwrap();
+            drop(peer);
+            let result = Err(PeerLeaseErrorV1::Io(io::Error::new(
+                kind,
+                "injected journal I/O",
+            )));
+            assert!(
+                matches!(finish_lease_response_v1(&mut stream, result, Instant::now()),
+                Err(LeaseConnectionFailureV1::Authority(PeerLeaseErrorV1::Io(error))) if error.kind() == kind)
+            );
+        }
+    }
+
+    #[test]
+    fn committed_lease_after_deadline_has_no_success_response_v1() {
+        let directory = tempfile::tempdir().unwrap();
+        fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let path = directory.path().join("lease.log");
+        let mut store = PeerLeaseStoreV1::open(&path).unwrap();
+        let request = isolated_acquire_request_v1();
+        let token = store.apply(request, 10_000).unwrap();
+        let hash = store.last_hash();
+        let (mut stream, mut peer) = UnixStream::pair().unwrap();
+        assert!(
+            matches!(finish_lease_response_v1(&mut stream, Ok(token), Instant::now()),
+            Err(LeaseConnectionFailureV1::Connection(PeerLeaseErrorV1::Io(error))) if error.kind() == io::ErrorKind::TimedOut)
+        );
+        drop(stream);
+        let mut received = Vec::new();
+        peer.read_to_end(&mut received).unwrap();
+        assert!(received.is_empty());
+        assert_eq!(store.apply(request, 10_001).unwrap(), token);
+        assert_eq!(store.last_hash(), hash);
     }
 }
