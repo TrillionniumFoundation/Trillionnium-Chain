@@ -15,7 +15,12 @@ TOPOLOGY_KEYS = {7: "seven", 31: "thirty_one", 100: "one_hundred"}
 INVENTORY = pathlib.Path(__file__).with_name("inventory.toml")
 CANONICAL_PLACEMENT = "canonical"
 REDUCED_PLACEMENT = "desktop4-rog3-mac-v1"
-PLACEMENT_PROFILES = (CANONICAL_PLACEMENT, REDUCED_PLACEMENT)
+LOCAL_ROG_PLACEMENT = "local4-rog3-mac-v1"
+ALTERNATE_ALLOCATIONS = {
+    REDUCED_PLACEMENT: {"desktop": 4, "rog": 3},
+    LOCAL_ROG_PLACEMENT: {"local": 4, "rog": 3},
+}
+PLACEMENT_PROFILES = (CANONICAL_PLACEMENT, *ALTERNATE_ALLOCATIONS)
 
 
 def identity(fleet_id: str, validator_index: int) -> str:
@@ -39,14 +44,14 @@ def build_topology(
         raise ValueError("unknown placement profile")
     topology_key = TOPOLOGY_KEYS[validator_count]
     hosts = inventory["hosts"]
-    if placement_profile == REDUCED_PLACEMENT:
+    if placement_profile in ALTERNATE_ALLOCATIONS:
         if validator_count != 7 or weight_profile != "equal":
             raise ValueError("reduced placement requires exactly seven equal-weight validators")
+        allocation = {**ALTERNATE_ALLOCATIONS[placement_profile], "mac": 0}
         by_id = {host["id"]: host for host in hosts}
-        if len(by_id) != len(hosts) or not {"desktop", "rog", "mac"} <= by_id.keys():
+        if len(by_id) != len(hosts) or not allocation.keys() <= by_id.keys():
             raise ValueError("reduced placement requires exact inventory host identities")
-        hosts = [by_id[name] for name in ("desktop", "rog", "mac")]
-        allocation = {"desktop": 4, "rog": 3, "mac": 0}
+        hosts = [by_id[name] for name in allocation]
     else:
         allocation = {host["id"]: host["validator_counts"][topology_key] for host in hosts}
     validators = []
@@ -113,8 +118,10 @@ def validate_topology_v1(inventory: dict[str, Any], topology: object) -> str:
         raise ValueError("topology schema must be one exact supported integer")
     if topology["schema_version"] == 1:
         placement = CANONICAL_PLACEMENT
-    elif topology["schema_version"] == 2 and topology.get("placement_profile") == REDUCED_PLACEMENT:
-        placement = REDUCED_PLACEMENT
+    elif (topology["schema_version"] == 2
+          and isinstance(topology.get("placement_profile"), str)
+          and topology["placement_profile"] in ALTERNATE_ALLOCATIONS):
+        placement = topology["placement_profile"]
     else:
         raise ValueError("topology schema/placement profile is unsupported")
     expected = build_topology(

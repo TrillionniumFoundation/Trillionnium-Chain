@@ -22,12 +22,17 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from plan_topology import REDUCED_PLACEMENT, validate_topology_v1
+from plan_topology import ALTERNATE_ALLOCATIONS, LOCAL_ROG_PLACEMENT, REDUCED_PLACEMENT, validate_topology_v1
 
 
 PROFILE = "planned-p2p-connectivity-admission-v1"
 SCHEMA_VERSION = 1
 REDUCED_PROFILE = "planned-p2p-connectivity-admission-desktop4-rog3-mac-v1"
+LOCAL_ROG_PROFILE = "planned-p2p-connectivity-admission-local4-rog3-mac-v1"
+ALTERNATE_PROFILES = {
+    REDUCED_PLACEMENT: REDUCED_PROFILE,
+    LOCAL_ROG_PLACEMENT: LOCAL_ROG_PROFILE,
+}
 REDUCED_SCHEMA_VERSION = 2
 DIRECT_SEVEN_VALIDATORS = 7
 DIRECT_SEVEN_SOURCE_HOSTS = 5
@@ -418,7 +423,7 @@ def _plan_source_host_count(value: Mapping[str, Any]) -> int:
     schema = _exact_int(value.get("schema_version"), "schema_version")
     if schema == SCHEMA_VERSION and value.get("profile") == PROFILE:
         return DIRECT_SEVEN_SOURCE_HOSTS
-    if schema == REDUCED_SCHEMA_VERSION and value.get("profile") == REDUCED_PROFILE:
+    if schema == REDUCED_SCHEMA_VERSION and value.get("profile") in ALTERNATE_PROFILES.values():
         return 2
     fail("unsupported endpoint plan schema/profile")
 
@@ -431,7 +436,7 @@ def _validate_topology_v1(
         placement = validate_topology_v1(inventory, decoded)
     except (KeyError, TypeError, ValueError) as error:
         fail(f"topology inventory binding failed: {error}")
-    reduced = placement == REDUCED_PLACEMENT
+    reduced = placement in ALTERNATE_ALLOCATIONS
     topology = _exact(
         decoded,
         {
@@ -519,7 +524,7 @@ def _validate_topology_v1(
     if len(eligible) != (2 if reduced else DIRECT_SEVEN_SOURCE_HOSTS):
         fail("direct-seven topology source count differs from its placement")
     local_sources = sum(item["management"] == "local" for item in eligible.values())
-    if local_sources != (0 if reduced else 1):
+    if local_sources != (0 if placement == REDUCED_PLACEMENT else 1):
         fail("direct-seven topology local source count differs from its placement")
     if len({item["lan_ip"] for item in participant_by_host.values()}) != len(
         participant_by_host
@@ -1004,7 +1009,7 @@ def build_direct_seven_endpoint_plan_v1(
     ]
     plan = {
         "schema_version": REDUCED_SCHEMA_VERSION if reduced else SCHEMA_VERSION,
-        "profile": REDUCED_PROFILE if reduced else PROFILE,
+        "profile": ALTERNATE_PROFILES[topology["placement_profile"]] if reduced else PROFILE,
         "run_id": run_id,
         "coordinator_manifest_sha256": coordinator_manifest_sha256,
         "topology_sha256": _sha256(topology_bytes),
@@ -1086,12 +1091,14 @@ def validate_direct_seven_endpoint_plan_v1(plan: object) -> str:
                 fail("source host validator assignment is duplicated")
             source_validator_ids.add(validator_id)
         source_by_id[host_id] = source
-    if source_count == 2 and {
-        host_id: len(source["validator_ids"]) for host_id, source in source_by_id.items()
-    } != {"desktop": 4, "rog": 3}:
-        fail("reduced endpoint plan differs from exact desktop4/rog3 placement")
+    if source_count == 2:
+        placement = next(key for key, profile in ALTERNATE_PROFILES.items() if profile == value["profile"])
+        if {
+            host_id: len(source["validator_ids"]) for host_id, source in source_by_id.items()
+        } != ALTERNATE_ALLOCATIONS[placement]:
+            fail("reduced endpoint plan differs from its exact inventory placement")
     local_sources = sum(item["management"] == "local" for item in source_hosts)
-    if local_sources != (0 if source_count == 2 else 1):
+    if local_sources != (0 if value["profile"] == REDUCED_PROFILE else 1):
         fail("endpoint plan local source count differs from its placement")
     if len({item["lan_ip"] for item in source_hosts}) != source_count:
         fail("endpoint plan source host LAN addresses are duplicated")

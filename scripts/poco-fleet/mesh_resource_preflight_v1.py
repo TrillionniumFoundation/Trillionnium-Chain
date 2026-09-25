@@ -8,7 +8,7 @@ import subprocess
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from plan_topology import CANONICAL_PLACEMENT, REDUCED_PLACEMENT
+from plan_topology import ALTERNATE_ALLOCATIONS, CANONICAL_PLACEMENT, REDUCED_PLACEMENT
 
 
 MAX_PROBE_BYTES = 64 * 1024
@@ -176,17 +176,19 @@ def _validated_host_inventory_v1(
     if placement_profile == CANONICAL_PLACEMENT:
         if local_hosts != 1:
             fail("capacity preflight requires one exact local coordinator host")
-    elif placement_profile == REDUCED_PLACEMENT:
+    elif isinstance(placement_profile, str) and placement_profile in ALTERNATE_ALLOCATIONS:
         # The runner has already compared the complete topology with the
         # committed inventory. This gate checks its resource-placement shape;
         # it cannot create another topology or authorize a management route.
         if (
             validator_count != 7
             or {key: value["validator_processes"] for key, value in host_inventory.items()}
-            != {"desktop": 4, "rog": 3}
-            or local_hosts != 0
+            != ALTERNATE_ALLOCATIONS[placement_profile]
+            or local_hosts != int("local" in ALTERNATE_ALLOCATIONS[placement_profile])
         ):
-            fail("reduced capacity placement must be desktop4/rog3 with no local validator")
+            if placement_profile == REDUCED_PLACEMENT:
+                fail("reduced capacity placement must be desktop4/rog3 with no local validator")
+            fail("diagnostic capacity placement must be local4/rog3 with one local coordinator")
     else:
         fail("capacity placement is outside the closed profile")
     return host_inventory
@@ -210,7 +212,7 @@ def evaluate_mesh_fleet_resources_v1(
         host_inventory["local-coordinator"] = {"management": "local", "validator_processes": 0}
         audited_facts["local-coordinator"] = coordinator_facts
     elif coordinator_facts is not None:
-        fail("canonical capacity preflight forbids a separate coordinator observation")
+        fail("validator-host coordinator preflight forbids a separate coordinator observation")
 
     peer_degree = 6 if validator_count == 7 else 8
     per_validator_threads = peer_degree * 2 + 1
@@ -340,13 +342,14 @@ def evaluate_mesh_fleet_resources_v1(
         "geo_wan_evidence": False,
         "production_activation": False,
     }
-    if placement_profile == REDUCED_PLACEMENT:
+    if placement_profile in ALTERNATE_ALLOCATIONS:
         report.update(
             schema_version=2,
-            profile="poco-g3-mesh-host-resource-preflight-desktop4-rog3-mac-v1",
+            profile=f"poco-g3-mesh-host-resource-preflight-{placement_profile}",
             placement_profile=placement_profile,
-            coordinator=observations.pop(),
         )
+        if placement_profile == REDUCED_PLACEMENT:
+            report["coordinator"] = observations.pop()
     return report
 
 

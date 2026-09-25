@@ -236,6 +236,41 @@ def evaluate(
     )
 
 
+def test_local_rog_profile() -> None:
+    plan = build_plan(plan_topology.LOCAL_ROG_PLACEMENT)
+    assert (plan["schema_version"], plan["profile"]) == (2, admission.LOCAL_ROG_PROFILE)
+    assert (plan["source_host_count"], plan["physical_edge_count"]) == (2, 14)
+    assert {x["host_id"]: len(x["validator_ids"]) for x in plan["source_hosts"]} == {"local": 4, "rog": 3}
+    assert sum(x["management"] == "local" for x in plan["source_hosts"]) == 1
+    for edge in plan["physical_edges"]:
+        request = admission.parse_probe_request_frame_v1(
+            admission.build_probe_request_frame_v1(plan, NONCE, edge["source_host_id"], edge["destination_validator_id"]), plan,
+        )
+        assert request["profile"] == admission.LOCAL_ROG_PROFILE
+        ack = admission.parse_probe_ack_frame_v1(
+            admission.build_probe_ack_frame_v1(request, plan, edge["source_lan_ip"]), plan, request,
+        )
+        assert ack["profile"] == admission.LOCAL_ROG_PROFILE
+    clients, servers = successful_observations(plan)
+    helpers, cleanups = successful_helpers(plan)
+    report = evaluate(plan, clients, servers, helpers, cleanups)
+    assert admission.parse_admission_report_v1(
+        admission.canonical_json_bytes_v1(report), plan, expected_nonce_hex=NONCE,
+    ) == report
+    assert report["physical_edge_count"] == 14
+    assert not report["g3_lan_multihost_evidence"] and not report["validator_run_completed"]
+    assert not report["production_activation"]
+    for profile in (admission.REDUCED_PROFILE, admission.PROFILE, "unknown"):
+        mutant = copy.deepcopy(plan)
+        mutant["profile"] = profile
+        try:
+            admission.validate_direct_seven_endpoint_plan_v1(mutant)
+        except admission.AdmissionContractError:
+            pass
+        else:
+            raise AssertionError("local4/rog3 endpoint plan was relabeled without rejection")
+
+
 def test_reduced_profile() -> None:
     plan = build_plan(plan_topology.REDUCED_PLACEMENT)
     assert plan["schema_version"] == 2
@@ -655,6 +690,7 @@ def main() -> None:
     )
 
     test_reduced_profile()
+    test_local_rog_profile()
     print(
         "planned_p2p_connectivity_admission_v1_test=passed "
         "source_hosts=5 endpoints=7 physical_edges=35 logical_edges=42 "

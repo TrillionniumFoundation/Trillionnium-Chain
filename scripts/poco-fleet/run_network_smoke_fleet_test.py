@@ -448,6 +448,30 @@ def test_layout_tamper_collision_and_negative_preflight_have_no_effects() -> Non
         )
 
 
+def test_local_rog_placement_reports_actual_hosts() -> None:
+    inventory = tomllib.loads((HERE / "inventory.toml").read_text())
+    profile = "local4-rog3-mac-v1"
+    topology = plan_topology.build_topology(inventory, 7, "equal", profile)
+    results = [{"validator_id": x["validator_id"], "host_id": x["host_id"]} for x in topology["validators"]]
+    assert fleet.placement_report_fields_v1(topology, results) == {
+        "schema_version": 2, "placement_profile": profile,
+        "linux_validator_host_count": 2, "participant_host_count": 3,
+    }
+    assert fleet.placement_report_fields_v1(topology, [])["participant_host_count"] == 0
+    assert fleet.placement_report_fields_v1(topology, results[:4])["linux_validator_host_count"] == 1
+    assert not fleet.all_six_hosts_participated_v1(topology, results)
+    processes = [
+        process(x["host_id"], x["management"], validator_id=x["validator_id"], runtime_alias=f"v{ordinal:03d}")
+        for ordinal, x in enumerate(sorted(topology["validators"], key=lambda item: item["validator_id"]))
+    ]
+    stages = fleet.preflight_runtime_layout(
+        processes, "poco-g3-7-20260813T120000Z-00000000", pathlib.Path("/evidence/local-rog"),
+    )
+    assert set(stages) == {"local", "rog", "mac"}
+    assert stages["local"].management == "local" and stages["local"].local_path is not None
+    assert stages["rog"].management != "local" and stages["mac"].management != "local"
+
+
 def test_reduced_placement_reports_actual_hosts() -> None:
     inventory = tomllib.loads((HERE / "inventory.toml").read_text())
     canonical = plan_topology.build_topology(inventory, 7, "equal")
@@ -506,6 +530,7 @@ def main() -> None:
     test_runtime_layout_exact_bounds_aliases_and_old_207_bytes()
     test_layout_tamper_collision_and_negative_preflight_have_no_effects()
     test_reduced_placement_reports_actual_hosts()
+    test_local_rog_placement_reports_actual_hosts()
     print(
         "poco_g3_network_smoke_fleet_test=passed positives=19 negatives=15 "
         "unique_json=true safe_remote_paths=true input_symlinks_rejected=true file_backed_process_io=true partial_cleanup=true "

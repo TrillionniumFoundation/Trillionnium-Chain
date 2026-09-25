@@ -125,10 +125,40 @@ def main() -> None:
         assert "cannot satisfy full-fleet" in str(error)
     else:
         raise AssertionError("reduced topology entered the full-fleet raw evidence gate")
+    local = plan_topology.build_topology(inventory, 7, "equal", "local4-rog3-mac-v1")
+    assert [item["host_id"] for item in local["participants"]] == ["local", "rog", "mac"]
+    assert [item["host_id"] for item in local["validators"]] == ["local"] * 4 + ["rog"] * 3
+    assert plan_topology.validate_topology_v1(inventory, local) == "local4-rog3-mac-v1"
+    assert json.loads(subprocess.check_output([
+        sys.executable, str(PLANNER), "7", "--placement-profile", "local4-rog3-mac-v1",
+    ])) == local
+    try:
+        check_raw_run_artifacts.require_full_fleet_topology_v1(local)
+    except SystemExit as error:
+        assert "cannot satisfy full-fleet" in str(error)
+    else:
+        raise AssertionError("pocket4/ROG diagnostic plan was relabeled as full fleet")
+    for mutate in (
+        lambda t: t.update(placement_profile=plan_topology.REDUCED_PLACEMENT),
+        lambda t: t.update(placement_profile={}),
+        lambda t: t["validators"][0].update(host_id="desktop"),
+        lambda t: t["validators"][0].update(p2p_port=True),
+        lambda t: t["participants"][0].update(management="p4-desktop"),
+    ):
+        changed = json.loads(json.dumps(local))
+        mutate(changed)
+        try:
+            plan_topology.validate_topology_v1(inventory, changed)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("diagnostic placement accepted a remapped or relabeled host")
     for count, weight, placement in (
         (31, "equal", plan_topology.REDUCED_PLACEMENT),
         (100, "equal", plan_topology.REDUCED_PLACEMENT),
         (7, "bounded-unequal", plan_topology.REDUCED_PLACEMENT),
+        (31, "equal", "local4-rog3-mac-v1"),
+        (7, "bounded-unequal", "local4-rog3-mac-v1"),
         (7, "equal", "unknown"),
     ):
         result = subprocess.run([

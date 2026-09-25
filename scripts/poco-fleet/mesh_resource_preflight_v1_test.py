@@ -108,6 +108,44 @@ def assert_runner_pre_effect_order(path: pathlib.Path) -> None:
         assert source.index(independent_anchor) < source.index(deployment_effect)
 
 
+def test_local_rog_coordinator_resources() -> None:
+    profile = "local4-rog3-mac-v1"
+    validators = [
+        Process(f"{index + 1:064x}", host, ROUTES[host])
+        for index, host in enumerate(["local"] * 4 + ["rog"] * 3)
+    ]
+    all_facts = facts()
+    host_facts = {host: all_facts[host] for host in ("local", "rog")}
+    report = preflight.evaluate_mesh_fleet_resources_v1(
+        validators, 7, host_facts, placement_profile=profile,
+    )
+    assert report["schema_version"] == 2 and report["placement_profile"] == profile
+    assert "coordinator" not in report
+    hosts = {host["host_id"]: host for host in report["hosts"]}
+    assert set(hosts) == {"local", "rog"}
+    assert hosts["local"]["validator_processes"] == 4
+    assert hosts["local"]["coordinator_capture_fds_required"] == 142
+    assert hosts["rog"]["validator_processes"] == 3
+    assert hosts["rog"]["coordinator_capture_fds_required"] == 0
+    assert not report["g3_lan_multihost_evidence"] and not report["validator_run_completed"]
+    wrong = list(validators)
+    wrong[3] = dataclasses.replace(wrong[3], host_id="rog", management=ROUTES["rog"])
+    expect_failure(lambda: preflight.evaluate_mesh_fleet_resources_v1(
+        wrong, 7, host_facts, placement_profile=profile,
+    ), "local4/rog3")
+    expect_failure(lambda: preflight.evaluate_mesh_fleet_resources_v1(
+        validators, 7, host_facts, placement_profile=profile, coordinator_facts=all_facts["local"],
+    ), "forbids a separate coordinator")
+    expect_failure(lambda: preflight.evaluate_mesh_fleet_resources_v1(
+        validators, 7, {"rog": all_facts["rog"]}, placement_profile=profile,
+    ), "observations differ")
+    limited = copy.deepcopy(host_facts)
+    limited["local"]["memory_available_bytes"] = "1"
+    expect_failure(lambda: preflight.evaluate_mesh_fleet_resources_v1(
+        validators, 7, limited, placement_profile=profile,
+    ), "RSS capacity")
+
+
 def test_reduced_coordinator_resources() -> None:
     validators = [
         Process(f"{index + 1:064x}", host, ROUTES[host])
@@ -326,6 +364,7 @@ def main() -> None:
         "duplicate",
     )
     test_reduced_coordinator_resources()
+    test_local_rog_coordinator_resources()
 
     print(
         "poco_g3_mesh_resource_preflight_v1_test=passed positives=18 negatives=11 "

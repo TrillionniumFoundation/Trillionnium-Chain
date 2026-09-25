@@ -30,7 +30,7 @@ import sys
 import time
 from typing import Any
 
-from plan_topology import CANONICAL_PLACEMENT, REDUCED_PLACEMENT
+from plan_topology import ALTERNATE_ALLOCATIONS, CANONICAL_PLACEMENT, REDUCED_PLACEMENT
 
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -878,7 +878,8 @@ def placement_report_fields_v1(
     if (
         type(schema) is not int
         or schema != 2
-        or topology.get("placement_profile") != REDUCED_PLACEMENT
+        or not isinstance(topology.get("placement_profile"), str)
+        or topology["placement_profile"] not in ALTERNATE_ALLOCATIONS
     ):
         fail("unsupported runtime placement schema/profile")
     hosts = (
@@ -887,7 +888,7 @@ def placement_report_fields_v1(
     )
     return {
         "schema_version": 2,
-        "placement_profile": REDUCED_PLACEMENT,
+        "placement_profile": topology["placement_profile"],
         "linux_validator_host_count": len(hosts),
         "participant_host_count": len(hosts | {OBSERVER_HOST_ID}) if hosts else 0,
     }

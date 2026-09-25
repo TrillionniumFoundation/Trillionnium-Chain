@@ -123,7 +123,8 @@ source/binary identities, topology digest, placement profile and actual
 validator host allocations. Selected invocations require
 `--coordinator-manifest-sha256 <independently-computed-sha256>`; a hash computed
 only after deployment is not this input anchor. Only the previously validated canonical placement
-or `desktop4-rog3-mac-v1` is admitted. Resource admission uses that placement;
+or one of `desktop4-rog3-mac-v1` / `local4-rog3-mac-v1` is admitted.
+Resource admission uses the exact selected placement;
 the reduced run independently probes its actual local zero-validator
 coordinator and does not invent a local validator. The Mac observer comes from
 the same validated participant inventory. Plans are regenerated and compared
@@ -670,6 +671,33 @@ Release acceptance requires the same artifact/profile identity, nonempty require
 results and authenticated independent external records where required. Repository
 fixtures, self-review, shortened runs or synthetic clocks cannot close those
 external gates. Critical/High unresolved findings block the affected acceptance.
+
+### Isolated pocket4/ROG diagnostic placement
+
+`local4-rog3-mac-v1` is an explicitly selected schema-2 placement using the
+unchanged committed inventory identities: pocket4 (`local`) runs four equal-
+weight validators, ROG runs three, and Mac remains the non-validator observer.
+It is a diagnostic alternative when a canonical host cannot meet its I/O
+budget, not a rename of the six-host campaign or a production deployment.
+The original canonical and desktop4/rog3 plans remain byte-identical.
+
+The exact topology, node endpoints, configuration bytes, public keys, candidate
+source/binaries and coordinator manifest bind the placement before deployment.
+Only seven equal-weight validators are supported by this alternative. Unknown
+profiles, host remapping, duplicate or missing endpoints, a wrong 4/3 split,
+and profile relabeling reject. Capacity admission includes both four local
+validators and the local coordinator; there is no separate zero-validator
+coordinator assertion for this placement. The existing 14 physical source-to-
+endpoint and 42 logical peer checks, N/N Ready/Start, current leases and client
+proof verification remain mandatory.
+
+Reports retain the selected profile and count actual participants. Empty or
+partial observations cannot claim all planned machines. This placement has two
+Linux validator hosts and three participating hosts only after the Mac verifier
+succeeds. `all_six_hosts_participated_v1` remains false, and the existing full-
+fleet raw-evidence gate continues to reject every noncanonical placement.
+No successful reduced run may replace the retained canonical failures or claim
+independent operators, WAN, power-loss, performance or production acceptance.
 
 ### Actual native client candidate campaign
 
