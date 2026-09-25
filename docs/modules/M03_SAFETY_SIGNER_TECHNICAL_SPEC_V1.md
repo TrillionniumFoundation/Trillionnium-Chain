@@ -1268,3 +1268,21 @@ or activation occurs. The ordinary external head must already have been checked
 by the original exact-head producer. M15 runs this final local operation after
 the last external callback together with the corresponding retained role and
 retirement local checks, before publishing an activation or signature.
+
+### Fleet authority connection isolation (M03-FLEET-SERVER-IO-V1)
+
+The existing Unix fleet-root authority accepts one bounded request per connection.
+A positive local I/O budget, at most 30 seconds (default 30 seconds), starts at
+accept and is not renewed by partial headers, body bytes or response writes.
+The request-specific byte ceiling is checked before body allocation or receipt.
+No incomplete/expired input reaches the durable authority. Peer EOF/reset, broken
+pipe and deadline expiry close only that connection and do not stop healthy
+subsequent clients. Authority corruption, uncertain durable writes and local
+configuration/resource failures remain fatal; transport isolation cannot repair
+or bypass a fenced authority. Completed signatures remain in the same durable
+nonce journal even if response delivery fails. Explicit exact retry returns that
+signature without another key call or sequence increment; there is no automatic
+request retry. The budget bounds network I/O, not interruption of a synchronous
+HSM/disk call; an expired post-key response remains an unknown client outcome.
+Regressions exercise a half-frame, idle peer, disconnect after signing, exact
+retry and retained authority failure using the actual server and journal.

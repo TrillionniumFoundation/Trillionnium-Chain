@@ -1,4 +1,4 @@
-//! Private fleet-client I/O with one deadline; no signer/request retry.
+//! Private fleet transport I/O with one deadline; no signer/request retry.
 use rustix::event::{poll, PollFd, PollFlags, Timespec};
 use std::{
     io::{self, Read, Write},
@@ -48,6 +48,16 @@ fn new_stream() -> io::Result<UnixStream> {
 }
 
 impl DeadlineStream {
+    pub(super) fn from_stream(stream: UnixStream, deadline: Instant) -> io::Result<Self> {
+        remaining(deadline)?;
+        stream.set_nonblocking(true)?;
+        Ok(Self { stream, deadline })
+    }
+
+    pub(super) fn check_deadline(&self) -> io::Result<()> {
+        remaining(self.deadline).map(|_| ())
+    }
+
     pub(super) fn connect(path: &Path, deadline: Instant) -> io::Result<Self> {
         remaining(deadline)?;
         let address = rustix::net::SocketAddrUnix::new(path)?;

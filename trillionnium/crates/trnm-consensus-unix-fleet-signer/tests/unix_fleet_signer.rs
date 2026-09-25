@@ -656,3 +656,147 @@ fn full_listener_backlog_cannot_block_public_client() {
         std::io::ErrorKind::WouldBlock
     );
 }
+
+// Actual public-server regressions: a peer cannot retire the durable authority.
+type IsolationServerJoin = std::thread::JoinHandle<(
+    Result<(), trnm_consensus_unix_fleet_signer::UnixFleetAuthorityServerErrorV1>,
+    u64,
+)>;
+fn isolation_server(
+    dir: &TempDir,
+    count: usize,
+) -> (
+    IsolationServerJoin,
+    std::path::PathBuf,
+    UnixFleetRootSignerConfig,
+) {
+    let socket = dir.path().join("isolation.sock");
+    let key = SigningKey::from_bytes(&[0x4a; 32]);
+    let authority = DurableFleetRootSignerAuthorityV1::open(
+        dir.path().join("isolation.log"),
+        origin(),
+        [0x31; 32],
+        key.verifying_key().to_bytes(),
+        GenericAuthoritySignerV1 { key: key.clone() },
+    )
+    .unwrap();
+    let mut server = UnixFleetRootAuthorityServerV1::new(authority, &socket)
+        .unwrap()
+        .with_io_timeout(Duration::from_millis(120))
+        .unwrap();
+    let join = thread::spawn(move || (server.serve_n(count), server.authority().sequence()));
+    wait_for_socket(&socket);
+    let mut client = config(&socket);
+    client.verifying_key = key.verifying_key().to_bytes();
+    (join, socket, client)
+}
+
+#[test]
+fn server_half_frame_disconnect_preserves_healthy_next_client() {
+    use std::{io::Write, os::unix::net::UnixStream};
+    let dir = tempfile::tempdir().unwrap();
+    let (join, socket, config) = isolation_server(&dir, 2);
+    let mut broken = UnixStream::connect(&socket).unwrap();
+    broken.write_all(&[0, 0]).unwrap();
+    drop(broken);
+    let mut client = UnixFleetRootSignerProducerV1::new(config).unwrap();
+    let signed = client.sign_fleet_root_v1(FleetRootPurposeV1::Ready, [0x91; 32], [0xa1; 32]);
+    // Old server exits on its failed reject write, so this join is finite too.
+    let (served, sequence) = join.join().unwrap();
+    assert!(
+        signed.is_ok(),
+        "healthy client after half-frame: {signed:?}"
+    );
+    served.unwrap();
+    assert_eq!(sequence, 1);
+}
+
+#[test]
+fn server_idle_peer_deadline_preserves_healthy_next_client() {
+    use std::{io::Write, os::unix::net::UnixStream, time::Instant};
+    let dir = tempfile::tempdir().unwrap();
+    let (join, socket, config) = isolation_server(&dir, 2);
+    let mut idle = UnixStream::connect(&socket).unwrap();
+    idle.write_all(&[0]).unwrap();
+    // Always release the old implementation, even when the assertion fails.
+    let release = thread::spawn(move || {
+        thread::sleep(Duration::from_millis(600));
+        drop(idle);
+    });
+    let mut client = UnixFleetRootSignerProducerV1::new(config).unwrap();
+    let start = Instant::now();
+    let signed = client.sign_fleet_root_v1(FleetRootPurposeV1::Ready, [0x92; 32], [0xa2; 32]);
+    let elapsed = start.elapsed();
+    release.join().unwrap();
+    let (served, sequence) = join.join().unwrap();
+    assert!(signed.is_ok(), "healthy client after idle peer: {signed:?}");
+    served.unwrap();
+    assert!(
+        elapsed < Duration::from_millis(500),
+        "network budget was renewed: {elapsed:?}"
+    );
+    assert_eq!(sequence, 1);
+}
+
+#[test]
+fn server_lost_response_retains_original_signature_and_nonce() {
+    use std::{io::Write, os::unix::net::UnixStream};
+    let dir = tempfile::tempdir().unwrap();
+    let (join, socket, config) = isolation_server(&dir, 3);
+    let request = FleetRootRequestV1::new(
+        FleetRootPurposeV1::Ready,
+        origin(),
+        [0x31; 32],
+        [0x93; 32],
+        [0xa3; 32],
+    )
+    .unwrap();
+    let bytes = request.try_exact_bytes().unwrap();
+    let mut lost = UnixStream::connect(&socket).unwrap();
+    lost.write_all(&(u32::try_from(bytes.len()).unwrap()).to_be_bytes())
+        .unwrap();
+    lost.write_all(&bytes).unwrap();
+    drop(lost); // A valid input remains queued, but its response has no reader.
+    let mut client = UnixFleetRootSignerProducerV1::new(config).unwrap();
+    let replay = client.sign_fleet_root_v1(FleetRootPurposeV1::Ready, [0x93; 32], [0xa3; 32]);
+    let next = client.sign_fleet_root_v1(FleetRootPurposeV1::Start, [0x94; 32], [0xa4; 32]);
+    let (served, sequence) = join.join().unwrap();
+    served.unwrap();
+    let key = SigningKey::from_bytes(&[0x4a; 32]);
+    assert_eq!(replay.unwrap(), key.sign(&[0x93; 32]).to_bytes());
+    assert!(next.is_ok());
+    assert_eq!(
+        sequence, 2,
+        "lost-response retry must not advance the journal twice"
+    );
+}
+
+#[test]
+fn server_authority_failure_is_not_isolated_as_a_peer_error() {
+    use trnm_consensus_unix_fleet_signer::UnixFleetAuthorityServerErrorV1;
+    let dir = tempfile::tempdir().unwrap();
+    let socket = dir.path().join("failing.sock");
+    let key = SigningKey::from_bytes(&[0x4a; 32]);
+    let authority = DurableFleetRootSignerAuthorityV1::open(
+        dir.path().join("failing.log"),
+        origin(),
+        [0x31; 32],
+        key.verifying_key().to_bytes(),
+        FailingAuthoritySignerV1,
+    )
+    .unwrap();
+    let mut server = UnixFleetRootAuthorityServerV1::new(authority, &socket).unwrap();
+    let join = thread::spawn(move || server.serve_n(1));
+    wait_for_socket(&socket);
+    let mut cfg = config(&socket);
+    cfg.verifying_key = key.verifying_key().to_bytes();
+    let mut client = UnixFleetRootSignerProducerV1::new(cfg).unwrap();
+    assert!(client
+        .sign_fleet_root_v1(FleetRootPurposeV1::Ready, [0x95; 32], [0xa5; 32])
+        .is_err());
+    assert!(matches!(
+        join.join().unwrap(),
+        Err(UnixFleetAuthorityServerErrorV1::Authority(_))
+    ));
+    assert!(!socket.exists());
+}

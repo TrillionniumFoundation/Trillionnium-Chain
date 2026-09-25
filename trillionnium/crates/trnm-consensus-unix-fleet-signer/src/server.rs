@@ -14,15 +14,17 @@ use std::{
     fmt, fs, io,
     os::unix::{
         fs::{FileTypeExt, PermissionsExt},
-        net::{UnixListener, UnixStream},
+        net::UnixListener,
     },
     path::{Path, PathBuf},
+    time::{Duration, Instant},
 };
 
+use crate::deadline_io::DeadlineStream;
 use crate::{
     read_frame_v1, write_frame_v1, DurableFleetRootSignerAuthorityV1, FleetRootAuthorityErrorV1,
     FleetRootAuthoritySignerV1, FleetRootRequestV1, FleetRootResponseV1,
-    FleetSignerProtocolErrorV1, UnixFleetSignerErrorV1, MAX_FRAME_BYTES_V1, MAX_REQUEST_BYTES_V1,
+    FleetSignerProtocolErrorV1, UnixFleetSignerErrorV1, MAX_REQUEST_BYTES_V1,
 };
 
 const RESPONSE_STATUS_OK_V1: u8 = 0;
@@ -81,6 +83,7 @@ impl Error for UnixFleetAuthorityServerErrorV1 {
 pub struct UnixFleetRootAuthorityServerV1<S> {
     authority: DurableFleetRootSignerAuthorityV1<S>,
     socket_path: PathBuf,
+    io_timeout: Duration,
 }
 
 impl<S: FleetRootAuthoritySignerV1> UnixFleetRootAuthorityServerV1<S> {
@@ -109,7 +112,22 @@ impl<S: FleetRootAuthoritySignerV1> UnixFleetRootAuthorityServerV1<S> {
         Ok(Self {
             authority,
             socket_path,
+            io_timeout: Duration::from_secs(30),
         })
+    }
+
+    /// Bounds one accepted connection's network I/O, without renewing on progress.
+    pub fn with_io_timeout(
+        mut self,
+        timeout: Duration,
+    ) -> Result<Self, UnixFleetAuthorityServerErrorV1> {
+        if timeout.is_zero() || timeout > Duration::from_secs(30) {
+            return Err(UnixFleetAuthorityServerErrorV1::InvalidConfig(
+                "I/O timeout must be positive and at most 30 seconds",
+            ));
+        }
+        self.io_timeout = timeout;
+        Ok(self)
     }
 
     pub fn socket_path(&self) -> &Path {
@@ -152,12 +170,28 @@ impl<S: FleetRootAuthoritySignerV1> UnixFleetRootAuthorityServerV1<S> {
             (|| {
                 let mut served = 0usize;
                 for incoming in listener.incoming() {
-                    let mut stream =
+                    let stream =
                         incoming.map_err(|source| UnixFleetAuthorityServerErrorV1::Io {
                             stage: "accept Unix connection",
                             source,
                         })?;
-                    self.handle_stream(&mut stream)?;
+                    let deadline = Instant::now().checked_add(self.io_timeout).ok_or(
+                        UnixFleetAuthorityServerErrorV1::InvalidConfig("I/O deadline overflow"),
+                    )?;
+                    let mut stream =
+                        DeadlineStream::from_stream(stream, deadline).map_err(|source| {
+                            UnixFleetAuthorityServerErrorV1::Io {
+                                stage: "bound accepted connection",
+                                source,
+                            }
+                        })?;
+                    match self.handle_stream(&mut stream) {
+                        Ok(()) => {}
+                        Err(UnixFleetAuthorityServerErrorV1::Transport(
+                            UnixFleetSignerErrorV1::Io { source, .. },
+                        )) if peer_connection_failure(&source) => {}
+                        Err(error) => return Err(error),
+                    }
                     served = served.checked_add(1).ok_or(
                         UnixFleetAuthorityServerErrorV1::InvalidConfig("request count overflow"),
                     )?;
@@ -235,9 +269,9 @@ impl<S: FleetRootAuthoritySignerV1> UnixFleetRootAuthorityServerV1<S> {
 
     fn handle_stream(
         &mut self,
-        stream: &mut UnixStream,
+        stream: &mut DeadlineStream,
     ) -> Result<(), UnixFleetAuthorityServerErrorV1> {
-        let frame = match read_frame_v1(stream, MAX_FRAME_BYTES_V1) {
+        let frame = match read_frame_v1(stream, MAX_REQUEST_BYTES_V1) {
             Ok(frame) => frame,
             Err(UnixFleetSignerErrorV1::Protocol(error)) => {
                 self.write_reject(stream, protocol_reject_code(&error))?;
@@ -256,6 +290,12 @@ impl<S: FleetRootAuthoritySignerV1> UnixFleetRootAuthorityServerV1<S> {
                 return Ok(());
             }
         };
+        stream.check_deadline().map_err(|source| {
+            UnixFleetAuthorityServerErrorV1::Transport(UnixFleetSignerErrorV1::Io {
+                stage: "admit complete request before authority",
+                source,
+            })
+        })?;
         let signature = match self.authority.sign_fleet_root_v1(&request) {
             Ok(signature) => signature,
             Err(FleetRootAuthorityErrorV1::ReplayConflict) => {
@@ -279,7 +319,7 @@ impl<S: FleetRootAuthoritySignerV1> UnixFleetRootAuthorityServerV1<S> {
 
     fn write_reject(
         &self,
-        stream: &mut UnixStream,
+        stream: &mut DeadlineStream,
         code: u8,
     ) -> Result<(), UnixFleetAuthorityServerErrorV1> {
         write_frame_v1(stream, &[RESPONSE_STATUS_REJECT_V1, code])
@@ -302,4 +342,20 @@ fn protocol_reject_code(error: &FleetSignerProtocolErrorV1) -> u8 {
     } else {
         REJECT_PROTOCOL_V1
     }
+}
+
+// A disconnected/slow peer is not evidence that the durable namespace failed.
+// Do not swallow other I/O errors (e.g. host resource exhaustion), and never
+// classify Authority errors here: a possibly committed signature stays fenced.
+fn peer_connection_failure(error: &io::Error) -> bool {
+    matches!(
+        error.kind(),
+        io::ErrorKind::TimedOut
+            | io::ErrorKind::WouldBlock
+            | io::ErrorKind::UnexpectedEof
+            | io::ErrorKind::BrokenPipe
+            | io::ErrorKind::ConnectionReset
+            | io::ErrorKind::ConnectionAborted
+            | io::ErrorKind::NotConnected
+    )
 }
