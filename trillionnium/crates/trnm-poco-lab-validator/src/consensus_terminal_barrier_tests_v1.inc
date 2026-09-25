@@ -137,6 +137,19 @@ fn terminal_seven_real_owners_park_only_after_every_prepare_then_validate_residu
                 .unwrap()
             })
             .collect::<Vec<_>>();
+        let drains = barriers.iter_mut().zip(&terminals).map(|(barrier, terminal)| {
+            barrier.drain_local(terminal.facts_v0().node_v0().finalized_height_v0(), 0).unwrap()
+        }).collect::<Vec<_>>();
+        for i in 0..7 {
+            for j in 0..7 {
+                if i != j {
+                    barriers[i].admit(&frame(
+                        terminals[i].facts_v0().local_validator_v0(),
+                        terminals[j].facts_v0().local_validator_v0(), drains[j].clone(),
+                    )).unwrap();
+                }
+            }
+        }
         let mut prepares = Vec::new();
         for (barrier, terminal) in barriers.iter_mut().zip(&terminals) {
             let f = terminal.facts_v0();

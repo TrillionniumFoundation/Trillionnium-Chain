@@ -47,9 +47,19 @@ fn inbound(local: ValidatorId, origin: ValidatorId, body: BodyV1) -> MeshInbound
         },
     )
 }
+fn seed_drains(barrier: &mut TerminalBarrierV1) {
+    // State-machine fixture only; authenticated ingress is tested separately.
+    for origin in members() {
+        barrier.insert(MessageV1 {
+            start: barrier.start, origin,
+            body: BodyV1::AdmissionDrained { finalized: 9, business: 0 },
+        }).unwrap();
+    }
+}
 fn initialized() -> TerminalBarrierV1 {
     let local = ValidatorId::new([1; 32]);
     let mut barrier = TerminalBarrierV1::new([77; 32], local, members(), &sessions(local)).unwrap();
+    seed_drains(&mut barrier);
     barrier.prepare_local(prepare(local)).unwrap();
     barrier
 }
@@ -172,6 +182,7 @@ fn terminal_sets_are_order_independent_and_exact_retries_cannot_change_cuts_v1()
     let mut reconnected =
         TerminalBarrierV1::new([77; 32], local, members(), &sessions(local)).unwrap();
     reconnected.observe_session(newer).unwrap();
+    seed_drains(&mut reconnected);
     reconnected.prepare_local(prepare(local)).unwrap();
     let old = sessions(local)
         .into_iter()
@@ -270,4 +281,100 @@ fn terminal_missing_park_wrong_set_and_shutdown_residuals_remain_fail_closed_v1(
             .is_err();
     }
     assert!(rejected);
+}
+
+
+#[test]
+fn terminal_local_empty_queue_cannot_prepare_without_peer_admission_drains_v2() {
+    let local = ValidatorId::new([1; 32]);
+    let mut barrier = TerminalBarrierV1::new([77; 32], local, members(), &sessions(local)).unwrap();
+    assert!(barrier.prepare_local(prepare(local)).is_err(),
+        "local Ready/empty queue cannot stand in for the six peer admission owners");
+    assert!(!barrier.local_prepared());
+}
+
+
+#[test]
+fn terminal_drain_requires_all_seven_and_covers_last_business_height_v2() {
+    let local = ValidatorId::new([1; 32]);
+    let mut barrier = TerminalBarrierV1::new([77; 32], local, members(), &sessions(local)).unwrap();
+    barrier.drain_local(9, 7).unwrap();
+    for remote in members().into_iter().filter(|v| *v != local).take(5) {
+        let message = inbound(local, remote, BodyV1::AdmissionDrained { finalized: 9, business: 0 });
+        barrier.admit(&message).unwrap();
+        barrier.admit(&message).unwrap();
+    }
+    assert_eq!(barrier.drains.len(), 6);
+    assert!(!barrier.admission_drain_ready(u64::MAX));
+    assert!(barrier.prepare_local(prepare(local)).is_err());
+    let last = ValidatorId::new([7; 32]);
+    barrier.admit(&inbound(local, last, BodyV1::AdmissionDrained { finalized: 11, business: 11 })).unwrap();
+    assert!(!barrier.admission_drain_ready(10));
+    assert!(barrier.admission_drain_ready(11));
+    assert!(barrier.prepare_local(prepare(local)).is_err());
+    let mut final_cut = prepare(local);
+    final_cut.common.height = 11;
+    barrier.prepare_local(final_cut).unwrap();
+    let prior = barrier.drains.clone();
+    assert!(barrier.admit(&inbound(local, last, BodyV1::AdmissionDrained { finalized: 12, business: 11 })).is_err());
+    assert_eq!(barrier.drains, prior);
+}
+
+#[test]
+fn terminal_drain_is_bounded_context_bound_and_session_fenced_v2() {
+    let local = ValidatorId::new([1; 32]);
+    let remote = ValidatorId::new([2; 32]);
+    let message = MessageV1 { start: [77; 32], origin: remote,
+        body: BodyV1::AdmissionDrained { finalized: 9, business: 0 } };
+    let bytes = message.encode();
+    assert_eq!(bytes.len(), DRAIN_BYTES);
+    assert_eq!(MessageV1::decode(&bytes).unwrap(), message);
+    for n in 0..bytes.len() { assert!(MessageV1::decode(&bytes[..n]).is_err()); }
+    let mut extra = bytes.clone(); extra.push(0);
+    assert!(MessageV1::decode(&extra).is_err());
+    let mut old = bytes.clone(); old[..8].copy_from_slice(b"TRNMTB01");
+    assert!(MessageV1::decode(&old).is_err());
+    for (finalized, business) in [(0, 0), (9, 10), (1, u64::MAX)] {
+        let bad = MessageV1 { body: BodyV1::AdmissionDrained { finalized, business }, ..message };
+        assert!(MessageV1::decode(&bad.encode()).is_err());
+    }
+    for offset in [9, 41] {
+        let mut bad = inbound(local, remote, message.body).into_frame();
+        bad.payload[offset] ^= 1;
+        let mut barrier = TerminalBarrierV1::new([77; 32], local, members(), &sessions(local)).unwrap();
+        assert!(barrier.admit(&MeshInboundFrameV0::for_test(sessions(local)[0], bad)).is_err());
+        assert!(barrier.drains.is_empty());
+    }
+    let mut barrier = TerminalBarrierV1::new([77; 32], local, members(), &sessions(local)).unwrap();
+    barrier.admit(&inbound(local, remote, message.body)).unwrap();
+    let new_session = PeerSessionFactsV0::for_test(remote, PeerDirectionV0::Inbound, [99; 32], 2);
+    assert!(barrier.observe_session(new_session).is_err());
+    assert!(!barrier.local_prepared());
+}
+
+#[test]
+fn terminal_early_prepare_remains_inert_until_every_admission_owner_drains_v2() {
+    let local = ValidatorId::new([1; 32]);
+    let remote = ValidatorId::new([2; 32]);
+    let mut barrier = TerminalBarrierV1::new([77; 32], local, members(), &sessions(local)).unwrap();
+    assert!(barrier.admit(&inbound(local, remote, BodyV1::Prepare(prepare(remote)))).is_err());
+    barrier.admit(&inbound(local, remote, BodyV1::AdmissionDrained { finalized: 9, business: 8 })).unwrap();
+    barrier.admit(&inbound(local, remote, BodyV1::Prepare(prepare(remote)))).unwrap();
+    assert_eq!(barrier.prepare_set().unwrap(), None);
+    assert!(!barrier.complete().unwrap());
+    assert!(barrier.prepare_local(prepare(local)).is_err());
+}
+
+#[test]
+fn terminal_prepare_set_binds_the_original_admission_drain_records_v2() {
+    let first = full_prepared();
+    let mut second = TerminalBarrierV1::new(first.start, first.local, members(), &sessions(first.local)).unwrap();
+    for origin in members().into_iter().rev() {
+        second.insert(MessageV1 { start: first.start, origin,
+            body: BodyV1::AdmissionDrained { finalized: 9, business: 1 } }).unwrap();
+    }
+    for origin in members().into_iter().rev() {
+        second.insert(MessageV1 { start: first.start, origin, body: BodyV1::Prepare(prepare(origin)) }).unwrap();
+    }
+    assert_ne!(first.prepare_set().unwrap(), second.prepare_set().unwrap());
 }

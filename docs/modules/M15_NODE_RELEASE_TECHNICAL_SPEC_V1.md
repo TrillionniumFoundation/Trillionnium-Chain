@@ -1924,6 +1924,38 @@ failure; restoring original files cannot reactivate the terminal owner.
 
 ## M15-DIRECT-TERMINAL-BARRIER-V1 — coordinate an actual clean stop
 
+### Admission drain before local terminal preparation (local carrier revision 2)
+
+The direct-seven bounded host must close new native admission on the configured
+height/duration bound, before polling another request and independently of leader
+selection. Already admitted exact bytes, durable retries, proof reads and consensus
+progress remain live. A locally empty queue is not evidence that the other six
+owners have finished their admitted work.
+
+Each actual owner may originate one AdmissionDrained record only after its closed
+native admission queue, ready batch and in-flight set are empty and its last
+business height is finalized/applied. The record binds the fleet StartCertificate,
+origin, observed finalized height and last business height through the current
+owned authenticated direct session. A node without native ingress has zero local
+business height. Duplicate records must be byte-exact; missing members, a changed
+record, wrong context or changed session after this commitment cannot authorize
+stopping. This is N/N controlled-campaign coordination, not a BFT quorum or proof.
+
+Keep local proposal production and the pacemaker live until all seven records are
+present and every advertised business height is finalized locally. Then apply the
+original Ready/no-pending-TC stop predicate. Prepare and Park retain the complete
+original durable snapshot checks and consumed-owner requirement. Early peer
+Prepare records are inert until the complete admission-drain set is present.
+
+Local carrier magic becomes TRNMTB02; phases 1/2 keep Prepare/Park shapes, phase 3
+has two little-endian u64 fields (finalized height > 0, business height <= finalized).
+The sorted Prepare-set hash additionally binds each origin's drain record in the
+revision-2 domain. Older local carrier bytes reject, not negotiate or fall back.
+Frozen consensus bytes, leader/quorum rules, maximum height, nominal duration and
+terminal grace are unchanged. A late durable change or undrained peer still fails;
+this repair does not erase an unresolved finality or in-flight obligation.
+
+
 The seven-validator direct candidate previously let the first locally quiet
 node close its sessions while other honest nodes were still establishing their
 quiet interval. Those peers then correctly refused CleanStop because an

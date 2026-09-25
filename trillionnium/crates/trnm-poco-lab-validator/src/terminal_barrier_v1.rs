@@ -9,10 +9,11 @@ use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 use trnm_consensus_types::ValidatorId;
 
-const MAGIC: &[u8; 8] = b"TRNMTB01";
+const MAGIC: &[u8; 8] = b"TRNMTB02";
 const PREFIX: usize = 8 + 1 + 32 + 32;
 const PREPARE_BYTES: usize = PREFIX + 8 + 5 * 32;
 const PARK_BYTES: usize = PREFIX + 32;
+const DRAIN_BYTES: usize = PREFIX + 16;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct TerminalCommonCutV1 {
@@ -29,6 +30,7 @@ pub(crate) struct TerminalPrepareV1 {
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum BodyV1 {
+    AdmissionDrained { finalized: u64, business: u64 },
     Prepare(TerminalPrepareV1),
     Park([u8; 32]),
 }
@@ -45,10 +47,18 @@ impl MessageV1 {
         bytes.push(match self.body {
             BodyV1::Prepare(_) => 1,
             BodyV1::Park(_) => 2,
+            BodyV1::AdmissionDrained { .. } => 3,
         });
         bytes.extend_from_slice(&self.start);
         bytes.extend_from_slice(self.origin.as_bytes());
         match self.body {
+            BodyV1::AdmissionDrained {
+                finalized,
+                business,
+            } => {
+                bytes.extend_from_slice(&finalized.to_le_bytes());
+                bytes.extend_from_slice(&business.to_le_bytes());
+            }
             BodyV1::Prepare(p) => {
                 bytes.extend_from_slice(&p.common.height.to_le_bytes());
                 for digest in [
@@ -67,7 +77,7 @@ impl MessageV1 {
     }
     fn decode(bytes: &[u8]) -> Result<Self> {
         ensure!(
-            matches!(bytes.len(), PREPARE_BYTES | PARK_BYTES),
+            matches!(bytes.len(), PREPARE_BYTES | PARK_BYTES | DRAIN_BYTES),
             "terminal payload length"
         );
         ensure!(&bytes[..8] == MAGIC, "terminal payload domain");
@@ -116,6 +126,20 @@ impl MessageV1 {
                 ensure!(set != [0; 32], "zero terminal Park set");
                 BodyV1::Park(set)
             }
+            3 if bytes.len() == DRAIN_BYTES => {
+                let finalized =
+                    u64::from_le_bytes(bytes[PREFIX..PREFIX + 8].try_into().expect("fixed drain"));
+                let business =
+                    u64::from_le_bytes(bytes[PREFIX + 8..].try_into().expect("fixed drain"));
+                ensure!(
+                    finalized > 0 && business <= finalized,
+                    "native admission drain is not finalized"
+                );
+                BodyV1::AdmissionDrained {
+                    finalized,
+                    business,
+                }
+            }
             _ => anyhow::bail!("terminal phase/length mismatch"),
         };
         Ok(Self {
@@ -132,6 +156,7 @@ pub(crate) struct TerminalBarrierV1 {
     start: [u8; 32],
     local: ValidatorId,
     members: BTreeSet<ValidatorId>,
+    drains: BTreeMap<ValidatorId, (u64, u64)>,
     prepares: BTreeMap<ValidatorId, TerminalPrepareV1>,
     parks: BTreeMap<ValidatorId, [u8; 32]>,
     sessions: BTreeMap<(PeerDirectionV0, ValidatorId), (u64, [u8; 32])>,
@@ -152,6 +177,7 @@ impl TerminalBarrierV1 {
             start,
             local,
             members,
+            drains: BTreeMap::new(),
             prepares: BTreeMap::new(),
             parks: BTreeMap::new(),
             sessions: BTreeMap::new(),
@@ -186,7 +212,9 @@ impl TerminalBarrierV1 {
                 return Ok(());
             }
             ensure!(
-                !self.local_prepared()
+                !self.local_drained()
+                    && !self.drains.contains_key(&remote)
+                    && !self.local_prepared()
                     && !self.prepares.contains_key(&remote)
                     && !self.parks.contains_key(&remote),
                 "terminal session changed after Prepare"
@@ -196,6 +224,30 @@ impl TerminalBarrierV1 {
         self.sessions.insert(key, current);
         Ok(())
     }
+    pub fn local_drained(&self) -> bool {
+        self.drains.contains_key(&self.local)
+    }
+    pub fn admission_drain_ready(&self, local_finalized: u64) -> bool {
+        self.drains.len() == self.members.len()
+            && self
+                .drains
+                .values()
+                .all(|(_, business)| *business <= local_finalized)
+    }
+    pub fn drain_local(&mut self, finalized: u64, business: u64) -> Result<Vec<u8>> {
+        let message = MessageV1 {
+            start: self.start,
+            origin: self.local,
+            body: BodyV1::AdmissionDrained {
+                finalized,
+                business,
+            },
+        };
+        let bytes = message.encode();
+        MessageV1::decode(&bytes)?;
+        self.insert(message)?;
+        Ok(bytes)
+    }
     pub fn local_prepared(&self) -> bool {
         self.prepares.contains_key(&self.local)
     }
@@ -203,6 +255,10 @@ impl TerminalBarrierV1 {
         self.prepares.get(&self.local).copied()
     }
     pub fn prepare_local(&mut self, prepare: TerminalPrepareV1) -> Result<Vec<u8>> {
+        ensure!(
+            self.admission_drain_ready(prepare.common.height),
+            "terminal Prepare lacks all finalized admission drains"
+        );
         let message = MessageV1 {
             start: self.start,
             origin: self.local,
@@ -245,7 +301,28 @@ impl TerminalBarrierV1 {
             "terminal member/context mismatch"
         );
         match message.body {
+            BodyV1::AdmissionDrained {
+                finalized,
+                business,
+            } => {
+                ensure!(
+                    finalized > 0 && business <= finalized,
+                    "native admission drain is not finalized"
+                );
+                if let Some(prior) = self.drains.get(&message.origin) {
+                    ensure!(
+                        *prior == (finalized, business),
+                        "conflicting native admission drain"
+                    );
+                    return Ok(());
+                }
+                self.drains.insert(message.origin, (finalized, business));
+            }
             BodyV1::Prepare(prepare) => {
+                ensure!(
+                    self.drains.contains_key(&message.origin),
+                    "terminal Prepare precedes origin admission drain"
+                );
                 if let Some(previous) = self.prepares.get(&message.origin) {
                     ensure!(*previous == prepare, "conflicting terminal Prepare");
                     return Ok(());
@@ -287,10 +364,28 @@ impl TerminalBarrierV1 {
         if self.prepares.len() != 7 {
             return Ok(None);
         }
+        ensure!(
+            self.prepares
+                .values()
+                .all(|p| self.admission_drain_ready(p.common.height)),
+            "terminal Prepare set does not cover every finalized business height"
+        );
         let mut hash = Sha256::new();
-        hash.update(b"TRNM/DirectSevenTerminalPrepareSet/V1\0");
+        hash.update(b"TRNM/DirectSevenTerminalPrepareSet/V2\0");
         hash.update(7_u32.to_le_bytes());
         for (origin, prepare) in &self.prepares {
+            let (finalized, business) = self.drains.get(origin).context("missing origin drain")?;
+            hash.update(
+                MessageV1 {
+                    start: self.start,
+                    origin: *origin,
+                    body: BodyV1::AdmissionDrained {
+                        finalized: *finalized,
+                        business: *business,
+                    },
+                }
+                .encode(),
+            );
             // Outer session/sequence/signature is peer-specific and must never
             // enter this common digest.
             hash.update(
@@ -402,6 +497,10 @@ impl TerminalBarrierV1 {
                     "residual terminal context differs"
                 );
                 let exact = match message.body {
+                    BodyV1::AdmissionDrained {
+                        finalized,
+                        business,
+                    } => self.drains.get(&message.origin) == Some(&(finalized, business)),
                     BodyV1::Prepare(p) => self.prepares.get(&message.origin) == Some(&p),
                     BodyV1::Park(p) => self.parks.get(&message.origin) == Some(&p),
                 };

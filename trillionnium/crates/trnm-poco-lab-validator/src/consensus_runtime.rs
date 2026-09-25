@@ -4266,6 +4266,9 @@ impl BoundedConsensusOwnerV1 {
             let outbox_progress = self.flush_outbox_v1()?;
             let pending_proposal_progress = self.drain_pending_proposals_v1()?;
             let certificate_progress = self.drain_pending_certificates_v1()?;
+            // Close admission at the owner boundary even when this node is not
+            // the leader. Reads and exact retries remain available while draining.
+            self.refresh_stop_state_v1(Instant::now())?;
             let client_progress = self.poll_native_client_v1()?;
             let proposal_progress = self.maybe_propose_v1()?;
             self.refresh_stop_state_v1(Instant::now())?;
@@ -4341,13 +4344,43 @@ impl BoundedConsensusOwnerV1 {
             >= self.config.ordinary_start_height()
             && facts.application_applied_height_v0() == facts.finalized_height_v0();
         let reached_duration_bound = now >= self.nominal_deadline;
+        let stop_requested = reached_duration_bound
+            || facts.high_qc_v0().height().get() >= self.preflight.target_height;
+        if stop_requested {
+            if let Some(client) = self.native_client.as_mut() {
+                client.stop_admission_v1();
+            }
+        }
         let native_drained = self
             .native_client
             .as_ref()
             .is_none_or(|client| client.drained_v1(facts.finalized_height_v0()));
+        // A peer with an empty local queue must continue proposing/voting until
+        // all actual admission owners finish their already accepted work.
+        let global_drained = if self.terminal_barrier_enabled_v1() {
+            if stop_requested
+                && positive_ordinary_finality
+                && native_drained
+                && !self.terminal_barrier_v1()?.local_drained()
+            {
+                let business = self
+                    .native_client
+                    .as_ref()
+                    .map_or(0, |client| client.last_business_height_v1());
+                let bytes = self
+                    .terminal_barrier_mut_v1()?
+                    .drain_local(facts.finalized_height_v0(), business)?;
+                self.outbox.enqueue(FrameKind::TerminalBarrier, bytes)?;
+            }
+            self.terminal_barrier_v1()?
+                .admission_drain_ready(facts.finalized_height_v0())
+        } else {
+            true
+        };
         if self.stopping_since.is_none()
             && positive_ordinary_finality
             && native_drained
+            && global_drained
             && bounded_stop_ready_v1(self.preflight.target_height, reached_duration_bound, facts)
         {
             self.stopping_since = Some(now);
