@@ -659,14 +659,19 @@ fn read_frame_inner(
     Ok(frame)
 }
 
-fn read_exact_until(
+/// The stream is private to one accepted/request connection. Keep it
+/// nonblocking so a peer closing after writing cannot make SO_RCVTIMEO fail
+/// before buffered bytes are read on Darwin. Every wait uses one deadline.
+pub(crate) fn read_exact_until(
     stream: &mut UnixStream,
     buffer: &mut [u8],
     deadline: Instant,
 ) -> Result<(), PeerLeaseErrorV1> {
+    remaining_timeout(deadline)?;
+    stream.set_nonblocking(true)?;
     let mut offset = 0usize;
     while offset < buffer.len() {
-        stream.set_read_timeout(Some(remaining_timeout(deadline)?))?;
+        remaining_timeout(deadline)?;
         match stream.read(&mut buffer[offset..]) {
             Ok(0) => {
                 return Err(PeerLeaseErrorV1::Io(io::Error::new(
@@ -676,13 +681,8 @@ fn read_exact_until(
             }
             Ok(count) => offset += count,
             Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
-            Err(error)
-                if matches!(
-                    error.kind(),
-                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
-                ) =>
-            {
-                return Err(operation_timeout_error())
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                wait_stream_ready_v1(stream, rustix::event::PollFlags::IN, deadline)?;
             }
             Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
         }
@@ -690,14 +690,16 @@ fn read_exact_until(
     Ok(())
 }
 
-fn write_all_until(
+pub(crate) fn write_all_until(
     stream: &mut UnixStream,
     buffer: &[u8],
     deadline: Instant,
 ) -> Result<(), PeerLeaseErrorV1> {
+    remaining_timeout(deadline)?;
+    stream.set_nonblocking(true)?;
     let mut offset = 0usize;
     while offset < buffer.len() {
-        stream.set_write_timeout(Some(remaining_timeout(deadline)?))?;
+        remaining_timeout(deadline)?;
         match stream.write(&buffer[offset..]) {
             Ok(0) => {
                 return Err(PeerLeaseErrorV1::Io(io::Error::new(
@@ -707,20 +709,47 @@ fn write_all_until(
             }
             Ok(count) => offset += count,
             Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
-            Err(error)
-                if matches!(
-                    error.kind(),
-                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
-                ) =>
-            {
-                return Err(operation_timeout_error())
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                wait_stream_ready_v1(stream, rustix::event::PollFlags::OUT, deadline)?;
             }
             Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
         }
     }
-    stream.set_write_timeout(Some(remaining_timeout(deadline)?))?;
+    // UnixStream is unbuffered, but retain the original completion deadline.
+    remaining_timeout(deadline)?;
     stream.flush()?;
     Ok(())
+}
+
+fn wait_stream_ready_v1(
+    stream: &UnixStream,
+    interest: rustix::event::PollFlags,
+    deadline: Instant,
+) -> Result<(), PeerLeaseErrorV1> {
+    use rustix::event::{poll, PollFd, PollFlags, Timespec};
+    loop {
+        let timeout = Timespec::try_from(remaining_timeout(deadline)?)
+            .map_err(|error| io::Error::new(io::ErrorKind::InvalidInput, error))?;
+        let mut fds = [PollFd::new(
+            stream,
+            interest | PollFlags::ERR | PollFlags::HUP,
+        )];
+        match poll(&mut fds, Some(&timeout)) {
+            Ok(0) => return Err(operation_timeout_error()),
+            Ok(_) if fds[0].revents().contains(PollFlags::NVAL) => {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
+                    "invalid peer-lease descriptor",
+                )
+                .into());
+            }
+            // Retry the actual I/O to consume bytes before EOF or obtain its
+            // precise error. Readiness alone never claims a delivered frame.
+            Ok(_) => return Ok(()),
+            Err(error) if error == rustix::io::Errno::INTR => continue,
+            Err(error) => return Err(PeerLeaseErrorV1::Io(error.into())),
+        }
+    }
 }
 
 fn remaining_timeout(deadline: Instant) -> Result<Duration, PeerLeaseErrorV1> {
@@ -968,12 +997,22 @@ mod tests {
         let (mut server, mut abandoned) = UnixStream::pair().unwrap();
         abandoned.write_all(&encode_request(request)).unwrap();
         abandoned.shutdown(Shutdown::Both).unwrap();
-        assert!(matches!(
-            serve_connection(&mut server, &mut store, Duration::from_secs(1)),
-            Err(LeaseConnectionFailureV1::Connection(PeerLeaseErrorV1::Io(
-                _
-            )))
-        ));
+        let outcome = serve_connection(&mut server, &mut store, Duration::from_secs(1));
+        // Linux may reject this write, while Darwin may accept bytes into a
+        // socket whose client never reads them. Neither is an application ACK.
+        // Only a connection-scoped error or a completed write is admissible;
+        // an authority failure must never be hidden as simulated response loss.
+        assert!(
+            matches!(
+                outcome,
+                Ok(())
+                    | Err(LeaseConnectionFailureV1::Connection(PeerLeaseErrorV1::Io(
+                        _
+                    )))
+            ),
+            "{outcome:?}"
+        );
+        drop(abandoned);
         let token = store.active_lease(request.scope).unwrap();
         let journal = fs::read(&path).unwrap();
         let (mut server, mut retry) = UnixStream::pair().unwrap();
@@ -1056,5 +1095,38 @@ mod tests {
         assert!(received.is_empty());
         assert_eq!(store.apply(request, 10_001).unwrap(), token);
         assert_eq!(store.last_hash(), hash);
+    }
+
+    #[test]
+    fn complete_response_survives_peer_close_before_reader_v1() {
+        let (mut peer, mut reader) = UnixStream::pair().unwrap();
+        let bytes = encode_response(LeaseResponseV1::Rejected(LeaseRejectCodeV1::Fenced));
+        peer.write_all(&bytes).unwrap();
+        drop(peer);
+        let frame = read_frame_until(&mut reader, Instant::now() + Duration::from_secs(1)).unwrap();
+        assert_eq!(frame, bytes);
+    }
+
+    #[test]
+    fn truncated_closed_response_is_eof_not_a_timeout_setup_failure_v1() {
+        let (mut peer, mut reader) = UnixStream::pair().unwrap();
+        peer.write_all(b"TPLS").unwrap();
+        drop(peer);
+        assert!(
+            matches!(read_frame_until(&mut reader, Instant::now() + Duration::from_secs(1)),
+            Err(PeerLeaseErrorV1::Io(error)) if error.kind() == io::ErrorKind::UnexpectedEof)
+        );
+    }
+
+    #[test]
+    fn backpressured_writer_retains_one_absolute_deadline_v1() {
+        let (mut writer, _stalled_reader) = UnixStream::pair().unwrap();
+        let bytes = vec![0x7fu8; 2 * 1024 * 1024];
+        let start = Instant::now();
+        let result = write_all_until(&mut writer, &bytes, start + Duration::from_millis(75));
+        assert!(
+            matches!(result, Err(PeerLeaseErrorV1::Io(error)) if error.kind() == io::ErrorKind::TimedOut)
+        );
+        assert!(start.elapsed() < Duration::from_secs(1));
     }
 }

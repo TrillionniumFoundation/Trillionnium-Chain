@@ -1679,25 +1679,84 @@ def test_peer_lease_spawn_failure_closes_diagnostic_descriptors() -> None:
         assert captures[0].stdout.closed and captures[0].stderr.closed
 
 
+
+def test_host_diagnostic_manifest_is_not_validator_evidence() -> None:
+    with tempfile.TemporaryDirectory(prefix="tp3-host-manifest-") as temporary:
+        workspace = pathlib.Path(temporary)
+        root = workspace / "baseline"
+        run_id, anchor = build_runner_output_fixture(root)
+        plan = read_json(root / "prestart-plan.json")
+        for validator in plan["validators"]:
+            validator["host_id"] = "local"
+        write_json(root / "prestart-plan.json", plan)
+        (root / "process-io").mkdir()
+        (root / "process-io/peer-lease-local.stdout").write_bytes(b"")
+        (root / "process-io/peer-lease-local.stderr").write_bytes(b"controlled authority failure\n")
+        (root / fleet.RUNNER_OUTPUT_MANIFEST).unlink()
+        def seal(directory):
+            fleet.write_runner_output_manifest(directory, run_id=run_id,
+                validator_count=7, coordinator_anchor=anchor)
+            return fleet.validate_runner_output_manifest(directory, expected_run_id=run_id,
+                expected_validator_count=7, expected_coordinator_anchor=anchor)
+        manifest = seal(root)
+        host_rows = [row for row in manifest["artifacts"] if row["role"] in fleet.RUNNER_HOST_DIAGNOSTIC_ROLES]
+        assert {row["subject"] for row in host_rows} == {"local"}
+        assert len(host_rows) == 2
+        assert any(row["bytes"] == 0 for row in host_rows)
+        assert not fleet.RUNNER_HOST_DIAGNOSTIC_ROLES.intersection(fleet.RUNNER_REQUIRED_SUCCESS_VALIDATOR_ROLES)
+        assert manifest["validator_run_completed"] is False
+        def reject(label, change, message):
+            mutant = workspace / label
+            shutil.copytree(root, mutant)
+            (mutant / fleet.RUNNER_OUTPUT_MANIFEST).unlink()
+            change(mutant)
+            expect_failure(lambda: seal(mutant), message)
+        reject("unplanned", lambda path: (path / "process-io/peer-lease-stranger.stderr").write_bytes(b"foreign"), "outside the planned hosts")
+        def missing_host(path):
+            value = read_json(path / "prestart-plan.json")
+            del value["validators"][0]["host_id"]
+            write_json(path / "prestart-plan.json", value)
+        reject("missing-host", missing_host, "complete planned host identities")
+        reject("malformed-name", lambda path: (path / "process-io/peer-lease-BAD.stderr").write_bytes(b"foreign"), "unowned artifact path")
+        # Changing role/subject cannot relabel a host diagnostic as a vote or
+        # validator proof, even when a caller recomputes the outer manifest.
+        value = read_json(root / fleet.RUNNER_OUTPUT_MANIFEST)
+        for row in value["artifacts"]:
+            if row["role"] == "peer_lease_authority_stderr":
+                row["role"] = "validator_process_stderr"
+                row["subject"] = "0" * 64
+        value["artifacts"].sort(key=lambda row: (row["role"], row["subject"], row["path"]))
+        value["ordered_artifact_root"] = fleet.ordered_runner_artifact_root(run_id=run_id,
+            validator_count=7, coordinator_anchor=anchor, artifacts=value["artifacts"])
+        write_json(root / fleet.RUNNER_OUTPUT_MANIFEST, value)
+        expect_failure(lambda: fleet.validate_runner_output_manifest(root,
+            expected_run_id=run_id, expected_validator_count=7, expected_coordinator_anchor=anchor), "role/subject/path binding differs")
+
+
 def main() -> None:
-    test_local_and_remote_commands()
-    test_remote_exit_status_is_observed_before_errexit()
-    test_peer_lease_remote_exit_preserves_status_and_original_cause()
-    test_peer_lease_local_capture_uses_existing_durable_process_files()
-    test_peer_lease_spawn_failure_closes_diagnostic_descriptors()
-    test_observer_fleet_certificate_command_and_strict_summary()
-    test_run_bounds()
-    test_terminal_agreement()
-    test_verification_profile()
-    test_journal_replay_and_terminal_chain_contract()
-    test_replay_archive_observer_contract()
-    test_independent_anchor_and_output_boundary()
-    test_runner_lifecycle_contract()
-    test_runner_output_manifest_contract()
-    test_native_client_bad_placement_rejects_before_effects()
-    test_failure_diagnostics_are_best_effort_before_stage_cleanup()
+    tests = [
+        test_local_and_remote_commands,
+        test_remote_exit_status_is_observed_before_errexit,
+        test_peer_lease_remote_exit_preserves_status_and_original_cause,
+        test_peer_lease_local_capture_uses_existing_durable_process_files,
+        test_peer_lease_spawn_failure_closes_diagnostic_descriptors,
+        test_observer_fleet_certificate_command_and_strict_summary,
+        test_run_bounds,
+        test_terminal_agreement,
+        test_verification_profile,
+        test_journal_replay_and_terminal_chain_contract,
+        test_replay_archive_observer_contract,
+        test_independent_anchor_and_output_boundary,
+        test_runner_lifecycle_contract,
+        test_runner_output_manifest_contract,
+        test_host_diagnostic_manifest_is_not_validator_evidence,
+        test_native_client_bad_placement_rejects_before_effects,
+        test_failure_diagnostics_are_best_effort_before_stage_cleanup,
+    ]
+    for test in tests:
+        test()
     print(
-        "poco_g3_consensus_fleet_test=passed positives=25 negatives=46 "
+        f"poco_g3_consensus_fleet_test=passed test_functions={len(tests)} "
         "parallel_process_contract=true signed_journal_required=true "
         "native_client_bad_placement_pre_effect_refusal=true "
         "fleet_start_certificate_required=true "

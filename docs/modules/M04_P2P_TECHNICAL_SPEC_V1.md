@@ -541,6 +541,22 @@ These are diagnostic observations, not signed consensus receipts or proof of
 a remote signal. No keys or request payloads are added to diagnostics. Cleanup
 still targets only the owned process; an already absent PID needs no signal,
 while a reused PID with another command remains protected from termination.
+Host diagnostics use separate output-manifest roles bound to the planned host
+IDs; they never count as validator receipts. Empty stdout is valid diagnostic
+content, not an empty signed report. Legacy manifests without these optional
+roles remain readable; a successful new diagnostic set must cover both streams
+for every planned validator host. Partial failures may retain a subset.
+
+### Absolute socket deadlines without platform timeout races
+
+Lease and optional recovery frame I/O share the existing Unix deadline helpers.
+Each operation uses nonblocking read/write and `poll` only when it would block;
+interruption and fragmentation retain the original absolute deadline. This avoids
+Darwin's `SO_RCVTIMEO` failure after a server has sent and closed a valid response.
+A complete buffered frame remains readable after peer close, a truncated frame
+returns EOF, and a stalled reader/writer times out without changing store state.
+Socket write success is not application acknowledgement: after client response
+loss the exact operation must still recover the same durable result.
 
 ## Observability and SLO
 

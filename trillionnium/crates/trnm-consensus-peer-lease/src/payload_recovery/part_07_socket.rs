@@ -1078,35 +1078,7 @@ fn write_recovery_frame(
     frame: &[u8],
     deadline: Instant,
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
-    let mut offset = 0usize;
-    while offset < frame.len() {
-        stream.set_write_timeout(Some(remaining_recovery_timeout(deadline)?))?;
-        match stream.write(&frame[offset..]) {
-            Ok(0) => {
-                return Err(PayloadReplayRecoveryErrorV1::Io(io::Error::new(
-                    io::ErrorKind::WriteZero,
-                    "recovery socket accepted no response bytes",
-                )))
-            }
-            Ok(written) => offset += written,
-            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
-            Err(error)
-                if matches!(
-                    error.kind(),
-                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
-                ) =>
-            {
-                return Err(PayloadReplayRecoveryErrorV1::Io(io::Error::new(
-                    io::ErrorKind::TimedOut,
-                    "recovery socket operation deadline exceeded",
-                )))
-            }
-            Err(error) => return Err(PayloadReplayRecoveryErrorV1::Io(error)),
-        }
-    }
-    stream.set_write_timeout(Some(remaining_recovery_timeout(deadline)?))?;
-    stream.flush()?;
-    Ok(())
+    crate::unix::write_all_until(stream, frame, deadline).map_err(map_peer_lease_error)
 }
 
 #[cfg(unix)]
@@ -1115,33 +1087,7 @@ fn read_exact_until_recovery(
     buffer: &mut [u8],
     deadline: Instant,
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
-    let mut offset = 0usize;
-    while offset < buffer.len() {
-        stream.set_read_timeout(Some(remaining_recovery_timeout(deadline)?))?;
-        match stream.read(&mut buffer[offset..]) {
-            Ok(0) => {
-                return Err(PayloadReplayRecoveryErrorV1::Io(io::Error::new(
-                    io::ErrorKind::UnexpectedEof,
-                    "recovery socket closed before frame completed",
-                )))
-            }
-            Ok(read) => offset += read,
-            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
-            Err(error)
-                if matches!(
-                    error.kind(),
-                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
-                ) =>
-            {
-                return Err(PayloadReplayRecoveryErrorV1::Io(io::Error::new(
-                    io::ErrorKind::TimedOut,
-                    "recovery socket operation deadline exceeded",
-                )))
-            }
-            Err(error) => return Err(PayloadReplayRecoveryErrorV1::Io(error)),
-        }
-    }
-    Ok(())
+    crate::unix::read_exact_until(stream, buffer, deadline).map_err(map_peer_lease_error)
 }
 
 #[cfg(unix)]
@@ -1365,12 +1311,15 @@ mod socket_tests {
         let eof = read_recovery_request(&mut server, Instant::now() + Duration::from_millis(100))
             .map_err(RecoverySocketConnectionErrorV1::Client)
             .expect_err("EOF must reject this client");
-        assert!(matches!(
-            eof,
-            RecoverySocketConnectionErrorV1::Client(
-                PayloadReplayRecoveryErrorV1::Io(ref error)
-            ) if error.kind() == io::ErrorKind::UnexpectedEof
-        ));
+        assert!(
+            matches!(
+                eof,
+                RecoverySocketConnectionErrorV1::Client(
+                    PayloadReplayRecoveryErrorV1::Io(ref error)
+                ) if error.kind() == io::ErrorKind::UnexpectedEof
+            ),
+            "unexpected disconnected client result: {eof:?}"
+        );
 
         // A peer that dribbles only part of a header is bounded by the same
         // absolute deadline and is likewise isolated to its connection.

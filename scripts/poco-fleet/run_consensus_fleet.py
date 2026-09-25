@@ -112,6 +112,12 @@ RUNNER_VALIDATOR_ARTIFACT_PATTERNS = (
     (re.compile(r"^process-io/([0-9a-f]{64})\.stdout$"), "validator_process_stdout"),
     (re.compile(r"^process-io/([0-9a-f]{64})\.stderr$"), "validator_process_stderr"),
 )
+RUNNER_HOST_DIAGNOSTIC_PATTERNS = (
+    (re.compile(r"^process-io/peer-lease-([a-z][a-z0-9-]{0,31})\.stdout$"), "peer_lease_authority_stdout"),
+    (re.compile(r"^process-io/peer-lease-([a-z][a-z0-9-]{0,31})\.stderr$"), "peer_lease_authority_stderr"),
+)
+RUNNER_HOST_DIAGNOSTIC_ROLES = {role for _pattern, role in RUNNER_HOST_DIAGNOSTIC_PATTERNS}
+RUNNER_PROCESS_IO_ROLES = {"validator_process_stdout", "validator_process_stderr"} | RUNNER_HOST_DIAGNOSTIC_ROLES
 RUNNER_REQUIRED_SINGLETON_ROLES = {
     "coordinator_anchor_record",
     "runner_prestart_plan",
@@ -487,7 +493,7 @@ def runner_lifecycle_document(
 def runner_artifact_identity(relative: str) -> tuple[str, str]:
     if relative in RUNNER_SINGLETON_ARTIFACTS:
         return RUNNER_SINGLETON_ARTIFACTS[relative], ""
-    for pattern, role in RUNNER_VALIDATOR_ARTIFACT_PATTERNS:
+    for pattern, role in RUNNER_VALIDATOR_ARTIFACT_PATTERNS + RUNNER_HOST_DIAGNOSTIC_PATTERNS:
         match = pattern.fullmatch(relative)
         if match is not None:
             return role, match.group(1)
@@ -644,7 +650,7 @@ def validate_runner_output_manifest(
             or expected_bytes < 0
         ):
             base.fail("runner output manifest content reference is not canonical")
-        allow_empty = role in {"validator_process_stdout", "validator_process_stderr"}
+        allow_empty = role in RUNNER_PROCESS_IO_ROLES
         observed_hash, observed_bytes, _metadata = sealed_file_facts(
             root.joinpath(*pathlib.PurePosixPath(relative).parts),
             f"runner output artifact {relative}",
@@ -695,6 +701,17 @@ def validate_runner_output_manifest(
         ):
             base.fail("runner output prestart validator inventory differs")
         validator_ids.add(validator_id)
+    has_host_diagnostics = bool(RUNNER_HOST_DIAGNOSTIC_ROLES.intersection(role_subjects))
+    planned_hosts: set[str] = set()
+    if has_host_diagnostics:
+        for item in raw_validators:
+            host = item.get("host_id")
+            if not isinstance(host, str) or re.fullmatch(r"[a-z][a-z0-9-]{0,31}", host) is None:
+                base.fail("host diagnostics require complete planned host identities")
+            planned_hosts.add(host)
+        for role in RUNNER_HOST_DIAGNOSTIC_ROLES:
+            if not role_subjects.get(role, set()).issubset(planned_hosts):
+                base.fail("lease authority diagnostic subject is outside the planned hosts")
     for role in RUNNER_REQUIRED_SUCCESS_VALIDATOR_ROLES:
         if not role_subjects.get(role, set()).issubset(validator_ids):
             base.fail("runner output artifact subject is outside the planned validators")
@@ -771,6 +788,10 @@ def validate_runner_output_manifest(
             base.fail("successful runner execution omits replay archive lifecycle stages")
         if role_subjects.get("runner_launch_observation") != {""}:
             base.fail("successful runner execution omits its launch observation")
+        if has_host_diagnostics:
+            for role in RUNNER_HOST_DIAGNOSTIC_ROLES:
+                if role_subjects.get(role, set()) != planned_hosts:
+                    base.fail("successful host diagnostics omit a planned authority stream")
         for role in RUNNER_REQUIRED_SUCCESS_VALIDATOR_ROLES:
             if role_subjects.get(role) != validator_ids:
                 base.fail(f"successful runner execution omits one {role}")
@@ -801,7 +822,7 @@ def write_runner_output_manifest(
     artifacts: list[dict[str, Any]] = []
     for relative, path in files.items():
         role, subject = runner_artifact_identity(relative)
-        allow_empty = role in {"validator_process_stdout", "validator_process_stderr"}
+        allow_empty = role in RUNNER_PROCESS_IO_ROLES
         digest, size, _metadata = sealed_file_facts(
             path, f"runner output artifact {relative}", allow_empty=allow_empty
         )
