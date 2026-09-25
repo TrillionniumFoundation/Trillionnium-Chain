@@ -7,6 +7,10 @@
 //! 32-byte [`trnm_consensus_types::SigningRoot`].
 
 extern crate alloc;
+#[cfg(feature = "bounded-signature-cache")]
+extern crate std;
+#[cfg(feature = "bounded-signature-cache")]
+mod signature_cache;
 
 use curve25519_dalek::edwards::CompressedEdwardsY;
 use ed25519_dalek::{Signature, VerifyingKey};
@@ -50,7 +54,10 @@ pub use strict_finality::{
 };
 pub use trnm_consensus_types::HistoricalAncestryLimitsV1;
 
-/// Stateless strict Ed25519 verifier for PoCO-BFT v0 consensus roots.
+/// Strict Ed25519 verifier for PoCO-BFT v0 consensus roots.
+///
+/// Default builds are stateless/no_std. The explicitly selected host cache
+/// remembers only exact successful mathematical predicates, never admission.
 ///
 /// Public keys must decode as Ed25519 compressed points. `verify_strict`
 /// additionally rejects non-canonical signature scalars/R encodings and
@@ -168,15 +175,31 @@ impl SignatureVerifier for StrictEd25519Verifier {
         signing_root: &SigningRoot,
         signature: &SignatureBytes,
     ) -> bool {
-        let public_key_bytes = validator.consensus_key();
-        let Ok(public_key) = VerifyingKey::from_bytes(public_key_bytes.as_bytes()) else {
-            return false;
-        };
-        let signature = Signature::from_bytes(signature.as_bytes());
-        public_key
-            .verify_strict(signing_root.as_bytes(), &signature)
-            .is_ok()
+        #[cfg(feature = "bounded-signature-cache")]
+        {
+            signature_cache::verify(validator, signing_root, signature)
+        }
+        #[cfg(not(feature = "bounded-signature-cache"))]
+        {
+            verify_uncached(validator, signing_root, signature)
+        }
     }
+}
+
+// Exact original predicate, also used on cache miss/contention/poison/allocation failure.
+fn verify_uncached(
+    validator: &Validator,
+    signing_root: &SigningRoot,
+    signature: &SignatureBytes,
+) -> bool {
+    let public_key_bytes = validator.consensus_key();
+    let Ok(public_key) = VerifyingKey::from_bytes(public_key_bytes.as_bytes()) else {
+        return false;
+    };
+    let signature = Signature::from_bytes(signature.as_bytes());
+    public_key
+        .verify_strict(signing_root.as_bytes(), &signature)
+        .is_ok()
 }
 
 #[cfg(test)]

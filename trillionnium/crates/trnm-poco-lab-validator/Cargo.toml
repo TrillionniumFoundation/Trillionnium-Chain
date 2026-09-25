@@ -120,7 +120,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["float_roundtrip"] }
 sha2 = "0.10"
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
-trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto", features = ["bounded-signature-cache"] }
 trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }
 trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }

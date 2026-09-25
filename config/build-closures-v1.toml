@@ -111,6 +111,7 @@ default_features = true
 features = []
 required_features = []
 forbidden_features = [
+  "trnm-consensus-crypto/bounded-signature-cache",
   "trnm-poco-node/epoch-runtime-candidate",
   "trnm-consensus-core/candidate-epoch-host-v1",
   "trnm-consensus-safety-store/candidate-epoch-host-v1",
@@ -124,6 +125,7 @@ default_features = true
 features = []
 required_features = []
 forbidden_features = [
+  "trnm-consensus-crypto/bounded-signature-cache",
   "trnm-poco-node/epoch-runtime-candidate",
   "trnm-consensus-core/candidate-epoch-host-v1",
   "trnm-consensus-safety-store/candidate-epoch-host-v1",
@@ -137,6 +139,7 @@ default_features = false
 features = ["persistent-authority-candidate"]
 required_features = ["trnm-poco-node/epoch-handoff-checkpoint-candidate"]
 forbidden_features = [
+  "trnm-consensus-crypto/bounded-signature-cache",
   "trnm-poco-node/epoch-runtime-candidate",
   "trnm-consensus-core/candidate-epoch-host-v1",
   "trnm-consensus-safety-store/candidate-epoch-host-v1",

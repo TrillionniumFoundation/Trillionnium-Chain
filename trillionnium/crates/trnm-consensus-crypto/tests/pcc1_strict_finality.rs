@@ -251,3 +251,65 @@ fn proof_cannot_select_its_own_chain_context() {
     )
     .is_err());
 }
+
+#[test]
+fn repeated_signature_math_never_caches_finality_admission_or_work_budget() {
+    let f = fixture();
+    let mut charged_work = None;
+    // This same test runs with and without the optional host cache. Warm every
+    // actual nested signature through the public proof boundary, not a cache API.
+    for _ in 0..3 {
+        let mut budget = Cev0AdmissionBudgetV0::for_validator_set(&f.parameters, &f.set);
+        let proof = decode_verify_finality_proof_strict_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &f.bytes,
+            &f.set,
+            &f.parameters,
+            f.expected,
+            &mut budget,
+        )
+        .unwrap();
+        assert_eq!(proof.finalized_block_id(), f.expected.block_id);
+        assert!(budget.signature_work() > 0);
+        if let Some(previous) = charged_work {
+            assert_eq!(budget.signature_work(), previous);
+        }
+        charged_work = Some(budget.signature_work());
+    }
+
+    // Cached valid mathematics must not make an under-budget proof admissible.
+    let mut budget = Cev0AdmissionBudgetV0::new(f.bytes.len(), charged_work.unwrap() - 1);
+    assert!(decode_verify_finality_proof_strict_v0(
+        POCO_THREE_CHAIN_PROOF_CLASS_V0,
+        &f.bytes,
+        &f.set,
+        &f.parameters,
+        f.expected,
+        &mut budget,
+    )
+    .is_err());
+
+    // Identical proof bytes and keys do not choose the current trust context.
+    let different_context = ValidatorSet::new(
+        GenesisHash::new([0xE1; 32]),
+        f.set.chain_id(),
+        f.set.protocol_version(),
+        f.set.epoch(),
+        f.set.consensus_parameters_hash(),
+        f.set.validators().to_vec(),
+    )
+    .unwrap();
+    assert!(decode_verify_finality_proof_strict_v0(
+        POCO_THREE_CHAIN_PROOF_CLASS_V0,
+        &f.bytes,
+        &different_context,
+        &f.parameters,
+        f.expected,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .is_err());
+    let mut different_target = f.expected;
+    different_target.state_root = StateRoot::new([0xD1; 32]);
+    assert!(!verify(&f, &f.bytes, different_target));
+    assert!(verify(&f, &f.bytes, f.expected));
+}

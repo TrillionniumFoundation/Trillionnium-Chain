@@ -392,6 +392,28 @@ trust-context digest, expected-target digest, verifier implementation version)`.
 A hit cannot bypass context admission, revocation generation or resource policy.
 Cache capacity/eviction affects latency only; eviction does not invalidate truth.
 
+The opt-in `bounded-signature-cache` host feature now memoizes a narrower pure
+mathematical predicate inside the same strict verifier. Its key is the complete
+128 bytes: public key32, signing root32, signature64. A digest selects a slot,
+but a hit requires equality of all128 bytes; digest collision is only eviction.
+Only successful `ed25519_dalek::verify_strict` results enter the cache. Negative
+results are never retained. This is not a cached validator set, trust context,
+role, proof, admission or currentness decision. All of those checks and charged
+signature-work accounting still execute outside the unchanged verifier call.
+
+The host cache is process-local, empty after restart, and has exactly4096 optional
+fixed-size slots (528,384 bytes for slots on the qualified layout). It uses no
+unbounded map, TTL, environment lookup, disk state or network. Lock contention,
+poisoning or a failed cache allocation falls back to the original strict
+verification instead of waiting or accepting. Duplicate concurrent misses may
+repeat work; they cannot create a result. Replacement changes performance only.
+The library default remains no_std without this host cache. Only the explicit
+lab dependency enables it; production/component default feature closures forbid
+it until separately selected and qualified. Cached mathematics does not permit
+old credentials to pass current-role or finality checks, and replaying old
+whole-store images still requires the independent monotonic boundary.
+
+
 On restart, M03/M08/M13 reopen inert evidence and independently restore the
 trusted context before asking M01 to re-verify. A checksum-only restore is
 insufficient. A serialized `verified=true`, type name or event is never accepted.
