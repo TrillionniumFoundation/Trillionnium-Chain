@@ -451,6 +451,24 @@ admission first; selected user blocks must obtain their two certified descendant
 or the bounded drain ends with `DRAIN_INCOMPLETE` and durable pending work.
 Reserve at least two successor heights beyond the last admitted business target;
 `max_blocks` cannot silently truncate finality while reporting campaign success.
+For the finite native-client host, checking the two-height tail only during
+proposal selection is insufficient: a nonleader can otherwise admit a new WAL
+entry after its last usable business turn. Before each endpoint poll, derive a
+local pending-count ceiling from freshly confirmed proposal-parent height and
+the installed proposal cap. Reserve two descendant heights plus complete
+validator rotations; count each pending transaction at the profile's maximum
+outer size when computing a safe batch occupancy. This conservative local
+admission policy changes no leader, validity, quorum or proposal-height rule.
+The owner rechecks its queued and ready counts before every new admission; a
+full remaining allowance returns backpressure without consuming WAL identity.
+No remaining turn returns non-retryable `finality_capacity_exhausted`. Existing
+exact retries and proof reads remain available. Previously accepted or handed-off
+work is never deleted or called failed solely because capacity later changes.
+This reserve assumes otherwise successful owner/protocol progress, not a promise
+that arbitrary faults or deterministic application rejection can be overcome.
+Capacity or deadline failures retain their real incomplete result; a smaller
+positive control does not qualify a failed larger campaign.
+
 On startup restore body/nonce/proposal/proof state and reconcile unresolved
 handoffs before exposing the client socket as ready. Migration and recovery
 failures preserve the prior databases and keep signing/submission fenced.

@@ -250,6 +250,7 @@ pub struct NativeClientRuntimeV1 {
     in_flight: BTreeMap<[u8; 32], NativePendingAdmissionV1>,
     next_proposal: Instant,
     accepting: bool,
+    finite_pending_ceiling: Option<usize>,
     last_business_height: u64,
     last_archived_finalized_height: u64,
     artifact_count: usize,
@@ -435,6 +436,7 @@ impl NativeClientRuntimeV1 {
             in_flight: BTreeMap::new(),
             next_proposal: Instant::now(),
             accepting: true,
+            finite_pending_ceiling: None,
             last_business_height: 0,
             last_archived_finalized_height: 0,
             artifact_count,
@@ -469,13 +471,43 @@ impl NativeClientRuntimeV1 {
     pub fn stop_admission_v1(&mut self) {
         self.accepting = false;
     }
+    /// Operational admission only. It cannot remove accepted WAL records or
+    /// change consensus validity; the current owner refreshes it before polling.
+    pub(crate) fn update_finality_capacity_v1(
+        &mut self,
+        parent_height: u64,
+        target_height: u64,
+    ) -> Result<()> {
+        self.finite_pending_ceiling = Some(finite_pending_capacity_v1(
+            &self.profile,
+            self.set.validators().len(),
+            parent_height,
+            target_height,
+        )?);
+        Ok(())
+    }
+    fn capacity_refusal_v1(&self) -> Option<(&'static str, bool)> {
+        match self.finite_pending_ceiling {
+            Some(0) => Some(("finality_capacity_exhausted", false)),
+            Some(limit)
+                if self
+                    .ready
+                    .len()
+                    .checked_add(self.admission.queued_counts().2)
+                    .is_none_or(|pending| pending >= limit) =>
+            {
+                Some(("backpressure", true))
+            }
+            _ => None,
+        }
+    }
     pub fn last_business_height_v1(&self) -> u64 {
         self.last_business_height
     }
     pub fn drained_v1(&self, finalized: u64) -> bool {
         self.in_flight.is_empty()
             && self.ready.is_empty()
-            && self.admission.queued_counts().0 == 0
+            && self.admission.queued_counts().2 == 0
             && self.last_business_height <= finalized
     }
     pub fn poll_v1(&mut self, parent_timestamp: u64, finalized_height: u64) -> Result<bool> {
@@ -777,6 +809,39 @@ impl NativeClientRuntimeV1 {
         {
             return Ok(self.error_reply(&id, "invalid_request", false));
         }
+        // Exact Pending/InFlight readback needs no new admission parent.
+        if let Request::Submit { data, .. } = &request {
+            if let Ok(bytes) =
+                canonical_hex(&data.signed_outer_hex, self.profile.maximum_outer_bytes)
+            {
+                // Exact durable retries remain answerable during stop/skew.
+                if let Ok(built) =
+                    trnm_application_tx_builder_v0::BuiltCanonicalTxV0::from_exact_outer_bytes_v0(
+                        &bytes,
+                    )
+                {
+                    if let Ok(hash) = built.envelope().tx_hash() {
+                        let retained = match self.admission.native_record_v1(hash) {
+                            Ok(record) => record,
+                            Err(_) => return Ok(self.error_reply(&id, "recovery_required", true)),
+                        };
+                        if let Some(record) = retained {
+                            if record.exact_outer_bytes() == bytes {
+                                return Ok(match self.record_response_v1(&record) {
+                                    Ok(data) => self.reply(&id, data),
+                                    Err(_) => self.error_reply(&id, "recovery_required", true),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if matches!(&request, Request::Submit { .. }) {
+            if let Some((code, retryable)) = self.capacity_refusal_v1() {
+                return Ok(self.error_reply(&id, code, retryable));
+            }
+        }
         let parent =
             if admission_ready && self.accepting && matches!(&request, Request::Submit { .. }) {
                 resolve_parent()?
@@ -803,7 +868,7 @@ impl NativeClientRuntimeV1 {
             }
             Request::Status { data, .. } => {
                 let _ = data;
-                self.reply(id,json!({"accepting":self.accepting && admission_ready,"finalized_height":finalized.to_string(),"pending":self.ready.len()+self.admission.queued_counts().0,"in_flight":self.in_flight.len(),"proof_verified":false}))
+                self.reply(id,json!({"accepting":self.accepting && admission_ready && self.capacity_refusal_v1().is_none(),"finalized_height":finalized.to_string(),"pending":self.ready.len()+self.admission.queued_counts().2,"in_flight":self.in_flight.len(),"proof_verified":false}))
             }
             Request::Submit { data, .. } => {
                 let bytes =
@@ -811,23 +876,6 @@ impl NativeClientRuntimeV1 {
                         Ok(b) => b,
                         Err(_) => return self.error_reply(id, "invalid_request", false),
                     };
-                // Exact durable retries remain answerable during stop/skew.
-                if let Ok(built) =
-                    trnm_application_tx_builder_v0::BuiltCanonicalTxV0::from_exact_outer_bytes_v0(
-                        &bytes,
-                    )
-                {
-                    if let Ok(hash) = built.envelope().tx_hash() {
-                        if let Ok(Some(record)) = self.admission.native_record_v1(hash) {
-                            if record.exact_outer_bytes() == bytes {
-                                return match self.record_response_v1(&record) {
-                                    Ok(data) => self.reply(id, data),
-                                    Err(_) => self.error_reply(id, "recovery_required", true),
-                                };
-                            }
-                        }
-                    }
-                }
                 let Some(parent) = parent.filter(|_| self.accepting) else {
                     return self.error_reply(id, "backpressure", true);
                 };
@@ -1017,6 +1065,42 @@ impl NativeClientRuntimeV1 {
         Ok(Some(proposal))
     }
 }
+// Every queued transaction is charged at maximum outer size. Complete leader
+// rotations are a conservative service allowance under otherwise healthy
+// progress, not a liveness promise under arbitrary faults or invalid execution.
+fn finite_pending_capacity_v1(
+    profile: &NativeClientProfileV1,
+    validator_count: usize,
+    parent_height: u64,
+    target_height: u64,
+) -> Result<usize> {
+    let validators = u64::try_from(validator_count).context("validator count overflow")?;
+    ensure!(validators > 0, "finite admission requires validators");
+    let item_bytes = profile
+        .maximum_outer_bytes
+        .checked_add(4)
+        .context("finite admission item size overflow")?;
+    let batch_bytes = profile
+        .maximum_batch_bytes
+        .checked_sub(4)
+        .context("finite admission batch header missing")?;
+    let per_turn = (batch_bytes / item_bytes).min(profile.maximum_batch_transactions);
+    ensure!(
+        per_turn > 0,
+        "finite admission profile cannot fit one transaction"
+    );
+    let turns = target_height
+        .saturating_sub(parent_height)
+        .saturating_sub(2)
+        / validators;
+    let turns = usize::try_from(turns.min(profile.maximum_pending as u64))
+        .context("finite admission turn count overflow")?;
+    Ok(turns
+        .checked_mul(per_turn)
+        .context("finite admission capacity overflow")?
+        .min(profile.maximum_pending))
+}
+
 impl Drop for NativeClientRuntimeV1 {
     fn drop(&mut self) {
         for client in &self.clients {
@@ -1552,5 +1636,44 @@ mod read_delivery_tests {
             .unwrap();
         assert_eq!(reader.read(&mut [0]).unwrap(), 0);
         drop(retained);
+    }
+}
+
+#[cfg(test)]
+mod finite_capacity_tests_v1 {
+    use super::*;
+
+    #[test]
+    fn reserve_counts_rotation_tail_and_maximum_framed_transaction() {
+        let temp = tempfile::tempdir().unwrap();
+        let mut profile = crate::native_client_profile::generate_isolated_native_client_profile_v1(
+            &temp.path().join("keys"),
+            "capacity-chain",
+        )
+        .unwrap();
+        profile.maximum_pending = 256;
+        profile.maximum_outer_bytes = 1024;
+        profile.maximum_batch_bytes = 4 + 2 * (1024 + 4);
+        profile.maximum_batch_transactions = 64;
+        assert_eq!(finite_pending_capacity_v1(&profile, 4, 3, 8).unwrap(), 0);
+        assert_eq!(finite_pending_capacity_v1(&profile, 4, 3, 9).unwrap(), 2);
+        assert_eq!(finite_pending_capacity_v1(&profile, 4, 3, 13).unwrap(), 4);
+        profile.maximum_batch_bytes -= 1;
+        assert_eq!(finite_pending_capacity_v1(&profile, 4, 3, 9).unwrap(), 1);
+        profile.maximum_batch_transactions = 1;
+        assert_eq!(finite_pending_capacity_v1(&profile, 4, 3, 13).unwrap(), 2);
+        assert_eq!(
+            finite_pending_capacity_v1(&profile, 4, 0, u64::MAX).unwrap(),
+            256
+        );
+        for parent in 0..20 {
+            let current = finite_pending_capacity_v1(&profile, 4, parent, 20).unwrap();
+            let next = finite_pending_capacity_v1(&profile, 4, parent + 1, 20).unwrap();
+            assert!(next <= current);
+        }
+        assert_eq!(finite_pending_capacity_v1(&profile, 4, 21, 20).unwrap(), 0);
+        assert!(finite_pending_capacity_v1(&profile, 0, 0, 20).is_err());
+        profile.maximum_outer_bytes = usize::MAX;
+        assert!(finite_pending_capacity_v1(&profile, 4, 0, 20).is_err());
     }
 }

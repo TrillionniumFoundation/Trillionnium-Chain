@@ -4509,7 +4509,7 @@ impl BoundedConsensusOwnerV1 {
             .authority
             .as_ref()
             .context("native client authority is unavailable")?;
-        poll_native_with_authority_v1(client, authority)
+        poll_native_with_authority_v1(client, authority, Some(self.preflight.target_height))
     }
 
     fn maybe_propose_v1(&mut self) -> Result<bool> {
@@ -7982,8 +7982,12 @@ pub(crate) fn route_contained_direct_frame_v1(
 pub(crate) fn poll_native_with_authority_v1(
     client: &mut crate::native_client_runtime::NativeClientRuntimeV1,
     authority: &ContinuousValidatorAuthorityV0,
+    target_height: Option<u64>,
 ) -> Result<bool> {
     let facts = authority.facts_v0()?;
+    if let Some(target_height) = target_height {
+        client.update_finality_capacity_v1(facts.proposal_parent_height_v0(), target_height)?;
+    }
     if facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready {
         client.poll_resolving_parent_v1(facts.finalized_height_v0(), || {
             authority.native_parent_timestamp_v1()

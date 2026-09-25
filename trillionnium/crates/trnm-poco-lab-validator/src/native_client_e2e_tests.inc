@@ -102,8 +102,16 @@ fn native_delayed_multi_height_archive_commits_real_historical_business_v1() {
 fn native_signed_phases_serve_real_proofs_and_refuse_new_admission_v1() {
     run_native_socket_finality_case_v1(NativeSocketCaseV1::SignedPhaseQueries);
 }
+#[test]
+fn native_pending_and_inflight_retries_do_not_resolve_new_parent_v1() {
+    run_native_socket_finality_case_v1(NativeSocketCaseV1::RetryWithoutParent);
+}
+#[test]
+fn native_finite_admission_retains_exact_retries_without_consuming_new_wal_identity_v1() {
+    run_native_socket_finality_case_v1(NativeSocketCaseV1::FiniteCapacity);
+}
 #[derive(Clone, Copy)]
-enum NativeSocketCaseV1 { Immediate, Deferred, ReplaySigkill, SignedPhaseQueries }
+enum NativeSocketCaseV1 { Immediate, Deferred, ReplaySigkill, SignedPhaseQueries, RetryWithoutParent, FiniteCapacity }
 fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
     on_bounded_takeover_owner_stack_v0(move || {
         let defer_archive = !matches!(case, NativeSocketCaseV1::Immediate);
@@ -117,6 +125,9 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
             set.chain_id().as_str(),
         )
         .unwrap();
+        if matches!(case, NativeSocketCaseV1::FiniteCapacity) {
+            profile.maximum_batch_transactions = 1;
+        }
         crate::bootstrap_material::write_native_client_test_bootstrap_v1(
             temp.path(),
             set.clone(),
@@ -247,6 +258,9 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
         .unwrap();
         let hash = tx.envelope().tx_hash().unwrap();
         let request = serde_json::json!({"schema":"trnm.native-client.request.v1","request_id":"e2e-submit","op":"submit","data":{"signed_outer_hex":hex::encode(tx.exact_outer_bytes())}});
+        if matches!(case, NativeSocketCaseV1::FiniteCapacity) {
+            clients.update_finality_capacity_v1(3, 9).unwrap();
+        }
         let first = native_socket_exchange(&mut clients, &socket, 3_000, 1, request.clone());
         assert_eq!(first["ok"], true, "real signed submit rejected: {first}");
         assert_eq!(first["data"]["status"], "pending");
@@ -255,6 +269,74 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
             native_socket_exchange(&mut clients, &socket, 3_000, 1, request.clone()),
             first
         );
+        if matches!(case, NativeSocketCaseV1::RetryWithoutParent | NativeSocketCaseV1::FiniteCapacity) {
+            let retry = native_socket_exchange_poll_v1(&mut clients, &socket,
+                request.clone(), |runtime| runtime.poll_resolving_parent_v1(1, || {
+                    Err(anyhow!("pending retry must not resolve a new parent"))
+                }));
+            assert_eq!(retry, first);
+        }
+        if matches!(case, NativeSocketCaseV1::FiniteCapacity) {
+            // Drive the actual phase-neutral runtime poll on a nonleader.
+            // Capacity cannot wait until this host gets a local proposal turn.
+            let other = (leader_index + 1) % authorities.len();
+            let other_root = temp.path().join("nonleader-client");
+            create_private_directory_v0(&other_root).unwrap();
+            let mut nonleader = crate::native_client_runtime::NativeClientRuntimeV1::open_parts_v1(
+                &other_root, &set, set.validators()[other].id(), profile.clone(),
+            ).unwrap();
+            let other_socket = other_root.join("native-client-v1").join(&profile.socket_basename);
+            let refused = native_socket_exchange_poll_v1(&mut nonleader, &other_socket,
+                request.clone(), |client| crate::consensus_runtime::poll_native_with_authority_v1(
+                    client, &authorities[other], Some(8),
+                ));
+            assert_eq!(refused["ok"], false);
+            assert_eq!(refused["error"], serde_json::json!({"code":"finality_capacity_exhausted", "retryable":false}));
+            let status = native_socket_exchange_poll_v1(&mut nonleader, &other_socket,
+                serde_json::json!({"schema":"trnm.native-client.request.v1", "request_id":"nonleader-status", "op":"status", "data":{}}),
+                |client| crate::consensus_runtime::poll_native_with_authority_v1(client, &authorities[other], Some(8)));
+            assert_eq!(status["data"]["accepting"], false);
+            assert_eq!(status["data"]["pending"], 0);
+            drop(nonleader);
+            let second = build_signed_canonical_tx_v0(
+                CanonicalTxBuildContextV0 {
+                    chain_id: set.chain_id().as_str().to_owned(), sender: signer.id.clone(),
+                    command_id: None, transaction_sequence: 2, issued_at_unix_ms: now,
+                    expires_at_unix_ms: now + 300_000, max_gas: 100_000, fee_limit: 1_000_000,
+                    limits: TxBuilderLimitsV0::candidate_v0(),
+                },
+                trnm_protocol::CanonicalCommandV1::CreditAccount {
+                    account: profile.signers[1].signer_id.clone(), amount: 2_000_000,
+                }, &signer,
+            ).unwrap();
+            let second_request = serde_json::json!({"schema":"trnm.native-client.request.v1",
+                "request_id":"capacity-new", "op":"submit",
+                "data":{"signed_outer_hex":hex::encode(second.exact_outer_bytes())}});
+            for (target, code, retryable) in [(9, "backpressure", true), (8, "finality_capacity_exhausted", false)] {
+                clients.update_finality_capacity_v1(3, target).unwrap();
+                let rejected = native_socket_exchange_poll_v1(&mut clients, &socket,
+                    second_request.clone(), |r| r.poll_resolving_parent_v1(1, || {
+                        Err(anyhow!("capacity refusal must precede a new parent lookup"))
+                    }));
+                assert_eq!(rejected["ok"], false, "{rejected}");
+                assert_eq!(rejected["error"], serde_json::json!({"code":code,"retryable":retryable}));
+                let exact = native_socket_exchange_poll_v1(&mut clients, &socket,
+                    request.clone(), |r| r.poll_resolving_parent_v1(1, || {
+                        Err(anyhow!("capacity cannot invalidate accepted identity"))
+                    }));
+                assert_eq!(exact, first);
+            }
+            let absent = native_socket_exchange(&mut clients, &socket, 3_000, 1,
+                serde_json::json!({"schema":"trnm.native-client.request.v1", "request_id":"capacity-absent",
+                    "op":"transaction", "data":{"native_tx_hash":hex::encode(second.envelope().tx_hash().unwrap())}}));
+            assert_eq!(absent["error"]["code"], "not_found");
+            let connection = rusqlite::Connection::open_with_flags(
+                client_root.join("native-client-v1/admission.sqlite"),
+                rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+            ).unwrap();
+            let count: u64 = connection.query_row("SELECT COUNT(*) FROM native_admission_body_v1", [], |row| row.get(0)).unwrap();
+            assert_eq!(count, 1, "refused new work must not consume a WAL identity");
+        }
         let proposal = clients
             .maybe_proposal_v1(
                 &mut authorities[leader_index],
@@ -264,6 +346,16 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
             .unwrap()
             .unwrap();
         assert_eq!(proposal.block().header().height().get(), 4);
+        if matches!(case, NativeSocketCaseV1::RetryWithoutParent | NativeSocketCaseV1::FiniteCapacity) {
+            let retry = native_socket_exchange_poll_v1(&mut clients, &socket,
+                request.clone(), |runtime| runtime.poll_resolving_parent_v1(1, || {
+                    Err(anyhow!("in-flight retry must not resolve a new parent"))
+                }));
+            assert_eq!(retry["ok"], true, "{retry}");
+            assert_eq!(retry["data"]["status"], "in_flight");
+            assert_eq!(retry["data"]["receive_sequence"], "1");
+            assert_eq!(retry["data"]["native_tx_hash"], hex::encode(hash));
+        }
         let business_id = proposal.block().id();
         headers.insert(proposal.block().id(), proposal.block().header().clone());
         drive_parallel_deployed_authority_round_v0(&mut authorities, proposal).unwrap();
@@ -438,7 +530,7 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
                 ] {
                     let request = serde_json::json!({"schema":"trnm.native-client.request.v1","request_id":"signed-phase","op":operation,"data":data});
                     let response = native_socket_exchange_poll_v1(&mut clients, &socket, request, |client| {
-                        crate::consensus_runtime::poll_native_with_authority_v1(client, authority)
+                        crate::consensus_runtime::poll_native_with_authority_v1(client, authority, None)
                     });
                     assert_eq!(response["request_id"], "signed-phase");
                     match expected {

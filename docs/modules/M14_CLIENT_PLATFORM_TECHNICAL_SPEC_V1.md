@@ -91,6 +91,17 @@ readiness and recovery conditions are retryable with the same exact bytes.
 An unknown hash is not a failed transaction; no proof is not proof of absence.
 Querying a retained rejected/expired transaction returns its local record.
 
+Exact retained Pending and InFlight submissions are readback, not new admission.
+They must match the original complete outer bytes and return the original durable
+identity/status without resolving a new application parent or reserving capacity.
+A new submission still requires current parent/time/capacity checks before WAL
+mutation; a failed lookup never proves that the previous effect was absent.
+A finite run additionally returns non-retryable `finality_capacity_exhausted`
+when no complete local proposal turn plus two finality descendants remains.
+A filled remaining queue allowance returns retryable `backpressure`; neither
+response consumes a new WAL identity. Status reports admission unavailable,
+while historical and exact-retry reads remain served.
+
 The SDK preserves its signed bytes, retries submit verbatim after ambiguous I/O,
 and verifies returned native hash by canonical decoding. Before labeling a
 transaction `included-finalized`, it verifies the dual ordered branches and
