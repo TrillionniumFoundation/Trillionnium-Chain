@@ -41,6 +41,8 @@ if mode == 'oversized':
     fd=os.open(r, os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600); os.ftruncate(fd,8404993); os.close(fd); sys.exit(0)
 if mode == 'symlink':
     os.symlink(q,r); sys.exit(0)
+if mode == 'hardlink':
+    os.link(q,r); sys.exit(0)
 request = json.loads(pathlib.Path(q).read_bytes())
 client = socket.socket(socket.AF_UNIX); client.connect(sock)
 client.sendall(pathlib.Path(q).read_bytes()); client.shutdown(socket.SHUT_WR)
@@ -135,6 +137,21 @@ os.execvp(args[0],args)
                 for mode in ('oversized','symlink'):
                     with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_TEST_MODE':mode}):
                         reject(lambda:fresh().request('status',{}),subprocess.CalledProcessError)
+                with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_TEST_MODE':'hardlink'}):
+                    reject(lambda:fresh().request('status',{}), subprocess.CalledProcessError,
+                           'hard-linked native response artifact')
+                # A profiler-created executable alias is not a proof-query failure.
+                # Keep the exact ownership guard and prove rejection before effects.
+                binary_alias = root/'shim/binary-alias'
+                os.link(binary,binary_alias)
+                before = len(received)
+                try:
+                    reject(lambda:fresh().request('proof',{}), subprocess.CalledProcessError,
+                           'hard-linked deployed validator binary')
+                    assert len(received) == before
+                finally:
+                    binary_alias.unlink()
+                assert fresh().request('status',{})['ok'] is True
                 with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_RESPONSE_ID':'other-request'}):
                     reject(lambda:fresh().request('status',{}),RuntimeError,'request identity differs')
                 # No-follow/mode/owned inventory rejection precedes CLI effects.

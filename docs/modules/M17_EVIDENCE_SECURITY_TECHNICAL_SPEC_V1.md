@@ -775,6 +775,16 @@ completion, production readiness or the missing full M05 intent binding.
 
 #### Native request wire encoding (M17-NATIVE-WIRE-V1)
 
+The on-host request adapter separately labels the deployed binary and response
+artifact when their required single-link ownership is violated. A binary alias
+must reject before invoking the client or contacting the socket; a response alias
+must reject before returning bytes. Both retain the same regular-file, owner,
+mode, no-follow and single-link checks. Diagnostics identify the artifact role,
+not a fabricated proof failure, and carry neither keys nor response payloads.
+Profilers and evidence collectors must not change a live deployment's file
+identity or link topology. Use a non-linking profiler mode or an isolated copy;
+never weaken the deployed input check to accommodate measurement tooling.
+
 The campaign request producer uses the M15 native socket's exact encoding:
 UTF-8, sorted object keys, compact comma/colon separators, no trailing newline,
 and no non-finite JSON numbers. It applies to every actual status, submit and

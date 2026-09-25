@@ -254,15 +254,15 @@ require(re.fullmatch(r"[a-z0-9.-]{1,43}\.sock", pathlib.PurePosixPath(socket).na
 require(len(socket.encode()) < 104 and 1 <= sequence <= 4096, "bounded locator/sequence")
 require(re.fullmatch(r"[0-9a-f]{64}", digest) and re.fullmatch(r"[0-9a-f]{64}", genesis), "identity pins")
 require(0 < float(timeout) <= 12, "request deadline")
-def owned(path, kind, mode):
+def owned(path, kind, mode, label="owned path"):
     info = os.lstat(path)
-    require(kind(info.st_mode) and info.st_uid == os.geteuid() and stat.S_IMODE(info.st_mode) == mode, "owned path type/mode: " + path)
+    require(kind(info.st_mode) and info.st_uid == os.geteuid() and stat.S_IMODE(info.st_mode) == mode, "owned path type/mode: " + label)
     if kind == stat.S_ISREG:
-        require(info.st_nlink == 1, "linked request artifact")
+        require(info.st_nlink == 1, "hard-linked " + label)
     return info
 for path in (root, root + "/bin", root + "/v", node):
     owned(path, stat.S_ISDIR, 0o700)
-owned(binary, stat.S_ISREG, 0o500)
+owned(binary, stat.S_ISREG, 0o500, "deployed validator binary")
 missing = False
 try:
     owned(node + "/native-client-v1", stat.S_ISDIR, 0o700)
@@ -288,7 +288,7 @@ result = subprocess.run([binary, "native-client", "request", socket, q, r, diges
                         stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, timeout=float(timeout))
 if result.returncode:
     sys.exit(result.returncode if result.returncode > 0 else 128 - result.returncode)
-info = owned(r, stat.S_ISREG, 0o600)
+info = owned(r, stat.S_ISREG, 0o600, "native response artifact")
 require(0 < info.st_size <= 8404992, "response byte bound")
 fd = os.open(r, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
 with os.fdopen(fd, "rb") as stream:
