@@ -870,3 +870,80 @@ fn native_read_query_reply_does_not_wait_for_another_owner_poll_v1() {
     assert_eq!(response["ok"], false);
     assert_eq!(response["error"]["code"], "proof_unavailable");
 }
+
+#[test]
+fn native_idle_and_read_queries_do_not_resolve_admission_parent_v1() {
+    let temp = private_temp_v0();
+    let (set, _, _) = fixture_validator_set_v0(4);
+    let profile = crate::native_client_profile::generate_isolated_native_client_profile_v1(
+        &temp.path().join("keys"), set.chain_id().as_str(),
+    ).unwrap();
+    let socket = temp.path().join("native-client-v1").join(&profile.socket_basename);
+    let mut owner = crate::native_client_runtime::NativeClientRuntimeV1::open_parts_v1(
+        temp.path(), &set, set.validators()[0].id(), profile,
+    ).unwrap();
+    let mut parent_reads = 0;
+    for _ in 0..100 {
+        owner.poll_resolving_parent_v1(1, || {
+            parent_reads += 1;
+            Err(anyhow!("read-only work must not resolve an admission parent"))
+        }).unwrap();
+    }
+    for (op, data, ok) in [
+        ("status", serde_json::json!({}), true),
+        ("capabilities", serde_json::json!({}), true),
+        ("proof", serde_json::json!({"native_tx_hash":hex::encode([42u8;32])}), false),
+        ("transaction", serde_json::json!({"native_tx_hash":hex::encode([42u8;32])}), false),
+    ] {
+        let response = native_socket_exchange_poll_v1(&mut owner, &socket,
+            serde_json::json!({"schema":"trnm.native-client.request.v1",
+                "request_id":"lazy-parent-read", "op":op, "data":data}),
+            |runtime| runtime.poll_resolving_parent_v1(1, || {
+                parent_reads += 1;
+                Err(anyhow!("read-only work must not resolve an admission parent"))
+            }),
+        );
+        assert_eq!(response["ok"], ok, "{response}");
+        if op == "status" {
+            assert_eq!(response["data"]["accepting"], true);
+            assert_eq!(response["data"]["proof_verified"], false);
+        }
+    }
+    assert_eq!(parent_reads, 0);
+}
+
+#[test]
+fn native_submit_parent_error_precedes_wal_mutation_v1() {
+    use std::io::Write;
+    let temp = private_temp_v0();
+    let (set, _, _) = fixture_validator_set_v0(4);
+    let profile = crate::native_client_profile::generate_isolated_native_client_profile_v1(
+        &temp.path().join("keys"), set.chain_id().as_str(),
+    ).unwrap();
+    let root = temp.path().join("native-client-v1");
+    let socket = root.join(&profile.socket_basename);
+    let mut owner = crate::native_client_runtime::NativeClientRuntimeV1::open_parts_v1(
+        temp.path(), &set, set.validators()[0].id(), profile,
+    ).unwrap();
+    let snapshot = || {
+        let mut paths = std::fs::read_dir(&root).unwrap().map(|entry| entry.unwrap().path())
+            .filter(|path| path.file_name().unwrap().to_str().unwrap().starts_with("admission.sqlite") && path.is_file())
+            .collect::<Vec<_>>();
+        paths.sort();
+        paths.into_iter().map(|path| (path.clone(), std::fs::read(path).unwrap())).collect::<Vec<_>>()
+    };
+    let before = snapshot();
+    let mut peer = std::os::unix::net::UnixStream::connect(&socket).unwrap();
+    let bytes = serde_json::to_vec(&serde_json::json!({"schema":"trnm.native-client.request.v1",
+        "request_id":"lazy-parent-submit", "op":"submit", "data":{"signed_outer_hex":"00"}})).unwrap();
+    peer.write_all(&(bytes.len() as u32).to_be_bytes()).unwrap();
+    peer.write_all(&bytes).unwrap();
+    let mut reads = 0;
+    let error = owner.poll_resolving_parent_v1(1, || {
+        reads += 1;
+        Err(anyhow!("test parent owner unavailable"))
+    }).unwrap_err();
+    assert_eq!(reads, 1);
+    assert!(error.to_string().contains("test parent owner unavailable"));
+    assert_eq!(snapshot(), before);
+}

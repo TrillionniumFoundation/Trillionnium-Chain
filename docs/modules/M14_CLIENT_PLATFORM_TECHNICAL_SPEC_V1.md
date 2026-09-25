@@ -59,7 +59,16 @@ Disk/kernel stalls are not claimed to be forcibly preempted by this I/O deadline
 connect that encounters a full Unix accept queue has not connected. It retries
 only connection establishment under the original absolute deadline; writable
 readiness and a zero socket error alone cannot authorize request transmission.
-No submitted transaction or signing request is automatically replayed here. Timeout after persistence is an unknown result to the client, not rollback.
+No submitted transaction or signing request is automatically replayed here.
+
+Idle endpoint polling and read-only requests do not request an application parent
+or a native execution capability. Status readiness reflects the actual Ready
+phase and admission switch only; it remains a non-proof observation. New submit
+admission in a Ready phase lazily resolves the same fresh authenticated parent
+immediately before its existing timestamp/admission checks. A failed resolver
+propagates before WAL mutation; no previous timestamp is cached or substituted.
+Signed phases still refuse new submission while preserving reads/exact retries.
+ Timeout after persistence is an unknown result to the client, not rollback.
 
 All requests have `schema`, opaque `request_id` (1..64 ASCII token bytes), `op`
 and a closed `data` object. `request_id` correlates responses only; native hash

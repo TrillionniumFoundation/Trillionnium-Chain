@@ -479,17 +479,27 @@ impl NativeClientRuntimeV1 {
             && self.last_business_height <= finalized
     }
     pub fn poll_v1(&mut self, parent_timestamp: u64, finalized_height: u64) -> Result<bool> {
-        self.poll_with_admission_parent_v1(Some(parent_timestamp), finalized_height)
+        self.poll_resolving_parent_v1(finalized_height, || Ok(parent_timestamp))
     }
     /// Serve bounded reads and exact durable retries while Core holds a signed
     /// phase. No cached timestamp is used to authorize new admission.
     pub(crate) fn poll_read_only_v1(&mut self, finalized_height: u64) -> Result<bool> {
-        self.poll_with_admission_parent_v1(None, finalized_height)
+        self.poll_with_admission_parent_v1(false, finalized_height, || Ok(None))
+    }
+    /// A read/idle tick does not request mutable-application admission facts.
+    /// Every new submit still obtains a fresh parent; errors remain fail-closed.
+    pub(crate) fn poll_resolving_parent_v1(
+        &mut self,
+        finalized_height: u64,
+        mut resolve_parent: impl FnMut() -> Result<u64>,
+    ) -> Result<bool> {
+        self.poll_with_admission_parent_v1(true, finalized_height, || resolve_parent().map(Some))
     }
     fn poll_with_admission_parent_v1(
         &mut self,
-        parent_timestamp: Option<u64>,
+        admission_ready: bool,
         finalized_height: u64,
+        mut resolve_parent: impl FnMut() -> Result<Option<u64>>,
     ) -> Result<bool> {
         let mut progress = false;
         let mut index = 0;
@@ -679,7 +689,12 @@ impl NativeClientRuntimeV1 {
                     {
                         self.error_reply("", "invalid_request", false)
                     } else {
-                        self.handle_request(&client.bytes[4..], parent_timestamp, finalized_height)
+                        self.handle_request(
+                            &client.bytes[4..],
+                            admission_ready,
+                            finalized_height,
+                            &mut resolve_parent,
+                        )?
                     };
                     client.reply = Some(frame_response(&reply)?);
                     client.bytes.clear();
@@ -740,10 +755,16 @@ impl NativeClientRuntimeV1 {
         reply["error"] = json!({"code":code,"retryable":retryable});
         reply
     }
-    fn handle_request(&mut self, bytes: &[u8], parent: Option<u64>, finalized: u64) -> Value {
+    fn handle_request(
+        &mut self,
+        bytes: &[u8],
+        admission_ready: bool,
+        finalized: u64,
+        resolve_parent: &mut impl FnMut() -> Result<Option<u64>>,
+    ) -> Result<Value> {
         let request: Request = match decode_request_v1(bytes) {
             Ok(r) => r,
-            Err(_) => return self.error_reply("", "invalid_request", false),
+            Err(_) => return Ok(self.error_reply("", "invalid_request", false)),
         };
         let (schema, id) = request.context();
         let id = id.to_owned();
@@ -754,25 +775,41 @@ impl NativeClientRuntimeV1 {
                 .bytes()
                 .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'_' | b'.'))
         {
-            return self.error_reply(&id, "invalid_request", false);
+            return Ok(self.error_reply(&id, "invalid_request", false));
         }
+        let parent =
+            if admission_ready && self.accepting && matches!(&request, Request::Submit { .. }) {
+                resolve_parent()?
+            } else {
+                None
+            };
+        Ok(self.handle_admitted_request_v1(request, &id, parent, admission_ready, finalized))
+    }
+    fn handle_admitted_request_v1(
+        &mut self,
+        request: Request,
+        id: &str,
+        parent: Option<u64>,
+        admission_ready: bool,
+        finalized: u64,
+    ) -> Value {
         match request {
             Request::SyncManifest { .. } | Request::SyncChunk { .. } => {
-                self.error_reply(&id, "invalid_request", false)
+                self.error_reply(id, "invalid_request", false)
             }
             Request::Capabilities { data, .. } => {
                 let _ = data;
-                self.reply(&id,json!({"profile":self.profile.schema,"wall_clock_epoch_ms":self.profile.wall_clock_epoch_ms.to_string(),"time_domain":"milliseconds_since_profile_wall_clock_epoch","maximum_outer_bytes":self.profile.maximum_outer_bytes,"maximum_pending":self.profile.maximum_pending,"proof_class":"poco-three-chain-v0","m05_intent_binding":false}))
+                self.reply(id,json!({"profile":self.profile.schema,"wall_clock_epoch_ms":self.profile.wall_clock_epoch_ms.to_string(),"time_domain":"milliseconds_since_profile_wall_clock_epoch","maximum_outer_bytes":self.profile.maximum_outer_bytes,"maximum_pending":self.profile.maximum_pending,"proof_class":"poco-three-chain-v0","m05_intent_binding":false}))
             }
             Request::Status { data, .. } => {
                 let _ = data;
-                self.reply(&id,json!({"accepting":self.accepting && parent.is_some(),"finalized_height":finalized.to_string(),"pending":self.ready.len()+self.admission.queued_counts().0,"in_flight":self.in_flight.len(),"proof_verified":false}))
+                self.reply(id,json!({"accepting":self.accepting && admission_ready,"finalized_height":finalized.to_string(),"pending":self.ready.len()+self.admission.queued_counts().0,"in_flight":self.in_flight.len(),"proof_verified":false}))
             }
             Request::Submit { data, .. } => {
                 let bytes =
                     match canonical_hex(&data.signed_outer_hex, self.profile.maximum_outer_bytes) {
                         Ok(b) => b,
-                        Err(_) => return self.error_reply(&id, "invalid_request", false),
+                        Err(_) => return self.error_reply(id, "invalid_request", false),
                     };
                 // Exact durable retries remain answerable during stop/skew.
                 if let Ok(built) =
@@ -784,60 +821,60 @@ impl NativeClientRuntimeV1 {
                         if let Ok(Some(record)) = self.admission.native_record_v1(hash) {
                             if record.exact_outer_bytes() == bytes {
                                 return match self.record_response_v1(&record) {
-                                    Ok(data) => self.reply(&id, data),
-                                    Err(_) => self.error_reply(&id, "recovery_required", true),
+                                    Ok(data) => self.reply(id, data),
+                                    Err(_) => self.error_reply(id, "recovery_required", true),
                                 };
                             }
                         }
                     }
                 }
                 let Some(parent) = parent.filter(|_| self.accepting) else {
-                    return self.error_reply(&id, "backpressure", true);
+                    return self.error_reply(id, "backpressure", true);
                 };
                 if !self
                     .profile
                     .proposal_timestamp_v1(parent, 60_000)
                     .is_ok_and(|(_, ready)| ready)
                 {
-                    return self.error_reply(&id, "time_unready", true);
+                    return self.error_reply(id, "time_unready", true);
                 }
                 match self.admission.submit_native_bytes_v1(&bytes) {
                     Ok(record) => match self.record_response_v1(&record) {
-                        Ok(data) => self.reply(&id, data),
-                        Err(_) => self.error_reply(&id, "recovery_required", true),
+                        Ok(data) => self.reply(id, data),
+                        Err(_) => self.error_reply(id, "recovery_required", true),
                     },
                     Err(NativeAdmissionErrorV1::Backpressure) => {
-                        self.error_reply(&id, "backpressure", true)
+                        self.error_reply(id, "backpressure", true)
                     }
                     Err(NativeAdmissionErrorV1::Uncertain) => {
-                        self.error_reply(&id, "recovery_required", true)
+                        self.error_reply(id, "recovery_required", true)
                     }
                     Err(NativeAdmissionErrorV1::Decode) => {
-                        self.error_reply(&id, "invalid_request", false)
+                        self.error_reply(id, "invalid_request", false)
                     }
                     Err(NativeAdmissionErrorV1::Wal(_)) => {
-                        self.error_reply(&id, "recovery_required", true)
+                        self.error_reply(id, "recovery_required", true)
                     }
-                    Err(_) => self.error_reply(&id, "admission_rejected", false),
+                    Err(_) => self.error_reply(id, "admission_rejected", false),
                 }
             }
             Request::Transaction { data, .. } => {
                 let hash = match hash32(&data.native_tx_hash) {
                     Ok(h) => h,
-                    Err(_) => return self.error_reply(&id, "invalid_request", false),
+                    Err(_) => return self.error_reply(id, "invalid_request", false),
                 };
                 match self.admission.native_record_v1(hash) {
                     Ok(Some(record)) => match self.record_response_v1(&record) {
-                        Ok(data) => self.reply(&id, data),
-                        Err(_) => self.error_reply(&id, "recovery_required", true),
+                        Ok(data) => self.reply(id, data),
+                        Err(_) => self.error_reply(id, "recovery_required", true),
                     },
-                    Ok(None) => self.error_reply(&id, "not_found", false),
-                    Err(_) => self.error_reply(&id, "recovery_required", true),
+                    Ok(None) => self.error_reply(id, "not_found", false),
+                    Err(_) => self.error_reply(id, "recovery_required", true),
                 }
             }
             Request::Proof { data, .. } => match hash32(&data.native_tx_hash) {
-                Ok(hash) => self.proof_reader_v1().proof_reply_v1(&id, hash),
-                Err(_) => self.error_reply(&id, "invalid_request", false),
+                Ok(hash) => self.proof_reader_v1().proof_reply_v1(id, hash),
+                Err(_) => self.error_reply(id, "invalid_request", false),
             },
         }
     }

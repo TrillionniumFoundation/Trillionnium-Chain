@@ -7985,10 +7985,9 @@ pub(crate) fn poll_native_with_authority_v1(
 ) -> Result<bool> {
     let facts = authority.facts_v0()?;
     if facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready {
-        client.poll_v1(
-            authority.native_parent_timestamp_v1()?,
-            facts.finalized_height_v0(),
-        )
+        client.poll_resolving_parent_v1(facts.finalized_height_v0(), || {
+            authority.native_parent_timestamp_v1()
+        })
     } else {
         client.poll_read_only_v1(facts.finalized_height_v0())
     }
