@@ -531,6 +531,17 @@ symlink or noncanonical path still fails the existing descriptor/path check.
 This repairs the feature's typed source integration; it changes neither wire
 identity nor the candidate endpoint's authority or activation status.
 
+### Host authority exits remain observable in a fleet run
+
+The existing fleet runner retains each host lease daemon's stdout/stderr in
+its private process-I/O evidence directory before removing deployment stages.
+The remote shell records host identity and the actual wait status, including
+nonzero exits under `set -e`; original daemon stderr is no longer discarded.
+These are diagnostic observations, not signed consensus receipts or proof of
+a remote signal. No keys or request payloads are added to diagnostics. Cleanup
+still targets only the owned process; an already absent PID needs no signal,
+while a reused PID with another command remains protected from termination.
+
 ## Observability and SLO
 
 An outgoing initial-session failure latches the same first-terminal state and

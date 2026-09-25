@@ -1608,9 +1608,83 @@ def test_remote_exit_status_is_observed_before_errexit() -> None:
             assert result.stderr.decode().count("validator process exited:") == 1
 
 
+
+def test_peer_lease_remote_exit_preserves_status_and_original_cause() -> None:
+    with tempfile.TemporaryDirectory(prefix="tp3-lease-diagnostics-") as temporary:
+        root = pathlib.Path(temporary)
+        binary = root / "validator"
+        for body, expected in (("exit 0", 0), ("exit 37", 37), ("kill -TERM $$", 143)):
+            stage_root = root / str(expected)
+            (stage_root / "bin").mkdir(parents=True)
+            stage = fleet.base.HostStage("desktop", "p4-desktop", str(stage_root), None)
+            binary.write_text("#!/bin/sh\necho controlled-authority-cause >&2\n" + body + "\n")
+            binary.chmod(0o700)
+            command = fleet.peer_lease_daemon_command(stage, str(binary), fleet.peer_lease_paths(stage))
+            result = subprocess.run(["/bin/sh", "-c", command[-1]],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5, check=False)
+            assert result.returncode == expected, result
+            diagnostic = f"peer-lease authority exited: host=desktop status={expected}"
+            assert diagnostic in result.stderr.decode(), result.stderr
+            assert result.stderr.decode().count("peer-lease authority exited:") == 1
+            assert "controlled-authority-cause" in result.stderr.decode()
+        invalid = fleet.base.HostStage("bad;host", "p4-desktop", str(root), None)
+        expect_failure(lambda: fleet.peer_lease_daemon_command(
+            invalid, str(binary), fleet.peer_lease_paths(invalid)), "host identity")
+
+
+def test_peer_lease_local_capture_uses_existing_durable_process_files() -> None:
+    with tempfile.TemporaryDirectory(prefix="tp3-lease-capture-") as temporary:
+        root = pathlib.Path(temporary)
+        (root / "bin").mkdir()
+        output = root / "process-io"
+        output.mkdir(mode=0o700)
+        binary = root / "validator"
+        binary.write_text("#!/bin/sh\necho controlled-authority-cause >&2\nexit 37\n")
+        binary.chmod(0o700)
+        stage = fleet.base.HostStage("desktop", "local", str(root), root)
+        # Exercise the real spawn/capture/reap path. The readiness stand-in
+        # waits for a deliberately failing child; this is not a daemon test.
+        with mock.patch.object(fleet, "wait_for_peer_lease_ready",
+                               side_effect=lambda daemon: daemon.child.wait(timeout=5)):
+            _paths, running = fleet.start_peer_lease_daemons(
+                {"desktop": stage}, [process("local")], {"desktop": str(binary)}, output)
+        assert running[0].child.returncode == 37
+        assert fleet.stop_peer_lease_daemons(running) == []
+        capture = running[0].capture
+        assert capture.stdout.closed and capture.stderr.closed
+        assert capture.stderr_path.read_text() == "controlled-authority-cause\n"
+        assert capture.stderr_path.stat().st_mode & 0o777 == 0o600
+
+
+def test_peer_lease_spawn_failure_closes_diagnostic_descriptors() -> None:
+    with tempfile.TemporaryDirectory(prefix="tp3-lease-spawn-") as temporary:
+        root = pathlib.Path(temporary)
+        stage = fleet.base.HostStage("desktop", "local", str(root), root)
+        captures = []
+        original = fleet.base.open_process_capture
+        def capture_files(*args):
+            value = original(*args)
+            captures.append(value)
+            return value
+        with mock.patch.object(fleet.base, "open_process_capture", side_effect=capture_files), \
+             mock.patch.object(fleet.subprocess, "Popen", side_effect=OSError("controlled spawn failure")):
+            try:
+                fleet.start_peer_lease_daemons({"desktop": stage}, [process("local")],
+                                              {"desktop": "/no/validator"}, root)
+            except OSError as error:
+                assert "controlled spawn failure" in str(error)
+            else:
+                raise AssertionError("spawn failure was hidden")
+        assert len(captures) == 1
+        assert captures[0].stdout.closed and captures[0].stderr.closed
+
+
 def main() -> None:
     test_local_and_remote_commands()
     test_remote_exit_status_is_observed_before_errexit()
+    test_peer_lease_remote_exit_preserves_status_and_original_cause()
+    test_peer_lease_local_capture_uses_existing_durable_process_files()
+    test_peer_lease_spawn_failure_closes_diagnostic_descriptors()
     test_observer_fleet_certificate_command_and_strict_summary()
     test_run_bounds()
     test_terminal_agreement()

@@ -183,6 +183,7 @@ class RunningPeerLeaseDaemon:
     paths: PeerLeasePaths
     binary: str
     child: subprocess.Popen[bytes]
+    capture: base.ProcessCapture | None = None
 
 
 def exact_object(value: object, keys: set[str], field: str) -> dict[str, Any]:
@@ -1124,6 +1125,8 @@ def peer_lease_daemon_command(
         "--ready-file",
         paths.ready,
     ]
+    if re.fullmatch(r"[a-z][a-z0-9-]{0,31}", stage.host_id) is None:
+        base.fail("invalid peer-lease host identity")
     if not stage.remote:
         return arguments
     command = " ".join(shlex.quote(value) for value in arguments)
@@ -1134,9 +1137,11 @@ def peer_lease_daemon_command(
         "wait \"$daemon\" 2>/dev/null || true; fi; }; "
         "trap cleanup EXIT HUP INT TERM; "
         f"test ! -e {pid}; "
-        f"{command} >/dev/null 2>&1 & daemon=$!; "
+        f"{command} >/dev/null & daemon=$!; "
         f"printf '%s\\n' \"$daemon\" > {pid}; chmod 600 {pid}; "
-        "wait \"$daemon\"; status=$?; daemon=''; exit \"$status\""
+        "status=0; wait \"$daemon\" || status=$?; daemon=''; "
+        f"printf 'peer-lease authority exited: host={stage.host_id} status=%s\\n' \"$status\" >&2; "
+        "exit \"$status\""
     )
     return [
         "ssh",
@@ -1220,6 +1225,7 @@ def start_peer_lease_daemons(
     stages: dict[str, base.HostStage],
     processes: list[base.ValidatorProcess],
     linux_paths: dict[str, str],
+    diagnostic_root: pathlib.Path | None = None,
 ) -> tuple[dict[str, PeerLeasePaths], list[RunningPeerLeaseDaemon]]:
     """Start exactly one candidate authority per validator host."""
 
@@ -1229,16 +1235,24 @@ def start_peer_lease_daemons(
         for host_id in sorted({process.host_id for process in processes}):
             stage = stages[host_id]
             paths = peer_lease_paths(stage)
+            command = peer_lease_daemon_command(stage, linux_paths[host_id], paths)
+            capture = (
+                base.open_process_capture(diagnostic_root, f"peer-lease-{host_id}")
+                if diagnostic_root is not None else None
+            )
+            try:
+                child = subprocess.Popen(
+                    command,
+                    stdout=capture.stdout if capture is not None else subprocess.DEVNULL,
+                    stderr=capture.stderr if capture is not None else subprocess.DEVNULL,
+                )
+            except BaseException:
+                if capture is not None:
+                    base.close_process_capture(capture)
+                raise
             daemon = RunningPeerLeaseDaemon(
-                host_id=host_id,
-                stage=stage,
-                paths=paths,
-                binary=linux_paths[host_id],
-                child=subprocess.Popen(
-                    peer_lease_daemon_command(stage, linux_paths[host_id], paths),
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                ),
+                host_id=host_id, stage=stage, paths=paths,
+                binary=linux_paths[host_id], child=child, capture=capture,
             )
             running.append(daemon)
             wait_for_peer_lease_ready(daemon)
@@ -1263,6 +1277,7 @@ def stop_peer_lease_daemons(daemons: list[RunningPeerLeaseDaemon]) -> list[str]:
                     "set -eu; test -f {pid}; test ! -L {pid}; "
                     "read -r daemon_pid < {pid}; "
                     "case \"$daemon_pid\" in ''|*[!0-9]*) exit 41;; esac; "
+                    "if test ! -e \"/proc/$daemon_pid\"; then exit 0; fi; "
                     "test -r \"/proc/$daemon_pid/cmdline\"; "
                     "command_line=$(tr '\\000' ' ' < \"/proc/$daemon_pid/cmdline\"); "
                     "expected={expected}; "
@@ -1295,6 +1310,12 @@ def stop_peer_lease_daemons(daemons: list[RunningPeerLeaseDaemon]) -> list[str]:
                     child.wait(timeout=10)
         except (OSError, subprocess.SubprocessError) as error:
             failures.append(f"peer-lease daemon {daemon.host_id}: {error}")
+        finally:
+            if daemon.capture is not None:
+                try:
+                    base.close_process_capture(daemon.capture)
+                except OSError as error:
+                    failures.append(f"peer-lease diagnostic {daemon.host_id}: {error}")
     return failures
 
 
@@ -2789,7 +2810,7 @@ def main() -> None:
         (
             peer_lease_paths_by_host,
             peer_lease_daemons,
-        ) = start_peer_lease_daemons(stages, processes, linux_paths)
+        ) = start_peer_lease_daemons(stages, processes, linux_paths, process_io)
         record_lifecycle_event(lifecycle_events, "deployment_completed")
         observer_stage = stages["mac"]
         first_launch_ns: int | None = None
