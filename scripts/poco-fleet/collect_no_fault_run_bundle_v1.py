@@ -731,8 +731,10 @@ def validate_mesh_preflight(
             - host["system_file_handles_allocated"]
             or host["host_threads_required"]
             != expected_threads * expected["validator_processes"]
+            + int(expected["validator_processes"] > 0) * resources.LEASE_DAEMON_THREADS
             or host["host_open_file_fds_required"]
             != expected_open_fds * expected["validator_processes"]
+            + int(expected["validator_processes"] > 0) * resources.LEASE_DAEMON_FDS
             or host["coordinator_capture_fds_required"]
             != (
                 expected_coordinator_fds
@@ -741,6 +743,7 @@ def validate_mesh_preflight(
             )
             or host["host_rss_bytes_required"]
             != expected_rss * expected["validator_processes"]
+            + int(expected["validator_processes"] > 0) * resources.LEASE_DAEMON_FRAME_BYTES
         ):
             fail(f"mesh resource preflight host {host_id} capacity arithmetic differs")
     if observed_hosts != set(planned_hosts):

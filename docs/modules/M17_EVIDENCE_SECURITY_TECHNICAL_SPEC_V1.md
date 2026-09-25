@@ -709,7 +709,10 @@ socket-service budget, not a measured RSS claim for journal history. Per-validat
 and coordinator limits retain their separate meanings. Exact system-file capacity
 passes at the combined requirement and rejects one descriptor below it. Earlier
 resource reports keep their original source identity; updated totals are not a
-new topology or protocol rule and do not mutate host resource limits.
+new topology or protocol rule and do not mutate host resource limits. The evidence
+collector recomputes these same per-host totals, including the authority once
+per validator host, and rejects missing or duplicated authority resources.
+
 
 ### Isolated pocket4/ROG diagnostic placement
 
