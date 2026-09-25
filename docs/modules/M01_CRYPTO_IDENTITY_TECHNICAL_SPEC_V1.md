@@ -384,6 +384,18 @@ voting permit.
 
 The planned dispositions do not allocate v0 wire error discriminants.
 
+## Explicit epoch-host verification reuse
+
+The default-off `trnm-poco-node/epoch-runtime-candidate` host selects the same
+`bounded-signature-cache` already used by the lab host. Its fixture feature
+inherits this real host choice, rather than relying on workspace feature
+unification to change test cost. Only the exact successful 128-byte mathematical
+predicate is retained; trust, target, quorum, work charging, current owner state
+and persistence are revalidated by their existing consumers on every call.
+Default node, production CLI and outgoing-only host closures remain cache-free.
+The unchanged complete V11 sequence and all its negative probes must execute
+inside the existing deadline; enabling this cache is not acceptance or activation.
+
 ## Persistence and recovery
 
 M01 caches only performance facts. A planned cache key is

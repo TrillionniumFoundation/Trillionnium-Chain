@@ -19,6 +19,7 @@ epoch-handoff-checkpoint-candidate = []
 # Explicit full-epoch trusted-host candidate; never enabled by the outgoing-only join.
 epoch-runtime-candidate = [
   "dep:anyhow",
+  "trnm-consensus-crypto/bounded-signature-cache",
   "epoch-handoff-checkpoint-candidate",
   "trnm-consensus-core/candidate-epoch-host-v1",
   "trnm-consensus-core/candidate-epoch-host-v2",

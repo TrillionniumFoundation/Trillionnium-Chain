@@ -152,6 +152,7 @@ root_packages = ["trnm-poco-node"]
 default_features = false
 features = ["epoch-runtime-candidate"]
 required_features = [
+  "trnm-consensus-crypto/bounded-signature-cache",
   "trnm-poco-node/epoch-runtime-candidate",
   "trnm-poco-node/epoch-handoff-checkpoint-candidate",
   "trnm-consensus-core/candidate-epoch-host-v1",
@@ -166,6 +167,7 @@ root_packages = ["trnm-poco-node"]
 default_features = false
 features = ["epoch-runtime-test-fixtures"]
 required_features = [
+  "trnm-consensus-crypto/bounded-signature-cache",
   "trnm-poco-node/epoch-runtime-test-fixtures",
   "trnm-poco-node/epoch-runtime-candidate",
   "trnm-poco-node/epoch-handoff-checkpoint-candidate",
