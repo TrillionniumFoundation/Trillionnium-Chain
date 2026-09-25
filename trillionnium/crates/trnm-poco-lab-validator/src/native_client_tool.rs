@@ -72,6 +72,28 @@ fn write_new(path: &Path, bytes: &[u8]) -> Result<()> {
     File::open(parent)?.sync_all()?;
     Ok(())
 }
+fn observer_config_path_v1(root: &Path, selected: &Path) -> Result<PathBuf> {
+    use std::os::unix::ffi::OsStrExt;
+    if selected.is_absolute() {
+        // The public loader still checks canonical containment and the entire
+        // independently pinned manifest; this does not trust an absolute path.
+        return Ok(selected.to_owned());
+    }
+    ensure!(
+        !selected.as_os_str().is_empty()
+            && selected
+                .components()
+                .all(|part| matches!(part, std::path::Component::Normal(_)))
+            && selected
+                .as_os_str()
+                .as_bytes()
+                .split(|byte| *byte == b'/')
+                .all(|part| !part.is_empty() && part != b"." && part != b".."),
+        "observer config must be strict root-relative or absolute and manifest-bound"
+    );
+    Ok(root.join(selected))
+}
+
 fn number(value: &OsString) -> Result<u64> {
     let s = text(value)?;
     ensure!(
@@ -257,7 +279,7 @@ fn validate_exchange_response_context_v1(
 fn run_sync_v1(args: &[OsString]) -> Result<()> {
     use crate::native_replay_sync_v1::{NativeReplayReceiverV1, ReplayManifestV1, CHUNK_BYTES};
     let root = PathBuf::from(&args[1]);
-    let config_path = PathBuf::from(&args[2]);
+    let config_path = observer_config_path_v1(&root, Path::new(&args[2]))?;
     let context = PublicReportVerifierContext::load(&root, &config_path, text(&args[3])?)?;
     let profile_hash = hex32(text(&args[7])?)?;
     ensure!(
@@ -582,9 +604,9 @@ pub fn run_cli_v1(arguments: impl Iterator<Item = OsString>) -> Result<()> {
         "sync" | "sync-import" if args.len() == 8 => run_sync_v1(&args)?,
         "verify" if args.len() == 8 => {
             let root = PathBuf::from(&args[1]);
-            let config = PathBuf::from(&args[2]);
+            let config = observer_config_path_v1(&root, Path::new(&args[2]))?;
             let context = PublicReportVerifierContext::load(&root, &config, text(&args[3])?)?;
-            let config_bytes = bytes(&root.join(&config), 64 * 1024)?;
+            let config_bytes = bytes(&config, 64 * 1024)?;
             ensure!(
                 <[u8; 32]>::from(Sha256::digest(&config_bytes)) == context.config_sha256(),
                 "observer config changed after pinning"
@@ -632,6 +654,41 @@ pub fn run_cli_v1(arguments: impl Iterator<Item = OsString>) -> Result<()> {
 mod tests {
     use super::*;
     use std::os::unix::fs::PermissionsExt;
+    #[test]
+    fn observer_relative_config_is_root_bound_and_not_prefixed_twice_v1() {
+        let dir = tempfile::tempdir().unwrap();
+        let root = dir.path().join("observer");
+        let relative = Path::new("public/configs/validator.json");
+        std::fs::create_dir_all(root.join("public/configs")).unwrap();
+        let actual = root.join(relative);
+        std::fs::write(&actual, b"root-bound config").unwrap();
+        let resolved = observer_config_path_v1(&root, relative).unwrap();
+        assert_eq!(resolved, actual);
+        assert_eq!(bytes(&resolved, 64).unwrap(), b"root-bound config");
+        assert_eq!(observer_config_path_v1(&root, &actual).unwrap(), actual);
+        for invalid in [
+            "",
+            ".",
+            "..",
+            "../public/configs/x.json",
+            "public/../configs/x.json",
+            "public//configs/x.json",
+            "./public/configs/x.json",
+            "public/./x.json",
+        ] {
+            assert!(
+                observer_config_path_v1(&root, Path::new(invalid)).is_err(),
+                "{invalid}"
+            );
+        }
+        // Resolving an absolute foreign path is not authorizing it: the loader
+        // must still reject it as outside its selected public namespace.
+        assert_eq!(
+            observer_config_path_v1(&root, Path::new("/foreign/config.json")).unwrap(),
+            Path::new("/foreign/config.json")
+        );
+    }
+
     #[test]
     fn native_client_sign_command_pins_key_profile_nonce_and_exact_output_v1() {
         let temp = tempfile::tempdir().unwrap();

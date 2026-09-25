@@ -370,6 +370,15 @@ a backdated clock.
 
 ### Candidate client executable
 
+For `native-client verify`, `sync`, and `sync-import`, a relative config argument
+is a strict relative path inside the explicitly supplied observer-public root,
+not inside the shell working directory. Empty, dot and parent-traversal relative
+selectors reject. Absolute config paths remain supported only under the unchanged
+public-context loader's canonical descendant, exact manifest inventory, content
+digest and validator identity checks. Resolving a path grants no proof or signing
+authority. CLI reads reuse the resolved path without prefixing its root twice.
+Changing the launch directory cannot select another configuration.
+
 The candidate validator executable exposes an explicit `native-client` command
 before validator configuration or consensus keys are loaded. `sign` takes the
 pinned public profile, selected campaign application key, explicit nonce/TTL and
