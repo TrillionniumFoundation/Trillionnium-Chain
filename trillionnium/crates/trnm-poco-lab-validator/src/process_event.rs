@@ -7244,10 +7244,9 @@ mod tests {
         );
     }
 
-    /// The cfg(test) process-2 bypass skips only the durable StoredRestartCut
-    /// capability. It deliberately does not weaken the public replay grammar,
-    /// so historical two-process tests must still append the exact semantic
-    /// RestartPrepare -> dual RestartCut -> RestartPark predecessor chain.
+    /// Legacy Cut/Park-only grammar input retained for rejection tests. It
+    /// intentionally lacks ParkedAck and must never open process 2. Positive
+    /// process-2 grammar cases use the authenticated stored-triple fixture below.
     fn append_test_restart_cut(journal: &mut RuntimeEventJournalV1, nonce: u64) {
         let monotonic_ns = journal.last_monotonic_ns;
         let statement_count =
@@ -7283,18 +7282,38 @@ mod tests {
             .unwrap();
     }
 
-    fn start_test_process2(
-        path: &Path,
-        context: &RuntimeEventContextV1,
-        key: &SigningKey,
-        nonce: u64,
-    ) -> RuntimeEventJournalV1 {
-        let mut first =
-            RuntimeEventJournalV1::start_with_context(path, context.clone(), key.clone()).unwrap();
-        enter_fleet_started(&mut first);
-        append_test_restart_cut(&mut first, nonce);
-        drop(first);
-        RuntimeEventJournalV1::start_with_context(path, context.clone(), key.clone()).unwrap()
+    /// Real signed and persisted N/N Cut/Park/ParkedAck admission, shared by
+    /// journal-grammar regressions. The retained affine owner is not recreated
+    /// from a success flag, and later grammar events claim no application work.
+    fn start_authenticated_process2_for_grammar_test(
+    ) -> (TempDir, Process2JournalStartedFromRestartCutV1) {
+        let AuthenticatedProcess2GateFixture {
+            _temporary,
+            journal,
+            journal_path,
+            context,
+            key,
+            stored_cut_park,
+            stored_ack,
+            journal_witness,
+            ..
+        } = authenticated_process2_gate_fixture();
+        let reopened = ReopenedRestartCutParkAckCertificatesV1 {
+            stored_cut_park,
+            stored_ack,
+            journal_witness,
+        };
+        reopened.revalidate_fresh_v1().unwrap();
+        drop(journal);
+        let started = Process2JournalStartedFromRestartCutV1::start_with_context_v1(
+            &journal_path,
+            context,
+            Box::new(LocalRuntimeEventSignatureProducerV1::new(key)),
+            reopened,
+        )
+        .unwrap();
+        started.revalidate_unchanged_start_v1().unwrap();
+        (_temporary, started)
     }
 
     #[test]
@@ -8025,13 +8044,11 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires an authenticated Cut/Park/ParkedAck process-2 fixture"]
     fn legacy_public_verifier_rejects_process2_without_restart_cut_artifact_authority() {
-        let (temporary, context, key) = fixture();
-        let path = temporary
-            .path()
-            .join("public-process2-without-cut-artifact.jsonl");
-        let mut second = start_test_process2(&path, &context, &key, 23);
+        let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+        let path = process2.journal.path().to_owned();
+        let context = process2.journal.context.clone();
+        let second = &mut process2.journal;
         second
             .record_recovery_zero_delta_for_grammar_test([0x92; 32], 3)
             .unwrap();
@@ -8051,7 +8068,7 @@ mod tests {
             .record_final_tip([0xa1; 32], [0xa2; 32], [0xa3; 32], 3)
             .unwrap();
         second.record_clean_stop().unwrap();
-        drop(second);
+        drop(process2);
 
         assert!(matches!(
             verify_runtime_event_journal_with_context_v1(&path, &context),
@@ -8423,19 +8440,17 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires an authenticated Cut/Park/ParkedAck process-2 fixture"]
     fn restarted_process_cannot_consensus_before_exact_zero_delta_or_recovery_start() {
-        let (temporary, context, key) = fixture();
-        let path = temporary.path().join("events.jsonl");
-        let mut restarted = start_test_process2(&path, &context, &key, 21);
+        let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+        let restarted = &mut process2.journal;
         assert!(restarted.observation().restart_pending_catchup);
         assert!(!restarted.state.restart_catchup_complete_v1());
         assert!(restarted
             .append(RuntimeEventKindV1::ProposalAdmitted, "proposal", 1)
             .is_err());
 
-        let zero_delta_path = temporary.path().join("events-zero-delta.jsonl");
-        let mut restarted = start_test_process2(&zero_delta_path, &context, &key, 22);
+        let (_zero_temporary, mut zero_process2) = start_authenticated_process2_for_grammar_test();
+        let restarted = &mut zero_process2.journal;
         restarted
             .record_recovery_zero_delta_for_grammar_test([0x91; 32], 3)
             .unwrap();
@@ -8449,7 +8464,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires an authenticated Cut/Park/ParkedAck process-2 fixture"]
     fn zero_delta_still_rejects_every_ordinary_event_before_recovery_start() {
         let cases = [
             (RuntimeEventKindV1::ProposalAdmitted, "proposal", 5),
@@ -8483,11 +8497,9 @@ mod tests {
             ),
             (RuntimeEventKindV1::CleanStop, "bounded-run-complete", 1),
         ];
-        for (index, (kind, subject, value)) in cases.into_iter().enumerate() {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join(format!("caught-up-{index}.jsonl"));
-            let mut restarted =
-                start_test_process2(&path, &context, &key, 30 + u64::try_from(index).unwrap());
+        for (kind, subject, value) in cases {
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let restarted = &mut process2.journal;
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0x92; 32], 3)
                 .unwrap();
@@ -8500,20 +8512,15 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires an authenticated Cut/Park/ParkedAck process-2 fixture"]
     fn recovery_ready_still_rejects_proposal_vote_and_timeout_before_recovery_start() {
-        for (index, kind) in [
+        for kind in [
             RuntimeEventKindV1::ProposalAdmitted,
             RuntimeEventKindV1::VoteBroadcast,
             RuntimeEventKindV1::TimeoutVoteBroadcast,
-        ]
-        .into_iter()
-        .enumerate()
-        {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join(format!("ready-{index}.jsonl"));
-            let mut restarted =
-                start_test_process2(&path, &context, &key, 60 + u64::try_from(index).unwrap());
+        ] {
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             let statement_count = u64::try_from(context.validator_set.validators().len()).unwrap();
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0x97; 32], 3)
@@ -8530,16 +8537,16 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires an authenticated Cut/Park/ParkedAck process-2 fixture"]
     fn recovery_start_grammar_rejects_missing_replayed_mutated_and_intervening_predecessors() {
         let validator_count = |context: &RuntimeEventContextV1| {
             u64::try_from(context.validator_set.validators().len()).unwrap()
         };
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("start-before-catchup.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 40);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             let before = fs::read(&path).unwrap();
             assert!(restarted
                 .record_recovery_start_for_grammar_test([0xa1; 32], validator_count(&context),)
@@ -8548,9 +8555,10 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("ready-before-catchup.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 41);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             let before = fs::read(&path).unwrap();
             assert!(restarted
                 .record_recovery_ready_for_grammar_test([0xa2; 32], validator_count(&context),)
@@ -8559,9 +8567,9 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("non-equal-zero-delta.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 42);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let restarted = &mut process2.journal;
             let before = fs::read(&path).unwrap();
             assert!(restarted
                 .record_recovery_zero_delta_for_grammar_test([0xa3; 32], 2)
@@ -8570,9 +8578,9 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("ahead-zero-delta.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 43);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let restarted = &mut process2.journal;
             let before = fs::read(&path).unwrap();
             assert!(restarted
                 .record_recovery_zero_delta_for_grammar_test([0xa3; 32], 4)
@@ -8581,9 +8589,9 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("zero-caught-up-artifact.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 44);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let restarted = &mut process2.journal;
             let before = fs::read(&path).unwrap();
             assert!(restarted
                 .record_recovery_zero_delta_for_grammar_test([0; 32], 3)
@@ -8592,9 +8600,9 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("replayed-catchup.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 45);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let restarted = &mut process2.journal;
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0xa4; 32], 3)
                 .unwrap();
@@ -8606,9 +8614,10 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("wrong-ready-count.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 45);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0xa6; 32], 3)
                 .unwrap();
@@ -8620,9 +8629,10 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("zero-ready-artifact.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 46);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0xa8; 32], 3)
                 .unwrap();
@@ -8634,9 +8644,10 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("replayed-ready.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 47);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0xa9; 32], 3)
                 .unwrap();
@@ -8651,9 +8662,10 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("start-before-ready.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 48);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0xac; 32], 3)
                 .unwrap();
@@ -8665,9 +8677,10 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("wrong-start-count.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 49);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0xae; 32], 3)
                 .unwrap();
@@ -8682,9 +8695,10 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("zero-start-certificate.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 50);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0xb1; 32], 3)
                 .unwrap();
@@ -8699,9 +8713,10 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("intervening-session.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 51);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0xb3; 32], 3)
                 .unwrap();
@@ -8720,9 +8735,10 @@ mod tests {
         }
 
         {
-            let (temporary, context, key) = fixture();
-            let path = temporary.path().join("replayed-start.jsonl");
-            let mut restarted = start_test_process2(&path, &context, &key, 52);
+            let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+            let path = process2.journal.path().to_owned();
+            let context = process2.journal.context.clone();
+            let restarted = &mut process2.journal;
             restarted
                 .record_recovery_zero_delta_for_grammar_test([0xb6; 32], 3)
                 .unwrap();
@@ -8741,11 +8757,11 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires an authenticated Cut/Park/ParkedAck process-2 fixture"]
     fn observer_replay_distinguishes_all_four_process2_restart_phases() {
-        let (temporary, context, key) = fixture();
-        let path = temporary.path().join("restart-phases.jsonl");
-        let mut restarted = start_test_process2(&path, &context, &key, 53);
+        let (_temporary, mut process2) = start_authenticated_process2_for_grammar_test();
+        let path = process2.journal.path().to_owned();
+        let context = process2.journal.context.clone();
+        let restarted = &mut process2.journal;
         let statement_count = u64::try_from(context.validator_set.validators().len()).unwrap();
 
         let replay = || {

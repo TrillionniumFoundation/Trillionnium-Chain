@@ -451,6 +451,22 @@ failed canary evidence to improve its objective.
 
 ## Verification and evidence
 
+### Process-2 recovery grammar must use current authenticated start fixtures
+
+The process-event recovery regression set must execute rather than remain ignored
+because its old process-2 setup predates N/N ParkedAck. Reuse the existing signed,
+persisted RestartCut/RestartPark/RestartParkedAck fixture and the actual
+`Process2JournalStartedFromRestartCutV1` admission. Retain that owner and its
+artifacts for the test lifetime; do not add a raw public process-start constructor,
+skip fresh triple verification, or invent a successful acknowledgement.
+
+The six historical cases continue checking pre-catchup/ready/start exclusion,
+exact zero-delta height, missing/replayed/changed/intervening predecessors, public
+verification without artifact authority, and observer phase reconstruction.
+Their later private grammar helpers exercise journal semantics only: passing them
+is not real multi-host restart, full application recovery or independent evidence.
+
+
 ### Formal auxiliary unit: assumptions, runner and counterexamples
 
 `formal/poco-convergence-v1/check.py` runs abstract Python conformance cases and
