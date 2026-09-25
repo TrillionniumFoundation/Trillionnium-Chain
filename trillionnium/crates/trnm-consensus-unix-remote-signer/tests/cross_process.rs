@@ -178,7 +178,7 @@ fn truncated_and_oversized_frames_fail_closed() {
 }
 
 #[test]
-fn signer_journal_composes_with_child_remote_signer_and_replays_locally() {
+fn signer_journal_composes_on_linux_or_rejects_unsupported_host_before_write() {
     let temp = tempfile::tempdir().expect("tempdir");
     fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700))
         .expect("protect journal directory");
@@ -196,8 +196,24 @@ fn signer_journal_composes_with_child_remote_signer_and_replays_locally() {
     .expect("journal profile");
     let database = temp.path().join("journal.sqlite3");
     let watermark = MemoryWatermark::default();
-    let mut journal = SqliteSignerJournalV0::initialize_new(&database, profile, watermark)
-        .expect("initialize journal");
+    let opened = SqliteSignerJournalV0::initialize_new(&database, profile, watermark);
+    if !cfg!(target_os = "linux") {
+        let unsupported = matches!(
+            opened,
+            Err(trnm_consensus_signer_journal::SignerJournalErrorV0::UnsupportedPlatform)
+        );
+        stop(child);
+        assert!(
+            unsupported,
+            "unsupported journal host must reject explicitly"
+        );
+        assert!(
+            !database.exists(),
+            "unsupported host must not create a journal"
+        );
+        return;
+    }
+    let mut journal = opened.expect("initialize Linux journal");
     let mut producer = UnixRemoteSignerProducer::new(config).expect("producer config");
     let intent = fixture_intent(0);
     let first = journal

@@ -1305,3 +1305,10 @@ Fleet fixture readiness observes an actual non-symlink Unix socket with final
 0600 permissions, not pathname existence alone. Bind publishes an inode before
 chmod; the original finite readiness deadline is retained. Production permission
 admission remains unchanged and must still reject a broad or non-socket endpoint.
+
+The Unix client transport is qualified separately from the SQLite signer journal's
+Linux-only namespace implementation. On unsupported hosts the composition test
+must execute `initialize_new`, require `UnsupportedPlatform` before any journal
+file exists, and stop its owned fixture child. This is a negative platform test,
+not a skipped positive test or permission to activate that journal on macOS. On
+Linux the same test retains real child signing, durable replay and one key call.
