@@ -1947,14 +1947,12 @@ original Ready/no-pending-TC stop predicate. Prepare and Park retain the complet
 original durable snapshot checks and consumed-owner requirement. Early peer
 Prepare records are inert until the complete admission-drain set is present.
 
-Local carrier magic becomes TRNMTB02; phases 1/2 keep Prepare/Park shapes, phase 3
-has two little-endian u64 fields (finalized height > 0, business height <= finalized).
-The sorted Prepare-set hash additionally binds each origin's drain record in the
-revision-2 domain. Older local carrier bytes reject, not negotiate or fall back.
+The current revision-2 wire and ordered set-hash preimages are defined below.
+They bind each origin's admission-drain record as well as its Prepare. Older
+local carrier bytes reject, without negotiation or fallback.
 Frozen consensus bytes, leader/quorum rules, maximum height, nominal duration and
 terminal grace are unchanged. A late durable change or undrained peer still fails;
 this repair does not erase an unresolved finality or in-flight obligation.
-
 
 The seven-validator direct candidate previously let the first locally quiet
 node close its sessions while other honest nodes were still establishing their
@@ -1963,7 +1961,10 @@ unavailable session remained. A common nominal deadline cannot synchronize
 these independent state machines. The correction is an explicit bounded
 Prepare/Park exchange, scoped to this direct controlled campaign.
 
-1. **Prepare.** The existing terminal predicate must pass unchanged: actual Ready,
+1. **AdmissionDrained.** Stop new admission and authenticate all seven drained
+   owners as specified above, keeping consensus active until their business
+   heights are finalized locally. A local empty queue is not an N/N drain.
+2. **Prepare.** The existing terminal predicate must pass unchanged: actual Ready,
    original Safety/signer/native/checkpoint joins, positive applied finality, no
    queued Core, client, network or restart work, no active/expected fault, common
    nominal horizon and local quiet interval. A strict frame binds the original
@@ -1971,7 +1972,7 @@ Prepare/Park exchange, scoped to this direct controlled campaign.
    roots, and independently selected local checkpoint digest. The local source
    is freshly rechecked before publishing. Prepare is only an observation; it
    cannot waive missing work, authorize a disconnect or grant consensus power.
-2. **Park.** After all seven exact, unique peer Prepare records agree on the
+3. **Park.** After all seven exact, unique peer Prepare records agree on the
    shared finality cut, the local cut must still match the original local
    Prepare. The live authority is consumed through the existing
    `ContinuousValidatorTerminalOwnerV0` constructor. This destroys live
@@ -1980,7 +1981,7 @@ Prepare/Park exchange, scoped to this direct controlled campaign.
    Prepare-set digest. Missing or changed source facts fail; there is no return
    from Park to ordinary voting. A peer's earlier Prepare alone cannot park
    the local owner.
-3. **Finish.** Every configured validator must have an authenticated Park for
+4. **Finish.** Every configured validator must have an authenticated Park for
    that same original Prepare set. Outbound obligations must be drained. Only
    disconnection of an already admitted, matching parked peer is an expected
    shutdown; all other unavailable sessions remain blockers. After stopping
@@ -2016,15 +2017,22 @@ still fails at the original deadline; a foreign generation/session fails
 immediately. The common Prepare-set hash contains only sorted canonical inner
 payloads, never peer-specific outer signatures, sessions or sequence numbers.
 
-The closed inner wire has magic `TRNMTB01` (8 bytes), phase u8 (1 Prepare or
-2 Park), original StartCertificate SHA-256 (32), and origin ID (32). Prepare
-then carries height u64 little-endian and five fixed 32-byte digests in order:
-block, state, chain, node checkpoint, local evidence cut (241 bytes total).
-Park instead carries the full Prepare-set SHA-256 (105 bytes total). Unknown
-phase, any other length/trailing bytes, or zero height/digest/identity rejects.
-The set digest hashes domain `TRNM/DirectSevenTerminalPrepareSet/V1` followed
-by one NUL byte, count u32 little-endian (7), then all seven canonical Prepare
-payloads sorted by validator ID. The local-cut digest hashes domain
+The current closed inner wire has magic `TRNMTB02` (8 bytes), phase u8
+(1 Prepare, 2 Park, 3 AdmissionDrained), original StartCertificate SHA-256 (32),
+and origin ID (32). Prepare then carries height u64 little-endian and five fixed
+32-byte digests in order: block, state, chain, node checkpoint, local evidence
+cut (241 bytes total). Park carries the full Prepare-set SHA-256 (105 bytes).
+AdmissionDrained carries finalized height followed by last local business
+height, both u64 little-endian (89 bytes total). Finalized height is positive;
+business height may be zero but cannot exceed finalized height. Context and
+identity and every Prepare/Park digest must be nonzero. Unknown/old magic,
+phase, wrong length or trailing bytes reject.
+
+The set digest hashes domain `TRNM/DirectSevenTerminalPrepareSet/V2`, one NUL
+byte, count u32 little-endian (7), then, in sorted validator-ID order, that
+origin's exact canonical AdmissionDrained payload immediately followed by its
+exact canonical Prepare payload. This is not all drains followed by all
+prepares. The local-cut digest retains domain
 `TRNM/DirectSevenTerminalLocalCut/V1` plus NUL, local ID, process-instance and
 checkpoint-generation u64 little-endian, checkpoint and signer-inventory
 SHA-256, archive context SHA-256, archive sequence u64 little-endian and head
