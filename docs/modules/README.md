@@ -39,8 +39,8 @@ code and representative regressions. This index adds detailed designs for all
 
 | Contract | Producer → consumers | Decision and limitation |
 |---|---|---|
-| Epoch application edge | M08/M13 → M02/M03/M06/M07/M15 | Planned authenticated checkpoint C / seal C+1 / seal C+2 edge; first new application version C+3. Seals produce no application mutation, P row or receipt. |
-| Carried predecessor root | M07 → M06/M08/M13 | Planned alias only for the authenticated empty-path root at C+2. Child node versions remain real historical versions; pruning and recovery retain the full reachable source root. No arbitrary path/version remapping. |
+| Epoch application edge | M08/M13 → M02/M03/M06/M07/M15 | Implemented bounded candidate checkpoint C / seal C+1 / seal C+2 edge; first new application version C+3. This is not continuous production epoch turnover. Seals produce no application mutation, P row or receipt. |
+| Carried predecessor root | M07 → M06/M08/M13 | Implemented candidate alias only for the authenticated empty-path root at C+2. Child node versions remain real historical versions; pruning and recovery retain the full reachable source root. No arbitrary path/version remapping. |
 | Public transaction completion | M05/M06/M08/M13 → M14 | Journal acceptance, execution and finality are separate. Existing v0 root-equality checks stay intact; general multi-transaction proofs require the specified versioned result/inclusion contract. |
 | Network authority | M04 → M02/M03/M15 | Transport authentication and delivery acknowledgement do not authorize signatures or finality. Peer identity binds chain/profile/active keys; data lanes cannot exhaust consensus reservations. |
 | Economic application | M09/M10/M11/M12 → M06/M14 | Development profiles are explicit and immutable per run. Unsupported verification backends remain disabled. PoCO stays shadow; no documented profile grants permissionless identity or mainnet economics acceptance. |
