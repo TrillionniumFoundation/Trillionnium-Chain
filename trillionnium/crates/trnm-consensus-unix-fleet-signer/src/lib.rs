@@ -13,17 +13,15 @@
 compile_error!("trnm-consensus-unix-fleet-signer requires a Unix host");
 
 mod authority;
+mod deadline_io;
 mod server;
 
 use std::{
     fmt, fs,
     io::{self, Read, Write},
-    os::unix::{
-        fs::{FileTypeExt, PermissionsExt},
-        net::UnixStream,
-    },
+    os::unix::fs::{FileTypeExt, PermissionsExt},
     path::PathBuf,
-    time::Duration,
+    time::{Duration, Instant},
 };
 
 use sha2::{Digest, Sha256};
@@ -542,25 +540,15 @@ impl UnixFleetRootSignerProducerV1 {
             }
             .into());
         }
+        let deadline = Instant::now()
+            .checked_add(self.config.timeout)
+            .ok_or(UnixFleetSignerErrorV1::InvalidConfig("timeout overflow"))?;
         self.preflight()?;
-        let mut stream = UnixStream::connect(&self.config.socket_path).map_err(|source| {
-            UnixFleetSignerErrorV1::Io {
-                stage: "connect",
-                source,
-            }
+        let mut stream = deadline_io::DeadlineStream::connect(&self.config.socket_path, deadline)
+            .map_err(|source| UnixFleetSignerErrorV1::Io {
+            stage: "connect",
+            source,
         })?;
-        stream
-            .set_read_timeout(Some(self.config.timeout))
-            .map_err(|source| UnixFleetSignerErrorV1::Io {
-                stage: "read timeout",
-                source,
-            })?;
-        stream
-            .set_write_timeout(Some(self.config.timeout))
-            .map_err(|source| UnixFleetSignerErrorV1::Io {
-                stage: "write timeout",
-                source,
-            })?;
         write_frame_v1(&mut stream, request)?;
         let frame = read_frame_v1(&mut stream, MAX_FRAME_BYTES_V1)?;
         if frame.is_empty() {
@@ -639,7 +627,7 @@ fn put_u16(output: &mut Vec<u8>, value: u16) {
 }
 
 pub(crate) fn write_frame_v1(
-    stream: &mut UnixStream,
+    stream: &mut impl Write,
     body: &[u8],
 ) -> Result<(), UnixFleetSignerErrorV1> {
     if body.is_empty() {
@@ -661,7 +649,7 @@ pub(crate) fn write_frame_v1(
 }
 
 pub(crate) fn read_frame_v1(
-    stream: &mut UnixStream,
+    stream: &mut impl Read,
     maximum: usize,
 ) -> Result<Vec<u8>, UnixFleetSignerErrorV1> {
     let mut header = [0u8; FRAME_HEADER_BYTES];

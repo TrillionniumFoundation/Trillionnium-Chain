@@ -1010,6 +1010,25 @@ checkpoint/floor authority; storage pressure cannot erase double-sign protection
 
 ## Resource bounds
 
+### Unix fleet-root client deadline
+
+The external fleet-root client has one monotonic I/O deadline beginning before
+socket preflight and shared by connection, request framing, response header and
+response body. A peer delivering occasional bytes must not renew that budget.
+A full listener backlog must not strand a node in blocking connect. Frame bounds,
+exact request/response and signature verification remain unchanged. Timeout after
+request transmission is an unknown external signing outcome, not evidence that
+no signature was produced; the caller must retain the same intent and nonce for
+its existing durable recovery. The transport never retries a signing request.
+
+The deadline applies to network waits; it is not a real-time guarantee over local
+filesystem syscalls, scheduler suspension, or independent custody durability.
+The client closes its owned descriptor on failure and starts no abandoned I/O
+thread. The existing server and authority retain their own lifecycle contract.
+Fragmented-header/body and saturated-backlog regressions exercise the real public
+client; successful exact replay and malformed-response cases remain required.
+
+
 Existing profile constructors validate `maximum_intents`, `maximum_intent_bytes`
 and `maximum_database_bytes` against source hard limits and checked storage
 products. Use the same rule for new-role and Safety14 records. Bound both encoded

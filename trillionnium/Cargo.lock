@@ -1600,6 +1600,7 @@ dependencies = [
  "ed25519-dalek",
  "fs2",
  "libc",
+ "rustix",
  "sha2",
  "tempfile",
  "trnm-consensus-crypto",

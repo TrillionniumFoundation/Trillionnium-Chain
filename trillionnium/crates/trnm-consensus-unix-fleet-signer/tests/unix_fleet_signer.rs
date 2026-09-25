@@ -525,3 +525,134 @@ fn durable_authority_namespace_lock_is_private_and_exclusive() {
     let socket = dir.path().join("fleet-root-authority.sock");
     assert_authority_start_fails(&socket, &log);
 }
+
+fn fragmented_response_has_one_deadline(fragment_header: bool) {
+    use std::{
+        io::{Read, Write},
+        os::unix::net::UnixListener,
+        time::Instant,
+    };
+    let dir = tempfile::tempdir().expect("deadline tempdir");
+    fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let socket = dir.path().join("deadline.sock");
+    let listener = UnixListener::bind(&socket).expect("bind deadline peer");
+    fs::set_permissions(&socket, fs::Permissions::from_mode(0o600)).unwrap();
+    let server = thread::spawn(move || {
+        listener.set_nonblocking(true).unwrap();
+        let accept_deadline = Instant::now() + Duration::from_secs(2);
+        let (mut stream, _) = loop {
+            match listener.accept() {
+                Ok(pair) => break pair,
+                Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                    assert!(Instant::now() < accept_deadline, "client never connected");
+                    thread::sleep(Duration::from_millis(1));
+                }
+                Err(error) => panic!("accept failed: {error}"),
+            }
+        };
+        stream
+            .set_read_timeout(Some(Duration::from_secs(2)))
+            .unwrap();
+        let mut header = [0; 4];
+        stream.read_exact(&mut header).expect("request header");
+        let mut body = vec![0; u32::from_be_bytes(header) as usize];
+        stream.read_exact(&mut body).expect("request body");
+        FleetRootRequestV1::decode_exact(&body).expect("real exact request");
+        // Each 80ms fragment fits the 120ms per-syscall timeout, but the
+        // full frame exceeds the caller's one operation deadline.
+        let header = 2u32.to_be_bytes();
+        if !fragment_header {
+            stream.write_all(&header).unwrap();
+        }
+        let fragments: &[u8] = if fragment_header { &header } else { &[1, 7] };
+        for byte in fragments {
+            thread::sleep(Duration::from_millis(80));
+            if stream.write_all(&[*byte]).is_err() {
+                return;
+            }
+        }
+        if fragment_header {
+            let _ = stream.write_all(&[1, 7]);
+        }
+    });
+    let mut settings = config(&socket);
+    settings.timeout = Duration::from_millis(120);
+    let mut client = UnixFleetRootSignerProducerV1::new(settings).unwrap();
+    let start = Instant::now();
+    let result = authority_request(&mut client, FleetRootPurposeV1::Ready, 0x91, 0x71);
+    let elapsed = start.elapsed();
+    server.join().expect("bounded peer finished");
+    assert!(
+        matches!(&result, Err(UnixFleetSignerErrorV1::Io { source, .. })
+        if source.kind() == std::io::ErrorKind::TimedOut),
+        "operation deadline was renewed: elapsed={elapsed:?}, result={result:?}"
+    );
+    assert!(
+        elapsed < Duration::from_secs(1),
+        "deadline response must stay bounded"
+    );
+}
+
+#[test]
+fn fragmented_header_cannot_renew_client_deadline() {
+    fragmented_response_has_one_deadline(true);
+}
+
+#[test]
+fn fragmented_body_cannot_renew_client_deadline() {
+    fragmented_response_has_one_deadline(false);
+}
+
+#[cfg(target_os = "linux")]
+#[test]
+fn full_listener_backlog_cannot_block_public_client() {
+    use rustix::net::{AddressFamily, SocketAddrUnix, SocketFlags, SocketType};
+    use std::{os::unix::net::UnixListener, time::Instant};
+    let dir = tempfile::tempdir().unwrap();
+    fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let path = dir.path().join("full.sock");
+    let listener = UnixListener::bind(&path).unwrap();
+    fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+    rustix::net::listen(&listener, 1).unwrap();
+    let address = SocketAddrUnix::new(&path).unwrap();
+    let mut queued = Vec::new();
+    let mut full = false;
+    for _ in 0..8 {
+        let fd = rustix::net::socket_with(
+            AddressFamily::UNIX,
+            SocketType::STREAM,
+            SocketFlags::NONBLOCK | SocketFlags::CLOEXEC,
+            None,
+        )
+        .unwrap();
+        match rustix::net::connect(&fd, &address) {
+            Ok(()) => queued.push(fd),
+            Err(rustix::io::Errno::AGAIN) => {
+                full = true;
+                break;
+            }
+            Err(error) => panic!("unexpected backlog error: {error}"),
+        }
+    }
+    assert!(full, "test must actually exhaust the accept queue");
+    let mut settings = config(&path);
+    settings.timeout = Duration::from_millis(120);
+    let mut client = UnixFleetRootSignerProducerV1::new(settings).unwrap();
+    let start = Instant::now();
+    let result = authority_request(&mut client, FleetRootPurposeV1::Ready, 0x92, 0x72);
+    assert!(
+        matches!(&result, Err(UnixFleetSignerErrorV1::Io { stage: "connect", source })
+        if source.kind() == std::io::ErrorKind::TimedOut),
+        "{result:?}"
+    );
+    assert!(start.elapsed() < Duration::from_secs(1));
+    // The timeout must not establish a false connection or send a request.
+    listener.set_nonblocking(true).unwrap();
+    for _ in 0..queued.len() {
+        let _ = listener.accept().unwrap();
+    }
+    assert_eq!(
+        listener.accept().unwrap_err().kind(),
+        std::io::ErrorKind::WouldBlock
+    );
+}
