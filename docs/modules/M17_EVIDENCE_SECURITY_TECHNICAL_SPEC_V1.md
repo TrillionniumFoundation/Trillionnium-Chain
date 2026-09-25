@@ -672,6 +672,18 @@ results and authenticated independent external records where required. Repositor
 fixtures, self-review, shortened runs or synthetic clocks cannot close those
 external gates. Critical/High unresolved findings block the affected acceptance.
 
+### Host lease-service resource admission
+
+The existing host totals also reserve one lease daemon on each validator host:
+96 file descriptors (64 bounded client slots plus 32 owner/base descriptors),
+one thread, and 64 maximum 16-KiB request frames plus framing. A coordinator
+without validators does not get a fictitious authority. This is a conservative
+socket-service budget, not a measured RSS claim for journal history. Per-validator
+and coordinator limits retain their separate meanings. Exact system-file capacity
+passes at the combined requirement and rejects one descriptor below it. Earlier
+resource reports keep their original source identity; updated totals are not a
+new topology or protocol rule and do not mutate host resource limits.
+
 ### Isolated pocket4/ROG diagnostic placement
 
 `local4-rog3-mac-v1` is an explicitly selected schema-2 placement using the

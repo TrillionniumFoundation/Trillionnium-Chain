@@ -167,7 +167,7 @@ def test_reduced_coordinator_resources() -> None:
     assert report["placement_profile"] == preflight.REDUCED_PLACEMENT
     assert [host["host_id"] for host in report["hosts"]] == ["desktop", "rog"]
     assert [host["validator_processes"] for host in report["hosts"]] == [4, 3]
-    assert [host["host_threads_required"] for host in report["hosts"]] == [52, 39]
+    assert [host["host_threads_required"] for host in report["hosts"]] == [53, 40]
     assert sum(host["validator_processes"] for host in report["hosts"]) == 7
     controller = report["coordinator"]
     assert controller["host_id"] == "local-coordinator"
@@ -243,7 +243,13 @@ def main() -> None:
     validators = processes()
     host_facts = facts()
     report = preflight.evaluate_mesh_fleet_resources_v1(validators, 100, host_facts)
-    assert hashlib.sha256(json.dumps(report, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == "50db0e63eb0fc6e836644e377cdb95a697d58aab4695bd1b69ca03d29e032652"
+    assert hashlib.sha256(json.dumps(report, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == "82dbe18cd95bf964ba6fb5a088d07e262451e9755164395b1d655cf09e3f4d3b"
+    # Independent exact-capacity control includes the single 96-FD authority.
+    exact = copy.deepcopy(host_facts)
+    exact["rog"]["file_nr_max"] = str(1000 + 38 * 162 + 96)
+    assert preflight.evaluate_mesh_fleet_resources_v1(validators, 100, exact)["capacity_passed"]
+    exact["rog"]["file_nr_max"] = str(1000 + 38 * 162 + 95)
+    expect_failure(lambda: preflight.evaluate_mesh_fleet_resources_v1(validators, 100, exact), "system file-handle")
     assert report["capacity_passed"] is True
     assert report["per_validator_threads"] == 17
     assert report["per_validator_socket_fds"] == 34
@@ -251,8 +257,8 @@ def main() -> None:
     assert report["per_validator_rss_bytes"] == 290 * 1024 * 1024
     assert report["coordinator_capture_fds"] == 328
     by_host = {item["host_id"]: item for item in report["hosts"]}
-    assert by_host["desktop"]["host_open_file_fds_required"] == 5_832
-    assert by_host["rog"]["host_open_file_fds_required"] == 6_156
+    assert by_host["desktop"]["host_open_file_fds_required"] == 5_928
+    assert by_host["rog"]["host_open_file_fds_required"] == 6_252
     assert by_host["rog"]["per_process_nofile_soft"] == "1024"
     assert by_host["local"]["coordinator_capture_fds_required"] == 328
     assert by_host["x230"]["coordinator_capture_fds_required"] == 0
@@ -367,11 +373,11 @@ def main() -> None:
     test_local_rog_coordinator_resources()
 
     print(
-        "poco_g3_mesh_resource_preflight_v1_test=passed positives=18 negatives=11 "
+        "poco_g3_mesh_resource_preflight_v1_test=passed positives=19 negatives=12 "
         "topology=100 per_process_rlimit=distinct host_file_capacity=system-wide "
         "uid_threads=bounded system_threads=bounded rss=bounded "
         "coordinator_capture_fds=per-process-bounded inherited_rlimit=true "
-        "reduced_coordinator_separate=true reduced_capacity_controls=true canonical_bytes_preserved=true "
+        "reduced_coordinator_separate=true reduced_capacity_controls=true canonical_topology_unchanged=true lease_service_capacity_included=true "
         "pre_effect_runners=consensus,fault "
         "ulimit_elevation=false validator_run=false g3_complete=false"
     )

@@ -14,6 +14,10 @@ from plan_topology import ALTERNATE_ALLOCATIONS, CANONICAL_PLACEMENT, REDUCED_PL
 MAX_PROBE_BYTES = 64 * 1024
 PROBE_TIMEOUT_SECONDS = 30
 PROCESS_FD_RESERVE = 128
+# One bounded authority per validator host: 64 clients plus 32 owner FDs.
+LEASE_DAEMON_FDS = 96
+LEASE_DAEMON_FRAME_BYTES = 64 * (16 * 1024 + 8)
+LEASE_DAEMON_THREADS = 1
 COORDINATOR_FD_RESERVE = 128
 UID_THREAD_RESERVE = 128
 SYSTEM_THREAD_RESERVE = 128
@@ -268,9 +272,10 @@ def evaluate_mesh_fleet_resources_v1(
             fail(f"host {host_id} has no authoritative system file-handle capacity")
 
         validator_processes = inventory["validator_processes"]
-        host_threads = per_validator_threads * validator_processes
-        host_open_file_fds = per_validator_open_file_fds * validator_processes
-        host_rss_bytes = per_validator_rss_bytes * validator_processes
+        has_authority = int(validator_processes > 0)
+        host_threads = per_validator_threads * validator_processes + has_authority * LEASE_DAEMON_THREADS
+        host_open_file_fds = per_validator_open_file_fds * validator_processes + has_authority * LEASE_DAEMON_FDS
+        host_rss_bytes = per_validator_rss_bytes * validator_processes + has_authority * LEASE_DAEMON_FRAME_BYTES
         maximum_host_threads = cpu_threads * THREADS_PER_CPU_CEILING
         usable_memory = memory_bytes * HOST_MEMORY_NUMERATOR // HOST_MEMORY_DENOMINATOR
         coordinator_fds = (

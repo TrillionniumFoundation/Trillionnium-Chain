@@ -521,6 +521,26 @@ one-request-per-connection framing and credential/expiry/generation checks are
 unchanged. This isolates client failures; it does not make storage calls
 interruptible or establish independent anti-rollback authority.
 
+### Bounded simultaneous lease connections
+
+The Unix daemon keeps one journal writer while multiplexing at most 64 accepted
+connections. A zero operation budget rejects before creating authority files.
+A partial header or body on one connection must not delay a complete
+request on another until the first client's timeout. Each accepted connection
+retains its original five-second operation deadline across read, durable apply
+and response; readiness or fragmentation never resets it. Header admission bounds
+the body before allocating it. At most 64 bounded frames and responses are kept;
+a full connection set stops accepting until capacity returns, without another
+thread, queue or journal writer. Socket failure affects only its connection.
+
+Actual authority failures still terminate the owner before any subsequent request
+can be applied. Successful durable operations remain committed if their response
+is lost. This is socket scheduling isolation, not interruptible storage, admission
+fairness against a same-UID process that fills every slot, or an external freshness
+source. The clock, schema, lease generation and signing/activation rules do not
+change. A real-process regression holds an incomplete request open while another
+client acquires, revalidates, renews and releases through the same live daemon.
+
 ### Recovery socket uses the existing directory-owner identity
 
 The optional `candidate-recovery-socket` daemon and client retain the same

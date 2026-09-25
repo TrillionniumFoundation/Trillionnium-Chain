@@ -20,6 +20,8 @@ use crate::protocol::{
 use crate::store::{ensure_private_directory, now_ms, prepare_private_directory, PeerLeaseStoreV1};
 use crate::PeerLeaseErrorV1;
 
+mod connection_service;
+
 /// Wall-clock budget for socket I/O while servicing one accepted stream.  The
 /// protocol permits only one request per connection, so keeping one absolute
 /// deadline for frame read and response write prevents a client from
@@ -335,6 +337,11 @@ impl UnixPeerLeaseDaemonV1 {
     /// are removed only after the journal has been opened and verified, so a
     /// tampered journal never gets hidden by socket cleanup.
     pub fn run(&self) -> Result<(), PeerLeaseErrorV1> {
+        if self.operation_timeout.is_zero() {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "peer-lease daemon timeout must be positive",
+            ));
+        }
         // Reject malformed/colliding paths before opening the durable lease
         // journal or creating a socket parent.  Otherwise a bad Unix path
         // could leave authority state behind even though bind never starts.
@@ -359,24 +366,7 @@ impl UnixPeerLeaseDaemonV1 {
         socket_cleanup.arm(&listener)?;
         set_socket_permissions(&self.socket_path)?;
         socket_cleanup.verify()?;
-        for stream in listener.incoming() {
-            match stream {
-                Ok(mut stream) => {
-                    match serve_connection(&mut stream, &mut store, self.operation_timeout) {
-                        Ok(()) => {}
-                        Err(LeaseConnectionFailureV1::Connection(error)) => {
-                            // The peer owns only this connection. In particular,
-                            // EOF/reset/broken pipe cannot destroy every lease.
-                            // Do not log unbounded client-selected failures.
-                            drop(error);
-                        }
-                        Err(LeaseConnectionFailureV1::Authority(error)) => return Err(error),
-                    }
-                }
-                Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
-            }
-        }
-        Ok(())
+        connection_service::serve(&listener, &mut store, self.operation_timeout)
     }
 }
 
@@ -443,6 +433,7 @@ enum LeaseConnectionFailureV1 {
     Authority(PeerLeaseErrorV1),
 }
 
+#[cfg(test)]
 fn serve_connection(
     stream: &mut UnixStream,
     store: &mut PeerLeaseStoreV1,
@@ -467,6 +458,7 @@ fn serve_connection(
     finish_lease_response_v1(stream, result, deadline)
 }
 
+#[cfg(test)]
 fn finish_lease_response_v1(
     stream: &mut UnixStream,
     result: Result<PeerLeaseTokenV1, PeerLeaseErrorV1>,
@@ -475,23 +467,18 @@ fn finish_lease_response_v1(
     use LeaseConnectionFailureV1::{Authority, Connection};
     // Inspect the actual authority result BEFORE checking response time. A
     // slow fsync or disconnected peer cannot mask corruption/clock rollback.
-    let response = match result {
-        Ok(token) => LeaseResponseV1::Token(token),
-        Err(PeerLeaseErrorV1::Rejected(
-            code @ (LeaseRejectCodeV1::ClockRollback | LeaseRejectCodeV1::AuthorityCorrupt),
-        )) => {
-            let _ = write_all_until(
-                stream,
-                &encode_response(LeaseResponseV1::Rejected(code)),
-                deadline,
-            );
-            return Err(Authority(PeerLeaseErrorV1::Rejected(code)));
+    let response = match connection_service::response_for_result(result) {
+        Ok(response) => response,
+        Err(error) => {
+            if let PeerLeaseErrorV1::Rejected(code) = &error {
+                let _ = write_all_until(
+                    stream,
+                    &encode_response(LeaseResponseV1::Rejected(*code)),
+                    deadline,
+                );
+            }
+            return Err(Authority(error));
         }
-        Err(PeerLeaseErrorV1::Rejected(code)) => LeaseResponseV1::Rejected(code),
-        Err(PeerLeaseErrorV1::InvalidRequest(_)) => {
-            LeaseResponseV1::Rejected(LeaseRejectCodeV1::InvalidRequest)
-        }
-        Err(error) => return Err(Authority(error)),
     };
     // An over-budget successful commit is response loss, not rollback. Each
     // write checks the original absolute deadline; no new allowance is issued.

@@ -251,3 +251,104 @@ fn daemon_anchor_io_failure_still_terminates_authority_v1() {
     }
     assert!(client.revalidate(token).is_err());
 }
+
+#[test]
+fn stalled_client_does_not_block_live_lease_operations_v1() {
+    use std::{io::Write, os::unix::net::UnixStream};
+    let directory = private_tempdir();
+    let (child, socket, _) = start_daemon(directory.path());
+    let mut child = DaemonChildGuardV1(child);
+    // These connections precede the real client in the listen queue and
+    // remain open. Neither an EOF nor the five-second daemon timeout helps.
+    let mut partial_header = UnixStream::connect(&socket).unwrap();
+    partial_header.write_all(b"TPL").unwrap();
+    let mut partial_body = UnixStream::connect(&socket).unwrap();
+    partial_body.write_all(b"TPLS").unwrap();
+    partial_body.write_all(&200u32.to_le_bytes()).unwrap();
+    partial_body.write_all(&[1, 2]).unwrap();
+    let client = UnixPeerLeaseClientV1::connect(&socket).with_timeout(Duration::from_millis(750));
+    let started = Instant::now();
+    let token = client
+        .acquire(scope(), [0xa1; 32], 1, 30_000)
+        .expect("partial clients must not block unrelated lease admission");
+    assert_eq!(client.revalidate(token).unwrap(), token);
+    let renewed = client.renew(token, 30_000).unwrap();
+    assert_eq!(client.revalidate(renewed).unwrap(), renewed);
+    client.release(renewed).unwrap();
+    assert!(started.elapsed() < Duration::from_secs(3));
+    assert!(child.0.try_wait().unwrap().is_none());
+    drop((partial_header, partial_body));
+    let successor = client.acquire(scope(), [0xa2; 32], 2, 30_000).unwrap();
+    assert_eq!(successor.generation(), 2);
+    assert!(matches!(
+        client.revalidate(renewed),
+        Err(PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::Fenced))
+    ));
+}
+
+#[test]
+fn parallel_clients_retain_one_durable_scope_winner_v1() {
+    let directory = private_tempdir();
+    let (child, socket, _) = start_daemon(directory.path());
+    let mut child = DaemonChildGuardV1(child);
+    let barrier = std::sync::Arc::new(std::sync::Barrier::new(8));
+    let handles = (0..8)
+        .map(|i| {
+            let barrier = barrier.clone();
+            let socket = socket.clone();
+            thread::spawn(move || {
+                let client = UnixPeerLeaseClientV1::connect(socket);
+                barrier.wait();
+                client.acquire(scope(), [0xb0 + i; 32], 1, 30_000)
+            })
+        })
+        .collect::<Vec<_>>();
+    let mut winner = None;
+    for handle in handles {
+        match handle.join().unwrap() {
+            Ok(token) => assert!(winner.replace(token).is_none(), "multiple scope winners"),
+            Err(error) => assert!(matches!(
+                error,
+                PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::AlreadyLeased)
+            )),
+        }
+    }
+    let winner = winner.expect("one durable admission");
+    let client = UnixPeerLeaseClientV1::connect(&socket);
+    assert_eq!(client.revalidate(winner).unwrap(), winner);
+    child.0.kill().unwrap();
+    child.0.wait().unwrap();
+    let (restarted, socket, _) = start_daemon(directory.path());
+    let _restarted = DaemonChildGuardV1(restarted);
+    assert_eq!(
+        UnixPeerLeaseClientV1::connect(socket)
+            .revalidate(winner)
+            .unwrap(),
+        winner
+    );
+}
+
+#[test]
+fn stalled_connection_capacity_is_released_without_restarting_authority_v1() {
+    use std::{io::Write, os::unix::net::UnixStream};
+    let directory = private_tempdir();
+    let (child, socket, journal) = start_daemon(directory.path());
+    let mut child = DaemonChildGuardV1(child);
+    let baseline = fs::read(&journal).unwrap();
+    let mut connections = Vec::new();
+    for _ in 0..64 {
+        let mut stream = UnixStream::connect(&socket).unwrap();
+        stream.write_all(b"T").unwrap();
+        connections.push(stream);
+    }
+    let client = UnixPeerLeaseClientV1::connect(&socket).with_timeout(Duration::from_millis(150));
+    assert!(client.acquire(scope(), [0xc1; 32], 1, 30_000).is_err());
+    assert_eq!(fs::read(&journal).unwrap(), baseline);
+    drop(connections);
+    // The timed-out complete request might be accepted after capacity returns.
+    // Exact retry must recover that same token rather than assuming rollback.
+    let client = UnixPeerLeaseClientV1::connect(&socket);
+    let token = client.acquire(scope(), [0xc1; 32], 1, 30_000).unwrap();
+    assert_eq!(client.revalidate(token).unwrap(), token);
+    assert!(child.0.try_wait().unwrap().is_none());
+}
