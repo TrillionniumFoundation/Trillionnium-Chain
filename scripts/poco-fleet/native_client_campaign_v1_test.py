@@ -427,6 +427,36 @@ def main():
     test_request_adapter_v1()
     test_owned_command_cleanup_v1()
     test_validator_exit_attribution_v1()
+    test_proof_verification_failure_diagnostic_v1()
     print(f'native_campaign_structural_tests=passed negatives={rejected} cryptographic_success_claim=false real_campaign_required=true controlled_ssh_unix_transport=true bounded_io_deadline=true owned_group_cleanup=true')
+
+def test_proof_verification_failure_diagnostic_v1():
+    import subprocess
+    import sys
+    import time
+    from unittest import mock
+    stage = base.HostStage("mac", "p4-mac", "/tmp/tp3-" + "a" * 20, None)
+    def fail_child(*args, **kwargs):
+        return c.bounded_command_v1([
+            sys.executable, "-c",
+            "import sys; sys.stdout.write('DO_NOT_LOG_OUTPUT'); "
+            "sys.stderr.write('missing config\\n\\x1b[31m'+'x'*2000); sys.exit(37)",
+            "DO_NOT_LOG_ARGUMENT",
+        ], timeout=3)
+    with mock.patch.object(c, "ssh", side_effect=fail_child):
+        try:
+            c.verify_proof_response_v1(stage, ["not-executed"], index=2,
+                                      deadline=time.monotonic()+5)
+        except c.NativeProofVerificationFailureV1 as error:
+            text = str(error)
+            assert error.returncode == 37 and error.index == 2
+            assert isinstance(error.__cause__, subprocess.CalledProcessError)
+            assert error.stdout == b"DO_NOT_LOG_OUTPUT"
+            assert "missing config" in text and "exit=37" in text
+            assert "DO_NOT_LOG_OUTPUT" not in text and "DO_NOT_LOG_ARGUMENT" not in text
+            assert "\n" not in text and "\x1b" not in text and len(text) < 1200
+        else:
+            raise AssertionError("failed verifier was accepted")
+
 
 if __name__=='__main__':main()

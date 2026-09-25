@@ -51,6 +51,28 @@ class NativeRequestFailureV1(subprocess.CalledProcessError):
         return f"native request {self.sequence} ({self.operation}) exit {self.returncode}: {(self.stderr or b'').decode('utf-8', errors='replace')}"
 
 
+class NativeProofVerificationFailureV1(subprocess.CalledProcessError):
+    def __init__(self, error: subprocess.CalledProcessError, index: int):
+        super().__init__(error.returncode, error.cmd, error.output, error.stderr)
+        self.index = index
+
+    def __str__(self) -> str:
+        raw = self.stderr or b""
+        if isinstance(raw, bytes):
+            raw = raw.decode("utf-8", errors="replace")
+        detail = json.dumps(raw, ensure_ascii=True)[:1024]
+        return f"native proof verification index={self.index} exit={self.returncode} stderr={detail}"
+
+
+def verify_proof_response_v1(stage: base.HostStage, arguments: list[str], *,
+                             index: int, deadline: float) -> dict:
+    try:
+        output = ssh(stage, arguments, timeout=remaining_timeout_v1(deadline, 30))
+    except subprocess.CalledProcessError as error:
+        raise NativeProofVerificationFailureV1(error, index) from error
+    return strict_json(output, "Mac independent native proof verification")
+
+
 def request_process_v1(processes: list[base.ValidatorProcess]) -> base.ValidatorProcess:
     if not 1 <= len(processes) <= 100 or len({p.validator_id for p in processes}) != len(processes):
         raise RuntimeError("native request requires unique actual Linux validators")
@@ -585,7 +607,7 @@ def run_campaign(*, coordinator: pathlib.Path, deployments: pathlib.Path, manife
             time.sleep(0.15)
         proof_path = f"{remote}/proof-{index}.json"
         remote_new(mac, proof_path, base.canonical_json(proof), deadline=deadline)
-        verified = strict_json(ssh(mac, [mac_binary, "native-client", "verify", observer_root, str(process.config_relative), anchor, proof_path, native_hash, outer_path, digest], timeout=remaining_timeout_v1(deadline, 30)), "Mac independent native proof verification")
+        verified = verify_proof_response_v1(mac, [mac_binary, "native-client", "verify", observer_root, str(process.config_relative), anchor, proof_path, native_hash, outer_path, digest], index=index, deadline=deadline)
         records.append({"kind": "funding" if funding else "transfer", "native_tx_hash": native_hash, "outer_hex": outer.hex(), "outer_sha256": hashlib.sha256(outer).hexdigest(), "submitted_monotonic_ns": submitted, "ack_monotonic_ns": ack_at, "verified_monotonic_ns": time.monotonic_ns(), "ack": ack, "retry_ack": retry, "proof_response": proof, "mac_verification": verified})
     completed = time.monotonic_ns()
     window = records[-1]["verified_monotonic_ns"] - records[1]["submitted_monotonic_ns"]

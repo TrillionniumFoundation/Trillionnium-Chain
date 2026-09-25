@@ -672,6 +672,17 @@ results and authenticated independent external records where required. Repositor
 fixtures, self-review, shortened runs or synthetic clocks cannot close those
 external gates. Critical/High unresolved findings block the affected acceptance.
 
+### Native-client proof-verifier failure observation
+
+If the actual Mac verification subprocess exits nonzero, retain its exit status,
+transaction ordinal and at most 1,024 escaped characters of its bounded stderr.
+The diagnostic omits argv and stdout and preserves the original exception/cause;
+a failing verifier never contributes a successful record or goodput. This is
+failure attribution, not verification authority. Control characters cannot add
+unbounded log lines. Existing owned-command cleanup and absolute deadlines stay
+unchanged. A real child-exit regression covers long/control-character stderr and
+ensures argument and stdout contents do not enter the failure message.
+
 ### Host lease-service resource admission
 
 The existing host totals also reserve one lease daemon on each validator host:
