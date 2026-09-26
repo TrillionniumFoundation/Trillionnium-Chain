@@ -3742,7 +3742,7 @@ mod tests {
         env, fs,
         net::TcpListener,
         os::unix::{
-            fs::{FileTypeExt, PermissionsExt},
+            fs::{FileTypeExt, OpenOptionsExt, PermissionsExt},
             net::UnixListener,
         },
         process::{Child, Command},
@@ -3809,6 +3809,57 @@ mod tests {
 
     const PROPOSED_BLOCKS: u64 = 6;
     const REQUIRED_FINALIZED_BLOCKS: u64 = 4;
+
+    /// Copies the currently executing test image through the kernel-owned
+    /// `/proc/self/exe` handle on Linux. Cargo or another workspace build may
+    /// unlink the original `current_exe()` path while this long-running test
+    /// process is still alive; opening the proc handle retains the live inode.
+    /// The destination is create-new, no-follow, owner-executable, synced, and
+    /// freshly checked before it is used for any child process.
+    fn pin_running_test_executable_v1(destination: &Path) -> std::io::Result<()> {
+        let source_path = if cfg!(target_os = "linux") {
+            PathBuf::from("/proc/self/exe")
+        } else {
+            env::current_exe()?
+        };
+        let mut source = fs::OpenOptions::new()
+            .read(true)
+            .custom_flags(libc::O_CLOEXEC)
+            .open(&source_path)?;
+        let source_metadata = source.metadata()?;
+        if !source_metadata.is_file() {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "running test image is not a regular file",
+            ));
+        }
+        let mut target = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o700)
+            .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+            .open(destination)?;
+        std::io::copy(&mut source, &mut target)?;
+        target.sync_all()?;
+        let target_metadata = target.metadata()?;
+        if !target_metadata.is_file()
+            || target_metadata.permissions().mode() & 0o777 != 0o700
+            || target_metadata.len() != source_metadata.len()
+        {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "pinned test image identity differs from the running image",
+            ));
+        }
+        let parent = destination.parent().ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "pinned test image has no parent directory",
+            )
+        })?;
+        fs::File::open(parent)?.sync_all()?;
+        Ok(())
+    }
 
     #[test]
     fn injected_vote_constructor_cannot_reintroduce_a_raw_proposal_key_v1() {
@@ -4717,20 +4768,11 @@ mod tests {
             let mut harness = takeover_phase_harness_v0(4);
             let root = harness._temp.path().join("cross-process-composition");
             create_private_directory_v0(&root).expect("create composition root");
-            // Keep a stable executable inode for all children.  Cargo may
-            // rebuild this test binary concurrently in another workspace
-            // process and unlink the path returned by `current_exe()` while
-            // this long-running composition test is between child spawns.
-            // A hard link survives that unlink; the copy fallback covers
-            // filesystems that do not permit hard links.
+            // Keep a stable executable inode for all children even if another
+            // workspace build unlinks Cargo's original test-binary pathname.
             let child_executable = root.join("composition-child");
-            let current_executable =
-                env::current_exe().expect("resolve composition test executable");
-            fs::hard_link(&current_executable, &child_executable)
-                .or_else(|_| fs::copy(&current_executable, &child_executable).map(|_| ()))
-                .expect("pin composition child executable");
-            fs::set_permissions(&child_executable, fs::Permissions::from_mode(0o700))
-                .expect("restrict composition child executable");
+            pin_running_test_executable_v1(&child_executable)
+                .expect("pin composition child executable from the running image");
             let author = harness.validator_set.validators()[0].id();
             let binding = composition_remote_binding_v0(&harness.validator_set, author);
             let capability = [0x33; 32];

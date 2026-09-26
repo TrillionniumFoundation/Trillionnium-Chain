@@ -86,11 +86,9 @@ fn verify_native_replay_sigkill_matrix_v1(
     let base = temp.path().join("actual-replay-sigkill");
     create_private_directory_v0(&base).unwrap();
     let executable = base.join("child-test-executable");
-    // Concurrent Cargo invocations may unlink the original executable path.
-    fs::hard_link(std::env::current_exe().unwrap(), &executable)
-        .or_else(|_| fs::copy(std::env::current_exe().unwrap(), &executable).map(|_| ()))
-        .unwrap();
-    fs::set_permissions(&executable, fs::Permissions::from_mode(0o700)).unwrap();
+    // Pin the live executable inode even if Cargo has unlinked its original
+    // pathname while this long-running parent test remains active.
+    pin_running_test_executable_v1(&executable).unwrap();
     let fixture_path = base.join("public-fixture.json");
     let fixture = NativeReplayCrashFixtureV1 {
         profile: profile.clone(),
