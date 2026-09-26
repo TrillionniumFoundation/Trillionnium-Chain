@@ -685,7 +685,7 @@ impl RestartCutJoinedProcess2InertOwnerV1 {
         config: &LoadedValidatorConfig,
     ) -> Result<RestartCutJoinedProcess2CaughtUpOwnerV1> {
         self.started
-            .revalidate_unchanged_start_v1()
+            .revalidate_process2_lineage_v1()
             .map_err(|error| {
                 anyhow!("revalidate process2 journal before zero-delta join: {error}")
             })?;
@@ -799,8 +799,8 @@ impl RestartCutJoinedProcess2InertOwnerV1 {
             .revalidate_v1()
             .context("revalidate caught-up owner before runtime-event publication")?;
         self.started
-            .record_zero_delta_caught_up_v1(&stored)
-            .map_err(|error| anyhow!("record process2 zero-delta runtime event: {error}"))?;
+            .ensure_zero_delta_caught_up_v1(&stored)
+            .map_err(|error| anyhow!("ensure process2 zero-delta runtime event: {error}"))?;
         caught_up
             .revalidate_v1()
             .context("revalidate caught-up owner after runtime-event publication")?;
@@ -865,9 +865,9 @@ fn require_process2_full_recovery_join_v1(
     started: Process2JournalStartedFromRestartCutV1,
     recovered: ArchivedDeployedProcess2RecoveryOwnerV1,
 ) -> Result<RestartCutJoinedProcess2InertOwnerV1> {
-    started
-        .revalidate_unchanged_start_v1()
-        .map_err(|error| anyhow!("revalidate process2 journal start before full join: {error}"))?;
+    started.revalidate_process2_lineage_v1().map_err(|error| {
+        anyhow!("revalidate process2 journal lineage before full join: {error}")
+    })?;
     recovered
         .revalidate_archive_identity_v1()
         .context("revalidate process2 archive before full join")?;
@@ -975,9 +975,9 @@ fn require_process2_full_recovery_join_v1(
                 .runtime_journal_head_sha256,
         },
     )?;
-    started
-        .revalidate_unchanged_start_v1()
-        .map_err(|error| anyhow!("revalidate process2 journal at full-join commit: {error}"))?;
+    started.revalidate_process2_lineage_v1().map_err(|error| {
+        anyhow!("revalidate process2 journal lineage at full-join commit: {error}")
+    })?;
     recovered
         .revalidate_archive_identity_v1()
         .context("freshly revalidate process2 archive at full-join commit")?;
@@ -1263,13 +1263,13 @@ pub fn recover_process2_ordinary_runtime_v1(
         runtime_event_producer.map(SharedRuntimeEventSignatureProducerV1::new);
     let started = match runtime_event_producer.as_ref() {
         Some(producer) => {
-            RuntimeEventJournalV1::start_process2_with_stored_restart_cut_park_ack_external_v1(
+            RuntimeEventJournalV1::resume_or_start_process2_with_stored_restart_cut_external_v1(
                 &event_journal_path,
                 &config,
                 producer.boxed(),
             )
         }
-        None => RuntimeEventJournalV1::start_process2_with_stored_restart_cut_v1(
+        None => RuntimeEventJournalV1::resume_or_start_process2_with_stored_restart_cut_v1(
             &event_journal_path,
             &config,
         ),
@@ -1335,14 +1335,21 @@ pub fn recover_process2_ordinary_runtime_v1(
         &StrictEd25519Verifier,
     )?;
     ensure!(
-        ready_transition.phase_v1() == Process2RecoveryTransitionPhaseV1::RecoveryReady
-            && ready_transition.ready_set_digest_v1() == start.ready_set_v1().digest()
-            && ready_transition.start_certificate_digest_v1() == [0; 32],
-        "process2 transition journal returned a non-Ready head"
+        ready_transition.ready_set_digest_v1() == start.ready_set_v1().digest()
+            && match ready_transition.phase_v1() {
+                Process2RecoveryTransitionPhaseV1::RecoveryReady => {
+                    ready_transition.start_certificate_digest_v1() == [0; 32]
+                }
+                Process2RecoveryTransitionPhaseV1::RecoveryStart => {
+                    ready_transition.start_certificate_digest_v1() == start.value_v1().digest()
+                }
+                Process2RecoveryTransitionPhaseV1::Empty => false,
+            },
+        "process2 transition journal returned a foreign Ready/Start head"
     );
     started
-        .record_recovery_ready_v1(start.ready_owner_v1())
-        .map_err(|error| anyhow!("record process2 RecoveryReady runtime event: {error}"))?;
+        .ensure_recovery_ready_v1(start.ready_owner_v1())
+        .map_err(|error| anyhow!("ensure process2 RecoveryReady runtime event: {error}"))?;
 
     let start_transition = caught_up.record_recovery_start_v1(
         &mut coordinator,
@@ -1353,14 +1360,16 @@ pub fn recover_process2_ordinary_runtime_v1(
     )?;
     ensure!(
         start_transition.phase_v1() == Process2RecoveryTransitionPhaseV1::RecoveryStart
-            && start_transition.sequence_v1() == ready_transition.sequence_v1().saturating_add(1)
             && start_transition.ready_set_digest_v1() == start.ready_set_v1().digest()
-            && start_transition.start_certificate_digest_v1() == start.value_v1().digest(),
-        "process2 transition journal returned a non-Start head"
+            && start_transition.start_certificate_digest_v1() == start.value_v1().digest()
+            && (ready_transition.phase_v1() == Process2RecoveryTransitionPhaseV1::RecoveryStart
+                || start_transition.sequence_v1()
+                    == ready_transition.sequence_v1().saturating_add(1)),
+        "process2 transition journal returned a foreign Start head"
     );
     started
-        .record_recovery_start_v1(&start)
-        .map_err(|error| anyhow!("record process2 RecoveryStart runtime event: {error}"))?;
+        .ensure_recovery_start_v1(&start)
+        .map_err(|error| anyhow!("ensure process2 RecoveryStart runtime event: {error}"))?;
 
     let runtime = caught_up.activate_after_recorded_start_v1(
         &coordinator,
@@ -9974,7 +9983,7 @@ mod tests {
             .expect("explicit process2 continuation remains bounded");
         let continuation = &source[start..end];
         let ordered = [
-            "start_process2_with_stored_restart_cut",
+            "resume_or_start_process2_with_stored_restart_cut",
             "SignedReplayArchiveV1::open_existing_v1",
             ".authenticate_recovery_v1",
             ".recover_full_process2_inert_v1",
@@ -9983,9 +9992,9 @@ mod tests {
             "load_recovery_start_certificate_v1(",
             "Process2RecoveryReadyStartCoordinatorV1::",
             "caught_up.record_recovery_ready_v1(",
-            ".record_recovery_ready_v1(start.ready_owner_v1())",
+            ".ensure_recovery_ready_v1(start.ready_owner_v1())",
             "caught_up.record_recovery_start_v1(",
-            ".record_recovery_start_v1(&start)",
+            ".ensure_recovery_start_v1(&start)",
             "caught_up.activate_after_recorded_start_v1(",
             "handoff.revalidate_v1()",
         ];
@@ -10073,7 +10082,7 @@ mod tests {
             "fn into_zero_delta_caught_up_v1(",
             "RecoveryZeroDeltaCutV1::new_direct7",
             "persist_recovery_zero_delta_cut_v1(",
-            ".record_zero_delta_caught_up_v1(&stored)",
+            ".ensure_zero_delta_caught_up_v1(&stored)",
             "RestartCutJoinedProcess2CaughtUpOwnerV1",
         ] {
             assert!(
@@ -10169,7 +10178,7 @@ mod tests {
             );
         }
 
-        assert!(join.contains("revalidate process2 journal at full-join commit"));
+        assert!(join.contains("revalidate process2 journal lineage at full-join commit"));
         assert!(join.contains("freshly revalidate process2 archive at full-join commit"));
     }
 

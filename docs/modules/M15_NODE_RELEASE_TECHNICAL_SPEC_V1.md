@@ -139,9 +139,19 @@ complete owner/checkpoint/fence tuple, and consumes the linear owner into the
 existing ordinary proposal runtime. The normal bounded runner deliberately still
 fail-stops after publishing the zero-delta cut with RecoveryReady pending; it does
 not silently select or consume precommissioned Ready/Start artifacts.
-The present explicit continuation is one uninterrupted owner transfer; a process
-loss after process-2 journal, zero-delta, Ready, or Start publication remains
-fail-closed rather than silently replaying or advancing that transition.
+
+The explicit continuation now reopens the same authenticated process-2 journal
+after process loss at the initial Restart, zero-delta, RecoveryReady, or
+RecoveryStart boundary. It reloads the exact Cut/Park/ParkedAck triple and typed
+recovery artifacts, then idempotently establishes only missing phases. An already
+recorded phase must match every retained identity and leaves the journal bytes
+unchanged; no replay signs or appends a duplicate event and no process-3 instance
+is created. Reopened append time continues from the authenticated
+`last_monotonic_ns`, while a genuinely new process instance retains the required
+zero-valued `process_start` boundary. The regression
+`process2_resume_is_idempotent_across_all_recovery_phases_v1` exercises all four
+loss cuts and exact final replay. This does not let the default runner choose
+Ready/Start authority or create a production activation path.
 
 The explicit bridge activates only the exact recovered signer and Core/application
 owners; it retains Core's unique startup timer privately and exposes no pacemaker,

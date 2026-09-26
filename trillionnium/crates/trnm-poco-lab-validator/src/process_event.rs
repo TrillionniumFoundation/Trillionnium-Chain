@@ -2398,6 +2398,7 @@ pub struct RuntimeEventJournalV1 {
     next_sequence: u64,
     previous_event_sha256: [u8; 32],
     last_monotonic_ns: u64,
+    monotonic_base_ns: u64,
     started: Instant,
     state: RuntimeJournalStateV1,
     fail_stopped: bool,
@@ -2744,6 +2745,220 @@ impl Process2JournalStartedFromRestartCutV1 {
         })
     }
 
+    /// Opens the exact existing journal under one exclusive lock. If process 2
+    /// has not started, append its `process_start -> restart` pair. If the pair
+    /// or later recovery phases already exist, recover any pending event and
+    /// retain that exact logical process-2 owner without creating process 3.
+    fn resume_or_start_with_loaded_config_v1(
+        path: &Path,
+        config: &LoadedValidatorConfig,
+        producer: Box<dyn RuntimeEventSignatureProducerV1>,
+    ) -> Result<Self, RuntimeEventErrorV1> {
+        let context = RuntimeEventContextV1::from_loaded_config(config);
+        Self::resume_or_start_with_loader_v1(path, context, producer, |journal_witness| {
+            load_target_restart_cut_park_ack_certificates_v1(config, journal_witness)
+        })
+    }
+
+    #[cfg(test)]
+    fn resume_or_start_with_context_and_stored_v1(
+        path: &Path,
+        context: RuntimeEventContextV1,
+        producer: Box<dyn RuntimeEventSignatureProducerV1>,
+        stored: ReopenedRestartCutParkAckCertificatesV1,
+    ) -> Result<Self, RuntimeEventErrorV1> {
+        Self::resume_or_start_with_loader_v1(path, context, producer, |journal_witness| {
+            if stored.journal_witness != journal_witness {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "test process2 resume owner differs from the selected journal prefix",
+                ));
+            }
+            Ok(stored)
+        })
+    }
+
+    fn resume_or_start_with_loader_v1<F>(
+        path: &Path,
+        context: RuntimeEventContextV1,
+        mut producer: Box<dyn RuntimeEventSignatureProducerV1>,
+        load_stored: F,
+    ) -> Result<Self, RuntimeEventErrorV1>
+    where
+        F: FnOnce(
+            Process1TargetParkedAckJournalWitnessV1,
+        ) -> Result<ReopenedRestartCutParkAckCertificatesV1, RuntimeEventErrorV1>,
+    {
+        context.validate_public_key(producer.public_key_v1())?;
+        let (path, parent, file) = open_locked_journal(path, false)?;
+        let parent_identity = RuntimeEventJournalParentIdentityV1::from_metadata_v1(
+            &parent.metadata().map_err(RuntimeEventErrorV1::Io)?,
+        )?;
+        let file_identity = RuntimeEventJournalFileIdentityV1::from_metadata_v1(
+            &file.metadata().map_err(RuntimeEventErrorV1::Io)?,
+        )?;
+        let events = read_exact_events(&file)?;
+        let recovered = validate_event_chain(&events, &context)?;
+        let recovered = recover_pending_runtime_event_v1(
+            &path,
+            &parent,
+            &file,
+            &context,
+            producer.as_mut(),
+            recovered,
+        )?;
+        let events = read_exact_events(&file)?;
+        let recovered_after_pending = validate_event_chain(&events, &context)?;
+        if recovered_after_pending != recovered
+            || recovered.state.clean_stop
+            || recovered.state.safety_halted
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "process2 resume journal is terminal or changed after pending recovery",
+            ));
+        }
+
+        let (journal_witness, already_process2) = match (
+            recovered.process_instance,
+            recovered.state.restart,
+        ) {
+            (1, RuntimeRestartJournalStateV1::ParkedAcked(facts))
+                if facts.parked.cut_park.preparation.role_v1() == RestartParkRoleV1::Target =>
+            {
+                (
+                    process1_target_parked_ack_journal_witness_v1(&events, &recovered, &context)?,
+                    false,
+                )
+            }
+            (
+                2,
+                RuntimeRestartJournalStateV1::Process2RestartMarkerPending(_)
+                | RuntimeRestartJournalStateV1::ParkedAcked(_)
+                | RuntimeRestartJournalStateV1::ZeroDeltaRecorded(_)
+                | RuntimeRestartJournalStateV1::RecoveryReadyRecorded(_)
+                | RuntimeRestartJournalStateV1::RecoveryCompleted(_),
+            ) => (
+                process2_target_parked_ack_prefix_witness_v1(&events, &context)?.0,
+                true,
+            ),
+            _ => {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "process2 resume requires the exact target ParkedAck or an in-progress process2 recovery",
+                ));
+            }
+        };
+        let stored = load_stored(journal_witness)?;
+        stored.revalidate_fresh_v1()?;
+        if stored.journal_witness != journal_witness {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "process2 resume artifacts differ from the selected journal prefix",
+            ));
+        }
+        if !already_process2 {
+            validate_process2_restart_cut_park_ack_predecessor_v1(
+                &events, &recovered, &context, &stored,
+            )?;
+        }
+
+        let process_instance = if already_process2 {
+            recovered.process_instance
+        } else {
+            recovered
+                .process_instance
+                .checked_add(1)
+                .ok_or(RuntimeEventErrorV1::Invalid("process instance overflow"))?
+        };
+        if process_instance != 2 {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "process2 resume would create a non-process2 instance",
+            ));
+        }
+        let mut journal = RuntimeEventJournalV1 {
+            path,
+            parent,
+            parent_identity,
+            file,
+            file_identity,
+            context,
+            producer,
+            process_instance,
+            next_sequence: recovered.next_sequence,
+            previous_event_sha256: recovered.previous_event_sha256,
+            last_monotonic_ns: recovered.last_monotonic_ns,
+            monotonic_base_ns: if already_process2 {
+                recovered.last_monotonic_ns
+            } else {
+                0
+            },
+            started: Instant::now(),
+            state: recovered.state,
+            fail_stopped: false,
+        };
+        if !already_process2 {
+            let process_id = u64::from(std::process::id());
+            journal.append_raw("process_start", "instance-2", process_id, 0)?;
+            journal.append_raw(
+                RuntimeEventKindV1::Restart.as_str(),
+                "instance-2",
+                process_id,
+                0,
+            )?;
+        } else if matches!(
+            journal.state.restart,
+            RuntimeRestartJournalStateV1::Process2RestartMarkerPending(_)
+        ) {
+            let (_, process_start_index) =
+                process2_target_parked_ack_prefix_witness_v1(&events, &journal.context)?;
+            if process_start_index.checked_add(1) != Some(events.len()) {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "pending process2 restart marker is not the journal head",
+                ));
+            }
+            let process_id = journal.state.current_process_id;
+            journal.append_raw(
+                RuntimeEventKindV1::Restart.as_str(),
+                "instance-2",
+                process_id,
+                0,
+            )?;
+        }
+        journal.parent.sync_all().map_err(RuntimeEventErrorV1::Io)?;
+        stored.revalidate_fresh_v1()?;
+
+        let events = read_exact_events(&journal.file)?;
+        let ancestry = process2_restart_ancestry_v1(&events)?;
+        let fresh_witness =
+            process2_target_parked_ack_journal_witness_v1(&events, &journal.context)?;
+        if fresh_witness != stored.journal_witness
+            || ancestry.request_sha256 != fresh_witness.restart_prepare_request_sha256
+            || ancestry.cut_park.cut_artifact_sha256
+                != stored.stored_cut_park_v1().cut_artifact_sha256_v1()
+            || ancestry.cut_park.park_artifact_sha256
+                != stored.stored_cut_park_v1().park_artifact_sha256_v1()
+            || ancestry.cut_park.body_sha256 != stored.stored_cut_park_v1().body_v1().digest()
+            || ancestry.cut_park.admission_set_sha256
+                != stored.stored_cut_park_v1().admission_set_sha256_v1()
+            || ancestry.park.local_park_statement_sha256
+                != stored.stored_cut_park_v1().local_park_statement_sha256_v1()
+            || ancestry.parked_ack.ack_certificate_sha256
+                != stored.stored_ack_v1().artifact_sha256_v1()
+            || ancestry.parked_ack.local_ack_statement_sha256
+                != stored.stored_ack_v1().local_statement_sha256_v1()
+            || ancestry.parked_ack.ack_admission_set_sha256 != stored.ack_admission_set_sha256_v1()
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "resumed process2 journal differs from its exact stored restart artifacts",
+            ));
+        }
+        let owner = Self {
+            journal,
+            stored,
+            restart_prepare_request_sha256: ancestry.request_sha256,
+            journal_start_head: ancestry.restart_event_head,
+        };
+        owner.revalidate_process2_lineage_v1()?;
+        Ok(owner)
+    }
+
     pub(crate) const fn process_instance_v1(&self) -> u64 {
         self.journal.process_instance()
     }
@@ -2779,42 +2994,43 @@ impl Process2JournalStartedFromRestartCutV1 {
         self.restart_prepare_request_sha256
     }
 
-    pub(crate) fn revalidate_unchanged_start_v1(&self) -> Result<(), RuntimeEventErrorV1> {
+    fn revalidate_process2_lineage_state_v1(
+        &self,
+    ) -> Result<RuntimeRestartJournalStateV1, RuntimeEventErrorV1> {
         self.stored.revalidate_fresh_v1()?;
         let cut_park = self.stored.stored_cut_park_v1();
         let stored_ack = self.stored.stored_ack_v1();
-        let statement_count = u64::try_from(cut_park.statement_count_v1())
-            .map_err(|_| RuntimeEventErrorV1::Invalid("RestartCut statement count overflows"))?;
         let events = read_exact_events(&self.journal.file)?;
         let recovered = validate_event_chain(&events, &self.journal.context)?;
         let ancestry = process2_restart_ancestry_v1(&events)?;
-        let restart_prepare_request_sha256 = ancestry.request_sha256;
-        let restart = events.last().ok_or(RuntimeEventErrorV1::Invalid(
-            "process2 journal start lacks restart event",
-        ))?;
-        let process_start = events
-            .len()
-            .checked_sub(2)
-            .and_then(|index| events.get(index))
-            .ok_or(RuntimeEventErrorV1::Invalid(
-                "process2 journal start lacks process-start event",
-            ))?;
-        if self.journal.process_instance() != 2
-            || self.journal.last_event_facts() != Some(self.journal_start_head)
-            || self.journal.restart_cut_facts_v1()
-                != Some((cut_park.cut_artifact_sha256_v1(), statement_count))
+        let journal_witness =
+            process2_target_parked_ack_journal_witness_v1(&events, &self.journal.context)?;
+        let target_phase = recovered
+            .state
+            .cut_park_facts_v1()
+            .is_some_and(|facts| facts.preparation.role_v1() == RestartParkRoleV1::Target);
+        if !target_phase
+            || recovered.process_instance != 2
+            || recovered.state.current_instance != 2
+            || recovered.state.clean_stop
+            || recovered.state.safety_halted
+            || recovered.process_instance != self.journal.process_instance
+            || recovered.next_sequence != self.journal.next_sequence
+            || recovered.previous_event_sha256 != self.journal.previous_event_sha256
+            || recovered.last_monotonic_ns != self.journal.last_monotonic_ns
+            || recovered.state != self.journal.state
+            || journal_witness != self.stored.journal_witness
+            || ancestry.request_sha256 != self.restart_prepare_request_sha256
+            || ancestry.restart_event_head != self.journal_start_head
             || ancestry.cut_park.cut_artifact_sha256 != cut_park.cut_artifact_sha256_v1()
             || ancestry.cut_park.park_artifact_sha256 != cut_park.park_artifact_sha256_v1()
             || ancestry.cut_park.body_sha256 != cut_park.body_v1().digest()
             || ancestry.cut_park.admission_set_sha256 != cut_park.admission_set_sha256_v1()
-            || ancestry.park.park_artifact_sha256 != cut_park.park_artifact_sha256_v1()
             || ancestry.park.local_park_statement_sha256
                 != cut_park.local_park_statement_sha256_v1()
             || ancestry.parked_ack.ack_certificate_sha256 != stored_ack.artifact_sha256_v1()
             || ancestry.parked_ack.local_ack_statement_sha256
                 != stored_ack.local_statement_sha256_v1()
-            || ancestry.parked_ack.cut_artifact_sha256 != cut_park.cut_artifact_sha256_v1()
-            || ancestry.parked_ack.park_artifact_sha256 != cut_park.park_artifact_sha256_v1()
             || ancestry.parked_ack.ack_admission_set_sha256
                 != self.stored.ack_admission_set_sha256_v1()
             || ancestry.parked_ack_event_head
@@ -2822,25 +3038,25 @@ impl Process2JournalStartedFromRestartCutV1 {
                     self.stored.journal_witness.parked_ack_event_sequence,
                     self.stored.journal_witness.parked_ack_event_sha256,
                 )
-            || restart_prepare_request_sha256 != self.restart_prepare_request_sha256
-            || recovered.process_instance != self.journal.process_instance
-            || recovered.next_sequence != self.journal.next_sequence
-            || recovered.previous_event_sha256 != self.journal.previous_event_sha256
-            || recovered.state != self.journal.state
-            || restart.kind != RuntimeEventKindV1::Restart.as_str()
-            || restart.process_instance != 2
-            || restart.sequence != self.journal_start_head.0
-            || restart.event_sha256 != hex::encode(self.journal_start_head.1)
-            || process_start.kind != "process_start"
-            || process_start.process_instance != 2
-            || process_start
-                .sequence
-                .checked_add(1)
-                .is_none_or(|sequence| sequence != restart.sequence)
-            || restart.previous_event_sha256 != process_start.event_sha256
         {
             return Err(RuntimeEventErrorV1::Invalid(
-                "process2 journal changed before the full inert-recovery join",
+                "process2 journal changed across its authenticated recovery lineage",
+            ));
+        }
+        Ok(recovered.state.restart)
+    }
+
+    pub(crate) fn revalidate_process2_lineage_v1(&self) -> Result<(), RuntimeEventErrorV1> {
+        self.revalidate_process2_lineage_state_v1().map(|_| ())
+    }
+
+    pub(crate) fn revalidate_unchanged_start_v1(&self) -> Result<(), RuntimeEventErrorV1> {
+        let state = self.revalidate_process2_lineage_state_v1()?;
+        if !matches!(state, RuntimeRestartJournalStateV1::ParkedAcked(_))
+            || self.journal.last_event_facts() != Some(self.journal_start_head)
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "process2 journal advanced beyond its initial restart head",
             ));
         }
         Ok(())
@@ -2933,7 +3149,7 @@ impl Process2JournalStartedFromRestartCutV1 {
                 "zero-delta recovery artifact differs from the exact process2 restart owner",
             ));
         }
-        let elapsed = u64::try_from(self.journal.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.journal.current_monotonic_ns_v1();
         let event = self.journal.append_raw(
             "recovery_zero_delta",
             &RecoveryZeroDeltaSubjectV1 {
@@ -2955,6 +3171,51 @@ impl Process2JournalStartedFromRestartCutV1 {
             ));
         }
         Ok(event)
+    }
+
+    /// Exact-replay counterpart for process-loss recovery. It appends only
+    /// from the original ParkedAck head; an already recorded zero-delta,
+    /// Ready, or Start phase is accepted only when every retained identity
+    /// matches the freshly opened typed artifact.
+    pub(crate) fn ensure_zero_delta_caught_up_v1(
+        &mut self,
+        stored: &StoredRecoveryZeroDeltaCutV1,
+    ) -> Result<(), RuntimeEventErrorV1> {
+        let validator_set = self.journal.context.validator_set.clone();
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid("stored zero-delta cut failed resume fresh readback")
+        })?;
+        let current = self.revalidate_current_restart_state_v1()?;
+        let facts = match current {
+            RuntimeRestartJournalStateV1::ParkedAcked(_) => {
+                self.record_zero_delta_caught_up_v1(stored)?;
+                return Ok(());
+            }
+            RuntimeRestartJournalStateV1::ZeroDeltaRecorded(facts) => facts,
+            RuntimeRestartJournalStateV1::RecoveryReadyRecorded(facts) => facts.zero_delta,
+            RuntimeRestartJournalStateV1::RecoveryCompleted(facts) => facts.ready.zero_delta,
+            _ => {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "process2 zero-delta resume has an incompatible journal phase",
+                ));
+            }
+        };
+        let fields = stored.value_v1().fields();
+        if facts.subject.zero_delta_artifact_sha256 != stored.artifact_sha256_v1()
+            || facts.subject.recovery_context_sha256 != stored.context_v1().digest()
+            || facts.height != fields.terminal_height.get()
+            || stored.context_v1().fields().caught_up_cut_artifact_sha256
+                != stored.artifact_sha256_v1()
+            || stored.context_v1().target_validator() != self.journal.context.validator_id
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "recorded zero-delta phase differs from the exact resumed artifact",
+            ));
+        }
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid("stored zero-delta cut changed during resume")
+        })?;
+        Ok(())
     }
 
     /// Records a complete, path-pinned direct-seven ReadySet. The caller
@@ -3000,7 +3261,7 @@ impl Process2JournalStartedFromRestartCutV1 {
             ready_set_artifact_sha256: stored.artifact_sha256_v1(),
             recovery_context_sha256: context.digest(),
         };
-        let elapsed = u64::try_from(self.journal.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.journal.current_monotonic_ns_v1();
         let event = self.journal.append_raw(
             "recovery_ready",
             &subject.encode(),
@@ -3024,6 +3285,53 @@ impl Process2JournalStartedFromRestartCutV1 {
             ));
         }
         Ok(event)
+    }
+
+    /// Idempotently establishes the exact Ready event after a process loss.
+    /// A completed Start may be observed, but no duplicate Ready signature or
+    /// journal row is produced.
+    pub(crate) fn ensure_recovery_ready_v1(
+        &mut self,
+        stored: &StoredRecoveryReadySetV1,
+    ) -> Result<(), RuntimeEventErrorV1> {
+        let validator_set = self.journal.context.validator_set.clone();
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid("stored recovery ReadySet failed resume fresh readback")
+        })?;
+        let current = self.revalidate_current_restart_state_v1()?;
+        let ready = match current {
+            RuntimeRestartJournalStateV1::ZeroDeltaRecorded(_) => {
+                self.record_recovery_ready_v1(stored)?;
+                return Ok(());
+            }
+            RuntimeRestartJournalStateV1::RecoveryReadyRecorded(facts) => facts,
+            RuntimeRestartJournalStateV1::RecoveryCompleted(facts) => facts.ready,
+            _ => {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "process2 RecoveryReady resume has an incompatible journal phase",
+                ));
+            }
+        };
+        let expected_count = u64::try_from(validator_set.validators().len())
+            .map_err(|_| RuntimeEventErrorV1::Invalid("validator count overflows"))?;
+        let context = stored.context_v1();
+        if ready.subject.ready_set_artifact_sha256 != stored.artifact_sha256_v1()
+            || ready.subject.recovery_context_sha256 != context.digest()
+            || ready.statement_count != expected_count
+            || ready.zero_delta.subject.zero_delta_artifact_sha256
+                != context.fields().caught_up_cut_artifact_sha256
+            || ready.zero_delta.subject.recovery_context_sha256 != context.digest()
+            || context.validator_set_id() != validator_set.id()
+            || context.target_validator() != self.journal.context.validator_id
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "recorded RecoveryReady differs from the exact resumed ReadySet",
+            ));
+        }
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid("stored recovery ReadySet changed during resume")
+        })?;
+        Ok(())
     }
 
     /// Records a complete path-pinned direct-seven Start certificate only
@@ -3069,7 +3377,7 @@ impl Process2JournalStartedFromRestartCutV1 {
             ready_set_artifact_sha256: stored.ready_set_artifact_sha256_v1(),
             recovery_context_sha256: context.digest(),
         };
-        let elapsed = u64::try_from(self.journal.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.journal.current_monotonic_ns_v1();
         let event = self.journal.append_raw(
             "recovery_start",
             &subject.encode(),
@@ -3093,6 +3401,28 @@ impl Process2JournalStartedFromRestartCutV1 {
             ));
         }
         Ok(event)
+    }
+
+    /// Idempotently establishes the exact Start event after a process loss.
+    /// An existing completed phase is freshly joined to the retained typed
+    /// Ready/Start artifacts instead of being signed or appended again.
+    pub(crate) fn ensure_recovery_start_v1(
+        &mut self,
+        stored: &StoredRecoveryStartCertificateV1,
+    ) -> Result<(), RuntimeEventErrorV1> {
+        let current = self.revalidate_current_restart_state_v1()?;
+        match current {
+            RuntimeRestartJournalStateV1::RecoveryReadyRecorded(_) => {
+                self.record_recovery_start_v1(stored)?;
+                Ok(())
+            }
+            RuntimeRestartJournalStateV1::RecoveryCompleted(_) => {
+                self.revalidate_recovery_completed_v1(stored)
+            }
+            _ => Err(RuntimeEventErrorV1::Invalid(
+                "process2 RecoveryStart resume has an incompatible journal phase",
+            )),
+        }
     }
 
     /// Freshly proves the signed runtime-event journal remains at the exact
@@ -3159,6 +3489,9 @@ struct Process2RestartAncestryV1 {
     park: RestartParkSubjectV1,
     parked_ack: RestartParkedAckSubjectV1,
     parked_ack_event_head: (u64, [u8; 32]),
+    process_start_index: usize,
+    process_start_event_head: (u64, [u8; 32]),
+    restart_event_head: (u64, [u8; 32]),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -3375,11 +3708,99 @@ fn load_target_restart_cut_park_ack_certificates_v1(
     Ok(value)
 }
 
+fn process2_start_index_v1(events: &[SignedRuntimeEventV1]) -> Result<usize, RuntimeEventErrorV1> {
+    let mut matches = events
+        .iter()
+        .enumerate()
+        .filter(|(_, event)| event.kind == "process_start" && event.process_instance == 2);
+    let (index, _) = matches.next().ok_or(RuntimeEventErrorV1::Invalid(
+        "process2 journal lacks the exact process-start event",
+    ))?;
+    if matches.next().is_some() {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "process2 journal contains multiple process-start events",
+        ));
+    }
+    Ok(index)
+}
+
+fn process2_target_parked_ack_prefix_witness_v1(
+    events: &[SignedRuntimeEventV1],
+    context: &RuntimeEventContextV1,
+) -> Result<(Process1TargetParkedAckJournalWitnessV1, usize), RuntimeEventErrorV1> {
+    let process_start_index = process2_start_index_v1(events)?;
+    let process_start = events
+        .get(process_start_index)
+        .ok_or(RuntimeEventErrorV1::Invalid("process2 process-start index"))?;
+    let process1_events = events
+        .get(..process_start_index)
+        .ok_or(RuntimeEventErrorV1::Invalid("process2 process-1 prefix"))?;
+    let process1_recovered = validate_event_chain(process1_events, context)?;
+    let witness = process1_target_parked_ack_journal_witness_v1(
+        process1_events,
+        &process1_recovered,
+        context,
+    )?;
+    if process_start.subject != "instance-2"
+        || process_start.value == 0
+        || process_start.sequence
+            != u64::try_from(process_start_index).map_err(|_| RuntimeEventErrorV1::TooLarge)?
+        || process_start.previous_event_sha256 != hex::encode(witness.parked_ack_event_sha256)
+    {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "process2 process-start differs from the exact target ParkedAck prefix",
+        ));
+    }
+    Ok((witness, process_start_index))
+}
+
+fn process2_target_parked_ack_journal_witness_v1(
+    events: &[SignedRuntimeEventV1],
+    context: &RuntimeEventContextV1,
+) -> Result<Process1TargetParkedAckJournalWitnessV1, RuntimeEventErrorV1> {
+    let (witness, _) = process2_target_parked_ack_prefix_witness_v1(events, context)?;
+    let ancestry = process2_restart_ancestry_v1(events)?;
+    if witness.restart_prepare_request_sha256 != ancestry.request_sha256
+        || witness.cut_artifact_sha256 != ancestry.cut_park.cut_artifact_sha256
+        || witness.park_artifact_sha256 != ancestry.cut_park.park_artifact_sha256
+        || witness.body_sha256 != ancestry.cut_park.body_sha256
+        || witness.cut_park_admission_set_sha256 != ancestry.cut_park.admission_set_sha256
+        || witness.local_park_statement_sha256 != ancestry.park.local_park_statement_sha256
+        || witness.ack_artifact_sha256 != ancestry.parked_ack.ack_certificate_sha256
+        || witness.local_ack_statement_sha256 != ancestry.parked_ack.local_ack_statement_sha256
+        || witness.ack_admission_set_sha256 != ancestry.parked_ack.ack_admission_set_sha256
+        || (
+            witness.parked_ack_event_sequence,
+            witness.parked_ack_event_sha256,
+        ) != ancestry.parked_ack_event_head
+    {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "process2 journal no longer joins its exact process1 ParkedAck prefix",
+        ));
+    }
+    Ok(witness)
+}
+
 fn process2_restart_ancestry_v1(
     events: &[SignedRuntimeEventV1],
 ) -> Result<Process2RestartAncestryV1, RuntimeEventErrorV1> {
-    let [.., restart_prepare, restart_cut, restart_park, restart_parked_ack, process_start, restart] =
+    let process_start_index = process2_start_index_v1(events)?;
+    let ancestry_start = process_start_index
+        .checked_sub(4)
+        .ok_or(RuntimeEventErrorV1::Invalid(
+            "process2 journal lacks the exact restart request ancestry",
+        ))?;
+    let restart_index = process_start_index
+        .checked_add(1)
+        .ok_or(RuntimeEventErrorV1::TooLarge)?;
+    let ancestry_events =
         events
+            .get(ancestry_start..=restart_index)
+            .ok_or(RuntimeEventErrorV1::Invalid(
+                "process2 journal lacks the exact restart request ancestry",
+            ))?;
+    let [restart_prepare, restart_cut, restart_park, restart_parked_ack, process_start, restart] =
+        ancestry_events
     else {
         return Err(RuntimeEventErrorV1::Invalid(
             "process2 journal lacks the exact restart request ancestry",
@@ -3396,6 +3817,12 @@ fn process2_restart_ancestry_v1(
         &restart_parked_ack.event_sha256,
         "restart parked acknowledgement event hash",
     )?;
+    let process_start_event_sha256 = decode_hex::<32>(
+        &process_start.event_sha256,
+        "process2 process-start event hash",
+    )?;
+    let restart_event_sha256 =
+        decode_hex::<32>(&restart.event_sha256, "process2 restart event hash")?;
     if request_sha256 == [0; 32]
         || restart_prepare.kind != "restart_prepare"
         || restart_prepare.process_instance != 1
@@ -3441,6 +3868,9 @@ fn process2_restart_ancestry_v1(
         park,
         parked_ack,
         parked_ack_event_head: (restart_parked_ack.sequence, parked_ack_event_sha256),
+        process_start_index,
+        process_start_event_head: (process_start.sequence, process_start_event_sha256),
+        restart_event_head: (restart.sequence, restart_event_sha256),
     })
 }
 
@@ -3507,6 +3937,40 @@ impl RuntimeEventJournalV1 {
             context,
             producer,
             ProcessStartGateV1::InitialProcessOnly,
+        )
+    }
+
+    /// Explicit continuation entry. It starts process 2 only from the exact
+    /// target ParkedAck predecessor, or reopens the same logical process 2 at
+    /// Restart, zero-delta, Ready, or Start without creating process 3.
+    pub(crate) fn resume_or_start_process2_with_stored_restart_cut_v1(
+        path: impl AsRef<Path>,
+        config: &LoadedValidatorConfig,
+    ) -> Result<Process2JournalStartedFromRestartCutV1, RuntimeEventErrorV1> {
+        if !config.has_local_consensus_secret() {
+            return Err(RuntimeEventErrorV1::ExternalAuthorityRequired);
+        }
+        Process2JournalStartedFromRestartCutV1::resume_or_start_with_loaded_config_v1(
+            path.as_ref(),
+            config,
+            Box::new(LocalRuntimeEventSignatureProducerV1::new(
+                config.consensus_signing_key().clone(),
+            )),
+        )
+    }
+
+    /// External-signer continuation counterpart. The signer is retained across
+    /// pending-event recovery and exact replay, but cannot choose the journal
+    /// prefix or any recovery artifact.
+    pub(crate) fn resume_or_start_process2_with_stored_restart_cut_external_v1(
+        path: impl AsRef<Path>,
+        config: &LoadedValidatorConfig,
+        producer: Box<dyn RuntimeEventSignatureProducerV1>,
+    ) -> Result<Process2JournalStartedFromRestartCutV1, RuntimeEventErrorV1> {
+        Process2JournalStartedFromRestartCutV1::resume_or_start_with_loaded_config_v1(
+            path.as_ref(),
+            config,
+            producer,
         )
     }
 
@@ -3711,6 +4175,7 @@ impl RuntimeEventJournalV1 {
             next_sequence: recovered.next_sequence,
             previous_event_sha256: recovered.previous_event_sha256,
             last_monotonic_ns: recovered.last_monotonic_ns,
+            monotonic_base_ns: 0,
             started: Instant::now(),
             state: recovered.state,
             fail_stopped: false,
@@ -3746,6 +4211,15 @@ impl RuntimeEventJournalV1 {
 
     pub fn path(&self) -> &Path {
         &self.path
+    }
+
+    /// Returns a process-local monotonic value that resumes from the last
+    /// authenticated journal value after reopening the same process instance.
+    /// A new process instance resets this base through its required zero-valued
+    /// `process_start` event.
+    fn current_monotonic_ns_v1(&self) -> u64 {
+        self.monotonic_base_ns
+            .saturating_add(u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX))
     }
 
     /// Exact final event coordinates for a terminal report. The returned
@@ -3848,7 +4322,7 @@ impl RuntimeEventJournalV1 {
         zero_delta_artifact_sha256: [u8; 32],
         finalized_height: u64,
     ) -> Result<SignedRuntimeEventV1, RuntimeEventErrorV1> {
-        let elapsed = u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.current_monotonic_ns_v1();
         let subject = RecoveryZeroDeltaSubjectV1 {
             zero_delta_artifact_sha256,
             recovery_context_sha256: [0xc1; 32],
@@ -3869,7 +4343,7 @@ impl RuntimeEventJournalV1 {
         ready_set_artifact_sha256: [u8; 32],
         statement_count: u64,
     ) -> Result<SignedRuntimeEventV1, RuntimeEventErrorV1> {
-        let elapsed = u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.current_monotonic_ns_v1();
         let recovery_context_sha256 = match self.state.restart {
             RuntimeRestartJournalStateV1::ZeroDeltaRecorded(facts) => {
                 facts.subject.recovery_context_sha256
@@ -3897,7 +4371,7 @@ impl RuntimeEventJournalV1 {
         certificate_sha256: [u8; 32],
         statement_count: u64,
     ) -> Result<SignedRuntimeEventV1, RuntimeEventErrorV1> {
-        let elapsed = u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.current_monotonic_ns_v1();
         let (ready_set_artifact_sha256, recovery_context_sha256) = match self.state.restart {
             RuntimeRestartJournalStateV1::RecoveryReadyRecorded(facts) => (
                 facts.subject.ready_set_artifact_sha256,
@@ -3962,7 +4436,7 @@ impl RuntimeEventJournalV1 {
                 "restart prepare owner differs from the live journal",
             ));
         }
-        let elapsed = u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.current_monotonic_ns_v1();
         self.append_raw(
             "restart_prepare",
             &hex::encode(owner.request_sha256_v1()),
@@ -4004,7 +4478,7 @@ impl RuntimeEventJournalV1 {
             body_sha256: owner.body_sha256_v1(),
             prepare_message_id: owner.prepare_message_id_v1(),
         };
-        let elapsed = u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.current_monotonic_ns_v1();
         self.append_raw(
             "restart_park_prepare",
             &subject.encode(),
@@ -4057,7 +4531,7 @@ impl RuntimeEventJournalV1 {
                 "stored restart Cut/Park pair failed fresh authentication before journal append",
             )
         })?;
-        let elapsed = u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.current_monotonic_ns_v1();
         let cut_subject = RestartCutParkSubjectV1 {
             cut_artifact_sha256: stored.cut_artifact_sha256_v1(),
             park_artifact_sha256: stored.park_artifact_sha256_v1(),
@@ -4186,7 +4660,7 @@ impl RuntimeEventJournalV1 {
                 "stored peer RestartCut/Park pair failed fresh authentication before journal append",
             )
         })?;
-        let elapsed = u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.current_monotonic_ns_v1();
         let cut_subject = RestartCutParkSubjectV1 {
             cut_artifact_sha256: stored.cut_artifact_sha256_v1(),
             park_artifact_sha256: stored.park_artifact_sha256_v1(),
@@ -4481,7 +4955,7 @@ impl RuntimeEventJournalV1 {
             park_artifact_sha256: commit.restart_park_artifact_sha256_v1(),
             ack_admission_set_sha256,
         };
-        let elapsed = u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.current_monotonic_ns_v1();
         let event = self.append_raw(
             "restart_parked_ack",
             &subject.encode(),
@@ -4915,7 +5389,7 @@ impl RuntimeEventJournalV1 {
         subject: &str,
         value: u64,
     ) -> Result<SignedRuntimeEventV1, RuntimeEventErrorV1> {
-        let elapsed = u64::try_from(self.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let elapsed = self.current_monotonic_ns_v1();
         self.append_raw(kind.as_str(), subject, value, elapsed)
     }
 
@@ -5807,10 +6281,13 @@ mod tests {
     use std::os::unix::fs::MetadataExt;
     use std::sync::{Arc, Mutex};
     use tempfile::TempDir;
+    use trnm_consensus_crypto::StrictEd25519Verifier;
     use trnm_consensus_signer_journal::SignerWatermarkV0;
     use trnm_consensus_types::{
         BlockId, CertificateId, ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch,
-        GenesisHash, Height, ProtocolVersion, QcRef, StateRoot, Validator, View, VotingPower,
+        GenesisHash, Height, ProtocolVersion, QcRef, RecoveryContextV1, RecoveryContextV1Fields,
+        RecoveryModeV1, RecoveryReadySetV1, RecoveryStartCertificateV1, RecoveryZeroDeltaCutV1,
+        RecoveryZeroDeltaCutV1Fields, StateRoot, Validator, View, VotingPower,
     };
 
     use crate::{
@@ -5826,6 +6303,14 @@ mod tests {
             SignedFleetStartV1,
         },
         frame::{AuthenticatedFrame, FrameKind},
+        recovery_barrier::{issue_local_recovery_ready_v1, issue_local_recovery_start_v1},
+        recovery_barrier_store::{
+            load_recovery_ready_set_v1, load_recovery_start_certificate_v1,
+            persist_recovery_ready_set_v1, persist_recovery_start_certificate_v1,
+        },
+        recovery_zero_delta_store::{
+            load_recovery_zero_delta_cut_v1, persist_recovery_zero_delta_cut_v1,
+        },
         restart_cut::{
             LocalRestartParkV1, RestartCutBodyV1, RestartCutCertificateV1,
             RestartCutParkStatementV1, RestartCutStateV1, RestartParkCertificateV1,
@@ -8223,6 +8708,370 @@ mod tests {
         assert_eq!(process_start.process_instance, 2);
         assert_eq!(restart.process_instance, 2);
         assert_eq!(restart.previous_event_sha256, process_start.event_sha256);
+    }
+
+    #[test]
+    fn process2_resume_is_idempotent_across_all_recovery_phases_v1() {
+        let AuthenticatedProcess2GateFixture {
+            _temporary,
+            journal,
+            journal_path,
+            context,
+            key,
+            stored_cut_park,
+            stored_ack,
+            journal_witness,
+            ack_admission_set_sha256,
+        } = authenticated_process2_gate_fixture();
+        assert_eq!(
+            journal_witness.ack_admission_set_sha256,
+            ack_admission_set_sha256
+        );
+
+        let private_root = stored_cut_park.cut_path_v1().parent().unwrap().to_owned();
+        let local_validator = stored_cut_park.local_validator_v1();
+        let local_config_sha256 = stored_cut_park.local_config_sha256_v1();
+        let fleet_start = stored_cut_park.fleet_start_certificate_v1().clone();
+        let validator_set = stored_cut_park.validator_set_v1().clone();
+        let cut_certificate = stored_cut_park.cut_certificate_v1().clone();
+        let park_certificate = stored_cut_park.park_certificate_v1().clone();
+        let ack_certificate = stored_ack.value_v1().clone();
+        let ack_artifact_sha256 = stored_ack.artifact_sha256_v1();
+        let ack_local_witness = stored_ack.local_witness_v1();
+
+        let reopen_restart_artifacts = || {
+            let verified_cut = cut_certificate
+                .clone()
+                .verify_owned(&fleet_start, &validator_set)
+                .unwrap();
+            let stored_cut_park = persist_restart_cut_park_at_test_root_v1(
+                &private_root,
+                local_validator,
+                local_config_sha256,
+                &fleet_start,
+                &validator_set,
+                verified_cut,
+                park_certificate.clone(),
+            )
+            .unwrap();
+            let stored_ack = persist_restart_parked_ack_certificate_v1(
+                &private_root,
+                ack_artifact_sha256,
+                ack_certificate.clone(),
+                stored_cut_park.cut_artifact_sha256_v1(),
+                stored_cut_park.cut_certificate_v1(),
+                stored_cut_park.park_artifact_sha256_v1(),
+                stored_cut_park.park_certificate_v1(),
+                stored_cut_park.admission_set_sha256_v1(),
+                local_validator,
+                local_config_sha256,
+                ack_local_witness,
+                &fleet_start,
+                &validator_set,
+            )
+            .unwrap();
+            ReopenedRestartCutParkAckCertificatesV1 {
+                stored_cut_park,
+                stored_ack,
+                journal_witness,
+            }
+        };
+
+        drop(journal);
+        drop(stored_cut_park);
+        drop(stored_ack);
+
+        let process2 =
+            Process2JournalStartedFromRestartCutV1::resume_or_start_with_context_and_stored_v1(
+                &journal_path,
+                context.clone(),
+                Box::new(LocalRuntimeEventSignatureProducerV1::new(key.clone())),
+                reopen_restart_artifacts(),
+            )
+            .unwrap();
+        assert_eq!(process2.process_instance_v1(), 2);
+        assert_eq!(
+            process2.journal.restart_phase_v1(),
+            RuntimeRestartPhaseV1::Process2CatchupPending
+        );
+
+        let body = process2.restart_cut_body_v1();
+        let state = body.state();
+        let observation = process2.journal.observation();
+        assert_eq!(observation.finalized_height, observation.application_height);
+        let journal_height = Height::new(observation.finalized_height);
+        let zero_delta = RecoveryZeroDeltaCutV1::new_direct7(
+            RecoveryZeroDeltaCutV1Fields {
+                campaign_context_sha256: body.campaign().digest(),
+                fleet_start_certificate_sha256: body.fleet_start_certificate_sha256(),
+                validator_set_id: validator_set.id(),
+                validator_set_artifact_sha256: body.validator_set_sha256(),
+                restart_cut_artifact_sha256: process2.restart_cut_artifact_sha256_v1(),
+                restart_park_artifact_sha256: process2.restart_park_artifact_sha256_v1(),
+                restart_parked_ack_artifact_sha256: process2
+                    .restart_parked_ack_artifact_sha256_v1(),
+                restart_parked_ack_admission_set_sha256: process2
+                    .restart_parked_ack_admission_set_sha256_v1(),
+                target_validator: body.target_validator(),
+                process_instance: 2,
+                recovery_nonce: process2.restart_prepare_request_sha256_v1(),
+                node_facts_sha256: [0xe1; 32],
+                signer_inventory_invariant_sha256: [0xe2; 32],
+                source_epoch: state.epoch,
+                source_height: journal_height,
+                source_block_id: state.finalized_block_id,
+                source_state_root: state.application_state_root,
+                source_finalized_chain_root: state.finalized_chain_root,
+                terminal_epoch: state.epoch,
+                terminal_height: journal_height,
+                terminal_block_id: state.finalized_block_id,
+                terminal_state_root: state.application_state_root,
+                terminal_finalized_chain_root: state.finalized_chain_root,
+                terminal_application_commit_sha256: [0xe3; 32],
+                terminal_checkpoint_canonical_sha256: [0xe4; 32],
+            },
+            &validator_set,
+        )
+        .unwrap();
+        let zero_delta_artifact_sha256: [u8; 32] =
+            Sha256::digest(zero_delta.try_cev1_bytes().unwrap()).into();
+        let zero_fields = zero_delta.fields();
+        let recovery_context = RecoveryContextV1::new_direct7(
+            RecoveryContextV1Fields {
+                mode: RecoveryModeV1::ZeroDelta,
+                campaign_context_sha256: zero_fields.campaign_context_sha256,
+                fleet_start_certificate_sha256: zero_fields.fleet_start_certificate_sha256,
+                validator_set_id: zero_fields.validator_set_id,
+                validator_set_artifact_sha256: zero_fields.validator_set_artifact_sha256,
+                restart_cut_artifact_sha256: zero_fields.restart_cut_artifact_sha256,
+                restart_park_artifact_sha256: zero_fields.restart_park_artifact_sha256,
+                restart_parked_ack_artifact_sha256: zero_fields.restart_parked_ack_artifact_sha256,
+                restart_parked_ack_admission_set_sha256: zero_fields
+                    .restart_parked_ack_admission_set_sha256,
+                caught_up_cut_artifact_sha256: zero_delta_artifact_sha256,
+                target_validator: zero_fields.target_validator,
+                process_instance: zero_fields.process_instance,
+                recovery_nonce: zero_fields.recovery_nonce,
+                restart_cut_epoch: zero_fields.source_epoch,
+                restart_cut_height: zero_fields.source_height,
+                restart_cut_block_id: zero_fields.source_block_id,
+                restart_cut_state_root: zero_fields.source_state_root,
+                restart_cut_chain_root: zero_fields.source_finalized_chain_root,
+                terminal_epoch: zero_fields.terminal_epoch,
+                terminal_height: zero_fields.terminal_height,
+                terminal_block_id: zero_fields.terminal_block_id,
+                terminal_state_root: zero_fields.terminal_state_root,
+                terminal_chain_root: zero_fields.terminal_finalized_chain_root,
+                node_facts_sha256: zero_fields.node_facts_sha256,
+            },
+            &validator_set,
+        )
+        .unwrap();
+
+        let restart_bytes = fs::read(&journal_path).unwrap();
+        drop(process2);
+        let resumed_restart =
+            Process2JournalStartedFromRestartCutV1::resume_or_start_with_context_and_stored_v1(
+                &journal_path,
+                context.clone(),
+                Box::new(LocalRuntimeEventSignatureProducerV1::new(key.clone())),
+                reopen_restart_artifacts(),
+            )
+            .unwrap();
+        assert_eq!(fs::read(&journal_path).unwrap(), restart_bytes);
+        drop(resumed_restart);
+
+        let stored_zero = persist_recovery_zero_delta_cut_v1(
+            &private_root,
+            zero_delta_artifact_sha256,
+            zero_delta,
+            &recovery_context,
+            &validator_set,
+        )
+        .unwrap();
+        let mut process2 =
+            Process2JournalStartedFromRestartCutV1::resume_or_start_with_context_and_stored_v1(
+                &journal_path,
+                context.clone(),
+                Box::new(LocalRuntimeEventSignatureProducerV1::new(key.clone())),
+                reopen_restart_artifacts(),
+            )
+            .unwrap();
+        process2
+            .ensure_zero_delta_caught_up_v1(&stored_zero)
+            .unwrap();
+        assert_eq!(
+            process2.journal.restart_phase_v1(),
+            RuntimeRestartPhaseV1::Process2RecoveryReadyPending
+        );
+        let zero_delta_bytes = fs::read(&journal_path).unwrap();
+        drop(stored_zero);
+        drop(process2);
+
+        let stored_zero = load_recovery_zero_delta_cut_v1(
+            &private_root,
+            zero_delta_artifact_sha256,
+            &zero_delta,
+            &recovery_context,
+            &validator_set,
+        )
+        .unwrap();
+        let mut process2 =
+            Process2JournalStartedFromRestartCutV1::resume_or_start_with_context_and_stored_v1(
+                &journal_path,
+                context.clone(),
+                Box::new(LocalRuntimeEventSignatureProducerV1::new(key.clone())),
+                reopen_restart_artifacts(),
+            )
+            .unwrap();
+        process2
+            .ensure_zero_delta_caught_up_v1(&stored_zero)
+            .unwrap();
+        assert_eq!(fs::read(&journal_path).unwrap(), zero_delta_bytes);
+
+        let (barrier_set, barrier_keys) = process2_validator_fixture();
+        assert_eq!(barrier_set, validator_set);
+        let ready_statements = barrier_set
+            .validators()
+            .iter()
+            .zip(&barrier_keys)
+            .map(|(validator, signing_key)| {
+                issue_local_recovery_ready_v1(
+                    recovery_context,
+                    validator.id(),
+                    &barrier_set,
+                    signing_key,
+                )
+                .unwrap()
+            })
+            .collect();
+        let ready_set = RecoveryReadySetV1::new(
+            recovery_context,
+            ready_statements,
+            &barrier_set,
+            &StrictEd25519Verifier,
+        )
+        .unwrap();
+        let stored_ready =
+            persist_recovery_ready_set_v1(&private_root, ready_set.clone(), &barrier_set).unwrap();
+        let ready_artifact_sha256 = stored_ready.artifact_sha256_v1();
+        process2.ensure_recovery_ready_v1(&stored_ready).unwrap();
+        assert_eq!(
+            process2.journal.restart_phase_v1(),
+            RuntimeRestartPhaseV1::Process2RecoveryStartPending
+        );
+        let ready_bytes = fs::read(&journal_path).unwrap();
+        drop(stored_zero);
+        drop(stored_ready);
+        drop(process2);
+
+        let stored_ready = load_recovery_ready_set_v1(
+            &private_root,
+            ready_artifact_sha256,
+            &recovery_context,
+            &barrier_set,
+        )
+        .unwrap();
+        let mut process2 =
+            Process2JournalStartedFromRestartCutV1::resume_or_start_with_context_and_stored_v1(
+                &journal_path,
+                context.clone(),
+                Box::new(LocalRuntimeEventSignatureProducerV1::new(key.clone())),
+                reopen_restart_artifacts(),
+            )
+            .unwrap();
+        process2.ensure_recovery_ready_v1(&stored_ready).unwrap();
+        assert_eq!(fs::read(&journal_path).unwrap(), ready_bytes);
+
+        let start_statements = barrier_set
+            .validators()
+            .iter()
+            .zip(&barrier_keys)
+            .map(|(validator, signing_key)| {
+                issue_local_recovery_start_v1(&ready_set, validator.id(), &barrier_set, signing_key)
+                    .unwrap()
+            })
+            .collect();
+        let start_certificate = RecoveryStartCertificateV1::new(
+            ready_set,
+            start_statements,
+            &barrier_set,
+            &StrictEd25519Verifier,
+        )
+        .unwrap();
+        let stored_start = persist_recovery_start_certificate_v1(
+            &private_root,
+            start_certificate,
+            stored_ready,
+            &barrier_set,
+        )
+        .unwrap();
+        let start_artifact_sha256 = stored_start.artifact_sha256_v1();
+        process2.ensure_recovery_start_v1(&stored_start).unwrap();
+        assert_eq!(
+            process2.journal.restart_phase_v1(),
+            RuntimeRestartPhaseV1::Process2Completed
+        );
+        let completed_bytes = fs::read(&journal_path).unwrap();
+        drop(stored_start);
+        drop(process2);
+
+        let stored_zero = load_recovery_zero_delta_cut_v1(
+            &private_root,
+            zero_delta_artifact_sha256,
+            &zero_delta,
+            &recovery_context,
+            &barrier_set,
+        )
+        .unwrap();
+        let stored_start = load_recovery_start_certificate_v1(
+            &private_root,
+            start_artifact_sha256,
+            ready_artifact_sha256,
+            &recovery_context,
+            &barrier_set,
+        )
+        .unwrap();
+        let mut process2 =
+            Process2JournalStartedFromRestartCutV1::resume_or_start_with_context_and_stored_v1(
+                &journal_path,
+                context,
+                Box::new(LocalRuntimeEventSignatureProducerV1::new(key)),
+                reopen_restart_artifacts(),
+            )
+            .unwrap();
+        process2
+            .ensure_zero_delta_caught_up_v1(&stored_zero)
+            .unwrap();
+        process2
+            .ensure_recovery_ready_v1(stored_start.ready_owner_v1())
+            .unwrap();
+        process2.ensure_recovery_start_v1(&stored_start).unwrap();
+        assert_eq!(fs::read(&journal_path).unwrap(), completed_bytes);
+        assert_eq!(process2.process_instance_v1(), 2);
+        assert_eq!(
+            process2.journal.restart_phase_v1(),
+            RuntimeRestartPhaseV1::Process2Completed
+        );
+
+        let events = read_exact_events(&File::open(&journal_path).unwrap()).unwrap();
+        for kind in [
+            "process_start",
+            "restart",
+            "recovery_zero_delta",
+            "recovery_ready",
+            "recovery_start",
+        ] {
+            assert_eq!(
+                events
+                    .iter()
+                    .filter(|event| event.process_instance == 2 && event.kind == kind)
+                    .count(),
+                1,
+                "process2 recovery phase {kind} was duplicated"
+            );
+        }
+        assert!(events.iter().all(|event| event.process_instance <= 2));
     }
 
     #[test]
