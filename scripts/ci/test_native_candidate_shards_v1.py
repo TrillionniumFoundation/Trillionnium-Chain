@@ -69,7 +69,7 @@ class NativeCandidateShardTests(unittest.TestCase):
         bin_dir = base / "bin"
         bin_dir.mkdir()
         executable = bin_dir / "fake-native"
-        executable.write_text(f"#!{sys.executable} -S\n" + f"NAMES={names!r}\nIGNORED={sorted(ignored)!r}\n" + '''
+        executable_text = f"#!{sys.executable} -S\n" + f"NAMES={names!r}\nIGNORED={sorted(ignored)!r}\n" + '''
 import os, pathlib, sys
 assert 'RUST_MIN_STACK' not in os.environ
 case = os.environ.get('SHARD_TEST_CASE', '')
@@ -152,16 +152,21 @@ if case == 'wrong-count':
     passed = max(0, passed - 1)
 print('test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s')
 print(f'test result: ok. {passed} passed; 0 failed; {len(set(selected) & ignored)} ignored; 0 measured; {len(NAMES)-len(selected)} filtered out; finished in 0.02s')
-''')
+'''
+        executable.write_text(executable_text)
         executable.chmod(0o755)
+        release_executable = bin_dir / "fake-native-release"
+        release_executable.write_text(executable_text)
+        release_executable.chmod(0o755)
         cargo = bin_dir / "cargo"
-        cargo.write_text(f"#!{sys.executable} -S\n" + f"EXE={str(executable)!r}\nPACKAGE={package!r}\nTARGET_KIND={target_kind!r}\nTARGET_NAME={target_name!r}\nRELATIVE_SOURCE={relative_source!r}\n" + '''
+        cargo.write_text(f"#!{sys.executable} -S\n" + f"EXE={str(executable)!r}\nRELEASE_EXE={str(release_executable)!r}\nPACKAGE={package!r}\nTARGET_KIND={target_kind!r}\nTARGET_NAME={target_name!r}\nRELATIVE_SOURCE={relative_source!r}\n" + '''
 import json, os, pathlib, sys
 if os.environ.get('SHARD_TEST_CASE') == 'compile-failure':
     raise SystemExit(9)
 if os.environ.get('SHARD_TEST_CASE') == 'foreign-package':
     PACKAGE = 'trnm-native-execution-v0'
-print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'kind':[TARGET_KIND], 'src_path':str(pathlib.Path.cwd() / 'crates' / PACKAGE / RELATIVE_SOURCE)}, 'profile':{'test':True}, 'executable':EXE}))
+executable = RELEASE_EXE if '--release' in sys.argv else EXE
+print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'kind':[TARGET_KIND], 'src_path':str(pathlib.Path.cwd() / 'crates' / PACKAGE / RELATIVE_SOURCE)}, 'profile':{'test':True}, 'executable':executable}))
 ''')
         cargo.chmod(0o755)
         return repo, bin_dir
@@ -197,6 +202,13 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
             self.assertEqual(code, 0)
             self.assertEqual(summary["package"], "trnm-poco-node")
             self.assertEqual(summary["features"], "epoch-runtime-test-fixtures")
+            self.assertIn(
+                "--release", (evidence / "compile-release.command").read_text()
+            )
+            self.assertRegex(
+                summary["release_executable_sha256"], r"^[0-9a-f]{64}$"
+            )
+            self.assertEqual(set(summary["release_cases"]), runner.NODE_RELEASE_CASES)
             inventory = json.loads((evidence / "inventory.json").read_text())
             self.assertEqual(sorted(sum(inventory.values(), [])), NODE_NAMES)
             self.assertEqual(inventory["general"], ["ordinary::new_test"])
@@ -207,11 +219,36 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
                 if shard != "general":
                     self.assertEqual(len(inventory[shard]), 1)
                     self.assertIn("--exact", (evidence / (shard + ".command")).read_text())
-                expected_deadline = runner.NODE_CASE_DEADLINES.get(inventory[shard][0], 30)
-                self.assertEqual(summary["shards"][shard]["deadline_seconds"], expected_deadline)
+                expected_deadline = runner.NODE_CASE_DEADLINES.get(
+                    inventory[shard][0], 30
+                )
+                self.assertEqual(
+                    summary["shards"][shard]["deadline_seconds"], expected_deadline
+                )
+                expected_profile = (
+                    "release"
+                    if len(inventory[shard]) == 1
+                    and inventory[shard][0] in runner.NODE_RELEASE_CASES
+                    else "dev"
+                )
+                self.assertEqual(
+                    summary["shards"][shard]["profile"], expected_profile
+                )
+                if expected_profile == "release":
+                    self.assertIn(
+                        "fake-native-release",
+                        (evidence / (shard + ".command")).read_text(),
+                    )
 
     def test_full_epoch_case_budgets_are_explicit_and_required(self) -> None:
         self.assertEqual(len(runner.NODE_CASE_DEADLINES), 4)
+        self.assertEqual(
+            runner.NODE_RELEASE_CASES,
+            {
+                runner.NODE_EPOCH_PREFIX
+                + "actual_successor_core_finalizes_and_applies_first_new_v11"
+            },
+        )
         for name in runner.NODE_CASE_DEADLINES:
             self.assertEqual(runner.shard_deadline("node-epoch", [name], 300), 600)
             self.assertEqual(runner.shard_deadline("native", [name], 900), 900)

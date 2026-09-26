@@ -41,6 +41,13 @@ NODE_CASE_DEADLINES = {
     NODE_EPOCH_PREFIX + "actual_successor_first_application_persists_executes_and_votes_v10": 600,
     NODE_EPOCH_PREFIX + "actual_successor_core_finalizes_and_applies_first_new_v11": 600,
 }
+# V11 executes a complete prior epoch and successor continuation. Keep the
+# unchanged 600-second process deadline, but qualify that product path with the
+# optimized profile used for shipped Rust code. All other node-epoch regressions
+# retain debug overflow/assertion coverage, and the runner binds both binaries.
+NODE_RELEASE_CASES = {
+    NODE_EPOCH_PREFIX + "actual_successor_core_finalizes_and_applies_first_new_v11",
+}
 NODE_REQUIRED_DRIVERS = {
     *NODE_CASE_DEADLINES,
     NODE_EPOCH_PREFIX + "actual_epoch_handoff_joint_attachment_and_exact_retry_v8",
@@ -301,12 +308,43 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
 
     feature_args = ["--all-features"] if args.suite == "safety-epoch" else ["--features", features]
     target_args = ["--test", "epoch_journal_v2"] if args.suite == "safety-epoch" else ["--lib"]
-    output, code = invoke("compile", ["cargo", "test", "-p", package, *feature_args, *target_args, "--locked", "--no-run", "--message-format=json"], args.deadline_seconds)
+    compile_command = [
+        "cargo",
+        "test",
+        "-p",
+        package,
+        *feature_args,
+        *target_args,
+        "--locked",
+        "--no-run",
+        "--message-format=json",
+    ]
+    output, code = invoke("compile", compile_command, args.deadline_seconds)
     if code:
         return code
     executable = find_executable(output.splitlines(), workspace, args.suite)
     digest = binary_digest(executable)
     summary.update(executable=str(executable), executable_sha256=digest)
+
+    release_executable: Path | None = None
+    release_digest: str | None = None
+    if args.suite == "node-epoch":
+        release_command = [*compile_command]
+        release_command.insert(release_command.index("--locked"), "--release")
+        release_output, code = invoke(
+            "compile-release", release_command, args.deadline_seconds
+        )
+        if code:
+            return code
+        release_executable = find_executable(
+            release_output.splitlines(), workspace, args.suite
+        )
+        release_digest = binary_digest(release_executable)
+        summary.update(
+            release_executable=str(release_executable),
+            release_executable_sha256=release_digest,
+            release_cases=sorted(NODE_RELEASE_CASES),
+        )
 
     def inventory_for(name: str, command: list[str], *, allow_empty: bool = False) -> list[str]:
         output, code = invoke(name, command + ["--list"], 120)
@@ -326,6 +364,13 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     outcomes = {
         shard: {
             "tests": names,
+            "profile": (
+                "release"
+                if args.suite == "node-epoch"
+                and len(names) == 1
+                and names[0] in NODE_RELEASE_CASES
+                else "dev"
+            ),
             "status": "not-run",
             "deadline_seconds": shard_deadline(args.suite, names, args.deadline_seconds),
             "planned_count": len(names),
@@ -338,7 +383,12 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     checkpoint_summary(evidence, summary)
 
     def confirm_source() -> None:
-        if clean_source(repo_root) != (source, tree) or binary_digest(executable) != digest:
+        binaries = [(executable, digest)]
+        if release_executable is not None and release_digest is not None:
+            binaries.append((release_executable, release_digest))
+        if clean_source(repo_root) != (source, tree) or any(
+            binary_digest(path) != expected for path, expected in binaries
+        ):
             raise ShardError("source or native executable changed during the run")
 
     # Inventory/source failures are not ordinary test failures. Refuse the
@@ -346,7 +396,16 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     commands = {}
     for shard in shards:
         confirm_source()
-        command = command_for_shard(executable, shard, shards, args.suite)
+        selected_executable = (
+            release_executable
+            if outcomes[shard]["profile"] == "release"
+            else executable
+        )
+        if selected_executable is None:
+            raise ShardError("release shard has no release libtest executable")
+        command = command_for_shard(
+            selected_executable, shard, shards, args.suite
+        )
         if inventory_for(shard + ".inventory", command) != shards[shard]:
             raise ShardError(f"{shard} filtered inventory differs from planned names")
         commands[shard] = command

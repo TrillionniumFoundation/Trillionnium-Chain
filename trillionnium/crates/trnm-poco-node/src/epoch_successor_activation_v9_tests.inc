@@ -651,15 +651,29 @@ type SuccessorCutoffCaseV11 = (
     Watermark,
 );
 
+fn trace_actual_successor_phase_v11(started: std::time::Instant, phase: &str) {
+    eprintln!(
+        "V11_PHASE phase={phase} elapsed_ms={}",
+        started.elapsed().as_millis()
+    );
+}
+
 #[test]
 fn actual_successor_core_finalizes_and_applies_first_new_v11() {
-    successor_seals_continuation_v11(
-        successor_checkpoint_continuation_v11(successor_settled_cutoff_case_v11()),
-    );
+    let started = std::time::Instant::now();
+    trace_actual_successor_phase_v11(started, "successor.begin");
+    let cutoff = successor_settled_cutoff_case_v11();
+    trace_actual_successor_phase_v11(started, "successor.cutoff-ready");
+    let checkpoint = successor_checkpoint_continuation_v11(cutoff);
+    trace_actual_successor_phase_v11(started, "successor.checkpoint-ready");
+    successor_seals_continuation_v11(checkpoint);
+    trace_actual_successor_phase_v11(started, "successor.complete");
 }
 
 #[inline(never)]
 fn successor_settled_cutoff_case_v11() -> Box<SuccessorCutoffCaseV11> {
+    let stage = std::time::Instant::now();
+    trace_actual_successor_phase_v11(stage, "cutoff.begin");
     // V2--V8 have dedicated negative and crash regressions. V11 needs their
     // genuine durable product output, not another replay of every historical
     // negative probe before the second-epoch continuation can start. Reuse
@@ -667,7 +681,9 @@ fn successor_settled_cutoff_case_v11() -> Box<SuccessorCutoffCaseV11> {
     // still executes every real owner transition, both handoff signatures,
     // the joint attachment and Journal12 activation.
     let (roles, _) = build_actual_attachment_case_v8();
+    trace_actual_successor_phase_v11(stage, "cutoff.attachment-ready");
     let (directory, owner, mut key, watermark) = *activate_live_successor_v10(roles);
+    trace_actual_successor_phase_v11(stage, "cutoff.successor-active");
 
     let first_proposal = successor_first_proposal_v10(&owner);
     let first_id = *first_proposal.block().id().as_bytes();
@@ -693,6 +709,7 @@ fn successor_settled_cutoff_case_v11() -> Box<SuccessorCutoffCaseV11> {
         .apply_front_v11(&mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0())
         .unwrap();
     let checkpoint = owner.settled_checkpoint_v11().unwrap();
+    trace_actual_successor_phase_v11(stage, "cutoff.first-front-applied");
     assert_eq!(checkpoint.fields().application.block_id, first_id);
     assert_eq!(
         owner
@@ -731,6 +748,7 @@ fn successor_settled_cutoff_case_v11() -> Box<SuccessorCutoffCaseV11> {
             .unwrap();
     }
     let cutoff = owner.settled_checkpoint_v11().unwrap();
+    trace_actual_successor_phase_v11(stage, "cutoff.target-applied");
     assert_eq!(cutoff.fields().application.height, cutoff_height);
     assert_eq!(
         owner.application_v11().confirmed_committed_head_v0().unwrap().height().get(),
@@ -751,7 +769,9 @@ fn successor_settled_cutoff_case_v11() -> Box<SuccessorCutoffCaseV11> {
 // complete, original owners move through the heap; the thread stack is unchanged.
 #[inline(never)]
 fn successor_checkpoint_continuation_v11(case: Box<SuccessorCutoffCaseV11>) -> Box<SuccessorCutoffCaseV11> {
+    let stage = std::time::Instant::now();
     let (directory, mut owner, mut key, watermark) = *case;
+    trace_actual_successor_phase_v11(stage, "checkpoint.begin");
     let cutoff = owner.settled_checkpoint_v11().unwrap();
     let cutoff_height = cutoff.fields().application.height;
     let retained = owner.prepared_headers_v11().unwrap();
@@ -773,6 +793,7 @@ fn successor_checkpoint_continuation_v11(case: Box<SuccessorCutoffCaseV11>) -> B
         owner.inner.runtime.source.roles.retired.checkpoint_store.database_path().to_path_buf(),
     ];
     let before: Vec<_> = paths.iter().map(|p| sqlite_logical_image_v3(p)).collect();
+    trace_actual_successor_phase_v11(stage, "checkpoint.negative-snapshot-ready");
     let calls = key.calls;
     bad.verify(owner.set_v11(), None, owner.parameters_v11(),
         retained.last().unwrap().timestamp_ms(), &trnm_consensus_crypto::StrictEd25519Verifier).unwrap();
@@ -786,6 +807,7 @@ fn successor_checkpoint_continuation_v11(case: Box<SuccessorCutoffCaseV11>) -> B
         assert!(sqlite_logical_image_v3(path) == expected, "invalid selection wrote {}", path.display());
     }
     owner = owner.execute_checkpoint_child_v11(good).unwrap();
+    trace_actual_successor_phase_v11(stage, "checkpoint.executed");
     assert_eq!(key.calls, calls, "checkpoint P/Valid must not invoke custody");
     let pending = owner.inner.pending_epoch_commit.as_ref().unwrap();
     assert_eq!(pending.prepared.header().unwrap().id(), checkpoint_id);
@@ -809,7 +831,9 @@ fn successor_checkpoint_continuation_v11(case: Box<SuccessorCutoffCaseV11>) -> B
 
 #[inline(never)]
 fn successor_seals_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
+    let stage = std::time::Instant::now();
     let (directory, mut owner, mut key, watermark) = *case;
+    trace_actual_successor_phase_v11(stage, "seals.begin");
     let checkpoint = owner.prepared.last().unwrap().prepared.header().unwrap();
     let calls = key.calls;
     let initial_sequence = watermark.0.lock().unwrap().0.unwrap().sequence();
@@ -835,6 +859,14 @@ fn successor_seals_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
                 assert!(sqlite_logical_image_v3(path) == image, "invalid seal wrote {}", path.display());
             }
         }
+        trace_actual_successor_phase_v11(
+            stage,
+            if index == 0 {
+                "seals.first-negatives-complete"
+            } else {
+                "seals.second-negatives-complete"
+            },
+        );
         let proposal = genuine_seal_for_parent_v5(&parent, owner.set_v11(), owner.parameters_v11(),
             kind, false, false);
         let seal_id = proposal.block().id();
@@ -864,6 +896,7 @@ fn successor_seals_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
     let terminal = owner.seals[1].block().header().clone();
     let qc = first_apply_qc_v2(&terminal, owner.set_v11());
     owner = owner.observe_checkpoint_finality_v11(qc).unwrap();
+    trace_actual_successor_phase_v11(stage, "seals.checkpoint-finality-observed");
     let pending = owner.inner.runtime.driver.state().pending_finalization().unwrap();
     let original_proof = pending.proof().id();
     assert_eq!(pending.proof().finalized_block().header(), &checkpoint);
@@ -893,6 +926,7 @@ fn successor_seals_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
     }
     owner = owner.apply_pre_handoff_checkpoint_v11(
         &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0()).unwrap();
+    trace_actual_successor_phase_v11(stage, "seals.pre-handoff-applied");
     let joined = owner.settled_pre_handoff_cut_v11().unwrap();
     assert_eq!(joined.fields().application.block_id, *checkpoint.id().as_bytes());
     assert_eq!(joined.fields().application.height, checkpoint.height().get());
@@ -903,6 +937,7 @@ fn successor_seals_continuation_v11(case: Box<SuccessorCutoffCaseV11>) {
     assert!(owner.inner.runtime.driver.state().pending_finalize().is_none());
     let recovered = owner.application_v11().recover_later_epoch_pre_handoff_v1(
         *checkpoint.id().as_bytes()).unwrap();
+    trace_actual_successor_phase_v11(stage, "seals.pre-handoff-recovered");
     assert_eq!(recovered.header(), &checkpoint);
     assert_eq!(recovered.strict_context().checkpoint_finality_proof_id(), original_proof);
     assert_eq!(recovered.commit_sequence(), joined.fields().application.commit_sequence);
