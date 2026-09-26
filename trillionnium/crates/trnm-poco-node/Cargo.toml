@@ -253,6 +253,7 @@ lab_deployed_ordinary_recovery_activation = false
 lab_deployed_ordinary_network_catch_up = false
 process2_recovery_transition_journal = true
 process2_recovery_ready_start_coordinator = true
+process2_recovery_start_owner_bridge = true
 process2_recovery_runtime_wiring = false
 process2_recovery_start_activation = false
 lab_deployed_coherent_whole_root_rollback_authority = false

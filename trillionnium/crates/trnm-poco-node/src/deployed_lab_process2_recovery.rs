@@ -1398,12 +1398,11 @@ pub struct PocoNodeDeployedLabProcess2CaughtUpOwnerV1<W: ExternalMonotonicWaterm
     caught_up_cut_digest: [u8; 32],
 }
 
-/// Future typed N/N RecoveryStart authority.
+/// Private typed N/N RecoveryStart authority.
 ///
-/// It has no normal-build constructor in this tranche. The scheduler tranche
-/// must create it only from a freshly persisted certificate whose target cut
-/// equals the caught-up owner.
-#[allow(dead_code)]
+/// Its only normal-build constructor is the crate-sealed owner bridge below,
+/// which consumes a token minted after the exact coordinator journal head has
+/// been freshly audited. Copied digests cannot construct this value.
 #[must_use = "RecoveryStart must be consumed together with its caught-up owner"]
 struct PocoNodeDeployedLabProcess2RecoveryStartAuthorityV1 {
     caught_up_cut_digest: [u8; 32],
@@ -1441,9 +1440,9 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2CaughtUpOwnerV1
     ///
     /// Signer activation occurs only after consuming both the caught-up owner
     /// and the matching typed N/N RecoveryStart authority. No recovery owner or
-    /// passive owner can call this method. The current tranche intentionally
-    /// has no normal-build path that constructs either input.
-    #[allow(dead_code, clippy::too_many_lines)]
+    /// passive owner can call this method. The authority is constructed only
+    /// from the crate-sealed durable coordinator token.
+    #[allow(clippy::too_many_lines)]
     fn activate_after_recovery_start_v1(
         self,
         recovery_start: PocoNodeDeployedLabProcess2RecoveryStartAuthorityV1,
@@ -1469,6 +1468,24 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2CaughtUpOwnerV1
         let passive = recovered.prepare_passive_catchup_v1()?;
         activate_passive_after_recovery_start_v1(passive)
     }
+}
+
+/// Crate-private consumption seam. The token type has no public or sibling
+/// constructor, so copied certificate/cut digests cannot reach the private
+/// activation authority.
+pub(crate) fn activate_caught_up_owner_after_persisted_recovery_start_v1<
+    W: ExternalMonotonicWatermarkV0,
+>(
+    owner: PocoNodeDeployedLabProcess2CaughtUpOwnerV1<W>,
+    authority: crate::recovery_ready_start::PersistedRecoveryStartOwnerAuthorityV1,
+) -> Result<
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1<W>,
+    PocoNodeDeployedLabProcess2RecoveryErrorV0,
+> {
+    owner.activate_after_recovery_start_v1(PocoNodeDeployedLabProcess2RecoveryStartAuthorityV1 {
+        caught_up_cut_digest: authority.caught_up_cut_digest_v1(),
+        certificate_sha256: authority.certificate_sha256_v1(),
+    })
 }
 
 #[allow(clippy::too_many_lines)]
@@ -2157,9 +2174,10 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2ActivatedOwnerV
 /// Linear process2-recovered ordinary runtime plus Core's sole startup timer.
 ///
 /// The timer remains private and unconsumed: constructing this owner never
-/// calls `AnchoredOrdinaryArmViewTimerV0::into_effect_v0`.  A later typed
-/// RecoveryStart transition must consume the entire owner before it can arm an
-/// external pacemaker.
+/// calls `AnchoredOrdinaryArmViewTimerV0::into_effect_v0`. The exact durable
+/// RecoveryStart transition has already been consumed; only a later sealed
+/// process-host transition may consume this entire owner and arm the external
+/// pacemaker after its listener and ingress owners are ready.
 ///
 /// ```compile_fail
 /// use trnm_poco_node::PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1;
@@ -2180,8 +2198,8 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2ActivatedOwnerV
 #[must_use = "the recovered runtime and startup timer must remain linear"]
 pub struct PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1<W: ExternalMonotonicWatermarkV0> {
     runtime: PocoNodeLabOrdinaryProposalRuntimeV0<W>,
-    // Intentionally retained and unread until a later typed N/N
-    // RecoveryStart transition can consume the entire owner and arm last.
+    // Intentionally retained and unread until a later sealed process-host
+    // transition consumes the entire owner and arms the timer last.
     #[allow(dead_code)]
     startup_timer: AnchoredOrdinaryArmViewTimerV0,
     facts: PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
@@ -5800,14 +5818,139 @@ mod tests {
     };
     use trnm_consensus_types::{
         ApplicationPayloadV0, Block, BlockHeader, BlockKind, EvidenceRoot, Height, PayloadDigest,
-        ProposalWitnessV0, QcReferenceV0, QuorumCertificate, ReceiptsRoot, SignatureBytes,
-        StateRoot, TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote, Vote,
+        ProposalWitnessV0, QcReferenceV0, QuorumCertificate, ReceiptsRoot, RecoveryContextV1,
+        RecoveryContextV1Fields, RecoveryModeV1, RecoveryReadySetV1, RecoveryStartCertificateV1,
+        Signature64, SignatureBytes, SignatureVerifier, SignedRecoveryReadyV1,
+        SignedRecoveryStartV1, SigningRoot, StateRoot, TimeoutCertificateV0, TimeoutEntryV0,
+        TimeoutVote, Validator, ValidatorSet, Vote, RECOVERY_PROCESS_INSTANCE_V1, SIGNATURE_BYTES,
     };
     use trnm_native_execution_v0::{
         AuthorizedSignerV0, CanonicalLabNativeApplicationConfigInputsV0,
     };
 
     use super::*;
+    use crate::recovery_ready_start::{
+        Process2RecoveryReadyStartCoordinatorV1, Process2RecoveryStartOwnerBridgeErrorV1,
+        RecoveryTransitionJournalErrorV1,
+    };
+
+    #[derive(Debug, Clone, Copy)]
+    struct RecoveryBarrierVerifierV1;
+
+    impl SignatureVerifier for RecoveryBarrierVerifierV1 {
+        fn verify(
+            &self,
+            validator: &Validator,
+            signing_root: &SigningRoot,
+            signature: &SignatureBytes,
+        ) -> bool {
+            signature.as_bytes()[..32] == signing_root.as_bytes()[..]
+                && signature.as_bytes()[32..] == validator.consensus_key().as_bytes()[..]
+        }
+    }
+
+    fn recovery_signature_v1(
+        validator_set: &ValidatorSet,
+        origin: ValidatorId,
+        signing_root: SigningRoot,
+    ) -> Signature64 {
+        let validator = validator_set.validator(origin).expect("recovery origin");
+        let mut bytes = [0_u8; SIGNATURE_BYTES];
+        bytes[..32].copy_from_slice(signing_root.as_bytes());
+        bytes[32..].copy_from_slice(validator.consensus_key().as_bytes());
+        Signature64::from_array(bytes)
+    }
+
+    fn recovery_context_for_caught_up_owner_v1(
+        validator_set: &ValidatorSet,
+        facts: PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1,
+    ) -> RecoveryContextV1 {
+        let cut = facts.restart_cut_v1().fields_v1();
+        RecoveryContextV1::new_direct7(
+            RecoveryContextV1Fields {
+                mode: RecoveryModeV1::ZeroDelta,
+                campaign_context_sha256: [0x31; 32],
+                fleet_start_certificate_sha256: [0x32; 32],
+                validator_set_id: validator_set.id(),
+                validator_set_artifact_sha256: [0x33; 32],
+                restart_cut_artifact_sha256: cut.restart_cut_artifact_sha256,
+                restart_park_artifact_sha256: [0x35; 32],
+                restart_parked_ack_artifact_sha256: [0x36; 32],
+                restart_parked_ack_admission_set_sha256: [0x37; 32],
+                caught_up_cut_artifact_sha256: facts.artifact_sha256_v1(),
+                target_validator: cut.local_validator,
+                process_instance: RECOVERY_PROCESS_INSTANCE_V1,
+                recovery_nonce: [0x38; 32],
+                restart_cut_epoch: cut.epoch,
+                restart_cut_height: Height::new(cut.finalized_height),
+                restart_cut_block_id: cut.finalized_block_id,
+                restart_cut_state_root: cut.application_state_root,
+                restart_cut_chain_root: cut.finalized_chain_root,
+                terminal_epoch: cut.epoch,
+                terminal_height: Height::new(cut.finalized_height),
+                terminal_block_id: cut.finalized_block_id,
+                terminal_state_root: cut.application_state_root,
+                terminal_chain_root: cut.finalized_chain_root,
+                node_facts_sha256: facts.node_facts_sha256_v1(),
+            },
+            validator_set,
+        )
+        .expect("exact direct-7 recovery context")
+    }
+
+    fn authenticated_recovery_barrier_v1(
+        validator_set: &ValidatorSet,
+        facts: PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1,
+    ) -> (RecoveryReadySetV1, RecoveryStartCertificateV1) {
+        let context = recovery_context_for_caught_up_owner_v1(validator_set, facts);
+        let ready_statements = validator_set
+            .validators()
+            .iter()
+            .map(|validator| {
+                let origin = validator.id();
+                let root = SignedRecoveryReadyV1::signing_root_for(&context, origin);
+                SignedRecoveryReadyV1::from_signature(
+                    context,
+                    origin,
+                    recovery_signature_v1(validator_set, origin, root),
+                    validator_set,
+                    &RecoveryBarrierVerifierV1,
+                )
+                .expect("authenticated RecoveryReady")
+            })
+            .collect();
+        let ready_set = RecoveryReadySetV1::new(
+            context,
+            ready_statements,
+            validator_set,
+            &RecoveryBarrierVerifierV1,
+        )
+        .expect("direct-7 RecoveryReady set");
+        let start_statements = validator_set
+            .validators()
+            .iter()
+            .map(|validator| {
+                let origin = validator.id();
+                let root = SignedRecoveryStartV1::signing_root_for(&ready_set, origin);
+                SignedRecoveryStartV1::from_signature(
+                    &ready_set,
+                    origin,
+                    recovery_signature_v1(validator_set, origin, root),
+                    validator_set,
+                    &RecoveryBarrierVerifierV1,
+                )
+                .expect("authenticated RecoveryStart")
+            })
+            .collect();
+        let certificate = RecoveryStartCertificateV1::new(
+            ready_set.clone(),
+            start_statements,
+            validator_set,
+            &RecoveryBarrierVerifierV1,
+        )
+        .expect("direct-7 RecoveryStart certificate");
+        (ready_set, certificate)
+    }
 
     #[test]
     fn inert_process2_owner_has_no_public_activation_bypass_v1() {
@@ -6118,6 +6261,165 @@ mod tests {
             signer_facts.exact_watermark(),
             expected_fields.signer_exact_watermark
         );
+    }
+
+    fn caught_up_owner_for_recorded_start_bridge_v1() -> (
+        TempDir,
+        ValidatorSet,
+        ExternalNodeCheckpointV0,
+        PocoNodeDeployedLabProcess2CaughtUpOwnerV1<SharedWatermarkV0>,
+    ) {
+        let Process2FixtureV0 {
+            directory,
+            watermark,
+            core_config,
+            entries,
+        } = process2_direct7_fixture_v0(false, false);
+        let validator_set = core_config.validator_set().clone();
+        let application_config = process2_application_config_v0(&core_config);
+        let recovered = recover_deployed_lab_process2_v0(
+            directory.path(),
+            core_config,
+            application_config,
+            entries,
+            |_path| Ok::<_, ExternalWatermarkErrorV0>(watermark),
+        )
+        .expect("close exact process2 replay for owner bridge");
+        let expected = zero_delta_restart_cut_for_recovered_v1(&recovered);
+        let mut caught_up = recovered
+            .into_zero_delta_caught_up_v1(expected)
+            .expect("join exact zero-delta cut for owner bridge");
+        let scope = caught_up
+            .facts_v1()
+            .restart_cut_v1()
+            .fields_v1()
+            .signer_exact_watermark
+            .scope();
+        let checkpoint = caught_up
+            .recovered
+            .checkpoint_store
+            .load(scope)
+            .expect("read exact final checkpoint")
+            .expect("final checkpoint exists");
+        (directory, validator_set, checkpoint, caught_up)
+    }
+
+    #[test]
+    fn recorded_recovery_start_consumes_real_caught_up_owner_v1() {
+        run_large_stack_test_v0(
+            "deployed-lab-process2-recorded-start-owner-bridge-v1",
+            assert_recorded_recovery_start_consumes_real_caught_up_owner_v1,
+        );
+    }
+
+    fn assert_recorded_recovery_start_consumes_real_caught_up_owner_v1() {
+        let (_authority_root, validator_set, checkpoint, mut caught_up) =
+            caught_up_owner_for_recorded_start_bridge_v1();
+        let caught_up_facts = caught_up.facts_v1();
+        let (ready_set, start_certificate) =
+            authenticated_recovery_barrier_v1(&validator_set, caught_up_facts);
+        let journal_root = tempdir().expect("transition journal root");
+        std::fs::set_permissions(journal_root.path(), std::fs::Permissions::from_mode(0o700))
+            .expect("private transition journal root");
+        let mut coordinator = Process2RecoveryReadyStartCoordinatorV1::initialize_new(
+            journal_root.path().join("transition.sqlite"),
+        )
+        .expect("initialize transition coordinator");
+        let fence_token_digest = [0x93; 32];
+        coordinator
+            .record_recovery_ready_for_caught_up_owner_v1(
+                &mut caught_up,
+                checkpoint,
+                fence_token_digest,
+                &ready_set,
+                &validator_set,
+                &RecoveryBarrierVerifierV1,
+            )
+            .expect("record owner-bound RecoveryReady");
+        let start_facts = coordinator
+            .record_recovery_start_for_caught_up_owner_v1(
+                &mut caught_up,
+                checkpoint,
+                fence_token_digest,
+                &start_certificate,
+                &validator_set,
+                &RecoveryBarrierVerifierV1,
+            )
+            .expect("record owner-bound RecoveryStart");
+        assert_eq!(
+            start_facts.phase_v1(),
+            crate::Process2RecoveryTransitionPhaseV1::RecoveryStart
+        );
+
+        let recovered_runtime = coordinator
+            .activate_caught_up_owner_after_recorded_start_v1(
+                caught_up,
+                checkpoint,
+                fence_token_digest,
+                &start_certificate,
+                &validator_set,
+                &RecoveryBarrierVerifierV1,
+            )
+            .expect("durable exact Start consumes the caught-up owner");
+        assert_eq!(
+            recovered_runtime.facts_v1().activation_v1().recovery_v0(),
+            caught_up_facts.process2_v1()
+        );
+        const {
+            assert!(crate::PROCESS2_RECOVERY_START_OWNER_BRIDGE_V1);
+            assert!(!crate::PROCESS2_RECOVERY_RUNTIME_WIRING_V1);
+            assert!(!crate::PROCESS2_RECOVERY_START_ACTIVATION_V1);
+        }
+    }
+
+    #[test]
+    fn ready_only_journal_cannot_consume_real_caught_up_owner_v1() {
+        run_large_stack_test_v0(
+            "deployed-lab-process2-ready-only-owner-bridge-v1",
+            assert_ready_only_journal_cannot_consume_real_caught_up_owner_v1,
+        );
+    }
+
+    fn assert_ready_only_journal_cannot_consume_real_caught_up_owner_v1() {
+        let (_authority_root, validator_set, checkpoint, mut caught_up) =
+            caught_up_owner_for_recorded_start_bridge_v1();
+        let (ready_set, start_certificate) =
+            authenticated_recovery_barrier_v1(&validator_set, caught_up.facts_v1());
+        let journal_root = tempdir().expect("transition journal root");
+        std::fs::set_permissions(journal_root.path(), std::fs::Permissions::from_mode(0o700))
+            .expect("private transition journal root");
+        let mut coordinator = Process2RecoveryReadyStartCoordinatorV1::initialize_new(
+            journal_root.path().join("transition.sqlite"),
+        )
+        .expect("initialize transition coordinator");
+        let fence_token_digest = [0x94; 32];
+        coordinator
+            .record_recovery_ready_for_caught_up_owner_v1(
+                &mut caught_up,
+                checkpoint,
+                fence_token_digest,
+                &ready_set,
+                &validator_set,
+                &RecoveryBarrierVerifierV1,
+            )
+            .expect("record owner-bound RecoveryReady only");
+
+        let error = coordinator
+            .activate_caught_up_owner_after_recorded_start_v1(
+                caught_up,
+                checkpoint,
+                fence_token_digest,
+                &start_certificate,
+                &validator_set,
+                &RecoveryBarrierVerifierV1,
+            )
+            .expect_err("Ready without durable Start must fail-stop");
+        assert!(matches!(
+            error,
+            Process2RecoveryStartOwnerBridgeErrorV1::Transition(
+                RecoveryTransitionJournalErrorV1::WrongOrder(_)
+            )
+        ));
     }
 
     #[test]
@@ -6775,6 +7077,21 @@ mod tests {
     }
 
     fn process2_fixture_v0(leave_pending_sign: bool, include_timeout: bool) -> Process2FixtureV0 {
+        process2_fixture_with_validator_count_v0(4, leave_pending_sign, include_timeout)
+    }
+
+    fn process2_direct7_fixture_v0(
+        leave_pending_sign: bool,
+        include_timeout: bool,
+    ) -> Process2FixtureV0 {
+        process2_fixture_with_validator_count_v0(7, leave_pending_sign, include_timeout)
+    }
+
+    fn process2_fixture_with_validator_count_v0(
+        validator_count: usize,
+        leave_pending_sign: bool,
+        include_timeout: bool,
+    ) -> Process2FixtureV0 {
         let directory = tempdir().expect("create process2 test root");
         std::fs::set_permissions(directory.path(), std::fs::Permissions::from_mode(0o700))
             .expect("protect process2 test root");
@@ -6782,7 +7099,7 @@ mod tests {
         let bundle = crate::commission_native_h1_ordinary_lab_test_bundle_v0(
             directory.path(),
             watermark.clone(),
-            4,
+            validator_count,
             3,
         )
         .expect("commission exact deployed h1-h3 process2 fixture");
