@@ -26,11 +26,24 @@ FAULT_ORDER = (
 
 # Closed execution choices; the whole-host name currently attests only a
 # remote connection and therefore cannot enter the bounded subset.
+FULL_CAMPAIGN_PROFILE = "poco-g3-seven-validator-fault-restart-campaign-v1"
+CONNECTIVITY_PROFILE = "poco-g3-seven-validator-connectivity-subset-v1"
+RESTART_PROFILE = "poco-g3-seven-validator-restart-subset-v1"
+
 CAMPAIGN_FAULTS = {
     "all": FAULT_ORDER,
     "leader_loss": ("leader_loss",),
     "asymmetric_partition": ("asymmetric_partition",),
     "connectivity": ("leader_loss", "asymmetric_partition"),
+    "restart": ("validator_process_kill",),
+}
+
+CAMPAIGN_PROFILES = {
+    "all": FULL_CAMPAIGN_PROFILE,
+    "leader_loss": CONNECTIVITY_PROFILE,
+    "asymmetric_partition": CONNECTIVITY_PROFILE,
+    "connectivity": CONNECTIVITY_PROFILE,
+    "restart": RESTART_PROFILE,
 }
 
 
@@ -38,6 +51,11 @@ def campaign_faults(selection: str) -> tuple[str, ...]:
     if not isinstance(selection, str) or selection not in CAMPAIGN_FAULTS:
         raise ValueError("unknown closed fault campaign selection")
     return CAMPAIGN_FAULTS[selection]
+
+
+def campaign_profile(selection: str) -> str:
+    campaign_faults(selection)
+    return CAMPAIGN_PROFILES[selection]
 
 
 def require_campaign_supported(selection: str) -> None:
@@ -49,7 +67,20 @@ def require_campaign_supported(selection: str) -> None:
         policy = policy_for(kind)
         if not policy.runner_execution_supported or not policy.runtime_authority_supported:
             raise RuntimeError(f"selected fault lacks actual runtime authority: {kind}")
-        require_primary_signed_transition(kind)
+        if policy.evidence_mode == SIGNED_CONNECTIVITY_TRANSITION:
+            require_primary_signed_transition(kind)
+        elif policy.evidence_mode == SIGNED_RESTART_CATCHUP:
+            if (
+                kind != "validator_process_kill"
+                or policy.primary_journal_applied_recovered
+                or not policy.signed_restart_catchup_required
+                or not policy.recovered_finality_required
+            ):
+                raise RuntimeError("restart selection crossed its dedicated evidence authority")
+        else:
+            raise RuntimeError(
+                f"selected fault evidence mode is not independently executable: {kind}"
+            )
 
 
 SIGNED_CONNECTIVITY_TRANSITION = "signed-runtime-connectivity-transition-v1"
@@ -133,11 +164,10 @@ POLICIES.update(
         "validator_process_kill": _policy(
             "validator_process_kill",
             SIGNED_RESTART_CATCHUP,
-            runtime_authority_supported=False,
-            runner_execution_supported=False,
+            runtime_authority_supported=True,
+            runner_execution_supported=True,
             signed_restart_catchup_required=True,
             recovered_finality_required=True,
-            blocker="process-instance-2-recovery-start-catchup-authority-unavailable",
         ),
         "bounded_delay_loss": _policy(
             "bounded_delay_loss",
@@ -184,6 +214,10 @@ POLICIES.update(
 def _validate_table() -> None:
     if set(POLICIES) != set(FAULT_ORDER):
         raise AssertionError("fault evidence policy is not the exact eight-fault matrix")
+    if set(CAMPAIGN_PROFILES) != set(CAMPAIGN_FAULTS):
+        raise AssertionError("closed campaign profile map differs from its selectors")
+    if len(set(CAMPAIGN_PROFILES.values())) != 3:
+        raise AssertionError("full, connectivity, and restart profiles are not distinct")
     for kind in FAULT_ORDER:
         policy = POLICIES[kind]
         if policy.kind != kind or not policy.evidence_mode:

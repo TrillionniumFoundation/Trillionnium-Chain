@@ -12,6 +12,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+use sha2::{Digest, Sha256};
+
 use crate::protocol::{
     decode_request, decode_response, encode_request, encode_response, LeaseOperationV1,
     LeaseRejectCodeV1, LeaseRequestV1, LeaseResponseV1, PeerLeaseScopeV1, PeerLeaseTokenV1,
@@ -30,6 +32,7 @@ const DEFAULT_DAEMON_OPERATION_TIMEOUT_V1: Duration = Duration::from_secs(5);
 // Keep the public Unix seam within the smallest `sockaddr_un.sun_path` used
 // by the supported Linux/macOS fleet.  The trailing NUL consumes one byte.
 const UNIX_SOCKET_PATH_MAX_BYTES_V1: usize = 103;
+const UNIX_AUTHORITY_BINDING_DOMAIN_V1: &[u8] = b"trnm.peer-lease.unix-authority-binding.v1\0";
 
 /// Protocol-neutral authority interface consumed by a P2P adapter.  It has
 /// no consensus-message or private-key operation; a caller must still bind a
@@ -93,6 +96,39 @@ impl UnixPeerLeaseClientV1 {
 
     pub fn socket_path(&self) -> &Path {
         &self.socket_path
+    }
+
+    /// Content-addresses the current Unix authority socket identity after the same
+    /// private-path preflight used by every lease call.
+    pub fn binding_digest_v1(&self) -> Result<[u8; 32], PeerLeaseErrorV1> {
+        self.preflight()?;
+        let parent = self
+            .socket_path
+            .parent()
+            .ok_or(PeerLeaseErrorV1::InvalidRequest("peer-lease socket parent"))?;
+        let canonical_parent = fs::canonicalize(parent)?;
+        if canonical_parent != parent {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "peer-lease socket parent is not canonical",
+            ));
+        }
+        let parent_metadata = fs::symlink_metadata(parent)?;
+        let socket_metadata = fs::symlink_metadata(&self.socket_path)?;
+        let parent_bytes = parent.as_os_str().as_bytes();
+        let socket_bytes = self.socket_path.as_os_str().as_bytes();
+        let mut hasher = Sha256::new();
+        hasher.update(UNIX_AUTHORITY_BINDING_DOMAIN_V1);
+        hasher.update((parent_bytes.len() as u32).to_be_bytes());
+        hasher.update(parent_bytes);
+        hasher.update(parent_metadata.dev().to_be_bytes());
+        hasher.update(parent_metadata.ino().to_be_bytes());
+        hasher.update(parent_metadata.mode().to_be_bytes());
+        hasher.update((socket_bytes.len() as u32).to_be_bytes());
+        hasher.update(socket_bytes);
+        hasher.update(socket_metadata.dev().to_be_bytes());
+        hasher.update(socket_metadata.ino().to_be_bytes());
+        hasher.update(socket_metadata.mode().to_be_bytes());
+        Ok(hasher.finalize().into())
     }
 
     /// Check only the local socket boundary. This does not grant a lease or
@@ -792,6 +828,32 @@ mod tests {
             crate::protocol::decode_request(&crate::protocol::encode_request(request)).unwrap();
         assert_eq!(round_trip.scope.direction(), PeerLeaseDirectionV1::Inbound);
         assert_eq!(round_trip.record_hash, [5; 32]);
+    }
+
+    #[test]
+    fn binding_digest_is_stable_and_changes_on_socket_replacement() {
+        let directory = tempfile::tempdir().unwrap();
+        fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let socket = directory.path().join("authority.sock");
+        let original = UnixListener::bind(&socket).unwrap();
+        fs::set_permissions(&socket, fs::Permissions::from_mode(0o600)).unwrap();
+        let client = UnixPeerLeaseClientV1::connect(&socket);
+
+        let first = client.binding_digest_v1().unwrap();
+        assert_ne!(first, [0; 32]);
+        assert_eq!(client.binding_digest_v1().unwrap(), first);
+
+        fs::remove_file(&socket).unwrap();
+        assert!(client.binding_digest_v1().is_err());
+        let replacement = UnixListener::bind(&socket).unwrap();
+        fs::set_permissions(&socket, fs::Permissions::from_mode(0o600)).unwrap();
+        let second = client.binding_digest_v1().unwrap();
+        assert_ne!(second, [0; 32]);
+        assert_ne!(second, first);
+
+        drop(replacement);
+        fs::remove_file(&socket).unwrap();
+        drop(original);
     }
 
     #[test]

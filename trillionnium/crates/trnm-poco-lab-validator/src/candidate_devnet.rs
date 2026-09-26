@@ -25,7 +25,9 @@ use crate::{
     config::LoadedValidatorConfig,
     consensus_report::{MAX_CONSENSUS_RUN_BLOCKS_V1, MAX_CONSENSUS_RUN_DURATION_SECONDS_V1},
     consensus_runtime::{
-        run_bounded_consensus_with_external_fence_v1, BoundedConsensusRunOutcomeV1,
+        run_bounded_consensus_with_external_fence_v1,
+        run_recovered_process2_consensus_with_external_fence_v1, BoundedConsensusRunOutcomeV1,
+        ConsensusRunRequestV1, Process2RecoveryContinuationRequestV1,
         MINIMUM_CONSENSUS_RUN_BLOCKS_V1,
     },
     p2p_admission::{ExternalPeerLeaseAuthorityV1, UnixExternalPeerLeaseAuthorityV1},
@@ -51,11 +53,25 @@ pub const CANDIDATE_DEVNET_USAGE_V1: &str = concat!(
     "--report ABSOLUTE_PATH ",
     "--duration-seconds N ",
     "--max-blocks N ",
-    "[--lease-timeout-millis N]\n",
+    "[--lease-timeout-millis N] ",
+    "[--resume-process2 ",
+    "--recovery-ready-set-sha256 HEX64 ",
+    "--recovery-start-certificate-sha256 HEX64 ",
+    "--recovery-fence-token-sha256 HEX64]\n",
     "\n",
     "This command is bounded single-LAN candidate evidence. ",
     "It is not a production validator or activation surface.\n",
 );
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CandidateDevnetProcessModeV1 {
+    Initial,
+    ResumeProcess2 {
+        ready_set_artifact_sha256: [u8; 32],
+        start_certificate_artifact_sha256: [u8; 32],
+        fence_token_digest: [u8; 32],
+    },
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CandidateDevnetRunArgsV1 {
@@ -66,6 +82,7 @@ pub struct CandidateDevnetRunArgsV1 {
     duration_seconds: u64,
     max_blocks: u64,
     lease_timeout_millis: u64,
+    process_mode: CandidateDevnetProcessModeV1,
 }
 
 impl CandidateDevnetRunArgsV1 {
@@ -96,17 +113,22 @@ impl CandidateDevnetRunArgsV1 {
     pub const fn lease_timeout_millis(&self) -> u64 {
         self.lease_timeout_millis
     }
+
+    pub const fn process_mode(&self) -> CandidateDevnetProcessModeV1 {
+        self.process_mode
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CandidateDevnetCliActionV1 {
     Help,
-    Run(CandidateDevnetRunArgsV1),
+    Run(Box<CandidateDevnetRunArgsV1>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CandidateDevnetRunOutcomeV1 {
     CompletedReport(PathBuf),
+    RecoveredProcess2CompletedReport(PathBuf),
     Process1TargetParked(String),
 }
 
@@ -123,6 +145,10 @@ where
     let mut duration_seconds = None;
     let mut max_blocks = None;
     let mut lease_timeout_millis = None;
+    let mut resume_process2 = false;
+    let mut recovery_ready_set_sha256 = None;
+    let mut recovery_start_certificate_sha256 = None;
+    let mut recovery_fence_token_sha256 = None;
     let mut saw_any = false;
 
     while let Some(raw_argument) = arguments.next() {
@@ -140,6 +166,10 @@ where
                         && duration_seconds.is_none()
                         && max_blocks.is_none()
                         && lease_timeout_millis.is_none()
+                        && !resume_process2
+                        && recovery_ready_set_sha256.is_none()
+                        && recovery_start_certificate_sha256.is_none()
+                        && recovery_fence_token_sha256.is_none()
                         && !acknowledge_candidate_only
                         && arguments.next().is_none(),
                     "--help must be the only argument"
@@ -153,6 +183,28 @@ where
                 );
                 acknowledge_candidate_only = true;
             }
+            "--resume-process2" => {
+                ensure!(
+                    !resume_process2,
+                    "--resume-process2 was supplied more than once"
+                );
+                resume_process2 = true;
+            }
+            "--recovery-ready-set-sha256" => set_hex32_option(
+                &mut recovery_ready_set_sha256,
+                next_value(&mut arguments, "--recovery-ready-set-sha256")?,
+                "--recovery-ready-set-sha256",
+            )?,
+            "--recovery-start-certificate-sha256" => set_hex32_option(
+                &mut recovery_start_certificate_sha256,
+                next_value(&mut arguments, "--recovery-start-certificate-sha256")?,
+                "--recovery-start-certificate-sha256",
+            )?,
+            "--recovery-fence-token-sha256" => set_hex32_option(
+                &mut recovery_fence_token_sha256,
+                next_value(&mut arguments, "--recovery-fence-token-sha256")?,
+                "--recovery-fence-token-sha256",
+            )?,
             "--run-root" => set_path_option(
                 &mut run_root,
                 next_value(&mut arguments, "--run-root")?,
@@ -198,6 +250,24 @@ where
         "--acknowledge-candidate-only is required"
     );
 
+    let process_mode = match (
+        resume_process2,
+        recovery_ready_set_sha256,
+        recovery_start_certificate_sha256,
+        recovery_fence_token_sha256,
+    ) {
+        (false, None, None, None) => CandidateDevnetProcessModeV1::Initial,
+        (true, Some(ready), Some(start), Some(fence)) => {
+            CandidateDevnetProcessModeV1::ResumeProcess2 {
+                ready_set_artifact_sha256: ready,
+                start_certificate_artifact_sha256: start,
+                fence_token_digest: fence,
+            }
+        }
+        (true, _, _, _) => bail!("--resume-process2 requires all three recovery SHA-256 options"),
+        (false, _, _, _) => bail!("recovery SHA-256 options require --resume-process2"),
+    };
+
     let parsed = CandidateDevnetRunArgsV1 {
         run_root: run_root.ok_or_else(|| anyhow!("--run-root is required"))?,
         config_path: config_path.ok_or_else(|| anyhow!("--config is required"))?,
@@ -209,9 +279,10 @@ where
         max_blocks: max_blocks.ok_or_else(|| anyhow!("--max-blocks is required"))?,
         lease_timeout_millis: lease_timeout_millis
             .unwrap_or(DEFAULT_CANDIDATE_DEVNET_LEASE_TIMEOUT_MILLIS_V1),
+        process_mode,
     };
     validate_candidate_devnet_args_v1(&parsed)?;
-    Ok(CandidateDevnetCliActionV1::Run(parsed))
+    Ok(CandidateDevnetCliActionV1::Run(Box::new(parsed)))
 }
 
 pub fn run_candidate_devnet_v1(
@@ -238,27 +309,58 @@ pub fn run_candidate_devnet_v1(
         "candidate local-key composition did not load all three role secrets"
     );
 
-    let outcome = run_bounded_consensus_with_external_fence_v1(
-        crate::consensus_runtime::ConsensusRunRequestV1 {
-            config,
-            duration: Duration::from_secs(arguments.duration_seconds()),
-            max_blocks: arguments.max_blocks(),
-            report_path: arguments.report_path().to_path_buf(),
-        },
-        Arc::new(external_fence),
-        |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
-    )
-    .context("run externally fenced bounded candidate validator")?;
+    let process_mode = arguments.process_mode();
+    let consensus = ConsensusRunRequestV1 {
+        config,
+        duration: Duration::from_secs(arguments.duration_seconds()),
+        max_blocks: arguments.max_blocks(),
+        report_path: arguments.report_path().to_path_buf(),
+    };
+    let outcome = match process_mode {
+        CandidateDevnetProcessModeV1::Initial => run_bounded_consensus_with_external_fence_v1(
+            consensus,
+            Arc::new(external_fence),
+            |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
+        )
+        .context("run externally fenced initial candidate validator")?,
+        CandidateDevnetProcessModeV1::ResumeProcess2 {
+            ready_set_artifact_sha256,
+            start_certificate_artifact_sha256,
+            fence_token_digest,
+        } => run_recovered_process2_consensus_with_external_fence_v1(
+            Process2RecoveryContinuationRequestV1 {
+                consensus,
+                ready_set_artifact_sha256,
+                start_certificate_artifact_sha256,
+                fence_token_digest,
+            },
+            Arc::new(external_fence),
+            None,
+        )
+        .context("resume externally fenced candidate validator as process2")?,
+    };
 
-    match outcome {
-        BoundedConsensusRunOutcomeV1::CompletedReport(path) => {
-            Ok(CandidateDevnetRunOutcomeV1::CompletedReport(path))
-        }
-        BoundedConsensusRunOutcomeV1::Process1TargetParked(handoff) => {
+    match (process_mode, outcome) {
+        (
+            CandidateDevnetProcessModeV1::Initial,
+            BoundedConsensusRunOutcomeV1::CompletedReport(path),
+        ) => Ok(CandidateDevnetRunOutcomeV1::CompletedReport(path)),
+        (
+            CandidateDevnetProcessModeV1::ResumeProcess2 { .. },
+            BoundedConsensusRunOutcomeV1::CompletedReport(path),
+        ) => Ok(CandidateDevnetRunOutcomeV1::RecoveredProcess2CompletedReport(path)),
+        (
+            CandidateDevnetProcessModeV1::Initial,
+            BoundedConsensusRunOutcomeV1::Process1TargetParked(handoff),
+        ) => {
             let encoded = serde_json::to_string(&handoff)
                 .context("encode candidate process-1 parked handoff")?;
             Ok(CandidateDevnetRunOutcomeV1::Process1TargetParked(encoded))
         }
+        (
+            CandidateDevnetProcessModeV1::ResumeProcess2 { .. },
+            BoundedConsensusRunOutcomeV1::Process1TargetParked(_),
+        ) => bail!("process2 continuation attempted a forbidden second restart/process3"),
     }
 }
 
@@ -313,6 +415,19 @@ fn validate_candidate_devnet_args_v1(arguments: &CandidateDevnetRunArgsV1) -> Re
             .contains(&arguments.lease_timeout_millis()),
         "lease timeout is outside the candidate transport profile"
     );
+    if let CandidateDevnetProcessModeV1::ResumeProcess2 {
+        ready_set_artifact_sha256,
+        start_certificate_artifact_sha256,
+        fence_token_digest,
+    } = arguments.process_mode()
+    {
+        ensure!(
+            ready_set_artifact_sha256 != [0; 32]
+                && start_certificate_artifact_sha256 != [0; 32]
+                && fence_token_digest != [0; 32],
+            "process2 recovery digests must be nonzero"
+        );
+    }
     Ok(())
 }
 
@@ -339,6 +454,27 @@ fn set_u64_option(slot: &mut Option<u64>, value: OsString, option: &str) -> Resu
         .parse::<u64>()
         .with_context(|| format!("{option} value is not an unsigned integer"))?;
     *slot = Some(value);
+    Ok(())
+}
+
+fn set_hex32_option(slot: &mut Option<[u8; 32]>, value: OsString, option: &str) -> Result<()> {
+    ensure!(slot.is_none(), "{option} was supplied more than once");
+    let value = value
+        .to_str()
+        .ok_or_else(|| anyhow!("{option} value is not valid UTF-8"))?;
+    ensure!(
+        value.len() == 64
+            && value
+                .as_bytes()
+                .iter()
+                .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(byte)),
+        "{option} must be exactly 64 lower-case hexadecimal characters"
+    );
+    let mut decoded = [0_u8; 32];
+    hex::decode_to_slice(value, &mut decoded)
+        .with_context(|| format!("decode {option} as SHA-256"))?;
+    ensure!(decoded != [0; 32], "{option} must be nonzero");
+    *slot = Some(decoded);
     Ok(())
 }
 
@@ -388,6 +524,20 @@ mod tests {
         .collect()
     }
 
+    fn valid_process2_arguments() -> Vec<OsString> {
+        let mut arguments = valid_arguments();
+        arguments.extend([
+            OsString::from("--resume-process2"),
+            OsString::from("--recovery-ready-set-sha256"),
+            OsString::from("11".repeat(32)),
+            OsString::from("--recovery-start-certificate-sha256"),
+            OsString::from("22".repeat(32)),
+            OsString::from("--recovery-fence-token-sha256"),
+            OsString::from("33".repeat(32)),
+        ]);
+        arguments
+    }
+
     #[test]
     fn candidate_cli_requires_explicit_nonproduction_acknowledgement() {
         let mut arguments = valid_arguments();
@@ -414,6 +564,62 @@ mod tests {
             parsed.report_path(),
             Path::new("/tmp/trnm-candidate-run/candidate-report.json")
         );
+    }
+
+    #[test]
+    fn candidate_cli_requires_complete_explicit_process2_authority() {
+        let parsed = parse_candidate_devnet_args_v1(valid_process2_arguments())
+            .expect("complete process2 authority parses");
+        let CandidateDevnetCliActionV1::Run(parsed) = parsed else {
+            panic!("expected process2 run action");
+        };
+        assert_eq!(
+            parsed.process_mode(),
+            CandidateDevnetProcessModeV1::ResumeProcess2 {
+                ready_set_artifact_sha256: [0x11; 32],
+                start_certificate_artifact_sha256: [0x22; 32],
+                fence_token_digest: [0x33; 32],
+            }
+        );
+
+        let mut missing = valid_process2_arguments();
+        missing.truncate(missing.len() - 2);
+        let error = parse_candidate_devnet_args_v1(missing)
+            .expect_err("partial process2 authority must reject");
+        assert!(error.to_string().contains("requires all three"));
+
+        let mut without_mode = valid_process2_arguments();
+        let flag = without_mode
+            .iter()
+            .position(|argument| argument == "--resume-process2")
+            .expect("resume flag");
+        without_mode.remove(flag);
+        let error = parse_candidate_devnet_args_v1(without_mode)
+            .expect_err("recovery digests without explicit mode must reject");
+        assert!(error.to_string().contains("require --resume-process2"));
+    }
+
+    #[test]
+    fn candidate_cli_rejects_noncanonical_or_zero_process2_digests() {
+        let mut uppercase = valid_process2_arguments();
+        let option = uppercase
+            .iter()
+            .position(|argument| argument == "--recovery-ready-set-sha256")
+            .expect("ready-set option");
+        uppercase[option + 1] = OsString::from("AA".repeat(32));
+        let error = parse_candidate_devnet_args_v1(uppercase)
+            .expect_err("uppercase recovery digest must reject");
+        assert!(error.to_string().contains("lower-case hexadecimal"));
+
+        let mut zero = valid_process2_arguments();
+        let option = zero
+            .iter()
+            .position(|argument| argument == "--recovery-fence-token-sha256")
+            .expect("fence option");
+        zero[option + 1] = OsString::from("00".repeat(32));
+        let error =
+            parse_candidate_devnet_args_v1(zero).expect_err("zero fence digest must reject");
+        assert!(error.to_string().contains("must be nonzero"));
     }
 
     #[test]

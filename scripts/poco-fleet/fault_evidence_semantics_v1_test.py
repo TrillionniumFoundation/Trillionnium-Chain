@@ -48,7 +48,14 @@ def main() -> None:
     restart = semantics.policy_for("validator_process_kill")
     assert restart.evidence_mode == semantics.SIGNED_RESTART_CATCHUP
     assert restart.signed_restart_catchup_required is True
-    assert restart.runtime_authority_supported is False
+    assert restart.runtime_authority_supported is True
+    assert restart.runner_execution_supported is True
+    assert restart.recovered_finality_required is True
+    assert restart.primary_journal_applied_recovered is False
+    assert restart.blocker == ""
+    assert semantics.campaign_faults("restart") == ("validator_process_kill",)
+    assert semantics.campaign_profile("restart") == semantics.RESTART_PROFILE
+    semantics.require_campaign_supported("restart")
 
     for kind in semantics.NEGATIVE_STARTUP_FAULTS:
         policy = semantics.policy_for(kind)
@@ -72,7 +79,6 @@ def main() -> None:
 
     blockers = semantics.active_campaign_blockers()
     assert {item["kind"] for item in blockers} == {
-        "validator_process_kill",
         "bounded_delay_loss",
         "stale_snapshot",
         "rollback_attempt",
@@ -90,7 +96,7 @@ def main() -> None:
 
     print(
         "poco_g3_fault_evidence_semantics_v1_test=passed positives=25 negatives=5 "
-        "connectivity_primary_signed=3 restart_catchup=distinct "
+        "connectivity_primary_signed=3 restart_catchup=executable-distinct "
         "negative_startup_isolated=2 bounded_delay_degraded=required "
         "epoch_handoff_signed=required active_campaign=fail-closed "
         "active_bundle_assembly=fail-closed g3_complete=false"

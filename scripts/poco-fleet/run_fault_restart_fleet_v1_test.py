@@ -272,12 +272,17 @@ def main() -> None:
     assert plan["active_campaign_supported"] is False
     assert plan["mesh_resource_preflight_required_before_effects"] is True
     assert plan["mesh_resource_preflight"] is None
-    assert len(plan["authority_blockers"]) == 5
+    assert (
+        plan["authority_blockers"]
+        == fleet.fault_semantics.active_campaign_blockers()
+    )
     policies = {item["kind"]: item for item in plan["fault_evidence_policy"]}
     assert policies["leader_loss"]["primary_journal_applied_recovered"] is True
     assert policies["host_loss"]["runtime_authority_supported"] is True
     assert policies["asymmetric_partition"]["runner_execution_supported"] is True
     assert policies["validator_process_kill"]["signed_restart_catchup_required"] is True
+    assert policies["validator_process_kill"]["runtime_authority_supported"] is True
+    assert policies["validator_process_kill"]["runner_execution_supported"] is True
     assert policies["validator_process_kill"]["primary_journal_applied_recovered"] is False
     for kind in ("stale_snapshot", "rollback_attempt"):
         assert policies[kind]["isolated_startup_attempt"] is True
@@ -289,7 +294,7 @@ def main() -> None:
     assert policies["epoch_handoff"]["signed_epoch_handoff_required"] is True
     expect_failure(
         fleet.fault_semantics.require_active_campaign_supported,
-        "process-instance-2-recovery-start-catchup-authority-unavailable",
+        "signed-degraded-window-binding-unavailable",
     )
     assert plan["fault_matrix_completed"] is False
     assert plan["g3_lan_multihost_evidence"] is False

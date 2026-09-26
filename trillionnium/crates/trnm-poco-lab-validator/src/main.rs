@@ -23,12 +23,14 @@ use trnm_poco_lab_validator::{
     consensus_runtime::{
         commission_deployed_ordinary_runtime_for_cli_v1,
         run_bounded_consensus_with_external_fence_v1, run_deployed_bounded_consensus_v1,
-        BoundedConsensusRunOutcomeV1, MINIMUM_CONSENSUS_RUN_BLOCKS_V1,
-        PROCESS1_TARGET_PARKED_EXIT_STATUS_V1,
+        run_recovered_process2_consensus_with_external_fence_v1, BoundedConsensusRunOutcomeV1,
+        ConsensusRunRequestV1, Process2RecoveryContinuationRequestV1,
+        MINIMUM_CONSENSUS_RUN_BLOCKS_V1, PROCESS1_TARGET_PARKED_EXIT_STATUS_V1,
     },
     fleet_barrier_evidence::load_and_verify_fleet_start_certificate_v1,
     network::{load_signed_network_smoke_report, run_network_smoke},
     process_event::{verify_runtime_event_journal_v1, RuntimeEventJournalV1, RuntimeEventKindV1},
+    recovery_material::{is_recovery_material_command_v1, run_recovery_material_command_v1},
     runtime::positive_checkpoint_bootstrap_assessment_v1,
     runtime_control::send_runtime_control_request_v1,
     runtime_evidence::{load_signed_runtime_final_state_v1, load_signed_runtime_metrics_v1},
@@ -50,7 +52,9 @@ use trnm_poco_lab_validator::{
 };
 
 #[cfg(unix)]
-use trnm_poco_lab_validator::p2p_admission::UnixExternalPeerLeaseAuthorityV1;
+use trnm_poco_lab_validator::p2p_admission::{
+    ExternalPeerLeaseAuthorityV1, UnixExternalPeerLeaseAuthorityV1,
+};
 
 #[cfg(unix)]
 use trnm_consensus_peer_lease::{UnixPeerLeaseClientV1, UnixPeerLeaseDaemonV1};
@@ -98,8 +102,16 @@ fn run() -> Result<ExitCode> {
     if command == "peer-lease-daemon" {
         return run_peer_lease_daemon(arguments);
     }
+    if command == "peer-lease-binding" {
+        return run_peer_lease_binding(arguments);
+    }
     let run_root = PathBuf::from(arguments.next().ok_or_else(|| anyhow::anyhow!(usage()))?);
     let config = PathBuf::from(arguments.next().ok_or_else(|| anyhow::anyhow!(usage()))?);
+    if is_recovery_material_command_v1(&command) {
+        let binary = env::current_exe().context("resolve recovery material executable")?;
+        run_recovery_material_command_v1(&command, run_root, config, &binary, arguments)?;
+        return Ok(ExitCode::SUCCESS);
+    }
     if command == "verify-replay-archive" {
         let context_path = PathBuf::from(arguments.next().ok_or_else(|| anyhow::anyhow!(usage()))?);
         let entries_path = PathBuf::from(arguments.next().ok_or_else(|| anyhow::anyhow!(usage()))?);
@@ -371,9 +383,10 @@ fn run() -> Result<ExitCode> {
         return Ok(ExitCode::SUCCESS);
     }
     if command == "run-consensus" {
-        // Reject malformed public bounds before opening any deployment store.
-        // This keeps the CLI's invalid-input path independent of topology size
-        // and makes the no-effect contract observable even for 100 validators.
+        // Reject malformed public bounds and the complete process-mode envelope
+        // before opening any deployment store.  Process2 is never inferred from
+        // filesystem state: all three exact recovery digests and the external
+        // peer-fence socket are mandatory.
         let duration_seconds = parse_bounded_u64(
             arguments.next(),
             "duration-seconds",
@@ -387,62 +400,67 @@ fn run() -> Result<ExitCode> {
             MAX_CONSENSUS_RUN_BLOCKS_V1,
         )?;
         let report_path = PathBuf::from(arguments.next().ok_or_else(|| anyhow::anyhow!(usage()))?);
-        let peer_lease_socket = parse_optional_peer_lease_socket(&mut arguments)?;
+        let options = parse_consensus_run_options_v1(&mut arguments)?;
+        let process2 = options.process2;
         let report_path = validate_consensus_run_report_target_v1(&report_path)?;
         let binary = env::current_exe().context("resolve current executable")?;
         let loaded = LoadedValidatorConfig::load(run_root, config, binary)?;
-        let outcome = match peer_lease_socket {
-            Some(socket_path) => {
+        let consensus = ConsensusRunRequestV1 {
+            config: loaded,
+            duration: Duration::from_secs(duration_seconds),
+            max_blocks,
+            report_path,
+        };
+        let outcome = match (options.peer_lease_socket, process2) {
+            (Some(socket_path), process2) => {
                 #[cfg(unix)]
                 {
-                    // This is the sole CLI opt-in to the Unix external-fence
-                    // seam.  The ordinary invocation below remains wired to
-                    // the rejecting authority and therefore fail-closed.
                     let client = UnixPeerLeaseClientV1::connect(socket_path)
                         .with_timeout(Duration::from_secs(5));
                     let external_fence =
                         Arc::new(UnixExternalPeerLeaseAuthorityV1::from_client(client));
-                    run_bounded_consensus_with_external_fence_v1(
-                        trnm_poco_lab_validator::consensus_runtime::ConsensusRunRequestV1 {
-                            config: loaded,
-                            duration: Duration::from_secs(duration_seconds),
-                            max_blocks,
-                            report_path,
-                        },
-                        external_fence,
-                        commission_deployed_ordinary_runtime_for_cli_v1,
-                    )?
+                    match process2 {
+                        Some(resume) => run_recovered_process2_consensus_with_external_fence_v1(
+                            Process2RecoveryContinuationRequestV1 {
+                                consensus,
+                                ready_set_artifact_sha256: resume.ready_set_artifact_sha256,
+                                start_certificate_artifact_sha256: resume
+                                    .start_certificate_artifact_sha256,
+                                fence_token_digest: resume.fence_token_digest,
+                            },
+                            external_fence,
+                            None,
+                        )?,
+                        None => run_bounded_consensus_with_external_fence_v1(
+                            consensus,
+                            external_fence,
+                            commission_deployed_ordinary_runtime_for_cli_v1,
+                        )?,
+                    }
                 }
                 #[cfg(not(unix))]
                 {
-                    let _ = (
-                        socket_path,
-                        loaded,
-                        duration_seconds,
-                        max_blocks,
-                        report_path,
-                    );
+                    let _ = (socket_path, process2, consensus);
                     bail!("peer-lease socket opt-in is supported only on Unix")
                 }
             }
-            None => run_deployed_bounded_consensus_v1(
-                trnm_poco_lab_validator::consensus_runtime::ConsensusRunRequestV1 {
-                    config: loaded,
-                    duration: Duration::from_secs(duration_seconds),
-                    max_blocks,
-                    report_path,
-                },
-            )?,
+            (None, None) => run_deployed_bounded_consensus_v1(consensus)?,
+            (None, Some(_)) => {
+                bail!("process2 continuation requires --peer-lease-socket")
+            }
         };
-        return match outcome {
-            BoundedConsensusRunOutcomeV1::CompletedReport(report_path) => {
+        return match (process2, outcome) {
+            (_, BoundedConsensusRunOutcomeV1::CompletedReport(report_path)) => {
                 let report = load_signed_consensus_run_report_v1(&report_path)?;
                 println!("{}", serde_json::to_string(&report)?);
                 Ok(ExitCode::SUCCESS)
             }
-            BoundedConsensusRunOutcomeV1::Process1TargetParked(handoff) => {
+            (None, BoundedConsensusRunOutcomeV1::Process1TargetParked(handoff)) => {
                 println!("{}", serde_json::to_string(&handoff)?);
                 Ok(ExitCode::from(PROCESS1_TARGET_PARKED_EXIT_STATUS_V1))
+            }
+            (Some(_), BoundedConsensusRunOutcomeV1::Process1TargetParked(_)) => {
+                bail!("process2 continuation attempted a forbidden second restart/process3")
             }
         };
     }
@@ -730,28 +748,99 @@ fn parse_bounded_u64(
     Ok(parsed)
 }
 
-fn parse_optional_peer_lease_socket<I>(arguments: &mut I) -> Result<Option<PathBuf>>
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct Process2ResumeDigestsV1 {
+    ready_set_artifact_sha256: [u8; 32],
+    start_certificate_artifact_sha256: [u8; 32],
+    fence_token_digest: [u8; 32],
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ConsensusRunOptionsV1 {
+    peer_lease_socket: Option<PathBuf>,
+    process2: Option<Process2ResumeDigestsV1>,
+}
+
+fn parse_consensus_run_options_v1<I>(arguments: &mut I) -> Result<ConsensusRunOptionsV1>
 where
     I: Iterator<Item = std::ffi::OsString>,
 {
-    let mut socket = None;
+    let mut peer_lease_socket = None;
+    let mut resume_process2 = false;
+    let mut ready_set_artifact_sha256 = None;
+    let mut start_certificate_artifact_sha256 = None;
+    let mut fence_token_digest = None;
     while let Some(argument) = arguments.next() {
-        if argument != "--peer-lease-socket" || socket.is_some() {
-            bail!(usage());
+        match argument.to_str() {
+            Some("--peer-lease-socket") if peer_lease_socket.is_none() => {
+                let path = PathBuf::from(arguments.next().ok_or_else(|| {
+                    anyhow::anyhow!("missing peer-lease socket path; {}", usage())
+                })?);
+                ensure!(
+                    !path.as_os_str().is_empty(),
+                    "peer-lease socket path must not be empty"
+                );
+                validate_peer_lease_socket_path_v1(&path)?;
+                peer_lease_socket = Some(path);
+            }
+            Some("--resume-process2") if !resume_process2 => {
+                resume_process2 = true;
+            }
+            Some("--recovery-ready-set-sha256") if ready_set_artifact_sha256.is_none() => {
+                ready_set_artifact_sha256 = Some(parse_nonzero_canonical_hex32_v1(
+                    arguments.next(),
+                    "recovery-ready-set-sha256",
+                )?);
+            }
+            Some("--recovery-start-certificate-sha256")
+                if start_certificate_artifact_sha256.is_none() =>
+            {
+                start_certificate_artifact_sha256 = Some(parse_nonzero_canonical_hex32_v1(
+                    arguments.next(),
+                    "recovery-start-certificate-sha256",
+                )?);
+            }
+            Some("--recovery-fence-token-sha256") if fence_token_digest.is_none() => {
+                fence_token_digest = Some(parse_nonzero_canonical_hex32_v1(
+                    arguments.next(),
+                    "recovery-fence-token-sha256",
+                )?);
+            }
+            _ => bail!(usage()),
         }
-        let path = PathBuf::from(
-            arguments
-                .next()
-                .ok_or_else(|| anyhow::anyhow!("missing peer-lease socket path; {}", usage()))?,
-        );
-        ensure!(
-            !path.as_os_str().is_empty(),
-            "peer-lease socket path must not be empty"
-        );
-        validate_peer_lease_socket_path_v1(&path)?;
-        socket = Some(path);
     }
-    Ok(socket)
+    let process2 = match (
+        resume_process2,
+        ready_set_artifact_sha256,
+        start_certificate_artifact_sha256,
+        fence_token_digest,
+    ) {
+        (false, None, None, None) => None,
+        (true, Some(ready), Some(start), Some(fence)) => Some(Process2ResumeDigestsV1 {
+            ready_set_artifact_sha256: ready,
+            start_certificate_artifact_sha256: start,
+            fence_token_digest: fence,
+        }),
+        (true, _, _, _) => bail!("--resume-process2 requires all three recovery SHA-256 options"),
+        (false, _, _, _) => bail!("recovery SHA-256 options require --resume-process2"),
+    };
+    ensure!(
+        process2.is_none() || peer_lease_socket.is_some(),
+        "process2 continuation requires --peer-lease-socket"
+    );
+    Ok(ConsensusRunOptionsV1 {
+        peer_lease_socket,
+        process2,
+    })
+}
+
+fn parse_nonzero_canonical_hex32_v1(
+    value: Option<std::ffi::OsString>,
+    field: &str,
+) -> Result<[u8; 32]> {
+    let value = parse_canonical_hex32(value, field)?;
+    ensure!(value != [0; 32], "{field} must be nonzero");
+    Ok(value)
 }
 
 #[cfg(unix)]
@@ -891,6 +980,55 @@ fn validate_peer_lease_data_path_v1(path: &std::path::Path, label: &str) -> Resu
 #[cfg(not(unix))]
 fn validate_peer_lease_data_path_v1(_path: &std::path::Path, _label: &str) -> Result<()> {
     bail!("peer-lease daemon is supported only on Unix")
+}
+
+#[cfg(unix)]
+fn run_peer_lease_binding<I>(mut arguments: I) -> Result<ExitCode>
+where
+    I: Iterator<Item = std::ffi::OsString>,
+{
+    ensure!(
+        arguments.next().as_deref() == Some(std::ffi::OsStr::new("--socket")),
+        "peer-lease-binding requires --socket PATH"
+    );
+    let socket = PathBuf::from(
+        arguments
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("missing peer-lease binding socket"))?,
+    );
+    ensure!(
+        arguments.next().is_none(),
+        "unexpected peer-lease-binding argument"
+    );
+    validate_peer_lease_socket_path_v1(&socket)?;
+    let authority =
+        UnixExternalPeerLeaseAuthorityV1::connect(&socket).with_timeout(Duration::from_secs(5));
+    authority
+        .preflight()
+        .map_err(|error| anyhow::anyhow!("peer-lease binding preflight: {error}"))?;
+    let digest = authority
+        .authority_binding_digest_v1()
+        .map_err(|error| anyhow::anyhow!("read peer-lease binding digest: {error}"))?;
+    ensure!(digest != [0; 32], "peer-lease binding digest is zero");
+    println!(
+        "{}",
+        serde_json::to_string(&json!({
+            "schema_version": 1,
+            "status": "peer-lease-binding",
+            "binding_digest": hex::encode(digest),
+            "candidate_only": true,
+            "production_activation": false,
+        }))?
+    );
+    Ok(ExitCode::SUCCESS)
+}
+
+#[cfg(not(unix))]
+fn run_peer_lease_binding<I>(_arguments: I) -> Result<ExitCode>
+where
+    I: Iterator<Item = std::ffi::OsString>,
+{
+    bail!("peer-lease binding is supported only on Unix")
 }
 
 #[cfg(unix)]
@@ -1114,7 +1252,7 @@ fn external_composition_projection_v1() -> serde_json::Value {
 }
 
 fn usage() -> &'static str {
-    "usage: trnm-poco-lab-validator peer-lease-daemon --socket PATH --journal PATH [--ready-file PATH] | trnm-poco-lab-validator verify-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-external-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-replay-archive <observer-public-root> <validator-config> <absolute-archive-context> <absolute-archive-entries> <absolute-archive-head> <absolute-terminal-seal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-network-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-consensus-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-journal <observer-public-root> <validator-config> <signed-journal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-metrics <observer-public-root> <validator-config> <signed-metrics> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-final-state <observer-public-root> <validator-config> <signed-final-state> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-fleet-start-certificate <observer-public-root> <validator-config> <fleet-start-certificate> <expected-coordinator-manifest-sha256> <expected-duration-seconds> <expected-max-blocks> | trnm-poco-lab-validator verify-isolated-startup-rejection <observer-public-root> <validator-config> <signed-rejection> <fleet-start-certificate> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator network-smoke <private-run-root> <validator-config> <rounds> <timeout-seconds> | trnm-poco-lab-validator run-consensus <private-run-root> <validator-config> <duration-seconds> <max-blocks> <report-path> [--peer-lease-socket PATH] | trnm-poco-lab-validator runtime-control <private-run-root> <validator-config> <process-instance> <generation> <nonce> <verb> <fault> | trnm-poco-lab-validator start-runtime-event-journal <private-run-root> <validator-config> <absolute-journal-path> | trnm-poco-lab-validator attempt-isolated-startup-rejection <private-run-root> <validator-config> <stale_snapshot|rollback_attempt> <absolute-isolated-authority-root> <attempt-nonce-hex> <absolute-evidence-path>"
+    "usage: trnm-poco-lab-validator peer-lease-daemon --socket PATH --journal PATH [--ready-file PATH] | trnm-poco-lab-validator peer-lease-binding --socket PATH | trnm-poco-lab-validator verify-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-external-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-replay-archive <observer-public-root> <validator-config> <absolute-archive-context> <absolute-archive-entries> <absolute-archive-head> <absolute-terminal-seal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-network-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-consensus-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-journal <observer-public-root> <validator-config> <signed-journal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-metrics <observer-public-root> <validator-config> <signed-metrics> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-final-state <observer-public-root> <validator-config> <signed-final-state> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-fleet-start-certificate <observer-public-root> <validator-config> <fleet-start-certificate> <expected-coordinator-manifest-sha256> <expected-duration-seconds> <expected-max-blocks> | trnm-poco-lab-validator verify-isolated-startup-rejection <observer-public-root> <validator-config> <signed-rejection> <fleet-start-certificate> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator network-smoke <private-run-root> <validator-config> <rounds> <timeout-seconds> | trnm-poco-lab-validator recovery-context <private-run-root> <validator-config> <absolute-context-output> | trnm-poco-lab-validator recovery-ready <private-run-root> <validator-config> <absolute-context-input> <absolute-ready-output> | trnm-poco-lab-validator recovery-ready-set <private-run-root> <validator-config> <absolute-context-input> <seven-ready-inputs> | trnm-poco-lab-validator recovery-start <private-run-root> <validator-config> <absolute-ready-set-input> <absolute-start-output> | trnm-poco-lab-validator recovery-start-certificate <private-run-root> <validator-config> <absolute-ready-set-input> <seven-start-inputs> | trnm-poco-lab-validator run-consensus <private-run-root> <validator-config> <duration-seconds> <max-blocks> <report-path> [--peer-lease-socket PATH] [--resume-process2 --recovery-ready-set-sha256 HEX64 --recovery-start-certificate-sha256 HEX64 --recovery-fence-token-sha256 HEX64] | trnm-poco-lab-validator runtime-control <private-run-root> <validator-config> <process-instance> <generation> <nonce> <verb> <fault> | trnm-poco-lab-validator start-runtime-event-journal <private-run-root> <validator-config> <absolute-journal-path> | trnm-poco-lab-validator attempt-isolated-startup-rejection <private-run-root> <validator-config> <stale_snapshot|rollback_attempt> <absolute-isolated-authority-root> <attempt-nonce-hex> <absolute-evidence-path>"
 }
 
 #[cfg(test)]
@@ -1128,8 +1266,8 @@ mod tests {
     use tempfile::tempdir;
 
     use super::{
-        ensure_private_ready_parent_v1, parse_optional_peer_lease_socket, usage,
-        validate_peer_lease_ready_path_v1,
+        ensure_private_ready_parent_v1, parse_consensus_run_options_v1, usage,
+        validate_peer_lease_ready_path_v1, Process2ResumeDigestsV1,
     };
 
     #[test]
@@ -1166,11 +1304,16 @@ mod tests {
         assert!(daemon_dispatch < run_root_parse);
         assert!(source.contains("--peer-lease-socket"));
         assert!(source.contains("UnixPeerLeaseClientV1::connect"));
+        assert!(source.contains("run_peer_lease_binding"));
+        assert!(source.contains("authority_binding_digest_v1"));
         assert!(source.contains("run_bounded_consensus_with_external_fence_v1"));
         assert!(source.contains("run_deployed_bounded_consensus_v1("));
         assert!(source.contains("UnixPeerLeaseDaemonV1::new"));
         assert!(source.contains("\"peer-lease-daemon\""));
         assert!(usage().contains("--peer-lease-socket PATH"));
+        assert!(usage().contains("peer-lease-binding --socket PATH"));
+        assert!(usage().contains("--resume-process2"));
+        assert!(usage().contains("recovery-start-certificate"));
     }
 
     #[cfg(unix)]
@@ -1274,18 +1417,39 @@ mod tests {
 
     #[cfg(unix)]
     #[test]
-    fn peer_lease_socket_option_parser_rejects_unknown_or_duplicate_options() {
+    fn consensus_run_options_require_exact_process2_authority() {
         let root = tempdir().expect("temporary root");
         std::fs::set_permissions(root.path(), std::fs::Permissions::from_mode(0o700))
             .expect("private temporary root");
         let socket = root.path().join("authority.sock");
-        let accepted = vec![
+        let initial = vec![
             OsString::from("--peer-lease-socket"),
             socket.as_os_str().to_owned(),
         ];
+        let parsed = parse_consensus_run_options_v1(&mut initial.into_iter()).unwrap();
+        assert_eq!(parsed.peer_lease_socket, Some(socket.clone()));
+        assert_eq!(parsed.process2, None);
+
+        let resumed = vec![
+            OsString::from("--peer-lease-socket"),
+            socket.as_os_str().to_owned(),
+            OsString::from("--resume-process2"),
+            OsString::from("--recovery-ready-set-sha256"),
+            OsString::from("11".repeat(32)),
+            OsString::from("--recovery-start-certificate-sha256"),
+            OsString::from("22".repeat(32)),
+            OsString::from("--recovery-fence-token-sha256"),
+            OsString::from("33".repeat(32)),
+        ];
+        let parsed = parse_consensus_run_options_v1(&mut resumed.into_iter()).unwrap();
+        assert_eq!(parsed.peer_lease_socket, Some(socket.clone()));
         assert_eq!(
-            parse_optional_peer_lease_socket(&mut accepted.into_iter()).unwrap(),
-            Some(socket.clone())
+            parsed.process2,
+            Some(Process2ResumeDigestsV1 {
+                ready_set_artifact_sha256: [0x11; 32],
+                start_certificate_artifact_sha256: [0x22; 32],
+                fence_token_digest: [0x33; 32],
+            })
         );
 
         let duplicate = vec![
@@ -1294,9 +1458,50 @@ mod tests {
             OsString::from("--peer-lease-socket"),
             socket.as_os_str().to_owned(),
         ];
-        assert!(parse_optional_peer_lease_socket(&mut duplicate.into_iter()).is_err());
+        assert!(parse_consensus_run_options_v1(&mut duplicate.into_iter()).is_err());
+
+        let missing_digest = vec![
+            OsString::from("--peer-lease-socket"),
+            socket.as_os_str().to_owned(),
+            OsString::from("--resume-process2"),
+            OsString::from("--recovery-ready-set-sha256"),
+            OsString::from("11".repeat(32)),
+        ];
+        assert!(parse_consensus_run_options_v1(&mut missing_digest.into_iter()).is_err());
+
+        let no_mode = vec![
+            OsString::from("--peer-lease-socket"),
+            socket.as_os_str().to_owned(),
+            OsString::from("--recovery-ready-set-sha256"),
+            OsString::from("11".repeat(32)),
+            OsString::from("--recovery-start-certificate-sha256"),
+            OsString::from("22".repeat(32)),
+            OsString::from("--recovery-fence-token-sha256"),
+            OsString::from("33".repeat(32)),
+        ];
+        assert!(parse_consensus_run_options_v1(&mut no_mode.into_iter()).is_err());
+
+        let no_fence = vec![
+            OsString::from("--resume-process2"),
+            OsString::from("--recovery-ready-set-sha256"),
+            OsString::from("11".repeat(32)),
+            OsString::from("--recovery-start-certificate-sha256"),
+            OsString::from("22".repeat(32)),
+            OsString::from("--recovery-fence-token-sha256"),
+            OsString::from("33".repeat(32)),
+        ];
+        assert!(parse_consensus_run_options_v1(&mut no_fence.into_iter()).is_err());
+
+        let zero = vec![
+            OsString::from("--peer-lease-socket"),
+            socket.as_os_str().to_owned(),
+            OsString::from("--resume-process2"),
+            OsString::from("--recovery-ready-set-sha256"),
+            OsString::from("00".repeat(32)),
+        ];
+        assert!(parse_consensus_run_options_v1(&mut zero.into_iter()).is_err());
 
         let unknown = vec![OsString::from("--unexpected")];
-        assert!(parse_optional_peer_lease_socket(&mut unknown.into_iter()).is_err());
+        assert!(parse_consensus_run_options_v1(&mut unknown.into_iter()).is_err());
     }
 }

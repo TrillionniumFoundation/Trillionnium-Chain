@@ -2314,6 +2314,135 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabRecoveredOrdinaryRuntim
     pub fn runtime_facts_v1(&self) -> PocoNodeLabRuntimeFactsV0 {
         self.runtime.facts_v0()
     }
+
+    /// Consumes the recovered ordinary owner while keeping Core's sole startup
+    /// timer private.  The supplied binder must move the exact recovered
+    /// runtime into one process-host authority; copied facts cannot call this
+    /// transition or recover the timer.
+    ///
+    /// The binder runs before any timer effect exists.  A binder failure
+    /// consumes the recovered owner and therefore fail-stops without arming a
+    /// pacemaker or returning the ordinary runtime.
+    pub fn bind_process_host_authority_v1<H>(
+        self,
+        bind: impl FnOnce(
+            PocoNodeLabOrdinaryProposalRuntimeV0<W>,
+            PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
+        ) -> Result<H, String>,
+    ) -> Result<
+        PocoNodeDeployedLabRecoveredProcessHostAuthorityV1<H>,
+        PocoNodeDeployedLabProcess2RecoveryErrorV0,
+    > {
+        let Self {
+            runtime,
+            startup_timer,
+            facts,
+        } = self;
+        let runtime_facts = runtime.facts_v0();
+        let activation = facts.activation_v1();
+        if facts.runtime_v1() != runtime_facts
+            || startup_timer.epoch_v0() != facts.startup_timer_epoch_v1()
+            || startup_timer.view_v0() != facts.startup_timer_view_v1()
+            || activation.startup_timer_epoch_v1() != facts.startup_timer_epoch_v1()
+            || activation.startup_timer_view_v1() != facts.startup_timer_view_v1()
+            || runtime_facts.current_view_v0() != facts.startup_timer_view_v1()
+            || runtime_facts.proposal_parent_block_id_v0()
+                != activation.application_parent_block_id_v1()
+            || runtime_facts.proposal_parent_height_v0()
+                != activation.application_parent_height_v1()
+        {
+            return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "process_host_authority.facts",
+                "recovered runtime, activation facts, and Core startup timer differ",
+            ));
+        }
+        let authority = bind(runtime, facts).map_err(|detail| {
+            PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "process_host_authority.bind",
+                detail,
+            )
+        })?;
+        Ok(PocoNodeDeployedLabRecoveredProcessHostAuthorityV1 {
+            authority,
+            startup_timer,
+            facts,
+        })
+    }
+}
+
+/// Linear authority-bound process-2 owner with Core's unique startup timer
+/// still private.
+///
+/// It deliberately has no parts accessor and is not Clone.  The only timer
+/// release is `activate_after_host_ready_v1`, whose closure must successfully
+/// construct all process-host I/O owners while borrowing the bound authority.
+/// The timer is converted to an effect only after that closure returns.
+///
+/// ```compile_fail
+/// use trnm_poco_node::PocoNodeDeployedLabRecoveredProcessHostAuthorityV1;
+/// fn require_clone<T: Clone>() {}
+/// fn check<H>() {
+///     require_clone::<PocoNodeDeployedLabRecoveredProcessHostAuthorityV1<H>>();
+/// }
+/// ```
+#[must_use = "the authority-bound recovered host and sole startup timer must remain linear"]
+pub struct PocoNodeDeployedLabRecoveredProcessHostAuthorityV1<H> {
+    authority: H,
+    startup_timer: AnchoredOrdinaryArmViewTimerV0,
+    facts: PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
+}
+
+impl<H> PocoNodeDeployedLabRecoveredProcessHostAuthorityV1<H> {
+    pub const fn facts_v1(&self) -> PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1 {
+        self.facts
+    }
+
+    /// Constructs the complete live-host owner graph while the Core startup
+    /// timer remains inaccessible.  Only a successful closure releases the
+    /// exact timer effect, and it is released after the returned host owners
+    /// already exist.
+    pub fn activate_after_host_ready_v1<R>(
+        self,
+        prepare_host: impl FnOnce(
+            &H,
+            PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
+        ) -> Result<R, String>,
+    ) -> Result<(H, R, Effect), PocoNodeDeployedLabProcess2RecoveryErrorV0> {
+        let Self {
+            authority,
+            startup_timer,
+            facts,
+        } = self;
+        let host = prepare_host(&authority, facts).map_err(|detail| {
+            PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "process_host_authority.io_ready",
+                detail,
+            )
+        })?;
+        let startup_timer_effect = startup_timer.into_effect_v0();
+        match &startup_timer_effect {
+            Effect::ArmViewTimer { epoch, view }
+                if *epoch == facts.startup_timer_epoch_v1()
+                    && *view == facts.startup_timer_view_v1() => {}
+            _ => {
+                return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                    "process_host_authority.timer",
+                    "Core startup timer did not yield the exact retained ArmViewTimer effect",
+                ));
+            }
+        }
+        Ok((authority, host, startup_timer_effect))
+    }
+}
+
+impl<H: fmt::Debug> fmt::Debug for PocoNodeDeployedLabRecoveredProcessHostAuthorityV1<H> {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("PocoNodeDeployedLabRecoveredProcessHostAuthorityV1")
+            .field("authority", &self.authority)
+            .field("facts", &self.facts)
+            .finish_non_exhaustive()
+    }
 }
 
 impl<W: ExternalMonotonicWatermarkV0> fmt::Debug
@@ -6741,6 +6870,33 @@ mod tests {
         assert_eq!(
             proposal_binding.high_qc_v0().qc_ref().block_id(),
             bridge_facts.runtime_v1().proposal_parent_block_id_v0()
+        );
+
+        let authority_bound = recovered_runtime
+            .bind_process_host_authority_v1(|runtime, facts| {
+                if runtime.facts_v0() != facts.runtime_v1() {
+                    return Err("test authority received foreign runtime facts".to_owned());
+                }
+                Ok(runtime)
+            })
+            .expect("bind the exact recovered runtime while retaining the sole timer");
+        assert_eq!(authority_bound.facts_v1(), bridge_facts);
+        let (runtime, host_ready, startup_effect) = authority_bound
+            .activate_after_host_ready_v1(|runtime, facts| {
+                if runtime.facts_v0() != facts.runtime_v1() {
+                    return Err("test host readiness received foreign authority".to_owned());
+                }
+                Ok("io-ready")
+            })
+            .expect("release the sole timer only after the host readiness owner exists");
+        assert_eq!(runtime.facts_v0(), bridge_facts.runtime_v1());
+        assert_eq!(host_ready, "io-ready");
+        assert_eq!(
+            startup_effect,
+            Effect::ArmViewTimer {
+                epoch: bridge_facts.startup_timer_epoch_v1(),
+                view: bridge_facts.startup_timer_view_v1(),
+            }
         );
     }
 

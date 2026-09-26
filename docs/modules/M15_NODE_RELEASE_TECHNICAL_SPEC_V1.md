@@ -153,11 +153,31 @@ zero-valued `process_start` boundary. The regression
 loss cuts and exact final replay. This does not let the default runner choose
 Ready/Start authority or create a production activation path.
 
-The explicit bridge activates only the exact recovered signer and Core/application
-owners; it retains Core's unique startup timer privately and exposes no pacemaker,
-listener, mesh, transaction ingress, or production constructor. The restart
-catch-up reference codec/assembler remains test-only, with behavioral tests; normal
-native-client replay/import remains the implemented transfer path.
+The explicit candidate process-host continuation now consumes the exact recovered
+signer/Core/application owner into the non-cloneable
+`PocoNodeDeployedLabRecoveredProcessHostAuthorityV1`. Core's unique startup timer
+remains private while the host reopens and revalidates the replay archive, retained
+Cut/Park/ParkedAck lineage, zero-delta cut, RecoveryReady/RecoveryStart artifacts,
+transition journal and live external peer-fence identity. It then reconstructs the
+original FleetStart certificate, establishes the authenticated mesh, opens the
+process-2 runtime-event/control owners and native client, and checks the authority
+identity again. Only after all of those owners exist does the linear transition
+release the exact retained `ArmViewTimer` effect to the pacemaker.
+
+The candidate CLI never infers this mode from files. Process 2 requires an explicit
+peer-lease socket plus canonical nonzero SHA-256 identities for the ReadySet, Start
+certificate and live fence; a second restart/process 3 is rejected. Each of the
+seven RecoveryReady/RecoveryStart statements is signed on its own validator with
+its local candidate key, while only the selected target aggregates and create-new
+persists the two certificates. The coordinator transports bounded public statement
+bytes and verifies each copy; it never receives a validator private key.
+
+This is a normal bounded candidate continuation after the deliberate status-75
+process-1 handoff, not a production constructor. It does not enable public-testnet,
+release, economic weight, HSM custody or production activation, and it does not
+remove the standard production binary's fail-closed gate. The restart catch-up
+reference codec remains non-authorizing; normal native-client replay/import remains
+the implemented application transfer path.
 
 The bounded validator entry family consumes `ConsensusRunRequestV1`, containing
 the loaded configuration, duration, block budget and report target. Existing

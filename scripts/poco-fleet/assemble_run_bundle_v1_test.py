@@ -18,6 +18,7 @@ import check_run_bundle as checker  # noqa: E402
 import check_run_bundle_test as fixture  # noqa: E402
 import check_run_evidence  # noqa: E402
 import evidence_bundle_profiles_v1 as profiles  # noqa: E402
+import fault_evidence_semantics_v1 as fault_semantics  # noqa: E402
 
 
 def expect_failure(action, contains: str) -> None:
@@ -292,7 +293,10 @@ def main() -> None:
         )
         mixed_plan = assembler.plan(mixed_document, anchor)
         assert mixed_plan["active_assembly_supported"] is False
-        assert len(mixed_plan["authority_blockers"]) == 6
+        assert (
+            mixed_plan["authority_blockers"]
+            == fault_semantics.bundle_assembly_blockers()
+        )
         policies = {item["kind"]: item for item in mixed_plan["fault_evidence_policy"]}
         assert policies["leader_loss"]["primary_journal_applied_recovered"] is True
         assert policies["validator_process_kill"]["primary_journal_applied_recovered"] is False

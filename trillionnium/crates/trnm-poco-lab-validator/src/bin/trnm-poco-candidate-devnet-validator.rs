@@ -31,10 +31,19 @@ fn main() -> ExitCode {
             print!("{CANDIDATE_DEVNET_USAGE_V1}");
             ExitCode::SUCCESS
         }
-        CandidateDevnetCliActionV1::Run(arguments) => match run_candidate_devnet_v1(arguments) {
+        CandidateDevnetCliActionV1::Run(arguments) => match run_candidate_devnet_v1(*arguments) {
             Ok(CandidateDevnetRunOutcomeV1::CompletedReport(path)) => {
                 println!(
                     "candidate_devnet_completed candidate_only=true single_lan=true external_peer_fence=true local_test_keys=true production_candidate={} production_consensus_activation={} report={}",
+                    PRODUCTION_CANDIDATE,
+                    PRODUCTION_CONSENSUS_ACTIVATION,
+                    path.display(),
+                );
+                ExitCode::SUCCESS
+            }
+            Ok(CandidateDevnetRunOutcomeV1::RecoveredProcess2CompletedReport(path)) => {
+                println!(
+                    "candidate_devnet_process2_completed candidate_only=true process_instance=2 external_peer_fence=true local_test_keys=true production_candidate={} production_consensus_activation={} report={}",
                     PRODUCTION_CANDIDATE,
                     PRODUCTION_CONSENSUS_ACTIVATION,
                     path.display(),

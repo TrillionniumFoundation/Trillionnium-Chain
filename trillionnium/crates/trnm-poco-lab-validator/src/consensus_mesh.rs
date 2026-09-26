@@ -1612,7 +1612,7 @@ impl MeshFenceRegistryV1 {
             bail!("mesh frame path has no admitted external lease");
         };
         if entry.external_release_confirmed {
-            bail!("mesh external lease is pending host-attestation release")
+            bail!("mesh external lease is pending host attestation release")
         }
         let mut token = entry.token;
         if token.scope().local() != self.local || token.scope().context() != self.context {
@@ -1693,7 +1693,7 @@ impl MeshFenceRegistryV1 {
             return Ok(MeshFenceRenewalOutcomeV1::Missing);
         };
         if entry.external_release_confirmed {
-            bail!("mesh external lease is pending host-attestation release")
+            bail!("mesh external lease is pending host attestation release")
         }
         if entry.token.scope().local() != self.local
             || entry.token.scope().context() != self.context
@@ -1829,7 +1829,7 @@ impl MeshFenceRegistryV1 {
             .copied()
             .ok_or_else(|| anyhow!("mesh renew has no admitted external lease"))?;
         if entry.external_release_confirmed {
-            bail!("mesh external lease is pending host-attestation release")
+            bail!("mesh external lease is pending host attestation release")
         }
         if let Some(host_attestation) = &self.host_attestation {
             if entry.host_release_confirmed {

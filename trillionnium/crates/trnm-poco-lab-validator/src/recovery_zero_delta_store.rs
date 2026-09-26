@@ -34,8 +34,8 @@ use std::{
 use anyhow::{bail, ensure, Context, Result};
 use sha2::{Digest, Sha256};
 use trnm_consensus_types::{
-    decode_recovery_zero_delta_cut_v1_exact, RecoveryContextV1, RecoveryModeV1,
-    RecoveryZeroDeltaCutV1, ValidatorSet, MAX_RECOVERY_ZERO_DELTA_CUT_BYTES_V1,
+    decode_recovery_zero_delta_cut_v1_exact, RecoveryContextV1, RecoveryContextV1Fields,
+    RecoveryModeV1, RecoveryZeroDeltaCutV1, ValidatorSet, MAX_RECOVERY_ZERO_DELTA_CUT_BYTES_V1,
 };
 
 const RECOVERY_ZERO_DELTA_CUT_FILE_V1: &str = "recovery-zero-delta-cut-v1.bin";
@@ -83,6 +83,7 @@ impl StoredRecoveryZeroDeltaCutV1 {
         self.artifact_sha256
     }
 
+    #[cfg(test)]
     pub(crate) fn path_v1(&self) -> &Path {
         &self.pinned.path
     }
@@ -191,6 +192,63 @@ pub(crate) fn load_recovery_zero_delta_cut_v1(
         context: *expected_context,
         artifact_sha256: observed_sha256,
     })
+}
+
+pub(crate) fn recovery_context_from_zero_delta_cut_v1(
+    artifact_sha256: [u8; 32],
+    cut: &RecoveryZeroDeltaCutV1,
+    validator_set: &ValidatorSet,
+) -> Result<RecoveryContextV1> {
+    ensure!(
+        artifact_sha256 != [0; 32],
+        "zero-delta artifact SHA-256 is zero"
+    );
+    let fields = cut.fields();
+    let context = RecoveryContextV1::new_direct7(
+        RecoveryContextV1Fields {
+            mode: RecoveryModeV1::ZeroDelta,
+            campaign_context_sha256: fields.campaign_context_sha256,
+            fleet_start_certificate_sha256: fields.fleet_start_certificate_sha256,
+            validator_set_id: fields.validator_set_id,
+            validator_set_artifact_sha256: fields.validator_set_artifact_sha256,
+            restart_cut_artifact_sha256: fields.restart_cut_artifact_sha256,
+            restart_park_artifact_sha256: fields.restart_park_artifact_sha256,
+            restart_parked_ack_artifact_sha256: fields.restart_parked_ack_artifact_sha256,
+            restart_parked_ack_admission_set_sha256: fields.restart_parked_ack_admission_set_sha256,
+            caught_up_cut_artifact_sha256: artifact_sha256,
+            target_validator: fields.target_validator,
+            process_instance: fields.process_instance,
+            recovery_nonce: fields.recovery_nonce,
+            restart_cut_epoch: fields.source_epoch,
+            restart_cut_height: fields.source_height,
+            restart_cut_block_id: fields.source_block_id,
+            restart_cut_state_root: fields.source_state_root,
+            restart_cut_chain_root: fields.source_finalized_chain_root,
+            terminal_epoch: fields.terminal_epoch,
+            terminal_height: fields.terminal_height,
+            terminal_block_id: fields.terminal_block_id,
+            terminal_state_root: fields.terminal_state_root,
+            terminal_chain_root: fields.terminal_finalized_chain_root,
+            node_facts_sha256: fields.node_facts_sha256,
+        },
+        validator_set,
+    )
+    .map_err(|error| anyhow::anyhow!("construct zero-delta recovery context: {error}"))?;
+    validate_cut_context_join_v1(artifact_sha256, cut, &context, validator_set)?;
+    Ok(context)
+}
+
+pub(crate) fn read_recovery_zero_delta_material_v1(
+    private_root: &Path,
+    validator_set: &ValidatorSet,
+) -> Result<(RecoveryZeroDeltaCutV1, RecoveryContextV1, [u8; 32])> {
+    let (pinned, bytes, artifact_sha256) = open_and_read_artifact_v1(private_root)?;
+    pinned.revalidate_held_v1()?;
+    let cut = decode_recovery_zero_delta_cut_v1_exact(&bytes, validator_set)
+        .map_err(|error| anyhow::anyhow!("decode stored zero-delta material: {error}"))?;
+    let context = recovery_context_from_zero_delta_cut_v1(artifact_sha256, &cut, validator_set)?;
+    pinned.revalidate_held_v1()?;
+    Ok((cut, context, artifact_sha256))
 }
 
 fn validate_expected_join_v1(

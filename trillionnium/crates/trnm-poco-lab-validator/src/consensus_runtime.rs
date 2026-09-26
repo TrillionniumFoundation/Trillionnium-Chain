@@ -29,7 +29,7 @@ use anyhow::{anyhow, bail, ensure, Context, Result};
 use ed25519_dalek::Signer;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
-use trnm_consensus_core::leader_for;
+use trnm_consensus_core::{leader_for, Effect};
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, ProposalSignatureProducerV0, SignatureProducerV0,
@@ -37,9 +37,9 @@ use trnm_consensus_signer_journal::{
 };
 use trnm_consensus_types::{
     BlockId, ContextAuthorizedQcV0, Epoch, Height, QcRef, QcReferenceV0, QuorumCertificate,
-    RecoveryContextV1, RecoveryContextV1Fields, RecoveryModeV1, RecoveryZeroDeltaCutV1,
-    RecoveryZeroDeltaCutV1Fields, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorId,
-    ValidatorSet, View, RECOVERY_PROCESS_INSTANCE_V1,
+    RecoveryContextV1, RecoveryZeroDeltaCutV1, RecoveryZeroDeltaCutV1Fields, StateRoot,
+    TimeoutCertificateV0, TimeoutVote, ValidatorId, ValidatorSet, View,
+    RECOVERY_PROCESS_INSTANCE_V1,
 };
 use trnm_consensus_unix_fleet_signer::{
     FleetRootPurposeV1, UnixFleetRootSignerConfig, UnixFleetRootSignerProducerV1,
@@ -88,13 +88,17 @@ use crate::{
     pacemaker::GenerationAwarePacemakerV0,
     process_event::{
         LocalRestartParkJournalCommitV1, Process1TargetParkedJournalCutV1,
-        Process2JournalStartedFromRestartCutV1, RuntimeEventErrorV1, RuntimeEventJournalV1,
-        RuntimeEventKindV1, RuntimeEventSignatureProducerV1, RuntimeRestartPhaseV1,
+        Process2JournalStartedFromRestartCutV1, Process2RestartArtifactGuardsV1,
+        RuntimeEventErrorV1, RuntimeEventJournalV1, RuntimeEventKindV1,
+        RuntimeEventSignatureProducerV1, RuntimeRestartPhaseV1,
     },
     recovery_barrier_store::{
         load_recovery_start_certificate_v1, StoredRecoveryStartCertificateV1,
     },
-    recovery_zero_delta_store::{persist_recovery_zero_delta_cut_v1, StoredRecoveryZeroDeltaCutV1},
+    recovery_zero_delta_store::{
+        persist_recovery_zero_delta_cut_v1, recovery_context_from_zero_delta_cut_v1,
+        StoredRecoveryZeroDeltaCutV1,
+    },
     relay::{
         required_ring_relay_hops_v0, ConsensusRelayEnvelopeV0, MAX_RELAY_INNER_PAYLOAD_BYTES_V0,
     },
@@ -102,6 +106,7 @@ use crate::{
         LocalRestartParkV1, RestartCutBodyV1, RestartCutStateV1, RestartParkRoleV1,
         RestartSharedCutV1, SignedRestartCutV1,
     },
+    restart_cut_store::load_fleet_start_certificate_v1,
     restart_park_protocol::{
         AdmittedRestartCutParkV1, AdmittedRestartPrepareV1, DurablyParkedPeerRestartOwnerV1,
         DurablyParkedTargetRestartOwnerV1, OriginatedRestartCutParkV1, OriginatedRestartPrepareV1,
@@ -406,7 +411,10 @@ pub struct Process2RecoveredRuntimeHandoffV1 {
     zero_delta: StoredRecoveryZeroDeltaCutV1,
     coordinator: Process2RecoveryReadyStartCoordinatorV1,
     transition: Process2RecoveryTransitionFactsV1,
+    fence_token_digest: [u8; 32],
     validator_set: ValidatorSet,
+    config: LoadedValidatorConfig,
+    preflight: ConsensusRuntimePreflightV1,
 }
 
 impl Process2RecoveredRuntimeHandoffV1 {
@@ -432,8 +440,9 @@ impl Process2RecoveredRuntimeHandoffV1 {
             .revalidate_fresh_v1(&self.validator_set)
             .context("revalidate retained process2 zero-delta artifact")?;
         ensure!(
-            self.start.context_v1() == self.zero_delta.context_v1(),
-            "process2 Start and zero-delta artifacts differ in recovery context"
+            self.start.context_v1() == self.zero_delta.context_v1()
+                && self.fence_token_digest != [0; 32],
+            "process2 Start/zero-delta/fence prerequisites differ or are zero"
         );
         self.started
             .revalidate_recovery_completed_v1(&self.start)
@@ -448,8 +457,229 @@ impl Process2RecoveredRuntimeHandoffV1 {
                 && head.phase_v1() == Process2RecoveryTransitionPhaseV1::RecoveryStart,
             "process2 transition journal differs from the retained RecoveryStart head"
         );
+        ensure!(
+            self.config.validator_set() == &self.validator_set
+                && self.config.local_validator() == self.start.context_v1().target_validator(),
+            "process2 retained config differs from recovery validator identity"
+        );
+        let request = self.preflight.fleet_campaign_request_v1(&self.config)?;
+        ensure!(
+            request.duration_seconds() == self.preflight.duration_seconds
+                && request.maximum_blocks() == self.preflight.requested_max_blocks
+                && request.target_height() == self.preflight.target_height,
+            "process2 preflight differs from the original bounded campaign"
+        );
         self.runtime.revalidate_archive_v1()?;
         Ok(())
+    }
+
+    fn into_bounded_owner_v1(
+        mut self,
+        external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    ) -> Result<BoundedConsensusOwnerV1> {
+        self.revalidate_v1()?;
+        let observed_fence_digest = external_fence
+            .authority_binding_digest_v1()
+            .map_err(|error| anyhow!("read process2 external-fence identity: {error}"))?;
+        ensure!(
+            observed_fence_digest == self.fence_token_digest,
+            "process2 external-fence identity differs before host reconstruction"
+        );
+        let Self {
+            runtime,
+            started,
+            start,
+            zero_delta,
+            coordinator,
+            transition,
+            fence_token_digest,
+            validator_set,
+            config,
+            preflight,
+        } = self;
+
+        let barrier = rebuild_process2_fleet_barrier_v1(&config, &preflight, start.context_v1())?;
+        let mesh = PersistentAuthenticatedPeerMeshV0::establish_with_fence(
+            &config,
+            MESH_SETUP_TIMEOUT_V1,
+            MESH_IO_TIMEOUT_V1,
+            MESH_QUEUE_CAPACITY_V1,
+            external_fence.clone(),
+        )
+        .context("re-establish externally fenced process2 consensus mesh")?;
+        let (mut event_journal, restart_guards) = started
+            .into_live_journal_after_recovery_start_v1(&start)
+            .map_err(|error| anyhow!("enter process2 live event journal: {error}"))?;
+        let guards = Process2RecoveryHostGuardsV1 {
+            restart_guards,
+            start,
+            zero_delta,
+            coordinator,
+            transition,
+            fence_token_digest,
+            validator_set,
+        };
+        guards.revalidate_v1(&event_journal)?;
+
+        let recovered_runtime_facts = runtime.runtime_facts_v1();
+        let authority = runtime.bind_process_host_authority_v1(|runtime, recovered| {
+            ContinuousValidatorAuthorityV0::from_recovered_process2_runtime_v1(
+                &config,
+                runtime,
+                recovered,
+                preflight.signer_lifetime,
+            )
+            .map_err(|error| error.to_string())
+        })?;
+        ensure!(
+            authority.facts_v1() == recovered_runtime_facts,
+            "process-host authority differs from the exact recovered runtime facts"
+        );
+        authority.revalidate_archive_v1()?;
+
+        let config_ref = &config;
+        let (replay_archive, authority, ready, startup_timer_effect) = authority
+            .activate_after_host_ready_v1(move |authority, recovered| {
+                guards
+                    .revalidate_v1(&event_journal)
+                    .map_err(|error| error.to_string())?;
+                for session in mesh.initial_sessions() {
+                    record_peer_session_v1(&mut event_journal, *session)
+                        .map_err(|error| error.to_string())?;
+                }
+                let runtime_control = RuntimeControlServerV1::bind(
+                    config_ref,
+                    RECOVERY_PROCESS_INSTANCE_V1,
+                    &event_journal,
+                )
+                .map_err(|error| error.to_string())?;
+                write_runtime_control_status_v1(config_ref, &runtime_control, &event_journal)
+                    .map_err(|error| error.to_string())?;
+                let native_client = crate::native_client_runtime::NativeClientRuntimeV1::open_v1(
+                    config_ref, authority,
+                )
+                .map_err(|error| error.to_string())?;
+                if authority
+                    .facts_v0()
+                    .map_err(|error| error.to_string())?
+                    .current_view_v0()
+                    != recovered.startup_timer_view_v1()
+                {
+                    return Err(
+                        "process2 continuous authority changed before host readiness".to_owned(),
+                    );
+                }
+                let final_fence_digest =
+                    external_fence
+                        .authority_binding_digest_v1()
+                        .map_err(|error| {
+                            format!("read final process2 external-fence identity: {error}")
+                        })?;
+                if final_fence_digest != fence_token_digest {
+                    return Err(
+                        "process2 external-fence identity changed before timer release".to_owned(),
+                    );
+                }
+                Ok(Process2HostReadyV1 {
+                    native_client,
+                    mesh,
+                    event_journal,
+                    runtime_control,
+                    barrier,
+                    guards,
+                })
+            })?;
+
+        let Process2HostReadyV1 {
+            native_client,
+            mesh,
+            event_journal,
+            runtime_control,
+            barrier,
+            guards,
+        } = ready;
+        let os_start = RuntimeOsSampleV1::capture_v1()?;
+        BoundedConsensusOwnerV1::new_recovered_process2_v1(
+            config,
+            authority,
+            ConsensusOwnerIoV1 {
+                mesh,
+                event_journal,
+                replay_archive,
+                runtime_control,
+            },
+            barrier,
+            preflight,
+            os_start,
+            native_client,
+            startup_timer_effect,
+            guards,
+        )
+    }
+}
+
+#[must_use = "the process2 recovery lineage must remain pinned for the live host lifetime"]
+struct Process2RecoveryHostGuardsV1 {
+    restart_guards: Process2RestartArtifactGuardsV1,
+    start: StoredRecoveryStartCertificateV1,
+    zero_delta: StoredRecoveryZeroDeltaCutV1,
+    coordinator: Process2RecoveryReadyStartCoordinatorV1,
+    transition: Process2RecoveryTransitionFactsV1,
+    fence_token_digest: [u8; 32],
+    validator_set: ValidatorSet,
+}
+
+impl Process2RecoveryHostGuardsV1 {
+    fn revalidate_v1(&self, event_journal: &RuntimeEventJournalV1) -> Result<()> {
+        self.start
+            .revalidate_fresh_v1(&self.validator_set)
+            .context("revalidate live process2 RecoveryStart artifact")?;
+        self.zero_delta
+            .revalidate_fresh_v1(&self.validator_set)
+            .context("revalidate live process2 zero-delta artifact")?;
+        self.restart_guards
+            .revalidate_with_live_journal_v1(event_journal, &self.start)
+            .map_err(|error| anyhow!("revalidate process2 restart lineage: {error}"))?;
+        let head = self
+            .coordinator
+            .head_v1()
+            .map_err(|error| anyhow!("read live process2 transition head: {error}"))?
+            .context("live process2 transition journal has no durable head")?;
+        ensure!(
+            head == self.transition
+                && head.phase_v1() == Process2RecoveryTransitionPhaseV1::RecoveryStart
+                && self.fence_token_digest != [0; 32],
+            "live process2 transition head or fence prerequisite changed"
+        );
+        Ok(())
+    }
+}
+
+impl std::fmt::Debug for Process2RecoveryHostGuardsV1 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("Process2RecoveryHostGuardsV1")
+            .field("transition", &self.transition)
+            .finish_non_exhaustive()
+    }
+}
+
+struct Process2HostReadyV1 {
+    native_client: Option<crate::native_client_runtime::NativeClientRuntimeV1>,
+    mesh: PersistentAuthenticatedPeerMeshV0,
+    event_journal: RuntimeEventJournalV1,
+    runtime_control: RuntimeControlServerV1,
+    barrier: CompletedFleetBarrierV1,
+    guards: Process2RecoveryHostGuardsV1,
+}
+
+impl std::fmt::Debug for Process2HostReadyV1 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("Process2HostReadyV1")
+            .field("local_validator", &self.mesh.local_validator())
+            .field("process_instance", &self.event_journal.process_instance())
+            .finish_non_exhaustive()
     }
 }
 
@@ -754,39 +984,12 @@ impl RestartCutJoinedProcess2InertOwnerV1 {
             .try_cev1_bytes()
             .map_err(|error| anyhow!("encode exact process2 zero-delta cut: {error}"))?;
         let zero_delta_artifact_sha256: [u8; 32] = Sha256::digest(&zero_delta_bytes).into();
-        let zero_delta_fields = zero_delta.fields();
-        let context = RecoveryContextV1::new_direct7(
-            RecoveryContextV1Fields {
-                mode: RecoveryModeV1::ZeroDelta,
-                campaign_context_sha256,
-                fleet_start_certificate_sha256: zero_delta_fields.fleet_start_certificate_sha256,
-                validator_set_id: zero_delta_fields.validator_set_id,
-                validator_set_artifact_sha256,
-                restart_cut_artifact_sha256,
-                restart_park_artifact_sha256: zero_delta_fields.restart_park_artifact_sha256,
-                restart_parked_ack_artifact_sha256: zero_delta_fields
-                    .restart_parked_ack_artifact_sha256,
-                restart_parked_ack_admission_set_sha256: zero_delta_fields
-                    .restart_parked_ack_admission_set_sha256,
-                caught_up_cut_artifact_sha256: zero_delta_artifact_sha256,
-                target_validator: zero_delta_fields.target_validator,
-                process_instance: RECOVERY_PROCESS_INSTANCE_V1,
-                recovery_nonce,
-                restart_cut_epoch: zero_delta_fields.source_epoch,
-                restart_cut_height: zero_delta_fields.source_height,
-                restart_cut_block_id: zero_delta_fields.source_block_id,
-                restart_cut_state_root: zero_delta_fields.source_state_root,
-                restart_cut_chain_root: zero_delta_fields.source_finalized_chain_root,
-                terminal_epoch: zero_delta_fields.terminal_epoch,
-                terminal_height: zero_delta_fields.terminal_height,
-                terminal_block_id: zero_delta_fields.terminal_block_id,
-                terminal_state_root: zero_delta_fields.terminal_state_root,
-                terminal_chain_root: zero_delta_fields.terminal_finalized_chain_root,
-                node_facts_sha256: zero_delta_fields.node_facts_sha256,
-            },
+        let context = recovery_context_from_zero_delta_cut_v1(
+            zero_delta_artifact_sha256,
+            &zero_delta,
             validator_set,
         )
-        .map_err(|error| anyhow!("construct exact process2 recovery context: {error}"))?;
+        .context("construct exact process2 recovery context")?;
         let stored = persist_recovery_zero_delta_cut_v1(
             config.run_root(),
             zero_delta_artifact_sha256,
@@ -1385,10 +1588,50 @@ pub fn recover_process2_ordinary_runtime_v1(
         zero_delta,
         coordinator,
         transition: start_transition,
+        fence_token_digest,
         validator_set,
+        config,
+        preflight,
     };
     handoff.revalidate_v1()?;
     Ok(handoff)
+}
+
+/// Explicit continuation of the same bounded campaign after the durable
+/// process-1 target handoff and complete RecoveryReady/RecoveryStart barrier.
+pub fn run_recovered_process2_consensus_with_external_fence_v1(
+    request: Process2RecoveryContinuationRequestV1,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    runtime_event_producer: Option<Box<dyn RuntimeEventSignatureProducerV1>>,
+) -> Result<BoundedConsensusRunOutcomeV1> {
+    let owner = thread::Builder::new()
+        .name("trnm-g3-consensus-process2-owner-v1".to_owned())
+        .stack_size(CONTINUOUS_RUNTIME_OWNER_STACK_BYTES_V0)
+        .spawn(move || {
+            let observed_fence_digest =
+                external_fence
+                    .authority_binding_digest_v1()
+                    .map_err(|error| {
+                        anyhow!("read initial process2 external-fence identity: {error}")
+                    })?;
+            ensure!(
+                observed_fence_digest == request.fence_token_digest,
+                "process2 request fence digest differs from the live external authority"
+            );
+            let handoff = recover_process2_ordinary_runtime_v1(request, runtime_event_producer)?;
+            let mut owner = handoff.into_bounded_owner_v1(external_fence)?;
+            match owner.run_and_finish_v1() {
+                Ok(outcome) => Ok(outcome),
+                Err(error) => {
+                    owner.fail_stop_v1();
+                    Err(error)
+                }
+            }
+        })
+        .context("spawn recovered process2 bounded consensus owner thread")?;
+    owner
+        .join()
+        .map_err(|_| anyhow!("recovered process2 bounded consensus owner thread panicked"))?
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -2244,6 +2487,85 @@ impl ConsensusRuntimePreflightV1 {
             bootstrap_initial_cut,
         })
     }
+
+    fn fleet_campaign_request_v1(
+        &self,
+        config: &LoadedValidatorConfig,
+    ) -> Result<FleetCampaignRequestV1> {
+        FleetCampaignRequestV1::new(
+            FLEET_BARRIER_ROUND_V1,
+            config.ordinary_start_height(),
+            crate::fleet_barrier::FleetCampaignTimingV1 {
+                duration_seconds: self.duration_seconds,
+                pacemaker_base_timeout_seconds: PACEMAKER_BASE_TIMEOUT_V1.as_secs(),
+                terminal_drain_allowance_seconds:
+                    CONSENSUS_RUNTIME_TERMINAL_DRAIN_ALLOWANCE_SECONDS_V1,
+                timeout_view_budget_allowance_seconds:
+                    CONSENSUS_RUNTIME_TIMEOUT_VIEW_BUDGET_ALLOWANCE_SECONDS_V1,
+            },
+            self.requested_max_blocks,
+            self.target_height,
+            match self.transport {
+                ConsensusTransportProfileV1::Direct => FleetBarrierTransportV1::Direct,
+                ConsensusTransportProfileV1::SparseRelay { hop_budget } => {
+                    FleetBarrierTransportV1::SparseRelay { hop_budget }
+                }
+            },
+        )
+        .map_err(|error| anyhow!("construct bounded campaign request: {error}"))
+    }
+}
+
+fn rebuild_process2_fleet_barrier_v1(
+    config: &LoadedValidatorConfig,
+    preflight: &ConsensusRuntimePreflightV1,
+    recovery_context: &RecoveryContextV1,
+) -> Result<CompletedFleetBarrierV1> {
+    let certificate = load_fleet_start_certificate_v1(config.run_root(), config.validator_set())
+        .context("reopen original FleetStart certificate for process2")?;
+    let bytes = certificate.encode();
+    let certificate_sha256: [u8; 32] = Sha256::digest(&bytes).into();
+    let context = certificate.ready_set().context();
+    let fields = recovery_context.fields();
+    ensure!(
+        certificate_sha256 == fields.fleet_start_certificate_sha256
+            && context.digest() == fields.campaign_context_sha256
+            && recovery_context.process_instance() == RECOVERY_PROCESS_INSTANCE_V1
+            && recovery_context.target_validator() == config.local_validator(),
+        "process2 recovery context differs from original FleetStart campaign"
+    );
+    let request = preflight.fleet_campaign_request_v1(config)?;
+    ensure!(
+        context.request() == request,
+        "process2 request differs from the original FleetStart campaign"
+    );
+
+    let mut admission =
+        FleetBarrierAdmissionMapV1::new(context.clone(), config.validator_set().clone())
+            .map_err(|error| anyhow!("rebuild process2 FleetStart admission map: {error}"))?;
+    for ready in certificate.ready_set().statements() {
+        admission
+            .admit_ready(ready.clone())
+            .map_err(|error| anyhow!("re-admit original FleetReady statement: {error}"))?;
+    }
+    for start in certificate.statements() {
+        admission
+            .admit_start(start.clone())
+            .map_err(|error| anyhow!("re-admit original FleetStart statement: {error}"))?;
+    }
+    let rebuilt = admission
+        .start_certificate()
+        .map_err(|error| anyhow!("reconstruct original FleetStart certificate: {error}"))?;
+    ensure!(
+        rebuilt == certificate && rebuilt.encode() == bytes,
+        "reconstructed process2 FleetStart certificate differs byte-for-byte"
+    );
+    Ok(CompletedFleetBarrierV1 {
+        admission,
+        start_certificate: certificate,
+        prestarted_ingress: VecDeque::new(),
+        fleet_producer: None,
+    })
 }
 
 fn validate_deployed_core_max_blocks_v1(max_blocks: u64) -> Result<usize> {
@@ -3199,6 +3521,7 @@ struct BoundedConsensusOwnerV1 {
     /// a tiny failure-path ring: it records coordinates and identities only,
     /// never signed payloads or raw consensus bytes.
     timeout_diagnostics: TimeoutDiagnosticRingV1,
+    process2_recovery_guards: Option<Process2RecoveryHostGuardsV1>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -4456,6 +4779,58 @@ impl BoundedConsensusOwnerV1 {
         preflight: ConsensusRuntimePreflightV1,
         os_start: RuntimeOsSampleV1,
     ) -> Result<Self> {
+        let native_client =
+            crate::native_client_runtime::NativeClientRuntimeV1::open_v1(&config, &authority)?;
+        Self::new_with_startup_v1(
+            config,
+            authority,
+            io,
+            barrier,
+            preflight,
+            os_start,
+            native_client,
+            None,
+            None,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn new_recovered_process2_v1(
+        config: LoadedValidatorConfig,
+        authority: ContinuousValidatorAuthorityV0,
+        io: ConsensusOwnerIoV1,
+        barrier: CompletedFleetBarrierV1,
+        preflight: ConsensusRuntimePreflightV1,
+        os_start: RuntimeOsSampleV1,
+        native_client: Option<crate::native_client_runtime::NativeClientRuntimeV1>,
+        startup_timer_effect: Effect,
+        guards: Process2RecoveryHostGuardsV1,
+    ) -> Result<Self> {
+        Self::new_with_startup_v1(
+            config,
+            authority,
+            io,
+            barrier,
+            preflight,
+            os_start,
+            native_client,
+            Some(startup_timer_effect),
+            Some(guards),
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn new_with_startup_v1(
+        config: LoadedValidatorConfig,
+        authority: ContinuousValidatorAuthorityV0,
+        io: ConsensusOwnerIoV1,
+        barrier: CompletedFleetBarrierV1,
+        preflight: ConsensusRuntimePreflightV1,
+        os_start: RuntimeOsSampleV1,
+        native_client: Option<crate::native_client_runtime::NativeClientRuntimeV1>,
+        startup_timer_effect: Option<Effect>,
+        process2_recovery_guards: Option<Process2RecoveryHostGuardsV1>,
+    ) -> Result<Self> {
         let ConsensusOwnerIoV1 {
             mesh,
             event_journal,
@@ -4475,6 +4850,13 @@ impl BoundedConsensusOwnerV1 {
                 && observation.fleet_start_certificate_sha256.is_some(),
             "consensus owner was constructed before durable FleetStarted"
         );
+        if let Some(guards) = process2_recovery_guards.as_ref() {
+            ensure!(
+                event_journal.process_instance() == RECOVERY_PROCESS_INSTANCE_V1,
+                "recovered owner did not retain process instance two"
+            );
+            guards.revalidate_v1(&event_journal)?;
+        }
         let high_qc = initial.high_qc_v0();
         let initial_consensus_view = initial.current_view_v0().get();
         let maximum_archivable_view = initial_consensus_view
@@ -4496,16 +4878,25 @@ impl BoundedConsensusOwnerV1 {
         let nominal_deadline = started_at
             .checked_add(preflight.duration)
             .ok_or_else(|| anyhow!("bounded consensus deadline overflows"))?;
-        arm_pacemaker_for_facts_v1(
-            &mut pacemaker,
-            config.validator_set().epoch(),
-            initial,
-            started_at,
-        )?;
-        let highest_submitted_height = config
-            .ordinary_start_height()
-            .checked_sub(1)
-            .expect("ordinary start height was validated as positive");
+        match startup_timer_effect {
+            None => arm_pacemaker_for_facts_v1(
+                &mut pacemaker,
+                config.validator_set().epoch(),
+                initial,
+                started_at,
+            )?,
+            Some(Effect::ArmViewTimer { epoch, view }) => {
+                ensure!(
+                    process2_recovery_guards.is_some()
+                        && epoch == config.validator_set().epoch()
+                        && view == initial.current_view_v0(),
+                    "recovered Core startup timer differs from process2 continuous authority"
+                );
+                let _ = pacemaker.arm(epoch, view, started_at)?;
+            }
+            Some(_) => bail!("recovered Core startup owner yielded a non-timer effect"),
+        }
+        let highest_submitted_height = initial.proposal_parent_height_v0();
         let reconstructed_start = barrier
             .admission
             .start_certificate()
@@ -4563,8 +4954,6 @@ impl BoundedConsensusOwnerV1 {
         } else {
             None
         };
-        let native_client =
-            crate::native_client_runtime::NativeClientRuntimeV1::open_v1(&config, &authority)?;
         Ok(Self {
             native_client,
             config,
@@ -4612,11 +5001,15 @@ impl BoundedConsensusOwnerV1 {
             network_rx_bytes: 0,
             preflight,
             timeout_diagnostics: TimeoutDiagnosticRingV1::default(),
+            process2_recovery_guards,
         })
     }
 
     fn run_and_finish_v1(&mut self) -> Result<BoundedConsensusRunOutcomeV1> {
-        match self.run_loop_v1()? {
+        self.revalidate_process2_lineage_v1()?;
+        let outcome = self.run_loop_v1()?;
+        self.revalidate_process2_lineage_v1()?;
+        match outcome {
             BoundedConsensusLoopOutcomeV1::NormalTerminal => self
                 .finish_v1()
                 .map(BoundedConsensusRunOutcomeV1::CompletedReport),
@@ -4625,6 +5018,17 @@ impl BoundedConsensusOwnerV1 {
                 .map(Box::new)
                 .map(BoundedConsensusRunOutcomeV1::Process1TargetParked),
         }
+    }
+
+    fn revalidate_process2_lineage_v1(&self) -> Result<()> {
+        if let Some(guards) = self.process2_recovery_guards.as_ref() {
+            guards.revalidate_v1(&self.event_journal)?;
+            ensure!(
+                self.event_journal.process_instance() == RECOVERY_PROCESS_INSTANCE_V1,
+                "recovered process2 owner changed its process instance"
+            );
+        }
+        Ok(())
     }
 
     fn run_loop_v1(&mut self) -> Result<BoundedConsensusLoopOutcomeV1> {
@@ -5119,6 +5523,10 @@ impl BoundedConsensusOwnerV1 {
         &mut self,
         action: RoutedRestartProtocolActionV1,
     ) -> Result<bool> {
+        ensure!(
+            self.process2_recovery_guards.is_none(),
+            "a second restart/process3 is outside the bounded two-process contract"
+        );
         self.require_direct_seven_restart_park_v1()?;
         let phase = action.phase();
         let admitted = action.into_admitted_message_v1();
@@ -5558,6 +5966,10 @@ impl BoundedConsensusOwnerV1 {
         &mut self,
         intent: RuntimeRestartPrepareIntentV1,
     ) -> Result<bool> {
+        ensure!(
+            self.process2_recovery_guards.is_none(),
+            "a second restart/process3 is outside the bounded two-process contract"
+        );
         self.require_direct_seven_restart_park_v1()?;
         ensure!(
             intent.process_instance_v1() == self.event_journal.process_instance()

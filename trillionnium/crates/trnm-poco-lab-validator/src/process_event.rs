@@ -3469,6 +3469,30 @@ impl Process2JournalStartedFromRestartCutV1 {
         Ok(())
     }
 
+    /// Consumes the completed process-2 recovery owner into the live event
+    /// journal plus the still-linear RestartCut/Park/ParkedAck guards. The
+    /// caller cannot obtain the journal unless the exact RecoveryStart artifact
+    /// and complete signed lineage are freshly revalidated.
+    pub(crate) fn into_live_journal_after_recovery_start_v1(
+        mut self,
+        start: &StoredRecoveryStartCertificateV1,
+    ) -> Result<(RuntimeEventJournalV1, Process2RestartArtifactGuardsV1), RuntimeEventErrorV1> {
+        self.revalidate_recovery_completed_v1(start)?;
+        let Self {
+            journal,
+            stored,
+            restart_prepare_request_sha256,
+            journal_start_head,
+        } = self;
+        let guards = Process2RestartArtifactGuardsV1 {
+            stored,
+            restart_prepare_request_sha256,
+            journal_start_head,
+        };
+        guards.revalidate_with_live_journal_v1(&journal, start)?;
+        Ok((journal, guards))
+    }
+
     /// Narrow fail-stop sink used only after the consuming full-recovery join.
     /// It does not expose a general mutable journal, signer, timer, or network
     /// handle to the joined owner.
@@ -3479,6 +3503,131 @@ impl Process2JournalStartedFromRestartCutV1 {
     ) -> Result<SignedRuntimeEventV1, RuntimeEventErrorV1> {
         self.journal
             .append(RuntimeEventKindV1::SafetyHalted, subject, value)
+    }
+}
+
+/// Non-cloneable retained restart artifacts after the mutable process-2 event
+/// journal enters the live host. These guards preserve the original file owners
+/// and can freshly join them to the current signed journal and RecoveryStart.
+#[must_use = "process2 restart artifacts must remain pinned for the live host lifetime"]
+pub(crate) struct Process2RestartArtifactGuardsV1 {
+    stored: ReopenedRestartCutParkAckCertificatesV1,
+    restart_prepare_request_sha256: [u8; 32],
+    journal_start_head: (u64, [u8; 32]),
+}
+
+impl fmt::Debug for Process2RestartArtifactGuardsV1 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("Process2RestartArtifactGuardsV1")
+            .field(
+                "restart_cut_artifact_sha256",
+                &hex::encode(self.stored.stored_cut_park.cut_artifact_sha256_v1()),
+            )
+            .field(
+                "restart_park_artifact_sha256",
+                &hex::encode(self.stored.stored_cut_park.park_artifact_sha256_v1()),
+            )
+            .field(
+                "restart_parked_ack_artifact_sha256",
+                &hex::encode(self.stored.stored_ack.artifact_sha256_v1()),
+            )
+            .field("journal_start_head", &self.journal_start_head)
+            .finish_non_exhaustive()
+    }
+}
+
+impl Process2RestartArtifactGuardsV1 {
+    pub(crate) fn revalidate_with_live_journal_v1(
+        &self,
+        journal: &RuntimeEventJournalV1,
+        start: &StoredRecoveryStartCertificateV1,
+    ) -> Result<(), RuntimeEventErrorV1> {
+        self.stored.revalidate_fresh_v1()?;
+        let cut_park = self.stored.stored_cut_park_v1();
+        let stored_ack = self.stored.stored_ack_v1();
+        let named_file = journal.reopen_exact_named_journal_v1()?;
+        let events = read_exact_events(&named_file)?;
+        let recovered = validate_event_chain(&events, &journal.context)?;
+        let ancestry = process2_restart_ancestry_v1(&events)?;
+        let journal_witness =
+            process2_target_parked_ack_journal_witness_v1(&events, &journal.context)?;
+        let target_phase = recovered
+            .state
+            .cut_park_facts_v1()
+            .is_some_and(|facts| facts.preparation.role_v1() == RestartParkRoleV1::Target);
+        if !target_phase
+            || recovered.process_instance != 2
+            || recovered.state.current_instance != 2
+            || recovered.state.clean_stop
+            || recovered.state.safety_halted
+            || recovered.process_instance != journal.process_instance
+            || recovered.next_sequence != journal.next_sequence
+            || recovered.previous_event_sha256 != journal.previous_event_sha256
+            || recovered.last_monotonic_ns != journal.last_monotonic_ns
+            || recovered.state != journal.state
+            || journal_witness != self.stored.journal_witness
+            || ancestry.request_sha256 != self.restart_prepare_request_sha256
+            || ancestry.restart_event_head != self.journal_start_head
+            || ancestry.cut_park.cut_artifact_sha256 != cut_park.cut_artifact_sha256_v1()
+            || ancestry.cut_park.park_artifact_sha256 != cut_park.park_artifact_sha256_v1()
+            || ancestry.cut_park.body_sha256 != cut_park.body_v1().digest()
+            || ancestry.cut_park.admission_set_sha256 != cut_park.admission_set_sha256_v1()
+            || ancestry.park.local_park_statement_sha256
+                != cut_park.local_park_statement_sha256_v1()
+            || ancestry.parked_ack.ack_certificate_sha256 != stored_ack.artifact_sha256_v1()
+            || ancestry.parked_ack.local_ack_statement_sha256
+                != stored_ack.local_statement_sha256_v1()
+            || ancestry.parked_ack.ack_admission_set_sha256
+                != self.stored.ack_admission_set_sha256_v1()
+            || ancestry.parked_ack_event_head
+                != (
+                    self.stored.journal_witness.parked_ack_event_sequence,
+                    self.stored.journal_witness.parked_ack_event_sha256,
+                )
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "live process2 journal changed across its retained restart artifacts",
+            ));
+        }
+
+        let completed = match recovered.state.restart {
+            RuntimeRestartJournalStateV1::RecoveryCompleted(facts) => facts,
+            _ => {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "live process2 journal is not at the exact RecoveryStart phase",
+                ));
+            }
+        };
+        let validator_set = journal.context.validator_set.clone();
+        start.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid(
+                "live process2 stored RecoveryStart failed authenticated readback",
+            )
+        })?;
+        let context = start.context_v1();
+        let expected_count = u64::try_from(validator_set.validators().len())
+            .map_err(|_| RuntimeEventErrorV1::Invalid("validator count overflows"))?;
+        if completed.subject.start_certificate_artifact_sha256 != start.artifact_sha256_v1()
+            || completed.subject.ready_set_artifact_sha256 != start.ready_set_artifact_sha256_v1()
+            || completed.subject.recovery_context_sha256 != context.digest()
+            || completed.ready.subject.ready_set_artifact_sha256
+                != start.ready_set_artifact_sha256_v1()
+            || completed.ready.subject.recovery_context_sha256 != context.digest()
+            || completed.statement_count != expected_count
+            || completed.ready.statement_count != expected_count
+            || start.ready_set_v1().context() != context
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "live process2 journal differs from its retained RecoveryStart artifact",
+            ));
+        }
+        start.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid(
+                "live process2 stored RecoveryStart changed during readback",
+            )
+        })?;
+        Ok(())
     }
 }
 
@@ -9072,6 +9221,15 @@ mod tests {
             );
         }
         assert!(events.iter().all(|event| event.process_instance <= 2));
+        let before_live_split = fs::read(&journal_path).unwrap();
+        let (live_journal, restart_guards) = process2
+            .into_live_journal_after_recovery_start_v1(&stored_start)
+            .unwrap();
+        restart_guards
+            .revalidate_with_live_journal_v1(&live_journal, &stored_start)
+            .unwrap();
+        assert_eq!(fs::read(&journal_path).unwrap(), before_live_split);
+        assert_eq!(live_journal.process_instance(), 2);
     }
 
     #[test]

@@ -50,9 +50,10 @@ use trnm_native_execution_v0::{DurableNativeApplicationV0, NativeApplicationConf
 #[cfg(feature = "safety-rules-sidecar")]
 use trnm_poco_node::SafetyRulesSemanticSidecarV1;
 use trnm_poco_node::{
-    PocoNodeLabAuthorityPhaseV0, PocoNodeLabCertificateAdvanceV0,
-    PocoNodeLabOrdinaryProposalRuntimeV0, PocoNodeLabPhaseFactsV0, PocoNodeLabSignedTimeoutOwnerV0,
-    PocoNodeLabSignedVoteOwnerV0, PocoNodeLabTerminalCutV0, PocoNodeLabTerminalOwnerV0,
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1, PocoNodeLabAuthorityPhaseV0,
+    PocoNodeLabCertificateAdvanceV0, PocoNodeLabOrdinaryProposalRuntimeV0, PocoNodeLabPhaseFactsV0,
+    PocoNodeLabSignedTimeoutOwnerV0, PocoNodeLabSignedVoteOwnerV0, PocoNodeLabTerminalCutV0,
+    PocoNodeLabTerminalOwnerV0,
 };
 #[cfg(test)]
 use trnm_poco_node::{
@@ -1501,6 +1502,87 @@ impl ContinuousValidatorAuthorityV0 {
             runtime,
             signer_lifetime,
         )
+    }
+
+    /// Rebinds the exact process-2 recovered ordinary runtime to the
+    /// continuous authority without re-commissioning h1 or guessing a new
+    /// ordinary-start coordinate.
+    ///
+    /// The Node carrier already joined Core/Safety/application/signer/
+    /// checkpoint/proposal state.  This constructor nevertheless performs the
+    /// continuous layer's own fresh signer-inventory audit and requires the
+    /// resulting Ready/direct-high-QC facts to equal the retained recovery
+    /// projection before returning authority.
+    pub fn from_recovered_process2_runtime_v1(
+        config: &LoadedValidatorConfig,
+        runtime: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
+        recovered: PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
+        signer_lifetime: ContinuousSignerLifetimeBoundsV0,
+    ) -> Result<Self> {
+        let runtime_facts = runtime.facts_v0();
+        ensure!(
+            runtime_facts == recovered.runtime_v1(),
+            "process2 recovered runtime differs from its retained facts"
+        );
+        let activation = recovered.activation_v1();
+        ensure!(
+            config.validator_set().epoch() == recovered.startup_timer_epoch_v1()
+                && runtime_facts.current_view_v0() == recovered.startup_timer_view_v1()
+                && runtime_facts.proposal_parent_block_id_v0()
+                    == activation.application_parent_block_id_v1()
+                && runtime_facts.proposal_parent_height_v0()
+                    == activation.application_parent_height_v1(),
+            "process2 recovered runtime differs from activation/timer coordinates"
+        );
+        let ordinary_start_height = runtime_facts
+            .proposal_parent_height_v0()
+            .checked_add(1)
+            .context("process2 recovered proposal-parent height overflows")?;
+        let authority = Self::from_takeover_parts_v0(
+            config.local_validator(),
+            config.validator_set().clone(),
+            *config.consensus_parameters(),
+            config.consensus_signing_key().clone(),
+            ordinary_start_height,
+            runtime,
+            signer_lifetime,
+        )?;
+        let facts = authority
+            .facts_v0()
+            .context("freshly audit process2 continuous authority")?;
+        ensure!(
+            facts.local_validator_v0() == config.local_validator()
+                && facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready
+                && facts.pending_timeout_certificate_id_v0().is_none()
+                && facts.current_view_v0() == runtime_facts.current_view_v0()
+                && facts.high_qc_v0().block_id() == runtime_facts.proposal_parent_block_id_v0()
+                && facts.high_qc_v0().height().get() == runtime_facts.proposal_parent_height_v0()
+                && facts.finalized_block_id_v0() == runtime_facts.finalized_block_id_v0()
+                && facts.finalized_height_v0() == runtime_facts.finalized_height_v0()
+                && facts.application_applied_block_id_v0()
+                    == runtime_facts.application_applied_block_id_v0()
+                && facts.application_applied_height_v0()
+                    == runtime_facts.application_applied_height_v0()
+                && facts.proposal_parent_block_id_v0()
+                    == runtime_facts.proposal_parent_block_id_v0()
+                && facts.proposal_parent_height_v0() == runtime_facts.proposal_parent_height_v0(),
+            "process2 continuous authority differs from recovered Core/application facts"
+        );
+        ensure!(
+            activation.signer_durable_vote_intent_count_v1()
+                == activation.signer_signed_vote_intent_count_v1()
+                && activation.signer_durable_timeout_intent_count_v1()
+                    == activation.signer_signed_timeout_intent_count_v1()
+                && facts.signer_exact_watermark_v1() == activation.signer_exact_watermark_v1()
+                && facts.signed_vote_intents_v0()
+                    == activation.signer_signed_vote_intent_count_v1()
+                && facts.signed_timeout_intents_v0()
+                    == activation.signer_signed_timeout_intent_count_v1()
+                && facts.authenticated_signer_inventory_digest_v1()
+                    == activation.signer_inventory_digest_v1(),
+            "fresh process2 continuous signer inventory differs from recovered activation"
+        );
+        Ok(authority)
     }
 
     /// Binds an already commissioned native takeover runtime to an injected

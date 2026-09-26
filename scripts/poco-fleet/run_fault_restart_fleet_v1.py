@@ -44,8 +44,9 @@ import mesh_resource_preflight_v1 as mesh_resources  # noqa: E402
 
 
 SCHEMA_VERSION = 1
-PROFILE = "poco-g3-seven-validator-fault-restart-campaign-v1"
-SELECTED_PROFILE = "poco-g3-seven-validator-connectivity-subset-v1"
+PROFILE = fault_semantics.FULL_CAMPAIGN_PROFILE
+SELECTED_PROFILE = fault_semantics.CONNECTIVITY_PROFILE
+RESTART_PROFILE = fault_semantics.RESTART_PROFILE
 FAULT_ORDER = fault_semantics.FAULT_ORDER
 RESTART_FAULT = "validator_process_kill"
 CONTROL_STATUS_FILE = "runtime-control-status.json"
@@ -172,6 +173,40 @@ class SavedControlLocatorV1:
 
     status: dict[str, Any]
     raw_sha256: str
+
+
+@dataclasses.dataclass(frozen=True)
+class Process2ResumeArtifactsV1:
+    ready_set_artifact_sha256: str
+    start_certificate_artifact_sha256: str
+    fence_token_digest: str
+
+
+def validate_process2_resume_artifacts_v1(
+    value: Process2ResumeArtifactsV1,
+) -> Process2ResumeArtifactsV1:
+    for field in dataclasses.fields(value):
+        digest = getattr(value, field.name)
+        if (
+            not isinstance(digest, str)
+            or HEX64.fullmatch(digest) is None
+            or digest == "0" * 64
+        ):
+            fail(f"process2 {field.name} is not one nonzero SHA-256")
+    return value
+
+
+def process2_resume_arguments_v1(value: Process2ResumeArtifactsV1) -> list[str]:
+    value = validate_process2_resume_artifacts_v1(value)
+    return [
+        "--resume-process2",
+        "--recovery-ready-set-sha256",
+        value.ready_set_artifact_sha256,
+        "--recovery-start-certificate-sha256",
+        value.start_certificate_artifact_sha256,
+        "--recovery-fence-token-sha256",
+        value.fence_token_digest,
+    ]
 
 
 def fail(message: str) -> None:
@@ -387,10 +422,15 @@ def campaign_plan(
             or any(not isinstance(value, str) or HEX64.fullmatch(value) is None for value in candidate.values())):
             fail("selected campaign lacks source-bound candidate identity")
         plan.update(
-            schema_version=2, profile=SELECTED_PROFILE, campaign=campaign,
-            candidate=dict(candidate), topology_sha256=hashlib.sha256(base.canonical_json(topology)).hexdigest(),
+            schema_version=2,
+            profile=fault_semantics.campaign_profile(campaign),
+            campaign=campaign,
+            candidate=dict(candidate),
+            topology_sha256=hashlib.sha256(base.canonical_json(topology)).hexdigest(),
             fault_evidence_policy=[fault_semantics.policy_for(kind).plan_record() for kind in kinds],
-            active_campaign_supported=True, authority_blockers=[], restart_count=0,
+            active_campaign_supported=True,
+            authority_blockers=[],
+            restart_count=1 if campaign == "restart" else 0,
             full_matrix_authority_blockers=fault_semantics.active_campaign_blockers(),
             selected_campaign_completed=False, fault_restart_profile_completed=False,
             **facts,
@@ -694,6 +734,592 @@ def remote_or_local_command(
         process.management,
         f"set -eu; exec {command}",
     ]
+
+
+RECOVERY_MATERIAL_RESULT_KEYS = {
+    "schema_version",
+    "status",
+    "run_id",
+    "validator_id",
+    "validator_set_id",
+    "path",
+    "artifact_sha256",
+    "context_digest",
+    "predecessor_artifact_sha256",
+    "candidate_only",
+    "production_activation",
+}
+PEER_LEASE_BINDING_RESULT_KEYS = {
+    "schema_version",
+    "status",
+    "binding_digest",
+    "candidate_only",
+    "production_activation",
+}
+
+
+def recovery_material_root_v1(
+    process: base.ValidatorProcess, stage: base.HostStage
+) -> str:
+    return exact_remote_root(f"{validator_root(process, stage)}/recovery-material-v1")
+
+
+def recovery_material_path_v1(
+    process: base.ValidatorProcess,
+    stage: base.HostStage,
+    name: str,
+) -> str:
+    if not re.fullmatch(r"[a-z0-9][a-z0-9_.-]{0,126}", name):
+        fail("recovery material file name is unsafe")
+    return exact_remote_root(f"{recovery_material_root_v1(process, stage)}/{name}")
+
+
+def create_recovery_material_root_v1(
+    *,
+    process: base.ValidatorProcess,
+    stage: base.HostStage,
+    io_root: pathlib.Path,
+    label: str,
+) -> str:
+    root = recovery_material_root_v1(process, stage)
+    if stage.remote:
+        validate_management(process.management)
+        quoted = base.shell_path(root)
+        run_file_backed(
+            [
+                "ssh",
+                "-o",
+                "BatchMode=yes",
+                "-o",
+                "ConnectTimeout=15",
+                process.management,
+                (
+                    f"set -eu; test ! -e {quoted}; test ! -L {quoted}; "
+                    f"mkdir -m 700 -- {quoted}; test -d {quoted}; test ! -L {quoted}; "
+                    f'test "$(stat -c %a -- {quoted})" = 700'
+                ),
+            ],
+            io_root=io_root,
+            label=label,
+            timeout=30,
+        )
+    else:
+        path = pathlib.Path(root)
+        path.mkdir(mode=0o700, parents=False, exist_ok=False)
+        metadata = path.lstat()
+        if path.is_symlink() or not path.is_dir() or metadata.st_mode & 0o7777 != 0o700:
+            raise RuntimeError("local recovery material root is not one private directory")
+    return root
+
+
+def copy_to_validator_v1(
+    *,
+    process: base.ValidatorProcess,
+    stage: base.HostStage,
+    source: pathlib.Path,
+    target: str,
+    io_root: pathlib.Path,
+    label: str,
+) -> None:
+    source_metadata = source.lstat()
+    if (
+        source.is_symlink()
+        or not source.is_file()
+        or source_metadata.st_nlink != 1
+        or source_metadata.st_size <= 0
+        or source_metadata.st_size > MAX_CONTROL_BYTES
+    ):
+        raise RuntimeError("recovery material source is not one bounded regular file")
+    source_sha256 = base.sha256_file(source)
+    exact_remote_root(target)
+    if stage.remote:
+        validate_management(process.management)
+        quoted = base.shell_path(target)
+        run_file_backed(
+            [
+                "ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=15",
+                process.management,
+                f"set -eu; test ! -e {quoted}; test ! -L {quoted}",
+            ],
+            io_root=io_root,
+            label=f"{label}-preflight",
+            timeout=30,
+        )
+        run_file_backed(
+            ["scp", "-q", str(source), f"{process.management}:{target}"],
+            io_root=io_root,
+            label=f"{label}-copy",
+            timeout=60,
+        )
+        verify = run_file_backed(
+            [
+                "ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=15",
+                process.management,
+                (
+                    f"set -eu; chmod 600 -- {quoted}; test -f {quoted}; "
+                    f'test ! -L {quoted}; test "$(stat -c %h -- {quoted})" = 1; '
+                    f'test "$(stat -c %a -- {quoted})" = 600; sha256sum -- {quoted}'
+                ),
+            ],
+            io_root=io_root,
+            label=f"{label}-verify",
+            timeout=30,
+        )
+        observed = verify.stdout.decode("ascii", errors="strict").split()[0]
+        if observed != source_sha256:
+            raise RuntimeError("remote recovery material digest differs after copy")
+        return
+    target_path = pathlib.Path(target)
+    if target_path.exists() or target_path.is_symlink():
+        raise RuntimeError("local recovery material target already exists")
+    shutil.copyfile(source, target_path)
+    target_path.chmod(0o600)
+    metadata = target_path.lstat()
+    if (
+        target_path.is_symlink()
+        or not target_path.is_file()
+        or metadata.st_nlink != 1
+        or metadata.st_mode & 0o7777 != 0o600
+        or base.sha256_file(target_path) != source_sha256
+    ):
+        raise RuntimeError("local recovery material differs after copy")
+
+
+def run_validator_cli_v1(
+    *,
+    process: base.ValidatorProcess,
+    stage: base.HostStage,
+    binary: str,
+    command: str,
+    arguments: list[str],
+    io_root: pathlib.Path,
+    label: str,
+    timeout: int = 60,
+) -> FileResultV1:
+    base.shell_path(binary)
+    return run_file_backed(
+        remote_or_local_command(
+            process,
+            stage,
+            [
+                binary,
+                command,
+                validator_root(process, stage),
+                validator_config(process, stage),
+                *arguments,
+            ],
+        ),
+        io_root=io_root,
+        label=label,
+        timeout=timeout,
+        bound=MAX_CONTROL_BYTES,
+    )
+
+
+def exact_recovery_material_result_v1(
+    value: object,
+    *,
+    command: str,
+    process: base.ValidatorProcess,
+    run_id: str,
+    expected_path: str,
+) -> dict[str, Any]:
+    if not isinstance(value, dict) or set(value) != RECOVERY_MATERIAL_RESULT_KEYS:
+        fail("recovery material result keys differ from contract")
+    optional_digests = ("context_digest", "predecessor_artifact_sha256")
+    if (
+        value["schema_version"] != 1
+        or value["status"] != command
+        or value["run_id"] != run_id
+        or value["validator_id"] != process.validator_id
+        or not isinstance(value["validator_set_id"], str)
+        or HEX64.fullmatch(value["validator_set_id"]) is None
+        or value["validator_set_id"] == "0" * 64
+        or value["path"] != expected_path
+        or not isinstance(value["artifact_sha256"], str)
+        or HEX64.fullmatch(value["artifact_sha256"]) is None
+        or value["artifact_sha256"] == "0" * 64
+        or any(
+            digest is not None
+            and (
+                not isinstance(digest, str)
+                or HEX64.fullmatch(digest) is None
+                or digest == "0" * 64
+            )
+            for digest in (value[field] for field in optional_digests)
+        )
+        or value["candidate_only"] is not True
+        or value["production_activation"] is not False
+    ):
+        fail("recovery material result crosses its exact request")
+    return value
+
+
+def exact_peer_lease_binding_v1(value: object) -> str:
+    if not isinstance(value, dict) or set(value) != PEER_LEASE_BINDING_RESULT_KEYS:
+        fail("peer-lease binding result keys differ from contract")
+    digest = value["binding_digest"]
+    if (
+        value["schema_version"] != 1
+        or value["status"] != "peer-lease-binding"
+        or not isinstance(digest, str)
+        or HEX64.fullmatch(digest) is None
+        or digest == "0" * 64
+        or value["candidate_only"] is not True
+        or value["production_activation"] is not False
+    ):
+        fail("peer-lease binding result crosses its exact endpoint")
+    return digest
+
+
+def query_peer_lease_binding_v1(
+    *,
+    process: base.ValidatorProcess,
+    stage: base.HostStage,
+    binary: str,
+    socket: str,
+    io_root: pathlib.Path,
+    label: str,
+) -> str:
+    result = run_file_backed(
+        remote_or_local_command(
+            process,
+            stage,
+            [binary, "peer-lease-binding", "--socket", socket],
+        ),
+        io_root=io_root,
+        label=label,
+        timeout=30,
+        bound=MAX_CONTROL_BYTES,
+    )
+    return exact_peer_lease_binding_v1(
+        strict_stdout_object(result.stdout, "peer-lease binding result")
+    )
+
+
+def commission_process2_recovery_material_v1(
+    *,
+    processes: list[base.ValidatorProcess],
+    stages: dict[str, base.HostStage],
+    linux_paths: dict[str, str],
+    target: base.ValidatorProcess,
+    peer_lease_socket: str,
+    run_id: str,
+    io_root: pathlib.Path,
+) -> tuple[Process2ResumeArtifactsV1, dict[str, Any]]:
+    if (
+        len(processes) != 7
+        or target.validator_id not in {process.validator_id for process in processes}
+        or len(stages) < 1
+    ):
+        raise RuntimeError("process2 recovery material requires one exact seven-validator fleet")
+    material_io = io_root / "process2-recovery-material-v1"
+    material_io.mkdir(mode=0o700, parents=False, exist_ok=False)
+    target_stage = stages[target.host_id]
+    target_binary = linux_paths[target.host_id]
+    binding_before = query_peer_lease_binding_v1(
+        process=target,
+        stage=target_stage,
+        binary=target_binary,
+        socket=peer_lease_socket,
+        io_root=io_root,
+        label="process2-fence-binding-before-material",
+    )
+
+    material_roots: dict[str, str] = {}
+    for process in processes:
+        material_roots[process.validator_id] = create_recovery_material_root_v1(
+            process=process,
+            stage=stages[process.host_id],
+            io_root=io_root,
+            label=f"process2-material-root-{process.validator_id}",
+        )
+
+    target_context = recovery_material_path_v1(target, target_stage, "context.bin")
+    context_result_raw = run_validator_cli_v1(
+        process=target,
+        stage=target_stage,
+        binary=target_binary,
+        command="recovery-context",
+        arguments=[target_context],
+        io_root=io_root,
+        label="process2-recovery-context",
+    )
+    context_result = exact_recovery_material_result_v1(
+        strict_stdout_object(context_result_raw.stdout, "process2 recovery context"),
+        command="recovery-context",
+        process=target,
+        run_id=run_id,
+        expected_path=target_context,
+    )
+    context_digest = context_result["context_digest"]
+    if context_digest is None:
+        raise RuntimeError("recovery context command omitted its typed context digest")
+    coordinator_context = material_io / "context.bin"
+    copy_remote_or_local(
+        process=target,
+        stage=target_stage,
+        source=target_context,
+        target=coordinator_context,
+        io_root=io_root,
+        label="process2-context-to-coordinator",
+    )
+    if base.sha256_file(coordinator_context) != context_result["artifact_sha256"]:
+        raise RuntimeError("copied recovery context differs from target result")
+
+    context_paths: dict[str, str] = {target.validator_id: target_context}
+    for process in processes:
+        if process.validator_id == target.validator_id:
+            continue
+        stage = stages[process.host_id]
+        destination = recovery_material_path_v1(process, stage, "context.bin")
+        copy_to_validator_v1(
+            process=process,
+            stage=stage,
+            source=coordinator_context,
+            target=destination,
+            io_root=io_root,
+            label=f"process2-context-to-{process.validator_id}",
+        )
+        context_paths[process.validator_id] = destination
+
+    ready_results: dict[str, dict[str, Any]] = {}
+    ready_coordinator_paths: dict[str, pathlib.Path] = {}
+    for process in processes:
+        stage = stages[process.host_id]
+        output = recovery_material_path_v1(
+            process, stage, f"ready-{process.validator_id}.bin"
+        )
+        raw = run_validator_cli_v1(
+            process=process,
+            stage=stage,
+            binary=linux_paths[process.host_id],
+            command="recovery-ready",
+            arguments=[context_paths[process.validator_id], output],
+            io_root=io_root,
+            label=f"process2-ready-{process.validator_id}",
+        )
+        result = exact_recovery_material_result_v1(
+            strict_stdout_object(raw.stdout, f"RecoveryReady {process.validator_id}"),
+            command="recovery-ready",
+            process=process,
+            run_id=run_id,
+            expected_path=output,
+        )
+        if result["context_digest"] != context_digest:
+            raise RuntimeError("RecoveryReady statement changed the recovery context")
+        ready_results[process.validator_id] = result
+        coordinator_path = material_io / f"ready-{process.validator_id}.bin"
+        copy_remote_or_local(
+            process=process,
+            stage=stage,
+            source=output,
+            target=coordinator_path,
+            io_root=io_root,
+            label=f"process2-ready-to-coordinator-{process.validator_id}",
+        )
+        if base.sha256_file(coordinator_path) != result["artifact_sha256"]:
+            raise RuntimeError("copied RecoveryReady statement differs")
+        ready_coordinator_paths[process.validator_id] = coordinator_path
+
+    target_ready_inputs: list[str] = []
+    for process in processes:
+        if process.validator_id == target.validator_id:
+            destination = recovery_material_path_v1(
+                target, target_stage, f"ready-{target.validator_id}.bin"
+            )
+        else:
+            destination = recovery_material_path_v1(
+                target, target_stage, f"ready-{process.validator_id}.bin"
+            )
+            copy_to_validator_v1(
+                process=target,
+                stage=target_stage,
+                source=ready_coordinator_paths[process.validator_id],
+                target=destination,
+                io_root=io_root,
+                label=f"process2-ready-to-target-{process.validator_id}",
+            )
+        target_ready_inputs.append(destination)
+
+    ready_set_path = exact_remote_root(
+        f"{validator_root(target, target_stage)}/recovery-ready-set-v1.bin"
+    )
+    raw_ready_set = run_validator_cli_v1(
+        process=target,
+        stage=target_stage,
+        binary=target_binary,
+        command="recovery-ready-set",
+        arguments=[target_context, *target_ready_inputs],
+        io_root=io_root,
+        label="process2-ready-set",
+    )
+    ready_set_result = exact_recovery_material_result_v1(
+        strict_stdout_object(raw_ready_set.stdout, "RecoveryReady set"),
+        command="recovery-ready-set",
+        process=target,
+        run_id=run_id,
+        expected_path=ready_set_path,
+    )
+    if ready_set_result["context_digest"] != context_digest:
+        raise RuntimeError("RecoveryReady set changed the recovery context")
+    ready_set_coordinator = material_io / "recovery-ready-set-v1.bin"
+    copy_remote_or_local(
+        process=target,
+        stage=target_stage,
+        source=ready_set_path,
+        target=ready_set_coordinator,
+        io_root=io_root,
+        label="process2-ready-set-to-coordinator",
+    )
+    if base.sha256_file(ready_set_coordinator) != ready_set_result["artifact_sha256"]:
+        raise RuntimeError("copied RecoveryReady set differs")
+
+    ready_set_paths: dict[str, str] = {target.validator_id: ready_set_path}
+    for process in processes:
+        if process.validator_id == target.validator_id:
+            continue
+        stage = stages[process.host_id]
+        destination = recovery_material_path_v1(process, stage, "ready-set.bin")
+        copy_to_validator_v1(
+            process=process,
+            stage=stage,
+            source=ready_set_coordinator,
+            target=destination,
+            io_root=io_root,
+            label=f"process2-ready-set-to-{process.validator_id}",
+        )
+        ready_set_paths[process.validator_id] = destination
+
+    start_results: dict[str, dict[str, Any]] = {}
+    start_coordinator_paths: dict[str, pathlib.Path] = {}
+    for process in processes:
+        stage = stages[process.host_id]
+        output = recovery_material_path_v1(
+            process, stage, f"start-{process.validator_id}.bin"
+        )
+        raw = run_validator_cli_v1(
+            process=process,
+            stage=stage,
+            binary=linux_paths[process.host_id],
+            command="recovery-start",
+            arguments=[ready_set_paths[process.validator_id], output],
+            io_root=io_root,
+            label=f"process2-start-{process.validator_id}",
+        )
+        result = exact_recovery_material_result_v1(
+            strict_stdout_object(raw.stdout, f"RecoveryStart {process.validator_id}"),
+            command="recovery-start",
+            process=process,
+            run_id=run_id,
+            expected_path=output,
+        )
+        if result["context_digest"] != context_digest:
+            raise RuntimeError("RecoveryStart statement changed the recovery context")
+        start_results[process.validator_id] = result
+        coordinator_path = material_io / f"start-{process.validator_id}.bin"
+        copy_remote_or_local(
+            process=process,
+            stage=stage,
+            source=output,
+            target=coordinator_path,
+            io_root=io_root,
+            label=f"process2-start-to-coordinator-{process.validator_id}",
+        )
+        if base.sha256_file(coordinator_path) != result["artifact_sha256"]:
+            raise RuntimeError("copied RecoveryStart statement differs")
+        start_coordinator_paths[process.validator_id] = coordinator_path
+
+    target_start_inputs: list[str] = []
+    for process in processes:
+        if process.validator_id == target.validator_id:
+            destination = recovery_material_path_v1(
+                target, target_stage, f"start-{target.validator_id}.bin"
+            )
+        else:
+            destination = recovery_material_path_v1(
+                target, target_stage, f"start-{process.validator_id}.bin"
+            )
+            copy_to_validator_v1(
+                process=target,
+                stage=target_stage,
+                source=start_coordinator_paths[process.validator_id],
+                target=destination,
+                io_root=io_root,
+                label=f"process2-start-to-target-{process.validator_id}",
+            )
+        target_start_inputs.append(destination)
+
+    start_certificate_path = exact_remote_root(
+        f"{validator_root(target, target_stage)}/recovery-start-certificate-v1.bin"
+    )
+    raw_certificate = run_validator_cli_v1(
+        process=target,
+        stage=target_stage,
+        binary=target_binary,
+        command="recovery-start-certificate",
+        arguments=[ready_set_path, *target_start_inputs],
+        io_root=io_root,
+        label="process2-start-certificate",
+    )
+    start_certificate_result = exact_recovery_material_result_v1(
+        strict_stdout_object(raw_certificate.stdout, "RecoveryStart certificate"),
+        command="recovery-start-certificate",
+        process=target,
+        run_id=run_id,
+        expected_path=start_certificate_path,
+    )
+    if (
+        start_certificate_result["context_digest"] != context_digest
+        or start_certificate_result["predecessor_artifact_sha256"]
+        != ready_set_result["artifact_sha256"]
+    ):
+        raise RuntimeError("RecoveryStart certificate changed its context or ReadySet")
+
+    binding_after = query_peer_lease_binding_v1(
+        process=target,
+        stage=target_stage,
+        binary=target_binary,
+        socket=peer_lease_socket,
+        io_root=io_root,
+        label="process2-fence-binding-after-material",
+    )
+    if binding_after != binding_before:
+        raise RuntimeError("external peer-fence identity changed during recovery material exchange")
+    artifacts = validate_process2_resume_artifacts_v1(
+        Process2ResumeArtifactsV1(
+            ready_set_artifact_sha256=ready_set_result["artifact_sha256"],
+            start_certificate_artifact_sha256=start_certificate_result["artifact_sha256"],
+            fence_token_digest=binding_after,
+        )
+    )
+    summary = {
+        "schema_version": 1,
+        "status": "process2-recovery-material-complete",
+        "run_id": run_id,
+        "target_validator_id": target.validator_id,
+        "context_sha256": context_result["artifact_sha256"],
+        "context_digest": context_digest,
+        "ready_statement_sha256": {
+            validator_id: result["artifact_sha256"]
+            for validator_id, result in sorted(ready_results.items())
+        },
+        "ready_set_sha256": artifacts.ready_set_artifact_sha256,
+        "start_statement_sha256": {
+            validator_id: result["artifact_sha256"]
+            for validator_id, result in sorted(start_results.items())
+        },
+        "start_certificate_sha256": artifacts.start_certificate_artifact_sha256,
+        "fence_token_digest": artifacts.fence_token_digest,
+        "candidate_only": True,
+        "production_activation": False,
+    }
+    base.write_new(
+        material_io / "summary.json",
+        json.dumps(summary, sort_keys=True, separators=(",", ":")).encode("utf-8"),
+        mode=0o600,
+    )
+    return artifacts, summary
 
 
 def wait_control_locator(
@@ -1269,10 +1895,20 @@ def launch_runtime(
     process_io: pathlib.Path,
     process_instance: int,
     peer_lease_socket: str | None = None,
+    process2_resume: Process2ResumeArtifactsV1 | None = None,
 ) -> RuntimeProcessV1:
     command, report, journal, metrics, final_state, certificate = consensus.command_for(
         process, stage, binary, duration_seconds, max_blocks, peer_lease_socket
     )
+    resume_arguments: list[str] = []
+    if process2_resume is not None:
+        if process_instance != 2 or peer_lease_socket is None:
+            raise RuntimeError(
+                "process2 resume requires process instance 2 and an external peer fence"
+            )
+        resume_arguments = process2_resume_arguments_v1(process2_resume)
+        if not stage.remote:
+            command.extend(resume_arguments)
     if stage.remote:
         # `wait` returning the dedicated successful handoff status must not be
         # consumed by `set -e`. Preserve every child status, including 75,
@@ -1288,6 +1924,7 @@ def launch_runtime(
         ]
         if peer_lease_socket is not None:
             arguments.extend(("--peer-lease-socket", peer_lease_socket))
+        arguments.extend(resume_arguments)
         child_command = shlex.join(arguments)
         remote = (
             "set -eu; child=''; "
@@ -1466,6 +2103,7 @@ def supervise_target_process1_handoff(
     control_io: pathlib.Path,
     command_nonce: int,
     timeout_seconds: int,
+    peer_lease_socket: str | None = None,
 ) -> tuple[RuntimeProcessV1, dict[str, Any], dict[str, Any], dict[str, Any]]:
     """Perform the sole exact P1-target status-75 to P2 supervisor handoff.
 
@@ -1564,6 +2202,7 @@ def supervise_target_process1_handoff(
         max_blocks=max_blocks,
         process_io=process_io,
         process_instance=2,
+        peer_lease_socket=peer_lease_socket,
     )
     runtimes[process.validator_id] = successor
     if successor.command != runtime.command:
@@ -2007,6 +2646,71 @@ def collect_terminal_evidence(
     return results
 
 
+def write_restart_artifacts_v1(
+    *,
+    output: pathlib.Path,
+    step: FaultStepV1,
+    run_id: str,
+    started_at: str,
+    ended_at: str,
+    transcript: list[dict[str, Any]],
+) -> dict[str, Any]:
+    if (
+        not step.restart
+        or fault_semantics.policy_for(step.kind).evidence_mode
+        != fault_semantics.SIGNED_RESTART_CATCHUP
+    ):
+        raise RuntimeError("restart artifact writer received a non-restart step")
+    if ended_at <= started_at or len(transcript) != 5:
+        raise RuntimeError("restart transcript is incomplete or lacks wall-clock duration")
+    required_surfaces = (
+        "process1-handoff",
+        "process2-inert-cut",
+        "recovery-material",
+        "process2-control",
+        "process2-catchup",
+    )
+    if tuple(item.get("surface") for item in transcript) != required_surfaces:
+        raise RuntimeError("restart transcript surfaces differ from the exact recovery order")
+    fault_root = output / "faults"
+    fault_root.mkdir(exist_ok=True, mode=0o700)
+    log_path = fault_root / f"{step.ordinal:02d}-{step.kind}.commands.jsonl"
+    log_bytes = b"".join(
+        json.dumps(item, sort_keys=True, separators=(",", ":")).encode("utf-8") + b"\n"
+        for item in transcript
+    )
+    base.write_new(log_path, log_bytes, mode=0o600)
+    schedule = {
+        "schema_version": 1,
+        "run_id": run_id,
+        "kind": step.kind,
+        "evidence_mode": fault_semantics.SIGNED_RESTART_CATCHUP,
+        "target_validator_id": step.target_validator_id,
+        "started_at": started_at,
+        "ended_at": ended_at,
+        "action": "status75-process1-park+exact-process2-zero-delta",
+        "restore_action": "direct7-ready+direct7-start+live-fence-bound-process2-resume",
+        "command_stdout_sha256": base.sha256_file(log_path),
+        "applied": True,
+        "restored": True,
+    }
+    schedule_path = fault_root / f"{step.ordinal:02d}-{step.kind}.schedule.json"
+    base.write_new(schedule_path, base.canonical_json(schedule), mode=0o600)
+    return {
+        "ordinal": step.ordinal,
+        "kind": step.kind,
+        "target_validator_id": step.target_validator_id,
+        "target_host_id": step.target_host_id,
+        "restart": True,
+        "schedule_path": str(schedule_path.relative_to(output)),
+        "schedule_sha256": base.sha256_file(schedule_path),
+        "command_log_path": str(log_path.relative_to(output)),
+        "command_log_sha256": base.sha256_file(log_path),
+        "signed_transition_observed": True,
+        "evidence_mode": fault_semantics.SIGNED_RESTART_CATCHUP,
+    }
+
+
 def write_fault_artifacts(
     *,
     output: pathlib.Path,
@@ -2262,7 +2966,8 @@ def execute_campaign(
                     raise RuntimeError(
                         "restart handoff differs from the sole signed-catchup slot"
                     )
-                successor, _process2_exit, _prepare, _handoff = supervise_target_process1_handoff(
+                restart_started_at = utc_now()
+                inert_runtime, process2_exit, prepare, handoff = supervise_target_process1_handoff(
                     runtimes=runtimes,
                     process=process,
                     stage=stage,
@@ -2274,17 +2979,91 @@ def execute_campaign(
                     control_io=control_io,
                     command_nonce=command_nonces[process.validator_id],
                     timeout_seconds=fault_window_seconds,
+                    peer_lease_socket=peer_lease_paths[process.host_id].socket,
                 )
-                if runtimes[process.validator_id] is not successor:
-                    raise RuntimeError("target process-2 runtime owner was not retained")
+                if runtimes[process.validator_id] is not inert_runtime:
+                    raise RuntimeError("target inert process-2 owner was not retained")
+                artifacts, material_summary = commission_process2_recovery_material_v1(
+                    processes=processes,
+                    stages=stages,
+                    linux_paths=linux_paths,
+                    target=process,
+                    peer_lease_socket=peer_lease_paths[process.host_id].socket,
+                    run_id=run_id,
+                    io_root=control_io,
+                )
+                require_non_target_processes_live(runtimes, process.validator_id)
+                resumed_runtime = launch_runtime(
+                    process=process,
+                    stage=stage,
+                    binary=binary,
+                    duration_seconds=duration_seconds,
+                    max_blocks=max_blocks,
+                    process_io=process_io,
+                    process_instance=2,
+                    peer_lease_socket=peer_lease_paths[process.host_id].socket,
+                    process2_resume=artifacts,
+                )
+                runtimes[process.validator_id] = resumed_runtime
+                statuses[process.validator_id] = wait_control_status(
+                    process=process,
+                    stage=stage,
+                    run_id=run_id,
+                    process_instance=2,
+                    io_root=control_io,
+                    label=f"status-process2-{process.validator_id}",
+                    timeout_seconds=consensus.STARTUP_ALLOWANCE_SECONDS,
+                )
+                read_nonces[process.validator_id] = 1
+                command_nonces[process.validator_id] = 1
+                wait_for_started_fleet_v1(
+                    processes,
+                    stages,
+                    linux_paths,
+                    statuses,
+                    read_nonces,
+                    control_io,
+                )
+                catchup = send_control(
+                    process=process,
+                    stage=stage,
+                    binary=binary,
+                    status=statuses[process.validator_id],
+                    nonce=read_nonces[process.validator_id],
+                    verb="status",
+                    fault="",
+                    io_root=control_io,
+                    label=f"process2-catchup-{process.validator_id}",
+                    allow_pre_start=False,
+                )
+                read_nonces[process.validator_id] += 1
+                if (
+                    catchup["barrier_phase"] != "started"
+                    or catchup["restart_pending_catchup"]
+                    or not catchup["restart_completed"]
+                    or catchup["safety_halted"]
+                    or catchup["clean_stop_recorded"]
+                ):
+                    raise RuntimeError("process2 did not reach exact started/caught-up state")
+                restart_ended_at = utc_now()
+                fault_results.append(
+                    write_restart_artifacts_v1(
+                        output=output,
+                        step=step,
+                        run_id=run_id,
+                        started_at=restart_started_at,
+                        ended_at=restart_ended_at,
+                        transcript=[
+                            {"surface": "process1-handoff", "prepare": prepare, "handoff": handoff},
+                            {"surface": "process2-inert-cut", **process2_exit},
+                            {"surface": "recovery-material", **material_summary},
+                            {"surface": "process2-control", **statuses[process.validator_id]},
+                            {"surface": "process2-catchup", **catchup},
+                        ],
+                    )
+                )
                 restart_launch_count += 1
-                # The current authority matrix still blocks signed process-2
-                # catch-up, so the validated handoff is not written as fault
-                # evidence and cannot reach a campaign success path.
-                raise RuntimeError(
-                    "status-75 handoff completed, but signed process-2 "
-                    "RecoveryReady/RecoveryStart catch-up authority remains unavailable"
-                )
+                continue
             if policy.evidence_mode != fault_semantics.SIGNED_CONNECTIVITY_TRANSITION:
                 raise RuntimeError(
                     f"{step.kind} requires {policy.evidence_mode}; the live runner "
@@ -2497,7 +3276,9 @@ def execute_campaign(
     }
     if campaign != "all":
         summary.update(
-            schema_version=2, profile=SELECTED_PROFILE, campaign=campaign,
+            schema_version=2,
+            profile=fault_semantics.campaign_profile(campaign),
+            campaign=campaign,
             selected_campaign_completed=success,
             candidate=plan["candidate"], topology_sha256=plan["topology_sha256"],
             fault_driver_sha256=plan["fault_driver_sha256"],

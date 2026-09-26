@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import json
 import pathlib
@@ -531,6 +532,143 @@ def main() -> None:
         remote_command = spawned_commands[0][-1]
         assert 'if wait "$child"; then status=0; else status=$?; fi' in remote_command
         assert 'exit "$status"' in remote_command
+
+    # Process2 resume arguments are exact, canonical and never legal without
+    # the instance-2/external-fence launch contract.
+    resume = fleet.Process2ResumeArtifactsV1(
+        ready_set_artifact_sha256="11" * 32,
+        start_certificate_artifact_sha256="22" * 32,
+        fence_token_digest="33" * 32,
+    )
+    assert fleet.process2_resume_arguments_v1(resume) == [
+        "--resume-process2",
+        "--recovery-ready-set-sha256",
+        "11" * 32,
+        "--recovery-start-certificate-sha256",
+        "22" * 32,
+        "--recovery-fence-token-sha256",
+        "33" * 32,
+    ]
+    try:
+        fleet.process2_resume_arguments_v1(
+            dataclasses.replace(resume, fence_token_digest="0" * 64)
+        )
+    except SystemExit:
+        pass
+    else:
+        raise AssertionError("zero process2 fence digest was accepted")
+
+    material_result = {
+        "schema_version": 1,
+        "status": "recovery-ready",
+        "run_id": RUN_ID,
+        "validator_id": target.validator_id,
+        "validator_set_id": "44" * 32,
+        "path": "/stage/validator/recovery-material-v1/ready.bin",
+        "artifact_sha256": "55" * 32,
+        "context_digest": "66" * 32,
+        "predecessor_artifact_sha256": None,
+        "candidate_only": True,
+        "production_activation": False,
+    }
+    assert fleet.exact_recovery_material_result_v1(
+        material_result,
+        command="recovery-ready",
+        process=target,
+        run_id=RUN_ID,
+        expected_path=material_result["path"],
+    ) == material_result
+    for mutation in (
+        {**material_result, "artifact_sha256": "0" * 64},
+        {**material_result, "path": "/other"},
+        {**material_result, "production_activation": True},
+    ):
+        try:
+            fleet.exact_recovery_material_result_v1(
+                mutation,
+                command="recovery-ready",
+                process=target,
+                run_id=RUN_ID,
+                expected_path=material_result["path"],
+            )
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError("invalid recovery material result was accepted")
+
+    assert fleet.exact_peer_lease_binding_v1(
+        {
+            "schema_version": 1,
+            "status": "peer-lease-binding",
+            "binding_digest": "77" * 32,
+            "candidate_only": True,
+            "production_activation": False,
+        }
+    ) == "77" * 32
+
+    restart_step = fleet.FaultStepV1(
+        ordinal=1,
+        kind=fleet.RESTART_FAULT,
+        target_validator_id=target.validator_id,
+        target_host_id=target.host_id,
+        restart=True,
+    )
+    restart_temporary = tempfile.TemporaryDirectory(prefix="tp3-restart-evidence-", dir="/tmp")
+    restart_output = pathlib.Path(restart_temporary.name) / "restart-output"
+    restart_output.mkdir(mode=0o700)
+    restart_result = fleet.write_restart_artifacts_v1(
+        output=restart_output,
+        step=restart_step,
+        run_id=RUN_ID,
+        started_at="2026-09-27T00:00:00Z",
+        ended_at="2026-09-27T00:00:01Z",
+        transcript=[
+            {"surface": "process1-handoff"},
+            {"surface": "process2-inert-cut"},
+            {"surface": "recovery-material"},
+            {"surface": "process2-control"},
+            {"surface": "process2-catchup"},
+        ],
+    )
+    assert restart_result["kind"] == fleet.RESTART_FAULT
+    assert restart_result["restart"] is True
+    assert restart_result["evidence_mode"] == fleet.fault_semantics.SIGNED_RESTART_CATCHUP
+
+    resume_process_io = pathlib.Path(restart_temporary.name) / "process-io"
+    resume_process_io.mkdir(mode=0o700)
+    spawned_commands.clear()
+    original_popen = fleet.subprocess.Popen
+    fleet.subprocess.Popen = CapturingPopen
+    try:
+        resumed_runtime = fleet.launch_runtime(
+            process=target,
+            stage=remote_stage,
+            binary="/stage/validator",
+            duration_seconds=60,
+            max_blocks=100,
+            process_io=resume_process_io,
+            process_instance=2,
+            peer_lease_socket=f"{remote_stage.root}/peer.sock",
+            process2_resume=resume,
+        )
+    finally:
+        fleet.subprocess.Popen = original_popen
+    fleet.base.close_process_capture(resumed_runtime.capture)
+    assert len(spawned_commands) == 1
+    resumed_command = spawned_commands[0][-1]
+    for token in (
+        "--peer-lease-socket",
+        "--resume-process2",
+        "--recovery-ready-set-sha256",
+        "--recovery-start-certificate-sha256",
+        "--recovery-fence-token-sha256",
+        "11" * 32,
+        "22" * 32,
+        "33" * 32,
+    ):
+        assert resumed_command.count(token) == 1
+
+    restart_temporary.cleanup()
 
     print(
         "poco_fault_restart_handoff_v1_test=passed "

@@ -35,10 +35,12 @@ use trnm_poco_node::{
     PocoNodeDeployedLabOrdinaryRecoveryOwnerV0, PocoNodeDeployedLabProcess2CaughtUpOwnerV1,
     PocoNodeDeployedLabProcess2RecoveryFactsV0, PocoNodeDeployedLabProcess2RecoveryOwnerV0,
     PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
-    PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1, PocoNodeDeployedLabRecoveryFactsV0,
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1,
+    PocoNodeDeployedLabRecoveredProcessHostAuthorityV1, PocoNodeDeployedLabRecoveryFactsV0,
     PocoNodeDeployedLabSignedReplayEntryV0, PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1,
-    PocoNodeDeployedLabZeroDeltaRestartCutV1, PocoNodeLabRuntimeFactsV0,
-    Process2RecoveryReadyStartCoordinatorV1, Process2RecoveryTransitionFactsV1,
+    PocoNodeDeployedLabZeroDeltaRestartCutV1, PocoNodeLabOrdinaryProposalRuntimeV0,
+    PocoNodeLabRuntimeFactsV0, Process2RecoveryReadyStartCoordinatorV1,
+    Process2RecoveryTransitionFactsV1,
 };
 
 use crate::{
@@ -3262,6 +3264,110 @@ impl ArchivedDeployedProcess2RecoveredRuntimeV1 {
             "recovered-runtime replay archive head changed"
         );
         Ok(())
+    }
+
+    pub(crate) fn bind_process_host_authority_v1<H>(
+        self,
+        bind: impl FnOnce(
+            PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
+            PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
+        ) -> Result<H, String>,
+    ) -> Result<ArchivedDeployedProcess2HostAuthorityV1<H>> {
+        let Self {
+            _archive: archive,
+            runtime,
+            archive_facts,
+        } = self;
+        archive
+            .revalidate_identity_v1()
+            .context("revalidate replay archive before process-host authority binding")?;
+        ensure!(
+            archive.facts_v1() == archive_facts,
+            "replay archive head changed before process-host authority binding"
+        );
+        let authority = runtime
+            .bind_process_host_authority_v1(bind)
+            .map_err(|error| anyhow!("bind recovered process-host authority: {error}"))?;
+        archive
+            .revalidate_identity_v1()
+            .context("revalidate replay archive after process-host authority binding")?;
+        ensure!(
+            archive.facts_v1() == archive_facts,
+            "replay archive head changed during process-host authority binding"
+        );
+        Ok(ArchivedDeployedProcess2HostAuthorityV1 {
+            archive,
+            authority,
+            archive_facts,
+        })
+    }
+}
+
+#[must_use = "archive, recovered authority, and sole startup timer must remain pinned together"]
+pub(crate) struct ArchivedDeployedProcess2HostAuthorityV1<H> {
+    archive: SignedReplayArchiveV1,
+    authority: PocoNodeDeployedLabRecoveredProcessHostAuthorityV1<H>,
+    archive_facts: SignedReplayArchiveFactsV1,
+}
+
+impl<H> ArchivedDeployedProcess2HostAuthorityV1<H> {
+    pub(crate) const fn facts_v1(&self) -> PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1 {
+        self.authority.facts_v1()
+    }
+
+    pub(crate) fn revalidate_archive_v1(&self) -> Result<()> {
+        self.archive
+            .revalidate_identity_v1()
+            .context("revalidate process-host replay archive identity")?;
+        ensure!(
+            self.archive.facts_v1() == self.archive_facts,
+            "process-host replay archive head changed"
+        );
+        Ok(())
+    }
+
+    pub(crate) fn activate_after_host_ready_v1<R>(
+        self,
+        prepare_host: impl FnOnce(
+            &H,
+            PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
+        ) -> Result<R, String>,
+    ) -> Result<(SignedReplayArchiveV1, H, R, trnm_consensus_core::Effect)> {
+        let Self {
+            archive,
+            authority,
+            archive_facts,
+        } = self;
+        archive
+            .revalidate_identity_v1()
+            .context("revalidate replay archive before live-host readiness")?;
+        ensure!(
+            archive.facts_v1() == archive_facts,
+            "replay archive head changed before live-host readiness"
+        );
+        let (authority, host, startup_timer_effect) = authority
+            .activate_after_host_ready_v1(prepare_host)
+            .map_err(|error| {
+                anyhow!("activate recovered process host after I/O readiness: {error}")
+            })?;
+        archive
+            .revalidate_identity_v1()
+            .context("revalidate replay archive after live-host readiness")?;
+        ensure!(
+            archive.facts_v1() == archive_facts,
+            "replay archive head changed during live-host readiness"
+        );
+        Ok((archive, authority, host, startup_timer_effect))
+    }
+}
+
+impl<H: std::fmt::Debug> std::fmt::Debug for ArchivedDeployedProcess2HostAuthorityV1<H> {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("ArchivedDeployedProcess2HostAuthorityV1")
+            .field("archive_facts", &self.archive_facts)
+            .field("authority", &self.authority)
+            .finish_non_exhaustive()
     }
 }
 

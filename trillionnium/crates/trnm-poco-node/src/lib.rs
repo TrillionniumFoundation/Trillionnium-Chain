@@ -300,10 +300,11 @@ pub use deployed_lab_process2_recovery::{
     PocoNodeDeployedLabProcess2ActivatedOwnerV1, PocoNodeDeployedLabProcess2CaughtUpOwnerV1,
     PocoNodeDeployedLabProcess2RecoveryErrorV0, PocoNodeDeployedLabProcess2RecoveryFactsV0,
     PocoNodeDeployedLabProcess2RecoveryOwnerV0, PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
-    PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1, PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1,
-    PocoNodeDeployedLabZeroDeltaRestartCutFieldsV1, PocoNodeDeployedLabZeroDeltaRestartCutV1,
-    DEPLOYED_LAB_PROCESS2_ACTIVATION_V0, DEPLOYED_LAB_PROCESS2_CLEAN_CUT_RECOVERY_V0,
-    DEPLOYED_LAB_PROCESS2_PENDING_SIGN_REPLAY_V0,
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1,
+    PocoNodeDeployedLabRecoveredProcessHostAuthorityV1,
+    PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1, PocoNodeDeployedLabZeroDeltaRestartCutFieldsV1,
+    PocoNodeDeployedLabZeroDeltaRestartCutV1, DEPLOYED_LAB_PROCESS2_ACTIVATION_V0,
+    DEPLOYED_LAB_PROCESS2_CLEAN_CUT_RECOVERY_V0, DEPLOYED_LAB_PROCESS2_PENDING_SIGN_REPLAY_V0,
 };
 #[cfg(feature = "lab-validator-runtime")]
 pub use deployed_lab_recovery::{

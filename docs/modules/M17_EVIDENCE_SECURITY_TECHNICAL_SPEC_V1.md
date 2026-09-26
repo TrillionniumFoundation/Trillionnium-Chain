@@ -108,17 +108,25 @@ verifier output through the Python consumer before the fleet campaign.
 ### Explicit connectivity fault selection (M17-FAULT-SELECTION-V1)
 
 `run_fault_restart_fleet_v1.py --campaign` is a closed selector: `all`
-(default), `leader_loss`, `asymmetric_partition`, or `connectivity` (exactly
-leader loss then asymmetric partition). The existing `all` plan remains
-schema 1/profile `poco-g3-seven-validator-fault-restart-campaign-v1`, with all
-eight faults, one restart and its existing authority blockers. Actual `all`
-execution still rejects before output creation, staging or any fault effect.
-An arbitrary comma-separated list, an empty choice, `host_loss`, restart,
-delay, stale snapshot, rollback and handoff selections are not accepted.
+(default), `leader_loss`, `asymmetric_partition`, `connectivity` (exactly
+leader loss then asymmetric partition), or `restart` (exactly one target
+`validator_process_kill` and process-instance-2 recovery). The existing `all`
+plan remains schema 1/profile
+`poco-g3-seven-validator-fault-restart-campaign-v1`, with all eight faults and
+its remaining independent authority blockers. Actual `all` execution still
+rejects before output creation, staging or any fault effect. An arbitrary
+comma-separated list, an empty choice, `host_loss`, delay, stale snapshot,
+rollback and handoff selections are not accepted.
 
-Explicit selections use schema 2/profile
-`poco-g3-seven-validator-connectivity-subset-v1`. Both plan and summary bind the
-selection, exact ordered fault list, independently supplied coordinator manifest digest, candidate
+Connectivity selections use schema 2/profile
+`poco-g3-seven-validator-connectivity-subset-v1`; restart uses the separate
+schema 2/profile `poco-g3-seven-validator-restart-subset-v1`. Restart never
+acquires the primary journal `FaultApplied`/`FaultRecovered` authority. Its
+accepted record instead binds the status-75 process-1 handoff, exact inert
+zero-delta process-2 cut, 7/7 RecoveryReady, 7/7 RecoveryStart, the live
+external peer-fence identity, process-2 control status and subsequent caught-up
+finality. Both plan and summary bind the selection, exact ordered fault list,
+independently supplied coordinator manifest digest, candidate
 source/binary identities, topology digest, placement profile and actual
 validator host allocations. Selected invocations require
 `--coordinator-manifest-sha256 <independently-computed-sha256>`; a hash computed

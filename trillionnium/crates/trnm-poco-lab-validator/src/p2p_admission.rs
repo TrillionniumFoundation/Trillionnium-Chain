@@ -369,6 +369,13 @@ pub trait ExternalPeerLeaseAuthorityV1: Send + Sync {
         Ok(())
     }
 
+    /// Returns one nonzero identity digest for the currently reachable
+    /// external authority instance. Process-2 recovery requires an
+    /// implementation to override this; ordinary process-1 paths do not.
+    fn authority_binding_digest_v1(&self) -> Result<[u8; 32], ExternalFenceError> {
+        Err(ExternalFenceError::Unavailable)
+    }
+
     fn acquire(
         &self,
         request: ExternalPeerLeaseRequestV1,
@@ -420,6 +427,12 @@ impl UnixExternalPeerLeaseAuthorityV1 {
 impl ExternalPeerLeaseAuthorityV1 for UnixExternalPeerLeaseAuthorityV1 {
     fn preflight(&self) -> Result<(), ExternalFenceError> {
         self.client.preflight().map_err(map_unix_lease_error)
+    }
+
+    fn authority_binding_digest_v1(&self) -> Result<[u8; 32], ExternalFenceError> {
+        self.client
+            .binding_digest_v1()
+            .map_err(map_unix_lease_error)
     }
 
     fn acquire(

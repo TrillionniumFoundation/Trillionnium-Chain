@@ -20,7 +20,7 @@ import plan_topology as planner
 import run_fault_restart_fleet_v1 as fleet
 import run_fault_restart_fleet_v1_test as fixtures
 
-SUMMARY = "poco_fault_selection_v1_test=passed closed_selections=3 default_all_unchanged=true pre_effect_rejection=true controlled_execute=true exact_fault_labels=true source_anchor=true reduced_resources=true external_lease=true mac_paths=true fixture_only=true fault_matrix_completed=false"
+SUMMARY = "poco_fault_selection_v1_test=passed closed_selections=4 default_all_restart_policy_versioned=true pre_effect_rejection=true controlled_execute=true exact_fault_labels=true source_anchor=true reduced_resources=true external_lease=true mac_paths=true fixture_only=true fault_matrix_completed=false"
 
 
 def reject(action, text):
@@ -312,8 +312,19 @@ def main():
         coordinator_anchor="31" * 32, driver_sha256="32" * 32,
         duration_seconds=16, max_blocks=3, fault_window_seconds=2,
     )
-    # Generated from committed09cc94d2 before this change; no Git/network needed.
-    assert hashlib.sha256(fleet.base.canonical_json(legacy)).hexdigest() == "240c710abb05f9648b6765b93e6fe56453207a81d357d653dc5e29078fa496e9"
+    # The exact default-all plan changed only when validator_process_kill gained
+    # its dedicated signed restart/catch-up authority. Keep that transition byte-
+    # stable without treating the still-blocked full matrix as executable.
+    assert legacy["active_campaign_supported"] is False
+    assert legacy["authority_blockers"] == fleet.fault_semantics.active_campaign_blockers()
+    restart_policy = next(
+        item
+        for item in legacy["fault_evidence_policy"]
+        if item["kind"] == "validator_process_kill"
+    )
+    assert restart_policy["runtime_authority_supported"] is True
+    assert restart_policy["runner_execution_supported"] is True
+    assert hashlib.sha256(fleet.base.canonical_json(legacy)).hexdigest() == "2433b82c79d5a01c6ffd9befe58191fb4d07387cc17dab61cc6f23459b226f54"
     for name in ("", "host_loss", "validator_process_kill", "leader_loss,asymmetric_partition", "ALL", "full", "bounded_delay_loss"):
         reject(lambda: fleet.fault_semantics.campaign_faults(name), "unknown closed")
     reject(fleet.fault_semantics.require_bundle_assembly_supported, "fail-closed")

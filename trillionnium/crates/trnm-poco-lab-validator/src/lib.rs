@@ -58,6 +58,10 @@ pub mod pacemaker;
 /// opts into the replay-aware receive API; no production activation follows.
 pub mod payload_replay;
 pub mod process_event;
+/// Candidate-only process-2 RecoveryReady/RecoveryStart material exchange.
+/// Validators sign only their own bounded statements; aggregation is target-
+/// local and does not grant production activation or bypass process-host gates.
+pub mod recovery_material;
 pub mod relay;
 // This reference catch-up codec/assembler has no live runtime caller. Keep its
 // behavioral tests without exporting an uncomposed production-looking API.
@@ -75,19 +79,16 @@ mod restart_park_protocol;
 // still private until the process-1 runtime and process-2 gate consume it.
 #[allow(dead_code)]
 mod restart_parked_ack_protocol;
-// Typed Ready/Start collection remains private. It can obtain only
-// recovery-purpose-bound signatures from the existing durable fleet signer and
-// immediately verifies them against the validator set; no process-2 runtime or
-// activation path consumes those statements yet.
-#[allow(dead_code)]
+// Typed Ready/Start collection remains private to the operational material
+// and process-2 runtime paths. Statements are recovery-purpose-bound and
+// strictly verified; collection itself grants no process or activation right.
 mod recovery_barrier;
-// Typed Ready/Start artifacts are durable but remain private, inert barrier
-// vocabulary. No runtime or activation path consumes these owners yet.
-#[allow(dead_code)]
+// Typed Ready/Start artifact owners are private and consumed only by the
+// target-local materialization and process-2 owner transition.
 mod recovery_barrier_store;
-// Canonical zero-delta cut persistence is an independent, private, inert
-// artifact boundary. It exposes no scheduler, Ready/Start, or activation API.
-#[allow(dead_code)]
+// Canonical zero-delta persistence remains private. The operational material
+// path may read and bind it, but only the sealed process-host transition can
+// release the retained timer and ordinary runtime.
 mod recovery_zero_delta_store;
 // Canonical direct-seven park-certificate persistence is a private, inert
 // content-addressed boundary. It grants no signer, barrier, or process-control

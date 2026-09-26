@@ -58,6 +58,7 @@ pub(crate) enum RecoveryBarrierErrorV1 {
     Recovery(RecoveryErrorV1),
     UnknownOrigin,
     AuthenticatedOriginMismatch,
+    #[cfg(test)]
     LocalKeyMismatch,
     Incomplete,
     PayloadTooLarge,
@@ -76,6 +77,7 @@ impl fmt::Display for RecoveryBarrierErrorV1 {
             Self::AuthenticatedOriginMismatch => {
                 formatter.write_str("recovery statement author differs from authenticated origin")
             }
+            #[cfg(test)]
             Self::LocalKeyMismatch => {
                 formatter.write_str("local recovery signing key differs from validator set")
             }

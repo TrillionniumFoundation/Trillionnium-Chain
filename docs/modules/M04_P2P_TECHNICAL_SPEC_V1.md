@@ -503,6 +503,27 @@ whole-process or whole-machine rollback still requires independently provisioned
 clock/frontier authority. This patch does not invent that external source or
 claim that a local sidecar closes restart-time non-resurrection.
 
+### Stable identity for a live Unix lease authority
+
+The candidate process-2 continuation additionally needs to prove that recovery
+material was commissioned against the same live external peer-fence endpoint that
+will own the resumed mesh. `UnixPeerLeaseClientV1::binding_digest_v1` first runs the
+ordinary private-path/socket preflight, then domain-separates and hashes the exact
+canonical parent and socket path plus their device, inode and mode identities. The
+candidate CLI exposes that nonzero digest through the bounded read-only
+`peer-lease-binding` command. The fleet coordinator reads it before and after the
+seven-validator RecoveryReady/RecoveryStart exchange; process 2 supplies the exact
+digest and rechecks it before host reconstruction and again immediately before the
+startup timer is released.
+
+This digest identifies one currently present private Unix socket boundary; it is
+not a lease, host attestation, anti-rollback proof or transferable capability. A
+path recreated at another inode changes the digest, and loss of the endpoint makes
+the continuation unavailable. Ordinary process-1 admission still authorizes every
+session with the existing acquire/revalidate/renew/release protocol. Production
+cross-host identity, independent monotonic custody and rollback resistance remain
+separate M03/M15 requirements.
+
 ### Lease daemon connection and authority failure isolation
 
 The existing Unix lease daemon distinguishes failures by the operation that
