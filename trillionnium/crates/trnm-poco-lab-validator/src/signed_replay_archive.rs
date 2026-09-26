@@ -31,9 +31,10 @@ use trnm_consensus_types::{
 };
 use trnm_poco_node::{
     PocoNodeDeployedLabAuthenticatedReplayFactsV0, PocoNodeDeployedLabAuthenticatedReplayOwnerV0,
-    PocoNodeDeployedLabOrdinaryRecoveryOwnerV0, PocoNodeDeployedLabProcess2RecoveryFactsV0,
-    PocoNodeDeployedLabProcess2RecoveryOwnerV0, PocoNodeDeployedLabRecoveryFactsV0,
-    PocoNodeDeployedLabSignedReplayEntryV0,
+    PocoNodeDeployedLabOrdinaryRecoveryOwnerV0, PocoNodeDeployedLabProcess2CaughtUpOwnerV1,
+    PocoNodeDeployedLabProcess2RecoveryFactsV0, PocoNodeDeployedLabProcess2RecoveryOwnerV0,
+    PocoNodeDeployedLabRecoveryFactsV0, PocoNodeDeployedLabSignedReplayEntryV0,
+    PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1, PocoNodeDeployedLabZeroDeltaRestartCutV1,
 };
 
 use crate::{
@@ -3036,6 +3037,104 @@ impl ArchivedDeployedProcess2RecoveryOwnerV1 {
 
     pub(crate) const fn process2_facts_v1(&self) -> PocoNodeDeployedLabProcess2RecoveryFactsV0 {
         self.node.facts_v0()
+    }
+
+    /// Projects the exact replay-fenced Node cut while the independently
+    /// audited archive remains pinned. The projection is inert and can grant
+    /// no authority without consuming this complete linear owner.
+    pub(crate) fn project_zero_delta_restart_cut_v1(
+        &self,
+        restart_cut_artifact_sha256: [u8; 32],
+    ) -> Result<PocoNodeDeployedLabZeroDeltaRestartCutV1> {
+        self.revalidate_archive_identity_v1()?;
+        let projected = self
+            .node
+            .project_zero_delta_restart_cut_v1(restart_cut_artifact_sha256)
+            .map_err(|error| anyhow!("project archive-pinned process2 zero-delta cut: {error}"))?;
+        self.revalidate_archive_identity_v1()?;
+        Ok(projected)
+    }
+
+    /// Consumes both the archive-pinned full recovery and the exact projected
+    /// cut into one caught-up owner. No archive pin, Core owner, signer, timer,
+    /// or application authority is released through a copyable facts object.
+    pub(crate) fn into_zero_delta_caught_up_v1(
+        self,
+        expected: PocoNodeDeployedLabZeroDeltaRestartCutV1,
+    ) -> Result<ArchivedDeployedProcess2CaughtUpOwnerV1> {
+        let Self {
+            _archive: archive,
+            node,
+            archive_facts,
+            recovery_facts: _,
+            authenticated_replay_facts: _,
+        } = self;
+        archive
+            .revalidate_identity_v1()
+            .context("revalidate replay archive before zero-delta join")?;
+        ensure!(
+            archive.facts_v1() == archive_facts,
+            "replay archive head changed before zero-delta join"
+        );
+        let node = node
+            .into_zero_delta_caught_up_v1(expected)
+            .map_err(|error| anyhow!("consume archive-pinned process2 zero-delta cut: {error}"))?;
+        archive
+            .revalidate_identity_v1()
+            .context("revalidate replay archive after zero-delta join")?;
+        ensure!(
+            archive.facts_v1() == archive_facts,
+            "replay archive head changed after zero-delta join"
+        );
+        Ok(ArchivedDeployedProcess2CaughtUpOwnerV1 {
+            _archive: archive,
+            node,
+            archive_facts,
+        })
+    }
+}
+
+/// Exact zero-delta process-2 owner retaining both the signed replay archive
+/// and every recovered Node authority. It is linear and exposes no activation
+/// or network constructor.
+#[must_use = "archive-pinned zero-delta recovery must reach RecoveryReady or fail stop"]
+pub(crate) struct ArchivedDeployedProcess2CaughtUpOwnerV1 {
+    _archive: SignedReplayArchiveV1,
+    node: PocoNodeDeployedLabProcess2CaughtUpOwnerV1<LabFileWatermark>,
+    archive_facts: SignedReplayArchiveFactsV1,
+}
+
+impl ArchivedDeployedProcess2CaughtUpOwnerV1 {
+    pub(crate) const fn archive_facts_v1(&self) -> SignedReplayArchiveFactsV1 {
+        self.archive_facts
+    }
+
+    pub(crate) const fn node_facts_v1(&self) -> PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1 {
+        self.node.facts_v1()
+    }
+
+    pub(crate) fn revalidate_v1(&mut self) -> Result<()> {
+        self._archive
+            .revalidate_identity_v1()
+            .context("revalidate zero-delta replay archive identity")?;
+        ensure!(
+            self._archive.facts_v1() == self.archive_facts,
+            "zero-delta replay archive head changed"
+        );
+        self.node
+            .revalidate_zero_delta_caught_up_v1()
+            .map_err(|error| anyhow!("revalidate archive-pinned zero-delta Node owner: {error}"))?;
+        Ok(())
+    }
+}
+
+impl std::fmt::Debug for ArchivedDeployedProcess2CaughtUpOwnerV1 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("ArchivedDeployedProcess2CaughtUpOwnerV1")
+            .field("archive_facts", &self.archive_facts)
+            .field("node_facts", &self.node.facts_v1())
+            .finish_non_exhaustive()
     }
 }
 

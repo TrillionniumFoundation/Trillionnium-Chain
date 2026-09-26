@@ -25,6 +25,7 @@ use trnm_consensus_types::{ValidatorId, ValidatorSet};
 use crate::{
     config::{LoadedValidatorConfig, PublicReportVerifierContext},
     fleet_barrier::FleetStartCertificateV1,
+    recovery_zero_delta_store::StoredRecoveryZeroDeltaCutV1,
     restart_cut::{
         restart_parked_ack_admission_set_sha256_for_ids_v1, RestartCutBodyV1, RestartParkRoleV1,
     },
@@ -2773,7 +2774,6 @@ impl Process2JournalStartedFromRestartCutV1 {
     /// Exact canonical runtime-control request SHA-256 retained from the
     /// process-1 `restart_prepare` subject. This is inert identity data only;
     /// the journal owner remains the sole authority for fresh validation.
-    #[cfg(test)]
     pub(crate) const fn restart_prepare_request_sha256_v1(&self) -> [u8; 32] {
         self.restart_prepare_request_sha256
     }
@@ -2843,6 +2843,86 @@ impl Process2JournalStartedFromRestartCutV1 {
             ));
         }
         Ok(())
+    }
+
+    /// Appends the exact operational zero-delta recovery cut after freshly
+    /// revalidating its pinned artifact and every process-1 restart identity.
+    /// The event is still non-activating: RecoveryReady, RecoveryStart, signer
+    /// activation, pacemaker, mesh, and ordinary ingress remain unreachable.
+    pub(crate) fn record_zero_delta_caught_up_v1(
+        &mut self,
+        stored: &StoredRecoveryZeroDeltaCutV1,
+    ) -> Result<SignedRuntimeEventV1, RuntimeEventErrorV1> {
+        self.revalidate_unchanged_start_v1()?;
+        let validator_set = self.journal.context.validator_set.clone();
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid(
+                "stored zero-delta cut failed authenticated fresh readback",
+            )
+        })?;
+        let cut = stored.value_v1().fields();
+        let context = stored.context_v1().fields();
+        let body = self.restart_cut_body_v1();
+        let expected_request = self.restart_prepare_request_sha256;
+        if cut.campaign_context_sha256 != body.campaign().digest()
+            || cut.fleet_start_certificate_sha256 != body.fleet_start_certificate_sha256()
+            || cut.validator_set_id != validator_set.id()
+            || cut.validator_set_artifact_sha256 != body.validator_set_sha256()
+            || cut.restart_cut_artifact_sha256 != self.restart_cut_artifact_sha256_v1()
+            || cut.restart_park_artifact_sha256 != self.restart_park_artifact_sha256_v1()
+            || cut.restart_parked_ack_artifact_sha256
+                != self.restart_parked_ack_artifact_sha256_v1()
+            || cut.restart_parked_ack_admission_set_sha256
+                != self.restart_parked_ack_admission_set_sha256_v1()
+            || cut.target_validator != self.journal.context.validator_id
+            || cut.target_validator != body.target_validator()
+            || cut.process_instance != 2
+            || cut.recovery_nonce != expected_request
+            || context.mode != trnm_consensus_types::RecoveryModeV1::ZeroDelta
+            || context.caught_up_cut_artifact_sha256 != stored.artifact_sha256_v1()
+            || context.campaign_context_sha256 != cut.campaign_context_sha256
+            || context.fleet_start_certificate_sha256 != cut.fleet_start_certificate_sha256
+            || context.validator_set_id != cut.validator_set_id
+            || context.validator_set_artifact_sha256 != cut.validator_set_artifact_sha256
+            || context.restart_cut_artifact_sha256 != cut.restart_cut_artifact_sha256
+            || context.restart_park_artifact_sha256 != cut.restart_park_artifact_sha256
+            || context.restart_parked_ack_artifact_sha256 != cut.restart_parked_ack_artifact_sha256
+            || context.restart_parked_ack_admission_set_sha256
+                != cut.restart_parked_ack_admission_set_sha256
+            || context.target_validator != cut.target_validator
+            || context.process_instance != cut.process_instance
+            || context.recovery_nonce != cut.recovery_nonce
+            || context.node_facts_sha256 != cut.node_facts_sha256
+            || context.restart_cut_epoch != cut.source_epoch
+            || context.restart_cut_height != cut.source_height
+            || context.restart_cut_block_id != cut.source_block_id
+            || context.restart_cut_state_root != cut.source_state_root
+            || context.restart_cut_chain_root != cut.source_finalized_chain_root
+            || context.terminal_epoch != cut.terminal_epoch
+            || context.terminal_height != cut.terminal_height
+            || context.terminal_block_id != cut.terminal_block_id
+            || context.terminal_state_root != cut.terminal_state_root
+            || context.terminal_chain_root != cut.terminal_finalized_chain_root
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "zero-delta recovery artifact differs from the exact process2 restart owner",
+            ));
+        }
+        let elapsed = u64::try_from(self.journal.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let event = self.journal.append_raw(
+            "recovery_zero_delta",
+            &RecoveryZeroDeltaSubjectV1 {
+                zero_delta_artifact_sha256: stored.artifact_sha256_v1(),
+                recovery_context_sha256: stored.context_v1().digest(),
+            }
+            .encode(),
+            cut.terminal_height.get(),
+            elapsed,
+        )?;
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid("stored zero-delta cut changed after journal publication")
+        })?;
+        Ok(event)
     }
 
     /// Narrow fail-stop sink used only after the consuming full-recovery join.

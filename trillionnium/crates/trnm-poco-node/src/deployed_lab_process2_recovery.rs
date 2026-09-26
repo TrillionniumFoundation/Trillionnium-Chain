@@ -448,6 +448,72 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2RecoveryOwnerV0
         self.facts
     }
 
+    /// Projects the exact current replay-fenced process-2 cut into inert
+    /// zero-delta vocabulary. The caller supplies only the already verified
+    /// process-1 RestartCut artifact identity; every state, application,
+    /// checkpoint, and signer field is read from this retained owner.
+    pub fn project_zero_delta_restart_cut_v1(
+        &self,
+        restart_cut_artifact_sha256: [u8; 32],
+    ) -> Result<PocoNodeDeployedLabZeroDeltaRestartCutV1, PocoNodeDeployedLabProcess2RecoveryErrorV0>
+    {
+        if restart_cut_artifact_sha256 == [0; 32] {
+            return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "zero_delta.projection_restart_cut",
+                "RestartCut artifact SHA-256 is zero",
+            ));
+        }
+        let safety = self.core.challenge_v0().safety_state_v0();
+        let finalized = safety.finalized();
+        let applied = safety.application_applied();
+        let high_qc = safety.high_qc().qc_ref();
+        let committed = self
+            .application
+            .confirmed_committed_head_v0()
+            .map_err(|error| {
+                PocoNodeDeployedLabProcess2RecoveryErrorV0::from_debug(
+                    "zero_delta.projection_application",
+                    error,
+                )
+            })?;
+        let session = self.replay_inventory.session_v0();
+        let process2 = self.facts;
+        PocoNodeDeployedLabZeroDeltaRestartCutV1::new(
+            PocoNodeDeployedLabZeroDeltaRestartCutFieldsV1 {
+                restart_cut_artifact_sha256,
+                local_validator: self.core_config.local_validator(),
+                validator_set_id: self.core_config.validator_set().id(),
+                epoch: safety.epoch(),
+                current_view: safety.current_view(),
+                direct_high_qc: high_qc,
+                proposal_parent_height: high_qc.height().get(),
+                proposal_parent_block_id: high_qc.block_id(),
+                finalized_height: finalized.height().get(),
+                finalized_block_id: finalized.block_id(),
+                finalized_chain_root: *self.core.finalized_chain_root_v0().as_bytes(),
+                application_height: applied.height().get(),
+                application_block_id: applied.block_id(),
+                application_state_root: StateRoot::new(*committed.state_root().as_bytes()),
+                restart_checkpoint_generation: session.initial_checkpoint_generation_v0(),
+                restart_checkpoint_canonical_sha256: Sha256::digest(
+                    self.restart_checkpoint.encode_canonical(),
+                )
+                .into(),
+                restart_safety_revision: session.initial_safety_revision_v0(),
+                restart_safety_state_record_checksum: session.initial_safety_state_checksum_v0(),
+                restart_safety_chain_checksum: session.initial_safety_chain_checksum_v0(),
+                signer_exact_watermark: process2.signer_exact_watermark_v1(),
+                signer_durable_vote_intent_count: process2.signer_durable_vote_intent_count_v1(),
+                signer_durable_timeout_intent_count: process2
+                    .signer_durable_timeout_intent_count_v1(),
+                signer_signed_vote_intent_count: process2.signer_signed_vote_intent_count_v1(),
+                signer_signed_timeout_intent_count: process2
+                    .signer_signed_timeout_intent_count_v1(),
+                signer_inventory_digest: process2.signer_inventory_digest_v1(),
+            },
+        )
+    }
+
     /// Consumes the complete process-2 recovery into one exact zero-delta
     /// caught-up owner.
     ///
@@ -6219,10 +6285,17 @@ mod tests {
             |_path| Ok::<_, ExternalWatermarkErrorV0>(fixture.watermark),
         )
         .expect("close exact process2 replay");
+        assert!(recovered
+            .project_zero_delta_restart_cut_v1([0; 32])
+            .is_err());
         let expected = zero_delta_restart_cut_for_recovered_v1(&recovered);
         let expected_fields = expected.fields_v1();
+        let projected = recovered
+            .project_zero_delta_restart_cut_v1(expected_fields.restart_cut_artifact_sha256)
+            .expect("project the exact retained process2 cut");
+        assert_eq!(projected, expected);
         let mut caught_up = recovered
-            .into_zero_delta_caught_up_v1(expected)
+            .into_zero_delta_caught_up_v1(projected)
             .expect("freshly confirm the exact zero-delta RestartCut");
         let facts = caught_up.facts_v1();
         caught_up
@@ -6286,8 +6359,12 @@ mod tests {
         )
         .expect("close exact process2 replay for owner bridge");
         let expected = zero_delta_restart_cut_for_recovered_v1(&recovered);
+        let projected = recovered
+            .project_zero_delta_restart_cut_v1(expected.fields_v1().restart_cut_artifact_sha256)
+            .expect("project exact zero-delta cut for owner bridge");
+        assert_eq!(projected, expected);
         let mut caught_up = recovered
-            .into_zero_delta_caught_up_v1(expected)
+            .into_zero_delta_caught_up_v1(projected)
             .expect("join exact zero-delta cut for owner bridge");
         let scope = caught_up
             .facts_v1()

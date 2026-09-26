@@ -36,7 +36,9 @@ use trnm_consensus_signer_journal::{
 };
 use trnm_consensus_types::{
     BlockId, ContextAuthorizedQcV0, Epoch, Height, QcRef, QcReferenceV0, QuorumCertificate,
-    StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorId, View, RECOVERY_PROCESS_INSTANCE_V1,
+    RecoveryContextV1, RecoveryContextV1Fields, RecoveryModeV1, RecoveryZeroDeltaCutV1,
+    RecoveryZeroDeltaCutV1Fields, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorId, View,
+    RECOVERY_PROCESS_INSTANCE_V1,
 };
 use trnm_consensus_unix_fleet_signer::{
     FleetRootPurposeV1, UnixFleetRootSignerConfig, UnixFleetRootSignerProducerV1,
@@ -85,6 +87,7 @@ use crate::{
         Process2JournalStartedFromRestartCutV1, RuntimeEventErrorV1, RuntimeEventJournalV1,
         RuntimeEventKindV1, RuntimeEventSignatureProducerV1, RuntimeRestartPhaseV1,
     },
+    recovery_zero_delta_store::persist_recovery_zero_delta_cut_v1,
     relay::{
         required_ring_relay_hops_v0, ConsensusRelayEnvelopeV0, MAX_RELAY_INNER_PAYLOAD_BYTES_V0,
     },
@@ -577,41 +580,158 @@ impl std::fmt::Debug for RestartCutJoinedProcess2InertOwnerV1 {
 }
 
 impl RestartCutJoinedProcess2InertOwnerV1 {
-    /// Consumes the complete joined owner into the current deliberate
-    /// fail-stop event.  Fresh readback and the unchanged journal-start head
-    /// are checked again immediately before the only permitted effect.
-    fn record_inert_safety_halted_v1(mut self) -> Result<()> {
+    /// Consumes the exact archive-pinned recovery into a durable operational
+    /// zero-delta caught-up cut, publishes that typed cut in the signed runtime
+    /// journal, and then fail-stops before the still-unavailable N/N Ready/Start
+    /// barrier. No signer, timer, mesh, or transaction ingress is activated.
+    fn record_zero_delta_caught_up_and_halt_v1(
+        mut self,
+        config: &LoadedValidatorConfig,
+    ) -> Result<()> {
         self.started
             .revalidate_unchanged_start_v1()
-            .map_err(|error| anyhow!("revalidate joined process2 journal start: {error}"))?;
+            .map_err(|error| {
+                anyhow!("revalidate process2 journal before zero-delta join: {error}")
+            })?;
         self.recovered
             .revalidate_archive_identity_v1()
-            .context("revalidate joined process2 archive before inert halt")?;
-        ensure!(
-            self.started.restart_cut_artifact_sha256_v1() != [0; 32]
-                && self.started.restart_park_artifact_sha256_v1() != [0; 32]
-                && self.started.restart_parked_ack_artifact_sha256_v1() != [0; 32]
-                && self
+            .context("revalidate process2 replay archive before zero-delta join")?;
+        let restart_cut_artifact_sha256 = self.started.restart_cut_artifact_sha256_v1();
+        let projected = self
+            .recovered
+            .project_zero_delta_restart_cut_v1(restart_cut_artifact_sha256)
+            .context("project archive-pinned process2 zero-delta cut")?;
+        let projected_fields = projected.fields_v1();
+        let mut caught_up = self
+            .recovered
+            .into_zero_delta_caught_up_v1(projected)
+            .context("consume archive-pinned process2 zero-delta owner")?;
+        caught_up
+            .revalidate_v1()
+            .context("revalidate archive-pinned process2 caught-up owner")?;
+        let node_facts = caught_up.node_facts_v1();
+        let body = self.started.restart_cut_body_v1();
+        let validator_set = config.validator_set();
+        let campaign_context_sha256 = body.campaign().digest();
+        let validator_set_artifact_sha256 = body.validator_set_sha256();
+        let recovery_nonce = self.started.restart_prepare_request_sha256_v1();
+        let source_height = Height::new(projected_fields.finalized_height);
+        let source_state_root = projected_fields.application_state_root;
+        let zero_delta = RecoveryZeroDeltaCutV1::new_direct7(
+            RecoveryZeroDeltaCutV1Fields {
+                campaign_context_sha256,
+                fleet_start_certificate_sha256: body.fleet_start_certificate_sha256(),
+                validator_set_id: projected_fields.validator_set_id,
+                validator_set_artifact_sha256,
+                restart_cut_artifact_sha256,
+                restart_park_artifact_sha256: self.started.restart_park_artifact_sha256_v1(),
+                restart_parked_ack_artifact_sha256: self
                     .started
-                    .restart_parked_ack_admission_set_sha256_v1()
-                    != [0; 32]
-                && self.started.restart_cut_statement_count_v1() == 7,
-            "joined process2 RestartCut/RestartPark/RestartParkedAck triple changed before inert halt"
-        );
-        let archive = self.recovered.archive_facts_v1();
-        let process2 = self.recovered.process2_facts_v1();
+                    .restart_parked_ack_artifact_sha256_v1(),
+                restart_parked_ack_admission_set_sha256: self
+                    .started
+                    .restart_parked_ack_admission_set_sha256_v1(),
+                target_validator: projected_fields.local_validator,
+                process_instance: RECOVERY_PROCESS_INSTANCE_V1,
+                recovery_nonce,
+                node_facts_sha256: node_facts.node_facts_sha256_v1(),
+                signer_inventory_invariant_sha256: node_facts
+                    .signer_inventory_invariant_sha256_v1(),
+                source_epoch: projected_fields.epoch,
+                source_height,
+                source_block_id: projected_fields.finalized_block_id,
+                source_state_root,
+                source_finalized_chain_root: projected_fields.finalized_chain_root,
+                terminal_epoch: projected_fields.epoch,
+                terminal_height: source_height,
+                terminal_block_id: projected_fields.finalized_block_id,
+                terminal_state_root: source_state_root,
+                terminal_finalized_chain_root: projected_fields.finalized_chain_root,
+                terminal_application_commit_sha256: node_facts.terminal_application_commit_id_v1(),
+                terminal_checkpoint_canonical_sha256: node_facts
+                    .process2_checkpoint_canonical_sha256_v1(),
+            },
+            validator_set,
+        )
+        .map_err(|error| anyhow!("construct exact direct-seven zero-delta cut: {error}"))?;
+        let zero_delta_bytes = zero_delta
+            .try_cev1_bytes()
+            .map_err(|error| anyhow!("encode exact process2 zero-delta cut: {error}"))?;
+        let zero_delta_artifact_sha256: [u8; 32] = Sha256::digest(&zero_delta_bytes).into();
+        let zero_delta_fields = zero_delta.fields();
+        let context = RecoveryContextV1::new_direct7(
+            RecoveryContextV1Fields {
+                mode: RecoveryModeV1::ZeroDelta,
+                campaign_context_sha256,
+                fleet_start_certificate_sha256: zero_delta_fields.fleet_start_certificate_sha256,
+                validator_set_id: zero_delta_fields.validator_set_id,
+                validator_set_artifact_sha256,
+                restart_cut_artifact_sha256,
+                restart_park_artifact_sha256: zero_delta_fields.restart_park_artifact_sha256,
+                restart_parked_ack_artifact_sha256: zero_delta_fields
+                    .restart_parked_ack_artifact_sha256,
+                restart_parked_ack_admission_set_sha256: zero_delta_fields
+                    .restart_parked_ack_admission_set_sha256,
+                caught_up_cut_artifact_sha256: zero_delta_artifact_sha256,
+                target_validator: zero_delta_fields.target_validator,
+                process_instance: RECOVERY_PROCESS_INSTANCE_V1,
+                recovery_nonce,
+                restart_cut_epoch: zero_delta_fields.source_epoch,
+                restart_cut_height: zero_delta_fields.source_height,
+                restart_cut_block_id: zero_delta_fields.source_block_id,
+                restart_cut_state_root: zero_delta_fields.source_state_root,
+                restart_cut_chain_root: zero_delta_fields.source_finalized_chain_root,
+                terminal_epoch: zero_delta_fields.terminal_epoch,
+                terminal_height: zero_delta_fields.terminal_height,
+                terminal_block_id: zero_delta_fields.terminal_block_id,
+                terminal_state_root: zero_delta_fields.terminal_state_root,
+                terminal_chain_root: zero_delta_fields.terminal_finalized_chain_root,
+                node_facts_sha256: zero_delta_fields.node_facts_sha256,
+            },
+            validator_set,
+        )
+        .map_err(|error| anyhow!("construct exact process2 recovery context: {error}"))?;
+        let stored = persist_recovery_zero_delta_cut_v1(
+            config.run_root(),
+            zero_delta_artifact_sha256,
+            zero_delta,
+            &context,
+            validator_set,
+        )
+        .context("persist exact process2 zero-delta cut")?;
+        caught_up
+            .revalidate_v1()
+            .context("revalidate caught-up owner before runtime-event publication")?;
+        self.started
+            .record_zero_delta_caught_up_v1(&stored)
+            .map_err(|error| anyhow!("record process2 zero-delta runtime event: {error}"))?;
+        caught_up
+            .revalidate_v1()
+            .context("revalidate caught-up owner after runtime-event publication")?;
+        stored
+            .revalidate_fresh_v1(validator_set)
+            .context("revalidate stored zero-delta cut before fail stop")?;
+        let archive = caught_up.archive_facts_v1();
+        let process2 = node_facts.process2_v1();
         self.started
             .record_joined_inert_safety_halted_v1(
                 &format!(
-                    "continuous-runtime-restart-cut-joined-process2-inert:{}:{}:{}:{}",
+                    "continuous-runtime-zero-delta-caught-up-ready-pending:{}:{}:{}:{}:{}",
                     archive.sequence_v1(),
                     hex::encode(archive.context_sha256_v1()),
                     hex::encode(archive.record_sha256_v1()),
                     hex::encode(process2.session_id_v0()),
+                    hex::encode(context.digest()),
                 ),
                 process2.replayed_link_count_v0(),
             )
-            .context("record RestartCut-joined inert process2 halt")?;
+            .context("record zero-delta caught-up RecoveryReady-pending halt")?;
+        caught_up
+            .revalidate_v1()
+            .context("revalidate caught-up owner after fail-stop publication")?;
+        stored
+            .revalidate_fresh_v1(validator_set)
+            .context("revalidate zero-delta artifact after fail-stop publication")?;
         Ok(())
     }
 }
@@ -1065,9 +1185,9 @@ where
                         .context(
                             "consume process2 start, RestartCut/RestartPark, and full inert recovery",
                         )?;
-                    joined.record_inert_safety_halted_v1()?;
+                    joined.record_zero_delta_caught_up_and_halt_v1(&config)?;
                     bail!(
-                        "continuous consensus RestartCut/RestartPark/RestartParkedAck-joined process2 is inert; authenticated start-catchup, RecoveryReady, and RecoveryStart remain unavailable"
+                        "continuous consensus process2 reached the durable zero-delta caught-up cut; RecoveryReady, RecoveryStart, pacemaker, mesh, and ordinary ingress remain unavailable"
                     );
                 }
                 Err(error) => return Err(anyhow!("start runtime event journal: {error}")),
@@ -9374,8 +9494,8 @@ mod tests {
             "require_process2_full_recovery_join_v1",
             "consume process2 start, RestartCut/RestartPark, and full inert recovery",
             "let joined =",
-            "joined.record_inert_safety_halted_v1()",
-            "RestartCut/RestartPark/RestartParkedAck-joined process2 is inert; authenticated start-catchup, RecoveryReady, and RecoveryStart remain unavailable",
+            "joined.record_zero_delta_caught_up_and_halt_v1(&config)?",
+            "continuous consensus process2 reached the durable zero-delta caught-up cut; RecoveryReady, RecoveryStart, pacemaker, mesh, and ordinary ingress remain unavailable",
         ] {
             assert!(inert_process2.contains(required), "missing {required}");
         }
@@ -9479,10 +9599,10 @@ mod tests {
         let join = branch
             .find("require_process2_full_recovery_join_v1")
             .expect("branch consumes the full recovery owners");
-        let halt = branch
-            .find("joined.record_inert_safety_halted_v1()")
-            .expect("branch records only its authenticated inert halt");
-        assert!(journal_start < full && full < join && join < halt);
+        let zero_delta = branch
+            .find("joined.record_zero_delta_caught_up_and_halt_v1(&config)?")
+            .expect("branch persists the authenticated zero-delta cut before halting");
+        assert!(journal_start < full && full < join && join < zero_delta);
         assert!(branch
             .contains("consume process2 start, RestartCut/RestartPark, and full inert recovery"));
         assert!(!branch.contains("load_local_restart_cut_certificate_v1"));
@@ -9502,7 +9622,7 @@ mod tests {
     }
 
     #[test]
-    fn operational_process2_does_not_bypass_missing_recovery_authority_v1() {
+    fn operational_process2_persists_zero_delta_without_bypassing_ready_start_v1() {
         let source = include_str!("consensus_runtime.rs");
         let branch_start = source
             .find("Err(error) if error.requires_stored_restart_cut_v1()")
@@ -9512,15 +9632,21 @@ mod tests {
             .map(|offset| branch_start + offset)
             .expect("process2 operational branch remains bounded");
         let branch = &source[branch_start..branch_end];
+        assert!(branch.contains("joined.record_zero_delta_caught_up_and_halt_v1(&config)?"));
+        assert!(branch.contains(
+            "continuous consensus process2 reached the durable zero-delta caught-up cut"
+        ));
         for forbidden in [
-            ".confirm_zero_delta_caught_up_v1(",
-            ".persist_zero_delta_cut_dormant_v1(",
-            "RecoveryZeroDeltaCutV1::new_direct7",
-            "persist_recovery_zero_delta_cut_v1",
+            "Process2RecoveryReadyStartCoordinatorV1",
+            ".record_recovery_ready_for_caught_up_owner_v1(",
+            ".record_recovery_start_for_caught_up_owner_v1(",
+            ".activate_caught_up_owner_after_recorded_start_v1(",
+            "PersistentAuthenticatedPeerMeshV0::",
+            "GenerationAwarePacemakerV0::",
         ] {
             assert!(
                 !branch.contains(forbidden),
-                "active process2 branch bypasses the missing N/N park gate via {forbidden}"
+                "zero-delta process2 branch bypasses pending RecoveryReady/RecoveryStart via {forbidden}"
             );
         }
     }
@@ -9584,14 +9710,27 @@ mod tests {
             .map(|offset| impl_start + offset)
             .expect("joined owner implementation remains bounded");
         let joined_api = &source[impl_start..impl_end];
-        assert!(joined_api.contains("fn record_inert_safety_halted_v1(mut self)"));
+        for required in [
+            "fn record_zero_delta_caught_up_and_halt_v1(",
+            "RecoveryZeroDeltaCutV1::new_direct7",
+            "persist_recovery_zero_delta_cut_v1(",
+            ".record_zero_delta_caught_up_v1(&stored)",
+            ".record_joined_inert_safety_halted_v1(",
+        ] {
+            assert!(
+                joined_api.contains(required),
+                "joined owner lost {required}"
+            );
+        }
         for forbidden in [
-            "PersistentAuthenticatedPeerMeshV0",
-            "RecoveryReady",
-            "RecoveryStart",
+            "PersistentAuthenticatedPeerMeshV0::",
+            "Process2RecoveryReadyStartCoordinatorV1",
+            ".record_recovery_ready_for_caught_up_owner_v1(",
+            ".record_recovery_start_for_caught_up_owner_v1(",
+            ".activate_caught_up_owner_after_recorded_start_v1(",
             "into_recovered_ordinary_runtime_v1",
             "activate_for_lab_authority_v1",
-            "GenerationAwarePacemakerV0",
+            "GenerationAwarePacemakerV0::",
         ] {
             assert!(
                 !joined_api.contains(forbidden),

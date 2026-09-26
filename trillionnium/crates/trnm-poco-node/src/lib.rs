@@ -451,13 +451,15 @@ pub use process_host::{
     PocoNodeProcessConfigV0, PocoNodeProcessHostErrorV0, PocoNodeProcessHostV0,
     PocoNodeProcessLifecyclePhaseV0,
 };
+#[cfg(feature = "lab-validator-runtime")]
+pub use recovery_ready_start::Process2RecoveryStartOwnerBridgeErrorV1;
 pub use recovery_ready_start::{
-    Process2RecoveryReadyStartCoordinatorV1, Process2RecoveryStartOwnerBridgeErrorV1,
-    Process2RecoveryTransitionBindingV1, Process2RecoveryTransitionFactsV1,
-    Process2RecoveryTransitionJournalV1, Process2RecoveryTransitionPhaseV1,
-    RecoveryTransitionJournalErrorV1, PROCESS2_RECOVERY_READY_START_COORDINATOR_V1,
-    PROCESS2_RECOVERY_RUNTIME_WIRING_V1, PROCESS2_RECOVERY_START_ACTIVATION_V1,
-    PROCESS2_RECOVERY_START_OWNER_BRIDGE_V1, PROCESS2_RECOVERY_TRANSITION_JOURNAL_V1,
+    Process2RecoveryReadyStartCoordinatorV1, Process2RecoveryTransitionBindingV1,
+    Process2RecoveryTransitionFactsV1, Process2RecoveryTransitionJournalV1,
+    Process2RecoveryTransitionPhaseV1, RecoveryTransitionJournalErrorV1,
+    PROCESS2_RECOVERY_READY_START_COORDINATOR_V1, PROCESS2_RECOVERY_RUNTIME_WIRING_V1,
+    PROCESS2_RECOVERY_START_ACTIVATION_V1, PROCESS2_RECOVERY_START_OWNER_BRIDGE_V1,
+    PROCESS2_RECOVERY_TRANSITION_JOURNAL_V1,
 };
 pub use remote_signer_protocol_adapter_v1::{
     decode_remote_signer_protocol_adapter_v1_exact,
