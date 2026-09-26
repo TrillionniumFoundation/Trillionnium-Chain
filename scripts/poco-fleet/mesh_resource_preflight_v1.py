@@ -28,6 +28,13 @@ FRAME_SCRATCH_BYTES = 8 * 1024 * 1024
 THREADS_PER_CPU_CEILING = 32
 HOST_MEMORY_NUMERATOR = 3
 HOST_MEMORY_DENOMINATOR = 4
+# Reserve one runnable CPU for each validator and for the local coordinator.
+# The 1-minute host load plus this planned reserve must remain within 150% of
+# logical CPU capacity. This is an operational admission bound, not consensus.
+CPU_LOAD_RESERVE_MILLI_PER_VALIDATOR = 1000
+COORDINATOR_CPU_LOAD_RESERVE_MILLI = 1000
+HOST_LOAD_CEILING_NUMERATOR = 3
+HOST_LOAD_CEILING_DENOMINATOR = 2
 HOST_ID = re.compile(r"^[a-z][a-z0-9-]{0,31}$")
 MANAGEMENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$")
 
@@ -37,6 +44,7 @@ FACT_KEYS = {
     "arch",
     "epoch",
     "cpu_threads",
+    "load1_milli",
     "memory_bytes",
     "memory_available_bytes",
     "nofile_soft",
@@ -56,6 +64,7 @@ printf 'os=%s\n' "$(uname -s)"
 printf 'arch=%s\n' "$(uname -m)"
 printf 'epoch=%s\n' "$(date +%s)"
 printf 'cpu_threads=%s\n' "$(nproc)"
+awk '{printf "load1_milli=%.0f\n", ($1 * 1000)}' /proc/loadavg
 awk '/^MemTotal:/{print "memory_bytes="($2 * 1024)} /^MemAvailable:/{print "memory_available_bytes="($2 * 1024)}' /proc/meminfo
 printf 'nofile_soft=%s\n' "$(ulimit -Sn)"
 printf 'nofile_hard=%s\n' "$(ulimit -Hn)"
@@ -134,6 +143,12 @@ def positive_int(value: object, field: str) -> int:
     if parsed <= 0:
         fail(f"{field} must be positive")
     return parsed
+
+
+def nonnegative_int(value: object, field: str) -> int:
+    if not isinstance(value, str) or not value.isascii() or not value.isdigit():
+        fail(f"{field} must be one nonnegative decimal integer")
+    return int(value)
 
 
 def finite_limit(value: object, field: str) -> int | None:
@@ -239,6 +254,7 @@ def evaluate_mesh_fleet_resources_v1(
             fail(f"host {host_id} is not one Linux/x86_64 execution host")
         epoch = positive_int(facts["epoch"], f"{host_id}.epoch")
         cpu_threads = positive_int(facts["cpu_threads"], f"{host_id}.cpu_threads")
+        load1_milli = nonnegative_int(facts["load1_milli"], f"{host_id}.load1_milli")
         memory_bytes = positive_int(facts["memory_bytes"], f"{host_id}.memory_bytes")
         memory_available = positive_int(
             facts["memory_available_bytes"], f"{host_id}.memory_available_bytes"
@@ -281,6 +297,20 @@ def evaluate_mesh_fleet_resources_v1(
         coordinator_fds = (
             coordinator_capture_fds if inventory["management"] == "local" else 0
         )
+        coordinator_cpu_reserve_milli = (
+            COORDINATOR_CPU_LOAD_RESERVE_MILLI
+            if inventory["management"] == "local"
+            else 0
+        )
+        planned_cpu_reserve_milli = (
+            validator_processes * CPU_LOAD_RESERVE_MILLI_PER_VALIDATOR
+            + coordinator_cpu_reserve_milli
+        )
+        host_load_ceiling_milli = (
+            cpu_threads * 1000 * HOST_LOAD_CEILING_NUMERATOR
+            // HOST_LOAD_CEILING_DENOMINATOR
+        )
+        projected_load_milli = load1_milli + planned_cpu_reserve_milli
         system_file_required = host_open_file_fds + coordinator_fds
         system_file_available = file_max - file_allocated
         uid_thread_required = uid_threads + host_threads + UID_THREAD_RESERVE
@@ -295,6 +325,11 @@ def evaluate_mesh_fleet_resources_v1(
             fail(f"host {host_id} validator threads exceed system thread capacity")
         if host_threads > maximum_host_threads:
             fail(f"host {host_id} placement exceeds the CPU-thread ceiling")
+        if projected_load_milli > host_load_ceiling_milli:
+            fail(
+                f"host {host_id} sustained CPU load plus planned process reserve "
+                "exceeds the pre-effect host load ceiling"
+            )
         if system_file_required > system_file_available:
             fail(f"host {host_id} placement exceeds system file-handle capacity")
         if host_rss_bytes > usable_memory or host_rss_bytes > memory_available:
@@ -307,6 +342,10 @@ def evaluate_mesh_fleet_resources_v1(
                 "hostname": facts["hostname"],
                 "validator_processes": validator_processes,
                 "cpu_threads": cpu_threads,
+                "load1_milli_observed": load1_milli,
+                "planned_cpu_reserve_milli": planned_cpu_reserve_milli,
+                "projected_cpu_load_milli": projected_load_milli,
+                "host_cpu_load_ceiling_milli": host_load_ceiling_milli,
                 "memory_bytes": memory_bytes,
                 "memory_available_bytes": memory_available,
                 "per_process_nofile_soft": facts["nofile_soft"],

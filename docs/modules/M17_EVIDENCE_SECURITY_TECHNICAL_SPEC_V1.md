@@ -714,6 +714,24 @@ collector recomputes these same per-host totals, including the authority once
 per validator host, and rejects missing or duplicated authority resources.
 
 
+### Sustained host-load admission
+
+Before any output directory, deployment copy, lease daemon or validator
+process is created, the shared fleet resource gate reads the Linux one-minute
+load together with the existing CPU, memory, file and thread facts. It records
+load in integer milli-CPU units, reserves one runnable CPU per planned validator
+and one for the local coordinator, and requires the projected total to remain at
+or below 150 percent of logical CPU capacity. This is a conservative operational
+admission rule, not consensus validity, a benchmark or evidence that the host
+will remain healthy after start.
+
+The exact observation, planned reserve, projected load and ceiling are retained
+in the prestart evidence and recomputed by the collector. A host above the bound
+fails before effects; the runner must not start a doomed campaign and later
+relabel a terminal timeout as consensus failure. A later resource spike can
+still produce a real `DRAIN_INCOMPLETE`; no load observation weakens terminal,
+finality or signed evidence requirements.
+
 ### Isolated pocket4/ROG diagnostic placement
 
 `local4-rog3-mac-v1` is an explicitly selected schema-2 placement using the

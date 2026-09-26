@@ -93,6 +93,7 @@ def active_prestart_plan(
             "arch": "x86_64",
             "epoch": "1787000000",
             "cpu_threads": "128",
+            "load1_milli": "500",
             "memory_bytes": str(512 * 1024 * 1024 * 1024),
             "memory_available_bytes": str(400 * 1024 * 1024 * 1024),
             "nofile_soft": "65536",
@@ -815,7 +816,23 @@ def mesh_authority_capacity_consumption_control(root: pathlib.Path) -> None:
                     assert "capacity arithmetic differs" in str(error), str(error)
                 else:
                     raise AssertionError(f"collector accepted missing/double lease service: {field}")
-    print("mesh_authority_capacity_consumer=passed positives=1 negatives=12")
+    for field in (
+        "load1_milli_observed",
+        "planned_cpu_reserve_milli",
+        "projected_cpu_load_milli",
+        "host_cpu_load_ceiling_milli",
+    ):
+        changed = json.loads(json.dumps(report))
+        changed["hosts"][0][field] += 1
+        try:
+            collector.validate_mesh_preflight(
+                changed, validator_count=7, planned_hosts=planned_hosts
+            )
+        except SystemExit as error:
+            assert "capacity arithmetic differs" in str(error), str(error)
+        else:
+            raise AssertionError(f"collector accepted tampered CPU load fact: {field}")
+    print("mesh_authority_capacity_consumer=passed positives=1 negatives=16")
 
 
 def main() -> None:

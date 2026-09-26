@@ -72,6 +72,7 @@ def facts() -> dict[str, dict[str, str]]:
             "arch": "x86_64",
             "epoch": str(1_786_707_200 + index),
             "cpu_threads": str(CPUS[host_id]),
+            "load1_milli": "500",
             "memory_bytes": str(MEMORY[host_id]),
             "memory_available_bytes": str(MEMORY[host_id] * 7 // 8),
             "nofile_soft": "1024",
@@ -243,7 +244,7 @@ def main() -> None:
     validators = processes()
     host_facts = facts()
     report = preflight.evaluate_mesh_fleet_resources_v1(validators, 100, host_facts)
-    assert hashlib.sha256(json.dumps(report, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == "82dbe18cd95bf964ba6fb5a088d07e262451e9755164395b1d655cf09e3f4d3b"
+    assert hashlib.sha256(json.dumps(report, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == "2cf2bf8f8201b3d74639db88f31aac4ba705d4c7b707aa6c3c27198a1c14c5d7"
     # Independent exact-capacity control includes the single 96-FD authority.
     exact = copy.deepcopy(host_facts)
     exact["rog"]["file_nr_max"] = str(1000 + 38 * 162 + 96)
@@ -264,6 +265,12 @@ def main() -> None:
     assert by_host["x230"]["coordinator_capture_fds_required"] == 0
     assert report["validator_run_completed"] is False
     assert report["g3_lan_multihost_evidence"] is False
+
+    zero_load = copy.deepcopy(host_facts)
+    zero_load["local"]["load1_milli"] = "0"
+    assert preflight.evaluate_mesh_fleet_resources_v1(
+        validators, 100, zero_load
+    )["capacity_passed"]
 
     parsed = preflight.parse_probe(
         "\n".join(f"{key}={value}" for key, value in host_facts["local"].items())
@@ -335,6 +342,13 @@ def main() -> None:
         "system thread capacity",
     )
 
+    overloaded = copy.deepcopy(host_facts)
+    overloaded["j3160"]["load1_milli"] = "3001"
+    expect_failure(
+        lambda: preflight.evaluate_mesh_fleet_resources_v1(validators, 100, overloaded),
+        "sustained CPU load",
+    )
+
     low_memory = copy.deepcopy(host_facts)
     low_memory["j3160"]["memory_available_bytes"] = str(869 * 1024 * 1024)
     expect_failure(
@@ -373,9 +387,9 @@ def main() -> None:
     test_local_rog_coordinator_resources()
 
     print(
-        "poco_g3_mesh_resource_preflight_v1_test=passed positives=19 negatives=12 "
+        "poco_g3_mesh_resource_preflight_v1_test=passed positives=19 negatives=13 "
         "topology=100 per_process_rlimit=distinct host_file_capacity=system-wide "
-        "uid_threads=bounded system_threads=bounded rss=bounded "
+        "uid_threads=bounded system_threads=bounded rss=bounded sustained_load=bounded "
         "coordinator_capture_fds=per-process-bounded inherited_rlimit=true "
         "reduced_coordinator_separate=true reduced_capacity_controls=true canonical_topology_unchanged=true lease_service_capacity_included=true "
         "pre_effect_runners=consensus,fault "
