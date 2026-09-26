@@ -30,6 +30,7 @@ use ed25519_dalek::Signer;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use trnm_consensus_core::leader_for;
+use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, ProposalSignatureProducerV0, SignatureProducerV0,
     SignerWatermarkV0,
@@ -37,15 +38,18 @@ use trnm_consensus_signer_journal::{
 use trnm_consensus_types::{
     BlockId, ContextAuthorizedQcV0, Epoch, Height, QcRef, QcReferenceV0, QuorumCertificate,
     RecoveryContextV1, RecoveryContextV1Fields, RecoveryModeV1, RecoveryZeroDeltaCutV1,
-    RecoveryZeroDeltaCutV1Fields, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorId, View,
-    RECOVERY_PROCESS_INSTANCE_V1,
+    RecoveryZeroDeltaCutV1Fields, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorId,
+    ValidatorSet, View, RECOVERY_PROCESS_INSTANCE_V1,
 };
 use trnm_consensus_unix_fleet_signer::{
     FleetRootPurposeV1, UnixFleetRootSignerConfig, UnixFleetRootSignerProducerV1,
 };
 use trnm_poco_node::{
-    validate_deployed_lab_core_record_envelope_v0, PocoNodeLabAuthorityPhaseV0,
-    PocoNodeLabOrdinaryProposalRuntimeV0,
+    validate_deployed_lab_core_record_envelope_v0,
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1, PocoNodeLabAuthorityPhaseV0,
+    PocoNodeLabOrdinaryProposalRuntimeV0, PocoNodeLabRuntimeFactsV0,
+    Process2RecoveryReadyStartCoordinatorV1, Process2RecoveryTransitionFactsV1,
+    Process2RecoveryTransitionPhaseV1,
 };
 
 use crate::{
@@ -87,7 +91,10 @@ use crate::{
         Process2JournalStartedFromRestartCutV1, RuntimeEventErrorV1, RuntimeEventJournalV1,
         RuntimeEventKindV1, RuntimeEventSignatureProducerV1, RuntimeRestartPhaseV1,
     },
-    recovery_zero_delta_store::persist_recovery_zero_delta_cut_v1,
+    recovery_barrier_store::{
+        load_recovery_start_certificate_v1, StoredRecoveryStartCertificateV1,
+    },
+    recovery_zero_delta_store::{persist_recovery_zero_delta_cut_v1, StoredRecoveryZeroDeltaCutV1},
     relay::{
         required_ring_relay_hops_v0, ConsensusRelayEnvelopeV0, MAX_RELAY_INNER_PAYLOAD_BYTES_V0,
     },
@@ -119,8 +126,9 @@ use crate::{
         write_runtime_metrics_v1, RuntimeFinalStateFactsV1, RuntimeMetricsFactsV1,
     },
     signed_replay_archive::{
-        ArchivedDeployedProcess2RecoveryOwnerV1, ReplayArchiveQcCoordinateStateV1,
-        SignedReplayArchiveBoundsV1, SignedReplayArchiveV1, MAXIMUM_ENTRY_COUNT_V1,
+        ArchivedDeployedProcess2RecoveredRuntimeV1, ArchivedDeployedProcess2RecoveryOwnerV1,
+        ReplayArchiveQcCoordinateStateV1, SignedReplayArchiveBoundsV1, SignedReplayArchiveV1,
+        MAXIMUM_ENTRY_COUNT_V1,
     },
     wire::{
         encode_quorum_certificate, encode_timeout_certificate, encode_timeout_vote, encode_vote,
@@ -136,6 +144,17 @@ pub struct ConsensusRunRequestV1 {
     pub duration: Duration,
     pub max_blocks: u64,
     pub report_path: PathBuf,
+}
+
+/// Explicit process-2 continuation. All barrier identities are supplied as
+/// content addresses; the implementation reopens their fixed private paths and
+/// verifies the complete direct-seven certificates before consuming authority.
+/// This request cannot select a different recovery context or enable production.
+pub struct Process2RecoveryContinuationRequestV1 {
+    pub consensus: ConsensusRunRequestV1,
+    pub ready_set_artifact_sha256: [u8; 32],
+    pub start_certificate_artifact_sha256: [u8; 32],
+    pub fence_token_digest: [u8; 32],
 }
 
 pub const CONSENSUS_RUNTIME_COMMISSIONING_ALLOWANCE_SECONDS_V1: u64 = 300;
@@ -374,6 +393,76 @@ pub enum BoundedConsensusRunOutcomeV1 {
     Process1TargetParked(Box<Process1TargetParkedHandoffV1>),
 }
 
+/// Linear, still-inert process-2 result. It retains the signed runtime-event
+/// journal, exact Ready/Start artifacts, transition journal, zero-delta cut,
+/// replay archive, recovered Core/application/signer owners, and the private
+/// unarmed startup timer. No mesh, ingress, pacemaker, or timer effect is
+/// reachable through this type.
+#[must_use = "the recovered runtime must enter one sealed process-host transition"]
+pub struct Process2RecoveredRuntimeHandoffV1 {
+    runtime: ArchivedDeployedProcess2RecoveredRuntimeV1,
+    started: Process2JournalStartedFromRestartCutV1,
+    start: StoredRecoveryStartCertificateV1,
+    zero_delta: StoredRecoveryZeroDeltaCutV1,
+    coordinator: Process2RecoveryReadyStartCoordinatorV1,
+    transition: Process2RecoveryTransitionFactsV1,
+    validator_set: ValidatorSet,
+}
+
+impl Process2RecoveredRuntimeHandoffV1 {
+    pub const fn runtime_facts_v1(&self) -> PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1 {
+        self.runtime.runtime_facts_v1()
+    }
+
+    pub fn ordinary_runtime_facts_v1(&self) -> PocoNodeLabRuntimeFactsV0 {
+        self.runtime.ordinary_runtime_facts_v1()
+    }
+
+    pub const fn transition_facts_v1(&self) -> Process2RecoveryTransitionFactsV1 {
+        self.transition
+    }
+
+    /// Revalidates every retained persistent boundary without arming the timer
+    /// or opening any network/process effect.
+    pub fn revalidate_v1(&mut self) -> Result<()> {
+        self.start
+            .revalidate_fresh_v1(&self.validator_set)
+            .context("revalidate retained process2 RecoveryStart artifact")?;
+        self.zero_delta
+            .revalidate_fresh_v1(&self.validator_set)
+            .context("revalidate retained process2 zero-delta artifact")?;
+        ensure!(
+            self.start.context_v1() == self.zero_delta.context_v1(),
+            "process2 Start and zero-delta artifacts differ in recovery context"
+        );
+        self.started
+            .revalidate_recovery_completed_v1(&self.start)
+            .map_err(|error| anyhow!("revalidate process2 RecoveryStart event: {error}"))?;
+        let head = self
+            .coordinator
+            .head_v1()
+            .map_err(|error| anyhow!("read process2 transition head: {error}"))?
+            .context("process2 transition journal has no durable head")?;
+        ensure!(
+            head == self.transition
+                && head.phase_v1() == Process2RecoveryTransitionPhaseV1::RecoveryStart,
+            "process2 transition journal differs from the retained RecoveryStart head"
+        );
+        self.runtime.revalidate_archive_v1()?;
+        Ok(())
+    }
+}
+
+impl std::fmt::Debug for Process2RecoveredRuntimeHandoffV1 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("Process2RecoveredRuntimeHandoffV1")
+            .field("runtime_facts", &self.runtime.runtime_facts_v1())
+            .field("transition", &self.transition)
+            .finish_non_exhaustive()
+    }
+}
+
 /// Data-only descriptor emitted after the target's process-1 control socket,
 /// pacemaker, and complete mesh have closed. The owner thread (and therefore
 /// the exclusive journal lock) has returned before this value reaches the
@@ -426,6 +515,7 @@ const RUNTIME_METRICS_FILE_V1: &str = "runtime-metrics.json";
 const RUNTIME_FINAL_STATE_FILE_V1: &str = "runtime-final-state.json";
 const FLEET_START_CERTIFICATE_FILE_V1: &str = "fleet-start-certificate.bin";
 const FLEET_START_CERTIFICATE_NEXT_FILE_V1: &str = "fleet-start-certificate.next";
+const PROCESS2_RECOVERY_TRANSITION_JOURNAL_FILE_V1: &str = "process2-recovery-transition-v1.sqlite";
 const FLEET_BARRIER_ROUND_V1: u64 = CONSENSUS_RUNTIME_FLEET_BARRIER_ROUND_V1;
 // Once all Ready statements exist, only the original 30-second Start exchange
 // allowance remains, still capped by the absolute startup deadline.
@@ -547,12 +637,12 @@ fn require_process2_restart_state_projection_v1(
     Ok(())
 }
 
-/// The only successful output of the T3-A process-2 join.  It retains all
+/// The only successful output of the T3-A process-2 join. It retains all
 /// three linear inputs: the locked process-2 journal-start owner, the freshly
-/// read N/N RestartCut, and the archive-pinned full recovery owner.  The type
-/// intentionally has no mesh, RecoveryReady, RecoveryStart, activation,
-/// signer, timer, or catch-up transition.
-#[must_use = "the joined process-2 owner must remain inert or be consumed into its fail-stop event"]
+/// read N/N RestartCut, and the archive-pinned full recovery owner. It has no
+/// mesh, signer, timer, or network authority and can only be consumed into the
+/// typed zero-delta caught-up owner below.
+#[must_use = "the joined process-2 owner must be consumed into zero-delta catch-up"]
 struct RestartCutJoinedProcess2InertOwnerV1 {
     started: Process2JournalStartedFromRestartCutV1,
     recovered: ArchivedDeployedProcess2RecoveryOwnerV1,
@@ -587,13 +677,13 @@ impl std::fmt::Debug for RestartCutJoinedProcess2InertOwnerV1 {
 
 impl RestartCutJoinedProcess2InertOwnerV1 {
     /// Consumes the exact archive-pinned recovery into a durable operational
-    /// zero-delta caught-up cut, publishes that typed cut in the signed runtime
-    /// journal, and then fail-stops before the still-unavailable N/N Ready/Start
-    /// barrier. No signer, timer, mesh, or transaction ingress is activated.
-    fn record_zero_delta_caught_up_and_halt_v1(
+    /// zero-delta caught-up cut and publishes that typed cut in the signed
+    /// runtime journal. The returned owner remains inert: no signer, timer,
+    /// mesh, pacemaker, or transaction ingress is activated.
+    fn into_zero_delta_caught_up_v1(
         mut self,
         config: &LoadedValidatorConfig,
-    ) -> Result<()> {
+    ) -> Result<RestartCutJoinedProcess2CaughtUpOwnerV1> {
         self.started
             .revalidate_unchanged_start_v1()
             .map_err(|error| {
@@ -717,8 +807,36 @@ impl RestartCutJoinedProcess2InertOwnerV1 {
         stored
             .revalidate_fresh_v1(validator_set)
             .context("revalidate stored zero-delta cut before fail stop")?;
-        let archive = caught_up.archive_facts_v1();
-        let process2 = node_facts.process2_v1();
+        Ok(RestartCutJoinedProcess2CaughtUpOwnerV1 {
+            started: self.started,
+            caught_up,
+            zero_delta: stored,
+            context,
+        })
+    }
+}
+
+#[must_use = "zero-delta caught-up owner must record Ready/Start or a fail-stop event"]
+struct RestartCutJoinedProcess2CaughtUpOwnerV1 {
+    started: Process2JournalStartedFromRestartCutV1,
+    caught_up: crate::signed_replay_archive::ArchivedDeployedProcess2CaughtUpOwnerV1,
+    zero_delta: crate::recovery_zero_delta_store::StoredRecoveryZeroDeltaCutV1,
+    context: RecoveryContextV1,
+}
+
+impl RestartCutJoinedProcess2CaughtUpOwnerV1 {
+    fn record_recovery_ready_pending_halt_v1(
+        mut self,
+        config: &LoadedValidatorConfig,
+    ) -> Result<()> {
+        self.caught_up
+            .revalidate_v1()
+            .context("revalidate caught-up owner before RecoveryReady-pending halt")?;
+        self.zero_delta
+            .revalidate_fresh_v1(config.validator_set())
+            .context("revalidate zero-delta artifact before RecoveryReady-pending halt")?;
+        let archive = self.caught_up.archive_facts_v1();
+        let process2 = self.caught_up.node_facts_v1().process2_v1();
         self.started
             .record_joined_inert_safety_halted_v1(
                 &format!(
@@ -727,16 +845,16 @@ impl RestartCutJoinedProcess2InertOwnerV1 {
                     hex::encode(archive.context_sha256_v1()),
                     hex::encode(archive.record_sha256_v1()),
                     hex::encode(process2.session_id_v0()),
-                    hex::encode(context.digest()),
+                    hex::encode(self.context.digest()),
                 ),
                 process2.replayed_link_count_v0(),
             )
             .context("record zero-delta caught-up RecoveryReady-pending halt")?;
-        caught_up
+        self.caught_up
             .revalidate_v1()
             .context("revalidate caught-up owner after fail-stop publication")?;
-        stored
-            .revalidate_fresh_v1(validator_set)
+        self.zero_delta
+            .revalidate_fresh_v1(config.validator_set())
             .context("revalidate zero-delta artifact after fail-stop publication")?;
         Ok(())
     }
@@ -1106,6 +1224,164 @@ where
     )
 }
 
+/// Reopens one exact parked process-1 cut, performs the complete archive-pinned
+/// process-2 recovery, consumes already commissioned content-addressed
+/// RecoveryReady/RecoveryStart artifacts, and returns a linear recovered
+/// ordinary runtime. This function deliberately stops before mesh, ingress,
+/// pacemaker, or startup-timer effects. It is presently one uninterrupted
+/// owner transfer: reopening after a process loss between process-2 journal,
+/// zero-delta, Ready, and Start publication remains a separate fail-closed cut.
+pub fn recover_process2_ordinary_runtime_v1(
+    request: Process2RecoveryContinuationRequestV1,
+    runtime_event_producer: Option<Box<dyn RuntimeEventSignatureProducerV1>>,
+) -> Result<Process2RecoveredRuntimeHandoffV1> {
+    let Process2RecoveryContinuationRequestV1 {
+        consensus,
+        ready_set_artifact_sha256,
+        start_certificate_artifact_sha256,
+        fence_token_digest,
+    } = request;
+    ensure!(
+        ready_set_artifact_sha256 != [0; 32]
+            && start_certificate_artifact_sha256 != [0; 32]
+            && fence_token_digest != [0; 32],
+        "process2 continuation contains a zero content/fence digest"
+    );
+    let ConsensusRunRequestV1 {
+        config,
+        duration,
+        max_blocks,
+        report_path,
+    } = consensus;
+    ensure!(
+        config.has_local_consensus_secret() || runtime_event_producer.is_some(),
+        "process2 continuation requires a local or external runtime-event signer"
+    );
+    let preflight = ConsensusRuntimePreflightV1::new(&config, duration, max_blocks, &report_path)?;
+    let event_journal_path = config.run_root().join("runtime-events.jsonl");
+    let runtime_event_producer =
+        runtime_event_producer.map(SharedRuntimeEventSignatureProducerV1::new);
+    let started = match runtime_event_producer.as_ref() {
+        Some(producer) => {
+            RuntimeEventJournalV1::start_process2_with_stored_restart_cut_park_ack_external_v1(
+                &event_journal_path,
+                &config,
+                producer.boxed(),
+            )
+        }
+        None => RuntimeEventJournalV1::start_process2_with_stored_restart_cut_v1(
+            &event_journal_path,
+            &config,
+        ),
+    }
+    .map_err(|error| anyhow!("start exact process2 runtime-event journal: {error}"))?;
+
+    let archive = SignedReplayArchiveV1::open_existing_v1(&config, preflight.archive_bounds)
+        .context("open process1 signed replay archive for continuation")?;
+    let recovered = config
+        .reopen_deployed_ordinary_cut_v1()
+        .context("reopen deployed ordinary cut for continuation")?;
+    let authenticated = archive
+        .authenticate_recovery_v1(recovered, &config)
+        .context("authenticate process2 signed replay archive for continuation")?;
+    let recovered = authenticated
+        .recover_full_process2_inert_v1(&config)
+        .context("recover complete inert process2 owner for continuation")?;
+    let joined = require_process2_full_recovery_join_v1(&config, started, recovered)
+        .context("join process2 restart artifacts and complete inert recovery")?;
+    let RestartCutJoinedProcess2CaughtUpOwnerV1 {
+        mut started,
+        mut caught_up,
+        zero_delta,
+        context,
+    } = joined
+        .into_zero_delta_caught_up_v1(&config)
+        .context("persist and retain exact process2 zero-delta cut")?;
+    let validator_set = config.validator_set().clone();
+    let start = load_recovery_start_certificate_v1(
+        config.run_root(),
+        start_certificate_artifact_sha256,
+        ready_set_artifact_sha256,
+        &context,
+        &validator_set,
+    )
+    .context("load exact content-addressed process2 RecoveryStart")?;
+    ensure!(
+        start.context_v1() == &context
+            && zero_delta.context_v1() == &context
+            && start.ready_set_artifact_sha256_v1() == ready_set_artifact_sha256
+            && start.artifact_sha256_v1() == start_certificate_artifact_sha256,
+        "process2 continuation artifacts differ from the caught-up context"
+    );
+
+    let transition_path = config
+        .run_root()
+        .join(PROCESS2_RECOVERY_TRANSITION_JOURNAL_FILE_V1);
+    let mut coordinator = if transition_path
+        .try_exists()
+        .with_context(|| format!("inspect {}", transition_path.display()))?
+    {
+        Process2RecoveryReadyStartCoordinatorV1::open_existing(&transition_path)
+    } else {
+        Process2RecoveryReadyStartCoordinatorV1::initialize_new(&transition_path)
+    }
+    .map_err(|error| anyhow!("open process2 recovery transition journal: {error}"))?;
+
+    let ready_transition = caught_up.record_recovery_ready_v1(
+        &mut coordinator,
+        fence_token_digest,
+        start.ready_set_v1(),
+        &validator_set,
+        &StrictEd25519Verifier,
+    )?;
+    ensure!(
+        ready_transition.phase_v1() == Process2RecoveryTransitionPhaseV1::RecoveryReady
+            && ready_transition.ready_set_digest_v1() == start.ready_set_v1().digest()
+            && ready_transition.start_certificate_digest_v1() == [0; 32],
+        "process2 transition journal returned a non-Ready head"
+    );
+    started
+        .record_recovery_ready_v1(start.ready_owner_v1())
+        .map_err(|error| anyhow!("record process2 RecoveryReady runtime event: {error}"))?;
+
+    let start_transition = caught_up.record_recovery_start_v1(
+        &mut coordinator,
+        fence_token_digest,
+        start.value_v1(),
+        &validator_set,
+        &StrictEd25519Verifier,
+    )?;
+    ensure!(
+        start_transition.phase_v1() == Process2RecoveryTransitionPhaseV1::RecoveryStart
+            && start_transition.sequence_v1() == ready_transition.sequence_v1().saturating_add(1)
+            && start_transition.ready_set_digest_v1() == start.ready_set_v1().digest()
+            && start_transition.start_certificate_digest_v1() == start.value_v1().digest(),
+        "process2 transition journal returned a non-Start head"
+    );
+    started
+        .record_recovery_start_v1(&start)
+        .map_err(|error| anyhow!("record process2 RecoveryStart runtime event: {error}"))?;
+
+    let runtime = caught_up.activate_after_recorded_start_v1(
+        &coordinator,
+        fence_token_digest,
+        start.value_v1(),
+        &validator_set,
+        &StrictEd25519Verifier,
+    )?;
+    let mut handoff = Process2RecoveredRuntimeHandoffV1 {
+        runtime,
+        started,
+        start,
+        zero_delta,
+        coordinator,
+        transition: start_transition,
+        validator_set,
+    };
+    handoff.revalidate_v1()?;
+    Ok(handoff)
+}
+
 #[allow(clippy::too_many_arguments)]
 fn run_bounded_consensus_with_optional_runtime_event_producer_v1<C, A>(
     request: ConsensusRunRequestV1,
@@ -1191,7 +1467,9 @@ where
                         .context(
                             "consume process2 start, RestartCut/RestartPark, and full inert recovery",
                         )?;
-                    joined.record_zero_delta_caught_up_and_halt_v1(&config)?;
+                    joined
+                        .into_zero_delta_caught_up_v1(&config)?
+                        .record_recovery_ready_pending_halt_v1(&config)?;
                     bail!(
                         "continuous consensus process2 reached the durable zero-delta caught-up cut; RecoveryReady, RecoveryStart, pacemaker, mesh, and ordinary ingress remain unavailable"
                     );
@@ -1592,8 +1870,8 @@ fn fleet_signing_authority_guard_is_precommission_and_preserves_fixture_v1() {
 
     let source = include_str!("consensus_runtime.rs");
     let entry = source
-        .find("pub fn run_bounded_consensus_with_authority_builder_v1<C, A>(")
-        .expect("authority-builder entry remains present");
+        .find("fn run_bounded_consensus_with_optional_runtime_event_producer_v1<C, A>(")
+        .expect("bounded owner entry remains present");
     let body = &source[entry..];
     let guard = body
         .find("require_fleet_signing_authority_for_builder_v1(")
@@ -9500,7 +9778,7 @@ mod tests {
             .find("runtime event journal process instance is outside the bounded two-process contract")
             .map(|offset| process2_branch + offset)
             .expect("process1 guard remains after the inert process2 branch");
-        let dispatch = &source[entry..process1_guard];
+        let dispatch = &source[process2_branch..process1_guard];
         let classifier = dispatch
             .find("error.requires_stored_restart_cut_v1()")
             .expect("dispatch uses the typed RestartCut classifier");
@@ -9522,7 +9800,8 @@ mod tests {
             "require_process2_full_recovery_join_v1",
             "consume process2 start, RestartCut/RestartPark, and full inert recovery",
             "let joined =",
-            "joined.record_zero_delta_caught_up_and_halt_v1(&config)?",
+            ".into_zero_delta_caught_up_v1(&config)?",
+            ".record_recovery_ready_pending_halt_v1(&config)?",
             "continuous consensus process2 reached the durable zero-delta caught-up cut; RecoveryReady, RecoveryStart, pacemaker, mesh, and ordinary ingress remain unavailable",
         ] {
             assert!(inert_process2.contains(required), "missing {required}");
@@ -9628,9 +9907,12 @@ mod tests {
             .find("require_process2_full_recovery_join_v1")
             .expect("branch consumes the full recovery owners");
         let zero_delta = branch
-            .find("joined.record_zero_delta_caught_up_and_halt_v1(&config)?")
-            .expect("branch persists the authenticated zero-delta cut before halting");
-        assert!(journal_start < full && full < join && join < zero_delta);
+            .find(".into_zero_delta_caught_up_v1(&config)?")
+            .expect("branch persists the authenticated zero-delta cut");
+        let halt = branch
+            .find(".record_recovery_ready_pending_halt_v1(&config)?")
+            .expect("default branch fail-stops before RecoveryReady");
+        assert!(journal_start < full && full < join && join < zero_delta && zero_delta < halt);
         assert!(branch
             .contains("consume process2 start, RestartCut/RestartPark, and full inert recovery"));
         assert!(!branch.contains("load_local_restart_cut_certificate_v1"));
@@ -9660,7 +9942,8 @@ mod tests {
             .map(|offset| branch_start + offset)
             .expect("process2 operational branch remains bounded");
         let branch = &source[branch_start..branch_end];
-        assert!(branch.contains("joined.record_zero_delta_caught_up_and_halt_v1(&config)?"));
+        assert!(branch.contains(".into_zero_delta_caught_up_v1(&config)?"));
+        assert!(branch.contains(".record_recovery_ready_pending_halt_v1(&config)?"));
         assert!(branch.contains(
             "continuous consensus process2 reached the durable zero-delta caught-up cut"
         ));
@@ -9675,6 +9958,54 @@ mod tests {
             assert!(
                 !branch.contains(forbidden),
                 "zero-delta process2 branch bypasses pending RecoveryReady/RecoveryStart via {forbidden}"
+            );
+        }
+    }
+
+    #[test]
+    fn explicit_process2_continuation_orders_ready_start_before_inert_runtime_v1() {
+        let source = include_str!("consensus_runtime.rs");
+        let start = source
+            .find("pub fn recover_process2_ordinary_runtime_v1(")
+            .expect("explicit process2 continuation remains present");
+        let end = source[start..]
+            .find("#[allow(clippy::too_many_arguments)]")
+            .map(|offset| start + offset)
+            .expect("explicit process2 continuation remains bounded");
+        let continuation = &source[start..end];
+        let ordered = [
+            "start_process2_with_stored_restart_cut",
+            "SignedReplayArchiveV1::open_existing_v1",
+            ".authenticate_recovery_v1",
+            ".recover_full_process2_inert_v1",
+            "require_process2_full_recovery_join_v1",
+            ".into_zero_delta_caught_up_v1(&config)",
+            "load_recovery_start_certificate_v1(",
+            "Process2RecoveryReadyStartCoordinatorV1::",
+            "caught_up.record_recovery_ready_v1(",
+            ".record_recovery_ready_v1(start.ready_owner_v1())",
+            "caught_up.record_recovery_start_v1(",
+            ".record_recovery_start_v1(&start)",
+            "caught_up.activate_after_recorded_start_v1(",
+            "handoff.revalidate_v1()",
+        ];
+        let mut cursor = 0;
+        for required in ordered {
+            let offset = continuation[cursor..]
+                .find(required)
+                .unwrap_or_else(|| panic!("process2 continuation lost ordered step {required}"));
+            cursor += offset + required.len();
+        }
+        for forbidden in [
+            "PersistentAuthenticatedPeerMeshV0::",
+            "GenerationAwarePacemakerV0::",
+            "ContinuousValidatorAuthorityV0::",
+            "write_runtime_metrics_v1",
+            "write_runtime_final_state_v1",
+        ] {
+            assert!(
+                !continuation.contains(forbidden),
+                "inert process2 continuation unexpectedly contains {forbidden}"
             );
         }
     }
@@ -9734,16 +10065,16 @@ mod tests {
             .find("impl RestartCutJoinedProcess2InertOwnerV1")
             .expect("joined process2 owner implementation remains present");
         let impl_end = source[impl_start..]
-            .find("fn require_process2_full_recovery_join_v1(")
+            .find("struct RestartCutJoinedProcess2CaughtUpOwnerV1")
             .map(|offset| impl_start + offset)
             .expect("joined owner implementation remains bounded");
         let joined_api = &source[impl_start..impl_end];
         for required in [
-            "fn record_zero_delta_caught_up_and_halt_v1(",
+            "fn into_zero_delta_caught_up_v1(",
             "RecoveryZeroDeltaCutV1::new_direct7",
             "persist_recovery_zero_delta_cut_v1(",
             ".record_zero_delta_caught_up_v1(&stored)",
-            ".record_joined_inert_safety_halted_v1(",
+            "RestartCutJoinedProcess2CaughtUpOwnerV1",
         ] {
             assert!(
                 joined_api.contains(required),
@@ -9759,10 +10090,43 @@ mod tests {
             "into_recovered_ordinary_runtime_v1",
             "activate_for_lab_authority_v1",
             "GenerationAwarePacemakerV0::",
+            ".record_joined_inert_safety_halted_v1(",
         ] {
             assert!(
                 !joined_api.contains(forbidden),
                 "joined process2 owner unexpectedly exposes {forbidden}"
+            );
+        }
+
+        let caught_up_start = source
+            .find("impl RestartCutJoinedProcess2CaughtUpOwnerV1")
+            .expect("caught-up process2 owner remains present");
+        let caught_up_end = source[caught_up_start..]
+            .find("fn require_process2_full_recovery_join_v1(")
+            .map(|offset| caught_up_start + offset)
+            .expect("caught-up process2 owner remains bounded");
+        let caught_up_api = &source[caught_up_start..caught_up_end];
+        for required in [
+            "fn record_recovery_ready_pending_halt_v1(",
+            ".record_joined_inert_safety_halted_v1(",
+            ".revalidate_fresh_v1(config.validator_set())",
+        ] {
+            assert!(
+                caught_up_api.contains(required),
+                "caught-up owner lost default fail-stop boundary {required}"
+            );
+        }
+        for forbidden in [
+            "Process2RecoveryReadyStartCoordinatorV1",
+            ".record_recovery_ready_for_caught_up_owner_v1(",
+            ".record_recovery_start_for_caught_up_owner_v1(",
+            ".activate_caught_up_owner_after_recorded_start_v1(",
+            "PersistentAuthenticatedPeerMeshV0::",
+            "GenerationAwarePacemakerV0::",
+        ] {
+            assert!(
+                !caught_up_api.contains(forbidden),
+                "default caught-up owner unexpectedly exposes {forbidden}"
             );
         }
 

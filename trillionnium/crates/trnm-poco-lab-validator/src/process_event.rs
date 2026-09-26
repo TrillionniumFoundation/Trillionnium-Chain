@@ -25,6 +25,7 @@ use trnm_consensus_types::{ValidatorId, ValidatorSet};
 use crate::{
     config::{LoadedValidatorConfig, PublicReportVerifierContext},
     fleet_barrier::FleetStartCertificateV1,
+    recovery_barrier_store::{StoredRecoveryReadySetV1, StoredRecoveryStartCertificateV1},
     recovery_zero_delta_store::StoredRecoveryZeroDeltaCutV1,
     restart_cut::{
         restart_parked_ack_admission_set_sha256_for_ids_v1, RestartCutBodyV1, RestartParkRoleV1,
@@ -2845,6 +2846,30 @@ impl Process2JournalStartedFromRestartCutV1 {
         Ok(())
     }
 
+    /// Reopens the exact named journal and proves the in-memory owner still
+    /// matches its complete signed history. This is the common pre/post gate
+    /// for the owner-backed RecoveryReady and RecoveryStart transitions.
+    fn revalidate_current_restart_state_v1(
+        &mut self,
+    ) -> Result<RuntimeRestartJournalStateV1, RuntimeEventErrorV1> {
+        self.stored.revalidate_fresh_v1()?;
+        let named_file = self.journal.reopen_exact_named_journal_v1()?;
+        let events = read_exact_events(&named_file)?;
+        let recovered = validate_event_chain(&events, &self.journal.context)?;
+        if recovered.process_instance != self.journal.process_instance
+            || recovered.next_sequence != self.journal.next_sequence
+            || recovered.previous_event_sha256 != self.journal.previous_event_sha256
+            || recovered.last_monotonic_ns != self.journal.last_monotonic_ns
+            || recovered.state != self.journal.state
+        {
+            self.journal.fail_stopped = true;
+            return Err(RuntimeEventErrorV1::Invalid(
+                "process2 journal owner differs from fresh signed history",
+            ));
+        }
+        Ok(recovered.state.restart)
+    }
+
     /// Appends the exact operational zero-delta recovery cut after freshly
     /// revalidating its pinned artifact and every process-1 restart identity.
     /// The event is still non-activating: RecoveryReady, RecoveryStart, signer
@@ -2922,7 +2947,196 @@ impl Process2JournalStartedFromRestartCutV1 {
         stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
             RuntimeEventErrorV1::Invalid("stored zero-delta cut changed after journal publication")
         })?;
+        let state = self.revalidate_current_restart_state_v1()?;
+        if !matches!(state, RuntimeRestartJournalStateV1::ZeroDeltaRecorded(_)) {
+            self.journal.fail_stopped = true;
+            return Err(RuntimeEventErrorV1::Invalid(
+                "zero-delta runtime event did not become the fresh journal head",
+            ));
+        }
         Ok(event)
+    }
+
+    /// Records a complete, path-pinned direct-seven ReadySet. The caller
+    /// supplies no scalar digest/count authority: both values are derived from
+    /// the freshly revalidated typed artifact and its already commissioned
+    /// recovery context.
+    pub(crate) fn record_recovery_ready_v1(
+        &mut self,
+        stored: &StoredRecoveryReadySetV1,
+    ) -> Result<SignedRuntimeEventV1, RuntimeEventErrorV1> {
+        let validator_set = self.journal.context.validator_set.clone();
+        let current = self.revalidate_current_restart_state_v1()?;
+        let zero_delta = match current {
+            RuntimeRestartJournalStateV1::ZeroDeltaRecorded(facts) => facts,
+            _ => {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "RecoveryReady must follow the exact operational zero-delta event",
+                ));
+            }
+        };
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid(
+                "stored recovery ReadySet failed authenticated fresh readback",
+            )
+        })?;
+        let context = stored.context_v1();
+        let statement_count = u64::try_from(stored.value_v1().statements().len())
+            .map_err(|_| RuntimeEventErrorV1::Invalid("RecoveryReady count overflows"))?;
+        let expected_count = u64::try_from(validator_set.validators().len())
+            .map_err(|_| RuntimeEventErrorV1::Invalid("validator count overflows"))?;
+        if context.digest() != zero_delta.subject.recovery_context_sha256
+            || context.fields().caught_up_cut_artifact_sha256
+                != zero_delta.subject.zero_delta_artifact_sha256
+            || context.validator_set_id() != validator_set.id()
+            || context.target_validator() != self.journal.context.validator_id
+            || statement_count != expected_count
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "RecoveryReady differs from the exact operational zero-delta context",
+            ));
+        }
+        let subject = RecoveryReadySubjectV1 {
+            ready_set_artifact_sha256: stored.artifact_sha256_v1(),
+            recovery_context_sha256: context.digest(),
+        };
+        let elapsed = u64::try_from(self.journal.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let event = self.journal.append_raw(
+            "recovery_ready",
+            &subject.encode(),
+            statement_count,
+            elapsed,
+        )?;
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid("stored recovery ReadySet changed after publication")
+        })?;
+        let state = self.revalidate_current_restart_state_v1()?;
+        if !matches!(
+            state,
+            RuntimeRestartJournalStateV1::RecoveryReadyRecorded(facts)
+                if facts.zero_delta == zero_delta
+                    && facts.subject == subject
+                    && facts.statement_count == statement_count
+        ) {
+            self.journal.fail_stopped = true;
+            return Err(RuntimeEventErrorV1::Invalid(
+                "RecoveryReady runtime event did not become the fresh journal head",
+            ));
+        }
+        Ok(event)
+    }
+
+    /// Records a complete path-pinned direct-seven Start certificate only
+    /// after the exact ReadySet event is the signed journal head. The embedded
+    /// ReadySet and context are compared rather than accepted by hash alone.
+    pub(crate) fn record_recovery_start_v1(
+        &mut self,
+        stored: &StoredRecoveryStartCertificateV1,
+    ) -> Result<SignedRuntimeEventV1, RuntimeEventErrorV1> {
+        let validator_set = self.journal.context.validator_set.clone();
+        let current = self.revalidate_current_restart_state_v1()?;
+        let ready = match current {
+            RuntimeRestartJournalStateV1::RecoveryReadyRecorded(facts) => facts,
+            _ => {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "RecoveryStart must follow the exact operational RecoveryReady event",
+                ));
+            }
+        };
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid(
+                "stored recovery Start failed authenticated fresh readback",
+            )
+        })?;
+        let context = stored.context_v1();
+        let statement_count = u64::try_from(stored.value_v1().statements().len())
+            .map_err(|_| RuntimeEventErrorV1::Invalid("RecoveryStart count overflows"))?;
+        let expected_count = u64::try_from(validator_set.validators().len())
+            .map_err(|_| RuntimeEventErrorV1::Invalid("validator count overflows"))?;
+        if context.digest() != ready.subject.recovery_context_sha256
+            || stored.ready_set_artifact_sha256_v1() != ready.subject.ready_set_artifact_sha256
+            || stored.ready_set_v1().context() != context
+            || context.validator_set_id() != validator_set.id()
+            || context.target_validator() != self.journal.context.validator_id
+            || statement_count != expected_count
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "RecoveryStart differs from the exact operational RecoveryReady context",
+            ));
+        }
+        let subject = RecoveryStartSubjectV1 {
+            start_certificate_artifact_sha256: stored.artifact_sha256_v1(),
+            ready_set_artifact_sha256: stored.ready_set_artifact_sha256_v1(),
+            recovery_context_sha256: context.digest(),
+        };
+        let elapsed = u64::try_from(self.journal.started.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let event = self.journal.append_raw(
+            "recovery_start",
+            &subject.encode(),
+            statement_count,
+            elapsed,
+        )?;
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid("stored recovery Start changed after publication")
+        })?;
+        let state = self.revalidate_current_restart_state_v1()?;
+        if !matches!(
+            state,
+            RuntimeRestartJournalStateV1::RecoveryCompleted(facts)
+                if facts.ready == ready
+                    && facts.subject == subject
+                    && facts.statement_count == statement_count
+        ) {
+            self.journal.fail_stopped = true;
+            return Err(RuntimeEventErrorV1::Invalid(
+                "RecoveryStart runtime event did not become the fresh journal head",
+            ));
+        }
+        Ok(event)
+    }
+
+    /// Freshly proves the signed runtime-event journal remains at the exact
+    /// typed RecoveryStart artifact retained by the continuation handoff.
+    pub(crate) fn revalidate_recovery_completed_v1(
+        &mut self,
+        stored: &StoredRecoveryStartCertificateV1,
+    ) -> Result<(), RuntimeEventErrorV1> {
+        let validator_set = self.journal.context.validator_set.clone();
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid("stored recovery Start failed continuation fresh readback")
+        })?;
+        let state = self.revalidate_current_restart_state_v1()?;
+        let completed = match state {
+            RuntimeRestartJournalStateV1::RecoveryCompleted(facts) => facts,
+            _ => {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "process2 journal is not at the exact RecoveryStart phase",
+                ));
+            }
+        };
+        let context = stored.context_v1();
+        let expected_count = u64::try_from(validator_set.validators().len())
+            .map_err(|_| RuntimeEventErrorV1::Invalid("validator count overflows"))?;
+        if completed.subject.start_certificate_artifact_sha256 != stored.artifact_sha256_v1()
+            || completed.subject.ready_set_artifact_sha256 != stored.ready_set_artifact_sha256_v1()
+            || completed.subject.recovery_context_sha256 != context.digest()
+            || completed.ready.subject.ready_set_artifact_sha256
+                != stored.ready_set_artifact_sha256_v1()
+            || completed.ready.subject.recovery_context_sha256 != context.digest()
+            || completed.statement_count != expected_count
+            || completed.ready.statement_count != expected_count
+            || stored.ready_set_v1().context() != context
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "process2 RecoveryStart journal head differs from retained typed artifacts",
+            ));
+        }
+        stored.revalidate_fresh_v1(&validator_set).map_err(|_| {
+            RuntimeEventErrorV1::Invalid(
+                "stored recovery Start changed during continuation readback",
+            )
+        })?;
+        Ok(())
     }
 
     /// Narrow fail-stop sink used only after the consuming full-recovery join.

@@ -1480,6 +1480,41 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2CaughtUpOwnerV1
         self.facts
     }
 
+    pub fn confirm_recovery_checkpoint_v1(
+        &mut self,
+    ) -> Result<ExternalNodeCheckpointV0, PocoNodeDeployedLabProcess2RecoveryErrorV0> {
+        self.revalidate_zero_delta_caught_up_v1()?;
+        let scope = self
+            .facts
+            .restart_cut_v1()
+            .fields_v1()
+            .signer_exact_watermark
+            .scope();
+        let checkpoint = process2_try!(
+            "zero_delta.checkpoint_load",
+            self.recovered.checkpoint_store.load(scope)
+        )
+        .ok_or_else(|| {
+            PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "zero_delta.checkpoint_missing",
+                "caught-up whole-node checkpoint is absent",
+            )
+        })?;
+        let process2 = self.facts.process2_v1();
+        let checkpoint_sha256: [u8; 32] = Sha256::digest(checkpoint.encode_canonical()).into();
+        if checkpoint.generation() != process2.final_checkpoint_generation_v0()
+            || checkpoint.checkpoint_checksum() != process2.final_checkpoint_checksum_v0()
+            || checkpoint_sha256 != self.facts.process2_checkpoint_canonical_sha256_v1()
+        {
+            return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "zero_delta.checkpoint_join",
+                "caught-up whole-node checkpoint differs from retained zero-delta facts",
+            ));
+        }
+        self.revalidate_zero_delta_caught_up_v1()?;
+        Ok(checkpoint)
+    }
+
     /// Freshly re-audits every retained Core, Safety, application, validation,
     /// replay-session, checkpoint, and signer head against the exact caught-up
     /// facts. This is a borrowed read-only gate: it neither clears the replay

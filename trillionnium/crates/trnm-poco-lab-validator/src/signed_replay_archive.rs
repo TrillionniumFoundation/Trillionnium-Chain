@@ -27,14 +27,18 @@ use sha2::{Digest, Sha256};
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
     CertifiedHeaderV0, ConsensusParametersV0, FinalityProofV0, QcRef, QuorumCertificate,
-    SignatureBytes, SignedProposalV0, ValidatorSet, Vote,
+    RecoveryReadySetV1, RecoveryStartCertificateV1, SignatureBytes, SignatureVerifier,
+    SignedProposalV0, ValidatorSet, Vote,
 };
 use trnm_poco_node::{
     PocoNodeDeployedLabAuthenticatedReplayFactsV0, PocoNodeDeployedLabAuthenticatedReplayOwnerV0,
     PocoNodeDeployedLabOrdinaryRecoveryOwnerV0, PocoNodeDeployedLabProcess2CaughtUpOwnerV1,
     PocoNodeDeployedLabProcess2RecoveryFactsV0, PocoNodeDeployedLabProcess2RecoveryOwnerV0,
-    PocoNodeDeployedLabRecoveryFactsV0, PocoNodeDeployedLabSignedReplayEntryV0,
-    PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1, PocoNodeDeployedLabZeroDeltaRestartCutV1,
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1, PocoNodeDeployedLabRecoveryFactsV0,
+    PocoNodeDeployedLabSignedReplayEntryV0, PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1,
+    PocoNodeDeployedLabZeroDeltaRestartCutV1, PocoNodeLabRuntimeFactsV0,
+    Process2RecoveryReadyStartCoordinatorV1, Process2RecoveryTransitionFactsV1,
 };
 
 use crate::{
@@ -3125,6 +3129,149 @@ impl ArchivedDeployedProcess2CaughtUpOwnerV1 {
             .revalidate_zero_delta_caught_up_v1()
             .map_err(|error| anyhow!("revalidate archive-pinned zero-delta Node owner: {error}"))?;
         Ok(())
+    }
+
+    pub(crate) fn record_recovery_ready_v1(
+        &mut self,
+        coordinator: &mut Process2RecoveryReadyStartCoordinatorV1,
+        fence_token_digest: [u8; 32],
+        ready_set: &RecoveryReadySetV1,
+        validator_set: &ValidatorSet,
+        verifier: &impl SignatureVerifier,
+    ) -> Result<Process2RecoveryTransitionFactsV1> {
+        self.revalidate_v1()?;
+        let checkpoint = self
+            .node
+            .confirm_recovery_checkpoint_v1()
+            .map_err(|error| {
+                anyhow!("confirm caught-up checkpoint before RecoveryReady: {error}")
+            })?;
+        let facts = coordinator
+            .record_recovery_ready_for_caught_up_owner_v1(
+                &mut self.node,
+                checkpoint,
+                fence_token_digest,
+                ready_set,
+                validator_set,
+                verifier,
+            )
+            .map_err(|error| anyhow!("record archive-pinned RecoveryReady: {error}"))?;
+        self.revalidate_v1()?;
+        Ok(facts)
+    }
+
+    pub(crate) fn record_recovery_start_v1(
+        &mut self,
+        coordinator: &mut Process2RecoveryReadyStartCoordinatorV1,
+        fence_token_digest: [u8; 32],
+        start_certificate: &RecoveryStartCertificateV1,
+        validator_set: &ValidatorSet,
+        verifier: &impl SignatureVerifier,
+    ) -> Result<Process2RecoveryTransitionFactsV1> {
+        self.revalidate_v1()?;
+        let checkpoint = self
+            .node
+            .confirm_recovery_checkpoint_v1()
+            .map_err(|error| {
+                anyhow!("confirm caught-up checkpoint before RecoveryStart: {error}")
+            })?;
+        let facts = coordinator
+            .record_recovery_start_for_caught_up_owner_v1(
+                &mut self.node,
+                checkpoint,
+                fence_token_digest,
+                start_certificate,
+                validator_set,
+                verifier,
+            )
+            .map_err(|error| anyhow!("record archive-pinned RecoveryStart: {error}"))?;
+        self.revalidate_v1()?;
+        Ok(facts)
+    }
+
+    pub(crate) fn activate_after_recorded_start_v1(
+        mut self,
+        coordinator: &Process2RecoveryReadyStartCoordinatorV1,
+        fence_token_digest: [u8; 32],
+        start_certificate: &RecoveryStartCertificateV1,
+        validator_set: &ValidatorSet,
+        verifier: &impl SignatureVerifier,
+    ) -> Result<ArchivedDeployedProcess2RecoveredRuntimeV1> {
+        self.revalidate_v1()?;
+        let checkpoint = self
+            .node
+            .confirm_recovery_checkpoint_v1()
+            .map_err(|error| {
+                anyhow!("confirm caught-up checkpoint before runtime recovery: {error}")
+            })?;
+        let Self {
+            _archive: archive,
+            node,
+            archive_facts,
+        } = self;
+        archive
+            .revalidate_identity_v1()
+            .context("revalidate replay archive before recovered runtime transition")?;
+        let runtime = coordinator
+            .activate_caught_up_owner_after_recorded_start_v1(
+                node,
+                checkpoint,
+                fence_token_digest,
+                start_certificate,
+                validator_set,
+                verifier,
+            )
+            .map_err(|error| anyhow!("activate archive-pinned recovered runtime: {error}"))?;
+        archive
+            .revalidate_identity_v1()
+            .context("revalidate replay archive after recovered runtime transition")?;
+        ensure!(
+            archive.facts_v1() == archive_facts,
+            "replay archive head changed during recovered runtime transition"
+        );
+        Ok(ArchivedDeployedProcess2RecoveredRuntimeV1 {
+            _archive: archive,
+            runtime,
+            archive_facts,
+        })
+    }
+}
+
+#[must_use = "archive-pinned recovered runtime must enter one sealed process host"]
+pub struct ArchivedDeployedProcess2RecoveredRuntimeV1 {
+    _archive: SignedReplayArchiveV1,
+    runtime: PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1<LabFileWatermark>,
+    archive_facts: SignedReplayArchiveFactsV1,
+}
+
+impl ArchivedDeployedProcess2RecoveredRuntimeV1 {
+    pub const fn runtime_facts_v1(&self) -> PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1 {
+        self.runtime.facts_v1()
+    }
+
+    pub fn ordinary_runtime_facts_v1(&self) -> PocoNodeLabRuntimeFactsV0 {
+        self.runtime.runtime_facts_v1()
+    }
+
+    pub fn revalidate_archive_v1(&self) -> Result<()> {
+        self._archive
+            .revalidate_identity_v1()
+            .context("revalidate recovered-runtime replay archive identity")?;
+        ensure!(
+            self._archive.facts_v1() == self.archive_facts,
+            "recovered-runtime replay archive head changed"
+        );
+        Ok(())
+    }
+}
+
+impl std::fmt::Debug for ArchivedDeployedProcess2RecoveredRuntimeV1 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("ArchivedDeployedProcess2RecoveredRuntimeV1")
+            .field("archive_facts", &self.archive_facts)
+            .field("runtime_facts", &self.runtime.facts_v1())
+            .finish_non_exhaustive()
     }
 }
 

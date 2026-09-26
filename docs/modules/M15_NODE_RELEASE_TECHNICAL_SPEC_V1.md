@@ -131,16 +131,23 @@ requires the existing fresh revalidation API.
 ## Interfaces
 
 The dormant lab-only zero-delta wrapper layer has no executable caller and is
-removed; Node's canonical zero-delta recovery implementation remains. The live
-process-2 path now binds a direct-seven zero-delta caught-up owner to authenticated
-RecoveryReady and RecoveryStart certificates, persists both transitions in the
-private coordinator journal, freshly rechecks the complete owner/checkpoint/fence
-tuple, and consumes the linear owner into the existing ordinary proposal runtime.
-That bridge activates only the exact recovered signer and Core/application owners;
-it retains Core's unique startup timer privately and exposes no pacemaker, listener,
-mesh, transaction ingress, or production constructor. The restart catch-up reference
-codec/assembler remains test-only, with behavioral tests; normal native-client
-replay/import remains the implemented transfer path.
+removed; Node's canonical zero-delta recovery implementation remains. The explicit
+`recover_process2_ordinary_runtime_v1` continuation binds a direct-seven zero-delta
+caught-up owner to authenticated RecoveryReady and RecoveryStart certificates,
+persists both transitions in the private coordinator journal, freshly rechecks the
+complete owner/checkpoint/fence tuple, and consumes the linear owner into the
+existing ordinary proposal runtime. The normal bounded runner deliberately still
+fail-stops after publishing the zero-delta cut with RecoveryReady pending; it does
+not silently select or consume precommissioned Ready/Start artifacts.
+The present explicit continuation is one uninterrupted owner transfer; a process
+loss after process-2 journal, zero-delta, Ready, or Start publication remains
+fail-closed rather than silently replaying or advancing that transition.
+
+The explicit bridge activates only the exact recovered signer and Core/application
+owners; it retains Core's unique startup timer privately and exposes no pacemaker,
+listener, mesh, transaction ingress, or production constructor. The restart
+catch-up reference codec/assembler remains test-only, with behavioral tests; normal
+native-client replay/import remains the implemented transfer path.
 
 The bounded validator entry family consumes `ConsensusRunRequestV1`, containing
 the loaded configuration, duration, block budget and report target. Existing
