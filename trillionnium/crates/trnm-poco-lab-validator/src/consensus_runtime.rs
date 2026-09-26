@@ -180,6 +180,8 @@ pub enum FleetSignaturePurposeV1 {
     RestartCut,
     RestartPark,
     Evidence,
+    RecoveryReady,
+    RecoveryStart,
 }
 
 /// Exact identity handed to a fleet-barrier signer.  The signing root is
@@ -240,6 +242,8 @@ fn unix_fleet_request_nonce_v1(request: FleetSignatureRequestV1) -> [u8; 32] {
         FleetSignaturePurposeV1::RestartCut => 5,
         FleetSignaturePurposeV1::RestartPark => 6,
         FleetSignaturePurposeV1::Evidence => 7,
+        FleetSignaturePurposeV1::RecoveryReady => 8,
+        FleetSignaturePurposeV1::RecoveryStart => 9,
     }]);
     let origin_id = request.origin();
     let origin = origin_id.as_bytes();
@@ -296,6 +300,8 @@ impl FleetSignatureProducerV1 for UnixFleetSignatureProducerV1 {
             FleetSignaturePurposeV1::RestartCut => FleetRootPurposeV1::RestartCut,
             FleetSignaturePurposeV1::RestartPark => FleetRootPurposeV1::RestartPark,
             FleetSignaturePurposeV1::Evidence => FleetRootPurposeV1::Evidence,
+            FleetSignaturePurposeV1::RecoveryReady => FleetRootPurposeV1::RecoveryReady,
+            FleetSignaturePurposeV1::RecoveryStart => FleetRootPurposeV1::RecoveryStart,
         };
         self.producer
             .sign_fleet_root_v1(
@@ -8663,6 +8669,28 @@ mod tests {
     };
 
     use super::*;
+
+    #[test]
+    fn recovery_fleet_purposes_have_distinct_durable_nonce_domains_v1() {
+        let origin = ValidatorId::new([0x41; 32]);
+        let set = [0x42; 32];
+        let root = [0x43; 32];
+        let nonce = |purpose| {
+            unix_fleet_request_nonce_v1(FleetSignatureRequestV1::new(purpose, origin, set, root))
+        };
+        assert_ne!(
+            nonce(FleetSignaturePurposeV1::Ready),
+            nonce(FleetSignaturePurposeV1::RecoveryReady)
+        );
+        assert_ne!(
+            nonce(FleetSignaturePurposeV1::Start),
+            nonce(FleetSignaturePurposeV1::RecoveryStart)
+        );
+        assert_ne!(
+            nonce(FleetSignaturePurposeV1::RecoveryReady),
+            nonce(FleetSignaturePurposeV1::RecoveryStart)
+        );
+    }
 
     #[test]
     fn timeout_diagnostic_ring_is_bounded_and_classifies_outcomes() {

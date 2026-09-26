@@ -76,6 +76,11 @@ pub enum FleetRootPurposeV1 {
     /// provisioned fleet authority, but remains a distinct replay domain from
     /// consensus relay/restart statements.
     Evidence = 7,
+    /// RecoveryReady is distinct from initial FleetReady so durable nonce and
+    /// audit domains cannot be replayed across startup and process-2 recovery.
+    RecoveryReady = 8,
+    /// RecoveryStart is distinct from initial FleetStart for the same reason.
+    RecoveryStart = 9,
 }
 
 impl FleetRootPurposeV1 {
@@ -92,6 +97,8 @@ impl FleetRootPurposeV1 {
             5 => Ok(Self::RestartCut),
             6 => Ok(Self::RestartPark),
             7 => Ok(Self::Evidence),
+            8 => Ok(Self::RecoveryReady),
+            9 => Ok(Self::RecoveryStart),
             _ => Err(FleetSignerProtocolErrorV1::InvalidPurpose(value)),
         }
     }
@@ -717,6 +724,37 @@ mod source_contract_tests {
                 "default source token: {forbidden}"
             );
         }
+    }
+
+    #[test]
+    fn closed_purpose_tags_round_trip_without_startup_recovery_aliases() {
+        let expected = [
+            (super::FleetRootPurposeV1::Ready, 1u8),
+            (super::FleetRootPurposeV1::Start, 2),
+            (super::FleetRootPurposeV1::Relay, 3),
+            (super::FleetRootPurposeV1::Restart, 4),
+            (super::FleetRootPurposeV1::RestartCut, 5),
+            (super::FleetRootPurposeV1::RestartPark, 6),
+            (super::FleetRootPurposeV1::Evidence, 7),
+            (super::FleetRootPurposeV1::RecoveryReady, 8),
+            (super::FleetRootPurposeV1::RecoveryStart, 9),
+        ];
+        for (purpose, tag) in expected {
+            assert_eq!(purpose.as_byte(), tag);
+            assert_eq!(super::FleetRootPurposeV1::from_byte(tag), Ok(purpose));
+        }
+        assert_ne!(
+            super::FleetRootPurposeV1::Ready.as_byte(),
+            super::FleetRootPurposeV1::RecoveryReady.as_byte()
+        );
+        assert_ne!(
+            super::FleetRootPurposeV1::Start.as_byte(),
+            super::FleetRootPurposeV1::RecoveryStart.as_byte()
+        );
+        assert!(matches!(
+            super::FleetRootPurposeV1::from_byte(10),
+            Err(super::FleetSignerProtocolErrorV1::InvalidPurpose(10))
+        ));
     }
 
     #[test]

@@ -5,27 +5,31 @@
 //! `trnm-consensus-types`.  This module joins those two boundaries without
 //! granting restart authority: normal builds only retain at most one exact
 //! externally signed statement per validator and phase and reconstruct the
-//! full N/N ReadySet and StartCertificate. Local signing helpers are test-only
-//! until a later consuming caught-up/journal owner exists. It has no journal,
-//! filesystem, process-control, Core, signer-activation, timer, or ordinary-
-//! ingress API.
+//! full N/N ReadySet and StartCertificate. Operational signing crosses only
+//! the durable fleet-root signer with recovery-specific purposes and verifies
+//! the returned signature against the exact validator set. This module still
+//! has no journal, filesystem, process-control, Core, signer-activation, timer,
+//! or ordinary-ingress API.
 
 use std::{collections::BTreeMap, fmt};
 
+use anyhow::{anyhow, Context, Result as AnyResult};
 #[cfg(test)]
 use ed25519_dalek::{Signer, SigningKey};
 use sha2::{Digest, Sha256};
 use trnm_consensus_crypto::StrictEd25519Verifier;
-#[cfg(test)]
-use trnm_consensus_types::Signature64;
 use trnm_consensus_types::{
     decode_signed_recovery_ready_v1_exact, decode_signed_recovery_start_v1_exact,
     RecoveryContextV1, RecoveryErrorV1, RecoveryReadySetV1, RecoveryStartCertificateV1,
-    SignedRecoveryReadyV1, SignedRecoveryStartV1, ValidatorId, ValidatorSet,
+    Signature64, SignedRecoveryReadyV1, SignedRecoveryStartV1, ValidatorId, ValidatorSet,
     DIRECT7_RECOVERY_VALIDATOR_COUNT_V1, MAX_SIGNED_RECOVERY_START_BYTES_V1,
 };
 
 const SLOT_DIGEST_DOMAIN_V1: &[u8] = b"trnm.poco-g3.recovery-barrier-slot.v1";
+
+use crate::consensus_runtime::{
+    FleetSignatureProducerV1, FleetSignaturePurposeV1, FleetSignatureRequestV1,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) enum RecoveryBarrierPhaseV1 {
@@ -99,6 +103,77 @@ impl From<RecoveryErrorV1> for RecoveryBarrierErrorV1 {
     fn from(error: RecoveryErrorV1) -> Self {
         Self::Recovery(error)
     }
+}
+
+/// Produces one operational RecoveryReady statement through the already
+/// configured durable fleet-root signer. The closed purpose is distinct from
+/// initial FleetReady, and the returned signature is verified against the
+/// exact validator-set consensus key before any statement is released.
+pub(crate) fn issue_external_recovery_ready_v1(
+    context: RecoveryContextV1,
+    origin: ValidatorId,
+    validator_set: &ValidatorSet,
+    producer: &mut dyn FleetSignatureProducerV1,
+) -> AnyResult<SignedRecoveryReadyV1> {
+    context
+        .validate_direct7(validator_set)
+        .map_err(|error| anyhow!("validate RecoveryReady context: {error}"))?;
+    ensure_known_origin_v1(origin, validator_set)?;
+    let signing_root = SignedRecoveryReadyV1::signing_root_for(&context, origin);
+    let signature = producer
+        .sign_fleet_v1(FleetSignatureRequestV1::new(
+            FleetSignaturePurposeV1::RecoveryReady,
+            origin,
+            *validator_set.id().as_bytes(),
+            *signing_root.as_bytes(),
+        ))
+        .context("produce durable external RecoveryReady signature")?;
+    SignedRecoveryReadyV1::from_signature(
+        context,
+        origin,
+        Signature64::from_array(signature),
+        validator_set,
+        &StrictEd25519Verifier,
+    )
+    .map_err(|error| anyhow!("verify external RecoveryReady signature: {error}"))
+}
+
+/// Produces one operational RecoveryStart statement only from the complete,
+/// strictly verified ReadySet. No caller-provided ReadySet digest is accepted.
+pub(crate) fn issue_external_recovery_start_v1(
+    ready_set: &RecoveryReadySetV1,
+    origin: ValidatorId,
+    validator_set: &ValidatorSet,
+    producer: &mut dyn FleetSignatureProducerV1,
+) -> AnyResult<SignedRecoveryStartV1> {
+    ready_set
+        .verify(validator_set, &StrictEd25519Verifier)
+        .map_err(|error| anyhow!("verify RecoveryReady set before Start: {error}"))?;
+    ensure_known_origin_v1(origin, validator_set)?;
+    let signing_root = SignedRecoveryStartV1::signing_root_for(ready_set, origin);
+    let signature = producer
+        .sign_fleet_v1(FleetSignatureRequestV1::new(
+            FleetSignaturePurposeV1::RecoveryStart,
+            origin,
+            *validator_set.id().as_bytes(),
+            *signing_root.as_bytes(),
+        ))
+        .context("produce durable external RecoveryStart signature")?;
+    SignedRecoveryStartV1::from_signature(
+        ready_set,
+        origin,
+        Signature64::from_array(signature),
+        validator_set,
+        &StrictEd25519Verifier,
+    )
+    .map_err(|error| anyhow!("verify external RecoveryStart signature: {error}"))
+}
+
+fn ensure_known_origin_v1(origin: ValidatorId, validator_set: &ValidatorSet) -> AnyResult<()> {
+    if validator_set.validator(origin).is_none() {
+        return Err(anyhow!("recovery signer is absent from validator set"));
+    }
+    Ok(())
 }
 
 /// Signs one Ready statement only after the local Ed25519 key is joined to
@@ -469,6 +544,25 @@ mod tests {
 
     use super::*;
 
+    struct RecoveryFleetTestProducerV1 {
+        key: SigningKey,
+        expected_origin: ValidatorId,
+        expected_set: [u8; 32],
+        observed: Vec<FleetSignaturePurposeV1>,
+    }
+
+    impl FleetSignatureProducerV1 for RecoveryFleetTestProducerV1 {
+        fn sign_fleet_v1(&mut self, request: FleetSignatureRequestV1) -> AnyResult<[u8; 64]> {
+            if request.origin() != self.expected_origin
+                || request.validator_set_id() != self.expected_set
+            {
+                return Err(anyhow!("test recovery fleet request identity mismatch"));
+            }
+            self.observed.push(request.purpose());
+            Ok(self.key.sign(&request.signing_root()).to_bytes())
+        }
+    }
+
     fn fixture_v1() -> (ValidatorSet, Vec<SigningKey>, RecoveryContextV1) {
         let keys = (0u8..7)
             .map(|index| SigningKey::from_bytes(&[0x31 + index; 32]))
@@ -540,6 +634,45 @@ mod tests {
                 issue_local_recovery_ready_v1(context, validator.id(), set, key).unwrap()
             })
             .collect()
+    }
+
+    #[test]
+    fn external_fleet_signer_uses_distinct_recovery_purposes_and_exact_roots_v1() {
+        let (set, keys, context) = fixture_v1();
+        let mut ready_statements = Vec::new();
+        for (validator, key) in set.validators().iter().zip(&keys) {
+            let mut producer = RecoveryFleetTestProducerV1 {
+                key: key.clone(),
+                expected_origin: validator.id(),
+                expected_set: *set.id().as_bytes(),
+                observed: Vec::new(),
+            };
+            let statement =
+                issue_external_recovery_ready_v1(context, validator.id(), &set, &mut producer)
+                    .expect("external RecoveryReady");
+            assert_eq!(
+                producer.observed,
+                vec![FleetSignaturePurposeV1::RecoveryReady]
+            );
+            ready_statements.push(statement);
+        }
+        let ready_set =
+            RecoveryReadySetV1::new(context, ready_statements, &set, &StrictEd25519Verifier)
+                .expect("complete ReadySet");
+        for (validator, key) in set.validators().iter().zip(&keys) {
+            let mut producer = RecoveryFleetTestProducerV1 {
+                key: key.clone(),
+                expected_origin: validator.id(),
+                expected_set: *set.id().as_bytes(),
+                observed: Vec::new(),
+            };
+            issue_external_recovery_start_v1(&ready_set, validator.id(), &set, &mut producer)
+                .expect("external RecoveryStart");
+            assert_eq!(
+                producer.observed,
+                vec![FleetSignaturePurposeV1::RecoveryStart]
+            );
+        }
     }
 
     #[test]

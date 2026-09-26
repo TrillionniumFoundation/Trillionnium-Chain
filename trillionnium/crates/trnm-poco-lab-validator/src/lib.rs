@@ -75,8 +75,10 @@ mod restart_park_protocol;
 // still private until the process-1 runtime and process-2 gate consume it.
 #[allow(dead_code)]
 mod restart_parked_ack_protocol;
-// Typed Ready/Start collection remains private and authority-free until the
-// process-2 journal transition consumes its durable artifacts.
+// Typed Ready/Start collection remains private. It can obtain only
+// recovery-purpose-bound signatures from the existing durable fleet signer and
+// immediately verifies them against the validator set; no process-2 runtime or
+// activation path consumes those statements yet.
 #[allow(dead_code)]
 mod recovery_barrier;
 // Typed Ready/Start artifacts are durable but remain private, inert barrier
