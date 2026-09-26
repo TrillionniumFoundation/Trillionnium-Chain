@@ -64,6 +64,11 @@ mod handoff_schema_v1;
 mod handoff_sqlite_v1;
 mod hash;
 mod model;
+mod retirement_model_v1;
+pub use retirement_model_v1::{
+    ExternalSignerRetirementV1, SignerRetirementHostCutV1, SignerRetirementRecordV1,
+    SIGNER_RETIREMENT_RECORD_BYTES_V1,
+};
 mod schema;
 mod sqlite;
 
@@ -74,11 +79,11 @@ pub use error::{
 pub use handoff_error_v1::{HandoffSignerJournalConflictV1, HandoffSignerJournalErrorV1};
 pub use handoff_model_v1::{
     HandoffSignatureProducerV1, HandoffSignatureRequestV1, HandoffSignerJournalProfileV1,
-    StrictOldSetHandoffAdmissionV1,
+    StrictNewSetHandoffAdmissionV1, StrictOldSetHandoffAdmissionV1,
 };
 pub use handoff_sqlite_v1::{
-    inspect_signer_journal_schema_read_only_v1, SignerJournalSchemaKindV1,
-    SqliteHandoffSignerJournalV1,
+    inspect_signer_journal_schema_read_only_v1, ConfirmedHandoffJournalHeadV1,
+    SignerJournalSchemaKindV1, SqliteHandoffSignerJournalV1,
 };
 pub use model::{
     signer_journal_lifecycle_nonce_v0, ExternalMonotonicWatermarkInjectionV0,
@@ -92,4 +97,8 @@ pub use sqlite::{
     SignerJournalActivationFailureV0, SignerJournalLifetimeInventoryV1,
     SignerJournalReconciliationFactsV0, SignerJournalTailFactsV0, SignerJournalTailStateV0,
     SignerNodeCheckpointIdentityV0, SignerPreparedIntentFactsV0, SqliteSignerJournalV0,
+};
+
+pub use sqlite::retirement_v1::{
+    ConfirmedOrdinarySignerRetirementV1, RetiredSqliteSignerJournalV1, SignerRetirementCutV1,
 };

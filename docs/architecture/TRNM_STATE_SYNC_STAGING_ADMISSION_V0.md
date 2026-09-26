@@ -36,6 +36,17 @@ receipt-mismatch handling still prohibits destructive abort.
 
 ## Retained replay
 
+The native SQLite session owner publishes initialization through a temporary
+same-directory inode. It verifies the complete metadata/chunk image, checkpoints
+the temporary WAL, fsyncs the file, and hard-links it into the requested final
+path without replacement; the parent directory is fsynced before the temporary
+link is removed. Existing final paths, dangling symlinks, ancestor symlinks,
+and SQLite sidecar symlinks are rejected, and reopen uses `SQLITE_OPEN_NOFOLLOW`.
+The owner keeps the existing immediate writer transaction and crash-resume
+readback rules. This is local filesystem hardening: descriptor-anchored
+directory ownership, physical power-loss qualification, and independently
+provisioned production state-sync transport remain open.
+
 The public integration suite exercises nonempty-chunk feasibility, both zero
 identity fields, unchanged serving state, exact callback order, write failure,
 commit uncertainty, and accepted positive controls. It uses an explicit test

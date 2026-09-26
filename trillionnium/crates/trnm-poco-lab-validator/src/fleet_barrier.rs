@@ -99,6 +99,7 @@ pub struct FleetCampaignIdentityV1 {
     binary_sha256: [u8; 32],
     workload_corpus_sha256: [u8; 32],
     workload_policy_sha256: [u8; 32],
+    native_client_profile_sha256: Option<[u8; 32]>,
     validator_count: u32,
 }
 
@@ -130,10 +131,51 @@ impl FleetCampaignIdentityV1 {
             binary_sha256,
             workload_corpus_sha256,
             workload_policy_sha256,
+            native_client_profile_sha256: None,
             validator_count,
         };
         value.validate()?;
         Ok(value)
+    }
+
+    /// Explicit native application profile. The reserved, formerly invalid
+    /// zero/zero workload pair tags a following nonzero native profile digest.
+    /// Every previously valid legacy encoding remains byte-for-byte unchanged.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_native_v1(
+        run_id: String,
+        chain_id: ChainId,
+        genesis_hash: [u8; 32],
+        validator_set_id: [u8; 32],
+        validator_set_sha256: [u8; 32],
+        topology_sha256: [u8; 32],
+        coordinator_manifest_sha256: [u8; 32],
+        candidate_source_sha256: [u8; 32],
+        binary_sha256: [u8; 32],
+        native_client_profile_sha256: [u8; 32],
+        validator_count: u32,
+    ) -> Result<Self, FleetBarrierErrorV1> {
+        let value = Self {
+            run_id,
+            chain_id,
+            genesis_hash,
+            validator_set_id,
+            validator_set_sha256,
+            topology_sha256,
+            coordinator_manifest_sha256,
+            candidate_source_sha256,
+            binary_sha256,
+            workload_corpus_sha256: [0; 32],
+            workload_policy_sha256: [0; 32],
+            native_client_profile_sha256: Some(native_client_profile_sha256),
+            validator_count,
+        };
+        value.validate()?;
+        Ok(value)
+    }
+
+    pub const fn native_client_profile_sha256_v1(&self) -> Option<[u8; 32]> {
+        self.native_client_profile_sha256
     }
 
     fn validate(&self) -> Result<(), FleetBarrierErrorV1> {
@@ -156,13 +198,24 @@ impl FleetCampaignIdentityV1 {
             self.coordinator_manifest_sha256,
             self.candidate_source_sha256,
             self.binary_sha256,
-            self.workload_corpus_sha256,
-            self.workload_policy_sha256,
         ] {
             if digest == [0; 32] {
                 return Err(FleetBarrierErrorV1::Malformed(
                     "zero campaign identity digest",
                 ));
+            }
+        }
+        match self.native_client_profile_sha256 {
+            Some(digest)
+                if digest != [0; 32]
+                    && self.workload_corpus_sha256 == [0; 32]
+                    && self.workload_policy_sha256 == [0; 32] => {}
+            None if self.workload_corpus_sha256 != [0; 32]
+                && self.workload_policy_sha256 != [0; 32] => {}
+            _ => {
+                return Err(FleetBarrierErrorV1::Malformed(
+                    "campaign application profile",
+                ))
             }
         }
         Ok(())
@@ -228,6 +281,9 @@ impl FleetCampaignIdentityV1 {
         output.extend_from_slice(&self.binary_sha256);
         output.extend_from_slice(&self.workload_corpus_sha256);
         output.extend_from_slice(&self.workload_policy_sha256);
+        if let Some(profile) = self.native_client_profile_sha256 {
+            output.extend_from_slice(&profile);
+        }
         output.extend_from_slice(&self.validator_count.to_be_bytes());
     }
 
@@ -235,20 +291,27 @@ impl FleetCampaignIdentityV1 {
         let run_id = cursor.string("run ID")?;
         let chain_id = ChainId::new(&cursor.string("chain ID")?)
             .map_err(|_| FleetBarrierErrorV1::Malformed("chain ID"))?;
-        Self::new(
+        let mut value = Self {
             run_id,
             chain_id,
-            cursor.array()?,
-            cursor.array()?,
-            cursor.array()?,
-            cursor.array()?,
-            cursor.array()?,
-            cursor.array()?,
-            cursor.array()?,
-            cursor.array()?,
-            cursor.array()?,
-            u32::from_be_bytes(cursor.array()?),
-        )
+            genesis_hash: cursor.array()?,
+            validator_set_id: cursor.array()?,
+            validator_set_sha256: cursor.array()?,
+            topology_sha256: cursor.array()?,
+            coordinator_manifest_sha256: cursor.array()?,
+            candidate_source_sha256: cursor.array()?,
+            binary_sha256: cursor.array()?,
+            workload_corpus_sha256: cursor.array()?,
+            workload_policy_sha256: cursor.array()?,
+            native_client_profile_sha256: None,
+            validator_count: 0,
+        };
+        if value.workload_corpus_sha256 == [0; 32] && value.workload_policy_sha256 == [0; 32] {
+            value.native_client_profile_sha256 = Some(cursor.array()?);
+        }
+        value.validator_count = u32::from_be_bytes(cursor.array()?);
+        value.validate()?;
+        Ok(value)
     }
 }
 
@@ -266,18 +329,29 @@ pub struct FleetCampaignRequestV1 {
     transport: FleetBarrierTransportV1,
 }
 
+/// Explicit local campaign timing input; the request constructor retains validation.
+pub struct FleetCampaignTimingV1 {
+    pub duration_seconds: u64,
+    pub pacemaker_base_timeout_seconds: u64,
+    pub terminal_drain_allowance_seconds: u64,
+    pub timeout_view_budget_allowance_seconds: u64,
+}
+
 impl FleetCampaignRequestV1 {
     pub fn new(
         barrier_round: u64,
         ordinary_start_height: u64,
-        duration_seconds: u64,
-        pacemaker_base_timeout_seconds: u64,
-        terminal_drain_allowance_seconds: u64,
-        timeout_view_budget_allowance_seconds: u64,
+        timing: FleetCampaignTimingV1,
         maximum_blocks: u64,
         target_height: u64,
         transport: FleetBarrierTransportV1,
     ) -> Result<Self, FleetBarrierErrorV1> {
+        let FleetCampaignTimingV1 {
+            duration_seconds,
+            pacemaker_base_timeout_seconds,
+            terminal_drain_allowance_seconds,
+            timeout_view_budget_allowance_seconds,
+        } = timing;
         let value = Self {
             barrier_round,
             ordinary_start_height,
@@ -363,10 +437,12 @@ impl FleetCampaignRequestV1 {
         Self::new(
             u64::from_be_bytes(cursor.array()?),
             u64::from_be_bytes(cursor.array()?),
-            u64::from_be_bytes(cursor.array()?),
-            u64::from_be_bytes(cursor.array()?),
-            u64::from_be_bytes(cursor.array()?),
-            u64::from_be_bytes(cursor.array()?),
+            FleetCampaignTimingV1 {
+                duration_seconds: u64::from_be_bytes(cursor.array()?),
+                pacemaker_base_timeout_seconds: u64::from_be_bytes(cursor.array()?),
+                terminal_drain_allowance_seconds: u64::from_be_bytes(cursor.array()?),
+                timeout_view_budget_allowance_seconds: u64::from_be_bytes(cursor.array()?),
+            },
             u64::from_be_bytes(cursor.array()?),
             u64::from_be_bytes(cursor.array()?),
             FleetBarrierTransportV1::decode(cursor)?,
@@ -2226,7 +2302,10 @@ impl FleetBarrierAdmissionMapV1 {
                 return Ok(FleetBarrierAdmissionV1::ExactReplay);
             }
             self.poisoned = true;
-            return Err(FleetBarrierErrorV1::Equivocation { origin, phase });
+            return Err(FleetBarrierErrorV1::Equivocation {
+                origin: Box::new(origin),
+                phase,
+            });
         }
         if self.entries.len() == self.maximum_entries {
             self.poisoned = true;
@@ -2405,7 +2484,7 @@ fn checked_ceil_div(numerator: u64, denominator: u64) -> Result<u64, FleetBarrie
     }
     let quotient = numerator / denominator;
     quotient
-        .checked_add(u64::from(numerator % denominator != 0))
+        .checked_add(u64::from(!numerator.is_multiple_of(denominator)))
         .ok_or(FleetBarrierErrorV1::Malformed("capacity division overflow"))
 }
 
@@ -2493,7 +2572,7 @@ pub enum FleetBarrierErrorV1 {
     Incomplete,
     Capacity,
     Equivocation {
-        origin: ValidatorId,
+        origin: Box<ValidatorId>,
         phase: FleetBarrierPhaseV1,
     },
     Poisoned,
@@ -2583,10 +2662,12 @@ mod tests {
             FleetCampaignRequestV1::new(
                 1,
                 4,
-                60,
-                2,
-                30,
-                30,
+                crate::fleet_barrier::FleetCampaignTimingV1 {
+                    duration_seconds: 60,
+                    pacemaker_base_timeout_seconds: 2,
+                    terminal_drain_allowance_seconds: 30,
+                    timeout_view_budget_allowance_seconds: 30,
+                },
                 100,
                 103,
                 FleetBarrierTransportV1::Direct,
@@ -2664,6 +2745,74 @@ mod tests {
                     .unwrap()
             })
             .collect()
+    }
+
+    #[test]
+    fn native_profile_has_exact_distinct_signed_campaign_identity_v1() {
+        let (set, keys) = fixture();
+        let legacy = context(&set);
+        let mut native = legacy.clone();
+        let old = legacy.identity();
+        native.identity = FleetCampaignIdentityV1::new_native_v1(
+            old.run_id().to_owned(),
+            old.chain_id(),
+            old.genesis_hash(),
+            old.validator_set_id(),
+            old.validator_set_sha256(),
+            old.topology_sha256(),
+            old.coordinator_manifest_sha256(),
+            old.candidate_source_sha256(),
+            old.binary_sha256(),
+            [0xef; 32],
+            old.validator_count(),
+        )
+        .unwrap();
+        assert_eq!(
+            native.identity.native_client_profile_sha256_v1(),
+            Some([0xef; 32])
+        );
+        assert_eq!(
+            CommonCampaignContextV1::decode(&native.encode()).unwrap(),
+            native
+        );
+        assert_eq!(
+            CommonCampaignContextV1::decode(&legacy.encode()).unwrap(),
+            legacy
+        );
+        assert_eq!(native.encode().len(), legacy.encode().len() + 32);
+        assert_ne!(native.encode(), legacy.encode());
+        let ready = ready_statements(&set, &keys, &native);
+        let signed = ready[0].encode();
+        assert_eq!(SignedFleetReadyV1::decode(&signed, &set).unwrap(), ready[0]);
+        let offset = signed.windows(32).position(|b| b == [0xef; 32]).unwrap();
+        let mut substituted = signed.clone();
+        substituted[offset] ^= 1;
+        assert!(SignedFleetReadyV1::decode(&substituted, &set).is_err());
+        let mut zero = native.clone();
+        zero.identity.native_client_profile_sha256 = Some([0; 32]);
+        assert!(CommonCampaignContextV1::decode(&zero.encode()).is_err());
+        let mut hybrid = native.clone();
+        hybrid.identity.workload_policy_sha256 = [1; 32];
+        assert!(hybrid.identity.validate().is_err());
+        assert!(FleetCampaignIdentityV1::new(
+            old.run_id().to_owned(),
+            old.chain_id(),
+            old.genesis_hash(),
+            old.validator_set_id(),
+            old.validator_set_sha256(),
+            old.topology_sha256(),
+            old.coordinator_manifest_sha256(),
+            old.candidate_source_sha256(),
+            old.binary_sha256(),
+            [0; 32],
+            [0; 32],
+            old.validator_count(),
+        )
+        .is_err());
+        let mut omitted = Vec::new();
+        native.identity.encode(&mut omitted);
+        omitted.truncate(omitted.len() - 32);
+        assert!(FleetCampaignIdentityV1::decode(&mut BarrierCursor::new(&omitted)).is_err());
     }
 
     #[test]
@@ -2785,7 +2934,7 @@ mod tests {
         ready[0] = externally_produced_ready;
         let ready_set = FleetReadySetV1::new(context, ready, &set).unwrap();
         let start_root = SignedFleetStartV1::signing_root_for_parts_v1(
-            &ready_set.statement(set.validators()[0].id()).unwrap(),
+            ready_set.statement(set.validators()[0].id()).unwrap(),
             &ready_set,
             11,
             [0xd1; 32],

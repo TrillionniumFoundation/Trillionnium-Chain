@@ -79,9 +79,11 @@ def prepare(
     material_builder: pathlib.Path,
     validator_binary: pathlib.Path,
     count: int,
+    *, native_client: bool = False,
 ) -> tuple[pathlib.Path, pathlib.Path, list[str]]:
-    coordinator = parent / f"coordinator-{count}"
-    deployments = parent / f"deployments-{count}"
+    suffix = "-native" if native_client else ""
+    coordinator = parent / f"coordinator-{count}{suffix}"
+    deployments = parent / f"deployments-{count}{suffix}"
     material_builder_hash = sha256_file(material_builder)
     binary_hash = sha256_file(validator_binary)
     run_id = f"poco-g3-{count}-20260814T000000Z-{NONCES[count]}"
@@ -112,6 +114,7 @@ def prepare(
             "6",
             "--run-id",
             run_id,
+            *(["--native-client-profile", "--client-key-root", str(parent / f"native-client-keys-{count}")] if native_client else []),
         ]
     )
     run(
@@ -175,8 +178,8 @@ def prepare(
     ):
         raise AssertionError("material-builder binary entered a runtime deployment")
     shared_public_relatives = (
-        pathlib.Path("public/workload.corpus"),
-        pathlib.Path("public/workload-policy.json"),
+        *([pathlib.Path("public/native-client-profile.json")] if native_client else [
+            pathlib.Path("public/workload.corpus"), pathlib.Path("public/workload-policy.json")]),
         pathlib.Path("public/bootstrap/h1.proposal"),
         pathlib.Path("public/bootstrap/h2.proposal"),
         pathlib.Path("public/bootstrap/h3.proposal"),

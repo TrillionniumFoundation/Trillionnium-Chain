@@ -36,6 +36,10 @@ pub mod fleet_barrier_evidence;
 pub mod frame;
 pub mod key_roles;
 pub mod loop_driver;
+pub mod native_client_profile;
+pub mod native_client_runtime;
+pub mod native_client_tool;
+pub mod native_replay_sync_v1;
 pub mod network;
 /// Active D0 peer-admission helper.  This is bounded handshake/lease
 /// authority only; it does not drive consensus transport or a validator loop.
@@ -55,9 +59,13 @@ pub mod pacemaker;
 pub mod payload_replay;
 pub mod process_event;
 pub mod relay;
+// This reference catch-up codec/assembler has no live runtime caller. Keep its
+// behavioral tests without exporting an uncomposed production-looking API.
+#[cfg(test)]
 pub mod restart_catchup;
 pub mod restart_cut;
 pub mod restart_protocol;
+mod terminal_barrier_v1;
 // Phase-bound direct-seven park aggregation is private and inert until one
 // composite durable owner is consumed by the journal-first runtime tranche.
 #[allow(dead_code)]
@@ -67,8 +75,10 @@ mod restart_park_protocol;
 // still private until the process-1 runtime and process-2 gate consume it.
 #[allow(dead_code)]
 mod restart_parked_ack_protocol;
-// Typed Ready/Start collection remains private and authority-free until the
-// process-2 journal transition consumes its durable artifacts.
+// Typed Ready/Start collection remains private. It can obtain only
+// recovery-purpose-bound signatures from the existing durable fleet signer and
+// immediately verifies them against the validator set; no process-2 runtime or
+// activation path consumes those statements yet.
 #[allow(dead_code)]
 mod recovery_barrier;
 // Typed Ready/Start artifacts are durable but remain private, inert barrier

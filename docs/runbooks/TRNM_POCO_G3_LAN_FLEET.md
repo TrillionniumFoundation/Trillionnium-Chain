@@ -158,6 +158,15 @@ infrastructure claim.
 Immediately before a formal campaign, produce fresh reports from the current
 producers and pass the exact outputs to the current acceptors:
 
+The runner must execute on the one inventory host whose `management` value is
+`local`. The `local` stage is a coordinator and capture-resource binding, not
+an arbitrary coordinator alias; an SSH wrapper on desktop or macOS must not be
+used to impersonate that host. The readiness producer now fail-closes unless
+the executing machine owns exactly the inventory `lan_ip` of that local host.
+Changing the coordinator requires a fresh inventory, topology and deployment
+material plus an authenticated SSH-route review. The X230 deployment boundary
+remains the canonical LAN control-host procedure.
+
 ```bash
 python3 scripts/poco-fleet/probe_fleet.py > "$FRESH_FLEET_REPORT"
 python3 scripts/poco-fleet/check_baseline.py "$FRESH_FLEET_REPORT"

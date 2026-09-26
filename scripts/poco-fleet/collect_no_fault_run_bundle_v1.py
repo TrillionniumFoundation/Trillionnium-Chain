@@ -198,6 +198,10 @@ MESH_PREFLIGHT_HOST_KEYS = {
     "hostname",
     "validator_processes",
     "cpu_threads",
+    "load1_milli_observed",
+    "planned_cpu_reserve_milli",
+    "projected_cpu_load_milli",
+    "host_cpu_load_ceiling_milli",
     "memory_bytes",
     "memory_available_bytes",
     "per_process_nofile_soft",
@@ -677,6 +681,9 @@ def validate_mesh_preflight(
     integer_fields = (
         "validator_processes",
         "cpu_threads",
+        "planned_cpu_reserve_milli",
+        "projected_cpu_load_milli",
+        "host_cpu_load_ceiling_milli",
         "memory_bytes",
         "memory_available_bytes",
         "uid_threads_observed",
@@ -713,6 +720,10 @@ def validate_mesh_preflight(
         for field in integer_fields:
             positive_int(host[field], f"mesh preflight {host_id}.{field}")
         nonnegative_int(
+            host["load1_milli_observed"],
+            f"mesh preflight {host_id}.load1_milli_observed",
+        )
+        nonnegative_int(
             host["coordinator_capture_fds_required"],
             f"mesh preflight {host_id}.coordinator_capture_fds_required",
         )
@@ -729,10 +740,21 @@ def validate_mesh_preflight(
             or host["system_file_handles_available"]
             != host["system_file_handles_max"]
             - host["system_file_handles_allocated"]
+            or host["planned_cpu_reserve_milli"]
+            != expected["validator_processes"] * resources.CPU_LOAD_RESERVE_MILLI_PER_VALIDATOR
+            + (resources.COORDINATOR_CPU_LOAD_RESERVE_MILLI if expected["management"] == "local" else 0)
+            or host["projected_cpu_load_milli"]
+            != host["load1_milli_observed"] + host["planned_cpu_reserve_milli"]
+            or host["host_cpu_load_ceiling_milli"]
+            != host["cpu_threads"] * 1000 * resources.HOST_LOAD_CEILING_NUMERATOR
+            // resources.HOST_LOAD_CEILING_DENOMINATOR
+            or host["projected_cpu_load_milli"] > host["host_cpu_load_ceiling_milli"]
             or host["host_threads_required"]
             != expected_threads * expected["validator_processes"]
+            + int(expected["validator_processes"] > 0) * resources.LEASE_DAEMON_THREADS
             or host["host_open_file_fds_required"]
             != expected_open_fds * expected["validator_processes"]
+            + int(expected["validator_processes"] > 0) * resources.LEASE_DAEMON_FDS
             or host["coordinator_capture_fds_required"]
             != (
                 expected_coordinator_fds
@@ -741,6 +763,7 @@ def validate_mesh_preflight(
             )
             or host["host_rss_bytes_required"]
             != expected_rss * expected["validator_processes"]
+            + int(expected["validator_processes"] > 0) * resources.LEASE_DAEMON_FRAME_BYTES
         ):
             fail(f"mesh resource preflight host {host_id} capacity arithmetic differs")
     if observed_hosts != set(planned_hosts):

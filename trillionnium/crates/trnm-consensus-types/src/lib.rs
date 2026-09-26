@@ -24,6 +24,9 @@ mod context;
 mod crypto;
 mod cutoff;
 mod epoch;
+mod epoch_runtime_context;
+mod epoch_seal;
+pub use epoch_seal::validate_empty_epoch_seal_v1;
 mod epoch_activation_evidence;
 mod error;
 mod evidence;
@@ -31,6 +34,7 @@ mod finality;
 mod genesis_application;
 mod handoff;
 mod handoff_sign_intent;
+mod historical;
 mod ids;
 mod joint_handoff;
 mod message;
@@ -47,9 +51,10 @@ mod wire_semantic;
 pub use anchor::{ContextAuthorizedQcV0, EpochAnchorQcV0, GenesisQcV0, QcReferenceV0};
 pub use block::{Block, BlockHeader, BlockKind};
 pub use body_v0::{
-    validate_root_bound_regular_body_v0, ApplicationPayloadV0, BlockBodyV0, BlockValidationError,
-    BlockValidationErrorCode, BlockValidationResult, DoubleVoteEvidenceV0,
-    ExecutionEventAttributeV0, ExecutionEventV0, ExecutionReceiptCommitmentV0, ExecutionReceiptsV0,
+    validate_root_bound_epoch_body_v1, validate_root_bound_regular_body_v0, ApplicationPayloadV0,
+    BlockBodyV0, BlockValidationError, BlockValidationErrorCode, BlockValidationResult,
+    DoubleVoteEvidenceV0, ExecutionEventAttributeV0, ExecutionEventV0,
+    ExecutionReceiptCommitmentV0, ExecutionReceiptsV0, RootBoundEpochBodyV1,
     RootBoundRegularBodyV0, ValidatedBlockCommitmentsV0, ValidatedCheckpointCommitmentsV0,
     VoteEvidenceRecordV0,
 };
@@ -63,6 +68,7 @@ pub use cev0_decode::{
     decode_checkpoint_finality_proof_v0_exact,
     decode_checkpoint_finality_proof_v0_exact_with_budget, decode_consensus_parameters_v0_exact,
     decode_double_vote_evidence_v0_exact, decode_epoch_anchor_authorization_kernel_v0_exact,
+    decode_epoch_first_finality_proof_v1_exact_with_budget,
     decode_execution_receipt_commitment_v0_exact, decode_finality_proof_v0_exact,
     decode_finality_proof_v0_exact_with_budget,
     decode_finality_proof_v0_exact_with_trusted_genesis,
@@ -97,7 +103,8 @@ pub use epoch::{
     EpochFallbackReasonV0, EpochGeometryV0, NextEpochCommitmentV0, NextEpochCommitmentV0Fields,
 };
 pub use epoch_activation_evidence::{
-    decode_epoch_activation_evidence_v0_exact, epoch_first_proposal_signing_root_v0,
+    decode_epoch_activation_evidence_v0_exact,
+    decode_epoch_activation_evidence_with_context_v1_exact, epoch_first_proposal_signing_root_v0,
     DecodedEpochActivationEvidenceV0, EpochActivationEvidenceBytesV0,
     EpochActivationEvidenceComponentV0, EpochActivationEvidenceErrorV0,
     EpochActivationEvidencePreimagesV0,
@@ -119,6 +126,7 @@ pub use handoff_sign_intent::{
     HandoffSignerRoleV1, CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1,
     HANDOFF_SIGNER_PROFILE_V1,
 };
+pub use historical::{validate_historical_header_link_v1, HistoricalAncestryLimitsV1};
 pub use ids::{
     BlockId, CertificateId, ChainId, ConsensusParametersHash, ConsensusPublicKey, ConsensusString,
     Epoch, EpochTransitionId, EvidenceId, EvidenceRoot, GenesisHash, Height,
@@ -127,7 +135,8 @@ pub use ids::{
     VotingPower, MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATOR_ID_BYTES, SIGNATURE_BYTES,
 };
 pub use joint_handoff::{
-    validate_checkpoint_parent_header_v0, verify_same_version_epoch_transition_proof_kernel_v0,
+    derive_successor_epoch_joint_structure_v1, validate_checkpoint_parent_header_v0,
+    verify_same_version_epoch_transition_proof_kernel_v0,
     verify_same_version_joint_handoff_kernel_v0, JointHandoffKernelError,
     JointHandoffKernelErrorCode, JointHandoffKernelResult, JointHandoffKernelV0,
     SameVersionEpochTransitionKernelError, SameVersionEpochTransitionKernelErrorCode,
@@ -138,7 +147,7 @@ pub use message::{
     SignIntentFingerprintV0, TimeoutVote, TimeoutVoteSignPreimageV0, Vote, VoteSignPreimageV0,
     CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0,
 };
-pub use ordered_root::{ordered_leaf_digest_v0, OrderedRootV0, RootKind};
+pub use ordered_root::{ordered_leaf_digest_v0, OrderedInclusionProofV0, OrderedRootV0, RootKind};
 pub use parameters::{
     ConsensusParametersV0, ConsensusParametersV0Fields, LeaderSchedule, RolloutPhase,
 };
@@ -179,6 +188,14 @@ pub use wire_semantic::{
     WireSemanticDecodeError, WireSemanticDecodeErrorCode, MAX_WIRE_NESTED_DEPTH_V0,
     MAX_WIRE_NESTED_FIELDS_V0, MAX_WIRE_NESTED_LIST_ITEMS_V0,
 };
+
+pub use cev0_decode::{
+    decode_epoch_runtime_certified_header_v1_exact_with_budget,
+    decode_epoch_runtime_finality_proof_v1_exact_with_budget,
+    decode_epoch_runtime_qc_reference_v1_exact_with_budget,
+    decode_epoch_runtime_timeout_certificate_v1_exact_with_budget,
+};
+pub use epoch_runtime_context::EpochRuntimeContextDataV1;
 
 #[cfg(test)]
 extern crate std;

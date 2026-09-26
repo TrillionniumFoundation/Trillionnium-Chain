@@ -1470,10 +1470,12 @@ mod tests {
             FleetCampaignRequestV1::new(
                 1,
                 4,
-                60,
-                2,
-                30,
-                30,
+                crate::fleet_barrier::FleetCampaignTimingV1 {
+                    duration_seconds: 60,
+                    pacemaker_base_timeout_seconds: 2,
+                    terminal_drain_allowance_seconds: 30,
+                    timeout_view_budget_allowance_seconds: 30,
+                },
                 100,
                 103,
                 FleetBarrierTransportV1::Direct,
@@ -1661,7 +1663,7 @@ mod tests {
     }
 
     fn process_profile(index: usize) -> EpochHandoffLocalProcessProfileV1 {
-        let process_instance = if index % 3 == 0 { 2 } else { 1 };
+        let process_instance = if index.is_multiple_of(3) { 2 } else { 1 };
         let salt = u8::try_from(index).unwrap();
         EpochHandoffLocalProcessProfileV1 {
             process_instance,

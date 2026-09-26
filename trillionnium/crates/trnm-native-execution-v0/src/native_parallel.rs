@@ -1,7 +1,7 @@
 //! Private frozen-v0 runtime speculation. No receipt, mutation or error from
 //! this module is authoritative until the ordered owner validates dependencies.
 
-use std::{cell::RefCell, thread};
+use std::{cell::RefCell, collections::BTreeSet, thread};
 
 use trnm_protocol::{
     account_key, AccountV1, CanonicalCommandV1, ACCOUNT_OBJECT_TYPE_V1, FEE_COLLECTOR_ACCOUNT_V1,
@@ -9,9 +9,9 @@ use trnm_protocol::{
 
 use super::{
     try_execute_v0, validate_signer_v0, AuthorizedSignerV0, BTreeMap, CanonicalTxV1,
-    CompleteNativeExecutionFailureV0, CompleteOverlayView, ExecutionContext,
-    InMemoryNativeExecutionStoreV0, Result, RuntimeReceipt, SignedCommandEnvelopeV1, StateObject,
-    TryStateViewV0, CANONICAL_TX_PAYLOAD_TYPE_V1,
+    CompleteNativeExecutionFailureV0, CompleteOverlayView, ExecutionContext, Result,
+    RuntimeReceipt, SignedCommandEnvelopeV1, StateObject, TryStateViewV0,
+    CANONICAL_TX_PAYLOAD_TYPE_V1,
 };
 
 pub(super) const MAX_WORKERS_V0: usize = 8;
@@ -54,9 +54,6 @@ pub(super) fn default_worker_count_v0() -> usize {
 
 #[derive(Clone, Copy)]
 pub(super) struct NativeSpeculationContextV0<'a> {
-    pub(super) store: &'a InMemoryNativeExecutionStoreV0,
-    pub(super) parent_version: u64,
-    pub(super) parent_root: jmt::RootHash,
     pub(super) height: u64,
     pub(super) chain_id: &'a str,
     pub(super) timestamp_ms: u64,
@@ -283,10 +280,16 @@ fn record_runtime_attempt_v0(
     attempt
 }
 
-fn speculate_outer_v0(
-    context: NativeSpeculationContextV0<'_>,
+struct AdmittedRuntimeInputV1<'a> {
+    transaction: CanonicalTxV1,
+    signer: &'a AuthorizedSignerV0,
+    payload_len: usize,
+}
+
+fn admit_outer_v1<'a>(
+    context: NativeSpeculationContextV0<'a>,
     exact_outer: &[u8],
-) -> Option<SpeculativeRuntimeAttemptV0> {
+) -> Option<AdmittedRuntimeInputV1<'a>> {
     // This preliminary admission is deliberately inert. The ordered owner
     // repeats exact envelope verification and checks block/committed replay
     // before it can consume the retained runtime result. Invalid or internal
@@ -305,19 +308,30 @@ fn speculate_outer_v0(
     if transaction.sender != envelope.signer_id || transaction.nonce != envelope.nonce {
         return None;
     }
+    Some(AdmittedRuntimeInputV1 {
+        transaction,
+        signer,
+        payload_len: inner.len(),
+    })
+}
+
+fn speculate_admitted_v1(
+    context: NativeSpeculationContextV0<'_>,
+    input: &AdmittedRuntimeInputV1<'_>,
+    source: &impl TryStateViewV0,
+) -> Option<SpeculativeRuntimeAttemptV0> {
+    let transaction = &input.transaction;
     let view = CompleteOverlayView {
-        store: context.store,
-        parent_version: context.parent_version,
-        parent_root: context.parent_root,
+        source,
         changes: context.changes,
     };
     let attempt = record_runtime_attempt_v0(
-        &transaction,
+        transaction,
         ExecutionContext {
             height: context.height,
-            signer_id: signer.signer_id(),
-            signer_role: signer.signer_role(),
-            payload_len: inner.len(),
+            signer_id: input.signer.signer_id(),
+            signer_role: input.signer.signer_role(),
+            payload_len: input.payload_len,
         },
         &view,
     );
@@ -328,7 +342,7 @@ fn speculate_outer_v0(
         // Explicit collector writes (and other command families without a
         // fee-only proof) always execute at the canonical owner, then form a
         // barrier. They cannot be accidentally covered by the transfer proof.
-        if requires_collector_barrier_v0(&transaction, receipt) {
+        if requires_collector_barrier_v0(transaction, receipt) {
             return None;
         }
         let bytes = receipt.mutations.iter().fold(0usize, |total, mutation| {
@@ -354,42 +368,157 @@ pub(super) fn speculate_transactions_v0(
     context: NativeSpeculationContextV0<'_>,
     transactions: &[Vec<u8>],
     worker_count: usize,
+    source: &impl TryStateViewV0,
 ) -> Vec<Option<SpeculativeRuntimeAttemptV0>> {
     // Zero bypasses the speculation scheduler entirely for differential tests.
     let mut outcomes: Vec<_> = (0..transactions.len()).map(|_| None).collect();
     if worker_count == 0 || transactions.is_empty() || transactions.len() > MAX_BATCH_V0 {
         return outcomes;
     }
+    // Verify/decode each candidate once, in workers. Read-discovery rounds
+    // must not repeat signature verification or allocate duplicate payloads.
     let active_workers = worker_count.min(MAX_WORKERS_V0).min(transactions.len());
     let chunk_size = transactions.len().div_ceil(active_workers);
+    let mut inputs: Vec<Option<AdmittedRuntimeInputV1<'_>>> =
+        (0..transactions.len()).map(|_| None).collect();
     thread::scope(|scope| {
-        let handles: Vec<_> = transactions
+        let handles = transactions
             .chunks(chunk_size)
             .enumerate()
-            .map(|(chunk_index, chunk)| {
-                let handle = thread::Builder::new().spawn_scoped(scope, move || {
-                    chunk
-                        .iter()
-                        .map(|outer| speculate_outer_v0(context, outer))
-                        .collect::<Vec<_>>()
-                });
-                (chunk_index * chunk_size, handle)
+            .map(|(index, chunk)| {
+                (
+                    index * chunk_size,
+                    thread::Builder::new().spawn_scoped(scope, move || {
+                        chunk
+                            .iter()
+                            .map(|raw| admit_outer_v1(context, raw))
+                            .collect::<Vec<_>>()
+                    }),
+                )
             })
-            .collect();
+            .collect::<Vec<_>>();
         for (start, handle) in handles {
-            // Worker resource failure or panic cannot authorize rejection at
-            // an unrelated transaction index. Join every started worker and
-            // leave its chunk for the unchanged canonical execution path.
             if let Ok(handle) = handle {
-                if let Ok(computed) = handle.join() {
-                    for (index, attempt) in computed.into_iter().enumerate() {
-                        outcomes[start + index] = attempt;
+                if let Ok(admitted) = handle.join() {
+                    for (index, input) in admitted.into_iter().enumerate() {
+                        inputs[start + index] = input;
                     }
                 }
             }
         }
     });
+    let mut pending: Vec<usize> = inputs
+        .iter()
+        .enumerate()
+        .filter_map(|(i, v)| v.as_ref().map(|_| i))
+        .collect();
+    let mut prefetched = BTreeMap::new();
+    let mut retained = 0usize;
+    // Dynamic task/account dependencies are discovered by the actual runtime,
+    // not by a second command interpreter. Only the owner touches its pinned
+    // SQLite transaction. Worker misses are not authenticated absence.
+    for _ in 0..=MAX_READS_V0 {
+        if pending.is_empty() {
+            break;
+        }
+        let active_workers = worker_count.min(MAX_WORKERS_V0).min(pending.len());
+        let chunk_size = pending.len().div_ceil(active_workers);
+        let mut next = Vec::new();
+        let mut missing = BTreeSet::new();
+        thread::scope(|scope| {
+            let handles: Vec<_> = pending
+                .chunks(chunk_size)
+                .map(|chunk| {
+                    let values = &prefetched;
+                    let inputs = &inputs;
+                    thread::Builder::new().spawn_scoped(scope, move || {
+                        chunk
+                            .iter()
+                            .map(|&index| {
+                                let view = PrefetchedViewV1 {
+                                    values,
+                                    missing: RefCell::new(BTreeSet::new()),
+                                };
+                                let attempt = speculate_admitted_v1(
+                                    context,
+                                    inputs[index].as_ref().expect("admitted index"),
+                                    &view,
+                                );
+                                (index, attempt, view.missing.into_inner())
+                            })
+                            .collect::<Vec<_>>()
+                    })
+                })
+                .collect();
+            for handle in handles.into_iter().flatten() {
+                // Failed workers leave None: canonical execution decides the
+                // result at the proper transaction index.
+                if let Ok(computed) = handle.join() {
+                    for (index, attempt, keys) in computed {
+                        if keys.is_empty() {
+                            outcomes[index] = attempt;
+                        } else {
+                            next.push(index);
+                            missing.extend(keys);
+                        }
+                    }
+                }
+            }
+        });
+        if missing.is_empty() {
+            break;
+        }
+        let mut available = true;
+        for key in missing {
+            if prefetched.len() >= MAX_READS_V0 * MAX_BATCH_V0 {
+                available = false;
+                break;
+            }
+            match source.try_get(&key) {
+                Ok(value) => {
+                    let bytes = key.len().saturating_add(value.as_ref().map_or(0, |object| {
+                        object
+                            .object_type
+                            .len()
+                            .saturating_add(object.value_bytes.len())
+                    }));
+                    retained = retained.saturating_add(bytes);
+                    if retained > MAX_RETAINED_READ_BYTES_V0 * MAX_BATCH_V0 {
+                        available = false;
+                        break;
+                    }
+                    prefetched.insert(key, value);
+                }
+                Err(_) => {
+                    available = false;
+                    break;
+                }
+            }
+        }
+        if !available {
+            break;
+        }
+        next.sort_unstable();
+        pending = next;
+    }
     outcomes
+}
+
+struct PrefetchedViewV1<'a> {
+    values: &'a BTreeMap<String, Option<StateObject>>,
+    missing: RefCell<BTreeSet<String>>,
+}
+impl TryStateViewV0 for PrefetchedViewV1<'_> {
+    type Error = &'static str;
+    fn try_get(&self, key: &str) -> std::result::Result<Option<StateObject>, Self::Error> {
+        match self.values.get(key) {
+            Some(value) => Ok(value.clone()),
+            None => {
+                self.missing.borrow_mut().insert(key.to_owned());
+                Err("private prefetch miss; owner proof required")
+            }
+        }
+    }
 }
 
 #[cfg(test)]

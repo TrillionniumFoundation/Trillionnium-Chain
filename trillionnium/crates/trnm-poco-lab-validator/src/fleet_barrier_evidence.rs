@@ -157,6 +157,8 @@ pub fn load_and_verify_fleet_start_certificate_v1(
             && identity.binary_sha256() == public.binary_sha256()
             && identity.workload_corpus_sha256() == public.workload_corpus_sha256()
             && identity.workload_policy_sha256() == public.workload_policy_sha256()
+            && identity.native_client_profile_sha256_v1()
+                == public.native_client_profile_sha256_v1()
             && usize::try_from(identity.validator_count()).ok() == Some(validator_count),
         "fleet StartCertificate deployment identity differs from observer-public"
     );
@@ -420,10 +422,15 @@ mod tests {
             FleetCampaignRequestV1::new(
                 CONSENSUS_RUNTIME_FLEET_BARRIER_ROUND_V1,
                 4,
-                60,
-                CONSENSUS_RUNTIME_PACEMAKER_BASE_TIMEOUT_SECONDS_V1,
-                CONSENSUS_RUNTIME_TERMINAL_DRAIN_ALLOWANCE_SECONDS_V1,
-                CONSENSUS_RUNTIME_TIMEOUT_VIEW_BUDGET_ALLOWANCE_SECONDS_V1,
+                crate::fleet_barrier::FleetCampaignTimingV1 {
+                    duration_seconds: 60,
+                    pacemaker_base_timeout_seconds:
+                        CONSENSUS_RUNTIME_PACEMAKER_BASE_TIMEOUT_SECONDS_V1,
+                    terminal_drain_allowance_seconds:
+                        CONSENSUS_RUNTIME_TERMINAL_DRAIN_ALLOWANCE_SECONDS_V1,
+                    timeout_view_budget_allowance_seconds:
+                        CONSENSUS_RUNTIME_TIMEOUT_VIEW_BUDGET_ALLOWANCE_SECONDS_V1,
+                },
                 100,
                 103,
                 FleetBarrierTransportV1::Direct,

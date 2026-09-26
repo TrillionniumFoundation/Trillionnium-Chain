@@ -118,17 +118,18 @@ protected review with matching evidence.
 
 ## 7. Required module supplements
 
-The stable M00-M17 reference remains the module authority index. Implementation
-details that were previously too compact are frozen in the following
-supplements:
+The stable M00-M17 reference remains the ownership index. Every module now has
+an individual design in the [module specification index](../modules/README.md),
+including explicit current/proposed boundaries and concrete acceptance cases.
+The registry binds all eighteen paths. Structural navigation checks are useful;
+file length and registry presence do not establish design completeness.
 
-- M04 authenticated P2P and dissemination;
-- M05 transaction lifecycle and mempool recovery;
-- M08 finality, Node Commit Ledger and restart convergence;
-- M14 RPC, indexer, SDK and CLI consistency;
-- M15 node composition, packaging and release supply chain;
-- M16 guarded, out-of-band control plane;
-- M17 observability, benchmark, security and evidence.
+The canonical documentation entrypoint owns its child checks once per source
+identity. Checkout-local helper fingerprints are emitted for provenance instead
+of being duplicated as mutable constants in another helper. Exact source/merge
+binding, protocol import hashes, release input pins, cryptographic/recovery tests
+and independent acceptance stay intact. Historical integration PR observations
+are provenance only; live PR routing is derived from the current CI event.
 
-Each supplement defines authority, typed interfaces, state machine, persistence,
-resource bounds, security, SLOs, verification evidence and activation boundary.
+A compatible contract/producer/consumer change may be reviewed in one atomic PR.
+Splitting is required by incompatibility or review size, not a fixed PR count.

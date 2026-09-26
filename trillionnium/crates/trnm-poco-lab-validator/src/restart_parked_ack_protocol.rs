@@ -130,7 +130,7 @@ pub(crate) fn issue_local_restart_parked_ack_v1(
     journal_commit: LocalRestartParkJournalCommitV1,
     config: &LoadedValidatorConfig,
     expected_role: RestartParkRoleV1,
-    mut restart_producer: Option<&mut dyn RestartSignatureProducerV1>,
+    restart_producer: Option<&mut dyn RestartSignatureProducerV1>,
 ) -> AnyResult<DeclaredRestartParkedAckV1> {
     stored
         .revalidate_fresh_v1()
@@ -174,7 +174,7 @@ pub(crate) fn issue_local_restart_parked_ack_v1(
         stored.validator_set_v1(),
     )
     .map_err(|error| anyhow::anyhow!("form exact ParkedAck signing digest: {error}"))?;
-    let signature = if let Some(producer) = restart_producer.as_deref_mut() {
+    let signature = if let Some(producer) = restart_producer {
         producer
             .sign_restart_v1(RestartSignaturePurposeV1::Park, digest)
             .context("produce external RestartParkedAck signature")?
@@ -465,8 +465,8 @@ impl OriginatedRestartParkedAckV1 {
 }
 
 enum RestartParkedAckSlotV1 {
-    Admitted(AdmittedRestartParkedAckV1),
-    Originated(OriginatedRestartParkedAckV1),
+    Admitted(Box<AdmittedRestartParkedAckV1>),
+    Originated(Box<OriginatedRestartParkedAckV1>),
 }
 
 impl RestartParkedAckSlotV1 {
@@ -551,13 +551,16 @@ impl VerifiedRestartParkedAckBarrierV1 {
         let mut canonical = BTreeMap::new();
         canonical.insert(
             local_validator,
-            RestartParkedAckSlotV1::Originated(originated),
+            RestartParkedAckSlotV1::Originated(Box::new(originated)),
         );
         for statement in admitted {
             let origin = statement.statement_v1().origin();
             ensure!(
                 canonical
-                    .insert(origin, RestartParkedAckSlotV1::Admitted(statement))
+                    .insert(
+                        origin,
+                        RestartParkedAckSlotV1::Admitted(Box::new(statement))
+                    )
                     .is_none(),
                 "ParkedAck barrier repeats one authenticated origin"
             );
@@ -917,4 +920,10 @@ impl DurablyAcknowledgedRestartParkedBarrierV1 {
         );
         Ok(())
     }
+}
+
+#[cfg(test)]
+#[test]
+fn restart_owner_slot_retains_only_indirection_v1() {
+    assert!(std::mem::size_of::<RestartParkedAckSlotV1>() <= 2 * std::mem::size_of::<usize>());
 }

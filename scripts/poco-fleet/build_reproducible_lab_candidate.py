@@ -17,6 +17,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+from source_candidate_doc_alias_v1 import LINK_MODE, validate_alias
 
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -351,9 +352,16 @@ def verify_cargo_lock(source: pathlib.Path, candidate_report: dict[str, object])
 def extract(candidate: pathlib.Path, destination: pathlib.Path) -> pathlib.Path:
     destination.mkdir(mode=0o700)
     with tarfile.open(candidate, "r:") as archive:
-        for member in archive.getmembers():
-            if not member.isfile() or not member.name.startswith("source/"):
-                fail("verified candidate unexpectedly contains a non-regular member")
+        members = archive.getmembers()
+        modes = {m.name.removeprefix("source/"): (LINK_MODE if m.issym() else m.mode) for m in members}
+        aliases = []
+        for member in members:
+            if not (member.isfile() or member.issym()) or not member.name.startswith("source/"):
+                fail("verified candidate unexpectedly contains an unsupported member")
+            if member.issym():
+                validate_alias(member.name.removeprefix("source/"), member.linkname.encode("utf-8"), modes)
+                aliases.append(member)
+                continue
             relative = pathlib.PurePosixPath(member.name)
             if relative.is_absolute() or any(part in {"", ".", ".."} for part in relative.parts):
                 fail("verified candidate member escapes extraction root")
@@ -374,6 +382,28 @@ def extract(candidate: pathlib.Path, destination: pathlib.Path) -> pathlib.Path:
                 raise
             if target.stat().st_size != member.size:
                 fail("candidate member changed length while extracting")
+        # Only after every regular target exists. No archive member can be
+        # extracted through a symlink, and the target must still be regular.
+        for member in aliases:
+            resolved = validate_alias(member.name.removeprefix("source/"), member.linkname.encode("utf-8"), modes)
+            target_document = destination / "source" / resolved
+            try:
+                target_metadata = target_document.lstat()
+            except FileNotFoundError:
+                fail("verified documentation alias target is not a regular extracted document")
+            # The candidate inventory has already proved that every component
+            # below source/ is a tracked directory or the exact regular
+            # Markdown target, and regular members are extracted before any
+            # candidate symlink is created. Do not require the host path
+            # itself to be canonical: macOS may place a trusted temporary root
+            # below a system symlink such as /var -> /private/var. lstat keeps
+            # the candidate-controlled target check non-following while
+            # allowing such ambient mount/path aliases.
+            if not stat.S_ISREG(target_metadata.st_mode):
+                fail("verified documentation alias target is not a regular extracted document")
+            alias = destination / member.name
+            alias.parent.mkdir(parents=True, exist_ok=True)
+            os.symlink(member.linkname, alias)
     return destination / "source"
 
 

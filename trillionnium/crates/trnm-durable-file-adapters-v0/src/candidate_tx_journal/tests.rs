@@ -8,7 +8,9 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_tx_lifecycle_v0::{
-    AuthorizationVerifierV0, ProductionTxCoordinatorV0, ResourceLimitsV0, TxIntentV0, TxLifecycleV0,
+    AuthorizationVerifierV0, DurableSignedTxEnvelopeV0, DurableTxSignIntentV0,
+    ProductionTxCoordinatorV0, ResourceLimitsV0, SignedTxEnvelopeV0, TxIntentV0, TxLifecycleV0,
+    TxSignRequestV0,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -230,6 +232,68 @@ fn pair(previous: &TxRecordV0) -> (TxRecordV0, TxRecordV0) {
     replaced.lifecycle_sequence += 1;
     replaced.tombstone = Some(TombstoneReasonV0::Replaced { by: admitted.tx_id });
     (replaced, admitted)
+}
+
+#[test]
+fn durable_sign_intent_and_signed_envelope_survive_reopen_exactly() {
+    let directory = Directory::new();
+    let (mut journal, record) = baseline(&directory.0);
+    let mut request = TxSignRequestV0 {
+        tx_id: record.tx_id,
+        record_digest: record.canonical_record_digest_v0(),
+        safety_state_digest: Digest32V0([30; 32]),
+        authority_receipt_digest: Digest32V0([31; 32]),
+        permit_digest: Digest32V0([0; 32]),
+        request_digest: Digest32V0([0; 32]),
+    };
+    let mut permit = trnm_tx_lifecycle_v0::CoreSafetyPermitClaimV0 {
+        tx_id: request.tx_id,
+        tx_record_digest: request.record_digest,
+        safety_state_digest: request.safety_state_digest,
+        authority_receipt_digest: request.authority_receipt_digest,
+        permit_digest: Digest32V0([0; 32]),
+    };
+    permit.permit_digest = permit.canonical_digest();
+    request.permit_digest = permit.permit_digest;
+    request.request_digest = request.canonical_digest();
+    let intent = DurableTxSignIntentV0::from_request(request);
+    assert_eq!(journal.persist_sign_intent(intent).unwrap(), intent);
+    let signature = vec![7; 64];
+    let signature_digest = Digest32V0::hash(b"trnm.tx.signature-bytes.v0", &[&signature]);
+    let envelope_digest = Digest32V0::hash(
+        b"trnm.tx.signed-envelope.v0",
+        &[
+            &request.tx_id.0,
+            &request.permit_digest.0,
+            &signature_digest.0,
+            &[70; 32],
+        ],
+    );
+    let envelope = DurableSignedTxEnvelopeV0::from_envelope(
+        &intent,
+        SignedTxEnvelopeV0 {
+            tx_id: request.tx_id,
+            permit_digest: request.permit_digest,
+            signature,
+            signature_digest,
+            signer_attestation_digest: Digest32V0([70; 32]),
+            envelope_digest,
+        },
+    );
+    assert_eq!(
+        journal.persist_signed_envelope(envelope.clone()).unwrap(),
+        envelope
+    );
+    drop(journal);
+    let mut reopened = open(&directory.0);
+    assert_eq!(
+        reopened.load_sign_intent(record.tx_id).unwrap(),
+        Some(intent)
+    );
+    assert_eq!(
+        reopened.load_signed_envelope(record.tx_id).unwrap(),
+        Some(envelope)
+    );
 }
 
 #[test]
@@ -849,6 +913,146 @@ fn actual_core_phase_and_broadcast_transitions_recover_through_finalized_collect
         Err(CandidateTxJournalErrorV0::CompareFailed)
     ));
     journal.compare_and_append(None, &admitted(1, 10)).unwrap();
+}
+
+#[test]
+fn coordinator_collection_resumes_retained_finalized_tombstone() {
+    use trnm_tx_lifecycle_v0::{
+        ExecutionReceiptV0, FinalityWitnessV0, OrderedPositionV0, ProductionTxErrorV0,
+        ProposalHandoffV0, TxCollectErrorV0, TxLifecycleErrorV0,
+    };
+
+    // A rejected floor leaves a committed tombstone. The same boundary also
+    // occurs when publication succeeds but its acknowledgement is lost.
+    for (reopen_before_retry, lose_tombstone_response) in
+        [(false, false), (true, false), (true, true)]
+    {
+        let directory = Directory::new();
+        let mut core = TxLifecycleV0::new(identity().chain_id, AuthorizedFixture);
+        let tx_id = core.admit(intent(0, 10), 1).unwrap();
+        let mut versions = vec![core.record(tx_id).unwrap().clone()];
+        core.persist_wal(tx_id, 1).unwrap();
+        versions.push(core.record(tx_id).unwrap().clone());
+        core.handoff_proposal(
+            tx_id,
+            ProposalHandoffV0 {
+                proposal_id: Digest32V0([4; 32]),
+                proposal_index: 0,
+            },
+        )
+        .unwrap();
+        versions.push(core.record(tx_id).unwrap().clone());
+        let ordered = OrderedPositionV0 {
+            block_id: Digest32V0([5; 32]),
+            height: 2,
+            transaction_index: 0,
+        };
+        core.mark_ordered(tx_id, ordered).unwrap();
+        versions.push(core.record(tx_id).unwrap().clone());
+        core.mark_executed(ExecutionReceiptV0 {
+            tx_id,
+            ordered,
+            pre_state_root: Digest32V0([6; 32]),
+            post_state_root: Digest32V0([7; 32]),
+            receipt_digest: Digest32V0([8; 32]),
+            event_root: Digest32V0([9; 32]),
+            fee_charged: 5,
+            success: true,
+        })
+        .unwrap();
+        versions.push(core.record(tx_id).unwrap().clone());
+        core.finalize(
+            tx_id,
+            FinalityWitnessV0 {
+                block_id: ordered.block_id,
+                height: ordered.height,
+                state_root: Digest32V0([7; 32]),
+                finality_proof_digest: Digest32V0([12; 32]),
+            },
+        )
+        .unwrap();
+        versions.push(core.record(tx_id).unwrap().clone());
+        let mut journal = open(&directory.0);
+        let mut previous = None;
+        for record in &versions {
+            previous = Some(
+                journal
+                    .compare_and_append(previous, record)
+                    .unwrap()
+                    .record_digest,
+            );
+        }
+        let mut coordinator = ProductionTxCoordinatorV0::recover(
+            identity().chain_id,
+            AuthorizedFixture,
+            &mut journal,
+        )
+        .unwrap();
+        let floor = ReplayFloorWitnessV0 {
+            account: intent(0, 10).sender,
+            minimum_replayable_nonce: 1,
+            finalized_height: 2,
+            authority_digest: Digest32V0([13; 32]),
+        };
+        let before_tombstone = journal.state.sequence;
+        if lose_tombstone_response {
+            journal.fault = Some(Fault {
+                point: Point::ResponseLost,
+                park: false,
+            });
+            assert!(coordinator
+                .tombstone_and_collect(&mut journal, tx_id, floor)
+                .is_err());
+            assert!(coordinator.is_poisoned());
+        } else {
+            let mut too_low = floor;
+            too_low.minimum_replayable_nonce = 0;
+            assert!(matches!(
+                coordinator.tombstone_and_collect(&mut journal, tx_id, too_low),
+                Err(TxCollectErrorV0::Protocol(ProductionTxErrorV0::Lifecycle(
+                    TxLifecycleErrorV0::GcNotAuthorized
+                )))
+            ));
+            assert!(!coordinator.is_poisoned());
+        }
+        if reopen_before_retry {
+            drop(coordinator);
+            drop(journal);
+            journal = open(&directory.0);
+            coordinator = ProductionTxCoordinatorV0::recover(
+                identity().chain_id,
+                AuthorizedFixture,
+                &mut journal,
+            )
+            .unwrap();
+        }
+        assert_eq!(journal.state.sequence, before_tombstone + 1);
+        let retained = journal.load_latest(identity().chain_id).unwrap();
+        assert_eq!(retained.len(), 1);
+        assert_eq!(retained[0].record.phase, TxPhaseV0::Tombstoned);
+        assert_eq!(
+            retained[0].record.tombstone,
+            Some(TombstoneReasonV0::Finalized)
+        );
+        let tombstone = retained[0].record.clone();
+        assert_eq!(
+            coordinator
+                .tombstone_and_collect(&mut journal, tx_id, floor)
+                .unwrap(),
+            tombstone
+        );
+        assert!(!coordinator.is_poisoned());
+        assert_eq!(journal.state.sequence, before_tombstone + 2);
+        assert!(journal.load_latest(identity().chain_id).unwrap().is_empty());
+        drop(journal);
+        let mut journal = open(&directory.0);
+        assert!(journal.load_latest(identity().chain_id).unwrap().is_empty());
+        assert!(matches!(
+            journal.compare_and_append(None, &admitted(0, 30)),
+            Err(CandidateTxJournalErrorV0::CompareFailed)
+        ));
+        journal.compare_and_append(None, &admitted(1, 10)).unwrap();
+    }
 }
 
 #[test]

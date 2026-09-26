@@ -137,10 +137,14 @@ Fixture/store-only private keys also occur in:
 
 The existing RecoveryReady/RecoveryStart verifier resolves each signer through
 the validator set and therefore still authenticates the consensus public key.
-Moving those statements to the operator/recovery key requires a versioned wire
-and verifier change; merely swapping the local signer would make valid
-statements unverifiable. This foundation consequently exposes the operator
-profile but no active operator/recovery signing command.
+The durable fleet-root seam now has closed, distinct `RecoveryReady` and
+`RecoveryStart` purpose tags, and the private barrier constructors reverify every
+returned signature against that exact key and full ReadySet. This prevents
+startup Ready/Start nonce or audit records from being reused as recovery records;
+it is not operator-key migration and still has no live process-2 caller. Moving
+those statements to the operator/recovery key requires a versioned wire and
+verifier change; merely swapping the local signer would make valid statements
+unverifiable. The exposed operator profile therefore remains inactive.
 
 ## Other signing keys that are not validator consensus keys
 

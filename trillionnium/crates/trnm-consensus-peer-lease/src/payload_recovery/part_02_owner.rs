@@ -93,7 +93,8 @@ struct PayloadJournalRecoveryV1 {
     path: PathBuf,
     head_path: PathBuf,
     directory: File,
-    directory_identity: AuthorityPathIdentityV1,
+    directory_identity: PayloadReplayDirectoryIdentityV1,
+    directory_legacy_label: AuthorityPathIdentityV1,
     _file: File,
     file_identity: AuthorityPathIdentityV1,
     _lock: File,
@@ -122,7 +123,10 @@ impl PayloadJournalRecoveryV1 {
             return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
         }
         let (directory, parent) = private_parent(path)?;
-        let directory_identity = descriptor_identity(&directory)?;
+        let directory_metadata = directory.metadata()?;
+        let directory_identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&directory_metadata);
+        let directory_legacy_label = AuthorityPathIdentityV1::from_metadata(&directory_metadata);
         verify_bound_directory_identity(&parent, &directory, directory_identity)?;
         let lock_path = sidecar_path(path, "lock-v1")?;
         let head_path = sidecar_path(path, "head-v1")?;
@@ -149,6 +153,7 @@ impl PayloadJournalRecoveryV1 {
             head_path,
             directory,
             directory_identity,
+            directory_legacy_label,
             _file: file,
             file_identity,
             _lock: lock,
@@ -290,7 +295,8 @@ pub struct PayloadReplayRecoveryOwnerV1 {
     payload: PayloadJournalRecoveryV1,
     acknowledgement_root: PathBuf,
     acknowledgement_directory: File,
-    acknowledgement_directory_identity: AuthorityPathIdentityV1,
+    acknowledgement_directory_identity: PayloadReplayDirectoryIdentityV1,
+    acknowledgement_directory_legacy_label: AuthorityPathIdentityV1,
     _ack_lock: File,
     ack_lock_path: PathBuf,
     ack_lock_identity: AuthorityPathIdentityV1,
@@ -316,7 +322,11 @@ impl PayloadReplayRecoveryOwnerV1 {
             ));
         }
         let acknowledgement_directory = private_directory(&acknowledgement_root)?;
-        let acknowledgement_directory_identity = descriptor_identity(&acknowledgement_directory)?;
+        let acknowledgement_metadata = acknowledgement_directory.metadata()?;
+        let acknowledgement_directory_identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&acknowledgement_metadata);
+        let acknowledgement_directory_legacy_label =
+            AuthorityPathIdentityV1::from_metadata(&acknowledgement_metadata);
         verify_bound_directory_identity(
             &acknowledgement_root,
             &acknowledgement_directory,
@@ -333,6 +343,7 @@ impl PayloadReplayRecoveryOwnerV1 {
             acknowledgement_root,
             acknowledgement_directory,
             acknowledgement_directory_identity,
+            acknowledgement_directory_legacy_label,
             _ack_lock: ack_lock,
             ack_lock_path,
             ack_lock_identity,
@@ -364,14 +375,17 @@ impl PayloadReplayRecoveryOwnerV1 {
         self.verify_bound_endpoint_identity()?;
         let mut bytes = Vec::with_capacity(256);
         bytes.extend_from_slice(self.payload.namespace_digest.as_slice());
-        append_authority_identity(&mut bytes, self.payload.directory_identity);
+        // Preserve the existing opaque endpoint-label preimage for this owner.
+        // Captured link counts label a generation; only the separate stable
+        // directory identity above decides whether the live namespace matches.
+        append_authority_identity(&mut bytes, self.payload.directory_legacy_label);
         append_authority_identity(&mut bytes, self.payload.file_identity);
         append_authority_identity(&mut bytes, self.payload.lock_identity);
         // The head sidecar is intentionally omitted from the stable digest:
         // bounded recovery may replace that publication inode after repairing
         // an exact one-record lag.  Its pathname/descriptor identity is still
         // revalidated before and after every operation above.
-        append_authority_identity(&mut bytes, self.acknowledgement_directory_identity);
+        append_authority_identity(&mut bytes, self.acknowledgement_directory_legacy_label);
         append_authority_identity(&mut bytes, self.ack_lock_identity);
         bytes.extend_from_slice(&self.target.record_index.to_be_bytes());
         bytes.extend_from_slice(&self.target.record_hash);

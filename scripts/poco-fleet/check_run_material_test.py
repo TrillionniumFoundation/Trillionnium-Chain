@@ -21,6 +21,7 @@ sys.path.insert(0, str(HERE))
 
 import check_run_material  # noqa: E402
 import prepare_run_material  # noqa: E402
+import plan_topology  # noqa: E402
 
 
 HASH_A = "11" * 32
@@ -618,7 +619,141 @@ def mutate_start_height_with_full_readdress(root: pathlib.Path) -> None:
     )
 
 
+def verify_reduced_placement(
+    parent: pathlib.Path,
+    material_builder: pathlib.Path,
+    material_builder_hash: str,
+    validator_binary: pathlib.Path,
+    validator_binary_hash: str,
+) -> None:
+    """Real role keys and fake application material test configuration, not consensus."""
+    reduced = parent / "reduced-placement"
+    command = generation_command(
+        reduced, material_builder, material_builder_hash, validator_binary, validator_binary_hash
+    )
+    command[command.index("--weight-profile") + 1] = "equal"
+    command.extend(["--placement-profile", plan_topology.REDUCED_PLACEMENT])
+    subprocess.run(command, check=True, capture_output=True, text=True)
+    checked = subprocess.run([
+        sys.executable, str(HERE / "check_run_material.py"), str(reduced), "--validators", "7",
+    ], check=True, capture_output=True, text=True)
+    assert "validator_hosts=2 " in checked.stdout
+    assert f"placement_profile={plan_topology.REDUCED_PLACEMENT} " in checked.stdout
+    assert "validator_hosts=5" not in checked.stdout
+    topology = json.loads((reduced / "topology.json").read_text())
+    assert topology == prepare_run_material.planner_output(7, "equal", plan_topology.REDUCED_PLACEMENT)
+    manifest = json.loads((reduced / "manifest.json").read_text())
+    assert manifest["schema_version"] == 2 and manifest["production_activation"] is False
+    assert len(manifest["secret_files"]) == 21
+    deployments = parent / "reduced-deployments"
+    subprocess.run([
+        sys.executable, str(HERE / "prepare_validator_deployments.py"), str(reduced),
+        "--output", str(deployments), "--validators", "7",
+    ], check=True, capture_output=True, text=True)
+    subprocess.run([
+        sys.executable, str(HERE / "check_validator_deployments.py"), str(reduced),
+        str(deployments), "--validators", "7",
+    ], check=True, capture_output=True, text=True)
+    for validator in topology["validators"]:
+        deployed = deployments / validator["validator_id"]
+        assert (deployed / "topology.json").read_bytes() == (reduced / "topology.json").read_bytes()
+        assert len(list((deployed / "secrets").glob("*/*.pk8"))) == 3
+    assert not list((deployments / "observer-public").rglob("*.pk8"))
+
+    def topology_mutation(root: pathlib.Path, mutate) -> None:
+        rewrite_json(root, "topology.json", mutate)
+        rehash_manifest_ref(root, "topology.json")
+
+    mutations = {
+        "unknown-profile": lambda t: t.update(placement_profile="arbitrary"),
+        "schema-downgrade": lambda t: t.update(schema_version=1),
+        "profile-missing": lambda t: t.pop("placement_profile"),
+        "extra-field": lambda t: t.update(full_fleet_evidence=True),
+        "wrong-management": lambda t: t["validators"][0].update(management="foreign-host"),
+        "wrong-host": lambda t: t["validators"][0].update(host_id="x230"),
+        "wrong-port": lambda t: t["validators"][0].update(p2p_port=31007),
+        "bool-weight": lambda t: t["validators"][0].update(weight=True),
+        "float-port": lambda t: t["validators"][0].update(metrics_port=32000.0),
+        "wrong-identity": lambda t: t["validators"][0].update(validator_id="fe" * 32),
+        "wrong-local-index": lambda t: t["validators"][0].update(host_local_index=4),
+        "wrong-peer-order": lambda t: t["validators"][0]["peers"].reverse(),
+        "wrong-participant-order": lambda t: t["participants"].reverse(),
+        "fake-observer": lambda t: t["participants"][-1].update(management="fake-mac"),
+    }
+    for name, mutate in mutations.items():
+        expect_reject(reduced, "reduced-" + name, "closed inventory placement",
+                      lambda root, mutate=mutate: topology_mutation(root, mutate))
+
+    def coherent_foreign_endpoint(root: pathlib.Path) -> None:
+        def mutate(value):
+            if isinstance(value, dict):
+                if value.get("lan_ip") == "192.168.0.4":
+                    value["lan_ip"] = "192.168.0.254"
+                if value.get("management") == "p4-desktop":
+                    value["management"] = "foreign-desktop"
+                for child in value.values():
+                    mutate(child)
+            elif isinstance(value, list):
+                for child in value:
+                    mutate(child)
+        paths = ["topology.json"] + [
+            p.relative_to(root).as_posix()
+            for directory in ("public/configs", "public/observer-configs")
+            for p in (root / directory).glob("*.json")
+        ]
+        for relative in paths:
+            rewrite_json(root, relative, mutate)
+            rehash_manifest_ref(root, relative)
+
+    expect_reject(reduced, "reduced-coherent-foreign-endpoint", "closed inventory placement",
+                  coherent_foreign_endpoint)
+    for count, weight, placement in (
+        (31, "equal", plan_topology.REDUCED_PLACEMENT),
+        (100, "equal", plan_topology.REDUCED_PLACEMENT),
+        (7, "bounded-unequal", plan_topology.REDUCED_PLACEMENT),
+        (7, "equal", "unknown"),
+    ):
+        output = parent / f"reject-placement-{count}-{weight}-{placement}"
+        invalid = list(command)
+        invalid[2] = str(count)
+        invalid[invalid.index("--output") + 1] = str(output)
+        invalid[invalid.index("--weight-profile") + 1] = weight
+        invalid[invalid.index("--placement-profile") + 1] = placement
+        result = subprocess.run(invalid, capture_output=True, text=True)
+        assert result.returncode != 0 and not output.exists()
+        assert ("reduced placement requires exactly seven equal-weight validators" in result.stderr
+                if placement != "unknown" else "invalid choice" in result.stderr)
+
+
+def verify_bounded_height_cli_v1() -> None:
+    import argparse
+
+    for text, expected in (("1", 1), ("4", 4), ("131072", 131072), ("+4", 4), ("0004", 4)):
+        assert prepare_run_material.bounded_workload_height_v1(text) == expected
+    for text in ("0", "-1", "131073", "1.5", "abc", "9" * 5000):
+        try:
+            prepare_run_material.bounded_workload_height_v1(text)
+        except argparse.ArgumentTypeError as error:
+            assert str(error) == "height must be an integer in 1..131072"
+        else:
+            raise AssertionError("invalid CLI height accepted")
+
+    helped = subprocess.run([sys.executable, str(GENERATOR), "--help"],
+                            capture_output=True, timeout=5, check=True)
+    assert len(helped.stdout) + len(helped.stderr) < 12 * 1024
+    assert b"--workload-max-height 1..131072" in helped.stdout
+    assert b"--ordinary-start-height 1..131072" in helped.stdout
+    for option in ("--ordinary-start-height", "--workload-max-height"):
+        for text in ("0", "131073", "bad"):
+            rejected = subprocess.run([sys.executable, str(GENERATOR), "7", option, text],
+                                      capture_output=True, timeout=5)
+            assert rejected.returncode == 2
+            assert len(rejected.stdout) + len(rejected.stderr) < 12 * 1024
+            assert b"height must be an integer in 1..131072" in rejected.stderr
+
+
 def main() -> None:
+    verify_bounded_height_cli_v1()
     with tempfile.TemporaryDirectory(prefix="poco-g3-run-material-test-") as temporary:
         parent = pathlib.Path(temporary)
         verify_pinned_builder_inode(parent)
@@ -626,6 +761,9 @@ def main() -> None:
         validator_binary, validator_binary_hash = fake_validator_binary(parent)
         if material_builder_hash == validator_binary_hash:
             raise AssertionError("fake authority binaries unexpectedly have identical hashes")
+        verify_reduced_placement(
+            parent, material_builder, material_builder_hash, validator_binary, validator_binary_hash
+        )
 
         same_binary_command = generation_command(
             parent / "same-authority-binary",
@@ -985,9 +1123,11 @@ def main() -> None:
         )
 
     print(
-        "poco_g3_run_material_self_test=passed positives=3 negatives=36 "
+        "poco_g3_run_material_self_test=passed canonical_positives=3 canonical_negatives=36 "
+        "reduced_material_positive=true reduced_mutants=15 reduced_cli_rejections=4 "
+        "reduced_validator_hosts=2 fake_material_is_consensus_evidence=false "
         "validator_hosts=5 mac_observer=true ephemeral_role_keys=three pop=true "
-        "public_workload=true ordinary_start_height=4 ordinal_height_mapping=true "
+        "public_workload=true ordinary_start_height=4 ordinal_height_mapping=true bounded_cli_diagnostics=true "
         "content_addressed=true application_private_keys=false "
         "builder_inode_pinned=true builder_path_substitution_rejected=true "
         "material_builder_validator_binary_distinct=true same_binary_fallback_rejected=true "

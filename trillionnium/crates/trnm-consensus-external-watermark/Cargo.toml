@@ -40,3 +40,5 @@ trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 [dev-dependencies]
 ed25519-dalek = "2.2"
 tempfile = "3"
+serde_json = "1"
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }

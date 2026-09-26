@@ -66,6 +66,24 @@ that do not call the Rust consensus crates:
   and small-order-key rejection cases. The exact bytes are reproduced by
   `cd trillionnium && cargo test -p trnm-consensus-crypto`; the public file
   contains no seed or private key.
+- `epoch-first-proposal-signing-v0.json` freezes one positive view-one
+  `EpochHandoff` signing root and signature from the authenticated
+  checkpoint/handoff fixture. The Rust recovery regression consumes these
+  bytes and retains the first-signature mutation rejection. The separate
+  standard-library checker
+  `scripts/ci/check_poco_bft_v0_epoch_first_proposal_vector.py` independently
+  reproduces the RFC 8032 public key/signature relation and rejects a bit
+  mutation. It is explicitly a candidate fixture
+  (`independent_implementation_required=true`): the committed bytes do not
+  constitute independent specialist acceptance or production signer custody.
+- `canonical-sign-intent-v0.json` records exact Vote and TimeoutVote
+  `CanonicalSignIntentV0` envelopes, signing roots, and fingerprints used by
+  the signer-journal contract. The consensus-types regression consumes the
+  machine-readable bytes, while
+  `scripts/ci/check_poco_bft_v0_sign_intent_vectors.py` checks widths and
+  canonical root/fingerprint placement. This remains a candidate fixture;
+  independently authored preimage/signature vectors and signer-custody
+  acceptance are still required.
 - `anchor-finality-v0.json` freezes the exact empty-signature `GenesisQC`, a
   skipped-view genesis `ProposalSignV0`, the independently domain-separated
   `HandoffDescriptorV0`, the nested epoch authorization/anchor, three complete

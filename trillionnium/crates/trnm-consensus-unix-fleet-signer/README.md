@@ -6,6 +6,10 @@ bounded tuple:
 
 `purpose + origin + validator-set id + signing root + caller nonce`
 
+The purpose enum is closed and separates initial `Ready`/`Start` from
+process-2 `RecoveryReady`/`RecoveryStart`; an exact signing root and nonce can
+therefore never be replayed under the other lifecycle domain.
+
 The client requires an absolute private Unix socket (socket and parent have no
 group/world permissions), uses a four-byte big-endian length frame, checks the
 response fingerprint/checksum, and strictly verifies the returned Ed25519

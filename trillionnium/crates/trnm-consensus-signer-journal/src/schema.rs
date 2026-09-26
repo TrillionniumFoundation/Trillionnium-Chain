@@ -125,7 +125,7 @@ pub(crate) fn validate_canonical_schema(
     Ok(())
 }
 
-fn schema_objects(
+pub(crate) fn schema_objects(
     connection: &Connection,
 ) -> Result<BTreeMap<(String, String), String>, SignerJournalErrorV0> {
     let mut statement = connection

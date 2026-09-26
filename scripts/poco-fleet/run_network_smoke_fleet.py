@@ -30,6 +30,8 @@ import sys
 import time
 from typing import Any
 
+from plan_topology import ALTERNATE_ALLOCATIONS, CANONICAL_PLACEMENT, REDUCED_PLACEMENT
+
 
 HERE = pathlib.Path(__file__).resolve().parent
 CHECK_DEPLOYMENTS = HERE / "check_validator_deployments.py"
@@ -861,6 +863,55 @@ def clean_stages(stages: dict[str, HostStage]) -> list[str]:
     return failures
 
 
+def placement_report_fields_v1(
+    topology: dict[str, Any], process_results: list[dict[str, Any]] | None = None
+) -> dict[str, Any]:
+    """Report the closed placement after load_contract verified the material.
+
+    A successful result is appended only after the Mac observer verifies it.
+    An empty result set therefore attests no participant, including the Mac.
+    Canonical schema-1 report fields remain byte compatible.
+    """
+    schema = topology.get("schema_version")
+    if type(schema) is int and schema == 1 and "placement_profile" not in topology:
+        return {}
+    if (
+        type(schema) is not int
+        or schema != 2
+        or not isinstance(topology.get("placement_profile"), str)
+        or topology["placement_profile"] not in ALTERNATE_ALLOCATIONS
+    ):
+        fail("unsupported runtime placement schema/profile")
+    hosts = (
+        {record["host_id"] for record in topology["validators"]}
+        if process_results is None else {record["host_id"] for record in process_results}
+    )
+    return {
+        "schema_version": 2,
+        "placement_profile": topology["placement_profile"],
+        "linux_validator_host_count": len(hosts),
+        "participant_host_count": len(hosts | {OBSERVER_HOST_ID}) if hosts else 0,
+    }
+
+
+def all_six_hosts_participated_v1(
+    topology: dict[str, Any], process_results: list[dict[str, Any]]
+) -> bool:
+    """Process count alone cannot establish physical host coverage."""
+    planned = {record["validator_id"]: record["host_id"] for record in topology["validators"]}
+    observed = {record["validator_id"]: record["host_id"] for record in process_results}
+    participants = {record["host_id"] for record in topology["participants"]}
+    return (
+        type(topology.get("schema_version")) is int
+        and topology["schema_version"] == 1
+        and "placement_profile" not in topology
+        and len(process_results) == len(planned)
+        and observed == planned
+        and set(observed.values()) | {OBSERVER_HOST_ID} == participants
+        and len(participants) == 6
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("coordinator_root", type=pathlib.Path)
@@ -878,7 +929,7 @@ def main() -> None:
 
     coordinator = require_private_directory(args.coordinator_root, "coordinator root")
     deployments = require_private_directory(args.deployment_root, "deployment root")
-    manifest, _topology, processes = load_contract(
+    manifest, topology, processes = load_contract(
         coordinator, deployments, args.validators
     )
     candidate = manifest["candidate"]
@@ -899,6 +950,7 @@ def main() -> None:
         "validator_count": args.validators,
         "linux_validator_host_count": len({item.host_id for item in processes}),
         "observer_host_id": "mac",
+        **placement_report_fields_v1(topology),
         "coordinator_manifest_sha256": coordinator_anchor,
         "rounds": args.rounds,
         "timeout_seconds": args.timeout_seconds,
@@ -1099,7 +1151,8 @@ def main() -> None:
         "validator_count": args.validators,
         "signed_report_count": len(process_results),
         "observer_verified_report_count": len(process_results),
-        "all_six_hosts_participated": len(process_results) == args.validators,
+        "all_six_hosts_participated": all_six_hosts_participated_v1(topology, process_results),
+        **placement_report_fields_v1(topology, process_results),
         "elapsed_monotonic_ns": elapsed_ns,
         "coordinator_manifest_sha256": coordinator_anchor,
         "processes": process_results,
@@ -1120,7 +1173,9 @@ def main() -> None:
         fail(f"run failed; preserved evidence at {output}: {failure or cleanup_failures}")
     print(
         f"poco_g3_network_smoke_fleet=passed validators={args.validators} "
-        "all_six_hosts=true signed_reports=true macos_cross_verified=true "
+        f"placement={topology.get('placement_profile', CANONICAL_PLACEMENT)} "
+        f"all_six_hosts={str(summary['all_six_hosts_participated']).lower()} "
+        "signed_reports=true macos_cross_verified=true "
         "validator_run_completed=false g3_complete=false geo_wan=false "
         f"output={output}"
     )

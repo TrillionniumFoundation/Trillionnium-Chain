@@ -1085,6 +1085,51 @@ mod tests {
     }
 
     #[test]
+    fn signed_fractional_metrics_survive_exact_durable_readback() {
+        let (mut evidence, context, set) = sign_metrics_for_test();
+        let (_, _, key) = fixture();
+        // Original binary64 observations from the source-bound b276d73c LAN run.
+        evidence.finality_samples_ms = vec![
+            12569.330711999999,
+            21451.154723,
+            27209.509875,
+            43820.211485,
+            45248.274051,
+            24986.145616,
+            43832.654697000005,
+        ];
+        evidence.cpu_seconds = 21.917374005;
+        let hash = domain_hash(
+            RUNTIME_METRICS_BODY_HASH_DOMAIN_V1,
+            &serde_json::to_vec(&evidence.body()).unwrap(),
+        );
+        evidence.body_sha256 = hex::encode(hash);
+        evidence.signature = hex::encode(
+            key.sign(&domain_hash(RUNTIME_METRICS_SIGNATURE_DOMAIN_V1, &hash))
+                .to_bytes(),
+        );
+        verify_metrics(&evidence, &set, &context).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let path = directory.path().join("runtime-metrics.json");
+        write_create_new_canonical(&path, &evidence).unwrap();
+        let original = fs::read(&path).unwrap();
+        let recovered = load_signed_runtime_metrics_v1(&path).unwrap();
+        assert_eq!(recovered, evidence);
+        assert_eq!(serde_json::to_vec(&recovered).unwrap(), original);
+        verify_metrics(&recovered, &set, &context).unwrap();
+
+        let mut changed = recovered;
+        changed.finality_samples_ms[0] =
+            f64::from_bits(changed.finality_samples_ms[0].to_bits() + 1);
+        assert!(verify_metrics(&changed, &set, &context).is_err());
+        let mut noncanonical = original;
+        noncanonical.push(b'\n');
+        fs::write(&path, noncanonical).unwrap();
+        assert!(load_signed_runtime_metrics_v1(&path).is_err());
+    }
+
+    #[test]
     fn metrics_requires_canonical_ordered_utc_interval() {
         assert!(canonical_utc_interval(
             "2024-02-29T23:59:58Z",

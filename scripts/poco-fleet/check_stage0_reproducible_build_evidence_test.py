@@ -292,7 +292,7 @@ def fixture_failure(
         assert_failure(action, label)
 
 
-def main() -> None:
+def run_contract_tests() -> None:
     positives = 0
     negatives = 0
 
@@ -808,6 +808,48 @@ def main() -> None:
         "unsafe_paths=fail-closed symlinks=fail-closed "
         "actual_build_executed=false production_activation=false geo_wan=false"
     )
+
+
+def main() -> None:
+    # The authoritative historical profile intentionally pins old tool bytes.
+    # Exercise its validation machinery with an explicit fixture-only profile
+    # in a temporary repository so current tool development cannot relabel old
+    # evidence or require stale source hashes. The production checker is never
+    # edited. Include the new source checker's import in this fixture closure.
+    global checker, CHECKER_PATH
+    authoritative_checker = checker
+    authoritative_path = CHECKER_PATH
+    with tempfile.TemporaryDirectory(prefix="poco-stage0-fixture-tools-") as raw:
+        repository = pathlib.Path(raw).resolve()
+        tools = []
+        for record in [*authoritative_checker.EXPECTED_TOOLS, {
+            "role": "documentation_alias_validator",
+            "path": "scripts/poco-fleet/source_candidate_doc_alias_v1.py",
+        }]:
+            relative = pathlib.PurePosixPath(record["path"])
+            content = (authoritative_checker.REPOSITORY_ROOT / relative).read_bytes()
+            target = repository / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+            tools.append({"role": record["role"], "path": record["path"],
+                          "sha256": hashlib.sha256(content).hexdigest(), "bytes": len(content)})
+        source = authoritative_path.read_text(encoding="utf-8")
+        begin = source.index("EXPECTED_TOOLS: list[dict[str, object]] = [")
+        end = source.index("\n]", begin) + len("\n]")
+        source = source[:begin] + "EXPECTED_TOOLS: list[dict[str, object]] = " + repr(tools) + source[end:]
+        source = source.replace(authoritative_checker.PROFILE,
+                                authoritative_checker.PROFILE + "-fixture-current-tools")
+        CHECKER_PATH = repository / "scripts/poco-fleet" / authoritative_path.name
+        CHECKER_PATH.write_text(source, encoding="utf-8")
+        spec = importlib.util.spec_from_file_location("stage0_fixture_checker", CHECKER_PATH)
+        assert spec is not None and spec.loader is not None
+        checker = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(checker)
+        try:
+            run_contract_tests()
+        finally:
+            checker = authoritative_checker
+            CHECKER_PATH = authoritative_path
 
 
 if __name__ == "__main__":

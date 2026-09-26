@@ -82,6 +82,14 @@ const WORKER_POLL: Duration = Duration::from_millis(50);
 const MAX_HANDSHAKE_ATTEMPT: Duration = Duration::from_secs(2);
 const MESH_EXTERNAL_FENCE_TTL_V1: Duration = Duration::from_secs(30);
 
+fn fence_admission_failure_reason_v1(direction: PeerDirectionV0, error: &anyhow::Error) -> String {
+    let direction = match direction {
+        PeerDirectionV0::Inbound => "inbound",
+        PeerDirectionV0::Outbound => "outbound",
+    };
+    format!("external fence rejected {direction} session: {error:#}")
+}
+
 fn fence_renew_interval(ttl: Duration) -> Duration {
     // Renew well before the authority-side expiry.  The lower bound keeps a
     // short deterministic fixture TTL from turning every frame into an RPC,
@@ -371,6 +379,16 @@ impl PeerSessionFactsV0 {
         self.generation
     }
 
+    /// Derive inert session coordinates only from the actual mesh queue owner.
+    pub(crate) fn from_inbound_owner_v1(inbound: &MeshInboundFrameV0) -> Self {
+        Self {
+            remote: inbound.remote,
+            direction: inbound.direction,
+            session_id: inbound.session_id,
+            generation: inbound.session_generation,
+        }
+    }
+
     /// Builds session facts for a unit test that exercises a consumer of the
     /// authenticated mesh owner.  Production code receives these facts only
     /// from the mesh lifecycle events, never from caller-supplied scalars.
@@ -498,7 +516,7 @@ impl MeshInboundFrameV0 {
 
 #[derive(Debug)]
 pub enum MeshIngressEventV0 {
-    Frame(MeshInboundFrameV0),
+    Frame(Box<MeshInboundFrameV0>),
     SessionUnavailable(PeerSessionFactsV0),
     SessionReestablished(PeerSessionFactsV0),
 }
@@ -507,12 +525,14 @@ pub enum MeshIngressEventV0 {
 pub enum MeshSendDispositionV0 {
     Queued,
     Backpressured,
+    Quarantined,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MeshBroadcastOutcomeV0 {
     queued_peers: usize,
     backpressured_peers: Vec<ValidatorId>,
+    quarantined_peers: Vec<ValidatorId>,
 }
 
 impl MeshBroadcastOutcomeV0 {
@@ -524,8 +544,12 @@ impl MeshBroadcastOutcomeV0 {
         &self.backpressured_peers
     }
 
+    pub fn quarantined_peers_v1(&self) -> &[ValidatorId] {
+        &self.quarantined_peers
+    }
+
     pub fn fully_queued(&self) -> bool {
-        self.backpressured_peers.is_empty()
+        self.backpressured_peers.is_empty() && self.quarantined_peers.is_empty()
     }
 }
 
@@ -538,7 +562,7 @@ struct MeshTerminalFailureV0 {
 
 #[derive(Debug)]
 struct MeshFencePeerFailureV1 {
-    remote: ValidatorId,
+    remote: Box<ValidatorId>,
     direction: PeerDirectionV0,
     reason: String,
 }
@@ -613,13 +637,13 @@ impl P2pIdentitySignatureProducerV1 for SharedP2pIdentityProducerV1 {
 enum MeshIdentitySignerV1 {
     /// Secret-bearing fixture mode only.  Deployed external composition must
     /// use [`Self::External`].
-    Local(SigningKey),
+    Local(Box<SigningKey>),
     External(SharedP2pIdentityProducerV1),
 }
 
 enum MeshAuthenticatedConnectionV1<T> {
-    Local(AuthenticatedConnection<T>),
-    External(ExternallySignedAuthenticatedConnectionV1<T>),
+    Local(Box<AuthenticatedConnection<T>>),
+    External(Box<ExternallySignedAuthenticatedConnectionV1<T>>),
 }
 
 impl<T: Read + Write> MeshAuthenticatedConnectionV1<T> {
@@ -669,6 +693,16 @@ impl<T: Read + Write> MeshAuthenticatedConnectionV1<T> {
         }
     }
 
+    fn receive_classified_v1(
+        &mut self,
+    ) -> std::result::Result<AuthenticatedFrame, crate::transport::EstablishedReceiveErrorV1> {
+        match self {
+            Self::Local(connection) => connection.receive_classified_v1(),
+            Self::External(connection) => connection.receive_classified_v1(),
+        }
+    }
+
+    #[cfg(test)]
     fn receive(&mut self) -> Result<AuthenticatedFrame, FrameError> {
         match self {
             Self::Local(connection) => connection.receive(),
@@ -802,9 +836,9 @@ impl MeshIdentityV0 {
         Self {
             run_id: config.run_id.clone(),
             local: config.local,
-            p2p_identity_signer: MeshIdentitySignerV1::Local(
+            p2p_identity_signer: MeshIdentitySignerV1::Local(Box::new(
                 config.p2p_identity_signing_key.clone(),
-            ),
+            )),
             validator_set: config.validator_set.clone(),
             key_roles: config.key_roles.clone(),
             transport_context: config.transport_context,
@@ -935,6 +969,7 @@ enum SetupEventV0 {
 #[derive(Debug, Clone, Copy)]
 enum InboundLifecycleV0 {
     TransientLoss(PeerSessionFactsV0),
+    PeerRejected(PeerSessionFactsV0),
 }
 
 struct InboundWorkerV0 {
@@ -945,6 +980,7 @@ struct InboundWorkerV0 {
 
 enum ConnectAttemptFailureV0 {
     Stopped,
+    Quarantined,
     WindowElapsed,
     Terminal(String),
 }
@@ -959,6 +995,7 @@ impl ConnectAttemptFailureV0 {
     fn render(&self) -> String {
         match self {
             Self::Stopped => "mesh stopped during connection establishment".to_owned(),
+            Self::Quarantined => "peer identity is quarantined".to_owned(),
             Self::WindowElapsed => "bounded connection-attempt window elapsed".to_owned(),
             Self::Terminal(reason) => reason.clone(),
         }
@@ -1014,7 +1051,10 @@ struct MeshFenceRegistryV1 {
     /// outbound queue only while this marker is present; all other missing
     /// lease states remain fail-closed.
     reconnecting: Arc<Mutex<BTreeSet<ActiveFenceKeyV0>>>,
+    quarantine: Arc<Mutex<PeerQuarantineStateV1>>,
 }
+
+include!("mesh_peer_quarantine_v1.inc");
 
 impl MeshFenceRegistryV1 {
     #[cfg(test)]
@@ -1049,6 +1089,7 @@ impl MeshFenceRegistryV1 {
             pending_releases: Arc::new(Mutex::new(BTreeMap::new())),
             pending_host_releases: Arc::new(Mutex::new(BTreeMap::new())),
             reconnecting: Arc::new(Mutex::new(BTreeSet::new())),
+            quarantine: Arc::new(Mutex::new(PeerQuarantineStateV1::default())),
         })
     }
 
@@ -1354,6 +1395,7 @@ impl MeshFenceRegistryV1 {
         Ok(())
     }
 
+    #[cfg(test)]
     fn acquire(
         &self,
         direction: PeerDirectionV0,
@@ -1361,11 +1403,27 @@ impl MeshFenceRegistryV1 {
         session_id: [u8; 32],
         generation: u64,
     ) -> Result<ExternalPeerLeaseTokenV1> {
+        self.acquire_or_quarantined_v1(direction, remote, session_id, generation)?
+            .context("peer identity is quarantined")
+    }
+
+    fn acquire_or_quarantined_v1(
+        &self,
+        direction: PeerDirectionV0,
+        remote: ValidatorId,
+        session_id: [u8; 32],
+        generation: u64,
+    ) -> Result<Option<ExternalPeerLeaseTokenV1>> {
         let key = (direction, remote);
+        let lock_started = Instant::now();
         let _admission_guard = self
             .admission_lock
             .lock()
             .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        let lock_wait = lock_started.elapsed();
+        if self.refuse_quarantined_admission_locked_v1(remote)? {
+            return Ok(None);
+        }
         let host_direction = match direction {
             PeerDirectionV0::Inbound => ExternalPeerDirectionV1::Inbound,
             PeerDirectionV0::Outbound => ExternalPeerDirectionV1::Outbound,
@@ -1398,6 +1456,16 @@ impl MeshFenceRegistryV1 {
         .map_err(|error| anyhow!("external fence scope rejected: {error}"))?;
         let request = ExternalPeerLeaseRequestV1::new(scope, self.ttl)
             .map_err(|error| anyhow!("external fence request rejected: {error}"))?;
+        // A burst of serialized handshakes must service existing due leases
+        // before taking another slow authority admission. The supervisor may
+        // itself be waiting for this lock; no mutex fairness is assumed.
+        self.renew_due_before_admission_locked_v1()
+            .with_context(|| {
+                format!(
+                    "admission maintenance failed after lock_wait_ms={}",
+                    lock_wait.as_millis()
+                )
+            })?;
         // Validate the peer scope and bounded TTL before asking the host
         // authority to mint a receipt. Otherwise an invalid internal
         // generation could leave an externally live host token with no
@@ -1411,6 +1479,7 @@ impl MeshFenceRegistryV1 {
                     .map_err(|error| anyhow!("host attestation rejected session: {error}"))
             })
             .transpose()?;
+        let authority_started = Instant::now();
         let token = match self.authority.acquire(request) {
             Ok(token) => token,
             Err(error) => {
@@ -1471,12 +1540,12 @@ impl MeshFenceRegistryV1 {
             ActiveFenceEntryV1 {
                 token,
                 host_admission,
-                next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                next_renew_at: authority_started + fence_renew_interval(self.ttl),
                 external_release_confirmed: false,
                 host_release_confirmed: host_admission.is_none(),
             },
         );
-        Ok(token)
+        Ok(Some(token))
     }
 
     fn revalidate(&self, direction: PeerDirectionV0, remote: ValidatorId) -> Result<()> {
@@ -1493,6 +1562,7 @@ impl MeshFenceRegistryV1 {
     /// a reconnect handoff; the caller still queues the payload behind the
     /// bounded worker queue, and the worker revalidates the fresh token before
     /// emitting any bytes.
+    #[cfg(test)]
     fn revalidate_for_send(
         &self,
         direction: PeerDirectionV0,
@@ -1557,10 +1627,14 @@ impl MeshFenceRegistryV1 {
                 .map_err(|error| anyhow!("host attestation revalidation failed: {error}"))?;
         }
         if Instant::now() >= entry.next_renew_at {
-            token = self
-                .authority
-                .renew(token)
-                .map_err(|error| anyhow!("external fence renewal failed: {error}"))?;
+            let authority_started = Instant::now();
+            token = self.authority.renew(token).map_err(|error| {
+                anyhow!(
+                "external fence renewal failed: {error}; rpc_elapsed_ms={} renewal_late_by_ms={}",
+                authority_started.elapsed().as_millis(),
+                authority_started.saturating_duration_since(entry.next_renew_at).as_millis()
+            )
+            })?;
             if token.scope() != entry.token.scope() {
                 bail!("external fence renewal changed the lease scope")
             }
@@ -1569,7 +1643,7 @@ impl MeshFenceRegistryV1 {
                 ActiveFenceEntryV1 {
                     token,
                     host_admission: entry.host_admission,
-                    next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                    next_renew_at: authority_started + fence_renew_interval(self.ttl),
                     external_release_confirmed: false,
                     host_release_confirmed: entry.host_release_confirmed,
                 },
@@ -1604,6 +1678,11 @@ impl MeshFenceRegistryV1 {
             .admission_lock
             .lock()
             .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        self.renew_if_due_locked_v1(key)
+    }
+
+    // Caller retains admission_lock across lookup, RPC and token replacement.
+    fn renew_if_due_locked_v1(&self, key: ActiveFenceKeyV0) -> Result<MeshFenceRenewalOutcomeV1> {
         self.retry_pending_releases_v1(key)?;
         self.retry_pending_host_releases_v1(key)?;
         let mut tokens = self
@@ -1637,10 +1716,15 @@ impl MeshFenceRegistryV1 {
                     anyhow!("host attestation revalidation before renewal failed: {error}")
                 })?;
         }
-        let renewed = self
-            .authority
-            .renew(entry.token)
-            .map_err(|error| anyhow!("external fence renewal failed: {error}"))?;
+        let authority_started = Instant::now();
+        let renewed =
+            self.authority.renew(entry.token).map_err(|error| {
+                anyhow!(
+                "external fence renewal failed: {error}; rpc_elapsed_ms={} renewal_late_by_ms={}",
+                authority_started.elapsed().as_millis(),
+                authority_started.saturating_duration_since(entry.next_renew_at).as_millis()
+            )
+            })?;
         if renewed.scope() != entry.token.scope() {
             bail!("external fence renewal changed the lease scope")
         }
@@ -1649,12 +1733,41 @@ impl MeshFenceRegistryV1 {
             ActiveFenceEntryV1 {
                 token: renewed,
                 host_admission: entry.host_admission,
-                next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                next_renew_at: authority_started + fence_renew_interval(self.ttl),
                 external_release_confirmed: false,
                 host_release_confirmed: entry.host_release_confirmed,
             },
         );
         Ok(MeshFenceRenewalOutcomeV1::Renewed)
+    }
+
+    /// Bounded scheduling order only; it conveys no lease or frame authority.
+    fn renewal_order_v1(&self) -> Result<Vec<ActiveFenceKeyV0>> {
+        let mut entries = self
+            .tokens
+            .lock()
+            .map_err(|_| anyhow!("mesh fence token map poisoned"))?
+            .iter()
+            .map(|(key, entry)| (entry.next_renew_at, *key))
+            .collect::<Vec<_>>();
+        entries.sort_unstable();
+        Ok(entries.into_iter().map(|(_, key)| key).collect())
+    }
+
+    // New admissions cannot overtake an already-due existing lease. One
+    // snapshot, one attempt per key: no unbounded catch-up or busy loop.
+    // Release paths intentionally do not depend on this maintenance succeeding.
+    fn renew_due_before_admission_locked_v1(&self) -> Result<()> {
+        for key in self.renewal_order_v1()? {
+            self.renew_if_due_locked_v1(key).with_context(|| {
+                format!(
+                    "existing lease maintenance before admission: direction={:?} remote={}",
+                    key.0,
+                    hex::encode(key.1.as_bytes()),
+                )
+            })?;
+        }
+        Ok(())
     }
 
     /// Runs the due-only path for every currently admitted edge and retains
@@ -1663,16 +1776,12 @@ impl MeshFenceRegistryV1 {
     /// here; the next generation will acquire a fresh token on reconnect.
     fn renew_due_all(&self) -> std::result::Result<(), MeshFencePeerFailureV1> {
         let keys = self
-            .tokens
-            .lock()
-            .map_err(|_| MeshFencePeerFailureV1 {
-                remote: self.local,
+            .renewal_order_v1()
+            .map_err(|error| MeshFencePeerFailureV1 {
+                remote: Box::new(self.local),
                 direction: PeerDirectionV0::Outbound,
-                reason: "mesh fence token map poisoned".to_owned(),
-            })?
-            .keys()
-            .copied()
-            .collect::<Vec<_>>();
+                reason: error.to_string(),
+            })?;
         for (direction, remote) in keys {
             match self.renew_if_due_inner(direction, remote) {
                 Ok(MeshFenceRenewalOutcomeV1::Missing)
@@ -1680,7 +1789,7 @@ impl MeshFenceRegistryV1 {
                 | Ok(MeshFenceRenewalOutcomeV1::Renewed) => {}
                 Err(error) => {
                     return Err(MeshFencePeerFailureV1 {
-                        remote,
+                        remote: Box::new(remote),
                         direction,
                         reason: error.to_string(),
                     })
@@ -1695,13 +1804,7 @@ impl MeshFenceRegistryV1 {
             .admission_lock
             .lock()
             .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
-        let keys = self
-            .tokens
-            .lock()
-            .map_err(|_| anyhow!("mesh fence token map poisoned"))?
-            .keys()
-            .copied()
-            .collect::<Vec<_>>();
+        let keys = self.renewal_order_v1()?;
         for key in keys {
             self.revalidate_locked(key)?;
         }
@@ -1741,6 +1844,7 @@ impl MeshFenceRegistryV1 {
                     anyhow!("host attestation revalidation before renewal failed: {error}")
                 })?;
         }
+        let authority_started = Instant::now();
         let renewed = self
             .authority
             .renew(entry.token)
@@ -1753,7 +1857,7 @@ impl MeshFenceRegistryV1 {
             ActiveFenceEntryV1 {
                 token: renewed,
                 host_admission: entry.host_admission,
-                next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                next_renew_at: authority_started + fence_renew_interval(self.ttl),
                 external_release_confirmed: false,
                 host_release_confirmed: entry.host_release_confirmed,
             },
@@ -1762,11 +1866,18 @@ impl MeshFenceRegistryV1 {
     }
 
     fn release(&self, direction: PeerDirectionV0, remote: ValidatorId) -> Result<()> {
-        let key = (direction, remote);
         let _admission_guard = self
             .admission_lock
             .lock()
             .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        if self.peer_quarantined_v1(remote)? {
+            return Ok(());
+        }
+        self.release_locked_v1(direction, remote)
+    }
+
+    fn release_locked_v1(&self, direction: PeerDirectionV0, remote: ValidatorId) -> Result<()> {
+        let key = (direction, remote);
         self.retry_pending_releases_v1(key)?;
         self.retry_pending_host_releases_v1(key)?;
         // Keep the token in the local map until both authority boundaries
@@ -1914,7 +2025,12 @@ impl MeshFenceRegistryV1 {
         let keys = keys.into_iter().collect::<BTreeSet<_>>();
         let mut first_error = None;
         for (direction, remote) in keys {
-            if let Err(error) = self.release(direction, remote) {
+            let release = self
+                .admission_lock
+                .lock()
+                .map_err(|_| anyhow!("mesh fence admission lock poisoned"))
+                .and_then(|_guard| self.release_locked_v1(direction, remote));
+            if let Err(error) = release {
                 first_error.get_or_insert(error);
             }
         }
@@ -2263,6 +2379,10 @@ impl PersistentAuthenticatedPeerMeshV0 {
             fence_ttl,
             host_attestation,
         )?;
+        fences.configure_peer_quarantine_v1(
+            incoming.keys().copied().collect(),
+            outgoing.keys().copied().collect(),
+        )?;
         fences.preflight_host_attestation()?;
         let listener = TcpListener::bind(listen_addr)
             .with_context(|| format!("bind consensus listener {listen_addr}"))?;
@@ -2323,7 +2443,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
                             &terminal,
                             &stop,
                             MeshTerminalFailureV0 {
-                                remote: failure.remote,
+                                remote: *failure.remote,
                                 direction: failure.direction,
                                 reason: format!(
                                     "external fence renewal supervisor failed: {}",
@@ -2340,40 +2460,6 @@ impl PersistentAuthenticatedPeerMeshV0 {
                     thread::sleep(WORKER_POLL);
                 })
                 .context("spawn mesh external-fence renewal worker")?;
-            workers.push(worker);
-        }
-        {
-            let accept_incoming = incoming.clone();
-            let worker = thread::Builder::new()
-                .name("trnm-g3-mesh-accept".to_owned())
-                .stack_size(MESH_WORKER_STACK_BYTES)
-                .spawn({
-                    let identity = identity.clone();
-                    let setup_tx = setup_tx.clone();
-                    let ingress_tx = ingress_tx.clone();
-                    let stop = Arc::clone(&stop);
-                    let terminal = Arc::clone(&terminal);
-                    let controls = Arc::clone(&controls);
-                    let fences = fences.clone();
-                    move || {
-                        accept_loop(
-                            listener,
-                            accept_incoming,
-                            identity,
-                            setup_deadline,
-                            io_timeout,
-                            setup_tx,
-                            ingress_tx,
-                            stop,
-                            terminal,
-                            controls,
-                            fences.clone(),
-                            inbound_peer_budgets,
-                            global_inbound_budget,
-                        );
-                    }
-                })
-                .context("spawn consensus acceptor")?;
             workers.push(worker);
         }
 
@@ -2429,7 +2515,58 @@ impl PersistentAuthenticatedPeerMeshV0 {
                     return Err(error).context("spawn consensus sender");
                 }
             };
-            workers.push(worker);
+            let mut worker = Some(worker);
+            if let Err(error) = fences.register_outgoing_worker_v1(remote, &mut worker) {
+                stop.store(true, Ordering::Release);
+                shutdown_all(&controls);
+                // A failed registry admission must not detach a live worker.
+                let panicked = worker.take().is_some_and(|worker| worker.join().is_err());
+                cleanup_failed_establish(&stop, &controls, workers, &fences);
+                return if panicked {
+                    Err(error.context("unregistered outgoing worker panicked"))
+                } else {
+                    Err(error)
+                };
+            }
+        }
+        {
+            let accept_incoming = incoming.clone();
+            let worker = thread::Builder::new()
+                .name("trnm-g3-mesh-accept".to_owned())
+                .stack_size(MESH_WORKER_STACK_BYTES)
+                .spawn({
+                    let identity = identity.clone();
+                    let setup_tx = setup_tx.clone();
+                    let ingress_tx = ingress_tx.clone();
+                    let stop = Arc::clone(&stop);
+                    let terminal = Arc::clone(&terminal);
+                    let controls = Arc::clone(&controls);
+                    let fences = fences.clone();
+                    move || {
+                        accept_loop(
+                            listener,
+                            accept_incoming,
+                            identity,
+                            setup_deadline,
+                            io_timeout,
+                            setup_tx,
+                            ingress_tx,
+                            stop,
+                            terminal,
+                            controls,
+                            fences.clone(),
+                            inbound_peer_budgets,
+                            global_inbound_budget,
+                        );
+                    }
+                });
+            match worker {
+                Ok(worker) => workers.push(worker),
+                Err(error) => {
+                    cleanup_failed_establish(&stop, &controls, workers, &fences);
+                    return Err(error).context("spawn consensus acceptor");
+                }
+            }
         }
         drop(setup_tx);
         drop(ingress_tx);
@@ -2458,6 +2595,13 @@ impl PersistentAuthenticatedPeerMeshV0 {
                     initial_sessions.push(facts);
                 }
                 Ok(SetupEventV0::Failed(reason)) => {
+                    // A sibling may report "stopped" after the initiating
+                    // worker latched its error. Preserve the original cause.
+                    let reason = terminal
+                        .lock()
+                        .ok()
+                        .and_then(|failure| failure.as_ref().map(MeshTerminalFailureV0::render))
+                        .unwrap_or(reason);
                     cleanup_failed_establish(&stop, &controls, workers, &fences);
                     bail!("mesh setup failed: {reason}");
                 }
@@ -2550,6 +2694,16 @@ impl PersistentAuthenticatedPeerMeshV0 {
             .outbound
             .get(&remote)
             .ok_or_else(|| anyhow!("remote is outside frozen outgoing peer set"))?;
+        // Publication cannot race this finite queue handoff: a queued-before
+        // publication owner is canceled by its original worker/reservation.
+        let _admission_guard = self
+            .fences
+            .admission_lock
+            .lock()
+            .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        if self.fences.peer_quarantined_v1(remote)? {
+            return Ok(MeshSendDispositionV0::Quarantined);
+        }
         // A worker-marked reconnect handoff may have released the old token
         // before the owner flushes this bounded outbox.  Keep the payload in
         // the caller's outbox until the worker has admitted a fresh lease:
@@ -2560,7 +2714,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
         // token, still fails closed here.
         if matches!(
             self.fences
-                .revalidate_for_send(PeerDirectionV0::Outbound, remote)?,
+                .revalidate_locked_for_send((PeerDirectionV0::Outbound, remote), true)?,
             MeshFenceSendValidationV1::Reconnecting
         ) {
             return Ok(MeshSendDispositionV0::Backpressured);
@@ -2606,6 +2760,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
         let payload: Arc<[u8]> = Arc::from(payload);
         let mut queued_peers = 0usize;
         let mut backpressured_peers = Vec::new();
+        let mut quarantined_peers = Vec::new();
         for remote in self.outbound.keys().copied() {
             match self.send_shared_to_v0(remote, kind, Arc::clone(&payload))? {
                 MeshSendDispositionV0::Queued => {
@@ -2614,18 +2769,26 @@ impl PersistentAuthenticatedPeerMeshV0 {
                         .ok_or_else(|| anyhow!("mesh queued-peer count overflow"))?;
                 }
                 MeshSendDispositionV0::Backpressured => backpressured_peers.push(remote),
+                MeshSendDispositionV0::Quarantined => quarantined_peers.push(remote),
             }
         }
         Ok(MeshBroadcastOutcomeV0 {
             queued_peers,
             backpressured_peers,
+            quarantined_peers,
         })
     }
 
     pub fn receive_timeout(&self, timeout: Duration) -> Result<Option<MeshIngressEventV0>> {
         self.ensure_healthy()?;
         match self.ingress.recv_timeout(timeout) {
-            Ok(event) => Ok(Some(event)),
+            Ok(event) => {
+                if self.fences.cancel_quarantined_ingress_v1(&event)? {
+                    // One original queue owner per call, no attacker-driven spin.
+                    return Ok(None);
+                }
+                Ok(Some(event))
+            }
             Err(RecvTimeoutError::Timeout) => {
                 self.ensure_healthy()?;
                 Ok(None)
@@ -2654,11 +2817,25 @@ impl PersistentAuthenticatedPeerMeshV0 {
         let Some(MeshIngressEventV0::Frame(ref inbound)) = event else {
             return Ok(event);
         };
+        let _admission_guard = self
+            .fences
+            .admission_lock
+            .lock()
+            .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        if self
+            .fences
+            .cancel_quarantined_ingress_v1(event.as_ref().unwrap())?
+        {
+            return Ok(None);
+        }
         // Revalidate the exact directed lease immediately before durable
         // payload admission. This closes the interval between the worker's
         // frame-path check and the WAL commit; a renewed/fenced generation
         // cannot race a stale payload into the replay owner.
-        if let Err(error) = self.fences.revalidate(inbound.direction, inbound.remote) {
+        if let Err(error) = self
+            .fences
+            .revalidate_locked((inbound.direction, inbound.remote))
+        {
             let facts = PeerSessionFactsV0 {
                 remote: inbound.remote,
                 direction: inbound.direction,
@@ -2706,6 +2883,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
             shutdown_all(&self.controls);
             return Err(error);
         }
+        drop(_admission_guard);
         self.ensure_healthy()?;
         Ok(event)
     }
@@ -2718,12 +2896,52 @@ impl PersistentAuthenticatedPeerMeshV0 {
     /// ingress event was already queued behind the runtime's terminal quiet
     /// check. A non-empty queue fails closed; the caller must not consume its
     /// consensus authority into a clean terminal report.
+    pub(crate) fn require_no_peer_quarantine_for_terminal_v1(&self) -> Result<()> {
+        ensure!(
+            self.fences
+                .quarantine
+                .lock()
+                .map_err(|_| anyhow!("quarantine registry poisoned"))?
+                .records
+                .is_empty(),
+            "quarantined peer forbids a clean terminal cut"
+        );
+        Ok(())
+    }
+
     pub fn close_if_ingress_empty_v1(mut self) -> Result<()> {
         self.close_inner()?;
+        self.require_no_peer_quarantine_for_terminal_v1()?;
         match self.ingress.try_recv() {
             Err(TryRecvError::Empty | TryRecvError::Disconnected) => Ok(()),
             Ok(_) => bail!("consensus ingress was queued at mesh shutdown"),
         }
+    }
+
+    /// Joins all producers before validating every finite residual event.
+    /// Only the owner of a completed terminal barrier may supply this policy.
+    pub(crate) fn close_with_terminal_ingress_v1(
+        mut self,
+        mut validate: impl FnMut(MeshIngressEventV0) -> Result<()>,
+    ) -> Result<()> {
+        self.ensure_healthy()?;
+        self.close_inner()?;
+        self.require_no_peer_quarantine_for_terminal_v1()?;
+        // A worker can discover an internal failure while being joined.
+        // The ordinary health method also rejects the intentionally closed
+        // owner, so inspect only the retained failure here.
+        if let Some(failure) = self
+            .terminal
+            .lock()
+            .map_err(|_| anyhow!("mesh terminal-state mutex poisoned"))?
+            .as_ref()
+        {
+            bail!(failure.render());
+        }
+        while let Ok(event) = self.ingress.try_recv() {
+            validate(event)?;
+        }
+        Ok(())
     }
 
     fn close_inner(&mut self) -> Result<()> {
@@ -2738,10 +2956,25 @@ impl PersistentAuthenticatedPeerMeshV0 {
         for worker in self.workers.drain(..) {
             panicked |= worker.join().is_err();
         }
-        self.fences.release_all()?;
+        let outgoing_join = self.fences.join_outgoing_workers_v1();
+        let releases = self.fences.release_all();
+        let quarantine_cleanup = self.fences.require_quarantine_cleanup_v1();
+        // All owners have been joined and all remaining releases attempted.
+        // Closing cannot erase the first failure discovered by those workers.
+        if let Some(failure) = self
+            .terminal
+            .lock()
+            .map_err(|_| anyhow!("mesh terminal-state mutex poisoned"))?
+            .as_ref()
+        {
+            bail!(failure.render());
+        }
         if panicked {
             bail!("mesh worker panicked during shutdown");
         }
+        outgoing_join?;
+        releases?;
+        quarantine_cleanup?;
         Ok(())
     }
 }
@@ -2773,16 +3006,30 @@ fn outgoing_loop(
         remote,
         remote_addr,
         &identity,
-        initial_deadline,
-        io_timeout,
-        &stop,
-        &controls,
-        &fences,
-        1,
+        crate::consensus_mesh::MeshConnectControlV1 {
+            deadline: initial_deadline,
+            io_timeout,
+            stop: &stop,
+            controls: &controls,
+            fences: &fences,
+            generation: 1,
+        },
     ) {
         Ok(connection) => connection,
         Err(error) => {
-            let _ = setup_tx.send(SetupEventV0::Failed(error.render()));
+            let reason = error.render();
+            // Record the initiating setup failure before the coordinator can
+            // spend time joining workers or releasing disk-backed leases.
+            set_terminal(
+                &terminal,
+                &stop,
+                MeshTerminalFailureV0 {
+                    remote,
+                    direction: PeerDirectionV0::Outbound,
+                    reason: reason.clone(),
+                },
+            );
+            let _ = setup_tx.send(SetupEventV0::Failed(reason));
             return;
         }
     };
@@ -2798,6 +3045,9 @@ fn outgoing_loop(
     }
 
     loop {
+        if stop_quarantined_sender_v1(&fences, remote, &terminal, &stop) {
+            return;
+        }
         if stop.load(Ordering::Acquire) {
             let _ = fences.release(PeerDirectionV0::Outbound, remote);
             return;
@@ -2840,6 +3090,9 @@ fn outgoing_loop(
             }
         };
         loop {
+            if stop_quarantined_sender_v1(&fences, remote, &terminal, &stop) {
+                return;
+            }
             if let Err(error) = fences.revalidate(PeerDirectionV0::Outbound, remote) {
                 set_terminal(
                     &terminal,
@@ -2857,6 +3110,12 @@ fn outgoing_loop(
             match connection.send(message.kind, message.payload.as_ref().to_vec()) {
                 Ok(()) => break,
                 Err(error) if transient_frame_error(&error) => {
+                    if let FrameError::Io(cause) = &error {
+                        let _ = writeln!(io::stderr(), "mesh transient: remote={remote:?} direction=Outbound generation={generation} stage=send kind={:?} os={:?}", cause.kind(), cause.raw_os_error());
+                    }
+                    if stop_quarantined_sender_v1(&fences, remote, &terminal, &stop) {
+                        return;
+                    }
                     // Publish the reconnecting marker before the lifecycle
                     // event and before releasing the old lease.  This makes
                     // the owner-side outbox handoff atomic with respect to
@@ -2938,16 +3197,21 @@ fn outgoing_loop(
                             remote,
                             remote_addr,
                             &identity,
-                            deadline,
-                            io_timeout,
-                            &stop,
-                            &controls,
-                            &fences,
-                            next_generation,
+                            crate::consensus_mesh::MeshConnectControlV1 {
+                                deadline,
+                                io_timeout,
+                                stop: &stop,
+                                controls: &controls,
+                                fences: &fences,
+                                generation: next_generation,
+                            },
                         ) {
                             Ok(connection) => break connection,
                             Err(ConnectAttemptFailureV0::WindowElapsed) => continue,
-                            Err(ConnectAttemptFailureV0::Stopped) => return,
+                            Err(
+                                ConnectAttemptFailureV0::Stopped
+                                | ConnectAttemptFailureV0::Quarantined,
+                            ) => return,
                             Err(ConnectAttemptFailureV0::Terminal(reason)) => {
                                 set_terminal(
                                     &terminal,
@@ -2970,6 +3234,9 @@ fn outgoing_loop(
                         session_id: connection.session_id(),
                         generation,
                     };
+                    if stop_quarantined_sender_v1(&fences, remote, &terminal, &stop) {
+                        return;
+                    }
                     // `connect_authenticated_until` has already acquired and
                     // host-validated the new generation.  Clearing the
                     // marker now permits the next owner flush to require the
@@ -3042,10 +3309,10 @@ fn accept_loop(
     let mut generations = BTreeMap::<ValidatorId, u64>::new();
     let mut children = BTreeMap::<ValidatorId, InboundWorkerV0>::new();
 
-    loop {
+    'accepting: loop {
         if stop.load(Ordering::Acquire) {
             shutdown_all(&controls);
-            join_children(children, &controls, &terminal, &stop, &fences);
+            join_children(children, &controls, &terminal, &stop);
             return;
         }
         loop {
@@ -3069,7 +3336,7 @@ fn accept_loop(
                                 },
                             );
                             let _ = fences.release(PeerDirectionV0::Inbound, facts.remote);
-                            join_children(children, &controls, &terminal, &stop, &fences);
+                            join_children(children, &controls, &terminal, &stop);
                             return;
                         }
                         if emit_event(
@@ -3082,9 +3349,31 @@ fn accept_loop(
                         )
                         .is_err()
                         {
-                            join_children(children, &controls, &terminal, &stop, &fences);
+                            join_children(children, &controls, &terminal, &stop);
                             return;
                         }
+                    }
+                }
+                Ok(InboundLifecycleV0::PeerRejected(facts)) => {
+                    if let Err(error) = fences.retire_quarantined_peer_v1(
+                        facts,
+                        &mut children,
+                        &controls,
+                        &ingress_tx,
+                        &terminal,
+                        &stop,
+                    ) {
+                        set_terminal(
+                            &terminal,
+                            &stop,
+                            MeshTerminalFailureV0 {
+                                remote: facts.remote,
+                                direction: facts.direction,
+                                reason: error.to_string(),
+                            },
+                        );
+                        join_children(children, &controls, &terminal, &stop);
+                        return;
                     }
                 }
                 Err(TryRecvError::Empty) => break,
@@ -3098,7 +3387,7 @@ fn accept_loop(
                             reason: "inbound lifecycle channel disappeared".to_owned(),
                         },
                     );
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 }
             }
@@ -3109,7 +3398,7 @@ fn accept_loop(
                 generations.len(),
                 expected.len()
             )));
-            join_children(children, &controls, &terminal, &stop, &fences);
+            join_children(children, &controls, &terminal, &stop);
             return;
         }
 
@@ -3141,11 +3430,28 @@ fn accept_loop(
                         let _ = setup_tx.send(SetupEventV0::Failed(
                             "inbound authentication ambiguity".to_owned(),
                         ));
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 };
                 let remote = connection.remote();
+                match fences.refuse_quarantined_reconnect_v1(remote) {
+                    Ok(true) => continue,
+                    Ok(false) => {}
+                    Err(error) => {
+                        set_terminal(
+                            &terminal,
+                            &stop,
+                            MeshTerminalFailureV0 {
+                                remote,
+                                direction: PeerDirectionV0::Inbound,
+                                reason: error.to_string(),
+                            },
+                        );
+                        join_children(children, &controls, &terminal, &stop);
+                        return;
+                    }
+                }
                 let Some(inbound_peer_budget) = inbound_peer_budgets.get(&remote).cloned() else {
                     set_terminal(
                         &terminal,
@@ -3156,7 +3462,7 @@ fn accept_loop(
                             reason: "authenticated remote has no inbound byte budget".to_owned(),
                         },
                     );
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 };
                 let generation = match generations
@@ -3176,7 +3482,7 @@ fn accept_loop(
                                 reason: "session generation exhausted".to_owned(),
                             },
                         );
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 };
@@ -3200,8 +3506,46 @@ fn accept_loop(
                                 reason: "superseded inbound worker panicked".to_owned(),
                             },
                         );
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
+                    }
+                    match fences.peer_quarantined_v1(remote) {
+                        Ok(true) => {
+                            if let Err(error) = fences.finish_joined_quarantine_v1(
+                                previous,
+                                &controls,
+                                &ingress_tx,
+                                &terminal,
+                                &stop,
+                            ) {
+                                set_terminal(
+                                    &terminal,
+                                    &stop,
+                                    MeshTerminalFailureV0 {
+                                        remote,
+                                        direction: PeerDirectionV0::Inbound,
+                                        reason: error.to_string(),
+                                    },
+                                );
+                                join_children(children, &controls, &terminal, &stop);
+                                return;
+                            }
+                            continue 'accepting;
+                        }
+                        Ok(false) => {}
+                        Err(error) => {
+                            set_terminal(
+                                &terminal,
+                                &stop,
+                                MeshTerminalFailureV0 {
+                                    remote,
+                                    direction: PeerDirectionV0::Inbound,
+                                    reason: error.to_string(),
+                                },
+                            );
+                            join_children(children, &controls, &terminal, &stop);
+                            return;
+                        }
                     }
                     if let Err(error) = fences.release(PeerDirectionV0::Inbound, remote) {
                         set_terminal(
@@ -3213,7 +3557,7 @@ fn accept_loop(
                                 reason: error.to_string(),
                             },
                         );
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                     if emit_event(
@@ -3226,26 +3570,33 @@ fn accept_loop(
                     )
                     .is_err()
                     {
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 }
-                if let Err(error) = fences.acquire(
+                let admission = fences.acquire_or_quarantined_v1(
                     PeerDirectionV0::Inbound,
                     remote,
                     connection.session_id(),
                     generation,
-                ) {
+                );
+                if matches!(&admission, Ok(None)) {
+                    continue;
+                }
+                if let Err(error) = admission {
                     set_terminal(
                         &terminal,
                         &stop,
                         MeshTerminalFailureV0 {
                             remote,
                             direction: PeerDirectionV0::Inbound,
-                            reason: format!("external fence rejected inbound session: {error}"),
+                            reason: fence_admission_failure_reason_v1(
+                                PeerDirectionV0::Inbound,
+                                &error,
+                            ),
                         },
                     );
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 }
                 let host_attestation = match fences.host_attestation_admission(
@@ -3266,7 +3617,7 @@ fn accept_loop(
                             },
                         );
                         let _ = fences.release(PeerDirectionV0::Inbound, remote);
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 };
@@ -3285,7 +3636,7 @@ fn accept_loop(
                         },
                     );
                     let _ = fences.release(PeerDirectionV0::Inbound, remote);
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 }
                 let control = match connection.io_mut().try_clone() {
@@ -3300,7 +3651,7 @@ fn accept_loop(
                                 reason: error.to_string(),
                             },
                         );
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 };
@@ -3316,13 +3667,13 @@ fn accept_loop(
                             reason: error.to_string(),
                         },
                     );
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 }
                 generations.insert(remote, generation);
                 if generation == 1 {
                     if setup_tx.send(SetupEventV0::Ready(facts)).is_err() {
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 } else if emit_event(
@@ -3335,7 +3686,7 @@ fn accept_loop(
                 )
                 .is_err()
                 {
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 }
                 let cancel = Arc::new(AtomicBool::new(false));
@@ -3391,6 +3742,7 @@ fn accept_loop(
                                     if !cancel.load(Ordering::Acquire)
                                         && !stop.load(Ordering::Acquire)
                                     {
+                                        let _ = writeln!(io::stderr(), "mesh transient: remote={remote:?} direction=Inbound generation={} stage=readiness kind={:?} os={:?}", facts.generation, error.kind(), error.raw_os_error());
                                         let _ = emit_inbound_lifecycle(
                                             &lifecycle_tx,
                                             InboundLifecycleV0::TransientLoss(facts),
@@ -3404,26 +3756,19 @@ fn accept_loop(
                                     return;
                                 }
                                 Err(error) => {
-                                    if !stop.load(Ordering::Acquire)
-                                        && !cancel.load(Ordering::Acquire)
-                                    {
-                                        set_terminal(
-                                            &terminal,
-                                            &stop,
-                                            MeshTerminalFailureV0 {
-                                                remote,
-                                                direction: PeerDirectionV0::Inbound,
-                                                reason: format!(
-                                                    "inbound readiness probe failed: {error}"
-                                                ),
-                                            },
-                                        );
-                                    }
+                                    retain_nontransient_inbound_failure_v1(
+                                        &terminal,
+                                        &stop,
+                                        &cancel,
+                                        facts,
+                                        "inbound readiness probe failed",
+                                        &FrameError::Io(error),
+                                    );
                                     let _ = fences.release(PeerDirectionV0::Inbound, remote);
                                     return;
                                 }
                             }
-                            match connection.receive() {
+                            match connection.receive_classified_v1() {
                                 Ok(frame) => {
                                     let reserved_bytes = match frame
                                         .payload
@@ -3451,15 +3796,15 @@ fn accept_loop(
                                     // this worker while admission is full. It
                                     // neither reads another frame nor discards
                                     // this one; stop/cancel remains polled.
-                                    let Some(reservation) =
-                                        reserve_inbound_frame_until_available_v0(
-                                            &inbound_peer_budget,
-                                            &global_inbound_budget,
-                                            reserved_bytes,
-                                            &stop,
-                                            &cancel,
-                                        )
-                                    else {
+                                    let Some(reservation) = reserve_decoded_inbound_frame_v1(
+                                        &inbound_peer_budget,
+                                        &global_inbound_budget,
+                                        reserved_bytes,
+                                        &stop,
+                                        &cancel,
+                                        &terminal,
+                                        facts,
+                                    ) else {
                                         let _ = fences.release(PeerDirectionV0::Inbound, remote);
                                         return;
                                     };
@@ -3480,14 +3825,14 @@ fn accept_loop(
                                     }
                                     if emit_event(
                                         &ingress_tx,
-                                        MeshIngressEventV0::Frame(MeshInboundFrameV0 {
+                                        MeshIngressEventV0::Frame(Box::new(MeshInboundFrameV0 {
                                             remote,
                                             direction: PeerDirectionV0::Inbound,
                                             session_id: facts.session_id,
                                             session_generation: facts.generation,
                                             frame,
                                             _reservation: reservation,
-                                        }),
+                                        })),
                                         &terminal,
                                         &stop,
                                         facts,
@@ -3499,10 +3844,30 @@ fn accept_loop(
                                         return;
                                     }
                                 }
-                                Err(error) if transient_frame_error(&error) => {
+                                Err(error)
+                                    if matches!(
+                                        error.class_v1(),
+                                        crate::transport::EstablishedReceiveClassV1::PeerInput(_)
+                                    ) =>
+                                {
+                                    handle_completed_peer_rejection_v1(
+                                        &fences,
+                                        facts,
+                                        &error,
+                                        &lifecycle_tx,
+                                        &terminal,
+                                        &stop,
+                                    );
+                                    // The acceptor owns this handle and exact pinned releases.
+                                    return;
+                                }
+                                Err(error) if transient_frame_error(error.frame_error_v1()) => {
                                     if !cancel.load(Ordering::Acquire)
                                         && !stop.load(Ordering::Acquire)
                                     {
+                                        if let FrameError::Io(cause) = error.frame_error_v1() {
+                                            let _ = writeln!(io::stderr(), "mesh transient: remote={remote:?} direction=Inbound generation={} stage=frame kind={:?} os={:?}", facts.generation, cause.kind(), cause.raw_os_error());
+                                        }
                                         let _ = emit_inbound_lifecycle(
                                             &lifecycle_tx,
                                             InboundLifecycleV0::TransientLoss(facts),
@@ -3516,21 +3881,9 @@ fn accept_loop(
                                     return;
                                 }
                                 Err(error) => {
-                                    if !stop.load(Ordering::Acquire)
-                                        && !cancel.load(Ordering::Acquire)
-                                    {
-                                        set_terminal(
-                                            &terminal,
-                                            &stop,
-                                            MeshTerminalFailureV0 {
-                                                remote,
-                                                direction: PeerDirectionV0::Inbound,
-                                                reason: format!(
-                                                    "non-recoverable frame error: {error}"
-                                                ),
-                                            },
-                                        );
-                                    }
+                                    retain_classified_inbound_failure_v1(
+                                        &terminal, &stop, &cancel, facts, &error,
+                                    );
                                     let _ = fences.release(PeerDirectionV0::Inbound, remote);
                                     return;
                                 }
@@ -3559,7 +3912,7 @@ fn accept_loop(
                                 reason: format!("spawn inbound worker: {error}"),
                             },
                         );
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 }
@@ -3582,25 +3935,43 @@ fn accept_loop(
                         reason: format!("accept failed: {error}"),
                     },
                 );
-                join_children(children, &controls, &terminal, &stop, &fences);
+                join_children(children, &controls, &terminal, &stop);
                 return;
             }
         }
     }
 }
 
+struct MeshConnectControlV1<'a> {
+    deadline: Instant,
+    io_timeout: Duration,
+    stop: &'a AtomicBool,
+    controls: &'a ActiveControlsV0,
+    fences: &'a MeshFenceRegistryV1,
+    generation: u64,
+}
+
 fn connect_authenticated_until(
     remote: ValidatorId,
     address: SocketAddr,
     identity: &MeshIdentityV0,
-    deadline: Instant,
-    io_timeout: Duration,
-    stop: &AtomicBool,
-    controls: &ActiveControlsV0,
-    fences: &MeshFenceRegistryV1,
-    generation: u64,
+    control: MeshConnectControlV1<'_>,
 ) -> std::result::Result<MeshAuthenticatedConnectionV1<DeadlineIo>, ConnectAttemptFailureV0> {
+    let MeshConnectControlV1 {
+        deadline,
+        io_timeout,
+        stop,
+        controls,
+        fences,
+        generation,
+    } = control;
     loop {
+        if fences
+            .refuse_quarantined_reconnect_v1(remote)
+            .map_err(|error| ConnectAttemptFailureV0::Terminal(error.to_string()))?
+        {
+            return Err(ConnectAttemptFailureV0::Quarantined);
+        }
         if stop.load(Ordering::Acquire) {
             return Err(ConnectAttemptFailureV0::Stopped);
         }
@@ -3632,14 +4003,17 @@ fn connect_authenticated_until(
         let mut connection = match match &identity.p2p_identity_signer {
             MeshIdentitySignerV1::Local(signing_key) => AuthenticatedConnection::connect(
                 io,
-                &identity.run_id,
-                identity.local,
-                remote,
+                crate::transport::ConnectionPeerV1 {
+                    run_id: &identity.run_id,
+                    local: identity.local,
+                    expected_remote: remote,
+                },
                 signing_key,
                 &identity.validator_set,
                 &identity.key_roles,
                 identity.transport_context,
             )
+            .map(Box::new)
             .map(MeshAuthenticatedConnectionV1::Local),
             MeshIdentitySignerV1::External(producer) => {
                 ExternallySignedAuthenticatedConnectionV1::connect(
@@ -3652,6 +4026,7 @@ fn connect_authenticated_until(
                     &identity.key_roles,
                     identity.transport_context,
                 )
+                .map(Box::new)
                 .map(MeshAuthenticatedConnectionV1::External)
             }
         } {
@@ -3678,16 +4053,24 @@ fn connect_authenticated_until(
         replace_control(controls, PeerDirectionV0::Outbound, remote, control).map_err(|error| {
             ConnectAttemptFailureV0::Terminal(format!("register shutdown handle: {error}"))
         })?;
-        if let Err(error) = fences.acquire(
+        match fences.acquire_or_quarantined_v1(
             PeerDirectionV0::Outbound,
             remote,
             connection.session_id(),
             generation,
         ) {
-            remove_control(controls, PeerDirectionV0::Outbound, remote);
-            return Err(ConnectAttemptFailureV0::Terminal(format!(
-                "external fence rejected outbound session: {error}"
-            )));
+            Ok(Some(_)) => {}
+            Ok(None) => {
+                remove_control_checked_v1(controls, PeerDirectionV0::Outbound, remote)
+                    .map_err(|error| ConnectAttemptFailureV0::Terminal(error.to_string()))?;
+                return Err(ConnectAttemptFailureV0::Quarantined);
+            }
+            Err(error) => {
+                remove_control(controls, PeerDirectionV0::Outbound, remote);
+                return Err(ConnectAttemptFailureV0::Terminal(
+                    fence_admission_failure_reason_v1(PeerDirectionV0::Outbound, &error),
+                ));
+            }
         }
         let host_attestation = fences
             .host_attestation_admission(
@@ -3737,6 +4120,7 @@ fn authenticate_incoming(
             &identity.key_roles,
             identity.transport_context,
         )
+        .map(Box::new)
         .map(MeshAuthenticatedConnectionV1::Local),
         MeshIdentitySignerV1::External(producer) => {
             ExternallySignedAuthenticatedConnectionV1::accept(
@@ -3748,6 +4132,7 @@ fn authenticate_incoming(
                 &identity.key_roles,
                 identity.transport_context,
             )
+            .map(Box::new)
             .map(MeshAuthenticatedConnectionV1::External)
         }
     } {
@@ -3825,6 +4210,7 @@ fn is_consensus_kind(kind: FrameKind) -> bool {
             | FrameKind::RestartRecoveryReady
             | FrameKind::RestartRecoveryStart
             | FrameKind::RestartCatchup
+            | FrameKind::TerminalBarrier
     )
 }
 
@@ -3848,6 +4234,63 @@ fn reserve_inbound_frame_until_available_v0(
     }
 }
 
+// A decoded frame cannot become an unbudgeted owner or disappear silently
+// when shutdown interrupts its reservation wait. Superseded edges retain their
+// prior cancellation semantics and never publish into a replacement session.
+fn reserve_decoded_inbound_frame_v1(
+    peer_budget: &Arc<MeshQueueByteBudgetV0>,
+    global_budget: &Arc<MeshQueueByteBudgetV0>,
+    reserved_bytes: usize,
+    stop: &AtomicBool,
+    edge_cancel: &AtomicBool,
+    terminal: &Mutex<Option<MeshTerminalFailureV0>>,
+    facts: PeerSessionFactsV0,
+) -> Option<InboundQueueReservationV0> {
+    let reservation = reserve_inbound_frame_until_available_v0(
+        peer_budget,
+        global_budget,
+        reserved_bytes,
+        stop,
+        edge_cancel,
+    );
+    if reservation.is_none() && stop.load(Ordering::Acquire) && !edge_cancel.load(Ordering::Acquire)
+    {
+        set_terminal(
+            terminal,
+            stop,
+            MeshTerminalFailureV0 {
+                remote: facts.remote,
+                direction: facts.direction,
+                reason: "shutdown interrupted decoded frame byte reservation".to_owned(),
+            },
+        );
+    }
+    reservation
+}
+
+// The global stop flag never hides a completed nontransient read failure.
+// Explicit transport loss and superseded-edge cancellation stay separate.
+fn retain_nontransient_inbound_failure_v1(
+    terminal: &Mutex<Option<MeshTerminalFailureV0>>,
+    stop: &AtomicBool,
+    edge_cancel: &AtomicBool,
+    facts: PeerSessionFactsV0,
+    stage: &str,
+    error: &FrameError,
+) {
+    if !edge_cancel.load(Ordering::Acquire) && !transient_frame_error(error) {
+        set_terminal(
+            terminal,
+            stop,
+            MeshTerminalFailureV0 {
+                remote: facts.remote,
+                direction: facts.direction,
+                reason: format!("{stage}: {error}"),
+            },
+        );
+    }
+}
+
 fn emit_event(
     sender: &SyncSender<MeshIngressEventV0>,
     mut event: MeshIngressEventV0,
@@ -3857,10 +4300,34 @@ fn emit_event(
     edge_cancel: Option<&AtomicBool>,
 ) -> Result<()> {
     loop {
-        if stop.load(Ordering::Acquire)
-            || edge_cancel.is_some_and(|cancel| cancel.load(Ordering::Acquire))
-        {
-            bail!("mesh stopped while applying bounded ingress backpressure");
+        if edge_cancel.is_some_and(|cancel| cancel.load(Ordering::Acquire)) {
+            bail!("mesh edge canceled while applying bounded ingress backpressure");
+        }
+        if stop.load(Ordering::Acquire) {
+            // Join cannot wait for this queue's consumer. One final bounded
+            // handoff preserves owned work for strict residual validation;
+            // inability to retain it must itself prevent successful shutdown.
+            return match sender.try_send(event) {
+                Ok(()) => Ok(()),
+                Err(error) => {
+                    let reason = match error {
+                        TrySendError::Full(_) => "shutdown ingress queue full with owned event",
+                        TrySendError::Disconnected(_) => {
+                            "shutdown ingress owner disappeared with owned event"
+                        }
+                    };
+                    set_terminal(
+                        terminal,
+                        stop,
+                        MeshTerminalFailureV0 {
+                            remote: facts.remote,
+                            direction: facts.direction,
+                            reason: reason.to_owned(),
+                        },
+                    );
+                    bail!(reason)
+                }
+            };
         }
         match sender.try_send(event) {
             Ok(()) => return Ok(()),
@@ -3869,17 +4336,15 @@ fn emit_event(
                 thread::sleep(WORKER_POLL);
             }
             Err(TrySendError::Disconnected(_)) => {
-                if !stop.load(Ordering::Acquire) {
-                    set_terminal(
-                        terminal,
-                        stop,
-                        MeshTerminalFailureV0 {
-                            remote: facts.remote,
-                            direction: facts.direction,
-                            reason: "ingress owner disappeared".to_owned(),
-                        },
-                    );
-                }
+                set_terminal(
+                    terminal,
+                    stop,
+                    MeshTerminalFailureV0 {
+                        remote: facts.remote,
+                        direction: facts.direction,
+                        reason: "ingress owner disappeared".to_owned(),
+                    },
+                );
                 bail!("mesh ingress owner disappeared")
             }
         }
@@ -3958,12 +4423,45 @@ fn set_terminal(
     stop: &AtomicBool,
     failure: MeshTerminalFailureV0,
 ) {
-    if let Ok(mut slot) = terminal.lock() {
+    set_terminal_with_diagnostic_v1(terminal, stop, failure, &mut io::stderr());
+}
+
+fn set_terminal_with_diagnostic_v1(
+    terminal: &Mutex<Option<MeshTerminalFailureV0>>,
+    stop: &AtomicBool,
+    failure: MeshTerminalFailureV0,
+    diagnostic: &mut impl Write,
+) {
+    let first = if let Ok(mut slot) = terminal.lock() {
         if slot.is_none() {
+            // Preserve the complete cause internally, but never duplicate an
+            // unbounded reason or permit injected terminal-control characters.
+            let reason: String = failure
+                .reason
+                .chars()
+                .flat_map(char::escape_default)
+                .take(512)
+                .collect();
+            let message = format!(
+                "mesh terminal: remote={} direction={} reason={}",
+                hex::encode(failure.remote.as_bytes()),
+                failure.direction.as_str(),
+                reason
+            );
             *slot = Some(failure);
+            Some(message)
+        } else {
+            None
         }
-    }
+    } else {
+        None
+    };
     stop.store(true, Ordering::Release);
+    // A best-effort diagnostic cannot replace the failure or prevent stopping.
+    // Do not hold the terminal mutex while touching the output sink.
+    if let Some(message) = first {
+        let _ = writeln!(diagnostic, "{message}");
+    }
 }
 
 fn cleanup_failed_establish(
@@ -3977,6 +4475,7 @@ fn cleanup_failed_establish(
     for worker in workers {
         let _ = worker.join();
     }
+    let _ = fences.join_outgoing_workers_v1();
     let _ = fences.release_all();
 }
 
@@ -3985,18 +4484,14 @@ fn join_children(
     controls: &ActiveControlsV0,
     terminal: &Mutex<Option<MeshTerminalFailureV0>>,
     stop: &AtomicBool,
-    fences: &MeshFenceRegistryV1,
 ) {
-    // Every terminal accept-loop path must interrupt all blocking socket
-    // readers before joining them. Otherwise one unrelated healthy inbound
-    // session can keep shutdown blocked forever after a different session
-    // fails closed.
-    for worker in children.values() {
-        worker.cancel.store(true, Ordering::Release);
-    }
+    // Global teardown is not supersession. Stop and interrupt every reader,
+    // but leave the edge-cancel flag reserved for explicit old-generation
+    // replacement so already owned work still reaches shutdown accounting.
+    stop.store(true, Ordering::Release);
     shutdown_all(controls);
     for (_, worker) in children {
-        if worker.handle.join().is_err() && !stop.load(Ordering::Acquire) {
+        if worker.handle.join().is_err() {
             set_terminal(
                 terminal,
                 stop,
@@ -4008,7 +4503,9 @@ fn join_children(
             );
         }
     }
-    let _ = fences.release_all();
+    // Only the mesh owner joins outbound workers. Global lease release belongs
+    // to close_inner/cleanup_failed_establish after all top-level joins.
+    // Releasing here races an outbound worker's final idle revalidation.
 }
 
 fn validate_limits(
@@ -4282,6 +4779,79 @@ mod tests {
         HostAttestationRequestV1, HostAttestationTokenV1, RejectingHostAttestationAuthorityV1,
     };
 
+    #[test]
+    fn mesh_connection_owners_do_not_inline_crypto_and_session_state_v1() {
+        assert!(std::mem::size_of::<MeshIdentitySignerV1>() <= 2 * std::mem::size_of::<usize>());
+        assert!(
+            std::mem::size_of::<MeshAuthenticatedConnectionV1<std::io::Cursor<Vec<u8>>>>()
+                <= 2 * std::mem::size_of::<usize>()
+        );
+    }
+
+    #[test]
+    fn first_mesh_failure_is_bounded_and_not_replaced_by_cleanup_v1() {
+        let terminal = Mutex::new(None);
+        let stop = AtomicBool::new(false);
+        let mut output = Vec::new();
+        let failure = MeshTerminalFailureV0 {
+            remote: ValidatorId::new([0x71; 32]),
+            direction: PeerDirectionV0::Outbound,
+            reason: format!("original\n\x1b{}", "界".repeat(2048)),
+        };
+        let original = failure.reason.clone();
+        set_terminal_with_diagnostic_v1(&terminal, &stop, failure, &mut output);
+        assert!(stop.load(Ordering::Acquire));
+        assert_eq!(terminal.lock().unwrap().as_ref().unwrap().reason, original);
+        let first = output.clone();
+        let rendered = String::from_utf8(first.clone()).unwrap();
+        assert!(rendered.contains("reason=original\\n\\u{1b}"));
+        assert_eq!(rendered.lines().count(), 1);
+        assert!(rendered.len() < 1024);
+        assert!(!rendered.contains('\x1b'));
+        set_terminal_with_diagnostic_v1(
+            &terminal,
+            &stop,
+            MeshTerminalFailureV0 {
+                remote: ValidatorId::new([0x72; 32]),
+                direction: PeerDirectionV0::Inbound,
+                reason: "later cleanup error".to_owned(),
+            },
+            &mut output,
+        );
+        assert_eq!(output, first);
+        assert_eq!(terminal.lock().unwrap().as_ref().unwrap().reason, original);
+    }
+
+    #[test]
+    fn mesh_diagnostic_write_failure_cannot_erase_terminal_or_stop_v1() {
+        struct FailedOutput;
+        impl Write for FailedOutput {
+            fn write(&mut self, _: &[u8]) -> io::Result<usize> {
+                Err(io::Error::other("diagnostic unavailable"))
+            }
+            fn flush(&mut self) -> io::Result<()> {
+                Ok(())
+            }
+        }
+        let terminal = Mutex::new(None);
+        let stop = AtomicBool::new(false);
+        set_terminal_with_diagnostic_v1(
+            &terminal,
+            &stop,
+            MeshTerminalFailureV0 {
+                remote: ValidatorId::new([0x71; 32]),
+                direction: PeerDirectionV0::Outbound,
+                reason: "real lease failure".to_owned(),
+            },
+            &mut FailedOutput,
+        );
+        assert!(stop.load(Ordering::Acquire));
+        assert_eq!(
+            terminal.lock().unwrap().as_ref().unwrap().reason,
+            "real lease failure"
+        );
+    }
+
     const TEST_RUN_ID: &str = "poco-g3-7-20260814T000000Z-mesh0001";
 
     fn authenticated_identity_fixture_v0() -> (MeshIdentityV0, MeshIdentityV0) {
@@ -4341,7 +4911,7 @@ mod tests {
             MeshIdentityV0 {
                 run_id: TEST_RUN_ID.to_owned(),
                 local: client,
-                p2p_identity_signer: MeshIdentitySignerV1::Local(client_key),
+                p2p_identity_signer: MeshIdentitySignerV1::Local(Box::new(client_key)),
                 validator_set: validator_set.clone(),
                 key_roles: key_roles.clone(),
                 transport_context: context,
@@ -4350,7 +4920,7 @@ mod tests {
             MeshIdentityV0 {
                 run_id: TEST_RUN_ID.to_owned(),
                 local: server,
-                p2p_identity_signer: MeshIdentitySignerV1::Local(server_key),
+                p2p_identity_signer: MeshIdentitySignerV1::Local(Box::new(server_key)),
                 validator_set,
                 key_roles,
                 transport_context: context,
@@ -4364,7 +4934,7 @@ mod tests {
         payload: Vec<u8>,
         reservation: InboundQueueReservationV0,
     ) -> MeshIngressEventV0 {
-        MeshIngressEventV0::Frame(MeshInboundFrameV0 {
+        MeshIngressEventV0::Frame(Box::new(MeshInboundFrameV0 {
             remote: facts.remote,
             direction: facts.direction,
             session_id: facts.session_id,
@@ -4377,7 +4947,7 @@ mod tests {
                 payload,
             },
             _reservation: reservation,
-        })
+        }))
     }
 
     #[test]
@@ -4457,6 +5027,279 @@ mod tests {
         ) -> Result<[u8; 64], P2pIdentityErrorV1> {
             Err(P2pIdentityErrorV1::Unavailable)
         }
+    }
+
+    #[test]
+    fn outgoing_setup_failure_latches_cause_and_stop_before_cleanup_v1() {
+        let (identity, peer) = authenticated_identity_fixture_v0();
+        let context = PeerAdmissionContextV1::new(0, [0x42; 32]).unwrap();
+        let fences = MeshFenceRegistryV1::new(
+            Arc::new(TestExternalPeerLeaseAuthorityV1::new(context)),
+            identity.local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+        )
+        .unwrap();
+        let (setup_tx, setup_rx) = mpsc::channel();
+        let (ingress_tx, _ingress_rx) = mpsc::sync_channel(1);
+        let (_outgoing_tx, outgoing_rx) = mpsc::sync_channel(1);
+        let stop = Arc::new(AtomicBool::new(false));
+        let terminal = Arc::new(Mutex::new(None));
+        let controls = Arc::new(Mutex::new(BTreeMap::new()));
+        // The real worker rejects an already-ended setup window before any
+        // connection or external lease. It must publish failure before return.
+        outgoing_loop(
+            peer.local,
+            "127.0.0.1:1".parse().unwrap(),
+            identity,
+            Instant::now(),
+            Duration::from_secs(1),
+            Duration::from_secs(1),
+            setup_tx,
+            ingress_tx,
+            outgoing_rx,
+            stop.clone(),
+            terminal.clone(),
+            controls,
+            fences,
+        );
+        let SetupEventV0::Failed(reason) = setup_rx.recv_timeout(Duration::from_secs(1)).unwrap()
+        else {
+            panic!("failed worker reported readiness")
+        };
+        assert!(
+            stop.load(Ordering::Acquire),
+            "setup failure must stop peers before cleanup"
+        );
+        let state = terminal.lock().unwrap();
+        let failure = state
+            .as_ref()
+            .expect("original setup cause retained before joins");
+        assert_eq!(failure.remote, peer.local);
+        assert_eq!(failure.direction, PeerDirectionV0::Outbound);
+        assert_eq!(failure.reason, reason);
+        assert!(!reason.is_empty());
+    }
+
+    struct AdmissionClockAuthorityV1 {
+        inner: TestExternalPeerLeaseAuthorityV1,
+        acquire_calls: AtomicUsize,
+        last_rpc_start: Mutex<Option<Instant>>,
+        renew_order: Mutex<Vec<ValidatorId>>,
+        advance_per_acquire_ms: u64,
+    }
+
+    impl AdmissionClockAuthorityV1 {
+        fn new(context: PeerAdmissionContextV1, advance_per_acquire_ms: u64) -> Self {
+            Self {
+                inner: TestExternalPeerLeaseAuthorityV1::new(context),
+                acquire_calls: AtomicUsize::new(0),
+                last_rpc_start: Mutex::new(None),
+                renew_order: Mutex::new(Vec::new()),
+                advance_per_acquire_ms,
+            }
+        }
+    }
+
+    impl ExternalPeerLeaseAuthorityV1 for AdmissionClockAuthorityV1 {
+        fn preflight(&self) -> Result<(), ExternalFenceError> {
+            self.inner.preflight()
+        }
+
+        fn acquire(
+            &self,
+            request: ExternalPeerLeaseRequestV1,
+        ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+            *self.last_rpc_start.lock().unwrap() = Some(Instant::now());
+            self.acquire_calls.fetch_add(1, Ordering::AcqRel);
+            let token = self.inner.acquire(request)?;
+            // Deterministic authority time, not a sleep or a performance result.
+            self.inner.advance_clock_millis(self.advance_per_acquire_ms);
+            Ok(token)
+        }
+
+        fn renew(
+            &self,
+            token: ExternalPeerLeaseTokenV1,
+        ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+            *self.last_rpc_start.lock().unwrap() = Some(Instant::now());
+            self.renew_order
+                .lock()
+                .unwrap()
+                .push(token.scope().remote());
+            self.inner.renew(token)
+        }
+
+        fn revalidate(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+            self.inner.revalidate(token)
+        }
+
+        fn release(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+            self.inner.release(token)
+        }
+    }
+
+    #[test]
+    fn admission_pressure_services_due_leases_before_minting_another_v1() {
+        let local = ValidatorId::new([0x41; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x42; 32]).unwrap();
+        let authority = Arc::new(AdmissionClockAuthorityV1::new(context, 5_000));
+        let fences = MeshFenceRegistryV1::new(
+            authority.clone(),
+            local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+        )
+        .unwrap();
+        for index in 0..7u8 {
+            // Model the same elapsed time in the local maintenance schedule.
+            // Each serialized acquire can delay all other mutex waiters.
+            let authority_now = 1 + u64::from(index) * 5_000;
+            for entry in fences.tokens.lock().unwrap().values_mut() {
+                if entry
+                    .token
+                    .expires_at_millis()
+                    .saturating_sub(authority_now)
+                    <= 20_000
+                {
+                    entry.next_renew_at = Instant::now() - Duration::from_secs(1);
+                }
+            }
+            fences
+                .acquire(
+                    PeerDirectionV0::Outbound,
+                    ValidatorId::new([0x50 + index; 32]),
+                    [0x60 + index; 32],
+                    1,
+                )
+                .unwrap();
+        }
+        assert_eq!(authority.acquire_calls.load(Ordering::Acquire), 7);
+        assert!(
+            !authority.renew_order.lock().unwrap().is_empty(),
+            "new admissions must service already-due leases even without supervisor scheduling"
+        );
+        for entry in fences.tokens.lock().unwrap().values() {
+            authority
+                .revalidate(entry.token)
+                .expect("all original generations remain live");
+            assert_eq!(entry.token.scope().generation(), 1);
+        }
+        fences.release_all().unwrap();
+    }
+
+    #[test]
+    fn expired_due_lease_prevents_a_new_external_admission_v1() {
+        let local = ValidatorId::new([0x41; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x42; 32]).unwrap();
+        let authority = Arc::new(AdmissionClockAuthorityV1::new(context, 0));
+        let fences = MeshFenceRegistryV1::new(
+            authority.clone(),
+            local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+        )
+        .unwrap();
+        fences
+            .acquire(
+                PeerDirectionV0::Outbound,
+                ValidatorId::new([0x51; 32]),
+                [0x61; 32],
+                1,
+            )
+            .unwrap();
+        fences
+            .tokens
+            .lock()
+            .unwrap()
+            .values_mut()
+            .next()
+            .unwrap()
+            .next_renew_at = Instant::now() - Duration::from_secs(1);
+        authority.inner.advance_clock_millis(30_000);
+        let error = fences
+            .acquire(
+                PeerDirectionV0::Outbound,
+                ValidatorId::new([0x52; 32]),
+                [0x62; 32],
+                1,
+            )
+            .expect_err("expired old lease must not be hidden by a new admission");
+        for direction in [PeerDirectionV0::Inbound, PeerDirectionV0::Outbound] {
+            let reason = fence_admission_failure_reason_v1(direction, &error);
+            assert!(reason.contains("existing lease maintenance before admission"));
+            assert!(
+                reason.contains("external fence lease expired"),
+                "actual authority rejection was hidden: {reason}"
+            );
+        }
+        assert_eq!(authority.acquire_calls.load(Ordering::Acquire), 1);
+        assert_eq!(fences.active_count().unwrap(), 1);
+    }
+
+    #[test]
+    fn due_lease_scan_prioritizes_deadline_over_validator_order_v1() {
+        let local = ValidatorId::new([0x41; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x42; 32]).unwrap();
+        let authority = Arc::new(AdmissionClockAuthorityV1::new(context, 0));
+        let fences = MeshFenceRegistryV1::new(
+            authority.clone(),
+            local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+        )
+        .unwrap();
+        let low = ValidatorId::new([0x51; 32]);
+        let high = ValidatorId::new([0x52; 32]);
+        for (remote, session) in [(low, [0x61; 32]), (high, [0x62; 32])] {
+            fences
+                .acquire(PeerDirectionV0::Outbound, remote, session, 1)
+                .unwrap();
+        }
+        fences.renew_due_all().unwrap();
+        assert!(
+            authority.renew_order.lock().unwrap().is_empty(),
+            "non-due poll makes no RPC"
+        );
+        let now = Instant::now();
+        {
+            let mut tokens = fences.tokens.lock().unwrap();
+            tokens
+                .get_mut(&(PeerDirectionV0::Outbound, low))
+                .unwrap()
+                .next_renew_at = now - Duration::from_secs(1);
+            tokens
+                .get_mut(&(PeerDirectionV0::Outbound, high))
+                .unwrap()
+                .next_renew_at = now - Duration::from_secs(2);
+        }
+        fences.renew_due_all().unwrap();
+        assert_eq!(*authority.renew_order.lock().unwrap(), [high, low]);
+        fences.release_all().unwrap();
+    }
+
+    #[test]
+    fn lease_cadence_starts_before_the_authority_response_v1() {
+        let local = ValidatorId::new([0x41; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x42; 32]).unwrap();
+        let authority = Arc::new(AdmissionClockAuthorityV1::new(context, 0));
+        let fences = MeshFenceRegistryV1::new(
+            authority.clone(),
+            local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+        )
+        .unwrap();
+        let remote = ValidatorId::new([0x51; 32]);
+        let key = (PeerDirectionV0::Outbound, remote);
+        fences.acquire(key.0, key.1, [0x61; 32], 1).unwrap();
+        let interval = fence_renew_interval(MESH_EXTERNAL_FENCE_TTL_V1);
+        let rpc_start = authority.last_rpc_start.lock().unwrap().unwrap();
+        assert!(fences.tokens.lock().unwrap()[&key].next_renew_at <= rpc_start + interval);
+        fences.renew(key.0, key.1).unwrap();
+        let rpc_start = authority.last_rpc_start.lock().unwrap().unwrap();
+        assert!(fences.tokens.lock().unwrap()[&key].next_renew_at <= rpc_start + interval);
+        fences.release_all().unwrap();
     }
 
     struct FailOnceReleaseAuthorityV1 {
@@ -5634,9 +6477,11 @@ mod tests {
             let io = DeadlineIo::new(stream, Instant::now() + Duration::from_secs(2)).unwrap();
             let connection = AuthenticatedConnection::connect(
                 io,
-                &client.run_id,
-                client.local,
-                server_thread_remote_v0(&client.validator_set, client.local),
+                crate::transport::ConnectionPeerV1 {
+                    run_id: &client.run_id,
+                    local: client.local,
+                    expected_remote: server_thread_remote_v0(&client.validator_set, client.local),
+                },
                 match &client.p2p_identity_signer {
                     MeshIdentitySignerV1::Local(signing_key) => signing_key,
                     MeshIdentitySignerV1::External(_) => unreachable!("fixture uses local key"),
@@ -5795,4 +6640,6 @@ mod tests {
             .find(|validator| *validator != local)
             .expect("two-validator mesh fixture has a remote")
     }
+    include!("consensus_mesh_shutdown_tests_v1.inc");
+    include!("mesh_peer_quarantine_tests_v1.inc");
 }

@@ -23,6 +23,7 @@ import tomllib
 from typing import Any
 
 from poco_consensus_contract import canonical_lab_genesis_hash
+from plan_topology import validate_topology_v1
 
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -58,6 +59,23 @@ def exact(value: object, keys: set[str], field: str) -> dict[str, Any]:
     if not isinstance(value, dict) or set(value) != keys:
         fail(f"{field} keys must be exactly {sorted(keys)!r}")
     return value
+
+
+def application_public_paths_v1(manifest: dict[str, Any]) -> tuple[str, ...]:
+    """Select only the application profile committed in exact manifest inputs."""
+    records = manifest.get("public_files")
+    if not isinstance(records, list) or any(not isinstance(row, dict) for row in records):
+        fail("application profile requires manifest public file records")
+    paths = [row.get("path") for row in records]
+    native = "public/native-client-profile.json"
+    legacy = ("public/workload.corpus", "public/workload-policy.json")
+    if native in paths:
+        if paths.count(native) != 1 or any(path in paths for path in legacy):
+            fail("native and workload application profiles cannot be mixed")
+        return (native,)
+    if any(paths.count(path) != 1 for path in legacy):
+        fail("legacy application profile requires exact corpus and policy")
+    return legacy
 
 
 def safe_relative(value: object, field: str) -> pathlib.PurePosixPath:
@@ -201,6 +219,42 @@ def workload_signer(value: object, field: str) -> dict[str, Any]:
     ):
         fail(f"{field}.public_key_hex must be one canonical Ed25519 public key")
     return signer
+
+
+def validate_native_client_profile(path: pathlib.Path, chain: str, role_keys: set[str]) -> str:
+    fields = ["schema", "chain_id", "wall_clock_epoch_ms", "signers", "governance_signer_id", "socket_basename", "maximum_pending", "maximum_pending_bytes", "maximum_outer_bytes", "maximum_batch_transactions", "maximum_batch_bytes", "block_cadence_ms", "maximum_clock_skew_ms", "drain_timeout_ms", "production_activation"]
+    if path.stat().st_size > 65536:
+        fail("native client public profile exceeds byte bound")
+    value = exact(read_json(path, "native client profile"), set(fields), "native client profile")
+    if path.read_bytes() != json.dumps({key:value[key] for key in fields}, separators=(",", ":"), ensure_ascii=False).encode():
+        fail("native client profile is not exact canonical JSON")
+    if value["schema"] != "native-public-candidate-v1" or value["chain_id"] != chain or value["production_activation"] is not False:
+        fail("native client profile crosses its candidate boundary")
+    positive_int(value["wall_clock_epoch_ms"], "native wall clock epoch", maximum=2**64-1)
+    for key, maximum in [("maximum_pending",256),("maximum_pending_bytes",16777216),("maximum_outer_bytes",262144),("maximum_batch_transactions",64),("maximum_batch_bytes",1048576),("block_cadence_ms",10000),("maximum_clock_skew_ms",5000),("drain_timeout_ms",60000)]:
+        positive_int(value[key], f"native {key}", maximum=maximum)
+    if value["maximum_outer_bytes"] > value["maximum_pending_bytes"] or value["maximum_batch_bytes"] < value["maximum_outer_bytes"]+8 or value["block_cadence_ms"]<250 or value["drain_timeout_ms"]<1000:
+        fail("native queue/cadence bounds are inconsistent")
+    if not isinstance(value["socket_basename"],str) or len(value["socket_basename"])>48 or not re.fullmatch(r"[a-z0-9.-]+\.sock",value["socket_basename"]):
+        fail("native client socket basename is noncanonical")
+    if not isinstance(value["signers"],list) or not 1<=len(value["signers"])<=100:
+        fail("native signer count outside bounds")
+    ids=set(); identities=set(); keys=set(); governance=False
+    for signer in value["signers"]:
+        signer=exact(signer,{"signer_id","canonical_identity","signer_role","public_key_hex"},"native signer")
+        identifier=signer["signer_id"]
+        if not isinstance(identifier,str) or not 1<=len(identifier)<=256 or not identifier.isascii() or identifier.strip()!=identifier:
+            fail("native signer ID is noncanonical")
+        identity=hashlib.sha256(b"trnm.native-public.signer.v1\0"+len(identifier).to_bytes(8,"big")+identifier.encode()).hexdigest()
+        if signer["canonical_identity"]!=identity or identifier in ids or identity in identities or not isinstance(signer["public_key_hex"],str) or not HEX64.fullmatch(signer["public_key_hex"]) or signer["public_key_hex"] in keys|role_keys:
+            fail("native signer identity/key conflict")
+        if not isinstance(signer["signer_role"],str) or not signer["signer_role"] or len(signer["signer_role"])>128:
+            fail("native signer role is invalid")
+        ids.add(identifier); identities.add(identity); keys.add(signer["public_key_hex"])
+        governance |= identifier==value["governance_signer_id"] and signer["signer_role"]=="operator"
+    if not governance:
+        fail("native governance signer lacks declared operator authority")
+    return sha256_file(path)
 
 
 def validate_workload(
@@ -634,17 +688,14 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
     validator_set_path = root / "public" / "validator-set.json"
     workload_corpus_path = root / "public" / "workload.corpus"
     workload_policy_path = root / "public" / "workload-policy.json"
-    if not {
-        topology_path,
-        validator_set_path,
-        workload_corpus_path,
-        workload_policy_path,
-    }.issubset(public_paths):
-        fail("manifest does not bind topology, validator-set, and public workload inputs")
+    native_profile_path = root / "public/native-client-profile.json"
+    native_client = application_public_paths_v1(manifest) == ("public/native-client-profile.json",)
+    application_public = {native_profile_path} if native_client else {workload_corpus_path, workload_policy_path}
+    if not {topology_path, validator_set_path, *application_public}.issubset(public_paths):
+        fail("manifest does not bind topology, validator-set and selected application profile")
     topology = read_json(topology_path, "topology")
     if (
-        topology.get("schema_version") != 1
-        or topology.get("fleet_id") != manifest["fleet_id"]
+        topology.get("fleet_id") != manifest["fleet_id"]
         or topology.get("validator_count") != expected_count
         or topology.get("weight_profile") != manifest["weight_profile"]
         or topology.get("network_scope") != "single-lan"
@@ -654,7 +705,10 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
         fail("topology differs from the closed run-material boundary")
     with INVENTORY.open("rb") as source:
         inventory = tomllib.load(source)
-    known_hosts = {host["id"]: host for host in inventory["hosts"]}
+    try:
+        placement_profile = validate_topology_v1(inventory, topology)
+    except (TypeError, ValueError) as error:
+        fail(f"topology differs from the closed inventory placement: {error}")
     planned = topology.get("validators")
     if not isinstance(planned, list) or len(planned) != expected_count:
         fail("topology validator cardinality mismatch")
@@ -783,16 +837,21 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
     if validator_set["genesis_hash"] != expected_genesis_hash:
         fail("validator-set genesis differs from the chain-only canonical derivation")
 
-    (
-        workload_corpus_hash,
-        workload_policy_hash,
-        ordinary_start_height,
-    ) = validate_workload(
-        workload_corpus_path,
-        workload_policy_path,
-        validator_set["chain_id"],
-        all_role_public_keys,
-    )
+    if native_client:
+        native_profile_hash = validate_native_client_profile(native_profile_path, validator_set["chain_id"], all_role_public_keys)
+        workload_corpus_hash = workload_policy_hash = "00" * 32
+        ordinary_start_height = 4
+    else:
+        (
+            workload_corpus_hash,
+            workload_policy_hash,
+            ordinary_start_height,
+        ) = validate_workload(
+            workload_corpus_path,
+            workload_policy_path,
+            validator_set["chain_id"],
+            all_role_public_keys,
+        )
 
     secret_by_role_id: dict[tuple[str, str], pathlib.Path] = {}
     for path in secret_paths:
@@ -869,7 +928,7 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
                 "network_scope",
                 "geo_wan_evidence",
                 "production_activation",
-            },
+            } | ({"native_client_profile_sha256"} if native_client else set()),
             f"config[{validator_id}]",
         )
         plan = planned_by_id[validator_id]
@@ -905,6 +964,8 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
             "geo_wan_evidence": False,
             "production_activation": False,
         }
+        if native_client:
+            expected_fixed["native_client_profile_sha256"] = native_profile_hash
         for field, expected in expected_fixed.items():
             if config[field] != expected:
                 fail(f"config[{validator_id}].{field} differs from trusted inputs")
@@ -1036,14 +1097,19 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
             for host_id in observer_plans
         ),
     }
+    if native_client:
+        expected_public_paths.difference_update({"public/workload.corpus", "public/workload-policy.json"})
+        expected_public_paths.add("public/native-client-profile.json")
     if {path.relative_to(root).as_posix() for path in public_paths} != expected_public_paths:
         fail("public file inventory differs from the closed workload/deployment contract")
 
     if emit:
         print(
             f"poco_g3_run_material=passed validators={expected_count} "
-            "validator_hosts=5 mac_observer=true ephemeral_keys=true pop=true private_mode=0600 "
-            f"public_workload=true ordinary_start_height={ordinary_start_height} "
+            f"validator_hosts={len({entry['host_id'] for entry in planned})} "
+            f"placement_profile={placement_profile} "
+            "mac_observer=true ephemeral_keys=true pop=true private_mode=0600 "
+            f"public_workload={str(not native_client).lower()} native_client_profile={str(native_client).lower()} ordinary_start_height={ordinary_start_height} "
             "application_private_keys=false public_bootstrap_bundle=true "
             "bootstrap_runtime_closed=false "
             "production_activation=false geo_wan=false"

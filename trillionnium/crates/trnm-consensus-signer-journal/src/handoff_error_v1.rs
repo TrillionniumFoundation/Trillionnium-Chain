@@ -99,7 +99,7 @@ impl fmt::Display for HandoffSignerJournalErrorV1 {
                 write!(formatter, "strict handoff admission differs at {field}")
             }
             Self::NewSetAdmissionUnavailable => formatter.write_str(
-                "new-set strict pre-certificate handoff admission is not implemented in schema1",
+                "new-set handoff role is not enabled by this profile or admission",
             ),
             Self::LegacySchemaReadOnly => formatter.write_str(
                 "legacy schema0 signer journal is identifiable only and cannot be reinterpreted as schema1",

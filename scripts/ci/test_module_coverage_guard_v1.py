@@ -17,28 +17,30 @@ from module_coverage_guard_v1 import (
 )
 
 
-# The entry point now composes two pinned gates. Exercise the real core loaded
-# through the production pin check, rather than patching stale wrapper globals.
-gate = wrapper.load(wrapper.CORE, wrapper.CORE_BLOB)
+# Exercise both real checkout-local gates; exact-source identity is bound by CI.
+gate = wrapper.load(wrapper.CORE)
 
 
 class WrapperContractTests(unittest.TestCase):
-    def test_both_pinned_gates_execute_in_order(self) -> None:
+    def test_both_gates_execute_in_order(self) -> None:
         calls = []
         core = mock.Mock()
         binding = mock.Mock()
+        design = mock.Mock()
+        design.validate.side_effect = lambda *args: calls.append("design") or {"result": "PASS"}
         core.main.side_effect = lambda: calls.append("core") or 0
         binding.validate.side_effect = lambda *args: calls.append("binding") or {
             "technical_convergence_bound": True,
         }
         output = io.StringIO()
-        with mock.patch.object(wrapper, "load", side_effect=[core, binding]) as load:
+        with mock.patch.object(wrapper, "load", side_effect=[core, binding, design]) as load:
             with contextlib.redirect_stdout(output):
                 self.assertEqual(wrapper.main(), 0)
-        self.assertEqual(calls, ["core", "binding"])
+        self.assertEqual(calls, ["core", "binding", "design"])
         self.assertEqual(load.call_args_list, [
-            mock.call(wrapper.CORE, wrapper.CORE_BLOB),
-            mock.call(wrapper.BINDING, wrapper.BINDING_BLOB),
+            mock.call(wrapper.CORE),
+            mock.call(wrapper.BINDING),
+            mock.call(wrapper.DESIGN),
         ])
         binding.validate.assert_called_once_with(wrapper.ROOT, wrapper.SPECS, wrapper.require)
         report = json.loads(output.getvalue())
@@ -48,37 +50,46 @@ class WrapperContractTests(unittest.TestCase):
     def test_core_failure_cannot_be_masked_by_supplement(self) -> None:
         core = mock.Mock()
         binding = mock.Mock()
+        design = mock.Mock()
         for outcome in (1, 2, None):
             with self.subTest(outcome=outcome):
                 core.main.return_value = outcome
-                with mock.patch.object(wrapper, "load", side_effect=[core, binding]):
+                with mock.patch.object(wrapper, "load", side_effect=[core, binding, design]):
                     with self.assertRaises(wrapper.CoverageWrapperError):
                         wrapper.main()
                 binding.validate.assert_not_called()
+                design.validate.assert_not_called()
 
     def test_supplement_failure_propagates(self) -> None:
         core = mock.Mock()
         core.main.return_value = 0
         binding = mock.Mock()
         binding.validate.side_effect = wrapper.CoverageWrapperError("binding rejected")
-        with mock.patch.object(wrapper, "load", side_effect=[core, binding]):
+        design = mock.Mock()
+        with mock.patch.object(wrapper, "load", side_effect=[core, binding, design]):
             with self.assertRaisesRegex(wrapper.CoverageWrapperError, "binding rejected"):
                 wrapper.main()
 
-    def test_missing_or_tampered_pins_fail_before_code_execution(self) -> None:
+    def test_missing_helpers_fail_before_code_execution(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)
-            for relative, expected in ((wrapper.CORE, wrapper.CORE_BLOB),
-                                       (wrapper.BINDING, wrapper.BINDING_BLOB)):
+            for relative in (wrapper.CORE, wrapper.BINDING, wrapper.DESIGN):
                 with self.subTest(relative=relative), mock.patch.object(wrapper, "ROOT", root):
                     with self.assertRaisesRegex(wrapper.CoverageWrapperError, "missing"):
-                        wrapper.load(relative, expected)
-                    target = root / relative
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    # An executed mutant would raise this different exception.
-                    target.write_text('raise AssertionError("unpinned code executed")\n', encoding="utf-8")
-                    with self.assertRaisesRegex(wrapper.CoverageWrapperError, "drift"):
-                        wrapper.load(relative, expected)
+                        wrapper.load(relative)
+
+    def test_helper_symlink_cannot_execute_outside_checkout(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = pathlib.Path(directory)
+            root = base / "checkout"
+            target = root / wrapper.CORE
+            target.parent.mkdir(parents=True)
+            outside = base / "external.py"
+            outside.write_text('raise AssertionError("external code executed")\n', encoding="utf-8")
+            target.symlink_to(outside)
+            with mock.patch.object(wrapper, "ROOT", root):
+                with self.assertRaisesRegex(wrapper.CoverageWrapperError, "repository file"):
+                    wrapper.load(wrapper.CORE)
 
 
 class ProspectiveMergeBindingTests(unittest.TestCase):

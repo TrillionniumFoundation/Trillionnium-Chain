@@ -28,7 +28,22 @@
 //! sidecar, but a production host must still place them behind one dedicated
 //! process owner in an owner-controlled namespace.
 
+mod epoch_journal_physical_v2;
+mod epoch_journal_v1;
+mod epoch_journal_v2;
 mod epoch_preparation_sqlite_v1;
+mod old_epoch_journal_v1;
+#[cfg(feature = "test-fixtures")]
+pub mod test_fixtures;
+pub use epoch_journal_v1::{
+    ConfirmedEpochSafetyHeadV1, EpochJournalCutV1, EpochJournalErrorV1, EpochSafetyHeadPinV1,
+    EpochSafetyJournalProfileV1, EpochSafetyMigrationSourceV1, SqliteEpochSafetyJournalV1,
+};
+pub use old_epoch_journal_v1::{
+    ConfirmedOldEpochSafetyHeadV1, OldEpochJournalCutV1, OldEpochJournalErrorV1,
+    OldEpochMigrationSourceV1, OldEpochSafetyHeadPinV1, OldEpochSafetyJournalProfileV1,
+    SqliteOldEpochSafetyJournalV1,
+};
 mod error;
 mod hash;
 mod schema;
@@ -60,8 +75,9 @@ pub use transition_context::{
     native_valid_result_checksum_v0, state_sync_anchor_checksum_v0, transition_context_checksum_v0,
     validate_transition_context_against_state_v0,
     AuthenticatedGenesisApplicationBootstrapTransitionV0, NativeDeterministicInvalidTransitionV0,
-    NativeFinalizationAppliedTransitionV0, NativeValidTransitionV0, SafetyTransitionContextV0,
-    StateSyncAnchorOrdinaryPromotionTransitionV0, StateSyncCheckpointBootstrapTransitionV0,
+    NativeFinalizationAppliedTransitionV0, NativeValidHostManifestV0, NativeValidTransitionV0,
+    SafetyTransitionContextV0, StateSyncAnchorOrdinaryPromotionTransitionV0,
+    StateSyncCheckpointBootstrapTransitionV0,
     NATIVE_FINALIZATION_APPLIED_POST_ACK_ARM_VIEW_TIMER_THEN_FINALIZE_V0,
     NATIVE_FINALIZATION_APPLIED_POST_ACK_ARM_VIEW_TIMER_THEN_REQUEST_SIGNATURE_V0,
     NATIVE_FINALIZATION_APPLIED_POST_ACK_ARM_VIEW_TIMER_THEN_STANDALONE_QC_SYNC_V0,
@@ -78,4 +94,24 @@ pub use transition_context::{
     NATIVE_VALID_POST_ACK_REQUEST_STANDALONE_QC_SYNC_V0,
     NATIVE_VALID_POST_ACK_REQUEST_TC_HIGH_QC_SYNC_V0,
     NATIVE_VALID_POST_ACK_SAFETY_HALTED_CONFLICT_V0, SAFETY_TRANSITION_CONTEXT_CODEC_VERSION_V0,
+};
+
+pub use epoch_journal_v2::{
+    ConfirmedEpochSafetyHeadV2, EpochJournalCutV2, EpochJournalErrorV2, EpochSafetyHeadPinV2,
+    EpochSafetyJournalProfileV2, EpochSafetyMigrationSourceV2, EpochSafetySourceKindV2,
+    EpochSafetySourceOwnerV2, EpochSafetySourcePinV2, SqliteEpochSafetyJournalV2,
+};
+
+/// Explicit Journal11 prefix-once physical owners; logical records remain codec2.
+pub use epoch_journal_v2::v3::{
+    ConfirmedEpochSafetyHeadV3, ConfirmedEpochSuccessorSourceV3, EpochJournalCutV3,
+    EpochJournalErrorV3, EpochSafetyHeadPinV3, EpochSafetyJournalProfileV3,
+    EpochSafetySourceOwnerV3, SqliteEpochSafetyJournalV3,
+};
+
+/// Explicit successor-capable Journal12; no prior physical owner is downcast.
+pub use epoch_journal_v2::v4::{
+    ConfirmedEpochSafetyHeadV4, EpochJournalCutV4, EpochJournalErrorV4, EpochSafetyHeadPinV4,
+    EpochSafetyJournalProfileV4, EpochSafetyMigrationSourceV4, EpochSafetySourceKindV4,
+    EpochSafetySourceOwnerV4, EpochSafetySourcePinV4, SqliteEpochSafetyJournalV4,
 };

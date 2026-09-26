@@ -65,6 +65,9 @@ pub struct PeerLeaseStoreV1 {
     last_hash: [u8; 32],
     record_count: u64,
     last_now_ms: u64,
+    // Highest trusted clock sample in this live owner, including read-only
+    // operations and rejections. This is not a persisted external time anchor.
+    last_observed_now_ms: u64,
     poisoned: bool,
 }
 
@@ -126,9 +129,11 @@ impl PeerLeaseStoreV1 {
             last_hash: [0; 32],
             record_count: 0,
             last_now_ms: 0,
+            last_observed_now_ms: 0,
             poisoned: false,
         };
         store.replay(&bytes)?;
+        store.last_observed_now_ms = store.last_now_ms;
         store.file.seek(SeekFrom::End(0))?;
         store.reconcile_anchor()?;
         Ok(store)
@@ -175,9 +180,14 @@ impl PeerLeaseStoreV1 {
                 LeaseRejectCodeV1::AuthorityCorrupt,
             ));
         }
-        if now_ms < self.last_now_ms {
+        if now_ms < self.last_observed_now_ms {
+            // The daemon treats ClockRollback as fatal. Keep that same
+            // fail-stop rule for direct owner callers, rather than allowing a
+            // later clock sample to revive the now-untrustworthy live owner.
+            self.poisoned = true;
             return Err(PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::ClockRollback));
         }
+        self.last_observed_now_ms = now_ms;
         validate_request(request)?;
         let scope = request.scope;
         let current = self.entries.get(&scope).copied();
@@ -1419,6 +1429,86 @@ mod tests {
             Err(PeerLeaseErrorV1::Rejected(
                 LeaseRejectCodeV1::AuthorityCorrupt
             ))
+        ));
+    }
+
+    fn revalidate_request(token: PeerLeaseTokenV1) -> LeaseRequestV1 {
+        LeaseRequestV1 {
+            operation: LeaseOperationV1::Revalidate,
+            scope: token.scope(),
+            session_id: token.session_id(),
+            generation: token.generation(),
+            expires_at_ms: token.expires_at_ms(),
+            ttl_ms: 0,
+            record_hash: token.record_hash(),
+        }
+    }
+
+    #[test]
+    fn expiry_observation_cannot_be_undone_by_live_clock_rollback_v1() {
+        let directory = private_tempdir();
+        let path = directory.path().join("leases.log");
+        let mut store = PeerLeaseStoreV1::open(&path).unwrap();
+        let token = store.apply(acquire([8; 32], 1), 1_000).unwrap();
+        let bytes = std::fs::read(&path).unwrap();
+        let head = store.last_hash();
+        let request = revalidate_request(token);
+        assert!(matches!(
+            store.apply(request, 11_000),
+            Err(PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::LeaseExpired))
+        ));
+        let rollback = store.apply(request, 10_000);
+        assert!(
+            matches!(
+                rollback,
+                Err(PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::ClockRollback))
+            ),
+            "an expiry refusal cannot be reversed by a later lower clock sample: {rollback:?}"
+        );
+        assert!(
+            matches!(
+                store.apply(request, 12_000),
+                Err(PeerLeaseErrorV1::Rejected(
+                    LeaseRejectCodeV1::AuthorityCorrupt
+                ))
+            ),
+            "the same authority cannot resume after its rollback failure"
+        );
+        assert_eq!(store.last_hash(), head);
+        assert_eq!(std::fs::read(&path).unwrap(), bytes);
+        assert_eq!(store.record_count, 1);
+        assert_eq!(store.latest_generation(scope()), 1);
+    }
+
+    #[test]
+    fn read_and_exact_retry_share_live_clock_floor_without_journal_writes_v1() {
+        let directory = private_tempdir();
+        let path = directory.path().join("leases.log");
+        let mut store = PeerLeaseStoreV1::open(&path).unwrap();
+        let token = store.apply(acquire([8; 32], 1), 1_000).unwrap();
+        let bytes = std::fs::read(&path).unwrap();
+        assert_eq!(
+            store.apply(revalidate_request(token), 5_000).unwrap(),
+            token
+        );
+        assert_eq!(store.apply(acquire([8; 32], 1), 5_000).unwrap(), token);
+        assert_eq!(
+            store.last_now_ms(),
+            1_000,
+            "durable time is not relabeled as observation"
+        );
+        assert!(matches!(
+            store.apply(acquire([8; 32], 1), 4_999),
+            Err(PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::ClockRollback))
+        ));
+        assert_eq!(std::fs::read(&path).unwrap(), bytes);
+        drop(store);
+        // A restart knows only the existing persisted floor, not the above
+        // read observations. External rollback freshness is a separate owner.
+        let mut reopened = PeerLeaseStoreV1::open(&path).unwrap();
+        assert!(matches!(
+            reopened.apply(revalidate_request(token), 999),
+            Err(PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::ClockRollback))
         ));
     }
 

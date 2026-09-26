@@ -5,10 +5,13 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import sys
 import tomllib
 from collections import defaultdict, deque
 from typing import Any
+
+import check_build_closures_v1 as closures
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "config/node-decomposition-v1.toml"
@@ -103,10 +106,12 @@ def assert_acyclic(edges: set[tuple[str, str]], nodes: set[str]) -> None:
     require(visited == len(nodes), "node decomposition runtime edges contain a cycle")
 
 
-def require_source_contract(package_root: pathlib.Path, required: list[str], forbidden: list[str]) -> None:
+def require_source_contract(package_root: pathlib.Path, required: list[str], forbidden: list[str],
+                            test_sources: tuple[str, ...] = ()) -> None:
     source_root = package_root / "src"
     require(source_root.is_dir(), f"{package_root.relative_to(ROOT)}: src directory missing")
-    sources = sorted(source_root.rglob("*.rs"))
+    sources = sorted(path for path in source_root.rglob("*.rs")
+                     if path.relative_to(source_root).as_posix() not in test_sources)
     require(sources, f"{package_root.relative_to(ROOT)}: Rust source missing")
     text = "\n".join(path.read_text(encoding="utf-8") for path in sources)
     for token in required:
@@ -158,6 +163,12 @@ def main() -> int:
         configured_edges.add((source, target))
     require(configured_edges == expected_edges, f"runtime edge registry drift: {sorted(configured_edges)}")
 
+    network_feature = "candidate-networked-authority"
+    candidate_edge = (declared["host_composition"], declared["component_library"])
+    require(config.get("candidate_runtime_edges") == [{
+        "from": candidate_edge[0], "to": candidate_edge[1], "feature": network_feature,
+    }], "candidate runtime edge registry drift")
+
     boundary_packages = {
         declared["component_library"],
         declared["authority_boundary"],
@@ -170,7 +181,8 @@ def main() -> int:
         for dependency in local_runtime_dependencies(packages[package]):
             if dependency in boundary_packages:
                 actual_edges.add((package, dependency))
-    require(actual_edges == expected_edges, f"actual decomposition edge drift: {sorted(actual_edges)}")
+    require(actual_edges == expected_edges | {candidate_edge},
+            f"actual decomposition edge drift: {sorted(actual_edges)}")
     assert_acyclic(actual_edges, boundary_packages)
 
     expected_metadata = {
@@ -212,15 +224,58 @@ def main() -> int:
 
     authority_manifest = load_toml(packages[declared["authority_boundary"]])
     host_manifest = load_toml(packages[declared["host_composition"]])
+    network_dependency = host_manifest.get("dependencies", {}).get(candidate_edge[1])
+    require(isinstance(network_dependency, dict) and network_dependency.get("optional") is True,
+            "host network component dependency must remain optional")
+    expected_network_features = {
+        "persistent-authority-candidate", f"dep:{candidate_edge[1]}",
+        f"{candidate_edge[1]}/candidate-authenticated-transport",
+        "trnm-poco-node-io/candidate-authenticated-p2p", "dep:trnm-durable-file-adapters-v0",
+    }
+    network_features = host_manifest.get("features", {}).get(network_feature, [])
+    require(set(network_features) == expected_network_features
+            and len(network_features) == len(expected_network_features),
+            "host network candidate feature drift")
+    try:
+        closure_packages = closures.workspace_packages(workspace_manifest)
+        network_features_by_owner = {
+            declared["host_composition"]: network_feature,
+            declared["component_library"]: "candidate-authenticated-transport",
+            declared["io_boundary"]: "candidate-authenticated-p2p",
+        }
+        for root in (declared["host_composition"], declared["cli_entrypoint"]):
+            for default in (False, True):
+                reached, active = closures.resolve_closure(closure_packages, [root], set(), default)
+                require(all(feature not in active.get(owner, set())
+                            for owner, feature in network_features_by_owner.items())
+                        and "trnm-durable-file-adapters-v0" not in reached,
+                        f"network candidate entered implicit composition: {root}, default={default}")
+        reached, active = closures.resolve_closure(
+            closure_packages, [declared["host_composition"]], {network_feature}, False)
+        require(all(feature in active.get(owner, set())
+                    for owner, feature in network_features_by_owner.items())
+                and "trnm-durable-file-adapters-v0" in reached,
+                "explicit network candidate lost its transport or durable owner")
+    except closures.ClosureError as error:
+        raise DecompositionError(f"network candidate feature graph: {error}") from error
     candidate_dependency = authority_manifest.get("dependencies", {}).get("trnm-durable-file-adapters-v0")
     require(isinstance(candidate_dependency, dict) and candidate_dependency.get("optional") is True,
             "authority file adapter must remain optional")
     for label, manifest in (("authority", authority_manifest), ("host", host_manifest)):
         require(manifest.get("features", {}).get("default") == [], f"{label}: default feature drift")
     require(authority_manifest["features"].get("persistent-authority-candidate") ==
-            ["dep:trnm-durable-file-adapters-v0"], "authority candidate feature drift")
-    require(host_manifest["features"].get("persistent-authority-candidate") ==
-            ["trnm-poco-node-authority/persistent-authority-candidate"], "host candidate feature drift")
+            ["dep:trnm-durable-file-adapters-v0", "trnm-poco-node/epoch-handoff-checkpoint-candidate"], "authority candidate feature drift")
+    handoff_dependencies = {"trnm-consensus-crypto", "trnm-consensus-signer-journal",
+                            "trnm-consensus-types", "trnm-native-execution-v0", "trnm-consensus-safety-store"}
+    expected_host_features = {"trnm-poco-node-authority/persistent-authority-candidate",
+                              *(f"dep:{name}" for name in handoff_dependencies)}
+    host_features = host_manifest["features"].get("persistent-authority-candidate", [])
+    require(set(host_features) == expected_host_features and len(host_features) == len(expected_host_features),
+            "host candidate feature drift")
+    for name in handoff_dependencies:
+        dependency = host_manifest.get("dependencies", {}).get(name)
+        require(isinstance(dependency, dict) and dependency.get("optional") is True,
+                f"host candidate dependency must remain optional: {name}")
     require(package_metadata(packages[declared["authority_boundary"]]).get(
         "durable_authority_journal_owner") is False, "composition may not own the journal")
 
@@ -240,8 +295,50 @@ def main() -> int:
     require_source_contract(
         roots[declared["host_composition"]],
         ["PocoNodeHostV0", "NodeHostStartBlockedV0"],
-        ["trnm_consensus_", "rusqlite", "SigningKey", "TcpListener"],
+        ["rusqlite", "SigningKey", "TcpListener"],
+        # The exact nested module's test/feature gates are verified below.
+        test_sources=("handoff_native_join_tests_v1.rs",),
     )
+    # Candidate handoff wiring calls the real verifier and journal owners. Its
+    # imports are legitimate only behind the explicit candidate feature; the
+    # default Cargo closure is independently checked by check_build_closures.
+    host_sources = roots[declared["host_composition"]] / "src"
+    host_lib = (host_sources / "lib.rs").read_text(encoding="utf-8")
+    require(re.search(r'#\[cfg\(feature = "candidate-networked-authority"\)\]\s*'
+                      r'pub use trnm_poco_node::\{', host_lib) is not None,
+            "host network component reexport must remain candidate gated")
+    for module in ("p2p_ingress_bridge", "persistent_p2p_ingress_bridge"):
+        require(re.search(r'#\[cfg\(feature = "candidate-networked-authority"\)\]\s*'
+                          rf'mod {module};', host_lib) is not None,
+                f"host network module must remain candidate gated: {module}")
+    require(re.search(r'#\[cfg\(feature = "persistent-authority-candidate"\)\]\s*'
+                      r'mod handoff_runtime_v1;', host_lib) is not None,
+            "host handoff module must remain candidate gated")
+    handoff_source = host_sources / "handoff_runtime_v1.rs"
+    handoff_tests = host_sources / "handoff_runtime_v1_tests.rs"
+    native_join_tests = host_sources / "handoff_native_join_tests_v1.rs"
+    require(re.search(r'#\[cfg\(test\)\]\s*'
+                      r'#\[path = "handoff_runtime_v1_tests.rs"\]\s*mod tests;',
+                      handoff_source.read_text(encoding="utf-8")) is not None,
+            "host handoff tests must remain test gated inside candidate wiring")
+    require("handoff_runtime_v1_tests" not in host_lib,
+            "host handoff tests cannot enter the root module")
+    require(re.search(r'#\[cfg\(feature = "epoch-join-test-fixtures"\)\]\s*'
+                      r'#\[path = "handoff_native_join_tests_v1.rs"\]\s*mod native_join;',
+                      handoff_tests.read_text(encoding="utf-8")) is not None,
+            "native join fixture must remain inside test-gated handoff module")
+    require(host_manifest["features"].get("epoch-join-test-fixtures") ==
+            ["persistent-authority-candidate", "trnm-consensus-safety-store/test-fixtures"],
+            "host real join fixture feature drift")
+    for source in host_sources.rglob("*.rs"):
+        if source != handoff_tests:
+            require("handoff_native_join_tests_v1" not in source.read_text(encoding="utf-8"),
+                    "native join tests cannot enter another host module")
+    for source in host_sources.rglob("*.rs"):
+        if source in (handoff_source, handoff_tests, native_join_tests):
+            continue
+        require("trnm_consensus_" not in source.read_text(encoding="utf-8"),
+                f"host consensus import outside candidate handoff wiring: {source.name}")
     require_source_contract(
         roots[declared["cli_entrypoint"]],
         ["NodeCliCommandV0", "run_v0"],
@@ -286,7 +383,8 @@ def main() -> int:
         "host_composition": declared["host_composition"],
         "cli_entrypoint": declared["cli_entrypoint"],
         "lab_runtime": declared["lab_runtime"],
-        "runtime_edges": sorted(f"{source}->{target}" for source, target in actual_edges),
+        "runtime_edges": sorted(f"{source}->{target}" for source, target in expected_edges),
+        "candidate_runtime_edges": config["candidate_runtime_edges"],
         "composition_only": True,
         "candidate_owner_outside_composition": True,
         "candidate_requires_explicit_feature": True,

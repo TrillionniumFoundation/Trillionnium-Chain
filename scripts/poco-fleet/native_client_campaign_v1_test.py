@@ -1,0 +1,477 @@
+#!/usr/bin/env python3
+"""Structural rejection tests; cryptographic verification requires real evidence."""
+import copy
+import hashlib
+import pathlib
+import tempfile
+import native_client_campaign_v1 as c
+import run_network_smoke_fleet as base
+
+
+# The programs below are controlled transport peers, never crypto-positive fixtures.
+def test_request_adapter_v1():
+    import dataclasses
+    import json
+    import os
+    import secrets
+    import shlex
+    import shutil
+    import socket
+    import subprocess
+    import sys
+    import threading
+    import time
+    from unittest import mock
+
+    root = pathlib.Path('/tmp') / ('tp3-' + secrets.token_hex(10))
+    root.mkdir(mode=0o700)
+    try:
+        for relative in ('bin', 'v', 'v/v000', 'v/v000/native-client-v1', 'shim'):
+            (root / relative).mkdir(mode=0o700)
+        node = root / 'v/v000'
+        binary = root / 'bin/trnm-poco-lab-validator'
+        binary.write_text('''#!/usr/bin/env python3
+import json, os, pathlib, socket, sys
+assert sys.argv[1:3] == ['native-client','request']
+sock, q, r, digest, genesis = sys.argv[3:]
+mode = os.environ.get('TRNM_TRANSPORT_TEST_MODE', '')
+if mode == 'fail':
+    sys.stderr.write('original native request failure\\n'); sys.exit(37)
+if mode == 'oversized':
+    fd=os.open(r, os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600); os.ftruncate(fd,8404993); os.close(fd); sys.exit(0)
+if mode == 'symlink':
+    os.symlink(q,r); sys.exit(0)
+if mode == 'hardlink':
+    os.link(q,r); sys.exit(0)
+request = json.loads(pathlib.Path(q).read_bytes())
+client = socket.socket(socket.AF_UNIX); client.connect(sock)
+client.sendall(pathlib.Path(q).read_bytes()); client.shutdown(socket.SHUT_WR)
+response = bytearray()
+while True:
+    part=client.recv(65536)
+    if not part: break
+    response.extend(part)
+client.close()
+fd=os.open(r,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
+with os.fdopen(fd,'wb') as stream: stream.write(response)
+''')
+        binary.chmod(0o500)
+        shim = root / 'shim/ssh'
+        shim.write_text('''#!/usr/bin/env python3
+import json,os,shlex,sys,time
+with open(os.environ['TRNM_TRANSPORT_SSH_LOG'],'a') as stream: stream.write(json.dumps(sys.argv[1:])+'\\n')
+assert sys.argv[-2]=='p4-desktop'
+mode=os.environ.get('TRNM_TRANSPORT_SSH_MODE','')
+if mode=='delay': time.sleep(5)
+if mode=='failure': sys.stderr.write('original ssh failure\\n'); sys.exit(255)
+args=shlex.split(sys.argv[-1]); assert args[:3]==['python3','-I','-c']
+os.execvp(args[0],args)
+''')
+        shim.chmod(0o500)
+        log = root / 'ssh-log'
+        process = base.ValidatorProcess('11'*32,'desktop','p4-desktop',node,pathlib.PurePosixPath('public/config.json'),'v000')
+        stage = base.HostStage('desktop','p4-desktop',str(root),None)
+        paths = {'desktop': str(binary)}
+        target = c.request_target_v1([process], {'desktop': stage}, paths, 'native.sock')
+        assert target.binary == str(binary)
+        local = dataclasses.replace(process, host_id='local',management='local')
+        assert c.request_process_v1([process, dataclasses.replace(local,validator_id='22'*32)]) .management == 'local'
+        lower = dataclasses.replace(process,host_id='rog',management='p4-rog',validator_id='00'*32)
+        assert c.request_process_v1([process,lower]) == lower
+        sock = socket.socket(socket.AF_UNIX)
+        sock.bind(target.socket); pathlib.Path(target.socket).chmod(0o600); sock.listen(); sock.settimeout(0.1)
+        stop = threading.Event(); received = []; failures = []
+        def serve():
+            while not stop.is_set():
+                try: client,_ = sock.accept()
+                except TimeoutError: continue
+                try:
+                    raw=bytearray()
+                    while True:
+                        part=client.recv(65536)
+                        if not part:break
+                        raw.extend(part)
+                    request=json.loads(raw)
+                    assert bytes(raw) == json.dumps(request, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode()
+                    received.append(request)
+                    result={'request_id':os.environ.get('TRNM_TRANSPORT_RESPONSE_ID',request['request_id']),'ok':True,'data':{'op':request['op']}}
+                    client.sendall(base.canonical_json(result))
+                except BaseException as error: failures.append(error)
+                finally: client.close()
+        thread=threading.Thread(target=serve);thread.start()
+        def fresh():
+            shutil.rmtree(node/'native-client-campaign-requests',ignore_errors=True)
+            return c.NativeRequestAdapterV1(target,'22'*32,'33'*32,time.monotonic()+10)
+        def reject(fn, kind=RuntimeError, text=None):
+            try:fn()
+            except kind as error:
+                if text is not None:assert text in str(error),str(error)
+                return error
+            raise AssertionError('transport accepted negative control')
+        try:
+            with mock.patch.dict(os.environ,{'PATH':str(root/'shim')+os.pathsep+os.environ['PATH'],'TRNM_TRANSPORT_SSH_LOG':str(log)}):
+                adapter=fresh()
+                for operation in ('status','submit','proof'):
+                    assert adapter.request(operation,{'signed_outer_hex':'ab'} if operation=='submit' else {})['data']['op']==operation
+                assert [r['op'] for r in received]==['status','submit','proof']
+                rows=[json.loads(row) for row in log.read_text().splitlines()]
+                assert len(rows)==3 and all(row[-2]=='p4-desktop' and '-T' in row for row in rows)
+                assert all('operator.key' not in row[-1] and 'client.key' not in row[-1] for row in rows)
+                files=list((node/'native-client-campaign-requests').iterdir())
+                assert len(files)==6 and all(p.stat().st_mode&0o777==0o600 for p in files)
+                # Local path executes the identical checked program without SSH.
+                local_stage=dataclasses.replace(stage,host_id='local',management='local',local_path=root)
+                local_target=c.request_target_v1([local],{'local':local_stage},{'local':str(binary)},'native.sock')
+                fresh();local_adapter=c.NativeRequestAdapterV1(local_target,'22'*32,'33'*32,time.monotonic()+10)
+                assert local_adapter.request('status',{})['ok'] is True
+                assert len(log.read_text().splitlines())==3
+                # Real exit codes and stderr survive both native and SSH failure.
+                with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_TEST_MODE':'fail'}):
+                    error=reject(lambda:fresh().request('status',{}),subprocess.CalledProcessError)
+                    assert error.returncode==37 and error.stderr==b'original native request failure\n'
+                    assert isinstance(error,c.NativeRequestFailureV1) and error.operation=='status' and error.sequence==1
+                    assert 'native request 1 (status) exit 37' in str(error)
+                with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_SSH_MODE':'failure'}):
+                    error=reject(lambda:fresh().request('status',{}),subprocess.CalledProcessError)
+                    assert error.returncode==255 and error.stderr==b'original ssh failure\n'
+                for mode in ('oversized','symlink'):
+                    with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_TEST_MODE':mode}):
+                        reject(lambda:fresh().request('status',{}),subprocess.CalledProcessError)
+                with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_TEST_MODE':'hardlink'}):
+                    reject(lambda:fresh().request('status',{}), subprocess.CalledProcessError,
+                           'hard-linked native response artifact')
+                # A profiler-created executable alias is not a proof-query failure.
+                # Keep the exact ownership guard and prove rejection before effects.
+                binary_alias = root/'shim/binary-alias'
+                os.link(binary,binary_alias)
+                before = len(received)
+                try:
+                    reject(lambda:fresh().request('proof',{}), subprocess.CalledProcessError,
+                           'hard-linked deployed validator binary')
+                    assert len(received) == before
+                finally:
+                    binary_alias.unlink()
+                assert fresh().request('status',{})['ok'] is True
+                with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_RESPONSE_ID':'other-request'}):
+                    reject(lambda:fresh().request('status',{}),RuntimeError,'request identity differs')
+                # No-follow/mode/owned inventory rejection precedes CLI effects.
+                fresh();(node/'native-client-campaign-requests').mkdir(mode=0o700)
+                reject(lambda:c.NativeRequestAdapterV1(target,'22'*32,'33'*32,time.monotonic()+10).request('status',{}),subprocess.CalledProcessError)
+                pathlib.Path(target.socket).chmod(0o666)
+                reject(lambda:fresh().request('status',{}),subprocess.CalledProcessError)
+                pathlib.Path(target.socket).chmod(0o600)
+                binary.chmod(0o700)
+                reject(lambda:fresh().request('status',{}),subprocess.CalledProcessError)
+                binary.chmod(0o500)
+                # Missing endpoint is the one typed, retryable startup case.
+                missing=dataclasses.replace(target,socket=str(pathlib.Path(target.socket).with_name('absent.sock')))
+                fresh();waiting=c.NativeRequestAdapterV1(missing,'22'*32,'33'*32,time.monotonic()+10)
+                reject(lambda:waiting.request('status',{}),c.NativeEndpointNotReady)
+                waiting.target=target;assert waiting.request('status',{})['ok'] is True
+                # Exit 75 is not retryable after an unconfirmed owned-group cleanup.
+                unclean = subprocess.CalledProcessError(75, ["controlled"], b"", b"native endpoint not ready\n")
+                unclean.add_note(c.CLEANUP_NOTE_PREFIX + "controlled reap failure")
+                with mock.patch.object(c, "bounded_command_v1", side_effect=unclean):
+                    error = reject(lambda: fresh().request("status", {}), c.NativeRequestFailureV1)
+                    assert error.returncode == 75 and c.CLEANUP_NOTE_PREFIX in c.command_failure_text_v1(error)
+                # Tight deadline includes transport startup, rather than granting another 12 seconds.
+                with mock.patch.dict(os.environ,{'TRNM_TRANSPORT_SSH_MODE':'delay'}):
+                    adapter=fresh();adapter.deadline=time.monotonic()+0.05
+                    start=time.monotonic();reject(lambda:adapter.request('status',{}),subprocess.TimeoutExpired)
+                    assert time.monotonic()-start<1
+                with mock.patch.object(c,'bounded_command_v1',side_effect=AssertionError('effect before rejection')):
+                    for field,value in [('sequence',c.MAX_REQUESTS),('request_bytes',c.MAX_REQUEST_BYTES),('response_bytes',c.MAX_RESPONSE_BYTES),('deadline',time.monotonic()-1)]:
+                        adapter=fresh();setattr(adapter,field,value)
+                        reject(lambda:adapter.request('status',{}),(RuntimeError,TimeoutError))
+                    reject(lambda:fresh().request('submit',{'signed_outer_hex':'a'*c.REQUEST_LIMIT}))
+                # Bounded reader is exercised with real subprocess output floods.
+                reject(lambda:c.bounded_command_v1([sys.executable,'-c','import sys;sys.stdout.write("x"*1025)'],timeout=2,output_limit=1024),RuntimeError,'bounded output')
+                reject(lambda:c.bounded_command_v1([sys.executable,'-c','import sys;sys.stderr.write("x"*65537)'],timeout=2),RuntimeError,'bounded output')
+            for values in ([dataclasses.replace(process,management='-oProxyCommand=x')], [dataclasses.replace(process,management='local')], [process,process], [dataclasses.replace(process,host_id='mac',management='p4-mac')]):
+                reject(lambda:c.request_process_v1(values))
+            for basename in ('../escape.sock','A.sock','x'*49+'.sock'):
+                reject(lambda:c.request_target_v1([process],{'desktop':stage},paths,basename))
+            reject(lambda:c.request_target_v1([process],{'desktop':stage},{'desktop':'/tmp/other'},'native.sock'))
+            reject(lambda:c.request_target_v1([process],{'desktop':dataclasses.replace(stage,management='p4-rog')},paths,'native.sock'))
+            assert not failures, failures
+        finally:
+            stop.set();thread.join(timeout=2);sock.close()
+    finally:
+        shutil.rmtree(root)
+
+
+
+def test_owned_command_cleanup_v1():
+    """Actual local processes; none of these peers are crypto-positive evidence."""
+    import os
+    import signal
+    import subprocess
+    import sys
+    import time
+    from unittest import mock
+
+    def reject(action, kind, text=""):
+        try:
+            action()
+        except kind as error:
+            assert text in str(error), str(error)
+            return error
+        raise AssertionError("command unexpectedly succeeded")
+
+    def live(pid):
+        # A stopped orphan may await its host init's reap. A zombie is not a
+        # running descendant; kill(pid, 0) alone cannot distinguish the two.
+        try:
+            state = pathlib.Path(f"/proc/{pid}/stat").read_text().rsplit(") ", 1)[1].split()[0]
+        except (FileNotFoundError, ProcessLookupError):
+            # Linux procfs can report ESRCH if exit races the open/read.
+            return False
+        return state not in {"Z", "X"}
+
+    with tempfile.TemporaryDirectory(prefix="trnm-command-cleanup-") as directory:
+        marker = pathlib.Path(directory) / "descendant"
+        for mode, code in (("held", 0), ("closed", 0), ("closed", 37), ("flood", 0)):
+            program = f"""import os, pathlib, time
+pid = os.fork()
+if pid == 0:
+    pathlib.Path({str(marker)!r}).write_text(str(os.getpid()))
+    if {mode!r} == 'closed':
+        for fd in (0, 1, 2): os.close(fd)
+    if {mode!r} == 'flood':
+        while True: os.write(1, b'x' * 4096)
+    time.sleep(30)
+    os._exit(0)
+while not pathlib.Path({str(marker)!r}).exists(): time.sleep(0.005)
+os.write(1, b'original-output')
+os.write(2, b'original-error')
+os._exit({code})
+"""
+            pid = None
+            started = time.monotonic()
+            try:
+                args = [sys.executable, "-I", "-S", "-c", program]
+                if mode == "held":
+                    error = reject(lambda: c.bounded_command_v1(args, timeout=2), subprocess.TimeoutExpired)
+                    assert error.output == b"original-output" and error.stderr == b"original-error"
+                elif mode == "flood":
+                    reject(lambda: c.bounded_command_v1(args, timeout=2, output_limit=1024), RuntimeError, "bounded output")
+                elif code:
+                    error = reject(lambda: c.bounded_command_v1(args, timeout=2), subprocess.CalledProcessError)
+                    assert error.returncode == code and error.output == b"original-output"
+                    assert error.stderr == b"original-error"
+                else:
+                    assert c.bounded_command_v1(args, timeout=2) == b"original-output"
+                assert time.monotonic() - started < 4
+                pid = int(marker.read_text())
+                deadline = time.monotonic() + 1
+                while live(pid) and time.monotonic() < deadline:
+                    time.sleep(0.01)
+                assert not live(pid), f"live descendant after {mode}/{code}: {pid}"
+            finally:
+                if pid is None and marker.exists():
+                    pid = int(marker.read_text())
+                if pid is not None and live(pid):
+                    try:
+                        os.kill(pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                marker.unlink(missing_ok=True)
+
+        # A process that closes both output pipes but has not exited is not done.
+        no_pipes = "import os,time;os.close(1);os.close(2);time.sleep(30)"
+        start = time.monotonic()
+        reject(lambda: c.bounded_command_v1([sys.executable, "-I", "-S", "-c", no_pipes], timeout=0.25), subprocess.TimeoutExpired)
+        assert 0.20 <= time.monotonic() - start < 2
+
+        # Output may precede stdin consumption; all three directions must drain.
+        program = "import sys;sys.stdout.buffer.write(b'o'*262144);sys.stdout.flush();sys.stderr.buffer.write(b'e'*32768);sys.stderr.flush();data=sys.stdin.buffer.read();assert data==b'i'*262144"
+        assert c.bounded_command_v1([sys.executable, "-I", "-S", "-c", program], timeout=3,
+                                    input_bytes=b"i" * 262144) == b"o" * 262144
+
+        # Shape/platform failures are inert, not a child followed by a late error.
+        with mock.patch.object(c.subprocess, "Popen", side_effect=AssertionError("unexpected spawn")):
+            for timeout in (0, -1, True, float("nan"), float("inf")):
+                reject(lambda: c.bounded_command_v1(["unused"], timeout=timeout), ValueError)
+            for bound in (0, -1, True, c.RESPONSE_LIMIT + 1):
+                reject(lambda: c.bounded_command_v1(["unused"], timeout=1, output_limit=bound), ValueError)
+            with mock.patch.object(c.signal, "getsignal", return_value=signal.SIG_IGN):
+                reject(lambda: c.bounded_command_v1(["unused"], timeout=1), RuntimeError, "sole-reaper")
+
+        # A bounded but unconfirmed reap preserves the actual exit and bytes.
+        # The injected failure happens AFTER a real reap; it leaves no test child.
+        real_wait = subprocess.Popen.wait
+        def uncertain_wait(child, timeout=None):
+            assert timeout == c.COMMAND_REAP_GRACE_SECONDS
+            real_wait(child, timeout=timeout)
+            raise subprocess.TimeoutExpired(child.args, timeout)
+        with mock.patch.object(c.subprocess.Popen, "wait", new=uncertain_wait):
+            args = [sys.executable, "-I", "-S", "-c", "import sys;sys.stderr.write('original');sys.exit(37)"]
+            error = reject(lambda: c.bounded_command_v1(args, timeout=2), subprocess.CalledProcessError)
+            assert error.returncode == 37 and error.stderr == b"original"
+            assert c.CLEANUP_NOTE_PREFIX in c.command_failure_text_v1(error)
+            wrapped = c.NativeRequestFailureV1(error.returncode, error.cmd, error.output, error.stderr,
+                                               operation="proof", sequence=3)
+            wrapped.__cause__ = error
+            text = c.command_failure_text_v1(wrapped)
+            assert "native request 3 (proof) exit 37: original" in text
+            assert c.CLEANUP_NOTE_PREFIX in text
+            reject(lambda: c.bounded_command_v1([sys.executable, "-I", "-S", "-c", "pass"], timeout=2), RuntimeError, c.CLEANUP_NOTE_PREFIX)
+
+        # Even caller cancellation must close/reap the actual child.
+        children = []
+        real_popen = subprocess.Popen
+        def remember(*args, **kwargs):
+            child = real_popen(*args, **kwargs)
+            children.append(child)
+            return child
+        with mock.patch.object(c.subprocess, "Popen", side_effect=remember):
+            with mock.patch.object(c.selectors.DefaultSelector, "select", side_effect=KeyboardInterrupt):
+                reject(lambda: c.bounded_command_v1([sys.executable, "-I", "-S", "-c", "import time;time.sleep(30)"], timeout=2), KeyboardInterrupt)
+        assert len(children) == 1 and children[0].returncode is not None
+        assert all(stream.closed for stream in (children[0].stdin, children[0].stdout, children[0].stderr))
+
+def test_validator_exit_attribution_v1():
+    import dataclasses
+    import subprocess
+    import sys
+    from unittest import mock
+
+    process = base.ValidatorProcess("11" * 32, "desktop", "p4-desktop",
+        pathlib.Path("/unused"), pathlib.PurePosixPath("public/config.json"), "v000")
+    local = dataclasses.replace(process, validator_id="22" * 32, host_id="local", management="local")
+    living = mock.Mock(); living.poll.return_value = None
+    c.require_running_validators_v1([process], [living])
+    for code in (0, 37, -9, 255):
+        exited = mock.Mock(); exited.poll.return_value = code
+        try:
+            c.require_running_validators_v1([process, local], [living, exited])
+        except RuntimeError as error:
+            text = str(error)
+            assert "exited_count=1" in text and "validator=" + local.validator_id in text
+            assert "host=local carrier=local returncode=" + str(code) in text
+            assert "remote cause" in text
+        else:
+            raise AssertionError("early exit was accepted")
+    for processes, children in (([process], []), ([process, process], [living, living])):
+        try:
+            c.require_running_validators_v1(processes, children)
+        except RuntimeError as error:
+            assert "attribution mismatch" in str(error)
+        else:
+            raise AssertionError("unattributed child accepted")
+    with subprocess.Popen([sys.executable, "-c", "raise SystemExit(37)"],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) as actual:
+        actual.wait(timeout=5)
+        try:
+            c.require_running_validators_v1([process], [actual])
+        except RuntimeError as error:
+            assert "host=desktop carrier=ssh returncode=37" in str(error)
+        else:
+            raise AssertionError("actual exited child accepted")
+    # Cap diagnostics independently of the deployed validator-count ceiling.
+    many = [dataclasses.replace(process, validator_id=f"{i+1:064x}") for i in range(100)]
+    dead = mock.Mock(); dead.poll.return_value = 1
+    try:
+        c.require_running_validators_v1(many, [dead] * 100)
+    except RuntimeError as error:
+        assert "exited_count=100" in str(error)
+        assert str(error).count("validator=") == 8 and len(str(error)) < 2000
+    else:
+        raise AssertionError("exited fleet accepted")
+
+
+def main():
+    native={"public_files":[{"path":"public/native-client-profile.json"}]}
+    legacy={"public_files":[{"path":"public/workload.corpus"},{"path":"public/workload-policy.json"}]}
+    assert c.application_selection(native,pathlib.Path('/candidate/keys'),1)
+    assert not c.application_selection(legacy,None,1)
+    rejected=0
+    def reject(fn):
+        nonlocal rejected
+        try:fn()
+        except (RuntimeError,ValueError,KeyError,TypeError,SystemExit):rejected+=1
+        else:raise AssertionError('accepted invalid candidate evidence')
+    reject(lambda:c.application_selection(native,None,1))
+    reject(lambda:c.application_selection(legacy,pathlib.Path('/keys'),1))
+    reject(lambda:c.application_selection(native,pathlib.Path('/keys'),17))
+    from native_campaign_contract_v1_test import structural_document, run_contract_tests
+    document = structural_document()
+    records = document["records"]
+    def validate(d):c.validate_document(d,run_id='candidate',anchor='11'*32,validator_ids={'33'*32})
+    validate(document) # Metadata only. These dummy bytes are never a crypto-positive.
+    for field,value in [('schema','fake'),('run_id','other'),('coordinator_manifest_sha256','44'*32),('submit_validator_id','55'*32),('signing_host','local'),('transport','public-http'),('business_transfer_count',2),('business_window_ns',1),('business_goodput_per_second',1),('completed_monotonic_ns',1),('started_monotonic_ns',False),('candidate_only',False),('production_activation',True),('performance_acceptance',True),('host_attestation',True),('m05_intent_binding',True),('fault_matrix_completed',True)]:
+        d=copy.deepcopy(document);d[field]=value;reject(lambda:validate(d))
+    d=copy.deepcopy(document);d["history_growth"]["finality_latency_ms"]["p99"]+=1;reject(lambda:validate(d))
+    for mutate in [lambda d:d['records'][1].update(native_tx_hash=d['records'][0]['native_tx_hash']),lambda d:d['records'][0].update(outer_sha256='00'*32),lambda d:d['records'][0].update(ack_monotonic_ns=0),lambda d:d['records'][0]['retry_ack']['data'].update(receive_sequence='99'),lambda d:d['records'][0]['ack'].update(ok=False),lambda d:d['records'][0]['mac_verification'].update(proof_verified_by_client=False),lambda d:d['records'][0].update(kind='transfer')]:
+        d=copy.deepcopy(document);mutate(d);reject(lambda:validate(d))
+    # A four-business-transfer history must report separate early/late
+    # finalized-proof windows rather than hiding growth behind one average.
+    growth_records=[copy.deepcopy(records[0])]
+    for i in range(4):
+        record=copy.deepcopy(records[1])
+        h=f'{10+i:064x}'
+        record["native_tx_hash"]=h
+        for response_name in ("ack","retry_ack","proof_response"):
+            record[response_name]["data"]["native_tx_hash"]=h
+        record["mac_verification"]["native_tx_hash"]=h
+        record["mac_verification"]["height"]=str(4+i)
+        record["mac_verification"]["index"]=i
+        record["submitted_monotonic_ns"]=100+i*100
+        record["ack_monotonic_ns"]=110+i*100
+        record["verified_monotonic_ns"]=140+i*100+(i*10)
+        growth_records.append(record)
+    growth=c.derive_history_growth_v1(growth_records,4)
+    assert growth["first_verified_height"]==4 and growth["last_verified_height"]==7
+    assert growth["verified_height_span"]==3
+    assert growth["first_half"]["transfers"]==growth["second_half"]["transfers"]==2
+    assert growth["finality_latency_ms"]["p50"]==50/1_000_000
+    assert growth["finality_latency_ms"]["p95"]==70/1_000_000
+    assert growth["finality_latency_ms"]["p99"]==70/1_000_000
+    assert growth["performance_acceptance"] is False
+
+    with tempfile.TemporaryDirectory() as temporary:
+        root=pathlib.Path(temporary);keys=root/'keys';keys.mkdir(mode=0o700);profile=b'candidate';coordinator=root/'coordinator';deployments=root/'deployments';coordinator.mkdir();deployments.mkdir()
+        for name in ('operator.key','client.key'):base.write_new(keys/name,b'a'*64)
+        base.write_new(keys/'native-client-profile.json',profile)
+        assert c.key_namespace(keys,coordinator,deployments,profile)==keys
+        reject(lambda:c.key_namespace(keys,root,deployments,profile))
+        reject(lambda:c.key_namespace(keys,coordinator,deployments,b'other'))
+        (keys/'client.key').chmod(0o644);reject(lambda:c.key_namespace(keys,coordinator,deployments,profile));(keys/'client.key').chmod(0o600)
+        (keys/'client.key').unlink();(keys/'client.key').symlink_to(keys/'operator.key');reject(lambda:c.key_namespace(keys,coordinator,deployments,profile))
+    test_request_adapter_v1()
+    test_owned_command_cleanup_v1()
+    test_validator_exit_attribution_v1()
+    test_proof_verification_failure_diagnostic_v1()
+    run_contract_tests()
+    print(f'native_campaign_structural_tests=passed negatives={rejected} cryptographic_success_claim=false real_campaign_required=true controlled_ssh_unix_transport=true bounded_io_deadline=true owned_group_cleanup=true')
+
+def test_proof_verification_failure_diagnostic_v1():
+    import subprocess
+    import sys
+    import time
+    from unittest import mock
+    stage = base.HostStage("mac", "p4-mac", "/tmp/tp3-" + "a" * 20, None)
+    def fail_child(*args, **kwargs):
+        return c.bounded_command_v1([
+            sys.executable, "-c",
+            "import sys; sys.stdout.write('DO_NOT_LOG_OUTPUT'); "
+            "sys.stderr.write('missing config\\n\\x1b[31m'+'x'*2000); sys.exit(37)",
+            "DO_NOT_LOG_ARGUMENT",
+        ], timeout=3)
+    with mock.patch.object(c, "ssh", side_effect=fail_child):
+        try:
+            c.verify_proof_response_v1(stage, ["not-executed"], index=2,
+                                      deadline=time.monotonic()+5)
+        except c.NativeProofVerificationFailureV1 as error:
+            text = str(error)
+            assert error.returncode == 37 and error.index == 2
+            assert isinstance(error.__cause__, subprocess.CalledProcessError)
+            assert error.stdout == b"DO_NOT_LOG_OUTPUT"
+            assert "missing config" in text and "exit=37" in text
+            assert "DO_NOT_LOG_OUTPUT" not in text and "DO_NOT_LOG_ARGUMENT" not in text
+            assert "\n" not in text and "\x1b" not in text and len(text) < 1200
+        else:
+            raise AssertionError("failed verifier was accepted")
+
+
+if __name__=='__main__':main()

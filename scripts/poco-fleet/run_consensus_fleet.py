@@ -33,6 +33,7 @@ import evidence_bundle_profiles_v1 as evidence_profiles
 import mesh_resource_preflight_v1 as mesh_resources
 import run_network_smoke_fleet as base
 import sealed_artifact_transport_v1 as sealed_transport
+import native_client_campaign_v1 as native_campaign
 
 
 MAX_DURATION_SECONDS = 7 * 24 * 60 * 60
@@ -96,6 +97,7 @@ RUNNER_SINGLETON_ARTIFACTS = {
     "runner-lifecycle.json": "runner_lifecycle",
     "fleet-launch-observation.json": "runner_launch_observation",
     "consensus-run-summary.json": "runner_summary",
+    native_campaign.ARTIFACT: "native_client_campaign",
 }
 RUNNER_VALIDATOR_ARTIFACT_PATTERNS = (
     (re.compile(r"^signed-reports/([0-9a-f]{64})\.json$"), "validator_consensus_run_report"),
@@ -110,6 +112,12 @@ RUNNER_VALIDATOR_ARTIFACT_PATTERNS = (
     (re.compile(r"^process-io/([0-9a-f]{64})\.stdout$"), "validator_process_stdout"),
     (re.compile(r"^process-io/([0-9a-f]{64})\.stderr$"), "validator_process_stderr"),
 )
+RUNNER_HOST_DIAGNOSTIC_PATTERNS = (
+    (re.compile(r"^process-io/peer-lease-([a-z][a-z0-9-]{0,31})\.stdout$"), "peer_lease_authority_stdout"),
+    (re.compile(r"^process-io/peer-lease-([a-z][a-z0-9-]{0,31})\.stderr$"), "peer_lease_authority_stderr"),
+)
+RUNNER_HOST_DIAGNOSTIC_ROLES = {role for _pattern, role in RUNNER_HOST_DIAGNOSTIC_PATTERNS}
+RUNNER_PROCESS_IO_ROLES = {"validator_process_stdout", "validator_process_stderr"} | RUNNER_HOST_DIAGNOSTIC_ROLES
 RUNNER_REQUIRED_SINGLETON_ROLES = {
     "coordinator_anchor_record",
     "runner_prestart_plan",
@@ -181,6 +189,7 @@ class RunningPeerLeaseDaemon:
     paths: PeerLeasePaths
     binary: str
     child: subprocess.Popen[bytes]
+    capture: base.ProcessCapture | None = None
 
 
 def exact_object(value: object, keys: set[str], field: str) -> dict[str, Any]:
@@ -484,7 +493,7 @@ def runner_lifecycle_document(
 def runner_artifact_identity(relative: str) -> tuple[str, str]:
     if relative in RUNNER_SINGLETON_ARTIFACTS:
         return RUNNER_SINGLETON_ARTIFACTS[relative], ""
-    for pattern, role in RUNNER_VALIDATOR_ARTIFACT_PATTERNS:
+    for pattern, role in RUNNER_VALIDATOR_ARTIFACT_PATTERNS + RUNNER_HOST_DIAGNOSTIC_PATTERNS:
         match = pattern.fullmatch(relative)
         if match is not None:
             return role, match.group(1)
@@ -641,7 +650,7 @@ def validate_runner_output_manifest(
             or expected_bytes < 0
         ):
             base.fail("runner output manifest content reference is not canonical")
-        allow_empty = role in {"validator_process_stdout", "validator_process_stderr"}
+        allow_empty = role in RUNNER_PROCESS_IO_ROLES
         observed_hash, observed_bytes, _metadata = sealed_file_facts(
             root.joinpath(*pathlib.PurePosixPath(relative).parts),
             f"runner output artifact {relative}",
@@ -692,6 +701,17 @@ def validate_runner_output_manifest(
         ):
             base.fail("runner output prestart validator inventory differs")
         validator_ids.add(validator_id)
+    has_host_diagnostics = bool(RUNNER_HOST_DIAGNOSTIC_ROLES.intersection(role_subjects))
+    planned_hosts: set[str] = set()
+    if has_host_diagnostics:
+        for item in raw_validators:
+            host = item.get("host_id")
+            if not isinstance(host, str) or re.fullmatch(r"[a-z][a-z0-9-]{0,31}", host) is None:
+                base.fail("host diagnostics require complete planned host identities")
+            planned_hosts.add(host)
+        for role in RUNNER_HOST_DIAGNOSTIC_ROLES:
+            if not role_subjects.get(role, set()).issubset(planned_hosts):
+                base.fail("lease authority diagnostic subject is outside the planned hosts")
     for role in RUNNER_REQUIRED_SUCCESS_VALIDATOR_ROLES:
         if not role_subjects.get(role, set()).issubset(validator_ids):
             base.fail("runner output artifact subject is outside the planned validators")
@@ -740,6 +760,20 @@ def validate_runner_output_manifest(
         or summary.get("production_activation") is not False
     ):
         base.fail("manifest-bound runner summary crosses its non-completion boundary")
+    native_selection = plan.get("native_client_campaign")
+    has_native_artifact = native_campaign.ARTIFACT in files
+    if native_selection is None and has_native_artifact:
+        base.fail("legacy runner cannot acquire an undeclared native campaign")
+    if native_selection is not None:
+        if not isinstance(native_selection, dict) or native_selection != {"profile": native_campaign.PROFILE, "business_transfer_count": native_selection.get("business_transfer_count"), "transport": "ssh-private-unix-ipc", "performance_acceptance": False}:
+            base.fail("native campaign plan selection differs")
+        if summary.get("failure") is None and not has_native_artifact:
+            base.fail("successful native runner omitted actual client evidence")
+        if has_native_artifact:
+            native_document = base.read_json(root / native_campaign.ARTIFACT, "native campaign")
+            native_campaign.validate_document(native_document, run_id=expected_run_id, anchor=expected_coordinator_anchor, validator_ids=validator_ids)
+            if native_document["business_transfer_count"] != native_selection["business_transfer_count"]:
+                base.fail("native campaign differs from planned transfer count")
     if summary.get("failure") is None:
         successful_lifecycle_kinds = {
             event.get("kind") for event in lifecycle.get("events", [])
@@ -754,6 +788,10 @@ def validate_runner_output_manifest(
             base.fail("successful runner execution omits replay archive lifecycle stages")
         if role_subjects.get("runner_launch_observation") != {""}:
             base.fail("successful runner execution omits its launch observation")
+        if has_host_diagnostics:
+            for role in RUNNER_HOST_DIAGNOSTIC_ROLES:
+                if role_subjects.get(role, set()) != planned_hosts:
+                    base.fail("successful host diagnostics omit a planned authority stream")
         for role in RUNNER_REQUIRED_SUCCESS_VALIDATOR_ROLES:
             if role_subjects.get(role) != validator_ids:
                 base.fail(f"successful runner execution omits one {role}")
@@ -784,7 +822,7 @@ def write_runner_output_manifest(
     artifacts: list[dict[str, Any]] = []
     for relative, path in files.items():
         role, subject = runner_artifact_identity(relative)
-        allow_empty = role in {"validator_process_stdout", "validator_process_stderr"}
+        allow_empty = role in RUNNER_PROCESS_IO_ROLES
         digest, size, _metadata = sealed_file_facts(
             path, f"runner output artifact {relative}", allow_empty=allow_empty
         )
@@ -1108,6 +1146,8 @@ def peer_lease_daemon_command(
         "--ready-file",
         paths.ready,
     ]
+    if re.fullmatch(r"[a-z][a-z0-9-]{0,31}", stage.host_id) is None:
+        base.fail("invalid peer-lease host identity")
     if not stage.remote:
         return arguments
     command = " ".join(shlex.quote(value) for value in arguments)
@@ -1118,9 +1158,11 @@ def peer_lease_daemon_command(
         "wait \"$daemon\" 2>/dev/null || true; fi; }; "
         "trap cleanup EXIT HUP INT TERM; "
         f"test ! -e {pid}; "
-        f"{command} >/dev/null 2>&1 & daemon=$!; "
+        f"{command} >/dev/null & daemon=$!; "
         f"printf '%s\\n' \"$daemon\" > {pid}; chmod 600 {pid}; "
-        "wait \"$daemon\"; status=$?; daemon=''; exit \"$status\""
+        "status=0; wait \"$daemon\" || status=$?; daemon=''; "
+        f"printf 'peer-lease authority exited: host={stage.host_id} status=%s\\n' \"$status\" >&2; "
+        "exit \"$status\""
     )
     return [
         "ssh",
@@ -1204,6 +1246,7 @@ def start_peer_lease_daemons(
     stages: dict[str, base.HostStage],
     processes: list[base.ValidatorProcess],
     linux_paths: dict[str, str],
+    diagnostic_root: pathlib.Path | None = None,
 ) -> tuple[dict[str, PeerLeasePaths], list[RunningPeerLeaseDaemon]]:
     """Start exactly one candidate authority per validator host."""
 
@@ -1213,16 +1256,24 @@ def start_peer_lease_daemons(
         for host_id in sorted({process.host_id for process in processes}):
             stage = stages[host_id]
             paths = peer_lease_paths(stage)
+            command = peer_lease_daemon_command(stage, linux_paths[host_id], paths)
+            capture = (
+                base.open_process_capture(diagnostic_root, f"peer-lease-{host_id}")
+                if diagnostic_root is not None else None
+            )
+            try:
+                child = subprocess.Popen(
+                    command,
+                    stdout=capture.stdout if capture is not None else subprocess.DEVNULL,
+                    stderr=capture.stderr if capture is not None else subprocess.DEVNULL,
+                )
+            except BaseException:
+                if capture is not None:
+                    base.close_process_capture(capture)
+                raise
             daemon = RunningPeerLeaseDaemon(
-                host_id=host_id,
-                stage=stage,
-                paths=paths,
-                binary=linux_paths[host_id],
-                child=subprocess.Popen(
-                    peer_lease_daemon_command(stage, linux_paths[host_id], paths),
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                ),
+                host_id=host_id, stage=stage, paths=paths,
+                binary=linux_paths[host_id], child=child, capture=capture,
             )
             running.append(daemon)
             wait_for_peer_lease_ready(daemon)
@@ -1247,6 +1298,7 @@ def stop_peer_lease_daemons(daemons: list[RunningPeerLeaseDaemon]) -> list[str]:
                     "set -eu; test -f {pid}; test ! -L {pid}; "
                     "read -r daemon_pid < {pid}; "
                     "case \"$daemon_pid\" in ''|*[!0-9]*) exit 41;; esac; "
+                    "if test ! -e \"/proc/$daemon_pid\"; then exit 0; fi; "
                     "test -r \"/proc/$daemon_pid/cmdline\"; "
                     "command_line=$(tr '\\000' ' ' < \"/proc/$daemon_pid/cmdline\"); "
                     "expected={expected}; "
@@ -1279,6 +1331,12 @@ def stop_peer_lease_daemons(daemons: list[RunningPeerLeaseDaemon]) -> list[str]:
                     child.wait(timeout=10)
         except (OSError, subprocess.SubprocessError) as error:
             failures.append(f"peer-lease daemon {daemon.host_id}: {error}")
+        finally:
+            if daemon.capture is not None:
+                try:
+                    base.close_process_capture(daemon.capture)
+                except OSError as error:
+                    failures.append(f"peer-lease diagnostic {daemon.host_id}: {error}")
     return failures
 
 
@@ -1326,7 +1384,11 @@ def command_for(
         "cleanup() { if test -n \"$child\"; then kill \"$child\" 2>/dev/null || true; "
         "wait \"$child\" 2>/dev/null || true; fi; }; "
         "trap cleanup EXIT HUP INT TERM; "
-        f"{command} & child=$!; wait \"$child\"; status=$?; child=''; exit \"$status\""
+        f"{command} & child=$!; "
+        "if wait \"$child\"; then status=0; else status=$?; fi; child=''; "
+        "printf 'validator process exited: validator=%s host=%s status=%s\\n' "
+        f"{shlex.quote(process.validator_id)} {shlex.quote(process.host_id)} \"$status\" >&2; "
+        "exit \"$status\""
     )
     return (
         [
@@ -1404,6 +1466,74 @@ def copy_replay_archive_set_v1(
     return copied
 
 
+def preserve_failure_diagnostics_v1(
+    *,
+    running: list[tuple[base.ValidatorProcess, subprocess.Popen[bytes], base.ProcessCapture, str, str, str, str, str]],
+    stages: dict[str, base.HostStage],
+    output: pathlib.Path,
+) -> list[str]:
+    """Best-effort copy of unverified runtime evidence before stage cleanup.
+
+    This path is diagnostic only: it never verifies, authorizes, or replaces the
+    original run failure. Existing successfully copied artifacts are left intact.
+    """
+    failures: list[str] = []
+    destinations = (
+        ("report", "signed-reports", ".json"),
+        ("journal", "signed-runtime-journals", ".jsonl"),
+        ("fleet-start-certificate", "fleet-start-certificates", ".bin"),
+        ("metrics", "signed-runtime-metrics", ".json"),
+        ("final-state", "signed-runtime-final-states", ".json"),
+    )
+    for process, _child, _capture, report, journal, metrics, final_state, certificate in running:
+        stage = stages.get(process.host_id)
+        if stage is None:
+            failures.append(f"{process.validator_id}: missing owned stage")
+            continue
+        sources = (report, journal, certificate, metrics, final_state)
+        for source, (label, directory, suffix) in zip(sources, destinations, strict=True):
+            target = output / directory / f"{process.validator_id}{suffix}"
+            if target.is_symlink():
+                failures.append(f"{process.validator_id}:{label}:symlink-target")
+                continue
+            if target.exists():
+                continue
+            try:
+                if not copy_observation_file(process, stage, source, target):
+                    failures.append(f"{process.validator_id}:{label}:copy-rejected")
+            except (OSError, subprocess.SubprocessError, RuntimeError, ValueError, SystemExit) as error:
+                failures.append(f"{process.validator_id}:{label}:{error}")
+        archive_targets = [
+            output / directory / f"{process.validator_id}{suffix}"
+            for _label, _source_relative, directory, suffix, _maximum in REPLAY_ARCHIVE_ARTIFACTS
+        ]
+        if any(target.is_symlink() for target in archive_targets):
+            failures.append(f"{process.validator_id}:replay-archives:symlink-target")
+        elif all(target.exists() for target in archive_targets):
+            pass
+        elif any(target.exists() for target in archive_targets):
+            failures.append(f"{process.validator_id}:replay-archives:partial-existing-set")
+        else:
+            try:
+                copy_replay_archive_set_v1(process=process, stage=stage, output=output)
+            except (OSError, subprocess.SubprocessError, RuntimeError, ValueError, SystemExit) as error:
+                # A failed diagnostic set is not an evidence set. Some sealed
+                # transports create the target before rejecting an empty or
+                # concurrently changing source; leaving that partial file here
+                # makes the final runner manifest fail on the diagnostic rather
+                # than preserve the original validator failure. Remove only
+                # targets created by this all-absent diagnostic attempt.
+                for target in archive_targets:
+                    if target.is_symlink():
+                        failures.append(
+                            f"{process.validator_id}:replay-archives:partial-symlink"
+                        )
+                        continue
+                    target.unlink(missing_ok=True)
+                failures.append(f"{process.validator_id}:replay-archives:{error}")
+    return failures
+
+
 def observer_sealed_reports_root_v1(observer_stage: base.HostStage) -> str:
     """Return the no-follow canonical path to the frozen Mac stage.
 
@@ -1473,7 +1603,7 @@ def exact_verified_summary(
     if set(value) != expected_keys:
         base.fail("observer consensus verification keys differ from contract")
     if (
-        value["schema_version"] != 2
+        value["schema_version"] != 3
         or value["status"]
         != "consensus-run-report-signature-and-semantics-verified"
         or value["run_id"] != run_id
@@ -2381,7 +2511,7 @@ def verify_fleet_start_certificate_on_observer(
             "-o",
             "BatchMode=yes",
             observer_stage.management,
-            f"chmod 600 -- {shlex.quote(remote_certificate)}",
+            f"chmod 600 {shlex.quote(remote_certificate)}",
         ],
         timeout=60,
     )
@@ -2479,6 +2609,8 @@ def main() -> None:
     parser.add_argument("--output", required=True, type=pathlib.Path)
     parser.add_argument("--duration-seconds", required=True, type=int)
     parser.add_argument("--max-blocks", required=True, type=int)
+    parser.add_argument("--native-client-key-root", type=pathlib.Path)
+    parser.add_argument("--native-client-transfers", type=int, default=3)
     parser.add_argument("--plan-only", action="store_true")
     args = parser.parse_args()
     run_bounds = validated_run_bounds(args.duration_seconds, args.max_blocks)
@@ -2499,11 +2631,16 @@ def main() -> None:
         monotonic_ns=anchor_snapshot.checked_monotonic_ns,
     )
     deployments = base.require_private_directory(args.deployment_root, "deployment root")
-    manifest, _topology, processes = base.load_contract(
+    manifest, topology, processes = base.load_contract(
         coordinator, deployments, args.validators
     )
     verify_coordinator_anchor(anchor_snapshot)
     record_lifecycle_event(lifecycle_events, "contract_loaded")
+    native_application = native_campaign.application_selection(manifest, args.native_client_key_root, args.native_client_transfers)
+    if native_application:
+        native_campaign.request_process_v1(processes)
+    if native_application:
+        native_campaign.key_namespace(args.native_client_key_root, coordinator, deployments, (coordinator / "public/native-client-profile.json").read_bytes())
     candidate = manifest["candidate"]
     linux_binary = base.require_binary(
         args.linux_binary, candidate["linux_x86_64_sha256"], "Linux binary"
@@ -2514,6 +2651,11 @@ def main() -> None:
     run_id = manifest["run_id"]
     planned_output = pathlib.Path(os.path.abspath(args.output))
     stage_plan = base.preflight_runtime_layout(processes, run_id, planned_output)
+    if native_application:
+        native_profile = native_campaign.strict_json((coordinator / "public/native-client-profile.json").read_bytes(), "native profile")
+        native_campaign.request_target_v1(processes, stage_plan,
+            {host: f"{stage.root}/bin/trnm-poco-lab-validator" for host, stage in stage_plan.items()},
+            native_profile["socket_basename"])
     plan = {
         "schema_version": 1,
         "profile": "frozen-v0-continuous-consensus-candidate",
@@ -2522,6 +2664,7 @@ def main() -> None:
         "validator_count": args.validators,
         "linux_validator_host_count": len({item.host_id for item in processes}),
         "observer_host_id": "mac",
+        **base.placement_report_fields_v1(topology),
         "coordinator_manifest_sha256": coordinator_anchor,
         "duration_seconds": args.duration_seconds,
         "max_blocks": args.max_blocks,
@@ -2586,6 +2729,8 @@ def main() -> None:
         "geo_wan_evidence": False,
         "production_activation": False,
     }
+    if native_application:
+        plan["native_client_campaign"] = {"profile": native_campaign.PROFILE, "business_transfer_count": args.native_client_transfers, "transport": "ssh-private-unix-ipc", "performance_acceptance": False}
     if args.plan_only:
         verify_coordinator_anchor(anchor_snapshot)
         print(json.dumps(plan, indent=2, sort_keys=True))
@@ -2600,7 +2745,8 @@ def main() -> None:
     try:
         plan["mesh_resource_preflight"] = (
             mesh_resources.preflight_mesh_fleet_resources_v1(
-                processes, args.validators
+                processes, args.validators,
+                placement_profile=topology.get("placement_profile", base.CANONICAL_PLACEMENT),
             )
         )
     except RuntimeError as error:
@@ -2665,6 +2811,7 @@ def main() -> None:
     terminal_agreement: dict[str, Any] | None = None
     failure: str | None = None
     cleanup_failures: list[str] = []
+    diagnostic_failures: list[str] = []
     observed_launch_skew_ns: int | None = None
     started_ns = time.monotonic_ns()
     try:
@@ -2684,7 +2831,7 @@ def main() -> None:
         (
             peer_lease_paths_by_host,
             peer_lease_daemons,
-        ) = start_peer_lease_daemons(stages, processes, linux_paths)
+        ) = start_peer_lease_daemons(stages, processes, linux_paths, process_io)
         record_lifecycle_event(lifecycle_events, "deployment_completed")
         observer_stage = stages["mac"]
         first_launch_ns: int | None = None
@@ -2755,6 +2902,16 @@ def main() -> None:
             + args.duration_seconds
             + run_bounds["process_completion_allowance_seconds"]
         )
+        if native_application:
+            native_campaign.run_campaign(
+                coordinator=coordinator, deployments=deployments, manifest=manifest,
+                processes=processes, stages=stages, linux_paths=linux_paths,
+                mac_binary=mac_binary, observer_root=observer_root,
+                key_root=args.native_client_key_root, anchor=coordinator_anchor,
+                transfers=args.native_client_transfers, output=output,
+                duration_seconds=args.duration_seconds,
+                running_children=[row[1] for row in running],
+            )
         for (
             process,
             child,
@@ -2967,7 +3124,7 @@ def main() -> None:
         ValueError,
         SystemExit,
     ) as error:
-        failure = str(error)
+        failure = native_campaign.command_failure_text_v1(error)
     finally:
         for (
             _process,
@@ -2989,6 +3146,17 @@ def main() -> None:
                 base.close_process_capture(capture)
             except OSError:
                 pass
+        if failure is not None:
+            try:
+                diagnostic_failures.extend(
+                    preserve_failure_diagnostics_v1(
+                        running=running, stages=stages, output=output
+                    )
+                )
+            except (OSError, subprocess.SubprocessError, RuntimeError, ValueError, SystemExit) as error:
+                # Even a collector-level failure cannot replace the original
+                # process failure or skip daemon/stage cleanup.
+                diagnostic_failures.append(f"failure-diagnostics:{error}")
         daemon_cleanup_failures = stop_peer_lease_daemons(peer_lease_daemons)
         cleanup_failures.extend(daemon_cleanup_failures)
         # Never delete a private stage while its authority may still own open
@@ -3001,7 +3169,7 @@ def main() -> None:
             verify_coordinator_anchor(anchor_snapshot)
         except SystemExit as error:
             if failure is None:
-                failure = str(error)
+                failure = native_campaign.command_failure_text_v1(error)
             else:
                 cleanup_failures.append(str(error))
         record_lifecycle_event(lifecycle_events, "cleanup_finished")
@@ -3036,6 +3204,7 @@ def main() -> None:
             observer_verified_replay_archive_count
         ),
         "all_six_hosts_participated": False,
+        **base.placement_report_fields_v1(topology, process_results),
         "elapsed_monotonic_ns": elapsed_ns,
         "observed_fleet_launch_skew_ns": observed_launch_skew_ns,
         "fleet_launch_skew_within_allowance": (
@@ -3049,6 +3218,7 @@ def main() -> None:
         "terminal_agreement": terminal_agreement,
         "failure": failure,
         "cleanup_failures": cleanup_failures,
+        "diagnostic_failures": diagnostic_failures,
         "validator_run_completed": False,
         "fault_matrix_completed": False,
         "performance_evidence": False,
@@ -3079,6 +3249,7 @@ def main() -> None:
         )
     print(
         f"poco_g3_consensus_fleet_runner_execution=passed validators={args.validators} "
+        f"placement={topology.get('placement_profile', base.CANONICAL_PLACEMENT)} "
         "all_six_hosts_attested=false signed_runtime_journals=true "
         "fleet_start_certificate=common "
         "signed_terminal_reports=true signed_runtime_metrics=true "

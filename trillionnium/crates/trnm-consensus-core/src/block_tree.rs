@@ -31,6 +31,7 @@ struct BlockNode {
 enum PayloadStatus {
     Unknown,
     Valid(BlockIdOverlayRefV0),
+    ConsensusSeal,
     DeterministicallyInvalid,
 }
 
@@ -230,15 +231,19 @@ impl BlockTree {
     ) -> Option<Vec<&SignedProposalV0>> {
         let path = bounded_parent_path_v0(target, finalized.block_id(), maximum, |block_id| {
             let node = self.nodes.get(&block_id)?;
-            let PayloadStatus::Valid(overlay) = node.payload_status else {
-                return None;
+            let overlay = match node.payload_status {
+                PayloadStatus::Valid(overlay) => Some(overlay),
+                PayloadStatus::ConsensusSeal => None,
+                _ => return None,
             };
             let proposal = node.validated_proposal.as_ref()?;
             if proposal.block().header() != &node.header
                 || proposal.witness() != &node.witness
                 || proposal.block().id() != block_id
-                || overlay.block_id() != block_id
-                || overlay.parent_block_id() != node.header.parent_id()
+                || overlay.is_some_and(|overlay| {
+                    overlay.block_id() != block_id
+                        || overlay.consensus_parent_block_id_v1() != node.header.parent_id()
+                })
             {
                 return None;
             }
@@ -313,7 +318,7 @@ impl BlockTree {
             PayloadValidationResult::Valid(valid) => {
                 let overlay = valid.artifact_ref().overlay();
                 if overlay.block_id() != block_id
-                    || overlay.parent_block_id() != node.header.parent_id()
+                    || overlay.consensus_parent_block_id_v1() != node.header.parent_id()
                 {
                     return Err(CoreError::ConflictingPayloadValidation(block_id));
                 }
@@ -345,6 +350,9 @@ impl BlockTree {
             (PayloadStatus::Valid(_), PayloadStatus::DeterministicallyInvalid)
             | (PayloadStatus::DeterministicallyInvalid, PayloadStatus::Valid(_)) => {
                 Ok(PayloadTransition::ConflictingTerminalResult)
+            }
+            (PayloadStatus::ConsensusSeal, _) | (_, PayloadStatus::ConsensusSeal) => {
+                Err(CoreError::UnsupportedBlockKind)
             }
             (PayloadStatus::Unknown, PayloadStatus::Unknown)
             | (PayloadStatus::Valid(_), PayloadStatus::Unknown)
@@ -390,7 +398,7 @@ impl BlockTree {
         }
         if result.artifact_ref().is_some_and(|artifact| {
             artifact.overlay().block_id() != block_id
-                || artifact.overlay().parent_block_id() != node.header.parent_id()
+                || artifact.overlay().consensus_parent_block_id_v1() != node.header.parent_id()
         }) {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
         }
@@ -402,7 +410,7 @@ impl BlockTree {
                 PayloadStatus::Valid(existing) => result
                     .artifact_ref()
                     .is_some_and(|artifact| artifact.overlay() == existing),
-                PayloadStatus::DeterministicallyInvalid => false,
+                PayloadStatus::DeterministicallyInvalid | PayloadStatus::ConsensusSeal => false,
             } {
             Some(proposal.durable_validation_resource_size_v0()?)
         } else {
@@ -467,7 +475,9 @@ impl BlockTree {
         if proposal.witness() != &node.witness {
             return Err(CoreError::ConflictingProposalWitness(block_id));
         }
-        if overlay.block_id() != block_id || overlay.parent_block_id() != node.header.parent_id() {
+        if overlay.block_id() != block_id
+            || overlay.consensus_parent_block_id_v1() != node.header.parent_id()
+        {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
         }
         if node
@@ -481,7 +491,7 @@ impl BlockTree {
             && match node.payload_status {
                 PayloadStatus::Unknown => true,
                 PayloadStatus::Valid(existing) => existing == overlay,
-                PayloadStatus::DeterministicallyInvalid => false,
+                PayloadStatus::DeterministicallyInvalid | PayloadStatus::ConsensusSeal => false,
             };
         let requested_resource_bytes = needs_install
             .then(|| proposal.durable_validation_resource_size_v0())
@@ -519,7 +529,9 @@ impl BlockTree {
                 }
                 Ok(())
             }
-            PayloadStatus::Valid(_) | PayloadStatus::DeterministicallyInvalid => {
+            PayloadStatus::Valid(_)
+            | PayloadStatus::DeterministicallyInvalid
+            | PayloadStatus::ConsensusSeal => {
                 Err(CoreError::ConflictingPayloadValidation(block_id))
             }
         }
@@ -543,10 +555,48 @@ impl BlockTree {
             .is_some_and(|node| matches!(node.payload_status, PayloadStatus::Valid(_)))
     }
 
+    /// Consensus readiness includes an independently checked state-preserving
+    /// seal; application readiness and overlay access intentionally do not.
+    pub(crate) fn consensus_is_valid_v1(&self, block_id: BlockId) -> bool {
+        self.payload_is_valid(block_id)
+            || self
+                .nodes
+                .get(&block_id)
+                .is_some_and(|node| matches!(node.payload_status, PayloadStatus::ConsensusSeal))
+    }
+
+    pub(crate) fn record_consensus_seal_v1(&mut self, proposal: &SignedProposalV0) -> Result<()> {
+        let id = proposal.block().id();
+        let node = self.nodes.get(&id).ok_or(CoreError::MissingBlock(id))?;
+        if node.header != *proposal.block().header() || node.witness != *proposal.witness() {
+            return Err(CoreError::ConflictingBlock(id));
+        }
+        if node.payload_status == PayloadStatus::ConsensusSeal {
+            return if node.validated_proposal.as_deref() == Some(proposal) {
+                Ok(())
+            } else {
+                Err(CoreError::ConflictingBlock(id))
+            };
+        }
+        if node.payload_status != PayloadStatus::Unknown {
+            return Err(CoreError::ConflictingPayloadValidation(id));
+        }
+        let requested = proposal.durable_validation_resource_size_v0()?;
+        let next_total = self.checked_retained_total(requested)?;
+        let node = self.nodes.get_mut(&id).ok_or(CoreError::MissingBlock(id))?;
+        node.payload_status = PayloadStatus::ConsensusSeal;
+        node.validated_proposal = Some(Arc::new(proposal.clone()));
+        node.validated_proposal_resource_bytes = requested;
+        self.retained_validated_proposal_bytes = next_total;
+        Ok(())
+    }
+
     pub(crate) fn payload_overlay_ref(&self, block_id: BlockId) -> Option<BlockIdOverlayRefV0> {
         match self.nodes.get(&block_id)?.payload_status {
             PayloadStatus::Valid(overlay) => Some(overlay),
-            PayloadStatus::Unknown | PayloadStatus::DeterministicallyInvalid => None,
+            PayloadStatus::Unknown
+            | PayloadStatus::DeterministicallyInvalid
+            | PayloadStatus::ConsensusSeal => None,
         }
     }
 
@@ -597,7 +647,7 @@ impl BlockTree {
             match node.payload_status {
                 PayloadStatus::DeterministicallyInvalid => return Ancestry::Conflicts,
                 PayloadStatus::Unknown => return Ancestry::Unknown,
-                PayloadStatus::Valid(_) => {}
+                PayloadStatus::Valid(_) | PayloadStatus::ConsensusSeal => {}
             }
             let height = node.header.height().get();
             if height <= finalized.height().get() {
@@ -642,6 +692,7 @@ impl BlockTree {
         validator_set: &ValidatorSet,
         consensus_parameters: &ConsensusParametersV0,
         finalized: FinalizedTip,
+        epoch: Option<&crate::EpochCoreStateV1>,
     ) -> Result<Option<DurableFinalizationV0>> {
         let Some(grandchild_node) = self.nodes.get(&newest_certificate.block_id()) else {
             return Ok(None);
@@ -661,7 +712,12 @@ impl BlockTree {
         }
         if [committed_node, child_node, grandchild_node]
             .iter()
-            .any(|node| !matches!(node.payload_status, PayloadStatus::Valid(_)))
+            .any(|node| {
+                !matches!(
+                    node.payload_status,
+                    PayloadStatus::Valid(_) | PayloadStatus::ConsensusSeal
+                )
+            })
         {
             return Ok(None);
         }
@@ -681,22 +737,41 @@ impl BlockTree {
             .cloned()
             .ok_or(CoreError::InvalidOrdinaryCertificate)?;
         let grandchild_qc = newest_certificate.clone();
-        let authenticated_parent = self.authenticated_parent(&committed_node.header, finalized)?;
+        let epoch_parent = if committed_node.header.block_kind()
+            == trnm_consensus_types::BlockKind::EpochHandoff
+        {
+            let epoch = epoch.ok_or(CoreError::UnsupportedEpochAnchor)?;
+            Some(crate::PayloadValidationParentV0::from_epoch_checkpoint_v1(
+                epoch,
+            ))
+        } else {
+            None
+        };
+        let authenticated_parent = match &epoch_parent {
+            Some(parent) => parent.tip(),
+            None => self.authenticated_parent(&committed_node.header, finalized)?,
+        };
+        let consensus_parent = epoch_parent
+            .as_ref()
+            .map_or(authenticated_parent, |parent| {
+                parent.consensus_parent_tip_v1()
+            });
+        let old_set = epoch.map(|e| e.old_validator_set());
         let committed = CertifiedHeaderV0::from_proposal_witness(
             committed_node.header.clone(),
             committed_node.witness.clone(),
             committed_qc,
             validator_set,
-            None,
+            old_set,
             consensus_parameters,
-            authenticated_parent.timestamp_ms(),
+            consensus_parent.timestamp_ms(),
         )?;
         let child = CertifiedHeaderV0::from_proposal_witness(
             child_node.header.clone(),
             child_node.witness.clone(),
             child_qc,
             validator_set,
-            None,
+            old_set,
             consensus_parameters,
             committed_node.header.timestamp_ms(),
         )?;
@@ -705,7 +780,7 @@ impl BlockTree {
             grandchild_node.witness.clone(),
             grandchild_qc,
             validator_set,
-            None,
+            old_set,
             consensus_parameters,
             child_node.header.timestamp_ms(),
         )?;
@@ -714,10 +789,17 @@ impl BlockTree {
             child,
             grandchild,
             validator_set,
-            None,
+            old_set,
             consensus_parameters,
-            authenticated_parent.timestamp_ms(),
+            consensus_parent.timestamp_ms(),
         )?;
+        if epoch_parent.is_some() {
+            return Ok(Some(DurableFinalizationV0::for_epoch_application_v1(
+                epoch.ok_or(CoreError::UnsupportedEpochAnchor)?,
+                proof,
+                target_overlay_ref,
+            )?));
+        }
         Ok(Some(DurableFinalizationV0::new(
             authenticated_parent,
             proof,
@@ -743,13 +825,19 @@ impl BlockTree {
         validator_set: &ValidatorSet,
         consensus_parameters: &ConsensusParametersV0,
         finalized: FinalizedTip,
+        epoch: Option<&crate::EpochCoreStateV1>,
     ) -> Result<Vec<DurableFinalizationV0>> {
         let mut newest = newest_certificate.clone();
         let mut newest_first = Vec::new();
 
         for _ in 0..=self.max_blocks {
-            let Some(finalization) =
-                self.detect_three_chain(&newest, validator_set, consensus_parameters, finalized)?
+            let Some(finalization) = self.detect_three_chain(
+                &newest,
+                validator_set,
+                consensus_parameters,
+                finalized,
+                epoch,
+            )?
             else {
                 break;
             };

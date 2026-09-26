@@ -663,9 +663,11 @@ fn connect_expected(
         let stream = DeadlineIo::new(stream, deadline)?;
         let mut connection = AuthenticatedConnection::connect(
             stream,
-            config.run_id(),
-            config.local_validator(),
-            remote,
+            crate::transport::ConnectionPeerV1 {
+                run_id: config.run_id(),
+                local: config.local_validator(),
+                expected_remote: remote,
+            },
             config.p2p_identity_signing_key(),
             config.validator_set(),
             config.key_role_registry(),

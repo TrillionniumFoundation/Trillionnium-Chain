@@ -4,8 +4,10 @@
 //! and keeps the startup timer private.  This module supplies the next,
 //! narrower boundary: it records the two authenticated recovery certificates
 //! in an independently durable journal and can be replayed after a process
-//! loss.  It does *not* consume the owner, clear Core's fence, activate a
-//! signer, arm a timer, or open ingress.
+//! loss.  After the exact `RecoveryStart` row is durable, one owner-aware
+//! bridge may consume the matching caught-up owner into the recovered ordinary
+//! runtime.  The candidate process still does not wire that runtime to a
+//! pacemaker, arm the retained timer, or open ingress.
 //!
 //! The journal is an actual SQLite CAS journal, rather than a marker file:
 //! every transition is written in an `IMMEDIATE` transaction with
@@ -47,7 +49,11 @@ use trnm_consensus_types::{
 use crate::external_node_checkpoint::ExternalNodeCheckpointV0;
 
 #[cfg(feature = "lab-validator-runtime")]
-use crate::deployed_lab_process2_recovery::PocoNodeDeployedLabProcess2CaughtUpOwnerV1;
+use crate::deployed_lab_process2_recovery::{
+    activate_caught_up_owner_after_persisted_recovery_start_v1,
+    PocoNodeDeployedLabProcess2CaughtUpOwnerV1, PocoNodeDeployedLabProcess2RecoveryErrorV0,
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1,
+};
 #[cfg(feature = "lab-validator-runtime")]
 use trnm_consensus_signer_journal::ExternalMonotonicWatermarkV0;
 
@@ -64,6 +70,7 @@ const JOURNAL_RECORD_BYTES_V1: usize = 8 + 2 + 1 + 8 + 32 + (32 * 11) + (8 * 3) 
 /// This journal is a real durable boundary.  It is not an activation claim.
 pub const PROCESS2_RECOVERY_TRANSITION_JOURNAL_V1: bool = true;
 pub const PROCESS2_RECOVERY_READY_START_COORDINATOR_V1: bool = true;
+pub const PROCESS2_RECOVERY_START_OWNER_BRIDGE_V1: bool = true;
 pub const PROCESS2_RECOVERY_RUNTIME_WIRING_V1: bool = false;
 pub const PROCESS2_RECOVERY_START_ACTIVATION_V1: bool = false;
 
@@ -306,6 +313,86 @@ impl fmt::Display for RecoveryTransitionJournalErrorV1 {
 }
 
 impl Error for RecoveryTransitionJournalErrorV1 {}
+
+/// Failure of the linear owner bridge after recovery certificates have been
+/// authenticated. A failure consumes the supplied caught-up owner; callers
+/// cannot retry a different startup history with the same Core/signer pair.
+#[cfg(feature = "lab-validator-runtime")]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Process2RecoveryStartOwnerBridgeErrorV1 {
+    Transition(RecoveryTransitionJournalErrorV1),
+    Recovery(PocoNodeDeployedLabProcess2RecoveryErrorV0),
+}
+
+#[cfg(feature = "lab-validator-runtime")]
+impl fmt::Display for Process2RecoveryStartOwnerBridgeErrorV1 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Transition(error) => write!(formatter, "{error}"),
+            Self::Recovery(error) => write!(formatter, "{error}"),
+        }
+    }
+}
+
+#[cfg(feature = "lab-validator-runtime")]
+impl Error for Process2RecoveryStartOwnerBridgeErrorV1 {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            Self::Transition(error) => Some(error),
+            Self::Recovery(error) => Some(error),
+        }
+    }
+}
+
+#[cfg(feature = "lab-validator-runtime")]
+impl From<RecoveryTransitionJournalErrorV1> for Process2RecoveryStartOwnerBridgeErrorV1 {
+    fn from(error: RecoveryTransitionJournalErrorV1) -> Self {
+        Self::Transition(error)
+    }
+}
+
+#[cfg(feature = "lab-validator-runtime")]
+impl From<PocoNodeDeployedLabProcess2RecoveryErrorV0> for Process2RecoveryStartOwnerBridgeErrorV1 {
+    fn from(error: PocoNodeDeployedLabProcess2RecoveryErrorV0) -> Self {
+        Self::Recovery(error)
+    }
+}
+
+/// Crate-sealed proof that this exact caught-up cut and Start certificate are
+/// the freshly audited durable head. The constructor remains private to this
+/// module; sibling code can consume but cannot mint it from copied digests.
+#[cfg(feature = "lab-validator-runtime")]
+#[must_use = "the persisted RecoveryStart authority must be consumed with its owner"]
+pub(crate) struct PersistedRecoveryStartOwnerAuthorityV1 {
+    caught_up_cut_digest: [u8; 32],
+    certificate_sha256: [u8; 32],
+}
+
+#[cfg(feature = "lab-validator-runtime")]
+impl PersistedRecoveryStartOwnerAuthorityV1 {
+    fn new(
+        caught_up_cut_digest: [u8; 32],
+        certificate_sha256: [u8; 32],
+    ) -> Result<Self, RecoveryTransitionJournalErrorV1> {
+        if caught_up_cut_digest == [0; 32] || certificate_sha256 == [0; 32] {
+            return Err(RecoveryTransitionJournalErrorV1::InvalidBinding(
+                "persisted RecoveryStart authority contains a zero digest",
+            ));
+        }
+        Ok(Self {
+            caught_up_cut_digest,
+            certificate_sha256,
+        })
+    }
+
+    pub(crate) const fn caught_up_cut_digest_v1(&self) -> [u8; 32] {
+        self.caught_up_cut_digest
+    }
+
+    pub(crate) const fn certificate_sha256_v1(&self) -> [u8; 32] {
+        self.certificate_sha256
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct TransitionRecordV1 {
@@ -1152,6 +1239,78 @@ impl Process2RecoveryReadyStartCoordinatorV1 {
         })?;
         let binding = binding_from_caught_up_owner_v1(owner, checkpoint, fence_token_digest)?;
         self.record_recovery_start_v1(binding, start_certificate, validator_set, verifier)
+    }
+
+    /// Consume the exact caught-up process-2 owner only after this journal has
+    /// durably recorded the matching direct-7 `RecoveryStart` certificate.
+    ///
+    /// The certificate is verified again at this boundary. The journal is
+    /// freshly audited, the complete owner/checkpoint/fence binding is
+    /// recomputed, and both the ReadySet and Start digests must match the
+    /// committed head. This produces an inert recovered ordinary runtime; it
+    /// still does not arm the retained timer or open networking/ingress.
+    /// Any failure consumes the supplied linear owner and is therefore
+    /// fail-stop rather than a retry with alternative startup evidence.
+    #[cfg(feature = "lab-validator-runtime")]
+    #[allow(clippy::too_many_arguments)]
+    pub fn activate_caught_up_owner_after_recorded_start_v1<W: ExternalMonotonicWatermarkV0>(
+        &self,
+        mut owner: PocoNodeDeployedLabProcess2CaughtUpOwnerV1<W>,
+        checkpoint: ExternalNodeCheckpointV0,
+        fence_token_digest: [u8; 32],
+        start_certificate: &RecoveryStartCertificateV1,
+        validator_set: &ValidatorSet,
+        verifier: &impl SignatureVerifier,
+    ) -> Result<
+        PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1<W>,
+        Process2RecoveryStartOwnerBridgeErrorV1,
+    > {
+        owner
+            .revalidate_zero_delta_caught_up_v1()
+            .map_err(Process2RecoveryStartOwnerBridgeErrorV1::Recovery)?;
+        let binding = binding_from_caught_up_owner_v1(&owner, checkpoint, fence_token_digest)?;
+        start_certificate
+            .verify(validator_set, verifier)
+            .map_err(|_| {
+                RecoveryTransitionJournalErrorV1::Verification(
+                    "RecoveryStart verification failed at owner activation",
+                )
+            })?;
+        validate_start_binding_v1(&binding, start_certificate, validator_set)?;
+
+        let ready_set_digest = start_certificate.ready_set().digest();
+        let start_certificate_digest = start_certificate.digest();
+        let head =
+            self.journal
+                .head_record_v1()?
+                .ok_or(RecoveryTransitionJournalErrorV1::WrongOrder(
+                    "caught-up owner cannot activate before RecoveryReady/RecoveryStart",
+                ))?;
+        if head.phase != Process2RecoveryTransitionPhaseV1::RecoveryStart || head.sequence != 1 {
+            return Err(RecoveryTransitionJournalErrorV1::WrongOrder(
+                "caught-up owner cannot activate before the durable RecoveryStart head",
+            )
+            .into());
+        }
+        if head.binding != binding || head.ready_set_digest != ready_set_digest {
+            return Err(RecoveryTransitionJournalErrorV1::Stale(
+                "durable RecoveryStart belongs to a stale or foreign caught-up owner",
+            )
+            .into());
+        }
+        if head.start_certificate_digest != start_certificate_digest {
+            return Err(RecoveryTransitionJournalErrorV1::Conflict(
+                "supplied RecoveryStart differs from the durable certificate",
+            )
+            .into());
+        }
+
+        let authority = PersistedRecoveryStartOwnerAuthorityV1::new(
+            binding.caught_up_cut_digest_v1(),
+            start_certificate_digest,
+        )?;
+        activate_caught_up_owner_after_persisted_recovery_start_v1(owner, authority)
+            .map_err(Process2RecoveryStartOwnerBridgeErrorV1::Recovery)
     }
 }
 

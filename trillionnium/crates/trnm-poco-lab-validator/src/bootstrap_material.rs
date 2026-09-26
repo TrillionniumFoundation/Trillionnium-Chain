@@ -28,8 +28,8 @@ use trnm_consensus_types::{
     View, Vote, VotingPower,
 };
 use trnm_native_execution_v0::{
-    derive_canonical_lab_genesis_hash_v0, CanonicalLabNativeChainGenesisInputsV0,
-    CanonicalLabNativeEmptyBootstrapPrefixV0,
+    derive_canonical_lab_genesis_hash_v0, AuthorizedSignerV0,
+    CanonicalLabNativeChainGenesisInputsV0, CanonicalLabNativeEmptyBootstrapPrefixV0,
 };
 
 use crate::{
@@ -247,6 +247,22 @@ pub fn verify_public_native_bootstrap_v1(
     parameters: &ConsensusParametersV0,
     workload: &VerifiedWorkloadCorpusV1,
 ) -> Result<VerifiedPublicNativeBootstrapV1> {
+    verify_public_native_bootstrap_with_policy_v1(
+        run_root,
+        validator_set,
+        parameters,
+        workload.authorized_signers_v0()?,
+        &workload.header().governance_signer_id,
+    )
+}
+
+pub fn verify_public_native_bootstrap_with_policy_v1(
+    run_root: impl AsRef<Path>,
+    validator_set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+    application_signers: Vec<AuthorizedSignerV0>,
+    governance_signer_id: &str,
+) -> Result<VerifiedPublicNativeBootstrapV1> {
     let run_root = run_root
         .as_ref()
         .canonicalize()
@@ -310,8 +326,8 @@ pub fn verify_public_native_bootstrap_v1(
     let chain_inputs = CanonicalLabNativeChainGenesisInputsV0::new(
         validator_set.clone(),
         *parameters,
-        workload.authorized_signers_v0()?,
-        workload.header().governance_signer_id.clone(),
+        application_signers,
+        governance_signer_id.to_owned(),
     )?;
     let mut prefix = CanonicalLabNativeEmptyBootstrapPrefixV0::new(chain_inputs)?;
     let chain_facts = prefix.chain_genesis_facts_v0();
@@ -467,6 +483,54 @@ pub fn build_public_native_bootstrap_v1(
     validator_set_output_path: impl AsRef<Path>,
     bootstrap_output_directory: impl AsRef<Path>,
 ) -> Result<BuiltPublicBootstrapSummaryV1> {
+    build_public_native_bootstrap_inner_v1(
+        validator_set_template_path,
+        workload_corpus_path,
+        workload_corpus_sha256,
+        workload_policy_path,
+        workload_policy_sha256,
+        consensus_secret_directory,
+        validator_set_output_path,
+        bootstrap_output_directory,
+        None,
+    )
+}
+
+pub fn build_public_native_client_bootstrap_v1(
+    template: impl AsRef<Path>,
+    profile_path: impl AsRef<Path>,
+    profile_sha256: [u8; 32],
+    consensus_secret_directory: impl AsRef<Path>,
+    validator_set_output: impl AsRef<Path>,
+    bootstrap_output: impl AsRef<Path>,
+) -> Result<BuiltPublicBootstrapSummaryV1> {
+    // The inner path slots are legacy compatibility arguments only; native
+    // mode parses this one public policy and never loads a workload corpus.
+    build_public_native_bootstrap_inner_v1(
+        template,
+        profile_path.as_ref(),
+        profile_sha256,
+        profile_path.as_ref(),
+        profile_sha256,
+        consensus_secret_directory,
+        validator_set_output,
+        bootstrap_output,
+        Some(profile_sha256),
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn build_public_native_bootstrap_inner_v1(
+    validator_set_template_path: impl AsRef<Path>,
+    workload_corpus_path: impl AsRef<Path>,
+    workload_corpus_sha256: [u8; 32],
+    workload_policy_path: impl AsRef<Path>,
+    workload_policy_sha256: [u8; 32],
+    consensus_secret_directory: impl AsRef<Path>,
+    validator_set_output_path: impl AsRef<Path>,
+    bootstrap_output_directory: impl AsRef<Path>,
+    native_profile_sha256: Option<[u8; 32]>,
+) -> Result<BuiltPublicBootstrapSummaryV1> {
     let validator_set_template_path = require_absolute_existing_file(
         validator_set_template_path.as_ref(),
         "validator-set author template",
@@ -518,21 +582,38 @@ pub fn build_public_native_bootstrap_v1(
         .iter()
         .map(|validator| validator.consensus_key().into_bytes())
         .collect::<Vec<_>>();
-    let workload = VerifiedWorkloadCorpusV1::load_for_ordinary_start_height(
-        &workload_corpus_path,
-        &workload_policy_path,
-        workload_corpus_sha256,
-        workload_policy_sha256,
-        validator_set.chain_id().as_str(),
-        ORDINARY_START_HEIGHT_V1,
-        &consensus_public_keys,
-    )?;
-    ensure!(
-        workload.header().genesis_timestamp_ms == WORKLOAD_GENESIS_TIMESTAMP_MS_V1
-            && workload.header().block_time_step_ms == WORKLOAD_BLOCK_TIME_STEP_MS_V1
-            && workload.header().ordinary_start_height == ORDINARY_START_HEIGHT_V1,
-        "workload policy differs from the fixed empty h1-h3 prefix schedule"
-    );
+    let (application_signers, governance_signer_id) = if let Some(hash) = native_profile_sha256 {
+        let profile = crate::native_client_profile::NativeClientProfileV1::load_v1(
+            &workload_policy_path,
+            hash,
+            validator_set.chain_id().as_str(),
+            &consensus_public_keys,
+        )?;
+        (
+            profile.authorized_signers_v1()?,
+            profile.governance_signer_id,
+        )
+    } else {
+        let workload = VerifiedWorkloadCorpusV1::load_for_ordinary_start_height(
+            &workload_corpus_path,
+            &workload_policy_path,
+            workload_corpus_sha256,
+            workload_policy_sha256,
+            validator_set.chain_id().as_str(),
+            ORDINARY_START_HEIGHT_V1,
+            &consensus_public_keys,
+        )?;
+        ensure!(
+            workload.header().genesis_timestamp_ms == WORKLOAD_GENESIS_TIMESTAMP_MS_V1
+                && workload.header().block_time_step_ms == WORKLOAD_BLOCK_TIME_STEP_MS_V1
+                && workload.header().ordinary_start_height == ORDINARY_START_HEIGHT_V1,
+            "workload policy differs from the fixed empty h1-h3 prefix schedule"
+        );
+        (
+            workload.authorized_signers_v0()?,
+            workload.header().governance_signer_id.clone(),
+        )
+    };
 
     let validator_set_bytes = canonical_json(&ValidatorSetDescriptorV1 {
         schema_version: template.schema_version,
@@ -551,8 +632,8 @@ pub fn build_public_native_bootstrap_v1(
         validator_set,
         parameters,
         signing_keys,
-        workload.authorized_signers_v0()?,
-        &workload.header().governance_signer_id,
+        application_signers,
+        &governance_signer_id,
         validator_set_bytes,
         secret_patterns,
     )?;
@@ -1326,6 +1407,42 @@ fn sync_directory(path: &Path) -> Result<()> {
         .with_context(|| format!("open directory {} for sync", path.display()))?
         .sync_all()
         .with_context(|| format!("sync directory {}", path.display()))
+}
+
+#[cfg(test)]
+pub(crate) fn write_native_client_test_bootstrap_v1(
+    root: &Path,
+    set: ValidatorSet,
+    parameters: ConsensusParametersV0,
+    keys: Vec<SigningKey>,
+    profile: &crate::native_client_profile::NativeClientProfileV1,
+) -> Result<()> {
+    let keys = set.validators().iter().map(|v| v.id()).zip(keys).collect();
+    let authored = author_bootstrap(
+        set,
+        parameters,
+        keys,
+        profile.authorized_signers_v1()?,
+        &profile.governance_signer_id,
+        b"test-set-bytes".to_vec(),
+        Vec::new(),
+    )?;
+    fs::create_dir_all(root.join("public/bootstrap"))?;
+    for (name, bytes) in ["h1.proposal", "h2.proposal", "h3.proposal"]
+        .into_iter()
+        .zip(&authored.proposal_bytes)
+    {
+        write_new_synced(&root.join("public/bootstrap").join(name), bytes)?;
+    }
+    write_new_synced(
+        &root.join("public/bootstrap/finality-proof.cev0"),
+        &authored.finality_proof_bytes,
+    )?;
+    write_new_synced(
+        &root.join("public/bootstrap/bootstrap.json"),
+        &authored.bootstrap_bytes,
+    )?;
+    Ok(())
 }
 
 #[cfg(test)]

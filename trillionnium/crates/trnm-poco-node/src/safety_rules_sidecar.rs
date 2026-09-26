@@ -988,16 +988,9 @@ mod tests {
                 self.poisoned = true;
                 return Err(ExternalWatermarkErrorV0::CompareFailed);
             }
-            let facts = ExternalWatermarkSemanticFactsV0::new(
-                0,
-                0,
-                0 + 1,
-                [1; 32],
-                [2; 32],
-                [3; 32],
-                [9; 32],
-            )
-            .expect("nonzero genesis facts");
+            let facts =
+                ExternalWatermarkSemanticFactsV0::new(0, 0, 1, [1; 32], [2; 32], [3; 32], [9; 32])
+                    .expect("nonzero genesis facts");
             self.head = Some(target);
             self.facts = Some(facts);
             Ok(())

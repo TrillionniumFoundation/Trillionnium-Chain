@@ -74,6 +74,8 @@ pub enum StrictFinalityErrorV0 {
     ParentMismatch,
     Decode(DecodeError),
     Consensus(ValidationError),
+    EpochEvidence(trnm_consensus_types::EpochActivationEvidenceErrorV0),
+    EpochActivation(trnm_consensus_types::JointHandoffKernelError),
 }
 
 impl fmt::Display for StrictFinalityErrorV0 {
@@ -84,6 +86,8 @@ impl fmt::Display for StrictFinalityErrorV0 {
             Self::ParentMismatch => {
                 f.write_str("finality proof does not extend the expected parent")
             }
+            Self::EpochEvidence(error) => write!(f, "epoch evidence: {error}"),
+            Self::EpochActivation(error) => write!(f, "epoch transition: {error}"),
             Self::Decode(error) => write!(f, "finality proof decode failed: {error}"),
             Self::Consensus(error) => write!(f, "strict finality verification failed: {error}"),
         }
@@ -172,4 +176,391 @@ pub fn decode_verify_finality_proof_strict_v0(
         )
         .map_err(StrictFinalityErrorV0::Consensus)?;
     Ok(StrictFinalityProofV0 { proof })
+}
+
+/// Strict first-new-epoch finality together with its authenticated application
+/// checkpoint and next context. None of these fields can be selected by a
+/// caller after verification; state-sync can join them to its current anchor.
+#[derive(Debug)]
+pub struct StrictEpochFinalityProofV1 {
+    finality: StrictFinalityProofV0,
+    checkpoint_header: trnm_consensus_types::BlockHeader,
+    new_validator_set: ValidatorSet,
+    new_consensus_parameters: ConsensusParametersV0,
+}
+
+impl StrictEpochFinalityProofV1 {
+    pub const fn proof(&self) -> &FinalityProofV0 {
+        self.finality.proof()
+    }
+    pub fn finalized_block_id(&self) -> BlockId {
+        self.finality.finalized_block_id()
+    }
+    pub const fn checkpoint_header(&self) -> &trnm_consensus_types::BlockHeader {
+        &self.checkpoint_header
+    }
+    pub const fn new_validator_set(&self) -> &ValidatorSet {
+        &self.new_validator_set
+    }
+    pub const fn new_consensus_parameters(&self) -> &ConsensusParametersV0 {
+        &self.new_consensus_parameters
+    }
+    pub fn into_finality(self) -> StrictFinalityProofV0 {
+        self.finality
+    }
+}
+
+/// Strictly verifies exact first-new-epoch finality against an independent old
+/// trust context and complete checkpoint/two-seal/joint evidence. This explicit
+/// route never retries a rejected ordinary proof with a permissive decoder.
+///
+/// Skipped views require a complete TC and every referenced QC is verified in
+/// the exact new context. Synthetic references must equal this handoff anchor.
+/// A successful result proves the first new block, not application installation.
+pub fn decode_verify_epoch_first_finality_strict_v1(
+    evidence: trnm_consensus_types::EpochActivationEvidencePreimagesV0<'_>,
+    bytes: &[u8],
+    trusted_old_set: &ValidatorSet,
+    trusted_old_parameters: &ConsensusParametersV0,
+    expected: FinalityExpectationV0,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<StrictEpochFinalityProofV1, StrictFinalityErrorV0> {
+    use trnm_consensus_types::{
+        decode_epoch_activation_evidence_v0_exact,
+        decode_epoch_first_finality_proof_v1_exact_with_budget,
+    };
+    let total = [
+        evidence.old_checkpoint_finality,
+        evidence.next_epoch_commitment,
+        evidence.authorization_kernel,
+        evidence.old_validator_set,
+        evidence.old_consensus_parameters,
+        evidence.new_validator_set,
+        evidence.new_consensus_parameters,
+        evidence.authenticated_checkpoint_parent_header,
+        bytes,
+    ]
+    .iter()
+    .try_fold(0usize, |n, part| n.checked_add(part.len()))
+    .ok_or(StrictFinalityErrorV0::Consensus(
+        ValidationError::ArithmeticOverflow("epoch proof total bytes"),
+    ))?;
+    budget
+        .admit_root_bytes(total)
+        .map_err(StrictFinalityErrorV0::Decode)?;
+    let decoded = decode_epoch_activation_evidence_v0_exact(
+        evidence,
+        trusted_old_set,
+        trusted_old_parameters,
+        budget,
+    )
+    .map_err(StrictFinalityErrorV0::EpochEvidence)?;
+    let proof = decode_epoch_first_finality_proof_v1_exact_with_budget(bytes, &decoded, budget)
+        .map_err(StrictFinalityErrorV0::Decode)?;
+    let target = proof.finalized_block().header();
+    if target.id() != expected.block_id
+        || target.height() != expected.height
+        || target.state_root() != expected.state_root
+        || target.receipts_root() != expected.receipts_root
+        || target.evidence_root() != expected.evidence_root
+    {
+        return Err(StrictFinalityErrorV0::TargetMismatch);
+    }
+    let parent = decoded.authorization_kernel().terminal_old_header();
+    if expected.parent_id != parent.id()
+        || expected.parent_height != parent.height()
+        || expected.parent_timestamp_ms != parent.timestamp_ms()
+        || target.parent_id() != parent.id()
+    {
+        return Err(StrictFinalityErrorV0::ParentMismatch);
+    }
+    let activation = crate::verify_same_version_epoch_activation_authority_strict_v0(
+        decoded.old_checkpoint_finality(),
+        decoded.next_epoch_commitment(),
+        decoded.authorization_kernel(),
+        decoded.old_validator_set(),
+        decoded.old_consensus_parameters(),
+        decoded.new_validator_set(),
+        decoded.new_consensus_parameters(),
+        decoded.authenticated_checkpoint_parent_header(),
+    )
+    .map_err(StrictFinalityErrorV0::EpochActivation)?;
+    verify_epoch_finality_from_activation(&activation, &proof)
+        .map_err(StrictFinalityErrorV0::Consensus)?;
+    Ok(StrictEpochFinalityProofV1 {
+        finality: StrictFinalityProofV0 { proof },
+        checkpoint_header: decoded
+            .old_checkpoint_finality()
+            .finalized_block()
+            .header()
+            .clone(),
+        new_validator_set: decoded.new_validator_set().clone(),
+        new_consensus_parameters: *decoded.new_consensus_parameters(),
+    })
+}
+
+/// Verifies a terminal first-new proof using the exact evidence already decoded
+/// and strictly authenticated by the historical ancestry verifier. The caller's
+/// existing meter is retained; activation work is neither repeated nor refunded.
+#[inline(never)]
+pub(crate) fn decode_verify_epoch_first_finality_from_activation_v1(
+    decoded: &trnm_consensus_types::DecodedEpochActivationEvidenceV0,
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+    bytes: &[u8],
+    expected: FinalityExpectationV0,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<StrictEpochFinalityProofV1, StrictFinalityErrorV0> {
+    require_exact_decoded_activation(decoded, activation)?;
+    let proof = trnm_consensus_types::decode_epoch_first_finality_proof_v1_exact_with_budget(
+        bytes, decoded, budget,
+    )
+    .map_err(StrictFinalityErrorV0::Decode)?;
+    let target = proof.finalized_block().header();
+    if target.id() != expected.block_id
+        || target.height() != expected.height
+        || target.state_root() != expected.state_root
+        || target.receipts_root() != expected.receipts_root
+        || target.evidence_root() != expected.evidence_root
+    {
+        return Err(StrictFinalityErrorV0::TargetMismatch);
+    }
+    let parent = activation.terminal_old_header();
+    if expected.parent_id != parent.id()
+        || expected.parent_height != parent.height()
+        || expected.parent_timestamp_ms != parent.timestamp_ms()
+        || target.parent_id() != parent.id()
+    {
+        return Err(StrictFinalityErrorV0::ParentMismatch);
+    }
+    verify_epoch_finality_from_activation(activation, &proof)
+        .map_err(StrictFinalityErrorV0::Consensus)?;
+    Ok(StrictEpochFinalityProofV1 {
+        finality: StrictFinalityProofV0 { proof },
+        checkpoint_header: activation
+            .old_checkpoint_finality()
+            .finalized_block()
+            .header()
+            .clone(),
+        new_validator_set: activation.new_validator_set().clone(),
+        new_consensus_parameters: *activation.new_consensus_parameters(),
+    })
+}
+
+fn require_exact_decoded_activation(
+    decoded: &trnm_consensus_types::DecodedEpochActivationEvidenceV0,
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+) -> Result<(), StrictFinalityErrorV0> {
+    if decoded.old_checkpoint_finality() != activation.old_checkpoint_finality()
+        || decoded.next_epoch_commitment() != activation.next_epoch_commitment()
+        || decoded.authorization_kernel() != activation.authorization_kernel()
+        || decoded.old_validator_set() != activation.old_validator_set()
+        || decoded.old_consensus_parameters() != activation.old_consensus_parameters()
+        || decoded.new_validator_set() != activation.new_validator_set()
+        || decoded.new_consensus_parameters() != activation.new_consensus_parameters()
+        || decoded.authenticated_checkpoint_parent_header()
+            != activation.authenticated_checkpoint_parent_header()
+    {
+        return Err(StrictFinalityErrorV0::Consensus(
+            ValidationError::InvalidFinalityProof(
+                "decoded activation differs from strict authority",
+            ),
+        ));
+    }
+    Ok(())
+}
+
+/// Historical terminal proof admission with the latest already authenticated
+/// epoch context. Activation bytes and signatures are consumed only once by
+/// the ancestry verifier; this function charges only the terminal proof.
+#[inline(never)]
+pub(crate) fn decode_verify_historical_epoch_finality_v1(
+    decoded: &trnm_consensus_types::DecodedEpochActivationEvidenceV0,
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+    bytes: &[u8],
+    expected: FinalityExpectationV0,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<FinalityProofV0, StrictFinalityErrorV0> {
+    use trnm_consensus_types::{
+        decode_epoch_runtime_finality_proof_v1_exact_with_budget, BlockKind,
+        EpochRuntimeContextDataV1,
+    };
+    let activation_height = activation
+        .handoff_certificate()
+        .descriptor()
+        .fields()
+        .activation_height;
+    if expected.height == activation_height {
+        return decode_verify_epoch_first_finality_from_activation_v1(
+            decoded, activation, bytes, expected, budget,
+        )
+        .map(|strict| strict.finality.proof);
+    }
+    require_exact_decoded_activation(decoded, activation)?;
+    if expected.height <= activation_height
+        || expected.parent_height.get().checked_add(1) != Some(expected.height.get())
+    {
+        return Err(StrictFinalityErrorV0::ParentMismatch);
+    }
+    let context = EpochRuntimeContextDataV1::from_decoded_evidence_v1(decoded)
+        .map_err(StrictFinalityErrorV0::Consensus)?;
+    let proof = decode_epoch_runtime_finality_proof_v1_exact_with_budget(
+        bytes,
+        &context,
+        expected.parent_timestamp_ms,
+        budget,
+    )
+    .map_err(StrictFinalityErrorV0::Decode)?;
+    let target = proof.finalized_block().header();
+    if !matches!(
+        target.block_kind(),
+        BlockKind::Regular | BlockKind::EpochCheckpoint
+    ) || target.id() != expected.block_id
+        || target.height() != expected.height
+        || target.state_root() != expected.state_root
+        || target.receipts_root() != expected.receipts_root
+        || target.evidence_root() != expected.evidence_root
+    {
+        return Err(StrictFinalityErrorV0::TargetMismatch);
+    }
+    if target.parent_id() != expected.parent_id {
+        return Err(StrictFinalityErrorV0::ParentMismatch);
+    }
+    crate::epoch_runtime_v1::verify_epoch_finality_precharged_v1(
+        activation,
+        &proof,
+        expected.parent_timestamp_ms,
+    )
+    .map_err(StrictFinalityErrorV0::Consensus)?;
+    Ok(proof)
+}
+
+// This path is reachable only after the complete strict handoff verifier above.
+// Generic proposal/TC APIs keep rejecting certificate-only epoch authorization.
+fn verify_epoch_finality_from_activation(
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+    proof: &FinalityProofV0,
+) -> Result<(), ValidationError> {
+    use trnm_consensus_types::BlockKind;
+    let set = activation.new_validator_set();
+    proof.validate(
+        set,
+        Some(activation.old_validator_set()),
+        activation.new_consensus_parameters(),
+        activation.terminal_old_header().timestamp_ms(),
+    )?;
+    let first = proof.finalized_block();
+    let descriptor = activation.handoff_certificate().descriptor().fields();
+    if first.header().block_kind() != BlockKind::EpochHandoff
+        || first.header().height() != descriptor.activation_height
+        || first.header().parent_id() != descriptor.terminal_old_block_id
+        || proof.child().header().block_kind() != BlockKind::Regular
+        || proof.grandchild().header().block_kind() != BlockKind::Regular
+        || first
+            .epoch_anchor_authorization()
+            .ok_or(ValidationError::InvalidFinalityProof(
+                "first block lacks the verified epoch authorization",
+            ))?
+            .try_cev0_bytes()?
+            != activation.authorization_cev0_bytes()?
+    {
+        return Err(ValidationError::InvalidFinalityProof(
+            "epoch finality context substitution",
+        ));
+    }
+    for certified in [first, proof.child(), proof.grandchild()] {
+        certified
+            .certifying_qc()
+            .verify(set, &StrictEd25519Verifier)?;
+        verify_epoch_proposal_witness_strict_v1(
+            activation,
+            certified.header(),
+            certified.witness(),
+        )?;
+    }
+    Ok(())
+}
+
+pub(crate) fn verify_epoch_qc_reference(
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+    reference: &trnm_consensus_types::QcReferenceV0,
+) -> Result<(), ValidationError> {
+    use trnm_consensus_types::{ContextAuthorizedQcV0, View};
+    let set = activation.new_validator_set();
+    if let Some(qc) = reference.as_ordinary() {
+        return qc.verify(set, &StrictEd25519Verifier);
+    }
+    let Some(ContextAuthorizedQcV0::Epoch(anchor)) = reference.as_synthetic() else {
+        return Err(ValidationError::InvalidCertificate(
+            "foreign synthetic epoch reference",
+        ));
+    };
+    let terminal = activation.terminal_old_header();
+    if anchor.genesis_hash() != set.genesis_hash()
+        || anchor.chain_id() != set.chain_id()
+        || anchor.protocol_version() != set.protocol_version()
+        || anchor.epoch() != set.epoch()
+        || anchor.validator_set_hash() != set.id()
+        || anchor.view() != View::new(0)
+        || anchor.height() != terminal.height()
+        || anchor.block_id() != terminal.id()
+    {
+        return Err(ValidationError::InvalidCertificate(
+            "epoch reference differs from strict handoff",
+        ));
+    }
+    Ok(())
+}
+
+pub(crate) fn verify_epoch_proposal_witness_strict_v1(
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+    header: &trnm_consensus_types::BlockHeader,
+    witness: &trnm_consensus_types::ProposalWitnessV0,
+) -> Result<(), ValidationError> {
+    use trnm_consensus_types::{BlockKind, SignatureVerifier};
+    let expected_authorization = (header.block_kind() == BlockKind::EpochHandoff)
+        .then_some(activation.runtime_data_v1().authorization());
+    if witness.epoch_anchor_authorization() != expected_authorization {
+        return Err(ValidationError::InvalidProposal(
+            "proposal substitutes complete strict epoch authorization",
+        ));
+    }
+    let set = activation.new_validator_set();
+    verify_epoch_qc_reference(activation, witness.justify_qc())?;
+    if let Some(tc) = witness.timeout_certificate() {
+        verify_epoch_timeout_certificate_strict_v1(activation, tc)?;
+    }
+    let proposer = set.validator(header.proposer_id()).ok_or_else(|| {
+        ValidationError::UnknownValidator(alloc::boxed::Box::new(header.proposer_id()))
+    })?;
+    let root = witness.signing_root_for_header(header)?;
+    if !StrictEd25519Verifier.verify(proposer, &root, witness.proposer_signature()) {
+        return Err(ValidationError::InvalidSignature(alloc::boxed::Box::new(
+            proposer.id(),
+        )));
+    }
+    Ok(())
+}
+
+pub(crate) fn verify_epoch_timeout_certificate_strict_v1(
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+    tc: &trnm_consensus_types::TimeoutCertificateV0,
+) -> Result<(), ValidationError> {
+    use trnm_consensus_types::{SignatureVerifier, TimeoutVote};
+    let set = activation.new_validator_set();
+    tc.validate_shape(set)?;
+    for reference in tc.referenced_qcs() {
+        verify_epoch_qc_reference(activation, reference)?;
+    }
+    for entry in tc.entries() {
+        let validator = set.validator(entry.signer_id()).ok_or_else(|| {
+            ValidationError::UnknownValidator(alloc::boxed::Box::new(entry.signer_id()))
+        })?;
+        let root = TimeoutVote::signing_root_for_set(set, tc.timed_out_view(), entry.high_qc())?;
+        if !StrictEd25519Verifier.verify(validator, &root, entry.signature()) {
+            return Err(ValidationError::InvalidSignature(alloc::boxed::Box::new(
+                entry.signer_id(),
+            )));
+        }
+    }
+    Ok(())
 }

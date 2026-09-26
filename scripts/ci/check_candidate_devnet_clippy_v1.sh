@@ -134,29 +134,41 @@ mod consensus_runtime {
     pub const MINIMUM_CONSENSUS_RUN_BLOCKS_V1: u64 = 3;
 
     #[derive(Debug)]
+    pub struct ConsensusRunRequestV1 {
+        pub config: LoadedValidatorConfig,
+        pub duration: Duration,
+        pub max_blocks: u64,
+        pub report_path: PathBuf,
+    }
+
+    #[derive(Debug)]
     pub enum BoundedConsensusRunOutcomeV1 {
         CompletedReport(PathBuf),
         Process1TargetParked(String),
     }
 
     pub fn run_bounded_consensus_with_external_fence_v1<F, T>(
-        mut config: LoadedValidatorConfig,
-        _duration: Duration,
-        _max_blocks: u64,
-        _report: PathBuf,
-        _fence: Arc<UnixExternalPeerLeaseAuthorityV1>,
+        request: ConsensusRunRequestV1,
+        external_fence: Arc<UnixExternalPeerLeaseAuthorityV1>,
         commission: F,
     ) -> anyhow::Result<BoundedConsensusRunOutcomeV1>
     where
         F: FnOnce(&mut LoadedValidatorConfig, ()) -> anyhow::Result<T>,
     {
+        let ConsensusRunRequestV1 {
+            mut config,
+            duration,
+            max_blocks,
+            report_path,
+        } = request;
+        let _ = (duration, max_blocks, external_fence);
         let _ = commission(&mut config, ())?;
         if std::hint::black_box(false) {
             Ok(BoundedConsensusRunOutcomeV1::Process1TargetParked(
                 String::new(),
             ))
         } else {
-            Ok(BoundedConsensusRunOutcomeV1::CompletedReport(PathBuf::new()))
+            Ok(BoundedConsensusRunOutcomeV1::CompletedReport(report_path))
         }
     }
 }

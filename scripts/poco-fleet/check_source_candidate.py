@@ -16,6 +16,7 @@ import stat
 import tarfile
 import tempfile
 from typing import Any
+from source_candidate_doc_alias_v1 import LINK_MODE, validate_alias
 
 
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -100,6 +101,11 @@ def canonical_tar_info(name: str, data: bytes, mode: int) -> tarfile.TarInfo:
     member.gname = ""
     member.mtime = 0
     member.type = tarfile.REGTYPE
+    if mode == LINK_MODE:
+        member.type = tarfile.SYMTYPE
+        member.linkname = data.decode("utf-8")
+        member.mode = 0o644
+        member.size = 0
     return member
 
 
@@ -158,7 +164,7 @@ def compute_git_tree_oid(records: list[dict[str, Any]], object_format: str) -> s
         entries: list[tuple[bytes, bytes]] = []
         for name, record in node["files"].items():
             encoded_name = name.encode("utf-8")
-            mode = b"100755" if record["mode"] == "0755" else b"100644"
+            mode = b"120000" if record["mode"] == "120000" else (b"100755" if record["mode"] == "0755" else b"100644")
             oid = bytes.fromhex(record["git_blob_oid"])
             entries.append((encoded_name, mode + b" " + encoded_name + b"\0" + oid))
         for name, child in node["dirs"].items():
@@ -243,9 +249,10 @@ def validate(path: pathlib.Path, *, require_clean: bool = False) -> dict[str, ob
             member_modes: dict[str, int] = {}
             for member in members:
                 if (
-                    not member.isfile()
-                    or member.issym()
+                    not (member.isfile() or member.issym())
                     or member.islnk()
+                    or (member.issym() and (member.mode != 0o644 or member.size != 0 or member.name == "source/SOURCE-CANDIDATE.json"))
+                    or (member.isfile() and bool(member.linkname))
                     or member.uid != 0
                     or member.gid != 0
                     or member.uname
@@ -260,16 +267,19 @@ def validate(path: pathlib.Path, *, require_clean: bool = False) -> dict[str, ob
                 relative = member.name.removeprefix("source/")
                 if relative != "SOURCE-CANDIDATE.json":
                     safe_source_path(relative)
-                stream = archive.extractfile(member)
-                if stream is None:
-                    fail("candidate tar regular member has no byte stream")
-                data = stream.read(MAX_FILE_BYTES + 1)
-                if len(data) != member.size:
-                    fail("candidate tar member length differs from header")
+                if member.issym():
+                    data = member.linkname.encode("utf-8")
+                else:
+                    stream = archive.extractfile(member)
+                    if stream is None:
+                        fail("candidate tar regular member has no byte stream")
+                    data = stream.read(MAX_FILE_BYTES + 1)
+                    if len(data) != member.size:
+                        fail("candidate tar member length differs from header")
                 names.append(member.name)
                 seen_names.add(member.name)
                 contents[relative] = data
-                member_modes[relative] = member.mode
+                member_modes[relative] = LINK_MODE if member.issym() else member.mode
 
     try:
         inventory_value = json.loads(
@@ -361,7 +371,7 @@ def validate(path: pathlib.Path, *, require_clean: bool = False) -> dict[str, ob
             or not isinstance(record.get("bytes"), int)
             or record["bytes"] < 0
             or record["bytes"] > MAX_FILE_BYTES
-            or record.get("mode") not in {"0644", "0755"}
+            or record.get("mode") not in {"0644", "0755", "120000"}
         ):
             fail("candidate file record is non-canonical")
         data = contents.get(relative)
@@ -381,6 +391,12 @@ def validate(path: pathlib.Path, *, require_clean: bool = False) -> dict[str, ob
             fail("candidate source total exceeds its bound")
         expected_names.append(f"source/{relative}")
         records.append(record)
+    for record in records:
+        if record["mode"] == "120000":
+            try:
+                validate_alias(record["path"], contents[record["path"]], member_modes)
+            except (ValueError, UnicodeDecodeError) as error:
+                fail(str(error))
     if names != expected_names or set(contents) != {
         "SOURCE-CANDIDATE.json",
         *(record["path"] for record in records),

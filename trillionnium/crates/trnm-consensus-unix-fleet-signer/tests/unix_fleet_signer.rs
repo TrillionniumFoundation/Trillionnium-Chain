@@ -2,7 +2,7 @@
 
 use std::{
     fs,
-    os::unix::fs::PermissionsExt,
+    os::unix::fs::{FileTypeExt, PermissionsExt},
     path::Path,
     process::{Child, Command},
     thread,
@@ -62,9 +62,15 @@ fn spawn_fixture(dir: &TempDir, mode: FixtureModeV1, count: usize) -> (Child, st
     (child, socket)
 }
 
+fn private_socket_ready(socket: &Path) -> bool {
+    fs::symlink_metadata(socket).is_ok_and(|metadata| {
+        metadata.file_type().is_socket() && metadata.permissions().mode() & 0o7777 == 0o600
+    })
+}
+
 fn wait_for_socket(socket: &Path) {
     for _ in 0..200 {
-        if socket.exists() {
+        if private_socket_ready(socket) {
             return;
         }
         thread::sleep(Duration::from_millis(5));
@@ -83,7 +89,7 @@ fn spawn_authority(dir: &TempDir, count: usize) -> (Child, std::path::PathBuf, s
         .spawn()
         .expect("spawn durable fleet authority fixture");
     for _ in 0..400 {
-        if socket.exists() {
+        if private_socket_ready(&socket) {
             return (child, socket, log);
         }
         if let Some(status) = child.try_wait().expect("poll durable fixture") {
@@ -358,12 +364,16 @@ fn durable_authority_prepares_before_signer_and_reopens_fail_closed() {
             key: SigningKey::from_bytes(&[0x4a; 32]),
         },
     );
-    assert!(matches!(
-        reopened,
-        Err(FleetRootAuthorityErrorV1::InvalidLog(
-            "unresolved prepared signing intent"
-        ))
-    ));
+    assert!(
+        matches!(
+            &reopened,
+            Err(FleetRootAuthorityErrorV1::InvalidLog(
+                "unresolved prepared signing intent"
+            ))
+        ),
+        "unresolved prepared intent must fence reopen, observed error: {:?}",
+        reopened.as_ref().err()
+    );
 }
 
 #[test]
@@ -520,4 +530,298 @@ fn durable_authority_namespace_lock_is_private_and_exclusive() {
     fs::set_permissions(&lock, fs::Permissions::from_mode(0o640)).expect("broaden lock");
     let socket = dir.path().join("fleet-root-authority.sock");
     assert_authority_start_fails(&socket, &log);
+}
+
+fn fragmented_response_has_one_deadline(fragment_header: bool) {
+    use std::{
+        io::{Read, Write},
+        os::unix::net::UnixListener,
+        time::Instant,
+    };
+    let dir = tempfile::tempdir().expect("deadline tempdir");
+    fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let socket = dir.path().join("deadline.sock");
+    let listener = UnixListener::bind(&socket).expect("bind deadline peer");
+    fs::set_permissions(&socket, fs::Permissions::from_mode(0o600)).unwrap();
+    let server = thread::spawn(move || {
+        listener.set_nonblocking(true).unwrap();
+        let accept_deadline = Instant::now() + Duration::from_secs(2);
+        let (mut stream, _) = loop {
+            match listener.accept() {
+                Ok(pair) => break pair,
+                Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                    assert!(Instant::now() < accept_deadline, "client never connected");
+                    thread::sleep(Duration::from_millis(1));
+                }
+                Err(error) => panic!("accept failed: {error}"),
+            }
+        };
+        stream
+            .set_read_timeout(Some(Duration::from_secs(2)))
+            .unwrap();
+        let mut header = [0; 4];
+        stream.read_exact(&mut header).expect("request header");
+        let mut body = vec![0; u32::from_be_bytes(header) as usize];
+        stream.read_exact(&mut body).expect("request body");
+        FleetRootRequestV1::decode_exact(&body).expect("real exact request");
+        // Each 80ms fragment fits the 120ms per-syscall timeout, but the
+        // full frame exceeds the caller's one operation deadline.
+        let header = 2u32.to_be_bytes();
+        if !fragment_header {
+            stream.write_all(&header).unwrap();
+        }
+        let fragments: &[u8] = if fragment_header { &header } else { &[1, 7] };
+        for byte in fragments {
+            thread::sleep(Duration::from_millis(80));
+            if stream.write_all(&[*byte]).is_err() {
+                return;
+            }
+        }
+        if fragment_header {
+            let _ = stream.write_all(&[1, 7]);
+        }
+    });
+    let mut settings = config(&socket);
+    settings.timeout = Duration::from_millis(120);
+    let mut client = UnixFleetRootSignerProducerV1::new(settings).unwrap();
+    let start = Instant::now();
+    let result = authority_request(&mut client, FleetRootPurposeV1::Ready, 0x91, 0x71);
+    let elapsed = start.elapsed();
+    server.join().expect("bounded peer finished");
+    assert!(
+        matches!(&result, Err(UnixFleetSignerErrorV1::Io { source, .. })
+        if source.kind() == std::io::ErrorKind::TimedOut),
+        "operation deadline was renewed: elapsed={elapsed:?}, result={result:?}"
+    );
+    assert!(
+        elapsed < Duration::from_secs(1),
+        "deadline response must stay bounded"
+    );
+}
+
+#[test]
+fn fragmented_header_cannot_renew_client_deadline() {
+    fragmented_response_has_one_deadline(true);
+}
+
+#[test]
+fn fragmented_body_cannot_renew_client_deadline() {
+    fragmented_response_has_one_deadline(false);
+}
+
+#[cfg(target_os = "linux")]
+#[test]
+fn full_listener_backlog_cannot_block_public_client() {
+    use rustix::net::{AddressFamily, SocketAddrUnix, SocketFlags, SocketType};
+    use std::{os::unix::net::UnixListener, time::Instant};
+    let dir = tempfile::tempdir().unwrap();
+    fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let path = dir.path().join("full.sock");
+    let listener = UnixListener::bind(&path).unwrap();
+    fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+    rustix::net::listen(&listener, 1).unwrap();
+    let address = SocketAddrUnix::new(&path).unwrap();
+    let mut queued = Vec::new();
+    let mut full = false;
+    for _ in 0..8 {
+        let fd = rustix::net::socket_with(
+            AddressFamily::UNIX,
+            SocketType::STREAM,
+            SocketFlags::NONBLOCK | SocketFlags::CLOEXEC,
+            None,
+        )
+        .unwrap();
+        match rustix::net::connect(&fd, &address) {
+            Ok(()) => queued.push(fd),
+            Err(rustix::io::Errno::AGAIN) => {
+                full = true;
+                break;
+            }
+            Err(error) => panic!("unexpected backlog error: {error}"),
+        }
+    }
+    assert!(full, "test must actually exhaust the accept queue");
+    let mut settings = config(&path);
+    settings.timeout = Duration::from_millis(120);
+    let mut client = UnixFleetRootSignerProducerV1::new(settings).unwrap();
+    let start = Instant::now();
+    let result = authority_request(&mut client, FleetRootPurposeV1::Ready, 0x92, 0x72);
+    assert!(
+        matches!(&result, Err(UnixFleetSignerErrorV1::Io { stage: "connect", source })
+        if source.kind() == std::io::ErrorKind::TimedOut),
+        "{result:?}"
+    );
+    assert!(start.elapsed() < Duration::from_secs(1));
+    // The timeout must not establish a false connection or send a request.
+    listener.set_nonblocking(true).unwrap();
+    for _ in 0..queued.len() {
+        let _ = listener.accept().unwrap();
+    }
+    assert_eq!(
+        listener.accept().unwrap_err().kind(),
+        std::io::ErrorKind::WouldBlock
+    );
+}
+
+// Actual public-server regressions: a peer cannot retire the durable authority.
+type IsolationServerJoin = std::thread::JoinHandle<(
+    Result<(), trnm_consensus_unix_fleet_signer::UnixFleetAuthorityServerErrorV1>,
+    u64,
+)>;
+fn isolation_server(
+    dir: &TempDir,
+    count: usize,
+) -> (
+    IsolationServerJoin,
+    std::path::PathBuf,
+    UnixFleetRootSignerConfig,
+) {
+    let socket = dir.path().join("isolation.sock");
+    let key = SigningKey::from_bytes(&[0x4a; 32]);
+    let authority = DurableFleetRootSignerAuthorityV1::open(
+        dir.path().join("isolation.log"),
+        origin(),
+        [0x31; 32],
+        key.verifying_key().to_bytes(),
+        GenericAuthoritySignerV1 { key: key.clone() },
+    )
+    .unwrap();
+    let mut server = UnixFleetRootAuthorityServerV1::new(authority, &socket)
+        .unwrap()
+        .with_io_timeout(Duration::from_millis(120))
+        .unwrap();
+    let join = thread::spawn(move || (server.serve_n(count), server.authority().sequence()));
+    wait_for_socket(&socket);
+    let mut client = config(&socket);
+    client.verifying_key = key.verifying_key().to_bytes();
+    (join, socket, client)
+}
+
+#[test]
+fn server_half_frame_disconnect_preserves_healthy_next_client() {
+    use std::{io::Write, os::unix::net::UnixStream};
+    let dir = tempfile::tempdir().unwrap();
+    let (join, socket, config) = isolation_server(&dir, 2);
+    let mut broken = UnixStream::connect(&socket).unwrap();
+    broken.write_all(&[0, 0]).unwrap();
+    drop(broken);
+    let mut client = UnixFleetRootSignerProducerV1::new(config).unwrap();
+    let signed = client.sign_fleet_root_v1(FleetRootPurposeV1::Ready, [0x91; 32], [0xa1; 32]);
+    // Old server exits on its failed reject write, so this join is finite too.
+    let (served, sequence) = join.join().unwrap();
+    assert!(
+        signed.is_ok(),
+        "healthy client after half-frame: {signed:?}"
+    );
+    served.unwrap();
+    assert_eq!(sequence, 1);
+}
+
+#[test]
+fn server_idle_peer_deadline_preserves_healthy_next_client() {
+    use std::{io::Write, os::unix::net::UnixStream, time::Instant};
+    let dir = tempfile::tempdir().unwrap();
+    let (join, socket, config) = isolation_server(&dir, 2);
+    let mut idle = UnixStream::connect(&socket).unwrap();
+    idle.write_all(&[0]).unwrap();
+    // Always release the old implementation, even when the assertion fails.
+    let release = thread::spawn(move || {
+        thread::sleep(Duration::from_millis(600));
+        drop(idle);
+    });
+    let mut client = UnixFleetRootSignerProducerV1::new(config).unwrap();
+    let start = Instant::now();
+    let signed = client.sign_fleet_root_v1(FleetRootPurposeV1::Ready, [0x92; 32], [0xa2; 32]);
+    let elapsed = start.elapsed();
+    release.join().unwrap();
+    let (served, sequence) = join.join().unwrap();
+    assert!(signed.is_ok(), "healthy client after idle peer: {signed:?}");
+    served.unwrap();
+    assert!(
+        elapsed < Duration::from_millis(500),
+        "network budget was renewed: {elapsed:?}"
+    );
+    assert_eq!(sequence, 1);
+}
+
+#[test]
+fn server_lost_response_retains_original_signature_and_nonce() {
+    use std::{io::Write, os::unix::net::UnixStream};
+    let dir = tempfile::tempdir().unwrap();
+    let (join, socket, config) = isolation_server(&dir, 3);
+    let request = FleetRootRequestV1::new(
+        FleetRootPurposeV1::Ready,
+        origin(),
+        [0x31; 32],
+        [0x93; 32],
+        [0xa3; 32],
+    )
+    .unwrap();
+    let bytes = request.try_exact_bytes().unwrap();
+    let mut lost = UnixStream::connect(&socket).unwrap();
+    lost.write_all(&(u32::try_from(bytes.len()).unwrap()).to_be_bytes())
+        .unwrap();
+    lost.write_all(&bytes).unwrap();
+    drop(lost); // A valid input remains queued, but its response has no reader.
+    let mut client = UnixFleetRootSignerProducerV1::new(config).unwrap();
+    let replay = client.sign_fleet_root_v1(FleetRootPurposeV1::Ready, [0x93; 32], [0xa3; 32]);
+    let next = client.sign_fleet_root_v1(FleetRootPurposeV1::Start, [0x94; 32], [0xa4; 32]);
+    let (served, sequence) = join.join().unwrap();
+    served.unwrap();
+    let key = SigningKey::from_bytes(&[0x4a; 32]);
+    assert_eq!(replay.unwrap(), key.sign(&[0x93; 32]).to_bytes());
+    assert!(next.is_ok());
+    assert_eq!(
+        sequence, 2,
+        "lost-response retry must not advance the journal twice"
+    );
+}
+
+#[test]
+fn server_authority_failure_is_not_isolated_as_a_peer_error() {
+    use trnm_consensus_unix_fleet_signer::UnixFleetAuthorityServerErrorV1;
+    let dir = tempfile::tempdir().unwrap();
+    let socket = dir.path().join("failing.sock");
+    let key = SigningKey::from_bytes(&[0x4a; 32]);
+    let authority = DurableFleetRootSignerAuthorityV1::open(
+        dir.path().join("failing.log"),
+        origin(),
+        [0x31; 32],
+        key.verifying_key().to_bytes(),
+        FailingAuthoritySignerV1,
+    )
+    .unwrap();
+    let mut server = UnixFleetRootAuthorityServerV1::new(authority, &socket).unwrap();
+    let join = thread::spawn(move || server.serve_n(1));
+    wait_for_socket(&socket);
+    let mut cfg = config(&socket);
+    cfg.verifying_key = key.verifying_key().to_bytes();
+    let mut client = UnixFleetRootSignerProducerV1::new(cfg).unwrap();
+    assert!(client
+        .sign_fleet_root_v1(FleetRootPurposeV1::Ready, [0x95; 32], [0xa5; 32])
+        .is_err());
+    assert!(matches!(
+        join.join().unwrap(),
+        Err(UnixFleetAuthorityServerErrorV1::Authority(_))
+    ));
+    assert!(!socket.exists());
+}
+
+#[test]
+fn fixture_readiness_rejects_broad_socket_and_symlink() {
+    use std::os::unix::{fs::symlink, net::UnixListener};
+    let dir = tempfile::tempdir().unwrap();
+    let socket = dir.path().join("ready.sock");
+    assert!(!private_socket_ready(&socket));
+    let _listener = UnixListener::bind(&socket).unwrap();
+    fs::set_permissions(&socket, fs::Permissions::from_mode(0o666)).unwrap();
+    assert!(
+        !private_socket_ready(&socket),
+        "published inode is not final readiness"
+    );
+    fs::set_permissions(&socket, fs::Permissions::from_mode(0o600)).unwrap();
+    assert!(private_socket_ready(&socket));
+    let alias = dir.path().join("alias.sock");
+    symlink(&socket, &alias).unwrap();
+    assert!(!private_socket_ready(&alias));
 }

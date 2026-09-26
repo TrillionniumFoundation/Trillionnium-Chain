@@ -43,8 +43,13 @@ fn wait_for_socket(path: &Path) {
     while Instant::now() < deadline {
         if let Ok(metadata) = fs::symlink_metadata(path) {
             assert!(metadata.file_type().is_socket());
-            assert_eq!(metadata.permissions().mode() & 0o077, 0);
-            return;
+            if metadata.permissions().mode() & 0o077 == 0 {
+                return;
+            }
+            // bind(2) publishes the socket inode before the fixture applies
+            // its final 0600 mode. The private 0700 parent already blocks
+            // other UIDs; readiness means both the socket and final mode are
+            // visible, so do not race the subsequent client preflight.
         }
         thread::sleep(Duration::from_millis(10));
     }
@@ -173,7 +178,7 @@ fn truncated_and_oversized_frames_fail_closed() {
 }
 
 #[test]
-fn signer_journal_composes_with_child_remote_signer_and_replays_locally() {
+fn signer_journal_composes_on_linux_or_rejects_unsupported_host_before_write() {
     let temp = tempfile::tempdir().expect("tempdir");
     fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700))
         .expect("protect journal directory");
@@ -191,8 +196,24 @@ fn signer_journal_composes_with_child_remote_signer_and_replays_locally() {
     .expect("journal profile");
     let database = temp.path().join("journal.sqlite3");
     let watermark = MemoryWatermark::default();
-    let mut journal = SqliteSignerJournalV0::initialize_new(&database, profile, watermark)
-        .expect("initialize journal");
+    let opened = SqliteSignerJournalV0::initialize_new(&database, profile, watermark);
+    if !cfg!(target_os = "linux") {
+        let unsupported = matches!(
+            opened,
+            Err(trnm_consensus_signer_journal::SignerJournalErrorV0::UnsupportedPlatform)
+        );
+        stop(child);
+        assert!(
+            unsupported,
+            "unsupported journal host must reject explicitly"
+        );
+        assert!(
+            !database.exists(),
+            "unsupported host must not create a journal"
+        );
+        return;
+    }
+    let mut journal = opened.expect("initialize Linux journal");
     let mut producer = UnixRemoteSignerProducer::new(config).expect("producer config");
     let intent = fixture_intent(0);
     let first = journal
@@ -405,4 +426,69 @@ fn vote_timeout_client_cannot_cross_into_proposal_service() {
         .join()
         .expect("proposal-only service thread")
         .expect("proposal-only request handling");
+}
+
+fn fragmented_service_response_obeys_one_deadline(fragment_header: bool) {
+    use std::{
+        io::{Read, Write},
+        os::unix::net::UnixListener,
+    };
+    let temp = tempfile::tempdir().unwrap();
+    fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let socket = temp.path().join("slow.sock");
+    let listener = UnixListener::bind(&socket).unwrap();
+    fs::set_permissions(&socket, fs::Permissions::from_mode(0o600)).unwrap();
+    let responder = thread::spawn(move || {
+        let (mut stream, _) = listener.accept().unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(2)))
+            .unwrap();
+        let mut size = [0u8; 4];
+        stream.read_exact(&mut size).unwrap();
+        let size = usize::try_from(u32::from_be_bytes(size)).unwrap();
+        assert!(size <= 8192);
+        let mut request = vec![0; size];
+        stream.read_exact(&mut request).unwrap();
+        let header = 2u32.to_be_bytes();
+        if fragment_header {
+            for byte in header {
+                thread::sleep(Duration::from_millis(80));
+                if stream.write_all(&[byte]).is_err() {
+                    return;
+                }
+            }
+            let _ = stream.write_all(&[1, 7]);
+        } else {
+            stream.write_all(&header).unwrap();
+            for byte in [1, 7] {
+                thread::sleep(Duration::from_millis(80));
+                if stream.write_all(&[byte]).is_err() {
+                    return;
+                }
+            }
+        }
+    });
+    let mut cfg = fixture_config(&socket);
+    cfg.timeout = Duration::from_millis(120);
+    let mut producer = UnixRemoteSignerProducer::new(cfg).unwrap();
+    let start = Instant::now();
+    let result = producer.sign_intent_exact(&fixture_intent(u64::from(!fragment_header)));
+    let elapsed = start.elapsed();
+    responder.join().unwrap();
+    assert!(
+        matches!(result, Err(UnixRemoteSignerError::Io { ref source, .. })
+        if source.kind() == std::io::ErrorKind::TimedOut),
+        "one 120ms budget must expire, got {result:?} after {elapsed:?}"
+    );
+    assert!(elapsed < Duration::from_secs(1));
+}
+
+#[test]
+fn vote_fragmented_header_cannot_renew_absolute_deadline() {
+    fragmented_service_response_obeys_one_deadline(true);
+}
+
+#[test]
+fn timeout_fragmented_body_cannot_renew_absolute_deadline() {
+    fragmented_service_response_obeys_one_deadline(false);
 }

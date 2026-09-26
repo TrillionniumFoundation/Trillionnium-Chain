@@ -10,6 +10,7 @@ import pathlib
 import subprocess
 import sys
 import tempfile
+import tomllib
 from unittest import mock
 
 
@@ -22,6 +23,7 @@ if SPEC is None or SPEC.loader is None:
 fleet = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = fleet
 SPEC.loader.exec_module(fleet)
+import plan_topology  # noqa: E402
 
 
 def completed(stdout: bytes = b"") -> subprocess.CompletedProcess[bytes]:
@@ -446,6 +448,76 @@ def test_layout_tamper_collision_and_negative_preflight_have_no_effects() -> Non
         )
 
 
+def test_local_rog_placement_reports_actual_hosts() -> None:
+    inventory = tomllib.loads((HERE / "inventory.toml").read_text())
+    profile = "local4-rog3-mac-v1"
+    topology = plan_topology.build_topology(inventory, 7, "equal", profile)
+    results = [{"validator_id": x["validator_id"], "host_id": x["host_id"]} for x in topology["validators"]]
+    assert fleet.placement_report_fields_v1(topology, results) == {
+        "schema_version": 2, "placement_profile": profile,
+        "linux_validator_host_count": 2, "participant_host_count": 3,
+    }
+    assert fleet.placement_report_fields_v1(topology, [])["participant_host_count"] == 0
+    assert fleet.placement_report_fields_v1(topology, results[:4])["linux_validator_host_count"] == 1
+    assert not fleet.all_six_hosts_participated_v1(topology, results)
+    processes = [
+        process(x["host_id"], x["management"], validator_id=x["validator_id"], runtime_alias=f"v{ordinal:03d}")
+        for ordinal, x in enumerate(sorted(topology["validators"], key=lambda item: item["validator_id"]))
+    ]
+    stages = fleet.preflight_runtime_layout(
+        processes, "poco-g3-7-20260813T120000Z-00000000", pathlib.Path("/evidence/local-rog"),
+    )
+    assert set(stages) == {"local", "rog", "mac"}
+    assert stages["local"].management == "local" and stages["local"].local_path is not None
+    assert stages["rog"].management != "local" and stages["mac"].management != "local"
+
+
+def test_reduced_placement_reports_actual_hosts() -> None:
+    inventory = tomllib.loads((HERE / "inventory.toml").read_text())
+    canonical = plan_topology.build_topology(inventory, 7, "equal")
+    reduced = plan_topology.build_topology(inventory, 7, "equal", plan_topology.REDUCED_PLACEMENT)
+    results = [
+        {"validator_id": value["validator_id"], "host_id": value["host_id"]}
+        for value in reduced["validators"]
+    ]
+    expected = {
+        "schema_version": 2,
+        "placement_profile": plan_topology.REDUCED_PLACEMENT,
+        "linux_validator_host_count": 2,
+        "participant_host_count": 3,
+    }
+    assert fleet.placement_report_fields_v1(reduced) == expected
+    assert fleet.placement_report_fields_v1(reduced, results) == expected
+    assert fleet.placement_report_fields_v1(reduced, []) == {
+        **expected, "linux_validator_host_count": 0, "participant_host_count": 0,
+    }
+    assert fleet.placement_report_fields_v1(reduced, results[:4]) == {
+        **expected, "linux_validator_host_count": 1, "participant_host_count": 2,
+    }
+    assert fleet.all_six_hosts_participated_v1(reduced, results) is False
+    assert fleet.placement_report_fields_v1(canonical) == {}
+    canonical_results = [
+        {"validator_id": value["validator_id"], "host_id": value["host_id"]}
+        for value in canonical["validators"]
+    ]
+    assert fleet.all_six_hosts_participated_v1(canonical, canonical_results) is True
+    assert fleet.all_six_hosts_participated_v1(canonical, canonical_results[:-1]) is False
+    assert fleet.all_six_hosts_participated_v1(canonical, results) is False
+    assert fleet.all_six_hosts_participated_v1(canonical, [canonical_results[0]] * 7) is False
+    expect_system_exit(lambda: fleet.placement_report_fields_v1(
+        dict(reduced, placement_profile="unreviewed")), "unsupported runtime placement")
+    processes = [
+        process(value["host_id"], value["management"],
+                validator_id=value["validator_id"], runtime_alias=f"v{ordinal:03d}")
+        for ordinal, value in enumerate(sorted(reduced["validators"], key=lambda item: item["validator_id"]))
+    ]
+    stages = fleet.preflight_runtime_layout(
+        processes, "poco-g3-7-20260813T120000Z-00000000", pathlib.Path("/evidence/reduced"),
+    )
+    assert set(stages) == {"desktop", "rog", "mac"}
+    assert all(stage.management != "local" for stage in stages.values())
+
+
 def main() -> None:
     test_unique_json_and_remote_path()
     test_input_symlinks_are_rejected_before_resolution()
@@ -457,6 +529,8 @@ def main() -> None:
     test_public_projection_and_remote_scp_land_at_exact_alias()
     test_runtime_layout_exact_bounds_aliases_and_old_207_bytes()
     test_layout_tamper_collision_and_negative_preflight_have_no_effects()
+    test_reduced_placement_reports_actual_hosts()
+    test_local_rog_placement_reports_actual_hosts()
     print(
         "poco_g3_network_smoke_fleet_test=passed positives=19 negatives=15 "
         "unique_json=true safe_remote_paths=true input_symlinks_rejected=true file_backed_process_io=true partial_cleanup=true "
@@ -464,6 +538,7 @@ def main() -> None:
         "runtime_stage_short=true aliases_100_unique=true socket_bytes_100_accepted=true "
         "socket_bytes_101_rejected=true generation_u64_max_bound=true old_207_rejected=true "
         "layout_collision_rejected=true frozen_stage_plan=true preflight_effects_zero=true plan_only_layout_frozen=true "
+        "reduced_actual_hosts=true seven_processes_not_six_hosts=true "
         "validator_run_completed=false fault_matrix_completed=false performance_evidence=false "
         "g3_complete=false geo_wan=false production_activation=false"
     )

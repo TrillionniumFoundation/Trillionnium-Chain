@@ -14,19 +14,26 @@ POLICY = ROOT / "config/repository-policy-v1.json"
 
 CONVERGENCE_COMMANDS = (
     "bash scripts/ci/check_canonical_development_plan.sh",
-    "python3 scripts/ci/check_plan_manifest_pins_v1.py",
-    "python3 scripts/ci/check_technical_convergence_v1.py",
-    "python3 scripts/ci/test_technical_convergence_v1.py",
-    "python3 scripts/ci/check_module_coverage_v1.py",
     "python3 scripts/ci/check_required_baseline_closure_v1.py",
 )
 CONVERGENCE_REQUIRED_PATHS = (
     "config/technical-convergence-v1.toml",
     "docs/architecture/TRNM_TECHNICAL_CONVERGENCE_V1.md",
     "docs/modules/README.md",
+    "docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md",
     "docs/modules/M04_P2P_TECHNICAL_SPEC_V1.md",
     "docs/modules/M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md",
     "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M12_SETTLEMENT_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md",
     "docs/modules/M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md",
     "docs/modules/M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md",
     "docs/modules/M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md",
@@ -217,6 +224,41 @@ def main() -> int:
         workflow,
         "Validate repository, development, module, node, and blocker truth",
     )
+    native_shard_step = named_step(
+        workflow,
+        "Verify explicit incremental epoch execution candidate",
+    )
+    native_shard_tests = named_step(
+        workflow,
+        "Test native candidate shard contract",
+    )
+    require_tokens(
+        native_shard_tests,
+        ("python3 ../scripts/ci/test_native_candidate_shards_v1.py",),
+        "native candidate shard contract tests",
+    )
+    require_tokens(
+        native_shard_step,
+        (
+            "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
+            "--features test-fixtures,incremental-epoch-candidate",
+            "cargo clippy -p trnm-native-execution-v0",
+        ),
+        "native candidate shard execution",
+    )
+    native_shard_artifact = named_step(
+        workflow,
+        "Retain exact-source native candidate shard evidence",
+    )
+    require_tokens(
+        native_shard_artifact,
+        (
+            "trnm-native-candidate-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}",
+            "${{ runner.temp }}/trnm-native-candidate-shards",
+            "if-no-files-found: error",
+        ),
+        "native candidate shard evidence",
+    )
     prospective_step = named_step(
         workflow,
         "Run separately bound prospective-merge regressions",
@@ -230,16 +272,42 @@ def main() -> int:
         "Run repository security-boundary regressions",
     )
     compile_step = named_step(workflow, "Compile Python CI tooling")
-    require_tokens(exact_step, CONVERGENCE_COMMANDS, "exact-source convergence closure")
+    epoch_step = named_step(workflow, "Verify default and explicit candidate ownership boundaries")
+    require_tokens(epoch_step, (
+        "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
+        "--suite node-epoch",
+        "--deadline-seconds 300",
+        '--evidence-dir "$RUNNER_TEMP/trnm-node-epoch-shards"',
+        "cargo test -p trnm-poco-node --features epoch-runtime-candidate --doc --locked",
+        "cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings",
+        "cargo test -p trnm-consensus-safety-store --features test-fixtures,candidate-epoch-host-v1 --test epoch_journal_v1 --locked",
+    ), "explicit epoch runtime test closure")
+    safety_epoch_step = named_step(workflow, "Verify codec2 epoch host and journal10")
+    require_tokens(safety_epoch_step, (
+        "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
+        "--suite safety-epoch", "--deadline-seconds 900",
+    ), "Safety epoch shard execution")
+    safety_epoch_artifact = named_step(workflow, "Retain exact-source Safety epoch shard evidence")
+    require_tokens(safety_epoch_artifact, (
+        "trnm-safety-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}",
+        "${{ runner.temp }}/trnm-safety-epoch-shards",
+        "if-no-files-found: error",
+    ), "Safety epoch shard evidence")
+    node_epoch_artifact = named_step(workflow, "Retain exact-source node epoch shard evidence")
+    require_tokens(node_epoch_artifact, (
+        "trnm-node-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}",
+        "${{ runner.temp }}/trnm-node-epoch-shards",
+        "if-no-files-found: error",
+    ), "node epoch shard evidence")
+    require_tokens(exact_step, CONVERGENCE_COMMANDS + ("python3 scripts/ci/test_build_closures_v1.py",), "exact-source convergence closure")
     require_tokens(
         prospective_step,
-        CONVERGENCE_COMMANDS,
+        CONVERGENCE_COMMANDS + ("python3 scripts/ci/test_build_closures_v1.py",),
         "prospective-merge convergence closure",
     )
     require_tokens(
         mutant_step,
         (
-            "python3 scripts/ci/test_technical_convergence_v1.py",
             "python3 scripts/ci/test_main_protection_v1.py",
             "python3 scripts/ci/test_codeql_default_setup_v1.py",
         ),
@@ -256,6 +324,7 @@ def main() -> int:
         "required baseline security regressions",
     )
     for path in (
+        "scripts/ci/test_build_closures_v1.py",
         "scripts/ci/check_plan_manifest_pins_v1.py",
         "scripts/ci/check_technical_convergence_v1.py",
         "scripts/ci/test_technical_convergence_v1.py",

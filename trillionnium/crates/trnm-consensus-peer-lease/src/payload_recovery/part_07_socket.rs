@@ -161,7 +161,8 @@ impl PayloadReplayRecoveryDaemonV1 {
             ))?
             .to_path_buf();
         let parent_file = File::open(&parent)?;
-        let parent_identity = descriptor_identity(&parent_file)?;
+        let parent_identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&parent_file.metadata()?);
         verify_bound_directory_identity(&parent, &parent_file, parent_identity)?;
         if fs::symlink_metadata(&self.socket_path).is_ok() {
             return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
@@ -338,7 +339,8 @@ impl PayloadReplayRecoveryClientV1 {
                     "recovery socket path has no parent",
                 ))?;
         let parent_file = File::open(parent)?;
-        let parent_identity = descriptor_identity(&parent_file)?;
+        let parent_identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&parent_file.metadata()?);
         verify_bound_directory_identity(parent, &parent_file, parent_identity)
             .map_err(PayloadReplayRecoverySocketErrorV1::Recovery)?;
         let metadata = fs::symlink_metadata(&self.socket_path)?;
@@ -622,7 +624,7 @@ fn verify_socket_identity(
     socket_path: &Path,
     parent: &Path,
     parent_file: &File,
-    parent_identity: AuthorityPathIdentityV1,
+    parent_identity: PayloadReplayDirectoryIdentityV1,
     expected: RecoverySocketIdentityV1,
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
     verify_bound_directory_identity(parent, parent_file, parent_identity)?;
@@ -1076,35 +1078,7 @@ fn write_recovery_frame(
     frame: &[u8],
     deadline: Instant,
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
-    let mut offset = 0usize;
-    while offset < frame.len() {
-        stream.set_write_timeout(Some(remaining_recovery_timeout(deadline)?))?;
-        match stream.write(&frame[offset..]) {
-            Ok(0) => {
-                return Err(PayloadReplayRecoveryErrorV1::Io(io::Error::new(
-                    io::ErrorKind::WriteZero,
-                    "recovery socket accepted no response bytes",
-                )))
-            }
-            Ok(written) => offset += written,
-            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
-            Err(error)
-                if matches!(
-                    error.kind(),
-                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
-                ) =>
-            {
-                return Err(PayloadReplayRecoveryErrorV1::Io(io::Error::new(
-                    io::ErrorKind::TimedOut,
-                    "recovery socket operation deadline exceeded",
-                )))
-            }
-            Err(error) => return Err(PayloadReplayRecoveryErrorV1::Io(error)),
-        }
-    }
-    stream.set_write_timeout(Some(remaining_recovery_timeout(deadline)?))?;
-    stream.flush()?;
-    Ok(())
+    crate::unix::write_all_until(stream, frame, deadline).map_err(map_peer_lease_error)
 }
 
 #[cfg(unix)]
@@ -1113,33 +1087,7 @@ fn read_exact_until_recovery(
     buffer: &mut [u8],
     deadline: Instant,
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
-    let mut offset = 0usize;
-    while offset < buffer.len() {
-        stream.set_read_timeout(Some(remaining_recovery_timeout(deadline)?))?;
-        match stream.read(&mut buffer[offset..]) {
-            Ok(0) => {
-                return Err(PayloadReplayRecoveryErrorV1::Io(io::Error::new(
-                    io::ErrorKind::UnexpectedEof,
-                    "recovery socket closed before frame completed",
-                )))
-            }
-            Ok(read) => offset += read,
-            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
-            Err(error)
-                if matches!(
-                    error.kind(),
-                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
-                ) =>
-            {
-                return Err(PayloadReplayRecoveryErrorV1::Io(io::Error::new(
-                    io::ErrorKind::TimedOut,
-                    "recovery socket operation deadline exceeded",
-                )))
-            }
-            Err(error) => return Err(PayloadReplayRecoveryErrorV1::Io(error)),
-        }
-    }
-    Ok(())
+    crate::unix::read_exact_until(stream, buffer, deadline).map_err(map_peer_lease_error)
 }
 
 #[cfg(unix)]
@@ -1363,12 +1311,15 @@ mod socket_tests {
         let eof = read_recovery_request(&mut server, Instant::now() + Duration::from_millis(100))
             .map_err(RecoverySocketConnectionErrorV1::Client)
             .expect_err("EOF must reject this client");
-        assert!(matches!(
-            eof,
-            RecoverySocketConnectionErrorV1::Client(
-                PayloadReplayRecoveryErrorV1::Io(ref error)
-            ) if error.kind() == io::ErrorKind::UnexpectedEof
-        ));
+        assert!(
+            matches!(
+                eof,
+                RecoverySocketConnectionErrorV1::Client(
+                    PayloadReplayRecoveryErrorV1::Io(ref error)
+                ) if error.kind() == io::ErrorKind::UnexpectedEof
+            ),
+            "unexpected disconnected client result: {eof:?}"
+        );
 
         // A peer that dribbles only part of a header is bounded by the same
         // absolute deadline and is likewise isolated to its connection.
@@ -1384,5 +1335,39 @@ mod socket_tests {
                 PayloadReplayRecoveryErrorV1::Io(ref error)
             ) if error.kind() == io::ErrorKind::TimedOut
         ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn recovery_socket_directory_pin_allows_children_but_rejects_replacement_v1() {
+        let root = tempfile::tempdir().unwrap();
+        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let parent = root.path().join("endpoint");
+        fs::create_dir(&parent).unwrap();
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o700)).unwrap();
+        let parent_file = File::open(&parent).unwrap();
+        let identity =
+            PayloadReplayDirectoryIdentityV1::from_metadata(&parent_file.metadata().unwrap());
+        let socket = parent.join("owner.sock");
+        let listener = UnixListener::bind(&socket).unwrap();
+        set_recovery_socket_permissions(&socket).unwrap();
+        let expected = socket_identity(&socket).unwrap();
+        verify_socket_identity(&socket, &parent, &parent_file, identity, expected).unwrap();
+        fs::create_dir(parent.join("child")).unwrap();
+        verify_socket_identity(&socket, &parent, &parent_file, identity, expected).unwrap();
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o750)).unwrap();
+        assert!(
+            verify_socket_identity(&socket, &parent, &parent_file, identity, expected).is_err()
+        );
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o700)).unwrap();
+        verify_socket_identity(&socket, &parent, &parent_file, identity, expected).unwrap();
+        fs::rename(&parent, root.path().join("displaced")).unwrap();
+        fs::create_dir(&parent).unwrap();
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o700)).unwrap();
+        assert!(verify_bound_directory_identity(&parent, &parent_file, identity).is_err());
+        fs::remove_dir(&parent).unwrap();
+        std::os::unix::fs::symlink(root.path().join("displaced"), &parent).unwrap();
+        assert!(verify_bound_directory_identity(&parent, &parent_file, identity).is_err());
+        drop(listener);
     }
 }

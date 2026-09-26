@@ -457,7 +457,7 @@ impl SimValidationKeyV0 {
 #[derive(Debug)]
 enum SimValidationCapabilityV0 {
     Permit(CoreIssuedValidPermitV0),
-    ApplicationSealed(ApplicationSealedValidV0),
+    ApplicationSealed(Box<ApplicationSealedValidV0>),
 }
 
 /// Development-only stand-in for the private ApplicationStore callback
@@ -1951,9 +1951,9 @@ impl Simulator {
                     "online Core lacks its simulated application seal authority",
                 ),
             )?;
-            callback.capability = SimValidationCapabilityV0::ApplicationSealed(
+            callback.capability = SimValidationCapabilityV0::ApplicationSealed(Box::new(
                 authority.seal_after_application_store_commit_v0(permit, commitments, artifact_ref),
-            );
+            ));
             self.nodes[node].validation_callbacks.insert(key, callback);
         }
 

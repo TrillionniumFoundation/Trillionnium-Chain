@@ -239,10 +239,12 @@ pub fn run_candidate_devnet_v1(
     );
 
     let outcome = run_bounded_consensus_with_external_fence_v1(
-        config,
-        Duration::from_secs(arguments.duration_seconds()),
-        arguments.max_blocks(),
-        arguments.report_path().to_path_buf(),
+        crate::consensus_runtime::ConsensusRunRequestV1 {
+            config,
+            duration: Duration::from_secs(arguments.duration_seconds()),
+            max_blocks: arguments.max_blocks(),
+            report_path: arguments.report_path().to_path_buf(),
+        },
         Arc::new(external_fence),
         |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
     )

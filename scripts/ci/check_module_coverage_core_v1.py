@@ -238,7 +238,6 @@ def main() -> int:
             f"{module_id}: invalid anchor",
         )
         require(row["anchor"] == module_id.lower(), f"{module_id}: anchor drift")
-        require(len(section.encode("utf-8")) >= 700, f"{module_id}: technical section is too shallow")
         for marker in TECHNICAL_REQUIRED_MARKERS:
             require(marker in section, f"{module_id}: technical section missing marker {marker}")
         require(

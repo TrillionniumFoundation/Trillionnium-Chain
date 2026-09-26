@@ -485,7 +485,7 @@ changed_tmp="$tmpdir/changed"
 
 if [[ -s "$changed_tmp" && "$lifecycle" != "archived" ]]; then
   if [[ ! -f "$topic_path" ]]; then
-    error "dirty worktree has no Git-local PROJECT_TOPIC"
+    : # Optional local edit scopes are not tracked project or source authority.
   else
     topic_project=$(sed -n 's/^project_id=//p' "$topic_path" | head -1)
     topic_name=$(sed -n 's/^topic=//p' "$topic_path" | head -1)
@@ -608,10 +608,10 @@ case "$mode" in
   --push) ci_runner_policy_source=--head ;;
 esac
 if ! bash "$root/scripts/check_ci_runner_policy.sh" "$ci_runner_policy_source"; then
-  error "GitHub Actions jobs must use only the dedicated X230 self-hosted runner"
+  error "GitHub Actions jobs must satisfy the hosted/privileged mixed-trust runner policy"
 fi
 if ! bash "$root/scripts/check_cargo_offline_policy.sh" "$ci_runner_policy_source"; then
-  error "GitHub Actions Cargo jobs must use the frozen X230 offline policy"
+  error "GitHub Actions Cargo jobs must preserve hosted isolation and privileged offline-cache policy"
 fi
 
 printf 'warnings=%d errors=%d\n' "$warnings" "$errors"

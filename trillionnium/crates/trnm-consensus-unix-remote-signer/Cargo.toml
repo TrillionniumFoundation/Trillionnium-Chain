@@ -35,6 +35,7 @@ proposal-purpose-client = []
 test-fixture = ["dep:ed25519-dalek", "proposal-purpose-client"]
 
 [dependencies]
+rustix = { version = "1.1.4", features = ["event", "net"] }
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
 trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }
 trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }

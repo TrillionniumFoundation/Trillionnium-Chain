@@ -91,6 +91,10 @@ fn run() -> Result<ExitCode> {
     // The lease daemon is an independent candidate-only process.  Dispatch it
     // before the normal command envelope so this subcommand never parses a
     // validator run-root/config and therefore cannot load validator secrets.
+    if command == "native-client" {
+        trnm_poco_lab_validator::native_client_tool::run_cli_v1(arguments)?;
+        return Ok(ExitCode::SUCCESS);
+    }
     if command == "peer-lease-daemon" {
         return run_peer_lease_daemon(arguments);
     }
@@ -399,10 +403,12 @@ fn run() -> Result<ExitCode> {
                     let external_fence =
                         Arc::new(UnixExternalPeerLeaseAuthorityV1::from_client(client));
                     run_bounded_consensus_with_external_fence_v1(
-                        loaded,
-                        Duration::from_secs(duration_seconds),
-                        max_blocks,
-                        report_path,
+                        trnm_poco_lab_validator::consensus_runtime::ConsensusRunRequestV1 {
+                            config: loaded,
+                            duration: Duration::from_secs(duration_seconds),
+                            max_blocks,
+                            report_path,
+                        },
                         external_fence,
                         commission_deployed_ordinary_runtime_for_cli_v1,
                     )?
@@ -420,10 +426,12 @@ fn run() -> Result<ExitCode> {
                 }
             }
             None => run_deployed_bounded_consensus_v1(
-                loaded,
-                Duration::from_secs(duration_seconds),
-                max_blocks,
-                report_path,
+                trnm_poco_lab_validator::consensus_runtime::ConsensusRunRequestV1 {
+                    config: loaded,
+                    duration: Duration::from_secs(duration_seconds),
+                    max_blocks,
+                    report_path,
+                },
             )?,
         };
         return match outcome {
@@ -448,7 +456,7 @@ fn run() -> Result<ExitCode> {
         // activation switch.  A future caller must supply every authority
         // object (including P2P, event/replay, proposal, Vote/Timeout, and
         // fleet producers) to
-        // `run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1`
+        // the complete entry named by external_composition_projection_v1
         // explicitly; this command merely proves that the public bundle can
         // be authenticated without importing private key material here.
         let binary = env::current_exe().context("resolve current executable")?;
@@ -462,40 +470,41 @@ fn run() -> Result<ExitCode> {
             "external-authority loader unexpectedly retained a non-consensus role secret"
         );
         let core = loaded.core_config()?;
-        println!(
-            "{}",
-            serde_json::to_string(&json!({
-                "schema_version": 1,
-                "status": "external-consensus-authority-config-secret-free",
-                "run_id": loaded.run_id(),
-                "host_id": loaded.host_id(),
-                "validator_id": hex::encode(loaded.local_validator().as_bytes()),
-                "validator_count": loaded.validator_set().validators().len(),
-                "validator_set_id": hex::encode(loaded.validator_set().id().as_bytes()),
-                "validator_set_sha256": hex::encode(loaded.validator_set_sha256()),
-                "topology_sha256": hex::encode(loaded.topology_sha256()),
-                "config_sha256": hex::encode(loaded.config_sha256()),
-                "coordinator_manifest_sha256": hex::encode(loaded.coordinator_manifest_sha256()),
-                "binary_sha256": hex::encode(loaded.binary_sha256()),
-                "core_max_blocks": core.max_blocks(),
-                "consensus_secret_loaded": false,
-                "p2p_identity_secret_loaded": loaded.has_local_p2p_identity_secret(),
-                "operator_recovery_secret_loaded": loaded.has_local_operator_recovery_secret(),
-                "all_local_role_secrets_loaded": loaded.has_local_consensus_secret()
-                    || loaded.has_local_p2p_identity_secret()
-                    || loaded.has_local_operator_recovery_secret(),
-                "external_peer_lease_required": true,
-                "external_monotonic_watermark_required": true,
-                "external_vote_timeout_producer_required": true,
-                "external_proposal_producer_required": true,
-                "external_fleet_signer_required": true,
-                "complete_composition_api": "run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1",
-                "production_candidate": PRODUCTION_CANDIDATE,
-                "production_consensus_activation": PRODUCTION_CONSENSUS_ACTIVATION,
-                "validator_runtime_started": VALIDATOR_RUNTIME_STARTED,
-                "g3_evidence_complete": false,
-            }))?
-        );
+        let mut report = json!({
+            "schema_version": 1,
+            "status": "external-consensus-authority-config-secret-free",
+            "run_id": loaded.run_id(),
+            "host_id": loaded.host_id(),
+            "validator_id": hex::encode(loaded.local_validator().as_bytes()),
+            "validator_count": loaded.validator_set().validators().len(),
+            "validator_set_id": hex::encode(loaded.validator_set().id().as_bytes()),
+            "validator_set_sha256": hex::encode(loaded.validator_set_sha256()),
+            "topology_sha256": hex::encode(loaded.topology_sha256()),
+            "config_sha256": hex::encode(loaded.config_sha256()),
+            "coordinator_manifest_sha256": hex::encode(loaded.coordinator_manifest_sha256()),
+            "binary_sha256": hex::encode(loaded.binary_sha256()),
+            "core_max_blocks": core.max_blocks(),
+            "consensus_secret_loaded": false,
+            "p2p_identity_secret_loaded": loaded.has_local_p2p_identity_secret(),
+            "operator_recovery_secret_loaded": loaded.has_local_operator_recovery_secret(),
+            "all_local_role_secrets_loaded": loaded.has_local_consensus_secret()
+                || loaded.has_local_p2p_identity_secret()
+                || loaded.has_local_operator_recovery_secret(),
+            "production_candidate": PRODUCTION_CANDIDATE,
+            "production_consensus_activation": PRODUCTION_CONSENSUS_ACTIVATION,
+            "validator_runtime_started": VALIDATOR_RUNTIME_STARTED,
+            "g3_evidence_complete": false,
+        });
+        report
+            .as_object_mut()
+            .expect("report is a JSON object")
+            .extend(
+                external_composition_projection_v1()
+                    .as_object()
+                    .expect("role projection is an object")
+                    .clone(),
+            );
+        println!("{}", serde_json::to_string(&report)?);
         return Ok(ExitCode::SUCCESS);
     }
     let binary = env::current_exe().context("resolve current executable")?;
@@ -746,7 +755,7 @@ where
 }
 
 #[cfg(unix)]
-fn validate_peer_lease_socket_path_v1(path: &PathBuf) -> Result<()> {
+fn validate_peer_lease_socket_path_v1(path: &std::path::Path) -> Result<()> {
     ensure!(
         path.is_absolute(),
         "peer-lease socket path must be absolute"
@@ -765,12 +774,12 @@ fn validate_peer_lease_socket_path_v1(path: &PathBuf) -> Result<()> {
 }
 
 #[cfg(not(unix))]
-fn validate_peer_lease_socket_path_v1(_path: &PathBuf) -> Result<()> {
+fn validate_peer_lease_socket_path_v1(_path: &std::path::Path) -> Result<()> {
     bail!("peer-lease socket opt-in is supported only on Unix")
 }
 
 #[cfg(unix)]
-fn validate_private_parent_v1(path: &PathBuf, label: &str) -> Result<Metadata> {
+fn validate_private_parent_v1(path: &std::path::Path, label: &str) -> Result<Metadata> {
     let parent = path
         .parent()
         .ok_or_else(|| anyhow::anyhow!("{label} path has no parent"))?;
@@ -794,9 +803,9 @@ fn validate_private_parent_v1(path: &PathBuf, label: &str) -> Result<Metadata> {
 }
 
 #[cfg(unix)]
-fn ready_parent_components_v1(path: &PathBuf, label: &str) -> Result<Vec<PathBuf>> {
+fn ready_parent_components_v1(path: &std::path::Path, label: &str) -> Result<Vec<PathBuf>> {
     let mut missing = Vec::new();
-    let mut cursor = path.clone();
+    let mut cursor = path.to_path_buf();
     loop {
         match fs::symlink_metadata(&cursor) {
             Ok(metadata) => {
@@ -826,7 +835,7 @@ fn ready_parent_components_v1(path: &PathBuf, label: &str) -> Result<Vec<PathBuf
 }
 
 #[cfg(unix)]
-fn validate_peer_lease_ready_path_v1(path: &PathBuf, label: &str) -> Result<()> {
+fn validate_peer_lease_ready_path_v1(path: &std::path::Path, label: &str) -> Result<()> {
     ensure!(path.is_absolute(), "{label} path must be absolute");
     ensure!(
         path.components()
@@ -842,7 +851,7 @@ fn validate_peer_lease_ready_path_v1(path: &PathBuf, label: &str) -> Result<()> 
 }
 
 #[cfg(unix)]
-fn ensure_private_ready_parent_v1(path: &PathBuf, label: &str) -> Result<()> {
+fn ensure_private_ready_parent_v1(path: &std::path::Path, label: &str) -> Result<()> {
     let missing = ready_parent_components_v1(path, label)?;
     for directory in missing.iter().rev() {
         let created = match fs::create_dir(directory) {
@@ -868,7 +877,7 @@ fn ensure_private_ready_parent_v1(path: &PathBuf, label: &str) -> Result<()> {
 }
 
 #[cfg(unix)]
-fn validate_peer_lease_data_path_v1(path: &PathBuf, label: &str) -> Result<()> {
+fn validate_peer_lease_data_path_v1(path: &std::path::Path, label: &str) -> Result<()> {
     ensure!(path.is_absolute(), "{label} path must be absolute");
     ensure!(
         path.components()
@@ -880,7 +889,7 @@ fn validate_peer_lease_data_path_v1(path: &PathBuf, label: &str) -> Result<()> {
 }
 
 #[cfg(not(unix))]
-fn validate_peer_lease_data_path_v1(_path: &PathBuf, _label: &str) -> Result<()> {
+fn validate_peer_lease_data_path_v1(_path: &std::path::Path, _label: &str) -> Result<()> {
     bail!("peer-lease daemon is supported only on Unix")
 }
 
@@ -950,8 +959,7 @@ where
     ensure!(
         ready_file
             .as_ref()
-            .map_or(true, |ready| ready != &journal_lock
-                && ready != &journal_head),
+            .is_none_or(|ready| ready != &journal_lock && ready != &journal_head),
         "peer-lease ready path collides with a journal sidecar"
     );
     Ok(PeerLeaseDaemonArgsV1 {
@@ -1090,6 +1098,21 @@ fn parse_canonical_hex32(value: Option<std::ffi::OsString>, field: &str) -> Resu
         .map_err(|_| anyhow::anyhow!("{field} must encode exactly 32 bytes"))
 }
 
+fn external_composition_projection_v1() -> serde_json::Value {
+    use trnm_poco_lab_validator::consensus_runtime::run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runtime_event_and_p2p_identity_producer_v1;
+    let _entry = run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runtime_event_and_p2p_identity_producer_v1;
+    json!({
+        "external_peer_lease_required": true,
+        "external_monotonic_watermark_required": true,
+        "external_vote_timeout_producer_required": true,
+        "external_proposal_producer_required": true,
+        "external_fleet_signer_required": true,
+        "external_runtime_event_producer_required": true,
+        "external_p2p_identity_producer_required": true,
+        "complete_composition_api": stringify!(run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runtime_event_and_p2p_identity_producer_v1),
+    })
+}
+
 fn usage() -> &'static str {
     "usage: trnm-poco-lab-validator peer-lease-daemon --socket PATH --journal PATH [--ready-file PATH] | trnm-poco-lab-validator verify-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-external-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-replay-archive <observer-public-root> <validator-config> <absolute-archive-context> <absolute-archive-entries> <absolute-archive-head> <absolute-terminal-seal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-network-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-consensus-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-journal <observer-public-root> <validator-config> <signed-journal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-metrics <observer-public-root> <validator-config> <signed-metrics> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-final-state <observer-public-root> <validator-config> <signed-final-state> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-fleet-start-certificate <observer-public-root> <validator-config> <fleet-start-certificate> <expected-coordinator-manifest-sha256> <expected-duration-seconds> <expected-max-blocks> | trnm-poco-lab-validator verify-isolated-startup-rejection <observer-public-root> <validator-config> <signed-rejection> <fleet-start-certificate> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator network-smoke <private-run-root> <validator-config> <rounds> <timeout-seconds> | trnm-poco-lab-validator run-consensus <private-run-root> <validator-config> <duration-seconds> <max-blocks> <report-path> [--peer-lease-socket PATH] | trnm-poco-lab-validator runtime-control <private-run-root> <validator-config> <process-instance> <generation> <nonce> <verb> <fault> | trnm-poco-lab-validator start-runtime-event-journal <private-run-root> <validator-config> <absolute-journal-path> | trnm-poco-lab-validator attempt-isolated-startup-rejection <private-run-root> <validator-config> <stale_snapshot|rollback_attempt> <absolute-isolated-authority-root> <attempt-nonce-hex> <absolute-evidence-path>"
 }
@@ -1110,15 +1133,25 @@ mod tests {
     };
 
     #[test]
-    fn external_config_command_is_explicit_and_keeps_activation_closed() {
-        let source = include_str!("main.rs");
-        assert!(source.contains("verify-external-config"));
-        assert!(source.contains("LoadedValidatorConfig::load_external_authority"));
-        assert!(source.contains("\"consensus_secret_loaded\": false"));
-        assert!(source.contains("complete_composition_api"));
-        assert!(
-            source.contains("\"production_consensus_activation\": PRODUCTION_CONSENSUS_ACTIVATION")
-        );
+    fn external_config_projection_requires_all_secret_free_roles() {
+        let report = super::external_composition_projection_v1();
+        assert_eq!(report["complete_composition_api"],
+            "run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runtime_event_and_p2p_identity_producer_v1");
+        for role in [
+            "external_peer_lease_required",
+            "external_monotonic_watermark_required",
+            "external_vote_timeout_producer_required",
+            "external_proposal_producer_required",
+            "external_fleet_signer_required",
+            "external_runtime_event_producer_required",
+            "external_p2p_identity_producer_required",
+        ] {
+            assert_eq!(report[role], true, "missing actual constructor role {role}");
+        }
+        const _: () = {
+            assert!(!super::PRODUCTION_CONSENSUS_ACTIVATION);
+            assert!(!super::VALIDATOR_RUNTIME_STARTED);
+        };
     }
 
     #[test]

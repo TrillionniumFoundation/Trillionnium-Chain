@@ -290,7 +290,7 @@ impl RestartProtocolAdmissionMapV1 {
                 return Ok(RestartProtocolAdmissionV1::ExactReplay);
             }
             return Err(RestartProtocolIngressErrorV1::Equivocation {
-                origin: message.origin,
+                origin: Box::new(message.origin),
                 phase: message.phase,
             });
         }
@@ -660,7 +660,7 @@ impl BoundedRestartProtocolIngressV1 {
         &mut self,
         phase: RestartProtocolPhaseV1,
         payload: &[u8],
-        mut relay_window: Option<&mut RestartRelayAdmissionWindowV1>,
+        relay_window: Option<&mut RestartRelayAdmissionWindowV1>,
     ) -> Result<RestartProtocolOriginReservationV1, RestartProtocolIngressErrorV1> {
         self.collector.ensure_live()?;
         if payload.is_empty() {
@@ -717,7 +717,7 @@ impl BoundedRestartProtocolIngressV1 {
         let payload_digest = message.payload_digest();
         self.collector
             .commit_preflight(&message, collector_preflight);
-        let relay_instance = match (relay_window.as_deref_mut(), relay_preflight) {
+        let relay_instance = match (relay_window, relay_preflight) {
             (Some(window), Some(admission)) => {
                 window.commit_preflight(&message, admission);
                 Some(window.instance)
@@ -739,6 +739,7 @@ impl BoundedRestartProtocolIngressV1 {
 
     /// Revalidates an already-issued reservation for an exact local retry.
     /// This borrows the sole verified owner and never mints a second one.
+    #[cfg(test)]
     pub(crate) fn verify_originated_statement_exact_retry_v1(
         &self,
         reservation: &VerifiedRestartProtocolOriginReservationV1,
@@ -949,6 +950,7 @@ impl fmt::Debug for RestartProtocolOriginReservationV1 {
 }
 
 impl RestartProtocolOriginReservationV1 {
+    #[cfg(test)]
     fn message_v1(&self) -> RestartProtocolMessageV1 {
         RestartProtocolMessageV1 {
             validator_set_id: self.validator_set_id,
@@ -1039,6 +1041,7 @@ impl VerifiedRestartProtocolOriginReservationV1 {
         self.reservation.payload_digest
     }
 
+    #[cfg(test)]
     pub(crate) const fn relay_reserved_v1(&self) -> bool {
         self.reservation.relay_instance.is_some()
     }
@@ -1058,7 +1061,7 @@ pub enum RestartProtocolIngressErrorV1 {
     OriginReservationMismatch,
     InconsistentAdmissionState,
     Equivocation {
-        origin: ValidatorId,
+        origin: Box<ValidatorId>,
         phase: RestartProtocolPhaseV1,
     },
     Poisoned,

@@ -68,6 +68,9 @@ signed_runtime_final_state_contract = true
 signed_runtime_final_state_independent_verifier = true
 signed_runtime_evidence_runtime_wired = true
 authenticated_frame_restart_replay_authority = false
+recovery_ready_start_external_purpose_binding = true
+recovery_ready_start_runtime_integration = false
+recovery_start_activation = false
 authenticated_payload_frame_durable_replay_candidate = true
 authenticated_payload_frame_durable_replay_production_activation = false
 consensus_wire_candidate = true
@@ -106,18 +109,21 @@ validator_runtime_started = false
 incomplete = true
 
 [dependencies]
+trnm-tx-lifecycle-v0 = { version = "0.1.0", path = "../trnm-tx-lifecycle-v0" }
+trnm-application-tx-builder-v0 = { version = "0.1.0", path = "../trnm-application-tx-builder-v0" }
+trnm-mempool = { version = "0.1.0", path = "../trnm-mempool" }
 anyhow = "1"
 ed25519-dalek = "2"
 fs2 = "0.4"
 getrandom = "0.2"
 hex = "0.4"
 libc = "0.2"
-rustix = { version = "1.1.4", features = ["process", "time"] }
+rustix = { version = "1.1.4", features = ["process", "time", "net", "event"] }
 serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+serde_json = { version = "1", features = ["float_roundtrip"] }
 sha2 = "0.10"
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
-trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto", features = ["bounded-signature-cache"] }
 trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }
 trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
@@ -126,10 +132,12 @@ trnm-consensus-unix-fleet-signer = { version = "0.1.0", path = "../trnm-consensu
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
 trnm-native-application = { version = "0.1.0", path = "../trnm-native-application" }
 trnm-native-execution-v0 = { version = "0.1.0", path = "../trnm-native-execution-v0" }
-trnm-poco-node = { version = "0.1.0", path = "../trnm-poco-node", features = ["lab-validator-runtime"] }
+trnm-poco-node = { version = "0.1.0", path = "../trnm-poco-node", features = ["lab-validator-runtime", "tx-admission-wal"] }
 trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
 
 [dev-dependencies]
+trnm-native-application-sqlite = { version = "0.1.0", path = "../trnm-native-application-sqlite" }
+rusqlite = { version = "0.32", features = ["bundled"] }
 tempfile = "3"
 trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark" }
 trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }

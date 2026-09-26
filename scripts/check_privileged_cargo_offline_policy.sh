@@ -76,7 +76,7 @@ list_workflows() {
   case "$source_mode" in
     --worktree)
       find "$root/.github/workflows" -maxdepth 1 -type f \
-        \( -name '*.yml' -o -name '*.yaml' \) -printf '%f\n' | LC_ALL=C sort
+        \( -name '*.yml' -o -name '*.yaml' \) -exec basename {} \; | LC_ALL=C sort
       ;;
     --staged)
       git -C "$root" ls-files --cached -- '.github/workflows/*.yml' \
@@ -162,7 +162,7 @@ invalid_guard_step_lines() {
     /^            --toolchain [A-Za-z0-9._-]+[[:space:]]*\\?$/ { next }
     /^            --component (clippy|rustfmt)[[:space:]]*\\?$/ { next }
     /^            --state ".+"[[:space:]]*\\?$/ { next }
-    /^            [A-Za-z0-9_./-]+Cargo\.toml:[A-Za-z0-9_./-]+Cargo\.lock[[:space:]]*\\?$/ { next }
+    /^            [A-Za-z0-9_.\/-]+Cargo\.toml:[A-Za-z0-9_.\/-]+Cargo\.lock[[:space:]]*\\?$/ { next }
     { print NR ":" $0 }
   ' "$1"
 }
@@ -294,7 +294,7 @@ done
 # validated by their own exact-source gates and do not share the offline
 # runner cache authority.
 mapfile -t workflows < <(
-  list_workflows | grep -Ev '^trnm-(required-baseline|documentation-truth)\.ya?ml$'
+  list_workflows | grep -Ev '^trnm-(required-baseline|documentation-truth|independent-rust-feedback)\.ya?ml$'
 )
 expected_workflows="$tmp/expected-workflows"
 printf '%s\n' "${!class[@]}" | cut -d: -f1 | LC_ALL=C sort -u >"$expected_workflows"

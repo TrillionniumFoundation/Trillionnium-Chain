@@ -25,6 +25,13 @@ SELF = 'scripts/ci/check_documentation_contracts_v1.py'
 TEST = 'scripts/ci/test_documentation_contracts_v1.py'
 OPERATIONS = 'config/documentation-operations-v1.json'
 OPERATION_GUIDE = 'docs/modules/TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md'
+SUPPLEMENT_OPERATIONS = 'config/documentation-operations-supplement-v1.json'
+SUPPLEMENT_GUIDE = 'docs/modules/TRNM_OPERATION_CLOSURE_SUPPLEMENT_V1.md'
+SUPPLEMENT_GATE = 'scripts/ci/check_documentation_operations_supplement_v1.py'
+SUPPLEMENT_TEST = 'scripts/ci/test_documentation_operations_supplement_v1.py'
+IMPLEMENTATION_MATRIX = 'docs/modules/TRNM_MODULE_IMPLEMENTATION_ACCEPTANCE_MATRIX_V1.md'
+IMPLEMENTATION_MATRIX_GATE = 'scripts/ci/check_module_implementation_contracts_v1.py'
+IMPLEMENTATION_MATRIX_TEST = 'scripts/ci/test_module_implementation_contracts_v1.py'
 REQUIRED_FOUNDATION_OPERATIONS = {
     'M02-OP-VOTE-BARRIER', 'M02-OP-TIMEOUT-BARRIER', 'M03-OP-SIGN-EXACT',
     'M04-OP-PERSIST-INGRESS', 'M04-OP-ACK-PREPARED', 'M08-OP-COMMIT-STRICT',
@@ -156,16 +163,23 @@ def validate_structure(data: dict[str, Any], coverage: dict[str, Any]) -> None:
             'DOC-LINEAGE', 'observation fields')
     require(isinstance(obs['observed_source'], str) and re.fullmatch(r'[0-9a-f]{40}', obs['observed_source']) is not None,
             'DOC-LINEAGE', 'observed source')
-    require(type(obs['selected_successor_pr']) is int and obs['selected_successor_pr'] == 62,
-            'DOC-LINEAGE', 'selected integration successor')
     require(obs['current_identity'] == 'derive-head-tree-base-and-prospective-merge-at-verification-time',
             'DOC-LINEAGE', 'mutable current identity must not be pinned as an observation')
-    expected_stack = [
-        {'pr': 62, 'base_ref': 'main', 'head_ref': 'work/plan-v2-full-gap-closure-20260902'},
-        {'pr': 85, 'base_ref': 'work/plan-v2-full-gap-closure-20260902', 'head_ref': 'work/poco-authority-ai-convergence-20260907'},
-        {'pr': 86, 'base_ref': 'work/poco-authority-ai-convergence-20260907', 'head_ref': 'fix/chain-pcc1-runtime-integration'},
-    ]
-    require(obs['stack'] == expected_stack, 'DOC-LINEAGE', 'observed stack differs; re-observe/review explicitly')
+    # Historical stack records provenance only; current PR identity comes from CI.
+    stack = obs['stack']
+    require(isinstance(stack, list) and bool(stack), 'DOC-LINEAGE', 'empty historical stack')
+    seen = set()
+    previous = 'main'
+    for row in stack:
+        require(isinstance(row, dict) and set(row) == {'pr', 'base_ref', 'head_ref'},
+                'DOC-LINEAGE', 'historical stack row')
+        require(type(row['pr']) is int and row['pr'] > 0 and row['pr'] not in seen,
+                'DOC-LINEAGE', 'historical PR identity')
+        require(row['base_ref'] == previous and isinstance(row['head_ref'], str) and bool(row['head_ref']),
+                'DOC-LINEAGE', 'disconnected historical stack')
+        seen.add(row['pr'])
+        previous = row['head_ref']
+    require(type(obs['selected_successor_pr']) is int and obs['selected_successor_pr'] == stack[0]['pr'], 'DOC-LINEAGE', 'historical stack root mismatch')
     rows = data['modules']
     require(isinstance(rows, list) and all(isinstance(x, dict) for x in rows), 'DOC-MODULES', 'rows')
     require([x.get('id') for x in rows] == MODULES, 'DOC-MODULES', 'exact ordered M00-M17 inventory')
@@ -528,7 +542,11 @@ def source_identity(root: Path, expected: str | None = None) -> tuple[str, str]:
 
 def validate_files(root: Path, data: dict[str, Any], manifest: dict[str, Any],
                    operation_refs: set[str] | None = None) -> dict[str, dict[str, str]]:
-    refs = {REGISTRY, GUIDE, AUTHORITY, REVIEW, PLAN, REFERENCE, MANIFEST, COVERAGE, SELF, TEST}
+    refs = {
+        REGISTRY, GUIDE, AUTHORITY, REVIEW, PLAN, REFERENCE, MANIFEST, COVERAGE, SELF, TEST,
+        SUPPLEMENT_OPERATIONS, SUPPLEMENT_GUIDE, SUPPLEMENT_GATE, SUPPLEMENT_TEST,
+        IMPLEMENTATION_MATRIX, IMPLEMENTATION_MATRIX_GATE, IMPLEMENTATION_MATRIX_TEST,
+    }
     refs.update(operation_refs or set())
     refs.update(data['pcc1_v0_imports'])
     for row in data['modules']:
@@ -558,7 +576,7 @@ def validate_files(root: Path, data: dict[str, Any], manifest: dict[str, Any],
     validate_guide(data, (root/GUIDE).read_text(encoding='utf-8'))
     plan = (root/PLAN).read_text(encoding='utf-8')
     reference = (root/REFERENCE).read_text(encoding='utf-8')
-    for path in [AUTHORITY, GUIDE, REVIEW, REGISTRY]:
+    for path in [AUTHORITY, GUIDE, REVIEW, REGISTRY, SUPPLEMENT_OPERATIONS]:
         require(path in plan, 'DOC-ENTRYPOINT', path+' missing from sole plan')
     for text in [plan, reference]:
         require('legacy-ledger-observation' in text and 'VotePublished' in text and 'ReceiptPublished' in text,
@@ -579,14 +597,23 @@ def main() -> int:
     manifest = tomllib.loads((ROOT/MANIFEST).read_text(encoding='utf-8'))
     validate_structure(data, coverage)
     operations = json.loads((ROOT/OPERATIONS).read_text(encoding='utf-8'), object_pairs_hook=strict_object)
+    from check_documentation_operations_supplement_v1 import validate as validate_supplement
+    supplemental_report = validate_supplement()
+    from check_module_implementation_contracts_v1 import load_registry as load_matrix_registry
+    from check_module_implementation_contracts_v1 import validate_matrix
+    matrix_report = validate_matrix(
+        (ROOT/IMPLEMENTATION_MATRIX).read_text(encoding='utf-8'),
+        load_matrix_registry(),
+    )
     operation_report, operation_refs = validate_operations(ROOT, operations, data, coverage)
-    require(manifest.get('selected_successor_pull_request') == data['integration_observation']['selected_successor_pr'],
-            'DOC-LINEAGE', 'plan manifest successor mismatch')
-    require(subprocess.run(['git', 'merge-base', '--is-ancestor', data['integration_observation']['observed_source'], 'HEAD'],
-                           cwd=ROOT, capture_output=True).returncode == 0, 'DOC-LINEAGE', 'observed source is not an ancestor')
-    require(subprocess.run(['git', 'merge-base', '--is-ancestor', operations['source_observation'], 'HEAD'],
-                           cwd=ROOT, capture_output=True).returncode == 0,
-            'DOC-OP-SOURCE', 'operation source observation is not an ancestor')
+    require(type(manifest.get('selected_successor_pull_request')) is int and
+            manifest['selected_successor_pull_request'] == 0 and
+            manifest.get('document_candidate_binding') == 'runtime-git-commit-and-tree',
+            'DOC-LINEAGE', 'current PR identity must be derived at verification time')
+    # Historical observations may precede the mainline convergence commit.
+    # Source identity and every current operation/file binding are checked here;
+    # the canonical manifest gate checks the actual assessed main ancestor.
+    # A historical branch SHA is never allowed to confer current acceptance.
     bindings = validate_files(ROOT, data, manifest, operation_refs)
     canonical = json.dumps(bindings, sort_keys=True, separators=(',', ':')).encode()
     report = {
@@ -601,6 +628,8 @@ def main() -> int:
         'independent_acceptance': 'absent-from-local-index-requires-authenticated-external-evidence',
         'vacant_review_domains': sorted(DOMAIN_IDS), 'production_authority': False,
         'operation_catalog': {key: value for key, value in operation_report.items() if key != 'replay_commands'},
+        'supplemental_operation_catalog': supplemental_report,
+        'implementation_matrix': matrix_report,
     }
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

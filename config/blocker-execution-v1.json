@@ -1,6 +1,6 @@
 {
   "schema": "trnm-blocker-execution-v1",
-  "as_of": "2026-09-02",
+  "as_of": "2026-09-16",
   "source_binding": "runtime-git-commit-and-tree",
   "canonical_register": "config/consensus-mainline.json",
   "repository_policy": "config/repository-policy-v1.json",
@@ -8,7 +8,7 @@
   "release_train": "docs/development/release-train-v1.toml",
   "current_snapshot": "docs/development/CURRENT_SNAPSHOT_V1.json",
   "implementation": {
-    "selected_successor": 62,
+    "selected_successor": 0,
     "workspace_crates": 62,
     "overlay_commit": "a44d67181dc74ad74e64819b913972d2a49abc54",
     "overlay_tree": "a4480623afae1bedee9f03fcf83ce31ec00a2bb7",
@@ -60,7 +60,7 @@
       "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
       "evidence_outputs": ["Accepted source-bound evidence packet."],
       "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
-      "next_actions": ["Pass exact-head/prospective-merge gates on PR 62, obtain independent reviews, merge through protected main and replay post-merge."]
+      "next_actions": ["Pass exact-head/prospective-merge gates on the current PR, obtain independent reviews, merge through protected main and replay post-merge."]
     },
     {
       "id": "P0-SCHEMA-001",
@@ -76,7 +76,7 @@
       "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
       "evidence_outputs": ["Accepted source-bound evidence packet."],
       "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
-      "next_actions": ["Replay registry/schema/vector gates on the current PR 62 head and obtain independent protocol acceptance."]
+      "next_actions": ["Replay registry/schema/vector gates on the current PR head and obtain independent protocol acceptance."]
     },
     {
       "id": "P0-PROTOCOL-001",

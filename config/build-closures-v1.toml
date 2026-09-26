@@ -101,3 +101,80 @@ features = []
 required_groups = ["lab", "evidence"]
 forbidden_groups = ["legacy"]
 authority = "simulation-and-evidence-only"
+
+# Package membership alone cannot fence candidate APIs inside an existing
+# production crate. Resolve feature propagation for each supported entrypoint.
+[[feature_closures]]
+id = "node-production-features"
+root_packages = ["trnm-poco-node-cli"]
+default_features = true
+features = []
+required_features = []
+forbidden_features = [
+  "trnm-consensus-crypto/bounded-signature-cache",
+  "trnm-poco-node/epoch-runtime-candidate",
+  "trnm-consensus-core/candidate-epoch-host-v1",
+  "trnm-consensus-safety-store/candidate-epoch-host-v1",
+]
+forbid_test_features = true
+
+[[feature_closures]]
+id = "node-component-default-features"
+root_packages = ["trnm-poco-node"]
+default_features = true
+features = []
+required_features = []
+forbidden_features = [
+  "trnm-consensus-crypto/bounded-signature-cache",
+  "trnm-poco-node/epoch-runtime-candidate",
+  "trnm-consensus-core/candidate-epoch-host-v1",
+  "trnm-consensus-safety-store/candidate-epoch-host-v1",
+]
+forbid_test_features = true
+
+[[feature_closures]]
+id = "outgoing-authority-features"
+root_packages = ["trnm-poco-node-host"]
+default_features = false
+features = ["persistent-authority-candidate"]
+required_features = ["trnm-poco-node/epoch-handoff-checkpoint-candidate"]
+forbidden_features = [
+  "trnm-consensus-crypto/bounded-signature-cache",
+  "trnm-poco-node/epoch-runtime-candidate",
+  "trnm-consensus-core/candidate-epoch-host-v1",
+  "trnm-consensus-safety-store/candidate-epoch-host-v1",
+]
+forbid_test_features = true
+
+[[feature_closures]]
+id = "epoch-runtime-features"
+root_packages = ["trnm-poco-node"]
+default_features = false
+features = ["epoch-runtime-candidate"]
+required_features = [
+  "trnm-consensus-crypto/bounded-signature-cache",
+  "trnm-poco-node/epoch-runtime-candidate",
+  "trnm-poco-node/epoch-handoff-checkpoint-candidate",
+  "trnm-consensus-core/candidate-epoch-host-v1",
+  "trnm-consensus-safety-store/candidate-epoch-host-v1",
+]
+forbidden_features = []
+forbid_test_features = true
+
+[[feature_closures]]
+id = "epoch-runtime-fixture-features"
+root_packages = ["trnm-poco-node"]
+default_features = false
+features = ["epoch-runtime-test-fixtures"]
+required_features = [
+  "trnm-consensus-crypto/bounded-signature-cache",
+  "trnm-poco-node/epoch-runtime-test-fixtures",
+  "trnm-poco-node/epoch-runtime-candidate",
+  "trnm-poco-node/epoch-handoff-checkpoint-candidate",
+  "trnm-consensus-core/candidate-epoch-host-v1",
+  "trnm-consensus-safety-store/candidate-epoch-host-v1",
+  "trnm-consensus-safety-store/test-fixtures",
+  "trnm-native-execution-v0/test-fixtures",
+]
+forbidden_features = []
+forbid_test_features = false

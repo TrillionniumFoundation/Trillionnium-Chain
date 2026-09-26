@@ -27,14 +27,18 @@ use sha2::{Digest, Sha256};
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
     CertifiedHeaderV0, ConsensusParametersV0, FinalityProofV0, QcRef, QuorumCertificate,
-    SignatureBytes, SignedProposalV0, ValidatorSet, Vote,
+    RecoveryReadySetV1, RecoveryStartCertificateV1, SignatureBytes, SignatureVerifier,
+    SignedProposalV0, ValidatorSet, Vote,
 };
 use trnm_poco_node::{
     PocoNodeDeployedLabAuthenticatedReplayFactsV0, PocoNodeDeployedLabAuthenticatedReplayOwnerV0,
     PocoNodeDeployedLabOrdinaryRecoveryOwnerV0, PocoNodeDeployedLabProcess2CaughtUpOwnerV1,
     PocoNodeDeployedLabProcess2RecoveryFactsV0, PocoNodeDeployedLabProcess2RecoveryOwnerV0,
-    PocoNodeDeployedLabRecoveryFactsV0, PocoNodeDeployedLabSignedReplayEntryV0,
-    PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1, PocoNodeDeployedLabZeroDeltaRestartCutV1,
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1, PocoNodeDeployedLabRecoveryFactsV0,
+    PocoNodeDeployedLabSignedReplayEntryV0, PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1,
+    PocoNodeDeployedLabZeroDeltaRestartCutV1, PocoNodeLabRuntimeFactsV0,
+    Process2RecoveryReadyStartCoordinatorV1, Process2RecoveryTransitionFactsV1,
 };
 
 use crate::{
@@ -759,6 +763,49 @@ impl FileIdentityV1 {
     }
 }
 
+// Directory link counts describe children, not the lifetime of the pinned
+// owner. Regular-file hard-link checks deliberately remain in FileIdentityV1.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct DirectoryIdentityV1 {
+    device: u64,
+    inode: u64,
+    owner: u32,
+    group: u32,
+    mode: u32,
+}
+
+impl DirectoryIdentityV1 {
+    fn from_metadata_v1(metadata: &fs::Metadata) -> Self {
+        Self {
+            device: metadata.dev(),
+            inode: metadata.ino(),
+            owner: metadata.uid(),
+            group: metadata.gid(),
+            mode: metadata.permissions().mode() & 0o7777,
+        }
+    }
+
+    fn from_file_v1(file: &File) -> Result<Self> {
+        let metadata = file.metadata().context("inspect pinned replay directory")?;
+        ensure!(
+            metadata.is_dir(),
+            "pinned replay directory is not a directory"
+        );
+        Ok(Self::from_metadata_v1(&metadata))
+    }
+
+    fn matches_metadata_v1(self, metadata: &fs::Metadata) -> bool {
+        metadata.is_dir() && Self::from_metadata_v1(metadata) == self
+    }
+
+    fn matches_file_v1(self, file: &File) -> Result<bool> {
+        let metadata = file
+            .metadata()
+            .context("reinspect pinned replay directory")?;
+        Ok(self.matches_metadata_v1(&metadata))
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct ReplayArchiveEntryIndexV1 {
     coordinate: ReplayArchiveCoordinateV1,
@@ -875,7 +922,7 @@ pub(crate) struct SignedReplayArchiveV1 {
     entries_file: File,
     context_file: File,
     head_file: File,
-    directory_identity: FileIdentityV1,
+    directory_identity: DirectoryIdentityV1,
     entries_identity: FileIdentityV1,
     context_identity: FileIdentityV1,
     head_identity: FileIdentityV1,
@@ -954,12 +1001,17 @@ impl SignedReplayArchiveV1 {
             "replay archive context differs from loaded validator"
         );
         let mut entries_file = open_private_file_v1(&root.join(ENTRY_FILE_V1), true)?;
-        let (head_from_log, tail_predecessor, index, entries_len, _entries_sha256) =
-            audit_entry_log_v1(
-                &mut entries_file,
-                expected.digest,
-                expected.json.maximum_archive_entries,
-            )?;
+        let ReplayArchiveAuditV1 {
+            head: head_from_log,
+            tail_predecessor,
+            index,
+            entries_len,
+            ..
+        } = audit_entry_log_v1(
+            &mut entries_file,
+            expected.digest,
+            expected.json.maximum_archive_entries,
+        )?;
         require_index_within_context_capacity_v1(&index, &expected)?;
         let historically_repaired = repair_or_reject_head_v1(
             &root,
@@ -974,7 +1026,7 @@ impl SignedReplayArchiveV1 {
             observed_head == head_from_log,
             "replay archive head differs after recovery audit"
         );
-        let directory_identity = FileIdentityV1::from_file_v1(&directory)?;
+        let directory_identity = DirectoryIdentityV1::from_file_v1(&directory)?;
         let entries_identity = FileIdentityV1::from_file_v1(&entries_file)?;
         let context_identity = FileIdentityV1::from_file_v1(&context_file)?;
         let head_identity = FileIdentityV1::from_file_v1(&head_file)?;
@@ -1012,6 +1064,172 @@ impl SignedReplayArchiveV1 {
         };
         archive.revalidate_identity_v1()?;
         Ok(archive)
+    }
+
+    /// Read exact parent bytes without treating archive metadata as trust.
+    /// The caller verifies the rehashed header against the signed target ID.
+    pub(crate) fn native_parent_header_v1(
+        &mut self,
+        target: &trnm_consensus_types::BlockHeader,
+        config: &LoadedValidatorConfig,
+    ) -> Result<trnm_consensus_types::BlockHeader> {
+        self.revalidate_identity_v1()?;
+        let parent_id = target.parent_id();
+        let index = self
+            .index
+            .values()
+            .find(|entry| {
+                entry.coordinate.kind == ReplayArchiveEntryKindV1::Proposal
+                    && entry.coordinate.block_id == *parent_id.as_bytes()
+            })
+            .cloned();
+        let payload = if let Some(index) = index {
+            self.read_indexed_payload_v1(index)?
+        } else {
+            let height = target
+                .height()
+                .get()
+                .checked_sub(1)
+                .context("native parent height zero")?;
+            ensure!(
+                (1..=3).contains(&height),
+                "native parent header is absent from durable archive"
+            );
+            let file = OpenOptions::new()
+                .read(true)
+                .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
+                .open(
+                    config
+                        .run_root()
+                        .join(format!("public/bootstrap/h{height}.proposal")),
+                )?;
+            let metadata = file.metadata()?;
+            ensure!(
+                metadata.is_file() && metadata.len() <= MAX_FRAME_PAYLOAD_BYTES as u64,
+                "native bootstrap parent file exceeds public input bound"
+            );
+            let mut bytes = Vec::new();
+            file.take(MAX_FRAME_PAYLOAD_BYTES as u64 + 1)
+                .read_to_end(&mut bytes)?;
+            ensure!(
+                bytes.len() <= MAX_FRAME_PAYLOAD_BYTES,
+                "native bootstrap parent file grew"
+            );
+            bytes
+        };
+        let proposal = UnboundProposalV0::decode(
+            &payload,
+            config.validator_set(),
+            config.consensus_parameters(),
+        )
+        .map_err(|e| anyhow!("decode archived native parent: {e}"))?;
+        let header = proposal.block().header().clone();
+        ensure!(
+            header.id() == parent_id
+                && header.height().get().checked_add(1) == Some(target.height().get()),
+            "native parent header differs from target commitment"
+        );
+        self.revalidate_identity_v1()?;
+        Ok(header)
+    }
+
+    /// Reconstruct every missing ordinary proof on the exact ancestor path of
+    /// the current Core finalized ID. This is used only for a skipped range;
+    /// the usual single-step path reuses Core's already verified current proof.
+    /// Reconstruct the three finalized empty prefix rows for application-only
+    /// genesis replay, using the existing exact frozen public bootstrap verifier.
+    pub(crate) fn native_sync_bootstrap_v1(
+        &mut self,
+        config: &LoadedValidatorConfig,
+        bootstrap: VerifiedPublicBootstrapInitialCutV1,
+    ) -> Result<[FinalityProofV0; 3]> {
+        self.revalidate_identity_v1()?;
+        let profile = config
+            .native_client_profile_v1()
+            .context("sync requires native profile")?;
+        let verified = crate::bootstrap_material::verify_public_native_bootstrap_with_policy_v1(
+            config.run_root(),
+            config.validator_set(),
+            config.consensus_parameters(),
+            profile.authorized_signers_v1()?,
+            &profile.governance_signer_id,
+        )?;
+        ensure!(
+            verified.initial_ordinary_cut_v1() == bootstrap,
+            "sync bootstrap changed from pinned initial cut"
+        );
+        let (proposals, first) = verified.into_node_parts_v1();
+        let mut semantics = decode_strict_archive_semantics_v1(
+            &self.entries_file,
+            &self.index,
+            self.context.digest,
+            config.validator_set(),
+            config.consensus_parameters(),
+            config.ordinary_start_height(),
+            bootstrap,
+        )?;
+        let mut parent_time = 0;
+        for proposal in proposals {
+            let timestamp = proposal.block().header().timestamp_ms();
+            semantics.proposals.insert(
+                *proposal.block().id().as_bytes(),
+                AuthenticatedReplayProposalV1 {
+                    proposal,
+                    authenticated_parent_timestamp_ms: parent_time,
+                },
+            );
+            parent_time = timestamp;
+        }
+        for certified in [first.finalized_block(), first.child(), first.grandchild()] {
+            semantics.proof_certificates.insert(
+                *certified.certifying_qc().id().as_bytes(),
+                certified.certifying_qc().clone(),
+            );
+        }
+        let second = strict_archive_finality_proof_v1(
+            &semantics,
+            config.validator_set(),
+            config.consensus_parameters(),
+            *first.child().header().id().as_bytes(),
+        )?;
+        let third = strict_archive_finality_proof_v1(
+            &semantics,
+            config.validator_set(),
+            config.consensus_parameters(),
+            *first.grandchild().header().id().as_bytes(),
+        )?;
+        self.revalidate_identity_v1()?;
+        Ok([first, second, third])
+    }
+
+    pub(crate) fn native_finality_range_v1(
+        &mut self,
+        config: &LoadedValidatorConfig,
+        bootstrap: VerifiedPublicBootstrapInitialCutV1,
+        tip: [u8; 32],
+        after_height: u64,
+    ) -> Result<Vec<(FinalityProofV0, trnm_consensus_types::BlockHeader)>> {
+        self.revalidate_identity_v1()?;
+        let semantics = decode_strict_archive_semantics_v1(
+            &self.entries_file,
+            &self.index,
+            self.context.digest,
+            config.validator_set(),
+            config.consensus_parameters(),
+            config.ordinary_start_height(),
+            bootstrap,
+        )?;
+        let floor = after_height.max(config.ordinary_start_height() - 1);
+        let reverse = strict_native_finality_range_v1(
+            &semantics,
+            config.validator_set(),
+            config.consensus_parameters(),
+            tip,
+            floor,
+            |header| self.native_parent_header_v1(header, config),
+        )?;
+        self.revalidate_identity_v1()?;
+        Ok(reverse)
     }
 
     pub(crate) fn facts_v1(&self) -> SignedReplayArchiveFactsV1 {
@@ -1373,7 +1591,12 @@ impl SignedReplayArchiveV1 {
             .entries_file
             .try_clone()
             .context("clone replay archive for terminal audit")?;
-        let (head, _tail_predecessor, index, entries_len, _entries_sha256) = audit_entry_log_v1(
+        let ReplayArchiveAuditV1 {
+            head,
+            index,
+            entries_len,
+            ..
+        } = audit_entry_log_v1(
             &mut entries,
             self.context.digest,
             self.context.json.maximum_archive_entries,
@@ -1492,7 +1715,7 @@ impl SignedReplayArchiveV1 {
         signer: &mut dyn FnMut([u8; 32]) -> Result<[u8; 64]>,
     ) -> Result<PathBuf> {
         let run_directory = open_directory_pinned_v1(config.run_root())?;
-        let run_directory_identity = FileIdentityV1::from_file_v1(&run_directory)?;
+        let run_directory_identity = DirectoryIdentityV1::from_file_v1(&run_directory)?;
         ensure!(
             self.root.parent() == Some(config.run_root()),
             "terminal archive is outside the loaded private run root"
@@ -2059,7 +2282,13 @@ pub fn verify_replay_archive_v1(
         .file
         .try_clone()
         .context("clone read-only replay entries for full audit")?;
-    let (log_head, _tail_predecessor, index, entries_len, entries_sha256) = audit_entry_log_v1(
+    let ReplayArchiveAuditV1 {
+        head: log_head,
+        index,
+        entries_len,
+        entries_sha256,
+        ..
+    } = audit_entry_log_v1(
         &mut audit_file,
         context.digest,
         context.json.maximum_archive_entries,
@@ -2471,6 +2700,74 @@ fn verify_signed_final_tip_coverage_v1(
         derived_chain_root == finalized_chain_root,
         "signed finalized Proposal differs from the CleanStop finalized chain root"
     );
+    let proof =
+        strict_archive_finality_proof_v1(semantics, validator_set, parameters, finalized_block_id)?;
+    Ok(SignedFinalTipCoverageV1 {
+        proof_id: *proof.id().as_bytes(),
+        child_block_id: *proof.child().header().id().as_bytes(),
+        grandchild_block_id: *proof.grandchild().header().id().as_bytes(),
+    })
+}
+
+fn strict_native_finality_range_v1(
+    semantics: &StrictReplayArchiveSemanticsV1,
+    set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+    tip: [u8; 32],
+    floor: u64,
+    mut parent_for: impl FnMut(
+        &trnm_consensus_types::BlockHeader,
+    ) -> Result<trnm_consensus_types::BlockHeader>,
+) -> Result<Vec<(FinalityProofV0, trnm_consensus_types::BlockHeader)>> {
+    let mut cursor = tip;
+    let mut reverse = Vec::new();
+    loop {
+        let target = semantics
+            .proposals
+            .get(&cursor)
+            .ok_or_else(|| anyhow!("RECOVERY_REQUIRED: native finalized ancestry is missing"))?;
+        let header = target.proposal.block().header();
+        if header.height().get() <= floor {
+            break;
+        }
+        ensure!(
+            reverse.len() < crate::config::DEPLOYED_CORE_MAX_BLOCKS_V1,
+            "native missing-proof range exceeds candidate bound"
+        );
+        let parent = parent_for(header)?;
+        ensure!(
+            parent.id() == header.parent_id()
+                && parent.height().get().checked_add(1) == Some(header.height().get()),
+            "native archived parent does not match target"
+        );
+        reverse.push((
+            strict_archive_finality_proof_v1(semantics, set, parameters, cursor)?,
+            parent.clone(),
+        ));
+        if parent.height().get() == floor {
+            break;
+        }
+        ensure!(
+            parent.height().get() > floor,
+            "native ancestor range skipped predecessor"
+        );
+        cursor = *parent.id().as_bytes();
+    }
+    reverse.reverse();
+    Ok(reverse)
+}
+
+fn strict_archive_finality_proof_v1(
+    semantics: &StrictReplayArchiveSemanticsV1,
+    validator_set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+    finalized_block_id: [u8; 32],
+) -> Result<FinalityProofV0> {
+    let finalized = semantics
+        .proposals
+        .get(&finalized_block_id)
+        .ok_or_else(|| anyhow!("native proof archive target is absent"))?;
+    let finalized_height = finalized.proposal.block().header().height().get();
     let child_height = finalized_height
         .checked_add(1)
         .context("finality child height overflows")?;
@@ -2569,11 +2866,7 @@ fn verify_signed_final_tip_coverage_v1(
                 {
                     continue;
                 }
-                return Ok(SignedFinalTipCoverageV1 {
-                    proof_id: *proof.id().as_bytes(),
-                    child_block_id: *child.proposal.block().id().as_bytes(),
-                    grandchild_block_id: *grandchild.proposal.block().id().as_bytes(),
-                });
+                return Ok(proof);
             }
         }
     }
@@ -2750,51 +3043,245 @@ impl ArchivedDeployedProcess2RecoveryOwnerV1 {
         self.node.facts_v0()
     }
 
-    /// Consumes the complete archive-pinned process-2 recovery into Node's
-    /// exact, still replay-fenced zero-delta owner.  The archive identity is
-    /// freshly revalidated on both sides of the consuming Node join and is
-    /// retained in the result; no signer, timer, mesh, or activation authority
-    /// is released.
-    pub(crate) fn confirm_zero_delta_caught_up_v1(
+    /// Projects the exact replay-fenced Node cut while the independently
+    /// audited archive remains pinned. The projection is inert and can grant
+    /// no authority without consuming this complete linear owner.
+    pub(crate) fn project_zero_delta_restart_cut_v1(
+        &self,
+        restart_cut_artifact_sha256: [u8; 32],
+    ) -> Result<PocoNodeDeployedLabZeroDeltaRestartCutV1> {
+        self.revalidate_archive_identity_v1()?;
+        let projected = self
+            .node
+            .project_zero_delta_restart_cut_v1(restart_cut_artifact_sha256)
+            .map_err(|error| anyhow!("project archive-pinned process2 zero-delta cut: {error}"))?;
+        self.revalidate_archive_identity_v1()?;
+        Ok(projected)
+    }
+
+    /// Consumes both the archive-pinned full recovery and the exact projected
+    /// cut into one caught-up owner. No archive pin, Core owner, signer, timer,
+    /// or application authority is released through a copyable facts object.
+    pub(crate) fn into_zero_delta_caught_up_v1(
         self,
         expected: PocoNodeDeployedLabZeroDeltaRestartCutV1,
-    ) -> Result<ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1> {
+    ) -> Result<ArchivedDeployedProcess2CaughtUpOwnerV1> {
         let Self {
             _archive: archive,
             node,
             archive_facts,
-            recovery_facts,
-            authenticated_replay_facts,
+            recovery_facts: _,
+            authenticated_replay_facts: _,
         } = self;
         archive
             .revalidate_identity_v1()
-            .context("revalidate pinned replay archive before zero-delta join")?;
+            .context("revalidate replay archive before zero-delta join")?;
         ensure!(
             archive.facts_v1() == archive_facts,
-            "pinned replay archive differs before zero-delta join"
+            "replay archive head changed before zero-delta join"
         );
-        let process2_facts = node.facts_v0();
         let node = node
             .into_zero_delta_caught_up_v1(expected)
-            .map_err(|error| anyhow!("confirm Node zero-delta cut: {error}"))?;
-        ensure!(
-            node.facts_v1().process2_v1() == process2_facts,
-            "Node zero-delta owner changed the process2 recovery projection"
-        );
+            .map_err(|error| anyhow!("consume archive-pinned process2 zero-delta cut: {error}"))?;
         archive
             .revalidate_identity_v1()
-            .context("revalidate pinned replay archive after zero-delta join")?;
+            .context("revalidate replay archive after zero-delta join")?;
         ensure!(
             archive.facts_v1() == archive_facts,
-            "pinned replay archive differs after zero-delta join"
+            "replay archive head changed after zero-delta join"
         );
-        Ok(ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1 {
+        Ok(ArchivedDeployedProcess2CaughtUpOwnerV1 {
             _archive: archive,
             node,
             archive_facts,
-            recovery_facts,
-            authenticated_replay_facts,
         })
+    }
+}
+
+/// Exact zero-delta process-2 owner retaining both the signed replay archive
+/// and every recovered Node authority. It is linear and exposes no activation
+/// or network constructor.
+#[must_use = "archive-pinned zero-delta recovery must reach RecoveryReady or fail stop"]
+pub(crate) struct ArchivedDeployedProcess2CaughtUpOwnerV1 {
+    _archive: SignedReplayArchiveV1,
+    node: PocoNodeDeployedLabProcess2CaughtUpOwnerV1<LabFileWatermark>,
+    archive_facts: SignedReplayArchiveFactsV1,
+}
+
+impl ArchivedDeployedProcess2CaughtUpOwnerV1 {
+    pub(crate) const fn archive_facts_v1(&self) -> SignedReplayArchiveFactsV1 {
+        self.archive_facts
+    }
+
+    pub(crate) const fn node_facts_v1(&self) -> PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1 {
+        self.node.facts_v1()
+    }
+
+    pub(crate) fn revalidate_v1(&mut self) -> Result<()> {
+        self._archive
+            .revalidate_identity_v1()
+            .context("revalidate zero-delta replay archive identity")?;
+        ensure!(
+            self._archive.facts_v1() == self.archive_facts,
+            "zero-delta replay archive head changed"
+        );
+        self.node
+            .revalidate_zero_delta_caught_up_v1()
+            .map_err(|error| anyhow!("revalidate archive-pinned zero-delta Node owner: {error}"))?;
+        Ok(())
+    }
+
+    pub(crate) fn record_recovery_ready_v1(
+        &mut self,
+        coordinator: &mut Process2RecoveryReadyStartCoordinatorV1,
+        fence_token_digest: [u8; 32],
+        ready_set: &RecoveryReadySetV1,
+        validator_set: &ValidatorSet,
+        verifier: &impl SignatureVerifier,
+    ) -> Result<Process2RecoveryTransitionFactsV1> {
+        self.revalidate_v1()?;
+        let checkpoint = self
+            .node
+            .confirm_recovery_checkpoint_v1()
+            .map_err(|error| {
+                anyhow!("confirm caught-up checkpoint before RecoveryReady: {error}")
+            })?;
+        let facts = coordinator
+            .record_recovery_ready_for_caught_up_owner_v1(
+                &mut self.node,
+                checkpoint,
+                fence_token_digest,
+                ready_set,
+                validator_set,
+                verifier,
+            )
+            .map_err(|error| anyhow!("record archive-pinned RecoveryReady: {error}"))?;
+        self.revalidate_v1()?;
+        Ok(facts)
+    }
+
+    pub(crate) fn record_recovery_start_v1(
+        &mut self,
+        coordinator: &mut Process2RecoveryReadyStartCoordinatorV1,
+        fence_token_digest: [u8; 32],
+        start_certificate: &RecoveryStartCertificateV1,
+        validator_set: &ValidatorSet,
+        verifier: &impl SignatureVerifier,
+    ) -> Result<Process2RecoveryTransitionFactsV1> {
+        self.revalidate_v1()?;
+        let checkpoint = self
+            .node
+            .confirm_recovery_checkpoint_v1()
+            .map_err(|error| {
+                anyhow!("confirm caught-up checkpoint before RecoveryStart: {error}")
+            })?;
+        let facts = coordinator
+            .record_recovery_start_for_caught_up_owner_v1(
+                &mut self.node,
+                checkpoint,
+                fence_token_digest,
+                start_certificate,
+                validator_set,
+                verifier,
+            )
+            .map_err(|error| anyhow!("record archive-pinned RecoveryStart: {error}"))?;
+        self.revalidate_v1()?;
+        Ok(facts)
+    }
+
+    pub(crate) fn activate_after_recorded_start_v1(
+        mut self,
+        coordinator: &Process2RecoveryReadyStartCoordinatorV1,
+        fence_token_digest: [u8; 32],
+        start_certificate: &RecoveryStartCertificateV1,
+        validator_set: &ValidatorSet,
+        verifier: &impl SignatureVerifier,
+    ) -> Result<ArchivedDeployedProcess2RecoveredRuntimeV1> {
+        self.revalidate_v1()?;
+        let checkpoint = self
+            .node
+            .confirm_recovery_checkpoint_v1()
+            .map_err(|error| {
+                anyhow!("confirm caught-up checkpoint before runtime recovery: {error}")
+            })?;
+        let Self {
+            _archive: archive,
+            node,
+            archive_facts,
+        } = self;
+        archive
+            .revalidate_identity_v1()
+            .context("revalidate replay archive before recovered runtime transition")?;
+        let runtime = coordinator
+            .activate_caught_up_owner_after_recorded_start_v1(
+                node,
+                checkpoint,
+                fence_token_digest,
+                start_certificate,
+                validator_set,
+                verifier,
+            )
+            .map_err(|error| anyhow!("activate archive-pinned recovered runtime: {error}"))?;
+        archive
+            .revalidate_identity_v1()
+            .context("revalidate replay archive after recovered runtime transition")?;
+        ensure!(
+            archive.facts_v1() == archive_facts,
+            "replay archive head changed during recovered runtime transition"
+        );
+        Ok(ArchivedDeployedProcess2RecoveredRuntimeV1 {
+            _archive: archive,
+            runtime,
+            archive_facts,
+        })
+    }
+}
+
+#[must_use = "archive-pinned recovered runtime must enter one sealed process host"]
+pub struct ArchivedDeployedProcess2RecoveredRuntimeV1 {
+    _archive: SignedReplayArchiveV1,
+    runtime: PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1<LabFileWatermark>,
+    archive_facts: SignedReplayArchiveFactsV1,
+}
+
+impl ArchivedDeployedProcess2RecoveredRuntimeV1 {
+    pub const fn runtime_facts_v1(&self) -> PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1 {
+        self.runtime.facts_v1()
+    }
+
+    pub fn ordinary_runtime_facts_v1(&self) -> PocoNodeLabRuntimeFactsV0 {
+        self.runtime.runtime_facts_v1()
+    }
+
+    pub fn revalidate_archive_v1(&self) -> Result<()> {
+        self._archive
+            .revalidate_identity_v1()
+            .context("revalidate recovered-runtime replay archive identity")?;
+        ensure!(
+            self._archive.facts_v1() == self.archive_facts,
+            "recovered-runtime replay archive head changed"
+        );
+        Ok(())
+    }
+}
+
+impl std::fmt::Debug for ArchivedDeployedProcess2RecoveredRuntimeV1 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("ArchivedDeployedProcess2RecoveredRuntimeV1")
+            .field("archive_facts", &self.archive_facts)
+            .field("runtime_facts", &self.runtime.facts_v1())
+            .finish_non_exhaustive()
+    }
+}
+
+impl std::fmt::Debug for ArchivedDeployedProcess2CaughtUpOwnerV1 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("ArchivedDeployedProcess2CaughtUpOwnerV1")
+            .field("archive_facts", &self.archive_facts)
+            .field("node_facts", &self.node.facts_v1())
+            .finish_non_exhaustive()
     }
 }
 
@@ -2809,77 +3296,6 @@ impl std::fmt::Debug for ArchivedDeployedProcess2RecoveryOwnerV1 {
                 &self.authenticated_replay_facts,
             )
             .field("process2_facts", &self.node.facts_v0())
-            .finish_non_exhaustive()
-    }
-}
-
-/// Archive-pinned, replay-fenced zero-delta process-2 owner.
-///
-/// The Node owner remains opaque and non-Clone.  This wrapper exposes only
-/// descriptive facts plus fresh archive revalidation; it has no Ready/Start,
-/// activation, signer, timer, mesh, or raw-parts API.
-#[must_use = "zero-delta recovery must retain both Node and replay-archive authority"]
-pub(crate) struct ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1 {
-    _archive: SignedReplayArchiveV1,
-    node: PocoNodeDeployedLabProcess2CaughtUpOwnerV1<LabFileWatermark>,
-    archive_facts: SignedReplayArchiveFactsV1,
-    recovery_facts: PocoNodeDeployedLabRecoveryFactsV0,
-    authenticated_replay_facts: PocoNodeDeployedLabAuthenticatedReplayFactsV0,
-}
-
-impl ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1 {
-    pub(crate) fn revalidate_archive_identity_v1(&self) -> Result<()> {
-        self._archive
-            .revalidate_identity_v1()
-            .context("revalidate zero-delta pinned replay archive identity")?;
-        ensure!(
-            self._archive.facts_v1() == self.archive_facts,
-            "zero-delta pinned replay archive head differs"
-        );
-        Ok(())
-    }
-
-    /// Revalidates the pinned archive around Node's complete borrowed
-    /// zero-delta durable-head audit. No retained authority is released and
-    /// Node remains replay-fenced throughout.
-    pub(crate) fn revalidate_zero_delta_caught_up_v1(&mut self) -> Result<()> {
-        self.revalidate_archive_identity_v1()?;
-        let expected = self.node.facts_v1();
-        self.node
-            .revalidate_zero_delta_caught_up_v1()
-            .map_err(|error| anyhow!("freshly revalidate Node zero-delta owner: {error}"))?;
-        ensure!(
-            self.node.facts_v1() == expected,
-            "fresh Node zero-delta revalidation changed retained facts"
-        );
-        self.revalidate_archive_identity_v1()
-    }
-
-    pub(crate) const fn archive_facts_v1(&self) -> SignedReplayArchiveFactsV1 {
-        self.archive_facts
-    }
-
-    pub(crate) const fn prior_recovery_facts_v1(&self) -> &PocoNodeDeployedLabRecoveryFactsV0 {
-        &self.recovery_facts
-    }
-
-    pub(crate) const fn authenticated_replay_facts_v1(
-        &self,
-    ) -> PocoNodeDeployedLabAuthenticatedReplayFactsV0 {
-        self.authenticated_replay_facts
-    }
-
-    pub(crate) const fn zero_delta_facts_v1(&self) -> PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1 {
-        self.node.facts_v1()
-    }
-}
-
-impl std::fmt::Debug for ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1 {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        formatter
-            .debug_struct("ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1")
-            .field("archive_facts", &self.archive_facts)
-            .field("zero_delta_facts", &self.node.facts_v1())
             .finish_non_exhaustive()
     }
 }
@@ -2928,17 +3344,20 @@ fn require_index_within_context_capacity_v1(
     Ok(())
 }
 
+#[derive(Debug)]
+struct ReplayArchiveAuditV1 {
+    head: ReplayArchiveHeadV1,
+    tail_predecessor: Option<ReplayArchiveHeadV1>,
+    index: BTreeMap<ReplayArchiveCoordinateV1, ReplayArchiveEntryIndexV1>,
+    entries_len: u64,
+    entries_sha256: [u8; 32],
+}
+
 fn audit_entry_log_v1(
     entries: &mut File,
     context_sha256: [u8; 32],
     maximum_entries: u64,
-) -> Result<(
-    ReplayArchiveHeadV1,
-    Option<ReplayArchiveHeadV1>,
-    BTreeMap<ReplayArchiveCoordinateV1, ReplayArchiveEntryIndexV1>,
-    u64,
-    [u8; 32],
-)> {
+) -> Result<ReplayArchiveAuditV1> {
     ensure!(
         maximum_entries > 0 && maximum_entries <= MAXIMUM_ENTRY_COUNT_V1,
         "replay archive audit entry bound is invalid"
@@ -3018,13 +3437,13 @@ fn audit_entry_log_v1(
         entries.metadata()?.len() == offset,
         "replay archive length changed during audit"
     );
-    Ok((
+    Ok(ReplayArchiveAuditV1 {
         head,
         tail_predecessor,
         index,
-        offset,
-        file_hasher.finalize().into(),
-    ))
+        entries_len: offset,
+        entries_sha256: file_hasher.finalize().into(),
+    })
 }
 
 fn context_bound_entry_file_bytes_v1(maximum_entries: u64) -> Result<u64> {
@@ -3293,7 +3712,7 @@ fn read_head_v1(path: &Path, context_sha256: [u8; 32]) -> Result<ReplayArchiveHe
 
 fn read_head_from_file_v1(file: &File, context_sha256: [u8; 32]) -> Result<ReplayArchiveHeadV1> {
     let value: ReplayArchiveHeadJsonV1 =
-        read_bounded_json_v1(&file, MAXIMUM_HEAD_BYTES_V1, "archive head")?;
+        read_bounded_json_v1(file, MAXIMUM_HEAD_BYTES_V1, "archive head")?;
     ensure!(
         value.schema_version == SCHEMA_VERSION_V1,
         "wrong replay archive head schema"
@@ -3394,7 +3813,7 @@ fn open_directory_pinned_v1(path: &Path) -> Result<File> {
         .context("inspect replay archive directory handle")?;
     validate_private_directory_metadata_v1(&metadata, "replay archive directory handle")?;
     ensure!(
-        FileIdentityV1::from_metadata_v1(&before).matches_metadata_v1(&metadata),
+        DirectoryIdentityV1::from_metadata_v1(&before).matches_metadata_v1(&metadata),
         "replay archive directory identity changed while opening"
     );
     Ok(file)
@@ -3403,7 +3822,7 @@ fn open_directory_pinned_v1(path: &Path) -> Result<File> {
 fn revalidate_directory_path_identity_v1(
     path: &Path,
     pinned: &File,
-    identity: FileIdentityV1,
+    identity: DirectoryIdentityV1,
     label: &'static str,
 ) -> Result<()> {
     ensure!(
@@ -3834,7 +4253,13 @@ mod tests {
             expected
         );
         let mut entries_file = open_private_file_v1(&root.join(ENTRY_FILE_V1), true).unwrap();
-        let (head, tail_predecessor, index, entries_len, _entries_sha256) = audit_entry_log_v1(
+        let ReplayArchiveAuditV1 {
+            head,
+            tail_predecessor,
+            index,
+            entries_len,
+            ..
+        } = audit_entry_log_v1(
             &mut entries_file,
             expected.digest,
             expected.json.maximum_archive_entries,
@@ -3851,7 +4276,7 @@ mod tests {
             .as_ref()
             .map(|file| FileIdentityV1::from_file_v1(file).unwrap());
         SignedReplayArchiveV1 {
-            directory_identity: FileIdentityV1::from_file_v1(&directory).unwrap(),
+            directory_identity: DirectoryIdentityV1::from_file_v1(&directory).unwrap(),
             entries_identity: FileIdentityV1::from_file_v1(&entries_file).unwrap(),
             context_identity: FileIdentityV1::from_file_v1(&context_file).unwrap(),
             head_identity: FileIdentityV1::from_file_v1(&head_file).unwrap(),
@@ -3870,6 +4295,51 @@ mod tests {
             fail_stopped: false,
             historically_repaired,
         }
+    }
+
+    #[test]
+    fn directory_owner_survives_child_publication_v1() {
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path().canonicalize().unwrap();
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        let pinned = open_directory_pinned_v1(&root).unwrap();
+        let identity = DirectoryIdentityV1::from_file_v1(&pinned).unwrap();
+        let child = root.join("new-child");
+        fs::create_dir(&child).unwrap();
+        revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").unwrap();
+        fs::write(child.join("bytes"), b"new content").unwrap();
+        revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").unwrap();
+        fs::remove_file(child.join("bytes")).unwrap();
+        fs::remove_dir(&child).unwrap();
+        revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").unwrap();
+    }
+
+    #[test]
+    fn directory_owner_still_rejects_mode_rename_and_symlink_v1() {
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path().canonicalize().unwrap().join("owner");
+        fs::create_dir(&root).unwrap();
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        let pinned = open_directory_pinned_v1(&root).unwrap();
+        let identity = DirectoryIdentityV1::from_file_v1(&pinned).unwrap();
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o500)).unwrap();
+        assert!(
+            revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").is_err()
+        );
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").unwrap();
+        let moved = root.with_file_name("displaced");
+        fs::rename(&root, &moved).unwrap();
+        fs::create_dir(&root).unwrap();
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        assert!(
+            revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").is_err()
+        );
+        fs::remove_dir(&root).unwrap();
+        std::os::unix::fs::symlink(&moved, &root).unwrap();
+        assert!(
+            revalidate_directory_path_identity_v1(&root, &pinned, identity, "run-root").is_err()
+        );
     }
 
     fn statement_v1(payload: &[u8]) -> ReplayArchiveStatementV1 {
@@ -4350,7 +4820,11 @@ mod tests {
         let root = archive.root.clone();
         drop(archive);
         let mut entries = open_private_file_v1(&root.join(ENTRY_FILE_V1), false).unwrap();
-        let (log_head, predecessor, _, _, _) = audit_entry_log_v1(
+        let ReplayArchiveAuditV1 {
+            head: log_head,
+            tail_predecessor: predecessor,
+            ..
+        } = audit_entry_log_v1(
             &mut entries,
             context.digest,
             context.json.maximum_archive_entries,
@@ -4400,7 +4874,9 @@ mod tests {
         fs::remove_file(root.join(REPAIR_TOMBSTONE_FILE_V1)).unwrap();
         let reopened_after_same_uid_deletion = open_for_test_v1(&root, context);
         assert!(!reopened_after_same_uid_deletion.historically_repaired);
-        assert!(!crate::COHERENT_WHOLE_AUTHORITY_ROOT_ROLLBACK_PROTECTION);
+        const {
+            assert!(!crate::COHERENT_WHOLE_AUTHORITY_ROOT_ROLLBACK_PROTECTION);
+        };
     }
 
     #[test]
@@ -4593,7 +5069,11 @@ mod tests {
         .unwrap();
         assert!(pinned.revalidate_v1().is_err());
         let mut audit = pinned.file.try_clone().unwrap();
-        let (_, _, _, audited_length, audited_sha256) = audit_entry_log_v1(
+        let ReplayArchiveAuditV1 {
+            entries_len: audited_length,
+            entries_sha256: audited_sha256,
+            ..
+        } = audit_entry_log_v1(
             &mut audit,
             context.digest,
             context.json.maximum_archive_entries,
@@ -5427,38 +5907,136 @@ mod tests {
     }
 
     #[test]
-    fn zero_delta_borrowed_revalidation_pins_archive_around_node_audit_v1() {
-        let source = include_str!("signed_replay_archive.rs");
-        let start = source
-            .find("pub(crate) fn revalidate_zero_delta_caught_up_v1(&mut self)")
-            .expect("archive-pinned zero-delta borrowed audit remains present");
-        let end = source[start..]
-            .find("pub(crate) const fn archive_facts_v1")
-            .map(|offset| start + offset)
-            .expect("archive-pinned zero-delta borrowed audit remains bounded");
-        let audit = &source[start..end];
-        let archive_before = audit
-            .find("self.revalidate_archive_identity_v1()?")
-            .expect("archive is revalidated before Node");
-        let node = audit
-            .find(".revalidate_zero_delta_caught_up_v1()")
-            .expect("Node durable heads are freshly revalidated");
-        let archive_after = audit
-            .rfind("self.revalidate_archive_identity_v1()")
-            .expect("archive is revalidated after Node");
-        assert!(archive_before < node && node < archive_after);
-        for forbidden in [
-            "into_parts",
-            "RecoveryReady",
-            "RecoveryStart",
-            "activate",
-            "signer",
-            "mesh",
-        ] {
+    fn live_archive_readback_rejects_same_inode_tamper_without_repair_v1() {
+        for name in [CONTEXT_FILE_V1, ENTRY_FILE_V1, HEAD_FILE_V1] {
+            let temp = TempDir::new().unwrap();
+            let mut archive = initialize_for_test_v1(&temp);
+            archive
+                .append_statement_v1(statement_v1(b"proposal"))
+                .unwrap();
+            let mut qc = successor_statement_v1(b"qc");
+            qc.coordinate.kind = ReplayArchiveEntryKindV1::QuorumCertificate;
+            archive.append_statement_v1(qc).unwrap();
+            assert!(archive.fresh_terminal_snapshot_v1().is_ok());
+            let path = archive.root.join(name);
+            let before = fs::metadata(&path).unwrap();
+            let mut bytes = fs::read(&path).unwrap();
+            assert!(!bytes.is_empty());
+            bytes[0] ^= 1;
+            let mut writer = OpenOptions::new().write(true).open(&path).unwrap();
+            writer.seek(SeekFrom::Start(0)).unwrap();
+            writer.write_all(&bytes).unwrap();
+            writer.sync_all().unwrap();
+            assert_eq!(writer.metadata().unwrap().ino(), before.ino());
+            assert_eq!(writer.metadata().unwrap().len(), before.len());
             assert!(
-                !audit.contains(forbidden),
-                "borrowed zero-delta audit unexpectedly exposes {forbidden}"
+                archive.fresh_terminal_snapshot_v1().is_err(),
+                "accepted {name} mutation"
+            );
+            assert_eq!(fs::read(&path).unwrap(), bytes, "readback repaired {name}");
+        }
+    }
+    #[test]
+    fn native_archive_reconstructs_all_skipped_heights_and_rejects_missing_or_wrong_evidence_v1() {
+        let (set, keys, parameters, _, mut semantics, _) =
+            strict_three_chain_semantics_fixture_v1();
+        for height in 7..=8 {
+            let parent = semantics
+                .proposals
+                .values()
+                .find(|p| p.proposal.block().header().height().get() == height - 1)
+                .unwrap()
+                .proposal
+                .clone();
+            let parent_qc =
+                strict_qc_fixture_for_block_v1(&set, &keys, height - 1, parent.block().id());
+            let proposal = strict_proposal_fixture_v1(
+                &set,
+                &keys,
+                height,
+                parent.block().id(),
+                parent.block().header().timestamp_ms(),
+                parent_qc,
+                StateRoot::new([height as u8; 32]),
+            );
+            let qc = strict_qc_fixture_for_block_v1(&set, &keys, height, proposal.block().id());
+            semantics.proof_certificates.insert(*qc.id().as_bytes(), qc);
+            semantics.proposals.insert(
+                *proposal.block().id().as_bytes(),
+                AuthenticatedReplayProposalV1 {
+                    proposal,
+                    authenticated_parent_timestamp_ms: parent.block().header().timestamp_ms(),
+                },
             );
         }
+        let tip = *semantics
+            .proposals
+            .values()
+            .find(|p| p.proposal.block().header().height().get() == 6)
+            .unwrap()
+            .proposal
+            .block()
+            .id()
+            .as_bytes();
+        let parents = semantics
+            .proposals
+            .iter()
+            .map(|(id, p)| (*id, p.proposal.block().header().clone()))
+            .collect::<BTreeMap<_, _>>();
+        let lookup = |header: &BlockHeader| {
+            parents
+                .get(header.parent_id().as_bytes())
+                .cloned()
+                .context("missing parent")
+        };
+        let recovered =
+            strict_native_finality_range_v1(&semantics, &set, &parameters, tip, 4, lookup).unwrap();
+        assert_eq!(
+            recovered
+                .iter()
+                .map(|(proof, _)| proof.finalized_block().header().height().get())
+                .collect::<Vec<_>>(),
+            vec![5, 6]
+        );
+        for (proof, parent) in &recovered {
+            proof
+                .verify(
+                    &set,
+                    None,
+                    &parameters,
+                    parent.timestamp_ms(),
+                    &StrictEd25519Verifier,
+                )
+                .unwrap();
+            assert_eq!(proof.finalized_block().header().parent_id(), parent.id());
+        }
+        let wrong = parents
+            .values()
+            .find(|h| h.height().get() == 4)
+            .unwrap()
+            .clone();
+        assert!(
+            strict_native_finality_range_v1(&semantics, &set, &parameters, tip, 4, |_| Ok(
+                wrong.clone()
+            ))
+            .is_err()
+        );
+        semantics
+            .proof_certificates
+            .retain(|_, qc| qc.height().get() != 8);
+        assert!(
+            strict_native_finality_range_v1(&semantics, &set, &parameters, tip, 4, lookup).is_err()
+        );
+        semantics.proposals.remove(
+            parents
+                .values()
+                .find(|h| h.height().get() == 5)
+                .unwrap()
+                .id()
+                .as_bytes(),
+        );
+        assert!(
+            strict_native_finality_range_v1(&semantics, &set, &parameters, tip, 4, lookup).is_err()
+        );
     }
 }

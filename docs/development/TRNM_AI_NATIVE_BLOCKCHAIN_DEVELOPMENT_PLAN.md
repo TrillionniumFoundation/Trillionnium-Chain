@@ -1,22 +1,22 @@
 # Trillionnium Chain Development Plan v2
 
-Plan ID: `trnm-chain-development-plan-v2`  
-Effective: **2026-09-02 (Asia/Singapore)**  
-Status: **sole active engineering plan; candidate-non-normative until independently accepted and merged through protected `main`**  
-Canonical destination: `refs/heads/main`  
-Selected integration entry: Draft PR **#62**, `refs/heads/work/plan-v2-full-gap-closure-20260902`\
-Assessed integration baseline: `work/plan-v2-full-gap-closure-20260902@af691ea5005e1f0262e90c4fc878ba0a70dbe7ea`  
-Assessed tree: `af09e389b1a462b3839508b7ef305596c76384c6`  
+Plan ID: `trnm-chain-development-plan-v2`
+Effective: **2026-09-16**\
+Status: **sole active engineering plan; candidate-non-normative until independently accepted and merged through protected `main`**
+Canonical destination: `refs/heads/main`
+Selected integration entry: derive from the current PR event, source HEAD/tree and prospective merge.\
+Assessed integration baseline: `main@c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`\
+Assessed tree: `c37858e60146147eccf1a6fec6eff04d00a828a7`\
 Current PR head, source tree, prospective-merge commit, and prospective-merge tree are derived at verification time and may not be copied from this prose. The assessed baseline is historical provenance, not the current tip.
 
-Observed bounded child stack: **#62 <- #85 (PCC1 contract) <- #86 (implementation continuation)**. Children are not additional integration successors and their presence does not prove absorption into a parent. Verify current refs, ancestry and file content before integrating or transferring evidence.
+Historical observed child stack (provenance only): **#62 <- #85 (PCC1 contract) <- #86 (implementation continuation)**. Children are not additional integration successors and their presence does not prove absorption into a parent. Verify current refs, ancestry and file content before integrating or transferring evidence.
 
-Machine truth: [`../../config/consensus-mainline.json`](../../config/consensus-mainline.json)  
-Snapshot: [`CURRENT_SNAPSHOT_V1.json`](CURRENT_SNAPSHOT_V1.json)  
-Module registry: [`module-registry-v1.toml`](module-registry-v1.toml)  
-Module coverage: [`../../config/module-coverage-v1.toml`](../../config/module-coverage-v1.toml)  
-Module technical reference: [`../modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md`](../modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md)  
-Release train: [`release-train-v1.toml`](release-train-v1.toml)  
+Machine truth: [`../../config/consensus-mainline.json`](../../config/consensus-mainline.json)
+Snapshot: [`CURRENT_SNAPSHOT_V1.json`](CURRENT_SNAPSHOT_V1.json)
+Module registry: [`module-registry-v1.toml`](module-registry-v1.toml)
+Module coverage: [`../../config/module-coverage-v1.toml`](../../config/module-coverage-v1.toml)
+Module technical reference: [`../modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md`](../modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md)
+Release train: [`release-train-v1.toml`](release-train-v1.toml)
 Manifest: [`plan-manifest-v1.toml`](plan-manifest-v1.toml)\
 Applicability: [`docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md`](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md)\
 Implementation guide: [`docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md`](../modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md)\
@@ -24,6 +24,8 @@ Independent review: [`docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md`](../modules/TR
 Trace registry: [`config/documentation-contracts-v1.json`](../../config/documentation-contracts-v1.json)\
 Foundation operations: [`docs/modules/TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md`](../modules/TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md)\
 Operation catalog: [`config/documentation-operations-v1.json`](../../config/documentation-operations-v1.json)
+
+Supplemental E1/T1/S1 operation closure: [`config/documentation-operations-supplement-v1.json`](../../config/documentation-operations-supplement-v1.json), validated by [`scripts/ci/check_documentation_operations_supplement_v1.py`](../../scripts/ci/check_documentation_operations_supplement_v1.py). The bounded foundation catalogue remains intentionally incomplete for future and disabled operations.
 
 ---
 
@@ -77,9 +79,9 @@ Development history lives in Git history, closed pull requests, immutable eviden
 
 ## 1. Current assessment and selected successor
 
-Protected `main` was observed at `b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9`. It is the canonical destination but not the assessed implementation baseline for this plan.
+Protected `main` was observed at `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2` for the module design review. Current source and base identities are resolved again at verification time.
 
-Draft PR #62 is the sole selected integration successor into protected main. PCC1/#85 and its implementation continuation #86 are bounded children on that line, not independent release authorities. Their latest source must be assessed separately from this historical integration baseline, which combines:
+The earlier PR #62 / #85 / #86 stack is historical provenance. It must not select or block a new change based on a closed PR number. The current PR integrates into protected main using its actual head/base and independently verified prospective merge. The currently observed baseline retains:
 
 - the descriptor-bound A04/A19/A23 application/finality/replay source train;
 - the Plan v2 single-development-truth structure;
@@ -108,7 +110,7 @@ These facts mean **implementation present**, not **accepted closed**. Closure ad
 
 The shortest honest path remains:
 
-1. keep PR #62 as the sole successor and supersede overlapping PRs without losing immutable evidence;
+1. use current PR metadata, preserve historical evidence, and reconcile actual overlapping changes;
 2. complete all non-skipped exact-head and prospective-merge gates on the same source;
 3. obtain independent module-owner, consumer, security, and release review;
 4. enforce crate/module dependency and production-build closures;
@@ -175,7 +177,7 @@ Crates are implementation units, not organizational boundaries. Every engineer h
 | M16 | Global Control Plane | registry, observation, planning, rollout, rollback | out of band | 2 |
 | M17 | Observability / Benchmark / Security / Evidence | metrics, fault/fuzz/formal/audit/evidence tooling | tooling | 3 |
 
-Target allocation: 48 engineers.
+Illustrative target allocation: 48 engineers. Staffing totals are planning data, not a CI correctness invariant.
 
 ### 3.1 Module documentation and coverage contract
 
@@ -495,19 +497,13 @@ Separate implementation owner, affected consumer reviewer, qualified independent
 
 The trace registry lists the required domains for every module, including consensus, cryptography, storage/recovery and economics. Specialist slots without authenticated appointments remain vacant; semantic acceptance stays not assessed. Real reviewer intake uses the existing external-evidence authentication process, not a local JSON flag. Producer and consumer review cannot replace the required specialist, and specialist review cannot replace affected consumer replay.
 
-Cross-module work normally uses:
-
-```text
-PR A: contract/version/limits/vectors/mutants
-PR B: producer implementation
-PR C: consumer adoption and aggregate replay
-```
+Cross-module work resolves contract/version/limits/vectors first, then implements the producer and consuming paths with aggregate replay. Compatible changes may use one atomic PR. Separate PRs are useful for independently reviewable or incompatible changes; three PRs are not a gate.
 
 Limits:
 
-- one active implementation PR per module;
+- coordinate overlapping edits to a module; unrelated paths need not wait on a module-wide writer lock;
 - one successor per integration surface;
-- at most five concurrent writers across consensus, Safety, state, finality, and recovery;
+- partition files and state-machine ownership explicitly; concurrency is limited by actual conflict and reviewer capacity;
 - no direct edits to another module implementation without its owner;
 - base movement invalidates exact-head evidence;
 - overlapping work declares one successor or closes.
@@ -538,7 +534,7 @@ Skipped, cancelled, queued, stale, synthetic, self-authored, or different-head r
 
 ### P0 — selected integration integrity
 
-PR #62 is the sole selected successor. Preserve the descriptor-bound SQLite namespace/schema/post-check implementation, declare old overlapping PRs superseded, and obtain unchanged exact-head plus prospective-merge checks and independent acceptance. No gate is promoted merely because implementation is present.
+Resolve the current PR head/base at verification time. Preserve descriptor-bound SQLite namespace/schema/post-check behavior and obtain unchanged exact-head plus prospective-merge checks and independent acceptance. No gate is promoted merely because implementation is present.
 
 ### P1 — module and production boundaries
 
@@ -574,7 +570,7 @@ Complete trusted source verification, exact export and root recomputation, multi
 |---|---|---|---|---|
 | P0 | DOC-TRUTH-001 | M15/M17 | implementation present | exact head, prospective merge, protected-main and post-merge document truth all pass |
 | P0 | MODULE-COVERAGE-001 | M00-M17 | implementation present | every source unit remains uniquely mapped; technical/SLO/testkit/owner/dependency checks pass |
-| P0 | INT-STACK-001 | M15/M17 | open | PR #62 sole successor; overlaps superseded; all required exact-head/merge checks and independent review pass |
+| P0 | INT-STACK-001 | M15/M17 | open | Current PR/event binding; overlapping work reconciled; all required exact-head/merge checks and independent review pass |
 | P0 | A19-NS-001 | M07/M08 | implementation present, acceptance pending | descriptor-bound DB and sidecar identity passes all replacement/rollback/reopen mutants |
 | P0 | A19-SCHEMA-001 | M07 | implementation present, acceptance pending | closed-world schema/pragma digest passes exact-source qualification |
 | P0 | A19-RETURN-001 | M07/M08 | implementation present, acceptance pending | no trusted return before close/post-check; crash/replay qualification passes |
@@ -668,25 +664,109 @@ Any source, protocol, dependency, compiler, feature, configuration, validator se
 
 ## 14. Immediate executable order
 
-1. rerun canonical document/module coverage, repository truth, protocol contract, Rust baseline, fuzz smoke, Node Commit, 1/2/4/8-worker, recovery, replay-to-Core, candidate-node, Web4, and prospective-merge gates on the exact current integration or bounded-child head being changed; separately requalify the current PR #62 head when child work is integrated;
-2. repair every exact log failure without weakening source identity, offline dependency, mutation, recovery, or non-promotion requirements;
-3. mark PRs #54, #57, #58, #59, and #61 superseded only after their evidence and unique commits are preserved or proven absorbed;
-4. obtain independent module-owner, consumer, security/evidence, and release acceptance on the unchanged head;
-5. merge only through protected `main`, then run post-merge verification and regenerate source-bound release status;
-6. retain and qualify the implemented Cargo dependency/feature closures for `node-prod-v0`, `node-devnet-v0`, `ai-v1-candidate`, and `lab-and-evidence` on the exact head and prospective merge;
-7. decompose the node composition hotspot and finish the persistent network/pacemaker/Vote/Timeout/finality/recovery path;
-8. complete transaction lifecycle, state sync, migration, packaging, SBOM/provenance, observability, denial/resource, and incident/DR closure;
-9. ingest authentic independent multi-host, HSM/anchor, physical power-loss, audit/red-team, and wall-clock soak evidence;
-10. retain G5 and every activation flag as false until governance signs the exact accepted bundle.
+The current development sequence is design coverage, process cleanup, cross-epoch
+runtime, public transactions and sync, incremental storage, then multi-host fault
+and performance acceptance. These are implementation stages inside this sole plan.
+Design text and structural CI cannot close a runtime or external-evidence gate.
+
+| Stage | Primary / consuming modules | Concrete implementation and exit |
+|---|---|---|
+| D1 specific module designs | M00–M17 | Every module has a linked spec with actual/proposed interfaces, state transitions, errors, persistent data, bounded resources, crash points and test vectors. Producer and consumer reconcile shared invariants. Unsupported profiles stay disabled. |
+| D2 development process | M17 / all | One canonical documentation entrypoint per source identity; no word-count or staffing-total gate; checkout-local helpers use reviewed source plus recorded fingerprints; historical PRs are not live routing. Exact source/merge bindings, required tests and independent acceptance remain. |
+| E1 cross epoch | M02 / M03, M06, M07, M08, M13, M15 | Execute through checkpoint C, finalize old-set seals C+1/C+2 without application execution, authenticate the carried predecessor root, then propose/vote/execute at C+3 under the new epoch. Separate consensus tip and application head. Test sparse JMT empty/leaf/internal/no-op roots, stale-index filtering, old/new key roles, restart at every durable boundary, reordered QC/TC and repeated crossings. |
+| T1 public transactions and sync | M05 / M04, M06, M08, M13, M14, M15 | Drive actual public signed submissions through bounded admission, durable dedup, proposer selection, execution, commit and query. Replace fixture workload selection in the runtime. A wiped/new node verifies a checkpoint, obtains bounded chunks/deltas, imports atomically and catches up across an epoch before signing. Test nonce gaps, overload, lost replies, duplicate submissions, peer failure and tampered chunks. |
+| S1 incremental storage | M07 / M06, M08, M13 | Replace per-commit full-history snapshots/scans with atomic changed-node/value batches, authenticated version/root metadata and bounded replay suffixes. Preserve descriptors, schema guards, fsync ordering and rollback anchors. Measure read/write bytes and reopen time over growing retained history; test interrupted migration, pruning references and recovery. |
+| F1 independent acceptance | M15 / M02–M08, M13, M17 | Multiple physical hosts with declared CPU/RAM/disk/network; fixed signed workload; RTT/loss/partition and f-tolerance matrix; real process crashes and separately identified physical power cuts; catch-up and epoch changes under load. Record finalized user goodput, p50/p95/p99 end-to-end finality, queue/drop rates, state growth and recovery time with raw evidence. Independent review, HSM/anchor, audit and soak gates remain open until authentic evidence. |
+
+E1 precedes public-network activation. T1 provides the workload used to measure S1
+and F1. Storage work can be developed in parallel after the E1 root contract is
+reviewed, but cannot bypass its recovery and root-equivalence tests. No mainnet
+throughput claim comes from an ingress benchmark or a single-machine fixture.
+
+Anti-double-sign, persist-before-sign, canonical cryptographic vectors, crash
+recovery and deterministic roots/receipts at 1/2/4/8 workers are mandatory throughout
+all stages. A failing invariant blocks integration. G5 and every activation flag
+stay false until the exact accepted bundle has the required signed authority.
+
+A compatible change may carry contract, implementation and evidence in one PR
+when it remains reviewable. A wire/root/schema incompatibility requires its
+versioned contract and migration decision before implementation. File partitioning
+and consumer review replace fixed PR-count or writer-count rituals.
+
+The current candidate implementation supports old-epoch checkpoint/seals,
+strict full epoch context, journal8→journal9 migration and inert TRNMS14E
+recovery, native schema4 C→C+3 preparation and commit, and original-owner-bound
+ordinary signer retirement before handoff. Real first-new three-chain tests
+preserve both C application parent and C+2 consensus parent, including reset
+view numbers in persisted successors. Journal9 verifies its actual terminal
+source, private Core request affinity and exact source/target recovery; three
+initialization SIGKILL cuts pass. A separate default-off continuing-author host
+now consumes the actual owners, migrates the independent V0 checkpoint to its
+bounded V1 lineage store, and acknowledges the initial Core state only after
+all physical cuts match. Its first timeout persists intent, signer decision and
+signature release through journal9 and the independent checkpoint before
+broadcast. It exposes no raw Core or signer handle.
+
+The external authority records retirement in its authenticated mode and append
+log, with restart reconciliation, fsync confirmation and actual process-crash
+checks. Terminal14O host recovery now requires a typed independent node-checkpoint
+join binding the original signer, audited Safety migration origin and committed
+native history. A real ten-vote Core/native/Safety run closes and reopens all local
+owners and reproduces the persisted handoff signature without another key call;
+substituted source cuts and a later external checkpoint fence recovery. The test
+watermark service is not an external HSM acceptance result. The new candidate
+also closes and reopens all owners at initial full14E activation, then signs its
+first timeout once. Database replacement during the final external-watermark
+callback rejects before the key call, even with identical bytes. Progressed
+whole-node recovery, actual new-epoch proposal/execution/finality driving,
+new-only commissioning and repeated activation remain open.
+
+T1 drives signed candidate submissions through durable admission, actual
+proposals, finalized native execution and historical inclusion proofs, including
+complete ancestry for batched finality and an independent client verifier. Its
+bounded ordinary finalized-body replay candidate reconstructs application and
+replay state from independently configured genesis; no peer-supplied replay set
+becomes authority. Ten real process-kill cuts cover manifest/chunk publication,
+native preparation/commit, and CURRENT publication; recovery rejects forged
+bodies and forged retained finality without changing the accepted head. This
+replay path does not activate consensus or cover cross-epoch sync.
+Native schema5 uses incremental ordinary P/state/replay commits and authenticated
+point reads with bounded deterministic parallel prefetch. Unrelated account growth
+no longer forces a full ordinary execution scan; cutoff/epoch operations still
+need their frozen manifest. The explicit schema6 candidate migrates a committed C
+and prepares a real C+3 sparse delta, preserving both parents, strict edge lineage
+and source replay binding across cold reopen and three SIGKILL cuts. Explicit
+schema6→7 migration adds strict first-new finality and ordinary descendant
+commits, atomic JMT/replay/P/head updates, speculative descendant retention and
+competing-fork retirement. Real signed execution agrees at 1/2/4/8 workers;
+first-new and descendant commit process-kill cuts and cold tamper checks cover
+the new records. Snapshot/proof adapters, reference-safe GC, full node integration
+and growing-history performance acceptance remain separate work.
+
+The clean six-host native campaigns exposed a timeout-certificate/high-QC
+checkpoint mismatch and then actor failure on a proposal received after signing
+a timeout. Real-owner regressions now preserve equivalent TC quorums and verify
+late proposals without issuing a conflicting vote. Nonvoting execution/catch-up
+still needs its complete runtime path. The previous exact-source Rust baseline
+passed at the normal stack size after ownership/frame fixes. Its schema taxonomy
+and dependency checks exposed separate drift, now corrected without weakening
+the frozen ordinary error partition or dependency policy. New candidate and
+fixture feature closures are checked against Cargo's actual resolution. No
+successful fault/performance acceptance is claimed before a new clean-source
+campaign and exact-source remote checks. Independent review,
+physical power-loss, HSM, WAN and soak evidence remain open. No stage is closed
+by these candidate implementations alone.
+
+After changing a manifest-bound input, regenerate its fingerprints with
+`python3 scripts/ci/check_plan_manifest_pins_v1.py --refresh-input-pins`, review the
+diff and commit it with the source change. This updates input provenance only;
+it never changes frozen protocol imports, acceptance records or activation flags.
+The normal read-only gate still checks the committed exact source.
 
 Minimum local replay:
 
 ```bash
 bash scripts/ci/check_canonical_development_plan.sh
-bash scripts/ci/check_agent_development_docs_v1.sh
-python3 scripts/ci/test_documentation_contracts_v1.py
-python3 scripts/ci/check_documentation_contracts_v1.py
-python3 scripts/ci/check_module_coverage_v1.py
 python3 scripts/ci/check_repository_truth_v1.py
 python3 scripts/ci/check_blocker_execution_v1.py
 python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree

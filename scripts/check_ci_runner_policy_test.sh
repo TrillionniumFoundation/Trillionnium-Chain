@@ -410,3 +410,39 @@ git -C "$repo" commit -qm 'negative reusable workflow fixture'
 expect_fail head-reusable-job --head
 
 printf 'check_ci_runner_policy tests passed\n'
+
+# The additional actor-independent feedback path is explicitly classified.
+feedback_workflow="$workflow_dir/trnm-independent-rust-feedback.yml"
+restore_feedback() {
+  cp "$root/.github/workflows/trnm-independent-rust-feedback.yml" "$feedback_workflow"
+}
+# Keep these controls independent of earlier deliberately malformed fixtures.
+git -C "$repo" restore --source="$(git -C "$repo" rev-list --max-parents=0 HEAD)" --staged --worktree .github/workflows
+git -C "$repo" clean -qfd -- .github/workflows
+restore_feedback
+expect_pass independent-hosted-feedback --worktree 5
+for mutation in permissions runner credentials trigger masking conditional matrix aggregate; do
+  restore_feedback
+  python3 - "$feedback_workflow" "$mutation" <<'MUTATE'
+from pathlib import Path
+import sys
+p=Path(sys.argv[1]); text=p.read_text()
+changes={
+ 'permissions':('contents: read','contents: write'),
+ 'runner':('runs-on: ubuntu-24.04','runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]'),
+ 'credentials':('persist-credentials: false','persist-credentials: true'),
+ 'trigger':('  pull_request:','  pull_request_target:'),
+ 'masking':('    timeout-minutes: 210','    continue-on-error: true\n    timeout-minutes: 210'),
+ 'conditional':('      - name: Execute complete independent lane','      - name: Execute complete independent lane\n        if: false'),
+ 'matrix':('mode: [head, merge]','mode: [head]'),
+ 'aggregate':('test "$LANES_RESULT" = success','true'),
+}
+old,new=changes[sys.argv[2]]; assert old in text; p.write_text(text.replace(old,new,1))
+MUTATE
+  expect_fail "independent-feedback-$mutation" --worktree
+done
+restore_feedback
+git -C "$repo" add .github/workflows
+expect_pass independent-hosted-feedback-staged --staged 5
+git -C "$repo" commit -qm 'registered hosted feedback fixture'
+expect_pass independent-hosted-feedback-head --head 5

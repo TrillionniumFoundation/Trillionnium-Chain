@@ -204,6 +204,10 @@ impl StoredRecoveryStartCertificateV1 {
         self.ready.value_v1()
     }
 
+    pub(crate) const fn ready_owner_v1(&self) -> &StoredRecoveryReadySetV1 {
+        &self.ready
+    }
+
     pub(crate) fn path_v1(&self) -> &Path {
         &self.pinned.path
     }

@@ -1436,6 +1436,40 @@ where
         }
     }
 
+    // A same-Safety Ready rebase can immediately follow an ordinary Synced
+    // completion. Admit only the actual no-sign K closure bound to this exact
+    // authenticated Safety record, before native recovery can mutate P rows.
+    if let SafetyTransitionContextV0::NativeValid(transition) = safety_head.transition_context() {
+        let retained = history
+            .get(&transition.validation_id().block_id())
+            .ok_or_else(|| {
+                PocoNodeDeployedLabRecoveryErrorV0::message(
+                    "safety.synced_k_missing",
+                    "NativeValid head lacks its original terminal K",
+                )
+            })?;
+        let context = recover_try!(
+            "safety.synced_k_context",
+            validation_store.confirm_synced_no_sign_native_valid_context_from_k_v1(
+                &retained.binding,
+                safety_head.transition_context(),
+                safety_facts.state_record_checksum_v0(),
+            )
+        );
+        let confirmed = recover_try!(
+            "safety.synced_exact_head",
+            safety_store.confirmed_native_valid_head_exact_v0(safety, &context)
+        );
+        if !confirmed.belongs_to_store_at_path_v0(&safety_store, &paths.target_safety)
+            || confirmed.state_record_checksum() != safety_facts.state_record_checksum_v0()
+        {
+            return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+                "safety.synced_owner",
+                "Synced K closure lost its exact Safety owner",
+            ));
+        }
+    }
+
     let recovery_request = recover_try!(
         "application.recovery_request",
         NativeApplicationRecoveryRequestV0::new(
@@ -1826,6 +1860,13 @@ fn recoverable_clean_transition_v0(
     safety: &SafetyState,
     context: &SafetyTransitionContextV0,
 ) -> bool {
+    if let SafetyTransitionContextV0::NativeValid(transition) = context {
+        return safety.revision() >= 6
+            && transition.route() == trnm_consensus_core::PayloadValidationRouteV0::Synced
+            && transition.post_ack_action_code()
+                == trnm_consensus_core::NativeValidPostAckActionV0::None.code()
+            && transition.completion_revision() == safety.revision();
+    }
     matches!(
         (safety.revision(), context),
         (

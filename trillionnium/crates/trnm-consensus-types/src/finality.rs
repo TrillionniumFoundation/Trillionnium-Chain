@@ -578,6 +578,27 @@ impl FinalityProofV0 {
         Ok(())
     }
 
+    /// Checks only the specialized checkpoint/two-seal structural relations.
+    ///
+    /// This performs no generic finality, authenticated-ancestry or signature
+    /// validation and returns no kernel token or authority. Contextual strict
+    /// consumers must separately decode with the complete runtime context and
+    /// verify every finality signature before using these relations.
+    pub fn validate_checkpoint_two_seal_structure_v1(
+        &self,
+        old_validator_set: &ValidatorSet,
+        old_consensus_parameters: &ConsensusParametersV0,
+        next_epoch_commitment: &NextEpochCommitmentV0,
+    ) -> Result<()> {
+        old_validator_set.validate_against_parameters(old_consensus_parameters)?;
+        self.checkpoint_two_seal_kernel(
+            old_validator_set,
+            old_consensus_parameters,
+            next_epoch_commitment,
+        )?;
+        Ok(())
+    }
+
     /// Verifies and records the checkpoint/two-seal bridge kernel.
     ///
     /// All generic finality proposal, QC, optional-TC, leader, timestamp, and
@@ -609,7 +630,7 @@ impl FinalityProofV0 {
         )
     }
 
-    fn checkpoint_two_seal_kernel(
+    pub(crate) fn checkpoint_two_seal_kernel(
         &self,
         old_validator_set: &ValidatorSet,
         old_consensus_parameters: &ConsensusParametersV0,

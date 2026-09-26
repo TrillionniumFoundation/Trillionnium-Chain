@@ -1,30 +1,41 @@
-<!--
-This file intentionally renders no content on the repository homepage.
-The text inside this comment exists only for automated repository-policy validation.
-It is not a project introduction and must remain hidden from the rendered page.
+# Trillionnium Chain
 
-Canonical clone URL marker: https://github.com/TrillionniumFoundation/Trillionnium-Chain.git
-Prerequisite marker: Node.js `>=24.18.0 <25`
-Authority marker: machine-readable authority is `config/consensus-mainline.json`
+Trillionnium Chain develops a native PoCO-BFT blockchain node. The current
+machine-readable authority is `config/consensus-mainline.json`: the node remains
+at `G1-native-host-incomplete`; production, public-testnet and release activation
+are disabled. Candidate code and laboratory evidence do not imply deployment readiness.
 
-Rendered-homepage blankness marker 01: no public overview is presented here.
-Rendered-homepage blankness marker 02: no architecture summary is presented here.
-Rendered-homepage blankness marker 03: no implementation summary is presented here.
-Rendered-homepage blankness marker 04: no status summary is presented here.
-Rendered-homepage blankness marker 05: no setup guide is presented here.
-Rendered-homepage blankness marker 06: no development guide is presented here.
-Rendered-homepage blankness marker 07: no operational guide is presented here.
-Rendered-homepage blankness marker 08: no release statement is presented here.
-Rendered-homepage blankness marker 09: no roadmap is presented here.
-Rendered-homepage blankness marker 10: no product narrative is presented here.
-Rendered-homepage blankness marker 11: no protocol narrative is presented here.
-Rendered-homepage blankness marker 12: no module narrative is presented here.
-Rendered-homepage blankness marker 13: no deployment narrative is presented here.
-Rendered-homepage blankness marker 14: no contribution narrative is presented here.
-Rendered-homepage blankness marker 15: no security narrative is presented here.
-Rendered-homepage blankness marker 16: no benchmark narrative is presented here.
-Rendered-homepage blankness marker 17: no readiness narrative is presented here.
-Rendered-homepage blankness marker 18: no activation narrative is presented here.
-Rendered-homepage blankness marker 19: no migration narrative is presented here.
-Rendered-homepage blankness marker 20: no consensus narrative is presented here.
--->
+Start with the [module design index](docs/modules/README.md), covering M00–M17.
+It links each module's concrete interfaces, algorithms, durable state, limits,
+failure behavior and acceptance tests. Existing behavior and proposed work are
+identified separately in each specification.
+
+The [development plan](docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+is the sole engineering sequence: complete module designs and simplify the
+workflow, then cross epoch, public transactions and sync, incremental storage,
+and multi-host fault/performance acceptance. The [authority resolver](docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md)
+explains precedence between frozen protocol rules and implementation designs.
+
+```bash
+git clone https://github.com/TrillionniumFoundation/Trillionnium-Chain.git trillionnium-chain
+cd trillionnium-chain
+bash scripts/project-preflight.sh --audit
+```
+
+For development, create a `feature/chain-*`, `fix/chain-*`, `docs/chain-*`,
+`test/chain-*` or `chore/chain-*` topic branch and follow [AGENTS.md](AGENTS.md).
+Rust is pinned by [rust-toolchain.toml](rust-toolchain.toml).
+The web client requires Node.js `>=24.18.0 <25` and npm `>=11.16.0 <12`.
+
+On the committed source, run the canonical documentation checks once:
+
+```bash
+bash scripts/ci/check_canonical_development_plan.sh
+python3 scripts/ci/check_repository_truth_v1.py
+python3 scripts/ci/check_required_baseline_closure_v1.py
+```
+
+Protocol vectors, anti-double-sign, persist-before-sign, crash recovery and
+concurrent execution determinism remain required checks. See the module specs
+and plan for the Rust test commands and external acceptance requirements.
+Report security issues through [SECURITY.md](SECURITY.md).

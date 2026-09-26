@@ -107,11 +107,10 @@ impl GenerationAwarePacemakerV0 {
 
     /// Arms the current `(epoch, view)` only when no generation is active.
     ///
-    /// This is deliberately different from [`Self::observe_progress`] followed
-    /// by [`Self::arm`]: a phase-only certificate transition can restore a
-    /// Ready owner without changing any authoritative Core fact.  In that
-    /// case the old timeout has already been consumed, so liveness needs a
-    /// fresh timer, but the bounded exponential backoff must remain intact.
+    /// This preserves bounded backoff across phase-only transitions. The
+    /// caller must first check Core's durable last-timeout coordinate: a
+    /// restored Ready wrapper does not permit another timeout in an already
+    /// timed-out view. This process-local timer has no signing authority.
     /// Calling this while a generation is active is an idempotent no-op, which
     /// also prevents duplicate stale certificates from moving its deadline.
     pub fn arm_if_unarmed(

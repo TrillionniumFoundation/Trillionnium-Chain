@@ -77,6 +77,8 @@ pub enum FrameKind {
     /// persisted the exact Cut/Park pair and committed its local park event.
     /// Transport carriage alone grants no handoff or recovery authority.
     RestartParkedAck = 16,
+    /// Direct-seven process-local Prepare/Park termination observation.
+    TerminalBarrier = 17,
 }
 
 impl TryFrom<u8> for FrameKind {
@@ -100,6 +102,7 @@ impl TryFrom<u8> for FrameKind {
             14 => Ok(Self::RestartRecoveryStart),
             15 => Ok(Self::RestartCatchup),
             16 => Ok(Self::RestartParkedAck),
+            17 => Ok(Self::TerminalBarrier),
             _ => Err(FrameError::Malformed("unknown frame kind")),
         }
     }
@@ -439,16 +442,30 @@ pub fn write_framed(
     Ok(())
 }
 
+/// Complete external frame-signing context. Encoding still verifies the returned
+/// signature against the committed role key before emitting any bytes.
+pub struct ExternalFrameSigningV1<'a> {
+    pub run_id: &'a str,
+    pub remote: ValidatorId,
+    pub network_context_digest: [u8; 32],
+    pub nonce_binding: [u8; 32],
+    pub expected_public_key: [u8; 32],
+    pub producer: &'a mut dyn P2pIdentitySignatureProducerV1,
+}
+
 pub fn write_framed_with_external_identity(
     writer: &mut impl Write,
     frame: &AuthenticatedFrame,
-    run_id: &str,
-    remote: ValidatorId,
-    network_context_digest: [u8; 32],
-    nonce_binding: [u8; 32],
-    expected_public_key: [u8; 32],
-    producer: &mut dyn P2pIdentitySignatureProducerV1,
+    signing: ExternalFrameSigningV1<'_>,
 ) -> Result<(), FrameError> {
+    let ExternalFrameSigningV1 {
+        run_id,
+        remote,
+        network_context_digest,
+        nonce_binding,
+        expected_public_key,
+        producer,
+    } = signing;
     let body = frame.encode_with_external_identity(
         run_id,
         remote,
@@ -828,13 +845,14 @@ mod tests {
             (FrameKind::RestartRecoveryStart, 14),
             (FrameKind::RestartCatchup, 15),
             (FrameKind::RestartParkedAck, 16),
+            (FrameKind::TerminalBarrier, 17),
         ];
         for (kind, discriminant) in frozen {
             assert_eq!(kind as u8, discriminant);
             assert_eq!(FrameKind::try_from(discriminant).unwrap(), kind);
         }
         assert!(FrameKind::try_from(0).is_err());
-        assert!(FrameKind::try_from(17).is_err());
+        assert!(FrameKind::try_from(18).is_err());
     }
 
     #[test]

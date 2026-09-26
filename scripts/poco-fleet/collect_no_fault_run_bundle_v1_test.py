@@ -93,6 +93,7 @@ def active_prestart_plan(
             "arch": "x86_64",
             "epoch": "1787000000",
             "cpu_threads": "128",
+            "load1_milli": "500",
             "memory_bytes": str(512 * 1024 * 1024 * 1024),
             "memory_available_bytes": str(400 * 1024 * 1024 * 1024),
             "nofile_soft": "65536",
@@ -784,9 +785,60 @@ def expect_production_plan_only(base: pathlib.Path) -> None:
         raise AssertionError("CLI default plan-only mode created output")
 
 
+def mesh_authority_capacity_consumption_control(root: pathlib.Path) -> None:
+    topology = {"validators": [
+        {"validator_id": f"{index + 1:064x}",
+         "host_id": "local" if index == 0 else "rog",
+         "management": "local" if index == 0 else "fixture-rog"}
+        for index in range(7)
+    ]}
+    planned_hosts = {
+        "local": {"management": "local", "validator_processes": 1},
+        "rog": {"management": "fixture-rog", "validator_processes": 6},
+    }
+    report = active_prestart_plan(root, topology, "fixture", "ab" * 32)["mesh_resource_preflight"]
+    collector.validate_mesh_preflight(report, validator_count=7, planned_hosts=planned_hosts)
+    resources = collector.consensus_runner.mesh_resources
+    for index, host in enumerate(report["hosts"]):
+        count = planned_hosts[host["host_id"]]["validator_processes"]
+        for field, per_validator, authority in (
+            ("host_threads_required", report["per_validator_threads"], resources.LEASE_DAEMON_THREADS),
+            ("host_open_file_fds_required", report["per_validator_open_file_fds"], resources.LEASE_DAEMON_FDS),
+            ("host_rss_bytes_required", report["per_validator_rss_bytes"], resources.LEASE_DAEMON_FRAME_BYTES),
+        ):
+            assert host[field] == count * per_validator + authority
+            for direction in (-1, 1):
+                changed = json.loads(json.dumps(report))
+                changed["hosts"][index][field] += direction * authority
+                try:
+                    collector.validate_mesh_preflight(changed, validator_count=7, planned_hosts=planned_hosts)
+                except SystemExit as error:
+                    assert "capacity arithmetic differs" in str(error), str(error)
+                else:
+                    raise AssertionError(f"collector accepted missing/double lease service: {field}")
+    for field in (
+        "load1_milli_observed",
+        "planned_cpu_reserve_milli",
+        "projected_cpu_load_milli",
+        "host_cpu_load_ceiling_milli",
+    ):
+        changed = json.loads(json.dumps(report))
+        changed["hosts"][0][field] += 1
+        try:
+            collector.validate_mesh_preflight(
+                changed, validator_count=7, planned_hosts=planned_hosts
+            )
+        except SystemExit as error:
+            assert "capacity arithmetic differs" in str(error), str(error)
+        else:
+            raise AssertionError(f"collector accepted tampered CPU load fact: {field}")
+    print("mesh_authority_capacity_consumer=passed positives=1 negatives=16")
+
+
 def main() -> None:
     with tempfile.TemporaryDirectory(prefix="poco-g3-no-fault-collector-test-") as raw:
         workspace = pathlib.Path(raw)
+        mesh_authority_capacity_consumption_control(workspace)
         base = workspace / "base"
         base.mkdir()
         prepare(base)

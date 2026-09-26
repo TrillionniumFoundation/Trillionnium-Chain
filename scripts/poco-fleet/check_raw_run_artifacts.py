@@ -19,11 +19,13 @@ import pathlib
 import re
 import subprocess
 import tempfile
+import tomllib
 from typing import Any
 
 import check_run_evidence
 import evidence_bundle_profiles_v1 as evidence_profiles
 from poco_consensus_contract import canonical_lab_genesis_hash
+from plan_topology import CANONICAL_PLACEMENT, INVENTORY, validate_topology_v1
 
 
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -35,6 +37,24 @@ KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
 
 def fail(message: str) -> None:
     raise SystemExit(f"PoCO G3 raw run artifacts invalid: {message}")
+
+
+def require_full_fleet_topology_v1(topology: object, *, expected_run_id: str | None = None) -> None:
+    """The existing external acceptance profile still requires the full fleet."""
+    with INVENTORY.open("rb") as source:
+        inventory = tomllib.load(source)
+    # The existing signed completed-bundle format annotates its frozen topology
+    # with the run ID. This annotation is not part of planner/material topology.
+    if isinstance(topology, dict) and "run_id" in topology:
+        if expected_run_id is None or topology["run_id"] != expected_run_id:
+            fail("completed topology run annotation differs from signed summary")
+        topology = {key: value for key, value in topology.items() if key != "run_id"}
+    try:
+        placement = validate_topology_v1(inventory, topology)
+    except (TypeError, ValueError) as error:
+        fail(f"topology differs from the closed inventory placement: {error}")
+    if placement != CANONICAL_PLACEMENT:
+        fail("reduced placement cannot satisfy full-fleet raw evidence acceptance")
 
 
 def unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -305,7 +325,8 @@ def validate(
 
     _, topology_path = artifact(records, "topology")
     topology = read_json(topology_path, "topology")
-    if topology.get("schema_version") != 1 or topology.get("fleet_id") != summary["fleet_id"]:
+    require_full_fleet_topology_v1(topology, expected_run_id=summary["run_id"])
+    if topology.get("fleet_id") != summary["fleet_id"]:
         fail("topology schema/fleet mismatch")
     if topology.get("network_scope") != "single-lan" or topology.get("geo_wan_evidence") is not False:
         fail("topology must remain single-lan and geo_wan_evidence=false")

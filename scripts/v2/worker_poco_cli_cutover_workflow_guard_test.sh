@@ -30,8 +30,22 @@ done
 
 automation_inputs=(
   scripts/auto_iterate.tasks
-  scripts/auto_relay_codegen.steps
 )
+
+# The former codegen relay only wrote timestamped marker files and reported
+# success.  Keep the retirement explicit: a restored copy must fail this guard
+# instead of quietly reintroducing a non-authorizing pipeline.
+retired_codegen_paths=(
+  scripts/codegen/run_codegen_task.sh
+  scripts/auto_relay_codegen.steps
+  scripts/run_codegen_pipeline.sh
+)
+for retired_codegen_path in "${retired_codegen_paths[@]}"; do
+  if [[ -e "$retired_codegen_path" || -L "$retired_codegen_path" ]]; then
+    echo "[FAIL] retired marker-only codegen pipeline returned: $retired_codegen_path" >&2
+    exit 3
+  fi
+done
 
 retired_refs=(
   run_worker_receipt_gates_real_cli.sh

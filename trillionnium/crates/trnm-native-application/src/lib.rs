@@ -8,6 +8,7 @@
 
 mod application;
 mod artifact;
+mod epoch;
 mod error;
 mod execution;
 mod primitives;
@@ -26,9 +27,15 @@ pub use application::{
     MAX_BLOCK_BYTES_V0, MAX_BLOCK_TRANSACTIONS_V0, MAX_FINALIZATION_QUEUE_ENTRIES_V0,
 };
 pub use artifact::{
-    decode_native_executed_block_artifact_v0, encode_native_executed_block_artifact_v0,
+    decode_native_executed_block_artifact_v0, decode_native_executed_epoch_block_artifact_v1,
+    encode_native_executed_block_artifact_v0, encode_native_executed_epoch_block_artifact_v1,
     MAX_NATIVE_EXECUTED_BLOCK_ARTIFACT_BYTES_V0, NATIVE_EXECUTED_BLOCK_ARTIFACT_DOMAIN_V0,
-    NATIVE_EXECUTED_BLOCK_ARTIFACT_VERSION_V0,
+    NATIVE_EXECUTED_BLOCK_ARTIFACT_VERSION_V0, NATIVE_EXECUTED_EPOCH_BLOCK_ARTIFACT_DOMAIN_V1,
+    NATIVE_EXECUTED_EPOCH_BLOCK_ARTIFACT_VERSION_V1,
+};
+pub use epoch::{
+    NativeEpochBlockExecutionRequestV1, NativeEpochBlockPreviewRequestV1,
+    NativeExecutedEpochBlockV1,
 };
 pub use error::{NativeBoundaryErrorCodeV0, NativeBoundaryErrorV0, NativeBoundaryResultV0};
 pub use execution::{

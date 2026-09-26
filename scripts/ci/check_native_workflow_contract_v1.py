@@ -77,6 +77,13 @@ RUNTIME_MATRICES = {
 }
 
 
+EPOCH_CODEC2_COMMANDS = (
+    'timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --no-default-features --features candidate-epoch-host-v2 --lib candidate_host_v2 --locked',
+    'timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --all-features --locked',
+    'python3 ../scripts/ci/run_native_candidate_shards_v1.py --suite safety-epoch --workspace "$PWD" --evidence-dir "$RUNNER_TEMP/trnm-safety-epoch-shards" --deadline-seconds 900',
+    'cargo clippy -p trnm-consensus-core -p trnm-consensus-safety-store --all-features --all-targets --locked -- -D warnings',
+)
+
 class ContractError(RuntimeError):
     pass
 
@@ -164,8 +171,9 @@ def reject_environment_shadowing(text: str, label: str) -> None:
             require(key not in OFFLINE or (label == "runtime" and indent == 4), f"{label}: local env shadows offline {key}")
 
 
-def exact_matrix_commands(body: str, expected: tuple[str, ...], name: str) -> None:
-    require(scalar(body, "working-directory", 8) == "trillionnium-chain", f"{name}: working directory differs")
+def exact_matrix_commands(body: str, expected: tuple[str, ...], name: str,
+                          working_directory: str = "trillionnium-chain") -> None:
+    require(scalar(body, "working-directory", 8) == working_directory, f"{name}: working directory differs")
     require(scalar(body, "run", 8) == "|", f"{name}: expected explicit run block")
     run = body.split("        run: |", 1)[1]
     # Join only shell line continuations; inspect complete argv of every
@@ -260,6 +268,39 @@ def validate_contract(root: Path) -> dict[str, object]:
     execution = step(baseline, "Test the unified workspace feature graph with a hard deadline")
     hard_step(execution, "workspace execution")
     tokens(execution, ("cargo test --workspace --all-targets --locked --no-fail-fast", "| tee", "timeout --signal=TERM", 'git rev-parse HEAD > "$root/HEAD"', 'git rev-parse \'HEAD^{tree}\' > "$root/TREE"'), "workspace execution")
+    epoch_name = "Verify codec2 epoch host and journal10"
+    epoch = step(baseline, epoch_name)
+    hard_step(epoch, epoch_name)
+    require(not re.search(r"^        continue-on-error:", epoch, re.M),
+            f"{epoch_name}: must propagate failure")
+    exact_matrix_commands(epoch, EPOCH_CODEC2_COMMANDS, epoch_name, "trillionnium")
+    candidate = step(baseline, "Verify explicit incremental epoch execution candidate")
+    hard_step(candidate, "native candidate shard execution")
+    tokens(candidate, (
+        "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
+        "--features test-fixtures,incremental-epoch-candidate",
+        "cargo clippy -p trnm-native-execution-v0",
+    ), "native candidate shard execution")
+    node_epoch = step(baseline, "Verify default and explicit candidate ownership boundaries")
+    hard_step(node_epoch, "node epoch shard execution")
+    tokens(node_epoch, (
+        "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
+        "--suite node-epoch", "--deadline-seconds 300",
+        '--evidence-dir "$RUNNER_TEMP/trnm-node-epoch-shards"',
+    ), "node epoch shard execution")
+    safety_upload = step(baseline, "Retain exact-source Safety epoch shard evidence")
+    require(scalar(safety_upload, "if", 8) == "always() && (steps.safety_epoch_shards.outcome == 'success' || steps.safety_epoch_shards.outcome == 'failure')", "Safety epoch failure evidence must be retained")
+    require(scalar(safety_upload, "name", 10) == "trnm-safety-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}", "Safety epoch artifact source binding differs")
+    require(scalar(safety_upload, "path", 10) == "${{ runner.temp }}/trnm-safety-epoch-shards", "Safety epoch artifact path differs")
+    require(scalar(safety_upload, "if-no-files-found", 10) == "error", "Safety epoch artifact absence must fail")
+    node_upload = step(baseline, "Retain exact-source node epoch shard evidence")
+    require(scalar(node_upload, "if", 8) == "always() && (steps.node_epoch_shards.outcome == 'success' || steps.node_epoch_shards.outcome == 'failure')", "node epoch failure evidence must be retained")
+    require(scalar(node_upload, "name", 10) == "trnm-node-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}", "node epoch artifact source binding differs")
+    require(scalar(node_upload, "path", 10) == "${{ runner.temp }}/trnm-node-epoch-shards", "node epoch artifact path differs")
+    require(scalar(node_upload, "if-no-files-found", 10) == "error", "node epoch artifact absence must fail")
+    candidate_contract = step(baseline, "Test native candidate shard contract")
+    hard_step(candidate_contract, "native candidate shard contract tests")
+    tokens(candidate_contract, ("python3 ../scripts/ci/test_native_candidate_shards_v1.py",), "native candidate shard contract tests")
     evidence = step(runtime, "Build exact-source runtime evidence record")
     hard_step(evidence, "runtime evidence")
     tokens(evidence, ('out="$RUNNER_TEMP/runtime-fault-matrix"', '"source_commit": os.environ["TRNM_EXPECTED_SOURCE_SHA"]', '"source_tree": os.environ["SOURCE_TREE"]', 'sha256sum "$out/evidence.json"'), "runtime evidence")

@@ -404,11 +404,11 @@ impl RuntimeControlStateV1 {
             fleet_ready_set_sha256: self
                 .journal
                 .fleet_ready_set_sha256
-                .map_or_else(String::new, |digest| hex::encode(digest)),
+                .map_or_else(String::new, hex::encode),
             fleet_start_certificate_sha256: self
                 .journal
                 .fleet_start_certificate_sha256
-                .map_or_else(String::new, |digest| hex::encode(digest)),
+                .map_or_else(String::new, hex::encode),
             journal_event_sequence: self.journal_event_sequence,
             journal_event_sha256: hex::encode(self.journal_event_sha256),
             finalized_height: self.journal.finalized_height,

@@ -17609,3 +17609,6 @@ fn safety_rules_shadow_missing_body_releases_aggregate_charge_and_fails_closed()
     );
     assert_eq!(core, before, "a shadow mismatch is transactional");
 }
+
+#[path = "epoch_boundary_tests_v1.rs"]
+mod epoch_boundary_tests_v1;

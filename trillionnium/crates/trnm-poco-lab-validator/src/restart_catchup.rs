@@ -796,7 +796,7 @@ impl RestartCatchupChunkBodyV1 {
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum RestartCatchupBodyV1 {
     Request(RestartCatchupRequestBodyV1),
-    Manifest(RestartCatchupManifestBodyV1),
+    Manifest(Box<RestartCatchupManifestBodyV1>),
     Chunk(RestartCatchupChunkBodyV1),
 }
 
@@ -844,7 +844,7 @@ impl RestartCatchupBodyV1 {
                 Self::Request(RestartCatchupRequestBodyV1::decode(&mut cursor)?)
             }
             RestartCatchupSubtypeV1::Manifest => {
-                Self::Manifest(RestartCatchupManifestBodyV1::decode(&mut cursor)?)
+                Self::Manifest(Box::new(RestartCatchupManifestBodyV1::decode(&mut cursor)?))
             }
             RestartCatchupSubtypeV1::Chunk => {
                 Self::Chunk(RestartCatchupChunkBodyV1::decode(&mut cursor)?)
@@ -1486,7 +1486,7 @@ impl RestartCatchupChunkActionV1 {
 
 pub enum RestartCatchupConsumingActionV1 {
     Request(RestartCatchupRequestActionV1),
-    Manifest(RestartCatchupManifestActionV1),
+    Manifest(Box<RestartCatchupManifestActionV1>),
     Chunk(RestartCatchupChunkActionV1),
 }
 
@@ -1673,11 +1673,13 @@ impl RestartCatchupAdmissionWindowV1 {
         if self.provider_states.len() == self.capacity.maximum_providers {
             return self.poison(RestartCatchupErrorV1::Capacity);
         }
-        let mut state = ProviderAdmissionStateV1::default();
-        state.request = Some(StoredRequestV1 {
-            message_digest,
-            facts,
-        });
+        let state = ProviderAdmissionStateV1 {
+            request: Some(StoredRequestV1 {
+                message_digest,
+                facts,
+            }),
+            ..ProviderAdmissionStateV1::default()
+        };
         self.provider_states.insert(provider, state);
         Ok(RestartCatchupAdmissionResultV1 {
             admission: RestartCatchupAdmissionV1::New,
@@ -1746,13 +1748,13 @@ impl RestartCatchupAdmissionWindowV1 {
         self.reserved_bytes = projected_bytes;
         Ok(RestartCatchupAdmissionResultV1 {
             admission: RestartCatchupAdmissionV1::New,
-            action: Some(RestartCatchupConsumingActionV1::Manifest(
+            action: Some(RestartCatchupConsumingActionV1::Manifest(Box::new(
                 RestartCatchupManifestActionV1 {
                     context_digest,
                     provider,
                     facts,
                 },
-            )),
+            ))),
         })
     }
 
@@ -4128,7 +4130,7 @@ mod tests {
         chunk_count: u32,
         total_bytes: u64,
     ) -> RestartCatchupBodyV1 {
-        RestartCatchupBodyV1::Manifest(RestartCatchupManifestBodyV1 {
+        RestartCatchupBodyV1::Manifest(Box::new(RestartCatchupManifestBodyV1 {
             restart_cut_height: context.restart_cut_height,
             restart_cut_block_id: context.restart_cut_block_id,
             first_height: context.restart_cut_height + 1,
@@ -4150,7 +4152,7 @@ mod tests {
             target_applied_entry_digest: [0x59; 32],
             terminal_entry_digest: [0x5a; 32],
             bundle_sha256: [0x5b; 32],
-        })
+        }))
     }
 
     fn chunk_body(
@@ -5325,9 +5327,36 @@ mod tests {
         let expectation = RestartCatchupBundleExpectationV1::from_authenticated_manifest_v1(
             context,
             source,
-            first_manifest_action,
+            *first_manifest_action,
         )
         .unwrap();
+        // An internally corrupted carrier must not create any publication bytes.
+        // This is deliberately negative test input, not an issued valid proof.
+        let malformed = VerifiedRestartCatchupBundleCandidateV1 {
+            expected_context: expectation.context.clone(),
+            manifest_facts: expectation.manifest,
+            context_digest: expectation.context.digest(),
+            provider: expectation.provider,
+            source_applied_cut: expectation.source_applied_cut,
+            last_certified_tail: expectation.last_certified_tail_v1(),
+            target_applied_cut: expectation.target_applied_cut_v1(),
+            target_applied_entry_digest: expectation.manifest.target_applied_entry_digest,
+            entries: Vec::new(),
+            canonical_bytes: b"deliberately invalid private test carrier".to_vec(),
+            bundle_sha256: [0; 32],
+        };
+        let temporary = TempDir::new().unwrap();
+        let unpublished = temporary.path().join("must-not-be-created");
+        assert!(matches!(
+            persist_restart_catchup_provider_bundle_v1(
+                &unpublished,
+                malformed,
+                &set,
+                &ConsensusParametersV0::reference_shadow_v0(),
+            ),
+            Err(RestartCatchupErrorV1::BundleMismatch(_))
+        ));
+        assert!(!unpublished.exists());
         let mut assembler = RestartCatchupProviderBundleAssemblerV1::new(expectation);
         assert!(matches!(
             assembler.admit_chunk_v1(second_chunk_action),
@@ -5336,6 +5365,10 @@ mod tests {
             ))
         ));
         assert!(assembler.poisoned);
+        assert!(matches!(
+            assembler.finish_v1(&set, &ConsensusParametersV0::reference_shadow_v0()),
+            Err(RestartCatchupErrorV1::BundleMismatch(_))
+        ));
     }
 
     fn private_bundle_publication_root_v1(temporary: &TempDir, name: &str) -> PathBuf {

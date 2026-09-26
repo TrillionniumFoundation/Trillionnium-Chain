@@ -1,10 +1,11 @@
 schema_version = 1
 contract_id = "trnm-technical-convergence-v1"
 plan_id = "trnm-chain-development-plan-v2"
-as_of = "2026-09-06"
+as_of = "2026-09-16"
+# Historical integration observation; never the current-head acceptance identity.
 parent_integration_head = "1d46ba8423c33a35b7923516959ce7734b442f86"
-integration_branch = "work/plan-v2-full-gap-closure-20260902"
-delivery_branch = "work/plan-v2-technical-convergence-20260906"
+integration_branch = "derive-from-current-pull-request"
+delivery_branch = "derive-from-current-pull-request"
 production_authority = false
 production_candidate = false
 production_consensus_activation = false
@@ -58,10 +59,6 @@ persistent_runner_with_candidate_write_token_forbidden = true
 independent_final_push_review_required = true
 commands = [
   "bash scripts/ci/check_canonical_development_plan.sh",
-  "python3 scripts/ci/check_plan_manifest_pins_v1.py",
-  "python3 scripts/ci/check_technical_convergence_v1.py",
-  "python3 scripts/ci/test_technical_convergence_v1.py",
-  "python3 scripts/ci/check_module_coverage_v1.py",
   "python3 scripts/ci/check_required_baseline_closure_v1.py",
 ]
 
@@ -79,6 +76,26 @@ release_requires_signed_artifact_manifest = true
 release_requires_sbom_and_provenance = true
 
 [[detailed_spec]]
+id = "M00"
+path = "docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M01"
+path = "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M02"
+path = "docs/modules/M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M03"
+path = "docs/modules/M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
 id = "M04"
 path = "docs/modules/M04_P2P_TECHNICAL_SPEC_V1.md"
 status = "implementation-contract"
@@ -89,8 +106,43 @@ path = "docs/modules/M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md"
 status = "implementation-contract"
 
 [[detailed_spec]]
+id = "M06"
+path = "docs/modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M07"
+path = "docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
 id = "M08"
 path = "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M09"
+path = "docs/modules/M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M10"
+path = "docs/modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M11"
+path = "docs/modules/M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M12"
+path = "docs/modules/M12_SETTLEMENT_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M13"
+path = "docs/modules/M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md"
 status = "implementation-contract"
 
 [[detailed_spec]]

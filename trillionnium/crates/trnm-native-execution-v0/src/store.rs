@@ -19,6 +19,13 @@ const OBJECT_NAMESPACE: u8 = 1;
 const OBJECT_RECORD_SCHEMA_VERSION: u16 = 1;
 const NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0: u16 = 1;
 
+#[path = "epoch_store.rs"]
+mod epoch_store;
+pub(crate) use epoch_store::CarriedRootReaderV1;
+
+#[path = "incremental_store_v1.rs"]
+pub mod incremental_store_v1;
+
 pub fn stored_object_key_v0(object_key_hex: &str) -> Result<Vec<u8>> {
     ensure!(!object_key_hex.is_empty(), "object key must not be empty");
     let component = object_key_hex.as_bytes();
@@ -231,6 +238,8 @@ pub struct CompleteStatePlanV0 {
     tree_update_batch: TreeUpdateBatch,
     preimages: BTreeMap<KeyHash, Vec<u8>>,
     writes: Vec<CompleteStateWriteV0>,
+    epoch_parent: Option<crate::epoch_edge::EpochApplicationCoordinatesV1>,
+    epoch_parameters: Option<ConsensusParametersV0>,
 }
 
 impl CompleteStatePlanV0 {
@@ -357,7 +366,7 @@ pub(crate) fn plan_state_update_v0<S: NativeExecutionStoreV0>(
     })
 }
 
-pub(crate) fn plan_complete_state_update_v0<S: NativeExecutionStoreV0>(
+pub(crate) fn plan_complete_state_update_v0<S: TreeReader + HasPreimage>(
     store: &S,
     parent_version: Version,
     target_version: Version,
@@ -405,6 +414,8 @@ pub(crate) fn plan_complete_state_update_v0<S: NativeExecutionStoreV0>(
         tree_update_batch,
         preimages,
         writes,
+        epoch_parent: None,
+        epoch_parameters: None,
     })
 }
 
@@ -573,17 +584,36 @@ impl InMemoryNativeExecutionStoreV0 {
         &mut self,
         plan: CompleteStatePlanV0,
     ) -> Result<trnm_consensus_types::StateRoot> {
-        let expected = self
-            .roots
-            .last_key_value()
-            .map_or(0, |(version, _)| version + 1);
-        ensure!(plan.version == expected, "complete state plan is stale");
+        if let Some(edge) = plan.epoch_parent {
+            epoch_store::validate_epoch_parent_v1(self, edge)?;
+            ensure!(
+                plan.version == edge.first_version,
+                "epoch state plan target mismatch"
+            );
+        } else {
+            let expected = self
+                .roots
+                .last_key_value()
+                .map_or(Some(0), |(version, _)| version.checked_add(1))
+                .context("complete state parent version exhausted")?;
+            ensure!(plan.version == expected, "complete state plan is stale");
+        }
         let root = plan.root_hash;
         self.apply_batch_v0(plan.version, root, plan.tree_update_batch, plan.preimages)?;
+        if let Some(parameters) = plan.epoch_parameters {
+            self.consensus_parameters = parameters;
+        }
         Ok(trnm_consensus_types::StateRoot::new(root.0))
     }
 
     pub(crate) fn encode_authenticated_snapshot_v0(&self) -> Result<Vec<u8>> {
+        ensure!(
+            self.roots
+                .keys()
+                .zip(self.roots.keys().skip(1))
+                .all(|(previous, next)| previous.checked_add(1) == Some(*next)),
+            "sparse epoch snapshot requires the explicit epoch snapshot codec"
+        );
         borsh::to_vec(&PersistentAuthTreeSnapshotRefV0 {
             codec_version: NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0,
             nodes: &self.nodes,
@@ -630,6 +660,13 @@ impl InMemoryNativeExecutionStoreV0 {
     }
 
     fn validate_snapshot_v0(&self) -> Result<()> {
+        self.validate_snapshot_with_gaps_v1(&BTreeMap::new())
+    }
+
+    fn validate_snapshot_with_gaps_v1(
+        &self,
+        gaps: &BTreeMap<Version, &crate::epoch_edge::EpochApplicationCoordinatesV1>,
+    ) -> Result<()> {
         ensure!(
             !self.roots.is_empty(),
             "authenticated snapshot has no roots"
@@ -640,12 +677,15 @@ impl InMemoryNativeExecutionStoreV0 {
             .context("authenticated snapshot has no latest root")?
             .0;
         let tree = Sha256Jmt::new(self);
-        let mut previous = None;
+        let mut previous: Option<Version> = None;
         for (&version, expected_root) in &self.roots {
             if let Some(previous) = previous {
                 ensure!(
-                    version == previous + 1,
-                    "authenticated roots are not contiguous"
+                    previous.checked_add(1) == Some(version)
+                        || gaps
+                            .get(&previous)
+                            .is_some_and(|edge| edge.first_version == version),
+                    "authenticated root gap lacks an exact verified epoch edge"
                 );
             }
             // Check the actual retained commitment, not just root-node presence.
@@ -747,6 +787,34 @@ impl InMemoryNativeExecutionStoreV0 {
         Ok(())
     }
 
+    pub(crate) fn verified_raw_value_v0(
+        &self,
+        version: Version,
+        key: &[u8],
+    ) -> Result<Option<Vec<u8>>> {
+        let expected_root = self
+            .roots
+            .get(&version)
+            .copied()
+            .context("missing authenticated raw-value root")?;
+        let hash = authenticated_key_hash_v0(key)?;
+        if let Some(preimage) = self.preimages.get(&hash) {
+            ensure!(preimage == key, "authenticated raw-value preimage mismatch");
+        }
+        let (value, proof) = Sha256Jmt::new(self).get_with_proof(hash, version)?;
+        match &value {
+            Some(bytes) => {
+                ensure!(
+                    self.preimages.contains_key(&hash),
+                    "missing raw-value preimage"
+                );
+                proof.verify_existence(expected_root, hash, bytes)?;
+            }
+            None => proof.verify_nonexistence(expected_root, hash)?,
+        }
+        Ok(value)
+    }
+
     pub(crate) fn prove_raw_key_v0(
         &self,
         version: Version,
@@ -761,9 +829,31 @@ impl InMemoryNativeExecutionStoreV0 {
         let (value, proof) = Sha256Jmt::new(self)
             .get_with_ics23_proof(key.to_vec(), version)
             .context("create native JMT ICS23 proof")?;
+        // Generation alone does not authenticate the result, especially for
+        // historical values below the snapshot's latest audited root. Verify
+        // against the requested retained root before exporting any proof bytes.
+        let root = expected_root.0.to_vec();
+        let authenticated = match value.as_deref() {
+            Some(value) => ics23::verify_membership::<ics23::HostFunctionsManager>(
+                &proof,
+                &jmt::ics23_spec(),
+                &root,
+                key,
+                value,
+            ),
+            None => ics23::verify_non_membership::<ics23::HostFunctionsManager>(
+                &proof,
+                &jmt::ics23_spec(),
+                &root,
+                key,
+            ),
+        };
+        ensure!(
+            authenticated,
+            "native JMT ICS23 proof does not authenticate its root"
+        );
         let proof_bytes = proof.encode_to_vec();
         ensure!(!proof_bytes.is_empty(), "native JMT ICS23 proof is empty");
-        ensure!(expected_root == self.roots[&version], "proof root drift");
         Ok((value, proof_bytes))
     }
 
@@ -948,6 +1038,111 @@ mod snapshot_encoding_tests {
             store.committed_signer_nonces.clone(),
             &store.encode_authenticated_snapshot_v0().unwrap(),
         )
+    }
+
+    #[test]
+    fn authenticated_point_reads_preserve_history_absence_and_deletion() {
+        let mut store = historical_store();
+        for version in 0..3 {
+            assert_eq!(
+                store.verified_raw_value_v0(version, b"account").unwrap(),
+                Some(vec![version as u8; 257]),
+            );
+            assert_eq!(
+                store.verified_raw_value_v0(version, b"missing").unwrap(),
+                None
+            );
+        }
+        let plan = plan_complete_state_update_v0(
+            &store,
+            2,
+            3,
+            vec![CompleteStateWriteV0::new(b"account".to_vec(), None).unwrap()],
+        )
+        .unwrap();
+        store.apply_complete_state_plan_v0(plan).unwrap();
+        assert_eq!(store.verified_raw_value_v0(3, b"account").unwrap(), None);
+        assert_eq!(
+            store.verified_raw_value_v0(2, b"account").unwrap(),
+            Some(vec![2; 257])
+        );
+        assert!(store.verified_raw_value_v0(4, b"account").is_err());
+    }
+
+    #[test]
+    fn authenticated_point_reads_reject_wrong_root_value_and_preimage() {
+        let hash = authenticated_key_hash_v0(b"account").unwrap();
+        let mut wrong_root = historical_store();
+        wrong_root.roots.insert(0, RootHash([42; 32]));
+        assert!(wrong_root.verified_raw_value_v0(0, b"account").is_err());
+        assert!(wrong_root.verified_raw_value_v0(0, b"missing").is_err());
+        let mut wrong_value = historical_store();
+        wrong_value.values.insert((hash, 0), Some(vec![99; 257]));
+        assert!(wrong_value.verified_raw_value_v0(0, b"account").is_err());
+        let mut wrong_preimage = historical_store();
+        wrong_preimage.preimages.insert(hash, b"different".to_vec());
+        assert!(wrong_preimage.verified_raw_value_v0(0, b"account").is_err());
+        wrong_preimage.preimages.remove(&hash);
+        assert!(wrong_preimage.verified_raw_value_v0(0, b"account").is_err());
+    }
+
+    #[test]
+    fn exported_point_proof_authenticates_membership_and_absence() {
+        use prost::Message;
+        let store = historical_store();
+        for version in 0..3 {
+            for key in [b"account".as_slice(), b"missing".as_slice()] {
+                let (value, bytes) = store.prove_raw_key_v0(version, key).unwrap();
+                let proof = ics23::CommitmentProof::decode(bytes.as_slice()).unwrap();
+                let root = store.roots[&version].0.to_vec();
+                let accepted = match value.as_deref() {
+                    Some(value) => ics23::verify_membership::<ics23::HostFunctionsManager>(
+                        &proof,
+                        &jmt::ics23_spec(),
+                        &root,
+                        key,
+                        value,
+                    ),
+                    None => ics23::verify_non_membership::<ics23::HostFunctionsManager>(
+                        &proof,
+                        &jmt::ics23_spec(),
+                        &root,
+                        key,
+                    ),
+                };
+                assert!(
+                    accepted,
+                    "exported proof does not authenticate its requested root"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn exported_point_proof_rejects_substituted_root_before_publication() {
+        let mut store = historical_store();
+        store.roots.insert(0, RootHash([42; 32]));
+        for key in [b"account".as_slice(), b"missing".as_slice()] {
+            assert!(
+                store.prove_raw_key_v0(0, key).is_err(),
+                "a self-comparison must not substitute for root verification",
+            );
+        }
+    }
+
+    #[test]
+    fn exported_point_proof_rejects_corrupt_historical_value_below_healthy_head() {
+        let mut store = historical_store();
+        let hash = authenticated_key_hash_v0(b"account").unwrap();
+        store.values.insert((hash, 0), Some(vec![99; 257]));
+        assert_eq!(
+            store.verified_raw_value_v0(2, b"account").unwrap(),
+            Some(vec![2; 257])
+        );
+        assert!(
+            store.prove_raw_key_v0(0, b"account").is_err(),
+            "historical proof producer published an unauthenticated value",
+        );
     }
 
     #[test]

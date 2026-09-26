@@ -8,10 +8,16 @@ import subprocess
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from plan_topology import ALTERNATE_ALLOCATIONS, CANONICAL_PLACEMENT, REDUCED_PLACEMENT
+
 
 MAX_PROBE_BYTES = 64 * 1024
 PROBE_TIMEOUT_SECONDS = 30
 PROCESS_FD_RESERVE = 128
+# One bounded authority per validator host: 64 clients plus 32 owner FDs.
+LEASE_DAEMON_FDS = 96
+LEASE_DAEMON_FRAME_BYTES = 64 * (16 * 1024 + 8)
+LEASE_DAEMON_THREADS = 1
 COORDINATOR_FD_RESERVE = 128
 UID_THREAD_RESERVE = 128
 SYSTEM_THREAD_RESERVE = 128
@@ -22,6 +28,13 @@ FRAME_SCRATCH_BYTES = 8 * 1024 * 1024
 THREADS_PER_CPU_CEILING = 32
 HOST_MEMORY_NUMERATOR = 3
 HOST_MEMORY_DENOMINATOR = 4
+# Reserve one runnable CPU for each validator and for the local coordinator.
+# The 1-minute host load plus this planned reserve must remain within 150% of
+# logical CPU capacity. This is an operational admission bound, not consensus.
+CPU_LOAD_RESERVE_MILLI_PER_VALIDATOR = 1000
+COORDINATOR_CPU_LOAD_RESERVE_MILLI = 1000
+HOST_LOAD_CEILING_NUMERATOR = 3
+HOST_LOAD_CEILING_DENOMINATOR = 2
 HOST_ID = re.compile(r"^[a-z][a-z0-9-]{0,31}$")
 MANAGEMENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$")
 
@@ -31,6 +44,7 @@ FACT_KEYS = {
     "arch",
     "epoch",
     "cpu_threads",
+    "load1_milli",
     "memory_bytes",
     "memory_available_bytes",
     "nofile_soft",
@@ -50,7 +64,8 @@ printf 'os=%s\n' "$(uname -s)"
 printf 'arch=%s\n' "$(uname -m)"
 printf 'epoch=%s\n' "$(date +%s)"
 printf 'cpu_threads=%s\n' "$(nproc)"
-free -b | awk '/^Mem:/{print "memory_bytes="$2; print "memory_available_bytes="$7}'
+awk '{printf "load1_milli=%.0f\n", ($1 * 1000)}' /proc/loadavg
+awk '/^MemTotal:/{print "memory_bytes="($2 * 1024)} /^MemAvailable:/{print "memory_available_bytes="($2 * 1024)}' /proc/meminfo
 printf 'nofile_soft=%s\n' "$(ulimit -Sn)"
 printf 'nofile_hard=%s\n' "$(ulimit -Hn)"
 printf 'nproc_soft=%s\n' "$(ulimit -Su)"
@@ -130,6 +145,12 @@ def positive_int(value: object, field: str) -> int:
     return parsed
 
 
+def nonnegative_int(value: object, field: str) -> int:
+    if not isinstance(value, str) or not value.isascii() or not value.isdigit():
+        fail(f"{field} must be one nonnegative decimal integer")
+    return int(value)
+
+
 def finite_limit(value: object, field: str) -> int | None:
     if value == "unlimited":
         return None
@@ -140,11 +161,11 @@ def _limit_passes(required: int, limit: int | None) -> bool:
     return limit is None or required <= limit
 
 
-def evaluate_mesh_fleet_resources_v1(
+def _validated_host_inventory_v1(
     processes: Sequence[Any],
     validator_count: int,
-    facts_by_host: Mapping[str, Mapping[str, str]],
-) -> dict[str, Any]:
+    placement_profile: str,
+) -> dict[str, dict[str, Any]]:
     if isinstance(validator_count, bool) or validator_count not in {7, 31, 100}:
         fail("validator count is outside the frozen topology")
     if len(processes) != validator_count:
@@ -170,10 +191,47 @@ def evaluate_mesh_fleet_resources_v1(
         if host["management"] != management:
             fail("one validator host has conflicting management routes")
         host["validator_processes"] += 1
+    local_hosts = sum(item["management"] == "local" for item in host_inventory.values())
+    if placement_profile == CANONICAL_PLACEMENT:
+        if local_hosts != 1:
+            fail("capacity preflight requires one exact local coordinator host")
+    elif isinstance(placement_profile, str) and placement_profile in ALTERNATE_ALLOCATIONS:
+        # The runner has already compared the complete topology with the
+        # committed inventory. This gate checks its resource-placement shape;
+        # it cannot create another topology or authorize a management route.
+        if (
+            validator_count != 7
+            or {key: value["validator_processes"] for key, value in host_inventory.items()}
+            != ALTERNATE_ALLOCATIONS[placement_profile]
+            or local_hosts != int("local" in ALTERNATE_ALLOCATIONS[placement_profile])
+        ):
+            if placement_profile == REDUCED_PLACEMENT:
+                fail("reduced capacity placement must be desktop4/rog3 with no local validator")
+            fail("diagnostic capacity placement must be local4/rog3 with one local coordinator")
+    else:
+        fail("capacity placement is outside the closed profile")
+    return host_inventory
+
+
+def evaluate_mesh_fleet_resources_v1(
+    processes: Sequence[Any],
+    validator_count: int,
+    facts_by_host: Mapping[str, Mapping[str, str]],
+    *,
+    placement_profile: str = CANONICAL_PLACEMENT,
+    coordinator_facts: Mapping[str, str] | None = None,
+) -> dict[str, Any]:
+    host_inventory = _validated_host_inventory_v1(processes, validator_count, placement_profile)
     if set(facts_by_host) != set(host_inventory):
         fail("capacity observations differ from the validator host inventory")
-    if sum(item["management"] == "local" for item in host_inventory.values()) != 1:
-        fail("capacity preflight requires one exact local coordinator host")
+    audited_facts = dict(facts_by_host)
+    if placement_profile == REDUCED_PLACEMENT:
+        if coordinator_facts is None:
+            fail("reduced capacity preflight requires independent local coordinator facts")
+        host_inventory["local-coordinator"] = {"management": "local", "validator_processes": 0}
+        audited_facts["local-coordinator"] = coordinator_facts
+    elif coordinator_facts is not None:
+        fail("validator-host coordinator preflight forbids a separate coordinator observation")
 
     peer_degree = 6 if validator_count == 7 else 8
     per_validator_threads = peer_degree * 2 + 1
@@ -189,13 +247,14 @@ def evaluate_mesh_fleet_resources_v1(
     observations: list[dict[str, Any]] = []
     epochs: list[int] = []
     for host_id, inventory in host_inventory.items():
-        facts = facts_by_host[host_id]
+        facts = audited_facts[host_id]
         if set(facts) != FACT_KEYS:
             fail(f"host {host_id} facts differ from the exact contract")
         if facts["os"] != "Linux" or facts["arch"] != "x86_64":
-            fail(f"host {host_id} is not one Linux/x86_64 validator host")
+            fail(f"host {host_id} is not one Linux/x86_64 execution host")
         epoch = positive_int(facts["epoch"], f"{host_id}.epoch")
         cpu_threads = positive_int(facts["cpu_threads"], f"{host_id}.cpu_threads")
+        load1_milli = nonnegative_int(facts["load1_milli"], f"{host_id}.load1_milli")
         memory_bytes = positive_int(facts["memory_bytes"], f"{host_id}.memory_bytes")
         memory_available = positive_int(
             facts["memory_available_bytes"], f"{host_id}.memory_available_bytes"
@@ -229,19 +288,34 @@ def evaluate_mesh_fleet_resources_v1(
             fail(f"host {host_id} has no authoritative system file-handle capacity")
 
         validator_processes = inventory["validator_processes"]
-        host_threads = per_validator_threads * validator_processes
-        host_open_file_fds = per_validator_open_file_fds * validator_processes
-        host_rss_bytes = per_validator_rss_bytes * validator_processes
+        has_authority = int(validator_processes > 0)
+        host_threads = per_validator_threads * validator_processes + has_authority * LEASE_DAEMON_THREADS
+        host_open_file_fds = per_validator_open_file_fds * validator_processes + has_authority * LEASE_DAEMON_FDS
+        host_rss_bytes = per_validator_rss_bytes * validator_processes + has_authority * LEASE_DAEMON_FRAME_BYTES
         maximum_host_threads = cpu_threads * THREADS_PER_CPU_CEILING
         usable_memory = memory_bytes * HOST_MEMORY_NUMERATOR // HOST_MEMORY_DENOMINATOR
         coordinator_fds = (
             coordinator_capture_fds if inventory["management"] == "local" else 0
         )
+        coordinator_cpu_reserve_milli = (
+            COORDINATOR_CPU_LOAD_RESERVE_MILLI
+            if inventory["management"] == "local"
+            else 0
+        )
+        planned_cpu_reserve_milli = (
+            validator_processes * CPU_LOAD_RESERVE_MILLI_PER_VALIDATOR
+            + coordinator_cpu_reserve_milli
+        )
+        host_load_ceiling_milli = (
+            cpu_threads * 1000 * HOST_LOAD_CEILING_NUMERATOR
+            // HOST_LOAD_CEILING_DENOMINATOR
+        )
+        projected_load_milli = load1_milli + planned_cpu_reserve_milli
         system_file_required = host_open_file_fds + coordinator_fds
         system_file_available = file_max - file_allocated
         uid_thread_required = uid_threads + host_threads + UID_THREAD_RESERVE
         system_thread_required = system_threads + host_threads + SYSTEM_THREAD_RESERVE
-        if not _limit_passes(per_validator_open_file_fds, nofile_soft):
+        if validator_processes and not _limit_passes(per_validator_open_file_fds, nofile_soft):
             fail(f"host {host_id} per-validator open files exceed RLIMIT_NOFILE")
         if coordinator_fds and not _limit_passes(coordinator_fds, nofile_soft):
             fail(f"host {host_id} coordinator capture files exceed RLIMIT_NOFILE")
@@ -251,6 +325,11 @@ def evaluate_mesh_fleet_resources_v1(
             fail(f"host {host_id} validator threads exceed system thread capacity")
         if host_threads > maximum_host_threads:
             fail(f"host {host_id} placement exceeds the CPU-thread ceiling")
+        if projected_load_milli > host_load_ceiling_milli:
+            fail(
+                f"host {host_id} sustained CPU load plus planned process reserve "
+                "exceeds the pre-effect host load ceiling"
+            )
         if system_file_required > system_file_available:
             fail(f"host {host_id} placement exceeds system file-handle capacity")
         if host_rss_bytes > usable_memory or host_rss_bytes > memory_available:
@@ -263,6 +342,10 @@ def evaluate_mesh_fleet_resources_v1(
                 "hostname": facts["hostname"],
                 "validator_processes": validator_processes,
                 "cpu_threads": cpu_threads,
+                "load1_milli_observed": load1_milli,
+                "planned_cpu_reserve_milli": planned_cpu_reserve_milli,
+                "projected_cpu_load_milli": projected_load_milli,
+                "host_cpu_load_ceiling_milli": host_load_ceiling_milli,
                 "memory_bytes": memory_bytes,
                 "memory_available_bytes": memory_available,
                 "per_process_nofile_soft": facts["nofile_soft"],
@@ -285,7 +368,7 @@ def evaluate_mesh_fleet_resources_v1(
     spread = max(epochs) - min(epochs)
     if spread > 30:
         fail("capacity observation epoch spread exceeds 30 seconds")
-    return {
+    report = {
         "schema_version": 1,
         "profile": "poco-g3-mesh-host-resource-preflight-v1",
         "validator_count": validator_count,
@@ -303,19 +386,25 @@ def evaluate_mesh_fleet_resources_v1(
         "geo_wan_evidence": False,
         "production_activation": False,
     }
+    if placement_profile in ALTERNATE_ALLOCATIONS:
+        report.update(
+            schema_version=2,
+            profile=f"poco-g3-mesh-host-resource-preflight-{placement_profile}",
+            placement_profile=placement_profile,
+        )
+        if placement_profile == REDUCED_PLACEMENT:
+            report["coordinator"] = observations.pop()
+    return report
 
 
 def preflight_mesh_fleet_resources_v1(
-    processes: Sequence[Any], validator_count: int
+    processes: Sequence[Any], validator_count: int, *,
+    placement_profile: str = CANONICAL_PLACEMENT,
 ) -> dict[str, Any]:
-    host_routes: dict[str, str] = {}
-    for process in processes:
-        host_id = getattr(process, "host_id", None)
-        management = getattr(process, "management", None)
-        if not isinstance(host_id, str) or not isinstance(management, str):
-            fail("validator process lacks host identity")
-        previous = host_routes.setdefault(host_id, management)
-        if previous != management:
-            fail("one validator host has conflicting management routes")
-    facts = {host_id: probe_host(route) for host_id, route in host_routes.items()}
-    return evaluate_mesh_fleet_resources_v1(processes, validator_count, facts)
+    hosts = _validated_host_inventory_v1(processes, validator_count, placement_profile)
+    facts = {host_id: probe_host(host["management"]) for host_id, host in hosts.items()}
+    coordinator = probe_host("local") if placement_profile == REDUCED_PLACEMENT else None
+    return evaluate_mesh_fleet_resources_v1(
+        processes, validator_count, facts,
+        placement_profile=placement_profile, coordinator_facts=coordinator,
+    )

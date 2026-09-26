@@ -24,6 +24,7 @@ import subprocess
 import sys
 import tarfile
 from typing import Any
+from source_candidate_doc_alias_v1 import LINK_MODE, validate_alias
 
 
 LEGACY_SCHEMA_VERSION = 1
@@ -162,7 +163,27 @@ def candidate_paths(root: pathlib.Path) -> list[pathlib.PurePosixPath]:
 def freeze_file(root: pathlib.Path, relative: pathlib.PurePosixPath) -> tuple[bytes, int]:
     path = root.joinpath(*relative.parts)
     metadata = path.lstat()
-    if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISREG(metadata.st_mode):
+    if stat.S_ISLNK(metadata.st_mode):
+        raw = git(root, "ls-files", "--stage", "-z")
+        modes = {}
+        for entry in raw.split(b"\0"):
+            if not entry:
+                continue
+            header, name = entry.split(b"\t", 1)
+            mode, _oid, stage = header.split(b" ")
+            if stage != b"0":
+                fail("documentation alias requires an unconflicted tracked index")
+            modes[name.decode("utf-8")] = {b"100644": 0o644, b"100755": 0o755, b"120000": LINK_MODE}.get(mode, 0)
+        data = os.fsencode(os.readlink(path))
+        target = validate_alias(relative.as_posix(), data, modes)
+        destination = root.joinpath(*pathlib.PurePosixPath(target).parts)
+        if destination.is_symlink() or not stat.S_ISREG(destination.lstat().st_mode) or destination.resolve(strict=True) != destination:
+            fail("documentation alias target changed into a link or non-file")
+        after = path.lstat()
+        if (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns, after.st_ctime_ns) != (metadata.st_dev, metadata.st_ino, metadata.st_size, metadata.st_mtime_ns, metadata.st_ctime_ns) or os.fsencode(os.readlink(path)) != data:
+            fail("documentation alias changed while freezing")
+        return data, LINK_MODE
+    if not stat.S_ISREG(metadata.st_mode):
         fail(f"candidate path is not one regular non-symlink file: {relative}")
     if metadata.st_size > MAX_FILE_BYTES:
         fail(f"candidate file size crosses its bound: {relative}")
@@ -246,7 +267,7 @@ def parse_tree(
         if path in seen:
             fail(f"Git tree contains a duplicate path: {path}")
         seen.add(path)
-        if mode not in {"100644", "100755"} or kind != "blob":
+        if mode not in {"100644", "100755", "120000"} or kind != "blob" or (mode == "120000" and not (path.as_posix().startswith("docs/") and path.suffix == ".md")):
             fail(f"Git tree contains unsupported mode/type {mode} {kind}: {path}")
         if len(oid) != expected_oid_length or re.fullmatch(r"[0-9a-f]+", oid) is None:
             fail(f"Git tree contains a non-canonical object ID: {path}")
@@ -355,7 +376,7 @@ def compute_git_tree_oid(records: list[dict[str, Any]], object_format: str) -> s
         entries_to_encode: list[tuple[bytes, bytes]] = []
         for name, record in node["files"].items():
             encoded_name = name.encode("utf-8")
-            mode = b"100755" if record["mode"] == "0755" else b"100644"
+            mode = b"120000" if record["mode"] == "120000" else (b"100755" if record["mode"] == "0755" else b"100644")
             entries_to_encode.append(
                 (
                     encoded_name,
@@ -496,7 +517,7 @@ def prepare_clean_commit(
         total += len(data)
         if total > MAX_TOTAL_BYTES:
             fail("candidate source bytes exceed the total bound")
-        mode = 0o755 if tree_mode == "100755" else 0o644
+        mode = LINK_MODE if tree_mode == "120000" else (0o755 if tree_mode == "100755" else 0o644)
         records.append(
             {
                 "path": relative.as_posix(),
@@ -507,6 +528,11 @@ def prepare_clean_commit(
             }
         )
         frozen.append((relative, data, mode))
+
+    modes = {record["path"]: int(record["mode"], 8) for record in records}
+    for relative, data, mode in frozen:
+        if mode == LINK_MODE:
+            validate_alias(relative.as_posix(), data, modes)
 
     lock_records = [record for record in records if record["path"] == CARGO_LOCK_PATH]
     if len(lock_records) != 1:
@@ -561,6 +587,12 @@ def tar_entry(name: str, data: bytes, mode: int) -> tuple[tarfile.TarInfo, io.By
     info.gname = ""
     info.mtime = 0
     info.type = tarfile.REGTYPE
+    if mode == LINK_MODE:
+        info.type = tarfile.SYMTYPE
+        info.linkname = data.decode("utf-8")
+        info.mode = 0o644
+        info.size = 0
+        return info, io.BytesIO()
     return info, io.BytesIO(data)
 
 
