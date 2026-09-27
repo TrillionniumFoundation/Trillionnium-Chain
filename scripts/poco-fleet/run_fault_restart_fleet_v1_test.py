@@ -425,6 +425,129 @@ def main() -> None:
         "regressed",
     )
 
+    prequiesce_order = fleet.restart_prequiesce_order_v1(
+        validators, validators[0].validator_id
+    )
+    assert prequiesce_order[-1].validator_id == validators[0].validator_id
+    assert {process.validator_id for process in prequiesce_order} == {
+        process.validator_id for process in validators
+    }
+    expect_failure(
+        lambda: fleet.restart_prequiesce_order_v1(
+            validators[:-1], validators[0].validator_id
+        ),
+        "exact direct-seven",
+    )
+
+    control_statuses = {
+        process.validator_id: {**status(), "validator_id": process.validator_id}
+        for process in validators
+    }
+    command_nonces = {process.validator_id: 1 for process in validators}
+    fake_stages = {
+        process.host_id: fleet.base.HostStage(
+            process.host_id, process.management, safe_root, pathlib.Path(safe_root)
+        )
+        for process in validators
+    }
+    fake_binaries = {process.host_id: "/tmp/trnm-validator" for process in validators}
+    calls: list[tuple[str, str, int]] = []
+    injected = validators[2].validator_id
+    original_send_control = fleet.send_control
+
+    def injected_send_control(**kwargs):
+        process = kwargs["process"]
+        verb = kwargs["verb"]
+        nonce = kwargs["nonce"]
+        calls.append((process.validator_id, verb, nonce))
+        if process.validator_id == injected and verb == "quiesce_restart":
+            raise RuntimeError("injected third-validator pre-quiesce failure")
+        return response(kwargs["status"], nonce=nonce, verb=verb)
+
+    fleet.send_control = injected_send_control
+    try:
+        with tempfile.TemporaryDirectory() as directory:
+            expect_failure(
+                lambda: fleet.quiesce_restart_fleet_v1(
+                    processes=validators,
+                    target_validator_id=validators[0].validator_id,
+                    stages=fake_stages,
+                    linux_paths=fake_binaries,
+                    statuses=control_statuses,
+                    command_nonces=command_nonces,
+                    io_root=pathlib.Path(directory),
+                ),
+                "all accepted pauses were cleared",
+            )
+    finally:
+        fleet.send_control = original_send_control
+    assert calls == [
+        (validators[1].validator_id, "quiesce_restart", 1),
+        (validators[2].validator_id, "quiesce_restart", 1),
+        (validators[2].validator_id, "quiesce_restart", 1),
+        (validators[1].validator_id, "clear_restart_quiesce", 2),
+    ]
+    assert command_nonces[validators[1].validator_id] == 3
+    assert command_nonces[validators[2].validator_id] == 1
+    assert command_nonces[validators[0].validator_id] == 1
+
+    success_calls: list[tuple[str, str, int]] = []
+    success_nonces = {process.validator_id: 1 for process in validators}
+
+    def successful_send_control(**kwargs):
+        process = kwargs["process"]
+        verb = kwargs["verb"]
+        nonce = kwargs["nonce"]
+        success_calls.append((process.validator_id, verb, nonce))
+        return response(kwargs["status"], nonce=nonce, verb=verb)
+
+    fleet.send_control = successful_send_control
+    try:
+        with tempfile.TemporaryDirectory() as directory:
+            ordered, fleet_responses = fleet.quiesce_restart_fleet_v1(
+                processes=validators,
+                target_validator_id=validators[0].validator_id,
+                stages=fake_stages,
+                linux_paths=fake_binaries,
+                statuses=control_statuses,
+                command_nonces=success_nonces,
+                io_root=pathlib.Path(directory),
+            )
+            peer_clears = fleet.clear_restart_prequiesce_v1(
+                processes=[
+                    process
+                    for process in ordered
+                    if process.validator_id != validators[0].validator_id
+                ],
+                stages=fake_stages,
+                linux_paths=fake_binaries,
+                statuses=control_statuses,
+                command_nonces=success_nonces,
+                io_root=pathlib.Path(directory),
+                label_prefix="test-peer-clear",
+            )
+    finally:
+        fleet.send_control = original_send_control
+    assert [item["validator_id"] for item in fleet_responses] == [
+        process.validator_id for process in prequiesce_order
+    ]
+    assert [item["validator_id"] for item in peer_clears] == [
+        process.validator_id for process in reversed(prequiesce_order[:-1])
+    ]
+    assert success_calls[:7] == [
+        (process.validator_id, "quiesce_restart", 1)
+        for process in prequiesce_order
+    ]
+    assert success_calls[7:] == [
+        (process.validator_id, "clear_restart_quiesce", 2)
+        for process in reversed(prequiesce_order[:-1])
+    ]
+    assert success_nonces[validators[0].validator_id] == 2
+    assert all(
+        success_nonces[process.validator_id] == 3
+        for process in validators[1:]
+    )
+
     for field, mutant in [
         ("barrier_phase", "ready"),
         ("fleet_ready_set_sha256", ""),

@@ -205,20 +205,23 @@ handoff signal, not a completed validator report and not evidence of a
 successful restart. Non-target validators must remain live through the
 handoff.
 
-Before issuing RestartPrepare, the current runner sends the selected target a
-reversible `quiesce_restart` control request. The target cancels only its local
-pacemaker/proposal production and refuses new native admission while it continues
-to authenticate and drain peer consensus traffic. The runner reads all six peers
-first and the target last, and requires two consecutive direct-seven observations,
-each with every validator locally at `finalized_height == application_height` and
-no peer ahead of the target. The target height may advance between the two reads as
-authenticated drain continues, but it must not regress; an unchanged-height rule
-would reject a healthy live chain. If this bounded observation fails, the runner
-sends `clear_restart_quiesce`, verifies the clean response and
-returns failure; no signed restart intent or evidence is created. Only a stable
-frontier may be followed by `prepare_restart`, after which the reversible clear is
-forbidden. Heights are only an operational scheduling guard; signed RestartPrepare
-and exact shared-cut verification remain the protocol authority.
+Before issuing RestartPrepare, the current runner sends a reversible
+`quiesce_restart` request to all six non-targets first and the selected target last.
+Each process cancels only its own pacemaker/proposal production and refuses new
+native admission while it authenticates and drains the remaining finite peer
+traffic. A partial fanout failure clears every already accepted pause in reverse
+order. The runner then reads all six peers first and the target last and requires two
+consecutive direct-seven observations, each with every validator locally at
+`finalized_height == application_height` and no peer ahead of the target. Heights
+may advance monotonically while the finite drain completes. If the bounded window
+fails, all seven pauses are explicitly cleared and no signed restart intent or
+evidence is created. Only that frontier may be followed by target
+`prepare_restart`, after which the target clear is forbidden. After all seven
+ParkedAck statements and the target's unique status-75 handoff, the runner clears
+the six peer operational flags; they remain irreversibly PeerAcked and gain no
+signing, timer or consensus authority from that clear. Heights remain an operational
+scheduling guard; signed RestartPrepare and exact shared-cut verification are the
+protocol authority.
 
 The supervisor then launches process 2 with the exact process-1 command. Its first
 invocation independently reopens and authenticates the complete

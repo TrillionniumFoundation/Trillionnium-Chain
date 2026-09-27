@@ -1741,8 +1741,8 @@ def advance_restart_frontier_stability_v1(
 ) -> tuple[tuple[int, int] | None, int]:
     """Advance consecutive safe-frontier evidence without requiring a frozen chain.
 
-    A quiesced target may continue applying authenticated peer progress between
-    observations. Requiring byte-identical heights therefore rejects a healthy
+    A pre-quiesced fleet may continue applying finite authenticated peer progress
+    between observations. Requiring byte-identical heights therefore rejects a healthy
     live chain. Each accepted observation still proves the exact direct-seven
     not-behind predicate; this helper additionally rejects coordinate regression.
     """
@@ -1754,6 +1754,172 @@ def advance_restart_frontier_stability_v1(
     ):
         fail("restart frontier regressed across consecutive safe observations")
     return frontier, stable_polls + 1
+
+
+def restart_prequiesce_order_v1(
+    processes: list[base.ValidatorProcess], target_validator_id: str
+) -> list[base.ValidatorProcess]:
+    if (
+        len(processes) != 7
+        or len({process.validator_id for process in processes}) != 7
+        or target_validator_id not in {process.validator_id for process in processes}
+    ):
+        fail("restart pre-quiesce requires one exact direct-seven target")
+    return [
+        process for process in processes if process.validator_id != target_validator_id
+    ] + [
+        next(process for process in processes if process.validator_id == target_validator_id)
+    ]
+
+
+def exact_restart_quiesce_response_v1(
+    value: dict[str, Any], *, requested: bool, validator_id: str
+) -> dict[str, Any]:
+    if (
+        value["barrier_phase"] != "started"
+        or value["restart_quiesce_requested"] is not requested
+        or value["expected_fault"] != ""
+        or value["active_faults"]
+        or value["restart_pending_catchup"]
+        or value["restart_completed"]
+        or value["final_tip_recorded"]
+        or value["clean_stop_recorded"]
+        or value["safety_halted"]
+    ):
+        state = "set" if requested else "cleared"
+        raise RuntimeError(
+            f"validator {validator_id} restart pre-quiesce was not cleanly {state}"
+        )
+    return value
+
+
+def send_restart_quiesce_control_v1(
+    *,
+    process: base.ValidatorProcess,
+    stage: base.HostStage,
+    binary: str,
+    status: dict[str, Any],
+    nonce: int,
+    verb: str,
+    io_root: pathlib.Path,
+    label: str,
+) -> dict[str, Any]:
+    if verb not in {"quiesce_restart", "clear_restart_quiesce"}:
+        raise RuntimeError("restart pre-quiesce helper received a foreign verb")
+    errors: list[str] = []
+    for attempt in (1, 2):
+        try:
+            return send_control(
+                process=process,
+                stage=stage,
+                binary=binary,
+                status=status,
+                nonce=nonce,
+                verb=verb,
+                fault="",
+                io_root=io_root,
+                label=f"{label}-attempt-{attempt}",
+            )
+        except (OSError, subprocess.SubprocessError, RuntimeError, SystemExit) as error:
+            errors.append(str(error))
+    raise RuntimeError(
+        f"validator {process.validator_id} {verb} omitted an exact response after retry: "
+        + " | ".join(errors)
+    )
+
+
+def clear_restart_prequiesce_v1(
+    *,
+    processes: list[base.ValidatorProcess],
+    stages: dict[str, base.HostStage],
+    linux_paths: dict[str, str],
+    statuses: dict[str, dict[str, Any]],
+    command_nonces: dict[str, int],
+    io_root: pathlib.Path,
+    label_prefix: str,
+) -> list[dict[str, Any]]:
+    cleared: list[dict[str, Any]] = []
+    failures: list[str] = []
+    if len({process.validator_id for process in processes}) != len(processes):
+        raise RuntimeError("restart pre-quiesce clear contains duplicate validators")
+    for process in reversed(processes):
+        nonce = command_nonces[process.validator_id]
+        try:
+            value = send_restart_quiesce_control_v1(
+                process=process,
+                stage=stages[process.host_id],
+                binary=linux_paths[process.host_id],
+                status=statuses[process.validator_id],
+                nonce=nonce,
+                verb="clear_restart_quiesce",
+                io_root=io_root,
+                label=f"{label_prefix}-{process.validator_id}",
+            )
+            command_nonces[process.validator_id] += 1
+            exact_restart_quiesce_response_v1(
+                value, requested=False, validator_id=process.validator_id
+            )
+            cleared.append({"validator_id": process.validator_id, "response": value})
+        except (OSError, subprocess.SubprocessError, RuntimeError, SystemExit) as error:
+            failures.append(f"{process.validator_id}: {error}")
+    if failures:
+        raise RuntimeError(
+            "restart pre-quiesce clear failed for: " + "; ".join(failures)
+        )
+    return cleared
+
+
+def quiesce_restart_fleet_v1(
+    *,
+    processes: list[base.ValidatorProcess],
+    target_validator_id: str,
+    stages: dict[str, base.HostStage],
+    linux_paths: dict[str, str],
+    statuses: dict[str, dict[str, Any]],
+    command_nonces: dict[str, int],
+    io_root: pathlib.Path,
+) -> tuple[list[base.ValidatorProcess], list[dict[str, Any]]]:
+    ordered = restart_prequiesce_order_v1(processes, target_validator_id)
+    quiesced: list[base.ValidatorProcess] = []
+    observations: list[dict[str, Any]] = []
+    try:
+        for process in ordered:
+            nonce = command_nonces[process.validator_id]
+            value = send_restart_quiesce_control_v1(
+                process=process,
+                stage=stages[process.host_id],
+                binary=linux_paths[process.host_id],
+                status=statuses[process.validator_id],
+                nonce=nonce,
+                verb="quiesce_restart",
+                io_root=io_root,
+                label=f"restart-prequiesce-{process.validator_id}",
+            )
+            command_nonces[process.validator_id] += 1
+            quiesced.append(process)
+            exact_restart_quiesce_response_v1(
+                value, requested=True, validator_id=process.validator_id
+            )
+            observations.append({"validator_id": process.validator_id, "response": value})
+    except (OSError, subprocess.SubprocessError, RuntimeError, SystemExit) as error:
+        try:
+            clear_restart_prequiesce_v1(
+                processes=quiesced,
+                stages=stages,
+                linux_paths=linux_paths,
+                statuses=statuses,
+                command_nonces=command_nonces,
+                io_root=io_root,
+                label_prefix="restart-prequiesce-rollback",
+            )
+        except (OSError, subprocess.SubprocessError, RuntimeError, SystemExit) as rollback:
+            raise RuntimeError(
+                f"fleet restart pre-quiesce failed and rollback was incomplete: {rollback}"
+            ) from error
+        raise RuntimeError(
+            "fleet restart pre-quiesce failed and all accepted pauses were cleared"
+        ) from error
+    return ordered, observations
 
 
 def wait_for_restart_target_frontier_v1(
@@ -1807,8 +1973,7 @@ def wait_for_restart_target_frontier_v1(
                 value["barrier_phase"] != "started"
                 or value["safety_halted"]
                 or value["clean_stop_recorded"]
-                or value["restart_quiesce_requested"]
-                != (validator_id == target.validator_id)
+                or value["restart_quiesce_requested"] is not True
                 or value["restart_pending_catchup"]
                 or value["restart_completed"]
                 or value["active_faults"]
@@ -3125,32 +3290,20 @@ def execute_campaign(
                         "restart handoff differs from the sole signed-catchup slot"
                     )
                 restart_started_at = utc_now()
-                quiesce_nonce = command_nonces[process.validator_id]
-                quiesce = send_control(
-                    process=process,
-                    stage=stage,
-                    binary=binary,
-                    status=statuses[process.validator_id],
-                    nonce=quiesce_nonce,
-                    verb="quiesce_restart",
-                    fault="",
+                quiesced_processes, fleet_quiesce = quiesce_restart_fleet_v1(
+                    processes=processes,
+                    target_validator_id=process.validator_id,
+                    stages=stages,
+                    linux_paths=linux_paths,
+                    statuses=statuses,
+                    command_nonces=command_nonces,
                     io_root=control_io,
-                    label=f"restart-quiesce-{process.validator_id}",
                 )
-                command_nonces[process.validator_id] += 1
-                if (
-                    quiesce["restart_quiesce_requested"] is not True
-                    or quiesce["expected_fault"] != ""
-                    or quiesce["active_faults"]
-                    or quiesce["restart_pending_catchup"]
-                    or quiesce["restart_completed"]
-                    or quiesce["final_tip_recorded"]
-                    or quiesce["clean_stop_recorded"]
-                    or quiesce["safety_halted"]
-                ):
-                    raise RuntimeError(
-                        "quiesce_restart response is not one reversible clean process-1 pause"
-                    )
+                target_quiesce = next(
+                    item["response"]
+                    for item in fleet_quiesce
+                    if item["validator_id"] == process.validator_id
+                )
                 try:
                     restart_frontier = wait_for_restart_target_frontier_v1(
                         processes=processes,
@@ -3164,35 +3317,31 @@ def execute_campaign(
                         timeout_seconds=fault_window_seconds,
                     )
                 except Exception as frontier_error:
-                    clear_nonce = command_nonces[process.validator_id]
-                    clear = send_control(
-                        process=process,
-                        stage=stage,
-                        binary=binary,
-                        status=statuses[process.validator_id],
-                        nonce=clear_nonce,
-                        verb="clear_restart_quiesce",
-                        fault="",
-                        io_root=control_io,
-                        label=f"restart-quiesce-clear-{process.validator_id}",
-                    )
-                    command_nonces[process.validator_id] += 1
-                    if (
-                        clear["restart_quiesce_requested"] is not False
-                        or clear["expected_fault"] != ""
-                        or clear["active_faults"]
-                        or clear["restart_pending_catchup"]
-                        or clear["restart_completed"]
-                        or clear["final_tip_recorded"]
-                        or clear["clean_stop_recorded"]
-                        or clear["safety_halted"]
-                    ):
+                    try:
+                        clear_restart_prequiesce_v1(
+                            processes=quiesced_processes,
+                            stages=stages,
+                            linux_paths=linux_paths,
+                            statuses=statuses,
+                            command_nonces=command_nonces,
+                            io_root=control_io,
+                            label_prefix="restart-frontier-prequiesce-clear",
+                        )
+                    except Exception as clear_error:
                         raise RuntimeError(
-                            "restart frontier failed and reversible quiesce did not clear cleanly"
+                            "restart frontier failed and direct-seven pre-quiesce "
+                            f"rollback was incomplete: {clear_error}"
                         ) from frontier_error
-                    require_non_target_processes_live(runtimes, process.validator_id)
+                    for validator_id, runtime in runtimes.items():
+                        returncode = runtime.child.poll()
+                        if returncode is not None:
+                            raise RuntimeError(
+                                f"validator {validator_id} exited {returncode} during "
+                                "restart pre-quiesce rollback"
+                            ) from frontier_error
                     raise RuntimeError(
-                        "restart frontier failed; target pre-quiesce was explicitly cleared"
+                        "restart frontier failed; direct-seven pre-quiesce was "
+                        "explicitly cleared"
                     ) from frontier_error
 
                 inert_runtime, process2_exit, prepare, handoff = supervise_target_process1_handoff(
@@ -3212,6 +3361,20 @@ def execute_campaign(
                 command_nonces[process.validator_id] += 1
                 if runtimes[process.validator_id] is not inert_runtime:
                     raise RuntimeError("target inert process-2 owner was not retained")
+                peer_prequiesce_clear = clear_restart_prequiesce_v1(
+                    processes=[
+                        candidate
+                        for candidate in quiesced_processes
+                        if candidate.validator_id != process.validator_id
+                    ],
+                    stages=stages,
+                    linux_paths=linux_paths,
+                    statuses=statuses,
+                    command_nonces=command_nonces,
+                    io_root=control_io,
+                    label_prefix="restart-peer-prequiesce-clear-after-handoff",
+                )
+                require_non_target_processes_live(runtimes, process.validator_id)
                 artifacts, material_summary = commission_process2_recovery_material_v1(
                     processes=processes,
                     stages=stages,
@@ -3286,10 +3449,12 @@ def execute_campaign(
                         transcript=[
                             {
                                 "surface": "process1-handoff",
-                                "quiesce": quiesce,
+                                "quiesce": target_quiesce,
+                                "fleet_quiesce": fleet_quiesce,
                                 "frontier": restart_frontier,
                                 "prepare": prepare,
                                 "handoff": handoff,
+                                "peer_prequiesce_clear": peer_prequiesce_clear,
                             },
                             {"surface": "process2-inert-cut", **process2_exit},
                             {"surface": "recovery-material", **material_summary},

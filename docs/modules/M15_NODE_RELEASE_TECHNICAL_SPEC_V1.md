@@ -130,23 +130,27 @@ requires the existing fresh revalidation API.
 
 ## Interfaces
 
-The selected physical restart runner now uses a reversible pre-quiesce before it
-creates any signed restart intent. `quiesce_restart` is process-local operational
-control only: while the existing restart lifecycle is still `Running`, it cancels
-the local pacemaker, refuses local proposals and serves the native client read-only,
-while authenticated peer traffic, votes, certificates, execution readback and
-finality drain continue. It creates no RestartPrepare, cut, signature, journal row
-or recovery authority. `clear_restart_quiesce` is admissible only before a
-RestartPrepare intent exists; it restores the pacemaker from fresh Core facts and
-returns normal admission. Once `prepare_restart` is accepted, clearing is forbidden.
+The selected physical restart runner now applies a reversible direct-seven
+pre-quiesce before it creates any signed restart intent. It sends
+`quiesce_restart` to all six non-targets first and the selected target last. This is
+process-local operational control only: while each existing restart lifecycle is
+still `Running`, it cancels that process's local pacemaker, refuses local proposals
+and serves its native client read-only, while the finite authenticated peer traffic,
+votes, certificates, execution readback and finality drain continue. It creates no
+RestartPrepare, cut, signature, journal row or recovery authority. Partial fanout
+failure clears every already accepted pause in reverse order.
 
-The fleet supervisor reads all six non-targets before the target and accepts the
+The fleet supervisor then reads all six non-targets before the target and accepts the
 transition only after two consecutive exact direct-seven observations each show
 every validator with `finalized_height == application_height` and no clean peer
-ahead of the target. The target coordinates may advance between the two observations
-while authenticated drain continues, but they cannot regress; requiring an unchanged
-height would make a healthy live chain fail by construction. A failed window explicitly
-clears the reversible pause; it is not restart evidence. Only after this check does
+ahead of the target. The coordinates may advance between observations while the
+finite authenticated drain completes, but they cannot regress. A failed window
+explicitly clears all seven reversible pauses; it is not restart evidence. Only
+after this check does the target accept `prepare_restart`; clearing that target is
+then forbidden. After the target's N/N ParkedAck and unique status-75 handoff, the
+supervisor clears the six peer operational flags while their protocol lifecycle
+remains irreversibly PeerAcked and parked. This prevents a stale local pause from
+leaking into recovery without restoring signing, timers or authority. Only then does
 the existing signed and durable
 `restart_prepare -> restart_cut -> restart_park -> restart_parked_ack` protocol
 begin. These height observations are scheduling preconditions, not cut authority;
