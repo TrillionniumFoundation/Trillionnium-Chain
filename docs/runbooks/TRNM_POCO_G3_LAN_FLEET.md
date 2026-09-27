@@ -236,6 +236,17 @@ establishes mesh/runtime-control/native-client owners, releases the retained
 `ArmViewTimer` last, catches up and continues ordinary finality while all six
 non-target validators remain live. A second restart/process 3 is rejected.
 
+Process 2 uses the exact process-1 command, but not the fresh-process closed-root
+assumption. The loader first attempts the unchanged closed deployment inventory;
+it selects the live-recovery inventory only when the complete private
+FleetStart/runtime-journal/Cut/Park/ParkedAck marker set and named runtime
+namespaces already exist. It still rehashes every manifest-bound immutable file
+and role secret. Missing markers, a foreign top-level runtime file or any config,
+validator-set, bootstrap, profile, workload or binary drift rejects before the
+process-2 journal is opened. Passing this inventory check is not a restart
+capability: the journal, replay archive and each restart/recovery store must still
+reconstruct their own exact authority.
+
 A restart campaign is accepted only when the retained transcript contains, in
 order, the reversible quiesce and stable frontier, status-75 handoff, inert
 process-2 cut, exact recovery material, resumed process-2 control and caught-up

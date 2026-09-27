@@ -559,13 +559,71 @@ pub struct PublicReportVerifierContext {
     bootstrap_initial_cut: VerifiedPublicBootstrapInitialCutV1,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum RunRootInventoryPolicyV1 {
+    ClosedDeployment,
+    LiveProcess2Recovery,
+}
+
 impl LoadedValidatorConfig {
     pub fn load(
         run_root: impl AsRef<Path>,
         config_path: impl AsRef<Path>,
         binary_path: impl AsRef<Path>,
     ) -> Result<Self> {
-        Self::load_with_consensus_secret(run_root, config_path, binary_path, true)
+        Self::load_with_consensus_secret(
+            run_root,
+            config_path,
+            binary_path,
+            true,
+            RunRootInventoryPolicyV1::ClosedDeployment,
+        )
+    }
+
+    /// Loads the immutable deployment inputs for a bounded consensus run.
+    ///
+    /// A fresh process must satisfy the original closed-root inventory. Only an
+    /// exact process-1 handoff root carrying the complete durable restart marker
+    /// set may retry through the live process-2 inventory. The retry still
+    /// authenticates every manifest-bound byte and permits only named private
+    /// runtime namespaces. Journal, archive and store owners subsequently
+    /// authenticate the meaning of those runtime files before any live effect.
+    pub fn load_for_consensus_run(
+        run_root: impl AsRef<Path>,
+        config_path: impl AsRef<Path>,
+        binary_path: impl AsRef<Path>,
+    ) -> Result<Self> {
+        let run_root = run_root.as_ref();
+        let config_path = config_path.as_ref();
+        let binary_path = binary_path.as_ref();
+        match Self::load_with_consensus_secret(
+            run_root,
+            config_path,
+            binary_path,
+            true,
+            RunRootInventoryPolicyV1::ClosedDeployment,
+        ) {
+            Ok(config) => Ok(config),
+            Err(closed_error) => {
+                if !live_process2_marker_files_present_v1(run_root)
+                    .context("inspect exact process2 recovery markers")?
+                {
+                    return Err(closed_error);
+                }
+                Self::load_with_consensus_secret(
+                    run_root,
+                    config_path,
+                    binary_path,
+                    true,
+                    RunRootInventoryPolicyV1::LiveProcess2Recovery,
+                )
+                .with_context(|| {
+                    format!(
+                        "load exact live process2 recovery root after closed deployment rejection: {closed_error:#}"
+                    )
+                })
+            }
+        }
     }
 
     /// Loads a deployment for an independently provisioned consensus
@@ -579,7 +637,13 @@ impl LoadedValidatorConfig {
         config_path: impl AsRef<Path>,
         binary_path: impl AsRef<Path>,
     ) -> Result<Self> {
-        Self::load_with_consensus_secret(run_root, config_path, binary_path, false)
+        Self::load_with_consensus_secret(
+            run_root,
+            config_path,
+            binary_path,
+            false,
+            RunRootInventoryPolicyV1::ClosedDeployment,
+        )
     }
 
     fn load_with_consensus_secret(
@@ -587,6 +651,7 @@ impl LoadedValidatorConfig {
         config_path: impl AsRef<Path>,
         binary_path: impl AsRef<Path>,
         open_consensus_secret: bool,
+        inventory_policy: RunRootInventoryPolicyV1,
     ) -> Result<Self> {
         let run_root = canonical_private_directory(run_root.as_ref())?;
         let config_path = canonical_regular_file(config_path.as_ref())?;
@@ -614,7 +679,19 @@ impl LoadedValidatorConfig {
                 .ok_or_else(|| anyhow!("deployment manifest lacks coordinator hash"))?,
             "manifest.coordinator_manifest_sha256",
         )?;
-        validate_manifest(&manifest, &config.run_id, &config.validator_id, &run_root)?;
+        match inventory_policy {
+            RunRootInventoryPolicyV1::ClosedDeployment => {
+                validate_manifest(&manifest, &config.run_id, &config.validator_id, &run_root)?;
+            }
+            RunRootInventoryPolicyV1::LiveProcess2Recovery => {
+                validate_live_process2_manifest_v1(
+                    &manifest,
+                    &config.run_id,
+                    &config.validator_id,
+                    &run_root,
+                )?;
+            }
+        }
         let expected_count = run_id_validator_count(&config.run_id)?;
         if manifest.validator_count != expected_count {
             bail!("manifest cardinality differs from run ID");
@@ -2034,13 +2111,10 @@ fn validate_manifest_envelope_v1(
     Ok(coordinator_manifest_sha256)
 }
 
-fn validate_manifest(
+fn validate_manifest_referenced_files_v1(
     manifest: &ManifestJson,
-    run_id: &str,
-    validator_id: &str,
     root: &Path,
-) -> Result<()> {
-    validate_manifest_envelope_v1(manifest, run_id, validator_id)?;
+) -> Result<BTreeSet<PathBuf>> {
     let mut paths = BTreeSet::new();
     for (record, secret) in manifest
         .public_files
@@ -2063,11 +2137,175 @@ fn validate_manifest(
             bail!("manifest file content address or permissions mismatch");
         }
     }
+    Ok(paths)
+}
+
+fn validate_manifest(
+    manifest: &ManifestJson,
+    run_id: &str,
+    validator_id: &str,
+    root: &Path,
+) -> Result<()> {
+    validate_manifest_envelope_v1(manifest, run_id, validator_id)?;
+    let paths = validate_manifest_referenced_files_v1(manifest, root)?;
     let mut actual_paths = BTreeSet::new();
     collect_closed_file_inventory(root, root, &mut actual_paths)?;
     actual_paths.remove(Path::new("manifest.json"));
     if actual_paths != paths {
         bail!("run root contains an unreferenced or missing manifest file");
+    }
+    Ok(())
+}
+
+const LIVE_PROCESS2_REQUIRED_DIRECTORIES_V1: [&str; 3] = [
+    "runtime-authority-v1",
+    "signed-replay-archive-v1",
+    "native-client-v1",
+];
+
+const LIVE_PROCESS2_REQUIRED_MARKER_FILES_V1: [&str; 5] = [
+    "runtime-events.jsonl",
+    "fleet-start-certificate.bin",
+    "restart-cut-certificate.bin",
+    "restart-park-certificate-v1.bin",
+    "restart-parked-ack-certificate-v1.bin",
+];
+
+const LIVE_PROCESS2_OPTIONAL_ROOT_FILES_V1: [&str; 19] = [
+    "runtime-control-status.json",
+    "fleet-start-certificate.next",
+    "restart-cut-certificate.next",
+    "restart-cut-certificate.tmp",
+    "restart-cut-certificate.lock",
+    "restart-park-certificate-v1.next",
+    "restart-park-certificate-v1.tmp",
+    "restart-park-certificate-v1.lock",
+    "restart-parked-ack-certificate-v1.next",
+    "restart-parked-ack-certificate-v1.tmp",
+    "restart-parked-ack-certificate-v1.lock",
+    "recovery-zero-delta-cut-v1.bin",
+    "recovery-zero-delta-cut-v1.next",
+    "recovery-zero-delta-cut-v1.tmp",
+    "recovery-zero-delta-cut-v1.lock",
+    "recovery-ready-set-v1.bin",
+    "recovery-start-certificate-v1.bin",
+    "process2-recovery-transition-v1.sqlite",
+    "process2-recovery-transition-v1.sqlite-journal",
+];
+
+fn require_private_live_process2_directory_v1(root: &Path, name: &str) -> Result<bool> {
+    let path = root.join(name);
+    let metadata = match fs::symlink_metadata(&path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(false),
+        Err(error) => return Err(error).with_context(|| format!("stat {}", path.display())),
+    };
+    if metadata.file_type().is_symlink()
+        || !metadata.is_dir()
+        || metadata.permissions().mode() & 0o077 != 0
+    {
+        bail!("{name} must be one private real process2 runtime directory");
+    }
+    let canonical = fs::canonicalize(&path)
+        .with_context(|| format!("canonicalize process2 directory {}", path.display()))?;
+    require_descendant(root, &canonical, "process2 runtime directory")?;
+    Ok(true)
+}
+
+fn require_private_live_process2_marker_v1(root: &Path, name: &str) -> Result<bool> {
+    let path = root.join(name);
+    let metadata = match fs::symlink_metadata(&path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(false),
+        Err(error) => return Err(error).with_context(|| format!("stat {}", path.display())),
+    };
+    if metadata.file_type().is_symlink()
+        || !metadata.is_file()
+        || metadata.file_type().is_socket()
+        || metadata.permissions().mode() & 0o777 != 0o600
+        || metadata.len() == 0
+    {
+        bail!("{name} must be one nonempty private regular process2 marker");
+    }
+    let canonical = fs::canonicalize(&path)
+        .with_context(|| format!("canonicalize process2 marker {}", path.display()))?;
+    require_descendant(root, &canonical, "process2 marker")?;
+    Ok(true)
+}
+
+fn live_process2_marker_files_present_v1(run_root: &Path) -> Result<bool> {
+    let root = canonical_private_directory(run_root)?;
+    for directory in LIVE_PROCESS2_REQUIRED_DIRECTORIES_V1 {
+        if !require_private_live_process2_directory_v1(&root, directory)? {
+            return Ok(false);
+        }
+    }
+    for marker in LIVE_PROCESS2_REQUIRED_MARKER_FILES_V1 {
+        if !require_private_live_process2_marker_v1(&root, marker)? {
+            return Ok(false);
+        }
+    }
+    Ok(true)
+}
+
+fn live_process2_root_file_allowed_v1(name: &str) -> bool {
+    LIVE_PROCESS2_REQUIRED_MARKER_FILES_V1.contains(&name)
+        || LIVE_PROCESS2_OPTIONAL_ROOT_FILES_V1.contains(&name)
+        || name == "recovery-ready-set-v1.next"
+        || name == "recovery-ready-set-v1.tmp"
+        || name == "recovery-ready-set-v1.lock"
+        || name == "recovery-start-certificate-v1.next"
+        || name == "recovery-start-certificate-v1.tmp"
+        || name == "recovery-start-certificate-v1.lock"
+        || name == "process2-recovery-transition-v1.sqlite-wal"
+        || name == "process2-recovery-transition-v1.sqlite-shm"
+        || name.starts_with("restart-cut-certificate.writing.")
+        || name.starts_with("restart-park-certificate-v1.writing.")
+        || name.starts_with("restart-parked-ack-certificate-v1.writing.")
+        || name.starts_with("recovery-zero-delta-cut-v1.writing.")
+        || name.starts_with("recovery-ready-set-v1.writing.")
+        || name.starts_with("recovery-start-certificate-v1.writing.")
+}
+
+fn live_process2_extra_path_allowed_v1(path: &Path) -> bool {
+    let mut components = path.components();
+    let Some(Component::Normal(first)) = components.next() else {
+        return false;
+    };
+    let Some(first) = first.to_str() else {
+        return false;
+    };
+    match components.next() {
+        None => live_process2_root_file_allowed_v1(first),
+        Some(_) => LIVE_PROCESS2_REQUIRED_DIRECTORIES_V1.contains(&first),
+    }
+}
+
+fn validate_live_process2_manifest_v1(
+    manifest: &ManifestJson,
+    run_id: &str,
+    validator_id: &str,
+    root: &Path,
+) -> Result<()> {
+    validate_manifest_envelope_v1(manifest, run_id, validator_id)?;
+    let manifest_paths = validate_manifest_referenced_files_v1(manifest, root)?;
+    if !live_process2_marker_files_present_v1(root)? {
+        bail!("live process2 root lacks the complete durable process1 handoff marker set");
+    }
+
+    let mut actual_paths = BTreeSet::new();
+    collect_closed_file_inventory(root, root, &mut actual_paths)?;
+    actual_paths.remove(Path::new("manifest.json"));
+    if !manifest_paths.is_subset(&actual_paths) {
+        bail!("live process2 root is missing a manifest-bound immutable file");
+    }
+    for extra in actual_paths.difference(&manifest_paths) {
+        if !live_process2_extra_path_allowed_v1(extra) {
+            bail!(
+                "live process2 root contains an unrecognized runtime artifact: {}",
+                extra.display()
+            );
+        }
     }
     Ok(())
 }

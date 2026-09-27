@@ -217,6 +217,18 @@ outputs, proves the client reaches only the absent exact socket without changing
 them, rejects a duplicate manifest reference, and proves a one-byte config
 substitution still fails at the immutable manifest boundary.
 
+`LoadedValidatorConfig::load_for_consensus_run` preserves that closed deployment
+loader for every fresh process. Only after the closed inventory rejects and the
+private root contains the complete nonempty FleetStart, runtime journal,
+RestartCut, RestartPark and RestartParkedAck markers plus the named runtime
+namespaces may it retry the separate live-process-2 inventory. The retry rehashes
+every manifest-bound config, validator-set, bootstrap, workload/profile and role
+secret, rejects missing immutable bytes and unknown top-level runtime artifacts,
+and accepts only the explicitly named recovery sidecars/namespaces. This grants
+permission to attempt recovery only: the runtime journal, replay archive, restart
+stores, zero-delta owner and Ready/Start transition independently authenticate
+their own bytes before any timer, signer, mesh, ingress or client effect.
+
 This is a normal bounded candidate continuation after the deliberate status-75
 process-1 handoff, not a production constructor. It does not enable public-testnet,
 release, economic weight, HSM custody or production activation, and it does not

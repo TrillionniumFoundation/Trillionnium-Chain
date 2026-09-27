@@ -299,9 +299,12 @@ pub fn run_candidate_devnet_v1(
         .map_err(|error| anyhow!("candidate peer-lease preflight failed: {error}"))?;
 
     let binary_path = std::env::current_exe().context("resolve candidate validator executable")?;
-    let config =
-        LoadedValidatorConfig::load(arguments.run_root(), arguments.config_path(), &binary_path)
-            .context("load manifest-bound candidate validator configuration")?;
+    let config = LoadedValidatorConfig::load_for_consensus_run(
+        arguments.run_root(),
+        arguments.config_path(),
+        &binary_path,
+    )
+    .context("load manifest-bound candidate validator configuration")?;
     ensure!(
         config.has_local_consensus_secret()
             && config.has_local_p2p_identity_secret()

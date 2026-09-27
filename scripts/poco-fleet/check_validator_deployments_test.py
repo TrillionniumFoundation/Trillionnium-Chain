@@ -339,6 +339,83 @@ def verify_runtime_control_client_accepts_live_mutable_root(
     shutil.rmtree(root)
 
 
+def verify_consensus_live_process2_inventory(
+    binary: pathlib.Path,
+    deployments: pathlib.Path,
+    validator_id: str,
+) -> None:
+    root = pathlib.Path(tempfile.mkdtemp(prefix="tp2-live-", dir="/tmp"))
+    shutil.rmtree(root)
+    shutil.copytree(deployments / validator_id, root)
+    config = root / f"public/configs/{validator_id}.json"
+    report_parent = root.parent / f"{root.name}-report"
+    report_parent.mkdir(mode=0o700)
+    report = report_parent / "forbidden-report.json"
+
+    for name in ("runtime-authority-v1", "signed-replay-archive-v1", "native-client-v1"):
+        directory = root / name
+        directory.mkdir(mode=0o700)
+    markers = {
+        "runtime-events.jsonl": b'{"live":true}\n',
+        "fleet-start-certificate.bin": b"not-authentic-fleet-start",
+        "restart-cut-certificate.bin": b"not-authentic-restart-cut",
+        "restart-park-certificate-v1.bin": b"not-authentic-restart-park",
+        "restart-parked-ack-certificate-v1.bin": b"not-authentic-parked-ack",
+    }
+    for name, payload in markers.items():
+        target = root / name
+        target.write_bytes(payload)
+        target.chmod(0o600)
+
+    command = [
+        str(binary),
+        "run-consensus",
+        str(root),
+        str(config),
+        "1",
+        "3",
+        str(report),
+    ]
+    completed = run(command, expect="runtime event JSON: unknown field", timeout=5)
+    observed = completed.stdout + completed.stderr
+    if "run root contains an unreferenced or missing manifest file" in observed:
+        raise AssertionError("live process2 inventory did not cross the closed-root selector")
+    if report.exists() or report.is_symlink():
+        raise AssertionError("inauthentic process2 journal created a terminal report")
+
+    unknown = root / "foreign-live-authority.bin"
+    unknown.write_bytes(b"foreign")
+    unknown.chmod(0o600)
+    run(
+        command,
+        expect="live process2 root contains an unrecognized runtime artifact",
+        timeout=5,
+    )
+    unknown.unlink()
+
+    parked_ack = root / "restart-parked-ack-certificate-v1.bin"
+    parked_ack_bytes = parked_ack.read_bytes()
+    parked_ack.unlink()
+    run(
+        command,
+        expect="run root contains an unreferenced or missing manifest file",
+        timeout=5,
+    )
+    parked_ack.write_bytes(parked_ack_bytes)
+    parked_ack.chmod(0o600)
+
+    config_bytes = config.read_bytes()
+    config.write_bytes(config_bytes + b"\n")
+    run(
+        command,
+        expect="manifest file content address or permissions mismatch",
+        timeout=5,
+    )
+    config.write_bytes(config_bytes)
+    shutil.rmtree(report_parent)
+    shutil.rmtree(root)
+
+
 def verify_rust_material_author_rejected(
     parent: pathlib.Path,
     binary: pathlib.Path,
@@ -1022,6 +1099,11 @@ def main() -> None:
                     deployments_for_count,
                     validator_id,
                 )
+                verify_consensus_live_process2_inventory(
+                    binary,
+                    deployments_for_count,
+                    validator_id,
+                )
                 verify_rust_material_author_rejected(
                     parent,
                     binary,
@@ -1263,7 +1345,9 @@ def main() -> None:
         "topology_positives=3 rust_verify_config_positives=3 "
         "rust_public_report_positives=3 rust_consensus_cli_fail_closed_positives=3 "
         "rust_runtime_control_live_root_positive=true "
-        "runtime_control_manifest_mutants_rejected=2 negatives=55 "
+        "rust_process2_live_root_positive=true "
+        "runtime_control_manifest_mutants_rejected=2 "
+        "process2_live_root_mutants_rejected=3 negatives=58 "
         "least_authority=true public_workload_everywhere=true public_bootstrap_everywhere=true "
         "ordinary_start_height=4 "
         "ordinal_nonce=true application_private_keys=false "

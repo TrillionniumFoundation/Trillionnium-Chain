@@ -433,7 +433,7 @@ fn run() -> Result<ExitCode> {
         let process2 = options.process2;
         let report_path = validate_consensus_run_report_target_v1(&report_path)?;
         let binary = env::current_exe().context("resolve current executable")?;
-        let loaded = LoadedValidatorConfig::load(run_root, config, binary)?;
+        let loaded = LoadedValidatorConfig::load_for_consensus_run(run_root, config, binary)?;
         let consensus = ConsensusRunRequestV1 {
             config: loaded,
             duration: Duration::from_secs(duration_seconds),
@@ -1324,10 +1324,10 @@ mod tests {
         let control_dispatch = source
             .find("if command == \"runtime-control\"")
             .expect("runtime-control dispatch remains present");
-        let full_load = source
-            .find("let loaded = LoadedValidatorConfig::load(run_root, config, binary)?")
-            .expect("normal full validator load remains present");
-        assert!(control_dispatch < full_load);
+        let consensus_load = source
+            .find("LoadedValidatorConfig::load_for_consensus_run(run_root, config, binary)?")
+            .expect("consensus live-recovery-aware load remains present");
+        assert!(control_dispatch < consensus_load);
         assert!(
             source.contains("RuntimeControlClientContextV1::load(&run_root, &config, &binary)?")
         );

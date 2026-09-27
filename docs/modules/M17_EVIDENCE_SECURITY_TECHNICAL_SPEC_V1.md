@@ -149,6 +149,16 @@ before effects, including target observer identities and every refusal flag.
 The selected duration must contain its one or two bounded fault windows;
 selection never increases the validator runtime's existing bounds.
 
+Process-2 startup additionally records the live-root admission boundary. A fresh
+root must remain an exact closed deployment. A status-75 successor may use the
+separate live-recovery inventory only with the complete private process-1 marker
+set; all manifest-bound immutable bytes are reverified, unknown runtime artifacts
+are rejected, and copied filenames grant no journal/archive/store authority. The
+deployment contract suite retains a positive traversal to runtime-journal
+authentication plus negatives for a foreign runtime file, missing ParkedAck and
+immutable config drift. These are source-bound contract checks, not restart
+observation evidence.
+
 A step's legacy `target_validator_id`/`target_host_id` names the **observing
 runtime** whose control socket selects and reads the condition. It is not a
 claim that this process or every validator on that host was stopped. The
