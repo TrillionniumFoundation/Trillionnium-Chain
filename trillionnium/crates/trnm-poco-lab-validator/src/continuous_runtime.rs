@@ -2134,6 +2134,27 @@ impl ContinuousValidatorAuthorityV0 {
             .map_err(|e| anyhow!("native parent: {e}"))?
             .authenticated_parent_timestamp_ms_v0())
     }
+
+    /// Reauthenticate only the inert application parent required by the
+    /// durable client-admission clock. Signed phases remain signed and retain
+    /// every Core/signer/proposal capability privately; only a timestamp from
+    /// the exact retained application cut is returned.
+    pub fn native_admission_parent_timestamp_v1(&self) -> Result<u64> {
+        let parent = match self.phase.as_ref() {
+            Some(ContinuousAuthorityPhaseV0::Ready(runtime)) => runtime
+                .proposal_parent_v0()
+                .map_err(|error| anyhow!("native Ready admission parent: {error}"))?,
+            Some(ContinuousAuthorityPhaseV0::VoteSigned(signed)) => signed
+                .admission_parent_v1()
+                .map_err(|error| anyhow!("native VoteSigned admission parent: {error}"))?,
+            Some(ContinuousAuthorityPhaseV0::TimeoutSigned(signed)) => signed
+                .admission_parent_v1()
+                .map_err(|error| anyhow!("native TimeoutSigned admission parent: {error}"))?,
+            None => bail!("continuous authority failed closed before native admission"),
+        };
+        Ok(parent.authenticated_parent_timestamp_ms_v0())
+    }
+
     pub fn native_finalized_query_v1(&self) -> Result<trnm_poco_node::PocoNodeLabFinalizedQueryV0> {
         let runtime = self.ready_runtime_v0()?;
         runtime

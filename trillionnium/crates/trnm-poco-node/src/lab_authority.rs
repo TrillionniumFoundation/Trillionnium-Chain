@@ -1552,6 +1552,22 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabSignedTimeoutOwnerV0<W> {
         &self.outbound
     }
 
+    /// Fresh, read-only authenticated application parent for durable client
+    /// admission while this exact TimeoutVote owner remains linear. This does
+    /// not convert the owner to Ready or expose Core, signer, timer, proposal,
+    /// validation, or publication authority.
+    pub fn admission_parent_v1(
+        &self,
+    ) -> Result<PocoNodeLabProposalParentV0, PocoNodeLabAuthorityErrorV0> {
+        authenticated_synced_parent_v1(
+            &self.core,
+            &self.application,
+            &self.application_head,
+            self.application_overlay,
+            &self.pending_executions,
+        )
+    }
+
     pub fn reconfirm_phase_neutral_exact_high_qc_v0(
         &mut self,
         certificate: &QuorumCertificate,
@@ -1608,13 +1624,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabSignedTimeoutOwnerV0<W> {
     pub fn synced_proposal_parent_v1(
         &self,
     ) -> Result<PocoNodeLabProposalParentV0, PocoNodeLabAuthorityErrorV0> {
-        authenticated_synced_parent_v1(
-            &self.core,
-            &self.application,
-            &self.application_head,
-            self.application_overlay,
-            &self.pending_executions,
-        )
+        self.admission_parent_v1()
     }
 
     /// Executes one actual late body while preserving this exact signed
@@ -5039,6 +5049,22 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabSignedVoteOwnerV0<W> {
 
     pub const fn outbound_v0(&self) -> &PocoNodeLabSignedVoteOutboundV0 {
         &self.outbound
+    }
+
+    /// Fresh, read-only authenticated application parent for durable client
+    /// admission while this exact Vote owner remains linear. The retained
+    /// speculative child and overlay are revalidated together; no proposal or
+    /// signing capability escapes this projection.
+    pub fn admission_parent_v1(
+        &self,
+    ) -> Result<PocoNodeLabProposalParentV0, PocoNodeLabAuthorityErrorV0> {
+        authenticated_synced_parent_v1(
+            &self.core,
+            self.host.application_v0(),
+            &self.application_head,
+            Some(self.application_overlay),
+            &self.pending_executions,
+        )
     }
 
     pub fn reconfirm_phase_neutral_exact_high_qc_v0(

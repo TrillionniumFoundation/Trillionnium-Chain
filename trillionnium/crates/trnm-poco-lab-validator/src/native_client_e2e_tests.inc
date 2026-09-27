@@ -99,7 +99,7 @@ fn native_delayed_multi_height_archive_commits_real_historical_business_v1() {
     run_native_socket_finality_case_v1(NativeSocketCaseV1::Deferred);
 }
 #[test]
-fn native_signed_phases_serve_real_proofs_and_refuse_new_admission_v1() {
+fn native_signed_phases_serve_real_proofs_and_admit_durable_work_v1() {
     run_native_socket_finality_case_v1(NativeSocketCaseV1::SignedPhaseQueries);
 }
 #[test]
@@ -487,6 +487,7 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
                 verify_native_replay_sigkill_matrix_v1(&temp, &set, &profile, export, tx.exact_outer_bytes());
             }
         }
+        let mut signed_phase_pending_hash = None;
         if matches!(case, NativeSocketCaseV1::SignedPhaseQueries) {
             let next = build_signed_canonical_tx_v0(
                 CanonicalTxBuildContextV0 {
@@ -501,11 +502,14 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
                 },
                 &signer,
             ).unwrap();
+            let next_hash = next.envelope().tx_hash().unwrap();
+            signed_phase_pending_hash = Some(next_hash);
             let view = authorities[0].facts_v0().unwrap().current_view_v0();
             let proposer = set.validators().iter().position(|v| v.id() == leader_for(&set, view)).unwrap();
             let timestamp = authorities[proposer].native_parent_timestamp_v1().unwrap() + 1;
             let next_proposal = authorities[proposer].signed_native_proposal_v1(Vec::new(), timestamp).unwrap();
             authorities[leader_index].vote_proposal_v0(next_proposal).unwrap();
+            let mut accepted_next = None;
             for expected_phase in [PocoNodeLabAuthorityPhaseV0::VoteSigned, PocoNodeLabAuthorityPhaseV0::TimeoutSigned] {
                 if expected_phase == PocoNodeLabAuthorityPhaseV0::TimeoutSigned {
                     authorities[leader_index].begin_local_timeout_v0().unwrap();
@@ -513,6 +517,12 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
                 let authority = &authorities[leader_index];
                 let before = authority.facts_v0().unwrap();
                 assert_eq!(before.phase_v0(), expected_phase);
+                let parent_timestamp = authority.native_admission_parent_timestamp_v1().unwrap();
+                assert!(parent_timestamp > 0);
+                assert!(
+                    authority.native_parent_timestamp_v1().is_err(),
+                    "signed-phase admission must not open Ready proposal authority"
+                );
                 let admission_image = || {
                     let mut paths = std::fs::read_dir(client_root.join("native-client-v1")).unwrap()
                         .map(|p| p.unwrap().path())
@@ -526,7 +536,7 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
                     ("status", serde_json::json!({}), "status"),
                     ("proof", serde_json::json!({"native_tx_hash":hex::encode(hash)}), "proof"),
                     ("submit", serde_json::json!({"signed_outer_hex":hex::encode(tx.exact_outer_bytes())}), "retry"),
-                    ("submit", serde_json::json!({"signed_outer_hex":hex::encode(next.exact_outer_bytes())}), "busy"),
+                    ("submit", serde_json::json!({"signed_outer_hex":hex::encode(next.exact_outer_bytes())}), "new-or-retry"),
                 ] {
                     let request = serde_json::json!({"schema":"trnm.native-client.request.v1","request_id":"signed-phase","op":operation,"data":data});
                     let response = native_socket_exchange_poll_v1(&mut clients, &socket, request, |client| {
@@ -534,18 +544,37 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
                     });
                     assert_eq!(response["request_id"], "signed-phase");
                     match expected {
-                        "status" => { assert_eq!(response["ok"], true); assert_eq!(response["data"]["accepting"], false); }
+                        "status" => { assert_eq!(response["ok"], true); assert_eq!(response["data"]["accepting"], true); }
                         "proof" => { assert_eq!(response["ok"], true); assert_eq!(response["data"], proof["data"]); }
                         "retry" => { assert_eq!(response["ok"], true); assert_eq!(response["data"], committed["data"]); }
-                        "busy" => { assert_eq!(response["ok"], false); assert_eq!(response["error"], serde_json::json!({"code":"backpressure","retryable":true})); }
+                        "new-or-retry" => {
+                            assert_eq!(response["ok"], true, "signed-phase admission failed: {response}");
+                            assert_eq!(response["data"]["status"], "pending");
+                            assert_eq!(response["data"]["receive_sequence"], "2");
+                            assert_eq!(response["data"]["native_tx_hash"], hex::encode(next_hash));
+                            if let Some(first) = &accepted_next {
+                                assert_eq!(&response, first, "signed-phase exact retry changed durable result");
+                            } else {
+                                accepted_next = Some(response.clone());
+                            }
+                        }
                         _ => unreachable!(),
                     }
                 }
-                assert_eq!(admission_image(), image_before, "signed-phase read/rejection changed admission storage");
-                assert_eq!(authority.facts_v0().unwrap(), before, "read-only traffic changed consensus or signer state");
+                let image_after = admission_image();
+                if expected_phase == PocoNodeLabAuthorityPhaseV0::VoteSigned {
+                    assert_ne!(image_after, image_before, "VoteSigned admission did not append durable work");
+                } else {
+                    assert_eq!(image_after, image_before, "TimeoutSigned exact retry changed admission storage");
+                }
+                assert_eq!(authority.facts_v0().unwrap(), before, "signed-phase admission changed consensus or signer state");
             }
         }
-        assert!(clients.drained_v1(facts.finalized_height_v0()));
+        if signed_phase_pending_hash.is_some() {
+            assert!(!clients.drained_v1(facts.finalized_height_v0()));
+        } else {
+            assert!(clients.drained_v1(facts.finalized_height_v0()));
+        }
         drop(clients);
         let mut reopened = crate::native_client_runtime::NativeClientRuntimeV1::open_parts_v1(
             &client_root,
@@ -554,6 +583,19 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
             profile,
         )
         .unwrap();
+        if let Some(pending_hash) = signed_phase_pending_hash {
+            let pending = native_socket_exchange(
+                &mut reopened,
+                &socket,
+                now + 10,
+                facts.finalized_height_v0(),
+                serde_json::json!({"schema":"trnm.native-client.request.v1","request_id":"pending-after-reopen","op":"transaction","data":{"native_tx_hash":hex::encode(pending_hash)}}),
+            );
+            assert_eq!(pending["ok"], true, "durable signed-phase admission did not reopen: {pending}");
+            assert_eq!(pending["data"]["status"], "pending");
+            assert_eq!(pending["data"]["receive_sequence"], "2");
+            assert_eq!(pending["data"]["proof_verified"], false);
+        }
         let status = native_socket_exchange(
             &mut reopened,
             &socket,

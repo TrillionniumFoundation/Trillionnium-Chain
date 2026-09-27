@@ -478,6 +478,20 @@ inert I/O and production-start refusal remain unchanged; wiring a candidate
 socket does not open them. Legacy `trnm-rpc` and G1 fixture finality are excluded
 from this composition.
 
+Durable client admission is not gated on observing one instantaneous `Ready`
+phase. Before serving a new submit in `Ready`, `VoteSigned` or `TimeoutSigned`,
+the process freshly reconstructs the exact retained application parent through
+the existing authenticated Core/application/overlay relation and uses only its
+parent timestamp for the candidate clock check. A signed owner remains signed:
+this projection exposes no Core, signer, timer, validation, proposal or
+publication capability, and `native_parent_timestamp_v1` stays Ready-only.
+The M05 admission WAL may append the accepted identity; only a later scheduled
+Ready leader can select it for a proposal. Explicit stop and restart pre-quiesce
+still close new admission and serve reads/exact retries only. The regression
+`native_signed_phases_serve_real_proofs_and_admit_durable_work_v1` requires one
+VoteSigned append, a byte-identical TimeoutSigned exact retry, unchanged
+consensus/signer facts and durable pending recovery after reopen.
+
 Network delivery can race a local Timeout or an earlier Vote in the same
 view. The candidate ingress first authenticates the proposer witness and
 checks the parent-time-independent view/parent/height relations and requires

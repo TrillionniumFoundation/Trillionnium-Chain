@@ -513,8 +513,10 @@ impl NativeClientRuntimeV1 {
     pub fn poll_v1(&mut self, parent_timestamp: u64, finalized_height: u64) -> Result<bool> {
         self.poll_resolving_parent_v1(finalized_height, || Ok(parent_timestamp))
     }
-    /// Serve bounded reads and exact durable retries while Core holds a signed
-    /// phase. No cached timestamp is used to authorize new admission.
+    /// Serve bounded reads and exact durable retries after admission has been
+    /// explicitly stopped, including restart prequiesce. Normal signed phases
+    /// instead resolve a fresh inert authenticated parent and may append new
+    /// durable work without gaining proposal or signing authority.
     pub(crate) fn poll_read_only_v1(&mut self, finalized_height: u64) -> Result<bool> {
         self.poll_with_admission_parent_v1(false, finalized_height, || Ok(None))
     }

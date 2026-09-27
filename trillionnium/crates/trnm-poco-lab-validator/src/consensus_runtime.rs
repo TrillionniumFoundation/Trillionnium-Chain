@@ -9086,13 +9086,9 @@ pub(crate) fn poll_native_with_authority_v1(
     if let Some(target_height) = target_height {
         client.update_finality_capacity_v1(facts.proposal_parent_height_v0(), target_height)?;
     }
-    if facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready {
-        client.poll_resolving_parent_v1(facts.finalized_height_v0(), || {
-            authority.native_parent_timestamp_v1()
-        })
-    } else {
-        client.poll_read_only_v1(facts.finalized_height_v0())
-    }
+    client.poll_resolving_parent_v1(facts.finalized_height_v0(), || {
+        authority.native_admission_parent_timestamp_v1()
+    })
 }
 
 /// The loop has already received at most one event before polling its timer.
