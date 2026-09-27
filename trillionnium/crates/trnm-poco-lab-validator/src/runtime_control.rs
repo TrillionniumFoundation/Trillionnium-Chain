@@ -24,7 +24,7 @@ use sha2::{Digest, Sha256};
 use trnm_consensus_types::ValidatorId;
 
 use crate::{
-    config::LoadedValidatorConfig,
+    config::{LoadedValidatorConfig, RuntimeControlClientContextV1},
     process_event::{RuntimeEventJournalV1, RuntimeFaultV1, RuntimeJournalObservationV1},
 };
 
@@ -665,7 +665,9 @@ pub fn load_runtime_control_status_v1(path: &Path) -> Result<RuntimeControlStatu
     Ok(status)
 }
 
-/// Exact, no-glob client for one runtime-control incarnation.
+/// Exact, no-glob client for one runtime-control incarnation after a complete
+/// deployment load. Runtime code should normally use this only while it already
+/// owns the authenticated deployment.
 pub fn send_runtime_control_request_v1(
     config: &LoadedValidatorConfig,
     process_instance: u64,
@@ -674,24 +676,74 @@ pub fn send_runtime_control_request_v1(
     verb: &str,
     fault: &str,
 ) -> Result<RuntimeControlResponseV1> {
+    let request = runtime_control_request_v1(
+        config.run_id(),
+        config.local_validator(),
+        process_instance,
+        generation,
+        nonce,
+        verb,
+        fault,
+    )?;
+    send_runtime_control_request_exact_v1(config.run_root(), &request)
+}
+
+/// Exact runtime-control client for an already-live run root. The supplied
+/// context authenticates only immutable deployment identity and the running
+/// binary; it never rescans mutable runtime sockets/journals as manifest input.
+pub fn send_runtime_control_client_request_v1(
+    config: &RuntimeControlClientContextV1,
+    process_instance: u64,
+    generation: u64,
+    nonce: u64,
+    verb: &str,
+    fault: &str,
+) -> Result<RuntimeControlResponseV1> {
+    let request = runtime_control_request_v1(
+        config.run_id(),
+        config.local_validator(),
+        process_instance,
+        generation,
+        nonce,
+        verb,
+        fault,
+    )?;
+    send_runtime_control_request_exact_v1(config.run_root(), &request)
+}
+
+fn runtime_control_request_v1(
+    run_id: &str,
+    local_validator: ValidatorId,
+    process_instance: u64,
+    generation: u64,
+    nonce: u64,
+    verb: &str,
+    fault: &str,
+) -> Result<RuntimeControlRequestV1> {
     if nonce == 0 {
         bail!("runtime control nonce must be positive");
     }
-    let request = RuntimeControlRequestV1 {
+    Ok(RuntimeControlRequestV1 {
         schema_version: CONTROL_SCHEMA_VERSION,
-        run_id: config.run_id().to_owned(),
-        validator_id: hex::encode(config.local_validator().as_bytes()),
+        run_id: run_id.to_owned(),
+        validator_id: hex::encode(local_validator.as_bytes()),
         process_instance,
         generation,
         nonce,
         verb: verb.to_owned(),
         fault: fault.to_owned(),
-    };
-    let request_bytes = serde_json::to_vec(&request).context("encode runtime control request")?;
+    })
+}
+
+fn send_runtime_control_request_exact_v1(
+    run_root: &Path,
+    request: &RuntimeControlRequestV1,
+) -> Result<RuntimeControlResponseV1> {
+    let request_bytes = serde_json::to_vec(request).context("encode runtime control request")?;
     if request_bytes.is_empty() || request_bytes.len() > MAX_REQUEST_BYTES {
         bail!("runtime control request crosses its size bound");
     }
-    let socket = exact_control_socket_path(config.run_root(), process_instance, generation)?;
+    let socket = exact_control_socket_path(run_root, request.process_instance, request.generation)?;
     let mut stream = UnixStream::connect(&socket)
         .with_context(|| format!("connect exact runtime control socket {}", socket.display()))?;
     stream
@@ -735,10 +787,10 @@ pub fn send_runtime_control_request_v1(
     if response.schema_version != CONTROL_SCHEMA_VERSION
         || response.run_id != request.run_id
         || response.validator_id != request.validator_id
-        || response.process_instance != process_instance
-        || response.generation != generation
-        || response.nonce != nonce
-        || response.verb != verb
+        || response.process_instance != request.process_instance
+        || response.generation != request.generation
+        || response.nonce != request.nonce
+        || response.verb != request.verb
         || response.status != "ok"
         || response.production_activation
         || !is_canonical_nonzero_hex32(&response.journal_event_sha256)

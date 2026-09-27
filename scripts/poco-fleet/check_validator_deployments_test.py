@@ -267,6 +267,78 @@ def verify_consensus_cli_rejects_invalid_bounds_before_effects(
         raise AssertionError("invalid run-consensus bounds crossed the pre-effect boundary")
 
 
+
+def verify_runtime_control_client_accepts_live_mutable_root(
+    binary: pathlib.Path,
+    deployments: pathlib.Path,
+    validator_id: str,
+) -> None:
+    root = pathlib.Path(tempfile.mkdtemp(prefix="trc-", dir="/tmp"))
+    shutil.rmtree(root)
+    shutil.copytree(deployments / validator_id, root)
+    config = root / f"public/configs/{validator_id}.json"
+
+    # These files are legitimate live-process outputs and therefore are not
+    # deployment inputs listed in the immutable manifest. A runtime-control
+    # client authenticates the immutable config/set/binary, then addresses the
+    # exact incarnation socket without reclassifying live state as input.
+    runtime_events = root / "runtime-events.jsonl"
+    runtime_status = root / "runtime-control-status.json"
+    runtime_events.write_bytes(b'{"live":true}\n')
+    runtime_status.write_bytes(b'{"live":true}')
+    runtime_events.chmod(0o600)
+    runtime_status.chmod(0o600)
+    before = {
+        item.relative_to(root).as_posix(): item.read_bytes()
+        for item in (runtime_events, runtime_status)
+    }
+
+    command = [
+        str(binary),
+        "runtime-control",
+        str(root),
+        str(config),
+        "1",
+        "1",
+        "1",
+        "prepare_restart",
+        "",
+    ]
+    run(
+        command,
+        expect="connect exact runtime control socket",
+        timeout=5,
+    )
+    after = {
+        item.relative_to(root).as_posix(): item.read_bytes()
+        for item in (runtime_events, runtime_status)
+    }
+    if after != before:
+        raise AssertionError("runtime-control client changed live state before connecting")
+
+    manifest_path = root / "manifest.json"
+    manifest_bytes = manifest_path.read_bytes()
+    manifest = json.loads(manifest_bytes)
+    config_ref = next(
+        record for record in manifest["public_files"]
+        if record["path"] == f"public/configs/{validator_id}.json"
+    )
+    manifest["public_files"].append(dict(config_ref))
+    write_json(manifest_path, manifest)
+    run(command, expect="manifest contains duplicate or empty file reference", timeout=5)
+    manifest_path.write_bytes(manifest_bytes)
+
+    # The narrower live-root loader still binds the exact immutable config;
+    # accepting mutable outputs must not become a manifest bypass.
+    config.write_bytes(config.read_bytes() + b"\n")
+    run(
+        command,
+        expect="frozen bytes differ from the exact manifest reference",
+        timeout=5,
+    )
+    shutil.rmtree(root)
+
+
 def verify_rust_material_author_rejected(
     parent: pathlib.Path,
     binary: pathlib.Path,
@@ -945,6 +1017,11 @@ def main() -> None:
                 validator_id,
             )
             if count == 7:
+                verify_runtime_control_client_accepts_live_mutable_root(
+                    binary,
+                    deployments_for_count,
+                    validator_id,
+                )
                 verify_rust_material_author_rejected(
                     parent,
                     binary,
@@ -1184,7 +1261,9 @@ def main() -> None:
     print(
         "poco_g3_validator_deployment_self_test=passed "
         "topology_positives=3 rust_verify_config_positives=3 "
-        "rust_public_report_positives=3 rust_consensus_cli_fail_closed_positives=3 negatives=53 "
+        "rust_public_report_positives=3 rust_consensus_cli_fail_closed_positives=3 "
+        "rust_runtime_control_live_root_positive=true "
+        "runtime_control_manifest_mutants_rejected=2 negatives=55 "
         "least_authority=true public_workload_everywhere=true public_bootstrap_everywhere=true "
         "ordinary_start_height=4 "
         "ordinal_nonce=true application_private_keys=false "

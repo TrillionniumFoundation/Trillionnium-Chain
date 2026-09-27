@@ -397,6 +397,136 @@ pub struct LoadedValidatorConfig {
     verified_public_bootstrap: Option<VerifiedPublicNativeBootstrapV1>,
 }
 
+/// Minimal immutable identity needed by the runtime-control client after the
+/// validator has started creating mutable sockets, journals and status files in
+/// its private run root. This context deliberately does not open role secrets or
+/// reinterpret any live runtime artifact as deployment input.
+#[derive(Debug)]
+pub struct RuntimeControlClientContextV1 {
+    run_root: PathBuf,
+    run_id: String,
+    local_validator: ValidatorId,
+}
+
+impl RuntimeControlClientContextV1 {
+    pub fn load(
+        run_root: impl AsRef<Path>,
+        config_path: impl AsRef<Path>,
+        binary_path: impl AsRef<Path>,
+    ) -> Result<Self> {
+        let run_root = canonical_private_directory(run_root.as_ref())?;
+        let config_path = canonical_regular_file(config_path.as_ref())?;
+        require_descendant(&run_root, &config_path, "runtime-control validator config")?;
+        let config_bytes =
+            read_regular_file_pinned(&config_path, "runtime-control validator config")?;
+        let config: ValidatorConfigJson = serde_json::from_slice(&config_bytes)
+            .context("decode runtime-control validator config JSON")?;
+        validate_fixed_config_fields(&config)?;
+        let expected_config_path = canonical_regular_file(
+            &run_root.join(format!("public/configs/{}.json", config.validator_id)),
+        )?;
+        if config_path != expected_config_path {
+            bail!("runtime-control config path differs from the closed per-validator layout");
+        }
+
+        let manifest_path = canonical_regular_file(&run_root.join("manifest.json"))?;
+        let manifest_bytes =
+            read_regular_file_pinned(&manifest_path, "runtime-control run manifest")?;
+        let manifest: ManifestJson = serde_json::from_slice(&manifest_bytes)
+            .context("decode runtime-control run manifest JSON")?;
+        validate_manifest_envelope_v1(&manifest, &config.run_id, &config.validator_id)?;
+        let expected_count = run_id_validator_count(&config.run_id)?;
+        if manifest.validator_count != expected_count {
+            bail!("runtime-control manifest cardinality differs from run ID");
+        }
+        require_manifest_bytes(
+            &manifest,
+            &format!("public/configs/{}.json", config.validator_id),
+            &config_bytes,
+            false,
+        )?;
+
+        let validator_set_path =
+            canonical_regular_file(&run_root.join("public/validator-set.json"))?;
+        require_descendant(
+            &run_root,
+            &validator_set_path,
+            "runtime-control validator set",
+        )?;
+        let validator_set_bytes =
+            read_regular_file_pinned(&validator_set_path, "runtime-control validator set")?;
+        require_manifest_bytes(
+            &manifest,
+            "public/validator-set.json",
+            &validator_set_bytes,
+            false,
+        )?;
+        let validator_set_sha256 = sha256(&validator_set_bytes);
+        if validator_set_sha256
+            != decode_hex32(&config.validator_set_sha256, "config.validator_set_sha256")?
+        {
+            bail!("runtime-control validator-set hash differs from config");
+        }
+        let descriptor: ValidatorSetJson = serde_json::from_slice(&validator_set_bytes)
+            .context("decode runtime-control validator set JSON")?;
+        validate_set_fixed_fields(&descriptor, &config.run_id)?;
+        if descriptor.validators.len() != expected_count {
+            bail!("runtime-control validator-set cardinality differs from run ID");
+        }
+        validate_manifest_binding(&manifest, &config, validator_set_sha256, &descriptor)?;
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let (validator_set, _, key_role_registry) = build_validator_set(&descriptor, &parameters)?;
+        let local_validator =
+            ValidatorId::new(decode_hex32(&config.validator_id, "config.validator_id")?);
+        let local = validator_set
+            .validator(local_validator)
+            .ok_or_else(|| anyhow!("runtime-control validator is absent from validator set"))?;
+        let local_roles = key_role_registry
+            .binding(local_validator)
+            .ok_or_else(|| anyhow!("runtime-control validator lacks key-role binding"))?;
+        if local.consensus_key().as_bytes()
+            != &decode_hex32(&config.consensus_public_key, "config.consensus_public_key")?
+            || local_roles.p2p_identity_public_key()
+                != decode_hex32(
+                    &config.p2p_identity_public_key,
+                    "config.p2p_identity_public_key",
+                )?
+            || local_roles.operator_recovery_public_key()
+                != decode_hex32(
+                    &config.operator_recovery_public_key,
+                    "config.operator_recovery_public_key",
+                )?
+            || local.voting_power().get() != config.weight
+        {
+            bail!("runtime-control config key roles/weight differ from validator set");
+        }
+
+        let binary_path = canonical_regular_file(binary_path.as_ref())?;
+        let binary_sha256 = sha256_running_image(&binary_path)?;
+        if binary_sha256 != decode_hex32(&config.binary_sha256, "config.binary_sha256")? {
+            bail!("runtime-control running binary hash differs from validator config");
+        }
+
+        Ok(Self {
+            run_root,
+            run_id: config.run_id,
+            local_validator,
+        })
+    }
+
+    pub fn run_root(&self) -> &Path {
+        &self.run_root
+    }
+
+    pub fn run_id(&self) -> &str {
+        &self.run_id
+    }
+
+    pub const fn local_validator(&self) -> ValidatorId {
+        self.local_validator
+    }
+}
+
 /// Secret-free verifier context for independently checking one validator's
 /// signed network-smoke report.
 ///
@@ -1803,20 +1933,19 @@ fn validate_material_author(
     Ok(author_hash)
 }
 
-fn validate_manifest(
+fn validate_manifest_envelope_v1(
     manifest: &ManifestJson,
     run_id: &str,
     validator_id: &str,
-    root: &Path,
-) -> Result<()> {
+) -> Result<[u8; 32]> {
+    let coordinator_manifest_sha256 = manifest
+        .coordinator_manifest_sha256
+        .as_deref()
+        .map(|value| decode_hex32(value, "manifest.coordinator_manifest_sha256"))
+        .transpose()?
+        .ok_or_else(|| anyhow!("deployment manifest lacks coordinator hash"))?;
     if manifest.schema_version != 3
         || manifest.deployment_validator_id.as_deref() != Some(validator_id)
-        || manifest
-            .coordinator_manifest_sha256
-            .as_deref()
-            .map(|value| decode_hex32(value, "manifest.coordinator_manifest_sha256"))
-            .transpose()?
-            .is_none()
         || manifest.run_id != run_id
         || manifest.fleet_id != "trnm-poco-lan-six-host-2026-08-13"
         || !matches!(manifest.validator_count, 7 | 31 | 100)
@@ -1827,6 +1956,7 @@ fn validate_manifest(
         || manifest.network_scope != "single-lan"
         || manifest.geo_wan_evidence
         || manifest.production_activation
+        || coordinator_manifest_sha256 == [0; 32]
     {
         bail!("run manifest differs from the frozen G3 laboratory contract");
     }
@@ -1851,34 +1981,15 @@ fn validate_manifest(
         &manifest.validator_set_sha256,
         "manifest.validator_set_sha256",
     )?;
-    let mut paths = BTreeSet::new();
-    for (record, secret) in manifest
-        .public_files
-        .iter()
-        .map(|record| (record, false))
-        .chain(manifest.secret_files.iter().map(|record| (record, true)))
-    {
+    let mut referenced_paths = BTreeSet::new();
+    for record in manifest.public_files.iter().chain(&manifest.secret_files) {
         let relative = strict_relative_path(&record.path)?;
-        if !paths.insert(relative.clone()) || record.bytes == 0 {
+        decode_hex32(&record.sha256, "manifest file sha256")?;
+        if !referenced_paths.insert(relative) || record.bytes == 0 {
             bail!("manifest contains duplicate or empty file reference");
         }
-        let path = canonical_regular_file(&root.join(&relative))?;
-        require_descendant(root, &path, "manifest file")?;
-        let metadata = fs::metadata(&path).context("stat manifest file")?;
-        if metadata.len() != record.bytes
-            || sha256_file(&path)? != decode_hex32(&record.sha256, "manifest file sha256")?
-            || (secret && metadata.permissions().mode() & 0o777 != 0o600)
-            || (!secret && metadata.permissions().mode() & 0o022 != 0)
-        {
-            bail!("manifest file content address or permissions mismatch");
-        }
     }
-    let mut actual_paths = BTreeSet::new();
-    collect_closed_file_inventory(root, root, &mut actual_paths)?;
-    actual_paths.remove(Path::new("manifest.json"));
-    if actual_paths != paths {
-        bail!("run root contains an unreferenced or missing manifest file");
-    }
+
     let mut expected_public = BTreeSet::from([
         PathBuf::from("topology.json"),
         PathBuf::from("public/validator-set.json"),
@@ -1919,6 +2030,44 @@ fn validate_manifest(
     }
     if source == [0; 32] {
         bail!("manifest source digest must not be zero");
+    }
+    Ok(coordinator_manifest_sha256)
+}
+
+fn validate_manifest(
+    manifest: &ManifestJson,
+    run_id: &str,
+    validator_id: &str,
+    root: &Path,
+) -> Result<()> {
+    validate_manifest_envelope_v1(manifest, run_id, validator_id)?;
+    let mut paths = BTreeSet::new();
+    for (record, secret) in manifest
+        .public_files
+        .iter()
+        .map(|record| (record, false))
+        .chain(manifest.secret_files.iter().map(|record| (record, true)))
+    {
+        let relative = strict_relative_path(&record.path)?;
+        if !paths.insert(relative.clone()) || record.bytes == 0 {
+            bail!("manifest contains duplicate or empty file reference");
+        }
+        let path = canonical_regular_file(&root.join(&relative))?;
+        require_descendant(root, &path, "manifest file")?;
+        let metadata = fs::metadata(&path).context("stat manifest file")?;
+        if metadata.len() != record.bytes
+            || sha256_file(&path)? != decode_hex32(&record.sha256, "manifest file sha256")?
+            || (secret && metadata.permissions().mode() & 0o777 != 0o600)
+            || (!secret && metadata.permissions().mode() & 0o022 != 0)
+        {
+            bail!("manifest file content address or permissions mismatch");
+        }
+    }
+    let mut actual_paths = BTreeSet::new();
+    collect_closed_file_inventory(root, root, &mut actual_paths)?;
+    actual_paths.remove(Path::new("manifest.json"));
+    if actual_paths != paths {
+        bail!("run root contains an unreferenced or missing manifest file");
     }
     Ok(())
 }

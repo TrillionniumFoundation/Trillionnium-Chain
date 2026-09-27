@@ -15,7 +15,7 @@ use std::{
 use anyhow::{bail, ensure, Context, Result};
 use serde_json::json;
 use trnm_poco_lab_validator::{
-    config::{LoadedValidatorConfig, PublicReportVerifierContext},
+    config::{LoadedValidatorConfig, PublicReportVerifierContext, RuntimeControlClientContextV1},
     consensus_report::{
         load_signed_consensus_run_report_v1, validate_consensus_run_report_target_v1,
         MAX_CONSENSUS_RUN_BLOCKS_V1, MAX_CONSENSUS_RUN_DURATION_SECONDS_V1,
@@ -32,7 +32,7 @@ use trnm_poco_lab_validator::{
     process_event::{verify_runtime_event_journal_v1, RuntimeEventJournalV1, RuntimeEventKindV1},
     recovery_material::{is_recovery_material_command_v1, run_recovery_material_command_v1},
     runtime::positive_checkpoint_bootstrap_assessment_v1,
-    runtime_control::send_runtime_control_request_v1,
+    runtime_control::send_runtime_control_client_request_v1,
     runtime_evidence::{load_signed_runtime_final_state_v1, load_signed_runtime_metrics_v1},
     signed_replay_archive::verify_replay_archive_v1,
     startup_rejection::{
@@ -110,6 +110,35 @@ fn run() -> Result<ExitCode> {
     if is_recovery_material_command_v1(&command) {
         let binary = env::current_exe().context("resolve recovery material executable")?;
         run_recovery_material_command_v1(&command, run_root, config, &binary, arguments)?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if command == "runtime-control" {
+        let process_instance =
+            parse_canonical_positive_u64(arguments.next(), "process-instance", 1, 2)?;
+        let generation = parse_canonical_positive_u64(arguments.next(), "generation", 1, 1_024)?;
+        let nonce = parse_canonical_positive_u64(arguments.next(), "nonce", 1, u64::MAX)?;
+        let verb = arguments
+            .next()
+            .and_then(|value| value.into_string().ok())
+            .ok_or_else(|| anyhow::anyhow!(usage()))?;
+        let fault = arguments
+            .next()
+            .and_then(|value| value.into_string().ok())
+            .ok_or_else(|| anyhow::anyhow!(usage()))?;
+        if arguments.next().is_some() {
+            bail!(usage());
+        }
+        let binary = env::current_exe().context("resolve runtime-control executable")?;
+        let client = RuntimeControlClientContextV1::load(&run_root, &config, &binary)?;
+        let response = send_runtime_control_client_request_v1(
+            &client,
+            process_instance,
+            generation,
+            nonce,
+            &verb,
+            &fault,
+        )?;
+        println!("{}", serde_json::to_string(&response)?);
         return Ok(ExitCode::SUCCESS);
     }
     if command == "verify-replay-archive" {
@@ -591,33 +620,6 @@ fn run() -> Result<ExitCode> {
                 "production_activation": false,
             }))?
         );
-        return Ok(ExitCode::SUCCESS);
-    }
-    if command == "runtime-control" {
-        let process_instance =
-            parse_canonical_positive_u64(arguments.next(), "process-instance", 1, 2)?;
-        let generation = parse_canonical_positive_u64(arguments.next(), "generation", 1, 1_024)?;
-        let nonce = parse_canonical_positive_u64(arguments.next(), "nonce", 1, u64::MAX)?;
-        let verb = arguments
-            .next()
-            .and_then(|value| value.into_string().ok())
-            .ok_or_else(|| anyhow::anyhow!(usage()))?;
-        let fault = arguments
-            .next()
-            .and_then(|value| value.into_string().ok())
-            .ok_or_else(|| anyhow::anyhow!(usage()))?;
-        if arguments.next().is_some() {
-            bail!(usage());
-        }
-        let response = send_runtime_control_request_v1(
-            &loaded,
-            process_instance,
-            generation,
-            nonce,
-            &verb,
-            &fault,
-        )?;
-        println!("{}", serde_json::to_string(&response)?);
         return Ok(ExitCode::SUCCESS);
     }
     if command == "start-runtime-event-journal" {
@@ -1314,6 +1316,23 @@ mod tests {
         assert!(usage().contains("peer-lease-binding --socket PATH"));
         assert!(usage().contains("--resume-process2"));
         assert!(usage().contains("recovery-start-certificate"));
+    }
+
+    #[test]
+    fn runtime_control_cli_uses_immutable_client_context_before_full_live_root_load() {
+        let source = include_str!("main.rs");
+        let control_dispatch = source
+            .find("if command == \"runtime-control\"")
+            .expect("runtime-control dispatch remains present");
+        let full_load = source
+            .find("let loaded = LoadedValidatorConfig::load(run_root, config, binary)?")
+            .expect("normal full validator load remains present");
+        assert!(control_dispatch < full_load);
+        assert!(
+            source.contains("RuntimeControlClientContextV1::load(&run_root, &config, &binary)?")
+        );
+        assert!(source.contains("send_runtime_control_client_request_v1("));
+        assert!(usage().contains("runtime-control <private-run-root>"));
     }
 
     #[cfg(unix)]

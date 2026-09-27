@@ -172,6 +172,25 @@ its local candidate key, while only the selected target aggregates and create-ne
 persists the two certificates. The coordinator transports bounded public statement
 bytes and verifies each copy; it never receives a validator private key.
 
+The live `runtime-control` client is dispatched before the normal full deployment
+loader because a running validator has already created sockets, journals and status
+files that are deliberately absent from the immutable deployment manifest. Its
+`RuntimeControlClientContextV1` still pins the canonical private root, exact
+manifest-bound validator config and validator-set bytes, run cardinality, local
+consensus/P2P/recovery key roles and weight, candidate binary digest and the running
+executable image. It opens no role secret and grants no consensus authority. Only
+after those immutable joins succeed may the client address the exact
+`process_instance`/`generation` socket; request and response remain context-bound
+and canonically encoded.
+
+Full startup, recovery and evidence verification continue to use their existing
+complete loaders. Mutable-root admission is not a manifest exception for config,
+validator-set or binary bytes. The deployment regression
+`verify_runtime_control_client_accepts_live_mutable_root` adds real unlisted live
+outputs, proves the client reaches only the absent exact socket without changing
+them, rejects a duplicate manifest reference, and proves a one-byte config
+substitution still fails at the immutable manifest boundary.
+
 This is a normal bounded candidate continuation after the deliberate status-75
 process-1 handoff, not a production constructor. It does not enable public-testnet,
 release, economic weight, HSM custody or production activation, and it does not
