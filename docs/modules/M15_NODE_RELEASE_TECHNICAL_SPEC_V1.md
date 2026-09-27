@@ -141,9 +141,11 @@ RestartPrepare intent exists; it restores the pacemaker from fresh Core facts an
 returns normal admission. Once `prepare_restart` is accepted, clearing is forbidden.
 
 The fleet supervisor reads all six non-targets before the target and accepts the
-transition only after two consecutive exact direct-seven observations show every
-validator with `finalized_height == application_height`, no clean peer ahead of the
-target, and an unchanged target frontier. A failed frontier observation explicitly
+transition only after two consecutive exact direct-seven observations each show
+every validator with `finalized_height == application_height` and no clean peer
+ahead of the target. The target coordinates may advance between the two observations
+while authenticated drain continues, but they cannot regress; requiring an unchanged
+height would make a healthy live chain fail by construction. A failed window explicitly
 clears the reversible pause; it is not restart evidence. Only after this check does
 the existing signed and durable
 `restart_prepare -> restart_cut -> restart_park -> restart_parked_ack` protocol

@@ -1734,6 +1734,28 @@ def restart_target_frontier_v1(
     return target
 
 
+def advance_restart_frontier_stability_v1(
+    prior_frontier: tuple[int, int] | None,
+    stable_polls: int,
+    frontier: tuple[int, int] | None,
+) -> tuple[tuple[int, int] | None, int]:
+    """Advance consecutive safe-frontier evidence without requiring a frozen chain.
+
+    A quiesced target may continue applying authenticated peer progress between
+    observations. Requiring byte-identical heights therefore rejects a healthy
+    live chain. Each accepted observation still proves the exact direct-seven
+    not-behind predicate; this helper additionally rejects coordinate regression.
+    """
+
+    if frontier is None:
+        return None, 0
+    if prior_frontier is not None and (
+        frontier[0] < prior_frontier[0] or frontier[1] < prior_frontier[1]
+    ):
+        fail("restart frontier regressed across consecutive safe observations")
+    return frontier, stable_polls + 1
+
+
 def wait_for_restart_target_frontier_v1(
     *,
     processes: list[base.ValidatorProcess],
@@ -1749,9 +1771,10 @@ def wait_for_restart_target_frontier_v1(
     """Observe a stable target-at-frontier window before signed restart prepare.
 
     Non-targets are read first and the selected target last. Two consecutive
-    identical target frontiers are required. This prevents a planned restart
-    from freezing a target cut already superseded by a healthy peer, while no
-    read response can construct a cut, signature, or lifecycle transition.
+    safe target frontiers are required. The target coordinates may advance while
+    authenticated peer drain continues, but they may not regress and no clean peer
+    may be ahead in either observation. No read response can construct a cut,
+    signature, or lifecycle transition.
     """
 
     if len(processes) != 7 or target.validator_id not in {p.validator_id for p in processes}:
@@ -1796,14 +1819,9 @@ def wait_for_restart_target_frontier_v1(
                 )
             observations[validator_id] = value
         frontier = restart_target_frontier_v1(observations, target.validator_id)
-        if frontier is not None and frontier == prior_frontier:
-            stable_polls += 1
-        elif frontier is not None:
-            prior_frontier = frontier
-            stable_polls = 1
-        else:
-            prior_frontier = None
-            stable_polls = 0
+        prior_frontier, stable_polls = advance_restart_frontier_stability_v1(
+            prior_frontier, stable_polls, frontier
+        )
         if stable_polls >= RESTART_FRONTIER_STABLE_POLLS_V1:
             require_non_target_processes_live(runtimes, target.validator_id)
             return {
@@ -1827,7 +1845,7 @@ def wait_for_restart_target_frontier_v1(
             }
         if time.monotonic() >= deadline:
             raise RuntimeError(
-                "selected restart target never held one stable not-behind frontier"
+                "selected restart target never held two consecutive not-behind frontiers"
             )
         time.sleep(CONTROL_POLL_SECONDS)
 

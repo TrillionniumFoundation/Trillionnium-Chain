@@ -405,6 +405,26 @@ def main() -> None:
         target_unapplied, validators[0].validator_id
     ) is None
 
+    prior, stable = fleet.advance_restart_frontier_stability_v1(None, 0, (10, 10))
+    assert prior == (10, 10)
+    assert stable == 1
+    prior, stable = fleet.advance_restart_frontier_stability_v1(
+        prior, stable, (11, 11)
+    )
+    assert prior == (11, 11)
+    assert stable == fleet.RESTART_FRONTIER_STABLE_POLLS_V1
+    prior, stable = fleet.advance_restart_frontier_stability_v1(
+        prior, stable, None
+    )
+    assert prior is None
+    assert stable == 0
+    expect_failure(
+        lambda: fleet.advance_restart_frontier_stability_v1(
+            (15, 15), 2, (14, 14)
+        ),
+        "regressed",
+    )
+
     for field, mutant in [
         ("barrier_phase", "ready"),
         ("fleet_ready_set_sha256", ""),

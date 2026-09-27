@@ -209,10 +209,12 @@ Before issuing RestartPrepare, the current runner sends the selected target a
 reversible `quiesce_restart` control request. The target cancels only its local
 pacemaker/proposal production and refuses new native admission while it continues
 to authenticate and drain peer consensus traffic. The runner reads all six peers
-first and the target last, and requires two consecutive direct-seven observations
-with every validator locally at `finalized_height == application_height`, no peer
-ahead of the target and an unchanged target frontier. If this bounded observation
-fails, the runner sends `clear_restart_quiesce`, verifies the clean response and
+first and the target last, and requires two consecutive direct-seven observations,
+each with every validator locally at `finalized_height == application_height` and
+no peer ahead of the target. The target height may advance between the two reads as
+authenticated drain continues, but it must not regress; an unchanged-height rule
+would reject a healthy live chain. If this bounded observation fails, the runner
+sends `clear_restart_quiesce`, verifies the clean response and
 returns failure; no signed restart intent or evidence is created. Only a stable
 frontier may be followed by `prepare_restart`, after which the reversible clear is
 forbidden. Heights are only an operational scheduling guard; signed RestartPrepare
