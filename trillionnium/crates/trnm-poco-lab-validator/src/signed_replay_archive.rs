@@ -834,6 +834,26 @@ struct StrictReplayArchiveSemanticsV1 {
     signature_share_count: u64,
 }
 
+fn exact_replay_certificate_v1(
+    semantics: &StrictReplayArchiveSemanticsV1,
+    target: QcRef,
+) -> Result<QuorumCertificate> {
+    let certificate = semantics
+        .proof_certificates
+        .get(target.qc_digest().as_bytes())
+        .ok_or_else(|| {
+            anyhow!(
+                "exact replay-chain quorum certificate is absent from authenticated archive evidence"
+            )
+        })?
+        .clone();
+    ensure!(
+        QcRef::from(&certificate) == target,
+        "authenticated replay certificate identity differs from exact replay chain"
+    );
+    Ok(certificate)
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct SignedFinalTipCoverageV1 {
     proof_id: [u8; 32],
@@ -1898,6 +1918,18 @@ impl SignedReplayArchiveV1 {
             challenge.requires_signed_ancestry_replay_v0(),
             "archive authentication requires a revision>5 replay challenge"
         );
+        self.revalidate_identity_v1()?;
+        let semantics = decode_strict_archive_semantics_v1(
+            &self.entries_file,
+            &self.index,
+            self.context.digest,
+            config.validator_set(),
+            config.consensus_parameters(),
+            config.ordinary_start_height(),
+            config.verified_public_bootstrap_initial_cut_v1()?,
+        )
+        .context("authenticate exact replay archive semantics")?;
+        self.revalidate_identity_v1()?;
         let mut parent_timestamps = BTreeMap::new();
         for block in recovery.facts_v0().high_qc_replay_path_v0() {
             ensure!(
@@ -1949,22 +1981,14 @@ impl SignedReplayArchiveV1 {
             } else {
                 challenge.high_qc_v0()
             };
-            let payload = self.entry_payload_v1(ReplayArchiveCoordinateV1 {
-                kind: ReplayArchiveEntryKindV1::QuorumCertificate,
-                height: target.height().get(),
-                view: target.view().get(),
-                block_id: *target.block_id().as_bytes(),
-            })?;
-            let certificate = decode_quorum_certificate_with_context(
-                &payload,
-                config.validator_set(),
-                config.consensus_parameters(),
-            )
-            .map_err(|error| anyhow!("decode archived quorum certificate: {error}"))?;
-            ensure!(
-                QcRef::from(&certificate) == target,
-                "archived quorum certificate differs from exact replay chain"
-            );
+            // A coordinate may have multiple valid quorum signer subsets. The
+            // append-only archive pins the first standalone QC bytes for audit,
+            // while an authenticated Proposal witness may carry the exact QC
+            // retained by Core. Select by the certificate digest from the fully
+            // authenticated semantic inventory; never substitute a merely
+            // compatible `(height, view, block_id)` certificate or rewrite the
+            // pinned standalone entry.
+            let certificate = exact_replay_certificate_v1(&semantics, target)?;
             entries.push(PocoNodeDeployedLabSignedReplayEntryV0::new(
                 proposals[index].clone(),
                 certificate,
@@ -5594,6 +5618,8 @@ mod tests {
             decoded.proof_certificates.get(embedded.id().as_bytes()),
             Some(embedded)
         );
+        let selected = exact_replay_certificate_v1(&decoded, QcRef::from(embedded)).unwrap();
+        assert_eq!(&selected, embedded);
         assert_eq!(
             decoded.certificates.get(pinned.id().as_bytes()),
             Some(&pinned)
@@ -5625,6 +5651,10 @@ mod tests {
         without_exact_embedded
             .proof_certificates
             .remove(embedded.id().as_bytes());
+        assert!(
+            exact_replay_certificate_v1(&without_exact_embedded, QcRef::from(embedded)).is_err(),
+            "a compatible coordinate cannot replace the missing exact replay certificate"
+        );
         assert!(
             verify_signed_final_tip_coverage_v1(
                 &without_exact_embedded,
