@@ -278,7 +278,7 @@ declare -A helper_hash=(
   [scripts/ci/check_preprovisioned_cargo_deny.sh]=a1eb25bea55e2ec5ef41a5be596ef3447d77d8453e25ffd526d950933ec0ba5c
   [scripts/ci/check_cargo_deny_offline.sh]=c3fb1b88898dc016d5e55cad20c9101a42676a08ff771a386dd061494c63ce75
   [scripts/ci/check_preprovisioned_cargo_fuzz.sh]=b2b1fa060440e2111f24f011bfc71c97baa1a558757b0ba8e960736c6c249040
-  [scripts/ci/check_canonical_fuzz_smoke.sh]=ba57b6de6e677156a3f1f9bbd8b1c203d2abd0871dff28756fe269779477f0aa
+  [scripts/ci/check_canonical_fuzz_smoke.sh]=64fe74d0dcec9d968f43d83f71a50b20c03f4dc1074343005194e3744e3036fe
 )
 for helper in "${!helper_hash[@]}"; do
   helper_file="$tmp/${helper//\//--}"
