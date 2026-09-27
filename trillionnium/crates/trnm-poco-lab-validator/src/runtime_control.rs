@@ -1113,6 +1113,17 @@ mod tests {
         .unwrap()
     }
 
+    fn runtime_derived_nonce_base_v1(case: &str) -> u64 {
+        let mut hasher = Sha256::new();
+        hasher.update(b"trnm.poco-lab-validator.runtime-control.test-nonce.v1");
+        hasher.update(std::process::id().to_be_bytes());
+        hasher.update(case.as_bytes());
+        let digest = hasher.finalize();
+        let mut prefix = [0_u8; 8];
+        prefix.copy_from_slice(&digest[..8]);
+        (u64::from_be_bytes(prefix) & 0x00ff_ffff_ffff_ff00) | 0x100
+    }
+
     #[test]
     fn socket_path_is_instance_and_generation_qualified() {
         let temporary = TempDir::new().unwrap();
@@ -1146,25 +1157,29 @@ mod tests {
     #[test]
     fn prepare_restart_records_only_an_idempotent_intent() {
         let mut state = started_control_state_v1();
+        let nonce_base = runtime_derived_nonce_base_v1("idempotent-prepare");
+        let quiesce_nonce = nonce_base + 1;
+        let prepare_nonce = nonce_base + 2;
+        let next_nonce = nonce_base + 3;
         let (quiesced, verb, nonce) = state
-            .process(&request_bytes_v1(16, "quiesce_restart", ""))
+            .process(&request_bytes_v1(quiesce_nonce, "quiesce_restart", ""))
             .unwrap();
         assert_eq!(verb, "quiesce_restart");
-        assert_eq!(nonce, 16);
+        assert_eq!(nonce, quiesce_nonce);
         assert!(state.restart_quiesce_requested);
         let quiesced: RuntimeControlResponseV1 = serde_json::from_slice(&quiesced).unwrap();
         assert!(quiesced.restart_quiesce_requested);
 
-        let request = request_bytes_v1(17, "prepare_restart", "");
+        let request = request_bytes_v1(prepare_nonce, "prepare_restart", "");
         let (first, verb, nonce) = state.process(&request).unwrap();
         assert_eq!(verb, "prepare_restart");
-        assert_eq!(nonce, 17);
+        assert_eq!(nonce, prepare_nonce);
         let intent = state
             .restart_prepare_intent
             .expect("accepted request retains one intent");
         assert_eq!(intent.process_instance_v1(), 1);
         assert_eq!(intent.generation_v1(), 9);
-        assert_eq!(intent.nonce_v1(), 17);
+        assert_eq!(intent.nonce_v1(), prepare_nonce);
         let request_sha256: [u8; 32] = Sha256::digest(&request).into();
         assert_eq!(intent.request_sha256_v1(), request_sha256);
         assert_eq!(state.journal.restart_prepare_nonce, None);
@@ -1185,17 +1200,21 @@ mod tests {
         assert_eq!(replayed, first);
         assert_eq!(state.restart_prepare_intent, Some(intent));
         assert!(state
-            .process(&request_bytes_v1(17, "prepare_restart", "leader_loss"))
+            .process(&request_bytes_v1(
+                prepare_nonce,
+                "prepare_restart",
+                "leader_loss",
+            ))
             .unwrap_err()
             .to_string()
             .contains("nonce was reused with different bytes"));
         assert!(state
-            .process(&request_bytes_v1(18, "prepare_restart", ""))
+            .process(&request_bytes_v1(next_nonce, "prepare_restart", ""))
             .unwrap_err()
             .to_string()
             .contains("not admissible"));
         assert!(state
-            .process(&request_bytes_v1(15, "prepare_restart", ""))
+            .process(&request_bytes_v1(nonce_base, "prepare_restart", ""))
             .unwrap_err()
             .to_string()
             .contains("stale outside the idempotence window"));
@@ -1204,26 +1223,35 @@ mod tests {
     #[test]
     fn restart_quiesce_is_reversible_only_before_prepare() {
         let mut state = started_control_state_v1();
+        let nonce_base = runtime_derived_nonce_base_v1("reversible-quiesce");
         assert!(state
-            .process(&request_bytes_v1(1, "prepare_restart", ""))
+            .process(&request_bytes_v1(nonce_base + 1, "prepare_restart", ""))
             .unwrap_err()
             .to_string()
             .contains("not admissible"));
 
         let (quiesced, _, _) = state
-            .process(&request_bytes_v1(2, "quiesce_restart", ""))
+            .process(&request_bytes_v1(nonce_base + 2, "quiesce_restart", ""))
             .unwrap();
         let quiesced: RuntimeControlResponseV1 = serde_json::from_slice(&quiesced).unwrap();
         assert!(quiesced.restart_quiesce_requested);
         assert!(state.restart_prepare_intent.is_none());
         assert!(state
-            .process(&request_bytes_v1(3, "expect_fault", "leader_loss"))
+            .process(&request_bytes_v1(
+                nonce_base + 3,
+                "expect_fault",
+                "leader_loss",
+            ))
             .unwrap_err()
             .to_string()
             .contains("overlaps planned restart control"));
 
         let (cleared, _, _) = state
-            .process(&request_bytes_v1(3, "clear_restart_quiesce", ""))
+            .process(&request_bytes_v1(
+                nonce_base + 3,
+                "clear_restart_quiesce",
+                "",
+            ))
             .unwrap();
         let cleared: RuntimeControlResponseV1 = serde_json::from_slice(&cleared).unwrap();
         assert!(!cleared.restart_quiesce_requested);
@@ -1231,15 +1259,19 @@ mod tests {
         assert!(state.restart_prepare_intent.is_none());
 
         state
-            .process(&request_bytes_v1(4, "quiesce_restart", ""))
+            .process(&request_bytes_v1(nonce_base + 4, "quiesce_restart", ""))
             .unwrap();
         state
-            .process(&request_bytes_v1(5, "prepare_restart", ""))
+            .process(&request_bytes_v1(nonce_base + 5, "prepare_restart", ""))
             .unwrap();
         assert!(state.restart_quiesce_requested);
         assert!(state.restart_prepare_intent.is_some());
         assert!(state
-            .process(&request_bytes_v1(6, "clear_restart_quiesce", ""))
+            .process(&request_bytes_v1(
+                nonce_base + 6,
+                "clear_restart_quiesce",
+                "",
+            ))
             .unwrap_err()
             .to_string()
             .contains("not admissible"));
@@ -1248,8 +1280,9 @@ mod tests {
     #[test]
     fn prepare_restart_rejects_caller_selected_cut_fields_and_fault_state() {
         let mut state = started_control_state_v1();
+        let nonce_base = runtime_derived_nonce_base_v1("caller-selected-cut");
         let mut request = serde_json::from_slice::<serde_json::Value>(&request_bytes_v1(
-            3,
+            nonce_base + 1,
             "prepare_restart",
             "",
         ))
@@ -1266,7 +1299,7 @@ mod tests {
         state.restart_quiesce_requested = true;
         state.expected_fault = Some(RuntimeFaultV1::LeaderLoss);
         assert!(state
-            .process(&request_bytes_v1(4, "prepare_restart", ""))
+            .process(&request_bytes_v1(nonce_base + 2, "prepare_restart", ""))
             .unwrap_err()
             .to_string()
             .contains("not admissible"));
