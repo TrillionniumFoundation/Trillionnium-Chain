@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
 FUZZ_ROOT="$ROOT/trillionnium/fuzz"
 FUZZ_TOOLCHAIN="nightly-2026-07-27"
-CARGO_BIN="${TRNM_CARGO_BIN:?pinned Cargo binary is required}"
+RUSTUP_BIN="${HOME:?HOME is required}/.cargo/bin/rustup"
 SECONDS_PER_TARGET="${TRNM_FUZZ_SMOKE_SECONDS:-15}"
 MAX_LEN="${TRNM_FUZZ_MAX_LEN:-2162688}"
 WORK_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/trnm-canonical-fuzz-smoke.XXXXXX")"
@@ -25,14 +25,20 @@ if [[ ! "$MAX_LEN" =~ ^[0-9]+$ ]] || ((MAX_LEN < 1 || MAX_LEN > 2162688)); then
   printf '%s\n' "TRNM_FUZZ_MAX_LEN must be between 1 and 2162688" >&2
   exit 2
 fi
-if [[ "$(command -v cargo)" != "$CARGO_BIN" ]]; then
-  printf '%s\n' "Cargo must resolve from the pinned job toolchain" >&2
+if [[ ! -x "$RUSTUP_BIN" ]]; then
+  printf '%s\n' "rustup must resolve from the job Cargo binary authority" >&2
   exit 2
 fi
-EXPECTED_CARGO=$("${HOME:?HOME is required}/.cargo/bin/rustup" \
-  which --toolchain "$FUZZ_TOOLCHAIN" cargo)
+EXPECTED_CARGO=$("$RUSTUP_BIN" which --toolchain "$FUZZ_TOOLCHAIN" cargo)
+TOOLCHAIN_BIN=$(dirname "$EXPECTED_CARGO")
+export PATH="$TOOLCHAIN_BIN:$PATH"
+CARGO_BIN="${TRNM_CARGO_BIN:-$EXPECTED_CARGO}"
 if [[ "$CARGO_BIN" != "$EXPECTED_CARGO" ]]; then
   printf '%s\n' "fuzz Cargo binary differs from the pinned nightly toolchain" >&2
+  exit 2
+fi
+if [[ "$(command -v cargo)" != "$EXPECTED_CARGO" ]]; then
+  printf '%s\n' "Cargo must resolve from the pinned job toolchain" >&2
   exit 2
 fi
 if ! "$CARGO_BIN" fuzz --help >/dev/null 2>&1; then
