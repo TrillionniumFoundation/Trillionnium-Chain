@@ -94,18 +94,49 @@ esac
   exit 2
 }
 
-cargo_home=${CARGO_HOME:-${HOME:?HOME is required when CARGO_HOME is unset}/.cargo}
-[[ -d "$cargo_home" && ! -L "$cargo_home" ]] || {
-  echo "CARGO_HOME must be a real directory, not a symlink: $cargo_home" >&2
+authority_home=${TRNM_CARGO_AUTHORITY_HOME:-${HOME:?HOME is required}/.cargo}
+[[ -d "$authority_home" && ! -L "$authority_home" ]] || {
+  echo "Cargo authority must be a real directory, not a symlink: $authority_home" >&2
   exit 2
 }
-cargo_home=$(cd "$cargo_home" && pwd -P)
-expected_cargo_home=$(cd "${HOME:?HOME is required}" && pwd -P)/.cargo
-[[ "$cargo_home" == "$expected_cargo_home" ]] || {
-  echo "CARGO_HOME must remain at the hardened runner path: $expected_cargo_home" >&2
+authority_home=$(cd "$authority_home" && pwd -P)
+expected_authority_home=$(cd "${HOME:?HOME is required}" && pwd -P)/.cargo
+[[ "$authority_home" == "$expected_authority_home" ]] || {
+  echo "Cargo authority must remain at the hardened runner path: $expected_authority_home" >&2
   exit 2
 }
-
+job_id=${GITHUB_JOB:-cargo}
+[[ "$job_id" =~ ^[A-Za-z0-9._-]+$ ]] || {
+  echo "unsafe GitHub job identifier for Cargo home: $job_id" >&2
+  exit 2
+}
+expected_cargo_home="$runner_temp/trnm-cargo-home-$job_id"
+[[ -z "${CARGO_HOME:-}" || "$CARGO_HOME" == "$expected_cargo_home" ]] || {
+  echo "CARGO_HOME must be unset or equal the job-scoped path: $expected_cargo_home" >&2
+  exit 2
+}
+cargo_home=$expected_cargo_home
+[[ ! -e "$cargo_home" && ! -L "$cargo_home" ]] || {
+  echo "job-scoped CARGO_HOME already exists: $cargo_home" >&2
+  exit 2
+}
+mkdir -m 0700 "$cargo_home"
+mkdir -m 0700 "$cargo_home/registry" "$cargo_home/registry/src"
+for registry_input in cache index; do
+  source="$authority_home/registry/$registry_input"
+  [[ -d "$source" && ! -L "$source" ]] || {
+    echo "missing immutable Cargo registry authority: $source" >&2
+    exit 2
+  }
+  ln -s -- "$source" "$cargo_home/registry/$registry_input"
+done
+export CARGO_HOME=$cargo_home
+if [[ -n "${GITHUB_ENV:-}" ]]; then
+  {
+    printf 'CARGO_HOME=%s\n' "$cargo_home"
+    printf 'TRNM_CARGO_AUTHORITY_HOME=%s\n' "$authority_home"
+  } >>"$GITHUB_ENV"
+fi
 assert_trusted_ancestors() {
   local current=$1 label=$2 uid mode
   while :; do
@@ -141,9 +172,9 @@ assert_root_readonly_tree() {
   }
 }
 
-assert_trusted_ancestors "$cargo_home" CARGO_HOME
-assert_root_readonly_tree "$cargo_home/registry" "Cargo registry cache"
-stamp="$cargo_home/trnm-chain-offline-cache-v2.sha256"
+assert_trusted_ancestors "$authority_home" "Cargo authority"
+assert_root_readonly_tree "$authority_home/registry" "Cargo registry authority"
+stamp="$authority_home/trnm-chain-offline-cache-v2.sha256"
 [[ -f "$stamp" && ! -L "$stamp" && -r "$stamp" ]] || {
   echo "missing readable non-symlink offline cache stamp: $stamp" >&2
   exit 2
@@ -182,7 +213,7 @@ done <"$stamp"
   exit 2
 }
 
-rustup_proxy="$HOME/.cargo/bin/rustup"
+rustup_proxy="$authority_home/bin/rustup"
 [[ "$(command -v rustup)" == "$rustup_proxy" ]] || {
   echo "rustup must resolve from the hardened Cargo binary authority" >&2
   exit 2
@@ -201,6 +232,36 @@ host_target=$("$rustc_bin" -vV | sed -n 's/^host: //p')
     "$target" "${host_target:-<missing>}" >&2
   exit 2
 }
+toolchain_bin=$(dirname "$cargo_bin")
+[[ "$(dirname "$rustc_bin")" == "$toolchain_bin" ]] || {
+  echo "Cargo and rustc resolve from different pinned toolchains" >&2
+  exit 2
+}
+for tool in "$cargo_bin" "$rustc_bin"; do
+  [[ -f "$tool" && ! -L "$tool" && -x "$tool" ]] || {
+    echo "pinned tool must be a real executable: $tool" >&2
+    exit 2
+  }
+  [[ "$(stat -c '%u' "$tool")" == "0" ]] || {
+    echo "pinned tool must remain root-owned: $tool" >&2
+    exit 2
+  }
+  mode=$(stat -c '%a' "$tool")
+  (( (8#$mode & 0222) == 0 )) || {
+    echo "pinned tool must remain read-only: $tool mode=$mode" >&2
+    exit 2
+  }
+done
+if [[ -n "${GITHUB_ENV:-}" ]]; then
+  {
+    printf 'TRNM_CARGO_BIN=%s\n' "$cargo_bin"
+    printf 'TRNM_RUSTC_BIN=%s\n' "$rustc_bin"
+    printf 'TRNM_TOOLCHAIN_BIN=%s\n' "$toolchain_bin"
+  } >>"$GITHUB_ENV"
+fi
+if [[ -n "${GITHUB_PATH:-}" ]]; then
+  printf '%s\n' "$toolchain_bin" >>"$GITHUB_PATH"
+fi
 
 declare -A seen_manifests=()
 declare -A seen_locks=()
@@ -298,7 +359,16 @@ trap cleanup EXIT
   printf 'repo_root=%s\n' "$root"
   printf 'toolchain=%s\n' "$toolchain"
   printf 'target=%s\n' "$target"
+  printf 'authority_home=%s\n' "$authority_home"
   printf 'cargo_home=%s\n' "$cargo_home"
+  printf 'cargo_home_identity=%s\n' "$(stat -c '%d:%i:%u:%a' "$cargo_home")"
+  printf 'cargo_bin=%s\n' "$cargo_bin"
+  printf 'cargo_bin_identity=%s\n' "$(stat -c '%d:%i:%u:%a' "$cargo_bin")"
+  printf 'cargo_bin_sha256=%s\n' "$(sha256sum -- "$cargo_bin" | awk '{print $1}')"
+  printf 'rustc_bin=%s\n' "$rustc_bin"
+  printf 'rustc_bin_identity=%s\n' "$(stat -c '%d:%i:%u:%a' "$rustc_bin")"
+  printf 'rustc_bin_sha256=%s\n' "$(sha256sum -- "$rustc_bin" | awk '{print $1}')"
+  printf 'toolchain_bin=%s\n' "$toolchain_bin"
   printf 'stamp=%s\n' "$stamp"
   printf 'stamp_sha256=%s\n' "$(sha256sum -- "$stamp" | awk '{print $1}')"
   printf 'stamp_status=%s\n' "$stamp_status"

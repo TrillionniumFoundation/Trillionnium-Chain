@@ -56,20 +56,34 @@ Node-only jobs are explicitly classified `not-applicable`; a workflow-level
 offline setting is forbidden because it would erase that job boundary. Every
 Cargo job first verifies its preprovisioned Rust toolchain, then invokes
 `scripts/ci/check_cargo_offline_ready.sh` with every exact
-`Cargo.toml:Cargo.lock` root it will consume. The guard verifies the root-owned,
-read-only `$CARGO_HOME/trnm-chain-offline-cache-v2.sha256` stamp, whose only
-accepted line format is `sha256<two spaces>repo-relative-lock`; proves each
-tracked clean lock resolves with all-target `cargo fetch --locked --offline`
-(the target flag is deliberately omitted because cargo-deny resolves the full
-locked graph, including non-Linux target dependencies); verifies the selected
-toolchain host is `x86_64-unknown-linux-gnu`; snapshots all tracked
-`Cargo.toml` hashes and lock
-hash/device/inode/mode evidence under `$RUNNER_TEMP`; and makes the active locks
-non-writable for the Cargo interval. The job's final explicit `if: always()`
-step invokes `check_cargo_offline_unchanged.sh`, verifies the stamp, manifests,
-locks, inode identities, and Git state, then restores the checkout lock modes.
-A missing package, stamp mismatch, changed manifest/lock, or missing final state
-is a fail-closed provisioning error. There is no online fallback.
+`Cargo.toml:Cargo.lock` root it will consume.
+
+The immutable authority remains the root-owned, read-only `$HOME/.cargo` tree.
+The guard verifies its `trnm-chain-offline-cache-v2.sha256` stamp, whose only
+accepted line format is `sha256<two spaces>repo-relative-lock`, and verifies the
+selected root-owned/read-only `cargo` and `rustc` binaries from the exact pinned
+toolchain. It then creates a fresh mode-0700 job-local Cargo home at
+`$RUNNER_TEMP/trnm-cargo-home-$GITHUB_JOB`. Only the registry archive and index
+are linked read-only from the immutable authority; package source extraction,
+package-cache coordination and any Cargo usage files stay inside that disposable
+job directory. The exact toolchain `bin` directory is injected through
+`GITHUB_PATH`, so later plain `cargo` commands cannot fall back to the rustup
+proxy's global Cargo home.
+
+The readiness guard proves each tracked clean lock resolves with all-target
+`cargo fetch --locked --offline` (the target flag is deliberately omitted
+because cargo-deny resolves the full locked graph, including non-Linux target
+dependencies); verifies the toolchain host is `x86_64-unknown-linux-gnu`;
+snapshots all tracked `Cargo.toml` hashes and lock hash/device/inode/mode
+evidence under `$RUNNER_TEMP`; and makes the active locks non-writable for the
+Cargo interval. The job's final explicit `if: always()` step invokes
+`check_cargo_offline_unchanged.sh`, verifies the immutable authority stamp,
+pinned tool identities and bytes, manifests, locks, inode identities, Git state,
+job-local cache links and absence of credentials, restores checkout lock modes,
+and removes the disposable Cargo home. A missing package, authority/stamp/tool
+mismatch, changed manifest/lock, escaped cache path, retained credentials or
+missing final state is a fail-closed provisioning error. There is no online
+fallback.
 
 Rust `1.95.0` is bound to rustc commit
 `59807616e1fa2540724bfbac14d7976d7e4a3860`; the fuzz jobs use
@@ -89,20 +103,23 @@ clean database tree before use. The advisory database is therefore another
 pinned offline input, not authorized network traffic.
 Its frozen tree is `ab125d2529cff71167188bf27b5deceaa4a86994`.
 
-The active registry cache is provisioned from a fresh credential-free
-`CARGO_HOME` using all five tracked locks without a target filter. Its archive
-is checksum-verified before extraction. `/home/trnm-ci` itself is the trusted
+The immutable registry authority is provisioned from a fresh credential-free
+Cargo home using all five tracked locks without a target filter. Its archive is
+checksum-verified before extraction. `/home/trnm-ci` itself is the trusted
 root-owned mode-0755 anchor, so the job identity cannot rename or replace the
-root-owned mode-0555 `.cargo` or `.rustup` authority trees. Registry
-directories, package sources, toolchains, binaries, RustSec data, and the stamp
-remain root-owned and read-only to `trnm-ci`; only Cargo's three
-version-confirmed cache-coordination/usage files and the precreated RustSec
-`advisory-dbs/db.lock` are job-writable. The runner installation and its
-configuration are root-owned and read-only; only the runner `_work` and `_diag`
-subdirectories are writable by `trnm-ci`. Node package and Playwright caches are
-similarly redirected to `$RUNNER_TEMP`, rather than creating writable authority
-under the runner home. Cargo auto-clean is disabled so an offline job never
-attempts to garbage-collect the root-owned cache. Superseded caches, partial
+root-owned mode-0555 `.cargo` or `.rustup` authority trees. Registry archives,
+indices, preprovisioned package sources, toolchains, binaries, RustSec data and
+the stamp remain root-owned and read-only to `trnm-ci`. A job never writes that
+source tree: it extracts any required package into its private `$RUNNER_TEMP`
+Cargo home and deletes that home after the final integrity check. The runner
+installation and its configuration are root-owned and read-only; only the
+runner `_work` and `_diag` subdirectories are writable by `trnm-ci`. Node
+package and Playwright caches are similarly redirected to `$RUNNER_TEMP`, rather
+than creating writable authority under the runner home. Cargo auto-clean is
+disabled so an offline job never attempts to garbage-collect the immutable
+cache.
+
+Superseded caches, partial
 downloads, toolchains, service drop-ins, and their checksum evidence are moved
 to dated backups rather than deleted. The runner service uses
 `KillMode=control-group` with a bounded stop timeout so cancelling maintenance

@@ -48,11 +48,63 @@ fail() {
 [[ "${CARGO_NET_OFFLINE:-}" == "true" ]] || fail "CARGO_NET_OFFLINE changed during the job"
 [[ "${CARGO_CACHE_AUTO_CLEAN_FREQUENCY:-}" == "never" ]] \
   || fail "CARGO_CACHE_AUTO_CLEAN_FREQUENCY changed during the job"
+
+authority_home=$(metadata_value authority_home)
 cargo_home=$(metadata_value cargo_home)
+expected_cargo_home_identity=$(metadata_value cargo_home_identity)
+cargo_bin=$(metadata_value cargo_bin)
+expected_cargo_bin_identity=$(metadata_value cargo_bin_identity)
+expected_cargo_bin_sha256=$(metadata_value cargo_bin_sha256)
+rustc_bin=$(metadata_value rustc_bin)
+expected_rustc_bin_identity=$(metadata_value rustc_bin_identity)
+expected_rustc_bin_sha256=$(metadata_value rustc_bin_sha256)
+toolchain_bin=$(metadata_value toolchain_bin)
 stamp=$(metadata_value stamp)
 expected_stamp_hash=$(metadata_value stamp_sha256)
-[[ -d "$cargo_home" && ! -L "$cargo_home" ]] || fail "CARGO_HOME changed or became a symlink"
-[[ "${CARGO_HOME:-${HOME:?}/.cargo}" == "$cargo_home" ]] || fail "CARGO_HOME changed during the job"
+expected_authority_home=$(cd "${HOME:?HOME is required}" && pwd -P)/.cargo
+[[ "$authority_home" == "$expected_authority_home" ]] \
+  || fail "Cargo authority changed during the job"
+[[ "${TRNM_CARGO_AUTHORITY_HOME:-$expected_authority_home}" == "$authority_home" ]] \
+  || fail "Cargo authority environment changed during the job"
+[[ -d "$cargo_home" && ! -L "$cargo_home" ]] \
+  || fail "job-scoped CARGO_HOME changed or became a symlink"
+case "$cargo_home" in
+  "$runner_temp"/trnm-cargo-home-*) ;;
+  *) fail "job-scoped CARGO_HOME escaped RUNNER_TEMP" ;;
+esac
+[[ "${CARGO_HOME:-}" == "$cargo_home" ]] || fail "CARGO_HOME changed during the job"
+[[ "${TRNM_CARGO_BIN:-}" == "$cargo_bin" ]] || fail "TRNM_CARGO_BIN changed during the job"
+[[ "${TRNM_RUSTC_BIN:-}" == "$rustc_bin" ]] || fail "TRNM_RUSTC_BIN changed during the job"
+[[ "${TRNM_TOOLCHAIN_BIN:-}" == "$toolchain_bin" ]] || fail "TRNM_TOOLCHAIN_BIN changed during the job"
+[[ "$(command -v cargo)" == "$cargo_bin" ]] || fail "Cargo no longer resolves from the pinned toolchain"
+for tool_record in   "$cargo_bin:$expected_cargo_bin_identity:$expected_cargo_bin_sha256"   "$rustc_bin:$expected_rustc_bin_identity:$expected_rustc_bin_sha256"; do
+  tool=${tool_record%%:*}
+  rest=${tool_record#*:}
+  expected_identity=${rest%:*}
+  expected_hash=${tool_record##*:}
+  if [[ ! -f "$tool" || -L "$tool" ]]; then
+    fail "pinned tool disappeared or became a symlink: $tool"
+    continue
+  fi
+  [[ "$(stat -c '%d:%i:%u:%a' "$tool")" == "$expected_identity" ]] \
+    || fail "pinned tool identity changed: $tool"
+  [[ "$(sha256sum -- "$tool" | awk '{print $1}')" == "$expected_hash" ]] \
+    || fail "pinned tool bytes changed: $tool"
+done
+if [[ -d "$cargo_home" && ! -L "$cargo_home" ]]; then
+  [[ "$(stat -c '%d:%i:%u:%a' "$cargo_home")" == "$expected_cargo_home_identity" ]] \
+    || fail "job-scoped CARGO_HOME identity or mode changed"
+  for registry_input in cache index; do
+    link="$cargo_home/registry/$registry_input"
+    [[ -L "$link" && "$(readlink -- "$link")" == "$authority_home/registry/$registry_input" ]] \
+      || fail "job-scoped Cargo registry authority link changed: $registry_input"
+  done
+  for credential in credentials credentials.toml; do
+    [[ ! -e "$cargo_home/$credential" && ! -L "$cargo_home/$credential" ]] \
+      || fail "job-scoped CARGO_HOME acquired a credentials file: $credential"
+  done
+fi
+
 if [[ ! -f "$stamp" || -L "$stamp" ]]; then
   fail "offline cache stamp disappeared or became a symlink"
 else
@@ -83,14 +135,12 @@ done <"$state_dir/locks.tsv"
 if ! sha256sum --check --status "$state_dir/manifests.sha256"; then
   fail "tracked Cargo.toml content changed during the job"
 fi
-
 mapfile -d '' -t current_manifests < <(
   git ls-files -z -- 'Cargo.toml' ':(glob)**/Cargo.toml' | LC_ALL=C sort -z
 )
 if [[ ${#current_manifests[@]} -ne $(wc -l <"$state_dir/manifests.sha256") ]]; then
   fail "tracked Cargo.toml set changed during the job"
 fi
-
 manifest_paths=()
 while read -r _hash manifest; do
   manifest_paths+=("$manifest")
@@ -105,6 +155,13 @@ for i in "${!locks[@]}"; do
   chmod "${original_modes[$i]}" -- "${locks[$i]}" || status=1
 done
 
+if ((status == 0)); then
+  case "$cargo_home" in
+    "$runner_temp"/trnm-cargo-home-*) rm -rf -- "$cargo_home" ;;
+    *) fail "refusing to remove non-job Cargo home" ;;
+  esac
+fi
+
 ((status == 0)) || exit 1
-printf 'cargo_offline_unchanged=passed roots=%d manifests=%d\n' \
+printf 'cargo_offline_unchanged=passed roots=%d manifests=%d job_cargo_home=removed\n' \
   "${#locks[@]}" "${#manifest_paths[@]}"

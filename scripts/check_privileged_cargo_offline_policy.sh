@@ -273,12 +273,12 @@ fi
 
 declare -A helper_hash=(
   [scripts/ci/check_preprovisioned_rust_toolchain.sh]=702ba1e134eee42e57e46da595ca9931f6298375112029c36807882c2d6c940a
-  [scripts/ci/check_cargo_offline_ready.sh]=409381365591dabed19158a23a86206f400f6e46a46fac5db1e9bf2083186da0
-  [scripts/ci/check_cargo_offline_unchanged.sh]=e76c1c06108553664b82fcc75789e4bde40541b99ebf8f5e86c09e7e6f59182f
+  [scripts/ci/check_cargo_offline_ready.sh]=2f8253ffb35cda0aaf3aaf652be4cc09a5ca8ef2880e9b974052491778174514
+  [scripts/ci/check_cargo_offline_unchanged.sh]=5b960086633a9f245b3ea83e48b0961b1907ae62677dfd90fdf8b824444ae604
   [scripts/ci/check_preprovisioned_cargo_deny.sh]=a1eb25bea55e2ec5ef41a5be596ef3447d77d8453e25ffd526d950933ec0ba5c
-  [scripts/ci/check_cargo_deny_offline.sh]=84cb9a42c13117a3eba5a0630f2d9ce85fb5733d47513a2c75a3b96baf89ac09
+  [scripts/ci/check_cargo_deny_offline.sh]=c3fb1b88898dc016d5e55cad20c9101a42676a08ff771a386dd061494c63ce75
   [scripts/ci/check_preprovisioned_cargo_fuzz.sh]=b2b1fa060440e2111f24f011bfc71c97baa1a558757b0ba8e960736c6c249040
-  [scripts/ci/check_canonical_fuzz_smoke.sh]=c1e4ce4ed6b4220171bc237e702a57497475b44762966f792cbe1384e6e1baa5
+  [scripts/ci/check_canonical_fuzz_smoke.sh]=ba57b6de6e677156a3f1f9bbd8b1c203d2abd0871dff28756fe269779477f0aa
 )
 for helper in "${!helper_hash[@]}"; do
   helper_file="$tmp/${helper//\//--}"
