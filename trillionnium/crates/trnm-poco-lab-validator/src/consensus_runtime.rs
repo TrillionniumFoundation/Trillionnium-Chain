@@ -5303,8 +5303,8 @@ impl BoundedConsensusOwnerV1 {
             >= self.config.ordinary_start_height()
             && facts.application_applied_height_v0() == facts.finalized_height_v0();
         let reached_duration_bound = now >= self.nominal_deadline;
-        let stop_requested = reached_duration_bound
-            || facts.high_qc_v0().height().get() >= self.preflight.target_height;
+        let reached_height_bound = bounded_height_certified_v1(self.preflight.target_height, facts);
+        let stop_requested = reached_duration_bound || reached_height_bound;
         if stop_requested {
             if let Some(client) = self.native_client.as_mut() {
                 client.stop_admission_v1();
@@ -5316,10 +5316,13 @@ impl BoundedConsensusOwnerV1 {
             .is_none_or(|client| client.drained_v1(facts.finalized_height_v0()));
         // A peer with an empty local queue must continue proposing/voting until
         // all actual admission owners finish their already accepted work.
+        let bounded_stop_ready =
+            bounded_stop_ready_v1(self.preflight.target_height, reached_duration_bound, facts);
         let global_drained = if self.terminal_barrier_enabled_v1() {
             if stop_requested
                 && positive_ordinary_finality
                 && native_drained
+                && bounded_stop_ready
                 && !self.terminal_barrier_v1()?.local_drained()
             {
                 let business = self
@@ -5330,6 +5333,13 @@ impl BoundedConsensusOwnerV1 {
                     .terminal_barrier_mut_v1()?
                     .drain_local(facts.finalized_height_v0(), business)?;
                 self.outbox.enqueue(FrameKind::TerminalBarrier, bytes)?;
+                // A certified final permitted height has no legal successor.
+                // Freeze the timer after the authenticated drain is emitted.
+                // Otherwise N/N drain waiting can manufacture a TC that cannot
+                // be cleared within the authenticated bound.
+                if reached_height_bound {
+                    self.pacemaker.cancel();
+                }
             }
             self.terminal_barrier_v1()?
                 .admission_drain_ready(facts.finalized_height_v0())
@@ -5340,7 +5350,7 @@ impl BoundedConsensusOwnerV1 {
             && positive_ordinary_finality
             && native_drained
             && global_drained
-            && bounded_stop_ready_v1(self.preflight.target_height, reached_duration_bound, facts)
+            && bounded_stop_ready
         {
             self.stopping_since = Some(now);
             if let Some(client) = self.native_client.as_mut() {
@@ -5490,7 +5500,9 @@ impl BoundedConsensusOwnerV1 {
             return Ok(false);
         }
         let facts = self.authority_v1()?.facts_v0()?;
-        if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready {
+        if bounded_height_certified_v1(self.preflight.target_height, facts)
+            || facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready
+        {
             return Ok(false);
         }
         if !self.authority_v1()?.proposal_witness_ready_v1()? {
@@ -7484,10 +7496,14 @@ impl BoundedConsensusOwnerV1 {
         {
             return Ok(false);
         }
+        let facts = self.authority_v1()?.facts_v0()?;
+        if bounded_height_certified_v1(self.preflight.target_height, facts) {
+            self.pacemaker.cancel();
+            return Ok(false);
+        }
         let Some(expiry) = self.pacemaker.poll(now) else {
             return Ok(false);
         };
-        let facts = self.authority_v1()?.facts_v0()?;
         ensure!(
             expiry.epoch() == self.config.validator_set().epoch()
                 && expiry.view() == facts.current_view_v0()
@@ -7892,6 +7908,10 @@ impl BoundedConsensusOwnerV1 {
         facts: ContinuousRuntimeFactsV0,
     ) -> Result<()> {
         update_pacemaker_after_progress_v1(&mut self.pacemaker, before, facts)?;
+        if bounded_height_certified_v1(self.preflight.target_height, facts) {
+            self.pacemaker.cancel();
+            return Ok(());
+        }
         if self.restart_lifecycle.is_running_v1() && self.stopping_since.is_none() {
             arm_pacemaker_for_facts_v1(
                 &mut self.pacemaker,
@@ -7904,6 +7924,10 @@ impl BoundedConsensusOwnerV1 {
     }
 
     fn rearm_after_phase_transition_v1(&mut self, facts: ContinuousRuntimeFactsV0) -> Result<()> {
+        if bounded_height_certified_v1(self.preflight.target_height, facts) {
+            self.pacemaker.cancel();
+            return Ok(());
+        }
         if self.restart_lifecycle.is_running_v1() && self.stopping_since.is_none() {
             if facts.local_timeout_available_v1() {
                 self.pacemaker.arm_if_unarmed(
@@ -8511,6 +8535,13 @@ impl BoundedConsensusOwnerV1 {
 }
 
 include!("terminal_barrier_runtime_v1.inc");
+
+// Once the exact final permitted height has a real QC, no legal successor
+// exists in this bounded campaign. Re-arming the pacemaker from that cut can
+// only create a TC whose clearing proposal would exceed the authenticated cap.
+fn bounded_height_certified_v1(target_height: u64, facts: ContinuousRuntimeFactsV0) -> bool {
+    facts.high_qc_v0().height().get() >= target_height
+}
 
 // Keep the pacemaker live while a last-height Vote or TC still needs a real
 // certificate transition. The hard deadline and unchanged height cap bound it.

@@ -30,6 +30,7 @@ fn post_timeout_direct_qc_releases_real_terminal_cut_below_submitted_tail_v1() {
         }
         for authority in &fixture.authorities {
             let ready = authority.facts_v0().unwrap();
+            assert!(!bounded_height_certified_v1(start + 3, ready));
             assert!(!bounded_stop_ready_v1(start + 3, false, ready));
             assert!(bounded_stop_ready_v1(start + 3, true, ready));
         }
@@ -42,6 +43,7 @@ fn post_timeout_direct_qc_releases_real_terminal_cut_below_submitted_tail_v1() {
         for authority in &mut fixture.authorities {
             authority.vote_proposal_v0(timed_out.clone()).unwrap();
             let signed = authority.facts_v0().unwrap();
+            assert!(!bounded_height_certified_v1(tail_height, signed));
             assert!(!bounded_stop_ready_v1(tail_height, false, signed));
             assert!(!bounded_stop_ready_v1(tail_height, true, signed));
         }
@@ -71,6 +73,7 @@ fn post_timeout_direct_qc_releases_real_terminal_cut_below_submitted_tail_v1() {
             assert_eq!(after.phase_v0(), PocoNodeLabAuthorityPhaseV0::Ready);
             assert!(after.pending_timeout_certificate_id_v0().is_some());
             assert!(!post_timeout_direct_qc_ready_v1(required_view, after));
+            assert!(!bounded_height_certified_v1(tail_height, after));
             assert!(!bounded_stop_ready_v1(tail_height, false, after));
             assert!(!bounded_stop_ready_v1(tail_height, true, after));
         }
@@ -104,6 +107,7 @@ fn post_timeout_direct_qc_releases_real_terminal_cut_below_submitted_tail_v1() {
                 ready.finalized_height_v0()
             );
             assert!(post_timeout_direct_qc_ready_v1(required_view, ready));
+            assert!(bounded_height_certified_v1(tail_height, ready));
             assert!(bounded_stop_ready_v1(tail_height, false, ready));
             assert!(!post_timeout_direct_qc_ready_v1(required_view + 1, ready));
         }

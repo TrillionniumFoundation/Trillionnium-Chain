@@ -1554,10 +1554,20 @@ A bounded height stop requires an actual Ready owner, no retained proposal TC,
 and an authoritative QC certifying at least the requested last height. Merely
 receiving or signing that last proposal cannot cancel the pacemaker: if its QC
 is missing, the real timeout/reproposal path must remain available at the same
-height. A duration stop also waits for Ready without retained TC context. Both
-stops retain the positive-finality and drained-native-work conditions; neither
-clears a post-timeout obligation. The hard drain deadline still fails an
-unfinished run and the proposal height cap never increases.
+height. Once the authoritative high QC reaches the requested last height, however,
+that bounded campaign has no legal successor proposal. Every proposal, timer-poll
+and progress/phase rearm path must then leave the pacemaker disarmed while peer
+traffic, durable readback, outbox delivery and the terminal barrier continue.
+Creating another timeout after that certificate would create a TC which cannot be
+cleared without exceeding the authenticated height cap. This freeze grants no
+stop authority and clears no pre-existing TC or other obligation.
+
+A duration stop also waits for Ready without retained TC context. Both stops retain
+the positive-finality and drained-native-work conditions; neither clears a
+post-timeout obligation. An AdmissionDrained statement is emitted only after this
+same bounded-stop predicate holds, so an early local queue observation cannot pin
+a timer-producing cut. The hard drain deadline still fails an unfinished run and
+the proposal height cap never increases.
 
 A runtime that adopts a TC records the new current view as its outstanding
 post-timeout context. The context closes only after an actual durable certificate
@@ -2040,11 +2050,20 @@ business height. Duplicate records must be byte-exact; missing members, a change
 record, wrong context or changed session after this commitment cannot authorize
 stopping. This is N/N controlled-campaign coordination, not a BFT quorum or proof.
 
-Keep local proposal production and the pacemaker live until all seven records are
-present and every advertised business height is finalized locally. Then apply the
-original Ready/no-pending-TC stop predicate. Prepare and Park retain the complete
-original durable snapshot checks and consumed-owner requirement. Early peer
-Prepare records are inert until the complete admission-drain set is present.
+Before the final permitted height has an authoritative QC, keep local proposal
+production and the pacemaker live whenever a missing last-height certificate can
+still be obtained through the same-height timeout/reproposal path. Once that QC is
+present, freeze local proposal production and the pacemaker even while the N/N
+AdmissionDrained set is incomplete; continue authenticated peer ingress, outbox
+flush, finality/application readback and terminal-barrier exchange. The N/N set
+authorizes coordinated stopping, not another timeout whose clearing proposal would
+exceed the height cap. Emit the local record only after the original
+Ready/no-pending-TC bounded-stop predicate and local native drain both hold.
+
+Prepare and Park retain the complete original durable snapshot checks and
+consumed-owner requirement. Early peer Prepare records are inert until the complete
+admission-drain set is present. A pre-certificate pending Vote or TC is never erased
+by this rule and still makes the hard drain fail closed if it cannot be resolved.
 
 The current revision-2 wire and ordered set-hash preimages are defined below.
 They bind each origin's admission-drain record as well as its Prepare. Older
