@@ -202,6 +202,92 @@ fn per_peer_outbox_byte_capacity_is_unchanged_until_last_destination() {
     assert!(outbox.enqueue(FrameKind::Vote, vec![3]).is_err());
 }
 
+
+#[test]
+fn per_peer_outbox_targeted_restart_retry_keeps_only_missing_peer_v1() {
+    let [missing, complete] = peers_v2();
+    let mut outbox = OrderedConsensusOutboxV1::new(vec![missing, complete]);
+    outbox
+        .enqueue_to_peers_v1(
+            FrameKind::RestartPrepare,
+            vec![9; 5],
+            BTreeSet::from([missing]),
+        )
+        .unwrap();
+    assert_eq!(
+        outbox
+            .flush_with_v2(|peer, kind, payload| {
+                assert_eq!(peer, missing);
+                assert_eq!(kind, FrameKind::RestartPrepare);
+                assert_eq!(payload.as_ref(), &[9; 5]);
+                Ok(Queued)
+            })
+            .unwrap(),
+        (5, 1)
+    );
+    assert!(outbox.is_empty());
+}
+
+#[test]
+fn restart_retry_selects_only_the_one_missing_prepare_peer_v1() {
+    let remote = (1u8..=6)
+        .map(|byte| ValidatorId::new([byte; 32]))
+        .collect::<BTreeSet<_>>();
+    let missing = ValidatorId::new([6; 32]);
+    let completed = remote
+        .iter()
+        .copied()
+        .filter(|origin| *origin != missing)
+        .collect::<BTreeSet<_>>();
+    assert_eq!(
+        restart_retry_missing_recipients_v1(&remote, &completed),
+        BTreeSet::from([missing])
+    );
+    assert!(restart_retry_missing_recipients_v1(&remote, &remote).is_empty());
+}
+
+#[test]
+fn per_peer_outbox_restart_quarantine_retains_n_of_n_obligation_v1() {
+    use crate::consensus_mesh::MeshSendDispositionV0::Quarantined;
+
+    let [quarantined, healthy] = peers_v2();
+    let mut outbox = OrderedConsensusOutboxV1::new(vec![quarantined, healthy]);
+    outbox
+        .enqueue(FrameKind::RestartPrepare, vec![7; 4])
+        .unwrap();
+    assert_eq!(
+        outbox
+            .flush_with_v2(|peer, _, _| {
+                Ok(if peer == quarantined {
+                    Quarantined
+                } else {
+                    Queued
+                })
+            })
+            .unwrap(),
+        (4, 1)
+    );
+    assert_eq!(outbox.pending_bytes, 4);
+    assert_eq!(
+        outbox.pending.front().unwrap().remaining_peers,
+        BTreeSet::from([quarantined])
+    );
+    assert_eq!(outbox.quarantined_recipient_count, 0);
+    assert_eq!(outbox.quarantined_payload_bytes, 0);
+    assert_eq!(
+        outbox
+            .flush_with_v2(|peer, kind, payload| {
+                assert_eq!(peer, quarantined);
+                assert_eq!(kind, FrameKind::RestartPrepare);
+                assert_eq!(payload.as_ref(), &[7; 4]);
+                Ok(Queued)
+            })
+            .unwrap(),
+        (4, 1)
+    );
+    assert!(outbox.is_empty());
+}
+
 #[test]
 fn per_peer_outbox_quarantine_retires_exact_obligation_without_false_progress_v1() {
     use crate::consensus_mesh::MeshSendDispositionV0::Quarantined;

@@ -38,13 +38,51 @@ impl OrderedConsensusOutboxV1 {
         self.enqueue_with_excluded_v1(kind, payload, Some(excluded_peer))
     }
 
+    fn enqueue_to_peers_v1(
+        &mut self,
+        kind: FrameKind,
+        payload: Vec<u8>,
+        remaining_peers: BTreeSet<ValidatorId>,
+    ) -> Result<()> {
+        ensure!(
+            remaining_peers
+                .iter()
+                .all(|peer| self.peers.contains(peer)),
+            "consensus outbox targeted an unknown destination peer"
+        );
+        self.enqueue_with_recipients_v1(kind, payload, remaining_peers)
+    }
+
     fn enqueue_with_excluded_v1(
         &mut self,
         kind: FrameKind,
         payload: Vec<u8>,
         excluded_peer: Option<ValidatorId>,
     ) -> Result<()> {
+        let mut remaining_peers = self.peers.iter().copied().collect::<BTreeSet<_>>();
+        if let Some(excluded_peer) = excluded_peer {
+            remaining_peers.remove(&excluded_peer);
+        }
+        self.enqueue_with_recipients_v1(kind, payload, remaining_peers)
+    }
+
+    fn enqueue_with_recipients_v1(
+        &mut self,
+        kind: FrameKind,
+        payload: Vec<u8>,
+        remaining_peers: BTreeSet<ValidatorId>,
+    ) -> Result<()> {
         ensure!(!payload.is_empty(), "consensus outbox payload is empty");
+        ensure!(
+            !remaining_peers.is_empty(),
+            "consensus outbox has no eligible destination peer"
+        );
+        ensure!(
+            remaining_peers
+                .iter()
+                .all(|peer| self.peers.contains(peer)),
+            "consensus outbox recipient set escaped the frozen peer set"
+        );
         ensure!(
             self.pending.len() < MAXIMUM_PENDING_BROADCASTS_V1,
             "consensus outbox message capacity exhausted"
@@ -56,14 +94,6 @@ impl OrderedConsensusOutboxV1 {
         ensure!(
             next_bytes <= MAXIMUM_PENDING_BROADCAST_BYTES_V1,
             "consensus outbox byte capacity exhausted"
-        );
-        let mut remaining_peers = self.peers.iter().copied().collect::<BTreeSet<_>>();
-        if let Some(excluded_peer) = excluded_peer {
-            remaining_peers.remove(&excluded_peer);
-        }
-        ensure!(
-            !remaining_peers.is_empty(),
-            "consensus outbox has no eligible destination peer"
         );
         self.pending_bytes = next_bytes;
         self.pending.push_back(OrderedBroadcastV1 {
@@ -118,6 +148,15 @@ impl OrderedConsensusOutboxV1 {
                     }
                     crate::consensus_mesh::MeshSendDispositionV0::Backpressured => {}
                     crate::consensus_mesh::MeshSendDispositionV0::Quarantined => {
+                        // Ordinary gossip can retire a permanently quarantined
+                        // destination and fail the later clean-terminal gate.
+                        // A restart barrier is N/N: treating quarantine as
+                        // delivery silently loses one required semantic slot.
+                        // Retain the exact frame for a later authenticated
+                        // session or for the campaign deadline to fail closed.
+                        if is_restart_protocol_kind_v1(broadcast.kind) {
+                            continue;
+                        }
                         let count = self
                             .quarantined_recipient_count
                             .checked_add(1)

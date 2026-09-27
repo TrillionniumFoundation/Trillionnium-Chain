@@ -729,6 +729,7 @@ const MESH_IO_TIMEOUT_V1: Duration = Duration::from_secs(2);
 const MESH_QUEUE_CAPACITY_V1: usize = 256;
 const MAXIMUM_INGRESS_EVENTS_PER_TICK_V1: usize = 64;
 const OWNER_POLL_INTERVAL_V1: Duration = Duration::from_millis(10);
+const RESTART_PROTOCOL_RETRY_INTERVAL_V1: Duration = Duration::from_millis(500);
 const PACEMAKER_BASE_TIMEOUT_V1: Duration =
     Duration::from_secs(CONSENSUS_RUNTIME_PACEMAKER_BASE_TIMEOUT_SECONDS_V1);
 const PACEMAKER_MAXIMUM_TIMEOUT_V1: Duration = Duration::from_secs(30);
@@ -3458,6 +3459,8 @@ fn write_fleet_start_certificate_v1(
     Ok(expected_sha256.into())
 }
 
+include!("restart_protocol_retransmit_v1.inc");
+
 struct BoundedConsensusOwnerV1 {
     native_client: Option<crate::native_client_runtime::NativeClientRuntimeV1>,
     config: LoadedValidatorConfig,
@@ -3482,6 +3485,7 @@ struct BoundedConsensusOwnerV1 {
     restart_ingress: BoundedRestartProtocolIngressV1,
     restart_relay_window: RestartRelayAdmissionWindowV1,
     restart_round: RestartCutRoundV1,
+    restart_retransmit: RestartProtocolRetransmitV1,
     prestarted_ingress: VecDeque<MeshIngressEventV0>,
     active_connectivity_fault: Option<ObservedConnectivityFaultV1>,
     pacemaker: GenerationAwarePacemakerV0,
@@ -3512,6 +3516,7 @@ struct BoundedConsensusOwnerV1 {
     terminal_prepared_snapshot: Option<RestartQuiescenceSnapshotV1>,
     terminal_owner: Option<ContinuousValidatorTerminalOwnerV0>,
     restart_lifecycle: RestartLifecycleV1,
+    restart_quiescence_diagnostic_mask: Option<u32>,
     prepared_normal_frame_drop_count: u64,
     os_start: RuntimeOsSampleV1,
     network_tx_bytes: u64,
@@ -4273,6 +4278,144 @@ fn is_restart_quiescent_v1(snapshot: &RestartQuiescenceSnapshotV1) -> bool {
         && is_restart_common_quiescent_v1(snapshot)
 }
 
+// Diagnostic-only grouping of the exact predicate above.  No bit grants
+// authority, changes admission, or replaces the full predicate; bit 31 is a
+// fail-closed guard if this grouping ever misses a newly added requirement.
+const RESTART_QUIESCENCE_REQUEST_BLOCKER_V1: u32 = 1 << 0;
+const RESTART_QUIESCENCE_OWNER_BLOCKER_V1: u32 = 1 << 1;
+const RESTART_QUIESCENCE_WORK_BLOCKER_V1: u32 = 1 << 2;
+const RESTART_QUIESCENCE_MESH_BLOCKER_V1: u32 = 1 << 3;
+const RESTART_QUIESCENCE_FAULT_JOURNAL_BLOCKER_V1: u32 = 1 << 4;
+const RESTART_QUIESCENCE_CONSENSUS_BLOCKER_V1: u32 = 1 << 5;
+const RESTART_QUIESCENCE_APPLICATION_BLOCKER_V1: u32 = 1 << 6;
+const RESTART_QUIESCENCE_SIGNER_INVENTORY_BLOCKER_V1: u32 = 1 << 7;
+const RESTART_QUIESCENCE_SIGNER_WATERMARK_BLOCKER_V1: u32 = 1 << 8;
+const RESTART_QUIESCENCE_SAFETY_CHECKPOINT_BLOCKER_V1: u32 = 1 << 9;
+const RESTART_QUIESCENCE_REPLAY_BLOCKER_V1: u32 = 1 << 10;
+const RESTART_QUIESCENCE_EVENT_JOURNAL_BLOCKER_V1: u32 = 1 << 11;
+const RESTART_QUIESCENCE_UNCLASSIFIED_BLOCKER_V1: u32 = 1 << 31;
+
+fn restart_quiescence_diagnostic_mask_v1(snapshot: &RestartQuiescenceSnapshotV1) -> u32 {
+    let mut mask = 0u32;
+    if !snapshot.restart_requested
+        || snapshot.restart_intent_generation == 0
+        || snapshot.restart_intent_nonce == 0
+        || snapshot.restart_intent_request_sha256 == [0; 32]
+    {
+        mask |= RESTART_QUIESCENCE_REQUEST_BLOCKER_V1;
+    }
+    if snapshot.normal_stop_in_progress
+        || snapshot.process_instance != 1
+        || snapshot.local_validator.is_zero()
+        || snapshot.authority_phase != PocoNodeLabAuthorityPhaseV0::Ready
+    {
+        mask |= RESTART_QUIESCENCE_OWNER_BLOCKER_V1;
+    }
+    if snapshot.pending_timeout_certificate
+        || snapshot.outbox_frame_count != 0
+        || snapshot.outbox_payload_bytes != 0
+        || snapshot.pending_proposal_count != 0
+        || snapshot.pending_certificate_count != 0
+        || snapshot.prestarted_ingress_count != 0
+        || snapshot.post_timeout_rebase_pending
+    {
+        mask |= RESTART_QUIESCENCE_WORK_BLOCKER_V1;
+    }
+    if snapshot.unavailable_session_count != 0 || snapshot.mesh_pending_outbound_bytes != 0 {
+        mask |= RESTART_QUIESCENCE_MESH_BLOCKER_V1;
+    }
+    if snapshot.active_connectivity_fault
+        || snapshot.expected_control_fault
+        || snapshot.active_journal_fault_count != 0
+        || !snapshot.journal_restart_prepare_absent
+        || snapshot.journal_restart_pending_catchup
+        || snapshot.journal_restart_completed
+        || snapshot.journal_final_tip_recorded
+        || snapshot.journal_clean_stop_recorded
+        || snapshot.journal_safety_halted
+    {
+        mask |= RESTART_QUIESCENCE_FAULT_JOURNAL_BLOCKER_V1;
+    }
+    let expected_current_view = snapshot.high_qc.view().get().checked_add(1);
+    if expected_current_view != Some(snapshot.current_view.get())
+        || snapshot.high_qc.qc_digest().is_zero()
+        || snapshot.high_qc.block_id().is_zero()
+        || snapshot.high_qc.validator_set_id().is_zero()
+        || snapshot.high_qc.height().get() < snapshot.finalized_height
+        || snapshot.proposal_parent_height != snapshot.high_qc.height().get()
+        || snapshot.proposal_parent_block_id != snapshot.high_qc.block_id()
+    {
+        mask |= RESTART_QUIESCENCE_CONSENSUS_BLOCKER_V1;
+    }
+    if snapshot.ordinary_start_height == 0
+        || snapshot.finalized_height < snapshot.ordinary_start_height
+        || snapshot.finalized_block_id.is_zero()
+        || snapshot.finalized_chain_root == [0; 32]
+        || snapshot.application_height != snapshot.finalized_height
+        || snapshot.application_block_id != snapshot.finalized_block_id
+        || snapshot.application_state_root == [0; 32]
+    {
+        mask |= RESTART_QUIESCENCE_APPLICATION_BLOCKER_V1;
+    }
+    let signed_intent_count = snapshot
+        .signer_signed_vote_intent_count
+        .checked_add(snapshot.signer_signed_timeout_intent_count);
+    if signed_intent_count == Some(0)
+        || snapshot.signer_durable_vote_intent_count != snapshot.signer_signed_vote_intent_count
+        || snapshot.signer_durable_timeout_intent_count
+            != snapshot.signer_signed_timeout_intent_count
+        || snapshot.signer_signed_vote_intent_count != snapshot.signed_vote_intents
+        || snapshot.signer_signed_timeout_intent_count != snapshot.signed_timeout_intents
+        || snapshot.signer_inventory_digest == [0; 32]
+        || snapshot.signer_inventory_digest != snapshot.authenticated_signer_inventory_digest
+    {
+        mask |= RESTART_QUIESCENCE_SIGNER_INVENTORY_BLOCKER_V1;
+    }
+    let expected_watermark_sequence = signed_intent_count.and_then(|value| value.checked_mul(2));
+    let watermark_ok = snapshot
+        .signer_exact_watermark
+        .zip(snapshot.checkpoint_signer_exact_watermark)
+        .is_some_and(|(signer, checkpoint)| {
+            signer == checkpoint
+                && signer.scope() != [0; 32]
+                && signer.journal_id() != [0; 32]
+                && signer.chain_checksum() != [0; 32]
+                && expected_watermark_sequence == Some(signer.sequence())
+                && expected_watermark_sequence == Some(snapshot.signer_watermark_sequence)
+        });
+    if !watermark_ok {
+        mask |= RESTART_QUIESCENCE_SIGNER_WATERMARK_BLOCKER_V1;
+    }
+    if snapshot.safety_revision == 0
+        || snapshot.safety_record_checksum == [0; 32]
+        || snapshot.safety_chain_checksum == [0; 32]
+        || snapshot.checkpoint_generation == 0
+        || snapshot.checkpoint_canonical_sha256 == [0; 32]
+        || snapshot.checkpoint_canonical_sha256 != snapshot.runtime_checkpoint_canonical_sha256
+    {
+        mask |= RESTART_QUIESCENCE_SAFETY_CHECKPOINT_BLOCKER_V1;
+    }
+    if snapshot.replay_archive_context_sha256 == [0; 32]
+        || snapshot.replay_archive_head_sequence == 0
+        || snapshot.replay_archive_head_sha256 == [0; 32]
+    {
+        mask |= RESTART_QUIESCENCE_REPLAY_BLOCKER_V1;
+    }
+    let expected_journal_next = snapshot.journal_head_sequence.checked_add(1);
+    if snapshot.journal_head_sequence == 0
+        || snapshot.journal_head_sha256 == [0; 32]
+        || expected_journal_next != Some(snapshot.journal_next_sequence)
+        || snapshot.journal_finalized_height != snapshot.finalized_height
+        || snapshot.journal_application_height != snapshot.application_height
+    {
+        mask |= RESTART_QUIESCENCE_EVENT_JOURNAL_BLOCKER_V1;
+    }
+    if mask == 0 && !is_restart_quiescent_v1(snapshot) {
+        mask |= RESTART_QUIESCENCE_UNCLASSIFIED_BLOCKER_V1;
+    }
+    mask
+}
+
 /// A peer below the advertised cut may continue draining already
 /// authenticated work. Equality is the only successful outcome; an ahead or
 /// same-height-different projection is a fail-closed fork/overshoot.
@@ -4969,6 +5112,7 @@ impl BoundedConsensusOwnerV1 {
             restart_ingress,
             restart_relay_window,
             restart_round: RestartCutRoundV1::default(),
+            restart_retransmit: RestartProtocolRetransmitV1::default(),
             prestarted_ingress: barrier.prestarted_ingress,
             active_connectivity_fault: None,
             pacemaker,
@@ -4995,6 +5139,7 @@ impl BoundedConsensusOwnerV1 {
             terminal_prepared_snapshot: None,
             terminal_owner: None,
             restart_lifecycle: RestartLifecycleV1::Running,
+            restart_quiescence_diagnostic_mask: None,
             prepared_normal_frame_drop_count: 0,
             os_start,
             network_tx_bytes: 0,
@@ -5046,6 +5191,7 @@ impl BoundedConsensusOwnerV1 {
             if self.restart_lifecycle.is_prepared_v1() {
                 self.mesh_v1()?.ensure_healthy()?;
                 let control_progress = self.poll_runtime_control_v1()?;
+                let restart_retry_progress = self.maybe_retry_restart_protocol_v1(Instant::now())?;
                 let outbox_progress = self.flush_outbox_v1()?;
                 let event = self.mesh_v1()?.receive_timeout(OWNER_POLL_INTERVAL_V1)?;
                 let ingress_progress = event
@@ -5059,6 +5205,7 @@ impl BoundedConsensusOwnerV1 {
                 let peer_cut_progress = self.maybe_complete_peer_restart_cut_v1()?;
                 let parked_ack_progress = self.maybe_complete_restart_parked_ack_v1()?;
                 if !(control_progress
+                    || restart_retry_progress
                     || outbox_progress
                     || ingress_progress
                     || cut_progress
@@ -5480,11 +5627,14 @@ impl BoundedConsensusOwnerV1 {
         payload: Vec<u8>,
     ) -> Result<RestartProtocolOriginReservationV1> {
         self.require_direct_seven_restart_park_v1()?;
+        let retry_payload = payload.clone();
         let reservation = self
             .restart_ingress
             .reserve_originated_statement_v1(phase, &payload, None)
             .map_err(|error| anyhow!("reserve originated restart statement: {error}"))?;
         self.outbox.enqueue(phase.frame_kind(), payload)?;
+        self.restart_retransmit
+            .remember_v1(phase, retry_payload, Instant::now())?;
         Ok(reservation)
     }
 
@@ -6105,6 +6255,45 @@ impl BoundedConsensusOwnerV1 {
         })
     }
 
+    fn record_restart_quiescence_diagnostic_v1(&mut self, snapshot: RestartQuiescenceSnapshotV1) {
+        let mask = restart_quiescence_diagnostic_mask_v1(&snapshot);
+        if mask == 0 {
+            self.restart_quiescence_diagnostic_mask = None;
+            return;
+        }
+        if self.restart_quiescence_diagnostic_mask == Some(mask) {
+            return;
+        }
+        self.restart_quiescence_diagnostic_mask = Some(mask);
+        eprintln!(
+            "restart_quiescence_pending_v1 mask=0x{mask:08x} phase={:?} view={} high_qc_view={} high_qc_height={} finalized={} application={} parent={} outbox_frames={} outbox_bytes={} pending_proposals={} pending_certificates={} prestarted={} unavailable_sessions={} mesh_pending_bytes={} vote_intents={}/{} timeout_intents={}/{} signer_watermark={:?} checkpoint_watermark={:?} journal_head={} journal_next={}",
+            snapshot.authority_phase,
+            snapshot.current_view.get(),
+            snapshot.high_qc.view().get(),
+            snapshot.high_qc.height().get(),
+            snapshot.finalized_height,
+            snapshot.application_height,
+            snapshot.proposal_parent_height,
+            snapshot.outbox_frame_count,
+            snapshot.outbox_payload_bytes,
+            snapshot.pending_proposal_count,
+            snapshot.pending_certificate_count,
+            snapshot.prestarted_ingress_count,
+            snapshot.unavailable_session_count,
+            snapshot.mesh_pending_outbound_bytes,
+            snapshot.signer_signed_vote_intent_count,
+            snapshot.signer_durable_vote_intent_count,
+            snapshot.signer_signed_timeout_intent_count,
+            snapshot.signer_durable_timeout_intent_count,
+            snapshot.signer_exact_watermark.map(|value| value.sequence()),
+            snapshot
+                .checkpoint_signer_exact_watermark
+                .map(|value| value.sequence()),
+            snapshot.journal_head_sequence,
+            snapshot.journal_next_sequence,
+        );
+    }
+
     fn maybe_complete_restart_prepare_v1(&mut self) -> Result<bool> {
         let Some(intent) = (match &self.restart_lifecycle {
             RestartLifecycleV1::TargetQuiescing(intent) => Some(*intent),
@@ -6125,8 +6314,10 @@ impl BoundedConsensusOwnerV1 {
         };
         let snapshot = self.restart_quiescence_snapshot_v1()?;
         if !is_restart_quiescent_v1(&snapshot) {
+            self.record_restart_quiescence_diagnostic_v1(snapshot);
             return Ok(false);
         }
+        self.restart_quiescence_diagnostic_mask = None;
         let signer_exact_watermark = snapshot.signer_exact_watermark.ok_or_else(|| {
             anyhow!("quiescent predicate admitted a missing exact signer watermark")
         })?;
@@ -10616,6 +10807,42 @@ mod tests {
         assert_eq!(prepared_facts.signer_exact_watermark.sequence(), 4);
         assert_ne!(prepared_facts.checkpoint_canonical_sha256, [0; 32]);
         assert_eq!(prepared_facts.finalized_chain_root, [0x40; 32]);
+    }
+
+    #[test]
+    fn restart_quiescence_diagnostic_groups_do_not_authorize_a_cut() {
+        let baseline = restart_quiescence_fixture_v1();
+        assert_eq!(restart_quiescence_diagnostic_mask_v1(&baseline), 0);
+
+        let mut mesh = baseline;
+        mesh.unavailable_session_count = 1;
+        assert_eq!(
+            restart_quiescence_diagnostic_mask_v1(&mesh),
+            RESTART_QUIESCENCE_MESH_BLOCKER_V1
+        );
+
+        let mut consensus = baseline;
+        consensus.current_view = View::new(consensus.current_view.get() + 1);
+        assert_eq!(
+            restart_quiescence_diagnostic_mask_v1(&consensus),
+            RESTART_QUIESCENCE_CONSENSUS_BLOCKER_V1
+        );
+
+        let mut signer = baseline;
+        signer.signer_watermark_sequence += 1;
+        assert_eq!(
+            restart_quiescence_diagnostic_mask_v1(&signer),
+            RESTART_QUIESCENCE_SIGNER_WATERMARK_BLOCKER_V1
+        );
+
+        let mut multiple = baseline;
+        multiple.outbox_frame_count = 1;
+        multiple.journal_next_sequence += 1;
+        assert_eq!(
+            restart_quiescence_diagnostic_mask_v1(&multiple),
+            RESTART_QUIESCENCE_WORK_BLOCKER_V1 | RESTART_QUIESCENCE_EVENT_JOURNAL_BLOCKER_V1
+        );
+        assert!(!is_restart_quiescent_v1(&multiple));
     }
 
     #[test]
