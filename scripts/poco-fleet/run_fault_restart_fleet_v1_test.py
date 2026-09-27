@@ -101,6 +101,7 @@ def response(
         "journal_event_sha256": "12" * 32,
         "finalized_height": 8,
         "application_height": 8,
+        "restart_quiesce_requested": verb in {"quiesce_restart", "prepare_restart"},
         "restart_pending_catchup": False,
         "restart_completed": control_status["process_instance"] == 2,
         "active_faults": active or [],
@@ -361,12 +362,48 @@ def main() -> None:
         ),
         "exact context",
     )
+    malformed_quiesce = dict(applied)
+    malformed_quiesce["restart_quiesce_requested"] = 1
+    expect_failure(
+        lambda: fleet.exact_response(
+            malformed_quiesce, status=accepted_status, nonce=1, verb="status"
+        ),
+        "exact context",
+    )
+
     halted = dict(applied)
     halted["safety_halted"] = True
     accepted_halted = fleet.exact_response(
         halted, status=accepted_status, nonce=1, verb="status"
     )
     assert accepted_halted["safety_halted"] is True
+
+    observations = {
+        process.validator_id: {
+            **response(
+                {**status(), "validator_id": process.validator_id},
+                nonce=index + 1,
+                verb="status",
+            ),
+            "finalized_height": 12,
+            "application_height": 12,
+        }
+        for index, process in enumerate(validators)
+    }
+    assert fleet.restart_target_frontier_v1(
+        observations, validators[0].validator_id
+    ) == (12, 12)
+    ahead = {key: dict(value) for key, value in observations.items()}
+    ahead[validators[1].validator_id]["finalized_height"] = 13
+    ahead[validators[1].validator_id]["application_height"] = 13
+    assert fleet.restart_target_frontier_v1(
+        ahead, validators[0].validator_id
+    ) is None
+    target_unapplied = {key: dict(value) for key, value in observations.items()}
+    target_unapplied[validators[0].validator_id]["application_height"] = 11
+    assert fleet.restart_target_frontier_v1(
+        target_unapplied, validators[0].validator_id
+    ) is None
 
     for field, mutant in [
         ("barrier_phase", "ready"),

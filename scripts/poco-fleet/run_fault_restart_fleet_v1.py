@@ -57,6 +57,7 @@ MAX_PROCESS_IO_BYTES = 16 * 1024 * 1024
 MAX_FAULT_WINDOW_SECONDS = 15 * 60
 MIN_FAULT_WINDOW_SECONDS = 2
 CONTROL_POLL_SECONDS = 1.0
+RESTART_FRONTIER_STABLE_POLLS_V1 = 2
 PROCESS1_TARGET_PARKED_EXIT_STATUS_V1 = 75
 PROCESS2_INERT_EXIT_STATUS_V1 = 2
 PROCESS2_INERT_BOUNDARY_MESSAGE_V1 = (
@@ -95,6 +96,7 @@ RESPONSE_KEYS = {
     "journal_event_sha256",
     "finalized_height",
     "application_height",
+    "restart_quiesce_requested",
     "restart_pending_catchup",
     "restart_completed",
     "active_faults",
@@ -623,6 +625,7 @@ def exact_response(
         or any(
             not isinstance(value[field], bool)
             for field in (
+                "restart_quiesce_requested",
                 "restart_pending_catchup",
                 "restart_completed",
                 "final_tip_recorded",
@@ -1693,6 +1696,142 @@ def wait_for_started_fleet_v1(
             time.sleep(CONTROL_POLL_SECONDS)
 
 
+def restart_target_frontier_v1(
+    observations: dict[str, dict[str, Any]], target_validator_id: str
+) -> tuple[int, int] | None:
+    """Return a safe planned-restart frontier only when target is not behind.
+
+    Heights are a precondition, not restart authority. The signed RestartPrepare
+    and every peer's exact cut/projection checks remain authoritative.
+    """
+
+    if len(observations) != 7 or target_validator_id not in observations:
+        fail("restart frontier does not contain the exact direct-seven set")
+    coordinates: dict[str, tuple[int, int]] = {}
+    for validator_id, value in observations.items():
+        finalized = value.get("finalized_height")
+        application = value.get("application_height")
+        if (
+            isinstance(finalized, bool)
+            or not isinstance(finalized, int)
+            or finalized < 0
+            or isinstance(application, bool)
+            or not isinstance(application, int)
+            or application < 0
+        ):
+            fail(f"restart frontier has invalid coordinates for {validator_id}")
+        coordinates[validator_id] = (finalized, application)
+    target = coordinates[target_validator_id]
+    if target[0] != target[1]:
+        return None
+    for validator_id, (finalized, application) in coordinates.items():
+        if finalized != application:
+            return None
+        if validator_id != target_validator_id and (
+            finalized > target[0] or application > target[1]
+        ):
+            return None
+    return target
+
+
+def wait_for_restart_target_frontier_v1(
+    *,
+    processes: list[base.ValidatorProcess],
+    target: base.ValidatorProcess,
+    runtimes: dict[str, RuntimeProcessV1],
+    stages: dict[str, base.HostStage],
+    linux_paths: dict[str, str],
+    statuses: dict[str, dict[str, Any]],
+    read_nonces: dict[str, int],
+    io_root: pathlib.Path,
+    timeout_seconds: int,
+) -> dict[str, Any]:
+    """Observe a stable target-at-frontier window before signed restart prepare.
+
+    Non-targets are read first and the selected target last. Two consecutive
+    identical target frontiers are required. This prevents a planned restart
+    from freezing a target cut already superseded by a healthy peer, while no
+    read response can construct a cut, signature, or lifecycle transition.
+    """
+
+    if len(processes) != 7 or target.validator_id not in {p.validator_id for p in processes}:
+        fail("restart frontier requires the exact selected direct-seven target")
+    deadline = time.monotonic() + timeout_seconds
+    ordered = [p for p in processes if p.validator_id != target.validator_id] + [target]
+    prior_frontier: tuple[int, int] | None = None
+    stable_polls = 0
+    attempt = 0
+    while True:
+        attempt += 1
+        require_non_target_processes_live(runtimes, target.validator_id)
+        observations: dict[str, dict[str, Any]] = {}
+        for process in ordered:
+            validator_id = process.validator_id
+            nonce = read_nonces[validator_id]
+            value = send_control(
+                process=process,
+                stage=stages[process.host_id],
+                binary=linux_paths[process.host_id],
+                status=statuses[validator_id],
+                nonce=nonce,
+                verb="status",
+                fault="",
+                io_root=io_root,
+                label=f"restart-frontier-{attempt:04d}-{validator_id}-{nonce}",
+            )
+            read_nonces[validator_id] += 1
+            if (
+                value["barrier_phase"] != "started"
+                or value["safety_halted"]
+                or value["clean_stop_recorded"]
+                or value["restart_quiesce_requested"]
+                != (validator_id == target.validator_id)
+                or value["restart_pending_catchup"]
+                or value["restart_completed"]
+                or value["active_faults"]
+                or value["expected_fault"] != ""
+            ):
+                raise RuntimeError(
+                    f"validator {validator_id} is not clean at restart frontier"
+                )
+            observations[validator_id] = value
+        frontier = restart_target_frontier_v1(observations, target.validator_id)
+        if frontier is not None and frontier == prior_frontier:
+            stable_polls += 1
+        elif frontier is not None:
+            prior_frontier = frontier
+            stable_polls = 1
+        else:
+            prior_frontier = None
+            stable_polls = 0
+        if stable_polls >= RESTART_FRONTIER_STABLE_POLLS_V1:
+            require_non_target_processes_live(runtimes, target.validator_id)
+            return {
+                "schema_version": 1,
+                "profile": "poco-g3-planned-restart-frontier-v1",
+                "target_validator_id": target.validator_id,
+                "finalized_height": frontier[0],
+                "application_height": frontier[1],
+                "stable_polls": stable_polls,
+                "poll_attempts": attempt,
+                "validator_heights": {
+                    validator_id: {
+                        "finalized_height": value["finalized_height"],
+                        "application_height": value["application_height"],
+                        "journal_event_sequence": value["journal_event_sequence"],
+                        "journal_event_sha256": value["journal_event_sha256"],
+                    }
+                    for validator_id, value in sorted(observations.items())
+                },
+                "production_activation": False,
+            }
+        if time.monotonic() >= deadline:
+            raise RuntimeError(
+                "selected restart target never held one stable not-behind frontier"
+            )
+        time.sleep(CONTROL_POLL_SECONDS)
+
+
 def wait_for_signed_fault_state(
     *,
     process: base.ValidatorProcess,
@@ -2146,6 +2285,7 @@ def supervise_target_process1_handoff(
     if (
         prepare["expected_fault"] != ""
         or prepare["active_faults"]
+        or prepare["restart_quiesce_requested"] is not True
         or prepare["restart_pending_catchup"] is not False
         or prepare["restart_completed"] is not False
         or prepare["final_tip_recorded"] is not False
@@ -2967,6 +3107,76 @@ def execute_campaign(
                         "restart handoff differs from the sole signed-catchup slot"
                     )
                 restart_started_at = utc_now()
+                quiesce_nonce = command_nonces[process.validator_id]
+                quiesce = send_control(
+                    process=process,
+                    stage=stage,
+                    binary=binary,
+                    status=statuses[process.validator_id],
+                    nonce=quiesce_nonce,
+                    verb="quiesce_restart",
+                    fault="",
+                    io_root=control_io,
+                    label=f"restart-quiesce-{process.validator_id}",
+                )
+                command_nonces[process.validator_id] += 1
+                if (
+                    quiesce["restart_quiesce_requested"] is not True
+                    or quiesce["expected_fault"] != ""
+                    or quiesce["active_faults"]
+                    or quiesce["restart_pending_catchup"]
+                    or quiesce["restart_completed"]
+                    or quiesce["final_tip_recorded"]
+                    or quiesce["clean_stop_recorded"]
+                    or quiesce["safety_halted"]
+                ):
+                    raise RuntimeError(
+                        "quiesce_restart response is not one reversible clean process-1 pause"
+                    )
+                try:
+                    restart_frontier = wait_for_restart_target_frontier_v1(
+                        processes=processes,
+                        target=process,
+                        runtimes=runtimes,
+                        stages=stages,
+                        linux_paths=linux_paths,
+                        statuses=statuses,
+                        read_nonces=read_nonces,
+                        io_root=control_io,
+                        timeout_seconds=fault_window_seconds,
+                    )
+                except Exception as frontier_error:
+                    clear_nonce = command_nonces[process.validator_id]
+                    clear = send_control(
+                        process=process,
+                        stage=stage,
+                        binary=binary,
+                        status=statuses[process.validator_id],
+                        nonce=clear_nonce,
+                        verb="clear_restart_quiesce",
+                        fault="",
+                        io_root=control_io,
+                        label=f"restart-quiesce-clear-{process.validator_id}",
+                    )
+                    command_nonces[process.validator_id] += 1
+                    if (
+                        clear["restart_quiesce_requested"] is not False
+                        or clear["expected_fault"] != ""
+                        or clear["active_faults"]
+                        or clear["restart_pending_catchup"]
+                        or clear["restart_completed"]
+                        or clear["final_tip_recorded"]
+                        or clear["clean_stop_recorded"]
+                        or clear["safety_halted"]
+                    ):
+                        raise RuntimeError(
+                            "restart frontier failed and reversible quiesce did not clear cleanly"
+                        ) from frontier_error
+                    require_non_target_processes_live(runtimes, process.validator_id)
+                    raise RuntimeError(
+                        "restart frontier failed; target pre-quiesce was explicitly cleared"
+                    ) from frontier_error
+
                 inert_runtime, process2_exit, prepare, handoff = supervise_target_process1_handoff(
                     runtimes=runtimes,
                     process=process,
@@ -2981,6 +3191,7 @@ def execute_campaign(
                     timeout_seconds=fault_window_seconds,
                     peer_lease_socket=peer_lease_paths[process.host_id].socket,
                 )
+                command_nonces[process.validator_id] += 1
                 if runtimes[process.validator_id] is not inert_runtime:
                     raise RuntimeError("target inert process-2 owner was not retained")
                 artifacts, material_summary = commission_process2_recovery_material_v1(
@@ -3039,6 +3250,7 @@ def execute_campaign(
                 read_nonces[process.validator_id] += 1
                 if (
                     catchup["barrier_phase"] != "started"
+                    or catchup["restart_quiesce_requested"]
                     or catchup["restart_pending_catchup"]
                     or not catchup["restart_completed"]
                     or catchup["safety_halted"]
@@ -3054,7 +3266,13 @@ def execute_campaign(
                         started_at=restart_started_at,
                         ended_at=restart_ended_at,
                         transcript=[
-                            {"surface": "process1-handoff", "prepare": prepare, "handoff": handoff},
+                            {
+                                "surface": "process1-handoff",
+                                "quiesce": quiesce,
+                                "frontier": restart_frontier,
+                                "prepare": prepare,
+                                "handoff": handoff,
+                            },
                             {"surface": "process2-inert-cut", **process2_exit},
                             {"surface": "recovery-material", **material_summary},
                             {"surface": "process2-control", **statuses[process.validator_id]},

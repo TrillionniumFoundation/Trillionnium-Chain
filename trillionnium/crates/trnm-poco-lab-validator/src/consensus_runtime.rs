@@ -5463,6 +5463,7 @@ impl BoundedConsensusOwnerV1 {
 
     fn poll_native_client_v1(&mut self) -> Result<bool> {
         self.archive_native_finality_v1()?;
+        let restart_prequiesce = self.restart_prequiesce_requested_v1();
         let Some(client) = &mut self.native_client else {
             return Ok(false);
         };
@@ -5473,11 +5474,19 @@ impl BoundedConsensusOwnerV1 {
             .authority
             .as_ref()
             .context("native client authority is unavailable")?;
-        poll_native_with_authority_v1(client, authority, Some(self.preflight.target_height))
+        if restart_prequiesce {
+            let facts = authority.facts_v0()?;
+            client.poll_read_only_v1(facts.finalized_height_v0())
+        } else {
+            poll_native_with_authority_v1(client, authority, Some(self.preflight.target_height))
+        }
     }
 
     fn maybe_propose_v1(&mut self) -> Result<bool> {
-        if !self.restart_lifecycle.allows_local_proposal_v1() || self.stopping_since.is_some() {
+        if !self.restart_lifecycle.allows_local_proposal_v1()
+            || self.restart_prequiesce_requested_v1()
+            || self.stopping_since.is_some()
+        {
             return Ok(false);
         }
         let facts = self.authority_v1()?.facts_v0()?;
@@ -6079,8 +6088,16 @@ impl BoundedConsensusOwnerV1 {
         Ok(false)
     }
 
+    fn restart_prequiesce_requested_v1(&self) -> bool {
+        self.restart_lifecycle.is_running_v1()
+            && self
+                .runtime_control
+                .as_ref()
+                .is_some_and(RuntimeControlServerV1::restart_quiesce_requested_v1)
+    }
+
     fn poll_runtime_control_v1(&mut self) -> Result<bool> {
-        let (outcome, restart_intent) = {
+        let (outcome, restart_intent, quiesce_before, quiesce_after) = {
             let control = self
                 .runtime_control
                 .as_mut()
@@ -6088,12 +6105,43 @@ impl BoundedConsensusOwnerV1 {
             control
                 .refresh_from_journal(&self.event_journal)
                 .context("refresh bounded runtime control journal view")?;
+            let quiesce_before = control.restart_quiesce_requested_v1();
             let outcome = control
                 .poll_once(Duration::ZERO)
                 .context("poll bounded runtime control server")?;
-            (outcome, control.restart_prepare_intent_v1())
+            (
+                outcome,
+                control.restart_prepare_intent_v1(),
+                quiesce_before,
+                control.restart_quiesce_requested_v1(),
+            )
         };
         let responded = !matches!(outcome, RuntimeControlPollV1::Idle);
+        let quiesce_progress = if quiesce_before == quiesce_after {
+            false
+        } else if quiesce_after {
+            ensure!(
+                restart_intent.is_none() && self.restart_lifecycle.is_running_v1(),
+                "restart pre-quiesce overlapped an irreversible restart owner"
+            );
+            self.pacemaker.cancel();
+            self.terminal_candidate_since = None;
+            true
+        } else {
+            ensure!(
+                restart_intent.is_none() && self.restart_lifecycle.is_running_v1(),
+                "restart pre-quiesce clear followed an irreversible restart owner"
+            );
+            let facts = self.authority_v1()?.facts_v0()?;
+            arm_pacemaker_for_facts_v1(
+                &mut self.pacemaker,
+                self.config.validator_set().epoch(),
+                facts,
+                Instant::now(),
+            )?;
+            self.terminal_candidate_since = None;
+            true
+        };
         let restart_progress = restart_intent
             .map(|intent| self.observe_restart_prepare_intent_v1(intent))
             .transpose()?
@@ -6109,7 +6157,7 @@ impl BoundedConsensusOwnerV1 {
         } else {
             self.reconcile_expected_connectivity_fault_v1()?
         };
-        Ok(responded || restart_progress || fault_progress)
+        Ok(responded || quiesce_progress || restart_progress || fault_progress)
     }
 
     fn observe_restart_prepare_intent_v1(
@@ -7430,7 +7478,10 @@ impl BoundedConsensusOwnerV1 {
     }
 
     fn poll_pacemaker_v1(&mut self, now: Instant) -> Result<bool> {
-        if !self.restart_lifecycle.is_running_v1() || self.stopping_since.is_some() {
+        if !self.restart_lifecycle.is_running_v1()
+            || self.restart_prequiesce_requested_v1()
+            || self.stopping_since.is_some()
+        {
             return Ok(false);
         }
         let Some(expiry) = self.pacemaker.poll(now) else {

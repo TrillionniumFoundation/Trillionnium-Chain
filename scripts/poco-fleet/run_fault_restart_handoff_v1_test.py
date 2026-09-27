@@ -112,6 +112,7 @@ def prepare_response(process: fleet.base.ValidatorProcess) -> dict[str, object]:
         "journal_event_sha256": "11" * 32,
         "finalized_height": 8,
         "application_height": 8,
+        "restart_quiesce_requested": True,
         "restart_pending_catchup": False,
         "restart_completed": False,
         "active_faults": [],

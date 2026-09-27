@@ -205,21 +205,40 @@ handoff signal, not a completed validator report and not evidence of a
 successful restart. Non-target validators must remain live through the
 handoff.
 
-The supervisor may then launch process 2 only with the exact process-1 command.
-Process 2 independently reopens and authenticates the full
-RestartCut/RestartPark/RestartParkedAck triple and replay boundary, but the
-current path then exits at its exact authenticated inert stop. It still has no
-authenticated start-catch-up activation, no operational RecoveryReady set or
-RecoveryStart certificate transition, and no Core, signer, timer, mesh, or
-ordinary-consensus activation authority. Typed structures and local tests do
-not supply those missing operational joins. Therefore:
+Before issuing RestartPrepare, the current runner sends the selected target a
+reversible `quiesce_restart` control request. The target cancels only its local
+pacemaker/proposal production and refuses new native admission while it continues
+to authenticate and drain peer consensus traffic. The runner reads all six peers
+first and the target last, and requires two consecutive direct-seven observations
+with every validator locally at `finalized_height == application_height`, no peer
+ahead of the target and an unchanged target frontier. If this bounded observation
+fails, the runner sends `clear_restart_quiesce`, verifies the clean response and
+returns failure; no signed restart intent or evidence is created. Only a stable
+frontier may be followed by `prepare_restart`, after which the reversible clear is
+forbidden. Heights are only an operational scheduling guard; signed RestartPrepare
+and exact shared-cut verification remain the protocol authority.
 
-- the inert process-2 stop is not a passed `validator_process_kill` fault;
-- status 75 plus a process-2 launch is not a successful restart;
-- no restart/catch-up, validator-run, fault, performance, or G3 claim may move;
-  and
-- the fault/restart campaign remains plan-only until all missing authorities
-  exist and a fresh external run is accepted.
+The supervisor then launches process 2 with the exact process-1 command. Its first
+invocation independently reopens and authenticates the complete
+RestartCut/RestartPark/RestartParkedAck triple and replay boundary, reaches the
+exact inert zero-delta cut and exits. That inert exit alone is still not a passed
+`validator_process_kill` fault. The coordinator must next collect seven locally
+signed RecoveryReady statements and seven locally signed RecoveryStart statements,
+create-new persist both exact certificates for the selected target, bind the live
+external peer-fence identity, and launch the explicit process-2 continuation. The
+continuation reopens the same journal and owner tuple, reconstructs FleetStart,
+establishes mesh/runtime-control/native-client owners, releases the retained
+`ArmViewTimer` last, catches up and continues ordinary finality while all six
+non-target validators remain live. A second restart/process 3 is rejected.
+
+A restart campaign is accepted only when the retained transcript contains, in
+order, the reversible quiesce and stable frontier, status-75 handoff, inert
+process-2 cut, exact recovery material, resumed process-2 control and caught-up
+status, followed by independently verified signed reports/journals/metrics/final
+states/replay archives at one terminal agreement. Local tests or a status-75/inert
+pair do not supply that observation. Until a fresh exact-source physical campaign
+passes this complete sequence, restart/fault completion, performance, G3 LAN,
+public-testnet, release and production flags remain false.
 
 ## 6. Contract checks versus observations
 

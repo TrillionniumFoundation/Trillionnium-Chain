@@ -121,8 +121,14 @@ rollback and handoff selections are not accepted.
 Connectivity selections use schema 2/profile
 `poco-g3-seven-validator-connectivity-subset-v1`; restart uses the separate
 schema 2/profile `poco-g3-seven-validator-restart-subset-v1`. Restart never
-acquires the primary journal `FaultApplied`/`FaultRecovered` authority. Its
-accepted record instead binds the status-75 process-1 handoff, exact inert
+acquires the primary journal `FaultApplied`/`FaultRecovered` authority. Before the
+signed transition, the runner records the exact `quiesce_restart` response and a
+two-observation direct-seven frontier: every finalized/application pair agrees
+locally, no non-target is ahead of the selected target, and the target coordinate
+is stable. This observation grants no cut or signature authority. If it cannot be
+established, the runner must record no restart success and must explicitly clear
+the reversible pause before returning failure. Its accepted record then binds the
+status-75 process-1 handoff, exact inert
 zero-delta process-2 cut, 7/7 RecoveryReady, 7/7 RecoveryStart, the live
 external peer-fence identity, process-2 control status and subsequent caught-up
 finality. Both plan and summary bind the selection, exact ordered fault list,

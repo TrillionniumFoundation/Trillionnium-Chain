@@ -130,6 +130,26 @@ requires the existing fresh revalidation API.
 
 ## Interfaces
 
+The selected physical restart runner now uses a reversible pre-quiesce before it
+creates any signed restart intent. `quiesce_restart` is process-local operational
+control only: while the existing restart lifecycle is still `Running`, it cancels
+the local pacemaker, refuses local proposals and serves the native client read-only,
+while authenticated peer traffic, votes, certificates, execution readback and
+finality drain continue. It creates no RestartPrepare, cut, signature, journal row
+or recovery authority. `clear_restart_quiesce` is admissible only before a
+RestartPrepare intent exists; it restores the pacemaker from fresh Core facts and
+returns normal admission. Once `prepare_restart` is accepted, clearing is forbidden.
+
+The fleet supervisor reads all six non-targets before the target and accepts the
+transition only after two consecutive exact direct-seven observations show every
+validator with `finalized_height == application_height`, no clean peer ahead of the
+target, and an unchanged target frontier. A failed frontier observation explicitly
+clears the reversible pause; it is not restart evidence. Only after this check does
+the existing signed and durable
+`restart_prepare -> restart_cut -> restart_park -> restart_parked_ack` protocol
+begin. These height observations are scheduling preconditions, not cut authority;
+the signed RestartPrepare and every exact shared-cut comparison remain authoritative.
+
 The dormant lab-only zero-delta wrapper layer has no executable caller and is
 removed; Node's canonical zero-delta recovery implementation remains. The explicit
 `recover_process2_ordinary_runtime_v1` continuation binds a direct-seven zero-delta

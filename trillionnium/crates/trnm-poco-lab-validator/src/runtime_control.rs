@@ -86,6 +86,7 @@ pub struct RuntimeControlResponseV1 {
     pub journal_event_sha256: String,
     pub finalized_height: u64,
     pub application_height: u64,
+    pub restart_quiesce_requested: bool,
     pub restart_pending_catchup: bool,
     pub restart_completed: bool,
     pub active_faults: Vec<String>,
@@ -115,6 +116,8 @@ enum ControlVerbV1 {
     Status,
     ExpectFault,
     ClearFaultExpectation,
+    QuiesceRestart,
+    ClearRestartQuiesce,
     PrepareRestart,
 }
 
@@ -124,6 +127,8 @@ impl ControlVerbV1 {
             "status" => Some(Self::Status),
             "expect_fault" => Some(Self::ExpectFault),
             "clear_fault_expectation" => Some(Self::ClearFaultExpectation),
+            "quiesce_restart" => Some(Self::QuiesceRestart),
+            "clear_restart_quiesce" => Some(Self::ClearRestartQuiesce),
             "prepare_restart" => Some(Self::PrepareRestart),
             _ => None,
         }
@@ -132,7 +137,10 @@ impl ControlVerbV1 {
     const fn namespace(self) -> NonceNamespaceV1 {
         match self {
             Self::Status => NonceNamespaceV1::Read,
-            Self::ExpectFault | Self::ClearFaultExpectation => NonceNamespaceV1::Command,
+            Self::ExpectFault
+            | Self::ClearFaultExpectation
+            | Self::QuiesceRestart
+            | Self::ClearRestartQuiesce => NonceNamespaceV1::Command,
             Self::PrepareRestart => NonceNamespaceV1::Restart,
         }
     }
@@ -197,6 +205,7 @@ struct RuntimeControlStateV1 {
     process_instance: u64,
     generation: u64,
     expected_fault: Option<RuntimeFaultV1>,
+    restart_quiesce_requested: bool,
     restart_prepare_intent: Option<RuntimeRestartPrepareIntentV1>,
     journal_event_sequence: u64,
     journal_event_sha256: [u8; 32],
@@ -234,6 +243,7 @@ impl RuntimeControlStateV1 {
             process_instance: observation.process_instance,
             generation,
             expected_fault: None,
+            restart_quiesce_requested: false,
             restart_prepare_intent: None,
             journal_event_sequence,
             journal_event_sha256,
@@ -328,8 +338,8 @@ impl RuntimeControlStateV1 {
                 }
             }
             ControlVerbV1::ExpectFault => {
-                if self.restart_prepare_intent.is_some() {
-                    bail!("runtime fault command follows restart-prepare intent");
+                if self.restart_quiesce_requested || self.restart_prepare_intent.is_some() {
+                    bail!("runtime fault command overlaps planned restart control");
                 }
                 if self.journal.barrier_phase != "started" {
                     bail!("runtime fault command precedes fleet Started");
@@ -343,8 +353,8 @@ impl RuntimeControlStateV1 {
                 }
             }
             ControlVerbV1::ClearFaultExpectation => {
-                if self.restart_prepare_intent.is_some() {
-                    bail!("runtime fault command follows restart-prepare intent");
+                if self.restart_quiesce_requested || self.restart_prepare_intent.is_some() {
+                    bail!("runtime fault command overlaps planned restart control");
                 }
                 if self.journal.barrier_phase != "started" {
                     bail!("runtime fault command precedes fleet Started");
@@ -362,6 +372,48 @@ impl RuntimeControlStateV1 {
                 }
                 self.expected_fault = None;
             }
+            ControlVerbV1::QuiesceRestart => {
+                if !request.fault.is_empty() {
+                    bail!("runtime restart-quiesce request fault must be empty");
+                }
+                if self.process_instance != 1
+                    || self.journal.barrier_phase != "started"
+                    || self.expected_fault.is_some()
+                    || !self.journal.active_faults.is_empty()
+                    || self.journal.restart_prepare_nonce.is_some()
+                    || self.journal.restart_pending_catchup
+                    || self.journal.restart_completed
+                    || self.journal.final_tip_recorded
+                    || self.journal.clean_stop_recorded
+                    || self.journal.safety_halted
+                    || self.restart_quiesce_requested
+                    || self.restart_prepare_intent.is_some()
+                {
+                    bail!("runtime restart-quiesce request is not admissible in this state");
+                }
+                self.restart_quiesce_requested = true;
+            }
+            ControlVerbV1::ClearRestartQuiesce => {
+                if !request.fault.is_empty() {
+                    bail!("runtime clear-restart-quiesce request fault must be empty");
+                }
+                if self.process_instance != 1
+                    || self.journal.barrier_phase != "started"
+                    || self.expected_fault.is_some()
+                    || !self.journal.active_faults.is_empty()
+                    || self.journal.restart_prepare_nonce.is_some()
+                    || self.journal.restart_pending_catchup
+                    || self.journal.restart_completed
+                    || self.journal.final_tip_recorded
+                    || self.journal.clean_stop_recorded
+                    || self.journal.safety_halted
+                    || !self.restart_quiesce_requested
+                    || self.restart_prepare_intent.is_some()
+                {
+                    bail!("runtime restart-quiesce clear is not admissible in this state");
+                }
+                self.restart_quiesce_requested = false;
+            }
             ControlVerbV1::PrepareRestart => {
                 if !request.fault.is_empty() {
                     bail!("runtime restart-prepare request fault must be empty");
@@ -376,6 +428,7 @@ impl RuntimeControlStateV1 {
                     || self.journal.final_tip_recorded
                     || self.journal.clean_stop_recorded
                     || self.journal.safety_halted
+                    || !self.restart_quiesce_requested
                     || self.restart_prepare_intent.is_some()
                 {
                     bail!("runtime restart-prepare intent is not admissible in this state");
@@ -413,6 +466,7 @@ impl RuntimeControlStateV1 {
             journal_event_sha256: hex::encode(self.journal_event_sha256),
             finalized_height: self.journal.finalized_height,
             application_height: self.journal.application_height,
+            restart_quiesce_requested: self.restart_quiesce_requested,
             restart_pending_catchup: self.journal.restart_pending_catchup,
             restart_completed: self.journal.restart_completed,
             active_faults: self.journal.active_faults.clone(),
@@ -492,6 +546,10 @@ impl RuntimeControlServerV1 {
 
     pub fn expected_fault(&self) -> Option<RuntimeFaultV1> {
         self.state.expected_fault
+    }
+
+    pub(crate) const fn restart_quiesce_requested_v1(&self) -> bool {
+        self.state.restart_quiesce_requested
     }
 
     pub(crate) const fn restart_prepare_intent_v1(&self) -> Option<RuntimeRestartPrepareIntentV1> {
@@ -1015,6 +1073,7 @@ mod tests {
             process_instance: 1,
             generation: 9,
             expected_fault: None,
+            restart_quiesce_requested: false,
             restart_prepare_intent: None,
             journal_event_sequence: 7,
             journal_event_sha256: [0x51; 32],
@@ -1087,6 +1146,15 @@ mod tests {
     #[test]
     fn prepare_restart_records_only_an_idempotent_intent() {
         let mut state = started_control_state_v1();
+        let (quiesced, verb, nonce) = state
+            .process(&request_bytes_v1(16, "quiesce_restart", ""))
+            .unwrap();
+        assert_eq!(verb, "quiesce_restart");
+        assert_eq!(nonce, 16);
+        assert!(state.restart_quiesce_requested);
+        let quiesced: RuntimeControlResponseV1 = serde_json::from_slice(&quiesced).unwrap();
+        assert!(quiesced.restart_quiesce_requested);
+
         let request = request_bytes_v1(17, "prepare_restart", "");
         let (first, verb, nonce) = state.process(&request).unwrap();
         assert_eq!(verb, "prepare_restart");
@@ -1103,6 +1171,7 @@ mod tests {
 
         let decoded: RuntimeControlResponseV1 = serde_json::from_slice(&first).unwrap();
         assert_eq!(decoded.status, "ok");
+        assert!(decoded.restart_quiesce_requested);
         let response_object = serde_json::from_slice::<serde_json::Value>(&first)
             .unwrap()
             .as_object()
@@ -1126,10 +1195,54 @@ mod tests {
             .to_string()
             .contains("not admissible"));
         assert!(state
-            .process(&request_bytes_v1(16, "prepare_restart", ""))
+            .process(&request_bytes_v1(15, "prepare_restart", ""))
             .unwrap_err()
             .to_string()
             .contains("stale outside the idempotence window"));
+    }
+
+    #[test]
+    fn restart_quiesce_is_reversible_only_before_prepare() {
+        let mut state = started_control_state_v1();
+        assert!(state
+            .process(&request_bytes_v1(1, "prepare_restart", ""))
+            .unwrap_err()
+            .to_string()
+            .contains("not admissible"));
+
+        let (quiesced, _, _) = state
+            .process(&request_bytes_v1(2, "quiesce_restart", ""))
+            .unwrap();
+        let quiesced: RuntimeControlResponseV1 = serde_json::from_slice(&quiesced).unwrap();
+        assert!(quiesced.restart_quiesce_requested);
+        assert!(state.restart_prepare_intent.is_none());
+        assert!(state
+            .process(&request_bytes_v1(3, "expect_fault", "leader_loss"))
+            .unwrap_err()
+            .to_string()
+            .contains("overlaps planned restart control"));
+
+        let (cleared, _, _) = state
+            .process(&request_bytes_v1(3, "clear_restart_quiesce", ""))
+            .unwrap();
+        let cleared: RuntimeControlResponseV1 = serde_json::from_slice(&cleared).unwrap();
+        assert!(!cleared.restart_quiesce_requested);
+        assert!(!state.restart_quiesce_requested);
+        assert!(state.restart_prepare_intent.is_none());
+
+        state
+            .process(&request_bytes_v1(4, "quiesce_restart", ""))
+            .unwrap();
+        state
+            .process(&request_bytes_v1(5, "prepare_restart", ""))
+            .unwrap();
+        assert!(state.restart_quiesce_requested);
+        assert!(state.restart_prepare_intent.is_some());
+        assert!(state
+            .process(&request_bytes_v1(6, "clear_restart_quiesce", ""))
+            .unwrap_err()
+            .to_string()
+            .contains("not admissible"));
     }
 
     #[test]
@@ -1150,6 +1263,7 @@ mod tests {
             .is_err());
         assert!(state.restart_prepare_intent.is_none());
 
+        state.restart_quiesce_requested = true;
         state.expected_fault = Some(RuntimeFaultV1::LeaderLoss);
         assert!(state
             .process(&request_bytes_v1(4, "prepare_restart", ""))
