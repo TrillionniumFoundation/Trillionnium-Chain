@@ -3525,10 +3525,16 @@ where
                 )
             })?
             .clone();
-        let confirmed_p = process2_try!(
-            "application.confirm_p",
-            application.confirm_durable_p_v0(&executed)
-        );
+        let confirmed_history = confirm_replay_application_history_v0(
+            &application,
+            &paths.application,
+            source,
+            &executed,
+            history.history_checksums[&block.id()],
+            history.source_artifact_checksums[&block.id()],
+        )?;
+        let source_artifact_checksum = confirmed_history.artifact_digest_v0();
+        let overlay_checksum = confirmed_history.overlay_digest_v0();
         let commitments = validated_commitments_from_durable_execution_v0(
             &block,
             &executed,
@@ -3540,12 +3546,8 @@ where
             PocoNodeDeployedLabProcess2RecoveryErrorV0::from_debug("application.commitments", error)
         })?;
         let artifact_ref = ValidatedPayloadArtifactRefV0::new(
-            BlockIdOverlayRefV0::new(
-                block.id(),
-                block.header().parent_id(),
-                confirmed_p.overlay_checksum_v0(),
-            ),
-            confirmed_p.source_artifact_checksum_v0(),
+            BlockIdOverlayRefV0::new(block.id(), block.header().parent_id(), overlay_checksum),
+            source_artifact_checksum,
         );
         let sealed = seal.seal_after_application_store_commit_v0(permit, commitments, artifact_ref);
         let completion_predecessor = core.safety_state().clone();
@@ -3568,7 +3570,7 @@ where
                 source,
                 &target_binding,
                 &accepted,
-                confirmed_p.source_artifact_checksum_v0(),
+                source_artifact_checksum,
                 history.history_checksums[&block.id()],
                 &core_config,
                 limits,
@@ -4149,6 +4151,57 @@ fn build_history_inventory_v0(
         source_artifact_checksums,
         application_history_digest,
     })
+}
+
+fn confirm_replay_application_history_v0(
+    application: &DurableNativeApplicationV0,
+    application_path: &Path,
+    source: &RecoveredHistoryKV0,
+    executed: &NativeExecutedBlockV0,
+    expected_history_checksum: [u8; 32],
+    expected_artifact_checksum: [u8; 32],
+) -> Result<ConfirmedDurableExecutionHistoryRowV0, PocoNodeDeployedLabProcess2RecoveryErrorV0> {
+    // The authenticated replay path contains a committed finalized prefix and
+    // a prepared speculative tail. `confirm_durable_p_v0` deliberately grants
+    // authority only for PREPARED rows, so using it for every replay entry
+    // rejects the first genuine committed prefix row. Reopen the exact
+    // prepared-or-committed history row instead and bind every immutable field
+    // to the first cross-store audit before Core receives the inert payload
+    // completion. This does not mint commit or callback authority.
+    let fresh = process2_try!(
+        "application.replay_history",
+        application.confirm_durable_execution_history_row_v0(executed)
+    );
+    let parent = process2_try!("application.replay_history_parent", fresh.parent_head_v0());
+    let target = process2_try!("application.replay_history_target", fresh.target_head_v0());
+    let expected_parent = process2_try!(
+        "application.replay_expected_parent",
+        source.history_row.parent_head_v0()
+    );
+    let expected_target = process2_try!(
+        "application.replay_expected_target",
+        source.history_row.target_head_v0()
+    );
+    let checksum = history_row_digest_v0(&source.binding, &fresh)?;
+    if !fresh.belongs_to_application_at_path_v0(application, application_path)
+        || fresh.store_id_v0() != application.config_v0().store_id()
+        || fresh.p_sequence_v0() != source.history_row.p_sequence_v0()
+        || fresh.status_v0() != source.status
+        || fresh.artifact_digest_v0() != source.history_row.artifact_digest_v0()
+        || fresh.overlay_digest_v0() != source.history_row.overlay_digest_v0()
+        || fresh.p_digest_v0() != source.history_row.p_digest_v0()
+        || fresh.commit_sequence_v0() != source.history_row.commit_sequence_v0()
+        || fresh.artifact_digest_v0() != expected_artifact_checksum
+        || parent != expected_parent
+        || target != expected_target
+        || checksum != expected_history_checksum
+    {
+        return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+            "application.replay_history_join",
+            "fresh replay application history differs from the authenticated P/K cut",
+        ));
+    }
+    Ok(fresh)
 }
 
 fn history_row_digest_v0(
@@ -6383,6 +6436,106 @@ mod tests {
         watermark: SharedWatermarkV0,
         core_config: CoreConfig,
         entries: Vec<PocoNodeDeployedLabSignedReplayEntryV0>,
+    }
+
+    #[test]
+    fn replay_application_history_accepts_committed_prefix_without_prepared_authority_v0() {
+        run_large_stack_test_v0(
+            "deployed-lab-process2-committed-prefix",
+            assert_replay_application_history_accepts_committed_prefix_without_prepared_authority_v0,
+        );
+    }
+
+    fn assert_replay_application_history_accepts_committed_prefix_without_prepared_authority_v0() {
+        let fixture = process2_fixture_v0(false, false);
+        let application_config = process2_application_config_v0(&fixture.core_config);
+        let paths = existing_paths_v0(fixture.directory.path()).expect("resolve process2 paths");
+        let application = DurableNativeApplicationV0::open(&paths.application, application_config)
+            .expect("open exact process2 application");
+        let (validation_scope, validation_owner) =
+            deployed_validation_identity_v0(&fixture.core_config, &application)
+                .expect("derive exact validation identity");
+        let mut validation_store = SqliteProposalValidationStoreV0::open(
+            &paths.validation,
+            validation_scope,
+            MINIMUM_TAKEOVER_VALIDATION_SEQUENCE_V0,
+        )
+        .expect("open exact process2 validation store");
+        let terminal_audit = validation_store
+            .confirm_terminal_k_audit_v0()
+            .expect("read exact terminal K audit");
+        let history = build_history_inventory_v0(
+            &fixture.core_config,
+            &paths,
+            &application,
+            &mut validation_store,
+            validation_scope,
+            validation_owner,
+            &terminal_audit,
+        )
+        .expect("read mixed committed/prepared replay history");
+
+        let (committed_block, committed_source) = history
+            .recovered
+            .iter()
+            .find(|(_, source)| source.status == DurableExecutionHistoryStatusV0::Committed)
+            .expect("three-chain fixture has a committed finalized prefix");
+        let committed_executed = history
+            .executed
+            .get(committed_block)
+            .expect("committed prefix artifact");
+        assert!(application
+            .confirm_durable_p_v0(committed_executed)
+            .is_err());
+        let committed_readback = confirm_replay_application_history_v0(
+            &application,
+            &paths.application,
+            committed_source,
+            committed_executed,
+            history.history_checksums[committed_block],
+            history.source_artifact_checksums[committed_block],
+        )
+        .expect("committed finalized prefix is valid replay provenance");
+        assert_eq!(
+            committed_readback.status_v0(),
+            DurableExecutionHistoryStatusV0::Committed
+        );
+
+        let (prepared_block, prepared_source) = history
+            .recovered
+            .iter()
+            .find(|(_, source)| source.status == DurableExecutionHistoryStatusV0::Prepared)
+            .expect("three-chain fixture retains a prepared speculative tail");
+        let prepared_executed = history
+            .executed
+            .get(prepared_block)
+            .expect("prepared tail artifact");
+        assert!(application.confirm_durable_p_v0(prepared_executed).is_ok());
+        let prepared_readback = confirm_replay_application_history_v0(
+            &application,
+            &paths.application,
+            prepared_source,
+            prepared_executed,
+            history.history_checksums[prepared_block],
+            history.source_artifact_checksums[prepared_block],
+        )
+        .expect("prepared speculative tail remains valid replay provenance");
+        assert_eq!(
+            prepared_readback.status_v0(),
+            DurableExecutionHistoryStatusV0::Prepared
+        );
+
+        let mut substituted_checksum = history.history_checksums[committed_block];
+        substituted_checksum[0] ^= 0x80;
+        assert!(confirm_replay_application_history_v0(
+            &application,
+            &paths.application,
+            committed_source,
+            committed_executed,
+            substituted_checksum,
+            history.source_artifact_checksums[committed_block],
+        )
+        .is_err());
     }
 
     #[test]

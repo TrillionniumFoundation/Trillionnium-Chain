@@ -258,6 +258,15 @@ or incomplete entry, parent/view/height/timestamp drift, foreign valid QC,
 missing durable Valid fact, or unconsumed persistence/callback state rejects the
 restart before Ready/Start activation.
 
+Review the native application join by lifecycle, not by assuming every replayed P
+is still speculative. Heights at or below the authenticated application-applied
+frontier must reopen as `Committed`; the remaining high-QC suffix must reopen as
+`Prepared`. Both use the read-only prepared-or-committed history API and must repeat
+exact P sequence, parent/target heads, artifact/overlay/P digests, commit sequence
+and the source-bound history checksum. The prepared-only P authority must reject a
+committed prefix row. Any status drift between inventory and replay is a failed
+campaign, not an idempotent alias.
+
 A restart campaign is accepted only when the retained transcript contains, in
 order, the reversible quiesce and stable frontier, status-75 handoff, inert
 process-2 cut, exact recovery material, resumed process-2 control and caught-up

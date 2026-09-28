@@ -191,6 +191,21 @@ parent/timestamp drift, an unconsumed callback or a remaining durable
 obligation fails closed before the recovered Core can bind the application and
 checkpoint stores. Copied archive bytes cannot select another replay path.
 
+That replay inventory deliberately contains two durable application states: the
+already-finalized prefix is `Committed`, while the high-QC speculative suffix is
+`Prepared`. Process 2 reopens each exact row through
+`confirm_durable_execution_history_row_v0`; it does not ask the prepared-only
+`confirm_durable_p_v0` authority to certify committed history. The fresh row must
+repeat the first cross-store audit's owner/path, P sequence, lifecycle status,
+parent and target heads, artifact/overlay/P digests, optional commit sequence and
+history checksum before its inert artifact reference is delivered to Core. A
+status change or any byte substitution between the two reads fails closed. The
+history carrier grants no application commit or callback authority, and the
+prepared-only API remains unchanged for real speculative P ownership. The
+regression
+`replay_application_history_accepts_committed_prefix_without_prepared_authority_v0`
+covers a genuine three-chain committed prefix, prepared tail and checksum mutant.
+
 The explicit candidate process-host continuation now consumes the exact recovered
 signer/Core/application owner into the non-cloneable
 `PocoNodeDeployedLabRecoveredProcessHostAuthorityV1`. Core's unique startup timer
