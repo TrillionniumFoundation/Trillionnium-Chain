@@ -8,6 +8,7 @@ import json
 import pathlib
 import sys
 import tempfile
+from unittest.mock import patch
 
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -248,7 +249,107 @@ def terminal_chain_inputs(
     return report_document, report, metrics, final_state
 
 
+
+def verify_recovery_material_exchange_v1() -> None:
+    """Exercise the actual exchange function; only remote transport/CLI is doubled."""
+    run_id = "poco-g3-7-20260814T000000Z-deadbeef"
+    for mutation in (None, "certificate-copy", "ready-predecessor", "fence"):
+        with tempfile.TemporaryDirectory(prefix="trnm-recovery-delivery-") as name:
+            root = pathlib.Path(name)
+            validators = processes()
+            stages = fleet.base.preflight_runtime_layout(validators, run_id, root / "run")
+            target = validators[0]
+            linux = {host: f"{stage.root}/bin/trnm-poco-lab-validator" for host, stage in stages.items()}
+            target_root = fleet.validator_root(target, stages[target.host_id])
+            virtual_files = {f"{target_root}/recovery-zero-delta-cut-v1.bin": b"test-only-zero-delta"}
+            operations = []
+            delivered = []
+            context_digest = "35" * 32
+
+            def create_root(**kwargs):
+                return fleet.recovery_material_root_v1(kwargs["process"], kwargs["stage"])
+
+            def cli(**kwargs):
+                command = kwargs["command"]
+                process = kwargs["process"]
+                stage = kwargs["stage"]
+                args = kwargs["arguments"]
+                predecessor = None
+                if command in ("recovery-context", "recovery-ready", "recovery-start"):
+                    output = args[-1]
+                    body = f"transport-fixture:{command}:{process.validator_id}".encode()
+                else:
+                    assert process == target, "only the target may assemble certificates"
+                    assert len(args) == 8, "all seven statements must be present"
+                    for source in args:
+                        assert source in virtual_files, "statement was not copied to its consumer"
+                    basename = ("recovery-ready-set-v1.bin" if command == "recovery-ready-set"
+                                else "recovery-start-certificate-v1.bin")
+                    output = f"{fleet.validator_root(process, stage)}/{basename}"
+                    body = command.encode() + b"|" + b"|".join(virtual_files[a] for a in args)
+                    if command == "recovery-start-certificate":
+                        predecessor = hashlib.sha256(virtual_files[args[0]]).hexdigest()
+                        if mutation == "ready-predecessor":
+                            predecessor = "47" * 32
+                assert output not in virtual_files, "material creation must be create-new"
+                virtual_files[output] = body
+                operations.append((command, process.validator_id))
+                result = {"schema_version": 1, "status": command, "run_id": run_id,
+                          "validator_id": process.validator_id, "validator_set_id": "21" * 32,
+                          "path": output, "artifact_sha256": hashlib.sha256(body).hexdigest(),
+                          "context_digest": context_digest, "predecessor_artifact_sha256": predecessor,
+                          "candidate_only": True, "production_activation": False}
+                return fleet.FileResultV1(0, json.dumps(result, separators=(",", ":")).encode() + b"\n", b"", root / "stdout", root / "stderr")
+
+            def copy_from(**kwargs):
+                data = virtual_files[kwargs["source"]]
+                if mutation == "certificate-copy" and kwargs["label"] == "peer-artifact-recovery-start-certificate-v1.bin":
+                    data += b"tampered"
+                destination = pathlib.Path(kwargs["target"])
+                assert not destination.exists()
+                destination.write_bytes(data)
+                destination.chmod(0o600)
+
+            def copy_to(**kwargs):
+                destination = kwargs["target"]
+                assert destination not in virtual_files, "delivery must never overwrite a prior artifact"
+                virtual_files[destination] = pathlib.Path(kwargs["source"]).read_bytes()
+                delivered.append((kwargs["process"].validator_id, destination))
+
+            bindings = iter(["31" * 32, ("32" if mutation == "fence" else "31") * 32])
+            with patch.multiple(fleet, create_recovery_material_root_v1=create_root,
+                                run_validator_cli_v1=cli, copy_remote_or_local=copy_from,
+                                copy_to_validator_v1=copy_to,
+                                query_peer_lease_binding_v1=lambda **kwargs: next(bindings)):
+                call = lambda: fleet.commission_process2_recovery_material_v1(
+                    processes=validators, stages=stages, linux_paths=linux, target=target,
+                    peer_lease_socket=f"{stages[target.host_id].root}/bin/peer-lease.sock",
+                    run_id=run_id, io_root=root)
+                if mutation:
+                    reason = {"certificate-copy": "artifact differs", "ready-predecessor": "context or ReadySet",
+                              "fence": "identity changed"}[mutation]
+                    expect_failure(call, reason)
+                    assert not (root / "process2-recovery-material-v1/summary.json").exists()
+                    continue
+                artifacts, summary = call()
+            assert len([op for op in operations if op[0] == "recovery-ready"]) == 7
+            assert len([op for op in operations if op[0] == "recovery-start"]) == 7
+            assert summary["start_certificate_sha256"] == artifacts.start_certificate_artifact_sha256
+            assert summary["production_activation"] is False
+            assert summary["candidate_only"] is True
+            for process in validators[1:]:
+                peer_root = fleet.validator_root(process, stages[process.host_id])
+                for basename in ("recovery-zero-delta-cut-v1.bin", "recovery-ready-set-v1.bin",
+                                 "recovery-start-certificate-v1.bin"):
+                    destination = f"{peer_root}/{basename}"
+                    assert (process.validator_id, destination) in delivered
+                    assert virtual_files[destination] == virtual_files[f"{target_root}/{basename}"]
+            saved = json.loads((root / "process2-recovery-material-v1/summary.json").read_text())
+            assert saved == summary
+
+
 def main() -> None:
+    verify_recovery_material_exchange_v1()
     validators = processes()
     steps = fleet.fixed_fault_plan(validators)
     assert tuple(step.kind for step in steps) == fleet.FAULT_ORDER
@@ -954,6 +1055,7 @@ def main() -> None:
         "fault_order=fixed-8 restart=exactly-1 runtime_control=exact "
         "mixed_fault_authority=exact active_campaign=fail-closed "
         "driver_not_evidence=true fault_driver_pinned=true safe_remote_paths=true file_backed_io=true "
+        "recovery_material_exchange=executed resident_peer_delivery=verified "
         "plan_only_no_effect=true reverse_failure_cleanup=true "
         "fleet_start_certificate_required=true "
         "signed_journal_report_metrics_final_state_required=true "

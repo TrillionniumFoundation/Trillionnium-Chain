@@ -72,6 +72,23 @@ above and the sole development plan. No legacy acceptance is transferred to PoN.
 
 Status: **implementation contract; evidence tooling is not self-acceptance authority**
 
+## RecoveryStart material delivery to resident peers
+
+After the target's actual `recovery-start-certificate` command succeeds, the
+coordinator must consume that exact command result, recheck its context and
+ReadySet predecessor, copy the original certificate bytes, and compare their
+digest before distributing them to every non-target peer. A context/ReadySet
+substitution, altered copied certificate or changed external fence rejects
+before the material-complete summary or any resumed runtime is returned.
+The coordinator never signs a validator statement or manufactures a certificate.
+
+The regression invokes `commission_process2_recovery_material_v1` end to end
+with transport-only test doubles, including all seven Ready and Start producers,
+ReadySet/certificate assembly, resident-peer delivery and final fence readback.
+It is orchestration coverage, not cryptographic or physical-run acceptance.
+A separate fresh source-bound physical campaign must exercise the same function.
+
+
 ## Independent hosted feedback trust class
 
 `trnm-independent-rust-feedback.yml` is an explicitly registered, read-only

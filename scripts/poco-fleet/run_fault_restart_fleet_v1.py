@@ -1283,7 +1283,7 @@ def commission_process2_recovery_material_v1(
     for name, expected in (
         ("recovery-zero-delta-cut-v1.bin", None),
         ("recovery-ready-set-v1.bin", ready_set_result["artifact_sha256"]),
-        ("recovery-start-certificate-v1.bin", certificate_result["artifact_sha256"]),
+        ("recovery-start-certificate-v1.bin", start_certificate_result["artifact_sha256"]),
     ):
         coordinator_file = material_io / ("peer-" + name)
         copy_remote_or_local(
