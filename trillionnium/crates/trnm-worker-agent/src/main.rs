@@ -10,7 +10,7 @@ use std::{
     fs::{self, OpenOptions},
     io::Write,
     path::{Path, PathBuf},
-    process::{Command as ProcCommand, Output, Stdio},
+    process::{Command as ProcCommand, Output},
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -39,7 +39,8 @@ use dispatch::dispatch_command;
 use proof_adapter::build_proof_adapter;
 use proof_adapter::ProofAdapter;
 use trnm_types::RequestStatus;
-use wait_timeout::ChildExt;
+mod command_runtime_exec;
+use command_runtime_exec::run_command_with_timeout;
 
 const DEFAULT_TX_ADAPTER_MAX_RETRIES: u32 = 3;
 const DEFAULT_TX_ADAPTER_BACKOFF_MS: u64 = 200;
@@ -228,7 +229,7 @@ pub(crate) fn now_ms() -> u128 {
         .unwrap_or(0)
 }
 
-fn append_json_line(path: &PathBuf, line: &str) -> Result<()> {
+fn append_json_line(path: &Path, line: &str) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
@@ -240,7 +241,7 @@ fn append_json_line(path: &PathBuf, line: &str) -> Result<()> {
 }
 
 pub(crate) fn append_submission(
-    submit_log: &PathBuf,
+    submit_log: &Path,
     task_id: u64,
     worker: &str,
     commit_hash: &str,
@@ -271,7 +272,7 @@ pub(crate) fn append_submission(
     append_json_line(submit_log, &line)
 }
 
-fn load_ack_records(ack_log: &PathBuf) -> Vec<AckRecord> {
+fn load_ack_records(ack_log: &Path) -> Vec<AckRecord> {
     if !ack_log.exists() {
         return vec![];
     }
@@ -286,7 +287,7 @@ fn load_ack_records(ack_log: &PathBuf) -> Vec<AckRecord> {
         .unwrap_or_default()
 }
 
-pub(crate) fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
+pub(crate) fn load_acked(ack_log: &Path) -> HashSet<u64> {
     load_ack_records(ack_log)
         .into_iter()
         .filter(|rec| rec.status == "accepted")
@@ -304,7 +305,7 @@ impl Drop for TaskExecutionLock {
     }
 }
 
-fn task_lock_path(ack_log: &PathBuf, task_id: u64) -> PathBuf {
+fn task_lock_path(ack_log: &Path, task_id: u64) -> PathBuf {
     let parent = ack_log
         .parent()
         .map(|p| p.to_path_buf())
@@ -317,7 +318,7 @@ fn task_lock_path(ack_log: &PathBuf, task_id: u64) -> PathBuf {
 }
 
 pub(crate) fn try_acquire_task_lock(
-    ack_log: &PathBuf,
+    ack_log: &Path,
     task_id: u64,
 ) -> Result<Option<TaskExecutionLock>> {
     let path = task_lock_path(ack_log, task_id);
@@ -331,7 +332,7 @@ pub(crate) fn try_acquire_task_lock(
     }
 }
 
-pub(crate) fn is_task_acked(ack_log: &PathBuf, task_id: u64) -> bool {
+pub(crate) fn is_task_acked(ack_log: &Path, task_id: u64) -> bool {
     load_acked(ack_log).contains(&task_id)
 }
 
@@ -367,7 +368,7 @@ pub(crate) fn transition_request_status(current: &str, to: RequestStatus) -> Res
 }
 
 pub(crate) fn append_ack(
-    ack_log: &PathBuf,
+    ack_log: &Path,
     task_id: u64,
     status: &str,
     commit_tx_hash: Option<String>,
@@ -388,12 +389,12 @@ pub(crate) fn append_ack(
     append_json_line(ack_log, &line)
 }
 
-pub(crate) fn append_event(event_log: &PathBuf, event: &WorkerEvent) -> Result<()> {
+pub(crate) fn append_event(event_log: &Path, event: &WorkerEvent) -> Result<()> {
     let line = serde_json::to_string(event)?;
     append_json_line(event_log, &line)
 }
 
-pub(crate) fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> Result<()> {
+pub(crate) fn append_progress(progress_log: &Path, rec: &ProgressRecord) -> Result<()> {
     let line = serde_json::to_string(rec)?;
     append_json_line(progress_log, &line)
 }
@@ -403,7 +404,7 @@ pub(crate) fn resolve_path_arg_from_env(
     env_name: &str,
     default_path: &str,
 ) -> PathBuf {
-    if path == PathBuf::from(default_path) {
+    if path == Path::new(default_path) {
         if let Some(value) = env::var_os(env_name) {
             if !value.is_empty() {
                 return PathBuf::from(value);
@@ -816,7 +817,7 @@ fn normalize_persisted_tx_hash(hash: Option<String>) -> Option<String> {
     })
 }
 
-pub(crate) fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> PersistedAckHashes {
+pub(crate) fn persisted_ack_hashes_for_task(ack_log: &Path, task_id: u64) -> PersistedAckHashes {
     let mut hashes = PersistedAckHashes {
         commit_tx_hash: None,
         reveal_tx_hash: None,
@@ -1091,29 +1092,6 @@ pub(crate) fn resolve_llm_adapter_policy(
             DEFAULT_LLM_ADAPTER_TIMEOUT_MS,
             1,
         ),
-    }
-}
-
-fn run_command_with_timeout(
-    program: &str,
-    base_args: &[String],
-    extra_args: &[String],
-    timeout: Duration,
-) -> Result<Output> {
-    let mut child = ProcCommand::new(program)
-        .args(base_args)
-        .args(extra_args)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()?;
-
-    match child.wait_timeout(timeout)? {
-        Some(_) => Ok(child.wait_with_output()?),
-        None => {
-            let _ = child.kill();
-            let _ = child.wait();
-            anyhow::bail!("llm adapter timeout after {}ms", timeout.as_millis());
-        }
     }
 }
 
@@ -1794,7 +1772,7 @@ pub(crate) fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAda
         None
     };
 
-    rec.llm_provenance = has_structured_provenance.then(|| LlmProvenanceRecord {
+    rec.llm_provenance = has_structured_provenance.then_some(LlmProvenanceRecord {
         provider,
         model,
         adapter,
@@ -1952,11 +1930,13 @@ pub(crate) fn reputation_impact(signal: ReputationSignal) -> ReputationImpact {
         .expect("canonical reputation mapping must cover all reputation signals")
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_score_impact(signal: ReputationSignal) -> (&'static str, i32) {
     let impact = reputation_impact(signal);
     (impact.label, impact.delta)
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_signal_from_label(label: &str) -> Option<ReputationSignal> {
     let normalized = label.trim();
     if normalized.is_empty() {
@@ -1970,10 +1950,12 @@ pub(crate) fn reputation_signal_from_label(label: &str) -> Option<ReputationSign
         })
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_label(label: &str) -> Option<ReputationImpact> {
     reputation_signal_from_label(label).map(reputation_impact)
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_signal_from_score_impact(
     label: &str,
     delta: i32,
@@ -1985,6 +1967,7 @@ pub(crate) fn reputation_signal_from_score_impact(
         })
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_score_impact(
     label: &str,
     delta: i32,
@@ -1998,24 +1981,29 @@ pub(crate) fn reputation_signal_from_delta(delta: i32) -> Option<ReputationSigna
         .find_map(|(signal, impact)| (impact.delta == delta).then_some(*signal))
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_delta(delta: i32) -> Option<ReputationImpact> {
     reputation_signal_from_delta(delta).map(reputation_impact)
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_signal_from_tier(tier: u8) -> Option<ReputationSignal> {
     CANONICAL_REPUTATION_IMPACTS
         .iter()
         .find_map(|(signal, impact)| (impact.tier == tier).then_some(*signal))
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_tier(tier: u8) -> Option<ReputationImpact> {
     reputation_signal_from_tier(tier).map(reputation_impact)
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_delta(signal: ReputationSignal) -> i32 {
     reputation_impact(signal).delta
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_tier(signal: ReputationSignal) -> u8 {
     reputation_impact(signal).tier
 }
@@ -2028,12 +2016,14 @@ pub(crate) fn reputation_rank_ordinal(signal: ReputationSignal) -> u8 {
         .expect("canonical reputation signal order must cover all reputation signals")
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_signal_from_rank_ordinal(rank_ordinal: u8) -> Option<ReputationSignal> {
     CANONICAL_REPUTATION_SIGNAL_ORDER
         .get(rank_ordinal as usize)
         .copied()
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_rank_ordinal(rank_ordinal: u8) -> Option<ReputationImpact> {
     reputation_signal_from_rank_ordinal(rank_ordinal).map(reputation_impact)
 }
@@ -2074,6 +2064,7 @@ pub(crate) fn reputation_gap_bps_from_best(signal: ReputationSignal) -> i32 {
     best_score_bps - reputation_score_bps(signal)
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_signal_from_gap_bps_from_best(
     gap_bps_from_best: i32,
 ) -> Option<ReputationSignal> {
@@ -2082,6 +2073,7 @@ pub(crate) fn reputation_signal_from_gap_bps_from_best(
     })
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_gap_bps_from_best(
     gap_bps_from_best: i32,
 ) -> Option<ReputationImpact> {
@@ -2097,6 +2089,7 @@ pub(crate) fn reputation_gap_bps_from_worst(signal: ReputationSignal) -> i32 {
     reputation_score_bps(signal) - worst_score_bps
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_signal_from_gap_bps_from_worst(
     gap_bps_from_worst: i32,
 ) -> Option<ReputationSignal> {
@@ -2105,6 +2098,7 @@ pub(crate) fn reputation_signal_from_gap_bps_from_worst(
     })
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_gap_bps_from_worst(
     gap_bps_from_worst: i32,
 ) -> Option<ReputationImpact> {

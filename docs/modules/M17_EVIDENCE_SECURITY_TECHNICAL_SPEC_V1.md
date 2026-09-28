@@ -1,86 +1,70 @@
-# M17 Observability / Benchmark / Security / Evidence technical specification v1
+# M17 Neural-work security, model efficacy and reorg evidence — PoN technical contract
 
-Status: **implementation contract; evidence tooling is not self-acceptance authority**
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M17; actual source ownership is in `config/portability-inventory-v1.json`.
 
-## Authority
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/SECURITY_ACCEPTANCE.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
 
-M17 defines metrics, traces, benchmark methodology, fault/fuzz/formal harnesses,
-security scanning, evidence schemas and gate reports. It observes and tests
-M00-M16. It cannot sign, order, execute, finalize, promote production or approve
-its own output.
+## PoN Authority
 
-## Interfaces
+Own source-bound observability, conformance/fuzz/formal campaigns and independent evidence
+intake. A checker cannot certify itself as a cryptographic authority, economics reviewer, model
+evaluator or release approver.
 
-`EvidenceManifestV1` binds source/base/prospective-merge identities, protocol and
-module versions, dependency/toolchain/configuration digests, binary/SBOM/
-provenance roots, topology, workload, faults, exact commands, start/end time,
-raw artifact roots, controls, mutants, findings, invalidation conditions,
-reviewers and signatures.
+## PoN Interfaces
 
-`MetricEnvelopeV1` binds metric schema, node/module identity, monotonic sequence,
-measurement window and privacy class. `GateDecisionV1` names every applicable
-lane and records non-empty terminal result, artifact digest and independent
-review status. Missing, skipped, queued, cancelled, `action_required`, stale or
-different-head lanes are not success.
+ValidateDocumentationTarget; RunReferenceCounterexamples; QualifyWorkPrimitive;
+CollectForkReorgCampaign; EvaluateFutureModelBenefit; AuditRewardBudget;
+VerifyExactArtifactEvidence. Keep source integrity, semantic acceptance, actual runtime and
+empirical efficacy as separate statuses.
 
-## State machine
+## PoN State machine
 
-```text
-Declared -> Executed -> ArtifactSealed -> IndependentlyReplayed
- -> Accepted | Rejected | Superseded
-```
+Resolve exact source/tree/base/binary/profile and changed responsibility. Run read-only
+document/registry tests, independent codecs/work verifiers, formal consensus/reorg properties,
+actual multi-host mining and model learning/use experiments. Preserve failures, missing data and
+censored runs. Explicitly test old model/nonce/proof reuse, work shortcuts, poisoned experts,
+split rewards and orphaned effects.
 
-A source, dependency, compiler, feature, configuration, validator-set, key
-policy, root format or workload change supersedes dependent evidence according
-to its declared invalidation graph. Failed evidence remains immutable and is not
-rewritten into a passing record.
+## PoN Persistence and recovery
 
-## Persistence and recovery
+Immutable evidence references bind raw traces and authoritative producer identities; collector
+stores are not domain truth. Historical PoCO tests retain their original source/profile and
+cannot be reused as PoN security. Reorg observations record both branches and local irreversible
+history.
 
-Raw traces and manifests are content addressed and stored immutably or with an
-independently auditable retention policy. Upload acknowledgements are verified
-by digest readback. Partial uploads, missing chunks or signature mismatch keep
-the evidence unaccepted. Derived summaries are reproducible from retained raw
-artifacts.
+## PoN Resource bounds
 
-## Resource bounds
+Bound collection overhead, evidence volume, fault scope, repeat counts and parser work. Measure
+proof verification and propagation separately from useful training, model benefit and hosted
+service. Never substitute queued/skipped jobs or structural fixtures for execution.
 
-Instrumentation has finite event size, label cardinality, buffer memory, disk
-quota, sampling rate and upload bandwidth. Backpressure may drop explicitly
-classified non-authoritative telemetry but never blocks or changes consensus.
-Security logs required for incident and evidence windows have reserved quotas
-and loss alarms.
+## PoN Security
 
-## Security
+False pass through file-presence flags, test rewriting, stale head evidence, same-operator
+independence claims, hidden fallback algorithms, forged evaluation provenance and benchmark
+contamination. Specialist review must state actual assumptions and unqualified work obligations.
 
-CI controllers and workflow definitions used as trust roots are protected from
-candidate modification. Candidate code executes without repository/release
-credentials on ephemeral workers. Artifact publishers execute no candidate
-code. Evidence ingestion rejects path traversal, archive bombs, mutable URLs,
-unsigned substitutions and reviewer conflicts. Sensitive payloads, private
-keys, bearer tokens and user data are redacted or excluded by schema.
+## PoN Verification and evidence
 
-## Observability and SLO
+All PON-C/R/M/E/X cases, independent byte/work implementations, crash/power-loss/multihost
+campaigns, whole-model future-window usefulness, free-tier actual service, conservation and
+attack-cost experiments. Document/reference tests alone never imply these passed.
 
-The `evidence-tooling-v1` profile measures instrumentation overhead,
-artifact completeness, deterministic regeneration, false-pass/false-fail rate,
-queue time separately from execution time, and independent replay success.
-Chain performance reports committed, replay-verified goodput and order/result/
-settlement finality p50/p95/p99, never ingress TPS alone.
+## Source disposition
 
-## Verification and evidence
+Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
+The old consensus/runtime/protocol artifacts are deleted from the active tree and are
+recoverable only from Git history. This module target is not automatically implemented
+by the retained components; ordinary PoN mining, proof verification and reorg remain
+explicit future implementation work. Retained local monotonic stores are not yet
+branch-aware reorg stores and cannot be advertised as chain-finality authorities.
 
-The harness itself requires retained failing mutants, artifact tamper tests,
-clock and topology validation, empty-job detection, stale-head rejection and
-review-conflict detection. Campaigns cover 4/7/31/100 processes across distinct
-hosts/operators/custody domains, network faults, leader failures, disk pressure,
-restart, state sync and migration. External audit, HSM, physical power and
-wall-clock soak records must come from their actual independent authorities.
+## Current source and verification
 
-## Activation boundary
-
-M17 may report readiness only when every required lane and external gate binds
-the same release identity. A repository fixture, administrator statement,
-self-review, shortened duration or simulated clock cannot close an external
-gate. Critical or High findings block promotion until independently remediated
-and replayed.
+- [`trnm-bench`](../../trillionnium/crates/trnm-bench/README.md): `cargo test --locked -p trnm-bench --all-targets --all-features`.
+- [`trnm-audit-events`](../../trillionnium/crates/trnm-audit-events/README.md): `cargo test --locked -p trnm-audit-events --all-targets --all-features`.

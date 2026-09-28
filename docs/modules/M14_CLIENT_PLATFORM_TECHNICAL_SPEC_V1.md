@@ -1,85 +1,68 @@
-# M14 RPC / Indexer / SDK / CLI technical specification v1
+# M14 Proof-aware clients, shared model discovery and free inference — PoN technical contract
 
-Status: **implementation contract; non-authoritative service**
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M14; actual source ownership is in `config/portability-inventory-v1.json`.
 
-## Authority
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
 
-M14 owns query and submission APIs, index projections, transaction builders,
-SDKs, CLI behavior and Web4 adapters. It owns usability and compatibility, not
-consensus, state-root, execution, signer or finality authority. Every response
-states its freshness and proof class.
+## PoN Authority
 
-## Interfaces
+Own non-authoritative RPC/indexer/SDK/CLI and public model-use surfaces. User-visible states are
+submitted, included, policy-confirmed, reorged and adopted-under-profile, not unconditional
+finalized. A UI cannot elevate an attestation into a work or local authority proof.
 
-The API surface is versioned and generated from M00 schemas. Common response
-metadata contains `chain_id`, protocol/schema version, serving node,
-committed/finalized height, state root, finality class, proof reference,
-indexer height and lag. Query consistency classes are:
+## PoN Interfaces
 
-- `local`: explicitly non-authoritative and potentially stale;
-- `committed`: bound to a committed node root;
-- `finalized`: accompanied by or referenceable to an M13-verifiable proof;
-- `historical`: bound to a retained checkpoint and pruning policy.
+GetPoNCapabilities; SubmitContribution; QueryConfirmation; SubscribeReorg; DiscoverModelRelease;
+DownloadExactBundle; RequestSponsoredInference; QueryReward. Return chain/profile, exact
+artifact/release, observed tip, generation, evidence class, freshness and bounds.
 
-Submission routes only to M05. Simulation invokes M06 semantics against an
-immutable view and discards all writes. Builders never sign implicitly and
-never normalize an invalid canonical object into a different transaction.
+## PoN State machine
 
-## State machine
+Read the verified active-chain view and index contiguous add/remove events idempotently. Verify
+confirmations/inclusion through M13, expose reorg and stale observations, and refuse unknown
+proof classes. Serve reproducible release manifests and parameter bytes through M09. Bind each
+inference request to a supported deployment profile and reserved free quota; do not hide missing
+experts or mutable backend switches.
 
-Indexer ingestion follows:
+## PoN Persistence and recovery
 
-```text
-Absent -> Received -> RootVerified -> Applied -> Published
-```
+Indexer/cache/projection is rebuildable and never authoritative for balances or adoption. Reorg
+updates remove/add entries atomically by generation. Persist client requests and exact returned
+model identity when needed; a retry cannot turn a past execution into a fresh free request
+silently.
 
-Rollback is permitted only for an unfinalized local projection and is explicit
-to clients. Finalized projection conflicts stop publication and trigger rebuild
-from a trusted checkpoint. SDK compatibility follows `supported`,
-`deprecated`, `read-only` and `rejected` states with published version windows.
+## PoN Resource bounds
 
-## Persistence and recovery
+Bound queries/pages/proof bytes/model-download rates/free queues and response sizes. Report
+honest queue/availability/partial-coverage states. Local model download is free under accepted
+policy; hosted compute remains capacity/funding limited.
 
-Index records bind source block/finality proof, state/receipt/event roots,
-schema version and previous applied height. Recovery resumes from the last
-verified contiguous height. Gaps, duplicate conflicting events or root mismatch
-halt the affected index. Rebuild occurs into a new namespace and swaps only
-after full verification; it does not rewrite the node authority store.
+## PoN Security
 
-## Resource bounds
+False green finality, outdated adopted model, source/payload swapping, quota farming, metadata
+privacy leakage and unsafe loader. Do not infer training/export permission from using a free
+endpoint or carrying a valid chain receipt.
 
-Every method declares maximum request bytes, decoded work, pagination size,
-proof work, response bytes, timeout and concurrency. Pagination tokens bind
-query, root, order and expiry and cannot be reused across chains or filters.
-WebSockets/streams have bounded subscriptions, buffers and lifetimes. Expensive
-historical/proof queries use separate quotas from transaction submission.
+## PoN Verification and evidence
 
-## Security
+SDK independently checks new proof classes, reorged rewards/model pointers, incomplete bundles,
+author offline, reduced deployment profile labeling, stale cache, free-tier overload and exact
+inference model binding.
 
-Mutating methods require authenticated authorization and cannot bypass M01/M05.
-Controls include TLS, origin policy, CSRF protection where applicable, credential
-separation, rate limits, cancellation, cache key isolation, error redaction and
-proof verification. Mock mode is unmistakable in protocol metadata and user
-interfaces. An indexer compromise cannot mint a finalized response.
+## Source disposition
 
-## Observability and SLO
+Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
+The old consensus/runtime/protocol artifacts are deleted from the active tree and are
+recoverable only from Git history. This module target is not automatically implemented
+by the retained components; ordinary PoN mining, proof verification and reorg remain
+explicit future implementation work. Retained local monotonic stores are not yet
+branch-aware reorg stores and cannot be advertised as chain-finality authorities.
 
-The `non-authoritative-service-v1` profile reports method p50/p95/p99, error and
-rate-limit classes, index lag, proof availability, stream drops, cache age,
-rebuild time and stale-read signalling accuracy. Availability SLOs are separate
-from chain-finality SLOs.
+## Current source and verification
 
-## Verification and evidence
-
-Contract tests compare generated clients in every supported language, stable
-error codes, pagination, cancellation, stale and proof-bearing reads. End-to-end
-tests submit a signed transaction, observe admission, wait for finality, verify
-the M13 proof, query the index and repeat after restart/rebuild. Browser tests
-cover credential boundaries and mock-mode separation.
-
-## Activation boundary
-
-M14 may be deployed before production consensus only as a labelled candidate.
-A public API claim requires versioned schemas, real-node finality/readback,
-rate-limit and abuse tests, proof-aware clients, index rebuild evidence and an
-operator runbook. Its deployment never promotes the chain.
+No native implementation is retained for this domain. A contract is not a runnable consensus or reorg implementation.

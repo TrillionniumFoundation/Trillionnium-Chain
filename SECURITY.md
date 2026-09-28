@@ -1,50 +1,18 @@
-# Security policy
+# Security boundary
 
-Status: **native PoCO-BFT candidate; no production or mainnet claim**.
+Report vulnerabilities privately through the repository's GitHub security reporting
+channel. Do not publish credentials, private tasks, live keys or deployment secrets.
 
-## Supported scope
+Portable components are candidates, not a production node. No consensus activation,
+historical compatibility or fallback is authorized. Important threats include parser
+and crypto ambiguity, unsafe model loading, namespace replacement and rollback, stale
+authorization, resource exhaustion, dishonest evaluations, contribution replay, and
+reorganization causing duplicate external effects.
 
-Security reports are accepted for the active native path and every component
-that can affect its safety, liveness, custody, availability, or release chain:
+A local commit, storage threshold, signed assessment or reference-model result is not
+ledger finality or a qualified neural-work proof. Preserve these distinct meanings.
 
-`authenticated ingress / state sync -> trnm-poco-node -> trnm-consensus-core
--> trnm-consensus-safety-rules / safety-store / signer journal -> native
-application / execution / state root -> finality and light-client proofs`
-
-Reports involving wire decoders, validator-set or epoch transitions, QC/TC
-verification, pacemaker behavior, persistence, rollback protection, remote
-signing, HSM/KMS policy, migration/export tooling, build provenance, CI, SBOMs,
-operator configuration, RPC admission, or denial of service are in scope.
-
-PoCO consensus, `trnm-native-application`, and `trnm-node` are migration residue and
-historical differential inputs. A vulnerability in those surfaces remains
-reportable, but it is not evidence that the native path is affected unless the
-behavior is reachable through an active migration, build, or runtime boundary.
-
-## Reporting
-
-Do not publish an unpatched vulnerability in a public issue, discussion, pull
-request, or commit message. Use GitHub private vulnerability reporting after the
-repository owner has verified that the route is enabled. Until that verification
-is recorded, use an already-established private maintainer channel and disclose
-only enough publicly to request contact.
-
-Include the exact commit/tree, affected configuration and validator role, a
-minimal reproduction, expected impact, prerequisites, and whether exploitation
-requires unauthenticated network access, validator/operator access, signer
-authority, filesystem access, or supply-chain control.
-
-## Handling and disclosure
-
-Security fixes must retain a private source-bound reproduction, add a negative
-regression or mutant, identify downstream evidence invalidated by the change,
-and receive independent review. Critical and High findings block public-testnet,
-release, production-candidate, migration-cutover, and activation claims until
-remediation is independently replayed and accepted.
-
-No bounty, response deadline, supported mainnet version, or deployment should be
-inferred from this policy.
-
-## Native consensus boundary
-
-The native-only consensus dependency policy is security-critical. Any external consensus engine, adapter, fallback path, compatibility feature, or hidden source archive is rejected by required CI.
+Pull requests use isolated hosted runners, read-only permissions and no retained
+checkout credentials. Existing protected-main reviews and no-force-push requirements
+remain unchanged. Dependency and supply-chain review are still required. Historical
+content remains in Git, outside active builds and deployment paths.

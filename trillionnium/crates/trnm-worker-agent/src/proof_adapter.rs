@@ -128,12 +128,11 @@ fn collapse_adapter_delimiters(raw: &str) -> String {
         };
 
         match mapped {
-            Some('-') => {
-                if !last_was_delimiter {
-                    collapsed.push('-');
-                    last_was_delimiter = true;
-                }
+            Some('-') if !last_was_delimiter => {
+                collapsed.push('-');
+                last_was_delimiter = true;
             }
+            Some('-') => {}
             Some(other) => {
                 collapsed.push(other);
                 last_was_delimiter = false;
@@ -260,7 +259,7 @@ fn strip_terminal_control_sequences(input: &str) -> String {
         match chars.peek().copied() {
             Some('[') => {
                 chars.next();
-                while let Some(next) = chars.next() {
+                for next in chars.by_ref() {
                     if ('@'..='~').contains(&next) {
                         break;
                     }
@@ -269,7 +268,7 @@ fn strip_terminal_control_sequences(input: &str) -> String {
             Some(']') => {
                 chars.next();
                 let mut saw_esc = false;
-                while let Some(next) = chars.next() {
+                for next in chars.by_ref() {
                     if saw_esc && next == '\\' {
                         break;
                     }
@@ -282,7 +281,7 @@ fn strip_terminal_control_sequences(input: &str) -> String {
             Some('P' | '^' | '_') => {
                 chars.next();
                 let mut saw_esc = false;
-                while let Some(next) = chars.next() {
+                for next in chars.by_ref() {
                     if saw_esc && next == '\\' {
                         break;
                     }

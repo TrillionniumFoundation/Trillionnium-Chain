@@ -1,0 +1,236 @@
+{
+  "schema": "trnm-pon-nakamoto-v2",
+  "plan_id": "trnm-chain-development-plan-v2",
+  "selected_development_target": "pon-nakamoto-v1",
+  "decision_date": "2026-09-28",
+  "consensus_family": "nakamoto-useful-neural-work",
+  "poco_development_retired": true,
+  "fork_choice": "maximum-fully-validated-cumulative-required-work",
+  "confirmation": "probabilistic-depth-and-work-policy",
+  "validator_voting": false,
+  "quality_weighted_chainwork": false,
+  "automatic_bft_fallback": false,
+  "automatic_hash_only_fallback": false,
+  "work_profile": {
+    "status": "unqualified",
+    "primitive_direction": "challenge-bound-verifiable-neural-linear-algebra",
+    "concrete_profile_id": null,
+    "canonical_codec_frozen": false,
+    "cost_hardness_accepted": false,
+    "independent_verifier": false,
+    "work_class_count": 1,
+    "quality_is_work": false,
+    "historical_training_is_fresh_work": false
+  },
+  "implementation": {
+    "runtime_implemented": false,
+    "work_profile_qualified": false,
+    "public_model_efficacy_measured": false,
+    "public_model_product_loop_accepted": false,
+    "reorg_external_effects_qualified": false,
+    "independent_security_accepted": false,
+    "independent_economics_accepted": false
+  },
+  "production_candidate": false,
+  "production_consensus_activation": false,
+  "public_testnet_ready": false,
+  "release_ready": false,
+  "parameter_status": "reference-formulas-only-deployment-values-not-selected",
+  "required_consensus_parameters": [
+    "chain_id",
+    "genesis",
+    "work_profile",
+    "initial_target",
+    "pow_limit",
+    "retarget_interval",
+    "target_spacing",
+    "future_skew_policy",
+    "confirmation_policies",
+    "reward_maturity",
+    "emission_rule",
+    "subsidy_schedule",
+    "fee_rule",
+    "model_budget",
+    "serving_budget",
+    "all_resource_limits"
+  ],
+  "protocol_documents": [
+    "docs/protocol/pon-nakamoto-v1/CONSENSUS.md",
+    "docs/protocol/pon-nakamoto-v1/ECONOMICS.md",
+    "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md",
+    "docs/protocol/pon-nakamoto-v1/NEURAL_WORK.md",
+    "docs/protocol/pon-nakamoto-v1/README.md",
+    "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md",
+    "docs/protocol/pon-nakamoto-v1/REFERENCES.md",
+    "docs/protocol/pon-nakamoto-v1/SECURITY_ACCEPTANCE.md"
+  ],
+  "module_targets": [
+    {
+      "id": "M00",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md",
+      "role": "Protocol, canonical neural-work and public-model contracts",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/CONSENSUS.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M01",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md",
+      "role": "Cryptography, neural-work verification and local identity",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/NEURAL_WORK.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M02",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md",
+      "role": "Nakamoto consensus, target and cumulative-work fork choice",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/CONSENSUS.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M03",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md",
+      "role": "Mining-attempt ownership, identity custody and local fencing",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/NEURAL_WORK.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M04",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M04_P2P_TECHNICAL_SPEC_V1.md",
+      "role": "Permissionless bounded block, proof and parameter network",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/CONSENSUS.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M05",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md",
+      "role": "Reorg-aware transaction and contribution admission",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M06",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md",
+      "role": "Deterministic branch execution and reversible state effects",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M07",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md",
+      "role": "Branch state, undo history and immutable model storage roots",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M08",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md",
+      "role": "Probabilistic confirmations, reorg coordination and recovery",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M09",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md",
+      "role": "Public parameter and evidence availability",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M10",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md",
+      "role": "Parameter contributions, evaluation jobs and shared-model releases",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M11",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md",
+      "role": "Independent model evaluation and qualified work verification profiles",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M12",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M12_SETTLEMENT_TECHNICAL_SPEC_V1.md",
+      "role": "Mining rewards, model contribution allocation and free-use budgets",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/ECONOMICS.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M13",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md",
+      "role": "Work-verified sync, probabilistic clients and fresh-instance migration",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M14",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md",
+      "role": "Proof-aware clients, shared model discovery and free inference",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M15",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md",
+      "role": "Ordinary PoN node, Hepta integration and release composition",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M16",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md",
+      "role": "Advisory model composition, routing and resource planning",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md",
+      "status": "target-not-implemented-by-documentation"
+    },
+    {
+      "id": "M17",
+      "source_owner_registry": "config/portability-inventory-v1.json",
+      "technical_spec": "docs/modules/M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md",
+      "role": "Neural-work security, model efficacy and reorg evidence",
+      "domain_contract": "docs/protocol/pon-nakamoto-v1/SECURITY_ACCEPTANCE.md",
+      "status": "target-not-implemented-by-documentation"
+    }
+  ],
+  "new_checks": [
+    "scripts/ci/check_repository.py",
+    "scripts/ci/test_repository.py",
+    "formal/pon-nakamoto-v1/test_reference.py"
+  ],
+  "reference_test_scope": "arithmetic-fork-reorg-accounting-only-not-neural-work-or-runtime",
+  "required_real_evidence": [
+    "qualified-work-primitive",
+    "independent-codec-verifier",
+    "ordinary-node-fork-reorg",
+    "real-authorized-task-trained-parameters",
+    "independent-whole-model-and-future-window-evaluation",
+    "public-parameter-availability-author-offline",
+    "funded-free-basic-consumption",
+    "reward-and-external-effect-reorg-recovery",
+    "fresh-instance-legacy-liability-migration"
+  ],
+  "retirement": {
+    "history_only": true,
+    "old_byte_compatibility": false,
+    "old_protocol_decoders_present": false
+  },
+  "source_inventory": "config/portability-inventory-v1.json"
+}

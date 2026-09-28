@@ -579,7 +579,7 @@ fn hot_bucket_hint_treats_object_zero_as_real_canonical_lane_under_role_flips() 
     let buckets_n = 97usize;
     let write_heavy = tx(971, vec![o(0), o(9), o(9)], vec![o(0), o(5), o(5)]);
     let read_heavy = tx(972, vec![o(0), o(5), o(5)], vec![o(0), o(9), o(9)]);
-    let expected = ((0u64 ^ 5u64.rotate_left(7)) % buckets_n as u64) as usize;
+    let expected = ((5u64.rotate_left(7)) % buckets_n as u64) as usize;
 
     // Object id 0 is a valid execution-domain key, not a sentinel. Equivalent
     // mixed domains should keep the same canonical lane even when read/write
@@ -593,7 +593,7 @@ fn hot_bucket_hint_power_of_two_path_keeps_zero_primary_stable_under_asymmetric_
     let buckets_n = 64usize;
     let write_heavy = tx(973, vec![o(0), o(17), o(33), o(33)], vec![o(0), o(9), o(9)]);
     let read_heavy = tx(974, vec![o(0), o(9), o(9)], vec![o(0), o(17), o(33), o(33)]);
-    let expected = ((0u64 ^ 9u64.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize;
+    let expected = ((9u64.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize;
 
     // The power-of-two reduction path should preserve the same canonical lane
     // when object id 0 is the primary execution-domain key and the echoed

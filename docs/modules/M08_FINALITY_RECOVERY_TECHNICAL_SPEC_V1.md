@@ -1,133 +1,68 @@
-# M08 Finality / Node Commit / Recovery technical specification v1
+# M08 Probabilistic confirmations, reorg coordination and recovery — PoN technical contract
 
-Status: **implementation contract; candidate only; semantic acceptance not assessed**
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M08; actual source ownership is in `config/portability-inventory-v1.json`.
 
-## Authority
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
 
-Resolve `docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md` first. Frozen
-`bft-v0` defines votes and three-chain finality; `pcc1` defines a candidate
-composition, not a new wire version. M08 coordinates ordered application commit,
-finalized receipt publication and restart convergence. M02/M03 remain the sole
-consensus/Safety authorities. M08 cannot choose a fork, create signing authority,
-change validity, or replace a verified proof with a stage label.
+## PoN Authority
 
-## Interfaces
+Own realization of M02 preferred-branch decisions, consistent confirmation views and recovery
+publication. It does not invent finality, select a second fork or use a QC to lock PoN history.
+Local policy confirmations remain reversible.
 
-The interfaces below are operation requirements, not newly frozen Rust types,
-wire tags or constructors. Bind each operation to the selected exact source
-symbol and accepted schema before enabling it. The historical candidate
-`Prepared` through `OutboundPublished` ledger labels are inert observations;
-they are not one production lifecycle for both votes and finalized receipts.
+## PoN Interfaces
 
-The signing operation binds chain/validator identity, epoch/view/block, exact
-SignIntent bytes, Safety decision/revision, generation and signer watermark.
-The finalized-application operation separately binds the commissioned proof
-context, expected oldest target and parent, pre/post application roots, prepared
-execution plan, finality bytes, ledger sequence and checkpoint predecessor.
-The strict candidate seam is `trnm-native-execution-v0/src/pcc1_finality.rs`;
-its verified proof/target is necessary but is not full checkpoint or publisher
-integration. Opaque caller digests and telemetry cannot construct capabilities.
+PlanReorg; PersistReorgIntent; DetachOldBranch; AttachNewBranch; PublishActiveTip;
+GetConfirmationReceipt; ReconcileOrphanedEffects. Receipts bind observed tip, included block,
+depth, work delta, policy and active generation.
 
-## State machine
+## PoN State machine
 
-Signing and vote publication follow:
+Accept only a bound M02 branch decision with all dependencies valid. Determine common ancestor
+and ordered detach/attach, persist intent, apply through M06/M07, verify roots, atomically
+publish active generation, then send idempotent index/outbox changes. Recompute confirmations
+and reward maturity. Crossing a local threshold never turns a valid deeper reorg into invalid
+consensus.
 
-```text
-Validated -> IntentDurable -> SignatureRecorded -> VotePublished
-```
+## PoN Persistence and recovery
 
-Finalized application and receipt publication follow:
+One Node Commit Ledger-style owner coordinates the exact reorg. Reopen by matching predecessor,
+intent, old/new roots and durable readback. Unknown commit/ack remains fenced. M03/Hepta effect
+and revocation histories are joined for reconciliation, not rolled back. Keep historical
+model-output identity.
 
-```text
-FinalityVerified -> CommitIntentDurable -> ApplicationApplied -> CommitRecorded -> CheckpointConfirmed -> ReceiptPublished
-```
+## PoN Resource bounds
 
-The signing path MUST NOT wait for the voted block to become final. Before
-voting, execute and validate the complete payload into a prepared overlay under
-its authenticated parent and exact runtime; an overlay is not canonical state.
-M03 persists its authorized Safety decision and exact signing intent before
-custody is invoked and records the exact signature before it escapes. Lost
-acknowledgement permits only exact intent replay/readback, not a fresh vote.
+Bound reorg staging, undo load, catch-up service and publication queues. Admit recovery
+downloads before ordinary service when necessary; preserve deadlines and explicit backpressure.
+Missing deep undo requests authenticated sync.
 
-The finalized path first admits a complete three-chain proof against the
-application's commissioned context and the expected oldest target. A single QC,
-a newest certified descendant, or a valid proof for another root is insufficient.
-Only then may a durable commit intent authorize the exact idempotent application
-apply. Record its durable result, confirm checkpoint predecessor/CAS and expose
-the finalized receipt, in that order. Readback cannot promote prepared state.
+## PoN Security
 
-Finality is applied in ancestor order. A child cannot skip an unacknowledged
-ancestor. Duplicate requests return the same logical effect; a changed context,
-generation, root, intent or predecessor rejects or fences the owner. The two
-paths may interleave, but neither grants the other's capabilities. In
-particular, vote publication is not receipt publication and a receipt retry
-cannot authorize signing.
+False finalized labels, stale confirmation replay, partial mixed-generation RPC, branch swap
+with same height, automatic external replay and poisoned model rollback. Compensation is a newly
+authorized action with explicit risk, not a fiction of exactly-once external execution.
 
-## Persistence and recovery
+## PoN Verification and evidence
 
-The ledger coordinates facts but does not overrule an independent Safety,
-application, signer or checkpoint authority. Reopen each named authority and
-resolve uncertainty to its exact source or exact target. Do not overwrite newer
-Safety decisions from an older ledger projection. Ambiguous or conflicting
-records fence dependent signing, commit and publication until resolved.
+Deep reorg after payout/model use, crashes during all stages, index ACK loss, failed
+replacement, unavailable ancestors, isolated client views, local revoke retained and
+authoritative query of already executed remote effects.
 
-Crash cuts exist before/after intent durability, custody, signature recording,
-vote publication, application apply, ledger result, checkpoint CAS and receipt
-publication. HSM success with lost response, disk-full, fsync error, WAL/SHM
-failure and owner takeover are uncertainty cases, not proof of no side effect.
-Recovery uses fresh authoritative readback and preserves exact replay identity.
-Separate durable stores are not a distributed atomic transaction merely because
-a process test passes. Whole-store rollback requires an independent external
-anchor and device-qualified custody; local hash chains are insufficient.
+## Source disposition
 
-## Resource bounds
+Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
+The old consensus/runtime/protocol artifacts are deleted from the active tree and are
+recoverable only from Git history. This module target is not automatically implemented
+by the retained components; ordinary PoN mining, proof verification and reorg remain
+explicit future implementation work. Retained local monotonic stores are not yet
+branch-aware reorg stores and cannot be advertised as chain-finality authorities.
 
-Bound proof bytes, total signature work (including failed verification), pending
-commits, retained ancestry, record size, recovery scan, replay and rebuild work.
-Compaction requires authenticated finalized history and retains every applicable
-replay, evidence, slashing and weak-subjectivity horizon. Reaching a local work
-limit yields unavailability or a fenced recovery, not deterministic peer guilt.
-No resource default may turn incomplete history into an accepted checkpoint.
+## Current source and verification
 
-The native v0 snapshot audit borrows the owner's immutable JMT collections
-through a private `TreeReader`. Iteration and each existence proof use the same
-snapshot and expected root for the entire borrow. This removes a full historical
-store clone from every audit while retaining verification of every live value,
-preimage and proof. It does not prune history, change snapshot codec bytes, or
-close the separate full-snapshot persistence and cumulative recovery-work gap.
-
-## Security
-
-Reject wrong proof class, chain, validator set, epoch, oldest target, root or
-parent before modifying the authoritative application or ledger. Generation
-regression, same-height conflicting roots, replaced namespaces and inconsistent
-signer watermarks fence the operation. An external rollback anchor must be in a
-different rollback domain; a local sidecar cannot certify its own history.
-No fixture, optimizer, indexer or historical journal tag supplies finality.
-
-## Observability and SLO
-
-Report signing, ordering-finality, durable-receipt and settlement latencies
-separately, with p50/p95/p99, fsync/HSM tails, pending depth, oldest pending age,
-replay count, ambiguous-stop count and restart convergence. Only finalized,
-replay-verified application transactions contribute to committed goodput.
-Metrics describe operations; they cannot synthesize stage authority.
-
-## Verification and evidence
-
-Retain tests that permit votes before their own block's finality and prohibit
-receipts before finality/checkpoint completion. Reject single-QC/newest-target
-substitution and prepared-state promotion by a read. Exhaust independent crash
-cuts and lost acknowledgements on both paths, ancestor reorder, exact replay,
-corrupt records, coherent rollback, takeover and state-sync rejoin. Verify no
-double-sign, conflicting finality or duplicated application effect, plus exact
-post-restart roots. Process kills do not stand in for physical controller/cache
-loss or HSM evidence. Structural documentation checks are not runtime proofs.
-
-## Activation boundary
-
-M08 remains candidate until the default node's real producers and consumers
-implement both separate paths, arbitrary valid proposals/transactions, bounded
-recovery and state-sync rejoin, and independently accepted device, physical-fault
-and multi-host evidence is bound to the exact artifact. The local strict-finality
-seam and persistent ingress bridge alone do not close these requirements.
+No native implementation is retained for this domain. A contract is not a runnable consensus or reorg implementation.

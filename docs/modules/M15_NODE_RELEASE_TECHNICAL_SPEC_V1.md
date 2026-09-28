@@ -1,83 +1,68 @@
-# M15 Node Composition / Packaging / Release technical specification v1
+# M15 Ordinary PoN node, Hepta integration and release composition — PoN technical contract
 
-Status: **implementation contract; no release authority**
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M15; actual source ownership is in `config/portability-inventory-v1.json`.
 
-## Authority
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
 
-M15 wires reviewed implementations into processes, validates configuration,
-owns lifecycle and feature/dependency closures, and produces reproducible
-artifacts, SBOMs, provenance, signatures and operator handoff. Composition
-contains no domain state machine and cannot weaken M02/M03, invent a root or
-promote machine truth.
+## PoN Authority
 
-## Interfaces
+Own composition, startup/shutdown, packaging and activation of one ordinary PoN node with
+separately owned services. It contains no domain state machine, alternative consensus, model
+trainer or hidden task store.
 
-The node constructor consumes closed-world configuration and explicit
-capabilities for M01-M08 and M13. Separate build closures exist for
-`node-prod-v0`, `node-devnet-v0`, `ai-v1-candidate` and
-`lab-and-evidence`. Each closure has an allow-list of crates, features, binaries,
-configuration schemas and external services. Candidate, fixture, benchmark,
-research, PoC and legacy consensus packages are forbidden in production.
+## PoN Interfaces
 
-Release inputs bind source commit/tree, prospective merge, toolchain, lockfile,
-features, target, container/base image, configuration schema, binary and library
-digests, SBOM, provenance statement, signer identity and migration compatibility.
+PoNNodeConfig; StartPoNNode; StopAndReconcile; ResumeBranchState; InstallWorkProfile;
+ConnectHeptaAdapter; BuildRelease; StageFreshInstance. These are proposed interfaces; current
+PoCO binary names cannot imply implementation.
 
-## State machine
+## PoN State machine
 
-```text
-Constructed -> ConfigValidated -> AuthorityRecovered -> NetworkEligible
- -> Serving -> Draining -> Stopped
-```
+Bind exact genesis/profile/work primitive and binaries; acquire writer/authority fences; reopen
+branch/application/effect journals; reconcile unfinished reorgs and external operations; load
+bounded networking/verification/mining workers; only then admit work and requests. Hepta startup
+uses existing model/artifact/operations owners. Shut down with bounded drain and retained
+unresolved identity; never discard an attempt to regain readiness.
 
-`NetworkEligible` is unreachable until Safety, signer, ledger, application,
-state and checkpoint authorities agree. Shutdown drains or durably records every
-intent. Upgrade follows `Staged -> Verified -> Activated`; failure returns to a
-separately verified previous binary without reusing unsafe signer state.
+## PoN Persistence and recovery
 
-## Persistence and recovery
+Startup joins M03/M07/M08/M13 exact contexts and independent local effect frontiers. Recover one
+owner per domain, not filesystem-inferred authority. Fresh-genesis migration keeps legacy
+namespace read-only. Global release inclusion does not force local model activation; use new
+admitted generations.
 
-M15 owns no hidden recovery database. It invokes module recovery in dependency
-order and records a non-authoritative lifecycle receipt. Configuration,
-artifact and authority identities are revalidated on every start. Downgrade is
-rejected when schema, protocol, signer watermark or finalized state is not
-compatible. Migration always targets a fresh namespace and signed descriptor.
+## PoN Resource bounds
 
-## Resource bounds
+Reserve consensus/verification/recovery floors separate from mining/training/serving; bound
+threads, file descriptors, GPU memory, queues and shutdown. A model-proving failure cannot
+starve chain validation or local safety.
 
-Startup, shutdown, recovery, migration and health checks have explicit time,
-memory, disk and retry ceilings. Process supervision prevents unbounded restart
-loops. File descriptors, threads, worker pools, queues, log volume and temporary
-artifact space are bounded by validated configuration.
+## PoN Security
 
-## Security
+Supply-chain profile substitution, accidental old BFT dependency, unqualified work fallback,
+remote-signer reuse, arbitrary downloaded model execution and central coordinator key
+aggregation. No feature flip or CLI label activates a network.
 
-Candidate-controlled code never receives repository or release-signing
-credentials. Build and publication are separate trust domains. Builders are
-ephemeral, read-only and tokenless; publishers execute no candidate code,
-verify content-addressed inputs and use expected-head compare-and-swap. Releases
-require two-person review, signed immutable manifests, SBOM/provenance and
-artifact transparency. Secrets never enter build logs or deterministic cores.
+## PoN Verification and evidence
 
-## Observability and SLO
+Exact binary ordinary startup/request/shutdown; real work/fork/reorg; integrated Hepta parameter
+loop; author/worker failures; multi-host recovery and power cuts; actual Cargo production
+closure excludes retired active BFT logic; independent accepted deployment.
 
-Node lifecycle uses `authority-hot-path-v1`; build/release uses
-`evidence-tooling-v1`. Metrics include startup/recovery time, authority mismatch,
-restart count, shutdown drain, binary/config identity, dependency closure,
-reproducibility result and artifact verification. A health endpoint cannot
-override a fail-stop authority state.
+## Source disposition
 
-## Verification and evidence
+Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
+The old consensus/runtime/protocol artifacts are deleted from the active tree and are
+recoverable only from Git history. This module target is not automatically implemented
+by the retained components; ordinary PoN mining, proof verification and reorg remain
+explicit future implementation work. Retained local monotonic stores are not yet
+branch-aware reorg stores and cannot be advertised as chain-finality authorities.
 
-Qualification includes dependency/feature closure scans, clean and offline
-builds, two independent reproducible builds, artifact tamper tests, clean
-install, startup/shutdown/crash, upgrade/downgrade refusal, migration rehearsal,
-configuration mutants and release-signature verification. The prospective merge
-and post-merge artifact are replayed, not inferred from a topic-branch binary.
+## Current source and verification
 
-## Activation boundary
-
-No release is accepted while the PR is draft, required lanes are empty,
-skipped, queued or `action_required`, independent reviews are missing, or
-external HSM/power-loss/audit/soak gates are open. Administrator permissions do
-not substitute for the evidence contract.
+- [`trnm-release-bundle`](../../trillionnium/crates/trnm-release-bundle/README.md): `cargo test --locked -p trnm-release-bundle --all-targets --all-features`.

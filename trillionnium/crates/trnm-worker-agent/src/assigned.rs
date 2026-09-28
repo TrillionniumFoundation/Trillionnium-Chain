@@ -37,9 +37,7 @@ fn run_assigned_summary_line(
     ingress_file: &Path,
     submit_log: &Path,
     llm_adapter_cmd: &str,
-    adapter_retries: u32,
-    adapter_backoff_ms: u64,
-    adapter_timeout_ms: u64,
+    policy: &LlmAdapterPolicy,
 ) -> String {
     format!(
         "[agent] run-assigned processed={} skipped={} ingress={} submit_log={} adapter={} adapter_retries={} adapter_backoff_ms={} adapter_timeout_ms={}",
@@ -48,9 +46,9 @@ fn run_assigned_summary_line(
         ingress_file.display(),
         submit_log.display(),
         llm_adapter_cmd,
-        adapter_retries,
-        adapter_backoff_ms,
-        adapter_timeout_ms
+        policy.retry.max_retries,
+        policy.retry.backoff_ms,
+        policy.timeout_ms
     )
 }
 
@@ -217,9 +215,7 @@ pub(crate) fn handle_run_assigned(
             &ingress_file,
             &submit_log,
             &llm_adapter_cmd,
-            llm_policy.retry.max_retries,
-            llm_policy.retry.backoff_ms,
-            llm_policy.timeout_ms,
+            &llm_policy,
         )
     );
     Ok(())
@@ -239,9 +235,7 @@ mod tests {
             std::path::Path::new("logs/ingress.jsonl"),
             std::path::Path::new("logs/submit.jsonl"),
             "llm-adapter",
-            2,
-            150,
-            5_000,
+            &crate::resolve_llm_adapter_policy(Some(2), Some(150), Some(5_000)),
         );
 
         assert_eq!(

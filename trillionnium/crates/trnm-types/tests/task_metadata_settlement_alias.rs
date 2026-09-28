@@ -6,7 +6,7 @@ fn settlement_snapshot_alias_deserializes_into_threaded_task_metadata() {
         r#"{
             "note": "interop",
             "settlement_snapshot": {
-                "settlement_schema": "poco_v1",
+                "settlement_schema": "service_usage_v2",
                 "tokenizer_id": "llama3-tokenizer",
                 "tokenizer_version": "1.0.0",
                 "output_hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -34,7 +34,7 @@ fn settlement_snapshot_alias_serializes_back_under_canonical_settlement_key() {
         r#"{
             "note": "interop",
             "settlement_snapshot": {
-                "settlement_schema": "poco_v1",
+                "settlement_schema": "service_usage_v2",
                 "tokenizer_id": "llama3-tokenizer",
                 "tokenizer_version": "1.0.0",
                 "output_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
@@ -57,7 +57,7 @@ fn canonical_settlement_wins_when_transitional_payload_sends_both_keys() {
         r#"{
             "note": "interop",
             "settlement": {
-                "settlement_schema": "poco_v1",
+                "settlement_schema": "service_usage_v2",
                 "tokenizer_id": "llama3-tokenizer",
                 "tokenizer_version": "1.0.0",
                 "output_hash": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
@@ -65,7 +65,7 @@ fn canonical_settlement_wins_when_transitional_payload_sends_both_keys() {
                 "output_root": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
             },
             "settlement_snapshot": {
-                "settlement_schema": "poco_v1",
+                "settlement_schema": "service_usage_v2",
                 "tokenizer_id": "llama3-tokenizer",
                 "tokenizer_version": "1.0.0",
                 "output_hash": "0x1111111111111111111111111111111111111111111111111111111111111111",

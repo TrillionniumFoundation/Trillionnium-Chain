@@ -5,7 +5,7 @@ use thiserror::Error;
 pub const CANONICAL_TX_SCHEMA_V1: &str = "trnm_canonical_tx_v1";
 pub const CANONICAL_TX_PAYLOAD_TYPE_V1: &str = "trnm.canonical.tx.v1";
 pub const ACCOUNT_OBJECT_TYPE_V1: &str = "trnm.account.v1";
-pub const TASK_OBJECT_TYPE_V1: &str = "trnm.poco.task.v1";
+pub const TASK_OBJECT_TYPE_V1: &str = "trnm.portable.v2.task.v1";
 pub const FEE_POLICY_OBJECT_TYPE_V1: &str = "trnm.fee-policy.v1";
 pub const MONETARY_STATE_OBJECT_TYPE_V1: &str = "trnm.monetary-state.v1";
 pub const FEE_COLLECTOR_ACCOUNT_V1: &str = "trnm:fee:collector";
@@ -333,7 +333,7 @@ pub fn account_key(account: &str) -> String {
 }
 
 pub fn task_key(task_id: &str) -> String {
-    object_key("trnm.poco.task.object-key.v1", task_id)
+    object_key("trnm.portable.v2.task.object-key.v1", task_id)
 }
 
 pub fn fee_policy_key() -> String {

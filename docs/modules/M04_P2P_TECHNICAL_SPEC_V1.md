@@ -1,102 +1,68 @@
-# M04 P2P / Session / Dissemination technical specification v1
+# M04 Permissionless bounded block, proof and parameter network — PoN technical contract
 
-Status: **implementation contract; candidate only**
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M04; actual source ownership is in `config/portability-inventory-v1.json`.
 
-## Authority
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/CONSENSUS.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
 
-M04 owns peer authentication, negotiated session profiles, replay admission,
-bounded framing, routing, dissemination, peer/global quotas and transport
-lifecycle. It may delay or reject local work because of overload. It must not
-sign, vote, choose a fork, classify a complete application transition, commit a
-state root or manufacture finality.
+## PoN Authority
 
-## Interfaces
+Own transport, discovery, bounded dissemination and authenticated resource/session context, not
+mining eligibility or consensus decisions. Peer identity authenticates a session, not stake,
+work, personhood or a right to exclude valid miners.
 
-The public boundary consists of versioned value types and ports:
+## PoN Interfaces
 
-- `OpenSessionV1(peer_identity, chain, genesis, protocol, limits, nonce)`;
-- `AuthenticatedSessionV1(session_id, peer, generation, profile, expiry)`;
-- `IngressFrameV1(session_id, sequence, message_kind, payload_digest, bytes)`;
-- `IngressDecisionV1(accepted | duplicate | stale | over_budget | invalid)`;
-- `DisseminateV1(object_id, audience, priority, expiry, bytes)`;
-- `ReplayFloorV1(peer, session_generation, highest_committed_sequence)`;
-- `PeerLeaseV1(peer, generation, byte_budget, work_budget, expiry)`.
+AnnounceHeader; FetchBody; FetchWorkProof; FetchParameterChunks; AnnounceContribution;
+PeerCapabilities; CancelFetch. All are versioned and bounded; M02/M01/M09 independently decide
+their domain validity.
 
-Transport bytes are never signing or hashing preimages. Decoding yields a
-bounded M00 canonical object before M02, M05 or M13 can consume it. A local
-queue error is a local availability result, not deterministic consensus
-invalidity.
+## PoN State machine
 
-## State machine
+Admit cheap length/version/rate/session checks before proof work. Separate queues for
+headers/control, transaction data, large parameter chunks and proofs. Fetch competing branches
+from diverse sources. Return exact request/generation-bound results; a corrupt peer copy does
+not classify all copies invalid. Gossip verified blocks promptly without waiting for global
+model adoption.
 
-```text
-Disconnected
- -> Negotiating
- -> Authenticated
- -> Active
- -> Draining
- -> Closed
-```
+## PoN Persistence and recovery
 
-Every transition consumes the exact session generation. Reconnect creates a new
-generation and cannot revive old sequence authority. `Active` accepts a frame
-only after identity, chain/profile, length, decompression, message-work and
-replay checks. Duplicate delivery is idempotent. Gaps may be buffered only
-within a finite window; otherwise the session is reset and the missing object is
-requested through a fresh lease.
+Retain replay/session and download cursors under their declared owner. Restart must not replay
+an obsolete response into a new attempt. Index parameters by exact content and codec, not
+mutable URL. Preserve partial-download checks and repair obligations.
 
-## Persistence and recovery
+## PoN Resource bounds
 
-The durable session record binds peer key, chain/genesis, negotiated profile,
-generation, replay floor and previous record digest. A replay floor is advanced
-before an acknowledgement that permits the peer to discard retransmission
-state. Lost acknowledgement is resolved by fresh durable readback. A restored
-old database, copied session directory, generation regression or disagreement
-between replay and lease state fails closed.
+Independent global and per-peer byte/item/in-flight/proof budgets. Chunk large weights with
+finite reconstruction size, bandwidth and wall-clock deadlines; reserve consensus/control
+capacity. Peer churn cannot reset global budgets.
 
-Persistent production listeners use descriptor-pinned namespaces and explicit
-certificate/key rotation. Process-local counters, Unix credentials and
-single-host sockets are test evidence only.
+## PoN Security
 
-## Resource bounds
+Eclipse/partition, Sybil connection churn, decompression/allocation bombs, proof floods,
+unavailable-model adverts and withholding are explicit threats. No static validator allowlist is
+inherited as PoN eligibility; transport permissions do not change fork choice.
 
-Every listener has finite connection, handshake, unauthenticated-byte,
-authenticated-byte, decompressed-byte, frame-count, nesting, signature-work,
-CPU-time, memory, outbound-queue and bandwidth budgets. Limits exist per peer,
-per identity, per subnet/transport source and globally. Admission checks length
-before allocation and decompression ratio before expansion. Backpressure
-propagates without blocking the deterministic consensus core.
+## PoN Verification and evidence
 
-## Security
+Independent-host partition/heal, different-work forks, malformed chunks/proofs, stale sessions,
+adversarial peers, source diversity, author offline, bounded memory/queues and measured
+propagation/verification tails.
 
-Required controls include mutual authentication, chain/profile downgrade
-resistance, domain-bound challenge nonces, certificate/key rotation, duplicate
-identity rejection, anti-amplification, slow-reader isolation, fair scheduling
-and explicit bans on peer-identity rebinding. Peer scores are advisory and
-cannot override cryptographic validity. Discovery input is untrusted. A
-Byzantine peer cannot create unbounded retained ancestry, TC references, state
-chunks or pending validation work.
+## Source disposition
 
-## Observability and SLO
+Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
+The old consensus/runtime/protocol artifacts are deleted from the active tree and are
+recoverable only from Git history. This module target is not automatically implemented
+by the retained components; ordinary PoN mining, proof verification and reorg remain
+explicit future implementation work. Retained local monotonic stores are not yet
+branch-aware reorg stores and cannot be advertised as chain-finality authorities.
 
-The `bounded-io-runtime-v1` profile reports handshake p50/p95/p99, admission
-latency, authenticated good bytes, rejected bytes by reason, queue depth,
-backpressure duration, retransmit/duplicate rate, CPU per message kind, memory
-high-water mark and peer/global quota saturation. Metrics carry no private
-payloads or bearer credentials.
+## Current source and verification
 
-## Verification and evidence
-
-Qualification requires independent client/parser interoperation, malformed and
-cross-domain corpora, sequence/generation replay mutants, certificate rotation,
-peer churn, fragmentation, reordering, duplicate delivery, 0/1/5 percent loss,
-20/80/180 ms RTT, bandwidth/CPU exhaustion, slow readers, partition/heal and
-multi-host identity tests. Evidence binds exact source and raw packet/metric
-roots.
-
-## Activation boundary
-
-M04 is not production-reachable until a persistent authenticated listener,
-durable replay authority, cross-platform peer authentication, exact Core ACK
-handoff, multi-host campaign and independent security review all pass on one
-unchanged source. Until then every production and release flag remains false.
+- [`trnm-peer-lease`](../../trillionnium/crates/trnm-peer-lease/README.md): `cargo test --locked -p trnm-peer-lease --all-targets --all-features`.
+- [`trnm-transport`](../../trillionnium/crates/trnm-transport/README.md): `cargo test --locked -p trnm-transport --all-targets --all-features`.

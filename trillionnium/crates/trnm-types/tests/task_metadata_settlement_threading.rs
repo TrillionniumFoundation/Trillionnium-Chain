@@ -2,7 +2,7 @@ use trnm_types::{TaskMetadata, TaskSettlementSnapshot, TaskSettlementSnapshotSou
 
 fn complete_settlement(output_hash: &str, output_root: &str) -> TaskSettlementSnapshot {
     TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".to_string(),
+        settlement_schema: "service_usage_v2".to_string(),
         tokenizer_id: "llama3-tokenizer".to_string(),
         tokenizer_version: "1.0.0".to_string(),
         output_hash: output_hash.to_string(),

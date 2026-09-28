@@ -25,9 +25,9 @@ pub(crate) fn process_submission_record(
     adapter_cmd: &str,
     tx_max_retries: u32,
     tx_backoff_ms: u64,
-    ack_log: &std::path::PathBuf,
-    event_log: &std::path::PathBuf,
-    progress_log: &std::path::PathBuf,
+    ack_log: &std::path::Path,
+    event_log: &std::path::Path,
+    progress_log: &std::path::Path,
     run_id: &str,
     now_ms_fn: fn() -> u128,
     acked: &mut HashSet<u64>,
@@ -316,7 +316,7 @@ fn verifier_status_for_ack_status(ack_status: &str) -> &'static str {
 fn classify_flush_ack(
     commit_res: &AdapterExecResult,
     reveal_res: &AdapterExecResult,
-    ack_log: &std::path::PathBuf,
+    ack_log: &std::path::Path,
     task_id: u64,
 ) -> (&'static str, &'static str, String) {
     let previous_ack_hashes = persisted_ack_hashes_for_task(ack_log, task_id);
