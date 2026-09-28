@@ -641,6 +641,19 @@ def main() -> None:
     original_popen = fleet.subprocess.Popen
     fleet.subprocess.Popen = CapturingPopen
     try:
+        inert_probe = fleet.launch_runtime(
+            process=target,
+            stage=remote_stage,
+            binary="/stage/validator",
+            duration_seconds=60,
+            max_blocks=100,
+            process_io=resume_process_io,
+            process_instance=2,
+            peer_lease_socket=f"{remote_stage.root}/peer.sock",
+        )
+        inert_probe.capture.stdout.write(b"\n")
+        inert_probe.capture.stderr.write(exact_inert_stderr)
+        fleet.base.close_process_capture(inert_probe.capture)
         resumed_runtime = fleet.launch_runtime(
             process=target,
             stage=remote_stage,
@@ -655,8 +668,33 @@ def main() -> None:
     finally:
         fleet.subprocess.Popen = original_popen
     fleet.base.close_process_capture(resumed_runtime.capture)
-    assert len(spawned_commands) == 1
-    resumed_command = spawned_commands[0][-1]
+    assert len(spawned_commands) == 2
+    assert inert_probe.process_instance == resumed_runtime.process_instance == 2
+    assert inert_probe.capture.stdout_path != resumed_runtime.capture.stdout_path
+    assert inert_probe.capture.stderr_path != resumed_runtime.capture.stderr_path
+    assert inert_probe.capture.stdout_path.read_bytes() == b"\n"
+    assert inert_probe.capture.stderr_path.read_bytes() == exact_inert_stderr
+    # Both streams stay exclusive: retry cannot truncate old evidence or spawn.
+    original_popen = fleet.subprocess.Popen
+    fleet.subprocess.Popen = CapturingPopen
+    try:
+        for resume_input in (None, resume):
+            try:
+                fleet.launch_runtime(
+                    process=target, stage=remote_stage, binary="/stage/validator",
+                    duration_seconds=60, max_blocks=100, process_io=resume_process_io,
+                    process_instance=2, peer_lease_socket=f"{remote_stage.root}/peer.sock",
+                    process2_resume=resume_input,
+                )
+            except FileExistsError:
+                pass
+            else:
+                raise AssertionError("duplicate capture unexpectedly overwrote retained evidence")
+        assert len(spawned_commands) == 2
+    finally:
+        fleet.subprocess.Popen = original_popen
+    assert inert_probe.capture.stderr_path.read_bytes() == exact_inert_stderr
+    resumed_command = spawned_commands[1][-1]
     for token in (
         "--peer-lease-socket",
         "--resume-process2",
@@ -715,7 +753,7 @@ def main() -> None:
         "poco_fault_restart_handoff_v1_test=passed "
         "target_only=true exit75_exact=true exit75_ssh_preserved=true schema2_exact=true "
         "p1_locator_digest_unlink=true peer_liveness=true "
-        "single_p2_launch=true normal_artifacts_absent=true "
+        "single_p2_launch=true normal_artifacts_absent=true resume_capture_no_overwrite=true "
         "truth_bits_unchanged=true"
     )
 

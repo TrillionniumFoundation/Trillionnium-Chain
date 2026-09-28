@@ -72,6 +72,18 @@ above and the sole development plan. No legacy acceptance is transferred to PoN.
 
 Status: **implementation contract; evidence tooling is not self-acceptance authority**
 
+## Process-2 diagnostic captures preserve both invocations
+
+Within the retained legacy recovery campaign, the exact-command inert recovery
+probe and the explicit authenticated resume share logical process instance 2,
+but are distinct subprocess invocations. Their stdout/stderr must use separate
+create-new capture names. Select the resume suffix only from the already
+validated explicit resume arguments, not from files or a caller-supplied label.
+Preserve the original inert-exit transcript byte-for-byte; a second capture for
+either invocation must fail before spawning a subprocess. This is diagnostic
+separation only: it changes neither runtime identity nor custody, journal,
+protocol, process-3 prohibition, timeout or no-overwrite rules.
+
 ## RecoveryStart material delivery to resident peers
 
 After the target's actual `recovery-start-certificate` command succeeds, the

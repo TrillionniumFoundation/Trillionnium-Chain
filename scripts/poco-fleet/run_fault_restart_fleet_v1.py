@@ -2335,12 +2335,13 @@ def launch_runtime(
             process.management,
             remote,
         ]
-    capture = base.open_process_capture(
-        process_io,
-        process.validator_id
-        if process_instance == 1
-        else f"{process.validator_id}.instance-{process_instance}",
-    )
+    capture_name = (process.validator_id if process_instance == 1
+                    else f"{process.validator_id}.instance-{process_instance}")
+    if process2_resume is not None:
+        # The inert probe's exact exit transcript is retained. Explicit resume
+        # is a second OS invocation of the same logical instance, not process 3.
+        capture_name += ".resume"
+    capture = base.open_process_capture(process_io, capture_name)
     try:
         child = subprocess.Popen(
             command,
