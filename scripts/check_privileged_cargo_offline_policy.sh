@@ -276,7 +276,7 @@ declare -A helper_hash=(
   [scripts/ci/check_cargo_offline_ready.sh]=2f8253ffb35cda0aaf3aaf652be4cc09a5ca8ef2880e9b974052491778174514
   [scripts/ci/check_cargo_offline_unchanged.sh]=5b960086633a9f245b3ea83e48b0961b1907ae62677dfd90fdf8b824444ae604
   [scripts/ci/check_preprovisioned_cargo_deny.sh]=a1eb25bea55e2ec5ef41a5be596ef3447d77d8453e25ffd526d950933ec0ba5c
-  [scripts/ci/check_cargo_deny_offline.sh]=c3fb1b88898dc016d5e55cad20c9101a42676a08ff771a386dd061494c63ce75
+  [scripts/ci/check_cargo_deny_offline.sh]=a0d956382d456a4064e3b9aa02a67f2701fdd87db5f618a8be25da2c68a9f98f
   [scripts/ci/check_preprovisioned_cargo_fuzz.sh]=b2b1fa060440e2111f24f011bfc71c97baa1a558757b0ba8e960736c6c249040
   [scripts/ci/check_canonical_fuzz_smoke.sh]=64fe74d0dcec9d968f43d83f71a50b20c03f4dc1074343005194e3744e3036fe
 )
