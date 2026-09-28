@@ -18,7 +18,13 @@ Start with the [sole development plan](docs/development/TRNM_AI_NATIVE_BLOCKCHAI
 [Machine target](config/pon-nakamoto-v1.json) separates architecture choice from
 [legacy runtime truth](config/consensus-mainline.json); all production flags remain false.
 
+The machine-readable authority is `config/consensus-mainline.json`; its legacy runtime
+identifiers do not override the explicit selected `development_target`.
+The existing web client requires Node.js `>=24.18.0 <25` and npm `>=11.16.0 <12`.
+
 ```bash
+git clone https://github.com/TrillionniumFoundation/Trillionnium-Chain.git trillionnium-chain
+cd trillionnium-chain
 bash scripts/project-preflight.sh
 python3 scripts/ci/check_pon_documentation_v1.py
 python3 scripts/ci/test_pon_documentation_v1.py
