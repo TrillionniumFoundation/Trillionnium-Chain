@@ -214,7 +214,15 @@ impl NativeClientProfileV1 {
             .context("TIME_UNREADY: candidate epoch lies in the future")
     }
     pub fn proposal_timestamp_v1(&self, parent: u64, maximum_step: u64) -> Result<(u64, bool)> {
-        let now = self.chain_now_ms_v1()?;
+        self.proposal_timestamp_at_v1(parent, maximum_step, self.chain_now_ms_v1()?)
+    }
+
+    fn proposal_timestamp_at_v1(
+        &self,
+        parent: u64,
+        maximum_step: u64,
+        now: u64,
+    ) -> Result<(u64, bool)> {
         ensure!(
             parent
                 <= now
@@ -261,13 +269,54 @@ impl CanonicalSignerIdentityResolverV0 for NativeProfileSignerResolverV1 {
     }
 }
 #[derive(Debug, Clone)]
-pub struct NativeProfileClockV1(pub NativeClientProfileV1);
+pub struct NativeProfileClockV1 {
+    profile: NativeClientProfileV1,
+    #[cfg(test)]
+    test_time: std::sync::Arc<std::sync::Mutex<Option<u64>>>,
+}
+
+impl NativeProfileClockV1 {
+    pub fn new(profile: NativeClientProfileV1) -> Self {
+        Self {
+            profile,
+            #[cfg(test)]
+            test_time: std::sync::Arc::new(std::sync::Mutex::new(None)),
+        }
+    }
+
+    pub(crate) fn chain_now_ms_v1(&self) -> Result<u64> {
+        #[cfg(test)]
+        if let Some(now) = *self
+            .test_time
+            .lock()
+            .map_err(|_| anyhow::anyhow!("test clock poisoned"))?
+        {
+            return Ok(now);
+        }
+        self.profile.chain_now_ms_v1()
+    }
+
+    pub(crate) fn proposal_timestamp_v1(
+        &self,
+        parent: u64,
+        maximum_step: u64,
+    ) -> Result<(u64, bool)> {
+        self.profile
+            .proposal_timestamp_at_v1(parent, maximum_step, self.chain_now_ms_v1()?)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn set_chain_time_for_test_v1(&self, now: u64) {
+        *self.test_time.lock().expect("unpoisoned test clock") = Some(now);
+    }
+}
+
 impl CanonicalAdmissionContextResolverV0 for NativeProfileClockV1 {
     fn chain_id_v0(&self) -> &str {
-        &self.0.chain_id
+        &self.profile.chain_id
     }
     fn now_unix_ms_v0(&self) -> u64 {
-        self.0.chain_now_ms_v1().unwrap_or(0)
+        self.chain_now_ms_v1().unwrap_or(0)
     }
 }
 
@@ -392,5 +441,36 @@ mod tests {
         changed = profile;
         changed.wall_clock_epoch_ms = unix_now_ms_v1().unwrap() + 60_000;
         assert!(changed.chain_now_ms_v1().is_err());
+    }
+    #[test]
+    fn shared_clock_preserves_exact_skew_and_overflow_boundaries_v1() {
+        let temp = tempfile::tempdir().unwrap();
+        let profile = generate_isolated_native_client_profile_v1(
+            &temp.path().join("clock"),
+            "trnm-clock-test",
+        )
+        .unwrap();
+        let clock = NativeProfileClockV1::new(profile);
+        let admission_clock = clock.clone();
+        clock.set_chain_time_for_test_v1(10_000);
+        assert_eq!(admission_clock.now_unix_ms_v0(), 10_000);
+        assert_eq!(
+            clock.proposal_timestamp_v1(5_000, 60_000).unwrap(),
+            (10_000, true)
+        );
+        assert_eq!(
+            clock.proposal_timestamp_v1(4_999, 60_000).unwrap(),
+            (10_000, false)
+        );
+        assert_eq!(
+            clock.proposal_timestamp_v1(15_000, 60_000).unwrap(),
+            (15_001, true)
+        );
+        assert!(clock.proposal_timestamp_v1(15_001, 60_000).is_err());
+        clock.set_chain_time_for_test_v1(u64::MAX);
+        assert_eq!(admission_clock.now_unix_ms_v0(), u64::MAX);
+        assert!(clock.proposal_timestamp_v1(1, 60_000).is_err());
+        clock.set_chain_time_for_test_v1(10_000);
+        assert!(clock.proposal_timestamp_v1(10_000, u64::MAX).is_err());
     }
 }

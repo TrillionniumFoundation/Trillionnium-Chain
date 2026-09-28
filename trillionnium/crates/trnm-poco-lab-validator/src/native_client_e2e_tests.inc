@@ -519,6 +519,9 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
                 assert_eq!(before.phase_v0(), expected_phase);
                 let parent_timestamp = authority.native_admission_parent_timestamp_v1().unwrap();
                 assert!(parent_timestamp > 0);
+                // Keep WAL expiry and readiness on the same fixture clock. The real
+                // owner remains signed; CPU contention is not a clock-skew test.
+                clients.set_chain_time_for_test_v1(parent_timestamp);
                 assert!(
                     authority.native_parent_timestamp_v1().is_err(),
                     "signed-phase admission must not open Ready proposal authority"

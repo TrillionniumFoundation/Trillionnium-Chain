@@ -237,6 +237,7 @@ struct Client {
 
 pub struct NativeClientRuntimeV1 {
     profile: NativeClientProfileV1,
+    clock: NativeProfileClockV1,
     set: ValidatorSet,
     root: PathBuf,
     socket: PathBuf,
@@ -259,6 +260,11 @@ pub struct NativeClientRuntimeV1 {
     cut_after_proof: bool,
 }
 impl NativeClientRuntimeV1 {
+    #[cfg(test)]
+    pub(crate) fn set_chain_time_for_test_v1(&self, now: u64) {
+        self.clock.set_chain_time_for_test_v1(now);
+    }
+
     pub fn open_v1(
         config: &LoadedValidatorConfig,
         authority: &ContinuousValidatorAuthorityV0,
@@ -320,12 +326,13 @@ impl NativeClientRuntimeV1 {
         namespace.update(profile.digest_v1()?);
         // Opening WAL takes the exclusive owner lock before a stale socket can
         // be removed. Restarted HandedOff inventory refuses readiness here.
+        let clock = NativeProfileClockV1::new(profile.clone());
         let mut admission = NodeOwnedTxAdmissionBoundaryV0::open_native_candidate_v1(
             root.join("admission.sqlite"),
             namespace.finalize().into(),
             profile.admission_profile_v1()?,
             NativeProfileSignerResolverV1(profile.clone()),
-            NativeProfileClockV1(profile.clone()),
+            clock.clone(),
             recovery_authority.is_some(),
         )?;
         let reader = NativeProofReaderV1 {
@@ -423,6 +430,7 @@ impl NativeClientRuntimeV1 {
         let metadata = fs::symlink_metadata(&socket)?;
         Ok(Self {
             profile,
+            clock,
             set: validator_set.clone(),
             root,
             socket,
@@ -882,7 +890,7 @@ impl NativeClientRuntimeV1 {
                     return self.error_reply(id, "backpressure", true);
                 };
                 if !self
-                    .profile
+                    .clock
                     .proposal_timestamp_v1(parent, 60_000)
                     .is_ok_and(|(_, ready)| ready)
                 {
@@ -987,8 +995,7 @@ impl NativeClientRuntimeV1 {
             return Ok(None);
         }
         let parent = authority.native_parent_timestamp_v1()?;
-        let (timestamp, ready_time) = match self.profile.proposal_timestamp_v1(parent, maximum_step)
-        {
+        let (timestamp, ready_time) = match self.clock.proposal_timestamp_v1(parent, maximum_step) {
             Ok(value) => value,
             Err(_) => return Ok(None),
         };

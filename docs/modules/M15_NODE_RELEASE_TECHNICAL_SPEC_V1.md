@@ -2405,3 +2405,16 @@ request only and never replay its side effect. Clearing a local pause is not
 RecoveryStart and cannot extract a parked authority. Resuming a parked peer
 still requires the independently authenticated recovery certificate and a
 durable peer-owner transition; target process-2 recovery alone does not supply it.
+
+## Native admission clock consistency
+
+Native socket admission, the durable admission resolver, and proposal timestamp
+selection share one profile clock. Normal builds always sample the existing
+profile-relative wall clock and preserve its skew and expiry checks. There is
+no wire/configuration field for a clock override. Unit-test builds may supply a
+process-local shared clock to the same resolver and readiness calculation; this
+lets socket/crypto/WAL tests exercise signed phases without assuming their
+fixture finishes inside the real five-second skew window. The production
+skew limit, transaction expiry, socket deadlines and actual owner checks do not
+change. Boundary tests cover exact skew, skew+1, ahead-of-clock parents and
+arithmetic overflow rather than accepting `time_unready` as a successful submit.
