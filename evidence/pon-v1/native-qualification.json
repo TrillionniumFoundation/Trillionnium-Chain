@@ -1,0 +1,152 @@
+{
+  "schema": "pon-native-source-qualification-v1",
+  "head": "8b87fee77ddee6a9778e8bebe880ba2627b05d5d",
+  "tree": "2068d839a45655e80653d4580a81023a064a7255",
+  "native_tests_filesystem": "tmpfs /dev/shm; logical behavior only",
+  "physical_disk_accepted": false,
+  "results": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "returncode": 0,
+      "seconds": 0.115,
+      "log": "8b87fee77dde-0.log"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "returncode": 0,
+      "seconds": 0.516,
+      "log": "8b87fee77dde-1.log"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_repository.py"
+      ],
+      "returncode": 0,
+      "seconds": 8.588,
+      "log": "8b87fee77dde-2.log"
+    },
+    {
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_reference.py"
+      ],
+      "returncode": 0,
+      "seconds": 0.115,
+      "log": "8b87fee77dde-3.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 0,
+      "seconds": 1.47,
+      "log": "8b87fee77dde-4.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features"
+      ],
+      "returncode": 0,
+      "seconds": 111.295,
+      "log": "8b87fee77dde-5.log",
+      "passed": 1794,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--doc",
+        "--all-features"
+      ],
+      "returncode": 0,
+      "seconds": 15.659,
+      "log": "8b87fee77dde-6.log",
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-research-protocol",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "--ignored"
+      ],
+      "returncode": 0,
+      "seconds": 5.028,
+      "log": "8b87fee77dde-7.log",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "seconds": 34.16,
+      "log": "8b87fee77dde-8.log"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "seconds": 0.008,
+      "log": "8b87fee77dde-9.log"
+    }
+  ],
+  "source_unchanged": true,
+  "production_activation": false,
+  "all_passed": true
+}

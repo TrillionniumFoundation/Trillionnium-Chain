@@ -11,3 +11,6 @@ they are not a qualified production node. Production remains disabled.
 [Exact shared procedures](protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md) and
 [module maturity](../config/pon/module-maturity-v1.json) distinguish the actual new
 conformance implementation from independent acceptance and deployment.
+
+[Executed local evidence and explicit limitations](../evidence/pon-v1/README.md) are
+retained with source hashes and raw results, including the first failed model experiment.

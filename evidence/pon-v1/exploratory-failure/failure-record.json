@@ -1,0 +1,5 @@
+{
+  "algorithm_sha256": "41762c60ad210e236df8949a09209bfafdcdb923e769e0b5461a691dab9793c5",
+  "outcome": "not_adopted; score zero on both evaluation partitions",
+  "changes_after_this_run": "corrected quantization erasing low-frequency features; balanced training loss by class; no external independent acceptance"
+}

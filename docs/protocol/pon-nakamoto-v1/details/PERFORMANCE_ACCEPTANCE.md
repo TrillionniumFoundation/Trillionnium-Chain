@@ -79,3 +79,11 @@ voting core. The exact experimental genesis is useful for reproducibility, not a
 production token launch. Improving the failing primitive or observation requires a new
 reviewed profile/context, not lowering assertions, erasing failures or adding a silent
 hash-only/BFT fallback.
+
+## P1.6 Recorded execution
+
+[The evidence package](../../../../evidence/pon-v1/README.md) contains the clean-source
+command exits,1794 native test results,18 executable-ledger tests,eight process-crash
+cuts,seven cross-language suites,work-cost samples,first failed model experiment and
+the later28-block release/reward/free-use run. Its source hashes are checked separately
+from its scientific scope; none of these results grant independent acceptance.

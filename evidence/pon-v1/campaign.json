@@ -1,0 +1,165 @@
+{
+  "schema": "pon-executed-campaign-v1",
+  "input_source_commit": "e7b36311fe5306bf63b7f88985801307e9e47d8c",
+  "implementation_head_at_execution": "8b87fee77ddee6a9778e8bebe880ba2627b05d5d",
+  "implementation_tree_clean": true,
+  "implementation_files_sha256": {
+    "config/pon/devnet-v1.json": "d8ea0c96d03f072313d058c17ba9cc06124a2725c3cac9f28b10bfdfa965b894",
+    "config/pon/ledger-v1.json": "ae7027d5c24caeefe201cebfca597a2519c943cee75d5b5c597af3679c76cf07",
+    "config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+    "config/pon/module-contracts-v1.json": "e4e85e08f8bcb65ee57a5db59726e79827ac7089f5a2c096d46dced4f2ef4d8b",
+    "config/pon/module-maturity-v1.json": "df6d66f6a2d17175dcfd902273bb055e696c6c74d0243dd2548ed6dc7a71a307",
+    "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "formal/pon-nakamoto-v1/README.md": "02a7d37948cc530f9834f610e19b6a97c4977177ec63fa2786f3b9fa16bf4008",
+    "formal/pon-nakamoto-v1/contract_wire.py": "3af90f511724d381f180e92addae87fe77767396bfbd6ff2c4cd5340904ad71e",
+    "formal/pon-nakamoto-v1/experiments/local_network.py": "49fe055d0fad16e71c46cf79014def589985294e7d0c65dde517faec43592dfc",
+    "formal/pon-nakamoto-v1/experiments/model_loop.py": "3f5e96d0105d1a4712226cfe2fae4ee43e85fabb5b4851893d8523133ec79fff",
+    "formal/pon-nakamoto-v1/experiments/run_campaign.py": "5993832b77689d1e57f5e6f8b1df32f1a7241c3955186dc91cbbcbcea2fcfc2d",
+    "formal/pon-nakamoto-v1/experiments/settle_model.py": "9b7cee5937c1ef8e779a3b28ee47abbf11781fdb8ce4978f9caacf8166d9bd16",
+    "formal/pon-nakamoto-v1/generate_vectors.py": "ed505ee4e36e6003609a20615b462e7b6462af3a05960009b1421026a8fe82c9",
+    "formal/pon-nakamoto-v1/ledger.py": "4c0f436eafdb3e71cc3e53d7bb1b33feab73ad4e236649ecaeb78216cb4f6a6c",
+    "formal/pon-nakamoto-v1/reference.py": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+    "formal/pon-nakamoto-v1/requirements.txt": "699b2a85292ac62587fbb32d0e207e709569d32540002ec0e8d206445d76cb6d",
+    "formal/pon-nakamoto-v1/test_contracts.py": "39b034165adf178b90a07723b1b294adc1c8fefa8a9e819754715daed839216d",
+    "formal/pon-nakamoto-v1/test_interop.py": "0c112f7290b22d8c7e7526cb8066bcbea127284d1284ec3b435c9894c11e60ae",
+    "formal/pon-nakamoto-v1/test_reference.py": "7260d84da792fd016d1ad57426216d9bf666b5697429a100244d3ac73c289e66",
+    "formal/pon-nakamoto-v1/vectors/expected.json": "87680265ed792d13b846d3dec4d278d00a615284767007f134aa6d73d1f89d0c",
+    "formal/pon-nakamoto-v1/vectors/header-short.bin": "1e16ca7e2d180ea53a846a91e0a95b1a1a94364f5e601ac5ef2e1b8bfbd7dd46",
+    "formal/pon-nakamoto-v1/vectors/header-trailing.bin": "a77ef2df6b8ff85a8d19ab352acbc17951f510a57d76a4443b0ada4ef60ca7b1",
+    "formal/pon-nakamoto-v1/vectors/header-version.bin": "05bbe219dbfdc3fdfa58318c58a14dbcc6cd946a9fb62c8cd8754fcbc17c5a9f",
+    "formal/pon-nakamoto-v1/vectors/header.bin": "773591e4a7ecd06635b45bff0685be4f8703b5e68466ddccd59e42898a89cdf4",
+    "formal/pon-nakamoto-v1/vectors/matrices.bin": "312ad8d99b89dbfb0ab13916e97048d8b5fb5e92e695da2d7b7e132fdd475321",
+    "formal/pon-nakamoto-v1/vectors/state.json": "f87cd9ba36b781269381668a4ef1a1b84ebeefeedd1b97c0845f674a8b4794a9",
+    "formal/pon-nakamoto-v1/vectors/tx-01.bin": "03e53520844dbebf7f7b36cd301c8e23a1ed2ef35c75cdcc3120bf68de56b228",
+    "formal/pon-nakamoto-v1/vectors/tx-02.bin": "95298c561dc3b49601516d0599f9450c6dc01424b967f5e2b500e49b85d58e25",
+    "formal/pon-nakamoto-v1/vectors/tx-03.bin": "ef6c0f53452cf1f93185d2d6bdbb0c91fb34e3465b74cdcd3165377f2b2fb41d",
+    "formal/pon-nakamoto-v1/vectors/tx-04.bin": "402cc94e2254a53984df15b816eb1d42d1c1066956bf98b6362681af423c9edd",
+    "formal/pon-nakamoto-v1/vectors/tx-05.bin": "abbd3000116aabcc00d0dd325fe01b7c0e5eb78dca51079c2edae146612b9e9e",
+    "formal/pon-nakamoto-v1/vectors/tx-06.bin": "dcf790c965d45befc146cd6b0c6d941d440121afb8631228b6588500e1ae4c80",
+    "formal/pon-nakamoto-v1/vectors/tx-07.bin": "76078d88f24408387ab5c8356e69323a0e518010006d74e2479abc616295d21c",
+    "formal/pon-nakamoto-v1/vectors/tx-08.bin": "a7f9aa6821bcf4d7b1271641982cc8cfae7a1ad8197eb3f5c646d3a27c42c4c5",
+    "formal/pon-nakamoto-v1/vectors/tx-09.bin": "8c6d8813baa7838819129431bfb83c66d08708b9a23662d308848ba517de958d",
+    "formal/pon-nakamoto-v1/vectors/tx-10.bin": "d1f2bb7082d83b992adbcd072dd1ad131e1088076150d0b085f44fee2351bf1a",
+    "formal/pon-nakamoto-v1/vectors/tx-11.bin": "b6b733b380842c376d86d89aa32a4cf7825275de17a8c9a88534ee6400a36a79",
+    "formal/pon-nakamoto-v1/vectors/tx-12.bin": "3889d78cef1e50506b962c144bd64a5c64af32a35299d0ae8efcf0cd41442c16",
+    "formal/pon-nakamoto-v1/vectors/tx-bad-length.bin": "5fc6a78ecd565300f1a65cc48d1beb868ad43546382f37363e912c3e6e1ac499",
+    "formal/pon-nakamoto-v1/vectors/tx-short.bin": "debbb64d03eb18aa6c3057d1be3783ed1ff992e697875f097627205d126833ff",
+    "formal/pon-nakamoto-v1/vectors/tx-trailing.bin": "e04649bf9c8182381157883b201e4df0868940c2633caf64a2cf0092b7bb6b5e",
+    "formal/pon-nakamoto-v1/vectors/tx-unknown.bin": "1f75584a97ecdcb55e072b9b6e876b52274154338aad583f5dd8edaf80118368",
+    "formal/pon-nakamoto-v1/vectors/tx-zero-nonce.bin": "270c79f6ef355e5757eda4669494eab6ee1098573ebeda8860d1f97262b486f9",
+    "formal/pon-nakamoto-v1/vectors/work.bin": "a1cc6c9ac1fea4da3521f7da6902f69d22f7257c572b59369861b541074b3df4",
+    "formal/pon-nakamoto-v1/work_oracle.py": "39df44648a31b58dbe6e69631f7755ee7fb029c77a18be5052574019da7e8caa",
+    "trillionnium/crates/trnm-protocol/Cargo.toml": "cf07bae91c180b933b5acc57e9b3bfe2cb6c34f9f74bec14c050a203bb1ecd51",
+    "trillionnium/crates/trnm-protocol/README.md": "743dd4c144287cd74dc91df613c829df11854cda988fd37642f27f43db45829d",
+    "trillionnium/crates/trnm-protocol/examples/pon_wire.rs": "2452de24afff42aaa72ac9a148d39bb0fe16e70f0547f33a3fae2ab8274260ad",
+    "trillionnium/crates/trnm-protocol/src/lib.rs": "03018856633755682c3fa7e4b04df288763c50ff551b2b53ccfa06291f4228d9",
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "13921155a33401852c2afce26bef188cb9c1a8094999e7b2fe4a285baa580bdc",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "f74147b05e106b2e29c2f7531c3c1dcef47a9b0ea878fce11c99655abc0fa760",
+    "trillionnium/crates/trnm-crypto-primitives/README.md": "e9c7855dd6da8b1611262050fc155d636d5d85b2ae62c25f3cb245746063628f",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs": "a6a7d58f5d3bbfabb63f4c0a9e9a14cc183f02d820b55999f376624180460cae",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs": "af443df76b65018d287874d22866ce873e283a3ca3526d5be6f9508da5af517a",
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "3313731eef97715af3750b824c2d75d975484bd9776fbaf0321dc132bcdc8bbf",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "760805cbddb2fc247f9ef1c789f35c179190f365aae9b2f9614c9095685e1ad8"
+  },
+  "environment": {
+    "platform": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "cpu_count": 48,
+    "test_threads": 1,
+    "blas_threads": 1,
+    "filesystem": "caller output path; no tmpfs override or power-loss claim"
+  },
+  "commands": [
+    {
+      "name": "contract-tests",
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/test_contracts.py"
+      ],
+      "returncode": 0,
+      "seconds": 7.034173282008851,
+      "log": "contract-tests.log"
+    },
+    {
+      "name": "native-probes",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-protocol",
+        "-p",
+        "trnm-crypto-primitives",
+        "--examples"
+      ],
+      "returncode": 0,
+      "seconds": 1.5193090160028078,
+      "log": "native-probes.log"
+    },
+    {
+      "name": "cross-language",
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/test_interop.py"
+      ],
+      "returncode": 0,
+      "seconds": 0.3654159909929149,
+      "log": "cross-language.log"
+    },
+    {
+      "name": "work-cost",
+      "command": [
+        "/home/qian-qi/.cache/trnm-portable-clean-build/release/examples/pon_cost"
+      ],
+      "returncode": 0,
+      "seconds": 0.3657216829888057,
+      "log": "work-cost.log"
+    },
+    {
+      "name": "model-learning",
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/experiments/model_loop.py",
+        "--source",
+        "e7b36311fe5306bf63b7f88985801307e9e47d8c",
+        "--out",
+        "/tmp/trnm-pon-exact-8b87fee77dde/model"
+      ],
+      "returncode": 0,
+      "seconds": 4.827782170003047,
+      "log": "model-learning.log"
+    },
+    {
+      "name": "model-settlement",
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/experiments/settle_model.py",
+        "--input",
+        "/tmp/trnm-pon-exact-8b87fee77dde/model",
+        "--out",
+        "/tmp/trnm-pon-exact-8b87fee77dde/settlement"
+      ],
+      "returncode": 0,
+      "seconds": 21.927164197986713,
+      "log": "model-settlement.log"
+    },
+    {
+      "name": "loopback-network",
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/experiments/local_network.py",
+        "--out",
+        "/tmp/trnm-pon-exact-8b87fee77dde/network"
+      ],
+      "returncode": 0,
+      "seconds": 24.681265951978276,
+      "log": "loopback-network.log"
+    }
+  ],
+  "all_commands_passed": true,
+  "independent_accepted": false,
+  "production_activation": false
+}

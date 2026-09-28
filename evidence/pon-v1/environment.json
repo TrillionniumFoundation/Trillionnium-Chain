@@ -1,0 +1,21 @@
+{
+  "platform": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "cpu": {
+    "Architecture": "x86_64",
+    "CPU(s)": "48",
+    "Model name": "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz",
+    "Thread(s) per core": "2",
+    "Core(s) per socket": "12",
+    "Socket(s)": "2"
+  },
+  "python": "3.12.3",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "numpy": "1.26.4",
+  "cryptography": "41.0.7",
+  "gpu_used": false,
+  "native_test_temporary_filesystem": "tmpfs /dev/shm",
+  "scientific_and_reorg_filesystem": "ext4",
+  "network": "three localhost processes on one operator-controlled machine",
+  "chain_time": "fixed logical timestamps, no actual Poisson block schedule",
+  "production_activation": false
+}

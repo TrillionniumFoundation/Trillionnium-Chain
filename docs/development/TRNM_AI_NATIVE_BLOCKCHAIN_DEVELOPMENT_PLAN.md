@@ -244,7 +244,7 @@ merge, a green document checker and model registry publication are not activatio
 Run project preflight before edits/commit/push. On a committed, unchanged checkout:
 
 ```bash
-bash scripts/project-preflight.sh
+bash scripts/project-preflight.sh --audit
 python3 scripts/ci/check_repository.py
 python3 scripts/ci/test_repository.py
 python3 formal/pon-nakamoto-v1/test_reference.py
@@ -306,3 +306,8 @@ visible. The specific positive test has no token-market value and no production 
 Root README remains intentionally blank. Current review policy is owner-approved zero
 mandatory PR approvals; source checks reflect that instead of silently reinstating old
 review counts. Force-push/deletion protections and runtime activation controls are separate.
+
+[Executed evidence and retained failures](../../evidence/pon-v1/README.md) bind the
+implementation, real parameter artifacts, disk crash tests and local network/cost campaigns.
+Read-only qualification on main uses `--audit`; editing/push preflight still requires
+an allowed continuation branch. No mandatory reviewer count is silently restored.
