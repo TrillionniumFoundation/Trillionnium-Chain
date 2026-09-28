@@ -39,6 +39,16 @@ p1_guard_lines=(
   "      (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')"
 )
 
+# Every persistent runner guard is intersected with the non-PR event domain.
+pr_fence="github.event_name != 'pull_request' && github.event_name != 'pull_request_target'"
+for guard_name in standard_guard_lines payload_guard_lines p1_guard_lines; do
+  declare -n guard_ref="$guard_name"
+  guard_ref[1]="      $pr_fence && (${guard_ref[1]#      }"
+  last_index=$((${#guard_ref[@]} - 1))
+  guard_ref[$last_index]="${guard_ref[$last_index]})"
+done
+unset -n guard_ref
+
 fixture_root=$(mktemp -d)
 trap 'rm -rf -- "$fixture_root"' EXIT
 
@@ -113,12 +123,12 @@ write_poco_workflow() {
     'jobs:' \
     '  scheduled-main-only:' \
     '    if: >-' \
-    "      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&" \
+    "      $pr_fence && (github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&" \
     "      (github.event_name == 'schedule' && github.ref == 'refs/heads/main' ||" \
     "       ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') &&" \
     "        github.triggering_actor == github.actor &&" \
     "        (github.event_name != 'pull_request' ||" \
-    '         github.event.pull_request.head.repo.full_name == github.repository)))' \
+    '         github.event.pull_request.head.repo.full_name == github.repository))))' \
     "    $expected" \
     '    steps:' \
     '      - run: true' >"$poco_workflow"
@@ -446,3 +456,42 @@ git -C "$repo" add .github/workflows
 expect_pass independent-hosted-feedback-staged --staged 5
 git -C "$repo" commit -qm 'registered hosted feedback fixture'
 expect_pass independent-hosted-feedback-head --head 5
+
+# A maintainer same-repository PR guard was once accepted; it is now forbidden.
+cp "$policy_workflow" "$fixture_root/policy-positive.yml"
+python3 - "$policy_workflow" <<'OLD_GUARD'
+from pathlib import Path
+import sys
+p=Path(sys.argv[1]); s=p.read_text()
+prefix="github.event_name != 'pull_request' && github.event_name != 'pull_request_target' && ("
+assert prefix in s
+s=s.replace(prefix,"",1)
+start=s.index('    if: >-\n'); end=s.index('    runs-on:',start)
+g=s[start:end].rstrip(); assert g.endswith(')')
+s=s[:start]+g[:-1]+'\n'+s[end:]; p.write_text(s)
+OLD_GUARD
+expect_fail old-maintainer-pr-guard-is-no-longer-trusted --worktree
+cp "$fixture_root/policy-positive.yml" "$policy_workflow"
+expect_pass restored-non-pr-persistent-runner --worktree 5
+
+doc_workflow="$workflow_dir/trnm-documentation-truth.yml"
+cp "$root/.github/workflows/trnm-documentation-truth.yml" "$doc_workflow"
+expect_pass hosted-source-and-merge-documentation --worktree 5
+for mutation in persistent actor trigger skip; do
+  cp "$root/.github/workflows/trnm-documentation-truth.yml" "$doc_workflow"
+  python3 - "$doc_workflow" "$mutation" <<'DOC_MUTANT'
+from pathlib import Path
+import sys
+p=Path(sys.argv[1]); s=p.read_text()
+changes={
+ 'persistent':('runs-on: ubuntu-24.04','runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]'),
+ 'actor':("github.event_name == 'pull_request'\n", "github.event_name == 'pull_request' && github.actor == 'ProfHepta'\n"),
+ 'trigger':('  pull_request:', '  pull_request_target:'),
+ 'skip':('      - name: Validate prospective-merge plan, module coverage and reference closure','      - name: Validate prospective-merge plan, module coverage and reference closure\n        if: false'),
+}
+a,b=changes[sys.argv[2]]; assert a in s; p.write_text(s.replace(a,b,1))
+DOC_MUTANT
+  expect_fail "hosted-documentation-$mutation" --worktree
+done
+cp "$root/.github/workflows/trnm-documentation-truth.yml" "$doc_workflow"
+expect_pass restored-hosted-documentation --worktree 5

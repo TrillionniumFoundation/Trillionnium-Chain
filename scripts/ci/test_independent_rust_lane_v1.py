@@ -185,6 +185,34 @@ class IndependentLaneTests(unittest.TestCase):
         if stat.exists():
             self.assertEqual(stat.read_text().split(")", 1)[1].split()[0], "Z")
 
+    def test_classification_uses_observed_boundary_not_log_keywords(self):
+        code, summary = self.run_plan([
+            ("assertion", self.python("print('Permission denied'); raise SystemExit(7)"), 5),
+            ("exit124", self.python("raise SystemExit(124)"), 5),
+            ("deadline", self.python("import time; time.sleep(30)"), 0.1),
+            ("absent", [str(self.top / "missing-binary")], 5),
+            ("last", self.python("pass"), 5),
+        ])
+        self.assertEqual(code, 7)
+        rows = summary["commands"]
+        self.assertEqual([r["failure_class"] for r in rows], [
+            "command-failure", "command-failure", "deadline-exhausted", "infrastructure", "none"])
+        self.assertEqual(rows[1]["termination"], "process-exit")
+        self.assertEqual(rows[1]["process_returncode"], 124)
+        self.assertEqual(rows[2]["termination"], "deadline")
+        self.assertEqual(rows[3]["errno"], 2)
+        self.assertEqual(rows[4]["status"], "passed")
+        self.assertEqual(summary["status"], "failed")
+
+    def test_output_limit_is_classified_by_runner_observation(self):
+        observation = {}
+        code = lane.run_command(self.python("print('x'*8192)"), self.root, os.environ.copy(),
+                                self.top / "output-budget.log", 5, max_bytes=4096,
+                                observation=observation)
+        self.assertEqual(code, 125)
+        self.assertEqual(observation["failure_class"], "resource-limit")
+        self.assertEqual(observation["termination"], "output-budget")
+
 
 if __name__ == "__main__":
     unittest.main()

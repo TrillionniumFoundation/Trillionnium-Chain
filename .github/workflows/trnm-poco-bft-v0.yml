@@ -162,13 +162,8 @@ jobs:
   vectors-schema-proto:
     name: Frozen vectors, schemas, and protobuf projection
     if: >-
-      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' &&
-       github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
-         github.triggering_actor == github.actor &&
-         (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository)))
+      github.event_name != 'pull_request' && github.event_name != 'pull_request_target' &&
+      (github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' && github.ref == 'refs/heads/main' || ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') && github.triggering_actor == github.actor && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository))))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 30
     env:
@@ -286,13 +281,8 @@ jobs:
   rust:
     name: Rust tests, Clippy, and formatting
     if: >-
-      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' &&
-       github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
-         github.triggering_actor == github.actor &&
-         (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository)))
+      github.event_name != 'pull_request' && github.event_name != 'pull_request_target' &&
+      (github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' && github.ref == 'refs/heads/main' || ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') && github.triggering_actor == github.actor && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository))))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 60
     env:
@@ -417,13 +407,8 @@ jobs:
   formal:
     name: Quint invariants, witnesses, and retained mutants
     if: >-
-      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' &&
-       github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
-         github.triggering_actor == github.actor &&
-         (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository)))
+      github.event_name != 'pull_request' && github.event_name != 'pull_request_target' &&
+      (github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' && github.ref == 'refs/heads/main' || ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') && github.triggering_actor == github.actor && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository))))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 45
     env:
@@ -454,13 +439,8 @@ jobs:
     name: Development-only integration library artifact build
     needs: [rust, vectors-schema-proto]
     if: >-
-      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' &&
-       github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
-         github.triggering_actor == github.actor &&
-         (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository)))
+      github.event_name != 'pull_request' && github.event_name != 'pull_request_target' &&
+      (github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' && github.ref == 'refs/heads/main' || ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') && github.triggering_actor == github.actor && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository))))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 60
     env:
@@ -686,13 +666,8 @@ jobs:
   dependency-policy:
     name: Cargo dependency policy
     if: >-
-      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' &&
-       github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
-         github.triggering_actor == github.actor &&
-         (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository)))
+      github.event_name != 'pull_request' && github.event_name != 'pull_request_target' &&
+      (github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' && github.ref == 'refs/heads/main' || ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') && github.triggering_actor == github.actor && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository))))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 30
     env:
@@ -747,13 +722,8 @@ jobs:
   fuzz-smoke:
     name: Bounded canonical-input fuzz smoke
     if: >-
-      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' &&
-       github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
-         github.triggering_actor == github.actor &&
-         (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository)))
+      github.event_name != 'pull_request' && github.event_name != 'pull_request_target' &&
+      (github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' && github.ref == 'refs/heads/main' || ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') && github.triggering_actor == github.actor && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository))))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 45
     env:

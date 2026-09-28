@@ -19,6 +19,8 @@ SELF_HOSTED = "runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]"
 HOSTED_BASELINE = "runs-on: ubuntu-24.04"
 BASELINE = "trnm-required-baseline.yml"
 FEEDBACK = "trnm-independent-rust-feedback.yml"
+DOCUMENTATION = "trnm-documentation-truth.yml"
+PR_FENCE = "github.event_name != 'pull_request' && github.event_name != 'pull_request_target'"
 
 STANDARD_GUARD = (
     "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
@@ -343,13 +345,41 @@ def accepted_privileged_guards(name: str, job: str) -> set[str]:
             "|| (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') || (github.actor == 'ProfHepta' && github.triggering_actor == 'ProfHepta') || (github.actor == 'github-actions[bot]'",
         )
     )
-    # The prospective-merge documentation job is meaningful only for a PR.
-    # Keep the exact trusted-runner guard intact, but bind it at the job level
-    # so push/dispatch runs are visibly skipped rather than succeeding after
-    # every step was skipped.
-    if name == "trnm-documentation-truth.yml" and job == "prospective-merge":
-        variants = {f"github.event_name == 'pull_request' && ({guard})" for guard in variants}
-    return variants
+    return {f"{PR_FENCE} && ({guard})" for guard in variants}
+
+def validate_documentation(name: str, text: str, jobs: dict[str, dict[str, object]]) -> int:
+    if set(jobs) != {"source", "prospective-merge"}:
+        raise PolicyError(f"{name}: exact source and prospective-merge jobs required")
+    for job, props in jobs.items():
+        if props["uses"] or props["runs_on"] != [HOSTED_BASELINE]:
+            raise PolicyError(f"{name}: documentation must run on fresh hosted runners")
+    if jobs["source"]["ifs"] or jobs["prospective-merge"]["guards"] != ["github.event_name == 'pull_request'"]:
+        raise PolicyError(f"{name}: source must be actor-independent and merge must run for every PR")
+    active = "\n".join(line for line in text.splitlines() if not line.lstrip().startswith("#"))
+    if "pull_request_target" in active or "continue-on-error:" in active:
+        raise PolicyError(f"{name}: privileged trigger or masked result")
+    if re.findall(r"(?m)^        if:", active):
+        raise PolicyError(f"{name}: documentation commands must not be conditionally skipped")
+    if re.search(r"(?m)^\s+contents:\s*read\s*$", active) is None:
+        raise PolicyError(f"{name}: read-only contents permission required")
+    if re.search(r"(?m)^\s+[a-z-]+:\s*write\s*$", active):
+        raise PolicyError(f"{name}: write permission forbidden")
+    required = (
+        "name: documentation-truth", "name: documentation-truth-merge",
+        "ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}", "ref: ${{ github.sha }}",
+        "TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}",
+        "TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}",
+        "TRNM_DOC_BINDING_MODE: merge", "TRNM_DOC_BINDING_MODE: ${{ github.event_name == 'pull_request' && 'source' || 'local' }}",
+        "--expected-sha256", "--mode source", "--mode merge",
+    )
+    if any(token not in active for token in required):
+        raise PolicyError(f"{name}: source/merge binding or evidence retention missing")
+    if active.count("persist-credentials: false") != 2 or active.count("fetch-depth: 0") != 2:
+        raise PolicyError(f"{name}: exact checkout credential/history contract changed")
+    if active.count("bash scripts/ci/check_canonical_development_plan.sh") != 2:
+        raise PolicyError(f"{name}: both source and merge validation must execute")
+    return len(jobs)
+
 
 def validate_privileged(name: str, jobs: dict[str, dict[str, object]]) -> int:
     for job, props in jobs.items():
@@ -379,6 +409,7 @@ def main() -> int:
     hosted_jobs = 0
     privileged_jobs = 0
     feedback_jobs = 0
+    documentation_jobs = 0
     for name in names:
         text = read_workflow(name)
         jobs = parse_jobs(name, text)
@@ -386,6 +417,8 @@ def main() -> int:
             hosted_jobs += validate_baseline(name, text, jobs)
         elif name == FEEDBACK:
             feedback_jobs += validate_feedback(name, text, jobs)
+        elif name == DOCUMENTATION:
+            documentation_jobs += validate_documentation(name, text, jobs)
         else:
             privileged_jobs += validate_privileged(name, jobs)
     if hosted_jobs == 0 or privileged_jobs == 0:
@@ -395,7 +428,7 @@ def main() -> int:
     print(
         "ci_runner_policy=mixed-trust "
         f"hosted_jobs={hosted_jobs} privileged_jobs={privileged_jobs} source={MODE[2:]} "
-        f"hosted_feedback_jobs={feedback_jobs}"
+        f"hosted_feedback_jobs={feedback_jobs} hosted_documentation_jobs={documentation_jobs} persistent_runner_pr_events=denied"
     )
     return 0
 

@@ -30,12 +30,8 @@ jobs:
   focused-semantics:
     name: focused-node-commit-exec-x230
     if: >-
-      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' ||
-      ((github.actor == 'ProfAlexQI' || github.actor == 'Franksudoman' ||
-      github.actor == 'ProfHepta') && github.triggering_actor == github.actor &&
-      (github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository)))
+      github.event_name != 'pull_request' && github.event_name != 'pull_request_target' &&
+      (github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') && github.triggering_actor == github.actor && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository))))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 60
     env:

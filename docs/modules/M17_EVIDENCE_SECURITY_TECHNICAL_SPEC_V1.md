@@ -911,3 +911,28 @@ Derived history fields keep their exact JSON types and finite numeric values.
 These are structural rejection conditions, not cryptographic or performance
 acceptance: the actual Rust client verifier and exact-source/run binding remain
 required. Synthetic structural fixtures never become a valid proof source.
+
+## Persistent-runner PR isolation
+
+Every self-hosted job is excluded for both pull_request and pull_request_target
+events, including same-repository maintainer PRs. Its previous actor/ref guard
+remains an additional requirement for trusted push, dispatch and schedule.
+Hosted baseline and independent head/merge lanes remain unchanged. Both named
+documentation source and prospective-merge checks now run on hosted workers
+without maintainer filtering; the source uses the PR head and the merge uses
+the event merge with ordered parent checks in the existing binding verifier.
+The change retains each status name and command rather than treating a skipped
+self-hosted job as qualification. Per-job Cargo extraction continues to use the
+existing root-read-only cache/index authority and private writable source tree.
+This is repository policy, not evidence that GitHub settings or hosted runs have
+already accepted a new candidate.
+
+The independent Rust runner records the observed failure boundary separately
+from the unchanged exit code/status: spawn/log-creation OS failures are
+infrastructure, runner-observed deadlines and output ceilings are resource
+outcomes, and a launched command's nonzero exit remains command-failure.
+Neither a `Permission denied` log string nor a command choosing exit124 can
+masquerade as infrastructure or a runner timeout. Command-failure does not
+assert a product root cause; compiler/test/adapter diagnosis still uses the
+retained exact command and hashed raw log. Every failure remains nonzero and
+later independent tests/lint still execute.

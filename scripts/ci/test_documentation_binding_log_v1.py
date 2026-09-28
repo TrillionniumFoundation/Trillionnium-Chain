@@ -151,7 +151,7 @@ class BindingTests(unittest.TestCase):
         for mode in ("source", "merge"):
             self.assertIn(f'--expected-sha256 "${{digest}}" --mode {mode}', workflow)
         self.assertEqual(workflow.count("python3 scripts/ci/documentation_binding_log_v1.py emit"), 2)
-        self.assertEqual(workflow.count("runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]"), 2)
+        self.assertEqual(workflow.count("runs-on: ubuntu-24.04"), 2)
         self.assertIn("contents: read", workflow)
         self.assertNotIn("continue-on-error:", workflow)
 

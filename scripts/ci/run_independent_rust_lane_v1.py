@@ -108,8 +108,11 @@ def terminate(process: subprocess.Popen) -> None:
 
 
 def run_command(command: list[str], root: Path, env: dict[str, str], log: Path,
-                seconds: int, max_bytes: int = MAX_LOG_BYTES) -> int:
+                seconds: int, max_bytes: int = MAX_LOG_BYTES,
+                observation: dict | None = None) -> int:
     started = time.monotonic()
+    observed = observation if observation is not None else {}
+    observed.update(termination="launch", failure_class="infrastructure")
     with log.open("xb") as stream:
         process = subprocess.Popen(command, cwd=root, env=env, stdout=stream,
                                    stderr=subprocess.STDOUT, start_new_session=True)
@@ -117,10 +120,14 @@ def run_command(command: list[str], root: Path, env: dict[str, str], log: Path,
             while True:
                 code = process.poll()
                 if os.fstat(stream.fileno()).st_size > max_bytes:
+                    observed.update(termination="output-budget", failure_class="resource-limit")
                     return 125
                 if code is not None:
+                    observed.update(termination="process-exit", process_returncode=code,
+                                    failure_class="none" if code == 0 else "command-failure")
                     return code if code >= 0 else 128 - code
                 if time.monotonic() - started >= seconds:
+                    observed.update(termination="deadline", failure_class="deadline-exhausted")
                     return 124
                 time.sleep(0.05)
         finally:
@@ -150,10 +157,12 @@ def execute(root: Path, evidence: Path, plan: list[tuple[str, list[str], int]],
         started = time.monotonic_ns()
         log = evidence / (row["name"] + ".log")
         try:
-            code = run_command(row["command"], root, env, log, row["deadline_seconds"])
+            code = run_command(row["command"], root, env, log, row["deadline_seconds"],
+                               observation=row)
         except OSError as error:
             code = 2
             row["error"] = str(error)
+            row.update(failure_class="infrastructure", termination="launch", errno=error.errno)
         row.update(exit_code=code, status="passed" if code == 0 else "failed",
                    elapsed_ms=(time.monotonic_ns() - started) // 1_000_000)
         if log.exists():
