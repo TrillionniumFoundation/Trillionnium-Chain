@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bind retained local evidence to actual inputs; never grant independent acceptance."""
 from pathlib import Path
-import hashlib,json
+import hashlib,json,subprocess
 
 def require(ok,msg):
     if not ok:raise ValueError(msg)
@@ -11,6 +11,7 @@ def validate(root,evidence=None):
     manifest=load('manifest.json')
     require(manifest['schema']=='pon-local-evidence-files-v1'and manifest['independent_accepted']is False and manifest['production_activation']is False,'local report cannot grant acceptance')
     mandatory={'campaign.json','native-qualification.json','summary.json','work-cost.json','model-report.json','settlement-report.json','network-report.json','environment.json','artifacts/model.json','artifacts/model-work.bin','exploratory-failure/report.json','exploratory-failure/failure-record.json'}
+    mandatory.update({'accepted-block/'+n for n in ['expected.json','header.bin','transaction.bin','work.bin','genesis-state.json','post-state.json']})
     require(mandatory<=set(manifest['files']),'missing positive or failed evidence')
     for relative,digest in manifest['files'].items():
         p=(evidence/relative).resolve();require(p.is_relative_to(evidence)and p.is_file(),'missing/escaping evidence path')
@@ -43,4 +44,11 @@ def validate(root,evidence=None):
     for k in ['generation_ns','verification_ns','invalid_verification_ns','cheap_forgery_ns']:require(len(cost[k])==32 and all(type(n)is int and n>0 for n in cost[k]),'missing raw cost samples')
     require(s['production_activation']is False and len(s['not_accepted'])>=5,'remaining blockers erased')
     return {'evidence_files':len(manifest['files']),'source_bindings':len(manifest['source_files_sha256']),'implementation_commit':manifest['implementation_commit'],'consistency':'verified','independent_accepted':False,'production_activation':False}
-if __name__=='__main__':print(json.dumps(validate(Path(__file__).resolve().parents[2]),sort_keys=True))
+if __name__=='__main__':
+    root=Path(__file__).resolve().parents[2];report=validate(root)
+    manifest=json.loads((root/'evidence/pon-v1/manifest.json').read_text())
+    tracked=set(subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines())
+    required={'evidence/pon-v1/'+name for name in manifest['files']}
+    require(required<=tracked,'evidence exists locally but is absent from the Git index: '+repr(sorted(required-tracked)))
+    report['tracked_artifacts_verified']=True
+    print(json.dumps(report,sort_keys=True))

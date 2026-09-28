@@ -37,9 +37,16 @@
     "native-qualification.json": "f5e28c196d5db53049b16a518ca01359061fcea764e600ced63004af6fb17ff5",
     "network-report.json": "abe48263c1d22e994d0c337d471719704cfd81ae26eeebee781554dd8fd1f095",
     "settlement-report.json": "1fea391aea704fc26bc1093bc7f497f96c390aff3c48306a5a9b9172e9e656b3",
-    "summary.json": "edb378774a99c62d4d359efbc91e0d940ad89b443be39593a36105a4038ee60c",
+    "summary.json": "c811b2d0a924de799e9eb0d1206716aa36ef9da129ad68c40a7f822fddbcb2fd",
     "work-cost.json": "21ecfd272ed4e91404fd50549734900abc5cc8d0b098866fb40e4448bb07355b",
-    "README.md": "8192b9c183a3c7edbd4fb0d0c488bb47191ce45d56ddecd3d7d277a1eeaaaf30"
+    "README.md": "3495fa8ad99c2fdbe1943d86a2efcb7481c3c911114d3a8cc0778c2549fc8d5f",
+    "accepted-block/expected.json": "9a4364957587b174534fb972eb3090d54761dce760de610034e1dfff01969b84",
+    "accepted-block/transaction.bin": "968eaa84b6e3331ac008a6c70b7e029370cce085b7d0c98c023098c077caf410",
+    "accepted-block/genesis-state.json": "1ca405c1038a18f8ab8c0bd8719c0d51ee20ff30f61c644dab520ed4996a4311",
+    "accepted-block/header.bin": "915c86ad8e023b26a2d279a93a9a91790f1a730a4135d7e96b05071f18f17415",
+    "accepted-block/work.bin": "bfcc67848a1d1924ce9b1a05212480d836777fc31179ab31f5df0a0e0a0cb1de",
+    "accepted-block/post-state.json": "18380a106d85c91b5ce7ed70de4d07188278d9b9c699ec9d04b0ab0ea4c6a3c6",
+    "accepted-block/test-output.log": "bffc2de0467fb1cd007118634d3030db9ee5af70c75deb4a1252abbb1c2c230b"
   },
   "source_files_sha256": {
     "config/pon/devnet-v1.json": "d8ea0c96d03f072313d058c17ba9cc06124a2725c3cac9f28b10bfdfa965b894",
@@ -744,7 +751,8 @@
     "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_unicode.rs": "a6740cb2e72fa6c8b2468de5150dff18e673afaceff578a7efe13856a8279a92",
     "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_reject.rs": "590ed1461fc5cee5146f1e323e0dcab63a4913a9632b6413fa8144bba9c08302",
     "trillionnium/crates/trnm-worker-agent/src/workflow.rs": "c0d941629c3bcadda4e5f349fdddb3bd1cb2ad70d9d34d01892956ca299da429",
-    "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs": "fcccdd423517338c35b0151a822c0c0f4b7137b3dbb43c5d0988ac7b09492f0d"
+    "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs": "fcccdd423517338c35b0151a822c0c0f4b7137b3dbb43c5d0988ac7b09492f0d",
+    "scripts/ci/test_pon_accepted_block.py": "87c27321f8067da85c5bad019df678ae4cb509d50ae225dc7ccbb0f02bf8da7a"
   },
   "independent_accepted": false,
   "production_activation": false

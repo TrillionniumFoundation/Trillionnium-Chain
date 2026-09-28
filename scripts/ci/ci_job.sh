@@ -13,6 +13,7 @@ case "${1:?required job}" in
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives --examples
     python3 formal/pon-nakamoto-v1/test_contracts.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+    TRNM_NATIVE_MODE=release python3 scripts/ci/test_pon_accepted_block.py
     ;;
   fuzz-smoke)
     python3 scripts/ci/test_repository.py

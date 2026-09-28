@@ -15,7 +15,8 @@
     "arithmetic_reference_tests": 28,
     "executable_contract_tests": 18,
     "cross_language_tests": 7,
-    "actual_process_crash_cuts": 8
+    "actual_process_crash_cuts": 8,
+    "accepted_block_cross_checks": 4
   },
   "work": {
     "proof_bytes": 49188,

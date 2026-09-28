@@ -58,3 +58,17 @@ Not accepted: cost-hardness and public proof-admission security; ordinary native
 Hepta owner integration; independently administered evaluation and geographically distinct
 availability; physical power loss/WAN consensus; unseen future model efficacy. Production
 activation remains false. No old BFT or successful-stub fallback was introduced.
+
+## Complete accepted-block vector
+
+[The accepted-block record](accepted-block/expected.json) includes exact genesis state,
+post-state, signed transfer, header and winning work certificate. Four additional tests
+check Rust/Python genesis and post-state roots, native header/transaction/work validation,
+actual ledger acceptance, and rejection without persistence after body mutation. These
+supplement the earlier syntax-only command samples rather than relabeling them as valid
+business transitions. `test_pon_accepted_block.py` runs in the real protocol CI lane.
+
+A fresh synthetic checkout caught raw logs excluded by the repository-wide ignore rule.
+The manifested logs are now explicitly tracked; CLI evidence validation requires them
+in the Git index, not merely present in the author's working directory. The earlier
+failed publication check was a packaging failure, not a successful evidence readback.
