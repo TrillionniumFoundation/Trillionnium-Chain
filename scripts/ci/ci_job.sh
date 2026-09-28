@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
 case "${1:?required job}" in
   repository-truth)
     bash scripts/project-preflight.sh --audit

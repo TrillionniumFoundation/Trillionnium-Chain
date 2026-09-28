@@ -98,6 +98,10 @@ class RepositoryMutants(unittest.TestCase):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d['module_targets'].pop())
     def test_broken_navigation(self):
         self.reject_text('README.md',lambda t:t+'\n[missing](docs/deleted-protocol.md)\n')
+    def test_removed_decoder_requirement_cannot_return(self):
+        self.reject_text('docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md',lambda t:t+'\nVerifyHistoricalPoCO\n')
+    def test_fault_harness_isolation_remains_explicit(self):
+        self.reject_text('.github/workflows/trnm-required-baseline.yml',lambda t:t.replace('RUST_TEST_THREADS: "1"','RUST_TEST_THREADS: "8"'))
     def test_required_job_not_dropped(self):
         self.reject_text('.github/workflows/trnm-required-baseline.yml',lambda t:t.replace('  rust-baseline:','  renamed-job:'))
     def test_no_persistent_runner_for_untrusted_pr(self):

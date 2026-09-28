@@ -119,6 +119,10 @@ def check(root=ROOT):
     for name in load(root/'config/repository-policy-v1.json')['required_check_names']:require('  '+name+':' in text,'missing required job '+name)
     require('self-hosted' not in text and 'contents: write' not in text,'privileged PR execution')
     require('persist-credentials: false' in text,'checkout credentials retained')
+    require('RUST_TEST_THREADS: "1"' in text,'fault-test harness isolation missing')
+    for row in specs:
+        prose=contained(root,row['technical_spec']).read_text()
+        require('VerifyHistoricalPoCO' not in prose and 'decoders in explicit legacy dispatch' not in prose,'old decoder requirement restored')
     require('pull_request_target' not in text,'privileged pull request event')
     return {'result':'PASS','workspace_packages':len(names),'rust_files':source_count,'local_links':links,'runtime_implemented':False,'activation':False,'normal_dependency_edges':sum(map(len,normal_graph.values()))}
 if __name__=='__main__':

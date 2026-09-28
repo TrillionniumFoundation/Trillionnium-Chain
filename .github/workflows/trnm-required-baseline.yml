@@ -13,6 +13,7 @@ env:
   CI: "true"
   CARGO_INCREMENTAL: "0"
   CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
   CARGO_TERM_COLOR: never
   PYTHONDONTWRITEBYTECODE: "1"
   TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}

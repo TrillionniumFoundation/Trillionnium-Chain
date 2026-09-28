@@ -18,7 +18,8 @@ Evaluation attestation and local authorization are separate proof types.
 ## PoN Interfaces
 
 VerifyWork(profile, exact_statement, proof, budget) -> VerifiedWork or Invalid/Unavailable;
-VerifyContributionSignature; VerifyEvaluationAttestation; VerifyHistoricalPoCO. Constructors
+VerifyContributionSignature; VerifyEvaluationAttestation. Historical proof readers are not
+retained in this module. Constructors
 remain restricted, but Rust type privacy is not a cross-host proof.
 
 ## PoN State machine

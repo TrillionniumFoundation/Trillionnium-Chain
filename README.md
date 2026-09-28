@@ -16,7 +16,7 @@ bash scripts/project-preflight.sh
 python3 scripts/ci/check_repository.py
 python3 scripts/ci/test_repository.py
 python3 formal/pon-nakamoto-v1/test_reference.py
-cargo test --locked --workspace --all-targets --all-features --manifest-path trillionnium/Cargo.toml
+RUST_TEST_THREADS=1 cargo test --locked --workspace --all-targets --all-features --manifest-path trillionnium/Cargo.toml
 ```
 
 Use the pinned Rust toolchain. Tests cover retained local components and explicitly
@@ -26,3 +26,12 @@ are not ledger votes. Fresh stores are mandatory; old databases are not upgrade 
 
 See [security](SECURITY.md), [operations](OPERATIONS.md) and
 [release status](RELEASE_READINESS.md). Production and release remain disabled.
+
+The hosted qualification serializes separate test cases to isolate process/disk fault
+fixtures. Explicit parallel actors, worker counts and race assertions inside each test
+remain unchanged. Product deadlines are not increased. Parallel-harness timing failures
+are retained as observations and do not establish or revoke a production SLO.
+
+The peer-lease partial-client scheduling test uses a private memory-backed fixture on
+Linux to keep disk contention out of that network property. Disk-backed persistence
+and corruption tests remain separate. No physical disk latency SLO is claimed.

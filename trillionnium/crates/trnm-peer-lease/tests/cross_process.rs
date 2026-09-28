@@ -1,5 +1,4 @@
 #![cfg(unix)]
-#![allow(clippy::zombie_processes)]
 
 use std::{
     fs,
@@ -39,13 +38,13 @@ fn daemon_command(socket: &Path, journal: &Path, ready: &Path) -> Command {
     command
 }
 
-fn start_daemon(directory: &Path) -> (Child, PathBuf, PathBuf) {
+fn start_daemon(directory: &Path) -> (DaemonChildGuardV1, PathBuf, PathBuf) {
     let socket = directory.join("authority.sock");
     let journal = directory.join("authority.log");
     let ready = directory.join("authority.ready");
     let _ = fs::remove_file(&socket);
     let _ = fs::remove_file(&ready);
-    let child = daemon_command(&socket, &journal, &ready).spawn().unwrap();
+    let child = DaemonChildGuardV1::new(daemon_command(&socket, &journal, &ready).spawn().unwrap());
     let deadline = Instant::now() + Duration::from_secs(10);
     while Instant::now() < deadline {
         if ready.exists() && socket.exists() {
@@ -64,19 +63,19 @@ fn private_tempdir() -> tempfile::TempDir {
     directory
 }
 
-fn stop_daemon(mut child: Child) {
-    let _ = child.kill();
-    let _ = child.wait();
+fn stop_daemon(child: DaemonChildGuardV1) {
+    drop(child);
 }
 
-fn wait_for_exit(mut child: Child) -> std::process::ExitStatus {
+fn wait_for_exit(child: Child) -> std::process::ExitStatus {
+    let mut child = DaemonChildGuardV1::new(child);
     let deadline = Instant::now() + Duration::from_secs(10);
     loop {
-        if let Some(status) = child.try_wait().unwrap() {
+        if let Some(status) = child.child_mut().try_wait().unwrap() {
             return status;
         }
         if Instant::now() >= deadline {
-            let _ = child.kill();
+            child.terminate();
             panic!("peer lease daemon did not exit after corrupt journal");
         }
         thread::sleep(Duration::from_millis(10));
@@ -183,13 +182,44 @@ fn separate_daemon_process_refuses_tampered_and_partial_journals() {
     assert!(!partial_ready.exists());
 }
 
-// Own every subprocess even when a new regression intentionally fails.
-struct DaemonChildGuardV1(Child);
+// Own every subprocess from spawn, including startup failures and assertion unwinds.
+struct DaemonChildGuardV1(Option<Child>);
+impl DaemonChildGuardV1 {
+    fn new(child: Child) -> Self {
+        Self(Some(child))
+    }
+    fn child_mut(&mut self) -> &mut Child {
+        self.0.as_mut().expect("live child owner")
+    }
+    fn terminate(&mut self) {
+        if let Some(mut child) = self.0.take() {
+            if !matches!(child.try_wait(), Ok(Some(_))) {
+                let _ = child.kill();
+                let _ = child.wait();
+            }
+        }
+    }
+}
 impl Drop for DaemonChildGuardV1 {
     fn drop(&mut self) {
-        let _ = self.0.kill();
-        let _ = self.0.wait();
+        self.terminate();
     }
+}
+
+#[test]
+fn daemon_guard_closes_listener_on_assertion_unwind() {
+    use std::os::unix::net::UnixStream;
+    let directory = private_tempdir();
+    let (child, socket, _) = start_daemon(directory.path());
+    let observed = std::panic::catch_unwind(move || {
+        let _owned_child = child;
+        panic!("intentional harness cleanup regression");
+    });
+    assert!(observed.is_err());
+    assert!(
+        UnixStream::connect(socket).is_err(),
+        "child listener survived unwind"
+    );
 }
 
 #[test]
@@ -197,7 +227,7 @@ fn daemon_disconnects_do_not_revoke_other_sessions_v1() {
     use std::{io::Write, net::Shutdown, os::unix::net::UnixStream};
     let directory = private_tempdir();
     let (child, socket, journal) = start_daemon(directory.path());
-    let mut child = DaemonChildGuardV1(child);
+    let mut child = child;
     let client = UnixPeerLeaseClientV1::connect(&socket);
     let token = client.acquire(scope(), [0x91; 32], 1, 30_000).unwrap();
     let original = fs::read(&journal).unwrap();
@@ -213,7 +243,7 @@ fn daemon_disconnects_do_not_revoke_other_sessions_v1() {
         // or daemon restart conceals loss of the authority process.
         assert_eq!(client.revalidate(token).unwrap(), token, "prefix={length}");
         assert_eq!(fs::read(&journal).unwrap(), original);
-        assert!(child.0.try_wait().unwrap().is_none());
+        assert!(child.child_mut().try_wait().unwrap().is_none());
     }
     client.release(token).unwrap();
     let successor = client.acquire(scope(), [0x92; 32], 2, 30_000).unwrap();
@@ -228,7 +258,7 @@ fn daemon_disconnects_do_not_revoke_other_sessions_v1() {
 fn daemon_anchor_io_failure_still_terminates_authority_v1() {
     let directory = private_tempdir();
     let (child, socket, _journal) = start_daemon(directory.path());
-    let mut child = DaemonChildGuardV1(child);
+    let mut child = child;
     let client = UnixPeerLeaseClientV1::connect(&socket);
     let token = client.acquire(scope(), [0x93; 32], 1, 30_000).unwrap();
     // This test owns the entire temporary namespace. Force a real anchor
@@ -239,7 +269,7 @@ fn daemon_anchor_io_failure_still_terminates_authority_v1() {
     assert!(client.renew(token, 30_000).is_err());
     let deadline = Instant::now() + Duration::from_secs(5);
     loop {
-        if let Some(status) = child.0.try_wait().unwrap() {
+        if let Some(status) = child.child_mut().try_wait().unwrap() {
             assert!(!status.success());
             break;
         }
@@ -252,12 +282,27 @@ fn daemon_anchor_io_failure_still_terminates_authority_v1() {
     assert!(client.revalidate(token).is_err());
 }
 
+// This test checks connection scheduling, not block-device durability/latency.
+// Keep its 750 ms request deadline independent of unrelated host fsync contention.
+// All persistence/restart/corruption tests continue to use private_tempdir on disk.
+fn socket_progress_tempdir() -> tempfile::TempDir {
+    #[cfg(target_os = "linux")]
+    let directory = tempfile::Builder::new()
+        .prefix("trnm-socket-progress-")
+        .tempdir_in("/dev/shm")
+        .expect("Linux network-scheduling fixture requires /dev/shm; no silent fallback");
+    #[cfg(not(target_os = "linux"))]
+    let directory = tempfile::tempdir().expect("network-scheduling fixture");
+    fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    directory
+}
+
 #[test]
 fn stalled_client_does_not_block_live_lease_operations_v1() {
     use std::{io::Write, os::unix::net::UnixStream};
-    let directory = private_tempdir();
+    let directory = socket_progress_tempdir();
     let (child, socket, _) = start_daemon(directory.path());
-    let mut child = DaemonChildGuardV1(child);
+    let mut child = child;
     // These connections precede the real client in the listen queue and
     // remain open. Neither an EOF nor the five-second daemon timeout helps.
     let mut partial_header = UnixStream::connect(&socket).unwrap();
@@ -276,7 +321,7 @@ fn stalled_client_does_not_block_live_lease_operations_v1() {
     assert_eq!(client.revalidate(renewed).unwrap(), renewed);
     client.release(renewed).unwrap();
     assert!(started.elapsed() < Duration::from_secs(3));
-    assert!(child.0.try_wait().unwrap().is_none());
+    assert!(child.child_mut().try_wait().unwrap().is_none());
     drop((partial_header, partial_body));
     let successor = client.acquire(scope(), [0xa2; 32], 2, 30_000).unwrap();
     assert_eq!(successor.generation(), 2);
@@ -290,7 +335,7 @@ fn stalled_client_does_not_block_live_lease_operations_v1() {
 fn parallel_clients_retain_one_durable_scope_winner_v1() {
     let directory = private_tempdir();
     let (child, socket, _) = start_daemon(directory.path());
-    let mut child = DaemonChildGuardV1(child);
+    let mut child = child;
     let barrier = std::sync::Arc::new(std::sync::Barrier::new(8));
     let handles = (0..8)
         .map(|i| {
@@ -316,10 +361,10 @@ fn parallel_clients_retain_one_durable_scope_winner_v1() {
     let winner = winner.expect("one durable admission");
     let client = UnixPeerLeaseClientV1::connect(&socket);
     assert_eq!(client.revalidate(winner).unwrap(), winner);
-    child.0.kill().unwrap();
-    child.0.wait().unwrap();
+    child.child_mut().kill().unwrap();
+    child.child_mut().wait().unwrap();
     let (restarted, socket, _) = start_daemon(directory.path());
-    let _restarted = DaemonChildGuardV1(restarted);
+    let _restarted = restarted;
     assert_eq!(
         UnixPeerLeaseClientV1::connect(socket)
             .revalidate(winner)
@@ -333,7 +378,7 @@ fn stalled_connection_capacity_is_released_without_restarting_authority_v1() {
     use std::{io::Write, os::unix::net::UnixStream};
     let directory = private_tempdir();
     let (child, socket, journal) = start_daemon(directory.path());
-    let mut child = DaemonChildGuardV1(child);
+    let mut child = child;
     let baseline = fs::read(&journal).unwrap();
     let mut connections = Vec::new();
     for _ in 0..64 {
@@ -350,5 +395,5 @@ fn stalled_connection_capacity_is_released_without_restarting_authority_v1() {
     let client = UnixPeerLeaseClientV1::connect(&socket);
     let token = client.acquire(scope(), [0xc1; 32], 1, 30_000).unwrap();
     assert_eq!(client.revalidate(token).unwrap(), token);
-    assert!(child.0.try_wait().unwrap().is_none());
+    assert!(child.child_mut().try_wait().unwrap().is_none());
 }
