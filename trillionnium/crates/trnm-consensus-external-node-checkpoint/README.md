@@ -52,3 +52,8 @@ Accordingly, `EXTERNAL_NODE_CHECKPOINT_OPERATIONAL_INTEGRATION_V0` in
 `trnm-poco-node` remains `false`, and every runtime/production flag in this
 crate remains `false`. This crate proves a process boundary and exact durable
 CAS behavior only.
+
+The V0 record and CAS port are shared through the existing M03 signer-journal
+package; this daemon has no normal dependency on the Node implementation.
+Node retains its old public re-exports. The independent checkpoint CAS never
+delegates to the signer watermark, and decoding a record grants no authority.

@@ -430,3 +430,7 @@ path = "tests/ordinary_timeout_certificate_recovery.rs"
 name = "native_signed_vote_replay"
 path = "tests/native_signed_vote_replay.rs"
 required-features = ["lab-validator-runtime-test-support"]
+
+[[test]]
+name = "external_checkpoint_port"
+path = "tests/external_checkpoint_port.rs"

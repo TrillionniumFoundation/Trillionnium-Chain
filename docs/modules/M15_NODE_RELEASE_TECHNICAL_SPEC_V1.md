@@ -83,6 +83,17 @@ uncommitted children; select the new proposal parent only from Core's verified
 high QC. Exact/no-effect replay remains phase-neutral. Missing or changed
 source/selected-path evidence rejects, never becomes an invented committed row.
 
+## External checkpoint interface consumption
+
+Node re-exports the existing V0 checkpoint record, codec and store trait from
+M03's signer-journal contract module. Existing Node import paths retain the
+same Rust types and byte encoding. The SQLite backend, trusted checkpoint
+candidate and cross-store joins remain Node-owned; no decoded record becomes
+an owner. The external Unix checkpoint adapter no longer depends on Node's
+implementation to obtain this port. See M03's V0 external checkpoint port
+contract for the retained independent-CAS boundary and regression requirements.
+
+
 ## Authority
 
 M15 composes reviewed ports into a process, validates configuration and owns

@@ -33,9 +33,8 @@ production_candidate = false
 fs2 = "0.4"
 libc = "0.2"
 sha2 = "0.10"
-trnm-poco-node = { version = "0.1.0", path = "../trnm-poco-node" }
+trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 
 [dev-dependencies]
 tempfile = "3"
-trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }

@@ -1478,7 +1478,6 @@ dependencies = [
  "tempfile",
  "trnm-consensus-signer-journal",
  "trnm-consensus-types",
- "trnm-poco-node",
 ]
 
 [[package]]

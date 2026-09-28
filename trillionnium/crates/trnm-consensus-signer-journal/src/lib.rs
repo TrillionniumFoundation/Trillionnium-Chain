@@ -58,6 +58,12 @@
 //! untrusted same-EUID process.
 
 mod error;
+mod external_node_checkpoint;
+pub use external_node_checkpoint::{
+    ExternalNodeCheckpointDecodeErrorV0, ExternalNodeCheckpointFieldsV0,
+    ExternalNodeCheckpointStoreErrorV0, ExternalNodeCheckpointStoreV0, ExternalNodeCheckpointV0,
+    EXTERNAL_NODE_CHECKPOINT_RECORD_BYTES_V0, EXTERNAL_NODE_CHECKPOINT_SCHEMA_V0,
+};
 mod handoff_error_v1;
 mod handoff_model_v1;
 mod handoff_schema_v1;

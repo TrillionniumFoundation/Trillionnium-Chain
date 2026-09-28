@@ -194,6 +194,21 @@ def resolve_closure(packages: dict[str, Package], roots: list[str], root_feature
     return reached, active_features
 
 
+
+def validate_external_checkpoint_port(packages: dict[str, Package]) -> set[str]:
+    """The Unix adapter consumes the shared M03 port, not Node's implementation."""
+    reached, _ = resolve_closure(
+        packages, ["trnm-consensus-external-node-checkpoint"], set(), True
+    )
+    forbidden = {"trnm-poco-node", "trnm-poco-node-host", "trnm-consensus-core",
+                 "trnm-native-execution-v0", "trnm-consensus-safety-store"}
+    require(not reached.intersection(forbidden),
+            f"external checkpoint port pulls runtime implementation: {sorted(reached & forbidden)}")
+    require("trnm-consensus-signer-journal" in reached,
+            "external checkpoint adapter lost the shared M03 record/CAS port")
+    return reached
+
+
 def validate_persistent_authority_boundary(
     packages: dict[str, Package], production_reached: set[str]
 ) -> set[str]:
@@ -422,6 +437,7 @@ def main() -> int:
         require(config.get(key) is False, f"build closure config promoted {key}")
     workspace_manifest = relative_path(config.get("workspace_manifest"), "workspace manifest")
     packages = workspace_packages(workspace_manifest)
+    checkpoint_port_packages = validate_external_checkpoint_port(packages)
     node_manifest_path = relative_path(config.get("node_manifest"), "node manifest")
     node_manifest = load_toml(node_manifest_path)
     require(node_manifest.get("package", {}).get("name") == "trnm-poco-node", "node manifest package drift")
@@ -590,6 +606,7 @@ def main() -> int:
         "schema": "trnm-build-closure-report-v1",
         "closure_registry_id": config["closure_registry_id"],
         "workspace_package_count": len(packages),
+        "external_checkpoint_port_packages": sorted(checkpoint_port_packages),
         "closure_count": len(report_rows),
         "closures": report_rows,
         "feature_closures": feature_reports,
@@ -603,6 +620,12 @@ def main() -> int:
         "release_ready": False,
         "result": "PASS",
     }
+    if args.verify_cargo_tree:
+        actual_checkpoint_packages = cargo_tree_workspace_packages(
+            workspace_manifest, ["trnm-consensus-external-node-checkpoint"], [], True, set(packages)
+        )
+        require(actual_checkpoint_packages == checkpoint_port_packages,
+                "external checkpoint actual Cargo closure differs from checked contract closure")
     if args.audit_module_graph or args.require_module_architecture or args.verify_cargo_tree:
         from cargo_module_graph_v1 import collect, GraphError
         try:

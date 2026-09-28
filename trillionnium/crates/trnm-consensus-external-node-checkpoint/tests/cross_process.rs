@@ -9,10 +9,10 @@ use std::{
 use tempfile::TempDir;
 use trnm_consensus_external_node_checkpoint::UnixExternalNodeCheckpointStoreV0;
 use trnm_consensus_signer_journal::SignerWatermarkV0;
-use trnm_consensus_types::{BlockId, StateRoot};
-use trnm_poco_node::{
+use trnm_consensus_signer_journal::{
     ExternalNodeCheckpointFieldsV0, ExternalNodeCheckpointStoreV0, ExternalNodeCheckpointV0,
 };
+use trnm_consensus_types::{BlockId, StateRoot};
 
 fn checkpoint() -> ExternalNodeCheckpointV0 {
     ExternalNodeCheckpointV0::new(ExternalNodeCheckpointFieldsV0 {

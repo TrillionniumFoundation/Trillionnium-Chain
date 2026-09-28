@@ -1,7 +1,7 @@
 //! Cross-process external whole-node checkpoint CAS authority.
 //!
 //! This crate is intentionally a narrow adapter around the canonical
-//! [`trnm_poco_node::ExternalNodeCheckpointStoreV0`] contract.  A daemon owns
+//! [`trnm_consensus_signer_journal::ExternalNodeCheckpointStoreV0`] contract.  A daemon owns
 //! an append-only, hash-chained journal and serves exact load/CAS requests over
 //! a private Unix socket.  The client never opens the journal.  A malformed,
 //! truncated, reordered, replayed, or checksum-modified journal fails closed
@@ -32,7 +32,7 @@ use std::{
 
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
-use trnm_poco_node::{
+use trnm_consensus_signer_journal::{
     ExternalNodeCheckpointStoreErrorV0, ExternalNodeCheckpointStoreV0, ExternalNodeCheckpointV0,
     EXTERNAL_NODE_CHECKPOINT_RECORD_BYTES_V0,
 };
@@ -1537,8 +1537,10 @@ mod tests {
     };
     use tempfile::TempDir;
     use trnm_consensus_signer_journal::SignerWatermarkV0;
+    use trnm_consensus_signer_journal::{
+        ExternalNodeCheckpointFieldsV0, ExternalNodeCheckpointStoreV0,
+    };
     use trnm_consensus_types::{BlockId, StateRoot};
-    use trnm_poco_node::{ExternalNodeCheckpointFieldsV0, ExternalNodeCheckpointStoreV0};
 
     const _: () = {
         assert!(EXTERNAL_NODE_CHECKPOINT_UNIX_ADAPTER_V0);
@@ -1548,8 +1550,6 @@ mod tests {
         assert!(!EXTERNAL_NODE_CHECKPOINT_SAFETY_RULES_V0);
         assert!(!EXTERNAL_NODE_CHECKPOINT_HOST_ATTESTATION_V0);
         assert!(!EXTERNAL_NODE_CHECKPOINT_PRODUCTION_ACTIVATION_V0);
-        assert!(!trnm_poco_node::EXTERNAL_NODE_CHECKPOINT_OPERATIONAL_INTEGRATION_V0);
-        assert!(!trnm_poco_node::EXTERNAL_NODE_CHECKPOINT_PRODUCTION_ACTIVATION_V0);
     };
 
     fn checkpoint(generation: u64, predecessor_checksum: [u8; 32]) -> ExternalNodeCheckpointV0 {

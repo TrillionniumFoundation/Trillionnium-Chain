@@ -73,6 +73,32 @@ Status: **implementation design with existing v0 interfaces and planned epoch
 custody extensions; no device qualification or production promotion**.
 Primary module: M03. Producers: M02/M08/M15. Consumers: M02/M04/M08/M13.
 
+
+## V0 external checkpoint port without a Node implementation dependency
+
+The existing M03 signer-journal package exports a separate
+`external_node_checkpoint` contract module: the unchanged 672-byte V0 record,
+its strict codec, closed errors and `ExternalNodeCheckpointStoreV0` port.
+It shares the existing `SignerWatermarkV0` data type but no storage instance,
+connection, namespace or CAS implementation with the signer watermark. The
+independent whole-node CAS domain must never delegate to
+`ExternalMonotonicWatermarkV0`. This is source-level ownership consolidation,
+not a new schema, wire format, admission capability or activation path.
+
+The Unix checkpoint adapter and node-commit ledger depend directly on this
+M03 port, not `trnm-poco-node`. Node preserves its existing public re-exports;
+its SQLite backend and non-Clone confirmed-owner producers remain in Node.
+A constructed or decoded checkpoint remains untrusted copyable data, and
+neither import path can mint a confirmed owner or authorize a signature.
+The data-only V1 whole-node checkpoint package is unchanged.
+
+Acceptance retains the frozen V0 codec vector, invalid-field/checksum and
+successor tests, real Unix CAS/lost-reply/tamper/process regressions, and Node
+consumer tests. Cargo's resolved normal adapter closure must contain neither
+Node, its host, native execution nor SafetyStore; a returning dependency is
+an architecture failure. This removes one concrete implementation edge, not
+all module-quotient cycles or remaining undeclared module dependencies.
+
 ## Authority
 
 Frozen v0 specifications 02/03/04 govern persist-before-sign and role preimages.

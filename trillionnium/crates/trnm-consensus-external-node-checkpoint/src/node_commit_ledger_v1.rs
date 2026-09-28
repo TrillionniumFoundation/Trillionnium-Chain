@@ -12,7 +12,9 @@ use std::{
 
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
-use trnm_poco_node::{ExternalNodeCheckpointV0, EXTERNAL_NODE_CHECKPOINT_RECORD_BYTES_V0};
+use trnm_consensus_signer_journal::{
+    ExternalNodeCheckpointV0, EXTERNAL_NODE_CHECKPOINT_RECORD_BYTES_V0,
+};
 
 const ANCHOR_MAGIC_V1: &[u8; 8] = b"TRNMNCLA";
 const RECORD_MAGIC_V1: &[u8; 8] = b"TRNMNCLR";
@@ -1004,9 +1006,9 @@ pub(crate) fn read_checkpoint_file_v1(path: &Path) -> ResultV1<ExternalNodeCheck
 #[cfg(test)]
 mod tests {
     use tempfile::TempDir;
+    use trnm_consensus_signer_journal::ExternalNodeCheckpointFieldsV0;
     use trnm_consensus_signer_journal::SignerWatermarkV0;
     use trnm_consensus_types::{BlockId, StateRoot};
-    use trnm_poco_node::ExternalNodeCheckpointFieldsV0;
 
     use super::*;
 

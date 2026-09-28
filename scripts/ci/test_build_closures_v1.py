@@ -36,6 +36,25 @@ class FeatureClosureTests(unittest.TestCase):
             dependency, features=(*dependency.features, feature)
         )
 
+    def test_external_checkpoint_uses_m03_port_without_node_implementation(self):
+        reached = closure.validate_external_checkpoint_port(self.packages)
+        self.assertIn("trnm-consensus-signer-journal", reached)
+        self.assertNotIn(NODE, reached)
+        self.assertNotIn(CORE, reached)
+        self.assertNotIn(SAFETY, reached)
+        self.assertNotIn(NATIVE, reached)
+
+    def test_external_checkpoint_direct_or_indirect_runtime_leak_rejects(self):
+        for owner in ("trnm-consensus-external-node-checkpoint", "trnm-consensus-signer-journal"):
+            with self.subTest(owner=owner):
+                packages = copy.deepcopy(self.packages)
+                packages[owner].dependencies[NODE] = closure.Dependency(
+                    alias=NODE, package=NODE, optional=False, default_features=True, features=()
+                )
+                packages[owner].all_dependencies[NODE] = False
+                with self.assertRaisesRegex(closure.ClosureError, "external checkpoint port pulls runtime implementation"):
+                    closure.validate_external_checkpoint_port(packages)
+
     def test_real_entrypoints_have_separate_feature_boundaries(self):
         reports = {row["id"]: row for row in self.validate()}
         self.assertEqual(len(reports), 5)
