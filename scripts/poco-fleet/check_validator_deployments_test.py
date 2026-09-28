@@ -23,6 +23,8 @@ CHECK_DEPLOYMENTS = HERE / "check_validator_deployments.py"
 SOURCE_SHA256 = "11" * 32
 NONCES = {7: "00000007", 31: "0000001f", 100: "00000064"}
 REPORT_DOMAIN = b"trnm.poco-g3.network-smoke-report.v1"
+# Counts are incremented only after the real command and its expected outcome pass.
+COMMAND_CHECKS = {"positive": 0, "negative": 0}
 
 
 def sha256_file(path: pathlib.Path) -> str:
@@ -71,6 +73,7 @@ def run(
             f"negative command returned {completed.returncode} with {observed!r}; "
             f"expected rejection containing {expect!r}"
         )
+    COMMAND_CHECKS["positive" if expect is None else "negative"] += 1
     return completed
 
 
@@ -352,7 +355,13 @@ def verify_consensus_live_process2_inventory(
     report_parent.mkdir(mode=0o700)
     report = report_parent / "forbidden-report.json"
 
-    for name in ("runtime-authority-v1", "signed-replay-archive-v1", "native-client-v1"):
+    native_client = json.loads(config.read_text(encoding="utf-8")).get(
+        "native_client_profile_sha256"
+    ) is not None
+    directory_names = ["runtime-authority-v1", "signed-replay-archive-v1"]
+    if native_client:
+        directory_names.append("native-client-v1")
+    for name in directory_names:
         directory = root / name
         directory.mkdir(mode=0o700)
     markers = {
@@ -382,6 +391,16 @@ def verify_consensus_live_process2_inventory(
         raise AssertionError("live process2 inventory did not cross the closed-root selector")
     if report.exists() or report.is_symlink():
         raise AssertionError("inauthentic process2 journal created a terminal report")
+
+    native_directory = root / "native-client-v1"
+    if native_client:
+        native_directory.rmdir()
+        run(command, expect="native-client recovery profile requires its private runtime directory", timeout=5)
+        native_directory.mkdir(mode=0o700)
+    else:
+        native_directory.mkdir(mode=0o700)
+        run(command, expect="workload recovery profile cannot contain a native-client runtime directory", timeout=5)
+        native_directory.rmdir()
 
     # Known public recovery material may coexist with a recovered process.
     # It supplies no validity: the unauthentic journal must still reject.
@@ -1125,6 +1144,11 @@ def main() -> None:
                     validator_id,
                 )
 
+        native_coordinator, native_deployments, native_ids = prepare(
+            parent, material_builder, binary, 7, native_client=True
+        )
+        verify_consensus_live_process2_inventory(binary, native_deployments, native_ids[0])
+
         coordinator, deployments, validator_ids = prepared[7]
         coordinator_symlink = parent / "coordinator-root-symlink"
         coordinator_symlink.symlink_to(coordinator, target_is_directory=True)
@@ -1361,7 +1385,10 @@ def main() -> None:
         "rust_runtime_control_live_root_positive=true "
         "rust_process2_live_root_positive=true "
         "runtime_control_manifest_mutants_rejected=2 "
-        "process2_live_root_mutants_rejected=3 negatives=58 "
+        "process2_live_root_profiles_exercised=2 "
+        f"negative_command_checks_executed={COMMAND_CHECKS['negative']} "
+        f"positive_command_checks_executed={COMMAND_CHECKS['positive']} "
+        "negative_count_scope=verified-command-invocations-not-unique-bugs "
         "least_authority=true public_workload_everywhere=true public_bootstrap_everywhere=true "
         "ordinary_start_height=4 "
         "ordinal_nonce=true application_private_keys=false "

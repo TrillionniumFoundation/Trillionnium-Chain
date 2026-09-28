@@ -708,6 +708,10 @@ impl LoadedValidatorConfig {
                 if !live_process2_marker_files_present_v1(&run_root)? {
                     bail!("recovery material requires the complete parked run marker set");
                 }
+                require_live_process2_profile_directory_v1(
+                    &run_root,
+                    config.native_client_profile_sha256.is_some(),
+                )?;
             }
             RunRootInventoryPolicyV1::LiveProcess2Recovery => {
                 validate_live_process2_manifest_v1(
@@ -715,6 +719,7 @@ impl LoadedValidatorConfig {
                     &config.run_id,
                     &config.validator_id,
                     &run_root,
+                    config.native_client_profile_sha256.is_some(),
                 )?;
             }
         }
@@ -2183,11 +2188,9 @@ fn validate_manifest(
     Ok(())
 }
 
-const LIVE_PROCESS2_REQUIRED_DIRECTORIES_V1: [&str; 3] = [
-    "runtime-authority-v1",
-    "signed-replay-archive-v1",
-    "native-client-v1",
-];
+const LIVE_PROCESS2_REQUIRED_DIRECTORIES_V1: [&str; 2] =
+    ["runtime-authority-v1", "signed-replay-archive-v1"];
+const LIVE_PROCESS2_NATIVE_CLIENT_DIRECTORY_V1: &str = "native-client-v1";
 
 const LIVE_PROCESS2_REQUIRED_MARKER_FILES_V1: [&str; 5] = [
     "runtime-events.jsonl",
@@ -2259,6 +2262,18 @@ fn require_private_live_process2_marker_v1(root: &Path, name: &str) -> Result<bo
     Ok(true)
 }
 
+fn require_live_process2_profile_directory_v1(root: &Path, native_client: bool) -> Result<()> {
+    let present =
+        require_private_live_process2_directory_v1(root, LIVE_PROCESS2_NATIVE_CLIENT_DIRECTORY_V1)?;
+    if native_client && !present {
+        bail!("native-client recovery profile requires its private runtime directory");
+    }
+    if !native_client && present {
+        bail!("workload recovery profile cannot contain a native-client runtime directory");
+    }
+    Ok(())
+}
+
 fn live_process2_marker_files_present_v1(run_root: &Path) -> Result<bool> {
     let root = canonical_private_directory(run_root)?;
     for directory in LIVE_PROCESS2_REQUIRED_DIRECTORIES_V1 {
@@ -2322,7 +2337,10 @@ fn live_process2_extra_path_allowed_v1(path: &Path) -> bool {
                         })
                 })
         }
-        Some(_) => LIVE_PROCESS2_REQUIRED_DIRECTORIES_V1.contains(&first),
+        Some(_) => {
+            LIVE_PROCESS2_REQUIRED_DIRECTORIES_V1.contains(&first)
+                || first == LIVE_PROCESS2_NATIVE_CLIENT_DIRECTORY_V1
+        }
     }
 }
 
@@ -2331,12 +2349,14 @@ fn validate_live_process2_manifest_v1(
     run_id: &str,
     validator_id: &str,
     root: &Path,
+    native_client: bool,
 ) -> Result<()> {
     validate_manifest_envelope_v1(manifest, run_id, validator_id)?;
     let manifest_paths = validate_manifest_referenced_files_v1(manifest, root)?;
     if !live_process2_marker_files_present_v1(root)? {
         bail!("live process2 root lacks the complete durable process1 handoff marker set");
     }
+    require_live_process2_profile_directory_v1(root, native_client)?;
 
     let mut actual_paths = BTreeSet::new();
     collect_closed_file_inventory(root, root, &mut actual_paths)?;
@@ -3383,5 +3403,45 @@ mod topology_tests {
         let mut changed = original;
         changed["participants"].as_array_mut().unwrap().swap(0, 1);
         assert!(admit(changed).is_err());
+    }
+}
+
+#[cfg(test)]
+mod process2_profile_directory_tests {
+    use super::*;
+
+    #[test]
+    fn process2_profile_directory_is_required_only_by_native_client_profile() {
+        let root = tempfile::tempdir().unwrap();
+        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        require_live_process2_profile_directory_v1(root.path(), false).unwrap();
+        assert!(require_live_process2_profile_directory_v1(root.path(), true).is_err());
+        let native = root.path().join(LIVE_PROCESS2_NATIVE_CLIENT_DIRECTORY_V1);
+        fs::create_dir(&native).unwrap();
+        fs::set_permissions(&native, fs::Permissions::from_mode(0o700)).unwrap();
+        require_live_process2_profile_directory_v1(root.path(), true).unwrap();
+        assert!(require_live_process2_profile_directory_v1(root.path(), false).is_err());
+        assert!(fs::read_dir(&native).unwrap().next().is_none());
+    }
+
+    #[test]
+    fn process2_profile_directory_rejects_nonprivate_or_linked_namespace() {
+        let root = tempfile::tempdir().unwrap();
+        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let native = root.path().join(LIVE_PROCESS2_NATIVE_CLIENT_DIRECTORY_V1);
+        fs::create_dir(&native).unwrap();
+        fs::set_permissions(&native, fs::Permissions::from_mode(0o755)).unwrap();
+        assert!(require_live_process2_profile_directory_v1(root.path(), true).is_err());
+        fs::remove_dir(&native).unwrap();
+        let other = root.path().join("other");
+        fs::create_dir(&other).unwrap();
+        fs::set_permissions(&other, fs::Permissions::from_mode(0o700)).unwrap();
+        std::os::unix::fs::symlink(&other, &native).unwrap();
+        assert!(require_live_process2_profile_directory_v1(root.path(), true).is_err());
+        assert!(require_live_process2_profile_directory_v1(root.path(), false).is_err());
+        assert!(fs::symlink_metadata(&native)
+            .unwrap()
+            .file_type()
+            .is_symlink());
     }
 }

@@ -130,6 +130,25 @@ requires the existing fresh revalidation API.
 
 ## Interfaces
 
+### Profile-bound process-2 runtime directories
+
+The live-recovery selector requires the common private authority and signed-replay
+archive directories plus the original five FleetStart/journal/Cut/Park/ParkedAck
+markers. A workload-only validator does not start a native client and therefore
+must not be required to invent a `native-client-v1` directory. After immutable
+config/manifest verification, recovery requires that directory exactly when the
+manifest-bound native-client profile is present; a workload-only root containing
+that directory is rejected. Recovery-material commands use the same profile check.
+All manifest bytes, private-path checks, exact runtime-file inventory and subsequent
+journal/store authentication remain mandatory. Marker presence is not authority.
+The deployment regression must exercise the actual workload-only layout without
+silently adding a directory that the running node never creates.
+Both workload-only and native-client deployments are exercised. Printed command
+counts are derived after checking actual exits and expected errors; repeated
+negative invocations are not reported as a count of unique bugs or independent
+acceptance cases.
+
+
 The selected physical restart runner now applies a reversible direct-seven
 pre-quiesce before it creates any signed restart intent. It sends
 `quiesce_restart` to all six non-targets first and the selected target last. This is
