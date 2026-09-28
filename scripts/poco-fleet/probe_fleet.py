@@ -91,6 +91,9 @@ def main() -> None:
                         host["management"],
                         REMOTE_PROBE,
                     ],
+                    # The remote program is an argv value, not stdin. A probe
+                    # must never drain its caller's piped script or input.
+                    stdin=subprocess.DEVNULL,
                     check=True,
                     capture_output=True,
                     text=True,

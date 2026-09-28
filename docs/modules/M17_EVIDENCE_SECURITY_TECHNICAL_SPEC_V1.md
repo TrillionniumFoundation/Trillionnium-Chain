@@ -936,3 +936,12 @@ masquerade as infrastructure or a runner timeout. Command-failure does not
 assert a product root cause; compiler/test/adapter diagnosis still uses the
 retained exact command and hashed raw log. Every failure remains nonzero and
 later independent tests/lint still execute.
+
+## Fleet probe standard-input isolation
+
+The read-only SSH fleet probe supplies its complete remote command as an
+argument and binds child standard input to the null device. It cannot consume
+a coordinator script, client workload or other caller-owned pipe. The behavioral
+control supplies a nonempty parent input and a local SSH substitute that rejects
+any inherited bytes; all six fixture observations must complete. This test makes
+no real SSH, validator-run, performance or fleet-readiness claim.

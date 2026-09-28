@@ -70,6 +70,7 @@ readonly -a REQUIRED_FILES=(
   "scripts/poco-fleet/check_native_client_material_test.py"
   "scripts/poco-fleet/check_baseline.py"
   "scripts/poco-fleet/check_baseline_test.py"
+  "scripts/poco-fleet/probe_fleet_test.py"
   "scripts/poco-fleet/check_raw_run_artifacts.py"
   "scripts/poco-fleet/check_run_bundle.py"
   "scripts/poco-fleet/check_run_bundle_test.py"
@@ -150,6 +151,7 @@ readonly -a PYTHON_FILES=(
   "scripts/poco-fleet/check_native_client_material_test.py"
   "scripts/poco-fleet/check_baseline.py"
   "scripts/poco-fleet/check_baseline_test.py"
+  "scripts/poco-fleet/probe_fleet_test.py"
   "scripts/poco-fleet/check_raw_run_artifacts.py"
   "scripts/poco-fleet/check_run_bundle.py"
   "scripts/poco-fleet/check_run_bundle_test.py"
@@ -209,6 +211,7 @@ readonly -a PYTHON_FILES=(
 readonly -a NO_CARGO_SELF_TESTS=(
   "scripts/poco-fleet/poco_consensus_contract_test.py"
   "scripts/poco-fleet/check_baseline_test.py"
+  "scripts/poco-fleet/probe_fleet_test.py"
   "scripts/poco-fleet/check_run_readiness_evidence_test.py"
   "scripts/poco-fleet/check_source_candidate_test.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_test.py"
@@ -241,6 +244,7 @@ readonly -a NO_CARGO_SELF_TESTS=(
 readonly -a NO_CARGO_STABLE_MARKERS=(
   'poco_consensus_contract_self_test=passed'
   'poco_g3_current_fleet_observation_self_test=passed'
+  'fleet_probe_stdin_boundary=passed'
   'poco_g3_current_run_readiness_self_test=passed'
   'poco_g3_source_candidate_test=passed'
   'poco_g3_reproducible_builder_boundary_test=passed'
