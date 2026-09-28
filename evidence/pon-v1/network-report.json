@@ -1,0 +1,398 @@
+{
+  "schema": "pon-loopback-executable-contract-cost-v1",
+  "transport": "framed TCP on 127.0.0.1 only",
+  "peer_processes": 3,
+  "independent_operators": false,
+  "native_node": false,
+  "network_security_accepted": false,
+  "temporary_storage": "normal output directory; SQLite WAL FULL, no power-loss test",
+  "actual_work_verification": true,
+  "actual_signed_transactions": 64,
+  "miner_target_initial": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "statistics_include_python_scalar_work_and_full_state_roots": true,
+  "configured_block_spacing_seconds": 10,
+  "chain_clock": "fixed logical timestamps for reproducibility, not live UTC consensus-time acceptance",
+  "no_sleep_to_enforce_spacing": true,
+  "samples": [
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.29634297199663706,
+      "validation_seconds": 0.2909088940068614,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.26770771501469426,
+      "validation_seconds": 0.26264983500004746,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.2966011719836388,
+      "validation_seconds": 0.2927236669929698,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "generation_seconds": 0.2521426669845823,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.34297923199483193,
+      "validation_seconds": 0.34058913198532537,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.28918467299081385,
+      "validation_seconds": 0.286635936005041,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.3159289759933017,
+      "validation_seconds": 0.31345408302149735,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "generation_seconds": 0.38490652199834585,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.34629191597923636,
+      "validation_seconds": 0.34423561199218966,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.3322116319905035,
+      "validation_seconds": 0.32992329401895404,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.34055285798967816,
+      "validation_seconds": 0.3392055109725334,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "generation_seconds": 0.252427720988635,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.4055749169783667,
+      "validation_seconds": 0.403787196992198,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.3840697200212162,
+      "validation_seconds": 0.38184972101589665,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "roundtrip_seconds": 0.3845649040013086,
+      "validation_seconds": 0.3819180590217002,
+      "transactions": 8
+    },
+    {
+      "scenario": "disjoint-recipients",
+      "generation_seconds": 0.2721205810084939,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.41415875297388993,
+      "validation_seconds": 0.4119062940008007,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.37610822200076655,
+      "validation_seconds": 0.37441061399294995,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.37548734500887804,
+      "validation_seconds": 0.3733539929962717,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "generation_seconds": 0.2675671449978836,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.3858581870154012,
+      "validation_seconds": 0.383392587013077,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.38790084098582156,
+      "validation_seconds": 0.3858732480148319,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.38699031798751093,
+      "validation_seconds": 0.38523173599969596,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "generation_seconds": 0.34855054499348626,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.465391086996533,
+      "validation_seconds": 0.4634630579967052,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.43437282499508,
+      "validation_seconds": 0.4319768699933775,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.4775129969930276,
+      "validation_seconds": 0.47485811298247427,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "generation_seconds": 0.25963313301326707,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.3855158989899792,
+      "validation_seconds": 0.3834542669937946,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.38753862099838443,
+      "validation_seconds": 0.3845406640029978,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "roundtrip_seconds": 0.41361086899996735,
+      "validation_seconds": 0.4110035379999317,
+      "transactions": 8
+    },
+    {
+      "scenario": "hot-recipient",
+      "generation_seconds": 0.2793014269846026,
+      "transactions": 8
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.4131900350039359,
+      "validation_seconds": 0.4107700360182207,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.432099659985397,
+      "validation_seconds": 0.43023670100956224,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.4131837640015874,
+      "validation_seconds": 0.41076286099269055,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.3898263490118552,
+      "validation_seconds": 0.38779475502087735,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.39677537899115123,
+      "validation_seconds": 0.39492771300137974,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.4205183009908069,
+      "validation_seconds": 0.41835372199420817,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.42579405300784856,
+      "validation_seconds": 0.4238503320084419,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.3933092539955396,
+      "validation_seconds": 0.3907940359786153,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.4229440889903344,
+      "validation_seconds": 0.4212081759760622,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.4995826469967142,
+      "validation_seconds": 0.49734085000818595,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.5173371729906648,
+      "validation_seconds": 0.5148283299931791,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.5196854649984743,
+      "validation_seconds": 0.5179973340127617,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.47493910798220895,
+      "validation_seconds": 0.47257951099891216,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.4358677399868611,
+      "validation_seconds": 0.43419771900516935,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.41328130499459803,
+      "validation_seconds": 0.41112333099590614,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.42070772100123577,
+      "validation_seconds": 0.4187189379881602,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.4375050190137699,
+      "validation_seconds": 0.4359003530116752,
+      "transactions": 0
+    },
+    {
+      "scenario": "confirmation-fill",
+      "roundtrip_seconds": 0.4373503999959212,
+      "validation_seconds": 0.4351955839956645,
+      "transactions": 0
+    },
+    {
+      "scenario": "fork-reorg",
+      "roundtrip_seconds": 0.7757605880033225,
+      "validation_seconds": 0.7734824090148322,
+      "transactions": 0
+    },
+    {
+      "scenario": "fork-reorg",
+      "roundtrip_seconds": 0.7445138760085683,
+      "validation_seconds": 0.7426185710064601,
+      "transactions": 0
+    },
+    {
+      "scenario": "fork-reorg",
+      "roundtrip_seconds": 0.6855948960001115,
+      "validation_seconds": 0.6836907379911281,
+      "transactions": 0
+    },
+    {
+      "scenario": "fork-reorg",
+      "roundtrip_seconds": 0.7546166670217644,
+      "validation_seconds": 0.7518285140104126,
+      "transactions": 0
+    },
+    {
+      "scenario": "fork-reorg",
+      "roundtrip_seconds": 0.752260885987198,
+      "validation_seconds": 0.7503476910060272,
+      "transactions": 0
+    },
+    {
+      "scenario": "fork-reorg",
+      "roundtrip_seconds": 0.7521725300175603,
+      "validation_seconds": 0.7500467310019303,
+      "transactions": 0
+    },
+    {
+      "scenario": "fork-reorg",
+      "roundtrip_seconds": 0.820723993005231,
+      "validation_seconds": 0.8191413109889254,
+      "transactions": 0
+    },
+    {
+      "scenario": "fork-reorg",
+      "roundtrip_seconds": 0.8225517850078177,
+      "validation_seconds": 0.8207796940114349,
+      "transactions": 0
+    },
+    {
+      "scenario": "fork-reorg",
+      "roundtrip_seconds": 0.8193735179957002,
+      "validation_seconds": 0.8176103979931213,
+      "transactions": 0
+    }
+  ],
+  "invalid_transcript_roundtrip_seconds": [
+    0.2135515919944737,
+    0.20791960298083723,
+    0.20687857700977474
+  ],
+  "oversized_frame_rejections": 3,
+  "final_tip": "63d8053150c8c571f73f213399be251ff85b5ad79dd1a0e831a0251c49fd06df",
+  "production_activation": false,
+  "roundtrip_by_scenario": {
+    "fork-reorg": {
+      "count": 9,
+      "p50": 0.7546166670217644,
+      "p95": 0.8225517850078177,
+      "max": 0.8225517850078177
+    },
+    "hot-recipient": {
+      "count": 12,
+      "p50": 0.38753862099838443,
+      "p95": 0.4775129969930276,
+      "max": 0.4775129969930276
+    },
+    "confirmation-fill": {
+      "count": 18,
+      "p50": 0.4229440889903344,
+      "p95": 0.5196854649984743,
+      "max": 0.5196854649984743
+    },
+    "disjoint-recipients": {
+      "count": 12,
+      "p50": 0.3322116319905035,
+      "p95": 0.4055749169783667,
+      "max": 0.4055749169783667
+    }
+  }
+}

@@ -1,69 +1,102 @@
-# M09 Public parameter and evidence availability — PoN technical contract
+# M09 Artifact content identity, retention and readback
 
-Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
-Status: new development contract; runtime, work-security and independent acceptance are not implied.
-Primary module: M09; actual source ownership is in `config/portability-inventory-v1.json`.
-
-The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [PoN domain contract](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md) govern new work.
-Logical interface names below are proposed contracts, not claims that matching Rust APIs,
-wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
+Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
+[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
+This module has detailed procedures and executable reference coverage, not an independently
+accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets ordering. [MODEL_EVALUATION.md](../protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md) defines exact shared rules.
 
 ## PoN Authority
 
-Own bounded artifact publication, availability, repair and retention responsibilities. A model
-root or receipt is not the model bytes, and storage attestations do not choose a ledger branch.
-Parameters must remain usable without the contributor online.
+Read at most65537 bytes; require <=65536 and canonical JSON byte identity, exact fields/shapes/ranges/feature/family. Hash bytes, never mutable path names. No executable object format.
+
+This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
+passing document check to grant work validity, model utility, local execution permission
+or production activation. Every consumer must use the specific verified fact it needs.
+Native component reuse and executable-contract integration are reported separately.
 
 ## PoN Interfaces
 
-PublishParameterManifest; VerifyChunk; ReconstructArtifact; ReserveRetention; FetchExactRelease;
-RepairReplica; ReleaseRetention. Bind content hash, codec, size, task/contribution/release
-identity, permissions and responsibility horizon.
+| Operation | Exact logical inputs | Output and authority boundary |
+|---|---|---|
+| `ValidateArtifact` | canonical model bytes,expected hash,family | bounded immutable tensor bundle |
+| `FetchWithoutAuthor` | manifesthash,two custodian paths,consumer request | verified same bytes or unavailable |
+
+The named signatures define domain contracts. Source bindings below identify which are
+implemented natively, in the executable Python specification, or only by reusable
+components. The names do not assert matching deployed Rust service APIs.
 
 ## PoN State machine
 
-Validate canonical bounded manifest and permissible data format, reserve storage/repair
-obligations, receive and verify actual chunks, reconstruct exact bytes and attest only the
-declared availability statement. Global adoption requires all base/expert/router/calibration
-dependencies available under the chosen profile. Replicate across declared independent
-custodians and check retrieval rather than counting URLs or signatures.
+### M09.ValidateArtifact
+
+Read at most65537 bytes; require <=65536 and canonical JSON byte identity, exact fields/shapes/ranges/feature/family. Hash bytes, never mutable path names. No executable object format.
+
+**Commit point:** Content-addressed artifact and manifest owned by the artifact provider.
+
+**Rejections:** `ARTIFACT_LIMIT, ARTIFACT_FIELDS, FAMILY, SHAPE, NUMERIC`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
+
+### M09.FetchWithoutAuthor
+
+Verify each copy hash; remove original author path during controlled test; load from a custodian and bind actual model hash to result. Remote diversified storage and long-term repair are not implied by local copies.
+
+**Commit point:** Retention obligations separate from self-contained historical work certificates.
+
+**Rejections:** `DA, ARTIFACT_CANONICAL_BYTES, UNAVAILABLE`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
 
 ## PoN Persistence and recovery
 
-Retain content-addressed bytes and responsibility records through evaluation/challenge/reward
-horizons and accepted replay policy. A chain reorg may change entitlement but cannot justify
-deleting evidence still needed for unresolved disputes or recovery. Reference-aware garbage
-collection never deletes shared base weights still used by another release.
+**M09.ValidateArtifact:** Content-addressed artifact and manifest owned by the artifact provider.
+
+**M09.FetchWithoutAuthor:** Retention obligations separate from self-contained historical work certificates.
+
+Branch-derived entitlement can be detached. Independent local effect/revocation facts
+cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
+A native implementation must reproduce byte/root/recovery vectors before replacing the
+reference path. No old consensus namespace or decoder is restored.
 
 ## PoN Resource bounds
 
-Per-artifact, chunk, reconstruction, peer, storage and global retention caps; bandwidth and
-repair deadlines; bounded replication queues. Capacity is reserved before accepting obligations.
-New model uploads cannot starve block-body/proof availability or historical replay.
+**M09.ValidateArtifact:** base/router3x257;deltas3x3x257;intweights[-32767,32767].
+
+**M09.FetchWithoutAuthor:** productiontarget artifacts64MiB,chunks1MiB,retention10000blocks.
+
+The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
+work, model and ledger profile. Limit changes require a new context. Local backpressure
+may reject service or defer data but cannot fabricate accepted block/evaluation facts.
 
 ## PoN Security
 
-Malicious tensor containers, path traversal, missing chunks, incorrect reconstruction,
-self-attested replicas, author disappearance and data-consent mismatch. Hashes do not imply
-confidentiality. Publicly downloaded weights cannot be recalled from every replica by deleting a
-chain row.
+The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
+cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
+experimental partitions; they are not independent future-window evidence. SQLite process
+crashes are not physical power-loss qualification. These limitations remain explicit in
+[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
 
 ## PoN Verification and evidence
 
-Author-offline retrieval, one/multiple replica failures, malicious manifests/chunks, exact size
-bounds, repair exhaustion, shared-base GC, reorged release retention and privacy/use-policy
-rejection.
+- `CodecTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
 
-## Source disposition
+```bash
+python3 formal/pon-nakamoto-v1/test_contracts.py
+CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+```
 
-Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
-The old consensus/runtime/protocol artifacts are deleted from the active tree and are
-recoverable only from Git history. This module target is not automatically implemented
-by the retained components; ordinary PoN mining, proof verification and reorg remain
-explicit future implementation work. Retained local monotonic stores are not yet
-branch-aware reorg stores and cannot be advertised as chain-finality authorities.
+Build native examples before the interop command; missing binaries cause failure, not
+a skipped pass. Fixtures are never regenerated by test execution. Independently written
+third-party vectors and acceptance remain future evidence, not an assumed status.
 
 ## Current source and verification
 
-- [`trnm-data-availability`](../../trillionnium/crates/trnm-data-availability/README.md): `cargo test --locked -p trnm-data-availability --all-targets --all-features`.
+- [`formal/pon-nakamoto-v1/experiments/model_loop.py`](../../formal/pon-nakamoto-v1/experiments/model_loop.py)
+- [`formal/pon-nakamoto-v1/experiments/settle_model.py`](../../formal/pon-nakamoto-v1/experiments/settle_model.py)
+- Native reusable owner: `trnm-data-availability`; run `cargo test --locked -p trnm-data-availability --all-targets --all-features` from `trillionnium`.
+
+## Maturity and outstanding integration
+
+Documented: yes. Executable contract: yes. Native component presence is enumerated above.
+Native ordinary-product integration: no. Independent acceptance: no. Production activation:
+no. Those axes are independent; a component-level pass does not promote the entire module.

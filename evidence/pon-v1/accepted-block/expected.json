@@ -1,0 +1,22 @@
+{
+  "schema": "pon-accepted-block-vector-v1",
+  "executed_commit": "2c67352d0a2af974a2dcc51d5541341f6004807f",
+  "algorithm_input_commit": "8b87fee77ddee6a9778e8bebe880ba2627b05d5d",
+  "network": "622282f429352e572cb376d6d7f5c62e7728c8d01338eade828922a134feb609",
+  "parameters": "fa66e908edf4b47cab5c31382588da4678840b0f672ac37723256a277a9d92bd",
+  "genesis": "82463aad3f270233718387e1f606441994bfc662ba74720b07f78eabaa2aff29",
+  "genesis_state_root": "a38261e0626576626728f955fa597c25420324cf6fd5bc7e55bd3da525f3a338",
+  "post_state_root": "b02ef572b8a75d2c4849acfd5812444a4a8acecda3057a70888029cfc0066221",
+  "block_id": "107a8643145a58e3b4160e38acecb3fa8fb2c838c7641eaad775e90ae4b8b2a5",
+  "header_challenge": "08e3bc05ce79f12f55a53194c3ac8af6d9e48394d5b847e0e73ab63ef96a4c49",
+  "tx_id": "c13ad43179e0f7292076868dc9d283393d02f42453b5428bb3317c97a6ddd7ec",
+  "work_task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+  "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "ticket": "0e1f847d9b376551812bad2770cc265c902853d27589c539291728b807972753",
+  "observed_logical_time": 1800001000,
+  "sender": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+  "recipient": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+  "transfer_amount": 1000,
+  "independent_accepted": false,
+  "production_activation": false
+}

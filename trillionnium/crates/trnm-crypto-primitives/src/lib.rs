@@ -175,3 +175,5 @@ mod tests {
         assert!(verify_hex_strict(&public_key_hex(&key), b"tampered", &signature).is_err());
     }
 }
+
+pub mod pon_work;

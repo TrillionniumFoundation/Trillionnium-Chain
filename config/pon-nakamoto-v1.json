@@ -12,15 +12,16 @@
   "automatic_bft_fallback": false,
   "automatic_hash_only_fallback": false,
   "work_profile": {
-    "status": "unqualified",
+    "status": "implemented-experimental-not-security-qualified",
     "primitive_direction": "challenge-bound-verifiable-neural-linear-algebra",
-    "concrete_profile_id": null,
-    "canonical_codec_frozen": false,
+    "concrete_profile_id": "pon-matmul-transcript-64-v1",
+    "canonical_codec_frozen": true,
     "cost_hardness_accepted": false,
     "independent_verifier": false,
     "work_class_count": 1,
     "quality_is_work": false,
-    "historical_training_is_fresh_work": false
+    "historical_training_is_fresh_work": false,
+    "codec_scope": "experimental-genesis-only"
   },
   "implementation": {
     "runtime_implemented": false,
@@ -232,5 +233,19 @@
     "old_byte_compatibility": false,
     "old_protocol_decoders_present": false
   },
-  "source_inventory": "config/portability-inventory-v1.json"
+  "source_inventory": "config/portability-inventory-v1.json",
+  "experimental_profiles": [
+    {
+      "id": "pon-matmul-transcript-64-v1",
+      "contract": "config/pon/work-profile-v1.json",
+      "native_implementation": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "reference_implementation": "formal/pon-nakamoto-v1/work_oracle.py",
+      "status": "specified-and-executable-candidate",
+      "production_eligible": false,
+      "independent_accepted": false
+    }
+  ],
+  "detailed_module_contracts": "config/pon/module-contracts-v1.json",
+  "module_maturity": "config/pon/module-maturity-v1.json",
+  "experimental_genesis": "config/pon/devnet-v1.json"
 }

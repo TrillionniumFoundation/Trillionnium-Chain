@@ -489,3 +489,5 @@ mod tests {
         assert!(serde_json::from_slice::<CanonicalTxV1>(leading_zero).is_err());
     }
 }
+
+pub mod pon_wire;

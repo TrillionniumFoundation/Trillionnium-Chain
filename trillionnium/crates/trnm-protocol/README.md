@@ -14,3 +14,10 @@ cargo test --locked -p trnm-protocol --all-targets --all-features
 
 Run from `trillionnium`. See [modules](../../../docs/modules/README.md) and
 [ownership](../../../config/portability-inventory-v1.json).
+
+## Executable PoN candidate
+
+This package now contains an exact experimental PoN wire codec and sparse state root.
+See [the exact contract](../../../docs/protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md) and
+the separate Python oracle. Native code and cross-language vectors are real; no public
+network hardness, native node integration or independent acceptance is implied.

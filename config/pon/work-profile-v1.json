@@ -1,0 +1,36 @@
+{
+  "schema": "pon-work-profile-v1",
+  "id": "pon-matmul-transcript-64-v1",
+  "status": "experimental-recompute-profile",
+  "production_eligible": false,
+  "external_hardness_acceptance": false,
+  "n": 64,
+  "rank": 8,
+  "field_modulus": 4294967291,
+  "field_element": "u32-little-endian-canonical-less-than-modulus",
+  "accumulator": "u128; at most 64 products before reduction",
+  "hash_framing": "TRNM-PON1\\0, LE16 tag length, tag, then LE32 length and bytes for every part",
+  "noise": "labels 0,1,2,3; H(noise,challenge,label,LE32(counter)); rejection-sampled LE32 words; 512 values per label",
+  "encoding": "Aprime=A+EL*ER; Bprime=B+FL*FR modulo q",
+  "trace": "SHA256(TRNM-PON-TRACE1\\0 || challenge || LE32 cumulative cell values in bi,bj,bk,i,j order; 8x8 tiles)",
+  "decoding": "C=Aprime*Bprime-(A*FL)*FR-EL*(ER*Bprime) mod q",
+  "proof_magic": "PNW1",
+  "proof_bytes": 49188,
+  "proof_layout": [
+    "magic:4",
+    "A:16384",
+    "B:16384",
+    "C:16384",
+    "trace:32"
+  ],
+  "ticket": "H(ticket,challenge,trace) <= expected target as unsigned big-endian 256-bit integer",
+  "verification": "bounded full replay of transcript and exact decoded product; no majority or approximate tolerances",
+  "known_limitations": [
+    "recomputation verifier not succinct",
+    "cheap forged transcript can pass ticket filter and force expensive rejection",
+    "task-dependent decoding shortcuts and adversarial hardware speedup unqualified",
+    "uniform independent ticket/cost assumptions not proven",
+    "no claim of paper-optimal overhead"
+  ],
+  "maximum_noise_hashes_per_label": 128
+}

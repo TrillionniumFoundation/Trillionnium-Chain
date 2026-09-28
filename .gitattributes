@@ -1,0 +1,5 @@
+# Observed command logs are byte-exact evidence, not normalized source text.
+# Keep trailing bytes and nested test output unchanged; hashes are verified separately.
+evidence/pon-v1/native-logs/*.log -text -diff
+evidence/pon-v1/campaign-logs/*.log -text -diff
+evidence/pon-v1/accepted-block/*.log -text -diff

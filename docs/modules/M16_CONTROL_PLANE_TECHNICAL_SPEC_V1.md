@@ -1,67 +1,102 @@
-# M16 Advisory model composition, routing and resource planning — PoN technical contract
+# M16 Bounded composition proposals and local intelligence
 
-Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
-Status: new development contract; runtime, work-security and independent acceptance are not implied.
-Primary module: M16; actual source ownership is in `config/portability-inventory-v1.json`.
-
-The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [PoN domain contract](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md) govern new work.
-Logical interface names below are proposed contracts, not claims that matching Rust APIs,
-wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
+Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
+[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
+This module has detailed procedures and executable reference coverage, not an independently
+accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets ordering. [MODEL_EVALUATION.md](../protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md) defines exact shared rules.
 
 ## PoN Authority
 
-The global control plane is advisory. It can propose composition/router/resource choices and
-summarize measurements; it cannot set chainwork, choose forks, issue capabilities, alter
-difficulty at runtime or automatically activate code/models.
+Use explicit full-batch softmax recipe,120stepslocal androuter, inverseclassfrequency, boundedquantization; selectroutertargets on calibration only. Emitnewimmutableartifact, never mutate activebundle.
+
+This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
+passing document check to grant work validity, model utility, local execution permission
+or production activation. Every consumer must use the specific verified fact it needs.
+Native component reuse and executable-contract integration are reported separately.
 
 ## PoN Interfaces
 
-ObservePublicModelMetrics; ProposeCompatibleComposition; SuggestResourceAllocation;
-SubmitEvaluationJob; CompareCandidates; RequestGovernedAdoption. Bind objective, model/reference
-versions, constraints, uncertainty and resource allowance.
+| Operation | Exact logical inputs | Output and authority boundary |
+|---|---|---|
+| `TrainCompatibleCandidate` | frozenpublic train/calibration partitions,base,family | integer deltas and router artifact |
+| `CompareOrAbstain` | base,singleexperts,meanmerge,composition,pooledcontrol | unhidden comparison and zero-or-positive candidate |
+
+The named signatures define domain contracts. Source bindings below identify which are
+implemented natively, in the executable Python specification, or only by reusable
+components. The names do not assert matching deployed Rust service APIs.
 
 ## PoN State machine
 
-Read permitted source-bound observations and fixed public evaluation plans. Generate bounded
-expert/graph/router or distillation candidates within registered interfaces, including
-reuse/no-change. Submit through M10/M11 for independent evaluation. Hepta retains local NDU
-objectives and four subject levels; no mandatory global RPC on Cell/reflex paths.
+### M16.TrainCompatibleCandidate
+
+Use explicit full-batch softmax recipe,120stepslocal androuter, inverseclassfrequency, boundedquantization; selectroutertargets on calibration only. Emitnewimmutableartifact, never mutate activebundle.
+
+**Commit point:** Training records owned by localproducer; chain receives only parameter/evidenceclaims.
+
+**Rejections:** `FAMILY, NUMERIC, INSUFFICIENT_PARTITION`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
+
+### M16.CompareOrAbstain
+
+Measure wholemodel and ablations on fixedpartitions; zero when gainrulefails; preservefirstfailedexperiment and strongerbaselines. Proposal cannot change consensus,target,evaluatorprofile or localpermissions.
+
+**Commit point:** No chainwrite until explicit M10 signedproposal and M11 evidence.
+
+**Rejections:** `EVIDENCE`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
 
 ## PoN Persistence and recovery
 
-Keep proposal lineage and non-authoritative telemetry with exact versions; canonical parameters,
-release state, budgets and learning facts stay with existing owners. A reorg invalidates
-chain-derived proposal context, not local history; recompute/revalidate without elevating
-caches.
+**M16.TrainCompatibleCandidate:** Training records owned by localproducer; chain receives only parameter/evidenceclaims.
+
+**M16.CompareOrAbstain:** No chainwrite until explicit M10 signedproposal and M11 evidence.
+
+Branch-derived entitlement can be detached. Independent local effect/revocation facts
+cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
+A native implementation must reproduce byte/root/recovery vectors before replacing the
+reference path. No old consensus namespace or decoder is restored.
 
 ## PoN Resource bounds
 
-Limit candidate sets, search/training/evaluation budgets, graph edits, message size and planning
-time. Reserve safety/foreground resources first. Routing quality includes end-to-end latency,
-loaded experts and uncertainty rather than raw parameter count.
+**M16.TrainCompatibleCandidate:** 3experts;257features;finitefullbatchsteps;no providerAPI.
+
+**M16.CompareOrAbstain:** training/quality cost separatefromwork; no globalmandatoryoptimizer.
+
+The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
+work, model and ledger profile. Limit changes require a new context. Local backpressure
+may reject service or defer data but cannot fabricate accepted block/evaluation facts.
 
 ## PoN Security
 
-Reward hacking, selecting evaluation data after results, authority encoded in latent tensors,
-hidden centralized operator, automatic hard-boundary mutation and biased resource allocation.
-Utility never compensates for privacy/truth/local authority constraints.
+The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
+cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
+experimental partitions; they are not independent future-window evidence. SQLite process
+crashes are not physical power-loss qualification. These limitations remain explicit in
+[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
 
 ## PoN Verification and evidence
 
-No-change and abstain paths, compatible/invalid composition proposals, whole-system gains vs
-local optima, missed windows, failed model proposal, stale/reorged context and continued system
-safety with this service disabled.
+- `ExecutionTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
 
-## Source disposition
+```bash
+python3 formal/pon-nakamoto-v1/test_contracts.py
+CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+```
 
-Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
-The old consensus/runtime/protocol artifacts are deleted from the active tree and are
-recoverable only from Git history. This module target is not automatically implemented
-by the retained components; ordinary PoN mining, proof verification and reorg remain
-explicit future implementation work. Retained local monotonic stores are not yet
-branch-aware reorg stores and cannot be advertised as chain-finality authorities.
+Build native examples before the interop command; missing binaries cause failure, not
+a skipped pass. Fixtures are never regenerated by test execution. Independently written
+third-party vectors and acceptance remain future evidence, not an assumed status.
 
 ## Current source and verification
 
-- [`trnm-control-plane`](../../trillionnium/crates/trnm-control-plane/README.md): `cargo test --locked -p trnm-control-plane --all-targets --all-features`.
+- [`formal/pon-nakamoto-v1/experiments/model_loop.py`](../../formal/pon-nakamoto-v1/experiments/model_loop.py)
+- [`trillionnium/crates/trnm-control-plane/src/lib.rs`](../../trillionnium/crates/trnm-control-plane/src/lib.rs)
+- Native reusable owner: `trnm-control-plane`; run `cargo test --locked -p trnm-control-plane --all-targets --all-features` from `trillionnium`.
+
+## Maturity and outstanding integration
+
+Documented: yes. Executable contract: yes. Native component presence is enumerated above.
+Native ordinary-product integration: no. Independent acceptance: no. Production activation:
+no. Those axes are independent; a component-level pass does not promote the entire module.

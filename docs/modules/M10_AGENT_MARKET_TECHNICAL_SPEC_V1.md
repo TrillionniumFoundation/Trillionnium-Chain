@@ -1,71 +1,104 @@
-# M10 Parameter contributions, evaluation jobs and shared-model releases — PoN technical contract
+# M10 Contributions, immutable release and actual task lifecycle
 
-Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
-Status: new development contract; runtime, work-security and independent acceptance are not implied.
-Primary module: M10; actual source ownership is in `config/portability-inventory-v1.json`.
-
-The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [PoN domain contract](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md) govern new work.
-Logical interface names below are proposed contracts, not claims that matching Rust APIs,
-wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
+Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
+[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
+This module has detailed procedures and executable reference coverage, not an independently
+accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets ordering. [MODEL_EVALUATION.md](../protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md) defines exact shared rules.
 
 ## PoN Authority
 
-Own the deterministic chain lifecycle for parameter contributions, evaluation/composition jobs
-and public release proposals. Hepta remains owner of local training and private task data. M10
-cannot self-certify a useful model, mint reward or issue local execution permission.
+Recompute full id; require exact family/current parent and artifact size; reject same parent/artifact duplicates even under another sender; status submitted. A signature is provenance claim, not model merit.
+
+This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
+passing document check to grant work validity, model utility, local execution permission
+or production activation. Every consumer must use the specific verified fact it needs.
+Native component reuse and executable-contract integration are reported separately.
 
 ## PoN Interfaces
 
-ParameterContribution; EvaluationPlan; CompositionCandidate; GlobalModelRelease;
-SponsoredInferenceTask; CancelOrExpire; ObserveReorg. Reuse current task/lease/attempt/resource
-owner contracts behind explicitly versioned extensions, not a second marketplace database.
+| Operation | Exact logical inputs | Output and authority boundary |
+|---|---|---|
+| `SubmitContribution` | author,family,parent,artifact,size,componentsRoot,signature | new immutable contribution id |
+| `PublishEvaluatedRelease` | evaluated bundle,sorted scored leaf list,sponsor budget | new release pointer plus escrow |
+
+The named signatures define domain contracts. Source bindings below identify which are
+implemented natively, in the executable Python specification, or only by reusable
+components. The names do not assert matching deployed Rust service APIs.
 
 ## PoN State machine
 
-Admit exact parent model, compatible family/layers/ranks/numeric profile, real parameter bytes
-and publication/use conditions. Reserve evaluation/retention obligations and lock the evaluation
-plan before results. Consume M11 typed evidence and whole-model composition outcomes, then
-propose a reproducible release and M12 allocation. Mining success alone cannot admit a model.
-Non-miners may contribute useful trained updates.
+### M10.SubmitContribution
+
+Recompute full id; require exact family/current parent and artifact size; reject same parent/artifact duplicates even under another sender; status submitted. A signature is provenance claim, not model merit.
+
+**Commit point:** Deterministic contribution/duplicate rows commit with block.
+
+**Rejections:** `ROOT, DUPLICATE, STATE, LIMIT`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
+
+### M10.PublishEvaluatedRelease
+
+Verify bundle minimum positive score; bind exact components root, accepted leaf scores/owners and total; recompute release id; debit sponsor; record maturity and claims; only then adopt pointer. Local Hepta use still requires generation admission.
+
+**Commit point:** Same state transition and block delta; reorg reverses pointer/escrow but not historical inference.
+
+**Rejections:** `EVIDENCE, ROOT, FUNDS, DUPLICATE`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
 
 ## PoN Persistence and recovery
 
-Chain lifecycle and adopted-release pointers are branch-derived; local training/artifact lineage
-and actual effect records remain with Hepta. Reorg transitions invalidate current
-adoption/entitlement without rewriting historical model outputs. Every retry binds the same
-original identity or an explicitly new authorized attempt.
+**M10.SubmitContribution:** Deterministic contribution/duplicate rows commit with block.
+
+**M10.PublishEvaluatedRelease:** Same state transition and block delta; reorg reverses pointer/escrow but not historical inference.
+
+Branch-derived entitlement can be detached. Independent local effect/revocation facts
+cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
+A native implementation must reproduce byte/root/recovery vectors before replacing the
+reference path. No old consensus namespace or decoder is restored.
 
 ## PoN Resource bounds
 
-Caps on contributions, experts per candidate, tensor metadata, evaluation/composition jobs,
-retries, graph depth, in-flight tasks and future obligations. No free task bypasses global
-resource caps. An empty improvement queue does not stop block production or invent a new gain.
+**M10.SubmitContribution:** candidate cap256; modelsize64MiB; newprofilebyteformat.
+
+**M10.PublishEvaluatedRelease:** 1..16 allocation entries;20-block rewardmaturity.
+
+The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
+work, model and ledger profile. Limit changes require a new context. Local backpressure
+may reject service or defer data but cannot fabricate accepted block/evaluation facts.
 
 ## PoN Security
 
-Parent/tokenizer substitution, invented training provenance, benchmark overfit,
-duplicated/perturbed contribution, self-service rewards and schema-incompatible experts.
-Permission to process a task is not permission to export training parameters or publish personal
-data.
+The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
+cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
+experimental partitions; they are not independent future-window evidence. SQLite process
+crashes are not physical power-loss qualification. These limitations remain explicit in
+[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
 
 ## PoN Verification and evidence
 
-Real task to parameter to independent evaluation to composed model to independent free consumer
-and next contribution. Test incompatible bundles, duplicate attempts, cancel/late receipt,
-author loss, complementary experts, no improvement and model-release reorg.
+- `ExecutionTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
 
-## Source disposition
+```bash
+python3 formal/pon-nakamoto-v1/test_contracts.py
+CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+```
 
-Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
-The old consensus/runtime/protocol artifacts are deleted from the active tree and are
-recoverable only from Git history. This module target is not automatically implemented
-by the retained components; ordinary PoN mining, proof verification and reorg remain
-explicit future implementation work. Retained local monotonic stores are not yet
-branch-aware reorg stores and cannot be advertised as chain-finality authorities.
+Build native examples before the interop command; missing binaries cause failure, not
+a skipped pass. Fixtures are never regenerated by test execution. Independently written
+third-party vectors and acceptance remain future evidence, not an assumed status.
 
 ## Current source and verification
 
-- [`trnm-worker-agent`](../../trillionnium/crates/trnm-worker-agent/README.md): `cargo test --locked -p trnm-worker-agent --all-targets --all-features`.
-- [`trnm-research-protocol`](../../trillionnium/crates/trnm-research-protocol/README.md): `cargo test --locked -p trnm-research-protocol --all-targets --all-features`.
-- [`trnm-task-kernel`](../../trillionnium/crates/trnm-task-kernel/README.md): `cargo test --locked -p trnm-task-kernel --all-targets --all-features`.
+- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
+- [`formal/pon-nakamoto-v1/experiments/settle_model.py`](../../formal/pon-nakamoto-v1/experiments/settle_model.py)
+- Native reusable owner: `trnm-worker-agent`; run `cargo test --locked -p trnm-worker-agent --all-targets --all-features` from `trillionnium`.
+- Native reusable owner: `trnm-research-protocol`; run `cargo test --locked -p trnm-research-protocol --all-targets --all-features` from `trillionnium`.
+- Native reusable owner: `trnm-task-kernel`; run `cargo test --locked -p trnm-task-kernel --all-targets --all-features` from `trillionnium`.
+
+## Maturity and outstanding integration
+
+Documented: yes. Executable contract: yes. Native component presence is enumerated above.
+Native ordinary-product integration: no. Independent acceptance: no. Production activation:
+no. Those axes are independent; a component-level pass does not promote the entire module.

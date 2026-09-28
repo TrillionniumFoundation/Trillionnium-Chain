@@ -1,0 +1,383 @@
+{
+  "schema": "pon-ledger-codec-v1",
+  "network_scope": "experimental-only-no-production-authority",
+  "hash": "SHA256(prefix TRNM-PON1\\0 || LE16(tag length) || tag || concatenated LE32(part length),part)",
+  "header_magic": "PNH1",
+  "header_version": 1,
+  "header": [
+    {
+      "name": "network",
+      "type": "hash32"
+    },
+    {
+      "name": "parameters",
+      "type": "hash32"
+    },
+    {
+      "name": "parent",
+      "type": "hash32"
+    },
+    {
+      "name": "height",
+      "type": "u64"
+    },
+    {
+      "name": "timestamp",
+      "type": "u64"
+    },
+    {
+      "name": "target",
+      "type": "hash32"
+    },
+    {
+      "name": "miner",
+      "type": "hash32"
+    },
+    {
+      "name": "transactions",
+      "type": "hash32"
+    },
+    {
+      "name": "state",
+      "type": "hash32"
+    },
+    {
+      "name": "receipts",
+      "type": "hash32"
+    },
+    {
+      "name": "work_task",
+      "type": "hash32"
+    },
+    {
+      "name": "nonce",
+      "type": "u64"
+    }
+  ],
+  "tx_magic": "PNX1",
+  "tx_envelope": [
+    "network:32",
+    "sender_ed25519:32",
+    "nonce:LE64",
+    "expiry_height:LE64",
+    "fee_limit:LE64",
+    "tag:u8",
+    "payload_length:LE16",
+    "payload",
+    "signature:64"
+  ],
+  "transaction_signature_domain": "tx-sign",
+  "transaction_id_domain": "tx-id",
+  "max_transaction_bytes": 2048,
+  "commands": [
+    {
+      "tag": 1,
+      "name": "transfer",
+      "payload": [
+        {
+          "name": "recipient",
+          "type": "hash32"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ],
+      "fixed_payload_bytes": 40,
+      "base_fee_units": 100
+    },
+    {
+      "tag": 2,
+      "name": "reserve_task",
+      "payload": [
+        {
+          "name": "task",
+          "type": "hash32"
+        },
+        {
+          "name": "provider",
+          "type": "hash32"
+        },
+        {
+          "name": "budget",
+          "type": "u64"
+        },
+        {
+          "name": "deadline",
+          "type": "u64"
+        }
+      ],
+      "fixed_payload_bytes": 80,
+      "base_fee_units": 180
+    },
+    {
+      "tag": 3,
+      "name": "cancel_task",
+      "payload": [
+        {
+          "name": "task",
+          "type": "hash32"
+        }
+      ],
+      "fixed_payload_bytes": 32,
+      "base_fee_units": 100
+    },
+    {
+      "tag": 4,
+      "name": "record_receipt",
+      "payload": [
+        {
+          "name": "task",
+          "type": "hash32"
+        },
+        {
+          "name": "output",
+          "type": "hash32"
+        }
+      ],
+      "fixed_payload_bytes": 64,
+      "base_fee_units": 120
+    },
+    {
+      "tag": 5,
+      "name": "accept_task",
+      "payload": [
+        {
+          "name": "task",
+          "type": "hash32"
+        },
+        {
+          "name": "output",
+          "type": "hash32"
+        }
+      ],
+      "fixed_payload_bytes": 64,
+      "base_fee_units": 120
+    },
+    {
+      "tag": 6,
+      "name": "contribute",
+      "payload": [
+        {
+          "name": "contribution",
+          "type": "hash32"
+        },
+        {
+          "name": "family",
+          "type": "hash32"
+        },
+        {
+          "name": "parent_release",
+          "type": "hash32"
+        },
+        {
+          "name": "artifact",
+          "type": "hash32"
+        },
+        {
+          "name": "size",
+          "type": "u64"
+        },
+        {
+          "name": "components_root",
+          "type": "hash32"
+        }
+      ],
+      "fixed_payload_bytes": 168,
+      "base_fee_units": 200
+    },
+    {
+      "tag": 7,
+      "name": "evaluate",
+      "payload": [
+        {
+          "name": "contribution",
+          "type": "hash32"
+        },
+        {
+          "name": "plan",
+          "type": "hash32"
+        },
+        {
+          "name": "evidence",
+          "type": "hash32"
+        },
+        {
+          "name": "score",
+          "type": "u64"
+        }
+      ],
+      "fixed_payload_bytes": 104,
+      "base_fee_units": 160
+    },
+    {
+      "tag": 8,
+      "name": "publish_release",
+      "payload": [
+        {
+          "name": "release",
+          "type": "hash32"
+        },
+        {
+          "name": "parent_release",
+          "type": "hash32"
+        },
+        {
+          "name": "bundle",
+          "type": "hash32"
+        },
+        {
+          "name": "budget",
+          "type": "u64"
+        },
+        {
+          "name": "allocation_root",
+          "type": "hash32"
+        },
+        {
+          "name": "total_score",
+          "type": "u64"
+        },
+        {
+          "name": "allocations",
+          "type": "allocation16"
+        }
+      ],
+      "fixed_payload_bytes": null,
+      "base_fee_units": 300
+    },
+    {
+      "tag": 9,
+      "name": "claim_reward",
+      "payload": [
+        {
+          "name": "release",
+          "type": "hash32"
+        },
+        {
+          "name": "contribution",
+          "type": "hash32"
+        },
+        {
+          "name": "score",
+          "type": "u64"
+        },
+        {
+          "name": "siblings",
+          "type": "proof8"
+        }
+      ],
+      "fixed_payload_bytes": null,
+      "base_fee_units": 200
+    },
+    {
+      "tag": 10,
+      "name": "reserve_quota",
+      "payload": [
+        {
+          "name": "quota",
+          "type": "hash32"
+        },
+        {
+          "name": "consumer",
+          "type": "hash32"
+        },
+        {
+          "name": "provider",
+          "type": "hash32"
+        },
+        {
+          "name": "units",
+          "type": "u64"
+        },
+        {
+          "name": "deadline",
+          "type": "u64"
+        }
+      ],
+      "fixed_payload_bytes": 112,
+      "base_fee_units": 160
+    },
+    {
+      "tag": 11,
+      "name": "consume_quota",
+      "payload": [
+        {
+          "name": "quota",
+          "type": "hash32"
+        },
+        {
+          "name": "units",
+          "type": "u64"
+        },
+        {
+          "name": "result",
+          "type": "hash32"
+        },
+        {
+          "name": "consumer_signature",
+          "type": "sig64"
+        }
+      ],
+      "fixed_payload_bytes": 136,
+      "base_fee_units": 0
+    },
+    {
+      "tag": 12,
+      "name": "register_work",
+      "payload": [
+        {
+          "name": "task_commitment",
+          "type": "hash32"
+        }
+      ],
+      "fixed_payload_bytes": 32,
+      "base_fee_units": 120
+    }
+  ],
+  "errors": {
+    "1": "LENGTH",
+    "2": "VERSION",
+    "3": "NONCANONICAL",
+    "4": "NETWORK",
+    "5": "SIGNATURE",
+    "6": "NONCE",
+    "7": "EXPIRED",
+    "8": "FEE",
+    "9": "FUNDS",
+    "10": "STATE",
+    "11": "AUTHORITY",
+    "12": "DUPLICATE",
+    "13": "EVIDENCE",
+    "14": "ROOT",
+    "15": "LIMIT",
+    "16": "UNKNOWN_PARENT",
+    "17": "WORK",
+    "18": "REORG_IN_PROGRESS",
+    "19": "OPERATION_ALREADY_ENTERED"
+  },
+  "states": {
+    "task": [
+      "reserved",
+      "receipt",
+      "settled",
+      "cancelled",
+      "expired"
+    ],
+    "quota": [
+      "reserved",
+      "spent",
+      "expired"
+    ],
+    "contribution": [
+      "submitted",
+      "evaluated",
+      "adopted"
+    ],
+    "reward": [
+      "immature",
+      "claimable",
+      "claimed"
+    ]
+  }
+}

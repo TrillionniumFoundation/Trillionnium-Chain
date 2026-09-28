@@ -14,8 +14,9 @@ offline must not remove public parameters or require all inference to call that 
 
 Genesis/profile must define the asset, atomic unit, finite emission/supply rule,
 block-subsidy schedule, maturity, fee allocation, treasury/model/service budgets,
-rounding, dust, vesting and maximum liabilities. This revision does not invent launch
-percentages or a token price. Unspecified values keep economic activation disabled.
+rounding, dust, vesting and maximum liabilities. The reproducible experimental profile fixes valueless test units, subsidy1000,
+halving100000, maturity20 and exact command fees in [L1](details/LEDGER_WIRE.md).
+No market price or production launch allocation is asserted; production activation stays disabled.
 No new votes, consumption-derived weights or slashable-bond ceiling select PoN blocks.
 Application service collateral is allowed only under its own explicit contract.
 
@@ -103,3 +104,7 @@ overhead, actual utilization, free-tier acceptance/queue tails, independent prov
 concentration, treasury runway in its declared unit and unfunded obligations. Separate
 failed work, stale mining, unreused artifacts and useful contractions. Do not equate
 matrix FLOPs, parameter uploads, rewards emitted or token activity with useful AI.
+
+[Exact evaluated-score publication, bounded claims and prepaid free-use rules](details/LEDGER_WIRE.md)
+are executable. [The controlled real-model campaign](details/MODEL_EVALUATION.md) binds
+actual artifacts/observations to these transitions without claiming independent economics.

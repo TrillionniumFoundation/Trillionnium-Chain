@@ -1,0 +1,226 @@
+{
+  "schema": "pon-observed-artifact-settlement-v1",
+  "source_model": "c9b186e423bffbd767aa7ed3044c6f2a039e4516c15de88d68732f5cd58d93ee",
+  "ordinary_hepta_entry": false,
+  "independent_evaluators": false,
+  "future_window_accepted": false,
+  "asset": "test-unit-no-market-value",
+  "chain_clock": "fixed logical timestamps; no live-clock acceptance",
+  "production_activation": false,
+  "outcome": "experimental_release_claim_and_free_service_completed",
+  "release": "e267cae7b7974dabc1a8034a7c20ac6f6dfbde69fcb4a8bcfc9fdb2adf15749b",
+  "adopted_model": "c9b186e423bffbd767aa7ed3044c6f2a039e4516c15de88d68732f5cd58d93ee",
+  "rewarded_experts": [
+    2
+  ],
+  "model_reward": 100000,
+  "budget": 100000,
+  "duplicate_claim_rejected": true,
+  "author_source_withdrawal_test": true,
+  "replicas": 2,
+  "consumer_paid": 0,
+  "consumer_result": "69aa835e52b95e41bfbdb9b1772188abfec1aef219d20dc3530fdcac662dab50",
+  "block_count": 28,
+  "blocks": [
+    {
+      "id": "a866dda752caf746233caa8b886e615c724b011d0778abafa2df78ea1dd64646",
+      "height": 1,
+      "transactions": 4,
+      "work_task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34"
+    },
+    {
+      "id": "d784f54d5bb612117c8e3367fa09d0ff4b90b06bd2ac74a0446b9c2f188753c9",
+      "height": 2,
+      "transactions": 6,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "431c33cf6cca1a0f0d8a87cbb00413fc648ec733c4b11b3afb3efed6206875f9",
+      "height": 3,
+      "transactions": 1,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "89bbd6961ccfe71ee8d1454d5860f8cfd9e88f65ce43d88a9f9720da36429bcf",
+      "height": 4,
+      "transactions": 2,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "1a6aa1e1000a4cdb8c2c0a9d366fb661260b7779de38ffa6ba748f6cdaeeb546",
+      "height": 5,
+      "transactions": 1,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "aef05b8631988ba7fe58fa8d2fc8be5e0d5348841a87f9ffecd3e83845922e3d",
+      "height": 6,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "c7e2a2897ec75d65e02be15313297b5f051cc5561f789ef824c8af7182dc2d5d",
+      "height": 7,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "36ec827a6baedb7eff591877c338f1830b7fcfb1d100f7706aab6610351be761",
+      "height": 8,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "9e247ac0827bae7e46e59d8f15822737b3eead05757222637cee1d4c995f7e61",
+      "height": 9,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "c9999371ed0b0ac8b397bcc8f27cc5e022466ff480d1cfd250cb59ac615ad8ad",
+      "height": 10,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "81cf4cff4b8b212861166d7a417e1d4f5ff9b278e37ef2dfee45be50366b7f91",
+      "height": 11,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "28d95be584af2b3df06d435eb53334ffc5c5c1c927cdb7c77c5545860f0de4b3",
+      "height": 12,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "69fd0deafe05d0b0d5ab7ca1c9d0aaf69bd935738583363e5c5459e4fac434c3",
+      "height": 13,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "28dedf90ccdf5c3308dc601ffd78720a6545a4e7cfc13bb8a3ff64b1c07501b8",
+      "height": 14,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "0aaf99d2223f9e92b7a10016441c1794e897f6819405a438ba3ff9bdc79c548c",
+      "height": 15,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "1ea53d0fd21baa3e35900817bea351dbcf3581490b830df807f9e4f648bf8bc0",
+      "height": 16,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "bf764fd66da763bdd5258f4a5ea5ac9bfe468bf428be18354d599d45ed6a08dc",
+      "height": 17,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "07f0607428bd51d082b6dfdcf77852ebc5180de24950c7be288480756f42c269",
+      "height": 18,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "93220cbe8eb8887aee93578faa8bc1784764374248fd4b205d578c1f21e9fedb",
+      "height": 19,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "9c6b70a38d4d224db7f7f9d72ab47087617855b3deba3ebd09238da542a6efeb",
+      "height": 20,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "5a30001d01e93cefc8b94de8a05d536b72517a2e6a32466d261b8a1d39c70609",
+      "height": 21,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "1baeb127e1f90c3584287c275402b8a443a33c0a2dbeab512a6cd7be5b7f287d",
+      "height": 22,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "096dfd3d98f4a8f1060f55c44d4120ac9dd7905ed0e044bd49e3812707139ba3",
+      "height": 23,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "239546a86fbe683fa61f5bbdb08fdab565843623da1cbe9549650e21a1932593",
+      "height": 24,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "fccde031726dd8dbc3f80b2f6cbac0fbf3c30048d967d27982e0fe086d501461",
+      "height": 25,
+      "transactions": 0,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "d91cdc264735dd150d0dace78e3eb0d4eaf85538bcfa65f2b64d0fab11d4a55e",
+      "height": 26,
+      "transactions": 1,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "ca9c4c9d7fa207cfb2c92ea08c178a4fbb392abf596c92596edfb80b6aba98e7",
+      "height": 27,
+      "transactions": 1,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    },
+    {
+      "id": "810a227ec7da4521380e2cee8fae4c0ea55c108467dada60dea1d71f8ff30680",
+      "height": 28,
+      "transactions": 1,
+      "work_task": "d12260a605d170a48edf31a260e1287450848da22b1d7a9d99cea82caf00b7bf"
+    }
+  ],
+  "block_seconds": [
+    1.2864471749926452,
+    0.5911992359906435,
+    0.6736998039996251,
+    0.6053614249976818,
+    0.44196178700076416,
+    0.46510765902348794,
+    0.4648087900131941,
+    0.4565642009838484,
+    0.6054240200028289,
+    0.45815849100472406,
+    0.4800919390108902,
+    0.6582416640012525,
+    0.9747209420020226,
+    0.8502387540065683,
+    0.6503458310035057,
+    1.2822427000210155,
+    1.125441721000243,
+    0.6123554719961248,
+    0.9516987290116958,
+    0.6426459049980622,
+    0.6598147850017995,
+    0.6569912559934892,
+    0.8332531380001456,
+    0.6394856339902617,
+    1.5286026050162036,
+    0.6659523030102719,
+    0.7635379769781139,
+    1.0140389220032375
+  ],
+  "actual_model_work_used_after_first_block": true,
+  "consensus_security_accepted": false
+}

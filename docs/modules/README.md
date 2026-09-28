@@ -6,7 +6,7 @@ legacy appendices and jobs are removed; Git alone retains historical content.
 [protocol suite](../protocol/pon-nakamoto-v1/README.md) and
 [actual source inventory](../../config/portability-inventory-v1.json) govern this tree.
 
-| Module | Technical specification | Actual portable packages |
+| Module | Technical specification | Native reusable packages (not product integration) |
 |---|---|---|
 | M00 | [M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md](M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md) | `trnm-types`, `trnm-protocol` |
 | M01 | [M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md](M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md) | `trnm-crypto-primitives`, `trnm-governance-guard` |
@@ -26,3 +26,12 @@ legacy appendices and jobs are removed; Git alone retains historical content.
 | M15 | [M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md](M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md) | `trnm-release-bundle` |
 | M16 | [M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md](M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md) | `trnm-control-plane` |
 | M17 | [M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md](M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md) | `trnm-bench`, `trnm-audit-events` |
+
+## Executable detail and maturity
+
+[36 typed procedures](../../config/pon/module-contracts-v1.json) bind all18 modules to
+exact shared wire, work, state/recovery, model/evaluation and network/acceptance details.
+[Per-module maturity](../../config/pon/module-maturity-v1.json) separates documented,
+native component, executable reference, native product integration and independent acceptance.
+Empty native source does not mean the design lacks executable conformance, nor does a
+reference implementation mean the native production owner has been completed.

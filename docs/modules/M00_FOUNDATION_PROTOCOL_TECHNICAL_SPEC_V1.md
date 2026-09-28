@@ -1,70 +1,104 @@
-# M00 Protocol, canonical neural-work and public-model contracts — PoN technical contract
+# M00 Protocol bytes and state commitments
 
-Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
-Status: new development contract; runtime, work-security and independent acceptance are not implied.
-Primary module: M00; actual source ownership is in `config/portability-inventory-v1.json`.
-
-The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [PoN domain contract](../protocol/pon-nakamoto-v1/CONSENSUS.md) govern new work.
-Logical interface names below are proposed contracts, not claims that matching Rust APIs,
-wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
+Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
+[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
+This module has detailed procedures and executable reference coverage, not an independently
+accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets ordering. [LEDGER_WIRE.md](../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md) defines exact shared rules.
 
 ## PoN Authority
 
-Own the versioned PoN header/template, work statement, target/parameter, contribution,
-evaluation, release, confirmation and reorg-event schemas. The codec does not choose a branch,
-issue local capabilities or certify the neural primitive. Preserve historical CEV0/CEV1 decoders
-in explicit legacy dispatch; no new value reuses an old tag with stronger meaning.
+Require PNH1/version1 and exactly318 bytes; decode the twelve fixed fields at the published offsets; compute challenge only from those bytes; no field normalization.
+
+This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
+passing document check to grant work validity, model utility, local execution permission
+or production activation. Every consumer must use the specific verified fact it needs.
+Native component reuse and executable-contract integration are reported separately.
 
 ## PoN Interfaces
 
-HeaderTemplate; NeuralWorkStatement; WorkCertificate; ParameterContribution; EvaluationReceipt;
-GlobalModelRelease; ConfirmationReceipt; ReorgEvent. These are proposed logical types until
-exact byte registries are frozen, not existing Rust APIs.
+| Operation | Exact logical inputs | Output and authority boundary |
+|---|---|---|
+| `DecodeHeader` | bytes[318] | Header(version1,network,parent,target,roots,task,nonce) |
+| `DecodeTransaction` | signed envelope bytes | Envelope without authority; TxId |
+
+The named signatures define domain contracts. Source bindings below identify which are
+implemented natively, in the executable Python specification, or only by reusable
+components. The names do not assert matching deployed Rust service APIs.
 
 ## PoN State machine
 
-Resolve installed genesis/chain/profile before decoding. Bound total bytes, lists, depth,
-tensors, proof and signature work before allocation. Canonicalize only valid objects; reject
-duplicates, unknown mandatory fields, trailing bytes and target/profile substitution. Encode
-every challenge-affecting field once. Derive a stable block id from template and canonical
-output, not proof randomness. Specify exact signedness, endian, dimensions and output uniqueness
-with an independent encoder.
+### M00.DecodeHeader
+
+Require PNH1/version1 and exactly318 bytes; decode the twelve fixed fields at the published offsets; compute challenge only from those bytes; no field normalization.
+
+**Commit point:** None; codec has no database.
+
+**Rejections:** `LENGTH, VERSION`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
+
+### M00.DecodeTransaction
+
+Read 95-byte prefix, match exact tag-specific payload length and bounded proof/list count, require nonce>0 and fee cap, then separate final64 signature bytes. Signature verification belongs to admission.
+
+**Commit point:** None; decode success cannot reserve nonce or funds.
+
+**Rejections:** `LENGTH, VERSION, NONCANONICAL, LIMIT`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
 
 ## PoN Persistence and recovery
 
-Codec owns no store. Persisted schemas are separate from public wire schemas; M07/M03 own
-migrations. A historical decode returns its original proof class. State/error/limit registry
-changes require explicit profile version and consumer requalification, never parser fallback.
+**M00.DecodeHeader:** None; codec has no database.
+
+**M00.DecodeTransaction:** None; decode success cannot reserve nonce or funds.
+
+Branch-derived entitlement can be detached. Independent local effect/revocation facts
+cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
+A native implementation must reproduce byte/root/recovery vectors before replacing the
+reference path. No old consensus namespace or decoder is restored.
 
 ## PoN Resource bounds
 
-Register checked 256-bit targets with wider intermediate and cumulative-work arithmetic. Give
-concrete byte/count/tensor/shape/proof ceilings before activation. Unknown ceilings or algorithm
-identifiers reject, rather than assuming unlimited capacity.
+**M00.DecodeHeader:** 318-byte header;2048-byte transaction;<=16 allocation leaves.
+
+**M00.DecodeTransaction:** 12 closed native tags; sorted unique allocation IDs.
+
+The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
+work, model and ledger profile. Limit changes require a new context. Local backpressure
+may reject service or defer data but cannot fabricate accepted block/evaluation facts.
 
 ## PoN Security
 
-Attack cross-chain/header/payout replay, proof malleability, duplicate fields and arbitrary
-executable model payloads. Crypto-verified types cannot be created by decoding a boolean. An
-unqualified work profile remains non-activatable.
+The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
+cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
+experimental partitions; they are not independent future-window evidence. SQLite process
+crashes are not physical power-loss qualification. These limitations remain explicit in
+[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
 
 ## PoN Verification and evidence
 
-Independent positive/negative codec vectors, every truncated prefix, appended bytes, maximum and
-maximum+1, target overflow, changed model/base/schema and old-QC-as-work rejection. Test every
-consensus-affecting field against the same challenge relation.
+- `CodecTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+- `InteropTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
 
-## Source disposition
+```bash
+python3 formal/pon-nakamoto-v1/test_contracts.py
+CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+```
 
-Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
-The old consensus/runtime/protocol artifacts are deleted from the active tree and are
-recoverable only from Git history. This module target is not automatically implemented
-by the retained components; ordinary PoN mining, proof verification and reorg remain
-explicit future implementation work. Retained local monotonic stores are not yet
-branch-aware reorg stores and cannot be advertised as chain-finality authorities.
+Build native examples before the interop command; missing binaries cause failure, not
+a skipped pass. Fixtures are never regenerated by test execution. Independently written
+third-party vectors and acceptance remain future evidence, not an assumed status.
 
 ## Current source and verification
 
-- [`trnm-types`](../../trillionnium/crates/trnm-types/README.md): `cargo test --locked -p trnm-types --all-targets --all-features`.
-- [`trnm-protocol`](../../trillionnium/crates/trnm-protocol/README.md): `cargo test --locked -p trnm-protocol --all-targets --all-features`.
+- [`trillionnium/crates/trnm-protocol/src/pon_wire.rs`](../../trillionnium/crates/trnm-protocol/src/pon_wire.rs)
+- [`formal/pon-nakamoto-v1/contract_wire.py`](../../formal/pon-nakamoto-v1/contract_wire.py)
+- Native reusable owner: `trnm-types`; run `cargo test --locked -p trnm-types --all-targets --all-features` from `trillionnium`.
+- Native reusable owner: `trnm-protocol`; run `cargo test --locked -p trnm-protocol --all-targets --all-features` from `trillionnium`.
+
+## Maturity and outstanding integration
+
+Documented: yes. Executable contract: yes. Native component presence is enumerated above.
+Native ordinary-product integration: no. Independent acceptance: no. Production activation:
+no. Those axes are independent; a component-level pass does not promote the entire module.

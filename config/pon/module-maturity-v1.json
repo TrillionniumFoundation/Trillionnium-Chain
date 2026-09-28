@@ -1,0 +1,168 @@
+{
+  "schema": "pon-module-maturity-v1",
+  "modules": [
+    {
+      "id": "M00",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M01",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M02",
+      "documented": true,
+      "has_native_component": false,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M03",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M04",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M05",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M06",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M07",
+      "documented": true,
+      "has_native_component": false,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M08",
+      "documented": true,
+      "has_native_component": false,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M09",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M10",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M11",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M12",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M13",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M14",
+      "documented": true,
+      "has_native_component": false,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M15",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M16",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    },
+    {
+      "id": "M17",
+      "documented": true,
+      "has_native_component": true,
+      "has_executable_contract": true,
+      "native_product_integrated": false,
+      "independent_accepted": false,
+      "evidence_scope": "controlled-local-conformance-not-production"
+    }
+  ],
+  "production_activation": false
+}

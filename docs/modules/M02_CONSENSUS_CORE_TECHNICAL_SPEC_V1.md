@@ -1,70 +1,105 @@
-# M02 Nakamoto consensus, target and cumulative-work fork choice — PoN technical contract
+# M02 Work-validated block admission and fork decisions
 
-Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
-Status: new development contract; runtime, work-security and independent acceptance are not implied.
-Primary module: M02; actual source ownership is in `config/portability-inventory-v1.json`.
-
-The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [PoN domain contract](../protocol/pon-nakamoto-v1/CONSENSUS.md) govern new work.
-Logical interface names below are proposed contracts, not claims that matching Rust APIs,
-wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
+Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
+[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
+This module has detailed procedures and executable reference coverage, not an independently
+accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets ordering. [LEDGER_WIRE.md](../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md) defines exact shared rules.
 
 ## PoN Authority
 
-Own the single deterministic PoN consensus state machine. Retire Vote, TimeoutVote, QC, TC,
-locked/high-QC and weighted validator scheduling from the target. No majority model score or
-application settlement can choose a fork.
+Resolve parent, exact height/target/median/profile and parent-admitted task; verify real work and all signatures; execute and compare state/receipt/tx roots; derive required work; persist only complete valid block.
+
+This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
+passing document check to grant work validity, model utility, local execution permission
+or production activation. Every consumer must use the specific verified fact it needs.
+Native component reuse and executable-contract integration are reported separately.
 
 ## PoN Interfaces
 
-AdmitHeader; WorkValidationCompleted; BodyExecutionCompleted; PreferredBranchChanged;
-ReorgApplied; ParentUnavailable. These named contracts use immutable context/generation and
-event/effect separation; they are implementation targets.
+| Operation | Exact logical inputs | Output and authority boundary |
+|---|---|---|
+| `AdmitBlock` | header, ordered tx bytes, full certificate, observed local time | immutable BlockId and derived chainwork |
+| `ChooseBranch` | fully validated tips and active tip | strictly heavier target or unchanged active |
+
+The named signatures define domain contracts. Source bindings below identify which are
+implemented natively, in the executable Python specification, or only by reusable
+components. The names do not assert matching deployed Rust service APIs.
 
 ## PoN State machine
 
-Validate parent/height/profile, exact branch-derived DAA target and median-time rule. Join M01
-work and M06 body/state validity, then derive work=floor(2^256/(target+1)) from required target,
-not lucky digest. Accumulate exact chainwork. Adopt only a fully validated strictly heavier
-branch; equal work retains the current valid tip. Header-only chains request missing
-dependencies and cannot publish application state. M08 receives a bound reorg decision, not an
-unsigned tip suggestion.
+### M02.AdmitBlock
+
+Resolve parent, exact height/target/median/profile and parent-admitted task; verify real work and all signatures; execute and compare state/receipt/tx roots; derive required work; persist only complete valid block.
+
+**Commit point:** Single block+deltas transaction owned by M07; no partial accepted header.
+
+**Rejections:** `UNKNOWN_PARENT, TIME, TARGET, WORK, ROOT, LIMIT`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
+
+### M02.ChooseBranch
+
+Compare derived cumulative required work; ignore invalid/unavailable branches; equal work retains current tip. Pass exact old/new roots and generation to M08; never alter application state in a fork selector.
+
+**Commit point:** M08 publishes active pointer only after staged-root readback.
+
+**Rejections:** `REORG_IN_PROGRESS, UNKNOWN_PARENT`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
 
 ## PoN Persistence and recovery
 
-M07 stores branch nodes/roots/work and M08 owns durable active-tip changes. On recovery
-recompute work/target from verified ancestry before preferred-tip publication. Missing deep
-history triggers resync. A consumer confirmation depth is not a permanent fork lock.
+**M02.AdmitBlock:** Single block+deltas transaction owned by M07; no partial accepted header.
+
+**M02.ChooseBranch:** M08 publishes active pointer only after staged-root readback.
+
+Branch-derived entitlement can be detached. Independent local effect/revocation facts
+cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
+A native implementation must reproduce byte/root/recovery vectors before replacing the
+reference path. No old consensus namespace or decoder is restored.
 
 ## PoN Resource bounds
 
-Bound pending headers, alternative branches, proof-validation obligations, per-peer/global
-queues and ancestor retrieval. Avoid cloning complete model/body graphs per transition. Use
-checked arithmetic; never truncate chainwork or accept peer totals.
+**M02.AdmitBlock:** block<=1MiB;txcount256;chainwork512bits.
+
+**M02.ChooseBranch:** max4096 reference ancestry; production streaming sync separate.
+
+The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
+work, model and ledger profile. Limit changes require a new context. Local backpressure
+may reject service or defer data but cannot fabricate accepted block/evaluation facts.
 
 ## PoN Security
 
-Threat model is adversarial effective work, propagation/verification delay and qualified
-primitive hardness. Less-than-one-third PoCO safety and old seven-node evidence do not apply.
-Time-warp, selfish mining, proof withholding, easy tasks and eclipse attacks require explicit
-analysis.
+The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
+cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
+experimental partitions; they are not independent future-window evidence. SQLite process
+crashes are not physical power-loss qualification. These limitations remain explicit in
+[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
 
 ## PoN Verification and evidence
 
-PON-C01 through PON-C12: higher-height/lower-work forks, target mutation, lucky output, DAA
-boundary, equal work, unavailable body, future-time deferral, workload exhaustion and
-adversarial work reuse. Formal common-prefix/chain-growth model plus real network evidence
-remain separate.
+- `DiskReorgTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+- `WorkExamples` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
 
-## Source disposition
+```bash
+python3 formal/pon-nakamoto-v1/test_contracts.py
+CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+```
 
-Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
-The old consensus/runtime/protocol artifacts are deleted from the active tree and are
-recoverable only from Git history. This module target is not automatically implemented
-by the retained components; ordinary PoN mining, proof verification and reorg remain
-explicit future implementation work. Retained local monotonic stores are not yet
-branch-aware reorg stores and cannot be advertised as chain-finality authorities.
+Build native examples before the interop command; missing binaries cause failure, not
+a skipped pass. Fixtures are never regenerated by test execution. Independently written
+third-party vectors and acceptance remain future evidence, not an assumed status.
 
 ## Current source and verification
 
-No native implementation is retained for this domain. A contract is not a runnable consensus or reorg implementation.
+- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
+- [`formal/pon-nakamoto-v1/reference.py`](../../formal/pon-nakamoto-v1/reference.py)
+
+No native product package is implemented for this owner. The executable specification
+is the shared design oracle; do not report it as an installed production node.
+
+## Maturity and outstanding integration
+
+Documented: yes. Executable contract: yes. Native component presence is enumerated above.
+Native ordinary-product integration: no. Independent acceptance: no. Production activation:
+no. Those axes are independent; a component-level pass does not promote the entire module.

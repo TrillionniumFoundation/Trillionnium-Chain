@@ -1,0 +1,128 @@
+{
+  "schema": "pon-independent-implementation-vectors-v1",
+  "derivation": "Python oracle, without invoking Rust; same author, not independent external acceptance",
+  "header": {
+    "file": "header.bin",
+    "challenge": "08a3c71de66e033a3a01ece9a5a851b21e48ab3710488699c76130b74d913d54"
+  },
+  "transactions": [
+    {
+      "tag": 1,
+      "file": "tx-01.bin",
+      "id": "b3cf1c778937f98801992cc791aed2f15845c6576cf3a3ee6fadc902369f9240",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 2,
+      "file": "tx-02.bin",
+      "id": "b8415bee5a309e5c82fd3bd877aacd59b5daefa133a2b674d2ad0685c6f48e83",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 3,
+      "file": "tx-03.bin",
+      "id": "a5060e8ea7340e2c70ca3d6a58915a0a6d916b2f8c5fabf93c5277b34f3a6a3d",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 4,
+      "file": "tx-04.bin",
+      "id": "2b331ee8449de0792dee53d45063af0e7051b2246fe06df881c36726d4f9788e",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 5,
+      "file": "tx-05.bin",
+      "id": "ad5a0f56862cf0e90809f1ec08d5881a6fc37e93f8946f689b4ce31dc26d7eb0",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 6,
+      "file": "tx-06.bin",
+      "id": "0fe882fa070b9dfae8ff15ffbbd77e617668f6d2033ae30bd0416d8366c5ae6c",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 7,
+      "file": "tx-07.bin",
+      "id": "d3eba5aa3fe7fd988575ca09425cf0430681291fbed89f6b8b846c5063ba9380",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 8,
+      "file": "tx-08.bin",
+      "id": "8044b4e375459591153ceb78f6df983767bc4e8bfedcb2843431dedee9eee6a2",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 9,
+      "file": "tx-09.bin",
+      "id": "c74dea0c6d87968b3b044ef661b61b5af2e8f3feddb9c18efef0338e1c0e342d",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 10,
+      "file": "tx-10.bin",
+      "id": "cebdc3829e9b0cde7515c831e74e38eb890451cb681acf29fccb06c2918493de",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 11,
+      "file": "tx-11.bin",
+      "id": "f4d653879b2c77b2a24ca496ef98546202648bc902bd5e06316bc00ecb9ead2c",
+      "scope": "codec-valid; not necessarily application-valid"
+    },
+    {
+      "tag": 12,
+      "file": "tx-12.bin",
+      "id": "61203c700ed7028b11b3ac1712de74697e86a49e174f4f1999d93dcd929947c7",
+      "scope": "codec-valid; not necessarily application-valid"
+    }
+  ],
+  "negative": [
+    {
+      "kind": "header",
+      "file": "header-trailing.bin"
+    },
+    {
+      "kind": "header",
+      "file": "header-short.bin"
+    },
+    {
+      "kind": "header",
+      "file": "header-version.bin"
+    },
+    {
+      "kind": "tx",
+      "file": "tx-trailing.bin"
+    },
+    {
+      "kind": "tx",
+      "file": "tx-short.bin"
+    },
+    {
+      "kind": "tx",
+      "file": "tx-unknown.bin"
+    },
+    {
+      "kind": "tx",
+      "file": "tx-zero-nonce.bin"
+    },
+    {
+      "kind": "tx",
+      "file": "tx-bad-length.bin"
+    }
+  ],
+  "state": {
+    "file": "state.json",
+    "root": "616d39f2ced83267570eab76fb61061276bb413f1255cb21562e95187db47bd7"
+  },
+  "work": {
+    "file": "work.bin",
+    "inputs": "matrices.bin",
+    "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+    "challenge": "08a3c71de66e033a3a01ece9a5a851b21e48ab3710488699c76130b74d913d54",
+    "target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "ticket": "2f97f9d17506f01cb0c164ac3a7df678c34a470f27fc6e8d28fe935de8c3fe54"
+  }
+}

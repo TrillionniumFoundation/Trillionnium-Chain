@@ -127,3 +127,11 @@ A global market/chain does not become a mandatory fifth central optimizer. Princ
 keep distinct goals; public metrics do not override their hard constraints. Learned
 routing and model parameters cannot become execution tokens or rewrite deterministic
 reflex, truth, ownership, revocation or privacy boundaries.
+
+## Concrete compatible family and experiment
+
+[M1](details/MODEL_EVALUATION.md) now defines exact features, tensor shapes, integer
+inference, training recipe, evaluation rule, counters, artifacts and reward/free-use
+transactions for a public-source routing task. It records a failed first run and all
+stronger controls. This does not declare a universal large-model composition theorem
+or an ordinary Hepta/future-window product acceptance.

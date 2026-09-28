@@ -1,0 +1,99 @@
+{
+  "schema": "pon-six-delivery-summary-v1",
+  "implementation_commit": "8b87fee77ddee6a9778e8bebe880ba2627b05d5d",
+  "implementation_tree": "2068d839a45655e80653d4580a81023a064a7255",
+  "input_source_commit": "e7b36311fe5306bf63b7f88985801307e9e47d8c",
+  "maturity": "executable design and controlled-local conformance; not native ordinary product or independent acceptance",
+  "counts": {
+    "modules": 18,
+    "typed_operations": 36,
+    "native_tags": 12,
+    "native_tests": 1794,
+    "doc_tests": 15,
+    "additional_ignored_fixture_helper_executed": 1,
+    "repository_negative_tests": 50,
+    "arithmetic_reference_tests": 28,
+    "executable_contract_tests": 18,
+    "cross_language_tests": 7,
+    "actual_process_crash_cuts": 8,
+    "accepted_block_cross_checks": 4
+  },
+  "work": {
+    "proof_bytes": 49188,
+    "sample_count": 32,
+    "median_milliseconds": {
+      "generation_ns": 3.4904695,
+      "verification_ns": 3.72824,
+      "invalid_verification_ns": 3.709078,
+      "cheap_forgery_ns": 0.0013255
+    },
+    "cost_benchmark_ticket_target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "invalid_vs_cheap_single_attempt_ratio": 2798.248208223312,
+    "independent_hardness_accepted": false
+  },
+  "model": {
+    "family": "public Rust source-owner linear experts and learned router, not an LLM",
+    "artifact": "c9b186e423bffbd767aa7ed3044c6f2a039e4516c15de88d68732f5cd58d93ee",
+    "bytes": 14123,
+    "consumer_samples": 190,
+    "base_correct": 100,
+    "composed_correct": 119,
+    "best_single_correct": 125,
+    "simple_merge_correct": 123,
+    "evaluation_reused_after_exploration": true,
+    "future_window_accepted": false,
+    "ordinary_hepta_entry": false
+  },
+  "settlement": {
+    "outcome": "experimental_release_claim_and_free_service_completed",
+    "block_count": 28,
+    "release": "e267cae7b7974dabc1a8034a7c20ac6f6dfbde69fcb4a8bcfc9fdb2adf15749b",
+    "budget": 100000,
+    "reward": 100000,
+    "asset": "valueless development test units",
+    "consumer_paid": 0,
+    "duplicate_claim_rejected": true,
+    "author_source_withdrawal_test": true
+  },
+  "network": {
+    "peers": 3,
+    "independent_operators": false,
+    "native_node": false,
+    "loopback_roundtrip_by_scenario": {
+      "fork-reorg": {
+        "count": 9,
+        "p50": 0.7546166670217644,
+        "p95": 0.8225517850078177,
+        "max": 0.8225517850078177
+      },
+      "hot-recipient": {
+        "count": 12,
+        "p50": 0.38753862099838443,
+        "p95": 0.4775129969930276,
+        "max": 0.4775129969930276
+      },
+      "confirmation-fill": {
+        "count": 18,
+        "p50": 0.4229440889903344,
+        "p95": 0.5196854649984743,
+        "max": 0.5196854649984743
+      },
+      "disjoint-recipients": {
+        "count": 12,
+        "p50": 0.3322116319905035,
+        "p95": 0.4055749169783667,
+        "max": 0.4055749169783667
+      }
+    },
+    "invalid_proof_rejected": true,
+    "oversize_frame_rejections": 3
+  },
+  "not_accepted": [
+    "public-work hardness and cheap-forgery DoS admission",
+    "native ordinary-node and Hepta product integration",
+    "independent evaluators and geographically independent DA",
+    "physical power loss and WAN consensus security",
+    "unseen future-window model efficacy and best-expert superiority"
+  ],
+  "production_activation": false
+}

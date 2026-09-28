@@ -29,8 +29,8 @@ execution overlays, active-chain generation and crash-safe reorganization intent
 A proposed header preimage contains version, genesis/chain identifiers, parent hash,
 height, parameter-profile hash, timestamp, target, transaction/body root, application
 post-state root, receipt root, contribution/availability commitments, miner identity,
-payout commitment and attempt seed. M00 must freeze widths/order/bounds and independent
-positive/negative bytes before activation; prose fields are not a registered codec.
+payout commitment and attempt seed. The experimental widths/order/bounds and positive/negative vectors are now fixed in
+[LEDGER_WIRE.md](details/LEDGER_WIRE.md) and its JSON registry; production acceptance remains separate.
 
 Let template include EVERY miner-chosen field above, excluding only the work output
 and proof. Let challenge = H(domain_challenge || canonical(template)). Let a qualified
@@ -93,7 +93,9 @@ contribution reward under the surviving chain's deduplication rules.
 ## C5. Difficulty and time: exact reference design
 
 Genesis fixes interval N>=16, target spacing tau>0, initial target, pow_limit,
-median width 11 and factor clamp 4. Numeric deployment values remain unassigned.
+median width 11 and factor clamp 4. The experimental values are N=16, tau=10 seconds, median11 and clamp4;
+[devnet-v1.json](../../../config/pon/devnet-v1.json) fixes all test-network parameters.
+These are not approved production deployment values.
 For candidate height h not divisible by N, inherit parent.target. At h=k*N, use
 ancestor timestamps at h-1 and h-N (N-1 intervals), desired=(N-1)*tau and
 observed=max(1, timestamp[h-1]-timestamp[h-N]) using checked signed difference.
@@ -136,3 +138,10 @@ always-available, bounded genesis-defined work source when new contributions are
 Its computational hardness must be qualified too: cached answers and zero/low-rank
 workloads cannot provide cheap tickets. Otherwise useful-task exhaustion is a liveness
 blocker, not permission to fabricate learning gains or silently switch algorithms.
+
+## Executable contract binding
+
+The full relation is [W1](details/WORK_PROFILE.md), encoding/application is [L1](details/LEDGER_WIRE.md),
+and disk branch/reorg is [S1](details/STATE_RECOVERY.md). The existing Python reference
+remains a small arithmetic model; the new ledger oracle uses actual signed transactions,
+real work verification and SQLite. Neither is a qualified native public-network node.

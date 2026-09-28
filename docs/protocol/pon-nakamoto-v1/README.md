@@ -45,9 +45,20 @@ of execution, data availability and chain inclusion each assert different statem
 
 ## Implementation truth
 
-The architecture choice is made; cryptographic work-profile qualification is not.
-The concrete neural-work circuit/program, byte registry, economic parameters,
-independent implementations and real network have no acceptance receipt in this change.
-The machine contract deliberately records an unqualified work profile and all runtime,
-mainnet, model-efficacy and release flags false. No guessed circuit, signature quorum,
-synthetic model score or SHA-only fallback may fill that gap at runtime.
+The architecture choice and a concrete executable experimental profile are defined;
+cryptographic public-network work qualification is not.
+The shared executable details now include exact work, ledger, recovery, model and peer
+contracts, native/Python vectors, real disk crash cuts, and controlled model experiments.
+None implies deployed native consensus, external independent acceptance, unseen future
+model efficacy or production activation. The cheap-forgery verification asymmetry is
+measured and remains a public-network blocker, not a hidden fallback.
+
+## Implementable detail index
+
+[W1 work relation](details/WORK_PROFILE.md) · [L1 ledger bytes/state](details/LEDGER_WIRE.md) ·
+[S1 persistence/reorg](details/STATE_RECOVERY.md) · [M1 model/evaluation](details/MODEL_EVALUATION.md) ·
+[N1 network/clients](details/NETWORK_CLIENT.md) · [P1 performance/acceptance](details/PERFORMANCE_ACCEPTANCE.md).
+
+[Procedure registry](../../../config/pon/module-contracts-v1.json) has36 typed operations
+for all18 existing modules. [Maturity](../../../config/pon/module-maturity-v1.json)
+separates document, component, executable contract, native product and independent acceptance.
