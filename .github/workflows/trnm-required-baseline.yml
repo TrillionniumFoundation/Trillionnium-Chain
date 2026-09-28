@@ -22,9 +22,6 @@ jobs:
     name: repository-truth
     runs-on: ubuntu-24.04
     timeout-minutes: 45
-    env:
-      CARGO_HOME: ${{ runner.temp }}/cargo-repository-truth
-      CARGO_TARGET_DIR: ${{ runner.temp }}/target-repository-truth
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -34,6 +31,12 @@ jobs:
           persist-credentials: false
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+      - name: Set isolated Cargo paths after runner allocation
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
       - name: Run actual repository-truth checks
         run: bash scripts/ci/ci_job.sh repository-truth
       - name: Verify source remained unchanged
@@ -42,9 +45,6 @@ jobs:
     name: protocol-contract
     runs-on: ubuntu-24.04
     timeout-minutes: 45
-    env:
-      CARGO_HOME: ${{ runner.temp }}/cargo-protocol-contract
-      CARGO_TARGET_DIR: ${{ runner.temp }}/target-protocol-contract
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -54,6 +54,12 @@ jobs:
           persist-credentials: false
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+      - name: Set isolated Cargo paths after runner allocation
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
       - name: Install pinned compiler and tools in isolated hosted runner
         run: |
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
@@ -65,9 +71,6 @@ jobs:
     name: fuzz-smoke
     runs-on: ubuntu-24.04
     timeout-minutes: 45
-    env:
-      CARGO_HOME: ${{ runner.temp }}/cargo-fuzz-smoke
-      CARGO_TARGET_DIR: ${{ runner.temp }}/target-fuzz-smoke
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -77,6 +80,12 @@ jobs:
           persist-credentials: false
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+      - name: Set isolated Cargo paths after runner allocation
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
       - name: Install pinned compiler and tools in isolated hosted runner
         run: |
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
@@ -88,9 +97,6 @@ jobs:
     name: rust-baseline
     runs-on: ubuntu-24.04
     timeout-minutes: 45
-    env:
-      CARGO_HOME: ${{ runner.temp }}/cargo-rust-baseline
-      CARGO_TARGET_DIR: ${{ runner.temp }}/target-rust-baseline
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -100,6 +106,12 @@ jobs:
           persist-credentials: false
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+      - name: Set isolated Cargo paths after runner allocation
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
       - name: Install pinned compiler and tools in isolated hosted runner
         run: |
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
@@ -111,9 +123,6 @@ jobs:
     name: external-evidence-contract
     runs-on: ubuntu-24.04
     timeout-minutes: 45
-    env:
-      CARGO_HOME: ${{ runner.temp }}/cargo-external-evidence-contract
-      CARGO_TARGET_DIR: ${{ runner.temp }}/target-external-evidence-contract
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -123,6 +132,12 @@ jobs:
           persist-credentials: false
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+      - name: Set isolated Cargo paths after runner allocation
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
       - name: Run actual external-evidence-contract checks
         run: bash scripts/ci/ci_job.sh external-evidence-contract
       - name: Verify source remained unchanged

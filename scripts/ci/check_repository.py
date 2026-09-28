@@ -119,6 +119,9 @@ def check(root=ROOT):
     for name in load(root/'config/repository-policy-v1.json')['required_check_names']:require('  '+name+':' in text,'missing required job '+name)
     require('self-hosted' not in text and 'contents: write' not in text,'privileged PR execution')
     require('persist-credentials: false' in text,'checkout credentials retained')
+    require(not re.search(r'(?ms)^    env:\n(?:(?:^      [^\n]*\n)|(?:^\s*\n))*?^      [^\n]*\$\{\{\s*runner\.', text), 'runner context is unavailable in job-level env')
+    require(text.count('name: Set isolated Cargo paths after runner allocation') == 5, 'missing per-job runner-stage Cargo isolation')
+    require(text.count('\"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"') == 10, 'Cargo paths must use allocated runner and job identity')
     require('RUST_TEST_THREADS: "1"' in text,'fault-test harness isolation missing')
     for row in specs:
         prose=contained(root,row['technical_spec']).read_text()
