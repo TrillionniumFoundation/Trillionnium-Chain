@@ -1064,6 +1064,18 @@ impl RestartCutJoinedProcess2CaughtUpOwnerV1 {
     }
 }
 
+fn process2_signed_archive_sequence_v1(replay_count: u64) -> Result<u64> {
+    // The independent signed archive retains the certified h3 anchor before
+    // the ordinary replay suffix. Each authenticated replay block then adds
+    // its exact Proposal and certifying QC. Node's private replay-session
+    // sequence intentionally counts only those 2N suffix records, while this
+    // archive head is 1 + 2N.
+    replay_count
+        .checked_mul(2)
+        .and_then(|sequence| sequence.checked_add(1))
+        .context("process2 signed replay archive sequence overflows")
+}
+
 fn require_process2_full_recovery_join_v1(
     config: &LoadedValidatorConfig,
     started: Process2JournalStartedFromRestartCutV1,
@@ -1096,9 +1108,7 @@ fn require_process2_full_recovery_join_v1(
     let replay = recovered.authenticated_replay_facts_v1();
     let process2 = recovered.process2_facts_v1();
     let replay_count = replay.authenticated_block_count_v0();
-    let archive_sequence = replay_count
-        .checked_mul(2)
-        .context("process2 replay archive sequence overflows")?;
+    let archive_sequence = process2_signed_archive_sequence_v1(replay_count)?;
     let final_safety_revision = replay_count
         .checked_mul(2)
         .and_then(|delta| prior.safety_revision_v0().checked_add(delta))
@@ -10452,6 +10462,13 @@ mod tests {
         assert!(cli.contains("ExitCode::from(2)"));
         assert!(!cli.contains("std::process::exit"));
         assert_eq!(PROCESS1_TARGET_PARKED_EXIT_STATUS_V1, 75);
+    }
+
+    #[test]
+    fn process2_signed_archive_sequence_includes_certified_anchor_qc() {
+        assert_eq!(process2_signed_archive_sequence_v1(1).unwrap(), 3);
+        assert_eq!(process2_signed_archive_sequence_v1(6).unwrap(), 13);
+        assert!(process2_signed_archive_sequence_v1(u64::MAX).is_err());
     }
 
     #[test]
