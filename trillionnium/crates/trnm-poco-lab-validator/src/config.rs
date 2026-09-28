@@ -563,6 +563,7 @@ pub struct PublicReportVerifierContext {
 enum RunRootInventoryPolicyV1 {
     ClosedDeployment,
     LiveProcess2Recovery,
+    RecoveryMaterial,
 }
 
 impl LoadedValidatorConfig {
@@ -577,6 +578,24 @@ impl LoadedValidatorConfig {
             binary_path,
             true,
             RunRootInventoryPolicyV1::ClosedDeployment,
+        )
+    }
+
+    /// Candidate material CLI: authenticate every immutable deployment byte and
+    /// the complete handoff marker inventory, but do not interpret a running
+    /// validator's mutable sockets/journals as deployment inputs. The material
+    /// commands grant no ordinary runtime or signing-owner activation.
+    pub(crate) fn load_for_recovery_material_v1(
+        run_root: impl AsRef<Path>,
+        config_path: impl AsRef<Path>,
+        binary_path: impl AsRef<Path>,
+    ) -> Result<Self> {
+        Self::load_with_consensus_secret(
+            run_root,
+            config_path,
+            binary_path,
+            true,
+            RunRootInventoryPolicyV1::RecoveryMaterial,
         )
     }
 
@@ -682,6 +701,13 @@ impl LoadedValidatorConfig {
         match inventory_policy {
             RunRootInventoryPolicyV1::ClosedDeployment => {
                 validate_manifest(&manifest, &config.run_id, &config.validator_id, &run_root)?;
+            }
+            RunRootInventoryPolicyV1::RecoveryMaterial => {
+                validate_manifest_envelope_v1(&manifest, &config.run_id, &config.validator_id)?;
+                validate_manifest_referenced_files_v1(&manifest, &run_root)?;
+                if !live_process2_marker_files_present_v1(&run_root)? {
+                    bail!("recovery material requires the complete parked run marker set");
+                }
             }
             RunRootInventoryPolicyV1::LiveProcess2Recovery => {
                 validate_live_process2_manifest_v1(
@@ -2277,6 +2303,25 @@ fn live_process2_extra_path_allowed_v1(path: &Path) -> bool {
     };
     match components.next() {
         None => live_process2_root_file_allowed_v1(first),
+        Some(Component::Normal(name)) if first == "recovery-material-v1" => {
+            let Some(name) = name.to_str() else {
+                return false;
+            };
+            if components.next().is_some() {
+                return false;
+            }
+            matches!(name, "context.bin" | "ready-set.bin")
+                || ["ready-", "start-"].iter().any(|prefix| {
+                    name.strip_prefix(prefix)
+                        .and_then(|s| s.strip_suffix(".bin"))
+                        .is_some_and(|id| {
+                            id.len() == 64
+                                && id
+                                    .bytes()
+                                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+                        })
+                })
+        }
         Some(_) => LIVE_PROCESS2_REQUIRED_DIRECTORIES_V1.contains(&first),
     }
 }

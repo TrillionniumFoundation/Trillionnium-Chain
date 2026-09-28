@@ -217,11 +217,15 @@ may advance monotonically while the finite drain completes. If the bounded windo
 fails, all seven pauses are explicitly cleared and no signed restart intent or
 evidence is created. Only that frontier may be followed by target
 `prepare_restart`, after which the target clear is forbidden. After all seven
-ParkedAck statements and the target's unique status-75 handoff, the runner clears
-the six peer operational flags; they remain irreversibly PeerAcked and gain no
-signing, timer or consensus authority from that clear. Heights remain an operational
-scheduling guard; signed RestartPrepare and exact shared-cut verification are the
-protocol authority.
+ParkedAck statements and the target's unique status-75 handoff, the six peers
+retain their original live process-1 owners but remain parked. Clearing a pause
+cannot restore this irreversible phase. The explicit `resume_restart_peer`
+intent must join the target's complete RecoveryReady/RecoveryStart certificate
+and zero-delta artifact to each peer's original Cut/Park/ParkedAck and actual
+Safety/signer/application cut. The existing signed recovery events are persisted
+on that peer's original journal before the retained owner and pacemaker resume.
+Heights remain an operational scheduling guard; the signed shared-cut and recovery
+certificates, not control responses or copied files, supply protocol evidence.
 
 The supervisor then launches process 2 with the exact process-1 command. Its first
 invocation independently reopens and authenticates the complete
@@ -235,6 +239,14 @@ continuation reopens the same journal and owner tuple, reconstructs FleetStart,
 establishes mesh/runtime-control/native-client owners, releases the retained
 `ArmViewTimer` last, catches up and continues ordinary finality while all six
 non-target validators remain live. A second restart/process 3 is rejected.
+
+This is a coordinated direct-seven zero-delta restart: peers stay alive, but they
+do not keep finalizing during the parked interval. The historical campaign label
+`validator_process_kill` is not proof that SIGKILL occurred. Evidence must state
+the actual exit mechanism and must not claim arbitrary crash recovery or nonzero-
+lag catch-up from a status-75 handoff. Those require separate implemented recovery
+joins and physical tests. No missing crash, epoch, HSM or independent acceptance
+is supplied by this bounded candidate path.
 
 Process 2 uses the exact process-1 command, but not the fresh-process closed-root
 assumption. The loader first attempts the unchanged closed deployment inventory;

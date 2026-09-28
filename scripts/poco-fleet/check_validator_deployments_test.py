@@ -383,6 +383,20 @@ def verify_consensus_live_process2_inventory(
     if report.exists() or report.is_symlink():
         raise AssertionError("inauthentic process2 journal created a terminal report")
 
+    # Known public recovery material may coexist with a recovered process.
+    # It supplies no validity: the unauthentic journal must still reject.
+    material = root / "recovery-material-v1"
+    material.mkdir(mode=0o700)
+    context = material / "context.bin"
+    context.write_bytes(b"not-authority")
+    context.chmod(0o600)
+    run(command, expect="runtime event JSON: unknown field", timeout=5)
+    unexpected = material / "foreign-authority.bin"
+    unexpected.write_bytes(b"not-authority")
+    unexpected.chmod(0o600)
+    run(command, expect="live process2 root contains an unrecognized runtime artifact", timeout=5)
+    unexpected.unlink()
+
     unknown = root / "foreign-live-authority.bin"
     unknown.write_bytes(b"foreign")
     unknown.chmod(0o600)

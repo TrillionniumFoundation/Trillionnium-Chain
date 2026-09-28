@@ -669,6 +669,46 @@ def main() -> None:
     ):
         assert resumed_command.count(token) == 1
 
+    # Control-path regression: six resident peers keep their process identity.
+    # Admission alone is not completion; only subsequent completed journal views
+    # count. These are fixture responses, never cryptographic run evidence.
+    from unittest.mock import patch
+    from types import SimpleNamespace
+    peers = [SimpleNamespace(validator_id=str(i), host_id="fixture") for i in range(6)]
+    peer_statuses = {p.validator_id: {"process_instance": 1} for p in peers}
+    sent = []
+    def peer_control(**kwargs):
+        sent.append((kwargs["process"].validator_id, kwargs["verb"]))
+        return {"safety_halted": False, "clean_stop_recorded": False,
+                "restart_completed": kwargs["verb"] == "status",
+                "restart_pending_catchup": False,
+                "restart_quiesce_requested": kwargs["verb"] != "status"}
+    with patch.object(fleet, "send_control", side_effect=peer_control):
+        observed = fleet.resume_resident_peers_v1(
+            processes=peers, stages={"fixture": None}, linux_paths={"fixture": "/fixture"},
+            statuses=peer_statuses, command_nonces={str(i): 1 for i in range(6)},
+            read_nonces={str(i): 1 for i in range(6)}, io_root=pathlib.Path("/fixture"),
+            timeout_seconds=2,
+        )
+    assert len(observed) == 6
+    assert [v for _, v in sent[:6]] == ["resume_restart_peer"] * 6
+    assert [v for _, v in sent[6:]] == ["status"] * 6
+    assert all(v != "clear_restart_quiesce" for _, v in sent)
+    assert all(s["process_instance"] == 1 for s in peer_statuses.values())
+    peer_statuses["0"]["process_instance"] = 2
+    with patch.object(fleet, "send_control", side_effect=AssertionError("unexpected effect")):
+        try:
+            fleet.resume_resident_peers_v1(
+                processes=peers, stages={"fixture": None}, linux_paths={"fixture": "/fixture"},
+                statuses=peer_statuses, command_nonces={str(i): 1 for i in range(6)},
+                read_nonces={str(i): 1 for i in range(6)}, io_root=pathlib.Path("/fixture"),
+                timeout_seconds=2,
+            )
+        except RuntimeError as error:
+            assert "process instance" in str(error)
+        else:
+            raise AssertionError("a process-2 target was accepted as a resident peer")
+
     restart_temporary.cleanup()
 
     print(

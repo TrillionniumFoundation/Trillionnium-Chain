@@ -42,6 +42,10 @@ use crate::{
     restart_protocol::{restart_protocol_message_id_for_parts_v1, RestartProtocolPhaseV1},
 };
 
+#[path = "peer_recovery_journal_v1.rs"]
+mod peer_recovery_journal_v1;
+pub(crate) use peer_recovery_journal_v1::PeerRecoveryStartJournalCommitV1;
+
 const EVENT_SCHEMA_VERSION: u32 = 1;
 const EVENT_HASH_DOMAIN: &[u8] = b"trnm.poco-g3.runtime-event.v1";
 const EVENT_SIGNATURE_DOMAIN: &[u8] = b"trnm.poco-g3.runtime-event-signature.v1";

@@ -1178,6 +1178,23 @@ pub(crate) struct ContinuousRestartDeclaredParkAuthorityV1 {
 }
 
 impl ContinuousRestartDeclaredParkAuthorityV1 {
+    pub(crate) fn resume_peer_after_recorded_start_v1(
+        self,
+        commit: crate::process_event::PeerRecoveryStartJournalCommitV1,
+        journal: &crate::process_event::RuntimeEventJournalV1,
+    ) -> Result<ContinuousValidatorAuthorityV0> {
+        let facts = self.facts_v1();
+        let mut authority = self._parked._authority;
+        commit.require_owner_v1(journal, authority.local_validator, facts)?;
+        authority.fresh_ready_signer_inventory_v1()?;
+        ensure!(
+            authority.facts_v0()? == facts,
+            "peer authority changed while parked before authenticated resume"
+        );
+        commit.require_owner_v1(journal, authority.local_validator, facts)?;
+        Ok(authority)
+    }
+
     pub(crate) const fn facts_v1(&self) -> ContinuousRuntimeFactsV0 {
         self._parked.facts_v1()
     }

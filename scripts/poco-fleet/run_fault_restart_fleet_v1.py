@@ -1279,6 +1279,32 @@ def commission_process2_recovery_material_v1(
     ):
         raise RuntimeError("RecoveryStart certificate changed its context or ReadySet")
 
+    peer_artifacts: dict[str, str] = {}
+    for name, expected in (
+        ("recovery-zero-delta-cut-v1.bin", None),
+        ("recovery-ready-set-v1.bin", ready_set_result["artifact_sha256"]),
+        ("recovery-start-certificate-v1.bin", certificate_result["artifact_sha256"]),
+    ):
+        coordinator_file = material_io / ("peer-" + name)
+        copy_remote_or_local(
+            process=target, stage=target_stage,
+            source=exact_remote_root(f"{validator_root(target, target_stage)}/{name}"),
+            target=coordinator_file, io_root=io_root, label=f"peer-artifact-{name}",
+        )
+        digest = base.sha256_file(coordinator_file)
+        if expected is not None and digest != expected:
+            raise RuntimeError("resident peer artifact differs from target certificate")
+        peer_artifacts[name] = digest
+        for peer in processes:
+            if peer.validator_id == target.validator_id:
+                continue
+            peer_stage = stages[peer.host_id]
+            copy_to_validator_v1(
+                process=peer, stage=peer_stage, source=coordinator_file,
+                target=exact_remote_root(f"{validator_root(peer, peer_stage)}/{name}"),
+                io_root=io_root, label=f"peer-artifact-{peer.validator_id}-{name}",
+            )
+
     binding_after = query_peer_lease_binding_v1(
         process=target,
         stage=target_stage,
@@ -1867,6 +1893,48 @@ def clear_restart_prequiesce_v1(
             "restart pre-quiesce clear failed for: " + "; ".join(failures)
         )
     return cleared
+
+
+def resume_resident_peers_v1(
+    *, processes: list[base.ValidatorProcess], stages: dict[str, base.HostStage],
+    linux_paths: dict[str, str], statuses: dict[str, dict[str, Any]],
+    command_nonces: dict[str, int], read_nonces: dict[str, int],
+    io_root: pathlib.Path, timeout_seconds: int,
+) -> dict[str, dict[str, Any]]:
+    if len(processes) != 6 or len({p.validator_id for p in processes}) != 6:
+        raise RuntimeError("resident recovery requires six distinct non-target peers")
+    deadline = time.monotonic() + timeout_seconds
+    for peer in processes:
+        if statuses[peer.validator_id]["process_instance"] != 1:
+            raise RuntimeError("resident recovery cannot replace a peer process instance")
+        send_control(
+            process=peer, stage=stages[peer.host_id], binary=linux_paths[peer.host_id],
+            status=statuses[peer.validator_id], nonce=command_nonces[peer.validator_id],
+            verb="resume_restart_peer", fault="", io_root=io_root,
+            label=f"resident-peer-resume-{peer.validator_id}",
+        )
+        command_nonces[peer.validator_id] += 1
+    completed: dict[str, dict[str, Any]] = {}
+    while time.monotonic() < deadline:
+        for peer in processes:
+            if peer.validator_id in completed:
+                continue
+            nonce = read_nonces[peer.validator_id]
+            response = send_control(
+                process=peer, stage=stages[peer.host_id], binary=linux_paths[peer.host_id],
+                status=statuses[peer.validator_id], nonce=nonce, verb="status", fault="",
+                io_root=io_root, label=f"resident-peer-status-{peer.validator_id}-{nonce}",
+            )
+            read_nonces[peer.validator_id] += 1
+            if response["safety_halted"] or response["clean_stop_recorded"]:
+                raise RuntimeError("resident peer halted before authenticated recovery")
+            if (response["restart_completed"] and not response["restart_pending_catchup"]
+                    and not response["restart_quiesce_requested"]):
+                completed[peer.validator_id] = response
+        if len(completed) == 6:
+            return completed
+        time.sleep(CONTROL_POLL_SECONDS)
+    raise RuntimeError("resident peer recovery did not complete within the original window")
 
 
 def quiesce_restart_fleet_v1(
@@ -3361,19 +3429,6 @@ def execute_campaign(
                 command_nonces[process.validator_id] += 1
                 if runtimes[process.validator_id] is not inert_runtime:
                     raise RuntimeError("target inert process-2 owner was not retained")
-                peer_prequiesce_clear = clear_restart_prequiesce_v1(
-                    processes=[
-                        candidate
-                        for candidate in quiesced_processes
-                        if candidate.validator_id != process.validator_id
-                    ],
-                    stages=stages,
-                    linux_paths=linux_paths,
-                    statuses=statuses,
-                    command_nonces=command_nonces,
-                    io_root=control_io,
-                    label_prefix="restart-peer-prequiesce-clear-after-handoff",
-                )
                 require_non_target_processes_live(runtimes, process.validator_id)
                 artifacts, material_summary = commission_process2_recovery_material_v1(
                     processes=processes,
@@ -3405,6 +3460,12 @@ def execute_campaign(
                     io_root=control_io,
                     label=f"status-process2-{process.validator_id}",
                     timeout_seconds=consensus.STARTUP_ALLOWANCE_SECONDS,
+                )
+                peer_recovery_resume = resume_resident_peers_v1(
+                    processes=[p for p in quiesced_processes if p.validator_id != process.validator_id],
+                    stages=stages, linux_paths=linux_paths, statuses=statuses,
+                    command_nonces=command_nonces, read_nonces=read_nonces,
+                    io_root=control_io, timeout_seconds=fault_window_seconds,
                 )
                 read_nonces[process.validator_id] = 1
                 command_nonces[process.validator_id] = 1
@@ -3454,7 +3515,7 @@ def execute_campaign(
                                 "frontier": restart_frontier,
                                 "prepare": prepare,
                                 "handoff": handoff,
-                                "peer_prequiesce_clear": peer_prequiesce_clear,
+                                "peer_recovery_resume": peer_recovery_resume,
                             },
                             {"surface": "process2-inert-cut", **process2_exit},
                             {"surface": "recovery-material", **material_summary},

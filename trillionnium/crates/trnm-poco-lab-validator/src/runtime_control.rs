@@ -120,6 +120,7 @@ enum ControlVerbV1 {
     ClearFaultExpectation,
     QuiesceRestart,
     ClearRestartQuiesce,
+    ResumeRestartPeer,
     PrepareRestart,
 }
 
@@ -131,6 +132,7 @@ impl ControlVerbV1 {
             "clear_fault_expectation" => Some(Self::ClearFaultExpectation),
             "quiesce_restart" => Some(Self::QuiesceRestart),
             "clear_restart_quiesce" => Some(Self::ClearRestartQuiesce),
+            "resume_restart_peer" => Some(Self::ResumeRestartPeer),
             "prepare_restart" => Some(Self::PrepareRestart),
             _ => None,
         }
@@ -142,7 +144,8 @@ impl ControlVerbV1 {
             Self::ExpectFault
             | Self::ClearFaultExpectation
             | Self::QuiesceRestart
-            | Self::ClearRestartQuiesce => NonceNamespaceV1::Command,
+            | Self::ClearRestartQuiesce
+            | Self::ResumeRestartPeer => NonceNamespaceV1::Command,
             Self::PrepareRestart => NonceNamespaceV1::Restart,
         }
     }
@@ -210,6 +213,8 @@ struct RuntimeControlStateV1 {
     restart_quiesce_requested: bool,
     restart_prepare_intent: Option<RuntimeRestartPrepareIntentV1>,
     restart_commands_fenced: bool,
+    peer_resume_requested: bool,
+    journal_restart_phase: RuntimeRestartPhaseV1,
     journal_event_sequence: u64,
     journal_event_sha256: [u8; 32],
     journal: RuntimeJournalObservationV1,
@@ -249,6 +254,8 @@ impl RuntimeControlStateV1 {
             restart_quiesce_requested: false,
             restart_prepare_intent: None,
             restart_commands_fenced: journal.restart_phase_v1() != RuntimeRestartPhaseV1::Process1,
+            peer_resume_requested: false,
+            journal_restart_phase: journal.restart_phase_v1(),
             journal_event_sequence,
             journal_event_sha256,
             journal: observation,
@@ -295,6 +302,7 @@ impl RuntimeControlStateV1 {
         self.journal_event_sequence = sequence;
         self.journal_event_sha256 = digest;
         self.journal = observation;
+        self.journal_restart_phase = journal.restart_phase_v1();
         self.restart_commands_fenced |=
             journal.restart_phase_v1() != RuntimeRestartPhaseV1::Process1;
         Ok(())
@@ -430,6 +438,24 @@ impl RuntimeControlStateV1 {
                     bail!("runtime restart-quiesce clear is not admissible in this state");
                 }
                 self.restart_quiesce_requested = false;
+            }
+            ControlVerbV1::ResumeRestartPeer => {
+                if !request.fault.is_empty()
+                    || self.process_instance != 1
+                    || self.journal_restart_phase != RuntimeRestartPhaseV1::Process1PeerParkedAcked
+                    || !self.restart_commands_fenced
+                    || !self.restart_quiesce_requested
+                    || self.restart_prepare_intent.is_some()
+                    || self.expected_fault.is_some()
+                    || !self.journal.active_faults.is_empty()
+                    || self.journal.clean_stop_recorded
+                    || self.journal.safety_halted
+                    || self.peer_resume_requested
+                {
+                    bail!("resident peer resume requires the exact parked peer phase");
+                }
+                // Intent only; certificate, journal and owner checks remain mandatory.
+                self.peer_resume_requested = true;
             }
             ControlVerbV1::PrepareRestart => {
                 if !request.fault.is_empty() {
@@ -577,6 +603,26 @@ impl RuntimeControlServerV1 {
     /// This monotonic fence only removes control authority; it cannot resume a peer.
     pub(crate) fn fence_restart_commands_v1(&mut self) {
         self.state.restart_commands_fenced = true;
+    }
+
+    pub(crate) const fn peer_resume_requested_v1(&self) -> bool {
+        self.state.peer_resume_requested
+    }
+
+    pub(crate) fn complete_peer_resume_v1(
+        &mut self,
+        journal: &RuntimeEventJournalV1,
+    ) -> Result<()> {
+        self.state.refresh(journal)?;
+        if !self.state.peer_resume_requested
+            || self.state.journal_restart_phase != RuntimeRestartPhaseV1::Process1PeerCompleted
+            || !self.state.journal.restart_completed
+        {
+            bail!("peer resume completion lacks the original committed recovery journal");
+        }
+        self.state.peer_resume_requested = false;
+        self.state.restart_quiesce_requested = false;
+        Ok(())
     }
 
     pub fn refresh_from_journal(&mut self, journal: &RuntimeEventJournalV1) -> Result<()> {
@@ -1099,6 +1145,8 @@ mod tests {
             restart_quiesce_requested: false,
             restart_prepare_intent: None,
             restart_commands_fenced: false,
+            peer_resume_requested: false,
+            journal_restart_phase: RuntimeRestartPhaseV1::Process1,
             journal_event_sequence: 7,
             journal_event_sha256: [0x51; 32],
             journal: RuntimeJournalObservationV1 {
@@ -1380,5 +1428,38 @@ mod tests {
             .to_string()
             .contains("not admissible"));
         assert!(state.restart_prepare_intent.is_none());
+    }
+    #[test]
+    fn resident_peer_resume_intent_is_role_fenced_and_replay_idempotent() {
+        let raw = request_bytes_v1(21, "resume_restart_peer", "");
+        for phase in [
+            RuntimeRestartPhaseV1::Process1,
+            RuntimeRestartPhaseV1::Process1TargetParkedAcked,
+            RuntimeRestartPhaseV1::Process1PeerRecoveryStartPending,
+            RuntimeRestartPhaseV1::Process2Completed,
+        ] {
+            let mut state = started_control_state_v1();
+            state.restart_commands_fenced = true;
+            state.restart_quiesce_requested = true;
+            state.journal_restart_phase = phase;
+            assert!(state.process(&raw).is_err());
+            assert!(!state.peer_resume_requested);
+            assert!(state.restart_quiesce_requested);
+        }
+        let mut state = started_control_state_v1();
+        state.restart_commands_fenced = true;
+        state.restart_quiesce_requested = true;
+        state.journal_restart_phase = RuntimeRestartPhaseV1::Process1PeerParkedAcked;
+        let first = state.process(&raw).unwrap();
+        assert!(state.peer_resume_requested);
+        assert!(state.restart_quiesce_requested);
+        assert_eq!(state.process(&raw).unwrap(), first);
+        assert!(state
+            .process(&request_bytes_v1(21, "resume_restart_peer", "foreign"))
+            .is_err());
+        assert!(state
+            .process(&request_bytes_v1(22, "clear_restart_quiesce", ""))
+            .is_err());
+        assert!(state.restart_commands_fenced);
     }
 }

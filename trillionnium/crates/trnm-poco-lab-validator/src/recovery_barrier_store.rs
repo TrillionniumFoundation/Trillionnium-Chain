@@ -389,6 +389,37 @@ pub(crate) fn load_recovery_start_certificate_v1(
     )
 }
 
+/// Reads only the bounded canonical certificate, then uses the existing pinned
+/// loader. The caller must still join this signed context to its retained owner.
+pub(crate) fn load_peer_recovery_start_v1(
+    private_root: &Path,
+    context: &RecoveryContextV1,
+    validator_set: &ValidatorSet,
+) -> Result<StoredRecoveryStartCertificateV1> {
+    let (pinned, bytes, start_sha256) =
+        open_and_read_artifact_v1(private_root, RecoveryArtifactKindV1::StartCertificate)?;
+    let value =
+        decode_recovery_start_certificate_v1_exact(&bytes, validator_set, &StrictEd25519Verifier)
+            .map_err(|error| anyhow::anyhow!("decode peer recovery Start: {error}"))?;
+    ensure!(
+        value.context() == context,
+        "peer recovery Start context differs"
+    );
+    let ready_bytes = value
+        .ready_set()
+        .try_cev1_bytes()
+        .map_err(|error| anyhow::anyhow!("encode peer recovery ReadySet: {error}"))?;
+    let ready_sha256: [u8; 32] = Sha256::digest(&ready_bytes).into();
+    pinned.revalidate_held_v1()?;
+    load_recovery_start_certificate_v1(
+        private_root,
+        start_sha256,
+        ready_sha256,
+        context,
+        validator_set,
+    )
+}
+
 fn load_recovery_start_certificate_with_ready_v1(
     private_root: &Path,
     expected_artifact_sha256: [u8; 32],
@@ -2085,5 +2116,44 @@ mod tests {
             );
         }
         assert!(!normal.contains("pub fn write"));
+    }
+    #[test]
+    fn resident_peer_loader_checks_real_certificate_context_and_tamper() {
+        let fixture = fixture();
+        let root = private_root();
+        let ready_bytes = fixture.ready_set.try_cev1_bytes().unwrap();
+        let start_bytes = fixture.start.try_cev1_bytes().unwrap();
+        write_test_artifact(root.path(), RECOVERY_READY_SET_FILE_V1, &ready_bytes);
+        assert!(load_peer_recovery_start_v1(root.path(), &fixture.context, &fixture.set).is_err());
+        write_test_artifact(
+            root.path(),
+            RECOVERY_START_CERTIFICATE_FILE_V1,
+            &start_bytes,
+        );
+        let stored =
+            load_peer_recovery_start_v1(root.path(), &fixture.context, &fixture.set).unwrap();
+        assert_eq!(stored.artifact_sha256_v1(), sha256(&start_bytes));
+        let mut foreign_fields = zero_delta_fields(&fixture.set);
+        foreign_fields.recovery_nonce = [0xee; 32];
+        let foreign = RecoveryContextV1::new_direct7(foreign_fields, &fixture.set).unwrap();
+        assert!(load_peer_recovery_start_v1(root.path(), &foreign, &fixture.set).is_err());
+        assert_eq!(
+            fs::read(root.path().join(RECOVERY_START_CERTIFICATE_FILE_V1)).unwrap(),
+            start_bytes
+        );
+        let mut corrupt = start_bytes;
+        let last = corrupt.len() - 1;
+        corrupt[last] ^= 1;
+        fs::write(
+            root.path().join(RECOVERY_START_CERTIFICATE_FILE_V1),
+            &corrupt,
+        )
+        .unwrap();
+        assert!(stored.revalidate_fresh_v1(&fixture.set).is_err());
+        assert!(load_peer_recovery_start_v1(root.path(), &fixture.context, &fixture.set).is_err());
+        assert_eq!(
+            fs::read(root.path().join(RECOVERY_START_CERTIFICATE_FILE_V1)).unwrap(),
+            corrupt
+        );
     }
 }

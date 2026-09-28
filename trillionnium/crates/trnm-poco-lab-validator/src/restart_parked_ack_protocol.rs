@@ -851,6 +851,29 @@ impl std::fmt::Debug for DurablyAcknowledgedRestartParkedBarrierV1 {
 }
 
 impl DurablyAcknowledgedRestartParkedBarrierV1 {
+    pub(crate) fn resume_peer_after_start_v1(
+        self,
+        journal: &mut crate::process_event::RuntimeEventJournalV1,
+        zero: &crate::recovery_zero_delta_store::StoredRecoveryZeroDeltaCutV1,
+        start: &crate::recovery_barrier_store::StoredRecoveryStartCertificateV1,
+    ) -> AnyResult<crate::continuous_runtime::ContinuousValidatorAuthorityV0> {
+        self.revalidate_fresh_v1()?;
+        let commit = journal.record_peer_recovery_start_v1(&self, zero, start)?;
+        let local = self
+            .barrier
+            .statements
+            .into_iter()
+            .find_map(|slot| match slot {
+                RestartParkedAckSlotV1::Originated(value) => Some(value),
+                RestartParkedAckSlotV1::Admitted(_) => None,
+            })
+            .context("validated ParkedAck lost its sole originated owner")?;
+        local
+            .declared
+            .declared_park
+            .resume_peer_after_recorded_start_v1(commit, journal)
+    }
+
     pub(crate) fn stored_cut_park_v1(&self) -> &StoredRestartCutParkCertificatesV1 {
         self.barrier.stored_cut_park_v1()
     }

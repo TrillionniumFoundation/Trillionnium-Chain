@@ -107,8 +107,9 @@ where
         is_recovery_material_command_v1(command),
         "unknown recovery material command"
     );
-    let config = LoadedValidatorConfig::load(&run_root, &config_path, binary_path)
-        .context("load manifest-bound recovery material configuration")?;
+    let config =
+        LoadedValidatorConfig::load_for_recovery_material_v1(&run_root, &config_path, binary_path)
+            .context("load manifest-bound recovery material configuration")?;
     ensure!(
         config.has_local_consensus_secret(),
         "recovery material command requires the local candidate consensus key"

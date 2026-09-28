@@ -2418,3 +2418,30 @@ fixture finishes inside the real five-second skew window. The production
 skew limit, transaction expiry, socket deadlines and actual owner checks do not
 change. Boundary tests cover exact skew, skew+1, ahead-of-clock parents and
 arithmetic overflow rather than accepting `time_unready` as a successful submit.
+
+## Direct-seven resident peer resume
+
+The six non-target process-1 owners remain alive but parked after ParkedAck.
+A reversible pre-quiesce clear cannot restore them. An explicit
+`resume_restart_peer` control intent may be admitted only for the exact peer
+ParkedAck phase; it supplies no authority. Before consuming the retained parked
+owner, verify the target's canonical zero-delta artifact and complete seven-member
+RecoveryReady/RecoveryStart certificate against the locally retained Cut, Park,
+ParkedAck, campaign, configuration and identical application/finality cut.
+Persist the existing zero-delta, Ready and Start events on that peer's original
+journal, then freshly authenticate the named journal and the original live
+Safety/signer/application owner before returning ordinary authority. Arm its
+pacemaker last. The target cannot use this path, and the peer does not create a
+second process instance, reinitialize state, clear a watermark or sign again.
+A lost response is queried through the original control nonce/status; an incomplete
+or conflicting durable join fences instead of fabricating a predecessor. A new
+cold-peer-restart path and repeated restart rounds are outside this bounded slice.
+
+The recovery-material CLI has a separate immutable-input loader. It verifies all
+manifest-referenced files, roles, configuration and binary bytes plus the complete
+park marker inventory; it does not classify live sockets as immutable inputs.
+Marker presence is not proof of a valid cut. Strict stored certificate, zero-delta
+and original-owner validation remains mandatory at resume. The closed deployment
+and process-2 startup loaders keep their existing stricter inventories unchanged.
+The coordinator copies only public recovery artifacts, launches the target's
+existing continuation, and requests peer resume instead of clearing quiescence.

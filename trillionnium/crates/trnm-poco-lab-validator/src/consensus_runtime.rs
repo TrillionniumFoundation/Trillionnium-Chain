@@ -6168,6 +6168,7 @@ impl BoundedConsensusOwnerV1 {
             self.terminal_candidate_since = None;
             true
         };
+        let peer_resume_progress = self.resume_parked_peer_v1()?;
         let restart_progress = restart_intent
             .map(|intent| self.observe_restart_prepare_intent_v1(intent))
             .transpose()?
@@ -6183,7 +6184,75 @@ impl BoundedConsensusOwnerV1 {
         } else {
             self.reconcile_expected_connectivity_fault_v1()?
         };
-        Ok(responded || quiesce_progress || restart_progress || fault_progress)
+        Ok(responded
+            || quiesce_progress
+            || peer_resume_progress
+            || restart_progress
+            || fault_progress)
+    }
+
+    /// Resumes only a retained resident peer after the explicit control intent.
+    /// The signed context must join its original durable and in-memory owners.
+    fn resume_parked_peer_v1(&mut self) -> Result<bool> {
+        if !self
+            .runtime_control
+            .as_ref()
+            .is_some_and(RuntimeControlServerV1::peer_resume_requested_v1)
+        {
+            return Ok(false);
+        }
+        ensure!(
+            matches!(self.restart_lifecycle, RestartLifecycleV1::PeerAcked(_))
+                && self.authority.is_none(),
+            "peer resume lacks the retained parked owner"
+        );
+        let (value, context, digest) =
+            crate::recovery_zero_delta_store::read_recovery_zero_delta_material_v1(
+                self.config.run_root(),
+                self.config.validator_set(),
+            )?;
+        let zero = crate::recovery_zero_delta_store::load_recovery_zero_delta_cut_v1(
+            self.config.run_root(),
+            digest,
+            &value,
+            &context,
+            self.config.validator_set(),
+        )?;
+        let start = crate::recovery_barrier_store::load_peer_recovery_start_v1(
+            self.config.run_root(),
+            &context,
+            self.config.validator_set(),
+        )?;
+        // Ordinary authority is absent throughout this consuming handoff.
+        // Failure after any durable write stops the owner, never fabricates Ready.
+        let old = std::mem::replace(&mut self.restart_lifecycle, RestartLifecycleV1::Running);
+        let RestartLifecycleV1::PeerAcked(owner) = old else {
+            self.restart_lifecycle = old;
+            bail!("peer resume lifecycle changed before consumption");
+        };
+        self.mesh_v1()?.ensure_healthy()?;
+        let authority = owner.acknowledged.resume_peer_after_start_v1(
+            &mut self.event_journal,
+            &zero,
+            &start,
+        )?;
+        zero.revalidate_fresh_v1(self.config.validator_set())?;
+        start.revalidate_fresh_v1(self.config.validator_set())?;
+        let facts = authority.facts_v0()?;
+        self.runtime_control
+            .as_mut()
+            .context("peer runtime control disappeared")?
+            .complete_peer_resume_v1(&self.event_journal)?;
+        self.mesh_v1()?.ensure_healthy()?;
+        self.authority = Some(authority);
+        arm_pacemaker_for_facts_v1(
+            &mut self.pacemaker,
+            self.config.validator_set().epoch(),
+            facts,
+            Instant::now(),
+        )?;
+        self.terminal_candidate_since = None;
+        Ok(true)
     }
 
     fn observe_restart_prepare_intent_v1(
