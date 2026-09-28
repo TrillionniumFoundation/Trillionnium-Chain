@@ -1,0 +1,15 @@
+[package]
+name = "trnm-escrow-vault"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[package.metadata.trnm]
+module = "M12"
+role = "portable-local-state-machine"
+consensus_authority = false
+production_activation = false
+
+[dependencies]
+trnm-audit-events = { path = "../trnm-audit-events" }

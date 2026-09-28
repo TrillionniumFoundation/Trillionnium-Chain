@@ -284,7 +284,7 @@ fn task_metadata_compatibility_truth_table_preserves_typed_governance_upgrade_de
 fn task_metadata_compatibility_truth_table_settlement_threading_promotes_legacy_fallback_without_breaking_note_only_compatibility(
 ) {
     let fallback_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "a".repeat(64)),
@@ -338,7 +338,7 @@ fn task_metadata_compatibility_truth_table_settlement_threading_promotes_legacy_
 fn task_metadata_compatibility_truth_table_settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_incomplete_snapshot(
 ) {
     let incomplete_fallback_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "c".repeat(64)),
@@ -397,7 +397,7 @@ fn task_metadata_compatibility_truth_table_settlement_threading_keeps_legacy_not
 fn task_metadata_compatibility_truth_table_settlement_threading_serialization_keeps_legacy_note_only_shape_compact(
 ) {
     let fallback_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "d".repeat(64)),
@@ -426,7 +426,7 @@ fn task_metadata_compatibility_truth_table_settlement_threading_serialization_ke
         serde_json::json!({
             "note": "legacy",
             "settlement": {
-                "settlement_schema": "poco_v1",
+                "settlement_schema": "service_usage_v2",
                 "tokenizer_id": "llama3-tokenizer",
                 "tokenizer_version": "1.0.0",
                 "output_hash": format!("0x{}", "d".repeat(64)),
@@ -441,7 +441,7 @@ fn task_metadata_compatibility_truth_table_settlement_threading_serialization_ke
 fn task_metadata_compatibility_truth_table_settlement_threading_report_serialization_preserves_fallback_vs_threaded_source(
 ) {
     let fallback_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "f".repeat(64)),
@@ -496,7 +496,7 @@ fn task_metadata_compatibility_truth_table_settlement_threading_report_serializa
 fn task_metadata_compatibility_truth_table_settlement_threading_prefers_incomplete_inline_settlement_over_complete_legacy_fallback(
 ) {
     let inline_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "2".repeat(64)),
@@ -505,7 +505,7 @@ fn task_metadata_compatibility_truth_table_settlement_threading_prefers_incomple
         output_span_commitment: None,
     };
     let fallback_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "3".repeat(64)),
@@ -548,7 +548,7 @@ fn task_metadata_compatibility_truth_table_settlement_threading_prefers_incomple
 #[test]
 fn task_metadata_compatibility_truth_table_task_object_threading_creates_metadata_when_absent() {
     let fallback_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "5".repeat(64)),
@@ -579,7 +579,7 @@ fn task_metadata_compatibility_truth_table_task_object_threading_creates_metadat
 fn task_metadata_compatibility_truth_table_task_object_threading_does_not_clobber_existing_inline_settlement(
 ) {
     let inline_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "6".repeat(64)),
@@ -588,7 +588,7 @@ fn task_metadata_compatibility_truth_table_task_object_threading_does_not_clobbe
         output_span_commitment: None,
     };
     let fallback_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "8".repeat(64)),
@@ -625,7 +625,7 @@ fn task_metadata_compatibility_truth_table_task_object_threading_does_not_clobbe
 fn task_metadata_compatibility_truth_table_task_object_settlement_helpers_preserve_absent_fallback_and_threaded_precedence(
 ) {
     let fallback_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "7".repeat(64)),
@@ -634,7 +634,7 @@ fn task_metadata_compatibility_truth_table_task_object_settlement_helpers_preser
         output_span_commitment: None,
     };
     let competing_fallback = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "9".repeat(64)),
@@ -674,7 +674,7 @@ fn task_metadata_compatibility_truth_table_task_object_settlement_helpers_preser
 fn task_metadata_compatibility_truth_table_task_object_report_tracks_legacy_fallback_to_threaded_transition(
 ) {
     let fallback_settlement = TaskSettlementSnapshot {
-        settlement_schema: "poco_v1".into(),
+        settlement_schema: "service_usage_v2".into(),
         tokenizer_id: "llama3-tokenizer".into(),
         tokenizer_version: "1.0.0".into(),
         output_hash: format!("0x{}", "b".repeat(64)),

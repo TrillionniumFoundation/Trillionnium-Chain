@@ -55,18 +55,12 @@ as required, quarantine problematic artifacts and create a new admitted local ge
 when switching. Active tasks drain/reconcile; old grants do not revive. Public bytes
 already downloaded cannot be recalled cryptographically by deleting a chain row.
 
-## R5. Historical proof dispatch
+## R5. Historical proof boundary
 
-PoCO frozen protocol directories, CEV0/CEV1 domains, QC/TC/three-chain proof verifiers,
-legacy signer journals and their tests are retained only for existing-source behavior,
-historical verification, liability export and migration rehearsal. New target operation
-must select pon-nakamoto-v1 explicitly. No decoder guessing, compatibility success flag,
-old validator signature or label substitution can construct a PoN work certificate.
-
-Likewise a PoN depth/work receipt is not an old FinalityProofV0. SDKs and RPCs expose
-both classes with their original trust statements. Legacy evidence never becomes new
-PoN security or efficacy evidence; historical audits remain unchanged. The retirement
-index classifies old specs instead of deleting hash-bound byte references.
+Old consensus source, protocol trees, QC/TC/finality decoders and signer journals are
+absent from the active tree. Git alone retains their history. A future historical export
+requires an explicitly isolated version-bound utility. No historical signature or proof
+is currently accepted as PoN work or implicit new-chain authority.
 
 ## R6. Initial migration is a fresh instance
 
@@ -85,16 +79,13 @@ No same-path WAL rewrite, reset of vote/nonce history or reinterpretation of an 
 signature is allowed. After new effects escape, recovery preserves that identity;
 restoring a pre-migration image is not safe rollback.
 
-## R7. Source retirement order and tests
+## R7. Current source and required tests
 
-Keep source ownership mappings to current packages. First build the new work/chain/
-reorg contracts with isolated types, then wire the ordinary PoN node path, then prove
-historical imports and source/build exclusion. Retained generic codecs, bounded I/O,
-worker cancellation, resource conservation and descriptor fencing may be reused only
-where semantics really match. Remove old active consensus dependencies from the PoN
-binary closure after actual callers migrate; do not merely flip a feature or delete tests.
+The portability inventory binds every retained package and concise source dispositions.
+No old active consensus dependency remains. Retained CAS, strict crypto, bounded worker
+control, escrow conservation and serial/parallel execution are candidates only. Local
+application stores need a new branch/undo adapter, not renamed monotonic finality.
 
-Mandatory tests include longer-low-work vs shorter-high-work, equal-work forks, deep
-reorg across reward maturity/model adoption/nonce reuse, unavailable fork data, every
-reorg crash cut, orphaned non-idempotent API result, stale checkpoint, coherent rollback,
-wrong-genesis import, omitted escrow/retention and attempted PoCO-QC-as-PoN verification.
+Future tests must cover shorter-higher-work chains, deep reorg across maturity/model
+adoption/nonce reuse, every crash cut, orphaned external effects, wrong-genesis import,
+omitted escrow/retention and rejection of historical proof substitution.

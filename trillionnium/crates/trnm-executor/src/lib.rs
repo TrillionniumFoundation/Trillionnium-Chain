@@ -1195,7 +1195,6 @@ fn build_parallel_groups_aggressive_profile(
         }
 
         let mut placed = false;
-        let mut scanned = 0usize;
         let candidate_span = groups.len().saturating_sub(min_group);
 
         if skip_empty_stage_checks && read_empty && write_empty && candidate_span > 0 {
@@ -1212,11 +1211,10 @@ fn build_parallel_groups_aggressive_profile(
             if placed {
                 break;
             }
-            if scan_window > 0 && scanned >= scan_window {
+            if scan_window > 0 && step >= scan_window {
                 break;
             }
             let idx = min_group + ((start_offset + step) % candidate_span);
-            scanned += 1;
             candidate_groups_scanned += 1;
 
             if !skip_empty_stage_checks || !write_empty {
@@ -2059,8 +2057,8 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 // Empty-access txs do not carry any conflict-domain hint. Keep them
                 // from fabricating an extra bucket-0 lane in mixed batches when all
                 // signaled traffic still belongs to one actual hot bucket.
-                if !(tx.read_set.is_empty() && tx.write_set.is_empty())
-                    && !signaled_bucket_seen[bucket]
+                if !(signaled_bucket_seen[bucket]
+                    || tx.read_set.is_empty() && tx.write_set.is_empty())
                 {
                     signaled_bucket_seen[bucket] = true;
                     signaled_non_empty_buckets += 1;
@@ -2142,7 +2140,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 .iter()
                 .map(|depth| Vec::with_capacity(*depth))
                 .collect();
-            for (tx, bucket) in txs.iter().cloned().zip(tx_bucket_hints.into_iter()) {
+            for (tx, bucket) in txs.iter().cloned().zip(tx_bucket_hints) {
                 // Prefer write-set as stronger conflict signal; fold a second key when present
                 // to reduce bucket skew for mixed workloads.
                 buckets[bucket].push(tx);
@@ -2172,7 +2170,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 rr_start = (rr_start + 1) % n;
             }
 
-            for (dst, src) in txs.iter_mut().zip(merged.into_iter()) {
+            for (dst, src) in txs.iter_mut().zip(merged) {
                 *dst = src;
             }
         }
@@ -3814,7 +3812,7 @@ mod tests {
         );
         assert_eq!(
             hot_bucket_hint(&write_then_read, buckets_n),
-            ((0u64 ^ 5u64.rotate_left(7)) % buckets_n as u64) as usize
+            ((5u64.rotate_left(7)) % buckets_n as u64) as usize
         );
     }
 
@@ -3838,7 +3836,7 @@ mod tests {
         );
         assert_eq!(
             hot_bucket_hint(&write_narrow, buckets_n),
-            ((0u64 ^ 5u64.rotate_left(7)) % buckets_n as u64) as usize
+            ((5u64.rotate_left(7)) % buckets_n as u64) as usize
         );
     }
 
@@ -3865,7 +3863,7 @@ mod tests {
         );
         assert_eq!(
             hot_bucket_hint(&write_then_read, buckets_n),
-            ((0u64 ^ high_a.rotate_left(7)) % buckets_n as u64) as usize
+            ((high_a.rotate_left(7)) % buckets_n as u64) as usize
         );
     }
 
@@ -3892,7 +3890,7 @@ mod tests {
         );
         assert_eq!(
             hot_bucket_hint(&write_narrow, buckets_n),
-            ((0u64 ^ high_a.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize
+            ((high_a.rotate_left(7)) & ((buckets_n as u64) - 1)) as usize
         );
     }
 
@@ -3931,7 +3929,7 @@ mod tests {
         );
         assert_eq!(
             hot_bucket_hint(&write_narrow, buckets_n),
-            ((0u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize
+            ((7u64.rotate_left(7)) % buckets_n as u64) as usize
         );
     }
 
@@ -4005,8 +4003,8 @@ mod tests {
         // One-key execution domains should hash directly to that object key without
         // needing the broader two-key sort/dedup path. This keeps simple transfer-
         // like lanes aligned across read-only and write-only singleton footprints.
-        assert_eq!(hot_bucket_hint(&write_only, 97), (42u64 % 97) as usize);
-        assert_eq!(hot_bucket_hint(&read_only, 97), (42u64 % 97) as usize);
+        assert_eq!(hot_bucket_hint(&write_only, 97), 42usize);
+        assert_eq!(hot_bucket_hint(&read_only, 97), 42usize);
         assert_eq!(hot_bucket_hint(&write_only, 64), (42u64 & 63u64) as usize);
         assert_eq!(hot_bucket_hint(&read_only, 64), (42u64 & 63u64) as usize);
     }

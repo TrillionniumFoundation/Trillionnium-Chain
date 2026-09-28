@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
 set -euo pipefail
-root=$(git rev-parse --show-toplevel)
-exec bash "$root/scripts/project-preflight.sh" --push "$@"
+exec bash scripts/project-preflight.sh --push "$1" "$2"

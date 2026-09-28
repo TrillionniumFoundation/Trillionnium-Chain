@@ -1,5 +1,0 @@
-{
-  "schema":"trnm-deterministic-reexecution-cases-v1",
-  "positive":["unchallenged-maturity","upheld-challenge","rejected-challenge"],
-  "negative":["output-mismatch","missing-evidence","unknown-no-fallback","disabled-profile","subjective-objective-forbidden","backend-unavailable","late-challenge","duplicate-challenge","premature-finalize"]
-}

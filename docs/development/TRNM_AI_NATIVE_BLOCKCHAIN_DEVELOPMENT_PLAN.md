@@ -11,7 +11,7 @@ Machine implementation truth: [consensus-mainline.json](../../config/consensus-m
 Selected protocol and transition: [pon-nakamoto-v1.json](../../config/pon-nakamoto-v1.json).
 Technical contract: [PoN specification](../protocol/pon-nakamoto-v1/README.md).
 Module index: [M00-M17](../modules/README.md); [source registry](module-registry-v1.toml);
-[coverage](../../config/module-coverage-v1.toml); [release train](release-train-v1.toml);
+[source inventory](../../config/portability-inventory-v1.json); [release train](release-train-v1.toml);
 [manifest](plan-manifest-v1.toml); [snapshot](CURRENT_SNAPSHOT_V1.json);
 [applicability](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md).
 
@@ -30,16 +30,15 @@ cumulative verified work, forks and probabilistic confirmations. Consumption-wei
 validators, stake/evaluator-vote fork choice, QC/TC locking, three-chain finality and
 joint validator epochs do not belong in the new consensus profile.
 
-Retirement of a design is not completed deletion/migration of running code. Existing
-PoCO binaries, frozen signed bytes, persisted state and regression vectors remain
-legacy implementation/reference material until consumers migrate safely. Do not rename
-an old proof, reset a signer journal, or flip a feature and claim PoN exists. Old literal
-`consensus_mainline`/`protocol_target` fields remain legacy runtime-byte identifiers for
-existing consumers; `development_target` and the PoN contract select new engineering.
+Retired consensus code, binaries, protocol files, fixtures and legacy appendices are
+now deleted from the active tree. Only explicitly inventoried portable components remain.
+History is available from Git, not an active compatibility directory. No legacy runtime,
+proof decoder or fallback remains in the workspace. Current local monotonic stores are
+not yet a PoN branch/undo implementation.
 
-No machine flag is promoted. The observed legacy implementation projection remains:
+No machine flag is promoted. The current implementation projection is:
 
-    stage = G1-native-host-incomplete
+    stage = portable-foundation-only
     production_candidate = false
     production_consensus_activation = false
     public_testnet_ready = false
@@ -189,8 +188,7 @@ parameters and independent economic review before activation; no invented launch
 ### PN0 — Contract and source alignment
 
 Update this plan, all module specifications, applicability and machine target together.
-Retain current source ownership and classify all old protocol/operation references as
-legacy-only. Register new objects/errors/bounds and independent vectors. Documentation
+Retain current source ownership and remove all old protocol/operation references from the active tree. Register new objects/errors/bounds and independent vectors. Documentation
 and reference-model tests prove only their stated scope. No parallel target or roadmap.
 
 ### PN1 — Qualify real neural work
@@ -246,23 +244,21 @@ Run project preflight before edits/commit/push. On a committed, unchanged checko
 
 ```bash
 bash scripts/project-preflight.sh
-python3 scripts/ci/check_pon_documentation_v1.py
-python3 scripts/ci/test_pon_documentation_v1.py
+python3 scripts/ci/check_repository.py
+python3 scripts/ci/test_repository.py
 python3 formal/pon-nakamoto-v1/test_reference.py
 bash scripts/ci/check_canonical_development_plan.sh
-python3 scripts/ci/check_repository_truth_v1.py
+cargo test --locked --workspace --all-targets --all-features --manifest-path trillionnium/Cargo.toml
 ```
 
 The new reference tests are arithmetic/state examples, never a neural miner, work proof,
-Rust node or deployment certificate. Existing source regression and frozen-byte tests
-remain required when their legacy paths change; they are not evidence of PoN completion.
+Rust node or deployment certificate. Retained component regression tests remain required and are not evidence of PoN completion.
 Run the affected Rust package tests, strict Clippy/fmt and applicable build-closure,
 security and supply-chain checks for actual implementation changes.
 
 Preserve exact source/tree/base/binary/profile/configuration, raw failing and successful
 logs, hardware, actual invocation path and independent review. Current candidate identity
-comes from Git/CI, not branch prose. Refresh reproducible documentation input hashes in
-the existing manifest, never evidence outcomes. No self-approval, protected-main bypass,
+comes from Git/CI, not branch prose. Derive source and document fingerprints from the actual checked-out tree, never evidence outcomes. No self-approval, protected-main bypass,
 force push, deployment or performance/efficacy claims arise from this refactor.
 
 ## 8. Completion definition
@@ -274,14 +270,11 @@ work competition and reorg under its qualified assumptions. This document does n
 assert any of those experiments ran. Open work-profile and implementation obligations
 remain named in the machine contract and domain acceptance specification.
 
-## 9. Legacy trace interpretation retained during migration
 
-`docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md` resolves explicit profile scope.
-`docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md` and
-`docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md` preserve current source/reviewer boundaries.
-`config/documentation-contracts-v1.json` and
-`config/documentation-operations-supplement-v1.json` retain exact legacy operation traces,
-not a second implementation plan. Under `legacy-ledger-observation`, the old
-VotePublished path and ReceiptPublished path remain distinct; a historical vote does
-not wait for its own block's finality. Those historical facts must stay interpretable,
-but neither publication lifecycle supplies PoN work, confirmations or activation.
+## 9. Active-tree cleanup boundary
+
+`config/portability-inventory-v1.json` is the actual retained-package/owner inventory.
+All old protocol and runtime trees are absent; Git history is the archive. Deployed
+state, keys and services were not touched. Portable domains and schemas are fresh-only.
+Local monotonic application stores are NOT yet authoritative branch-aware chain storage.
+Storage/evaluator thresholds are application trust contracts, not ledger voting power.

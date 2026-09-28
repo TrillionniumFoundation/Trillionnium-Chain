@@ -2205,7 +2205,7 @@ mod tests {
     #[test]
     fn settlement_evidence_path_sanitizes_arabic_letter_mark_controls() {
         let rec = SettlementRecord {
-            settlement_id: 49_1,
+            settlement_id: 491,
             route: BridgeRoute {
                 route_id: "eth\u{061C}mainnet->trnm".to_string(),
                 source_chain: "ethereum\u{061C}mainnet".to_string(),
@@ -2226,7 +2226,7 @@ mod tests {
     #[test]
     fn settlement_evidence_path_sanitizes_word_joiner_controls() {
         let rec = SettlementRecord {
-            settlement_id: 49_2,
+            settlement_id: 492,
             route: BridgeRoute {
                 route_id: "eth\u{2060}mainnet->trnm".to_string(),
                 source_chain: "ethereum\u{2060}mainnet".to_string(),
@@ -2331,7 +2331,7 @@ mod tests {
     #[test]
     fn settlement_evidence_path_avoids_windows_reserved_device_names_with_unicode_space_padding() {
         let rec = SettlementRecord {
-            settlement_id: 53_0,
+            settlement_id: 530,
             route: BridgeRoute {
                 route_id: "\u{2003}CON\u{2002}".to_string(),
                 source_chain: "\u{00A0}nul\u{00A0}".to_string(),
@@ -2352,7 +2352,7 @@ mod tests {
     #[test]
     fn settlement_evidence_path_trims_trailing_dot_or_space_for_non_reserved_segments() {
         let rec = SettlementRecord {
-            settlement_id: 53_1,
+            settlement_id: 531,
             route: BridgeRoute {
                 route_id: "eth-mainnet. ".to_string(),
                 source_chain: "ethereum.. ".to_string(),

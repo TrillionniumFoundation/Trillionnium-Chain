@@ -15,9 +15,9 @@ consumption-derived validator weights, QC/TC locks, three-certified-block finali
 old/new-validator-set handoff are RETIRED AS DEVELOPMENT TARGETS.
 
 No BFT checkpoint/finality committee or consumption/stake vote is hidden in PoN.
-The existing PoCO source remains a legacy implementation and migration/readback input;
-its current names, signatures, stored bytes and regression expectations are not changed
-by this documentation revision. A new PoN runtime and proof format remain to be built.
+Old PoCO source, protocol decoders, byte registries and runtime launchers are deleted
+from the active tree. Git retains history; only inventoried neutral components remain.
+A new PoN runtime and proof format remain to be built.
 
 ## The product, not just a compute market
 

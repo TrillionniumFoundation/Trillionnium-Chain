@@ -1,5 +1,0 @@
-{
-  "schema": "trnm-settlement-risk-cases-v2",
-  "positive": ["canonical-ordering", "independent-roles", "provider-bond", "challenge-bond"],
-  "negative": ["payer-provider-related", "provider-verifier-related", "challenger-conflict", "provider-bond-under-collateralized", "challenge-bond-under-collateralized", "provider-concentration", "beneficial-owner-sybil-concentration", "duplicate-task", "unknown-actor", "wrong-role", "wash-funding-source"]
-}

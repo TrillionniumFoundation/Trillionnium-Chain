@@ -94,7 +94,7 @@ fn default_task_metering_ratio_denominator() -> u128 {
 }
 
 fn default_task_settlement_schema() -> String {
-    "poco_v1".to_string()
+    "service_usage_v2".to_string()
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -666,8 +666,6 @@ pub struct GovProposalObject {
     pub version: u64,
 }
 
-pub const HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID: u64 = 7_351;
-pub const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID: u64 = 7_352;
 pub const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -693,8 +691,6 @@ pub enum GovParamKey {
     LlmMeterWorkerSlashRebatePerWorkUnitNum,
     LlmMeterWorkerSlashRebatePerWorkUnitDen,
     ResolveAuthority,
-    HybridSettlementPocoWeightBps,
-    ShadowSettlementCompareOnly,
     EmergencyPause,
     MonetaryPolicyTickIntervalBlocks,
     MonetaryPolicyTickCooldownBlocks,
@@ -737,8 +733,6 @@ impl GovParamKey {
                 "llm_meter_worker_slash_rebate_per_work_unit_den"
             }
             Self::ResolveAuthority => "resolve_authority",
-            Self::HybridSettlementPocoWeightBps => "hybrid_settlement_poco_weight_bps",
-            Self::ShadowSettlementCompareOnly => "shadow_settlement_compare_only",
             Self::EmergencyPause => "emergency_pause",
             Self::MonetaryPolicyTickIntervalBlocks => "monetary_policy_tick_interval_blocks",
             Self::MonetaryPolicyTickCooldownBlocks => "monetary_policy_tick_cooldown_blocks",
@@ -749,8 +743,6 @@ impl GovParamKey {
 
     pub fn canonical_key_id(self) -> Option<u64> {
         match self {
-            Self::HybridSettlementPocoWeightBps => Some(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID),
-            Self::ShadowSettlementCompareOnly => Some(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID),
             Self::EmergencyPause => Some(EMERGENCY_PAUSE_KEY_ID),
             _ => None,
         }
@@ -791,8 +783,6 @@ impl GovParamKey {
                 Self::LlmMeterWorkerSlashRebatePerWorkUnitDen
             }
             "resolve_authority" => Self::ResolveAuthority,
-            "hybrid_settlement_poco_weight_bps" => Self::HybridSettlementPocoWeightBps,
-            "shadow_settlement_compare_only" => Self::ShadowSettlementCompareOnly,
             "emergency_pause" => Self::EmergencyPause,
             "monetary_policy_tick_interval_blocks" => Self::MonetaryPolicyTickIntervalBlocks,
             "monetary_policy_tick_cooldown_blocks" => Self::MonetaryPolicyTickCooldownBlocks,
@@ -853,7 +843,7 @@ mod tests {
     #[test]
     fn task_settlement_snapshot_core_fields_accept_output_root_binding() {
         let snapshot = TaskSettlementSnapshot {
-            settlement_schema: "poco_v1".into(),
+            settlement_schema: "service_usage_v2".into(),
             tokenizer_id: "llama3-tokenizer".into(),
             tokenizer_version: "1.0.0".into(),
             output_hash: format!("0x{}", "a".repeat(64)),
@@ -868,7 +858,7 @@ mod tests {
     #[test]
     fn task_settlement_snapshot_core_fields_accept_output_span_commitment_binding() {
         let snapshot = TaskSettlementSnapshot {
-            settlement_schema: "poco_v1".into(),
+            settlement_schema: "service_usage_v2".into(),
             tokenizer_id: "llama3-tokenizer".into(),
             tokenizer_version: "1.0.0".into(),
             output_hash: format!("0x{}", "c".repeat(64)),
@@ -939,7 +929,7 @@ mod tests {
                 worker_slash_rebate_per_work_unit_den: 384,
             }),
             settlement: Some(TaskSettlementSnapshot {
-                settlement_schema: "poco_v1".into(),
+                settlement_schema: "service_usage_v2".into(),
                 tokenizer_id: "llama3-tokenizer".into(),
                 tokenizer_version: "1.0.0".into(),
                 output_hash: format!("0x{}", "e".repeat(64)),
@@ -971,7 +961,7 @@ mod tests {
             "task_type": "inference",
             "input_hash": format!("0x{}", "a".repeat(64)),
             "settlement_snapshot": {
-                "settlement_schema": "poco_v1",
+                "settlement_schema": "service_usage_v2",
                 "tokenizer_id": "llama3-tokenizer",
                 "tokenizer_version": "1.0.0",
                 "output_hash": format!("0x{}", "b".repeat(64)),
@@ -1008,7 +998,7 @@ mod tests {
             "task_type": "inference",
             "input_hash": format!("0x{}", "d".repeat(64)),
             "settlement": {
-                "settlement_schema": "poco_v1",
+                "settlement_schema": "service_usage_v2",
                 "tokenizer_id": "llama3-tokenizer",
                 "tokenizer_version": "1.0.0",
                 "output_hash": format!("0x{}", "e".repeat(64)),
@@ -1017,7 +1007,7 @@ mod tests {
                 "output_span_commitment": null
             },
             "settlement_snapshot": {
-                "settlement_schema": "poco_v1",
+                "settlement_schema": "service_usage_v2",
                 "tokenizer_id": "llama3-tokenizer",
                 "tokenizer_version": "1.0.0",
                 "output_hash": format!("0x{}", "f".repeat(64)),
@@ -1447,7 +1437,7 @@ mod tests {
             ..TaskMetadata::default()
         };
         let settlement = TaskSettlementSnapshot {
-            settlement_schema: "poco_v1".into(),
+            settlement_schema: "service_usage_v2".into(),
             tokenizer_id: "llama3-tokenizer".into(),
             tokenizer_version: "1.0.0".into(),
             output_hash: format!("0x{}", "e".repeat(64)),
@@ -1479,7 +1469,7 @@ mod tests {
         let metadata: TaskMetadata = serde_json::from_str(r#"{"note":"legacy"}"#)
             .expect("legacy payload should deserialize");
         let settlement = TaskSettlementSnapshot {
-            settlement_schema: "poco_v1".into(),
+            settlement_schema: "service_usage_v2".into(),
             tokenizer_id: "llama3-tokenizer".into(),
             tokenizer_version: "1.0.0".into(),
             output_hash: format!("0x{}", "a".repeat(64)),
@@ -1520,7 +1510,7 @@ mod tests {
         let metadata: TaskMetadata = serde_json::from_str(r#"{"note":"legacy"}"#)
             .expect("legacy payload should deserialize");
         let settlement = TaskSettlementSnapshot {
-            settlement_schema: "poco_v1".into(),
+            settlement_schema: "service_usage_v2".into(),
             tokenizer_id: "llama3-tokenizer".into(),
             tokenizer_version: "1.0.0".into(),
             output_hash: format!("0x{}", "c".repeat(64)),
@@ -1563,7 +1553,7 @@ mod tests {
         let metadata: TaskMetadata = serde_json::from_value(serde_json::json!({
             "note": "legacy",
             "settlement": {
-                "settlement_schema": "poco_v1",
+                "settlement_schema": "service_usage_v2",
                 "tokenizer_id": "llama3-tokenizer",
                 "tokenizer_version": "1.0.0",
                 "output_hash": format!("0x{}", "c".repeat(64)),
@@ -1602,7 +1592,7 @@ mod tests {
             ..TaskMetadata::default()
         };
         let settlement = TaskSettlementSnapshot {
-            settlement_schema: "poco_v1".into(),
+            settlement_schema: "service_usage_v2".into(),
             tokenizer_id: "llama3-tokenizer".into(),
             tokenizer_version: "1.0.0".into(),
             output_hash: format!("0x{}", "5".repeat(64)),
@@ -1646,7 +1636,7 @@ mod tests {
             task_type: Some("inference".into()),
             input_hash: Some("a".repeat(64)),
             settlement: Some(TaskSettlementSnapshot {
-                settlement_schema: "poco_v1".into(),
+                settlement_schema: "service_usage_v2".into(),
                 tokenizer_id: "llama3-tokenizer".into(),
                 tokenizer_version: "1.0.0".into(),
                 output_hash: format!("0x{}", "1".repeat(64)),
@@ -1686,7 +1676,7 @@ mod tests {
             task_type: Some("inference".into()),
             input_hash: Some("a".repeat(64)),
             settlement: Some(TaskSettlementSnapshot {
-                settlement_schema: "poco_v1".into(),
+                settlement_schema: "service_usage_v2".into(),
                 tokenizer_id: "llama3-tokenizer".into(),
                 tokenizer_version: "1.0.0".into(),
                 output_hash: format!("0x{}", "2".repeat(64)),
@@ -1697,7 +1687,7 @@ mod tests {
             ..TaskMetadata::default()
         };
         let fallback_settlement = TaskSettlementSnapshot {
-            settlement_schema: "poco_v1".into(),
+            settlement_schema: "service_usage_v2".into(),
             tokenizer_id: "llama3-tokenizer".into(),
             tokenizer_version: "1.0.0".into(),
             output_hash: format!("0x{}", "4".repeat(64)),
@@ -1726,7 +1716,7 @@ mod tests {
     #[test]
     fn task_metadata_settlement_snapshot_source_distinguishes_threaded_from_legacy_fallback() {
         let fallback_settlement = TaskSettlementSnapshot {
-            settlement_schema: "poco_v1".into(),
+            settlement_schema: "service_usage_v2".into(),
             tokenizer_id: "llama3-tokenizer".into(),
             tokenizer_version: "1.0.0".into(),
             output_hash: format!("0x{}", "6".repeat(64)),
@@ -1747,7 +1737,7 @@ mod tests {
 
         let threaded_metadata = TaskMetadata {
             settlement: Some(TaskSettlementSnapshot {
-                settlement_schema: "poco_v1".into(),
+                settlement_schema: "service_usage_v2".into(),
                 tokenizer_id: "llama3-tokenizer".into(),
                 tokenizer_version: "1.0.0".into(),
                 output_hash: format!("0x{}", "8".repeat(64)),
@@ -1794,16 +1784,6 @@ mod tests {
             (GovParamKey::MaxBlockMs, "max_block_ms", None),
             (GovParamKey::ResolveAuthority, "resolve_authority", None),
             (
-                GovParamKey::HybridSettlementPocoWeightBps,
-                "hybrid_settlement_poco_weight_bps",
-                Some(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID),
-            ),
-            (
-                GovParamKey::ShadowSettlementCompareOnly,
-                "shadow_settlement_compare_only",
-                Some(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID),
-            ),
-            (
                 GovParamKey::EmergencyPause,
                 "emergency_pause",
                 Some(EMERGENCY_PAUSE_KEY_ID),
@@ -1827,30 +1807,6 @@ mod tests {
 
     #[test]
     fn gov_param_key_enforces_reserved_key_id_bindings_fail_closed() {
-        GovParamKey::HybridSettlementPocoWeightBps
-            .validate_key_id(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID)
-            .expect("hybrid settlement weight should accept the canonical key id");
-
-        let err = GovParamKey::HybridSettlementPocoWeightBps
-            .validate_key_id(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID + 1)
-            .expect_err("hybrid settlement weight should reject mismatched key ids");
-        assert!(
-            err.contains("governance key id mismatch for hybrid_settlement_poco_weight_bps"),
-            "unexpected mismatch error: {err}"
-        );
-
-        GovParamKey::ShadowSettlementCompareOnly
-            .validate_key_id(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID)
-            .expect("shadow settlement flag should accept the canonical key id");
-
-        let err = GovParamKey::ShadowSettlementCompareOnly
-            .validate_key_id(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID + 1)
-            .expect_err("shadow settlement flag should reject mismatched key ids");
-        assert!(
-            err.contains("governance key id mismatch for shadow_settlement_compare_only"),
-            "unexpected mismatch error: {err}"
-        );
-
         GovParamKey::EmergencyPause
             .validate_key_id(EMERGENCY_PAUSE_KEY_ID)
             .expect("reserved binding should accept the canonical key id");

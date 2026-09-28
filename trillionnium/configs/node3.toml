@@ -1,4 +1,0 @@
-schema = "trnm-retired-legacy-node-config-v1"
-retired = true
-slot = 3
-reason = "legacy node configuration authority removed from the native workspace"
