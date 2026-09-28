@@ -1264,6 +1264,7 @@ def start_peer_lease_daemons(
             try:
                 child = subprocess.Popen(
                     command,
+                    stdin=subprocess.DEVNULL,
                     stdout=capture.stdout if capture is not None else subprocess.DEVNULL,
                     stderr=capture.stderr if capture is not None else subprocess.DEVNULL,
                 )
@@ -2860,6 +2861,7 @@ def main() -> None:
                     first_launch_ns = launch_ns
                 child = subprocess.Popen(
                     command,
+                    stdin=subprocess.DEVNULL,
                     stdout=capture.stdout,
                     stderr=capture.stderr,
                 )

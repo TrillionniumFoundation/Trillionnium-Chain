@@ -945,3 +945,20 @@ a coordinator script, client workload or other caller-owned pipe. The behavioral
 control supplies a nonempty parent input and a local SSH substitute that rejects
 any inherited bytes; all six fixture observations must complete. This test makes
 no real SSH, validator-run, performance or fleet-readiness claim.
+
+## Coordinator standard-input ownership
+
+A launcher executing under `ssh host bash -s` must retain ownership of its script
+input. The shared checked-command helper supplies closed standard input when no
+payload was requested. An explicitly supplied payload still uses its own pipe;
+empty payload bytes and an absent payload remain distinct. Long-lived validator
+and peer-lease children also receive closed input. No SSH child may consume the
+coordinator's later exit-code capture, verification or cleanup commands.
+
+The network-runner regression executes actual local child processes with a piped
+sentinel representing the remaining coordinator script. A no-input child must see
+EOF and leave the sentinel intact; an explicit-input child must receive only its
+payload and still leave that sentinel intact. Existing file-backed stdout/stderr,
+timeouts, exact remote paths and cleanup rules remain unchanged. These are launcher
+I/O tests, not physical consensus or independent acceptance. Test-function totals
+are printed only after those functions actually return successfully.

@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import json
+
 import dataclasses
 import hashlib
 import importlib.util
@@ -518,21 +520,56 @@ def test_reduced_placement_reports_actual_hosts() -> None:
     assert all(stage.management != "local" for stage in stages.values())
 
 
+def checked_command_stdin_observation(payload: bytes | None) -> dict[str, str]:
+    sentinel = b"coordinator-tail-sentinel"
+    program = (
+        "import sys,json; "
+        f"sys.path.insert(0,{str(pathlib.Path(__file__).resolve().parent)!r}); "
+        "import run_network_smoke_fleet as f; "
+        "command=[sys.executable,'-c','import sys; sys.stdout.buffer.write(sys.stdin.buffer.read())']; "
+        f"child=f.run_checked(command,timeout=5,input_bytes={payload!r}); "
+        "print(json.dumps({'child':child.stdout.hex(),'parent':sys.stdin.buffer.read().hex()}))"
+    )
+    completed = subprocess.run(
+        [sys.executable, "-c", program], input=sentinel,
+        capture_output=True, check=True, timeout=10,
+    )
+    return json.loads(completed.stdout)
+
+
+def test_checked_command_cannot_consume_coordinator_script_input() -> None:
+    observed = checked_command_stdin_observation(None)
+    assert observed == {"child": "", "parent": b"coordinator-tail-sentinel".hex()}
+
+
+def test_checked_command_explicit_payload_does_not_consume_coordinator_input() -> None:
+    for payload in (b"", b"\x00signed-input\n"):
+        observed = checked_command_stdin_observation(payload)
+        assert observed == {"child": payload.hex(), "parent": b"coordinator-tail-sentinel".hex()}
+
+
 def main() -> None:
-    test_unique_json_and_remote_path()
-    test_input_symlinks_are_rejected_before_resolution()
-    test_process_output_is_file_backed_without_pipe_pressure()
-    test_partial_stage_creation_cleans_exact_prior_root()
-    test_local_stage_creates_private_deployment_directories()
-    test_remote_binary_hash_mismatch_is_rejected()
-    test_deploy_uses_frozen_alias_and_observer_stage()
-    test_public_projection_and_remote_scp_land_at_exact_alias()
-    test_runtime_layout_exact_bounds_aliases_and_old_207_bytes()
-    test_layout_tamper_collision_and_negative_preflight_have_no_effects()
-    test_reduced_placement_reports_actual_hosts()
-    test_local_rog_placement_reports_actual_hosts()
+    tests = (
+        test_unique_json_and_remote_path,
+        test_input_symlinks_are_rejected_before_resolution,
+        test_process_output_is_file_backed_without_pipe_pressure,
+        test_partial_stage_creation_cleans_exact_prior_root,
+        test_local_stage_creates_private_deployment_directories,
+        test_remote_binary_hash_mismatch_is_rejected,
+        test_deploy_uses_frozen_alias_and_observer_stage,
+        test_public_projection_and_remote_scp_land_at_exact_alias,
+        test_runtime_layout_exact_bounds_aliases_and_old_207_bytes,
+        test_layout_tamper_collision_and_negative_preflight_have_no_effects,
+        test_reduced_placement_reports_actual_hosts,
+        test_local_rog_placement_reports_actual_hosts,
+        test_checked_command_cannot_consume_coordinator_script_input,
+        test_checked_command_explicit_payload_does_not_consume_coordinator_input,
+    )
+    for test in tests:
+        test()
     print(
-        "poco_g3_network_smoke_fleet_test=passed positives=19 negatives=15 "
+        f"poco_g3_network_smoke_fleet_test=passed test_functions_executed={len(tests)} "
+        "coordinator_stdin_preserved=true explicit_input_pipe_preserved=true "
         "unique_json=true safe_remote_paths=true input_symlinks_rejected=true file_backed_process_io=true partial_cleanup=true "
         "local_stage_directories=true remote_binary_hash=true frozen_alias_deploy=true exact_scp_alias=true public_schema_unchanged=true "
         "runtime_stage_short=true aliases_100_unique=true socket_bytes_100_accepted=true "

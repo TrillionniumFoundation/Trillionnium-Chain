@@ -151,6 +151,7 @@ def run_checked(arguments: list[str], *, timeout: int, input_bytes: bytes | None
     return subprocess.run(
         arguments,
         input=input_bytes,
+        stdin=subprocess.DEVNULL if input_bytes is None else None,
         check=True,
         capture_output=True,
         timeout=timeout,
@@ -1021,6 +1022,7 @@ def main() -> None:
             try:
                 child = subprocess.Popen(
                     command,
+                    stdin=subprocess.DEVNULL,
                     stdout=capture.stdout,
                     stderr=capture.stderr,
                 )
