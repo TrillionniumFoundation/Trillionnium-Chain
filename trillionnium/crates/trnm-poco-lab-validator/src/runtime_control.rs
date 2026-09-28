@@ -25,7 +25,9 @@ use trnm_consensus_types::ValidatorId;
 
 use crate::{
     config::{LoadedValidatorConfig, RuntimeControlClientContextV1},
-    process_event::{RuntimeEventJournalV1, RuntimeFaultV1, RuntimeJournalObservationV1},
+    process_event::{
+        RuntimeEventJournalV1, RuntimeFaultV1, RuntimeJournalObservationV1, RuntimeRestartPhaseV1,
+    },
 };
 
 const CONTROL_SCHEMA_VERSION: u32 = 1;
@@ -207,6 +209,7 @@ struct RuntimeControlStateV1 {
     expected_fault: Option<RuntimeFaultV1>,
     restart_quiesce_requested: bool,
     restart_prepare_intent: Option<RuntimeRestartPrepareIntentV1>,
+    restart_commands_fenced: bool,
     journal_event_sequence: u64,
     journal_event_sha256: [u8; 32],
     journal: RuntimeJournalObservationV1,
@@ -245,6 +248,7 @@ impl RuntimeControlStateV1 {
             expected_fault: None,
             restart_quiesce_requested: false,
             restart_prepare_intent: None,
+            restart_commands_fenced: journal.restart_phase_v1() != RuntimeRestartPhaseV1::Process1,
             journal_event_sequence,
             journal_event_sha256,
             journal: observation,
@@ -291,6 +295,8 @@ impl RuntimeControlStateV1 {
         self.journal_event_sequence = sequence;
         self.journal_event_sha256 = digest;
         self.journal = observation;
+        self.restart_commands_fenced |=
+            journal.restart_phase_v1() != RuntimeRestartPhaseV1::Process1;
         Ok(())
     }
 
@@ -329,6 +335,17 @@ impl RuntimeControlStateV1 {
             .is_some_and(|last| request.nonce <= *last)
         {
             bail!("runtime control nonce is stale outside the idempotence window");
+        }
+
+        if self.restart_commands_fenced
+            && matches!(
+                verb,
+                ControlVerbV1::QuiesceRestart
+                    | ControlVerbV1::ClearRestartQuiesce
+                    | ControlVerbV1::PrepareRestart
+            )
+        {
+            bail!("runtime restart control is fenced by an irreversible owner");
         }
 
         match verb {
@@ -554,6 +571,12 @@ impl RuntimeControlServerV1 {
 
     pub(crate) const fn restart_prepare_intent_v1(&self) -> Option<RuntimeRestartPrepareIntentV1> {
         self.state.restart_prepare_intent
+    }
+
+    /// The live restart owner may advance before its next journal event.
+    /// This monotonic fence only removes control authority; it cannot resume a peer.
+    pub(crate) fn fence_restart_commands_v1(&mut self) {
+        self.state.restart_commands_fenced = true;
     }
 
     pub fn refresh_from_journal(&mut self, journal: &RuntimeEventJournalV1) -> Result<()> {
@@ -1075,6 +1098,7 @@ mod tests {
             expected_fault: None,
             restart_quiesce_requested: false,
             restart_prepare_intent: None,
+            restart_commands_fenced: false,
             journal_event_sequence: 7,
             journal_event_sha256: [0x51; 32],
             journal: RuntimeJournalObservationV1 {
@@ -1275,6 +1299,58 @@ mod tests {
             .unwrap_err()
             .to_string()
             .contains("not admissible"));
+    }
+
+    #[test]
+    fn irreversible_peer_restart_rejects_clear_without_mutating_control() {
+        let mut state = started_control_state_v1();
+        let nonce = runtime_derived_nonce_base_v1("peer-parked-clear");
+        state
+            .process(&request_bytes_v1(nonce, "quiesce_restart", ""))
+            .unwrap();
+        // A remote Prepare need not set the target-only local intent or nonce.
+        state.restart_commands_fenced = true;
+        assert!(state.restart_prepare_intent.is_none());
+        assert!(state.journal.restart_prepare_nonce.is_none());
+        let cache_len = state.cache.len();
+        let last_nonce = state.last_nonce.clone();
+        for verb in [
+            "clear_restart_quiesce",
+            "quiesce_restart",
+            "prepare_restart",
+        ] {
+            let error = state
+                .process(&request_bytes_v1(nonce + 1, verb, ""))
+                .unwrap_err();
+            assert!(error.to_string().contains("irreversible owner"));
+            assert!(state.restart_quiesce_requested);
+            assert!(state.restart_prepare_intent.is_none());
+            assert_eq!(state.cache.len(), cache_len);
+            assert_eq!(state.last_nonce, last_nonce);
+        }
+        // Rejection leaves the owner available for status/reconciliation.
+        let (status, _, _) = state
+            .process(&request_bytes_v1(nonce + 1, "status", ""))
+            .unwrap();
+        let status: RuntimeControlResponseV1 = serde_json::from_slice(&status).unwrap();
+        assert!(status.restart_quiesce_requested);
+        assert!(!status.safety_halted);
+    }
+
+    #[test]
+    fn cached_quiesce_reply_does_not_reopen_an_irreversible_owner() {
+        let mut state = started_control_state_v1();
+        let nonce = runtime_derived_nonce_base_v1("peer-parked-replay");
+        let request = request_bytes_v1(nonce, "quiesce_restart", "");
+        let (original, _, _) = state.process(&request).unwrap();
+        state.restart_commands_fenced = true;
+        let (replayed, _, _) = state.process(&request).unwrap();
+        assert_eq!(original, replayed);
+        assert!(state.restart_commands_fenced);
+        assert!(state.restart_quiesce_requested);
+        assert!(state
+            .process(&request_bytes_v1(nonce + 1, "clear_restart_quiesce", ""))
+            .is_err());
     }
 
     #[test]

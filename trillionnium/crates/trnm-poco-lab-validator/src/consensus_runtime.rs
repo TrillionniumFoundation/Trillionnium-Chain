@@ -6119,6 +6119,7 @@ impl BoundedConsensusOwnerV1 {
     }
 
     fn poll_runtime_control_v1(&mut self) -> Result<bool> {
+        let irreversible_restart = !self.restart_lifecycle.is_running_v1();
         let (outcome, restart_intent, quiesce_before, quiesce_after) = {
             let control = self
                 .runtime_control
@@ -6127,6 +6128,9 @@ impl BoundedConsensusOwnerV1 {
             control
                 .refresh_from_journal(&self.event_journal)
                 .context("refresh bounded runtime control journal view")?;
+            if irreversible_restart {
+                control.fence_restart_commands_v1();
+            }
             let quiesce_before = control.restart_quiesce_requested_v1();
             let outcome = control
                 .poll_once(Duration::ZERO)

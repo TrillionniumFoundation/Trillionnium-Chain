@@ -2391,3 +2391,17 @@ responsibility; this projection invents no operator key or fallback. The seriali
 projection has behavior tests, not only a source-name search. Successful config
 verification starts no runtime, proves no external service ready, and does not
 change candidate, public-testnet, economic or production activation status.
+
+## Irreversible restart control admission
+
+The process-local pre-quiesce request is reversible only while the retained
+restart owner and signed journal are still ordinary Process1. A peer can receive
+an authenticated Prepare before its local journal advances; the live owner must
+fence further quiesce, clear and prepare commands before polling the control
+socket. The fence is monotonic and also reconstructed from journal phase on
+reopen. A refused command must not change the pause, intent, nonce or reply cache,
+and must not terminate the validator. Exact cached replies describe the original
+request only and never replay its side effect. Clearing a local pause is not
+RecoveryStart and cannot extract a parked authority. Resuming a parked peer
+still requires the independently authenticated recovery certificate and a
+durable peer-owner transition; target process-2 recovery alone does not supply it.
