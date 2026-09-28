@@ -1,4 +1,72 @@
-# M14 RPC / Indexer / SDK / CLI technical specification v1
+# M14 Proof-aware clients, shared model discovery and free inference — PoN technical contract
+
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M14; existing source ownership remains in `config/module-coverage-v1.toml`.
+
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+
+## PoN Authority
+
+Own non-authoritative RPC/indexer/SDK/CLI and public model-use surfaces. User-visible states are
+submitted, included, policy-confirmed, reorged and adopted-under-profile, not unconditional
+finalized. A UI cannot elevate an attestation into a work or local authority proof.
+
+## PoN Interfaces
+
+GetPoNCapabilities; SubmitContribution; QueryConfirmation; SubscribeReorg; DiscoverModelRelease;
+DownloadExactBundle; RequestSponsoredInference; QueryReward. Return chain/profile, exact
+artifact/release, observed tip, generation, evidence class, freshness and bounds.
+
+## PoN State machine
+
+Read the verified active-chain view and index contiguous add/remove events idempotently. Verify
+confirmations/inclusion through M13, expose reorg and stale observations, and refuse unknown
+proof classes. Serve reproducible release manifests and parameter bytes through M09. Bind each
+inference request to a supported deployment profile and reserved free quota; do not hide missing
+experts or mutable backend switches.
+
+## PoN Persistence and recovery
+
+Indexer/cache/projection is rebuildable and never authoritative for balances or adoption. Reorg
+updates remove/add entries atomically by generation. Persist client requests and exact returned
+model identity when needed; a retry cannot turn a past execution into a fresh free request
+silently.
+
+## PoN Resource bounds
+
+Bound queries/pages/proof bytes/model-download rates/free queues and response sizes. Report
+honest queue/availability/partial-coverage states. Local model download is free under accepted
+policy; hosted compute remains capacity/funding limited.
+
+## PoN Security
+
+False green finality, outdated adopted model, source/payload swapping, quota farming, metadata
+privacy leakage and unsafe loader. Do not infer training/export permission from using a free
+endpoint or carrying a valid chain receipt.
+
+## PoN Verification and evidence
+
+SDK independently checks new proof classes, reorged rewards/model pointers, incomplete bundles,
+author offline, reduced deployment profile labeling, stale cache, free-tier overload and exact
+inference model binding.
+
+## PoN Source migration
+
+Reuse safe bounded RPC and source-bound projections. Existing finalized DTOs and legacy client
+paths stay explicitly historical until actual consumers adopt probabilistic states.
+
+## Retired PoCO implementation reference
+
+**Scope of everything below this heading: legacy implementation and historical source
+verification only.** PoCO is retired as the selected development target. Existing
+source/API/byte/error/test detail is retained without pretending it already implements
+PoN. Any planned Vote/QC/TC/validator-epoch work below is retired backlog, not the active
+work sequence. Frozen history remains interpretable; new work uses the PoN sections
+above and the sole development plan. No legacy acceptance is transferred to PoN.
 
 Status: **implementation contract; non-authoritative service**
 

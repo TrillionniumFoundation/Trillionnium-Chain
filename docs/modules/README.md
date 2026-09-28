@@ -1,82 +1,60 @@
-# Trillionnium Chain module specifications
+# Trillionnium Chain module specifications — PoN / Hepta-PoH
 
-Every module M00–M17 has an individual implementation design below. These are
-candidate technical contracts for the next implementation, with current source,
-proposed APIs, algorithms, durable data, errors, limits and concrete test cases.
-They are not claims that the designed runtime is implemented or independently
-accepted. CI reports structural coverage only; it cannot prove semantic completeness.
+All 18 module designs select `pon-nakamoto-v1`. PoCO is retired as the development target.
+The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md) owns sequence;
+[the protocol suite](../protocol/pon-nakamoto-v1/README.md) owns consensus/model contracts.
+The [authority resolver](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md) separates
+new target, existing legacy implementation, historical proofs and activation.
 
-Read the [authority resolver](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md)
-first. Frozen protocol bytes, cryptographic domains and root meaning take
-precedence. The [technical reference](TRNM_MODULE_TECHNICAL_REFERENCE_V1.md)
-remains the ownership/index authority; the [implementation guide](TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md)
-and [trace registry](../../config/documentation-contracts-v1.json) bind current
-code and representative regressions. This index adds detailed designs for all
-18 boundaries, not a second development sequence.
+Each technical specification starts with module-specific PoN authority, interfaces,
+algorithm, persistence/reorg, limits, security, tests and source migration. Its clearly
+marked legacy appendix preserves existing implementation details and frozen references;
+these are not evidence of new implementation or an active PoCO completion plan.
 
-| Module | Technical design | Specific implementation boundary |
+| Module | Technical specification | New responsibility |
 |---|---|---|
-| M00 | [M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md](M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md) | Exact codecs, domains, parameter/context binding and reject-before-allocation rules |
-| M01 | [M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md](M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md) | Strict verification, verified capabilities, key roles, verification work budgets |
-| M02 | [M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md](M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md) | Proposal/QC/TC processing, locks, pacemaker, checkpoint/seal/epoch transitions |
-| M03 | [M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md](M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md) | Safety state, durable intents, exact retries, old/new signer roles and rollback anchors |
-| M04 | [M04_P2P_TECHNICAL_SPEC_V1.md](M04_P2P_TECHNICAL_SPEC_V1.md) | Authenticated TCP/TLS candidate transport, framing, replay sequences and lane backpressure |
-| M05 | [M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md](M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md) | Signed admission, nonce/idempotency, durable journal, proposer selection and receipt semantics |
-| M06 | [M06_EXECUTION_TECHNICAL_SPEC_V1.md](M06_EXECUTION_TECHNICAL_SPEC_V1.md) | Deterministic execution, read-set validation, fee rebasing and sparse epoch-edge execution |
-| M07 | [M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md](M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md) | Prepared/committed state, JMT carried predecessor root, incremental delta schema and pruning |
-| M08 | [M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md](M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md) | Three-chain finality, Node Commit Ledger, consensus/application coordinates and recovery cuts |
-| M09 | [M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md](M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md) | Chunk/manifest commitments, durable-before-attest, retention, retrieval and repair |
-| M10 | [M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md](M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md) | Agent/capability/task/lease/escrow states, deterministic scheduling and development profile |
-| M11 | [M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md](M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md) | Verification registry, implemented StakeQuorum scope, challenge windows and disabled backends |
-| M12 | [M12_SETTLEMENT_TECHNICAL_SPEC_V1.md](M12_SETTLEMENT_TECHNICAL_SPEC_V1.md) | Fee/escrow/refund/slash accounting, economic profile validation and conservation vectors |
-| M13 | [M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md](M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md) | Trusted checkpoint/epoch proof, chunk admission, staged import, catch-up and migration |
-| M14 | [M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md](M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md) | Public API/SDK/indexer consistency, proofs, overload and transaction/block root distinction |
-| M15 | [M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md](M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md) | Composition, startup/shutdown, runtime feature closures, release bundles and host acceptance |
-| M16 | [M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md](M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md) | Observer/evaluator separation, local policy generations, action budgets and rollback |
-| M17 | [M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md](M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md) | Evidence identity, metrics, benchmark denominators, security and independent acceptance |
+| M00 | [M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md](M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md) | Protocol, canonical neural-work and public-model contracts |
+| M01 | [M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md](M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md) | Cryptography, neural-work verification and local identity |
+| M02 | [M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md](M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md) | Nakamoto consensus, target and cumulative-work fork choice |
+| M03 | [M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md](M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md) | Mining-attempt ownership, identity custody and local fencing |
+| M04 | [M04_P2P_TECHNICAL_SPEC_V1.md](M04_P2P_TECHNICAL_SPEC_V1.md) | Permissionless bounded block, proof and parameter network |
+| M05 | [M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md](M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md) | Reorg-aware transaction and contribution admission |
+| M06 | [M06_EXECUTION_TECHNICAL_SPEC_V1.md](M06_EXECUTION_TECHNICAL_SPEC_V1.md) | Deterministic branch execution and reversible state effects |
+| M07 | [M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md](M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md) | Branch state, undo history and immutable model storage roots |
+| M08 | [M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md](M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md) | Probabilistic confirmations, reorg coordination and recovery |
+| M09 | [M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md](M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md) | Public parameter and evidence availability |
+| M10 | [M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md](M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md) | Parameter contributions, evaluation jobs and shared-model releases |
+| M11 | [M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md](M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md) | Independent model evaluation and qualified work verification profiles |
+| M12 | [M12_SETTLEMENT_TECHNICAL_SPEC_V1.md](M12_SETTLEMENT_TECHNICAL_SPEC_V1.md) | Mining rewards, model contribution allocation and free-use budgets |
+| M13 | [M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md](M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md) | Work-verified sync, probabilistic clients and fresh-instance migration |
+| M14 | [M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md](M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md) | Proof-aware clients, shared model discovery and free inference |
+| M15 | [M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md](M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md) | Ordinary PoN node, Hepta integration and release composition |
+| M16 | [M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md](M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md) | Advisory model composition, routing and resource planning |
+| M17 | [M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md](M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md) | Neural-work security, model efficacy and reorg evidence |
 
-## Shared decisions that consumers must implement consistently
+## Shared contracts
 
-| Contract | Producer → consumers | Decision and limitation |
+| Contract | Producer / consumers | Required distinction |
 |---|---|---|
-| Epoch application edge | M08/M13 → M02/M03/M06/M07/M15 | Implemented bounded candidate checkpoint C / seal C+1 / seal C+2 edge; first new application version C+3. This is not continuous production epoch turnover. Seals produce no application mutation, P row or receipt. |
-| Carried predecessor root | M07 → M06/M08/M13 | Implemented candidate alias only for the authenticated empty-path root at C+2. Child node versions remain real historical versions; pruning and recovery retain the full reachable source root. No arbitrary path/version remapping. |
-| Public transaction completion | M05/M06/M08/M13 → M14 | Journal acceptance, execution and finality are separate. Existing v0 root-equality checks stay intact; general multi-transaction proofs require the specified versioned result/inclusion contract. |
-| Network authority | M04 → M02/M03/M15 | Transport authentication and delivery acknowledgement do not authorize signatures or finality. Peer identity binds chain/profile/active keys; data lanes cannot exhaust consensus reservations. |
-| Economic application | M09/M10/M11/M12 → M06/M14 | Development profiles are explicit and immutable per run. Unsupported verification backends remain disabled. PoCO stays shadow; no documented profile grants permissionless identity or mainnet economics acceptance. |
-| Evidence | All → M17 | Source-bound logs, reproducible vectors and independent acceptance remain distinct. Source structure and headings are navigation checks, never an acceptance certificate. |
+| Fresh neural work | M00/M01/M03 -> M02 | Old trained parameters and evaluator scores cannot create new parent-bound work |
+| Fork choice / confirmation | M02 -> M07/M08/M13/M14 | Required cumulative work, not height or QC; depth is not irreversible finality |
+| Reorganization | M08 with M06/M07 -> all clients | Chain state unwinds; local execution and revocation history does not |
+| Model commons | M09/M10/M11 -> M12/M14/Hepta | Real parameter availability, compatibility, whole-model gain and local adoption are separate |
+| Reward and public use | M12 with M10/M11 | Finite mining/model/service budgets; funded free basic access, not unlimited GPU supply |
+| Evidence | All -> M17 | Exact source, work security, actual runtime and future-model efficacy have different acceptance |
 
-The [foundation operation contracts](TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md)
-and [operation catalog](../../config/documentation-operations-v1.json) retain
-selected concrete source/function/error/test bindings. The catalog is explicitly
-incomplete; extending a module design does not invent executable operation coverage.
-The [implementation acceptance matrix](TRNM_MODULE_IMPLEMENTATION_ACCEPTANCE_MATRIX_V1.md)
-adds one source/test symbol, ordered state transition, and requirement list for
-each M00–M17 row. Its companion gate checks those bindings while preserving
-`source-regression-open`; it does not claim that the referenced tests pass or
-that semantic, production, or external acceptance has occurred.
-The [native signed Vote replay contract](TRNM_NATIVE_SIGNED_VOTE_REPLAY_CONTRACT_V1.md)
-grants laboratory readback only, with no new signing/recovery authority.
+## Source ownership and retained supplements
 
-The [target closure design](TRNM_TARGET_CLOSURE_DESIGN_V1.md) is the
-implementation-ready cross-module index for the current E1/T1/S1/F1 work. It
-records the exact P/D/C/K/checkpoint order, durable fields, crash cuts, error
-dispositions, source symbols and acceptance evidence for each target stage.
-It is a design contract and evidence map; its status column deliberately does
-not promote a candidate into production.
+[Technical reference](TRNM_MODULE_TECHNICAL_REFERENCE_V1.md) and
+[implementation guide](TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md) keep all M00-M17 source
+traces. [Coverage](../../config/module-coverage-v1.toml) maps every current crate to its
+actual owner; [target contract](../../config/pon-nakamoto-v1.json) binds new responsibilities
+without pretending the Cargo graph changed. The [acceptance matrix](TRNM_MODULE_IMPLEMENTATION_ACCEPTANCE_MATRIX_V1.md),
+[foundation operations](TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md),
+[closure design](TRNM_TARGET_CLOSURE_DESIGN_V1.md) and other retained supplements carry
+explicit legacy applicability where they describe old stored operations or signatures.
 
-## Reviewing a design change
-
-For the affected boundary, review exact input/output fields and versioning;
-state transitions and forbidden edges; database keys, atomicity and replay;
-work/memory/network caps; authenticated trust inputs; and a positive/negative/crash
-case with an expected root, effect or error. Check the consuming module against
-the same decision. If a parameter is deployment-selected, its schema, constraints,
-selection authority and development fixture must be explicit before enabling it.
-
-Do not replace these checks with word counts, repeated headings or a large
-registry. Preserve anti-double-sign, persist-before-sign, cryptographic vectors,
-crash recovery and deterministic concurrent roots. The
-[sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md#14-immediate-executable-order)
-sets the implementation order and stage exits. Production and external acceptance
-remain governed by machine truth and authenticated evidence.
+New acceptance includes independent work/canonical encoders, deeper higher-work forks,
+every reorg crash cut, external-effect reconciliation, compatible real trained experts,
+whole-model composition, future-window free consumption and exact reward conservation.
+The existing representative operation traces remain legacy regressions, not PoN passes.

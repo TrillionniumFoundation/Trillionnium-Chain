@@ -1,5 +1,24 @@
 # PoCO Agent + Market v1 local kernel
 
+## PoN target and current-source scope
+
+This crate remains existing implementation/reference source; this documentation does
+not turn it into a PoN runtime. Selected development profile: `pon-nakamoto-v1`.
+Source owner: M10. Target responsibility: Parameter contributions, evaluation jobs and shared-model releases.
+See [M10 technical contract](../../../docs/modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md) and the
+[PoN protocol](../../../docs/protocol/pon-nakamoto-v1/README.md).
+
+Reuse task/lease/escrow/attempt/capacity state ownership and bounded worker execution. New
+contribution/evaluation/release transitions are unimplemented until actual registered consumers
+execute them.
+
+## Retained implementation documentation
+
+The source interfaces, stored formats, commands and tests below retain their actual
+legacy/profile semantics. PoCO consensus is retired as the target. No old finality,
+committee, vote, consumption weight or test pass is new neural-work/efficacy evidence.
+
+
 This crate is a **candidate, non-normative, local execution kernel** for the
 first bounded PoCO-Agent/PoCO-Market tranche. It cannot activate protocol v1 or
 serve as a production node.

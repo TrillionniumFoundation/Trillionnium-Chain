@@ -1,5 +1,63 @@
 # Operation-level implementation contracts v2
 
+## PoN applicability and retirement
+
+Selected development profile: `pon-nakamoto-v1`. The active development sequence is
+[the sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md), not this
+retained operation supplement. PoCO consensus, validator epochs, Vote/QC/TC rules and
+finality-specific closure work below are retired target requirements; they remain
+precise legacy source/API/byte/regression references for compatibility and migration.
+No old function trace or acceptance status certifies the new work/reorg/model runtime.
+
+**M00 target linkage.** Protocol, canonical neural-work and public-model contracts; see [M00](M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M01 target linkage.** Cryptography, neural-work verification and local identity; see [M01](M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M02 target linkage.** Nakamoto consensus, target and cumulative-work fork choice; see [M02](M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M03 target linkage.** Mining-attempt ownership, identity custody and local fencing; see [M03](M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M04 target linkage.** Permissionless bounded block, proof and parameter network; see [M04](M04_P2P_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M05 target linkage.** Reorg-aware transaction and contribution admission; see [M05](M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M06 target linkage.** Deterministic branch execution and reversible state effects; see [M06](M06_EXECUTION_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M07 target linkage.** Branch state, undo history and immutable model storage roots; see [M07](M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M08 target linkage.** Probabilistic confirmations, reorg coordination and recovery; see [M08](M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M09 target linkage.** Public parameter and evidence availability; see [M09](M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M10 target linkage.** Parameter contributions, evaluation jobs and shared-model releases; see [M10](M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M11 target linkage.** Independent model evaluation and qualified work verification profiles; see [M11](M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M12 target linkage.** Mining rewards, model contribution allocation and free-use budgets; see [M12](M12_SETTLEMENT_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M13 target linkage.** Work-verified sync, probabilistic clients and fresh-instance migration; see [M13](M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M14 target linkage.** Proof-aware clients, shared model discovery and free inference; see [M14](M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M15 target linkage.** Ordinary PoN node, Hepta integration and release composition; see [M15](M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M16 target linkage.** Advisory model composition, routing and resource planning; see [M16](M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M17 target linkage.** Neural-work security, model efficacy and reorg evidence; see [M17](M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+For this supplement, preserve frozen selectors and historical evidence while replacing
+active consumers with explicit PoN contracts. Use [work/fork rules](../protocol/pon-nakamoto-v1/CONSENSUS.md),
+[model contribution and composition](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md),
+[reward budgets](../protocol/pon-nakamoto-v1/ECONOMICS.md) and
+[reorg/migration](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md).
+
+## Retired PoCO implementation reference
+
+Everything below retains its original legacy profile and source scope. Old planned
+closure stages are not the new development sequence. Existing regression checks must
+remain accurate for retained code; they are neither waived nor relabelled as PoN tests.
+
+
 Status: **candidate design expansion, not semantic acceptance or production activation**.
 Primary owner M17; each row's M00–M17 prefix identifies its semantic owner.
 

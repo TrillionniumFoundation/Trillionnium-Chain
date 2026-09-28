@@ -1,5 +1,39 @@
 # Operation gap design v1
 
+## PoN applicability and retirement
+
+Selected development profile: `pon-nakamoto-v1`. The active development sequence is
+[the sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md), not this
+retained operation supplement. PoCO consensus, validator epochs, Vote/QC/TC rules and
+finality-specific closure work below are retired target requirements; they remain
+precise legacy source/API/byte/regression references for compatibility and migration.
+No old function trace or acceptance status certifies the new work/reorg/model runtime.
+
+**M02 target linkage.** Nakamoto consensus, target and cumulative-work fork choice; see [M02](M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M03 target linkage.** Mining-attempt ownership, identity custody and local fencing; see [M03](M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M04 target linkage.** Permissionless bounded block, proof and parameter network; see [M04](M04_P2P_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M08 target linkage.** Probabilistic confirmations, reorg coordination and recovery; see [M08](M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M15 target linkage.** Ordinary PoN node, Hepta integration and release composition; see [M15](M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M17 target linkage.** Neural-work security, model efficacy and reorg evidence; see [M17](M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+For this supplement, preserve frozen selectors and historical evidence while replacing
+active consumers with explicit PoN contracts. Use [work/fork rules](../protocol/pon-nakamoto-v1/CONSENSUS.md),
+[model contribution and composition](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md),
+[reward budgets](../protocol/pon-nakamoto-v1/ECONOMICS.md) and
+[reorg/migration](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md).
+
+## Retired PoCO implementation reference
+
+Everything below retains its original legacy profile and source scope. Old planned
+closure stages are not the new development sequence. Existing regression checks must
+remain accurate for retained code; they are neither waived nor relabelled as PoN tests.
+
+
 Status: **implementation-ready contract; candidate only; semantic and independent acceptance remain open**  
 Owner: M17 documentation authority. The operation registry (`config/documentation-operations-v1.json`) is the identity source; this document supplies the design needed to implement each currently registered foundation operation. It does not enlarge the operation catalogue, promote a module, or convert a repository regression into an independent vector.
 

@@ -1,5 +1,23 @@
 # TRNM consensus remote-signer protocol v1
 
+## PoN target and current-source scope
+
+This crate remains existing implementation/reference source; this documentation does
+not turn it into a PoN runtime. Selected development profile: `pon-nakamoto-v1`.
+Source owner: M01. Target responsibility: Cryptography, neural-work verification and local identity.
+See [M01 technical contract](../../../docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md) and the
+[PoN protocol](../../../docs/protocol/pon-nakamoto-v1/README.md).
+
+Keep strict signatures, identity/role separation and legacy finality verifiers as history only.
+Neither StrictFinalityProof nor an accept-all test verifier can authorize a PoN block.
+
+## Retained implementation documentation
+
+The source interfaces, stored formats, commands and tests below retain their actual
+legacy/profile semantics. PoCO consensus is retired as the target. No old finality,
+committee, vote, consumption weight or test pass is new neural-work/efficacy evidence.
+
+
 This crate is an inert, data-only wire candidate. It carries owned canonical
 vote and timeout-vote intents plus public role/profile, process-generation,
 lease, whole-node-checkpoint, and request bindings. It contains no transport,

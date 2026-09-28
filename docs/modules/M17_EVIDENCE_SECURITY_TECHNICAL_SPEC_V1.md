@@ -1,4 +1,74 @@
-# M17 Observability / Benchmark / Security / Evidence technical specification v1
+# M17 Neural-work security, model efficacy and reorg evidence — PoN technical contract
+
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M17; existing source ownership remains in `config/module-coverage-v1.toml`.
+
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/SECURITY_ACCEPTANCE.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+
+## PoN Authority
+
+Own source-bound observability, conformance/fuzz/formal campaigns and independent evidence
+intake. A checker cannot certify itself as a cryptographic authority, economics reviewer, model
+evaluator or release approver.
+
+## PoN Interfaces
+
+ValidateDocumentationTarget; RunReferenceCounterexamples; QualifyWorkPrimitive;
+CollectForkReorgCampaign; EvaluateFutureModelBenefit; AuditRewardBudget;
+VerifyExactArtifactEvidence. Keep source integrity, semantic acceptance, actual runtime and
+empirical efficacy as separate statuses.
+
+## PoN State machine
+
+Resolve exact source/tree/base/binary/profile and changed responsibility. Run read-only
+document/registry tests, independent codecs/work verifiers, formal consensus/reorg properties,
+actual multi-host mining and model learning/use experiments. Preserve failures, missing data and
+censored runs. Explicitly test old model/nonce/proof reuse, work shortcuts, poisoned experts,
+split rewards and orphaned effects.
+
+## PoN Persistence and recovery
+
+Immutable evidence references bind raw traces and authoritative producer identities; collector
+stores are not domain truth. Historical PoCO tests retain their original source/profile and
+cannot be reused as PoN security. Reorg observations record both branches and local irreversible
+history.
+
+## PoN Resource bounds
+
+Bound collection overhead, evidence volume, fault scope, repeat counts and parser work. Measure
+proof verification and propagation separately from useful training, model benefit and hosted
+service. Never substitute queued/skipped jobs or structural fixtures for execution.
+
+## PoN Security
+
+False pass through file-presence flags, test rewriting, stale head evidence, same-operator
+independence claims, hidden fallback algorithms, forged evaluation provenance and benchmark
+contamination. Specialist review must state actual assumptions and unqualified work obligations.
+
+## PoN Verification and evidence
+
+All PON-C/R/M/E/X cases, independent byte/work implementations, crash/power-loss/multihost
+campaigns, whole-model future-window usefulness, free-tier actual service, conservation and
+attack-cost experiments. Document/reference tests alone never imply these passed.
+
+## PoN Source migration
+
+Reuse exact-source evidence pipeline, failure retention, CI trust separation and source-graph
+checks. Retire PoCO release milestones as the active work sequence; retain legacy source
+regressions only for affected compatibility code.
+
+## Retired PoCO implementation reference
+
+**Scope of everything below this heading: legacy implementation and historical source
+verification only.** PoCO is retired as the selected development target. Existing
+source/API/byte/error/test detail is retained without pretending it already implements
+PoN. Any planned Vote/QC/TC/validator-epoch work below is retired backlog, not the active
+work sequence. Frozen history remains interpretable; new work uses the PoN sections
+above and the sole development plan. No legacy acceptance is transferred to PoN.
 
 Status: **implementation contract; evidence tooling is not self-acceptance authority**
 

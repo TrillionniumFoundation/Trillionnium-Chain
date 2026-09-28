@@ -1,3 +1,7 @@
+development_target = "pon-nakamoto-v1"
+development_target_contract = "config/pon-nakamoto-v1.json"
+retained_consensus_scope = "legacy-PoCO-source-and-regressions-only"
+
 schema_version = 1
 contract_id = "trnm-technical-convergence-v1"
 plan_id = "trnm-chain-development-plan-v2"

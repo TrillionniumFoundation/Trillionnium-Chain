@@ -1,12 +1,24 @@
 # M00-M17 implementation and conformance guide v1
 
+## Selected PoN scope and retained-source boundary
+
+The selected development profile is `pon-nakamoto-v1`; PoCO-BFT is retired as the target.
+Each module below begins with its new work/fork/model-commons responsibility. The existing
+source, API and regression paragraphs that follow are explicitly **legacy source traces**;
+they do not claim an implemented PoN runtime or impose a second PoCO roadmap.
+New module-specific algorithms and acceptance live in the [eighteen technical specs](README.md).
+The [PoN suite](../protocol/pon-nakamoto-v1/README.md) defines the shared semantics.
+Compatibility profiles retain their original byte and proof meanings. Trace integrity
+is not cryptographic work qualification, model-efficacy evidence or deployment authority.
+
+
 Status: **candidate implementation documentation; semantic acceptance and production conformance not assessed**. Primary module: M17; affected producers/consumers: M00-M17. This is a stable technical supplement, not a second plan or a completion report.
 
 ## How to use this guide
 
 Resolve `docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md` first. The machine trace index is `config/documentation-contracts-v1.json`. Each row names exact normative files, concrete implementation files, regression inputs, package ownership and required review domains. Read the referenced normative layout and error registry with the module's algorithm below; do not infer a wire schema from an English stage name or a Rust type name.
 
-The guide specifies required behavior. A cited source/test means it is a review target, not that the behavior is integrated or its tests pass. `bft-v0` is the frozen implementation target; `pcc1` and `ai-v1` are non-activated candidates. For a mixed-profile module, choose the profile per operation and artifact, not once for the entire crate. Unsupported or undecided production operations remain disabled.
+The guide specifies required behavior. A cited source/test means it is a review target, not that the behavior is integrated or its tests pass. `bft-v0` is the retained legacy implementation profile; `pcc1` and `ai-v1` are non-activated candidates. For a mixed-profile module, choose the profile per operation and artifact, not once for the entire crate. Unsupported or undecided production operations remain disabled.
 
 Individual [M00–M17 technical designs](README.md) provide detailed data structures, algorithms, persistence and test cases for the next implementation. A proposed design is distinguished from the representative implemented trace in this guide.
 
@@ -22,6 +34,14 @@ Each scenario below has a stable requirement ID (`Mxx-*`). A reference implement
 
 <a id="m00"></a>
 ## M00 — Protocol / Schema / Codec
+
+**Selected PoN responsibility.** Own the versioned PoN header/template, work statement, target/parameter, contribution, evaluation, release, confirmation and reorg-event schemas. The codec does not choose a branch, issue local capabilities or certify the neural primitive. Preserve historical CEV0/CEV1 decoders in explicit legacy dispatch; no new value reuses an old tag with stronger meaning.
+
+**PoN transition and recovery.** Resolve installed genesis/chain/profile before decoding. Bound total bytes, lists, depth, tensors, proof and signature work before allocation. Canonicalize only valid objects; reject duplicates, unknown mandatory fields, trailing bytes and target/profile substitution. Encode every challenge-affecting field once. Derive a stable block id from template and canonical output, not proof randomness. Specify exact signedness, endian, dimensions and output uniqueness with an independent encoder. Codec owns no store. Persisted schemas are separate from public wire schemas; M07/M03 own migrations. A historical decode returns its original proof class. State/error/limit registry changes require explicit profile version and consumer requalification, never parser fallback.
+
+**PoN acceptance and source migration.** Independent positive/negative codec vectors, every truncated prefix, appended bytes, maximum and maximum+1, target overflow, changed model/base/schema and old-QC-as-work rejection. Test every consensus-affecting field against the same challenge relation. Reuse bounded canonical-codec patterns and exact historical verification. New header/work/model byte domains need implementation; old type names and existing golden vectors do not establish it.
+
+### Legacy source contract and trace — not the selected PoN target
 
 **Applicability and inputs.** `bft-v0` controls CEV0 signed/hashed preimages; `ai-v1` controls its separately versioned CEV1 objects. Resolve genesis, chain, protocol, role/domain, active parameter hash and object kind before interpreting bytes. The seven v0 normative imports and their byte vectors remain immutable inputs to PCC1.
 
@@ -39,6 +59,14 @@ Each scenario below has a stable requirement ID (`Mxx-*`). A reference implement
 <a id="m01"></a>
 ## M01 — Cryptography / Identity / Capability
 
+**Selected PoN responsibility.** Own strict cryptographic verification and private context-bound verified work/identity carriers. Mining keys identify producer and payout; they do not define a validator set or voting weight. Evaluation attestation and local authorization are separate proof types.
+
+**PoN transition and recovery.** Authenticate the installed work profile and expected template/challenge, then exact-decode and verify the complete relation. Bind model/input, miner, payout, parent, dimensions and canonical output. Charge failed cryptographic attempts to the local budget. Return work validity only; M02 derives target/chainwork and M11 evaluates usefulness. Proof-of-execution does not demonstrate an adversarial work-cost lower bound by itself. Keep verification stateless except bounded non-authoritative caches keyed by complete profile/statement/proof context. Cache hits cannot mint additional lottery outcomes. Key rotation preserves historical verification while fresh local grants require current authority.
+
+**PoN acceptance and source migration.** Independent verification implementation; invalid proof/weak key/wrong context/payout/template mutations; proof-randomness replay; degree/range/field mismatch; verifier-flood resource bounds; research attacks from NEURAL_WORK. Keep strict signatures, identity/role separation and legacy finality verifiers as history only. Neither StrictFinalityProof nor an accept-all test verifier can authorize a PoN block.
+
+### Legacy source contract and trace — not the selected PoN target
+
 **Applicability and inputs.** `bft-v0`/`pcc1` use the imported strict Ed25519 verification and CEV0 domains; AI identity/capability rules are `ai-v1`. Inputs include authenticated context, committed authority set, expected object/target, exact statement bytes, key policy and remaining verification budget. The supplied proof cannot choose its own trust context.
 
 **State/admission algorithm.** Strictly admit every authority key before activating its set. Establish canonical unique member IDs and public keys; count each authorized signer at most once. Bind role, genesis/chain/protocol, epoch or nonce/session generation, target and domain according to the exact statement layout. Charge the work budget before attempting each signature verification, including unsuccessful attempts. Verify the complete proof and required ancestry/justifications before returning a private verified capability. Never expose a constructor or deserializer that converts an untrusted success flag into that capability.
@@ -54,6 +82,14 @@ Each scenario below has a stable requirement ID (`Mxx-*`). A reference implement
 
 <a id="m02"></a>
 ## M02 — Order / Consensus Kernel
+
+**Selected PoN responsibility.** Own the single deterministic PoN consensus state machine. Retire Vote, TimeoutVote, QC, TC, locked/high-QC and weighted validator scheduling from the target. No majority model score or application settlement can choose a fork.
+
+**PoN transition and recovery.** Validate parent/height/profile, exact branch-derived DAA target and median-time rule. Join M01 work and M06 body/state validity, then derive work=floor(2^256/(target+1)) from required target, not lucky digest. Accumulate exact chainwork. Adopt only a fully validated strictly heavier branch; equal work retains the current valid tip. Header-only chains request missing dependencies and cannot publish application state. M08 receives a bound reorg decision, not an unsigned tip suggestion. M07 stores branch nodes/roots/work and M08 owns durable active-tip changes. On recovery recompute work/target from verified ancestry before preferred-tip publication. Missing deep history triggers resync. A consumer confirmation depth is not a permanent fork lock.
+
+**PoN acceptance and source migration.** PON-C01 through PON-C12: higher-height/lower-work forks, target mutation, lucky output, DAA boundary, equal work, unavailable body, future-time deferral, workload exhaustion and adversarial work reuse. Formal common-prefix/chain-growth model plus real network evidence remain separate. Reuse no-I/O Input/Effect architecture and bounded ownership patterns. Old BFT transitions are retired reference logic, not a second active consensus engine or PoN implementation.
+
+### Legacy source contract and trace — not the selected PoN target
 
 **Applicability and inputs.** The sole kernel is `bft-v0`; PCC1 specifies its target owner/composition. Inputs are authenticated typed events, immutable prior state, the exact epoch validator/parameter commitments, retained certified ancestry and explicit completion generations. No socket, database, wall clock, model output or control-plane decision belongs in the deterministic transition.
 
@@ -97,6 +133,14 @@ After C, Core retains a `SignIntent::Vote` obligation. `sign_pending_epoch_vote_
 <a id="m03"></a>
 ## M03 — Safety / Signer / Checkpoint
 
+**Selected PoN responsibility.** Own the generation-fenced local mining/identity/effect publication boundary and its durable attempt journal. Custody authenticates producer/payout and authorized external use; it never votes, determines target or certifies model usefulness.
+
+**PoN transition and recovery.** Bind template/challenge/input/model/profile/resource budget and worker generation before dispatch. Record physical attempt entry, run bounded work/proving, verify exact output, persist publication intent and retry identical publication only. New parent/template requires new charged work. Stale result remains attributable to its old attempt; it may support a separate model claim but not new chainwork. Use one writer per attempt namespace and independent rollback frontier where required. Recover dispatched unknown work by exact query/readback; do not reset history. Do not copy PoCO one-vote-per-view restrictions into valid PoW fork behavior. Local capability/revocation/effect history never rewinds on chain reorg.
+
+**PoN acceptance and source migration.** Crash before/after dispatch, output, proof, intent and publication; ACK loss; stale parent; changing payout/body; pipe-capacity output; cancellation; host takeover; coherent store rollback; duplicate exact retransmission. Reuse descriptor/nonce/fence/custody and bounded worker mechanisms where matching. Retire SafetyRules vote locks and PoCO double-vote slashing as target requirements; retained signer records stay historical.
+
+### Legacy source contract and trace — not the selected PoN target
+
 **Applicability and inputs.** Frozen v0 Safety/signing contracts plus candidate PCC1 owner convergence. Inputs bind node generation, validator/chain context, exact complete SignIntent, Safety revision, predecessor checkpoint and external anchor. All M03 packages remain individually visible in the ownership inventory; candidate file/Unix adapters are not device-qualified production adapters.
 
 **State/admission algorithm.** Revalidate namespace and owner generation. Check the new decision against durable Safety state and monotonic watermark. Persist the authorized transition and exact complete signing intent before invoking custody. After hardware success or a lost response, resolve the identical intent using authoritative signer readback; record the result before publication. Publish only the same signed bytes through the bounded outbox. Checkpoint compare-and-swap binds its exact predecessor and independent monotonic state. Never create a replacement intent merely because acknowledgement was lost.
@@ -113,6 +157,14 @@ After C, Core retains a `SignIntent::Vote` obligation. `sign_pending_epoch_vote_
 <a id="m04"></a>
 ## M04 — P2P / Session / Dissemination
 
+**Selected PoN responsibility.** Own transport, discovery, bounded dissemination and authenticated resource/session context, not mining eligibility or consensus decisions. Peer identity authenticates a session, not stake, work, personhood or a right to exclude valid miners.
+
+**PoN transition and recovery.** Admit cheap length/version/rate/session checks before proof work. Separate queues for headers/control, transaction data, large parameter chunks and proofs. Fetch competing branches from diverse sources. Return exact request/generation-bound results; a corrupt peer copy does not classify all copies invalid. Gossip verified blocks promptly without waiting for global model adoption. Retain replay/session and download cursors under their declared owner. Restart must not replay an obsolete response into a new attempt. Index parameters by exact content and codec, not mutable URL. Preserve partial-download checks and repair obligations.
+
+**PoN acceptance and source migration.** Independent-host partition/heal, different-work forks, malformed chunks/proofs, stale sessions, adversarial peers, source diversity, author offline, bounded memory/queues and measured propagation/verification tails. Reuse safe framing, request binding, replay protection and bounded I/O. Retired validator mesh/ReadySet certificates are not PoN consensus admission.
+
+### Legacy source contract and trace — not the selected PoN target
+
 **Applicability and inputs.** Version-0 consensus payloads remain frozen; authenticated stream/session transport is a separately selected bounded candidate contract, not an invented v0 wire extension. Inputs bind peer identity, negotiated chain/profile/limits, session generation, lease, sequence and exact frame bytes. Production transport operations without an accepted complete transport profile are disabled.
 
 **State/admission algorithm.** Authenticate peer identity and negotiation before admitting payloads. Enforce per-frame and aggregate peer/global byte, item, depth and verification-work limits before decode. Acquire/revalidate the exact generation-bound lease and replay identity. Persist replay admission before forwarding the matching bounded event to the Core owner; preserve uncertain handoff breadcrumbs until authoritative readback resolves them. Acknowledgement cannot outrun the required durable replay/Core boundary. Release only the acquired lease identity. Renewals/rotation cannot let a stale owner clear a successor's reservation.
@@ -128,6 +180,14 @@ After C, Core retains a `SignIntent::Vote` obligation. `sign_pending_epoch_vote_
 
 <a id="m05"></a>
 ## M05 — Transaction Admission / Mempool
+
+**Selected PoN responsibility.** Own provisional transaction admission, mempool and branch-aware nonce/reservation handoff. Inclusion, confirmation, model adoption and external execution are different facts. No mempool success or local WAL entry certifies a block.
+
+**PoN transition and recovery.** Validate signatures/scope/nonce and bounded payload against the exact active state. Reserve provisionally without changing canonical balances. On block inclusion index its hash, not height alone. On reorg remove orphan inclusion, release/reconcile provisional state and revalidate transactions against new balances, nonces, grants and generation before requeue. Do not automatically create a new external attempt. Version existing WAL semantics to distinguish local request history from branch-derived reservations. Preserve identity and uncertain handoff across restart. A local operation terminal/effect-entry tombstone cannot disappear just because its chain transaction was detached.
+
+**PoN acceptance and source migration.** Double submit, changed payload at same key, inclusion and depth regression, nonce conflict after reorg, sponsor exhaustion, missing history, signed stale authorization and no-side-effect rejection. Reuse exact request identity and durable handoff/readback patterns. Old Reserved/HandedOff/finalized labels require explicit new semantics; do not mass-rename stored enums.
+
+### Legacy source contract and trace — not the selected PoN target
 
 **Applicability and inputs.** Native transaction lifecycle contracts with explicitly selected v0 or AI-v1 envelopes. Inputs bind canonical transaction bytes/ID, authentication, chain/profile, parent-view version, signer/session generation, nonce lane, fee/resource/access limits, expiry and stable handoff identity.
 
@@ -156,6 +216,14 @@ frame count remain unchanged. The latest recovery implementation is
 
 <a id="m06"></a>
 ## M06 — Execution / MVCC / Meter
+
+**Selected PoN responsibility.** Own parent-relative deterministic execution, resource metering and ordered reversible application deltas. It validates block roots, not the mining work predicate or preferred branch. Long training/inference stays in bounded workers.
+
+**PoN transition and recovery.** Apply mandatory bounded deadline/refund/retention work first, then canonical transactions. Record actual read/write conflicts including shared sponsor, nonce, grant and budget rows. Produce complete forward/undo effects and state/receipt/model/reward roots. Parallel 1/2/4/8-worker execution must equal serial output. A valid proof cannot excuse unavailable bodies or nondeterministic evaluation. M07 owns commits and undo data; M08 coordinates active-chain changes. Persist source/target block hash/root and exact deltas, with readback. Reexecute only deterministic chain application; external provider effects remain in their independent journal and are never undone by a database rollback.
+
+**PoN acceptance and source migration.** Serial/parallel root equality, reject-no-write, attach/detach replay equality, conflicting sponsor/nonces, rewards/model pointers unwound, deep replay and crashes across durable publication. Reuse deterministic native execution and checked metering. Introduce versioned undo/branch carriers; old P/D/C/K finality assumptions remain legacy until adapted and qualified.
+
+### Legacy source contract and trace — not the selected PoN target
 
 **Applicability and inputs.** Native execution is distinct from candidate AI-v1 execution; use the selected runtime/parameter/state schema. Inputs are exact ordered transaction bytes, authenticated immutable parent snapshot, deterministic fee schedule and selected budgets. AI-v1 transactions declare access sets; frozen-v0 native runtime attempts record actual authenticated reads without introducing an AI-v1 envelope or fee profile.
 
@@ -224,6 +292,14 @@ The bounds cover retained speculative data; each active worker still pays the ex
 <a id="m07"></a>
 ## M07 — State / JMT / Storage
 
+**Selected PoN responsibility.** Own canonical state schemas, branch roots, undo/checkpoint storage and authoritative chain-state writes. It does not select a fork or own local Hepta learning facts. Parameter bytes are M09/Hepta artifacts referenced by authenticated roots.
+
+**PoN transition and recovery.** Check descriptor-bound namespace, schema and current writer generation. Validate source root before staging reversible changes. Retain forward/undo lineage per block hash, then atomically publish the M08-approved active generation only after exact readback. Rebuild derived indexes from authenticated state. Do not use height as unique identity or copy all state per small read. Use PinnedSqliteNamespace-style identity/fence/sidecar protection and explicit new branch schema. Chain balances/nonces/model pointers roll back; independent local effect/revocation anchors do not. Deep reorg beyond retained undo triggers verified rebuild, not permanent rejection of heavier valid work. Crash recovery must recognize only exact old, intermediate intent or exact new states.
+
+**PoN acceptance and source migration.** Fault injection at every stage/detach/attach/head/ack cut; two-writer races; same-height different-root snapshots; old profile replay; prune-depth resync; resource accounting and bounded query/restart tails. Reuse exact schema validation, incremental deltas, descriptor fences and readback. Current append-finalized implementation is not claimed to provide the required PoN undo schema.
+
+### Legacy source contract and trace — not the selected PoN target
+
 **Applicability and inputs.** Native JMT/SQLite state and AI-v1 state-tree contracts are separate profiles; do not equate roots by type name. Inputs include the accepted write plan, parent root/version, chain/store/role/generation, closed-world schema/pragma profile and retention/proof horizons.
 
 **State/admission algorithm.** Open only through the reviewed descriptor-bound namespace capability. Distinguish fresh creation, read-only and read-write modes; verify database and WAL/SHM/journal/lock/anchor identities before and after authoritative operations and after close. Apply a complete plan atomically, recompute its selected root and retain exact receipts/history. Return trusted state only after required durable completion and namespace/schema revalidation. Generate membership/non-membership proofs only under an authenticated committed root. Pruning respects all proof, replay, challenge and retention holds.
@@ -245,6 +321,14 @@ This store is a local M07 primitive, not a production migration owner: it has no
 
 <a id="m08"></a>
 ## M08 — Finality / Commit / Recovery
+
+**Selected PoN responsibility.** Own realization of M02 preferred-branch decisions, consistent confirmation views and recovery publication. It does not invent finality, select a second fork or use a QC to lock PoN history. Local policy confirmations remain reversible.
+
+**PoN transition and recovery.** Accept only a bound M02 branch decision with all dependencies valid. Determine common ancestor and ordered detach/attach, persist intent, apply through M06/M07, verify roots, atomically publish active generation, then send idempotent index/outbox changes. Recompute confirmations and reward maturity. Crossing a local threshold never turns a valid deeper reorg into invalid consensus. One Node Commit Ledger-style owner coordinates the exact reorg. Reopen by matching predecessor, intent, old/new roots and durable readback. Unknown commit/ack remains fenced. M03/Hepta effect and revocation histories are joined for reconciliation, not rolled back. Keep historical model-output identity.
+
+**PoN acceptance and source migration.** Deep reorg after payout/model use, crashes during all stages, index ACK loss, failed replacement, unavailable ancestors, isolated client views, local revoke retained and authoritative query of already executed remote effects. Reuse durable coordinator/intents/readback. Retire three-QC ancestor-finalization and joint epoch handoff for new history; retain their old decoders and storage meaning solely for migration.
+
+### Legacy source contract and trace — not the selected PoN target
 
 **Applicability and inputs.** `bft-v0` supplies finality meaning; PCC1 supplies candidate composition and publication ordering. The old `Prepared` through `OutboundPublished` journal vocabulary is an inert integration observation, not the lifecycle for publishing both votes and finality receipts.
 
@@ -276,6 +360,14 @@ Required `M08-CUT` acceptance is a real checkpoint-to-first-block commit at C to
 <a id="m09"></a>
 ## M09 — Data Availability
 
+**Selected PoN responsibility.** Own bounded artifact publication, availability, repair and retention responsibilities. A model root or receipt is not the model bytes, and storage attestations do not choose a ledger branch. Parameters must remain usable without the contributor online.
+
+**PoN transition and recovery.** Validate canonical bounded manifest and permissible data format, reserve storage/repair obligations, receive and verify actual chunks, reconstruct exact bytes and attest only the declared availability statement. Global adoption requires all base/expert/router/calibration dependencies available under the chosen profile. Replicate across declared independent custodians and check retrieval rather than counting URLs or signatures. Retain content-addressed bytes and responsibility records through evaluation/challenge/reward horizons and accepted replay policy. A chain reorg may change entitlement but cannot justify deleting evidence still needed for unresolved disputes or recovery. Reference-aware garbage collection never deletes shared base weights still used by another release.
+
+**PoN acceptance and source migration.** Author-offline retrieval, one/multiple replica failures, malicious manifests/chunks, exact size bounds, repair exhaustion, shared-base GC, reorged release retention and privacy/use-policy rejection. Reuse bounded chunk/retention/repair and durable artifact patterns. Old weighted availability committees are not PoN fork-choice authority; any attested storage profile must disclose its separate trust assumptions.
+
+### Legacy source contract and trace — not the selected PoN target
+
 **Applicability and inputs.** `ai-v1` DA is design/candidate work. Inputs include exact namespace, author/sequence, batch bytes, committee descriptor, policy/limits, funding account and derived retention horizon. TransactionBatch and ArtifactEvidence are never interchangeable.
 
 **State/admission algorithm.** Verify the exact committed committee and author authority, byte/item/chunk/outstanding limits and storage charge. Derive retention end by checked addition of the maximum required committee/policy horizon; do not let the author shorten it. Store bytes and manifest durably before attestation. Verify certificate uniqueness, signatures and threshold under the selected descriptor. For the reference TransactionBatch profile, committee identity/keys/weights project the validator set and threshold is `floor(2W/3)+1`. Retrieve and verify each exact chunk/content binding before reconstructing the batch. Repair uses authenticated content, not another node's unverified assertion.
@@ -291,6 +383,14 @@ Required `M08-CUT` acceptance is a real checkpoint-to-first-block commit at C to
 
 <a id="m10"></a>
 ## M10 — Agent / Task / Market
+
+**Selected PoN responsibility.** Own the deterministic chain lifecycle for parameter contributions, evaluation/composition jobs and public release proposals. Hepta remains owner of local training and private task data. M10 cannot self-certify a useful model, mint reward or issue local execution permission.
+
+**PoN transition and recovery.** Admit exact parent model, compatible family/layers/ranks/numeric profile, real parameter bytes and publication/use conditions. Reserve evaluation/retention obligations and lock the evaluation plan before results. Consume M11 typed evidence and whole-model composition outcomes, then propose a reproducible release and M12 allocation. Mining success alone cannot admit a model. Non-miners may contribute useful trained updates. Chain lifecycle and adopted-release pointers are branch-derived; local training/artifact lineage and actual effect records remain with Hepta. Reorg transitions invalidate current adoption/entitlement without rewriting historical model outputs. Every retry binds the same original identity or an explicitly new authorized attempt.
+
+**PoN acceptance and source migration.** Real task to parameter to independent evaluation to composed model to independent free consumer and next contribution. Test incompatible bundles, duplicate attempts, cancel/late receipt, author loss, complementary experts, no improvement and model-release reorg. Reuse task/lease/escrow/attempt/capacity state ownership and bounded worker execution. New contribution/evaluation/release transitions are unimplemented until actual registered consumers execute them.
+
+### Legacy source contract and trace — not the selected PoN target
 
 **Applicability and inputs.** AI-v1 identity/market layouts are draft; PCC1 adds a proposed resource/service discipline, not activated fields. Inputs bind exact identity/controller or session authorization, capability generation, lane/nonce, task revision/attempt, lease, profile hash, budget/escrow and height-based deadlines.
 
@@ -308,6 +408,14 @@ Required `M08-CUT` acceptance is a real checkpoint-to-first-block commit at C to
 <a id="m11"></a>
 ## M11 — Verification / Challenge
 
+**Selected PoN responsibility.** Own pinned evaluation and challenge semantics for public model benefit, distinct from M01 work-proof cryptography and M02 fork choice. No evaluator majority, model rank, stake or subjective truth assertion creates chainwork.
+
+**PoN transition and recovery.** Lock exact candidate/reference, compatibility, data strata, metrics, uncertainty, resource allowance and composition recipe before testing. Run isolated independent cross-node held-out and future-window evaluations. Test whole composition and old-task regression, not just local training loss. A deterministic public profile verifies reproducible outputs; private/human assessments have explicit attested trust classes. Apply bounded rules to current chain state without retroactively changing valid block work. Store immutable plan/evidence identity, accepted result and challenge responsibility under the existing owner. Reorged acceptance is not current adoption; retain source-bound evidence and failed observations. Evaluator failure or unavailable data is not a fabricated positive or fraud verdict.
+
+**PoN acceptance and source migration.** Candidate/reference/input/profile replacement, repeat benchmark gaming, bad loader/backdoor probes, whole-model degradation despite expert gain, complementary bundles, evaluator conflicts, timeout/Unknown preservation and independent work-primitive shortcut attacks. Reuse context-bound verification/result types and challenge persistence. Current StakeQuorum/business attestation remains legacy evidence semantics, never a substitute for new permissionless neural-work consensus.
+
+### Legacy source contract and trace — not the selected PoN target
+
 **Applicability and inputs.** `ai-v1` verification profiles and PCC1 resource bindings remain candidates. Pin profile ID/version/hash, task/lease/attempt/result revision, evidence and DA policy, verifier authority, height deadlines and challenge rules at authorization; do not select a more convenient profile at settlement.
 
 **State/admission algorithm.** Validate exact receipt/statement bindings and profile activation. Dispatch only to that verification class; verify its proof/attestation/evidence and independently stated trust assumptions. Record the result and evaluation history as an atomic deterministic transition. Challenges bind the exact challenged result/revision, bond, evidence and response; adjudication and any appeal follow the profile's closed rules. A successful challenge creates a forward finalized state transition; it cannot reorg an already finalized ordering block. Only a mature, challenge-closed result may supply the M12 settlement predicate.
@@ -324,6 +432,14 @@ Required `M08-CUT` acceptance is a real checkpoint-to-first-block commit at C to
 <a id="m12"></a>
 ## M12 — Settlement / Economics
 
+**Selected PoN responsibility.** Own deterministic asset accounting and three separate economic responsibilities: mining reward maturity, adopted-model gain rewards and actual serving/evaluation/storage payment. Consumption-derived voting power and validator-weight phases are retired from the target.
+
+**PoN transition and recovery.** Apply fixed genesis/profile issuance, fee and maturity rules only for active valid-chain blocks. Unlock a bounded model pool only for credible whole-model improvement under the locked plan; zero gain pays zero. Allocate accepted nonnegative contribution scores using exact floor arithmetic and retain dust. Root work has one budget across parents/experts/cells. Fund and reserve bounded public inference before service, separately accounting tokens and in-kind resources. Account balances, claim nullifiers, subsidy maturity and release entitlement revert with branch state. Actual off-chain delivery/payout observations do not. Reconcile orphaned external effects under a declared policy before reissuing; SQL rollback does not recover money or undo an API call.
+
+**PoN acceptance and source migration.** Conservation through reorg/restart, zero score and no-gain allocation, floor/dust, repeat claims, split contributions, reward maturity crossed by deep fork, insufficient sponsor funds, free-tier Sybil load and non-idempotent external payout recovery. Reuse exact escrow/resource conservation, typed settlement and replay principles. Existing consumption-rollup formulas and bond-weight selection are legacy-only, not adopted PoN reward or work rules.
+
+### Legacy source contract and trace — not the selected PoN target
+
 **Applicability and inputs.** AI-v1 settlement is candidate work; v0 PoCO effective-weight calculation remains under its frozen rollout rules, initially shadow. Inputs include exact finalized task/result/profile/challenge maturity, escrow assets, price/fee/policy revision, bond, consumption identity and beneficiary.
 
 **State/admission algorithm.** Verify the complete maturity predicate and exact funded escrow before moving any asset. Compute checked fee/payment/refund/slash/burn legs from the pinned policy. For each asset separately, total debits equal total credits plus explicitly accounted burns/fees; no cross-asset cancellation. Atomically consume the settlement identity and write all legs/receipt. Exact replay returns the original receipt without another debit. Consumption rollups are gap-free and duplicate-free. Candidate consumer capacity does not itself grant voting power; activation/membership remains an authenticated epoch decision.
@@ -339,6 +455,14 @@ Required `M08-CUT` acceptance is a real checkpoint-to-first-block commit at C to
 
 <a id="m13"></a>
 ## M13 — State Sync / Light Client / Proofs
+
+**Selected PoN responsibility.** Own verification of PoN work/header ancestry and application inclusion/snapshot provenance, bounded sync and explicit legacy import. It does not trust peer-supplied chainwork or convert old finality to new work. A light client exposes its availability and full-validation assumptions.
+
+**PoN transition and recovery.** Verify every required target/work/profile/time relation along the relevant branch, accumulate work, compare peers under the accepted light-client model and bind inclusion to an observed best tip. Header-only/SPV verification does not independently establish complete model-data availability or execution validity. Full sync fetches/reexecutes missing bodies/state before service. Export all balances/escrow/nonces/tasks/profiles/retention and classify old proof strength before fresh-namespace import. Persist checkpoint/sync progress with exact chain/root/schema and branch generation; do not infer finality from a cached tip. Deep reorg beyond pruning triggers authenticated reconstruction. Legacy key/WAL state remains read-only; fresh PoN identity never resets the same signing/effect namespace.
+
+**PoN acceptance and source migration.** Independent header/work chain and inclusion parser, competing-work views, missing body/data, deep replay, interrupted import, conserved escrow/retention, separate old/new asset semantics and old proof-class mislabel rejection. Reuse bounded download/staging, exact root reconstruction and classified legacy proof readers. New PoN sync/confirmation proofs need explicit new codecs; WeakSubjectivityAnchorV0 cannot be renamed a PoN work anchor.
+
+### Legacy source contract and trace — not the selected PoN target
 
 **Applicability and inputs.** Select native v0/PCC1 proof meaning or independent AI-v1 envelopes explicitly. Inputs include a trusted earlier anchor/commissioned context, exact target block/root/schema, validator/parameter/epoch path, catalog/chunks, proof class, weak-subjectivity policy and destination namespace.
 
@@ -364,6 +488,14 @@ Initialization now persists every chunk already retained by a non-empty session 
 <a id="m14"></a>
 ## M14 — RPC / Indexer / SDK / CLI
 
+**Selected PoN responsibility.** Own non-authoritative RPC/indexer/SDK/CLI and public model-use surfaces. User-visible states are submitted, included, policy-confirmed, reorged and adopted-under-profile, not unconditional finalized. A UI cannot elevate an attestation into a work or local authority proof.
+
+**PoN transition and recovery.** Read the verified active-chain view and index contiguous add/remove events idempotently. Verify confirmations/inclusion through M13, expose reorg and stale observations, and refuse unknown proof classes. Serve reproducible release manifests and parameter bytes through M09. Bind each inference request to a supported deployment profile and reserved free quota; do not hide missing experts or mutable backend switches. Indexer/cache/projection is rebuildable and never authoritative for balances or adoption. Reorg updates remove/add entries atomically by generation. Persist client requests and exact returned model identity when needed; a retry cannot turn a past execution into a fresh free request silently.
+
+**PoN acceptance and source migration.** SDK independently checks new proof classes, reorged rewards/model pointers, incomplete bundles, author offline, reduced deployment profile labeling, stale cache, free-tier overload and exact inference model binding. Reuse safe bounded RPC and source-bound projections. Existing finalized DTOs and legacy client paths stay explicitly historical until actual consumers adopt probabilistic states.
+
+### Legacy source contract and trace — not the selected PoN target
+
 **Applicability and inputs.** Query/transaction-builder APIs are versioned separately from consensus. The current Web4 API contract is read-only; the target write/SDK surface is not activated by documentation. Inputs include selected endpoint/schema, bounded parameters, authentication where applicable, requested proof class and freshness requirements.
 
 **State/admission algorithm.** Bound pagination, result size and proof work before serving. Read only committed data at a named height/root; include actual source/finality class and indexer lag. Expose demo, stale, unavailable and unverified states honestly. Builders preserve exact selected bytes and send authorized operations through M05; neither RPC success nor a transaction ID means finality. Simulation discards mutations and uses the same selected meter semantics. Cache keys include chain/profile/schema/height/proof class; index rebuild replays authenticated committed history.
@@ -381,6 +513,14 @@ Initialization now persists every chunk already retained by a non-empty session 
 
 <a id="m15"></a>
 ## M15 — Node / Packaging / Release
+
+**Selected PoN responsibility.** Own composition, startup/shutdown, packaging and activation of one ordinary PoN node with separately owned services. It contains no domain state machine, alternative consensus, model trainer or hidden task store.
+
+**PoN transition and recovery.** Bind exact genesis/profile/work primitive and binaries; acquire writer/authority fences; reopen branch/application/effect journals; reconcile unfinished reorgs and external operations; load bounded networking/verification/mining workers; only then admit work and requests. Hepta startup uses existing model/artifact/operations owners. Shut down with bounded drain and retained unresolved identity; never discard an attempt to regain readiness. Startup joins M03/M07/M08/M13 exact contexts and independent local effect frontiers. Recover one owner per domain, not filesystem-inferred authority. Fresh-genesis migration keeps legacy namespace read-only. Global release inclusion does not force local model activation; use new admitted generations.
+
+**PoN acceptance and source migration.** Exact binary ordinary startup/request/shutdown; real work/fork/reorg; integrated Hepta parameter loop; author/worker failures; multi-host recovery and power cuts; actual Cargo production closure excludes retired active BFT logic; independent accepted deployment. Reuse thin host/port composition, bounded worker/process controls and release provenance. Old PoCO candidate host remains legacy source; new runtime is not claimed implemented by these documents.
+
+### Legacy source contract and trace — not the selected PoN target
 
 **Applicability and inputs.** Select one of the existing production, devnet, AI-v1-candidate and lab/evidence build closures. Inputs include exact source/tree, Cargo lock/toolchain/features, closed configuration, commissioned identity, adapter ownership, accepted evidence and artifact provenance.
 
@@ -404,6 +544,14 @@ This boundary assumes owner-controlled ancestor directories and one live journal
 <a id="m16"></a>
 ## M16 — Global Control Plane
 
+**Selected PoN responsibility.** The global control plane is advisory. It can propose composition/router/resource choices and summarize measurements; it cannot set chainwork, choose forks, issue capabilities, alter difficulty at runtime or automatically activate code/models.
+
+**PoN transition and recovery.** Read permitted source-bound observations and fixed public evaluation plans. Generate bounded expert/graph/router or distillation candidates within registered interfaces, including reuse/no-change. Submit through M10/M11 for independent evaluation. Hepta retains local NDU objectives and four subject levels; no mandatory global RPC on Cell/reflex paths. Keep proposal lineage and non-authoritative telemetry with exact versions; canonical parameters, release state, budgets and learning facts stay with existing owners. A reorg invalidates chain-derived proposal context, not local history; recompute/revalidate without elevating caches.
+
+**PoN acceptance and source migration.** No-change and abstain paths, compatible/invalid composition proposals, whole-system gains vs local optima, missed windows, failed model proposal, stale/reorged context and continued system safety with this service disabled. Reuse observer/planner/guard separation. Old advisory control does not acquire consensus or production activation through the new PoN name.
+
+### Legacy source contract and trace — not the selected PoN target
+
 **Applicability and inputs.** Non-authoritative operational contract/core only. Inputs bind module descriptors, source/contract graph, telemetry workload validity region, bounded proposed tunables, parameter class, generation, expiry, rollback and signer/guard policy. No networked service or rollout daemon is commissioned by the library's existence.
 
 **State/admission algorithm.** Validate descriptor and measurement bindings; reject stale/poisoned data and infeasible constraints. Produce only bounded proposals. A separate node-local guard verifies profile, generation, expiry, limits and allowed parameter class before any apply. ConsensusCritical changes require authorized governance/activation; DeterminismCritical changes require independently evidenced invariance/shadow policy; only the accepted OperationalLocal subset can be locally tuned. Record exact proposal/decision/applied digest and rollback receipt. Optimizing latency/cost cannot precede zero safety, determinism, durability and compatibility violations.
@@ -419,6 +567,14 @@ This boundary assumes owner-controlled ancestor directories and one live journal
 
 <a id="m17"></a>
 ## M17 — Observability / Benchmark / Security / Evidence
+
+**Selected PoN responsibility.** Own source-bound observability, conformance/fuzz/formal campaigns and independent evidence intake. A checker cannot certify itself as a cryptographic authority, economics reviewer, model evaluator or release approver.
+
+**PoN transition and recovery.** Resolve exact source/tree/base/binary/profile and changed responsibility. Run read-only document/registry tests, independent codecs/work verifiers, formal consensus/reorg properties, actual multi-host mining and model learning/use experiments. Preserve failures, missing data and censored runs. Explicitly test old model/nonce/proof reuse, work shortcuts, poisoned experts, split rewards and orphaned effects. Immutable evidence references bind raw traces and authoritative producer identities; collector stores are not domain truth. Historical PoCO tests retain their original source/profile and cannot be reused as PoN security. Reorg observations record both branches and local irreversible history.
+
+**PoN acceptance and source migration.** All PON-C/R/M/E/X cases, independent byte/work implementations, crash/power-loss/multihost campaigns, whole-model future-window usefulness, free-tier actual service, conservation and attack-cost experiments. Document/reference tests alone never imply these passed. Reuse exact-source evidence pipeline, failure retention, CI trust separation and source-graph checks. Retire PoCO release milestones as the active work sequence; retain legacy source regressions only for affected compatibility code.
+
+### Legacy source contract and trace — not the selected PoN target
 
 **Applicability and inputs.** Read-only evidence tooling for explicitly named profiles and source identities. Inputs bind actual head/tree and prospective merge, exact protocol/plan/module/dependency/toolchain/features/config, commands, topology/workload/faults, raw artifacts, reviewer statements and qualification scope.
 

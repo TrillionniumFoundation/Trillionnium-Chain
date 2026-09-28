@@ -558,7 +558,7 @@
         },
         {
           "path": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
-          "heading": "## 4. Publication ordering: two lifecycles, not one circular wait",
+          "heading": "## 4. Publication and recovery meanings",
           "rule": "Prepared remains an inert local integration fact and cannot authorize vote or finality publication."
         }
       ],
@@ -714,7 +714,7 @@
         },
         {
           "path": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
-          "heading": "## 4. Publication ordering: two lifecycles, not one circular wait",
+          "heading": "## 4. Publication and recovery meanings",
           "rule": "Prepared remains an inert local integration fact and cannot authorize vote or finality publication."
         }
       ],
@@ -1198,7 +1198,7 @@
       "normative_clauses": [
         {
           "path": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
-          "heading": "## 4. Publication ordering: two lifecycles, not one circular wait",
+          "heading": "## 4. Publication and recovery meanings",
           "rule": "These historical stages record caller facts; unmapped records are inert and cannot authorize publication."
         },
         {
@@ -1369,7 +1369,7 @@
       "normative_clauses": [
         {
           "path": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
-          "heading": "## 4. Publication ordering: two lifecycles, not one circular wait",
+          "heading": "## 4. Publication and recovery meanings",
           "rule": "These historical stages record caller facts; unmapped records are inert and cannot authorize publication."
         },
         {

@@ -1,5 +1,19 @@
 # Trillionnium Chain operations manual
 
+## PoN development applicability
+
+Selected development target: `pon-nakamoto-v1`. PoCO-BFT is retired as the target;
+new work follows `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`
+and `docs/protocol/pon-nakamoto-v1/`. This document's retained PoCO-specific runtime,
+release, consensus and deployment detail applies only to existing legacy source,
+historical verification and migration. Generic security/ownership/supply-chain rules
+remain applicable where their semantics match. No legacy planned milestone, binary,
+proof or acceptance becomes PoN by relabeling it. New work-profile qualification,
+reorg recovery, public-model efficacy and production activation remain unaccepted.
+
+## Retained source and operating reference
+
+
 Status: **candidate-only; no public-testnet, production, or activation runbook**.
 
 This document describes safe handling of the current Native PoCO-BFT candidate.

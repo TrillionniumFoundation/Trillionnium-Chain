@@ -132,5 +132,9 @@
     "trillionnium/crates/trnm-state-sync-v0/Cargo.toml",
     "trillionnium/crates/trnm-tx-lifecycle-v0/Cargo.toml",
     "scripts/ci/check_native_consensus_only.py"
-  ]
+  ],
+  "development_target": "pon-nakamoto-v1",
+  "development_target_contract": "config/pon-nakamoto-v1.json",
+  "poco_development_retired": true,
+  "legacy_runtime_field_scope": "consensus_mainline/protocol_target describe existing code and stored bytes only; not the selected new-development target"
 }

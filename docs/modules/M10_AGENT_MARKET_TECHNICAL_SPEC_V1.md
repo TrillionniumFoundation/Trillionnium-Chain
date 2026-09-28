@@ -1,4 +1,74 @@
-# M10 Agent, Task and Market technical specification v1
+# M10 Parameter contributions, evaluation jobs and shared-model releases — PoN technical contract
+
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M10; existing source ownership remains in `config/module-coverage-v1.toml`.
+
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+
+## PoN Authority
+
+Own the deterministic chain lifecycle for parameter contributions, evaluation/composition jobs
+and public release proposals. Hepta remains owner of local training and private task data. M10
+cannot self-certify a useful model, mint reward or issue local execution permission.
+
+## PoN Interfaces
+
+ParameterContribution; EvaluationPlan; CompositionCandidate; GlobalModelRelease;
+SponsoredInferenceTask; CancelOrExpire; ObserveReorg. Reuse current task/lease/attempt/resource
+owner contracts behind explicitly versioned extensions, not a second marketplace database.
+
+## PoN State machine
+
+Admit exact parent model, compatible family/layers/ranks/numeric profile, real parameter bytes
+and publication/use conditions. Reserve evaluation/retention obligations and lock the evaluation
+plan before results. Consume M11 typed evidence and whole-model composition outcomes, then
+propose a reproducible release and M12 allocation. Mining success alone cannot admit a model.
+Non-miners may contribute useful trained updates.
+
+## PoN Persistence and recovery
+
+Chain lifecycle and adopted-release pointers are branch-derived; local training/artifact lineage
+and actual effect records remain with Hepta. Reorg transitions invalidate current
+adoption/entitlement without rewriting historical model outputs. Every retry binds the same
+original identity or an explicitly new authorized attempt.
+
+## PoN Resource bounds
+
+Caps on contributions, experts per candidate, tensor metadata, evaluation/composition jobs,
+retries, graph depth, in-flight tasks and future obligations. No free task bypasses global
+resource caps. An empty improvement queue does not stop block production or invent a new gain.
+
+## PoN Security
+
+Parent/tokenizer substitution, invented training provenance, benchmark overfit,
+duplicated/perturbed contribution, self-service rewards and schema-incompatible experts.
+Permission to process a task is not permission to export training parameters or publish personal
+data.
+
+## PoN Verification and evidence
+
+Real task to parameter to independent evaluation to composed model to independent free consumer
+and next contribution. Test incompatible bundles, duplicate attempts, cancel/late receipt,
+author loss, complementary experts, no improvement and model-release reorg.
+
+## PoN Source migration
+
+Reuse task/lease/escrow/attempt/capacity state ownership and bounded worker execution. New
+contribution/evaluation/release transitions are unimplemented until actual registered consumers
+execute them.
+
+## Retired PoCO implementation reference
+
+**Scope of everything below this heading: legacy implementation and historical source
+verification only.** PoCO is retired as the selected development target. Existing
+source/API/byte/error/test detail is retained without pretending it already implements
+PoN. Any planned Vote/QC/TC/validator-epoch work below is retired backlog, not the active
+work sequence. Frozen history remains interpretable; new work uses the PoN sections
+above and the sole development plan. No legacy acceptance is transferred to PoN.
 
 Status: candidate module contract; terminal-lifecycle extension below is planned.
 The archive storage owner is implemented as a candidate local adapter; its

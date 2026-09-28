@@ -1,4 +1,73 @@
-# M08 Finality / Node Commit / Recovery technical specification v1
+# M08 Probabilistic confirmations, reorg coordination and recovery — PoN technical contract
+
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M08; existing source ownership remains in `config/module-coverage-v1.toml`.
+
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+
+## PoN Authority
+
+Own realization of M02 preferred-branch decisions, consistent confirmation views and recovery
+publication. It does not invent finality, select a second fork or use a QC to lock PoN history.
+Local policy confirmations remain reversible.
+
+## PoN Interfaces
+
+PlanReorg; PersistReorgIntent; DetachOldBranch; AttachNewBranch; PublishActiveTip;
+GetConfirmationReceipt; ReconcileOrphanedEffects. Receipts bind observed tip, included block,
+depth, work delta, policy and active generation.
+
+## PoN State machine
+
+Accept only a bound M02 branch decision with all dependencies valid. Determine common ancestor
+and ordered detach/attach, persist intent, apply through M06/M07, verify roots, atomically
+publish active generation, then send idempotent index/outbox changes. Recompute confirmations
+and reward maturity. Crossing a local threshold never turns a valid deeper reorg into invalid
+consensus.
+
+## PoN Persistence and recovery
+
+One Node Commit Ledger-style owner coordinates the exact reorg. Reopen by matching predecessor,
+intent, old/new roots and durable readback. Unknown commit/ack remains fenced. M03/Hepta effect
+and revocation histories are joined for reconciliation, not rolled back. Keep historical
+model-output identity.
+
+## PoN Resource bounds
+
+Bound reorg staging, undo load, catch-up service and publication queues. Admit recovery
+downloads before ordinary service when necessary; preserve deadlines and explicit backpressure.
+Missing deep undo requests authenticated sync.
+
+## PoN Security
+
+False finalized labels, stale confirmation replay, partial mixed-generation RPC, branch swap
+with same height, automatic external replay and poisoned model rollback. Compensation is a newly
+authorized action with explicit risk, not a fiction of exactly-once external execution.
+
+## PoN Verification and evidence
+
+Deep reorg after payout/model use, crashes during all stages, index ACK loss, failed
+replacement, unavailable ancestors, isolated client views, local revoke retained and
+authoritative query of already executed remote effects.
+
+## PoN Source migration
+
+Reuse durable coordinator/intents/readback. Retire three-QC ancestor-finalization and joint
+epoch handoff for new history; retain their old decoders and storage meaning solely for
+migration.
+
+## Retired PoCO implementation reference
+
+**Scope of everything below this heading: legacy implementation and historical source
+verification only.** PoCO is retired as the selected development target. Existing
+source/API/byte/error/test detail is retained without pretending it already implements
+PoN. Any planned Vote/QC/TC/validator-epoch work below is retired backlog, not the active
+work sequence. Frozen history remains interpretable; new work uses the PoN sections
+above and the sole development plan. No legacy acceptance is transferred to PoN.
 
 Status: **strict pre-handoff, bounded later-epoch storage bridges and V11 first-new
 Core finalization/application implemented; sustained whole-node multiple-epoch and

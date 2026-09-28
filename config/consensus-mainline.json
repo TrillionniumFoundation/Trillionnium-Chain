@@ -311,5 +311,9 @@
     "generator": "scripts/ci/generate_release_status_v1.py",
     "committed_truth_may_not_claim_its_own_future_commit": true,
     "exact_source_required_for_evidence": true
-  }
+  },
+  "development_target": "pon-nakamoto-v1",
+  "development_target_contract": "config/pon-nakamoto-v1.json",
+  "poco_development_retired": true,
+  "legacy_runtime_field_scope": "consensus_mainline/protocol_target describe existing code and stored bytes only; not the selected new-development target"
 }

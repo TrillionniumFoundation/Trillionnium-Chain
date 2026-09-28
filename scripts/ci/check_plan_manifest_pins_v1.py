@@ -189,6 +189,11 @@ def main() -> int:
     )
 
     pinned = {
+        "pon_contract_git_blob": "pon_contract_path",
+        "pon_documentation_gate_git_blob": "pon_documentation_gate_path",
+        "pon_documentation_test_git_blob": "pon_documentation_test_path",
+        "pon_reference_git_blob": "pon_reference_path",
+        "pon_reference_test_git_blob": "pon_reference_test_path",
         "build_closure_git_blob": "build_closure_registry_path",
         "build_closure_validator_git_blob": "build_closure_validator_path",
         "workspace_manifest_git_blob": "workspace_manifest_path",

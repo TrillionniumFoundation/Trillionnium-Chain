@@ -1,4 +1,75 @@
-# M13 State Sync, Light Client and Migration technical specification v1
+# M13 Work-verified sync, probabilistic clients and fresh-instance migration — PoN technical contract
+
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M13; existing source ownership remains in `config/module-coverage-v1.toml`.
+
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+
+## PoN Authority
+
+Own verification of PoN work/header ancestry and application inclusion/snapshot provenance,
+bounded sync and explicit legacy import. It does not trust peer-supplied chainwork or convert
+old finality to new work. A light client exposes its availability and full-validation
+assumptions.
+
+## PoN Interfaces
+
+VerifyWorkHeaderChain; VerifyConfirmationAndInclusion; FetchVerifiedBranch; RebuildBeyondUndo;
+ExportLegacyLiabilities; ReconcileImport; StageFreshPoNGenesis. Trusted genesis/profile is
+supplied independently of the proof being checked.
+
+## PoN State machine
+
+Verify every required target/work/profile/time relation along the relevant branch, accumulate
+work, compare peers under the accepted light-client model and bind inclusion to an observed best
+tip. Header-only/SPV verification does not independently establish complete model-data
+availability or execution validity. Full sync fetches/reexecutes missing bodies/state before
+service. Export all balances/escrow/nonces/tasks/profiles/retention and classify old proof
+strength before fresh-namespace import.
+
+## PoN Persistence and recovery
+
+Persist checkpoint/sync progress with exact chain/root/schema and branch generation; do not
+infer finality from a cached tip. Deep reorg beyond pruning triggers authenticated
+reconstruction. Legacy key/WAL state remains read-only; fresh PoN identity never resets the same
+signing/effect namespace.
+
+## PoN Resource bounds
+
+Limit headers/proofs/chunks/ancestry, total verified work per request, download concurrency,
+snapshot expansion and replay/retention. Partial sync cannot publish an authoritative root.
+Refuse unavailable required verifier versions and liabilities that the target cannot service.
+
+## PoN Security
+
+Eclipse/SPV false confidence, fabricated accumulated work, snapshot root substitution,
+wrong-genesis or QC-as-work import, omitted obligations, old/new double-spend claims and hidden
+trusted checkpoints. No BFT signature committee silently supplies PoN finality.
+
+## PoN Verification and evidence
+
+Independent header/work chain and inclusion parser, competing-work views, missing body/data,
+deep replay, interrupted import, conserved escrow/retention, separate old/new asset semantics
+and old proof-class mislabel rejection.
+
+## PoN Source migration
+
+Reuse bounded download/staging, exact root reconstruction and classified legacy proof readers.
+New PoN sync/confirmation proofs need explicit new codecs; WeakSubjectivityAnchorV0 cannot be
+renamed a PoN work anchor.
+
+## Retired PoCO implementation reference
+
+**Scope of everything below this heading: legacy implementation and historical source
+verification only.** PoCO is retired as the selected development target. Existing
+source/API/byte/error/test detail is retained without pretending it already implements
+PoN. Any planned Vote/QC/TC/validator-epoch work below is retired backlog, not the active
+work sequence. Frozen history remains interpretable; new work uses the PoN sections
+above and the sole development plan. No legacy acceptance is transferred to PoN.
 
 Status: candidate implementation contract, with a native multi-epoch execution
 owner path and planned transport installation. Primary module: M13; no new

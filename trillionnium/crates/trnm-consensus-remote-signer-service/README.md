@@ -1,5 +1,24 @@
 # Remote signer P0 service slice
 
+## PoN target and current-source scope
+
+This crate remains existing implementation/reference source; this documentation does
+not turn it into a PoN runtime. Selected development profile: `pon-nakamoto-v1`.
+Source owner: M03. Target responsibility: Mining-attempt ownership, identity custody and local fencing.
+See [M03 technical contract](../../../docs/modules/M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md) and the
+[PoN protocol](../../../docs/protocol/pon-nakamoto-v1/README.md).
+
+Reuse descriptor/nonce/fence/custody and bounded worker mechanisms where matching. Retire
+SafetyRules vote locks and PoCO double-vote slashing as target requirements; retained signer
+records stay historical.
+
+## Retained implementation documentation
+
+The source interfaces, stored formats, commands and tests below retain their actual
+legacy/profile semantics. PoCO consensus is retired as the target. No old finality,
+committee, vote, consumption weight or test pass is new neural-work/efficacy evidence.
+
+
 This crate is a deliberately small, independently runnable vertical slice for
 the Stage-1 remote-signer boundary. It accepts the existing
 trnm-consensus-remote-signer-protocol schema-1 request bytes over a

@@ -337,6 +337,9 @@ require(
     and truth.get("protocol_target") == "poco-bft-v0",
     "machine truth drift",
 )
+require(truth.get("development_target") == "pon-nakamoto-v1"
+        and truth.get("poco_development_retired") is True,
+        "selected PoN target or PoCO retirement drift")
 
 train_lower = repr(train).lower()
 for marker in ("selected", "successor", "sqlite", "schema", "review", "production_candidate"):
@@ -366,6 +369,9 @@ fi
 
 python3 "$REFERENCE_GATE" "${args[@]}"
 python3 "$MODULE_GATE"
+python3 scripts/ci/check_pon_documentation_v1.py
+python3 scripts/ci/test_pon_documentation_v1.py
+python3 formal/pon-nakamoto-v1/test_reference.py
 python3 scripts/ci/test_documentation_contracts_v1.py
 python3 scripts/ci/check_documentation_contracts_v1.py
 python3 "$PIN_GATE"

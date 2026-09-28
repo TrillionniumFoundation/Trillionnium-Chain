@@ -1,5 +1,24 @@
 # trnm-consensus-sim
 
+## PoN target and current-source scope
+
+This crate remains existing implementation/reference source; this documentation does
+not turn it into a PoN runtime. Selected development profile: `pon-nakamoto-v1`.
+Source owner: M17. Target responsibility: Neural-work security, model efficacy and reorg evidence.
+See [M17 technical contract](../../../docs/modules/M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md) and the
+[PoN protocol](../../../docs/protocol/pon-nakamoto-v1/README.md).
+
+Reuse exact-source evidence pipeline, failure retention, CI trust separation and source-graph
+checks. Retire PoCO release milestones as the active work sequence; retain legacy source
+regressions only for affected compatibility code.
+
+## Retained implementation documentation
+
+The source interfaces, stored formats, commands and tests below retain their actual
+legacy/profile semantics. PoCO consensus is retired as the target. No old finality,
+committee, vote, consumption weight or test pass is new neural-work/efficacy evidence.
+
+
 Deterministic, in-memory fault simulator for the current epoch-0 PoCO-BFT core
 prototype. It drives `Effect`/`Input` boundaries without opening sockets,
 starting services, reading a wall clock, writing a database, or owning a real

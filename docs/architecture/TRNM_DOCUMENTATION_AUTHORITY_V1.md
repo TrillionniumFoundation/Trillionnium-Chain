@@ -1,70 +1,105 @@
-# Documentation authority and applicability contract v1
+# Documentation authority and applicability — PoN transition
 
-Status: **candidate documentation contract; no protocol freeze, activation or independent acceptance**. Primary module: M17; producers/consumers: M00, M03, M08 and M15.
+Status: selected development contract, no implemented/accepted/activated PoN claim.
+Primary module M17; producers/consumers M00-M17. The sole sequence is
+`docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`.
 
-The sole engineering plan remains `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`. This is a resolver for technical rules, not a roadmap. Machine activation authority remains `config/consensus-mainline.json`. Its false production/release flags are not changed by this contract.
+## 1. Separate design target, source truth and deployment
 
-## 1. Resolve a rule before implementing it
+The selected new-development profile is `pon-nakamoto-v1`, governed by
+[the PoN suite](../protocol/pon-nakamoto-v1/README.md) and
+[its machine contract](../../config/pon-nakamoto-v1.json). PoCO is retired as the
+development target. It is not kept as a BFT finality layer or automatic fallback.
 
-An implementation or review selects the tuple `(repository, source_commit, source_tree, protocol_version, contract_profile, parameter_commitment, feature_closure)`. A branch name, PR number, file modification date or successful ancestor check is not this tuple. Obtain commit/tree from the actual checkout; obtain active chain/profile/parameters from authenticated commissioning or activation material, never from the proof being verified.
+The literal `consensus_mainline=native-poco-bft` and `protocol_target=poco-bft-v0`
+fields still describe current legacy source/storage identifiers for existing tools.
+They must not be used as the selected engineering direction: `development_target`
+explicitly separates that choice. None of the actual old Rust APIs, binaries, stored
+bytes, tests or chains became PoN by this documentation change. All production and
+new work-profile/efficacy acceptance flags remain false.
 
-Read in this order: authenticated activation/governance and machine policy; the selected frozen protocol and its exact schemas/parameters/vectors; the applicable integration contract; module implementation contracts; operating instructions. A lower layer may strengthen local isolation but cannot change signing bytes, validity, quorum, locks, finality or replicated state without explicit protocol/profile change. A conflict in those meanings stops the affected profile and requires producer, consumer and specialist review. Neither newest prose nor executable code wins automatically.
+Resolve `(repository, source_commit, source_tree, chain/genesis, protocol/profile,
+parameter commitment, feature closure, evidence class)` before interpreting any rule.
+New development contracts cannot reinterpret authenticated old history; old executable
+behavior cannot override the newly selected design. Deployment requires its own accepted
+release and activation context; neither chat, source merge nor passing document checks
+is runtime authority. A conflict stops the affected profile, not all authorized coding.
 
 ## 2. Applicability matrix
 
-| Profile ID | Applicable rule set | Status and permissible use | Not implied |
-|---|---|---|---|
-| `bft-v0` | `docs/protocol/poco-bft-v0/README.md`, its seven numbered specifications, parameters and vector registry | Frozen version-0 normative **implementation target**; CEV0 and the committed v0 signature/hash domains | An implemented, audited or activated network |
-| `pcc1` | `docs/protocol/poco-convergence-v1/README.md` and its resource/proof-migration companions | Candidate implementation/integration contract importing the exact v0 kernel; PCC1 is a contract revision, not protocol version 1 | A new consensus algorithm, permission to alter v0 bytes, or default-node activation |
-| `ai-v1` | `docs/protocol/poco-ai-native-v1/README.md` and its specification manifest | Draft version-1 design/candidate surface; independently selected CEV1 schemas, domains, parameters and activation | Automatic activation on a v0 node or acceptance of re-encoded v0 signatures |
-| `legacy-ledger-observation` | Existing `Prepared` through `OutboundPublished` candidate journal vocabulary and historical implementation evidence | Local integration observation only; stages/digests may describe recorded caller facts | Proof that domain operations occurred, three-chain finality, or permission to gate consensus vote publication on finality |
+| Profile | Applicable material | Current meaning |
+|---|---|---|
+| `pon-nakamoto-v1` | `docs/protocol/pon-nakamoto-v1/` and the PoN sections of M00-M17 | Selected development target; primitive, codecs, native runtime and independent acceptance remain unqualified/unimplemented |
+| `bft-v0` | `docs/protocol/poco-bft-v0/` frozen specification and vectors | Retired target; retain exact legacy implementation and historical verification only |
+| `pcc1` | `docs/protocol/poco-convergence-v1/` | Retired target integration contract; exact imported old byte/proof semantics, not a wire version or PoN implementation |
+| `ai-v1` | `docs/protocol/poco-ai-native-v1/` | Retained legacy candidate application/source reference; business patterns may be adapted but old quorum/epoch/finality cannot authorize PoN |
+| `legacy-ledger-observation` | retained old journal/function/error/test traces | Historical local-stage vocabulary, not new publication or execution authority |
 
-`pcc1` may import `bft-v0` only at the seven blob identities already recorded in PCC1 section 1. The checker verifies those imports rather than silently repinning them. `ai-v1` has no implicit compatibility edge to either profile. Historical proof classes require the explicit dispatch and migration rules in `PROOF_MIGRATION.md`; a legacy QC cannot be relabelled as native finality. Missing or unknown profiles are unsupported, not a cue for fallback.
+The frozen directory/file fingerprints in the PoN contract bind retained bytes; this
+refactor does not repin the seven PCC1 v0 imports or invent new tags. Unknown profiles
+fail rather than trying decoders until one accepts. Historical QC, full PoCO finality,
+work proof, model evaluation, availability and local capability remain different types.
 
-The AI resource proposal inside PCC1 is a proposed application-profile extension. Its complete wire registry, state codec, Rust implementation and independent vectors must be accepted before enabling it under a runtime/parameter commitment. A Python model is not its codec. A crate ending in `v1` is not, by itself, proof of protocol/profile activation.
+## 3. Module and operation documentation
 
-## 3. Integration lineage is not protocol authority
+Every primary module file starts with PoN authority, interfaces, state machine,
+persistence/reorg, resource, security, verification and migration sections. All content
+below its `Retired PoCO implementation reference` heading is legacy source detail.
+Planned old Vote/QC/TC/epoch work inside that retained section is retired backlog,
+not a competing next-work sequence. Stable paths remain to avoid breaking exact source
+selectors and historical review links. The suffix V1 in an old filename is not a new
+PoN wire version. All existing module supplements and crate docs carry explicit scope.
 
-The observed stack is `main <- #62 <- #85 <- #86`. PR #62 remains the sole Plan V2 integration successor into protected main. PR #85 is a bounded contract child of #62; PR #86 is its implementation continuation. This documentation change is a bounded child of #86, not another selected successor. The observed source for preparation is `1f5ebbb8dab62cfd4d56447480ad60992f61f0ba`.
+`config/module-coverage-v1.toml` remains the actual source ownership inventory.
+`config/documentation-contracts-v1.json` retains exact old implementation and regression
+traces and explicitly adds the new profile/domain references. Its legacy requirement
+IDs and source symbols do not prove new code exists. The PoN machine contract references
+that inventory rather than owning a duplicate set of crates or domain writers.
 
-The machine registry records PR/ref relationships as observations. Every review rereads the actual base, head and prospective-merge identities and verifies ancestry/content. It does not assume that a parent contains a child's changes. A branch rename, restack or new head requires a new observation and invalidates affected review evidence. This file does not close, supersede, merge or approve any PR.
+## 4. Publication and recovery meanings
 
-The old assessed Plan V2 commit remains historical assessed provenance. It must not be displayed as the current tip. Current-source reports always derive HEAD/tree and input hashes during verification. No immutable document claims to know a continuously moving latest head.
+Historical PCC1 publications remain separately interpretable:
 
-## 4. Publication ordering: two lifecycles, not one circular wait
+    signing: Validated -> IntentDurable -> SignatureRecorded -> VotePublished
+    finality: FinalityVerified -> CommitIntentDurable -> ApplicationApplied
+              -> CommitRecorded -> CheckpointConfirmed -> ReceiptPublished
 
-For PCC1, use the two lifecycles specified in its durable lifecycle contract:
+Prepared and unmapped historical stages remain inert caller observations and cannot
+authorize either vote or finality publication.
 
-```text
-signing:  Validated -> IntentDurable -> SignatureRecorded -> VotePublished
-finality: FinalityVerified -> CommitIntentDurable -> ApplicationApplied
-          -> CommitRecorded -> CheckpointConfirmed -> ReceiptPublished
-```
+The old signing path does not wait for its own block's finality. These preserved source
+facts are NOT the PoN publication rule. PoN mining uses exact template/work/output
+publication; active-chain application uses durable reorg intent, detach/attach, root
+readback and generation publication. A depth/work confirmation is probabilistic.
 
-The signing owner verifies the exact authorized intent, durable Safety state and required independent anchor before releasing a signature. It must not wait for finality of the vote's block. A vote is not an application receipt. A receipt requires verified finality, durable application/commit records and confirmed checkpoint.
+Chain-derived state can reorg; independent local effect/revocation/anti-rollback history
+cannot. Model-release reorg never rewrites the parameters used by a completed historical
+decision. Migration is fresh instance, exact liability reconciliation and explicit
+proof-class dispatch; old signer or ledger state is never overwritten in place.
 
-The older single `Prepared` through `OutboundPublished` sequence in local candidate journals is retained as an implementation observation, not as the orchestration rule for both message classes. For this scope it is superseded by the two PCC1 lifecycles. Do not rename stored enum tags in a documentation change. Adapter adoption requires an explicit mapping from each stored fact to its real domain operation, predecessor, owner, recovery action and publication class, followed by crash/replay qualification. Unmapped records remain inert and cannot authorize publication.
+## 5. One integration line and evidence invalidation
 
-The plan's persistence section and the M08 module reference must carry this same distinction. The documentation checker rejects removal of either lifecycle or the explicit vote/finality separation. This is a consistency check, not a liveness proof.
+Use the current canonical PR and protected main, resolving actual head/base/tree and
+prospective merge from Git/GitHub. Earlier numbered stacks are history, not another
+selected successor. A local preparation worktree does not create a second remote
+architecture branch. Preserve concurrent changes; no force push or branch-protection
+relaxation is implied by this refactor.
 
-## 5. Implementable document bundle
+Each changed implementation, contract, source or evaluation input invalidates affected
+acceptance evidence. Historical source hashes cannot be presented as latest passes.
+Independent reviewer assignments must be actually authorized; no placeholder account
+or self-approval establishes cryptographic/economic/model expertise.
 
-`config/documentation-contracts-v1.json` binds all M00-M17 modules to `TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md`, concrete normative files, implementation files, regression inputs and review domains. The ownership inventory remains `config/module-coverage-v1.toml`; the two inventories must agree exactly. No crate or auxiliary unit becomes documented merely because a directory exists.
+## 6. Evidence axes and executable checks
 
-Each module section supplies version applicability, ordered state/admission steps, authoritative inputs, mutation/publication boundaries, error/retry/recovery semantics, conformance cases and implementation/consumer tracing. Referenced frozen layouts and existing code enums remain their authoritative definitions; the guide does not invent wire error numbers. Unimplemented or unregistered operations are explicitly blocked rather than assigned guessed defaults.
+Run the new PoN documentation and reference tests plus existing canonical-plan,
+source-coverage, legacy byte/source and applicable package tests. All checks are
+read-only except the explicit reviewable input-fingerprint refresh before committing.
+`traceability integrity`, `semantic design acceptance`, `work-profile security`,
+`runtime acceptance`, `model future-window efficacy` and `deployment` remain separate.
 
-Every enabled operation needs a requirement-level record containing: requirement ID; exact profile and normative clause; concrete schema/domain/limit; pre-state and authenticated input; accepted post-state/effects; each rejected/local-unavailable/uncertain outcome; concrete positive/negative vector IDs and expected bytes/errors; implementation symbol and feature; producer/consumer; source-bound replay command and result. Module-level navigation and source hashes are the starting index, not proof that every operation has such an accepted record.
-
-## 6. Three independent status axes
-
-- **Traceability integrity:** all declared module/profile/source/reference links and hashes resolve, with no forbidden compatibility or authority promotion.
-- **Semantic design acceptance:** qualified independent specialists can implement and compare the specified operation without guessing, and attest to the requirement-level records.
-- **Implementation/production acceptance:** the selected production closure and deployed artifacts pass the relevant real execution and external gates.
-
-The automated checker may pass the first axis only. It always reports semantic and implementation acceptance as not assessed. Open requirements and vacant reviewer slots remain visible. Neither a new status label nor a zero missing-link count advances the other axes.
-
-## 7. Replay and change invalidation
-
-Run `python3 scripts/ci/test_documentation_contracts_v1.py` and `python3 scripts/ci/check_documentation_contracts_v1.py` in the exact checkout. The existing canonical-plan gate invokes both; its pre-existing checks remain required. The checker is read-only and uses no network or dependency installation. Its output records source/tree and SHA-256 input digests, not an attestation of expertise or release approval.
-
-Changes to a referenced rule, implementation, test, dependency, feature, parameter, reviewer authorization or ownership invalidate that requirement and affected consumers. Changes to author/reviewer conflicts invalidate the associated signatures. Submit fresh source-bound evidence through the existing external-evidence process. Keep failed observations immutable; do not import the result of an ancestor, a fixture or a different binary.
+The reference model proves only tested arithmetic, selected fork/reorg examples and
+accounting behavior. It is not a real miner or proof verifier. Document coverage does
+not prove usefulness, consensus security, independence or scalable free service.
+Preserve failures and open obligations; do not enable a work profile or weaken retained
+legacy tests merely because the architecture changed.

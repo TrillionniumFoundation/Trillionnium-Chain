@@ -1,5 +1,23 @@
 # PoCO object-MVCC and fee v1 candidate kernel
 
+## PoN target and current-source scope
+
+This crate remains existing implementation/reference source; this documentation does
+not turn it into a PoN runtime. Selected development profile: `pon-nakamoto-v1`.
+Source owner: M06. Target responsibility: Deterministic branch execution and reversible state effects.
+See [M06 technical contract](../../../docs/modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md) and the
+[PoN protocol](../../../docs/protocol/pon-nakamoto-v1/README.md).
+
+Reuse deterministic native execution and checked metering. Introduce versioned undo/branch
+carriers; old P/D/C/K finality assumptions remain legacy until adapted and qualified.
+
+## Retained implementation documentation
+
+The source interfaces, stored formats, commands and tests below retain their actual
+legacy/profile semantics. PoCO consensus is retired as the target. No old finality,
+committee, vote, consumption weight or test pass is new neural-work/efficacy evidence.
+
+
 This crate is a **candidate-non-normative** local single-block execution
 kernel. It speculates every transaction against one parent snapshot, validates
 in gap-free transaction-index order, and deterministically re-executes an

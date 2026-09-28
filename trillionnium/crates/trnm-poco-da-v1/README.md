@@ -1,5 +1,24 @@
 # `trnm-poco-da-v1`
 
+## PoN target and current-source scope
+
+This crate remains existing implementation/reference source; this documentation does
+not turn it into a PoN runtime. Selected development profile: `pon-nakamoto-v1`.
+Source owner: M09. Target responsibility: Public parameter and evidence availability.
+See [M09 technical contract](../../../docs/modules/M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md) and the
+[PoN protocol](../../../docs/protocol/pon-nakamoto-v1/README.md).
+
+Reuse bounded chunk/retention/repair and durable artifact patterns. Old weighted availability
+committees are not PoN fork-choice authority; any attested storage profile must disclose its
+separate trust assumptions.
+
+## Retained implementation documentation
+
+The source interfaces, stored formats, commands and tests below retain their actual
+legacy/profile semantics. PoCO consensus is retired as the target. No old finality,
+committee, vote, consumption weight or test pass is new neural-work/efficacy evidence.
+
+
 Candidate-only local deterministic storage/kernel for the PoCO AI-native v1
 `TransactionBatch` DA namespace.
 

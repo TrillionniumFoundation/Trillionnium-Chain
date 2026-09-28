@@ -1,4 +1,73 @@
-# M03 Safety / Signer / Checkpoint technical specification v1
+# M03 Mining-attempt ownership, identity custody and local fencing — PoN technical contract
+
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M03; existing source ownership remains in `config/module-coverage-v1.toml`.
+
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/NEURAL_WORK.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+
+## PoN Authority
+
+Own the generation-fenced local mining/identity/effect publication boundary and its durable
+attempt journal. Custody authenticates producer/payout and authorized external use; it never
+votes, determines target or certifies model usefulness.
+
+## PoN Interfaces
+
+FreezeMiningTemplate; StartQualifiedWork; RecordWorkOutput; VerifyBeforePublish;
+PublishExactBlock; CancelStaleAttempt; ReconcileAttempt. Distinguish public work statement,
+private key policy and local final-use authority.
+
+## PoN State machine
+
+Bind template/challenge/input/model/profile/resource budget and worker generation before
+dispatch. Record physical attempt entry, run bounded work/proving, verify exact output, persist
+publication intent and retry identical publication only. New parent/template requires new
+charged work. Stale result remains attributable to its old attempt; it may support a separate
+model claim but not new chainwork.
+
+## PoN Persistence and recovery
+
+Use one writer per attempt namespace and independent rollback frontier where required. Recover
+dispatched unknown work by exact query/readback; do not reset history. Do not copy PoCO
+one-vote-per-view restrictions into valid PoW fork behavior. Local capability/revocation/effect
+history never rewinds on chain reorg.
+
+## PoN Resource bounds
+
+Reserve GPU/CPU/RAM, output/proof bytes, task slots and completion space before attempt
+dispatch. Drain pipes concurrently; bound cancellation/kill and keep unreconciled resources
+fenced. Proving cannot starve verification or recovery.
+
+## PoN Security
+
+Separate miner payout, local grant issuer, evaluator and host identities. Hardware/remote
+signing keys cannot promote arbitrary work. Stop handling preserves indeterminate external
+effects. Unused nonce/payout mutations cannot reuse old expensive work.
+
+## PoN Verification and evidence
+
+Crash before/after dispatch, output, proof, intent and publication; ACK loss; stale parent;
+changing payout/body; pipe-capacity output; cancellation; host takeover; coherent store
+rollback; duplicate exact retransmission.
+
+## PoN Source migration
+
+Reuse descriptor/nonce/fence/custody and bounded worker mechanisms where matching. Retire
+SafetyRules vote locks and PoCO double-vote slashing as target requirements; retained signer
+records stay historical.
+
+## Retired PoCO implementation reference
+
+**Scope of everything below this heading: legacy implementation and historical source
+verification only.** PoCO is retired as the selected development target. Existing
+source/API/byte/error/test detail is retained without pretending it already implements
+PoN. Any planned Vote/QC/TC/validator-epoch work below is retired backlog, not the active
+work sequence. Frozen history remains interpretable; new work uses the PoN sections
+above and the sole development plan. No legacy acceptance is transferred to PoN.
 
 Status: **implementation design with existing v0 interfaces and planned epoch
 custody extensions; no device qualification or production promotion**.

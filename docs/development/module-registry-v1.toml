@@ -4,6 +4,9 @@ plan_id = "trnm-chain-development-plan-v2"
 as_of = "2026-09-02"
 assessed_source_mode = "runtime-pr-head-and-tree"
 module_count = 18
+development_target = "pon-nakamoto-v1"
+development_target_contract = "config/pon-nakamoto-v1.json"
+source_status_scope = "existing-legacy-implementation-not-new-target-completion"
 production_authority = false
 coverage_manifest = "config/module-coverage-v1.toml"
 technical_reference = "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
@@ -18,6 +21,8 @@ production_may_depend_on_candidate_or_lab = false
 
 [[modules]]
 id = "M00"
+development_role = "Protocol, canonical neural-work and public-model contracts"
+development_profile = "pon-nakamoto-v1"
 name = "protocol-schema-canonical-codec"
 layer = "contract"
 runtime = "library"
@@ -29,6 +34,8 @@ forbidden_capabilities = ["filesystem", "network", "clock", "sign", "vote", "fin
 
 [[modules]]
 id = "M01"
+development_role = "Cryptography, neural-work verification and local identity"
+development_profile = "pon-nakamoto-v1"
 name = "crypto-identity-capability"
 layer = "contract-core-adapter"
 runtime = "library-and-isolated-signer"
@@ -40,6 +47,8 @@ forbidden_capabilities = ["consensus-transition", "state-root", "finalize"]
 
 [[modules]]
 id = "M02"
+development_role = "Nakamoto consensus, target and cumulative-work fork choice"
+development_profile = "pon-nakamoto-v1"
 name = "order-consensus-kernel"
 layer = "pure-core"
 runtime = "in-process-hot-path"
@@ -51,6 +60,8 @@ forbidden_capabilities = ["filesystem", "network", "wall-clock", "direct-signing
 
 [[modules]]
 id = "M03"
+development_role = "Mining-attempt ownership, identity custody and local fencing"
+development_profile = "pon-nakamoto-v1"
 name = "safety-signer-checkpoint-authority"
 layer = "authority-core-adapter"
 runtime = "in-process-plus-hsm-adapter"
@@ -62,6 +73,8 @@ forbidden_capabilities = ["fork-choice", "application-state-root", "control-plan
 
 [[modules]]
 id = "M04"
+development_role = "Permissionless bounded block, proof and parameter network"
+development_profile = "pon-nakamoto-v1"
 name = "p2p-session-dissemination"
 layer = "adapter-runtime"
 runtime = "in-process-io"
@@ -73,6 +86,8 @@ forbidden_capabilities = ["sign", "vote", "finalize", "state-commit"]
 
 [[modules]]
 id = "M05"
+development_role = "Reorg-aware transaction and contribution admission"
+development_profile = "pon-nakamoto-v1"
 name = "transaction-admission-mempool"
 layer = "core-adapter"
 runtime = "in-process"
@@ -84,6 +99,8 @@ forbidden_capabilities = ["consensus-order", "sign", "finalize"]
 
 [[modules]]
 id = "M06"
+development_role = "Deterministic branch execution and reversible state effects"
+development_profile = "pon-nakamoto-v1"
 name = "deterministic-execution-mvcc-meter"
 layer = "pure-core"
 runtime = "in-process-hot-path"
@@ -95,6 +112,8 @@ forbidden_capabilities = ["network", "wall-clock", "consensus-finality"]
 
 [[modules]]
 id = "M07"
+development_role = "Branch state, undo history and immutable model storage roots"
+development_profile = "pon-nakamoto-v1"
 name = "state-jmt-storage"
 layer = "core-adapter"
 runtime = "in-process-hot-path"
@@ -106,6 +125,8 @@ forbidden_capabilities = ["vote", "sign", "fork-choice"]
 
 [[modules]]
 id = "M08"
+development_role = "Probabilistic confirmations, reorg coordination and recovery"
+development_profile = "pon-nakamoto-v1"
 name = "finality-commit-recovery"
 layer = "authority-coordinator"
 runtime = "in-process-hot-path"
@@ -117,6 +138,8 @@ forbidden_capabilities = ["independent-fork-choice", "control-plane-override"]
 
 [[modules]]
 id = "M09"
+development_role = "Public parameter and evidence availability"
+development_profile = "pon-nakamoto-v1"
 name = "data-availability"
 layer = "core-worker"
 runtime = "library-and-workers"
@@ -128,6 +151,8 @@ forbidden_capabilities = ["order-finality", "settlement-authority"]
 
 [[modules]]
 id = "M10"
+development_role = "Parameter contributions, evaluation jobs and shared-model releases"
+development_profile = "pon-nakamoto-v1"
 name = "agent-task-market"
 layer = "deterministic-application"
 runtime = "in-process"
@@ -139,6 +164,8 @@ forbidden_capabilities = ["order-finality", "direct-signing"]
 
 [[modules]]
 id = "M11"
+development_role = "Independent model evaluation and qualified work verification profiles"
+development_profile = "pon-nakamoto-v1"
 name = "verify-challenge"
 layer = "deterministic-core-worker"
 runtime = "in-process-and-proof-workers"
@@ -150,6 +177,8 @@ forbidden_capabilities = ["order-finality", "implicit-profile-fallback"]
 
 [[modules]]
 id = "M12"
+development_role = "Mining rewards, model contribution allocation and free-use budgets"
+development_profile = "pon-nakamoto-v1"
 name = "settlement-economics"
 layer = "deterministic-application"
 runtime = "in-process"
@@ -161,6 +190,8 @@ forbidden_capabilities = ["order-finality", "unprofiled-result-authority"]
 
 [[modules]]
 id = "M13"
+development_role = "Work-verified sync, probabilistic clients and fresh-instance migration"
+development_profile = "pon-nakamoto-v1"
 name = "state-sync-light-client-proofs"
 layer = "verifier-adapter"
 runtime = "in-process-verifier-and-downloader"
@@ -172,6 +203,8 @@ forbidden_capabilities = ["sign", "vote", "trusted-unverified-checkpoint"]
 
 [[modules]]
 id = "M14"
+development_role = "Proof-aware clients, shared model discovery and free inference"
+development_profile = "pon-nakamoto-v1"
 name = "rpc-indexer-sdk-cli"
 layer = "service-client"
 runtime = "isolated-services"
@@ -183,6 +216,8 @@ forbidden_capabilities = ["consensus-authority", "state-root-authority", "finali
 
 [[modules]]
 id = "M15"
+development_role = "Ordinary PoN node, Hepta integration and release composition"
+development_profile = "pon-nakamoto-v1"
 name = "node-composition-packaging-release"
 layer = "composition"
 runtime = "node-and-release-tooling"
@@ -194,6 +229,8 @@ forbidden_capabilities = ["domain-state-machine", "silent-gate-promotion"]
 
 [[modules]]
 id = "M16"
+development_role = "Advisory model composition, routing and resource planning"
+development_profile = "pon-nakamoto-v1"
 name = "global-control-plane"
 layer = "out-of-band-control"
 runtime = "isolated-service"
@@ -205,6 +242,8 @@ forbidden_capabilities = ["sign", "vote", "finalize", "state-root", "safety-bypa
 
 [[modules]]
 id = "M17"
+development_role = "Neural-work security, model efficacy and reorg evidence"
+development_profile = "pon-nakamoto-v1"
 name = "observability-benchmark-security-evidence"
 layer = "tooling-observer"
 runtime = "tooling-and-isolated-collectors"

@@ -1,5 +1,24 @@
 # PoCO Verify/Challenge v1 candidate kernel
 
+## PoN target and current-source scope
+
+This crate remains existing implementation/reference source; this documentation does
+not turn it into a PoN runtime. Selected development profile: `pon-nakamoto-v1`.
+Source owner: M11. Target responsibility: Independent model evaluation and qualified work verification profiles.
+See [M11 technical contract](../../../docs/modules/M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md) and the
+[PoN protocol](../../../docs/protocol/pon-nakamoto-v1/README.md).
+
+Reuse context-bound verification/result types and challenge persistence. Current
+StakeQuorum/business attestation remains legacy evidence semantics, never a substitute for new
+permissionless neural-work consensus.
+
+## Retained implementation documentation
+
+The source interfaces, stored formats, commands and tests below retain their actual
+legacy/profile semantics. PoCO consensus is retired as the target. No old finality,
+committee, vote, consumption weight or test pass is new neural-work/efficacy evidence.
+
+
 This crate is a **candidate-non-normative**, local SQLite kernel for one
 bounded `StakeQuorum` verification profile. It exists to make the first
 receipt → atomic two-record evaluation → challenge evidence → provider

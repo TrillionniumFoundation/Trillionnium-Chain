@@ -1,5 +1,29 @@
 # Supplemental operation closure v1
 
+## PoN applicability and retirement
+
+Selected development profile: `pon-nakamoto-v1`. The active development sequence is
+[the sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md), not this
+retained operation supplement. PoCO consensus, validator epochs, Vote/QC/TC rules and
+finality-specific closure work below are retired target requirements; they remain
+precise legacy source/API/byte/regression references for compatibility and migration.
+No old function trace or acceptance status certifies the new work/reorg/model runtime.
+
+**M17 target linkage.** Neural-work security, model efficacy and reorg evidence; see [M17](M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+For this supplement, preserve frozen selectors and historical evidence while replacing
+active consumers with explicit PoN contracts. Use [work/fork rules](../protocol/pon-nakamoto-v1/CONSENSUS.md),
+[model contribution and composition](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md),
+[reward budgets](../protocol/pon-nakamoto-v1/ECONOMICS.md) and
+[reorg/migration](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md).
+
+## Retired PoCO implementation reference
+
+Everything below retains its original legacy profile and source scope. Old planned
+closure stages are not the new development sequence. Existing regression checks must
+remain accurate for retained code; they are neither waived nor relabelled as PoN tests.
+
+
 Status: **candidate implementation design; semantic, independent and production acceptance remain open**.
 
 This supplement closes the documentation identity gap for the three implementation

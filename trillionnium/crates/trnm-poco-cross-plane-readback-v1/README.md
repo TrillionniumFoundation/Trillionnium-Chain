@@ -1,5 +1,24 @@
 # PoCO AI-native v1 cross-plane fresh-readback candidate
 
+## PoN target and current-source scope
+
+This crate remains existing implementation/reference source; this documentation does
+not turn it into a PoN runtime. Selected development profile: `pon-nakamoto-v1`.
+Source owner: M13. Target responsibility: Work-verified sync, probabilistic clients and fresh-instance migration.
+See [M13 technical contract](../../../docs/modules/M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md) and the
+[PoN protocol](../../../docs/protocol/pon-nakamoto-v1/README.md).
+
+Reuse bounded download/staging, exact root reconstruction and classified legacy proof readers.
+New PoN sync/confirmation proofs need explicit new codecs; WeakSubjectivityAnchorV0 cannot be
+renamed a PoN work anchor.
+
+## Retained implementation documentation
+
+The source interfaces, stored formats, commands and tests below retain their actual
+legacy/profile semantics. PoCO consensus is retired as the target. No old finality,
+committee, vote, consumption weight or test pass is new neural-work/efficacy evidence.
+
+
 This crate joins five independently authenticated local candidate stores: transaction-batch DA,
 Agent/Market, Verify/Challenge, MVCC/Fee, and Consumption/Settlement. It takes two complete fresh
 readback samples and accepts only when all identities, sequences, order heads, state roots,

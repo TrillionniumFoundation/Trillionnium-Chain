@@ -41,9 +41,10 @@ REQUIRED_FOUNDATION_OPERATIONS = {
 }
 MODULES = [f'M{i:02d}' for i in range(18)]
 PROFILES = {
-    'bft-v0': 'frozen-implementation-target-not-activation',
-    'pcc1': 'candidate-contract-not-wire-version',
-    'ai-v1': 'draft-protocol-v1-not-activated',
+    'pon-nakamoto-v1': 'selected-development-target-unqualified-work-not-activated',
+    'bft-v0': 'retired-development-target-frozen-legacy-implementation-only',
+    'pcc1': 'retired-target-legacy-integration-contract-not-wire-version',
+    'ai-v1': 'retired-target-legacy-draft-protocol-not-activated',
     'legacy-ledger-observation': 'historical-local-stage-vocabulary-not-publication-authority',
 }
 _V0 = 'docs/protocol/poco-bft-v0/'

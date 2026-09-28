@@ -1,4 +1,72 @@
-# M01 Cryptography / Identity / Capability technical specification v1
+# M01 Cryptography, neural-work verification and local identity — PoN technical contract
+
+Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
+Status: new development contract; runtime, work-security and independent acceptance are not implied.
+Primary module: M01; existing source ownership remains in `config/module-coverage-v1.toml`.
+
+The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [PoN domain contract](../protocol/pon-nakamoto-v1/NEURAL_WORK.md) govern new work.
+Logical interface names below are proposed contracts, not claims that matching Rust APIs,
+wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+
+## PoN Authority
+
+Own strict cryptographic verification and private context-bound verified work/identity carriers.
+Mining keys identify producer and payout; they do not define a validator set or voting weight.
+Evaluation attestation and local authorization are separate proof types.
+
+## PoN Interfaces
+
+VerifyWork(profile, exact_statement, proof, budget) -> VerifiedWork or Invalid/Unavailable;
+VerifyContributionSignature; VerifyEvaluationAttestation; VerifyHistoricalPoCO. Constructors
+remain restricted, but Rust type privacy is not a cross-host proof.
+
+## PoN State machine
+
+Authenticate the installed work profile and expected template/challenge, then exact-decode and
+verify the complete relation. Bind model/input, miner, payout, parent, dimensions and canonical
+output. Charge failed cryptographic attempts to the local budget. Return work validity only; M02
+derives target/chainwork and M11 evaluates usefulness. Proof-of-execution does not demonstrate
+an adversarial work-cost lower bound by itself.
+
+## PoN Persistence and recovery
+
+Keep verification stateless except bounded non-authoritative caches keyed by complete
+profile/statement/proof context. Cache hits cannot mint additional lottery outcomes. Key
+rotation preserves historical verification while fresh local grants require current authority.
+
+## PoN Resource bounds
+
+Prove/check proof size, verifier time, memory and security parameter per exact shape/cost class.
+Reject unknown algorithms and missing setup material. Isolate long proving from the
+verifier/consensus hot path.
+
+## PoN Security
+
+Qualify challenge influence, shortcut resistance, output uniqueness, setup trust and matrix/ML
+arithmetic correspondence. TEE, logs and rational incentive proofs cannot silently satisfy
+Byzantine mining security. Copying a model may be a contribution dispute but cannot yield
+parent-bound work.
+
+## PoN Verification and evidence
+
+Independent verification implementation; invalid proof/weak key/wrong context/payout/template
+mutations; proof-randomness replay; degree/range/field mismatch; verifier-flood resource bounds;
+research attacks from NEURAL_WORK.
+
+## PoN Source migration
+
+Keep strict signatures, identity/role separation and legacy finality verifiers as history only.
+Neither StrictFinalityProof nor an accept-all test verifier can authorize a PoN block.
+
+## Retired PoCO implementation reference
+
+**Scope of everything below this heading: legacy implementation and historical source
+verification only.** PoCO is retired as the selected development target. Existing
+source/API/byte/error/test detail is retained without pretending it already implements
+PoN. Any planned Vote/QC/TC/validator-epoch work below is retired backlog, not the active
+work sequence. Frozen history remains interpretable; new work uses the PoN sections
+above and the sole development plan. No legacy acceptance is transferred to PoN.
 
 Status: **module-specific implementation design; frozen v0 verification retained;
 planned identity adapters are not implemented production authority**.

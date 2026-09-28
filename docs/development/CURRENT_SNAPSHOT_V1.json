@@ -1,6 +1,6 @@
 {
   "schema": "trnm-current-snapshot-v1",
-  "as_of": "2026-09-16",
+  "as_of": "2026-09-28",
   "repository": "TrillionniumFoundation/Trillionnium-Chain",
   "default_branch": "main",
   "default_branch_head_observed": "c552c31c6d3c5ac47522a124e02c6b8bca4e23f2",
@@ -91,14 +91,16 @@
     "v1_release_ready": false
   },
   "current_promotion_critical_stack": [
-    "all required checks on one unchanged current PR head and prospective merge",
-    "independent module-owner, consumer, security and release acceptance",
-    "exact-head and prospective-merge Cargo-tree/compiler acceptance of production build closures, plus node decomposition",
-    "persistent authenticated network, pacemaker, Vote/Timeout, finality and recovery",
-    "production transaction lifecycle and authenticated state sync",
-    "trusted migration and target-root recomputation",
-    "independent multi-host, HSM/anchor, physical power-loss, audit/red-team and wall-clock soak evidence",
-    "signed governance and activation record"
+    "PN0 contract/source alignment",
+    "PN1 qualified neural work",
+    "PN2 native PoN fork/reorg",
+    "PN3 real public-model loop",
+    "PN4 rewards and bounded free service",
+    "PN5 independent system acceptance",
+    "PN6 fresh-instance migration and release"
   ],
-  "truth_rule": "protected main, assessed baseline, current PR head, prospective merge, artifact, evidence, accepted release and activated network identities are distinct and must never be silently substituted"
+  "truth_rule": "protected main, assessed baseline, current PR head, prospective merge, artifact, evidence, accepted release and activated network identities are distinct and must never be silently substituted",
+  "development_target": "pon-nakamoto-v1",
+  "development_target_contract": "config/pon-nakamoto-v1.json",
+  "legacy_implementation_scope": "existing PoCO code only; retired as development target"
 }

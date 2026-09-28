@@ -9,10 +9,11 @@
   "semantic_design_accepted": false,
   "implementation_accepted": false,
   "profile_status": {
-    "bft-v0": "frozen-implementation-target-not-activation",
-    "pcc1": "candidate-contract-not-wire-version",
-    "ai-v1": "draft-protocol-v1-not-activated",
-    "legacy-ledger-observation": "historical-local-stage-vocabulary-not-publication-authority"
+    "bft-v0": "retired-development-target-frozen-legacy-implementation-only",
+    "pcc1": "retired-target-legacy-integration-contract-not-wire-version",
+    "ai-v1": "retired-target-legacy-draft-protocol-not-activated",
+    "legacy-ledger-observation": "historical-local-stage-vocabulary-not-publication-authority",
+    "pon-nakamoto-v1": "selected-development-target-unqualified-work-not-activated"
   },
   "pcc1_v0_imports": {
     "docs/protocol/poco-bft-v0/01-system-model-and-threat-model.md": "9b7791addf496d0b88f84bb37592d099ad525eec",
@@ -52,7 +53,8 @@
       "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m00",
       "profiles": [
         "bft-v0",
-        "ai-v1"
+        "ai-v1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-consensus-types",
@@ -62,7 +64,8 @@
       ],
       "normative_refs": [
         "docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md",
-        "docs/protocol/poco-ai-native-v1/README.md"
+        "docs/protocol/poco-ai-native-v1/README.md",
+        "docs/protocol/pon-nakamoto-v1/CONSENSUS.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-consensus-types/src/lib.rs",
@@ -107,7 +110,8 @@
       "profiles": [
         "bft-v0",
         "pcc1",
-        "ai-v1"
+        "ai-v1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-consensus-crypto",
@@ -115,7 +119,8 @@
       ],
       "normative_refs": [
         "docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md",
-        "docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md"
+        "docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md",
+        "docs/protocol/pon-nakamoto-v1/NEURAL_WORK.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-consensus-crypto/src/strict_finality.rs"
@@ -157,7 +162,8 @@
       "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m02",
       "profiles": [
         "bft-v0",
-        "pcc1"
+        "pcc1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-consensus-core"
@@ -165,7 +171,8 @@
       "normative_refs": [
         "docs/protocol/poco-bft-v0/02-chained-qc-consensus.md",
         "docs/protocol/poco-bft-v0/04-epochs-validator-sets-and-upgrades.md",
-        "docs/protocol/poco-convergence-v1/README.md"
+        "docs/protocol/poco-convergence-v1/README.md",
+        "docs/protocol/pon-nakamoto-v1/CONSENSUS.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-consensus-core/src/lib.rs",
@@ -208,7 +215,8 @@
       "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m03",
       "profiles": [
         "bft-v0",
-        "pcc1"
+        "pcc1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-consensus-safety-rules",
@@ -224,7 +232,8 @@
       ],
       "normative_refs": [
         "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
-        "docs/protocol/poco-convergence-v1/README.md"
+        "docs/protocol/poco-convergence-v1/README.md",
+        "docs/protocol/pon-nakamoto-v1/NEURAL_WORK.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-consensus-signer-journal/src/lib.rs",
@@ -268,14 +277,16 @@
       "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m04",
       "profiles": [
         "bft-v0",
-        "pcc1"
+        "pcc1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-consensus-peer-lease"
       ],
       "normative_refs": [
         "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
-        "docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md"
+        "docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md",
+        "docs/protocol/pon-nakamoto-v1/CONSENSUS.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-consensus-peer-lease/src/lib.rs",
@@ -320,7 +331,8 @@
       "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m05",
       "profiles": [
         "bft-v0",
-        "ai-v1"
+        "ai-v1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-mempool",
@@ -329,7 +341,8 @@
       ],
       "normative_refs": [
         "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
-        "docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md"
+        "docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md",
+        "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs"
@@ -373,7 +386,8 @@
       "profiles": [
         "bft-v0",
         "pcc1",
-        "ai-v1"
+        "ai-v1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-native-application",
@@ -385,7 +399,8 @@
       ],
       "normative_refs": [
         "docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md",
-        "docs/architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md"
+        "docs/architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md",
+        "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-native-execution-v0/src/lib.rs"
@@ -428,7 +443,8 @@
       "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m07",
       "profiles": [
         "bft-v0",
-        "ai-v1"
+        "ai-v1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-state",
@@ -437,7 +453,8 @@
       ],
       "normative_refs": [
         "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
-        "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md"
+        "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md",
+        "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-state/src/lib.rs",
@@ -484,7 +501,8 @@
       "profiles": [
         "bft-v0",
         "pcc1",
-        "legacy-ledger-observation"
+        "legacy-ledger-observation",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-core-restart-v0",
@@ -492,7 +510,8 @@
       ],
       "normative_refs": [
         "docs/protocol/poco-convergence-v1/README.md",
-        "docs/protocol/poco-convergence-v1/PROOF_MIGRATION.md"
+        "docs/protocol/poco-convergence-v1/PROOF_MIGRATION.md",
+        "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs"
@@ -533,13 +552,15 @@
       "id": "M09",
       "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m09",
       "profiles": [
-        "ai-v1"
+        "ai-v1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-poco-da-v1"
       ],
       "normative_refs": [
-        "docs/protocol/poco-ai-native-v1/06-certified-data-availability.md"
+        "docs/protocol/poco-ai-native-v1/06-certified-data-availability.md",
+        "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-poco-da-v1/src/lib.rs",
@@ -584,7 +605,8 @@
       "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m10",
       "profiles": [
         "ai-v1",
-        "pcc1"
+        "pcc1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-poco-agent-market-v1",
@@ -593,7 +615,8 @@
       "normative_refs": [
         "docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md",
         "docs/protocol/poco-ai-native-v1/04-market-task-lease-escrow-and-lifecycle.md",
-        "docs/protocol/poco-convergence-v1/AI_RESOURCE_STATE_MACHINE.md"
+        "docs/protocol/poco-convergence-v1/AI_RESOURCE_STATE_MACHINE.md",
+        "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-poco-agent-market-v1/src/lib.rs",
@@ -639,14 +662,16 @@
       "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m11",
       "profiles": [
         "ai-v1",
-        "pcc1"
+        "pcc1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-poco-verify-challenge-v1",
         "trnm-oracle"
       ],
       "normative_refs": [
-        "docs/protocol/poco-ai-native-v1/05-compute-receipts-verification-and-challenges.md"
+        "docs/protocol/poco-ai-native-v1/05-compute-receipts-verification-and-challenges.md",
+        "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-poco-verify-challenge-v1/src/lib.rs",
@@ -690,7 +715,8 @@
       "profiles": [
         "bft-v0",
         "ai-v1",
-        "pcc1"
+        "pcc1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-poco-consumption-settlement-v1",
@@ -698,7 +724,8 @@
       ],
       "normative_refs": [
         "docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md",
-        "docs/protocol/poco-bft-v0/05-poco-weights-bond-and-slashing.md"
+        "docs/protocol/poco-bft-v0/05-poco-weights-bond-and-slashing.md",
+        "docs/protocol/pon-nakamoto-v1/ECONOMICS.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/lib.rs",
@@ -745,7 +772,8 @@
       "profiles": [
         "bft-v0",
         "ai-v1",
-        "pcc1"
+        "pcc1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-poco-cross-plane-readback-v1",
@@ -758,7 +786,8 @@
       "normative_refs": [
         "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md",
         "docs/protocol/poco-bft-v0/06-light-client.md",
-        "docs/protocol/poco-convergence-v1/PROOF_MIGRATION.md"
+        "docs/protocol/poco-convergence-v1/PROOF_MIGRATION.md",
+        "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-state-sync-v0/src/lib.rs"
@@ -803,14 +832,16 @@
       "profiles": [
         "bft-v0",
         "ai-v1",
-        "pcc1"
+        "pcc1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-rpc",
         "trnm-cli"
       ],
       "normative_refs": [
-        "web4-frontend/docs/api-contract.md"
+        "web4-frontend/docs/api-contract.md",
+        "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-rpc/src/lib.rs"
@@ -855,7 +886,8 @@
         "bft-v0",
         "pcc1",
         "ai-v1",
-        "legacy-ledger-observation"
+        "legacy-ledger-observation",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-poco-node",
@@ -871,7 +903,8 @@
       "normative_refs": [
         "docs/architecture/TRNM_POCO_NODE_DECOMPOSITION_V1.md",
         "OPERATIONS.md",
-        "RELEASE_READINESS.md"
+        "RELEASE_READINESS.md",
+        "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs"
@@ -912,14 +945,16 @@
       "id": "M16",
       "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m16",
       "profiles": [
-        "pcc1"
+        "pcc1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-control-plane-v0"
       ],
       "normative_refs": [
         "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
-        "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
+        "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md",
+        "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-control-plane-v0/src/lib.rs"
@@ -963,7 +998,8 @@
       "profiles": [
         "bft-v0",
         "pcc1",
-        "ai-v1"
+        "ai-v1",
+        "pon-nakamoto-v1"
       ],
       "primary_crates": [
         "trnm-bench",
@@ -975,7 +1011,8 @@
       "normative_refs": [
         "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
         "docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md",
-        "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md"
+        "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+        "docs/protocol/pon-nakamoto-v1/SECURITY_ACCEPTANCE.md"
       ],
       "implementation_refs": [
         "scripts/ci/check_external_evidence_v1.py",

@@ -1,5 +1,31 @@
 # Module ownership and independent acceptance contract v1
 
+## PoN applicability and retirement
+
+Selected development profile: `pon-nakamoto-v1`. The active development sequence is
+[the sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md), not this
+retained operation supplement. PoCO consensus, validator epochs, Vote/QC/TC rules and
+finality-specific closure work below are retired target requirements; they remain
+precise legacy source/API/byte/regression references for compatibility and migration.
+No old function trace or acceptance status certifies the new work/reorg/model runtime.
+
+**M15 target linkage.** Ordinary PoN node, Hepta integration and release composition; see [M15](M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+**M17 target linkage.** Neural-work security, model efficacy and reorg evidence; see [M17](M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md) for the new state/owner/recovery/test contract.
+
+For this supplement, preserve frozen selectors and historical evidence while replacing
+active consumers with explicit PoN contracts. Use [work/fork rules](../protocol/pon-nakamoto-v1/CONSENSUS.md),
+[model contribution and composition](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md),
+[reward budgets](../protocol/pon-nakamoto-v1/ECONOMICS.md) and
+[reorg/migration](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md).
+
+## Retired PoCO implementation reference
+
+Everything below retains its original legacy profile and source scope. Old planned
+closure stages are not the new development sequence. Existing regression checks must
+remain accurate for retained code; they are neither waived nor relabelled as PoN tests.
+
+
 Status: **candidate review policy; no people appointed and no independent acceptance claimed**. Primary module: M17; consumers: every module and M15 release composition.
 
 This contract complements the sole Plan V2 and `TRNM_DOCUMENTATION_AUTHORITY_V1.md`. It does not replace protected-branch review rules, provision teams, change membership, dismiss reviews or authorize administrator bypass.
