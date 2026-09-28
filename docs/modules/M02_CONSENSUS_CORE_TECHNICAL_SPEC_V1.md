@@ -706,6 +706,28 @@ on the strength of an inert record round trip.
 
 ## Persistence and recovery
 
+### Exact anchored-ordinary payload replay
+
+An anchored ordinary recovery may need to rebuild local Synced payload
+obligations for an already-finalized signed prefix. Generic
+`Core::step(SyncedProposal)` remains idempotent at or below finality and never
+mints that authority. Only the consuming
+`StateSyncAnchorOrdinaryPayloadReplayV0` owner may replay the exact next
+proposal.
+
+The owner is constructed only after the non-cloneable anchor recovery session
+freshly authenticates the complete ordered H3-to-high-QC
+proposal/certifying-QC inventory, exact parents, heights, views, timestamps,
+signatures, durable Valid terminal facts, and the current high, locked and
+finalized cut. It has no generic `Core::step`, no caller-supplied proposal
+argument and no signing, timer, network or finality handle. Each step must emit
+exactly one Safety persistence request for one Synced obligation, and the
+application-sealed callback remains bound to the same live Core affinity.
+`confirm_complete_v0` fails unless every inventory entry, persistence barrier,
+claim, callback and durable obligation has been consumed. This is a
+crash-recovery adapter, not a network replay protocol or a production
+activation surface.
+
 M03 persists schema-14 epoch-qualified Safety plus the exact phase record as one
 local authority transaction; M08 coordinates independent application/checkpoint
 stores by intent/readback/CAS, not assumed cross-database atomicity.

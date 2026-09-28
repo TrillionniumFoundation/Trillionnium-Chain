@@ -4069,6 +4069,281 @@ fn rebuild_checkpointed_claim_v0(
 }
 
 #[test]
+fn anchored_ordinary_payload_replay_rebuilds_finalized_prefix_without_opening_network_replay_v0() {
+    let fixture = anchored_ordinary_rehydrate_fixture_v0();
+    let set = fixture.config.validator_set();
+    let parameters = fixture.config.consensus_parameters();
+    let h4 = fixture.entries[0].proposal_v0().clone();
+    let q4 = fixture.entries[0].certifying_qc_v0().clone();
+    let h5 = fixture.entries[1].proposal_v0().clone();
+    let q5 = fixture.entries[1].certifying_qc_v0().clone();
+    let h6 = proposal_with_parameters(set, parameters, q5.clone(), 6, b"payload replay h6");
+    let q6 = qc(set, 6, 6, h6.block().id());
+    let h7 = proposal_with_parameters(set, parameters, q6.clone(), 7, b"payload replay h7");
+    let q7 = qc(set, 7, 7, h7.block().id());
+    let h6_artifact = artifact_ref_for_ids(h6.block().id(), h5.block().id());
+    let h7_artifact = artifact_ref_for_ids(h7.block().id(), h6.block().id());
+    let h6_commitments = DurableValidatedBlockCommitmentsV1::from_live(
+        valid_commitments_for_config(&fixture.config, h6.block()),
+    );
+    let h7_commitments = DurableValidatedBlockCommitmentsV1::from_live(
+        valid_commitments_for_config(&fixture.config, h7.block()),
+    );
+    let mut completions = fixture.safety.payload_validation_completions().to_vec();
+    completions.extend([
+        DurablePayloadValidationCompletionV0::new(
+            PayloadValidationRouteV0::Proposal,
+            ValidationId::new(h6.block().id(), h6.block().header().view(), 14),
+            DurablePayloadValidationResultV1::Valid {
+                commitments: h6_commitments,
+                artifact_ref: h6_artifact,
+            },
+            15,
+        ),
+        DurablePayloadValidationCompletionV0::new(
+            PayloadValidationRouteV0::Proposal,
+            ValidationId::new(h7.block().id(), h7.block().header().view(), 16),
+            DurablePayloadValidationResultV1::Valid {
+                commitments: h7_commitments,
+                artifact_ref: h7_artifact,
+            },
+            17,
+        ),
+    ]);
+    completions.sort_by_key(DurablePayloadValidationCompletionV0::key);
+    let mut terminal_facts = fixture.safety.payload_terminal_facts().to_vec();
+    terminal_facts.extend([
+        PayloadTerminalFact::new_valid(h6_artifact.overlay(), 15),
+        PayloadTerminalFact::new_valid(h7_artifact.overlay(), 17),
+    ]);
+    terminal_facts.sort_by_key(|fact| fact.block_id());
+
+    let certified_h5 = CertifiedHeaderV0::from_signed_proposal(
+        h5.clone(),
+        q5.clone(),
+        set,
+        None,
+        parameters,
+        h4.block().header().timestamp_ms(),
+    )
+    .expect("certify payload replay h5");
+    let certified_h6 = CertifiedHeaderV0::from_signed_proposal(
+        h6.clone(),
+        q6.clone(),
+        set,
+        None,
+        parameters,
+        h5.block().header().timestamp_ms(),
+    )
+    .expect("certify payload replay h6");
+    let certified_h7 = CertifiedHeaderV0::from_signed_proposal(
+        h7.clone(),
+        q7.clone(),
+        set,
+        None,
+        parameters,
+        h6.block().header().timestamp_ms(),
+    )
+    .expect("certify payload replay h7");
+    let proof = FinalityProofV0::new(
+        certified_h5,
+        certified_h6,
+        certified_h7,
+        set,
+        None,
+        parameters,
+        h4.block().header().timestamp_ms(),
+    )
+    .expect("construct payload replay h5 finality proof");
+    let h4_tip = FinalizedTip::new(
+        h4.block().header().height(),
+        h4.block().header().view(),
+        h4.block().id(),
+        h4.block().header().timestamp_ms(),
+    );
+    let h5_tip = FinalizedTip::new(
+        h5.block().header().height(),
+        h5.block().header().view(),
+        h5.block().id(),
+        h5.block().header().timestamp_ms(),
+    );
+    let h5_overlay = fixture
+        .safety
+        .payload_terminal_fact(h5.block().id())
+        .and_then(PayloadTerminalFact::valid_overlay)
+        .expect("h5 retains a permanent Valid overlay");
+    let finalization = DurableFinalizationV0::new(h4_tip, proof, h5_overlay)
+        .expect("construct exact h5 finalization");
+    let safety = SafetyState::from_persisted_parts_v13(
+        fixture.safety.schema_version(),
+        fixture.safety.chain_id(),
+        fixture.safety.protocol_version(),
+        fixture.safety.epoch(),
+        fixture.safety.validator_set_id(),
+        fixture.safety.genesis_block_id(),
+        fixture
+            .safety
+            .authenticated_genesis_application_parent_v0()
+            .copied(),
+        View::new(8),
+        fixture.safety.last_voted_view(),
+        fixture.safety.last_timeout_view(),
+        QcReferenceV0::ordinary(q7.clone()),
+        QcReferenceV0::ordinary(q6.clone()),
+        h5_tip,
+        17,
+        fixture.safety.durable_observed_qcs().to_vec(),
+        terminal_facts,
+        Vec::new(),
+        completions,
+        None,
+        None,
+        None,
+        Some(finalization),
+        fixture.safety.state_sync_anchor().cloned(),
+        h5_tip,
+        Vec::new(),
+        None,
+        None,
+    );
+    Core::validate_persisted_state_v0(&fixture.config, &safety, &RootSignatures)
+        .expect("finalized h5 replay cut is a valid durable Core state");
+    let replay_entries = vec![
+        AnchoredOrdinaryPayloadReplayEntryV0::new(h4.clone(), q4),
+        AnchoredOrdinaryPayloadReplayEntryV0::new(h5.clone(), q5),
+        AnchoredOrdinaryPayloadReplayEntryV0::new(h6.clone(), q6),
+        AnchoredOrdinaryPayloadReplayEntryV0::new(h7.clone(), q7),
+    ];
+
+    let begin_session = || {
+        let bundle = Core::prepare_h1_state_sync_anchor_successor_bundle_v0(
+            &fixture.config,
+            &safety,
+            fixture.h2.clone(),
+            fixture.h3.clone(),
+            &RootSignatures,
+        )
+        .expect("prepare exact h2/h3 bundle");
+        Core::begin_state_sync_anchor_ordinary_recovery_v0(
+            fixture.config.clone(),
+            safety.clone(),
+            bundle,
+            &RootSignatures,
+        )
+        .expect("begin exact anchored ordinary recovery")
+    };
+
+    let mut generic_reconciler = ExactAnchorOrdinaryReconcilerV0 {
+        expected_state: safety.clone(),
+        expected_child: fixture.h2.clone(),
+        expected_grandchild: fixture.h3.clone(),
+        accept: true,
+        calls: 0,
+    };
+    let generic_activation = begin_session()
+        .reconcile_and_activate_v0(&mut generic_reconciler, &RootSignatures)
+        .expect("generic replay-fenced Core activates without startup authority");
+    let (mut generic, effects) = generic_activation.into_parts_v0();
+    assert!(effects.is_empty());
+    let generic_before = generic.safety_state().clone();
+    let generic_effects = generic
+        .step(Input::SyncedProposal(Box::new(h4.clone())), &RootSignatures)
+        .expect("generic finalized proposal remains an idempotent observation");
+    assert!(generic_effects
+        .iter()
+        .all(|effect| matches!(effect, Effect::PersistSafetyState(_) | Effect::Evidence(_))));
+    assert!(!generic_effects.iter().any(|effect| matches!(
+        effect,
+        Effect::ValidatePayload(_) | Effect::ValidateSyncedPayload(_)
+    )));
+    assert_eq!(
+        generic.safety_state().finalized(),
+        generic_before.finalized()
+    );
+    assert_eq!(
+        generic.safety_state().application_applied(),
+        generic_before.application_applied()
+    );
+    assert_eq!(
+        generic.safety_state().payload_validation_obligations(),
+        generic_before.payload_validation_obligations()
+    );
+    assert_eq!(
+        generic.safety_state().payload_validation_completions(),
+        generic_before.payload_validation_completions()
+    );
+    assert_eq!(
+        generic.safety_state().payload_terminal_facts(),
+        generic_before.payload_terminal_facts()
+    );
+
+    let mut replay_reconciler = ExactAnchorOrdinaryReconcilerV0 {
+        expected_state: safety.clone(),
+        expected_child: fixture.h2.clone(),
+        expected_grandchild: fixture.h3.clone(),
+        accept: true,
+        calls: 0,
+    };
+    let mut replay = begin_session()
+        .begin_signed_payload_replay_v0(
+            &mut replay_reconciler,
+            replay_entries.clone(),
+            &RootSignatures,
+        )
+        .expect("authenticated signed prefix opens one narrow replay owner");
+    let authority = replay
+        .issue_application_seal_authority_v0()
+        .expect("one payload replay application authority");
+    let initial_revision = replay.safety_state().revision();
+    for expected in replay_entries {
+        let obligation = replay
+            .step_next_proposal_v0(&RootSignatures)
+            .expect("exact next signed proposal registers one Synced obligation");
+        let (obligation_barrier, _) = persistence_effect(&obligation);
+        let released = replay
+            .step_storage_ack_v0(obligation_barrier, &RootSignatures)
+            .expect("obligation ACK releases exact payload request");
+        let request = into_validation_request(released);
+        let claimed = request
+            .try_claim()
+            .unwrap_or_else(|_| panic!("fresh payload replay request is claimable"));
+        let (route, _id, block, _parent, permit) = claimed.into_parts();
+        assert_eq!(route, PayloadValidationRouteV0::Synced);
+        assert_eq!(block.id(), expected.proposal_v0().block().id());
+        let sealed = authority.seal_after_application_store_commit_v0(
+            permit,
+            valid_commitments_for_config(&fixture.config, &block),
+            artifact_ref_for_ids(block.id(), block.header().parent_id()),
+        );
+        let accepted = replay
+            .step_application_sealed_valid_to_delivery_v0(&sealed, &RootSignatures)
+            .expect("sealed Valid result produces the exact D carrier");
+        assert!(replay
+            .step_storage_ack_v0(accepted.barrier_v0(), &RootSignatures)
+            .expect("completion ACK remains inert")
+            .is_empty());
+    }
+    replay
+        .confirm_complete_v0()
+        .expect("every signed replay entry and callback completed");
+    assert_eq!(replay_reconciler.calls, 1);
+    assert_eq!(replay.safety_state().finalized(), h5_tip);
+    assert_eq!(replay.safety_state().application_applied(), h5_tip);
+    assert_eq!(
+        replay
+            .safety_state()
+            .payload_validation_completions()
+            .iter()
+            .filter(|completion| {
+                completion.route() == PayloadValidationRouteV0::Synced
+                    && completion.first_recorded_revision() > initial_revision
+            })
+            .count(),
+        4
+    );
+}
+
+#[test]
 fn anchored_ordinary_bulk_rehydrate_is_exact_replay_fenced_and_repeatable_v0() {
     let fixture = anchored_ordinary_rehydrate_fixture_v0();
     let session =

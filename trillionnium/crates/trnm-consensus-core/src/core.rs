@@ -3246,6 +3246,37 @@ pub trait StateSyncAnchorOrdinaryRecoveryReconcilerV0 {
     ) -> bool;
 }
 
+/// Exact signed proposal/certifying-QC pair admitted only by one
+/// replay-fenced anchored-ordinary recovery session.
+///
+/// This cloneable value is inert input. It cannot open a Core, create a
+/// validation obligation, or bypass the normal finalized-prefix rule. The
+/// non-cloneable recovery session independently verifies the complete ordered
+/// chain and retains it inside a narrow replay owner before any transition is
+/// possible.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AnchoredOrdinaryPayloadReplayEntryV0 {
+    proposal: SignedProposalV0,
+    certifying_qc: QuorumCertificate,
+}
+
+impl AnchoredOrdinaryPayloadReplayEntryV0 {
+    pub fn new(proposal: SignedProposalV0, certifying_qc: QuorumCertificate) -> Self {
+        Self {
+            proposal,
+            certifying_qc,
+        }
+    }
+
+    pub const fn proposal_v0(&self) -> &SignedProposalV0 {
+        &self.proposal
+    }
+
+    pub const fn certifying_qc_v0(&self) -> &QuorumCertificate {
+        &self.certifying_qc
+    }
+}
+
 /// Untrusted archive/session envelope for one checkpoint-complete ordinary
 /// ancestry replay.
 ///
@@ -4099,6 +4130,49 @@ impl StateSyncAnchorOrdinaryRecoverySessionV0 {
         })
     }
 
+    /// Consumes the exact anchored-ordinary recovery owner into a narrow
+    /// payload-replay session for the authenticated h3 -> high-QC prefix.
+    ///
+    /// Unlike generic `Core::step(SyncedProposal)`, this owner may reproduce a
+    /// local Synced validation obligation for a proposal which is already at
+    /// or below the durable finalized tip. The exception is unavailable from
+    /// a network input: the complete ordered proposal/QC chain is first
+    /// verified against the non-cloneable recovery session, current high/lock
+    /// certificates, finalized/application tips, and retained terminal facts.
+    /// The returned wrapper exposes only the exact next proposal, its storage
+    /// acknowledgements, and the application-sealed Valid callback.
+    pub fn begin_signed_payload_replay_v0<
+        R: StateSyncAnchorOrdinaryRecoveryReconcilerV0,
+        V: SignatureVerifier,
+    >(
+        mut self,
+        reconciler: &mut R,
+        entries: Vec<AnchoredOrdinaryPayloadReplayEntryV0>,
+        verifier: &V,
+    ) -> Result<StateSyncAnchorOrdinaryPayloadReplayV0> {
+        if !reconciler.reconcile_state_sync_anchor_ordinary_v0(&self.challenge)
+            || !Arc::ptr_eq(&self.core.persistence_affinity.0, &self.challenge.affinity)
+            || self.core.safety != *self.challenge.safety_state
+        {
+            return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                "the trusted host rejected the promoted application successor closure",
+            ));
+        }
+        self.core.restore_state_sync_anchor_successor_tree_v0(
+            StateSyncAnchorSuccessorPhaseV0::H3Valid,
+            self.challenge.child.as_ref(),
+            self.challenge.grandchild.as_ref(),
+        )?;
+        self.core
+            .validate_anchored_ordinary_payload_replay_entries_v0(&entries, verifier)?;
+        self.core.validate_runtime(verifier, false)?;
+        Ok(StateSyncAnchorOrdinaryPayloadReplayV0 {
+            core: self.core,
+            entries,
+            cursor: 0,
+        })
+    }
+
     pub fn reconcile_and_activate_v0<
         R: StateSyncAnchorOrdinaryRecoveryReconcilerV0,
         V: SignatureVerifier,
@@ -4130,6 +4204,93 @@ impl StateSyncAnchorOrdinaryRecoverySessionV0 {
             core: self.core,
             effects,
         })
+    }
+}
+
+/// Narrow replay-fenced owner for the exact signed h3 -> high-QC payload
+/// prefix retained by one anchored-ordinary recovery session.
+///
+/// It intentionally has no generic `Core::step` or proposal argument. The
+/// next proposal is selected from the already authenticated ordered inventory,
+/// so copied proposal bytes or a valid alternate certificate cannot retarget
+/// the replay. Storage acknowledgements and the sealed Valid callback remain
+/// bound to the exact live Core affinity.
+#[derive(Debug)]
+#[must_use = "the signed payload replay must finish or remain durably fenced"]
+pub struct StateSyncAnchorOrdinaryPayloadReplayV0 {
+    core: Core,
+    entries: Vec<AnchoredOrdinaryPayloadReplayEntryV0>,
+    cursor: usize,
+}
+
+impl StateSyncAnchorOrdinaryPayloadReplayV0 {
+    pub const fn safety_state(&self) -> &SafetyState {
+        self.core.safety_state()
+    }
+
+    pub fn safety_state_persistence_binding_v0(&self) -> SafetyStatePersistenceBindingV0 {
+        self.core.safety_state_persistence_binding_v0()
+    }
+
+    pub fn issue_application_seal_authority_v0(
+        &self,
+    ) -> Result<CoreIssuedApplicationSealAuthorityV0> {
+        self.core.issue_application_seal_authority_v0()
+    }
+
+    pub fn step_next_proposal_v0<V: SignatureVerifier>(
+        &mut self,
+        verifier: &V,
+    ) -> Result<Vec<Effect>> {
+        let entry =
+            self.entries
+                .get(self.cursor)
+                .ok_or(CoreError::AnchoredOrdinaryRehydrateRejected(
+                    "the signed payload replay has no remaining proposal",
+                ))?;
+        let effects = self
+            .core
+            .step_anchored_ordinary_payload_replay_proposal_v0(entry, verifier)?;
+        self.cursor = self
+            .cursor
+            .checked_add(1)
+            .ok_or(CoreError::ArithmeticOverflow(
+                "anchored ordinary payload replay cursor",
+            ))?;
+        Ok(effects)
+    }
+
+    pub fn step_storage_ack_v0<V: SignatureVerifier>(
+        &mut self,
+        barrier: BarrierId,
+        verifier: &V,
+    ) -> Result<Vec<Effect>> {
+        self.core.step(Input::StorageAck { barrier }, verifier)
+    }
+
+    pub fn step_application_sealed_valid_to_delivery_v0<V: SignatureVerifier>(
+        &mut self,
+        proof: &ApplicationSealedValidV0,
+        verifier: &V,
+    ) -> Result<CoreAcceptedApplicationValidDV0> {
+        self.core
+            .step_application_sealed_valid_to_delivery_v0(proof, verifier)
+    }
+
+    pub fn confirm_complete_v0(&self) -> Result<()> {
+        if self.cursor != self.entries.len()
+            || self.core.pending_validation_count() != 0
+            || self.core.pending_persistence.is_some()
+            || self.core.awaiting_signature
+            || self.core.recovered_validation_pending.is_some()
+            || self.core.recovered_native_finalization_applied.is_some()
+            || !self.core.safety.payload_validation_obligations().is_empty()
+        {
+            return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                "signed payload replay did not consume every entry and callback",
+            ));
+        }
+        Ok(())
     }
 }
 
@@ -8480,6 +8641,214 @@ impl Core {
         Ok(effects)
     }
 
+    fn validate_anchored_ordinary_payload_replay_entries_v0<V: SignatureVerifier>(
+        &self,
+        entries: &[AnchoredOrdinaryPayloadReplayEntryV0],
+        verifier: &V,
+    ) -> Result<()> {
+        if !self.replay_required
+            || self.safety.revision() < 5
+            || self.pending_validation_count() != 0
+            || self.pending_persistence.is_some()
+            || self.awaiting_signature
+            || self.recovered_validation_pending.is_some()
+            || self.recovered_native_finalization_applied.is_some()
+            || self.safety.safety_halt().is_some()
+            || self.safety.pending_sign().is_some()
+            || self.safety.pending_finalize().is_some()
+            || self.safety.pending_finalization().is_some()
+            || self.safety.pending_tc_high_qc_sync().is_some()
+            || self.safety.pending_standalone_qc_sync().is_some()
+            || !self.safety.finalization_queue().is_empty()
+            || !self.safety.payload_validation_obligations().is_empty()
+            || self.safety.finalized() != self.safety.application_applied()
+        {
+            return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                "signed payload replay requires one stable replay-fenced cut",
+            ));
+        }
+        let required_nodes = entries
+            .len()
+            .checked_add(2)
+            .ok_or(CoreError::ArithmeticOverflow(
+                "anchored ordinary payload replay node count",
+            ))?;
+        if entries.is_empty() || required_nodes > self.config.max_blocks() {
+            return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                "signed payload replay inventory is empty or exceeds the Core bound",
+            ));
+        }
+
+        let anchor = self
+            .safety
+            .state_sync_anchor()
+            .ok_or(CoreError::StateSyncAnchorRecoveryNotRequired)?;
+        let proof = anchor.proof();
+        let h1 = proof.finalized_block().header();
+        let h2 = proof.child().header();
+        let h3 = proof.grandchild().header();
+        let finalized = self.safety.finalized();
+        let finalized_matches = |header: &BlockHeader| {
+            finalized.height() == header.height()
+                && finalized.view() == header.view()
+                && finalized.block_id() == header.id()
+                && finalized.timestamp_ms() == header.timestamp_ms()
+        };
+        let mut finalized_seen = [h1, h2, h3].into_iter().any(finalized_matches);
+        let high_qc = self.safety.high_qc().as_ordinary().ok_or(
+            CoreError::AnchoredOrdinaryRehydrateRejected(
+                "signed payload replay high-QC is not ordinary",
+            ),
+        )?;
+        let locked_qc = self.safety.locked_qc().as_ordinary().ok_or(
+            CoreError::AnchoredOrdinaryRehydrateRejected(
+                "signed payload replay locked-QC is not ordinary",
+            ),
+        )?;
+        let mut locked_seen = [
+            proof.finalized_block().certifying_qc(),
+            proof.child().certifying_qc(),
+            proof.grandchild().certifying_qc(),
+        ]
+        .into_iter()
+        .any(|certificate| certificate == locked_qc);
+        let mut previous_block_id = h3.id();
+        let mut previous_height = h3.height().get();
+        let mut previous_timestamp_ms = h3.timestamp_ms();
+        let mut previous_certificate = QcRef::from(proof.grandchild().certifying_qc());
+        let mut seen_blocks = BTreeSet::new();
+        let mut preview = self.transactional_clone_v0();
+
+        for entry in entries {
+            let proposal = entry.proposal_v0();
+            let certificate = entry.certifying_qc_v0();
+            let header = proposal.block().header();
+            let expected_height =
+                previous_height
+                    .checked_add(1)
+                    .ok_or(CoreError::ArithmeticOverflow(
+                        "anchored ordinary payload replay height",
+                    ))?;
+            if header.block_kind() != BlockKind::Regular
+                || !seen_blocks.insert(proposal.block().id())
+                || header.parent_id() != previous_block_id
+                || header.height().get() != expected_height
+                || header.timestamp_ms() <= previous_timestamp_ms
+                || proposal.witness().justify_qc().qc_ref() != previous_certificate
+                || certificate.block_id() != proposal.block().id()
+                || certificate.height() != header.height()
+                || certificate.view() != header.view()
+            {
+                return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                    "signed payload replay order or certificate coordinates differ",
+                ));
+            }
+            preview.verify_proposal(proposal, verifier)?;
+            preview.verify_ordinary_qc(certificate, verifier)?;
+            let protected = preview.protected_blocks();
+            preview
+                .blocks
+                .insert_verified_proposal(proposal, &protected)?;
+            preview.blocks.validate_certificate_binding(certificate)?;
+
+            let terminal = self
+                .safety
+                .payload_terminal_fact(proposal.block().id())
+                .ok_or(CoreError::AnchoredOrdinaryRehydrateRejected(
+                    "signed payload replay proposal lacks a durable terminal fact",
+                ))?;
+            let overlay =
+                terminal
+                    .valid_overlay()
+                    .ok_or(CoreError::AnchoredOrdinaryRehydrateRejected(
+                        "signed payload replay terminal fact is not Valid",
+                    ))?;
+            if terminal.result() != PayloadTerminalResult::Valid
+                || overlay.block_id() != proposal.block().id()
+                || overlay.parent_block_id() != previous_block_id
+            {
+                return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                    "signed payload replay terminal fact differs from the proposal chain",
+                ));
+            }
+            finalized_seen |= finalized_matches(header);
+            locked_seen |= certificate == locked_qc;
+            previous_block_id = proposal.block().id();
+            previous_height = header.height().get();
+            previous_timestamp_ms = header.timestamp_ms();
+            previous_certificate = QcRef::from(certificate);
+        }
+        if entries
+            .last()
+            .is_none_or(|entry| entry.certifying_qc_v0() != high_qc)
+            || !finalized_seen
+            || !locked_seen
+        {
+            return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                "signed payload replay does not close the durable high/lock/finalized cut",
+            ));
+        }
+        Ok(())
+    }
+
+    fn step_anchored_ordinary_payload_replay_proposal_v0<V: SignatureVerifier>(
+        &mut self,
+        entry: &AnchoredOrdinaryPayloadReplayEntryV0,
+        verifier: &V,
+    ) -> Result<Vec<Effect>> {
+        let proposal = entry.proposal_v0().clone();
+        let input = Input::SyncedProposal(Box::new(proposal.clone()));
+        self.reject_state_sync_anchor_successor_input_v0(&input)?;
+        self.reject_while_busy(&input)?;
+        self.preauthenticate_input(&input, verifier)?;
+        let previous_safety = self.safety.clone();
+        let mut next = self.transactional_clone_v0();
+        let effects =
+            next.handle_anchored_ordinary_payload_replay_proposal_v0(proposal.clone(), verifier)?;
+        next.validate_runtime(verifier, false)?;
+        next.validate_monotonic_transition(&previous_safety)?;
+
+        let [Effect::PersistSafetyState(persistence)] = effects.as_slice() else {
+            return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                "signed payload replay did not emit exactly one Safety persistence request",
+            ));
+        };
+        let expected_revision =
+            previous_safety
+                .revision()
+                .checked_add(1)
+                .ok_or(CoreError::ArithmeticOverflow(
+                    "anchored ordinary payload replay revision",
+                ))?;
+        let matching = next
+            .safety
+            .payload_validation_obligations()
+            .iter()
+            .filter(|obligation| {
+                obligation.route() == PayloadValidationRouteV0::Synced
+                    && obligation.proposal() == &proposal
+                    && obligation.id().block_id() == proposal.block().id()
+                    && obligation.first_recorded_revision() == expected_revision
+            })
+            .collect::<Vec<_>>();
+        if persistence.state() != &next.safety
+            || persistence.barrier().get() != expected_revision
+            || next.safety.revision() != expected_revision
+            || matching.len() != 1
+            || next
+                .safety
+                .payload_validation_completions()
+                .iter()
+                .any(|completion| completion.id() == matching[0].id())
+        {
+            return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                "signed payload replay persistence differs from its exact Synced obligation",
+            ));
+        }
+        *self = next;
+        Ok(effects)
+    }
+
     /// Transactional step used only by the narrow anchored-successor owner.
     /// The generic h1 entry continues to reject every non-Resume input.
     fn step_state_sync_anchor_successor_proposal_v0<V: SignatureVerifier>(
@@ -10007,6 +10376,28 @@ impl Core {
         proposal: SignedProposalV0,
         verifier: &V,
     ) -> Result<Vec<Effect>> {
+        self.handle_synced_proposal_inner_v0(proposal, verifier, false)
+    }
+
+    fn handle_anchored_ordinary_payload_replay_proposal_v0<V: SignatureVerifier>(
+        &mut self,
+        proposal: SignedProposalV0,
+        verifier: &V,
+    ) -> Result<Vec<Effect>> {
+        self.handle_synced_proposal_inner_v0(proposal, verifier, true)
+    }
+
+    fn handle_synced_proposal_inner_v0<V: SignatureVerifier>(
+        &mut self,
+        proposal: SignedProposalV0,
+        verifier: &V,
+        authenticated_historical_replay: bool,
+    ) -> Result<Vec<Effect>> {
+        if authenticated_historical_replay && !self.replay_required {
+            return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                "historical payload replay requires the durable replay fence",
+            ));
+        }
         let parent_timestamp_ms = self.verify_proposal(&proposal, verifier)?;
         let mut side_effects = Vec::new();
         if let Some(evidence) = self.observe_proposal(&proposal, parent_timestamp_ms)? {
@@ -10041,7 +10432,7 @@ impl Core {
             return Ok(effects);
         }
         let header = proposal.block().header();
-        if header.height() <= self.safety.finalized().height() {
+        if header.height() <= self.safety.finalized().height() && !authenticated_historical_replay {
             return Ok(side_effects);
         }
         if self.replay_required {
@@ -10057,10 +10448,25 @@ impl Core {
                 return Err(CoreError::StaleInput);
             }
         }
+        let ancestry_tip = if authenticated_historical_replay {
+            let anchor = self
+                .safety
+                .state_sync_anchor()
+                .ok_or(CoreError::StateSyncAnchorRecoveryNotRequired)?;
+            let header = anchor.proof().grandchild().header();
+            FinalizedTip::new(
+                header.height(),
+                header.view(),
+                header.id(),
+                header.timestamp_ms(),
+            )
+        } else {
+            self.consensus_ancestry_tip_v1()?
+        };
         match self.blocks.validate_proposal_parent(
             header,
             proposal.witness().justify_qc().qc_ref(),
-            self.consensus_ancestry_tip_v1()?,
+            ancestry_tip,
             self.config.max_block_time_step_ms(),
         ) {
             Ancestry::Descends => {}
@@ -10076,7 +10482,15 @@ impl Core {
         let protected = self.protected_blocks();
         self.blocks
             .insert_verified_proposal(&proposal, &protected)?;
-        self.restore_durable_payload_fact(proposal.block().id())?;
+        if authenticated_historical_replay {
+            if self.blocks.payload_is_known(proposal.block().id()) {
+                return Err(CoreError::AnchoredOrdinaryRehydrateRejected(
+                    "historical replay proposal already acquired volatile payload authority",
+                ));
+            }
+        } else {
+            self.restore_durable_payload_fact(proposal.block().id())?;
+        }
         if matches!(
             header.block_kind(),
             BlockKind::EpochSeal1 | BlockKind::EpochSeal2

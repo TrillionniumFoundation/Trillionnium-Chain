@@ -247,6 +247,17 @@ process-2 journal is opened. Passing this inventory check is not a restart
 capability: the journal, replay archive and each restart/recovery store must still
 reconstruct their own exact authority.
 
+The process-2 Core replay is not ordinary peer replay. Already-finalized
+proposals stay idempotent on the generic network path. Only the non-cloneable
+recovery owner minted after checking the complete signed H3-to-high-QC
+proposal/certifying-QC inventory may rebuild the local Synced payload
+obligations needed to join the application history. It selects the next entry
+from that preverified inventory and exposes no caller-supplied proposal,
+signing, timer, network or finality handle. Any missing, reordered, substituted
+or incomplete entry, parent/view/height/timestamp drift, foreign valid QC,
+missing durable Valid fact, or unconsumed persistence/callback state rejects the
+restart before Ready/Start activation.
+
 A restart campaign is accepted only when the retained transcript contains, in
 order, the reversible quiesce and stable frontier, status-75 handoff, inert
 process-2 cut, exact recovery material, resumed process-2 control and caught-up

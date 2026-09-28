@@ -179,6 +179,18 @@ zero-valued `process_start` boundary. The regression
 loss cuts and exact final replay. This does not let the default runner choose
 Ready/Start authority or create a production activation path.
 
+Before zero-delta reconciliation, process 2 now rebuilds local payload-validation
+obligations for the exact already-finalized signed H3-to-high-QC prefix. The
+generic synced-proposal path remains idempotent and cannot produce this work.
+`trnm-consensus-core` first verifies the complete ordered
+proposal/certifying-QC inventory, its high/locked/finalized cut and every
+permanent Valid terminal fact, then returns a non-cloneable replay owner with no
+generic proposal, signer, timer, network or finality surface. Missing,
+reordered, substituted or incomplete inventory, a foreign quorum subset,
+parent/timestamp drift, an unconsumed callback or a remaining durable
+obligation fails closed before the recovered Core can bind the application and
+checkpoint stores. Copied archive bytes cannot select another replay path.
+
 The explicit candidate process-host continuation now consumes the exact recovered
 signer/Core/application owner into the non-cloneable
 `PocoNodeDeployedLabRecoveredProcessHostAuthorityV1`. Core's unique startup timer

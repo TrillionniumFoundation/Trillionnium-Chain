@@ -16,12 +16,13 @@ use sha2::{Digest, Sha256};
 use trnm_consensus_core::{
     decode_safety_state_record_v0_exact, encode_safety_state_record_v0,
     AnchoredOrdinaryArmViewTimerV0, AnchoredOrdinaryCheckpointedLinkClaimV0,
-    AnchoredOrdinaryRehydrateChallengeV0, AnchoredOrdinaryRehydrateReconcilerV0,
-    AnchoredOrdinaryRehydratedOwnerV0, AnchoredOrdinaryReplayArchivePlanV0,
-    AnchoredOrdinarySignedReplayEntryV0, BlockIdOverlayRefV0, Core,
-    CoreAcceptedApplicationValidDV0, CoreConfig, Effect, Input, PayloadValidationRouteV0,
-    SafetyState, SafetyStateRecordContextV0, StateSyncAnchorOrdinaryRecoveryChallengeV0,
-    StateSyncAnchorOrdinaryRecoveryReconcilerV0, ValidatedPayloadArtifactRefV0, ValidationId,
+    AnchoredOrdinaryPayloadReplayEntryV0, AnchoredOrdinaryRehydrateChallengeV0,
+    AnchoredOrdinaryRehydrateReconcilerV0, AnchoredOrdinaryRehydratedOwnerV0,
+    AnchoredOrdinaryReplayArchivePlanV0, AnchoredOrdinarySignedReplayEntryV0, BlockIdOverlayRefV0,
+    Core, CoreAcceptedApplicationValidDV0, CoreConfig, Effect, PayloadValidationRouteV0,
+    SafetyState, SafetyStateRecordContextV0, StateSyncAnchorOrdinaryPayloadReplayV0,
+    StateSyncAnchorOrdinaryRecoveryChallengeV0, StateSyncAnchorOrdinaryRecoveryReconcilerV0,
+    ValidatedPayloadArtifactRefV0, ValidationId,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_safety_store::{
@@ -3425,8 +3426,22 @@ where
         existing_inventory.as_ref(),
     )?;
     trigger_test_crash_v0(crash_hook, Process2CrashHookV0::SessionOpened)?;
-    let (mut core, child, grandchild) =
-        recover_initial_replay_core_v0(&core_config, initial_safety.clone(), child, grandchild)?;
+    let core_replay_entries = entries
+        .iter()
+        .map(|entry| {
+            AnchoredOrdinaryPayloadReplayEntryV0::new(
+                entry.proposal_v0().clone(),
+                entry.certificate_v0().clone(),
+            )
+        })
+        .collect();
+    let (mut core, child, grandchild) = recover_initial_replay_core_v0(
+        &core_config,
+        initial_safety.clone(),
+        child,
+        grandchild,
+        core_replay_entries,
+    )?;
     process2_try!(
         "safety.bind_core",
         safety_store.bind_core_v0(core.safety_state_persistence_binding_v0())
@@ -3455,10 +3470,7 @@ where
         let before = core.safety_state().clone();
         let effects = process2_try!(
             "core.synced_proposal",
-            core.step(
-                Input::SyncedProposal(Box::new(entry.proposal_v0().clone())),
-                &StrictEd25519Verifier,
-            )
+            core.step_next_proposal_v0(&StrictEd25519Verifier)
         );
         let obligation = exact_persistence_effect_v0(effects, "core.synced_obligation")?;
         if cursor >= already_checkpointed
@@ -3473,12 +3485,7 @@ where
         }
         let request_effects = process2_try!(
             "core.synced_obligation_ack",
-            core.step(
-                Input::StorageAck {
-                    barrier: obligation.barrier(),
-                },
-                &StrictEd25519Verifier,
-            )
+            core.step_storage_ack_v0(obligation.barrier(), &StrictEd25519Verifier)
         );
         let request = match request_effects.as_slice() {
             [Effect::ValidateSyncedPayload(request)] => request.clone(),
@@ -3568,12 +3575,7 @@ where
             )?;
             let effects = process2_try!(
                 "core.prior_completion_ack",
-                core.step(
-                    Input::StorageAck {
-                        barrier: accepted.barrier_v0(),
-                    },
-                    &StrictEd25519Verifier,
-                )
+                core.step_storage_ack_v0(accepted.barrier_v0(), &StrictEd25519Verifier)
             );
             require_no_authority_effects_v0(&effects, "core.prior_completion_ack")?;
             continue;
@@ -3602,15 +3604,11 @@ where
         )?;
         let effects = process2_try!(
             "core.completion_ack",
-            core.step(
-                Input::StorageAck {
-                    barrier: accepted.barrier_v0(),
-                },
-                &StrictEd25519Verifier,
-            )
+            core.step_storage_ack_v0(accepted.barrier_v0(), &StrictEd25519Verifier)
         );
         require_no_authority_effects_v0(&effects, "core.completion_ack")?;
     }
+    process2_try!("core.replay_complete", core.confirm_complete_v0());
     let (complete_expected_count, final_progress) = match frontier {
         Process2FrontierV0::Complete(value) => (
             value.expected_count_v0(),
@@ -4742,9 +4740,10 @@ fn recover_initial_replay_core_v0(
     safety: SafetyState,
     child: trnm_consensus_types::SignedProposalV0,
     grandchild: trnm_consensus_types::SignedProposalV0,
+    entries: Vec<AnchoredOrdinaryPayloadReplayEntryV0>,
 ) -> Result<
     (
-        Core,
+        StateSyncAnchorOrdinaryPayloadReplayV0,
         trnm_consensus_types::SignedProposalV0,
         trnm_consensus_types::SignedProposalV0,
     ),
@@ -4775,21 +4774,14 @@ fn recover_initial_replay_core_v0(
         grandchild: grandchild.clone(),
         calls: 0,
     };
-    let activation = process2_try!(
+    let core = process2_try!(
         "core.initial_reconcile",
-        session.reconcile_and_activate_v0(&mut reconciler, &StrictEd25519Verifier)
+        session.begin_signed_payload_replay_v0(&mut reconciler, entries, &StrictEd25519Verifier,)
     );
-    if reconciler.calls != 1 || !activation.effects().is_empty() {
+    if reconciler.calls != 1 {
         return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
-            "core.initial_effects",
-            "process2 initial Core emitted startup authority",
-        ));
-    }
-    let (core, effects) = activation.into_parts_v0();
-    if !effects.is_empty() {
-        return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
-            "core.initial_effects",
-            "process2 retained a startup effect",
+            "core.initial_reconciler_calls",
+            "process2 initial Core reconciler was not called exactly once",
         ));
     }
     Ok((core, child, grandchild))
