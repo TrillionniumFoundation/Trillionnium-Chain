@@ -144,5 +144,89 @@ class FeatureClosureTests(unittest.TestCase):
             self.validate()
 
 
+class CargoModuleGraphTests(unittest.TestCase):
+    def fixture(self):
+        import cargo_module_graph_v1 as graph
+        self.graph = graph
+        def package(name, deps):
+            return {"id": name, "name": name, "dependencies": [
+                {"name": target, "kind": kind, "optional": optional, "target": predicate}
+                for target, kind, optional, predicate in deps]}
+        packages = [package("a", [("b", None, False, None)]),
+                    package("b", [("c", None, False, None)]), package("c", [])]
+        nodes = [{"id": p["id"], "features": [], "deps": [
+            {"name": d["name"], "pkg": d["name"],
+             "dep_kinds": [{"kind": d["kind"], "target": d["target"]}]}
+            for d in p["dependencies"]]} for p in packages]
+        metadata = {"workspace_members": ["a", "b", "c"], "packages": packages,
+                    "resolve": {"nodes": nodes}}
+        coverage = {"module_coverage": [{"id": "M00", "primary_crates": ["a", "c"]},
+                                       {"id": "M01", "primary_crates": ["b"]}]}
+        registry = {"modules": [{"id": "M00", "allowed_module_dependencies": ["M01"]},
+                                {"id": "M01", "allowed_module_dependencies": ["M00"]}]}
+        return metadata, coverage, registry
+
+    def test_quotient_cycle_is_not_a_crate_cycle(self):
+        args = self.fixture(); report = self.graph.analyze(*args)
+        self.assertEqual(report["normal_crate_cycles"], [])
+        self.assertEqual(report["module_quotient_cycles"], [["M00", "M01"]])
+        self.assertFalse(report["module_architecture_satisfied"])
+        self.assertEqual(report["module_edges"][0]["witnesses"][0]["source"], "a")
+
+    def test_unknown_or_duplicate_coverage_rejects(self):
+        for bad in ("unknown", "duplicate", "missing"):
+            metadata, coverage, registry = self.fixture()
+            if bad == "unknown": coverage["module_coverage"][0]["id"] = "M99"
+            elif bad == "duplicate": coverage["module_coverage"][1]["primary_crates"].append("a")
+            else: coverage["module_coverage"][0]["primary_crates"].remove("c")
+            with self.assertRaises(self.graph.GraphError):
+                self.graph.analyze(metadata, coverage, registry)
+
+    def test_undeclared_edge_has_exact_crate_witness(self):
+        metadata, coverage, registry = self.fixture()
+        registry["modules"][1]["allowed_module_dependencies"] = []
+        report = self.graph.analyze(metadata, coverage, registry)
+        self.assertEqual(len(report["undeclared_normal_module_edges"]), 1)
+        edge = report["undeclared_normal_module_edges"][0]
+        self.assertEqual((edge["source"], edge["target"]), ("M01", "M00"))
+        self.assertEqual(edge["witnesses"][0]["target"], "c")
+
+    def test_real_cycle_and_self_loop_detected(self):
+        self.fixture()
+        self.assertEqual(self.graph.components({"a", "b"}, [
+            {"source":"a","target":"b"},{"source":"b","target":"a"}]), [["a", "b"]])
+        self.assertEqual(self.graph.components({"a"}, [{"source":"a","target":"a"}]), [["a"]])
+
+    def test_dev_build_and_inactive_optional_are_not_normal_runtime_edges(self):
+        for kind in ("dev", "build"):
+            metadata, coverage, registry = self.fixture()
+            metadata["packages"][1]["dependencies"][0]["kind"] = kind
+            metadata["resolve"]["nodes"][1]["deps"][0]["dep_kinds"][0]["kind"] = kind
+            metadata["packages"][2]["dependencies"].append(
+                {"name":"a", "kind":None, "optional":True, "target":'cfg(windows)'})
+            report = self.graph.analyze(metadata, coverage, registry)
+            self.assertEqual(report["normal_crate_cycles"], [])
+            self.assertEqual(report["module_quotient_cycles"], [])
+            self.assertTrue(any(e["kind"]==kind for e in report["resolved_edges"]))
+            self.assertTrue(any(e["optional"] and e["target_predicate"]=='cfg(windows)'
+                                for e in report["declared_edges"]))
+            self.assertEqual(len(report["resolved_edges"]), 2)
+
+    def test_dependency_rename_keeps_package_identity(self):
+        metadata, coverage, registry = self.fixture()
+        metadata["packages"][0]["dependencies"][0]["rename"] = "renamed-port"
+        metadata["resolve"]["nodes"][0]["deps"][0]["name"] = "renamed_port"
+        report = self.graph.analyze(metadata, coverage, registry)
+        self.assertEqual(report["resolved_edges"][0]["target"], "b")
+
+    def test_metadata_without_resolution_or_forged_dependency_refuses(self):
+        for bad in ("missing", "forged", "wrong-target"):
+            args = self.fixture(); metadata = args[0]
+            if bad=="missing": metadata["resolve"] = None
+            elif bad=="forged": metadata["resolve"]["nodes"][0]["deps"][0]["pkg"] = "phantom"
+            else: metadata["resolve"]["nodes"][0]["deps"][0]["dep_kinds"][0]["target"] = 'cfg(windows)'
+            with self.assertRaises(self.graph.GraphError): self.graph.analyze(*args)
+
+
 if __name__ == "__main__":
     unittest.main()

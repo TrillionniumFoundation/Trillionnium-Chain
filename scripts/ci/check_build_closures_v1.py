@@ -358,6 +358,10 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="compare the static resolver with Cargo's locked offline dependency tree",
     )
+    parser.add_argument("--audit-module-graph", action="store_true",
+                        help="report real host-target Cargo metadata and module edge witnesses")
+    parser.add_argument("--require-module-architecture", action="store_true",
+                        help="also fail for undeclared module edges or crate/module SCCs")
     return parser.parse_args()
 
 
@@ -599,6 +603,16 @@ def main() -> int:
         "release_ready": False,
         "result": "PASS",
     }
+    if args.audit_module_graph or args.require_module_architecture or args.verify_cargo_tree:
+        from cargo_module_graph_v1 import collect, GraphError
+        try:
+            report["module_graph"] = collect(ROOT)
+        except (GraphError, OSError, ValueError, KeyError, TypeError) as error:
+            raise ClosureError(f"Cargo module graph assessment failed: {error}") from error
+        if args.require_module_architecture and not report["module_graph"]["module_architecture_satisfied"]:
+            report["result"] = "FAIL"
+            print(json.dumps(report, indent=2, sort_keys=True))
+            return 2
     print(json.dumps(report, indent=2, sort_keys=True))
     return 0
 

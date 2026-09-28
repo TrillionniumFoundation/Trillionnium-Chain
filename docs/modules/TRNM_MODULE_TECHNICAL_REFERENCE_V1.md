@@ -686,3 +686,23 @@ authenticated accepted evidence. Maintainer routing is not independent review;
 vacant specialist roles and unaccepted vectors remain visible blockers.
 Production and activation remain governed solely by machine truth, protected
 review, external evidence and signed governance records.
+
+## Cargo graph and module quotient assessment
+
+The existing build-closure command can also consume real locked/offline Cargo
+metadata for the host target. It retains normal, dev and build dependencies,
+optional declarations, target predicates and resolved feature names separately.
+A module quotient contracts multiple crates into one Mxx bucket; a cycle there
+is not evidence of a normal Cargo cycle. In particular a pure rule and its
+storage adapter may belong to one module but have different dependency roles.
+The audit reports exact source/destination crate witnesses for every undeclared
+module edge and every quotient edge. No existing edge is silently whitelisted.
+`--require-module-architecture` emits its report and fails when actual normal
+crate cycles, undeclared normal module edges, unknown/ambiguous module membership
+or module quotient cycles violate the declared registry. `--audit-module-graph`
+reports those gaps without pretending build-closure qualification is architecture
+acceptance. The existing per-product Cargo-tree feature comparisons remain the
+authority for production composition; workspace metadata uses unified workspace
+features and must not be labeled as an individual binary's feature graph.
+Manifest/lock/registry bytes are checked before and after collection. No metadata
+result changes a runtime capability, source module ownership or release flag.
