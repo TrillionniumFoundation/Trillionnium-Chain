@@ -843,6 +843,16 @@ impl<S: FleetRootAuthoritySignerV1> DurableFleetRootSignerAuthorityV1<S> {
     }
 }
 
+impl<S> Drop for DurableFleetRootSignerAuthorityV1<S> {
+    fn drop(&mut self) {
+        // Release the process-owned namespace deterministically before a
+        // successor owner attempts to authenticate the durable head. Relying
+        // only on descriptor close made same-host handoff observation depend
+        // on platform/runtime descriptor-drop timing under parallel tests.
+        let _ = FileExt::unlock(&self._lock);
+    }
+}
+
 fn ensure_private_directory(path: &Path) -> Result<(), FleetRootAuthorityErrorV1> {
     let metadata = fs::symlink_metadata(path).map_err(|source| FleetRootAuthorityErrorV1::Io {
         stage: "stat authority directory",
