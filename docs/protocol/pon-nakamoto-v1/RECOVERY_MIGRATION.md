@@ -89,3 +89,10 @@ application stores need a new branch/undo adapter, not renamed monotonic finalit
 Future tests must cover shorter-higher-work chains, deep reorg across maturity/model
 adoption/nonce reuse, every crash cut, orphaned external effects, wrong-genesis import,
 omitted escrow/retention and rejection of historical proof substitution.
+
+## Executed reference storage protocol
+
+[S1](details/STATE_RECOVERY.md) now gives exact tables, owner locks, before/after values,
+shadow generations, publication transaction and eight actual child-process crash cuts.
+The Python ledger is an executable design oracle; existing native local task stores are
+not claimed to have become a qualified native chain/reorganization implementation.

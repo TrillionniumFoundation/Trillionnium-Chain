@@ -63,6 +63,11 @@ jobs:
       - name: Install pinned compiler and tools in isolated hosted runner
         run: |
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Install isolated conformance-only Python environment
+        run: |
+          python3 -m venv "$RUNNER_TEMP/pon-contract-env"
+          "$RUNNER_TEMP/pon-contract-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+          echo "$RUNNER_TEMP/pon-contract-env/bin" >> "$GITHUB_PATH"
       - name: Run actual protocol-contract checks
         run: bash scripts/ci/ci_job.sh protocol-contract
       - name: Verify source remained unchanged

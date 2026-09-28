@@ -1,68 +1,105 @@
-# M14 Proof-aware clients, shared model discovery and free inference — PoN technical contract
+# M14 Client currentness, model loading and user results
 
-Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
-Status: new development contract; runtime, work-security and independent acceptance are not implied.
-Primary module: M14; actual source ownership is in `config/portability-inventory-v1.json`.
-
-The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [PoN domain contract](../protocol/pon-nakamoto-v1/MODEL_COMMONS.md) govern new work.
-Logical interface names below are proposed contracts, not claims that matching Rust APIs,
-wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
+Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
+[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
+This module has detailed procedures and executable reference coverage, not an independently
+accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets ordering. [NETWORK_CLIENT.md](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md) defines exact shared rules.
 
 ## PoN Authority
 
-Own non-authoritative RPC/indexer/SDK/CLI and public model-use surfaces. User-visible states are
-submitted, included, policy-confirmed, reorged and adopted-under-profile, not unconditional
-finalized. A UI cannot elevate an attestation into a work or local authority proof.
+Read active pointer and generation kv in one snapshot and recompute root; return no unconditional finalized flag. A production confirmation adds depth/work evidence and freshness; localhost ACK is not independent proof.
+
+This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
+passing document check to grant work validity, model utility, local execution permission
+or production activation. Every consumer must use the specific verified fact it needs.
+Native component reuse and executable-contract integration are reported separately.
 
 ## PoN Interfaces
 
-GetPoNCapabilities; SubmitContribution; QueryConfirmation; SubscribeReorg; DiscoverModelRelease;
-DownloadExactBundle; RequestSponsoredInference; QueryReward. Return chain/profile, exact
-artifact/release, observed tip, generation, evidence class, freshness and bounds.
+| Operation | Exact logical inputs | Output and authority boundary |
+|---|---|---|
+| `QueryCurrentState` | active generation and optional event cursor | tip,root,generation and branch-relative status |
+| `ConsumePublishedModel` | expectedartifact/family,quota,input,local permission | bound inference result and optional signedusage receipt |
+
+The named signatures define domain contracts. Source bindings below identify which are
+implemented natively, in the executable Python specification, or only by reusable
+components. The names do not assert matching deployed Rust service APIs.
 
 ## PoN State machine
 
-Read the verified active-chain view and index contiguous add/remove events idempotently. Verify
-confirmations/inclusion through M13, expose reorg and stale observations, and refuse unknown
-proof classes. Serve reproducible release manifests and parameter bytes through M09. Bind each
-inference request to a supported deployment profile and reserved free quota; do not hide missing
-experts or mutable backend switches.
+### M14.QueryCurrentState
+
+Read active pointer and generation kv in one snapshot and recompute root; return no unconditional finalized flag. A production confirmation adds depth/work evidence and freshness; localhost ACK is not independent proof.
+
+**Commit point:** Indexer is derived; cursor(generation,ordinal), no new balanceauthority.
+
+**Rejections:** `ROOT, UNAVAILABLE`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
+
+### M14.ConsumePublishedModel
+
+Fetch exact canonical artifact, check all fields/shapes; execute integer router/base/expert; persist actual model/request identity before usage settlement. No data export follows automatically from free usage.
+
+**Commit point:** Local modelgeneration and effect owner remain Hepta responsibilities.
+
+**Rejections:** `FAMILY, SHAPE, ARTIFACT_CANONICAL_BYTES, SIGNATURE`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
 
 ## PoN Persistence and recovery
 
-Indexer/cache/projection is rebuildable and never authoritative for balances or adoption. Reorg
-updates remove/add entries atomically by generation. Persist client requests and exact returned
-model identity when needed; a retry cannot turn a past execution into a fresh free request
-silently.
+**M14.QueryCurrentState:** Indexer is derived; cursor(generation,ordinal), no new balanceauthority.
+
+**M14.ConsumePublishedModel:** Local modelgeneration and effect owner remain Hepta responsibilities.
+
+Branch-derived entitlement can be detached. Independent local effect/revocation facts
+cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
+A native implementation must reproduce byte/root/recovery vectors before replacing the
+reference path. No old consensus namespace or decoder is restored.
 
 ## PoN Resource bounds
 
-Bound queries/pages/proof bytes/model-download rates/free queues and response sizes. Report
-honest queue/availability/partial-coverage states. Local model download is free under accepted
-policy; hosted compute remains capacity/funding limited.
+**M14.QueryCurrentState:** responsebounded; socket10seconds in executableharness.
+
+**M14.ConsumePublishedModel:** 65536artifactbytes experimental; no reducedmodel hidden behind fullprofile.
+
+The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
+work, model and ledger profile. Limit changes require a new context. Local backpressure
+may reject service or defer data but cannot fabricate accepted block/evaluation facts.
 
 ## PoN Security
 
-False green finality, outdated adopted model, source/payload swapping, quota farming, metadata
-privacy leakage and unsafe loader. Do not infer training/export permission from using a free
-endpoint or carrying a valid chain receipt.
+The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
+cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
+experimental partitions; they are not independent future-window evidence. SQLite process
+crashes are not physical power-loss qualification. These limitations remain explicit in
+[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
 
 ## PoN Verification and evidence
 
-SDK independently checks new proof classes, reorged rewards/model pointers, incomplete bundles,
-author offline, reduced deployment profile labeling, stale cache, free-tier overload and exact
-inference model binding.
+- `CodecTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+- `ExecutionTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
 
-## Source disposition
+```bash
+python3 formal/pon-nakamoto-v1/test_contracts.py
+CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+```
 
-Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
-The old consensus/runtime/protocol artifacts are deleted from the active tree and are
-recoverable only from Git history. This module target is not automatically implemented
-by the retained components; ordinary PoN mining, proof verification and reorg remain
-explicit future implementation work. Retained local monotonic stores are not yet
-branch-aware reorg stores and cannot be advertised as chain-finality authorities.
+Build native examples before the interop command; missing binaries cause failure, not
+a skipped pass. Fixtures are never regenerated by test execution. Independently written
+third-party vectors and acceptance remain future evidence, not an assumed status.
 
 ## Current source and verification
 
-No native implementation is retained for this domain. A contract is not a runnable consensus or reorg implementation.
+- [`formal/pon-nakamoto-v1/experiments/model_loop.py`](../../formal/pon-nakamoto-v1/experiments/model_loop.py)
+- [`formal/pon-nakamoto-v1/experiments/local_network.py`](../../formal/pon-nakamoto-v1/experiments/local_network.py)
+
+No native product package is implemented for this owner. The executable specification
+is the shared design oracle; do not report it as an installed production node.
+
+## Maturity and outstanding integration
+
+Documented: yes. Executable contract: yes. Native component presence is enumerated above.
+Native ordinary-product integration: no. Independent acceptance: no. Production activation:
+no. Those axes are independent; a component-level pass does not promote the entire module.

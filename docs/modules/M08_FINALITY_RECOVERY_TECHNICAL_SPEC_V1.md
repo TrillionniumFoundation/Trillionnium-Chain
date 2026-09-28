@@ -1,68 +1,103 @@
-# M08 Probabilistic confirmations, reorg coordination and recovery — PoN technical contract
+# M08 Generation-atomic reorg and coherent confirmation
 
-Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
-Status: new development contract; runtime, work-security and independent acceptance are not implied.
-Primary module: M08; actual source ownership is in `config/portability-inventory-v1.json`.
-
-The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [PoN domain contract](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md) govern new work.
-Logical interface names below are proposed contracts, not claims that matching Rust APIs,
-wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
+Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
+[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
+This module has detailed procedures and executable reference coverage, not an independently
+accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets ordering. [STATE_RECOVERY.md](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md) defines exact shared rules.
 
 ## PoN Authority
 
-Own realization of M02 preferred-branch decisions, consistent confirmation views and recovery
-publication. It does not invent finality, select a second fork or use a QC to lock PoN history.
-Local policy confirmations remain reversible.
+Find common ancestor; detach descending old branch and attach ascending new branch. Copy old generation to fresh staging generation and commit exact intent/position0. If pending, resume the same intent before new work.
+
+This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
+passing document check to grant work validity, model utility, local execution permission
+or production activation. Every consumer must use the specific verified fact it needs.
+Native component reuse and executable-contract integration are reported separately.
 
 ## PoN Interfaces
 
-PlanReorg; PersistReorgIntent; DetachOldBranch; AttachNewBranch; PublishActiveTip;
-GetConfirmationReceipt; ReconcileOrphanedEffects. Receipts bind observed tip, included block,
-depth, work delta, policy and active generation.
+| Operation | Exact logical inputs | Output and authority boundary |
+|---|---|---|
+| `PlanReorg` | old/new validated tips and active generation | durable ordered detach/attach intent |
+| `RecoverAndPublish` | persisted intent,position,staged generation | new coherent active root and unique events |
+
+The named signatures define domain contracts. Source bindings below identify which are
+implemented natively, in the executable Python specification, or only by reusable
+components. The names do not assert matching deployed Rust service APIs.
 
 ## PoN State machine
 
-Accept only a bound M02 branch decision with all dependencies valid. Determine common ancestor
-and ordered detach/attach, persist intent, apply through M06/M07, verify roots, atomically
-publish active generation, then send idempotent index/outbox changes. Recompute confirmations
-and reward maturity. Crossing a local threshold never turns a valid deeper reorg into invalid
-consensus.
+### M08.PlanReorg
+
+Find common ancestor; detach descending old branch and attach ascending new branch. Copy old generation to fresh staging generation and commit exact intent/position0. If pending, resume the same intent before new work.
+
+**Commit point:** BEGIN IMMEDIATE: staged kv+reorg row; public active unchanged.
+
+**Rejections:** `UNKNOWN_PARENT, GENERATION, REORG_IN_PROGRESS`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
+
+### M08.RecoverAndPublish
+
+Apply each step+cursor atomically with expected-value checks; verify full target root; publish active pointer, ordered events and done atomically. Repeat recovery is idempotent; local external facts are not undone.
+
+**Commit point:** Eight named process-crash cuts; read transaction sees whole old or new generation.
+
+**Rejections:** `UNDO_ROOT, ROOT, GENERATION`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
 
 ## PoN Persistence and recovery
 
-One Node Commit Ledger-style owner coordinates the exact reorg. Reopen by matching predecessor,
-intent, old/new roots and durable readback. Unknown commit/ack remains fenced. M03/Hepta effect
-and revocation histories are joined for reconciliation, not rolled back. Keep historical
-model-output identity.
+**M08.PlanReorg:** BEGIN IMMEDIATE: staged kv+reorg row; public active unchanged.
+
+**M08.RecoverAndPublish:** Eight named process-crash cuts; read transaction sees whole old or new generation.
+
+Branch-derived entitlement can be detached. Independent local effect/revocation facts
+cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
+A native implementation must reproduce byte/root/recovery vectors before replacing the
+reference path. No old consensus namespace or decoder is restored.
 
 ## PoN Resource bounds
 
-Bound reorg staging, undo load, catch-up service and publication queues. Admit recovery
-downloads before ordinary service when necessary; preserve deadlines and explicit backpressure.
-Missing deep undo requests authenticated sync.
+**M08.PlanReorg:** bounded retained ancestry; no local depth as permanent finality.
+
+**M08.RecoverAndPublish:** event cursor(generation,ordinal), exactly one writer.
+
+The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
+work, model and ledger profile. Limit changes require a new context. Local backpressure
+may reject service or defer data but cannot fabricate accepted block/evaluation facts.
 
 ## PoN Security
 
-False finalized labels, stale confirmation replay, partial mixed-generation RPC, branch swap
-with same height, automatic external replay and poisoned model rollback. Compensation is a newly
-authorized action with explicit risk, not a fiction of exactly-once external execution.
+The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
+cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
+experimental partitions; they are not independent future-window evidence. SQLite process
+crashes are not physical power-loss qualification. These limitations remain explicit in
+[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
 
 ## PoN Verification and evidence
 
-Deep reorg after payout/model use, crashes during all stages, index ACK loss, failed
-replacement, unavailable ancestors, isolated client views, local revoke retained and
-authoritative query of already executed remote effects.
+- `DiskReorgTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
 
-## Source disposition
+```bash
+python3 formal/pon-nakamoto-v1/test_contracts.py
+CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+```
 
-Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
-The old consensus/runtime/protocol artifacts are deleted from the active tree and are
-recoverable only from Git history. This module target is not automatically implemented
-by the retained components; ordinary PoN mining, proof verification and reorg remain
-explicit future implementation work. Retained local monotonic stores are not yet
-branch-aware reorg stores and cannot be advertised as chain-finality authorities.
+Build native examples before the interop command; missing binaries cause failure, not
+a skipped pass. Fixtures are never regenerated by test execution. Independently written
+third-party vectors and acceptance remain future evidence, not an assumed status.
 
 ## Current source and verification
 
-No native implementation is retained for this domain. A contract is not a runnable consensus or reorg implementation.
+- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
+
+No native product package is implemented for this owner. The executable specification
+is the shared design oracle; do not report it as an installed production node.
+
+## Maturity and outstanding integration
+
+Documented: yes. Executable contract: yes. Native component presence is enumerated above.
+Native ordinary-product integration: no. Independent acceptance: no. Production activation:
+no. Those axes are independent; a component-level pass does not promote the entire module.

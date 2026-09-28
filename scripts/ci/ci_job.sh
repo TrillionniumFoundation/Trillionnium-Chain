@@ -9,6 +9,10 @@ case "${1:?required job}" in
     ;;
   protocol-contract)
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
+    cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives --examples
+    python3 formal/pon-nakamoto-v1/test_contracts.py
+    TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
     ;;
   fuzz-smoke)
     python3 scripts/ci/test_repository.py

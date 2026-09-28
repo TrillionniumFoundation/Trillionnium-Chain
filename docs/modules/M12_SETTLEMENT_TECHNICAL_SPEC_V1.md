@@ -1,70 +1,103 @@
-# M12 Mining rewards, model contribution allocation and free-use budgets — PoN technical contract
+# M12 Finite reward, service fees and free-use conservation
 
-Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
-Status: new development contract; runtime, work-security and independent acceptance are not implied.
-Primary module: M12; actual source ownership is in `config/portability-inventory-v1.json`.
-
-The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [PoN domain contract](../protocol/pon-nakamoto-v1/ECONOMICS.md) govern new work.
-Logical interface names below are proposed contracts, not claims that matching Rust APIs,
-wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
+Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
+[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
+This module has detailed procedures and executable reference coverage, not an independently
+accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets ordering. [LEDGER_WIRE.md](../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md) defines exact shared rules.
 
 ## PoN Authority
 
-Own deterministic asset accounting and three separate economic responsibilities: mining reward
-maturity, adopted-model gain rewards and actual serving/evaluation/storage payment.
-Consumption-derived voting power and validator-weight phases are retired from the target.
+Check maturity, ownership, unclaimed leaf and exact proofdepth; verify root; pay floor(originalbudget*score/acceptedtotal); mark nullifier and decrement remaining. New transactionnonce cannot replay a claimed contribution.
+
+This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
+passing document check to grant work validity, model utility, local execution permission
+or production activation. Every consumer must use the specific verified fact it needs.
+Native component reuse and executable-contract integration are reported separately.
 
 ## PoN Interfaces
 
-RecordTentativeMiningReward; MatureReward; ClaimAllocation; ReserveModelBudget;
-AllocateContributionGain; ReservePublicInferenceBudget; SettleService; ReorgEntitlement. Every
-operation binds asset, branch, predecessor, task/release and deduplication identity.
+| Operation | Exact logical inputs | Output and authority boundary |
+|---|---|---|
+| `ClaimContributionReward` | release,cid,acceptedscore,exactproof,owner,nonce | bounded payment or reject |
+| `ConsumeSponsoredQuota` | quota,provider signedtx,consumer signature,units,result | quota decrement,provider credit less fee |
+
+The named signatures define domain contracts. Source bindings below identify which are
+implemented natively, in the executable Python specification, or only by reusable
+components. The names do not assert matching deployed Rust service APIs.
 
 ## PoN State machine
 
-Apply fixed genesis/profile issuance, fee and maturity rules only for active valid-chain blocks.
-Unlock a bounded model pool only for credible whole-model improvement under the locked plan;
-zero gain pays zero. Allocate accepted nonnegative contribution scores using exact floor
-arithmetic and retain dust. Root work has one budget across parents/experts/cells. Fund and
-reserve bounded public inference before service, separately accounting tokens and in-kind
-resources.
+### M12.ClaimContributionReward
+
+Check maturity, ownership, unclaimed leaf and exact proofdepth; verify root; pay floor(originalbudget*score/acceptedtotal); mark nullifier and decrement remaining. New transactionnonce cannot replay a claimed contribution.
+
+**Commit point:** Reward and account mutations are branch state; external delivery is independent.
+
+**Rejections:** `AUTHORITY, ROOT, DUPLICATE, STATE, FUNDS`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
+
+### M12.ConsumeSponsoredQuota
+
+Verify bound provider, deadline, positiveunits, prepaidfunds and consumer signature over provider nonce. Debit prepaid units*1024, pay fee and provider, leave consumer balance untouched. It does not imply learning/export permission.
+
+**Commit point:** Atomic nativecommand transition; effects journal separately records actual delivery.
+
+**Rejections:** `SIGNATURE, AUTHORITY, EXPIRED, LIMIT, FUNDS`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
 
 ## PoN Persistence and recovery
 
-Account balances, claim nullifiers, subsidy maturity and release entitlement revert with branch
-state. Actual off-chain delivery/payout observations do not. Reconcile orphaned external effects
-under a declared policy before reissuing; SQL rollback does not recover money or undo an API
-call.
+**M12.ClaimContributionReward:** Reward and account mutations are branch state; external delivery is independent.
+
+**M12.ConsumeSponsoredQuota:** Atomic nativecommand transition; effects journal separately records actual delivery.
+
+Branch-derived entitlement can be detached. Independent local effect/revocation facts
+cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
+A native implementation must reproduce byte/root/recovery vectors before replacing the
+reference path. No old consensus namespace or decoder is restored.
 
 ## PoN Resource bounds
 
-Finite emission rule, per-release/period budget, service capacity, maximum liabilities,
-evidence/appeal horizon and claim batch work. No guessed launch token price, infinite reward
-stream, permanent automatic lineage royalty or unlimited free tier.
+**M12.ClaimContributionReward:** max16leaves,8siblings; integerfloor;dust retained.
+
+**M12.ConsumeSponsoredQuota:** max1millionunits; pre-reservedquota; no unlimited free-service obligation.
+
+The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
+work, model and ledger profile. Limit changes require a new context. Local backpressure
+may reject service or defer data but cannot fabricate accepted block/evaluation facts.
 
 ## PoN Security
 
-Identity-splitting/near-duplicate experts, reciprocal free traffic, copied parameter rewards,
-same-root double attribution, dust overflow, fake capacity and blind reorg replay. Normal fork
-mining is not PoCO double signing; service timeout is not objective fraud.
+The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
+cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
+experimental partitions; they are not independent future-window evidence. SQLite process
+crashes are not physical power-loss qualification. These limitations remain explicit in
+[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
 
 ## PoN Verification and evidence
 
-Conservation through reorg/restart, zero score and no-gain allocation, floor/dust, repeat
-claims, split contributions, reward maturity crossed by deep fork, insufficient sponsor funds,
-free-tier Sybil load and non-idempotent external payout recovery.
+- `ExecutionTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
 
-## Source disposition
+```bash
+python3 formal/pon-nakamoto-v1/test_contracts.py
+CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+```
 
-Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
-The old consensus/runtime/protocol artifacts are deleted from the active tree and are
-recoverable only from Git history. This module target is not automatically implemented
-by the retained components; ordinary PoN mining, proof verification and reorg remain
-explicit future implementation work. Retained local monotonic stores are not yet
-branch-aware reorg stores and cannot be advertised as chain-finality authorities.
+Build native examples before the interop command; missing binaries cause failure, not
+a skipped pass. Fixtures are never regenerated by test execution. Independently written
+third-party vectors and acceptance remain future evidence, not an assumed status.
 
 ## Current source and verification
 
-- [`trnm-service-settlement`](../../trillionnium/crates/trnm-service-settlement/README.md): `cargo test --locked -p trnm-service-settlement --all-targets --all-features`.
-- [`trnm-escrow-vault`](../../trillionnium/crates/trnm-escrow-vault/README.md): `cargo test --locked -p trnm-escrow-vault --all-targets --all-features`.
+- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
+- [`formal/pon-nakamoto-v1/experiments/settle_model.py`](../../formal/pon-nakamoto-v1/experiments/settle_model.py)
+- Native reusable owner: `trnm-service-settlement`; run `cargo test --locked -p trnm-service-settlement --all-targets --all-features` from `trillionnium`.
+- Native reusable owner: `trnm-escrow-vault`; run `cargo test --locked -p trnm-escrow-vault --all-targets --all-features` from `trillionnium`.
+
+## Maturity and outstanding integration
+
+Documented: yes. Executable contract: yes. Native component presence is enumerated above.
+Native ordinary-product integration: no. Independent acceptance: no. Production activation:
+no. Those axes are independent; a component-level pass does not promote the entire module.

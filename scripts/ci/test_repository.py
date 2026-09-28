@@ -79,6 +79,21 @@ class RepositoryMutants(unittest.TestCase):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d['implementation'].pop('independent_security_accepted'))
     def test_unknown_implementation_axis(self):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d['implementation'].update(extra_accepted=False))
+    def test_algorithm_cannot_be_replaced_with_tbd(self):
+        import re
+        self.reject_text('docs/modules/M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md',lambda t:re.sub(r'(?ms)(^## PoN State machine\s*\n).*?(?=^## |\Z)',r'\1TBD\n\n',t))
+    def test_missing_procedure_commit_is_rejected(self):
+        self.reject_json('config/pon/module-contracts-v1.json',lambda d:d['modules'][0]['operations'][0].pop('commit'))
+    def test_wrong_wire_width_is_rejected(self):
+        self.reject_json('config/pon/ledger-v1.json',lambda d:d['commands'][0].update(fixed_payload_bytes=41))
+    def test_candidate_profile_is_not_production_qualified(self):
+        self.reject_json('config/pon/work-profile-v1.json',lambda d:d.update(production_eligible=True))
+    def test_reference_does_not_imply_native_product_integration(self):
+        self.reject_json('config/pon/module-maturity-v1.json',lambda d:d['modules'][2].update(native_product_integrated=True))
+    def test_review_policy_matches_owner_decision(self):
+        self.reject_json('PROJECT_BOUNDARY.json',lambda d:d['repository'].update(required_pull_request_reviews=2))
+    def test_missing_native_contract_test_is_rejected(self):
+        self.reject_json('config/pon/module-contracts-v1.json',lambda d:d['modules'][0].update(test_classes=['DoesNotExist']))
     def test_wrong_fork_choice(self):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d.update(fork_choice='highest-quality'))
     def test_quality_cannot_be_work(self):
@@ -87,6 +102,8 @@ class RepositoryMutants(unittest.TestCase):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d.update(validator_voting=True))
     def test_no_automatic_fallback(self):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d.update(automatic_bft_fallback=True))
+    def test_unknown_concrete_work_profile_rejected(self):
+        self.reject_json('config/pon-nakamoto-v1.json',lambda d:d['work_profile'].update(concrete_profile_id='unregistered-profile'))
     def test_fake_qualified_primitive(self):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d['work_profile'].update(status='qualified'))
     def test_fake_public_model_efficacy(self):

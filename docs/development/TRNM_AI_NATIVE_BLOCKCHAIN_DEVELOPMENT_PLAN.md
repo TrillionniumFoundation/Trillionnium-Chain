@@ -2,7 +2,7 @@
 
 Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 3).
 Effective: 2026-09-28. Status: selected development direction; no runtime activation.
-Canonical destination: `refs/heads/main`; use the existing current integration PR.
+Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
 `c37858e60146147eccf1a6fec6eff04d00a828a7`; this is provenance, not a live-head claim.
@@ -21,7 +21,7 @@ This is the one active engineering plan. It owns sequence, work boundaries and i
 policy; the protocol suite owns domain rules and the module guides own implementation
 contracts. There is no parallel PoCO completion roadmap or separate Hepta blockchain.
 Git history is the archive. The development directory retains one regular Markdown plan
-and its existing evidence-contract symlink, not dated plans, boards or prompt packs.
+and small machine-readable companions, not historical symlinks or dated parallel plans.
 
 The user's revised consensus decision supersedes the earlier keep-BFT proposal:
 PoCO-BFT is RETIRED AS DEVELOPMENT TARGET. PoN is a Nakamoto-style useful neural-work
@@ -38,7 +38,7 @@ not yet a PoN branch/undo implementation.
 
 No machine flag is promoted. The current implementation projection is:
 
-    stage = portable-foundation-only
+    stage = executable-contract-and-portable-components
     production_candidate = false
     production_consensus_activation = false
     public_testnet_ready = false
@@ -85,8 +85,9 @@ The precise candidate arithmetic, target adjustment and time rules are in CONSEN
 
 An old fine-tuned model may earn a model-contribution reward. It is not fresh consensus
 work. The target work primitive is challenge-bound verifiable linear algebra arising
-from adapter/head/router training or evaluation. Concrete primitive/circuit, anti-shortcut
-security, efficiency and cross-device vectors remain explicit unqualified work. No
+from adapter/head/router training or evaluation. The exact experimental transcript primitive, numeric/byte registry and two-language
+vectors are implemented in W1/L1. Anti-shortcut security, cheap-forgery admission,
+public-network efficiency and independent verification remain unqualified. No
 quality threshold, training log, TEE quote or proof-of-execution is silently substituted
 for computational hardness. No pure-hash or old-BFT automatic fallback is authorized.
 
@@ -258,7 +259,7 @@ security and supply-chain checks for actual implementation changes.
 
 Preserve exact source/tree/base/binary/profile/configuration, raw failing and successful
 logs, hardware, actual invocation path and independent review. Current candidate identity
-comes from Git/CI, not branch prose. Derive source and document fingerprints from the actual checked-out tree, never evidence outcomes. No self-approval, protected-main bypass,
+comes from Git/CI, not branch prose. Derive source and document fingerprints from the actual checked-out tree, never evidence outcomes. No self-approval, unrelated protection change,
 force push, deployment or performance/efficacy claims arise from this refactor.
 
 ## 8. Completion definition
@@ -278,3 +279,30 @@ All old protocol and runtime trees are absent; Git history is the archive. Deplo
 state, keys and services were not touched. Portable domains and schemas are fresh-only.
 Local monotonic application stores are NOT yet authoritative branch-aware chain storage.
 Storage/evaluator thresholds are application trust contracts, not ledger voting power.
+
+## 10. This executable-contract delivery and remaining boundaries
+
+The six shared detail contracts under `docs/protocol/pon-nakamoto-v1/details/` define
+real algorithms, wire offsets, table keys, commit points, errors, limits and tests.
+`config/pon/module-contracts-v1.json` binds36 operations to all18 module documents and
+actual source/test paths. `module-maturity-v1.json` distinguishes documented, component,
+executable contract, native product integration and independent acceptance. A `TBD`
+state-machine replacement and omitted commit/width/test bindings now fail CI.
+
+Completed local scope: native work/codec candidates; independently coded Python oracle;
+exact frozen experimental genesis;12 signed native commands; sparse state commitments;
+real SQLite branch/delta/shadow publication and eight process-crash cuts; real trained
+public-source experts/router, exact model contraction, bounded observed-score settlement
+and author-path-offline free use; three-process loopback verification/cost campaigns.
+These are not a new parallel production engine; the oracle is the existing modules'
+shared executable design and future interoperability target.
+
+Not accepted: adversarial work-cost theorem, efficient hostile-proof admission, native
+ordinary node/Hepta integration, independently administered evaluators/custodians, real
+WAN performance, physical power loss and unseen future-window model efficacy. The first
+failed learning experiment and the later model's weaker-than-best-single results remain
+visible. The specific positive test has no token-market value and no production activation.
+
+Root README remains intentionally blank. Current review policy is owner-approved zero
+mandatory PR approvals; source checks reflect that instead of silently reinstating old
+review counts. Force-push/deletion protections and runtime activation controls are separate.

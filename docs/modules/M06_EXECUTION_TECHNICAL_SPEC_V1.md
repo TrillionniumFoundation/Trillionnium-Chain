@@ -1,69 +1,104 @@
-# M06 Deterministic branch execution and reversible state effects — PoN technical contract
+# M06 Deterministic application execution and reversible deltas
 
-Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
-Status: new development contract; runtime, work-security and independent acceptance are not implied.
-Primary module: M06; actual source ownership is in `config/portability-inventory-v1.json`.
-
-The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [PoN domain contract](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md) govern new work.
-Logical interface names below are proposed contracts, not claims that matching Rust APIs,
-wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
+Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
+[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
+This module has detailed procedures and executable reference coverage, not an independently
+accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets ordering. [LEDGER_WIRE.md](../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md) defines exact shared rules.
 
 ## PoN Authority
 
-Own parent-relative deterministic execution, resource metering and ordered reversible
-application deltas. It validates block roots, not the mining work predicate or preferred branch.
-Long training/inference stays in bounded workers.
+Run deterministic due expiry and maturity before txs; execute exactly12 closed commands; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition.
+
+This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
+passing document check to grant work validity, model utility, local execution permission
+or production activation. Every consumer must use the specific verified fact it needs.
+Native component reuse and executable-contract integration are reported separately.
 
 ## PoN Interfaces
 
-ExecuteCandidate(parent_root, ordered_transactions, profile); StageDelta; ValidateRoots;
-ApplyBranchDelta; UndoBranchDelta. M10/M11/M12 expose deterministic business transitions through
-contracts, never shared database handles.
+| Operation | Exact logical inputs | Output and authority boundary |
+|---|---|---|
+| `ExecuteCandidate` | parent map, ordered signed txs,height,miner,parentId | next map, ordered receipts, state root |
+| `DeriveBranchDelta` | before and after key/value maps | sorted changed-key before/after records |
+
+The named signatures define domain contracts. Source bindings below identify which are
+implemented natively, in the executable Python specification, or only by reusable
+components. The names do not assert matching deployed Rust service APIs.
 
 ## PoN State machine
 
-Apply mandatory bounded deadline/refund/retention work first, then canonical transactions.
-Record actual read/write conflicts including shared sponsor, nonce, grant and budget rows.
-Produce complete forward/undo effects and state/receipt/model/reward roots. Parallel
-1/2/4/8-worker execution must equal serial output. A valid proof cannot excuse unavailable
-bodies or nondeterministic evaluation.
+### M06.ExecuteCandidate
+
+Run deterministic due expiry and maturity before txs; execute exactly12 closed commands; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition.
+
+**Commit point:** Return complete state/delta intent; caller M07 owns persistence.
+
+**Rejections:** `EVIDENCE, AUTHORITY, STATE, FUNDS, CONSERVATION, LIMIT`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
+
+### M06.DeriveBranchDelta
+
+For sorted union of keys compare canonical values; emit only changed entries, encode absence as NULL and empty value as real bytes. Detach verifies after then restores before; attach checks before then writes after.
+
+**Commit point:** Same atomic commit as admitted block row.
+
+**Rejections:** `UNDO_ROOT, ROOT`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
 
 ## PoN Persistence and recovery
 
-M07 owns commits and undo data; M08 coordinates active-chain changes. Persist source/target
-block hash/root and exact deltas, with readback. Reexecute only deterministic chain application;
-external provider effects remain in their independent journal and are never undone by a database
-rollback.
+**M06.ExecuteCandidate:** Return complete state/delta intent; caller M07 owns persistence.
+
+**M06.DeriveBranchDelta:** Same atomic commit as admitted block row.
+
+Branch-derived entitlement can be detached. Independent local effect/revocation facts
+cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
+A native implementation must reproduce byte/root/recovery vectors before replacing the
+reference path. No old consensus namespace or decoder is restored.
 
 ## PoN Resource bounds
 
-Meter proof admission, state accesses, events, tensor metadata and mandatory work. Bound
-speculative overlays/undo size and verification queues. No wall clock, remote dataset fetch or
-floating evaluator call in deterministic block execution.
+**M06.ExecuteCandidate:** expiry16,task256,tx256,statekeys65536.
+
+**M06.DeriveBranchDelta:** keys160bytes,values4096bytes; no copied state claimed high throughput.
+
+The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
+work, model and ledger profile. Limit changes require a new context. Local backpressure
+may reject service or defer data but cannot fabricate accepted block/evaluation facts.
 
 ## PoN Security
 
-Root substitution, hidden shared resource conflicts, overflow, partial escrow mutation, invalid
-undo and noncanonical evaluation aggregation. Old monotonic finalized append assumptions are not
-a reorg algorithm.
+The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
+cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
+experimental partitions; they are not independent future-window evidence. SQLite process
+crashes are not physical power-loss qualification. These limitations remain explicit in
+[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
 
 ## PoN Verification and evidence
 
-Serial/parallel root equality, reject-no-write, attach/detach replay equality, conflicting
-sponsor/nonces, rewards/model pointers unwound, deep replay and crashes across durable
-publication.
+- `ExecutionTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+- `DiskReorgTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
 
-## Source disposition
+```bash
+python3 formal/pon-nakamoto-v1/test_contracts.py
+CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+```
 
-Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
-The old consensus/runtime/protocol artifacts are deleted from the active tree and are
-recoverable only from Git history. This module target is not automatically implemented
-by the retained components; ordinary PoN mining, proof verification and reorg remain
-explicit future implementation work. Retained local monotonic stores are not yet
-branch-aware reorg stores and cannot be advertised as chain-finality authorities.
+Build native examples before the interop command; missing binaries cause failure, not
+a skipped pass. Fixtures are never regenerated by test execution. Independently written
+third-party vectors and acceptance remain future evidence, not an assumed status.
 
 ## Current source and verification
 
-- [`trnm-executor`](../../trillionnium/crates/trnm-executor/README.md): `cargo test --locked -p trnm-executor --all-targets --all-features`.
-- [`trnm-mvcc-fee`](../../trillionnium/crates/trnm-mvcc-fee/README.md): `cargo test --locked -p trnm-mvcc-fee --all-targets --all-features`.
+- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
+- [`trillionnium/crates/trnm-mvcc-fee/src/engine.rs`](../../trillionnium/crates/trnm-mvcc-fee/src/engine.rs)
+- Native reusable owner: `trnm-executor`; run `cargo test --locked -p trnm-executor --all-targets --all-features` from `trillionnium`.
+- Native reusable owner: `trnm-mvcc-fee`; run `cargo test --locked -p trnm-mvcc-fee --all-targets --all-features` from `trillionnium`.
+
+## Maturity and outstanding integration
+
+Documented: yes. Executable contract: yes. Native component presence is enumerated above.
+Native ordinary-product integration: no. Independent acceptance: no. Production activation:
+no. Those axes are independent; a component-level pass does not promote the entire module.

@@ -1,68 +1,102 @@
-# M15 Ordinary PoN node, Hepta integration and release composition — PoN technical contract
+# M15 Single host composition and bounded lifecycle
 
-Selected profile: `pon-nakamoto-v1`. Revision: 2026-09-28.
-Status: new development contract; runtime, work-security and independent acceptance are not implied.
-Primary module: M15; actual source ownership is in `config/portability-inventory-v1.json`.
-
-The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-and [PoN domain contract](../protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md) govern new work.
-Logical interface names below are proposed contracts, not claims that matching Rust APIs,
-wire tags, cryptographic proofs or ordinary product consumers have been implemented.
+Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
+Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
+[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
+This module has detailed procedures and executable reference coverage, not an independently
+accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+sets ordering. [NETWORK_CLIENT.md](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md) defines exact shared rules.
 
 ## PoN Authority
 
-Own composition, startup/shutdown, packaging and activation of one ordinary PoN node with
-separately owned services. It contains no domain state machine, alternative consensus, model
-trainer or hidden task store.
+Acquire exclusive store owner, verify parameters, recover unfinishedintent, then bind127.0.0.1 and announcegenesis. No network admission before recovery. This is not the native production node assembly.
+
+This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
+passing document check to grant work validity, model utility, local execution permission
+or production activation. Every consumer must use the specific verified fact it needs.
+Native component reuse and executable-contract integration are reported separately.
 
 ## PoN Interfaces
 
-PoNNodeConfig; StartPoNNode; StopAndReconcile; ResumeBranchState; InstallWorkProfile;
-ConnectHeptaAdapter; BuildRelease; StageFreshInstance. These are proposed interfaces; current
-PoCO binary names cannot imply implementation.
+| Operation | Exact logical inputs | Output and authority boundary |
+|---|---|---|
+| `StartExecutableSpecPeer` | privateledgerdir,exactconfig | ready localhostport or failure |
+| `StopAndReconcile` | ownedchildsockets/processes | closed/reapedprocesses with durablestate retained |
+
+The named signatures define domain contracts. Source bindings below identify which are
+implemented natively, in the executable Python specification, or only by reusable
+components. The names do not assert matching deployed Rust service APIs.
 
 ## PoN State machine
 
-Bind exact genesis/profile/work primitive and binaries; acquire writer/authority fences; reopen
-branch/application/effect journals; reconcile unfinished reorgs and external operations; load
-bounded networking/verification/mining workers; only then admit work and requests. Hepta startup
-uses existing model/artifact/operations owners. Shut down with bounded drain and retained
-unresolved identity; never discard an attempt to regain readiness.
+### M15.StartExecutableSpecPeer
+
+Acquire exclusive store owner, verify parameters, recover unfinishedintent, then bind127.0.0.1 and announcegenesis. No network admission before recovery. This is not the native production node assembly.
+
+**Commit point:** Own one ledger writer perprocess; private directory; current schemaonly.
+
+**Rejections:** `WRITER_BUSY, NETWORK, ROOT, NODE_START_TIMEOUT`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
+
+### M15.StopAndReconcile
+
+Stop admission, requestchild stop, wait bounded5seconds, kill+reap ifunresponsive; retain DB intent and local effect identity. No global service or external credentials are touched.
+
+**Commit point:** Child owner acquired immediately; finally paths clean startedchildren.
+
+**Rejections:** `UNAVAILABLE`. Failure does not silently downgrade to a weaker proof or
+convert an uncertain external outcome into not-executed.
 
 ## PoN Persistence and recovery
 
-Startup joins M03/M07/M08/M13 exact contexts and independent local effect frontiers. Recover one
-owner per domain, not filesystem-inferred authority. Fresh-genesis migration keeps legacy
-namespace read-only. Global release inclusion does not force local model activation; use new
-admitted generations.
+**M15.StartExecutableSpecPeer:** Own one ledger writer perprocess; private directory; current schemaonly.
+
+**M15.StopAndReconcile:** Child owner acquired immediately; finally paths clean startedchildren.
+
+Branch-derived entitlement can be detached. Independent local effect/revocation facts
+cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
+A native implementation must reproduce byte/root/recovery vectors before replacing the
+reference path. No old consensus namespace or decoder is restored.
 
 ## PoN Resource bounds
 
-Reserve consensus/verification/recovery floors separate from mining/training/serving; bound
-threads, file descriptors, GPU memory, queues and shutdown. A model-proving failure cannot
-starve chain validation or local safety.
+**M15.StartExecutableSpecPeer:** startup20seconds,listen16,request10seconds,inactivity30seconds.
+
+**M15.StopAndReconcile:** exact3controlledpeers; no unattendedbackground service.
+
+The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
+work, model and ledger profile. Limit changes require a new context. Local backpressure
+may reject service or defer data but cannot fabricate accepted block/evaluation facts.
 
 ## PoN Security
 
-Supply-chain profile substitution, accidental old BFT dependency, unqualified work fallback,
-remote-signer reuse, arbitrary downloaded model execution and central coordinator key
-aggregation. No feature flip or CLI label activates a network.
+The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
+cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
+experimental partitions; they are not independent future-window evidence. SQLite process
+crashes are not physical power-loss qualification. These limitations remain explicit in
+[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
 
 ## PoN Verification and evidence
 
-Exact binary ordinary startup/request/shutdown; real work/fork/reorg; integrated Hepta parameter
-loop; author/worker failures; multi-host recovery and power cuts; actual Cargo production
-closure excludes retired active BFT logic; independent accepted deployment.
+- `DiskReorgTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
 
-## Source disposition
+```bash
+python3 formal/pon-nakamoto-v1/test_contracts.py
+CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
+```
 
-Only consensus-neutral components listed in `config/portability-inventory-v1.json` remain.
-The old consensus/runtime/protocol artifacts are deleted from the active tree and are
-recoverable only from Git history. This module target is not automatically implemented
-by the retained components; ordinary PoN mining, proof verification and reorg remain
-explicit future implementation work. Retained local monotonic stores are not yet
-branch-aware reorg stores and cannot be advertised as chain-finality authorities.
+Build native examples before the interop command; missing binaries cause failure, not
+a skipped pass. Fixtures are never regenerated by test execution. Independently written
+third-party vectors and acceptance remain future evidence, not an assumed status.
 
 ## Current source and verification
 
-- [`trnm-release-bundle`](../../trillionnium/crates/trnm-release-bundle/README.md): `cargo test --locked -p trnm-release-bundle --all-targets --all-features`.
+- [`formal/pon-nakamoto-v1/experiments/local_network.py`](../../formal/pon-nakamoto-v1/experiments/local_network.py)
+- [`trillionnium/crates/trnm-release-bundle/src/lib.rs`](../../trillionnium/crates/trnm-release-bundle/src/lib.rs)
+- Native reusable owner: `trnm-release-bundle`; run `cargo test --locked -p trnm-release-bundle --all-targets --all-features` from `trillionnium`.
+
+## Maturity and outstanding integration
+
+Documented: yes. Executable contract: yes. Native component presence is enumerated above.
+Native ordinary-product integration: no. Independent acceptance: no. Production activation:
+no. Those axes are independent; a component-level pass does not promote the entire module.

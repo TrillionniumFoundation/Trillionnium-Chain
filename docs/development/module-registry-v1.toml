@@ -2,94 +2,95 @@ schema_version = 2
 plan_id = "trnm-chain-development-plan-v2"
 source_inventory = "config/portability-inventory-v1.json"
 module_count = 18
+module_maturity = "config/pon/module-maturity-v1.json"
 production_authority = false
 
 [[modules]]
 id = "M00"
 source_packages = ["trnm-types", "trnm-protocol"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M01"
 source_packages = ["trnm-crypto-primitives", "trnm-governance-guard"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M02"
 source_packages = []
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M03"
 source_packages = ["trnm-checkpoint-store", "trnm-checkpoint-types"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M04"
 source_packages = ["trnm-peer-lease", "trnm-transport"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M05"
 source_packages = ["trnm-mempool"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M06"
 source_packages = ["trnm-executor", "trnm-mvcc-fee"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M07"
 source_packages = []
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M08"
 source_packages = []
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M09"
 source_packages = ["trnm-data-availability"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M10"
 source_packages = ["trnm-worker-agent", "trnm-research-protocol", "trnm-task-kernel"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M11"
 source_packages = ["trnm-oracle", "trnm-verification-profiles"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M12"
 source_packages = ["trnm-service-settlement", "trnm-escrow-vault"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M13"
 source_packages = ["trnm-state-import"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M14"
 source_packages = []
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M15"
 source_packages = ["trnm-release-bundle"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M16"
 source_packages = ["trnm-control-plane"]
-status = "portable-components-only"
+status = "see-module-maturity"
 
 [[modules]]
 id = "M17"
 source_packages = ["trnm-bench", "trnm-audit-events"]
-status = "portable-components-only"
+status = "see-module-maturity"

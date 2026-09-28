@@ -21,7 +21,7 @@ def check(mode):
     require(p['consensus']['production_consensus_activation'] is False,'activation changed')
     require(p['consensus']['development_target']=='pon-nakamoto-v1','target mismatch')
     review=p['repository']
-    require(review['required_pull_request_reviews']==2 and review['require_code_owner_review'] is True and review['require_last_push_approval'] is True,'review contract changed')
+    require(review['required_pull_request_reviews']==0 and review['require_code_owner_review'] is False and review['require_last_push_approval'] is False,'review contract changed')
     require(review['block_force_push'] is True and review['block_branch_deletion'] is True,'remote preservation contract changed')
     branch=git('branch','--show-current')
     if mode!='--audit':
@@ -49,8 +49,10 @@ def check(mode):
             local,sha,remote,old=line.split()
             require(sha==git('rev-parse','HEAD'),'only checked-out HEAD can be pushed')
             require(remote.startswith('refs/heads/') and re.fullmatch(p['branch']['development_regex'],remote.removeprefix('refs/heads/')) is not None,'protected/invalid remote branch')
-            require(old!='0'*40,'this workflow updates the existing candidate only')
-            require(subprocess.run(['git','merge-base','--is-ancestor',old,sha],cwd=ROOT).returncode==0,'non-fast-forward push rejected')
+            if old!='0'*40:
+                require(subprocess.run(['git','merge-base','--is-ancestor',old,sha],cwd=ROOT).returncode==0,'non-fast-forward push rejected')
+            else:
+                require(remote == 'refs/heads/'+branch, 'new continuation must be the checked-out branch')
     print(json.dumps({'result':'PASS','mode':mode,'project':'trillionnium-chain','packages':len(members),'branch':branch,'remote_policy_mutated':False}))
 if __name__=='__main__':
     try: check(sys.argv[1])

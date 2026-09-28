@@ -2,8 +2,9 @@
   "schema": "trnm-current-snapshot-v2",
   "source_identity": "derive-from-git-at-verification",
   "development_target": "pon-nakamoto-v1",
-  "stage": "portable-foundation-only",
+  "stage": "executable-contract-and-portable-components",
   "workspace_packages": 24,
   "runtime_implemented": false,
-  "production_consensus_activation": false
+  "production_consensus_activation": false,
+  "module_maturity": "config/pon/module-maturity-v1.json"
 }

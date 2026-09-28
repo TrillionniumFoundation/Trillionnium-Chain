@@ -1,0 +1,699 @@
+{
+  "schema": "pon-module-procedures-v1",
+  "modules": [
+    {
+      "id": "M00",
+      "specification": "docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md",
+      "operations": [
+        {
+          "id": "M00.DecodeHeader",
+          "inputs": "bytes[318]",
+          "output": "Header(version1,network,parent,target,roots,task,nonce)",
+          "algorithm": "Require PNH1/version1 and exactly318 bytes; decode the twelve fixed fields at the published offsets; compute challenge only from those bytes; no field normalization.",
+          "commit": "None; codec has no database.",
+          "errors": "LENGTH, VERSION",
+          "limits": "318-byte header;2048-byte transaction;<=16 allocation leaves"
+        },
+        {
+          "id": "M00.DecodeTransaction",
+          "inputs": "signed envelope bytes",
+          "output": "Envelope without authority; TxId",
+          "algorithm": "Read 95-byte prefix, match exact tag-specific payload length and bounded proof/list count, require nonce>0 and fee cap, then separate final64 signature bytes. Signature verification belongs to admission.",
+          "commit": "None; decode success cannot reserve nonce or funds.",
+          "errors": "LENGTH, VERSION, NONCANONICAL, LIMIT",
+          "limits": "12 closed native tags; sorted unique allocation IDs"
+        }
+      ],
+      "source_refs": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "formal/pon-nakamoto-v1/contract_wire.py"
+      ],
+      "test_classes": [
+        "CodecTests",
+        "InteropTests"
+      ],
+      "native_packages": [
+        "trnm-types",
+        "trnm-protocol"
+      ],
+      "implementation_scope": "native-candidate-and-executable-spec",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M01",
+      "specification": "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/WORK_PROFILE.md",
+      "operations": [
+        {
+          "id": "M01.VerifyWork",
+          "inputs": "challenge32, expectedTask32, target32, certificate[49188]",
+          "output": "non-public native VerifiedWork",
+          "algorithm": "Check length/magic/field bounds; recompute TaskId; apply cheap ticket filter; replay challenge-noised tiled transcript and exact decoded product; return no verified type on any mismatch.",
+          "commit": "No authoritative store; cache key must include complete context.",
+          "errors": "LENGTH, VERSION, TASK, FIELD, TARGET, TRANSCRIPT, PRODUCT",
+          "limits": "n64,r8,q4294967291,u128; fixed49188 bytes"
+        },
+        {
+          "id": "M01.VerifyTransactionSignature",
+          "inputs": "decoded sender32,signature64, unsigned envelope",
+          "output": "validated exact sender statement",
+          "algorithm": "Strict Ed25519 over H(tx-sign,unsigned). Reject weak/malformed keys or mismatching signatures before copying mutations into a committed state. Signed scores remain attestations, not work.",
+          "commit": "No key material copied from fixtures into deployment.",
+          "errors": "SIGNATURE, NETWORK",
+          "limits": "one signature per tx; quota use adds one consumer signature"
+        }
+      ],
+      "source_refs": [
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "formal/pon-nakamoto-v1/work_oracle.py",
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "test_classes": [
+        "InteropTests",
+        "ExecutionTests"
+      ],
+      "native_packages": [
+        "trnm-crypto-primitives",
+        "trnm-governance-guard"
+      ],
+      "implementation_scope": "native-candidate-and-executable-spec",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M02",
+      "specification": "docs/modules/M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md",
+      "operations": [
+        {
+          "id": "M02.AdmitBlock",
+          "inputs": "header, ordered tx bytes, full certificate, observed local time",
+          "output": "immutable BlockId and derived chainwork",
+          "algorithm": "Resolve parent, exact height/target/median/profile and parent-admitted task; verify real work and all signatures; execute and compare state/receipt/tx roots; derive required work; persist only complete valid block.",
+          "commit": "Single block+deltas transaction owned by M07; no partial accepted header.",
+          "errors": "UNKNOWN_PARENT, TIME, TARGET, WORK, ROOT, LIMIT",
+          "limits": "block<=1MiB;txcount256;chainwork512bits"
+        },
+        {
+          "id": "M02.ChooseBranch",
+          "inputs": "fully validated tips and active tip",
+          "output": "strictly heavier target or unchanged active",
+          "algorithm": "Compare derived cumulative required work; ignore invalid/unavailable branches; equal work retains current tip. Pass exact old/new roots and generation to M08; never alter application state in a fork selector.",
+          "commit": "M08 publishes active pointer only after staged-root readback.",
+          "errors": "REORG_IN_PROGRESS, UNKNOWN_PARENT",
+          "limits": "max4096 reference ancestry; production streaming sync separate"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/ledger.py",
+        "formal/pon-nakamoto-v1/reference.py"
+      ],
+      "test_classes": [
+        "DiskReorgTests",
+        "WorkExamples"
+      ],
+      "native_packages": [],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M03",
+      "specification": "docs/modules/M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md",
+      "operations": [
+        {
+          "id": "M03.RunWorkAttempt",
+          "inputs": "frozen header,parent generation, task matrices, attempt budget",
+          "output": "exact proof or explicit stale/cancelled attempt",
+          "algorithm": "Freeze all header bytes before work; evaluate full challenge transcript; retry a different nonce with a new computation; cap local reference attempts4096. Parent changes do not relabel an old transcript. Durable mining-attempt recovery is a native integration obligation, not implemented by the CLI.",
+          "commit": "Reference mining is in-memory; no claim of durable miner. External publication uses exact idempotent BlockId.",
+          "errors": "WORK_BUDGET, REORG_IN_PROGRESS, FIELD",
+          "limits": "49188-byte result, bounded matrix sizes; no hidden success fallback"
+        },
+        {
+          "id": "M03.EnterExternalEffect",
+          "inputs": "operation32,payload32,local generation",
+          "output": "unique entered fact or replay/revoke failure",
+          "algorithm": "Check revocation; insert exact operation once into independent effects DB before actual dispatch. A reorg never deletes this record. Duplicate entry queries/reconciles target; it cannot dispatch again.",
+          "commit": "Separate SQLite WAL FULL DB, PK operation; independent anchor not yet joined.",
+          "errors": "OPERATION_ALREADY_ENTERED, REVOKED",
+          "limits": "fixed operation and payload digests; one local owner"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-checkpoint-types/src/record.rs"
+      ],
+      "test_classes": [
+        "DiskReorgTests"
+      ],
+      "native_packages": [
+        "trnm-checkpoint-store",
+        "trnm-checkpoint-types"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M04",
+      "specification": "docs/modules/M04_P2P_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md",
+      "operations": [
+        {
+          "id": "M04.ReadFrame",
+          "inputs": "socket and BE32 length prefix",
+          "output": "bounded exact message or transport error",
+          "algorithm": "Read four bytes with10-second timeout; require 1..2097152 before allocating; read exactly length and reject duplicate JSON keys. Submit payload goes through full M02 validation, never through an accept flag.",
+          "commit": "Transport has no chain authority; each child owns a different ledger.",
+          "errors": "FRAME_LIMIT, SHORT_FRAME, OPERATION, ROOT",
+          "limits": "127.0.0.1 experiment only;backlog16;timeout10seconds"
+        },
+        {
+          "id": "M04.PropagateVerifiedBlock",
+          "inputs": "fixed header,txs,certificate and three peer endpoints",
+          "output": "per-peer read-back tip/root/generation",
+          "algorithm": "Send identical block to separate processes; each rechecks full work and state before ack. Retain failed/unavailable outcomes. Native peer identity/replay comes from retained authenticated frame components, not the test TCP wrapper.",
+          "commit": "M07/M08 own receipt persistence; transport never writes ledger tables.",
+          "errors": "UNAVAILABLE, UNKNOWN_PARENT, TRANSCRIPT",
+          "limits": "native target peer inflight4;globalproof4;independent queues"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/experiments/local_network.py",
+        "trillionnium/crates/trnm-transport/src/lib.rs"
+      ],
+      "test_classes": [
+        "InteropTests"
+      ],
+      "native_packages": [
+        "trnm-peer-lease",
+        "trnm-transport"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M05",
+      "specification": "docs/modules/M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md",
+      "operations": [
+        {
+          "id": "M05.ValidateTransaction",
+          "inputs": "active snapshot, signed envelope, candidate height",
+          "output": "validated transition intent or reject",
+          "algorithm": "Require exact network, signature, nonce=current+1, height<=expiry and sufficient fee/funds before applying command. Invalid input leaves the original parent unchanged; decoded bytes are not reserved balance.",
+          "commit": "M06 returns a new state; only M07 can commit it.",
+          "errors": "SIGNATURE, NONCE, EXPIRED, FUNDS, FEE",
+          "limits": "tx2048bytes, nonceu64, feelimit10million"
+        },
+        {
+          "id": "M05.ReconsiderAfterReorg",
+          "inputs": "old included tx, new active generation, local effect id",
+          "output": "new admissible intent or reconciliation requirement",
+          "algorithm": "Invalidate branch-relative inclusion; rerun nonce/grant/funds checks against new state. Never replay an irreversible operation because chain nonce vanished. Native mempool event wiring remains integration work.",
+          "commit": "Persistent local effect tombstones stay outside chain undo.",
+          "errors": "STATE, NONCE, OPERATION_ALREADY_ENTERED",
+          "limits": "bounded pending256 task/quota obligations"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-mempool/src/lib.rs"
+      ],
+      "test_classes": [
+        "ExecutionTests",
+        "DiskReorgTests"
+      ],
+      "native_packages": [
+        "trnm-mempool"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M06",
+      "specification": "docs/modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md",
+      "operations": [
+        {
+          "id": "M06.ExecuteCandidate",
+          "inputs": "parent map, ordered signed txs,height,miner,parentId",
+          "output": "next map, ordered receipts, state root",
+          "algorithm": "Run deterministic due expiry and maturity before txs; execute exactly12 closed commands; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition.",
+          "commit": "Return complete state/delta intent; caller M07 owns persistence.",
+          "errors": "EVIDENCE, AUTHORITY, STATE, FUNDS, CONSERVATION, LIMIT",
+          "limits": "expiry16,task256,tx256,statekeys65536"
+        },
+        {
+          "id": "M06.DeriveBranchDelta",
+          "inputs": "before and after key/value maps",
+          "output": "sorted changed-key before/after records",
+          "algorithm": "For sorted union of keys compare canonical values; emit only changed entries, encode absence as NULL and empty value as real bytes. Detach verifies after then restores before; attach checks before then writes after.",
+          "commit": "Same atomic commit as admitted block row.",
+          "errors": "UNDO_ROOT, ROOT",
+          "limits": "keys160bytes,values4096bytes; no copied state claimed high throughput"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-mvcc-fee/src/engine.rs"
+      ],
+      "test_classes": [
+        "ExecutionTests",
+        "DiskReorgTests"
+      ],
+      "native_packages": [
+        "trnm-executor",
+        "trnm-mvcc-fee"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M07",
+      "specification": "docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md",
+      "operations": [
+        {
+          "id": "M07.OpenNamespace",
+          "inputs": "private path,expected parameter commitment",
+          "output": "one writable ledger or refusal",
+          "algorithm": "Reject directory/database symlinks; obtain nonblocking exclusive owner lock; open WAL FULL; require exact stored parameter commitment; initialize genesis only in an empty new namespace.",
+          "commit": "Tables and keys are fixed in S1; no implicit old-store migration.",
+          "errors": "NAMESPACE, WRITER_BUSY, NETWORK",
+          "limits": "one process writer, SQLite10-second lock timeout"
+        },
+        {
+          "id": "M07.StageBranch",
+          "inputs": "fully verified block and before/after map",
+          "output": "atomic block row plus exact deltas",
+          "algorithm": "BEGIN IMMEDIATE, insert immutable block, insert changed-key deltas, COMMIT. Any failure rolls back the transaction. A restart reads complete old/new state, not partially visible rows.",
+          "commit": "blocks+deltas one transaction; active pointer separate M08 publication.",
+          "errors": "ROOT, LIMIT, DUPLICATE",
+          "limits": "proof49188;block1MiB;512-bit storedwork"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "test_classes": [
+        "DiskReorgTests"
+      ],
+      "native_packages": [],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M08",
+      "specification": "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md",
+      "operations": [
+        {
+          "id": "M08.PlanReorg",
+          "inputs": "old/new validated tips and active generation",
+          "output": "durable ordered detach/attach intent",
+          "algorithm": "Find common ancestor; detach descending old branch and attach ascending new branch. Copy old generation to fresh staging generation and commit exact intent/position0. If pending, resume the same intent before new work.",
+          "commit": "BEGIN IMMEDIATE: staged kv+reorg row; public active unchanged.",
+          "errors": "UNKNOWN_PARENT, GENERATION, REORG_IN_PROGRESS",
+          "limits": "bounded retained ancestry; no local depth as permanent finality"
+        },
+        {
+          "id": "M08.RecoverAndPublish",
+          "inputs": "persisted intent,position,staged generation",
+          "output": "new coherent active root and unique events",
+          "algorithm": "Apply each step+cursor atomically with expected-value checks; verify full target root; publish active pointer, ordered events and done atomically. Repeat recovery is idempotent; local external facts are not undone.",
+          "commit": "Eight named process-crash cuts; read transaction sees whole old or new generation.",
+          "errors": "UNDO_ROOT, ROOT, GENERATION",
+          "limits": "event cursor(generation,ordinal), exactly one writer"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "test_classes": [
+        "DiskReorgTests"
+      ],
+      "native_packages": [],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M09",
+      "specification": "docs/modules/M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md",
+      "operations": [
+        {
+          "id": "M09.ValidateArtifact",
+          "inputs": "canonical model bytes,expected hash,family",
+          "output": "bounded immutable tensor bundle",
+          "algorithm": "Read at most65537 bytes; require <=65536 and canonical JSON byte identity, exact fields/shapes/ranges/feature/family. Hash bytes, never mutable path names. No executable object format.",
+          "commit": "Content-addressed artifact and manifest owned by the artifact provider.",
+          "errors": "ARTIFACT_LIMIT, ARTIFACT_FIELDS, FAMILY, SHAPE, NUMERIC",
+          "limits": "base/router3x257;deltas3x3x257;intweights[-32767,32767]"
+        },
+        {
+          "id": "M09.FetchWithoutAuthor",
+          "inputs": "manifesthash,two custodian paths,consumer request",
+          "output": "verified same bytes or unavailable",
+          "algorithm": "Verify each copy hash; remove original author path during controlled test; load from a custodian and bind actual model hash to result. Remote diversified storage and long-term repair are not implied by local copies.",
+          "commit": "Retention obligations separate from self-contained historical work certificates.",
+          "errors": "DA, ARTIFACT_CANONICAL_BYTES, UNAVAILABLE",
+          "limits": "productiontarget artifacts64MiB,chunks1MiB,retention10000blocks"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/experiments/model_loop.py",
+        "formal/pon-nakamoto-v1/experiments/settle_model.py"
+      ],
+      "test_classes": [
+        "CodecTests"
+      ],
+      "native_packages": [
+        "trnm-data-availability"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M10",
+      "specification": "docs/modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md",
+      "operations": [
+        {
+          "id": "M10.SubmitContribution",
+          "inputs": "author,family,parent,artifact,size,componentsRoot,signature",
+          "output": "new immutable contribution id",
+          "algorithm": "Recompute full id; require exact family/current parent and artifact size; reject same parent/artifact duplicates even under another sender; status submitted. A signature is provenance claim, not model merit.",
+          "commit": "Deterministic contribution/duplicate rows commit with block.",
+          "errors": "ROOT, DUPLICATE, STATE, LIMIT",
+          "limits": "candidate cap256; modelsize64MiB; newprofilebyteformat"
+        },
+        {
+          "id": "M10.PublishEvaluatedRelease",
+          "inputs": "evaluated bundle,sorted scored leaf list,sponsor budget",
+          "output": "new release pointer plus escrow",
+          "algorithm": "Verify bundle minimum positive score; bind exact components root, accepted leaf scores/owners and total; recompute release id; debit sponsor; record maturity and claims; only then adopt pointer. Local Hepta use still requires generation admission.",
+          "commit": "Same state transition and block delta; reorg reverses pointer/escrow but not historical inference.",
+          "errors": "EVIDENCE, ROOT, FUNDS, DUPLICATE",
+          "limits": "1..16 allocation entries;20-block rewardmaturity"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/ledger.py",
+        "formal/pon-nakamoto-v1/experiments/settle_model.py"
+      ],
+      "test_classes": [
+        "ExecutionTests"
+      ],
+      "native_packages": [
+        "trnm-worker-agent",
+        "trnm-research-protocol",
+        "trnm-task-kernel"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M11",
+      "specification": "docs/modules/M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md",
+      "operations": [
+        {
+          "id": "M11.EvaluateFrozenModel",
+          "inputs": "fixed tasks,reference,candidate,ablation index",
+          "output": "integer outcomes,win/loss counts,score,evidence bytes",
+          "algorithm": "Use exact model inference and paired sign rule: n>=20,w>l,20*binomialtail<=2^m; score=floor((w-l)*1e6/n), else0. Record every baseline including stronger single experts; no score tuning after observation.",
+          "commit": "Immutable evidence bytes; durations outside consensus values.",
+          "errors": "EVIDENCE, SHAPE, FAMILY, NUMERIC",
+          "limits": "file-disjoint sourcepartitions, maxscore1million"
+        },
+        {
+          "id": "M11.AdmitEvaluation",
+          "inputs": "signed candidate/plan/evidence/score from evaluator",
+          "output": "one attestation or frozen evaluated result",
+          "algorithm": "Require one of three named development evaluators, not author, unique sender, expected plan and nonzero evidence. First2 valid attestations freeze minimum score; no extra votes change it. This admits attestation truth, not objectively recomputed ML correctness.",
+          "commit": "Votes embedded in contribution state; no chainwork or validationmembership mutation.",
+          "errors": "AUTHORITY, DUPLICATE, STATE, EVIDENCE",
+          "limits": "threshold2-of3 controlledfixture; production evaluatorprofile notaccepted"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/experiments/model_loop.py",
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "test_classes": [
+        "ExecutionTests"
+      ],
+      "native_packages": [
+        "trnm-oracle",
+        "trnm-verification-profiles"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M12",
+      "specification": "docs/modules/M12_SETTLEMENT_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md",
+      "operations": [
+        {
+          "id": "M12.ClaimContributionReward",
+          "inputs": "release,cid,acceptedscore,exactproof,owner,nonce",
+          "output": "bounded payment or reject",
+          "algorithm": "Check maturity, ownership, unclaimed leaf and exact proofdepth; verify root; pay floor(originalbudget*score/acceptedtotal); mark nullifier and decrement remaining. New transactionnonce cannot replay a claimed contribution.",
+          "commit": "Reward and account mutations are branch state; external delivery is independent.",
+          "errors": "AUTHORITY, ROOT, DUPLICATE, STATE, FUNDS",
+          "limits": "max16leaves,8siblings; integerfloor;dust retained"
+        },
+        {
+          "id": "M12.ConsumeSponsoredQuota",
+          "inputs": "quota,provider signedtx,consumer signature,units,result",
+          "output": "quota decrement,provider credit less fee",
+          "algorithm": "Verify bound provider, deadline, positiveunits, prepaidfunds and consumer signature over provider nonce. Debit prepaid units*1024, pay fee and provider, leave consumer balance untouched. It does not imply learning/export permission.",
+          "commit": "Atomic nativecommand transition; effects journal separately records actual delivery.",
+          "errors": "SIGNATURE, AUTHORITY, EXPIRED, LIMIT, FUNDS",
+          "limits": "max1millionunits; pre-reservedquota; no unlimited free-service obligation"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/ledger.py",
+        "formal/pon-nakamoto-v1/experiments/settle_model.py"
+      ],
+      "test_classes": [
+        "ExecutionTests"
+      ],
+      "native_packages": [
+        "trnm-service-settlement",
+        "trnm-escrow-vault"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M13",
+      "specification": "docs/modules/M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md",
+      "operations": [
+        {
+          "id": "M13.RebuildBranchState",
+          "inputs": "known genesis,retained block/delta ancestry,target",
+          "output": "exact branch map/root or explicit failure",
+          "algorithm": "Walk parent links to genesis within referencebound; replay sorted deltas verifying each before value and block root. Existing local authenticated storage is the premise; untrusted network imports must first pass full block admission.",
+          "commit": "Reconstructed state is checked before active publication; no unauthenticated snapshot trust.",
+          "errors": "UNKNOWN_PARENT, UNDO_ROOT, ROOT, LIMIT",
+          "limits": "4096reference ancestry; production streamingproofsync remains nativework"
+        },
+        {
+          "id": "M13.VerifyIncomingHistory",
+          "inputs": "ordered block/certificate/tx stream,expectedgenesis",
+          "output": "fully verified retained ancestry",
+          "algorithm": "For each block use M02 exact parent work and M06 state validation. Work matrices/certificate remain self-contained; model retention is separate. Never interpret a local checkpoint or old proof as a new finality certificate.",
+          "commit": "Append valid branch rows/deltas only; incomplete import not active.",
+          "errors": "NETWORK, WORK, ROOT, UNKNOWN_PARENT",
+          "limits": "block1MiB; bounded proof jobs; no permanent pruning-depth fork rejection"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-state-import/src/lib.rs"
+      ],
+      "test_classes": [
+        "DiskReorgTests",
+        "InteropTests"
+      ],
+      "native_packages": [
+        "trnm-state-import"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M14",
+      "specification": "docs/modules/M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md",
+      "operations": [
+        {
+          "id": "M14.QueryCurrentState",
+          "inputs": "active generation and optional event cursor",
+          "output": "tip,root,generation and branch-relative status",
+          "algorithm": "Read active pointer and generation kv in one snapshot and recompute root; return no unconditional finalized flag. A production confirmation adds depth/work evidence and freshness; localhost ACK is not independent proof.",
+          "commit": "Indexer is derived; cursor(generation,ordinal), no new balanceauthority.",
+          "errors": "ROOT, UNAVAILABLE",
+          "limits": "responsebounded; socket10seconds in executableharness"
+        },
+        {
+          "id": "M14.ConsumePublishedModel",
+          "inputs": "expectedartifact/family,quota,input,local permission",
+          "output": "bound inference result and optional signedusage receipt",
+          "algorithm": "Fetch exact canonical artifact, check all fields/shapes; execute integer router/base/expert; persist actual model/request identity before usage settlement. No data export follows automatically from free usage.",
+          "commit": "Local modelgeneration and effect owner remain Hepta responsibilities.",
+          "errors": "FAMILY, SHAPE, ARTIFACT_CANONICAL_BYTES, SIGNATURE",
+          "limits": "65536artifactbytes experimental; no reducedmodel hidden behind fullprofile"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/experiments/model_loop.py",
+        "formal/pon-nakamoto-v1/experiments/local_network.py"
+      ],
+      "test_classes": [
+        "CodecTests",
+        "ExecutionTests"
+      ],
+      "native_packages": [],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M15",
+      "specification": "docs/modules/M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md",
+      "operations": [
+        {
+          "id": "M15.StartExecutableSpecPeer",
+          "inputs": "privateledgerdir,exactconfig",
+          "output": "ready localhostport or failure",
+          "algorithm": "Acquire exclusive store owner, verify parameters, recover unfinishedintent, then bind127.0.0.1 and announcegenesis. No network admission before recovery. This is not the native production node assembly.",
+          "commit": "Own one ledger writer perprocess; private directory; current schemaonly.",
+          "errors": "WRITER_BUSY, NETWORK, ROOT, NODE_START_TIMEOUT",
+          "limits": "startup20seconds,listen16,request10seconds,inactivity30seconds"
+        },
+        {
+          "id": "M15.StopAndReconcile",
+          "inputs": "ownedchildsockets/processes",
+          "output": "closed/reapedprocesses with durablestate retained",
+          "algorithm": "Stop admission, requestchild stop, wait bounded5seconds, kill+reap ifunresponsive; retain DB intent and local effect identity. No global service or external credentials are touched.",
+          "commit": "Child owner acquired immediately; finally paths clean startedchildren.",
+          "errors": "UNAVAILABLE",
+          "limits": "exact3controlledpeers; no unattendedbackground service"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/experiments/local_network.py",
+        "trillionnium/crates/trnm-release-bundle/src/lib.rs"
+      ],
+      "test_classes": [
+        "DiskReorgTests"
+      ],
+      "native_packages": [
+        "trnm-release-bundle"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M16",
+      "specification": "docs/modules/M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md",
+      "operations": [
+        {
+          "id": "M16.TrainCompatibleCandidate",
+          "inputs": "frozenpublic train/calibration partitions,base,family",
+          "output": "integer deltas and router artifact",
+          "algorithm": "Use explicit full-batch softmax recipe,120stepslocal androuter, inverseclassfrequency, boundedquantization; selectroutertargets on calibration only. Emitnewimmutableartifact, never mutate activebundle.",
+          "commit": "Training records owned by localproducer; chain receives only parameter/evidenceclaims.",
+          "errors": "FAMILY, NUMERIC, INSUFFICIENT_PARTITION",
+          "limits": "3experts;257features;finitefullbatchsteps;no providerAPI"
+        },
+        {
+          "id": "M16.CompareOrAbstain",
+          "inputs": "base,singleexperts,meanmerge,composition,pooledcontrol",
+          "output": "unhidden comparison and zero-or-positive candidate",
+          "algorithm": "Measure wholemodel and ablations on fixedpartitions; zero when gainrulefails; preservefirstfailedexperiment and strongerbaselines. Proposal cannot change consensus,target,evaluatorprofile or localpermissions.",
+          "commit": "No chainwrite until explicit M10 signedproposal and M11 evidence.",
+          "errors": "EVIDENCE",
+          "limits": "training/quality cost separatefromwork; no globalmandatoryoptimizer"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/experiments/model_loop.py",
+        "trillionnium/crates/trnm-control-plane/src/lib.rs"
+      ],
+      "test_classes": [
+        "ExecutionTests"
+      ],
+      "native_packages": [
+        "trnm-control-plane"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    },
+    {
+      "id": "M17",
+      "specification": "docs/modules/M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md",
+      "shared_contract": "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+      "operations": [
+        {
+          "id": "M17.CheckDetailedContracts",
+          "inputs": "closedmodule registry,codecs,source/testreferences",
+          "output": "structural/algorithmcoverage result, not acceptance",
+          "algorithm": "Require all18 modules, nonplaceholder procedures, complete typedinputs/output/preconditions/commit/errors/limits and existing source/tests. Run positive/negative vectors and actual tests separately; file existence is never runtime evidence.",
+          "commit": "Read-only checker; no evidence outcome mutation.",
+          "errors": "SCHEMA, SOURCE, PLACEHOLDER, COVERAGE",
+          "limits": "fixed18modules; preserveblankrootREADME"
+        },
+        {
+          "id": "M17.QualifyExecutedCampaign",
+          "inputs": "exactsource/configdigests,rawtimings,outcomes,environment",
+          "output": "scoped pass/failure report",
+          "algorithm": "Keep workcost, invalidproofamplification, diskprocesscrashes, localhostnetwork, actuallearning andreward evidence separate. Retainfailedobservations; requireexternal revieweridentity for independentacceptance, never substitute authoredsubprocesses.",
+          "commit": "Immutable evidence artifact manifest; cannot enableproduction.",
+          "errors": "EVIDENCE, CONTEXT, MISSING_CAMPAIGN",
+          "limits": "no all-green fabricated row; no throughput extrapolation"
+        }
+      ],
+      "source_refs": [
+        "formal/pon-nakamoto-v1/test_contracts.py",
+        "formal/pon-nakamoto-v1/test_interop.py"
+      ],
+      "test_classes": [
+        "CodecTests",
+        "DiskReorgTests",
+        "InteropTests"
+      ],
+      "native_packages": [
+        "trnm-bench",
+        "trnm-audit-events"
+      ],
+      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_product_integrated": false,
+      "independent_accepted": false
+    }
+  ]
+}

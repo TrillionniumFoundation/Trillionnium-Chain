@@ -86,7 +86,7 @@ def check(root=ROOT):
     require(pon['selected_development_target']=='pon-nakamoto-v1','selected target drift')
     require(pon['fork_choice']=='maximum-fully-validated-cumulative-required-work','wrong fork choice')
     for key in ['validator_voting','quality_weighted_chainwork','automatic_bft_fallback','automatic_hash_only_fallback']:require(pon[key] is False,'forbidden authority/fallback')
-    require(pon['work_profile']['status']=='unqualified' and pon['work_profile']['concrete_profile_id'] is None,'work primitive incorrectly qualified')
+    require(pon['work_profile']['status']=='implemented-experimental-not-security-qualified' and pon['work_profile']['concrete_profile_id']=='pon-matmul-transcript-64-v1' and pon['work_profile']['canonical_codec_frozen'] is True and pon['work_profile']['codec_scope']=='experimental-genesis-only','experimental work identity or qualification drift')
     for key in ['cost_hardness_accepted','independent_verifier','quality_is_work','historical_training_is_fresh_work']:require(pon['work_profile'][key] is False,'work security claim')
     required_axes={'runtime_implemented','work_profile_qualified','public_model_efficacy_measured','public_model_product_loop_accepted','reorg_external_effects_qualified','independent_security_accepted','independent_economics_accepted'}
     require(set(pon['implementation']) == required_axes, 'incomplete or unknown implementation axes')
@@ -127,6 +127,8 @@ def check(root=ROOT):
         prose=contained(root,row['technical_spec']).read_text()
         require('VerifyHistoricalPoCO' not in prose and 'decoders in explicit legacy dispatch' not in prose,'old decoder requirement restored')
     require('pull_request_target' not in text,'privileged pull request event')
+    from check_detailed_contracts import validate as detailed_validate
+    detailed_validate(root)
     return {'result':'PASS','workspace_packages':len(names),'rust_files':source_count,'local_links':links,'runtime_implemented':False,'activation':False,'normal_dependency_edges':sum(map(len,normal_graph.values()))}
 if __name__=='__main__':
     try:

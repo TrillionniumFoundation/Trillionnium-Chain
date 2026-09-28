@@ -1,6 +1,6 @@
 # Release readiness
 
-Stage: `portable-foundation-only`. Native consensus runtime and qualified work profile:
+Stage: `executable-contract-and-portable-components`. Native consensus runtime and qualified work profile:
 **false**. Production candidate, consensus activation, public testnet and release: **false**.
 
 Old source/protocol/deployment trees are deleted. The portability inventory names the
@@ -15,3 +15,7 @@ A separate tmpfs-backed temporary-directory run can test complete logical file/I
 restart, mutation and ownership behavior with all assertions retained; it cannot qualify
 block-device latency, fsync durability or physical power loss. The exact report must name
 the temporary filesystem and test concurrency. No production SLO is granted by cleanup.
+
+Native work/codec candidates and the executable Python ledger/model loop now exist.
+Their controlled evidence does not activate a public network. Full-recompute proof
+admission has measured asymmetry; external independent work and model acceptance remain false.
