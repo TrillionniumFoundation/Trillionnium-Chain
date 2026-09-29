@@ -71,3 +71,6 @@ separates document, component, executable contract, native product and independe
 [Hepta owner handoff](details/HEPTA_HANDOFF.md) supersede the affected experimental lifecycle
 rules. New genesis parameters and storage schema require fresh namespaces. The work relation
 itself remains experimental and unqualified; all production/independent acceptance is false.
+
+[Immutable evaluation inputs and full service consent](details/EVALUATION_BUNDLE.md)
+bind actual producer/evaluator/settlement calls; they do not grant export or deployment authority.

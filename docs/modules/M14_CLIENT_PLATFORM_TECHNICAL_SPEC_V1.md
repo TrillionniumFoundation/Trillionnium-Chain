@@ -65,3 +65,13 @@ raw command exits and concrete invariant test results. Its verifier distinguishe
 runtime byte identity from documentation edits and cannot grant independent acceptance.
 Module-specific limitations above remain in force even when the referenced local test
 passes. The development plan, not this link or a count of procedures, selects next work.
+
+## Frozen evaluation and consent continuation
+
+See [E3](../protocol/pon-nakamoto-v1/details/EVALUATION_BUNDLE.md) for exact bytes,
+owner boundaries and failure schedules. No public export or future-window authority
+is created by a frozen artifact. The following additional regressions are executable:
+
+- `formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_cost_nonce_and_returned_output_cannot_be_omitted`.
+- `formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_oversized_receipt_rejects_before_json`.
+- `formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_boolean_counter_alias_rejects`.

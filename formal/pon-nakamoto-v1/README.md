@@ -77,3 +77,15 @@ clock overrides and remaining limits. Historical [v1 evidence](../../evidence/po
 is not edited or promoted to current acceptance. Work hardness, fair public proof admission,
 ordinary Hepta integration, long-term DA, physical power loss and independent acceptance
 remain separate work; all production flags stay false.
+
+## Immutable evaluation caller
+
+The current model producer writes `evaluation-bundle.json` and returns its digest.
+Evaluation requires `--evaluation-bundle`, `--bundle-hash`, the locked `--calibration` input and `--partition`;
+`--reference` alone is rejected. Settlement additionally requires `--bundle-hash` and
+recomputes the two bound evaluator partitions before signing test attestations. Use new
+output directories. `run_campaign.py` forwards the producer's returned digest.
+
+Run `python3 formal/pon-nakamoto-v1/test_evaluation_bundle.py` for exact substitution,
+leakage, statistical-unit, worker and settlement counterexamples. Three-cycle learning
+uses the same sealed controls/parent, while keeping retrospective/no-public-update scope.

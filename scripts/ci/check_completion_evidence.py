@@ -16,7 +16,7 @@ def load_list(path):
     require(isinstance(value,list),'expected report list')
     return value
 
-def validate(root=ROOT,evidence=None):
+def validate(root=ROOT,evidence=None,*,current_runtime=True):
     root=Path(root).resolve();folder=Path(evidence or root/'evidence/pon-v4').resolve()
     manifest=load(folder/'manifest.json')
     require(manifest['schema']=='pon-completion-evidence-v4','schema')
@@ -33,9 +33,9 @@ def validate(root=ROOT,evidence=None):
     old=source_bytes(root,commit,list(q['source_files_sha256']))
     for relative,data in old.items():
         require(hashlib.sha256(data).hexdigest()==q['source_files_sha256'][relative],'source digest '+relative)
-        if runtime(relative):require(safe(root,relative).read_bytes()==data,'runtime differs from measured source '+relative)
+        if current_runtime and runtime(relative):require(safe(root,relative).read_bytes()==data,'runtime differs from measured source '+relative)
     tracked=set(subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines())
-    require({p for p in tracked if runtime(p)}=={p for p in old if runtime(p)},'runtime inventory mismatch')
+    if current_runtime:require({p for p in tracked if runtime(p)}=={p for p in old if runtime(p)},'runtime inventory mismatch')
     aggregate=[];native=None
     for row in q['results']:
         require(row['returncode']==0,'failed execution')
@@ -125,10 +125,12 @@ def validate(root=ROOT,evidence=None):
     history=manifest['historical_evidence']
     require(history['path']=='evidence/pon-v3/manifest.json' and history['claimed_current_runtime']is False,'old campaign promoted')
     require(hashlib.sha256(safe(root,history['path']).read_bytes()).hexdigest()==history['sha256'],'historical package changed')
-    return {'measured_commit':commit,'runtime_matches':True,'executed_invariant_selectors':len(selectors),'native_tests':native['passed'],'comparison_samples':len(comparison['samples']),'physical_hosts':len(hosts['results']),'independent_accepted':False,'ordinary_hepta_entry':False,'production_activation':False}
+    return {'measured_commit':commit,'runtime_matches':True if current_runtime else None,'historical_only':not current_runtime,'executed_invariant_selectors':len(selectors),'native_tests':native['passed'],'comparison_samples':len(comparison['samples']),'physical_hosts':len(hosts['results']),'independent_accepted':False,'ordinary_hepta_entry':False,'production_activation':False}
 
 if __name__=='__main__':
-    result=validate();manifest=load(ROOT/'evidence/pon-v4/manifest.json')
+    import argparse
+    parser=argparse.ArgumentParser();parser.add_argument('--historical',action='store_true');args=parser.parse_args()
+    result=validate(current_runtime=not args.historical);manifest=load(ROOT/'evidence/pon-v4/manifest.json')
     tracked=set(subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines())
     require({'evidence/pon-v4/'+p for p in manifest['files']}<=tracked,'evidence not tracked')
     print(json.dumps(result,sort_keys=True))

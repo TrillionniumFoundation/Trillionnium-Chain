@@ -19,12 +19,16 @@ def run(out,source):
         ('model-settlement',[sys.executable,'formal/pon-nakamoto-v1/experiments/settle_model.py','--input',str(out/'model'),'--out',str(out/'settlement')]),
         ('loopback-network',[sys.executable,'formal/pon-nakamoto-v1/experiments/local_network.py','--out',str(out/'network')]),
     ]
-    records=[]
+    records=[];locked_bundle=None
     for name,command in commands:
+        if name=='model-settlement':
+            if locked_bundle is None:raise ValueError('MISSING_PRODUCER_BUNDLE')
+            command=command+['--bundle-hash',locked_bundle]
         path=out/(name+'.log');start=time.perf_counter()
         with path.open('w')as log:result=subprocess.run(command,cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=240)
         row={'name':name,'command':command,'returncode':result.returncode,'seconds':time.perf_counter()-start,'log':path.name};records.append(row);print(json.dumps(row),flush=True)
         if result.returncode:print(path.read_text()[-6000:],flush=True);break
+        if name=='model-learning':locked_bundle=json.loads(path.read_text().splitlines()[-1])['evaluation_bundle']
     inputs={}
     for folder in ['config/pon','formal/pon-nakamoto-v1','trillionnium/crates/trnm-protocol','trillionnium/crates/trnm-crypto-primitives']:
         for p in sorted((ROOT/folder).rglob('*')):

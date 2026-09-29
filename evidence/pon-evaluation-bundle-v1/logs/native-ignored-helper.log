@@ -1,0 +1,24 @@
+   Compiling syn v2.0.117
+   Compiling serde_json v1.0.149
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling curve25519-dalek v4.1.3
+   Compiling thiserror-impl v1.0.69
+   Compiling thiserror v1.0.69
+   Compiling serde v1.0.228
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-research-protocol v0.1.0 (/home/qian-qi/Documents/chain-pon-model-closure-20260929/trillionnium/crates/trnm-research-protocol)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.48s
+     Running unittests src/lib.rs (/tmp/trnm-model-closure-target-20260929/debug/deps/trnm_research_protocol-5ebacfdd10f07337)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/protocol_v1.rs (/tmp/trnm-model-closure-target-20260929/debug/deps/protocol_v1-b0263576e80b7aaa)
+
+running 1 test
+test print_golden_fixture_for_regeneration ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.01s
+

@@ -14,8 +14,11 @@ def receipt(fields):
     return canonical(fields)
 
 def verify(raw,expected):
+    if type(raw)is not bytes or len(raw)>2048:raise ValueError('RECEIPT_LIMIT')
+    if not isinstance(expected,dict)or set(expected)!=FIELDS:raise ValueError('RECEIPT_BINDING')
+    receipt(expected)
     fields=json.loads(raw,object_pairs_hook=unique)
     if receipt(fields)!=raw:raise ValueError('RECEIPT_CANONICAL')
-    mandatory={'network','parameters','model','request','input','provider','quota'}
+    mandatory=FIELDS
     if not mandatory<=set(expected) or any(k not in FIELDS or fields[k]!=v for k,v in expected.items()):raise ValueError('RECEIPT_BINDING')
     return H('inference-receipt-v2',raw)

@@ -6,10 +6,10 @@ from prepare_evidence_sources import identity,prepare,REMOTE
 class EvidenceSourceTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name)
-        for version,commit,tree in [('pon-v3','1'*40,'2'*40),('pon-v4','3'*40,'4'*40)]:
+        for version,commit,tree in [('pon-v3','1'*40,'2'*40),('pon-v4','3'*40,'4'*40),('pon-evaluation-bundle-v1','5'*40,'6'*40)]:
             p=self.root/'evidence'/version;p.mkdir(parents=True)
             (p/'manifest.json').write_text(json.dumps(dict(implementation_commit=commit,implementation_tree=tree)))
-        self.trees={'5d59b9540268914794a62e8fa237caf999499314':'30ee65c0752693f4eecc90f924972279f00c0c73','1'*40:'2'*40,'3'*40:'4'*40}
+        self.trees={'5d59b9540268914794a62e8fa237caf999499314':'30ee65c0752693f4eecc90f924972279f00c0c73','1'*40:'2'*40,'3'*40:'4'*40,'5'*40:'6'*40}
     def tearDown(self):self.tmp.cleanup()
     def test_non_sha_cannot_be_a_fetch_argument(self):
         for value in ['main','--all','1'*39,'A'*40,'1'*40+'; echo BAD',None]:
@@ -30,7 +30,7 @@ class EvidenceSourceTests(unittest.TestCase):
             if args[1]=='rev-parse':return subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')
             return subprocess.CompletedProcess(args,0,'','')
         result=prepare(self.root,run)
-        self.assertEqual(len(result['fetched']),3)
+        self.assertEqual(len(result['fetched']),4)
         for args,kw in calls:
             if args[1]=='fetch':
                 self.assertEqual(args[2:5],['--no-tags','--no-write-fetch-head',REMOTE]);identity(args[5]);self.assertEqual(kw['timeout'],90)

@@ -1,0 +1,29 @@
+test_bad_exit_is_not_a_pass (__main__.CompletionEvidenceTests.test_bad_exit_is_not_a_pass) ... ok
+test_changed_root_rejects_even_after_rehash (__main__.CompletionEvidenceTests.test_changed_root_rejects_even_after_rehash) ... ok
+test_different_host_binary_is_not_qualified (__main__.CompletionEvidenceTests.test_different_host_binary_is_not_qualified) ... ok
+test_different_inputs_not_comparable (__main__.CompletionEvidenceTests.test_different_inputs_not_comparable) ... ok
+test_dirty_execution_not_qualified (__main__.CompletionEvidenceTests.test_dirty_execution_not_qualified) ... ok
+test_failed_temporary_cleanup_is_not_hidden (__main__.CompletionEvidenceTests.test_failed_temporary_cleanup_is_not_hidden) ... ok
+test_hepta_owner_cannot_be_invented (__main__.CompletionEvidenceTests.test_hepta_owner_cannot_be_invented) ... ok
+test_historical_receipt_does_not_claim_current_runtime (__main__.CompletionEvidenceTests.test_historical_receipt_does_not_claim_current_runtime) ... ok
+test_host_result_cannot_be_independent_consensus (__main__.CompletionEvidenceTests.test_host_result_cannot_be_independent_consensus) ... ok
+test_host_wrong_root_rejects (__main__.CompletionEvidenceTests.test_host_wrong_root_rejects) ... ok
+test_included_count_cannot_be_inferred (__main__.CompletionEvidenceTests.test_included_count_cannot_be_inferred) ... ok
+test_missing_binary_samples_reject (__main__.CompletionEvidenceTests.test_missing_binary_samples_reject) ... ok
+test_model_generations_cannot_be_invented (__main__.CompletionEvidenceTests.test_model_generations_cannot_be_invented) ... ok
+test_no_independent_operator_from_same_owner (__main__.CompletionEvidenceTests.test_no_independent_operator_from_same_owner) ... ok
+test_old_campaign_cannot_be_promoted (__main__.CompletionEvidenceTests.test_old_campaign_cannot_be_promoted) ... ok
+test_old_receipt_refuses_current_runtime_without_explicit_historical_scope (__main__.CompletionEvidenceTests.test_old_receipt_refuses_current_runtime_without_explicit_historical_scope) ... ok
+test_omitted_host_case_rejects (__main__.CompletionEvidenceTests.test_omitted_host_case_rejects) ... ok
+test_raw_log_cannot_be_replaced (__main__.CompletionEvidenceTests.test_raw_log_cannot_be_replaced) ... ok
+test_signature_count_does_not_disappear (__main__.CompletionEvidenceTests.test_signature_count_does_not_disappear) ... ok
+test_summary_cannot_claim_future_learning (__main__.CompletionEvidenceTests.test_summary_cannot_claim_future_learning) ... ok
+test_summary_cannot_hide_regression (__main__.CompletionEvidenceTests.test_summary_cannot_hide_regression) ... ok
+test_summary_cannot_inflate_test_results (__main__.CompletionEvidenceTests.test_summary_cannot_inflate_test_results) ... ok
+test_summary_cannot_relabel_old_history_as_current (__main__.CompletionEvidenceTests.test_summary_cannot_relabel_old_history_as_current) ... ok
+test_worker_creation_bound_is_real (__main__.CompletionEvidenceTests.test_worker_creation_bound_is_real) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 6.711s
+
+OK

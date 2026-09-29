@@ -2,7 +2,7 @@ import unittest
 from evaluation import *
 class ModelGateTests(unittest.TestCase):
     def test_stronger_single_control_not_weak_base_is_selected(self):
-        rows=[{'id':str(i),'label':i%2}for i in range(40)];labels=[r['label']for r in rows]
+        rows=[{'id':str(i),'label':i%2,'source_group':str(i)}for i in range(40)];labels=[r['label']for r in rows]
         name,_=select_reference(rows,{'current':[0]*40,'best_single':labels,'mean_merge':[1]*40,'pooled':[0]*40});self.assertEqual(name,'best_single')
     def test_snippets_from_one_file_do_not_become_independent_samples(self):
         rows=[{'id':str(i),'label':1,'source_group':'one-file'}for i in range(100)]
@@ -17,5 +17,5 @@ class ModelGateTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'DUPLICATE_TASK'):assess([{'id':'x','label':1,'source_group':'a'}]*2,[1,1],[0,0])
         with self.assertRaisesRegex(ValueError,'PARTITION_OVERLAP'):freeze_plan(source='source',train_ids=['a'],calibration_ids=['a'],eligible_future_after=1,model_hash='hash')
     def test_reference_cannot_silently_omit_a_control(self):
-        with self.assertRaisesRegex(ValueError,'CONTROL_SET'):select_reference([{'id':'a','label':1}],{'current':[0]})
+        with self.assertRaisesRegex(ValueError,'CONTROL_SET'):select_reference([{'id':'a','label':1,'source_group':'a'}],{'current':[0]})
 if __name__=='__main__':unittest.main(verbosity=2)

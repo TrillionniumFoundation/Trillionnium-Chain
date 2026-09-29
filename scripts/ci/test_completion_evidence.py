@@ -16,9 +16,13 @@ class CompletionEvidenceTests(unittest.TestCase):
             data=json.loads(raw);change(data);p.write_text(json.dumps(data,indent=2)+'\n')
             if path!='manifest.json':
                 index=json.loads(before);index['files'][path]=hashlib.sha256(p.read_bytes()).hexdigest();m.write_text(json.dumps(index))
-            with self.assertRaises(ValueError):validate(ROOT,self.folder)
+            with self.assertRaises(ValueError):validate(ROOT,self.folder,current_runtime=False)
         finally:p.write_bytes(raw);m.write_bytes(before)
-    def test_current_receipt(self):self.assertTrue(validate(ROOT,self.folder)['runtime_matches'])
+    def test_historical_receipt_does_not_claim_current_runtime(self):
+        result=validate(ROOT,self.folder,current_runtime=False)
+        self.assertIsNone(result['runtime_matches']);self.assertTrue(result['historical_only'])
+    def test_old_receipt_refuses_current_runtime_without_explicit_historical_scope(self):
+        with self.assertRaisesRegex(ValueError,'runtime differs'):validate(ROOT,self.folder)
     def test_model_generations_cannot_be_invented(self):self.mutate('manifest.json',lambda d:d.update(three_improving_generations=True))
     def test_hepta_owner_cannot_be_invented(self):self.mutate('manifest.json',lambda d:d.update(ordinary_hepta_entry=True))
     def test_no_independent_operator_from_same_owner(self):self.mutate('manifest.json',lambda d:d.update(independent_accepted=True))
@@ -57,6 +61,6 @@ class CompletionEvidenceTests(unittest.TestCase):
         p=self.folder/path;old=p.read_bytes()
         try:
             p.write_bytes(b'OK\n')
-            with self.assertRaises(ValueError):validate(ROOT,self.folder)
+            with self.assertRaises(ValueError):validate(ROOT,self.folder,current_runtime=False)
         finally:p.write_bytes(old)
 if __name__=='__main__':unittest.main(verbosity=2)

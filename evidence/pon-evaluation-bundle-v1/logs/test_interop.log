@@ -1,0 +1,12 @@
+test_all_command_tags (__main__.InteropTests.test_all_command_tags) ... ok
+test_header (__main__.InteropTests.test_header) ... ok
+test_independent_sparse_tree_directions_agree (__main__.InteropTests.test_independent_sparse_tree_directions_agree) ... ok
+test_native_generation_reproduces_python_bytes (__main__.InteropTests.test_native_generation_reproduces_python_bytes) ... ok
+test_native_rejects_changed_context_and_output (__main__.InteropTests.test_native_rejects_changed_context_and_output) ... ok
+test_rejection_vectors (__main__.InteropTests.test_rejection_vectors) ... ok
+test_work_certificate_parity (__main__.InteropTests.test_work_certificate_parity) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.261s
+
+OK

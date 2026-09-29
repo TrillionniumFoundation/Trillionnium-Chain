@@ -302,24 +302,36 @@
     {
       "module": "M11",
       "id": "StrongClusterControl",
-      "claim": "A candidate losing to the strongest calibration-locked control receives no improvement score; many snippets in one file are one statistical cluster.",
+      "claim": "Candidate, materialized strongest source-group control, policy and task partition are immutable under a caller-admitted bundle hash; a negative mean cannot pass the directional gate.",
       "scope": "Controlled real training and explicit evaluation producer; signatures still use the experimental attestor trust model.",
-      "atomic": "Freeze candidate/control/calibration before evaluation; calculate exact source-group sign test with multiplicity correction.",
+      "atomic": "Seal candidate, parent, all materialized controls, calibration and evaluation partitions; replay calibration selection and exact group scores before evaluating held-out results or signing controlled settlement evidence.",
       "cuts": [
         "Best single stronger than base",
         "Candidate loses to best control",
         "One hundred snippets from one source",
-        "Caller labels data future"
+        "Caller labels data future",
+        "Replace reference weights at same path",
+        "Unequal numbers of correlated calibration snippets",
+        "Positive sign majority with negative macro gain",
+        "Attempt evaluation through old unbound reference mode"
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_stronger_single_control_not_weak_base_is_selected",
         "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_improving_over_base_but_losing_to_control_is_not_rewarded",
         "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_snippets_from_one_file_do_not_become_independent_samples",
-        "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_positive_cluster_result_does_not_mint_future_acceptance"
+        "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_positive_cluster_result_does_not_mint_future_acceptance",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::StatisticalBoundaryTests.test_calibration_weights_source_groups_not_number_of_snippets",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::StatisticalBoundaryTests.test_positive_direction_majority_with_negative_mean_is_rejected",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_every_control_parameter_is_bound_before_inference",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_input_label_content_identity_and_group_substitution_reject",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::EvaluationWorkerTests.test_legacy_unbound_reference_cannot_authorize_evaluation",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_self_consistent_rehashed_calibration_score_still_requires_actual_replay",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_changed_calibration_data_cannot_be_substituted"
       ],
       "source": [
         "formal/pon-nakamoto-v1/evaluation.py",
-        "formal/pon-nakamoto-v1/experiments/model_loop.py"
+        "formal/pon-nakamoto-v1/experiments/model_loop.py",
+        "formal/pon-nakamoto-v1/evaluation_bundle.py"
       ],
       "limit": "At least20 clusters, four-comparison correction, integer/Fraction arithmetic; public reward eligibility stays false without owner-verified evidence.",
       "threat": "Weak baselines, correlated samples, adaptive holdout reuse, poisoned evaluators and first-two arrival manipulation.",
@@ -335,17 +347,23 @@
         "Maturity and claim deadline",
         "Repeated proof with new nonce",
         "Unclaimed budget",
-        "Empty old release retirement"
+        "Empty old release retirement",
+        "Forge both evaluator and aggregate score files before signing",
+        "No marginal gain before any ledger creation"
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_unclaimed_release_budget_refunds_at_reserved_deadline",
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement",
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_terminal_task_retirement_cannot_reopen_same_resource_id",
-        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_spent_quota_retirement_preserves_consent_identity"
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_spent_quota_retirement_preserves_consent_identity",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_mutating_both_summary_and_evaluator_score_does_not_authorize_reward",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_zero_marginal_candidate_creates_no_ledger_or_reward",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_undeclared_bundle_cannot_be_read_from_summary_as_authority"
       ],
       "source": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "formal/pon-nakamoto-v1/experiments/settle_model.py"
       ],
       "limit": "20-block maturity plus1000-block claim window;16 due slots per height shared with tasks and quotas.",
       "threat": "Replay, uncompensated liabilities, expiry starvation, sponsor self-traffic and orphaned external payouts.",
@@ -377,18 +395,24 @@
     {
       "module": "M14",
       "id": "ServiceReceiptBinding",
-      "claim": "Consumer consent binds expected network, parameters, model, request, input, provider and quota; no opaque result hash silently substitutes another service.",
+      "claim": "Consumer consent binds every expected network, model, request, input/output, provider, quota, units and provider nonce; omitted cost fields cannot be inferred from untrusted receipt bytes.",
       "scope": "Closed receipt before quota-use signing, distinct from a local capability.",
       "atomic": "Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.",
       "cuts": [
         "Replace every receipt field",
         "Missing expected identities",
         "Extra authority field",
-        "Noncanonical bytes"
+        "Noncanonical bytes",
+        "Omit units/provider nonce/output from expectations",
+        "Oversize input before JSON",
+        "Boolean aliases cost counter"
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_every_service_identity_is_bound",
-        "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_duplicate_or_implicit_receipt_fields_reject"
+        "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_duplicate_or_implicit_receipt_fields_reject",
+        "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_cost_nonce_and_returned_output_cannot_be_omitted",
+        "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_oversized_receipt_rejects_before_json",
+        "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_boolean_counter_alias_rejects"
       ],
       "source": [
         "formal/pon-nakamoto-v1/inference_receipt.py",
@@ -438,15 +462,26 @@
       "cuts": [
         "Omit a control",
         "Overlap task identities",
-        "Composition loses to selected control"
+        "Composition loses to selected control",
+        "Old unadopted model masquerades as current",
+        "Reuse source group/content under different task id",
+        "Overwrite frozen plan",
+        "Caller asserts future without source/time authority"
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_reference_cannot_silently_omit_a_control",
-        "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_duplicate_task_and_partition_overlap_reject"
+        "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_duplicate_task_and_partition_overlap_reject",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_control_current_must_be_actual_parent",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_cross_partition_exact_content_overlap_rejects",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_cross_partition_source_group_overlap_rejects",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_write_once_plan_survives_readback_and_cannot_be_overwritten",
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::StatisticalBoundaryTests.test_caller_future_flag_is_not_observation_or_reward"
       ],
       "source": [
         "formal/pon-nakamoto-v1/evaluation.py",
-        "formal/pon-nakamoto-v1/experiments/model_loop.py"
+        "formal/pon-nakamoto-v1/experiments/model_loop.py",
+        "formal/pon-nakamoto-v1/evaluation_bundle.py",
+        "formal/pon-nakamoto-v1/experiments/learning_cycles.py"
       ],
       "limit": "Finite local optimization, disclosed training budget, no paid provider invocation.",
       "threat": "Reward hacking, self-evaluation, adapting after seeing outcomes and absorbing existing Hepta owners.",

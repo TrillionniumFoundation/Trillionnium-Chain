@@ -17,7 +17,7 @@ def identity(value):
 def declarations(root):
     # v1 source bytes are also bound by the independently retained mainline archive.
     values={'5d59b9540268914794a62e8fa237caf999499314':'30ee65c0752693f4eecc90f924972279f00c0c73'}
-    for name in ['pon-v3','pon-v4']:
+    for name in ['pon-v3','pon-v4','pon-evaluation-bundle-v1']:
         data=json.loads((root/'evidence'/name/'manifest.json').read_text())
         commit=identity(data['implementation_commit']);tree=identity(data['implementation_tree'])
         if commit in values and values[commit]!=tree:raise ValueError('conflicting source tree')
