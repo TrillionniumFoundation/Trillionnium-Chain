@@ -19,7 +19,7 @@ default = []
 [dependencies]
 borsh = { version = "1", features = ["derive"] }
 ed25519-dalek = "2"
-rusqlite = { version = "0.32", features = ["bundled"] }
+rusqlite = { version = "0.40", features = ["bundled"] }
 sha2 = "0.10"
 
 [dev-dependencies]

@@ -22,7 +22,7 @@ trnm-crypto-primitives = { path = "../trnm-crypto-primitives" }
 serde_json = "1"
 hex = "0.4"
 borsh = { version = "1", features = ["derive"] }
-rusqlite = { version = "0.32", features = ["bundled"] }
+rusqlite = { version = "0.40", features = ["bundled"] }
 sha2 = "0.10"
 
 [dev-dependencies]
