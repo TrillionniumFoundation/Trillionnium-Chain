@@ -60,7 +60,7 @@ lower bounds. Separately report cold and warm caches, invalid field/length/task 
 failed ticket checks, ticket-passing false transcripts and duplicate valid retransmits.
 
 For m public verifier slots, a measured isolated service approximation is
-m / C_invalid seconds of service per request, not a safety theorem. Under an explicit
+m / C_invalid requests per second when C_invalid is in seconds per request, not a safety theorem. Under an explicit
 arrival model lambda_invalid*C_invalid + lambda_valid*C_valid must remain below the
 usable public CPU budget for a stable queue; burst tails and honest waiting time still
 need measurement. A recovery reservation protects only the locally authorized lane. It
@@ -78,3 +78,8 @@ The controlled cost collector in `scripts/pon_work_cost_report.py` can re-run th
 native cost binary and preserve raw output plus exact-source identities. It rejects
 mixed targets, duplicate samples, Boolean counters and invented security flags, but
 creates no public-admission qualification. It does not send traffic to any peer or host.
+
+[The new controlled cost record](../../../../evidence/pon-contract-authority-v1/README.md)
+binds actual execution, raw samples, target, binary and original source. Current-source
+verification and the retained failed environment setup are separate from public admission
+or work-hardness acceptance, which remain false.

@@ -44,4 +44,28 @@ class EvidenceSourceTests(unittest.TestCase):
         p=self.root/'evidence/pon-v4/manifest.json';d=json.loads(p.read_text());d['implementation_commit']='refs/heads/main';p.write_text(json.dumps(d))
         def run(*args,**kw):raise AssertionError('must not execute')
         with self.assertRaises(ValueError):prepare(self.root,run)
+    def test_new_cost_package_retains_exact_original_source(self):
+        p=self.root/'evidence/pon-contract-authority-v1';p.mkdir()
+        (p/'manifest.json').write_text(json.dumps(dict(implementation_commit='7'*40,implementation_tree='8'*40)))
+        self.trees['7'*40]='8'*40
+        calls=[]
+        def run(args,**kw):
+            calls.append(args)
+            if args[1]=='cat-file':return subprocess.CompletedProcess(args,1,'','missing')
+            if args[1]=='rev-parse':return subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')
+            return subprocess.CompletedProcess(args,0,'','')
+        result=prepare(self.root,run)
+        self.assertIn('7'*40,result['fetched'])
+        self.assertIn(['git','fetch','--no-tags','--no-write-fetch-head',REMOTE,'7'*40],calls)
+        self.assertFalse(result['branch_refs_changed'])
+    def test_new_cost_package_rejects_branch_as_measurement(self):
+        p=self.root/'evidence/pon-contract-authority-v1';p.mkdir()
+        (p/'manifest.json').write_text(json.dumps(dict(implementation_commit='main',implementation_tree='8'*40)))
+        def run(*a,**kw):raise AssertionError('must validate before any Git command')
+        with self.assertRaises(ValueError):prepare(self.root,run)
+    def test_new_cost_package_cannot_rebind_existing_source_tree(self):
+        p=self.root/'evidence/pon-contract-authority-v1';p.mkdir()
+        (p/'manifest.json').write_text(json.dumps(dict(implementation_commit='1'*40,implementation_tree='8'*40)))
+        def run(*a,**kw):raise AssertionError('conflicting source must reject before commands')
+        with self.assertRaises(ValueError):prepare(self.root,run)
 if __name__=='__main__':unittest.main(verbosity=2)

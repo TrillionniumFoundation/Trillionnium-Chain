@@ -85,3 +85,8 @@ recorded runtime match; it never grants integration, independence or production 
 
 The reporter never writes a new SHA into any historical report. Current PR/head/merge
 checks for changed development tooling remain new observations, not old logs relabelled.
+
+The [contract/tooling delivery](../../evidence/pon-contract-authority-v1/README.md) has its
+own exact-source new test/cost observations, including a failed fixture preparation and
+a successful same-source native rerun. It does not overwrite any of the four runtime
+package identities above or make current documentation edits into new model experiments.

@@ -55,6 +55,7 @@ case "${1:?required job}" in
     python3 scripts/ci/check_evaluation_bundle_evidence.py
     python3 scripts/ci/test_evaluation_bundle_evidence.py
     python3 scripts/ci/report_module_evidence.py --format markdown
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-contract-authority-v1/work-cost
     ;;
   *) printf '%s\n' 'unknown CI job' >&2; exit 2 ;;
 esac

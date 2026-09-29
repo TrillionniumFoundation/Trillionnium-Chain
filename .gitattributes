@@ -12,3 +12,6 @@ evidence/pon-v4/**/*.log -whitespace
 
 # Preserve exact captured process output, including partial progress lines and trailing blank lines.
 evidence/pon-evaluation-bundle-v1/logs/*.log -whitespace
+
+# Byte-exact new contract/cost observations, including the failed fixture preparation.
+evidence/pon-contract-authority-v1/**/*.log -text -whitespace
