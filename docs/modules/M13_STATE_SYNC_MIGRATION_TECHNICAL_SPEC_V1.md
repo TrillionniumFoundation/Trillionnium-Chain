@@ -67,3 +67,18 @@ Run `python3 scripts/ci/report_module_evidence.py --module M13` from the reposit
 root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
 not observed in each package. A byte match is not a new test run or product acceptance.
 Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
+
+## Bounded receiver / confirmation continuation
+
+The actual controlled caller is `formal/pon-nakamoto-v1/client_confirmation.py`.
+[N2](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md#n2--executed-bounded-history-receiver-and-local-confirmation)
+defines page fields, caller-pinned cursors, full work/state validation, per-block commit,
+interrupted-prefix recovery, local confirmation and clock/currentness limits. The existing
+Ledger remains the only persistent owner. Maturity now binds this caller and its exact
+regressions; native public-host and ordinary Hepta integration flags remain false.
+
+A receiver computes work and transaction membership rather than accepting RPC assertions.
+This is a full-verifying reference client with explicit optional native work/execution
+components, NOT a succinct light client or proof of the globally latest tip. Completed
+lower-work delivery does not replace the receiver's heavier observed branch. Successful
+logical-clock tests cannot be reported as live confirmed public throughput.

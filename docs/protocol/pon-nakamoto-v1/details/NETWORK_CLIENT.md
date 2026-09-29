@@ -106,3 +106,80 @@ peak RSS and database size. GPU work is absent, not a measured GPU performance c
 Physical hosts controlled by the same person are not independent operators. Transport
 routing attacks, hostile open peers, long-term DA, power loss and ordinary Hepta owner
 execution remain different acceptance obligations.
+
+## N2 — executed bounded history receiver and local confirmation
+
+`formal/pon-nakamoto-v1/client_confirmation.py` adds the controlled M13/M14 caller,
+not another consensus engine, chain store, native public node or succinct proof system.
+The receiver uses its existing `Ledger.admit` (real work, signatures, expected target,
+ordered state and roots), `Ledger.activate` and durable namespace. Optional explicitly
+selected `TRNM_NATIVE_WORK` / `TRNM_NATIVE_EXECUTOR` retain their fail-without-fallback
+semantics. Without those selections this is the existing Python reference backend.
+
+### Page bytes and cursor
+
+The versioned `pon-history-page-v1` object has exactly schema, network, parameters,
+genesis, tip, after, blocks, next_after and complete. All five digest fields and the
+genesis context are exact lowercase fixed digests. A block contains only canonical
+base64 header, a list of canonical base64 transactions, and canonical base64 work proof.
+Proof size comes from the installed work profile. Remote chainwork, confirmed, clock,
+authority or snapshot fields reject; no peer total is used for chain selection.
+
+At most16 blocks and2MiB occur in a page. Bytes are bounded before JSON, duplicate keys
+reject, and decoded per-object limits apply before work. Parent links, the exact last
+block identity and complete=(next_after==requested_tip) must agree. Empty pages are
+valid only when the requested tip already equals the locally verified cursor.
+These are transport budgets, not a permanent height or reorganization cutoff.
+
+`history_pages` pins a stored branch and spools its ancestry once in an8KiB buffer,
+then emits it forwards. Height must decrease strictly in ancestry; a cursor from another
+fork rejects. The exporter does not export SQL snapshots or assert global currentness.
+The iterator closes its spool on cancellation/close. Traversal and disk use can grow
+with history; this does not claim constant-work synchronization or long-term DA.
+
+### Admission, incomplete delivery and retry
+
+`receive_page(receiver,bytes,expected_tip,after,observed_now)` uses the caller-pinned
+expected tip, a cursor already present in the receiver's verified store, and the LOCAL
+observation clock. Neither digest pinning nor the page's complete field proves that
+this is the latest global chain. Full byte/context/order checks precede expensive work.
+Each successful block is committed by the existing Ledger owner; failure or cancellation
+may leave a fully verified prefix. It never persists the invalid block or returns a
+successful completed-request receipt. Replaying the same page after a lost ACK uses
+exact stored block/body/proof equality rather than repeating work or issuing rewards.
+
+Requested-tip activation occurs after the complete target verifies and still uses
+strictly greater locally derived cumulative work. A lower-work valid imported target
+can complete without becoming active; both observations are returned separately.
+A subsequent ordinary restart can correctly select a stored verified prefix as its
+best observed chain. That fact is not completion of an interrupted longer request.
+EOF before completion is INCOMPLETE_HISTORY; trailing data is not a successful request.
+Already committed valid blocks are not rolled back to simulate page-level atomicity.
+
+### Confirmation facts, not authority
+
+`confirmation` reads the receiver's coherent active state, checks the included body's
+transaction root and exact TxId membership, follows active ancestry, and computes depth
+and cumulative-work delta against the installed depth+work policy. It returns included,
+confirmed or reorged with exact observed tip and local generation. A replaced generation
+fails STALE_VIEW. A future-clock tip fails TIME_DEFERRED. A logical test clock is explicitly
+labelled and cannot become a wall-clock confirmation merely by reopening its database.
+Orphaned inclusion has no current depth/work and cannot remain confirmed.
+
+A retained confirmed response is only an observation at its returned generation/time.
+It cannot authorize a physical call or guarantee global freshness, eclipse resistance,
+zero rollback risk, data retention or independently administered validation. Finalized
+and execution-authority fields remain false. The full client verifies history rather
+than trusting a server's work counter; it is not advertised as a lightweight proof.
+
+The controlled CLI supports export/receive/confirm with --store, caller-selected --tip,
+--after, --transaction and --included-block. NDJSON transport bounds each line before
+parsing. --logical-now is explicitly a test option; absence uses the local wall clock.
+No public listener, firewall, running service, deployed key or Hepta permission is added.
+
+Exact regression owners: `test_client_confirmation.py::VerifiedHistoryTests` covers
+actual work/signature/state replay; disk reopen/resume and lost ACK; invalid and reordered
+pages; body substitution; lower-work branches; heavy-fork removal of confirmation;
+local-clock deferral; and real CLI subprocess receive/confirm. The same suite also runs
+with both native component backends explicitly selected. This tests controlled client
+behavior, not a full native node or independent public-network acceptance.

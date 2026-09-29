@@ -144,3 +144,12 @@ that the remote block is invalid. A process exception is not proof of a remote A
 No recovery operation clears `EffectJournal` or creates a local Hepta final-use token.
 The concrete module contract and retained crash tests are linked from
 [M08](../../../modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md).
+
+## Incoming history consumer at the existing owner
+
+N2 in NETWORK_CLIENT defines the bounded page producer/receiver. It imports actual
+header/body/proof records through Ledger.admit, never through the local checkpoint
+trust premise. A per-page failure can retain a fully verified prefix; retry or reopen
+uses those immutable records. Transport completion, local active-tip selection and
+current transaction confirmation are separate observations. No new tables, authority
+owner, genesis parameters or schema migration are introduced by this client continuation.

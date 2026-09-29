@@ -526,17 +526,18 @@
         },
         {
           "id": "M13.VerifyIncomingHistory",
-          "inputs": "ordered block/certificate/tx stream,expectedgenesis",
-          "output": "fully verified retained ancestry",
-          "algorithm": "For each block use M02 exact parent work and M06 state validation. Work matrices/certificate remain self-contained; model retention is separate. Never interpret a local checkpoint or old proof as a new finality certificate.",
-          "commit": "Append valid branch rows/deltas only; incomplete import not active.",
-          "errors": "NETWORK, WORK, ROOT, UNKNOWN_PARENT",
-          "limits": "block1MiB; bounded proof jobs; no permanent pruning-depth fork rejection"
+          "inputs": "bounded page bytes, caller-pinned expected tip and locally verified block cursor, local clock",
+          "output": "verified continuation cursor plus completed/requested-tip-active separately",
+          "algorithm": "Decode bounded closed page before work; check consecutive parents, fixed context and exact next cursor; use Ledger.admit for each actual work/signature/state block. Activate only a complete target under local cumulative-work selection. Interrupted valid prefixes remain resumable.",
+          "commit": "Existing Ledger owns each fully verified block+deltas transaction. No peer snapshot or chainwork field is imported. Failure may retain valid prefixes but cannot claim requested-tip completion.",
+          "errors": "PAGE_BYTES, PAGE_CONTEXT, PAGE_CONTINUATION, UNKNOWN_PARENT, NETWORK, TIME_DEFERRED, WORK, ROOT, INCOMPLETE_HISTORY",
+          "limits": "At most16 blocks and2MiB per page, 8KiB ancestry spool; no total-height finality cutoff. Native bridge limits remain separate."
         }
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-state-import/src/lib.rs"
+        "trillionnium/crates/trnm-state-import/src/lib.rs",
+        "formal/pon-nakamoto-v1/client_confirmation.py"
       ],
       "test_classes": [
         "DiskReorgTests",
@@ -556,12 +557,12 @@
       "operations": [
         {
           "id": "M14.QueryCurrentState",
-          "inputs": "active generation and optional event cursor",
-          "output": "tip,root,generation and branch-relative status",
-          "algorithm": "Read active pointer and generation kv in one snapshot and recompute root; return no unconditional finalized flag. A production confirmation adds depth/work evidence and freshness; localhost ACK is not independent proof.",
-          "commit": "Indexer is derived; cursor(generation,ordinal), no new balanceauthority.",
-          "errors": "ROOT, UNAVAILABLE",
-          "limits": "responsebounded; socket10seconds in executableharness"
+          "inputs": "locally verified ledger, exact transaction id and included block, local observation clock",
+          "output": "included/confirmed/reorged with observed tip, generation, membership index, depth and locally derived work delta",
+          "algorithm": "Read coherent active state; recheck included body commitment and exact transaction membership; walk active ancestry, derive depth and work delta against fixed policy; reject future clock and changed generation. Never accept remote confirmed/work flags.",
+          "commit": "Read-only local projection of existing Ledger. No irreversible-finality or execution-authority token is returned.",
+          "errors": "NO_TRANSACTION, ROOT, TIME_DEFERRED, STALE_VIEW, UNKNOWN_PARENT",
+          "limits": "Full-verifying client, not succinct; ancestry time may grow with distance while path memory remains bounded."
         },
         {
           "id": "M14.ConsumePublishedModel",
@@ -577,7 +578,8 @@
         "formal/pon-nakamoto-v1/experiments/local_network.py",
         "formal/pon-nakamoto-v1/experiments/model_loop.py",
         "formal/pon-nakamoto-v1/inference_receipt.py",
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "formal/pon-nakamoto-v1/client_confirmation.py"
       ],
       "test_classes": [
         "CodecTests",

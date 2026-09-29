@@ -15,7 +15,7 @@ def runtime(path):
  return (path.startswith(('formal/pon-nakamoto-v1/','trillionnium/'))and not path.endswith('.md'))or path in {
  'config/pon/devnet-v1.json','config/pon/ledger-v1.json','config/pon/model-family-v1.json','config/pon/work-profile-v1.json'}
 
-def run(output,source,target,cargo_home,hosts):
+def run(output,source,target,cargo_home,hosts,client_only=False):
  out=Path(output).resolve();out.mkdir(parents=True,exist_ok=False)
  if git('status','--porcelain'):raise ValueError('DIRTY_SOURCE')
  commit=git('rev-parse','HEAD');tree=git('rev-parse','HEAD^{tree}')
@@ -67,7 +67,9 @@ def run(output,source,target,cargo_home,hosts):
           'temporary_filesystem':subprocess.check_output(['findmnt','-T','/tmp','-n','-o','FSTYPE,TARGET'],text=True).strip(),
           'test_threads':1,'cargo_jobs':2,'cargo_offline':True,'cargo_locked':True,'physical_power_loss':False},
          'results':records,'all_commands_passed':False,'ordinary_hepta_entry':False,
-         'independent_accepted':False,'future_window_accepted':False,'production_activation':False}
+         'independent_accepted':False,'future_window_accepted':False,'production_activation':False,
+         'workstream':'client-confirmation' if client_only else 'model-evaluation',
+         'model_experiments_rerun':not client_only}
  error=None
  try:
   execute('preflight',['bash','scripts/project-preflight.sh','--audit'])
@@ -82,18 +84,27 @@ def run(output,source,target,cargo_home,hosts):
   execute('native-ignored-helper',['cargo','test','--offline','--locked',*manifest,'-p','trnm-research-protocol','--all-targets','--all-features','--','--ignored'])
   execute('native-lints',['cargo','clippy','--offline','--locked',*manifest,'--workspace','--all-targets','--all-features','--','-D','warnings'])
   execute('native-format',['cargo','fmt',*manifest,'--all','--','--check'])
-  for test in PYTHON_TESTS:execute(test,['python3','formal/pon-nakamoto-v1/'+test+'.py'])
+  for test in PYTHON_TESTS+(['test_client_confirmation'] if client_only else []):execute(test,['python3','formal/pon-nakamoto-v1/'+test+'.py'])
   execute('accepted-block',['python3','scripts/ci/test_pon_accepted_block.py'])
   execute('native-ledger',['python3','formal/pon-nakamoto-v1/test_contracts.py'],extra={'TRNM_NATIVE_EXECUTOR':str(Path(target).resolve()/'release/examples/pon_execute'),'TRNM_EXECUTION_WORKERS':'8'})
   execute('historical-v1-rejections',['python3','scripts/ci/test_pon_evidence.py'])
   execute('historical-v4',['python3','scripts/ci/check_completion_evidence.py','--historical'])
   execute('historical-v4-rejections',['python3','scripts/ci/test_completion_evidence.py'])
-  produced=execute('model-learning',['python3','formal/pon-nakamoto-v1/experiments/model_loop.py','--source',source,'--out',str(out/'model')])
-  bundle=json.loads(produced.splitlines()[-1])['evaluation_bundle'];report['evaluation_bundle']=bundle
-  execute('model-settlement',['python3','formal/pon-nakamoto-v1/experiments/settle_model.py','--input',str(out/'model'),'--out',str(out/'settlement'),'--bundle-hash',bundle])
-  execute('learning-cycles',['python3','formal/pon-nakamoto-v1/experiments/learning_cycles.py','--source',source,'--out',str(out/'cycles')])
-  if hosts:
-   execute('physical-evaluation',['python3','formal/pon-nakamoto-v1/experiments/evaluation_host_parity.py','--input',str(out/'model'),'--out',str(out/'hosts'),'--bundle-hash',bundle,'--hosts',*hosts],timeout=600)
+  if client_only:
+   execute('native-client-confirmation',['python3','formal/pon-nakamoto-v1/test_client_confirmation.py'],extra={
+    'TRNM_NATIVE_WORK':str(Path(target).resolve()/'release/examples/pon_work_io'),
+    'TRNM_NATIVE_EXECUTOR':str(Path(target).resolve()/'release/examples/pon_execute'),'TRNM_EXECUTION_WORKERS':'8'})
+   execute('historical-evaluation-components',['python3','scripts/ci/check_evaluation_bundle_evidence.py','--component-scope'])
+   execute('historical-evaluation-rejections',['python3','scripts/ci/test_evaluation_bundle_evidence.py'])
+   execute('responsibility-evidence',['python3','scripts/ci/test_responsibility_evidence.py'])
+   execute('work-cost-rejections',['python3','scripts/ci/test_work_cost_report.py'])
+  else:
+   produced=execute('model-learning',['python3','formal/pon-nakamoto-v1/experiments/model_loop.py','--source',source,'--out',str(out/'model')])
+   bundle=json.loads(produced.splitlines()[-1])['evaluation_bundle'];report['evaluation_bundle']=bundle
+   execute('model-settlement',['python3','formal/pon-nakamoto-v1/experiments/settle_model.py','--input',str(out/'model'),'--out',str(out/'settlement'),'--bundle-hash',bundle])
+   execute('learning-cycles',['python3','formal/pon-nakamoto-v1/experiments/learning_cycles.py','--source',source,'--out',str(out/'cycles')])
+   if hosts:
+    execute('physical-evaluation',['python3','formal/pon-nakamoto-v1/experiments/evaluation_host_parity.py','--input',str(out/'model'),'--out',str(out/'hosts'),'--bundle-hash',bundle,'--hosts',*hosts],timeout=600)
   execute('whitespace',['git','diff','--check'])
   report['all_commands_passed']=True
  except (ValueError,RuntimeError,OSError,subprocess.SubprocessError)as failure:
@@ -101,7 +112,7 @@ def run(output,source,target,cargo_home,hosts):
  finally:
   report['source_clean_after']=git('rev-parse','HEAD')==commit and not git('status','--porcelain')
   (out/'qualification.json').write_text(json.dumps(report,indent=2)+'\n')
-  (out/'manifest.json').write_text(json.dumps({'schema':'pon-evaluation-evidence-v1','implementation_commit':commit,
+  (out/'manifest.json').write_text(json.dumps({'schema':'pon-client-confirmation-evidence-v1' if client_only else 'pon-evaluation-evidence-v1','implementation_commit':commit,
     'implementation_tree':tree,'source_clean':report['source_clean_after'],'all_commands_passed':report['all_commands_passed'],
     'files':{str(p.relative_to(out)):sha(p)for p in sorted(out.rglob('*'))if p.is_file()and p.name!='manifest.json'},
     'historical_v4_sha256':sha(ROOT/'evidence/pon-v4/manifest.json'),'ordinary_hepta_entry':False,
@@ -112,5 +123,6 @@ def run(output,source,target,cargo_home,hosts):
 
 if __name__=='__main__':
  parser=argparse.ArgumentParser();parser.add_argument('--out',required=True);parser.add_argument('--source',required=True)
+ parser.add_argument('--client-only',action='store_true',help='Run common regression plus both client backends, preserving prior model evidence rather than rerunning unrelated experiments')
  parser.add_argument('--target',required=True);parser.add_argument('--cargo-home',required=True);parser.add_argument('--hosts',nargs='*',default=[])
- args=parser.parse_args();run(args.out,args.source,args.target,args.cargo_home,args.hosts)
+ args=parser.parse_args();run(args.out,args.source,args.target,args.cargo_home,args.hosts,args.client_only)

@@ -21,7 +21,7 @@ def runtime(path):
 
 def json_bytes(value):return json.dumps(value,sort_keys=True,separators=(',',':')).encode()
 
-def validate(root=ROOT,evidence=None):
+def validate(root=ROOT,evidence=None,*,exact_inventory=True):
  root=Path(root).resolve();folder=Path(evidence or root/'evidence/pon-evaluation-bundle-v1').resolve()
  manifest=load(folder/'manifest.json');require(manifest['schema']=='pon-evaluation-evidence-v1','schema')
  for flag in FALSE_FLAGS:require(manifest[flag]is False,'unsupported acceptance '+flag)
@@ -43,7 +43,12 @@ def validate(root=ROOT,evidence=None):
   require(hashlib.sha256(raw).hexdigest()==q['source_files_sha256'][relative],'source fingerprint '+relative)
   require(safe(root,relative).read_bytes()==raw,'runtime/invariant differs from measured source '+relative)
  tracked=set(subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines())
- require({p for p in tracked if runtime(p)}=={p for p in original if runtime(p)},'runtime inventory mismatch')
+ untracked=set(subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=root,text=True).splitlines())
+ current_runtime={p for p in tracked|untracked if runtime(p)}
+ recorded_runtime={p for p in original if runtime(p)}
+ require(recorded_runtime<=current_runtime,'recorded runtime inventory missing')
+ inventory_matches=current_runtime==recorded_runtime
+ if exact_inventory:require(inventory_matches,'runtime inventory mismatch')
  require('config/pon/invariants-v2.json'in original,'missing invariant source')
  require(subprocess.check_output(['git','rev-parse',q['input_source_commit']+'^{tree}'],cwd=root,text=True).strip()==q['input_source_tree'],'corpus source')
  records=list(q['results'])
@@ -140,7 +145,8 @@ def validate(root=ROOT,evidence=None):
  for part in expected:
   result=evaluate_bundle((folder/'model/evaluation-bundle.json').read_bytes(),q['evaluation_bundle'],load_list(folder/'model'/(part+'.json')),part,calibration_rows=calibration)
   require(hashlib.sha256(json_bytes(result)).hexdigest()==expected[part],'remote expected outcome')
- return {'measured_commit':commit,'runtime_matches':True,'executed_invariant_selectors':len(selectors),
+ return {'measured_commit':commit,'runtime_matches':inventory_matches,'recorded_runtime_matches':True,
+         'unmeasured_added_runtime':sorted(current_runtime-recorded_runtime),'executed_invariant_selectors':len(selectors),
          'native_tests':native,'doc_tests':doc,'python_test_executions':python_count,'physical_hosts':3,
          'model_reward':0,'three_improving_generations':False,'ordinary_hepta_entry':False,'independent_accepted':False,'production_activation':False}
 
@@ -149,7 +155,10 @@ def load_list(path):
  value=json.loads(path.read_text(),object_pairs_hook=unique);require(isinstance(value,list),'expected array');return value
 
 if __name__=='__main__':
- result=validate();manifest=load(ROOT/'evidence/pon-evaluation-bundle-v1/manifest.json')
+ import argparse
+ parser=argparse.ArgumentParser();parser.add_argument('--component-scope',action='store_true',help='Check all original runtime bytes; report additional runtime as unmeasured, never as covered')
+ args=parser.parse_args()
+ result=validate(exact_inventory=not args.component_scope);manifest=load(ROOT/'evidence/pon-evaluation-bundle-v1/manifest.json')
  tracked=set(subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines())
  require({'evidence/pon-evaluation-bundle-v1/'+p for p in manifest['files']}<=tracked,'untracked evidence')
  print(json.dumps(result,sort_keys=True))

@@ -17,10 +17,15 @@ class CurrentEvaluationEvidenceTests(unittest.TestCase):
    obj=json.loads(raw);change(obj);p.write_text(json.dumps(obj,indent=2)+'\n')
    if path!='manifest.json':
     manifest=json.loads(before);manifest['files'][path]=hashlib.sha256(p.read_bytes()).hexdigest();m.write_text(json.dumps(manifest))
-   with self.assertRaises((ValueError,KeyError)):validate(ROOT,self.folder)
+   with self.assertRaises((ValueError,KeyError)):validate(ROOT,self.folder,exact_inventory=False)
   finally:p.write_bytes(raw);m.write_bytes(before)
  def test_current_source_and_all_named_experiments_recompute(self):
-  result=validate(ROOT,self.folder);self.assertTrue(result['runtime_matches']);self.assertEqual(result['model_reward'],0)
+  result=validate(ROOT,self.folder,exact_inventory=False);self.assertTrue(result['recorded_runtime_matches']);self.assertEqual(result['model_reward'],0)
+ def test_original_evidence_does_not_cover_new_client_runtime(self):
+  result=validate(ROOT,self.folder,exact_inventory=False)
+  self.assertFalse(result['runtime_matches'])
+  self.assertIn('formal/pon-nakamoto-v1/client_confirmation.py',result['unmeasured_added_runtime'])
+  with self.assertRaisesRegex(ValueError,'runtime inventory mismatch'):validate(ROOT,self.folder)
  def test_independent_operators_cannot_be_invented(self):self.mutate('manifest.json',lambda d:d.update(independent_accepted=True))
  def test_future_generations_cannot_be_invented(self):self.mutate('manifest.json',lambda d:d.update(three_improving_generations=True))
  def test_missing_native_oracle_command_rejects(self):self.mutate('qualification.json',lambda d:d['results'].pop())

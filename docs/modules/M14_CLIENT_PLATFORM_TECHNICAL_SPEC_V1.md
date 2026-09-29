@@ -49,7 +49,7 @@ These exact functions contain executable assertions. The registry only checks bi
 
 Stale confirmation, input/model substitution, cross-genesis signatures and unsafe remote-result authority.
 
-Public client confirmation verification and normal Hepta final-use integration remain unimplemented.
+Controlled full-verifying confirmation is implemented in N2 below; succinct light verification, public-network currentness and normal Hepta final-use integration remain unimplemented.
 
 ## Current source and verification
 
@@ -78,3 +78,18 @@ is created by a frozen artifact. The following additional regressions are execut
 - `formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_cost_nonce_and_returned_output_cannot_be_omitted`.
 - `formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_oversized_receipt_rejects_before_json`.
 - `formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_boolean_counter_alias_rejects`.
+
+## Bounded receiver / confirmation continuation
+
+The actual controlled caller is `formal/pon-nakamoto-v1/client_confirmation.py`.
+[N2](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md#n2--executed-bounded-history-receiver-and-local-confirmation)
+defines page fields, caller-pinned cursors, full work/state validation, per-block commit,
+interrupted-prefix recovery, local confirmation and clock/currentness limits. The existing
+Ledger remains the only persistent owner. Maturity now binds this caller and its exact
+regressions; native public-host and ordinary Hepta integration flags remain false.
+
+A receiver computes work and transaction membership rather than accepting RPC assertions.
+This is a full-verifying reference client with explicit optional native work/execution
+components, NOT a succinct light client or proof of the globally latest tip. Completed
+lower-work delivery does not replace the receiver's heavier observed branch. Successful
+logical-clock tests cannot be reported as live confirmed public throughput.

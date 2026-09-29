@@ -89,3 +89,9 @@ output directories. `run_campaign.py` forwards the producer's returned digest.
 Run `python3 formal/pon-nakamoto-v1/test_evaluation_bundle.py` for exact substitution,
 leakage, statistical-unit, worker and settlement counterexamples. Three-cycle learning
 uses the same sealed controls/parent, while keeping retrospective/no-public-update scope.
+
+
+The controlled `client_confirmation.py` CLI adds bounded full-history delivery and a
+receiver-computed transaction confirmation query. It is not a succinct proof or native
+network host. `test_client_confirmation.py` executes actual work and signed state replay,
+with the same tests additionally selecting native work/execution in protocol CI.
