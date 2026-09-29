@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Native and Python wire codecs, not application acceptance.
+Native/Python codecs and pure in-memory state commitments, not application acceptance or native persistent storage.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -25,15 +25,15 @@ Read 95-byte prefix, match exact tag-specific payload length and bounded proof/l
 
 ## M00.CanonicalBytes
 
-**Invariant:** Replacing any header field changes its challenge; malformed transaction bytes reject without nonce or balance authority.
+**Invariant:** Replacing any header field changes its challenge; malformed transaction bytes reject without nonce or balance authority. Incremental compressed commitments equal the full state-root builder; failed batches preserve immutable predecessor snapshots.
 
-**Scope:** Native and Python wire codecs, not application acceptance.
+**Scope:** Native/Python codecs and pure in-memory state commitments, not application acceptance or native persistent storage.
 
-**Atomic boundary:** Decode is pure and bounded; signature verification and state publication are later independent boundaries.
+**Atomic boundary:** Decode is pure and bounded; signature verification and state publication are later independent boundaries. StateTree checks the whole before/root batch before returning a staged immutable tree.
 
 **Failure schedule:** Every header field mutation; Truncation, trailing bytes, zero nonce, unknown tag.
 
-**Expected result:** Replacing any header field changes its challenge; malformed transaction bytes reject without nonce or balance authority.
+**Expected result:** Replacing any header field changes its challenge; malformed transaction bytes reject without nonce or balance authority. Incremental compressed commitments equal the full state-root builder; failed batches preserve immutable predecessor snapshots.
 
 **Resource and retention rule:** 318-byte header, 2048-byte envelope, closed twelve tags.
 
@@ -68,3 +68,10 @@ Run `python3 scripts/ci/report_module_evidence.py --module M00` from the reposit
 root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
 not observed in each package. A byte match is not a new test run or product acceptance.
 Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
+
+## Native cache / receiver continuation
+
+The exact continuation is specified in [native execution](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md), [admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) and [client/recovery](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md). It does not promote native persistence, independent acceptance or public-network capacity. Exact additional counterexamples:
+
+- `trillionnium/crates/trnm-protocol/src/pon_state.rs::mixed_batches_match_full_builder_and_inverse_restores_predecessor`.
+- `trillionnium/crates/trnm-protocol/src/pon_state.rs::all_deletions_return_empty_and_values_remain_bounded`.

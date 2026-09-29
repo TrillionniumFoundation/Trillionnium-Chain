@@ -25,7 +25,9 @@ class ClientEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.original = ROOT / 'evidence/pon-client-confirmation-v1'
-        cls.baseline = validate()
+        from historical_evidence import measured_checkout
+        cls.original_root = cls.enterClassContext(measured_checkout(ROOT, cls.original))
+        cls.baseline = validate(root=cls.original_root, evidence=cls.original)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='pon-client-evidence-test-')
@@ -44,19 +46,19 @@ class ClientEvidenceTests(unittest.TestCase):
             self.manifest['files'][name] = hashlib.sha256((self.folder / name).read_bytes()).hexdigest()
         self.write_json('manifest.json', self.manifest)
         with self.assertRaisesRegex(ValueError, pattern):
-            validate(evidence=self.folder)
+            validate(root=self.original_root, evidence=self.folder)
 
     def row(self, name):
         return next(row for row in self.qualification['results'] if row['name'] == name)
 
     def test_unchanged_complete_package_passes(self):
-        self.assertEqual(validate(evidence=self.folder), self.baseline)
+        self.assertEqual(validate(root=self.original_root, evidence=self.folder), self.baseline)
 
     def test_edited_log_without_rehash_rejects(self):
         path = self.folder / self.row('test_client_confirmation')['log']
         path.write_bytes(path.read_bytes() + b'changed\n')
         with self.assertRaisesRegex(ValueError, 'changed artifact'):
-            validate(evidence=self.folder)
+            validate(root=self.original_root, evidence=self.folder)
 
     def test_public_acceptance_cannot_be_rehashed(self):
         self.manifest['public_network_ready'] = True
@@ -76,7 +78,7 @@ class ClientEvidenceTests(unittest.TestCase):
 
     def test_missing_client_runtime_input_rejects(self):
         self.qualification['source_files_sha256'].pop('formal/pon-nakamoto-v1/client_confirmation.py')
-        self.reject_rehashed('current runtime inventory')
+        self.reject_rehashed('runtime inventory')
 
     def test_fabricated_source_digest_rejects(self):
         self.qualification['source_files_sha256'][TEST_FILE] = '0' * 64
@@ -133,15 +135,18 @@ class ClientEvidenceTests(unittest.TestCase):
         self.qualification['environment']['physical_power_loss'] = True
         self.reject_rehashed('environment scope')
 
-    def test_client_navigation_uses_new_receipt_not_historical_model_evidence(self):
+    def test_client_navigation_retains_observations_without_covering_changed_runtime(self):
         from report_module_evidence import report
         value = report(module='M14')
         queried = [r for r in value['responsibilities'] if any(TEST_FILE in s for s in r['evidence_selectors'])]
         self.assertTrue(queried)
         for row in queried:
             current = row['packages']['client_confirmation']
-            self.assertTrue(current['current_regression_support'])
-            self.assertEqual(current['unobserved_selectors'], [])
+            self.assertFalse(current['current_regression_support'])
+            original_selectors = set(client_selectors((self.original_root / TEST_FILE).read_text()))
+            for selector in row['evidence_selectors']:
+                if selector.startswith(TEST_FILE):
+                    self.assertEqual(selector in current['unobserved_selectors'], selector not in original_selectors)
             self.assertFalse(row['packages']['e3']['current_regression_support'])
         self.assertFalse(value['ordinary_product_integration_granted'])
         self.assertFalse(value['independent_acceptance_granted'])

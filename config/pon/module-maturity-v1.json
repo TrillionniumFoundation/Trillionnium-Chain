@@ -376,20 +376,36 @@
             {
               "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
               "symbol": "execute"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "ExecutionSession::execute"
+            },
+            {
+              "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+              "symbol": "StateTree::apply"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/native_session.py",
+              "symbol": "NativeExecutionSession.execute"
             }
           ],
           "controlled_entrypoint": {
-            "path": "formal/pon-nakamoto-v1/native_execution.py",
-            "symbol": "execute_native"
+            "path": "formal/pon-nakamoto-v1/ledger.py",
+            "symbol": "Ledger.execute_application"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Explicit bounded native pon_execute process or independent Python reference",
+          "backend": "Explicit single-shot native executor or root/sequence-bound native compute cache; reference Ledger owns persistence.",
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_all_twelve_tags_match_for_1_2_4_8_workers",
-            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict"
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict",
+            "formal/pon-nakamoto-v1/test_native_session.py::NativeSessionTests.test_all_twelve_tags_run_in_1_2_4_8_worker_persistent_sessions",
+            "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_boolean_before_value_does_not_alias_integer_zero",
+            "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_lost_reply_discards_advanced_cache_and_retries_same_input",
+            "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_exact_predecessor_memo_does_not_skip_returned_root_verification"
           ],
-          "remaining": "Complete native persistence/consensus host and end-to-end capacity remain unaccepted."
+          "remaining": "Compressed in-memory root updates are not native paged persistence; full maps, 16 MiB bridge bounds and complete native host remain open."
         },
         {
           "operation": "M06.DeriveBranchDelta",
@@ -852,7 +868,8 @@
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_disk_reopen_resume_uses_verified_block_cursor",
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_cancel_retains_only_fully_verified_prefix_and_can_resume",
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_duplicate_page_rechecks_clock_without_repeating_work",
-            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_empty_terminal_page_checks_previously_imported_ancestry"
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_empty_terminal_page_checks_previously_imported_ancestry",
+            "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_client_pages_confirm_and_reorg_with_explicit_session_after_restart"
           ],
           "remaining": "Controlled file/stdio delivery with receiver-verified block cursors; not a persistent native WAN node, succinct proof, independently operated network or global-freshness guarantee."
         }
@@ -878,6 +895,10 @@
             {
               "path": "formal/pon-nakamoto-v1/ledger.py",
               "symbol": "Ledger.read_active"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/client_confirmation.py",
+              "symbol": "confirmations"
             }
           ],
           "controlled_entrypoint": {
@@ -885,7 +906,7 @@
             "symbol": "main"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Locally full-verified membership/complete-ancestry clock/depth/work observation with cancellation and generation recheck",
+          "backend": "Bounded batch or single fully verifying reference client; one current-clock ancestry scan per response, optional native compute components.",
           "persistence_owner": {
             "path": "formal/pon-nakamoto-v1/ledger.py",
             "symbol": "Ledger"
@@ -897,7 +918,10 @@
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_future_ancestor_cannot_hide_behind_earlier_tip_clock",
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_future_ancestor_below_inclusion_is_also_checked",
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_confirmation_cancel_is_read_only_and_can_retry",
-            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_generation_change_during_observation_cannot_escape"
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_generation_change_during_observation_cannot_escape",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_distinct_memberships_share_only_one_coherent_observation",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_rechecks_future_spike_below_all_requested_inclusions",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_cancellation_cannot_leave_reusable_currentness"
           ],
           "remaining": "Not a succinct light client or proof of latest global tip; public discovery, eclipse defense, ordinary Hepta authority and native node assembly remain unintegrated."
         },
@@ -944,6 +968,10 @@
             {
               "path": "formal/pon-nakamoto-v1/experiments/local_network.py",
               "symbol": "serve"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.execute_application"
             }
           ],
           "controlled_entrypoint": {
@@ -956,7 +984,10 @@
             "path": "formal/pon-nakamoto-v1/ledger.py",
             "symbol": "Ledger"
           },
-          "evidence_selectors": [],
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_multiple_selected_backends_reject_before_starting_cache",
+            "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_changed_selected_binary_cannot_reuse_previous_success"
+          ],
           "remaining": "Native node startup and ordinary product entry are absent; historical loopback/owned-host experiments retain their exact sources."
         },
         {

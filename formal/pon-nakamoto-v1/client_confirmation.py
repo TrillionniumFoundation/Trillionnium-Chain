@@ -147,17 +147,12 @@ def decode_page(raw: bytes, expected_tip: bytes, after: bytes) -> tuple[list[tup
 
 
 
-def _observe_branch(receiver: Ledger, tip: bytes, observed_now: int, *,
-                    included_block: bytes | None = None,
-                    progress: Callable[[str, int], None] | None = None) -> bool:
-    """Check the current clock over complete locally verified ancestry, in O(1) RAM.
-
-    Stored work validity does not authenticate today's clock. Timestamps need only
-    exceed the recent median, so a later tip can predate a future ancestor. This
-    read-only observation neither invalidates stored work nor creates a checkpoint.
-    Cancellation leaves no currentness cache or partially accepted observation.
-    """
-    current, count, member = tip, 0, False
+def _observe_members(receiver: Ledger, tip: bytes, observed_now: int,
+                     included_blocks: set[bytes], *,
+                     progress: Callable[[str, int], None] | None = None) -> set[bytes]:
+    """Reobserve every timestamp once; remember only the bounded requested identities."""
+    require(len(included_blocks) <= PARAMS['max_transactions'], 'CONFIRMATION_LIMIT')
+    current, count, members = tip, 0, set()
     if progress:
         progress('observation', count)
     row = receiver.block(current)
@@ -165,14 +160,23 @@ def _observe_branch(receiver: Ledger, tip: bytes, observed_now: int, *,
         header = header_decode(row[3])
         require(header['height'] == row[1] and header['parent'] == row[0], 'HEIGHT')
         require(header['timestamp'] <= observed_now + PARAMS['future_skew_seconds'], 'TIME_DEFERRED')
-        member = member or current == included_block
+        if current in included_blocks:
+            members.add(current)
         require(row[0] is not None, 'HEIGHT')
         parent = receiver.block(row[0])
         require(parent[1] + 1 == row[1], 'HEIGHT')
         current, row, count = row[0], parent, count + 1
         if progress and count % 256 == 0:
             progress('observation', count)
-    return member
+    return members
+
+
+def _observe_branch(receiver: Ledger, tip: bytes, observed_now: int, *,
+                    included_block: bytes | None = None,
+                    progress: Callable[[str, int], None] | None = None) -> bool:
+    """No tip-only shortcut, persistent currentness cache or trusted remote clock."""
+    requested = set() if included_block is None else {included_block}
+    return included_block in _observe_members(receiver, tip, observed_now, requested, progress=progress)
 
 
 def receive_page(receiver: Ledger, raw: bytes, *, expected_tip: bytes, after: bytes,
@@ -206,47 +210,71 @@ def receive_page(receiver: Ledger, raw: bytes, *, expected_tip: bytes, after: by
             'requested_tip_active': active == expected_tip}
 
 
-def confirmation(receiver: Ledger, transaction: bytes, included_block: bytes, *,
-                 observed_now: int | None = None,
-                 progress: Callable[[str, int], None] | None = None) -> dict:
-    """Calculate transaction membership, active ancestry, depth and work locally.
+def confirmations(receiver: Ledger, requests: list[tuple[bytes, bytes]], *,
+                  observed_now: int | None = None,
+                  progress: Callable[[str, int], None] | None = None) -> list[dict]:
+    """One coherent bounded batch, not a cache of currentness across requests.
 
-    The observed chain is not proof of global freshness or eclipse resistance. This
-    return value is neither irreversible finality nor a local execution permission.
+    Each pair is (transaction ID, included block). Verify every required body's root and
+    membership; share only this call's complete-ancestry clock observation and active view.
+    Any missing membership or generation change rejects the whole response.
     """
-    require(isinstance(transaction, bytes) and len(transaction) == 32
-            and isinstance(included_block, bytes) and len(included_block) == 32, 'DIGEST')
+    require(isinstance(requests, (list, tuple))
+            and 1 <= len(requests) <= PARAMS['max_transactions'], 'CONFIRMATION_LIMIT')
+    for pair in requests:
+        require(isinstance(pair, (list, tuple)) and len(pair) == 2
+                and all(isinstance(value, bytes) and len(value) == 32 for value in pair), 'DIGEST')
+    require(len({tuple(pair) for pair in requests}) == len(requests), 'DUPLICATE_CONFIRMATION')
     clock_scope = 'local-wall-clock' if observed_now is None else 'explicit-logical-test-clock'
     observed_now = int(time.time()) if observed_now is None else observed_now
     require(type(observed_now) is int and 0 <= observed_now < 2**64, 'CLOCK')
     receiver.ready()
     tip, generation, _ = receiver.read_active()
-    included = receiver.block(included_block)
-    require(included[3] is not None, 'NO_TRANSACTION')
-    body = unpack_body(included[4])
-    require(sequence_root('transactions', body) == header_decode(included[3])['transactions'], 'ROOT')
-    indexes = [i for i, tx in enumerate(body) if H('tx-id', tx) == transaction]
-    require(len(indexes) == 1, 'NO_TRANSACTION')
-    on_chain = _observe_branch(receiver, tip, observed_now,
-                               included_block=included_block, progress=progress)
+    included_blocks = {pair[1] for pair in requests}
+    rows, positions = {}, {}
+    for included_block in sorted(included_blocks):
+        included = receiver.block(included_block)
+        require(included[3] is not None, 'NO_TRANSACTION')
+        body = unpack_body(included[4])
+        require(sequence_root('transactions', body) == header_decode(included[3])['transactions'], 'ROOT')
+        index = {}
+        for ordinal, tx in enumerate(body):
+            tx_id = H('tx-id', tx)
+            require(tx_id not in index, 'NO_TRANSACTION')
+            index[tx_id] = ordinal
+        rows[included_block], positions[included_block] = included, index
+    members = _observe_members(receiver, tip, observed_now, included_blocks, progress=progress)
     tip_row = receiver.block(tip)
-    depth = tip_row[1] - included[1] if on_chain else None
-    delta = int.from_bytes(tip_row[2], 'big') - int.from_bytes(included[2], 'big') if on_chain else None
-    target = int.from_bytes(header_decode(included[3])['target'], 'big')
-    required = (2**256 // (target + 1)) * PARAMS['confirmation_work_multiplier']
-    confirmed = on_chain and depth >= PARAMS['confirmation_depth'] and delta >= required
+    result = []
+    for transaction, included_block in requests:
+        require(transaction in positions[included_block], 'NO_TRANSACTION')
+        included, on_chain = rows[included_block], included_block in members
+        depth = tip_row[1] - included[1] if on_chain else None
+        delta = int.from_bytes(tip_row[2], 'big') - int.from_bytes(included[2], 'big') if on_chain else None
+        target = int.from_bytes(header_decode(included[3])['target'], 'big')
+        required = (2**256 // (target + 1)) * PARAMS['confirmation_work_multiplier']
+        confirmed = on_chain and depth >= PARAMS['confirmation_depth'] and delta >= required
+        result.append({'network': NETWORK.hex(), 'parameters': PARAMETER_HASH.hex(), 'genesis': GENESIS.hex(),
+                       'transaction': transaction.hex(), 'transaction_index': positions[included_block][transaction],
+                       'included_block': included_block.hex(), 'observed_tip': tip.hex(),
+                       'included_height': included[1], 'observed_height': tip_row[1],
+                       'active_generation': generation, 'depth': depth,
+                       'observed_now': observed_now, 'clock_scope': clock_scope,
+                       'cumulative_work_delta': str(delta) if delta is not None else None,
+                       'required_work_delta': str(required),
+                       'status': 'confirmed' if confirmed else ('included' if on_chain else 'reorged'),
+                       'scope': 'locally-full-verified-observation-not-global-freshness',
+                       'finalized': False, 'execution_authority': False})
     require(receiver.active() == (tip, generation), 'STALE_VIEW')
-    return {'network': NETWORK.hex(), 'parameters': PARAMETER_HASH.hex(), 'genesis': GENESIS.hex(),
-            'transaction': transaction.hex(), 'transaction_index': indexes[0],
-            'included_block': included_block.hex(), 'observed_tip': tip.hex(),
-            'included_height': included[1], 'observed_height': tip_row[1],
-            'active_generation': generation, 'depth': depth,
-            'observed_now': observed_now, 'clock_scope': clock_scope,
-            'cumulative_work_delta': str(delta) if delta is not None else None,
-            'required_work_delta': str(required),
-            'status': 'confirmed' if confirmed else ('included' if on_chain else 'reorged'),
-            'scope': 'locally-full-verified-observation-not-global-freshness',
-            'finalized': False, 'execution_authority': False}
+    return result
+
+
+def confirmation(receiver: Ledger, transaction: bytes, included_block: bytes, *,
+                 observed_now: int | None = None,
+                 progress: Callable[[str, int], None] | None = None) -> dict:
+    """The same single-request API, sharing no observation with later calls."""
+    return confirmations(receiver, [(transaction, included_block)], observed_now=observed_now,
+                         progress=progress)[0]
 
 
 def receive_stream(receiver: Ledger, stream: BinaryIO, *, expected_tip: bytes,

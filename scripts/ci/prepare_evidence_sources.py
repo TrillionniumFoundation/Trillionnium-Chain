@@ -19,7 +19,7 @@ def declarations(root):
     values={'5d59b9540268914794a62e8fa237caf999499314':'30ee65c0752693f4eecc90f924972279f00c0c73'}
     names=['pon-v3','pon-v4','pon-evaluation-bundle-v1']
     # The collector's original commit must remain retrievable after squash publication.
-    for package in ['pon-contract-authority-v1', 'pon-client-confirmation-v1']:
+    for package in ['pon-contract-authority-v1', 'pon-client-confirmation-v1', 'pon-native-session-v1']:
         if (root/'evidence'/package/'manifest.json').is_file():
             names.append(package)
     for name in names:

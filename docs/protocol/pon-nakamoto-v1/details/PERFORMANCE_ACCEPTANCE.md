@@ -150,3 +150,18 @@ Client-confirmed throughput requires independently checked work/inclusion/curren
 not an RPC integer or a controller ACK. Public attack capacity additionally requires the
 ordinary open ingress path. Missing network/native owner/independent observations remain
 unmeasured, even when all local correctness and cost collectors complete successfully.
+
+## Native session and receiver pipeline measurement scope
+
+A new-source session qualification must rerun all native and reference regressions,
+work prechecks, exact twelve-command session parity, and both single/batched client
+confirmation with explicit native backends. Historical E3 and client packages are
+validated against their original measured Git trees; they cannot qualify changed runtime.
+
+Paired cache measurements advance nonces/roots; cache hits are excluded as actual samples.
+Bootstrap, full-state serialization, incremental native commitment, Python root checking
+and whole-map costs remain separately visible. The real-proof receiver campaign measures
+all fill blocks and source/receiver verification through locally computed confirmation.
+Its unpaced logical clock and same-controller transport forbid a public-chain TPS claim.
+Do not derive tail percentiles from a handful of samples, omit slower cases, or infer
+hostile-peer availability, independence, GPU consumption or physical durability.

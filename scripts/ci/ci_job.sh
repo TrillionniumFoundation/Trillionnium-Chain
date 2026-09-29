@@ -24,6 +24,11 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_inference_receipt.py
     python3 formal/pon-nakamoto-v1/test_bounded_process.py
     python3 formal/pon-nakamoto-v1/test_client_confirmation.py
+    python3 formal/pon-nakamoto-v1/test_native_session.py
+    python3 formal/pon-nakamoto-v1/test_work_precheck.py
+    TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py
+    TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py
+    TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_invariants.py
     TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py
     python3 formal/pon-nakamoto-v1/test_model_contract.py
     python3 formal/pon-nakamoto-v1/test_work_backend.py
@@ -55,8 +60,10 @@ case "${1:?required job}" in
     python3 scripts/ci/test_invariant_evidence.py
     python3 scripts/ci/check_completion_evidence.py --historical
     python3 scripts/ci/test_completion_evidence.py
-    python3 scripts/ci/check_evaluation_bundle_evidence.py --component-scope
-    python3 scripts/ci/check_client_confirmation_evidence.py
+    python3 scripts/ci/check_evaluation_bundle_evidence.py --historical
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical
+    python3 scripts/ci/check_client_confirmation_evidence.py --session
+    python3 scripts/ci/test_native_session_evidence.py
     python3 scripts/ci/test_client_confirmation_evidence.py
     python3 scripts/ci/test_evaluation_bundle_evidence.py
     python3 scripts/ci/report_module_evidence.py --format markdown

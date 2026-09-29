@@ -359,5 +359,52 @@ class VerifiedHistoryTests(unittest.TestCase):
         self.assertEqual(json.loads(result.stdout)['status'], 'confirmed')
 
 
+    def test_batch_distinct_memberships_share_only_one_coherent_observation(self):
+        self.import_all(self.future_tip)
+        requests=[(self.txid,self.future_blocks[0]),(H('tx-id',self.future_tx),self.future_blocks[3])]
+        with patch.object(self.receiver,'read_active',wraps=self.receiver.read_active) as snapshot, \
+             patch.object(client,'_observe_members',wraps=client._observe_members) as observed:
+            rows=client.confirmations(self.receiver,requests,observed_now=self.now)
+            self.assertEqual(snapshot.call_count,1)
+            self.assertEqual(observed.call_count,1)
+        self.assertEqual([row['status'] for row in rows],['confirmed','included'])
+        self.assertEqual([row['depth'] for row in rows],[8,5])
+        self.assertEqual([row['cumulative_work_delta'] for row in rows],['16','10'])
+        self.assertEqual(len({row['active_generation'] for row in rows}),1)
+        self.assertEqual([row['transaction'] for row in rows],[pair[0].hex() for pair in requests])
+        self.assertTrue(all(not row['finalized'] and not row['execution_authority'] for row in rows))
+
+    def test_batch_bad_late_membership_rejects_without_partial_response(self):
+        self.import_all()
+        before=self.receiver.read_active()
+        with self.assertRaisesRegex(ValueError,'NO_TRANSACTION'):
+            client.confirmations(self.receiver,[(self.txid,self.blocks[0]),(H('missing'),self.blocks[1])],observed_now=self.now)
+        self.assertEqual(self.receiver.read_active(),before)
+
+    def test_batch_size_and_duplicate_queries_reject_before_snapshot(self):
+        request=(self.txid,self.blocks[0])
+        for requests,error in [([], 'CONFIRMATION_LIMIT'),([request]*257,'CONFIRMATION_LIMIT'),
+                               ([request,request],'DUPLICATE_CONFIRMATION'),([(True,self.blocks[0])],'DIGEST')]:
+            with patch.object(self.receiver,'read_active',side_effect=AssertionError('must not read state')), \
+                 self.assertRaisesRegex(ValueError,error):
+                client.confirmations(self.receiver,requests,observed_now=self.now)
+
+    def test_batch_rechecks_future_spike_below_all_requested_inclusions(self):
+        self.import_all(self.future_tip)
+        with self.assertRaisesRegex(ValueError,'TIME_DEFERRED'):
+            client.confirmations(self.receiver,[(H('tx-id',self.future_tx),self.future_blocks[3])],
+                                 observed_now=PARAMS['genesis_timestamp']+100)
+
+    def test_batch_cancellation_cannot_leave_reusable_currentness(self):
+        self.import_all(self.future_tip)
+        requests=[(self.txid,self.future_blocks[0]),(H('tx-id',self.future_tx),self.future_blocks[3])]
+        def stop(stage,count):
+            if stage=='observation':raise RuntimeError('cancelled batch')
+        with self.assertRaisesRegex(RuntimeError,'cancelled batch'):
+            client.confirmations(self.receiver,requests,observed_now=self.now,progress=stop)
+        rows=client.confirmations(self.receiver,requests,observed_now=self.now)
+        self.assertEqual([row['status'] for row in rows],['confirmed','included'])
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

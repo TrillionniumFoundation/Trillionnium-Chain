@@ -83,3 +83,16 @@ creates no public-admission qualification. It does not send traffic to any peer 
 binds actual execution, raw samples, target, binary and original source. Current-source
 verification and the retained failed environment setup are separate from public admission
 or work-hardness acceptance, which remain false.
+
+## Early rejection before branch-state reconstruction
+
+`work_oracle.precheck` is now reused by the existing Ledger admission path after bounded
+header/transaction context checks and before potentially expensive `state_at(parent)`.
+It checks certificate width/magic, field ranges, TaskId and ticket threshold. Malformed
+fields, substituted task and bad ticket cannot force state replay or full transcript work.
+
+A passing precheck is explicitly NOT `VerifiedWork`. A forged digest passing the ticket
+still reaches the unchanged complete transcript verifier and rejects there. Parent-state
+work eligibility, signatures, deterministic execution and roots remain mandatory before
+persistence. This saves malformed-input replay cost; it does not solve a cheaply fabricated
+passing ticket, structured-input shortcuts, fastest-adversary cost or public Sybil fairness.

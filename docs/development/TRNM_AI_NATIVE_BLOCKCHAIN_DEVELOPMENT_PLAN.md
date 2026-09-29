@@ -391,3 +391,30 @@ an omitted-source hole in historical component checking: the original measured r
 inventory must come from the measured Git tree, not an editable receipt. Publication
 checker tests are separate from runtime qualification; local callbacks inside a test
 are not independent test cases. Original successful and failed logs remain immutable.
+
+## 13. Native session, bounded confirmation and new-source qualification
+
+Continue the same canonical PR #204 lineage. Existing five applicability/evidence/M08/
+responsibility/application-scope corrections are preserved, not counted as new runtime.
+Recovered local work is integrated only after source comparison and byte-preservation.
+
+M06 now exposes an optional private native compute session with a compressed in-memory
+incremental commitment. It executes the same twelve commands; M07/M08 reference SQLite
+remains the sole durable chain owner. Strict predecessor bytes, sequence, delta, output,
+backend selection and lost-reply handling prevent reuse of an unknown cache as authority.
+Early work prechecks reject malformed input before branch-state reconstruction but do not
+qualify cheap forged tickets or adversarial work hardness. The receiver can check a bounded
+batch of distinct transaction confirmations with one complete-ancestry clock observation.
+
+Qualify on a clean committed source, including all existing native tests, client/reference/
+explicit-native/session backends, old evidence integrity and newly added counterexamples.
+Run same-source paired execution costs and an actual work/persistence/receiver-confirmation
+campaign into new paths. Report logical-clock/no-pacing and local-controller limitations;
+no executor improvement becomes public TPS, independent consensus or full-node completion.
+Historical E3/model/client reports retain their original source and outcomes. The new
+current receipt must cover changed runtime; no old receipt is repinned or silently waived.
+
+All six P0/P1/P2 tracks above retain their missing real boundaries: adversarial work/public
+admission, ordinary native node, persistent state/WAN sync, authorized independent future
+model efficacy, funded DA/effects/physical faults, and sustained public confirmed capacity.
+No new VM, EVM, consensus fallback, learning owner, live service or production flag is added.

@@ -163,8 +163,16 @@ def load_list(path):
 if __name__=='__main__':
  import argparse
  parser=argparse.ArgumentParser();parser.add_argument('--component-scope',action='store_true',help='Check all original runtime bytes; report additional runtime as unmeasured, never as covered')
+ parser.add_argument('--root',type=Path,default=ROOT);parser.add_argument('--evidence',type=Path)
+ parser.add_argument('--historical',action='store_true')
  args=parser.parse_args()
- result=validate(exact_inventory=not args.component_scope);manifest=load(ROOT/'evidence/pon-evaluation-bundle-v1/manifest.json')
- tracked=set(subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines())
- require({'evidence/pon-evaluation-bundle-v1/'+p for p in manifest['files']}<=tracked,'untracked evidence')
+ folder=args.evidence or args.root/'evidence/pon-evaluation-bundle-v1'
+ if args.historical:
+  from historical_evidence import validate_historical_cli
+  result=validate_historical_cli(__file__,args.root,folder)
+ else:result=validate(root=args.root,evidence=folder,exact_inventory=not args.component_scope)
+ if args.evidence is None:
+  manifest=load(folder/'manifest.json')
+  tracked=set(subprocess.check_output(['git','ls-files'],cwd=args.root,text=True).splitlines())
+  require({'evidence/pon-evaluation-bundle-v1/'+p for p in manifest['files']}<=tracked,'untracked evidence')
  print(json.dumps(result,sort_keys=True))

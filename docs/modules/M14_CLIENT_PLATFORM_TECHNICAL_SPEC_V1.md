@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Closed receipt before quota-use signing, distinct from a local capability.
+Closed service-consent receipts and fully verifying reference client observations; neither is a local capability.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -19,17 +19,17 @@ Read active pointer and generation kv in one snapshot and recompute root; return
 
 ### M14.ConsumePublishedModel
 
-Consumer consent binds expected network, parameters, model, request, input, provider and quota; no opaque result hash silently substitutes another service. Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.
+Consumer consent binds expected network, parameters, model, request, input, provider and quota; no opaque result hash silently substitutes another service. Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context. Confirmation reads one active view, validates all memberships, and checks that tip/generation still match before returning.
 
-**Atomic/commit boundary:** Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.
+**Atomic/commit boundary:** Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context. Confirmation reads one active view, validates all memberships, and checks that tip/generation still match before returning.
 
 ## M14.ServiceReceiptBinding
 
 **Invariant:** Consumer consent binds expected network, parameters, model, request, input, provider and quota; no opaque result hash silently substitutes another service.
 
-**Scope:** Closed receipt before quota-use signing, distinct from a local capability.
+**Scope:** Closed service-consent receipts and fully verifying reference client observations; neither is a local capability.
 
-**Atomic boundary:** Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.
+**Atomic boundary:** Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context. Confirmation reads one active view, validates all memberships, and checks that tip/generation still match before returning.
 
 **Failure schedule:** Replace every receipt field; Missing expected identities; Extra authority field; Noncanonical bytes.
 
@@ -98,3 +98,11 @@ The current-clock observation checks every verified ancestor, not only the tip. 
 stored retransmission does not reuse an earlier clock verdict. Cancellation yields no
 partial confirmation, and a generation change during traversal rejects STALE_VIEW.
 See N2 for the actual callback, retry, memory and linear-history cost boundaries.
+
+## Native cache / receiver continuation
+
+The exact continuation is specified in [native execution](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md), [admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) and [client/recovery](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md). It does not promote native persistence, independent acceptance or public-network capacity. Exact additional counterexamples:
+
+- `formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_distinct_memberships_share_only_one_coherent_observation`.
+- `formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_rechecks_future_spike_below_all_requested_inclusions`.
+- `formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_cancellation_cannot_leave_reusable_currentness`.

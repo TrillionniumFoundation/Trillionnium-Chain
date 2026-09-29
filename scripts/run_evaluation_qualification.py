@@ -15,7 +15,8 @@ def runtime(path):
  return (path.startswith(('formal/pon-nakamoto-v1/','trillionnium/'))and not path.endswith('.md'))or path in {
  'config/pon/devnet-v1.json','config/pon/ledger-v1.json','config/pon/model-family-v1.json','config/pon/work-profile-v1.json'}
 
-def run(output,source,target,cargo_home,hosts,client_only=False):
+def run(output,source,target,cargo_home,hosts,client_only=False,session_only=False):
+ client_only=client_only or session_only
  out=Path(output).resolve();out.mkdir(parents=True,exist_ok=False)
  if git('status','--porcelain'):raise ValueError('DIRTY_SOURCE')
  commit=git('rev-parse','HEAD');tree=git('rev-parse','HEAD^{tree}')
@@ -69,8 +70,10 @@ def run(output,source,target,cargo_home,hosts,client_only=False):
          'results':records,'all_commands_passed':False,'ordinary_hepta_entry':False,
          'independent_accepted':False,'future_window_accepted':False,'production_activation':False,
          'historical_evidence_sha256':{str(Path('evidence')/name/'manifest.json'):sha(ROOT/'evidence'/name/'manifest.json') for name in ['pon-v1','pon-v3','pon-v4','pon-evaluation-bundle-v1','pon-contract-authority-v1']},
-         'workstream':'client-confirmation' if client_only else 'model-evaluation',
+         'workstream':'native-session' if session_only else ('client-confirmation' if client_only else 'model-evaluation'),
          'model_experiments_rerun':not client_only}
+ if session_only:
+  report['historical_evidence_sha256']['evidence/pon-client-confirmation-v1/manifest.json']=sha(ROOT/'evidence/pon-client-confirmation-v1/manifest.json')
  error=None
  try:
   execute('preflight',['bash','scripts/project-preflight.sh','--audit'])
@@ -85,7 +88,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False):
   execute('native-ignored-helper',['cargo','test','--offline','--locked',*manifest,'-p','trnm-research-protocol','--all-targets','--all-features','--','--ignored'])
   execute('native-lints',['cargo','clippy','--offline','--locked',*manifest,'--workspace','--all-targets','--all-features','--','-D','warnings'])
   execute('native-format',['cargo','fmt',*manifest,'--all','--','--check'])
-  for test in PYTHON_TESTS+(['test_client_confirmation'] if client_only else []):execute(test,['python3','formal/pon-nakamoto-v1/'+test+'.py'])
+  for test in PYTHON_TESTS+(['test_client_confirmation'] if client_only else [])+(['test_native_session','test_work_precheck'] if session_only else []):execute(test,['python3','formal/pon-nakamoto-v1/'+test+'.py'])
   execute('accepted-block',['python3','scripts/ci/test_pon_accepted_block.py'])
   execute('native-ledger',['python3','formal/pon-nakamoto-v1/test_contracts.py'],extra={'TRNM_NATIVE_EXECUTOR':str(Path(target).resolve()/'release/examples/pon_execute'),'TRNM_EXECUTION_WORKERS':'8'})
   execute('historical-v1-rejections',['python3','scripts/ci/test_pon_evidence.py'])
@@ -95,10 +98,25 @@ def run(output,source,target,cargo_home,hosts,client_only=False):
    execute('native-client-confirmation',['python3','formal/pon-nakamoto-v1/test_client_confirmation.py'],extra={
     'TRNM_NATIVE_WORK':str(Path(target).resolve()/'release/examples/pon_work_io'),
     'TRNM_NATIVE_EXECUTOR':str(Path(target).resolve()/'release/examples/pon_execute'),'TRNM_EXECUTION_WORKERS':'8'})
-   execute('historical-evaluation-components',['python3','scripts/ci/check_evaluation_bundle_evidence.py','--component-scope'])
+   execute('historical-evaluation-components',['python3','scripts/ci/check_evaluation_bundle_evidence.py','--historical' if session_only else '--component-scope'])
    execute('historical-evaluation-rejections',['python3','scripts/ci/test_evaluation_bundle_evidence.py'])
    execute('responsibility-evidence',['python3','scripts/ci/test_responsibility_evidence.py'])
    execute('work-cost-rejections',['python3','scripts/ci/test_work_cost_report.py'])
+   if session_only:
+    selected={'TRNM_NATIVE_WORK':str(Path(target).resolve()/'release/examples/pon_work_io'),
+              'TRNM_NATIVE_SESSION':str(Path(target).resolve()/'release/examples/pon_execute_session'),
+              'TRNM_EXECUTION_WORKERS':'8'}
+    execute('session-ledger',['python3','formal/pon-nakamoto-v1/test_contracts.py'],extra=selected)
+    execute('session-invariants',['python3','formal/pon-nakamoto-v1/test_invariants.py'],extra=selected)
+    execute('session-client-confirmation',['python3','formal/pon-nakamoto-v1/test_client_confirmation.py'],extra=selected)
+    execute('historical-client',['python3','scripts/ci/check_client_confirmation_evidence.py','--historical'])
+    execute('historical-client-rejections',['python3','scripts/ci/test_client_confirmation_evidence.py'])
+    execute('session-comparison',['python3','formal/pon-nakamoto-v1/experiments/session_cost.py','--out',str(out/'comparison'),
+            '--single',str(Path(target).resolve()/'release/examples/pon_execute'),
+            '--session',str(Path(target).resolve()/'release/examples/pon_execute_session'),'--samples','3'])
+    execute('session-pipeline',['python3','formal/pon-nakamoto-v1/experiments/session_pipeline.py','--out',str(out/'pipeline'),
+            '--samples','3','--width','16'],extra=selected)
+
   else:
    produced=execute('model-learning',['python3','formal/pon-nakamoto-v1/experiments/model_loop.py','--source',source,'--out',str(out/'model')])
    bundle=json.loads(produced.splitlines()[-1])['evaluation_bundle'];report['evaluation_bundle']=bundle
@@ -113,7 +131,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False):
  finally:
   report['source_clean_after']=git('rev-parse','HEAD')==commit and not git('status','--porcelain')
   (out/'qualification.json').write_text(json.dumps(report,indent=2)+'\n')
-  (out/'manifest.json').write_text(json.dumps({'schema':'pon-client-confirmation-evidence-v1' if client_only else 'pon-evaluation-evidence-v1','implementation_commit':commit,
+  (out/'manifest.json').write_text(json.dumps({'schema':'pon-native-session-evidence-v1' if session_only else ('pon-client-confirmation-evidence-v1' if client_only else 'pon-evaluation-evidence-v1'),'implementation_commit':commit,
     'implementation_tree':tree,'source_clean':report['source_clean_after'],'all_commands_passed':report['all_commands_passed'],
     'files':{str(p.relative_to(out)):sha(p)for p in sorted(out.rglob('*'))if p.is_file()and p.name!='manifest.json'},
     'historical_v4_sha256':sha(ROOT/'evidence/pon-v4/manifest.json'),'ordinary_hepta_entry':False,
@@ -124,6 +142,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False):
 
 if __name__=='__main__':
  parser=argparse.ArgumentParser();parser.add_argument('--out',required=True);parser.add_argument('--source',required=True)
+ parser.add_argument('--session-only',action='store_true',help='Qualify native cache, incremental root, precheck and controlled receiver pipeline without rerunning model experiments')
  parser.add_argument('--client-only',action='store_true',help='Run common regression plus both client backends, preserving prior model evidence rather than rerunning unrelated experiments')
  parser.add_argument('--target',required=True);parser.add_argument('--cargo-home',required=True);parser.add_argument('--hosts',nargs='*',default=[])
- args=parser.parse_args();run(args.out,args.source,args.target,args.cargo_home,args.hosts,args.client_only)
+ args=parser.parse_args();run(args.out,args.source,args.target,args.cargo_home,args.hosts,args.client_only,args.session_only)

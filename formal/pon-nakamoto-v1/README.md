@@ -95,3 +95,13 @@ The controlled `client_confirmation.py` CLI adds bounded full-history delivery a
 receiver-computed transaction confirmation query. It is not a succinct proof or native
 network host. `test_client_confirmation.py` executes actual work and signed state replay,
 with the same tests additionally selecting native work/execution in protocol CI.
+
+## Explicit native session
+
+Build `pon_execute_session` with the existing M06 examples and select it using
+`TRNM_NATIVE_SESSION=/absolute/path/to/pon_execute_session`; `TRNM_NATIVE_WORK` may
+independently select the existing verifier. Do not also set `TRNM_NATIVE_EXECUTOR`.
+The session is a bounded disposable compute cache owned by the reference Ledger, not a
+native persistent node or new database. Run `test_native_session.py` and
+`test_work_precheck.py`; client single/batch confirmation retains complete-ancestry
+clock checks. Missing/changed binaries and ambiguous replies cannot silently fall back.

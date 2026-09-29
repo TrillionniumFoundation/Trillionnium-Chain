@@ -895,6 +895,39 @@ pub fn execute(
     workers: usize,
     cfg: &Config,
 ) -> Result<Output> {
+    execute_with_commitment(
+        parent,
+        BlockExecution {
+            transactions,
+            height,
+            miner,
+            parent_id,
+            workers,
+        },
+        cfg,
+        |_, next| root(next),
+    )
+}
+struct BlockExecution<'a> {
+    transactions: &'a [Vec<u8>],
+    height: u64,
+    miner: Hash,
+    parent_id: Hash,
+    workers: usize,
+}
+fn execute_with_commitment(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
+) -> Result<Output> {
+    let BlockExecution {
+        transactions,
+        height,
+        miner,
+        parent_id,
+        workers,
+    } = block;
     require([1, 2, 4, 8].contains(&workers), "WORKERS")?;
     require(
         transactions.len() as u64 <= cfg.limit("max_transactions")?,
@@ -1033,7 +1066,7 @@ pub fn execute(
     state.insert("meta:issued".into(), json!(issued));
     require(funds(&state)? == issued, "CONSERVATION")?;
     let root_start = std::time::Instant::now();
-    let root = root(&state)?;
+    let root = commitment(parent, &state)?;
     metrics.state_root_ns = root_start.elapsed().as_nanos();
     Ok(Output {
         state,
@@ -1041,4 +1074,197 @@ pub fn execute(
         root,
         metrics,
     })
+}
+
+/// Compute cache only. The caller remains the sole authoritative ledger owner.
+/// A request must name the exact predecessor root and monotonically increasing sequence.
+/// Every failed transaction, commitment check or sequence mismatch preserves this session.
+pub struct ExecutionSession {
+    state: State,
+    tree: trnm_protocol::pon_state::StateTree,
+    config: Config,
+    sequence: u64,
+}
+#[derive(Debug)]
+pub struct SessionOutput {
+    pub predecessor: Hash,
+    pub root: Hash,
+    pub sequence: u64,
+    pub changes: Vec<(String, Option<Value>, Option<Value>)>,
+    pub receipts: Vec<Vec<u8>>,
+    pub metrics: Metrics,
+    pub commitment_nodes: usize,
+}
+impl ExecutionSession {
+    pub fn new(state: State, expected_root: Hash, config: Config) -> Result<Self> {
+        let mut bytes = BTreeMap::new();
+        for (key, value) in &state {
+            bytes.insert(key.as_bytes().to_vec(), canonical(value)?);
+        }
+        let tree =
+            trnm_protocol::pon_state::StateTree::from_values(&bytes).map_err(|_| "STATE_TREE")?;
+        require(tree.root() == expected_root, "SESSION_ROOT")?;
+        Ok(Self {
+            state,
+            tree,
+            config,
+            sequence: 0,
+        })
+    }
+    pub fn root(&self) -> Hash {
+        self.tree.root()
+    }
+    pub fn sequence(&self) -> u64 {
+        self.sequence
+    }
+    pub fn state(&self) -> &State {
+        &self.state
+    }
+    pub fn execute(
+        &mut self,
+        predecessor: (u64, Hash),
+        transactions: &[Vec<u8>],
+        height: u64,
+        miner: Hash,
+        parent_id: Hash,
+        workers: usize,
+    ) -> Result<SessionOutput> {
+        require(
+            predecessor == (self.sequence, self.tree.root()),
+            "SESSION_PREDECESSOR",
+        )?;
+        let sequence = self.sequence.checked_add(1).ok_or("SESSION_SEQUENCE")?;
+        let mut staged = None;
+        let mut changes = Vec::new();
+        let output = execute_with_commitment(
+            &self.state,
+            BlockExecution {
+                transactions,
+                height,
+                miner,
+                parent_id,
+                workers,
+            },
+            &self.config,
+            |before, after| {
+                use trnm_protocol::pon_state::Change;
+                let keys: BTreeSet<_> = before.keys().chain(after.keys()).collect();
+                let mut updates = Vec::new();
+                for key in keys {
+                    let old = before.get(key);
+                    let new = after.get(key);
+                    if old != new {
+                        updates.push(Change {
+                            key: key.as_bytes().to_vec(),
+                            before: old.map(canonical).transpose()?,
+                            after: new.map(canonical).transpose()?,
+                        });
+                        changes.push((key.clone(), old.cloned(), new.cloned()));
+                    }
+                }
+                let next = self
+                    .tree
+                    .apply(predecessor.1, &updates)
+                    .map_err(|_| "STATE_TREE")?;
+                let root = next.root();
+                staged = Some(next);
+                Ok(root)
+            },
+        )?;
+        let tree = staged.ok_or("STATE_TREE")?;
+        let result = SessionOutput {
+            predecessor: predecessor.1,
+            root: output.root,
+            sequence,
+            changes,
+            receipts: output.receipts,
+            metrics: output.metrics,
+            commitment_nodes: tree.allocated_nodes(),
+        };
+        self.state = output.state;
+        self.tree = tree;
+        self.sequence = sequence;
+        Ok(result)
+    }
+}
+
+#[cfg(test)]
+mod session_tests {
+    use super::*;
+
+    fn initial() -> State {
+        BTreeMap::from([
+            ("meta:issued".into(), json!(0)),
+            ("model:current".into(), json!(hex::encode([0; 32]))),
+        ])
+    }
+
+    #[test]
+    fn session_state_and_receipts_equal_existing_complete_builder() {
+        let state = initial();
+        let cfg = Config::installed().unwrap();
+        let old_root = root(&state).unwrap();
+        let mut session = ExecutionSession::new(state.clone(), old_root, cfg.clone()).unwrap();
+        for height in 1..=8 {
+            let expected = execute(
+                session.state(),
+                &[],
+                height,
+                [1; 32],
+                [height as u8; 32],
+                4,
+                &cfg,
+            )
+            .unwrap();
+            let observed = session
+                .execute(
+                    (session.sequence(), session.root()),
+                    &[],
+                    height,
+                    [1; 32],
+                    [height as u8; 32],
+                    4,
+                )
+                .unwrap();
+            assert_eq!(observed.root, expected.root);
+            assert_eq!(observed.receipts, expected.receipts);
+            assert_eq!(session.state(), &expected.state);
+            assert_eq!(session.sequence(), height);
+        }
+        assert_eq!(root(&state).unwrap(), old_root);
+    }
+
+    #[test]
+    fn invalid_context_transaction_and_sequence_never_publish_session_state() {
+        let state = initial();
+        let old_root = root(&state).unwrap();
+        let mut session =
+            ExecutionSession::new(state.clone(), old_root, Config::installed().unwrap()).unwrap();
+        assert_eq!(
+            session
+                .execute((99, old_root), &[], 1, [1; 32], [2; 32], 1)
+                .unwrap_err(),
+            "SESSION_PREDECESSOR"
+        );
+        assert_eq!(
+            session
+                .execute((0, [9; 32]), &[], 1, [1; 32], [2; 32], 1)
+                .unwrap_err(),
+            "SESSION_PREDECESSOR"
+        );
+        assert!(session
+            .execute((0, old_root), &[vec![0; 159]], 1, [1; 32], [2; 32], 8)
+            .is_err());
+        assert_eq!(session.sequence(), 0);
+        assert_eq!(session.root(), old_root);
+        assert_eq!(session.state(), &state);
+        session.sequence = u64::MAX;
+        assert_eq!(
+            session
+                .execute((u64::MAX, old_root), &[], 1, [1; 32], [2; 32], 1)
+                .unwrap_err(),
+            "SESSION_SEQUENCE"
+        );
+        assert_eq!(session.state(), &state);
+    }
 }

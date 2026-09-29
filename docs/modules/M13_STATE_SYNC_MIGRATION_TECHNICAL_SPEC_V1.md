@@ -82,3 +82,9 @@ This is a full-verifying reference client with explicit optional native work/exe
 components, NOT a succinct light client or proof of the globally latest tip. Completed
 lower-work delivery does not replace the receiver's heavier observed branch. Successful
 logical-clock tests cannot be reported as live confirmed public throughput.
+
+## Native cache / receiver continuation
+
+The exact continuation is specified in [native execution](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md), [admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) and [client/recovery](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md). It does not promote native persistence, independent acceptance or public-network capacity. Exact additional counterexamples:
+
+- `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_client_pages_confirm_and_reorg_with_explicit_session_after_restart`.

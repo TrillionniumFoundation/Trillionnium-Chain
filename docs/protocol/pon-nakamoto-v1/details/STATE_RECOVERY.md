@@ -153,3 +153,18 @@ trust premise. A per-page failure can retain a fully verified prefix; retry or r
 uses those immutable records. Transport completion, local active-tip selection and
 current transaction confirmation are separate observations. No new tables, authority
 owner, genesis parameters or schema migration are introduced by this client continuation.
+
+## Native compute caches do not replace this durable owner
+
+The optional M06 native session and M00 compressed commitment tree are disposable
+in-memory caches. `Ledger` remains the only block/delta/reorg/active-pointer SQLite owner.
+A crash or ambiguous compute reply closes the cache. Restart recovers this same durable
+namespace, selects the verified branch, and opens a new root-bound compute session.
+Different parent state resets the session; no session sequence is a commit receipt,
+undo checkpoint, authorization or evidence that a physical effect happened.
+
+The native commitment updates changed paths, but durable maps, ancestry, application
+scans and Python verification still have complete-state costs. Native paged storage,
+state lifetime economics, the 16 MiB bridge capacity gap and physical power-loss testing
+remain open. Existing M08 crash/reorg tests run with the explicit session backend too;
+this tests composition with the reference persistent owner, not a complete native node.

@@ -94,3 +94,10 @@ consumer signatures still bind actual quota state. See the exact algorithm, erro
 counterexamples in [EXECUTION_PARALLEL](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md).
 Complete-state root construction, full native node assembly and Hepta ownership remain
 separate work; worker counts do not establish throughput or independent acceptance.
+
+## Native cache / receiver continuation
+
+The exact continuation is specified in [native execution](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md), [admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) and [client/recovery](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md). It does not promote native persistence, independent acceptance or public-network capacity. Exact additional counterexamples:
+
+- `formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_bad_field_and_task_reject_before_state_replay_or_full_verification`.
+- `formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_forged_passing_ticket_does_not_become_verified_work`.

@@ -87,3 +87,12 @@ Exact continuation selectors (each must appear as actually executed in a current
 - `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots`
 - `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_later_invalid_signature_does_not_change_canonical_error`
 - `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_single_signature_context_cannot_be_reused_for_another_payload`
+
+## Native cache / receiver continuation
+
+The exact continuation is specified in [native execution](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md), [admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) and [client/recovery](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md). It does not promote native persistence, independent acceptance or public-network capacity. Exact additional counterexamples:
+
+- `formal/pon-nakamoto-v1/test_native_session.py::NativeSessionTests.test_all_twelve_tags_run_in_1_2_4_8_worker_persistent_sessions`.
+- `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_boolean_before_value_does_not_alias_integer_zero`.
+- `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_lost_reply_discards_advanced_cache_and_retries_same_input`.
+- `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_exact_predecessor_memo_does_not_skip_returned_root_verification`.

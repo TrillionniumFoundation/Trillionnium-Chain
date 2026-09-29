@@ -34,8 +34,9 @@ The pool lifetime is one call, not the lifetime of a chain or a local authorizat
 
 Metrics separate worker creation, main-signature verifications, state speculation,
 canonical replays, transition time and root time. `workers_spawned<=workers`; valid input
-has one main-signature verification per envelope, even on conflict. Root computation
-still walks the complete resulting state and is not incremental native persistence.
+has one main-signature verification per envelope, even on conflict. The original single-shot root computation
+walks the complete resulting state. The optional session continuation below updates its
+native commitment incrementally; neither path is incremental native persistence.
 The retained full-state bridge and its memory/byte bounds remain explicit limitations.
 
 ## Actual read/write and range conflicts
@@ -115,3 +116,43 @@ hashes, request hashes, roots, receipt digests, process-inclusive and executor-o
 RSS and missing VRAM/inclusion/confirmation fields. Regressions remain in the report; no
 speedup threshold can mask a wrong result. Old `evidence/pon-v3` costs remain bound to their
 measured source and are not relabelled as this continuation's performance.
+
+## Private native session and incremental commitment continuation
+
+The existing M06 `ExecutionSession` reuses the same twelve-command implementation;
+`pon_execute_session` is its private BE32-framed stdin/stdout adapter, not another node,
+consensus engine, listener or database writer. `TRNM_NATIVE_SESSION` selects it through
+`Ledger.execute_application`. Selecting it together with `TRNM_NATIVE_EXECUTOR` rejects
+`NATIVE_BACKEND_CONFLICT`; changing the selected executable discards the previous cache.
+An unavailable selected binary cannot fall back to reference execution.
+
+Opening binds the complete installed Network/Parameters, initial map and independently
+computed root. Each execute request binds predecessor root, monotonic sequence, exact
+transactions, height, miner, parent and worker count. The native side publishes its
+in-memory next map/tree/sequence only after the whole existing transition succeeds.
+The host validates closed reply fields, strict integer counters, ordered distinct deltas,
+canonical before-value bytes, receipt count and the independently recomputed result root.
+Python Boolean/integer equality cannot authenticate predecessor or delta identity.
+
+`trnm-protocol::pon_state::StateTree` shares immutable compressed nodes. Empty padding
+is hashed without allocating 256 nodes per key; an N-key tree has at most 2N-1 nodes.
+Changed-key batches check every before value and expected root, then stage a complete
+new tree. Insert, overwrite, delete, empty values, inverse deltas and frozen snapshots
+match the existing independent full builder. This is an in-memory authenticated cache,
+NOT a disk format or completed M07 native persistence. State-map copies, delta discovery
+scans, canonical input comparison and the receiver's full root recomputation remain costs.
+
+The private frame limit remains 16 MiB in each direction, cumulative stderr 64 KiB,
+request deadline 30 seconds and owned-child reap deadline 5 seconds. These are adapter
+bounds, not proof that every protocol-permitted state fits this experimental bridge.
+Timeout, partial/lost/malformed reply, invalid result or changed parent discards the
+cache; SQLite state is never inferred from a cached sequence. Exact repeated pure work
+may reuse its prior output, but reports `request_cache_hit=true` and zero transmitted
+bytes. It is not another execution, signed action, included block or benchmark sample.
+
+`experiments/session_cost.py` compares same-source full-state and delta-session paths
+on actually advancing signed transactions, with separately recorded bootstrap and full
+Python result-root checks. `experiments/session_pipeline.py` additionally mines/verifies
+real work, commits actual source and receiver stores, and queries bounded client
+confirmation after genuine fill blocks. Its logical unpaced clock, one controller and
+local transport remain explicit. Neither campaign supplies public-network TPS.

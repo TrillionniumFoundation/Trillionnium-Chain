@@ -207,3 +207,23 @@ valid tip, an ancestor below inclusion, a duplicate page with a different local 
 a terminal cursor referring to old future history, cancellation and a generation switch.
 All work and state in those tests are actually verified; no accepted-history fixture
 or remote clock field supplies their authority.
+
+## Bounded coherent confirmation batches
+
+`client_confirmation.confirmations` accepts 1..256 distinct (transaction, included-block)
+pairs. It validates every required body commitment and membership, captures one active
+tip/generation, and reobserves the COMPLETE verified ancestry against the caller's clock
+once for that batch. A future timestamp spike below all requested inclusions still defers.
+Any missing membership, invalid tuple, cancellation or generation change rejects the
+response; there is no partial successful batch or persistent currentness cache.
+
+The single `confirmation` API delegates to the same path. Included, confirmed and reorged
+are computed per transaction under that one coherent view; no remote work sum is trusted.
+A bounded batch avoids repeated identical scans inside one request without changing
+probabilistic confirmation, returning deterministic finality, or granting execution rights.
+
+The controlled session pipeline records submitted, source-included, receiver-verified
+and locally policy-confirmed counts from actual signed transactions and work-verified
+blocks. It is one controller passing bounded pages between separate stores with separate
+native compute children, not authenticated public P2P, independent administration or WAN
+capacity. The test uses an explicit logical clock and does not pace ten-second blocks.
