@@ -38,7 +38,7 @@ not yet a PoN branch/undo implementation.
 
 No machine flag is promoted. The current implementation projection is:
 
-    stage = executable-contract-and-portable-components
+    stage = invariant-driven-native-application-candidate
     production_candidate = false
     production_consensus_activation = false
     public_testnet_ready = false
@@ -280,34 +280,30 @@ state, keys and services were not touched. Portable domains and schemas are fres
 Local monotonic application stores are NOT yet authoritative branch-aware chain storage.
 Storage/evaluator thresholds are application trust contracts, not ledger voting power.
 
-## 10. This executable-contract delivery and remaining boundaries
+## 10. Invariant-driven continuation, revision2
 
-The six shared detail contracts under `docs/protocol/pon-nakamoto-v1/details/` define
-real algorithms, wire offsets, table keys, commit points, errors, limits and tests.
-`config/pon/module-contracts-v1.json` binds36 operations to all18 module documents and
-actual source/test paths. `module-maturity-v1.json` distinguishes documented, component,
-executable contract, native product integration and independent acceptance. A `TBD`
-state-machine replacement and omitted commit/width/test bindings now fail CI.
+The authoritative failure contracts are `config/pon/invariants-v2.json`: scope,
+atomic boundary, concrete fault schedule, expected result, exact test function,
+source owner, resource bounds and honest remaining work. Module-count, heading length
+and test-class names do not establish completion. The gate validates exact selectors;
+only separate source-bound command receipts say whether those tests executed.
 
-Completed local scope: native work/codec candidates; independently coded Python oracle;
-exact frozen experimental genesis;12 signed native commands; sparse state commitments;
-real SQLite branch/delta/shadow publication and eight process-crash cuts; real trained
-public-source experts/router, exact model contraction, bounded observed-score settlement
-and author-path-offline free use; three-process loopback verification/cost campaigns.
-These are not a new parallel production engine; the oracle is the existing modules'
-shared executable design and future interoperability target.
+Implemented candidate scope: four reviewed counterexamples corrected; durable owned
+initialization; entry/revoke serialization; best-known-tip recovery; active-only candidate
+capacity; root-bound claims after retirement; bounded release expiry/refunds; incremental
+normal append; local checkpoints beyond4096 without declaring finality; actual native
+all-twelve-command application execution with fixed-order bounded speculation; explicit
+native backend without success fallback; native local proof-capacity separation; strongest
+calibration control and clustered evaluation; closed genesis-bound service receipts.
 
-Not accepted: adversarial work-cost theorem, efficient hostile-proof admission, native
-ordinary node/Hepta integration, independently administered evaluators/custodians, real
-WAN performance, physical power loss and unseen future-window model efficacy. The first
-failed learning experiment and the later model's weaker-than-best-single results remain
-visible. The specific positive test has no token-market value and no production activation.
+These are not all seven acceptance packages completed. Public proof hardness/hostile
+admission fairness, full native consensus/persistence host, normal Hepta final-use/owner
+integration, independent operators, untouched future learning windows, native paged sync,
+complete historical compaction, WAN and physical power-loss remain unaccepted. The
+three-generation signed ledger fixture is not three improving trained models.
 
-Root README remains intentionally blank. Current review policy is owner-approved zero
-mandatory PR approvals; source checks reflect that instead of silently reinstating old
-review counts. Force-push/deletion protections and runtime activation controls are separate.
-
-[Executed evidence and retained failures](../../evidence/pon-v1/README.md) bind the
-implementation, real parameter artifacts, disk crash tests and local network/cost campaigns.
-Read-only qualification on main uses `--audit`; editing/push preflight still requires
-an allowed continuation branch. No mandatory reviewer count is silently restored.
+Prioritized remaining work stays on this lineage: verify the new failure regressions;
+qualify work and actual public ingress; finish bounded history/resource lifecycle; connect
+native host and Hepta owners; then run genuinely independent multi-host and prospective
+model acceptance. Do not reopen retired consensus or create a parallel global trainer.
+The root README remains blank by owner decision.

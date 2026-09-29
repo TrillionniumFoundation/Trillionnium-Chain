@@ -1,31 +1,13 @@
 # M05 Admission, nonce and branch-aware lifecycle
 
-Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
-Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
-[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
-This module has detailed procedures and executable reference coverage, not an independently
-accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets ordering. [LEDGER_WIRE.md](../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md) defines exact shared rules.
+Revision: invariant-driven revision2. The selected target remains `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [precise invariant/test registry](../../config/pon/invariants-v2.json).
 
-## PoN Authority
+## Scope and ownership
 
-Require exact network, signature, nonce=current+1, height<=expiry and sufficient fee/funds before applying command. Invalid input leaves the original parent unchanged; decoded bytes are not reserved balance.
+Signed transactions in native M06 execution; mempool product wiring remains distinct.
 
-This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
-passing document check to grant work validity, model utility, local execution permission
-or production activation. Every consumer must use the specific verified fact it needs.
-Native component reuse and executable-contract integration are reported separately.
-
-## PoN Interfaces
-
-| Operation | Exact logical inputs | Output and authority boundary |
-|---|---|---|
-| `ValidateTransaction` | active snapshot, signed envelope, candidate height | validated transition intent or reject |
-| `ReconsiderAfterReorg` | old included tx, new active generation, local effect id | new admissible intent or reconciliation requirement |
-
-The named signatures define domain contracts. Source bindings below identify which are
-implemented natively, in the executable Python specification, or only by reusable
-components. The names do not assert matching deployed Rust service APIs.
+This is an implementation boundary, not a claim of a complete native node or independent acceptance.
 
 ## PoN State machine
 
@@ -33,71 +15,48 @@ components. The names do not assert matching deployed Rust service APIs.
 
 Require exact network, signature, nonce=current+1, height<=expiry and sufficient fee/funds before applying command. Invalid input leaves the original parent unchanged; decoded bytes are not reserved balance.
 
-**Commit point:** M06 returns a new state; only M07 can commit it.
-
-**Rejections:** `SIGNATURE, NONCE, EXPIRED, FUNDS, FEE`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+**Atomic/commit boundary:** M06 returns a new state; only M07 can commit it.
 
 ### M05.ReconsiderAfterReorg
 
 Invalidate branch-relative inclusion; rerun nonce/grant/funds checks against new state. Never replay an irreversible operation because chain nonce vanished. Native mempool event wiring remains integration work.
 
-**Commit point:** Persistent local effect tombstones stay outside chain undo.
+**Atomic/commit boundary:** Persistent local effect tombstones stay outside chain undo.
 
-**Rejections:** `STATE, NONCE, OPERATION_ALREADY_ENTERED`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+## M05.CanonicalNonce
 
-## PoN Persistence and recovery
+**Invariant:** Actual disjoint senders avoid false conflicts; hot-sender transactions retry at most once against canonical preceding state.
 
-**M05.ValidateTransaction:** M06 returns a new state; only M07 can commit it.
+**Preconditions:** Exact installed revision2 context; current local owner and immutable task/evidence identities. Storage-only and controlled-attestation premises are explicitly labelled in their tests.
 
-**M05.ReconsiderAfterReorg:** Persistent local effect tombstones stay outside chain undo.
+**Atomic boundary:** Validate exact key reads and prefix-scan results immediately before canonical patch commit.
 
-Branch-derived entitlement can be detached. Independent local effect/revocation facts
-cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
-A native implementation must reproduce byte/root/recovery vectors before replacing the
-reference path. No old consensus namespace or decoder is restored.
+**Failure schedule:** Sixteen ordered same-sender nonces; Independent sender and recipient pairs; Speculation sees insufficient preceding funds.
 
-## PoN Resource bounds
+**Expected result:** Actual disjoint senders avoid false conflicts; hot-sender transactions retry at most once against canonical preceding state.
 
-**M05.ValidateTransaction:** tx2048bytes, nonceu64, feelimit10million.
+**Resource and retention rule:** Retries at most transaction count; inflight at most configured workers.
 
-**M05.ReconsiderAfterReorg:** bounded pending256 task/quota obligations.
+## Concrete regression selectors
 
-The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
-work, model and ledger profile. Limit changes require a new context. Local backpressure
-may reject service or defer data but cannot fabricate accepted block/evaluation facts.
+`formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_hot_sender_degrades_to_serial_without_speculation`
 
-## PoN Security
+`formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_independent_senders_commit_without_false_conflicts`
 
-The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
-cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
-experimental partitions; they are not independent future-window evidence. SQLite process
-crashes are not physical power-loss qualification. These limitations remain explicit in
-[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
+These selectors identify actual test functions, not a class-name count. A binding checker cannot label a test passed; the separate exact-source command receipt must show execution and outcome.
 
-## PoN Verification and evidence
+## Module-specific threat and residual work
 
-- `ExecutionTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
-- `DiskReorgTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+Nonce contention, stale reservations, replay after reorg and hidden shared sponsor keys.
 
-```bash
-python3 formal/pon-nakamoto-v1/test_contracts.py
-CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
-```
+Future-nonce parking, replacement policy and mempool reorg events still require native host integration.
 
-Build native examples before the interop command; missing binaries cause failure, not
-a skipped pass. Fixtures are never regenerated by test execution. Independently written
-third-party vectors and acceptance remain future evidence, not an assumed status.
+No assertion of independent operators, physical durability, ordinary Hepta execution or future model efficacy follows from local fixtures.
 
 ## Current source and verification
 
-- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
-- [`trillionnium/crates/trnm-mempool/src/lib.rs`](../../trillionnium/crates/trnm-mempool/src/lib.rs)
-- Native reusable owner: `trnm-mempool`; run `cargo test --locked -p trnm-mempool --all-targets --all-features` from `trillionnium`.
+- [`trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs`](../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs).
 
-## Maturity and outstanding integration
+Run the relevant native package and exact Python test selectors through the protocol CI lane. Preserve source hashes, failures, backend, filesystem and process/host scope. Historical evidence is never relabelled as current.
 
-Documented: yes. Executable contract: yes. Native component presence is enumerated above.
-Native ordinary-product integration: no. Independent acceptance: no. Production activation:
-no. Those axes are independent; a component-level pass does not promote the entire module.
+Additional exact regression: `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_hot_recipient_conflict_reexecutes_once_in_canonical_order`. Identical senders take a serial lane before speculation; distinct senders sharing one recipient still exercise bounded canonical re-execution.

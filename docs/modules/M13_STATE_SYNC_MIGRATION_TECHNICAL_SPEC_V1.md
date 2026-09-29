@@ -1,103 +1,58 @@
 # M13 Validated replay, work history and bounded synchronization
 
-Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
-Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
-[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
-This module has detailed procedures and executable reference coverage, not an independently
-accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets ordering. [STATE_RECOVERY.md](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md) defines exact shared rules.
+Revision: invariant-driven revision2. The selected target remains `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [precise invariant/test registry](../../config/pon/invariants-v2.json).
 
-## PoN Authority
+## Scope and ownership
 
-Walk parent links to genesis within referencebound; replay sorted deltas verifying each before value and block root. Existing local authenticated storage is the premise; untrusted network imports must first pass full block admission.
+Root-verified local storage replay. The4101-height fixture is not4101 real mined blocks.
 
-This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
-passing document check to grant work validity, model utility, local execution permission
-or production activation. Every consumer must use the specific verified fact it needs.
-Native component reuse and executable-contract integration are reported separately.
-
-## PoN Interfaces
-
-| Operation | Exact logical inputs | Output and authority boundary |
-|---|---|---|
-| `RebuildBranchState` | known genesis,retained block/delta ancestry,target | exact branch map/root or explicit failure |
-| `VerifyIncomingHistory` | ordered block/certificate/tx stream,expectedgenesis | fully verified retained ancestry |
-
-The named signatures define domain contracts. Source bindings below identify which are
-implemented natively, in the executable Python specification, or only by reusable
-components. The names do not assert matching deployed Rust service APIs.
+This is an implementation boundary, not a claim of a complete native node or independent acceptance.
 
 ## PoN State machine
 
 ### M13.RebuildBranchState
 
-Walk parent links to genesis within referencebound; replay sorted deltas verifying each before value and block root. Existing local authenticated storage is the premise; untrusted network imports must first pass full block admission.
+A height beyond4096 does not alone reject a shallow-fork state reconstruction; local checkpoint contents must match stored block roots. Find verified checkpoint or genesis, follow decreasing heights, verify every delta precondition and resultant root.
 
-**Commit point:** Reconstructed state is checked before active publication; no unauthenticated snapshot trust.
-
-**Rejections:** `UNKNOWN_PARENT, UNDO_ROOT, ROOT, LIMIT`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+**Atomic/commit boundary:** Find verified checkpoint or genesis, follow decreasing heights, verify every delta precondition and resultant root.
 
 ### M13.VerifyIncomingHistory
 
 For each block use M02 exact parent work and M06 state validation. Work matrices/certificate remain self-contained; model retention is separate. Never interpret a local checkpoint or old proof as a new finality certificate.
 
-**Commit point:** Append valid branch rows/deltas only; incomplete import not active.
+**Atomic/commit boundary:** Append valid branch rows/deltas only; incomplete import not active.
 
-**Rejections:** `NETWORK, WORK, ROOT, UNKNOWN_PARENT`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+## M13.NoHeightFinality
 
-## PoN Persistence and recovery
+**Invariant:** A height beyond4096 does not alone reject a shallow-fork state reconstruction; local checkpoint contents must match stored block roots.
 
-**M13.RebuildBranchState:** Reconstructed state is checked before active publication; no unauthenticated snapshot trust.
+**Preconditions:** Exact installed revision2 context; current local owner and immutable task/evidence identities. Storage-only and controlled-attestation premises are explicitly labelled in their tests.
 
-**M13.VerifyIncomingHistory:** Append valid branch rows/deltas only; incomplete import not active.
+**Atomic boundary:** Find verified checkpoint or genesis, follow decreasing heights, verify every delta precondition and resultant root.
 
-Branch-derived entitlement can be detached. Independent local effect/revocation facts
-cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
-A native implementation must reproduce byte/root/recovery vectors before replacing the
-reference path. No old consensus namespace or decoder is restored.
+**Failure schedule:** Height4101 replay; Corrupt4096 checkpoint; Missing ancestry and cyclic records.
 
-## PoN Resource bounds
+**Expected result:** A height beyond4096 does not alone reject a shallow-fork state reconstruction; local checkpoint contents must match stored block roots.
 
-**M13.RebuildBranchState:** 4096reference ancestry; production streamingproofsync remains nativework.
+**Resource and retention rule:** Checkpoint every128 admitted heights;64 snapshots plus genesis; progress every256 replay records.
 
-**M13.VerifyIncomingHistory:** block1MiB; bounded proof jobs; no permanent pruning-depth fork rejection.
+## Concrete regression selectors
 
-The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
-work, model and ledger profile. Limit changes require a new context. Local backpressure
-may reject service or defer data but cannot fabricate accepted block/evaluation facts.
+`formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_storage_replay_beyond_4096_does_not_invent_finality`
 
-## PoN Security
+These selectors identify actual test functions, not a class-name count. A binding checker cannot label a test passed; the separate exact-source command receipt must show execution and outcome.
 
-The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
-cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
-experimental partitions; they are not independent future-window evidence. SQLite process
-crashes are not physical power-loss qualification. These limitations remain explicit in
-[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
+## Module-specific threat and residual work
 
-## PoN Verification and evidence
+Pruning treated as finality, false checkpoint trust, unavailable profiles and replay memory growth.
 
-- `DiskReorgTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
-- `InteropTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+Fallback ancestry still materializes in reference memory; native paged WAN synchronization remains to be implemented.
 
-```bash
-python3 formal/pon-nakamoto-v1/test_contracts.py
-CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
-```
-
-Build native examples before the interop command; missing binaries cause failure, not
-a skipped pass. Fixtures are never regenerated by test execution. Independently written
-third-party vectors and acceptance remain future evidence, not an assumed status.
+No assertion of independent operators, physical durability, ordinary Hepta execution or future model efficacy follows from local fixtures.
 
 ## Current source and verification
 
-- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
-- [`trillionnium/crates/trnm-state-import/src/lib.rs`](../../trillionnium/crates/trnm-state-import/src/lib.rs)
-- Native reusable owner: `trnm-state-import`; run `cargo test --locked -p trnm-state-import --all-targets --all-features` from `trillionnium`.
+- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
-## Maturity and outstanding integration
-
-Documented: yes. Executable contract: yes. Native component presence is enumerated above.
-Native ordinary-product integration: no. Independent acceptance: no. Production activation:
-no. Those axes are independent; a component-level pass does not promote the entire module.
+Run the relevant native package and exact Python test selectors through the protocol CI lane. Preserve source hashes, failures, backend, filesystem and process/host scope. Historical evidence is never relabelled as current.

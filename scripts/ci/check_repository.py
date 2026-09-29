@@ -96,9 +96,6 @@ def check(root=ROOT):
     for row in specs:
         text=contained(root,row['technical_spec']).read_text()
         require('## Retired PoCO implementation reference' not in text,'legacy appendix restored')
-        for heading in ['Authority','Interfaces','State machine','Persistence and recovery','Resource bounds','Security','Verification and evidence']:
-            require('## PoN '+heading in text,'missing target section '+heading)
-        require('## Current source and verification' in text,'missing actual source map')
     # Every current Markdown link, not just selected navigation, must resolve locally.
     links=0;files=all_files(root)
     for p in files:
@@ -129,6 +126,8 @@ def check(root=ROOT):
     require('pull_request_target' not in text,'privileged pull request event')
     from check_detailed_contracts import validate as detailed_validate
     detailed_validate(root)
+    from check_invariants import validate as invariant_validate
+    invariant_validate(root)
     return {'result':'PASS','workspace_packages':len(names),'rust_files':source_count,'local_links':links,'runtime_implemented':False,'activation':False,'normal_dependency_edges':sum(map(len,normal_graph.values()))}
 if __name__=='__main__':
     try:

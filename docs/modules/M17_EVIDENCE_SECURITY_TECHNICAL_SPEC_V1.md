@@ -1,105 +1,60 @@
 # M17 Reproducible evidence and semantic contract checks
 
-Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
-Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
-[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
-This module has detailed procedures and executable reference coverage, not an independently
-accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets ordering. [PERFORMANCE_ACCEPTANCE.md](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md) defines exact shared rules.
+Revision: invariant-driven revision2. The selected target remains `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [precise invariant/test registry](../../config/pon/invariants-v2.json).
 
-## PoN Authority
+## Scope and ownership
 
-Require all18 modules, nonplaceholder procedures, complete typedinputs/output/preconditions/commit/errors/limits and existing source/tests. Run positive/negative vectors and actual tests separately; file existence is never runtime evidence.
+Immutable evidence/pon-v1 plus separate current-source receipts.
 
-This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
-passing document check to grant work validity, model utility, local execution permission
-or production activation. Every consumer must use the specific verified fact it needs.
-Native component reuse and executable-contract integration are reported separately.
-
-## PoN Interfaces
-
-| Operation | Exact logical inputs | Output and authority boundary |
-|---|---|---|
-| `CheckDetailedContracts` | closedmodule registry,codecs,source/testreferences | structural/algorithmcoverage result, not acceptance |
-| `QualifyExecutedCampaign` | exactsource/configdigests,rawtimings,outcomes,environment | scoped pass/failure report |
-
-The named signatures define domain contracts. Source bindings below identify which are
-implemented natively, in the executable Python specification, or only by reusable
-components. The names do not assert matching deployed Rust service APIs.
+This is an implementation boundary, not a claim of a complete native node or independent acceptance.
 
 ## PoN State machine
 
 ### M17.CheckDetailedContracts
 
-Require all18 modules, nonplaceholder procedures, complete typedinputs/output/preconditions/commit/errors/limits and existing source/tests. Run positive/negative vectors and actual tests separately; file existence is never runtime evidence.
+Old reports remain tied to their measured source; newer source is never called tested by rehashing an old pass. Verify original artifacts and measured ancestor bytes; report current-source match separately from historical consistency.
 
-**Commit point:** Read-only checker; no evidence outcome mutation.
-
-**Rejections:** `SCHEMA, SOURCE, PLACEHOLDER, COVERAGE`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+**Atomic/commit boundary:** Verify original artifacts and measured ancestor bytes; report current-source match separately from historical consistency.
 
 ### M17.QualifyExecutedCampaign
 
 Keep workcost, invalidproofamplification, diskprocesscrashes, localhostnetwork, actuallearning andreward evidence separate. Retainfailedobservations; requireexternal revieweridentity for independentacceptance, never substitute authoredsubprocesses.
 
-**Commit point:** Immutable evidence artifact manifest; cannot enableproduction.
+**Atomic/commit boundary:** Immutable evidence artifact manifest; cannot enableproduction.
 
-**Rejections:** `EVIDENCE, CONTEXT, MISSING_CAMPAIGN`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+## M17.HistoricalEvidence
 
-## PoN Persistence and recovery
+**Invariant:** Old reports remain tied to their measured source; newer source is never called tested by rehashing an old pass.
 
-**M17.CheckDetailedContracts:** Read-only checker; no evidence outcome mutation.
+**Preconditions:** Exact installed revision2 context; current local owner and immutable task/evidence identities. Storage-only and controlled-attestation premises are explicitly labelled in their tests.
 
-**M17.QualifyExecutedCampaign:** Immutable evidence artifact manifest; cannot enableproduction.
+**Atomic boundary:** Verify original artifacts and measured ancestor bytes; report current-source match separately from historical consistency.
 
-Branch-derived entitlement can be detached. Independent local effect/revocation facts
-cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
-A native implementation must reproduce byte/root/recovery vectors before replacing the
-reference path. No old consensus namespace or decoder is restored.
+**Failure schedule:** Stale digest; Dropped failure; Hidden strongest control; Forged independent or future acceptance.
 
-## PoN Resource bounds
+**Expected result:** Old reports remain tied to their measured source; newer source is never called tested by rehashing an old pass.
 
-**M17.CheckDetailedContracts:** fixed18modules; preserveblankrootREADME.
+**Resource and retention rule:** Binding validation is read-only and does not execute tests or award deployment authority.
 
-**M17.QualifyExecutedCampaign:** no all-green fabricated row; no throughput extrapolation.
+## Concrete regression selectors
 
-The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
-work, model and ledger profile. Limit changes require a new context. Local backpressure
-may reject service or defer data but cannot fabricate accepted block/evaluation facts.
+`scripts/ci/test_pon_evidence.py::EvidenceRejectionTests.test_source_digest_cannot_be_stale`
 
-## PoN Security
+`scripts/ci/test_pon_evidence.py::EvidenceRejectionTests.test_future_window_claim_rejected_even_after_rehash`
 
-The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
-cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
-experimental partitions; they are not independent future-window evidence. SQLite process
-crashes are not physical power-loss qualification. These limitations remain explicit in
-[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
+These selectors identify actual test functions, not a class-name count. A binding checker cannot label a test passed; the separate exact-source command receipt must show execution and outcome.
 
-## PoN Verification and evidence
+## Module-specific threat and residual work
 
-- `CodecTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
-- `DiskReorgTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
-- `InteropTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+Heading/class-count theatre, stale measurements, omitted failures and same-operator processes called independent.
 
-```bash
-python3 formal/pon-nakamoto-v1/test_contracts.py
-CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
-```
+Every final result needs actual source, command, filesystem, backend and honest unexecuted scope.
 
-Build native examples before the interop command; missing binaries cause failure, not
-a skipped pass. Fixtures are never regenerated by test execution. Independently written
-third-party vectors and acceptance remain future evidence, not an assumed status.
+No assertion of independent operators, physical durability, ordinary Hepta execution or future model efficacy follows from local fixtures.
 
 ## Current source and verification
 
-- [`formal/pon-nakamoto-v1/test_contracts.py`](../../formal/pon-nakamoto-v1/test_contracts.py)
-- [`formal/pon-nakamoto-v1/test_interop.py`](../../formal/pon-nakamoto-v1/test_interop.py)
-- Native reusable owner: `trnm-bench`; run `cargo test --locked -p trnm-bench --all-targets --all-features` from `trillionnium`.
-- Native reusable owner: `trnm-audit-events`; run `cargo test --locked -p trnm-audit-events --all-targets --all-features` from `trillionnium`.
+- [`scripts/ci/check_pon_evidence.py`](../../scripts/ci/check_pon_evidence.py).
 
-## Maturity and outstanding integration
-
-Documented: yes. Executable contract: yes. Native component presence is enumerated above.
-Native ordinary-product integration: no. Independent acceptance: no. Production activation:
-no. Those axes are independent; a component-level pass does not promote the entire module.
+Run the relevant native package and exact Python test selectors through the protocol CI lane. Preserve source hashes, failures, backend, filesystem and process/host scope. Historical evidence is never relabelled as current.

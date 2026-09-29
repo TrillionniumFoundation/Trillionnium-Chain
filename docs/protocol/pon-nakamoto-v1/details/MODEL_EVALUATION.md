@@ -65,26 +65,31 @@ costs are disclosed. This is not an equal-total-compute proof of MoE superiority
 The calibration outcome can select a composition that later loses to a single expert;
 all those results are retained, including the observed best-single advantage.
 
-## M1.4 Exact evaluation and score rule
+## M2.4 Frozen strongest baseline and clustered evaluation
 
-For each evaluation partition, compare composed prediction with base. Let w be composed
-correct/base wrong cases, l be the reverse, m=w+l, n=number of examples. Require n>=20,
-w>l and:
+The producer trains before evaluation, calculates all four calibration controls (current,
+best single expert, mean-delta merge and pooled model), and locks the best deployable
+control with a deterministic tie order. The reference file binds exact candidate bytes,
+calibration inputs, selected mode and any pooled weights. Evaluators refuse a missing
+reference. Held-out outcomes do not choose or tune the reference.
 
-    20 * sum(binomial(m,k), k=w..m) <= 2^m
+Group examples by source file, average correctness improvement within each group, then
+run a paired sign test over group directions. Require at least20 groups and multiply the
+one-sided binomial-tail bound by four comparisons. The scoring function uses exact
+integers and Fractions. A100-snippet file is one group, not100 independent observations.
+A weaker composition receives zero even if it beats the original weak base.
 
-If true, score=floor((w-l)*1,000,000/n); otherwise score=0. The same rule measures each
-expert's ablation (replace its delta with base only on requests routed to it). This rule
-uses arbitrary-precision integers; timing floats never enter ledger decisions.
-No-evidence, degradation or insufficient sample size yields zero, not a guessed utility.
-Multiple testing and adaptive experiment reuse are additional scientific limitations;
-external acceptance must prescribe family-wise/error and future-window controls.
+The current source partitions have already been observed, and training budgets differ
+across controls. This remains controlled exploratory evidence. An explicit caller-set
+future flag never creates public_reward_eligible; independently authenticated future
+source and owner receipts are still absent. The two-of-three dev attestation profile is
+not silently replaced with independent evaluators by improving a local scoring function.
+First-two arrival manipulation and public dispute rules remain separate protocol work.
 
-Two separately executed evaluation partitions produce exact artifacts. In the devnet,
-two distinct known, non-author Ed25519 identities attest the submitted bounded score and
-evidence digest. Minimum score freezes when the threshold is reached. These identities
-are under the same experiment operator; signatures do NOT establish operator independence.
-Their attestations affect application adoption and reward only, never block work.
+`model_loop.py` writes frozen-plan/reference records before evaluation. Its inference
+mode only returns bound predictions, not a fabricated evaluation. The settlement driver
+uses the new whole-gain/marginal scores and may return `not_adopted` with zero reward.
+No threshold is lowered to force a successful contribution cycle.
 
 ## M1.5 Artifact identities and admission
 
@@ -101,7 +106,7 @@ without credible local marginal evidence can be included in a research bundle wi
 being credited as independently valuable. General nonlinear complementary attribution
 is a separate profile; this specific rule is bounded ablation, not exact Shapley fairness.
 
-After20 blocks, a contributor claims floor(budget×score/total). The proof binds its
+After20 blocks and before its1000-block claim window closes, a contributor claims floor(budget×score/total). The proof binds its
 identity, contribution and accepted score; a root-relative nullifier forbids repeats.
 A new nonce does not bypass the claim nullifier. Dust remains in the reserved pool.
 Fork reorganization can remove the entitlement; actual prior service facts cannot vanish.
@@ -113,8 +118,8 @@ During the test, the author's original file is renamed away and a separate consu
 process loads a custodian copy. This tests removal of one source path, not independent
 geographic DA, legal erasure, anonymous-host trust or long-term retention availability.
 
-A sponsor reserves quota for an unfunded consumer and specific provider. Consumer signs
-H("use",quota,provider,provider_tx_nonce,units,result). Provider submits the signed use;
+A sponsor reserves quota for an unfunded consumer and specific provider. Consumer validates the closed model/request/input/output receipt, then signs
+H("use",Network,Parameters,quota,provider,provider_tx_nonce,units,result). Provider submits the signed use;
 prepaid budget covers execution fee and service amount. No account debit or training
 consent is silently required from the consumer. Replays, mismatched provider/result,
 expired quota and insufficient units reject. Consent to service never means consent to
@@ -133,3 +138,5 @@ Exact artifact manifests, failed experiment, two evaluation partitions, withheld
 real work partial contraction,28-block release/claim flow and zero-cost consumer evidence
 are collected separately. Native deployment, future efficacy, external data governance,
 independent evaluators and public-network economics are still unaccepted.
+
+Current native three-generation release tests use controlled signed scores and exercise retirement/claim semantics. They do not establish three improving learned generations. The ordinary Hepta path and prospective independent evaluation remain missing.

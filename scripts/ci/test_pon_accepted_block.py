@@ -5,7 +5,7 @@ import json,os,subprocess,sys,tempfile,unittest
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'formal/pon-nakamoto-v1'))
 from ledger import Ledger,GENESIS,PARAMS,header_decode,H,state_root,genesis_state
-D=ROOT/'evidence/pon-v1/accepted-block'
+D=ROOT/'formal/pon-nakamoto-v1/vectors/accepted-block'
 TARGET=Path(os.environ.get('CARGO_TARGET_DIR',str(ROOT/'trillionnium/target')))
 MODE=os.environ.get('TRNM_NATIVE_MODE','release')
 class AcceptedBlockTests(unittest.TestCase):

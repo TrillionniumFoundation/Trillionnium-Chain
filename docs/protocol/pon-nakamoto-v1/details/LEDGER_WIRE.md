@@ -1,8 +1,8 @@
-# L1 — experimental ledger bytes, genesis and native transitions
+# L2 — revision2 ledger context, native commands and lifecycle
 
 The exact registry is [`ledger-v1.json`](../../../../config/pon/ledger-v1.json), with
 [`devnet-v1.json`](../../../../config/pon/devnet-v1.json), work and model-family JSONs.
-Normative scope is the named test network, not a financial product or mainnet launch.
+Normative scope is the revision2 test network. Byte layouts remain PNH1/PNX1, but changed devnet parameters yield a new Network/Parameters/Genesis context. Old context bytes are not reinterpreted.
 Canonical JSON used INSIDE commitments is ASCII escaped, key-sorted, compact JSON with
 only strings, booleans, null, bounded integers, arrays and string-key objects. Duplicate
 keys, floats, NaN and out-of-range integers reject. JSON whitespace is not wire encoding.
@@ -77,14 +77,14 @@ All invalid commands reject the candidate block and leave the parent state uncha
 | Tag | Command / fixed payload bytes | Preconditions and transition |
 |---:|---|---|
 | 1 | transfer / 40 | positive amount; sender funds cover fee+amount; transfer to recipient; checked balances |
-| 2 | reserve_task / 80 | new task, positive budget, admitted deadline; reserve payer funds; bind provider; status reserved |
+| 2 | reserve_task / 80 | new task, positive budget, pre-reserved expiry slot; reserve payer funds; bind provider; status reserved |
 | 3 | cancel_task / 32 | only task owner, only reserved; refund remaining escrow; terminal cancelled |
 | 4 | record_receipt / 64 | bound provider, reserved and before deadline, nonzero output; status receipt, no payment yet |
 | 5 | accept_task / 64 | task owner, receipt and matching output before deadline; pay provider, status settled |
-| 6 | contribute / 168 | current parent release, exact family, bounded artifact; id binds author+family+parent+artifact+components root; reject same parent/artifact duplicate |
+| 6 | contribute / 168 | current parent release, exact family, bounded artifact; id binds author+family+parent+artifact+components root; reject same parent/artifact duplicate; count live candidates, not zero-score history |
 | 7 | evaluate / 104 | registered non-author evaluator; once per evaluator; fixed plan, nonzero evidence, integer bounded score; freeze minimum of first two valid attestations |
-| 8 | publish_release / 145+40n | 1<=n<=16 sorted unique contribution IDs; bundle and allocations positively evaluated; recompute total and root; sponsor locks finite budget; adopt release |
-| 9 | claim_reward / 73+32n | owner, maturity, exact Merkle depth/root/score; one claim per contribution; transfer floor(budget×score/total), retain dust |
+| 8 | publish_release / 145+40n | 1<=n<=16 sorted unique contribution IDs; bundle and allocations positively evaluated; recompute total and root; sponsor locks finite budget and reserves maturity+1000 claim deadline; adopt release |
+| 9 | claim_reward / 73+32n | payee bound by allocation-root membership, maturity and deadline, exact Merkle depth/root/score; one claim per contribution; transfer floor(budget×score/total), retain dust |
 | 10 | reserve_quota / 112 | payer prepays units×1024, binds consumer/provider and deadline; independent quota object |
 | 11 | consume_quota / 136 | provider transaction plus consumer signature over exact quota/provider nonce/units/result; subtract units, pay provider less fee; user pays no funds |
 | 12 | register_work / 32 | new nonzero task commitment; eligible only in a later block |
@@ -103,9 +103,9 @@ registry. fee_limit<=10,000,000 and must cover calculated fee. For tag11, prepai
 pays the fee; otherwise the sender pays it. Quota consumer consent binds provider nonce,
 so re-signing the receipt under another attempt fails. No dynamic price API is queried.
 
-Before transactions, expire due tasks/quotas sorted by (deadline,key), maximum16, and
+Before transactions, retire obsolete contribution records; expire due tasks/quotas/releases sorted by (deadline,key), maximum16, and
 release mature miner rewards. Admission allows at most16 outstanding expiries at one
-height, at most256 pending tasks/quotas and deadline within1000 blocks. Thus mandatory
+height, at most256 pending funded task/quota/release obligations and task/quota deadline within1000 blocks; release claim deadline at publication+maturity+1000 blocks. Thus mandatory
 expiry is bounded without allowing miners to starve obligations. Receipts do not extend
 deadlines. A late acceptance cannot resurrect cancelled/expired escrow.
 
@@ -141,6 +141,17 @@ Chain reorg reverses these balances and entitlement; real external effects do no
 `vectors/expected.json` holds independent-language expected hashes; it is not regenerated
 by tests. Native `pon_wire` must accept all 12 tags and reproduce header, transaction and
 state roots, while rejecting every malformed vector. The Python oracle separately checks
-signatures and application transitions. Native envelope decoding does not claim those
-application rules were executed. Current Rust task kernels are not silently converted
-into this ledger; production integration remains a separately tested owner operation.
+signatures and application transitions. Native M06 now executes all twelve commands and is compared to the reference at1/2/4/8 workers. See EXECUTION_PARALLEL.md. It is explicitly selectable through the existing Ledger bridge. A native application engine is not a complete native consensus/persistence or Hepta node.
+
+## L2.7 Changed semantics and fresh namespace
+
+The devnet schema and chain label are revision2. Candidate slots count live current-parent
+candidates only. Current-parent duplicate nullifiers remain, while old-parent rows retire
+because no new submission can name that old parent. Root-bound claims do not require a
+live candidate row. Unclaimed release budgets refund at their pre-reserved deadline;
+noncurrent empty release objects retire. All changes are part of the new context.
+
+Consumer use signatures now cover H("use",Network,Parameters,quota,provider,nonce,units,result).
+`result` may be the strict closed inference receipt digest binding model/request/input/
+output and exact provider/quota. The consumer validates expected fields before signing.
+The chain verifies the signed digest, not private plaintext or actual model usefulness.

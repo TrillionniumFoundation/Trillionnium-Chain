@@ -1,103 +1,61 @@
 # M12 Finite reward, service fees and free-use conservation
 
-Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
-Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
-[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
-This module has detailed procedures and executable reference coverage, not an independently
-accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets ordering. [LEDGER_WIRE.md](../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md) defines exact shared rules.
+Revision: invariant-driven revision2. The selected target remains `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [precise invariant/test registry](../../config/pon/invariants-v2.json).
 
-## PoN Authority
+## Scope and ownership
 
-Check maturity, ownership, unclaimed leaf and exact proofdepth; verify root; pay floor(originalbudget*score/acceptedtotal); mark nullifier and decrement remaining. New transactionnonce cannot replay a claimed contribution.
+Actual native/Python release and quota accounting, not external monetary value.
 
-This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
-passing document check to grant work validity, model utility, local execution permission
-or production activation. Every consumer must use the specific verified fact it needs.
-Native component reuse and executable-contract integration are reported separately.
-
-## PoN Interfaces
-
-| Operation | Exact logical inputs | Output and authority boundary |
-|---|---|---|
-| `ClaimContributionReward` | release,cid,acceptedscore,exactproof,owner,nonce | bounded payment or reject |
-| `ConsumeSponsoredQuota` | quota,provider signedtx,consumer signature,units,result | quota decrement,provider credit less fee |
-
-The named signatures define domain contracts. Source bindings below identify which are
-implemented natively, in the executable Python specification, or only by reusable
-components. The names do not assert matching deployed Rust service APIs.
+This is an implementation boundary, not a claim of a complete native node or independent acceptance.
 
 ## PoN State machine
 
 ### M12.ClaimContributionReward
 
-Check maturity, ownership, unclaimed leaf and exact proofdepth; verify root; pay floor(originalbudget*score/acceptedtotal); mark nullifier and decrement remaining. New transactionnonce cannot replay a claimed contribution.
+Claims pay once under exact root membership; unclaimed budget refunds at a reserved deadline even if old candidates have retired. Publish reserves due capacity; claim updates balance/nullifier/remaining together; mandatory expiry returns remainder.
 
-**Commit point:** Reward and account mutations are branch state; external delivery is independent.
-
-**Rejections:** `AUTHORITY, ROOT, DUPLICATE, STATE, FUNDS`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+**Atomic/commit boundary:** Publish reserves due capacity; claim updates balance/nullifier/remaining together; mandatory expiry returns remainder.
 
 ### M12.ConsumeSponsoredQuota
 
 Verify bound provider, deadline, positiveunits, prepaidfunds and consumer signature over provider nonce. Debit prepaid units*1024, pay fee and provider, leave consumer balance untouched. It does not imply learning/export permission.
 
-**Commit point:** Atomic nativecommand transition; effects journal separately records actual delivery.
+**Atomic/commit boundary:** Atomic nativecommand transition; effects journal separately records actual delivery.
 
-**Rejections:** `SIGNATURE, AUTHORITY, EXPIRED, LIMIT, FUNDS`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+## M12.FiniteReleaseLiability
 
-## PoN Persistence and recovery
+**Invariant:** Claims pay once under exact root membership; unclaimed budget refunds at a reserved deadline even if old candidates have retired.
 
-**M12.ClaimContributionReward:** Reward and account mutations are branch state; external delivery is independent.
+**Preconditions:** Exact installed revision2 context; current local owner and immutable task/evidence identities. Storage-only and controlled-attestation premises are explicitly labelled in their tests.
 
-**M12.ConsumeSponsoredQuota:** Atomic nativecommand transition; effects journal separately records actual delivery.
+**Atomic boundary:** Publish reserves due capacity; claim updates balance/nullifier/remaining together; mandatory expiry returns remainder.
 
-Branch-derived entitlement can be detached. Independent local effect/revocation facts
-cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
-A native implementation must reproduce byte/root/recovery vectors before replacing the
-reference path. No old consensus namespace or decoder is restored.
+**Failure schedule:** Maturity and claim deadline; Repeated proof with new nonce; Unclaimed budget; Empty old release retirement.
 
-## PoN Resource bounds
+**Expected result:** Claims pay once under exact root membership; unclaimed budget refunds at a reserved deadline even if old candidates have retired.
 
-**M12.ClaimContributionReward:** max16leaves,8siblings; integerfloor;dust retained.
+**Resource and retention rule:** 20-block maturity plus1000-block claim window;16 due slots per height shared with tasks and quotas.
 
-**M12.ConsumeSponsoredQuota:** max1millionunits; pre-reservedquota; no unlimited free-service obligation.
+## Concrete regression selectors
 
-The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
-work, model and ledger profile. Limit changes require a new context. Local backpressure
-may reject service or defer data but cannot fabricate accepted block/evaluation facts.
+`formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_unclaimed_release_budget_refunds_at_reserved_deadline`
 
-## PoN Security
+`formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement`
 
-The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
-cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
-experimental partitions; they are not independent future-window evidence. SQLite process
-crashes are not physical power-loss qualification. These limitations remain explicit in
-[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
+These selectors identify actual test functions, not a class-name count. A binding checker cannot label a test passed; the separate exact-source command receipt must show execution and outcome.
 
-## PoN Verification and evidence
+## Module-specific threat and residual work
 
-- `ExecutionTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+Replay, uncompensated liabilities, expiry starvation, sponsor self-traffic and orphaned external payouts.
 
-```bash
-python3 formal/pon-nakamoto-v1/test_contracts.py
-CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
-```
+Funded GPU capacity, market sustainability, fee adaptation and independent economic acceptance remain absent.
 
-Build native examples before the interop command; missing binaries cause failure, not
-a skipped pass. Fixtures are never regenerated by test execution. Independently written
-third-party vectors and acceptance remain future evidence, not an assumed status.
+No assertion of independent operators, physical durability, ordinary Hepta execution or future model efficacy follows from local fixtures.
 
 ## Current source and verification
 
-- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
-- [`formal/pon-nakamoto-v1/experiments/settle_model.py`](../../formal/pon-nakamoto-v1/experiments/settle_model.py)
-- Native reusable owner: `trnm-service-settlement`; run `cargo test --locked -p trnm-service-settlement --all-targets --all-features` from `trillionnium`.
-- Native reusable owner: `trnm-escrow-vault`; run `cargo test --locked -p trnm-escrow-vault --all-targets --all-features` from `trillionnium`.
+- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
+- [`trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs`](../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs).
 
-## Maturity and outstanding integration
-
-Documented: yes. Executable contract: yes. Native component presence is enumerated above.
-Native ordinary-product integration: no. Independent acceptance: no. Production activation:
-no. Those axes are independent; a component-level pass does not promote the entire module.
+Run the relevant native package and exact Python test selectors through the protocol CI lane. Preserve source hashes, failures, backend, filesystem and process/host scope. Historical evidence is never relabelled as current.

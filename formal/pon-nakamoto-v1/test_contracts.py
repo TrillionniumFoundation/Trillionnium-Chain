@@ -56,7 +56,7 @@ class ExecutionTests(unittest.TestCase):
     def test_free_consumer_is_not_charged_or_implicitly_authorized(self):
         q=H('free');consumer=key(4);provider=key(1)
         s=self.apply(self.s,[sign(key(0),1,'reserve_quota',{'quota':q,'consumer':public(consumer),'provider':public(provider),'units':2,'deadline':10})])
-        fields={'quota':q,'units':1,'result':H('served'),'consumer_signature':consumer.sign(H('use',q,public(provider),u64(1),u64(1),H('served')))}
+        fields={'quota':q,'units':1,'result':H('served'),'consumer_signature':consumer.sign(H('use',NETWORK,PARAMETER_HASH,q,public(provider),u64(1),u64(1),H('served')))}
         bad=dict(fields,consumer_signature=bytes(64))
         with self.assertRaises(ValueError):self.apply(s,[sign(provider,1,'consume_quota',bad)],2)
         s=self.apply(s,[sign(provider,1,'consume_quota',fields)],2)

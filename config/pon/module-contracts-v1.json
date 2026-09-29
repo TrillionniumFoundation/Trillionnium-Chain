@@ -26,8 +26,8 @@
         }
       ],
       "source_refs": [
-        "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
-        "formal/pon-nakamoto-v1/contract_wire.py"
+        "formal/pon-nakamoto-v1/contract_wire.py",
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
       ],
       "test_classes": [
         "CodecTests",
@@ -66,9 +66,10 @@
         }
       ],
       "source_refs": [
-        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "formal/pon-nakamoto-v1/ledger.py",
         "formal/pon-nakamoto-v1/work_oracle.py",
-        "formal/pon-nakamoto-v1/ledger.py"
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
       ],
       "test_classes": [
         "InteropTests",
@@ -100,10 +101,10 @@
           "id": "M02.ChooseBranch",
           "inputs": "fully validated tips and active tip",
           "output": "strictly heavier target or unchanged active",
-          "algorithm": "Compare derived cumulative required work; ignore invalid/unavailable branches; equal work retains current tip. Pass exact old/new roots and generation to M08; never alter application state in a fork selector.",
-          "commit": "M08 publishes active pointer only after staged-root readback.",
+          "algorithm": "A persisted valid higher-work block is selected after restart even if activation intent was never written. Finish existing reorg intent, inspect indexed fully verified tips, then publish strictly heavier state.",
+          "commit": "Finish existing reorg intent, inspect indexed fully verified tips, then publish strictly heavier state.",
           "errors": "REORG_IN_PROGRESS, UNKNOWN_PARENT",
-          "limits": "max4096 reference ancestry; production streaming sync separate"
+          "limits": "512-bit derived chainwork; same work retains current tip."
         }
       ],
       "source_refs": [
@@ -137,10 +138,10 @@
           "id": "M03.EnterExternalEffect",
           "inputs": "operation32,payload32,local generation",
           "output": "unique entered fact or replay/revoke failure",
-          "algorithm": "Check revocation; insert exact operation once into independent effects DB before actual dispatch. A reorg never deletes this record. Duplicate entry queries/reconciles target; it cannot dispatch again.",
-          "commit": "Separate SQLite WAL FULL DB, PK operation; independent anchor not yet joined.",
+          "algorithm": "If revoke commits before entry, the same operation cannot create an effects row; a committed entry cannot be repeated after crash. BEGIN IMMEDIATE encloses revocation check, duplicate check and insert; revoke uses the same serialization point.",
+          "commit": "BEGIN IMMEDIATE encloses revocation check, duplicate check and insert; revoke uses the same serialization point.",
           "errors": "OPERATION_ALREADY_ENTERED, REVOKED",
-          "limits": "fixed operation and payload digests; one local owner"
+          "limits": "Fixed operation and payload identity, bounded lock wait, explicit generation."
         }
       ],
       "source_refs": [
@@ -184,7 +185,8 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/experiments/local_network.py",
-        "trillionnium/crates/trnm-transport/src/lib.rs"
+        "trillionnium/crates/trnm-transport/src/lib.rs",
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs"
       ],
       "test_classes": [
         "InteropTests"
@@ -223,7 +225,8 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-mempool/src/lib.rs"
+        "trillionnium/crates/trnm-mempool/src/lib.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
       ],
       "test_classes": [
         "ExecutionTests",
@@ -262,7 +265,9 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-mvcc-fee/src/engine.rs"
+        "formal/pon-nakamoto-v1/native_execution.py",
+        "trillionnium/crates/trnm-mvcc-fee/src/engine.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
       ],
       "test_classes": [
         "ExecutionTests",
@@ -285,10 +290,10 @@
           "id": "M07.OpenNamespace",
           "inputs": "private path,expected parameter commitment",
           "output": "one writable ledger or refusal",
-          "algorithm": "Reject directory/database symlinks; obtain nonblocking exclusive owner lock; open WAL FULL; require exact stored parameter commitment; initialize genesis only in an empty new namespace.",
-          "commit": "Tables and keys are fixed in S1; no implicit old-store migration.",
+          "algorithm": "Every owned initialization crash cut can recover; foreign incomplete databases and injected schema objects reject without writable mutation. Fsync exact initialization intent, create schema plus genesis in one transaction, remove marker after commit; compare exact schema projection on reopen.",
+          "commit": "Fsync exact initialization intent, create schema plus genesis in one transaction, remove marker after commit; compare exact schema projection on reopen.",
           "errors": "NAMESPACE, WRITER_BUSY, NETWORK",
-          "limits": "one process writer, SQLite10-second lock timeout"
+          "limits": "Ordinary append writes only changed keys; one physical state slot, separate logical generation."
         },
         {
           "id": "M07.StageBranch",
@@ -320,19 +325,19 @@
           "id": "M08.PlanReorg",
           "inputs": "old/new validated tips and active generation",
           "output": "durable ordered detach/attach intent",
-          "algorithm": "Find common ancestor; detach descending old branch and attach ascending new branch. Copy old generation to fresh staging generation and commit exact intent/position0. If pending, resume the same intent before new work.",
-          "commit": "BEGIN IMMEDIATE: staged kv+reorg row; public active unchanged.",
+          "algorithm": "All eight reorg process-crash cuts recover the same root and one event set while irreversible local records survive. Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
+          "commit": "Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
           "errors": "UNKNOWN_PARENT, GENERATION, REORG_IN_PROGRESS",
-          "limits": "bounded retained ancestry; no local depth as permanent finality"
+          "limits": "Ordinary append avoids full copies; real forks use a staging slot; readers retain SQLite transaction snapshots."
         },
         {
           "id": "M08.RecoverAndPublish",
           "inputs": "persisted intent,position,staged generation",
           "output": "new coherent active root and unique events",
-          "algorithm": "Apply each step+cursor atomically with expected-value checks; verify full target root; publish active pointer, ordered events and done atomically. Repeat recovery is idempotent; local external facts are not undone.",
-          "commit": "Eight named process-crash cuts; read transaction sees whole old or new generation.",
+          "algorithm": "All eight reorg process-crash cuts recover the same root and one event set while irreversible local records survive. Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
+          "commit": "Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
           "errors": "UNDO_ROOT, ROOT, GENERATION",
-          "limits": "event cursor(generation,ordinal), exactly one writer"
+          "limits": "Ordinary append avoids full copies; real forks use a staging slot; readers retain SQLite transaction snapshots."
         }
       ],
       "source_refs": [
@@ -393,10 +398,10 @@
           "id": "M10.SubmitContribution",
           "inputs": "author,family,parent,artifact,size,componentsRoot,signature",
           "output": "new immutable contribution id",
-          "algorithm": "Recompute full id; require exact family/current parent and artifact size; reject same parent/artifact duplicates even under another sender; status submitted. A signature is provenance claim, not model merit.",
-          "commit": "Deterministic contribution/duplicate rows commit with block.",
+          "algorithm": "Zero-score history no longer blocks all256 pending slots, and three successor releases can retire old candidates without losing valid claims. Count active current-parent candidates; preserve same-parent duplicate keys; old-parent retirement leaves root-bound release authority intact.",
+          "commit": "Count active current-parent candidates; preserve same-parent duplicate keys; old-parent retirement leaves root-bound release authority intact.",
           "errors": "ROOT, DUPLICATE, STATE, LIMIT",
-          "limits": "candidate cap256; modelsize64MiB; newprofilebyteformat"
+          "limits": "Active capacity256; candidate lifetime1000; current-parent tombstones still subject to global state capacity."
         },
         {
           "id": "M10.PublishEvaluatedRelease",
@@ -409,8 +414,9 @@
         }
       ],
       "source_refs": [
+        "formal/pon-nakamoto-v1/experiments/settle_model.py",
         "formal/pon-nakamoto-v1/ledger.py",
-        "formal/pon-nakamoto-v1/experiments/settle_model.py"
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
       ],
       "test_classes": [
         "ExecutionTests"
@@ -433,10 +439,10 @@
           "id": "M11.EvaluateFrozenModel",
           "inputs": "fixed tasks,reference,candidate,ablation index",
           "output": "integer outcomes,win/loss counts,score,evidence bytes",
-          "algorithm": "Use exact model inference and paired sign rule: n>=20,w>l,20*binomialtail<=2^m; score=floor((w-l)*1e6/n), else0. Record every baseline including stronger single experts; no score tuning after observation.",
-          "commit": "Immutable evidence bytes; durations outside consensus values.",
+          "algorithm": "A candidate losing to the strongest calibration-locked control receives no improvement score; many snippets in one file are one statistical cluster. Freeze candidate/control/calibration before evaluation; calculate exact source-group sign test with multiplicity correction.",
+          "commit": "Freeze candidate/control/calibration before evaluation; calculate exact source-group sign test with multiplicity correction.",
           "errors": "EVIDENCE, SHAPE, FAMILY, NUMERIC",
-          "limits": "file-disjoint sourcepartitions, maxscore1million"
+          "limits": "At least20 clusters, four-comparison correction, integer/Fraction arithmetic; public reward eligibility stays false without owner-verified evidence."
         },
         {
           "id": "M11.AdmitEvaluation",
@@ -449,6 +455,7 @@
         }
       ],
       "source_refs": [
+        "formal/pon-nakamoto-v1/evaluation.py",
         "formal/pon-nakamoto-v1/experiments/model_loop.py",
         "formal/pon-nakamoto-v1/ledger.py"
       ],
@@ -472,10 +479,10 @@
           "id": "M12.ClaimContributionReward",
           "inputs": "release,cid,acceptedscore,exactproof,owner,nonce",
           "output": "bounded payment or reject",
-          "algorithm": "Check maturity, ownership, unclaimed leaf and exact proofdepth; verify root; pay floor(originalbudget*score/acceptedtotal); mark nullifier and decrement remaining. New transactionnonce cannot replay a claimed contribution.",
-          "commit": "Reward and account mutations are branch state; external delivery is independent.",
+          "algorithm": "Claims pay once under exact root membership; unclaimed budget refunds at a reserved deadline even if old candidates have retired. Publish reserves due capacity; claim updates balance/nullifier/remaining together; mandatory expiry returns remainder.",
+          "commit": "Publish reserves due capacity; claim updates balance/nullifier/remaining together; mandatory expiry returns remainder.",
           "errors": "AUTHORITY, ROOT, DUPLICATE, STATE, FUNDS",
-          "limits": "max16leaves,8siblings; integerfloor;dust retained"
+          "limits": "20-block maturity plus1000-block claim window;16 due slots per height shared with tasks and quotas."
         },
         {
           "id": "M12.ConsumeSponsoredQuota",
@@ -488,8 +495,9 @@
         }
       ],
       "source_refs": [
+        "formal/pon-nakamoto-v1/experiments/settle_model.py",
         "formal/pon-nakamoto-v1/ledger.py",
-        "formal/pon-nakamoto-v1/experiments/settle_model.py"
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
       ],
       "test_classes": [
         "ExecutionTests"
@@ -511,10 +519,10 @@
           "id": "M13.RebuildBranchState",
           "inputs": "known genesis,retained block/delta ancestry,target",
           "output": "exact branch map/root or explicit failure",
-          "algorithm": "Walk parent links to genesis within referencebound; replay sorted deltas verifying each before value and block root. Existing local authenticated storage is the premise; untrusted network imports must first pass full block admission.",
-          "commit": "Reconstructed state is checked before active publication; no unauthenticated snapshot trust.",
+          "algorithm": "A height beyond4096 does not alone reject a shallow-fork state reconstruction; local checkpoint contents must match stored block roots. Find verified checkpoint or genesis, follow decreasing heights, verify every delta precondition and resultant root.",
+          "commit": "Find verified checkpoint or genesis, follow decreasing heights, verify every delta precondition and resultant root.",
           "errors": "UNKNOWN_PARENT, UNDO_ROOT, ROOT, LIMIT",
-          "limits": "4096reference ancestry; production streamingproofsync remains nativework"
+          "limits": "Checkpoint every128 admitted heights;64 snapshots plus genesis; progress every256 replay records."
         },
         {
           "id": "M13.VerifyIncomingHistory",
@@ -559,15 +567,17 @@
           "id": "M14.ConsumePublishedModel",
           "inputs": "expectedartifact/family,quota,input,local permission",
           "output": "bound inference result and optional signedusage receipt",
-          "algorithm": "Fetch exact canonical artifact, check all fields/shapes; execute integer router/base/expert; persist actual model/request identity before usage settlement. No data export follows automatically from free usage.",
-          "commit": "Local modelgeneration and effect owner remain Hepta responsibilities.",
+          "algorithm": "Consumer consent binds expected network, parameters, model, request, input, provider and quota; no opaque result hash silently substitutes another service. Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.",
+          "commit": "Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.",
           "errors": "FAMILY, SHAPE, ARTIFACT_CANONICAL_BYTES, SIGNATURE",
-          "limits": "65536artifactbytes experimental; no reducedmodel hidden behind fullprofile"
+          "limits": "Fixed digest identities, positive bounded counters and no hidden reduced deployment profile."
         }
       ],
       "source_refs": [
+        "formal/pon-nakamoto-v1/experiments/local_network.py",
         "formal/pon-nakamoto-v1/experiments/model_loop.py",
-        "formal/pon-nakamoto-v1/experiments/local_network.py"
+        "formal/pon-nakamoto-v1/inference_receipt.py",
+        "formal/pon-nakamoto-v1/ledger.py"
       ],
       "test_classes": [
         "CodecTests",
@@ -604,6 +614,8 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/experiments/local_network.py",
+        "formal/pon-nakamoto-v1/ledger.py",
+        "formal/pon-nakamoto-v1/native_execution.py",
         "trillionnium/crates/trnm-release-bundle/src/lib.rs"
       ],
       "test_classes": [
@@ -634,13 +646,14 @@
           "id": "M16.CompareOrAbstain",
           "inputs": "base,singleexperts,meanmerge,composition,pooledcontrol",
           "output": "unhidden comparison and zero-or-positive candidate",
-          "algorithm": "Measure wholemodel and ablations on fixedpartitions; zero when gainrulefails; preservefirstfailedexperiment and strongerbaselines. Proposal cannot change consensus,target,evaluatorprofile or localpermissions.",
-          "commit": "No chainwrite until explicit M10 signedproposal and M11 evidence.",
+          "algorithm": "The producer must retain all required deployable controls and reject overlapping training/calibration identities; a weaker composition need not be adopted. Train and calibrate before frozen evaluation; emit immutable candidate and reference records.",
+          "commit": "Train and calibrate before frozen evaluation; emit immutable candidate and reference records.",
           "errors": "EVIDENCE",
-          "limits": "training/quality cost separatefromwork; no globalmandatoryoptimizer"
+          "limits": "Finite local optimization, disclosed training budget, no paid provider invocation."
         }
       ],
       "source_refs": [
+        "formal/pon-nakamoto-v1/evaluation.py",
         "formal/pon-nakamoto-v1/experiments/model_loop.py",
         "trillionnium/crates/trnm-control-plane/src/lib.rs"
       ],
@@ -663,10 +676,10 @@
           "id": "M17.CheckDetailedContracts",
           "inputs": "closedmodule registry,codecs,source/testreferences",
           "output": "structural/algorithmcoverage result, not acceptance",
-          "algorithm": "Require all18 modules, nonplaceholder procedures, complete typedinputs/output/preconditions/commit/errors/limits and existing source/tests. Run positive/negative vectors and actual tests separately; file existence is never runtime evidence.",
-          "commit": "Read-only checker; no evidence outcome mutation.",
+          "algorithm": "Old reports remain tied to their measured source; newer source is never called tested by rehashing an old pass. Verify original artifacts and measured ancestor bytes; report current-source match separately from historical consistency.",
+          "commit": "Verify original artifacts and measured ancestor bytes; report current-source match separately from historical consistency.",
           "errors": "SCHEMA, SOURCE, PLACEHOLDER, COVERAGE",
-          "limits": "fixed18modules; preserveblankrootREADME"
+          "limits": "Binding validation is read-only and does not execute tests or award deployment authority."
         },
         {
           "id": "M17.QualifyExecutedCampaign",
@@ -680,7 +693,8 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/test_contracts.py",
-        "formal/pon-nakamoto-v1/test_interop.py"
+        "formal/pon-nakamoto-v1/test_interop.py",
+        "scripts/ci/check_pon_evidence.py"
       ],
       "test_classes": [
         "CodecTests",

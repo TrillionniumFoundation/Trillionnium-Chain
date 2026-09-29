@@ -36,7 +36,7 @@
   "production_consensus_activation": false,
   "public_testnet_ready": false,
   "release_ready": false,
-  "parameter_status": "reference-formulas-only-deployment-values-not-selected",
+  "parameter_status": "revision-2-experimental-genesis-only",
   "required_consensus_parameters": [
     "chain_id",
     "genesis",
@@ -247,5 +247,6 @@
   ],
   "detailed_module_contracts": "config/pon/module-contracts-v1.json",
   "module_maturity": "config/pon/module-maturity-v1.json",
-  "experimental_genesis": "config/pon/devnet-v1.json"
+  "experimental_genesis": "config/pon/devnet-v1.json",
+  "invariant_contract": "config/pon/invariants-v2.json"
 }

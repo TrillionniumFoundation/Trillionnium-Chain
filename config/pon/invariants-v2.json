@@ -1,0 +1,431 @@
+{
+  "schema": "pon-invariants-v2",
+  "genesis_revision": 2,
+  "invariants": [
+    {
+      "module": "M00",
+      "id": "CanonicalBytes",
+      "claim": "Replacing any header field changes its challenge; malformed transaction bytes reject without nonce or balance authority.",
+      "scope": "Native and Python wire codecs, not application acceptance.",
+      "atomic": "Decode is pure and bounded; signature verification and state publication are later independent boundaries.",
+      "cuts": [
+        "Every header field mutation",
+        "Truncation, trailing bytes, zero nonce, unknown tag"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_contracts.py::CodecTests.test_header_mutations_bind_all_fields",
+        "formal/pon-nakamoto-v1/test_interop.py::InteropTests.test_rejection_vectors"
+      ],
+      "source": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "formal/pon-nakamoto-v1/contract_wire.py"
+      ],
+      "limit": "318-byte header, 2048-byte envelope, closed twelve tags.",
+      "threat": "Encoding ambiguity, cross-genesis replay and unsafe unversioned upgrades.",
+      "remaining": "Third-party verifier and production upgrade policy remain unaccepted."
+    },
+    {
+      "module": "M01",
+      "id": "VerificationAuthority",
+      "claim": "Bad signatures reject the whole block without mutating parent state; altered work output or context never yields verified work.",
+      "scope": "Actual strict native signatures and unchanged experimental transcript verification.",
+      "atomic": "Signature verification precedes speculative patches; only full transcript verification creates work authority.",
+      "cuts": [
+        "Bad signature at every worker count",
+        "Changed transcript, product and challenge"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_bad_signature_rejects_entire_block_without_parent_mutation",
+        "formal/pon-nakamoto-v1/test_interop.py::InteropTests.test_native_rejects_changed_context_and_output"
+      ],
+      "source": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+      ],
+      "limit": "49188-byte work certificate; failed proof still requires substantial computation.",
+      "threat": "Cheap forgery amplification, structured-input shortcuts, hardware advantage and weak-key disagreement.",
+      "remaining": "Cost hardness and public Sybil-safe proof admission are not established by queue limits."
+    },
+    {
+      "module": "M02",
+      "id": "RecoveredBestChain",
+      "claim": "A persisted valid higher-work block is selected after restart even if activation intent was never written.",
+      "scope": "Existing reference Ledger; native consensus actor remains separate work.",
+      "atomic": "Finish existing reorg intent, inspect indexed fully verified tips, then publish strictly heavier state.",
+      "cuts": [
+        "Close after admit before activate",
+        "Repeat recover with no new input"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_admitted_before_activation_is_selected_on_restart"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "limit": "512-bit derived chainwork; same work retains current tip.",
+      "threat": "Admission-to-activation gaps, fabricated chainwork, stale parent and partitioned observations.",
+      "remaining": "Native P2P consensus actor, timestamp attack qualification and independently operated network are pending."
+    },
+    {
+      "module": "M03",
+      "id": "RevokeEntryLinearization",
+      "claim": "If revoke commits before entry, the same operation cannot create an effects row; a committed entry cannot be repeated after crash.",
+      "scope": "Two SQLite connections to one local operation namespace. This is not physical effect cancellation.",
+      "atomic": "BEGIN IMMEDIATE encloses revocation check, duplicate check and insert; revoke uses the same serialization point.",
+      "cuts": [
+        "Revoke commits first",
+        "Revoker scheduled between checks and insertion",
+        "Crash after entry commit"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_invariants.py::EffectLinearizationTests.test_revoke_committed_first_prevents_entry",
+        "formal/pon-nakamoto-v1/test_invariants.py::EffectLinearizationTests.test_revoker_cannot_commit_inside_entry_transaction",
+        "formal/pon-nakamoto-v1/test_invariants.py::EffectLinearizationTests.test_crash_after_entry_commit_rejects_replay"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "limit": "Fixed operation and payload identity, bounded lock wait, explicit generation.",
+      "threat": "Check/use races, ACK loss, owner takeover and coherent rollback of all evidence.",
+      "remaining": "Normal Hepta final-use token, independent rollback frontier and target-side reconciliation remain unjoined."
+    },
+    {
+      "module": "M04",
+      "id": "RecoveryCapacity",
+      "claim": "Public proof permits cannot consume the local-only reserved recovery slot; stop/resume does not erase live jobs.",
+      "scope": "Native transport admission component, not an already deployed public network service.",
+      "atomic": "One mutex owns global/per-peer counts and duplicate identities; RAII releases every permit on success, failure or unwind.",
+      "cuts": [
+        "Fill public capacity with changing identities",
+        "Acquire recovery permit",
+        "Stop/resume while old jobs live",
+        "Panic unwind"
+      ],
+      "tests": [
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs::public_flood_cannot_consume_reserved_recovery_capacity",
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs::stop_resume_does_not_erase_outstanding_work",
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs::panic_unwind_releases_capacity"
+      ],
+      "source": [
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs"
+      ],
+      "limit": "Three public jobs, one recovery job, two jobs per peer; no unbounded queue.",
+      "threat": "Sybil connection churn, eclipse, validation starvation and forged recovery priority.",
+      "remaining": "Global public fairness and cheap-proof defense are unresolved; local recovery capability is never selected by packet fields."
+    },
+    {
+      "module": "M05",
+      "id": "CanonicalNonce",
+      "claim": "Actual disjoint senders avoid false conflicts; hot-sender transactions retry at most once against canonical preceding state.",
+      "scope": "Signed transactions in native M06 execution; mempool product wiring remains distinct.",
+      "atomic": "Validate exact key reads and prefix-scan results immediately before canonical patch commit.",
+      "cuts": [
+        "Sixteen ordered same-sender nonces",
+        "Independent sender and recipient pairs",
+        "Speculation sees insufficient preceding funds"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_hot_sender_degrades_to_serial_without_speculation",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_independent_senders_commit_without_false_conflicts",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_hot_recipient_conflict_reexecutes_once_in_canonical_order"
+      ],
+      "source": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+      ],
+      "limit": "Retries at most transaction count; inflight at most configured workers.",
+      "threat": "Nonce contention, stale reservations, replay after reorg and hidden shared sponsor keys.",
+      "remaining": "Future-nonce parking, replacement policy and mempool reorg events still require native host integration."
+    },
+    {
+      "module": "M06",
+      "id": "TwelveCommandEquivalence",
+      "claim": "All twelve commands produce identical state, receipts, fees and root at one, two, four and eight workers.",
+      "scope": "Native implementation inside existing trnm-mvcc-fee and separately coded Python reference.",
+      "atomic": "Mandatory transitions first, parallel local proposals, canonical read-set validation, one re-execution on conflict, then final conservation and subsidy.",
+      "cuts": [
+        "Tasks, cancel, receipt and accept",
+        "Contribute, evaluate, publish and claim",
+        "Quota reserve/use and work registration",
+        "Missing native backend"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_all_twelve_tags_match_for_1_2_4_8_workers",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_missing_native_binary_is_not_reference_fallback"
+      ],
+      "source": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "formal/pon-nakamoto-v1/native_execution.py",
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "limit": "256 transactions; tracked prefix reads detect phantoms; explicit native bridge is bounded to16MiB and30 seconds.",
+      "threat": "Incorrect conflict sets, receipt order changes, unbounded retries and successful fallback masking missing implementation.",
+      "remaining": "A native application engine is not a complete native consensus/persistence/Hepta host."
+    },
+    {
+      "module": "M07",
+      "id": "OwnedInitialization",
+      "claim": "Every owned initialization crash cut can recover; foreign incomplete databases and injected schema objects reject without writable mutation.",
+      "scope": "Fresh revision2 SQLite namespace, not an in-place historical database upgrade.",
+      "atomic": "Fsync exact initialization intent, create schema plus genesis in one transaction, remove marker after commit; compare exact schema projection on reopen.",
+      "cuts": [
+        "Intent persisted",
+        "Schema staged",
+        "Before initialization commit",
+        "After commit before marker removal",
+        "Unexpected trigger and unmarked empty database"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_every_initialization_cut_recovers_only_our_exact_intent",
+        "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_unmarked_empty_database_is_not_reinitialized",
+        "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_injected_trigger_rejects_before_writable_open",
+        "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_append_retains_one_physical_state_slot"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "limit": "Ordinary append writes only changed keys; one physical state slot, separate logical generation.",
+      "threat": "Initialization gaps, trigger/schema substitution, disk full, path replacement and unbounded full-state copies.",
+      "remaining": "Full descriptor/sidecar fencing, incremental authenticated native state tree and physical power-loss tests remain pending."
+    },
+    {
+      "module": "M08",
+      "id": "ReorgAtomicView",
+      "claim": "All eight reorg process-crash cuts recover the same root and one event set while irreversible local records survive.",
+      "scope": "Reference disk SQLite; process crash is not physical power-loss evidence.",
+      "atomic": "Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
+      "cuts": [
+        "Intent",
+        "Two detaches",
+        "Three attaches",
+        "Before publish",
+        "After publish",
+        "Repeated recovery"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "limit": "Ordinary append avoids full copies; real forks use a staging slot; readers retain SQLite transaction snapshots.",
+      "threat": "Mixed generations, wrong undo values, duplicated notifications and erasing external effects.",
+      "remaining": "Remote target compensation and long-running native node recovery are separate obligations."
+    },
+    {
+      "module": "M09",
+      "id": "ArtifactIdentity",
+      "claim": "Replacing model bytes at the same path fails the requested digest before load; malformed or executable-shaped artifacts reject.",
+      "scope": "Current bounded integer model family, not arbitrary neural model hosting.",
+      "atomic": "Read at most65537 bytes, check size and expected digest, canonical JSON, family and tensor dimensions before inference.",
+      "cuts": [
+        "Change base weights",
+        "Wrong family or shape",
+        "Extra executable field",
+        "Trailing bytes and oversized input"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_exact_expected_artifact_not_mutable_path",
+        "formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_shapes_fields_and_noncanonical_bytes_reject",
+        "formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_loader_size_is_bounded_before_json_decode"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/experiments/model_loop.py"
+      ],
+      "limit": "This loader accepts64KiB, distinct from the generic64MiB transport target.",
+      "threat": "Parameter substitution, hostile object formats, unavailable custodians and expired shared bases.",
+      "remaining": "Geographic replication, repair, renewal and long-retention independence remain unexecuted."
+    },
+    {
+      "module": "M10",
+      "id": "PendingNotHistory",
+      "claim": "Zero-score history no longer blocks all256 pending slots, and three successor releases can retire old candidates without losing valid claims.",
+      "scope": "Signed controlled development contributions and release transitions, not three measured learning improvements.",
+      "atomic": "Count active current-parent candidates; preserve same-parent duplicate keys; old-parent retirement leaves root-bound release authority intact.",
+      "cuts": [
+        "257 zero-scored contributions",
+        "Same-parent duplicate after retirement",
+        "Candidate expiry",
+        "Three releases and claims with original rows removed"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_invariants.py::CapacityTests.test_zero_score_history_does_not_consume_pending_capacity",
+        "formal/pon-nakamoto-v1/test_invariants.py::CapacityTests.test_expiry_releases_capacity_without_dropping_current_parent_nullifier",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+      ],
+      "limit": "Active capacity256; candidate lifetime1000; current-parent tombstones still subject to global state capacity.",
+      "threat": "Lifetime counters, generation-stale scores, duplicate rewards and unbounded same-parent spam.",
+      "remaining": "Full historical compaction and economic anti-spam policy are not declared solved."
+    },
+    {
+      "module": "M11",
+      "id": "StrongClusterControl",
+      "claim": "A candidate losing to the strongest calibration-locked control receives no improvement score; many snippets in one file are one statistical cluster.",
+      "scope": "Controlled real training and explicit evaluation producer; signatures still use the experimental attestor trust model.",
+      "atomic": "Freeze candidate/control/calibration before evaluation; calculate exact source-group sign test with multiplicity correction.",
+      "cuts": [
+        "Best single stronger than base",
+        "Candidate loses to best control",
+        "One hundred snippets from one source",
+        "Caller labels data future"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_stronger_single_control_not_weak_base_is_selected",
+        "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_improving_over_base_but_losing_to_control_is_not_rewarded",
+        "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_snippets_from_one_file_do_not_become_independent_samples",
+        "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_positive_cluster_result_does_not_mint_future_acceptance"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/evaluation.py",
+        "formal/pon-nakamoto-v1/experiments/model_loop.py"
+      ],
+      "limit": "At least20 clusters, four-comparison correction, integer/Fraction arithmetic; public reward eligibility stays false without owner-verified evidence.",
+      "threat": "Weak baselines, correlated samples, adaptive holdout reuse, poisoned evaluators and first-two arrival manipulation.",
+      "remaining": "Fresh future windows, independent evaluators and a public dispute/aggregation profile are still required."
+    },
+    {
+      "module": "M12",
+      "id": "FiniteReleaseLiability",
+      "claim": "Claims pay once under exact root membership; unclaimed budget refunds at a reserved deadline even if old candidates have retired.",
+      "scope": "Actual native/Python release and quota accounting, not external monetary value.",
+      "atomic": "Publish reserves due capacity; claim updates balance/nullifier/remaining together; mandatory expiry returns remainder.",
+      "cuts": [
+        "Maturity and claim deadline",
+        "Repeated proof with new nonce",
+        "Unclaimed budget",
+        "Empty old release retirement"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_unclaimed_release_budget_refunds_at_reserved_deadline",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+      ],
+      "limit": "20-block maturity plus1000-block claim window;16 due slots per height shared with tasks and quotas.",
+      "threat": "Replay, uncompensated liabilities, expiry starvation, sponsor self-traffic and orphaned external payouts.",
+      "remaining": "Funded GPU capacity, market sustainability, fee adaptation and independent economic acceptance remain absent."
+    },
+    {
+      "module": "M13",
+      "id": "NoHeightFinality",
+      "claim": "A height beyond4096 does not alone reject a shallow-fork state reconstruction; local checkpoint contents must match stored block roots.",
+      "scope": "Root-verified local storage replay. The4101-height fixture is not4101 real mined blocks.",
+      "atomic": "Find verified checkpoint or genesis, follow decreasing heights, verify every delta precondition and resultant root.",
+      "cuts": [
+        "Height4101 replay",
+        "Corrupt4096 checkpoint",
+        "Missing ancestry and cyclic records"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_storage_replay_beyond_4096_does_not_invent_finality"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "limit": "Checkpoint every128 admitted heights;64 snapshots plus genesis; progress every256 replay records.",
+      "threat": "Pruning treated as finality, false checkpoint trust, unavailable profiles and replay memory growth.",
+      "remaining": "Fallback ancestry still materializes in reference memory; native paged WAN synchronization remains to be implemented."
+    },
+    {
+      "module": "M14",
+      "id": "ServiceReceiptBinding",
+      "claim": "Consumer consent binds expected network, parameters, model, request, input, provider and quota; no opaque result hash silently substitutes another service.",
+      "scope": "Closed receipt before quota-use signing, distinct from a local capability.",
+      "atomic": "Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.",
+      "cuts": [
+        "Replace every receipt field",
+        "Missing expected identities",
+        "Extra authority field",
+        "Noncanonical bytes"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_every_service_identity_is_bound",
+        "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_duplicate_or_implicit_receipt_fields_reject"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/inference_receipt.py",
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "limit": "Fixed digest identities, positive bounded counters and no hidden reduced deployment profile.",
+      "threat": "Stale confirmation, input/model substitution, cross-genesis signatures and unsafe remote-result authority.",
+      "remaining": "Public client confirmation verification and normal Hepta final-use integration remain unimplemented."
+    },
+    {
+      "module": "M15",
+      "id": "ExplicitBackend",
+      "claim": "A host selecting native execution either uses that binary or fails; it does not silently substitute a reference success path.",
+      "scope": "Existing ledger with explicit native application bridge; not a complete native public host.",
+      "atomic": "Backend choice before execution; bounded subprocess response; independently recompute returned root.",
+      "cuts": [
+        "Missing or inaccessible binary",
+        "Failed native transaction",
+        "Restart with persisted higher-work tip"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_missing_native_binary_is_not_reference_fallback",
+        "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_admitted_before_activation_is_selected_on_restart",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_wrong_native_context_rejects_even_an_empty_block"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/native_execution.py",
+        "formal/pon-nakamoto-v1/ledger.py"
+      ],
+      "limit": "16MiB bridge input,30-second execution limit, fixed worker choices.",
+      "threat": "Fallback masking missing modules, startup before recovery, task starvation and authority conflation.",
+      "remaining": "Normal Hepta entry, native persistence/consensus assembly, ongoing miner and multi-host deployment remain distinct work."
+    },
+    {
+      "module": "M16",
+      "id": "NoForcedAdoption",
+      "claim": "The producer must retain all required deployable controls and reject overlapping training/calibration identities; a weaker composition need not be adopted.",
+      "scope": "Bounded local optimization and non-authoritative proposals only.",
+      "atomic": "Train and calibrate before frozen evaluation; emit immutable candidate and reference records.",
+      "cuts": [
+        "Omit a control",
+        "Overlap task identities",
+        "Composition loses to selected control"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_reference_cannot_silently_omit_a_control",
+        "formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_duplicate_task_and_partition_overlap_reject"
+      ],
+      "source": [
+        "formal/pon-nakamoto-v1/evaluation.py",
+        "formal/pon-nakamoto-v1/experiments/model_loop.py"
+      ],
+      "limit": "Finite local optimization, disclosed training budget, no paid provider invocation.",
+      "threat": "Reward hacking, self-evaluation, adapting after seeing outcomes and absorbing existing Hepta owners.",
+      "remaining": "Real chronological multi-generation learning and authenticated data withdrawals are not replaced by experimental splits."
+    },
+    {
+      "module": "M17",
+      "id": "HistoricalEvidence",
+      "claim": "Old reports remain tied to their measured source; newer source is never called tested by rehashing an old pass.",
+      "scope": "Immutable evidence/pon-v1 plus separate current-source receipts.",
+      "atomic": "Verify original artifacts and measured ancestor bytes; report current-source match separately from historical consistency.",
+      "cuts": [
+        "Stale digest",
+        "Dropped failure",
+        "Hidden strongest control",
+        "Forged independent or future acceptance"
+      ],
+      "tests": [
+        "scripts/ci/test_pon_evidence.py::EvidenceRejectionTests.test_source_digest_cannot_be_stale",
+        "scripts/ci/test_pon_evidence.py::EvidenceRejectionTests.test_future_window_claim_rejected_even_after_rehash"
+      ],
+      "source": [
+        "scripts/ci/check_pon_evidence.py"
+      ],
+      "limit": "Binding validation is read-only and does not execute tests or award deployment authority.",
+      "threat": "Heading/class-count theatre, stale measurements, omitted failures and same-operator processes called independent.",
+      "remaining": "Every final result needs actual source, command, filesystem, backend and honest unexecuted scope."
+    }
+  ],
+  "binding_is_execution": false,
+  "independent_accepted": false
+}

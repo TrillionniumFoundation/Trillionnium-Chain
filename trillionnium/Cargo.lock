@@ -889,10 +889,13 @@ name = "trnm-mvcc-fee"
 version = "0.1.0"
 dependencies = [
  "borsh",
+ "hex",
  "rusqlite",
  "serde_json",
  "sha2",
  "tempfile",
+ "trnm-crypto-primitives",
+ "trnm-protocol",
 ]
 
 [[package]]

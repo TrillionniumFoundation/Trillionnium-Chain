@@ -62,3 +62,12 @@ measured and remains a public-network blocker, not a hidden fallback.
 [Procedure registry](../../../config/pon/module-contracts-v1.json) has36 typed operations
 for all18 existing modules. [Maturity](../../../config/pon/module-maturity-v1.json)
 separates document, component, executable contract, native product and independent acceptance.
+
+## Revision2 invariant continuation
+
+[Exact invariant/test bindings](../../../config/pon/invariants-v2.json),
+[native execution](details/EXECUTION_PARALLEL.md), [recovery](details/STATE_RECOVERY.md),
+[proof admission boundary](details/ADMISSION_SECURITY.md) and
+[Hepta owner handoff](details/HEPTA_HANDOFF.md) supersede the affected experimental lifecycle
+rules. New genesis parameters and storage schema require fresh namespaces. The work relation
+itself remains experimental and unqualified; all production/independent acceptance is false.

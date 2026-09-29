@@ -3,79 +3,79 @@
   "derivation": "Python oracle, without invoking Rust; same author, not independent external acceptance",
   "header": {
     "file": "header.bin",
-    "challenge": "08a3c71de66e033a3a01ece9a5a851b21e48ab3710488699c76130b74d913d54"
+    "challenge": "c65e0d45b78bd013c7973b3cbbb340b2f1f5e47fb77ba41bc430537809281270"
   },
   "transactions": [
     {
       "tag": 1,
       "file": "tx-01.bin",
-      "id": "b3cf1c778937f98801992cc791aed2f15845c6576cf3a3ee6fadc902369f9240",
+      "id": "3d27c3fdf7d779e6f00e09d757c634a82bff187d026c4be9e5c8b1c72acdba36",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 2,
       "file": "tx-02.bin",
-      "id": "b8415bee5a309e5c82fd3bd877aacd59b5daefa133a2b674d2ad0685c6f48e83",
+      "id": "6e3cd94c6ebe4a46664a830d8e6a33bd23e193b6831ea8ba69318a7bb500cf62",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 3,
       "file": "tx-03.bin",
-      "id": "a5060e8ea7340e2c70ca3d6a58915a0a6d916b2f8c5fabf93c5277b34f3a6a3d",
+      "id": "566f4038b7948ecdf4a1950814f444868d3524f4e080367f1b5621919489de08",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 4,
       "file": "tx-04.bin",
-      "id": "2b331ee8449de0792dee53d45063af0e7051b2246fe06df881c36726d4f9788e",
+      "id": "aa28620fafd7147075b6ebfd226e124784893e33d46685ed24b79de8d9cadcfe",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 5,
       "file": "tx-05.bin",
-      "id": "ad5a0f56862cf0e90809f1ec08d5881a6fc37e93f8946f689b4ce31dc26d7eb0",
+      "id": "01fe5a58fa36eed8fc313daaf2913e1acce8aaa7b26e6d341c6db3ffd463c86a",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 6,
       "file": "tx-06.bin",
-      "id": "0fe882fa070b9dfae8ff15ffbbd77e617668f6d2033ae30bd0416d8366c5ae6c",
+      "id": "8c5ca0fdd8d52f399cac42d853850dc1750804c236f2fbafd7f3f8a625b9cc6d",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 7,
       "file": "tx-07.bin",
-      "id": "d3eba5aa3fe7fd988575ca09425cf0430681291fbed89f6b8b846c5063ba9380",
+      "id": "6964cab66692e7e0fed81c5940b29ea41fdff2a465b0b0502ac8b328e8df2637",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 8,
       "file": "tx-08.bin",
-      "id": "8044b4e375459591153ceb78f6df983767bc4e8bfedcb2843431dedee9eee6a2",
+      "id": "34cc8b18a37d0eb02e52a6eceda09fb53f01dd06579cd7a5090b13f3def02718",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 9,
       "file": "tx-09.bin",
-      "id": "c74dea0c6d87968b3b044ef661b61b5af2e8f3feddb9c18efef0338e1c0e342d",
+      "id": "32b088526ce9627dd7788990e61d970f10cb326f062afaede123c4f7dec0d423",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 10,
       "file": "tx-10.bin",
-      "id": "cebdc3829e9b0cde7515c831e74e38eb890451cb681acf29fccb06c2918493de",
+      "id": "e168acc36c174aa39716b910ee00ff77a051cffa8c2b931d4ed806a93faffc03",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 11,
       "file": "tx-11.bin",
-      "id": "f4d653879b2c77b2a24ca496ef98546202648bc902bd5e06316bc00ecb9ead2c",
+      "id": "5f1a18ebf22e766f1ca42124aea0c34b813dc5c86c6c654c07a0cb366a4a9c37",
       "scope": "codec-valid; not necessarily application-valid"
     },
     {
       "tag": 12,
       "file": "tx-12.bin",
-      "id": "61203c700ed7028b11b3ac1712de74697e86a49e174f4f1999d93dcd929947c7",
+      "id": "7da2bcc05cfa20d7d69ac52f56cc2c4d7e069f4f413c77888043a3faeb8e0a88",
       "scope": "codec-valid; not necessarily application-valid"
     }
   ],
@@ -121,8 +121,8 @@
     "file": "work.bin",
     "inputs": "matrices.bin",
     "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
-    "challenge": "08a3c71de66e033a3a01ece9a5a851b21e48ab3710488699c76130b74d913d54",
+    "challenge": "c65e0d45b78bd013c7973b3cbbb340b2f1f5e47fb77ba41bc430537809281270",
     "target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-    "ticket": "2f97f9d17506f01cb0c164ac3a7df678c34a470f27fc6e8d28fe935de8c3fe54"
+    "ticket": "278bfb9fd54466c5a455baf20a8be80672537b0bc45b29a5302603174c442521"
   }
 }

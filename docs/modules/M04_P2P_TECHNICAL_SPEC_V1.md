@@ -1,31 +1,13 @@
 # M04 Bounded peer ingress and propagation
 
-Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
-Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
-[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
-This module has detailed procedures and executable reference coverage, not an independently
-accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets ordering. [NETWORK_CLIENT.md](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md) defines exact shared rules.
+Revision: invariant-driven revision2. The selected target remains `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [precise invariant/test registry](../../config/pon/invariants-v2.json).
 
-## PoN Authority
+## Scope and ownership
 
-Read four bytes with10-second timeout; require 1..2097152 before allocating; read exactly length and reject duplicate JSON keys. Submit payload goes through full M02 validation, never through an accept flag.
+Native transport admission component, not an already deployed public network service.
 
-This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
-passing document check to grant work validity, model utility, local execution permission
-or production activation. Every consumer must use the specific verified fact it needs.
-Native component reuse and executable-contract integration are reported separately.
-
-## PoN Interfaces
-
-| Operation | Exact logical inputs | Output and authority boundary |
-|---|---|---|
-| `ReadFrame` | socket and BE32 length prefix | bounded exact message or transport error |
-| `PropagateVerifiedBlock` | fixed header,txs,certificate and three peer endpoints | per-peer read-back tip/root/generation |
-
-The named signatures define domain contracts. Source bindings below identify which are
-implemented natively, in the executable Python specification, or only by reusable
-components. The names do not assert matching deployed Rust service APIs.
+This is an implementation boundary, not a claim of a complete native node or independent acceptance.
 
 ## PoN State machine
 
@@ -33,71 +15,48 @@ components. The names do not assert matching deployed Rust service APIs.
 
 Read four bytes with10-second timeout; require 1..2097152 before allocating; read exactly length and reject duplicate JSON keys. Submit payload goes through full M02 validation, never through an accept flag.
 
-**Commit point:** Transport has no chain authority; each child owns a different ledger.
-
-**Rejections:** `FRAME_LIMIT, SHORT_FRAME, OPERATION, ROOT`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+**Atomic/commit boundary:** Transport has no chain authority; each child owns a different ledger.
 
 ### M04.PropagateVerifiedBlock
 
 Send identical block to separate processes; each rechecks full work and state before ack. Retain failed/unavailable outcomes. Native peer identity/replay comes from retained authenticated frame components, not the test TCP wrapper.
 
-**Commit point:** M07/M08 own receipt persistence; transport never writes ledger tables.
+**Atomic/commit boundary:** M07/M08 own receipt persistence; transport never writes ledger tables.
 
-**Rejections:** `UNAVAILABLE, UNKNOWN_PARENT, TRANSCRIPT`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+## M04.RecoveryCapacity
 
-## PoN Persistence and recovery
+**Invariant:** Public proof permits cannot consume the local-only reserved recovery slot; stop/resume does not erase live jobs.
 
-**M04.ReadFrame:** Transport has no chain authority; each child owns a different ledger.
+**Preconditions:** Exact installed revision2 context; current local owner and immutable task/evidence identities. Storage-only and controlled-attestation premises are explicitly labelled in their tests.
 
-**M04.PropagateVerifiedBlock:** M07/M08 own receipt persistence; transport never writes ledger tables.
+**Atomic boundary:** One mutex owns global/per-peer counts and duplicate identities; RAII releases every permit on success, failure or unwind.
 
-Branch-derived entitlement can be detached. Independent local effect/revocation facts
-cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
-A native implementation must reproduce byte/root/recovery vectors before replacing the
-reference path. No old consensus namespace or decoder is restored.
+**Failure schedule:** Fill public capacity with changing identities; Acquire recovery permit; Stop/resume while old jobs live; Panic unwind.
 
-## PoN Resource bounds
+**Expected result:** Public proof permits cannot consume the local-only reserved recovery slot; stop/resume does not erase live jobs.
 
-**M04.ReadFrame:** 127.0.0.1 experiment only;backlog16;timeout10seconds.
+**Resource and retention rule:** Three public jobs, one recovery job, two jobs per peer; no unbounded queue.
 
-**M04.PropagateVerifiedBlock:** native target peer inflight4;globalproof4;independent queues.
+## Concrete regression selectors
 
-The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
-work, model and ledger profile. Limit changes require a new context. Local backpressure
-may reject service or defer data but cannot fabricate accepted block/evaluation facts.
+`trillionnium/crates/trnm-transport/src/proof_admission.rs::public_flood_cannot_consume_reserved_recovery_capacity`
 
-## PoN Security
+`trillionnium/crates/trnm-transport/src/proof_admission.rs::stop_resume_does_not_erase_outstanding_work`
 
-The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
-cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
-experimental partitions; they are not independent future-window evidence. SQLite process
-crashes are not physical power-loss qualification. These limitations remain explicit in
-[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
+`trillionnium/crates/trnm-transport/src/proof_admission.rs::panic_unwind_releases_capacity`
 
-## PoN Verification and evidence
+These selectors identify actual test functions, not a class-name count. A binding checker cannot label a test passed; the separate exact-source command receipt must show execution and outcome.
 
-- `InteropTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+## Module-specific threat and residual work
 
-```bash
-python3 formal/pon-nakamoto-v1/test_contracts.py
-CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
-```
+Sybil connection churn, eclipse, validation starvation and forged recovery priority.
 
-Build native examples before the interop command; missing binaries cause failure, not
-a skipped pass. Fixtures are never regenerated by test execution. Independently written
-third-party vectors and acceptance remain future evidence, not an assumed status.
+Global public fairness and cheap-proof defense are unresolved; local recovery capability is never selected by packet fields.
+
+No assertion of independent operators, physical durability, ordinary Hepta execution or future model efficacy follows from local fixtures.
 
 ## Current source and verification
 
-- [`formal/pon-nakamoto-v1/experiments/local_network.py`](../../formal/pon-nakamoto-v1/experiments/local_network.py)
-- [`trillionnium/crates/trnm-transport/src/lib.rs`](../../trillionnium/crates/trnm-transport/src/lib.rs)
-- Native reusable owner: `trnm-peer-lease`; run `cargo test --locked -p trnm-peer-lease --all-targets --all-features` from `trillionnium`.
-- Native reusable owner: `trnm-transport`; run `cargo test --locked -p trnm-transport --all-targets --all-features` from `trillionnium`.
+- [`trillionnium/crates/trnm-transport/src/proof_admission.rs`](../../trillionnium/crates/trnm-transport/src/proof_admission.rs).
 
-## Maturity and outstanding integration
-
-Documented: yes. Executable contract: yes. Native component presence is enumerated above.
-Native ordinary-product integration: no. Independent acceptance: no. Production activation:
-no. Those axes are independent; a component-level pass does not promote the entire module.
+Run the relevant native package and exact Python test selectors through the protocol CI lane. Preserve source hashes, failures, backend, filesystem and process/host scope. Historical evidence is never relabelled as current.

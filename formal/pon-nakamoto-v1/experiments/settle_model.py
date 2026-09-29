@@ -6,6 +6,7 @@ from pathlib import Path
 import argparse,json,sys,subprocess,shutil,time
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from ledger import *
+from inference_receipt import receipt as encode_receipt,verify as verify_receipt
 
 def run(directory,out):
     directory=Path(directory);out=Path(out);out.mkdir(parents=True,exist_ok=True)
@@ -62,10 +63,13 @@ def run(directory,out):
     original=directory/'model.json';offline=directory/'model.author-offline';original.rename(offline)
     effect=EffectJournal(out/'effects.sqlite');op=H('public-consumer-request',rid,quota);effect.enter(op,model_hash,generation)
     try:
-        subprocess.run([sys.executable,str(Path(__file__).with_name('model_loop.py')),'--mode','evaluate','--tasks',str(directory/'consumer.json'),'--model',str(out/'custodian-a/model.json'),'--out',str(out/'consumer-service.json')],check=True)
+        subprocess.run([sys.executable,str(Path(__file__).with_name('model_loop.py')),'--mode','infer','--tasks',str(directory/'consumer.json'),'--model',str(out/'custodian-a/model.json'),'--out',str(out/'consumer-service.json')],check=True)
     finally:offline.rename(original)
-    result=H('served-output',(out/'consumer-service.json').read_bytes());nextnonce=nonces[0]+1
-    acknowledgement=key(4).sign(H('use',quota,public(key(0)),u64(nextnonce),u64(1),result))
+    nextnonce=nonces[0]+1
+    fields={'network':NETWORK.hex(),'parameters':PARAMETER_HASH.hex(),'model':model_hash.hex(),'request':op.hex(),'input':H('request-input',(directory/'consumer.json').read_bytes()).hex(),'output':H('served-output',(out/'consumer-service.json').read_bytes()).hex(),'provider':public(key(0)).hex(),'quota':quota.hex(),'units':1,'provider_nonce':nextnonce}
+    exact_receipt=encode_receipt(fields);(out/'inference-receipt.json').write_bytes(exact_receipt)
+    result=verify_receipt(exact_receipt,fields)
+    acknowledgement=key(4).sign(H('use',NETWORK,PARAMETER_HASH,quota,public(key(0)),u64(nextnonce),u64(1),result))
     block([tx(0,'consume_quota',dict(quota=quota,units=1,result=result,consumer_signature=acknowledgement))])
     _,_,state=l.read_active();require('account:'+public(key(4)).hex()not in state,'FREE_CONSUMER_CHARGED');require(total_funds(state)==state['meta:issued'],'CONSERVATION')
     effect.db.close();l.close()

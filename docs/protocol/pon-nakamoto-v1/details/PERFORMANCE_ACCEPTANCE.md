@@ -87,3 +87,19 @@ command exits,1794 native test results,18 executable-ledger tests,eight process-
 cuts,seven cross-language suites,work-cost samples,first failed model experiment and
 the later28-block release/reward/free-use run. Its source hashes are checked separately
 from its scientific scope; none of these results grant independent acceptance.
+
+## P2. Revision2 reporting contract
+
+[Native execution](EXECUTION_PARALLEL.md), [local admission](ADMISSION_SECURITY.md),
+[recovery](STATE_RECOVERY.md) and [Hepta handoff](HEPTA_HANDOFF.md) have distinct scopes.
+Every current measurement must state block mix, exact encoded bytes, real shared key
+conflicts, retries, workers, proof cost, host, filesystem and source. Record input accepted,
+application executed, block included and client-confirmed counts separately. Unmeasured
+inclusion/confirmation is null, not copied from executor success. Peak RSS is measured by
+the executed process; absent GPU telemetry is null with an explanation, never zero usage.
+
+Historical pon-v1 results remain tied to their original source. New reference/Python/
+native tests do not silently inherit physical disk, WAN, independent-operator or future
+model efficacy acceptance. The current network harness uses a fixed logical clock; it
+cannot supply live-clock confirmation or public TPS. 256 slots/10-second target is a
+nominal25.6 slot/s parameter budget, not measured throughput.

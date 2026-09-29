@@ -48,13 +48,41 @@ def total_funds(s):
 def release_id(parent,bundle,budget,root,total):return H('release',parent,bundle,u64(budget),root,u64(total))
 def contribution_id(sender,family,parent,artifact,components):return H('contribution',sender,family,parent,artifact,components)
 
-def execute(parent,transactions,height,miner,parent_id):
+def candidate_active(value, current, height):
+    return (value['parent']==current and
+            value['status'] in {'submitted','evaluated'} and
+            (value['status']!='evaluated' or value['score']>0) and
+            height<=value.get('submitted_height',height)+PARAMS['candidate_lifetime_blocks'])
+
+
+def retire_candidates(state, height):
+    """Retire capacity, not historical truth. Current-parent nullifiers remain exact.
+
+    Parent transitions permanently reject old-parent submissions. Immutable block/delta
+    history retains retired records. Claims verify release-root payee membership and do
+    not need a deleted candidate row. This is revision-2 consensus, not a v1 rewrite.
+    """
+    current=state['model:current']
+    for name,value in list(state.items()):
+        if name.startswith('contribution:'):
+            if value['parent']!=current:
+                del state[name]
+            elif height>value.get('submitted_height',height)+PARAMS['candidate_lifetime_blocks'] and value['status']=='submitted':
+                value['status']='expired';value['votes']={}
+        elif name.startswith('artifact:') and name.split(':',2)[1]!=current:
+            del state[name]
+        elif name.startswith('release:') and name[8:]!=current and value['remaining']==0:
+            del state[name]
+
+
+def execute_reference(parent,transactions,height,miner,parent_id):
     require(len(transactions)<=PARAMS['max_transactions'],'LIMIT')
     s=copy.deepcopy(parent);fees=0;receipts=[];miner=miner.hex()
+    retire_candidates(s, height)
     # Mandatory expiry is sorted deterministically. Admission limits due slots to 16.
     due=[]
     for name,v in s.items():
-        if name.startswith(('task:','quota:'))and v['remaining'] and v['deadline']<=height:due.append((v['deadline'],name))
+        if name.startswith(('task:','quota:','release:'))and v['remaining'] and v['deadline']<=height:due.append((v['deadline'],name))
     for _,name in sorted(due)[:PARAMS['mandatory_expiry_per_block']]:
         obj=s[name];account(s,obj['owner'])['balance']=checked(account(s,obj['owner'])['balance']+obj['remaining'])
         obj['remaining']=0;obj['status']='expired';receipts.append(canonical({'expiry':name}))
@@ -71,9 +99,9 @@ def execute(parent,transactions,height,miner,parent_id):
         def pay(n):require(n>0 and acct['balance']>=n,'FUNDS');acct['balance']-=n
         def fetch(prefix,h):
             name=prefix+h.hex();require(name in s,'STATE');return s[name]
-        def deadline(d):
-            require(height<d<=height+PARAMS['max_task_lifetime_blocks'],'EXPIRED')
-            active=[v for k,v in s.items()if k.startswith(('task:','quota:'))and v['remaining']]
+        def deadline(d,lifetime=None):
+            require(height<d<=height+(PARAMS['max_task_lifetime_blocks']if lifetime is None else lifetime),'EXPIRED')
+            active=[v for k,v in s.items()if k.startswith(('task:','quota:','release:'))and v['remaining']]
             require(len(active)<PARAMS['max_pending_tasks'],'LIMIT')
             require(sum(v['deadline']==d for v in active)<PARAMS['mandatory_expiry_per_block'],'LIMIT')
         if tag==1:
@@ -95,12 +123,12 @@ def execute(parent,transactions,height,miner,parent_id):
             require(f['contribution']==contribution_id(tx['sender'],f['family'],f['parent_release'],f['artifact'],f['components_root']),'ROOT')
             require(f['family']==FAMILY and f['parent_release'].hex()==s['model:current'],'STATE')
             require(0<f['size']<=PARAMS['max_artifact_bytes'],'LIMIT');require(f['artifact']!=ZERO,'EVIDENCE')
-            require(sum(k.startswith('contribution:')for k in s)<PARAMS['max_model_candidates'],'LIMIT')
+            require(sum(k.startswith('contribution:') and candidate_active(v, s['model:current'], height) for k,v in s.items())<PARAMS['max_model_candidates'],'LIMIT')
             duplicate='artifact:'+f['parent_release'].hex()+':'+f['artifact'].hex();require(name not in s and duplicate not in s,'DUPLICATE')
-            s[name]={'owner':sender,'artifact':f['artifact'].hex(),'components_root':f['components_root'].hex(),'family':f['family'].hex(),'parent':f['parent_release'].hex(),'votes':{},'score':0,'status':'submitted'};s[duplicate]=cid
+            s[name]={'owner':sender,'artifact':f['artifact'].hex(),'components_root':f['components_root'].hex(),'family':f['family'].hex(),'parent':f['parent_release'].hex(),'votes':{},'score':0,'status':'submitted','submitted_height':height};s[duplicate]=cid
         elif tag==7:
             obj=fetch('contribution:',f['contribution']);require(sender in EVALUATORS and sender!=obj['owner'],'AUTHORITY')
-            require(obj['status']=='submitted','STATE');require(sender not in obj['votes'],'DUPLICATE')
+            require(obj['status']=='submitted' and obj['parent']==s['model:current'],'STATE');require(sender not in obj['votes'],'DUPLICATE')
             require(f['plan']==PLAN and f['evidence']!=ZERO and f['score']<=PARAMS['max_evidence_score'],'EVIDENCE')
             obj['votes'][sender]={'score':f['score'],'evidence':f['evidence'].hex()}
             if len(obj['votes'])>=PARAMS['evaluation_threshold']:
@@ -116,13 +144,15 @@ def execute(parent,transactions,height,miner,parent_id):
             root,_=allocation_root_and_proofs(allocations);total=sum(r[2]for r in allocations)
             require(root==f['allocation_root']and total==f['total_score'],'ROOT')
             require(f['release']==release_id(f['parent_release'],f['bundle'],f['budget'],root,total),'ROOT')
-            name='release:'+f['release'].hex();require(name not in s,'DUPLICATE');pay(f['budget'])
-            s[name]={'owner':sender,'remaining':f['budget'],'budget':f['budget'],'total':total,'root':root.hex(),'maturity':height+PARAMS['reward_maturity_blocks'],'bundle':f['bundle'].hex(),'leaf_count':len(allocations),'claims':{}}
+            name='release:'+f['release'].hex();require(name not in s,'DUPLICATE')
+            horizon=PARAMS['reward_maturity_blocks']+PARAMS['release_claim_window_blocks'];expiry=height+horizon
+            deadline(expiry,horizon);pay(f['budget'])
+            s[name]={'owner':sender,'remaining':f['budget'],'budget':f['budget'],'total':total,'root':root.hex(),'maturity':height+PARAMS['reward_maturity_blocks'],'bundle':f['bundle'].hex(),'leaf_count':len(allocations),'claims':{},'deadline':expiry,'status':'open'}
             for cid,_,_ in allocations:s['contribution:'+cid.hex()]['status']='adopted'
             bundle['status']='adopted';s['model:current']=f['release'].hex()
         elif tag==9:
-            rel=fetch('release:',f['release']);obj=fetch('contribution:',f['contribution']);require(obj['owner']==sender,'AUTHORITY')
-            require(height>=rel['maturity'],'STATE');cid=f['contribution'].hex();require(cid not in rel['claims'],'DUPLICATE')
+            rel=fetch('release:',f['release'])
+            require(height>=rel['maturity'] and height<rel['deadline'] and rel['status']=='open','STATE');cid=f['contribution'].hex();require(cid not in rel['claims'],'DUPLICATE')
             require(len(f['siblings'])==(rel['leaf_count']-1).bit_length(),'ROOT')
             require(allocation_check(allocation_leaf(f['contribution'],tx['sender'],f['score']),f['siblings'],bytes.fromhex(rel['root'])),'ROOT')
             amount=rel['budget']*f['score']//rel['total'];require(amount<=rel['remaining'],'FUNDS')
@@ -134,7 +164,7 @@ def execute(parent,transactions,height,miner,parent_id):
         elif tag==11:
             obj=fetch('quota:',f['quota']);require(sender==obj['provider'],'AUTHORITY');require(obj['status']=='reserved'and height<obj['deadline'],'STATE')
             require(0<f['units']<=obj['units']and f['result']!=ZERO,'LIMIT')
-            digest=H('use',f['quota'],tx['sender'],u64(tx['nonce']),u64(f['units']),f['result'])
+            digest=H('use',NETWORK,PARAMETER_HASH,f['quota'],tx['sender'],u64(tx['nonce']),u64(f['units']),f['result'])
             try:Ed25519PublicKey.from_public_bytes(bytes.fromhex(obj['consumer'])).verify(f['consumer_signature'],digest)
             except (ValueError,InvalidSignature)as e:raise ValueError('SIGNATURE')from e
             cost=f['units']*PARAMS['quota_unit_price'];require(cost>=fee and obj['remaining']>=cost,'FUNDS')
@@ -153,105 +183,193 @@ def execute(parent,transactions,height,miner,parent_id):
     state_root(s) # range/size checks precede persistence
     return s,receipts
 
-SCHEMA_SQL='''
-PRAGMA journal_mode=WAL;
-PRAGMA synchronous=FULL;
-CREATE TABLE IF NOT EXISTS metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL);
-CREATE TABLE IF NOT EXISTS blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,header BLOB,body BLOB,proof BLOB,state_root BLOB NOT NULL);
-CREATE TABLE IF NOT EXISTS deltas(block BLOB NOT NULL,key TEXT NOT NULL,before BLOB,after BLOB,PRIMARY KEY(block,key));
-CREATE TABLE IF NOT EXISTS active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL);
-CREATE TABLE IF NOT EXISTS kv(generation INTEGER NOT NULL,key TEXT NOT NULL,value BLOB NOT NULL,PRIMARY KEY(generation,key));
-CREATE TABLE IF NOT EXISTS reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB,new_tip BLOB,generation INTEGER,steps BLOB,position INTEGER,status TEXT);
-CREATE TABLE IF NOT EXISTS events(generation INTEGER NOT NULL,ordinal INTEGER NOT NULL,kind TEXT,block BLOB,PRIMARY KEY(generation,ordinal));
+def execute(parent,transactions,height,miner,parent_id):
+    if os.environ.get('TRNM_NATIVE_EXECUTOR'):
+        from native_execution import execute_native
+        state,receipts,_=execute_native(parent,transactions,height,miner,parent_id)
+        return state,receipts
+    return execute_reference(parent,transactions,height,miner,parent_id)
+
+
+SCHEMA_DDL = '''
+CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL);
+CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,header BLOB,body BLOB,proof BLOB,state_root BLOB NOT NULL);
+CREATE TABLE deltas(block BLOB NOT NULL,key TEXT NOT NULL,before BLOB,after BLOB,PRIMARY KEY(block,key));
+CREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL);
+CREATE TABLE kv(generation INTEGER NOT NULL,key TEXT NOT NULL,value BLOB NOT NULL,PRIMARY KEY(generation,key));
+CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB,new_tip BLOB,generation INTEGER,steps BLOB,position INTEGER,status TEXT);
+CREATE TABLE events(generation INTEGER NOT NULL,ordinal INTEGER NOT NULL,kind TEXT,block BLOB,PRIMARY KEY(generation,ordinal));
+CREATE TABLE snapshots(block BLOB PRIMARY KEY,state BLOB NOT NULL);
+CREATE INDEX work_order ON blocks(chainwork DESC,height,id);
 '''
+# Hash the exact schema into the initialization intent. Existing stores never auto-migrate.
+SCHEMA_ID=H('storage-schema-v2',SCHEMA_DDL.encode())
+
+def schema_projection(db):
+    return {(kind,name):' '.join(sql.split()) for kind,name,sql in db.execute(
+        "SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'")}
+
+def expected_schema():
+    db=sqlite3.connect(':memory:')
+    try:
+        db.executescript(SCHEMA_DDL)
+        return schema_projection(db)
+    finally:db.close()
+
+
+
+def sync_directory(path):
+    fd=os.open(path,os.O_RDONLY|os.O_DIRECTORY)
+    try:os.fsync(fd)
+    finally:os.close(fd)
+
+
 class Ledger:
-    def __init__(self,directory):
+    """Single existing reference owner; no duplicate production ledger introduced."""
+    def __init__(self,directory,init_cut=None):
         self.directory=Path(directory);self.directory.mkdir(mode=0o700,parents=True,exist_ok=True)
         require(not self.directory.is_symlink(),'NAMESPACE')
-        lock_path=self.directory/'owner.lock';require(not lock_path.is_symlink(),'NAMESPACE')
-        self.owner=open(lock_path,'a+b')
-        try:fcntl.flock(self.owner.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
-        except BlockingIOError:self.owner.close();raise ValueError('WRITER_BUSY')
-        path=self.directory/'ledger.sqlite'
+        lock=self.directory/'owner.lock';require(not lock.is_symlink(),'NAMESPACE')
+        fd=os.open(lock,os.O_RDWR|os.O_CREAT|os.O_NOFOLLOW,0o600)
+        self.owner=os.fdopen(fd,'a+b');self.db=None
         try:
-            require(not path.is_symlink(),'NAMESPACE')
+            try:fcntl.flock(self.owner.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
+            except BlockingIOError:raise ValueError('WRITER_BUSY')
+            path=self.directory/'ledger.sqlite';marker=self.directory/'initializing.json'
+            require(not path.is_symlink() and not marker.is_symlink(),'NAMESPACE')
+            expected=canonical({'schema':SCHEMA_ID.hex(),'parameters':PARAMETER_HASH.hex(),'genesis':GENESIS.hex()})
+            fresh=not path.exists()
+            if fresh and not marker.exists():
+                require(set(p.name for p in self.directory.iterdir())<={'owner.lock'},'NAMESPACE_NOT_EMPTY')
+                fd=os.open(marker,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
+                with os.fdopen(fd,'wb')as out:out.write(expected);out.flush();os.fsync(out.fileno())
+                sync_directory(self.directory)
+                if init_cut:init_cut('init-intent')
+            intent=marker.exists()
+            if intent:require(marker.read_bytes()==expected,'INITIALIZATION_CONTEXT')
+            # Probe before writable PRAGMAs. A foreign/incomplete DB without our intent rejects.
+            tables=set()
             if path.exists():
-                # Reject foreign/incomplete stores without creating tables or changing journal mode.
                 from urllib.parse import quote
                 probe=sqlite3.connect('file:'+quote(str(path.resolve()))+'?mode=ro',uri=True)
                 try:
                     tables={r[0]for r in probe.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")}
-                    require(tables=={'metadata','blocks','deltas','active','kv','reorg','events'},'SCHEMA')
-                    stored=probe.execute("SELECT value FROM metadata WHERE key='parameters'").fetchone()
-                    require(stored is not None and stored[0]==PARAMETER_HASH,'NETWORK')
+                    if tables:
+                        require(tables=={'metadata','blocks','deltas','active','kv','reorg','events','snapshots'},'SCHEMA')
+                        require(schema_projection(probe)==expected_schema(),'SCHEMA')
+                        row=probe.execute("SELECT value FROM metadata WHERE key='parameters'").fetchone()
+                        require(row is not None and row[0]==PARAMETER_HASH,'NETWORK')
+                        shape=probe.execute("SELECT value FROM metadata WHERE key='schema'").fetchone()
+                        require(shape is not None and shape[0]==SCHEMA_ID,'SCHEMA')
+                    else:require(intent,'INITIALIZATION_INTENT_REQUIRED')
                 finally:probe.close()
-            self.db=sqlite3.connect(path,timeout=10,isolation_level=None);self.db.executescript(SCHEMA_SQL)
+            self.db=sqlite3.connect(path,timeout=10,isolation_level=None)
+            self.db.execute('PRAGMA journal_mode=WAL');self.db.execute('PRAGMA synchronous=FULL')
+            if not tables:
+                require(intent,'INITIALIZATION_INTENT_REQUIRED')
+                self.db.execute('BEGIN IMMEDIATE')
+                try:
+                    for statement in SCHEMA_DDL.split(';'):
+                        if statement.strip():self.db.execute(statement)
+                    if init_cut:init_cut('init-schema')
+                    state=genesis_state();root=state_root(state)
+                    self.db.executemany('INSERT INTO metadata VALUES(?,?)',[('parameters',PARAMETER_HASH),('schema',SCHEMA_ID)])
+                    self.db.execute('INSERT INTO blocks VALUES(?,?,?,?,?,?,?,?)',(GENESIS,None,0,bytes(64),None,None,None,root))
+                    self.db.execute('INSERT INTO active VALUES(1,?,0,0)',(GENESIS,))
+                    self.db.executemany('INSERT INTO kv VALUES(0,?,?)',[(k,canonical(v))for k,v in state.items()])
+                    self.db.execute('INSERT INTO snapshots VALUES(?,?)',(GENESIS,canonical(state)))
+                    if init_cut:init_cut('init-before-commit')
+                    self.db.execute('COMMIT')
+                except BaseException:
+                    if self.db.in_transaction:self.db.execute('ROLLBACK')
+                    raise
+                if init_cut:init_cut('init-committed')
+            if intent:
+                marker.unlink();sync_directory(self.directory)
+            self.read_active()
         except BaseException:
+            if self.db is not None:self.db.close()
             self.owner.close();raise
-        network=self.db.execute("SELECT value FROM metadata WHERE key='parameters'").fetchone()
-        if network:require(network[0]==PARAMETER_HASH,'NETWORK')
-        else:
-            s=genesis_state();self.db.execute('BEGIN IMMEDIATE')
-            self.db.execute("INSERT INTO metadata VALUES('parameters',?)",(PARAMETER_HASH,))
-            self.db.execute('INSERT INTO blocks VALUES(?,?,?,?,?,?,?,?)',(GENESIS,None,0,bytes(64),None,None,None,state_root(s)))
-            self.db.execute('INSERT INTO active VALUES(1,?,0)',(GENESIS,))
-            self.db.executemany('INSERT INTO kv VALUES(0,?,?)',[(k,canonical(v))for k,v in s.items()]);self.db.execute('COMMIT')
+
     def close(self):
         self.db.close();fcntl.flock(self.owner.fileno(),fcntl.LOCK_UN);self.owner.close()
+
     def ready(self):
-        p=self.db.execute("SELECT status FROM reorg WHERE singleton=1").fetchone()
-        require(not p or p[0]=='done','REORG_IN_PROGRESS')
+        pending=self.db.execute('SELECT status FROM reorg WHERE singleton=1').fetchone()
+        require(not pending or pending[0]=='done','REORG_IN_PROGRESS')
+
     def block(self,tip):
-        row=self.db.execute('SELECT parent,height,chainwork,header,body,proof,state_root FROM blocks WHERE id=?',(tip,)).fetchone();require(row is not None,'UNKNOWN_PARENT');return row
+        row=self.db.execute('SELECT parent,height,chainwork,header,body,proof,state_root FROM blocks WHERE id=?',(tip,)).fetchone()
+        require(row is not None,'UNKNOWN_PARENT');return row
+
     def active(self):return self.db.execute('SELECT tip,generation FROM active WHERE singleton=1').fetchone()
+    def slot(self):return self.db.execute('SELECT state_slot FROM active WHERE singleton=1').fetchone()[0]
+
     def read_active(self):
         self.db.execute('BEGIN')
         try:
-            tip,g=self.active();s={k:json.loads(v)for k,v in self.db.execute('SELECT key,value FROM kv WHERE generation=?',(g,))};require(state_root(s)==self.block(tip)[6],'ROOT');return tip,g,s
+            tip,g=self.active();slot=self.slot()
+            state={k:json.loads(v,object_pairs_hook=unique)for k,v in self.db.execute('SELECT key,value FROM kv WHERE generation=?',(slot,))}
+            require(state_root(state)==self.block(tip)[6],'ROOT');return tip,g,state
         finally:self.db.execute('COMMIT')
-    def state_at(self,tip):
+
+    def state_at(self,tip,progress=None):
         if tip==self.active()[0]:return self.read_active()[2]
-        chain=[];cur=tip
-        while cur!=GENESIS:
-            require(len(chain)<PARAMS['max_header_candidates'],'LIMIT');chain.append(cur);cur=self.block(cur)[0]
-        s=genesis_state()
-        for b in reversed(chain):
-            for k,before,after in self.db.execute('SELECT key,before,after FROM deltas WHERE block=? ORDER BY key',(b,)):
-                require((canonical(s[k])if k in s else None)==before,'UNDO_ROOT')
-                if after is None:s.pop(k,None)
-                else:s[k]=json.loads(after)
-            require(state_root(s)==self.block(b)[6],'ROOT')
-        return s
+        # Root-bound local checkpoints accelerate shallow forks at any height. Missing
+        # checkpoints fall back to retained deltas, never a permanent 4096-height veto.
+        chain=[];cur=tip;seen=set()
+        while True:
+            require(cur not in seen,'ANCESTRY_CYCLE');seen.add(cur)
+            row=self.block(cur);snapshot=self.db.execute('SELECT state FROM snapshots WHERE block=?',(cur,)).fetchone()
+            if snapshot:
+                state=json.loads(snapshot[0],object_pairs_hook=unique)
+                require(state_root(state)==row[6],'ROOT');break
+            require(row[0]is not None and self.block(row[0])[1]+1==row[1],'HEIGHT')
+            chain.append(cur);cur=row[0]
+            if progress and len(chain)%256==0:progress('ancestry',len(chain))
+        for i,bid in enumerate(reversed(chain)):
+            for k,before,after in self.db.execute('SELECT key,before,after FROM deltas WHERE block=? ORDER BY key',(bid,)):
+                require((canonical(state[k])if k in state else None)==before,'UNDO_ROOT')
+                if after is None:state.pop(k,None)
+                else:state[k]=json.loads(after,object_pairs_hook=unique)
+            require(state_root(state)==self.block(bid)[6],'ROOT')
+            if progress and (i+1)%256==0:progress('replay',i+1)
+        return state
+
     def ancestor_headers(self,parent):
-        hs=[]
-        while parent!=GENESIS and len(hs)<max(16,11):
-            row=self.block(parent);hs.append(header_decode(row[3]));parent=row[0]
-        if parent==GENESIS:hs.append({'timestamp':PARAMS['genesis_timestamp'],'target':bytes.fromhex(PARAMS['initial_target_hex'])})
-        return hs
+        headers=[]
+        while parent!=GENESIS and len(headers)<max(PARAMS['retarget_interval'],PARAMS['median_time_width']):
+            row=self.block(parent);headers.append(header_decode(row[3]));parent=row[0]
+        if parent==GENESIS:headers.append({'timestamp':PARAMS['genesis_timestamp'],'target':bytes.fromhex(PARAMS['initial_target_hex'])})
+        return headers
+
     def target(self,parent):
         from reference import retarget
-        row=self.block(parent);height=row[1]+1;hs=self.ancestor_headers(parent);prior=int.from_bytes(hs[0]['target'],'big')
+        row=self.block(parent);height=row[1]+1;headers=self.ancestor_headers(parent);prior=int.from_bytes(headers[0]['target'],'big')
         if height%PARAMS['retarget_interval']==0:
-            prior=retarget(prior,hs[PARAMS['retarget_interval']-1]['timestamp'],hs[0]['timestamp'],PARAMS['retarget_interval'],PARAMS['target_spacing_seconds'],int(PARAMS['pow_limit_hex'],16))
+            prior=retarget(prior,headers[PARAMS['retarget_interval']-1]['timestamp'],headers[0]['timestamp'],PARAMS['retarget_interval'],PARAMS['target_spacing_seconds'],int(PARAMS['pow_limit_hex'],16))
         return prior.to_bytes(32,'big')
+
     def make(self,parent,txs,miner=None,timestamp=None,max_attempts=4096,work_inputs=None):
-        self.ready()
-        wa,wb=(A,B)if work_inputs is None else work_inputs
+        self.ready();wa,wb=(A,B)if work_inputs is None else work_inputs
         miner=public(key(0))if miner is None else miner;row=self.block(parent);height=row[1]+1
-        s,receipts=execute(self.state_at(parent),txs,height,miner,parent)
-        h=dict(network=NETWORK,parameters=PARAMETER_HASH,parent=parent,height=height,timestamp=timestamp if timestamp is not None else self.ancestor_headers(parent)[0]['timestamp']+10,target=self.target(parent),miner=miner,transactions=sequence_root('transactions',txs),state=state_root(s),receipts=sequence_root('receipts',receipts),work_task=work.task_id(wa,wb),nonce=0)
+        state,receipts=execute(self.state_at(parent),txs,height,miner,parent)
+        h=dict(network=NETWORK,parameters=PARAMETER_HASH,parent=parent,height=height,timestamp=timestamp if timestamp is not None else self.ancestor_headers(parent)[0]['timestamp']+10,target=self.target(parent),miner=miner,transactions=sequence_root('transactions',txs),state=state_root(state),receipts=sequence_root('receipts',receipts),work_task=work.task_id(wa,wb),nonce=0)
         for nonce in range(max_attempts):
             h['nonce']=nonce;hb=header_encode(h);challenge=H('challenge',hb);proof=work.prove(challenge,wa,wb)
             if H('ticket',challenge,proof[-32:])<=h['target']:return hb,txs,proof
         raise ValueError('WORK_BUDGET')
+
     def admit(self,hb,txs,proof,observed_now):
         from reference import timestamp_state,work as work_score
         self.ready()
-        require(len(hb)+sum(map(len,txs))+len(proof)<=PARAMS['max_block_bytes'],'LIMIT')
+        require(len(hb)+2+sum(2+len(t)for t in txs)+len(proof)<=PARAMS['max_block_bytes'],'LIMIT')
+        require(len(txs)<=PARAMS['max_transactions'],'LIMIT')
         h=header_decode(hb);require(h['network']==NETWORK and h['parameters']==PARAMETER_HASH,'NETWORK')
         parent=self.block(h['parent']);require(h['height']==parent[1]+1,'HEIGHT');require(h['target']==self.target(h['parent']),'TARGET')
-        ts=[x['timestamp']for x in reversed(self.ancestor_headers(h['parent'])[:11])]
-        require(timestamp_state(h['timestamp'],ts,observed_now,PARAMS['future_skew_seconds'])=='admissible','TIME')
+        ts=[x['timestamp']for x in reversed(self.ancestor_headers(h['parent'])[:PARAMS['median_time_width']])]
+        timing=timestamp_state(h['timestamp'],ts,observed_now,PARAMS['future_skew_seconds'])
+        require(timing!='deferred-future','TIME_DEFERRED');require(timing=='admissible','TIME')
         prior=self.state_at(h['parent']);require(prior.get('work:'+h['work_task'].hex())is True,'TASK')
         require(h['transactions']==sequence_root('transactions',txs),'ROOT')
         work.verify(H('challenge',hb),h['work_task'],h['target'],proof)
@@ -266,61 +384,111 @@ class Ledger:
             for k in sorted(set(prior)|set(state)):
                 before=canonical(prior[k])if k in prior else None;after=canonical(state[k])if k in state else None
                 if before!=after:self.db.execute('INSERT INTO deltas VALUES(?,?,?,?)',(bid,k,before,after))
+            if h['height']%128==0:
+                self.db.execute('INSERT INTO snapshots VALUES(?,?)',(bid,canonical(state)))
+                self.db.execute('DELETE FROM snapshots WHERE block!=? AND block NOT IN (SELECT snapshots.block FROM snapshots JOIN blocks ON blocks.id=snapshots.block ORDER BY blocks.height DESC,blocks.id LIMIT 64)',(GENESIS,))
             self.db.execute('COMMIT')
         except BaseException:self.db.execute('ROLLBACK');raise
         return bid
+
+    def _apply_delta(self,bid,slot,detach=False):
+        for k,before,after in self.db.execute('SELECT key,before,after FROM deltas WHERE block=? ORDER BY key',(bid,)).fetchall():
+            expected,new=(after,before)if detach else(before,after)
+            actual=self.db.execute('SELECT value FROM kv WHERE generation=? AND key=?',(slot,k)).fetchone()
+            require((actual[0]if actual else None)==expected,'UNDO_ROOT')
+            if new is None:self.db.execute('DELETE FROM kv WHERE generation=? AND key=?',(slot,k))
+            else:self.db.execute('INSERT OR REPLACE INTO kv VALUES(?,?,?)',(slot,k,new))
+
     def activate(self,target,cut=None):
-        pending=self.db.execute("SELECT status FROM reorg WHERE singleton=1").fetchone()
-        if pending and pending[0]!='done':return self.recover(cut)
+        pending=self.db.execute('SELECT status FROM reorg WHERE singleton=1').fetchone()
+        if pending and pending[0]!='done':self._recover_intent(cut)
         old,g=self.active()
         if int.from_bytes(self.block(target)[2],'big')<=int.from_bytes(self.block(old)[2],'big'):return old
+        # Ordinary extension writes only changed keys. SQLite WAL snapshots provide
+        # reader atomicity; logical generation is not a request to clone the database.
+        if self.block(target)[0]==old and cut is None:
+            slot=self.slot();self.db.execute('BEGIN IMMEDIATE')
+            try:
+                self._apply_delta(target,slot)
+                state={k:json.loads(v)for k,v in self.db.execute('SELECT key,value FROM kv WHERE generation=?',(slot,))}
+                require(state_root(state)==self.block(target)[6],'ROOT')
+                self.db.execute('UPDATE active SET tip=?,generation=? WHERE singleton=1',(target,g+1))
+                self.db.execute('INSERT INTO events VALUES(?,0,?,?)',(g+1,'attach',target));self.db.execute('COMMIT')
+            except BaseException:self.db.execute('ROLLBACK');raise
+            return target
         left=old;right=target;detach=[];attach=[]
         while left!=right:
             if self.block(left)[1]>=self.block(right)[1]:detach.append(left);left=self.block(left)[0]
             else:attach.append(right);right=self.block(right)[0]
         steps=[['detach',x.hex()]for x in detach]+[['attach',x.hex()]for x in reversed(attach)]
         self.db.execute('BEGIN IMMEDIATE')
-        self.db.execute('DELETE FROM kv WHERE generation=?',(g+1,))
-        self.db.execute('INSERT INTO kv SELECT ?,key,value FROM kv WHERE generation=?',(g+1,g))
-        self.db.execute('INSERT OR REPLACE INTO reorg VALUES(1,?,?,?,?,0,?)',(old,target,g+1,canonical(steps),'staging'));self.db.execute('COMMIT')
+        try:
+            self.db.execute('DELETE FROM kv WHERE generation=?',(g+1,))
+            self.db.execute('INSERT INTO kv SELECT ?,key,value FROM kv WHERE generation=?',(g+1,self.slot()))
+            self.db.execute('INSERT OR REPLACE INTO reorg VALUES(1,?,?,?,?,0,?)',(old,target,g+1,canonical(steps),'staging'));self.db.execute('COMMIT')
+        except BaseException:self.db.execute('ROLLBACK');raise
         if cut:cut('intent')
-        return self.recover(cut)
-    def recover(self,cut=None):
+        return self._recover_intent(cut)
+
+    def _recover_intent(self,cut=None):
         row=self.db.execute('SELECT old_tip,new_tip,generation,steps,position,status FROM reorg WHERE singleton=1').fetchone()
         if not row or row[5]=='done':return self.active()[0]
-        old,target,g,encoded,pos,status=row;steps=json.loads(encoded)
+        old,target,g,encoded,pos,status=row;steps=json.loads(encoded,object_pairs_hook=unique)
         require(self.active()==(old,g-1),'GENERATION')
         for index in range(pos,len(steps)):
-            kind,block=steps[index];changes=list(self.db.execute('SELECT key,before,after FROM deltas WHERE block=? ORDER BY key',(bytes.fromhex(block),)))
+            kind,block=steps[index];require(kind in {'detach','attach'},'SCHEMA')
             self.db.execute('BEGIN IMMEDIATE')
             try:
-                for k,before,after in changes:
-                    expected,new=(after,before)if kind=='detach'else(before,after)
-                    actual=self.db.execute('SELECT value FROM kv WHERE generation=? AND key=?',(g,k)).fetchone()
-                    require((actual[0]if actual else None)==expected,'UNDO_ROOT')
-                    if new is None:self.db.execute('DELETE FROM kv WHERE generation=? AND key=?',(g,k))
-                    else:self.db.execute('INSERT OR REPLACE INTO kv VALUES(?,?,?)',(g,k,new))
+                self._apply_delta(bytes.fromhex(block),g,kind=='detach')
                 self.db.execute('UPDATE reorg SET position=? WHERE singleton=1',(index+1,));self.db.execute('COMMIT')
             except BaseException:self.db.execute('ROLLBACK');raise
             if cut:cut(kind+':'+str(index))
-        s={k:json.loads(v)for k,v in self.db.execute('SELECT key,value FROM kv WHERE generation=?',(g,))}
-        require(state_root(s)==self.block(target)[6],'ROOT')
+        state={k:json.loads(v)for k,v in self.db.execute('SELECT key,value FROM kv WHERE generation=?',(g,))}
+        require(state_root(state)==self.block(target)[6],'ROOT')
         if cut:cut('before-publish')
         self.db.execute('BEGIN IMMEDIATE')
-        self.db.execute('UPDATE active SET tip=?,generation=? WHERE singleton=1',(target,g))
-        for i,(kind,b)in enumerate(steps):self.db.execute('INSERT INTO events VALUES(?,?,?,?)',(g,i,kind,bytes.fromhex(b)))
-        self.db.execute("UPDATE reorg SET status='done' WHERE singleton=1");self.db.execute('COMMIT')
+        try:
+            self.db.execute('UPDATE active SET tip=?,generation=?,state_slot=? WHERE singleton=1',(target,g,g))
+            for i,(kind,b)in enumerate(steps):self.db.execute('INSERT INTO events VALUES(?,?,?,?)',(g,i,kind,bytes.fromhex(b)))
+            self.db.execute("UPDATE reorg SET status='done' WHERE singleton=1")
+            self.db.execute('DELETE FROM kv WHERE generation!=?',(g,));self.db.execute('COMMIT')
+        except BaseException:self.db.execute('ROLLBACK');raise
         if cut:cut('published')
         return target
 
+    def recover(self,cut=None):
+        self._recover_intent(cut)
+        best=self.db.execute('SELECT id,chainwork FROM blocks ORDER BY chainwork DESC,height,id LIMIT 1').fetchone()
+        if best and best[1]>self.block(self.active()[0])[2]:self.activate(best[0],cut)
+        return self.active()[0]
+
+
 class EffectJournal:
-    """Separate irreversible local facts. Does not solve simultaneous rollback of all stores."""
+    """Independent local facts; SQLite serializes revoke with entry across connections.
+
+    This is the durable fact boundary, NOT the target-device effect or a Hepta permit.
+    Coherent rollback of every copy still needs the independent frontier integration.
+    """
     def __init__(self,path):
-        self.db=sqlite3.connect(path,isolation_level=None);self.db.execute('PRAGMA journal_mode=WAL');self.db.execute('PRAGMA synchronous=FULL')
+        self.db=sqlite3.connect(path,timeout=10,isolation_level=None)
+        self.db.execute('PRAGMA journal_mode=WAL');self.db.execute('PRAGMA synchronous=FULL')
         self.db.execute('CREATE TABLE IF NOT EXISTS effects(id BLOB PRIMARY KEY,payload BLOB NOT NULL,generation INTEGER NOT NULL,state TEXT NOT NULL)')
         self.db.execute('CREATE TABLE IF NOT EXISTS revoked(id BLOB PRIMARY KEY)')
+
     def enter(self,op,payload,generation):
-        require(not self.db.execute('SELECT 1 FROM revoked WHERE id=?',(op,)).fetchone(),'REVOKED')
-        require(not self.db.execute('SELECT 1 FROM effects WHERE id=?',(op,)).fetchone(),'OPERATION_ALREADY_ENTERED')
-        self.db.execute("INSERT INTO effects VALUES(?,?,?,'entered')",(op,payload,generation))
-    def revoke(self,op):self.db.execute('INSERT OR IGNORE INTO revoked VALUES(?)',(op,))
+        require(isinstance(op,bytes)and len(op)==32 and isinstance(payload,bytes)and len(payload)==32,'EFFECT_ID')
+        require(type(generation)is int and 0<=generation<(1<<63),'GENERATION')
+        self.db.execute('BEGIN IMMEDIATE')
+        try:
+            require(not self.db.execute('SELECT 1 FROM revoked WHERE id=?',(op,)).fetchone(),'REVOKED')
+            require(not self.db.execute('SELECT 1 FROM effects WHERE id=?',(op,)).fetchone(),'OPERATION_ALREADY_ENTERED')
+            self.db.execute("INSERT INTO effects VALUES(?,?,?,'entered')",(op,payload,generation));self.db.execute('COMMIT')
+        except BaseException:
+            if self.db.in_transaction:self.db.execute('ROLLBACK')
+            raise
+
+    def revoke(self,op):
+        require(isinstance(op,bytes)and len(op)==32,'EFFECT_ID')
+        self.db.execute('BEGIN IMMEDIATE')
+        try:self.db.execute('INSERT OR IGNORE INTO revoked VALUES(?)',(op,));self.db.execute('COMMIT')
+        except BaseException:self.db.execute('ROLLBACK');raise

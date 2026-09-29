@@ -1,21 +1,14 @@
 # Release readiness
 
-Stage: `executable-contract-and-portable-components`. Native consensus runtime and qualified work profile:
-**false**. Production candidate, consensus activation, public testnet and release: **false**.
+Stage: `invariant-driven-native-application-candidate`. Complete native consensus runtime,
+qualified useful-work security, production candidate, activation and release remain false.
 
-Old source/protocol/deployment trees are deleted. The portability inventory names the
-actual reusable components. Their tests are not deployed recovery, model efficacy or
-independent acceptance. The sole development plan retains PN1-PN6 implementation work.
+Revision2 implements the reviewed recovery/capacity/entry counterexamples and actual native
+application execution. Tests and reports distinguish reference persistence, native commands,
+controlled model outcomes, localhost transport and absent independent/WAN/physical evidence.
+The root README remains blank. No deployment or historical namespace migration occurred.
 
-## Local test environment observations
-
-Disk-backed local test runs retained peer-lease request-deadline and short-lease expiry
-failures under the observed host I/O load. Those runs are failed evidence, not passes.
-A separate tmpfs-backed temporary-directory run can test complete logical file/IPC,
-restart, mutation and ownership behavior with all assertions retained; it cannot qualify
-block-device latency, fsync durability or physical power loss. The exact report must name
-the temporary filesystem and test concurrency. No production SLO is granted by cleanup.
-
-Native work/codec candidates and the executable Python ledger/model loop now exist.
-Their controlled evidence does not activate a public network. Full-recompute proof
-admission has measured asymmetry; external independent work and model acceptance remain false.
+Work-cost hardness and Sybil-safe admission, native host and ordinary Hepta integration,
+full historical compaction, prospective model efficacy and independent multi-host validation
+remain explicit obligations. Tests for three signed model releases are not three improving
+learned generations. Source-consistency checks never issue those missing guarantees.

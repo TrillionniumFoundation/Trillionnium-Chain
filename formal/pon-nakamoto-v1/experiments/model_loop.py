@@ -11,6 +11,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import numpy as np
 from contract_wire import *
 from ledger import *
+from evaluation import assess,select_reference,freeze_plan
 DIM=257;CLASSES=['M00','M04','M10'];SCALE=1024
 
 def features(text):
@@ -63,9 +64,11 @@ def train(x,y,steps,initial=None,weight=None):
 def quantize(w):return np.clip(np.rint(w*SCALE),-32767,32767).astype(np.int64)
 def artifact(value,path):
     b=canonical(value);Path(path).write_bytes(b);return H('artifact',b)
-def load_model(path):
+def load_model(path,expected=None):
     with open(path,'rb')as f:b=f.read(65537)
-    require(len(b)<=65536,'ARTIFACT_LIMIT');m=json.loads(b,object_pairs_hook=unique)
+    require(len(b)<=65536,'ARTIFACT_LIMIT')
+    if expected is not None:require(H('artifact',b)==expected,'ARTIFACT_IDENTITY')
+    m=json.loads(b,object_pairs_hook=unique)
     require(canonical(m)==b,'ARTIFACT_CANONICAL_BYTES')
     require(set(m)=={'schema','family','scale','source','base','router','deltas','feature','classes'},'ARTIFACT_FIELDS')
     require(m['feature']=='signed-token-hash-256-clipped8-plus-bias-v1'and m['classes']==CLASSES,'FEATURES')
@@ -103,9 +106,26 @@ def worker(args):
         mask=np.array([r['label']==i or int(r['id'][:8],16)%3==i for r in tasks])
         w=train(x[mask],y[mask],120,base);delta=quantize(w)-quantize(base)
         value={'node':i,'rows':int(mask.sum()),'file_count':len({r['file']for r,ok in zip(tasks,mask)if ok}),'delta':delta.tolist(),'duration_seconds':time.perf_counter()-start}
+    elif args.mode=='infer':
+        m=load_model(args.model);pred=predict(m,x)
+        value={'schema':'controlled-source-inference-v2','task_commitment':H('tasks',canonical(tasks)).hex(),'model_artifact':H('artifact',Path(args.model).read_bytes()).hex(),'predictions':pred.tolist(),'duration_seconds':time.perf_counter()-start,'training_consent':False}
     else:
         m=load_model(args.model);pred=predict(m,x);base=predict(m,x,mode='base');correct=pred==y
-        value={'schema':'controlled-source-evaluation-v1','task_commitment':H('tasks',canonical(tasks)).hex(),'model_artifact':H('artifact',Path(args.model).read_bytes()).hex(),'samples':len(y),'composed_correct':int(correct.sum()),'base_correct':int((base==y).sum()),'whole_gain':gain(correct,base==y),'expert_correct':[int((predict(m,x,mode='expert',expert=i)==y).sum())for i in range(3)],'simple_merge_correct':int((predict(m,x,mode='merge')==y).sum()),'marginal':[gain(correct,predict(m,x,removed=i)==y)for i in range(3)],'predictions':pred.tolist(),'duration_seconds':time.perf_counter()-start,'independent_administration':False}
+        if not args.reference:raise ValueError('FROZEN_REFERENCE_REQUIRED')
+        reference=json.loads(Path(args.reference).read_text(),object_pairs_hook=unique)
+        require(reference['candidate']==H('artifact',Path(args.model).read_bytes()).hex(),'REFERENCE_MODEL')
+        selected=reference['selected'];require(selected in {'current','best_single','mean_merge','pooled'},'REFERENCE_MODE')
+        if selected=='current':strong=predict(m,x,mode='base')
+        elif selected=='best_single':strong=predict(m,x,mode='expert',expert=reference['expert'])
+        elif selected=='mean_merge':strong=predict(m,x,mode='merge')
+        else:strong=np.argmax(x@np.asarray(reference['pooled'],dtype=np.int64).T,axis=1)
+        cluster_rows=[dict(row,source_group=row['file'])for row in tasks]
+        whole=assess(cluster_rows,pred.tolist(),strong.tolist());whole['score']=whole['exploratory_score']
+        marginal=[]
+        for i in range(3):
+            result=assess(cluster_rows,pred.tolist(),predict(m,x,removed=i).tolist());result['score']=result['exploratory_score'];marginal.append(result)
+
+        value={'schema':'controlled-source-evaluation-v1','task_commitment':H('tasks',canonical(tasks)).hex(),'model_artifact':H('artifact',Path(args.model).read_bytes()).hex(),'samples':len(y),'composed_correct':int(correct.sum()),'base_correct':int((base==y).sum()),'whole_gain':whole,'weak_base_gain_for_comparison_only':gain(correct,base==y),'strong_reference':selected,'strong_reference_correct':int((strong==y).sum()),'expert_correct':[int((predict(m,x,mode='expert',expert=i)==y).sum())for i in range(3)],'simple_merge_correct':int((predict(m,x,mode='merge')==y).sum()),'marginal':marginal,'predictions':pred.tolist(),'duration_seconds':time.perf_counter()-start,'independent_administration':False}
     Path(args.out).write_text(json.dumps(value,indent=2)+'\n')
 
 def run(source,out):
@@ -127,8 +147,18 @@ def run(source,out):
     route_y=np.argmax(np.array(scores).T,axis=1);router=quantize(train(xc,route_y,120))
     model={'schema':'hepta-source-owner-linear-256-v1','family':FAMILY.hex(),'scale':SCALE,'source':source,'base':base.tolist(),'router':router.tolist(),'deltas':deltas.tolist(),'feature':'signed-token-hash-256-clipped8-plus-bias-v1','classes':CLASSES}
     artifact(model,out/'model.json')
+    train_rows=groups['train'];pooled=quantize(train([r['x']for r in train_rows],[r['label']for r in train_rows],120,base/SCALE))
+    expert_scores=[int((predict(model,xc,mode='expert',expert=i)==yc).sum())for i in range(3)]
+    best=max(range(3),key=lambda i:(expert_scores[i],-i))
+    controls={'current':predict(model,xc,mode='base').tolist(),'best_single':predict(model,xc,mode='expert',expert=best).tolist(),'mean_merge':predict(model,xc,mode='merge').tolist(),'pooled':np.argmax(xc@pooled.T,axis=1).tolist()}
+    selected,lock=select_reference(groups['calibration'],controls)
+    reference={'schema':'locked-strong-reference-v2','candidate':H('artifact',(out/'model.json').read_bytes()).hex(),'selected':selected,'expert':best,'pooled':pooled.tolist(),'calibration_lock':lock,'scope':'controlled-source-not-new-future-window'}
+    (out/'reference.json').write_bytes(canonical(reference))
+    plan=freeze_plan(source=source,train_ids=[r['id']for r in groups['train']],calibration_ids=[r['id']for r in groups['calibration']],eligible_future_after=0,model_hash=reference['candidate'])
+    plan['eligible_future_after']=None;plan['future_window_unavailable']=True
+    (out/'frozen-plan.json').write_bytes(canonical(plan))
     for split in ['evaluation_a','evaluation_b','consumer']:
-        subprocess.run([sys.executable,__file__,'--mode','evaluate','--tasks',str(out/(split+'.json')),'--model',str(out/'model.json'),'--out',str(out/(split+'-result.json'))],check=True)
+        subprocess.run([sys.executable,__file__,'--mode','evaluate','--tasks',str(out/(split+'.json')),'--model',str(out/'model.json'),'--reference',str(out/'reference.json'),'--out',str(out/(split+'-result.json'))],check=True)
     results={s:json.loads((out/(s+'-result.json')).read_text())for s in ['evaluation_a','evaluation_b','consumer']}
     # Equal-order pooled control makes the extra-data/compute advantage visible, not a claimed MoE theorem.
     train_rows=groups['train'];pooled=quantize(train([r['x']for r in train_rows],[r['label']for r in train_rows],120,base/SCALE))
@@ -145,8 +175,8 @@ def run(source,out):
     _,product=work.verify(context,work.task_id(av,bv),bytes([255])*32,proof)
     signed=np.array([v-work.Q if v>work.Q//2 else v for v in product],dtype=np.int64).reshape(64,64)
     require(np.array_equal(signed,aa@bb),'NUMERIC_BRIDGE');(out/'model-work.bin').write_bytes(proof)
-    report={'schema':'controlled-model-loop-report-v1','source':source,'task':'route public Rust function changes to their actual owning module','private_data_used':False,'ordinary_hepta_product_entry':False,'future_time_window_observed':False,'evaluation_partitions_previously_observed_in_exploration':True,'independent_operators':False,'training_is_real_parameter_optimization':True,
-      'plan':{'feature_dimensions':257,'classes':CLASSES,'base_steps':8,'local_steps':120,'router_steps':120,'split':'whole-file-stratified deterministic, exact-content deduplicated','feature_scaling':'signed count clipping to [-8,8], bias=8, no frequency-erasing integer division','class_weighting':'inverse within-training-shard frequency','statistical_rule':'paired sign test p<=0.05 on each evaluation partition; integer scoring','seed_tasks':len(common)},
+    report={'schema':'controlled-model-loop-report-v1','source':source,'strong_reference':reference['selected'],'task':'route public Rust function changes to their actual owning module','private_data_used':False,'ordinary_hepta_product_entry':False,'future_time_window_observed':False,'evaluation_partitions_previously_observed_in_exploration':True,'independent_operators':False,'training_is_real_parameter_optimization':True,
+      'plan':{'feature_dimensions':257,'classes':CLASSES,'base_steps':8,'local_steps':120,'router_steps':120,'split':'whole-file-stratified deterministic, exact-content deduplicated','feature_scaling':'signed count clipping to [-8,8], bias=8, no frequency-erasing integer division','class_weighting':'inverse within-training-shard frequency','statistical_rule':'source-file cluster sign test with four-comparison correction against strongest calibration-locked deployable control; local exploratory only','seed_tasks':len(common)},
       'task_counts':{s:len(v)for s,v in groups.items()},'file_counts':{s:len({x['file']for x in v})for s,v in groups.items()},'models':{'artifact_hash':H('artifact',(out/'model.json').read_bytes()).hex(),'bytes':(out/'model.json').stat().st_size,'base_parameters':int(base.size),'delta_parameters':int(deltas.size),'router_parameters':int(router.size)},'results':results,
       'useful_work':{'proof_file':'model-work.bin','task_commitment':work.task_id(av,bv).hex(),'challenge':context.hex(),'proof_bytes':len(proof),'exact_integer_contraction':True,'scope':'first 64 feature coordinates of one selected expert on up to 64 real consumer tasks; not a whole-model training proof'},
       'end_to_end_seconds':time.perf_counter()-start,'production_activation':False}
@@ -154,6 +184,6 @@ def run(source,out):
     print(json.dumps({'task_counts':report['task_counts'],'results':{s:{k:v for k,v in d.items()if k not in {'predictions'}}for s,d in results.items()},'artifact':report['models'],'elapsed':report['end_to_end_seconds']}),flush=True)
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--mode',choices=['run','train','evaluate'],default='run');p.add_argument('--source');p.add_argument('--out',required=True);p.add_argument('--tasks');p.add_argument('--base');p.add_argument('--model');p.add_argument('--node',type=int,default=0);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--mode',choices=['run','train','evaluate','infer'],default='run');p.add_argument('--source');p.add_argument('--out',required=True);p.add_argument('--tasks');p.add_argument('--base');p.add_argument('--model');p.add_argument('--reference');p.add_argument('--node',type=int,default=0);a=p.parse_args()
     if a.mode=='run':run(a.source,a.out)
     else:worker(a)

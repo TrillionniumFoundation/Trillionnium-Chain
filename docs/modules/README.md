@@ -35,3 +35,7 @@ exact shared wire, work, state/recovery, model/evaluation and network/acceptance
 native component, executable reference, native product integration and independent acceptance.
 Empty native source does not mean the design lacks executable conformance, nor does a
 reference implementation mean the native production owner has been completed.
+
+## Invariants, not document counts
+
+[Concrete invariant and failure schedules](../../config/pon/invariants-v2.json) bind every module to actual test functions and source. Binding verification is not a test pass. M06 now contains native twelve-command execution; complete native consensus/persistence/Hepta host and independent acceptance remain absent.

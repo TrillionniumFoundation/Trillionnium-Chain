@@ -643,3 +643,6 @@ mod tests {
         );
     }
 }
+
+/// Bounded local proof ingress with isolated recovery capacity.
+pub mod proof_admission;
