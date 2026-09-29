@@ -7,6 +7,8 @@ case "${1:?required job}" in
     python3 scripts/ci/check_repository.py
     python3 scripts/ci/test_repository.py
     python3 scripts/ci/test_invariants_registry.py
+    python3 scripts/ci/test_responsibility_evidence.py
+    python3 scripts/ci/test_work_cost_report.py
     ;;
   protocol-contract)
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
@@ -52,6 +54,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_completion_evidence.py
     python3 scripts/ci/check_evaluation_bundle_evidence.py
     python3 scripts/ci/test_evaluation_bundle_evidence.py
+    python3 scripts/ci/report_module_evidence.py --format markdown
     ;;
   *) printf '%s\n' 'unknown CI job' >&2; exit 2 ;;
 esac

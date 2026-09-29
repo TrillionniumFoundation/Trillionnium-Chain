@@ -17,7 +17,10 @@ old/new-validator-set handoff are RETIRED AS DEVELOPMENT TARGETS.
 No BFT checkpoint/finality committee or consumption/stake vote is hidden in PoN.
 Old PoCO source, protocol decoders, byte registries and runtime launchers are deleted
 from the active tree. Git retains history; only inventoried neutral components remain.
-A new PoN runtime and proof format remain to be built.
+The concrete experimental W1 work relation and 49,188-byte proof format are implemented
+in native Rust and a separate Python oracle. A complete native consensus/persistence
+runtime and public-network work-security qualification remain unfinished; the existence
+of a proof codec is not either acceptance.
 
 ## The product, not just a compute market
 
@@ -55,8 +58,8 @@ measured and remains a public-network blocker, not a hidden fallback.
 
 ## Implementable detail index
 
-[W1 work relation](details/WORK_PROFILE.md) · [L1 ledger bytes/state](details/LEDGER_WIRE.md) ·
-[S1 persistence/reorg](details/STATE_RECOVERY.md) · [M1 model/evaluation](details/MODEL_EVALUATION.md) ·
+[W1 work relation](details/WORK_PROFILE.md) · [L3 ledger bytes/state](details/LEDGER_WIRE.md) ·
+[S2 persistence/reorg](details/STATE_RECOVERY.md) · [M1 model/evaluation](details/MODEL_EVALUATION.md) ·
 [N1 network/clients](details/NETWORK_CLIENT.md) · [P1 performance/acceptance](details/PERFORMANCE_ACCEPTANCE.md).
 
 [Procedure registry](../../../config/pon/module-contracts-v1.json) has36 typed operations

@@ -49,3 +49,32 @@ fairness or a Sybil cost theorem. `pon_adversarial_cost` uses the actual half-ra
 target with dense, zero, rank-one and sparse matrices, separating honest winning cost,
 forgery hash trials, verification and rejection. Honest structured runs are not the
 fastest adversarial implementation; measured cost does not supply a hardness theorem.
+
+## Same-target resource model and public service obligations
+
+A useful admission budget names the target, profile, task class, attacker preprocessing,
+forged-ticket trials, honest work attempts, encoded bytes, verifier CPU time, queue delay,
+cache state and actual hardware. Construction/rejection ratios use the same target and
+units; ratios of process wall times must not be presented as cryptographic operation
+lower bounds. Separately report cold and warm caches, invalid field/length/task checks,
+failed ticket checks, ticket-passing false transcripts and duplicate valid retransmits.
+
+For m public verifier slots, a measured isolated service approximation is
+m / C_invalid seconds of service per request, not a safety theorem. Under an explicit
+arrival model lambda_invalid*C_invalid + lambda_valid*C_valid must remain below the
+usable public CPU budget for a stable queue; burst tails and honest waiting time still
+need measurement. A recovery reservation protects only the locally authorized lane. It
+does not prove that a new honest public miner can obtain service during identity churn.
+
+The public qualification campaign must run the actual M04/M02 ordinary ingress path,
+not acquire local permits by directly calling a library. Bind miner and attacker source,
+identity churn policy, bounded queues, CPU scheduling, network loss/delay and independent
+operator roles. Measure admitted, Busy, rejected-before-work, rejected-after-work, valid
+accepted and honest wait-tail counters. Missing ordinary ingress is an integration gap,
+not a passing fairness result. State whether the attack is controller-delivery withholding,
+real network loss or genuine hostile peers; these observations are not interchangeable.
+
+The controlled cost collector in `scripts/pon_work_cost_report.py` can re-run the existing
+native cost binary and preserve raw output plus exact-source identities. It rejects
+mixed targets, duplicate samples, Boolean counters and invented security flags, but
+creates no public-admission qualification. It does not send traffic to any peer or host.

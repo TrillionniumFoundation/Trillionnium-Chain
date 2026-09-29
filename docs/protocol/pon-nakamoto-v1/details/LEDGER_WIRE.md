@@ -1,8 +1,17 @@
-# L2 — revision2 ledger context, native commands and lifecycle
+# L3 — revision3 ledger context, native commands and lifecycle
 
 The exact registry is [`ledger-v1.json`](../../../../config/pon/ledger-v1.json), with
 [`devnet-v1.json`](../../../../config/pon/devnet-v1.json), work and model-family JSONs.
-Normative scope is the revision2 test network. Byte layouts remain PNH1/PNX1, but changed devnet parameters yield a new Network/Parameters/Genesis context. Old context bytes are not reinterpreted.
+Current normative scope: `consensus_revision=3`, chain label
+`trnm-pon-invariant-contract-devnet-3`. Registry filenames ending in v1 are stable
+identifiers, not claims that their content still specifies consensus revision1.
+PNH1/PNX1 remain the wire magic; the complete parameter commitment selects semantics.
+
+The rules below describe revision3 as a whole. The two final Revision3 sections define
+signed contribution windows, resource identity, retained release discovery and strict
+signatures. They replace revision2's lifetime/nullifier rules, not supplement an optional
+legacy mode. Revision2 is historical context only; there is no in-place database upgrade,
+old-context decoder dispatch or activation by editing these documents.
 Canonical JSON used INSIDE commitments is ASCII escaped, key-sorted, compact JSON with
 only strings, booleans, null, bounded integers, arrays and string-key objects. Duplicate
 keys, floats, NaN and out-of-range integers reject. JSON whitespace is not wire encoding.
@@ -81,7 +90,7 @@ All invalid commands reject the candidate block and leave the parent state uncha
 | 3 | cancel_task / 32 | only task owner, only reserved; refund remaining escrow; terminal cancelled |
 | 4 | record_receipt / 64 | bound provider, reserved and before deadline, nonzero output; status receipt, no payment yet |
 | 5 | accept_task / 64 | task owner, receipt and matching output before deadline; pay provider, status settled |
-| 6 | contribute / 176 | current parent release, exact family, bounded artifact; id binds author+family+parent+artifact+components root; reject same parent/artifact duplicate; count live candidates, not zero-score history |
+| 6 | contribute / 176 | current parent release, exact family, bounded artifact; id binds author+family+parent+artifact+components root+submission round; reject same parent/round/artifact duplicate; count live candidates, not zero-score history |
 | 7 | evaluate / 104 | registered non-author evaluator; once per evaluator; fixed plan, nonzero evidence, integer bounded score; freeze minimum of first two valid attestations |
 | 8 | publish_release / 145+40n | 1<=n<=16 sorted unique contribution IDs; bundle and allocations positively evaluated; recompute total and root; sponsor locks finite budget and reserves maturity+1000 claim deadline; adopt release |
 | 9 | claim_reward / 73+32n | payee bound by allocation-root membership, maturity and deadline, exact Merkle depth/root/score; one claim per contribution; transfer floor(budget×score/total), retain dust |
@@ -143,13 +152,15 @@ by tests. Native `pon_wire` must accept all 12 tags and reproduce header, transa
 state roots, while rejecting every malformed vector. The Python oracle separately checks
 signatures and application transitions. Native M06 now executes all twelve commands and is compared to the reference at1/2/4/8 workers. See EXECUTION_PARALLEL.md. It is explicitly selectable through the existing Ledger bridge. A native application engine is not a complete native consensus/persistence or Hepta node.
 
-## L2.7 Changed semantics and fresh namespace
+## L3.7 Revision2 provenance and superseded rules
 
-The devnet schema and chain label are revision2. Candidate slots count live current-parent
-candidates only. Current-parent duplicate nullifiers remain, while old-parent rows retire
-because no new submission can name that old parent. Root-bound claims do not require a
-live candidate row. Unclaimed release budgets refund at their pre-reserved deadline;
-noncurrent empty release objects retire. All changes are part of the new context.
+Revision2 introduced live-candidate capacity, root-bound claims and reserved refunds.
+Revision3 retains those behaviors but replaces unbounded same-parent nullifier retention
+with signed intake rounds and finite same-round history, as specified below. The active
+schema identifier and parameter bytes come from the installed revision3 configuration;
+this provenance paragraph is not a second set of applicable rules. Root-bound claims
+survive candidate retirement; unclaimed release budgets still refund at their reserved
+deadline, and noncurrent empty release objects can retire.
 
 Consumer use signatures now cover H("use",Network,Parameters,quota,provider,nonce,units,result).
 `result` may be the strict closed inference receipt digest binding model/request/input/
@@ -201,3 +212,26 @@ primitive is implemented by the Python public-point prevalidation helper.
 Early admission checks envelope count and lengths before root/work replay. Identical
 already verified header/body/proof retransmission reuses that stored fact; a matching
 BlockId with altered certificate/body rejects and cannot poison the valid stored entry.
+
+## Application scope and non-goals of this mainline
+
+This PoN mainline is a dedicated AI-work/model/service ledger with the twelve closed
+native commands in the canonical registry. It is not a general-purpose user-deployed
+contract VM. There is no arbitrary bytecode deployment, EVM opcode dispatch, Solidity ABI,
+Move package installation, reentrant contract call or user-selected host function.
+Model artifacts are bounded data, not executable contracts. Local Hepta actions remain
+outside deterministic chain execution and under their existing authorization owners.
+
+The current fee rule meters the registered command and encoded bytes. It is not a gas
+schedule for arbitrary programs, nor a completed storage-rent policy. Native command
+benchmarks establish only the stated command mix, shared-key conflicts and exact pipeline
+stage; they say nothing about arbitrary smart-contract capacity.
+
+Adding a general-purpose VM is outside the selected implementation scope, not an implicit
+promise or a permanent prohibition on future research. A future explicit architecture
+choice must define the VM and bytecode verifier, deterministic instruction/host-call
+semantics, compute/memory/storage metering, ABI and type/resource rules, deployment and
+upgrade authorization, reorg/undo behavior, tooling and wallet interfaces, and owners in
+M00/M05/M06/M07/M14/M15. It requires a separately reviewed version/context and adversarial
+vectors before any executable tag is admitted. No EVM or other VM is added merely to
+match another chain's feature list. Until that decision, reject unknown tags and bytecode.

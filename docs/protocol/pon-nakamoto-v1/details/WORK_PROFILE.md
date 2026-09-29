@@ -130,3 +130,41 @@ Required vectors cover canonical product identity, every changed header context,
 product, false trace, malformed length/field, zero matrix with a forged trace and native
 versus Python byte identity. Reference evaluation is executable; hardness and external
 acceptance remain false. No old BFT or hash-only fallback fills that gap.
+
+## W1.7 Search difficulty, verification and useful-output accounting
+
+Distinguish one attempt from one winning block. Under the explicitly unqualified uniform
+independent-ticket and equal-cost assumptions, p=(T+1)/2^256, expected winning work is
+C_attempt/p, and a verifier checks one presented proof at C_verify. Full recomputation
+can still have search/verification asymmetry at small p; it is incorrect to infer the
+absence of PoW search difficulty solely from C_attempt approximately equaling C_verify.
+The current initial/pow-limit target is 2^255-1, so p=1/2 at that target. Those development
+parameters do not establish production asymmetry or permissionless safety.
+
+Invalid admission is a different experiment. A forged trace can pass the cheap ticket
+predicate after expected 1/p hash trials while rejection still replays work. Report the
+attacker's actual construction budget and defender's rejection budget at the SAME target.
+Neither a wide-target amplification ratio nor a local queue cap proves an attack rate,
+public fairness, or adequate safety at another target. Target increase/decrease, timestamp
+choices, task choices, proof preprocessing and shared hardware must all be explicit.
+
+For fixed A and B the decoded useful output remains AB across header/nonce challenges.
+Fresh consensus work therefore need not be a new useful result or a model improvement.
+Count unique task/output identities, actual downstream adoption, stale/lost attempts,
+encoding/transcript cost and every verifier's repeated computation separately. Do not
+label all mining FLOPs as useful training. The retained 64-coordinate contraction is
+not proof of whole-model training, data rights or future quality.
+
+### Candidate analysis without silently changing the admitted profile
+
+| Candidate | What must be specified and falsified | Current status |
+|---|---|---|
+| Keep full recomputation | Fastest implemented shortcuts for selected/sparse/low-rank tasks; preprocessing amortization; hardware advantage; same-target valid/invalid cost and honest public service budget | Existing executable reference; no qualified public-cost bound. |
+| Add a compact proof | Exact challenged relation, canonical output and ticket binding; proof soundness/setup; bounded malformed-proof verifier cost; proof-generation overhead and inability to grind randomized proofs | Research candidate only; proof of correct execution alone does not establish expended work hardness. |
+| Add separate admission protection | Anonymous/permissionless access assumptions; replay/context binding; quantified defender/attacker resource accounting and honest service under identity churn | Research candidate only. An admission hash filter cannot replace useful-work validity or change fork weight. |
+
+No alternative is enabled by this table. Qualification requires exact versioned bytes,
+independent attack implementation/reproduction and declared assumptions, not an
+unconditional complexity lower bound or a prescribed count of successful experiments.
+The cited matrix-work paper's conjectured security and asymptotic costs remain separate
+from this concrete profile's parameters and implementation.

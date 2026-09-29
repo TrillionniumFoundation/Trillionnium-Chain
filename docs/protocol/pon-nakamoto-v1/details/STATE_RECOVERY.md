@@ -110,3 +110,37 @@ The storage-only4102-record regression labels its premise explicitly. The separa
 `long_history.py` campaign creates actual proofs and signed transactions above4096 and
 performs a shallow competing fork; its logical clock and real SQLite evidence are reported
 separately from the physical-host UTC campaign. Neither establishes physical power loss.
+
+## M08 procedure boundary and retry contract
+
+`M08.PlanReorg` is the planning phase of `Ledger.activate(target, cut=None)`, not a
+separate exported plan constructor. The target is an already admitted block identifier;
+callers cannot supply its work or replacement undo steps. Existing pending intent is
+completed first. Equal/lower work returns the active tip without new events. Ordinary
+extension without a fault callback updates deltas/head/generation/event in one transaction
+on the existing slot. An actual fork finds the common ancestor and persists the staging
+copy plus exact detach/attach intent before any fork step. The current ancestry lists
+are in memory and staging is a full copy: native bounded planning is still work to do.
+
+`M08.RecoverAndPublish` is `Ledger._recover_intent(cut=None)`. It requires
+`active == (old_tip, next_generation - 1)`, applies each step with its cursor transaction,
+checks the final root, and publishes the active tuple/events/done/slot retirement together.
+`Ledger.recover` then separately selects the best verified stored work. Do not conflate
+completion of an existing intent with discovery and activation of a later heavier tip.
+
+| Interruption or rejection | Durable state and required next action |
+|---|---|
+| Before staging commit | Old published state remains; caller may recompute the same target plan. |
+| After intent commit | Old published state remains; resume this exact persisted intent before new admission. |
+| During a delta transaction | Either prior cursor/state or next cursor/state survives; never advance one without the other. |
+| Wrong before-image / generation / target root | Retain committed evidence and fence admission; diagnose corruption instead of deleting intent or manufacturing a new root. |
+| Before final publication commit | Old active view remains; replay cursor/root check and retry publication. |
+| After publication, before return/ACK | Done marker and events already exist; repeat recovery returns current tip, without duplicate events or effects. |
+| After admission, before activation intent | Startup recovery inspects stored fully verified tips and activates strictly heavier work. |
+
+`UNKNOWN_PARENT`, `GENERATION`, `SCHEMA`, `UNDO_ROOT`, `ROOT` and underlying SQLite/I/O
+errors are not interchangeable. SQLite error or local capacity exhaustion is not proof
+that the remote block is invalid. A process exception is not proof of a remote API effect.
+No recovery operation clears `EffectJournal` or creates a local Hepta final-use token.
+The concrete module contract and retained crash tests are linked from
+[M08](../../../modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md).

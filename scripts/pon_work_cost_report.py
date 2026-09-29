@@ -1,0 +1,242 @@
+#!/usr/bin/env python3
+"""Collect or summarize the existing native work-cost experiment, not public acceptance.
+
+--run builds the existing example from a clean committed tree and writes a new owned
+output directory. --input summarizes recorded raw samples without calling them a fresh
+measurement. --verify checks retained bytes, derivation and source/current applicability.
+No peer traffic, deployment, paid provider or alternate work algorithm is involved.
+"""
+from __future__ import annotations
+
+import argparse
+import datetime
+import hashlib
+import json
+import os
+import platform
+import re
+import statistics
+import subprocess
+import sys
+import time
+from fractions import Fraction
+from pathlib import Path
+from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'scripts/ci'))
+sys.path.insert(0, str(ROOT / 'formal/pon-nakamoto-v1'))
+from check_invariant_evidence import load, require, safe, source_bytes
+from bounded_process import run_bounded
+
+CLASSES = {'dense', 'zero', 'rank-one', 'sparse'}
+COUNTERS = {'honest_attempts', 'forgery_hash_trials'}
+TIMES = {'honest_winning_ns', 'valid_verify_ns', 'forgery_ns', 'invalid_verify_ns'}
+SOURCE_PATHS = {'scripts/pon_work_cost_report.py',
+                'formal/pon-nakamoto-v1/bounded_process.py',
+                'scripts/ci/check_invariant_evidence.py',
+                'config/pon/devnet-v1.json', 'config/pon/work-profile-v1.json',
+                'rust-toolchain.toml'}
+BUILD_COMMAND = ['cargo', 'build', '--offline', '--locked', '--release', '--manifest-path',
+                 'trillionnium/Cargo.toml', '-p', 'trnm-crypto-primitives', '--example', 'pon_adversarial_cost']
+FALSE_FLAGS = ('independent_accepted', 'public_network_tested',
+               'honest_public_service_measured', 'work_hardness_accepted', 'production_activation')
+
+
+def digest(raw: bytes) -> str:
+    return hashlib.sha256(raw).hexdigest()
+
+
+def encoded(value: Any) -> bytes:
+    return (json.dumps(value, indent=2, sort_keys=True, allow_nan=False) + '\n').encode()
+
+
+def target_value(text: str) -> int:
+    require(isinstance(text, str) and re.fullmatch('[0-9a-f]{64}', text), 'target must be canonical 256-bit hex')
+    value = int(text, 16)
+    require(0 < value < 1 << 256, 'nonpositive/out-of-range target')
+    return value
+
+
+def summarize(raw: dict[str, Any], expected_target: str) -> dict[str, Any]:
+    target = target_value(expected_target)
+    require(set(raw) == {'schema', 'target', 'samples', 'fastest_adversary_implemented',
+                         'hardness_accepted', 'production_activation'}, 'cost schema fields')
+    require(raw['schema'] == 'pon-structured-cost-v3', 'unsupported raw cost schema')
+    require(raw['target'] == expected_target, 'mixed or unexpected target')
+    for flag in ('fastest_adversary_implemented', 'hardness_accepted', 'production_activation'):
+        require(raw[flag] is False, 'unsupported raw qualification ' + flag)
+    require(isinstance(raw['samples'], list) and raw['samples'], 'empty cost samples')
+    grouped: dict[str, list[dict[str, Any]]] = {name: [] for name in CLASSES}
+    seen: set[tuple[str, int]] = set()
+    for sample in raw['samples']:
+        require(isinstance(sample, dict), 'sample must be an object')
+        require(set(sample) == {'class', 'sample'} | COUNTERS | TIMES, 'cost sample fields')
+        require(isinstance(sample['class'], str) and sample['class'] in CLASSES, 'unknown task class')
+        require(type(sample['sample']) is int and 0 <= sample['sample'] < 1 << 64,
+                'invalid sample identity')
+        identity = (sample['class'], sample['sample'])
+        require(identity not in seen, 'duplicate sample cannot increase evidence')
+        seen.add(identity)
+        for field in COUNTERS | TIMES:
+            require(type(sample[field]) is int and 0 < sample[field] < 1 << 128,
+                    'invalid cost counter ' + field)
+        for field in COUNTERS:
+            require(sample[field] <= 4096, 'native attempt bound exceeded')
+        grouped[sample['class']].append(sample)
+    require(all(grouped.values()), 'missing structured-input comparison')
+    summaries = {}
+    for name, samples in sorted(grouped.items()):
+        medians = {field: statistics.median(row[field] for row in samples) for field in sorted(TIMES)}
+        summaries[name] = {
+            'samples': len(samples), 'median_ns': medians,
+            'invalid_rejection_to_forgery_ratio': medians['invalid_verify_ns'] / medians['forgery_ns'],
+            'honest_winner_to_valid_verification_ratio': medians['honest_winning_ns'] / medians['valid_verify_ns'],
+            'honest_attempts_total': sum(row['honest_attempts'] for row in samples),
+            'forgery_hash_trials_total': sum(row['forgery_hash_trials'] for row in samples),
+        }
+    p = Fraction(target + 1, 1 << 256)
+    return {
+        'schema': 'pon-same-target-cost-summary-v1', 'target': expected_target,
+        'assumed_uniform_ticket_probability': {'numerator': str(p.numerator), 'denominator': str(p.denominator)},
+        'lottery_assumptions_qualified': False, 'classes': summaries,
+        'ratio_definition': 'ratio of within-class median measured durations at the same target',
+        'scope': 'controlled CPU work/forgery costs; not fastest-adversary lower bound or public attack rate',
+        **{flag: False for flag in FALSE_FLAGS}, 'vram_bytes': None,
+    }
+
+
+def git(*args: str) -> str:
+    return subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip()
+
+
+def clean() -> None:
+    require(not git('status', '--porcelain'), 'measurement requires a clean committed source')
+
+
+def source_inventory(paths: set[str]) -> set[str]:
+    require(SOURCE_PATHS <= paths, 'missing collector/source configuration input')
+    return {p for p in paths if p.startswith('trillionnium/') and not p.endswith('.md')} | SOURCE_PATHS
+
+
+def current_inputs() -> dict[str, str]:
+    paths = source_inventory(set(git('ls-files').splitlines()))
+    return {p: digest(safe(ROOT, p).read_bytes()) for p in sorted(paths)}
+
+
+def write_new(path: Path, raw: bytes) -> None:
+    with path.open('xb') as file:
+        file.write(raw)
+        file.flush()
+        os.fsync(file.fileno())
+
+
+def collect(out: Path) -> dict[str, Any]:
+    out = out.resolve()
+    os.chdir(ROOT)  # Cargo must consume this checkout and its installed toolchain.
+    clean()
+    require(not out.is_relative_to(ROOT), 'measure into a new directory outside the checkout')
+    out.mkdir(mode=0o700, parents=False, exist_ok=False)
+    head, tree = git('rev-parse', 'HEAD'), git('rev-parse', 'HEAD^{tree}')
+    inputs = current_inputs()
+    target_dir = Path(os.environ.get('CARGO_TARGET_DIR', ROOT / 'trillionnium/target')).resolve()
+    command = list(BUILD_COMMAND)
+    build = run_bounded(command, b'', timeout=900, stdout_limit=2*1024*1024, stderr_limit=2*1024*1024)
+    write_new(out / 'build.log', build.stdout + build.stderr)
+    require(build.returncode == 0, 'native cost build failed; build log retained')
+    binary = target_dir / 'release/examples/pon_adversarial_cost'
+    binary_hash = digest(binary.read_bytes())
+    started = time.monotonic_ns()
+    execution = run_bounded([str(binary)], b'', timeout=120, stdout_limit=2*1024*1024, stderr_limit=65536)
+    elapsed = time.monotonic_ns() - started
+    write_new(out / 'native-work.json', execution.stdout)
+    write_new(out / 'native-stderr.log', execution.stderr)
+    require(execution.returncode == 0, 'native cost command failed; raw output retained')
+    raw = load(out / 'native-work.json')
+    expected_target = load(ROOT / 'config/pon/devnet-v1.json')['initial_target_hex']
+    summary = summarize(raw, expected_target)
+    clean()
+    require(git('rev-parse', 'HEAD') == head and current_inputs() == inputs, 'source changed during measurement')
+    require(digest(binary.read_bytes()) == binary_hash, 'binary changed during measurement')
+    write_new(out / 'summary.json', encoded(summary))
+    record = {
+        'schema': 'pon-native-cost-execution-v1', 'source_commit': head, 'source_tree': tree,
+        'source_clean_before_and_after': True, 'source_files_sha256': inputs,
+        'binary_sha256': binary_hash, 'build_command': command, 'build_returncode': build.returncode,
+        'command': [str(binary)], 'returncode': execution.returncode, 'process_wall_ns': elapsed,
+        'observed_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'platform': platform.platform(), 'python': platform.python_version(),
+        'rustc': subprocess.check_output(['rustc', '--version'], text=True).strip(),
+        'target': expected_target, 'test_threads': os.environ.get('RUST_TEST_THREADS'),
+        **{flag: False for flag in FALSE_FLAGS},
+    }
+    write_new(out / 'execution.json', encoded(record))
+    manifest = {'schema': 'pon-native-cost-files-v1', 'files': {
+        name: digest((out / name).read_bytes()) for name in
+        ('build.log', 'native-work.json', 'native-stderr.log', 'summary.json', 'execution.json')},
+        **{flag: False for flag in FALSE_FLAGS}}
+    write_new(out / 'manifest.json', encoded(manifest))
+    return {'out': str(out), 'measured_commit': head, 'binary_sha256': binary_hash, 'summary': summary}
+
+
+def verify(out: Path, require_current: bool = True) -> dict[str, Any]:
+    out = out.resolve()
+    manifest = load(safe(out, 'manifest.json'))
+    require(manifest['schema'] == 'pon-native-cost-files-v1', 'manifest schema')
+    required = {'build.log', 'native-work.json', 'native-stderr.log', 'summary.json', 'execution.json'}
+    require(set(manifest['files']) == required, 'missing or extra collection artifact')
+    for name, expected in manifest['files'].items():
+        require(digest(safe(out, name).read_bytes()) == expected, 'changed retained artifact ' + name)
+    record = load(out / 'execution.json')
+    require(record['schema'] == 'pon-native-cost-execution-v1' and
+            record['source_clean_before_and_after'] is True, 'execution scope')
+    for value in (manifest, record):
+        for flag in FALSE_FLAGS:
+            require(value[flag] is False, 'false collection authority ' + flag)
+    require(type(record['returncode']) is int and record['returncode'] == 0 and
+            type(record['build_returncode']) is int and record['build_returncode'] == 0, 'failed recorded command')
+    require(re.fullmatch('[0-9a-f]{64}', record['binary_sha256']), 'missing binary identity')
+    commit = record['source_commit']
+    require(re.fullmatch('[0-9a-f]{40}', commit), 'bad source identity')
+    require(git('rev-parse', commit + '^{tree}') == record['source_tree'], 'wrong source tree')
+    require(record['build_command'] == BUILD_COMMAND, 'unexpected native build command')
+    require(isinstance(record['command'], list) and len(record['command']) == 1 and
+            Path(record['command'][0]).name == 'pon_adversarial_cost', 'unexpected native cost command')
+    require(type(record['process_wall_ns']) is int and record['process_wall_ns'] > 0, 'invalid process timing')
+    measured_inventory = source_inventory(set(git('ls-tree', '-r', '--name-only', commit).splitlines()))
+    require(set(record['source_files_sha256']) == measured_inventory, 'incomplete measured source inventory')
+    original = source_bytes(ROOT, commit, list(record['source_files_sha256']))
+    for name, raw in original.items():
+        require(digest(raw) == record['source_files_sha256'][name], 'wrong measured source ' + name)
+    source_target = json.loads(original['config/pon/devnet-v1.json'])['initial_target_hex']
+    require(record['target'] == source_target, 'target differs from measured configuration')
+    expected_summary = summarize(load(out / 'native-work.json'), source_target)
+    require(encoded(expected_summary) == safe(out, 'summary.json').read_bytes(), 'summary differs from raw observations')
+    matches = record['source_files_sha256'] == current_inputs()
+    if require_current:
+        require(matches, 'source changed: retain historical costs and execute a new collection')
+    return {'source_commit': commit, 'current_measured_inputs_match': matches,
+            'retained_observations_verified': True, 'experiment_reexecuted_by_verifier': False,
+            **{flag: False for flag in FALSE_FLAGS}}
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument('--run', action='store_true')
+    mode.add_argument('--input', type=Path)
+    mode.add_argument('--verify', type=Path)
+    parser.add_argument('--out', type=Path)
+    parser.add_argument('--expected-target')
+    parser.add_argument('--historical', action='store_true')
+    args = parser.parse_args()
+    if args.run:
+        require(args.out is not None, '--run requires --out')
+        value = collect(args.out)
+    elif args.verify:
+        value = verify(args.verify, require_current=not args.historical)
+    else:
+        require(args.expected_target is not None, '--input requires an explicit --expected-target')
+        value = {'input_sha256': digest(args.input.read_bytes()), 'fresh_measurement': False,
+                 'summary': summarize(load(args.input), args.expected_target)}
+    print(encoded(value).decode(), end='')

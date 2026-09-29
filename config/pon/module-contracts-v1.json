@@ -323,21 +323,21 @@
       "operations": [
         {
           "id": "M08.PlanReorg",
-          "inputs": "old/new validated tips and active generation",
-          "output": "durable ordered detach/attach intent",
-          "algorithm": "All eight reorg process-crash cuts recover the same root and one event set while irreversible local records survive. Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
-          "commit": "Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
-          "errors": "UNKNOWN_PARENT, GENERATION, REORG_IN_PROGRESS",
-          "limits": "Ordinary append avoids full copies; real forks use a staging slot; readers retain SQLite transaction snapshots."
+          "inputs": "Ledger exclusive owner; fully verified stored target BlockId; active(old_tip,generation,state_slot); optional crash-cut callback",
+          "output": "Existing tip for no strictly greater work, direct-extension publication, or committed staging intent consumed by RecoverAndPublish",
+          "algorithm": "This is the planning phase inside Ledger.activate, not a separate public API. Finish an existing staging intent first and reread active state. Compare stored 512-bit work; equal/lower returns old tip without new events. A direct child with no fault callback applies deltas and publishes on the existing slot in one transaction. Otherwise walk old/new ancestry by height to the common ancestor; order detach tip-to-fork and attach fork-to-tip; copy the active slot and write old/new tips, next generation, ordered steps and cursor zero in one IMMEDIATE transaction. Never accept caller-supplied work totals or step lists.",
+          "commit": "Direct extension: delta, active tip/generation and attach event commit atomically. Fork: staging copy plus reorg intent commit together before any detach; active pointer remains unchanged.",
+          "errors": "UNKNOWN_PARENT; UNDO_ROOT or ROOT on direct append; existing-intent GENERATION/SCHEMA failures; propagated SQLite/OSError. Resource exhaustion is a local failure, not consensus-invalid history.",
+          "limits": "One owner and one pending intent. Actual planning currently holds detach/attach lists and a full staging copy; bounded native planning is not implemented. No fixed depth becomes finality."
         },
         {
           "id": "M08.RecoverAndPublish",
-          "inputs": "persisted intent,position,staged generation",
-          "output": "new coherent active root and unique events",
-          "algorithm": "All eight reorg process-crash cuts recover the same root and one event set while irreversible local records survive. Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
-          "commit": "Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
-          "errors": "UNDO_ROOT, ROOT, GENERATION",
-          "limits": "Ordinary append avoids full copies; real forks use a staging slot; readers retain SQLite transaction snapshots."
+          "inputs": "Ledger._recover_intent reads the persisted singleton(old_tip,new_tip,generation,steps,position,status); optional crash-cut callback",
+          "output": "No pending/done intent: active tip unchanged. Successful recovery: target tip with coherent generation, root and one ordered remove/add event set",
+          "algorithm": "This is Ledger._recover_intent, called by activate and recover. Require active==(old_tip,generation-1). From persisted cursor, check detach/attach kind and each delta before-image, then apply that step and advance its cursor in one IMMEDIATE transaction. After all steps, recompute the staged target root. Publish active tip/generation/state_slot, events, done status and old-slot retirement in one transaction. Ledger.recover then selects any fully verified indexed strictly heavier tip; completing one intent alone is not best-chain selection.",
+          "commit": "Every delta step and cursor commit together; final active tuple, ordered events, done flag and old-slot deletion have a separate single commit. Independent EffectJournal is never part of undo.",
+          "errors": "GENERATION for stale active tuple; SCHEMA for invalid step kind; UNDO_ROOT for before-image mismatch; ROOT before publication; UNKNOWN_PARENT or propagated SQLite/OSError. Do not label any failure as an executed remote effect.",
+          "limits": "Resume committed cursor after interruption; done/no intent is idempotent and creates no repeated events. On root/generation corruption retain the intent and fence new admission for diagnosis; do not auto-clear it. Full staged state/root replay and physical power-loss qualification remain open."
         }
       ],
       "source_refs": [

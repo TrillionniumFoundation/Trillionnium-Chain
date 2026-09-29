@@ -39,3 +39,49 @@ reference implementation mean the native production owner has been completed.
 ## Invariants, not document counts
 
 [Concrete invariant and failure schedules](../../config/pon/invariants-v2.json) bind every module to actual test functions and source. Binding verification is not a test pass. M06 now contains native twelve-command execution; complete native consensus/persistence/Hepta host and independent acceptance remain absent.
+
+## Responsibility and evidence
+
+Module-level flags describe inventory, not percent complete. The existing
+[module maturity file](../../config/pon/module-maturity-v1.json) now maps every registered
+procedure to actual callable symbols, its controlled entrypoint, backend, persistent
+owner, exact test selectors and remaining scope. `ordinary_product_entrypoint: null`
+means the normal native product route has not been supplied. A reusable checkpoint,
+release or import package does not fill that null. A specified-only responsibility may
+name a prerequisite without pretending that prerequisite is the missing consumer.
+
+Use the read-only reporter from a checkout with the declared evidence Git objects:
+
+```bash
+python3 scripts/ci/prepare_evidence_sources.py
+python3 scripts/ci/report_module_evidence.py --module M08 --format markdown
+python3 scripts/ci/report_module_evidence.py --format json
+```
+
+The report derives measured source identities from the original manifests and receipts,
+checks their artifact hashes and original source bytes, and keeps these facts separate:
+
+- **Subject bytes match:** only the explicitly named owner/entry/persistence source and
+  installed parameters match. This is not a claim about all transitive dependencies.
+- **Complete recorded runtime matches:** the recorded formal/native runtime, parameters
+  and tracked/untracked candidate runtime inventory all match. Changed or newly added
+  runtime code makes this false, even when a narrow subject stayed byte-identical.
+- **Exact selectors observed:** the declared file invocation and exact class/method
+  occur in a successful bounded receipt log. Missing/new selectors stay unobserved.
+
+Empty selector lists mean no registered per-procedure execution claim. They are not a
+pass. Campaign-specific results, such as author disappearance, training, network service
+and physical-host cost, must still be read in their own artifacts and validated by the
+existing package-specific checkers. This reporter does not reexecute those campaigns.
+A current regression-support result requires all declared selectors and the complete
+recorded runtime match; it never grants integration, independence or production use.
+
+| Package | Actual retained scope | Current applicability |
+|---|---|---|
+| [v1](../../evidence/pon-v1/README.md) | Original work/model/ledger/network experiments, including failure | Historical only. Keep measured implementation separate from its original publication/archive source snapshot. |
+| [v3](../../evidence/pon-v3/README.md) | Invariants, actual long history, work costs, controlled owned hosts | Derive byte comparisons; do not inherit its host or work measurements into changed inputs. |
+| [v4](../../evidence/pon-v4/README.md) | Block-scoped native comparison and same-admin binary parity | Same source can support that recorded observation, not a newly measured machine or public TPS. |
+| [E3](../../evidence/pon-evaluation-bundle-v1/README.md) | Frozen evaluation, full consent, no adoption/reward, owned-host evaluation | Compare the current source; no future-window or independent-operator authority. |
+
+The reporter never writes a new SHA into any historical report. Current PR/head/merge
+checks for changed development tooling remain new observations, not old logs relabelled.

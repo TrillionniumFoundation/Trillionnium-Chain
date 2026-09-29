@@ -106,7 +106,7 @@ nominal25.6 slot/s parameter budget, not measured throughput.
 
 ## Invariant continuation: stage boundaries and actual observations
 
-[Revision3 evidence](../../../../evidence/pon-v3/README.md) records current runtime tests,
+[Historical revision3 evidence](../../../../evidence/pon-v3/README.md) records its measured runtime tests,
 actual >4096 history, the 1/2/4/8 native-command comparisons, local proof-admission load,
 three real learning attempts and same-operator ROG/Pocket4/X230 execution. Each report
 names the source and its distinct clock/filesystem/trust conditions. Source-file equality
@@ -123,3 +123,30 @@ are slower stay in the report. No learning update is inferred from successful op
 all three measured candidates may remain unapplied with zero reward. File-disjoint source
 windows are not independent future user experience. Physical hosts and actual UTC do not
 establish different operators, public ingress fairness or proof-cost hardness.
+
+## Current applicability and pipeline cost decomposition
+
+The [responsibility reporter](../../../modules/README.md#responsibility-and-evidence)
+derives current byte applicability; neither v3 nor v4 is globally labelled current merely
+because a component file stayed unchanged. E3 is a later model/consent experiment and
+does not replay v4's native-host performance campaign. New tooling checks belong to their
+own source/PR observations. Never overwrite an old manifest or change its measured SHA.
+
+The current workload is the closed twelve-command ledger, not an arbitrary contract VM.
+For one source and one profile, split signature preparation, state speculation, canonical
+replay, root construction, IPC encoding, process startup, durable commit, work validation,
+propagation, inclusion and client confirmation. Record state size and shared sponsor,
+provider, nonce, release-pointer and prefix conflicts. Ordinary append no longer copies
+all KV rows; full root computation and the reference/native bridge still require scrutiny.
+
+Optimize the measured bottleneck rather than prescribing another worker pool. Candidate
+work includes incremental authenticated roots, bounded native state residency, explicit
+access/dependency scheduling and serial hotspot degradation while preserving the existing
+single durable owner. A changed backend needs exact state/receipt/error/recovery parity
+before its speed can count. A faster executor cannot expand the 256-slot/10-second nominal
+budget or reduce probabilistic confirmation risk by itself.
+
+Client-confirmed throughput requires independently checked work/inclusion/currentness,
+not an RPC integer or a controller ACK. Public attack capacity additionally requires the
+ordinary open ingress path. Missing network/native owner/independent observations remain
+unmeasured, even when all local correctness and cost collectors complete successfully.

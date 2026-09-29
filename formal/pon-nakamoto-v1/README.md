@@ -30,7 +30,7 @@ The work relation, transaction/state bytes and parameter commitment are still ch
 
 The complete command set also covers bounded child I/O, strict signatures, model/receipt
 binding, clustered evaluation, malformed work and all workspace tests/Clippy/fmt. Actual
-commands and environment are in [the retained receipt](../../evidence/pon-v3/qualification/report.json).
+commands and environment belong to each [source-bound package](../../docs/modules/README.md#responsibility-and-evidence); v3 is historical, not the global current receipt.
 A test class name, new heading or passing document parser cannot stand in for those runs.
 Vectors are immutable test inputs; generating replacement vectors is an explicit protocol
 change and must never be part of a test's pass path.
@@ -72,7 +72,7 @@ withholding tests a controlled partition schedule; it does not simulate every WA
 Model copies, actual inference, finite sponsored quota and replay rejection are measured
 separately from adoption. Hosts controlled by one operator do not become independent actors.
 
-[The evidence package](../../evidence/pon-v3/README.md) binds raw outputs, code, inputs,
+[The historical v3 evidence package](../../evidence/pon-v3/README.md) binds raw outputs, code, inputs,
 clock overrides and remaining limits. Historical [v1 evidence](../../evidence/pon-v1/README.md)
 is not edited or promoted to current acceptance. Work hardness, fair public proof admission,
 ordinary Hepta integration, long-term DA, physical power loss and independent acceptance

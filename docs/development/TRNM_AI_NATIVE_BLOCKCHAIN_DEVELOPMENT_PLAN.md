@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
 Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 3).
-Effective: 2026-09-28. Status: selected development direction; no runtime activation.
+Effective: 2026-09-28; applicability clarification: 2026-09-29. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -91,7 +91,17 @@ public-network efficiency and independent verification remain unqualified. No
 quality threshold, training log, TEE quote or proof-of-execution is silently substituted
 for computational hardness. No pure-hash or old-BFT automatic fallback is authorized.
 
-### 2.2 Shared model structure
+### 2.2 Executable application boundary
+
+The current mainline is a dedicated AI-work/model/service chain with twelve registered
+native commands, not an arbitrary user-contract VM. No EVM, Move or WASM backend is
+selected. Fees and performance evidence apply to the named closed commands. A future
+VM decision needs explicit bytecode safety, deterministic metering, ABI, storage,
+upgrade/reorg semantics, tooling and module ownership; it cannot arrive through an
+unknown transaction tag or model artifact. See the application-scope section of
+[LEDGER_WIRE](../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md).
+
+### 2.3 Shared model structure
 
 Use a common immutable base, organ/domain adapters, Cell/expert deltas, learned router
 and typed composition graph. Parameters carry exact compatibility-family identities.
@@ -107,7 +117,7 @@ routing and output semantics can be reproduced. Cell depth is not transformer de
 
 The global control plane remains advisory and outside ledger authority.
 
-### 2.3 Local Hepta sovereignty
+### 2.4 Local Hepta sovereignty
 
 Hepta training/artifact/evaluation/plasticity owners remain authoritative for their
 facts. Neuron/Intuition/inference execute admitted models; kernel.operations owns
@@ -288,15 +298,21 @@ assumptions. All eighteen module contracts refer to their own failure modes. A r
 checker proves that these bindings exist; a separate exact-source receipt proves which
 selectors actually ran. Neither mechanism supplies independent scientific authority.
 
-| Workstream | Actual implemented boundary | Next acceptance requirement |
+| Priority / workstream | Actual implemented boundary | Concrete next acceptance requirement |
 |---|---|---|
-| Four audited counterexamples | Pending versus history capacity; durable owned initialization; serialized revoke/entry; restart selection of stored verified heavier tip | Keep the concrete fault regressions on every changed owner; join normal Hepta final-use and target-side reconciliation |
-| Work and proof admission | Fixed transcript verifier, strict native signature parity, bounded public/recovery lanes and duplicate ownership | Adversarial cost and shortcut model; public Sybil-safe proof intake and honest block service under sustained attack |
-| State lifetime and recovery | Signed intake rounds, bounded terminal refund/retirement, incremental append, checkpoints and spooled ancestry | Complete account/work history compaction, native paged sync and long-run retained obligations without artificial finality |
-| Native execution | All twelve commands with canonical validation, bounded speculation, block-scoped signature preparation, 1/2/4/8 worker parity | Ordinary native consensus/persistence integration and capacity measured on the full block/confirmation pipeline |
-| Model adoption and reward | E3 sealed artifacts/controls/partitions, source-group calibration and evaluation, actual calibration/result replay before controlled signing, valid no-update outcomes | Untouched prospective task sources, independent evaluation/withdrawal owners, strongest deployable control under declared resource budget |
-| Ordinary Hepta and resource responsibility | Closed genesis/model/request/input/output/cost/nonce service receipt; exact upstream owner map, not an invented grant | Implement and configure the ordinary Agentd PoN destination through existing operation and artifact owners; reserve real serving/retention resources |
-| Physical-host acceptance | Prior source-bound ROG/Pocket4/X230 experiments; current same-input evaluator parity is a separate experiment | Independently administered operators, actual network partitions, long-term DA, disk/power failure and sustained resource exhaustion |
+| P0 work and public admission | Exact experimental transcript, strict native verification, bounded public/recovery library lanes; W1/A2 distinguish search difficulty from invalid rejection | Implement/reproduce adversarial shortcuts and same-target costs; join ordinary public ingress and demonstrate honest service under stated sustained attack. No queue count grants work hardness. |
+| P0 one native node | Native work and all twelve native commands are explicit components; reference Ledger owns consensus decisions and persistence | Existing M02/M07/M08/M14/M15 owners must form one normal startup/request path: mine/receive, validate, execute, persist, select/reorg and serve independently checked confirmation. No second engine or reference fallback labelled native completion. |
+| P1 long-lived state and confirmation | Incremental ordinary append, bounded candidate/resource retirement, local checkpoints and spooled ancestry | Native incremental authenticated state and resumable paged history/confirmation with explicit cursors and resource budgets. Verify valid deep history without treating retention as finality. |
+| P1 independent model value | E3 seals actual parent/candidate/strong controls/calibration/partitions; no-gain remains zero adoption and reward | Authorized new tasks, independent source/evaluation/withdrawal owners, untouched future windows and budget-matched strong controls. Retrospective splits or configured identities do not satisfy independence. |
+| P1 real resources and failures | Closed service receipt, finite quota/reward conservation and same-admin process/host fault observations | Real storage/serving obligations and funding, target-side effect reconciliation, independent operators, physical power loss and hostile public network. No chain undo may repeat a physical action. |
+| P2 end-to-end capacity | Source-bound native worker comparisons; shared-key and whole-state-root costs remain visible | Same profile, source, state size and load through submission, inclusion and client-verified depth/work confirmation, with latency tails, hotspot degradation, resources and attack availability. Executor speed alone is not TPS. |
+
+Existing capacity/initialization/revoke-entry/admit-before-activate counterexample fixes
+remain regression obligations in the current owners; they are not new missing features.
+P0 work research and native integration may proceed concurrently, but neither grants the
+other's acceptance. The five documentation corrections are implemented through current
+revision applicability, procedure-level maturity/evidence, exact M08 phase contracts and
+explicit application scope; their completion is not completion of this table.
 
 Do not repeat already accepted component work under a new parallel engine. The source
 inventory remains the sole native package/owner list; proof, execution, chain state,
@@ -328,6 +344,13 @@ parameters change only after current independently admitted evidence and owner a
 not because the experiment was scheduled to run three times.
 
 ## 12. Evidence and remaining authority
+
+[Procedure-level evidence navigation](../modules/README.md#responsibility-and-evidence)
+reads immutable package identities and reports subject-byte equality, the complete
+recorded runtime and exact observed/unobserved selectors separately. Reusable package
+presence is not ordinary product integration. Empty entrypoints and unobserved campaigns
+remain explicit; no mandatory paragraph length, heading total or test-count gate is added.
+
 
 `evidence/pon-v1`, `pon-v3` and `pon-v4` retain their exact historical source, failures,
 workload, filesystem and host scope. The historical verifier checks those bytes and
