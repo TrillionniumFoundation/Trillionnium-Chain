@@ -38,6 +38,12 @@ def validate(root=ROOT,evidence=None,*,exact_inventory=True):
  require(q['source_clean']is True and q['source_clean_after']is True and q['all_commands_passed']is True,'dirty or failed run')
  for flag in ['ordinary_hepta_entry','independent_accepted','future_window_accepted','production_activation']:
   require(q[flag]is False,'qualification overclaim '+flag)
+ # Historical component mode may admit NEW current files, never omit files that
+ # existed in the measured tree. Derive that original inventory from Git, not the
+ # mutable receipt; otherwise deleting a source binding can hide it as 'unmeasured'.
+ measured_paths=subprocess.check_output(['git','ls-tree','-r','--name-only',commit],cwd=root,text=True).splitlines()
+ measured_runtime={p for p in measured_paths if runtime(p)}
+ require({p for p in q['source_files_sha256'] if runtime(p)}==measured_runtime,'measured runtime inventory mismatch')
  original=source_bytes(root,commit,list(q['source_files_sha256']))
  for relative,raw in original.items():
   require(hashlib.sha256(raw).hexdigest()==q['source_files_sha256'][relative],'source fingerprint '+relative)

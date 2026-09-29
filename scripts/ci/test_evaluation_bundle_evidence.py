@@ -44,6 +44,10 @@ class CurrentEvaluationEvidenceTests(unittest.TestCase):
  def test_old_evidence_is_not_silently_replaced(self):self.mutate('manifest.json',lambda d:d.update(historical_v4_sha256='00'*32))
  def test_forged_aggregate_score_fails_even_with_updated_file_hash(self):
   self.mutate('model/report.json',lambda d:d['results']['evaluation_a']['whole_gain'].update(score=999999))
+ def test_historical_component_mode_cannot_drop_a_transitive_runtime_input(self):
+  self.mutate('qualification.json',lambda d:d['source_files_sha256'].pop('formal/pon-nakamoto-v1/model_contract.py'))
+ def test_historical_component_mode_cannot_drop_locked_native_dependencies(self):
+  self.mutate('qualification.json',lambda d:d['source_files_sha256'].pop('trillionnium/Cargo.lock'))
  def test_source_hash_binding_cannot_be_omitted(self):
   self.mutate('qualification.json',lambda d:d['source_files_sha256'].pop('formal/pon-nakamoto-v1/evaluation_bundle.py'))
 
