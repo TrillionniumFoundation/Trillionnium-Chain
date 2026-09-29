@@ -1,31 +1,13 @@
 # M01 Strict identity and exact neural-work verification
 
-Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
-Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
-[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
-This module has detailed procedures and executable reference coverage, not an independently
-accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets ordering. [WORK_PROFILE.md](../protocol/pon-nakamoto-v1/details/WORK_PROFILE.md) defines exact shared rules.
+Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 
-## PoN Authority
+## Scope and ownership
 
-Check length/magic/field bounds; recompute TaskId; apply cheap ticket filter; replay challenge-noised tiled transcript and exact decoded product; return no verified type on any mismatch.
+Actual strict native signatures and unchanged experimental transcript verification.
 
-This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
-passing document check to grant work validity, model utility, local execution permission
-or production activation. Every consumer must use the specific verified fact it needs.
-Native component reuse and executable-contract integration are reported separately.
-
-## PoN Interfaces
-
-| Operation | Exact logical inputs | Output and authority boundary |
-|---|---|---|
-| `VerifyWork` | challenge32, expectedTask32, target32, certificate[49188] | non-public native VerifiedWork |
-| `VerifyTransactionSignature` | decoded sender32,signature64, unsigned envelope | validated exact sender statement |
-
-The named signatures define domain contracts. Source bindings below identify which are
-implemented natively, in the executable Python specification, or only by reusable
-components. The names do not assert matching deployed Rust service APIs.
+The claims below apply to their named component and tests, not to an independently accepted full native node.
 
 ## PoN State machine
 
@@ -33,73 +15,79 @@ components. The names do not assert matching deployed Rust service APIs.
 
 Check length/magic/field bounds; recompute TaskId; apply cheap ticket filter; replay challenge-noised tiled transcript and exact decoded product; return no verified type on any mismatch.
 
-**Commit point:** No authoritative store; cache key must include complete context.
-
-**Rejections:** `LENGTH, VERSION, TASK, FIELD, TARGET, TRANSCRIPT, PRODUCT`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+**Atomic/commit boundary:** No authoritative store; cache key must include complete context.
 
 ### M01.VerifyTransactionSignature
 
 Strict Ed25519 over H(tx-sign,unsigned). Reject weak/malformed keys or mismatching signatures before copying mutations into a committed state. Signed scores remain attestations, not work.
 
-**Commit point:** No key material copied from fixtures into deployment.
+**Atomic/commit boundary:** No key material copied from fixtures into deployment.
 
-**Rejections:** `SIGNATURE, NETWORK`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+## M01.VerificationAuthority
 
-## PoN Persistence and recovery
+**Invariant:** Bad signatures reject the whole block without mutating parent state; altered work output or context never yields verified work. Both verification languages reject small-order public keys/R, noncanonical points and scalars outside the group-order bound.
 
-**M01.VerifyWork:** No authoritative store; cache key must include complete context.
+**Scope:** Actual strict native signatures and unchanged experimental transcript verification.
 
-**M01.VerifyTransactionSignature:** No key material copied from fixtures into deployment.
+**Atomic boundary:** Signature verification precedes speculative patches; only full transcript verification creates work authority.
 
-Branch-derived entitlement can be detached. Independent local effect/revocation facts
-cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
-A native implementation must reproduce byte/root/recovery vectors before replacing the
-reference path. No old consensus namespace or decoder is restored.
+**Failure schedule:** Bad signature at every worker count; Changed transcript, product and challenge; Small-order sender with R identity and zero scalar; Noncanonical point or S plus group order; Weak quota consumer identity.
 
-## PoN Resource bounds
+**Expected result:** Bad signatures reject the whole block without mutating parent state; altered work output or context never yields verified work. Both verification languages reject small-order public keys/R, noncanonical points and scalars outside the group-order bound.
 
-**M01.VerifyWork:** n64,r8,q4294967291,u128; fixed49188 bytes.
+**Resource and retention rule:** 49188-byte work certificate; failed proof still requires substantial computation.
 
-**M01.VerifyTransactionSignature:** one signature per tx; quota use adds one consumer signature.
+## Concrete regression selectors
 
-The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
-work, model and ledger profile. Limit changes require a new context. Local backpressure
-may reject service or defer data but cannot fabricate accepted block/evaluation facts.
+`formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_bad_signature_rejects_entire_block_without_parent_mutation`
 
-## PoN Security
+`formal/pon-nakamoto-v1/test_interop.py::InteropTests.test_native_rejects_changed_context_and_output`
 
-The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
-cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
-experimental partitions; they are not independent future-window evidence. SQLite process
-crashes are not physical power-loss qualification. These limitations remain explicit in
-[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
+`formal/pon-nakamoto-v1/test_work_backend.py::NativeWorkBridgeTests.test_proof_bytes_and_verified_product_equal_oracle`
 
-## PoN Verification and evidence
+`formal/pon-nakamoto-v1/test_work_backend.py::NativeWorkBridgeTests.test_wrong_statement_and_bad_trace_reject_without_fallback`
 
-- `InteropTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
-- `ExecutionTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+`formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_native_and_reference_reject_weak_sender_without_state_change`
 
-```bash
-python3 formal/pon-nakamoto-v1/test_contracts.py
-CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
-```
+`formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_weak_consumer_cannot_authorize_quota`
 
-Build native examples before the interop command; missing binaries cause failure, not
-a skipped pass. Fixtures are never regenerated by test execution. Independently written
-third-party vectors and acceptance remain future evidence, not an assumed status.
+`formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_rfc8032_known_vector`
+
+`formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_all_declared_order_eight_points_reject`
+
+These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
+
+## Module-specific threat and residual work
+
+Cheap forgery amplification, structured-input shortcuts, hardware advantage and weak-key disagreement.
+
+The native work bridge and structured-input costs are executable; fastest-adversary cost, public proof admission and independent work security are still unqualified.
 
 ## Current source and verification
 
-- [`trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs`](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs)
-- [`formal/pon-nakamoto-v1/work_oracle.py`](../../formal/pon-nakamoto-v1/work_oracle.py)
-- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
-- Native reusable owner: `trnm-crypto-primitives`; run `cargo test --locked -p trnm-crypto-primitives --all-targets --all-features` from `trillionnium`.
-- Native reusable owner: `trnm-governance-guard`; run `cargo test --locked -p trnm-governance-guard --all-targets --all-features` from `trillionnium`.
+- [`trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs`](../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs).
+- [`trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs`](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs).
+- [`formal/pon-nakamoto-v1/work_backend.py`](../../formal/pon-nakamoto-v1/work_backend.py).
+- [`trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs`](../../trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs).
+- [`formal/pon-nakamoto-v1/strict_signature.py`](../../formal/pon-nakamoto-v1/strict_signature.py).
+- [`trillionnium/crates/trnm-crypto-primitives/src/lib.rs`](../../trillionnium/crates/trnm-crypto-primitives/src/lib.rs).
 
-## Maturity and outstanding integration
+No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.
 
-Documented: yes. Executable contract: yes. Native component presence is enumerated above.
-Native ordinary-product integration: no. Independent acceptance: no. Production activation:
-no. Those axes are independent; a component-level pass does not promote the entire module.
+## Executed evidence and scope
+
+The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
+raw command exits and concrete invariant test results. Its verifier distinguishes
+runtime byte identity from documentation edits and cannot grant independent acceptance.
+Module-specific limitations above remain in force even when the referenced local test
+passes. The development plan, not this link or a count of procedures, selects next work.
+
+## Block-scoped execution continuation
+
+The existing native executor now bounds thread creation per block and preserves a private
+verified main envelope across canonical state replay. This is a computational fact, not
+work validity or local permission. Capacity/range state transitions remain ordered and
+consumer signatures still bind actual quota state. See the exact algorithm, errors and
+counterexamples in [EXECUTION_PARALLEL](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md).
+Complete-state root construction, full native node assembly and Hepta ownership remain
+separate work; worker counts do not establish throughput or independent acceptance.

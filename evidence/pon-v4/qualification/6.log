@@ -1,0 +1,17 @@
+test_binding_cannot_grant_execution (__main__.InvariantRegistryTests.test_binding_cannot_grant_execution) ... ok
+test_boolean_revision_is_not_integer (__main__.InvariantRegistryTests.test_boolean_revision_is_not_integer) ... ok
+test_class_name_is_not_a_test_function (__main__.InvariantRegistryTests.test_class_name_is_not_a_test_function) ... ok
+test_duplicate_identity_rejected (__main__.InvariantRegistryTests.test_duplicate_identity_rejected) ... ok
+test_independence_cannot_be_granted (__main__.InvariantRegistryTests.test_independence_cannot_be_granted) ... ok
+test_known_revoke_obligation_cannot_be_omitted (__main__.InvariantRegistryTests.test_known_revoke_obligation_cannot_be_omitted) ... ok
+test_missing_atomic_boundary (__main__.InvariantRegistryTests.test_missing_atomic_boundary) ... ok
+test_no_counterexample_schedule (__main__.InvariantRegistryTests.test_no_counterexample_schedule) ... ok
+test_prose_rephrase_and_heading_change_do_not_fake_a_failure (__main__.InvariantRegistryTests.test_prose_rephrase_and_heading_change_do_not_fake_a_failure) ... ok
+test_real_function_bindings (__main__.InvariantRegistryTests.test_real_function_bindings) ... ok
+test_stale_genesis_revision_rejected (__main__.InvariantRegistryTests.test_stale_genesis_revision_rejected) ... ok
+test_wrong_test_selector_rejected (__main__.InvariantRegistryTests.test_wrong_test_selector_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.805s
+
+OK

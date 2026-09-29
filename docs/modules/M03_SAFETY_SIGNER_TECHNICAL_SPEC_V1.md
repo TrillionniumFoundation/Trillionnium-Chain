@@ -1,31 +1,13 @@
 # M03 Work attempts, independent local effects and custody
 
-Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
-Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
-[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
-This module has detailed procedures and executable reference coverage, not an independently
-accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets ordering. [STATE_RECOVERY.md](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md) defines exact shared rules.
+Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 
-## PoN Authority
+## Scope and ownership
 
-Freeze all header bytes before work; evaluate full challenge transcript; retry a different nonce with a new computation; cap local reference attempts4096. Parent changes do not relabel an old transcript. Durable mining-attempt recovery is a native integration obligation, not implemented by the CLI.
+Two SQLite connections to one local operation namespace. This is not physical effect cancellation.
 
-This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
-passing document check to grant work validity, model utility, local execution permission
-or production activation. Every consumer must use the specific verified fact it needs.
-Native component reuse and executable-contract integration are reported separately.
-
-## PoN Interfaces
-
-| Operation | Exact logical inputs | Output and authority boundary |
-|---|---|---|
-| `RunWorkAttempt` | frozen header,parent generation, task matrices, attempt budget | exact proof or explicit stale/cancelled attempt |
-| `EnterExternalEffect` | operation32,payload32,local generation | unique entered fact or replay/revoke failure |
-
-The named signatures define domain contracts. Source bindings below identify which are
-implemented natively, in the executable Python specification, or only by reusable
-components. The names do not assert matching deployed Rust service APIs.
+The claims below apply to their named component and tests, not to an independently accepted full native node.
 
 ## PoN State machine
 
@@ -33,71 +15,54 @@ components. The names do not assert matching deployed Rust service APIs.
 
 Freeze all header bytes before work; evaluate full challenge transcript; retry a different nonce with a new computation; cap local reference attempts4096. Parent changes do not relabel an old transcript. Durable mining-attempt recovery is a native integration obligation, not implemented by the CLI.
 
-**Commit point:** Reference mining is in-memory; no claim of durable miner. External publication uses exact idempotent BlockId.
-
-**Rejections:** `WORK_BUDGET, REORG_IN_PROGRESS, FIELD`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+**Atomic/commit boundary:** Reference mining is in-memory; no claim of durable miner. External publication uses exact idempotent BlockId.
 
 ### M03.EnterExternalEffect
 
-Check revocation; insert exact operation once into independent effects DB before actual dispatch. A reorg never deletes this record. Duplicate entry queries/reconciles target; it cannot dispatch again.
+If revoke commits before entry, the same operation cannot create an effects row; a committed entry cannot be repeated after crash. BEGIN IMMEDIATE encloses revocation check, duplicate check and insert; revoke uses the same serialization point.
 
-**Commit point:** Separate SQLite WAL FULL DB, PK operation; independent anchor not yet joined.
+**Atomic/commit boundary:** BEGIN IMMEDIATE encloses revocation check, duplicate check and insert; revoke uses the same serialization point.
 
-**Rejections:** `OPERATION_ALREADY_ENTERED, REVOKED`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+## M03.RevokeEntryLinearization
 
-## PoN Persistence and recovery
+**Invariant:** If revoke commits before entry, the same operation cannot create an effects row; a committed entry cannot be repeated after crash.
 
-**M03.RunWorkAttempt:** Reference mining is in-memory; no claim of durable miner. External publication uses exact idempotent BlockId.
+**Scope:** Two SQLite connections to one local operation namespace. This is not physical effect cancellation.
 
-**M03.EnterExternalEffect:** Separate SQLite WAL FULL DB, PK operation; independent anchor not yet joined.
+**Atomic boundary:** BEGIN IMMEDIATE encloses revocation check, duplicate check and insert; revoke uses the same serialization point.
 
-Branch-derived entitlement can be detached. Independent local effect/revocation facts
-cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
-A native implementation must reproduce byte/root/recovery vectors before replacing the
-reference path. No old consensus namespace or decoder is restored.
+**Failure schedule:** Revoke commits first; Revoker scheduled between checks and insertion; Crash after entry commit.
 
-## PoN Resource bounds
+**Expected result:** If revoke commits before entry, the same operation cannot create an effects row; a committed entry cannot be repeated after crash.
 
-**M03.RunWorkAttempt:** 49188-byte result, bounded matrix sizes; no hidden success fallback.
+**Resource and retention rule:** Fixed operation and payload identity, bounded lock wait, explicit generation.
 
-**M03.EnterExternalEffect:** fixed operation and payload digests; one local owner.
+## Concrete regression selectors
 
-The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
-work, model and ledger profile. Limit changes require a new context. Local backpressure
-may reject service or defer data but cannot fabricate accepted block/evaluation facts.
+`formal/pon-nakamoto-v1/test_invariants.py::EffectLinearizationTests.test_revoke_committed_first_prevents_entry`
 
-## PoN Security
+`formal/pon-nakamoto-v1/test_invariants.py::EffectLinearizationTests.test_revoker_cannot_commit_inside_entry_transaction`
 
-The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
-cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
-experimental partitions; they are not independent future-window evidence. SQLite process
-crashes are not physical power-loss qualification. These limitations remain explicit in
-[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
+`formal/pon-nakamoto-v1/test_invariants.py::EffectLinearizationTests.test_crash_after_entry_commit_rejects_replay`
 
-## PoN Verification and evidence
+These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
-- `DiskReorgTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+## Module-specific threat and residual work
 
-```bash
-python3 formal/pon-nakamoto-v1/test_contracts.py
-CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
-```
+Check/use races, ACK loss, owner takeover and coherent rollback of all evidence.
 
-Build native examples before the interop command; missing binaries cause failure, not
-a skipped pass. Fixtures are never regenerated by test execution. Independently written
-third-party vectors and acceptance remain future evidence, not an assumed status.
+Normal Hepta final-use token, independent rollback frontier and target-side reconciliation remain unjoined.
 
 ## Current source and verification
 
-- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
-- [`trillionnium/crates/trnm-checkpoint-types/src/record.rs`](../../trillionnium/crates/trnm-checkpoint-types/src/record.rs)
-- Native reusable owner: `trnm-checkpoint-store`; run `cargo test --locked -p trnm-checkpoint-store --all-targets --all-features` from `trillionnium`.
-- Native reusable owner: `trnm-checkpoint-types`; run `cargo test --locked -p trnm-checkpoint-types --all-targets --all-features` from `trillionnium`.
+- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
-## Maturity and outstanding integration
+No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.
 
-Documented: yes. Executable contract: yes. Native component presence is enumerated above.
-Native ordinary-product integration: no. Independent acceptance: no. Production activation:
-no. Those axes are independent; a component-level pass does not promote the entire module.
+## Executed evidence and scope
+
+The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
+raw command exits and concrete invariant test results. Its verifier distinguishes
+runtime byte identity from documentation edits and cannot grant independent acceptance.
+Module-specific limitations above remain in force even when the referenced local test
+passes. The development plan, not this link or a count of procedures, selects next work.

@@ -181,9 +181,13 @@
         {
           "name": "components_root",
           "type": "hash32"
+        },
+        {
+          "name": "submission_round",
+          "type": "u64"
         }
       ],
-      "fixed_payload_bytes": 168,
+      "fixed_payload_bytes": 176,
       "base_fee_units": 200
     },
     {
@@ -354,7 +358,13 @@
     "16": "UNKNOWN_PARENT",
     "17": "WORK",
     "18": "REORG_IN_PROGRESS",
-    "19": "OPERATION_ALREADY_ENTERED"
+    "19": "OPERATION_ALREADY_ENTERED",
+    "20": "RESOURCE_ID",
+    "21": "SUBMISSION_ROUND",
+    "22": "CANDIDATE_WINDOW_FULL",
+    "23": "DUPLICATE_CONTENT",
+    "24": "WORK_LENGTH",
+    "25": "ANCESTRY_IO"
   },
   "states": {
     "task": [
@@ -372,12 +382,21 @@
     "contribution": [
       "submitted",
       "evaluated",
-      "adopted"
+      "adopted",
+      "expired"
     ],
     "reward": [
       "immature",
       "claimable",
       "claimed"
     ]
+  },
+  "signature_profile": {
+    "id": "ed25519-canonical-small-order-reject-v1",
+    "canonical_point_encoding": true,
+    "scalar_s_less_than_group_order": true,
+    "reject_small_order_public_key": true,
+    "reject_small_order_r": true,
+    "equation": "uncofactored strict verification; library verifier after explicit byte/point checks"
   }
 }

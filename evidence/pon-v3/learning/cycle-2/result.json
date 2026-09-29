@@ -1,0 +1,31 @@
+{
+  "cycle": 2,
+  "parent_actually_admitted_artifact": "c42c23d4c469b0540706a1fd8be8bcccb88c54adc1123c88ad9d150de0a3a802",
+  "candidate": "b21f19fef3c1444b70474e4f8790fedd4cdc2cc96c36312c7f2e403eb306d29d",
+  "selected_reference": "best_single",
+  "training_rows": 270,
+  "calibration_rows": 167,
+  "evaluation_rows": 85,
+  "source_groups": {
+    "train": 40,
+    "calibration": 20,
+    "evaluation": 21
+  },
+  "evaluation": {
+    "clusters": 21,
+    "wins": 0,
+    "losses": 0,
+    "comparisons": 4,
+    "cluster_gate": false,
+    "mean_gain_numerator": 0,
+    "mean_gain_denominator": 1,
+    "exploratory_score": 0,
+    "future_window_observed": false,
+    "public_reward_eligible": false,
+    "reason": "independent time/source-owner receipts must be verified by the accepting owner"
+  },
+  "outcome": "no_public_update",
+  "reward": 0,
+  "public_artifact_after": "c42c23d4c469b0540706a1fd8be8bcccb88c54adc1123c88ad9d150de0a3a802",
+  "duration_ns": 221149860
+}

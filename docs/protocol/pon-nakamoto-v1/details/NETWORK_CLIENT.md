@@ -83,3 +83,26 @@ Production services are not installed or run by these experiments. Generic relea
 checks do not establish this node lifecycle. The native adapter to ordinary Hepta requests,
 independent operators, target-machine long runs and public RPC remain explicit missing
 integrations, with component/reference evidence shown separately from deployment.
+
+## Physical-host conformance without installing a service
+
+`multihost_campaign.py` copies a closed source manifest into new private temporary roots
+on explicitly selected SSH hosts. The test channel is framed authenticated SSH stdio,
+not a public P2P protocol or independent network. No listener, firewall, router, key or
+existing user service is changed. All child sessions are closed/reaped on completion.
+
+A separately recorded temporary devnet configuration selects a distinct genesis whose
+timestamp permits real UTC validation. Every peer verifies identical source/config
+hashes and reports actual local UTC. Test headers use max(UTC,median+1); the configured
+10-second target spacing is NOT enforced and the experiment does not report public TPS.
+
+The campaign measures a deliberate controller delivery partition and catch-up, exit86
+after block admission, startup selection, heavier fork detach/attach, retained local
+effect facts, invalid proofs, independent physical artifact copies, author-copy removal,
+integer inference parity, sponsored signed consumption, exhausted-quota rejection and
+a six-depth/work confirmation. Actual observations include bytes, elapsed/CPU time,
+peak RSS and database size. GPU work is absent, not a measured GPU performance claim.
+
+Physical hosts controlled by the same person are not independent operators. Transport
+routing attacks, hostile open peers, long-term DA, power loss and ordinary Hepta owner
+execution remain different acceptance obligations.

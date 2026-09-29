@@ -1,103 +1,71 @@
 # M11 Evaluation profile, attested trust and integer merit
 
-Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
-Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
-[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
-This module has detailed procedures and executable reference coverage, not an independently
-accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets ordering. [MODEL_EVALUATION.md](../protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md) defines exact shared rules.
+Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 
-## PoN Authority
+## Scope and ownership
 
-Use exact model inference and paired sign rule: n>=20,w>l,20*binomialtail<=2^m; score=floor((w-l)*1e6/n), else0. Record every baseline including stronger single experts; no score tuning after observation.
+Controlled real training and explicit evaluation producer; signatures still use the experimental attestor trust model.
 
-This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
-passing document check to grant work validity, model utility, local execution permission
-or production activation. Every consumer must use the specific verified fact it needs.
-Native component reuse and executable-contract integration are reported separately.
-
-## PoN Interfaces
-
-| Operation | Exact logical inputs | Output and authority boundary |
-|---|---|---|
-| `EvaluateFrozenModel` | fixed tasks,reference,candidate,ablation index | integer outcomes,win/loss counts,score,evidence bytes |
-| `AdmitEvaluation` | signed candidate/plan/evidence/score from evaluator | one attestation or frozen evaluated result |
-
-The named signatures define domain contracts. Source bindings below identify which are
-implemented natively, in the executable Python specification, or only by reusable
-components. The names do not assert matching deployed Rust service APIs.
+The claims below apply to their named component and tests, not to an independently accepted full native node.
 
 ## PoN State machine
 
 ### M11.EvaluateFrozenModel
 
-Use exact model inference and paired sign rule: n>=20,w>l,20*binomialtail<=2^m; score=floor((w-l)*1e6/n), else0. Record every baseline including stronger single experts; no score tuning after observation.
+A candidate losing to the strongest calibration-locked control receives no improvement score; many snippets in one file are one statistical cluster. Freeze candidate/control/calibration before evaluation; calculate exact source-group sign test with multiplicity correction.
 
-**Commit point:** Immutable evidence bytes; durations outside consensus values.
-
-**Rejections:** `EVIDENCE, SHAPE, FAMILY, NUMERIC`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+**Atomic/commit boundary:** Freeze candidate/control/calibration before evaluation; calculate exact source-group sign test with multiplicity correction.
 
 ### M11.AdmitEvaluation
 
 Require one of three named development evaluators, not author, unique sender, expected plan and nonzero evidence. First2 valid attestations freeze minimum score; no extra votes change it. This admits attestation truth, not objectively recomputed ML correctness.
 
-**Commit point:** Votes embedded in contribution state; no chainwork or validationmembership mutation.
+**Atomic/commit boundary:** Votes embedded in contribution state; no chainwork or validationmembership mutation.
 
-**Rejections:** `AUTHORITY, DUPLICATE, STATE, EVIDENCE`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+## M11.StrongClusterControl
 
-## PoN Persistence and recovery
+**Invariant:** A candidate losing to the strongest calibration-locked control receives no improvement score; many snippets in one file are one statistical cluster.
 
-**M11.EvaluateFrozenModel:** Immutable evidence bytes; durations outside consensus values.
+**Scope:** Controlled real training and explicit evaluation producer; signatures still use the experimental attestor trust model.
 
-**M11.AdmitEvaluation:** Votes embedded in contribution state; no chainwork or validationmembership mutation.
+**Atomic boundary:** Freeze candidate/control/calibration before evaluation; calculate exact source-group sign test with multiplicity correction.
 
-Branch-derived entitlement can be detached. Independent local effect/revocation facts
-cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
-A native implementation must reproduce byte/root/recovery vectors before replacing the
-reference path. No old consensus namespace or decoder is restored.
+**Failure schedule:** Best single stronger than base; Candidate loses to best control; One hundred snippets from one source; Caller labels data future.
 
-## PoN Resource bounds
+**Expected result:** A candidate losing to the strongest calibration-locked control receives no improvement score; many snippets in one file are one statistical cluster.
 
-**M11.EvaluateFrozenModel:** file-disjoint sourcepartitions, maxscore1million.
+**Resource and retention rule:** At least20 clusters, four-comparison correction, integer/Fraction arithmetic; public reward eligibility stays false without owner-verified evidence.
 
-**M11.AdmitEvaluation:** threshold2-of3 controlledfixture; production evaluatorprofile notaccepted.
+## Concrete regression selectors
 
-The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
-work, model and ledger profile. Limit changes require a new context. Local backpressure
-may reject service or defer data but cannot fabricate accepted block/evaluation facts.
+`formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_stronger_single_control_not_weak_base_is_selected`
 
-## PoN Security
+`formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_improving_over_base_but_losing_to_control_is_not_rewarded`
 
-The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
-cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
-experimental partitions; they are not independent future-window evidence. SQLite process
-crashes are not physical power-loss qualification. These limitations remain explicit in
-[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
+`formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_snippets_from_one_file_do_not_become_independent_samples`
 
-## PoN Verification and evidence
+`formal/pon-nakamoto-v1/test_evaluation.py::ModelGateTests.test_positive_cluster_result_does_not_mint_future_acceptance`
 
-- `ExecutionTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
-```bash
-python3 formal/pon-nakamoto-v1/test_contracts.py
-CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
-```
+## Module-specific threat and residual work
 
-Build native examples before the interop command; missing binaries cause failure, not
-a skipped pass. Fixtures are never regenerated by test execution. Independently written
-third-party vectors and acceptance remain future evidence, not an assumed status.
+Weak baselines, correlated samples, adaptive holdout reuse, poisoned evaluators and first-two arrival manipulation.
+
+Fresh future windows, independent evaluators and a public dispute/aggregation profile are still required.
 
 ## Current source and verification
 
-- [`formal/pon-nakamoto-v1/experiments/model_loop.py`](../../formal/pon-nakamoto-v1/experiments/model_loop.py)
-- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
-- Native reusable owner: `trnm-oracle`; run `cargo test --locked -p trnm-oracle --all-targets --all-features` from `trillionnium`.
-- Native reusable owner: `trnm-verification-profiles`; run `cargo test --locked -p trnm-verification-profiles --all-targets --all-features` from `trillionnium`.
+- [`formal/pon-nakamoto-v1/evaluation.py`](../../formal/pon-nakamoto-v1/evaluation.py).
+- [`formal/pon-nakamoto-v1/experiments/model_loop.py`](../../formal/pon-nakamoto-v1/experiments/model_loop.py).
 
-## Maturity and outstanding integration
+No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.
 
-Documented: yes. Executable contract: yes. Native component presence is enumerated above.
-Native ordinary-product integration: no. Independent acceptance: no. Production activation:
-no. Those axes are independent; a component-level pass does not promote the entire module.
+## Executed evidence and scope
+
+The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
+raw command exits and concrete invariant test results. Its verifier distinguishes
+runtime byte identity from documentation edits and cannot grant independent acceptance.
+Module-specific limitations above remain in force even when the referenced local test
+passes. The development plan, not this link or a count of procedures, selects next work.

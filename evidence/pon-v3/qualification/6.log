@@ -1,0 +1,14 @@
+test_best_expert_control_cannot_be_hidden (__main__.EvidenceRejectionTests.test_best_expert_control_cannot_be_hidden) ... ok
+test_current_local_evidence (__main__.EvidenceRejectionTests.test_current_local_evidence) ... ok
+test_evidence_path_cannot_escape (__main__.EvidenceRejectionTests.test_evidence_path_cannot_escape) ... ok
+test_failed_experiment_cannot_be_omitted (__main__.EvidenceRejectionTests.test_failed_experiment_cannot_be_omitted) ... ok
+test_future_window_claim_rejected_even_after_rehash (__main__.EvidenceRejectionTests.test_future_window_claim_rejected_even_after_rehash) ... ok
+test_independent_acceptance_cannot_be_fabricated (__main__.EvidenceRejectionTests.test_independent_acceptance_cannot_be_fabricated) ... ok
+test_raw_artifact_cannot_be_swapped (__main__.EvidenceRejectionTests.test_raw_artifact_cannot_be_swapped) ... ok
+test_skipped_campaign_cannot_be_a_pass (__main__.EvidenceRejectionTests.test_skipped_campaign_cannot_be_a_pass) ... ok
+test_source_digest_cannot_be_stale (__main__.EvidenceRejectionTests.test_source_digest_cannot_be_stale) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 12.987s
+
+OK

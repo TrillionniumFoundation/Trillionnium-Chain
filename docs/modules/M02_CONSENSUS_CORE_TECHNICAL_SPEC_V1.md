@@ -1,31 +1,13 @@
 # M02 Work-validated block admission and fork decisions
 
-Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
-Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
-[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
-This module has detailed procedures and executable reference coverage, not an independently
-accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets ordering. [LEDGER_WIRE.md](../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md) defines exact shared rules.
+Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 
-## PoN Authority
+## Scope and ownership
 
-Resolve parent, exact height/target/median/profile and parent-admitted task; verify real work and all signatures; execute and compare state/receipt/tx roots; derive required work; persist only complete valid block.
+Existing reference Ledger; native consensus actor remains separate work.
 
-This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
-passing document check to grant work validity, model utility, local execution permission
-or production activation. Every consumer must use the specific verified fact it needs.
-Native component reuse and executable-contract integration are reported separately.
-
-## PoN Interfaces
-
-| Operation | Exact logical inputs | Output and authority boundary |
-|---|---|---|
-| `AdmitBlock` | header, ordered tx bytes, full certificate, observed local time | immutable BlockId and derived chainwork |
-| `ChooseBranch` | fully validated tips and active tip | strictly heavier target or unchanged active |
-
-The named signatures define domain contracts. Source bindings below identify which are
-implemented natively, in the executable Python specification, or only by reusable
-components. The names do not assert matching deployed Rust service APIs.
+The claims below apply to their named component and tests, not to an independently accepted full native node.
 
 ## PoN State machine
 
@@ -33,73 +15,56 @@ components. The names do not assert matching deployed Rust service APIs.
 
 Resolve parent, exact height/target/median/profile and parent-admitted task; verify real work and all signatures; execute and compare state/receipt/tx roots; derive required work; persist only complete valid block.
 
-**Commit point:** Single block+deltas transaction owned by M07; no partial accepted header.
-
-**Rejections:** `UNKNOWN_PARENT, TIME, TARGET, WORK, ROOT, LIMIT`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+**Atomic/commit boundary:** Single block+deltas transaction owned by M07; no partial accepted header.
 
 ### M02.ChooseBranch
 
-Compare derived cumulative required work; ignore invalid/unavailable branches; equal work retains current tip. Pass exact old/new roots and generation to M08; never alter application state in a fork selector.
+A persisted valid higher-work block is selected after restart even if activation intent was never written. Finish existing reorg intent, inspect indexed fully verified tips, then publish strictly heavier state.
 
-**Commit point:** M08 publishes active pointer only after staged-root readback.
+**Atomic/commit boundary:** Finish existing reorg intent, inspect indexed fully verified tips, then publish strictly heavier state.
 
-**Rejections:** `REORG_IN_PROGRESS, UNKNOWN_PARENT`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+## M02.RecoveredBestChain
 
-## PoN Persistence and recovery
+**Invariant:** A persisted valid higher-work block is selected after restart even if activation intent was never written.
 
-**M02.AdmitBlock:** Single block+deltas transaction owned by M07; no partial accepted header.
+**Scope:** Existing reference Ledger; native consensus actor remains separate work.
 
-**M02.ChooseBranch:** M08 publishes active pointer only after staged-root readback.
+**Atomic boundary:** Finish existing reorg intent, inspect indexed fully verified tips, then publish strictly heavier state.
 
-Branch-derived entitlement can be detached. Independent local effect/revocation facts
-cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
-A native implementation must reproduce byte/root/recovery vectors before replacing the
-reference path. No old consensus namespace or decoder is restored.
+**Failure schedule:** Close after admit before activate; Repeat recover with no new input; 257 short envelopes before any work/root replay; Exact verified retransmission; Same block id with changed certificate body.
 
-## PoN Resource bounds
+**Expected result:** A persisted valid higher-work block is selected after restart even if activation intent was never written.
 
-**M02.AdmitBlock:** block<=1MiB;txcount256;chainwork512bits.
+**Resource and retention rule:** 512-bit derived chainwork; same work retains current tip.
 
-**M02.ChooseBranch:** max4096 reference ancestry; production streaming sync separate.
+## Concrete regression selectors
 
-The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
-work, model and ledger profile. Limit changes require a new context. Local backpressure
-may reject service or defer data but cannot fabricate accepted block/evaluation facts.
+`formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_admitted_before_activation_is_selected_on_restart`
 
-## PoN Security
+`formal/pon-nakamoto-v1/test_invariants.py::CheapAdmissionTests.test_transaction_count_rejects_before_root_or_work_replay`
 
-The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
-cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
-experimental partitions; they are not independent future-window evidence. SQLite process
-crashes are not physical power-loss qualification. These limitations remain explicit in
-[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
+`formal/pon-nakamoto-v1/test_invariants.py::DuplicateAdmissionTests.test_exact_verified_duplicate_does_not_repeat_expensive_work`
 
-## PoN Verification and evidence
+`formal/pon-nakamoto-v1/test_invariants.py::DuplicateAdmissionTests.test_same_block_id_with_changed_certificate_never_uses_valid_cache`
 
-- `DiskReorgTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
-- `WorkExamples` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
-```bash
-python3 formal/pon-nakamoto-v1/test_contracts.py
-CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
-```
+## Module-specific threat and residual work
 
-Build native examples before the interop command; missing binaries cause failure, not
-a skipped pass. Fixtures are never regenerated by test execution. Independently written
-third-party vectors and acceptance remain future evidence, not an assumed status.
+Admission-to-activation gaps, fabricated chainwork, stale parent and partitioned observations.
+
+Native P2P consensus actor, timestamp attack qualification and independently operated network are pending.
 
 ## Current source and verification
 
-- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py)
-- [`formal/pon-nakamoto-v1/reference.py`](../../formal/pon-nakamoto-v1/reference.py)
+- [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
-No native product package is implemented for this owner. The executable specification
-is the shared design oracle; do not report it as an installed production node.
+No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.
 
-## Maturity and outstanding integration
+## Executed evidence and scope
 
-Documented: yes. Executable contract: yes. Native component presence is enumerated above.
-Native ordinary-product integration: no. Independent acceptance: no. Production activation:
-no. Those axes are independent; a component-level pass does not promote the entire module.
+The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
+raw command exits and concrete invariant test results. Its verifier distinguishes
+runtime byte identity from documentation edits and cannot grant independent acceptance.
+Module-specific limitations above remain in force even when the referenced local test
+passes. The development plan, not this link or a count of procedures, selects next work.

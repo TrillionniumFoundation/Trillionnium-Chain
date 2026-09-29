@@ -1,0 +1,25 @@
+test_busy_and_recomputed_counts_must_conserve (__main__.InvariantEvidenceTests.test_busy_and_recomputed_counts_must_conserve) ... ok
+test_dirty_source_is_not_exact_head (__main__.InvariantEvidenceTests.test_dirty_source_is_not_exact_head) ... ok
+test_executor_sample_cannot_be_chain_tps (__main__.InvariantEvidenceTests.test_executor_sample_cannot_be_chain_tps) ... ok
+test_failed_learning_cannot_be_paid (__main__.InvariantEvidenceTests.test_failed_learning_cannot_be_paid) ... ok
+test_fixture_history_cannot_be_real_work (__main__.InvariantEvidenceTests.test_fixture_history_cannot_be_real_work) ... ok
+test_initial_harness_failure_cannot_be_hidden (__main__.InvariantEvidenceTests.test_initial_harness_failure_cannot_be_hidden) ... ok
+test_multihost_is_not_independent_operation (__main__.InvariantEvidenceTests.test_multihost_is_not_independent_operation) ... ok
+test_native_count_cannot_be_inflated (__main__.InvariantEvidenceTests.test_native_count_cannot_be_inflated) ... ok
+test_no_cost_theorem_from_timing (__main__.InvariantEvidenceTests.test_no_cost_theorem_from_timing) ... ok
+test_no_implicit_public_fairness (__main__.InvariantEvidenceTests.test_no_implicit_public_fairness) ... ok
+test_page_limit_is_not_a_physical_disk_outage (__main__.InvariantEvidenceTests.test_page_limit_is_not_a_physical_disk_outage) ... ok
+test_parallel_different_roots_reject (__main__.InvariantEvidenceTests.test_parallel_different_roots_reject) ... ok
+test_prior_execution_cannot_be_promoted_to_current_runtime (__main__.InvariantEvidenceTests.test_prior_execution_cannot_be_promoted_to_current_runtime) ... ok
+test_process_crash_is_not_power_loss (__main__.InvariantEvidenceTests.test_process_crash_is_not_power_loss) ... ok
+test_public_owner_path_cannot_be_fabricated (__main__.InvariantEvidenceTests.test_public_owner_path_cannot_be_fabricated) ... ok
+test_raw_log_tampering_is_rejected (__main__.InvariantEvidenceTests.test_raw_log_tampering_is_rejected) ... ok
+test_recorded_source_and_results (__main__.InvariantEvidenceTests.test_recorded_source_and_results) ... ok
+test_runtime_failure_is_not_success (__main__.InvariantEvidenceTests.test_runtime_failure_is_not_success) ... ok
+test_training_attempts_cannot_be_improving_generations (__main__.InvariantEvidenceTests.test_training_attempts_cannot_be_improving_generations) ... ok
+test_wrong_source_commit_is_rejected (__main__.InvariantEvidenceTests.test_wrong_source_commit_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 5.715s
+
+OK

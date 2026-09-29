@@ -1,0 +1,121 @@
+{
+  "schema": "pon-real-training-controlled-cycles-v3",
+  "source": "e7b36311fe5306bf63b7f88985801307e9e47d8c",
+  "bootstrap": "c42c23d4c469b0540706a1fd8be8bcccb88c54adc1123c88ad9d150de0a3a802",
+  "bootstrap_source_groups": [
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_04_io_ack.rs",
+    "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+    "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs",
+    "trillionnium/crates/trnm-task-kernel/src/archive_store.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/normalize.rs",
+    "trillionnium/crates/trnm-types/src/request_status/parsing.rs",
+    "trillionnium/crates/trnm-types/src/request_status/transitions.rs",
+    "trillionnium/crates/trnm-worker-agent/src/dispatch_flush.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat.rs"
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "parent_actually_admitted_artifact": "c42c23d4c469b0540706a1fd8be8bcccb88c54adc1123c88ad9d150de0a3a802",
+      "candidate": "9e07f977049a7c5db0d20ab63e1affa7ca42ca74883cea338c786c2d12894d3d",
+      "selected_reference": "best_single",
+      "training_rows": 440,
+      "calibration_rows": 124,
+      "evaluation_rows": 96,
+      "source_groups": {
+        "train": 40,
+        "calibration": 21,
+        "evaluation": 21
+      },
+      "evaluation": {
+        "clusters": 21,
+        "wins": 2,
+        "losses": 1,
+        "comparisons": 4,
+        "cluster_gate": false,
+        "mean_gain_numerator": 8,
+        "mean_gain_denominator": 19635,
+        "exploratory_score": 0,
+        "future_window_observed": false,
+        "public_reward_eligible": false,
+        "reason": "independent time/source-owner receipts must be verified by the accepting owner"
+      },
+      "outcome": "no_public_update",
+      "reward": 0,
+      "public_artifact_after": "c42c23d4c469b0540706a1fd8be8bcccb88c54adc1123c88ad9d150de0a3a802",
+      "duration_ns": 323280718
+    },
+    {
+      "cycle": 2,
+      "parent_actually_admitted_artifact": "c42c23d4c469b0540706a1fd8be8bcccb88c54adc1123c88ad9d150de0a3a802",
+      "candidate": "b21f19fef3c1444b70474e4f8790fedd4cdc2cc96c36312c7f2e403eb306d29d",
+      "selected_reference": "best_single",
+      "training_rows": 270,
+      "calibration_rows": 167,
+      "evaluation_rows": 85,
+      "source_groups": {
+        "train": 40,
+        "calibration": 20,
+        "evaluation": 21
+      },
+      "evaluation": {
+        "clusters": 21,
+        "wins": 0,
+        "losses": 0,
+        "comparisons": 4,
+        "cluster_gate": false,
+        "mean_gain_numerator": 0,
+        "mean_gain_denominator": 1,
+        "exploratory_score": 0,
+        "future_window_observed": false,
+        "public_reward_eligible": false,
+        "reason": "independent time/source-owner receipts must be verified by the accepting owner"
+      },
+      "outcome": "no_public_update",
+      "reward": 0,
+      "public_artifact_after": "c42c23d4c469b0540706a1fd8be8bcccb88c54adc1123c88ad9d150de0a3a802",
+      "duration_ns": 221149860
+    },
+    {
+      "cycle": 3,
+      "parent_actually_admitted_artifact": "c42c23d4c469b0540706a1fd8be8bcccb88c54adc1123c88ad9d150de0a3a802",
+      "candidate": "e8dccdea27a4c54b422004d31bb51c4f4e56aa0805cf177ee44addcd50463df9",
+      "selected_reference": "best_single",
+      "training_rows": 129,
+      "calibration_rows": 315,
+      "evaluation_rows": 97,
+      "source_groups": {
+        "train": 40,
+        "calibration": 20,
+        "evaluation": 21
+      },
+      "evaluation": {
+        "clusters": 21,
+        "wins": 0,
+        "losses": 0,
+        "comparisons": 4,
+        "cluster_gate": false,
+        "mean_gain_numerator": 0,
+        "mean_gain_denominator": 1,
+        "exploratory_score": 0,
+        "future_window_observed": false,
+        "public_reward_eligible": false,
+        "reason": "independent time/source-owner receipts must be verified by the accepting owner"
+      },
+      "outcome": "no_public_update",
+      "reward": 0,
+      "public_artifact_after": "c42c23d4c469b0540706a1fd8be8bcccb88c54adc1123c88ad9d150de0a3a802",
+      "duration_ns": 198346687
+    }
+  ],
+  "real_optimization": true,
+  "independent_tasks_across_cycles": false,
+  "file_groups_disjoint_across_cycles": true,
+  "new_future_window": false,
+  "ordinary_hepta_entry": false,
+  "independent_evaluators": false,
+  "three_improving_public_generations": false,
+  "public_pointer_unchanged": true,
+  "total_model_reward": 0,
+  "production_activation": false
+}

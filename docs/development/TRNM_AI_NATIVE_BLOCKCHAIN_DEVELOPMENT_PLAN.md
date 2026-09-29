@@ -38,7 +38,7 @@ not yet a PoN branch/undo implementation.
 
 No machine flag is promoted. The current implementation projection is:
 
-    stage = executable-contract-and-portable-components
+    stage = invariant-driven-native-application-candidate
     production_candidate = false
     production_consensus_activation = false
     public_testnet_ready = false
@@ -280,34 +280,92 @@ state, keys and services were not touched. Portable domains and schemas are fres
 Local monotonic application stores are NOT yet authoritative branch-aware chain storage.
 Storage/evaluator thresholds are application trust contracts, not ledger voting power.
 
-## 10. This executable-contract delivery and remaining boundaries
+## 10. Invariant-driven continuation, revision2
 
-The six shared detail contracts under `docs/protocol/pon-nakamoto-v1/details/` define
-real algorithms, wire offsets, table keys, commit points, errors, limits and tests.
-`config/pon/module-contracts-v1.json` binds36 operations to all18 module documents and
-actual source/test paths. `module-maturity-v1.json` distinguishes documented, component,
-executable contract, native product integration and independent acceptance. A `TBD`
-state-machine replacement and omitted commit/width/test bindings now fail CI.
+The authoritative failure contracts are `config/pon/invariants-v2.json`: scope,
+atomic boundary, concrete fault schedule, expected result, exact test function,
+source owner, resource bounds and honest remaining work. Module-count, heading length
+and test-class names do not establish completion. The gate validates exact selectors;
+only separate source-bound command receipts say whether those tests executed.
 
-Completed local scope: native work/codec candidates; independently coded Python oracle;
-exact frozen experimental genesis;12 signed native commands; sparse state commitments;
-real SQLite branch/delta/shadow publication and eight process-crash cuts; real trained
-public-source experts/router, exact model contraction, bounded observed-score settlement
-and author-path-offline free use; three-process loopback verification/cost campaigns.
-These are not a new parallel production engine; the oracle is the existing modules'
-shared executable design and future interoperability target.
+Implemented candidate scope: four reviewed counterexamples corrected; durable owned
+initialization; entry/revoke serialization; best-known-tip recovery; active-only candidate
+capacity; root-bound claims after retirement; bounded release expiry/refunds; incremental
+normal append; local checkpoints beyond4096 without declaring finality; actual native
+all-twelve-command application execution with fixed-order bounded speculation; explicit
+native backend without success fallback; native local proof-capacity separation; strongest
+calibration control and clustered evaluation; closed genesis-bound service receipts.
 
-Not accepted: adversarial work-cost theorem, efficient hostile-proof admission, native
-ordinary node/Hepta integration, independently administered evaluators/custodians, real
-WAN performance, physical power loss and unseen future-window model efficacy. The first
-failed learning experiment and the later model's weaker-than-best-single results remain
-visible. The specific positive test has no token-market value and no production activation.
+These are not all seven acceptance packages completed. Public proof hardness/hostile
+admission fairness, full native consensus/persistence host, normal Hepta final-use/owner
+integration, independent operators, untouched future learning windows, native paged sync,
+complete historical compaction, WAN and physical power-loss remain unaccepted. The
+three-generation signed ledger fixture is not three improving trained models.
 
-Root README remains intentionally blank. Current review policy is owner-approved zero
-mandatory PR approvals; source checks reflect that instead of silently reinstating old
-review counts. Force-push/deletion protections and runtime activation controls are separate.
+Prioritized remaining work stays on this lineage: verify the new failure regressions;
+qualify work and actual public ingress; finish bounded history/resource lifecycle; connect
+native host and Hepta owners; then run genuinely independent multi-host and prospective
+model acceptance. Do not reopen retired consensus or create a parallel global trainer.
+The root README remains blank by owner decision.
 
-[Executed evidence and retained failures](../../evidence/pon-v1/README.md) bind the
-implementation, real parameter artifacts, disk crash tests and local network/cost campaigns.
-Read-only qualification on main uses `--audit`; editing/push preflight still requires
-an allowed continuation branch. No mandatory reviewer count is silently restored.
+## Current revision3 continuation
+
+Continue the existing invariant candidate; do not create a parallel consensus or learning
+owner. Revision3 adds signed contribution intake windows, per-lane proof identity,
+bounded native process I/O, explicit native work bridging and spooled historical replay.
+All18 modules now bind their specific invariant, failure schedule and executable tests.
+Machine-count or section-count coverage is not semantic or independent acceptance.
+
+Acceptance must keep four result classes separate: deterministic native/reference
+regression; real long-chain storage with logical timestamps; same-operator physical-host
+SSH conformance with real UTC; and actual controlled learning with possible zero reward.
+The ordinary Hepta destination, independent attestors/operators, fresh future experience,
+public work-cost security, long retention and physical power-loss campaigns remain named
+work. No local experiment, preserved failure or admin privilege silently resolves them.
+
+## Measured continuation and unresolved acceptance boundaries
+
+The concrete regression/experiment package is `evidence/pon-v3/README.md`. It records
+which exact implementation ran, source hashes, command output, filesystem and clock scope.
+The checker verifies those records; it is not an authority that certifies usefulness,
+consensus security, independent operators or production deployment.
+
+The four audited counterexamples and native twelve-command parity have executable
+regressions. Signed intake rounds, root-bound claims, bounded checkpoint caches and
+spooled ancestry deepen long-lived behavior; they do not complete global state compaction.
+Real >4096 proof history, local malicious-verification load and physical SSH peers are
+separate workloads. Ordinary-node and Hepta owner integration remain distinct missing
+implementation, not a permission that can be created from an admin token.
+
+The three controlled learning attempts preserve strongest-baseline and clustered rules;
+all no-update/zero-reward outcomes must remain visible. The actual public-model pointer
+must change only on current admitted evidence. The desired three improving generations
+requires prospective tasks and the real owner path; it is not met by three synthetic
+score releases, three retrospectively trained candidates or three remote machines.
+
+## Current invariant continuation and measured-source boundaries
+
+Continue PR #202 on this main lineage rather than creating a competing product owner.
+The four audited counterexamples have executable fixes and exact selectors in
+`config/pon/invariants-v2.json`. Retained `evidence/pon-v3` reports 4,114 real work-verified
+blocks and a shallow fork above height4,096, all twelve native commands, and controlled
+ROG/Pocket4/X230 fault/partition experiments. Those are source-bound historical observations,
+not claims that every later binary has repeated the same campaign.
+
+The next native execution increment reduces thread creation and repeated main-signature
+work while keeping canonical state/receipt/root behavior. New comparisons must be run on
+identical signed requests with both binaries interleaved. Missing proof cost, chain
+inclusion, client confirmation and GPU measurements remain null, not inferred throughput.
+
+An ordinary Hepta destination and independently authorized public-export/resource owners
+are still not installed by these tests. Independently administered evaluators, public
+admission hardness, physical power loss, long-term DA and three improving future-window
+model generations remain unaccepted. Three valid no-update training attempts must stay
+no-update; they cannot be renamed three successful public generations. The explicit
+remaining implementation and external acceptance scopes are not reasons to duplicate
+existing owner kernels or restore retired consensus.
+
+After squash integration, exact measured Git commits may not be ancestors of main. The
+external-evidence lane fetches only missing declared40-hex objects from this repository,
+checks their expected trees, and never moves branch refs or grants acceptance. Missing
+source objects remain an error; local object caches must not hide a broken clean clone.

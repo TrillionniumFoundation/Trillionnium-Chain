@@ -1,0 +1,158 @@
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/Documents/chain-pon-invariants-verify-242906/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/Documents/chain-pon-invariants-verify-242906/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/Documents/chain-pon-invariants-verify-242906/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-governance-guard v0.1.0 (/home/qian-qi/Documents/chain-pon-invariants-verify-242906/trillionnium/crates/trnm-governance-guard)
+   Compiling trnm-escrow-vault v0.1.0 (/home/qian-qi/Documents/chain-pon-invariants-verify-242906/trillionnium/crates/trnm-escrow-vault)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/Documents/chain-pon-invariants-verify-242906/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-oracle v0.1.0 (/home/qian-qi/Documents/chain-pon-invariants-verify-242906/trillionnium/crates/trnm-oracle)
+   Compiling trnm-state-import v0.1.0 (/home/qian-qi/Documents/chain-pon-invariants-verify-242906/trillionnium/crates/trnm-state-import)
+   Compiling trnm-release-bundle v0.1.0 (/home/qian-qi/Documents/chain-pon-invariants-verify-242906/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-control-plane v0.1.0 (/home/qian-qi/Documents/chain-pon-invariants-verify-242906/trillionnium/crates/trnm-control-plane)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.81s
+   Doc-tests trnm_audit_events
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_checkpoint_store
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_checkpoint_types
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_control_plane
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_crypto_primitives
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_data_availability
+
+running 8 tests
+test crates/trnm-data-availability/src/lib.rs - (line 16) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 24) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 29) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 39) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 46) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 51) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 58) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 9) - compile fail ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
+
+   Doc-tests trnm_escrow_vault
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_executor
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_governance_guard
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_mempool
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_mvcc_fee
+
+running 2 tests
+test crates/trnm-mvcc-fee/src/lib.rs - (line 14) - compile fail ... ok
+test crates/trnm-mvcc-fee/src/lib.rs - (line 19) - compile fail ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+   Doc-tests trnm_oracle
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_peer_lease
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_protocol
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_release_bundle
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_research_protocol
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_service_settlement
+
+running 2 tests
+test crates/trnm-service-settlement/src/lib.rs - (line 14) - compile fail ... ok
+test crates/trnm-service-settlement/src/lib.rs - (line 9) - compile fail ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+   Doc-tests trnm_state_import
+
+running 1 test
+test crates/trnm-state-import/src/lib.rs - FinalizedSourceBindingV0 (line 182) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+   Doc-tests trnm_task_kernel
+
+running 2 tests
+test crates/trnm-task-kernel/src/lib.rs - (line 12) - compile fail ... ok
+test crates/trnm-task-kernel/src/lib.rs - (line 17) - compile fail ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+   Doc-tests trnm_transport
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests trnm_types
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests trnm_verification_profiles
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

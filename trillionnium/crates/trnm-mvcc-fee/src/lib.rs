@@ -40,3 +40,6 @@ pub use types::*;
 
 #[cfg(test)]
 mod tests;
+
+/// Revision-2 PoN commands with validated ordered speculation.
+pub mod pon_executor;

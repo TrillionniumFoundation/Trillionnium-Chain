@@ -1,7 +1,7 @@
 {
   "schema": "trnm-consensus-mainline-truth-v2",
   "development_target": "pon-nakamoto-v1",
-  "stage": "executable-contract-and-portable-components",
+  "stage": "invariant-driven-native-application-candidate",
   "runtime_implemented": false,
   "work_profile_qualified": false,
   "active_consensus_implementation": null,
@@ -12,5 +12,7 @@
   "public_testnet_ready": false,
   "release_ready": false,
   "experimental_contracts": "config/pon/module-contracts-v1.json",
-  "module_maturity": "config/pon/module-maturity-v1.json"
+  "module_maturity": "config/pon/module-maturity-v1.json",
+  "invariant_contract": "config/pon/invariants-v2.json",
+  "native_application_scope": "twelve-commands-ordered-speculation-not-complete-node"
 }

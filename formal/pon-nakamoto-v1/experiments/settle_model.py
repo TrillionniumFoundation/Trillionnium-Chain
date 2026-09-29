@@ -6,6 +6,7 @@ from pathlib import Path
 import argparse,json,sys,subprocess,shutil,time
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from ledger import *
+from inference_receipt import receipt as encode_receipt,verify as verify_receipt
 
 def run(directory,out):
     directory=Path(directory);out=Path(out);out.mkdir(parents=True,exist_ok=True)
@@ -27,7 +28,7 @@ def run(directory,out):
     for i in range(3):
         value={'schema':'hepta-source-owner-delta-v1','family':FAMILY.hex(),'base':H('base',canonical(model['base'])).hex(),'delta':model['deltas'][i],'feature':model['feature']}
         b=canonical(value);(out/f'expert-{i}.json').write_bytes(b);artifact=H('artifact',b);cid=contribution_id(public(key(i)),FAMILY,ZERO,artifact,ZERO);contributions.append(cid)
-        initial.append(tx(i,'contribute',dict(contribution=cid,family=FAMILY,parent_release=ZERO,artifact=artifact,size=len(b),components_root=ZERO)))
+        initial.append(tx(i,'contribute',dict(contribution=cid,family=FAMILY,parent_release=ZERO,artifact=artifact,size=len(b),components_root=ZERO,submission_round=0)))
     block(initial)
     votes=[]
     for i,cid in enumerate(contributions):
@@ -39,7 +40,7 @@ def run(directory,out):
     allocations=[(contributions[i],public(key(i)),min(observed['results'][p]['marginal'][i]['score']for p in ['evaluation_a','evaluation_b']))for i in eligible]
     root,proofs=allocation_root_and_proofs(allocations);model_bytes=(directory/'model.json').read_bytes();model_hash=H('artifact',model_bytes)
     bundle=contribution_id(public(key(3)),FAMILY,ZERO,model_hash,root)
-    block([tx(3,'contribute',dict(contribution=bundle,family=FAMILY,parent_release=ZERO,artifact=model_hash,size=len(model_bytes),components_root=root))])
+    block([tx(3,'contribute',dict(contribution=bundle,family=FAMILY,parent_release=ZERO,artifact=model_hash,size=len(model_bytes),components_root=root,submission_round=0))])
     block([tx(i,'evaluate',dict(contribution=bundle,plan=PLAN,evidence=H('whole-evaluation',bundle,(directory/(partition+'-result.json')).read_bytes()),score=observed['results'][partition]['whole_gain']['score']))for i,partition in enumerate(['evaluation_a','evaluation_b'])])
     budget=100000;total=sum(s for _,_,s in allocations);rid=release_id(ZERO,bundle,budget,root,total)
     block([tx(3,'publish_release',dict(release=rid,parent_release=ZERO,bundle=bundle,budget=budget,allocation_root=root,total_score=total,allocations=sorted((cid,s)for cid,_,s in allocations)))])
@@ -58,14 +59,17 @@ def run(directory,out):
     # Two actual replicas are read without consulting the original author artifact.
     for name in ['custodian-a','custodian-b']:
         p=out/name;p.mkdir();(p/'model.json').write_bytes(model_bytes);require(H('artifact',(p/'model.json').read_bytes())==model_hash,'DA')
-    quota=H('public-consumer-quota',rid);block([tx(3,'reserve_quota',dict(quota=quota,consumer=public(key(4)),provider=public(key(0)),units=2,deadline=l.block(tip)[1]+100))])
+    quota=quota_identity(public(key(3)),nonces.get(3,0)+1,public(key(4)),public(key(0)),2,l.block(tip)[1]+100);block([tx(3,'reserve_quota',dict(quota=quota,consumer=public(key(4)),provider=public(key(0)),units=2,deadline=l.block(tip)[1]+100))])
     original=directory/'model.json';offline=directory/'model.author-offline';original.rename(offline)
     effect=EffectJournal(out/'effects.sqlite');op=H('public-consumer-request',rid,quota);effect.enter(op,model_hash,generation)
     try:
-        subprocess.run([sys.executable,str(Path(__file__).with_name('model_loop.py')),'--mode','evaluate','--tasks',str(directory/'consumer.json'),'--model',str(out/'custodian-a/model.json'),'--out',str(out/'consumer-service.json')],check=True)
+        subprocess.run([sys.executable,str(Path(__file__).with_name('model_loop.py')),'--mode','infer','--tasks',str(directory/'consumer.json'),'--model',str(out/'custodian-a/model.json'),'--out',str(out/'consumer-service.json')],check=True)
     finally:offline.rename(original)
-    result=H('served-output',(out/'consumer-service.json').read_bytes());nextnonce=nonces[0]+1
-    acknowledgement=key(4).sign(H('use',quota,public(key(0)),u64(nextnonce),u64(1),result))
+    nextnonce=nonces[0]+1
+    fields={'network':NETWORK.hex(),'parameters':PARAMETER_HASH.hex(),'model':model_hash.hex(),'request':op.hex(),'input':H('request-input',(directory/'consumer.json').read_bytes()).hex(),'output':H('served-output',(out/'consumer-service.json').read_bytes()).hex(),'provider':public(key(0)).hex(),'quota':quota.hex(),'units':1,'provider_nonce':nextnonce}
+    exact_receipt=encode_receipt(fields);(out/'inference-receipt.json').write_bytes(exact_receipt)
+    result=verify_receipt(exact_receipt,fields)
+    acknowledgement=key(4).sign(H('use',NETWORK,PARAMETER_HASH,quota,public(key(0)),u64(nextnonce),u64(1),result))
     block([tx(0,'consume_quota',dict(quota=quota,units=1,result=result,consumer_signature=acknowledgement))])
     _,_,state=l.read_active();require('account:'+public(key(4)).hex()not in state,'FREE_CONSUMER_CHARGED');require(total_funds(state)==state['meta:issued'],'CONSERVATION')
     effect.db.close();l.close()

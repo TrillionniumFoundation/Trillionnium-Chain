@@ -128,7 +128,7 @@ fn payload_len(tag: u8, p: &[u8]) -> Result<(), WireError> {
         2 => 80,
         3 => 32,
         4 | 5 => 64,
-        6 => 168,
+        6 => 176,
         7 => 104,
         8 => {
             if p.len() < 145 {
@@ -308,7 +308,7 @@ mod tests {
             (3, 32),
             (4, 64),
             (5, 64),
-            (6, 168),
+            (6, 176),
             (7, 104),
             (9, 73),
             (10, 112),
@@ -335,6 +335,13 @@ mod tests {
             assert!(Envelope::decode(&b).is_err());
         }
     }
+    #[test]
+    fn contribution_without_signed_round_is_not_revision3_wire() {
+        assert_eq!(payload_len(6, &[0; 168]), Err(WireError::Length));
+        assert!(payload_len(6, &[0; 176]).is_ok());
+        assert_eq!(payload_len(6, &[0; 177]), Err(WireError::Length));
+    }
+
     #[test]
     fn release_payload_is_bounded_and_sorted() {
         let mut p = vec![0; 185];

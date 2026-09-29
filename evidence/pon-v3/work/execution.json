@@ -1,0 +1,15 @@
+{
+  "source_commit": "242906bae4f281c738c60adbd2c053d2ded1eae5",
+  "commands": {
+    "pon_adversarial_cost": {
+      "binary_sha256": "0623412e1210c941d3e421771cdf64a5ba19293c3bcf3d92d9ff8337b11fafef",
+      "returncode": 0
+    },
+    "pon_admission_load": {
+      "binary_sha256": "37cc7c1a7d353d609f2a8a07ffa3ae47cf0a84175e11ae6649b30f62f697a777",
+      "returncode": 0
+    }
+  },
+  "independent_accepted": false,
+  "production_activation": false
+}

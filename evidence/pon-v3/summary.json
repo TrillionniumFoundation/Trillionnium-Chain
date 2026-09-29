@@ -1,0 +1,60 @@
+{
+  "schema": "pon-invariant-progress-v3",
+  "implementation_commit": "242906bae4f281c738c60adbd2c053d2ded1eae5",
+  "implementation_tree": "160cc493ab4cfb7f3f8c26b2d1621691a0c49502",
+  "native_tests": 1801,
+  "native_failures": 0,
+  "native_default_ignored": 1,
+  "all_qualification_commands_passed": true,
+  "long_history": {
+    "actual_mined_and_verified_blocks": 4114,
+    "canonical_height_before_fork": 4106,
+    "fork_parent_height": 4099,
+    "final_height": 4107,
+    "signed_transfers": 9,
+    "shallow_fork_verified": true,
+    "effects_preserved": true,
+    "database_bytes": 211460096,
+    "max_rss_kib": 29380
+  },
+  "long_history_filesystem": "tmpfs /dev/shm",
+  "parallel_median_native_ns": {
+    "independent-senders-hot-recipient": {
+      "1": 25223097,
+      "2": 37795423,
+      "4": 33780365,
+      "8": 29243600
+    },
+    "single-hot-sender-recipient": {
+      "1": 25433979,
+      "2": 25116087,
+      "4": 25161770,
+      "8": 26504891
+    },
+    "independent-senders-and-recipients": {
+      "1": 40900101,
+      "2": 46219681,
+      "4": 44088337,
+      "8": 41062999
+    }
+  },
+  "public_admission": {
+    "attempted_public_jobs": 2048,
+    "invalid_proofs_recomputed_and_rejected": 529,
+    "busy_before_work": 1519,
+    "local_recovery_verified": 16
+  },
+  "physical_hosts": [
+    "rog-ts",
+    "pocket4-ts",
+    "x230-ts"
+  ],
+  "three_independent_improving_generations": false,
+  "training_attempts": 3,
+  "training_model_reward": 0,
+  "public_artifact_unchanged": true,
+  "ordinary_hepta_entry": false,
+  "independent_accepted": false,
+  "physical_power_loss": false,
+  "production_activation": false
+}

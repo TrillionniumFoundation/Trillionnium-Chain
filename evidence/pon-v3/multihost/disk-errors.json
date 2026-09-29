@@ -1,0 +1,125 @@
+{
+  "schema": "pon-bound-physical-disk-error-followup-v3",
+  "source_commit": "242906bae4f281c738c60adbd2c053d2ded1eae5",
+  "same_operator": true,
+  "independent_operators": false,
+  "all_cases_passed": true,
+  "results": [
+    {
+      "host": "rog-ts",
+      "returncode": 0,
+      "stderr": "",
+      "report": {
+        "schema": "pon-owned-disk-error-cases-v3",
+        "temporary_root": "/tmp/trnm-pon-host-qualification-pbym71id/disk-fault-copies-6dy8_wtw",
+        "cases": [
+          {
+            "case": "extra-trigger",
+            "rejection": "SCHEMA",
+            "database_unchanged_after_refusal": true
+          },
+          {
+            "case": "published-value-corruption",
+            "rejection": "ROOT",
+            "no_authoritative_read": true
+          },
+          {
+            "case": "sqlite-page-limit-full",
+            "rejection": "SQLITE_FULL",
+            "partial_rows_committed": false,
+            "original_state_reopens": true,
+            "physical_device_full": false
+          },
+          {
+            "case": "truncated-database",
+            "rejection_type": "DatabaseError",
+            "database_unchanged_after_refusal": true
+          }
+        ],
+        "uses_real_sqlite": true,
+        "original_database_modified": false,
+        "physical_power_loss": false,
+        "independent_accepted": false,
+        "production_activation": false
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "returncode": 0,
+      "stderr": "",
+      "report": {
+        "schema": "pon-owned-disk-error-cases-v3",
+        "temporary_root": "/tmp/trnm-pon-host-qualification-sz85vehb/disk-fault-copies-8pg2ydff",
+        "cases": [
+          {
+            "case": "extra-trigger",
+            "rejection": "SCHEMA",
+            "database_unchanged_after_refusal": true
+          },
+          {
+            "case": "published-value-corruption",
+            "rejection": "ROOT",
+            "no_authoritative_read": true
+          },
+          {
+            "case": "sqlite-page-limit-full",
+            "rejection": "SQLITE_FULL",
+            "partial_rows_committed": false,
+            "original_state_reopens": true,
+            "physical_device_full": false
+          },
+          {
+            "case": "truncated-database",
+            "rejection_type": "DatabaseError",
+            "database_unchanged_after_refusal": true
+          }
+        ],
+        "uses_real_sqlite": true,
+        "original_database_modified": false,
+        "physical_power_loss": false,
+        "independent_accepted": false,
+        "production_activation": false
+      }
+    },
+    {
+      "host": "x230-ts",
+      "returncode": 0,
+      "stderr": "",
+      "report": {
+        "schema": "pon-owned-disk-error-cases-v3",
+        "temporary_root": "/tmp/trnm-pon-host-qualification-weskrp6w/disk-fault-copies-6qixcus_",
+        "cases": [
+          {
+            "case": "extra-trigger",
+            "rejection": "SCHEMA",
+            "database_unchanged_after_refusal": true
+          },
+          {
+            "case": "published-value-corruption",
+            "rejection": "ROOT",
+            "no_authoritative_read": true
+          },
+          {
+            "case": "sqlite-page-limit-full",
+            "rejection": "SQLITE_FULL",
+            "partial_rows_committed": false,
+            "original_state_reopens": true,
+            "physical_device_full": false
+          },
+          {
+            "case": "truncated-database",
+            "rejection_type": "DatabaseError",
+            "database_unchanged_after_refusal": true
+          }
+        ],
+        "uses_real_sqlite": true,
+        "original_database_modified": false,
+        "physical_power_loss": false,
+        "independent_accepted": false,
+        "production_activation": false
+      }
+    }
+  ],
+  "physical_power_loss": false,
+  "production_activation": false
+}

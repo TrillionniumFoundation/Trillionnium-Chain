@@ -1,0 +1,2152 @@
+{
+  "schema": "pon-owned-physical-host-conformance-v3",
+  "source_manifest": {
+    "schema": "pon-cross-host-source-manifest-v3",
+    "source_commit": "242906bae4f281c738c60adbd2c053d2ded1eae5",
+    "source_clean": true,
+    "runtime_config_overrides": {
+      "chain_label": "trnm-pon-physical-host-audit-1790652497627226202",
+      "genesis_timestamp": 1790651897
+    },
+    "runtime_is_distinct_genesis": true,
+    "files": {
+      "config/pon/devnet-v1.json": "f5f44715c12bb01dcd1eee99d78b9d24bd1e4dc093dbc0f33233d04895bf831b",
+      "config/pon/invariants-v2.json": "eaf53fd297891d9f3be371c4c2afe46a354c0eb26165a2b392f79e079565624a",
+      "config/pon/ledger-v1.json": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "config/pon/module-contracts-v1.json": "b79e0ffcd9348ba19577ed3bcf9ec0210e618a4cdef87b20564b6c7758cb1633",
+      "config/pon/module-maturity-v1.json": "df6d66f6a2d17175dcfd902273bb055e696c6c74d0243dd2548ed6dc7a71a307",
+      "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "formal/pon-nakamoto-v1/bounded_process.py": "818c94268f64c9606998e54aa4ec701c73017e948c7da835cc536587c6c8f404",
+      "formal/pon-nakamoto-v1/contract_wire.py": "3af90f511724d381f180e92addae87fe77767396bfbd6ff2c4cd5340904ad71e",
+      "formal/pon-nakamoto-v1/evaluation.py": "d237bfde98e8af5129de07ada05563d0cc219b08055966c8b2076fc209dadf3c",
+      "formal/pon-nakamoto-v1/experiments/learning_cycles.py": "ba7f69f120c0d795f318a3d8f5820c2128f00f2330d126a24d3c95caf785fafc",
+      "formal/pon-nakamoto-v1/experiments/local_network.py": "2caeb5f2e19239e0775d0c95b11dd9e28b95f08dc109b232bee31b0c75162152",
+      "formal/pon-nakamoto-v1/experiments/long_history.py": "a56d6e4bffb6b68bc4a85ab12c8f372eb3c16a74b42641285500bc424a4bd549",
+      "formal/pon-nakamoto-v1/experiments/model_loop.py": "7f3adf02ad6efcf0635baeb643ca91f8afb12558c3ef4cc8f00f18f56a0e5b7b",
+      "formal/pon-nakamoto-v1/experiments/multihost_campaign.py": "5cec497291840dabad1977188ca5d4a6f1fcf91e4ede835d565dfa021a0f1a33",
+      "formal/pon-nakamoto-v1/experiments/parallel_cost.py": "d7d2101f5970f3d786a01e8b5b170708d6b959d3448c05ee4b144c7b99fc2261",
+      "formal/pon-nakamoto-v1/experiments/remote_peer.py": "c673f2715ef63cfb006300d1f786c29175ceb3c332350af005e4ff5cc4b972b4",
+      "formal/pon-nakamoto-v1/experiments/run_campaign.py": "5993832b77689d1e57f5e6f8b1df32f1a7241c3955186dc91cbbcbcea2fcfc2d",
+      "formal/pon-nakamoto-v1/experiments/settle_model.py": "a37efd22d4ffa5a565ae6c879e738c5d3e6b834cb9b036f5354ba55acf75a7c1",
+      "formal/pon-nakamoto-v1/generate_accepted_block.py": "4935f1095526fba50ed9e52b8828ea6415b6efcb8455f65e6adca65b51ff653f",
+      "formal/pon-nakamoto-v1/generate_vectors.py": "ed505ee4e36e6003609a20615b462e7b6462af3a05960009b1421026a8fe82c9",
+      "formal/pon-nakamoto-v1/inference_receipt.py": "7485d58214f9d97c4644cbea9d946d0b32f790e87440e8357fa619c24985ceb1",
+      "formal/pon-nakamoto-v1/ledger.py": "4ceb2b22e00962988abf858b2388b86ac79d1127fc174f20042283a3ccbb7c4a",
+      "formal/pon-nakamoto-v1/model_contract.py": "fd0e90294e27fd297cd931b222d901eedcd075f93cf31576a633453a7710ae23",
+      "formal/pon-nakamoto-v1/native_execution.py": "0af0fd022b3c75ec960dc27ca0c578d3852724936029bba092b23be6ff3d6e55",
+      "formal/pon-nakamoto-v1/reference.py": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+      "formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+      "formal/pon-nakamoto-v1/test_artifacts.py": "ab80d47e20e940218a84db571cd64cd7fb1cee75f06f13d4fd03dc0b5c626f7a",
+      "formal/pon-nakamoto-v1/test_bounded_process.py": "beee0f8e473414ea29c172b06cdafb04fe01fd50e63c8c49c0974c84cb8dbbdf",
+      "formal/pon-nakamoto-v1/test_contracts.py": "c30aa0cbac33ad5ba3173fbc9f3e0486e7f96d5862d47aad1a6c117d0ce2a435",
+      "formal/pon-nakamoto-v1/test_evaluation.py": "201679efc2620b83e87f4800ba0537f63c114a5754119ea67613c17d83328956",
+      "formal/pon-nakamoto-v1/test_inference_receipt.py": "c38bfd3e9727f373958d2f3554ff541f460b35e5318774400e005736050b003b",
+      "formal/pon-nakamoto-v1/test_interop.py": "0c112f7290b22d8c7e7526cb8066bcbea127284d1284ec3b435c9894c11e60ae",
+      "formal/pon-nakamoto-v1/test_invariants.py": "b0ebd526dd12e852b2be281609c75ca035c2bc843d60658c2a64384fa28594d2",
+      "formal/pon-nakamoto-v1/test_model_contract.py": "674a10aefb6b636d0f347399aac51eddb29f9c7a34efa155552e4cd3c615b6a8",
+      "formal/pon-nakamoto-v1/test_native_execution.py": "4ea935d977f0dcdd236ad32d1145bd934d75e6639a14fe805d756de2be76d81b",
+      "formal/pon-nakamoto-v1/test_reference.py": "7260d84da792fd016d1ad57426216d9bf666b5697429a100244d3ac73c289e66",
+      "formal/pon-nakamoto-v1/test_strict_signature.py": "9ab8dbc11c2c2018e237f98ea2a421c0a9f9b0513068dbd89dc59389ba916ba8",
+      "formal/pon-nakamoto-v1/test_work_backend.py": "50f5acac2c4d17cc356c99bd597d3e087fafe37ba08cb8c9793bfdd88d76445c",
+      "formal/pon-nakamoto-v1/work_backend.py": "0cb7d96d4432a27c5d2964d13ea7e1269fcc73e0568cc3f1680b5610ebc9caed",
+      "formal/pon-nakamoto-v1/work_oracle.py": "39df44648a31b58dbe6e69631f7755ee7fb029c77a18be5052574019da7e8caa"
+    }
+  },
+  "hosts": [
+    {
+      "host": "rog-ts",
+      "temporary_root": "/tmp/trnm-pon-host-qualification-pbym71id",
+      "hello": {
+        "genesis": "7ad5bb000221cc6322d52669a23e52aa46e01fae7681df5e5a558c79fdc30348",
+        "independent_operator": false,
+        "machine": "x86_64",
+        "native_node": false,
+        "network": "7981f162e70b0b9bed21dd17f0368422f4844d06e21e26899ae0d49ffd496224",
+        "parameters": "d4674d9f63ce4b69e1135fc8dcec2d0745cd5de37618226c94a03dc514ed0ff9",
+        "pid": 1504222,
+        "platform": "Linux",
+        "python": "3.12.3",
+        "ready": true,
+        "source_manifest": "481fcb8de9d9f4cb7b6fef27071d363db805635a5379c5c03ccfe8e464d20c38",
+        "utc_seconds": 1790652499
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "temporary_root": "/tmp/trnm-pon-host-qualification-sz85vehb",
+      "hello": {
+        "genesis": "7ad5bb000221cc6322d52669a23e52aa46e01fae7681df5e5a558c79fdc30348",
+        "independent_operator": false,
+        "machine": "x86_64",
+        "native_node": false,
+        "network": "7981f162e70b0b9bed21dd17f0368422f4844d06e21e26899ae0d49ffd496224",
+        "parameters": "d4674d9f63ce4b69e1135fc8dcec2d0745cd5de37618226c94a03dc514ed0ff9",
+        "pid": 3690961,
+        "platform": "Linux",
+        "python": "3.12.3",
+        "ready": true,
+        "source_manifest": "481fcb8de9d9f4cb7b6fef27071d363db805635a5379c5c03ccfe8e464d20c38",
+        "utc_seconds": 1790652501
+      }
+    },
+    {
+      "host": "x230-ts",
+      "temporary_root": "/tmp/trnm-pon-host-qualification-weskrp6w",
+      "hello": {
+        "genesis": "7ad5bb000221cc6322d52669a23e52aa46e01fae7681df5e5a558c79fdc30348",
+        "independent_operator": false,
+        "machine": "x86_64",
+        "native_node": false,
+        "network": "7981f162e70b0b9bed21dd17f0368422f4844d06e21e26899ae0d49ffd496224",
+        "parameters": "d4674d9f63ce4b69e1135fc8dcec2d0745cd5de37618226c94a03dc514ed0ff9",
+        "pid": 1015061,
+        "platform": "Linux",
+        "python": "3.12.3",
+        "ready": true,
+        "source_manifest": "481fcb8de9d9f4cb7b6fef27071d363db805635a5379c5c03ccfe8e464d20c38",
+        "utc_seconds": 1790652505
+      }
+    }
+  ],
+  "started_utc_ns": 1790652497897921510,
+  "finished_utc_ns": 1790652552533128246,
+  "same_operator": true,
+  "independent_operators": false,
+  "native_full_node": false,
+  "ordinary_hepta_entry": false,
+  "physical_power_loss": false,
+  "public_network_security_accepted": false,
+  "transport": "SSH authenticated stdio, no public listener",
+  "clock": "actual local UTC for admission; header=max(UTC,median+1)",
+  "target_spacing_enforced": false,
+  "public_tps_claimed": false,
+  "partition_model": "controller delivery withheld, no routing/firewall alteration",
+  "process_crash_exit": 86,
+  "recovered_admitted_block": true,
+  "reorg_preserved_effects": true,
+  "model_adopted_by_ledger": false,
+  "model_scope": "controlled exploratory artifact; service test is not adoption acceptance",
+  "artifact_copies_physical_hosts": 3,
+  "author_path_unavailable": true,
+  "long_term_retention_accepted": false,
+  "quota_depleted_replay_rejected": true,
+  "consumer_paid": 0,
+  "confirmed_inclusion": {
+    "block": "14769a037fdd43cffc8b8164edcb531501e30055ff13ba744306339aecba9721",
+    "observed_tip": "476a78ea31dec3660b1b634b5b62d11b113a583a79609a5a8d4dcfb109286536",
+    "depth": 6,
+    "work_delta": 12
+  },
+  "final_root": "edb82268baf36abffd5ea0389b076d3d6498b9bc32401385f762caf1e7339c90",
+  "input_bytes": 4600418,
+  "observations": [
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 164891858,
+      "request_bytes": 69483,
+      "response": {
+        "observed": {
+          "cpu_ns": 103615000,
+          "database_bytes": 197576,
+          "elapsed_ns": 124381858,
+          "gpu_used": false,
+          "max_rss_kib": 30216,
+          "utc_seconds": 1790652509
+        },
+        "ok": true,
+        "result": {
+          "block": "797e32b1ce18d1a2dc2f31c76a69a88309fc316b3a2b7de881dfcb05f6a41fc4",
+          "generation": 1,
+          "root": "0f17c195389c410f2908cb36f688ca8f9ddf226541338f3bc95e9f3317e97d29",
+          "tip": "797e32b1ce18d1a2dc2f31c76a69a88309fc316b3a2b7de881dfcb05f6a41fc4"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 168511793,
+      "request_bytes": 69483,
+      "response": {
+        "observed": {
+          "cpu_ns": 105934999,
+          "database_bytes": 197576,
+          "elapsed_ns": 107673291,
+          "gpu_used": false,
+          "max_rss_kib": 30620,
+          "utc_seconds": 1790652509
+        },
+        "ok": true,
+        "result": {
+          "block": "797e32b1ce18d1a2dc2f31c76a69a88309fc316b3a2b7de881dfcb05f6a41fc4",
+          "generation": 1,
+          "root": "0f17c195389c410f2908cb36f688ca8f9ddf226541338f3bc95e9f3317e97d29",
+          "tip": "797e32b1ce18d1a2dc2f31c76a69a88309fc316b3a2b7de881dfcb05f6a41fc4"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 786165911,
+      "request_bytes": 69483,
+      "response": {
+        "observed": {
+          "cpu_ns": 545086000,
+          "database_bytes": 197576,
+          "elapsed_ns": 567808745,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652509
+        },
+        "ok": true,
+        "result": {
+          "block": "797e32b1ce18d1a2dc2f31c76a69a88309fc316b3a2b7de881dfcb05f6a41fc4",
+          "generation": 1,
+          "root": "0f17c195389c410f2908cb36f688ca8f9ddf226541338f3bc95e9f3317e97d29",
+          "tip": "797e32b1ce18d1a2dc2f31c76a69a88309fc316b3a2b7de881dfcb05f6a41fc4"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 202279604,
+      "request_bytes": 69483,
+      "response": {
+        "observed": {
+          "cpu_ns": 116653000,
+          "database_bytes": 308816,
+          "elapsed_ns": 118462977,
+          "gpu_used": false,
+          "max_rss_kib": 30620,
+          "utc_seconds": 1790652510
+        },
+        "ok": true,
+        "result": {
+          "block": "c06ea7ac5b6ddc9013e6657bb5728bae73772381d4b5799f4a446c6e5751fd85",
+          "generation": 2,
+          "root": "9ce0cf2cba467432c2a46ae679a3e565cc80f4dd2f7714cbc82ffdb931227c49",
+          "tip": "c06ea7ac5b6ddc9013e6657bb5728bae73772381d4b5799f4a446c6e5751fd85"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 214079775,
+      "request_bytes": 69483,
+      "response": {
+        "observed": {
+          "cpu_ns": 117691999,
+          "database_bytes": 308816,
+          "elapsed_ns": 121266722,
+          "gpu_used": false,
+          "max_rss_kib": 30472,
+          "utc_seconds": 1790652510
+        },
+        "ok": true,
+        "result": {
+          "block": "c06ea7ac5b6ddc9013e6657bb5728bae73772381d4b5799f4a446c6e5751fd85",
+          "generation": 2,
+          "root": "9ce0cf2cba467432c2a46ae679a3e565cc80f4dd2f7714cbc82ffdb931227c49",
+          "tip": "c06ea7ac5b6ddc9013e6657bb5728bae73772381d4b5799f4a446c6e5751fd85"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 774301949,
+      "request_bytes": 69483,
+      "response": {
+        "observed": {
+          "cpu_ns": 591575000,
+          "database_bytes": 308816,
+          "elapsed_ns": 603540919,
+          "gpu_used": false,
+          "max_rss_kib": 30972,
+          "utc_seconds": 1790652511
+        },
+        "ok": true,
+        "result": {
+          "block": "c06ea7ac5b6ddc9013e6657bb5728bae73772381d4b5799f4a446c6e5751fd85",
+          "generation": 2,
+          "root": "9ce0cf2cba467432c2a46ae679a3e565cc80f4dd2f7714cbc82ffdb931227c49",
+          "tip": "c06ea7ac5b6ddc9013e6657bb5728bae73772381d4b5799f4a446c6e5751fd85"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "effect",
+      "roundtrip_ns": 5290160,
+      "request_bytes": 185,
+      "response": {
+        "observed": {
+          "cpu_ns": 313000,
+          "database_bytes": 308816,
+          "elapsed_ns": 1249401,
+          "gpu_used": false,
+          "max_rss_kib": 30472,
+          "utc_seconds": 1790652511
+        },
+        "ok": true,
+        "result": {
+          "entered": true
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "effect",
+      "roundtrip_ns": 4927913,
+      "request_bytes": 185,
+      "response": {
+        "observed": {
+          "cpu_ns": 232000,
+          "database_bytes": 308816,
+          "elapsed_ns": 1418983,
+          "gpu_used": false,
+          "max_rss_kib": 30620,
+          "utc_seconds": 1790652511
+        },
+        "ok": true,
+        "result": {
+          "entered": true
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "effect",
+      "roundtrip_ns": 5650091,
+      "request_bytes": 185,
+      "response": {
+        "observed": {
+          "cpu_ns": 416999,
+          "database_bytes": 308816,
+          "elapsed_ns": 1950627,
+          "gpu_used": false,
+          "max_rss_kib": 30972,
+          "utc_seconds": 1790652511
+        },
+        "ok": true,
+        "result": {
+          "entered": true
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 117865428,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 87589000,
+          "database_bytes": 403576,
+          "elapsed_ns": 91248265,
+          "gpu_used": false,
+          "max_rss_kib": 30472,
+          "utc_seconds": 1790652512
+        },
+        "ok": true,
+        "result": {
+          "block": "204c942c7c79e6cf5baeabb497021866f9302f4d662b2252053ca30a53a8311f",
+          "generation": 3,
+          "root": "3809b323c6445d2b950fbd5456e5476a4865b9305a9d6229b8b7a427490d6114",
+          "tip": "204c942c7c79e6cf5baeabb497021866f9302f4d662b2252053ca30a53a8311f"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 267320681,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 117038000,
+          "database_bytes": 403576,
+          "elapsed_ns": 118671294,
+          "gpu_used": false,
+          "max_rss_kib": 30812,
+          "utc_seconds": 1790652512
+        },
+        "ok": true,
+        "result": {
+          "block": "204c942c7c79e6cf5baeabb497021866f9302f4d662b2252053ca30a53a8311f",
+          "generation": 3,
+          "root": "3809b323c6445d2b950fbd5456e5476a4865b9305a9d6229b8b7a427490d6114",
+          "tip": "204c942c7c79e6cf5baeabb497021866f9302f4d662b2252053ca30a53a8311f"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 122832731,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 87138999,
+          "database_bytes": 498336,
+          "elapsed_ns": 90736356,
+          "gpu_used": false,
+          "max_rss_kib": 30472,
+          "utc_seconds": 1790652513
+        },
+        "ok": true,
+        "result": {
+          "block": "44275e90ce3bcc70924f8a9fc68a69dbb5293cbdd92a04934238a7cef3933987",
+          "generation": 4,
+          "root": "5585ad313a219eb1260d3cb94dac2387ecf585d5be526f37af03f40073857871",
+          "tip": "44275e90ce3bcc70924f8a9fc68a69dbb5293cbdd92a04934238a7cef3933987"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 159418879,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 120043999,
+          "database_bytes": 498336,
+          "elapsed_ns": 121951960,
+          "gpu_used": false,
+          "max_rss_kib": 30812,
+          "utc_seconds": 1790652513
+        },
+        "ok": true,
+        "result": {
+          "block": "44275e90ce3bcc70924f8a9fc68a69dbb5293cbdd92a04934238a7cef3933987",
+          "generation": 4,
+          "root": "5585ad313a219eb1260d3cb94dac2387ecf585d5be526f37af03f40073857871",
+          "tip": "44275e90ce3bcc70924f8a9fc68a69dbb5293cbdd92a04934238a7cef3933987"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 151714136,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 111396999,
+          "database_bytes": 593096,
+          "elapsed_ns": 114890947,
+          "gpu_used": false,
+          "max_rss_kib": 30472,
+          "utc_seconds": 1790652514
+        },
+        "ok": true,
+        "result": {
+          "block": "95f1b76d84434f5089b456c07003a5a0d609f64a89ad6a8d3e08289f1481138e",
+          "generation": 5,
+          "root": "8fdab124af038acee0e38d9f8d365a2148e21a1cab86aab4a7ab2a89373cffc9",
+          "tip": "95f1b76d84434f5089b456c07003a5a0d609f64a89ad6a8d3e08289f1481138e"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 202558803,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 118546000,
+          "database_bytes": 593096,
+          "elapsed_ns": 172055212,
+          "gpu_used": false,
+          "max_rss_kib": 30812,
+          "utc_seconds": 1790652514
+        },
+        "ok": true,
+        "result": {
+          "block": "95f1b76d84434f5089b456c07003a5a0d609f64a89ad6a8d3e08289f1481138e",
+          "generation": 5,
+          "root": "8fdab124af038acee0e38d9f8d365a2148e21a1cab86aab4a7ab2a89373cffc9",
+          "tip": "95f1b76d84434f5089b456c07003a5a0d609f64a89ad6a8d3e08289f1481138e"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "head",
+      "roundtrip_ns": 118186821,
+      "request_bytes": 13,
+      "response": {
+        "observed": {
+          "cpu_ns": 101119999,
+          "database_bytes": 308816,
+          "elapsed_ns": 112269895,
+          "gpu_used": false,
+          "max_rss_kib": 30972,
+          "utc_seconds": 1790652514
+        },
+        "ok": true,
+        "result": {
+          "chainwork": 4,
+          "effect_count": 1,
+          "generation": 2,
+          "height": 2,
+          "root": "9ce0cf2cba467432c2a46ae679a3e565cc80f4dd2f7714cbc82ffdb931227c49",
+          "state_keys": 25,
+          "tip": "c06ea7ac5b6ddc9013e6657bb5728bae73772381d4b5799f4a446c6e5751fd85"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 691550588,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 627462000,
+          "database_bytes": 403576,
+          "elapsed_ns": 643207119,
+          "gpu_used": false,
+          "max_rss_kib": 31228,
+          "utc_seconds": 1790652515
+        },
+        "ok": true,
+        "result": {
+          "block": "204c942c7c79e6cf5baeabb497021866f9302f4d662b2252053ca30a53a8311f",
+          "generation": 3,
+          "root": "3809b323c6445d2b950fbd5456e5476a4865b9305a9d6229b8b7a427490d6114",
+          "tip": "204c942c7c79e6cf5baeabb497021866f9302f4d662b2252053ca30a53a8311f"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 761307937,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 687719000,
+          "database_bytes": 498336,
+          "elapsed_ns": 720091808,
+          "gpu_used": false,
+          "max_rss_kib": 31356,
+          "utc_seconds": 1790652516
+        },
+        "ok": true,
+        "result": {
+          "block": "44275e90ce3bcc70924f8a9fc68a69dbb5293cbdd92a04934238a7cef3933987",
+          "generation": 4,
+          "root": "5585ad313a219eb1260d3cb94dac2387ecf585d5be526f37af03f40073857871",
+          "tip": "44275e90ce3bcc70924f8a9fc68a69dbb5293cbdd92a04934238a7cef3933987"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 765864329,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 710839000,
+          "database_bytes": 593096,
+          "elapsed_ns": 715904554,
+          "gpu_used": false,
+          "max_rss_kib": 31356,
+          "utc_seconds": 1790652516
+        },
+        "ok": true,
+        "result": {
+          "block": "95f1b76d84434f5089b456c07003a5a0d609f64a89ad6a8d3e08289f1481138e",
+          "generation": 5,
+          "root": "8fdab124af038acee0e38d9f8d365a2148e21a1cab86aab4a7ab2a89373cffc9",
+          "tip": "95f1b76d84434f5089b456c07003a5a0d609f64a89ad6a8d3e08289f1481138e"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 190419232,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 122627000,
+          "database_bytes": 691976,
+          "elapsed_ns": 125858576,
+          "gpu_used": false,
+          "max_rss_kib": 30812,
+          "utc_seconds": 1790652518
+        },
+        "ok": true,
+        "result": {
+          "block": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 737243520,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 631181000,
+          "database_bytes": 691976,
+          "elapsed_ns": 645406267,
+          "gpu_used": false,
+          "max_rss_kib": 31356,
+          "utc_seconds": 1790652519
+        },
+        "ok": true,
+        "result": {
+          "block": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "head",
+      "roundtrip_ns": 15485406,
+      "request_bytes": 13,
+      "response": {
+        "observed": {
+          "cpu_ns": 12643000,
+          "database_bytes": 691976,
+          "elapsed_ns": 12647674,
+          "gpu_used": false,
+          "max_rss_kib": 27520,
+          "utc_seconds": 1790652520
+        },
+        "ok": true,
+        "result": {
+          "chainwork": 12,
+          "effect_count": 1,
+          "generation": 6,
+          "height": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "state_keys": 29,
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 154250242,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 111325000,
+          "database_bytes": 766136,
+          "elapsed_ns": 114076642,
+          "gpu_used": false,
+          "max_rss_kib": 29824,
+          "utc_seconds": 1790652521
+        },
+        "ok": true,
+        "result": {
+          "block": "cd09f002e40e52d2df89b62437f6d522824079e5ca4def2736be35f52f4804eb",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 237057147,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 130699999,
+          "database_bytes": 766136,
+          "elapsed_ns": 144140171,
+          "gpu_used": false,
+          "max_rss_kib": 30812,
+          "utc_seconds": 1790652521
+        },
+        "ok": true,
+        "result": {
+          "block": "cd09f002e40e52d2df89b62437f6d522824079e5ca4def2736be35f52f4804eb",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 821503076,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 659657999,
+          "database_bytes": 766136,
+          "elapsed_ns": 711783010,
+          "gpu_used": false,
+          "max_rss_kib": 31356,
+          "utc_seconds": 1790652521
+        },
+        "ok": true,
+        "result": {
+          "block": "cd09f002e40e52d2df89b62437f6d522824079e5ca4def2736be35f52f4804eb",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 184163840,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 113366000,
+          "database_bytes": 848536,
+          "elapsed_ns": 116141420,
+          "gpu_used": false,
+          "max_rss_kib": 30080,
+          "utc_seconds": 1790652523
+        },
+        "ok": true,
+        "result": {
+          "block": "e421e008957f6b01d03df1dde3bc7793f23a7c8cc018ab9684b2d4bd190657ac",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 225097400,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 125698999,
+          "database_bytes": 848536,
+          "elapsed_ns": 127419711,
+          "gpu_used": false,
+          "max_rss_kib": 30812,
+          "utc_seconds": 1790652523
+        },
+        "ok": true,
+        "result": {
+          "block": "e421e008957f6b01d03df1dde3bc7793f23a7c8cc018ab9684b2d4bd190657ac",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 742565049,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 669520000,
+          "database_bytes": 848536,
+          "elapsed_ns": 686888142,
+          "gpu_used": false,
+          "max_rss_kib": 31356,
+          "utc_seconds": 1790652523
+        },
+        "ok": true,
+        "result": {
+          "block": "e421e008957f6b01d03df1dde3bc7793f23a7c8cc018ab9684b2d4bd190657ac",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 180159701,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 101441999,
+          "database_bytes": 922696,
+          "elapsed_ns": 104322548,
+          "gpu_used": false,
+          "max_rss_kib": 30336,
+          "utc_seconds": 1790652524
+        },
+        "ok": true,
+        "result": {
+          "block": "dae29578228434e2e84396115e15df07305f7f17a94265fb4620d5a3f2995fc2",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 247008876,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 142405000,
+          "database_bytes": 922696,
+          "elapsed_ns": 143476353,
+          "gpu_used": false,
+          "max_rss_kib": 30812,
+          "utc_seconds": 1790652524
+        },
+        "ok": true,
+        "result": {
+          "block": "dae29578228434e2e84396115e15df07305f7f17a94265fb4620d5a3f2995fc2",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 933910096,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 834530000,
+          "database_bytes": 922696,
+          "elapsed_ns": 847475828,
+          "gpu_used": false,
+          "max_rss_kib": 31484,
+          "utc_seconds": 1790652525
+        },
+        "ok": true,
+        "result": {
+          "block": "dae29578228434e2e84396115e15df07305f7f17a94265fb4620d5a3f2995fc2",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 162843521,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 104350999,
+          "database_bytes": 996856,
+          "elapsed_ns": 124315673,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652526
+        },
+        "ok": true,
+        "result": {
+          "block": "6676f592da69e16dd5f57bf29c181a59cc0be9c525d21140852f740cbb537680",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 244441175,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 148347999,
+          "database_bytes": 996856,
+          "elapsed_ns": 150212438,
+          "gpu_used": false,
+          "max_rss_kib": 30812,
+          "utc_seconds": 1790652526
+        },
+        "ok": true,
+        "result": {
+          "block": "6676f592da69e16dd5f57bf29c181a59cc0be9c525d21140852f740cbb537680",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 903383382,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 785725000,
+          "database_bytes": 996856,
+          "elapsed_ns": 808835924,
+          "gpu_used": false,
+          "max_rss_kib": 31612,
+          "utc_seconds": 1790652527
+        },
+        "ok": true,
+        "result": {
+          "block": "6676f592da69e16dd5f57bf29c181a59cc0be9c525d21140852f740cbb537680",
+          "generation": 6,
+          "root": "520221288e989686048e81ddc86fc16e3dc7669c6cc533353824c63d27508f24",
+          "tip": "b9bfe5c442ddc6c78be18d82ffd19cd6f31dad537ccd9b2b37e420114b3f929c"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 149152290,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 119512000,
+          "database_bytes": 1260536,
+          "elapsed_ns": 128309193,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652530
+        },
+        "ok": true,
+        "result": {
+          "block": "22d9be42128cfb3805aaca231c4fdbd63f3e2ac101aa5a03bfbd2d70ed284e90",
+          "generation": 7,
+          "root": "8d6f4baa57580a3699308f468f3caf4ea9b6c5de2881153c08d209af853d94c8",
+          "tip": "22d9be42128cfb3805aaca231c4fdbd63f3e2ac101aa5a03bfbd2d70ed284e90"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 281669126,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 171812000,
+          "database_bytes": 1260536,
+          "elapsed_ns": 195603231,
+          "gpu_used": false,
+          "max_rss_kib": 31004,
+          "utc_seconds": 1790652530
+        },
+        "ok": true,
+        "result": {
+          "block": "22d9be42128cfb3805aaca231c4fdbd63f3e2ac101aa5a03bfbd2d70ed284e90",
+          "generation": 7,
+          "root": "8d6f4baa57580a3699308f468f3caf4ea9b6c5de2881153c08d209af853d94c8",
+          "tip": "22d9be42128cfb3805aaca231c4fdbd63f3e2ac101aa5a03bfbd2d70ed284e90"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 1093169500,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 986601999,
+          "database_bytes": 1260536,
+          "elapsed_ns": 1035578628,
+          "gpu_used": false,
+          "max_rss_kib": 31612,
+          "utc_seconds": 1790652531
+        },
+        "ok": true,
+        "result": {
+          "block": "22d9be42128cfb3805aaca231c4fdbd63f3e2ac101aa5a03bfbd2d70ed284e90",
+          "generation": 7,
+          "root": "8d6f4baa57580a3699308f468f3caf4ea9b6c5de2881153c08d209af853d94c8",
+          "tip": "22d9be42128cfb3805aaca231c4fdbd63f3e2ac101aa5a03bfbd2d70ed284e90"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "head",
+      "roundtrip_ns": 16226992,
+      "request_bytes": 13,
+      "response": {
+        "observed": {
+          "cpu_ns": 12741000,
+          "database_bytes": 1260536,
+          "elapsed_ns": 12746208,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652531
+        },
+        "ok": true,
+        "result": {
+          "chainwork": 14,
+          "effect_count": 1,
+          "generation": 7,
+          "height": 7,
+          "root": "8d6f4baa57580a3699308f468f3caf4ea9b6c5de2881153c08d209af853d94c8",
+          "state_keys": 30,
+          "tip": "22d9be42128cfb3805aaca231c4fdbd63f3e2ac101aa5a03bfbd2d70ed284e90"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "effect",
+      "roundtrip_ns": 4735901,
+      "request_bytes": 185,
+      "response": {
+        "error": "OPERATION_ALREADY_ENTERED",
+        "observed": {
+          "cpu_ns": 160999,
+          "database_bytes": 1260536,
+          "elapsed_ns": 162584,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652531
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "head",
+      "roundtrip_ns": 21580733,
+      "request_bytes": 13,
+      "response": {
+        "observed": {
+          "cpu_ns": 17789999,
+          "database_bytes": 1260536,
+          "elapsed_ns": 17799570,
+          "gpu_used": false,
+          "max_rss_kib": 31004,
+          "utc_seconds": 1790652531
+        },
+        "ok": true,
+        "result": {
+          "chainwork": 14,
+          "effect_count": 1,
+          "generation": 7,
+          "height": 7,
+          "root": "8d6f4baa57580a3699308f468f3caf4ea9b6c5de2881153c08d209af853d94c8",
+          "state_keys": 30,
+          "tip": "22d9be42128cfb3805aaca231c4fdbd63f3e2ac101aa5a03bfbd2d70ed284e90"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "effect",
+      "roundtrip_ns": 9279597,
+      "request_bytes": 185,
+      "response": {
+        "error": "OPERATION_ALREADY_ENTERED",
+        "observed": {
+          "cpu_ns": 183999,
+          "database_bytes": 1260536,
+          "elapsed_ns": 193066,
+          "gpu_used": false,
+          "max_rss_kib": 31004,
+          "utc_seconds": 1790652531
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "head",
+      "roundtrip_ns": 139675552,
+      "request_bytes": 13,
+      "response": {
+        "observed": {
+          "cpu_ns": 121475999,
+          "database_bytes": 1260536,
+          "elapsed_ns": 132291907,
+          "gpu_used": false,
+          "max_rss_kib": 31612,
+          "utc_seconds": 1790652531
+        },
+        "ok": true,
+        "result": {
+          "chainwork": 14,
+          "effect_count": 1,
+          "generation": 7,
+          "height": 7,
+          "root": "8d6f4baa57580a3699308f468f3caf4ea9b6c5de2881153c08d209af853d94c8",
+          "state_keys": 30,
+          "tip": "22d9be42128cfb3805aaca231c4fdbd63f3e2ac101aa5a03bfbd2d70ed284e90"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "effect",
+      "roundtrip_ns": 3195596,
+      "request_bytes": 185,
+      "response": {
+        "error": "OPERATION_ALREADY_ENTERED",
+        "observed": {
+          "cpu_ns": 125000,
+          "database_bytes": 1260536,
+          "elapsed_ns": 130923,
+          "gpu_used": false,
+          "max_rss_kib": 31612,
+          "utc_seconds": 1790652531
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 98278134,
+      "request_bytes": 66276,
+      "response": {
+        "error": "TRANSCRIPT",
+        "observed": {
+          "cpu_ns": 80354000,
+          "database_bytes": 1260536,
+          "elapsed_ns": 80373011,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652532
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 108693755,
+      "request_bytes": 66276,
+      "response": {
+        "error": "TRANSCRIPT",
+        "observed": {
+          "cpu_ns": 84337000,
+          "database_bytes": 1260536,
+          "elapsed_ns": 84430962,
+          "gpu_used": false,
+          "max_rss_kib": 31004,
+          "utc_seconds": 1790652532
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 509832617,
+      "request_bytes": 66276,
+      "response": {
+        "error": "TRANSCRIPT",
+        "observed": {
+          "cpu_ns": 420351999,
+          "database_bytes": 1260536,
+          "elapsed_ns": 462410874,
+          "gpu_used": false,
+          "max_rss_kib": 31612,
+          "utc_seconds": 1790652533
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 76644902,
+      "request_bytes": 66276,
+      "response": {
+        "error": "TRANSCRIPT",
+        "observed": {
+          "cpu_ns": 60151000,
+          "database_bytes": 1260536,
+          "elapsed_ns": 60164091,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652533
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 408826010,
+      "request_bytes": 66276,
+      "response": {
+        "error": "TRANSCRIPT",
+        "observed": {
+          "cpu_ns": 83735000,
+          "database_bytes": 1260536,
+          "elapsed_ns": 83761512,
+          "gpu_used": false,
+          "max_rss_kib": 31004,
+          "utc_seconds": 1790652533
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 748219269,
+      "request_bytes": 66276,
+      "response": {
+        "error": "TRANSCRIPT",
+        "observed": {
+          "cpu_ns": 419885000,
+          "database_bytes": 1260536,
+          "elapsed_ns": 432054497,
+          "gpu_used": false,
+          "max_rss_kib": 31740,
+          "utc_seconds": 1790652534
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 132535508,
+      "request_bytes": 66276,
+      "response": {
+        "error": "TRANSCRIPT",
+        "observed": {
+          "cpu_ns": 79937999,
+          "database_bytes": 1260536,
+          "elapsed_ns": 79946701,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652534
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 131491288,
+      "request_bytes": 66276,
+      "response": {
+        "error": "TRANSCRIPT",
+        "observed": {
+          "cpu_ns": 80819999,
+          "database_bytes": 1260536,
+          "elapsed_ns": 80847441,
+          "gpu_used": false,
+          "max_rss_kib": 31004,
+          "utc_seconds": 1790652534
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 633369302,
+      "request_bytes": 66276,
+      "response": {
+        "error": "TRANSCRIPT",
+        "observed": {
+          "cpu_ns": 414844999,
+          "database_bytes": 1260536,
+          "elapsed_ns": 421405579,
+          "gpu_used": false,
+          "max_rss_kib": 31740,
+          "utc_seconds": 1790652535
+        },
+        "ok": false
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 174579949,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 127577000,
+          "database_bytes": 1359416,
+          "elapsed_ns": 142726332,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652535
+        },
+        "ok": true,
+        "result": {
+          "block": "0d54414e6ab6bb209b4c7bf5fadf6779fbbc4935c5a15c650a9b05bc182ee497",
+          "generation": 8,
+          "root": "461c0b6bc2f93181210c1a0181361de3ba2fc12e487c6f3019c69fb1a57c348f",
+          "tip": "0d54414e6ab6bb209b4c7bf5fadf6779fbbc4935c5a15c650a9b05bc182ee497"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 428461541,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 129364999,
+          "database_bytes": 1359416,
+          "elapsed_ns": 131715729,
+          "gpu_used": false,
+          "max_rss_kib": 31004,
+          "utc_seconds": 1790652535
+        },
+        "ok": true,
+        "result": {
+          "block": "0d54414e6ab6bb209b4c7bf5fadf6779fbbc4935c5a15c650a9b05bc182ee497",
+          "generation": 8,
+          "root": "461c0b6bc2f93181210c1a0181361de3ba2fc12e487c6f3019c69fb1a57c348f",
+          "tip": "0d54414e6ab6bb209b4c7bf5fadf6779fbbc4935c5a15c650a9b05bc182ee497"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 1412189748,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 731862000,
+          "database_bytes": 1359416,
+          "elapsed_ns": 775681286,
+          "gpu_used": false,
+          "max_rss_kib": 31740,
+          "utc_seconds": 1790652536
+        },
+        "ok": true,
+        "result": {
+          "block": "0d54414e6ab6bb209b4c7bf5fadf6779fbbc4935c5a15c650a9b05bc182ee497",
+          "generation": 8,
+          "root": "461c0b6bc2f93181210c1a0181361de3ba2fc12e487c6f3019c69fb1a57c348f",
+          "tip": "0d54414e6ab6bb209b4c7bf5fadf6779fbbc4935c5a15c650a9b05bc182ee497"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 179342709,
+      "request_bytes": 66820,
+      "response": {
+        "observed": {
+          "cpu_ns": 95705999,
+          "database_bytes": 1458296,
+          "elapsed_ns": 109415738,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652537
+        },
+        "ok": true,
+        "result": {
+          "block": "2c2f8889660701d902f51a426ff6ece95c3c66f858988a60d265a68f41416459",
+          "generation": 9,
+          "root": "9ac5e28979c2c63ad100451b727bf955fa20f1a30a3c2cfdd0ea9664a663e88c",
+          "tip": "2c2f8889660701d902f51a426ff6ece95c3c66f858988a60d265a68f41416459"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 225660517,
+      "request_bytes": 66820,
+      "response": {
+        "observed": {
+          "cpu_ns": 140555999,
+          "database_bytes": 1458296,
+          "elapsed_ns": 142898333,
+          "gpu_used": false,
+          "max_rss_kib": 31196,
+          "utc_seconds": 1790652537
+        },
+        "ok": true,
+        "result": {
+          "block": "2c2f8889660701d902f51a426ff6ece95c3c66f858988a60d265a68f41416459",
+          "generation": 9,
+          "root": "9ac5e28979c2c63ad100451b727bf955fa20f1a30a3c2cfdd0ea9664a663e88c",
+          "tip": "2c2f8889660701d902f51a426ff6ece95c3c66f858988a60d265a68f41416459"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 898767942,
+      "request_bytes": 66820,
+      "response": {
+        "observed": {
+          "cpu_ns": 752413999,
+          "database_bytes": 1458296,
+          "elapsed_ns": 803674464,
+          "gpu_used": false,
+          "max_rss_kib": 31868,
+          "utc_seconds": 1790652538
+        },
+        "ok": true,
+        "result": {
+          "block": "2c2f8889660701d902f51a426ff6ece95c3c66f858988a60d265a68f41416459",
+          "generation": 9,
+          "root": "9ac5e28979c2c63ad100451b727bf955fa20f1a30a3c2cfdd0ea9664a663e88c",
+          "tip": "2c2f8889660701d902f51a426ff6ece95c3c66f858988a60d265a68f41416459"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "put_artifact",
+      "roundtrip_ns": 11282705,
+      "request_bytes": 18921,
+      "response": {
+        "observed": {
+          "cpu_ns": 1468000,
+          "database_bytes": 1458296,
+          "elapsed_ns": 4096845,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652538
+        },
+        "ok": true,
+        "result": {
+          "artifact": "4d034a73fe6fa5dddccfea5524b5cb6e4fc678b34b2efb683414430952befa38",
+          "bytes": 14108
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "put_artifact",
+      "roundtrip_ns": 10803294,
+      "request_bytes": 18921,
+      "response": {
+        "observed": {
+          "cpu_ns": 2153000,
+          "database_bytes": 1458296,
+          "elapsed_ns": 3394653,
+          "gpu_used": false,
+          "max_rss_kib": 31196,
+          "utc_seconds": 1790652538
+        },
+        "ok": true,
+        "result": {
+          "artifact": "4d034a73fe6fa5dddccfea5524b5cb6e4fc678b34b2efb683414430952befa38",
+          "bytes": 14108
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "put_artifact",
+      "roundtrip_ns": 27946257,
+      "request_bytes": 18921,
+      "response": {
+        "observed": {
+          "cpu_ns": 5570999,
+          "database_bytes": 1458296,
+          "elapsed_ns": 8523239,
+          "gpu_used": false,
+          "max_rss_kib": 31868,
+          "utc_seconds": 1790652538
+        },
+        "ok": true,
+        "result": {
+          "artifact": "4d034a73fe6fa5dddccfea5524b5cb6e4fc678b34b2efb683414430952befa38",
+          "bytes": 14108
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "infer",
+      "roundtrip_ns": 7769324,
+      "request_bytes": 4341,
+      "response": {
+        "observed": {
+          "cpu_ns": 2449000,
+          "database_bytes": 1458296,
+          "elapsed_ns": 2452274,
+          "gpu_used": false,
+          "max_rss_kib": 30592,
+          "utc_seconds": 1790652538
+        },
+        "ok": true,
+        "result": {
+          "artifact": "4d034a73fe6fa5dddccfea5524b5cb6e4fc678b34b2efb683414430952befa38",
+          "author_source_required": false,
+          "input": "cb25c7c9681fc933bfc7afc5f01c1e46918f699ddb0a416c25393948da25e502",
+          "ordinary_hepta_entry": false,
+          "output": "68a54238b96ba6ec1b9e26f795465e807826c2313b5adb158c5fbcd85b3a8486",
+          "predictions": [
+            0,
+            0,
+            0,
+            0,
+            2,
+            2,
+            2,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "infer",
+      "roundtrip_ns": 8292117,
+      "request_bytes": 4341,
+      "response": {
+        "observed": {
+          "cpu_ns": 2713999,
+          "database_bytes": 1458296,
+          "elapsed_ns": 2744949,
+          "gpu_used": false,
+          "max_rss_kib": 31196,
+          "utc_seconds": 1790652538
+        },
+        "ok": true,
+        "result": {
+          "artifact": "4d034a73fe6fa5dddccfea5524b5cb6e4fc678b34b2efb683414430952befa38",
+          "author_source_required": false,
+          "input": "cb25c7c9681fc933bfc7afc5f01c1e46918f699ddb0a416c25393948da25e502",
+          "ordinary_hepta_entry": false,
+          "output": "68a54238b96ba6ec1b9e26f795465e807826c2313b5adb158c5fbcd85b3a8486",
+          "predictions": [
+            0,
+            0,
+            0,
+            0,
+            2,
+            2,
+            2,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "infer",
+      "roundtrip_ns": 26758975,
+      "request_bytes": 4341,
+      "response": {
+        "observed": {
+          "cpu_ns": 9517999,
+          "database_bytes": 1458296,
+          "elapsed_ns": 12525462,
+          "gpu_used": false,
+          "max_rss_kib": 31868,
+          "utc_seconds": 1790652538
+        },
+        "ok": true,
+        "result": {
+          "artifact": "4d034a73fe6fa5dddccfea5524b5cb6e4fc678b34b2efb683414430952befa38",
+          "author_source_required": false,
+          "input": "cb25c7c9681fc933bfc7afc5f01c1e46918f699ddb0a416c25393948da25e502",
+          "ordinary_hepta_entry": false,
+          "output": "68a54238b96ba6ec1b9e26f795465e807826c2313b5adb158c5fbcd85b3a8486",
+          "predictions": [
+            0,
+            0,
+            0,
+            0,
+            2,
+            2,
+            2,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 171665700,
+      "request_bytes": 66868,
+      "response": {
+        "observed": {
+          "cpu_ns": 133371000,
+          "database_bytes": 1565416,
+          "elapsed_ns": 134855437,
+          "gpu_used": false,
+          "max_rss_kib": 30848,
+          "utc_seconds": 1790652539
+        },
+        "ok": true,
+        "result": {
+          "block": "14769a037fdd43cffc8b8164edcb531501e30055ff13ba744306339aecba9721",
+          "generation": 10,
+          "root": "a21f58bab8cdf408cc5f1909c1089c60c771c50f11ed185be9a140c1702382d9",
+          "tip": "14769a037fdd43cffc8b8164edcb531501e30055ff13ba744306339aecba9721"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 219589097,
+      "request_bytes": 66868,
+      "response": {
+        "observed": {
+          "cpu_ns": 130047999,
+          "database_bytes": 1565416,
+          "elapsed_ns": 132602003,
+          "gpu_used": false,
+          "max_rss_kib": 31388,
+          "utc_seconds": 1790652539
+        },
+        "ok": true,
+        "result": {
+          "block": "14769a037fdd43cffc8b8164edcb531501e30055ff13ba744306339aecba9721",
+          "generation": 10,
+          "root": "a21f58bab8cdf408cc5f1909c1089c60c771c50f11ed185be9a140c1702382d9",
+          "tip": "14769a037fdd43cffc8b8164edcb531501e30055ff13ba744306339aecba9721"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 884307942,
+      "request_bytes": 66868,
+      "response": {
+        "observed": {
+          "cpu_ns": 767424000,
+          "database_bytes": 1565416,
+          "elapsed_ns": 807854028,
+          "gpu_used": false,
+          "max_rss_kib": 31868,
+          "utc_seconds": 1790652540
+        },
+        "ok": true,
+        "result": {
+          "block": "14769a037fdd43cffc8b8164edcb531501e30055ff13ba744306339aecba9721",
+          "generation": 10,
+          "root": "a21f58bab8cdf408cc5f1909c1089c60c771c50f11ed185be9a140c1702382d9",
+          "tip": "14769a037fdd43cffc8b8164edcb531501e30055ff13ba744306339aecba9721"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 182941646,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 131433999,
+          "database_bytes": 1660176,
+          "elapsed_ns": 133272637,
+          "gpu_used": false,
+          "max_rss_kib": 31388,
+          "utc_seconds": 1790652541
+        },
+        "ok": true,
+        "result": {
+          "block": "e3ddc2e7691b9992af0f4c86b7bd338a58420b695a2f319a281510746e0a49fa",
+          "generation": 11,
+          "root": "ba3256280a3918ef6a647e8603c9c81db5d76669c4ed7627b59664a77775264a",
+          "tip": "e3ddc2e7691b9992af0f4c86b7bd338a58420b695a2f319a281510746e0a49fa"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 185317839,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 135210000,
+          "database_bytes": 1660176,
+          "elapsed_ns": 138972129,
+          "gpu_used": false,
+          "max_rss_kib": 30848,
+          "utc_seconds": 1790652541
+        },
+        "ok": true,
+        "result": {
+          "block": "e3ddc2e7691b9992af0f4c86b7bd338a58420b695a2f319a281510746e0a49fa",
+          "generation": 11,
+          "root": "ba3256280a3918ef6a647e8603c9c81db5d76669c4ed7627b59664a77775264a",
+          "tip": "e3ddc2e7691b9992af0f4c86b7bd338a58420b695a2f319a281510746e0a49fa"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 918486770,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 777885999,
+          "database_bytes": 1660176,
+          "elapsed_ns": 850827491,
+          "gpu_used": false,
+          "max_rss_kib": 31996,
+          "utc_seconds": 1790652542
+        },
+        "ok": true,
+        "result": {
+          "block": "e3ddc2e7691b9992af0f4c86b7bd338a58420b695a2f319a281510746e0a49fa",
+          "generation": 11,
+          "root": "ba3256280a3918ef6a647e8603c9c81db5d76669c4ed7627b59664a77775264a",
+          "tip": "e3ddc2e7691b9992af0f4c86b7bd338a58420b695a2f319a281510746e0a49fa"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 172235269,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 135544999,
+          "database_bytes": 1754936,
+          "elapsed_ns": 139096361,
+          "gpu_used": false,
+          "max_rss_kib": 31104,
+          "utc_seconds": 1790652543
+        },
+        "ok": true,
+        "result": {
+          "block": "515ecdc2a358a5bc06d25a06285ee67be6b2de9c2d7d2c343a31edcdcc376618",
+          "generation": 12,
+          "root": "d9af997588d7142515a5df3e27905f21289569048765b32542f6d86e7169709d",
+          "tip": "515ecdc2a358a5bc06d25a06285ee67be6b2de9c2d7d2c343a31edcdcc376618"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 232783371,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 139367000,
+          "database_bytes": 1754936,
+          "elapsed_ns": 143064421,
+          "gpu_used": false,
+          "max_rss_kib": 31388,
+          "utc_seconds": 1790652543
+        },
+        "ok": true,
+        "result": {
+          "block": "515ecdc2a358a5bc06d25a06285ee67be6b2de9c2d7d2c343a31edcdcc376618",
+          "generation": 12,
+          "root": "d9af997588d7142515a5df3e27905f21289569048765b32542f6d86e7169709d",
+          "tip": "515ecdc2a358a5bc06d25a06285ee67be6b2de9c2d7d2c343a31edcdcc376618"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 900138661,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 787114000,
+          "database_bytes": 1754936,
+          "elapsed_ns": 835691985,
+          "gpu_used": false,
+          "max_rss_kib": 32064,
+          "utc_seconds": 1790652544
+        },
+        "ok": true,
+        "result": {
+          "block": "515ecdc2a358a5bc06d25a06285ee67be6b2de9c2d7d2c343a31edcdcc376618",
+          "generation": 12,
+          "root": "d9af997588d7142515a5df3e27905f21289569048765b32542f6d86e7169709d",
+          "tip": "515ecdc2a358a5bc06d25a06285ee67be6b2de9c2d7d2c343a31edcdcc376618"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 177044951,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 138371000,
+          "database_bytes": 1853816,
+          "elapsed_ns": 141869365,
+          "gpu_used": false,
+          "max_rss_kib": 31104,
+          "utc_seconds": 1790652545
+        },
+        "ok": true,
+        "result": {
+          "block": "87219468c78505547cccc22af9a9eaefa5c353740cc5f0fc40b98554d28ec713",
+          "generation": 13,
+          "root": "33e1bb0c3cebe56bd849b1047b456f7f1c83e3baaee0c36e46a7ca55fc7e8724",
+          "tip": "87219468c78505547cccc22af9a9eaefa5c353740cc5f0fc40b98554d28ec713"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 357029169,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 144937000,
+          "database_bytes": 1853816,
+          "elapsed_ns": 147449454,
+          "gpu_used": false,
+          "max_rss_kib": 31772,
+          "utc_seconds": 1790652545
+        },
+        "ok": true,
+        "result": {
+          "block": "87219468c78505547cccc22af9a9eaefa5c353740cc5f0fc40b98554d28ec713",
+          "generation": 13,
+          "root": "33e1bb0c3cebe56bd849b1047b456f7f1c83e3baaee0c36e46a7ca55fc7e8724",
+          "tip": "87219468c78505547cccc22af9a9eaefa5c353740cc5f0fc40b98554d28ec713"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 886689379,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 798180000,
+          "database_bytes": 1853816,
+          "elapsed_ns": 830472136,
+          "gpu_used": false,
+          "max_rss_kib": 32064,
+          "utc_seconds": 1790652545
+        },
+        "ok": true,
+        "result": {
+          "block": "87219468c78505547cccc22af9a9eaefa5c353740cc5f0fc40b98554d28ec713",
+          "generation": 13,
+          "root": "33e1bb0c3cebe56bd849b1047b456f7f1c83e3baaee0c36e46a7ca55fc7e8724",
+          "tip": "87219468c78505547cccc22af9a9eaefa5c353740cc5f0fc40b98554d28ec713"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 145405605,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 102889000,
+          "database_bytes": 1948576,
+          "elapsed_ns": 106458247,
+          "gpu_used": false,
+          "max_rss_kib": 31104,
+          "utc_seconds": 1790652547
+        },
+        "ok": true,
+        "result": {
+          "block": "9f92eeed3403ad598e22db1f45c775efb6657d190c5031c416c800d6b2de5de1",
+          "generation": 14,
+          "root": "588d56880ad484c0ba2cf9aa38053aade571704f6c4bb78800f3e844cc7dcd98",
+          "tip": "9f92eeed3403ad598e22db1f45c775efb6657d190c5031c416c800d6b2de5de1"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 224919937,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 150197999,
+          "database_bytes": 1948576,
+          "elapsed_ns": 152573189,
+          "gpu_used": false,
+          "max_rss_kib": 31772,
+          "utc_seconds": 1790652547
+        },
+        "ok": true,
+        "result": {
+          "block": "9f92eeed3403ad598e22db1f45c775efb6657d190c5031c416c800d6b2de5de1",
+          "generation": 14,
+          "root": "588d56880ad484c0ba2cf9aa38053aade571704f6c4bb78800f3e844cc7dcd98",
+          "tip": "9f92eeed3403ad598e22db1f45c775efb6657d190c5031c416c800d6b2de5de1"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 948216876,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 808294999,
+          "database_bytes": 1948576,
+          "elapsed_ns": 855806559,
+          "gpu_used": false,
+          "max_rss_kib": 32192,
+          "utc_seconds": 1790652547
+        },
+        "ok": true,
+        "result": {
+          "block": "9f92eeed3403ad598e22db1f45c775efb6657d190c5031c416c800d6b2de5de1",
+          "generation": 14,
+          "root": "588d56880ad484c0ba2cf9aa38053aade571704f6c4bb78800f3e844cc7dcd98",
+          "tip": "9f92eeed3403ad598e22db1f45c775efb6657d190c5031c416c800d6b2de5de1"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 177306191,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 141878999,
+          "database_bytes": 2043336,
+          "elapsed_ns": 145883986,
+          "gpu_used": false,
+          "max_rss_kib": 31104,
+          "utc_seconds": 1790652549
+        },
+        "ok": true,
+        "result": {
+          "block": "1ab34f893c6aa215c3afef9e77cecb873be37b08d42a5bce331733de9f2a63b6",
+          "generation": 15,
+          "root": "f002aa713292b210776502e78b59d63df6c7dea66047505c4828d8a57dff3aad",
+          "tip": "1ab34f893c6aa215c3afef9e77cecb873be37b08d42a5bce331733de9f2a63b6"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 242690383,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 150451999,
+          "database_bytes": 2043336,
+          "elapsed_ns": 170810542,
+          "gpu_used": false,
+          "max_rss_kib": 31772,
+          "utc_seconds": 1790652549
+        },
+        "ok": true,
+        "result": {
+          "block": "1ab34f893c6aa215c3afef9e77cecb873be37b08d42a5bce331733de9f2a63b6",
+          "generation": 15,
+          "root": "f002aa713292b210776502e78b59d63df6c7dea66047505c4828d8a57dff3aad",
+          "tip": "1ab34f893c6aa215c3afef9e77cecb873be37b08d42a5bce331733de9f2a63b6"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 959968372,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 820194000,
+          "database_bytes": 2043336,
+          "elapsed_ns": 880873506,
+          "gpu_used": false,
+          "max_rss_kib": 32192,
+          "utc_seconds": 1790652550
+        },
+        "ok": true,
+        "result": {
+          "block": "1ab34f893c6aa215c3afef9e77cecb873be37b08d42a5bce331733de9f2a63b6",
+          "generation": 15,
+          "root": "f002aa713292b210776502e78b59d63df6c7dea66047505c4828d8a57dff3aad",
+          "tip": "1ab34f893c6aa215c3afef9e77cecb873be37b08d42a5bce331733de9f2a63b6"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "submit",
+      "roundtrip_ns": 180608736,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 143771999,
+          "database_bytes": 2146336,
+          "elapsed_ns": 147393834,
+          "gpu_used": false,
+          "max_rss_kib": 31360,
+          "utc_seconds": 1790652551
+        },
+        "ok": true,
+        "result": {
+          "block": "476a78ea31dec3660b1b634b5b62d11b113a583a79609a5a8d4dcfb109286536",
+          "generation": 16,
+          "root": "edb82268baf36abffd5ea0389b076d3d6498b9bc32401385f762caf1e7339c90",
+          "tip": "476a78ea31dec3660b1b634b5b62d11b113a583a79609a5a8d4dcfb109286536"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "submit",
+      "roundtrip_ns": 224138243,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 139899999,
+          "database_bytes": 2146336,
+          "elapsed_ns": 142799262,
+          "gpu_used": false,
+          "max_rss_kib": 31772,
+          "utc_seconds": 1790652551
+        },
+        "ok": true,
+        "result": {
+          "block": "476a78ea31dec3660b1b634b5b62d11b113a583a79609a5a8d4dcfb109286536",
+          "generation": 16,
+          "root": "edb82268baf36abffd5ea0389b076d3d6498b9bc32401385f762caf1e7339c90",
+          "tip": "476a78ea31dec3660b1b634b5b62d11b113a583a79609a5a8d4dcfb109286536"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "submit",
+      "roundtrip_ns": 922834388,
+      "request_bytes": 66276,
+      "response": {
+        "observed": {
+          "cpu_ns": 828778999,
+          "database_bytes": 2146336,
+          "elapsed_ns": 874912347,
+          "gpu_used": false,
+          "max_rss_kib": 32316,
+          "utc_seconds": 1790652552
+        },
+        "ok": true,
+        "result": {
+          "block": "476a78ea31dec3660b1b634b5b62d11b113a583a79609a5a8d4dcfb109286536",
+          "generation": 16,
+          "root": "edb82268baf36abffd5ea0389b076d3d6498b9bc32401385f762caf1e7339c90",
+          "tip": "476a78ea31dec3660b1b634b5b62d11b113a583a79609a5a8d4dcfb109286536"
+        }
+      }
+    },
+    {
+      "host": "rog-ts",
+      "operation": "head",
+      "roundtrip_ns": 27945755,
+      "request_bytes": 13,
+      "response": {
+        "observed": {
+          "cpu_ns": 23721000,
+          "database_bytes": 2146336,
+          "elapsed_ns": 23726498,
+          "gpu_used": false,
+          "max_rss_kib": 31360,
+          "utc_seconds": 1790652552
+        },
+        "ok": true,
+        "result": {
+          "chainwork": 32,
+          "effect_count": 1,
+          "generation": 16,
+          "height": 16,
+          "root": "edb82268baf36abffd5ea0389b076d3d6498b9bc32401385f762caf1e7339c90",
+          "state_keys": 40,
+          "tip": "476a78ea31dec3660b1b634b5b62d11b113a583a79609a5a8d4dcfb109286536"
+        }
+      }
+    },
+    {
+      "host": "pocket4-ts",
+      "operation": "head",
+      "roundtrip_ns": 38962771,
+      "request_bytes": 13,
+      "response": {
+        "observed": {
+          "cpu_ns": 35207000,
+          "database_bytes": 2146336,
+          "elapsed_ns": 35231394,
+          "gpu_used": false,
+          "max_rss_kib": 31772,
+          "utc_seconds": 1790652552
+        },
+        "ok": true,
+        "result": {
+          "chainwork": 32,
+          "effect_count": 1,
+          "generation": 16,
+          "height": 16,
+          "root": "edb82268baf36abffd5ea0389b076d3d6498b9bc32401385f762caf1e7339c90",
+          "state_keys": 40,
+          "tip": "476a78ea31dec3660b1b634b5b62d11b113a583a79609a5a8d4dcfb109286536"
+        }
+      }
+    },
+    {
+      "host": "x230-ts",
+      "operation": "head",
+      "roundtrip_ns": 180246703,
+      "request_bytes": 13,
+      "response": {
+        "observed": {
+          "cpu_ns": 160186000,
+          "database_bytes": 2146336,
+          "elapsed_ns": 172217129,
+          "gpu_used": false,
+          "max_rss_kib": 32316,
+          "utc_seconds": 1790652552
+        },
+        "ok": true,
+        "result": {
+          "chainwork": 32,
+          "effect_count": 1,
+          "generation": 16,
+          "height": 16,
+          "root": "edb82268baf36abffd5ea0389b076d3d6498b9bc32401385f762caf1e7339c90",
+          "state_keys": 40,
+          "tip": "476a78ea31dec3660b1b634b5b62d11b113a583a79609a5a8d4dcfb109286536"
+        }
+      }
+    }
+  ],
+  "production_activation": false
+}

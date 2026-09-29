@@ -1,31 +1,13 @@
 # M09 Artifact content identity, retention and readback
 
-Selected development target: `pon-nakamoto-v1`. Revision: executable-contract increment.
-Actual source ownership: `config/portability-inventory-v1.json`; procedure registry:
-[`module-contracts-v1.json`](../../config/pon/module-contracts-v1.json).
-This module has detailed procedures and executable reference coverage, not an independently
-accepted native product. The [sole plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
-sets ordering. [MODEL_EVALUATION.md](../protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md) defines exact shared rules.
+Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 
-## PoN Authority
+## Scope and ownership
 
-Read at most65537 bytes; require <=65536 and canonical JSON byte identity, exact fields/shapes/ranges/feature/family. Hash bytes, never mutable path names. No executable object format.
+Current bounded integer model family, not arbitrary neural model hosting.
 
-This module cannot use a decoded JSON boolean, historical proof, local checkpoint or a
-passing document check to grant work validity, model utility, local execution permission
-or production activation. Every consumer must use the specific verified fact it needs.
-Native component reuse and executable-contract integration are reported separately.
-
-## PoN Interfaces
-
-| Operation | Exact logical inputs | Output and authority boundary |
-|---|---|---|
-| `ValidateArtifact` | canonical model bytes,expected hash,family | bounded immutable tensor bundle |
-| `FetchWithoutAuthor` | manifesthash,two custodian paths,consumer request | verified same bytes or unavailable |
-
-The named signatures define domain contracts. Source bindings below identify which are
-implemented natively, in the executable Python specification, or only by reusable
-components. The names do not assert matching deployed Rust service APIs.
+The claims below apply to their named component and tests, not to an independently accepted full native node.
 
 ## PoN State machine
 
@@ -33,70 +15,57 @@ components. The names do not assert matching deployed Rust service APIs.
 
 Read at most65537 bytes; require <=65536 and canonical JSON byte identity, exact fields/shapes/ranges/feature/family. Hash bytes, never mutable path names. No executable object format.
 
-**Commit point:** Content-addressed artifact and manifest owned by the artifact provider.
-
-**Rejections:** `ARTIFACT_LIMIT, ARTIFACT_FIELDS, FAMILY, SHAPE, NUMERIC`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+**Atomic/commit boundary:** Content-addressed artifact and manifest owned by the artifact provider.
 
 ### M09.FetchWithoutAuthor
 
 Verify each copy hash; remove original author path during controlled test; load from a custodian and bind actual model hash to result. Remote diversified storage and long-term repair are not implied by local copies.
 
-**Commit point:** Retention obligations separate from self-contained historical work certificates.
+**Atomic/commit boundary:** Retention obligations separate from self-contained historical work certificates.
 
-**Rejections:** `DA, ARTIFACT_CANONICAL_BYTES, UNAVAILABLE`. Failure does not silently downgrade to a weaker proof or
-convert an uncertain external outcome into not-executed.
+## M09.ArtifactIdentity
 
-## PoN Persistence and recovery
+**Invariant:** Replacing model bytes at the same path fails the requested digest before load; malformed or executable-shaped artifacts reject.
 
-**M09.ValidateArtifact:** Content-addressed artifact and manifest owned by the artifact provider.
+**Scope:** Current bounded integer model family, not arbitrary neural model hosting.
 
-**M09.FetchWithoutAuthor:** Retention obligations separate from self-contained historical work certificates.
+**Atomic boundary:** Read at most65537 bytes, check size and expected digest, canonical JSON, family and tensor dimensions before inference.
 
-Branch-derived entitlement can be detached. Independent local effect/revocation facts
-cannot. See [the exact tables and eight crash cuts](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md).
-A native implementation must reproduce byte/root/recovery vectors before replacing the
-reference path. No old consensus namespace or decoder is restored.
+**Failure schedule:** Change base weights; Wrong family or shape; Extra executable field; Trailing bytes and oversized input.
 
-## PoN Resource bounds
+**Expected result:** Replacing model bytes at the same path fails the requested digest before load; malformed or executable-shaped artifacts reject.
 
-**M09.ValidateArtifact:** base/router3x257;deltas3x3x257;intweights[-32767,32767].
+**Resource and retention rule:** This loader accepts64KiB, distinct from the generic64MiB transport target.
 
-**M09.FetchWithoutAuthor:** productiontarget artifacts64MiB,chunks1MiB,retention10000blocks.
+## Concrete regression selectors
 
-The [numeric devnet limits](../../config/pon/devnet-v1.json) are authenticated with the
-work, model and ledger profile. Limit changes require a new context. Local backpressure
-may reject service or defer data but cannot fabricate accepted block/evaluation facts.
+`formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_exact_expected_artifact_not_mutable_path`
 
-## PoN Security
+`formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_shapes_fields_and_noncanonical_bytes_reject`
 
-The full-recompute work verifier has measured cheap-forgery amplification and unaccepted
-cost-hardness assumptions. Local model evaluations use controlled attestors and repeated
-experimental partitions; they are not independent future-window evidence. SQLite process
-crashes are not physical power-loss qualification. These limitations remain explicit in
-[this acceptance contract](../protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md).
+`formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_loader_size_is_bounded_before_json_decode`
 
-## PoN Verification and evidence
+`formal/pon-nakamoto-v1/test_model_contract.py::PublicModelContractTests.test_numpy_and_scalar_integer_outputs_match`
 
-- `CodecTests` in the conformance suite covers this module's stated scope; cross-module positive product behavior is exercised by the signed release/free-use experiment.
+These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
-```bash
-python3 formal/pon-nakamoto-v1/test_contracts.py
-CARGO_TARGET_DIR=/path/to/target TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
-```
+## Module-specific threat and residual work
 
-Build native examples before the interop command; missing binaries cause failure, not
-a skipped pass. Fixtures are never regenerated by test execution. Independently written
-third-party vectors and acceptance remain future evidence, not an assumed status.
+Parameter substitution, hostile object formats, unavailable custodians and expired shared bases.
+
+Physical-host copies and source-path loss are tested by a scoped campaign; geographic independence, renewal and long-retention responsibility remain unaccepted.
 
 ## Current source and verification
 
-- [`formal/pon-nakamoto-v1/experiments/model_loop.py`](../../formal/pon-nakamoto-v1/experiments/model_loop.py)
-- [`formal/pon-nakamoto-v1/experiments/settle_model.py`](../../formal/pon-nakamoto-v1/experiments/settle_model.py)
-- Native reusable owner: `trnm-data-availability`; run `cargo test --locked -p trnm-data-availability --all-targets --all-features` from `trillionnium`.
+- [`formal/pon-nakamoto-v1/model_contract.py`](../../formal/pon-nakamoto-v1/model_contract.py).
+- [`formal/pon-nakamoto-v1/experiments/model_loop.py`](../../formal/pon-nakamoto-v1/experiments/model_loop.py).
 
-## Maturity and outstanding integration
+No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.
 
-Documented: yes. Executable contract: yes. Native component presence is enumerated above.
-Native ordinary-product integration: no. Independent acceptance: no. Production activation:
-no. Those axes are independent; a component-level pass does not promote the entire module.
+## Executed evidence and scope
+
+The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
+raw command exits and concrete invariant test results. Its verifier distinguishes
+runtime byte identity from documentation edits and cannot grant independent acceptance.
+Module-specific limitations above remain in force even when the referenced local test
+passes. The development plan, not this link or a count of procedures, selects next work.

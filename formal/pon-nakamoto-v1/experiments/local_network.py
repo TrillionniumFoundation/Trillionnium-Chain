@@ -74,12 +74,19 @@ def run(out):
             with ThreadPoolExecutor(max_workers=3)as pool:responses=list(pool.map(lambda port:request(port,message),ports))
             for reply,elapsed in responses:require(reply['ok'],'PEER_'+str(reply));metrics.append({'scenario':label,'roundtrip_seconds':elapsed,'validation_seconds':reply['validation_seconds'],'transactions':len(txs)})
             require(len({r[0]['root']for r in responses})==1,'PEER_ROOT_DISAGREEMENT')
+        funding=[]
+        for who in range(4,36):
+            nonce+=1;funding.append(sign(key(0),nonce,'transfer',dict(recipient=public(key(who)),amount=10000)))
+        h,t,p=origin.make(tip,funding);tip=origin.admit(h,t,p,PARAMS['genesis_timestamp']+1000000);origin.activate(tip);propagate(h,t,p,'fund-independent-senders')
         for scenario in ['disjoint-recipients','hot-recipient']:
+
             for batch in range(4):
                 txs=[]
                 for j in range(8):
-                    nonce+=1;recipient=H('new-payee',u64(nonce))if scenario=='disjoint-recipients'else public(key(1))
-                    txs.append(sign(key(0),nonce,'transfer',dict(recipient=recipient,amount=100)))
+                    if scenario=='disjoint-recipients':
+                        who=4+batch*8+j;txs.append(sign(key(who),1,'transfer',dict(recipient=H('new-payee',u64(who)),amount=100)))
+                    else:
+                        nonce+=1;txs.append(sign(key(0),nonce,'transfer',dict(recipient=public(key(1)),amount=100)))
                 start=time.perf_counter();h,t,p=origin.make(tip,txs);generation=time.perf_counter()-start
                 tip=origin.admit(h,t,p,PARAMS['genesis_timestamp']+1000000);origin.activate(tip);propagate(h,t,p,scenario)
                 metrics.append({'scenario':scenario,'generation_seconds':generation,'transactions':len(txs)})
@@ -109,7 +116,7 @@ def run(out):
             fork=origin.admit(h,t,p,PARAMS['genesis_timestamp']+1000000);propagate(h,t,p,'fork-reorg');count+=1
         origin.activate(fork);require(all(request(port,{'op':'head'})[0]['tip']==fork.hex()for port in ports),'REORG_DISAGREEMENT')
         origin.close()
-        report={'schema':'pon-loopback-executable-contract-cost-v1','transport':'framed TCP on 127.0.0.1 only','peer_processes':3,'independent_operators':False,'native_node':False,'network_security_accepted':False,'temporary_storage':'normal output directory; SQLite WAL FULL, no power-loss test','actual_work_verification':True,'actual_signed_transactions':64,'miner_target_initial':PARAMS['initial_target_hex'],'statistics_include_python_scalar_work_and_full_state_roots':True,'configured_block_spacing_seconds':10,'chain_clock':'fixed logical timestamps for reproducibility, not live UTC consensus-time acceptance','no_sleep_to_enforce_spacing':True,'samples':metrics,'invalid_transcript_roundtrip_seconds':attacks,'oversized_frame_rejections':frame_rejections,'final_tip':fork.hex(),'production_activation':False}
+        report={'schema':'pon-loopback-executable-contract-cost-v1','transport':'framed TCP on 127.0.0.1 only','peer_processes':3,'independent_operators':False,'native_node':False,'network_security_accepted':False,'temporary_storage':'normal output directory; SQLite WAL FULL, no power-loss test','actual_work_verification':True,'actual_signed_transactions':96,'measured_transfers':64,'setup_funding_transfers':32,'disjoint_senders_and_recipients':True,'native_application_backend':bool(os.environ.get('TRNM_NATIVE_EXECUTOR')), 'miner_target_initial':PARAMS['initial_target_hex'],'statistics_include_python_scalar_work_and_full_state_roots':True,'configured_block_spacing_seconds':10,'chain_clock':'fixed logical timestamps for reproducibility, not live UTC consensus-time acceptance','no_sleep_to_enforce_spacing':True,'samples':metrics,'invalid_transcript_roundtrip_seconds':attacks,'oversized_frame_rejections':frame_rejections,'final_tip':fork.hex(),'production_activation':False}
         report['roundtrip_by_scenario']={s:percentiles([r['roundtrip_seconds']for r in metrics if r['scenario']==s and 'roundtrip_seconds'in r])for s in {r['scenario']for r in metrics}}
         (out/'report.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({k:v for k,v in report.items()if k!='samples'}),flush=True)
     finally:
