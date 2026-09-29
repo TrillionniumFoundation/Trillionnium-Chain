@@ -140,3 +140,18 @@ are collected separately. Native deployment, future efficacy, external data gove
 independent evaluators and public-network economics are still unaccepted.
 
 Current native three-generation release tests use controlled signed scores and exercise retirement/claim semantics. They do not establish three improving learned generations. The ordinary Hepta path and prospective independent evaluation remain missing.
+
+## Continuous attempts, including no-change outcomes
+
+`learning_cycles.py` performs three actual local optimization/calibration/evaluation
+attempts. Bootstrap source files are excluded from later partitions; the three cycles
+use disjoint file groups. Candidate, strongest calibration-selected control and partitions
+are fixed before evaluation. Each attempt starts from the actually admitted public
+artifact, not from an unaccepted optimistic candidate. If independent owner/time evidence
+is absent, public parameters remain unchanged and reward is zero even when an exploratory
+score is positive. Retrospective file partitions are not new future user experience.
+
+These experiments are not three improving public releases. The separate native ledger
+regression exercises three signed controlled release generations for exact accounting.
+Neither may be relabelled as three ordinary Hepta learning generations. A composition
+losing to a stronger deployable single/merged control is not forced into adoption.

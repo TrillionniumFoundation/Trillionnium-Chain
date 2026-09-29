@@ -68,3 +68,15 @@ block inclusion and confirmation. A local executor speedup is never public-chain
 Before launching a batch, identical fixed sender bytes imply a mandatory shared nonce write. Such a batch executes serially with full validation and no speculation. Metrics report serial_conflict_batches and actual peak_inflight. Distinct senders sharing a recipient remain a real re-execution test; no valid transaction or signature is skipped.
 
 The native bridge checks Network and full Parameters on every request and returns both identities. The caller rejects mismatches even when the transaction list is empty; stale binaries cannot silently supply old empty-block rules.
+
+## Native process boundary and exact work backend
+
+The native application bridge drains stdin/stdout/stderr concurrently and enforces16MiB
+input,32MiB stdout,64KiB stderr and a30-second deadline. Overflow/timeout terminates and
+reaps only its owned process session. A selected native backend never falls back to the
+Python oracle. Request/response contexts and the resulting state root remain checked.
+
+`TRNM_NATIVE_WORK` additionally selects the fixed-size native work bridge in M01. Proof
+bytes and decoded products are compared against the separate oracle. Unknown or failed
+native executables reject. This joins native work and application components to the
+existing reference ledger; it is not a new standalone native consensus/persistence host.

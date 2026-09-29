@@ -15,7 +15,7 @@ struct State {
     public: usize,
     recovery: usize,
     peers: BTreeMap<[u8; 32], usize>,
-    active: BTreeSet<[u8; 32]>,
+    active: BTreeSet<(bool, [u8; 32])>,
     generation: u64,
     stopped: bool,
 }
@@ -45,7 +45,7 @@ fn acquire(
     if s.stopped {
         return Err(Refusal::Stopped);
     }
-    if s.active.contains(&digest) {
+    if s.active.contains(&(recovery, digest)) {
         return Err(Refusal::Duplicate);
     }
     if recovery {
@@ -60,7 +60,7 @@ fn acquire(
             return Err(Refusal::PeerBusy);
         }
     }
-    s.active.insert(digest);
+    s.active.insert((recovery, digest));
     if recovery {
         s.recovery += 1;
     } else {
@@ -108,7 +108,7 @@ impl Drop for Permit {
     fn drop(&mut self) {
         // Poisoning fences admission. Reclaiming counts never produces verified work.
         let mut s = self.state.lock().unwrap_or_else(|e| e.into_inner());
-        s.active.remove(&self.digest);
+        s.active.remove(&(self.recovery, self.digest));
         if self.recovery {
             s.recovery -= 1;
         } else {
@@ -178,6 +178,26 @@ mod tests {
         drop(held);
         assert!(public.try_acquire([7; 32], [7; 32]).is_ok());
     }
+    #[test]
+    fn public_duplicate_cannot_pin_a_locally_requested_recovery_digest() {
+        let (public, recovery) = bounded_ingress();
+        let remote = public.try_acquire([1; 32], [9; 32]).unwrap();
+        let local = recovery.try_acquire([9; 32]).unwrap();
+        assert!(!remote.cancelled());
+        assert!(!local.cancelled());
+        assert!(matches!(
+            recovery.try_acquire([9; 32]),
+            Err(Refusal::Duplicate)
+        ));
+        drop(remote);
+        assert!(matches!(
+            recovery.try_acquire([9; 32]),
+            Err(Refusal::Duplicate)
+        ));
+        drop(local);
+        assert!(recovery.try_acquire([9; 32]).is_ok());
+    }
+
     #[test]
     fn panic_unwind_releases_capacity() {
         let (public, _) = bounded_ingress();

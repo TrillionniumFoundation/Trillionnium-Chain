@@ -81,7 +81,7 @@ All invalid commands reject the candidate block and leave the parent state uncha
 | 3 | cancel_task / 32 | only task owner, only reserved; refund remaining escrow; terminal cancelled |
 | 4 | record_receipt / 64 | bound provider, reserved and before deadline, nonzero output; status receipt, no payment yet |
 | 5 | accept_task / 64 | task owner, receipt and matching output before deadline; pay provider, status settled |
-| 6 | contribute / 168 | current parent release, exact family, bounded artifact; id binds author+family+parent+artifact+components root; reject same parent/artifact duplicate; count live candidates, not zero-score history |
+| 6 | contribute / 176 | current parent release, exact family, bounded artifact; id binds author+family+parent+artifact+components root; reject same parent/artifact duplicate; count live candidates, not zero-score history |
 | 7 | evaluate / 104 | registered non-author evaluator; once per evaluator; fixed plan, nonzero evidence, integer bounded score; freeze minimum of first two valid attestations |
 | 8 | publish_release / 145+40n | 1<=n<=16 sorted unique contribution IDs; bundle and allocations positively evaluated; recompute total and root; sponsor locks finite budget and reserves maturity+1000 claim deadline; adopt release |
 | 9 | claim_reward / 73+32n | payee bound by allocation-root membership, maturity and deadline, exact Merkle depth/root/score; one claim per contribution; transfer floor(budget×score/total), retain dust |
@@ -89,7 +89,7 @@ All invalid commands reject the candidate block and leave the parent state uncha
 | 11 | consume_quota / 136 | provider transaction plus consumer signature over exact quota/provider nonce/units/result; subtract units, pay provider less fee; user pays no funds |
 | 12 | register_work / 32 | new nonzero task commitment; eligible only in a later block |
 
-ContributionId=H("contribution",author,family,parent,artifact,components_root).
+ContributionId=H("contribution-v3",author,family,parent,artifact,components_root,LE64(submission_round)).
 ReleaseId=H("release",parent,bundle,LE64(budget),allocation_root,LE64(total_score)).
 The bundle is itself an evaluated contribution binding its exact allocation root.
 This prevents an otherwise valid publisher from inventing contribution scores or a
@@ -155,3 +155,49 @@ Consumer use signatures now cover H("use",Network,Parameters,quota,provider,nonc
 `result` may be the strict closed inference receipt digest binding model/request/input/
 output and exact provider/quota. The consumer validates expected fields before signing.
 The chain verifies the signed digest, not private plaintext or actual model usefulness.
+
+## Revision3: finite contribution windows without replay reopening
+
+`consensus_revision=3` and a new chain label produce a fresh parameter/genesis context.
+This is NOT an in-place revision2 database or transaction upgrade. Tag6 appends one u64
+`submission_round`, giving176 payload bytes. The field is signed and part of its ID.
+Require submission_round=floor(candidate_height/128). Retain at most512 contribution
+records and256 active candidates in that window. A64-block candidate lifetime expires
+both pending and evaluated results; expired results cannot authorize publication.
+
+On crossing the window boundary, old-window candidate and artifact duplicate records
+can be removed because their original signed payloads remain invalid. A new submission
+requires a new ID/signature/round and new evaluation; there is no carried-forward score.
+Published release-root claims remain independently payable within their original claim
+window even after candidate rows retire. A chain reorg replays these changes normally;
+it does not erase the independent local execution/revocation journal.
+
+The finite window may reject excess submissions temporarily. It does not claim Sybil
+fairness or solve all historical account, task, work-registration and block-storage growth.
+The parameters are experimental and require separate production resource/economic design.
+
+## Revision3: resource identity, current model and strict signatures
+
+TaskId=H("task-instance-v3",Network,Parameters,sender,LE64(creation_nonce),provider,
+LE64(budget),LE64(deadline)). QuotaId=H("quota-instance-v3",Network,Parameters,sender,
+LE64(creation_nonce),consumer,provider,LE64(units),LE64(deadline)). These are mandatory
+checks on the existing tag2/tag10 payloads. Closed, remaining-zero resources can retire
+after the declared deadline: old transaction nonces and old signed deadlines remain
+invalid; a new nonce cannot reopen the same ID. Raw task labels are not resource IDs.
+
+Publication preserves bundle artifact, family, components root and parent in the release
+record before candidate rows are retired. Current model discovery must not depend on a
+reclaimed candidate record. Reward Merkle membership remains a separate fact.
+
+The parameter commitment now includes the explicit strict Ed25519 profile: canonical
+point encodings with y<p and no negative-zero encoding; scalar S<L; reject small-order
+public keys and R; then the actual signature equation verifier. Python backend defaults
+were observed to accept the identity-key/identity-R zero-scalar case; relying on those
+defaults disagreed with native verify_strict. Both paths now perform the specified
+rejections, with an RFC8032 positive vector and small-order/canonicality parity tests.
+These tests are not an independent cryptographic audit. No private scalar or signing
+primitive is implemented by the Python public-point prevalidation helper.
+
+Early admission checks envelope count and lengths before root/work replay. Identical
+already verified header/body/proof retransmission reuses that stored fact; a matching
+BlockId with altered certificate/body rejects and cannot poison the valid stored entry.

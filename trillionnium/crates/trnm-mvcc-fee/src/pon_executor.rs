@@ -1,4 +1,4 @@
-//! Native revision-2 application transitions. No work/fork/Hepta authority is implied.
+//! Native revision-3 application transitions. No work/fork/Hepta authority is implied.
 //! Parallel workers speculate against one immutable snapshot; exact key and prefix
 //! reads are validated in canonical order. Conflict or speculative rejection is
 //! re-executed ONCE against that order's current state, never an unbounded retry loop.
@@ -89,7 +89,7 @@ impl Config {
             serde_json::from_str(include_str!("../../../../config/pon/devnet-v1.json"))
                 .map_err(|_| "CONFIG")?;
         require(
-            params["consensus_revision"] == 2 && params["production_activation"] == false,
+            params["consensus_revision"] == 3 && params["production_activation"] == false,
             "CONFIG",
         )?;
         let model: Value =
@@ -333,6 +333,8 @@ fn active_candidate(v: &Value, current: &str, height: u64, cfg: &Config) -> Resu
         .transpose()?
         .unwrap_or(height);
     Ok(text(v, "parent")? == current
+        && v.get("submission_round").map(num).transpose()?.unwrap_or(0)
+            == height / cfg.limit("candidate_round_blocks")?
         && (status == "submitted" || status == "evaluated")
         && (status != "evaluated" || field(v, "score")? > 0)
         && height <= add(submitted, cfg.limit("candidate_lifetime_blocks")?)?)
@@ -380,6 +382,21 @@ fn apply_one(base: &State, raw: &[u8], height: u64, cfg: &Config) -> Result<Patc
             let provider = hex::encode(p.h()?);
             let budget = p.n()?;
             let deadline = p.n()?;
+            require(
+                task == hash(
+                    b"task-instance-v3",
+                    &[
+                        &cfg.network,
+                        &cfg.parameters,
+                        &tx.sender,
+                        &tx.nonce.to_le_bytes(),
+                        &hash32(&provider)?,
+                        &budget.to_le_bytes(),
+                        &deadline.to_le_bytes(),
+                    ],
+                ),
+                "RESOURCE_ID",
+            )?;
             let k = format!("task:{}", hex::encode(task));
             require(s.get(&k).is_none(), "DUPLICATE")?;
             s.deadline(cfg, deadline, height)?;
@@ -430,10 +447,22 @@ fn apply_one(base: &State, raw: &[u8], height: u64, cfg: &Config) -> Result<Patc
             let artifact = p.h()?;
             let size = p.n()?;
             let components = p.h()?;
+            let round = p.n()?;
+            require(
+                round == height / cfg.limit("candidate_round_blocks")?,
+                "SUBMISSION_ROUND",
+            )?;
             require(
                 cid == hash(
-                    b"contribution",
-                    &[&tx.sender, &family, &parent, &artifact, &components],
+                    b"contribution-v3",
+                    &[
+                        &tx.sender,
+                        &family,
+                        &parent,
+                        &artifact,
+                        &components,
+                        &round.to_le_bytes(),
+                    ],
                 ),
                 "ROOT",
             )?;
@@ -450,20 +479,30 @@ fn apply_one(base: &State, raw: &[u8], height: u64, cfg: &Config) -> Result<Patc
                 "LIMIT",
             )?;
             require(artifact != ZERO, "EVIDENCE")?;
+            let history = s.scan("contribution:");
+            require(
+                (history.len() as u64) < cfg.limit("max_candidate_history_per_round")?,
+                "CANDIDATE_WINDOW_FULL",
+            )?;
             let mut count = 0;
-            for v in s.scan("contribution:").values() {
+            for v in history.values() {
                 if active_candidate(v, &current, height, cfg)? {
                     count += 1;
                 }
             }
             require(count < cfg.limit("max_model_candidates")?, "LIMIT")?;
             let k = format!("contribution:{}", hex::encode(cid));
-            let duplicate = format!("artifact:{}:{}", hex::encode(parent), hex::encode(artifact));
+            let duplicate = format!(
+                "artifact:{}:{}:{}",
+                hex::encode(parent),
+                round,
+                hex::encode(artifact)
+            );
             require(
                 s.get(&k).is_none() && s.get(&duplicate).is_none(),
                 "DUPLICATE",
             )?;
-            s.put(k,json!({"owner":sender,"artifact":hex::encode(artifact),"components_root":hex::encode(components),"family":hex::encode(family),"parent":hex::encode(parent),"votes":{},"score":0,"status":"submitted","submitted_height":height}));
+            s.put(k,json!({"owner":sender,"artifact":hex::encode(artifact),"components_root":hex::encode(components),"family":hex::encode(family),"parent":hex::encode(parent),"votes":{},"score":0,"status":"submitted","submitted_height":height,"submission_round":round}));
             s.put(duplicate, json!(hex::encode(cid)));
         }
         7 => {
@@ -567,7 +606,7 @@ fn apply_one(base: &State, raw: &[u8], height: u64, cfg: &Config) -> Result<Patc
             let expiry = add(height, horizon)?;
             s.deadline_with_lifetime(cfg, expiry, height, horizon)?;
             s.debit(&sender, budget)?;
-            s.put(rk,json!({"owner":sender,"remaining":budget,"budget":budget,"total":total,"root":hex::encode(supplied_root),"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?,"bundle":hex::encode(bundle_id),"leaf_count":count,"claims":{},"deadline":expiry,"status":"open"}));
+            s.put(rk,json!({"owner":sender,"remaining":budget,"budget":budget,"total":total,"root":hex::encode(supplied_root),"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?,"bundle":hex::encode(bundle_id),"artifact":bundle["artifact"].clone(),"family":bundle["family"].clone(),"components_root":bundle["components_root"].clone(),"parent":hex::encode(parent),"leaf_count":count,"claims":{},"deadline":expiry,"status":"open"}));
             for (k, o) in adopted {
                 s.put(k, o);
             }
@@ -613,6 +652,23 @@ fn apply_one(base: &State, raw: &[u8], height: u64, cfg: &Config) -> Result<Patc
             let provider = hex::encode(p.h()?);
             let units = p.n()?;
             let deadline = p.n()?;
+            require(
+                quota
+                    == hash(
+                        b"quota-instance-v3",
+                        &[
+                            &cfg.network,
+                            &cfg.parameters,
+                            &tx.sender,
+                            &tx.nonce.to_le_bytes(),
+                            &hash32(&consumer)?,
+                            &hash32(&provider)?,
+                            &units.to_le_bytes(),
+                            &deadline.to_le_bytes(),
+                        ],
+                    ),
+                "RESOURCE_ID",
+            )?;
             let k = format!("quota:{}", hex::encode(quota));
             require(s.get(&k).is_none(), "DUPLICATE")?;
             s.deadline(cfg, deadline, height)?;
@@ -724,7 +780,10 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
     for k in keys {
         if k.starts_with("contribution:") {
             let v = state.get_mut(&k).ok_or("STATE")?;
-            if text(v, "parent")? != current {
+            if text(v, "parent")? != current
+                || v.get("submission_round").map(num).transpose()?.unwrap_or(0)
+                    != height / cfg.limit("candidate_round_blocks")?
+            {
                 state.remove(&k);
             } else {
                 let submitted = v
@@ -733,14 +792,24 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
                     .transpose()?
                     .unwrap_or(height);
                 if height > add(submitted, cfg.limit("candidate_lifetime_blocks")?)?
-                    && text(v, "status")? == "submitted"
+                    && matches!(text(v, "status")?, "submitted" | "evaluated")
                 {
                     v["status"] = json!("expired");
                     v["votes"] = json!({});
+                    v["score"] = json!(0);
                 }
             }
-        } else if k.starts_with("artifact:") && k.split(':').nth(1) != Some(current.as_str()) {
-            state.remove(&k);
+        } else if k.starts_with("task:") || k.starts_with("quota:") {
+            let value = state.get(&k).ok_or("STATE")?;
+            if field(value, "remaining")? == 0 && field(value, "deadline")? < height {
+                state.remove(&k);
+            }
+        } else if k.starts_with("artifact:") {
+            let parts: Vec<_> = k.split(':').collect();
+            let round = (height / cfg.limit("candidate_round_blocks")?).to_string();
+            if parts.len() != 4 || parts[1] != current || parts[2] != round {
+                state.remove(&k);
+            }
         }
     }
     let retired: Vec<_> = state

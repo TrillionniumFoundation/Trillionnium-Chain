@@ -1,6 +1,6 @@
 {
   "schema": "pon-devnet-2",
-  "chain_label": "trnm-pon-invariant-devnet-2",
+  "chain_label": "trnm-pon-invariant-contract-devnet-3",
   "not_mainnet": true,
   "work_profile": "pon-matmul-transcript-64-v1",
   "initial_target_hex": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -50,7 +50,9 @@
   "max_artifact_chunk_bytes": 1048576,
   "retention_blocks": 10000,
   "production_activation": false,
-  "consensus_revision": 2,
-  "candidate_lifetime_blocks": 1000,
-  "release_claim_window_blocks": 1000
+  "consensus_revision": 3,
+  "candidate_lifetime_blocks": 64,
+  "release_claim_window_blocks": 1000,
+  "candidate_round_blocks": 128,
+  "max_candidate_history_per_round": 512
 }

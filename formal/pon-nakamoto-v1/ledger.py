@@ -3,13 +3,14 @@ Not a production host. Local Python execution is an independently coded spec ora
 not the existing Rust task kernel and not an ordinary Hepta product invocation.
 """
 from __future__ import annotations
-import copy,json,os,sqlite3,struct,fcntl
+import copy,json,os,sqlite3,struct,fcntl,tempfile
 from pathlib import Path
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey,Ed25519PublicKey
 from cryptography.hazmat.primitives.serialization import Encoding,PublicFormat
 from cryptography.exceptions import InvalidSignature
+from strict_signature import verify as verify_signature
 from contract_wire import *
-import work_oracle as work
+import work_backend as work
 ZERO=bytes(32)
 FAMILY=H('family',canonical(MODEL_FAMILY))
 PLAN=H('plan',b'public-source-file-disjoint-v1')
@@ -46,10 +47,19 @@ def total_funds(s):
     return total
 
 def release_id(parent,bundle,budget,root,total):return H('release',parent,bundle,u64(budget),root,u64(total))
-def contribution_id(sender,family,parent,artifact,components):return H('contribution',sender,family,parent,artifact,components)
+def submission_round(height):return height//PARAMS['candidate_round_blocks']
+
+def contribution_id(sender,family,parent,artifact,components,round_id=0):
+    return H('contribution-v3',sender,family,parent,artifact,components,u64(round_id))
+
+def task_identity(sender,nonce,provider,budget,deadline):
+    return H('task-instance-v3',NETWORK,PARAMETER_HASH,sender,u64(nonce),provider,u64(budget),u64(deadline))
+
+def quota_identity(sender,nonce,consumer,provider,units,deadline):
+    return H('quota-instance-v3',NETWORK,PARAMETER_HASH,sender,u64(nonce),consumer,provider,u64(units),u64(deadline))
 
 def candidate_active(value, current, height):
-    return (value['parent']==current and
+    return (value['parent']==current and value.get('submission_round',0)==submission_round(height) and
             value['status'] in {'submitted','evaluated'} and
             (value['status']!='evaluated' or value['score']>0) and
             height<=value.get('submitted_height',height)+PARAMS['candidate_lifetime_blocks'])
@@ -65,11 +75,14 @@ def retire_candidates(state, height):
     current=state['model:current']
     for name,value in list(state.items()):
         if name.startswith('contribution:'):
-            if value['parent']!=current:
+            if value['parent']!=current or value.get('submission_round',0)!=submission_round(height):
                 del state[name]
-            elif height>value.get('submitted_height',height)+PARAMS['candidate_lifetime_blocks'] and value['status']=='submitted':
-                value['status']='expired';value['votes']={}
-        elif name.startswith('artifact:') and name.split(':',2)[1]!=current:
+            elif height>value.get('submitted_height',height)+PARAMS['candidate_lifetime_blocks'] and value['status']in {'submitted','evaluated'}:
+                value['status']='expired';value['votes']={};value['score']=0
+        elif name.startswith('artifact:'):
+            parts=name.split(':')
+            if len(parts)!=4 or parts[1]!=current or parts[2]!=str(submission_round(height)):del state[name]
+        elif name.startswith(('task:','quota:')) and value['remaining']==0 and value['deadline']<height:
             del state[name]
         elif name.startswith('release:') and name[8:]!=current and value['remaining']==0:
             del state[name]
@@ -92,7 +105,7 @@ def execute_reference(parent,transactions,height,miner,parent_id):
     for raw in transactions:
         tx=tx_decode(raw);f=tx['fields'];sender=tx['sender'].hex();tag=tx['tag'];acct=account(s,sender)
         require(tx['network']==NETWORK,'NETWORK');require(tx['nonce']==acct['nonce']+1,'NONCE');require(height<=tx['expiry'],'EXPIRED')
-        try:Ed25519PublicKey.from_public_bytes(tx['sender']).verify(tx['signature'],H('tx-sign',tx['unsigned']))
+        try:verify_signature(tx['sender'],tx['signature'],H('tx-sign',tx['unsigned']))
         except (ValueError,InvalidSignature) as e:raise ValueError('SIGNATURE')from e
         fee=COMMANDS[tag]['base_fee_units']+len(raw)*PARAMS['byte_fee_units'];require(tx['fee_limit']>=fee,'FEE')
         if tag!=11:require(acct['balance']>=fee,'FUNDS');acct['balance']-=fee
@@ -107,6 +120,7 @@ def execute_reference(parent,transactions,height,miner,parent_id):
         if tag==1:
             pay(f['amount']);dest=account(s,f['recipient'].hex());dest['balance']=checked(dest['balance']+f['amount'])
         elif tag==2:
+            require(f['task']==task_identity(tx['sender'],tx['nonce'],f['provider'],f['budget'],f['deadline']),'RESOURCE_ID')
             name='task:'+f['task'].hex();require(name not in s,'DUPLICATE');deadline(f['deadline']);pay(f['budget'])
             s[name]={'owner':sender,'provider':f['provider'].hex(),'remaining':f['budget'],'deadline':f['deadline'],'status':'reserved','output':None}
         elif tag==3:
@@ -120,12 +134,14 @@ def execute_reference(parent,transactions,height,miner,parent_id):
             dest=account(s,obj['provider']);dest['balance']=checked(dest['balance']+obj['remaining']);obj['remaining']=0;obj['status']='settled'
         elif tag==6:
             cid=f['contribution'].hex();name='contribution:'+cid
-            require(f['contribution']==contribution_id(tx['sender'],f['family'],f['parent_release'],f['artifact'],f['components_root']),'ROOT')
+            require(f['contribution']==contribution_id(tx['sender'],f['family'],f['parent_release'],f['artifact'],f['components_root'],f['submission_round']),'ROOT')
+            require(f['submission_round']==submission_round(height),'SUBMISSION_ROUND')
             require(f['family']==FAMILY and f['parent_release'].hex()==s['model:current'],'STATE')
+            require(sum(k.startswith('contribution:')for k in s)<PARAMS['max_candidate_history_per_round'],'CANDIDATE_WINDOW_FULL')
             require(0<f['size']<=PARAMS['max_artifact_bytes'],'LIMIT');require(f['artifact']!=ZERO,'EVIDENCE')
             require(sum(k.startswith('contribution:') and candidate_active(v, s['model:current'], height) for k,v in s.items())<PARAMS['max_model_candidates'],'LIMIT')
-            duplicate='artifact:'+f['parent_release'].hex()+':'+f['artifact'].hex();require(name not in s and duplicate not in s,'DUPLICATE')
-            s[name]={'owner':sender,'artifact':f['artifact'].hex(),'components_root':f['components_root'].hex(),'family':f['family'].hex(),'parent':f['parent_release'].hex(),'votes':{},'score':0,'status':'submitted','submitted_height':height};s[duplicate]=cid
+            duplicate='artifact:'+f['parent_release'].hex()+':'+str(f['submission_round'])+':'+f['artifact'].hex();require(name not in s and duplicate not in s,'DUPLICATE')
+            s[name]={'owner':sender,'artifact':f['artifact'].hex(),'components_root':f['components_root'].hex(),'family':f['family'].hex(),'parent':f['parent_release'].hex(),'votes':{},'score':0,'status':'submitted','submitted_height':height,'submission_round':f['submission_round']};s[duplicate]=cid
         elif tag==7:
             obj=fetch('contribution:',f['contribution']);require(sender in EVALUATORS and sender!=obj['owner'],'AUTHORITY')
             require(obj['status']=='submitted' and obj['parent']==s['model:current'],'STATE');require(sender not in obj['votes'],'DUPLICATE')
@@ -147,7 +163,7 @@ def execute_reference(parent,transactions,height,miner,parent_id):
             name='release:'+f['release'].hex();require(name not in s,'DUPLICATE')
             horizon=PARAMS['reward_maturity_blocks']+PARAMS['release_claim_window_blocks'];expiry=height+horizon
             deadline(expiry,horizon);pay(f['budget'])
-            s[name]={'owner':sender,'remaining':f['budget'],'budget':f['budget'],'total':total,'root':root.hex(),'maturity':height+PARAMS['reward_maturity_blocks'],'bundle':f['bundle'].hex(),'leaf_count':len(allocations),'claims':{},'deadline':expiry,'status':'open'}
+            s[name]={'owner':sender,'remaining':f['budget'],'budget':f['budget'],'total':total,'root':root.hex(),'maturity':height+PARAMS['reward_maturity_blocks'],'bundle':f['bundle'].hex(),'artifact':bundle['artifact'],'family':bundle['family'],'components_root':bundle['components_root'],'parent':f['parent_release'].hex(),'leaf_count':len(allocations),'claims':{},'deadline':expiry,'status':'open'}
             for cid,_,_ in allocations:s['contribution:'+cid.hex()]['status']='adopted'
             bundle['status']='adopted';s['model:current']=f['release'].hex()
         elif tag==9:
@@ -158,6 +174,7 @@ def execute_reference(parent,transactions,height,miner,parent_id):
             amount=rel['budget']*f['score']//rel['total'];require(amount<=rel['remaining'],'FUNDS')
             acct['balance']=checked(acct['balance']+amount);rel['remaining']-=amount;rel['claims'][cid]=amount
         elif tag==10:
+            require(f['quota']==quota_identity(tx['sender'],tx['nonce'],f['consumer'],f['provider'],f['units'],f['deadline']),'RESOURCE_ID')
             name='quota:'+f['quota'].hex();require(name not in s,'DUPLICATE');deadline(f['deadline']);require(0<f['units']<=PARAMS['max_quota_units'],'LIMIT')
             cost=f['units']*PARAMS['quota_unit_price'];pay(cost)
             s[name]={'owner':sender,'consumer':f['consumer'].hex(),'provider':f['provider'].hex(),'remaining':cost,'units':f['units'],'deadline':f['deadline'],'status':'reserved'}
@@ -165,7 +182,7 @@ def execute_reference(parent,transactions,height,miner,parent_id):
             obj=fetch('quota:',f['quota']);require(sender==obj['provider'],'AUTHORITY');require(obj['status']=='reserved'and height<obj['deadline'],'STATE')
             require(0<f['units']<=obj['units']and f['result']!=ZERO,'LIMIT')
             digest=H('use',NETWORK,PARAMETER_HASH,f['quota'],tx['sender'],u64(tx['nonce']),u64(f['units']),f['result'])
-            try:Ed25519PublicKey.from_public_bytes(bytes.fromhex(obj['consumer'])).verify(f['consumer_signature'],digest)
+            try:verify_signature(bytes.fromhex(obj['consumer']),f['consumer_signature'],digest)
             except (ValueError,InvalidSignature)as e:raise ValueError('SIGNATURE')from e
             cost=f['units']*PARAMS['quota_unit_price'];require(cost>=fee and obj['remaining']>=cost,'FUNDS')
             obj['remaining']-=cost;obj['units']-=f['units'];acct['balance']=checked(acct['balance']+cost-fee)
@@ -317,23 +334,28 @@ class Ledger:
         if tip==self.active()[0]:return self.read_active()[2]
         # Root-bound local checkpoints accelerate shallow forks at any height. Missing
         # checkpoints fall back to retained deltas, never a permanent 4096-height veto.
-        chain=[];cur=tip;seen=set()
-        while True:
-            require(cur not in seen,'ANCESTRY_CYCLE');seen.add(cur)
-            row=self.block(cur);snapshot=self.db.execute('SELECT state FROM snapshots WHERE block=?',(cur,)).fetchone()
-            if snapshot:
-                state=json.loads(snapshot[0],object_pairs_hook=unique)
-                require(state_root(state)==row[6],'ROOT');break
-            require(row[0]is not None and self.block(row[0])[1]+1==row[1],'HEIGHT')
-            chain.append(cur);cur=row[0]
-            if progress and len(chain)%256==0:progress('ancestry',len(chain))
-        for i,bid in enumerate(reversed(chain)):
-            for k,before,after in self.db.execute('SELECT key,before,after FROM deltas WHERE block=? ORDER BY key',(bid,)):
-                require((canonical(state[k])if k in state else None)==before,'UNDO_ROOT')
-                if after is None:state.pop(k,None)
-                else:state[k]=json.loads(after,object_pairs_hook=unique)
-            require(state_root(state)==self.block(bid)[6],'ROOT')
-            if progress and (i+1)%256==0:progress('replay',i+1)
+        # Spill ancestor identifiers above 8 KiB. Replay may grow with history,
+        # but its path index cannot grow without bound in RAM or veto old height.
+        with tempfile.SpooledTemporaryFile(max_size=32*256, mode='w+b') as ancestry:
+            cur=tip;count=0
+            while True:
+                row=self.block(cur)
+                snapshot=self.db.execute('SELECT state FROM snapshots WHERE block=?',(cur,)).fetchone()
+                if snapshot:
+                    state=json.loads(snapshot[0],object_pairs_hook=unique)
+                    require(state_root(state)==row[6],'ROOT');break
+                require(row[0]is not None and self.block(row[0])[1]+1==row[1],'HEIGHT')
+                ancestry.write(cur);count+=1;cur=row[0]
+                if progress and count%256==0:progress('ancestry',count)
+            for i in range(count):
+                ancestry.seek(32*(count-i-1));bid=ancestry.read(32)
+                require(len(bid)==32,'ANCESTRY_IO')
+                for k,before,after in self.db.execute('SELECT key,before,after FROM deltas WHERE block=? ORDER BY key',(bid,)):
+                    require((canonical(state[k])if k in state else None)==before,'UNDO_ROOT')
+                    if after is None:state.pop(k,None)
+                    else:state[k]=json.loads(after,object_pairs_hook=unique)
+                require(state_root(state)==self.block(bid)[6],'ROOT')
+                if progress and (i+1)%256==0:progress('replay',i+1)
         return state
 
     def ancestor_headers(self,parent):
@@ -363,9 +385,19 @@ class Ledger:
     def admit(self,hb,txs,proof,observed_now):
         from reference import timestamp_state,work as work_score
         self.ready()
-        require(len(hb)+2+sum(2+len(t)for t in txs)+len(proof)<=PARAMS['max_block_bytes'],'LIMIT')
         require(len(txs)<=PARAMS['max_transactions'],'LIMIT')
+        require(all(159<=len(tx)<=PARAMS['max_transaction_bytes']for tx in txs),'LIMIT')
+        require(len(hb)+2+sum(2+len(tx)for tx in txs)+len(proof)<=PARAMS['max_block_bytes'],'LIMIT')
         h=header_decode(hb);require(h['network']==NETWORK and h['parameters']==PARAMETER_HASH,'NETWORK')
+        require(len(proof)==WORK_PROFILE['proof_bytes'],'WORK_LENGTH')
+        bid=H('block',hb,proof[-32:])
+        body=struct.pack('<H',len(txs))+b''.join(struct.pack('<H',len(tx))+tx for tx in txs)
+        existing=self.db.execute('SELECT header,body,proof FROM blocks WHERE id=?',(bid,)).fetchone()
+        if existing is not None:
+            require(existing==(hb,body,proof),'DUPLICATE_CONTENT')
+            return bid # Identical previously verified record, not new packet authority.
+        for raw in txs:tx_decode(raw) # Cheap closed-codec rejection precedes heavy replay.
+
         parent=self.block(h['parent']);require(h['height']==parent[1]+1,'HEIGHT');require(h['target']==self.target(h['parent']),'TARGET')
         ts=[x['timestamp']for x in reversed(self.ancestor_headers(h['parent'])[:PARAMS['median_time_width']])]
         timing=timestamp_state(h['timestamp'],ts,observed_now,PARAMS['future_skew_seconds'])

@@ -1,13 +1,13 @@
 # M03 Work attempts, independent local effects and custody
 
-Revision: invariant-driven revision2. The selected target remains `pon-nakamoto-v1`.
-[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [precise invariant/test registry](../../config/pon/invariants-v2.json).
+Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 
 ## Scope and ownership
 
 Two SQLite connections to one local operation namespace. This is not physical effect cancellation.
 
-This is an implementation boundary, not a claim of a complete native node or independent acceptance.
+The claims below apply to their named component and tests, not to an independently accepted full native node.
 
 ## PoN State machine
 
@@ -27,7 +27,7 @@ If revoke commits before entry, the same operation cannot create an effects row;
 
 **Invariant:** If revoke commits before entry, the same operation cannot create an effects row; a committed entry cannot be repeated after crash.
 
-**Preconditions:** Exact installed revision2 context; current local owner and immutable task/evidence identities. Storage-only and controlled-attestation premises are explicitly labelled in their tests.
+**Scope:** Two SQLite connections to one local operation namespace. This is not physical effect cancellation.
 
 **Atomic boundary:** BEGIN IMMEDIATE encloses revocation check, duplicate check and insert; revoke uses the same serialization point.
 
@@ -45,7 +45,7 @@ If revoke commits before entry, the same operation cannot create an effects row;
 
 `formal/pon-nakamoto-v1/test_invariants.py::EffectLinearizationTests.test_crash_after_entry_commit_rejects_replay`
 
-These selectors identify actual test functions, not a class-name count. A binding checker cannot label a test passed; the separate exact-source command receipt must show execution and outcome.
+These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
 ## Module-specific threat and residual work
 
@@ -53,10 +53,8 @@ Check/use races, ACK loss, owner takeover and coherent rollback of all evidence.
 
 Normal Hepta final-use token, independent rollback frontier and target-side reconciliation remain unjoined.
 
-No assertion of independent operators, physical durability, ordinary Hepta execution or future model efficacy follows from local fixtures.
-
 ## Current source and verification
 
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
-Run the relevant native package and exact Python test selectors through the protocol CI lane. Preserve source hashes, failures, backend, filesystem and process/host scope. Historical evidence is never relabelled as current.
+No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.

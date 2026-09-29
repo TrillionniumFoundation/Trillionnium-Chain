@@ -89,3 +89,17 @@ Release proofs bind the payee directly, so retiring a candidate does not erase c
 ownership. Release claim windows reserve mandatory-expiry slots; remainder refunds at
 the deadline. Noncurrent empty release objects then retire. This does NOT solve unlimited
 same-parent tombstones, all account/task history or the global state-key ceiling.
+
+## Revision3: bounded-memory ancestry index
+
+`state_at` stores ancestry IDs in an8KiB spooled file and seeks it backwards for replay.
+Missing checkpoints no longer create an unbounded in-memory ID list. Strictly decreasing
+validated heights rule out cycles; every recovered snapshot/delta is still root checked.
+A progress callback every256 records can abort, closing the spool; a later call resumes
+by verified replay rather than trusting a partial root. State maps and root recomputation
+remain full reference values, and this is not a persistent resumable native WAN sync.
+
+The storage-only4102-record regression labels its premise explicitly. The separate
+`long_history.py` campaign creates actual proofs and signed transactions above4096 and
+performs a shallow competing fork; its logical clock and real SQLite evidence are reported
+separately from the physical-host UTC campaign. Neither establishes physical power loss.

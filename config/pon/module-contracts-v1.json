@@ -1,5 +1,5 @@
 {
-  "schema": "pon-module-procedures-v1",
+  "schema": "pon-module-contracts-v1",
   "modules": [
     {
       "id": "M00",
@@ -396,12 +396,12 @@
       "operations": [
         {
           "id": "M10.SubmitContribution",
-          "inputs": "author,family,parent,artifact,size,componentsRoot,signature",
+          "inputs": "author,family,parent,artifact,size,componentsRoot,submission_round,signature",
           "output": "new immutable contribution id",
-          "algorithm": "Zero-score history no longer blocks all256 pending slots, and three successor releases can retire old candidates without losing valid claims. Count active current-parent candidates; preserve same-parent duplicate keys; old-parent retirement leaves root-bound release authority intact.",
+          "algorithm": "Validate the signed128-block intake round, full context-bound contribution id,64-block lifetime,256 active and512 total current-round records. Current-round repeats reject; old-round signed transactions remain invalid after reclamation.",
           "commit": "Count active current-parent candidates; preserve same-parent duplicate keys; old-parent retirement leaves root-bound release authority intact.",
           "errors": "ROOT, DUPLICATE, STATE, LIMIT",
-          "limits": "Active capacity256; candidate lifetime1000; current-parent tombstones still subject to global state capacity."
+          "limits": "176-byte tag6 payload;256 active;512 per128-block window;64-block candidate lifetime."
         },
         {
           "id": "M10.PublishEvaluatedRelease",

@@ -307,3 +307,18 @@ qualify work and actual public ingress; finish bounded history/resource lifecycl
 native host and Hepta owners; then run genuinely independent multi-host and prospective
 model acceptance. Do not reopen retired consensus or create a parallel global trainer.
 The root README remains blank by owner decision.
+
+## Current revision3 continuation
+
+Continue the existing invariant candidate; do not create a parallel consensus or learning
+owner. Revision3 adds signed contribution intake windows, per-lane proof identity,
+bounded native process I/O, explicit native work bridging and spooled historical replay.
+All18 modules now bind their specific invariant, failure schedule and executable tests.
+Machine-count or section-count coverage is not semantic or independent acceptance.
+
+Acceptance must keep four result classes separate: deterministic native/reference
+regression; real long-chain storage with logical timestamps; same-operator physical-host
+SSH conformance with real UTC; and actual controlled learning with possible zero reward.
+The ordinary Hepta destination, independent attestors/operators, fresh future experience,
+public work-cost security, long retention and physical power-loss campaigns remain named
+work. No local experiment, preserved failure or admin privilege silently resolves them.

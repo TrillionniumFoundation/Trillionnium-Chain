@@ -987,6 +987,9 @@ dependencies = [
 [[package]]
 name = "trnm-transport"
 version = "0.1.0"
+dependencies = [
+ "trnm-crypto-primitives",
+]
 
 [[package]]
 name = "trnm-types"

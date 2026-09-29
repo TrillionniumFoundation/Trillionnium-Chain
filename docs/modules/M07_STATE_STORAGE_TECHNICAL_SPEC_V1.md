@@ -1,13 +1,13 @@
 # M07 Branch roots, schema and owner-controlled persistence
 
-Revision: invariant-driven revision2. The selected target remains `pon-nakamoto-v1`.
-[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [precise invariant/test registry](../../config/pon/invariants-v2.json).
+Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 
 ## Scope and ownership
 
-Fresh revision2 SQLite namespace, not an in-place historical database upgrade.
+Fresh revision3 SQLite namespace, not an in-place historical database upgrade.
 
-This is an implementation boundary, not a claim of a complete native node or independent acceptance.
+The claims below apply to their named component and tests, not to an independently accepted full native node.
 
 ## PoN State machine
 
@@ -27,7 +27,7 @@ BEGIN IMMEDIATE, insert immutable block, insert changed-key deltas, COMMIT. Any 
 
 **Invariant:** Every owned initialization crash cut can recover; foreign incomplete databases and injected schema objects reject without writable mutation.
 
-**Preconditions:** Exact installed revision2 context; current local owner and immutable task/evidence identities. Storage-only and controlled-attestation premises are explicitly labelled in their tests.
+**Scope:** Fresh revision3 SQLite namespace, not an in-place historical database upgrade.
 
 **Atomic boundary:** Fsync exact initialization intent, create schema plus genesis in one transaction, remove marker after commit; compare exact schema projection on reopen.
 
@@ -47,7 +47,7 @@ BEGIN IMMEDIATE, insert immutable block, insert changed-key deltas, COMMIT. Any 
 
 `formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_append_retains_one_physical_state_slot`
 
-These selectors identify actual test functions, not a class-name count. A binding checker cannot label a test passed; the separate exact-source command receipt must show execution and outcome.
+These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
 ## Module-specific threat and residual work
 
@@ -55,10 +55,8 @@ Initialization gaps, trigger/schema substitution, disk full, path replacement an
 
 Full descriptor/sidecar fencing, incremental authenticated native state tree and physical power-loss tests remain pending.
 
-No assertion of independent operators, physical durability, ordinary Hepta execution or future model efficacy follows from local fixtures.
-
 ## Current source and verification
 
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
-Run the relevant native package and exact Python test selectors through the protocol CI lane. Preserve source hashes, failures, backend, filesystem and process/host scope. Historical evidence is never relabelled as current.
+No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.

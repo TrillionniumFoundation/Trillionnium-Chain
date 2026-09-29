@@ -59,6 +59,25 @@ pub fn decode_hash32(label: &str, value: &str) -> Result<Hash32> {
     Ok(out)
 }
 
+// RFC8032 section5.1.3: y is canonical and negative zero is not an encoding.
+// Point membership and small-order rejection remain the cryptographic library's job.
+fn canonical_ed25519_point(bytes: &[u8; 32]) -> bool {
+    let sign = bytes[31] >> 7;
+    let mut y = *bytes;
+    y[31] &= 127;
+    let mut p = [255_u8; 32];
+    p[0] = 237;
+    p[31] = 127;
+    if y.iter().rev().cmp(p.iter().rev()).is_ge() {
+        return false;
+    }
+    let mut one = [0_u8; 32];
+    one[0] = 1;
+    let mut minus_one = p;
+    minus_one[0] -= 1;
+    !(sign == 1 && (y == one || y == minus_one))
+}
+
 pub fn decode_signature(label: &str, value: &str) -> Result<Signature> {
     let bytes = hex::decode(value).map_err(|_| anyhow!("{label} must be lowercase hex"))?;
     ensure!(bytes.len() == 64, "{label} must encode exactly 64 bytes");
@@ -68,11 +87,17 @@ pub fn decode_signature(label: &str, value: &str) -> Result<Signature> {
     );
     let mut out = [0u8; 64];
     out.copy_from_slice(&bytes);
+    let r: [u8; 32] = out[..32].try_into().expect("fixed signature R");
+    ensure!(canonical_ed25519_point(&r), "signature R is not canonical");
     Ok(Signature::from_bytes(&out))
 }
 
 pub fn verifying_key_from_hex(value: &str) -> Result<VerifyingKey> {
     let bytes = decode_hash32("public_key_hex", value)?;
+    ensure!(
+        canonical_ed25519_point(&bytes),
+        "public key is not canonical"
+    );
     VerifyingKey::from_bytes(&bytes)
         .map_err(|_| anyhow!("public_key_hex is not a valid Ed25519 key"))
 }
@@ -163,6 +188,23 @@ mod tests {
     fn domain_hash_is_framed_and_domain_separated() {
         assert_ne!(hash_domain("a", &[b"bc"]), hash_domain("a", &[b"b", b"c"]));
         assert_ne!(hash_domain("a", &[b"x"]), hash_domain("b", &[b"x"]));
+    }
+
+    #[test]
+    fn strict_signatures_reject_small_order_and_noncanonical_points() {
+        let mut identity = [0_u8; 32];
+        identity[0] = 1;
+        let mut signature = [0_u8; 64];
+        signature[..32].copy_from_slice(&identity);
+        assert!(
+            verify_hex_strict(&hex::encode(identity), b"message", &hex::encode(signature)).is_err()
+        );
+        let mut p = [255_u8; 32];
+        p[0] = 237;
+        p[31] = 127;
+        assert!(verifying_key_from_hex(&hex::encode(p)).is_err());
+        identity[31] = 128;
+        assert!(verifying_key_from_hex(&hex::encode(identity)).is_err());
     }
 
     #[test]

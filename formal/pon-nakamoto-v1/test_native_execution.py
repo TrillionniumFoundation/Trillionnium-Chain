@@ -33,10 +33,10 @@ class NativeExecutionTests(unittest.TestCase):
 
     def contribute_and_publish(self,index):
         parent=bytes.fromhex(self.state['model:current']);art=H('controlled-expert',u64(index));bundle_art=H('controlled-bundle',u64(index));owner=public(key(0))
-        cid=contribution_id(owner,FAMILY,parent,art,ZERO);score=100
+        round_id=submission_round(self.height+1);cid=contribution_id(owner,FAMILY,parent,art,ZERO,round_id);score=100
         allocation,proofs=allocation_root_and_proofs([(cid,owner,score)])
-        bundle=contribution_id(public(key(3)),FAMILY,parent,bundle_art,allocation)
-        self.run_block([self.tx(0,'contribute',dict(contribution=cid,family=FAMILY,parent_release=parent,artifact=art,size=100,components_root=ZERO)),self.tx(3,'contribute',dict(contribution=bundle,family=FAMILY,parent_release=parent,artifact=bundle_art,size=100,components_root=allocation))])
+        bundle=contribution_id(public(key(3)),FAMILY,parent,bundle_art,allocation,round_id)
+        self.run_block([self.tx(0,'contribute',dict(contribution=cid,family=FAMILY,parent_release=parent,artifact=art,size=100,components_root=ZERO,submission_round=round_id)),self.tx(3,'contribute',dict(contribution=bundle,family=FAMILY,parent_release=parent,artifact=bundle_art,size=100,components_root=allocation,submission_round=round_id))])
         txs=[]
         for contribution,operators in [(cid,[1,2]),(bundle,[0,1])]:
             for operator in operators:txs.append(self.tx(operator,'evaluate',dict(contribution=contribution,plan=PLAN,evidence=H('controlled-attestation',u64(index),u64(operator),contribution),score=score)))
@@ -45,17 +45,19 @@ class NativeExecutionTests(unittest.TestCase):
         self.run_block([self.tx(0,'publish_release',dict(release=release,parent_release=parent,bundle=bundle,budget=budget,allocation_root=allocation,total_score=score,allocations=[(cid,score)]))])
         self.run_block([],advance=PARAMS['reward_maturity_blocks'])
         self.assertNotIn('contribution:'+cid.hex(),self.state)
+        self.assertEqual(self.state['release:'+release.hex()]['artifact'],bundle_art.hex())
+        self.assertEqual(self.state['release:'+release.hex()]['family'],FAMILY.hex())
         self.run_block([self.tx(0,'claim_reward',dict(release=release,contribution=cid,score=score,siblings=proofs[cid]))])
         return release,cid,score,proofs[cid]
 
     def test_all_twelve_tags_match_for_1_2_4_8_workers(self):
         self.run_block([self.tx(0,'transfer',dict(recipient=public(key(1)),amount=10))])
-        tasks=[H('test-task',u64(i))for i in range(2)];output=H('actual-recorded-output')
+        tasks=[task_identity(public(key(0)),2+i,public(key(1)),10000,200)for i in range(2)];output=H('actual-recorded-output')
         self.run_block([self.tx(0,'reserve_task',dict(task=t,provider=public(key(1)),budget=10000,deadline=200))for t in tasks]+[self.tx(2,'register_work',dict(task_commitment=H('work-registration')))])
         self.run_block([self.tx(1,'record_receipt',dict(task=tasks[0],output=output)),self.tx(0,'cancel_task',dict(task=tasks[1]))])
         self.run_block([self.tx(0,'accept_task',dict(task=tasks[0],output=output))])
         self.contribute_and_publish(0)
-        quota=H('quota');consumer=key(30);provider=public(key(1))
+        consumer=key(30);provider=public(key(1));quota=quota_identity(public(key(0)),self.nonces[0]+1,public(consumer),provider,2,self.height+100)
         self.run_block([self.tx(0,'reserve_quota',dict(quota=quota,consumer=public(consumer),provider=provider,units=2,deadline=self.height+100))])
         nonce=self.nonces.get(1,0)+1;result=H('service-result')
         signature=consumer.sign(H('use',NETWORK,PARAMETER_HASH,quota,provider,u64(nonce),u64(1),result))
@@ -102,11 +104,53 @@ class NativeExecutionTests(unittest.TestCase):
         self.assertEqual(self.state['release:'+rid]['remaining'],0)
         self.run_block([]);self.assertNotIn('release:'+rid,self.state)
 
+    def test_native_round_boundary_retires_history_and_rejects_old_signature(self):
+        owner=public(key(0));artifact=H('boundary-artifact')
+        old=contribution_id(owner,FAMILY,ZERO,artifact,ZERO,0)
+        raw=sign(key(0),1,'contribute',dict(contribution=old,family=FAMILY,parent_release=ZERO,artifact=artifact,size=1,components_root=ZERO,submission_round=0),expiry=100000)
+        before=copy.deepcopy(self.state)
+        for workers in [1,2,4,8]:
+            with self.assertRaisesRegex(ValueError,'SUBMISSION_ROUND'):
+                execute_native(self.state,[raw],PARAMS['candidate_round_blocks'],owner,GENESIS,workers,BINARY)
+        self.assertEqual(self.state,before)
+        self.height=PARAMS['candidate_round_blocks']-1
+        self.contribute_and_publish(91)
+        self.assertNotEqual(self.state['model:current'],ZERO.hex())
+
     def test_bad_signature_rejects_entire_block_without_parent_mutation(self):
         tx=self.tx(0,'transfer',dict(recipient=public(key(1)),amount=1));bad=tx[:-1]+bytes([tx[-1]^1]);before=copy.deepcopy(self.state)
         for workers in [1,2,4,8]:
             with self.assertRaisesRegex(ValueError,'SIGNATURE'):execute_native(self.state,[bad],1,public(key(0)),GENESIS,workers,BINARY)
         self.assertEqual(before,self.state)
+
+    def test_terminal_task_retirement_cannot_reopen_same_resource_id(self):
+        owner=public(key(0));provider=public(key(1));task=task_identity(owner,1,provider,1000,3)
+        self.run_block([self.tx(0,'reserve_task',dict(task=task,provider=provider,budget=1000,deadline=3)),self.tx(0,'cancel_task',dict(task=task))])
+        self.run_block([],advance=3);self.assertNotIn('task:'+task.hex(),self.state)
+        malicious=sign(key(0),3,'reserve_task',dict(task=task,provider=provider,budget=1000,deadline=8),expiry=1000)
+        for workers in [1,2,4,8]:
+            with self.assertRaisesRegex(ValueError,'RESOURCE_ID'):
+                execute_native(self.state,[malicious],5,owner,GENESIS,workers,BINARY)
+        fresh=task_identity(owner,3,provider,1000,8)
+        self.run_block([self.tx(0,'reserve_task',dict(task=fresh,provider=provider,budget=1000,deadline=8))])
+        self.assertIn('task:'+fresh.hex(),self.state)
+
+    def test_spent_quota_retirement_preserves_consent_identity(self):
+        owner=public(key(0));provider=public(key(1));consumer=key(4)
+        quota=quota_identity(owner,1,public(consumer),provider,1,3)
+        self.run_block([self.tx(0,'reserve_quota',dict(quota=quota,consumer=public(consumer),provider=provider,units=1,deadline=3))])
+        result=H('once-served');signature=consumer.sign(H('use',NETWORK,PARAMETER_HASH,quota,provider,u64(1),u64(1),result))
+        self.run_block([self.tx(1,'consume_quota',dict(quota=quota,units=1,result=result,consumer_signature=signature))])
+        self.run_block([],advance=2);self.assertNotIn('quota:'+quota.hex(),self.state)
+        malicious=sign(key(0),2,'reserve_quota',dict(quota=quota,consumer=public(consumer),provider=provider,units=1,deadline=8),expiry=1000)
+        for workers in [1,2,4,8]:
+            with self.assertRaisesRegex(ValueError,'RESOURCE_ID'):
+                execute_native(self.state,[malicious],5,owner,GENESIS,workers,BINARY)
+        fresh=quota_identity(owner,2,public(consumer),provider,1,8)
+        self.run_block([self.tx(0,'reserve_quota',dict(quota=fresh,consumer=public(consumer),provider=provider,units=1,deadline=8))])
+        reuse=sign(key(1),2,'consume_quota',dict(quota=fresh,units=1,result=result,consumer_signature=signature),expiry=1000)
+        with self.assertRaisesRegex(ValueError,'SIGNATURE'):
+            execute_native(self.state,[reuse],6,owner,GENESIS,8,BINARY)
 
     def test_wrong_native_context_rejects_even_an_empty_block(self):
         data={'network':NETWORK.hex(),'parameters':H('wrong-context').hex(),'state':self.state,'transactions':[],'height':1,'miner':public(key(0)).hex(),'parent':GENESIS.hex(),'workers':8}

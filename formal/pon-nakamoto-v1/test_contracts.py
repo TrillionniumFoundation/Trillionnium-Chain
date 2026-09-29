@@ -40,7 +40,7 @@ class ExecutionTests(unittest.TestCase):
         for tx in [sign(key(0),1,'transfer',{'recipient':public(key(1)),'amount':100},expiry=0),sign(key(0),1,'transfer',{'recipient':public(key(1)),'amount':100},fee_limit=0),sign(key(0),1,'transfer',{'recipient':public(key(1)),'amount':10**12})]:
             with self.assertRaises(ValueError):self.apply(self.s,[tx])
     def test_task_receipt_does_not_self_settle(self):
-        task=H('task-example');out=H('actual-result')
+        task=task_identity(public(key(0)),1,public(key(1)),10000,10);out=H('actual-result')
         s=self.apply(self.s,[sign(key(0),1,'reserve_task',{'task':task,'provider':public(key(1)),'budget':10000,'deadline':10})])
         s=self.apply(s,[sign(key(1),1,'record_receipt',{'task':task,'output':out})],2)
         self.assertEqual(s['task:'+task.hex()]['remaining'],10000)
@@ -48,13 +48,13 @@ class ExecutionTests(unittest.TestCase):
         s=self.apply(s,[sign(key(0),2,'accept_task',{'task':task,'output':out})],3)
         self.assertEqual(s['task:'+task.hex()]['remaining'],0);self.assertEqual(total_funds(s),s['meta:issued'])
     def test_cancel_and_late_receipt_are_monotonic(self):
-        task=H('cancel');s=self.apply(self.s,[sign(key(0),1,'reserve_task',{'task':task,'provider':public(key(1)),'budget':1000,'deadline':10}),sign(key(0),2,'cancel_task',{'task':task})])
+        task=task_identity(public(key(0)),1,public(key(1)),1000,10);s=self.apply(self.s,[sign(key(0),1,'reserve_task',{'task':task,'provider':public(key(1)),'budget':1000,'deadline':10}),sign(key(0),2,'cancel_task',{'task':task})])
         with self.assertRaises(ValueError):self.apply(s,[sign(key(1),1,'record_receipt',{'task':task,'output':H('out')})],2)
     def test_mandatory_expiry_returns_reserved_funds(self):
-        task=H('expiry');s=self.apply(self.s,[sign(key(0),1,'reserve_task',{'task':task,'provider':public(key(1)),'budget':1000,'deadline':2})]);s=self.apply(s,[],2)
+        task=task_identity(public(key(0)),1,public(key(1)),1000,2);s=self.apply(self.s,[sign(key(0),1,'reserve_task',{'task':task,'provider':public(key(1)),'budget':1000,'deadline':2})]);s=self.apply(s,[],2)
         self.assertEqual(s['task:'+task.hex()]['status'],'expired');self.assertEqual(total_funds(s),s['meta:issued'])
     def test_free_consumer_is_not_charged_or_implicitly_authorized(self):
-        q=H('free');consumer=key(4);provider=key(1)
+        consumer=key(4);provider=key(1);q=quota_identity(public(key(0)),1,public(consumer),public(provider),2,10)
         s=self.apply(self.s,[sign(key(0),1,'reserve_quota',{'quota':q,'consumer':public(consumer),'provider':public(provider),'units':2,'deadline':10})])
         fields={'quota':q,'units':1,'result':H('served'),'consumer_signature':consumer.sign(H('use',NETWORK,PARAMETER_HASH,q,public(provider),u64(1),u64(1),H('served')))}
         bad=dict(fields,consumer_signature=bytes(64))
@@ -63,7 +63,7 @@ class ExecutionTests(unittest.TestCase):
         self.assertNotIn('account:'+public(consumer).hex(),s);self.assertEqual(s['quota:'+q.hex()]['units'],1);self.assertEqual(total_funds(s),s['meta:issued'])
     def test_contribution_cannot_swap_parent_family_or_claim_self_eval(self):
         artifact=H('model');sender=public(key(0));cid=contribution_id(sender,FAMILY,ZERO,artifact,ZERO)
-        fields={'contribution':cid,'family':FAMILY,'parent_release':ZERO,'artifact':artifact,'size':32,'components_root':ZERO}
+        fields={'contribution':cid,'family':FAMILY,'parent_release':ZERO,'artifact':artifact,'size':32,'components_root':ZERO,'submission_round':0}
         s=self.apply(self.s,[sign(key(0),1,'contribute',fields)])
         with self.assertRaises(ValueError):self.apply(s,[sign(key(0),2,'evaluate',{'contribution':cid,'plan':PLAN,'evidence':H('evidence'),'score':10})],2)
         with self.assertRaises(ValueError):self.apply(s,[sign(key(0),2,'contribute',fields)],2)

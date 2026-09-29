@@ -34,3 +34,18 @@ security assumptions, verifier cost and invalid-input bounds. It cannot be subst
 silently, and normal hash tickets are not renamed useful work. Never alter chain validity
 because one peer or receiver is overloaded. Busy and temporarily unavailable are local
 observations; an actual cryptographically invalid proof is a separate fact.
+
+## Executed work versus capacity, and cross-lane duplicates
+
+Active duplicate keys include the local admission lane. A public sender holding a digest
+cannot block the independently held recovery capability for that same digest. It still
+cannot request recovery priority through a remote field. Each lane owns its own permit;
+dropping a public permit cannot clear a recovery permit's identity or accounting.
+
+`pon_admission_load` runs actual full verification during2048 local public attempts and
+16 recovery verifications. It records before-work Busy decisions and expensive rejection
+counts. This proves only the measured capacity/isolation behavior, not public honest-peer
+fairness or a Sybil cost theorem. `pon_adversarial_cost` uses the actual half-range devnet
+target with dense, zero, rank-one and sparse matrices, separating honest winning cost,
+forgery hash trials, verification and rejection. Honest structured runs are not the
+fastest adversarial implementation; measured cost does not supply a hardness theorem.

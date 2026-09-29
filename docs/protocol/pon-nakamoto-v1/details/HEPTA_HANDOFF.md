@@ -46,3 +46,33 @@ experience and untouched prospective evaluation sources. Record independent owne
 resource use, valid no-update outcomes, budget exhaustion and withdrawals. Three signed
 synthetic-score release transitions only test the ledger lifecycle and do not satisfy this
 requirement. No parallel full-system rewrite is an acceptable substitute.
+
+## Exact upstream owner boundary inspected for this increment
+
+Upstream source: `TrillionniumFoundation/hepta-private-ci` at
+`a126987b84737dbc2ee2592442a314117bddb4a2`. The existing non-test publication owner is
+`LearningArtifactOwnerService::publish` in
+`codex-rs/hepta-learning-artifacts/src/owner_service.rs`. Its request includes
+operation_id, WithdrawalBoundArtifactAdmissionV3, payload, signed_current_head,
+expected_registry_predecessor_head and now. It checks current-head/storage/withdrawal
+binding and recovers acknowledged or incomplete publication from its own journal.
+The chain must not replace that journal or manufacture the verified admission type.
+
+The existing `AgentdLearningPlasticityProducerV1` submits parameters/topology through
+`PlasticityRuntimeHandleV1`; it does not own authority or a blockchain writer. The
+inspected `AgentdOperationsHost` currently implements the automation destination with
+an independent AutomationGrantProvider and DurableOperationStore. Reusing its name or
+serializing a raw operation does not create a PoN destination or an export grant.
+
+To connect ordinary requests, the configured owner must supply an explicitly permitted
+public-export publication and a durable operation intent for the chain destination.
+Map both source digest algorithms and actual payload bytes; do not reinterpret a Hepta
+Digest32 as the chain artifact digest. Before dispatch, revalidate withdrawal/frontier,
+parent model, exact submission round, quota and local final-use generation. If a round
+expires before a provably NotDispatched action, create a new authorized intent; an
+Unknown effect must first query/reconcile the original identity, not blindly re-sign.
+
+This increment reads these real owner interfaces but does not configure a live signed
+owner/withdrawal frontier, implement the ordinary Agentd PoN destination, or publish
+private user artifacts. `ordinary_hepta_entry=false` is mandatory in the controlled
+experiments. SSH model consumers and local fixture attestors cannot satisfy that gap.

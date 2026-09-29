@@ -28,7 +28,7 @@ def run(directory,out):
     for i in range(3):
         value={'schema':'hepta-source-owner-delta-v1','family':FAMILY.hex(),'base':H('base',canonical(model['base'])).hex(),'delta':model['deltas'][i],'feature':model['feature']}
         b=canonical(value);(out/f'expert-{i}.json').write_bytes(b);artifact=H('artifact',b);cid=contribution_id(public(key(i)),FAMILY,ZERO,artifact,ZERO);contributions.append(cid)
-        initial.append(tx(i,'contribute',dict(contribution=cid,family=FAMILY,parent_release=ZERO,artifact=artifact,size=len(b),components_root=ZERO)))
+        initial.append(tx(i,'contribute',dict(contribution=cid,family=FAMILY,parent_release=ZERO,artifact=artifact,size=len(b),components_root=ZERO,submission_round=0)))
     block(initial)
     votes=[]
     for i,cid in enumerate(contributions):
@@ -40,7 +40,7 @@ def run(directory,out):
     allocations=[(contributions[i],public(key(i)),min(observed['results'][p]['marginal'][i]['score']for p in ['evaluation_a','evaluation_b']))for i in eligible]
     root,proofs=allocation_root_and_proofs(allocations);model_bytes=(directory/'model.json').read_bytes();model_hash=H('artifact',model_bytes)
     bundle=contribution_id(public(key(3)),FAMILY,ZERO,model_hash,root)
-    block([tx(3,'contribute',dict(contribution=bundle,family=FAMILY,parent_release=ZERO,artifact=model_hash,size=len(model_bytes),components_root=root))])
+    block([tx(3,'contribute',dict(contribution=bundle,family=FAMILY,parent_release=ZERO,artifact=model_hash,size=len(model_bytes),components_root=root,submission_round=0))])
     block([tx(i,'evaluate',dict(contribution=bundle,plan=PLAN,evidence=H('whole-evaluation',bundle,(directory/(partition+'-result.json')).read_bytes()),score=observed['results'][partition]['whole_gain']['score']))for i,partition in enumerate(['evaluation_a','evaluation_b'])])
     budget=100000;total=sum(s for _,_,s in allocations);rid=release_id(ZERO,bundle,budget,root,total)
     block([tx(3,'publish_release',dict(release=rid,parent_release=ZERO,bundle=bundle,budget=budget,allocation_root=root,total_score=total,allocations=sorted((cid,s)for cid,_,s in allocations)))])
@@ -59,7 +59,7 @@ def run(directory,out):
     # Two actual replicas are read without consulting the original author artifact.
     for name in ['custodian-a','custodian-b']:
         p=out/name;p.mkdir();(p/'model.json').write_bytes(model_bytes);require(H('artifact',(p/'model.json').read_bytes())==model_hash,'DA')
-    quota=H('public-consumer-quota',rid);block([tx(3,'reserve_quota',dict(quota=quota,consumer=public(key(4)),provider=public(key(0)),units=2,deadline=l.block(tip)[1]+100))])
+    quota=quota_identity(public(key(3)),nonces.get(3,0)+1,public(key(4)),public(key(0)),2,l.block(tip)[1]+100);block([tx(3,'reserve_quota',dict(quota=quota,consumer=public(key(4)),provider=public(key(0)),units=2,deadline=l.block(tip)[1]+100))])
     original=directory/'model.json';offline=directory/'model.author-offline';original.rename(offline)
     effect=EffectJournal(out/'effects.sqlite');op=H('public-consumer-request',rid,quota);effect.enter(op,model_hash,generation)
     try:

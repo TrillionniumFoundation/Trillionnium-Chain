@@ -1,13 +1,13 @@
 # M04 Bounded peer ingress and propagation
 
-Revision: invariant-driven revision2. The selected target remains `pon-nakamoto-v1`.
-[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [precise invariant/test registry](../../config/pon/invariants-v2.json).
+Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
+[Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 
 ## Scope and ownership
 
 Native transport admission component, not an already deployed public network service.
 
-This is an implementation boundary, not a claim of a complete native node or independent acceptance.
+The claims below apply to their named component and tests, not to an independently accepted full native node.
 
 ## PoN State machine
 
@@ -25,15 +25,15 @@ Send identical block to separate processes; each rechecks full work and state be
 
 ## M04.RecoveryCapacity
 
-**Invariant:** Public proof permits cannot consume the local-only reserved recovery slot; stop/resume does not erase live jobs.
+**Invariant:** Public verification cannot consume or duplicate-pin a local recovery slot; stopped generations retain live accounting until every permit drops.
 
-**Preconditions:** Exact installed revision2 context; current local owner and immutable task/evidence identities. Storage-only and controlled-attestation premises are explicitly labelled in their tests.
+**Scope:** Native transport admission component, not an already deployed public network service.
 
-**Atomic boundary:** One mutex owns global/per-peer counts and duplicate identities; RAII releases every permit on success, failure or unwind.
+**Atomic boundary:** One mutex owns counts and per-lane duplicate identities; only the local recovery capability can select its lane; RAII releases each live permit.
 
-**Failure schedule:** Fill public capacity with changing identities; Acquire recovery permit; Stop/resume while old jobs live; Panic unwind.
+**Failure schedule:** Fill public capacity with changing identities; Acquire recovery permit; Stop/resume while old jobs live; Panic unwind; Public caller holds the same certificate identity requested for local recovery.
 
-**Expected result:** Public proof permits cannot consume the local-only reserved recovery slot; stop/resume does not erase live jobs.
+**Expected result:** Public verification cannot consume or duplicate-pin a local recovery slot; stopped generations retain live accounting until every permit drops.
 
 **Resource and retention rule:** Three public jobs, one recovery job, two jobs per peer; no unbounded queue.
 
@@ -45,7 +45,9 @@ Send identical block to separate processes; each rechecks full work and state be
 
 `trillionnium/crates/trnm-transport/src/proof_admission.rs::panic_unwind_releases_capacity`
 
-These selectors identify actual test functions, not a class-name count. A binding checker cannot label a test passed; the separate exact-source command receipt must show execution and outcome.
+`trillionnium/crates/trnm-transport/src/proof_admission.rs::public_duplicate_cannot_pin_a_locally_requested_recovery_digest`
+
+These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
 ## Module-specific threat and residual work
 
@@ -53,10 +55,8 @@ Sybil connection churn, eclipse, validation starvation and forged recovery prior
 
 Global public fairness and cheap-proof defense are unresolved; local recovery capability is never selected by packet fields.
 
-No assertion of independent operators, physical durability, ordinary Hepta execution or future model efficacy follows from local fixtures.
-
 ## Current source and verification
 
 - [`trillionnium/crates/trnm-transport/src/proof_admission.rs`](../../trillionnium/crates/trnm-transport/src/proof_admission.rs).
 
-Run the relevant native package and exact Python test selectors through the protocol CI lane. Preserve source hashes, failures, backend, filesystem and process/host scope. Historical evidence is never relabelled as current.
+No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.

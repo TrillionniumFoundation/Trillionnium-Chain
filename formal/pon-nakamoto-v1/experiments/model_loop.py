@@ -64,20 +64,7 @@ def train(x,y,steps,initial=None,weight=None):
 def quantize(w):return np.clip(np.rint(w*SCALE),-32767,32767).astype(np.int64)
 def artifact(value,path):
     b=canonical(value);Path(path).write_bytes(b);return H('artifact',b)
-def load_model(path,expected=None):
-    with open(path,'rb')as f:b=f.read(65537)
-    require(len(b)<=65536,'ARTIFACT_LIMIT')
-    if expected is not None:require(H('artifact',b)==expected,'ARTIFACT_IDENTITY')
-    m=json.loads(b,object_pairs_hook=unique)
-    require(canonical(m)==b,'ARTIFACT_CANONICAL_BYTES')
-    require(set(m)=={'schema','family','scale','source','base','router','deltas','feature','classes'},'ARTIFACT_FIELDS')
-    require(m['feature']=='signed-token-hash-256-clipped8-plus-bias-v1'and m['classes']==CLASSES,'FEATURES')
-    require(m['schema']=='hepta-source-owner-linear-256-v1'and m['family']==FAMILY.hex()and m['scale']==SCALE,'FAMILY')
-    for name in ['base','router']:
-        a=m[name];require(len(a)==3 and all(len(r)==DIM for r in a),'SHAPE');require(all(type(v)is int and -32767<=v<=32767 for r in a for v in r),'NUMERIC')
-    require(len(m['deltas'])==3,'SHAPE')
-    for a in m['deltas']:require(len(a)==3 and all(len(r)==DIM for r in a)and all(type(v)is int and -32767<=v<=32767 for r in a for v in r),'SHAPE')
-    return m
+from model_contract import load_model
 
 def predict(m,x,removed=None,mode='composed',expert=0):
     x=np.asarray(x,dtype=np.int64);base=np.asarray(m['base'],dtype=np.int64);deltas=np.asarray(m['deltas'],dtype=np.int64)

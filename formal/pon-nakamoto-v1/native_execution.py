@@ -1,6 +1,7 @@
 """Explicit native M06 bridge; missing/failed native execution never falls back."""
 from __future__ import annotations
-import json,os,subprocess
+import json,os
+from bounded_process import run_bounded
 from pathlib import Path
 from contract_wire import canonical,state_root,unique,NETWORK,PARAMETER_HASH
 
@@ -14,8 +15,7 @@ def execute_native(state,transactions,height,miner,parent,workers=None,binary=No
     request={'network':NETWORK.hex(),'parameters':PARAMETER_HASH.hex(),'state':state,'transactions':[t.hex()for t in transactions],'height':height,'miner':miner.hex(),'parent':parent.hex(),'workers':count}
     data=canonical(request)
     if len(data)>16*1024*1024:raise ValueError('NATIVE_BRIDGE_LIMIT')
-    try:r=subprocess.run([str(path)],input=data,capture_output=True,timeout=30)
-    except subprocess.TimeoutExpired as e:raise ValueError('NATIVE_EXECUTOR_TIMEOUT')from e
+    r=run_bounded([str(path)],data)
     if r.returncode:raise ValueError('NATIVE_'+r.stderr.decode(errors='replace').strip()[:300])
     result=json.loads(r.stdout,object_pairs_hook=unique)
     if set(result)!={'network','parameters','state','receipts','root','metrics','scope'}:raise ValueError('NATIVE_FIELDS')
