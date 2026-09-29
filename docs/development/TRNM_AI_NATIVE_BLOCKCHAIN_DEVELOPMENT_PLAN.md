@@ -376,7 +376,18 @@ and public network security. Highest repository privilege does not manufacture t
 facts. Continue their implementations and falsifiable experiments on this lineage;
 production remains disabled until the corresponding evidence exists.
 
-[The current E3 execution receipt](../../evidence/pon-evaluation-bundle-v1/README.md)
-records exact-source native and logical regressions, locked evaluation replay, three
+[The retained E3 model execution receipt](../../evidence/pon-evaluation-bundle-v1/README.md)
+records its exact-source native and logical regressions, locked evaluation replay, three
 no-update optimization attempts and nine same-input results on three owned hosts.
-It does not replace independently administered future tasks or public work qualification.
+It does not cover the subsequently added client runtime or replace independently
+administered future tasks and public work qualification.
+
+[The receiver-verified client receipt](../../evidence/pon-client-confirmation-v1/README.md)
+records new clean-source full regression and both reference and explicit native compute
+client configurations, including complete-ancestry clock reobservation. The same
+responsibility reporter resolves its measured source and exact selectors. No model
+training/host campaign was rerun for that receipt. Its retained initial failure exposed
+an omitted-source hole in historical component checking: the original measured runtime
+inventory must come from the measured Git tree, not an editable receipt. Publication
+checker tests are separate from runtime qualification; local callbacks inside a test
+are not independent test cases. Original successful and failed logs remain immutable.

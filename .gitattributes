@@ -15,3 +15,6 @@ evidence/pon-evaluation-bundle-v1/logs/*.log -whitespace
 
 # Byte-exact new contract/cost observations, including the failed fixture preparation.
 evidence/pon-contract-authority-v1/**/*.log -text -whitespace
+
+# Client qualification preserves exact successful and failed process output.
+evidence/pon-client-confirmation-v1/**/*.log -text -whitespace

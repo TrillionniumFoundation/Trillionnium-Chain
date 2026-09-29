@@ -90,3 +90,9 @@ The [contract/tooling delivery](../../evidence/pon-contract-authority-v1/README.
 own exact-source new test/cost observations, including a failed fixture preparation and
 a successful same-source native rerun. It does not overwrite any of the four runtime
 package identities above or make current documentation edits into new model experiments.
+
+The [receiver-verified client qualification](../../evidence/pon-client-confirmation-v1/README.md)
+is registered as `client_confirmation` in the same maturity inventory. The reporter now
+shows current exact-source regression support for the M13/M14 client selectors rather
+than borrowing their coverage from E3. The original model/host observations stay historical;
+client replay does not remeasure model benefit, public consensus or physical power loss.

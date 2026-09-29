@@ -1,0 +1,8 @@
+test_exact_expected_artifact_not_mutable_path (__main__.ArtifactBindingTests.test_exact_expected_artifact_not_mutable_path) ... ok
+test_loader_size_is_bounded_before_json_decode (__main__.ArtifactBindingTests.test_loader_size_is_bounded_before_json_decode) ... ok
+test_shapes_fields_and_noncanonical_bytes_reject (__main__.ArtifactBindingTests.test_shapes_fields_and_noncanonical_bytes_reject) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.025s
+
+OK

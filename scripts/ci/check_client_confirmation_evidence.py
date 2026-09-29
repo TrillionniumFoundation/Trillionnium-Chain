@@ -31,6 +31,12 @@ REQUIRED = {
 }
 
 
+def client_selectors(text):
+    """Only direct unittest methods, not local callbacks nested inside those tests."""
+    return [TEST_FILE + '::' + name for name in sorted(python_symbols(text))
+            if name.startswith('VerifiedHistoryTests.test_') and name.count('.') == 1]
+
+
 def validate(root=ROOT, evidence=None):
     root = Path(root).resolve()
     folder = Path(evidence or root / 'evidence/pon-client-confirmation-v1').resolve()
@@ -97,8 +103,7 @@ def validate(root=ROOT, evidence=None):
                 require({'--workspace', '--all-targets', '--all-features'} <= set(row['command']), 'incomplete native suite')
                 native_count = row['native_passed']
         records.append(dict(row, _log_text=text))
-    selectors = [TEST_FILE + '::' + name for name in python_symbols(originals[TEST_FILE].decode())
-                 if name.startswith('VerifiedHistoryTests.test_')]
+    selectors = client_selectors(originals[TEST_FILE].decode())
     require(selectors, 'missing client assertions')
     for name in ['test_client_confirmation', 'native-client-confirmation']:
         row = by_name[name]
