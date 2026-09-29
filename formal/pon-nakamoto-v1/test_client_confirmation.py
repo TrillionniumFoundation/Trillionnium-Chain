@@ -38,6 +38,18 @@ class VerifiedHistoryTests(unittest.TestCase):
             packet = cls.source.make(cls.fork, [], miner=public(key(2)))
             cls.fork = cls.source.admit(*packet, PARAMS['genesis_timestamp'] + 1000)
 
+        # Every block is actually mined and admitted. Median-time rules allow
+        # a future spike below a later tip whose timestamp is earlier.
+        cls.future_tip = GENESIS
+        cls.future_blocks = []
+        cls.future_tx = sign(key(0), 2, 'transfer', {'recipient': public(key(1)), 'amount': 3})
+        for height in range(1, 10):
+            timestamp = PARAMS['genesis_timestamp'] + (1000 if height == 3 else height * 10)
+            txs = [cls.tx] if height == 1 else ([cls.future_tx] if height == 4 else [])
+            packet = cls.source.make(cls.future_tip, txs, timestamp=timestamp)
+            cls.future_tip = cls.source.admit(*packet, PARAMS['genesis_timestamp'] + 2000)
+            cls.future_blocks.append(cls.future_tip)
+
     @classmethod
     def tearDownClass(cls):
         cls.source.close()
@@ -273,6 +285,63 @@ class VerifiedHistoryTests(unittest.TestCase):
         result = self.import_all(after=self.tip)
         self.assertEqual(result['verified_blocks'], 0)
         self.assertEqual(self.receiver.active()[1], generation)
+
+    def test_future_ancestor_cannot_hide_behind_earlier_tip_clock(self):
+        self.import_all(self.future_tip)
+        with patch.object(client.time, 'time', return_value=PARAMS['genesis_timestamp'] + 200):
+            with self.assertRaisesRegex(ValueError, 'TIME_DEFERRED'):
+                client.confirmation(self.receiver, self.txid, self.blocks[0])
+        fact = client.confirmation(self.receiver, self.txid, self.blocks[0], observed_now=self.now)
+        self.assertEqual(fact['status'], 'confirmed')
+
+    def test_future_ancestor_below_inclusion_is_also_checked(self):
+        self.import_all(self.future_tip)
+        # Query a real transaction after the timestamp spike, through the public API.
+        with self.assertRaisesRegex(ValueError, 'TIME_DEFERRED'):
+            client.confirmation(self.receiver, H('tx-id', self.future_tx), self.future_blocks[3],
+                                observed_now=PARAMS['genesis_timestamp'] + 200)
+
+    def test_duplicate_page_rechecks_clock_without_repeating_work(self):
+        self.import_all()
+        before = self.receiver.read_active()
+        with patch('ledger.work.verify', side_effect=AssertionError('duplicate work replay')):
+            with self.assertRaisesRegex(ValueError, 'TIME_DEFERRED'):
+                client.receive_page(self.receiver, self.pages[0], expected_tip=self.tip,
+                                    after=GENESIS, observed_now=0)
+        self.assertEqual(self.receiver.read_active(), before)
+        self.assertTrue(self.import_all()['complete'])
+
+    def test_empty_terminal_page_checks_previously_imported_ancestry(self):
+        self.import_all(self.future_tip)
+        page = next(client.history_pages(self.source, self.future_tip, self.future_tip))
+        with self.assertRaisesRegex(ValueError, 'TIME_DEFERRED'):
+            client.receive_page(self.receiver, page, expected_tip=self.future_tip,
+                                after=self.future_tip, observed_now=PARAMS['genesis_timestamp'] + 200)
+
+    def test_confirmation_cancel_is_read_only_and_can_retry(self):
+        self.import_all()
+        before = self.receiver.read_active()
+        def cancel(stage, count):
+            self.assertEqual((stage, count), ('observation', 0))
+            raise InterruptedError('caller cancelled observation')
+        with self.assertRaises(InterruptedError):
+            client.confirmation(self.receiver, self.txid, self.blocks[0], observed_now=self.now, progress=cancel)
+        self.assertEqual(self.receiver.read_active(), before)
+        self.assertEqual(client.confirmation(self.receiver, self.txid, self.blocks[0], observed_now=self.now)['status'], 'confirmed')
+
+    def test_generation_change_during_observation_cannot_escape(self):
+        self.import_all()
+        # Admit a verified competing branch without selecting it yet.
+        for page in client.history_pages(self.source, self.fork):
+            records, _, _ = client.decode_page(page, self.fork, GENESIS)
+            for hb, txs, proof, _ in records:
+                self.receiver.admit(hb, txs, proof, self.now)
+        def switch(stage, count):
+            if stage == 'observation' and count == 0:
+                self.receiver.activate(self.fork)
+        with self.assertRaisesRegex(ValueError, 'STALE_VIEW'):
+            client.confirmation(self.receiver, self.txid, self.blocks[0], observed_now=self.now, progress=switch)
+        self.assertEqual(client.confirmation(self.receiver, self.txid, self.blocks[0], observed_now=self.now)['status'], 'reorged')
 
     def test_command_line_receive_and_confirm_use_persistent_receiver(self):
         path = str(Path(self.tmp.name) / 'cli-store')

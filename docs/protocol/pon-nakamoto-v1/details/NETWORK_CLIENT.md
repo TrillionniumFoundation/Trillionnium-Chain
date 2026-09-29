@@ -162,8 +162,10 @@ Already committed valid blocks are not rolled back to simulate page-level atomic
 transaction root and exact TxId membership, follows active ancestry, and computes depth
 and cumulative-work delta against the installed depth+work policy. It returns included,
 confirmed or reorged with exact observed tip and local generation. A replaced generation
-fails STALE_VIEW. A future-clock tip fails TIME_DEFERRED. A logical test clock is explicitly
-labelled and cannot become a wall-clock confirmation merely by reopening its database.
+fails STALE_VIEW. Any future-clock ancestor fails TIME_DEFERRED, including ancestors
+below the included block: timestamps are median-constrained, not monotonically increasing.
+A logical test clock is explicitly labelled and cannot become a wall-clock confirmation
+merely by reopening its database or following a later, earlier-timestamped tip.
 Orphaned inclusion has no current depth/work and cannot remain confirmed.
 
 A retained confirmed response is only an observation at its returned generation/time.
@@ -183,3 +185,25 @@ pages; body substitution; lower-work branches; heavy-fork removal of confirmatio
 local-clock deferral; and real CLI subprocess receive/confirm. The same suite also runs
 with both native component backends explicitly selected. This tests controlled client
 behavior, not a full native node or independent public-network acceptance.
+
+### Local-clock reobservation and cancellation
+
+An immutable work result is reusable; a prior clock observation is not. `receive_page`
+checks every incoming header against its caller's current clock even on exact stored
+retransmission. Before completed-target activation (including an empty terminal page),
+it checks all locally verified ancestry, so an old cursor cannot smuggle a future block
+from an earlier logical-clock import. TIME_DEFERRED is a local retryable observation,
+not a permanent invalid-block cache entry or a change to chainwork/consensus validity.
+
+`confirmation(..., progress=...)` checks full ancestry through genesis in constant
+auxiliary memory. It invokes the cancellation callback before walking and every256
+ancestors. Cancellation returns no partial confirmation, changes no store and can be
+retried. The generation is checked again before a result escapes; a reorg during the
+walk yields STALE_VIEW. This is linear historical work, not a succinct proof or an
+incremental native state index. Source-root reconstruction costs remain separate.
+
+Actual counterexamples include a high-timestamp ancestor followed by a lower-timestamp
+valid tip, an ancestor below inclusion, a duplicate page with a different local clock,
+a terminal cursor referring to old future history, cancellation and a generation switch.
+All work and state in those tests are actually verified; no accepted-history fixture
+or remote clock field supplies their authority.

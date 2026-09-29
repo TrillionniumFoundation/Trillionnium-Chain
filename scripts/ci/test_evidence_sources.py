@@ -68,4 +68,26 @@ class EvidenceSourceTests(unittest.TestCase):
         (p/'manifest.json').write_text(json.dumps(dict(implementation_commit='1'*40,implementation_tree='8'*40)))
         def run(*a,**kw):raise AssertionError('conflicting source must reject before commands')
         with self.assertRaises(ValueError):prepare(self.root,run)
+    def test_client_receipt_retains_exact_source_after_squash(self):
+        p=self.root/'evidence/pon-client-confirmation-v1';p.mkdir()
+        (p/'manifest.json').write_text(json.dumps(dict(implementation_commit='9'*40,implementation_tree='a'*40)))
+        self.trees['9'*40]='a'*40
+        calls=[]
+        def run(args,**kw):
+            calls.append(args)
+            if args[1]=='cat-file':return subprocess.CompletedProcess(args,1,'','missing')
+            if args[1]=='rev-parse':return subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')
+            return subprocess.CompletedProcess(args,0,'','')
+        result=prepare(self.root,run)
+        self.assertIn(['git','fetch','--no-tags','--no-write-fetch-head',REMOTE,'9'*40],calls)
+        self.assertFalse(result['branch_refs_changed'])
+        self.assertFalse(result['acceptance_granted'])
+    def test_client_receipt_cannot_rebind_source_or_fetch_a_branch(self):
+        p=self.root/'evidence/pon-client-confirmation-v1';p.mkdir()
+        for commit,tree in [('main','a'*40),('1'*40,'a'*40)]:
+            with self.subTest(commit=commit):
+                (p/'manifest.json').write_text(json.dumps(dict(implementation_commit=commit,implementation_tree=tree)))
+                def run(*args,**kwargs):raise AssertionError('must reject before commands')
+                with self.assertRaises(ValueError):prepare(self.root,run)
+
 if __name__=='__main__':unittest.main(verbosity=2)

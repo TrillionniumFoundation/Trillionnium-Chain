@@ -850,7 +850,9 @@
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_full_work_state_and_transaction_confirmation",
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_disk_reopen_resume_uses_verified_block_cursor",
-            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_cancel_retains_only_fully_verified_prefix_and_can_resume"
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_cancel_retains_only_fully_verified_prefix_and_can_resume",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_duplicate_page_rechecks_clock_without_repeating_work",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_empty_terminal_page_checks_previously_imported_ancestry"
           ],
           "remaining": "Controlled file/stdio delivery with receiver-verified block cursors; not a persistent native WAN node, succinct proof, independently operated network or global-freshness guarantee."
         }
@@ -883,7 +885,7 @@
             "symbol": "main"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Locally full-verified membership/active ancestry/depth/work query, with local-clock check and generation",
+          "backend": "Locally full-verified membership/complete-ancestry clock/depth/work observation with cancellation and generation recheck",
           "persistence_owner": {
             "path": "formal/pon-nakamoto-v1/ledger.py",
             "symbol": "Ledger"
@@ -891,7 +893,11 @@
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_fork_replay_invalidates_old_confirmation",
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_forged_work_total_or_confirmation_flags_reject",
-            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_logical_import_does_not_masquerade_as_live_confirmation"
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_logical_import_does_not_masquerade_as_live_confirmation",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_future_ancestor_cannot_hide_behind_earlier_tip_clock",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_future_ancestor_below_inclusion_is_also_checked",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_confirmation_cancel_is_read_only_and_can_retry",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_generation_change_during_observation_cannot_escape"
           ],
           "remaining": "Not a succinct light client or proof of latest global tip; public discovery, eclipse defense, ordinary Hepta authority and native node assembly remain unintegrated."
         },

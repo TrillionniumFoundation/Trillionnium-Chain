@@ -21,7 +21,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False):
  commit=git('rev-parse','HEAD');tree=git('rev-parse','HEAD^{tree}')
  if not re.fullmatch('[0-9a-f]{40}',source):raise ValueError('SOURCE_COMMIT')
  source_tree=git('rev-parse',source+'^{tree}')
- files=git('ls-files').splitlines();source_files={p:sha(ROOT/p)for p in files if runtime(p)or p=='config/pon/invariants-v2.json'}
+ files=git('ls-files').splitlines();source_files={p:sha(ROOT/p)for p in files if runtime(p)or p in {'config/pon/invariants-v2.json','scripts/run_evaluation_qualification.py'}}
  env=os.environ.copy()
  for name in list(env):
   if name.startswith('TRNM_'):env.pop(name)
@@ -68,6 +68,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False):
           'test_threads':1,'cargo_jobs':2,'cargo_offline':True,'cargo_locked':True,'physical_power_loss':False},
          'results':records,'all_commands_passed':False,'ordinary_hepta_entry':False,
          'independent_accepted':False,'future_window_accepted':False,'production_activation':False,
+         'historical_evidence_sha256':{str(Path('evidence')/name/'manifest.json'):sha(ROOT/'evidence'/name/'manifest.json') for name in ['pon-v1','pon-v3','pon-v4','pon-evaluation-bundle-v1','pon-contract-authority-v1']},
          'workstream':'client-confirmation' if client_only else 'model-evaluation',
          'model_experiments_rerun':not client_only}
  error=None

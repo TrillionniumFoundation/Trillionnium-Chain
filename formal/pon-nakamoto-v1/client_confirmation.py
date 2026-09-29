@@ -146,6 +146,35 @@ def decode_page(raw: bytes, expected_tip: bytes, after: bytes) -> tuple[list[tup
     return records, current, page['complete']
 
 
+
+def _observe_branch(receiver: Ledger, tip: bytes, observed_now: int, *,
+                    included_block: bytes | None = None,
+                    progress: Callable[[str, int], None] | None = None) -> bool:
+    """Check the current clock over complete locally verified ancestry, in O(1) RAM.
+
+    Stored work validity does not authenticate today's clock. Timestamps need only
+    exceed the recent median, so a later tip can predate a future ancestor. This
+    read-only observation neither invalidates stored work nor creates a checkpoint.
+    Cancellation leaves no currentness cache or partially accepted observation.
+    """
+    current, count, member = tip, 0, False
+    if progress:
+        progress('observation', count)
+    row = receiver.block(current)
+    while current != GENESIS:
+        header = header_decode(row[3])
+        require(header['height'] == row[1] and header['parent'] == row[0], 'HEIGHT')
+        require(header['timestamp'] <= observed_now + PARAMS['future_skew_seconds'], 'TIME_DEFERRED')
+        member = member or current == included_block
+        require(row[0] is not None, 'HEIGHT')
+        parent = receiver.block(row[0])
+        require(parent[1] + 1 == row[1], 'HEIGHT')
+        current, row, count = row[0], parent, count + 1
+        if progress and count % 256 == 0:
+            progress('observation', count)
+    return member
+
+
 def receive_page(receiver: Ledger, raw: bytes, *, expected_tip: bytes, after: bytes,
                  observed_now: int, progress: Callable[[str, int], None] | None = None) -> dict:
     """Reuse the receiver's normal admission and persistence, never a second store.
@@ -159,6 +188,8 @@ def receive_page(receiver: Ledger, raw: bytes, *, expected_tip: bytes, after: by
     receiver.ready()
     receiver.block(after)  # must already be locally verified, never imported as a snapshot
     for index, (hb, txs, proof, expected) in enumerate(records):
+        # Exact retransmission can reuse work, never a prior clock observation.
+        require(header_decode(hb)['timestamp'] <= observed_now + PARAMS['future_skew_seconds'], 'TIME_DEFERRED')
         if progress:
             progress('before_admit', index)
         actual = receiver.admit(hb, txs, proof, observed_now)
@@ -166,6 +197,8 @@ def receive_page(receiver: Ledger, raw: bytes, *, expected_tip: bytes, after: by
         if progress:
             progress('admitted', index + 1)
     if complete:
+        # Also check previously imported cursor ancestry and empty terminal pages.
+        _observe_branch(receiver, expected_tip, observed_now, progress=progress)
         receiver.activate(expected_tip)  # strictly greater locally derived work only
     active, generation = receiver.active()
     return {'next_after': next_after.hex(), 'complete': complete, 'verified_blocks': len(records),
@@ -174,7 +207,8 @@ def receive_page(receiver: Ledger, raw: bytes, *, expected_tip: bytes, after: by
 
 
 def confirmation(receiver: Ledger, transaction: bytes, included_block: bytes, *,
-                 observed_now: int | None = None) -> dict:
+                 observed_now: int | None = None,
+                 progress: Callable[[str, int], None] | None = None) -> dict:
     """Calculate transaction membership, active ancestry, depth and work locally.
 
     The observed chain is not proof of global freshness or eclipse resistance. This
@@ -187,20 +221,14 @@ def confirmation(receiver: Ledger, transaction: bytes, included_block: bytes, *,
     require(type(observed_now) is int and 0 <= observed_now < 2**64, 'CLOCK')
     receiver.ready()
     tip, generation, _ = receiver.read_active()
-    if tip != GENESIS:
-        require(header_decode(receiver.block(tip)[3])['timestamp'] <= observed_now + PARAMS['future_skew_seconds'], 'TIME_DEFERRED')
     included = receiver.block(included_block)
     require(included[3] is not None, 'NO_TRANSACTION')
     body = unpack_body(included[4])
     require(sequence_root('transactions', body) == header_decode(included[3])['transactions'], 'ROOT')
     indexes = [i for i, tx in enumerate(body) if H('tx-id', tx) == transaction]
     require(len(indexes) == 1, 'NO_TRANSACTION')
-    current = tip
-    while receiver.block(current)[1] > included[1]:
-        row = receiver.block(current)
-        require(row[0] is not None and receiver.block(row[0])[1] + 1 == row[1], 'HEIGHT')
-        current = row[0]
-    on_chain = current == included_block
+    on_chain = _observe_branch(receiver, tip, observed_now,
+                               included_block=included_block, progress=progress)
     tip_row = receiver.block(tip)
     depth = tip_row[1] - included[1] if on_chain else None
     delta = int.from_bytes(tip_row[2], 'big') - int.from_bytes(included[2], 'big') if on_chain else None

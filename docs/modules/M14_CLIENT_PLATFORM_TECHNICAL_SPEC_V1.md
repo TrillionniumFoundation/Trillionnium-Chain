@@ -93,3 +93,8 @@ This is a full-verifying reference client with explicit optional native work/exe
 components, NOT a succinct light client or proof of the globally latest tip. Completed
 lower-work delivery does not replace the receiver's heavier observed branch. Successful
 logical-clock tests cannot be reported as live confirmed public throughput.
+
+The current-clock observation checks every verified ancestor, not only the tip. Exact
+stored retransmission does not reuse an earlier clock verdict. Cancellation yields no
+partial confirmation, and a generation change during traversal rejects STALE_VIEW.
+See N2 for the actual callback, retry, memory and linear-history cost boundaries.

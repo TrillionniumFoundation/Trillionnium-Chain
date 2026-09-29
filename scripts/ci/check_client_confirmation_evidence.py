@@ -11,6 +11,9 @@ from check_invariant_evidence import ROOT, load, require, safe, source_bytes
 from report_module_evidence import runtime_path, python_symbols, observed_selector
 
 TEST_FILE = 'formal/pon-nakamoto-v1/test_client_confirmation.py'
+RUNNER = 'scripts/run_evaluation_qualification.py'
+HISTORICAL = {'evidence/' + name + '/manifest.json' for name in
+              ['pon-v1', 'pon-v3', 'pon-v4', 'pon-evaluation-bundle-v1', 'pon-contract-authority-v1']}
 FLAGS = ['ordinary_hepta_entry', 'independent_accepted', 'three_improving_generations',
          'physical_power_loss', 'public_network_ready', 'production_activation']
 REQUIRED = {
@@ -50,6 +53,11 @@ def validate(root=ROOT, evidence=None):
         require(q[flag] is False, 'qualification authority ' + flag)
     tree = subprocess.check_output(['git', 'rev-parse', q['source_commit'] + '^{tree}'], cwd=root, text=True).strip()
     require(tree == q['source_tree'], 'source tree')
+    require(RUNNER in q['source_files_sha256'], 'missing measured qualification runner')
+    require(set(q['historical_evidence_sha256']) == HISTORICAL, 'historical inventory')
+    for relative, expected in q['historical_evidence_sha256'].items():
+        require(hashlib.sha256(safe(root, relative).read_bytes()).hexdigest() == expected, 'historical evidence changed ' + relative)
+    require(manifest['historical_v4_sha256'] == q['historical_evidence_sha256']['evidence/pon-v4/manifest.json'], 'historical manifest mismatch')
     originals = source_bytes(root, q['source_commit'], list(q['source_files_sha256']))
     for relative, raw in originals.items():
         require(hashlib.sha256(raw).hexdigest() == q['source_files_sha256'][relative], 'false source digest')
@@ -68,6 +76,10 @@ def validate(root=ROOT, evidence=None):
         text = safe(folder, row['log']).read_text()
         require(row['vram_bytes'] is None and row['included_transactions'] is None
                 and row['client_confirmed_transactions'] is None, 'unmeasured network metric')
+        if row['name'].startswith('test_') or row['name'] in {'native-ledger', 'native-client-confirmation', 'accepted-block', 'source-rejections', 'invariant-registry', 'historical-v1-rejections', 'historical-v4-rejections', 'historical-evaluation-rejections', 'responsibility-evidence', 'work-cost-rejections'}:
+            require('python_tests' in row, 'missing executed Python summary ' + row['name'])
+        if row['name'].startswith('test_'):
+            require(row['command'] == ['python3', 'formal/pon-nakamoto-v1/' + row['name'] + '.py'], 'wrong Python invocation ' + row['name'])
         if 'python_tests' in row:
             require(type(row['python_tests']) is int and row['python_tests'] > 0, 'test counter')
             require(re.search(r'(?m)^Ran ' + str(row['python_tests']) + r' tests?\b', text)
@@ -93,6 +105,9 @@ def validate(root=ROOT, evidence=None):
         require(row['command'] == ['python3', TEST_FILE], 'client invocation')
         exact = [r for r in records if r['name'] == name]
         require(all(observed_selector(s, exact) for s in selectors), 'unobserved client selector')
+    build = by_name['native-build']['command']
+    require(build[:2] == ['cargo', 'build'] and {'--offline', '--locked', '--release', '--examples'} <= set(build), 'native build invocation')
+    require({'trnm-protocol', 'trnm-crypto-primitives', 'trnm-mvcc-fee', 'trnm-transport'} <= set(build), 'native build scope')
     overrides = by_name['native-client-confirmation']['environment_overrides']
     require(overrides.get('TRNM_EXECUTION_WORKERS') == '8'
             and overrides.get('TRNM_NATIVE_WORK', '').endswith('/release/examples/pon_work_io')
