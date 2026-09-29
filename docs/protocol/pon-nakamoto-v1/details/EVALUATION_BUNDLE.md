@@ -122,5 +122,9 @@ reports. `test_inference_receipt.py` additionally checks omitted cost/nonce/outp
 bounded parsing. The invariant registry binds exact selectors. Test success proves
 those executed cases, not universal model safety or independent scientific acceptance.
 
-[Current executed evidence](../../../../evidence/pon-evaluation-bundle-v1/README.md)
-retains source identities, all raw results and the no-adoption/zero-reward outcome.
+[The recorded E3 model experiment](../../../../evidence/pon-evaluation-bundle-v1/README.md)
+retains its original source identities, raw results and no-adoption/zero-reward outcome.
+It is not a claim that this model experiment ran on every later runtime. The
+[responsibility reporter](../../../modules/README.md#responsibility-and-evidence) derives
+current source applicability. Later native-session/client regressions have their own
+receipt and do not rerun model efficacy, future-window evaluation or physical hosts.

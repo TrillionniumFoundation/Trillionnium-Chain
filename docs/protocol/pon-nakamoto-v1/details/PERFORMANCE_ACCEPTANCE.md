@@ -128,9 +128,12 @@ establish different operators, public ingress fairness or proof-cost hardness.
 
 The [responsibility reporter](../../../modules/README.md#responsibility-and-evidence)
 derives current byte applicability; neither v3 nor v4 is globally labelled current merely
-because a component file stayed unchanged. E3 is a later model/consent experiment and
-does not replay v4's native-host performance campaign. New tooling checks belong to their
-own source/PR observations. Never overwrite an old manifest or change its measured SHA.
+because a component file stayed unchanged. E3 records its model/consent experiment;
+client and native-session receipts record later receiver/execution regressions. None
+replays v4's physical-host performance or repeats E3 model efficacy by implication.
+The module index links all these packages and the separately measured native-session
+work costs. New tooling checks belong to their own source/PR observations. Never
+overwrite an old manifest or change its measured SHA.
 
 The current workload is the closed twelve-command ledger, not an arbitrary contract VM.
 For one source and one profile, split signature preparation, state speculation, canonical

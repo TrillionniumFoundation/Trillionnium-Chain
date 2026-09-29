@@ -79,10 +79,11 @@ native cost binary and preserve raw output plus exact-source identities. It reje
 mixed targets, duplicate samples, Boolean counters and invented security flags, but
 creates no public-admission qualification. It does not send traffic to any peer or host.
 
-[The new controlled cost record](../../../../evidence/pon-contract-authority-v1/README.md)
-binds actual execution, raw samples, target, binary and original source. Current-source
-verification and the retained failed environment setup are separate from public admission
-or work-hardness acceptance, which remain false.
+[The historical contract/tooling cost record](../../../../evidence/pon-contract-authority-v1/README.md)
+binds its actual execution, raw samples, target, binary and original source, including
+its retained failed environment setup. It is checked as historical after native-session
+source changes. The newer collection below has its own current-input check; neither
+record grants public admission or work-hardness acceptance.
 
 ## Early rejection before branch-state reconstruction
 

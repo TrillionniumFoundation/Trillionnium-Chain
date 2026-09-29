@@ -81,18 +81,23 @@ recorded runtime match; it never grants integration, independence or production 
 | [v1](../../evidence/pon-v1/README.md) | Original work/model/ledger/network experiments, including failure | Historical only. Keep measured implementation separate from its original publication/archive source snapshot. |
 | [v3](../../evidence/pon-v3/README.md) | Invariants, actual long history, work costs, controlled owned hosts | Derive byte comparisons; do not inherit its host or work measurements into changed inputs. |
 | [v4](../../evidence/pon-v4/README.md) | Block-scoped native comparison and same-admin binary parity | Same source can support that recorded observation, not a newly measured machine or public TPS. |
-| [E3](../../evidence/pon-evaluation-bundle-v1/README.md) | Frozen evaluation, full consent, no adoption/reward, owned-host evaluation | Compare the current source; no future-window or independent-operator authority. |
+| [E3](../../evidence/pon-evaluation-bundle-v1/README.md) | Frozen evaluation, full consent, no adoption/reward, owned-host evaluation | Historical model observations on their recorded source; later client/session qualification does not rerun this experiment. |
+| [Client](../../evidence/pon-client-confirmation-v1/README.md) | Receiver-verified history and confirmation on its original implementation | Historical after the native-session changes; component equality and observed selectors remain separate from current whole-runtime matching. |
+| [Native session](../../evidence/pon-native-session-v1/README.md) | Bounded compute cache, incremental in-memory roots, early proof rejection and controlled receiver confirmation | Derive complete-runtime equality and executed selectors from this receipt. Neither in-memory state nor controlled confirmation establishes a full native node. |
+| [Native-session work costs](../../evidence/pon-native-session-v1/work-cost/README.md) | New same-target native CPU measurements on a separately named clean source | Its cost verifier requires the measured input inventory to match; source freshness does not qualify fastest-adversary cost or public admission. |
 
 The reporter never writes a new SHA into any historical report. Current PR/head/merge
 checks for changed development tooling remain new observations, not old logs relabelled.
 
 The [contract/tooling delivery](../../evidence/pon-contract-authority-v1/README.md) has its
 own exact-source new test/cost observations, including a failed fixture preparation and
-a successful same-source native rerun. It does not overwrite any of the four runtime
-package identities above or make current documentation edits into new model experiments.
+a successful same-source native rerun. It does not overwrite any historical runtime
+package identity above or make current documentation edits into new model experiments.
 
-The [receiver-verified client qualification](../../evidence/pon-client-confirmation-v1/README.md)
-is registered as `client_confirmation` in the same maturity inventory. The reporter now
-shows current exact-source regression support for the M13/M14 client selectors rather
-than borrowing their coverage from E3. The original model/host observations stay historical;
-client replay does not remeasure model benefit, public consensus or physical power loss.
+The client and native-session qualifications are registered as `client_confirmation`
+and `native_session` in the same maturity inventory. The former remains tied to its
+original runtime; the latter covers the added cache, commitment and receiver changes.
+Run the reporter to derive applicability for the actual checkout rather than treating
+this navigation order or a package label as a current-source pass. Original model and
+physical-host observations remain historical; neither receipt remeasures model benefit,
+public consensus, physical power loss or ordinary Hepta integration.
