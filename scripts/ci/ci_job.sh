@@ -39,6 +39,8 @@ case "${1:?required job}" in
     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings
     ;;
   external-evidence-contract)
+    python3 scripts/ci/prepare_evidence_sources.py
+    python3 scripts/ci/test_evidence_sources.py
     python3 scripts/ci/check_repository.py
     python3 scripts/ci/test_repository.py EvidenceBoundaryTests
     python3 scripts/ci/check_pon_evidence.py

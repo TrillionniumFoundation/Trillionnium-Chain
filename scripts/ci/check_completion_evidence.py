@@ -9,13 +9,20 @@ PARAMETERS={'config/pon/devnet-v1.json','config/pon/ledger-v1.json','config/pon/
 def runtime(path):
     return (path.startswith(('formal/pon-nakamoto-v1/','trillionnium/')) and not path.endswith('.md')) or path in PARAMETERS
 
+def load_list(path):
+    import json
+    from check_invariant_evidence import unique
+    value=json.loads(path.read_text(),object_pairs_hook=unique)
+    require(isinstance(value,list),'expected report list')
+    return value
+
 def validate(root=ROOT,evidence=None):
     root=Path(root).resolve();folder=Path(evidence or root/'evidence/pon-v4').resolve()
     manifest=load(folder/'manifest.json')
     require(manifest['schema']=='pon-completion-evidence-v4','schema')
     for flag in ['independent_accepted','ordinary_hepta_entry','three_improving_generations','physical_power_loss','public_network_ready','production_activation']:
         require(manifest[flag]is False,'unearned scope '+flag)
-    require({'qualification/report.json','comparison/report.json','summary.json'}<=set(manifest['files']),'missing report')
+    require({'qualification/report.json','comparison/report.json','summary.json','native-hosts/report.json','native-hosts/source-manifest.json','native-hosts/requests.json','native-hosts/remote-driver.py'}<=set(manifest['files']),'missing report')
     for relative,digest in manifest['files'].items():
         require(hashlib.sha256(safe(folder,relative).read_bytes()).hexdigest()==digest,'changed artifact '+relative)
     q=load(folder/'qualification/report.json');commit=q['source_commit']
@@ -54,8 +61,18 @@ def validate(root=ROOT,evidence=None):
     require(comparison['consensus_tps_claimed']is False and comparison['independent_accepted']is False and comparison['production_activation']is False,'comparison scope')
     require(comparison['binary_sha256']['candidate']==q['native_binary_sha256']['pon_execute'],'binary mismatch')
     require(comparison['baseline_source']=='209f742279044327ad8c763012b6fdda54e5e61e','baseline mismatch')
+    resource_lines=safe(folder,'comparison/process-resource-usage.tsv').read_text().splitlines()
+    require(resource_lines[0]=='filename\tmax_rss_kib user_seconds system_seconds','resource table header')
+    resource_rows={}
+    for line in resource_lines[1:]:
+        name,value=line.split('\t',1)
+        require(name not in resource_rows and len(value.split())==3,'resource line duplicate/shape')
+        resource_rows[name]=value.split()
+    require(len(resource_rows)==12*2*(comparison['sample_count_per_case']+1),'resource/warmup coverage')
     groups={}
     for sample in comparison['samples']:
+        usage='usage-'+sample['scenario']+'-'+str(sample['workers'])+'-'+str(sample['sample'])+'-'+sample['binary']+'.txt'
+        require(usage in resource_rows and int(resource_rows[usage][0])==sample['peak_rss_kib'],'resource result mismatch')
         require(sample['included']is None and sample['client_confirmed']is None and sample['proof_verification_ns']is None and sample['vram_bytes']is None,'unmeasured metric claim')
         require(sample['executed']==sample['transactions'] and sample['metrics']['reexecuted']<=sample['transactions'],'count mismatch')
         if sample['binary']=='candidate':
@@ -73,11 +90,42 @@ def validate(root=ROOT,evidence=None):
         b=statistics.median(int(x['metrics']['elapsed_ns'])for x in samples if x['binary']=='baseline')
         c=statistics.median(int(x['metrics']['elapsed_ns'])for x in samples if x['binary']=='candidate')
         require(row['baseline_median_ns']==b and row['candidate_median_ns']==c and row['regression_observed']==(c>b),'summary hides cost')
+    hosts=load(folder/'native-hosts/report.json');hm=load(folder/'native-hosts/source-manifest.json')
+    require(hosts['source_commit']==commit and hosts['source_clean']is True and hosts['all_hosts_passed']is True,'host source/result')
+    require(hm['candidate_source']==commit and hm['source_clean']is True,'host manifest source')
+    require(hm['files']['candidate']==q['native_binary_sha256']['pon_execute'] and hm['files']['baseline']==comparison['binary_sha256']['baseline'],'host binary identity')
+    for name,path in [('requests.json','native-hosts/requests.json'),('run.py','native-hosts/remote-driver.py')]:
+        require(hashlib.sha256(safe(folder,path).read_bytes()).hexdigest()==hm['files'][name],'host input/driver hash')
+    for flag in ['independent_operators','native_full_node','ordinary_hepta_entry','physical_power_loss','public_network_security','production_activation']:
+        require(hosts[flag]is False,'host overclaim '+flag)
+    require(len({h['host']for h in hosts['results']})==len(hosts['results'])==3,'host inventory')
+    requests={x['scenario']:x for x in load_list(folder/'native-hosts/requests.json')}
+    for host in hosts['results']:
+        require(host['all_parity_passed']is True and host['returncode']==0 and host['owned_temporary_directory_removed']is True,'host execution or cleanup')
+        require(host['source_manifest']==hm and host['independent_operator']is False and host['consensus_host']is False and host['production_activation']is False,'host scope/manifest')
+        require(len(host['samples'])==24,'host sample coverage')
+        keys={(v['scenario'],v['workers'],v['variant'])for v in host['samples']}
+        require(keys=={(name,w,b)for name in requests for w in [1,2,4,8]for b in ['baseline','candidate']},'host case matrix')
+        for sample in host['samples']:
+            require(sample['root']==requests[sample['scenario']]['root'] and sample['included']is None and sample['confirmed']is None,'host root or fabricated inclusion')
+            if sample['variant']=='candidate':
+                require(sample['metrics']['workers_spawned']<=sample['workers'] and sample['metrics']['signature_verifications']==sample['transactions'],'host work accounting')
+    summary=load(folder/'summary.json')
+    require(summary['source_commit']==commit and summary['source_tree']==q['source_tree'],'summary source')
+    require(summary['all_qualification_commands_passed']is True and summary['native_tests']==native['passed'] and summary['native_failures']==0,'summary qualification counts')
+    require(summary['invariant_selectors']==len(selectors) and summary['comparison_samples']==len(comparison['samples']),'summary execution coverage')
+    require(summary['comparison_medians']==comparison['summary'],'summary performance mismatch')
+    require(summary['host_execution_samples']==sum(len(h['samples'])for h in hosts['results']) and summary['physical_hosts']==[h['host']for h in hosts['results']],'summary host counts')
+    require(summary['all_owned_remote_directories_removed']is True and summary['all_host_parity_passed']is True,'summary host outcome')
+    require(summary['full_test_filesystem']==q['environment']['temporary_filesystem'] and summary['full_test_threads']==q['environment']['test_threads'],'summary environment')
+    require(summary['historical_long_history_current_binary_rerun']is False,'historical long run promoted')
+    for flag in ['ordinary_hepta_entry','three_improving_generations','independent_accepted','physical_power_loss','public_network_ready','production_activation']:
+        require(summary[flag]is False,'summary overclaim '+flag)
     # Old 4114-block and physical-host results remain explicitly on their own source.
     history=manifest['historical_evidence']
     require(history['path']=='evidence/pon-v3/manifest.json' and history['claimed_current_runtime']is False,'old campaign promoted')
     require(hashlib.sha256(safe(root,history['path']).read_bytes()).hexdigest()==history['sha256'],'historical package changed')
-    return {'measured_commit':commit,'runtime_matches':True,'executed_invariant_selectors':len(selectors),'native_tests':native['passed'],'comparison_samples':len(comparison['samples']),'independent_accepted':False,'ordinary_hepta_entry':False,'production_activation':False}
+    return {'measured_commit':commit,'runtime_matches':True,'executed_invariant_selectors':len(selectors),'native_tests':native['passed'],'comparison_samples':len(comparison['samples']),'physical_hosts':len(hosts['results']),'independent_accepted':False,'ordinary_hepta_entry':False,'production_activation':False}
 
 if __name__=='__main__':
     result=validate();manifest=load(ROOT/'evidence/pon-v4/manifest.json')

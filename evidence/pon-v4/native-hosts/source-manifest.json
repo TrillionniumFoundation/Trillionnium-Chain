@@ -1,0 +1,11 @@
+{
+  "schema": "pon-native-host-input-v1",
+  "candidate_source": "30b85c34d1be404dcccd9f415286bb43b00f64ea",
+  "source_clean": true,
+  "files": {
+    "baseline": "604fedb29cda89a851df6228d0148bc2ffcd7c78a8febbc58a53afe78d322ea8",
+    "candidate": "282168351d6ff8adeba23972b11889d0a13f8e8b62b93fd840b0c7107253e8cb",
+    "requests.json": "2f0343b1fee5b26b4cb2d0d83040ae3857b232417ab2802db1f9b9a1e742b378",
+    "run.py": "ef2b4b4698ba94fabf8d4bcbde72695d10396368b3b77350123ee6cd58dc0686"
+  }
+}

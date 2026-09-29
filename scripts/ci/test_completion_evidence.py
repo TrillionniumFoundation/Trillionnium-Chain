@@ -36,6 +36,22 @@ class CompletionEvidenceTests(unittest.TestCase):
     def test_signature_count_does_not_disappear(self):
         def change(d):next(x for x in d['samples']if x['binary']=='candidate')['metrics']['signature_verifications']=0
         self.mutate('comparison/report.json',change)
+    def test_different_host_binary_is_not_qualified(self):
+        self.mutate('native-hosts/source-manifest.json',lambda d:d['files'].update(candidate='0'*64))
+    def test_host_result_cannot_be_independent_consensus(self):
+        self.mutate('native-hosts/report.json',lambda d:d.update(independent_operators=True))
+    def test_omitted_host_case_rejects(self):
+        self.mutate('native-hosts/report.json',lambda d:d['results'][0]['samples'].pop())
+    def test_host_wrong_root_rejects(self):
+        self.mutate('native-hosts/report.json',lambda d:d['results'][0]['samples'][0].update(root='0'*64))
+    def test_failed_temporary_cleanup_is_not_hidden(self):
+        self.mutate('native-hosts/report.json',lambda d:d['results'][0].update(owned_temporary_directory_removed=False))
+    def test_summary_cannot_inflate_test_results(self):
+        self.mutate('summary.json',lambda d:d.update(native_tests=d['native_tests']+1))
+    def test_summary_cannot_claim_future_learning(self):
+        self.mutate('summary.json',lambda d:d.update(three_improving_generations=True))
+    def test_summary_cannot_relabel_old_history_as_current(self):
+        self.mutate('summary.json',lambda d:d.update(historical_long_history_current_binary_rerun=True))
     def test_raw_log_cannot_be_replaced(self):
         m=json.loads((self.folder/'manifest.json').read_text());path=next(x for x in m['files']if x.startswith('qualification/')and x.endswith('.log'))
         p=self.folder/path;old=p.read_bytes()

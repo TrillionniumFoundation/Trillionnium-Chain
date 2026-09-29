@@ -364,3 +364,8 @@ model generations remain unaccepted. Three valid no-update training attempts mus
 no-update; they cannot be renamed three successful public generations. The explicit
 remaining implementation and external acceptance scopes are not reasons to duplicate
 existing owner kernels or restore retired consensus.
+
+After squash integration, exact measured Git commits may not be ancestors of main. The
+external-evidence lane fetches only missing declared40-hex objects from this repository,
+checks their expected trees, and never moves branch refs or grants acceptance. Missing
+source objects remain an error; local object caches must not hide a broken clean clone.
