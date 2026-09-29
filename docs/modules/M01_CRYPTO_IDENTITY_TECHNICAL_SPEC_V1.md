@@ -101,3 +101,10 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 
 - `formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_bad_field_and_task_reject_before_state_replay_or_full_verification`.
 - `formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_forged_passing_ticket_does_not_become_verified_work`.
+
+## Current work-cost applicability
+
+[Native-session-source cost observations](../../evidence/pon-native-session-v1/work-cost/README.md)
+carry their own measured commit, binary, source inventory and same-target samples.
+The old cost package remains historical. Neither collection establishes a fastest-
+adversary lower bound, public admission fairness or independent work qualification.

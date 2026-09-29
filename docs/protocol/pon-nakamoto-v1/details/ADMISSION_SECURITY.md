@@ -96,3 +96,12 @@ still reaches the unchanged complete transcript verifier and rejects there. Pare
 work eligibility, signatures, deterministic execution and roots remain mandatory before
 persistence. This saves malformed-input replay cost; it does not solve a cheaply fabricated
 passing ticket, structured-input shortcuts, fastest-adversary cost or public Sybil fairness.
+
+## Current same-target measurements after native-session integration
+
+[The new retained collection](../../../../evidence/pon-native-session-v1/work-cost/README.md)
+binds the current native source inventory and exact binary to dense, zero, rank-one
+and sparse tasks at one target. The old contract-authority collection is verified only
+as historical observations. The current CI path still requires a matching current-cost
+collection; it does not silence a stale-source failure by changing the old result.
+These CPU timings do not bound the fastest adversary or guarantee honest public service.

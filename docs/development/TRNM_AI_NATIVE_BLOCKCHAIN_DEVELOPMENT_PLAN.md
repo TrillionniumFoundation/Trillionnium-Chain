@@ -426,3 +426,11 @@ The retained selected-matrix pass is accompanied by the later actual expiry-rece
 maximum-budget failures, their fixes and a complete clean-source rerun. An incremental
 in-memory tree is not persistent native storage, and locally verified confirmation
 under a logical clock is not public WAN throughput or deterministic finality.
+
+The [current same-target work-cost collection](../../evidence/pon-native-session-v1/work-cost/README.md)
+was rebuilt and executed on its named clean source after the prior cost gate rejected
+stale inputs. Current and historical verification remain separate required checks.
+The [retained publication failures](../../evidence/pon-native-session-v1/publication-failures/README.md)
+also record globally ignored raw logs; the delivery checker now requires actual Git
+coverage for in-repository receipts. None of these repairs changes work qualification,
+production flags, original model observations or the missing ordinary native host.
