@@ -42,6 +42,28 @@ def client_selectors(text):
             if name.startswith('VerifiedHistoryTests.test_') and name.count('.') == 1]
 
 
+
+def require_tracked_evidence(root, folder, manifest):
+    """Published inputs must survive checkout, including globally ignored raw logs.
+
+    External historical/mutation packages are read-only supplied inputs, not a claim
+    that the original measured source commit already contained its later evidence.
+    """
+    root, folder = Path(root).resolve(), Path(folder).resolve()
+    if not folder.is_relative_to(root):
+        return False
+    prefix = folder.relative_to(root)
+    tracked = set(subprocess.check_output(
+        ['git', 'ls-files', '-z', '--', prefix.as_posix()], cwd=root
+    ).decode().split('\0'))
+    required = {(prefix / 'manifest.json').as_posix()}
+    required.update(safe(folder, name).relative_to(root).as_posix()
+                    for name in manifest['files'])
+    missing = sorted(required - tracked)
+    require(not missing, 'untracked evidence artifact: ' + ', '.join(missing[:3]))
+    return True
+
+
 def validate(root=ROOT, evidence=None):
     root = Path(root).resolve()
     folder = Path(evidence or root / 'evidence/pon-client-confirmation-v1').resolve()
@@ -55,6 +77,7 @@ def validate(root=ROOT, evidence=None):
     for relative, expected in manifest['files'].items():
         require(re.fullmatch('[0-9a-f]{64}', expected), 'digest shape')
         require(hashlib.sha256(safe(folder, relative).read_bytes()).hexdigest() == expected, 'changed artifact ' + relative)
+    require_tracked_evidence(root, folder, manifest)
     q = load(folder / 'qualification.json')
     require(q['source_commit'] == manifest['implementation_commit']
             and q['source_tree'] == manifest['implementation_tree'], 'source identity')

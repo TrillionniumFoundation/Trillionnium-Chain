@@ -27,6 +27,18 @@ def declarations(root):
         commit=identity(data['implementation_commit']);tree=identity(data['implementation_tree'])
         if commit in values and values[commit]!=tree:raise ValueError('conflicting source tree')
         values[commit]=tree
+    # Cost collections may be newer than the enclosing runtime qualification.
+    for package in ['pon-contract-authority-v1', 'pon-native-session-v1']:
+        path = root/'evidence'/package/'work-cost/execution.json'
+        if not path.is_file():
+            continue
+        data = json.loads(path.read_text())
+        if data.get('schema') != 'pon-native-cost-execution-v1':
+            raise ValueError('invalid cost execution schema')
+        commit, tree = identity(data['source_commit']), identity(data['source_tree'])
+        if commit in values and values[commit] != tree:
+            raise ValueError('conflicting source tree')
+        values[commit] = tree
     return values
 
 def prepare(root=ROOT,run=subprocess.run):

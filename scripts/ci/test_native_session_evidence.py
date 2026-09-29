@@ -4,10 +4,11 @@ import copy
 import hashlib
 import json
 import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
-from check_client_confirmation_evidence import ROOT, validate
+from check_client_confirmation_evidence import ROOT, validate, require_tracked_evidence
 
 
 class NativeSessionEvidenceTests(unittest.TestCase):
@@ -120,6 +121,51 @@ class NativeSessionEvidenceTests(unittest.TestCase):
     def test_omitted_receiver_sample_is_not_complete_pipeline(self):
         self.change('pipeline/report.json',lambda d:d['samples'].pop())
         self.reject('pipeline coverage')
+
+
+
+class RepositoryEvidenceTrackingTests(unittest.TestCase):
+    """Exercise a real Git index; file existence alone did not catch ignored logs."""
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix='pon-evidence-tracking-')
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name) / 'repository'
+        self.root.mkdir()
+        self.git('init', '-q')
+        (self.root / '.gitignore').write_text('*.log\n')
+        self.folder = self.root / 'evidence' / 'sample'
+        self.folder.mkdir(parents=True)
+        self.raw = b'actual process output with trailing spaces  \n'
+        (self.folder / 'run.log').write_bytes(self.raw)
+        self.manifest = {'files': {'run.log': hashlib.sha256(self.raw).hexdigest()}}
+        (self.folder / 'manifest.json').write_text(json.dumps(self.manifest))
+        self.git('add', '--', '.gitignore', 'evidence/sample/manifest.json')
+
+    def git(self, *args):
+        return subprocess.run(['git', '-C', str(self.root), *args], check=True,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    def test_present_but_ignored_raw_log_is_not_published_evidence(self):
+        self.assertTrue((self.folder / 'run.log').is_file())
+        with self.assertRaisesRegex(ValueError, 'untracked evidence artifact'):
+            require_tracked_evidence(self.root, self.folder, self.manifest)
+
+    def test_explicitly_tracked_log_preserves_its_original_bytes(self):
+        self.git('add', '-f', '--', 'evidence/sample/run.log')
+        self.assertTrue(require_tracked_evidence(self.root, self.folder, self.manifest))
+        self.assertEqual(self.git('show', ':evidence/sample/run.log').stdout, self.raw)
+
+    def test_removing_log_only_from_index_cannot_keep_a_passing_delivery(self):
+        self.git('add', '-f', '--', 'evidence/sample/run.log')
+        self.git('rm', '--cached', '--', 'evidence/sample/run.log')
+        self.assertEqual((self.folder / 'run.log').read_bytes(), self.raw)
+        with self.assertRaisesRegex(ValueError, 'untracked evidence artifact'):
+            require_tracked_evidence(self.root, self.folder, self.manifest)
+
+    def test_external_historical_package_does_not_claim_source_tree_publication(self):
+        external = self.root.parent / 'historical-evidence'
+        external.mkdir()
+        self.assertFalse(require_tracked_evidence(self.root, external, self.manifest))
 
 
 if __name__=='__main__':unittest.main(verbosity=2)

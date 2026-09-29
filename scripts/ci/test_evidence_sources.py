@@ -90,4 +90,31 @@ class EvidenceSourceTests(unittest.TestCase):
                 def run(*args,**kwargs):raise AssertionError('must reject before commands')
                 with self.assertRaises(ValueError):prepare(self.root,run)
 
+    def test_nested_cost_collection_has_its_own_exact_source(self):
+        p = self.root/'evidence/pon-native-session-v1/work-cost'
+        p.mkdir(parents=True)
+        (p/'execution.json').write_text(json.dumps(dict(schema='pon-native-cost-execution-v1',
+            source_commit='b'*40, source_tree='c'*40)))
+        self.trees['b'*40] = 'c'*40
+        calls = []
+        def run(args, **kwargs):
+            calls.append(args)
+            if args[1] == 'cat-file': return subprocess.CompletedProcess(args, 1, '', 'missing')
+            if args[1] == 'rev-parse': return subprocess.CompletedProcess(args, 0, self.trees[args[2].split('^')[0]], '')
+            return subprocess.CompletedProcess(args, 0, '', '')
+        result = prepare(self.root, run)
+        self.assertIn(['git','fetch','--no-tags','--no-write-fetch-head',REMOTE,'b'*40], calls)
+        self.assertEqual(result['verified_object_trees']['b'*40], 'c'*40)
+        self.assertFalse(result['acceptance_granted'])
+
+    def test_cost_collection_cannot_fetch_branch_or_conflicting_tree(self):
+        p = self.root/'evidence/pon-native-session-v1/work-cost'
+        p.mkdir(parents=True)
+        for commit, tree in [('main','c'*40), ('1'*40,'c'*40)]:
+            with self.subTest(commit=commit):
+                (p/'execution.json').write_text(json.dumps(dict(schema='pon-native-cost-execution-v1',
+                    source_commit=commit, source_tree=tree)))
+                def run(*args, **kwargs): raise AssertionError('reject before commands')
+                with self.assertRaises(ValueError): prepare(self.root, run)
+
 if __name__=='__main__':unittest.main(verbosity=2)

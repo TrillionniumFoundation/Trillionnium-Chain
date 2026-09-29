@@ -67,3 +67,12 @@ Run `python3 scripts/ci/report_module_evidence.py --module M17` from the reposit
 root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
 not observed in each package. A byte match is not a new test run or product acceptance.
 Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
+
+## Repository delivery versus local files
+
+The current client/session evidence checker requires every declared artifact in an
+in-repository package to be tracked by Git, including globally ignored raw logs.
+Presence and matching hashes in the author's directory do not establish a complete
+checkout. The publication tests exercise actual Git index omission and byte-preserving
+addition. Externally supplied historical packages remain explicitly separate from
+claims about which files existed in their original measured source tree.

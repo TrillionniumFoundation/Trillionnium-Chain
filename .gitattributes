@@ -21,3 +21,6 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 /evidence/pon-native-session-v1/logs/*.log -text -whitespace
 /evidence/pon-native-session-v1/failures/initial-candidate/*.log -text -whitespace
 /evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/logs/*.log -text -whitespace
+
+/evidence/pon-native-session-v1/publication-failures/*.log -text -whitespace
+/evidence/pon-native-session-v1/work-cost/*.log -text -whitespace
