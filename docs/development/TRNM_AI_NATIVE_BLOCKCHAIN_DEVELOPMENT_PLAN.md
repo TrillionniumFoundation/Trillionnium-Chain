@@ -418,3 +418,11 @@ All six P0/P1/P2 tracks above retain their missing real boundaries: adversarial 
 admission, ordinary native node, persistent state/WAN sync, authorized independent future
 model efficacy, funded DA/effects/physical faults, and sustained public confirmed capacity.
 No new VM, EVM, consensus fallback, learning owner, live service or production flag is added.
+
+[The current native-session and receiver receipt](../../evidence/pon-native-session-v1/README.md)
+now supplies exact-source regression and controlled pipeline observations for this
+continuation. Old E3/client packages are historical, not current-runtime coverage.
+The retained selected-matrix pass is accompanied by the later actual expiry-receipt and
+maximum-budget failures, their fixes and a complete clean-source rerun. An incremental
+in-memory tree is not persistent native storage, and locally verified confirmation
+under a logical clock is not public WAN throughput or deterministic finality.

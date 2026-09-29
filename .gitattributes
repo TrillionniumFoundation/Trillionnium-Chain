@@ -18,3 +18,6 @@ evidence/pon-contract-authority-v1/**/*.log -text -whitespace
 
 # Client qualification preserves exact successful and failed process output.
 evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
+/evidence/pon-native-session-v1/logs/*.log -text -whitespace
+/evidence/pon-native-session-v1/failures/initial-candidate/*.log -text -whitespace
+/evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/logs/*.log -text -whitespace

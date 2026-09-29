@@ -1172,6 +1172,13 @@
       "log_prefix": "",
       "scope": "Full regression and two receiver-verifying client backends; no rerun of model efficacy, public network or native full node",
       "source_archive": null
+    },
+    "native_session": {
+      "manifest": "evidence/pon-native-session-v1/manifest.json",
+      "qualification": "qualification.json",
+      "log_prefix": "",
+      "scope": "Exact-source native compute cache, incremental root, early precheck and controlled receiver confirmation; no full native node or public capacity.",
+      "source_archive": null
     }
   }
 }
