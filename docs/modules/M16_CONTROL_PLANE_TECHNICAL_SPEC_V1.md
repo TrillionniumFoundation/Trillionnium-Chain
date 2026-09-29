@@ -65,3 +65,18 @@ raw command exits and concrete invariant test results. Its verifier distinguishe
 runtime byte identity from documentation edits and cannot grant independent acceptance.
 Module-specific limitations above remain in force even when the referenced local test
 passes. The development plan, not this link or a count of procedures, selects next work.
+
+## Frozen evaluation and consent continuation
+
+See [E3](../protocol/pon-nakamoto-v1/details/EVALUATION_BUNDLE.md) for exact bytes,
+owner boundaries and failure schedules. No public export or future-window authority
+is created by a frozen artifact. The following additional regressions are executable:
+
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_control_current_must_be_actual_parent`.
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_cross_partition_exact_content_overlap_rejects`.
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_cross_partition_source_group_overlap_rejects`.
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_write_once_plan_survives_readback_and_cannot_be_overwritten`.
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::StatisticalBoundaryTests.test_caller_future_flag_is_not_observation_or_reward`.
+
+Actual producer/evaluator implementation: `formal/pon-nakamoto-v1/evaluation_bundle.py`;
+normal controlled worker and three-attempt caller consume it rather than a parallel trainer.

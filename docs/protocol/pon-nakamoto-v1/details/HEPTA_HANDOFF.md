@@ -79,3 +79,19 @@ This increment reads these real owner interfaces but does not configure a live s
 owner/withdrawal frontier, implement the ordinary Agentd PoN destination, or publish
 private user artifacts. `ordinary_hepta_entry=false` is mandatory in the controlled
 experiments. SSH model consumers and local fixture attestors cannot satisfy that gap.
+
+## Publication is not redistribution permission
+
+The inspected `LearningArtifactOwnerService::publish` returns an
+`ArtifactPublicationReceiptV1`; its reconstructed receipt sets
+`authority: AuthorityPosture::DENY_ALL`. It certifies the named local publication fact,
+not a grant to export data or invoke a chain destination. E3 bundle identity must be
+carried by the existing evaluation/operation owners alongside the actual signed current
+artifact head and withdrawal context. A receiving digest checker cannot manufacture
+WithdrawalBoundArtifactAdmissionV3, a final-use token or an independent resource lease.
+
+The controlled evaluator and settlement producer now consume the same locked model,
+reference and task identities. This implements their boundary but does not install an
+Agentd PoN destination. The repository owner has authorized development, not fabricated
+past task records or independent evaluator identities. Normal integration must preserve
+these distinctions while mapping the existing typed publication and operation APIs.

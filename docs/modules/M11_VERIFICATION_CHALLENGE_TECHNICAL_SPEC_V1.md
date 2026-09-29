@@ -69,3 +69,23 @@ raw command exits and concrete invariant test results. Its verifier distinguishe
 runtime byte identity from documentation edits and cannot grant independent acceptance.
 Module-specific limitations above remain in force even when the referenced local test
 passes. The development plan, not this link or a count of procedures, selects next work.
+
+## Frozen evaluation and consent continuation
+
+See [E3](../protocol/pon-nakamoto-v1/details/EVALUATION_BUNDLE.md) for exact bytes,
+owner boundaries and failure schedules. No public export or future-window authority
+is created by a frozen artifact. The following additional regressions are executable:
+
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::StatisticalBoundaryTests.test_calibration_weights_source_groups_not_number_of_snippets`.
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::StatisticalBoundaryTests.test_positive_direction_majority_with_negative_mean_is_rejected`.
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_every_control_parameter_is_bound_before_inference`.
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_input_label_content_identity_and_group_substitution_reject`.
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::EvaluationWorkerTests.test_legacy_unbound_reference_cannot_authorize_evaluation`.
+
+Actual producer/evaluator implementation: `formal/pon-nakamoto-v1/evaluation_bundle.py`;
+normal controlled worker and three-attempt caller consume it rather than a parallel trainer.
+
+Calibration claims are recomputed, not accepted merely because a producer can hash them:
+
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_self_consistent_rehashed_calibration_score_still_requires_actual_replay`.
+- `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_changed_calibration_data_cannot_be_substituted`.

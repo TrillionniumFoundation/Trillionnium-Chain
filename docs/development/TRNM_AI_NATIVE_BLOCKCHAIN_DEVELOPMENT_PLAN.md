@@ -280,92 +280,75 @@ state, keys and services were not touched. Portable domains and schemas are fres
 Local monotonic application stores are NOT yet authoritative branch-aware chain storage.
 Storage/evaluator thresholds are application trust contracts, not ledger voting power.
 
-## 10. Invariant-driven continuation, revision2
+## 10. Current convergence, not a count of documents or tests
 
-The authoritative failure contracts are `config/pon/invariants-v2.json`: scope,
-atomic boundary, concrete fault schedule, expected result, exact test function,
-source owner, resource bounds and honest remaining work. Module-count, heading length
-and test-class names do not establish completion. The gate validates exact selectors;
-only separate source-bound command receipts say whether those tests executed.
+The authoritative invariants are `config/pon/invariants-v2.json`. Each names its claim,
+owner/scope, atomic boundary, adversarial schedule, exact test selectors and remaining
+assumptions. All eighteen module contracts refer to their own failure modes. A registry
+checker proves that these bindings exist; a separate exact-source receipt proves which
+selectors actually ran. Neither mechanism supplies independent scientific authority.
 
-Implemented candidate scope: four reviewed counterexamples corrected; durable owned
-initialization; entry/revoke serialization; best-known-tip recovery; active-only candidate
-capacity; root-bound claims after retirement; bounded release expiry/refunds; incremental
-normal append; local checkpoints beyond4096 without declaring finality; actual native
-all-twelve-command application execution with fixed-order bounded speculation; explicit
-native backend without success fallback; native local proof-capacity separation; strongest
-calibration control and clustered evaluation; closed genesis-bound service receipts.
+| Workstream | Actual implemented boundary | Next acceptance requirement |
+|---|---|---|
+| Four audited counterexamples | Pending versus history capacity; durable owned initialization; serialized revoke/entry; restart selection of stored verified heavier tip | Keep the concrete fault regressions on every changed owner; join normal Hepta final-use and target-side reconciliation |
+| Work and proof admission | Fixed transcript verifier, strict native signature parity, bounded public/recovery lanes and duplicate ownership | Adversarial cost and shortcut model; public Sybil-safe proof intake and honest block service under sustained attack |
+| State lifetime and recovery | Signed intake rounds, bounded terminal refund/retirement, incremental append, checkpoints and spooled ancestry | Complete account/work history compaction, native paged sync and long-run retained obligations without artificial finality |
+| Native execution | All twelve commands with canonical validation, bounded speculation, block-scoped signature preparation, 1/2/4/8 worker parity | Ordinary native consensus/persistence integration and capacity measured on the full block/confirmation pipeline |
+| Model adoption and reward | E3 sealed artifacts/controls/partitions, source-group calibration and evaluation, actual calibration/result replay before controlled signing, valid no-update outcomes | Untouched prospective task sources, independent evaluation/withdrawal owners, strongest deployable control under declared resource budget |
+| Ordinary Hepta and resource responsibility | Closed genesis/model/request/input/output/cost/nonce service receipt; exact upstream owner map, not an invented grant | Implement and configure the ordinary Agentd PoN destination through existing operation and artifact owners; reserve real serving/retention resources |
+| Physical-host acceptance | Prior source-bound ROG/Pocket4/X230 experiments; current same-input evaluator parity is a separate experiment | Independently administered operators, actual network partitions, long-term DA, disk/power failure and sustained resource exhaustion |
 
-These are not all seven acceptance packages completed. Public proof hardness/hostile
-admission fairness, full native consensus/persistence host, normal Hepta final-use/owner
-integration, independent operators, untouched future learning windows, native paged sync,
-complete historical compaction, WAN and physical power-loss remain unaccepted. The
-three-generation signed ledger fixture is not three improving trained models.
+Do not repeat already accepted component work under a new parallel engine. The source
+inventory remains the sole native package/owner list; proof, execution, chain state,
+model quality, local permission and actual effect entry remain different facts. A
+published Hepta learning artifact does not automatically authorize public redistribution:
+its publication receipt carries DENY_ALL authority, and actual export/withdrawal and
+final-use decisions belong to existing independently configured owners.
 
-Prioritized remaining work stays on this lineage: verify the new failure regressions;
-qualify work and actual public ingress; finish bounded history/resource lifecycle; connect
-native host and Hepta owners; then run genuinely independent multi-host and prospective
-model acceptance. Do not reopen retired consensus or create a parallel global trainer.
-The root README remains blank by owner decision.
+## 11. Current model and consent increment
 
-## Current revision3 continuation
+The [E3 contract](../protocol/pon-nakamoto-v1/details/EVALUATION_BUNDLE.md) gives the
+exact immutable evaluation object, limits, control materialization, source-group policy,
+producer write boundary, evaluator replay and consumer expectations. Existing
+`model_loop.py`, `learning_cycles.py` and `settle_model.py` consume it directly. No new
+trainer, artifact registry, global optimizer or parallel economic ledger is added.
 
-Continue the existing invariant candidate; do not create a parallel consensus or learning
-owner. Revision3 adds signed contribution intake windows, per-lane proof identity,
-bounded native process I/O, explicit native work bridging and spooled historical replay.
-All18 modules now bind their specific invariant, failure schedule and executable tests.
-Machine-count or section-count coverage is not semantic or independent acceptance.
+A reference file, task file or score report changed after sealing must fail under the
+caller's admitted hash. Calibration chooses the strongest deployable control using the
+same equal-group principle as evaluation. Both positive mean gain and the corrected
+sign-direction test are required. The settlement producer recomputes the original
+calibration and evaluation; rehashing both summary and evaluator files cannot grant
+reward. Full service expectations include returned output, units and provider nonce.
 
-Acceptance must keep four result classes separate: deterministic native/reference
-regression; real long-chain storage with logical timestamps; same-operator physical-host
-SSH conformance with real UTC; and actual controlled learning with possible zero reward.
-The ordinary Hepta destination, independent attestors/operators, fresh future experience,
-public work-cost security, long retention and physical power-loss campaigns remain named
-work. No local experiment, preserved failure or admin privilege silently resolves them.
+Three actual optimization attempts must each start from the actually admitted public
+artifact. No-update, weaker-than-control and zero-reward outcomes remain visible. The
+current public-source corpus is retrospective; three disjoint file pools or a caller's
+future flag are not three independently improving prospective generations. Public
+parameters change only after current independently admitted evidence and owner approval,
+not because the experiment was scheduled to run three times.
 
-## Measured continuation and unresolved acceptance boundaries
+## 12. Evidence and remaining authority
 
-The concrete regression/experiment package is `evidence/pon-v3/README.md`. It records
-which exact implementation ran, source hashes, command output, filesystem and clock scope.
-The checker verifies those records; it is not an authority that certifies usefulness,
-consensus security, independent operators or production deployment.
+`evidence/pon-v1`, `pon-v3` and `pon-v4` retain their exact historical source, failures,
+workload, filesystem and host scope. The historical verifier checks those bytes and
+results without promoting them to a changed current binary. Current model execution
+requires its own current-source receipt; source equality and empirical effectiveness
+are separate checks. Runtime changes must never be hidden by repinning old reports.
 
-The four audited counterexamples and native twelve-command parity have executable
-regressions. Signed intake rounds, root-bound claims, bounded checkpoint caches and
-spooled ancestry deepen long-lived behavior; they do not complete global state compaction.
-Real >4096 proof history, local malicious-verification load and physical SSH peers are
-separate workloads. Ordinary-node and Hepta owner integration remain distinct missing
-implementation, not a permission that can be created from an admin token.
+New measurements report input composition and conflicts, submitted/executed/included/
+client-confirmed stages separately, proof cost, wall time, RSS, model load and actual
+resource use. Unmeasured VRAM/inclusion/confirmation remains null. Native component
+throughput is not chain TPS, and same-administrator physical machines are not independent
+consensus actors. Root README remains blank by owner decision.
 
-The three controlled learning attempts preserve strongest-baseline and clustered rules;
-all no-update/zero-reward outcomes must remain visible. The actual public-model pointer
-must change only on current admitted evidence. The desired three improving generations
-requires prospective tasks and the real owner path; it is not met by three synthetic
-score releases, three retrospectively trained candidates or three remote machines.
+Squash merges may leave measured source commits outside main's ancestry. The evidence
+preparation tool fetches only declared exact objects from this repository, verifies
+their trees and never moves a branch or grants acceptance. A missing source object is
+an error, not permission to copy current results into historical evidence.
 
-## Current invariant continuation and measured-source boundaries
-
-Continue PR #202 on this main lineage rather than creating a competing product owner.
-The four audited counterexamples have executable fixes and exact selectors in
-`config/pon/invariants-v2.json`. Retained `evidence/pon-v3` reports 4,114 real work-verified
-blocks and a shallow fork above height4,096, all twelve native commands, and controlled
-ROG/Pocket4/X230 fault/partition experiments. Those are source-bound historical observations,
-not claims that every later binary has repeated the same campaign.
-
-The next native execution increment reduces thread creation and repeated main-signature
-work while keeping canonical state/receipt/root behavior. New comparisons must be run on
-identical signed requests with both binaries interleaved. Missing proof cost, chain
-inclusion, client confirmation and GPU measurements remain null, not inferred throughput.
-
-An ordinary Hepta destination and independently authorized public-export/resource owners
-are still not installed by these tests. Independently administered evaluators, public
-admission hardness, physical power loss, long-term DA and three improving future-window
-model generations remain unaccepted. Three valid no-update training attempts must stay
-no-update; they cannot be renamed three successful public generations. The explicit
-remaining implementation and external acceptance scopes are not reasons to duplicate
-existing owner kernels or restore retired consensus.
-
-After squash integration, exact measured Git commits may not be ancestors of main. The
-external-evidence lane fetches only missing declared40-hex objects from this repository,
-checks their expected trees, and never moves branch refs or grants acceptance. Missing
-source objects remain an error; local object caches must not hide a broken clean clone.
+Still unaccepted: cost-hardness and public hostile-proof fairness; complete native node
+and ordinary Hepta owner/resource integration; independent attestors/custodians;
+untouched future tasks; sustained long-term DA/state growth; actual physical power loss
+and public network security. Highest repository privilege does not manufacture those
+facts. Continue their implementations and falsifiable experiments on this lineage;
+production remains disabled until the corresponding evidence exists.

@@ -11,13 +11,17 @@ DIM=257;CLASSES=['M00','M04','M10'];SCALE=1024
 
 def load_model(path,expected=None):
     with open(path,'rb')as source:data=source.read(65537)
-    require(len(data)<=65536,'ARTIFACT_LIMIT')
+    return load_model_bytes(data, expected)
+
+def load_model_bytes(data,expected=None):
+    require(type(data)is bytes and len(data)<=65536,'ARTIFACT_LIMIT')
     if expected is not None:require(H('artifact',data)==expected,'ARTIFACT_IDENTITY')
     model=json.loads(data,object_pairs_hook=unique)
     require(canonical(model)==data,'ARTIFACT_CANONICAL_BYTES')
     require(set(model)=={'schema','family','scale','source','base','router','deltas','feature','classes'},'ARTIFACT_FIELDS')
     require(model['feature']=='signed-token-hash-256-clipped8-plus-bias-v1'and model['classes']==CLASSES,'FEATURES')
     require(model['schema']=='hepta-source-owner-linear-256-v1'and model['family']==FAMILY.hex()and model['scale']==SCALE,'FAMILY')
+    require(isinstance(model['source'],str) and 0<len(model['source'])<=512,'SOURCE')
     def matrix(value):
         require(isinstance(value,list)and len(value)==3,'SHAPE')
         require(all(isinstance(row,list)and len(row)==DIM for row in value),'SHAPE')

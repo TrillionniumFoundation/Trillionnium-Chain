@@ -15,4 +15,17 @@ class InferenceBindingTests(unittest.TestCase):
         with self.assertRaises(ValueError):verify(raw+b' ',self.fields)
         with self.assertRaises(ValueError):receipt(dict(self.fields,authority=True))
         with self.assertRaises(ValueError):verify(raw,{})
+    def test_expected_cost_nonce_and_returned_output_cannot_be_omitted(self):
+        raw=receipt(self.fields)
+        for field in ['units','provider_nonce','output']:
+            expected=dict(self.fields);expected.pop(field)
+            with self.subTest(field=field),self.assertRaisesRegex(ValueError,'RECEIPT_BINDING'):verify(raw,expected)
+    def test_oversized_receipt_rejects_before_json(self):
+        from unittest.mock import patch
+        with patch('inference_receipt.json.loads')as decode:
+            with self.assertRaisesRegex(ValueError,'RECEIPT_LIMIT'):verify(b' '*2049,self.fields)
+            decode.assert_not_called()
+    def test_expected_boolean_counter_alias_rejects(self):
+        expected=dict(self.fields,units=True)
+        with self.assertRaisesRegex(ValueError,'RECEIPT_COUNTER'):verify(receipt(self.fields),expected)
 if __name__=='__main__':unittest.main(verbosity=2)

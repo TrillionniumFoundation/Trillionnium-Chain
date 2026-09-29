@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from experiments.model_loop import corpus,train,quantize,predict,artifact,np,DIM,SCALE,CLASSES
-from evaluation import select_reference,assess
+from evaluation_bundle import control_models,freeze_bundle,evaluate_bundle,verify_bundle,write_new
 from ledger import FAMILY
 from contract_wire import canonical,H
 
@@ -39,7 +39,7 @@ def run(source,out):
             split='evaluation'if index%4==0 else 'calibration'if index%4==1 else 'train'
             partitions[split].extend(groups[name])
         for name,data in partitions.items():(directory/(name+'.json')).write_bytes(canonical(data))
-        before=H('artifact',canonical(current)).hex();started=time.time_ns();candidate=copy.deepcopy(current)
+        before=H('artifact',canonical(current)).hex();started=time.perf_counter_ns();candidate=copy.deepcopy(current)
         base=np.asarray(current['base'],dtype=np.int64);deltas=[];training=partitions['train']
         for i in range(3):
             shard=[r for r in training if r['label']==i or int(r['id'][:8],16)%3==i]
@@ -55,32 +55,25 @@ def run(source,out):
             probs=np.exp(logits);probs/=probs.sum(axis=1,keepdims=True);candidates.append(probs[np.arange(len(yc)),yc])
         candidate['router']=quantize(train(xc,np.argmax(np.array(candidates).T,axis=1),120,np.asarray(current['router'])/SCALE)).tolist()
         digest=artifact(candidate,directory/'candidate.json').hex()
-        single=[predict(candidate,xc,mode='expert',expert=i)for i in range(3)]
-        best=max(range(3),key=lambda i:(int((single[i]==yc).sum()),-i))
         pooled=quantize(train([r['x']for r in training],[r['label']for r in training],120,base/SCALE))
-        controls={'current':predict(current,xc).tolist(),'best_single':single[best].tolist(),
-                  'mean_merge':predict(candidate,xc,mode='merge').tolist(),'pooled':np.argmax(xc@pooled.T,axis=1).tolist()}
-        selected,lock=select_reference(calibration,controls)
-        plan={'parent_artifact':before,'candidate':digest,'source':source,'cycle':cycle,'reference':selected,'reference_lock':lock,
-              'train_groups':sorted({r['file']for r in training}),'calibration_groups':sorted({r['file']for r in calibration}),
-              'evaluation_groups':sorted({r['file']for r in partitions['evaluation']}),'data_are_retrospective':True,'independent_time_owner':False}
-        (directory/'locked-plan.json').write_bytes(canonical(plan))
-        evaluation=partitions['evaluation'];xe=np.array([r['x']for r in evaluation],dtype=np.int64)
-        predicted=predict(candidate,xe).tolist()
-        if selected=='current':reference=predict(current,xe).tolist()
-        elif selected=='best_single':reference=predict(candidate,xe,mode='expert',expert=best).tolist()
-        elif selected=='mean_merge':reference=predict(candidate,xe,mode='merge').tolist()
-        else:reference=np.argmax(xe@pooled.T,axis=1).tolist()
-        result=assess([dict(r,source_group=r['file'])for r in evaluation],predicted,reference)
+        controls=control_models(current,candidate,calibration,pooled.tolist())
+        bundle_raw,bundle_hash=freeze_bundle(source_commit=source,round_number=cycle,parent_release='00'*32,
+            current=current,candidate=candidate,controls=controls,partitions=partitions)
+        write_new(directory/'evaluation-bundle.json',bundle_raw)
+        bundle=verify_bundle(bundle_raw,bundle_hash,expected_parent=before)
+        selected=bundle['selected'];evaluation=partitions['evaluation']
+        observed=evaluate_bundle(bundle_raw,bundle_hash,evaluation,'evaluation',calibration_rows=calibration,expected_parent=before)
+        write_new(directory/'bound-evaluation.json',(json.dumps(observed,sort_keys=True,separators=(',',':'))+'\n').encode())
+        result=observed['primary']
         # Without independent source/time and owner admission, even an exploratory win
         # cannot change the public pointer. No-update is the valid terminal outcome.
         assert result['public_reward_eligible']is False
-        row={'cycle':cycle,'parent_actually_admitted_artifact':before,'candidate':digest,'selected_reference':selected,
+        row={'cycle':cycle,'parent_actually_admitted_artifact':before,'candidate':digest,'selected_reference':selected,'evaluation_bundle':bundle_hash,'bound_evaluation':'bound-evaluation.json',
              'training_rows':len(training),'calibration_rows':len(calibration),'evaluation_rows':len(evaluation),
              'source_groups':{k:len({r['file']for r in v})for k,v in partitions.items()},'evaluation':result,
-             'outcome':'no_public_update','reward':0,'public_artifact_after':before,'duration_ns':time.time_ns()-started}
+             'outcome':'no_public_update','reward':0,'public_artifact_after':before,'duration_ns':time.perf_counter_ns()-started}
         (directory/'result.json').write_text(json.dumps(row,indent=2)+'\n');rows.append(row)
-    report={'schema':'pon-real-training-controlled-cycles-v3','source':source,'bootstrap':initial,'bootstrap_source_groups':sorted(bootstrap_files),'cycles':rows,
+    report={'schema':'pon-real-training-controlled-cycles-v4','source':source,'bootstrap':initial,'bootstrap_source_groups':sorted(bootstrap_files),'cycles':rows,
             'real_optimization':True,'independent_tasks_across_cycles':False,'file_groups_disjoint_across_cycles':True,
             'new_future_window':False,'ordinary_hepta_entry':False,'independent_evaluators':False,
             'three_improving_public_generations':False,'public_pointer_unchanged':True,'total_model_reward':0,'production_activation':False}

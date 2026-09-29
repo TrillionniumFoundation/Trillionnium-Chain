@@ -67,29 +67,28 @@ all those results are retained, including the observed best-single advantage.
 
 ## M2.4 Frozen strongest baseline and clustered evaluation
 
-The producer trains before evaluation, calculates all four calibration controls (current,
-best single expert, mean-delta merge and pooled model), and locks the best deployable
-control with a deterministic tie order. The reference file binds exact candidate bytes,
-calibration inputs, selected mode and any pooled weights. Evaluators refuse a missing
-reference. Held-out outcomes do not choose or tune the reference.
+The producer and evaluator now use [the immutable E3 bundle](EVALUATION_BUNDLE.md).
+All four deployable control artifacts, the actual parent/candidate, task partitions,
+calibration selection and policy are sealed before evaluation. The caller supplies the
+expected bundle hash independently of downloaded bytes. Both best-single selection and
+control selection use equal source-group weighting; a large correlated file is not
+allowed to dominate selection merely by producing more snippets.
 
-Group examples by source file, average correctness improvement within each group, then
-run a paired sign test over group directions. Require at least20 groups and multiply the
-one-sided binomial-tail bound by four comparisons. The scoring function uses exact
-integers and Fractions. A100-snippet file is one group, not100 independent observations.
-A weaker composition receives zero even if it beats the original weak base.
+The paired source-group directional gate retains the four-comparison correction and
+at least twenty groups, and now also requires positive average group improvement.
+Input labels/predictions are strict bounded integers. Calibration, training and named
+evaluation partitions cannot be relabelled or share exact content/groups. Legacy
+unbound reference files reject. Candidate/control mutation after lock produces no score.
 
-The current source partitions have already been observed, and training budgets differ
-across controls. This remains controlled exploratory evidence. An explicit caller-set
-future flag never creates public_reward_eligible; independently authenticated future
-source and owner receipts are still absent. The two-of-three dev attestation profile is
-not silently replaced with independent evaluators by improving a local scoring function.
-First-two arrival manipulation and public dispute rules remain separate protocol work.
+Before signing controlled settlement attestations, the existing settlement producer
+recomputes the bound evaluation and checks predictions, controls and scores in both
+report copies. No-update results still pay zero. This does not make development
+attestors independent or replace the chain's explicit trust profile.
 
-`model_loop.py` writes frozen-plan/reference records before evaluation. Its inference
-mode only returns bound predictions, not a fabricated evaluation. The settlement driver
-uses the new whole-gain/marginal scores and may return `not_adopted` with zero reward.
-No threshold is lowered to force a successful contribution cycle.
+The current corpus is retrospective and has been observed; caller flags cannot create
+future-window observation or authority. First-two ledger attestation arrival semantics,
+public dispute policy, genuine Hepta owner integration and independent prospective
+acceptance remain explicit work, not properties of this bundle.
 
 ## M1.5 Artifact identities and admission
 

@@ -7,15 +7,40 @@ import argparse,json,sys,subprocess,shutil,time
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from ledger import *
 from inference_receipt import receipt as encode_receipt,verify as verify_receipt
+from evaluation_bundle import verify_bundle,evaluate_bundle,read_bounded,MAX_BUNDLE_BYTES,MAX_TASK_BYTES
 
-def run(directory,out):
-    directory=Path(directory);out=Path(out);out.mkdir(parents=True,exist_ok=True)
-    observed=json.loads((directory/'report.json').read_text());model=json.loads((directory/'model.json').read_text())
-    report={'schema':'pon-observed-artifact-settlement-v1','source_model':observed['models']['artifact_hash'],'ordinary_hepta_entry':False,'independent_evaluators':False,'future_window_accepted':False,'asset':'test-unit-no-market-value','chain_clock':'fixed logical timestamps; no live-clock acceptance','production_activation':False}
+def verify_observation(directory,expected_bundle):
+    directory=Path(directory)
+    raw=read_bounded(directory/'evaluation-bundle.json',MAX_BUNDLE_BYTES)
+    bundle=verify_bundle(raw,expected_bundle)
+    model_bytes=read_bounded(directory/'model.json',65536)
+    require(H('artifact',model_bytes).hex()==bundle['candidate_artifact'],'MODEL_IDENTITY')
+    observed=json.loads(read_bounded(directory/'report.json',MAX_TASK_BYTES),object_pairs_hook=unique)
+    require(observed['evaluation_bundle']==expected_bundle and observed['source']==bundle['source_commit'],'OBSERVATION_BINDING')
+    require(observed['models']['artifact_hash']==bundle['candidate_artifact'] and observed['models']['bytes']==len(model_bytes),'MODEL_IDENTITY')
+    calibration=json.loads(read_bounded(directory/'calibration.json',MAX_TASK_BYTES),object_pairs_hook=unique)
+    # Controlled attestors replay the named evaluation instead of signing mutable report scores.
+    for partition in ['evaluation_a','evaluation_b']:
+        tasks=json.loads(read_bounded(directory/(partition+'.json'),MAX_TASK_BYTES),object_pairs_hook=unique)
+        result=evaluate_bundle(raw,expected_bundle,tasks,partition,calibration_rows=calibration)
+        record=json.loads(read_bounded(directory/(partition+'-result.json'),MAX_TASK_BYTES),object_pairs_hook=unique)
+        exact={'evaluation_bundle':expected_bundle,'evaluation_partition':partition,
+               'model_artifact':bundle['candidate_artifact'],'predictions':result['predictions'],
+               'whole_gain':dict(result['primary'],score=result['primary']['exploratory_score']),
+               'marginal':[dict(r,score=r['exploratory_score'])for r in result['marginal']],
+               'strong_reference':bundle['selected'],'strong_reference_artifact':result['reference_artifact']}
+        for key,value in exact.items():
+            require(record.get(key)==value and observed['results'][partition].get(key)==value,'OBSERVED_EVALUATION_MISMATCH')
+    return observed,bundle['candidate']
+
+def run(directory,out,expected_bundle):
+    directory=Path(directory);out=Path(out);out.mkdir(parents=True,exist_ok=False)
+    observed,model=verify_observation(directory,expected_bundle)
+    report={'schema':'pon-observed-artifact-settlement-v1','source_model':observed['models']['artifact_hash'],'evaluation_bundle':expected_bundle,'observed_evaluation_recomputed':True,'ordinary_hepta_entry':False,'independent_evaluators':False,'future_window_accepted':False,'asset':'test-unit-no-market-value','chain_clock':'fixed logical timestamps; no live-clock acceptance','production_activation':False}
     eligible=[i for i in range(3)if min(observed['results'][p]['marginal'][i]['score']for p in ['evaluation_a','evaluation_b'])>0]
     whole=min(observed['results'][p]['whole_gain']['score']for p in ['evaluation_a','evaluation_b'])
     if not eligible or not whole:
-        report.update(outcome='not_adopted',model_reward=0,reason='preregistered statistical gate not met');(out/'report.json').write_text(json.dumps(report,indent=2)+'\n');return
+        report.update(outcome='not_adopted',model_reward=0,reason='preregistered statistical gate not met');(out/'report.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report),flush=True);return
     l=Ledger(out/'chain');tip=GENESIS;nonces={i:0 for i in range(5)};blocks=[];timings=[]
     data=(directory/'model-work.bin').read_bytes();values=list(struct.unpack('<'+'I'*(2*work.CELLS),data[4:4+8*work.CELLS]));wa,wb=values[:work.CELLS],values[work.CELLS:];task=work.task_id(wa,wb)
     def tx(i,name,fields):nonces[i]+=1;return sign(key(i),nonces[i],name,fields)
@@ -76,4 +101,4 @@ def run(directory,out):
     report.update(outcome='experimental_release_claim_and_free_service_completed',release=rid.hex(),adopted_model=model_hash.hex(),rewarded_experts=eligible,model_reward=allocated,budget=budget,duplicate_claim_rejected=rejected,author_source_withdrawal_test=True,replicas=2,consumer_paid=0,consumer_result=result.hex(),block_count=len(blocks),blocks=blocks,block_seconds=timings,actual_model_work_used_after_first_block=True,consensus_security_accepted=False)
     (out/'report.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({k:v for k,v in report.items()if k not in {'blocks','block_seconds'}}),flush=True)
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--input',required=True);p.add_argument('--out',required=True);a=p.parse_args();run(a.input,a.out)
+    p=argparse.ArgumentParser();p.add_argument('--input',required=True);p.add_argument('--out',required=True);p.add_argument('--bundle-hash',required=True);a=p.parse_args();run(a.input,a.out,a.bundle_hash)
