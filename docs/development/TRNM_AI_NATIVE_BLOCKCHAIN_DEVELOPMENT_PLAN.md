@@ -322,3 +322,23 @@ SSH conformance with real UTC; and actual controlled learning with possible zero
 The ordinary Hepta destination, independent attestors/operators, fresh future experience,
 public work-cost security, long retention and physical power-loss campaigns remain named
 work. No local experiment, preserved failure or admin privilege silently resolves them.
+
+## Measured continuation and unresolved acceptance boundaries
+
+The concrete regression/experiment package is `evidence/pon-v3/README.md`. It records
+which exact implementation ran, source hashes, command output, filesystem and clock scope.
+The checker verifies those records; it is not an authority that certifies usefulness,
+consensus security, independent operators or production deployment.
+
+The four audited counterexamples and native twelve-command parity have executable
+regressions. Signed intake rounds, root-bound claims, bounded checkpoint caches and
+spooled ancestry deepen long-lived behavior; they do not complete global state compaction.
+Real >4096 proof history, local malicious-verification load and physical SSH peers are
+separate workloads. Ordinary-node and Hepta owner integration remain distinct missing
+implementation, not a permission that can be created from an admin token.
+
+The three controlled learning attempts preserve strongest-baseline and clustered rules;
+all no-update/zero-reward outcomes must remain visible. The actual public-model pointer
+must change only on current admitted evidence. The desired three improving generations
+requires prospective tasks and the real owner path; it is not met by three synthetic
+score releases, three retrospectively trained candidates or three remote machines.

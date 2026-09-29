@@ -18,6 +18,8 @@ def validate(root):
     root=Path(root).resolve()
     data=json.loads((root/'config/pon/invariants-v2.json').read_text())
     require(data['schema']=='pon-invariants-v2'and data['binding_is_execution']is False and data['independent_accepted']is False,'binding may not grant execution/acceptance')
+    params=json.loads((root/'config/pon/devnet-v1.json').read_text())
+    require(type(data.get('genesis_revision'))is int and data['genesis_revision']==params['consensus_revision'],'invariant contract revision does not match installed consensus')
     contracts=json.loads((root/'config/pon/module-contracts-v1.json').read_text())['modules']
     specs={c['id']:c['specification']for c in contracts};seen=set();owners=set();tests=set()
     for row in data['invariants']:

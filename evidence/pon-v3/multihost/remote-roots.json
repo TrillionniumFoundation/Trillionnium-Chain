@@ -1,0 +1,56 @@
+[
+  {
+    "host": "rog-ts",
+    "temporary_root": "/tmp/trnm-pon-host-qualification-pbym71id",
+    "hello": {
+      "genesis": "7ad5bb000221cc6322d52669a23e52aa46e01fae7681df5e5a558c79fdc30348",
+      "independent_operator": false,
+      "machine": "x86_64",
+      "native_node": false,
+      "network": "7981f162e70b0b9bed21dd17f0368422f4844d06e21e26899ae0d49ffd496224",
+      "parameters": "d4674d9f63ce4b69e1135fc8dcec2d0745cd5de37618226c94a03dc514ed0ff9",
+      "pid": 1504222,
+      "platform": "Linux",
+      "python": "3.12.3",
+      "ready": true,
+      "source_manifest": "481fcb8de9d9f4cb7b6fef27071d363db805635a5379c5c03ccfe8e464d20c38",
+      "utc_seconds": 1790652499
+    }
+  },
+  {
+    "host": "pocket4-ts",
+    "temporary_root": "/tmp/trnm-pon-host-qualification-sz85vehb",
+    "hello": {
+      "genesis": "7ad5bb000221cc6322d52669a23e52aa46e01fae7681df5e5a558c79fdc30348",
+      "independent_operator": false,
+      "machine": "x86_64",
+      "native_node": false,
+      "network": "7981f162e70b0b9bed21dd17f0368422f4844d06e21e26899ae0d49ffd496224",
+      "parameters": "d4674d9f63ce4b69e1135fc8dcec2d0745cd5de37618226c94a03dc514ed0ff9",
+      "pid": 3690961,
+      "platform": "Linux",
+      "python": "3.12.3",
+      "ready": true,
+      "source_manifest": "481fcb8de9d9f4cb7b6fef27071d363db805635a5379c5c03ccfe8e464d20c38",
+      "utc_seconds": 1790652501
+    }
+  },
+  {
+    "host": "x230-ts",
+    "temporary_root": "/tmp/trnm-pon-host-qualification-weskrp6w",
+    "hello": {
+      "genesis": "7ad5bb000221cc6322d52669a23e52aa46e01fae7681df5e5a558c79fdc30348",
+      "independent_operator": false,
+      "machine": "x86_64",
+      "native_node": false,
+      "network": "7981f162e70b0b9bed21dd17f0368422f4844d06e21e26899ae0d49ffd496224",
+      "parameters": "d4674d9f63ce4b69e1135fc8dcec2d0745cd5de37618226c94a03dc514ed0ff9",
+      "pid": 1015061,
+      "platform": "Linux",
+      "python": "3.12.3",
+      "ready": true,
+      "source_manifest": "481fcb8de9d9f4cb7b6fef27071d363db805635a5379c5c03ccfe8e464d20c38",
+      "utc_seconds": 1790652505
+    }
+  }
+]

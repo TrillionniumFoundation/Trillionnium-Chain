@@ -1,0 +1,7 @@
+test_duplicate_or_implicit_receipt_fields_reject (__main__.InferenceBindingTests.test_duplicate_or_implicit_receipt_fields_reject) ... ok
+test_every_service_identity_is_bound (__main__.InferenceBindingTests.test_every_service_identity_is_bound) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.002s
+
+OK

@@ -21,6 +21,8 @@ class InvariantRegistryTests(unittest.TestCase):
             text=text.replace('A persisted valid higher-work block is selected after restart even if activation intent was never written.','After restart, recover the best verified persisted branch even without a prior activation intent.')
             doc.write_text(text);validate(self.root);validate_details(self.root)
         finally:doc.write_bytes(old)
+    def test_stale_genesis_revision_rejected(self):self.reject(lambda d:d.update(genesis_revision=2))
+    def test_boolean_revision_is_not_integer(self):self.reject(lambda d:d.update(genesis_revision=True))
     def test_missing_atomic_boundary(self):self.reject(lambda d:d['invariants'][3].update(atomic=''))
     def test_no_counterexample_schedule(self):self.reject(lambda d:d['invariants'][3].update(cuts=[]))
     def test_class_name_is_not_a_test_function(self):self.reject(lambda d:d['invariants'][3].update(tests=['formal/pon-nakamoto-v1/test_invariants.py::EffectLinearizationTests']))

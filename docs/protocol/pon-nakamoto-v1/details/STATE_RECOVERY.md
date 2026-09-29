@@ -60,11 +60,12 @@ genesis; missing cache falls back to original deltas, not an invented finality c
 Parent heights decrease exactly and cycles reject. Progress callbacks occur every256
 ancestry/replay records. All replayed delta preconditions and block roots are checked.
 
-The regression at height4101 is explicitly a storage fixture with assumed previously
-verified history; it is NOT4101 generated PoN proofs. Native paged synchronization and
-bounded-memory deep replay remain future work: this reference still materializes an
-ancestry list, while full block/delta/event history is retained. Full-state root hashing
-is not advertised as a scalable incremental-tree implementation.
+The storage regression above4100 includes an explicit previously-verified-history
+premise; it is not generated work. The separate long_history campaign mines/verifies
+actual proofs, includes signed transfers and executes a shallow fork beyond4096.
+Its runtime/source/filesystem receipts are recorded separately. Replay spools the
+ancestry index to an8KiB bounded buffer; state maps and root hashing remain full
+reference values, not a complete incremental native authenticated tree.
 
 ## Effects and revoke linearization
 
@@ -82,13 +83,19 @@ and effect history never follow chain undo. Compensation is a newly authorized a
 
 ## Long-lived application records
 
-Revision2 counts only live current-parent contributions. Zero-score evaluated and expired
-records do not consume pending capacity. Same-parent artifact nullifiers are retained;
-old-parent records can leave active state because submissions require the current parent.
-Release proofs bind the payee directly, so retiring a candidate does not erase claim
-ownership. Release claim windows reserve mandatory-expiry slots; remainder refunds at
-the deadline. Noncurrent empty release objects then retire. This does NOT solve unlimited
-same-parent tombstones, all account/task history or the global state-key ceiling.
+Revision3 counts only live current-parent/current-round candidates against pending
+capacity. Zero-score evaluated and expired candidates no longer consume that capacity.
+Each signed contribution additionally binds its128-block intake round; a round admits
+at most512 historical candidates. On a new round, old candidates and their same-round
+artifact nullifiers retire, while the old signed payload is rejected by its round.
+A new parent similarly invalidates old-parent admission. The new round is not evidence
+of a new useful contribution: utility still requires current-parent evaluation.
+
+Release claims verify the payee against the retained allocation root without requiring
+a retired candidate row. Claim windows reserve mandatory-expiry capacity and refund
+remaining escrow at the deadline. Expired task/quota objects have nonce/context-derived
+identities; their deletion cannot reopen the same signed creation. Accounts, registered
+work and full block/delta/event history still need a future bounded retention policy.
 
 ## Revision3: bounded-memory ancestry index
 

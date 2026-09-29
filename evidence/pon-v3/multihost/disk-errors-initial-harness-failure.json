@@ -1,0 +1,29 @@
+{
+  "schema": "pon-bound-physical-disk-error-followup-v3",
+  "source_commit": "242906bae4f281c738c60adbd2c053d2ded1eae5",
+  "same_operator": true,
+  "independent_operators": false,
+  "all_cases_passed": false,
+  "results": [
+    {
+      "host": "rog-ts",
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 33, in <module>\n  File \"/tmp/trnm-pon-host-qualification-pbym71id/source/formal/pon-nakamoto-v1/ledger.py\", line 306, in __init__\n    self.read_active()\n  File \"/tmp/trnm-pon-host-qualification-pbym71id/source/formal/pon-nakamoto-v1/ledger.py\", line 330, in read_active\n    require(state_root(state)==self.block(tip)[6],'ROOT');return tip,g,state\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-pon-host-qualification-pbym71id/source/formal/pon-nakamoto-v1/ledger.py\", line 28, in require\n    if not ok:raise ValueError(code)\n              ^^^^^^^^^^^^^^^^^^^^^^\nValueError: ROOT\n",
+      "output": ""
+    },
+    {
+      "host": "pocket4-ts",
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 33, in <module>\n  File \"/tmp/trnm-pon-host-qualification-sz85vehb/source/formal/pon-nakamoto-v1/ledger.py\", line 306, in __init__\n    self.read_active()\n  File \"/tmp/trnm-pon-host-qualification-sz85vehb/source/formal/pon-nakamoto-v1/ledger.py\", line 330, in read_active\n    require(state_root(state)==self.block(tip)[6],'ROOT');return tip,g,state\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-pon-host-qualification-sz85vehb/source/formal/pon-nakamoto-v1/ledger.py\", line 28, in require\n    if not ok:raise ValueError(code)\n              ^^^^^^^^^^^^^^^^^^^^^^\nValueError: ROOT\n",
+      "output": ""
+    },
+    {
+      "host": "x230-ts",
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 33, in <module>\n  File \"/tmp/trnm-pon-host-qualification-weskrp6w/source/formal/pon-nakamoto-v1/ledger.py\", line 306, in __init__\n    self.read_active()\n  File \"/tmp/trnm-pon-host-qualification-weskrp6w/source/formal/pon-nakamoto-v1/ledger.py\", line 330, in read_active\n    require(state_root(state)==self.block(tip)[6],'ROOT');return tip,g,state\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trnm-pon-host-qualification-weskrp6w/source/formal/pon-nakamoto-v1/ledger.py\", line 28, in require\n    if not ok:raise ValueError(code)\n              ^^^^^^^^^^^^^^^^^^^^^^\nValueError: ROOT\n",
+      "output": ""
+    }
+  ],
+  "physical_power_loss": false,
+  "production_activation": false
+}

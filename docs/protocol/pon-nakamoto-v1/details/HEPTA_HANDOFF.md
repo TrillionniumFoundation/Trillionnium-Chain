@@ -35,9 +35,12 @@ boundary. The existing normal Hepta task pipeline has NOT been connected to this
 in this change. Its final-use authority, real resources, independent evaluator signatures
 and actual future tasks cannot be fabricated by assembling test objects.
 
-Cross-machine probe execution was blocked by the available execution layer. No claim of
-multi-host, independent operators, WAN consensus, physical faults or live service install
-is made. Separate hosts controlled by one operator would still not establish independence.
+An earlier cross-machine probe was blocked; the subsequent owned-SSH campaign now
+executes on ROG, Pocket4 and X230 and records exact source manifests and live UTC.
+It tests delivery partition/catch-up, process exit/recovery, reorg, model-copy use and
+quota exhaustion. This supersedes only the earlier lack of multi-host execution;
+it does not establish independent operators, public WAN consensus, physical power loss,
+long-term storage or an ordinary Hepta owner path. No persistent service is installed.
 
 ## Evidence required for three learning generations
 

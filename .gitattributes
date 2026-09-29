@@ -3,3 +3,6 @@
 evidence/pon-v1/native-logs/*.log -text -diff
 evidence/pon-v1/campaign-logs/*.log -text -diff
 evidence/pon-v1/accepted-block/*.log -text -diff
+
+# Revision3 raw runner logs are immutable bytes, not source formatting input.
+evidence/pon-v3/**/*.log -text -whitespace

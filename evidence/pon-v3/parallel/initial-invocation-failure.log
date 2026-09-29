@@ -1,0 +1,2 @@
+usage: parallel_cost.py [-h] --out OUT --native NATIVE
+parallel_cost.py: error: the following arguments are required: --native

@@ -103,3 +103,23 @@ native tests do not silently inherit physical disk, WAN, independent-operator or
 model efficacy acceptance. The current network harness uses a fixed logical clock; it
 cannot supply live-clock confirmation or public TPS. 256 slots/10-second target is a
 nominal25.6 slot/s parameter budget, not measured throughput.
+
+## Invariant continuation: stage boundaries and actual observations
+
+[Revision3 evidence](../../../../evidence/pon-v3/README.md) records current runtime tests,
+actual >4096 history, the 1/2/4/8 native-command comparisons, local proof-admission load,
+three real learning attempts and same-operator ROG/Pocket4/X230 execution. Each report
+names the source and its distinct clock/filesystem/trust conditions. Source-file equality
+permits later documentation publication without calling it another runtime experiment.
+
+Prepared transactions, application-executed transactions, included transactions and
+policy-confirmed transactions remain separate counters. A missing stage is null, not zero
+or estimated from another stage. Report encoded bytes, key conflicts, proof generation and
+verification, root/persistence cost, peak RSS, actual GPU/VRAM use or explicit nonuse,
+queue/Busy outcomes, state growth, active physical slots and recovery duration.
+
+No throughput improvement is inferred from worker count. Samples in which extra workers
+are slower stay in the report. No learning update is inferred from successful optimization:
+all three measured candidates may remain unapplied with zero reward. File-disjoint source
+windows are not independent future user experience. Physical hosts and actual UTC do not
+establish different operators, public ingress fairness or proof-cost hardness.

@@ -1,6 +1,6 @@
 {
   "schema": "pon-invariants-v2",
-  "genesis_revision": 2,
+  "genesis_revision": 3,
   "invariants": [
     {
       "module": "M00",
