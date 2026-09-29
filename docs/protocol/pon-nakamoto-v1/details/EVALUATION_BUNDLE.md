@@ -121,3 +121,6 @@ positive direction with negative mean, actual worker invocation and forged settl
 reports. `test_inference_receipt.py` additionally checks omitted cost/nonce/output and
 bounded parsing. The invariant registry binds exact selectors. Test success proves
 those executed cases, not universal model safety or independent scientific acceptance.
+
+[Current executed evidence](../../../../evidence/pon-evaluation-bundle-v1/README.md)
+retains source identities, all raw results and the no-adoption/zero-reward outcome.

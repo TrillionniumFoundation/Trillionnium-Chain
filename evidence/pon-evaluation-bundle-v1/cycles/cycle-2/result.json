@@ -1,0 +1,34 @@
+{
+  "cycle": 2,
+  "parent_actually_admitted_artifact": "047e1cf75174d4b4d6d7d20440ff38ad97915a7adee42c888ba413aeb19343c9",
+  "candidate": "e1cc56eb22573e0a39fe3c513bed64d2bc03f401ad25f2d6fc823c8e1e072436",
+  "selected_reference": "best_single",
+  "evaluation_bundle": "35cb46744ab47585d47283b13e4566f654e5a25c7f39c5866480cdd886ebb462",
+  "bound_evaluation": "bound-evaluation.json",
+  "training_rows": 391,
+  "calibration_rows": 76,
+  "evaluation_rows": 56,
+  "source_groups": {
+    "train": 40,
+    "calibration": 21,
+    "evaluation": 21
+  },
+  "evaluation": {
+    "clusters": 21,
+    "wins": 1,
+    "losses": 0,
+    "comparisons": 4,
+    "cluster_gate": false,
+    "mean_gain_numerator": 1,
+    "mean_gain_denominator": 21,
+    "exploratory_score": 0,
+    "future_window_observed": false,
+    "caller_future_window_claim": false,
+    "public_reward_eligible": false,
+    "reason": "independent time/source-owner receipts must be verified by the accepting owner"
+  },
+  "outcome": "no_public_update",
+  "reward": 0,
+  "public_artifact_after": "047e1cf75174d4b4d6d7d20440ff38ad97915a7adee42c888ba413aeb19343c9",
+  "duration_ns": 877992846
+}

@@ -13,7 +13,7 @@ REQUIRED_RUNS={'preflight','source-contract','source-rejections','invariant-regi
  'test_reference','test_contracts','test_invariants','test_evaluation','test_evaluation_bundle',
  'test_artifacts','test_model_contract','test_inference_receipt','test_bounded_process',
  'test_work_backend','test_strict_signature','test_native_execution','test_interop',
- 'accepted-block','native-ledger','historical-v4','historical-v4-rejections','model-learning',
+ 'accepted-block','native-ledger','historical-v1-rejections','historical-v4','historical-v4-rejections','model-learning',
  'model-settlement','learning-cycles','physical-evaluation','whitespace'}
 
 def runtime(path):
@@ -46,15 +46,28 @@ def validate(root=ROOT,evidence=None):
  require({p for p in tracked if runtime(p)}=={p for p in original if runtime(p)},'runtime inventory mismatch')
  require('config/pon/invariants-v2.json'in original,'missing invariant source')
  require(subprocess.check_output(['git','rev-parse',q['input_source_commit']+'^{tree}'],cwd=root,text=True).strip()==q['input_source_tree'],'corpus source')
- names=[r['name']for r in q['results']];require(set(names)==REQUIRED_RUNS and len(names)==len(set(names)),'incomplete execution matrix')
+ records=list(q['results'])
+ if 'qualification-supplement.json' in manifest['files']:
+  extra=load(folder/'qualification-supplement.json')
+  require(extra['schema']=='pon-evaluation-qualification-supplement-v1'and extra['source_commit']==commit and extra['source_tree']==q['source_tree']and extra['source_clean']is True,'supplement source')
+  require(extra['production_activation']is False and extra['independent_accepted']is False,'supplement overclaim')
+  for path,raw in source_bytes(root,commit,list(extra['source_files_sha256'])).items():
+   require(hashlib.sha256(raw).hexdigest()==extra['source_files_sha256'][path]and safe(root,path).read_bytes()==raw,'supplement source changed')
+  records+=extra['results']
+ names=[r['name']for r in records];require(set(names)==REQUIRED_RUNS and len(names)==len(set(names)),'incomplete execution matrix')
  logs=[];native=0;doc=0;python_count=0
- for row in q['results']:
+ for row in records:
   require(row['returncode']==0 and row['timed_out']is False,'failed command '+row['name'])
   require(row['vram_bytes']is None and row['included_transactions']is None and row['client_confirmed_transactions']is None,'unmeasured metric claimed')
   log=safe(folder,row['log']).read_text();logs.append(log)
   if 'python_tests'in row:
    require(re.search(r'Ran '+str(row['python_tests'])+r' tests?\b',log) and re.search(r'(?m)^OK\s*$',log),'Python log outcome')
    python_count+=row['python_tests']
+  elif row['command'][0].endswith('python3'):
+   observed=re.search(r'Ran (\d+) tests?\b',log)
+   if observed:
+    require(re.search(r'(?m)^OK\s*$',log),'supplemental Python outcome')
+    python_count+=int(observed[1])
   if row['name']in {'native-suite','native-doctests','native-ignored-helper'}:
    counts=[]
    for section in re.split(r'(?m)^\s*(?:Running (?:unittests|tests/)|Doc-tests )',log):
@@ -70,7 +83,12 @@ def validate(root=ROOT,evidence=None):
  joined='\n'.join(logs);selectors=set()
  for item in json.loads(original['config/pon/invariants-v2.json'])['invariants']:
   for selector in item['tests']:
-   name=selector.split('::',1)[1].split('.')[-1]
+   path,symbol=selector.split('::',1);name=symbol.split('.')[-1]
+   if path.endswith('.py'):
+    eligible=[r for r in records if path in r['command']]
+    require(eligible,'missing exact test-file invocation '+selector)
+    exact='\n'.join(safe(folder,r['log']).read_text()for r in eligible)
+    require(re.search(r'\b'+re.escape(name)+r' \([^)]*'+re.escape(symbol)+r'\)[^\n]*\bok\b',exact),'unobserved exact class/method '+selector)
    require(re.search(r'\b'+re.escape(name)+r'(?:\s|\))[^\n]*\bok\b',joined),'unexecuted invariant '+selector)
    selectors.add(selector)
  sys.path.insert(0,str(root/'formal/pon-nakamoto-v1'))

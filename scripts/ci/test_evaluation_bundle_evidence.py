@@ -27,6 +27,10 @@ class CurrentEvaluationEvidenceTests(unittest.TestCase):
  def test_failed_command_cannot_be_counted(self):self.mutate('qualification.json',lambda d:d['results'][0].update(returncode=1))
  def test_native_backend_cannot_be_silently_reference(self):
   self.mutate('qualification.json',lambda d:next(r for r in d['results']if r['name']=='native-ledger').update(environment_overrides={}))
+ def test_class_name_in_another_file_is_not_a_test_invocation(self):
+  self.mutate('qualification.json',lambda d:next(r for r in d['results']if r['name']=='test_evaluation_bundle').update(command=['python3','formal/pon-nakamoto-v1/test_evaluation.py']))
+ def test_supplement_must_be_same_clean_implementation(self):
+  self.mutate('qualification-supplement.json',lambda d:d.update(source_clean=False))
  def test_unmeasured_vram_cannot_be_filled(self):self.mutate('qualification.json',lambda d:d['results'][0].update(vram_bytes=123))
  def test_retrospective_zero_reward_cannot_be_promoted(self):self.mutate('settlement/report.json',lambda d:d.update(model_reward=1,outcome='adopted'))
  def test_three_no_change_attempts_are_not_three_adoptions(self):self.mutate('cycles/report.json',lambda d:d.update(three_improving_public_generations=True))

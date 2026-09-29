@@ -85,6 +85,7 @@ def run(output,source,target,cargo_home,hosts):
   for test in PYTHON_TESTS:execute(test,['python3','formal/pon-nakamoto-v1/'+test+'.py'])
   execute('accepted-block',['python3','scripts/ci/test_pon_accepted_block.py'])
   execute('native-ledger',['python3','formal/pon-nakamoto-v1/test_contracts.py'],extra={'TRNM_NATIVE_EXECUTOR':str(Path(target).resolve()/'release/examples/pon_execute'),'TRNM_EXECUTION_WORKERS':'8'})
+  execute('historical-v1-rejections',['python3','scripts/ci/test_pon_evidence.py'])
   execute('historical-v4',['python3','scripts/ci/check_completion_evidence.py','--historical'])
   execute('historical-v4-rejections',['python3','scripts/ci/test_completion_evidence.py'])
   produced=execute('model-learning',['python3','formal/pon-nakamoto-v1/experiments/model_loop.py','--source',source,'--out',str(out/'model')])

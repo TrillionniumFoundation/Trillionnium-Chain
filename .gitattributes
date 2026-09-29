@@ -9,3 +9,6 @@ evidence/pon-v3/**/*.log -text -whitespace
 
 # Exact raw continuation logs are hash-bound; do not normalize transcript whitespace.
 evidence/pon-v4/**/*.log -whitespace
+
+# Preserve exact captured process output, including partial progress lines and trailing blank lines.
+evidence/pon-evaluation-bundle-v1/logs/*.log -whitespace

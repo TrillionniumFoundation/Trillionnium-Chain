@@ -1,0 +1,31 @@
+{
+  "schema": "pon-evaluation-qualification-supplement-v1",
+  "source_commit": "50e158640d8278ca94dbecb6539dab96c6a9fb84",
+  "source_tree": "d61a69d3433db127019924d269bf25ded3aecf60",
+  "source_clean": true,
+  "reason": "The initial matrix did not execute two already declared M17 selectors; its receipt was correctly rejected before publication. Run their existing full suite on the identical committed source.",
+  "results": [
+    {
+      "name": "historical-v1-rejections",
+      "command": [
+        "python3",
+        "scripts/ci/test_pon_evidence.py"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_ns": 11765154992,
+      "log": "logs/historical-v1-rejections.log",
+      "environment_overrides": {},
+      "peak_rss_kib": null,
+      "vram_bytes": null,
+      "included_transactions": null,
+      "client_confirmed_transactions": null
+    }
+  ],
+  "source_files_sha256": {
+    "scripts/ci/test_pon_evidence.py": "ab63d4f65b10d5737f6148f7bb06da829b91008fcb0c7845429e0124252eeb07",
+    "scripts/ci/check_pon_evidence.py": "285d6b9924a2cd0e708fb170f55629248216d9a85385159093718e2f8cfc9f83"
+  },
+  "production_activation": false,
+  "independent_accepted": false
+}

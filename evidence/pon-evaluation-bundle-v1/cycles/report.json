@@ -1,0 +1,130 @@
+{
+  "schema": "pon-real-training-controlled-cycles-v4",
+  "source": "6cdbf9551aae1754e489773bac29bc0598e20a9b",
+  "bootstrap": "047e1cf75174d4b4d6d7d20440ff38ad97915a7adee42c888ba413aeb19343c9",
+  "bootstrap_source_groups": [
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_04_io_ack.rs",
+    "trillionnium/crates/trnm-peer-lease/src/unix.rs",
+    "trillionnium/crates/trnm-peer-lease/src/unix/connection_service.rs",
+    "trillionnium/crates/trnm-task-kernel/src/archive_store.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/normalize.rs",
+    "trillionnium/crates/trnm-types/src/request_status/parsing.rs",
+    "trillionnium/crates/trnm-types/src/request_status/transitions.rs",
+    "trillionnium/crates/trnm-worker-agent/src/dispatch_flush.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat.rs"
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "parent_actually_admitted_artifact": "047e1cf75174d4b4d6d7d20440ff38ad97915a7adee42c888ba413aeb19343c9",
+      "candidate": "81404c9b55f4363c99437f8df6cd472613ab4b752b73d3031349ec90690d8257",
+      "selected_reference": "best_single",
+      "evaluation_bundle": "d1a25ee8b358e975c52b9d53443d9cd611812c20ff2923bde8ee5909dd9c0706",
+      "bound_evaluation": "bound-evaluation.json",
+      "training_rows": 332,
+      "calibration_rows": 135,
+      "evaluation_rows": 114,
+      "source_groups": {
+        "train": 40,
+        "calibration": 21,
+        "evaluation": 21
+      },
+      "evaluation": {
+        "clusters": 21,
+        "wins": 2,
+        "losses": 3,
+        "comparisons": 4,
+        "cluster_gate": false,
+        "mean_gain_numerator": -28457,
+        "mean_gain_denominator": 1801485,
+        "exploratory_score": 0,
+        "future_window_observed": false,
+        "caller_future_window_claim": false,
+        "public_reward_eligible": false,
+        "reason": "independent time/source-owner receipts must be verified by the accepting owner"
+      },
+      "outcome": "no_public_update",
+      "reward": 0,
+      "public_artifact_after": "047e1cf75174d4b4d6d7d20440ff38ad97915a7adee42c888ba413aeb19343c9",
+      "duration_ns": 1118698396
+    },
+    {
+      "cycle": 2,
+      "parent_actually_admitted_artifact": "047e1cf75174d4b4d6d7d20440ff38ad97915a7adee42c888ba413aeb19343c9",
+      "candidate": "e1cc56eb22573e0a39fe3c513bed64d2bc03f401ad25f2d6fc823c8e1e072436",
+      "selected_reference": "best_single",
+      "evaluation_bundle": "35cb46744ab47585d47283b13e4566f654e5a25c7f39c5866480cdd886ebb462",
+      "bound_evaluation": "bound-evaluation.json",
+      "training_rows": 391,
+      "calibration_rows": 76,
+      "evaluation_rows": 56,
+      "source_groups": {
+        "train": 40,
+        "calibration": 21,
+        "evaluation": 21
+      },
+      "evaluation": {
+        "clusters": 21,
+        "wins": 1,
+        "losses": 0,
+        "comparisons": 4,
+        "cluster_gate": false,
+        "mean_gain_numerator": 1,
+        "mean_gain_denominator": 21,
+        "exploratory_score": 0,
+        "future_window_observed": false,
+        "caller_future_window_claim": false,
+        "public_reward_eligible": false,
+        "reason": "independent time/source-owner receipts must be verified by the accepting owner"
+      },
+      "outcome": "no_public_update",
+      "reward": 0,
+      "public_artifact_after": "047e1cf75174d4b4d6d7d20440ff38ad97915a7adee42c888ba413aeb19343c9",
+      "duration_ns": 877992846
+    },
+    {
+      "cycle": 3,
+      "parent_actually_admitted_artifact": "047e1cf75174d4b4d6d7d20440ff38ad97915a7adee42c888ba413aeb19343c9",
+      "candidate": "2fa49d4f307ddad0c91ec8f44b67d628eddaf2c42718a6ac5cedbfa97eb7bc41",
+      "selected_reference": "pooled",
+      "evaluation_bundle": "e77785de92d9846e972c432570a2ecb879c3ae1538d9e34c0f04a41e57841034",
+      "bound_evaluation": "bound-evaluation.json",
+      "training_rows": 379,
+      "calibration_rows": 148,
+      "evaluation_rows": 125,
+      "source_groups": {
+        "train": 40,
+        "calibration": 21,
+        "evaluation": 21
+      },
+      "evaluation": {
+        "clusters": 21,
+        "wins": 3,
+        "losses": 1,
+        "comparisons": 4,
+        "cluster_gate": false,
+        "mean_gain_numerator": 4703,
+        "mean_gain_denominator": 570570,
+        "exploratory_score": 0,
+        "future_window_observed": false,
+        "caller_future_window_claim": false,
+        "public_reward_eligible": false,
+        "reason": "independent time/source-owner receipts must be verified by the accepting owner"
+      },
+      "outcome": "no_public_update",
+      "reward": 0,
+      "public_artifact_after": "047e1cf75174d4b4d6d7d20440ff38ad97915a7adee42c888ba413aeb19343c9",
+      "duration_ns": 1253694308
+    }
+  ],
+  "real_optimization": true,
+  "independent_tasks_across_cycles": false,
+  "file_groups_disjoint_across_cycles": true,
+  "new_future_window": false,
+  "ordinary_hepta_entry": false,
+  "independent_evaluators": false,
+  "three_improving_public_generations": false,
+  "public_pointer_unchanged": true,
+  "total_model_reward": 0,
+  "production_activation": false
+}

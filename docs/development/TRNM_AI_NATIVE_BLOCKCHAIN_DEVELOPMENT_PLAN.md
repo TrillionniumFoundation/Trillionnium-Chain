@@ -352,3 +352,8 @@ untouched future tasks; sustained long-term DA/state growth; actual physical pow
 and public network security. Highest repository privilege does not manufacture those
 facts. Continue their implementations and falsifiable experiments on this lineage;
 production remains disabled until the corresponding evidence exists.
+
+[The current E3 execution receipt](../../evidence/pon-evaluation-bundle-v1/README.md)
+records exact-source native and logical regressions, locked evaluation replay, three
+no-update optimization attempts and nine same-input results on three owned hosts.
+It does not replace independently administered future tasks or public work qualification.
