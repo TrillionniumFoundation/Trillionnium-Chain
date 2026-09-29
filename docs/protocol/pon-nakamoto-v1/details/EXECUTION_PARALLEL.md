@@ -131,7 +131,10 @@ computed root. Each execute request binds predecessor root, monotonic sequence, 
 transactions, height, miner, parent and worker count. The native side publishes its
 in-memory next map/tree/sequence only after the whole existing transition succeeds.
 The host validates closed reply fields, strict integer counters, ordered distinct deltas,
-canonical before-value bytes, receipt count and the independently recomputed result root.
+canonical before-value bytes and the independently recomputed result root. Mandatory
+expiry receipts precede transaction receipts: their exact bounded count, identities and
+order are derived from due funded predecessor objects. Empty blocks may have expiry
+receipts. A reply cannot omit, reorder or substitute that prefix.
 Python Boolean/integer equality cannot authenticate predecessor or delta identity.
 
 `trnm-protocol::pon_state::StateTree` shares immutable compressed nodes. Empty padding
@@ -148,7 +151,7 @@ bounds, not proof that every protocol-permitted state fits this experimental bri
 Timeout, partial/lost/malformed reply, invalid result or changed parent discards the
 cache; SQLite state is never inferred from a cached sequence. Exact repeated pure work
 may reuse its prior output, but reports `request_cache_hit=true` and zero transmitted
-bytes. It is not another execution, signed action, included block or benchmark sample.
+bytes and zero new native execution/signature counters. It is not another execution, signed action, included block or benchmark sample.
 
 `experiments/session_cost.py` compares same-source full-state and delta-session paths
 on actually advancing signed transactions, with separately recorded bootstrap and full
@@ -156,3 +159,7 @@ Python result-root checks. `experiments/session_pipeline.py` additionally mines/
 real work, commits actual source and receiver stores, and queries bounded client
 confirmation after genuine fill blocks. Its logical unpaced clock, one controller and
 local transport remain explicit. Neither campaign supplies public-network TPS.
+
+A maximum-budget benchmark regression uses actual signed transfers and registered fees
+to fund the hot sender for every declared sample plus warmup. This fixes a generator
+funding defect without changing genesis, balances by fiat, fee rules or accepted output.

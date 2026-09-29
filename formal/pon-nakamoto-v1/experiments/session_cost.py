@@ -12,14 +12,22 @@ from ledger import *
 from native_session import NativeExecutionSession
 from bounded_process import run_bounded
 
-def cases(samples):
+def initial_state(samples):
+    if type(samples)is not int or not 3<=samples<=20:raise ValueError('SAMPLE_BUDGET')
+    exemplar=sign(key(4),1,'transfer',dict(recipient=public(key(1)),amount=1),expiry=100000)
+    per_transfer=1+COMMANDS[1]['base_fee_units']+len(exemplar)*PARAMS['byte_fee_units']
+    hot_budget=max(125000,64*(samples+1)*per_transfer)
     initial=genesis_state();height=0;nonce=0
     for batch in range(4):
         txs=[]
         for i in range(4+batch*64,4+(batch+1)*64):
-            nonce+=1;amount=125000 if i<68 else 1000
+            nonce+=1;amount=hot_budget if i==4 else(125000 if i<68 else 1000)
             txs.append(sign(key(0),nonce,'transfer',dict(recipient=public(key(i)),amount=amount),expiry=100000))
         height+=1;initial,_=execute_reference(initial,txs,height,public(key(0)),H('session-funding',u64(height)))
+    return initial,height
+
+def cases(samples):
+    initial,height=initial_state(samples)
     output=[]
     for name in ['independent','hot-recipient','hot-sender']:
         state=copy.deepcopy(initial);blocks=[]

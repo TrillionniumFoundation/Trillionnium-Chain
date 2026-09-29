@@ -771,7 +771,11 @@
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_unclaimed_release_budget_refunds_at_reserved_deadline",
-            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement"
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_sixteen_expiry_receipts_precede_same_block_transaction",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_empty_expiry_block_runs_through_real_ledger_and_restart",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_expiry_receipt_drop_reorder_and_substitution_cannot_be_rehashed",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_real_quota_and_release_expiry_share_existing_receipt_semantics"
           ],
           "remaining": "No monetary-value, fairness or external payout reconciliation claim."
         },
@@ -797,7 +801,11 @@
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_spent_quota_retirement_preserves_consent_identity",
-            "formal/pon-nakamoto-v1/test_contracts.py::ExecutionTests.test_free_consumer_is_not_charged_or_implicitly_authorized"
+            "formal/pon-nakamoto-v1/test_contracts.py::ExecutionTests.test_free_consumer_is_not_charged_or_implicitly_authorized",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_sixteen_expiry_receipts_precede_same_block_transaction",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_empty_expiry_block_runs_through_real_ledger_and_restart",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_expiry_receipt_drop_reorder_and_substitution_cannot_be_rehashed",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_real_quota_and_release_expiry_share_existing_receipt_semantics"
           ],
           "remaining": "Real GPU availability, delivery evidence, sponsor self-traffic and sustainable funding remain separate."
         }

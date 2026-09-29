@@ -82,3 +82,12 @@ is created by a frozen artifact. The following additional regressions are execut
 - `formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_mutating_both_summary_and_evaluator_score_does_not_authorize_reward`.
 - `formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_zero_marginal_candidate_creates_no_ledger_or_reward`.
 - `formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_undeclared_bundle_cannot_be_read_from_summary_as_authority`.
+
+## Mandatory expiry receipts through the native cache
+
+Funded task/quota/release expiry emits its canonical receipt before ordinary transaction receipts. The existing native session preserves and verifies this prefix, including empty blocks and mixed 16-expiry/transaction blocks. This does not change subsidy, fees or durable ownership.
+
+- `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_sixteen_expiry_receipts_precede_same_block_transaction`.
+- `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_empty_expiry_block_runs_through_real_ledger_and_restart`.
+- `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_expiry_receipt_drop_reorder_and_substitution_cannot_be_rehashed`.
+- `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_real_quota_and_release_expiry_share_existing_receipt_semantics`.

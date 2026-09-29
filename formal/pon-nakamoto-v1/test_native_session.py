@@ -8,6 +8,7 @@ import copy,json,os,sys,tempfile,types,unittest
 from pathlib import Path
 from unittest.mock import patch
 from ledger import *
+from ledger import task_identity, quota_identity, account
 from native_session import NativeExecutionSession,FramedProcess
 import test_native_execution as scenarios
 BINARY=Path(os.environ.get('TRNM_SESSION_BINARY',str(Path(os.environ.get('CARGO_TARGET_DIR',ROOT/'trillionnium/target'))/'release/examples/pon_execute_session')))
@@ -42,7 +43,7 @@ class NativeSessionTests(unittest.TestCase):
             a=s.execute(initial,[tx],1,public(key(0)),GENESIS,4);pid=s.process.child.pid
             self.assertEqual(s.sequence,1)
             b=s.execute(initial,[tx],1,public(key(0)),GENESIS,4)
-            self.assertEqual(a[:2],b[:2]);self.assertTrue(b[2]['request_cache_hit']);self.assertEqual(b[2]['bridge_request_bytes'],0);self.assertEqual(b[2]['bridge_response_bytes'],0);self.assertEqual(s.sequence,1);self.assertEqual(s.process.child.pid,pid)
+            self.assertEqual(a[:2],b[:2]);self.assertTrue(b[2]['request_cache_hit']);self.assertEqual(b[2]['bridge_request_bytes'],0);self.assertEqual(b[2]['bridge_response_bytes'],0);self.assertEqual(b[2]['signature_verifications'],0);self.assertEqual(b[2]['workers_spawned'],0);self.assertEqual(s.sequence,1);self.assertEqual(s.process.child.pid,pid)
             a[0]['meta:issued']=0
             self.assertNotEqual(s.execute(initial,[tx],1,public(key(0)),GENESIS,4)[0]['meta:issued'],0)
             expected,_=execute_reference(initial,[],1,public(key(1)),GENESIS)
@@ -111,6 +112,107 @@ class NativeSessionTests(unittest.TestCase):
             try:
                 with self.assertRaisesRegex(ValueError,'UNAVAILABLE'):ledger.make(GENESIS,[])
             finally:ledger.close()
+class ExpiryAndBudgetTests(unittest.TestCase):
+    def reserved(self, session, count=2):
+        state=genesis_state();owner=public(key(0));provider=public(key(1))
+        txs=[sign(key(0),i+1,'reserve_task',dict(task=task_identity(owner,i+1,provider,1000,3),
+              provider=provider,budget=1000,deadline=3),expiry=100000) for i in range(count)]
+        actual=session.execute(state,txs,1,owner,GENESIS,8)
+        self.assertEqual(actual[:2],execute_reference(state,txs,1,owner,GENESIS))
+        return actual[0]
+
+    def test_sixteen_expiry_receipts_precede_same_block_transaction(self):
+        session=NativeExecutionSession(BINARY)
+        try:
+            state=self.reserved(session,16);before=copy.deepcopy(state)
+            tx=sign(key(0),17,'transfer',dict(recipient=public(key(1)),amount=1),expiry=100000)
+            actual=session.execute(state,[tx],3,public(key(0)),H('expiry-parent'),8)
+            self.assertEqual(actual[:2],execute_reference(state,[tx],3,public(key(0)),H('expiry-parent')))
+            self.assertEqual(len(actual[1]),17);self.assertEqual(actual[2]['mandatory_receipts'],16)
+            self.assertEqual(actual[2]['signature_verifications'],1);self.assertEqual(state,before)
+            self.assertTrue(all(json.loads(raw).keys()=={'expiry'} for raw in actual[1][:16]))
+            last=session.execute(actual[0],[],4,public(key(0)),H('retirement-parent'),8)
+            self.assertEqual(last[:2],execute_reference(actual[0],[],4,public(key(0)),H('retirement-parent')))
+            self.assertEqual(last[1],[])
+        finally:session.close()
+
+    def test_empty_expiry_block_runs_through_real_ledger_and_restart(self):
+        with tempfile.TemporaryDirectory() as folder,patch.dict(os.environ,{'TRNM_NATIVE_SESSION':str(BINARY)}):
+            ledger=Ledger(folder)
+            try:
+                task=task_identity(public(key(0)),1,public(key(1)),1000,3)
+                tx=sign(key(0),1,'reserve_task',dict(task=task,provider=public(key(1)),budget=1000,deadline=3),expiry=100000)
+                for transactions in [[tx],[],[]]:
+                    packet=ledger.make(ledger.active()[0],transactions)
+                    tip=ledger.admit(*packet,PARAMS['genesis_timestamp']+1000);ledger.recover()
+                self.assertEqual(ledger.read_active()[2]['task:'+task.hex()]['remaining'],0)
+                root=ledger.block(tip)[6]
+            finally:ledger.close()
+            ledger=Ledger(folder)
+            try:
+                ledger.recover();self.assertEqual(ledger.active()[0],tip)
+                self.assertEqual(state_root(ledger.read_active()[2]),root)
+            finally:ledger.close()
+
+    def test_expiry_receipt_drop_reorder_and_substitution_cannot_be_rehashed(self):
+        def drop(result):result['receipts'].pop()
+        def reorder(result):result['receipts'].reverse()
+        def substitute(result):result['receipts'][0]=canonical({'expiry':'task:'+('0'*64)}).hex()
+        for mutate in [drop,reorder,substitute]:
+            with self.subTest(mutate=mutate.__name__):
+                session=NativeExecutionSession(BINARY)
+                try:
+                    state=self.reserved(session);before=copy.deepcopy(state);original=session._exchange
+                    def changed(message):
+                        result=original(message)
+                        if message['op']=='execute':mutate(result)
+                        return result
+                    with patch.object(session,'_exchange',changed),self.assertRaisesRegex(ValueError,'SESSION_.*RECEIPTS'):
+                        session.execute(state,[],3,public(key(0)),H('expiry-parent'),8)
+                    self.assertEqual(state,before);self.assertIsNone(session.process)
+                finally:session.close()
+
+    def test_real_quota_and_release_expiry_share_existing_receipt_semantics(self):
+        import test_native_execution as original
+        # Reuse the original reference-vs-native scenarios, changing only its explicit backend.
+        for method in ['test_unclaimed_release_budget_refunds_at_reserved_deadline']:
+            sessions={workers:NativeExecutionSession(BINARY) for workers in [1,2,4,8]}
+            def selected(state,txs,height,miner,parent,workers,binary):
+                return sessions[workers].execute(state,txs,height,miner,parent,workers)
+            try:
+                case=original.NativeExecutionTests(method);case.setUp()
+                with patch.object(original,'execute_native',selected):getattr(case,method)()
+            finally:
+                for session in sessions.values():session.close()
+        session=NativeExecutionSession(BINARY)
+        try:
+            state=genesis_state();owner=public(key(0));provider=public(key(1));consumer=public(key(4))
+            quota=quota_identity(owner,1,consumer,provider,2,3)
+            tx=sign(key(0),1,'reserve_quota',dict(quota=quota,consumer=consumer,provider=provider,units=2,deadline=3),expiry=100000)
+            state=session.execute(state,[tx],1,owner,GENESIS)[0]
+            actual=session.execute(state,[],3,owner,H('quota-expiry'))
+            self.assertEqual(actual[:2],execute_reference(state,[],3,owner,H('quota-expiry')))
+            self.assertEqual(actual[2]['mandatory_receipts'],1)
+        finally:session.close()
+
+    def test_maximum_sample_budget_funds_actual_hot_sender_not_an_estimated_score(self):
+        from experiments.session_cost import initial_state
+        state,height=initial_state(20)
+        for sample in range(21):
+            txs=[sign(key(4),sample*64+i+1,'transfer',dict(recipient=public(key(1)),amount=1),expiry=100000) for i in range(64)]
+            state,receipts=execute_reference(state,txs,height+sample+1,public(key(0)),H('budget-parent',u64(sample)))
+            self.assertEqual(len(receipts),64)
+        self.assertEqual(account(state,public(key(4)).hex())['nonce'],21*64)
+        self.assertGreaterEqual(account(state,public(key(4)).hex())['balance'],0)
+
+    def test_sample_bounds_reject_before_artifact_creation(self):
+        from experiments.session_cost import run
+        with tempfile.TemporaryDirectory() as directory:
+            for number in [True,2,21,float('nan')]:
+                path=Path(directory)/'never-created'
+                with self.assertRaisesRegex(ValueError,'SAMPLE_BUDGET'):run(path,'/absent/one','/absent/two',number)
+                self.assertFalse(path.exists())
+
 class SessionBoundaryTests(unittest.TestCase):
     def test_exact_predecessor_memo_does_not_skip_returned_root_verification(self):
         session=NativeExecutionSession(BINARY)

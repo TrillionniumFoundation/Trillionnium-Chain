@@ -206,8 +206,11 @@ class NativeExecutionSession:
         fingerprint = H('native-session-request', canonical(logical))
         if self.last is not None and self.last[0] == fingerprint:
             value = copy.deepcopy(self.last[1])
-            value[2].update(request_cache_hit=True, bridge_request_bytes=0, bridge_response_bytes=0)
-            return value  # A repeated pure result is not another executed/communicated sample.
+            value[2].update(request_cache_hit=True, bridge_request_bytes=0, bridge_response_bytes=0,
+                            state_transition_ns='0', state_root_ns='0', workers_spawned=0,
+                            signature_verifications=0, speculative=0, reexecuted=0,
+                            committed_without_replay=0, serial_conflict_batches=0, peak_inflight=0)
+            return value  # Cached facts are not additional verification, work or communication.
         if self.process is None or self.root != root:
             self._open(state, checked_root=root)  # Exact canonical bytes, never True == 1 equality.
         before_sent, before_received = self.process.bytes_sent, self.process.bytes_received
@@ -245,9 +248,21 @@ class NativeExecutionSession:
                     require(change['after'] is None, 'SESSION_DELTA')
                     next_state.pop(key, None)
             require(state_root(next_state).hex() == result['root'], 'SESSION_ROOT')
+            # Mandatory expiry receipts precede transaction receipts, including empty blocks.
+            # Derive their exact order from the unchanged predecessor, not a reply counter.
+            due = []
+            for name, value in state.items():
+                if name.startswith(('task:', 'quota:', 'release:')):
+                    require(isinstance(value, dict) and type(value.get('remaining')) is int
+                            and type(value.get('deadline')) is int, 'SESSION_EXPIRY_STATE')
+                    if value['remaining'] > 0 and value['deadline'] <= height:
+                        due.append((value['deadline'], name))
+            expiries = [canonical({'expiry': name}) for _, name in
+                        sorted(due)[:PARAMS['mandatory_expiry_per_block']]]
             require(isinstance(result['receipts'], list)
-                    and len(result['receipts']) == len(transactions), 'SESSION_RECEIPTS')
+                    and len(result['receipts']) == len(transactions) + len(expiries), 'SESSION_RECEIPTS')
             receipts = [strict_hex(raw, PARAMS['max_transaction_bytes']) for raw in result['receipts']]
+            require(receipts[:len(expiries)] == expiries, 'SESSION_EXPIRY_RECEIPTS')
             metrics = result['metrics']
             require(isinstance(metrics, dict) and set(metrics) == METRIC_COUNTS | METRIC_TIMES,
                     'SESSION_METRICS')
@@ -261,7 +276,7 @@ class NativeExecutionSession:
                     and metrics['commitment_nodes'] <= max(0, 2 * len(next_state) - 1), 'SESSION_METRICS')
             metrics = dict(metrics, bridge_request_bytes=self.process.bytes_sent - before_sent,
                            bridge_response_bytes=self.process.bytes_received - before_received,
-                           session_resets=self.reset_count, request_cache_hit=False)
+                           session_resets=self.reset_count, request_cache_hit=False, mandatory_receipts=len(expiries))
             self.state, self.root, self.sequence = next_state, result['root'], result['sequence']
             self.state_bytes, self.last_input = canonical(next_state), (state_bytes, root)
             value = (copy.deepcopy(next_state), receipts, metrics)

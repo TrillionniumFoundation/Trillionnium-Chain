@@ -136,7 +136,8 @@ def validate(root=ROOT, evidence=None):
     extra = validate_session(root, folder, manifest, q, records, originals) if session else {}
     return {**extra, 'measured_commit': q['source_commit'], 'runtime_matches': True,
             'native_tests': native_count, 'client_selectors_per_backend': len(selectors),
-            'backends': ['reference', 'explicit-native-work-and-eight-worker-execution'],
+            'backends': ['reference', 'explicit-native-work-and-eight-worker-execution'] +
+                        (['explicit-native-work-and-eight-worker-session'] if session else []),
             'model_experiments_rerun': False, 'public_confirmed_tps': None,
             'native_full_node': False, 'independent_accepted': False, 'production_activation': False}
 
