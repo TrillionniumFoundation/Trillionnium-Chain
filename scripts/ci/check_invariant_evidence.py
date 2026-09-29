@@ -141,7 +141,10 @@ def validate(root=ROOT,evidence=None,require_current_runtime=True):
     return {'implementation_commit':commit,'artifact_files':len(manifest['files']),'executed_invariant_selectors':len(selectors),'python_suites':python_suites,'native_tests':native['passed'],'runtime_matches_measured_source':current_runtime,'physical_hosts':len(hosts['hosts']),'independent_accepted':False,'production_activation':False}
 
 if __name__=='__main__':
-    result=validate();manifest=load(ROOT/'evidence/pon-v3/manifest.json')
+    import argparse
+    parser=argparse.ArgumentParser();parser.add_argument('--historical',action='store_true')
+    args=parser.parse_args()
+    result=validate(require_current_runtime=not args.historical);manifest=load(ROOT/'evidence/pon-v3/manifest.json')
     tracked=set(subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines())
     require({'evidence/pon-v3/'+p for p in manifest['files']}<=tracked,'evidence absent from Git index')
     print(json.dumps(result,sort_keys=True))

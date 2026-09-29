@@ -74,14 +74,66 @@ class NativeExecutionTests(unittest.TestCase):
         self.run_block([self.tx(0,'transfer',dict(recipient=public(key(1)),amount=1))for _ in range(16)])
         self.assertEqual(self.last_metrics[8]['reexecuted'],0)
         self.assertEqual(self.last_metrics[8]['peak_inflight'],1)
-        self.assertEqual(self.last_metrics[8]['serial_conflict_batches'],2)
+        self.assertEqual(self.last_metrics[8]['serial_conflict_batches'],1)
 
     def test_hot_recipient_conflict_reexecutes_once_in_canonical_order(self):
         self.run_block([self.tx(0,'transfer',dict(recipient=public(key(i)),amount=10000))for i in range(4,20)])
         self.run_block([self.tx(i,'transfer',dict(recipient=public(key(1)),amount=1))for i in range(4,20)])
-        self.assertEqual(self.last_metrics[8]['reexecuted'],14)
+        self.assertEqual(self.last_metrics[8]['reexecuted'],15)
         self.assertEqual(self.last_metrics[8]['peak_inflight'],8)
         self.assertEqual(self.last_metrics[8]['serial_conflict_batches'],0)
+
+    def test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict(self):
+        self.run_block([self.tx(0,'transfer',dict(recipient=public(key(i)),amount=10000))for i in range(4,36)])
+        self.run_block([self.tx(i,'transfer',dict(recipient=public(key(1)),amount=1))for i in range(4,36)])
+        for workers in [1,2,4,8]:
+            metrics=self.last_metrics[workers]
+            self.assertEqual(metrics['signature_verifications'],32)
+            self.assertLessEqual(metrics['workers_spawned'],workers)
+            self.assertEqual(metrics['workers_spawned'],0 if workers==1 else workers)
+        self.assertEqual(self.last_metrics[8]['reexecuted'],31)
+
+    def test_later_invalid_signature_does_not_change_canonical_error(self):
+        first=sign(key(0),2,'transfer',dict(recipient=public(key(1)),amount=1))
+        second=sign(key(1),1,'transfer',dict(recipient=public(key(2)),amount=1))
+        second=second[:-1]+bytes([second[-1]^1]);before=copy.deepcopy(self.state)
+        for workers in [1,2,4,8]:
+            with self.assertRaisesRegex(ValueError,'NONCE'):
+                execute_native(self.state,[first,second],1,public(key(0)),GENESIS,workers,BINARY)
+        self.assertEqual(self.state,before)
+
+    def test_funding_dependency_replays_state_not_main_signature(self):
+        self.run_block([self.tx(0,'transfer',dict(recipient=public(key(4)),amount=10000)),
+                        self.tx(4,'transfer',dict(recipient=public(key(5)),amount=1000))])
+        for workers in [2,4,8]:
+            self.assertEqual(self.last_metrics[workers]['reexecuted'],1)
+            self.assertEqual(self.last_metrics[workers]['signature_verifications'],2)
+
+    def test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots(self):
+        self.run_block([self.tx(0,'transfer',dict(recipient=public(key(i)),amount=10000))for i in range(4,20)])
+        deadline=self.height+20;transactions=[]
+        for i in range(4,20):
+            task=task_identity(public(key(i)),1,public(key(1)),1000,deadline)
+            transactions.append(self.tx(i,'reserve_task',dict(task=task,provider=public(key(1)),budget=1000,deadline=deadline)))
+        self.run_block(transactions)
+        for workers in [1,2,4,8]:
+            self.assertEqual(self.last_metrics[workers]['speculative'],0)
+            self.assertEqual(self.last_metrics[workers]['signature_verifications'],16)
+        task=task_identity(public(key(0)),self.nonces[0]+1,public(key(1)),1000,deadline)
+        overflow=self.tx(0,'reserve_task',dict(task=task,provider=public(key(1)),budget=1000,deadline=deadline))
+        before=copy.deepcopy(self.state)
+        for workers in [1,2,4,8]:
+            with self.assertRaisesRegex(ValueError,'LIMIT'):
+                execute_native(self.state,[overflow],self.height+1,public(key(0)),GENESIS,workers,BINARY)
+        self.assertEqual(self.state,before)
+
+    def test_single_signature_context_cannot_be_reused_for_another_payload(self):
+        raw=bytearray(sign(key(0),1,'transfer',dict(recipient=public(key(1)),amount=1)))
+        raw[127]^=1;before=copy.deepcopy(self.state)
+        for workers in [1,2,4,8]:
+            with self.assertRaisesRegex(ValueError,'SIGNATURE'):
+                execute_native(self.state,[bytes(raw)],1,public(key(0)),GENESIS,workers,BINARY)
+        self.assertEqual(self.state,before)
 
     def test_three_signed_release_generations_preserve_payout_and_retirement(self):
         for i in range(3):

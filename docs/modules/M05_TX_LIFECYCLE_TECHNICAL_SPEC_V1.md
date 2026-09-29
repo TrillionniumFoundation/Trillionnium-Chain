@@ -66,3 +66,13 @@ raw command exits and concrete invariant test results. Its verifier distinguishe
 runtime byte identity from documentation edits and cannot grant independent acceptance.
 Module-specific limitations above remain in force even when the referenced local test
 passes. The development plan, not this link or a count of procedures, selects next work.
+
+## Block-scoped execution continuation
+
+The existing native executor now bounds thread creation per block and preserves a private
+verified main envelope across canonical state replay. This is a computational fact, not
+work validity or local permission. Capacity/range state transitions remain ordered and
+consumer signatures still bind actual quota state. See the exact algorithm, errors and
+counterexamples in [EXECUTION_PARALLEL](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md).
+Complete-state root construction, full native node assembly and Hepta ownership remain
+separate work; worker counts do not establish throughput or independent acceptance.

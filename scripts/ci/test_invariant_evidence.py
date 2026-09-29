@@ -17,11 +17,16 @@ class InvariantEvidenceTests(unittest.TestCase):
         try:
             data=json.loads(raw);change(data);p.write_text(json.dumps(data,indent=2)+'\n')
             m=json.loads(original);m['files'][relative]=hashlib.sha256(p.read_bytes()).hexdigest();mp.write_text(json.dumps(m))
-            with self.assertRaises(ValueError):validate(ROOT,self.evidence)
+            with self.assertRaises(ValueError):validate(ROOT,self.evidence,require_current_runtime=False)
         finally:p.write_bytes(raw);mp.write_bytes(original)
     def test_recorded_source_and_results(self):
-        result=validate(ROOT,self.evidence)
+        result=validate(ROOT,self.evidence,require_current_runtime=False)
         self.assertFalse(result['independent_accepted']);self.assertGreater(result['executed_invariant_selectors'],0)
+    def test_prior_execution_cannot_be_promoted_to_current_runtime(self):
+        historical=validate(ROOT,self.evidence,require_current_runtime=False)
+        self.assertFalse(historical['runtime_matches_measured_source'])
+        with self.assertRaisesRegex(ValueError,'runtime changed'):
+            validate(ROOT,self.evidence,require_current_runtime=True)
     def test_runtime_failure_is_not_success(self):
         self.mutate('qualification/report.json',lambda d:d['results'][0].update(returncode=1))
     def test_native_count_cannot_be_inflated(self):
@@ -63,7 +68,7 @@ class InvariantEvidenceTests(unittest.TestCase):
         p=self.evidence/'qualification/7.log';data=p.read_bytes()
         try:
             p.write_bytes(b'OK\n')
-            with self.assertRaises(ValueError):validate(ROOT,self.evidence)
+            with self.assertRaises(ValueError):validate(ROOT,self.evidence,require_current_runtime=False)
         finally:p.write_bytes(data)
 
 if __name__=='__main__':unittest.main(verbosity=2)

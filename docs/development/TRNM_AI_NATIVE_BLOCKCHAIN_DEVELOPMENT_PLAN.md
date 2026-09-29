@@ -342,3 +342,25 @@ all no-update/zero-reward outcomes must remain visible. The actual public-model 
 must change only on current admitted evidence. The desired three improving generations
 requires prospective tasks and the real owner path; it is not met by three synthetic
 score releases, three retrospectively trained candidates or three remote machines.
+
+## Current invariant continuation and measured-source boundaries
+
+Continue PR #202 on this main lineage rather than creating a competing product owner.
+The four audited counterexamples have executable fixes and exact selectors in
+`config/pon/invariants-v2.json`. Retained `evidence/pon-v3` reports 4,114 real work-verified
+blocks and a shallow fork above height4,096, all twelve native commands, and controlled
+ROG/Pocket4/X230 fault/partition experiments. Those are source-bound historical observations,
+not claims that every later binary has repeated the same campaign.
+
+The next native execution increment reduces thread creation and repeated main-signature
+work while keeping canonical state/receipt/root behavior. New comparisons must be run on
+identical signed requests with both binaries interleaved. Missing proof cost, chain
+inclusion, client confirmation and GPU measurements remain null, not inferred throughput.
+
+An ordinary Hepta destination and independently authorized public-export/resource owners
+are still not installed by these tests. Independently administered evaluators, public
+admission hardness, physical power loss, long-term DA and three improving future-window
+model generations remain unaccepted. Three valid no-update training attempts must stay
+no-update; they cannot be renamed three successful public generations. The explicit
+remaining implementation and external acceptance scopes are not reasons to duplicate
+existing owner kernels or restore retired consensus.

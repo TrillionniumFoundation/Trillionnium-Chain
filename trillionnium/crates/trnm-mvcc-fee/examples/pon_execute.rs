@@ -42,7 +42,7 @@ fn run() -> Result<(), String> {
     .map_err(str::to_owned)?;
     println!(
         "{}",
-        json!({"network":hex::encode(cfg.network),"parameters":hex::encode(cfg.parameters),"state":result.state,"receipts":result.receipts.iter().map(hex::encode).collect::<Vec<_>>(),"root":hex::encode(result.root),"metrics":{"workers":result.metrics.workers,"speculative":result.metrics.speculative,"reexecuted":result.metrics.reexecuted,"committed_without_replay":result.metrics.committed_without_replay,"peak_inflight":result.metrics.peak_inflight,"serial_conflict_batches":result.metrics.serial_conflict_batches,"elapsed_ns":start.elapsed().as_nanos().to_string()},"scope":"native-application-not-production-node"})
+        json!({"network":hex::encode(cfg.network),"parameters":hex::encode(cfg.parameters),"state":result.state,"receipts":result.receipts.iter().map(hex::encode).collect::<Vec<_>>(),"root":hex::encode(result.root),"metrics":{"workers":result.metrics.workers,"speculative":result.metrics.speculative,"reexecuted":result.metrics.reexecuted,"committed_without_replay":result.metrics.committed_without_replay,"peak_inflight":result.metrics.peak_inflight,"serial_conflict_batches":result.metrics.serial_conflict_batches,"workers_spawned":result.metrics.workers_spawned,"signature_verifications":result.metrics.signature_verifications,"state_transition_ns":result.metrics.state_transition_ns.to_string(),"state_root_ns":result.metrics.state_root_ns.to_string(),"elapsed_ns":start.elapsed().as_nanos().to_string()},"scope":"native-application-not-production-node"})
     );
     Ok(())
 }

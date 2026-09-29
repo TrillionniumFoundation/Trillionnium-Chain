@@ -4,6 +4,7 @@
 //! re-executed ONCE against that order's current state, never an unbounded retry loop.
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_protocol::pon_wire::{hash, state_root, Envelope, Hash};
 
@@ -151,6 +152,10 @@ pub struct Metrics {
     pub committed_without_replay: usize,
     pub peak_inflight: usize,
     pub serial_conflict_batches: usize,
+    pub workers_spawned: usize,
+    pub signature_verifications: usize,
+    pub state_transition_ns: u128,
+    pub state_root_ns: u128,
 }
 #[derive(Clone, Debug)]
 pub struct Output {
@@ -340,23 +345,41 @@ fn active_candidate(v: &Value, current: &str, height: u64, cfg: &Config) -> Resu
         && height <= add(submitted, cfg.limit("candidate_lifetime_blocks")?)?)
 }
 
-fn apply_one(base: &State, raw: &[u8], height: u64, cfg: &Config) -> Result<Patch> {
+// This carrier is private and tied to the exact immutable input and installed context.
+// Main-envelope verification is independent of branch state and is done only once.
+// Consumer-use signatures still depend on the actual quota state and are checked there.
+struct Prepared {
+    envelope: Envelope,
+    sender: String,
+    encoded_len: usize,
+}
+fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> Result<Prepared> {
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
     require(tx.network == cfg.network, "NETWORK")?;
     require(height <= tx.expiry, "EXPIRED")?;
     let sender = hex::encode(tx.sender);
+    signatures.fetch_add(1, Ordering::Relaxed);
     verify_hex_strict(
         &sender,
         &tx.signing_digest().map_err(|_| "ENCODING")?,
         &hex::encode(tx.signature),
     )
     .map_err(|_| "SIGNATURE")?;
+    Ok(Prepared {
+        envelope: tx,
+        sender,
+        encoded_len: raw.len(),
+    })
+}
+fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) -> Result<Patch> {
+    let tx = &prepared.envelope;
+    let sender = prepared.sender.clone();
     let mut s = View::new(base);
     let acct = s.account(&sender);
     require(tx.nonce == add(field(&acct, "nonce")?, 1)?, "NONCE")?;
     let fee = add(
         cfg.fees[tx.tag as usize],
-        (raw.len() as u64)
+        (prepared.encoded_len as u64)
             .checked_mul(cfg.limit("byte_fee_units")?)
             .ok_or("RANGE")?,
     )?;
@@ -884,57 +907,121 @@ pub fn execute(
         workers,
         ..Metrics::default()
     };
-    for batch in transactions.chunks(workers) {
-        // Sender is a mandatory nonce write in every command. Identical fixed
-        // sender bytes can only choose a cheaper schedule, never skip validation.
-        let same_sender = batch.len() > 1
-            && batch[0].len() >= 68
-            && batch
+    let transition_start = std::time::Instant::now();
+    let signatures = AtomicUsize::new(0);
+    // Same sender means every transaction writes the same nonce. Preserve a serial
+    // state path, while independent cryptographic checks may still use the bounded pool.
+    let serial_state = workers == 1
+        || (transactions.len() > 1
+            && transactions[0].len() >= 68
+            && transactions
                 .iter()
-                .all(|raw| raw.get(36..68) == batch[0].get(36..68));
-        if workers == 1 || same_sender {
-            metrics.peak_inflight = metrics.peak_inflight.max(1);
-            if same_sender {
-                metrics.serial_conflict_batches += 1;
+                .all(|raw| raw.get(36..68) == transactions[0].get(36..68)));
+    struct Predicted {
+        prepared: Result<Prepared>,
+        patch: Option<Result<Patch>>,
+    }
+    let predict = |raw: &[u8]| {
+        let prepared = prepare(raw, height, cfg, &signatures);
+        let range_command = prepared
+            .as_ref()
+            .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10));
+        // Prefix-capacity operations remain canonical: do not retain one full
+        // prefix snapshot per transaction merely to parallelize shared budgets.
+        let patch = if serial_state || range_command {
+            None
+        } else {
+            Some(
+                prepared
+                    .as_ref()
+                    .map_err(|e| *e)
+                    .and_then(|tx| apply_prepared(&state, tx, height, cfg)),
+            )
+        };
+        Predicted { prepared, patch }
+    };
+    let count = workers.min(transactions.len());
+    let predicted = if count <= 1 {
+        transactions
+            .iter()
+            .map(|raw| predict(raw))
+            .collect::<Vec<_>>()
+    } else {
+        // One bounded group of scoped workers PER BLOCK, not per short batch.
+        // No clone of the full state per worker; everyone reads the same snapshot.
+        metrics.workers_spawned = count;
+        std::thread::scope(|scope| -> Result<Vec<Predicted>> {
+            let mut handles = Vec::with_capacity(count);
+            for worker in 0..count {
+                let work = &predict;
+                let handle = std::thread::Builder::new()
+                    .name(format!("pon-exec-{worker}"))
+                    .spawn_scoped(scope, move || {
+                        (worker..transactions.len())
+                            .step_by(count)
+                            .map(|index| (index, work(&transactions[index])))
+                            .collect::<Vec<_>>()
+                    });
+                match handle {
+                    Ok(h) => handles.push(h),
+                    Err(_) => {
+                        // Join already started workers on partial-spawn failure too.
+                        for h in handles {
+                            let _ = h.join();
+                        }
+                        return Err("WORKER_START");
+                    }
+                }
             }
-            for raw in batch {
-                let patch = apply_one(&state, raw, height, cfg)?;
-                fees = add(fees, patch.fee)?;
-                receipts.push(patch.receipt.clone());
-                patch.apply(&mut state);
-                metrics.committed_without_replay += 1;
+            let mut rows = Vec::with_capacity(transactions.len());
+            let mut panicked = false;
+            for handle in handles {
+                match handle.join() {
+                    Ok(mut values) => rows.append(&mut values),
+                    Err(_) => panicked = true,
+                }
             }
-            continue;
-        }
-        metrics.peak_inflight = metrics.peak_inflight.max(batch.len());
-        let predicted = std::thread::scope(|scope| {
-            let base = &state;
-            let handles: Vec<_> = batch
-                .iter()
-                .map(|raw| scope.spawn(move || apply_one(base, raw, height, cfg)))
-                .collect();
-            handles
-                .into_iter()
-                .map(|h| h.join().unwrap_or(Err("WORKER_PANIC")))
-                .collect::<Vec<_>>()
-        });
-        metrics.speculative += batch.len();
-        for (raw, result) in batch.iter().zip(predicted) {
-            let patch = match result {
-                Ok(p) if p.current(&state) => {
+            require(!panicked, "WORKER_PANIC")?;
+            rows.sort_by_key(|(index, _)| *index);
+            require(rows.len() == transactions.len(), "WORKER_RESULT")?;
+            Ok(rows.into_iter().map(|(_, result)| result).collect())
+        })?
+    };
+    metrics.signature_verifications = signatures.load(Ordering::Relaxed);
+    metrics.peak_inflight = if serial_state {
+        usize::from(!transactions.is_empty())
+    } else {
+        count
+    };
+    if serial_state && workers > 1 && !transactions.is_empty() {
+        metrics.serial_conflict_batches = 1;
+    }
+    for result in predicted {
+        // Consume failures at their canonical transaction position. A bad later
+        // signature never bypasses an earlier state error or mutates the parent.
+        let prepared = result.prepared?;
+        let patch = if serial_state || result.patch.is_none() {
+            metrics.committed_without_replay += 1;
+            apply_prepared(&state, &prepared, height, cfg)?
+        } else {
+            metrics.speculative += 1;
+            match result.patch.ok_or("WORKER_RESULT")? {
+                Ok(patch) if patch.current(&state) => {
                     metrics.committed_without_replay += 1;
-                    p
+                    patch
                 }
                 _ => {
                     metrics.reexecuted += 1;
-                    apply_one(&state, raw, height, cfg)?
+                    // Exactly one canonical state replay, no duplicate main-signature work.
+                    apply_prepared(&state, &prepared, height, cfg)?
                 }
-            };
-            fees = add(fees, patch.fee)?;
-            receipts.push(patch.receipt.clone());
-            patch.apply(&mut state);
-        }
+            }
+        };
+        fees = add(fees, patch.fee)?;
+        receipts.push(patch.receipt.clone());
+        patch.apply(&mut state);
     }
+    metrics.state_transition_ns = transition_start.elapsed().as_nanos();
     let halvings = (height / cfg.limit("subsidy_halving_interval")?).min(64);
     let subsidy = cfg
         .limit("block_subsidy_units")?
@@ -945,7 +1032,9 @@ pub fn execute(
     let issued = add(num(state.get("meta:issued").ok_or("STATE")?)?, subsidy)?;
     state.insert("meta:issued".into(), json!(issued));
     require(funds(&state)? == issued, "CONSERVATION")?;
+    let root_start = std::time::Instant::now();
     let root = root(&state)?;
+    metrics.state_root_ns = root_start.elapsed().as_nanos();
     Ok(Output {
         state,
         receipts,

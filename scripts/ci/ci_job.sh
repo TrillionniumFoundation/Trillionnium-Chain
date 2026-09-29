@@ -43,8 +43,10 @@ case "${1:?required job}" in
     python3 scripts/ci/test_repository.py EvidenceBoundaryTests
     python3 scripts/ci/check_pon_evidence.py
     python3 scripts/ci/test_pon_evidence.py
-    python3 scripts/ci/check_invariant_evidence.py
+    python3 scripts/ci/check_invariant_evidence.py --historical
     python3 scripts/ci/test_invariant_evidence.py
+    python3 scripts/ci/check_completion_evidence.py
+    python3 scripts/ci/test_completion_evidence.py
     ;;
   *) printf '%s\n' 'unknown CI job' >&2; exit 2 ;;
 esac

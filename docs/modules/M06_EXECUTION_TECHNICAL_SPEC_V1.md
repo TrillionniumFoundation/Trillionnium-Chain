@@ -66,3 +66,21 @@ raw command exits and concrete invariant test results. Its verifier distinguishe
 runtime byte identity from documentation edits and cannot grant independent acceptance.
 Module-specific limitations above remain in force even when the referenced local test
 passes. The development plan, not this link or a count of procedures, selects next work.
+
+## Block-scoped execution continuation
+
+The existing native executor now bounds thread creation per block and preserves a private
+verified main envelope across canonical state replay. This is a computational fact, not
+work validity or local permission. Capacity/range state transitions remain ordered and
+consumer signatures still bind actual quota state. See the exact algorithm, errors and
+counterexamples in [EXECUTION_PARALLEL](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md).
+Complete-state root construction, full native node assembly and Hepta ownership remain
+separate work; worker counts do not establish throughput or independent acceptance.
+
+Exact continuation selectors (each must appear as actually executed in a current receipt):
+
+- `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict`
+- `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_funding_dependency_replays_state_not_main_signature`
+- `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots`
+- `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_later_invalid_signature_does_not_change_canonical_error`
+- `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_single_signature_context_cannot_be_reused_for_another_payload`

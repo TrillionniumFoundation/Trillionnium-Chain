@@ -4,25 +4,39 @@ Implementation: `trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs`, in the 
 M06 owner. The M00 wire and M01 strict signatures are reused. No parallel consensus,
 learning ledger or database writer is introduced. `execute_reference` remains the
 independently coded Python oracle. Both implementations have the same experimental
-revision2 context, not independently administered acceptance.
+revision3 context, not independently administered acceptance.
 
 ## Fixed ordering and validation
 
-Execute mandatory candidate retirement, due expiry and reward maturity first. Split
-canonical transactions into batches at most the configured worker count1/2/4/8. Each
-worker reads one immutable snapshot and emits a private patch with exact key observations,
-prefix-scan observations, writes, fee and receipt. Prefix observations include absent
-keys, preventing phantom insertion from bypassing capacity/deadline checks.
+Execute mandatory candidate retirement, due expiry and reward maturity first. Main
+transaction envelopes are decoded and strictly verified once per block against the
+installed context. A private `Prepared` value owns that exact envelope, sender and
+encoded length; neither JSON nor a cached Boolean constructs this carrier.
 
-In canonical order, publish a patch only when its observed keys AND prefix sets still
-match the current state. Otherwise rerun that transaction exactly once against canonical
-preceding state. A speculative error can be caused by a missing preceding nonce/funds,
-so it also reruns once; a deterministic error then rejects the whole block. The borrowed
-parent is never mutated. Finish fee/subsidy accounting, global conservation and root.
+At most the requested 1/2/4/8 workers are created once per block. Distinct-sender point
+operations may produce patches against one borrowed immutable state. Every key read,
+including absence, is checked again against canonical preceding state. A stale patch
+or speculative state error triggers exactly one canonical replay, using the same verified
+envelope. Work or state errors are consumed at their canonical transaction index: a bad
+later signature does not replace an earlier nonce error. No borrowed parent is mutated.
 
-Maximum simultaneous workers=8; each transaction has at most one retry. No endless
-optimistic loop. This implementation creates scoped workers for each small batch; a
-resident pool is a later optimization requiring the same cancellation and ordering tests.
+Capacity/range operations (tags2,6,8,10) execute their state transition canonically after
+parallel signature preparation. This deliberately avoids retaining a prefix snapshot for
+every transaction and does not claim those shared budgets are independent. Identical
+sender blocks use serial state execution for the shared nonce. Consumer quota signatures
+remain bound to actual quota state and are checked there; main-envelope signature reuse
+must never become a generic permission cache.
+
+All scoped workers are joined, including partial thread-creation failure and panic.
+`WORKER_START`, `WORKER_PANIC` and `WORKER_RESULT` fail the candidate, not a successful
+fallback. There is no resident worker service, second writer, or parallel consensus actor.
+The pool lifetime is one call, not the lifetime of a chain or a local authorization.
+
+Metrics separate worker creation, main-signature verifications, state speculation,
+canonical replays, transition time and root time. `workers_spawned<=workers`; valid input
+has one main-signature verification per envelope, even on conflict. Root computation
+still walks the complete resulting state and is not incremental native persistence.
+The retained full-state bridge and its memory/byte bounds remain explicit limitations.
 
 ## Actual read/write and range conflicts
 
@@ -65,7 +79,12 @@ rejection after old-candidate removal; it does not claim three successful ML gen
 Report execution-only duration separately from process startup, work verification,
 block inclusion and confirmation. A local executor speedup is never public-chain TPS.
 
-Before launching a batch, identical fixed sender bytes imply a mandatory shared nonce write. Such a batch executes serially with full validation and no speculation. Metrics report serial_conflict_batches and actual peak_inflight. Distinct senders sharing a recipient remain a real re-execution test; no valid transaction or signature is skipped.
+`serial_conflict_batches=1` now identifies a whole same-sender block handled by the
+serial state path; it no longer counts retired per-worker-size scheduling batches.
+A sixteen-transaction common-recipient block needs fifteen canonical state replays under
+the whole-block snapshot schedule, rather than fourteen under eight-item batches. Its
+main-signature checks remain sixteen, not thirty-one. This changed scheduling metric is
+not a consensus byte, fee, root, or success/rejection rule change.
 
 The native bridge checks Network and full Parameters on every request and returns both identities. The caller rejects mismatches even when the transaction list is empty; stale binaries cannot silently supply old empty-block rules.
 
@@ -80,3 +99,19 @@ Python oracle. Request/response contexts and the resulting state root remain che
 bytes and decoded products are compared against the separate oracle. Unknown or failed
 native executables reject. This joins native work and application components to the
 existing reference ledger; it is not a new standalone native consensus/persistence host.
+
+## Exact continuation counterexamples and cost comparison
+
+`test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict` asserts both
+the resource count and exact roots. `test_funding_dependency_replays_state_not_main_signature`
+uses a preceding transfer that makes a later sender solvent. `test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots`
+checks the shared deadline capacity, including the rejecting next reservation.
+`test_later_invalid_signature_does_not_change_canonical_error` preserves error ordering;
+`test_single_signature_context_cannot_be_reused_for_another_payload` changes signed bytes.
+
+`experiments/executor_comparison.py` interleaves unchanged baseline and new binaries on
+identical signed inputs, against the separate Python result. It records source and binary
+hashes, request hashes, roots, receipt digests, process-inclusive and executor-only times,
+RSS and missing VRAM/inclusion/confirmation fields. Regressions remain in the report; no
+speedup threshold can mask a wrong result. Old `evidence/pon-v3` costs remain bound to their
+measured source and are not relabelled as this continuation's performance.

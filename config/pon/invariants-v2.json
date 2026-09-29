@@ -29,7 +29,7 @@
       "id": "VerificationAuthority",
       "claim": "Bad signatures reject the whole block without mutating parent state; altered work output or context never yields verified work. Both verification languages reject small-order public keys/R, noncanonical points and scalars outside the group-order bound.",
       "scope": "Actual strict native signatures and unchanged experimental transcript verification.",
-      "atomic": "Signature verification precedes speculative patches; only full transcript verification creates work authority.",
+      "atomic": "A private verified envelope binds bytes and installed genesis before state patches. Canonical replay reuses only this main-signature fact; quota-consumer signatures are checked against actual state. Only full transcript verification creates work authority.",
       "cuts": [
         "Bad signature at every worker count",
         "Changed transcript, product and challenge",
@@ -139,7 +139,7 @@
       "id": "CanonicalNonce",
       "claim": "Actual disjoint senders avoid false conflicts; hot-sender transactions retry at most once against canonical preceding state.",
       "scope": "Signed transactions in native M06 execution; mempool product wiring remains distinct.",
-      "atomic": "Validate exact key reads and prefix-scan results immediately before canonical patch commit.",
+      "atomic": "Only current exact key observations allow a speculative point patch to commit. Range-capacity commands use canonical state; identical-sender state transitions do not speculate.",
       "cuts": [
         "Sixteen ordered same-sender nonces",
         "Independent sender and recipient pairs",
@@ -160,25 +160,34 @@
     {
       "module": "M06",
       "id": "TwelveCommandEquivalence",
-      "claim": "All twelve commands produce identical state, receipts, fees and root at one, two, four and eight workers.",
+      "claim": "All twelve commands produce identical state, receipts, fees and root at one, two, four and eight workers. Each main envelope is verified once even on state conflict, and the whole block starts at most the selected worker count.",
       "scope": "Native implementation inside existing trnm-mvcc-fee and separately coded Python reference.",
-      "atomic": "Mandatory transitions first, parallel local proposals, canonical read-set validation, one re-execution on conflict, then final conservation and subsidy.",
+      "atomic": "Mandatory transitions, one bounded group of signature/point-operation workers, canonical range transitions and patch validation, at most one state replay, then conservation/root. Worker failures reject without publishing any parent mutation.",
       "cuts": [
         "Tasks, cancel, receipt and accept",
         "Contribute, evaluate, publish and claim",
         "Quota reserve/use and work registration",
-        "Missing native backend"
+        "Missing native backend",
+        "Preceding transfer funds a later sender",
+        "Later signature fails while earlier nonce is invalid",
+        "Shared range deadline capacity is exhausted",
+        "Changed bytes with a previous signature"
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_all_twelve_tags_match_for_1_2_4_8_workers",
-        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_missing_native_binary_is_not_reference_fallback"
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_missing_native_binary_is_not_reference_fallback",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_funding_dependency_replays_state_not_main_signature",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_later_invalid_signature_does_not_change_canonical_error",
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_single_signature_context_cannot_be_reused_for_another_payload"
       ],
       "source": [
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
         "formal/pon-nakamoto-v1/native_execution.py",
         "formal/pon-nakamoto-v1/ledger.py"
       ],
-      "limit": "256 transactions; tracked prefix reads detect phantoms; explicit native bridge is bounded to16MiB and30 seconds.",
+      "limit": "256 envelopes; at most1/2/4/8 created workers per block; one main signature check per valid envelope; range capacity commands commit canonically; at most one state replay per other transaction. No per-worker full-state clone.",
       "threat": "Incorrect conflict sets, receipt order changes, unbounded retries and successful fallback masking missing implementation.",
       "remaining": "A native application engine is not a complete native consensus/persistence/Hepta host."
     },
