@@ -9,6 +9,7 @@ import argparse, hashlib, json, os, platform, signal, subprocess, sys, time
 from importlib.metadata import version
 from cryptography.hazmat.backends.openssl.backend import backend as openssl_backend
 from pathlib import Path
+from qualification_runtime import bind_python_runtime
 
 ROOT = Path(__file__).resolve().parents[1]
 FLAGS = ('public_network_ready', 'production_activation', 'independent_accepted',
@@ -37,10 +38,12 @@ def run(args):
     env.update(CARGO_HOME=str(Path(args.cargo_home).resolve()), CARGO_TARGET_DIR=str(Path(args.target).resolve()),
                CARGO_BUILD_JOBS='2', CARGO_NET_OFFLINE='true', RUST_TEST_THREADS='1',
                PYTHONDONTWRITEBYTECODE='1', OPENBLAS_NUM_THREADS='1', OMP_NUM_THREADS='1')
+    env, child_python3 = bind_python_runtime(env)
     records = []
     report = dict(schema='trnm-public-readiness-engineering-v1', source_commit=commit, source_tree=tree,
         source_clean=True, all_commands_passed=False, source_files_sha256={p:sha(ROOT/p) for p in git('ls-files').splitlines() if relevant(p)},
         environment=dict(platform=platform.platform(), python=platform.python_version(),
+            child_python3=child_python3,
             numpy=__import__('numpy').__version__, cryptography=__import__('cryptography').__version__,
             cryptography_openssl=openssl_backend.openssl_version_text(), cffi=version('cffi'),
             rust=subprocess.check_output(['rustc','--version'],text=True).strip(),

@@ -161,6 +161,14 @@ def validate_environment(root, report, baseline):
     for package in ('cryptography_openssl','cffi'):
         value=environment.get(package)
         require(isinstance(value,str) and value.strip(), 'missing environment runtime record '+package)
+    for observer in (environment,reference):
+        child=observer.get('child_python3')
+        require(isinstance(child,dict), 'missing child Python environment')
+        require(isinstance(child.get('executable'),str) and Path(child['executable']).is_absolute(),
+                'child Python executable')
+        for package in ('python','numpy','cryptography'):
+            require(child.get(package) == observer.get(package), 'child Python runtime mismatch '+package)
+    require(environment['child_python3'] == reference['child_python3'], 'child Python/baseline mismatch')
 
 
 def quantiles(values):

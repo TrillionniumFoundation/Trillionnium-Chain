@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import os
 import re
 import sqlite3
 import subprocess
@@ -89,7 +90,17 @@ class SourceAndArtifactTests(unittest.TestCase):
         report={'environment':dict(python='3.12.14',numpy='1.26.4',cryptography='50.0.2',
                                   cryptography_openssl='OpenSSL 4.0.3',cffi='2.1.1')}
         baseline={'environment':dict(python='3.12.14',numpy='1.26.4',cryptography='50.0.2')}
+        child=dict(executable='/isolated/venv/bin/python3',python='3.12.14',numpy='1.26.4',cryptography='50.0.2')
+        report['environment']['child_python3']=copy.deepcopy(child)
+        baseline['environment']['child_python3']=copy.deepcopy(child)
         check.validate_environment(self.root,report,baseline)
+        for field,value in [('executable','python3'),('numpy','1.26.3'),('cryptography','41.0.7'),('python','3.12.13')]:
+            changed=copy.deepcopy(report);changed['environment']['child_python3'][field]=value
+            with self.subTest(child_field=field),self.assertRaisesRegex(ValueError,'child Python'):
+                check.validate_environment(self.root,changed,baseline)
+        changed=copy.deepcopy(report);changed['environment'].pop('child_python3')
+        with self.assertRaisesRegex(ValueError,'missing child Python'):
+            check.validate_environment(self.root,changed,baseline)
         for field,value in [('cryptography','41.0.7'),('numpy','1.26.3'),('python','3.12.13'),
                             ('python','3.12'),('cryptography_openssl',''),('cryptography_openssl',None),
                             ('cffi',' '),('cffi',False)]:
@@ -103,6 +114,21 @@ class SourceAndArtifactTests(unittest.TestCase):
         requirements.write_text('numpy==1.26.4\ncryptography>=50\n')
         with self.assertRaisesRegex(ValueError,'missing or ambiguous environment pin cryptography'):
             check.validate_environment(self.root,report,baseline)
+
+    def test_qualification_subprocess_ignores_a_poisoned_python_search_path(self):
+        sys.path.insert(0,str(check.ROOT/'scripts'))
+        from qualification_runtime import bind_python_runtime
+        fake=self.root/'fake-bin';fake.mkdir()
+        program=fake/'python3';program.write_text('#!/bin/sh\nexit 79\n');program.chmod(0o755)
+        poisoned=dict(os.environ,PATH=str(fake)+os.pathsep+os.environ.get('PATH',''))
+        self.assertEqual(subprocess.run(['python3','-c','pass'],env=poisoned).returncode,79)
+        bound,observed=bind_python_runtime(poisoned)
+        output=json.loads(subprocess.check_output(['python3','-c',
+            'import sys,platform,json,numpy,cryptography; print(json.dumps(dict('
+            'executable=sys.executable,python=platform.python_version(),numpy=numpy.__version__,'
+            'cryptography=cryptography.__version__)))'],env=bound,text=True))
+        self.assertEqual(output,observed)
+        self.assertEqual(output['python'],sys.version.split()[0])
 
     def artifacts(self):
         folder = self.root/'evidence/test'; folder.mkdir(parents=True)

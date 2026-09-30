@@ -3,6 +3,7 @@
 from __future__ import annotations
 import argparse,hashlib,json,os,platform,re,signal,subprocess,sys,time
 from pathlib import Path
+from qualification_runtime import bind_python_runtime
 
 ROOT=Path(__file__).resolve().parents[1]
 PYTHON_TESTS=['test_reference','test_contracts','test_invariants','test_evaluation',
@@ -23,13 +24,14 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
  commit=git('rev-parse','HEAD');tree=git('rev-parse','HEAD^{tree}')
  if not re.fullmatch('[0-9a-f]{40}',source):raise ValueError('SOURCE_COMMIT')
  source_tree=git('rev-parse',source+'^{tree}')
- files=git('ls-files').splitlines();source_files={p:sha(ROOT/p)for p in files if runtime(p)or p in {'config/pon/invariants-v2.json','scripts/run_evaluation_qualification.py'}}
+ files=git('ls-files').splitlines();source_files={p:sha(ROOT/p)for p in files if runtime(p)or p in {'config/pon/invariants-v2.json','scripts/run_evaluation_qualification.py','scripts/qualification_runtime.py'}}
  env=os.environ.copy()
  for name in list(env):
   if name.startswith('TRNM_'):env.pop(name)
  env.update(CARGO_HOME=str(Path(cargo_home).resolve()),CARGO_TARGET_DIR=str(Path(target).resolve()),
   CARGO_BUILD_JOBS='2',CARGO_NET_OFFLINE='true',RUST_TEST_THREADS='1',PYTHONDONTWRITEBYTECODE='1',
   OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1',TRNM_NATIVE_MODE='release',TMPDIR='/tmp')
+ env,child_python3=bind_python_runtime(env)
  (out/'logs').mkdir();records=[]
  def execute(name,command,timeout=1200,extra=None):
   log=out/'logs'/(name+'.log');usage=out/'logs'/(name+'.usage')
@@ -64,6 +66,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
  report={'schema':'pon-evaluation-qualification-v1','source_commit':commit,'source_tree':tree,
          'source_clean':True,'source_files_sha256':source_files,'input_source_commit':source,'input_source_tree':source_tree,
          'environment':{'platform':platform.platform(),'python':platform.python_version(),
+          'child_python3':child_python3,
           'numpy':__import__('numpy').__version__,'cryptography':__import__('cryptography').__version__,
           'rust':subprocess.check_output(['rustc','--version'],text=True).strip(),
           'temporary_filesystem':subprocess.check_output(['findmnt','-T','/tmp','-n','-o','FSTYPE,TARGET'],text=True).strip(),
