@@ -117,4 +117,102 @@ class EvidenceSourceTests(unittest.TestCase):
                 def run(*args, **kwargs): raise AssertionError('reject before commands')
                 with self.assertRaises(ValueError): prepare(self.root, run)
 
+    def write_input_source(self, commit='7'*40, tree='8'*40, package='pon-evaluation-bundle-v1'):
+        path=self.root/'evidence'/package/'qualification.json'
+        path.write_text(json.dumps(dict(input_source_commit=commit,input_source_tree=tree)))
+        return path
+
+    def test_corpus_fetch_uses_only_declared_exact_object_and_tree(self):
+        self.write_input_source();self.trees['7'*40]='8'*40;calls=[]
+        def run(args,**kwargs):
+            calls.append(args)
+            if args[1]=='cat-file':
+                return subprocess.CompletedProcess(args,1 if args[3].startswith('7'*40) else 0,'','')
+            if args[1]=='rev-parse':
+                return subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')
+            return subprocess.CompletedProcess(args,0,'','')
+        result=prepare(self.root,run)
+        self.assertEqual(result['fetched'],['7'*40])
+        self.assertEqual(result['verified_object_trees']['7'*40],'8'*40)
+        self.assertEqual([args for args in calls if args[1]=='fetch'],
+            [['git','fetch','--no-tags','--no-write-fetch-head',REMOTE,'7'*40]])
+        self.assertFalse(result['branch_refs_changed']);self.assertFalse(result['acceptance_granted'])
+
+    def test_existing_corpus_is_checked_without_fetch(self):
+        self.write_input_source();self.trees['7'*40]='8'*40;calls=[]
+        def run(args,**kwargs):
+            calls.append(args)
+            return subprocess.CompletedProcess(args,0,
+                self.trees[args[2].split('^')[0]] if args[1]=='rev-parse' else '','')
+        result=prepare(self.root,run)
+        self.assertEqual(result['fetched'],[])
+        self.assertIn(['git','rev-parse','7'*40+'^{tree}'],calls)
+        self.assertFalse(any(args[1]=='fetch' for args in calls))
+
+    def test_corpus_commit_and_tree_each_require_strict_lowercase_sha(self):
+        def run(*args,**kwargs):raise AssertionError('must reject before any Git command')
+        for field in ['input_source_commit','input_source_tree']:
+            for value in ['main','--all','7'*39,'A'*40,'7'*40+'; echo BAD',None,7]:
+                with self.subTest(field=field,value=value):
+                    path=self.write_input_source();data=json.loads(path.read_text())
+                    data[field]=value;path.write_text(json.dumps(data))
+                    with self.assertRaisesRegex(ValueError,'invalid measured Git identity'):
+                        prepare(self.root,run)
+
+    def test_corpus_requires_complete_pair_before_any_command(self):
+        def run(*args,**kwargs):raise AssertionError('must reject before any Git command')
+        for missing in ['input_source_commit','input_source_tree']:
+            with self.subTest(missing=missing):
+                path=self.write_input_source();data=json.loads(path.read_text())
+                del data[missing];path.write_text(json.dumps(data))
+                with self.assertRaisesRegex(ValueError,'incomplete input source pair'):
+                    prepare(self.root,run)
+
+    def test_corpus_cannot_rebind_implementation_or_another_corpus(self):
+        def run(*args,**kwargs):raise AssertionError('must reject before any Git command')
+        self.write_input_source(commit='1'*40,tree='8'*40)
+        with self.assertRaisesRegex(ValueError,'conflicting source tree'):prepare(self.root,run)
+        self.write_input_source(commit='7'*40,tree='8'*40)
+        self.write_input_source(commit='7'*40,tree='9'*40,package='pon-v4')
+        with self.assertRaisesRegex(ValueError,'conflicting source tree'):prepare(self.root,run)
+
+    def test_corpus_matching_implementation_pair_deduplicates(self):
+        self.write_input_source(commit='1'*40,tree='2'*40);calls=[]
+        def run(args,**kwargs):
+            calls.append(args)
+            if args[1]=='cat-file':return subprocess.CompletedProcess(args,1,'','missing')
+            if args[1]=='rev-parse':
+                return subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')
+            return subprocess.CompletedProcess(args,0,'','')
+        result=prepare(self.root,run)
+        self.assertEqual(len(result['verified_object_trees']),4)
+        self.assertEqual(result['fetched'].count('1'*40),1)
+
+    def test_corpus_fetch_does_not_accept_mismatched_tree(self):
+        self.write_input_source()
+        def run(args,**kwargs):
+            if args[1]=='cat-file':return subprocess.CompletedProcess(args,1,'','missing')
+            if args[1]=='rev-parse':
+                commit=args[2].split('^')[0]
+                return subprocess.CompletedProcess(args,0,'9'*40 if commit=='7'*40 else self.trees[commit],'')
+            return subprocess.CompletedProcess(args,0,'','')
+        with self.assertRaisesRegex(ValueError,'measured tree unavailable or mismatched: '+'7'*40):
+            prepare(self.root,run)
+
+    def test_no_pair_or_nested_failure_does_not_invent_source(self):
+        (self.root/'evidence/pon-evaluation-bundle-v1/qualification.json').write_text(
+            json.dumps(dict(note='qualification with no corpus pair')))
+        for path in [self.root/'evidence/pon-evaluation-bundle-v1/failures/run/qualification.json',
+                     self.root/'evidence/unlisted-package/qualification.json']:
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps(dict(input_source_commit='main',input_source_tree='8'*40)))
+        calls=[]
+        def run(args,**kwargs):
+            calls.append(args)
+            return subprocess.CompletedProcess(args,0,
+                self.trees[args[2].split('^')[0]] if args[1]=='rev-parse' else '','')
+        result=prepare(self.root,run)
+        self.assertEqual(result['verified_object_trees'],self.trees)
+        self.assertFalse(any(args[1]=='fetch' for args in calls))
+
 if __name__=='__main__':unittest.main(verbosity=2)

@@ -63,6 +63,8 @@ def run(args):
         if code or expired: raise RuntimeError('QUALIFICATION_FAILED:'+name)
         if git('rev-parse','HEAD')!=commit or git('status','--porcelain'): raise ValueError('SOURCE_CHANGED')
     try:
+        execute('evidence-source-negative-tests',[sys.executable,'scripts/ci/test_evidence_sources.py'])
+        execute('evidence-source-preparation',[sys.executable,'scripts/ci/prepare_evidence_sources.py'])
         execute('public-readiness-evidence-negative-tests',[sys.executable,'scripts/ci/test_public_readiness_evidence.py'])
         execute('full-native-reference-regression',[sys.executable,'scripts/run_evaluation_qualification.py',
             '--native-node','--source',commit,'--out',str(out/'baseline'),'--target',env['CARGO_TARGET_DIR'],

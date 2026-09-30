@@ -27,6 +27,19 @@ def declarations(root):
         commit=identity(data['implementation_commit']);tree=identity(data['implementation_tree'])
         if commit in values and values[commit]!=tree:raise ValueError('conflicting source tree')
         values[commit]=tree
+    # Corpus snapshots are separately declared by these packages' root qualification.
+    # Do not infer sources from arbitrary JSON, nested failed runs, or branch names.
+    for name in names:
+        path=root/'evidence'/name/'qualification.json'
+        if not path.is_file():continue
+        data=json.loads(path.read_text())
+        if not isinstance(data,dict):raise ValueError('invalid source qualification')
+        has_commit='input_source_commit' in data;has_tree='input_source_tree' in data
+        if not (has_commit or has_tree):continue
+        if not (has_commit and has_tree):raise ValueError('incomplete input source pair')
+        commit,tree=identity(data['input_source_commit']),identity(data['input_source_tree'])
+        if commit in values and values[commit]!=tree:raise ValueError('conflicting source tree')
+        values[commit]=tree
     # Cost collections may be newer than the enclosing runtime qualification.
     for package in ['pon-contract-authority-v1', 'pon-native-session-v1', 'pon-native-node-v1', 'pon-closed-round-v1']:
         path = root/'evidence'/package/'work-cost/execution.json'

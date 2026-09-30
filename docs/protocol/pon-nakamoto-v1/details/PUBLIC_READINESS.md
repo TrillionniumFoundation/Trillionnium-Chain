@@ -111,7 +111,8 @@ correlated. Transactions in one block do not inflate the block sample count. The
 RPC/mempool stage; that latency is null. No GPU is used by this CPU chain workload;
 deployment model-inference VRAM remains unmeasured.
 
-`scripts/run_public_readiness_qualification.py` first executes the full existing
+`scripts/run_public_readiness_qualification.py` prepares exact declared implementation
+and corpus Git objects, verifies negative source/evidence tests, executes the full existing
 native/reference regression and then the new attack, task, attribution/lifecycle and
 live pipeline campaigns from clean committed source. Failures and raw logs are retained.
 It hashes its source and binary, records actual tool/runtime versions and produces no

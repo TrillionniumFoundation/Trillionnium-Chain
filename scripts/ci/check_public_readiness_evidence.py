@@ -21,6 +21,8 @@ CASES = (('hot', 'legacy'), ('hot', 'protected'), ('disjoint4', 'protected'), ('
 TESTS = ('test_model_attribution', 'test_work_utility', 'test_public_evaluation_lifecycle', 'test_llm_adapter_contract')
 SOCKET_RUN = 'transport-sustained-paid-unpaid'
 NEGATIVE_RUN = 'public-readiness-evidence-negative-tests'
+SOURCE_NEGATIVE_RUN = 'evidence-source-negative-tests'
+SOURCE_PREPARATION_RUN = 'evidence-source-preparation'
 
 
 def require(ok, message):
@@ -448,7 +450,7 @@ def validate(root=ROOT, evidence=None, *, tracked=True):
     require(report['source_clean_after'] is True and 'error' not in report, 'incomplete run')
     commit = validate_source(root,report,manifest)
     records = report['results']
-    required = {'full-native-reference-regression','pipeline-build','bounded-model-attribution',SOCKET_RUN,NEGATIVE_RUN,*TESTS} | {'pipeline-'+p+'-'+a for p,a in CASES}
+    required = {'full-native-reference-regression','pipeline-build','bounded-model-attribution',SOCKET_RUN,NEGATIVE_RUN,SOURCE_NEGATIVE_RUN,SOURCE_PREPARATION_RUN,*TESTS} | {'pipeline-'+p+'-'+a for p,a in CASES}
     require(len(records) == len(required) and {r['name'] for r in records} == required, 'command matrix')
     by_name = {r['name']:r for r in records}
     for row in records:
@@ -460,9 +462,17 @@ def validate(root=ROOT, evidence=None, *, tracked=True):
         if row['name'] in TESTS:
             require(row['command'][0].endswith('python3') and row['command'][1:] == ['formal/pon-nakamoto-v1/'+row['name']+'.py'], 'Python invocation')
             require(re.search(r'(?m)^Ran [1-9]\d* tests?\b',text) and re.search(r'(?m)^OK\s*$',text), 'Python actual outcome')
-        if row['name'] == NEGATIVE_RUN:
-            require(row['command'][0].endswith('python3') and row['command'][1:] == ['scripts/ci/test_public_readiness_evidence.py'], 'negative-test invocation')
+        if row['name'] in (NEGATIVE_RUN,SOURCE_NEGATIVE_RUN):
+            target = 'scripts/ci/test_public_readiness_evidence.py' if row['name'] == NEGATIVE_RUN else 'scripts/ci/test_evidence_sources.py'
+            require(row['command'][0].endswith('python3') and row['command'][1:] == [target], 'negative-test invocation')
             require(re.search(r'(?m)^Ran [1-9]\d* tests?\b',text) and re.search(r'(?m)^OK\s*$',text), 'negative-test actual outcome')
+        if row['name'] == SOURCE_PREPARATION_RUN:
+            require(row['command'][0].endswith('python3') and row['command'][1:] == ['scripts/ci/prepare_evidence_sources.py'], 'source-preparation invocation')
+            prepared = json.loads(text.splitlines()[-1],object_pairs_hook=unique)
+            from prepare_evidence_sources import declarations
+            require(prepared['verified_object_trees'] == declarations(root)
+                    and prepared['branch_refs_changed'] is False
+                    and prepared['acceptance_granted'] is False, 'source-preparation scope')
     baseline_command = by_name['full-native-reference-regression']['command']
     require(baseline_command[0].endswith('python3') and baseline_command[1] == 'scripts/run_evaluation_qualification.py' and '--native-node' in baseline_command and baseline_command[baseline_command.index('--source')+1] == commit, 'baseline command/source')
     from check_client_confirmation_evidence import validate as baseline_validate
