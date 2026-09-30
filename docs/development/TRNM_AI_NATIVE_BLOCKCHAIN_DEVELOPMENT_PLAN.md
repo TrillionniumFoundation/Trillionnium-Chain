@@ -473,3 +473,11 @@ host evidence remains historical. No new training, funded GPU serving, independe
 administered future-task acceptance, continuous public miner or persistent authenticated
 state is claimed by the closed-round or arithmetic changes. Their existing P0/P1/P2
 workstreams remain implementation and external-acceptance obligations, not paper gates.
+
+
+The [closed-round/producer receipt](../../evidence/pon-closed-round-v1/README.md)
+retains the explicit revision4 selection, complete eligible-set aggregation, ordinary
+native CLI/reorg tests, exact optimized producer, and new same-target cost collection.
+It preserves revision3 defaults and all historical artifacts. Source qualification,
+independent model value, public work safety and production activation remain separate;
+the remaining work stays in the existing convergence table, not a new roadmap.
