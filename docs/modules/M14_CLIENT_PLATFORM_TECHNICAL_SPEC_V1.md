@@ -115,3 +115,9 @@ The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
 the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
 No historical receipt is relabelled as executing this source.
+
+Native ancestry observations now use block-ID-bound stored-header projections instead
+of materializing every full packet. Requested bodies still undergo full membership
+checking, and all clock/generation/cancellation semantics remain. Full transaction-page
+replay and stored header/trace/body mutations are covered by the native node suite;
+[N2](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md) retains the finite local scope.

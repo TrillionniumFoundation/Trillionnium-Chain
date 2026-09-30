@@ -197,3 +197,12 @@ Reconstruction spools ancestor identities on disk and checks snapshots/deltas/ro
 retention is not a finality threshold. Full maps/root computations and long history
 remain resource costs. No Hepta operation journal, provider effect or user database is
 inside this chain namespace or its undo transaction.
+
+### Metadata-only native ancestry access
+
+The existing native owner now separates metadata retrieval from full packet retrieval.
+Ancestry/DAA/current-clock traversal uses block-ID-bound header projections, while work
+admission and queried transaction inclusion still check complete packets. No stored
+schema, genesis, reward, rollback or root rule changes. This removes repeated Rust-side
+packet materialization but does not turn the complete-state root into persistent
+incremental authenticated storage or qualify physical power loss.

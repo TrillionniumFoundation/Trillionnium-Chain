@@ -134,3 +134,12 @@ attestation disagreement and business arbitration. A timeout or failed learning 
 not objectively proven fraud. Late dispositions affect permitted current obligations,
 never retrospectively change the validity of historical work. This successor remains
 implementation/review work; no native-node or source-equality flag grants it acceptance.
+
+The current native/reference counterexample
+`NativeExecutionTests.test_revision3_first_pair_is_order_sensitive_and_late_third_rejects`
+executes all six eligible-score permutations at 1/2/4/8 workers. The first pairs produce
+10 or 100; a third attestation after status becomes evaluated rejects STATE. This is a
+retained economic defect, not an order-independent successor claimed as complete.
+`test_exact_artifact_copy_across_authors_does_not_gain_second_intake` verifies existing
+exact-content duplicate rejection across authors. Functional equivalence, perturbations
+and identity splitting remain different obligations; no file-hash rule solves them.

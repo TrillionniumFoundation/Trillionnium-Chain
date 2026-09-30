@@ -745,3 +745,132 @@ fn test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry() 
     assert_eq!(metrics.completed_requests, 16);
     println!("actual native loopback: 32 ticket-passing false transcripts rejected; 16 four-query batches served; not public/Sybil qualification");
 }
+
+#[test]
+fn test_native_header_projection_rejects_changed_header_or_trace() {
+    let temp = tempfile::tempdir().unwrap();
+    let (node, queries) = batch_fixture(temp.path(), Settings::development(None).unwrap());
+    let tip = node.active().unwrap().0;
+    let original = node.packet(tip).unwrap().encode().unwrap();
+    let db = rusqlite::Connection::open(temp.path().join("native.sqlite")).unwrap();
+    for offset in [0, original.len() - 1] {
+        let mut changed = original.clone();
+        changed[offset] ^= 1;
+        db.execute(
+            "UPDATE blocks SET packet=? WHERE id=?",
+            rusqlite::params![changed, tip.as_slice()],
+        )
+        .unwrap();
+        assert!(node.confirmations(&queries, CLOCK).is_err());
+        db.execute(
+            "UPDATE blocks SET packet=? WHERE id=?",
+            rusqlite::params![&original, tip.as_slice()],
+        )
+        .unwrap();
+        assert!(node
+            .confirmations(&queries, CLOCK)
+            .unwrap()
+            .observations
+            .iter()
+            .all(|o| o.confirmed));
+    }
+}
+
+#[test]
+fn test_native_body_membership_is_still_checked_after_header_projection() {
+    let temp = tempfile::tempdir().unwrap();
+    let (node, queries) = batch_fixture(temp.path(), Settings::development(None).unwrap());
+    let block = queries[0].1;
+    let original = node.packet(block).unwrap().encode().unwrap();
+    let mut packet = node.packet(block).unwrap();
+    packet.transactions[0] = signed_transfer(node.settings(), 1, 100);
+    let changed = packet.encode().unwrap();
+    let db = rusqlite::Connection::open(temp.path().join("native.sqlite")).unwrap();
+    db.execute(
+        "UPDATE blocks SET packet=? WHERE id=?",
+        rusqlite::params![changed, block.as_slice()],
+    )
+    .unwrap();
+    assert_eq!(
+        node.confirmations(&queries, CLOCK).unwrap_err().to_string(),
+        "ROOT"
+    );
+    db.execute(
+        "UPDATE blocks SET packet=? WHERE id=?",
+        rusqlite::params![&original, block.as_slice()],
+    )
+    .unwrap();
+    assert!(node.confirmations(&queries, CLOCK).is_ok());
+}
+
+#[test]
+fn test_full_transaction_pages_use_byte_limits_and_recover_all_native_state() {
+    let temp = tempfile::tempdir().unwrap();
+    let clock = ingress::now().unwrap();
+    let settings = Settings::development(Some(clock - 200)).unwrap();
+    let mut source = Node::open(&temp.path().join("source"), settings.clone(), 4).unwrap();
+    let mut tip = settings.genesis();
+    for height in 1u64..=12 {
+        let txs = (1..=256)
+            .map(|i| signed_transfer(&settings, 1, (height - 1) * 256 + i))
+            .collect();
+        let packet = source
+            .make(
+                tip,
+                txs,
+                development_public(0).unwrap(),
+                clock - 200 + height * 10,
+                4096,
+            )
+            .unwrap();
+        tip = source.admit(&packet, clock).unwrap();
+        source.activate_observed(tip, clock).unwrap();
+    }
+    let expected_root = source.stats().unwrap()["state_root"].clone();
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    let child_stop = stop.clone();
+    let server = std::thread::spawn(move || {
+        ingress::serve(listener, source, Duration::from_secs(120), child_stop)
+    });
+    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let mut receiver = Node::open(&temp.path().join("receiver"), settings.clone(), 4).unwrap();
+        let mut after = settings.genesis();
+        let mut page_count = 0;
+        while after != tip {
+            let value = ingress::call(
+                address,
+                &ingress::Request::History {
+                    tip: hex::encode(tip),
+                    after: hex::encode(after),
+                },
+            )
+            .unwrap();
+            assert!(serde_json::to_vec(&value).unwrap().len() <= 2_097_152);
+            let page: ingress::Page = serde_json::from_value(value).unwrap();
+            assert!(!page.packets.is_empty());
+            if page_count == 0 {
+                assert!(!page.complete);
+                assert!(page.packets.len() < 12);
+            }
+            after = ingress::receive_page(&mut receiver, page, tip, after, clock).unwrap();
+            page_count += 1;
+            assert!(page_count <= 12);
+        }
+        assert!(page_count >= 2);
+        assert_eq!(receiver.stats().unwrap()["state_root"], expected_root);
+        assert_eq!(receiver.stats().unwrap()["height"], 12);
+        drop(receiver);
+        assert_eq!(
+            Node::open(&temp.path().join("receiver"), settings, 1)
+                .unwrap()
+                .stats()
+                .unwrap()["state_root"],
+            expected_root
+        );
+    }));
+    stop.store(true, Ordering::Release);
+    server.join().unwrap().unwrap();
+    result.unwrap();
+}

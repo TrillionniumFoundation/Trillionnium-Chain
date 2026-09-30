@@ -301,3 +301,21 @@ honest four-query confirmation batches through the normal native entry. It uses 
 loopback host, bounded clients and the existing serialized owner, not public identities,
 WAN load, independent operators or a Sybil-safe public-service result. Native generation
 fault injection and actual heavier-fork tests are separately identified in the tests.
+
+### Native stored-header traversal and full transaction pages
+
+Native parent/height/chainwork lookups no longer materialize the packet BLOB in Rust.
+Timestamp/target walks read the fixed 318-byte header and 32-byte trace, authenticate
+their block identity, and compare parent/height/state-root metadata. They traverse
+already admitted local history; this is not an unchecked incoming-header shortcut.
+Every queried inclusion body still undergoes exact transaction-root and membership
+checking. Clock, cancellation and generation checks remain per observation; no reusable
+currentness verdict or administrator checkpoint is introduced. SQLite's physical page
+I/O is not inferred from these application-level projection widths.
+
+History delivery retains both its 16-packet count and conservative 800,000 raw-byte
+budget, then enforces the real encoded frame bound. A full-width regression mines and
+verifies twelve 256-transaction blocks, exports more than one actual socket page,
+rechecks every block in a separate native store, and reopens the resulting state.
+Changed stored headers/traces and substituted inclusion bodies have separate rejections.
+These are finite same-operator development cases, not public throughput or long-run DA.

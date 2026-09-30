@@ -117,3 +117,20 @@ Loopback-only access, IP grouping, three socket workers and serialized proof/sta
 remain explicit limitations. Read-only traversal checks stop/deadline cooperatively;
 this does not solve fastest valid producer shortcuts, identity churn, slow-connection
 starvation or sustained honest public admission. No public listener is enabled by tests.
+
+## Native admission lock boundary
+
+The existing native `serve` path performs context/duplicate checks under the one Node
+owner, then drops that lock before full transcript replay. `WorkCheckedPacket` owns the
+exact verified packet behind private fields; it cannot be a caller-supplied Boolean or
+be rebound to another packet. Admission reacquires the same owner and reruns current
+namespace, duplicate, parent, target and clock checks before application/state/receipt
+validation and atomic persistence. Cancellation after verification leaves no new block.
+Owner-lock waiting checks the request deadline rather than blocking indefinitely.
+
+Deterministic scheduling regressions execute a status read while work is outstanding,
+change the best branch during that interval, and exercise cancellation, wrong destination
+context, stale clock and exact retransmission. The real socket regression continues to
+reject 32 ticket-passing false transcripts while serving 16 four-query batches. These
+are controlled loopback observations, not a Sybil/public fairness bound. Full valid
+application execution, recovery and noninterruptible SQLite calls still use the owner.

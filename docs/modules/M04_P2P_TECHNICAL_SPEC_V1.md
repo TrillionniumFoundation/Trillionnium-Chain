@@ -80,3 +80,9 @@ The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
 the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
 No historical receipt is relabelled as executing this source.
+
+The native development Submit path releases the Node mutex for transcript replay,
+then consumes an opaque exact-packet verification result through the same Node owner.
+Context/clock/state checks are repeated before commit; lock waiting and post-work
+cancellation are bounded. The exact remaining public-service limits and executed
+counterexamples are in [A2](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md).

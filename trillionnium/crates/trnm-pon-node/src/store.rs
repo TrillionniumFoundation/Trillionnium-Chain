@@ -17,7 +17,7 @@ use std::{
 };
 use trnm_crypto_primitives::pon_work;
 use trnm_mvcc_fee::pon_executor::{execute, root, State};
-use trnm_protocol::pon_wire::{hash, Hash, Header};
+use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
 const DDL:&str="CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL);
 CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL);
 CREATE INDEX work_order ON blocks(chainwork DESC,height,id);
@@ -75,9 +75,22 @@ struct Record {
     parent: Option<Hash>,
     height: u64,
     work: Work,
-    packet: Option<Vec<u8>>,
     root: Hash,
 }
+/// Owns the exact packet whose work was actually verified. Not state or clock authority.
+/// Private fields prevent replacing the header/body/proof after verification.
+pub(crate) struct WorkCheckedPacket {
+    packet: Packet,
+}
+impl WorkCheckedPacket {
+    pub(crate) fn verify(packet: Packet) -> Result<Self> {
+        let h = &packet.header;
+        pon_work::verify(h.challenge(), h.work_task, h.target, &packet.proof)
+            .map_err(|e| Error::from(format!("WORK:{e:?}")))?;
+        Ok(Self { packet })
+    }
+}
+
 /// One private native namespace; no reference subprocess or remote state setter exists.
 pub struct Node {
     db: Connection,
@@ -325,15 +338,14 @@ impl Node {
         let row = self
             .db
             .query_row(
-                "SELECT parent,height,chainwork,packet,state_root FROM blocks WHERE id=?",
+                "SELECT parent,height,chainwork,state_root FROM blocks WHERE id=?",
                 [id.as_slice()],
                 |r| {
                     Ok((
                         r.get::<_, Option<Vec<u8>>>(0)?,
                         r.get::<_, u64>(1)?,
                         r.get::<_, Vec<u8>>(2)?,
-                        r.get::<_, Option<Vec<u8>>>(3)?,
-                        r.get::<_, Vec<u8>>(4)?,
+                        r.get::<_, Vec<u8>>(3)?,
                     ))
                 },
             )
@@ -343,8 +355,7 @@ impl Node {
             parent: row.0.map(bytes32).transpose()?,
             height: row.1,
             work: Work::from_bytes(bytes64(row.2)?),
-            packet: row.3,
-            root: bytes32(row.4)?,
+            root: bytes32(row.3)?,
         })
     }
     pub fn active(&self) -> Result<(Hash, u64)> {
@@ -395,7 +406,12 @@ impl Node {
     }
     pub fn packet(&self, id: Hash) -> Result<Packet> {
         let row = self.record(id)?;
-        let packet = Packet::decode(&row.packet.ok_or("GENESIS_HAS_NO_PACKET")?)?;
+        let raw: Option<Vec<u8>> = self.db.query_row(
+            "SELECT packet FROM blocks WHERE id=?",
+            [id.as_slice()],
+            |r| r.get(0),
+        )?;
+        let packet = Packet::decode(&raw.ok_or("GENESIS_HAS_NO_PACKET")?)?;
         ensure(
             packet.id()? == id
                 && Some(packet.header.parent) == row.parent
@@ -405,6 +421,35 @@ impl Node {
         )?;
         Ok(packet)
     }
+    /// Reads only the committed header and trace of an already admitted local block.
+    /// This does not verify new work or replace inclusion-body validation.
+    fn stored_header(&self, id: Hash) -> Result<Header> {
+        let row = self.record(id)?;
+        let (prefix, trace, length): (Option<Vec<u8>>, Option<Vec<u8>>, Option<usize>) = self
+            .db
+            .query_row(
+            "SELECT substr(packet,1,?),substr(packet,-32),length(packet) FROM blocks WHERE id=?",
+            params![HEADER_BYTES, id.as_slice()],
+            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+        )?;
+        ensure(
+            (HEADER_BYTES + 2 + pon_work::PROOF_BYTES..=1_048_576)
+                .contains(&length.ok_or("GENESIS_HAS_NO_PACKET")?),
+            "PACKET_LIMIT",
+        )?;
+        let header = Header::decode(&prefix.ok_or("GENESIS_HAS_NO_PACKET")?)
+            .map_err(|_| Error::from("HEADER_CODEC"))?;
+        let trace = bytes32(trace.ok_or("GENESIS_HAS_NO_PACKET")?)?;
+        ensure(
+            header.block_id(trace) == id
+                && Some(header.parent) == row.parent
+                && header.height == row.height
+                && header.state == row.root,
+            "STORAGE_PACKET",
+        )?;
+        Ok(header)
+    }
+
     fn parent(&self, id: Hash) -> Result<Hash> {
         let row = self.record(id)?;
         let parent = row.parent.ok_or("UNKNOWN_PARENT")?;
@@ -470,8 +515,8 @@ impl Node {
         let mut out = Vec::new();
         let bound = self.settings.limit("retarget_interval")?.max(11);
         while parent != self.settings.genesis() && out.len() < (bound as usize) {
-            let packet = self.packet(parent)?;
-            out.push((packet.header.timestamp, packet.header.target));
+            let header = self.stored_header(parent)?;
+            out.push((header.timestamp, header.target));
             parent = self.parent(parent)?;
         }
         if parent == self.settings.genesis() {
@@ -503,7 +548,11 @@ impl Node {
             self.settings.target("pow_limit_hex")?,
         )
     }
-    pub fn admit(&mut self, packet: &Packet, observed_now: u64) -> Result<Hash> {
+    pub(crate) fn check_admission_context(
+        &self,
+        packet: &Packet,
+        observed_now: u64,
+    ) -> Result<Option<Hash>> {
         self.ready()?;
         let bytes = packet.encode()?;
         let h = &packet.header;
@@ -528,7 +577,7 @@ impl Node {
                     <= observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128,
                 "TIME_DEFERRED",
             )?;
-            return Ok(id);
+            return Ok(Some(id));
         }
         let parent = self.record(h.parent)?;
         ensure(
@@ -552,8 +601,28 @@ impl Node {
             h.transactions == sequence_root("transactions", &packet.transactions),
             "ROOT",
         )?;
-        pon_work::verify(h.challenge(), h.work_task, h.target, &packet.proof)
-            .map_err(|e| Error::from(format!("WORK:{e:?}")))?;
+        Ok(None)
+    }
+    pub fn admit(&mut self, packet: &Packet, observed_now: u64) -> Result<Hash> {
+        if let Some(id) = self.check_admission_context(packet, observed_now)? {
+            return Ok(id);
+        }
+        self.admit_work_checked(WorkCheckedPacket::verify(packet.clone())?, observed_now)
+    }
+    /// Work is reusable only for the owned packet; branch/state/clock checks run again.
+    pub(crate) fn admit_work_checked(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+    ) -> Result<Hash> {
+        let packet = checked.packet;
+        if let Some(id) = self.check_admission_context(&packet, observed_now)? {
+            return Ok(id);
+        }
+        let bytes = packet.encode()?;
+        let h = &packet.header;
+        let id = packet.id()?;
+        let parent = self.record(h.parent)?;
         let prior = self.state_at(h.parent)?;
         ensure(
             prior.get(&format!("work:{}", hex::encode(h.work_task))) == Some(&Value::Bool(true)),
@@ -917,7 +986,7 @@ impl Node {
         let mut current = tip;
         while current != self.settings.genesis() {
             ensure(
-                self.packet(current)?.header.timestamp as u128 <= bound,
+                self.stored_header(current)?.timestamp as u128 <= bound,
                 "TIME_DEFERRED",
             )?;
             current = self.parent(current)?;
@@ -993,7 +1062,7 @@ impl Node {
                 found.insert(current);
             }
             ensure(
-                self.packet(current)?.header.timestamp as u128 <= bound,
+                self.stored_header(current)?.timestamp as u128 <= bound,
                 "TIME_DEFERRED",
             )?;
             current = self.parent(current)?;

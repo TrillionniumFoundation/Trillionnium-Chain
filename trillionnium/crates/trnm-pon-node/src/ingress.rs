@@ -1,5 +1,5 @@
 //! Bounded native socket ingress. Development loopback only; not Sybil-safe public P2P.
-use crate::{digest, ensure, Error, Node, Packet, Result};
+use crate::{digest, ensure, store::WorkCheckedPacket, Error, Node, Packet, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
@@ -7,7 +7,7 @@ use std::{
     net::{SocketAddr, TcpListener, TcpStream},
     sync::{
         atomic::{AtomicBool, Ordering},
-        Arc, Mutex,
+        Arc, Mutex, MutexGuard, TryLockError,
     },
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
@@ -136,15 +136,7 @@ fn dispatch(
     progress(0)?;
     match request {
         Request::Head => node.stats(),
-        Request::Submit { packet } => {
-            let packet = hex_packet(&packet)?;
-            let clock = now()?;
-            let id = node.admit(&packet, clock)?;
-            let active = node.activate_observed(id, clock)?;
-            Ok(
-                json!({"block":hex::encode(id),"active":hex::encode(active),"generation":node.active()?.1,"physical_execution":false}),
-            )
-        }
+        Request::Submit { .. } => Err("SUBMIT_REQUIRES_WORK_CHECK".into()),
         Request::History { tip, after } => {
             let packets =
                 node.history_with_progress(digest(&tip)?, digest(&after)?, 16, progress)?;
@@ -187,6 +179,60 @@ fn dispatch(
         )?),
     }
 }
+fn lock_owner<'a>(
+    node: &'a Mutex<Node>,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+) -> Result<MutexGuard<'a, Node>> {
+    loop {
+        progress(0)?;
+        match node.try_lock() {
+            Ok(owner) => return Ok(owner),
+            Err(TryLockError::Poisoned(_)) => return Err("OWNER_POISONED".into()),
+            Err(TryLockError::WouldBlock) => thread::sleep(Duration::from_millis(2)),
+        }
+    }
+}
+
+fn submit_result(node: &mut Node, id: Hash, clock: u64) -> Result<Value> {
+    let active = node.activate_observed(id, clock)?;
+    Ok(json!({"block":hex::encode(id),"active":hex::encode(active),
+        "generation":node.active()?.1,"physical_execution":false}))
+}
+
+/// The verifier runs outside the only durable owner's lock. It cannot commit a block.
+/// The injected verifier is private and used only to schedule deterministic unit tests.
+fn dispatch_shared_with(
+    node: &Mutex<Node>,
+    request: Request,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+    verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
+) -> Result<Value> {
+    match request {
+        Request::Submit { packet } => {
+            let packet = hex_packet(&packet)?;
+            {
+                let mut owner = lock_owner(node, progress)?;
+                let clock = now()?;
+                if let Some(id) = owner.check_admission_context(&packet, clock)? {
+                    return submit_result(&mut owner, id, clock);
+                }
+            }
+            progress(0)?;
+            let checked = verify(packet)?;
+            // Cancellation after work must not turn into a durable admission.
+            progress(0)?;
+            let mut owner = lock_owner(node, progress)?;
+            let clock = now()?;
+            let id = owner.admit_work_checked(checked, clock)?;
+            submit_result(&mut owner, id, clock)
+        }
+        other => {
+            let mut owner = lock_owner(node, progress)?;
+            dispatch(&mut owner, other, progress)
+        }
+    }
+}
+
 pub fn serve(
     listener: TcpListener,
     node: Node,
@@ -262,15 +308,16 @@ pub fn serve(
                     };
                     let result = (|| -> Result<Value> {
                         let request: Request = serde_json::from_slice(&bytes)?;
-                        {
-                            let mut owner =
-                                node.lock().map_err(|_| Error::from("OWNER_POISONED"))?;
-                            let mut progress = |_: u64| -> Result<()> {
-                                ensure(!stop.load(Ordering::Acquire), "CANCELLED")?;
-                                ensure(Instant::now() < request_deadline, "REQUEST_DEADLINE")
-                            };
-                            dispatch(&mut owner, request, &mut progress)
-                        }
+                        let mut progress = |_: u64| -> Result<()> {
+                            ensure(!stop.load(Ordering::Acquire), "CANCELLED")?;
+                            ensure(Instant::now() < request_deadline, "REQUEST_DEADLINE")
+                        };
+                        dispatch_shared_with(
+                            &node,
+                            request,
+                            &mut progress,
+                            WorkCheckedPacket::verify,
+                        )
                     })();
                     let reply = match result {
                         Ok(value) => {
@@ -415,5 +462,180 @@ mod tests {
         assert!(read_frame_budget(&mut stream, Duration::from_millis(100)).is_err());
         drop(stream);
         sender.join().unwrap();
+    }
+
+    fn pending_packet() -> (tempfile::TempDir, Mutex<Node>, Packet) {
+        let dir = tempfile::tempdir().unwrap();
+        let clock = now().unwrap();
+        let settings = crate::Settings::development(Some(clock - 100)).unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                clock - 90,
+                4096,
+            )
+            .unwrap();
+        (dir, Mutex::new(node), packet)
+    }
+
+    #[test]
+    fn work_replay_does_not_hold_the_durable_owner_lock() {
+        let (_dir, node, packet) = pending_packet();
+        let expected = packet.id().unwrap();
+        let request = Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        };
+        let reply = dispatch_shared_with(&node, request, &mut |_| Ok(()), |packet| {
+            // Schedule a genuine status read while the verifier is in flight.
+            assert!(node.try_lock().is_ok());
+            let head = dispatch_shared_with(&node, Request::Head, &mut |_| Ok(()), |_| {
+                panic!("read requests cannot ask for work verification")
+            })
+            .unwrap();
+            assert_eq!(head["height"], 0);
+            WorkCheckedPacket::verify(packet)
+        })
+        .unwrap();
+        assert_eq!(reply["block"], hex::encode(expected));
+        assert_eq!(node.lock().unwrap().stats().unwrap()["height"], 1);
+    }
+
+    #[test]
+    fn cancellation_after_actual_work_verification_has_no_commit() {
+        let (_dir, node, packet) = pending_packet();
+        let before = node.lock().unwrap().stats().unwrap();
+        let cancelled = AtomicBool::new(false);
+        let mut progress = |_| ensure(!cancelled.load(Ordering::Acquire), "CANCELLED");
+        let request = Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        };
+        let error = dispatch_shared_with(&node, request, &mut progress, |packet| {
+            let checked = WorkCheckedPacket::verify(packet)?;
+            cancelled.store(true, Ordering::Release);
+            Ok(checked)
+        })
+        .unwrap_err();
+        assert_eq!(error.to_string(), "CANCELLED");
+        assert_eq!(node.lock().unwrap().stats().unwrap(), before);
+    }
+
+    #[test]
+    fn context_reject_and_exact_duplicate_do_not_replay_work() {
+        let (_dir, node, packet) = pending_packet();
+        let mut wrong = packet.clone();
+        wrong.header.network[0] ^= 1;
+        let request = Request::Submit {
+            packet: hex::encode(wrong.encode().unwrap()),
+        };
+        assert_eq!(
+            dispatch_shared_with(&node, request, &mut |_| Ok(()), |_| panic!(
+                "bad context reached work verifier"
+            ))
+            .unwrap_err()
+            .to_string(),
+            "NETWORK"
+        );
+        let encoded = hex::encode(packet.encode().unwrap());
+        dispatch_shared_with(
+            &node,
+            Request::Submit {
+                packet: encoded.clone(),
+            },
+            &mut |_| Ok(()),
+            WorkCheckedPacket::verify,
+        )
+        .unwrap();
+        let before = node.lock().unwrap().stats().unwrap();
+        dispatch_shared_with(
+            &node,
+            Request::Submit { packet: encoded },
+            &mut |_| Ok(()),
+            |_| panic!("exact stored duplicate repeated work"),
+        )
+        .unwrap();
+        assert_eq!(node.lock().unwrap().stats().unwrap(), before);
+    }
+
+    #[test]
+    fn verified_work_cannot_bypass_destination_context_or_clock() {
+        let (_dir, node, packet) = pending_packet();
+        let checked = WorkCheckedPacket::verify(packet.clone()).unwrap();
+        let before = node.lock().unwrap().stats().unwrap();
+        assert_eq!(
+            node.lock()
+                .unwrap()
+                .admit_work_checked(checked, 1)
+                .unwrap_err()
+                .to_string(),
+            "TIME_DEFERRED"
+        );
+        assert_eq!(node.lock().unwrap().stats().unwrap(), before);
+        let other_dir = tempfile::tempdir().unwrap();
+        let mut other = Node::open(
+            other_dir.path(),
+            crate::Settings::development(None).unwrap(),
+            1,
+        )
+        .unwrap();
+        let before = other.stats().unwrap();
+        assert_eq!(
+            other
+                .admit_work_checked(WorkCheckedPacket::verify(packet).unwrap(), now().unwrap())
+                .unwrap_err()
+                .to_string(),
+            "NETWORK"
+        );
+        assert_eq!(other.stats().unwrap(), before);
+    }
+
+    #[test]
+    fn owner_lock_wait_remains_cooperatively_cancellable() {
+        let (_dir, node, _packet) = pending_packet();
+        let held = node.lock().unwrap();
+        let mut calls = 0;
+        let mut progress = |_| {
+            calls += 1;
+            ensure(calls < 3, "CANCELLED")
+        };
+        assert!(matches!(lock_owner(&node, &mut progress), Err(e) if e.to_string() == "CANCELLED"));
+        assert_eq!(calls, 3);
+        drop(held);
+        assert!(lock_owner(&node, &mut |_| Ok(())).is_ok());
+    }
+
+    #[test]
+    fn intervening_heavier_branch_does_not_promote_the_verified_stale_candidate() {
+        let (_dir, node, packet) = pending_packet();
+        let original = packet.id().unwrap();
+        let request = Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        };
+        let reply = dispatch_shared_with(&node, request, &mut |_| Ok(()), |packet| {
+            {
+                let mut owner = node.lock().unwrap();
+                let base = owner.settings().genesis_time();
+                for height in 1..=2 {
+                    let other = owner.make(
+                        owner.active()?.0,
+                        vec![],
+                        crate::development_public(1)?,
+                        base + height * 10,
+                        4096,
+                    )?;
+                    let id = owner.admit(&other, now()?)?;
+                    owner.activate_observed(id, now()?)?;
+                }
+            }
+            WorkCheckedPacket::verify(packet)
+        })
+        .unwrap();
+        assert_eq!(reply["block"], hex::encode(original));
+        assert_ne!(reply["active"], reply["block"]);
+        let owner = node.lock().unwrap();
+        assert_eq!(owner.stats().unwrap()["height"], 2);
+        assert_eq!(owner.stats().unwrap()["stored_blocks"], 4);
     }
 }
