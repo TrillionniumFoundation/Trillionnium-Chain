@@ -1,15 +1,4 @@
-   Compiling trnm-mvcc-fee v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
-   Compiling trnm-task-kernel v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)
-   Compiling trnm-pon-node v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
-   Compiling trnm-service-settlement v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)
-   Compiling trnm-governance-guard v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-governance-guard)
-   Compiling trnm-escrow-vault v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-escrow-vault)
-   Compiling trnm-data-availability v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)
-   Compiling trnm-state-import v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-state-import)
-   Compiling trnm-oracle v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-oracle)
-   Compiling trnm-release-bundle v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-release-bundle)
-   Compiling trnm-control-plane v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-control-plane)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.09s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
    Doc-tests trnm_audit_events
 
 running 0 tests
@@ -52,7 +41,7 @@ test crates/trnm-data-availability/src/lib.rs - (line 51) - compile fail ... ok
 test crates/trnm-data-availability/src/lib.rs - (line 58) - compile fail ... ok
 test crates/trnm-data-availability/src/lib.rs - (line 9) - compile fail ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
 
    Doc-tests trnm_escrow_vault
 

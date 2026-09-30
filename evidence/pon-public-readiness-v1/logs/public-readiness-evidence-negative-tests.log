@@ -13,12 +13,13 @@ test_artifacts_must_exist_match_exact_inventory_and_be_tracked (__main__.SourceA
 test_current_bytes_new_untracked_runtime_and_symlink_reject (__main__.SourceAndArtifactTests.test_current_bytes_new_untracked_runtime_and_symlink_reject) ... ok
 test_historical_source_check_does_not_silently_qualify_changed_current (__main__.SourceAndArtifactTests.test_historical_source_check_does_not_silently_qualify_changed_current) ... ok
 test_preparation_uses_exact_measured_git_snapshot_after_root_publication (__main__.SourceAndArtifactTests.test_preparation_uses_exact_measured_git_snapshot_after_root_publication) ... ok
+test_qualification_subprocess_ignores_a_poisoned_python_search_path (__main__.SourceAndArtifactTests.test_qualification_subprocess_ignores_a_poisoned_python_search_path) ... ok
 test_real_git_source_control_is_valid_and_false_tree_or_hash_rejects (__main__.SourceAndArtifactTests.test_real_git_source_control_is_valid_and_false_tree_or_hash_rejects) ... ok
 test_source_inventory_cannot_omit_script_config_or_workflow (__main__.SourceAndArtifactTests.test_source_inventory_cannot_omit_script_config_or_workflow) ... ok
 test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records (__main__.SourceAndArtifactTests.test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records) ... ok
 test_symlink_path_aliases_and_duplicate_json_are_refused (__main__.SourceAndArtifactTests.test_symlink_path_aliases_and_duplicate_json_are_refused) ... ok
 
 ----------------------------------------------------------------------
-Ran 19 tests in 0.473s
+Ran 20 tests in 0.612s
 
 OK

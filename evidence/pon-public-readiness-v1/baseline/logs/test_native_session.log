@@ -27,6 +27,6 @@ test_receipt_count_metrics_and_delta_order_substitution_reject (__main__.Session
 test_type_distinct_predecessor_reopens_instead_of_python_equality (__main__.SessionBoundaryTests.test_type_distinct_predecessor_reopens_instead_of_python_equality) ... ok
 
 ----------------------------------------------------------------------
-Ran 27 tests in 6.820s
+Ran 27 tests in 6.981s
 
 OK

@@ -20,6 +20,6 @@ test_three_no_change_attempts_are_not_three_adoptions (__main__.CurrentEvaluatio
 test_unmeasured_vram_cannot_be_filled (__main__.CurrentEvaluationEvidenceTests.test_unmeasured_vram_cannot_be_filled) ... ok
 
 ----------------------------------------------------------------------
-Ran 20 tests in 8.086s
+Ran 20 tests in 8.058s
 
 OK

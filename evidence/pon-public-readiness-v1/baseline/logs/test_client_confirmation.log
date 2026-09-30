@@ -40,6 +40,6 @@ test_unverified_receiver_cursor_rejects (__main__.VerifiedHistoryTests.test_unve
 test_wrong_network_parameters_and_genesis_reject (__main__.VerifiedHistoryTests.test_wrong_network_parameters_and_genesis_reject) ... ok
 
 ----------------------------------------------------------------------
-Ran 40 tests in 17.916s
+Ran 40 tests in 17.961s
 
 OK

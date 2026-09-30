@@ -1,13 +1,4 @@
-   Compiling syn v2.0.117
-   Compiling curve25519-dalek-derive v0.1.1
-   Compiling thiserror-impl v1.0.69
-   Compiling curve25519-dalek v4.1.3
-   Compiling serde_derive v1.0.228
-   Compiling serde v1.0.228
-   Compiling thiserror v1.0.69
-   Compiling ed25519-dalek v2.2.0
-   Compiling trnm-research-protocol v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-research-protocol)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.16s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
      Running unittests src/lib.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/trnm_research_protocol-5ebacfdd10f07337)
 
 running 0 tests

@@ -29,6 +29,6 @@ test_public_root_is_in_snapshot_but_nested_failure_declarations_never_are (__mai
 test_real_measured_snapshot_is_exact_when_publication_adds_its_own_root (__main__.MeasuredDeclarationSnapshotTests.test_real_measured_snapshot_is_exact_when_publication_adds_its_own_root) ... ok
 
 ----------------------------------------------------------------------
-Ran 29 tests in 0.254s
+Ran 29 tests in 0.270s
 
 OK

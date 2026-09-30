@@ -50,6 +50,6 @@ test_wrong_fork_choice (__main__.RepositoryMutants.test_wrong_fork_choice) ... o
 test_wrong_wire_width_is_rejected (__main__.RepositoryMutants.test_wrong_wire_width_is_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 50 tests in 17.156s
+Ran 50 tests in 22.668s
 
 OK

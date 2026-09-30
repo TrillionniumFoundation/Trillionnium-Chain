@@ -6,6 +6,6 @@ test_small_order_and_noncanonical_point_rejections (__main__.StrictSignatureTest
 test_weak_consumer_cannot_authorize_quota (__main__.StrictSignatureTests.test_weak_consumer_cannot_authorize_quota) ... ok
 
 ----------------------------------------------------------------------
-Ran 6 tests in 0.016s
+Ran 6 tests in 0.017s
 
 OK

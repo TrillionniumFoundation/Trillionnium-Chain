@@ -12,6 +12,6 @@ test_stale_genesis_revision_rejected (__main__.InvariantRegistryTests.test_stale
 test_wrong_test_selector_rejected (__main__.InvariantRegistryTests.test_wrong_test_selector_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 1.174s
+Ran 12 tests in 1.218s
 
 OK

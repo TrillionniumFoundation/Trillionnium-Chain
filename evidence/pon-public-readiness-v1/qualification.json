@@ -1,7 +1,7 @@
 {
   "schema": "trnm-public-readiness-engineering-v1",
-  "source_commit": "a77db766925029f92886c851eca8494e4257a497",
-  "source_tree": "32842e0717c495de999e9cfa057853055aa471bf",
+  "source_commit": "c2b1ca2503aeca35873d20d1b188689369edc752",
+  "source_tree": "5df72527b22520b27f5ad858bbca98456c7ad9cf",
   "source_clean": true,
   "all_commands_passed": true,
   "source_files_sha256": {
@@ -113,7 +113,7 @@
     "scripts/ci/check_invariants.py": "d52b34ce66a8a8704585ec749aefb82d559952ab09e3ed3940913bc6a1c3df1b",
     "scripts/ci/check_native_node_supplements.py": "2c89ce9f407303ada700eaaeaa74b8e495a7c83f1868836f73154f72239d324f",
     "scripts/ci/check_pon_evidence.py": "285d6b9924a2cd0e708fb170f55629248216d9a85385159093718e2f8cfc9f83",
-    "scripts/ci/check_public_readiness_evidence.py": "ffd2d2f3d909bd2cd9cea234e7754ee1378570a5131f61d08d202a8825ce25f0",
+    "scripts/ci/check_public_readiness_evidence.py": "5a959a30e89afc02d23db726d381aba7c0114f1b590a59914cde0aaa0f0636b2",
     "scripts/ci/check_repository.py": "c4a7314a453902b9d9a43fe8016fb0a22283a552e42e7d87b7445bada20f9e24",
     "scripts/ci/ci_job.sh": "918c2be6cec8e04744c7939856310a789b33837aee2305a513d70f771d35327e",
     "scripts/ci/historical_evidence.py": "3bf91d29a598fabc75c6b1b0f292795fd5c8a1d1917309f860f54bd28e54d401",
@@ -127,18 +127,19 @@
     "scripts/ci/test_invariant_evidence.py": "1886641ce98079569627f2e57141eea4b998b717410fbe27200c68a8c7155813",
     "scripts/ci/test_invariants_registry.py": "80c940c5611a55642f14e3958301a7dca69b331e8f2a182e6457ab1f14beea37",
     "scripts/ci/test_native_node_supplements.py": "09c584f0cb79bdd238b4498452c701d77fe65abce1ba36c5183699bae6a84c74",
-    "scripts/ci/test_native_session_evidence.py": "31ad405112f1c9f50318c3cf367ffa40d6b176b0ed2f3254110118e677a5e30c",
+    "scripts/ci/test_native_session_evidence.py": "2b587695f81799209ebf616e3f5eba9fb3e043f7d9e8f1b56f8d0e7ec0f1eeb3",
     "scripts/ci/test_pon_accepted_block.py": "b613b31a0ef9963ef7af8e95af6d3ab7678f87db61e67b06c261b88901f78bd8",
     "scripts/ci/test_pon_evidence.py": "ab63d4f65b10d5737f6148f7bb06da829b91008fcb0c7845429e0124252eeb07",
     "scripts/ci/test_project_boundary.py": "7ab3556cec8d9ce709581711c4601776449eac91724d50a2211d7aa1024c0da1",
-    "scripts/ci/test_public_readiness_evidence.py": "5fa8e67d7a2b5a20ec25cdc9409b4e7f5155dd133ad4991a13c9132401945741",
+    "scripts/ci/test_public_readiness_evidence.py": "f612683bd59fe472994182c086a9ea4e8d7fba2883b082d36c2adaadec6e1a8b",
     "scripts/ci/test_repository.py": "95ca70a3491a111ef97b97ce3bfb25324221433ea8fd854e83372b4b6ad0d605",
     "scripts/ci/test_responsibility_evidence.py": "c8991c903a403bf6e0aad226c95b99af9dea4423ce45dc334557867e3a421853",
     "scripts/ci/test_work_cost_report.py": "4082a120fe397741dda0d0e76aacea4df84c3518ef5fc5d9685a3cb76c143e79",
     "scripts/pon_work_cost_report.py": "064861381da4f1e03ce7947d2229778cc1b43561a0bb5af72f8142c10dd7eb95",
     "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
-    "scripts/run_evaluation_qualification.py": "85cf3bb32aebf17d5d96f589dd35950c10d766033c050a21d8a3166c0f29b53b",
-    "scripts/run_public_readiness_qualification.py": "807d7bda8d6ba05a22846e2d263726a21bc7e139d623dc96dc20bc5b69ac72f1",
+    "scripts/qualification_runtime.py": "3927077c005481852db3c6598787f8868f7236ca8f5de3b20ebbde15a0761a64",
+    "scripts/run_evaluation_qualification.py": "a92035c72f3e16b6cb6382f877f48c935d434f9a41931e91b72cb12dbfd69dda",
+    "scripts/run_public_readiness_qualification.py": "5ae29d012655cfc35cd8cefc8dd91427b3ace77f9f8850ce52ae5281cdc65060",
     "scripts/worker_tx_adapter.sh": "d86b5eef4efcb15d761e97d5ce7d2395681307608bf6cc40e09519f0b0be4965",
     "trillionnium/Cargo.lock": "2491df5be6446ea8407acaee0c691638af541997bd5fa130efb775cfed57f5e1",
     "trillionnium/Cargo.toml": "37ae0608674cbe14bae58230e4d9a83f978bcd04dc37aaaecd09dfb6b84e6a2f",
@@ -801,12 +802,18 @@
   "environment": {
     "platform": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
     "python": "3.12.14",
+    "child_python3": {
+      "executable": "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/runtime-env/bin/python3",
+      "python": "3.12.14",
+      "numpy": "1.26.4",
+      "cryptography": "50.0.2"
+    },
     "numpy": "1.26.4",
     "cryptography": "50.0.2",
     "cryptography_openssl": "OpenSSL 4.0.3 29 Sep 2026",
     "cffi": "2.1.1",
     "rust": "rustc 1.95.0 (59807616e 2026-04-14)",
-    "hardware": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           48 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  24\nOn-line CPU(s) list:                     0-23\nVendor ID:                               AuthenticAMD\nModel name:                              AMD Ryzen AI 9 HX 370 w/ Radeon 890M\nCPU family:                              26\nModel:                                   36\nThread(s) per core:                      2\nCore(s) per socket:                      12\nSocket(s):                               1\nStepping:                                0\nFrequency boost:                         enabled\nCPU(s) scaling MHz:                      66%\nCPU max MHz:                             5157.8950\nCPU min MHz:                             605.2640\nBogoMIPS:                                3992.64\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good amd_lbr_v2 nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpuid_fault cpb cat_l3 cdp_l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp ibrs_enhanced vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local user_shstk avx_vnni avx512_bf16 clzero irperf xsaveerptr rdpru wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif x2avic v_spec_ctrl vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid bus_lock_detect movdiri movdir64b overflow_recov succor smca fsrm avx512_vp2intersect flush_l1d amd_lbr_pmc_freeze\nVirtualization:                          AMD-V\nL1d cache:                               576 KiB (12 instances)\nL1i cache:                               384 KiB (12 instances)\nL2 cache:                                12 MiB (12 instances)\nL3 cache:                                24 MiB (2 instances)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-23\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Mitigation; IBPB on VMEXIT only\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; STIBP always-on; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Mitigation; IBPB on VMEXIT\n",
+    "hardware": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           48 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  24\nOn-line CPU(s) list:                     0-23\nVendor ID:                               AuthenticAMD\nModel name:                              AMD Ryzen AI 9 HX 370 w/ Radeon 890M\nCPU family:                              26\nModel:                                   36\nThread(s) per core:                      2\nCore(s) per socket:                      12\nSocket(s):                               1\nStepping:                                0\nFrequency boost:                         enabled\nCPU(s) scaling MHz:                      67%\nCPU max MHz:                             5157.8950\nCPU min MHz:                             605.2640\nBogoMIPS:                                3992.64\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good amd_lbr_v2 nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpuid_fault cpb cat_l3 cdp_l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp ibrs_enhanced vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local user_shstk avx_vnni avx512_bf16 clzero irperf xsaveerptr rdpru wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif x2avic v_spec_ctrl vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid bus_lock_detect movdiri movdir64b overflow_recov succor smca fsrm avx512_vp2intersect flush_l1d amd_lbr_pmc_freeze\nVirtualization:                          AMD-V\nL1d cache:                               576 KiB (12 instances)\nL1i cache:                               384 KiB (12 instances)\nL2 cache:                                12 MiB (12 instances)\nL3 cache:                                24 MiB (2 instances)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-23\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Mitigation; IBPB on VMEXIT only\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; STIBP always-on; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Mitigation; IBPB on VMEXIT\n",
     "filesystem": "ext4   /",
     "cargo_jobs": 2,
     "test_threads": 1,
@@ -822,9 +829,9 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 316396714,
+      "elapsed_ns": 364580541,
       "log": "logs/evidence-source-negative-tests.log",
-      "peak_rss_kib": 19056,
+      "peak_rss_kib": 19080,
       "vram_bytes": null
     },
     {
@@ -835,9 +842,9 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 114183486,
+      "elapsed_ns": 114017707,
       "log": "logs/evidence-source-preparation.log",
-      "peak_rss_kib": 15272,
+      "peak_rss_kib": 15180,
       "vram_bytes": null
     },
     {
@@ -848,9 +855,9 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 565595063,
+      "elapsed_ns": 715531986,
       "log": "logs/public-readiness-evidence-negative-tests.log",
-      "peak_rss_kib": 32092,
+      "peak_rss_kib": 34624,
       "vram_bytes": null
     },
     {
@@ -860,9 +867,9 @@
         "scripts/run_evaluation_qualification.py",
         "--native-node",
         "--source",
-        "a77db766925029f92886c851eca8494e4257a497",
+        "c2b1ca2503aeca35873d20d1b188689369edc752",
         "--out",
-        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-d/baseline",
+        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-f/baseline",
         "--target",
         "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target",
         "--cargo-home",
@@ -870,9 +877,9 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 401578295183,
+      "elapsed_ns": 290357280508,
       "log": "logs/full-native-reference-regression.log",
-      "peak_rss_kib": 398772,
+      "peak_rss_kib": 135508,
       "vram_bytes": null
     },
     {
@@ -883,9 +890,9 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 364394964,
+      "elapsed_ns": 415423062,
       "log": "logs/test_model_attribution.log",
-      "peak_rss_kib": 36260,
+      "peak_rss_kib": 36468,
       "vram_bytes": null
     },
     {
@@ -896,9 +903,9 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 114222354,
+      "elapsed_ns": 64087967,
       "log": "logs/test_work_utility.log",
-      "peak_rss_kib": 32156,
+      "peak_rss_kib": 33348,
       "vram_bytes": null
     },
     {
@@ -909,9 +916,9 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 114260267,
+      "elapsed_ns": 114276175,
       "log": "logs/test_public_evaluation_lifecycle.log",
-      "peak_rss_kib": 32392,
+      "peak_rss_kib": 33756,
       "vram_bytes": null
     },
     {
@@ -922,9 +929,9 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 114308008,
+      "elapsed_ns": 114119157,
       "log": "logs/test_llm_adapter_contract.log",
-      "peak_rss_kib": 21024,
+      "peak_rss_kib": 22364,
       "vram_bytes": null
     },
     {
@@ -950,9 +957,9 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 47952551967,
+      "elapsed_ns": 47439553963,
       "log": "logs/transport-sustained-paid-unpaid.log",
-      "peak_rss_kib": 228816,
+      "peak_rss_kib": 228868,
       "vram_bytes": null
     },
     {
@@ -972,16 +979,16 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 1369606136,
+      "elapsed_ns": 1368210279,
       "log": "logs/pipeline-build.log",
-      "peak_rss_kib": 205608,
+      "peak_rss_kib": 205400,
       "vram_bytes": null
     },
     {
       "name": "pipeline-hot-legacy",
       "command": [
         "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/release/examples/continuous_pipeline",
-        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-d/pipeline-hot-legacy",
+        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-f/pipeline-hot-legacy",
         "20",
         "256",
         "10000",
@@ -990,16 +997,16 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 250198980285,
+      "elapsed_ns": 250230668079,
       "log": "logs/pipeline-hot-legacy.log",
-      "peak_rss_kib": 95752,
+      "peak_rss_kib": 96248,
       "vram_bytes": null
     },
     {
       "name": "pipeline-hot-protected",
       "command": [
         "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/release/examples/continuous_pipeline",
-        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-d/pipeline-hot-protected",
+        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-f/pipeline-hot-protected",
         "20",
         "256",
         "10000",
@@ -1008,16 +1015,16 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 250205542947,
+      "elapsed_ns": 250572857309,
       "log": "logs/pipeline-hot-protected.log",
-      "peak_rss_kib": 95836,
+      "peak_rss_kib": 96340,
       "vram_bytes": null
     },
     {
       "name": "pipeline-disjoint4-protected",
       "command": [
         "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/release/examples/continuous_pipeline",
-        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-d/pipeline-disjoint4-protected",
+        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-f/pipeline-disjoint4-protected",
         "20",
         "256",
         "10000",
@@ -1026,16 +1033,16 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 250231370371,
+      "elapsed_ns": 250229812818,
       "log": "logs/pipeline-disjoint4-protected.log",
-      "peak_rss_kib": 96600,
+      "peak_rss_kib": 97156,
       "vram_bytes": null
     },
     {
       "name": "pipeline-growth-protected",
       "command": [
         "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/release/examples/continuous_pipeline",
-        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-d/pipeline-growth-protected",
+        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-f/pipeline-growth-protected",
         "20",
         "256",
         "10000",
@@ -1044,9 +1051,9 @@
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 252840919318,
+      "elapsed_ns": 252870245241,
       "log": "logs/pipeline-growth-protected.log",
-      "peak_rss_kib": 121120,
+      "peak_rss_kib": 120608,
       "vram_bytes": null
     },
     {
@@ -1059,13 +1066,13 @@
         "--bundle-hash",
         "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
         "--out",
-        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-d/attribution"
+        "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/public-readiness-qualification-20261001-f/attribution"
       ],
       "returncode": 0,
       "timed_out": false,
-      "elapsed_ns": 1616824113,
+      "elapsed_ns": 1671409608,
       "log": "logs/bounded-model-attribution.log",
-      "peak_rss_kib": 55808,
+      "peak_rss_kib": 55868,
       "vram_bytes": null
     }
   ],

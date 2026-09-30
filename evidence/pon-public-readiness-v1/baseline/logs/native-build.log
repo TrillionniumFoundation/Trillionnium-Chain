@@ -1,5 +1,1 @@
-   Compiling trnm-transport v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-transport)
-   Compiling trnm-mvcc-fee v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
-   Compiling trnm-protocol v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-protocol)
-   Compiling trnm-crypto-primitives v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
-    Finished `release` profile [optimized] target(s) in 1.99s
+    Finished `release` profile [optimized] target(s) in 0.09s

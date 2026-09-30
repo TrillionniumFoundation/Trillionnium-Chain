@@ -3,6 +3,6 @@ test_proof_bytes_and_verified_product_equal_oracle (__main__.NativeWorkBridgeTes
 test_wrong_statement_and_bad_trace_reject_without_fallback (__main__.NativeWorkBridgeTests.test_wrong_statement_and_bad_trace_reject_without_fallback) ... ok
 
 ----------------------------------------------------------------------
-Ran 3 tests in 0.199s
+Ran 3 tests in 0.179s
 
 OK

@@ -9,6 +9,6 @@ test_two_fast_high_scores_do_not_unlock_and_missing_vote_expires (__main__.Close
 test_zero_full_round_has_no_adoption_or_reward (__main__.ClosedRoundTests.test_zero_full_round_has_no_adoption_or_reward) ... ok
 
 ----------------------------------------------------------------------
-Ran 9 tests in 0.490s
+Ran 9 tests in 0.505s
 
 OK

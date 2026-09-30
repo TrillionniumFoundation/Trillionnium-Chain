@@ -1,52 +1,4 @@
-   Compiling trnm-mempool v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-mempool)
-   Compiling serde_json v1.0.149
-   Compiling rustix v1.1.4
-   Compiling linux-raw-sys v0.12.1
-   Compiling shlex v1.3.0
-   Compiling cc v1.2.59
-   Compiling libsqlite3-sys v0.30.1
-   Compiling tempfile v3.27.0
-   Compiling trnm-types v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-types)
-   Compiling trnm-peer-lease v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-peer-lease)
-   Compiling rusqlite v0.32.1
-   Compiling trnm-mvcc-fee v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
-   Compiling utf8parse v0.2.2
-   Compiling anstyle-parse v1.0.0
-   Compiling trnm-checkpoint-types v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-checkpoint-types)
-   Compiling trnm-pon-node v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
-   Compiling anstyle-query v1.1.5
-   Compiling colorchoice v1.0.5
-   Compiling anstyle v1.0.14
-   Compiling is_terminal_polyfill v1.70.2
-   Compiling anstream v1.0.0
-   Compiling trnm-task-kernel v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)
-   Compiling clap_lex v1.1.0
-   Compiling heck v0.5.0
-   Compiling strsim v0.11.1
-   Compiling clap_builder v4.6.0
-   Compiling clap_derive v4.6.0
-   Compiling trnm-checkpoint-store v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-checkpoint-store)
-   Compiling trnm-audit-events v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-audit-events)
-   Compiling trnm-executor v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-executor)
-   Compiling clap v4.6.0
-   Compiling trnm-research-protocol v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-research-protocol)
-   Compiling wait-timeout v0.2.1
-   Compiling shell-escape v0.1.5
-   Compiling trnm-worker-agent v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-worker-agent)
-   Compiling trnm-bench v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-bench)
-   Compiling trnm-governance-guard v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-governance-guard)
-   Compiling trnm-escrow-vault v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-escrow-vault)
-   Compiling trnm-service-settlement v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)
-   Compiling trnm-transport v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-transport)
-   Compiling trnm-verification-profiles v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)
-   Compiling trnm-state-import v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-state-import)
-   Compiling trnm-data-availability v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)
-   Compiling trnm-crypto-primitives v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
-   Compiling trnm-protocol v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-protocol)
-   Compiling trnm-oracle v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-oracle)
-   Compiling trnm-control-plane v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-control-plane)
-   Compiling trnm-release-bundle v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-release-bundle)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 49.47s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
      Running unittests src/lib.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/trnm_audit_events-364338f19e3c774c)
 
 running 3 tests
@@ -107,7 +59,7 @@ test node_commit_ledger_v1::tests::third_state_is_rejected ... ok
 test node_commit_ledger_v1::tests::unknown_root_and_noncanonical_temp_names_are_retained_and_rejected_v1 ... ok
 test node_commit_ledger_v1::tests::valid_extension_preserves_the_observed_live_prefix_v1 ... ok
 
-test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
 
      Running tests/cross_process.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/cross_process-63fded85c66d18ca)
 
@@ -151,7 +103,7 @@ test tests::fixed_hash_text_preserves_all_ascii_substitutions_and_error_preceden
 test tests::fixed_hash_text_reproduces_every_byte_value_without_normalization ... ok
 test tests::strict_signatures_reject_small_order_and_noncanonical_points ... ok
 
-test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.88s
 
      Running tests/qualified_work_task.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/qualified_work_task-75640d7f8f3ff5e1)
 
@@ -216,7 +168,7 @@ test tests::typed_namespace_and_batch_derivation_are_deterministic ... ok
 test tests::under_quorum_and_signed_equivocation_are_distinct ... ok
 test tests::weighted_certificate_retrieval_retention_and_gc_close ... ok
 
-test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.76s
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.86s
 
      Running unittests src/lib.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/trnm_escrow_vault-c4f64effe68c393c)
 
@@ -2015,7 +1967,7 @@ test tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed ... ok
 test tests::static_access_fee_and_arithmetic_mutants_fail_before_commit ... ok
 test tests::vector_inventory_matches_executable_candidate_assertions ... ok
 
-test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.61s
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.60s
 
      Running unittests examples/pon_execute.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/examples/pon_execute-85bcd2f22fb5edf3)
 
@@ -2251,7 +2203,7 @@ test unix::tests::socket_cleanup_guard_does_not_remove_replacement_inode ... ok
 test unix::tests::socket_path_validation_rejects_traversal_length_and_sidecar_collisions ... ok
 test unix::tests::truncated_closed_response_is_eof_not_a_timeout_setup_failure_v1 ... ok
 
-test result: ok. 94 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.75s
+test result: ok. 94 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.76s
 
      Running unittests src/bin/trnm-payload-replay-recovery-owner-v1.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/trnm_payload_replay_recovery_owner_v1-af513cdb3912f467)
 
@@ -2374,7 +2326,7 @@ test ingress::tests::test_slow_partial_frame_cannot_extend_the_absolute_deadline
 test ingress::tests::verified_work_cannot_bypass_destination_context_or_clock ... ok
 test ingress::tests::work_replay_does_not_hold_the_durable_owner_lock ... ok
 
-test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.40s
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.18s
 
      Running unittests src/main.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/trnm_pon_node-ffe069d2607b5aea)
 
@@ -2412,7 +2364,7 @@ test test_native_writer_and_namespace_fences_are_not_optional ... ok
 test test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry ... ok
 test test_socket_history_uses_real_native_validation_and_separate_stores ... ok
 
-test result: ok. 24 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 56.96s
+test result: ok. 24 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 56.04s
 
      Running tests/protected_ingress.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/protected_ingress-014380d0e13e293b)
 
@@ -2428,7 +2380,7 @@ test socket_admission_binds_exact_challenge_and_keeps_fake_work_invalid ... ok
 test strict_negotiation_refuses_legacy_before_mutation_and_blocks_unnegotiated_submit ... ok
 test sustained_protected_socket_cost_campaign ... ignored, release-only sustained socket cost measurement; run explicitly with --ignored
 
-test result: ok. 9 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 6.00s
+test result: ok. 9 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 5.00s
 
      Running tests/qualified_tasks.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/qualified_tasks-732beb9f57b2cde0)
 
@@ -2438,7 +2390,7 @@ test registered_task_mines_real_work_and_counts_one_output_across_fresh_challeng
 test source_nonce_demand_withdrawal_and_historical_profile_are_checked_atomically ... ok
 test validator_rejects_signed_false_recipe_even_with_manually_constructed_valid_work_and_state ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.27s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.34s
 
      Running unittests examples/continuous_pipeline.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/examples/continuous_pipeline-ff5ba5f103a7907b)
 
@@ -2464,7 +2416,7 @@ test tests::identifiers_and_decimal_values_are_canonical ... ok
 test tests::object_namespaces_do_not_collide ... ok
 test tests::result_commitment_binds_every_field ... ok
 
-test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.67s
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.80s
 
      Running tests/qualified_work_task.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/qualified_work_task-ba563f084efde837)
 
@@ -2535,7 +2487,7 @@ test tests::schema_sidecar_row_and_self_consistent_state_substitution_fail_close
 test tests::settlement_maturity_versions_replay_and_one_shot_are_exact ... ok
 test tests::vector_inventory_matches_candidate_assertions ... ok
 
-test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
 
      Running unittests src/lib.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/trnm_state_import-538172b9b59afd9c)
 
@@ -2594,7 +2546,7 @@ test tests::stale_versions_expiry_double_consumption_and_conservation_reject ...
 test tests::task_funded_escrow_bid_lease_and_provider_accept_are_atomic ... ok
 test tests::vector_inventory_matches_executable_negative_assertions ... ok
 
-test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.10s
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.09s
 
      Running tests/agent_transaction_wire_v1.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/agent_transaction_wire_v1-ffc8604edec7fe2a)
 
@@ -2612,7 +2564,7 @@ test archive_store_process_loss_after_commit_reopens_and_retries_exact_batch ...
 running 1 test
 test archive_store_process_loss_after_commit_reopens_and_retries_exact_batch ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
 
      Running unittests examples/agent_transaction_wire_v1.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/examples/agent_transaction_wire_v1-10eb3a4f8b2aea52)
 
@@ -3382,5 +3334,5 @@ test workflow_ops::tests::compute_commit_hash_stays_deterministic ... ok
 test workflow_ops::tests::compute_result_and_salt_matches_core_payload_hashing ... ok
 test workflow_ops::tests::submit_log_contract_line_keeps_operator_handoff_tokens_stable ... ok
 
-test result: ok. 342 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.87s
+test result: ok. 342 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.91s
 
