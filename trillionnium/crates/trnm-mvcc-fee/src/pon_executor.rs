@@ -86,13 +86,36 @@ pub struct Config {
 impl Config {
     /// Installed experimental genesis context, not caller-supplied authority booleans.
     pub fn installed() -> Result<Self> {
-        let params: Value =
+        Self::installed_with_evaluation_policy("legacy-first-two-v3")
+    }
+    /// Explicit successor selects different network/parameter commitments. The default
+    /// revision3 bytes and economics remain unchanged; this is not a hot upgrade.
+    pub fn installed_with_evaluation_policy(policy: &str) -> Result<Self> {
+        let mut params: Value =
             serde_json::from_str(include_str!("../../../../config/pon/devnet-v1.json"))
                 .map_err(|_| "CONFIG")?;
         require(
             params["consensus_revision"] == 3 && params["production_activation"] == false,
             "CONFIG",
         )?;
+        match policy {
+            "legacy-first-two-v3" => {}
+            trnm_verification_profiles::closed_round::PROFILE => {
+                let policy: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/evaluation-round-v1.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(policy["production_activation"] == false, "CONFIG")?;
+                for (key, value) in policy["genesis_overrides"].as_object().ok_or("CONFIG")? {
+                    params[key] = value.clone();
+                }
+                params["evaluation_policy_hash"] = json!(hex::encode(hash(
+                    b"evaluation-policy",
+                    &[&canonical(&policy)?]
+                )));
+            }
+            _ => return Err("EVALUATION_POLICY"),
+        }
         let model: Value =
             serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
                 .map_err(|_| "CONFIG")?;
@@ -113,7 +136,17 @@ impl Config {
             ],
         );
         let family = hash(b"family", &[&canonical(&model)?]);
-        let plan = hash(b"plan", &[b"public-source-file-disjoint-v1"]);
+        let plan = if policy == "legacy-first-two-v3" {
+            hash(b"plan", &[b"public-source-file-disjoint-v1"])
+        } else {
+            hash(
+                b"plan",
+                &[
+                    b"public-source-file-disjoint-v1",
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                ],
+            )
+        };
         let mut fees = [0; 13];
         let mut tags = BTreeSet::new();
         for c in wire["commands"].as_array().ok_or("CONFIG")? {
@@ -549,7 +582,32 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             )?;
             o["votes"][&sender] = json!({"score":score,"evidence":hex::encode(evidence)});
             let votes = o["votes"].as_object().ok_or("STATE")?;
-            if votes.len() as u64 >= cfg.limit("evaluation_threshold")? {
+            let complete = match text(&cfg.params, "evaluation_profile")? {
+                "explicit-attested-dev-profile-not-permissionless-utility" => {
+                    votes.len() as u64 >= cfg.limit("evaluation_threshold")?
+                }
+                trnm_verification_profiles::closed_round::PROFILE => {
+                    let author = text(&o, "owner")?;
+                    let eligible = cfg
+                        .evaluators
+                        .iter()
+                        .filter(|s| s.as_str() != author)
+                        .cloned()
+                        .collect();
+                    let scores = votes
+                        .iter()
+                        .map(|(signer, vote)| Ok((signer.clone(), field(vote, "score")?)))
+                        .collect::<Result<BTreeMap<_, _>>>()?;
+                    trnm_verification_profiles::closed_round::complete_score(
+                        &eligible,
+                        &scores,
+                        cfg.limit("max_evidence_score")?,
+                    )?
+                    .is_some()
+                }
+                _ => return Err("EVALUATION_POLICY"),
+            };
+            if complete {
                 let minimum = votes
                     .values()
                     .map(|v| field(v, "score"))

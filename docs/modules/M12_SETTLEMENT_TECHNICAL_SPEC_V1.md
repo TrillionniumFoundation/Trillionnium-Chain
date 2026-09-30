@@ -106,3 +106,14 @@ accuracy/marginal-value/bound statement in MODEL_EVALUATION. Its canonical repla
 false prospective/general-circuit authority and numeric aliases. A perfect empirical
 score proves only that fixed accuracy objective, not public reward eligibility or model
 safety. Revision3 first-two attestation arrival semantics remain unchanged and unqualified.
+
+## Complete-evaluator successor and reward conservation
+
+The explicit revision4 policy in [MODEL_EVALUATION](../protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md)
+changes when an attested score is complete, not the release budget, fee, maturity,
+claim-nullifier or conservation algorithm. Pending and zero-valued rounds cannot publish
+or mint model rewards. Complete positive controlled rounds exercise publish, maturity,
+exact claim and duplicate rejection through both existing implementations.
+
+Selector: `formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_complete_round_can_publish_mature_and_claim_exactly_once`.
+This does not establish real model benefit, functional-copy fairness or funded GPU service.

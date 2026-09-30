@@ -216,6 +216,40 @@ pub fn verify(
     })
 }
 
+// q = 2^32 - 5. A transcript sum is below 2^70; two folds followed by
+// one subtraction are exact. Only the producer uses this alternative arithmetic;
+// the independent verifier retains u128 remainder and full recomputation.
+fn producer_reduce(x: u128) -> u32 {
+    debug_assert!(x < (1_u128 << 70));
+    let first = (x as u32 as u64) + 5 * ((x >> 32) as u64);
+    let second = (first as u32 as u64) + 5 * (first >> 32);
+    if second >= Q as u64 {
+        (second - Q as u64) as u32
+    } else {
+        second as u32
+    }
+}
+fn producer_mul(a: &[u32], b: &[u32], rows: usize, inner: usize, cols: usize) -> Vec<u32> {
+    debug_assert!(inner <= N);
+    let mut transposed = vec![0; b.len()];
+    for k in 0..inner {
+        for j in 0..cols {
+            transposed[j * inner + k] = b[k * cols + j];
+        }
+    }
+    let mut out = vec![0; rows * cols];
+    for i in 0..rows {
+        for j in 0..cols {
+            let mut sum = 0_u128;
+            for k in 0..inner {
+                sum += u128::from(a[i * inner + k]) * u128::from(transposed[j * inner + k]);
+            }
+            out[i * cols + j] = producer_reduce(sum);
+        }
+    }
+    out
+}
+
 /// Bounded producer cache for one exact task. It carries no verification authority.
 /// The useful product is fixed across challenges; every challenge still hashes every tile.
 pub struct PreparedTask {
@@ -227,7 +261,7 @@ impl PreparedTask {
     pub fn new(a: &[u32], b: &[u32]) -> Result<Self, WorkError> {
         validate(a)?;
         validate(b)?;
-        let product = mul(a, b, N, N, N);
+        let product = producer_mul(a, b, N, N, N);
         let mut prefix = Vec::with_capacity(PROOF_BYTES);
         prefix.extend_from_slice(b"PNW1");
         for matrix in [a, b, product.as_slice()] {
@@ -247,32 +281,42 @@ impl PreparedTask {
         let ap: Vec<u32> = self
             .a
             .iter()
-            .zip(mul(&el, &er, N, R, N))
+            .zip(producer_mul(&el, &er, N, R, N))
             .map(|(x, y)| ((u128::from(*x) + u128::from(y)) % Q) as u32)
             .collect();
         let bp: Vec<u32> = self
             .b
             .iter()
-            .zip(mul(&fl, &fr, N, R, N))
+            .zip(producer_mul(&fl, &fr, N, R, N))
             .map(|(x, y)| ((u128::from(*x) + u128::from(y)) % Q) as u32)
             .collect();
-        let mut cp = vec![0u32; CELLS];
+        let mut bt = vec![0u32; CELLS];
+        for k in 0..N {
+            for j in 0..N {
+                bt[j * N + k] = bp[k * N + j];
+            }
+        }
         let mut transcript = Sha256::new();
         transcript.update(b"TRNM-PON-TRACE1\0");
         transcript.update(challenge);
         for bi in 0..N / R {
             for bj in 0..N / R {
+                let mut cells = [0u32; R * R];
+                let mut bytes = [0u8; R * R * 4];
                 for bk in 0..N / R {
-                    for i in bi * R..(bi + 1) * R {
-                        for j in bj * R..(bj + 1) * R {
-                            let mut sum = u128::from(cp[i * N + j]);
+                    for i in 0..R {
+                        for j in 0..R {
+                            let pos = i * R + j;
+                            let mut sum = u128::from(cells[pos]);
                             for k in bk * R..(bk + 1) * R {
-                                sum += u128::from(ap[i * N + k]) * u128::from(bp[k * N + j]);
+                                sum += u128::from(ap[(bi * R + i) * N + k])
+                                    * u128::from(bt[(bj * R + j) * N + k]);
                             }
-                            cp[i * N + j] = (sum % Q) as u32;
-                            transcript.update(cp[i * N + j].to_le_bytes());
+                            cells[pos] = producer_reduce(sum);
+                            bytes[pos * 4..pos * 4 + 4].copy_from_slice(&cells[pos].to_le_bytes());
                         }
                     }
+                    transcript.update(bytes);
                 }
             }
         }
@@ -285,6 +329,53 @@ impl PreparedTask {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn producer_reduction_matches_remainder_at_boundaries_and_deterministic_samples() {
+        let limit = 1_u128 << 70;
+        let bounds = [
+            0,
+            1,
+            Q - 1,
+            Q,
+            Q + 1,
+            Q * Q - 1,
+            64 * (Q - 1) * (Q - 1) + Q - 1,
+            limit - 1,
+        ];
+        for x in bounds {
+            assert_eq!(producer_reduce(x), (x % Q) as u32);
+        }
+        let mut seed = 19u128;
+        for _ in 0..8192 {
+            seed = seed
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            let x = seed % limit;
+            assert_eq!(producer_reduce(x), (x % Q) as u32);
+        }
+    }
+    #[test]
+    fn optimized_producer_matches_full_verifier_for_structures_and_extreme_fields() {
+        let shapes = [
+            vec![0; CELLS],
+            vec![(Q - 1) as u32; CELLS],
+            (0..CELLS)
+                .map(|i| ((i / N + 1) * (i % N + 1)) as u32)
+                .collect(),
+            (0..CELLS)
+                .map(|i| if i % 71 == 0 { (Q - 2) as u32 } else { 0 })
+                .collect(),
+        ];
+        for (index, a) in shapes.iter().enumerate() {
+            let b = &shapes[(index + 1) % shapes.len()];
+            let prepared = PreparedTask::new(a, b).unwrap();
+            for c in [[0; 32], [7; 32], [255; 32]] {
+                let proof = prepared.prove(c).unwrap();
+                assert_eq!(proof, prove(c, a, b).unwrap());
+                verify(c, task_id(a, b).unwrap(), [255; 32], &proof).unwrap();
+            }
+        }
+    }
     fn matrices() -> (Vec<u32>, Vec<u32>) {
         (
             (0..CELLS).map(|i| (i % 31) as u32).collect(),

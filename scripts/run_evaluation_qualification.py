@@ -13,7 +13,7 @@ def git(*args):return subprocess.check_output(['git',*args],cwd=ROOT,text=True).
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def runtime(path):
  return (path.startswith(('formal/pon-nakamoto-v1/','trillionnium/'))and not path.endswith('.md'))or path in {
- 'config/pon/devnet-v1.json','config/pon/ledger-v1.json','config/pon/model-family-v1.json','config/pon/work-profile-v1.json'}
+ 'config/pon/devnet-v1.json','config/pon/ledger-v1.json','config/pon/model-family-v1.json','config/pon/work-profile-v1.json','config/pon/evaluation-round-v1.json'}
 
 def run(output,source,target,cargo_home,hosts,client_only=False,session_only=False,native_node=False):
  session_only=session_only or native_node
@@ -95,7 +95,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
   execute('native-ignored-helper',['cargo','test','--offline','--locked',*manifest,'-p','trnm-research-protocol','--all-targets','--all-features','--','--ignored'])
   execute('native-lints',['cargo','clippy','--offline','--locked',*manifest,'--workspace','--all-targets','--all-features','--','-D','warnings'])
   execute('native-format',['cargo','fmt',*manifest,'--all','--','--check'])
-  for test in PYTHON_TESTS+(['test_client_confirmation'] if client_only else [])+(['test_native_session','test_work_precheck'] if session_only else []):execute(test,['python3','formal/pon-nakamoto-v1/'+test+'.py'])
+  for test in PYTHON_TESTS+(['test_client_confirmation'] if client_only else [])+(['test_native_session','test_work_precheck'] if session_only else [])+(['test_evaluation_round'] if native_node else []):execute(test,['python3','formal/pon-nakamoto-v1/'+test+'.py'])
   execute('accepted-block',['python3','scripts/ci/test_pon_accepted_block.py'])
   execute('native-ledger',['python3','formal/pon-nakamoto-v1/test_contracts.py'],extra={'TRNM_NATIVE_EXECUTOR':str(Path(target).resolve()/'release/examples/pon_execute'),'TRNM_EXECUTION_WORKERS':'8'})
   execute('historical-v1-rejections',['python3','scripts/ci/test_pon_evidence.py'])

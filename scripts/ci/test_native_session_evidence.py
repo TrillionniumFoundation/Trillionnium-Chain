@@ -14,7 +14,7 @@ from check_client_confirmation_evidence import ROOT, validate, require_tracked_e
 class NativeSessionEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.original=ROOT/'evidence/pon-native-node-v1'
+        cls.original=ROOT/'evidence/pon-closed-round-v1'
         cls.baseline=validate(evidence=cls.original)
 
     def setUp(self):
@@ -44,6 +44,20 @@ class NativeSessionEvidenceTests(unittest.TestCase):
         self.assertGreater(self.baseline['controlled_policy_confirmations_replayed'],0)
         self.assertIsNone(self.baseline['public_confirmed_tps'])
         self.assertFalse(self.baseline['native_full_node'])
+
+    def test_successor_policy_configuration_is_not_an_omittable_input(self):
+        self.q['source_files_sha256'].pop('config/pon/evaluation-round-v1.json')
+        self.reject('runtime inventory')
+
+    def test_successor_execution_cannot_be_replaced_with_legacy_passes(self):
+        self.q['results'].remove(self.row('test_evaluation_round'))
+        self.reject('execution matrix')
+
+    def test_every_successor_selector_must_have_actually_run(self):
+        path=self.folder/self.row('test_evaluation_round')['log']
+        path.write_text(path.read_text().replace(
+            'test_ordinary_native_cli_uses_successor_and_reopens_only_its_namespace','omitted_case'))
+        self.reject('unobserved successor selector')
 
     def test_missing_session_input_cannot_be_called_unmeasured_addition(self):
         self.q['source_files_sha256'].pop('formal/pon-nakamoto-v1/native_session.py')

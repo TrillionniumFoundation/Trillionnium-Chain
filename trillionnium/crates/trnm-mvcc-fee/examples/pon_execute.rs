@@ -25,7 +25,13 @@ fn run() -> Result<(), String> {
         .iter()
         .map(|x| hex::decode(x.as_str().ok_or("hex")?).map_err(|_| "hex"))
         .collect::<Result<Vec<_>, _>>()?;
-    let cfg = Config::installed().map_err(str::to_owned)?;
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let policy = match args.as_slice() {
+        [] => "legacy-first-two-v3",
+        [flag, policy] if flag == "--evaluation-policy" => policy.as_str(),
+        _ => return Err("EVALUATION_POLICY_ARGUMENTS".into()),
+    };
+    let cfg = Config::installed_with_evaluation_policy(policy).map_err(str::to_owned)?;
     if h(&v["network"])? != cfg.network || h(&v["parameters"])? != cfg.parameters {
         return Err("CONTEXT".into());
     }

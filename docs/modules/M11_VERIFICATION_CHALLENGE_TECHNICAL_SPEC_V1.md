@@ -107,3 +107,22 @@ accuracy/marginal-value/bound statement in MODEL_EVALUATION. Its canonical repla
 false prospective/general-circuit authority and numeric aliases. A perfect empirical
 score proves only that fixed accuracy objective, not public reward eligibility or model
 safety. Revision3 first-two attestation arrival semantics remain unchanged and unqualified.
+
+## Explicit successor without rewriting revision3
+
+[M1 closed-round successor](../protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md#explicit-closed-round-successor-all-eligible-attestations-not-first-arrivals)
+adds a profile-bound all-eligible minimum rule in the existing M11/M06 owners.
+The default first-two rule and its economic counterexample remain historical/default
+facts, not silently repaired bytes. The selected successor requires a fresh network and
+store context. No attestation becomes objective ML truth, independent acceptance or work.
+
+Concrete selectors: `formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_all_six_arrival_orders_close_to_the_same_state_with_all_workers`
+and `formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_two_fast_high_scores_do_not_unlock_and_missing_vote_expires`.
+
+### M11.CompleteEvaluatorRound
+
+The explicit successor closes only the complete frozen eligible roster. Its exact
+counterexamples above compare all arrival orders and withheld/expired evidence. This
+invariant applies to a fresh revision4 context; the registry's genesis revision remains
+the unchanged installed revision3 default. No new authority is obtained by choosing a
+profile or by registering a test selector.

@@ -96,3 +96,15 @@ The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
 the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
 No historical receipt is relabelled as executing this source.
+
+## Explicit evaluation-profile selection
+
+The ordinary `trnm-pon-node` development CLI accepts `--evaluation-policy closed-round-all-eligible-min-v1` on a fresh namespace. Omission keeps revision3;
+unknown values reject. The network, parameters, plan and genesis are bound before store
+open. A node never opens an old namespace under successor semantics, and cross-network
+packets reject. The actual CLI regression also mines a heavier fork, reopens storage and
+replays the original signed candidate under the surviving state.
+
+Selector: `formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_ordinary_native_cli_uses_successor_and_reopens_only_its_namespace`.
+This is a bounded native development path, not authenticated public P2P, ordinary Hepta
+resource ownership or production activation.

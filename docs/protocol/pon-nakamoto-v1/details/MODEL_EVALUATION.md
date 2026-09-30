@@ -200,3 +200,40 @@ both mutable reports are changed together. The prediction-row accounting names o
 this evaluator (candidate, four controls, three fixed-router ablations, and four
 calibration controls), not training, auxiliary worker metrics, wall time or GPU cost.
 No revision3 transaction, signed parameter context or reward authority is changed.
+
+## Explicit closed-round successor: all eligible attestations, not first arrivals
+
+`config/pon/evaluation-round-v1.json` defines `closed-round-all-eligible-min-v1`.
+The installed default remains revision3, including its retained first-two counterexample.
+The successor is selected explicitly by the native CLI `--evaluation-policy` option,
+`Settings::development_with_evaluation_policy` or, in a separately started Python oracle,
+`TRNM_PON_EVALUATION_POLICY=closed-round-all-eligible-min-v1`. Unknown profiles reject.
+Its revision4 network label, complete policy hash, parameter commitment and evaluation
+plan differ. Existing databases and old signed transactions are not upgraded or relabelled.
+
+For each candidate the roster is the genesis evaluator set minus the exact author, with
+at least two eligible identities. Only those identities may attest once, to the fixed
+plan/evidence/score. No prefix quorum can freeze a score. After ALL eligible identities
+are present, the minimum of the complete set is the accepted score; before then status
+remains submitted and no release can consume it. A complete round containing zero cannot
+unlock model reward. Existing signed intake windows, expiry and retirement remain in
+force: a missing evaluator can withhold this candidate's adoption, but cannot suspend
+mining, fabricate a timeout vote or create an indefinite payout liability.
+
+This deliberately trades evaluator availability for a complete, order-independent set.
+Scores 10/100/100 yield 10 in all six orders. Scores 0/100/100 yield zero. An author in
+the three-member roster is excluded, so both remaining members are required. Distinct
+keys still do not establish independent administration. Signed false scores remain an
+attested-trust risk; minimum aggregation is NOT objective model verification or arbitration.
+A same-signer replacement rejects rather than silently replacing the first statement.
+No slashing, appeal authority, retroactive block invalidation or consensus voting is added.
+Functional-copy/split attribution and an objective public dispute profile remain open.
+
+The M11 `trnm-verification-profiles::closed_round::complete_score` procedure is consumed
+by the existing M06 twelve-command executor. The Python `evaluation_round.complete_score`
+is separately coded. `test_evaluation_round.py::ClosedRoundTests` runs signed transitions
+at 1/2/4/8 workers, zero/missing/duplicate/wrong-context rejection, complete-budget
+publication/maturity/claim, and the ordinary native CLI with real work, disk reopen and
+heavier-fork replay. Positive scores in these tests are controlled fixtures, not a new
+learned improvement or an independently authorized reward. Historical model observations
+remain unchanged; fixed-data, prospective and optimum-certificate claims remain distinct.

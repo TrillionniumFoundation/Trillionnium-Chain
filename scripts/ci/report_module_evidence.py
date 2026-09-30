@@ -23,6 +23,7 @@ MATURITY = 'config/pon/module-maturity-v1.json'
 PARAMETERS = {
     'config/pon/devnet-v1.json', 'config/pon/ledger-v1.json',
     'config/pon/model-family-v1.json', 'config/pon/work-profile-v1.json',
+    'config/pon/evaluation-round-v1.json',
 }
 KINDS = {
     'pure-component', 'reference-owner', 'native-component-with-reference-caller',

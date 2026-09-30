@@ -159,11 +159,21 @@ pub struct Settings {
 impl Settings {
     /// An explicit new timestamp selects a distinct valueless devnet, not a hot upgrade.
     pub fn development(genesis_timestamp: Option<u64>) -> Result<Self> {
-        let mut app = Config::installed()?;
+        Self::development_with_evaluation_policy(genesis_timestamp, "legacy-first-two-v3")
+    }
+    pub fn development_with_evaluation_policy(
+        genesis_timestamp: Option<u64>,
+        policy: &str,
+    ) -> Result<Self> {
+        let mut app = Config::installed_with_evaluation_policy(policy)?;
         if let Some(time) = genesis_timestamp {
             ensure(time > 0 && time <= i64::MAX as u64, "GENESIS_TIME")?;
             app.params["genesis_timestamp"] = json!(time);
-            let label = format!("trnm-pon-native-wall-devnet-3-{time}");
+            let label = if policy == "legacy-first-two-v3" {
+                format!("trnm-pon-native-wall-devnet-3-{time}")
+            } else {
+                format!("trnm-pon-native-wall-devnet-4-{policy}-{time}")
+            };
             app.params["chain_label"] = json!(label);
             app.network = hash(b"network", &[label.as_bytes()]);
             let wire: Value =

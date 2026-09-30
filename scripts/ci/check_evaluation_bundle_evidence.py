@@ -5,7 +5,7 @@ import hashlib,json,re,subprocess,sys
 from pathlib import Path
 from check_invariant_evidence import ROOT,load,require,safe,source_bytes
 
-PARAMETERS={'config/pon/devnet-v1.json','config/pon/ledger-v1.json','config/pon/model-family-v1.json','config/pon/work-profile-v1.json'}
+PARAMETERS={'config/pon/devnet-v1.json','config/pon/ledger-v1.json','config/pon/model-family-v1.json','config/pon/work-profile-v1.json','config/pon/evaluation-round-v1.json'}
 FALSE_FLAGS=['ordinary_hepta_entry','independent_accepted','three_improving_generations',
              'physical_power_loss','public_network_ready','production_activation']
 REQUIRED_RUNS={'preflight','source-contract','source-rejections','invariant-registry','native-build',

@@ -4,6 +4,8 @@
 //! invocation. The resulting decision never moves settlement assets, changes
 //! Order finality or becomes portable application weight in this package.
 
+pub mod closed_round;
+
 use std::{
     collections::{BTreeMap, BTreeSet},
     fmt,

@@ -535,6 +535,32 @@
       "limit": "Binding validation is read-only and does not execute tests or award deployment authority.",
       "threat": "Heading/class-count theatre, stale measurements, omitted failures and same-operator processes called independent.",
       "remaining": "Every final result needs actual source, command, filesystem, backend and honest unexecuted scope."
+    },
+    {
+      "module": "M11",
+      "id": "CompleteEvaluatorRound",
+      "claim": "The explicit successor closes only the complete frozen eligible roster; equal score sets produce equal final state regardless of arrival order.",
+      "scope": "Fresh revision4 development context only; revision3 remains the legacy first-two profile. Attestations are not model truth or chainwork.",
+      "atomic": "Existing M06 speculative transition and M07 block/delta commit; no separate evaluator database.",
+      "cuts": [
+        "All six 10/100/100 permutations",
+        "Two fast high scores with missing final evaluator",
+        "Candidate expiry before missing vote",
+        "Cross-profile signed packet and store reopen"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_all_six_arrival_orders_close_to_the_same_state_with_all_workers",
+        "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_two_fast_high_scores_do_not_unlock_and_missing_vote_expires"
+      ],
+      "source": [
+        "config/pon/evaluation-round-v1.json",
+        "trillionnium/crates/trnm-verification-profiles/src/closed_round.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "formal/pon-nakamoto-v1/evaluation_round.py"
+      ],
+      "limit": "Two or three eligible configured identities, bounded unsigned scores and existing candidate lifetime/intake window.",
+      "threat": "First-arrival score selection, withheld evaluator, duplicate replacement and cross-profile replay.",
+      "remaining": "Evaluator independence, objective dispute adjudication, functional-copy attribution and public production acceptance remain unqualified."
     }
   ],
   "binding_is_execution": false,

@@ -13,7 +13,8 @@ from contract_wire import *
 import work_backend as work
 ZERO=bytes(32)
 FAMILY=H('family',canonical(MODEL_FAMILY))
-PLAN=H('plan',b'public-source-file-disjoint-v1')
+PLAN=(H('plan',b'public-source-file-disjoint-v1',bytes.fromhex(PARAMS['evaluation_policy_hash']))
+      if 'evaluation_policy_hash' in PARAMS else H('plan',b'public-source-file-disjoint-v1'))
 
 def key(i):
     # Publicly known development seeds, never imported into a production signer.
@@ -147,8 +148,16 @@ def execute_reference(parent,transactions,height,miner,parent_id):
             require(obj['status']=='submitted' and obj['parent']==s['model:current'],'STATE');require(sender not in obj['votes'],'DUPLICATE')
             require(f['plan']==PLAN and f['evidence']!=ZERO and f['score']<=PARAMS['max_evidence_score'],'EVIDENCE')
             obj['votes'][sender]={'score':f['score'],'evidence':f['evidence'].hex()}
-            if len(obj['votes'])>=PARAMS['evaluation_threshold']:
-                obj['score']=min(v['score']for v in obj['votes'].values());obj['status']='evaluated'
+            if PARAMS['evaluation_profile'] == 'closed-round-all-eligible-min-v1':
+                from evaluation_round import complete_score
+                score = complete_score(EVALUATORS, obj['owner'], obj['votes'], PARAMS['max_evidence_score'])
+                if score is not None:
+                    obj['score']=score;obj['status']='evaluated'
+            elif PARAMS['evaluation_profile'] == 'explicit-attested-dev-profile-not-permissionless-utility':
+                if len(obj['votes'])>=PARAMS['evaluation_threshold']:
+                    obj['score']=min(v['score']for v in obj['votes'].values());obj['status']='evaluated'
+            else:
+                raise ValueError('EVALUATION_POLICY')
         elif tag==8:
             require(f['parent_release'].hex()==s['model:current'],'STATE')
             bundle=fetch('contribution:',f['bundle']);require(bundle['status']=='evaluated'and bundle['score']>=PARAMS['minimum_adoption_score'],'EVIDENCE')

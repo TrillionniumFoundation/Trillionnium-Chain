@@ -16,9 +16,13 @@ class NativeSupplementTests(unittest.TestCase):
     def test_retained_native_results_match_separate_work_state_replay(self):
         result=validate_batch_report(self.record,self.q,self.expected)
         self.assertEqual(result['application_confirmation_targets'],sum(len(e['queries'])for e in self.expected))
-    def test_whole_current_supplement_replays_model_claims_and_zero_settlement(self):
-        result=validate()
-        self.assertTrue(result['frozen_model_claims_recomputed']);self.assertEqual(result['model_reward'],0)
+    def test_historical_supplement_replays_its_measured_model_and_zero_settlement(self):
+        from historical_evidence import validate_historical_cli
+        result=validate_historical_cli(ROOT/'scripts/ci/check_native_node_supplements.py',ROOT,self.folder)
+        self.assertEqual(result['measured_commit'],self.q['source_commit'])
+        self.assertTrue(result['historical_semantics_verified'])
+        self.assertFalse(result['runtime_matches'])
+        self.assertFalse(result['current_source_qualified_by_this_check'])
         self.assertFalse(result['production_activation'])
     def test_source_substitution_rejects(self):
         self.reject(lambda r:r.update(source_commit='00'*20))

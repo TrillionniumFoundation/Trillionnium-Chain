@@ -195,3 +195,26 @@ implementations, not the globally fastest algorithm, permissionless admission or
 model utility. Cheap fabricated transcript admission and further algebraic/preprocessing,
 hardware and task-choice shortcuts remain open. The old full-prover cost remains useful
 as a named baseline but must not be presented as unavoidable effective mining work.
+
+## Same-relation alternative producer and explicit arithmetic bound
+
+`PreparedTask` now uses a separately implemented producer kernel: transposed operands,
+exact pseudo-Mersenne reduction, one retained 8x8 accumulation tile and batched transcript
+hash updates. The original full verifier still uses its u128 remainder/recomputation.
+Proof bytes, field bounds, complete transcript order, task/output and lottery identities
+are unchanged. New task preparation is charged separately; it is not free training.
+
+For x < 2^70 and q=2^32-5, write x=x0+2^32*x1 and fold y=x0+5*x1.
+Fold again z=(y mod 2^32)+5*floor(y/2^32). Both folds preserve x mod q;
+z < 2*q, so one conditional subtraction is sufficient. The admitted dot products have
+at most 64 canonical products plus one canonical accumulator and obey that bound.
+Boundary and deterministic-sample tests compare against exact `% q`; extreme-field,
+zero, structured and sparse proofs compare complete bytes with the original verifier.
+This is an arithmetic equivalence argument, not a theorem of work-cost hardness.
+
+The existing same-target prepared-cost collector compares the new valid producer with
+full generation and verification on the same task/target. Retain setup, every attempt,
+all slower samples and forged-ticket rejection separately. The fastest observed supplied
+implementation is not the fastest possible adversary. A faster miner can worsen the
+claimed mining/verifier asymmetry; public admission and useful-work security remain
+unqualified until their own sustained adversarial evidence exists.

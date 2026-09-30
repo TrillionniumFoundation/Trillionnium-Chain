@@ -109,6 +109,10 @@ def validate(root=ROOT, evidence=None):
     require(TEST_FILE in originals and 'formal/pon-nakamoto-v1/client_confirmation.py' in originals, 'missing client source')
     rows = q['results']
     required = REQUIRED | (SESSION_RUNS if session else set()) | ({'native-node-build', 'native-node-contracts', 'native-prepared-cost'} if native_node else set())
+    round_test = 'formal/pon-nakamoto-v1/test_evaluation_round.py'
+    if native_node and 'config/pon/evaluation-round-v1.json' in originals:
+        require(round_test in originals, 'missing successor execution test')
+        required = required | {'test_evaluation_round'}
     require({r['name'] for r in rows} == required and len(rows) == len(required), 'execution matrix')
     records, native_count = [], 0
     by_name = {r['name']: r for r in rows}
@@ -139,6 +143,13 @@ def validate(root=ROOT, evidence=None):
                 require({'--workspace', '--all-targets', '--all-features'} <= set(row['command']), 'incomplete native suite')
                 native_count = row['native_passed']
         records.append(dict(row, _log_text=text))
+    if native_node and 'config/pon/evaluation-round-v1.json' in originals:
+        selected = [round_test + '::' + name for name in python_symbols(originals[round_test].decode())
+                    if name.startswith('ClosedRoundTests.test_') and name.count('.') == 1]
+        require(selected, 'missing successor assertions')
+        executed = [row for row in records if row['name'] == 'test_evaluation_round']
+        require(all(observed_selector(selector, executed) for selector in selected),
+                'unobserved successor selector')
     selectors = client_selectors(originals[TEST_FILE].decode())
     require(selectors, 'missing client assertions')
     for name in ['test_client_confirmation', 'native-client-confirmation']:

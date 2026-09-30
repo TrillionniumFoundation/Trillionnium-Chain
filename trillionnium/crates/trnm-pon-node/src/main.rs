@@ -72,7 +72,9 @@ fn run() -> Result<Value> {
         "serve" => "--listen --seconds",
         _ => return Err("UNKNOWN_COMMAND".into()),
     };
-    let allowed = format!("--development --store --genesis-time --workers --logical-now {extra}");
+    let allowed = format!(
+        "--development --store --genesis-time --workers --logical-now --evaluation-policy {extra}"
+    );
     for key in args.keys() {
         if !allowed.split_whitespace().any(|k| k == key) {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
@@ -80,6 +82,16 @@ fn run() -> Result<Value> {
     }
     if matches!(command.as_str(), "serve" | "sync" | "push") && args.contains_key("--logical-now") {
         return Err("NETWORK_USES_LOCAL_WALL_CLOCK".into());
+    }
+    let evaluation_policy = args
+        .get("--evaluation-policy")
+        .map(String::as_str)
+        .unwrap_or("legacy-first-two-v3");
+    if !matches!(
+        evaluation_policy,
+        "legacy-first-two-v3" | "closed-round-all-eligible-min-v1"
+    ) {
+        return Err("EVALUATION_POLICY".into());
     }
     if command == "push" {
         let packet = Packet::decode(&read(need(&args, "--packet")?, 1_048_576)?)?;
@@ -93,10 +105,11 @@ fn run() -> Result<Value> {
             },
         );
     }
-    let settings = Settings::development(
+    let settings = Settings::development_with_evaluation_policy(
         args.get("--genesis-time")
             .map(|s| s.parse().map_err(|_| Error::from("GENESIS_TIME")))
             .transpose()?,
+        evaluation_policy,
     )?;
     let clock = number(&args, "--logical-now", ingress::now()?)?;
     let mut node = Node::open(

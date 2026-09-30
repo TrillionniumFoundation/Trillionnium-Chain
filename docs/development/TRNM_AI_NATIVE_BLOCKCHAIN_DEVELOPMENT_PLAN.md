@@ -448,3 +448,28 @@ state, revision3 evaluation-order economics and genuine Hepta/model/resource int
 remain separate unfinished implementation/acceptance work on these existing owners.
 
 The current [native-node receipt](../../evidence/pon-native-node-v1/README.md) binds the clean runtime, actual native CLI replay, both work-cost targets and a separate recomputed model-value experiment. Hosted candidate/merge checks remain fresh delivery observations, not part of old runtime receipts.
+
+## Complete-evaluator successor and alternative valid-work producer
+
+Continue PR #204 and the same native M11/M06/M15 owners. The default revision3 and all
+prior evidence remain unchanged. An explicitly selected fresh revision4 development
+context binds `closed-round-all-eligible-min-v1`: every eligible genesis attestor except
+the exact author must submit before the minimum score closes. Missing/zero evidence
+cannot unlock adoption or reward; existing signed expiry bounds withheld candidates.
+This removes prefix-arrival selection for this complete-set rule, not evaluator trust,
+withholding, functional-copy attribution or the need for a public dispute profile.
+Ordinary native CLI mining, reopen, heavier-fork removal and reexecution are exercised
+with the same signed transactions and independently computed state. No old database is
+migrated, production enabled or authenticated public ingress inferred.
+
+The existing M01 PreparedTask producer now uses exact bounded field reduction,
+transposition and batched transcript hashing. It must produce byte-identical work under
+the unchanged verifier. Account preprocessing and same-target winners, full verification
+and forged-ticket rejection separately. An observed cheaper valid miner tightens the
+actual cost question; it does not qualify the work profile or supply a lower bound.
+
+New runtime needs its own clean-source qualification and cost records. Old node/model/
+host evidence remains historical. No new training, funded GPU serving, independently
+administered future-task acceptance, continuous public miner or persistent authenticated
+state is claimed by the closed-round or arithmetic changes. Their existing P0/P1/P2
+workstreams remain implementation and external-acceptance obligations, not paper gates.

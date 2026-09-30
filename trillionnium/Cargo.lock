@@ -897,6 +897,7 @@ dependencies = [
  "tempfile",
  "trnm-crypto-primitives",
  "trnm-protocol",
+ "trnm-verification-profiles",
 ]
 
 [[package]]

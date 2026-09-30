@@ -134,3 +134,19 @@ context, stale clock and exact retransmission. The real socket regression contin
 reject 32 ticket-passing false transcripts while serving 16 four-query batches. These
 are controlled loopback observations, not a Sybil/public fairness bound. Full valid
 application execution, recovery and noninterruptible SQLite calls still use the owner.
+
+## Alternative valid producer versus unchanged invalid rejection
+
+The same-relation PreparedTask kernel in W1 is an implemented lower-cost candidate,
+not a changed proof system or a separate admission ticket. Its transposed arithmetic,
+exact bounded reduction and tile-batched hashing must be compared at the same tasks and
+targets as the unchanged full verifier. Keep setup, successful and unsuccessful attempts,
+full rejection and network arrival budgets separate. A better valid producer can reduce
+the security cost per credited unit even while every existing invalid-proof test passes.
+
+The ordinary native node remains a bounded development loopback endpoint. Its local
+read/verification concurrency is not authenticated permissionless public fairness.
+No filter, queue budget or measured median may set work_profile_qualified or public
+activation. Sustained identity-churn delivery through the future authenticated public
+owner, fastest implemented structural attacks, clock/target changes and honest service
+under saturation remain explicit acceptance work.

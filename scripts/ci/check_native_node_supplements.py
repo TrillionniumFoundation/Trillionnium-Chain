@@ -217,10 +217,18 @@ def validate(root=ROOT,folder=None):
     require(outcome['outcome']=='not_adopted'and type(outcome['model_reward'])is int and outcome['model_reward']==0,'model no-gain settlement')
     require([row['name']for row in record['results']]==['model-learning','model-settlement','learning-cycles']
             and all(type(row['returncode'])is int and row['returncode']==0 for row in record['results']),'model execution matrix')
-    return {**result,'frozen_model_claims_recomputed':True,'model_reward':0,'independent_accepted':False,
+    return {**result,'measured_commit':q['source_commit'],'frozen_model_claims_recomputed':True,'model_reward':0,'independent_accepted':False,
             'public_confirmed_tps':None,'production_activation':False}
 
 if __name__=='__main__':
     import argparse
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--evidence',type=Path)
-    args=parser.parse_args();print(json.dumps(validate(folder=args.evidence),sort_keys=True))
+    parser.add_argument('--root',type=Path,default=ROOT)
+    parser.add_argument('--historical',action='store_true')
+    args=parser.parse_args()
+    if args.historical:
+        from historical_evidence import validate_historical_cli
+        result=validate_historical_cli(__file__,args.root,args.evidence or args.root/'evidence/pon-native-node-v1')
+    else:
+        result=validate(root=args.root,folder=args.evidence)
+    print(json.dumps(result,sort_keys=True))
