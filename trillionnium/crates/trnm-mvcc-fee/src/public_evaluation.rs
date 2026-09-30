@@ -6,6 +6,14 @@ use std::collections::{BTreeMap, BTreeSet};
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
+pub const RECORD_NAMESPACE: &str = "evaluation-record-v2";
+pub const STORAGE_REVISION: u64 = 2;
+const MAPS: [(&str, &str, usize); 4] = [
+    ("c", "commits", 16),
+    ("r", "reveals", 16),
+    ("f", "conflicts", 32),
+    ("a", "appeals", 16),
+];
 pub const PROFILE: &str = "native-public-evaluation-dev-v1";
 pub const CANDIDATE_END: u64 = 15;
 pub const COMMIT_END: u64 = 31;
@@ -66,7 +74,7 @@ pub fn freeze(
     let plan = json!({"schema":"pon-native-frozen-evaluation-v1","network":hex::encode(cfg.network),"parameters":hex::encode(cfg.parameters),"candidate":hex::encode(cid),"artifact":contribution["artifact"],"components_root":contribution["components_root"],"parent":contribution["parent"],"family":hex::encode(cfg.family),"model_and_task_contract":hex::encode(cfg.plan),"roster":roster,"start":start,"candidate_end":start+CANDIDATE_END,"commit_end":start+COMMIT_END,"reveal_end":start+REVEAL_END,"adoption_start":start+ADOPTION_START,"max_score":cfg.params["max_evidence_score"],"independent_governance_accepted":false,"objective_model_quality":false});
     let round = hash(b"native-public-evaluation-round-v1", &[&bytes(&plan)?]);
     Ok(
-        json!({"plan":plan,"round":hex::encode(round),"commits":{},"reveals":{},"conflicts":{},"appeals":{},"closed":null}),
+        json!({"storage_revision":STORAGE_REVISION,"plan":plan,"round":hex::encode(round),"record_counts":{"commits":0,"reveals":0,"conflicts":0,"appeals":0},"closed":null}),
     )
 }
 pub fn round(evaluation: &Value) -> Result<Hash> {
@@ -201,7 +209,7 @@ pub fn close(evaluation: &mut Value, height: u64) -> Result<Option<u64>> {
             .min()
     };
     check(aborted || score.is_some(), "PUBLIC_EVAL_STATE")?;
-    evaluation["closed"] = json!({"schema":"pon-native-closed-evaluation-v1","round":evaluation["round"],"candidate":evaluation["plan"]["candidate"],"status":if aborted{"aborted"}else{"complete-scored"},"score":score,"missing_reveals":missing,"conflicts_before_close":conflicts.keys().collect::<Vec<_>>(),"closed_height":height,"objective_model_quality":false,"independent_governance_accepted":false});
+    evaluation["closed"] = json!({"schema":"pon-native-closed-evaluation-v2","round":evaluation["round"],"candidate":evaluation["plan"]["candidate"],"status":if aborted{"aborted"}else{"complete-scored"},"score":score,"missing_reveal_count":missing.len(),"conflict_count_before_close":conflicts.len(),"records_digest":hex::encode(records_digest(evaluation)?),"closed_height":height,"objective_model_quality":false,"independent_governance_accepted":false});
     Ok(score)
 }
 pub fn adoption_allowed(evaluation: &Value, height: u64) -> Result<()> {
@@ -219,7 +227,7 @@ pub fn adoption_allowed(evaluation: &Value, height: u64) -> Result<()> {
 pub fn closed_digest(evaluation: &Value) -> Result<Hash> {
     check(!evaluation["closed"].is_null(), "PUBLIC_EVAL_NOT_CLOSED")?;
     Ok(hash(
-        b"native-public-evaluation-closed-v1",
+        b"native-public-evaluation-closed-v2",
         &[&bytes(&evaluation["closed"])?],
     ))
 }
@@ -320,4 +328,131 @@ pub fn excluded(state: &BTreeMap<String, Value>) -> BTreeSet<String> {
                 .map(str::to_owned)
         })
         .collect()
+}
+
+/// Exact per-candidate prefix participates in MVCC scan validation.
+pub fn record_prefix(candidate: Hash) -> String {
+    format!("{RECORD_NAMESPACE}:{}:", hex::encode(candidate))
+}
+fn identity(kind: &str, id: &str) -> Result<()> {
+    let valid_hex = |s: &str| {
+        s.len() == 64
+            && s.bytes()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    };
+    check(
+        if kind == "f" {
+            id.split_once(':')
+                .is_some_and(|(key, tag)| valid_hex(key) && matches!(tag, "14" | "15"))
+        } else {
+            valid_hex(id)
+        },
+        "PUBLIC_EVAL_RECORD_KEY",
+    )
+}
+pub fn record_rows(candidate: Hash, evaluation: &Value) -> Result<BTreeMap<String, Value>> {
+    check(
+        evaluation["plan"]["candidate"] == hex::encode(candidate),
+        "PUBLIC_EVAL_RECORD_CONTEXT",
+    )?;
+    let prefix = record_prefix(candidate);
+    let mut rows = BTreeMap::new();
+    for (kind, name, maximum) in MAPS {
+        let map = evaluation[name].as_object().ok_or("PUBLIC_EVAL_STATE")?;
+        check(map.len() <= maximum, "PUBLIC_EVAL_RECORD_LIMIT")?;
+        for (id, value) in map {
+            identity(kind, id)?;
+            let key = format!("{prefix}{kind}:{id}");
+            let row = json!({"schema":"pon-native-evaluation-record-v2","candidate":hex::encode(candidate),"kind":kind,"id":id,"value":value});
+            check(
+                key.len() <= 160 && bytes(&row)?.len() <= 4096,
+                "PUBLIC_EVAL_RECORD_LIMIT",
+            )?;
+            rows.insert(key, row);
+        }
+    }
+    Ok(rows)
+}
+pub fn compact(evaluation: &Value) -> Result<Value> {
+    check(
+        evaluation["storage_revision"] == STORAGE_REVISION,
+        "PUBLIC_EVAL_STORAGE_REVISION",
+    )?;
+    let mut value = evaluation.clone();
+    for (_, name, maximum) in MAPS {
+        let map = value[name].as_object().ok_or("PUBLIC_EVAL_STATE")?;
+        check(map.len() <= maximum, "PUBLIC_EVAL_RECORD_LIMIT")?;
+        let count = map.len();
+        value["record_counts"][name] = json!(count);
+        value
+            .as_object_mut()
+            .ok_or("PUBLIC_EVAL_STATE")?
+            .remove(name);
+    }
+    check(bytes(&value)?.len() <= 4096, "PUBLIC_EVAL_RECORD_LIMIT")?;
+    Ok(value)
+}
+pub fn hydrate(compact: &Value, candidate: Hash, rows: &BTreeMap<String, Value>) -> Result<Value> {
+    check(
+        compact["storage_revision"] == STORAGE_REVISION
+            && compact["plan"]["candidate"] == hex::encode(candidate),
+        "PUBLIC_EVAL_STORAGE_REVISION",
+    )?;
+    let mut value = compact.clone();
+    for (_, name, _) in MAPS {
+        check(value.get(name).is_none(), "PUBLIC_EVAL_STORAGE_SHAPE")?;
+        value[name] = json!({});
+    }
+    let prefix = record_prefix(candidate);
+    for (key, row) in rows {
+        let suffix = key
+            .strip_prefix(&prefix)
+            .ok_or("PUBLIC_EVAL_RECORD_CONTEXT")?;
+        let (kind, id) = suffix.split_once(':').ok_or("PUBLIC_EVAL_RECORD_KEY")?;
+        identity(kind, id)?;
+        let (_, name, _) = MAPS
+            .iter()
+            .find(|(k, _, _)| *k == kind)
+            .ok_or("PUBLIC_EVAL_RECORD_KEY")?;
+        check(
+            row.as_object().is_some_and(|m| m.len() == 5)
+                && row["schema"] == "pon-native-evaluation-record-v2"
+                && row["candidate"] == hex::encode(candidate)
+                && row["kind"] == kind
+                && row["id"] == id,
+            "PUBLIC_EVAL_RECORD_CONTEXT",
+        )?;
+        value[*name][id] = row["value"].clone();
+    }
+    let expected = record_rows(candidate, &value)?;
+    check(expected == *rows, "PUBLIC_EVAL_RECORD_CONTEXT")?;
+    for (_, name, _) in MAPS {
+        check(
+            n(&value["record_counts"], name)?
+                == value[name].as_object().ok_or("PUBLIC_EVAL_STATE")?.len() as u64,
+            "PUBLIC_EVAL_RECORD_COUNT",
+        )?;
+    }
+    Ok(value)
+}
+pub fn read_evaluation(state: &BTreeMap<String, Value>, candidate: Hash) -> Result<Value> {
+    let hex = hex::encode(candidate);
+    let contribution = state
+        .get(&format!("contribution:{hex}"))
+        .or_else(|| state.get(&format!("evaluation-archive:{hex}")))
+        .ok_or("STATE")?;
+    let prefix = record_prefix(candidate);
+    let rows = state
+        .range(prefix.clone()..)
+        .take_while(|(key, _)| key.starts_with(&prefix))
+        .map(|(k, v)| (k.clone(), v.clone()))
+        .collect();
+    hydrate(&contribution["public_evaluation"], candidate, &rows)
+}
+fn records_digest(evaluation: &Value) -> Result<Hash> {
+    let snapshot = json!({"commits":evaluation["commits"],"reveals":evaluation["reveals"],"conflicts":evaluation["conflicts"]});
+    Ok(hash(
+        b"native-public-evaluation-closure-records-v2",
+        &[&bytes(&snapshot)?],
+    ))
 }

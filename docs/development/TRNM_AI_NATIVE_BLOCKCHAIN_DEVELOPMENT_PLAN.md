@@ -510,6 +510,11 @@ mandatory deadline closure, signature-conflict evidence, bounded archive appeals
 existing funded release/reward gating. Its heights and branch state are native; its
 development identities and signed scores remain unqualified for independent governance
 and objective ML quality. Historical revision4 and default revision3 keep their bytes.
+An actual complete-round counterexample exposed the previous single-value storage
+limit: a late reveal conflict and the third appeal exceeded4096 bytes and rejected.
+Storage revision2 separates bounded records, commits a fresh network/parameter context,
+and tests all16 appeals, late conflicts, archive-only continuation, reopen and cleanup.
+Preserve the failed candidate and its original execution record.
 
 The explicit signed-task-lifecycle-dev-v2 revision7 adds native requester lease
 open/renew/revoke and source registration under distinct signing/parameter domains.

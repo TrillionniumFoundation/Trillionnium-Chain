@@ -145,6 +145,11 @@ impl Config {
                         && policy["objective_model_quality"] == false,
                     "CONFIG",
                 )?;
+                require(
+                    policy["storage_revision"] == public_evaluation::STORAGE_REVISION
+                        && policy["maximum_record_bytes"] == 4096,
+                    "CONFIG",
+                )?;
                 for (name, expected) in [
                     ("candidate_end_offset", public_evaluation::CANDIDATE_END),
                     ("commit_end_offset", public_evaluation::COMMIT_END),
@@ -223,6 +228,13 @@ impl Config {
                 )));
             }
             _ => return Err("WORK_TASK_PROFILE"),
+        }
+        if policy == public_evaluation::PROFILE {
+            params["chain_label"] = json!(format!(
+                "{}-evaluation-storage{}",
+                text(&params, "chain_label")?,
+                public_evaluation::STORAGE_REVISION
+            ));
         }
         let model: Value = match model_profile {
             "linear-expert-dev-v1" => {
@@ -893,7 +905,10 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             require(current == json!(hex::encode(parent)), "STATE")?;
             let (bk, mut bundle) = s.object("contribution:", bundle_id)?;
             if public_evaluation::enabled(cfg) {
-                public_evaluation::adoption_allowed(&bundle["public_evaluation"], height)?;
+                let records = s.scan(&public_evaluation::record_prefix(bundle_id));
+                let evaluation =
+                    public_evaluation::hydrate(&bundle["public_evaluation"], bundle_id, &records)?;
+                public_evaluation::adoption_allowed(&evaluation, height)?;
             }
             require(
                 text(&bundle, "status")? == "evaluated"
@@ -913,7 +928,10 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                 let score = p.n()?;
                 let (k, mut o) = s.object("contribution:", cid)?;
                 if public_evaluation::enabled(cfg) {
-                    public_evaluation::adoption_allowed(&o["public_evaluation"], height)?;
+                    let records = s.scan(&public_evaluation::record_prefix(cid));
+                    let evaluation =
+                        public_evaluation::hydrate(&o["public_evaluation"], cid, &records)?;
+                    public_evaluation::adoption_allowed(&evaluation, height)?;
                 }
                 require(
                     text(&o, "status")? == "evaluated"
@@ -1124,6 +1142,9 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                 require(matches!(tx.tag, 16 | 17), "STATE")?;
                 (archive_key.clone(), s.get(&archive_key).ok_or("STATE")?)
             };
+            let records = s.scan(&public_evaluation::record_prefix(cid));
+            contribution["public_evaluation"] =
+                public_evaluation::hydrate(&contribution["public_evaluation"], cid, &records)?;
             let evaluation = &mut contribution["public_evaluation"];
             require(
                 public_evaluation::enabled(cfg) && !evaluation.is_null(),
@@ -1164,6 +1185,17 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                 }
                 _ => unreachable!(),
             }
+            for (record_key, value) in
+                public_evaluation::record_rows(cid, &contribution["public_evaluation"])?
+            {
+                if let Some(previous) = records.get(&record_key) {
+                    require(previous == &value, "PUBLIC_EVAL_RECORD_MUTATION")?;
+                } else {
+                    s.put(record_key, value);
+                }
+            }
+            contribution["public_evaluation"] =
+                public_evaluation::compact(&contribution["public_evaluation"])?;
             if !contribution["public_evaluation"]["closed"].is_null() {
                 s.put(archive_key, contribution.clone());
             }
@@ -1227,9 +1259,12 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
             .cloned()
             .collect();
         for key in candidates {
+            let cid = hash32(key.strip_prefix("contribution:").ok_or("STATE")?)?;
+            let mut evaluation = public_evaluation::read_evaluation(state, cid)?;
+            let closed = public_evaluation::close(&mut evaluation, height)?;
             let value = state.get_mut(&key).ok_or("STATE")?;
-            if let Some(score) = public_evaluation::close(&mut value["public_evaluation"], height)?
-            {
+            value["public_evaluation"] = public_evaluation::compact(&evaluation)?;
+            if let Some(score) = closed {
                 value["score"] = json!(score);
                 value["status"] = json!("evaluated");
             } else if value["public_evaluation"]["closed"]["status"] == "aborted" {
@@ -1287,6 +1322,26 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
             if parts.len() != 4 || parts[1] != current || parts[2] != round {
                 state.remove(&k);
             }
+        }
+    }
+    if public_evaluation::enabled(cfg) {
+        // Remove records only after both active candidate and retained archive vanish.
+        // Branch state cleanup never touches physical/local operation journals.
+        let orphaned: Vec<_> = state
+            .keys()
+            .filter(|key| key.starts_with(&format!("{}:", public_evaluation::RECORD_NAMESPACE)))
+            .filter(|key| {
+                key.strip_prefix(&format!("{}:", public_evaluation::RECORD_NAMESPACE))
+                    .and_then(|suffix| suffix.split_once(':'))
+                    .is_some_and(|(candidate, _)| {
+                        !state.contains_key(&format!("contribution:{candidate}"))
+                            && !state.contains_key(&format!("evaluation-archive:{candidate}"))
+                    })
+            })
+            .cloned()
+            .collect();
+        for key in orphaned {
+            state.remove(&key);
         }
     }
     let retired: Vec<_> = state

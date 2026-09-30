@@ -225,6 +225,14 @@ impl Settings {
             } else {
                 format!("trnm-pon-native-wall-devnet-4-{policy}-{time}")
             };
+            let label = if policy == trnm_mvcc_fee::public_evaluation::PROFILE {
+                format!(
+                    "{label}-evaluation-storage{}",
+                    trnm_mvcc_fee::public_evaluation::STORAGE_REVISION
+                )
+            } else {
+                label
+            };
             let label = if model_profile == "linear-expert-dev-v1" {
                 label
             } else {

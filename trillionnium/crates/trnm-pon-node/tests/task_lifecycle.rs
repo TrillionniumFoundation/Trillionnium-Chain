@@ -357,3 +357,59 @@ fn real_model_family_uses_a_distinct_namespace_and_enforces_its_artifact_budget(
     assert_eq!(result.unwrap_err().to_string(), "LIMIT");
     assert_eq!(node.stats().unwrap(), before);
 }
+
+#[test]
+fn evaluation_storage_revision_changes_transaction_network_even_with_the_same_wall_clock() {
+    for time in [None, Some(1_790_000_000)] {
+        let settings = Settings::development_with_profiles(time, POLICY, PROFILE).unwrap();
+        let previous_label = match time {
+            None => "trnm-pon-task-lifecycle-devnet-7-native-public-evaluation-dev-v1".to_owned(),
+            Some(clock) => format!(
+                "trnm-pon-task-lifecycle-wall-devnet-7-native-public-evaluation-dev-v1-{clock}"
+            ),
+        };
+        let previous_network = hash(b"network", &[previous_label.as_bytes()]);
+        assert_ne!(settings.network(), previous_network);
+        let dir = tempfile::tempdir().unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+        let before = node.stats().unwrap();
+        let mut payload = [7; 32].to_vec();
+        payload.extend(1_u64.to_le_bytes());
+        let mut old = Envelope::decode(&transaction(&settings, 3, 1, 1, payload)).unwrap();
+        old.network = previous_network;
+        old.signature = signature(3, &old.signing_digest().unwrap());
+        let boot = settings.bootstrap_lifecycle_task().unwrap();
+        let (model, input, a, b) = settings.bootstrap_task_material().unwrap();
+        let admission = verify_lifecycle_admission(
+            &boot.signed.encode().unwrap(),
+            TaskMaterial {
+                model: &model,
+                input: &input,
+                a: &a,
+                b: &b,
+            },
+            &boot.lease,
+            1,
+        )
+        .unwrap();
+        let timestamp = time.unwrap_or(1_800_000_000) + 10;
+        let error = node
+            .make_with_task(
+                settings.genesis(),
+                vec![old.encode().unwrap()],
+                development_public(0).unwrap(),
+                timestamp,
+                4096,
+                &admission,
+                TaskMaterial {
+                    model: &model,
+                    input: &input,
+                    a: &a,
+                    b: &b,
+                },
+            )
+            .unwrap_err();
+        assert_eq!(error.to_string(), "NETWORK");
+        assert_eq!(node.stats().unwrap(), before);
+    }
+}

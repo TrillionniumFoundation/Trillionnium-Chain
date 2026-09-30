@@ -1,6 +1,9 @@
 {
   "schema": "pon-native-public-evaluation-v1",
   "id": "native-public-evaluation-dev-v1",
+  "storage_revision": 2,
+  "record_namespace": "evaluation-record-v2; separate bounded map entries; candidate retains frozen plan and closure",
+  "maximum_record_bytes": 4096,
   "genesis_overrides": {
     "chain_label": "trnm-pon-native-public-evaluation-devnet-6",
     "consensus_revision": 6,

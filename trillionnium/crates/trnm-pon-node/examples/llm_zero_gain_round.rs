@@ -24,6 +24,19 @@ const CONTROLS: [&str; 4] = [
     "budget-matched-full-tune",
     "randomized-rank-matched-lora",
 ];
+#[path = "support/distributed_source_inventory.rs"]
+mod source_inventory;
+
+fn source_receipt() -> Result<Value> {
+    let entries: Vec<_> = source_inventory::FILES.iter().map(|(path, bytes)| {
+        json!({"path":path,"bytes":bytes.len(),"digest":hex::encode(hash(b"distributed-source-file-v1", &[bytes]))})
+    }).collect();
+    let inventory = serde_json::to_vec(&entries)?;
+    let binary = fs::read(std::env::current_exe()?)?;
+    Ok(
+        json!({"schema":"native-llm-bridge-source-v1","builder_commit_claim":option_env!("TRNM_DISTRIBUTED_SOURCE_COMMIT"),"builder_tree_claim":option_env!("TRNM_DISTRIBUTED_SOURCE_TREE"),"inventory":entries,"inventory_digest":hex::encode(hash(b"distributed-source-inventory-v1",&[&inventory])),"binary_digest":hex::encode(hash(b"native-llm-bridge-binary-v1",&[&binary])),"binary_bytes":binary.len(),"scope":"compiled source/config bytes and builder declarations; caller must verify Git tree/build; no independent or native ML attestation"}),
+    )
+}
 fn check(ok: bool, error: &'static str) -> Result<()> {
     if ok {
         Ok(())
@@ -363,7 +376,7 @@ fn run(args: &[String]) -> Result<Value> {
     check(reopened.stats()? == stats, "REOPEN_STATE")?;
     drop(reopened);
     Ok(
-        json!({"schema":"native-llm-zero-gain-round-v1","binding":binding,"candidate":hex::encode(cid),"closed_result":result,"state":stats,"blocks":64,"mining_attempts":attempts,"actual_settlement_refusals":refusals,"clock_scope":"logical-test; actual native proofs/execution/store; no live WAN timing","score":0,"adopted":false,"model_contribution_reward":0,"mining_subsidy_separate":true,"native_ml_execution_claim":false,"public_network_ready":false,"independent_accepted":false,"work_profile_qualified":false}),
+        json!({"schema":"native-llm-zero-gain-round-v1","source":source_receipt()?,"binding":binding,"candidate":hex::encode(cid),"closed_result":result,"state":stats,"blocks":64,"mining_attempts":attempts,"actual_settlement_refusals":refusals,"clock_scope":"logical-test; actual native proofs/execution/store; no live WAN timing","score":0,"adopted":false,"model_contribution_reward":0,"mining_subsidy_separate":true,"native_ml_execution_claim":false,"public_network_ready":false,"independent_accepted":false,"work_profile_qualified":false}),
     )
 }
 fn main() {

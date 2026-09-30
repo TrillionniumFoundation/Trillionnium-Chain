@@ -15,6 +15,10 @@ the native node. Its policy is committed in
 Legacy contexts keep their original network, parameters, economics and golden bytes.
 Native successor genesis changes; it is not a hot upgrade or public governance
 certificate. With signed-task v1 it uses revision6; lease lifecycle v2 uses revision7.
+The current storage revision2 is also committed in the policy and the network label
+suffix `evaluation-storage2`, including explicit wall-clock contexts. The earlier
+monolithic development format is retained only as a failed observation; its transaction
+network and durable namespace are not reinterpreted.
 
 Each contribution freezes network/parameters, candidate/artifact/components/parent,
 family, task/model plan, maximum score and eligible development keys. Author and
@@ -46,6 +50,15 @@ keys for256 heights after closure. At most512 candidates per128-height round,
 archive. Old block packets and local operation history retain their separate owners
 and growth limits. Archived appeals and conflicts remain possible in that window.
 An appeal records an objection, not automatic rescoring or retroactive settlement.
+Storage uses `evaluation-record-v2:{candidate}:{c/r/f/a}:{identity}` for individual
+commit/reveal/conflict/appeal records. Each key remains at most160 bytes and each value
+at most4096 bytes; the historical global bounds are unchanged. Candidate/archive values
+retain the frozen plan, round, compact record counts and closure. Tracked prefix reads
+reconstruct maps for native execution and prevent concurrent phantom records. Closure
+schema v2 records missing/conflict counts and the digest of the close-time snapshot;
+later evidence and appeals do not rewrite that digest. Records are removed only after
+both the active candidate and retained archive are gone. `read_evaluation` reconstructs
+the current maps for audit, separately from that immutable close-time snapshot.
 Reorg reverses branch evaluation/adoption/reward state; durable operation/session
 histories remain under their existing non-rewinding owners.
 
