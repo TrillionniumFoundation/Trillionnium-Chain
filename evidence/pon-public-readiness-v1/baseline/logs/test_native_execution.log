@@ -19,6 +19,6 @@ test_unclaimed_release_budget_refunds_at_reserved_deadline (__main__.NativeExecu
 test_wrong_native_context_rejects_even_an_empty_block (__main__.NativeExecutionTests.test_wrong_native_context_rejects_even_an_empty_block) ... ok
 
 ----------------------------------------------------------------------
-Ran 19 tests in 3.768s
+Ran 19 tests in 3.556s
 
 OK

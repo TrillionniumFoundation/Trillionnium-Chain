@@ -1,20 +1,20 @@
    Compiling syn v2.0.117
    Compiling curve25519-dalek-derive v0.1.1
-   Compiling serde_derive v1.0.228
-   Compiling curve25519-dalek v4.1.3
    Compiling thiserror-impl v1.0.69
-   Compiling thiserror v1.0.69
+   Compiling curve25519-dalek v4.1.3
+   Compiling serde_derive v1.0.228
    Compiling serde v1.0.228
+   Compiling thiserror v1.0.69
    Compiling ed25519-dalek v2.2.0
    Compiling trnm-research-protocol v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-research-protocol)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.91s
-     Running unittests src/lib.rs (trillionnium/target/debug/deps/trnm_research_protocol-5ebacfdd10f07337)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.16s
+     Running unittests src/lib.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/trnm_research_protocol-5ebacfdd10f07337)
 
 running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
 
-     Running tests/protocol_v1.rs (trillionnium/target/debug/deps/protocol_v1-b0263576e80b7aaa)
+     Running tests/protocol_v1.rs (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/native-target/debug/deps/protocol_v1-b0263576e80b7aaa)
 
 running 1 test
 test print_golden_fixture_for_regeneration ... ok

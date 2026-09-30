@@ -18,9 +18,17 @@ test_new_cost_package_rejects_branch_as_measurement (__main__.EvidenceSourceTest
 test_new_cost_package_retains_exact_original_source (__main__.EvidenceSourceTests.test_new_cost_package_retains_exact_original_source) ... ok
 test_no_pair_or_nested_failure_does_not_invent_source (__main__.EvidenceSourceTests.test_no_pair_or_nested_failure_does_not_invent_source) ... ok
 test_non_sha_cannot_be_a_fetch_argument (__main__.EvidenceSourceTests.test_non_sha_cannot_be_a_fetch_argument) ... ok
+test_public_root_rejects_invalid_identity_or_conflicting_tree (__main__.EvidenceSourceTests.test_public_root_rejects_invalid_identity_or_conflicting_tree) ... ok
+test_public_root_source_is_fetched_but_nested_observations_are_ignored (__main__.EvidenceSourceTests.test_public_root_source_is_fetched_but_nested_observations_are_ignored) ... ok
 test_tree_mismatch_is_not_evidence (__main__.EvidenceSourceTests.test_tree_mismatch_is_not_evidence) ... ok
+test_committed_declaration_symlink_is_not_followed (__main__.MeasuredDeclarationSnapshotTests.test_committed_declaration_symlink_is_not_followed) ... ok
+test_conflict_in_committed_public_root_is_rejected_without_using_current_repair (__main__.MeasuredDeclarationSnapshotTests.test_conflict_in_committed_public_root_is_rejected_without_using_current_repair) ... ok
+test_measured_commit_must_be_exact_and_really_a_commit (__main__.MeasuredDeclarationSnapshotTests.test_measured_commit_must_be_exact_and_really_a_commit) ... ok
+test_measured_corpus_and_cost_blobs_survive_current_rewrites_and_deletion (__main__.MeasuredDeclarationSnapshotTests.test_measured_corpus_and_cost_blobs_survive_current_rewrites_and_deletion) ... ok
+test_public_root_is_in_snapshot_but_nested_failure_declarations_never_are (__main__.MeasuredDeclarationSnapshotTests.test_public_root_is_in_snapshot_but_nested_failure_declarations_never_are) ... ok
+test_real_measured_snapshot_is_exact_when_publication_adds_its_own_root (__main__.MeasuredDeclarationSnapshotTests.test_real_measured_snapshot_is_exact_when_publication_adds_its_own_root) ... ok
 
 ----------------------------------------------------------------------
-Ran 21 tests in 0.017s
+Ran 29 tests in 0.254s
 
 OK

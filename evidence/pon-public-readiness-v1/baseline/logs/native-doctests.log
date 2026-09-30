@@ -7,9 +7,9 @@
    Compiling trnm-data-availability v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)
    Compiling trnm-state-import v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-state-import)
    Compiling trnm-oracle v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-oracle)
-   Compiling trnm-control-plane v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-control-plane)
    Compiling trnm-release-bundle v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-release-bundle)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.57s
+   Compiling trnm-control-plane v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-control-plane)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.09s
    Doc-tests trnm_audit_events
 
 running 0 tests
@@ -52,7 +52,7 @@ test crates/trnm-data-availability/src/lib.rs - (line 51) - compile fail ... ok
 test crates/trnm-data-availability/src/lib.rs - (line 58) - compile fail ... ok
 test crates/trnm-data-availability/src/lib.rs - (line 9) - compile fail ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
 
    Doc-tests trnm_escrow_vault
 
@@ -84,7 +84,7 @@ running 2 tests
 test crates/trnm-mvcc-fee/src/lib.rs - (line 14) - compile fail ... ok
 test crates/trnm-mvcc-fee/src/lib.rs - (line 19) - compile fail ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
 
    Doc-tests trnm_oracle
 
@@ -128,7 +128,7 @@ running 2 tests
 test crates/trnm-service-settlement/src/lib.rs - (line 14) - compile fail ... ok
 test crates/trnm-service-settlement/src/lib.rs - (line 9) - compile fail ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
 
    Doc-tests trnm_state_import
 
@@ -143,7 +143,7 @@ running 2 tests
 test crates/trnm-task-kernel/src/lib.rs - (line 12) - compile fail ... ok
 test crates/trnm-task-kernel/src/lib.rs - (line 17) - compile fail ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
 
    Doc-tests trnm_transport
 

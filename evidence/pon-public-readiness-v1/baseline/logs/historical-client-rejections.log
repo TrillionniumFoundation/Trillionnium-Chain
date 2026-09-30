@@ -23,6 +23,6 @@ test_all_direct_cases_remain_required (__main__.ClientSelectorBindingTests.test_
 test_nested_callbacks_are_not_independent_unittest_cases (__main__.ClientSelectorBindingTests.test_nested_callbacks_are_not_independent_unittest_cases) ... ok
 
 ----------------------------------------------------------------------
-Ran 23 tests in 2.802s
+Ran 23 tests in 2.644s
 
 OK

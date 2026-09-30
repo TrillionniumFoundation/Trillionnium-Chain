@@ -3,6 +3,6 @@ test_loader_size_is_bounded_before_json_decode (__main__.ArtifactBindingTests.te
 test_shapes_fields_and_noncanonical_bytes_reject (__main__.ArtifactBindingTests.test_shapes_fields_and_noncanonical_bytes_reject) ... ok
 
 ----------------------------------------------------------------------
-Ran 3 tests in 0.008s
+Ran 3 tests in 0.006s
 
 OK

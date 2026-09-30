@@ -5,6 +5,6 @@ test_expected_cost_nonce_and_returned_output_cannot_be_omitted (__main__.Inferen
 test_oversized_receipt_rejects_before_json (__main__.InferenceBindingTests.test_oversized_receipt_rejects_before_json) ... ok
 
 ----------------------------------------------------------------------
-Ran 5 tests in 0.036s
+Ran 5 tests in 0.012s
 
 OK

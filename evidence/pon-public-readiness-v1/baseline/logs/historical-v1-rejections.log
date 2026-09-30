@@ -9,6 +9,6 @@ test_skipped_campaign_cannot_be_a_pass (__main__.EvidenceRejectionTests.test_ski
 test_source_digest_cannot_be_stale (__main__.EvidenceRejectionTests.test_source_digest_cannot_be_stale) ... ok
 
 ----------------------------------------------------------------------
-Ran 9 tests in 4.527s
+Ran 9 tests in 4.459s
 
 OK

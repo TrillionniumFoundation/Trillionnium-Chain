@@ -24,6 +24,6 @@ test_summary_cannot_relabel_old_history_as_current (__main__.CompletionEvidenceT
 test_worker_creation_bound_is_real (__main__.CompletionEvidenceTests.test_worker_creation_bound_is_real) ... ok
 
 ----------------------------------------------------------------------
-Ran 24 tests in 1.816s
+Ran 24 tests in 1.734s
 
 OK

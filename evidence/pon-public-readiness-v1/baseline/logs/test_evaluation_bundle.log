@@ -40,6 +40,6 @@ test_labels_and_predictions_do_not_accept_boolean_aliases (__main__.StatisticalB
 test_positive_direction_majority_with_negative_mean_is_rejected (__main__.StatisticalBoundaryTests.test_positive_direction_majority_with_negative_mean_is_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 40 tests in 2.828s
+Ran 40 tests in 2.337s
 
 OK

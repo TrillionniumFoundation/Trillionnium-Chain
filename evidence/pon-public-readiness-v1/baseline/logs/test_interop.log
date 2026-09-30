@@ -7,6 +7,6 @@ test_rejection_vectors (__main__.InteropTests.test_rejection_vectors) ... ok
 test_work_certificate_parity (__main__.InteropTests.test_work_certificate_parity) ... ok
 
 ----------------------------------------------------------------------
-Ran 7 tests in 0.079s
+Ran 7 tests in 0.070s
 
 OK

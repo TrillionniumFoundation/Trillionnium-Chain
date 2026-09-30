@@ -4,6 +4,6 @@ test_integer_prediction_and_lowest_index_ties (__main__.PublicModelContractTests
 test_numpy_and_scalar_integer_outputs_match (__main__.PublicModelContractTests.test_numpy_and_scalar_integer_outputs_match) ... ok
 
 ----------------------------------------------------------------------
-Ran 4 tests in 0.045s
+Ran 4 tests in 0.052s
 
 OK

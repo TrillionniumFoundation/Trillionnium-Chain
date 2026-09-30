@@ -4,15 +4,15 @@
     Checking cpufeatures v0.2.17
     Checking serde_core v1.0.228
     Checking generic-array v0.14.7
-    Checking crypto-common v0.1.7
     Checking block-buffer v0.10.4
+    Checking crypto-common v0.1.7
     Checking digest v0.10.7
     Checking sha2 v0.10.9
    Compiling curve25519-dalek v4.1.3
-    Checking subtle v2.6.1
     Checking signature v2.2.0
-    Checking hex v0.4.3
     Checking zeroize v1.8.2
+    Checking hex v0.4.3
+    Checking subtle v2.6.1
     Checking ed25519 v2.2.3
     Checking serde v1.0.228
     Checking bitflags v2.11.0
@@ -30,16 +30,16 @@
     Checking fs2 v0.4.3
     Checking zerocopy v0.8.48
     Checking rustix v1.1.4
-    Checking tempfile v3.27.0
     Checking ahash v0.8.12
     Checking hashbrown v0.14.5
+    Checking tempfile v3.27.0
     Checking libsqlite3-sys v0.30.1
     Checking anyhow v1.0.103
     Checking trnm-protocol v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-protocol)
     Checking hashlink v0.9.1
-    Checking fallible-streaming-iterator v0.1.9
     Checking smallvec v1.15.1
     Checking fallible-iterator v0.3.0
+    Checking fallible-streaming-iterator v0.1.9
     Checking rusqlite v0.32.1
     Checking trnm-types v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-types)
     Checking borsh v1.8.0
@@ -50,14 +50,14 @@
     Checking trnm-transport v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-transport)
     Checking utf8parse v0.2.2
     Checking anstyle-parse v1.0.0
-    Checking is_terminal_polyfill v1.70.2
-    Checking colorchoice v1.0.5
     Checking anstyle-query v1.1.5
     Checking anstyle v1.0.14
+    Checking colorchoice v1.0.5
+    Checking is_terminal_polyfill v1.70.2
     Checking anstream v1.0.0
-    Checking trnm-pon-node v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
-    Checking clap_lex v1.1.0
     Checking strsim v0.11.1
+    Checking clap_lex v1.1.0
+    Checking trnm-pon-node v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
     Checking clap_builder v4.6.0
     Checking trnm-task-kernel v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)
     Checking trnm-checkpoint-types v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-checkpoint-types)
@@ -66,8 +66,8 @@
     Checking trnm-checkpoint-store v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-checkpoint-store)
     Checking trnm-executor v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-executor)
     Checking wait-timeout v0.2.1
-    Checking shell-escape v0.1.5
     Checking shlex v1.3.0
+    Checking shell-escape v0.1.5
     Checking trnm-research-protocol v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-research-protocol)
     Checking trnm-service-settlement v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)
     Checking trnm-worker-agent v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-worker-agent)
@@ -79,4 +79,4 @@
     Checking trnm-oracle v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-oracle)
     Checking trnm-control-plane v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-control-plane)
     Checking trnm-release-bundle v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-release-bundle)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 21.23s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 22.10s

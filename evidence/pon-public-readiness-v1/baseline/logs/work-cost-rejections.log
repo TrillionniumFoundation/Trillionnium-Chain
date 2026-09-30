@@ -31,6 +31,6 @@ test_unhashable_class_rejects_as_input_error (__main__.WorkCostAccountingTests.t
 test_zero_denominator_rejects (__main__.WorkCostAccountingTests.test_zero_denominator_rejects) ... ok
 
 ----------------------------------------------------------------------
-Ran 31 tests in 0.013s
+Ran 31 tests in 0.008s
 
 OK

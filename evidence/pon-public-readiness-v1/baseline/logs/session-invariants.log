@@ -21,6 +21,6 @@ test_storage_replay_beyond_4096_does_not_invent_finality (__main__.RestartForkTe
 test_missing_checkpoints_spill_and_cancel_without_height_veto (__main__.StreamingReplayTests.test_missing_checkpoints_spill_and_cancel_without_height_veto) ... ok
 
 ----------------------------------------------------------------------
-Ran 21 tests in 8.102s
+Ran 21 tests in 6.863s
 
 OK

@@ -7,6 +7,6 @@ test_stdout_flood_is_killed_and_reaped (__main__.BoundedProcessTests.test_stdout
 test_timeout_reaps_own_child (__main__.BoundedProcessTests.test_timeout_reaps_own_child) ... ok
 
 ----------------------------------------------------------------------
-Ran 7 tests in 0.254s
+Ran 7 tests in 0.259s
 
 OK

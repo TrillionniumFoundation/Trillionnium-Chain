@@ -516,11 +516,15 @@ The new clean-source qualification runner captures the full native/reference reg
 and additional campaigns; historical receipts stay bound to their original source.
 
 The [six-finding local qualification](../../evidence/pon-public-readiness-v1/README.md)
-records clean implementation1213a8b, all15 qualification commands and the nested48-command
-native/reference regression. Four live transfer workloads confirm20,480 transactions
-through two durable owners; protected socket phases preserve all honest/attacker outcomes.
-Actual transcript, signature, confirmation and closed SQLite replay passed. First-run
-missing-corpus failure and predecessor traffic-accounting/caller-cost observations are
-retained without relabelling their source. This evidence does not close the public gates
-above or replace the remaining native integration, real model and independent work-cost
+records clean implementation a77db76 with cryptography50.0.2/OpenSSL4.0.3, all 15
+qualification commands and the nested 48-command native/reference regression. Four live
+transfer workloads confirm 20,480 transactions
+through two durable owners; protected socket phases preserve reported high-level attempt outcomes and retry-inclusive
+elapsed times, without individual reconnect attribution.
+Actual transcript, signature, confirmation and closed SQLite replay passed. The 29
+source-preparation and 19 evidence negative tests passed. First-run missing-corpus failure,
+predecessor traffic-accounting/caller costs, the prior publication CI selector failure
+and D publication historical-test setup failure
+are retained without relabelling their source or tool environment. This evidence does not
+close the public gates above or replace the remaining native integration, real model and independent work-cost
 obligations. Preserve the measured Git source history when publishing or merging evidence.

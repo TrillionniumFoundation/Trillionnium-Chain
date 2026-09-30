@@ -35,6 +35,6 @@ test_report_does_not_rewrite_original_hashes (__main__.SourceApplicabilityTests.
 test_unchanged_recorded_subject_and_runtime (__main__.SourceApplicabilityTests.test_unchanged_recorded_subject_and_runtime) ... ok
 
 ----------------------------------------------------------------------
-Ran 35 tests in 0.841s
+Ran 35 tests in 0.584s
 
 OK

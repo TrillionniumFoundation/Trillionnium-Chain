@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Negative tests for new runtime evidence; historical reports remain immutable."""
+"""Negative tests for original measured runtime evidence; history stays immutable."""
 import copy
 import hashlib
 import json
@@ -15,7 +15,9 @@ class NativeSessionEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.original=ROOT/'evidence/pon-closed-round-v1'
-        cls.baseline=validate(evidence=cls.original)
+        from historical_evidence import measured_checkout
+        cls.original_root=cls.enterClassContext(measured_checkout(ROOT,cls.original))
+        cls.baseline=validate(root=cls.original_root,evidence=cls.original)
 
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory(prefix='pon-session-evidence-')
@@ -30,7 +32,7 @@ class NativeSessionEvidenceTests(unittest.TestCase):
         for name in self.manifest['files']:
             self.manifest['files'][name]=hashlib.sha256((self.folder/name).read_bytes()).hexdigest()
         (self.folder/'manifest.json').write_text(json.dumps(self.manifest,indent=2)+'\n')
-        with self.assertRaisesRegex(ValueError,pattern):validate(evidence=self.folder)
+        with self.assertRaisesRegex(ValueError,pattern):validate(root=self.original_root,evidence=self.folder)
 
     def row(self,name):return next(row for row in self.q['results'] if row['name']==name)
 
@@ -38,12 +40,16 @@ class NativeSessionEvidenceTests(unittest.TestCase):
         file=self.folder/path;data=json.loads(file.read_text());mutate(data)
         file.write_text(json.dumps(data,indent=2)+'\n')
 
-    def test_current_changed_runtime_has_its_own_complete_receipt(self):
+    def test_original_measured_runtime_has_its_own_complete_receipt(self):
         self.assertTrue(self.baseline['runtime_matches'])
         self.assertGreater(self.baseline['controlled_work_blocks_replayed'],0)
         self.assertGreater(self.baseline['controlled_policy_confirmations_replayed'],0)
         self.assertIsNone(self.baseline['public_confirmed_tps'])
         self.assertFalse(self.baseline['native_full_node'])
+
+    def test_current_root_cannot_claim_the_historical_runtime_receipt(self):
+        with self.assertRaisesRegex(ValueError,'current source differs|runtime inventory'):
+            validate(root=ROOT,evidence=self.original)
 
     def test_successor_policy_configuration_is_not_an_omittable_input(self):
         self.q['source_files_sha256'].pop('config/pon/evaluation-round-v1.json')
