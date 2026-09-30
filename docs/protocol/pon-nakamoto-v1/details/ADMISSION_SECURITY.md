@@ -150,3 +150,111 @@ No filter, queue budget or measured median may set work_profile_qualified or pub
 activation. Sustained identity-churn delivery through the future authenticated public
 owner, fastest implemented structural attacks, clock/target changes and honest service
 under saturation remain explicit acceptance work.
+
+## Explicit transport admission challenge v1
+
+`ingress::serve_protected` and `serve_authenticated_protected` are distinct opt-in
+development listeners. Historical `serve` and `serve_authenticated` retain their
+named development scope. A protected Submit connection must complete the new
+`trnm-pon-admission-challenge-v1` / `trnm-pon-admission-solution-v1` exchange before
+obtaining a public proof permit or calling the PoN verifier. Read-only requests do
+not perform this search. Ordinary protected client helpers require a challenge for
+Submit and refuse a legacy terminal response as `ADMISSION_REQUIRED`. A protected
+client first sends the closed `trnm-pon-admission-hello-v1` frame and verifies the
+matching `trnm-pon-admission-ready-v1` response before transmitting the original
+Submit bytes. The subsequent challenge must name the exact profile announced by
+Ready before the client performs any search. The hello commits to those exact bytes. A legacy listener rejects the
+hello without receiving a mutating request. A protected listener rejects an
+unnegotiated Submit before work; signed durable request bytes are never rewritten.
+
+The challenge binds the admission profile, network, parameters, genesis, a fresh
+32-byte OS-entropy nonce, the hash of the EXACT received request frame, the selected
+leading-zero bit count, lifetime and Unix-millisecond expiration. The admission
+profile commits to both cost parameters and the connection-local SHA-256 protocol.
+An authenticated listener additionally signs the challenge in the independent
+`native-transport-admission-server-sign-v1` domain; the client checks the expected
+server key before searching. Existing authenticated request/outbox bytes and their
+ledger meaning do not change. There is no bearer authorization or alternate work
+statement in these messages.
+
+The solution names the complete canonical challenge digest and a u64 search nonce.
+The server checks the corresponding SHA-256 leading-zero predicate once. It accepts
+exactly one solution on that same connection and then discards that challenge;
+reconnecting, retrying after restart or changing any request needs fresh entropy and
+a fresh solution. Cross-connection replay cannot select a previous nonce. A solution
+frame is at most 512 bytes and must use the exact closed serialization. Challenge
+write and solution read share one monotonic absolute deadline; partial bytes cannot
+extend it. Unix expiry is checked by the client as a bounded search aid, while the
+server's monotonic deadline decides acceptance. Entropy failure refuses intake.
+
+`AdmissionPolicy::new` accepts 8..20 leading-zero bits and 100..2000 milliseconds.
+The explicit development default is 16 bits and 2000 milliseconds; these are measured
+experimental resource parameters, not approved public deployment values. Clients
+refuse out-of-cap policies, wrong context/request/server, expired challenges and
+searches exceeding 1,048,576 trials. Protected listeners retain three fixed socket
+workers, the existing frame/connection limits and local recovery permit isolation.
+Two workers may process negotiated proof requests; the third refuses proof hellos
+as `ADMISSION_BUSY_READ_ONLY_RESERVED` before receiving their bodies and remains
+eligible for read-only frames. Protected read-only requests do not consume proof
+permits. Every protected initial frame and Hello/body exchange shares a 100 ms
+absolute preface deadline. Slow fragments cannot renew that budget. The profile
+hash commits to this allocation and deadline as well as the puzzle parameters.
+Frame helpers recheck the absolute deadline after the final successful syscall;
+late final bytes cannot turn an expired read/write into a completed frame. Protected
+untrusted preface, request-decoding and authentication errors return at most 128 Unicode
+characters under a separate 100 ms write budget. Both limits are profile committed.
+A huge malformed operation therefore cannot select a huge echoed error response.
+Clients may reconnect to the identical destination after the nonterminal reserved
+lane refusal, at most 256 attempts, with 10 ms backoff and one five-second absolute
+negotiation deadline. Retries transmit only the nonmutating Hello before acceptance;
+they never replace the durable signed request, advance its nonce or downgrade the
+protocol. Raw Busy negotiation responses convey no authentication authority.
+No puzzle holds a proof or recovery permit. Slow initial frames can still occupy
+all three workers for the short preface budget, and repeated anonymous connections
+can still compete for socket acceptance. Slow links may fail the experimental
+100 ms budget. This separation does not guarantee anonymous honest scheduling.
+
+The admission predicate is independent of a parent block's PoN target. Historical
+easy-target or low-work side-branch submissions must also pass it, without declaring
+those branches consensus-invalid. Paying the transport puzzle never bypasses full
+transcript, parent eligibility, application, root, replay or clock verification.
+An attacker that pays this budget can still send a ticket-passing false transcript;
+the original verifier must reject it. The hash search neither adds chainwork nor
+proves useful computation, task hardness, public Sybil resistance or model utility.
+
+The returned `Metrics` separates issued challenges, accepted solutions, rejections
+before work, unnegotiated submissions, work-verifier invocation counts and measured
+check/replay durations. Malformed hellos remain separate malformed-frame counters.
+Socket accepts, protected preface refusals and reserved read-only worker refusals
+are counted separately from solved or rejected admission challenges. A retry can
+create multiple socket accepts for one ultimately submitted request.
+Nanosecond durations use the monotonic elapsed clock and include actual scheduling;
+they are not CPU-cycle lower bounds or sustained request-rate estimates. Reporting
+must include bits, TTL, hash trials, request bytes, hardware, operator identities,
+valid/invalid arrival schedules, expired/slow connections, Busy and honest wait
+samples. Under identity rotation, any fairness assumption must name the scheduler,
+connection budget and anonymous admission model; changing keys does not magically
+add resource cost beyond the actual performed search. Sustained independent public
+attack/service and hardware-asymmetry acceptance remain separate work.
+
+`tests/protected_ingress.rs` uses real sockets, original ticket-passing false
+transcripts, real valid work blocks, expiry, exact-wire context/replay substitution,
+authenticated durable retransmission and a bounded mixed load. Its raw sample
+output is new execution evidence only when actually run on the identified source;
+test existence and local passes do not promote public activation or work hardness.
+The explicitly ignored `sustained_protected_socket_cost_campaign` is a release
+measurement with separate baseline, unpaid false-transcript and paid false-transcript
+phases. The false-transcript phases have two sequential anonymous loopback streams
+for a requested ten seconds each. It changes false transcript digests for each request, uses a
+known easy genesis parent, and records actual elapsed duration, performed hash trials,
+Busy responses, server checks, honest Submit/Head attempts, successes and failures.
+The `slow_hello_occupancy` phase adds three rotating TCP streams for ten seconds.
+Each alternates between a half-written initial Hello and a complete Hello with
+its promised request body withheld, holds that socket for 150 ms and then opens
+a fresh one. Partial initial Hellos can occupy all three socket workers until the
+preface deadline; complete Hellos test the two proof slots and reserved read-only
+worker. Honest Submit and Head calls continue throughout the phase. Slow connections
+and failed attack negotiation attempts retain their own denominators.
+The observed honest sample denominator must survive any failed or starved requests.
+These local streams do not establish fairness under independent or rotating
+public identities, and elapsed hash rate is not an adversarial cost lower bound.

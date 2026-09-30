@@ -7,8 +7,14 @@ use serde_json::{json, Value};
 use std::{error, fmt};
 pub use store::{ConfirmationBatch, Node, Observation};
 use trnm_crypto_primitives::pon_work;
+use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};
 use trnm_mvcc_fee::pon_executor::{self, Config, State};
+use trnm_mvcc_fee::pon_executor::{LEGACY_TASK_PROFILE, QUALIFIED_DEMANDS, SIGNED_TASK_PROFILE};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash, Header, HEADER_BYTES};
+use trnm_protocol::qualified_work_task::{
+    QualifiedWorkTask, SignedQualifiedWorkTask, TaskPurpose, LOGICAL_MULTIPLY_ADD_UNITS,
+    MATRIX_ARTIFACT_BYTES,
+};
 
 #[derive(Debug)]
 pub struct Error(String);
@@ -44,6 +50,8 @@ impl From<serde_json::Error> for Error {
     }
 }
 pub type Result<T> = std::result::Result<T, Error>;
+/// (model bytes, input bytes, derived A, derived B) for the public maintenance fixture.
+pub type BootstrapTaskMaterial = (Vec<u8>, Vec<u8>, Vec<u32>, Vec<u32>);
 pub(crate) fn ensure(ok: bool, message: &str) -> Result<()> {
     if ok {
         Ok(())
@@ -179,11 +187,20 @@ impl Settings {
         genesis_timestamp: Option<u64>,
         policy: &str,
     ) -> Result<Self> {
-        let mut app = Config::installed_with_evaluation_policy(policy)?;
+        Self::development_with_profiles(genesis_timestamp, policy, LEGACY_TASK_PROFILE)
+    }
+    pub fn development_with_profiles(
+        genesis_timestamp: Option<u64>,
+        policy: &str,
+        task_profile: &str,
+    ) -> Result<Self> {
+        let mut app = Config::installed_with_profiles(policy, task_profile)?;
         if let Some(time) = genesis_timestamp {
             ensure(time > 0 && time <= i64::MAX as u64, "GENESIS_TIME")?;
             app.params["genesis_timestamp"] = json!(time);
-            let label = if policy == "legacy-first-two-v3" {
+            let label = if task_profile == SIGNED_TASK_PROFILE {
+                format!("trnm-pon-signed-task-wall-devnet-5-{policy}-{time}")
+            } else if policy == "legacy-first-two-v3" {
                 format!("trnm-pon-native-wall-devnet-3-{time}")
             } else {
                 format!("trnm-pon-native-wall-devnet-4-{policy}-{time}")
@@ -218,7 +235,46 @@ impl Settings {
             json!(count.checked_mul(funding).ok_or("CONFIG")?),
         );
         initial.insert("model:current".into(), json!(hex::encode([0; 32])));
-        initial.insert(format!("work:{}", hex::encode(task)), json!(true));
+        if task_profile == SIGNED_TASK_PROFILE {
+            for index in 0..QUALIFIED_DEMANDS {
+                let demand = app.qualified_demand_id(index)?;
+                initial.insert(format!("work-demand-registry:{}",hex::encode(demand)),
+                    json!({"purpose":Config::qualified_demand_purpose(index)? as u8,"scope":"public-development-fixture-not-real-user-demand"}));
+            }
+            let model: Vec<u8> = a.iter().flat_map(|v| v.to_le_bytes()).collect();
+            let input: Vec<u8> = b.iter().flat_map(|v| v.to_le_bytes()).collect();
+            let bootstrap = development_manifest(
+                &app,
+                0,
+                TaskPurpose::Maintenance,
+                &model,
+                &input,
+                0,
+                1000,
+                1,
+            )?;
+            let context = app.qualified_task_context(bootstrap.manifest.demand_id, 0)?;
+            initial.insert(format!("work:{}",hex::encode(task)),json!({"schema":"qualified-work-registration-v1","manifest":hex::encode(bootstrap.encode().map_err(|_|Error::from("TASK_MANIFEST"))?),"admitted_height":0,"manifest_id":hex::encode(bootstrap.manifest.id().map_err(|_|Error::from("TASK_MANIFEST"))?)}));
+            initial.insert(
+                format!("work-source:{}", hex::encode(context.source)),
+                json!(1),
+            );
+            initial.insert(
+                format!("work-withdrawal:{}", hex::encode(context.source)),
+                json!(hex::encode(context.withdrawal_head)),
+            );
+            initial.insert(
+                format!("work-demand:{}", hex::encode(context.demand_id)),
+                json!(hex::encode(
+                    bootstrap
+                        .manifest
+                        .id()
+                        .map_err(|_| Error::from("TASK_MANIFEST"))?
+                )),
+            );
+        } else {
+            initial.insert(format!("work:{}", hex::encode(task)), json!(true));
+        }
         for i in 0..count {
             initial.insert(
                 format!("account:{}", hex::encode(development_public(i)?)),
@@ -247,6 +303,48 @@ impl Settings {
     pub fn parameters(&self) -> Hash {
         self.app.parameters
     }
+    pub fn task_profile(&self) -> &str {
+        self.app.task_profile()
+    }
+    pub fn qualified_task_context(&self, demand_id: Hash, height: u64) -> Result<AdmissionContext> {
+        Ok(self.app.qualified_task_context(demand_id, height)?)
+    }
+    /// Exact explicitly classified genesis maintenance statement for the signed dev profile.
+    pub fn bootstrap_task_statement(&self) -> Result<SignedQualifiedWorkTask> {
+        ensure(self.task_profile() == SIGNED_TASK_PROFILE, "TASK_PROFILE")?;
+        let (model, input, _, _) = self.bootstrap_task_material()?;
+        self.development_task_manifest(0, TaskPurpose::Maintenance, &model, &input, 0, 1000, 1)
+    }
+    /// Public fixture artifacts, never a generic model or training-data claim.
+    pub fn bootstrap_task_material(&self) -> Result<BootstrapTaskMaterial> {
+        ensure(self.task_profile() == SIGNED_TASK_PROFILE, "TASK_PROFILE")?;
+        let (a, b) = maintenance();
+        let model = a.iter().flat_map(|v| v.to_le_bytes()).collect();
+        let input = b.iter().flat_map(|v| v.to_le_bytes()).collect();
+        Ok((model, input, a, b))
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub fn development_task_manifest(
+        &self,
+        index: u64,
+        purpose: TaskPurpose,
+        model: &[u8],
+        input: &[u8],
+        not_before: u64,
+        expires: u64,
+        demand_nonce: u64,
+    ) -> Result<SignedQualifiedWorkTask> {
+        development_manifest(
+            &self.app,
+            index,
+            purpose,
+            model,
+            input,
+            not_before,
+            expires,
+            demand_nonce,
+        )
+    }
     pub fn genesis(&self) -> Hash {
         self.genesis
     }
@@ -263,6 +361,74 @@ impl Settings {
     pub(crate) fn target(&self, name: &str) -> Result<Hash> {
         digest(self.app.params[name].as_str().ok_or("CONFIG")?)
     }
+}
+#[allow(clippy::too_many_arguments)]
+fn development_manifest(
+    app: &Config,
+    index: u64,
+    purpose: TaskPurpose,
+    model: &[u8],
+    input: &[u8],
+    not_before: u64,
+    expires: u64,
+    demand_nonce: u64,
+) -> Result<SignedQualifiedWorkTask> {
+    ensure(
+        purpose == Config::qualified_demand_purpose(index)?,
+        "TASK_PURPOSE",
+    )?;
+    let context = app.qualified_task_context(app.qualified_demand_id(index)?, not_before)?;
+    let (a, b) =
+        derive_matrices(model, input).map_err(|e| Error::from(format!("TASK_MATERIAL:{e:?}")))?;
+    let mut manifest = QualifiedWorkTask {
+        purpose,
+        cost_class: 1,
+        numeric_encoding: 1,
+        hardness_status: 0,
+        reuse: 1,
+        network: context.network,
+        parameters: context.parameters,
+        work_profile: QualifiedWorkTask::profile_id(),
+        source: context.source,
+        demand_id: context.demand_id,
+        source_record: context.source_record,
+        model: hash(b"artifact", &[model]),
+        layer: [1; 32],
+        input: hash(b"qualified-task-input-v1", &[input]),
+        recipe: QualifiedWorkTask::recipe_id(),
+        matrix_task: pon_work::task_id(&a, &b).map_err(|_| Error::from("WORK_TASK"))?,
+        availability_manifest: context.availability_manifest,
+        availability_root: context.availability_root,
+        authorization_scope: context.authorization_scope,
+        withdrawal_head: context.withdrawal_head,
+        output_meter: [1; 32],
+        rows: 64,
+        inner: 64,
+        columns: 64,
+        demand_nonce,
+        not_before,
+        expires,
+        available_until: expires.checked_add(100).ok_or("TASK_AVAILABILITY")?,
+        logical_multiply_add_units: LOGICAL_MULTIPLY_ADD_UNITS,
+        model_bytes: MATRIX_ARTIFACT_BYTES,
+        input_bytes: MATRIX_ARTIFACT_BYTES,
+        useful_output_limit: purpose.output_limit(),
+    };
+    manifest.layer = QualifiedWorkTask::layer_id(manifest.model);
+    manifest.output_meter = manifest.derived_output_meter();
+    let seed = hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]);
+    let key = trnm_crypto_primitives::signing_key_from_hex(&hex::encode(seed))
+        .map_err(|_| Error::from("DEV_KEY"))?;
+    let message = SignedQualifiedWorkTask::signing_message(&manifest)
+        .map_err(|_| Error::from("TASK_MANIFEST"))?;
+    let signature = hex::decode(trnm_crypto_primitives::sign_hex(&key, &message))
+        .map_err(|_| Error::from("DEV_KEY"))?
+        .try_into()
+        .map_err(|_| Error::from("DEV_KEY"))?;
+    Ok(SignedQualifiedWorkTask {
+        manifest,
+        signature,
+    })
 }
 pub fn maintenance() -> (Vec<u32>, Vec<u32>) {
     (

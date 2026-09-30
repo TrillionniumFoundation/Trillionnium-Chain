@@ -843,6 +843,7 @@ dependencies = [
  "ed25519-dalek",
  "hex",
  "sha2",
+ "trnm-protocol",
 ]
 
 [[package]]

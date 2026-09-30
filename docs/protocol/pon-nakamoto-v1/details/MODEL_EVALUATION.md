@@ -227,7 +227,9 @@ keys still do not establish independent administration. Signed false scores rema
 attested-trust risk; minimum aggregation is NOT objective model verification or arbitration.
 A same-signer replacement rejects rather than silently replacing the first statement.
 No slashing, appeal authority, retroactive block invalidation or consensus voting is added.
-Functional-copy/split attribution and an objective public dispute profile remain open.
+General nonlinear functional-copy/split attribution and independently governed objective
+dispute resolution remain open. The exact integer-linear profile and signed bounded
+policy below now execute narrower obligations.
 
 The M11 `trnm-verification-profiles::closed_round::complete_score` procedure is consumed
 by the existing M06 twelve-command executor. The Python `evaluation_round.complete_score`
@@ -237,3 +239,27 @@ publication/maturity/claim, and the ordinary native CLI with real work, disk reo
 heavier-fork replay. Positive scores in these tests are controlled fixtures, not a new
 learned improvement or an independently authorized reward. Historical model observations
 remain unchanged; fixed-data, prospective and optimum-certificate claims remain distinct.
+
+## Executable integer-linear copy, complementarity and finite-set profile
+
+[MODEL_ATTRIBUTION](MODEL_ATTRIBUTION.md) specifies fresh sidecar schemas for exact
+BA normalization, parent/slot/numeric binding, admitted same-source caps, declared
+bounded perturbations and all finite subset replays. Copying under another factorization
+or identity cannot multiply the same effective update or its cap. Distinct components
+may retain joint value even with zero standalone gain. Group-level Shapley and an
+exhaustive finite-set optimum are replayed, never inferred from probe hashes or a
+reported solver bound. This leaves general nonlinear equivalence, optimal circuit cost,
+real independent source admission and target LLM prospective quality unqualified.
+
+The same detail defines UniqueUsefulOutputAccounting: A/B relabelling, stale attempts,
+reorg and output replay cannot erase incurred verifier costs or count one adopted
+content output twice. Positive verification alone is not downstream adoption. The
+real campaign uses existing training/inference owners and records actual versions;
+retrospective source tasks remain exploratory, with no public reward authority.
+
+[PUBLIC_EVALUATION_LIFECYCLE](PUBLIC_EVALUATION_LIFECYCLE.md) defines a separately
+named bounded off-chain policy: pre-candidate roster/lineage/context freeze, strict
+signed commit/reveal, deterministic deadlines, explicit missing-reveal abort, signature
+conflict evidence and next-round disqualification, plus signed appeals that do not
+silently replace the closed result. Native revision4 remains unchanged; governance,
+prospective independence and objective evaluation cannot be supplied by minimum scores.

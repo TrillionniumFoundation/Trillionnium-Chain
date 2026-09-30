@@ -1,5 +1,13 @@
 # L3 — revision3 ledger context, native commands and lifecycle
 
+Revision3 remains the historical default described below. Explicit revision4 selects
+the [complete eligible evaluation round](MODEL_EVALUATION.md); explicit revision5
+`signed-task-dev-v1` additionally selects the [signed task registration contract](QUALIFIED_WORK_TASK.md).
+Tag13 and its new parent-admission rules belong only to that distinct development
+context. [Current CLI profiles and remaining public gates](PUBLIC_READINESS.md) bind
+interfaces, source ownership, resource limits and actual acceptance scope. These
+extensions do not reinterpret revision3 byte commitments, golden roots or stored state.
+
 The exact registry is [`ledger-v1.json`](../../../../config/pon/ledger-v1.json), with
 [`devnet-v1.json`](../../../../config/pon/devnet-v1.json), work and model-family JSONs.
 Current normative scope: `consensus_revision=3`, chain label

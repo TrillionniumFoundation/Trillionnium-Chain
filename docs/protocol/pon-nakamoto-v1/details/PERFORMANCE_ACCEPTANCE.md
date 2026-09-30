@@ -4,6 +4,12 @@ All performance reports must bind executed source/input hashes, compiler/interpr
 hardware, filesystem, concurrency, workload and exact command. Do not merge benchmark
 numbers from different code/profile contexts. Production activation stays separate.
 
+The [current continuous pipeline and six acceptance gates](PUBLIC_READINESS.md) add
+live native TCP/persistence/client observation campaigns. Logical smoke runs remain
+explicitly distinct from paced wall-clock measurements. Transfer-only throughput,
+correlated block samples, null mempool/GPU stages and confirmation-drain costs are
+reported with their exact limits; no nominal configuration is promoted to measured TPS.
+
 ## P1.1 Reproducible campaign matrix
 
 | Campaign | Actual executable | Measures | Does NOT establish |

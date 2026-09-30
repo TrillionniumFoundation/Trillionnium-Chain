@@ -4,6 +4,7 @@ Status: selected development architecture; candidate specification, not a deploy
 Decision date: 2026-09-28. Primary owner M00; consensus M02; cross-module consumers M01-M17.
 The sole work sequence remains the [development plan](../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 Machine contract: [pon-nakamoto-v1.json](../../../config/pon-nakamoto-v1.json).
+Current entrypoint profiles and audit gates: [public readiness](details/PUBLIC_READINESS.md).
 
 ## Architectural decision
 
@@ -18,9 +19,10 @@ No BFT checkpoint/finality committee or consumption/stake vote is hidden in PoN.
 Old PoCO source, protocol decoders, byte registries and runtime launchers are deleted
 from the active tree. Git retains history; only inventoried neutral components remain.
 The concrete experimental W1 work relation and 49,188-byte proof format are implemented
-in native Rust and a separate Python oracle. A complete native consensus/persistence
-runtime and public-network work-security qualification remain unfinished; the existence
-of a proof codec is not either acceptance.
+in native Rust and a separate Python oracle. `trnm-pon-node` composes a native
+development consensus, branch owner and socket entrypoint. Work-profile security,
+independent integration acceptance and public-network qualification remain unfinished.
+The implementation and acceptance claims have separate evidence requirements.
 
 ## The product, not just a compute market
 

@@ -9,7 +9,11 @@ use std::{
     sync::{atomic::AtomicBool, Arc},
     time::Duration,
 };
+use trnm_crypto_primitives::qualified_work_task::{
+    derive_matrices, verify_development_admission, TaskMaterial,
+};
 use trnm_pon_node::{development_public, digest, ingress, Error, Node, Packet, Result, Settings};
+use trnm_protocol::qualified_work_task::{SignedQualifiedWorkTask, TaskPurpose};
 fn need<'a>(args: &'a BTreeMap<String, String>, key: &str) -> Result<&'a str> {
     args.get(key)
         .map(String::as_str)
@@ -144,6 +148,14 @@ fn authenticated_server(
     )?))
 }
 
+fn admission_profile(args: &BTreeMap<String, String>) -> Result<bool> {
+    match args.get("--admission-profile").map(String::as_str) {
+        None | Some("legacy-development") => Ok(false),
+        Some("connection-work-v1") => Ok(true),
+        _ => Err("ADMISSION_PROFILE".into()),
+    }
+}
+
 fn output(path: &str, bytes: &[u8]) -> Result<()> {
     let mut file = OpenOptions::new().create_new(true).write(true).open(path)?;
     file.write_all(bytes)?;
@@ -166,7 +178,7 @@ fn run() -> Result<Value> {
     while let Some(key) = raw.next() {
         let value = if matches!(
             key.as_str(),
-            "--development" | "--authenticated-development-network"
+            "--development" | "--authenticated-development-network" | "--task-bootstrap"
         ) {
             "true".into()
         } else {
@@ -183,7 +195,8 @@ fn run() -> Result<Value> {
     }
     let extra = match command.as_str() {
         "status" | "recover" => "",
-        "mine" | "make" => "--transactions --timestamp --output --parent --miner",
+        "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input",
+        "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
         "submit" | "push" => "--packet --peer",
         "export" => "--block --output",
         "confirm" => "--transaction --block",
@@ -199,8 +212,13 @@ fn run() -> Result<Value> {
         "push" | "sync" => "--auth-secret --server-public --session-generation",
         _ => "",
     };
+    let admission_options = match command.as_str() {
+        "serve" => "--admission-profile --admission-bits --admission-ttl-ms",
+        "push" => "--admission-profile",
+        _ => "",
+    };
     let allowed = format!(
-        "--development --store --genesis-time --workers --logical-now --evaluation-policy {authentication_options} {extra}"
+        "--development --store --genesis-time --workers --logical-now --evaluation-policy --task-profile {authentication_options} {admission_options} {extra}"
     );
     for key in args.keys() {
         if !allowed.split_whitespace().any(|k| k == key) {
@@ -220,13 +238,47 @@ fn run() -> Result<Value> {
     ) {
         return Err("EVALUATION_POLICY".into());
     }
-    let settings = Settings::development_with_evaluation_policy(
+    let settings = Settings::development_with_profiles(
         args.get("--genesis-time")
             .map(|s| s.parse().map_err(|_| Error::from("GENESIS_TIME")))
             .transpose()?,
         evaluation_policy,
+        args.get("--task-profile")
+            .map(String::as_str)
+            .unwrap_or("legacy-task-v1"),
     )?;
+    if command == "task-fixture" {
+        if settings.task_profile() != "signed-task-dev-v1" {
+            return Err("SIGNED_TASK_PROFILE_REQUIRED".into());
+        }
+        let model = read(need(&args, "--task-model")?, 16384)?;
+        let input = read(need(&args, "--task-input")?, 16384)?;
+        let purpose = match need(&args, "--purpose")? {
+            "maintenance" => TaskPurpose::Maintenance,
+            "adapter" => TaskPurpose::AdapterContraction,
+            "evaluation" => TaskPurpose::EvaluationContraction,
+            "inference" => TaskPurpose::InferenceContraction,
+            _ => return Err("TASK_PURPOSE".into()),
+        };
+        let signed = settings.development_task_manifest(
+            number(&args, "--demand-index", 0)?,
+            purpose,
+            &model,
+            &input,
+            number(&args, "--not-before", 1)?,
+            number(&args, "--expires", 1000)?,
+            number(&args, "--demand-nonce", 1)?,
+        )?;
+        let wire = signed
+            .encode()
+            .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?;
+        output(need(&args, "--output")?, &wire)?;
+        return Ok(
+            json!({"scope":"public-key development fixture; no real-world demand or consent certificate","signed_manifest":need(&args,"--output")?,"matrix_task":hex::encode(signed.manifest.matrix_task),"production_activation":false}),
+        );
+    }
     if command == "push" {
+        let protected = admission_profile(&args)?;
         let packet = Packet::decode(&read(need(&args, "--packet")?, 1_048_576)?)?;
         let address = need(&args, "--peer")?
             .parse()
@@ -240,19 +292,27 @@ fn run() -> Result<Value> {
                 settings.clone(),
                 number(&args, "--workers", 1)? as usize,
             )?;
-            let response = ingress::call_authenticated_durable(
-                &mut owner,
-                address,
-                &request,
-                &authentication,
-            )?;
+            let response = if protected {
+                ingress::call_authenticated_durable_protected(
+                    &mut owner,
+                    address,
+                    &request,
+                    &authentication,
+                )?
+            } else {
+                ingress::call_authenticated_durable(&mut owner, address, &request, &authentication)?
+            };
             return Ok(json!({
                 "response":response,
                 "state":owner.stats()?,
                 "production_activation":false
             }));
         }
-        return ingress::call(address, &request);
+        return if protected {
+            ingress::call_protected(address, &request, &settings)
+        } else {
+            ingress::call(address, &request)
+        };
     }
     let clock = number(&args, "--logical-now", ingress::now()?)?;
     let mut node = Node::open(
@@ -292,7 +352,73 @@ fn run() -> Result<Value> {
                     .map(|s| digest(s))
                     .transpose()?
                     .unwrap_or(development_public(0)?);
-                node.make(parent, transactions, miner, timestamp, 4096)?
+                let files_present = ["--task-manifest", "--task-model", "--task-input"]
+                    .map(|key| args.contains_key(key));
+                let bootstrap = args.contains_key("--task-bootstrap");
+                if node.settings().task_profile() == "signed-task-dev-v1" {
+                    if bootstrap && files_present.iter().any(|present| *present) {
+                        return Err("TASK_OPTIONS".into());
+                    }
+                    let (wire, model, input) = if bootstrap {
+                        let signed = node.settings().bootstrap_task_statement()?;
+                        let (a, b) = trnm_pon_node::maintenance();
+                        (
+                            signed
+                                .encode()
+                                .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?,
+                            a.iter().flat_map(|v| v.to_le_bytes()).collect::<Vec<_>>(),
+                            b.iter().flat_map(|v| v.to_le_bytes()).collect::<Vec<_>>(),
+                        )
+                    } else {
+                        if !files_present.iter().all(|present| *present) {
+                            return Err("TASK_MATERIAL_REQUIRED".into());
+                        }
+                        (
+                            read(need(&args, "--task-manifest")?, 652)?,
+                            read(need(&args, "--task-model")?, 16384)?,
+                            read(need(&args, "--task-input")?, 16384)?,
+                        )
+                    };
+                    let signed = SignedQualifiedWorkTask::decode(&wire)
+                        .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?;
+                    let (a, b) = derive_matrices(&model, &input)
+                        .map_err(|e| Error::from(format!("TASK_MATERIAL:{e:?}")))?;
+                    let context = node.settings().qualified_task_context(
+                        signed.manifest.demand_id,
+                        node.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?,
+                    )?;
+                    let material = TaskMaterial {
+                        model: &model,
+                        input: &input,
+                        a: &a,
+                        b: &b,
+                    };
+                    let admitted = verify_development_admission(
+                        &wire,
+                        TaskMaterial {
+                            model: &model,
+                            input: &input,
+                            a: &a,
+                            b: &b,
+                        },
+                        &context,
+                    )
+                    .map_err(|e| Error::from(format!("TASK_ADMISSION:{e:?}")))?;
+                    node.make_with_task(
+                        parent,
+                        transactions,
+                        miner,
+                        timestamp,
+                        4096,
+                        &admitted,
+                        material,
+                    )?
+                } else {
+                    if bootstrap || files_present.iter().any(|present| *present) {
+                        return Err("SIGNED_TASK_PROFILE_REQUIRED".into());
+                    }
+                    node.make(parent, transactions, miner, timestamp, 4096)?
+                }
             };
             output(need(&args, "--output")?, &packet.encode()?)?;
             if command == "mine" {
@@ -350,6 +476,22 @@ fn run() -> Result<Value> {
             }
         }
         "serve" => {
+            let protected = admission_profile(&args)?;
+            if !protected
+                && (args.contains_key("--admission-bits")
+                    || args.contains_key("--admission-ttl-ms"))
+            {
+                return Err("ADMISSION_PROFILE_REQUIRED".into());
+            }
+            let admission = if protected {
+                Some(ingress::AdmissionPolicy::new(
+                    u8::try_from(number(&args, "--admission-bits", 16)?)
+                        .map_err(|_| Error::from("ADMISSION_POLICY"))?,
+                    Duration::from_millis(number(&args, "--admission-ttl-ms", 2000)?),
+                )?)
+            } else {
+                None
+            };
             let address = args
                 .get("--listen")
                 .map(String::as_str)
@@ -372,6 +514,7 @@ fn run() -> Result<Value> {
                     "state":node.stats()?,
                     "scope":if authentication.is_some(){"authenticated-development-private"}else{"native-development-loopback"},
                     "server_public":server_public,
+                    "admission_profile":if protected {"connection-work-v1"} else {"legacy-development"},
                     "confidentiality":false,
                     "production_activation":false
                 })
@@ -379,11 +522,22 @@ fn run() -> Result<Value> {
             std::io::stdout().flush()?;
             let lifetime = Duration::from_secs(number(&args, "--seconds", 30)?);
             let stop = Arc::new(AtomicBool::new(false));
-            let metrics = match authentication {
-                Some(authentication) => {
+            let metrics = match (authentication, admission) {
+                (Some(authentication), Some(policy)) => ingress::serve_authenticated_protected(
+                    listener,
+                    node,
+                    lifetime,
+                    stop,
+                    authentication,
+                    policy,
+                )?,
+                (None, Some(policy)) => {
+                    ingress::serve_protected(listener, node, lifetime, stop, policy)?
+                }
+                (Some(authentication), None) => {
                     ingress::serve_authenticated(listener, node, lifetime, stop, authentication)?
                 }
-                None => ingress::serve(listener, node, lifetime, stop)?,
+                (None, None) => ingress::serve(listener, node, lifetime, stop)?,
             };
             serde_json::to_value(metrics)?
         }

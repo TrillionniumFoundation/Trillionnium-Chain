@@ -493,3 +493,5 @@ mod tests {
 pub mod pon_wire;
 
 pub mod pon_state;
+
+pub mod qualified_work_task;

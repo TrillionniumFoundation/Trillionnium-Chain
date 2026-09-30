@@ -487,3 +487,30 @@ native CLI/reorg tests, exact optimized producer, and new same-target cost colle
 It preserves revision3 defaults and all historical artifacts. Source qualification,
 independent model value, public work safety and production activation remain separate;
 the remaining work stays in the existing convergence table, not a new roadmap.
+
+## Six-finding convergence continuation
+
+The [current entrypoint and acceptance contract](../protocol/pon-nakamoto-v1/details/PUBLIC_READINESS.md)
+maps the six audit findings onto executable development interfaces and remaining public
+gates. This continuation stays on the existing native candidate; no acceptance flag is
+promoted. The implemented additions are a negotiated connection-local proof-admission
+challenge, explicit signed-task revision5 registration/material/parent eligibility,
+branch-relative arithmetic-output counting, bounded integer-adapter attribution and
+off-chain evaluation lifecycle, and a durable TCP/client-confirmation campaign. The
+original work verifier, chainwork and revision3/default bytes remain unchanged.
+
+The signed-task testing context has16 public fixture demands, a public source seed,
+a fixed withdrawal frontier and1000-block bootstrap lifetime. It is intentionally not
+an exclusive production source, real task marketplace, live revoke or indefinite
+maintenance policy. The attribution profile establishes exact BA identity and finite
+candidate-set objectives, not generic neuron equivalence, independent future efficacy
+or global neural-circuit optimum. Public evaluator governance and native public
+evaluation/reward integration remain separate owner responsibilities.
+
+Priority remains P0 qualified cheapest-miner work cost and sustained hostile intake,
+then P1 actual target-model efficacy/poisoning/deployment costs, independent evaluation
+governance, useful-output efficiency and steady end-to-end state/history/network load.
+Keep failed experiments and all attempt/validator costs. Live wall time and descriptive
+latencies do not supply a hardness theorem, independent operators or public fairness.
+The new clean-source qualification runner captures the full native/reference regression
+and additional campaigns; historical receipts stay bound to their original source.

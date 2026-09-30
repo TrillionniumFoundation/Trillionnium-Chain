@@ -19,7 +19,13 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
     cargo fetch --locked --manifest-path trillionnium/Cargo.toml
-    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins
+    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress
+    python3 formal/pon-nakamoto-v1/test_model_attribution.py
+    python3 formal/pon-nakamoto-v1/test_work_utility.py
+    python3 formal/pon-nakamoto-v1/test_public_evaluation_lifecycle.py
+    python3 formal/pon-nakamoto-v1/test_llm_adapter_contract.py
+    "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuous_pipeline" "${RUNNER_TEMP:-/tmp}/trnm-pipeline-smoke-$$" 2 4 0 growth protected
     python3 formal/pon-nakamoto-v1/test_evaluation_round.py
     python3 formal/pon-nakamoto-v1/test_evaluation.py
     python3 formal/pon-nakamoto-v1/test_evaluation_bundle.py
@@ -67,7 +73,9 @@ case "${1:?required job}" in
     python3 scripts/ci/check_client_confirmation_evidence.py --historical
     python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-session-v1
     python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-node-v1
-    python3 scripts/ci/check_client_confirmation_evidence.py --native-node --evidence evidence/pon-closed-round-v1
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical --native-node --evidence evidence/pon-closed-round-v1
+    python3 scripts/ci/check_public_readiness_evidence.py --evidence evidence/pon-public-readiness-v1
+    python3 scripts/ci/test_public_readiness_evidence.py
     python3 scripts/ci/check_native_node_supplements.py --historical
     python3 scripts/ci/test_native_node_supplements.py
     python3 scripts/ci/test_native_session_evidence.py
@@ -77,7 +85,7 @@ case "${1:?required job}" in
     python3 scripts/pon_work_cost_report.py --verify evidence/pon-contract-authority-v1/work-cost --historical
     python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-session-v1/work-cost --historical
     python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-node-v1/work-cost --historical
-    python3 scripts/pon_work_cost_report.py --verify evidence/pon-closed-round-v1/work-cost
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-closed-round-v1/work-cost --historical
     ;;
   *) printf '%s\n' 'unknown CI job' >&2; exit 2 ;;
 esac

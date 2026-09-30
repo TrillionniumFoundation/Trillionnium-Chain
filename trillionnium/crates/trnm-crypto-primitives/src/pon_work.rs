@@ -258,6 +258,11 @@ pub struct PreparedTask {
     prefix: Vec<u8>,
 }
 impl PreparedTask {
+    /// Cached mathematical result bytes for producer root planning. This is not
+    /// a verified-work capability; admission still replays the original relation.
+    pub fn product_bytes(&self) -> &[u8] {
+        &self.prefix[4 + 2 * CELLS * 4..4 + 3 * CELLS * 4]
+    }
     pub fn new(a: &[u32], b: &[u32]) -> Result<Self, WorkError> {
         validate(a)?;
         validate(b)?;

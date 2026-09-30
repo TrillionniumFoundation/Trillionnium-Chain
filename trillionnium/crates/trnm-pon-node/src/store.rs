@@ -16,8 +16,15 @@ use std::{
     time::Duration,
 };
 use trnm_crypto_primitives::pon_work;
+use trnm_crypto_primitives::qualified_work_task::{
+    derive_matrices, verify_development_statement, DevelopmentTaskAdmission, TaskMaterial,
+};
+use trnm_mvcc_fee::pon_executor::SIGNED_TASK_PROFILE;
 use trnm_mvcc_fee::pon_executor::{execute, root, State};
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
+use trnm_protocol::qualified_work_task::{
+    QualifiedWorkTask, SignedQualifiedWorkTask, TaskPurpose, SIGNED_TASK_BYTES,
+};
 use trnm_transport::{
     AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, IoDigest32V0, PeerFrameSourceV0,
     PeerReplayRecoverySourceV0, PeerReplayStateV0, PeerSessionIdentityV0,
@@ -59,6 +66,31 @@ type ReplayRow = (
     Option<u64>,
 );
 const AUTH_RESPONSE_RETENTION: u64 = 16;
+
+fn json_value(value: String) -> Value {
+    Value::String(value)
+}
+fn record_task_output(
+    state: &mut State,
+    manifest: &QualifiedWorkTask,
+    product: &[u8],
+) -> Result<()> {
+    if manifest.purpose == TaskPurpose::Maintenance {
+        return Ok(());
+    }
+    ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
+    let key = format!("work-output:{}", hex::encode(manifest.output_meter));
+    let digest = hex::encode(hash(b"qualified-task-product-v1", &[product]));
+    if let Some(prior) = state.get(&key) {
+        ensure(
+            prior["product"] == digest && prior["arithmetic_output_count"] == 1,
+            "TASK_OUTPUT",
+        )?;
+    } else {
+        state.insert(key,serde_json::json!({"product":digest,"arithmetic_output_count":1,"matrix_task":hex::encode(manifest.matrix_task),"scope":"source-attested-fixed-contraction-not-model-value"}));
+    }
+    Ok(())
+}
 
 #[derive(Debug)]
 pub(crate) enum AuthenticatedReplayDecision {
@@ -224,13 +256,14 @@ struct Record {
 /// Private fields prevent replacing the header/body/proof after verification.
 pub(crate) struct WorkCheckedPacket {
     packet: Packet,
+    work: pon_work::VerifiedWork,
 }
 impl WorkCheckedPacket {
     pub(crate) fn verify(packet: Packet) -> Result<Self> {
         let h = &packet.header;
-        pon_work::verify(h.challenge(), h.work_task, h.target, &packet.proof)
+        let work = pon_work::verify(h.challenge(), h.work_task, h.target, &packet.proof)
             .map_err(|e| Error::from(format!("WORK:{e:?}")))?;
-        Ok(Self { packet })
+        Ok(Self { packet, work })
     }
 }
 
@@ -1260,6 +1293,34 @@ impl Node {
             h.transactions == sequence_root("transactions", &packet.transactions),
             "ROOT",
         )?;
+        // Signed task context/expiry/parent registration reject before full work replay.
+        if let Some(manifest) = self.eligible_work_task(h.parent, h.work_task, h.height)? {
+            // The fixed recipe's actual model and input artifacts are precisely the
+            // proof's A/B bytes. An untrusted miner can bypass every local builder;
+            // the validator must bind these commitments before transcript replay.
+            let artifact_bytes = pon_work::CELLS * 4;
+            ensure(
+                packet.proof.len() == pon_work::PROOF_BYTES
+                    && packet.proof.get(..4) == Some(b"PNW1"),
+                "TASK_PROOF_MATERIAL",
+            )?;
+            let model = packet
+                .proof
+                .get(4..4 + artifact_bytes)
+                .ok_or("TASK_PROOF_MATERIAL")?;
+            let input = packet
+                .proof
+                .get(4 + artifact_bytes..4 + 2 * artifact_bytes)
+                .ok_or("TASK_PROOF_MATERIAL")?;
+            ensure(
+                hash(b"artifact", &[model]) == manifest.model,
+                "TASK_MODEL_BINDING",
+            )?;
+            ensure(
+                hash(b"qualified-task-input-v1", &[input]) == manifest.input,
+                "TASK_INPUT_BINDING",
+            )?;
+        }
         Ok(None)
     }
     pub fn admit(&mut self, packet: &Packet, observed_now: u64) -> Result<Hash> {
@@ -1274,7 +1335,10 @@ impl Node {
         checked: WorkCheckedPacket,
         observed_now: u64,
     ) -> Result<Hash> {
-        let packet = checked.packet;
+        let WorkCheckedPacket {
+            packet,
+            work: verified_work,
+        } = checked;
         if let Some(id) = self.check_admission_context(&packet, observed_now)? {
             return Ok(id);
         }
@@ -1283,11 +1347,8 @@ impl Node {
         let id = packet.id()?;
         let parent = self.record(h.parent)?;
         let prior = self.state_at(h.parent)?;
-        ensure(
-            prior.get(&format!("work:{}", hex::encode(h.work_task))) == Some(&Value::Bool(true)),
-            "TASK",
-        )?;
-        let output = execute(
+        let registered_task = self.eligible_work_task(h.parent, h.work_task, h.height)?;
+        let mut output = execute(
             &prior,
             &packet.transactions,
             h.height,
@@ -1296,6 +1357,15 @@ impl Node {
             self.workers,
             &self.settings.app,
         )?;
+        if let Some(manifest) = registered_task {
+            let product: Vec<u8> = verified_work
+                .product()
+                .iter()
+                .flat_map(|value| value.to_le_bytes())
+                .collect();
+            record_task_output(&mut output.state, &manifest, &product)?;
+            output.root = root(&output.state)?;
+        }
         ensure(
             h.state == output.root && h.receipts == sequence_root("receipts", &output.receipts),
             "ROOT",
@@ -1347,10 +1417,143 @@ impl Node {
         timestamp: u64,
         max_attempts: u64,
     ) -> Result<Packet> {
+        ensure(
+            self.settings.task_profile() != SIGNED_TASK_PROFILE,
+            "EXPLICIT_TASK_REQUIRED",
+        )?;
+        let (a, b) = maintenance();
+        self.make_from_matrices(parent, transactions, miner, timestamp, max_attempts, &a, &b)
+    }
+    pub fn parent_height(&self, parent: Hash) -> Result<u64> {
+        Ok(self.record(parent)?.height)
+    }
+    /// Explicit material-bound development route; no implicit maintenance or arbitrary
+    /// unsigned source/context can authorize a task in the parent's branch state.
+    #[allow(clippy::too_many_arguments)]
+    pub fn make_with_task(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        max_attempts: u64,
+        admission: &DevelopmentTaskAdmission,
+        material: TaskMaterial<'_>,
+    ) -> Result<Packet> {
+        ensure(
+            self.settings.task_profile() == SIGNED_TASK_PROFILE,
+            "WORK_TASK_PROFILE",
+        )?;
+        let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
+        let signed = self
+            .eligible_work_task(parent, admission.matrix_task(), height)?
+            .ok_or("TASK_MANIFEST")?;
+        ensure(
+            signed.id().map_err(|_| Error::from("TASK_MANIFEST"))? == admission.manifest_id(),
+            "TASK_ADMISSION_CONTEXT",
+        )?;
+        ensure(
+            hash(b"artifact", &[material.model]) == signed.model
+                && hash(b"qualified-task-input-v1", &[material.input]) == signed.input,
+            "TASK_MATERIAL",
+        )?;
+        let (a, b) = derive_matrices(material.model, material.input)
+            .map_err(|e| Error::from(format!("TASK_MATERIAL:{e:?}")))?;
+        ensure(material.a == a && material.b == b, "TASK_MATRIX_BINDING")?;
+        ensure(
+            pon_work::task_id(&a, &b).map_err(|_| Error::from("WORK_TASK"))? == signed.matrix_task,
+            "TASK_MATRIX_BINDING",
+        )?;
+        self.make_from_matrices(parent, transactions, miner, timestamp, max_attempts, &a, &b)
+    }
+    fn eligible_work_task(
+        &self,
+        parent: Hash,
+        task: Hash,
+        height: u64,
+    ) -> Result<Option<QualifiedWorkTask>> {
+        let state = self.state_at(parent)?;
+        let registered = state
+            .get(&format!("work:{}", hex::encode(task)))
+            .ok_or("TASK")?;
+        if self.settings.task_profile() != SIGNED_TASK_PROFILE {
+            ensure(registered == &Value::Bool(true), "TASK")?;
+            return Ok(None);
+        }
+        ensure(
+            registered["schema"] == "qualified-work-registration-v1",
+            "TASK_MANIFEST",
+        )?;
+        ensure(
+            registered["admitted_height"]
+                .as_u64()
+                .ok_or("TASK_MANIFEST")?
+                < height,
+            "TASK_PARENT",
+        )?;
+        let text = registered["manifest"].as_str().ok_or("TASK_MANIFEST")?;
+        ensure(text.len() == SIGNED_TASK_BYTES * 2, "TASK_MANIFEST")?;
+        let bytes = hex::decode(text).map_err(|_| Error::from("TASK_MANIFEST"))?;
+        ensure(hex::encode(&bytes) == text, "TASK_MANIFEST")?;
+        let signed =
+            SignedQualifiedWorkTask::decode(&bytes).map_err(|_| Error::from("TASK_MANIFEST"))?;
+        ensure(signed.manifest.matrix_task == task, "TASK")?;
+        let context = self
+            .settings
+            .qualified_task_context(signed.manifest.demand_id, height)?;
+        let verified = verify_development_statement(&bytes, &context)
+            .map_err(|e| Error::from(format!("TASK_STATEMENT:{e:?}")))?;
+        ensure(
+            registered["manifest_id"] == hex::encode(verified.manifest_id()),
+            "TASK_MANIFEST",
+        )?;
+        ensure(
+            state.get(&format!("work-withdrawal:{}", hex::encode(context.source)))
+                == Some(&json_value(hex::encode(context.withdrawal_head))),
+            "TASK_WITHDRAWAL",
+        )?;
+        let demand = state
+            .get(&format!(
+                "work-demand-registry:{}",
+                hex::encode(context.demand_id)
+            ))
+            .ok_or("TASK_DEMAND")?;
+        ensure(
+            demand["purpose"].as_u64() == Some(signed.manifest.purpose as u64),
+            "TASK_PURPOSE",
+        )?;
+        ensure(
+            state.get(&format!("work-demand:{}", hex::encode(context.demand_id)))
+                == Some(&json_value(hex::encode(verified.manifest_id()))),
+            "TASK_DEMAND",
+        )?;
+        let source_nonce = state
+            .get(&format!("work-source:{}", hex::encode(context.source)))
+            .and_then(Value::as_u64)
+            .ok_or("TASK_SOURCE_NONCE")?;
+        ensure(
+            source_nonce >= signed.manifest.demand_nonce,
+            "TASK_SOURCE_NONCE",
+        )?;
+        Ok(Some(signed.manifest))
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn make_from_matrices(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        max_attempts: u64,
+        a: &[u32],
+        b: &[u32],
+    ) -> Result<Packet> {
         self.ready()?;
         ensure((1..=4096).contains(&max_attempts), "WORK_BUDGET")?;
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
-        let output = execute(
+        let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
+        let registered_task = self.eligible_work_task(parent, task, height)?;
+        let mut output = execute(
             &self.state_at(parent)?,
             &transactions,
             height,
@@ -1359,8 +1562,12 @@ impl Node {
             self.workers,
             &self.settings.app,
         )?;
-        let (a, b) = maintenance();
-        let task = pon_work::task_id(&a, &b).map_err(|_| Error::from("WORK_TASK"))?;
+        let prepared =
+            pon_work::PreparedTask::new(a, b).map_err(|e| Error::from(format!("WORK:{e:?}")))?;
+        if let Some(manifest) = registered_task {
+            record_task_output(&mut output.state, &manifest, prepared.product_bytes())?;
+            output.root = root(&output.state)?;
+        }
         let mut header = Header {
             network: self.settings.network(),
             parameters: self.settings.parameters(),
@@ -1375,8 +1582,6 @@ impl Node {
             work_task: task,
             nonce: 0,
         };
-        let prepared =
-            pon_work::PreparedTask::new(&a, &b).map_err(|e| Error::from(format!("WORK:{e:?}")))?;
         for nonce in 0..max_attempts {
             header.nonce = nonce;
             let challenge = header.challenge();

@@ -151,6 +151,8 @@ fn payload_len(tag: u8, p: &[u8]) -> Result<(), WireError> {
         10 => 112,
         11 => 136,
         12 => 32,
+        // Decoding this candidate payload does not activate it in historical contexts.
+        13 => crate::qualified_work_task::SIGNED_TASK_BYTES,
         9 => {
             if p.len() < 73 {
                 return Err(WireError::Length);

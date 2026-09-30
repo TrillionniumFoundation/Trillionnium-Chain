@@ -28,6 +28,179 @@ const MAX_FRAME: usize = 2 * 1024 * 1024;
 const AUTH_REQUEST_SCHEMA: &str = "trnm-authenticated-request-v1";
 const AUTH_RESPONSE_SCHEMA: &str = "trnm-authenticated-response-v1";
 const MAX_AUTHENTICATED_PEERS: usize = 64;
+const ADMISSION_CHALLENGE_SCHEMA: &str = "trnm-pon-admission-challenge-v1";
+const ADMISSION_SOLUTION_SCHEMA: &str = "trnm-pon-admission-solution-v1";
+const ADMISSION_HELLO_SCHEMA: &str = "trnm-pon-admission-hello-v1";
+const ADMISSION_READY_SCHEMA: &str = "trnm-pon-admission-ready-v1";
+const PROTECTED_PREFACE_BUDGET: Duration = Duration::from_millis(100);
+const PROTECTED_ERROR_CHARS: usize = 128;
+const RESERVED_READ_ONLY_BUSY: &str = "ADMISSION_BUSY_READ_ONLY_RESERVED";
+
+/// Connection-local transport CPU protection, never ledger work or a Sybil theorem.
+/// The old development listeners remain separate and do not silently adopt this profile.
+#[derive(Clone, Copy, Debug)]
+pub struct AdmissionPolicy {
+    bits: u8,
+    lifetime_ms: u64,
+}
+impl AdmissionPolicy {
+    pub fn new(bits: u8, lifetime: Duration) -> Result<Self> {
+        let lifetime_ms = u64::try_from(lifetime.as_millis()).map_err(|_| "ADMISSION_POLICY")?;
+        ensure(
+            (8..=20).contains(&bits) && (100..=2000).contains(&lifetime_ms),
+            "ADMISSION_POLICY",
+        )?;
+        Ok(Self { bits, lifetime_ms })
+    }
+    pub fn development() -> Self {
+        Self {
+            bits: 16,
+            lifetime_ms: 2000,
+        }
+    }
+    fn profile(self) -> Hash {
+        hash(
+            b"native-transport-admission-profile-v1",
+            &[
+                b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry256-5s/refusal128chars-100ms",
+                &[self.bits],
+                &self.lifetime_ms.to_le_bytes(),
+            ],
+        )
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AdmissionHello {
+    schema: String,
+    request_digest: String,
+}
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AdmissionReady {
+    schema: String,
+    profile: String,
+    request_digest: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AdmissionChallenge {
+    pub schema: String,
+    pub profile: String,
+    pub network: String,
+    pub parameters: String,
+    pub genesis: String,
+    pub nonce: String,
+    pub request_digest: String,
+    pub bits: u8,
+    pub lifetime_ms: u64,
+    pub expires_unix_ms: u64,
+    pub server: String,
+    pub signature: String,
+}
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AdmissionSolution {
+    pub schema: String,
+    pub challenge_digest: String,
+    pub nonce: u64,
+}
+fn unix_ms() -> Result<u64> {
+    u64::try_from(
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map_err(|_| "CLOCK")?
+            .as_millis(),
+    )
+    .map_err(|_| "CLOCK".into())
+}
+fn admission_digest(challenge: &AdmissionChallenge) -> Result<Hash> {
+    Ok(hash(
+        b"native-transport-admission-challenge-v1",
+        &[&serde_json::to_vec(challenge)?],
+    ))
+}
+fn admission_authority_digest(challenge: &AdmissionChallenge) -> Result<Hash> {
+    let mut authority = challenge.clone();
+    authority.signature.clear();
+    Ok(hash(
+        b"native-transport-admission-server-sign-v1",
+        &[&serde_json::to_vec(&authority)?],
+    ))
+}
+fn admission_winner(challenge: Hash, nonce: u64, bits: u8) -> bool {
+    let ticket = hash(
+        b"native-transport-admission-solution-v1",
+        &[&challenge, &nonce.to_le_bytes()],
+    );
+    let prefix = u32::from_be_bytes([ticket[0], ticket[1], ticket[2], ticket[3]]);
+    prefix.leading_zeros() >= u32::from(bits)
+}
+/// Bound client effort and validate the destination and exact pending wire before search.
+/// Returned hash trials are measured transport work; they confer no chain authority.
+pub fn solve_admission_challenge(
+    challenge: &AdmissionChallenge,
+    request_wire: &[u8],
+    settings: &Settings,
+) -> Result<(AdmissionSolution, u64)> {
+    let policy =
+        AdmissionPolicy::new(challenge.bits, Duration::from_millis(challenge.lifetime_ms))?;
+    ensure(
+        challenge.schema == ADMISSION_CHALLENGE_SCHEMA
+            && challenge.profile == hex::encode(policy.profile()),
+        "ADMISSION_PROFILE",
+    )?;
+    ensure(
+        challenge.network == hex::encode(settings.network())
+            && challenge.parameters == hex::encode(settings.parameters())
+            && challenge.genesis == hex::encode(settings.genesis()),
+        "ADMISSION_CONTEXT",
+    )?;
+    if challenge.server.is_empty() {
+        ensure(challenge.signature.is_empty(), "ADMISSION_SIGNATURE")?;
+    } else {
+        verify_hex_strict(
+            &challenge.server,
+            &admission_authority_digest(challenge)?,
+            &challenge.signature,
+        )
+        .map_err(|e| Error::from(format!("ADMISSION_SIGNATURE:{e}")))?;
+    }
+    digest(&challenge.nonce)?;
+    ensure(
+        challenge.request_digest
+            == hex::encode(hash(b"native-transport-admission-wire-v1", &[request_wire])),
+        "ADMISSION_REQUEST",
+    )?;
+    let remaining = challenge
+        .expires_unix_ms
+        .checked_sub(unix_ms()?)
+        .ok_or("ADMISSION_EXPIRED")?;
+    ensure(
+        remaining > 0 && remaining <= challenge.lifetime_ms,
+        "ADMISSION_EXPIRED",
+    )?;
+    let deadline = Instant::now() + Duration::from_millis(remaining);
+    let challenge_digest = admission_digest(challenge)?;
+    for nonce in 0..1_048_576_u64 {
+        if nonce % 256 == 0 {
+            ensure(Instant::now() < deadline, "ADMISSION_EXPIRED")?;
+        }
+        if admission_winner(challenge_digest, nonce, challenge.bits) {
+            return Ok((
+                AdmissionSolution {
+                    schema: ADMISSION_SOLUTION_SCHEMA.into(),
+                    challenge_digest: hex::encode(challenge_digest),
+                    nonce,
+                },
+                nonce + 1,
+            ));
+        }
+    }
+    Err("ADMISSION_SEARCH_BUDGET".into())
+}
 
 #[derive(Clone)]
 pub struct DevelopmentIdentity {
@@ -431,6 +604,7 @@ pub struct Page {
 }
 #[derive(Default, Debug, Serialize)]
 pub struct Metrics {
+    pub socket_connections: u64,
     pub completed_requests: u64,
     pub rejected_requests: u64,
     pub busy_requests: u64,
@@ -438,6 +612,135 @@ pub struct Metrics {
     pub authenticated_requests: u64,
     pub replayed_responses: u64,
     pub pending_busy_requests: u64,
+    pub admission_challenges: u64,
+    pub admission_accepted: u64,
+    pub admission_rejected_before_work: u64,
+    pub admission_unnegotiated_requests: u64,
+    pub admission_reserved_read_only_refusals: u64,
+    pub protected_preface_refusals: u64,
+    pub admission_verification_ns: u64,
+    pub work_verifications: u64,
+    pub work_verification_ns: u64,
+}
+fn elapsed_ns(start: Instant) -> u64 {
+    u64::try_from(start.elapsed().as_nanos()).unwrap_or(u64::MAX)
+}
+fn measured_work_verify(packet: Packet, metrics: &Mutex<Metrics>) -> Result<WorkCheckedPacket> {
+    let start = Instant::now();
+    metrics
+        .lock()
+        .map_err(|_| "METRICS_POISONED")?
+        .work_verifications += 1;
+    let result = WorkCheckedPacket::verify(packet);
+    let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
+    counts.work_verification_ns = counts
+        .work_verification_ns
+        .saturating_add(elapsed_ns(start));
+    result
+}
+
+struct AdmissionHost<'a> {
+    settings: &'a Settings,
+    policy: Option<AdmissionPolicy>,
+    authentication: Option<&'a AuthenticatedServer>,
+    metrics: &'a Mutex<Metrics>,
+    negotiated: bool,
+}
+fn protect_submit(
+    socket: &mut TcpStream,
+    request: &Request,
+    request_wire: &[u8],
+    host: AdmissionHost<'_>,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+) -> Result<()> {
+    let AdmissionHost {
+        settings,
+        policy,
+        authentication,
+        metrics,
+        negotiated,
+    } = host;
+    let Some(policy) = policy.filter(|_| matches!(request, Request::Submit { .. })) else {
+        return Ok(());
+    };
+    if !negotiated {
+        metrics
+            .lock()
+            .map_err(|_| "METRICS_POISONED")?
+            .admission_unnegotiated_requests += 1;
+        return Err("ADMISSION_REQUIRED".into());
+    }
+    progress(0)?;
+    let mut nonce = [0u8; 32];
+    // The native development host is Linux. Entropy failure fences protected intake.
+    std::fs::File::open("/dev/urandom")?.read_exact(&mut nonce)?;
+    let mut challenge = AdmissionChallenge {
+        schema: ADMISSION_CHALLENGE_SCHEMA.into(),
+        profile: hex::encode(policy.profile()),
+        network: hex::encode(settings.network()),
+        parameters: hex::encode(settings.parameters()),
+        genesis: hex::encode(settings.genesis()),
+        nonce: hex::encode(nonce),
+        request_digest: hex::encode(hash(b"native-transport-admission-wire-v1", &[request_wire])),
+        bits: policy.bits,
+        lifetime_ms: policy.lifetime_ms,
+        expires_unix_ms: unix_ms()?.checked_add(policy.lifetime_ms).ok_or("CLOCK")?,
+        server: authentication.map_or_else(String::new, |a| a.public_key().to_owned()),
+        signature: String::new(),
+    };
+    if let Some(server) = authentication {
+        challenge.signature = server
+            .identity
+            .sign(&admission_authority_digest(&challenge)?)?;
+    }
+    let deadline = Instant::now() + Duration::from_millis(policy.lifetime_ms);
+    let challenge_digest = admission_digest(&challenge)?;
+    write_frame_deadline(socket, &serde_json::to_vec(&challenge)?, deadline)?;
+    metrics
+        .lock()
+        .map_err(|_| "METRICS_POISONED")?
+        .admission_challenges += 1;
+    let outcome = (|| -> Result<()> {
+        ensure(Instant::now() < deadline, "ADMISSION_EXPIRED")?;
+        // Solutions are tiny; do not allocate the ordinary 2 MiB request limit here.
+        let mut prefix = [0u8; 4];
+        read_exact_deadline(socket, &mut prefix, deadline)?;
+        let length = u32::from_be_bytes(prefix) as usize;
+        ensure((1..=512).contains(&length), "ADMISSION_LENGTH")?;
+        let mut bytes = vec![0; length];
+        read_exact_deadline(socket, &mut bytes, deadline)?;
+        progress(0)?;
+        ensure(Instant::now() < deadline, "ADMISSION_EXPIRED")?;
+        let start = Instant::now();
+        let checked = (|| -> Result<()> {
+            let solution: AdmissionSolution = serde_json::from_slice(&bytes)?;
+            ensure(
+                serde_json::to_vec(&solution)? == bytes,
+                "ADMISSION_NONCANONICAL",
+            )?;
+            ensure(
+                solution.schema == ADMISSION_SOLUTION_SCHEMA
+                    && solution.challenge_digest == hex::encode(challenge_digest),
+                "ADMISSION_REPLAY_OR_CONTEXT",
+            )?;
+            ensure(
+                admission_winner(challenge_digest, solution.nonce, policy.bits),
+                "ADMISSION_TARGET",
+            )
+        })();
+        let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
+        counts.admission_verification_ns = counts
+            .admission_verification_ns
+            .saturating_add(elapsed_ns(start));
+        checked
+    })();
+    let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
+    if outcome.is_ok() {
+        counts.admission_accepted += 1;
+    } else {
+        counts.admission_rejected_before_work += 1;
+    }
+    outcome
 }
 pub fn now() -> Result<u64> {
     Ok(SystemTime::now()
@@ -463,10 +766,12 @@ fn read_exact_deadline(
             Err(e) => return Err(e.into()),
         }
     }
-    Ok(())
+    ensure(Instant::now() < deadline, "FRAME_DEADLINE")
 }
 fn read_frame_budget(stream: &mut TcpStream, budget: Duration) -> Result<Vec<u8>> {
-    let deadline = Instant::now() + budget;
+    read_frame_deadline(stream, Instant::now() + budget)
+}
+fn read_frame_deadline(stream: &mut TcpStream, deadline: Instant) -> Result<Vec<u8>> {
     let mut prefix = [0; 4];
     read_exact_deadline(stream, &mut prefix, deadline)?;
     let length = u32::from_be_bytes(prefix) as usize;
@@ -479,8 +784,10 @@ fn read_frame(stream: &mut TcpStream) -> Result<Vec<u8>> {
     read_frame_budget(stream, Duration::from_secs(5))
 }
 fn write_frame(stream: &mut TcpStream, bytes: &[u8]) -> Result<()> {
+    write_frame_deadline(stream, bytes, Instant::now() + Duration::from_secs(5))
+}
+fn write_frame_deadline(stream: &mut TcpStream, bytes: &[u8], deadline: Instant) -> Result<()> {
     ensure((1..=MAX_FRAME).contains(&bytes.len()), "FRAME_LIMIT")?;
-    let deadline = Instant::now() + Duration::from_secs(5);
     let prefix = (bytes.len() as u32).to_be_bytes();
     for mut part in [prefix.as_slice(), bytes] {
         while !part.is_empty() {
@@ -497,7 +804,29 @@ fn write_frame(stream: &mut TcpStream, bytes: &[u8]) -> Result<()> {
             }
         }
     }
-    Ok(())
+    ensure(Instant::now() < deadline, "FRAME_DEADLINE")
+}
+fn write_untrusted_error(
+    stream: &mut TcpStream,
+    error: &dyn std::fmt::Display,
+    protected: bool,
+) -> Result<()> {
+    let text = error.to_string();
+    let bounded = if protected {
+        text.chars().take(PROTECTED_ERROR_CHARS).collect::<String>()
+    } else {
+        text
+    };
+    let budget = if protected {
+        PROTECTED_PREFACE_BUDGET
+    } else {
+        Duration::from_secs(5)
+    };
+    write_frame_deadline(
+        stream,
+        &serde_json::to_vec(&json!({"error":bounded}))?,
+        Instant::now() + budget,
+    )
 }
 fn hex_packet(text: &str) -> Result<Packet> {
     ensure(
@@ -509,6 +838,101 @@ fn hex_packet(text: &str) -> Result<Packet> {
         "PACKET_HEX",
     )?;
     Packet::decode(&hex::decode(text).map_err(|_| Error::from("PACKET_HEX"))?)
+}
+/// Negotiate before sending Submit; legacy listeners see only a nonmutating hello.
+/// Durable authenticated outbox bytes remain the exact originally signed request.
+pub fn write_protected_request(
+    stream: &mut TcpStream,
+    request: &Request,
+    wire: &[u8],
+) -> Result<()> {
+    write_protected_request_bound(stream, request, wire).map(|_| ())
+}
+fn write_protected_request_bound(
+    stream: &mut TcpStream,
+    request: &Request,
+    wire: &[u8],
+) -> Result<Option<Hash>> {
+    // Multi-frame challenge negotiation must not inherit delayed small-packet writes.
+    stream.set_nodelay(true)?;
+    let profile = if matches!(request, Request::Submit { .. }) {
+        let hello = AdmissionHello {
+            schema: ADMISSION_HELLO_SCHEMA.into(),
+            request_digest: hex::encode(hash(b"native-transport-admission-wire-v1", &[wire])),
+        };
+        let hello_wire = serde_json::to_vec(&hello)?;
+        let deadline = Instant::now() + Duration::from_secs(5);
+        let mut negotiated = None;
+        for attempt in 0..256 {
+            write_frame_deadline(stream, &hello_wire, deadline)?;
+            let ready_wire = read_frame_deadline(stream, deadline)?;
+            if serde_json::from_slice::<Value>(&ready_wire)?["error"] == RESERVED_READ_ONLY_BUSY {
+                ensure(attempt < 255, RESERVED_READ_ONLY_BUSY)?;
+                let remaining = deadline
+                    .checked_duration_since(Instant::now())
+                    .filter(|remaining| !remaining.is_zero())
+                    .ok_or("FRAME_DEADLINE")?;
+                thread::sleep(Duration::from_millis(10).min(remaining));
+                let remaining = deadline
+                    .checked_duration_since(Instant::now())
+                    .filter(|remaining| !remaining.is_zero())
+                    .ok_or("FRAME_DEADLINE")?;
+                *stream = TcpStream::connect_timeout(&stream.peer_addr()?, remaining)?;
+                stream.set_nodelay(true)?;
+                continue;
+            }
+            let ready: AdmissionReady =
+                serde_json::from_slice(&ready_wire).map_err(|_| "ADMISSION_REQUIRED")?;
+            ensure(
+                serde_json::to_vec(&ready)? == ready_wire
+                    && ready.schema == ADMISSION_READY_SCHEMA
+                    && ready.request_digest == hello.request_digest,
+                "ADMISSION_REQUIRED",
+            )?;
+            negotiated = Some(digest(&ready.profile)?);
+            break;
+        }
+        ensure(negotiated.is_some(), "ADMISSION_REQUIRED")?;
+        negotiated
+    } else {
+        None
+    };
+    write_frame(stream, wire)?;
+    Ok(profile)
+}
+fn receive_protected_request(
+    stream: &mut TcpStream,
+    first: Vec<u8>,
+    policy: Option<AdmissionPolicy>,
+    deadline: Instant,
+    proof_enabled: bool,
+) -> Result<(Vec<u8>, bool)> {
+    let Some(policy) = policy else {
+        return Ok((first, false));
+    };
+    let Ok(hello) = serde_json::from_slice::<AdmissionHello>(&first) else {
+        return Ok((first, false));
+    };
+    ensure(
+        first.len() <= 512
+            && serde_json::to_vec(&hello)? == first
+            && hello.schema == ADMISSION_HELLO_SCHEMA,
+        "ADMISSION_HELLO",
+    )?;
+    digest(&hello.request_digest)?;
+    ensure(proof_enabled, RESERVED_READ_ONLY_BUSY)?;
+    let ready = AdmissionReady {
+        schema: ADMISSION_READY_SCHEMA.into(),
+        profile: hex::encode(policy.profile()),
+        request_digest: hello.request_digest.clone(),
+    };
+    write_frame_deadline(stream, &serde_json::to_vec(&ready)?, deadline)?;
+    let wire = read_frame_deadline(stream, deadline)?;
+    ensure(
+        hello.request_digest == hex::encode(hash(b"native-transport-admission-wire-v1", &[&wire])),
+        "ADMISSION_REQUEST",
+    )?;
+    Ok((wire, true))
 }
 fn dispatch(
     node: &mut Node,
@@ -645,7 +1069,18 @@ pub fn serve(
     lifetime: Duration,
     stop: Arc<AtomicBool>,
 ) -> Result<Metrics> {
-    serve_inner(listener, node, lifetime, stop, None)
+    serve_inner(listener, node, lifetime, stop, None, None)
+}
+
+/// Explicit protected development transport. The challenge adds no ledger authority.
+pub fn serve_protected(
+    listener: TcpListener,
+    node: Node,
+    lifetime: Duration,
+    stop: Arc<AtomicBool>,
+    policy: AdmissionPolicy,
+) -> Result<Metrics> {
+    serve_inner(listener, node, lifetime, stop, None, Some(policy))
 }
 
 /// Allowlisted authenticated development transport. It provides identity, replay and
@@ -663,6 +1098,25 @@ pub fn serve_authenticated(
         lifetime,
         stop,
         Some(Arc::new(authentication)),
+        None,
+    )
+}
+
+pub fn serve_authenticated_protected(
+    listener: TcpListener,
+    node: Node,
+    lifetime: Duration,
+    stop: Arc<AtomicBool>,
+    authentication: AuthenticatedServer,
+    policy: AdmissionPolicy,
+) -> Result<Metrics> {
+    serve_inner(
+        listener,
+        node,
+        lifetime,
+        stop,
+        Some(Arc::new(authentication)),
+        Some(policy),
     )
 }
 
@@ -672,6 +1126,7 @@ fn serve_inner(
     lifetime: Duration,
     stop: Arc<AtomicBool>,
     authentication: Option<Arc<AuthenticatedServer>>,
+    admission: Option<AdmissionPolicy>,
 ) -> Result<Metrics> {
     if authentication.is_none() {
         ensure(
@@ -695,7 +1150,7 @@ fn serve_inner(
     let deadline = Instant::now() + lifetime;
     thread::scope(|scope| -> Result<()> {
         let mut workers = Vec::new();
-        for listener in listeners {
+        for (worker_index, listener) in listeners.into_iter().enumerate() {
             let node = node.clone();
             let metrics = metrics.clone();
             let active_requests = active_requests.clone();
@@ -714,20 +1169,57 @@ fn serve_inner(
                         Err(e) => return Err(e.into()),
                     };
                     let request_deadline = deadline.min(Instant::now() + Duration::from_secs(10));
+                    metrics
+                        .lock()
+                        .map_err(|_| "METRICS_POISONED")?
+                        .socket_connections += 1;
                     socket.set_nonblocking(false)?;
+                    if admission.is_some() {
+                        socket.set_nodelay(true)?;
+                    }
                     socket.set_read_timeout(Some(Duration::from_secs(5)))?;
                     socket.set_write_timeout(Some(Duration::from_secs(5)))?;
-                    let bytes = match read_frame(&mut socket) {
+                    let preface_deadline = request_deadline.min(
+                        Instant::now()
+                            + if admission.is_some() {
+                                PROTECTED_PREFACE_BUDGET
+                            } else {
+                                Duration::from_secs(5)
+                            },
+                    );
+                    let bytes = match read_frame_deadline(&mut socket, preface_deadline) {
                         Ok(bytes) => bytes,
                         Err(e) => {
-                            metrics
-                                .lock()
-                                .map_err(|_| Error::from("METRICS_POISONED"))?
-                                .malformed_requests += 1;
-                            let _ = write_frame(
-                                &mut socket,
-                                &serde_json::to_vec(&json!({"error":e.to_string()}))?,
-                            );
+                            let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
+                            counts.malformed_requests += 1;
+                            if admission.is_some() {
+                                counts.protected_preface_refusals += 1;
+                            }
+                            drop(counts);
+                            let _ = write_untrusted_error(&mut socket, &e, admission.is_some());
+                            continue;
+                        }
+                    };
+                    let (bytes, negotiated) = match receive_protected_request(
+                        &mut socket,
+                        bytes,
+                        admission,
+                        preface_deadline,
+                        admission.is_none() || worker_index < 2,
+                    ) {
+                        Ok(request) => request,
+                        Err(error) => {
+                            let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
+                            if error.to_string() == RESERVED_READ_ONLY_BUSY {
+                                counts.admission_reserved_read_only_refusals += 1;
+                            } else {
+                                counts.malformed_requests += 1;
+                                if admission.is_some() {
+                                    counts.protected_preface_refusals += 1;
+                                }
+                            }
+                            drop(counts);
+                            let _ = write_untrusted_error(&mut socket, &error, admission.is_some());
                             continue;
                         }
                     };
@@ -744,31 +1236,53 @@ fn serve_inner(
                                     .lock()
                                     .map_err(|_| Error::from("METRICS_POISONED"))?
                                     .malformed_requests += 1;
-                                let _ = write_frame(
-                                    &mut socket,
-                                    &serde_json::to_vec(&json!({"error":error.to_string()}))?,
-                                );
+                                let _ =
+                                    write_untrusted_error(&mut socket, &error, admission.is_some());
                                 continue;
                             }
                         };
-                        let _permit = match public.try_acquire(
-                            request.frame.session().peer_id().bytes(),
-                            request.frame.payload_digest().bytes(),
+                        if let Err(error) = protect_submit(
+                            &mut socket,
+                            &request.request,
+                            &bytes,
+                            AdmissionHost {
+                                settings: &settings,
+                                policy: admission,
+                                authentication: Some(authentication),
+                                metrics: &metrics,
+                                negotiated,
+                            },
+                            &mut progress,
                         ) {
-                            Ok(permit) => permit,
-                            Err(error) => {
-                                metrics
-                                    .lock()
-                                    .map_err(|_| Error::from("METRICS_POISONED"))?
-                                    .busy_requests += 1;
-                                let reply = signed_response(
-                                    authentication,
-                                    &request,
-                                    false,
-                                    Err(Error::from(format!("BUSY:{error:?}"))),
-                                )?;
-                                let _ = write_frame(&mut socket, &reply);
-                                continue;
+                            let reply =
+                                signed_response(authentication, &request, false, Err(error))?;
+                            let _ = write_frame(&mut socket, &reply);
+                            continue;
+                        }
+                        let _permit = if admission.is_some()
+                            && !matches!(&request.request, Request::Submit { .. })
+                        {
+                            None
+                        } else {
+                            match public.try_acquire(
+                                request.frame.session().peer_id().bytes(),
+                                request.frame.payload_digest().bytes(),
+                            ) {
+                                Ok(permit) => Some(permit),
+                                Err(error) => {
+                                    metrics
+                                        .lock()
+                                        .map_err(|_| Error::from("METRICS_POISONED"))?
+                                        .busy_requests += 1;
+                                    let reply = signed_response(
+                                        authentication,
+                                        &request,
+                                        false,
+                                        Err(Error::from(format!("BUSY:{error:?}"))),
+                                    )?;
+                                    let _ = write_frame(&mut socket, &reply);
+                                    continue;
+                                }
                             }
                         };
                         let decision = {
@@ -838,7 +1352,7 @@ fn serve_inner(
                             &node,
                             request.request.clone(),
                             &mut progress,
-                            WorkCheckedPacket::verify,
+                            |packet| measured_work_verify(packet, &metrics),
                         );
                         let succeeded = outcome.is_ok();
                         let terminal_reply =
@@ -874,31 +1388,58 @@ fn serve_inner(
                         let _ = write_frame(&mut socket, &terminal_reply);
                         continue;
                     }
-                    let peer = hash(b"native-peer-ip", &[address.ip().to_string().as_bytes()]);
-                    let _permit = match public.try_acquire(peer, hash(b"native-request", &[&bytes]))
-                    {
-                        Ok(permit) => permit,
+                    let request: Request = match serde_json::from_slice(&bytes) {
+                        Ok(request) => request,
                         Err(error) => {
                             metrics
                                 .lock()
-                                .map_err(|_| Error::from("METRICS_POISONED"))?
-                                .busy_requests += 1;
-                            let _ = write_frame(
-                                &mut socket,
-                                &serde_json::to_vec(&json!({"error":format!("BUSY:{error:?}")}))?,
-                            );
+                                .map_err(|_| "METRICS_POISONED")?
+                                .malformed_requests += 1;
+                            let _ = write_untrusted_error(&mut socket, &error, admission.is_some());
                             continue;
                         }
                     };
-                    let result = (|| -> Result<Value> {
-                        let request: Request = serde_json::from_slice(&bytes)?;
-                        dispatch_shared_with(
-                            &node,
-                            request,
-                            &mut progress,
-                            WorkCheckedPacket::verify,
-                        )
-                    })();
+                    if let Err(error) = protect_submit(
+                        &mut socket,
+                        &request,
+                        &bytes,
+                        AdmissionHost {
+                            settings: &settings,
+                            policy: admission,
+                            authentication: None,
+                            metrics: &metrics,
+                            negotiated,
+                        },
+                        &mut progress,
+                    ) {
+                        let _ = write_untrusted_error(&mut socket, &error, admission.is_some());
+                        continue;
+                    }
+                    let peer = hash(b"native-peer-ip", &[address.ip().to_string().as_bytes()]);
+                    let _permit =
+                        if admission.is_some() && !matches!(&request, Request::Submit { .. }) {
+                            None
+                        } else {
+                            match public.try_acquire(peer, hash(b"native-request", &[&bytes])) {
+                                Ok(permit) => Some(permit),
+                                Err(error) => {
+                                    metrics
+                                        .lock()
+                                        .map_err(|_| Error::from("METRICS_POISONED"))?
+                                        .busy_requests += 1;
+                                    let _ = write_frame(
+                                        &mut socket,
+                                        &serde_json::to_vec(
+                                            &json!({"error":format!("BUSY:{error:?}")}),
+                                        )?,
+                                    );
+                                    continue;
+                                }
+                            }
+                        };
+                    let result = dispatch_shared_with(&node, request, &mut progress, |packet| {
+                        measured_work_verify(packet, &metrics)
+                    });
                     let reply = match result {
                         Ok(value) => {
                             metrics
@@ -931,11 +1472,67 @@ fn serve_inner(
 
 pub fn call(address: SocketAddr, request: &Request) -> Result<Value> {
     let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(5))?;
+    stream.set_nodelay(true)?;
     stream.set_read_timeout(Some(Duration::from_secs(5)))?;
     stream.set_write_timeout(Some(Duration::from_secs(5)))?;
     write_frame(&mut stream, &serde_json::to_vec(request)?)?;
     let bytes = read_frame(&mut stream)?;
     let value: Value = serde_json::from_slice(&bytes)?;
+    if let Some(error) = value.get("error") {
+        return Err(format!("REMOTE:{error}").into());
+    }
+    Ok(value)
+}
+
+fn protected_response(
+    stream: &mut TcpStream,
+    request: &Request,
+    wire: &[u8],
+    settings: &Settings,
+    expected_server: Option<&str>,
+    expected_profile: Option<Hash>,
+) -> Result<Vec<u8>> {
+    let first = read_frame(stream)?;
+    if !matches!(request, Request::Submit { .. }) {
+        return Ok(first);
+    }
+    let challenge: AdmissionChallenge =
+        serde_json::from_slice(&first).map_err(|_| "ADMISSION_REQUIRED")?;
+    ensure(
+        serde_json::to_vec(&challenge)? == first,
+        "ADMISSION_NONCANONICAL",
+    )?;
+    ensure(
+        expected_profile.is_some_and(|profile| challenge.profile == hex::encode(profile)),
+        "ADMISSION_NEGOTIATION_CONTEXT",
+    )?;
+    if let Some(server) = expected_server {
+        ensure(challenge.server == server, "ADMISSION_SERVER")?;
+    }
+    let (solution, _) = solve_admission_challenge(&challenge, wire, settings)?;
+    write_frame(stream, &serde_json::to_vec(&solution)?)?;
+    read_frame(stream)
+}
+
+/// Strict opt-in. A legacy listener's ordinary Submit response is a downgrade refusal.
+pub fn call_protected(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+) -> Result<Value> {
+    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(5))?;
+    stream.set_read_timeout(Some(Duration::from_secs(5)))?;
+    stream.set_write_timeout(Some(Duration::from_secs(5)))?;
+    let wire = serde_json::to_vec(request)?;
+    let profile = write_protected_request_bound(&mut stream, request, &wire)?;
+    let value: Value = serde_json::from_slice(&protected_response(
+        &mut stream,
+        request,
+        &wire,
+        settings,
+        None,
+        profile,
+    )?)?;
     if let Some(error) = value.get("error") {
         return Err(format!("REMOTE:{error}").into());
     }
@@ -951,6 +1548,25 @@ pub fn call_authenticated(
     client: &AuthenticatedClient,
     replay_nonce: &mut u64,
 ) -> Result<Value> {
+    call_authenticated_inner(address, request, settings, client, replay_nonce, false)
+}
+pub fn call_authenticated_protected(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    client: &AuthenticatedClient,
+    replay_nonce: &mut u64,
+) -> Result<Value> {
+    call_authenticated_inner(address, request, settings, client, replay_nonce, true)
+}
+fn call_authenticated_inner(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    client: &AuthenticatedClient,
+    replay_nonce: &mut u64,
+    protected: bool,
+) -> Result<Value> {
     let nonce = *replay_nonce;
     let bytes = authenticated_request_bytes(settings, client, nonce, request.clone())?;
     let envelope: AuthenticatedRequest = serde_json::from_slice(&bytes)?;
@@ -959,8 +1575,24 @@ pub fn call_authenticated(
     let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(5))?;
     stream.set_read_timeout(Some(Duration::from_secs(5)))?;
     stream.set_write_timeout(Some(Duration::from_secs(5)))?;
-    write_frame(&mut stream, &bytes)?;
-    let response = read_frame(&mut stream)?;
+    let profile = if protected {
+        write_protected_request_bound(&mut stream, request, &bytes)?
+    } else {
+        write_frame(&mut stream, &bytes)?;
+        None
+    };
+    let response = if protected {
+        protected_response(
+            &mut stream,
+            request,
+            &bytes,
+            settings,
+            Some(&client.server_public),
+            profile,
+        )?
+    } else {
+        read_frame(&mut stream)?
+    };
     let (terminal, ok, value) =
         verify_authenticated_response(&response, &envelope.session, nonce, request_digest)?;
     if terminal {
@@ -1033,6 +1665,23 @@ pub fn call_authenticated_durable(
     request: &Request,
     client: &AuthenticatedClient,
 ) -> Result<Value> {
+    call_authenticated_durable_inner(node, address, request, client, false)
+}
+pub fn call_authenticated_durable_protected(
+    node: &mut Node,
+    address: SocketAddr,
+    request: &Request,
+    client: &AuthenticatedClient,
+) -> Result<Value> {
+    call_authenticated_durable_inner(node, address, request, client, true)
+}
+fn call_authenticated_durable_inner(
+    node: &mut Node,
+    address: SocketAddr,
+    request: &Request,
+    client: &AuthenticatedClient,
+    protected: bool,
+) -> Result<Value> {
     let settings = node.settings().clone();
     let session = authenticated_session(
         &settings,
@@ -1064,8 +1713,24 @@ pub fn call_authenticated_durable(
     let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(5))?;
     stream.set_read_timeout(Some(Duration::from_secs(5)))?;
     stream.set_write_timeout(Some(Duration::from_secs(5)))?;
-    write_frame(&mut stream, &verified.wire)?;
-    let response = read_frame(&mut stream)?;
+    let profile = if protected {
+        write_protected_request_bound(&mut stream, request, &verified.wire)?
+    } else {
+        write_frame(&mut stream, &verified.wire)?;
+        None
+    };
+    let response = if protected {
+        protected_response(
+            &mut stream,
+            request,
+            &verified.wire,
+            &settings,
+            Some(&client.server_public),
+            profile,
+        )?
+    } else {
+        read_frame(&mut stream)?
+    };
     let (terminal, ok, value) = verify_authenticated_response(
         &response,
         &verified.session,

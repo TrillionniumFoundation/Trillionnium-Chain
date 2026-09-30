@@ -5,8 +5,14 @@
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::atomic::{AtomicUsize, Ordering};
+use trnm_crypto_primitives::qualified_work_task::{verify_development_statement, AdmissionContext};
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_protocol::pon_wire::{hash, state_root, Envelope, Hash};
+use trnm_protocol::qualified_work_task::{SignedQualifiedWorkTask, TaskPurpose};
+
+pub const SIGNED_TASK_PROFILE: &str = "signed-task-dev-v1";
+pub const LEGACY_TASK_PROFILE: &str = "legacy-task-v1";
+pub const QUALIFIED_DEMANDS: u64 = 16;
 
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
@@ -80,7 +86,7 @@ pub struct Config {
     pub family: Hash,
     pub plan: Hash,
     pub evaluators: BTreeSet<String>,
-    pub fees: [u64; 13],
+    pub fees: [u64; 14],
     pub params: Value,
 }
 impl Config {
@@ -91,6 +97,9 @@ impl Config {
     /// Explicit successor selects different network/parameter commitments. The default
     /// revision3 bytes and economics remain unchanged; this is not a hot upgrade.
     pub fn installed_with_evaluation_policy(policy: &str) -> Result<Self> {
+        Self::installed_with_profiles(policy, LEGACY_TASK_PROFILE)
+    }
+    pub fn installed_with_profiles(policy: &str, task_profile: &str) -> Result<Self> {
         let mut params: Value =
             serde_json::from_str(include_str!("../../../../config/pon/devnet-v1.json"))
                 .map_err(|_| "CONFIG")?;
@@ -115,6 +124,28 @@ impl Config {
                 )));
             }
             _ => return Err("EVALUATION_POLICY"),
+        }
+        match task_profile {
+            LEGACY_TASK_PROFILE => {}
+            SIGNED_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-work-task-v1.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false,
+                    "CONFIG",
+                )?;
+                params["consensus_revision"] = json!(5);
+                params["chain_label"] = json!(format!("trnm-pon-signed-task-devnet-5-{policy}"));
+                params["work_task_profile"] = json!(SIGNED_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v1",
+                    &[&canonical(&registry)?]
+                )));
+            }
+            _ => return Err("WORK_TASK_PROFILE"),
         }
         let model: Value =
             serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
@@ -147,7 +178,7 @@ impl Config {
                 ],
             )
         };
-        let mut fees = [0; 13];
+        let mut fees = [0; 14];
         let mut tags = BTreeSet::new();
         for c in wire["commands"].as_array().ok_or("CONFIG")? {
             let tag = field(c, "tag")? as usize;
@@ -155,6 +186,9 @@ impl Config {
             fees[tag] = field(c, "base_fee_units")?;
         }
         require(tags.len() == 12, "CONFIG")?;
+        // The signed-task extension has an explicit fixed development base fee.
+        // It is refused under every historical context even though its codec exists.
+        fees[13] = 100;
         let mut evaluators = BTreeSet::new();
         for i in 0_u64..3 {
             let seed = hash(b"DEV-ONLY-KEY", &[&i.to_le_bytes()]);
@@ -174,6 +208,74 @@ impl Config {
     }
     fn limit(&self, name: &str) -> Result<u64> {
         field(&self.params, name)
+    }
+    pub fn task_profile(&self) -> &str {
+        self.params["work_task_profile"]
+            .as_str()
+            .unwrap_or(LEGACY_TASK_PROFILE)
+    }
+    pub fn qualified_demand_id(&self, index: u64) -> Result<Hash> {
+        require(
+            self.task_profile() == SIGNED_TASK_PROFILE && index < QUALIFIED_DEMANDS,
+            "TASK_DEMAND",
+        )?;
+        Ok(hash(
+            b"qualified-development-demand-v1",
+            &[&self.network, &self.parameters, &index.to_le_bytes()],
+        ))
+    }
+    pub fn qualified_demand_purpose(index: u64) -> Result<TaskPurpose> {
+        require(index < QUALIFIED_DEMANDS, "TASK_DEMAND")?;
+        Ok(if index == 0 {
+            TaskPurpose::Maintenance
+        } else {
+            match index % 3 {
+                1 => TaskPurpose::InferenceContraction,
+                2 => TaskPurpose::EvaluationContraction,
+                _ => TaskPurpose::AdapterContraction,
+            }
+        })
+    }
+    pub fn qualified_task_context(&self, demand_id: Hash, height: u64) -> Result<AdmissionContext> {
+        require(
+            self.task_profile() == SIGNED_TASK_PROFILE,
+            "WORK_TASK_PROFILE",
+        )?;
+        let mut known = false;
+        for index in 0..QUALIFIED_DEMANDS {
+            known |= self.qualified_demand_id(index)? == demand_id;
+        }
+        require(known, "TASK_DEMAND")?;
+        let seed = hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]);
+        let key = trnm_crypto_primitives::signing_key_from_hex(&hex::encode(seed))
+            .map_err(|_| "CONFIG")?;
+        let source = key.verifying_key().to_bytes();
+        Ok(AdmissionContext {
+            network: self.network,
+            parameters: self.parameters,
+            source,
+            demand_id,
+            source_record: hash(
+                b"qualified-development-source-record-v1",
+                &[&demand_id, b"public-fixture-not-real-user-demand"],
+            ),
+            authorization_scope: hash(
+                b"qualified-development-authorization-v1",
+                &[
+                    &self.network,
+                    &self.parameters,
+                    b"development-attestation-not-local-permission",
+                ],
+            ),
+            withdrawal_head: hash(
+                b"qualified-development-withdrawal-v1",
+                &[&self.network, &self.parameters, &0_u64.to_le_bytes()],
+            ),
+            availability_manifest: hash(b"qualified-development-da-manifest-v1", &[&demand_id]),
+            availability_root: hash(b"qualified-development-da-attestation-v1", &[&demand_id]),
+            height,
+            required_retention_blocks: 100,
+        })
     }
 }
 
@@ -388,6 +490,14 @@ struct Prepared {
 }
 fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> Result<Prepared> {
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
+    require(
+        tx.tag != 13 || cfg.task_profile() == SIGNED_TASK_PROFILE,
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 12 || cfg.task_profile() != SIGNED_TASK_PROFILE,
+        "WORK_TASK_PROFILE",
+    )?;
     require(tx.network == cfg.network, "NETWORK")?;
     require(height <= tx.expiry, "EXPIRED")?;
     let sender = hex::encode(tx.sender);
@@ -807,6 +917,42 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             require(task != ZERO && s.get(&k).is_none(), "DUPLICATE")?;
             s.put(k, json!(true));
         }
+        13 => {
+            let signed =
+                SignedQualifiedWorkTask::decode(&tx.payload).map_err(|_| "TASK_MANIFEST")?;
+            let manifest = &signed.manifest;
+            let context = cfg.qualified_task_context(manifest.demand_id, height)?;
+            require(tx.sender == context.source, "TASK_SOURCE")?;
+            let statement = verify_development_statement(&tx.payload, &context)
+                .map_err(|_| "TASK_STATEMENT")?;
+            let registry_key = format!("work-demand-registry:{}", hex::encode(manifest.demand_id));
+            let registered = s.get(&registry_key).ok_or("TASK_DEMAND")?;
+            require(
+                field(&registered, "purpose")? == manifest.purpose as u64,
+                "TASK_PURPOSE",
+            )?;
+            let withdrawal_key = format!("work-withdrawal:{}", hex::encode(context.source));
+            require(
+                s.get(&withdrawal_key) == Some(json!(hex::encode(context.withdrawal_head))),
+                "TASK_WITHDRAWAL",
+            )?;
+            let sequence_key = format!("work-source:{}", hex::encode(context.source));
+            let previous_sequence = s.get(&sequence_key).ok_or("TASK_SOURCE")?;
+            require(
+                manifest.demand_nonce == add(num(&previous_sequence)?, 1)?,
+                "TASK_SOURCE_NONCE",
+            )?;
+            let demand_key = format!("work-demand:{}", hex::encode(manifest.demand_id));
+            let work_key = format!("work:{}", hex::encode(manifest.matrix_task));
+            require(
+                s.get(&demand_key).is_none() && s.get(&work_key).is_none(),
+                "TASK_REPLAY",
+            )?;
+            s.put(sequence_key, json!(manifest.demand_nonce));
+            s.put(demand_key, json!(hex::encode(statement.manifest_id())));
+            s.put(work_key, json!({"schema":"qualified-work-registration-v1","manifest":hex::encode(&tx.payload),"admitted_height":height,"manifest_id":hex::encode(statement.manifest_id())}));
+            p.pos = p.bytes.len();
+        }
         _ => return Err("VERSION"),
     }
     require(p.pos == p.bytes.len(), "LENGTH")?;
@@ -942,7 +1088,7 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
     Ok(receipts)
 }
 
-/// Execute all twelve signed commands in exact ledger order. Failed blocks never
+/// Execute context-selected signed commands in exact ledger order. Failed blocks never
 /// mutate `parent`. Only observed dependencies cause one canonical re-execution.
 pub fn execute(
     parent: &State,
