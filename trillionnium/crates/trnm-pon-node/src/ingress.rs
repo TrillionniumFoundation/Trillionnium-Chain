@@ -22,6 +22,20 @@ pub enum Request {
     Submit { packet: String },
     History { tip: String, after: String },
     Confirm { transaction: String, block: String },
+    ConfirmMany { queries: Vec<ConfirmationQuery> },
+}
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ConfirmationQuery {
+    pub transaction: String,
+    pub block: String,
+}
+pub fn confirmation_queries(queries: &[ConfirmationQuery]) -> Result<Vec<(Hash, Hash)>> {
+    ensure((1..=256).contains(&queries.len()), "CONFIRMATION_LIMIT")?;
+    queries
+        .iter()
+        .map(|q| Ok((digest(&q.transaction)?, digest(&q.block)?)))
+        .collect()
 }
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -114,7 +128,12 @@ fn hex_packet(text: &str) -> Result<Packet> {
     )?;
     Packet::decode(&hex::decode(text).map_err(|_| Error::from("PACKET_HEX"))?)
 }
-fn dispatch(node: &mut Node, request: Request) -> Result<Value> {
+fn dispatch(
+    node: &mut Node,
+    request: Request,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+) -> Result<Value> {
+    progress(0)?;
     match request {
         Request::Head => node.stats(),
         Request::Submit { packet } => {
@@ -127,7 +146,8 @@ fn dispatch(node: &mut Node, request: Request) -> Result<Value> {
             )
         }
         Request::History { tip, after } => {
-            let packets = node.history(digest(&tip)?, digest(&after)?, 16)?;
+            let packets =
+                node.history_with_progress(digest(&tip)?, digest(&after)?, 16, progress)?;
             let next = packets
                 .last()
                 .map(|p| p.id().map(hex::encode))
@@ -148,11 +168,23 @@ fn dispatch(node: &mut Node, request: Request) -> Result<Value> {
                     .collect::<Result<_>>()?,
             })?)
         }
-        Request::Confirm { transaction, block } => Ok(serde_json::to_value(node.confirmation(
-            digest(&transaction)?,
-            digest(&block)?,
-            now()?,
-        )?)?),
+        Request::Confirm { transaction, block } => {
+            let batch = node.confirmations_with_progress(
+                &[(digest(&transaction)?, digest(&block)?)],
+                now()?,
+                progress,
+            )?;
+            Ok(serde_json::to_value(
+                batch
+                    .observations
+                    .into_iter()
+                    .next()
+                    .ok_or("EMPTY_CONFIRMATION")?,
+            )?)
+        }
+        Request::ConfirmMany { queries } => Ok(serde_json::to_value(
+            node.confirmations_with_progress(&confirmation_queries(&queries)?, now()?, progress)?,
+        )?),
     }
 }
 pub fn serve(
@@ -194,6 +226,7 @@ pub fn serve(
                         }
                         Err(e) => return Err(e.into()),
                     };
+                    let request_deadline = deadline.min(Instant::now() + Duration::from_secs(10));
                     socket.set_nonblocking(false)?;
                     socket.set_read_timeout(Some(Duration::from_secs(5)))?;
                     socket.set_write_timeout(Some(Duration::from_secs(5)))?;
@@ -232,7 +265,11 @@ pub fn serve(
                         {
                             let mut owner =
                                 node.lock().map_err(|_| Error::from("OWNER_POISONED"))?;
-                            dispatch(&mut owner, request)
+                            let mut progress = |_: u64| -> Result<()> {
+                                ensure(!stop.load(Ordering::Acquire), "CANCELLED")?;
+                                ensure(Instant::now() < request_deadline, "REQUEST_DEADLINE")
+                            };
+                            dispatch(&mut owner, request, &mut progress)
                         }
                     })();
                     let reply = match result {

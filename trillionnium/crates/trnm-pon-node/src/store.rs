@@ -109,6 +109,13 @@ pub struct Observation {
     pub finalized: bool,
     pub execution_authority: bool,
 }
+/// Bounded results under one locally reobserved generation, not a finality certificate.
+#[derive(Debug, Serialize)]
+pub struct ConfirmationBatch {
+    pub observations: Vec<Observation>,
+    pub ancestry_checked: u64,
+    pub distinct_bodies_checked: usize,
+}
 impl Node {
     pub fn open(path: &Path, settings: Settings, workers: usize) -> Result<Self> {
         Self::open_with_fault(path, settings, workers, None)
@@ -515,6 +522,12 @@ impl Node {
             .optional()?;
         if let Some(prior) = previous {
             ensure(prior == bytes, "DUPLICATE_CONTENT")?;
+            // Immutable work can be cached; a previous caller's clock cannot.
+            ensure(
+                h.timestamp as u128
+                    <= observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128,
+                "TIME_DEFERRED",
+            )?;
             return Ok(id);
         }
         let parent = self.record(h.parent)?;
@@ -921,76 +934,125 @@ impl Node {
         included: Hash,
         observed_now: u64,
     ) -> Result<Observation> {
+        self.confirmations(&[(transaction, included)], observed_now)?
+            .observations
+            .into_iter()
+            .next()
+            .ok_or_else(|| "EMPTY_CONFIRMATION".into())
+    }
+    pub fn confirmations(
+        &self,
+        queries: &[(Hash, Hash)],
+        observed_now: u64,
+    ) -> Result<ConfirmationBatch> {
+        self.confirmations_with_progress(queries, observed_now, &mut |_| Ok(()))
+    }
+    /// Cancellation produces no partial batch and never stores a reusable clock verdict.
+    pub fn confirmations_with_progress(
+        &self,
+        queries: &[(Hash, Hash)],
+        observed_now: u64,
+        progress: &mut dyn FnMut(u64) -> Result<()>,
+    ) -> Result<ConfirmationBatch> {
+        use std::collections::BTreeSet;
+        ensure((1..=256).contains(&queries.len()), "CONFIRMATION_LIMIT")?;
+        let unique: BTreeSet<_> = queries.iter().copied().collect();
+        ensure(unique.len() == queries.len(), "DUPLICATE_QUERY")?;
+        progress(0)?;
         self.ready()?;
         let (tip, generation, _) = self.read_active()?;
-        let row = self.record(included)?;
-        let packet = self.packet(included)?;
-        ensure(
-            packet.header.transactions == sequence_root("transactions", &packet.transactions),
-            "ROOT",
-        )?;
-        ensure(
-            packet
-                .transactions
-                .iter()
-                .any(|raw| hash(b"tx-id", &[raw]) == transaction),
-            "MEMBERSHIP",
-        )?;
+        let mut included = BTreeMap::new();
+        for (transaction, block) in queries {
+            if !included.contains_key(block) {
+                let row = self.record(*block)?;
+                let packet = self.packet(*block)?;
+                ensure(
+                    packet.header.transactions
+                        == sequence_root("transactions", &packet.transactions),
+                    "ROOT",
+                )?;
+                let members: BTreeSet<_> = packet
+                    .transactions
+                    .iter()
+                    .map(|raw| hash(b"tx-id", &[raw]))
+                    .collect();
+                included.insert(*block, (row, packet.header.target, members));
+            }
+            ensure(included[block].2.contains(transaction), "MEMBERSHIP")?;
+        }
         let observed = self.record(tip)?;
         let mut current = tip;
-        let mut found = false;
+        let mut found = BTreeSet::new();
+        let mut checked = 0u64;
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         while current != self.settings.genesis() {
-            if current == included {
-                found = true;
+            if checked.is_multiple_of(256) {
+                progress(checked)?;
+            }
+            if included.contains_key(&current) {
+                found.insert(current);
             }
             ensure(
                 self.packet(current)?.header.timestamp as u128 <= bound,
                 "TIME_DEFERRED",
             )?;
             current = self.parent(current)?;
+            checked = checked.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
         }
-        let delta = if found {
-            Some(observed.work.checked_sub(row.work)?)
-        } else {
-            None
-        };
-        let depth = if found {
-            Some(observed.height.checked_sub(row.height).ok_or("HEIGHT")?)
-        } else {
-            None
-        };
-        let threshold = consensus::required_work(packet.header.target)?
-            .mul_small(self.settings.limit("confirmation_work_multiplier")?)?;
-        let confirmed = depth.is_some_and(|d| {
-            d >= self
-                .settings
-                .limit("confirmation_depth")
-                .unwrap_or(u64::MAX)
-        }) && delta.is_some_and(|w| w >= threshold);
+        let depth_required = self.settings.limit("confirmation_depth")?;
+        let multiplier = self.settings.limit("confirmation_work_multiplier")?;
+        let mut observations = Vec::with_capacity(queries.len());
+        for (transaction, block) in queries {
+            let (row, target, _) = &included[block];
+            let present = found.contains(block);
+            let delta = present
+                .then(|| observed.work.checked_sub(row.work))
+                .transpose()?;
+            let depth = present
+                .then(|| observed.height.checked_sub(row.height).ok_or("HEIGHT"))
+                .transpose()?;
+            let threshold = consensus::required_work(*target)?.mul_small(multiplier)?;
+            observations.push(Observation {
+                transaction: hex::encode(transaction),
+                genesis: hex::encode(self.settings.genesis()),
+                policy: "installed-depth-and-required-work".into(),
+                required_work_delta: hex::encode(threshold.bytes()),
+                network: hex::encode(self.settings.network()),
+                parameters: hex::encode(self.settings.parameters()),
+                included_block: hex::encode(block),
+                observed_tip: hex::encode(tip),
+                included_height: row.height,
+                observed_height: observed.height,
+                depth,
+                work_delta: delta.map(|w| hex::encode(w.bytes())),
+                active_generation: generation,
+                observed_now,
+                confirmed: depth.is_some_and(|d| d >= depth_required)
+                    && delta.is_some_and(|w| w >= threshold),
+                reorged: !present,
+                finalized: false,
+                execution_authority: false,
+            });
+        }
+        progress(checked)?;
         ensure(self.active()? == (tip, generation), "STALE_VIEW")?;
-        Ok(Observation {
-            transaction: hex::encode(transaction),
-            genesis: hex::encode(self.settings.genesis()),
-            policy: "installed-depth-and-required-work".into(),
-            required_work_delta: hex::encode(threshold.bytes()),
-            network: hex::encode(self.settings.network()),
-            parameters: hex::encode(self.settings.parameters()),
-            included_block: hex::encode(included),
-            observed_tip: hex::encode(tip),
-            included_height: row.height,
-            observed_height: observed.height,
-            depth,
-            work_delta: delta.map(|w| hex::encode(w.bytes())),
-            active_generation: generation,
-            observed_now,
-            confirmed,
-            reorged: !found,
-            finalized: false,
-            execution_authority: false,
+        Ok(ConfirmationBatch {
+            observations,
+            ancestry_checked: checked,
+            distinct_bodies_checked: included.len(),
         })
     }
     pub fn history(&self, tip: Hash, after: Hash, limit: usize) -> Result<Vec<Packet>> {
+        self.history_with_progress(tip, after, limit, &mut |_| Ok(()))
+    }
+    pub fn history_with_progress(
+        &self,
+        tip: Hash,
+        after: Hash,
+        limit: usize,
+        progress: &mut dyn FnMut(u64) -> Result<()>,
+    ) -> Result<Vec<Packet>> {
+        progress(0)?;
         self.ready()?;
         ensure((1..=16).contains(&limit), "PAGE_LIMIT")?;
         ensure(
@@ -1001,6 +1063,9 @@ impl Node {
         let mut current = tip;
         let mut count = 0u64;
         while current != after {
+            if count.is_multiple_of(256) {
+                progress(count)?;
+            }
             ensure(current != self.settings.genesis(), "CURSOR")?;
             spool.write_all(&current)?;
             count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
@@ -1020,6 +1085,7 @@ impl Node {
             bytes += n;
             packets.push(packet);
         }
+        progress(count)?;
         Ok(packets)
     }
     pub fn stats(&self) -> Result<Value> {

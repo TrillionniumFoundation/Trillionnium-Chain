@@ -67,6 +67,7 @@ fn run() -> Result<Value> {
         "submit" | "push" => "--packet --peer",
         "export" => "--block --output",
         "confirm" => "--transaction --block",
+        "confirm-batch" => "--queries",
         "sync" => "--peer --tip --after --pages",
         "serve" => "--listen --seconds",
         _ => return Err("UNKNOWN_COMMAND".into()),
@@ -154,6 +155,13 @@ fn run() -> Result<Value> {
             digest(need(&args, "--block")?)?,
             clock,
         )?)?,
+        "confirm-batch" => {
+            let queries: Vec<ingress::ConfirmationQuery> =
+                serde_json::from_slice(&read(need(&args, "--queries")?, 65_536)?)?;
+            serde_json::to_value(
+                node.confirmations(&ingress::confirmation_queries(&queries)?, clock)?,
+            )?
+        }
         "sync" => {
             let address = need(&args, "--peer")?
                 .parse()

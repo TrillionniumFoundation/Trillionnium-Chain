@@ -5,7 +5,7 @@ pub mod ingress;
 mod store;
 use serde_json::{json, Value};
 use std::{error, fmt};
-pub use store::{Node, Observation};
+pub use store::{ConfirmationBatch, Node, Observation};
 use trnm_crypto_primitives::pon_work;
 use trnm_mvcc_fee::pon_executor::{self, Config, State};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash, Header, HEADER_BYTES};

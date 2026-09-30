@@ -419,18 +419,29 @@ admission, ordinary native node, persistent state/WAN sync, authorized independe
 model efficacy, funded DA/effects/physical faults, and sustained public confirmed capacity.
 No new VM, EVM, consensus fallback, learning owner, live service or production flag is added.
 
-[The current native-session and receiver receipt](../../evidence/pon-native-session-v1/README.md)
-now supplies exact-source regression and controlled pipeline observations for this
-continuation. Old E3/client packages are historical, not current-runtime coverage.
+[The historical native-session and receiver receipt](../../evidence/pon-native-session-v1/README.md)
+supplies its original exact-source regression and controlled pipeline observations.
+Native-node changes require a new native-node receipt; old E3/client/session packages
+are historical, not current-runtime coverage.
 The retained selected-matrix pass is accompanied by the later actual expiry-receipt and
 maximum-budget failures, their fixes and a complete clean-source rerun. An incremental
 in-memory tree is not persistent native storage, and locally verified confirmation
 under a logical clock is not public WAN throughput or deterministic finality.
 
-The [current same-target work-cost collection](../../evidence/pon-native-session-v1/work-cost/README.md)
+The [historical session-source work-cost collection](../../evidence/pon-native-session-v1/work-cost/README.md)
 was rebuilt and executed on its named clean source after the prior cost gate rejected
 stale inputs. Current and historical verification remain separate required checks.
 The [retained publication failures](../../evidence/pon-native-session-v1/publication-failures/README.md)
 also record globally ignored raw logs; the delivery checker now requires actual Git
 coverage for in-repository receipts. None of these repairs changes work qualification,
 production flags, original model observations or the missing ordinary native host.
+
+
+The same native development composition now supplies bounded ordinary CLI/socket batch
+confirmation and cancellable read traversal. Fixed-dataset value and elementary accuracy
+upper-bound statements are recomputed by the existing evaluation/settlement workers;
+they do not qualify prospective learning or general circuit optimization. Record this
+changed source in the native-node receipt rather than repinning session evidence. Public
+P2P/work admission, continuous mining/mempool scheduling, native persistent incremental
+state, revision3 evaluation-order economics and genuine Hepta/model/resource integration
+remain separate unfinished implementation/acceptance work on these existing owners.

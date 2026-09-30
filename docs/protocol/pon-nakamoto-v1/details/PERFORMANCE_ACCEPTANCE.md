@@ -168,3 +168,14 @@ all fill blocks and source/receiver verification through locally computed confir
 Its unpaced logical clock and same-controller transport forbid a public-chain TPS claim.
 Do not derive tail percentiles from a handful of samples, omit slower cases, or infer
 hostile-peer availability, independence, GPU consumption or physical durability.
+
+## Native confirmation cost and bounded mixed ingress observations
+
+Native `confirm-batch` shares one complete ancestry walk and one membership index per
+distinct requested body. Reports expose those actual check counts and preserve every
+individual work/depth/generation result. Complete state-root work, serialized Node access
+and linear historical traversal remain costs; no constant-time or public TPS claim is
+made. Cancellation discards the result rather than caching incomplete currentness.
+Native socket tests with concurrent false transcripts and honest confirmation requests
+exercise the real entry, but bounded same-host concurrency is not a sustained public
+arrival process, Sybil churn, latency-tail qualification or independently operated load.

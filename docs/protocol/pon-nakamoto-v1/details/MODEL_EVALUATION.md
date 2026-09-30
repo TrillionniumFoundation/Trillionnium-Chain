@@ -165,7 +165,7 @@ not add transaction tags, a new evaluator authority or an active revision3 wire 
 | Challenged arithmetic | Committed task/matrices, exact header challenge, canonical transcript/product and target; replay the W1 relation | Implemented experimental relation. Neither effort hardness nor useful model improvement follows. |
 | Fixed-dataset marginal gain | Exact parent/candidate/control bytes, compatibility/composition recipe, dataset/groups, metric, budget and threshold; recompute predictions and the existing statistical gate | E3 controlled retrospective evaluation. It is not independent prospective benefit. |
 | Prospective benefit | The fixed-dataset statement plus authenticated chronological collection, independently controlled untouched task windows, consent/withdrawal and preregistered stopping/multiplicity policy | Required but unaccepted; a caller timestamp, future flag or disjoint file names cannot supply it. |
-| Bounded optimality | Exact feasible circuit/weight family, numeric domain, objective, resource budget, epsilon, candidate and checkable lower-bound certificate | No admitted certificate verifier exists. Candidate score or first place cannot fill this class. |
+| Bounded optimality | Exact feasible circuit/weight family, numeric domain, objective, resource budget, epsilon, candidate and checkable lower-bound certificate | The exact committed-dataset accuracy upper-bound certificate below is implemented. Arbitrary circuit/resource-constrained lower-bound certificates remain unimplemented; first place cannot fill them. |
 
 For loss minimization, a valid feasible candidate with loss l and independently checked
 lower bound L proves only the declared family's epsilon-optimality when l-L<=epsilon.
@@ -180,3 +180,23 @@ current bounded ablation recipe is not an exact Shapley or unrestricted optimali
 algorithm. For a low-rank delta BA, BA=(BQ)(Q^-1 A) for invertible Q: different bytes
 can represent the same update. Content hashes therefore establish exact identity,
 not functional novelty, economic independence or immunity to attribution splitting.
+
+### Executed empirical value and objective-bound statement
+
+The existing evaluator now emits `pon-fixed-dataset-value-claim-v1`, binding the frozen
+bundle, candidate, parent, strongest control and task digest. It recomputes reduced
+rational candidate/control/marginal equal-source-group accuracy. The certificate
+`zero-one-accuracy-upper-bound-v1` uses the universal upper bound 1 on this fixed labelled
+dataset: gap=1-candidate_accuracy; exact empirical optimality is true only at gap zero.
+A feasible model attaining this bound is optimal for that empirical objective. It is
+NOT a minimum-size/minimum-cost circuit, a future distribution guarantee, a general
+neural optimization certificate, original training provenance or fresh consensus work.
+A nonzero gap is a valid bound, not a claim that the submitted model reaches the optimum.
+
+Normal worker output carries this statement; settlement recomputes it and requires
+canonical byte equality in both the worker and summary records. Relabelled future or
+general-optimality claims, changed bounds and integer/Boolean aliases reject even when
+both mutable reports are changed together. The prediction-row accounting names only
+this evaluator (candidate, four controls, three fixed-router ablations, and four
+calibration controls), not training, auxiliary worker metrics, wall time or GPU cost.
+No revision3 transaction, signed parameter context or reward authority is changed.

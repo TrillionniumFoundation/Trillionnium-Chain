@@ -236,7 +236,7 @@ checked target/time/work arithmetic; `store::Node` is the M07/M08 single durable
 owner for a NEW `native.sqlite` namespace. The Python Ledger remains a separate
 conformance oracle, never a runtime fallback or writer of that namespace.
 
-The ordinary binary exposes status/recover, make/mine, submit/export, confirm,
+The ordinary binary exposes status/recover, make/mine, submit/export, confirm/confirm-batch,
 push/sync and serve. It requires `--development`; the installed identities and units
 are public test material, not wallet custody or a monetary deployment. Signed command
 bytes are external inputs; this entry does not introduce a wallet or provider caller.
@@ -270,7 +270,34 @@ tests; it cannot reopen an existing store under new parameters. `--logical-now` 
 labelled local conformance option and is rejected for serve, sync and push.
 
 Still missing: durable continuous mining and transaction-pool/reorg scheduling,
-authenticated peer discovery/gossip, native incremental persistent state, interruptible
-long-history service, ordinary Hepta admission/consent/effect owners and independent
+authenticated peer discovery/gossip, native incremental persistent state, bounded interruption of all
+state reconstruction/admission/reorg work, ordinary Hepta admission/consent/effect owners and independent
 public attack acceptance. Session cache and native Node own different namespaces; neither
 may be substituted for the other without their own explicit invocation and evidence.
+
+### Native coherent batches and cooperative read cancellation
+
+`Node::confirmations` and `confirmations_with_progress` accept 1..256 distinct
+(transaction, included-block) pairs. All requested memberships must validate; empty,
+duplicate, oversized or partially invalid requests return no batch. One distinct body
+is checked once, and the complete current ancestry is reobserved once for the batch.
+Returned observations retain each transaction's depth/work/reorg result and share one
+observed generation/time. `ancestry_checked` and `distinct_bodies_checked` count actual
+checks; neither is a throughput estimate. Single confirmation delegates to this path.
+
+The ordinary `confirm-batch --queries PATH` command reads at most 64 KiB of closed
+transaction/block objects. Socket `confirm_many` uses the same owner and validation.
+History export and confirmation call the cancellation hook before traversal, every
+256 ancestors and before successful return. Cancellation or changed generation returns
+no partial successful observation and stores no reusable currentness cache. Read-only
+socket operations check local stop and a ten-second request deadline bounded by the
+server lifetime. This is cooperative cancellation, not a preemptive deadline for one
+SQLite call, root reconstruction, proof verification, admission or reorg execution.
+Duplicate packet admission also rechecks its timestamp against the caller's clock;
+immutable work equality never supplies that clock observation.
+
+The actual socket regression runs ticket-passing false transcripts concurrently with
+honest four-query confirmation batches through the normal native entry. It uses one
+loopback host, bounded clients and the existing serialized owner, not public identities,
+WAN load, independent operators or a Sybil-safe public-service result. Native generation
+fault injection and actual heavier-fork tests are separately identified in the tests.

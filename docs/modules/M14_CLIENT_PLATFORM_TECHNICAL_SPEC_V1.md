@@ -109,7 +109,7 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 
 ## Native development continuation and remaining scope
 
-Native single-transaction confirmation binds transaction, genesis, policy, generation, work/depth and local clock after complete membership/ancestry checks. It is not a succinct light client, public freshness proof, native batch confirmation or Hepta final-use authority.
+Native single and bounded batch confirmation bind transaction, genesis, policy, generation, work/depth and local clock after complete membership/ancestry checks. The ordinary CLI and socket paths share one ancestry observation per batch, validate each membership, and cancel without partial success. This is not a succinct light client, public freshness proof or Hepta final-use authority.
 
 The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,

@@ -100,3 +100,9 @@ The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
 the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
 No historical receipt is relabelled as executing this source.
+
+The existing frozen evaluator and settlement producer also bind the versioned empirical
+accuracy/marginal-value/bound statement in MODEL_EVALUATION. Its canonical replay rejects
+false prospective/general-circuit authority and numeric aliases. A perfect empirical
+score proves only that fixed accuracy objective, not public reward eligibility or model
+safety. Revision3 first-two attestation arrival semantics remain unchanged and unqualified.

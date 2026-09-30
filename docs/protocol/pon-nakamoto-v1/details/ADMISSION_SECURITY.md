@@ -106,3 +106,14 @@ and sparse tasks at one target. The old contract-authority collection is verifie
 as historical observations. The current CI path still requires a matching current-cost
 collection; it does not silence a stale-source failure by changing the old result.
 These CPU timings do not bound the fastest adversary or guarantee honest public service.
+
+## Native development ingress mixed-load boundary
+
+The ordinary native entry now accepts closed socket confirmation batches while actual
+false-transcript requests pass the ticket prefilter and fail full work verification.
+The bounded regression verifies every honest result and exact rejected-request counts;
+it neither bypasses the durable owner nor directly acquires fake library permits.
+Loopback-only access, IP grouping, three socket workers and serialized proof/state work
+remain explicit limitations. Read-only traversal checks stop/deadline cooperatively;
+this does not solve fastest valid producer shortcuts, identity churn, slow-connection
+starvation or sustained honest public admission. No public listener is enabled by tests.

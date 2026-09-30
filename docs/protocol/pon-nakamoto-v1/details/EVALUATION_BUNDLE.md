@@ -128,3 +128,15 @@ It is not a claim that this model experiment ran on every later runtime. The
 [responsibility reporter](../../../modules/README.md#responsibility-and-evidence) derives
 current source applicability. Later native-session/client regressions have their own
 receipt and do not rerun model efficacy, future-window evaluation or physical hosts.
+
+## Recomputed result claims without expanding authority
+
+`evaluate_bundle` includes the exact empirical value/bound statement specified in
+[MODEL_EVALUATION](MODEL_EVALUATION.md#executed-empirical-value-and-objective-bound-statement).
+`model_loop.worker` emits it, and `settle_model.verify_observation` recomputes it before
+any controlled settlement. Existing report fields compared at that boundary now use
+canonical bytes, not Python equality that aliases true and 1. Unknown claim fields,
+missing/changed identities, invented future/general-circuit claims or substituted bounds
+cannot become accepted evidence by editing both report copies. This is an additive
+versioned result statement; the sealed bundle and revision3 consensus bytes are unchanged.
+The perfect-score and nonzero-gap cases are numeric tests, not new empirical efficacy.

@@ -742,11 +742,14 @@
             "symbol": "worker"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "E3 sealed candidate/control/calibration/partition evaluation",
+          "backend": "E3 sealed evaluation with recomputed empirical value and fixed-objective accuracy-bound claim; not prospective or general-circuit acceptance",
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_self_consistent_rehashed_calibration_score_still_requires_actual_replay",
-            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::EvaluationWorkerTests.test_legacy_unbound_reference_cannot_authorize_evaluation"
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::EvaluationWorkerTests.test_legacy_unbound_reference_cannot_authorize_evaluation",
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_empirical_optimum_certificate_is_bound_to_only_the_committed_dataset",
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_empirical_optimality_gap_is_recomputed_not_inferred_from_positive_gain",
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_rehashed_value_claim_cannot_promote_future_or_general_optimality"
           ],
           "remaining": "Future-window, independent evaluator, provenance and poisoning acceptance remain open."
         },
@@ -906,6 +909,10 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
               "symbol": "Node::admit"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::history_with_progress"
             }
           ],
           "controlled_entrypoint": {
@@ -925,7 +932,8 @@
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_duplicate_page_rechecks_clock_without_repeating_work",
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_empty_terminal_page_checks_previously_imported_ancestry",
             "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_client_pages_confirm_and_reorg_with_explicit_session_after_restart",
-            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_socket_history_uses_real_native_validation_and_separate_stores"
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_socket_history_uses_real_native_validation_and_separate_stores",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache"
           ],
           "remaining": "Authenticated public P2P, persistent mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
         }
@@ -959,6 +967,14 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
               "symbol": "Node::confirmation"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::confirmations"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::confirmations_with_progress"
             }
           ],
           "controlled_entrypoint": {
@@ -982,7 +998,13 @@
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_distinct_memberships_share_only_one_coherent_observation",
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_rechecks_future_spike_below_all_requested_inclusions",
             "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_cancellation_cannot_leave_reusable_currentness",
-            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_cached_work_never_reuses_an_old_clock_verdict"
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_cached_work_never_reuses_an_old_clock_verdict",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_checks_one_history_and_one_shared_body",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_rechecks_future_ancestor_below_all_inclusions",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_actual_heavier_reorg_removes_all_confirmations",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_cli_uses_the_real_persisted_owner",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry"
           ],
           "remaining": "Authenticated public P2P, persistent mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
         },
