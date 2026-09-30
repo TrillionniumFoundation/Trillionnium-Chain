@@ -12,6 +12,9 @@ missing work-security or real model-benefit claims.
 |---|---|---|
 | historical task registration | `--task-profile legacy-task-v1` (default) | twelve original PNX1 commands; tag12 records a nonzero task commitment; original golden bytes/roots remain applicable |
 | signed task development context | `--task-profile signed-task-dev-v1` | distinct revision5 genesis/network/parameters; tag13 is652 signed payload bytes; rejects historical tag12 and implicit maintenance; finite16 genesis demand records and public development source key |
+| renewable task development context | `--task-profile signed-task-lifecycle-dev-v2` | distinct revision7 namespace; tags18/19 open/renew344-byte leases, tag20 revokes144 bytes, tag21 registers684-byte statements;32 bounded slots, optimistic revision, monotonic generation and one-output meter preserved on renewal |
+| native evaluation development context | `--evaluation-policy native-public-evaluation-dev-v1` | tags14/15 commit/reveal,16 signed conflict evidence,17 bounded record-only appeal;128-height frozen rounds, mandatory close and positive conflict-free adoption guard |
+| real small-model development family | `--model-profile smollm2-135m-cpu-dev-v1` with native evaluation | frozen135M decoder/tokenizer and rank4 adapter interface; distinct family/chain parameters and2MiB candidate limit; actual external CPU observations do not grant native authenticated ML execution or quality acceptance |
 | full task material mining | `mine` / `make` with `--task-manifest`, `--task-model`, `--task-input` | exact source statement, independently pinned genesis demand context, model/input derivation, parent registration and signed height window; no self-registration by its own work block |
 | explicit bootstrap | `mine` / `make --task-bootstrap` | exact genesis maintenance statement/material; zero useful-output credit; expires at height1000 |
 | manifest fixture generation | `task-fixture` plus model/input, demand index, purpose, source nonce and height window | reproducible public-key fixture; no genuine demand, exclusive custody, legal consent or production DA certificate |
@@ -51,22 +54,26 @@ The bootstrap expires at height1000. A valid successor must already be registere
 parent state before that expiry. Unused fixed demand records can admit later windows,
 but neither a used demand nor the same matrix task can be renewed through tag13.
 The16-record testing context therefore has a finite lifecycle and cannot promise
-indefinite production liveness. Live demand renewal/revocation is a remaining owner contract.
+indefinite production liveness. The explicit [lifecycle successor](QUALIFIED_TASK_LIFECYCLE_V2.md)
+adds native lease open/renew/revoke, retained source sequences and generation-safe slot
+recycling. Actual Node tests exercise renewal, revoke, reopen and heavier-fork replacement.
+It still requires genuine authorized requesters, available materials, timely renewal and
+an accepted work-cost class. Public development keys provide none of those owner attestations.
 
 ## Six gates and their evidence requirements
 
 | Priority / gate | Executable progress | Required before public acceptance |
 |---|---|---|
 | P0 hostile public proof intake | versioned transport challenge; complete rejection remains; strict downgrade, replay, expiry and mixed real-socket tests | calibrated adversarial CPU/GPU/hash budget; paid/unpaid attacks; identity rotation; bandwidth/connection exhaustion; realistic valid/invalid mixes; honest waiting time and service success under sustained attack; independent deployment |
-| P0 qualified neural tasks | exact manifest/source/demand/layer/input/recipe, signed window, parent registration, replay nullifiers and separate output meters | genuinely admitted task owners; live revocation/renewal and maintenance policy; DA/retention funding; cheapest valid instance and structural shortcuts; cross-challenge preprocessing/reuse analysis; independent cheapest-miner bound |
-| P1 public evaluation/reward | revision4 all-eligible minimum; bounded off-chain precommit/reveal lifecycle, evidence and next-round exclusions | public roster governance and independent evaluator ownership; confirmed-chain phase observation; withheld/low-score/cartel incentives; verifiable factual fraud evidence versus subjective quality disagreement; funded appeal/timeout process and native integration |
-| P1 target model attribution | exact integer BA equivalence, common-root budget, finite-group attribution and complementary subset inference | real target backbone/tokenizer/adapter interfaces; independent future tasks; strong controls; poisoning/backdoor/forgetting and inference/memory costs; prospective registration; no general circuit-optimum claim |
+| P0 qualified neural tasks | exact material-bound source statement; native renewable/revocable leases; parent eligibility, retained sequences, generation-safe recycling and one-output meters | genuinely admitted task owners; sustainable maintenance/renewal policy; DA/retention funding; cheapest valid instance and structural shortcuts; cross-challenge preprocessing/reuse analysis; independent cheapest-miner bound |
+| P1 public evaluation/reward | frozen native commit/reveal rounds and all-eligible minimum; mandatory timeout abort; strict signed conflict evidence, next-round key exclusions, bounded archived appeals and funded release/claim gating | public roster governance and independent evaluator ownership; confirmed-chain phase observation policy; withheld/low-score/cartel incentives; objective ML fraud versus subjective quality disagreement; funded appeal adjudication and sanctions for past paid rewards |
+| P1 target model attribution | exact integer BA equivalence/common-root budgets; pinned135M decoder/rank4 LoRA CPU execution with all four strong controls; native zero-gain no-adoption/no-reward experiment | independent future tasks; prospective registration; reproducible positive efficacy; poisoning/backdoor/forgetting, functional-copy handling and inference/memory costs; no general circuit-optimum claim |
 | P1 useful-work efficiency | arithmetic output meter counts fixed AB once; branch-relative adopted-output observer records explicitly supplied attempt and validator costs | real downstream use receipts; count duplicate, failed, stale/orphan work and every verifier; include training/load/retention/DA costs; report accepted unique benefit per aggregate resource budget |
-| P1 sustained end-to-end capacity | continuous native producer/TCP-validator/client pipeline with durable state, signed transfers, inclusion and policy confirmation | long steady-state campaigns, state/history scaling, tail confidence, mixed commands/conflicts, queued transaction RPC/mempool, attack availability, WAN independent nodes and measured deployment GPU/VRAM |
+| P1 sustained end-to-end capacity | continuous durable TCP pipeline plus [separate producer/validator/full-sync confirmer processes](DISTRIBUTED_PIPELINE.md), signed receipts and matching independently verified state | physical-host LAN measurements; long steady-state campaigns, state/history scaling, tail confidence, mixed commands/conflicts, queued transaction RPC/mempool, attack availability, WAN independent nodes and measured deployment GPU/VRAM |
 
 No table row grants a source an independent identity, proves neural work unavoidable,
 or turns an empirical fixed-dataset optimum into a general model/circuit optimum.
-The public reward owner and off-chain evaluation lifecycle remain separate from
+The public reward owner and native evaluation lifecycle remain separate from
 Nakamoto fork choice. Missing scores explicitly abort the bounded evaluation outcome
 with no recommended adoption/reward; an appeal cannot rewrite a closed round.
 
@@ -119,7 +126,12 @@ samples: fewer than20 gives no p95, fewer than100 gives no p99. These are resolu
 not independent-sample or confidence guarantees; blocks on the same chain/host can be
 correlated. Transactions in one block do not inflate the block sample count. The program has no transaction-only
 RPC/mempool stage; that latency is null. No GPU is used by this CPU chain workload;
-deployment model-inference VRAM remains unmeasured.
+deployment model-inference GPU/VRAM qualification remains absent. The separate CPU
+SmolLM2 pilot reloads actual frozen weights and all five candidate/control artifacts;
+its tiny same-operator fixture produces no gain over the strongest control. Its native
+bridge binds raw candidate bytes and the original external observation to a fresh chain
+context and exercises zero-score closure, adoption/reward refusal and durable reopen.
+It does not rebrand the original observation as authenticated native ML execution.
 
 `scripts/run_public_readiness_qualification.py` prepares exact declared implementation
 and corpus Git objects, verifies negative source/evidence tests, executes the full existing

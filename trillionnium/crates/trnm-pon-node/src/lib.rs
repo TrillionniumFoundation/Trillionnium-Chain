@@ -10,7 +10,9 @@ use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};
 use trnm_mvcc_fee::pon_executor::{self, Config, State};
 use trnm_mvcc_fee::pon_executor::{LEGACY_TASK_PROFILE, QUALIFIED_DEMANDS, SIGNED_TASK_PROFILE};
+use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::pon_wire::{hash, Envelope, Hash, Header, HEADER_BYTES};
+use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::{
     QualifiedWorkTask, SignedQualifiedWorkTask, TaskPurpose, LOGICAL_MULTIPLY_ADD_UNITS,
     MATRIX_ARTIFACT_BYTES,
@@ -194,16 +196,39 @@ impl Settings {
         policy: &str,
         task_profile: &str,
     ) -> Result<Self> {
-        let mut app = Config::installed_with_profiles(policy, task_profile)?;
+        Self::development_with_model_profiles(
+            genesis_timestamp,
+            policy,
+            task_profile,
+            "linear-expert-dev-v1",
+        )
+    }
+    pub fn development_with_model_profiles(
+        genesis_timestamp: Option<u64>,
+        policy: &str,
+        task_profile: &str,
+        model_profile: &str,
+    ) -> Result<Self> {
+        let mut app = Config::installed_with_model_profiles(policy, task_profile, model_profile)?;
         if let Some(time) = genesis_timestamp {
             ensure(time > 0 && time <= i64::MAX as u64, "GENESIS_TIME")?;
             app.params["genesis_timestamp"] = json!(time);
-            let label = if task_profile == SIGNED_TASK_PROFILE {
-                format!("trnm-pon-signed-task-wall-devnet-5-{policy}-{time}")
+            let label = if task_profile == LIFECYCLE_TASK_PROFILE {
+                format!("trnm-pon-task-lifecycle-wall-devnet-7-{policy}-{time}")
+            } else if task_profile == SIGNED_TASK_PROFILE {
+                let revision = app.params["consensus_revision"].as_u64().ok_or("CONFIG")?;
+                format!("trnm-pon-signed-task-wall-devnet-{revision}-{policy}-{time}")
             } else if policy == "legacy-first-two-v3" {
                 format!("trnm-pon-native-wall-devnet-3-{time}")
+            } else if policy == "native-public-evaluation-dev-v1" {
+                format!("trnm-pon-native-evaluation-wall-devnet-6-{policy}-{time}")
             } else {
                 format!("trnm-pon-native-wall-devnet-4-{policy}-{time}")
+            };
+            let label = if model_profile == "linear-expert-dev-v1" {
+                label
+            } else {
+                format!("{label}-{model_profile}")
             };
             app.params["chain_label"] = json!(label);
             app.network = hash(b"network", &[label.as_bytes()]);
@@ -211,15 +236,14 @@ impl Settings {
                 serde_json::from_str(include_str!("../../../../config/pon/ledger-v1.json"))?;
             let work: Value =
                 serde_json::from_str(include_str!("../../../../config/pon/work-profile-v1.json"))?;
-            let model: Value =
-                serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))?;
+            let model = &app.model_registry;
             app.parameters = hash(
                 b"parameters",
                 &[
                     &serde_json::to_vec(&app.params)?,
                     &serde_json::to_vec(&wire)?,
                     &serde_json::to_vec(&work)?,
-                    &serde_json::to_vec(&model)?,
+                    &serde_json::to_vec(model)?,
                 ],
             );
         }
@@ -235,7 +259,11 @@ impl Settings {
             json!(count.checked_mul(funding).ok_or("CONFIG")?),
         );
         initial.insert("model:current".into(), json!(hex::encode([0; 32])));
-        if task_profile == SIGNED_TASK_PROFILE {
+        if task_profile == LIFECYCLE_TASK_PROFILE {
+            let model: Vec<u8> = a.iter().flat_map(|v| v.to_le_bytes()).collect();
+            let input: Vec<u8> = b.iter().flat_map(|v| v.to_le_bytes()).collect();
+            initial.extend(qualified_task_lifecycle::bootstrap_state(&app, &model, &input)?.state);
+        } else if task_profile == SIGNED_TASK_PROFILE {
             for index in 0..QUALIFIED_DEMANDS {
                 let demand = app.qualified_demand_id(index)?;
                 initial.insert(format!("work-demand-registry:{}",hex::encode(demand)),
@@ -317,11 +345,29 @@ impl Settings {
     }
     /// Public fixture artifacts, never a generic model or training-data claim.
     pub fn bootstrap_task_material(&self) -> Result<BootstrapTaskMaterial> {
-        ensure(self.task_profile() == SIGNED_TASK_PROFILE, "TASK_PROFILE")?;
+        ensure(
+            matches!(
+                self.task_profile(),
+                SIGNED_TASK_PROFILE | LIFECYCLE_TASK_PROFILE
+            ),
+            "TASK_PROFILE",
+        )?;
         let (a, b) = maintenance();
         let model = a.iter().flat_map(|v| v.to_le_bytes()).collect();
         let input = b.iter().flat_map(|v| v.to_le_bytes()).collect();
         Ok((model, input, a, b))
+    }
+    pub fn bootstrap_lifecycle_task(
+        &self,
+    ) -> Result<qualified_task_lifecycle::BootstrapLifecycleTask> {
+        ensure(
+            self.task_profile() == LIFECYCLE_TASK_PROFILE,
+            "TASK_PROFILE",
+        )?;
+        let (model, input, _, _) = self.bootstrap_task_material()?;
+        Ok(qualified_task_lifecycle::bootstrap_state(
+            &self.app, &model, &input,
+        )?)
     }
     #[allow(clippy::too_many_arguments)]
     pub fn development_task_manifest(

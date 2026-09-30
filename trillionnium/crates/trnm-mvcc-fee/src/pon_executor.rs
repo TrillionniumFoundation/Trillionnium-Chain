@@ -2,12 +2,15 @@
 //! Parallel workers speculate against one immutable snapshot; exact key and prefix
 //! reads are validated in canonical order. Conflict or speculative rejection is
 //! re-executed ONCE against that order's current state, never an unbounded retry loop.
+use crate::public_evaluation;
+use crate::qualified_task_lifecycle;
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use trnm_crypto_primitives::qualified_work_task::{verify_development_statement, AdmissionContext};
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_protocol::pon_wire::{hash, state_root, Envelope, Hash};
+use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::{SignedQualifiedWorkTask, TaskPurpose};
 
 pub const SIGNED_TASK_PROFILE: &str = "signed-task-dev-v1";
@@ -86,8 +89,9 @@ pub struct Config {
     pub family: Hash,
     pub plan: Hash,
     pub evaluators: BTreeSet<String>,
-    pub fees: [u64; 14],
+    pub fees: [u64; 22],
     pub params: Value,
+    pub model_registry: Value,
 }
 impl Config {
     /// Installed experimental genesis context, not caller-supplied authority booleans.
@@ -100,6 +104,13 @@ impl Config {
         Self::installed_with_profiles(policy, LEGACY_TASK_PROFILE)
     }
     pub fn installed_with_profiles(policy: &str, task_profile: &str) -> Result<Self> {
+        Self::installed_with_model_profiles(policy, task_profile, "linear-expert-dev-v1")
+    }
+    pub fn installed_with_model_profiles(
+        policy: &str,
+        task_profile: &str,
+        model_profile: &str,
+    ) -> Result<Self> {
         let mut params: Value =
             serde_json::from_str(include_str!("../../../../config/pon/devnet-v1.json"))
                 .map_err(|_| "CONFIG")?;
@@ -123,6 +134,48 @@ impl Config {
                     &[&canonical(&policy)?]
                 )));
             }
+            public_evaluation::PROFILE => {
+                let policy: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/public-evaluation-native-v1.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    policy["production_activation"] == false
+                        && policy["independent_governance_accepted"] == false
+                        && policy["objective_model_quality"] == false,
+                    "CONFIG",
+                )?;
+                for (name, expected) in [
+                    ("candidate_end_offset", public_evaluation::CANDIDATE_END),
+                    ("commit_end_offset", public_evaluation::COMMIT_END),
+                    ("reveal_end_offset", public_evaluation::REVEAL_END),
+                    ("adoption_start_offset", public_evaluation::ADOPTION_START),
+                    ("appeal_limit_per_candidate", 16),
+                    ("archive_retention_blocks", 256),
+                    ("round_blocks", 128),
+                    ("maximum_candidates_per_round", 512),
+                ] {
+                    require(field(&policy, name)? == expected, "CONFIG")?;
+                }
+                for tag in 14..=17 {
+                    require(
+                        field(&policy["base_fee_units"], &tag.to_string())? == 160,
+                        "CONFIG",
+                    )?;
+                }
+                require(
+                    field(&params, "candidate_round_blocks")? == 128
+                        && field(&params, "max_candidate_history_per_round")? == 512,
+                    "CONFIG",
+                )?;
+                for (key, value) in policy["genesis_overrides"].as_object().ok_or("CONFIG")? {
+                    params[key] = value.clone();
+                }
+                params["evaluation_policy_hash"] = json!(hex::encode(hash(
+                    b"evaluation-policy",
+                    &[&canonical(&policy)?]
+                )));
+            }
             _ => return Err("EVALUATION_POLICY"),
         }
         match task_profile {
@@ -137,19 +190,65 @@ impl Config {
                         && registry["hardness_accepted"] == false,
                     "CONFIG",
                 )?;
-                params["consensus_revision"] = json!(5);
-                params["chain_label"] = json!(format!("trnm-pon-signed-task-devnet-5-{policy}"));
+                let revision = if policy == public_evaluation::PROFILE {
+                    6
+                } else {
+                    5
+                };
+                params["consensus_revision"] = json!(revision);
+                params["chain_label"] =
+                    json!(format!("trnm-pon-signed-task-devnet-{revision}-{policy}"));
                 params["work_task_profile"] = json!(SIGNED_TASK_PROFILE);
                 params["qualified_task_registry_hash"] = json!(hex::encode(hash(
                     b"qualified-task-registry-v1",
                     &[&canonical(&registry)?]
                 )));
             }
+            LIFECYCLE_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-task-lifecycle-v2.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false,
+                    "CONFIG",
+                )?;
+                params["consensus_revision"] = json!(7);
+                params["chain_label"] = json!(format!("trnm-pon-task-lifecycle-devnet-7-{policy}"));
+                params["work_task_profile"] = json!(LIFECYCLE_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v2",
+                    &[&canonical(&registry)?]
+                )));
+            }
             _ => return Err("WORK_TASK_PROFILE"),
         }
-        let model: Value =
-            serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
-                .map_err(|_| "CONFIG")?;
+        let model: Value = match model_profile {
+            "linear-expert-dev-v1" => {
+                serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
+                    .map_err(|_| "CONFIG")?
+            }
+            "smollm2-135m-cpu-dev-v1" => {
+                require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
+                params["model_profile"] = json!(model_profile);
+                params["chain_label"] =
+                    json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
+                serde_json::from_str(include_str!(
+                    "../../../../config/pon/model-family-smollm2-135m-v1.json"
+                ))
+                .map_err(|_| "CONFIG")?
+            }
+            _ => return Err("MODEL_PROFILE"),
+        };
+        if model_profile != "linear-expert-dev-v1" {
+            let maximum = field(&model, "artifact_max_bytes")?;
+            require(
+                maximum > 0 && maximum <= field(&params, "max_artifact_bytes")?,
+                "MODEL_PROFILE_LIMIT",
+            )?;
+            params["max_artifact_bytes"] = json!(maximum);
+        }
         let wire: Value =
             serde_json::from_str(include_str!("../../../../config/pon/ledger-v1.json"))
                 .map_err(|_| "CONFIG")?;
@@ -167,7 +266,16 @@ impl Config {
             ],
         );
         let family = hash(b"family", &[&canonical(&model)?]);
-        let plan = if policy == "legacy-first-two-v3" {
+        let plan = if model_profile != "linear-expert-dev-v1" {
+            hash(
+                b"plan",
+                &[
+                    b"native-llm-strong-baseline-dev-v1",
+                    &family,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                ],
+            )
+        } else if policy == "legacy-first-two-v3" {
             hash(b"plan", &[b"public-source-file-disjoint-v1"])
         } else {
             hash(
@@ -178,7 +286,7 @@ impl Config {
                 ],
             )
         };
-        let mut fees = [0; 14];
+        let mut fees = [0; 22];
         let mut tags = BTreeSet::new();
         for c in wire["commands"].as_array().ok_or("CONFIG")? {
             let tag = field(c, "tag")? as usize;
@@ -189,6 +297,12 @@ impl Config {
         // The signed-task extension has an explicit fixed development base fee.
         // It is refused under every historical context even though its codec exists.
         fees[13] = 100;
+        for fee in &mut fees[14..=17] {
+            *fee = 160;
+        }
+        for fee in &mut fees[18..=21] {
+            *fee = 100;
+        }
         let mut evaluators = BTreeSet::new();
         for i in 0_u64..3 {
             let seed = hash(b"DEV-ONLY-KEY", &[&i.to_le_bytes()]);
@@ -204,6 +318,7 @@ impl Config {
             evaluators,
             fees,
             params,
+            model_registry: model,
         })
     }
     fn limit(&self, name: &str) -> Result<u64> {
@@ -405,6 +520,17 @@ impl<'a> View<'a> {
         )
     }
 }
+impl qualified_task_lifecycle::LifecycleState for View<'_> {
+    fn get(&mut self, key: &str) -> Option<Value> {
+        self.get(key)
+    }
+    fn put(&mut self, key: String, value: Value) {
+        self.put(key, value);
+    }
+    fn scan(&mut self, prefix: &str) -> State {
+        self.scan(prefix)
+    }
+}
 impl Patch {
     fn current(&self, state: &State) -> bool {
         self.reads.iter().all(|(k, v)| state.get(k) == v.as_ref())
@@ -440,6 +566,13 @@ impl<'a> Payload<'a> {
     }
     fn h(&mut self) -> Result<Hash> {
         self.take()
+    }
+    fn blob(&mut self) -> Result<&'a [u8]> {
+        let length = u16::from_le_bytes(self.take()?) as usize;
+        let end = self.pos.checked_add(length).ok_or("LENGTH")?;
+        let value = self.bytes.get(self.pos..end).ok_or("LENGTH")?;
+        self.pos = end;
+        Ok(value)
     }
     fn byte(&mut self) -> Result<u8> {
         Ok(self.take::<1>()?[0])
@@ -491,11 +624,23 @@ struct Prepared {
 fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> Result<Prepared> {
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
     require(
+        !(18..=21).contains(&tx.tag) || cfg.task_profile() == LIFECYCLE_TASK_PROFILE,
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        !(14..=17).contains(&tx.tag) || public_evaluation::enabled(cfg),
+        "PUBLIC_EVAL_PROFILE",
+    )?;
+    require(
+        tx.tag != 7 || !public_evaluation::enabled(cfg),
+        "PUBLIC_EVAL_PROFILE",
+    )?;
+    require(
         tx.tag != 13 || cfg.task_profile() == SIGNED_TASK_PROFILE,
         "WORK_TASK_PROFILE",
     )?;
     require(
-        tx.tag != 12 || cfg.task_profile() != SIGNED_TASK_PROFILE,
+        tx.tag != 12 || cfg.task_profile() == LEGACY_TASK_PROFILE,
         "WORK_TASK_PROFILE",
     )?;
     require(tx.network == cfg.network, "NETWORK")?;
@@ -668,7 +813,13 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                 s.get(&k).is_none() && s.get(&duplicate).is_none(),
                 "DUPLICATE",
             )?;
-            s.put(k,json!({"owner":sender,"artifact":hex::encode(artifact),"components_root":hex::encode(components),"family":hex::encode(family),"parent":hex::encode(parent),"votes":{},"score":0,"status":"submitted","submitted_height":height,"submission_round":round}));
+            let mut contribution = json!({"owner":sender,"artifact":hex::encode(artifact),"components_root":hex::encode(components),"family":hex::encode(family),"parent":hex::encode(parent),"votes":{},"score":0,"status":"submitted","submitted_height":height,"submission_round":round});
+            if public_evaluation::enabled(cfg) {
+                let excluded = public_evaluation::excluded(&s.scan("evaluation-disqualified:"));
+                contribution["public_evaluation"] =
+                    public_evaluation::freeze(cfg, cid, &contribution, height, &excluded)?;
+            }
+            s.put(k, contribution);
             s.put(duplicate, json!(hex::encode(cid)));
         }
         7 => {
@@ -741,6 +892,9 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             let current = s.get("model:current").ok_or("STATE")?;
             require(current == json!(hex::encode(parent)), "STATE")?;
             let (bk, mut bundle) = s.object("contribution:", bundle_id)?;
+            if public_evaluation::enabled(cfg) {
+                public_evaluation::adoption_allowed(&bundle["public_evaluation"], height)?;
+            }
             require(
                 text(&bundle, "status")? == "evaluated"
                     && field(&bundle, "score")? >= cfg.limit("minimum_adoption_score")?,
@@ -758,6 +912,9 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                 let cid = p.h()?;
                 let score = p.n()?;
                 let (k, mut o) = s.object("contribution:", cid)?;
+                if public_evaluation::enabled(cfg) {
+                    public_evaluation::adoption_allowed(&o["public_evaluation"], height)?;
+                }
                 require(
                     text(&o, "status")? == "evaluated"
                         && o["parent"] == current
@@ -953,6 +1110,65 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             s.put(work_key, json!({"schema":"qualified-work-registration-v1","manifest":hex::encode(&tx.payload),"admitted_height":height,"manifest_id":hex::encode(statement.manifest_id())}));
             p.pos = p.bytes.len();
         }
+        18..=21 => {
+            qualified_task_lifecycle::apply_verified_command(&mut s, tx, height, cfg)?;
+            p.pos = tx.payload.len();
+        }
+        14..=17 => {
+            let cid = p.h()?;
+            let active_key = format!("contribution:{}", hex::encode(cid));
+            let archive_key = format!("evaluation-archive:{}", hex::encode(cid));
+            let (key, mut contribution) = if let Some(value) = s.get(&active_key) {
+                (active_key, value)
+            } else {
+                require(matches!(tx.tag, 16 | 17), "STATE")?;
+                (archive_key.clone(), s.get(&archive_key).ok_or("STATE")?)
+            };
+            let evaluation = &mut contribution["public_evaluation"];
+            require(
+                public_evaluation::enabled(cfg) && !evaluation.is_null(),
+                "PUBLIC_EVAL_PROFILE",
+            )?;
+            match tx.tag {
+                14 => public_evaluation::commit(evaluation, &sender, p.h()?, p.h()?, height)?,
+                15 => {
+                    let value = public_evaluation::Reveal {
+                        candidate: cid,
+                        round: p.h()?,
+                        evaluator: tx.sender,
+                        plan: p.h()?,
+                        evidence: p.h()?,
+                        score: p.n()?,
+                        salt: p.h()?,
+                    };
+                    public_evaluation::reveal(evaluation, value, height)?;
+                }
+                16 => {
+                    let first = p.blob()?;
+                    let second = p.blob()?;
+                    let disqualified =
+                        public_evaluation::conflict(evaluation, cfg, cid, first, second)?;
+                    s.put(format!("evaluation-disqualified:{disqualified}"),json!({"evidence_candidate":hex::encode(cid),"height":height,"scope":"exact development key; no hidden-controller independence claim"}));
+                }
+                17 => {
+                    let author = contribution["owner"].as_str().ok_or("STATE")?.to_owned();
+                    public_evaluation::appeal(
+                        &mut contribution["public_evaluation"],
+                        &author,
+                        &sender,
+                        p.h()?,
+                        p.h()?,
+                        p.h()?,
+                        height,
+                    )?;
+                }
+                _ => unreachable!(),
+            }
+            if !contribution["public_evaluation"]["closed"].is_null() {
+                s.put(archive_key, contribution.clone());
+            }
+            s.put(key, contribution);
+        }
         _ => return Err("VERSION"),
     }
     require(p.pos == p.bytes.len(), "LENGTH")?;
@@ -1004,6 +1220,34 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
         .ok_or("STATE")?
         .to_owned();
     let keys: Vec<_> = state.keys().cloned().collect();
+    if public_evaluation::enabled(cfg) {
+        let candidates: Vec<_> = keys
+            .iter()
+            .filter(|key| key.starts_with("contribution:"))
+            .cloned()
+            .collect();
+        for key in candidates {
+            let value = state.get_mut(&key).ok_or("STATE")?;
+            if let Some(score) = public_evaluation::close(&mut value["public_evaluation"], height)?
+            {
+                value["score"] = json!(score);
+                value["status"] = json!("evaluated");
+            } else if value["public_evaluation"]["closed"]["status"] == "aborted" {
+                value["score"] = json!(0);
+                value["status"] = json!("evaluation-aborted");
+            }
+            if !value["public_evaluation"]["closed"].is_null() {
+                let archive = value.clone();
+                state.insert(
+                    format!(
+                        "evaluation-archive:{}",
+                        key.strip_prefix("contribution:").ok_or("STATE")?
+                    ),
+                    archive,
+                );
+            }
+        }
+    }
     for k in keys {
         if k.starts_with("contribution:") {
             let v = state.get_mut(&k).ok_or("STATE")?;
@@ -1025,6 +1269,12 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
                     v["votes"] = json!({});
                     v["score"] = json!(0);
                 }
+            }
+        } else if k.starts_with("evaluation-archive:") {
+            let value = state.get(&k).ok_or("STATE")?;
+            let closed = field(&value["public_evaluation"]["closed"], "closed_height")?;
+            if height.saturating_sub(closed) > 256 {
+                state.remove(&k);
             }
         } else if k.starts_with("task:") || k.starts_with("quota:") {
             let value = state.get(&k).ok_or("STATE")?;

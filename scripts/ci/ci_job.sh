@@ -6,6 +6,7 @@ case "${1:?required job}" in
     bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_project_boundary.py
     python3 scripts/ci/check_repository.py
+    python3 scripts/refresh_distributed_source_inventory.py --check
     python3 scripts/ci/test_repository.py
     python3 scripts/ci/test_invariants_registry.py
     python3 scripts/ci/test_responsibility_evidence.py
@@ -20,7 +21,8 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_invariants.py
     cargo fetch --locked --manifest-path trillionnium/Cargo.toml
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
-    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test public_evaluation --test distributed_roles
+    python3 scripts/test_llm_runtime_pilot.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_work_utility.py
     python3 formal/pon-nakamoto-v1/test_public_evaluation_lifecycle.py
@@ -74,7 +76,7 @@ case "${1:?required job}" in
     python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-session-v1
     python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-node-v1
     python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-closed-round-v1
-    python3 scripts/ci/check_public_readiness_evidence.py --evidence evidence/pon-public-readiness-v1
+    python3 scripts/ci/check_public_readiness_evidence.py --historical --evidence evidence/pon-public-readiness-v1
     python3 scripts/ci/test_public_readiness_evidence.py
     python3 scripts/ci/check_native_node_supplements.py --historical
     python3 scripts/ci/test_native_node_supplements.py

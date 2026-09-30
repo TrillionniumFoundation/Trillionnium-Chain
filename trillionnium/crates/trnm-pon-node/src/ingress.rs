@@ -1667,6 +1667,29 @@ fn outbound_authenticated_request(
     })
 }
 
+/// Recover the exact pending request through the existing durable outbox and
+/// strict session/signature verifier. This exposes no key, wire or database handle.
+pub fn pending_authenticated_request(
+    node: &Node,
+    client: &AuthenticatedClient,
+) -> Result<Option<Request>> {
+    let settings = node.settings();
+    let session = authenticated_session(
+        settings,
+        client.identity.public_key(),
+        &client.server_public,
+        client.generation,
+    )?;
+    let (nonce, pending) = node.authenticated_outbound_reservation(transport_session(&session)?)?;
+    pending
+        .map(|wire| {
+            let verified = outbound_authenticated_request(&wire, settings, client)?;
+            ensure(verified.frame.replay_nonce() == nonce, "AUTH_OUTBOX_NONCE")?;
+            Ok(verified.request)
+        })
+        .transpose()
+}
+
 /// Persist one exact signed request before network I/O. A missing or nonterminal response
 /// leaves the same bytes pending; a verified terminal response advances the durable nonce.
 pub fn call_authenticated_durable(
@@ -2473,11 +2496,18 @@ mod tests {
         });
 
         let mut client_node = Node::open(client_dir.path(), settings.clone(), 1).unwrap();
+        assert!(pending_authenticated_request(&client_node, &client)
+            .unwrap()
+            .is_none());
         let wire = authenticated_request_bytes(&settings, &client, 1, Request::Head).unwrap();
         let request = outbound_authenticated_request(&wire, &settings, &client).unwrap();
         client_node
             .reserve_authenticated_outbound(request.frame, &request.payload, &wire)
             .unwrap();
+        assert_eq!(
+            pending_authenticated_request(&client_node, &client).unwrap(),
+            Some(Request::Head)
+        );
         {
             let mut stream = TcpStream::connect(address).unwrap();
             write_frame(&mut stream, &wire).unwrap();
@@ -2486,6 +2516,10 @@ mod tests {
         thread::sleep(Duration::from_millis(50));
 
         let mut client_node = Node::open(client_dir.path(), settings, 1).unwrap();
+        assert_eq!(
+            pending_authenticated_request(&client_node, &client).unwrap(),
+            Some(Request::Head)
+        );
         let value = loop {
             match call_authenticated_durable(&mut client_node, address, &Request::Head, &client) {
                 Ok(value) => break value,

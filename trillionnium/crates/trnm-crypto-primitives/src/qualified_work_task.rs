@@ -2,6 +2,8 @@
 //! Caller-pinned owner records are an explicit trust contract, not proof of genuine
 //! demand, lawful authorization, correct model-to-layer extraction, or remote retention.
 use crate::{pon_work, verify_hex_strict};
+
+pub mod lifecycle_v2;
 use trnm_protocol::{
     pon_wire::{hash, Hash},
     qualified_work_task::{

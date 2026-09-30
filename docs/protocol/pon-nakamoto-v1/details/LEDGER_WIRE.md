@@ -4,7 +4,13 @@ Revision3 remains the historical default described below. Explicit revision4 sel
 the [complete eligible evaluation round](MODEL_EVALUATION.md); explicit revision5
 `signed-task-dev-v1` additionally selects the [signed task registration contract](QUALIFIED_WORK_TASK.md).
 Tag13 and its new parent-admission rules belong only to that distinct development
-context. [Current CLI profiles and remaining public gates](PUBLIC_READINESS.md) bind
+context. The explicit revision6 native evaluation policy adds tags14..17 for frozen
+commit/reveal, signed conflict evidence and bounded archived appeals; it refuses legacy
+direct-score tag7. Revision7 [renewable task leases](QUALIFIED_TASK_LIFECYCLE_V2.md)
+adds tags18..21 and refuses historical task tags12/13. These payload widths and exact
+phase/error/state rules are specified by [PUBLIC_EVALUATION_LIFECYCLE](PUBLIC_EVALUATION_LIFECYCLE.md)
+and the lifecycle successor, alongside their versioned JSON registries and native tests.
+[Current CLI profiles and remaining public gates](PUBLIC_READINESS.md) bind
 interfaces, source ownership, resource limits and actual acceptance scope. These
 extensions do not reinterpret revision3 byte commitments, golden roots or stored state.
 

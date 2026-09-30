@@ -15,6 +15,18 @@ The claims below apply to their named component and tests, not to an independent
 
 Run deterministic due expiry and maturity before txs; execute exactly12 closed commands; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition.
 
+The12-command equivalence claim below applies to the historical default context.
+Explicit successors additionally gate signed task registration, renewable requester
+leases and native frozen evaluation transitions by committed profile. Their exact
+interfaces, payloads, errors, windows and retention bounds are in
+[LEDGER_WIRE](../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md),
+[QUALIFIED_TASK_LIFECYCLE_V2](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V2.md)
+and [PUBLIC_EVALUATION_LIFECYCLE](../protocol/pon-nakamoto-v1/details/PUBLIC_EVALUATION_LIFECYCLE.md).
+Native selectors `trnm-pon-node --test task_lifecycle --test public_evaluation` exercise
+their actual signed execution, material-bound work, persistence/reopen and heavier-fork
+behavior. Controlled scores and public development authorities do not qualify objective
+ML quality, task demand or evaluator independence.
+
 **Atomic/commit boundary:** Return complete state/delta intent; caller M07 owns persistence.
 
 ### M06.DeriveBranchDelta

@@ -6,6 +6,54 @@ implement an off-chain policy on existing evaluation/artifact and operations own
 Native revision4 remains unchanged. No ledger reward, consensus vote, chainwork,
 transaction or monetary penalty is added.
 
+## Explicit native successor
+
+[`public_evaluation.rs`](../../../../trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs)
+adds the separate `native-public-evaluation-dev-v1` context, selected explicitly by
+the native node. Its policy is committed in
+[`public-evaluation-native-v1.json`](../../../../config/pon/public-evaluation-native-v1.json).
+Legacy contexts keep their original network, parameters, economics and golden bytes.
+Native successor genesis changes; it is not a hot upgrade or public governance
+certificate. With signed-task v1 it uses revision6; lease lifecycle v2 uses revision7.
+
+Each contribution freezes network/parameters, candidate/artifact/components/parent,
+family, task/model plan, maximum score and eligible development keys. Author and
+previously evidenced conflicting keys are excluded before freeze; at least two keys
+remain. A round has128 admitted heights. Offsets0..15 accept candidates,16..31
+accept commits,32..47 accept reveals,48 closes automatically, and56 first permits
+adoption. The current frozen roster never shrinks. Every eligible reveal must match
+its earlier commitment to candidate, evaluator, plan, evidence, unsigned score and
+32-byte salt. Missing reveals or a verified conflict abort. Scores aggregate by minimum.
+Tag7 direct votes are refused in this new context.
+
+| Tag | Native signed payload | Effect |
+| --- | --- | --- |
+|14|candidate32 + round32 + commitment32|Commit during the frozen phase.|
+|15|candidate32 + round32 + plan32 + evidence32 + scoreLE64 + salt32|Reveal exact prior commitment.|
+|16|candidate32 + firstLengthLE16 + first signed envelope + secondLengthLE16 + second signed envelope|Verify two conflicting commit/reveal envelopes of the same identity/context; block adoption and exclude that exact key in future freezes.|
+|17|candidate32 + closedResult32 + claim32 + evidence32|Record participant appeal; keep closed score and historical rewards unchanged.|
+
+Tags14..17 refuse historical contexts. Existing tag8 verifies complete, positive,
+conflict-free closure after the dispute interval for the bundle and every allocation
+contribution. The existing funded budget, allocation proofs,20-block maturity,
+deadline and single-claim conditions govern tag9. Neither a signature nor this state
+machine verifies model quality, consent, hidden common control, fair marginal
+attribution or an independent future experiment.
+
+Closed candidates survive model changes in bounded `evaluation-archive:` branch
+keys for256 heights after closure. At most512 candidates per128-height round,
+16 appeals per candidate and two conflict phases per evaluator bound this live
+archive. Old block packets and local operation history retain their separate owners
+and growth limits. Archived appeals and conflicts remain possible in that window.
+An appeal records an objection, not automatic rescoring or retroactive settlement.
+Reorg reverses branch evaluation/adoption/reward state; durable operation/session
+histories remain under their existing non-rewinding owners.
+
+[`native integration tests`](../../../../trillionnium/crates/trnm-pon-node/tests/public_evaluation.rs)
+exercise reveal permutations, phase refusal, changed commitments, conflicts, archive
+appeals, complete/missing release gates, mature claims, actual SQLite reopen and a
+heavier fork. These are development fixtures, not public acceptance evidence.
+
 ## Freeze before candidates
 
 `freeze_round` seals network/parameters, round number, parent artifact, family,

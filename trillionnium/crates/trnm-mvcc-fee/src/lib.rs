@@ -27,6 +27,8 @@ mod codec;
 pub mod deterministic_parallel_v1;
 mod engine;
 mod error;
+pub mod public_evaluation;
+pub mod qualified_task_lifecycle;
 mod store;
 mod types;
 

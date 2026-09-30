@@ -1,0 +1,23 @@
+{
+  "schema": "pon-native-public-evaluation-v1",
+  "id": "native-public-evaluation-dev-v1",
+  "genesis_overrides": {
+    "chain_label": "trnm-pon-native-public-evaluation-devnet-6",
+    "consensus_revision": 6,
+    "evaluation_profile": "native-public-evaluation-dev-v1"
+  },
+  "candidate_end_offset": 15,
+  "commit_end_offset": 31,
+  "reveal_end_offset": 47,
+  "adoption_start_offset": 56,
+  "appeal_limit_per_candidate": 16,
+  "archive_retention_blocks": 256,
+  "round_blocks": 128,
+  "maximum_candidates_per_round": 512,
+  "base_fee_units": { "14": 160, "15": 160, "16": 160, "17": 160 },
+  "roster": "frozen genesis development identities excluding author and previously evidenced conflicting identities",
+  "aggregation": "minimum after every eligible reveal; missing or conflicting signatures abort",
+  "objective_model_quality": false,
+  "independent_governance_accepted": false,
+  "production_activation": false
+}

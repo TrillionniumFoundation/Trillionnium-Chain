@@ -1,5 +1,9 @@
 # Q1 — exact source-attested task admission and output identity
 
+The separately selected fresh [Q2 lifecycle context](QUALIFIED_TASK_LIFECYCLE_V2.md)
+adds renewable/revocable bounded demand leases. It preserves the Q1 wire/domain and
+finite-fixture semantics documented here; an existing Q1 store is not upgraded.
+
 Owners: M00 owns the bounded description, M01 checks strict signatures and actual matrix
 material, and existing M02/M06/M07 owners admit and retain parent-relative registrations.
 The [registry](../../../../config/pon/qualified-work-task-v1.json) is new development
@@ -120,7 +124,8 @@ revokes or replays an external Hepta effect. Pure admission performs no I/O or c
 
 `Config::installed_with_profiles(policy,"signed-task-dev-v1")` and
 `Settings::development_with_profiles(timestamp,policy,"signed-task-dev-v1")` explicitly
-select native consensus revision5. The new profile hashes this entire registry into its
+select native consensus revision5 with the historical evaluation policies, or revision6
+with explicit native-public-evaluation-dev-v1. The new profile hashes this entire registry into its
 parameter identity, changes the network label and genesis, and cannot open an existing
 historical store. Historical32-byte register_work, default genesis and golden roots remain
 unchanged. Codec tag13 carries exactly652 signed payload bytes (811 including envelope);

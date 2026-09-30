@@ -21,7 +21,9 @@ use trnm_crypto_primitives::qualified_work_task::{
 };
 use trnm_mvcc_fee::pon_executor::SIGNED_TASK_PROFILE;
 use trnm_mvcc_fee::pon_executor::{execute, root, State};
+use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
+use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::{
     QualifiedWorkTask, SignedQualifiedWorkTask, TaskPurpose, SIGNED_TASK_BYTES,
 };
@@ -1363,7 +1365,7 @@ impl Node {
                 .iter()
                 .flat_map(|value| value.to_le_bytes())
                 .collect();
-            record_task_output(&mut output.state, &manifest, &product)?;
+            self.record_task_output(h.parent, h.height, &mut output.state, &manifest, &product)?;
             output.root = root(&output.state)?;
         }
         ensure(
@@ -1418,7 +1420,7 @@ impl Node {
         max_attempts: u64,
     ) -> Result<Packet> {
         ensure(
-            self.settings.task_profile() != SIGNED_TASK_PROFILE,
+            self.settings.task_profile() == trnm_mvcc_fee::pon_executor::LEGACY_TASK_PROFILE,
             "EXPLICIT_TASK_REQUIRED",
         )?;
         let (a, b) = maintenance();
@@ -1426,6 +1428,21 @@ impl Node {
     }
     pub fn parent_height(&self, parent: Hash) -> Result<u64> {
         Ok(self.record(parent)?.height)
+    }
+    pub fn lifecycle_task_lease(
+        &self,
+        parent: Hash,
+        task: Hash,
+        height: u64,
+    ) -> Result<trnm_protocol::qualified_work_task::lifecycle_v2::DemandLeaseV2> {
+        Ok(qualified_task_lifecycle::eligible_task(
+            &self.state_at(parent)?,
+            task,
+            height,
+            &self.settings.app,
+        )?
+        .lease()
+        .clone())
     }
     /// Explicit material-bound development route; no implicit maintenance or arbitrary
     /// unsigned source/context can authorize a task in the parent's branch state.
@@ -1441,15 +1458,29 @@ impl Node {
         material: TaskMaterial<'_>,
     ) -> Result<Packet> {
         ensure(
-            self.settings.task_profile() == SIGNED_TASK_PROFILE,
+            matches!(
+                self.settings.task_profile(),
+                SIGNED_TASK_PROFILE | LIFECYCLE_TASK_PROFILE
+            ),
             "WORK_TASK_PROFILE",
         )?;
         let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
         let signed = self
             .eligible_work_task(parent, admission.matrix_task(), height)?
             .ok_or("TASK_MANIFEST")?;
+        let statement_id = if self.settings.task_profile() == LIFECYCLE_TASK_PROFILE {
+            qualified_task_lifecycle::eligible_task(
+                &self.state_at(parent)?,
+                admission.matrix_task(),
+                height,
+                &self.settings.app,
+            )?
+            .statement_id()
+        } else {
+            signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?
+        };
         ensure(
-            signed.id().map_err(|_| Error::from("TASK_MANIFEST"))? == admission.manifest_id(),
+            statement_id == admission.manifest_id(),
             "TASK_ADMISSION_CONTEXT",
         )?;
         ensure(
@@ -1473,6 +1504,11 @@ impl Node {
         height: u64,
     ) -> Result<Option<QualifiedWorkTask>> {
         let state = self.state_at(parent)?;
+        if self.settings.task_profile() == LIFECYCLE_TASK_PROFILE {
+            let eligible =
+                qualified_task_lifecycle::eligible_task(&state, task, height, &self.settings.app)?;
+            return Ok(Some(eligible.manifest().clone()));
+        }
         let registered = state
             .get(&format!("work:{}", hex::encode(task)))
             .ok_or("TASK")?;
@@ -1565,7 +1601,13 @@ impl Node {
         let prepared =
             pon_work::PreparedTask::new(a, b).map_err(|e| Error::from(format!("WORK:{e:?}")))?;
         if let Some(manifest) = registered_task {
-            record_task_output(&mut output.state, &manifest, prepared.product_bytes())?;
+            self.record_task_output(
+                parent,
+                height,
+                &mut output.state,
+                &manifest,
+                prepared.product_bytes(),
+            )?;
             output.root = root(&output.state)?;
         }
         let mut header = Header {
@@ -1597,6 +1639,33 @@ impl Node {
             }
         }
         Err("WORK_BUDGET".into())
+    }
+    fn record_task_output(
+        &self,
+        parent: Hash,
+        height: u64,
+        state: &mut State,
+        manifest: &QualifiedWorkTask,
+        product: &[u8],
+    ) -> Result<()> {
+        if self.settings.task_profile() == LIFECYCLE_TASK_PROFILE {
+            ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
+            let eligible = qualified_task_lifecycle::eligible_task(
+                &self.state_at(parent)?,
+                manifest.matrix_task,
+                height,
+                &self.settings.app,
+            )?;
+            qualified_task_lifecycle::consume_output(
+                state,
+                &eligible,
+                hash(b"qualified-task-product-v1", &[product]),
+                height,
+            )?;
+            Ok(())
+        } else {
+            record_task_output(state, manifest, product)
+        }
     }
     pub fn mine(
         &mut self,

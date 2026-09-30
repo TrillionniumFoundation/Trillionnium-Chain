@@ -504,8 +504,29 @@ a fixed withdrawal frontier and1000-block bootstrap lifetime. It is intentionall
 an exclusive production source, real task marketplace, live revoke or indefinite
 maintenance policy. The attribution profile establishes exact BA identity and finite
 candidate-set objectives, not generic neuron equivalence, independent future efficacy
-or global neural-circuit optimum. Public evaluator governance and native public
-evaluation/reward integration remain separate owner responsibilities.
+or global neural-circuit optimum. Public evaluator governance remains a separate owner responsibility. The explicit
+native-public-evaluation-dev-v1 successor implements frozen commit/reveal phases,
+mandatory deadline closure, signature-conflict evidence, bounded archive appeals and
+existing funded release/reward gating. Its heights and branch state are native; its
+development identities and signed scores remain unqualified for independent governance
+and objective ML quality. Historical revision4 and default revision3 keep their bytes.
+
+The explicit signed-task-lifecycle-dev-v2 revision7 adds native requester lease
+open/renew/revoke and source registration under distinct signing/parameter domains.
+Renewal keeps the admitted material and one-output meter; revoked parent state refuses
+subsequent work. Generation-safe bounded slots retain source sequence and availability
+windows. Actual Node tests cover signed transactions, valid PNW1 packets, durable reopen
+and heavier-fork replacement. Development authorities and cost-class1 remain unqualified
+for genuine demand, remote availability or cheapest-miner hardness.
+
+The pinned SmolLM2-135M CPU/rank4 LoRA family has actual material loading, training and
+all four required controls in an isolated LAN runtime. The tiny public same-operator
+fixture gives zero gain against the strongest control. An explicit cross-context bridge
+binds the raw artifact and original observation to native revision7, completes the native
+commit/reveal round at score0 and refuses adoption/reward; it claims no native ML proof.
+The separate distributed caller assigns producer, authenticated validator and full-sync
+confirmer to three OS processes with three owners. Each verifies native work and state;
+matching signed receipts do not attest physical placement or independent operation.
 
 Priority remains P0 qualified cheapest-miner work cost and sustained hostile intake,
 then P1 actual target-model efficacy/poisoning/deployment costs, independent evaluation
@@ -526,7 +547,8 @@ source-preparation and 20 evidence negative tests passed. First-run missing-corp
 predecessor traffic-accounting/caller costs, the prior publication CI selector failure,
 D publication historical-test setup failure and E launch/Python-path failure
 are retained without relabelling their source or tool environment. This evidence does not
-close the public gates above or replace the remaining native integration, real model
-and independent work-cost obligations. Child Python is explicitly bound to the observer environment and its actual
+close the public gates above or qualify the later lifecycle, evaluation, model and
+distributed additions. Each successor requires its own source-bound observations;
+independent work-cost and model-benefit obligations remain open. Child Python is explicitly bound to the observer environment and its actual
 executable/dependencies are checked against both qualification layers. Preserve the
 measured Git source history when publishing or merging evidence.

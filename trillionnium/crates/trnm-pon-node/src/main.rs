@@ -218,7 +218,7 @@ fn run() -> Result<Value> {
         _ => "",
     };
     let allowed = format!(
-        "--development --store --genesis-time --workers --logical-now --evaluation-policy --task-profile {authentication_options} {admission_options} {extra}"
+        "--development --store --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile {authentication_options} {admission_options} {extra}"
     );
     for key in args.keys() {
         if !allowed.split_whitespace().any(|k| k == key) {
@@ -234,11 +234,13 @@ fn run() -> Result<Value> {
         .unwrap_or("legacy-first-two-v3");
     if !matches!(
         evaluation_policy,
-        "legacy-first-two-v3" | "closed-round-all-eligible-min-v1"
+        "legacy-first-two-v3"
+            | "closed-round-all-eligible-min-v1"
+            | "native-public-evaluation-dev-v1"
     ) {
         return Err("EVALUATION_POLICY".into());
     }
-    let settings = Settings::development_with_profiles(
+    let settings = Settings::development_with_model_profiles(
         args.get("--genesis-time")
             .map(|s| s.parse().map_err(|_| Error::from("GENESIS_TIME")))
             .transpose()?,
@@ -246,6 +248,9 @@ fn run() -> Result<Value> {
         args.get("--task-profile")
             .map(String::as_str)
             .unwrap_or("legacy-task-v1"),
+        args.get("--model-profile")
+            .map(String::as_str)
+            .unwrap_or("linear-expert-dev-v1"),
     )?;
     if command == "task-fixture" {
         if settings.task_profile() != "signed-task-dev-v1" {
@@ -355,17 +360,30 @@ fn run() -> Result<Value> {
                 let files_present = ["--task-manifest", "--task-model", "--task-input"]
                     .map(|key| args.contains_key(key));
                 let bootstrap = args.contains_key("--task-bootstrap");
-                if node.settings().task_profile() == "signed-task-dev-v1" {
+                if matches!(
+                    node.settings().task_profile(),
+                    "signed-task-dev-v1" | "signed-task-lifecycle-dev-v2"
+                ) {
                     if bootstrap && files_present.iter().any(|present| *present) {
                         return Err("TASK_OPTIONS".into());
                     }
                     let (wire, model, input) = if bootstrap {
-                        let signed = node.settings().bootstrap_task_statement()?;
+                        let wire =
+                            if node.settings().task_profile() == "signed-task-lifecycle-dev-v2" {
+                                node.settings()
+                                    .bootstrap_lifecycle_task()?
+                                    .signed
+                                    .encode()
+                                    .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?
+                            } else {
+                                node.settings()
+                                    .bootstrap_task_statement()?
+                                    .encode()
+                                    .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?
+                            };
                         let (a, b) = trnm_pon_node::maintenance();
                         (
-                            signed
-                                .encode()
-                                .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?,
+                            wire,
                             a.iter().flat_map(|v| v.to_le_bytes()).collect::<Vec<_>>(),
                             b.iter().flat_map(|v| v.to_le_bytes()).collect::<Vec<_>>(),
                         )
@@ -374,36 +392,46 @@ fn run() -> Result<Value> {
                             return Err("TASK_MATERIAL_REQUIRED".into());
                         }
                         (
-                            read(need(&args, "--task-manifest")?, 652)?,
+                            read(need(&args, "--task-manifest")?, 684)?,
                             read(need(&args, "--task-model")?, 16384)?,
                             read(need(&args, "--task-input")?, 16384)?,
                         )
                     };
-                    let signed = SignedQualifiedWorkTask::decode(&wire)
-                        .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?;
+                    let lifecycle =
+                        node.settings().task_profile() == "signed-task-lifecycle-dev-v2";
+                    let manifest = if lifecycle {
+                        trnm_protocol::qualified_work_task::lifecycle_v2::SignedLifecycleTaskV2::decode(&wire).map_err(|e|Error::from(format!("TASK_MANIFEST:{e:?}")))?.manifest
+                    } else {
+                        SignedQualifiedWorkTask::decode(&wire)
+                            .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?
+                            .manifest
+                    };
                     let (a, b) = derive_matrices(&model, &input)
                         .map_err(|e| Error::from(format!("TASK_MATERIAL:{e:?}")))?;
-                    let context = node.settings().qualified_task_context(
-                        signed.manifest.demand_id,
-                        node.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?,
-                    )?;
+                    let height = node.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
                     let material = TaskMaterial {
                         model: &model,
                         input: &input,
                         a: &a,
                         b: &b,
                     };
-                    let admitted = verify_development_admission(
-                        &wire,
-                        TaskMaterial {
-                            model: &model,
-                            input: &input,
-                            a: &a,
-                            b: &b,
-                        },
-                        &context,
-                    )
-                    .map_err(|e| Error::from(format!("TASK_ADMISSION:{e:?}")))?;
+                    let verification_material = TaskMaterial {
+                        model: &model,
+                        input: &input,
+                        a: &a,
+                        b: &b,
+                    };
+                    let admitted = if lifecycle {
+                        let lease =
+                            node.lifecycle_task_lease(parent, manifest.matrix_task, height)?;
+                        trnm_crypto_primitives::qualified_work_task::lifecycle_v2::verify_lifecycle_admission(&wire,verification_material,&lease,height).map_err(|e|Error::from(format!("TASK_ADMISSION:{e:?}")))?
+                    } else {
+                        let context = node
+                            .settings()
+                            .qualified_task_context(manifest.demand_id, height)?;
+                        verify_development_admission(&wire, verification_material, &context)
+                            .map_err(|e| Error::from(format!("TASK_ADMISSION:{e:?}")))?
+                    };
                     node.make_with_task(
                         parent,
                         transactions,
