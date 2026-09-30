@@ -85,6 +85,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/qualified-task-lifecycle-v3.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/qualified-task-lifecycle-v3.json"
+        )),
+    ),
+    (
         "config/pon/qualified-work-task-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2066,6 +2073,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/tests/qualified_task_lifecycle_v3.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/tests/qualified_task_lifecycle_v3.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-oracle/Cargo.toml",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2353,6 +2367,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/examples/lifecycle_atomic_continuity.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/lifecycle_atomic_continuity.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/examples/lifecycle_continuity.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2385,6 +2406,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/ingress.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs"
         )),
     ),
     (
@@ -2430,10 +2458,24 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/public_cli.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/public_evaluation.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/public_evaluation.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs"
         )),
     ),
     (
@@ -2448,6 +2490,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/task_lifecycle.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v3.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v3.rs"
         )),
     ),
     (
@@ -2500,10 +2549,24 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v2.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v2.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v3.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v3.rs"
         )),
     ),
     (

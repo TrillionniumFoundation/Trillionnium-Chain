@@ -93,8 +93,12 @@ for computational hardness. No pure-hash or old-BFT automatic fallback is author
 
 ### 2.2 Executable application boundary
 
-The current mainline is a dedicated AI-work/model/service chain with twelve registered
-native commands, not an arbitrary user-contract VM. No EVM, Move or WASM backend is
+The mainline is a dedicated AI-work/model/service chain with twelve original closed
+application commands and explicit profile-gated native extensions. Signed task13,
+evaluation14..17, lifecycle18..21, and the revision8
+[V3 atomic renewal22](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md)
+have distinct context and gate rules; V3 refuses standalone19. Historical twelve-command
+parity and transfer benchmarks retain their original scope. This is not an arbitrary user-contract VM. No EVM, Move or WASM backend is
 selected. Fees and performance evidence apply to the named closed commands. A future
 VM decision needs explicit bytecode safety, deterministic metering, ABI, storage,
 upgrade/reorg semantics, tooling and module ownership; it cannot arrive through an
@@ -301,7 +305,7 @@ selectors actually ran. Neither mechanism supplies independent scientific author
 | Priority / workstream | Actual implemented boundary | Concrete next acceptance requirement |
 |---|---|---|
 | P0 work and public admission | Exact experimental transcript and original verification; native PreparedTask removes avoidable repeated product work; paired valid-producer costs and bounded development ingress retain open hostile-proof/Sybil qualification | Implement/reproduce adversarial shortcuts and same-target costs; join ordinary public ingress and demonstrate honest service under stated sustained attack. No queue count grants work hardness. |
-| P0 one native node | Native development CLI owns work/target decisions, branch persistence/reorg, receiver sync/confirmation and an allowlisted signed private-development ingress with durable inbound replay and client outbox; original M00/M01/M06 are reused | Finish persistent mining/mempool scheduling, open public discovery/gossip plus confidentiality, interruptible long history and ordinary Hepta/resource/effect integration. The private development path is not public or complete product acceptance. |
+| P0 one native node | Native development CLI owns work/target decisions, branch persistence/reorg, receiver sync/confirmation an allowlisted signed private-development ingress with durable inbound replay/client outbox, and explicit public-development-v2 resource-ticket intake with bounded Head/History and no durable guest authority; original M00/M01/M06 are reused | Finish persistent mining/mempool scheduling, open public discovery/gossip plus confidentiality, interruptible long history and ordinary Hepta/resource/effect integration. Both transport profiles remain development candidates; public-v2 resource bounds and local conformance do not grant public-service or complete product acceptance. |
 | P1 long-lived state and confirmation | Native branch/delta/checkpoint persistence, receiver verification and exact signed-request replay/outbox state coexist with the independent reference oracle; root maps/history scans still incur full-size costs | Persistent incremental authenticated roots and real WAN/open-peer integration; the controlled receiver is full-verifying, not succinct or globally fresh. Verify deep history without treating private authentication, transport budgets or retention as finality. |
 | P1 independent model value | E3 seals actual parent/candidate/strong controls/calibration/partitions; no-gain remains zero adoption and reward | Authorized new tasks, independent source/evaluation/withdrawal owners, untouched future windows and budget-matched strong controls. Retrospective splits or configured identities do not satisfy independence. |
 | P1 real resources and failures | Closed service receipt, finite quota/reward conservation and same-admin process/host fault observations | Real storage/serving obligations and funding, target-side effect reconciliation, independent operators, physical power loss and hostile public network. No chain undo may repeat a physical action. |

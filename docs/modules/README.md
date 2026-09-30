@@ -38,7 +38,10 @@ reference implementation mean the native production owner has been completed.
 
 ## Invariants, not document counts
 
-[Concrete invariant and failure schedules](../../config/pon/invariants-v2.json) bind every module to actual test functions and source. Binding verification is not a test pass. M06 contains native twelve-command execution. The native development composition adds M02 consensus decisions, a distinct M07/M08 SQLite owner and an allowlisted signed private-development ingress/outbox. Open public discovery/gossip, confidential transport, continuous miner/mempool lifecycle, ordinary Hepta integration and independent acceptance remain incomplete.
+[Concrete invariant and failure schedules](../../config/pon/invariants-v2.json) bind every module to actual test functions and source. Binding verification is not a test pass. M06 contains the original twelve-command execution plus explicit profile-gated
+signed task13, native evaluation14..17, task lifecycle18..21 and
+[V3 atomic renewal22](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md);
+V3 refuses standalone19. Historical parity measurements keep their original scope. The native development composition adds M02 consensus decisions, a distinct M07/M08 SQLite owner and an allowlisted signed private-development ingress/outbox. Open public discovery/gossip, confidential transport, continuous miner/mempool lifecycle, ordinary Hepta integration and independent acceptance remain incomplete.
 
 ## Responsibility and evidence
 

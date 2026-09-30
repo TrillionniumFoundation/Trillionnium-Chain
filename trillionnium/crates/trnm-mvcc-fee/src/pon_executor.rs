@@ -11,6 +11,7 @@ use trnm_crypto_primitives::qualified_work_task::{verify_development_statement, 
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_protocol::pon_wire::{hash, state_root, Envelope, Hash};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::{SignedQualifiedWorkTask, TaskPurpose};
 
 pub const SIGNED_TASK_PROFILE: &str = "signed-task-dev-v1";
@@ -89,7 +90,7 @@ pub struct Config {
     pub family: Hash,
     pub plan: Hash,
     pub evaluators: BTreeSet<String>,
-    pub fees: [u64; 22],
+    pub fees: [u64; 23],
     pub params: Value,
     pub model_registry: Value,
 }
@@ -227,6 +228,28 @@ impl Config {
                     &[&canonical(&registry)?]
                 )));
             }
+            ATOMIC_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-task-lifecycle-v3.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false
+                        && registry["consensus_revision"] == 8
+                        && registry["standalone_renew_disabled"] == true
+                        && registry["exact_contract"]["atomic_renew_bytes"] == 1028
+                        && registry["exact_contract"]["base_fee_units"]["22"] == 200,
+                    "CONFIG",
+                )?;
+                params["consensus_revision"] = json!(8);
+                params["chain_label"] = json!(format!("trnm-pon-task-lifecycle-devnet-8-{policy}"));
+                params["work_task_profile"] = json!(ATOMIC_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v3",
+                    &[&canonical(&registry)?]
+                )));
+            }
             _ => return Err("WORK_TASK_PROFILE"),
         }
         if policy == public_evaluation::PROFILE {
@@ -298,7 +321,7 @@ impl Config {
                 ],
             )
         };
-        let mut fees = [0; 22];
+        let mut fees = [0; 23];
         let mut tags = BTreeSet::new();
         for c in wire["commands"].as_array().ok_or("CONFIG")? {
             let tag = field(c, "tag")? as usize;
@@ -315,6 +338,7 @@ impl Config {
         for fee in &mut fees[18..=21] {
             *fee = 100;
         }
+        fees[22] = 200;
         let mut evaluators = BTreeSet::new();
         for i in 0_u64..3 {
             let seed = hash(b"DEV-ONLY-KEY", &[&i.to_le_bytes()]);
@@ -636,7 +660,15 @@ struct Prepared {
 fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> Result<Prepared> {
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
     require(
-        !(18..=21).contains(&tx.tag) || cfg.task_profile() == LIFECYCLE_TASK_PROFILE,
+        !(18..=21).contains(&tx.tag) || qualified_task_lifecycle::enabled(cfg),
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 19 || cfg.task_profile() == LIFECYCLE_TASK_PROFILE,
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 22 || cfg.task_profile() == ATOMIC_TASK_PROFILE,
         "WORK_TASK_PROFILE",
     )?;
     require(
@@ -1128,7 +1160,7 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             s.put(work_key, json!({"schema":"qualified-work-registration-v1","manifest":hex::encode(&tx.payload),"admitted_height":height,"manifest_id":hex::encode(statement.manifest_id())}));
             p.pos = p.bytes.len();
         }
-        18..=21 => {
+        18..=22 => {
             qualified_task_lifecycle::apply_verified_command(&mut s, tx, height, cfg)?;
             p.pos = tx.payload.len();
         }

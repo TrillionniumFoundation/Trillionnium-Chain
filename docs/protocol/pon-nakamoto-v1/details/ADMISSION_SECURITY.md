@@ -275,3 +275,16 @@ failure retains the already completed body bytes and its transport-error observa
 The observed honest sample denominator must survive any failed or starved requests.
 These local streams do not establish fairness under independent or rotating
 public identities, and elapsed hash rate is not an adversarial cost lower bound.
+
+## Explicit public development transport successor
+
+The [public-v2 contract](PUBLIC_INTAKE_V2.md) replaces the connection-work-v1
+shared short Hello/body deadline only when explicitly selected. It assigns fixed
+phase deadlines and connection/body/output/queue budgets, resource tickets to
+all public operations, bounded metadata/one-packet history reads, and no durable
+guest identity table. These are transport changes. The full experimental PNW1
+verifier, source admission, deterministic execution, branch rules and chainwork
+remain authoritative. Native calls already in execution are not preempted by a
+connection deadline. Saturation and serialized persistence can still deny honest
+service; physical deployment and a predeclared attack/service budget remain
+required. Local conformance does not remove the experimental work-profile gate.

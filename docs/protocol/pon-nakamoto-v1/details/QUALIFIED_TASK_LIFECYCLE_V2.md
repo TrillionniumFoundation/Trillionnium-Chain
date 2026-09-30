@@ -1,5 +1,9 @@
 # Q2 — renewable, revocable, bounded development task leases
 
+A separately selected [V3 atomic successor](QUALIFIED_TASK_LIFECYCLE_V3.md) fixes the
+sole-task gap when a producer includes tag19 without source tag21. V2 remains unchanged;
+its historical pair-command continuity runs do not prove atomic inclusion.
+
 The sole registry is [qualified-task-lifecycle-v2.json](../../../../config/pon/qualified-task-lifecycle-v2.json).
 This explicitly selected `signed-task-lifecycle-dev-v2` context uses consensus revision7,
 a fresh network/parameter/genesis commitment and separate source signature/statement-ID

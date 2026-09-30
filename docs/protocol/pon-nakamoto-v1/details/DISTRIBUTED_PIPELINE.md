@@ -12,15 +12,17 @@ distributed_pipeline run PRIVATE_CONFIG_JSON
 distributed_pipeline resume SAME_PRIVATE_CONFIG_JSON
 ```
 
-The producer, authenticated validator and full-sync confirmer run as three separate
+The producer, explicitly selected development validator and full-sync confirmer run as three separate
 processes with separate durable owners. Actual physical-host placement and native LAN
 routing must be observed by the external controller. A local-process test explicitly
 records that scope and cannot grant LAN or independent-operator acceptance.
 
 The producer constructs canonical signed tag1 transfers, explicitly uses the existing
 signed genesis maintenance task, completely verifies and admits its own packet, activates
-it and sends it through the existing authenticated protected Submit. The validator uses
-`serve_authenticated_protected`; the confirmer obtains a signed Head, independently
+it and sends it through the explicitly selected transport Submit. Config schema v1
+uses the existing authenticated protected listener; public-role schema v2 uses
+[public development intake v2](PUBLIC_INTAKE_V2.md) without a caller allowlist.
+The validator uses its selected native service; the confirmer obtains a signed Head, independently
 receives and verifies every history packet through the native owner, and calls its own
 `Node::confirmations`. Server-provided chainwork or confirmed booleans never substitute
 for the confirmer's local work, state, transaction membership or depth/work checks.
@@ -31,7 +33,7 @@ JSON duplicate/unknown fields reject. The exact fields are:
 
 | Field | Contract |
 |---|---|
-| schema | `pon-distributed-role-config-v1` |
+| schema | private `pon-distributed-role-config-v1` or explicit `pon-distributed-public-role-config-v2`; no implicit upgrade |
 | role | `producer`, `validator` or `confirmer` |
 | scope | `lan-development` or explicit `local-process-test` |
 | run_id | 1..64 ASCII letters, digits, underscore, hyphen or dot |
@@ -52,9 +54,9 @@ JSON duplicate/unknown fields reject. The exact fields are:
 | listen | validator SocketAddr; null for other roles |
 | peer | producer/confirmer SocketAddr; null for validator |
 | auth_secret | dedicated business identity file;64 lowercase hexadecimal digits, optional final newline;0600, regular single-link and no symlink |
-| peer_roster | validator's1..64 unique canonical public-key JSON array, at most16384 bytes; regular single-link, no group/other write; null for other roles |
+| peer_roster | private v1 validator:1..64 unique canonical public-key JSON array, at most16384 bytes, regular single-link, no group/other write; null for public v2 and other roles |
 | server_public | pinned validator Ed25519 public key; null for validator |
-| session_generation | matching1..i64::MAX on all roles |
+| session_generation | private v1: matching1..i64::MAX; public v2:0 on every role |
 
 LAN scope requires non-loopback, non-unspecified addresses and a nonzero port.
 Address selection is a configuration claim; it does not prove that the roles inhabit
@@ -167,3 +169,33 @@ cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-po
 
 This retained conformance test has local-process scope. A successful result is not a
 measurement of three physical machines or an independent public deployment.
+
+## Explicit public-role successor
+
+`pon-distributed-public-role-config-v2` selects `public-protected-development-v2`
+for every Submit, Head and History operation, with development16 bits/2000ms.
+It requires `session_generation=0` and no `peer_roster` for any role. Validator
+identity and client-pinned `server_public` still bind responses to the selected
+server and exact chain/transport context; they grant no task, evaluator or ledger
+authority. The existing v1 configuration retains its allowlist and nonzero
+durable session generation. Mixed options fail explicitly.
+
+Every receipt binds `transport_profile` and `transport_identity_authority` to the
+original exact configuration. Successful public calls retain actual solve trials,
+solve elapsed time and body bytes. Public callers inspect the authenticated
+business outcome; a signed refusal is a failed operation. Guest keys create no
+peer replay/outbox/audit rows. Public resume replays exact retained admitted
+packets and obtains new tickets; it does not mine replacements or rewind signed
+receipt history. Ambiguous response delivery remains an unknown operation outcome.
+
+The actual local-process conformance covers fresh and interrupted producer/
+confirmer executions, independent full native sync, matching durable roots/tips,
+transaction confirmation, zero guest identity rows and released shutdown pools.
+Its output remains labelled local-process-test and builder/source claims remain
+separate from physical host observations. The private v1 physical-LAN attempt at
+commit7d99848 failed from admission timeouts and stopped after two remotely
+admitted blocks; it is retained as a failure, not a public-v2 measurement. New
+physical-LAN and WAN campaigns require a new frozen source/binary and every
+actual attempt. Rates after process resume cannot divide the whole workload by
+only the final process segment's elapsed time; retain the full external duration
+or report the whole-run rate as unavailable.

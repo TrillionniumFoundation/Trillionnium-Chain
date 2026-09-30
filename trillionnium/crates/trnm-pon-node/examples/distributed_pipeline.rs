@@ -90,7 +90,10 @@ fn pin_of(fp: &Value) -> Result<SourcePin> {
 }
 fn validate_config(c: &Config, actual: &SourcePin) -> Result<()> {
     ensure(
-        c.schema == "pon-distributed-role-config-v1",
+        matches!(
+            c.schema.as_str(),
+            "pon-distributed-role-config-v1" | "pon-distributed-public-role-config-v2"
+        ),
         "CONFIG_SCHEMA",
     )?;
     ensure(
@@ -170,13 +173,17 @@ fn validate_config(c: &Config, actual: &SourcePin) -> Result<()> {
         "LIFETIME_BUDGET",
     )?;
     ensure(
-        (1..=i64::MAX as u64).contains(&c.session_generation),
+        if is_public(c) {
+            c.session_generation == 0
+        } else {
+            (1..=i64::MAX as u64).contains(&c.session_generation)
+        },
         "AUTH_GENERATION",
     )?;
     if c.role == "validator" {
         ensure(
             c.listen.is_some()
-                && c.peer_roster.is_some()
+                && c.peer_roster.is_some() != is_public(c)
                 && c.peer.is_none()
                 && c.server_public.is_none(),
             "VALIDATOR_OPTIONS",
@@ -231,12 +238,77 @@ fn secret(c: &Config) -> Result<String> {
 fn settings(c: &Config) -> Result<Settings> {
     Settings::development_with_profiles(Some(c.genesis_time), &c.evaluation_policy, &c.task_profile)
 }
-fn client(c: &Config, secret: &str) -> Result<AuthenticatedClient> {
-    AuthenticatedClient::new(
-        DevelopmentIdentity::from_secret_hex(secret)?,
-        c.server_public.clone().ok_or("SERVER_PUBLIC")?,
-        c.session_generation,
-    )
+fn is_public(c: &Config) -> bool {
+    c.schema == "pon-distributed-public-role-config-v2"
+}
+enum RoleClient {
+    Authenticated(AuthenticatedClient),
+    Public {
+        identity: DevelopmentIdentity,
+        server_public: String,
+    },
+}
+impl RoleClient {
+    fn pending(&self, node: &Node) -> Result<Option<Request>> {
+        match self {
+            Self::Authenticated(client) => ingress::pending_authenticated_request(node, client),
+            Self::Public { .. } => Ok(None),
+        }
+    }
+    fn call(
+        &self,
+        c: &Config,
+        node: &mut Node,
+        request: &Request,
+        protected: bool,
+    ) -> Result<(Value, Option<Value>)> {
+        let address = c.peer.ok_or("PEER")?;
+        match self {
+            Self::Authenticated(client) => {
+                let value = if protected {
+                    ingress::call_authenticated_durable_protected(node, address, request, client)?
+                } else {
+                    ingress::call_authenticated_durable(node, address, request, client)?
+                };
+                Ok((value, None))
+            }
+            Self::Public {
+                identity,
+                server_public,
+            } => {
+                let reply = ingress::public_v2::call_public_protected_v2(
+                    address,
+                    request,
+                    node.settings(),
+                    server_public,
+                    identity,
+                    ingress::public_v2::PublicPolicy::development(),
+                )?;
+                if !reply.ok {
+                    return Err(format!("PUBLIC_REMOTE_REFUSED:{}", reply.value).into());
+                }
+                let cost = json!({"solve_trials":reply.solve_trials,"solve_elapsed_ns":reply.solve_elapsed_ns,
+                    "body_bytes_sent":reply.body_bytes_sent,"identity_authority":false,"durable_guest_operation":false});
+                Ok((reply.value, Some(cost)))
+            }
+        }
+    }
+}
+fn client(c: &Config, secret: &str) -> Result<RoleClient> {
+    let identity = DevelopmentIdentity::from_secret_hex(secret)?;
+    let server_public = c.server_public.clone().ok_or("SERVER_PUBLIC")?;
+    if is_public(c) {
+        Ok(RoleClient::Public {
+            identity,
+            server_public,
+        })
+    } else {
+        Ok(RoleClient::Authenticated(AuthenticatedClient::new(
+            identity,
+            server_public,
+            c.session_generation,
+        )?))
+    }
 }
 fn save_new(path: &Path, bytes: &[u8]) -> Result<()> {
     let mut f = OpenOptions::new()
@@ -282,7 +354,7 @@ impl Receipts {
                     .map(|raw| hex::encode(hash(b"distributed-peer-roster-file-v1", &[&raw])))
             })
             .transpose()?;
-        let common = json!({"run_id":c.run_id,"role":c.role,"scope":c.scope,"source":pin_of(&fp)?,"source_inventory_file":"fingerprint.json","config_file":"config.json","config_file_digest":hex::encode(hash(b"distributed-role-config-file-v1", &[raw_config])),"peer_roster_file_digest":roster_digest,"role_public":key.public_key(),"genesis_time":c.genesis_time,"evaluation_policy":c.evaluation_policy,"task_profile":c.task_profile,"pattern":c.pattern,"data_blocks":c.data_blocks,"transactions_per_block":c.transactions_per_block,"drain_blocks":c.drain_blocks,"pace_ms":c.pace_ms,"session_generation":c.session_generation,"lan_requested":c.scope=="lan-development","physical_host_verified":false,"public_network_ready":false,"production_activation":false,"independent_accepted":false,"work_profile_qualified":false});
+        let common = json!({"run_id":c.run_id,"role":c.role,"scope":c.scope,"source":pin_of(&fp)?,"source_inventory_file":"fingerprint.json","config_file":"config.json","config_file_digest":hex::encode(hash(b"distributed-role-config-file-v1", &[raw_config])),"peer_roster_file_digest":roster_digest,"role_public":key.public_key(),"genesis_time":c.genesis_time,"evaluation_policy":c.evaluation_policy,"task_profile":c.task_profile,"pattern":c.pattern,"data_blocks":c.data_blocks,"transactions_per_block":c.transactions_per_block,"drain_blocks":c.drain_blocks,"pace_ms":c.pace_ms,"session_generation":c.session_generation,"transport_profile":if is_public(c){ingress::public_v2::PROFILE}else{"connection-work-v1"},"transport_identity_authority":!is_public(c),"lan_requested":c.scope=="lan-development","physical_host_verified":false,"public_network_ready":false,"production_activation":false,"independent_accepted":false,"work_profile_qualified":false});
         if !resume {
             fs::create_dir(&c.run_root)?;
             fs::set_permissions(&c.run_root, fs::Permissions::from_mode(0o700))?;
@@ -636,7 +708,7 @@ fn retain_packets(c: &Config, node: &Node) -> Result<()> {
 fn submit_packet(
     c: &Config,
     node: &mut Node,
-    auth: &AuthenticatedClient,
+    auth: &RoleClient,
     packet: &Packet,
     receipts: &mut Receipts,
     recovered: bool,
@@ -647,13 +719,8 @@ fn submit_packet(
     };
     for attempt in 0..8 {
         let attempted = Instant::now();
-        match ingress::call_authenticated_durable_protected(
-            node,
-            c.peer.ok_or("PEER")?,
-            &request,
-            auth,
-        ) {
-            Ok(response) => {
+        match auth.call(c, node, &request, true) {
+            Ok((response, transport_cost)) => {
                 ensure(
                     response["block"] == hex::encode(id)
                         && response["active"]
@@ -662,7 +729,7 @@ fn submit_packet(
                         && (recovered || response["active"] == hex::encode(id)),
                     "SUBMIT_ACK",
                 )?;
-                receipts.emit("submit-attempt",json!({"height":packet.header.height,"block":hex::encode(id),"attempt":attempt,"recovery_replay":recovered,"success":true,"elapsed_ns":attempted.elapsed().as_nanos(),"response":response}))?;
+                receipts.emit("submit-attempt",json!({"height":packet.header.height,"block":hex::encode(id),"attempt":attempt,"recovery_replay":recovered,"success":true,"elapsed_ns":attempted.elapsed().as_nanos(),"response":response,"transport_cost":transport_cost}))?;
                 return Ok(());
             }
             Err(error) => {
@@ -705,7 +772,7 @@ fn producer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) -> 
     if resume {
         checked_workload(c, &node)?;
         retain_packets(c, &node)?;
-        if let Some(request) = ingress::pending_authenticated_request(&node, &auth)? {
+        if let Some(request) = auth.pending(&node)? {
             let Request::Submit { packet } = request else {
                 return Err("PRODUCER_PENDING_OPERATION".into());
             };
@@ -760,28 +827,39 @@ fn producer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) -> 
     receipts.emit("producer-complete",json!({"state":node.stats()?,"elapsed_ns":started.elapsed().as_nanos(),"duration_scope":"current process segment only","submitted_transfers":c.data_blocks*c.transactions_per_block,"data_blocks":c.data_blocks,"drain_blocks":c.drain_blocks,"task_height_limit":1000,"gpu_used":false}))
 }
 fn validator(c: &Config, receipts: &mut Receipts, secret: &str) -> Result<()> {
-    let peers: Vec<String> = serde_json::from_slice(&owned_read(
-        c.peer_roster.as_ref().ok_or("ROSTER")?,
-        16384,
-        false,
-    )?)?;
-    let auth = AuthenticatedServer::new(
-        DevelopmentIdentity::from_secret_hex(secret)?,
-        peers,
-        c.session_generation,
-    )?;
+    let identity = DevelopmentIdentity::from_secret_hex(secret)?;
+    let server_public = identity.public_key().to_owned();
     let node = Node::open(&c.run_root.join("store"), settings(c)?, c.workers)?;
     let listener = TcpListener::bind(c.listen.ok_or("LISTEN")?)?;
-    receipts.emit("validator-listening",json!({"pid":std::process::id(),"address":listener.local_addr()?.to_string(),"state":node.stats()?,"server_public":auth.public_key(),"admission_profile":"connection-work-v1","admission_bits":16,"admission_ttl_ms":2000,"confidentiality":false}))?;
+    receipts.emit("validator-listening",json!({"pid":std::process::id(),"address":listener.local_addr()?.to_string(),"state":node.stats()?,"server_public":server_public,"admission_profile":if is_public(c){ingress::public_v2::PROFILE}else{"connection-work-v1"},"admission_bits":16,"admission_ttl_ms":2000,"confidentiality":false}))?;
     let started = Instant::now();
-    let metrics = ingress::serve_authenticated_protected(
-        listener,
-        node,
-        Duration::from_secs(c.server_seconds),
-        Arc::new(AtomicBool::new(false)),
-        auth,
-        ingress::AdmissionPolicy::development(),
-    )?;
+    let metrics = if is_public(c) {
+        serde_json::to_value(ingress::public_v2::serve_public_protected_v2(
+            listener,
+            node,
+            Duration::from_secs(c.server_seconds),
+            Arc::new(AtomicBool::new(false)),
+            ingress::public_v2::PublicServer::new(
+                identity,
+                ingress::public_v2::PublicPolicy::development(),
+            )?,
+        )?)?
+    } else {
+        let peers: Vec<String> = serde_json::from_slice(&owned_read(
+            c.peer_roster.as_ref().ok_or("ROSTER")?,
+            16384,
+            false,
+        )?)?;
+        let auth = AuthenticatedServer::new(identity, peers, c.session_generation)?;
+        serde_json::to_value(ingress::serve_authenticated_protected(
+            listener,
+            node,
+            Duration::from_secs(c.server_seconds),
+            Arc::new(AtomicBool::new(false)),
+            auth,
+            ingress::AdmissionPolicy::development(),
+        )?)?
+    };
     let node = Node::open(&c.run_root.join("store"), settings(c)?, c.workers)?;
     retain_packets(c, &node)?;
     receipts.emit(
@@ -801,15 +879,15 @@ fn validator(c: &Config, receipts: &mut Receipts, secret: &str) -> Result<()> {
 fn read_call(
     c: &Config,
     node: &mut Node,
-    auth: &AuthenticatedClient,
+    auth: &RoleClient,
     request: &Request,
     receipts: &mut Receipts,
 ) -> Result<Value> {
     for attempt in 0..8 {
         let started = Instant::now();
-        match ingress::call_authenticated_durable(node, c.peer.ok_or("PEER")?, request, auth) {
-            Ok(value) => {
-                receipts.emit("read-attempt",json!({"request":request,"attempt":attempt,"success":true,"elapsed_ns":started.elapsed().as_nanos()}))?;
+        match auth.call(c, node, request, false) {
+            Ok((value, transport_cost)) => {
+                receipts.emit("read-attempt",json!({"request":request,"attempt":attempt,"success":true,"elapsed_ns":started.elapsed().as_nanos(),"transport_cost":transport_cost}))?;
                 return Ok(value);
             }
             Err(error) => {
@@ -823,7 +901,7 @@ fn read_call(
 fn sync_checked(
     c: &Config,
     node: &mut Node,
-    auth: &AuthenticatedClient,
+    auth: &RoleClient,
     tip: [u8; 32],
     mut after: [u8; 32],
     receipts: &mut Receipts,
@@ -857,7 +935,7 @@ fn confirmer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) ->
     if resume {
         checked_workload(c, &node)?;
         retain_packets(c, &node)?;
-        if let Some(request) = ingress::pending_authenticated_request(&node, &auth)? {
+        if let Some(request) = auth.pending(&node)? {
             ensure(
                 matches!(request, Request::Head | Request::History { .. }),
                 "CONFIRMER_PENDING_OPERATION",
@@ -1200,16 +1278,10 @@ mod tests {
         let request = Request::Submit {
             packet: hex::encode(packet.encode().unwrap()),
         };
-        assert!(
-            ingress::call_authenticated_durable_protected(&mut node, address, &request, &auth)
-                .is_err()
-        );
+        assert!(auth.call(&c, &mut node, &request, true).is_err());
         drop(node);
         let mut node = Node::open(&c.run_root.join("store"), settings(&c).unwrap(), 1).unwrap();
-        assert_eq!(
-            ingress::pending_authenticated_request(&node, &auth).unwrap(),
-            Some(request)
-        );
+        assert_eq!(auth.pending(&node).unwrap(), Some(request));
         let listener = TcpListener::bind(address).unwrap();
         let server_root = d.path().join("server");
         let server = Node::open(&server_root, settings(&c).unwrap(), 1).unwrap();
@@ -1228,9 +1300,7 @@ mod tests {
             )
         });
         submit_packet(&c, &mut node, &auth, &packet, &mut receipts, true).unwrap();
-        assert!(ingress::pending_authenticated_request(&node, &auth)
-            .unwrap()
-            .is_none());
+        assert!(auth.pending(&node).unwrap().is_none());
         assert_eq!(node.active().unwrap().0, id);
         assert_eq!(
             node.packet(id).unwrap().encode().unwrap(),

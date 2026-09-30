@@ -5,6 +5,8 @@ Decision date: 2026-09-28. Primary owner M00; consensus M02; cross-module consum
 The sole work sequence remains the [development plan](../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 Machine contract: [pon-nakamoto-v1.json](../../../config/pon-nakamoto-v1.json).
 Current entrypoint profiles and audit gates: [public readiness](details/PUBLIC_READINESS.md).
+Atomic task renewal: [lifecycle V3](details/QUALIFIED_TASK_LIFECYCLE_V3.md).
+Versioned public transport: [public intake v2](details/PUBLIC_INTAKE_V2.md).
 Pinned tool dependency review: [dependency security](details/DEPENDENCY_SECURITY.md).
 
 ## Architectural decision

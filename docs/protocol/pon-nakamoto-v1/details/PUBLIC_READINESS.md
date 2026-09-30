@@ -13,23 +13,27 @@ missing work-security or real model-benefit claims.
 | historical task registration | `--task-profile legacy-task-v1` (default) | twelve original PNX1 commands; tag12 records a nonzero task commitment; original golden bytes/roots remain applicable |
 | signed task development context | `--task-profile signed-task-dev-v1` | distinct revision5 genesis/network/parameters; tag13 is652 signed payload bytes; rejects historical tag12 and implicit maintenance; finite16 genesis demand records and public development source key |
 | renewable task development context | `--task-profile signed-task-lifecycle-dev-v2` | distinct revision7 namespace; tags18/19 open/renew344-byte leases, tag20 revokes144 bytes, tag21 registers684-byte statements;32 bounded slots, optimistic revision, monotonic generation and one-output meter preserved on renewal |
+| atomic renewable task development context | `--task-profile signed-task-lifecycle-dev-v3` | distinct revision8 namespace; [atomic successor](QUALIFIED_TASK_LIFECYCLE_V3.md) tag22 couples requester renewal and exact source signature in1028 payload bytes; standalone tag19 refuses; legacy V2 is unchanged |
 | native evaluation development context | `--evaluation-policy native-public-evaluation-dev-v1` | tags14/15 commit/reveal,16 signed conflict evidence,17 bounded record-only appeal;128-height frozen rounds, mandatory close and positive conflict-free adoption guard |
 | real small-model development family | `--model-profile smollm2-135m-cpu-dev-v1` with native evaluation | frozen135M decoder/tokenizer and rank4 adapter interface; distinct family/chain parameters and2MiB candidate limit; actual external CPU observations do not grant native authenticated ML execution or quality acceptance |
 | full task material mining | `mine` / `make` with `--task-manifest`, `--task-model`, `--task-input` | exact source statement, independently pinned genesis demand context, model/input derivation, parent registration and signed height window; no self-registration by its own work block |
 | explicit bootstrap | `mine` / `make --task-bootstrap` | exact genesis maintenance statement/material; zero useful-output credit; expires at height1000 |
 | manifest fixture generation | `task-fixture` plus model/input, demand index, purpose, source nonce and height window | reproducible public-key fixture; no genuine demand, exclusive custody, legal consent or production DA certificate |
 | historical ingress | `--admission-profile legacy-development` (default) | unchanged development listener; no admission-work claim |
+| public development ingress/client | `serve` / `push` / `head` / `history` / `sync --admission-profile public-protected-development-v2` | [separate versioned public intake](PUBLIC_INTAKE_V2.md); guest resource tickets for all operations, no allowlist or durable guest authority, independent full packet verification on sync; explicit `--public-development-network` required for serve |
 | protected ingress/client | `serve` / `push --admission-profile connection-work-v1` | hello/ready before Submit body, exact-wire challenge and single connection-local solution; strict clients refuse downgrade before exposing Submit; ordinary read-only requests retain their bounded path |
 
 Protected `serve` additionally accepts `--admission-bits`8..20 and
 `--admission-ttl-ms`100..2000. Default16 bits/2000ms is a development experiment,
 not an accepted public attacker budget. The client search cap and timeout can reject an
-honest request at excessive difficulty; record that failure. Non-loopback development
-listeners still require signed allowlisted authentication. A puzzle changes neither the
+honest request at excessive difficulty; record that failure. Non-loopback legacy and connection-work-v1 development
+listeners require signed allowlisted authentication. The explicit public-v2 successor
+accepts unknown transport keys with per-operation resource tickets; its bounded
+resources are not public service or work-hardness qualification. A puzzle changes neither the
 work relation, block validity, chainwork, reward nor confirmation policy. Its parameters
 are transport-profile committed, separately from the chain context.
 
-The protected development listener has two proof-capable socket workers and one
+The connection-work-v1 protected development listener has two proof-capable socket workers and one
 reserved read-only worker. Initial frame and Hello/body reads share a100ms absolute
 budget; the reserved worker refuses proof Hello traffic before accepting a body.
 After such a refusal it yields for2ms to reduce accept competition with proof workers;
@@ -41,7 +45,7 @@ Untrusted protected parse/auth/preface refusals have at most128 Unicode characte
 and a100ms absolute response budget, also committed by the transport profile.
 
 Authoritative implementations are `trnm-pon-node/src/main.rs`, `src/ingress.rs`,
-`src/store.rs`, `trnm-mvcc-fee/src/pon_executor.rs` and the strict
+`src/ingress/public_v2.rs`, `src/store.rs`, `trnm-mvcc-fee/src/pon_executor.rs` and the strict
 [qualified-task codec and admission](QUALIFIED_WORK_TASK.md). The namespace owner
 refuses a mismatched genesis/schema; no stored signature or historical state is reinterpreted.
 PNH1 remains318 bytes and the work transcript remains49188 bytes. The source statement
@@ -56,7 +60,10 @@ but neither a used demand nor the same matrix task can be renewed through tag13.
 The16-record testing context therefore has a finite lifecycle and cannot promise
 indefinite production liveness. The explicit [lifecycle successor](QUALIFIED_TASK_LIFECYCLE_V2.md)
 adds native lease open/renew/revoke, retained source sequences and generation-safe slot
-recycling. Actual Node tests exercise renewal, revoke, reopen and heavier-fork replacement.
+recycling. V2 standalone renewal can invalidate the sole task statement and stop mining;
+its paired local transactions do not guarantee consensus atomicity. The explicit
+[atomic V3 successor](QUALIFIED_TASK_LIFECYCLE_V3.md) uses one tag22 and refuses
+standalone tag19. Actual Node tests exercise renewal, revoke, reopen and heavier-fork replacement.
 It still requires genuine authorized requesters, available materials, timely renewal and
 an accepted work-cost class. Public development keys provide none of those owner attestations.
 

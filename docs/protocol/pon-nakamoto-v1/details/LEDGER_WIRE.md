@@ -7,7 +7,9 @@ Tag13 and its new parent-admission rules belong only to that distinct developmen
 context. The explicit revision6 native evaluation policy adds tags14..17 for frozen
 commit/reveal, signed conflict evidence and bounded archived appeals; it refuses legacy
 direct-score tag7. Revision7 [renewable task leases](QUALIFIED_TASK_LIFECYCLE_V2.md)
-adds tags18..21 and refuses historical task tags12/13. These payload widths and exact
+adds tags18..21 and refuses historical task tags12/13. Revision8
+[V3 atomic renewal](QUALIFIED_TASK_LIFECYCLE_V3.md) retains18/20/21, adds exact1028B
+tag22 and refuses standalone19; its fresh registry/network/parameters do not reinterpret V2. These payload widths and exact
 phase/error/state rules are specified by [PUBLIC_EVALUATION_LIFECYCLE](PUBLIC_EVALUATION_LIFECYCLE.md)
 and the lifecycle successor, alongside their versioned JSON registries and native tests.
 [Current CLI profiles and remaining public gates](PUBLIC_READINESS.md) bind
@@ -229,8 +231,9 @@ BlockId with altered certificate/body rejects and cannot poison the valid stored
 
 ## Application scope and non-goals of this mainline
 
-This PoN mainline is a dedicated AI-work/model/service ledger with the twelve closed
-native commands in the canonical registry. It is not a general-purpose user-deployed
+This PoN mainline is a dedicated AI-work/model/service ledger with twelve original closed
+native commands in the base registry and explicit profile-gated successor tags13..22.
+The exact selected context determines enabled commands; V3 refuses19 and task12/13. It is not a general-purpose user-deployed
 contract VM. There is no arbitrary bytecode deployment, EVM opcode dispatch, Solidity ABI,
 Move package installation, reentrant contract call or user-selected host function.
 Model artifacts are bounded data, not executable contracts. Local Hepta actions remain

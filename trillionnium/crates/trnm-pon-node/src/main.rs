@@ -155,6 +155,41 @@ fn admission_profile(args: &BTreeMap<String, String>) -> Result<bool> {
         _ => Err("ADMISSION_PROFILE".into()),
     }
 }
+fn public_profile(args: &BTreeMap<String, String>) -> bool {
+    args.get("--admission-profile").map(String::as_str) == Some(ingress::public_v2::PROFILE)
+}
+fn public_policy(args: &BTreeMap<String, String>) -> Result<ingress::public_v2::PublicPolicy> {
+    ingress::public_v2::PublicPolicy::new(
+        u8::try_from(number(args, "--admission-bits", 16)?)
+            .map_err(|_| Error::from("PUBLIC_POLICY"))?,
+        Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
+    )
+}
+fn public_identity(args: &BTreeMap<String, String>) -> Result<ingress::DevelopmentIdentity> {
+    if args.contains_key("--peer-roster")
+        || args.contains_key("--session-generation")
+        || args.contains_key("--authenticated-development-network")
+    {
+        return Err("PUBLIC_IDENTITY_OPTIONS".into());
+    }
+    secret_identity(need(args, "--auth-secret")?)
+}
+fn public_call(
+    args: &BTreeMap<String, String>,
+    request: &ingress::Request,
+    settings: &Settings,
+) -> Result<ingress::public_v2::PublicReply> {
+    ingress::public_v2::call_public_protected_v2(
+        need(args, "--peer")?
+            .parse()
+            .map_err(|_| Error::from("PEER_ADDRESS"))?,
+        request,
+        settings,
+        need(args, "--server-public")?,
+        &public_identity(args)?,
+        public_policy(args)?,
+    )
+}
 
 fn output(path: &str, bytes: &[u8]) -> Result<()> {
     let mut file = OpenOptions::new().create_new(true).write(true).open(path)?;
@@ -173,12 +208,15 @@ fn run() -> Result<Value> {
     let mut raw = std::env::args().skip(1);
     let command = raw
         .next()
-        .ok_or("command: status|mine|submit|export|confirm|sync|serve|push")?;
+        .ok_or("command: status|mine|submit|export|confirm|sync|serve|push|head|history")?;
     let mut args = BTreeMap::new();
     while let Some(key) = raw.next() {
         let value = if matches!(
             key.as_str(),
-            "--development" | "--authenticated-development-network" | "--task-bootstrap"
+            "--development"
+                | "--authenticated-development-network"
+                | "--public-development-network"
+                | "--task-bootstrap"
         ) {
             "true".into()
         } else {
@@ -202,19 +240,24 @@ fn run() -> Result<Value> {
         "confirm" => "--transaction --block",
         "confirm-batch" => "--queries",
         "sync" => "--peer --tip --after --pages",
+        "head" => "--peer",
+        "history" => "--peer --tip --after",
         "serve" => "--listen --seconds",
         _ => return Err("UNKNOWN_COMMAND".into()),
     };
     let authentication_options = match command.as_str() {
         "serve" => {
-            "--authenticated-development-network --auth-secret --peer-roster --session-generation"
+            "--authenticated-development-network --public-development-network --auth-secret --peer-roster --session-generation"
         }
         "push" | "sync" => "--auth-secret --server-public --session-generation",
+        "head" | "history" => "--auth-secret --server-public",
         _ => "",
     };
     let admission_options = match command.as_str() {
         "serve" => "--admission-profile --admission-bits --admission-ttl-ms",
-        "push" => "--admission-profile",
+        "push" | "sync" | "head" | "history" => {
+            "--admission-profile --admission-bits --admission-ttl-ms"
+        }
         _ => "",
     };
     let allowed = format!(
@@ -225,7 +268,14 @@ fn run() -> Result<Value> {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
         }
     }
-    if matches!(command.as_str(), "serve" | "sync" | "push") && args.contains_key("--logical-now") {
+    if !public_profile(&args) {
+        admission_profile(&args)?;
+    }
+    if matches!(
+        command.as_str(),
+        "serve" | "sync" | "push" | "head" | "history"
+    ) && args.contains_key("--logical-now")
+    {
         return Err("NETWORK_USES_LOCAL_WALL_CLOCK".into());
     }
     let evaluation_policy = args
@@ -252,6 +302,33 @@ fn run() -> Result<Value> {
             .map(String::as_str)
             .unwrap_or("linear-expert-dev-v1"),
     )?;
+    if !public_profile(&args)
+        && (args.contains_key("--public-development-network")
+            || (command != "serve"
+                && (args.contains_key("--admission-bits")
+                    || args.contains_key("--admission-ttl-ms"))))
+    {
+        return Err("PUBLIC_PROFILE_REQUIRED".into());
+    }
+    if matches!(command.as_str(), "head" | "history") {
+        if !public_profile(&args) {
+            return Err("PUBLIC_PROFILE_REQUIRED".into());
+        }
+        let request = if command == "head" {
+            ingress::Request::Head
+        } else {
+            ingress::Request::History {
+                tip: need(&args, "--tip")?.into(),
+                after: args
+                    .get("--after")
+                    .cloned()
+                    .unwrap_or(hex::encode(settings.genesis())),
+            }
+        };
+        return Ok(serde_json::to_value(public_call(
+            &args, &request, &settings,
+        )?)?);
+    }
     if command == "task-fixture" {
         if settings.task_profile() != "signed-task-dev-v1" {
             return Err("SIGNED_TASK_PROFILE_REQUIRED".into());
@@ -283,7 +360,6 @@ fn run() -> Result<Value> {
         );
     }
     if command == "push" {
-        let protected = admission_profile(&args)?;
         let packet = Packet::decode(&read(need(&args, "--packet")?, 1_048_576)?)?;
         let address = need(&args, "--peer")?
             .parse()
@@ -291,6 +367,12 @@ fn run() -> Result<Value> {
         let request = ingress::Request::Submit {
             packet: hex::encode(packet.encode()?),
         };
+        if public_profile(&args) {
+            return Ok(serde_json::to_value(public_call(
+                &args, &request, &settings,
+            )?)?);
+        }
+        let protected = admission_profile(&args)?;
         if let Some(authentication) = authenticated_client(&args)? {
             let mut owner = Node::open(
                 Path::new(need(&args, "--store")?),
@@ -362,25 +444,29 @@ fn run() -> Result<Value> {
                 let bootstrap = args.contains_key("--task-bootstrap");
                 if matches!(
                     node.settings().task_profile(),
-                    "signed-task-dev-v1" | "signed-task-lifecycle-dev-v2"
+                    "signed-task-dev-v1"
+                        | "signed-task-lifecycle-dev-v2"
+                        | "signed-task-lifecycle-dev-v3"
                 ) {
                     if bootstrap && files_present.iter().any(|present| *present) {
                         return Err("TASK_OPTIONS".into());
                     }
                     let (wire, model, input) = if bootstrap {
-                        let wire =
-                            if node.settings().task_profile() == "signed-task-lifecycle-dev-v2" {
-                                node.settings()
-                                    .bootstrap_lifecycle_task()?
-                                    .signed
-                                    .encode()
-                                    .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?
-                            } else {
-                                node.settings()
-                                    .bootstrap_task_statement()?
-                                    .encode()
-                                    .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?
-                            };
+                        let wire = if matches!(
+                            node.settings().task_profile(),
+                            "signed-task-lifecycle-dev-v2" | "signed-task-lifecycle-dev-v3"
+                        ) {
+                            node.settings()
+                                .bootstrap_lifecycle_task()?
+                                .signed
+                                .encode()
+                                .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?
+                        } else {
+                            node.settings()
+                                .bootstrap_task_statement()?
+                                .encode()
+                                .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?
+                        };
                         let (a, b) = trnm_pon_node::maintenance();
                         (
                             wire,
@@ -397,8 +483,10 @@ fn run() -> Result<Value> {
                             read(need(&args, "--task-input")?, 16384)?,
                         )
                     };
-                    let lifecycle =
-                        node.settings().task_profile() == "signed-task-lifecycle-dev-v2";
+                    let lifecycle = matches!(
+                        node.settings().task_profile(),
+                        "signed-task-lifecycle-dev-v2" | "signed-task-lifecycle-dev-v3"
+                    );
                     let manifest = if lifecycle {
                         trnm_protocol::qualified_work_task::lifecycle_v2::SignedLifecycleTaskV2::decode(&wire).map_err(|e|Error::from(format!("TASK_MANIFEST:{e:?}")))?.manifest
                     } else {
@@ -482,7 +570,47 @@ fn run() -> Result<Value> {
                 .map(|s| digest(s))
                 .transpose()?
                 .unwrap_or(node.settings().genesis());
-            if let Some(authentication) = authenticated_client(&args)? {
+            if public_profile(&args) {
+                let pages = number(&args, "--pages", 256)?;
+                if !(1..=4096).contains(&pages) {
+                    return Err("SYNC_BUDGET".into());
+                }
+                let mut cursor = after;
+                let mut complete = cursor == tip;
+                let mut trials = 0u64;
+                for _ in 0..pages {
+                    if complete {
+                        break;
+                    }
+                    let reply = public_call(
+                        &args,
+                        &ingress::Request::History {
+                            tip: hex::encode(tip),
+                            after: hex::encode(cursor),
+                        },
+                        node.settings(),
+                    )?;
+                    trials = trials
+                        .checked_add(reply.solve_trials)
+                        .ok_or("PUBLIC_TRIALS")?;
+                    if !reply.ok {
+                        return Err(format!("PUBLIC_REMOTE_REFUSED:{}", reply.value).into());
+                    }
+                    let page: ingress::Page = serde_json::from_value(reply.value)?;
+                    complete = page.complete;
+                    cursor = ingress::receive_page(&mut node, page, tip, cursor, ingress::now()?)?;
+                }
+                if !complete {
+                    return Err(format!(
+                        "INCOMPLETE_HISTORY:page_budget:after={}",
+                        hex::encode(cursor)
+                    )
+                    .into());
+                }
+                // A signed remote page is only transport evidence; receive_page owns
+                // complete native verification and activation of the fixed tip.
+                json!({"verified_tip":hex::encode(cursor),"state":node.stats()?,"transport_solve_trials":trials,"public_network_ready":false})
+            } else if let Some(authentication) = authenticated_client(&args)? {
                 let verified = ingress::sync_from_authenticated_durable(
                     &mut node,
                     address,
@@ -504,6 +632,39 @@ fn run() -> Result<Value> {
             }
         }
         "serve" => {
+            if public_profile(&args) {
+                if args.get("--public-development-network").map(String::as_str) != Some("true")
+                    || args.contains_key("--server-public")
+                {
+                    return Err("EXPLICIT_PUBLIC_DEVELOPMENT_REQUIRED".into());
+                }
+                let identity = public_identity(&args)?;
+                let server_public = identity.public_key().to_owned();
+                let listener = std::net::TcpListener::bind(
+                    args.get("--listen")
+                        .map(String::as_str)
+                        .unwrap_or("127.0.0.1:0"),
+                )?;
+                let policy = public_policy(&args)?;
+                println!(
+                    "{}",
+                    json!({"event":"listening","address":listener.local_addr()?.to_string(),
+                    "state":node.stats()?,"server_public":server_public,"scope":"public-development-unqualified",
+                    "admission_profile":ingress::public_v2::PROFILE,"admission_profile_digest":hex::encode(policy.id()),
+                    "confidentiality":false,"identity_authority":false,"public_network_ready":false,"production_activation":false})
+                );
+                std::io::stdout().flush()?;
+                let metrics = ingress::public_v2::serve_public_protected_v2(
+                    listener,
+                    node,
+                    Duration::from_secs(number(&args, "--seconds", 30)?),
+                    Arc::new(AtomicBool::new(false)),
+                    ingress::public_v2::PublicServer::new(identity, policy)?,
+                )?;
+                return Ok(
+                    json!({"result":metrics,"public_network_ready":false,"production_activation":false}),
+                );
+            }
             let protected = admission_profile(&args)?;
             if !protected
                 && (args.contains_key("--admission-bits")
@@ -577,7 +738,15 @@ fn run() -> Result<Value> {
 }
 fn main() {
     match run() {
-        Ok(value) => println!("{value}"),
+        Ok(value) => {
+            let refused = value.get("ok") == Some(&Value::Bool(false));
+            println!("{value}");
+            // Preserve the authenticated denial as structured stdout while making
+            // the command unsuccessful for shell callers and campaign supervisors.
+            if refused {
+                std::process::exit(2);
+            }
+        }
         Err(error) => {
             eprintln!("{error}");
             std::process::exit(2);

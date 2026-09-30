@@ -13,9 +13,15 @@ use trnm_protocol::{
             DEMAND_SLOTS, LIFECYCLE_TASK_BYTES, OPEN_TAG, PROFILE, REGISTER_TAG, RENEW_TAG,
             REVOKE_TAG,
         },
+        lifecycle_v3::{AtomicRenewTaskV3, ATOMIC_RENEW_TAG, PROFILE as ATOMIC_PROFILE},
         QualifiedWorkTask, TaskPurpose, LOGICAL_MULTIPLY_ADD_UNITS, MATRIX_ARTIFACT_BYTES,
     },
 };
+
+/// Shared bounded codecs; the configured network/parameters distinguish V2 and V3.
+pub fn enabled(cfg: &Config) -> bool {
+    matches!(cfg.task_profile(), PROFILE | ATOMIC_PROFILE)
+}
 
 pub const SLOT_PREFIX: &str = "qualified-demand-slot-v2:";
 pub const GENERATION_KEY: &str = "qualified-demand-generation-v2";
@@ -32,7 +38,7 @@ pub struct BootstrapLifecycleTask {
 /// are checked; this is maintenance with zero useful-output credit, not user demand
 /// or private production custody. Returned state contains lifecycle keys only.
 pub fn bootstrap_state(cfg: &Config, model: &[u8], input: &[u8]) -> Result<BootstrapLifecycleTask> {
-    ensure(cfg.task_profile() == PROFILE, "WORK_TASK_PROFILE")?;
+    ensure(enabled(cfg), "WORK_TASK_PROFILE")?;
     let (a, b) = derive_matrices(model, input).map_err(|_| "TASK_MATERIAL")?;
     let source_seed = hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]);
     let requester_seed = hash(b"DEV-ONLY-KEY", &[&1_u64.to_le_bytes()]);
@@ -284,15 +290,19 @@ fn open(view: &mut impl LifecycleState, tx: &Envelope, height: u64, cfg: &Config
     view.put(GENERATION_KEY.to_owned(), json!(request.generation));
     Ok(())
 }
-fn renew(view: &mut impl LifecycleState, tx: &Envelope, height: u64, cfg: &Config) -> Result<()> {
-    let successor = DemandLeaseV2::decode(&tx.payload).map_err(|_| "TASK_DEMAND_LEASE")?;
-    context(&successor, cfg)?;
-    let key = slot_key(successor.slot)?;
-    let mut record = view.get(&key).ok_or("TASK_DEMAND")?;
+fn renewed_record(
+    original: &Value,
+    successor: &DemandLeaseV2,
+    requester: Hash,
+    height: u64,
+    cfg: &Config,
+) -> Result<Value> {
+    context(successor, cfg)?;
+    let mut record = original.clone();
     let previous = lease(&record)?;
     ensure(record["status"] == "active", "TASK_REVOKED")?;
     ensure(
-        tx.sender == previous.requester && successor.requester == previous.requester,
+        requester == previous.requester && successor.requester == previous.requester,
         "TASK_REQUESTER",
     )?;
     ensure(
@@ -318,12 +328,21 @@ fn renew(view: &mut impl LifecycleState, tx: &Envelope, height: u64, cfg: &Confi
             && successor.expires > previous.expires,
         "TASK_WINDOW",
     )?;
-    record["lease"] = json!(hex::encode(&tx.payload));
+    record["lease"] = json!(hex::encode(
+        successor.encode().map_err(|_| "TASK_DEMAND_LEASE")?
+    ));
     record["renewed_height"] = json!(height);
-    // Existing statement is retained for bounded audit/DA, but no longer matches
-    // the new lease ID. Source sequence, bound material and output count persist.
+    Ok(record)
+}
+fn renew(view: &mut impl LifecycleState, tx: &Envelope, height: u64, cfg: &Config) -> Result<()> {
+    let successor = DemandLeaseV2::decode(&tx.payload).map_err(|_| "TASK_DEMAND_LEASE")?;
+    let key = slot_key(successor.slot)?;
+    let original = view.get(&key).ok_or("TASK_DEMAND")?;
+    // V2 preserves its historical two-command behavior; V3 refuses this route.
+    let record = renewed_record(&original, &successor, tx.sender, height, cfg)?;
     store(view, key, record)
 }
+
 fn revoke(view: &mut impl LifecycleState, tx: &Envelope, height: u64, cfg: &Config) -> Result<()> {
     let request = DemandRevocationV2::decode(&tx.payload).map_err(|_| "TASK_REVOCATION")?;
     ensure(
@@ -347,27 +366,23 @@ fn revoke(view: &mut impl LifecycleState, tx: &Envelope, height: u64, cfg: &Conf
     record["revoked_height"] = json!(height);
     store(view, key, record)
 }
-fn register(
-    view: &mut impl LifecycleState,
-    tx: &Envelope,
+fn registered_record(
+    original: &Value,
+    key: &str,
+    rows: &State,
+    raw: &[u8],
+    source: Hash,
     height: u64,
     cfg: &Config,
-) -> Result<()> {
-    let signed = SignedLifecycleTaskV2::decode(&tx.payload).map_err(|_| "TASK_MANIFEST")?;
-    let rows = slots(view)?;
-    let (key, found) = rows
-        .iter()
-        .find(|(_, record)| {
-            lease(record).is_ok_and(|current| current.demand_id == signed.manifest.demand_id)
-        })
-        .ok_or("TASK_DEMAND")?;
-    let mut record = found.clone();
+) -> Result<Value> {
+    let signed = SignedLifecycleTaskV2::decode(raw).map_err(|_| "TASK_MANIFEST")?;
+    let mut record = original.clone();
     let current = lease(&record)?;
     context(&current, cfg)?;
     ensure(record["status"] == "active", "TASK_REVOKED")?;
-    ensure(tx.sender == current.source, "TASK_SOURCE")?;
+    ensure(source == current.source, "TASK_SOURCE")?;
     let statement =
-        verify_lifecycle_statement(&tx.payload, &current, height).map_err(|_| "TASK_STATEMENT")?;
+        verify_lifecycle_statement(raw, &current, height).map_err(|_| "TASK_STATEMENT")?;
     ensure(
         signed.manifest.demand_nonce
             == number(&record, "source_sequence")?
@@ -386,7 +401,7 @@ fn register(
             ensure(record[field] == hex::encode(value), "TASK_RENEW_MATERIAL")?;
         }
     }
-    for (other_key, other) in &rows {
+    for (other_key, other) in rows {
         let other_lease = lease(other)?;
         if other_key != key && other["status"] == "active" && height <= other_lease.expires {
             ensure(
@@ -396,13 +411,57 @@ fn register(
         }
     }
     record["source_sequence"] = json!(signed.manifest.demand_nonce);
-    record["statement"] = json!(hex::encode(&tx.payload));
+    record["statement"] = json!(hex::encode(raw));
     record["statement_id"] = json!(hex::encode(statement.manifest_id()));
     record["registered_height"] = json!(height);
     for (field, value) in material_fields {
         record[field] = json!(hex::encode(value));
     }
+    Ok(record)
+}
+
+fn register(
+    view: &mut impl LifecycleState,
+    tx: &Envelope,
+    height: u64,
+    cfg: &Config,
+) -> Result<()> {
+    let signed = SignedLifecycleTaskV2::decode(&tx.payload).map_err(|_| "TASK_MANIFEST")?;
+    let rows = slots(view)?;
+    let (key, original) = rows
+        .iter()
+        .find(|(_, record)| {
+            lease(record).is_ok_and(|current| current.demand_id == signed.manifest.demand_id)
+        })
+        .ok_or("TASK_DEMAND")?;
+    let record = registered_record(original, key, &rows, &tx.payload, tx.sender, height, cfg)?;
     store(view, key.clone(), record)
+}
+fn atomic_renew(
+    view: &mut impl LifecycleState,
+    tx: &Envelope,
+    height: u64,
+    cfg: &Config,
+) -> Result<()> {
+    let request = AtomicRenewTaskV3::decode(&tx.payload).map_err(|_| "TASK_ATOMIC_RENEW")?;
+    let rows = slots(view)?;
+    let key = slot_key(request.lease.slot)?;
+    let original = rows.get(&key).ok_or("TASK_DEMAND")?;
+    let successor = renewed_record(original, &request.lease, tx.sender, height, cfg)?;
+    let raw = request.signed.encode().map_err(|_| "TASK_MANIFEST")?;
+    // The source is authenticated by its existing strict inner signature. No fake
+    // nested ledger envelope is created; only requester ledger nonce/fee advances.
+    let record = registered_record(
+        &successor,
+        &key,
+        &rows,
+        &raw,
+        request.lease.source,
+        height,
+        cfg,
+    )?;
+    // No LifecycleState write has occurred until every successor/source check passes.
+    store(view, key, record)
 }
 
 /// Called only after the existing executor verified the main envelope and performed
@@ -413,11 +472,14 @@ pub fn apply_verified_command(
     height: u64,
     cfg: &Config,
 ) -> Result<()> {
-    ensure(cfg.task_profile() == PROFILE, "WORK_TASK_PROFILE")?;
+    ensure(enabled(cfg), "WORK_TASK_PROFILE")?;
     ensure(tx.network == cfg.network, "NETWORK")?;
     match tx.tag {
         OPEN_TAG => open(view, tx, height, cfg),
-        RENEW_TAG => renew(view, tx, height, cfg),
+        RENEW_TAG if cfg.task_profile() == PROFILE => renew(view, tx, height, cfg),
+        ATOMIC_RENEW_TAG if cfg.task_profile() == ATOMIC_PROFILE => {
+            atomic_renew(view, tx, height, cfg)
+        }
         REVOKE_TAG => revoke(view, tx, height, cfg),
         REGISTER_TAG => register(view, tx, height, cfg),
         _ => Err("WORK_TASK_PROFILE"),
@@ -448,7 +510,7 @@ pub fn eligible_task(
     height: u64,
     cfg: &Config,
 ) -> Result<EligibleLifecycleTask> {
-    ensure(cfg.task_profile() == PROFILE, "WORK_TASK_PROFILE")?;
+    ensure(enabled(cfg), "WORK_TASK_PROFILE")?;
     let rows: State = state
         .range(SLOT_PREFIX.to_owned()..)
         .take_while(|(key, _)| key.starts_with(SLOT_PREFIX))

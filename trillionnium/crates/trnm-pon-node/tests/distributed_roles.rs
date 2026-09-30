@@ -78,14 +78,19 @@ fn check_receipts(root: &Path, expected: &str) -> Value {
     }
     final_payload.expect("actual role completion receipt required")
 }
-fn campaign(restart: bool) {
+fn campaign(restart: bool, public: bool) {
     let binary =
         PathBuf::from(std::env::var("TRNM_DISTRIBUTED_TEST_BINARY").expect("binary required"));
     let root = PathBuf::from(
         std::env::var("TRNM_DISTRIBUTED_TEST_OUTPUT").expect("retained output path required"),
     );
     fs::create_dir_all(&root).unwrap();
-    let root = root.join(if restart { "restart" } else { "fresh" });
+    let root = root.join(match (restart, public) {
+        (false, false) => "fresh",
+        (true, false) => "restart",
+        (false, true) => "public-fresh",
+        (true, true) => "public-restart",
+    });
     fs::create_dir(&root).unwrap();
     let output = Command::new(&binary).arg("fingerprint").output().unwrap();
     assert!(output.status.success());
@@ -108,7 +113,7 @@ fn campaign(restart: bool) {
         let path = root.join(format!("{role}.key"));
         fs::write(&path, secret).unwrap();
         fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
-        configs.push(json!({"schema":"pon-distributed-role-config-v1","role":role,"scope":"local-process-test","run_id":"three-process-conformance","run_root":root.join(role),"source_pin":pin,"genesis_time":now-100,"workers":1,"evaluation_policy":"closed-round-all-eligible-min-v1","task_profile":"signed-task-dev-v1","pattern":"disjoint4","data_blocks":2,"transactions_per_block":4,"drain_blocks":6,"pace_ms":if restart {350}else{0},"server_seconds":20,"poll_ms":40,"timeout_seconds":16,"listen":if *role=="validator"{Some(addr.to_string())}else{None},"peer":if *role=="validator"{None}else{Some(addr.to_string())},"auth_secret":path,"peer_roster":if *role=="validator"{Some(root.join("roster.json"))}else{None},"server_public":Value::Null,"session_generation":1}));
+        configs.push(json!({"schema":if public {"pon-distributed-public-role-config-v2"}else{"pon-distributed-role-config-v1"},"role":role,"scope":"local-process-test","run_id":"three-process-conformance","run_root":root.join(role),"source_pin":pin,"genesis_time":now-100,"workers":1,"evaluation_policy":"closed-round-all-eligible-min-v1","task_profile":"signed-task-dev-v1","pattern":"disjoint4","data_blocks":2,"transactions_per_block":4,"drain_blocks":6,"pace_ms":if restart {350}else{0},"server_seconds":20,"poll_ms":40,"timeout_seconds":16,"listen":if *role=="validator"{Some(addr.to_string())}else{None},"peer":if *role=="validator"{None}else{Some(addr.to_string())},"auth_secret":path,"peer_roster":if !public && *role=="validator"{Some(root.join("roster.json"))}else{None},"server_public":Value::Null,"session_generation":if public {0}else{1}}));
     }
     fs::write(
         root.join("roster.json"),
@@ -183,6 +188,42 @@ fn campaign(restart: bool) {
     let c = check_receipts(&root.join("confirmer"), "confirmer-complete");
     assert_eq!(c["confirmed_transfers"], 8);
     assert_eq!(c["independent_store_full_verification"], true);
+    if public {
+        assert_eq!(v["metrics"]["unknown_caller_durable_rows"], 0);
+        assert_eq!(v["metrics"]["paid_body_reserved_bytes_after_shutdown"], 0);
+        assert_eq!(v["metrics"]["output_reserved_bytes_after_shutdown"], 0);
+        assert!(v["metrics"]["completed_submit"].as_u64().unwrap() >= 8);
+        for receipt in [&p, &v, &c] {
+            for field in [
+                "authenticated_sessions",
+                "authenticated_pending",
+                "authenticated_audit_rows",
+                "authenticated_outbox_sessions",
+                "authenticated_outbox_pending",
+            ] {
+                assert_eq!(receipt["state"][field], 0);
+            }
+        }
+        for role in ["producer", "confirmer"] {
+            let raw = fs::read_to_string(root.join(role).join("receipts.jsonl")).unwrap();
+            let rows: Vec<Value> = raw
+                .lines()
+                .map(|s| serde_json::from_str(s).unwrap())
+                .collect();
+            assert!(rows
+                .iter()
+                .any(|r| r["body"]["payload"]["transport_cost"]["solve_trials"]
+                    .as_u64()
+                    .is_some_and(|n| n > 0)));
+            for r in rows {
+                assert_eq!(
+                    r["body"]["run"]["transport_profile"],
+                    "public-protected-development-v2"
+                );
+                assert_eq!(r["body"]["run"]["transport_identity_authority"], false);
+            }
+        }
+    }
     for key in [
         "tip",
         "height",
@@ -239,10 +280,21 @@ fn campaign(restart: bool) {
 #[test]
 #[ignore = "requires explicit built example and retained output directory; local-process scope"]
 fn three_separate_processes_fully_verify_and_confirm_with_signed_receipts() {
-    campaign(false);
+    campaign(false, false);
 }
 #[test]
 #[ignore = "requires explicit built example; retained restart and partial-write conformance"]
 fn killed_producer_and_confirmer_resume_exact_owners_without_rewinding_receipts() {
-    campaign(true);
+    campaign(true, false);
+}
+
+#[test]
+#[ignore = "requires explicit built example; retained unknown-caller public transport conformance"]
+fn public_three_processes_verify_without_an_identity_allowlist() {
+    campaign(false, true);
+}
+#[test]
+#[ignore = "requires explicit built example; retained public transport restart conformance"]
+fn public_producer_and_confirmer_resume_exact_packets_without_guest_session_authority() {
+    campaign(true, true);
 }

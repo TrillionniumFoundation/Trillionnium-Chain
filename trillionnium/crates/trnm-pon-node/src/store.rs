@@ -24,6 +24,7 @@ use trnm_mvcc_fee::pon_executor::{execute, root, State};
 use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::{
     QualifiedWorkTask, SignedQualifiedWorkTask, TaskPurpose, SIGNED_TASK_BYTES,
 };
@@ -1460,7 +1461,7 @@ impl Node {
         ensure(
             matches!(
                 self.settings.task_profile(),
-                SIGNED_TASK_PROFILE | LIFECYCLE_TASK_PROFILE
+                SIGNED_TASK_PROFILE | LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
         )?;
@@ -1468,7 +1469,10 @@ impl Node {
         let signed = self
             .eligible_work_task(parent, admission.matrix_task(), height)?
             .ok_or("TASK_MANIFEST")?;
-        let statement_id = if self.settings.task_profile() == LIFECYCLE_TASK_PROFILE {
+        let statement_id = if matches!(
+            self.settings.task_profile(),
+            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE
+        ) {
             qualified_task_lifecycle::eligible_task(
                 &self.state_at(parent)?,
                 admission.matrix_task(),
@@ -1504,7 +1508,10 @@ impl Node {
         height: u64,
     ) -> Result<Option<QualifiedWorkTask>> {
         let state = self.state_at(parent)?;
-        if self.settings.task_profile() == LIFECYCLE_TASK_PROFILE {
+        if matches!(
+            self.settings.task_profile(),
+            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE
+        ) {
             let eligible =
                 qualified_task_lifecycle::eligible_task(&state, task, height, &self.settings.app)?;
             return Ok(Some(eligible.manifest().clone()));
@@ -1648,7 +1655,10 @@ impl Node {
         manifest: &QualifiedWorkTask,
         product: &[u8],
     ) -> Result<()> {
-        if self.settings.task_profile() == LIFECYCLE_TASK_PROFILE {
+        if matches!(
+            self.settings.task_profile(),
+            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE
+        ) {
             ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
             let eligible = qualified_task_lifecycle::eligible_task(
                 &self.state_at(parent)?,
@@ -2090,6 +2100,81 @@ impl Node {
         progress(count)?;
         Ok(packets)
     }
+    /// Bounded public-read metadata. The state root is the admitted header's
+    /// commitment, not a fresh scan or audit of the active key/value state.
+    pub(crate) fn public_head_metadata(&self) -> Result<Value> {
+        self.ready()?;
+        let (tip, generation) = self.active()?;
+        let row = self.record(tip)?;
+        Ok(serde_json::json!({
+            "network":hex::encode(self.settings.network()),
+            "parameters":hex::encode(self.settings.parameters()),
+            "genesis":hex::encode(self.settings.genesis()),
+            "tip":hex::encode(tip),"height":row.height,
+            "chainwork_hex":hex::encode(row.work.bytes()),
+            "state_root":hex::encode(row.root),"generation":generation,
+            "context_matches":true,
+            "commitment_scope":"admitted-active-header; no fresh key/value audit",
+            "production_activation":false
+        }))
+    }
+    /// One public history packet, with exact ancestry and pre-allocation bounds.
+    /// No unbounded tempfile spool or multi-packet JSON value is constructed.
+    pub(crate) fn public_history_packet(
+        &self,
+        tip: Hash,
+        after: Hash,
+        maximum_steps: u64,
+        progress: &mut dyn FnMut(u64) -> Result<()>,
+    ) -> Result<Vec<Packet>> {
+        progress(0)?;
+        self.ready()?;
+        ensure((1..=4096).contains(&maximum_steps), "PUBLIC_HISTORY_STEPS")?;
+        let target = self.record(tip)?;
+        let cursor = self.record(after)?;
+        let difference = target.height.checked_sub(cursor.height).ok_or("CURSOR")?;
+        ensure(difference <= maximum_steps, "PUBLIC_HISTORY_STEPS")?;
+        if tip == after {
+            return Ok(Vec::new());
+        }
+        let mut current = tip;
+        let mut next = None;
+        for steps in 0..difference {
+            progress(steps)?;
+            ensure(current != self.settings.genesis(), "CURSOR")?;
+            next = Some(current);
+            current = self.parent(current)?;
+        }
+        progress(difference)?;
+        ensure(current == after, "CURSOR")?;
+        let id = next.ok_or("CURSOR")?;
+        let row = self.record(id)?;
+        // Query the scalar length before materializing a possibly damaged BLOB.
+        let maximum = 1_048_576;
+        let length: Option<usize> = self.db.query_row(
+            "SELECT length(packet) FROM blocks WHERE id=?",
+            [id.as_slice()],
+            |r| r.get(0),
+        )?;
+        ensure(
+            length.is_some_and(|n| n > 0 && n <= maximum),
+            "PUBLIC_HISTORY_BYTES",
+        )?;
+        let raw: Vec<u8> = self.db.query_row(
+            "SELECT packet FROM blocks WHERE id=? AND length(packet)<=?",
+            params![id.as_slice(), maximum],
+            |r| r.get(0),
+        )?;
+        let packet = Packet::decode(&raw)?;
+        ensure(
+            packet.id()? == id
+                && Some(packet.header.parent) == row.parent
+                && packet.header.height == row.height
+                && packet.header.state == row.root,
+            "STORAGE_PACKET",
+        )?;
+        Ok(vec![packet])
+    }
     pub fn stats(&self) -> Result<Value> {
         let (tip, g, state) = self.read_active()?;
         let row = self.record(tip)?;
@@ -2106,5 +2191,58 @@ impl Node {
         Ok(
             serde_json::json!({"network":hex::encode(self.settings.network()),"parameters":hex::encode(self.settings.parameters()),"genesis":hex::encode(self.settings.genesis()),"tip":hex::encode(tip),"height":row.height,"chainwork_hex":hex::encode(row.work.bytes()),"state_root":hex::encode(root(&state)?),"generation":g,"state_keys":state.len(),"stored_blocks":blocks,"events":events,"authenticated_sessions":authenticated_sessions,"authenticated_pending":authenticated_pending,"authenticated_audit_rows":authenticated_audit_rows,"authenticated_outbox_sessions":authenticated_outbox_sessions,"authenticated_outbox_pending":authenticated_outbox_pending,"production_activation":false}),
         )
+    }
+}
+
+#[cfg(test)]
+mod public_read_bounds_tests {
+    use super::*;
+    #[test]
+    fn corrupt_oversize_packet_and_long_suffix_are_rejected_before_blob_load() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let genesis = settings.genesis();
+        let row = node.record(genesis).unwrap();
+        // Deliberately corrupt local rows test read boundaries, not consensus admission.
+        node.db
+            .execute(
+                "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
+                params![
+                    [1_u8; 32].as_slice(),
+                    genesis.as_slice(),
+                    4097_u64,
+                    row.work.bytes().as_slice(),
+                    Option::<Vec<u8>>::None,
+                    row.root.as_slice()
+                ],
+            )
+            .unwrap();
+        let mut steps = Vec::new();
+        let e = node
+            .public_history_packet([1; 32], genesis, 4096, &mut |n| {
+                steps.push(n);
+                Ok(())
+            })
+            .unwrap_err();
+        assert_eq!(e.to_string(), "PUBLIC_HISTORY_STEPS");
+        assert_eq!(steps, vec![0]);
+        node.db
+            .execute(
+                "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
+                params![
+                    [2_u8; 32].as_slice(),
+                    genesis.as_slice(),
+                    1_u64,
+                    row.work.bytes().as_slice(),
+                    vec![0_u8; 1_048_577],
+                    row.root.as_slice()
+                ],
+            )
+            .unwrap();
+        let e = node
+            .public_history_packet([2; 32], genesis, 4096, &mut |_| Ok(()))
+            .unwrap_err();
+        assert_eq!(e.to_string(), "PUBLIC_HISTORY_BYTES");
     }
 }

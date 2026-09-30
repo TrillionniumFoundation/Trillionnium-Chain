@@ -4,6 +4,7 @@ use crate::pon_wire::{hash, Hash};
 
 /// Fresh-context renewable demand controls and source signatures; never v1 authority.
 pub mod lifecycle_v2;
+pub mod lifecycle_v3;
 
 pub const MANIFEST_BYTES: usize = 584;
 pub const SIGNED_TASK_BYTES: usize = 4 + MANIFEST_BYTES + 64;

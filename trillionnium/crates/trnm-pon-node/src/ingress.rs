@@ -2540,3 +2540,6 @@ mod tests {
         assert_eq!(metrics.authenticated_requests, 2);
     }
 }
+
+/// Explicit unintegrated public development successor; old listeners unchanged.
+pub mod public_v2;
