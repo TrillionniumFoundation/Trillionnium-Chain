@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Native development CLI/loopback composition and a separate reference ledger with explicit native compute bridge. The bridge-specific invariant below is not a claim of a complete native public host.
+Native development CLI composition, including loopback and explicit allowlisted signed private transport, plus a separate reference ledger with explicit native compute bridge. These development invariants are not a claim of a complete native public host.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -13,9 +13,15 @@ The claims below apply to their named component and tests, not to an independent
 
 ### M15.StartExecutableSpecPeer
 
-Acquire exclusive store owner, verify parameters, recover unfinishedintent, then bind127.0.0.1 and announcegenesis. No network admission before recovery. This is not the native production node assembly.
+Acquire the exclusive store owner, verify parameters, and recover unfinished branch, replay and outbox state before binding. Plain service may bind loopback only. A selected non-loopback development bind additionally requires the explicit authenticated flag, a no-follow single-link owner-private key, an exact allowlist and a positive session generation. No network admission precedes recovery.
 
-**Atomic/commit boundary:** Own one ledger writer perprocess; private directory; current schemaonly.
+**Atomic/commit boundary:** One Node owns branch state, inbound replay and outbound exact-wire state in a private current-schema namespace.
+
+### M15.SendDurableAuthenticatedRequest
+
+Create and sign one canonical request under the exact expected server identity and session generation. Commit its payload, wire and digests before connect/write. If the process or network loses the response, reopen and retry only the stored wire. Clear pending bytes and advance the nonce only after a context-matching strict server signature with `terminal=true`; a different request while pending rejects.
+
+**Atomic/commit boundary:** `peer_outbox` reservation commits before network I/O. Verified terminal acknowledgement advances `highest_ack` and clears every pending field in one transaction.
 
 ### M15.StopAndReconcile
 
@@ -27,7 +33,7 @@ Stop admission, requestchild stop, wait bounded5seconds, kill+reap ifunresponsiv
 
 **Invariant:** A host selecting native execution either uses that binary or fails; it does not silently substitute a reference success path.
 
-**Scope:** Native development CLI/loopback composition and a separate reference ledger with explicit native compute bridge. The bridge-specific invariant below is not a claim of a complete native public host.
+**Scope:** Native development CLI composition, including loopback and explicit allowlisted signed private transport, plus a separate reference ledger with explicit native compute bridge. These development invariants are not a claim of a complete native public host.
 
 **Atomic boundary:** Backend choice before execution; bounded subprocess response; independently recompute returned root.
 
@@ -36,6 +42,20 @@ Stop admission, requestchild stop, wait bounded5seconds, kill+reap ifunresponsiv
 **Expected result:** A host selecting native execution either uses that binary or fails; it does not silently substitute a reference success path.
 
 **Resource and retention rule:** 16MiB bridge input,32MiB stdout,64KiB stderr,30-second deadline; both pipes drained while writing; only the owned child session is terminated.
+
+## M15.DurableOutbox
+
+**Invariant:** A native authenticated client commits one exact signed wire before network I/O, retries only those bytes after restart and advances its nonce only after a verified terminal response.
+
+**Scope:** Caller-owned private development Node namespace; not a wallet, production key service or remote physical-effect exactly-once protocol.
+
+**Atomic boundary:** `peer_outbox` stores payload, wire and digests before connect/write; verified terminal acknowledgement atomically advances `highest_ack` and clears every pending field.
+
+**Failure schedule:** Connection refused after reservation; Response lost after server commit; Client restart with pending bytes; Different request attempted while pending; Wrong server signature or session; Symlink, hard-link or group-readable secret file.
+
+**Expected result:** Restart preserves one exact request. Retry cannot change its bytes, server or context, and no retryable/nonterminal response consumes the nonce.
+
+**Resource and retention rule:** One pending request per session,2MiB wire,positive signed generation/nonce and descriptor-checked single-link private secret input.
 
 ## Concrete regression selectors
 
@@ -51,13 +71,23 @@ Stop admission, requestchild stop, wait bounded5seconds, kill+reap ifunresponsiv
 
 `formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_timeout_reaps_own_child`
 
+`trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_client_outbox_survives_network_loss_and_rejects_changed_request`
+
+`trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_client_retries_exact_wire_after_lost_server_response`
+
+`trillionnium/crates/trnm-pon-node/src/main.rs::test_authentication_configuration_uses_the_opened_file_identity`
+
+`trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authentication_options_are_scoped_to_network_commands`
+
+`trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner`
+
 These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
 ## Module-specific threat and residual work
 
 Fallback masking missing modules, startup before recovery, task starvation and authority conflation.
 
-Same-operator SSH test peers are not native host integration. Ordinary Hepta entry, persistent miner and signed production owner resources are not claimed.
+The exact private-development request path is integrated, but same-operator allowlisted peers are not independent public operators. Open discovery/gossip, encrypted transport, ordinary Hepta entry, persistent miner/mempool scheduling and signed production owner resources are not claimed.
 
 ## Current source and verification
 
@@ -90,7 +120,7 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 
 ## Native development continuation and remaining scope
 
-The new M15 composition binary trnm-pon-node starts/recover/admit/mine/export/sync/confirm/serve without Python fallback. It reuses M00/M01/M06 and owns one fresh native branch namespace. Public P2P, persistent miner/mempool lifecycle and ordinary Hepta/resource integration are still absent.
+The M15 composition binary `trnm-pon-node` starts/recover/admit/mine/export/sync/confirm/serve without Python fallback. It reuses M00/M01/M06 and owns one fresh native branch namespace. `push` and `sync` can use the same durable signed client outbox; `serve` can use the matching allowlisted signed private-development ingress. Authentication options are command-scoped and do not turn local status/mining commands into key consumers. Open public P2P, confidentiality, persistent miner/mempool lifecycle and ordinary Hepta/resource integration are still absent.
 
 The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,

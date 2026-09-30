@@ -2,8 +2,10 @@
 use serde_json::Value;
 use std::{
     fs,
+    io::{BufRead, BufReader, Read},
+    os::unix::fs::PermissionsExt,
     path::Path,
-    process::Command,
+    process::{Command, Stdio},
     sync::{
         atomic::{AtomicBool, Ordering},
         Arc,
@@ -447,7 +449,12 @@ fn signed_transfer(settings: &Settings, sender: u64, nonce: u64) -> Vec<u8> {
 }
 fn batch_fixture(path: &Path, settings: Settings) -> (Node, Vec<(Hash, Hash)>) {
     let mut node = Node::open(path, settings.clone(), 2).unwrap();
-    let txs: Vec<_> = (0..4).map(|i| signed_transfer(&settings, i, 1)).collect();
+    let txs: Vec<_> = (0..4)
+        .map(|i| {
+            let sender = development_public(i).unwrap();
+            signed_transfer(&settings, i, node.next_nonce(sender).unwrap())
+        })
+        .collect();
     let packet = node
         .make(
             settings.genesis(),
@@ -576,7 +583,8 @@ fn test_native_batch_rechecks_future_ancestor_below_all_inclusions() {
         let timestamp = base + if height == 8 { 1000 } else { height * 10 };
         tip = extend(&mut node, tip, timestamp, 0, true).id().unwrap();
     }
-    let tx = signed_transfer(node.settings(), 1, 1);
+    let sender = development_public(1).unwrap();
+    let tx = signed_transfer(node.settings(), 1, node.next_nonce(sender).unwrap());
     let packet = node
         .make(
             tip,
@@ -783,7 +791,8 @@ fn test_native_body_membership_is_still_checked_after_header_projection() {
     let block = queries[0].1;
     let original = node.packet(block).unwrap().encode().unwrap();
     let mut packet = node.packet(block).unwrap();
-    packet.transactions[0] = signed_transfer(node.settings(), 1, 100);
+    let sender = development_public(1).unwrap();
+    packet.transactions[0] = signed_transfer(node.settings(), 1, node.next_nonce(sender).unwrap());
     let changed = packet.encode().unwrap();
     let db = rusqlite::Connection::open(temp.path().join("native.sqlite")).unwrap();
     db.execute(
@@ -873,4 +882,178 @@ fn test_full_transaction_pages_use_byte_limits_and_recover_all_native_state() {
     stop.store(true, Ordering::Release);
     server.join().unwrap().unwrap();
     result.unwrap();
+}
+
+#[test]
+fn test_authentication_options_are_scoped_to_network_commands() {
+    let temp = tempfile::tempdir().unwrap();
+    let cases: &[(&str, &[&str])] = &[
+        ("status", &["--auth-secret", "unused.key"]),
+        ("push", &["--peer-roster", "unused.json"]),
+        ("sync", &["--authenticated-development-network"]),
+        ("serve", &["--server-public", &"11".repeat(32)]),
+    ];
+    for (command, extra) in cases {
+        let output = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+            .arg(command)
+            .args(["--development", "--store"])
+            .arg(temp.path().join(command))
+            .args(*extra)
+            .output()
+            .unwrap();
+        assert!(!output.status.success());
+        assert!(
+            String::from_utf8_lossy(&output.stderr).contains("UNKNOWN_OPTION:"),
+            "command={command} stderr={}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+}
+
+#[test]
+fn test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner() {
+    use trnm_crypto_primitives::{public_key_hex, signing_key_from_hex};
+    use trnm_protocol::pon_wire::hash;
+
+    let temp = tempfile::tempdir().unwrap();
+    let genesis_time = ingress::now().unwrap() - 100;
+    let settings = Settings::development(Some(genesis_time)).unwrap();
+    let server_seed = hex::encode(hash(b"cli-auth-server", &[b"private-test"]));
+    let client_seed = hex::encode(hash(b"cli-auth-client", &[b"private-test"]));
+    let server_public = public_key_hex(&signing_key_from_hex(&server_seed).unwrap());
+    let client_public = public_key_hex(&signing_key_from_hex(&client_seed).unwrap());
+    let server_key = temp.path().join("server.key");
+    let client_key = temp.path().join("client.key");
+    fs::write(&server_key, format!("{server_seed}\n")).unwrap();
+    fs::write(&client_key, format!("{client_seed}\n")).unwrap();
+    fs::set_permissions(&server_key, fs::Permissions::from_mode(0o600)).unwrap();
+    fs::set_permissions(&client_key, fs::Permissions::from_mode(0o600)).unwrap();
+    let roster = temp.path().join("peers.json");
+    fs::write(&roster, serde_json::to_vec(&vec![client_public]).unwrap()).unwrap();
+    fs::set_permissions(&roster, fs::Permissions::from_mode(0o644)).unwrap();
+
+    let source_path = temp.path().join("source");
+    let source = Node::open(&source_path, settings.clone(), 1).unwrap();
+    let packet = source
+        .make(
+            settings.genesis(),
+            vec![],
+            development_public(0).unwrap(),
+            genesis_time + 10,
+            4096,
+        )
+        .unwrap();
+    let packet_path = temp.path().join("block.packet");
+    fs::write(&packet_path, packet.encode().unwrap()).unwrap();
+    drop(source);
+
+    let mut server = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+        .args([
+            "serve",
+            "--development",
+            "--authenticated-development-network",
+            "--store",
+        ])
+        .arg(temp.path().join("server-store"))
+        .args([
+            "--genesis-time",
+            &genesis_time.to_string(),
+            "--listen",
+            "127.0.0.1:0",
+        ])
+        .args(["--seconds", "4", "--auth-secret"])
+        .arg(&server_key)
+        .args(["--peer-roster"])
+        .arg(&roster)
+        .args(["--session-generation", "1"])
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let stdout = server.stdout.take().unwrap();
+    let mut server_stdout = BufReader::new(stdout);
+    let mut listening = String::new();
+    server_stdout.read_line(&mut listening).unwrap();
+    assert!(!listening.is_empty());
+    let listening: Value = serde_json::from_str(&listening).unwrap();
+    let address = listening["address"].as_str().unwrap().to_owned();
+    assert_eq!(listening["server_public"], server_public);
+    assert_eq!(listening["scope"], "authenticated-development-private");
+
+    let client_store = temp.path().join("client-store");
+    let push = || {
+        Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+            .args(["push", "--development", "--store"])
+            .arg(&client_store)
+            .args(["--packet"])
+            .arg(&packet_path)
+            .args([
+                "--peer",
+                &address,
+                "--genesis-time",
+                &genesis_time.to_string(),
+            ])
+            .args(["--auth-secret"])
+            .arg(&client_key)
+            .args(["--server-public", &server_public])
+            .args(["--session-generation", "1"])
+            .output()
+            .unwrap()
+    };
+    let first = push();
+    assert!(
+        first.status.success(),
+        "{}",
+        String::from_utf8_lossy(&first.stderr)
+    );
+    let first: Value = serde_json::from_slice(&first.stdout).unwrap();
+    assert_eq!(first["state"]["authenticated_outbox_pending"], 0);
+    let tip = first["response"]["block"].as_str().unwrap().to_owned();
+
+    let replay = push();
+    assert!(
+        replay.status.success(),
+        "{}",
+        String::from_utf8_lossy(&replay.stderr)
+    );
+    let replay: Value = serde_json::from_slice(&replay.stdout).unwrap();
+    assert_eq!(replay["response"], first["response"]);
+    assert_eq!(replay["state"]["authenticated_outbox_pending"], 0);
+
+    let sync = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+        .args(["sync", "--development", "--store"])
+        .arg(&client_store)
+        .args(["--peer", &address, "--tip", &tip])
+        .args(["--genesis-time", &genesis_time.to_string(), "--pages", "4"])
+        .args(["--auth-secret"])
+        .arg(&client_key)
+        .args(["--server-public", &server_public])
+        .args(["--session-generation", "1"])
+        .output()
+        .unwrap();
+    assert!(
+        sync.status.success(),
+        "{}",
+        String::from_utf8_lossy(&sync.stderr)
+    );
+    let sync: Value = serde_json::from_slice(&sync.stdout).unwrap();
+    assert_eq!(sync["result"]["verified_tip"], tip);
+    assert_eq!(sync["result"]["state"]["authenticated_outbox_pending"], 0);
+    assert_eq!(sync["result"]["state"]["height"], 1);
+
+    let mut remainder = String::new();
+    server_stdout.read_to_string(&mut remainder).unwrap();
+    let status = server.wait().unwrap();
+    let mut stderr = String::new();
+    server
+        .stderr
+        .take()
+        .unwrap()
+        .read_to_string(&mut stderr)
+        .unwrap();
+    assert!(status.success(), "{stderr}");
+    let final_line = remainder.lines().last().unwrap();
+    let final_value: Value = serde_json::from_str(final_line).unwrap();
+    assert_eq!(final_value["result"]["replayed_responses"], 0);
+    assert_eq!(final_value["result"]["authenticated_requests"], 3);
 }

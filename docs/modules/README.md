@@ -12,7 +12,7 @@ legacy appendices and jobs are removed; Git alone retains historical content.
 | M01 | [M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md](M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md) | `trnm-crypto-primitives`, `trnm-governance-guard` |
 | M02 | [M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md](M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md) | `trnm-pon-node` development component; full public target incomplete |
 | M03 | [M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md](M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md) | `trnm-checkpoint-store`, `trnm-checkpoint-types` |
-| M04 | [M04_P2P_TECHNICAL_SPEC_V1.md](M04_P2P_TECHNICAL_SPEC_V1.md) | `trnm-peer-lease`, `trnm-transport` |
+| M04 | [M04_P2P_TECHNICAL_SPEC_V1.md](M04_P2P_TECHNICAL_SPEC_V1.md) | `trnm-peer-lease`, `trnm-transport`, `trnm-pon-node` development ingress |
 | M05 | [M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md](M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md) | `trnm-mempool` |
 | M06 | [M06_EXECUTION_TECHNICAL_SPEC_V1.md](M06_EXECUTION_TECHNICAL_SPEC_V1.md) | `trnm-executor`, `trnm-mvcc-fee` |
 | M07 | [M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md](M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md) | `trnm-pon-node` development component; full public target incomplete |
@@ -29,7 +29,7 @@ legacy appendices and jobs are removed; Git alone retains historical content.
 
 ## Executable detail and maturity
 
-[36 typed procedures](../../config/pon/module-contracts-v1.json) bind all18 modules to
+[38 typed procedures](../../config/pon/module-contracts-v1.json) bind all18 modules to
 exact shared wire, work, state/recovery, model/evaluation and network/acceptance details.
 [Per-module maturity](../../config/pon/module-maturity-v1.json) separates documented,
 native component, executable reference, native product integration and independent acceptance.
@@ -38,7 +38,7 @@ reference implementation mean the native production owner has been completed.
 
 ## Invariants, not document counts
 
-[Concrete invariant and failure schedules](../../config/pon/invariants-v2.json) bind every module to actual test functions and source. Binding verification is not a test pass. M06 contains native twelve-command execution. The native development composition adds M02 consensus decisions and a distinct M07/M08 SQLite owner; authenticated public P2P, continuous miner/mempool lifecycle, ordinary Hepta integration and independent acceptance remain incomplete.
+[Concrete invariant and failure schedules](../../config/pon/invariants-v2.json) bind every module to actual test functions and source. Binding verification is not a test pass. M06 contains native twelve-command execution. The native development composition adds M02 consensus decisions, a distinct M07/M08 SQLite owner and an allowlisted signed private-development ingress/outbox. Open public discovery/gossip, confidential transport, continuous miner/mempool lifecycle, ordinary Hepta integration and independent acceptance remain incomplete.
 
 ## Responsibility and evidence
 

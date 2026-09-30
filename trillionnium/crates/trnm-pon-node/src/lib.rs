@@ -63,6 +63,20 @@ pub fn digest(text: &str) -> Result<Hash> {
     hex::decode_to_slice(text, &mut out).map_err(|_| Error::from("HASH"))?;
     Ok(out)
 }
+/// Fixed authenticated-development transport profile. This binds replay and signature
+/// semantics only; it is not a production-network or confidentiality claim.
+pub fn authenticated_profile_digest() -> Hash {
+    hash(
+        b"native-authenticated-development-v1",
+        &[b"ed25519-strict/canonical-json/durable-replay"],
+    )
+}
+
+/// Canonical logical request identity used by both the wire signature and durable replay owner.
+pub fn authenticated_payload_digest(bytes: &[u8]) -> Hash {
+    hash(b"native-authenticated-payload-v1", &[bytes])
+}
+
 pub fn sequence_root(tag: &str, items: &[Vec<u8>]) -> Hash {
     let mut leaves: Vec<_> = items
         .iter()

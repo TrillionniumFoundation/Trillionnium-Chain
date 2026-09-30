@@ -301,8 +301,8 @@ selectors actually ran. Neither mechanism supplies independent scientific author
 | Priority / workstream | Actual implemented boundary | Concrete next acceptance requirement |
 |---|---|---|
 | P0 work and public admission | Exact experimental transcript and original verification; native PreparedTask removes avoidable repeated product work; paired valid-producer costs and bounded development ingress retain open hostile-proof/Sybil qualification | Implement/reproduce adversarial shortcuts and same-target costs; join ordinary public ingress and demonstrate honest service under stated sustained attack. No queue count grants work hardness. |
-| P0 one native node | Native development CLI now owns work/target decisions, branch persistence/reorg, receiver sync and single confirmation through M15; original M00/M01/M06 are reused | Finish persistent mining/mempool scheduling, authenticated public discovery/gossip, interruptible long history and ordinary Hepta/resource/effect integration. The native development path is not a public or complete product acceptance. |
-| P1 long-lived state and confirmation | Native branch/delta/checkpoint persistence and receiver verification now coexist with the independent reference oracle; root maps/history scans still incur full-size costs | Persistent incremental authenticated roots and authenticated WAN integration; the controlled receiver is full-verifying, not succinct or globally fresh. Verify deep history without treating transport budgets or retention as finality. |
+| P0 one native node | Native development CLI owns work/target decisions, branch persistence/reorg, receiver sync/confirmation and an allowlisted signed private-development ingress with durable inbound replay and client outbox; original M00/M01/M06 are reused | Finish persistent mining/mempool scheduling, open public discovery/gossip plus confidentiality, interruptible long history and ordinary Hepta/resource/effect integration. The private development path is not public or complete product acceptance. |
+| P1 long-lived state and confirmation | Native branch/delta/checkpoint persistence, receiver verification and exact signed-request replay/outbox state coexist with the independent reference oracle; root maps/history scans still incur full-size costs | Persistent incremental authenticated roots and real WAN/open-peer integration; the controlled receiver is full-verifying, not succinct or globally fresh. Verify deep history without treating private authentication, transport budgets or retention as finality. |
 | P1 independent model value | E3 seals actual parent/candidate/strong controls/calibration/partitions; no-gain remains zero adoption and reward | Authorized new tasks, independent source/evaluation/withdrawal owners, untouched future windows and budget-matched strong controls. Retrospective splits or configured identities do not satisfy independence. |
 | P1 real resources and failures | Closed service receipt, finite quota/reward conservation and same-admin process/host fault observations | Real storage/serving obligations and funding, target-side effect reconciliation, independent operators, physical power loss and hostile public network. No chain undo may repeat a physical action. |
 | P2 end-to-end capacity | Source-bound worker/session comparisons plus real native CLI, process-cut and loopback socket regressions; no sustained public capacity claim | Same profile, source, state size and load through submission, inclusion and client-verified depth/work confirmation, with latency tails, hotspot degradation, resources and attack availability. Executor speed alone is not TPS. |
@@ -439,13 +439,19 @@ production flags, original model observations or the missing ordinary native hos
 
 
 The same native development composition now supplies bounded ordinary CLI/socket batch
-confirmation and cancellable read traversal. Fixed-dataset value and elementary accuracy
-upper-bound statements are recomputed by the existing evaluation/settlement workers;
-they do not qualify prospective learning or general circuit optimization. Record this
-changed source in the native-node receipt rather than repinning session evidence. Public
-P2P/work admission, continuous mining/mempool scheduling, native persistent incremental
-state, revision3 evaluation-order economics and genuine Hepta/model/resource integration
-remain separate unfinished implementation/acceptance work on these existing owners.
+confirmation, cancellable read traversal and an explicit allowlisted signed private-
+development transport. Inbound replay reservation and signed response retention survive
+restart; the client commits one exact signed wire before I/O and retries only those bytes.
+Opened-descriptor checks protect key/roster inputs and authentication options are confined
+to network commands. These facts close a controlled request/replay gap, not confidentiality,
+open peer discovery, Sybil fairness, independent administration or target-side physical
+exactly-once effects. Fixed-dataset value and elementary accuracy upper-bound statements
+are recomputed by the existing evaluation/settlement workers; they do not qualify
+prospective learning or general circuit optimization. Record this changed source in a new
+native-node receipt rather than repinning session evidence. Public P2P/work admission,
+continuous mining/mempool scheduling, native persistent incremental state, revision3
+evaluation-order economics and genuine Hepta/model/resource integration remain separate
+unfinished implementation/acceptance work on these existing owners.
 
 The current [native-node receipt](../../evidence/pon-native-node-v1/README.md) binds the clean runtime, actual native CLI replay, both work-cost targets and a separate recomputed model-value experiment. Hosted candidate/merge checks remain fresh delivery observations, not part of old runtime receipts.
 

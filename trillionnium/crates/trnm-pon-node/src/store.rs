@@ -18,6 +18,10 @@ use std::{
 use trnm_crypto_primitives::pon_work;
 use trnm_mvcc_fee::pon_executor::{execute, root, State};
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
+use trnm_transport::{
+    AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, IoDigest32V0, PeerFrameSourceV0,
+    PeerReplayRecoverySourceV0, PeerReplayStateV0, PeerSessionIdentityV0,
+};
 const DDL:&str="CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL);
 CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL);
 CREATE INDEX work_order ON blocks(chainwork DESC,height,id);
@@ -27,7 +31,10 @@ CREATE TABLE kv(slot INTEGER NOT NULL,key TEXT NOT NULL,value BLOB NOT NULL,PRIM
 CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL);
 CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL);
 CREATE TABLE events(generation INTEGER NOT NULL,ordinal INTEGER NOT NULL,kind INTEGER NOT NULL,block BLOB NOT NULL,PRIMARY KEY(generation,ordinal));
-CREATE TABLE snapshots(block BLOB PRIMARY KEY,state BLOB NOT NULL);";
+CREATE TABLE snapshots(block BLOB PRIMARY KEY,state BLOB NOT NULL);
+CREATE TABLE peer_replay(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER, CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0)));
+CREATE TABLE peer_request_audit(session_id BLOB NOT NULL,nonce INTEGER NOT NULL CHECK(nonce>0),payload_digest BLOB NOT NULL,payload BLOB,response_digest BLOB,response BLOB,status INTEGER NOT NULL CHECK(status IN (0,1,2)),PRIMARY KEY(session_id,nonce),FOREIGN KEY(session_id) REFERENCES peer_replay(session_id));
+CREATE TABLE peer_outbox(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER,pending_payload BLOB,pending_wire BLOB,pending_wire_digest BLOB,CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL AND pending_payload IS NULL AND pending_wire IS NULL AND pending_wire_digest IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0 AND pending_payload IS NOT NULL AND pending_wire IS NOT NULL AND pending_wire_digest IS NOT NULL)));";
 fn bytes32(bytes: Vec<u8>) -> Result<Hash> {
     bytes.try_into().map_err(|_| "STORAGE_HASH".into())
 }
@@ -39,6 +46,142 @@ fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
 }
 type Delta = (String, Option<Vec<u8>>, Option<Vec<u8>>);
 type Hook<'a> = dyn FnMut(&str) -> Result<()> + 'a;
+type ReplayRow = (
+    Vec<u8>,
+    Vec<u8>,
+    Vec<u8>,
+    Vec<u8>,
+    Vec<u8>,
+    u64,
+    u64,
+    Option<u64>,
+    Option<Vec<u8>>,
+    Option<u64>,
+);
+const AUTH_RESPONSE_RETENTION: u64 = 16;
+
+#[derive(Debug)]
+pub(crate) enum AuthenticatedReplayDecision {
+    Execute,
+    Cached(Vec<u8>),
+}
+
+struct ReplayRecovery<'a> {
+    db: &'a Connection,
+}
+impl PeerReplayRecoverySourceV0 for ReplayRecovery<'_> {
+    type Error = Error;
+
+    fn verify_recovery(&mut self, state: &PeerReplayStateV0) -> Result<()> {
+        let session = state.session().session_id().bytes();
+        let completed: u64 = self.db.query_row(
+            "SELECT COUNT(*) FROM peer_request_audit WHERE session_id=? AND nonce<=? AND status IN (1,2)",
+            params![session.as_slice(), state.highest_acknowledged_nonce()],
+            |row| row.get(0),
+        )?;
+        ensure(
+            completed == state.highest_acknowledged_nonce(),
+            "AUTH_REPLAY_GAP",
+        )?;
+        match state.pending() {
+            Some(frame) => {
+                let row: Option<(Vec<u8>, Option<Vec<u8>>, u64)> = self
+                    .db
+                    .query_row(
+                        "SELECT payload_digest,payload,status FROM peer_request_audit WHERE session_id=? AND nonce=?",
+                        params![session.as_slice(), frame.replay_nonce()],
+                        |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+                    )
+                    .optional()?;
+                let (digest, payload, status) = row.ok_or("AUTH_PENDING_AUDIT")?;
+                ensure(
+                    status == 0
+                        && bytes32(digest)? == frame.payload_digest().bytes()
+                        && payload.as_ref().is_some_and(|v| {
+                            v.len() == frame.payload_bytes()
+                                && crate::authenticated_payload_digest(v)
+                                    == frame.payload_digest().bytes()
+                        }),
+                    "AUTH_PENDING_AUDIT",
+                )?;
+            }
+            None => {
+                let pending: u64 = self.db.query_row(
+                    "SELECT COUNT(*) FROM peer_request_audit WHERE session_id=? AND status=0",
+                    [session.as_slice()],
+                    |row| row.get(0),
+                )?;
+                ensure(pending == 0, "AUTH_PENDING_AUDIT")?;
+            }
+        }
+        let future: u64 = self.db.query_row(
+            "SELECT COUNT(*) FROM peer_request_audit WHERE session_id=? AND nonce>?",
+            params![
+                session.as_slice(),
+                state
+                    .pending()
+                    .map_or(state.highest_acknowledged_nonce(), |v| v.replay_nonce())
+            ],
+            |row| row.get(0),
+        )?;
+        ensure(future == 0, "AUTH_REPLAY_FUTURE")
+    }
+}
+
+struct ExactFrameSource<'a> {
+    payload: &'a [u8],
+}
+impl PeerFrameSourceV0 for ExactFrameSource<'_> {
+    type Error = Error;
+
+    fn verify_frame(
+        &mut self,
+        _state: PeerReplayStateV0,
+        frame: &AuthenticatedPeerFrameV0,
+    ) -> Result<()> {
+        ensure(
+            frame.payload_bytes() == self.payload.len()
+                && frame.payload_digest().bytes()
+                    == crate::authenticated_payload_digest(self.payload),
+            "AUTH_PAYLOAD",
+        )
+    }
+}
+
+struct OutboxRecovery<'a> {
+    db: &'a Connection,
+}
+impl PeerReplayRecoverySourceV0 for OutboxRecovery<'_> {
+    type Error = Error;
+
+    fn verify_recovery(&mut self, state: &PeerReplayStateV0) -> Result<()> {
+        let session = state.session().session_id().bytes();
+        match state.pending() {
+            Some(frame) => {
+                let row: Option<(Vec<u8>, Vec<u8>, Vec<u8>)> = self
+                    .db
+                    .query_row(
+                        "SELECT pending_payload,pending_wire,pending_wire_digest FROM peer_outbox WHERE session_id=?",
+                        [session.as_slice()],
+                        |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+                    )
+                    .optional()?;
+                let (payload, wire, wire_digest) = row.ok_or("AUTH_OUTBOX_PENDING")?;
+                ensure(
+                    payload.len() == frame.payload_bytes()
+                        && crate::authenticated_payload_digest(&payload)
+                            == frame.payload_digest().bytes()
+                        && !wire.is_empty()
+                        && wire.len() <= 2 * 1024 * 1024
+                        && bytes32(wire_digest)? == hash(b"native-authenticated-wire-v1", &[&wire]),
+                    "AUTH_OUTBOX_PENDING",
+                )
+            }
+            None => Ok(()),
+        }
+    }
+}
+
 fn cut(hook: &mut Option<&mut Hook<'_>>, name: &str) -> Result<()> {
     if let Some(h) = hook.as_mut() {
         h(name)?;
@@ -245,7 +388,7 @@ impl Node {
         }
         db.busy_timeout(Duration::from_secs(5))?;
         db.execute_batch(
-            "PRAGMA trusted_schema=OFF; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
+            "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
         )?;
         if !initialized {
             ensure(intent, "INITIALIZATION_INTENT_REQUIRED")?;
@@ -302,11 +445,513 @@ impl Node {
             workers,
         };
         node.read_active()?;
+        node.validate_authenticated_replay()?;
+        node.validate_authenticated_outbox()?;
         node.recover()?;
         Ok(node)
     }
     pub fn settings(&self) -> &Settings {
         &self.settings
+    }
+    fn decode_replay_row(row: ReplayRow) -> Result<PeerReplayStateV0> {
+        let chain = IoDigest32V0::new(bytes32(row.0)?)
+            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+        let protocol = IoDigest32V0::new(bytes32(row.1)?)
+            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+        let peer = IoDigest32V0::new(bytes32(row.2)?)
+            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+        let session_id = IoDigest32V0::new(bytes32(row.3)?)
+            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+        let profile = IoDigest32V0::new(bytes32(row.4)?)
+            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+        let session = PeerSessionIdentityV0::new(chain, protocol, peer, session_id, profile, row.5)
+            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+        let pending = match (row.7, row.8, row.9) {
+            (None, None, None) => None,
+            (Some(nonce), Some(digest), Some(bytes)) => Some(
+                AuthenticatedPeerFrameV0::new(
+                    session,
+                    nonce,
+                    IoDigest32V0::new(bytes32(digest)?)
+                        .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?,
+                    usize::try_from(bytes).map_err(|_| Error::from("AUTH_REPLAY_SIZE"))?,
+                )
+                .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?,
+            ),
+            _ => return Err("AUTH_PENDING_AUDIT".into()),
+        };
+        PeerReplayStateV0::new(session, row.6, pending)
+            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))
+    }
+
+    fn authenticated_replay_state(
+        &self,
+        session: PeerSessionIdentityV0,
+    ) -> Result<Option<PeerReplayStateV0>> {
+        let id = session.session_id().bytes();
+        let row = self
+            .db
+            .query_row(
+                "SELECT chain_id,protocol_digest,peer_id,session_id,profile_digest,generation,highest_ack,pending_nonce,pending_digest,pending_bytes FROM peer_replay WHERE session_id=?",
+                [id.as_slice()],
+                |row| {
+                    Ok((
+                        row.get(0)?,
+                        row.get(1)?,
+                        row.get(2)?,
+                        row.get(3)?,
+                        row.get(4)?,
+                        row.get(5)?,
+                        row.get(6)?,
+                        row.get(7)?,
+                        row.get(8)?,
+                        row.get(9)?,
+                    ))
+                },
+            )
+            .optional()?;
+        row.map(Self::decode_replay_row)
+            .transpose()
+            .and_then(|state| {
+                if state.as_ref().is_some_and(|v| v.session() != session) {
+                    Err("AUTH_SESSION_COLLISION".into())
+                } else {
+                    Ok(state)
+                }
+            })
+    }
+
+    fn validate_authenticated_replay(&self) -> Result<()> {
+        let mut stmt = self.db.prepare(
+            "SELECT chain_id,protocol_digest,peer_id,session_id,profile_digest,generation,highest_ack,pending_nonce,pending_digest,pending_bytes FROM peer_replay ORDER BY session_id",
+        )?;
+        let rows = stmt
+            .query_map([], |row| {
+                Ok((
+                    row.get(0)?,
+                    row.get(1)?,
+                    row.get(2)?,
+                    row.get(3)?,
+                    row.get(4)?,
+                    row.get(5)?,
+                    row.get(6)?,
+                    row.get(7)?,
+                    row.get(8)?,
+                    row.get(9)?,
+                ))
+            })?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        drop(stmt);
+        for row in rows {
+            let state = Self::decode_replay_row(row)?;
+            ensure(
+                state.session().chain_id().bytes() == self.settings.genesis()
+                    && state.session().protocol_digest().bytes() == self.settings.parameters()
+                    && state.session().profile_digest().bytes()
+                        == crate::authenticated_profile_digest(),
+                "AUTH_REPLAY_CONTEXT",
+            )?;
+            CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
+                .map_err(|e| Error::from(format!("AUTH_RECOVERY:{e}")))?;
+        }
+        Ok(())
+    }
+
+    fn authenticated_outbox_state(
+        &self,
+        session: PeerSessionIdentityV0,
+    ) -> Result<Option<PeerReplayStateV0>> {
+        let id = session.session_id().bytes();
+        let row = self
+            .db
+            .query_row(
+                "SELECT chain_id,protocol_digest,peer_id,session_id,profile_digest,generation,highest_ack,pending_nonce,pending_digest,pending_bytes FROM peer_outbox WHERE session_id=?",
+                [id.as_slice()],
+                |row| {
+                    Ok((
+                        row.get(0)?,
+                        row.get(1)?,
+                        row.get(2)?,
+                        row.get(3)?,
+                        row.get(4)?,
+                        row.get(5)?,
+                        row.get(6)?,
+                        row.get(7)?,
+                        row.get(8)?,
+                        row.get(9)?,
+                    ))
+                },
+            )
+            .optional()?;
+        row.map(Self::decode_replay_row)
+            .transpose()
+            .and_then(|state| {
+                if state
+                    .as_ref()
+                    .is_some_and(|value| value.session() != session)
+                {
+                    Err("AUTH_OUTBOX_SESSION_COLLISION".into())
+                } else {
+                    Ok(state)
+                }
+            })
+    }
+
+    fn validate_authenticated_outbox(&self) -> Result<()> {
+        let mut stmt = self.db.prepare(
+            "SELECT chain_id,protocol_digest,peer_id,session_id,profile_digest,generation,highest_ack,pending_nonce,pending_digest,pending_bytes FROM peer_outbox ORDER BY session_id",
+        )?;
+        let rows = stmt
+            .query_map([], |row| {
+                Ok((
+                    row.get(0)?,
+                    row.get(1)?,
+                    row.get(2)?,
+                    row.get(3)?,
+                    row.get(4)?,
+                    row.get(5)?,
+                    row.get(6)?,
+                    row.get(7)?,
+                    row.get(8)?,
+                    row.get(9)?,
+                ))
+            })?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        drop(stmt);
+        for row in rows {
+            let state = Self::decode_replay_row(row)?;
+            ensure(
+                state.session().chain_id().bytes() == self.settings.genesis()
+                    && state.session().protocol_digest().bytes() == self.settings.parameters()
+                    && state.session().profile_digest().bytes()
+                        == crate::authenticated_profile_digest(),
+                "AUTH_OUTBOX_CONTEXT",
+            )?;
+            CandidateP2pAdmissionV0::recover_verified(state, &mut OutboxRecovery { db: &self.db })
+                .map_err(|error| Error::from(format!("AUTH_OUTBOX_RECOVERY:{error}")))?;
+        }
+        Ok(())
+    }
+
+    pub(crate) fn authenticated_outbound_reservation(
+        &self,
+        session: PeerSessionIdentityV0,
+    ) -> Result<(u64, Option<Vec<u8>>)> {
+        ensure(
+            session.chain_id().bytes() == self.settings.genesis()
+                && session.protocol_digest().bytes() == self.settings.parameters()
+                && session.profile_digest().bytes() == crate::authenticated_profile_digest(),
+            "AUTH_OUTBOX_CONTEXT",
+        )?;
+        let state = self.authenticated_outbox_state(session)?.unwrap_or(
+            PeerReplayStateV0::new(session, 0, None)
+                .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?,
+        );
+        CandidateP2pAdmissionV0::recover_verified(state, &mut OutboxRecovery { db: &self.db })
+            .map_err(|error| Error::from(format!("AUTH_OUTBOX_RECOVERY:{error}")))?;
+        if let Some(frame) = state.pending() {
+            let wire: Vec<u8> = self.db.query_row(
+                "SELECT pending_wire FROM peer_outbox WHERE session_id=?",
+                [session.session_id().bytes().as_slice()],
+                |row| row.get(0),
+            )?;
+            return Ok((frame.replay_nonce(), Some(wire)));
+        }
+        Ok((
+            state
+                .highest_acknowledged_nonce()
+                .checked_add(1)
+                .ok_or("AUTH_OUTBOX_OVERFLOW")?,
+            None,
+        ))
+    }
+
+    pub(crate) fn reserve_authenticated_outbound(
+        &mut self,
+        frame: AuthenticatedPeerFrameV0,
+        payload: &[u8],
+        wire: &[u8],
+    ) -> Result<Vec<u8>> {
+        self.ready()?;
+        self.namespace()?;
+        ensure(
+            !wire.is_empty() && wire.len() <= 2 * 1024 * 1024,
+            "AUTH_OUTBOX_WIRE",
+        )?;
+        let session = frame.session();
+        ensure(
+            session.chain_id().bytes() == self.settings.genesis()
+                && session.protocol_digest().bytes() == self.settings.parameters()
+                && session.profile_digest().bytes() == crate::authenticated_profile_digest(),
+            "AUTH_OUTBOX_CONTEXT",
+        )?;
+        let state = self.authenticated_outbox_state(session)?.unwrap_or(
+            PeerReplayStateV0::new(session, 0, None)
+                .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?,
+        );
+        let mut admission =
+            CandidateP2pAdmissionV0::recover_verified(state, &mut OutboxRecovery { db: &self.db })
+                .map_err(|error| Error::from(format!("AUTH_OUTBOX_RECOVERY:{error}")))?;
+        let verified = admission
+            .verify_frame(frame, &mut ExactFrameSource { payload })
+            .map_err(|error| Error::from(format!("AUTH_OUTBOX_FRAME:{error}")))?;
+        admission
+            .admit_verified(verified)
+            .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?;
+        if state.pending().is_some() {
+            let stored: Vec<u8> = self.db.query_row(
+                "SELECT pending_wire FROM peer_outbox WHERE session_id=?",
+                [session.session_id().bytes().as_slice()],
+                |row| row.get(0),
+            )?;
+            ensure(stored == wire, "AUTH_OUTBOX_CONFLICT")?;
+            return Ok(stored);
+        }
+        let tx = self
+            .db
+            .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        tx.execute(
+            "INSERT INTO peer_outbox(session_id,chain_id,protocol_digest,peer_id,profile_digest,generation,highest_ack,pending_nonce,pending_digest,pending_bytes,pending_payload,pending_wire,pending_wire_digest) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(session_id) DO UPDATE SET pending_nonce=excluded.pending_nonce,pending_digest=excluded.pending_digest,pending_bytes=excluded.pending_bytes,pending_payload=excluded.pending_payload,pending_wire=excluded.pending_wire,pending_wire_digest=excluded.pending_wire_digest",
+            params![
+                session.session_id().bytes().as_slice(),
+                session.chain_id().bytes().as_slice(),
+                session.protocol_digest().bytes().as_slice(),
+                session.peer_id().bytes().as_slice(),
+                session.profile_digest().bytes().as_slice(),
+                session.generation(),
+                state.highest_acknowledged_nonce(),
+                frame.replay_nonce(),
+                frame.payload_digest().bytes().as_slice(),
+                frame.payload_bytes() as u64,
+                payload,
+                wire,
+                hash(b"native-authenticated-wire-v1", &[wire]).as_slice(),
+            ],
+        )?;
+        tx.commit()?;
+        Ok(wire.to_vec())
+    }
+
+    pub(crate) fn finish_authenticated_outbound(
+        &mut self,
+        frame: AuthenticatedPeerFrameV0,
+    ) -> Result<()> {
+        let state = self
+            .authenticated_outbox_state(frame.session())?
+            .ok_or("AUTH_OUTBOX_STATE")?;
+        if state.highest_acknowledged_nonce() >= frame.replay_nonce() {
+            return Ok(());
+        }
+        let mut admission =
+            CandidateP2pAdmissionV0::recover_verified(state, &mut OutboxRecovery { db: &self.db })
+                .map_err(|error| Error::from(format!("AUTH_OUTBOX_RECOVERY:{error}")))?;
+        let next = admission
+            .acknowledge(frame)
+            .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?;
+        let tx = self
+            .db
+            .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let changed = tx.execute(
+            "UPDATE peer_outbox SET highest_ack=?,pending_nonce=NULL,pending_digest=NULL,pending_bytes=NULL,pending_payload=NULL,pending_wire=NULL,pending_wire_digest=NULL WHERE session_id=? AND pending_nonce=? AND pending_digest=?",
+            params![
+                next.highest_acknowledged_nonce(),
+                frame.session().session_id().bytes().as_slice(),
+                frame.replay_nonce(),
+                frame.payload_digest().bytes().as_slice(),
+            ],
+        )?;
+        ensure(changed == 1, "AUTH_OUTBOX_STATE")?;
+        tx.commit()?;
+        Ok(())
+    }
+
+    pub(crate) fn begin_authenticated_request(
+        &mut self,
+        frame: AuthenticatedPeerFrameV0,
+        payload: &[u8],
+    ) -> Result<AuthenticatedReplayDecision> {
+        self.ready()?;
+        self.namespace()?;
+        let session = frame.session();
+        ensure(
+            session.chain_id().bytes() == self.settings.genesis()
+                && session.protocol_digest().bytes() == self.settings.parameters()
+                && session.profile_digest().bytes() == crate::authenticated_profile_digest()
+                && session.generation() <= i64::MAX as u64
+                && frame.replay_nonce() <= i64::MAX as u64,
+            "AUTH_REPLAY_CONTEXT",
+        )?;
+        let existing = self.authenticated_replay_state(session)?;
+        let state = existing.unwrap_or(
+            PeerReplayStateV0::new(session, 0, None)
+                .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?,
+        );
+        CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
+            .map_err(|e| Error::from(format!("AUTH_RECOVERY:{e}")))?;
+        let session_id = session.session_id().bytes();
+        if frame.replay_nonce() <= state.highest_acknowledged_nonce() {
+            let audit: Option<(Vec<u8>, u64, Option<Vec<u8>>)> = self
+                .db
+                .query_row(
+                    "SELECT payload_digest,status,response FROM peer_request_audit WHERE session_id=? AND nonce=?",
+                    params![session_id.as_slice(), frame.replay_nonce()],
+                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+                )
+                .optional()?;
+            let (digest, status, response) = audit.ok_or("AUTH_REPLAY_GAP")?;
+            ensure(
+                bytes32(digest)? == frame.payload_digest().bytes(),
+                "AUTH_CONFLICTING_REPLAY",
+            )?;
+            return match (status, response) {
+                (1, Some(bytes)) => Ok(AuthenticatedReplayDecision::Cached(bytes)),
+                (2, None) => Err("AUTH_REPLAY_RETIRED".into()),
+                _ => Err("AUTH_REPLAY_AUDIT".into()),
+            };
+        }
+        let mut admission =
+            CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
+                .map_err(|e| Error::from(format!("AUTH_RECOVERY:{e}")))?;
+        let verified = admission
+            .verify_frame(frame, &mut ExactFrameSource { payload })
+            .map_err(|e| Error::from(format!("AUTH_FRAME:{e}")))?;
+        admission
+            .admit_verified(verified)
+            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+        if state.pending().is_some() {
+            return Ok(AuthenticatedReplayDecision::Execute);
+        }
+        let tx = self
+            .db
+            .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        tx.execute(
+            "INSERT INTO peer_replay(session_id,chain_id,protocol_digest,peer_id,profile_digest,generation,highest_ack,pending_nonce,pending_digest,pending_bytes) VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(session_id) DO UPDATE SET pending_nonce=excluded.pending_nonce,pending_digest=excluded.pending_digest,pending_bytes=excluded.pending_bytes",
+            params![
+                session_id.as_slice(),
+                session.chain_id().bytes().as_slice(),
+                session.protocol_digest().bytes().as_slice(),
+                session.peer_id().bytes().as_slice(),
+                session.profile_digest().bytes().as_slice(),
+                session.generation(),
+                state.highest_acknowledged_nonce(),
+                frame.replay_nonce(),
+                frame.payload_digest().bytes().as_slice(),
+                frame.payload_bytes() as u64,
+            ],
+        )?;
+        tx.execute(
+            "INSERT INTO peer_request_audit(session_id,nonce,payload_digest,payload,response_digest,response,status) VALUES(?,?,?,?,NULL,NULL,0)",
+            params![
+                session_id.as_slice(),
+                frame.replay_nonce(),
+                frame.payload_digest().bytes().as_slice(),
+                payload,
+            ],
+        )?;
+        tx.commit()?;
+        Ok(AuthenticatedReplayDecision::Execute)
+    }
+
+    pub(crate) fn finish_authenticated_request(
+        &mut self,
+        frame: AuthenticatedPeerFrameV0,
+        response: &[u8],
+    ) -> Result<()> {
+        ensure(
+            !response.is_empty() && response.len() <= 2 * 1024 * 1024,
+            "AUTH_RESPONSE",
+        )?;
+        let state = self
+            .authenticated_replay_state(frame.session())?
+            .ok_or("AUTH_REPLAY_STATE")?;
+        CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
+            .map_err(|e| Error::from(format!("AUTH_RECOVERY:{e}")))?;
+        let session = frame.session().session_id().bytes();
+        let response_digest = hash(b"native-authenticated-response-v1", &[response]);
+        if state.highest_acknowledged_nonce() >= frame.replay_nonce() {
+            let audit: Option<(Vec<u8>, u64, Option<Vec<u8>>)> = self
+                .db
+                .query_row(
+                    "SELECT response_digest,status,response FROM peer_request_audit WHERE session_id=? AND nonce=?",
+                    params![session.as_slice(), frame.replay_nonce()],
+                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+                )
+                .optional()?;
+            let (digest, status, retained) = audit.ok_or("AUTH_REPLAY_GAP")?;
+            ensure(
+                bytes32(digest)? == response_digest,
+                "AUTH_RESPONSE_CONFLICT",
+            )?;
+            ensure(
+                (status == 1 && retained.as_deref() == Some(response))
+                    || (status == 2 && retained.is_none()),
+                "AUTH_RESPONSE_CONFLICT",
+            )?;
+            return Ok(());
+        }
+        let mut admission =
+            CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
+                .map_err(|e| Error::from(format!("AUTH_RECOVERY:{e}")))?;
+        let next = admission
+            .acknowledge(frame)
+            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+        let tx = self
+            .db
+            .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let changed = tx.execute(
+            "UPDATE peer_request_audit SET payload=NULL,response_digest=?,response=?,status=1 WHERE session_id=? AND nonce=? AND status=0 AND payload_digest=?",
+            params![
+                response_digest.as_slice(),
+                response,
+                session.as_slice(),
+                frame.replay_nonce(),
+                frame.payload_digest().bytes().as_slice(),
+            ],
+        )?;
+        ensure(changed == 1, "AUTH_REPLAY_AUDIT")?;
+        tx.execute(
+            "UPDATE peer_replay SET highest_ack=?,pending_nonce=NULL,pending_digest=NULL,pending_bytes=NULL WHERE session_id=?",
+            params![next.highest_acknowledged_nonce(), session.as_slice()],
+        )?;
+        let retire = next
+            .highest_acknowledged_nonce()
+            .saturating_sub(AUTH_RESPONSE_RETENTION);
+        if retire > 0 {
+            tx.execute(
+                "UPDATE peer_request_audit SET response=NULL,status=2 WHERE session_id=? AND nonce<=? AND status=1",
+                params![session.as_slice(), retire],
+            )?;
+        }
+        tx.commit()?;
+        Ok(())
+    }
+
+    pub(crate) fn authenticated_outbox_counts(&self) -> Result<(u64, u64)> {
+        Ok((
+            self.db
+                .query_row("SELECT COUNT(*) FROM peer_outbox", [], |row| row.get(0))?,
+            self.db.query_row(
+                "SELECT COUNT(*) FROM peer_outbox WHERE pending_nonce IS NOT NULL",
+                [],
+                |row| row.get(0),
+            )?,
+        ))
+    }
+
+    pub(crate) fn authenticated_replay_counts(&self) -> Result<(u64, u64, u64)> {
+        Ok((
+            self.db
+                .query_row("SELECT COUNT(*) FROM peer_replay", [], |row| row.get(0))?,
+            self.db.query_row(
+                "SELECT COUNT(*) FROM peer_replay WHERE pending_nonce IS NOT NULL",
+                [],
+                |row| row.get(0),
+            )?,
+            self.db
+                .query_row("SELECT COUNT(*) FROM peer_request_audit", [], |row| {
+                    row.get(0)
+                })?,
+        ))
     }
     fn namespace(&self) -> Result<()> {
         let meta = fs::symlink_metadata(&self.directory)?;
@@ -365,6 +1010,20 @@ impl Node {
             |r| Ok((r.get::<_, Vec<u8>>(0)?, r.get::<_, u64>(1)?)),
         )?;
         Ok((bytes32(tip)?, g))
+    }
+    pub fn next_nonce(&self, sender: Hash) -> Result<u64> {
+        let state = self.state_at(self.active()?.0)?;
+        let key = format!("account:{}", hex::encode(sender));
+        let current = match state.get(&key) {
+            None => 0,
+            Some(account) => account
+                .get("nonce")
+                .and_then(serde_json::Value::as_u64)
+                .ok_or("STATE_NONCE")?,
+        };
+        current
+            .checked_add(1)
+            .ok_or_else(|| "NONCE_OVERFLOW".into())
     }
     fn slot(&self) -> Result<u64> {
         Ok(self
@@ -1166,8 +1825,12 @@ impl Node {
         let events: u64 = self
             .db
             .query_row("SELECT COUNT(*) FROM events", [], |r| r.get(0))?;
+        let (authenticated_sessions, authenticated_pending, authenticated_audit_rows) =
+            self.authenticated_replay_counts()?;
+        let (authenticated_outbox_sessions, authenticated_outbox_pending) =
+            self.authenticated_outbox_counts()?;
         Ok(
-            serde_json::json!({"network":hex::encode(self.settings.network()),"parameters":hex::encode(self.settings.parameters()),"genesis":hex::encode(self.settings.genesis()),"tip":hex::encode(tip),"height":row.height,"chainwork_hex":hex::encode(row.work.bytes()),"state_root":hex::encode(root(&state)?),"generation":g,"state_keys":state.len(),"stored_blocks":blocks,"events":events,"production_activation":false}),
+            serde_json::json!({"network":hex::encode(self.settings.network()),"parameters":hex::encode(self.settings.parameters()),"genesis":hex::encode(self.settings.genesis()),"tip":hex::encode(tip),"height":row.height,"chainwork_hex":hex::encode(row.work.bytes()),"state_root":hex::encode(root(&state)?),"generation":g,"state_keys":state.len(),"stored_blocks":blocks,"events":events,"authenticated_sessions":authenticated_sessions,"authenticated_pending":authenticated_pending,"authenticated_audit_rows":authenticated_audit_rows,"authenticated_outbox_sessions":authenticated_outbox_sessions,"authenticated_outbox_pending":authenticated_outbox_pending,"production_activation":false}),
         )
     }
 }

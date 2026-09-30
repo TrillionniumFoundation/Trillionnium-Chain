@@ -247,12 +247,39 @@ Mining freezes native execution roots before varying nonce. Packet publication u
 create-new output, file/directory sync, then block admission/activation; an existing
 output path cannot cause a newly mined block to be published silently.
 
-`serve` binds loopback only, uses three fixed workers and the existing public proof
+Plain `serve` binds loopback only, uses three fixed workers and the existing public proof
 admission component. BE32-framed closed JSON has a 2 MiB bound and an absolute five-
 second frame read/write deadline; incremental bytes cannot reset it. Remote messages
 cannot stop the host, supply local time, select recovery priority or change genesis.
 Full validation is serialized by the durable Node owner. This is real socket ingress,
-not authenticated public discovery/gossip, parallel public verification or Sybil fairness.
+not open public discovery/gossip, parallel public verification or Sybil fairness.
+
+### Allowlisted authenticated development transport
+
+`serve --authenticated-development-network` is a separate, explicit private-development
+profile. It may bind the selected address only when supplied a no-follow, single-link,
+owner-private Ed25519 key file, a bounded exact public-key roster and a positive session
+generation. `push` and `sync` require the matching client key, expected server public key
+and generation. Authentication options are accepted only by those network commands.
+The profile provides identity, integrity and replay control; it deliberately provides
+no confidentiality, anonymous admission, discovery or trust distribution.
+
+A canonical signed request binds network, parameters, genesis, authentication profile,
+peer and server keys, generation, replay nonce and complete closed request. The receiver
+atomically reserves session/nonce/payload before execution. One active duplicate receives
+Busy; an acknowledged duplicate receives only the stored signed terminal response after
+that response is reverified against the current exact request. A changed payload at the
+same nonce rejects. Work verification runs outside the durable owner mutex, but destination
+context, state and local clock are checked again before block admission. The response and
+acknowledged nonce commit together; 16 old response bodies are retained before retirement.
+
+The caller's `peer_outbox` commits the exact signed payload, wire and digests before any
+connect or write. Network loss, process restart or a lost server response retries those
+same bytes. Another request cannot replace them, and a retryable/nonterminal response does
+not consume the nonce. Only a strict context-matching server signature with `terminal=true`
+advances `highest_ack` and clears the pending fields. This is request-level exact retry;
+it is not target-side physical exactly-once execution, a wallet/HSM, TLS/Noise transport
+or production peer custody.
 
 The closed `pon-native-history-v1` page binds network, parameters, genesis, requested
 branch/cursor, full packets and terminal identity. The receiver checks all cheap page
@@ -270,9 +297,9 @@ tests; it cannot reopen an existing store under new parameters. `--logical-now` 
 labelled local conformance option and is rejected for serve, sync and push.
 
 Still missing: durable continuous mining and transaction-pool/reorg scheduling,
-authenticated peer discovery/gossip, native incremental persistent state, bounded interruption of all
-state reconstruction/admission/reorg work, ordinary Hepta admission/consent/effect owners and independent
-public attack acceptance. Session cache and native Node own different namespaces; neither
+open authenticated peer discovery/gossip and confidential transport, native incremental persistent state,
+bounded interruption of all state reconstruction/admission/reorg work, ordinary Hepta
+admission/consent/effect owners and independent public attack acceptance. Session cache and native Node own different namespaces; neither
 may be substituted for the other without their own explicit invocation and evidence.
 
 ### Native coherent batches and cooperative read cancellation

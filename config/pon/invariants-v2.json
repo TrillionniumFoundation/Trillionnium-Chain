@@ -561,6 +561,65 @@
       "limit": "Two or three eligible configured identities, bounded unsigned scores and existing candidate lifetime/intake window.",
       "threat": "First-arrival score selection, withheld evaluator, duplicate replacement and cross-profile replay.",
       "remaining": "Evaluator independence, objective dispute adjudication, functional-copy attribution and public production acceptance remain unqualified."
+    },
+    {
+      "module": "M04",
+      "id": "AuthenticatedReplay",
+      "claim": "One exact authenticated session nonce executes at most one active copy and replays only the same reverified signed terminal response; a different payload at that nonce rejects.",
+      "scope": "Allowlisted signed private development transport; no confidentiality, permissionless identity or public-network acceptance.",
+      "atomic": "Reserve session, nonce, digest and payload before execution; terminal signed response and acknowledged nonce commit together. Work verification occurs outside the durable owner lock and context is rechecked before block commit.",
+      "cuts": [
+        "Restart with a pending request",
+        "Lose the first terminal response",
+        "Concurrent duplicate while pending",
+        "Changed payload at the same nonce",
+        "Replay a terminal error",
+        "Alter canonical session or request bytes"
+      ],
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_authenticated_bytes_bind_session_signature_and_canonical_request",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_pending_request_recovers_and_completed_response_replays",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_committed_submit_with_missing_auth_ack_recovers_without_work_replay",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_authenticated_socket_replays_response_after_client_loses_first_ack",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_cached_terminal_error_is_reverified_and_counted_as_rejected"
+      ],
+      "source": [
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
+      ],
+      "limit": "At most64 peers, one pending nonce per session,16 retained response bodies,2MiB frames,three public workers and absolute deadlines.",
+      "threat": "Key theft, roster substitution, replay conflict, lost acknowledgement, disk corruption, identity churn and public Sybil admission.",
+      "remaining": "No encrypted channel, automated trust distribution, open discovery/gossip, permissionless fairness, WAN campaign or independent operator acceptance."
+    },
+    {
+      "module": "M15",
+      "id": "DurableOutbox",
+      "claim": "A native authenticated client commits one exact signed wire before network I/O, retries only those bytes after restart and advances its nonce only after a verified terminal response.",
+      "scope": "Caller-owned private development Node namespace; not a wallet, production key service or remote physical-effect exactly-once protocol.",
+      "atomic": "peer_outbox stores payload, wire and digests before connect/write; verified terminal acknowledgement atomically advances highest_ack and clears every pending field.",
+      "cuts": [
+        "Connection refused after reservation",
+        "Response lost after server commit",
+        "Client restart with pending bytes",
+        "Different request attempted while pending",
+        "Wrong server signature or session",
+        "Symlink, hard-link or group-readable secret file"
+      ],
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_client_outbox_survives_network_loss_and_rejects_changed_request",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_client_retries_exact_wire_after_lost_server_response",
+        "trillionnium/crates/trnm-pon-node/src/main.rs::test_authentication_configuration_uses_the_opened_file_identity",
+        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authentication_options_are_scoped_to_network_commands",
+        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"
+      ],
+      "source": [
+        "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
+      ],
+      "limit": "One pending request per session,2MiB wire,positive signed generation/nonce and descriptor-checked single-link private secret input.",
+      "threat": "Secret substitution, ambiguous retry, nonce gaps, response spoofing, client crash and request changes after reservation.",
+      "remaining": "No HSM custody, TLS/noise confidentiality, public peer routing, target-side physical exactly-once reconciliation or production lifecycle."
     }
   ],
   "binding_is_execution": false,

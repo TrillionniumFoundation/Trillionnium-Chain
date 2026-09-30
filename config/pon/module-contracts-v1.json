@@ -171,28 +171,39 @@
       "operations": [
         {
           "id": "M04.ReadFrame",
-          "inputs": "socket and BE32 length prefix",
-          "output": "bounded exact message or transport error",
-          "algorithm": "Read four bytes with10-second timeout; require 1..2097152 before allocating; read exactly length and reject duplicate JSON keys. Submit payload goes through full M02 validation, never through an accept flag.",
-          "commit": "Transport has no chain authority; each child owns a different ledger.",
-          "errors": "FRAME_LIMIT, SHORT_FRAME, OPERATION, ROOT",
-          "limits": "127.0.0.1 experiment only;backlog16;timeout10seconds"
+          "inputs": "socket, BE32 length prefix and optional canonical signed development envelope",
+          "output": "bounded exact request or authenticated transport error",
+          "algorithm": "Use one absolute five-second frame deadline; require 1..2097152 before allocation and read exactly that many bytes. Unauthenticated service is loopback-only. The explicit private development profile verifies canonical context-bound signatures before dispatch.",
+          "commit": "Transport has no chain authority. Authenticated replay reservation is durable before execution; M07/M08 remain the only block/state commit owner.",
+          "errors": "FRAME_LIMIT, FRAME_DEADLINE, AUTH_NONCANONICAL, AUTH_SIGNATURE, BUSY",
+          "limits": "three fixed server workers;10-second request budget;64 allowlisted peers;no confidentiality or public Sybil claim"
         },
         {
           "id": "M04.PropagateVerifiedBlock",
-          "inputs": "fixed header,txs,certificate and three peer endpoints",
-          "output": "per-peer read-back tip/root/generation",
-          "algorithm": "Send identical block to separate processes; each rechecks full work and state before ack. Retain failed/unavailable outcomes. Native peer identity/replay comes from retained authenticated frame components, not the test TCP wrapper.",
-          "commit": "M07/M08 own receipt persistence; transport never writes ledger tables.",
-          "errors": "UNAVAILABLE, UNKNOWN_PARENT, TRANSCRIPT",
-          "limits": "native target peer inflight4;globalproof4;independent queues"
+          "inputs": "fixed packet and a loopback or allowlisted authenticated development endpoint",
+          "output": "signed terminal response or retained exact pending request",
+          "algorithm": "Send one canonical packet through the normal native request path; the receiver rechecks work, state and local clock before commit. Authenticated clients persist the exact signed wire before I/O and retry that wire after loss.",
+          "commit": "M07/M08 own block persistence; inbound replay state and outbound pending wire use the same private Node namespace in separate atomic tables.",
+          "errors": "UNAVAILABLE, AUTH_OUTBOX_PENDING, AUTH_CONFLICTING_REPLAY, UNKNOWN_PARENT, TRANSCRIPT",
+          "limits": "one pending request per session;2MiB frame;bounded response retention;independent local recovery lane"
+        },
+        {
+          "id": "M04.AuthenticateRequest",
+          "inputs": "canonical request,peer/server Ed25519 identities,network/parameters/genesis/profile,generation and replay nonce",
+          "output": "one replay-qualified request or the exact previously signed terminal response",
+          "algorithm": "Derive the session from complete context and both identities; verify strict Ed25519 over canonical request bytes; reserve nonce and payload digest durably; execute at most one active copy; reverify any retained signed response before replay. A changed payload at the same nonce rejects.",
+          "commit": "peer_replay and peer_request_audit reserve the exact request in one transaction before execution; terminal signed response and acknowledged nonce commit together.",
+          "errors": "AUTH_SESSION_CONTEXT, AUTH_SIGNATURE, AUTH_REPLAY, AUTH_CONFLICTING_REPLAY, AUTH_PENDING_BUSY, AUTH_RESPONSE_CONFLICT",
+          "limits": "generation and nonce in1..i64::MAX;16 retained response bodies;allowlist<=64;development private transport without confidentiality"
         }
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/experiments/local_network.py",
         "trillionnium/crates/trnm-transport/src/lib.rs",
         "trillionnium/crates/trnm-transport/src/proof_admission.rs",
-        "trillionnium/crates/trnm-pon-node/src/store.rs"
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/main.rs"
       ],
       "test_classes": [
         "InteropTests"
@@ -615,12 +626,21 @@
       "operations": [
         {
           "id": "M15.StartExecutableSpecPeer",
-          "inputs": "privateledgerdir,exactconfig",
-          "output": "ready localhostport or failure",
-          "algorithm": "Acquire exclusive store owner, verify parameters, recover unfinishedintent, then bind127.0.0.1 and announcegenesis. No network admission before recovery. This is not the native production node assembly.",
-          "commit": "Own one ledger writer perprocess; private directory; current schemaonly.",
-          "errors": "WRITER_BUSY, NETWORK, ROOT, NODE_START_TIMEOUT",
-          "limits": "startup20seconds,listen16,request10seconds,inactivity30seconds"
+          "inputs": "private ledger directory,exact development context and optional allowlisted authentication profile",
+          "output": "recovered bounded native endpoint or failure",
+          "algorithm": "Acquire the exclusive store owner, verify parameters, recover reorg plus replay/outbox state, then bind. Plain service is loopback-only; a non-loopback development bind requires the explicit authenticated flag, a descriptor-checked private key, an exact peer roster and a positive session generation.",
+          "commit": "One Node owns branch state, inbound replay and outbound exact-wire state. No admission occurs before all recovery checks finish.",
+          "errors": "WRITER_BUSY, STORAGE_CONTEXT, AUTH_SECRET_FILE, AUTH_ROSTER, AUTH_RECOVERY, NETWORK",
+          "limits": "fresh current schema only;three workers;5-second frame and10-second request budgets;no unattended production service"
+        },
+        {
+          "id": "M15.SendDurableAuthenticatedRequest",
+          "inputs": "Node owner,peer address,canonical request,client key,expected server key and session generation",
+          "output": "verified signed terminal response or the unchanged pending exact wire for retry",
+          "algorithm": "Create and sign one canonical request; commit its exact payload, wire and digests before network I/O; on restart retry only those bytes; clear the pending row and advance the nonce only after a context-matching strict server signature with terminal=true. A different request while pending rejects.",
+          "commit": "peer_outbox reservation commits before connect/write; terminal acknowledgement clears pending bytes and advances highest_ack in one transaction.",
+          "errors": "AUTH_OUTBOX_CONTEXT, AUTH_OUTBOX_PENDING, AUTH_OUTBOX_CONFLICT, AUTH_RESPONSE_CONTEXT, AUTH_RESPONSE_SIGNATURE, REMOTE_RETRYABLE",
+          "limits": "one pending request per session;wire<=2MiB;secret file is no-follow,single-link and owner-private;network commands alone accept authentication options"
         },
         {
           "id": "M15.StopAndReconcile",
@@ -637,7 +657,9 @@
         "formal/pon-nakamoto-v1/ledger.py",
         "formal/pon-nakamoto-v1/native_execution.py",
         "trillionnium/crates/trnm-release-bundle/src/lib.rs",
-        "trillionnium/crates/trnm-pon-node/src/store.rs"
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/main.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
