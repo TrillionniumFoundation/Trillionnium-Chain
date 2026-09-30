@@ -23,7 +23,7 @@ legacy appendices and jobs are removed; Git alone retains historical content.
 | M12 | [M12_SETTLEMENT_TECHNICAL_SPEC_V1.md](M12_SETTLEMENT_TECHNICAL_SPEC_V1.md) | `trnm-service-settlement`, `trnm-escrow-vault` |
 | M13 | [M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md](M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md) | `trnm-state-import` |
 | M14 | [M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md](M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md) | `trnm-pon-node` development component; full public target incomplete |
-| M15 | [M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md](M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md) | `trnm-release-bundle` |
+| M15 | [M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md](M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md) | `trnm-release-bundle`, `trnm-pon-node` development composition |
 | M16 | [M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md](M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md) | `trnm-control-plane` |
 | M17 | [M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md](M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md) | `trnm-bench`, `trnm-audit-events` |
 
@@ -38,7 +38,7 @@ reference implementation mean the native production owner has been completed.
 
 ## Invariants, not document counts
 
-[Concrete invariant and failure schedules](../../config/pon/invariants-v2.json) bind every module to actual test functions and source. Binding verification is not a test pass. M06 now contains native twelve-command execution; complete native consensus/persistence/Hepta host and independent acceptance remain absent.
+[Concrete invariant and failure schedules](../../config/pon/invariants-v2.json) bind every module to actual test functions and source. Binding verification is not a test pass. M06 contains native twelve-command execution. The native development composition adds M02 consensus decisions and a distinct M07/M08 SQLite owner; authenticated public P2P, continuous miner/mempool lifecycle, ordinary Hepta integration and independent acceptance remain incomplete.
 
 ## Responsibility and evidence
 
@@ -109,3 +109,5 @@ reference-only M02/M07/M08 and single-confirmation M14 responsibilities. Existin
 M00/M01/M06 are reused. Component presence, a development CLI, complete public-host
 integration and independent acceptance remain separate facts. The responsibility map
 binds the actual functions and exact native integration tests; no new roadmap exists.
+
+The [native development receipt](../../evidence/pon-native-node-v1/README.md) is registered as `native_node` in the same reporter. It records the native owner, bounded CLI/socket batches and a separately replayed current model supplement; no historical package is repinned.

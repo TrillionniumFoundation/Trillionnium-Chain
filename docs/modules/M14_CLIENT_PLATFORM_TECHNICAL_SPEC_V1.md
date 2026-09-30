@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Closed service-consent receipts and fully verifying reference client observations; neither is a local capability.
+Closed service-consent receipts and native/reference fully verifying client observations; none is a local capability.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -27,7 +27,7 @@ Consumer consent binds expected network, parameters, model, request, input, prov
 
 **Invariant:** Consumer consent binds expected network, parameters, model, request, input, provider and quota; no opaque result hash silently substitutes another service.
 
-**Scope:** Closed service-consent receipts and fully verifying reference client observations; neither is a local capability.
+**Scope:** Closed service-consent receipts and native/reference fully verifying client observations; none is a local capability.
 
 **Atomic boundary:** Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context. Confirmation reads one active view, validates all memberships, and checks that tip/generation still match before returning.
 
@@ -53,6 +53,8 @@ Controlled full-verifying confirmation is implemented in N2 below; succinct ligh
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
+- [`trillionnium/crates/trnm-pon-node/src/main.rs`](../../trillionnium/crates/trnm-pon-node/src/main.rs).
 - [`formal/pon-nakamoto-v1/inference_receipt.py`](../../formal/pon-nakamoto-v1/inference_receipt.py).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 

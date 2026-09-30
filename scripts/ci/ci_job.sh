@@ -64,6 +64,8 @@ case "${1:?required job}" in
     python3 scripts/ci/check_client_confirmation_evidence.py --historical
     python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-session-v1
     python3 scripts/ci/check_client_confirmation_evidence.py --native-node
+    python3 scripts/ci/check_native_node_supplements.py
+    python3 scripts/ci/test_native_node_supplements.py
     python3 scripts/ci/test_native_session_evidence.py
     python3 scripts/ci/test_client_confirmation_evidence.py
     python3 scripts/ci/test_evaluation_bundle_evidence.py

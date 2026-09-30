@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Two SQLite connections to one local operation namespace. This is not physical effect cancellation.
+Native bounded development mining plus the separate reference local-effect experiment. Its two SQLite connections demonstrate local entry linearization, not physical effect cancellation or a durable continuous miner.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -27,7 +27,7 @@ If revoke commits before entry, the same operation cannot create an effects row;
 
 **Invariant:** If revoke commits before entry, the same operation cannot create an effects row; a committed entry cannot be repeated after crash.
 
-**Scope:** Two SQLite connections to one local operation namespace. This is not physical effect cancellation.
+**Scope:** Native bounded development mining plus the separate reference local-effect experiment. Its two SQLite connections demonstrate local entry linearization, not physical effect cancellation or a durable continuous miner.
 
 **Atomic boundary:** BEGIN IMMEDIATE encloses revocation check, duplicate check and insert; revoke uses the same serialization point.
 
@@ -55,6 +55,7 @@ Normal Hepta final-use token, independent rollback frontier and target-side reco
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.

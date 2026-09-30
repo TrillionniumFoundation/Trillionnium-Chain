@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Fresh revision3 SQLite namespace, not an in-place historical database upgrade.
+Distinct fresh native-development and reference revision3 SQLite namespaces; each has one writer. Neither silently upgrades or writes the other namespace.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -27,7 +27,7 @@ BEGIN IMMEDIATE, insert immutable block, insert changed-key deltas, COMMIT. Any 
 
 **Invariant:** Every owned initialization crash cut can recover; foreign incomplete databases and injected schema objects reject without writable mutation.
 
-**Scope:** Fresh revision3 SQLite namespace, not an in-place historical database upgrade.
+**Scope:** Distinct fresh native-development and reference revision3 SQLite namespaces; each has one writer. Neither silently upgrades or writes the other namespace.
 
 **Atomic boundary:** Fsync exact initialization intent, create schema plus genesis in one transaction, remove marker after commit; compare exact schema projection on reopen.
 
@@ -53,10 +53,11 @@ These exact functions contain executable assertions. The registry only checks bi
 
 Initialization gaps, trigger/schema substitution, disk full, path replacement and unbounded full-state copies.
 
-Full descriptor/sidecar fencing, incremental authenticated native state tree and physical power-loss tests remain pending.
+Full descriptor/sidecar fencing, incremental authenticated native persistent state and physical power-loss tests remain pending.
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.

@@ -24,3 +24,7 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 
 /evidence/pon-native-session-v1/publication-failures/*.log -text -whitespace
 /evidence/pon-native-session-v1/work-cost/*.log -text -whitespace
+
+# Native-node receipts retain exact raw command output; source formatting stays enforced.
+/evidence/pon-native-node-v1/**/*.log -text -whitespace
+/evidence/pon-native-node-v1/owned-host-smoke/*.packet -text -diff

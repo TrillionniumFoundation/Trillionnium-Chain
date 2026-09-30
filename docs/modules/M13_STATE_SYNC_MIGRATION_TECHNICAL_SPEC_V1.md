@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Root-verified local storage replay. The4101-height fixture is not4101 real mined blocks.
+Native bounded history delivery and separate reference root-verified storage replay. The reference 4101-height fixture is not 4101 real mined native blocks.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -27,7 +27,7 @@ For each block use M02 exact parent work and M06 state validation. Work matrices
 
 **Invariant:** A height beyond4096 does not alone reject a shallow-fork state reconstruction; local checkpoint contents must match stored block roots.
 
-**Scope:** Root-verified local storage replay. The4101-height fixture is not4101 real mined blocks.
+**Scope:** Native bounded history delivery and separate reference root-verified storage replay. The reference 4101-height fixture is not 4101 real mined native blocks.
 
 **Atomic boundary:** Find verified checkpoint or genesis, follow decreasing heights, verify every delta precondition and resultant root.
 
@@ -53,6 +53,8 @@ State maps and root recomputation are still complete reference values; resumable
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
+- [`trillionnium/crates/trnm-pon-node/src/ingress.rs`](../../trillionnium/crates/trnm-pon-node/src/ingress.rs).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.

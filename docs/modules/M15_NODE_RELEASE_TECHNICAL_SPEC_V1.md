@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Existing ledger with explicit native application bridge; not a complete native public host.
+Native development CLI/loopback composition and a separate reference ledger with explicit native compute bridge. The bridge-specific invariant below is not a claim of a complete native public host.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -27,7 +27,7 @@ Stop admission, requestchild stop, wait bounded5seconds, kill+reap ifunresponsiv
 
 **Invariant:** A host selecting native execution either uses that binary or fails; it does not silently substitute a reference success path.
 
-**Scope:** Existing ledger with explicit native application bridge; not a complete native public host.
+**Scope:** Native development CLI/loopback composition and a separate reference ledger with explicit native compute bridge. The bridge-specific invariant below is not a claim of a complete native public host.
 
 **Atomic boundary:** Backend choice before execution; bounded subprocess response; independently recompute returned root.
 
@@ -61,6 +61,9 @@ Same-operator SSH test peers are not native host integration. Ordinary Hepta ent
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/main.rs`](../../trillionnium/crates/trnm-pon-node/src/main.rs).
+- [`trillionnium/crates/trnm-pon-node/src/ingress.rs`](../../trillionnium/crates/trnm-pon-node/src/ingress.rs).
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
 - [`formal/pon-nakamoto-v1/native_execution.py`](../../formal/pon-nakamoto-v1/native_execution.py).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 - [`formal/pon-nakamoto-v1/bounded_process.py`](../../formal/pon-nakamoto-v1/bounded_process.py).

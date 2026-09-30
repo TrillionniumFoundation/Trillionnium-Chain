@@ -398,9 +398,10 @@ Continue the same canonical PR #204 lineage. Existing five applicability/evidenc
 responsibility/application-scope corrections are preserved, not counted as new runtime.
 Recovered local work is integrated only after source comparison and byte-preservation.
 
-M06 now exposes an optional private native compute session with a compressed in-memory
-incremental commitment. It executes the same twelve commands; M07/M08 reference SQLite
-remains the sole durable chain owner. Strict predecessor bytes, sequence, delta, output,
+In the historical session path, M06 exposes an optional private native compute session
+with a compressed in-memory incremental commitment. Within that path M07/M08 reference
+SQLite remains the sole durable owner. The subsequent native CLI has its own fresh
+M07/M08 namespace, not a second writer of the reference store. Strict predecessor bytes, sequence, delta, output,
 backend selection and lost-reply handling prevent reuse of an unknown cache as authority.
 Early work prechecks reject malformed input before branch-state reconstruction but do not
 qualify cheap forged tickets or adversarial work hardness. The receiver can check a bounded
@@ -445,3 +446,5 @@ changed source in the native-node receipt rather than repinning session evidence
 P2P/work admission, continuous mining/mempool scheduling, native persistent incremental
 state, revision3 evaluation-order economics and genuine Hepta/model/resource integration
 remain separate unfinished implementation/acceptance work on these existing owners.
+
+The current [native-node receipt](../../evidence/pon-native-node-v1/README.md) binds the clean runtime, actual native CLI replay, both work-cost targets and a separate recomputed model-value experiment. Hosted candidate/merge checks remain fresh delivery observations, not part of old runtime receipts.

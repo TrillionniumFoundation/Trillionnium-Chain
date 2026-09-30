@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Reference disk SQLite; process crash is not physical power-loss evidence.
+Native Node and separate reference Ledger disk-SQLite recovery. The detailed Ledger-named phase contracts below identify the reference API; the native mapping is stated in the continuation section. Process crash is not physical power-loss evidence.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -43,7 +43,7 @@ The claims below apply to their named component and tests, not to an independent
 
 **Invariant:** All eight reorg process-crash cuts recover the same root and one event set while irreversible local records survive.
 
-**Scope:** Reference disk SQLite; process crash is not physical power-loss evidence.
+**Scope:** Native Node and separate reference Ledger disk-SQLite recovery. The detailed Ledger-named phase contracts below identify the reference API; the native mapping is stated in the continuation section. Process crash is not physical power-loss evidence.
 
 **Atomic boundary:** Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.
 
@@ -67,6 +67,7 @@ Remote target compensation and long-running native node recovery are separate ob
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.

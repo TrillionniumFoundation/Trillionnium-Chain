@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Existing reference Ledger; native consensus actor remains separate work.
+Native development target/work/admission and branch decisions in trnm-pon-node, with a separate reference Ledger oracle. Authenticated public consensus service remains incomplete.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -27,7 +27,7 @@ A persisted valid higher-work block is selected after restart even if activation
 
 **Invariant:** A persisted valid higher-work block is selected after restart even if activation intent was never written.
 
-**Scope:** Existing reference Ledger; native consensus actor remains separate work.
+**Scope:** Native development target/work/admission and branch decisions in trnm-pon-node, with a separate reference Ledger oracle. Authenticated public consensus service remains incomplete.
 
 **Atomic boundary:** Finish existing reorg intent, inspect indexed fully verified tips, then publish strictly heavier state.
 
@@ -57,6 +57,8 @@ Native P2P consensus actor, timestamp attack qualification and independently ope
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/consensus.rs`](../../trillionnium/crates/trnm-pon-node/src/consensus.rs).
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.

@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Native transport admission component, not an already deployed public network service.
+Native admission components and the bounded development loopback endpoint; neither is an authenticated public network service.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -27,7 +27,7 @@ Send identical block to separate processes; each rechecks full work and state be
 
 **Invariant:** Public verification cannot consume or duplicate-pin a local recovery slot; stopped generations retain live accounting until every permit drops.
 
-**Scope:** Native transport admission component, not an already deployed public network service.
+**Scope:** Native admission components and the bounded development loopback endpoint; neither is an authenticated public network service.
 
 **Atomic boundary:** One mutex owns counts and per-lane duplicate identities; only the local recovery capability can select its lane; RAII releases each live permit.
 
@@ -57,6 +57,7 @@ Global public fairness and cheap-proof defense are unresolved; local recovery ca
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/ingress.rs`](../../trillionnium/crates/trnm-pon-node/src/ingress.rs).
 - [`trillionnium/crates/trnm-transport/src/proof_admission.rs`](../../trillionnium/crates/trnm-transport/src/proof_admission.rs).
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.

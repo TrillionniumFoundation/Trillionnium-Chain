@@ -1259,6 +1259,13 @@
       "log_prefix": "",
       "scope": "Exact-source native compute cache, incremental root, early precheck and controlled receiver confirmation; no full native node or public capacity.",
       "source_archive": null
+    },
+    "native_node": {
+      "manifest": "evidence/pon-native-node-v1/manifest.json",
+      "qualification": "qualification.json",
+      "log_prefix": "",
+      "scope": "Native development consensus/storage/CLI plus bounded batches; separate current model supplement. No public-node, future-value or independent acceptance.",
+      "source_archive": null
     }
   }
 }
