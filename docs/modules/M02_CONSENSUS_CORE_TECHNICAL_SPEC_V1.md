@@ -71,3 +71,12 @@ Run `python3 scripts/ci/report_module_evidence.py --module M02` from the reposit
 root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
 not observed in each package. A byte match is not a new test run or product acceptance.
 Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
+
+## Native development continuation and remaining scope
+
+Native required-target, 512-bit chainwork, full-block admission and heavier-branch decisions now execute in trnm-pon-node consensus/store. Native retarget regression compares a lower-height higher-work branch against a taller branch. Public work hardness and network assumptions remain unqualified.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

@@ -14,7 +14,7 @@ from check_client_confirmation_evidence import ROOT, validate, require_tracked_e
 class NativeSessionEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.original=ROOT/'evidence/pon-native-session-v1'
+        cls.original=ROOT/'evidence/pon-native-node-v1'
         cls.baseline=validate(evidence=cls.original)
 
     def setUp(self):

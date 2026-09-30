@@ -197,6 +197,14 @@
       "role": "Pure in-memory escrow conservation reference; no second production ledger or durability claim.",
       "consensus_authority": false,
       "production_activation": false
+    },
+    {
+      "package": "trnm-pon-node",
+      "module": "M15",
+      "path": "trillionnium/crates/trnm-pon-node",
+      "role": "Native experimental composition of M02 work/target decisions, M07 branch storage, M08 reorg and M14 confirmation using existing M00/M01/M04/M06 components. Separate fresh namespace; not public-network or production qualification.",
+      "consensus_authority": false,
+      "production_activation": false
     }
   ],
   "source_disposition": [

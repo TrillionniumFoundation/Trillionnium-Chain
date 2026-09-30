@@ -216,6 +216,72 @@ pub fn verify(
     })
 }
 
+/// Bounded producer cache for one exact task. It carries no verification authority.
+/// The useful product is fixed across challenges; every challenge still hashes every tile.
+pub struct PreparedTask {
+    a: Vec<u32>,
+    b: Vec<u32>,
+    prefix: Vec<u8>,
+}
+impl PreparedTask {
+    pub fn new(a: &[u32], b: &[u32]) -> Result<Self, WorkError> {
+        validate(a)?;
+        validate(b)?;
+        let product = mul(a, b, N, N, N);
+        let mut prefix = Vec::with_capacity(PROOF_BYTES);
+        prefix.extend_from_slice(b"PNW1");
+        for matrix in [a, b, product.as_slice()] {
+            prefix.extend_from_slice(&field_bytes(matrix));
+        }
+        Ok(Self {
+            a: a.to_vec(),
+            b: b.to_vec(),
+            prefix,
+        })
+    }
+    pub fn prove(&self, challenge: Hash) -> Result<Vec<u8>, WorkError> {
+        let el = expand(challenge, 0, N * R)?;
+        let er = expand(challenge, 1, N * R)?;
+        let fl = expand(challenge, 2, N * R)?;
+        let fr = expand(challenge, 3, N * R)?;
+        let ap: Vec<u32> = self
+            .a
+            .iter()
+            .zip(mul(&el, &er, N, R, N))
+            .map(|(x, y)| ((u128::from(*x) + u128::from(y)) % Q) as u32)
+            .collect();
+        let bp: Vec<u32> = self
+            .b
+            .iter()
+            .zip(mul(&fl, &fr, N, R, N))
+            .map(|(x, y)| ((u128::from(*x) + u128::from(y)) % Q) as u32)
+            .collect();
+        let mut cp = vec![0u32; CELLS];
+        let mut transcript = Sha256::new();
+        transcript.update(b"TRNM-PON-TRACE1\0");
+        transcript.update(challenge);
+        for bi in 0..N / R {
+            for bj in 0..N / R {
+                for bk in 0..N / R {
+                    for i in bi * R..(bi + 1) * R {
+                        for j in bj * R..(bj + 1) * R {
+                            let mut sum = u128::from(cp[i * N + j]);
+                            for k in bk * R..(bk + 1) * R {
+                                sum += u128::from(ap[i * N + k]) * u128::from(bp[k * N + j]);
+                            }
+                            cp[i * N + j] = (sum % Q) as u32;
+                            transcript.update(cp[i * N + j].to_le_bytes());
+                        }
+                    }
+                }
+            }
+        }
+        let mut out = self.prefix.clone();
+        out.extend_from_slice(&transcript.finalize());
+        Ok(out)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -298,5 +364,35 @@ mod tests {
         let mut a = vec![0; CELLS];
         a[0] = u32::MAX;
         assert_eq!(prove([0; 32], &a, &a).unwrap_err(), WorkError::Field);
+    }
+    #[test]
+    fn fixed_task_preparation_is_byte_identical_across_challenges_and_shapes() {
+        for class in 0..4 {
+            let a: Vec<u32> = (0..CELLS)
+                .map(|i| match class {
+                    0 => 0,
+                    1 => u32::from(i / N == i % N),
+                    2 => ((i / N + 1) * (i % N + 1)) as u32,
+                    _ => (i % 31) as u32,
+                })
+                .collect();
+            let b: Vec<u32> = (0..CELLS)
+                .map(|i| match class {
+                    0 => 0,
+                    1 => u32::from(i / N == i % N),
+                    2 => ((i / N + 2) * (i % N + 1)) as u32,
+                    _ => ((i * 7) % 37) as u32,
+                })
+                .collect();
+            let prepared = PreparedTask::new(&a, &b).unwrap();
+            let task = task_id(&a, &b).unwrap();
+            for challenge in [[0; 32], [255; 32], [7; 32]] {
+                let actual = prepared.prove(challenge).unwrap();
+                assert_eq!(actual, prove(challenge, &a, &b).unwrap());
+                verify(challenge, task, [255; 32], &actual).unwrap();
+            }
+        }
+        assert!(PreparedTask::new(&[], &[]).is_err());
+        assert!(PreparedTask::new(&vec![u32::MAX; CELLS], &vec![0; CELLS]).is_err());
     }
 }

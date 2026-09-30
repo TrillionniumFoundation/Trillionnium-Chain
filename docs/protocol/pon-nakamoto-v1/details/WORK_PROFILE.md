@@ -168,3 +168,30 @@ independent attack implementation/reproduction and declared assumptions, not an
 unconditional complexity lower bound or a prescribed count of successful experiments.
 The cited matrix-work paper's conjectured security and asymptotic costs remain separate
 from this concrete profile's parameters and implementation.
+
+### Fixed-task producer preparation: implemented comparison, not hardness qualification
+
+`pon_work::PreparedTask` caches the exact canonical A/B/product prefix once for a fixed
+admitted task. For EVERY new challenge it still expands all challenge noise, computes
+the challenged tile accumulations and hashes every required intermediate in the exact
+original order. The original `evaluate`, `prove` and full `verify` are unchanged. The
+new native development miner calls this producer; a cached prefix is not VerifiedWork.
+Cross-challenge dense/zero/rank-one/sparse regressions require byte-identical certificates
+and successful ORIGINAL verification. Invalid sizes and field elements still reject.
+
+For this scalar algorithm, original generation performs 458,752 field multiplications
+per attempt. The prepared producer pays 262,144 once for AB and 327,680 per attempt.
+These are operation counts from the loops, not measured CPU ratios or adversary lower
+bounds. For k attempts, preparation reduces that count only when k>2; at the half-range
+development target E[k]=2 under the unqualified uniform-ticket assumption. Caching
+across later challenges has another amortization scope and cannot be hidden as free work.
+
+`pon_prepared_cost` compares both producers on identical task/challenge/nonce streams
+at targets 7fff... and 07ff..., alternating invocation order. It retains setup, search,
+total and original-verifier costs, actual attempts, certificate commitment and slower
+samples. The narrower target is an explicit relation microbenchmark, not a new genesis
+or silent change to the branch-derived required target. It measures two actual valid
+implementations, not the globally fastest algorithm, permissionless admission or new
+model utility. Cheap fabricated transcript admission and further algebraic/preprocessing,
+hardware and task-choice shortcuts remain open. The old full-prover cost remains useful
+as a named baseline but must not be presented as unavoidable effective mining work.

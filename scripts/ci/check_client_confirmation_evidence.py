@@ -68,7 +68,8 @@ def validate(root=ROOT, evidence=None):
     root = Path(root).resolve()
     folder = Path(evidence or root / 'evidence/pon-client-confirmation-v1').resolve()
     manifest = load(folder / 'manifest.json')
-    session = manifest['schema'] == 'pon-native-session-evidence-v1'
+    native_node = manifest['schema'] == 'pon-native-node-evidence-v1'
+    session = native_node or manifest['schema'] == 'pon-native-session-evidence-v1'
     require(session or manifest['schema'] == 'pon-client-confirmation-evidence-v1', 'schema')
     require(manifest['source_clean'] is True and manifest['all_commands_passed'] is True, 'incomplete measurement')
     for flag in FLAGS:
@@ -83,7 +84,7 @@ def validate(root=ROOT, evidence=None):
             and q['source_tree'] == manifest['implementation_tree'], 'source identity')
     require(q['source_clean'] is True and q['source_clean_after'] is True
             and q['all_commands_passed'] is True, 'dirty or failed qualification')
-    require(q['workstream'] == ('native-session' if session else 'client-confirmation')
+    require(q['workstream'] == ('native-node' if native_node else ('native-session' if session else 'client-confirmation'))
             and q['model_experiments_rerun'] is False, 'wrong experiment scope')
     for flag in ['ordinary_hepta_entry', 'independent_accepted', 'future_window_accepted', 'production_activation']:
         require(q[flag] is False, 'qualification authority ' + flag)
@@ -107,7 +108,7 @@ def validate(root=ROOT, evidence=None):
     require({p for p in tracked | untracked if runtime_path(p)} == {p for p in originals if runtime_path(p)}, 'current runtime inventory')
     require(TEST_FILE in originals and 'formal/pon-nakamoto-v1/client_confirmation.py' in originals, 'missing client source')
     rows = q['results']
-    required = REQUIRED | (SESSION_RUNS if session else set())
+    required = REQUIRED | (SESSION_RUNS if session else set()) | ({'native-node-build', 'native-node-contracts', 'native-prepared-cost'} if native_node else set())
     require({r['name'] for r in rows} == required and len(rows) == len(required), 'execution matrix')
     records, native_count = [], 0
     by_name = {r['name']: r for r in rows}
@@ -157,12 +158,57 @@ def validate(root=ROOT, evidence=None):
     require(q['environment']['cargo_locked'] is True and q['environment']['cargo_offline'] is True
             and q['environment']['physical_power_loss'] is False, 'environment scope')
     extra = validate_session(root, folder, manifest, q, records, originals) if session else {}
+    if native_node:
+        extra.update(validate_native_node(q, by_name, records, originals, folder, manifest))
     return {**extra, 'measured_commit': q['source_commit'], 'runtime_matches': True,
             'native_tests': native_count, 'client_selectors_per_backend': len(selectors),
             'backends': ['reference', 'explicit-native-work-and-eight-worker-execution'] +
                         (['explicit-native-work-and-eight-worker-session'] if session else []),
             'model_experiments_rerun': False, 'public_confirmed_tps': None,
             'native_full_node': False, 'independent_accepted': False, 'production_activation': False}
+
+
+def validate_native_node(q, by_name, records, originals, folder, manifest):
+    path = 'trillionnium/crates/trnm-pon-node/tests/native_node.rs'
+    require(path in originals, 'missing native node tests')
+    selectors = [path+'::'+name for name in re.findall(r'fn (test_\w+)\s*\(', originals[path].decode())]
+    require(selectors and all(observed_selector(s, records) for s in selectors), 'unobserved native node selector')
+    require(by_name['native-node-build']['command'] == ['cargo','build','--offline','--locked','--release',
+            '--manifest-path','trillionnium/Cargo.toml','-p','trnm-pon-node','--bins'], 'native node build command')
+    require(re.fullmatch('[0-9a-f]{64}', q['native_binary_sha256']['trnm-pon-node']), 'native node binary identity')
+    text = next(row['_log_text'] for row in records if row['name'] == 'native-node-contracts')
+    for cut in ['init-intent','init-schema','init-before-commit','init-committed','admitted','intent',
+                'detach:0','detach:1','attach:2','attach:3','attach:4','before-publish','published']:
+        require('actual child exit86 at '+cut in text, 'unobserved native process cut '+cut)
+    validate_prepared_cost(q, by_name, records, folder, manifest)
+    return {'native_development_node_selectors':len(selectors), 'native_development_entry':True,
+            'physical_power_loss':False, 'public_network_ready':False}
+
+
+def validate_prepared_cost(q, by_name, records, folder, manifest):
+    require('prepared-cost.json' in manifest['files'], 'missing prepared producer costs')
+    raw = load(folder/'prepared-cost.json')
+    require(raw['schema']=='pon-prepared-producer-cost-v1', 'prepared cost schema')
+    for flag in ['fastest_adversary_qualified','public_service_measured','production_activation']:
+        require(raw[flag] is False, 'unsupported prepared cost claim')
+    row = by_name['native-prepared-cost']
+    require(len(row['command'])==1 and row['command'][0].endswith('/release/examples/pon_prepared_cost'), 'prepared cost invocation')
+    require(re.fullmatch('[0-9a-f]{64}',q['native_binary_sha256']['pon_prepared_cost']), 'prepared cost binary')
+    require(json.loads(next(r['_log_text'] for r in records if r['name']=='native-prepared-cost'))==raw, 'prepared costs differ from execution')
+    targets={'7'+'f'*63,'0'+'7'+'f'*62}
+    expected={(c,t,n) for c in ['dense','zero','rank-one','sparse'] for t in targets for n in range(8)}
+    seen=set()
+    for sample in raw['samples']:
+        key=(sample['class'],sample['target'],sample['sample'])
+        require(type(sample['sample']) is int and key in expected and key not in seen, 'prepared cost sample identity')
+        seen.add(key)
+        for field in ['attempts','baseline_ns','prepared_setup_ns','prepared_search_ns','prepared_total_ns','original_verifier_ns','proof_bytes']:
+            require(type(sample[field]) is int and sample[field]>0, 'prepared cost numeric field')
+        require(sample['attempts']<=4096 and sample['proof_bytes']==49188, 'prepared cost bounds')
+        require(sample['prepared_total_ns']==sample['prepared_setup_ns']+sample['prepared_search_ns'], 'prepared setup omitted')
+        require(sample['baseline_first'] is (sample['sample']%2==0), 'paired ordering')
+        require(re.fullmatch('[0-9a-f]{64}',sample['proof_commitment']), 'prepared proof commitment')
+    require(seen==expected, 'missing paired cost sample')
 
 
 SESSION_RUNS = {
@@ -348,7 +394,12 @@ if __name__ == '__main__':
     parser.add_argument('--root', type=Path, default=ROOT)
     parser.add_argument('--historical', action='store_true')
     parser.add_argument('--session', action='store_true')
+    parser.add_argument('--native-node', action='store_true')
     args = parser.parse_args()
+    if args.native_node:
+        if args.session or args.historical:
+            parser.error('--native-node selects current native-node qualification')
+        args.evidence = args.evidence or args.root / 'evidence/pon-native-node-v1'
     if args.session:
         if args.historical:
             parser.error('--session and --historical select different claims')
@@ -358,4 +409,6 @@ if __name__ == '__main__':
         value = validate_historical_cli(__file__, args.root, args.evidence or args.root / 'evidence/pon-client-confirmation-v1')
     else:
         value = validate(root=args.root, evidence=args.evidence)
+    if args.native_node:
+        require(value.get('native_development_entry') is True, 'native-node qualification cannot downgrade to session-only')
     print(json.dumps(value, sort_keys=True))

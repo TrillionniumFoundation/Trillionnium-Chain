@@ -300,12 +300,12 @@ selectors actually ran. Neither mechanism supplies independent scientific author
 
 | Priority / workstream | Actual implemented boundary | Concrete next acceptance requirement |
 |---|---|---|
-| P0 work and public admission | Exact experimental transcript, strict native verification, bounded public/recovery library lanes; W1/A2 distinguish search difficulty from invalid rejection | Implement/reproduce adversarial shortcuts and same-target costs; join ordinary public ingress and demonstrate honest service under stated sustained attack. No queue count grants work hardness. |
-| P0 one native node | Native work and all twelve native commands are explicit components; reference Ledger owns consensus decisions and persistence | Existing M02/M07/M08/M14/M15 owners must form one normal startup/request path: mine/receive, validate, execute, persist, select/reorg and serve independently checked confirmation. No second engine or reference fallback labelled native completion. |
-| P1 long-lived state and confirmation | Incremental append/retirement, checkpoints/spooled ancestry; bounded history pages and receiver-computed transaction confirmation now use the existing Ledger and optional explicit native components | Native incremental authenticated state and persistent WAN integration; the controlled receiver is full-verifying, not succinct or globally fresh. Verify deep history without treating transport budgets or retention as finality. |
+| P0 work and public admission | Exact experimental transcript and original verification; native PreparedTask removes avoidable repeated product work; paired valid-producer costs and bounded development ingress retain open hostile-proof/Sybil qualification | Implement/reproduce adversarial shortcuts and same-target costs; join ordinary public ingress and demonstrate honest service under stated sustained attack. No queue count grants work hardness. |
+| P0 one native node | Native development CLI now owns work/target decisions, branch persistence/reorg, receiver sync and single confirmation through M15; original M00/M01/M06 are reused | Finish persistent mining/mempool scheduling, authenticated public discovery/gossip, interruptible long history and ordinary Hepta/resource/effect integration. The native development path is not a public or complete product acceptance. |
+| P1 long-lived state and confirmation | Native branch/delta/checkpoint persistence and receiver verification now coexist with the independent reference oracle; root maps/history scans still incur full-size costs | Persistent incremental authenticated roots and authenticated WAN integration; the controlled receiver is full-verifying, not succinct or globally fresh. Verify deep history without treating transport budgets or retention as finality. |
 | P1 independent model value | E3 seals actual parent/candidate/strong controls/calibration/partitions; no-gain remains zero adoption and reward | Authorized new tasks, independent source/evaluation/withdrawal owners, untouched future windows and budget-matched strong controls. Retrospective splits or configured identities do not satisfy independence. |
 | P1 real resources and failures | Closed service receipt, finite quota/reward conservation and same-admin process/host fault observations | Real storage/serving obligations and funding, target-side effect reconciliation, independent operators, physical power loss and hostile public network. No chain undo may repeat a physical action. |
-| P2 end-to-end capacity | Source-bound native worker comparisons; shared-key and whole-state-root costs remain visible | Same profile, source, state size and load through submission, inclusion and client-verified depth/work confirmation, with latency tails, hotspot degradation, resources and attack availability. Executor speed alone is not TPS. |
+| P2 end-to-end capacity | Source-bound worker/session comparisons plus real native CLI, process-cut and loopback socket regressions; no sustained public capacity claim | Same profile, source, state size and load through submission, inclusion and client-verified depth/work confirmation, with latency tails, hotspot degradation, resources and attack availability. Executor speed alone is not TPS. |
 
 Existing capacity/initialization/revoke-entry/admit-before-activate counterexample fixes
 remain regression obligations in the current owners; they are not new missing features.
@@ -369,7 +369,7 @@ preparation tool fetches only declared exact objects from this repository, verif
 their trees and never moves a branch or grants acceptance. A missing source object is
 an error, not permission to copy current results into historical evidence.
 
-Still unaccepted: cost-hardness and public hostile-proof fairness; complete native node
+Still unaccepted: cost-hardness and public hostile-proof fairness; complete public native host, continuous miner/mempool lifecycle
 and ordinary Hepta owner/resource integration; independent attestors/custodians;
 untouched future tasks; sustained long-term DA/state growth; actual physical power loss
 and public network security. Highest repository privilege does not manufacture those

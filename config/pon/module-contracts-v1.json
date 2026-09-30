@@ -109,14 +109,17 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "formal/pon-nakamoto-v1/reference.py"
+        "formal/pon-nakamoto-v1/reference.py",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests",
         "WorkExamples"
       ],
-      "native_packages": [],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_packages": [
+        "trnm-pon-node"
+      ],
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -146,16 +149,18 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-checkpoint-types/src/record.rs"
+        "trillionnium/crates/trnm-checkpoint-types/src/record.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
       ],
       "native_packages": [
         "trnm-checkpoint-store",
-        "trnm-checkpoint-types"
+        "trnm-checkpoint-types",
+        "trnm-pon-node"
       ],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -186,16 +191,18 @@
       "source_refs": [
         "formal/pon-nakamoto-v1/experiments/local_network.py",
         "trillionnium/crates/trnm-transport/src/lib.rs",
-        "trillionnium/crates/trnm-transport/src/proof_admission.rs"
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "InteropTests"
       ],
       "native_packages": [
         "trnm-peer-lease",
-        "trnm-transport"
+        "trnm-transport",
+        "trnm-pon-node"
       ],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -306,13 +313,16 @@
         }
       ],
       "source_refs": [
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
       ],
-      "native_packages": [],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_packages": [
+        "trnm-pon-node"
+      ],
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -341,13 +351,16 @@
         }
       ],
       "source_refs": [
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
       ],
-      "native_packages": [],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_packages": [
+        "trnm-pon-node"
+      ],
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -537,16 +550,18 @@
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
         "trillionnium/crates/trnm-state-import/src/lib.rs",
-        "formal/pon-nakamoto-v1/client_confirmation.py"
+        "formal/pon-nakamoto-v1/client_confirmation.py",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests",
         "InteropTests"
       ],
       "native_packages": [
-        "trnm-state-import"
+        "trnm-state-import",
+        "trnm-pon-node"
       ],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -579,14 +594,17 @@
         "formal/pon-nakamoto-v1/experiments/model_loop.py",
         "formal/pon-nakamoto-v1/inference_receipt.py",
         "formal/pon-nakamoto-v1/ledger.py",
-        "formal/pon-nakamoto-v1/client_confirmation.py"
+        "formal/pon-nakamoto-v1/client_confirmation.py",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "CodecTests",
         "ExecutionTests"
       ],
-      "native_packages": [],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_packages": [
+        "trnm-pon-node"
+      ],
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -618,15 +636,17 @@
         "formal/pon-nakamoto-v1/experiments/local_network.py",
         "formal/pon-nakamoto-v1/ledger.py",
         "formal/pon-nakamoto-v1/native_execution.py",
-        "trillionnium/crates/trnm-release-bundle/src/lib.rs"
+        "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
       ],
       "native_packages": [
-        "trnm-release-bundle"
+        "trnm-release-bundle",
+        "trnm-pon-node"
       ],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },

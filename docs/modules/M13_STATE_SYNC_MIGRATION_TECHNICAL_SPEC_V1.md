@@ -88,3 +88,12 @@ logical-clock tests cannot be reported as live confirmed public throughput.
 The exact continuation is specified in [native execution](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md), [admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) and [client/recovery](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md). It does not promote native persistence, independent acceptance or public-network capacity. Exact additional counterexamples:
 
 - `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_client_pages_confirm_and_reorg_with_explicit_session_after_restart`.
+
+## Native development continuation and remaining scope
+
+Native history export spools ancestry to disk and emits bounded full packets; native sync recomputes admission and retains valid interrupted prefixes. Native snapshots/delta replay do not impose a height finality threshold. Each history request and confirmation still has history-sized work.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

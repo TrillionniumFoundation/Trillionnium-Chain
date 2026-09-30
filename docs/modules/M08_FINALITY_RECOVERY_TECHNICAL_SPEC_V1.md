@@ -81,3 +81,12 @@ Run `python3 scripts/ci/report_module_evidence.py --module M08` from the reposit
 root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
 not observed in each package. A byte match is not a new test run or product acceptance.
 Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
+
+## Native development continuation and remaining scope
+
+Node::activate_with_fault plans native ordered steps; Node::resume_intent commits each step/cursor and atomic root-checked publication. Startup additionally selects admitted heavier history. Actual subprocess cuts cover initialization and reorg; no physical power cut or external-effect compensation is inferred.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

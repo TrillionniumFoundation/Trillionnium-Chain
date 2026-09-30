@@ -154,3 +154,29 @@ These experiments are not three improving public releases. The separate native l
 regression exercises three signed controlled release generations for exact accounting.
 Neither may be relabelled as three ordinary Hepta learning generations. A composition
 losing to a stronger deployable single/merged control is not forced into adoption.
+
+## Claim classes: no promotion from arithmetic to future benefit or optimality
+
+These distinguish statement meaning inside the existing evaluation contract; they do
+not add transaction tags, a new evaluator authority or an active revision3 wire field.
+
+| Claim | Exact subject and verification obligation | Current acceptance boundary |
+|---|---|---|
+| Challenged arithmetic | Committed task/matrices, exact header challenge, canonical transcript/product and target; replay the W1 relation | Implemented experimental relation. Neither effort hardness nor useful model improvement follows. |
+| Fixed-dataset marginal gain | Exact parent/candidate/control bytes, compatibility/composition recipe, dataset/groups, metric, budget and threshold; recompute predictions and the existing statistical gate | E3 controlled retrospective evaluation. It is not independent prospective benefit. |
+| Prospective benefit | The fixed-dataset statement plus authenticated chronological collection, independently controlled untouched task windows, consent/withdrawal and preregistered stopping/multiplicity policy | Required but unaccepted; a caller timestamp, future flag or disjoint file names cannot supply it. |
+| Bounded optimality | Exact feasible circuit/weight family, numeric domain, objective, resource budget, epsilon, candidate and checkable lower-bound certificate | No admitted certificate verifier exists. Candidate score or first place cannot fill this class. |
+
+For loss minimization, a valid feasible candidate with loss l and independently checked
+lower bound L proves only the declared family's epsilon-optimality when l-L<=epsilon.
+An arbitrary returned L, solver success string, training trace or signed score is not a
+lower-bound certificate. The circuit family and objective must be fixed before search;
+finite precision, allowed topology and resource limits are part of the statement.
+No such statement certifies optimality over every possible future task or neural model.
+
+Marginal evaluation must specify whether removing an expert freezes or retrains its
+router; any retraining/composition budget is charged equally in compared cases. The
+current bounded ablation recipe is not an exact Shapley or unrestricted optimality
+algorithm. For a low-rank delta BA, BA=(BQ)(Q^-1 A) for invertible Q: different bytes
+can represent the same update. Content hashes therefore establish exact identity,
+not functional novelty, economic independence or immunity to attribution splitting.

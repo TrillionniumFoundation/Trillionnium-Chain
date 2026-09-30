@@ -108,3 +108,12 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 carry their own measured commit, binary, source inventory and same-target samples.
 The old cost package remains historical. Neither collection establishes a fastest-
 adversary lower bound, public admission fairness or independent work qualification.
+
+## Native development continuation and remaining scope
+
+PreparedTask is now a valid producer-side fixed-task optimization, not a new work relation or verified capability. Original full verification remains unchanged. Paired cost measurements distinguish setup, search, narrower targets, slower samples and the still-open invalid-proof admission problem.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

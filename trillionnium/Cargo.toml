@@ -25,6 +25,7 @@ members = [
   "crates/trnm-crypto-primitives",
   "crates/trnm-verification-profiles",
   "crates/trnm-transport",
+  "crates/trnm-pon-node",
 ]
 
 [workspace.package]

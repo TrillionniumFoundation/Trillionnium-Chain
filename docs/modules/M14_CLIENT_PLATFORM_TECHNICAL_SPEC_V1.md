@@ -106,3 +106,12 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 - `formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_distinct_memberships_share_only_one_coherent_observation`.
 - `formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_rechecks_future_spike_below_all_requested_inclusions`.
 - `formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_cancellation_cannot_leave_reusable_currentness`.
+
+## Native development continuation and remaining scope
+
+Native single-transaction confirmation binds transaction, genesis, policy, generation, work/depth and local clock after complete membership/ancestry checks. It is not a succinct light client, public freshness proof, native batch confirmation or Hepta final-use authority.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

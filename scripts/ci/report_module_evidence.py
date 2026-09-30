@@ -26,7 +26,7 @@ PARAMETERS = {
 }
 KINDS = {
     'pure-component', 'reference-owner', 'native-component-with-reference-caller',
-    'controlled-experiment', 'specified-not-integrated',
+    'controlled-experiment', 'specified-not-integrated', 'native-development-owner',
 }
 FIELDS = {
     'operation', 'implementation_kind', 'runtime_symbols', 'controlled_entrypoint',
@@ -143,8 +143,24 @@ def runtime_path(path: str) -> bool:
 def observed_selector(selector: str, records: list[dict[str, Any]]) -> bool:
     """A similarly named test in another invocation is not evidence for this one."""
     path, symbol = selector.split('::', 1)
+    if path.endswith('.rs'):
+        parts = Path(path).parts
+        if len(parts) != 5 or parts[:2] != ('trillionnium', 'crates') or parts[3] != 'tests':
+            return False
+        package, target = parts[2], Path(parts[4]).stem
+        expected = ['cargo', 'test', '--offline', '--locked', '--manifest-path',
+                    'trillionnium/Cargo.toml', '-p', package, '--test', target, '--', '--nocapture']
+        for row in records:
+            if row['command'] != expected or type(row['returncode']) is not int or row['returncode'] != 0 or row.get('timed_out', False):
+                continue
+            text = row['_log_text']
+            if (re.search(r'(?m)^\s*Running tests/' + re.escape(target) + r'\.rs ', text)
+                and re.search(r'(?m)^test ' + re.escape(symbol) + r' \.\.\.(?:(?!^test ).)*?(?:^| )ok\s*$', text, re.S)
+                and re.search(r'(?m)^test result: ok\. \d+ passed; 0 failed;', text)):
+                return True
+        return False
     if not path.endswith('.py'):
-        return False  # Explicitly unsupported rather than guessing a native test owner.
+        return False
     method = symbol.rsplit('.', 1)[-1]
     for row in records:
         if (path not in row['command'] or type(row['returncode']) is not int or

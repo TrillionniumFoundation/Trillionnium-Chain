@@ -168,3 +168,32 @@ scans and Python verification still have complete-state costs. Native paged stor
 state lifetime economics, the 16 MiB bridge capacity gap and physical power-loss testing
 remain open. Existing M08 crash/reorg tests run with the explicit session backend too;
 this tests composition with the reference persistent owner, not a complete native node.
+
+## Native branch owner continuation
+
+The M15 `trnm-pon-node` composition implements M07/M08 in `src/store.rs` without
+opening the reference Ledger's database. Its fresh `native.sqlite` owns metadata,
+blocks, before/after deltas, active generation/slot, KV, reorg intent/cursor, ordered
+steps/events and root-checked local snapshots. A 512-bit big-endian indexed work value
+is derived at native admission; no peer-supplied work total enters this table.
+
+Initialization writes and syncs an exact context/schema intent before creating schema
+and genesis in one SQLite transaction. Reopen checks the schema and context read-only
+before a writable connection. Unknown empty stores, extra triggers, mismatched genesis
+and duplicate native writers reject. WAL/FULL, owner file locks and inode/symlink checks
+are implemented; full descriptor/sidecar race protection and coherent disk rollback
+anchors remain unqualified. No process-exit test is called a physical power-cut test.
+
+Block plus deltas commit together. A direct extension applies its deltas, checks its
+root and publishes tip/generation/event atomically without copying all persistent KV.
+A real fork prepares a separate slot and disk-backed ordered detach/attach steps in one
+transaction. Each step validates before-images and advances its cursor atomically.
+Only a matching final root permits one atomic active/events/done/old-slot publication.
+Recovery completes the intent, then selects any strictly heavier verified stored block;
+this includes an admission committed before its activation intent. Equal work retains
+the current chain. Corrupt generation, steps, root or delta preconditions remain fenced.
+
+Reconstruction spools ancestor identities on disk and checks snapshots/deltas/roots;
+retention is not a finality threshold. Full maps/root computations and long history
+remain resource costs. No Hepta operation journal, provider effect or user database is
+inside this chain namespace or its undo transaction.

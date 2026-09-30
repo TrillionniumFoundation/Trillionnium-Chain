@@ -69,3 +69,12 @@ Run `python3 scripts/ci/report_module_evidence.py --module M03` from the reposit
 root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
 not observed in each package. A byte match is not a new test run or product acceptance.
 Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
+
+## Native development continuation and remaining scope
+
+Node::make uses a bounded prepared-task producer and commits no chain state before validation. CLI output is create-new and synced before local publication. Durable continuous mining, stale-job cancellation, wallet custody and provider/effect reconciliation remain unimplemented.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

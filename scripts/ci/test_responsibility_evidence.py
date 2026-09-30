@@ -215,5 +215,20 @@ class SourceApplicabilityTests(unittest.TestCase):
         self.assertNotIn('Other.run', symbols)
 
 
+class NativeSelectorTests(unittest.TestCase):
+    def test_exact_package_target_and_success_are_required(self):
+        selector='trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_recover'
+        row={'command':['cargo','test','--offline','--locked','--manifest-path','trillionnium/Cargo.toml',
+             '-p','trnm-pon-node','--test','native_node','--','--nocapture'], 'returncode':0,
+             'timed_out':False,'_log_text':'Running tests/native_node.rs (target)\ntest test_recover ... ok\ntest result: ok. 1 passed; 0 failed;\n'}
+        self.assertTrue(observed_selector(selector,[row]))
+        for key,value in [('returncode',1),('timed_out',True),('command',['cargo','test','--workspace'])]:
+            self.assertFalse(observed_selector(selector,[{**row,key:value}]))
+        self.assertFalse(observed_selector(selector,[{**row,'_log_text':row['_log_text'].replace('test_recover','test_other')}]))
+        output='Running tests/native_node.rs (target)\ntest test_recover ... actual child exit86 at intent\nok\ntest result: ok. 1 passed; 0 failed;\n'
+        self.assertTrue(observed_selector(selector,[{**row,'_log_text':output}]))
+        self.assertFalse(observed_selector(selector,[{**row,'_log_text':output.replace('\nok\n','\nFAILED\n')}]))
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

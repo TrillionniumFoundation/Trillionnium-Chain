@@ -91,3 +91,12 @@ Funded task/quota/release expiry emits its canonical receipt before ordinary tra
 - `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_empty_expiry_block_runs_through_real_ledger_and_restart`.
 - `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_expiry_receipt_drop_reorder_and_substitution_cannot_be_rehashed`.
 - `formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_real_quota_and_release_expiry_share_existing_receipt_semantics`.
+
+## Native development continuation and remaining scope
+
+ECONOMICS now isolates the first-two ordering counterexample and the required versioned complete-set/deadline/dispute contract. Native byte parity preserves existing revision3 accounting rather than silently altering rewards. Independent resource funding and the successor policy remain open.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

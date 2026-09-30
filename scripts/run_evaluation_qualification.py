@@ -15,7 +15,8 @@ def runtime(path):
  return (path.startswith(('formal/pon-nakamoto-v1/','trillionnium/'))and not path.endswith('.md'))or path in {
  'config/pon/devnet-v1.json','config/pon/ledger-v1.json','config/pon/model-family-v1.json','config/pon/work-profile-v1.json'}
 
-def run(output,source,target,cargo_home,hosts,client_only=False,session_only=False):
+def run(output,source,target,cargo_home,hosts,client_only=False,session_only=False,native_node=False):
+ session_only=session_only or native_node
  client_only=client_only or session_only
  out=Path(output).resolve();out.mkdir(parents=True,exist_ok=False)
  if git('status','--porcelain'):raise ValueError('DIRTY_SOURCE')
@@ -70,7 +71,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
          'results':records,'all_commands_passed':False,'ordinary_hepta_entry':False,
          'independent_accepted':False,'future_window_accepted':False,'production_activation':False,
          'historical_evidence_sha256':{str(Path('evidence')/name/'manifest.json'):sha(ROOT/'evidence'/name/'manifest.json') for name in ['pon-v1','pon-v3','pon-v4','pon-evaluation-bundle-v1','pon-contract-authority-v1']},
-         'workstream':'native-session' if session_only else ('client-confirmation' if client_only else 'model-evaluation'),
+         'workstream':'native-node' if native_node else ('native-session' if session_only else ('client-confirmation' if client_only else 'model-evaluation')),
          'model_experiments_rerun':not client_only}
  if session_only:
   report['historical_evidence_sha256']['evidence/pon-client-confirmation-v1/manifest.json']=sha(ROOT/'evidence/pon-client-confirmation-v1/manifest.json')
@@ -83,6 +84,12 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
   manifest=['--manifest-path','trillionnium/Cargo.toml']
   execute('native-build',['cargo','build','--offline','--locked','--release',*manifest,'-p','trnm-protocol','-p','trnm-crypto-primitives','-p','trnm-mvcc-fee','-p','trnm-transport','--examples'])
   report['native_binary_sha256']={p.name:sha(p)for p in (Path(target).resolve()/'release/examples').iterdir()if p.is_file() and '.'not in p.name and os.access(p,os.X_OK)}
+  if native_node:
+   execute('native-node-build',['cargo','build','--offline','--locked','--release',*manifest,'-p','trnm-pon-node','--bins'])
+   report['native_binary_sha256']['trnm-pon-node']=sha(Path(target).resolve()/'release/trnm-pon-node')
+   raw=execute('native-prepared-cost',[str(Path(target).resolve()/'release/examples/pon_prepared_cost')],timeout=120)
+   (out/'prepared-cost.json').write_text(raw)
+   execute('native-node-contracts',['cargo','test','--offline','--locked',*manifest,'-p','trnm-pon-node','--test','native_node','--','--nocapture'])
   execute('native-suite',['cargo','test','--offline','--locked',*manifest,'--workspace','--all-targets','--all-features'])
   execute('native-doctests',['cargo','test','--offline','--locked',*manifest,'--workspace','--doc','--all-features'])
   execute('native-ignored-helper',['cargo','test','--offline','--locked',*manifest,'-p','trnm-research-protocol','--all-targets','--all-features','--','--ignored'])
@@ -131,7 +138,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
  finally:
   report['source_clean_after']=git('rev-parse','HEAD')==commit and not git('status','--porcelain')
   (out/'qualification.json').write_text(json.dumps(report,indent=2)+'\n')
-  (out/'manifest.json').write_text(json.dumps({'schema':'pon-native-session-evidence-v1' if session_only else ('pon-client-confirmation-evidence-v1' if client_only else 'pon-evaluation-evidence-v1'),'implementation_commit':commit,
+  (out/'manifest.json').write_text(json.dumps({'schema':'pon-native-node-evidence-v1' if native_node else ('pon-native-session-evidence-v1' if session_only else ('pon-client-confirmation-evidence-v1' if client_only else 'pon-evaluation-evidence-v1')),'implementation_commit':commit,
     'implementation_tree':tree,'source_clean':report['source_clean_after'],'all_commands_passed':report['all_commands_passed'],
     'files':{str(p.relative_to(out)):sha(p)for p in sorted(out.rglob('*'))if p.is_file()and p.name!='manifest.json'},
     'historical_v4_sha256':sha(ROOT/'evidence/pon-v4/manifest.json'),'ordinary_hepta_entry':False,
@@ -142,7 +149,8 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
 
 if __name__=='__main__':
  parser=argparse.ArgumentParser();parser.add_argument('--out',required=True);parser.add_argument('--source',required=True)
+ parser.add_argument('--native-node',action='store_true',help='Also qualify the native development node with its ordinary CLI and actual process/socket regressions')
  parser.add_argument('--session-only',action='store_true',help='Qualify native cache, incremental root, precheck and controlled receiver pipeline without rerunning model experiments')
  parser.add_argument('--client-only',action='store_true',help='Run common regression plus both client backends, preserving prior model evidence rather than rerunning unrelated experiments')
  parser.add_argument('--target',required=True);parser.add_argument('--cargo-home',required=True);parser.add_argument('--hosts',nargs='*',default=[])
- args=parser.parse_args();run(args.out,args.source,args.target,args.cargo_home,args.hosts,args.client_only,args.session_only)
+ args=parser.parse_args();run(args.out,args.source,args.target,args.cargo_home,args.hosts,args.client_only,args.session_only,args.native_node)

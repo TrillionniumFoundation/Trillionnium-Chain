@@ -84,3 +84,12 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 
 - `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_multiple_selected_backends_reject_before_starting_cache`.
 - `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_changed_selected_binary_cannot_reuse_previous_success`.
+
+## Native development continuation and remaining scope
+
+The new M15 composition binary trnm-pon-node starts/recover/admit/mine/export/sync/confirm/serve without Python fallback. It reuses M00/M01/M06 and owns one fresh native branch namespace. Public P2P, persistent miner/mempool lifecycle and ordinary Hepta/resource integration are still absent.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

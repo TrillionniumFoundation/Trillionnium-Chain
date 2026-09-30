@@ -92,3 +92,12 @@ Calibration claims are recomputed, not accepted merely because a producer can ha
 
 - `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_self_consistent_rehashed_calibration_score_still_requires_actual_replay`.
 - `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_changed_calibration_data_cannot_be_substituted`.
+
+## Native development continuation and remaining scope
+
+Statement classes and the difference between retrospective gain, prospective benefit and bounded optimality are explicit in MODEL_EVALUATION. No optimality verifier or independent future-window authority has been admitted. Revision3 first-two evaluation order remains an explicit successor-policy obligation.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

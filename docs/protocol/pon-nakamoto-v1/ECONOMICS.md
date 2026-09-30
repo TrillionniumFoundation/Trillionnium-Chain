@@ -108,3 +108,29 @@ matrix FLOPs, parameter uploads, rewards emitted or token activity with useful A
 [Exact evaluated-score publication, bounded claims and prepaid free-use rules](details/LEDGER_WIRE.md)
 are executable. [The controlled real-model campaign](details/MODEL_EVALUATION.md) binds
 actual artifacts/observations to these transitions without claiming independent economics.
+
+## Evaluation ordering: frozen revision3 behavior and required successor contract
+
+Revision3 freezes the minimum of the first two eligible development attestations.
+For eligible scores (10,100,100), admitting the low score in the first pair yields10;
+admitting the two high scores first yields100. Nodes still agree on a given ordered
+block: this is producer-controlled reward ordering, not nondeterministic execution.
+The new native owner executes the SAME revision3 rule. It does not silently repair it
+by changing aggregation, receipts, historical roots or already bound evaluation objects.
+
+Before a successor policy can be admitted, M10/M11/M12 must specify one intake identity,
+commit/reveal deadlines, admitted evaluator set, complete-set closing rule, deterministic
+aggregation, missing/revoked/conflicting evidence treatment, bounded dispute deposits and
+resolution/expiry. Closing by a fixed complete set or deadline separates arrival order
+from set choice; it does not itself remove censorship or collusion. An absent evaluator
+must result in its declared no-adoption/refund outcome, not an invented positive score.
+Permuting the same complete admitted set must preserve result, allocation and root.
+A changed evidence set must be reported as different, not called order-independent.
+
+Copied or reparameterized deltas and split identities require an explicit root-work
+budget plus tested functional/provenance policy; a new digest alone is insufficient.
+Disputes distinguish invalid bytes/signatures, reproducible evaluation errors, private
+attestation disagreement and business arbitration. A timeout or failed learning run is
+not objectively proven fraud. Late dispositions affect permitted current obligations,
+never retrospectively change the validity of historical work. This successor remains
+implementation/review work; no native-node or source-equality flag grants it acceptance.

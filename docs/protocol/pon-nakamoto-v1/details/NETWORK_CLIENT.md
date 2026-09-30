@@ -227,3 +227,50 @@ and locally policy-confirmed counts from actual signed transactions and work-ver
 blocks. It is one controller passing bounded pages between separate stores with separate
 native compute children, not authenticated public P2P, independent administration or WAN
 capacity. The test uses an explicit logical clock and does not pace ten-second blocks.
+
+## N3 — native development entry and its remaining public-host boundary
+
+`trnm-pon-node` is the M15 native composition of the existing M00 codecs, M01 work
+verifier and M06 twelve-command executor. Its `consensus` module implements M02
+checked target/time/work arithmetic; `store::Node` is the M07/M08 single durable
+owner for a NEW `native.sqlite` namespace. The Python Ledger remains a separate
+conformance oracle, never a runtime fallback or writer of that namespace.
+
+The ordinary binary exposes status/recover, make/mine, submit/export, confirm,
+push/sync and serve. It requires `--development`; the installed identities and units
+are public test material, not wallet custody or a monetary deployment. Signed command
+bytes are external inputs; this entry does not introduce a wallet or provider caller.
+A packet is the existing 318-byte header, LE16 transaction count, repeated LE16 length
+plus signed command bytes, and the exact 49,188-byte work certificate. Counts, total
+bytes and each existing command codec are checked before accepted state is constructed.
+Mining freezes native execution roots before varying nonce. Packet publication uses
+create-new output, file/directory sync, then block admission/activation; an existing
+output path cannot cause a newly mined block to be published silently.
+
+`serve` binds loopback only, uses three fixed workers and the existing public proof
+admission component. BE32-framed closed JSON has a 2 MiB bound and an absolute five-
+second frame read/write deadline; incremental bytes cannot reset it. Remote messages
+cannot stop the host, supply local time, select recovery priority or change genesis.
+Full validation is serialized by the durable Node owner. This is real socket ingress,
+not authenticated public discovery/gossip, parallel public verification or Sybil fairness.
+
+The closed `pon-native-history-v1` page binds network, parameters, genesis, requested
+branch/cursor, full packets and terminal identity. The receiver checks all cheap page
+links before admission, recomputes work/execution itself and preserves only fully valid
+prefixes on interruption. A completed lower-work branch is not necessarily active.
+The native confirm path verifies exact transaction membership, active ancestry, all
+ancestor timestamps and depth plus required work. Its identity includes transaction,
+genesis, policy, observed generation/time and required work; it grants no finality or
+physical-call authority. Cached immutable work does not cache a local clock verdict.
+
+Build with `cargo build --locked --release --manifest-path trillionnium/Cargo.toml
+-p trnm-pon-node --bins` (one command). Every store must use the same explicit context.
+`--genesis-time` creates a distinct valueless development genesis for wall-clock socket
+tests; it cannot reopen an existing store under new parameters. `--logical-now` is a
+labelled local conformance option and is rejected for serve, sync and push.
+
+Still missing: durable continuous mining and transaction-pool/reorg scheduling,
+authenticated peer discovery/gossip, native incremental persistent state, interruptible
+long-history service, ordinary Hepta admission/consent/effect owners and independent
+public attack acceptance. Session cache and native Node own different namespaces; neither
+may be substituted for the other without their own explicit invocation and evidence.
