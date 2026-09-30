@@ -514,3 +514,13 @@ Keep failed experiments and all attempt/validator costs. Live wall time and desc
 latencies do not supply a hardness theorem, independent operators or public fairness.
 The new clean-source qualification runner captures the full native/reference regression
 and additional campaigns; historical receipts stay bound to their original source.
+
+The [six-finding local qualification](../../evidence/pon-public-readiness-v1/README.md)
+records clean implementation1213a8b, all15 qualification commands and the nested48-command
+native/reference regression. Four live transfer workloads confirm20,480 transactions
+through two durable owners; protected socket phases preserve all honest/attacker outcomes.
+Actual transcript, signature, confirmation and closed SQLite replay passed. First-run
+missing-corpus failure and predecessor traffic-accounting/caller-cost observations are
+retained without relabelling their source. This evidence does not close the public gates
+above or replace the remaining native integration, real model and independent work-cost
+obligations. Preserve the measured Git source history when publishing or merging evidence.

@@ -64,7 +64,7 @@ measured and remains a public-network blocker, not a hidden fallback.
 [S2 persistence/reorg](details/STATE_RECOVERY.md) · [M1 model/evaluation](details/MODEL_EVALUATION.md) ·
 [N1 network/clients](details/NETWORK_CLIENT.md) · [P1 performance/acceptance](details/PERFORMANCE_ACCEPTANCE.md).
 
-[Procedure registry](../../../config/pon/module-contracts-v1.json) has36 typed operations
+[Procedure registry](../../../config/pon/module-contracts-v1.json) has38 typed operations
 for all18 existing modules. [Maturity](../../../config/pon/module-maturity-v1.json)
 separates document, component, executable contract, native product and independent acceptance.
 
@@ -79,3 +79,13 @@ itself remains experimental and unqualified; all production/independent acceptan
 
 [Immutable evaluation inputs and full service consent](details/EVALUATION_BUNDLE.md)
 bind actual producer/evaluator/settlement calls; they do not grant export or deployment authority.
+
+## Six-finding engineering evidence
+
+The [source-bound local qualification](../../../evidence/pon-public-readiness-v1/README.md)
+retains the current full regression, four live continuous transfer workloads, protected
+socket attack phases and bounded model attribution campaign. Actual proofs, signatures,
+confirmations and durable database states are independently replayed. Earlier failed and
+pre-correction runs are preserved as observations. The measured runtime is identified
+separately from later documentation/evidence publication; all public, work-hardness,
+independent, future-window and production acceptance flags remain false.
