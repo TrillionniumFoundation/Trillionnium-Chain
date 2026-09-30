@@ -35,6 +35,7 @@ const ADMISSION_READY_SCHEMA: &str = "trnm-pon-admission-ready-v1";
 const PROTECTED_PREFACE_BUDGET: Duration = Duration::from_millis(100);
 const PROTECTED_ERROR_CHARS: usize = 128;
 const RESERVED_READ_ONLY_BUSY: &str = "ADMISSION_BUSY_READ_ONLY_RESERVED";
+const RESERVED_HELLO_YIELD: Duration = Duration::from_millis(2);
 
 /// Connection-local transport CPU protection, never ledger work or a Sybil theorem.
 /// The old development listeners remain separate and do not silently adopt this profile.
@@ -62,7 +63,7 @@ impl AdmissionPolicy {
         hash(
             b"native-transport-admission-profile-v1",
             &[
-                b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry256-5s/refusal128chars-100ms",
+                b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry256-5s/refusal128chars-100ms/reserved-hello-yield2ms",
                 &[self.bits],
                 &self.lifetime_ms.to_le_bytes(),
             ],
@@ -1209,8 +1210,9 @@ fn serve_inner(
                     ) {
                         Ok(request) => request,
                         Err(error) => {
+                            let reserved_refusal = error.to_string() == RESERVED_READ_ONLY_BUSY;
                             let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
-                            if error.to_string() == RESERVED_READ_ONLY_BUSY {
+                            if reserved_refusal {
                                 counts.admission_reserved_read_only_refusals += 1;
                             } else {
                                 counts.malformed_requests += 1;
@@ -1220,6 +1222,14 @@ fn serve_inner(
                             }
                             drop(counts);
                             let _ = write_untrusted_error(&mut socket, &error, admission.is_some());
+                            if reserved_refusal {
+                                // A bounded yield mitigates accept competition with
+                                // proof workers; it is not anonymous scheduling fairness.
+                                thread::sleep(
+                                    RESERVED_HELLO_YIELD
+                                        .min(deadline.saturating_duration_since(Instant::now())),
+                                );
+                            }
                             continue;
                         }
                     };

@@ -195,7 +195,12 @@ searches exceeding 1,048,576 trials. Protected listeners retain three fixed sock
 workers, the existing frame/connection limits and local recovery permit isolation.
 Two workers may process negotiated proof requests; the third refuses proof hellos
 as `ADMISSION_BUSY_READ_ONLY_RESERVED` before receiving their bodies and remains
-eligible for read-only frames. Protected read-only requests do not consume proof
+eligible for read-only frames. After sending this refusal it yields for 2 ms before
+accepting another connection, bounded by the server lifetime. This avoids an
+immediate refusal/accept loop outpacing the two proof workers' idle polling; it does
+not guarantee that an idle proof worker wins every accept race. The profile commits
+to this policy as `reserved-hello-yield2ms`. Its nominal local backoff is 2 ms;
+operating-system scheduling may extend observed wakeup delay. Protected read-only requests do not consume proof
 permits. Every protected initial frame and Hello/body exchange shares a 100 ms
 absolute preface deadline. Slow fragments cannot renew that budget. The profile
 hash commits to this allocation and deadline as well as the puzzle parameters.
@@ -255,6 +260,18 @@ a fresh one. Partial initial Hellos can occupy all three socket workers until th
 preface deadline; complete Hellos test the two proof slots and reserved read-only
 worker. Honest Submit and Head calls continue throughout the phase. Slow connections
 and failed attack negotiation attempts retain their own denominators.
+Its `transport-admission-sustained-cost-v2` report names the fixed encoded body
+length `request_template_bytes`. `attacker_body_bytes_successfully_written` sums
+only complete attack request-body writes confirmed by the actual protected client
+helper, before reading a challenge or terminal response. It excludes frame prefixes,
+Hello, solutions, responses and unknown partial writes; it is not total network
+traffic. `attacker_body_write_success_count` counts these completions.
+`attacker_body_write_outcome_unknown_count` counts helper failures, including failures
+before a body starts or after a partial write; `attacker_body_not_started_count`
+counts connection/setup failures before calling the helper. The three counts sum
+to false-transcript attack attempts. Baseline and slow-Hello phases have zero body
+counts because those streams do not send attack request bodies. A later response
+failure retains the already completed body bytes and its transport-error observation.
 The observed honest sample denominator must survive any failed or starved requests.
 These local streams do not establish fairness under independent or rotating
 public identities, and elapsed hash rate is not an adversarial cost lower bound.

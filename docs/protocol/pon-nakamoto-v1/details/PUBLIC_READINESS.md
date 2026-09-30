@@ -29,6 +29,8 @@ are transport-profile committed, separately from the chain context.
 The protected development listener has two proof-capable socket workers and one
 reserved read-only worker. Initial frame and Hello/body reads share a100ms absolute
 budget; the reserved worker refuses proof Hello traffic before accepting a body.
+After such a refusal it yields for2ms to reduce accept competition with proof workers;
+this bounded delay does not guarantee fair scheduling.
 The client allows at most256 Busy retries within one5-second deadline and searches
 at most1,048,576 puzzle nonces per challenge. These finite bounds and the retained
 read-only service test do not guarantee public service under arbitrary occupancy.
@@ -99,6 +101,14 @@ drain blocks are retained. Queries independently check transaction membership an
 installed depth/work policy; they never claim finality or execution authority.
 Ledger-only disk counters cover the two durable database directories. Separate whole-run
 counters include raw packets and measurement files; they must not be called ledger growth.
+The transfer builder reads each sender nonce once per block. Its eager lookup predecessor
+reloaded the full authenticated state for every transfer; the retained observation documents
+that caller bottleneck. Remaining full-state persistence and query costs still require scale tests.
+
+The sustained socket measurement uses `transport-admission-sustained-cost-v2`.
+`request_template_bytes` describes one fixed request body, while separate counters record
+successfully written attacker bodies and writes whose outcome is unknown. These are
+body-write observations, not total link bandwidth including handshake and responses.
 
 The workload is exactly signed transfer tag1. Four funded senders are available; hot
 uses one sender/receiver, disjoint4 uses four, and growth introduces new receiver keys.

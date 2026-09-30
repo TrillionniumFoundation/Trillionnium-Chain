@@ -131,9 +131,14 @@ fn run() -> Result<()> {
                         (offset % 4) as u64
                     };
                     let sender = development_public(sender_index)?;
-                    let nonce = next
-                        .entry(sender_index)
-                        .or_insert(producer.next_nonce(sender)?);
+                    // One owner read per sender and block. An eager or_insert argument
+                    // rereads the entire authenticated state for every transfer.
+                    let nonce = match next.entry(sender_index) {
+                        std::collections::btree_map::Entry::Vacant(entry) => {
+                            entry.insert(producer.next_nonce(sender)?)
+                        }
+                        std::collections::btree_map::Entry::Occupied(entry) => entry.into_mut(),
+                    };
                     let receiver = match pattern {
                         "hot" => hash(b"pipeline-receiver-v1", &[&0u64.to_le_bytes()]),
                         "disjoint4" => {

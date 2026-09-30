@@ -617,6 +617,10 @@ fn protected_untrusted_large_errors_have_bounded_real_socket_responses() {
 #[derive(Default)]
 struct AttackObservations {
     connections: u64,
+    body_bytes_successfully_written: u64,
+    body_write_success_count: u64,
+    body_write_outcome_unknown_count: u64,
+    body_not_started_count: u64,
     forgery_hash_trials: u64,
     admission_hash_trials: u64,
     admission_solve_ns: u128,
@@ -628,6 +632,95 @@ struct AttackObservations {
     slow_body_hello_connections: u64,
     transport_errors: Vec<String>,
     elapsed_ns: u128,
+}
+
+fn try_connect_observed(
+    address: SocketAddr,
+    request: &Request,
+    observations: &mut AttackObservations,
+) -> std::result::Result<(TcpStream, Vec<u8>, AdmissionChallenge), String> {
+    let wire = serde_json::to_vec(request).unwrap();
+    let initialized = (|| -> std::io::Result<TcpStream> {
+        let stream = TcpStream::connect(address)?;
+        stream.set_read_timeout(Some(Duration::from_secs(5)))?;
+        stream.set_write_timeout(Some(Duration::from_secs(5)))?;
+        Ok(stream)
+    })();
+    let mut stream = match initialized {
+        Ok(stream) => stream,
+        Err(error) => {
+            observations.body_not_started_count += 1;
+            return Err(error.to_string());
+        }
+    };
+    if let Err(error) = ingress::write_protected_request(&mut stream, request, &wire) {
+        // This helper includes Hello/Ready negotiation. An error can precede
+        // the body, or follow a partial write; no exact partial byte claim.
+        observations.body_write_outcome_unknown_count += 1;
+        return Err(error.to_string());
+    }
+    // Count a completed body write before reading any server response. These
+    // bytes exclude the framing prefix, Hello, solution, and response traffic.
+    observations.body_write_success_count += 1;
+    observations.body_bytes_successfully_written += u64::try_from(wire.len()).unwrap();
+    let challenge = serde_json::from_slice(&try_read(&mut stream)?).map_err(|e| e.to_string())?;
+    Ok((stream, wire, challenge))
+}
+
+#[test]
+fn attack_body_counts_survive_response_loss_without_guessing_partial_writes() {
+    let request = Request::Submit {
+        packet: "00".into(),
+    };
+    let expected_wire = serde_json::to_vec(&request).unwrap();
+    for complete_body in [false, true] {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let expected = expected_wire.clone();
+        let server = thread::spawn(move || {
+            let (mut socket, _) = listener.accept().unwrap();
+            socket.set_nodelay(true).unwrap();
+            socket
+                .set_read_timeout(Some(Duration::from_secs(5)))
+                .unwrap();
+            let hello: Value = serde_json::from_slice(&read(&mut socket)).unwrap();
+            if complete_body {
+                let ready = format!(
+                    "{{\"schema\":\"trnm-pon-admission-ready-v1\",\"profile\":\"{}\",\"request_digest\":\"{}\"}}",
+                    hex::encode([0; 32]),
+                    hello["request_digest"].as_str().unwrap(),
+                );
+                send(&mut socket, ready.as_bytes());
+                assert_eq!(read(&mut socket), expected);
+            }
+            // Lose the challenge response after the exact stage being measured.
+        });
+        let mut observations = AttackObservations::default();
+        assert!(try_connect_observed(address, &request, &mut observations).is_err());
+        server.join().unwrap();
+        assert_eq!(observations.body_not_started_count, 0);
+        if complete_body {
+            assert_eq!(observations.body_write_success_count, 1);
+            assert_eq!(observations.body_write_outcome_unknown_count, 0);
+            assert_eq!(
+                observations.body_bytes_successfully_written,
+                u64::try_from(expected_wire.len()).unwrap()
+            );
+        } else {
+            assert_eq!(observations.body_write_success_count, 0);
+            assert_eq!(observations.body_write_outcome_unknown_count, 1);
+            assert_eq!(observations.body_bytes_successfully_written, 0);
+        }
+    }
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    drop(listener);
+    let mut observations = AttackObservations::default();
+    assert!(try_connect_observed(address, &request, &mut observations).is_err());
+    assert_eq!(observations.body_not_started_count, 1);
+    assert_eq!(observations.body_write_success_count, 0);
+    assert_eq!(observations.body_write_outcome_unknown_count, 0);
+    assert_eq!(observations.body_bytes_successfully_written, 0);
 }
 
 /// Explicit release measurement, separate from fast deterministic contract tests.
@@ -727,7 +820,11 @@ fn sustained_protected_socket_cost_campaign() {
                             }
                         }
                         let (mut stream, wire, challenge) =
-                            match try_connect(address, &request(&forged)) {
+                            match try_connect_observed(
+                                address,
+                                &request(&forged),
+                                &mut observations,
+                            ) {
                                 Ok(connected) => connected,
                                 Err(error) => {
                                     observations.connections += 1;
@@ -750,8 +847,23 @@ fn sustained_protected_socket_cost_campaign() {
                                 nonce: 0,
                             }
                         };
-                        send(&mut stream, &serde_json::to_vec(&solution).unwrap());
-                        let reply: Value = serde_json::from_slice(&read(&mut stream)).unwrap();
+                        let solution_wire = serde_json::to_vec(&solution).unwrap();
+                        let reply = (|| -> std::result::Result<Value, String> {
+                            stream
+                                .write_all(&(solution_wire.len() as u32).to_be_bytes())
+                                .and_then(|()| stream.write_all(&solution_wire))
+                                .map_err(|error| error.to_string())?;
+                            serde_json::from_slice(&try_read(&mut stream)?)
+                                .map_err(|error| error.to_string())
+                        })();
+                        let reply = match reply {
+                            Ok(reply) => reply,
+                            Err(error) => {
+                                observations.connections += 1;
+                                observations.transport_errors.push(error);
+                                continue;
+                            }
+                        };
                         match reply["error"].as_str().unwrap() {
                             "WORK:Transcript" => observations.full_work_rejections += 1,
                             "ADMISSION_REPLAY_OR_CONTEXT" => observations.cheap_rejections += 1,
@@ -835,7 +947,7 @@ fn sustained_protected_socket_cost_campaign() {
         println!(
             "{}",
             json!({
-                "schema":"transport-admission-sustained-cost-v1", "phase":phase,
+                "schema":"transport-admission-sustained-cost-v2", "phase":phase,
                 "bits":16, "ttl_ms":2000, "requested_attack_duration_ns":10_000_000_000_u64,
                 "observed_wall_ns":wall_ns, "attacker_streams":observations.len(),
                 "attacker_observed_ns":observations.iter().map(|o| o.elapsed_ns).collect::<Vec<_>>(),
@@ -844,7 +956,11 @@ fn sustained_protected_socket_cost_campaign() {
                 "slow_preface_connections":slow,
                 "slow_partial_hello_connections":observations.iter().map(|o| o.slow_partial_hello_connections).sum::<u64>(),
                 "slow_body_hello_connections":observations.iter().map(|o| o.slow_body_hello_connections).sum::<u64>(),
-                "submitted_wire_bytes":serde_json::to_vec(&request(&first)).unwrap().len(),
+                "request_template_bytes":serde_json::to_vec(&request(&first)).unwrap().len(),
+                "attacker_body_bytes_successfully_written":observations.iter().map(|o| o.body_bytes_successfully_written).sum::<u64>(),
+                "attacker_body_write_success_count":observations.iter().map(|o| o.body_write_success_count).sum::<u64>(),
+                "attacker_body_write_outcome_unknown_count":observations.iter().map(|o| o.body_write_outcome_unknown_count).sum::<u64>(),
+                "attacker_body_not_started_count":observations.iter().map(|o| o.body_not_started_count).sum::<u64>(),
                 "attack_transport_error_count":transport_errors.len(),
                 "attack_transport_errors":transport_errors,
                 "forged_ticket_hash_trials":observations.iter().map(|o| o.forgery_hash_trials).sum::<u64>(),

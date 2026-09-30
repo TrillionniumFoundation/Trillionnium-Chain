@@ -151,11 +151,13 @@ class SocketAccountingTests(unittest.TestCase):
         for phase in ['baseline','unpaid_false_transcript','paid_false_transcript','slow_hello_occupancy']:
             paid = int(phase == 'paid_false_transcript'); cheap = int(phase == 'unpaid_false_transcript'); slow = int(phase == 'slow_hello_occupancy')
             streams = 0 if phase == 'baseline' else (3 if slow else 2)
-            rows.append(dict(schema='transport-admission-sustained-cost-v1',phase=phase,bits=16,ttl_ms=2000,
+            rows.append(dict(schema='transport-admission-sustained-cost-v2',phase=phase,bits=16,ttl_ms=2000,
                 requested_attack_duration_ns=10_000_000_000,observed_wall_ns=10_001_000_000,attacker_streams=streams,
                 attacker_observed_ns=[10_000_000_000]*streams,attack_connections=paid+cheap+2*slow,paid_full_work_rejections=paid,
                 slow_preface_connections=2*slow,slow_partial_hello_connections=slow,slow_body_hello_connections=slow,
-                submitted_wire_bytes=100*(paid+cheap+slow),attack_transport_error_count=0,attack_transport_errors=[],
+                request_template_bytes=100,attacker_body_bytes_successfully_written=100*(paid+cheap),
+                attacker_body_write_success_count=paid+cheap,attacker_body_write_outcome_unknown_count=0,
+                attacker_body_not_started_count=0,attack_transport_error_count=0,attack_transport_errors=[],
                 cheap_rejections=cheap,busy_rejections=0,forged_ticket_hash_trials=paid+cheap,admission_hash_trials=paid,
                 attacker_admission_solve_ns=100*paid,honest_submit_attempts=1,honest_valid_blocks=1,honest_submit_ns=[100],
                 honest_submit_errors=[],honest_head_attempts=1,honest_head_ns=[50],honest_head_errors=[],
@@ -184,9 +186,74 @@ class SocketAccountingTests(unittest.TestCase):
         rows = self.rows(); row = rows[2]
         row['attack_connections'] += 1; row['attack_transport_error_count'] = 1
         row['attack_transport_errors'] = ['ADMISSION_RESERVED_READ_ONLY']
+        row['attacker_body_write_outcome_unknown_count'] = 1
         check.validate_socket_log(self.log(rows))
         row['attack_transport_errors'] = []
         with self.assertRaises(ValueError): check.validate_socket_log(self.log(rows))
+
+    def test_baseline_template_bytes_and_honest_busy_outcomes_are_not_attack_cost(self):
+        rows=self.rows();row=rows[0]
+        self.assertGreater(row['request_template_bytes'],0)
+        row['honest_submit_attempts']=2
+        row['honest_submit_errors']=[{'elapsed_ns':20,'error':'BUSY:work-capacity'}]
+        row['metrics']['admission_reserved_read_only_refusals']=502
+        self.assertEqual(check.validate_socket_log(self.log(rows)),rows)
+        row['honest_submit_errors']=[]
+        with self.assertRaisesRegex(ValueError,'honest outcome denominator'):
+            check.validate_socket_log(self.log(rows))
+        rows=self.rows();rows[0]['request_template_bytes']=0
+        with self.assertRaises(ValueError):check.validate_socket_log(self.log(rows))
+        rows=self.rows();rows[1]['request_template_bytes']+=1
+        with self.assertRaisesRegex(ValueError,'socket request template size'):
+            check.validate_socket_log(self.log(rows))
+        rows=self.rows();rows[0]['submitted_wire_bytes']=rows[0]['request_template_bytes']
+        with self.assertRaisesRegex(ValueError,'socket request template size'):
+            check.validate_socket_log(self.log(rows))
+
+    def test_baseline_real_attack_counters_remain_strictly_zero(self):
+        for field in ['attack_connections','paid_full_work_rejections','cheap_rejections','busy_rejections',
+                      'slow_preface_connections','slow_partial_hello_connections','slow_body_hello_connections',
+                      'attack_transport_error_count','forged_ticket_hash_trials','admission_hash_trials',
+                      'attacker_admission_solve_ns','attacker_body_bytes_successfully_written',
+                      'attacker_body_write_success_count','attacker_body_write_outcome_unknown_count',
+                      'attacker_body_not_started_count']:
+            with self.subTest(field=field):
+                rows=self.rows();rows[0][field]=1
+                with self.assertRaises(ValueError):check.validate_socket_log(self.log(rows))
+        # Repair the aggregate denominator too: genuine unsolicited attack work
+        # still cannot be presented as an otherwise consistent no-attacker phase.
+        rows=self.rows();row=rows[0]
+        row['attack_connections']=row['paid_full_work_rejections']=1
+        row['admission_hash_trials']=row['attacker_admission_solve_ns']=1
+        row['metrics']['work_verifications']+=1;row['metrics']['admission_accepted']+=1
+        with self.assertRaisesRegex(ValueError,'baseline attack contamination'):
+            check.validate_socket_log(self.log(rows))
+
+    def test_attacker_body_bytes_keep_complete_writes_and_unknown_outcomes_separate(self):
+        rows=self.rows();row=rows[2]
+        # One completed body is followed by a failed challenge read; two other
+        # requests fail in the opaque helper or before invoking that helper.
+        row['attack_connections']+=3;row['attack_transport_error_count']=3
+        row['attack_transport_errors']=['CHALLENGE_READ','HELPER_ERROR_UNKNOWN_BODY','CONNECT_ERROR']
+        row['attacker_body_write_success_count']+=1
+        row['attacker_body_bytes_successfully_written']+=row['request_template_bytes']
+        row['attacker_body_write_outcome_unknown_count']=1;row['attacker_body_not_started_count']=1
+        self.assertEqual(check.validate_socket_log(self.log(rows)),rows)
+        for field in ['attacker_body_bytes_successfully_written','attacker_body_write_success_count',
+                      'attacker_body_write_outcome_unknown_count','attacker_body_not_started_count']:
+            with self.subTest(field=field):
+                changed=copy.deepcopy(rows);changed[2][field]+=1
+                with self.assertRaises(ValueError):check.validate_socket_log(self.log(changed))
+        # Repair both sums, but falsely mark a server rejection as a request
+        # whose body never finished writing: this still contradicts the outcome.
+        changed=self.rows();row=changed[2]
+        row['attacker_body_write_success_count']=row['attacker_body_bytes_successfully_written']=0
+        row['attacker_body_write_outcome_unknown_count']=1
+        with self.assertRaisesRegex(ValueError,'attacker body outcome accounting'):
+            check.validate_socket_log(self.log(changed))
+        changed=self.rows();changed[3]['attacker_body_not_started_count']=1
+        with self.assertRaisesRegex(ValueError,'unexpected attacker body write'):
+            check.validate_socket_log(self.log(changed))
 
 
 class DurableStoreTests(unittest.TestCase):

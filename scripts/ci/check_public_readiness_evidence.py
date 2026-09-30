@@ -340,7 +340,7 @@ def validate_socket_log(text):
         start = line.find('{')
         if start >= 0:
             value = json.loads(line[start:], object_pairs_hook=unique)
-            if value.get('schema') == 'transport-admission-sustained-cost-v1':
+            if value.get('schema') == 'transport-admission-sustained-cost-v2':
                 rows.append(value)
     require([r['phase'] for r in rows] == ['baseline','unpaid_false_transcript','paid_false_transcript','slow_hello_occupancy'], 'socket phase coverage')
     require(re.search(r'\btest sustained_protected_socket_cost_campaign \.\.\.',text)
@@ -349,9 +349,15 @@ def validate_socket_log(text):
     for row in rows:
         for field in ['attack_connections','paid_full_work_rejections','cheap_rejections','busy_rejections',
                       'slow_preface_connections','slow_partial_hello_connections','slow_body_hello_connections',
-                      'submitted_wire_bytes','attack_transport_error_count','forged_ticket_hash_trials',
+                      'request_template_bytes','attacker_body_bytes_successfully_written',
+                      'attacker_body_write_success_count','attacker_body_write_outcome_unknown_count',
+                      'attacker_body_not_started_count','attack_transport_error_count','forged_ticket_hash_trials',
                       'admission_hash_trials','attacker_admission_solve_ns']:
             integer(row[field])
+        # The harness records the serialized first-request template size in every
+        # phase, including baseline; this is not total attacker-submitted bytes.
+        require('submitted_wire_bytes' not in row
+                and integer(row['request_template_bytes'],1) == rows[0]['request_template_bytes'], 'socket request template size')
         require(row['bits'] == 16 and row['ttl_ms'] == 2000 and row['requested_attack_duration_ns'] == 10_000_000_000, 'socket cost context')
         integer(row['observed_wall_ns'],1)
         require(row['attack_connections'] == row['paid_full_work_rejections']+row['cheap_rejections']+row['busy_rejections']+row['slow_preface_connections']+row['attack_transport_error_count'], 'socket attack denominator')
@@ -372,15 +378,34 @@ def validate_socket_log(text):
         require(metrics['admission_rejected_before_work'] == row['cheap_rejections'] and metrics['admission_accepted'] >= row['paid_full_work_rejections']+row['busy_rejections']+row['honest_valid_blocks'], 'socket cost accounting')
         baseline = row['phase'] == 'baseline'
         slow = row['phase'] == 'slow_hello_occupancy'
+        body_fields = ('attacker_body_bytes_successfully_written','attacker_body_write_success_count',
+                       'attacker_body_write_outcome_unknown_count','attacker_body_not_started_count')
+        if baseline or slow:
+            require(all(row[field] == 0 for field in body_fields), 'unexpected attacker body write')
+        else:
+            # A failed opaque write helper can fail before or during the body.
+            # It contributes an unknown outcome, never invented partial bytes.
+            success, unknown, not_started = (row[field] for field in body_fields[1:])
+            require(success+unknown+not_started == row['attack_connections'], 'attacker body outcome denominator')
+            require(row['attacker_body_bytes_successfully_written'] == success*row['request_template_bytes'], 'attacker body byte denominator')
+            require(success >= row['paid_full_work_rejections']+row['cheap_rejections']+row['busy_rejections']
+                    and unknown+not_started <= row['attack_transport_error_count'], 'attacker body outcome accounting')
+        if not slow:
+            require(row['slow_preface_connections'] == row['slow_partial_hello_connections']
+                    == row['slow_body_hello_connections'] == 0, 'unexpected slow-Hello phase')
         require(row['attacker_streams'] == (0 if baseline else (3 if slow else 2)) and len(row['attacker_observed_ns']) == row['attacker_streams'], 'attacker identity denominator')
         for elapsed in row['attacker_observed_ns']: integer(elapsed,9_000_000_000)
         if baseline:
-            require(row['attack_connections'] == row['admission_hash_trials'] == row['paid_full_work_rejections'] == row['submitted_wire_bytes'] == 0, 'baseline attack contamination')
+            require(all(row[field] == 0 for field in
+                ('attack_connections','paid_full_work_rejections','cheap_rejections','busy_rejections',
+                 'slow_preface_connections','slow_partial_hello_connections','slow_body_hello_connections',
+                 'attack_transport_error_count','forged_ticket_hash_trials','admission_hash_trials',
+                 'attacker_admission_solve_ns')), 'baseline attack contamination')
         elif row['phase'] == 'unpaid_false_transcript':
             require(row['attack_connections'] > 0 and row['paid_full_work_rejections'] == row['admission_hash_trials'] == row['attacker_admission_solve_ns'] == 0, 'unpaid work reached verifier')
         elif slow:
             require(row['slow_partial_hello_connections'] > 0 and row['slow_body_hello_connections'] > 0
-                and row['submitted_wire_bytes'] > 0 and all(row[field] == 0 for field in
+                and row['request_template_bytes'] > 0 and all(row[field] == 0 for field in
                 ('forged_ticket_hash_trials','admission_hash_trials','attacker_admission_solve_ns','paid_full_work_rejections','cheap_rejections','busy_rejections')), 'slow-preface cost/outcome class')
         else:
             require(row['paid_full_work_rejections'] > 0 and row['admission_hash_trials'] >= row['paid_full_work_rejections']+row['busy_rejections'] and row['attacker_admission_solve_ns'] > 0, 'paid attack cost absent')
