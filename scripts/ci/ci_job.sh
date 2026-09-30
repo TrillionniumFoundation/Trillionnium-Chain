@@ -73,7 +73,7 @@ case "${1:?required job}" in
     python3 scripts/ci/check_client_confirmation_evidence.py --historical
     python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-session-v1
     python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-node-v1
-    python3 scripts/ci/check_client_confirmation_evidence.py --historical --native-node --evidence evidence/pon-closed-round-v1
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-closed-round-v1
     python3 scripts/ci/check_public_readiness_evidence.py --evidence evidence/pon-public-readiness-v1
     python3 scripts/ci/test_public_readiness_evidence.py
     python3 scripts/ci/check_native_node_supplements.py --historical

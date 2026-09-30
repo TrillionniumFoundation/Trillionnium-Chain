@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json,subprocess,tempfile,unittest
 from pathlib import Path
-from prepare_evidence_sources import identity,prepare,REMOTE
+from prepare_evidence_sources import identity,declarations,prepare,REMOTE
 
 class EvidenceSourceTests(unittest.TestCase):
     def setUp(self):
@@ -214,5 +214,110 @@ class EvidenceSourceTests(unittest.TestCase):
         result=prepare(self.root,run)
         self.assertEqual(result['verified_object_trees'],self.trees)
         self.assertFalse(any(args[1]=='fetch' for args in calls))
+
+    def test_public_root_source_is_fetched_but_nested_observations_are_ignored(self):
+        path=self.root/'evidence/pon-public-readiness-v1';path.mkdir()
+        (path/'manifest.json').write_text(json.dumps(dict(implementation_commit='7'*40,implementation_tree='8'*40)))
+        nested=path/'observations/pre-correction-b';nested.mkdir(parents=True)
+        (nested/'manifest.json').write_text(json.dumps(dict(implementation_commit='main',implementation_tree='9'*40)))
+        (nested/'qualification.json').write_text(json.dumps(dict(input_source_commit='--all',input_source_tree='9'*40)))
+        self.trees['7'*40]='8'*40;calls=[]
+        def run(args,**kwargs):
+            calls.append(args)
+            if args[1]=='cat-file':return subprocess.CompletedProcess(args,1 if args[3].startswith('7'*40) else 0,'','')
+            if args[1]=='rev-parse':return subprocess.CompletedProcess(args,0,self.trees[args[2].split('^')[0]],'')
+            return subprocess.CompletedProcess(args,0,'','')
+        result=prepare(self.root,run)
+        self.assertEqual(result['fetched'],['7'*40])
+        self.assertEqual([args for args in calls if args[1]=='fetch'],
+            [['git','fetch','--no-tags','--no-write-fetch-head',REMOTE,'7'*40]])
+        self.assertEqual(result['verified_object_trees'],self.trees)
+
+    def test_public_root_rejects_invalid_identity_or_conflicting_tree(self):
+        path=self.root/'evidence/pon-public-readiness-v1';path.mkdir()
+        for commit,tree in [('main','8'*40),('7'*40,'TREE'),('1'*40,'8'*40)]:
+            with self.subTest(commit=commit,tree=tree):
+                (path/'manifest.json').write_text(json.dumps(dict(implementation_commit=commit,implementation_tree=tree)))
+                def run(*args,**kwargs):raise AssertionError('reject before Git fetch')
+                with self.assertRaises(ValueError):prepare(self.root,run)
+
+
+class MeasuredDeclarationSnapshotTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name)
+        self.git('init','-q');self.git('config','user.email','fixture@example.invalid');self.git('config','user.name','Fixture')
+        (self.root/'source.txt').write_text('retained implementation\n')
+        self.git('add','.');self.git('commit','-qm','real retained implementation')
+        self.implementation=self.git('rev-parse','HEAD');self.implementation_tree=self.git('rev-parse','HEAD^{tree}')
+        for name in ['pon-v3','pon-v4','pon-evaluation-bundle-v1']:
+            self.write('evidence/'+name+'/manifest.json',dict(implementation_commit=self.implementation,
+                       implementation_tree=self.implementation_tree))
+        self.snapshot=self.commit('measured fixed declarations')
+        self.snapshot_tree=self.git('rev-parse',self.snapshot+'^{tree}')
+        self.original=declarations(self.root,source=self.snapshot)
+
+    def tearDown(self):self.tmp.cleanup()
+    def git(self,*args):
+        return subprocess.check_output(['git',*args],cwd=self.root,text=True).strip()
+    def commit(self,message):
+        self.git('add','.');self.git('commit','-qm',message);return self.git('rev-parse','HEAD')
+    def write(self,relative,value):
+        path=self.root/relative;path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_text(json.dumps(value));return path
+
+    def test_real_measured_snapshot_is_exact_when_publication_adds_its_own_root(self):
+        self.assertEqual(declarations(self.root),self.original)
+        self.write('evidence/pon-public-readiness-v1/manifest.json',
+                   dict(implementation_commit=self.snapshot,implementation_tree=self.snapshot_tree))
+        self.commit('publish new root evidence after its measurement')
+        current=declarations(self.root)
+        self.assertEqual(current,{**self.original,self.snapshot:self.snapshot_tree})
+        self.assertNotEqual(current,self.original)
+        self.assertEqual(declarations(self.root,source=self.snapshot),self.original)
+
+    def test_measured_corpus_and_cost_blobs_survive_current_rewrites_and_deletion(self):
+        qualification=self.write('evidence/pon-evaluation-bundle-v1/qualification.json',
+            dict(input_source_commit=self.snapshot,input_source_tree=self.snapshot_tree))
+        cost=self.write('evidence/pon-native-node-v1/work-cost/execution.json',
+            dict(schema='pon-native-cost-execution-v1',source_commit=self.snapshot,source_tree=self.snapshot_tree))
+        measured=self.commit('retain independent corpus and cost source')
+        expected={**self.original,self.snapshot:self.snapshot_tree}
+        self.assertEqual(declarations(self.root,source=measured),expected)
+        qualification.write_text(json.dumps(dict(input_source_commit='main',input_source_tree='TREE')));cost.unlink()
+        with self.assertRaises(ValueError):declarations(self.root)
+        self.assertEqual(declarations(self.root,source=measured),expected)
+
+    def test_public_root_is_in_snapshot_but_nested_failure_declarations_never_are(self):
+        self.write('evidence/pon-public-readiness-v1/manifest.json',
+            dict(implementation_commit=self.snapshot,implementation_tree=self.snapshot_tree))
+        prefix='evidence/pon-public-readiness-v1/observations/pre-correction-b/'
+        self.write(prefix+'manifest.json',dict(implementation_commit='main',implementation_tree='TREE'))
+        self.write(prefix+'qualification.json',dict(input_source_commit='--all',input_source_tree='TREE'))
+        measured=self.commit('root plus retained untrusted historical observation')
+        expected={**self.original,self.snapshot:self.snapshot_tree}
+        self.assertEqual(declarations(self.root),expected)
+        self.assertEqual(declarations(self.root,source=measured),expected)
+
+    def test_measured_commit_must_be_exact_and_really_a_commit(self):
+        for source in ['main','--all','A'*40,'0'*40,self.snapshot_tree]:
+            with self.subTest(source=source),self.assertRaises(ValueError):
+                declarations(self.root,source=source)
+
+    def test_conflict_in_committed_public_root_is_rejected_without_using_current_repair(self):
+        path=self.write('evidence/pon-public-readiness-v1/manifest.json',
+            dict(implementation_commit=self.implementation,implementation_tree=self.snapshot_tree))
+        conflicting=self.commit('committed conflicting tree')
+        path.unlink()
+        self.assertEqual(declarations(self.root),self.original)
+        with self.assertRaisesRegex(ValueError,'conflicting source tree'):
+            declarations(self.root,source=conflicting)
+
+    def test_committed_declaration_symlink_is_not_followed(self):
+        path=self.root/'evidence/pon-public-readiness-v1/manifest.json'
+        path.parent.mkdir(parents=True)
+        path.symlink_to('../pon-v3/manifest.json')
+        linked=self.commit('invalid declaration symlink')
+        with self.assertRaisesRegex(ValueError,'unsafe measured declaration file'):
+            declarations(self.root,source=linked)
 
 if __name__=='__main__':unittest.main(verbosity=2)

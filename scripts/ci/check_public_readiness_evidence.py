@@ -137,6 +137,32 @@ def validate_artifacts(root, folder, manifest, *, tracked=True):
         require(required <= index, 'untracked published evidence')
 
 
+def validate_source_preparation(root, text, commit):
+    prepared=json.loads(text.splitlines()[-1],object_pairs_hook=unique)
+    from prepare_evidence_sources import declarations
+    expected=declarations(root,source=commit)
+    require(prepared['verified_object_trees'] == expected
+            and prepared['branch_refs_changed'] is False
+            and prepared['acceptance_granted'] is False, 'source-preparation scope')
+    return expected
+
+
+def validate_environment(root, report, baseline):
+    requirements=safe(root,'formal/pon-nakamoto-v1/requirements.txt').read_text()
+    environment=report['environment'];reference=baseline['environment']
+    for package in ('numpy','cryptography'):
+        pins=re.findall(r'(?m)^'+package+r'==([0-9]+\.[0-9]+\.[0-9]+)[ \t]*$',requirements)
+        require(len(pins) == 1, 'missing or ambiguous environment pin '+package)
+        require(environment.get(package) == reference.get(package) == pins[0], 'environment dependency pin '+package)
+    python=environment.get('python')
+    require(isinstance(python,str) and re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+',python)
+            and python == reference.get('python'), 'environment Python/baseline mismatch')
+    # These are observer records, not remote package or hardware attestations.
+    for package in ('cryptography_openssl','cffi'):
+        value=environment.get(package)
+        require(isinstance(value,str) and value.strip(), 'missing environment runtime record '+package)
+
+
 def quantiles(values):
     ordered = sorted(values)
     def rank(percent):
@@ -474,6 +500,7 @@ def validate(root=ROOT, evidence=None, *, tracked=True):
         for flag in FLAGS: require(value[flag] is False, 'unsupported authority '+flag)
     require(report['source_clean_after'] is True and 'error' not in report, 'incomplete run')
     commit = validate_source(root,report,manifest)
+    validate_environment(root,report,load(safe(folder,'baseline/qualification.json')))
     records = report['results']
     required = {'full-native-reference-regression','pipeline-build','bounded-model-attribution',SOCKET_RUN,NEGATIVE_RUN,SOURCE_NEGATIVE_RUN,SOURCE_PREPARATION_RUN,*TESTS} | {'pipeline-'+p+'-'+a for p,a in CASES}
     require(len(records) == len(required) and {r['name'] for r in records} == required, 'command matrix')
@@ -493,11 +520,7 @@ def validate(root=ROOT, evidence=None, *, tracked=True):
             require(re.search(r'(?m)^Ran [1-9]\d* tests?\b',text) and re.search(r'(?m)^OK\s*$',text), 'negative-test actual outcome')
         if row['name'] == SOURCE_PREPARATION_RUN:
             require(row['command'][0].endswith('python3') and row['command'][1:] == ['scripts/ci/prepare_evidence_sources.py'], 'source-preparation invocation')
-            prepared = json.loads(text.splitlines()[-1],object_pairs_hook=unique)
-            from prepare_evidence_sources import declarations
-            require(prepared['verified_object_trees'] == declarations(root)
-                    and prepared['branch_refs_changed'] is False
-                    and prepared['acceptance_granted'] is False, 'source-preparation scope')
+            validate_source_preparation(root,text,commit)
     baseline_command = by_name['full-native-reference-regression']['command']
     require(baseline_command[0].endswith('python3') and baseline_command[1] == 'scripts/run_evaluation_qualification.py' and '--native-node' in baseline_command and baseline_command[baseline_command.index('--source')+1] == commit, 'baseline command/source')
     from check_client_confirmation_evidence import validate as baseline_validate
@@ -538,9 +561,12 @@ if __name__ == '__main__':
         from historical_evidence import measured_checkout
         validate_artifacts(args.root.resolve(),folder.absolute(),load(safe(folder,'manifest.json')))
         with measured_checkout(args.root,folder) as source:
-            child = subprocess.run([sys.executable,__file__,'--root',str(source),'--evidence',str(folder.absolute())],check=True,capture_output=True,text=True)
+            child = subprocess.run([sys.executable,'-B',str(source/'scripts/ci/check_public_readiness_evidence.py'),
+                                    '--root',str(source),'--evidence',str(folder.absolute())],
+                                   cwd=source,check=True,capture_output=True,text=True)
             original = json.loads(child.stdout.splitlines()[-1])
-        result = dict(original,current_source_qualified_by_this_check=False,runtime_matches=False,historical_semantics_verified=True)
+        result = dict(original,current_source_qualified_by_this_check=False,runtime_matches=False,
+                      historical_semantics_verified=True,**{flag:False for flag in FLAGS})
     else:
         result = validate(args.root,folder)
     print(json.dumps(result,sort_keys=True))

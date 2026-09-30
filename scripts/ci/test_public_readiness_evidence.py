@@ -58,6 +58,52 @@ class SourceAndArtifactTests(unittest.TestCase):
         self.assertEqual(check.validate_source(self.root,self.report,self.manifest,current=False),self.commit)
         with self.assertRaises(ValueError): check.validate_source(self.root,self.report,self.manifest,current=True)
 
+    def test_preparation_uses_exact_measured_git_snapshot_after_root_publication(self):
+        from prepare_evidence_sources import declarations
+        for package in ['pon-v3','pon-v4','pon-evaluation-bundle-v1']:
+            path=self.root/'evidence'/package/'manifest.json';path.parent.mkdir(parents=True)
+            path.write_text(json.dumps(dict(implementation_commit=self.commit,implementation_tree=self.tree)))
+        self.git('add','evidence');self.git('commit','-qm','measured declaration snapshot')
+        measured=self.git('rev-parse','HEAD');tree=self.git('rev-parse','HEAD^{tree}')
+        expected=declarations(self.root,source=measured)
+        record=dict(verified_object_trees=expected,fetched=[],branch_refs_changed=False,acceptance_granted=False)
+        path=self.root/'evidence/pon-public-readiness-v1/manifest.json';path.parent.mkdir(parents=True)
+        path.write_text(json.dumps(dict(implementation_commit=measured,implementation_tree=tree)))
+        self.git('add','evidence');self.git('commit','-qm','later evidence publication')
+        self.assertNotEqual(declarations(self.root),expected)
+        self.assertEqual(check.validate_source_preparation(self.root,json.dumps(record),measured),expected)
+        changed=copy.deepcopy(record);changed['verified_object_trees']=declarations(self.root)
+        with self.assertRaisesRegex(ValueError,'source-preparation scope'):
+            check.validate_source_preparation(self.root,json.dumps(changed),measured)
+        changed=copy.deepcopy(record);del changed['verified_object_trees'][self.commit]
+        with self.assertRaisesRegex(ValueError,'source-preparation scope'):
+            check.validate_source_preparation(self.root,json.dumps(changed),measured)
+        for field in ['branch_refs_changed','acceptance_granted']:
+            changed=copy.deepcopy(record);changed[field]=True
+            with self.subTest(field=field),self.assertRaisesRegex(ValueError,'source-preparation scope'):
+                check.validate_source_preparation(self.root,json.dumps(changed),measured)
+
+    def test_source_pinned_environment_rejects_old_crypto_and_inconsistent_records(self):
+        requirements=self.root/'formal/pon-nakamoto-v1/requirements.txt';requirements.parent.mkdir(parents=True)
+        requirements.write_text('numpy==1.26.4\ncryptography==50.0.2\n')
+        report={'environment':dict(python='3.12.14',numpy='1.26.4',cryptography='50.0.2',
+                                  cryptography_openssl='OpenSSL 4.0.3',cffi='2.1.1')}
+        baseline={'environment':dict(python='3.12.14',numpy='1.26.4',cryptography='50.0.2')}
+        check.validate_environment(self.root,report,baseline)
+        for field,value in [('cryptography','41.0.7'),('numpy','1.26.3'),('python','3.12.13'),
+                            ('python','3.12'),('cryptography_openssl',''),('cryptography_openssl',None),
+                            ('cffi',' '),('cffi',False)]:
+            changed=copy.deepcopy(report);changed['environment'][field]=value
+            with self.subTest(field=field,value=value),self.assertRaises(ValueError):
+                check.validate_environment(self.root,changed,baseline)
+        old_report=copy.deepcopy(report);old_baseline=copy.deepcopy(baseline)
+        old_report['environment']['cryptography']=old_baseline['environment']['cryptography']='41.0.7'
+        with self.assertRaisesRegex(ValueError,'environment dependency pin cryptography'):
+            check.validate_environment(self.root,old_report,old_baseline)
+        requirements.write_text('numpy==1.26.4\ncryptography>=50\n')
+        with self.assertRaisesRegex(ValueError,'missing or ambiguous environment pin cryptography'):
+            check.validate_environment(self.root,report,baseline)
+
     def artifacts(self):
         folder = self.root/'evidence/test'; folder.mkdir(parents=True)
         (folder/'qualification.json').write_text('{}\n'); (folder/'result.bin').write_bytes(b'actual bytes')

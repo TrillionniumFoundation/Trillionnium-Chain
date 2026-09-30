@@ -6,6 +6,8 @@ regression to its actual owner. Long live-clock TCP campaigns are additional evi
 """
 from __future__ import annotations
 import argparse, hashlib, json, os, platform, signal, subprocess, sys, time
+from importlib.metadata import version
+from cryptography.hazmat.backends.openssl.backend import backend as openssl_backend
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,6 +42,7 @@ def run(args):
         source_clean=True, all_commands_passed=False, source_files_sha256={p:sha(ROOT/p) for p in git('ls-files').splitlines() if relevant(p)},
         environment=dict(platform=platform.platform(), python=platform.python_version(),
             numpy=__import__('numpy').__version__, cryptography=__import__('cryptography').__version__,
+            cryptography_openssl=openssl_backend.openssl_version_text(), cffi=version('cffi'),
             rust=subprocess.check_output(['rustc','--version'],text=True).strip(),
             hardware=subprocess.check_output(['lscpu'],text=True),
             filesystem=subprocess.check_output(['findmnt','-T',str(out),'-n','-o','FSTYPE,TARGET'],text=True).strip(),
