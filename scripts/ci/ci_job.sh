@@ -18,6 +18,7 @@ case "${1:?required job}" in
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
+    cargo fetch --locked --manifest-path trillionnium/Cargo.toml
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins
     python3 formal/pon-nakamoto-v1/test_evaluation_round.py
     python3 formal/pon-nakamoto-v1/test_evaluation.py
