@@ -141,7 +141,10 @@ The module index links all these packages and the separately measured native-ses
 work costs. New tooling checks belong to their own source/PR observations. Never
 overwrite an old manifest or change its measured SHA.
 
-The current workload is the closed twelve-command ledger, not an arbitrary contract VM.
+Current workloads use the closed command set selected by the committed profile: the
+historical twelve-command core and explicitly gated signed-task, native evaluation and
+lifecycle extensions. Each benchmark must name its profile and exercised tags; historical
+twelve-command parity and transfer-only measurements retain their original scope.
 For one source and one profile, split signature preparation, state speculation, canonical
 replay, root construction, IPC encoding, process startup, durable commit, work validation,
 propagation, inclusion and client confirmation. Record state size and shared sponsor,

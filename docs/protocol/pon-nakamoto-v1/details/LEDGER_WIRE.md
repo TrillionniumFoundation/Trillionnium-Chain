@@ -7,20 +7,28 @@ Tag13 and its new parent-admission rules belong only to that distinct developmen
 context. The explicit revision6 native evaluation policy adds tags14..17 for frozen
 commit/reveal, signed conflict evidence and bounded archived appeals; it refuses legacy
 direct-score tag7. Revision7 [renewable task leases](QUALIFIED_TASK_LIFECYCLE_V2.md)
-adds tags18..21 and refuses historical task tags12/13. Revision8
-[V3 atomic renewal](QUALIFIED_TASK_LIFECYCLE_V3.md) retains18/20/21, adds exact1028B
-tag22 and refuses standalone19; its fresh registry/network/parameters do not reinterpret V2. These payload widths and exact
-phase/error/state rules are specified by [PUBLIC_EVALUATION_LIFECYCLE](PUBLIC_EVALUATION_LIFECYCLE.md)
-and the lifecycle successor, alongside their versioned JSON registries and native tests.
+adds18 OPEN, 19 standalone RENEW, 20 REVOKE and 21 REGISTER, and refuses historical
+task tags12/13. Revision8 [V3 atomic renewal](QUALIFIED_TASK_LIFECYCLE_V3.md)
+retains18/20/21, adds exact1028B atomic22 and refuses standalone19. Revision9
+[V4 signed-overlap renewal](QUALIFIED_TASK_LIFECYCLE_V4.md) retains those tags and
+refusal, permitting atomic22 inclusion during the source-authorized overlap instead of
+V3's exact containing height. Each successor has its own committed registry/network/
+parameters/genesis; none reinterprets V2/V3. The explicit [operator actor context](OPERATOR_ACTORS_V1.md)
+separately binds its public descriptor and bootstrap signatures; it is not the historical
+default. Payload widths and exact phase/error/state rules are specified by
+[PUBLIC_EVALUATION_LIFECYCLE](PUBLIC_EVALUATION_LIFECYCLE.md) and the selected
+lifecycle contract, alongside their versioned JSON registries and native tests.
 [Current CLI profiles and remaining public gates](PUBLIC_READINESS.md) bind
 interfaces, source ownership, resource limits and actual acceptance scope. These
 extensions do not reinterpret revision3 byte commitments, golden roots or stored state.
 
-The exact registry is [`ledger-v1.json`](../../../../config/pon/ledger-v1.json), with
-[`devnet-v1.json`](../../../../config/pon/devnet-v1.json), work and model-family JSONs.
-Current normative scope: `consensus_revision=3`, chain label
-`trnm-pon-invariant-contract-devnet-3`. Registry filenames ending in v1 are stable
-identifiers, not claims that their content still specifies consensus revision1.
+The historical/default core registry is [`ledger-v1.json`](../../../../config/pon/ledger-v1.json),
+with [`devnet-v1.json`](../../../../config/pon/devnet-v1.json), work and model-family JSONs.
+The core rules below have normative scope `consensus_revision=3`, chain label
+`trnm-pon-invariant-contract-devnet-3`; explicit successor profiles select the additional
+contracts above through fresh parameter/genesis commitments. Historical valid parameters,
+genesis and recorded results retain their original identities. Registry filenames ending
+in v1 are stable identifiers, not claims that their content still specifies consensus revision1.
 PNH1/PNX1 remain the wire magic; the complete parameter commitment selects semantics.
 
 The rules below describe revision3 as a whole. The two final Revision3 sections define

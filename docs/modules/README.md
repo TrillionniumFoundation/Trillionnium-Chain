@@ -38,10 +38,23 @@ reference implementation mean the native production owner has been completed.
 
 ## Invariants, not document counts
 
-[Concrete invariant and failure schedules](../../config/pon/invariants-v2.json) bind every module to actual test functions and source. Binding verification is not a test pass. M06 contains the original twelve-command execution plus explicit profile-gated
-signed task13, native evaluation14..17, task lifecycle18..21 and
-[V3 atomic renewal22](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md);
-V3 refuses standalone19. Historical parity measurements keep their original scope. The native development composition adds M02 consensus decisions, a distinct M07/M08 SQLite owner and an allowlisted signed private-development ingress/outbox. Open public discovery/gossip, confidential transport, continuous miner/mempool lifecycle, ordinary Hepta integration and independent acceptance remain incomplete.
+[Concrete invariant and failure schedules](../../config/pon/invariants-v2.json) bind every module to actual test functions and source. Binding verification is not a test pass. M06 contains the historical twelve-command core
+plus explicit profile-gated signed task13, native evaluation14..17 and lifecycle tags:
+18 OPEN, 19 standalone RENEW only in V2, 20 REVOKE, 21 REGISTER, and 22 atomic renewal
+in [V3](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md) and
+[V4](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md).
+V3/V4 refuse standalone19; V4 selects fresh revision9 signed-overlap semantics.
+Historical parity measurements keep their original scope. The native development
+composition adds M02 decisions, the distinct M07/M08 SQLite owner and signed private
+ingress/outbox. It also implements an explicitly enabled [bounded local pool](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md),
+[finite continuous miner](../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md),
+[public-development V3 transaction intake](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
+and [operator-pinned peer following](../protocol/pon-nakamoto-v1/details/PINNED_PEER_POLLING.md)
+under that same owner. [Operator actors](../protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md)
+and source/task profiles remain explicit fresh-context gates. These implemented development
+components do not complete ordinary Hepta integration or independent qualification.
+Open public discovery/gossip, confidential transport and public/WAN readiness remain
+unqualified; bounded development networking does not supply those acceptances.
 
 ## Responsibility and evidence
 
