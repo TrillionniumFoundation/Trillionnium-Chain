@@ -4,7 +4,10 @@ This is the acceptance contract for the six audit findings. The sole engineering
 sequence remains the [development plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 All public/production acceptance flags remain false. Implemented development controls
 and controlled measurements are independently useful; they cannot substitute for the
-missing work-security or real model-benefit claims.
+missing work-security or real model-benefit claims. These gates govern acceptance;
+the CLI can still run an explicitly selected public-development listener with
+`--development` and `--public-development-network` at the operator's `--listen` address.
+This document adds no automatic firewall or acceptance-gate listener prohibition.
 
 ## Applicable profiles and exact interfaces
 
@@ -14,21 +17,27 @@ missing work-security or real model-benefit claims.
 | signed task development context | `--task-profile signed-task-dev-v1` | distinct revision5 genesis/network/parameters; tag13 is652 signed payload bytes; rejects historical tag12 and implicit maintenance; finite16 genesis demand records and public development source key |
 | renewable task development context | `--task-profile signed-task-lifecycle-dev-v2` | distinct revision7 namespace; tags18/19 open/renew344-byte leases, tag20 revokes144 bytes, tag21 registers684-byte statements;32 bounded slots, optimistic revision, monotonic generation and one-output meter preserved on renewal |
 | atomic renewable task development context | `--task-profile signed-task-lifecycle-dev-v3` | distinct revision8 namespace; [atomic successor](QUALIFIED_TASK_LIFECYCLE_V3.md) tag22 couples requester renewal and exact source signature in1028 payload bytes; standalone tag19 refuses; legacy V2 is unchanged |
+| overlap renewable task development context | `--task-profile signed-task-lifecycle-dev-v4` | distinct revision9 namespace; [V4 atomic22](QUALIFIED_TASK_LIFECYCLE_V4.md) retains1028 bytes and refuses19, permits a source-signed successor whose window has begun to be included while the old lease remains valid; no automatic renewal or source signing |
+| operator actor development context | `--actor-profile native-operator-actors-dev-v1` plus `--deployment-spec`, `--deployment-bootstrap`, `--deployment-model`, `--deployment-input` | [public descriptor and approvals](OPERATOR_ACTORS_V1.md) bind fresh N/P/G and role/material pins; runtime reads public inputs, actor mining requires explicit `--miner`, and genesis/profile overrides and implicit DEV task fixtures refuse; key possession does not establish independent governance or truthful demand |
 | native evaluation development context | `--evaluation-policy native-public-evaluation-dev-v1` | tags14/15 commit/reveal,16 signed conflict evidence,17 bounded record-only appeal;128-height frozen rounds, mandatory close and positive conflict-free adoption guard |
 | real small-model development family | `--model-profile smollm2-135m-cpu-dev-v1` with native evaluation | frozen135M decoder/tokenizer and rank4 adapter interface; distinct family/chain parameters and2MiB candidate limit; actual external CPU observations do not grant native authenticated ML execution or quality acceptance |
 | full task material mining | `mine` / `make` with `--task-manifest`, `--task-model`, `--task-input` | exact source statement, independently pinned genesis demand context, model/input derivation, parent registration and signed height window; no self-registration by its own work block |
-| explicit bootstrap | `mine` / `make --task-bootstrap` | exact genesis maintenance statement/material; zero useful-output credit; expires at height1000 |
+| explicit bootstrap | `mine` / `make --task-bootstrap` | exact genesis maintenance statement/material; zero useful-output credit; the initial lease covers heights0..1000; renewable profiles require explicitly signed successor lease/source registration, with current parent material checked for mining |
 | manifest fixture generation | `task-fixture` plus model/input, demand index, purpose, source nonce and height window | reproducible public-key fixture; no genuine demand, exclusive custody, legal consent or production DA certificate |
 | historical ingress | `--admission-profile legacy-development` (default) | unchanged development listener; no admission-work claim |
 | public development ingress/client | `serve` / `push` / `head` / `history` / `sync --admission-profile public-protected-development-v2` | [separate versioned public intake](PUBLIC_INTAKE_V2.md); guest resource tickets for all operations, no allowlist or durable guest authority, independent full packet verification on sync; explicit `--public-development-network` required for serve |
+| public development pool ingress/client | `serve` / `pool-push` / `pool-status-remote --admission-profile public-protected-development-v3` | [fresh V3 transport](PUBLIC_POOL_INTAKE_V3.md) retains Submit/Head/History and adds paid `pool_context`-bound PNX1 bundles1..16 plus read-only scalar pool status; `serve` requires `--public-development-network`, `--auth-secret` and fixed `--pool-policy`; queue reservation is not inclusion/confirmation |
+| local persistent pool | `pool-submit --transactions --pool-policy` / `pool-status` | [existing Node queue owner](LOCAL_MEMPOOL_LIFECYCLE.md) applies M05 typed checks and M06 prefix preview; [cache V2](LOCAL_MEMPOOL_CACHE_V2.md) bounds logical retained resources and evicts wholly expired/sequence-consumed groups on admission need, preserving explicit-removal tombstones; physical archive/WAL growth remains separate |
+| finite continuous mining | `mine-loop --miner --pool-policy`, or public V3 `serve --mine --miner --pool-policy` | [wall-clock mining](CONTINUOUS_MINING_V1.md) selects exact queued groups and current parent task/source material under the same Node owner; attempts, runtime and block limits are finite; proof search releases the owner and rechecks parent/generation before native admission |
+| operator-pinned peer following | public V3 `serve --peers`, optional `--peer-poll-ms` / `--peer-pages` | [bounded pinned polling](PINNED_PEER_POLLING.md) verifies the configured peer/context/history under the same owner; operator pins addresses and server keys, with no open discovery or independent-operator claim |
 | protected ingress/client | `serve` / `push --admission-profile connection-work-v1` | hello/ready before Submit body, exact-wire challenge and single connection-local solution; strict clients refuse downgrade before exposing Submit; ordinary read-only requests retain their bounded path |
 
 Protected `serve` additionally accepts `--admission-bits`8..20 and
 `--admission-ttl-ms`100..2000. Default16 bits/2000ms is a development experiment,
 not an accepted public attacker budget. The client search cap and timeout can reject an
 honest request at excessive difficulty; record that failure. Non-loopback legacy and connection-work-v1 development
-listeners require signed allowlisted authentication. The explicit public-v2 successor
-accepts unknown transport keys with per-operation resource tickets; its bounded
+listeners require signed allowlisted authentication. Explicit public-v2/v3 successors
+accept unknown transport keys with per-operation resource tickets; their bounded
 resources are not public service or work-hardness qualification. A puzzle changes neither the
 work relation, block validity, chainwork, reward nor confirmation policy. Its parameters
 are transport-profile committed, separately from the chain context.
@@ -45,7 +54,9 @@ Untrusted protected parse/auth/preface refusals have at most128 Unicode characte
 and a100ms absolute response budget, also committed by the transport profile.
 
 Authoritative implementations are `trnm-pon-node/src/main.rs`, `src/ingress.rs`,
-`src/ingress/public_v2.rs`, `src/store.rs`, `trnm-mvcc-fee/src/pon_executor.rs` and the strict
+`src/ingress/public_v2.rs`, `src/ingress/public_v3.rs`, `src/store.rs`,
+`src/store/mempool.rs`, `src/mining.rs`, `src/peer_polling.rs`, `src/operator_deployment.rs`,
+`trnm-mvcc-fee/src/pon_executor.rs` and the strict
 [qualified-task codec and admission](QUALIFIED_WORK_TASK.md). The namespace owner
 refuses a mismatched genesis/schema; no stored signature or historical state is reinterpreted.
 PNH1 remains318 bytes and the work transcript remains49188 bytes. The source statement
@@ -54,18 +65,22 @@ Validators independently bind the actual PNW1 operand bytes to the signed model 
 input hashes before expensive transcript verification; this requirement also applies
 to manually constructed packets that bypass the ordinary mining entrypoint.
 
-The bootstrap expires at height1000. A valid successor must already be registered in
-parent state before that expiry. Unused fixed demand records can admit later windows,
-but neither a used demand nor the same matrix task can be renewed through tag13.
-The16-record testing context therefore has a finite lifecycle and cannot promise
-indefinite production liveness. The explicit [lifecycle successor](QUALIFIED_TASK_LIFECYCLE_V2.md)
-adds native lease open/renew/revoke, retained source sequences and generation-safe slot
-recycling. V2 standalone renewal can invalidate the sole task statement and stop mining;
-its paired local transactions do not guarantee consensus atomicity. The explicit
-[atomic V3 successor](QUALIFIED_TASK_LIFECYCLE_V3.md) uses one tag22 and refuses
-standalone tag19. Actual Node tests exercise renewal, revoke, reopen and heavier-fork replacement.
-It still requires genuine authorized requesters, available materials, timely renewal and
-an accepted work-cost class. Public development keys provide none of those owner attestations.
+Height1000 is the end of the initial bootstrap lease, not a universal chain lifetime.
+In `signed-task-dev-v1`, unused fixed demand records can admit later windows, but a
+used demand or the same matrix task cannot be renewed through tag13; its16-record
+context remains finite. [V2](QUALIFIED_TASK_LIFECYCLE_V2.md) separately adds native
+lease open/renew/revoke, retained source sequences and generation-safe slot recycling.
+V2 standalone19 can invalidate the sole task statement before21 is included; a local
+bundle does not guarantee consensus atomicity. [V3](QUALIFIED_TASK_LIFECYCLE_V3.md)
+and [V4](QUALIFIED_TASK_LIFECYCLE_V4.md) use one requester-signed22 carrying the exact
+source signature and refuse19. V3 requires its exact containing height; V4 permits
+inclusion during the signed overlap. A valid successor must be included while the old
+lease remains eligible, so it is parent state for subsequent work; source signatures,
+material, sequences and the output meter remain checked. Actual Node tests cover signed
+renewal, revoke, reopen and heavier-fork replacement. No profile automatically signs
+renewal or creates new demand; missing material, all expired/revoked tasks or unwilling
+signers still stop eligibility. Operator actor approvals establish signed bootstrap
+possession and bindings, not genuine demand, independent owners or an accepted work-cost class.
 
 ## Six gates and their evidence requirements
 
@@ -76,7 +91,7 @@ an accepted work-cost class. Public development keys provide none of those owner
 | P1 public evaluation/reward | frozen native commit/reveal rounds and all-eligible minimum; mandatory timeout abort; strict signed conflict evidence, next-round key exclusions, bounded archived appeals and funded release/claim gating | public roster governance and independent evaluator ownership; confirmed-chain phase observation policy; withheld/low-score/cartel incentives; objective ML fraud versus subjective quality disagreement; funded appeal adjudication and sanctions for past paid rewards |
 | P1 target model attribution | exact integer BA equivalence/common-root budgets; pinned135M decoder/rank4 LoRA CPU execution with all four strong controls; native zero-gain no-adoption/no-reward experiment | independent future tasks; prospective registration; reproducible positive efficacy; poisoning/backdoor/forgetting, functional-copy handling and inference/memory costs; no general circuit-optimum claim |
 | P1 useful-work efficiency | arithmetic output meter counts fixed AB once; branch-relative adopted-output observer records explicitly supplied attempt and validator costs | real downstream use receipts; count duplicate, failed, stale/orphan work and every verifier; include training/load/retention/DA costs; report accepted unique benefit per aggregate resource budget |
-| P1 sustained end-to-end capacity | continuous durable TCP pipeline plus [separate producer/validator/full-sync confirmer processes](DISTRIBUTED_PIPELINE.md), signed receipts and matching independently verified state | physical-host LAN measurements; long steady-state campaigns, state/history scaling, tail confidence, mixed commands/conflicts, queued transaction RPC/mempool, attack availability, WAN independent nodes and measured deployment GPU/VRAM |
+| P1 sustained end-to-end capacity | durable TCP pipeline and [separate processes](DISTRIBUTED_PIPELINE.md); explicitly selected native pool/public V3 queue intake, finite wall-clock miner and pinned peer following share one Node owner | measured queued-transaction latency and saturation; long steady-state campaigns, state/history scaling, tail confidence, mixed commands/conflicts, attack availability, WAN independent nodes and measured deployment GPU/VRAM |
 
 No table row grants a source an independent identity, proves neural work unavoidable,
 or turns an empirical fixed-dataset optimum into a general model/circuit optimum.
