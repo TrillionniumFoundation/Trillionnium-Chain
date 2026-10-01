@@ -129,21 +129,32 @@ and does not hash or audit the active key/value state. `commitment_scope` states
 that distinction. `context_matches=true` records the native namespace check;
 it is not independent consensus or data-availability attestation.
 
-History returns at most one packet. Before loading its BLOB it checks the
-scalar stored length against the native raw cap. It requires the exact ancestry
-relationship, caps the suffix at 4096 steps, and checks work/deadline progress on
-every step. It constructs no unbounded ancestry spool or multi-packet JSON value.
-Unknown cursors, non-ancestors, longer suffixes, and oversized corrupt stored
-BLOBs fail explicitly. Every returned packet remains subject to full native
-proof/task/ledger verification by the receiving Node.
+History returns at most one packet. A native derived binary-lifting index
+locates the next admitted packet without repeatedly walking the full suffix.
+Each History lookup/body load has a hard budget of 1024 indexed SQL reads, including the scalar
+length check and final BLOB load; every indexed/body read checks work/deadline progress.
+The fixed native namespace/reorganization checks precede the lookup. Before
+loading a packet BLOB it checks the scalar stored length against the 1 MiB native
+raw cap. Fixed-size header/hash projections are also length guarded. Unknown
+cursors, non-ancestors, index inconsistencies and oversized corrupt stored BLOBs
+fail explicitly. No unbounded ancestry spool or multi-packet JSON value is built.
+The transport profile digest commits the derived-index version, 63 possible jump
+levels and SQL budget; historical transport pins are distinct.
 
-**Remaining synchronization gate:** paging repeatedly walks the suffix from
-requested tip to cursor. A chain longer than 4096 blocks cannot be bootstrapped
-from genesis through this public path; it rejects rather than silently returning
-an incomplete unauthenticated substitute. A bounded derived ancestor/range
-index or independently verified checkpoint/range protocol is needed. The index
-must not replace client validation of each packet. Existing signed-task-v1
-bootstrap expiry also remains finite; this transport does not renew it.
+The index is created only by native admission in the same SQLite transaction as
+the accepted block and its state deltas. The fresh DDL identity refuses existing
+layouts; it does not silently migrate a live owner. Each used jump checks its
+context hash, actual stored header parent/height and two visible half-jump links,
+without recursively auditing the entire path. Reopen checks the active tip's
+rows; untouched branch rows are checked lazily. The public hash detects local
+inconsistency, not an owner who can rewrite and reseal the database. It is not an
+independent proof of long ancestry. Every receiving Node still verifies every
+returned PNW1/task/ledger packet and only activates after reaching the pinned tip.
+See [derived-index details](NATIVE_ANCESTRY_INDEX.md).
+
+The former 4096-suffix bootstrap limit is removed by this indexed path. This does
+not renew a finite signed-task-v1 lease: continuing task qualification still needs
+its own explicitly selected lifecycle profile and source-authorized transactions.
 
 Submit calls the existing native context checks before full PNW1 replay, then
 executes native task/ledger/state-root validation and branch activation. Two

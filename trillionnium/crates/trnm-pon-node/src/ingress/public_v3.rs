@@ -1,8 +1,11 @@
 //! Public development intake: resource tickets confer no ledger/source authority.
-//! Explicit development profile. No peer/nonce/replay row is persisted for unknown callers.
+//! Explicit development profile. No guest identity/replay row is persisted.
+//! Pool writes are exact signed transaction facts, under the existing shared Node owner.
+//! V2 retains separate signed domains; both select the current derived-index resource bound.
+//! All native stages are nonpreemptive; deadlines bound admission/wait stages, not a hard M06 interruption.
 use super::{
-    digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node, Request, Result,
-    Settings, WorkCheckedPacket,
+    digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node,
+    Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -22,17 +25,41 @@ use std::{
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_protocol::pon_wire::Hash;
 
-pub const PROFILE: &str = "public-protected-development-v2";
+/// Fresh signed/wire successor. V2 remains a separate unchanged byte contract.
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
+pub enum Request {
+    Submit {
+        packet: String,
+    },
+    Head,
+    History {
+        tip: String,
+        after: String,
+    },
+    PoolSubmitBundle {
+        pool_context: String,
+        transactions: Vec<String>,
+    },
+    PoolStatus,
+}
+pub const PROFILE: &str = "public-protected-development-v3";
 const HELLO_BYTES: usize = 108;
 const SOLUTION_BYTES: usize = 108;
 const MAX_PACKET: usize = 1_048_576;
 const MAX_BODY: usize = 2 * MAX_PACKET + 64;
 const MAX_READ_BODY: usize = 512;
+const MIN_POOL_RAW: usize = 159;
+const MAX_POOL_RAW: usize = 2048;
+const MAX_POOL_MEMBERS: usize = 16;
+const MAX_POOL_BUNDLE_BYTES: usize = MAX_POOL_RAW * MAX_POOL_MEMBERS;
+const MAX_POOL_BODY: usize = MAX_POOL_BUNDLE_BYTES * 2 + 512;
+const MAX_SERVICE_SECONDS: u64 = 72 * 3600;
 const MAX_RESPONSE: usize = 2 * MAX_PACKET + 4096;
 const MAX_CONNECTIONS: usize = 64;
 const MAX_PAID_BODY_BYTES: usize = 8 * 1024 * 1024;
 const MAX_SPENT: usize = 1024;
-const MAX_HISTORY_STEPS: u64 = crate::ancestry_index::READ_SQL_BUDGET;
+const MAX_HISTORY_STEPS: u64 = 1024;
 const PREFIX_MS: u64 = 2000;
 const CHALLENGE_MS: u64 = 2000;
 const BODY_MS: u64 = 5000;
@@ -66,7 +93,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v2",&[PROFILE.as_bytes(),b"hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/output-conservative32MiB/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32/no-durable-guest-rows",&[self.bits],&self.lifetime_ms.to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/output-conservative32MiB/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-native-stages-nonpreemptive/no-durable-guest-rows",&[self.bits],&self.lifetime_ms.to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -89,6 +116,12 @@ pub struct PublicMetrics {
     pub work_ns: u64,
     pub executor_refusals: u64,
     pub completed_submit: u64,
+    pub completed_pool_submit: u64,
+    pub completed_pool_status: u64,
+    pub pool_submit_started: u64,
+    pub pool_submit_finished: u64,
+    pub pool_submit_failed: u64,
+    pub pool_submit_ns: u64,
     pub completed_read: u64,
     pub expired_connections: u64,
     pub expired_phase_counts: BTreeMap<String, u64>,
@@ -143,12 +176,12 @@ impl Cookie {
         let mut c = self.clone();
         c.signature.clear();
         Ok(hash(
-            b"public-cookie-server-sign-v2",
+            b"public-cookie-server-sign-v3",
             &[&serde_json::to_vec(&c)?],
         ))
     }
     fn id(&self) -> Result<Hash> {
-        Ok(hash(b"public-cookie-id-v2", &[&serde_json::to_vec(self)?]))
+        Ok(hash(b"public-cookie-id-v3", &[&serde_json::to_vec(self)?]))
     }
 }
 fn hmac(secret: &[u8; 32], message: &[u8]) -> Hash {
@@ -171,7 +204,7 @@ fn equal_mac(a: Hash, b: Hash) -> bool {
     a.iter().zip(b).fold(0u8, |acc, (x, y)| acc | (x ^ y)) == 0
 }
 fn winner(cookie: Hash, nonce: u64, bits: u8) -> bool {
-    let h = hash(b"public-ticket-v2", &[&cookie, &nonce.to_le_bytes()]);
+    let h = hash(b"public-ticket-v3", &[&cookie, &nonce.to_le_bytes()]);
     u32::from_be_bytes(h[..4].try_into().expect("fixed hash")).leading_zeros() >= u32::from(bits)
 }
 fn entropy<const N: usize>() -> Result<[u8; N]> {
@@ -184,8 +217,76 @@ fn request_op(request: &Request) -> Result<u8> {
         Request::Submit { .. } => Ok(1),
         Request::Head => Ok(2),
         Request::History { .. } => Ok(3),
+        Request::PoolSubmitBundle { .. } => Ok(4),
+        Request::PoolStatus => Ok(5),
+    }
+}
+fn response_maximum(op: u8) -> usize {
+    if op == 3 {
+        MAX_RESPONSE
+    } else {
+        16384
+    }
+}
+fn mutating_operation(op: u8) -> bool {
+    matches!(op, 1 | 4)
+}
+fn body_maximum(op: u8) -> Result<usize> {
+    match op {
+        1 => Ok(MAX_BODY),
+        4 => Ok(MAX_POOL_BODY),
+        2 | 3 | 5 => Ok(MAX_READ_BODY),
         _ => Err("PUBLIC_OPERATION".into()),
     }
+}
+fn lower_hex(text: &[u8]) -> bool {
+    text.iter()
+        .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b))
+}
+/// Check cardinality and every hex row before serde can allocate a Vec<String>.
+fn pool_bundle_body_guard(bytes: &[u8]) -> Result<()> {
+    ensure(bytes.len() <= MAX_POOL_BODY, "PUBLIC_POOL_BODY")?;
+    let prefix = br#"{"op":"pool_submit_bundle","pool_context":""#;
+    let payload = bytes
+        .strip_prefix(prefix)
+        .and_then(|b| b.strip_suffix(b"]}"))
+        .ok_or("PUBLIC_POOL_CANONICAL")?;
+    let (context, rest) = payload.split_at_checked(64).ok_or("PUBLIC_POOL_CONTEXT")?;
+    ensure(lower_hex(context), "PUBLIC_POOL_CONTEXT")?;
+    let mut rest = rest
+        .strip_prefix(b"\",\"transactions\":[")
+        .ok_or("PUBLIC_POOL_CANONICAL")?;
+    let mut count = 0;
+    let mut total = 0usize;
+    while !rest.is_empty() {
+        ensure(count < MAX_POOL_MEMBERS, "PUBLIC_POOL_MEMBERS")?;
+        rest = rest.strip_prefix(b"\"").ok_or("PUBLIC_POOL_CANONICAL")?;
+        let end = rest
+            .iter()
+            .position(|b| *b == b'"')
+            .ok_or("PUBLIC_POOL_CANONICAL")?;
+        let text = &rest[..end];
+        ensure(
+            text.len().is_multiple_of(2)
+                && (2 * MIN_POOL_RAW..=2 * MAX_POOL_RAW).contains(&text.len())
+                && lower_hex(text),
+            "PUBLIC_POOL_RAW",
+        )?;
+        total = total
+            .checked_add(text.len() / 2)
+            .ok_or("PUBLIC_POOL_BYTES")?;
+        ensure(total <= MAX_POOL_BUNDLE_BYTES, "PUBLIC_POOL_BYTES")?;
+        count += 1;
+        rest = &rest[end + 1..];
+        if !rest.is_empty() {
+            rest = rest.strip_prefix(b",").ok_or("PUBLIC_POOL_CANONICAL")?;
+            ensure(!rest.is_empty(), "PUBLIC_POOL_CANONICAL")?;
+        }
+    }
+    ensure(
+        (1..=MAX_POOL_MEMBERS).contains(&count),
+        "PUBLIC_POOL_MEMBERS",
+    )
 }
 #[derive(Clone, Copy)]
 struct Hello {
@@ -198,13 +299,13 @@ struct Hello {
 impl Hello {
     fn parse(raw: &[u8]) -> Result<Self> {
         ensure(
-            raw.len() == HELLO_BYTES && raw[..4] == *b"PPH2" && raw[5..8] == [0; 3],
+            raw.len() == HELLO_BYTES && raw[..4] == *b"PPH3" && raw[5..8] == [0; 3],
             "PUBLIC_HELLO",
         )?;
         let op = raw[4];
         let len = u32::from_le_bytes(raw[8..12].try_into().map_err(|_| "PUBLIC_HELLO")?) as usize;
         ensure(
-            matches!(op, 1..=3) && len > 0 && len <= if op == 1 { MAX_BODY } else { MAX_READ_BODY },
+            matches!(op, 1..=5) && len > 0 && len <= body_maximum(op)?,
             "PUBLIC_BODY_LIMIT",
         )?;
         Ok(Self {
@@ -216,7 +317,7 @@ impl Hello {
         })
     }
     fn encode(self) -> Vec<u8> {
-        let mut xs = b"PPH2".to_vec();
+        let mut xs = b"PPH3".to_vec();
         xs.push(self.op);
         xs.extend([0; 3]);
         xs.extend((self.len as u32).to_le_bytes());
@@ -254,7 +355,7 @@ impl PublicServer {
     fn cookie(&self, s: &Settings, h: Hello, peer: SocketAddr) -> Result<Cookie> {
         let tick = self.tick()?;
         let mut c = Cookie {
-            schema: "public-resource-cookie-v2".into(),
+            schema: "public-resource-cookie-v3".into(),
             profile: hex::encode(self.policy.id()),
             network: hex::encode(s.network()),
             parameters: hex::encode(s.parameters()),
@@ -263,7 +364,7 @@ impl PublicServer {
             epoch: hex::encode(self.epoch),
             connection_nonce: hex::encode(entropy::<32>()?),
             peer_binding: hex::encode(hash(
-                b"public-peer-binding-v2",
+                b"public-peer-binding-v3",
                 &[peer.to_string().as_bytes()],
             )),
             caller: hex::encode(h.caller),
@@ -286,7 +387,7 @@ impl PublicServer {
     }
     fn validate(&self, c: &Cookie, s: &Settings, check_expiry: bool) -> Result<()> {
         ensure(
-            c.schema == "public-resource-cookie-v2"
+            c.schema == "public-resource-cookie-v3"
                 && c.profile == hex::encode(self.policy.id())
                 && c.network == hex::encode(s.network())
                 && c.parameters == hex::encode(s.parameters())
@@ -361,7 +462,7 @@ impl Response {
         };
         r.signature.clear();
         Ok(hash(
-            b"public-response-sign-v2",
+            b"public-response-sign-v3",
             &[&serde_json::to_vec(&r)?],
         ))
     }
@@ -389,7 +490,7 @@ fn response(
         ),
     };
     let mut r = Response {
-        schema: "public-protected-response-v2".into(),
+        schema: "public-protected-response-v3".into(),
         profile: hex::encode(server.policy.id()),
         network: hex::encode(s.network()),
         parameters: hex::encode(s.parameters()),
@@ -402,7 +503,7 @@ fn response(
         signature: String::new(),
     };
     r.signature = server.identity.sign(&r.message()?)?;
-    framed(serde_json::to_vec(&r)?, MAX_RESPONSE)
+    framed(serde_json::to_vec(&r)?, response_maximum(c.op))
 }
 /// Streaming canonical equality avoids another body-sized serialization Vec.
 struct ExactCanonical<'a> {
@@ -426,6 +527,13 @@ impl Write for ExactCanonical<'_> {
     }
 }
 fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
+    ensure(
+        !bytes.is_empty() && bytes.len() <= body_maximum(op)?,
+        "PUBLIC_BODY_LIMIT",
+    )?;
+    if op == 4 {
+        pool_bundle_body_guard(bytes)?;
+    }
     if op == 1 {
         // Reject escaping/non-hex packet text before serde's scratch allocation.
         let prefix = br#"{"op":"submit","packet":""#;
@@ -592,8 +700,11 @@ fn public_dispatch(
         ensure(steps <= MAX_HISTORY_STEPS, "PUBLIC_HISTORY_STEPS")
     };
     match request {
-        Request::Submit { packet } => {
-            super::dispatch_shared_with(node, Request::Submit { packet }, &mut progress, |packet| {
+        Request::Submit { packet } => super::dispatch_shared_with(
+            node,
+            NativeRequest::Submit { packet },
+            &mut progress,
+            |packet| {
                 let start = Instant::now();
                 metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
                 let result = WorkCheckedPacket::verify(packet);
@@ -604,8 +715,8 @@ fn public_dispatch(
                     m.work_failed += 1;
                 }
                 result
-            })
-        }
+            },
+        ),
         Request::Head => {
             let owner = lock_owner(node, &mut progress)?;
             owner.public_head_metadata()
@@ -644,27 +755,126 @@ fn public_dispatch(
                 packets: encoded,
             })?)
         }
-        _ => Err("PUBLIC_OPERATION".into()),
+        Request::PoolSubmitBundle {
+            pool_context,
+            transactions,
+        } => {
+            progress(0)?;
+            let mut owner = lock_owner(node, &mut progress)?;
+            let snapshot = owner.pool_status_snapshot()?;
+            ensure(pool_context == snapshot.context, "PUBLIC_POOL_CONTEXT")?;
+            // The canonical body guard already capped the vector before serde allocation.
+            let raws = transactions
+                .iter()
+                .map(|text| hex::decode(text).map_err(|_| "PUBLIC_POOL_RAW".into()))
+                .collect::<Result<Vec<_>>>()?;
+            // Check again before starting the nonpreemptive mutable native stage.
+            progress(0)?;
+            let start = Instant::now();
+            metrics
+                .lock()
+                .map_err(|_| "PUBLIC_METRICS")?
+                .pool_submit_started += 1;
+            let outcome = owner.pool_submit_bundle(raws);
+            let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+            m.pool_submit_finished += 1;
+            m.pool_submit_ns = m.pool_submit_ns.saturating_add(elapsed_ns(start));
+            if outcome.is_err() {
+                m.pool_submit_failed += 1;
+            }
+            drop(m);
+            let receipt = outcome?;
+            Ok(
+                json!({"pool_context":pool_context,"receipt":receipt,"adoption_authority":false,
+                "reward_authority":false,"exact_inclusion_proof":false,"public_network_ready":false}),
+            )
+        }
+        Request::PoolStatus => {
+            let owner = lock_owner(node, &mut progress)?;
+            let snapshot = owner.pool_status_snapshot()?;
+            ensure(
+                snapshot.groups.len() <= 256
+                    && snapshot.retained_records <= 256
+                    && snapshot.retained_bytes <= 524288,
+                "PUBLIC_POOL_SNAPSHOT_BOUND",
+            )?;
+            let mut counts = [0usize; 4];
+            for group in &snapshot.groups {
+                ensure(
+                    group.reason.len() <= 128 && group.digests.len() <= 16,
+                    "PUBLIC_POOL_SNAPSHOT_BOUND",
+                )?;
+                let index = match group.state {
+                    crate::PoolState::Queued => 0,
+                    crate::PoolState::SequenceConsumed => 1,
+                    crate::PoolState::Expired => 2,
+                    crate::PoolState::Blocked => 3,
+                };
+                counts[index] += 1;
+            }
+            progress(0)?;
+            Ok(
+                json!({"schema":"public-pool-scalar-snapshot-v3","profile":snapshot.profile,"context":snapshot.context,
+                "parent":snapshot.parent,"generation":snapshot.generation,"checked_parent":snapshot.checked_parent,
+                "checked_generation":snapshot.checked_generation,"classification_current":snapshot.classification_current,
+                "retained_records":snapshot.retained_records,"retained_bytes":snapshot.retained_bytes,
+                "local_removals":snapshot.local_removals,"gc":snapshot.gc,"queued_groups":counts[0],"sequence_consumed_groups":counts[1],
+                "expired_groups":counts[2],"blocked_groups":counts[3],
+                "classification_scope":"last local branch-relative classification; sequence consumed is not exact inclusion",
+                "snapshot_does_not_reconcile":true,"adoption_authority":false,"reward_authority":false,
+                "exact_inclusion_proof":false,"public_network_ready":false}),
+            )
+        }
     }
 }
 
 /// Dedicated successor. No authentication roster or durable guest operation table.
 /// A finite engineering service; global saturation can still deny honest callers.
-pub fn serve_public_protected_v2(
+pub fn serve_public_protected_v3(
     listener: TcpListener,
-    node: Node,
+    node: Arc<Mutex<Node>>,
     lifetime: Duration,
     stop: Arc<AtomicBool>,
     server: PublicServer,
 ) -> Result<PublicMetrics> {
+    serve_public_protected_v3_with_metrics(
+        listener,
+        node,
+        lifetime,
+        stop,
+        server,
+        Arc::new(Mutex::new(PublicMetrics::default())),
+    )
+}
+
+/// Trusted local observer only. Holding or modifying its mutex can affect this
+/// process; these counters never authorize a guest or prove an economic bound.
+pub fn serve_public_protected_v3_with_metrics(
+    listener: TcpListener,
+    node: Arc<Mutex<Node>>,
+    lifetime: Duration,
+    stop: Arc<AtomicBool>,
+    server: PublicServer,
+    metrics: Arc<Mutex<PublicMetrics>>,
+) -> Result<PublicMetrics> {
     ensure(
-        lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
+        lifetime > Duration::ZERO && lifetime <= Duration::from_secs(MAX_SERVICE_SECONDS),
         "PUBLIC_LIFETIME",
     )?;
     listener.set_nonblocking(true)?;
-    let settings = node.settings().clone();
-    let node = Arc::new(Mutex::new(node));
-    let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+    let startup_deadline = Instant::now() + Duration::from_millis(WORK_MS);
+    let settings = {
+        let mut progress = |_: u64| {
+            ensure(
+                !stop.load(Ordering::Acquire) && Instant::now() < startup_deadline,
+                "PUBLIC_STARTUP_DEADLINE",
+            )
+        };
+        let owner = lock_owner(&node, &mut progress)?;
+        owner.pool_status_snapshot()?; // Explicit operator enable is required; never enable from the guest listener.
+        progress(0)?;
+        owner.settings().clone()
+    };
     let end = Instant::now() + lifetime;
     let (proof_tx, proof_rx) = mpsc::sync_channel::<Task>(2);
     let (read_tx, read_rx) = mpsc::sync_channel::<Task>(2);
@@ -699,11 +909,7 @@ pub fn serve_public_protected_v2(
                     let task = queue.lock().map_err(|_| "PUBLIC_QUEUE")?.try_recv();
                     match task {
                         Ok(task) => {
-                            let response_max = if task.cookie.op == 3 {
-                                MAX_RESPONSE
-                            } else {
-                                16384
-                            };
+                            let response_max = response_maximum(task.cookie.op);
                             let permit = BufferPermit::acquire(
                                 output_pool.clone(),
                                 response_max * 4,
@@ -727,12 +933,20 @@ pub fn serve_public_protected_v2(
                             m.peak_output_reserved_bytes =
                                 m.peak_output_reserved_bytes.max(reserved);
                             if outcome.is_ok() {
-                                if task.cookie.op == 1 {
-                                    m.completed_submit += 1;
+                                if mutating_operation(task.cookie.op) {
+                                    if task.cookie.op == 4 {
+                                        m.completed_pool_submit += 1;
+                                    } else {
+                                        m.completed_submit += 1;
+                                    }
                                 } else {
-                                    m.completed_read += 1;
+                                    if task.cookie.op == 5 {
+                                        m.completed_pool_status += 1;
+                                    } else {
+                                        m.completed_read += 1;
+                                    }
                                 }
-                            } else if task.cookie.op == 1 {
+                            } else if mutating_operation(task.cookie.op) {
                                 m.executor_refusals += 1;
                             }
                             drop(m);
@@ -919,7 +1133,7 @@ pub fn serve_public_protected_v2(
                                 }
                                 server.validate(&cookie, &settings, true)?;
                                 ensure(
-                                    bytes[..4] == *b"PPS2" && bytes[4..36] == cookie.id()?,
+                                    bytes[..4] == *b"PPS3" && bytes[4..36] == cookie.id()?,
                                     "PUBLIC_SOLUTION",
                                 )?;
                                 let nonce = u64::from_le_bytes(
@@ -933,7 +1147,7 @@ pub fn serve_public_protected_v2(
                                     return Err("PUBLIC_TICKET_TARGET".into());
                                 }
                                 let auth = hash(
-                                    b"public-caller-sign-v2",
+                                    b"public-caller-sign-v3",
                                     &[&cookie.id()?, &nonce.to_le_bytes()],
                                 );
                                 if verify_hex_strict(
@@ -990,7 +1204,7 @@ pub fn serve_public_protected_v2(
                                 }
                                 let frame = framed(
                                     serde_json::to_vec(
-                                        &json!({"schema":"public-body-ready-v2","cookie_digest":hex::encode(cookie.id()?)}),
+                                        &json!({"schema":"public-body-ready-v3","cookie_digest":hex::encode(cookie.id()?)}),
                                     )?,
                                     256,
                                 )?;
@@ -1041,12 +1255,16 @@ pub fn serve_public_protected_v2(
                                 }
                                 ensure(
                                     cookie.body_digest
-                                        == hex::encode(hash(b"public-request-body-v2", &[&bytes])),
+                                        == hex::encode(hash(b"public-request-body-v3", &[&bytes])),
                                     "PUBLIC_BODY_DIGEST",
                                 )?;
                                 let request = canonical_request(&bytes, cookie.op)?;
                                 server.validate(&cookie, &settings, false)?;
-                                let sender = if cookie.op == 1 { &proof_tx } else { &read_tx };
+                                let sender = if mutating_operation(cookie.op) {
+                                    &proof_tx
+                                } else {
+                                    &read_tx
+                                };
                                 let task = Task {
                                     _permit: conn.permit.take().ok_or("PUBLIC_BODY_PERMIT")?,
                                     id: conn.id,
@@ -1152,10 +1370,8 @@ pub fn serve_public_protected_v2(
         }
         outcome
     })?;
-    Arc::try_unwrap(metrics)
-        .map_err(|_| "PUBLIC_METRICS_LIFETIME")?
-        .into_inner()
-        .map_err(|_| "PUBLIC_METRICS".into())
+    let final_metrics = metrics.lock().map_err(|_| "PUBLIC_METRICS")?.clone();
+    Ok(final_metrics)
 }
 
 #[derive(Debug, Serialize)]
@@ -1169,7 +1385,21 @@ pub struct PublicReply {
     pub identity_authority: bool,
 }
 /// Every read is charged too. The caller must pin server/context/policy; no fallback.
-pub fn call_public_protected_v2(
+/// Client-local observations, including failed calls; not admission or cost authority.
+#[derive(Default, Debug, Serialize)]
+pub struct PublicClientMetrics {
+    pub construction_ns: u64,
+    pub challenge_ns: u64,
+    pub solution_search_ns: u64,
+    pub solution_trials: u64,
+    pub solution_found: bool,
+    pub solution_body_response_ns: u64,
+    pub total_elapsed_ns: u64,
+    pub failed_stage: Option<&'static str>,
+}
+/// Wire and signed profile are identical to the ordinary client. The observation
+/// reports elapsed stage time, never an adversarial cost bound or server CPU time.
+pub fn call_public_protected_v3(
     address: SocketAddr,
     request: &Request,
     settings: &Settings,
@@ -1177,129 +1407,174 @@ pub fn call_public_protected_v2(
     caller: &DevelopmentIdentity,
     policy: PublicPolicy,
 ) -> Result<PublicReply> {
-    PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
-    let raw = serde_json::to_vec(request)?;
-    let op = request_op(request)?;
-    let hello = Hello {
-        op,
-        len: raw.len(),
-        caller: digest(caller.public_key())?,
-        digest: hash(b"public-request-body-v2", &[&raw]),
-        client_nonce: entropy()?,
-    };
-    Hello::parse(&hello.encode())?;
-    let total_deadline = Instant::now() + Duration::from_millis(OVERALL_MS);
-    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(2))?;
-    stream.set_read_timeout(Some(Duration::from_secs(5)))?;
-    stream.set_write_timeout(Some(Duration::from_secs(5)))?;
-    client_write(
-        &mut stream,
-        &hello.encode(),
-        total_deadline.min(Instant::now() + Duration::from_millis(PREFIX_MS)),
-    )?;
-    let bytes = client_frame(
-        &mut stream,
-        2048,
-        total_deadline.min(Instant::now() + Duration::from_millis(CHALLENGE_MS)),
-    )?;
-    let cookie: Cookie = serde_json::from_slice(&bytes)?;
-    ensure(
-        serde_json::to_vec(&cookie)? == bytes
-            && cookie.schema == "public-resource-cookie-v2"
-            && cookie.profile == hex::encode(policy.id())
-            && cookie.network == hex::encode(settings.network())
-            && cookie.parameters == hex::encode(settings.parameters())
-            && cookie.genesis == hex::encode(settings.genesis())
-            && cookie.server == pinned_server
-            && cookie.caller == caller.public_key()
-            && cookie.op == op
-            && cookie.body_len as usize == raw.len()
-            && cookie.body_digest == hex::encode(hello.digest)
-            && cookie.client_nonce == hex::encode(hello.client_nonce)
-            && cookie.bits == policy.bits
-            && cookie.lifetime_ms == policy.lifetime_ms
-            && cookie.expires_tick_ms.checked_sub(cookie.issued_tick_ms)
-                == Some(policy.lifetime_ms),
-        "PUBLIC_CHALLENGE_CONTEXT",
-    )?;
-    verify_hex_strict(pinned_server, &cookie.server_message()?, &cookie.signature)
-        .map_err(|_| "PUBLIC_CHALLENGE_SIGNATURE")?;
-    let started = Instant::now();
-    let id = cookie.id()?;
-    let mut solved = None;
-    for nonce in 0..1_048_576u64 {
-        if nonce % 256 == 0 {
-            ensure(
-                started.elapsed() < Duration::from_millis(policy.lifetime_ms),
-                "PUBLIC_SOLVE_EXPIRED",
-            )?;
+    call_public_protected_v3_with_metrics(address, request, settings, pinned_server, caller, policy)
+        .0
+}
+pub fn call_public_protected_v3_with_metrics(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    pinned_server: &str,
+    caller: &DevelopmentIdentity,
+    policy: PublicPolicy,
+) -> (Result<PublicReply>, PublicClientMetrics) {
+    let call_start = Instant::now();
+    let mut phase_start = call_start;
+    let mut phase = "construction";
+    let mut metrics = PublicClientMetrics::default();
+    let result = (|| -> Result<PublicReply> {
+        PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
+        let raw = serde_json::to_vec(request)?;
+        let op = request_op(request)?;
+        canonical_request(&raw, op)?;
+        let hello = Hello {
+            op,
+            len: raw.len(),
+            caller: digest(caller.public_key())?,
+            digest: hash(b"public-request-body-v3", &[&raw]),
+            client_nonce: entropy()?,
+        };
+        Hello::parse(&hello.encode())?;
+        metrics.construction_ns = elapsed_ns(phase_start);
+        phase = "challenge";
+        phase_start = Instant::now();
+        let total_deadline = Instant::now() + Duration::from_millis(OVERALL_MS);
+        let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(2))?;
+        stream.set_read_timeout(Some(Duration::from_secs(5)))?;
+        stream.set_write_timeout(Some(Duration::from_secs(5)))?;
+        client_write(
+            &mut stream,
+            &hello.encode(),
+            total_deadline.min(Instant::now() + Duration::from_millis(PREFIX_MS)),
+        )?;
+        let bytes = client_frame(
+            &mut stream,
+            2048,
+            total_deadline.min(Instant::now() + Duration::from_millis(CHALLENGE_MS)),
+        )?;
+        let cookie: Cookie = serde_json::from_slice(&bytes)?;
+        ensure(
+            serde_json::to_vec(&cookie)? == bytes
+                && cookie.schema == "public-resource-cookie-v3"
+                && cookie.profile == hex::encode(policy.id())
+                && cookie.network == hex::encode(settings.network())
+                && cookie.parameters == hex::encode(settings.parameters())
+                && cookie.genesis == hex::encode(settings.genesis())
+                && cookie.server == pinned_server
+                && cookie.caller == caller.public_key()
+                && cookie.op == op
+                && cookie.body_len as usize == raw.len()
+                && cookie.body_digest == hex::encode(hello.digest)
+                && cookie.client_nonce == hex::encode(hello.client_nonce)
+                && cookie.bits == policy.bits
+                && cookie.lifetime_ms == policy.lifetime_ms
+                && cookie.expires_tick_ms.checked_sub(cookie.issued_tick_ms)
+                    == Some(policy.lifetime_ms),
+            "PUBLIC_CHALLENGE_CONTEXT",
+        )?;
+        verify_hex_strict(pinned_server, &cookie.server_message()?, &cookie.signature)
+            .map_err(|_| "PUBLIC_CHALLENGE_SIGNATURE")?;
+        metrics.challenge_ns = elapsed_ns(phase_start);
+        phase = "solution-search";
+        phase_start = Instant::now();
+        let started = Instant::now();
+        let id = cookie.id()?;
+        let mut solved = None;
+        for nonce in 0..1_048_576u64 {
+            if nonce % 256 == 0 {
+                ensure(
+                    started.elapsed() < Duration::from_millis(policy.lifetime_ms),
+                    "PUBLIC_SOLVE_EXPIRED",
+                )?;
+            }
+            metrics.solution_trials = nonce + 1;
+            if winner(id, nonce, policy.bits) {
+                solved = Some(nonce);
+                break;
+            }
         }
-        if winner(id, nonce, policy.bits) {
-            solved = Some(nonce);
-            break;
+        let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
+        let solve_elapsed_ns = elapsed_ns(started);
+        metrics.solution_search_ns = elapsed_ns(phase_start);
+        metrics.solution_found = true;
+        phase = "solution-body-response";
+        phase_start = Instant::now();
+        let mut solution = b"PPS3".to_vec();
+        solution.extend(id);
+        solution.extend(nonce.to_le_bytes());
+        solution.extend(
+            hex::decode(caller.sign(&hash(
+                b"public-caller-sign-v3",
+                &[&id, &nonce.to_le_bytes()],
+            ))?)
+            .map_err(|_| "PUBLIC_CALLER_SIGNATURE")?,
+        );
+        client_write(
+            &mut stream,
+            &solution,
+            total_deadline.min(started + Duration::from_millis(policy.lifetime_ms)),
+        )?;
+        let ready: Value = serde_json::from_slice(&client_frame(
+            &mut stream,
+            256,
+            total_deadline.min(Instant::now() + Duration::from_millis(CHALLENGE_MS)),
+        )?)?;
+        ensure(
+            ready["schema"] == "public-body-ready-v3" && ready["cookie_digest"] == hex::encode(id),
+            "PUBLIC_READY",
+        )?;
+        client_write(
+            &mut stream,
+            &raw,
+            total_deadline.min(Instant::now() + Duration::from_millis(BODY_MS)),
+        )?;
+        let bytes = client_frame(
+            &mut stream,
+            response_maximum(op),
+            total_deadline.min(Instant::now() + Duration::from_millis(WORK_MS + OUTPUT_MS)),
+        )?;
+        let r: Response = serde_json::from_slice(&bytes)?;
+        ensure(
+            serde_json::to_vec(&r)? == bytes
+                && r.schema == "public-protected-response-v3"
+                && r.profile == hex::encode(policy.id())
+                && r.network == hex::encode(settings.network())
+                && r.parameters == hex::encode(settings.parameters())
+                && r.genesis == hex::encode(settings.genesis())
+                && r.server == pinned_server
+                && r.cookie_digest == hex::encode(id)
+                && r.request_digest == hex::encode(hello.digest),
+            "PUBLIC_RESPONSE_CONTEXT",
+        )?;
+        verify_hex_strict(pinned_server, &r.message()?, &r.signature)
+            .map_err(|_| "PUBLIC_RESPONSE_SIGNATURE")?;
+        metrics.solution_body_response_ns = elapsed_ns(phase_start);
+        phase = "complete";
+        Ok(PublicReply {
+            ok: r.ok,
+            value: r.value,
+            solve_trials: nonce + 1,
+            solve_elapsed_ns,
+            body_bytes_sent: raw.len(),
+            public_network_ready: false,
+            identity_authority: false,
+        })
+    })();
+    if result.is_err() {
+        metrics.failed_stage = Some(phase);
+        let ns = elapsed_ns(phase_start);
+        match phase {
+            "construction" => metrics.construction_ns = ns,
+            "challenge" => metrics.challenge_ns = ns,
+            "solution-search" => metrics.solution_search_ns = ns,
+            "solution-body-response" => metrics.solution_body_response_ns = ns,
+            _ => {}
         }
     }
-    let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
-    let solve_elapsed_ns = elapsed_ns(started);
-    let mut solution = b"PPS2".to_vec();
-    solution.extend(id);
-    solution.extend(nonce.to_le_bytes());
-    solution.extend(
-        hex::decode(caller.sign(&hash(
-            b"public-caller-sign-v2",
-            &[&id, &nonce.to_le_bytes()],
-        ))?)
-        .map_err(|_| "PUBLIC_CALLER_SIGNATURE")?,
-    );
-    client_write(
-        &mut stream,
-        &solution,
-        total_deadline.min(started + Duration::from_millis(policy.lifetime_ms)),
-    )?;
-    let ready: Value = serde_json::from_slice(&client_frame(
-        &mut stream,
-        256,
-        total_deadline.min(Instant::now() + Duration::from_millis(CHALLENGE_MS)),
-    )?)?;
-    ensure(
-        ready["schema"] == "public-body-ready-v2" && ready["cookie_digest"] == hex::encode(id),
-        "PUBLIC_READY",
-    )?;
-    client_write(
-        &mut stream,
-        &raw,
-        total_deadline.min(Instant::now() + Duration::from_millis(BODY_MS)),
-    )?;
-    let bytes = client_frame(
-        &mut stream,
-        MAX_RESPONSE,
-        total_deadline.min(Instant::now() + Duration::from_millis(WORK_MS + OUTPUT_MS)),
-    )?;
-    let r: Response = serde_json::from_slice(&bytes)?;
-    ensure(
-        serde_json::to_vec(&r)? == bytes
-            && r.schema == "public-protected-response-v2"
-            && r.profile == hex::encode(policy.id())
-            && r.network == hex::encode(settings.network())
-            && r.parameters == hex::encode(settings.parameters())
-            && r.genesis == hex::encode(settings.genesis())
-            && r.server == pinned_server
-            && r.cookie_digest == hex::encode(id)
-            && r.request_digest == hex::encode(hello.digest),
-        "PUBLIC_RESPONSE_CONTEXT",
-    )?;
-    verify_hex_strict(pinned_server, &r.message()?, &r.signature)
-        .map_err(|_| "PUBLIC_RESPONSE_SIGNATURE")?;
-    Ok(PublicReply {
-        ok: r.ok,
-        value: r.value,
-        solve_trials: nonce + 1,
-        solve_elapsed_ns,
-        body_bytes_sent: raw.len(),
-        public_network_ready: false,
-        identity_authority: false,
-    })
+    metrics.total_elapsed_ns = elapsed_ns(call_start);
+    (result, metrics)
 }
+
 fn client_frame(stream: &mut TcpStream, maximum: usize, deadline: Instant) -> Result<Vec<u8>> {
     let mut prefix = [0; 4];
     super::read_exact_deadline(stream, &mut prefix, deadline)?;
@@ -1340,6 +1615,18 @@ mod tests {
         )
         .unwrap()
     }
+    fn shared(mut node: Node) -> Arc<Mutex<Node>> {
+        node.enable_local_mempool(crate::PoolLimits {
+            max_records: 16,
+            max_bytes: 32768,
+            max_group_members: 16,
+            critical_reserve: 0,
+            max_removals: 64,
+            preview_miner: crate::development_public(0).unwrap(),
+        })
+        .unwrap();
+        Arc::new(Mutex::new(node))
+    }
     fn hello(op: u8, len: usize) -> Hello {
         Hello {
             op,
@@ -1348,6 +1635,80 @@ mod tests {
             digest: [3; 32],
             client_nonce: [4; 32],
         }
+    }
+    #[test]
+    fn pool_body_guard_checks_shape_before_vector_allocation_and_closed_metadata() {
+        let request = Request::PoolSubmitBundle {
+            pool_context: "ab".repeat(32),
+            transactions: vec!["cd".repeat(MIN_POOL_RAW)],
+        };
+        let bytes = serde_json::to_vec(&request).unwrap();
+        assert_eq!(canonical_request(&bytes, 4).unwrap(), request);
+        for rows in [
+            vec![],
+            vec!["cd".repeat(MIN_POOL_RAW - 1)],
+            vec!["cd".repeat(MAX_POOL_RAW + 1)],
+            vec!["cd".repeat(MIN_POOL_RAW); MAX_POOL_MEMBERS + 1],
+            vec!["CD".repeat(MIN_POOL_RAW)],
+        ] {
+            let raw = serde_json::to_vec(&Request::PoolSubmitBundle {
+                pool_context: "ab".repeat(32),
+                transactions: rows,
+            })
+            .unwrap();
+            assert!(canonical_request(&raw, 4).is_err());
+        }
+        for change in [
+            bytes
+                .iter()
+                .map(|b| if *b == b'c' { b'G' } else { *b })
+                .collect::<Vec<_>>(),
+            bytes[..bytes.len() - 1].to_vec(),
+        ] {
+            assert!(canonical_request(&change, 4).is_err());
+        }
+        let maximum = Request::PoolSubmitBundle {
+            pool_context: "ab".repeat(32),
+            transactions: vec!["cd".repeat(MAX_POOL_RAW); MAX_POOL_MEMBERS],
+        };
+        let raw = serde_json::to_vec(&maximum).unwrap();
+        assert!(raw.len() <= MAX_POOL_BODY);
+        canonical_request(&raw, 4).unwrap();
+        assert!(Hello::parse(&hello(4, MAX_POOL_BODY + 1).encode()).is_err());
+        assert!(Hello::parse(&hello(5, MAX_READ_BODY + 1).encode()).is_err());
+        for raw in [
+            br#"{"op":"pool_status","enable":true}"#.as_slice(),
+            br#"{"op":"pool_prune"}"#,
+            br#"{"op":"pool_reset"}"#,
+        ] {
+            assert!(canonical_request(raw, 5).is_err());
+        }
+        assert!(canonical_request(&bytes, 1).is_err());
+    }
+    #[test]
+    fn v2_magic_profile_and_signature_domains_are_rejected_exactly() {
+        let new_policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let old_policy =
+            super::super::public_v2::PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        assert_ne!(new_policy.id(), old_policy.id());
+        let mut old = hello(2, 10).encode();
+        old[..4].copy_from_slice(b"PPH2");
+        assert!(Hello::parse(&old).is_err());
+        let s = Settings::development(Some(1)).unwrap();
+        let server = server();
+        let c = server
+            .cookie(&s, hello(2, 10), "127.0.0.1:1".parse().unwrap())
+            .unwrap();
+        let mut old_cookie = c.clone();
+        old_cookie.schema = "public-resource-cookie-v2".into();
+        assert!(server.validate(&old_cookie, &s, true).is_err());
+        let id = c.id().unwrap();
+        let nonce = 77u64;
+        let signer = identity(72);
+        let old_message = hash(b"public-caller-sign-v2", &[&id, &nonce.to_le_bytes()]);
+        let new_message = hash(b"public-caller-sign-v3", &[&id, &nonce.to_le_bytes()]);
+        let signature = signer.sign(&old_message).unwrap();
+        assert!(verify_hex_strict(signer.public_key(), &new_message, &signature).is_err());
     }
     #[test]
     fn canonical_streaming_rejects_escaped_packets_and_extra_fields() {
@@ -1393,15 +1754,21 @@ mod tests {
         let key = server.identity.public_key().to_owned();
         server.fail_next_output.store(true, Ordering::Release);
         let worker = thread::spawn(move || {
-            serve_public_protected_v2(listener, node, Duration::from_secs(5), signal, server)
-                .unwrap()
+            serve_public_protected_v3(
+                listener,
+                shared(node),
+                Duration::from_secs(5),
+                signal,
+                server,
+            )
+            .unwrap()
         });
         assert!(
-            call_public_protected_v2(address, &Request::Head, &s, &key, &identity(72), policy)
+            call_public_protected_v3(address, &Request::Head, &s, &key, &identity(72), policy)
                 .is_err()
         );
         let reply =
-            call_public_protected_v2(address, &Request::Head, &s, &key, &identity(72), policy)
+            call_public_protected_v3(address, &Request::Head, &s, &key, &identity(72), policy)
                 .unwrap();
         assert!(reply.ok);
         assert_eq!(reply.value["height"], 0);
@@ -1419,7 +1786,7 @@ mod tests {
         assert!(Hello::parse(&hello(1, MAX_BODY + 1).encode()).is_err());
         assert!(Hello::parse(&hello(2, MAX_READ_BODY).encode()).is_ok());
         assert!(Hello::parse(&hello(2, MAX_READ_BODY + 1).encode()).is_err());
-        assert!(Hello::parse(&hello(4, 1).encode()).is_err());
+        assert!(Hello::parse(&hello(6, 1).encode()).is_err());
         assert!(Hello::parse(&hello(1, 0).encode()).is_err());
         let mut bytes = hello(1, 1).encode();
         bytes[5] = 1;
@@ -1576,7 +1943,7 @@ mod tests {
             op: request_op(request).unwrap(),
             len: raw.len(),
             caller: digest(caller.public_key()).unwrap(),
-            digest: hash(b"public-request-body-v2", &[&raw]),
+            digest: hash(b"public-request-body-v3", &[&raw]),
             client_nonce: entropy().unwrap(),
         };
         let mut stream = TcpStream::connect(address).unwrap();
@@ -1606,14 +1973,14 @@ mod tests {
         let nonce = (0..1_048_576)
             .find(|n| winner(id, *n, policy.bits))
             .unwrap();
-        let mut solution = b"PPS2".to_vec();
+        let mut solution = b"PPS3".to_vec();
         solution.extend(id);
         solution.extend(nonce.to_le_bytes());
         solution.extend(
             hex::decode(
                 caller
                     .sign(&hash(
-                        b"public-caller-sign-v2",
+                        b"public-caller-sign-v3",
                         &[&id, &nonce.to_le_bytes()],
                     ))
                     .unwrap(),
@@ -1669,9 +2036,9 @@ mod tests {
         let policy = PublicPolicy::new(8, Duration::from_millis(500)).unwrap();
         let signal = stop.clone();
         let worker = thread::spawn(move || {
-            serve_public_protected_v2(
+            serve_public_protected_v3(
                 listener,
-                node,
+                shared(node),
                 Duration::from_secs(15),
                 signal,
                 PublicServer::new(identity(71), policy).unwrap(),
@@ -1720,9 +2087,9 @@ mod tests {
         let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
         let signal = stop.clone();
         let worker = thread::spawn(move || {
-            serve_public_protected_v2(
+            serve_public_protected_v3(
                 listener,
-                node,
+                shared(node),
                 Duration::from_secs(8),
                 signal,
                 PublicServer::new(identity(71), policy).unwrap(),
@@ -1746,7 +2113,7 @@ mod tests {
             }
             if [3, 8, 15].contains(&i) {
                 honest_attempts += 1;
-                let reply = call_public_protected_v2(
+                let reply = call_public_protected_v3(
                     address,
                     &Request::Head,
                     &s,

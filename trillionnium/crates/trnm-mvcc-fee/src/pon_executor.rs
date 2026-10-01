@@ -12,6 +12,7 @@ use trnm_crypto_primitives::verify_hex_strict;
 use trnm_protocol::pon_wire::{hash, state_root, Envelope, Hash};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::{SignedQualifiedWorkTask, TaskPurpose};
 
 pub const SIGNED_TASK_PROFILE: &str = "signed-task-dev-v1";
@@ -247,6 +248,29 @@ impl Config {
                 params["work_task_profile"] = json!(ATOMIC_TASK_PROFILE);
                 params["qualified_task_registry_hash"] = json!(hex::encode(hash(
                     b"qualified-task-registry-v3",
+                    &[&canonical(&registry)?]
+                )));
+            }
+            OVERLAP_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-task-lifecycle-v4.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false
+                        && registry["consensus_revision"] == 9
+                        && registry["standalone_renew_disabled"] == true
+                        && registry["atomic_overlap_window"] == true
+                        && registry["exact_contract"]["atomic_renew_bytes"] == 1028
+                        && registry["exact_contract"]["base_fee_units"]["22"] == 200,
+                    "CONFIG",
+                )?;
+                params["consensus_revision"] = json!(9);
+                params["chain_label"] = json!(format!("trnm-pon-task-lifecycle-devnet-9-{policy}"));
+                params["work_task_profile"] = json!(OVERLAP_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v4",
                     &[&canonical(&registry)?]
                 )));
             }
@@ -657,6 +681,11 @@ struct Prepared {
     sender: String,
     encoded_len: usize,
 }
+/// Read-only native admission check for exact PNX1 canonical context, selected tag,
+/// expiry and strict main signature. This grants no nonce, funds or execution fact.
+pub fn validate_main_envelope(raw: &[u8], height: u64, cfg: &Config) -> Result<Envelope> {
+    Ok(prepare(raw, height, cfg, &AtomicUsize::new(0))?.envelope)
+}
 fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> Result<Prepared> {
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
     require(
@@ -668,7 +697,11 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
         "WORK_TASK_PROFILE",
     )?;
     require(
-        tx.tag != 22 || cfg.task_profile() == ATOMIC_TASK_PROFILE,
+        tx.tag != 22
+            || matches!(
+                cfg.task_profile(),
+                ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
+            ),
         "WORK_TASK_PROFILE",
     )?;
     require(

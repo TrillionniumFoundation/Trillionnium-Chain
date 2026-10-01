@@ -33,8 +33,9 @@ joint validator epochs do not belong in the new consensus profile.
 Retired consensus code, binaries, protocol files, fixtures and legacy appendices are
 now deleted from the active tree. Only explicitly inventoried portable components remain.
 History is available from Git, not an active compatibility directory. No legacy runtime,
-proof decoder or fallback remains in the workspace. Current local monotonic stores are
-not yet a PoN branch/undo implementation.
+proof decoder or fallback remains in the workspace. Portable local monotonic stores do
+not grant PoN branch/undo semantics. The later native development Node owns its own
+explicit branch namespace and cannot silently import those portable stores.
 
 No machine flag is promoted. The current implementation projection is:
 
@@ -47,6 +48,26 @@ No machine flag is promoted. The current implementation projection is:
 New PoN implementation, work-profile qualification, cryptographic security, public-model
 efficacy and activation are also false. Source work and documentation may proceed now;
 release requires their own real evidence, not completion of the retired PoCO roadmap.
+
+### Current native development contracts
+
+The following contracts describe the current candidate under M05/M06/M15 ownership.
+Older evidence and historical sections below retain their original source and profile.
+Their presence does not make an earlier absence claim the current API specification.
+
+| Boundary | Current explicit contract | Remaining acceptance boundary |
+| --- | --- | --- |
+| Retained signed transactions | [Local pool](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md), [cache V2](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_CACHE_V2.md) | Logical cache bounds do not bound physical chain/SQLite/WAL growth or operator tombstone lifetime. |
+| Continuous native work | [Wall-clock mining](../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md) | Preparation, one transcript, native commit and diagnostic sinks remain nonpreemptive. |
+| Guest transaction intake | [Public V3](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md) | Resource tickets and separate read queues do not certify hostile-load fairness. |
+| Atomic task renewal | [V3 exact inclusion](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md), [fresh V4 overlap](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md) | Source/requester signatures and actual task availability remain required; no automatic qualification or indefinite lease. |
+| Long retained history | [Native ancestry index](../protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md) | Local derived index integrity is not a remote ancestry certificate; receivers still verify full packets. |
+| Explicit neighbor following | [Pinned peer polling](../protocol/pon-nakamoto-v1/details/PINNED_PEER_POLLING.md) | Paid Head/History and fixed cursors do not supply discovery, gossip, independent operators or eclipse resistance. |
+
+Same-administrator Tailscale campaigns and task-owned delayed/interrupted TCP
+proxies are simulation evidence. Record actual direct/DERP routes, every failed
+attempt, native inclusion and stopped-store verification; do not promote independent
+operators, prospective model tasks, computational hardness or public readiness from them.
 
 ## 1. Product mission: shared intelligence from real work
 
@@ -97,7 +118,10 @@ The mainline is a dedicated AI-work/model/service chain with twelve original clo
 application commands and explicit profile-gated native extensions. Signed task13,
 evaluation14..17, lifecycle18..21, and the revision8
 [V3 atomic renewal22](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md)
-have distinct context and gate rules; V3 refuses standalone19. Historical twelve-command
+and revision9 [V4 signed overlap](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md)
+have distinct context and gate rules; V3/V4 refuse standalone19. V3 requires the exact
+containing height; V4 permits delayed inclusion while both signed authority windows
+remain valid. Historical twelve-command
 parity and transfer benchmarks retain their original scope. This is not an arbitrary user-contract VM. No EVM, Move or WASM backend is
 selected. Fees and performance evidence apply to the named closed commands. A future
 VM decision needs explicit bytecode safety, deterministic metering, ABI, storage,
@@ -305,7 +329,7 @@ selectors actually ran. Neither mechanism supplies independent scientific author
 | Priority / workstream | Actual implemented boundary | Concrete next acceptance requirement |
 |---|---|---|
 | P0 work and public admission | Exact experimental transcript and original verification; native PreparedTask removes avoidable repeated product work; paired valid-producer costs and bounded development ingress retain open hostile-proof/Sybil qualification | Implement/reproduce adversarial shortcuts and same-target costs; join ordinary public ingress and demonstrate honest service under stated sustained attack. No queue count grants work hardness. |
-| P0 one native node | Native development CLI owns work/target decisions, branch persistence/reorg, receiver sync/confirmation an allowlisted signed private-development ingress with durable inbound replay/client outbox, and explicit public-development-v2 resource-ticket intake with bounded Head/History and no durable guest authority; original M00/M01/M06 are reused | Finish persistent mining/mempool scheduling, open public discovery/gossip plus confidentiality, interruptible long history and ordinary Hepta/resource/effect integration. Both transport profiles remain development candidates; public-v2 resource bounds and local conformance do not grant public-service or complete product acceptance. |
+| P0 one native node | Native development CLI owns work/target decisions, branch persistence/reorg, receiver sync/confirmation an allowlisted signed private-development ingress with durable inbound replay/client outbox, and explicit public-development-v2 resource-ticket intake with bounded Head/History and no durable guest authority; original M00/M01/M06 are reused | The explicitly enabled [local queued owner](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md) provides bounded durable groups, typed M05 checks/M06 preview and branch/restart reconciliation; its explicit wall-clock miner, fresh V4 signed-overlap renewal, paid V3 transaction intake and operator-pinned peer following share one native owner; qualify measured sustained operation, open public discovery/gossip plus confidentiality, interruptible native work and ordinary Hepta/resource/effect integration. Both transport profiles remain development candidates; public-v2 resource bounds and local conformance do not grant public-service or complete product acceptance. |
 | P1 long-lived state and confirmation | Native branch/delta/checkpoint persistence, receiver verification and exact signed-request replay/outbox state coexist with the independent reference oracle; root maps/history scans still incur full-size costs | Persistent incremental authenticated roots and real WAN/open-peer integration; the controlled receiver is full-verifying, not succinct or globally fresh. Verify deep history without treating private authentication, transport budgets or retention as finality. |
 | P1 independent model value | E3 seals actual parent/candidate/strong controls/calibration/partitions; no-gain remains zero adoption and reward | Authorized new tasks, independent source/evaluation/withdrawal owners, untouched future windows and budget-matched strong controls. Retrospective splits or configured identities do not satisfy independence. |
 | P1 real resources and failures | Closed service receipt, finite quota/reward conservation and same-admin process/host fault observations | Real storage/serving obligations and funding, target-side effect reconciliation, independent operators, physical power loss and hostile public network. No chain undo may repeat a physical action. |

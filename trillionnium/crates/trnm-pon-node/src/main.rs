@@ -6,13 +6,21 @@ use std::{
     io::{Read, Write},
     os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt},
     path::Path,
-    sync::{atomic::AtomicBool, Arc},
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc, Mutex,
+    },
     time::Duration,
 };
 use trnm_crypto_primitives::qualified_work_task::{
     derive_matrices, verify_development_admission, TaskMaterial,
 };
 use trnm_pon_node::{development_public, digest, ingress, Error, Node, Packet, Result, Settings};
+use trnm_pon_node::{
+    mining::{run_pool_mining, MiningConfig, MiningMaterial},
+    peer_polling::{run_pinned_peer_polling, PeerPollingConfig},
+    PoolLimits,
+};
 use trnm_protocol::qualified_work_task::{SignedQualifiedWorkTask, TaskPurpose};
 fn need<'a>(args: &'a BTreeMap<String, String>, key: &str) -> Result<&'a str> {
     args.get(key)
@@ -43,7 +51,7 @@ fn read_owned_configuration(
     // the descriptor metadata closes the symlink/replacement window for these inputs.
     let file = OpenOptions::new()
         .read(true)
-        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
         .open(path)
         .map_err(|_| Error::from(file_error))?;
     let metadata = file.metadata().map_err(|_| Error::from(file_error))?;
@@ -156,7 +164,13 @@ fn admission_profile(args: &BTreeMap<String, String>) -> Result<bool> {
     }
 }
 fn public_profile(args: &BTreeMap<String, String>) -> bool {
-    args.get("--admission-profile").map(String::as_str) == Some(ingress::public_v2::PROFILE)
+    matches!(
+        args.get("--admission-profile").map(String::as_str),
+        Some(ingress::public_v2::PROFILE | ingress::public_v3::PROFILE)
+    )
+}
+fn public_pool_profile(args: &BTreeMap<String, String>) -> bool {
+    args.get("--admission-profile").map(String::as_str) == Some(ingress::public_v3::PROFILE)
 }
 fn public_policy(args: &BTreeMap<String, String>) -> Result<ingress::public_v2::PublicPolicy> {
     ingress::public_v2::PublicPolicy::new(
@@ -179,6 +193,29 @@ fn public_call(
     request: &ingress::Request,
     settings: &Settings,
 ) -> Result<ingress::public_v2::PublicReply> {
+    if public_pool_profile(args) {
+        let request = match request {
+            ingress::Request::Submit { packet } => ingress::public_v3::Request::Submit {
+                packet: packet.clone(),
+            },
+            ingress::Request::Head => ingress::public_v3::Request::Head,
+            ingress::Request::History { tip, after } => ingress::public_v3::Request::History {
+                tip: tip.clone(),
+                after: after.clone(),
+            },
+            _ => return Err("PUBLIC_OPERATION".into()),
+        };
+        let reply = public_pool_call(args, &request, settings)?;
+        return Ok(ingress::public_v2::PublicReply {
+            ok: reply.ok,
+            value: reply.value,
+            solve_trials: reply.solve_trials,
+            solve_elapsed_ns: reply.solve_elapsed_ns,
+            body_bytes_sent: reply.body_bytes_sent,
+            public_network_ready: reply.public_network_ready,
+            identity_authority: reply.identity_authority,
+        });
+    }
     ingress::public_v2::call_public_protected_v2(
         need(args, "--peer")?
             .parse()
@@ -189,6 +226,104 @@ fn public_call(
         &public_identity(args)?,
         public_policy(args)?,
     )
+}
+
+fn public_pool_call(
+    args: &BTreeMap<String, String>,
+    request: &ingress::public_v3::Request,
+    settings: &Settings,
+) -> Result<ingress::public_v3::PublicReply> {
+    if !public_pool_profile(args) {
+        return Err("PUBLIC_V3_REQUIRED".into());
+    }
+    let (reply, observations) = ingress::public_v3::call_public_protected_v3_with_metrics(
+        need(args, "--peer")?.parse().map_err(|_| "PEER_ADDRESS")?,
+        request,
+        settings,
+        need(args, "--server-public")?,
+        &public_identity(args)?,
+        ingress::public_v3::PublicPolicy::new(
+            u8::try_from(number(args, "--admission-bits", 16)?).map_err(|_| "PUBLIC_POLICY")?,
+            Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
+        )?,
+    );
+    if args.contains_key("--client-observations") {
+        eprintln!(
+            "{}",
+            json!({"schema":"public-v3-cli-client-observation-v1","observations":observations,
+            "scope":"local elapsed stage time including failed calls; not server CPU or cost authority",
+            "public_network_ready":false})
+        );
+    }
+    reply
+}
+fn pool_policy(args: &BTreeMap<String, String>) -> Result<PoolLimits> {
+    Ok(serde_json::from_slice(&read_owned_configuration(
+        need(args, "--pool-policy")?,
+        4096,
+        false,
+        "POOL_POLICY_FILE",
+        "POOL_POLICY_LENGTH",
+    )?)?)
+}
+fn mining_configuration(
+    args: &BTreeMap<String, String>,
+    settings: &Settings,
+    policy: &PoolLimits,
+    default_seconds: u64,
+) -> Result<MiningConfig> {
+    let miner = args
+        .get("--miner")
+        .map(|s| digest(s))
+        .transpose()?
+        .unwrap_or(policy.preview_miner);
+    if miner != policy.preview_miner {
+        return Err("POOL_MINER".into());
+    }
+    let bootstrap = args.contains_key("--task-bootstrap");
+    let files = ["--task-model", "--task-input"].map(|key| args.contains_key(key));
+    let material = if settings.task_profile() != "legacy-task-v1" {
+        if bootstrap && files.iter().any(|p| *p) {
+            return Err("TASK_OPTIONS".into());
+        }
+        let (model, input) = if bootstrap {
+            let (a, b) = trnm_pon_node::maintenance();
+            (
+                a.iter().flat_map(|v| v.to_le_bytes()).collect(),
+                b.iter().flat_map(|v| v.to_le_bytes()).collect(),
+            )
+        } else {
+            if !files.iter().all(|p| *p) {
+                return Err("TASK_MATERIAL_REQUIRED".into());
+            }
+            (
+                read(need(args, "--task-model")?, 16384)?,
+                read(need(args, "--task-input")?, 16384)?,
+            )
+        };
+        MiningMaterial::Registered { model, input }
+    } else {
+        if bootstrap || files.iter().any(|p| *p) {
+            return Err("SIGNED_TASK_PROFILE_REQUIRED".into());
+        }
+        MiningMaterial::LegacyDevelopment
+    };
+    let config = MiningConfig {
+        miner,
+        material,
+        max_transactions: number(args, "--max-transactions", 256)?
+            .try_into()
+            .map_err(|_| "MINING_LIMITS")?,
+        max_transaction_bytes: number(args, "--max-transaction-bytes", 524288)?
+            .try_into()
+            .map_err(|_| "MINING_LIMITS")?,
+        search_attempts: number(args, "--search-attempts", 4096)?,
+        pace: Duration::from_millis(number(args, "--pace-ms", 10000)?),
+        runtime: Duration::from_secs(number(args, "--seconds", default_seconds)?),
+        max_blocks: number(args, "--blocks", 100000)?,
+    };
+    config.validate()?;
+    Ok(config)
 }
 
 fn output(path: &str, bytes: &[u8]) -> Result<()> {
@@ -217,6 +352,8 @@ fn run() -> Result<Value> {
                 | "--authenticated-development-network"
                 | "--public-development-network"
                 | "--task-bootstrap"
+                | "--mine"
+                | "--client-observations"
         ) {
             "true".into()
         } else {
@@ -232,7 +369,11 @@ fn run() -> Result<Value> {
         );
     }
     let extra = match command.as_str() {
-        "status" | "recover" => "",
+        "status" | "recover" | "pool-status" => "",
+        "pool-submit" => "--transactions --pool-policy",
+        "pool-push" => "--peer --transactions --pool-context",
+        "pool-status-remote" => "--peer",
+        "mine-loop" => "--miner --pool-policy --seconds --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input",
         "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input",
         "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
         "submit" | "push" => "--packet --peer",
@@ -242,7 +383,7 @@ fn run() -> Result<Value> {
         "sync" => "--peer --tip --after --pages",
         "head" => "--peer",
         "history" => "--peer --tip --after",
-        "serve" => "--listen --seconds",
+        "serve" => "--listen --seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --peers --peer-poll-ms --peer-pages",
         _ => return Err("UNKNOWN_COMMAND".into()),
     };
     let authentication_options = match command.as_str() {
@@ -250,13 +391,13 @@ fn run() -> Result<Value> {
             "--authenticated-development-network --public-development-network --auth-secret --peer-roster --session-generation"
         }
         "push" | "sync" => "--auth-secret --server-public --session-generation",
-        "head" | "history" => "--auth-secret --server-public",
+        "head" | "history" | "pool-push" | "pool-status-remote" => "--auth-secret --server-public",
         _ => "",
     };
     let admission_options = match command.as_str() {
         "serve" => "--admission-profile --admission-bits --admission-ttl-ms",
-        "push" | "sync" | "head" | "history" => {
-            "--admission-profile --admission-bits --admission-ttl-ms"
+        "push" | "sync" | "head" | "history" | "pool-push" | "pool-status-remote" => {
+            "--admission-profile --admission-bits --admission-ttl-ms --client-observations"
         }
         _ => "",
     };
@@ -271,9 +412,19 @@ fn run() -> Result<Value> {
     if !public_profile(&args) {
         admission_profile(&args)?;
     }
+    if args.contains_key("--client-observations") && !public_pool_profile(&args) {
+        return Err("PUBLIC_V3_REQUIRED".into());
+    }
     if matches!(
         command.as_str(),
-        "serve" | "sync" | "push" | "head" | "history"
+        "serve"
+            | "sync"
+            | "push"
+            | "head"
+            | "history"
+            | "mine-loop"
+            | "pool-push"
+            | "pool-status-remote"
     ) && args.contains_key("--logical-now")
     {
         return Err("NETWORK_USES_LOCAL_WALL_CLOCK".into());
@@ -302,6 +453,87 @@ fn run() -> Result<Value> {
             .map(String::as_str)
             .unwrap_or("linear-expert-dev-v1"),
     )?;
+    if command == "serve" {
+        let mining_options = [
+            "--miner",
+            "--blocks",
+            "--pace-ms",
+            "--search-attempts",
+            "--max-transactions",
+            "--max-transaction-bytes",
+            "--task-bootstrap",
+            "--task-model",
+            "--task-input",
+        ];
+        if !public_pool_profile(&args)
+            && (args.contains_key("--pool-policy")
+                || args.contains_key("--mine")
+                || args.contains_key("--peers")
+                || args.contains_key("--peer-poll-ms")
+                || args.contains_key("--peer-pages")
+                || mining_options.iter().any(|key| args.contains_key(*key)))
+        {
+            return Err("PUBLIC_V3_REQUIRED".into());
+        }
+        if !args.contains_key("--mine") && mining_options.iter().any(|key| args.contains_key(*key))
+        {
+            return Err("MINING_OPTIONS_REQUIRE_MINE".into());
+        }
+        if !args.contains_key("--peers")
+            && (args.contains_key("--peer-poll-ms") || args.contains_key("--peer-pages"))
+        {
+            return Err("PEER_OPTIONS_REQUIRE_PEERS".into());
+        }
+    }
+    // Validate the opened, bounded operator configuration before creating a store.
+    // The context below binds effective overrides, rather than an unused file value.
+    let polling = if command == "serve" && args.contains_key("--peers") {
+        let raw = read_owned_configuration(
+            need(&args, "--peers")?,
+            16384,
+            false,
+            "PEER_CONFIG_FILE",
+            "PEER_CONFIG_LIMIT",
+        )?;
+        let mut config: PeerPollingConfig = serde_json::from_slice(&raw)?;
+        let service_ms = number(&args, "--seconds", 30)?
+            .checked_mul(1000)
+            .ok_or("PUBLIC_LIFETIME")?;
+        config.runtime_ms = config.runtime_ms.min(service_ms);
+        config.poll_interval_ms = number(&args, "--peer-poll-ms", config.poll_interval_ms)?;
+        config.max_pages_per_cycle = usize::try_from(number(
+            &args,
+            "--peer-pages",
+            config.max_pages_per_cycle as u64,
+        )?)
+        .map_err(|_| "PEER_CONFIG_LIMIT")?;
+        config.validate(&settings)?;
+        if config.bits
+            != u8::try_from(number(&args, "--admission-bits", 16)?).map_err(|_| "PUBLIC_POLICY")?
+            || config.lifetime_ms != number(&args, "--admission-ttl-ms", 2000)?
+        {
+            return Err("PEER_CONFIG_CONTEXT".into());
+        }
+        Some(config)
+    } else {
+        None
+    };
+    if matches!(command.as_str(), "pool-push" | "pool-status-remote") {
+        let request = if command == "pool-status-remote" {
+            ingress::public_v3::Request::PoolStatus
+        } else {
+            ingress::public_v3::Request::PoolSubmitBundle {
+                pool_context: need(&args, "--pool-context")?.to_owned(),
+                transactions: serde_json::from_slice(&read(
+                    need(&args, "--transactions")?,
+                    65536,
+                )?)?,
+            }
+        };
+        return Ok(serde_json::to_value(public_pool_call(
+            &args, &request, &settings,
+        )?)?);
+    }
     if !public_profile(&args)
         && (args.contains_key("--public-development-network")
             || (command != "serve"
@@ -409,6 +641,54 @@ fn run() -> Result<Value> {
     )?;
     let value = match command.as_str() {
         "status" | "recover" => node.stats()?,
+        "pool-status" => serde_json::to_value(node.pool_status()?)?,
+        "pool-submit" => {
+            let policy: PoolLimits = serde_json::from_slice(&read_owned_configuration(
+                need(&args, "--pool-policy")?,
+                4096,
+                false,
+                "POOL_POLICY_FILE",
+                "POOL_POLICY_LENGTH",
+            )?)?;
+            node.enable_local_mempool(policy)?;
+            let hexes: Vec<String> =
+                serde_json::from_slice(&read(need(&args, "--transactions")?, 65536)?)?;
+            if !(1..=16).contains(&hexes.len()) {
+                return Err("POOL_GROUP_LIMIT".into());
+            }
+            let raws = hexes
+                .iter()
+                .map(|s| {
+                    if !(318..=4096).contains(&s.len()) {
+                        return Err("TRANSACTION_LIMIT".into());
+                    }
+                    let raw = hex::decode(s).map_err(|_| Error::from("TRANSACTION_HEX"))?;
+                    if hex::encode(&raw) != *s {
+                        return Err("TRANSACTION_HEX".into());
+                    }
+                    Ok(raw)
+                })
+                .collect::<Result<Vec<_>>>()?;
+            serde_json::to_value(node.pool_submit_bundle(raws)?)?
+        }
+        "mine-loop" => {
+            let policy = pool_policy(&args)?;
+            let config = mining_configuration(&args, node.settings(), &policy, 60)?;
+            node.enable_local_mempool(policy)?;
+            let report = run_pool_mining(
+                Arc::new(Mutex::new(node)),
+                config,
+                Arc::new(AtomicBool::new(false)),
+                |event| {
+                    println!("{}", serde_json::to_string(event)?);
+                    std::io::stdout().flush()?;
+                    Ok(())
+                },
+            )?;
+            return Ok(
+                json!({"result":report,"clock_scope":"local-wall","public_network_ready":false,"production_activation":false}),
+            );
+        }
         "submit" => {
             let packet = Packet::decode(&read(need(&args, "--packet")?, 1_048_576)?)?;
             let id = node.admit(&packet, clock)?;
@@ -447,6 +727,7 @@ fn run() -> Result<Value> {
                     "signed-task-dev-v1"
                         | "signed-task-lifecycle-dev-v2"
                         | "signed-task-lifecycle-dev-v3"
+                        | "signed-task-lifecycle-dev-v4"
                 ) {
                     if bootstrap && files_present.iter().any(|present| *present) {
                         return Err("TASK_OPTIONS".into());
@@ -454,7 +735,9 @@ fn run() -> Result<Value> {
                     let (wire, model, input) = if bootstrap {
                         let wire = if matches!(
                             node.settings().task_profile(),
-                            "signed-task-lifecycle-dev-v2" | "signed-task-lifecycle-dev-v3"
+                            "signed-task-lifecycle-dev-v2"
+                                | "signed-task-lifecycle-dev-v3"
+                                | "signed-task-lifecycle-dev-v4"
                         ) {
                             node.settings()
                                 .bootstrap_lifecycle_task()?
@@ -485,7 +768,9 @@ fn run() -> Result<Value> {
                     };
                     let lifecycle = matches!(
                         node.settings().task_profile(),
-                        "signed-task-lifecycle-dev-v2" | "signed-task-lifecycle-dev-v3"
+                        "signed-task-lifecycle-dev-v2"
+                            | "signed-task-lifecycle-dev-v3"
+                            | "signed-task-lifecycle-dev-v4"
                     );
                     let manifest = if lifecycle {
                         trnm_protocol::qualified_work_task::lifecycle_v2::SignedLifecycleTaskV2::decode(&wire).map_err(|e|Error::from(format!("TASK_MANIFEST:{e:?}")))?.manifest
@@ -640,6 +925,118 @@ fn run() -> Result<Value> {
                 }
                 let identity = public_identity(&args)?;
                 let server_public = identity.public_key().to_owned();
+                let lifetime = Duration::from_secs(number(&args, "--seconds", 30)?);
+                if public_pool_profile(&args) {
+                    if lifetime == Duration::ZERO || lifetime > Duration::from_secs(259200) {
+                        return Err("PUBLIC_LIFETIME".into());
+                    }
+                    let pool = pool_policy(&args)?;
+                    let mining = if args.contains_key("--mine") {
+                        Some(mining_configuration(&args, node.settings(), &pool, 30)?)
+                    } else {
+                        None
+                    };
+                    let policy = ingress::public_v3::PublicPolicy::new(
+                        u8::try_from(number(&args, "--admission-bits", 16)?)
+                            .map_err(|_| "PUBLIC_POLICY")?,
+                        Duration::from_millis(number(&args, "--admission-ttl-ms", 2000)?),
+                    )?;
+                    let polling_identity = identity.clone();
+                    let polling_context = polling
+                        .as_ref()
+                        .map(PeerPollingConfig::context)
+                        .transpose()?
+                        .map(hex::encode);
+                    let server = ingress::public_v3::PublicServer::new(identity, policy)?;
+                    let pool_context = node.enable_local_mempool(pool)?;
+                    let listener = std::net::TcpListener::bind(
+                        args.get("--listen")
+                            .map(String::as_str)
+                            .unwrap_or("127.0.0.1:0"),
+                    )?;
+                    println!(
+                        "{}",
+                        json!({"event":"listening","address":listener.local_addr()?.to_string(),
+                        "state":node.stats()?,"server_public":server_public,"scope":"public-development-unqualified",
+                        "admission_profile":ingress::public_v3::PROFILE,"admission_profile_digest":hex::encode(policy.id()),
+                        "pool_context":hex::encode(pool_context),"mining_enabled":mining.is_some(),
+                        "peer_polling_enabled":polling.is_some(),"peer_polling_context":polling_context,
+                        "confidentiality":false,"identity_authority":false,"public_network_ready":false,"production_activation":false})
+                    );
+                    std::io::stdout().flush()?;
+                    let owner = Arc::new(Mutex::new(node));
+                    let stop = Arc::new(AtomicBool::new(false));
+                    let (service, mining_result, polling_result) = std::thread::scope(|scope| {
+                        let miner = mining.map(|config| {
+                            let owner = owner.clone();
+                            let stop = stop.clone();
+                            scope.spawn(move || {
+                                let result =
+                                    run_pool_mining(owner, config, stop.clone(), |event| {
+                                        println!("{}", serde_json::to_string(event)?);
+                                        std::io::stdout().flush()?;
+                                        Ok(())
+                                    });
+                                // A finite successful miner limit leaves ingress
+                                // serving retained blocks for peer catch-up. An
+                                // operational failure stops the shared runtime.
+                                if result.is_err() {
+                                    stop.store(true, Ordering::Release);
+                                }
+                                result
+                            })
+                        });
+                        let poller = polling.map(|config| {
+                            let owner = owner.clone();
+                            let stop = stop.clone();
+                            scope.spawn(move || {
+                                let result = run_pinned_peer_polling(
+                                    owner,
+                                    config,
+                                    polling_identity,
+                                    stop.clone(),
+                                    |event| {
+                                        println!("{}", serde_json::to_string(event)?);
+                                        std::io::stdout().flush()?;
+                                        Ok(())
+                                    },
+                                );
+                                if result.is_err() {
+                                    stop.store(true, Ordering::Release);
+                                }
+                                result
+                            })
+                        });
+                        let service = ingress::public_v3::serve_public_protected_v3(
+                            listener,
+                            owner,
+                            lifetime,
+                            stop.clone(),
+                            server,
+                        );
+                        stop.store(true, Ordering::Release);
+                        let mining_result = miner.map(|handle| {
+                            handle
+                                .join()
+                                .map_err(|_| Error::from("MINING_THREAD"))
+                                .and_then(|result| result)
+                        });
+                        let polling_result = poller.map(|handle| {
+                            handle
+                                .join()
+                                .map_err(|_| Error::from("PEER_POLL_THREAD"))
+                                .and_then(|result| result)
+                        });
+                        (service, mining_result, polling_result)
+                    });
+                    // All scoped workers have stopped before returning any error.
+                    let metrics = service?;
+                    let mining_report = mining_result.transpose()?;
+                    let polling_report = polling_result.transpose()?;
+                    return Ok(
+                        json!({"result":metrics,"mining":mining_report,"peer_polling":polling_report,"public_network_ready":false,"production_activation":false}),
+                    );
+                }
                 let listener = std::net::TcpListener::bind(
                     args.get("--listen")
                         .map(String::as_str)
@@ -657,7 +1054,7 @@ fn run() -> Result<Value> {
                 let metrics = ingress::public_v2::serve_public_protected_v2(
                     listener,
                     node,
-                    Duration::from_secs(number(&args, "--seconds", 30)?),
+                    lifetime,
                     Arc::new(AtomicBool::new(false)),
                     ingress::public_v2::PublicServer::new(identity, policy)?,
                 )?;

@@ -44,6 +44,18 @@ A failed command/block does not advance lease, source sequence, main nonce or fu
 The old parent statement remains the work authority for the containing block; the
 new statement becomes eligible for its successor. It cannot grant work in its own block.
 
+The current V3 command has an exact containing-height constraint. Renewal requires
+`successor.not_before >= height`, while source-statement admission at that same
+height requires `height >= statement.not_before`; the statement and lease windows
+must match. Therefore an accepted atomic successor has `not_before == height`.
+A future-start statement submitted in an earlier block fails `TASK_STATEMENT`;
+a delayed successor whose start is below the actual containing height fails
+`TASK_WINDOW`. Mempool preview success does not reserve that height. Public latency,
+transaction reordering and a producer withholding the renewal can invalidate its
+planned inclusion. Source-authorized reissue, critical capacity and any future
+overlapping/preauthorized renewal contract require explicit rules and actual tests.
+The finite height900 experiment does not certify asynchronous renewal liveness.
+
 Only the requester main-ledger nonce advances. The source signs a per-demand sequence;
 there is no source main-ledger transaction in tag22. Material identity, arithmetic
 output_count/product/height and the one-output meter survive renewal. Maintenance

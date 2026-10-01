@@ -1,4 +1,5 @@
 //! M07/M08 native branch persistence and recovery using the existing M06 executor.
+pub mod mempool;
 use crate::{
     consensus::{self, Work},
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
@@ -25,6 +26,7 @@ use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::{
     QualifiedWorkTask, SignedQualifiedWorkTask, TaskPurpose, SIGNED_TASK_BYTES,
 };
@@ -32,7 +34,7 @@ use trnm_transport::{
     AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, IoDigest32V0, PeerFrameSourceV0,
     PeerReplayRecoverySourceV0, PeerReplayStateV0, PeerSessionIdentityV0,
 };
-const DDL:&str="CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL);
+const BASE_DDL:&str="CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL);
 CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL);
 CREATE INDEX work_order ON blocks(chainwork DESC,height,id);
 CREATE TABLE deltas(block BLOB NOT NULL,key TEXT NOT NULL,before BLOB,after BLOB,PRIMARY KEY(block,key));
@@ -42,9 +44,16 @@ CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB
 CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL);
 CREATE TABLE events(generation INTEGER NOT NULL,ordinal INTEGER NOT NULL,kind INTEGER NOT NULL,block BLOB NOT NULL,PRIMARY KEY(generation,ordinal));
 CREATE TABLE snapshots(block BLOB PRIMARY KEY,state BLOB NOT NULL);
+CREATE TABLE local_pool_metadata(singleton INTEGER PRIMARY KEY CHECK(singleton=1),context BLOB NOT NULL CHECK(length(context)=32),limits BLOB NOT NULL,gc_groups BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_groups)=8),gc_records BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_records)=8),gc_bytes BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_bytes)=8),gc_head BLOB NOT NULL DEFAULT X'0000000000000000000000000000000000000000000000000000000000000000' CHECK(length(gc_head)=32),checked_parent BLOB,checked_generation INTEGER,CHECK((checked_parent IS NULL AND checked_generation IS NULL) OR (length(checked_parent)=32 AND checked_generation>=0)));
+CREATE TABLE local_pool_groups(ordinal INTEGER PRIMARY KEY AUTOINCREMENT,id BLOB UNIQUE NOT NULL CHECK(length(id)=32),status INTEGER NOT NULL CHECK(status IN (0,1,2,3)),reason TEXT NOT NULL);
+CREATE TABLE local_pool_rows(group_id BLOB NOT NULL,position INTEGER NOT NULL CHECK(position>=0 AND position<16),digest BLOB UNIQUE NOT NULL CHECK(length(digest)=32),sender BLOB NOT NULL CHECK(length(sender)=32),nonce BLOB NOT NULL CHECK(length(nonce)=8),expiry BLOB NOT NULL CHECK(length(expiry)=8),fee_limit BLOB NOT NULL CHECK(length(fee_limit)=8),raw BLOB NOT NULL CHECK(length(raw)>0 AND length(raw)<=2048),PRIMARY KEY(group_id,position),FOREIGN KEY(group_id) REFERENCES local_pool_groups(id) ON DELETE CASCADE);
+CREATE TABLE local_pool_removals(ordinal INTEGER PRIMARY KEY AUTOINCREMENT,id BLOB UNIQUE NOT NULL CHECK(length(id)=32),group_id BLOB NOT NULL CHECK(length(group_id)=32),reason TEXT NOT NULL);
 CREATE TABLE peer_replay(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER, CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0)));
 CREATE TABLE peer_request_audit(session_id BLOB NOT NULL,nonce INTEGER NOT NULL CHECK(nonce>0),payload_digest BLOB NOT NULL,payload BLOB,response_digest BLOB,response BLOB,status INTEGER NOT NULL CHECK(status IN (0,1,2)),PRIMARY KEY(session_id,nonce),FOREIGN KEY(session_id) REFERENCES peer_replay(session_id));
 CREATE TABLE peer_outbox(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER,pending_payload BLOB,pending_wire BLOB,pending_wire_digest BLOB,CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL AND pending_payload IS NULL AND pending_wire IS NULL AND pending_wire_digest IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0 AND pending_payload IS NOT NULL AND pending_wire IS NOT NULL AND pending_wire_digest IS NOT NULL)));";
+fn ddl() -> String {
+    format!("{}{}", BASE_DDL, crate::ancestry_index::DDL)
+}
 fn bytes32(bytes: Vec<u8>) -> Result<Hash> {
     bytes.try_into().map_err(|_| "STORAGE_HASH".into())
 }
@@ -352,7 +361,8 @@ impl Node {
         owner
             .try_lock_exclusive()
             .map_err(|_| Error::from("WRITER_BUSY"))?;
-        let schema_id = hash(b"native-branch-schema-v1", &[DDL.as_bytes()]);
+        let ddl = ddl();
+        let schema_id = hash(b"native-branch-schema-v2", &[ddl.as_bytes()]);
         let expected = canonical(
             &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
         )?;
@@ -376,7 +386,7 @@ impl Node {
             ensure(fs::read(&marker)? == expected, "INITIALIZATION_CONTEXT")?;
         }
         let expected_db = Connection::open_in_memory()?;
-        expected_db.execute_batch(DDL)?;
+        expected_db.execute_batch(&ddl)?;
         let expected_schema = schema(&expected_db)?;
         let mut initialized = false;
         let mut prior_inode = None;
@@ -429,7 +439,7 @@ impl Node {
         if !initialized {
             ensure(intent, "INITIALIZATION_INTENT_REQUIRED")?;
             let tx = db.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
-            tx.execute_batch(DDL)?;
+            tx.execute_batch(&ddl)?;
             cut(&mut hook, "init-schema")?;
             for (key, value) in [
                 ("schema", schema_id),
@@ -484,7 +494,15 @@ impl Node {
         node.validate_authenticated_replay()?;
         node.validate_authenticated_outbox()?;
         node.recover()?;
+        crate::ancestry_index::validate_tip(&node.db, node.ancestry_context(), node.active()?.0)?;
         Ok(node)
+    }
+    fn ancestry_context(&self) -> crate::ancestry_index::Context {
+        crate::ancestry_index::Context {
+            network: self.settings.network(),
+            parameters: self.settings.parameters(),
+            genesis: self.settings.genesis(),
+        }
     }
     pub fn settings(&self) -> &Settings {
         &self.settings
@@ -1378,6 +1396,7 @@ impl Node {
             .checked_add(consensus::required_work(h.target)?)?;
         let mut keys: std::collections::BTreeSet<_> = prior.keys().collect();
         keys.extend(output.state.keys());
+        let index_context = self.ancestry_context();
         let tx = self
             .db
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
@@ -1392,6 +1411,7 @@ impl Node {
                 h.state.as_slice()
             ],
         )?;
+        crate::ancestry_index::insert(&tx, index_context, id)?;
         for key in keys {
             let before = prior.get(key).map(canonical).transpose()?;
             let after = output.state.get(key).map(canonical).transpose()?;
@@ -1458,10 +1478,35 @@ impl Node {
         admission: &DevelopmentTaskAdmission,
         material: TaskMaterial<'_>,
     ) -> Result<Packet> {
+        self.prepare_with_task(
+            parent,
+            transactions,
+            miner,
+            timestamp,
+            max_attempts,
+            admission,
+            material,
+        )?
+        .search(max_attempts)
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn prepare_with_task(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        max_attempts: u64,
+        admission: &DevelopmentTaskAdmission,
+        material: TaskMaterial<'_>,
+    ) -> Result<crate::mining::PreparedCandidate> {
         ensure(
             matches!(
                 self.settings.task_profile(),
-                SIGNED_TASK_PROFILE | LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE
+                SIGNED_TASK_PROFILE
+                    | LIFECYCLE_TASK_PROFILE
+                    | ATOMIC_TASK_PROFILE
+                    | OVERLAP_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
         )?;
@@ -1471,7 +1516,7 @@ impl Node {
             .ok_or("TASK_MANIFEST")?;
         let statement_id = if matches!(
             self.settings.task_profile(),
-            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE
+            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
         ) {
             qualified_task_lifecycle::eligible_task(
                 &self.state_at(parent)?,
@@ -1499,7 +1544,8 @@ impl Node {
             pon_work::task_id(&a, &b).map_err(|_| Error::from("WORK_TASK"))? == signed.matrix_task,
             "TASK_MATRIX_BINDING",
         )?;
-        self.make_from_matrices(parent, transactions, miner, timestamp, max_attempts, &a, &b)
+        ensure((1..=4096).contains(&max_attempts), "WORK_BUDGET")?;
+        self.prepare_from_matrices(parent, transactions, miner, timestamp, &a, &b)
     }
     fn eligible_work_task(
         &self,
@@ -1510,7 +1556,7 @@ impl Node {
         let state = self.state_at(parent)?;
         if matches!(
             self.settings.task_profile(),
-            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE
+            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
         ) {
             let eligible =
                 qualified_task_lifecycle::eligible_task(&state, task, height, &self.settings.app)?;
@@ -1591,8 +1637,20 @@ impl Node {
         a: &[u32],
         b: &[u32],
     ) -> Result<Packet> {
-        self.ready()?;
         ensure((1..=4096).contains(&max_attempts), "WORK_BUDGET")?;
+        self.prepare_from_matrices(parent, transactions, miner, timestamp, a, b)?
+            .search(max_attempts)
+    }
+    pub(crate) fn prepare_from_matrices(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        a: &[u32],
+        b: &[u32],
+    ) -> Result<crate::mining::PreparedCandidate> {
+        self.ready()?;
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
         let registered_task = self.eligible_work_task(parent, task, height)?;
@@ -1617,7 +1675,7 @@ impl Node {
             )?;
             output.root = root(&output.state)?;
         }
-        let mut header = Header {
+        let header = Header {
             network: self.settings.network(),
             parameters: self.settings.parameters(),
             parent,
@@ -1631,21 +1689,11 @@ impl Node {
             work_task: task,
             nonce: 0,
         };
-        for nonce in 0..max_attempts {
-            header.nonce = nonce;
-            let challenge = header.challenge();
-            let proof = prepared
-                .prove(challenge)
-                .map_err(|e| Error::from(format!("WORK:{e:?}")))?;
-            if hash(b"ticket", &[&challenge, &proof[proof.len() - 32..]]) <= header.target {
-                return Ok(Packet {
-                    header,
-                    transactions,
-                    proof,
-                });
-            }
-        }
-        Err("WORK_BUDGET".into())
+        Ok(crate::mining::PreparedCandidate {
+            header,
+            transactions,
+            prepared,
+        })
     }
     fn record_task_output(
         &self,
@@ -1657,7 +1705,7 @@ impl Node {
     ) -> Result<()> {
         if matches!(
             self.settings.task_profile(),
-            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE
+            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
         ) {
             ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
             let eligible = qualified_task_lifecycle::eligible_task(
@@ -2129,26 +2177,18 @@ impl Node {
     ) -> Result<Vec<Packet>> {
         progress(0)?;
         self.ready()?;
-        ensure((1..=4096).contains(&maximum_steps), "PUBLIC_HISTORY_STEPS")?;
-        let target = self.record(tip)?;
-        let cursor = self.record(after)?;
-        let difference = target.height.checked_sub(cursor.height).ok_or("CURSOR")?;
-        ensure(difference <= maximum_steps, "PUBLIC_HISTORY_STEPS")?;
-        if tip == after {
+        let lookup = crate::ancestry_index::next(
+            &self.db,
+            self.ancestry_context(),
+            tip,
+            after,
+            maximum_steps,
+            progress,
+        )?;
+        let Some(id) = lookup.next else {
             return Ok(Vec::new());
-        }
-        let mut current = tip;
-        let mut next = None;
-        for steps in 0..difference {
-            progress(steps)?;
-            ensure(current != self.settings.genesis(), "CURSOR")?;
-            next = Some(current);
-            current = self.parent(current)?;
-        }
-        progress(difference)?;
-        ensure(current == after, "CURSOR")?;
-        let id = next.ok_or("CURSOR")?;
-        let row = self.record(id)?;
+        };
+        progress(lookup.sql_lookups + 1)?;
         // Query the scalar length before materializing a possibly damaged BLOB.
         let maximum = 1_048_576;
         let length: Option<usize> = self.db.query_row(
@@ -2160,6 +2200,7 @@ impl Node {
             length.is_some_and(|n| n > 0 && n <= maximum),
             "PUBLIC_HISTORY_BYTES",
         )?;
+        progress(lookup.sql_lookups + 2)?;
         let raw: Vec<u8> = self.db.query_row(
             "SELECT packet FROM blocks WHERE id=? AND length(packet)<=?",
             params![id.as_slice(), maximum],
@@ -2168,9 +2209,8 @@ impl Node {
         let packet = Packet::decode(&raw)?;
         ensure(
             packet.id()? == id
-                && Some(packet.header.parent) == row.parent
-                && packet.header.height == row.height
-                && packet.header.state == row.root,
+                && packet.header.parent == after
+                && packet.header.height == lookup.height,
             "STORAGE_PACKET",
         )?;
         Ok(vec![packet])
@@ -2198,7 +2238,7 @@ impl Node {
 mod public_read_bounds_tests {
     use super::*;
     #[test]
-    fn corrupt_oversize_packet_and_long_suffix_are_rejected_before_blob_load() {
+    fn corrupt_packet_shapes_are_rejected_before_blob_load() {
         let directory = tempfile::tempdir().unwrap();
         let settings = Settings::development(Some(1)).unwrap();
         let node = Node::open(directory.path(), settings.clone(), 1).unwrap();
@@ -2220,13 +2260,18 @@ mod public_read_bounds_tests {
             .unwrap();
         let mut steps = Vec::new();
         let e = node
-            .public_history_packet([1; 32], genesis, 4096, &mut |n| {
-                steps.push(n);
-                Ok(())
-            })
+            .public_history_packet(
+                [1; 32],
+                genesis,
+                crate::ancestry_index::READ_SQL_BUDGET,
+                &mut |n| {
+                    steps.push(n);
+                    Ok(())
+                },
+            )
             .unwrap_err();
-        assert_eq!(e.to_string(), "PUBLIC_HISTORY_STEPS");
-        assert_eq!(steps, vec![0]);
+        assert_eq!(e.to_string(), "ANCESTRY_INDEX_PACKET_BYTES");
+        assert_eq!(steps, vec![0, 1]);
         node.db
             .execute(
                 "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
@@ -2241,8 +2286,188 @@ mod public_read_bounds_tests {
             )
             .unwrap();
         let e = node
-            .public_history_packet([2; 32], genesis, 4096, &mut |_| Ok(()))
+            .public_history_packet(
+                [2; 32],
+                genesis,
+                crate::ancestry_index::READ_SQL_BUDGET,
+                &mut |_| Ok(()),
+            )
             .unwrap_err();
-        assert_eq!(e.to_string(), "PUBLIC_HISTORY_BYTES");
+        assert_eq!(e.to_string(), "ANCESTRY_INDEX_PACKET_BYTES");
+    }
+}
+
+#[cfg(test)]
+mod native_ancestry_tests {
+    use super::*;
+    use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+    use trnm_protocol::pon_wire::Envelope;
+    fn transfer(node: &Node) -> Vec<u8> {
+        let sender = development_public(0).unwrap();
+        let mut payload = development_public(1).unwrap().to_vec();
+        payload.extend(1_u64.to_le_bytes());
+        let mut tx = Envelope {
+            network: node.settings().network(),
+            sender,
+            nonce: node.next_nonce(sender).unwrap(),
+            expiry: 1000,
+            fee_limit: 1_000_000,
+            tag: 1,
+            payload,
+            signature: [0; 64],
+        };
+        let key =
+            signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()])))
+                .unwrap();
+        tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+            .unwrap()
+            .try_into()
+            .unwrap();
+        tx.encode().unwrap()
+    }
+    fn make(node: &Node, parent: Hash, height: u64, miner: u64, txs: Vec<Vec<u8>>) -> Packet {
+        node.make(
+            parent,
+            txs,
+            development_public(miner).unwrap(),
+            1 + height * 10,
+            4096,
+        )
+        .unwrap()
+    }
+    #[test]
+    fn actual_work_index_abort_preserves_block_state_and_sender_nonce() {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+        let mut parent = settings.genesis();
+        for height in 1..=3 {
+            let packet = make(&node, parent, height, 0, vec![]);
+            parent = node.admit(&packet, 1000).unwrap();
+            node.activate_observed(parent, 1000).unwrap();
+        }
+        let before = node.read_active().unwrap();
+        let sender = development_public(0).unwrap();
+        let nonce = node.next_nonce(sender).unwrap();
+        let packet = make(&node, parent, 4, 0, vec![transfer(&node)]);
+        let id = packet.id().unwrap();
+        // A real validated proof and signed transfer reach the write transaction.
+        node.db.execute_batch("CREATE TRIGGER fail_index BEFORE INSERT ON ancestry_jump WHEN NEW.level=2 BEGIN SELECT RAISE(ABORT,'index fault');END;").unwrap();
+        assert!(node.admit(&packet, 1000).is_err());
+        assert_eq!(node.read_active().unwrap(), before);
+        assert_eq!(node.next_nonce(sender).unwrap(), nonce);
+        assert!(node.record(id).is_err());
+        let rows: u64 = node
+            .db
+            .query_row(
+                "SELECT COUNT(*) FROM ancestry_jump WHERE block=?",
+                [id.as_slice()],
+                |r| r.get(0),
+            )
+            .unwrap();
+        assert_eq!(rows, 0);
+        node.db.execute_batch("DROP TRIGGER fail_index").unwrap();
+        assert_eq!(node.admit(&packet, 1000).unwrap(), id);
+        node.activate_observed(id, 1000).unwrap();
+        assert_eq!(node.next_nonce(sender).unwrap(), nonce + 1);
+        drop(node);
+        let node = Node::open(dir.path(), settings, 1).unwrap();
+        assert_eq!(node.active().unwrap().0, id);
+    }
+    #[test]
+    fn actual_native_forks_reopen_and_independent_validation_use_indexed_pages() {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+        let mut ids = vec![settings.genesis()];
+        for height in 1..=8 {
+            let packet = make(&node, *ids.last().unwrap(), height, 0, vec![]);
+            let id = node.admit(&packet, 1000).unwrap();
+            node.activate_observed(id, 1000).unwrap();
+            ids.push(id);
+        }
+        let mut fork = vec![ids[3]];
+        for height in 4..=9 {
+            let packet = make(&node, *fork.last().unwrap(), height, 1, vec![]);
+            fork.push(node.admit(&packet, 1000).unwrap());
+        }
+        let tip = *fork.last().unwrap();
+        node.activate_observed(tip, 1000).unwrap();
+        drop(node);
+        let node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+        assert_eq!(node.active().unwrap().0, tip);
+        let first = node
+            .public_history_packet(
+                tip,
+                ids[3],
+                crate::ancestry_index::READ_SQL_BUDGET,
+                &mut |_| Ok(()),
+            )
+            .unwrap();
+        assert_eq!(first[0].id().unwrap(), fork[1]);
+        assert_eq!(
+            node.public_history_packet(
+                ids[8],
+                fork[1],
+                crate::ancestry_index::READ_SQL_BUDGET,
+                &mut |_| Ok(())
+            )
+            .unwrap_err()
+            .to_string(),
+            "CURSOR"
+        );
+        let other = tempfile::tempdir().unwrap();
+        let mut confirmer = Node::open(other.path(), settings.clone(), 1).unwrap();
+        let mut after = settings.genesis();
+        while after != tip {
+            let page = node
+                .public_history_packet(
+                    tip,
+                    after,
+                    crate::ancestry_index::READ_SQL_BUDGET,
+                    &mut |_| Ok(()),
+                )
+                .unwrap();
+            assert_eq!(page.len(), 1);
+            assert_eq!(page[0].header.parent, after);
+            after = confirmer.admit(&page[0], 1000).unwrap();
+        }
+        confirmer.activate_observed(tip, 1000).unwrap();
+        let confirmed = confirmer.read_active().unwrap();
+        let expected = node.read_active().unwrap();
+        assert_eq!(confirmed.0, expected.0);
+        assert_eq!(confirmed.2, expected.2);
+        assert_eq!(
+            confirmer.stats().unwrap()["chainwork_hex"],
+            node.stats().unwrap()["chainwork_hex"]
+        );
+        node.db
+            .execute(
+                "UPDATE ancestry_jump SET seal=? WHERE block=? AND level=3",
+                params![[0_u8; 32].as_slice(), tip.as_slice()],
+            )
+            .unwrap();
+        drop(node);
+        assert_eq!(
+            Node::open(dir.path(), settings, 1)
+                .err()
+                .unwrap()
+                .to_string(),
+            "ANCESTRY_INDEX_SEAL"
+        );
+    }
+    #[test]
+    fn previous_ddl_is_refused_without_migration_or_database_mutation() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("native.sqlite");
+        let db = Connection::open(&path).unwrap();
+        db.execute_batch(BASE_DDL).unwrap();
+        drop(db);
+        let before = fs::read(&path).unwrap();
+        let error = Node::open(dir.path(), Settings::development(Some(1)).unwrap(), 1)
+            .err()
+            .unwrap();
+        assert_eq!(error.to_string(), "SCHEMA");
+        assert_eq!(fs::read(path).unwrap(), before);
     }
 }

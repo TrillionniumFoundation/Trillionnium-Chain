@@ -79,3 +79,17 @@ consumer signatures still bind actual quota state. See the exact algorithm, erro
 counterexamples in [EXECUTION_PARALLEL](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md).
 Complete-state root construction, full native node assembly and Hepta ownership remain
 separate work; worker counts do not establish throughput or independent acceptance.
+
+## Native bounded queued owner continuation
+
+The existing Node SQLite owner now provides explicitly enabled local PNX1 queue/group
+submission, M05 typed metadata, exact M06 prefix preview, fenced mining batches and
+branch-relative reconciliation. Queue success is not execution, inclusion, confirmation
+or external permission. All pending and archived rows/bytes plus local removal digests
+are bounded; local removal history is not rewound by reorg. See the exact interfaces,
+limits and actual native selectors in
+[LOCAL_MEMPOOL_LIFECYCLE](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md).
+The explicit V2 local profile adds admission-triggered wholly terminal cache eviction;
+operator removal digests remain monotonic and separately finite. See
+[LOCAL_MEMPOOL_CACHE_V2](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_CACHE_V2.md).
+Public-v2 transport operations and acceptance flags are unchanged by this local owner.

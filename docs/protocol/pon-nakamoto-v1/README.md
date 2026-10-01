@@ -6,6 +6,7 @@ The sole work sequence remains the [development plan](../../development/TRNM_AI_
 Machine contract: [pon-nakamoto-v1.json](../../../config/pon-nakamoto-v1.json).
 Current entrypoint profiles and audit gates: [public readiness](details/PUBLIC_READINESS.md).
 Atomic task renewal: [lifecycle V3](details/QUALIFIED_TASK_LIFECYCLE_V3.md).
+Queued signed overlap: [lifecycle V4](details/QUALIFIED_TASK_LIFECYCLE_V4.md).
 Versioned public transport: [public intake v2](details/PUBLIC_INTAKE_V2.md).
 Pinned tool dependency review: [dependency security](details/DEPENDENCY_SECURITY.md).
 

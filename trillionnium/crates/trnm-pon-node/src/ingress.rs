@@ -2543,3 +2543,5 @@ mod tests {
 
 /// Explicit unintegrated public development successor; old listeners unchanged.
 pub mod public_v2;
+
+pub mod public_v3;

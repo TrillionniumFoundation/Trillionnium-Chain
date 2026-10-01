@@ -936,6 +936,7 @@ dependencies = [
  "sha2",
  "tempfile",
  "trnm-crypto-primitives",
+ "trnm-mempool",
  "trnm-mvcc-fee",
  "trnm-protocol",
  "trnm-transport",

@@ -120,7 +120,7 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 
 ## Native development continuation and remaining scope
 
-The M15 composition binary `trnm-pon-node` starts/recover/admit/mine/export/sync/confirm/serve without Python fallback. It reuses M00/M01/M06 and owns one fresh native branch namespace. `push` and `sync` can use the same durable signed client outbox; `serve` can use the matching allowlisted signed private-development ingress. Authentication options are command-scoped and do not turn local status/mining commands into key consumers. Open public P2P, confidentiality, persistent miner/mempool lifecycle and ordinary Hepta/resource integration are still absent.
+The M15 composition binary `trnm-pon-node` starts/recover/admit/mine/export/sync/confirm/serve without Python fallback. It reuses M00/M01/M05/M06 and owns one fresh native branch namespace. `push` and `sync` can use the same durable signed client outbox; `serve` can use the matching allowlisted signed private-development ingress or explicitly selected resource-ticket public development intake. The separately versioned V3 public contract adds signed transaction bundles and a read-only pool snapshot. Its optional `serve --mine` shares one native owner with the wall-clock miner and persistent local pool. Authentication options are command-scoped and do not turn local status/mining commands into key consumers. Open peer discovery/gossip, confidentiality, sustained hostile-WAN service and ordinary Hepta/resource integration remain unaccepted.
 
 The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
@@ -138,3 +138,35 @@ replays the original signed candidate under the surviving state.
 Selector: `formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_ordinary_native_cli_uses_successor_and_reopens_only_its_namespace`.
 This is a bounded native development path, not authenticated public P2P, ordinary Hepta
 resource ownership or production activation.
+
+## Native bounded queued owner continuation
+
+The existing Node SQLite owner now provides explicitly enabled local PNX1 queue/group
+submission, M05 typed metadata, exact M06 prefix preview, fenced mining batches and
+branch-relative reconciliation. Queue success is not execution, inclusion, confirmation
+or external permission. All pending and archived rows/bytes plus local removal digests
+are bounded; local removal history is not rewound by reorg. See the exact interfaces,
+limits and actual native selectors in
+[LOCAL_MEMPOOL_LIFECYCLE](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md).
+The explicit V2 local profile adds admission-triggered wholly terminal cache eviction;
+operator removal digests remain monotonic and separately finite. See
+[LOCAL_MEMPOOL_CACHE_V2](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_CACHE_V2.md).
+Public-v2 transport operations and acceptance flags are unchanged by this local owner.
+
+The integrated current entrypoints, cooperative stop/failure behavior and actual tests
+are [CONTINUOUS_MINING_V1](../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md)
+and [PUBLIC_POOL_INTAKE_V3](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md).
+The executable tests submit a guest signed funding/renewal bundle, actually mine it,
+and sync another full native owner. This finite local behavior is not independent
+WAN acceptance or a durable service guarantee.
+
+The explicitly configured `serve --peers FILE` composition uses the same owner
+for paid pinned Head/History following, full native packet verification and
+observed-work branch selection; see
+[PINNED_PEER_POLLING](../protocol/pon-nakamoto-v1/details/PINNED_PEER_POLLING.md).
+It retains a fixed target/cursor through network errors, and allows one labelled
+genesis fallback for an initial signed cursor refusal. Open discovery/gossip,
+eclipse resistance, public fairness and independent operators remain unaccepted.
+Renewable mining supports the separate
+[V4 overlap contract](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md),
+without changing V3 signed heights or inventing source/requester authorization.

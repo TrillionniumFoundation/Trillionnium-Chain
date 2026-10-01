@@ -4,14 +4,24 @@ from pathlib import Path
 import argparse
 import subprocess
 import os
+import shutil
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
 
 def render():
-    args = ["rg", "--files", "trillionnium/crates", "config", "-g", "*.rs", "-g", "Cargo.toml", "-g", "*.json"]
-    paths = set(subprocess.check_output(args, cwd=ROOT, text=True).splitlines())
+    if shutil.which("rg"):
+        args = ["rg", "--files", "trillionnium/crates", "config", "-g", "*.rs", "-g", "Cargo.toml", "-g", "*.json"]
+        paths = set(subprocess.check_output(args, cwd=ROOT, text=True).splitlines())
+    else:
+        # Hosted runners need not install ripgrep. Git applies the repository's
+        # ignore rules and also includes new development sources before commit.
+        raw = subprocess.check_output(["git", "ls-files", "-z", "--cached", "--others",
+                                       "--exclude-standard", "--", "trillionnium/crates", "config"], cwd=ROOT)
+        paths = {path for item in raw.split(b"\0") if item
+                 for path in [item.decode("utf-8")]
+                 if Path(path).suffix in {".rs", ".json"} or Path(path).name == "Cargo.toml"}
     paths.update(("trillionnium/Cargo.toml", "trillionnium/Cargo.lock", str(OUTPUT.relative_to(ROOT))))
     rows = ["// Embedded exact bytes. Regenerate inventory when adding native source files.", "pub const FILES: &[(&str, &[u8])] = &["]
     for path in sorted(paths):

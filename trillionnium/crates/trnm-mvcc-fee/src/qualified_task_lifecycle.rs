@@ -14,13 +14,17 @@ use trnm_protocol::{
             REVOKE_TAG,
         },
         lifecycle_v3::{AtomicRenewTaskV3, ATOMIC_RENEW_TAG, PROFILE as ATOMIC_PROFILE},
+        lifecycle_v4::PROFILE as OVERLAP_PROFILE,
         QualifiedWorkTask, TaskPurpose, LOGICAL_MULTIPLY_ADD_UNITS, MATRIX_ARTIFACT_BYTES,
     },
 };
 
-/// Shared bounded codecs; the configured network/parameters distinguish V2 and V3.
+/// Shared bounded codecs; the configured network/parameters distinguish V2, V3 and V4.
 pub fn enabled(cfg: &Config) -> bool {
-    matches!(cfg.task_profile(), PROFILE | ATOMIC_PROFILE)
+    matches!(
+        cfg.task_profile(),
+        PROFILE | ATOMIC_PROFILE | OVERLAP_PROFILE
+    )
 }
 
 pub const SLOT_PREFIX: &str = "qualified-demand-slot-v2:";
@@ -321,9 +325,16 @@ fn renewed_record(
         successor.revision == previous.revision.checked_add(1).ok_or("TASK_REVISION")?,
         "TASK_REVISION",
     )?;
+    let signed_window = if cfg.task_profile() == OVERLAP_PROFILE {
+        // Only fresh V4 atomic22 uses the overlap rule. Its source statement is
+        // still independently verified at the actual containing height below.
+        previous.not_before <= successor.not_before && successor.not_before <= height
+    } else {
+        successor.not_before >= height
+    };
     ensure(
         height <= previous.expires
-            && successor.not_before >= height
+            && signed_window
             && successor.not_before <= previous.expires
             && successor.expires > previous.expires,
         "TASK_WINDOW",
@@ -477,7 +488,7 @@ pub fn apply_verified_command(
     match tx.tag {
         OPEN_TAG => open(view, tx, height, cfg),
         RENEW_TAG if cfg.task_profile() == PROFILE => renew(view, tx, height, cfg),
-        ATOMIC_RENEW_TAG if cfg.task_profile() == ATOMIC_PROFILE => {
+        ATOMIC_RENEW_TAG if matches!(cfg.task_profile(), ATOMIC_PROFILE | OVERLAP_PROFILE) => {
             atomic_renew(view, tx, height, cfg)
         }
         REVOKE_TAG => revoke(view, tx, height, cfg),

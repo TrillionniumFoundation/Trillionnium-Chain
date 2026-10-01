@@ -1,10 +1,17 @@
 //! Experimental native composition; never imports Python or activates production.
 #![forbid(unsafe_code)]
+mod ancestry_index;
 pub mod consensus;
 pub mod ingress;
+pub mod mining;
+pub mod peer_polling;
 mod store;
 use serde_json::{json, Value};
 use std::{error, fmt};
+pub use store::mempool::{
+    PoolBatch, PoolGcSummary, PoolGroupStatus, PoolLimits, PoolReceipt, PoolState, PoolStatus,
+    LOCAL_POOL_PROFILE,
+};
 pub use store::{ConfirmationBatch, Node, Observation};
 use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};
@@ -14,6 +21,7 @@ use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::pon_wire::{hash, Envelope, Hash, Header, HEADER_BYTES};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::{
     QualifiedWorkTask, SignedQualifiedWorkTask, TaskPurpose, LOGICAL_MULTIPLY_ADD_UNITS,
     MATRIX_ARTIFACT_BYTES,
@@ -214,7 +222,10 @@ impl Settings {
         if let Some(time) = genesis_timestamp {
             ensure(time > 0 && time <= i64::MAX as u64, "GENESIS_TIME")?;
             app.params["genesis_timestamp"] = json!(time);
-            let label = if matches!(task_profile, LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE) {
+            let label = if matches!(
+                task_profile,
+                LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
+            ) {
                 format!(
                     "trnm-pon-task-lifecycle-wall-devnet-{}-{policy}-{time}",
                     app.params["consensus_revision"].as_u64().ok_or("CONFIG")?
@@ -271,7 +282,10 @@ impl Settings {
             json!(count.checked_mul(funding).ok_or("CONFIG")?),
         );
         initial.insert("model:current".into(), json!(hex::encode([0; 32])));
-        if matches!(task_profile, LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE) {
+        if matches!(
+            task_profile,
+            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
+        ) {
             let model: Vec<u8> = a.iter().flat_map(|v| v.to_le_bytes()).collect();
             let input: Vec<u8> = b.iter().flat_map(|v| v.to_le_bytes()).collect();
             initial.extend(qualified_task_lifecycle::bootstrap_state(&app, &model, &input)?.state);
@@ -360,7 +374,10 @@ impl Settings {
         ensure(
             matches!(
                 self.task_profile(),
-                SIGNED_TASK_PROFILE | LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE
+                SIGNED_TASK_PROFILE
+                    | LIFECYCLE_TASK_PROFILE
+                    | ATOMIC_TASK_PROFILE
+                    | OVERLAP_TASK_PROFILE
             ),
             "TASK_PROFILE",
         )?;
@@ -375,7 +392,7 @@ impl Settings {
         ensure(
             matches!(
                 self.task_profile(),
-                LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE
+                LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
             ),
             "TASK_PROFILE",
         )?;
