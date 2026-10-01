@@ -272,7 +272,16 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
     let reader = thread::spawn(move || {
         let mut lines = BufReader::new(stdout).lines();
         tx.send(lines.next().unwrap().unwrap()).unwrap();
-        lines.collect::<std::io::Result<Vec<_>>>().unwrap()
+        let mut captured = Vec::new();
+        for line in lines {
+            let line = line.unwrap();
+            // At most eight block callbacks and one final report in this finite
+            // test. Preserve stdout while notifying the test of actual progress;
+            // this notification does not grant block verification authority.
+            let _ = tx.send(line.clone());
+            captured.push(line);
+        }
+        captured
     });
     let ready: Value = serde_json::from_str(&rx.recv_timeout(ready_budget).unwrap()).unwrap();
     assert_eq!(ready["mining_enabled"], true);
@@ -408,23 +417,47 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
     drop(receiver_node);
     // A completed finite miner must leave its last block retrievable while the
     // service still has a budget. This is necessary for peer catch-up.
-    let catchup_end = Instant::now() + remaining_mining_budget;
-    let final_head = loop {
-        let head = successful_while_serving(
-            &mut client("head"),
-            &mut running,
-            "finite miner block limit",
-            catchup_end,
+    // Use the already declared finite service window, reserving the second
+    // independent sync and shutdown. A separate seven-second reset raced native
+    // debug execution although the service still had an unused bounded budget.
+    let catchup_end = service_started + service_budget - sync_budget - shutdown_budget;
+    loop {
+        assert!(
+            running.0.try_wait().unwrap().is_none(),
+            "service exited before its finite miner completed"
         );
-        if head["value"]["height"] == 8 {
-            break head;
-        }
         assert!(
             Instant::now() < catchup_end,
             "miner did not reach its finite limit"
         );
-        thread::sleep(Duration::from_millis(50));
-    };
+        let wait = catchup_end
+            .saturating_duration_since(Instant::now())
+            .min(Duration::from_millis(100));
+        let row = match rx.recv_timeout(wait) {
+            Ok(line) => serde_json::from_str::<Value>(&line).unwrap(),
+            Err(mpsc::RecvTimeoutError::Timeout) => continue,
+            Err(mpsc::RecvTimeoutError::Disconnected) => {
+                panic!("native mining observation stream closed before its finite limit")
+            }
+        };
+        if row["schema"] == "native-wall-pool-mining-event-v1" {
+            assert!(row["failure"].is_null(), "native mining failed: {row}");
+            if row["kind"] == "activated" && row["height"] == 8 {
+                break;
+            }
+        } else if let Some(report) = row.get("mining") {
+            panic!("native miner ended before the required activation: {report}");
+        }
+    }
+    // Confirm actual retrievability through the public RPC after the callback;
+    // the later full-native sync still verifies every packet and final state.
+    let final_head = successful_while_serving(
+        &mut client("head"),
+        &mut running,
+        "finite miner final native head",
+        catchup_end,
+    );
+    assert_eq!(final_head["value"]["height"], 8);
     let final_tip = final_head["value"]["tip"].as_str().unwrap();
     let caught_up = successful_while_serving(
         client("sync").args(["--tip", final_tip, "--after", tip, "--pages", "16"]),
