@@ -109,6 +109,58 @@ fn wall_clock_loop_executes_funding_dependencies_then_reopens_exact_queue_and_ch
     assert!(!report.stage_preemption);
     assert!(report.actual_elapsed_ns >= 1_000_000_000);
     assert_eq!(events.len(), 2);
+    for field in [
+        "initial_owner_wait_ns",
+        "pool_batch_ns",
+        "pre_search_batch_validation_ns",
+        "prepare_ns",
+        "search_ns",
+        "post_search_owner_wait_ns",
+        "post_search_batch_validation_ns",
+        "make_ns",
+        "admit_ns",
+        "activate_ns",
+        "reconcile_ns",
+    ] {
+        let actual: u64 = events
+            .iter()
+            .map(|event| event[field].as_u64().unwrap())
+            .sum();
+        assert_eq!(
+            serde_json::to_value(&report).unwrap()[field]
+                .as_u64()
+                .unwrap(),
+            actual
+        );
+    }
+    for event in &events {
+        for field in [
+            "pool_batch_ns",
+            "pre_search_batch_validation_ns",
+            "prepare_ns",
+            "search_ns",
+            "post_search_batch_validation_ns",
+            "admit_ns",
+            "activate_ns",
+            "reconcile_ns",
+        ] {
+            assert!(event[field].as_u64().unwrap() > 0);
+        }
+        assert!(
+            event["make_ns"].as_u64().unwrap()
+                >= event["prepare_ns"].as_u64().unwrap() + event["search_ns"].as_u64().unwrap()
+        );
+    }
+    let measured = report.initial_owner_wait_ns
+        + report.pool_batch_ns
+        + report.pre_search_batch_validation_ns
+        + report.make_ns
+        + report.post_search_owner_wait_ns
+        + report.post_search_batch_validation_ns
+        + report.admit_ns
+        + report.activate_ns
+        + report.reconcile_ns;
+    assert!(report.actual_elapsed_ns >= measured);
     assert!(
         events[1]["observed_wall_seconds"].as_u64().unwrap()
             > events[0]["observed_wall_seconds"].as_u64().unwrap()
@@ -170,6 +222,8 @@ fn reconciliation_failure_reports_the_already_activated_durable_block() {
     let event = &events[0];
     assert_eq!(event["kind"], "failed");
     assert_eq!(event["failure_stage"], "pool-reconciliation");
+    assert!(event["reconcile_ns"].as_u64().unwrap() > 0);
+    assert!(event["post_search_batch_validation_ns"].as_u64().unwrap() > 0);
     assert_eq!(event["admitted"], true);
     assert_eq!(event["activated"], true);
     let node = owner.lock().unwrap();
@@ -283,6 +337,9 @@ fn bounded_stop_runtime_and_invalid_material_do_not_mine_or_consume_pending_tran
     assert_eq!(report.activated_blocks, 0);
     assert_eq!(report.stop_reason, "runtime");
     assert!(start.elapsed() < Duration::from_secs(2));
+    assert!(report.initial_owner_wait_ns >= 100_000_000);
+    assert_eq!(report.pool_batch_ns, 0);
+    assert_eq!(report.post_search_owner_wait_ns, 0);
     drop(guard);
     let mut wrong = config;
     wrong.material = MiningMaterial::Registered {
@@ -407,4 +464,78 @@ fn actual_cli_retains_signed_group_then_mines_with_wall_clock_and_refuses_logica
         reopened.next_nonce(development_public(0).unwrap()).unwrap(),
         2
     );
+}
+
+#[test]
+fn failed_pool_batch_retains_elapsed_before_any_search_or_admission() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut node, settings, mut config, _) = setup(dir.path());
+    node.pool_submit(transfer(&settings, 0, 1, 2, 5)).unwrap();
+    config.max_blocks = 1;
+    let before = node.active().unwrap();
+    let fixture = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
+    fixture.execute_batch("CREATE TRIGGER pool_before_search_cut BEFORE UPDATE ON local_pool_groups BEGIN SELECT RAISE(ABORT,'owned-presearch-cache-cut'); END;").unwrap();
+    let owner = Arc::new(Mutex::new(node));
+    let mut events = Vec::new();
+    let error = run_pool_mining(
+        owner.clone(),
+        config,
+        Arc::new(AtomicBool::new(false)),
+        |event| {
+            events.push(serde_json::to_value(event)?);
+            Ok(())
+        },
+    )
+    .unwrap_err();
+    assert!(error.to_string().contains("owned-presearch-cache-cut"));
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0]["failure_stage"], "pool-batch");
+    assert!(events[0]["pool_batch_ns"].as_u64().unwrap() > 0);
+    assert_eq!(events[0]["make_ns"], 0);
+    assert_eq!(events[0]["admit_ns"], 0);
+    assert_eq!(events[0]["activated"], false);
+    assert_eq!(owner.lock().unwrap().active().unwrap(), before);
+}
+
+#[test]
+fn failed_pre_and_post_search_revalidation_retain_elapsed_without_admission() {
+    for threshold in [2, 3] {
+        let dir = tempfile::tempdir().unwrap();
+        let (mut node, settings, mut config, _) = setup(dir.path());
+        node.pool_submit(transfer(&settings, 0, 1, 2, 5)).unwrap();
+        config.max_blocks = 1;
+        let before = node.active().unwrap();
+        let fixture = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
+        fixture.execute_batch(&format!("CREATE TABLE fixture_rechecks(n INTEGER NOT NULL); INSERT INTO fixture_rechecks VALUES(0); CREATE TRIGGER revalidation_cut BEFORE UPDATE ON local_pool_groups BEGIN UPDATE fixture_rechecks SET n=n+1; SELECT CASE WHEN (SELECT n FROM fixture_rechecks)>={threshold} THEN RAISE(ABORT,'owned-revalidation-cut') END; END;")).unwrap();
+        let owner = Arc::new(Mutex::new(node));
+        let mut events = Vec::new();
+        let error = run_pool_mining(
+            owner.clone(),
+            config,
+            Arc::new(AtomicBool::new(false)),
+            |event| {
+                events.push(serde_json::to_value(event)?);
+                Ok(())
+            },
+        )
+        .unwrap_err();
+        assert!(error.to_string().contains("owned-revalidation-cut"));
+        assert_eq!(events.len(), 1);
+        let event = &events[0];
+        assert!(event["pool_batch_ns"].as_u64().unwrap() > 0);
+        assert!(event["pre_search_batch_validation_ns"].as_u64().unwrap() > 0);
+        if threshold == 2 {
+            assert_eq!(event["failure_stage"], "pre-search-batch-validation");
+            assert_eq!(event["make_ns"], 0);
+            assert_eq!(event["post_search_batch_validation_ns"], 0);
+        } else {
+            assert_eq!(event["failure_stage"], "batch-revalidation");
+            assert!(event["make_ns"].as_u64().unwrap() > 0);
+            assert!(event["post_search_batch_validation_ns"].as_u64().unwrap() > 0);
+        }
+        assert_eq!(event["admit_ns"], 0);
+        assert_eq!(event["admitted"], false);
+        assert_eq!(event["activated"], false);
+        assert_eq!(owner.lock().unwrap().active().unwrap(), before);
+    }
 }

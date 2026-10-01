@@ -244,6 +244,36 @@ fn chain_nonce(state: &State, sender: Hash) -> Result<u64> {
         Some(value) => value["nonce"].as_u64().ok_or_else(|| "STATE_NONCE".into()),
     }
 }
+/// Invocation-local exact raw bindings. No signature/state result is cached.
+/// Duplicate digests refuse before replacement, and ready bodies consume one binding.
+struct RawBindings<'a> {
+    remaining: BTreeMap<Hash, &'a [u8]>,
+    max_records: usize,
+}
+impl<'a> RawBindings<'a> {
+    fn new(max_records: usize) -> Self {
+        Self {
+            remaining: BTreeMap::new(),
+            max_records,
+        }
+    }
+    fn insert(&mut self, digest: Hash, raw: &'a [u8]) -> Result<()> {
+        ensure(
+            !self.remaining.contains_key(&digest),
+            "POOL_DUPLICATE_MEMBER",
+        )?;
+        ensure(self.remaining.len() < self.max_records, "POOL_RECORD_LIMIT")?;
+        self.remaining.insert(digest, raw);
+        Ok(())
+    }
+    fn consume(&mut self, digest: Hash, body: &[u8]) -> Result<()> {
+        let raw = self.remaining.remove(&digest).ok_or("POOL_TYPED_BINDING")?;
+        ensure(body == raw, "POOL_TYPED_BINDING")
+    }
+    fn is_empty(&self) -> bool {
+        self.remaining.is_empty()
+    }
+}
 /// Real M05 metadata and strict M06 whole-prefix execution, all against one parent.
 /// M05 lane capacity is reused; the durable owner preserves complete group order
 /// instead of pretending its lane pop order can split or reorder control bundles.
@@ -258,13 +288,10 @@ fn validate_pending(
     let mut gate = TypedAdmissionGate::new(limits.max_records, limits.critical_reserve, 2048);
     let mut next = BTreeMap::new();
     let mut exhausted = BTreeSet::new();
-    let mut digests = BTreeSet::new();
+    let mut bindings = RawBindings::new(limits.max_records);
     for raw in raws {
         let view = PnxView::new(raw, cfg)?;
-        ensure(
-            digests.insert(view.digest.as_bytes()),
-            "POOL_DUPLICATE_MEMBER",
-        )?;
+        bindings.insert(view.digest.as_bytes(), raw)?;
         ensure(!exhausted.contains(&view.envelope.sender), "NONCE_OVERFLOW")?;
         let expected = match next.get(&view.envelope.sender) {
             Some(value) => *value,
@@ -298,22 +325,11 @@ fn validate_pending(
     }
     let mut ready = 0;
     while let Some(metadata) = gate.pop_ready() {
-        ensure(
-            digests.remove(&metadata.digest().as_bytes()),
-            "POOL_TYPED_BINDING",
-        )?;
-        let raw = raws
-            .iter()
-            .find(|raw| {
-                Envelope::decode(raw).ok().and_then(|tx| tx.id().ok())
-                    == Some(metadata.digest().as_bytes())
-            })
-            .ok_or("POOL_TYPED_BINDING")?;
-        ensure(metadata.body() == raw.as_slice(), "POOL_TYPED_BINDING")?;
+        bindings.consume(metadata.digest().as_bytes(), metadata.body())?;
         ready += 1;
     }
     ensure(
-        digests.is_empty() && ready == raws.len(),
+        bindings.is_empty() && ready == raws.len(),
         "POOL_TYPED_BINDING",
     )?;
     pon_executor::execute(state, raws, height, limits.preview_miner, parent, 1, cfg)?;
@@ -929,4 +945,129 @@ fn fence(db: &rusqlite::Transaction<'_>, parent: Hash, generation: u64) -> Resul
         |r| Ok((r.get(0)?, r.get(1)?)),
     )?;
     ensure(tip == parent && recorded == generation, "POOL_STALE_PARENT")
+}
+
+#[cfg(test)]
+mod binding_tests {
+    use super::*;
+
+    #[test]
+    fn exact_binding_consumes_each_body_once_in_any_ready_order() {
+        let mut bindings = RawBindings::new(2);
+        bindings.insert([1; 32], b"first exact raw").unwrap();
+        bindings.insert([2; 32], b"second exact raw").unwrap();
+        bindings.consume([2; 32], b"second exact raw").unwrap();
+        assert!(!bindings.is_empty());
+        bindings.consume([1; 32], b"first exact raw").unwrap();
+        assert!(bindings.is_empty());
+        assert!(bindings.consume([1; 32], b"first exact raw").is_err());
+    }
+
+    #[test]
+    fn duplicate_binding_cannot_replace_original_even_at_capacity() {
+        let mut bindings = RawBindings::new(1);
+        bindings.insert([1; 32], b"original").unwrap();
+        assert_eq!(
+            bindings
+                .insert([1; 32], b"mutated")
+                .unwrap_err()
+                .to_string(),
+            "POOL_DUPLICATE_MEMBER"
+        );
+        assert_eq!(bindings.remaining[&[1; 32]], b"original");
+        assert!(bindings.insert([2; 32], b"extra").is_err());
+        bindings.consume([1; 32], b"original").unwrap();
+        assert!(bindings.is_empty());
+    }
+
+    #[test]
+    fn unknown_digest_or_mutated_ready_body_refuses_without_success() {
+        let mut bindings = RawBindings::new(2);
+        bindings.insert([1; 32], b"original").unwrap();
+        bindings.insert([2; 32], b"remaining").unwrap();
+        assert!(bindings.consume([3; 32], b"original").is_err());
+        assert_eq!(bindings.remaining.len(), 2);
+        assert!(bindings.consume([1; 32], b"mutated").is_err());
+        assert!(!bindings.is_empty());
+        assert_eq!(bindings.remaining[&[2; 32]], b"remaining");
+    }
+
+    #[test]
+    #[ignore = "explicit normal component timing, not a service or work-cost qualification"]
+    fn normal_256_signed_raw_binding_component_timing() {
+        use std::time::Instant;
+        use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+        let cfg = Config::installed().unwrap();
+        let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])))
+            .unwrap();
+        let sender = crate::development_public(0).unwrap();
+        let mut raws = Vec::new();
+        for nonce in 1..=256 {
+            let mut payload = crate::development_public(2).unwrap().to_vec();
+            payload.extend(1u64.to_le_bytes());
+            let mut envelope = Envelope {
+                network: cfg.network,
+                sender,
+                nonce,
+                expiry: 2000,
+                fee_limit: 1_000_000,
+                tag: 1,
+                payload,
+                signature: [0; 64],
+            };
+            envelope.signature = hex::decode(sign_hex(&key, &envelope.signing_digest().unwrap()))
+                .unwrap()
+                .try_into()
+                .unwrap();
+            let raw = envelope.encode().unwrap();
+            pon_executor::validate_main_envelope(&raw, 1, &cfg).unwrap();
+            raws.push(raw);
+        }
+        let mut old_ns = Vec::new();
+        let mut indexed_ns = Vec::new();
+        for _ in 0..32 {
+            let stage = Instant::now();
+            let digests = raws
+                .iter()
+                .map(|raw| PnxView::new(raw, &cfg).unwrap().digest.as_bytes())
+                .collect::<Vec<_>>();
+            let mut remaining = BTreeSet::new();
+            for digest in &digests {
+                assert!(remaining.insert(*digest));
+            }
+            for (digest, body) in digests.iter().zip(&raws) {
+                assert!(remaining.remove(digest));
+                let raw = raws
+                    .iter()
+                    .find(|raw| {
+                        Envelope::decode(raw).ok().and_then(|tx| tx.id().ok()) == Some(*digest)
+                    })
+                    .unwrap();
+                assert_eq!(std::hint::black_box(body), raw);
+            }
+            assert!(remaining.is_empty());
+            old_ns.push(stage.elapsed().as_nanos());
+            let stage = Instant::now();
+            let mut bindings = RawBindings::new(256);
+            let digests = raws
+                .iter()
+                .map(|raw| {
+                    let view = PnxView::new(raw, &cfg).unwrap();
+                    bindings.insert(view.digest.as_bytes(), raw).unwrap();
+                    view.digest.as_bytes()
+                })
+                .collect::<Vec<_>>();
+            for (digest, body) in digests.into_iter().zip(&raws) {
+                bindings
+                    .consume(digest, std::hint::black_box(body))
+                    .unwrap();
+            }
+            assert!(bindings.is_empty());
+            indexed_ns.push(stage.elapsed().as_nanos());
+        }
+        println!(
+            "{}",
+            serde_json::json!({"schema":"normal-pending-raw-binding-timing-v1","signed_raws":256,"raw_bytes":raws.iter().map(Vec::len).sum::<usize>(),"samples":32,"old_scan_elapsed_ns":old_ns,"indexed_elapsed_ns":indexed_ns,"scope":"one invocation-local metadata binding component; real signatures checked before timing; excludes M05, M06, pool reconciliation, native work, SQLite, Node wait and service concurrency","public_network_ready":false,"production_activation":false})
+        );
+    }
 }

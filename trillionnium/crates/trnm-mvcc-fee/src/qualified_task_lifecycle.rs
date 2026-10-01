@@ -43,6 +43,10 @@ pub struct BootstrapLifecycleTask {
 /// or private production custody. Returned state contains lifecycle keys only.
 pub fn bootstrap_state(cfg: &Config, model: &[u8], input: &[u8]) -> Result<BootstrapLifecycleTask> {
     ensure(enabled(cfg), "WORK_TASK_PROFILE")?;
+    ensure(
+        cfg.params["actor_profile"].is_null(),
+        "ACTOR_EXPLICIT_BOOTSTRAP_REQUIRED",
+    )?;
     let (a, b) = derive_matrices(model, input).map_err(|_| "TASK_MATERIAL")?;
     let source_seed = hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]);
     let requester_seed = hash(b"DEV-ONLY-KEY", &[&1_u64.to_le_bytes()]);
@@ -144,6 +148,37 @@ pub fn bootstrap_state(cfg: &Config, model: &[u8], input: &[u8]) -> Result<Boots
     let mut state = State::new();
     // Genesis has no transaction fee or account-nonce movement. Consensus commits
     // this explicit fixture; these private helpers are not an unauthenticated RPC.
+    let mut fixture = Envelope {
+        network: cfg.network,
+        sender: current.requester,
+        nonce: 0,
+        expiry: 0,
+        fee_limit: 0,
+        tag: OPEN_TAG,
+        payload: current.encode().map_err(|_| "TASK_DEMAND")?,
+        signature: [0; 64],
+    };
+    open(&mut state, &fixture, 0, cfg)?;
+    fixture.sender = current.source;
+    fixture.tag = REGISTER_TAG;
+    fixture.payload = signed.encode().map_err(|_| "TASK_MANIFEST")?;
+    register(&mut state, &fixture, 0, cfg)?;
+    Ok(BootstrapLifecycleTask {
+        state,
+        lease: current,
+        signed,
+    })
+}
+
+/// A public already-signed genesis certificate. Caller has independently pinned
+/// the exact expected lease/manifest template; no private key enters this path.
+pub fn bootstrap_from_signed(
+    cfg: &Config,
+    current: DemandLeaseV2,
+    signed: SignedLifecycleTaskV2,
+) -> Result<BootstrapLifecycleTask> {
+    ensure(enabled(cfg), "WORK_TASK_PROFILE")?;
+    let mut state = State::new();
     let mut fixture = Envelope {
         network: cfg.network,
         sender: current.requester,

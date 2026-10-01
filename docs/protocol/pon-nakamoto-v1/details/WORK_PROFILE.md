@@ -9,6 +9,11 @@ oracle is `formal/pon-nakamoto-v1/work_oracle.py`. They share bytes and vectors,
 implementation. Both were authored in this development increment. Cross-language
 agreement is not external independent security acceptance.
 
+The [external checkpoint tile recipe](CHECKPOINT_TILE_PROVENANCE_V1.md) specifies
+exact source/activation/quantization replay and structured preparation limits. Current
+QWT1 layer/recipe IDs bind derived 64x64 field material; they do not activate checkpoint
+coordinate provenance, full LLM execution or marginal-contribution acceptance.
+
 ## W1.1 Exact arithmetic and byte grammar
 
 Let n=64, r=8 and q=4,294,967,291. Every field element is a canonical little-endian u32

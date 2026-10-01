@@ -93,3 +93,9 @@ The explicit V2 local profile adds admission-triggered wholly terminal cache evi
 operator removal digests remain monotonic and separately finite. See
 [LOCAL_MEMPOOL_CACHE_V2](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_CACHE_V2.md).
 Public-v2 transport operations and acceptance flags are unchanged by this local owner.
+
+
+The explicit [operator actor context](../protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md)
+uses the existing module owner and fresh public descriptor/signature-bound N/P/G.
+This changes development bootstrap custody and role pins only; native admission,
+execution and confirmation remain required, and no independent/public flag is accepted.

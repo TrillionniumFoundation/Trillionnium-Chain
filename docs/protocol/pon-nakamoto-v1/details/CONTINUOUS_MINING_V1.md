@@ -95,6 +95,33 @@ admission errors, pool batch/context errors, and ordinary native storage/branch
 errors. Exhausted search budget is recorded and retried after the configured pause;
 invalid task material or execution is a visible failure, without fallback mining.
 
+## Additive elapsed observations
+
+Events and normally returned reports retain existing make/admit/activate/reconcile
+fields and add `initial_owner_wait_ns`, `pool_batch_ns`,
+`pre_search_batch_validation_ns`, `prepare_ns`, `search_ns`,
+`post_search_owner_wait_ns` and `post_search_batch_validation_ns`. Reports aggregate
+these elapsed stages; existing event stage aggregates are also returned. `make_ns`
+includes preparation and search and must not be added again to those two sub-stages.
+Owner-wait fields measure polling acquisition attempts and their retry sleeps, not
+synchronous native execution. Actual run time also includes pace, initial metadata
+reads, context fences, observer calls and other uninstrumented overhead. Aggregate
+wait may include unsuccessful iterations with no candidate event, such as a held
+owner through runtime expiry or waiting for the next wall-clock timestamp.
+
+Pool-batch and pre-search validation failures emit scoped failed events retaining
+completed elapsed stages. Post-search revalidation retains its time on failure;
+an already activated block remains reported if later reconciliation fails. Errors
+return an error rather than a successful aggregate report. These are local elapsed
+observations, not process CPU time, an adversarial cost lower bound, service fairness,
+a throughput guarantee or hard deadline. Synchronous native stages remain
+nonpreemptive. No signature, execution, task or chain validation is skipped.
+Reconciliation continues to re-execute growing complete prefixes, and observed
+activation continues to check retained timestamps through the ancestor history.
+The binding optimization and added timers remove neither cost. A future history
+summary must preserve branch identity and check the caller's actual observed time;
+there is no cached reusable clock approval in this change.
+
 ## CLI and acceptance scope
 
 `pool-submit --transactions FILE --pool-policy FILE` admits one canonical lowercase

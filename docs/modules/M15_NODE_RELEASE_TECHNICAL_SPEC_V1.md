@@ -170,3 +170,9 @@ eclipse resistance, public fairness and independent operators remain unaccepted.
 Renewable mining supports the separate
 [V4 overlap contract](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md),
 without changing V3 signed heights or inventing source/requester authorization.
+
+
+The explicit [operator actor context](../protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md)
+uses the existing module owner and fresh public descriptor/signature-bound N/P/G.
+This changes development bootstrap custody and role pins only; native admission,
+execution and confirmation remain required, and no independent/public flag is accepted.

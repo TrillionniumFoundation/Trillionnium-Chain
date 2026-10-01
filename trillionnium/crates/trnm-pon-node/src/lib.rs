@@ -4,6 +4,7 @@ mod ancestry_index;
 pub mod consensus;
 pub mod ingress;
 pub mod mining;
+pub mod operator_deployment;
 pub mod peer_polling;
 mod store;
 use serde_json::{json, Value};
@@ -188,6 +189,8 @@ pub struct Settings {
     pub(crate) app: Config,
     pub(crate) genesis: Hash,
     pub(crate) initial: State,
+    pub(crate) operator_bootstrap: Option<qualified_task_lifecycle::BootstrapLifecycleTask>,
+    pub(crate) operator_material: Option<BootstrapTaskMaterial>,
 }
 impl Settings {
     /// An explicit new timestamp selects a distinct valueless devnet, not a hot upgrade.
@@ -349,6 +352,8 @@ impl Settings {
             app,
             genesis,
             initial,
+            operator_bootstrap: None,
+            operator_material: None,
         })
     }
     pub fn network(&self) -> Hash {
@@ -371,6 +376,9 @@ impl Settings {
     }
     /// Public fixture artifacts, never a generic model or training-data claim.
     pub fn bootstrap_task_material(&self) -> Result<BootstrapTaskMaterial> {
+        if let Some(material) = &self.operator_material {
+            return Ok(material.clone());
+        }
         ensure(
             matches!(
                 self.task_profile(),
@@ -389,6 +397,9 @@ impl Settings {
     pub fn bootstrap_lifecycle_task(
         &self,
     ) -> Result<qualified_task_lifecycle::BootstrapLifecycleTask> {
+        if let Some(bootstrap) = &self.operator_bootstrap {
+            return Ok(bootstrap.clone());
+        }
         ensure(
             matches!(
                 self.task_profile(),
@@ -412,6 +423,10 @@ impl Settings {
         expires: u64,
         demand_nonce: u64,
     ) -> Result<SignedQualifiedWorkTask> {
+        ensure(
+            self.operator_actor_profile().is_none(),
+            "ACTOR_EXPLICIT_SIGNATURE_REQUIRED",
+        )?;
         development_manifest(
             &self.app,
             index,

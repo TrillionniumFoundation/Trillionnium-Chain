@@ -287,11 +287,8 @@ fn mining_configuration(
             return Err("TASK_OPTIONS".into());
         }
         let (model, input) = if bootstrap {
-            let (a, b) = trnm_pon_node::maintenance();
-            (
-                a.iter().flat_map(|v| v.to_le_bytes()).collect(),
-                b.iter().flat_map(|v| v.to_le_bytes()).collect(),
-            )
+            let (model, input, _, _) = settings.bootstrap_task_material()?;
+            (model, input)
         } else {
             if !files.iter().all(|p| *p) {
                 return Err("TASK_MATERIAL_REQUIRED".into());
@@ -339,6 +336,74 @@ fn output(path: &str, bytes: &[u8]) -> Result<()> {
     .sync_all()?;
     Ok(())
 }
+fn operator_inputs(
+    args: &BTreeMap<String, String>,
+) -> Result<(
+    trnm_pon_node::operator_deployment::OperatorDeploymentSpec,
+    Vec<u8>,
+    Vec<u8>,
+)> {
+    use trnm_pon_node::operator_deployment::{self as actors, offline};
+    if need(args, "--actor-profile")? != actors::PROFILE {
+        return Err("ACTOR_PROFILE".into());
+    }
+    let spec = actors::OperatorDeploymentSpec::decode(&offline::read_public(
+        Path::new(need(args, "--deployment-spec")?),
+        actors::SPEC_BYTES as u64,
+    )?)?;
+    let model = offline::read_public(Path::new(need(args, "--deployment-model")?), 16384)?;
+    let input = offline::read_public(Path::new(need(args, "--deployment-input")?), 16384)?;
+    Ok((spec, model, input))
+}
+fn operator_command(command: &str, args: &BTreeMap<String, String>) -> Result<Value> {
+    use trnm_pon_node::operator_deployment::{self as actors, offline};
+    let (spec, model, input) = operator_inputs(args)?;
+    let expected = actors::prepare(&spec, &model, &input)?;
+    let value = match command {
+        "genesis-prepare" => serde_json::to_value(expected)?,
+        "genesis-sign" => {
+            let template: actors::BootstrapTemplate = actors::decode(&offline::read_public(
+                Path::new(need(args, "--deployment-template")?),
+                actors::BOOTSTRAP_BYTES as u64,
+            )?)?;
+            serde_json::to_value(offline::sign_approval_from_file(
+                &spec,
+                &template,
+                &model,
+                &input,
+                need(args, "--role")?,
+                Path::new(need(args, "--signer-secret")?),
+            )?)?
+        }
+        "genesis-finalize" => {
+            let template: actors::BootstrapTemplate = actors::decode(&offline::read_public(
+                Path::new(need(args, "--deployment-template")?),
+                actors::BOOTSTRAP_BYTES as u64,
+            )?)?;
+            if template != expected {
+                return Err("ACTOR_TEMPLATE".into());
+            }
+            let source = actors::decode(&offline::read_public(
+                Path::new(need(args, "--source-approval")?),
+                actors::BOOTSTRAP_BYTES as u64,
+            )?)?;
+            let requester = actors::decode(&offline::read_public(
+                Path::new(need(args, "--requester-approval")?),
+                actors::BOOTSTRAP_BYTES as u64,
+            )?)?;
+            let bundle = actors::assemble(&expected, &source, &requester)?;
+            // Finalization independently constructs the full public state; a forged
+            // template or merely well-shaped approval cannot produce a genesis.
+            Settings::development_with_operator_actors(&spec, &bundle, &model, &input)?;
+            serde_json::to_value(bundle)?
+        }
+        _ => return Err("UNKNOWN_COMMAND".into()),
+    };
+    if let Some(path) = args.get("--output") {
+        offline::write_new_public(Path::new(path), &actors::canonical(&value)?)?;
+    }
+    Ok(value)
+}
 fn run() -> Result<Value> {
     let mut raw = std::env::args().skip(1);
     let command = raw
@@ -369,6 +434,9 @@ fn run() -> Result<Value> {
         );
     }
     let extra = match command.as_str() {
+        "genesis-prepare" => "--output",
+        "genesis-sign" => "--deployment-template --role --signer-secret --output",
+        "genesis-finalize" => "--deployment-template --source-approval --requester-approval --output",
         "status" | "recover" | "pool-status" => "",
         "pool-submit" => "--transactions --pool-policy",
         "pool-push" => "--peer --transactions --pool-context",
@@ -402,12 +470,33 @@ fn run() -> Result<Value> {
         _ => "",
     };
     let allowed = format!(
-        "--development --store --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile {authentication_options} {admission_options} {extra}"
+        "--development --store --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile --actor-profile --deployment-spec --deployment-bootstrap --deployment-model --deployment-input {authentication_options} {admission_options} {extra}"
     );
     for key in args.keys() {
         if !allowed.split_whitespace().any(|k| k == key) {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
         }
+    }
+    if matches!(
+        command.as_str(),
+        "genesis-prepare" | "genesis-sign" | "genesis-finalize"
+    ) {
+        if args.keys().any(|key| {
+            matches!(
+                key.as_str(),
+                "--store"
+                    | "--genesis-time"
+                    | "--workers"
+                    | "--logical-now"
+                    | "--evaluation-policy"
+                    | "--task-profile"
+                    | "--model-profile"
+                    | "--deployment-bootstrap"
+            )
+        }) {
+            return Err("ACTOR_PREPARATION_OPTIONS".into());
+        }
+        return operator_command(&command, &args);
     }
     if !public_profile(&args) {
         admission_profile(&args)?;
@@ -441,18 +530,58 @@ fn run() -> Result<Value> {
     ) {
         return Err("EVALUATION_POLICY".into());
     }
-    let settings = Settings::development_with_model_profiles(
-        args.get("--genesis-time")
-            .map(|s| s.parse().map_err(|_| Error::from("GENESIS_TIME")))
-            .transpose()?,
-        evaluation_policy,
-        args.get("--task-profile")
-            .map(String::as_str)
-            .unwrap_or("legacy-task-v1"),
-        args.get("--model-profile")
-            .map(String::as_str)
-            .unwrap_or("linear-expert-dev-v1"),
-    )?;
+    let actor_options = [
+        "--actor-profile",
+        "--deployment-spec",
+        "--deployment-bootstrap",
+        "--deployment-model",
+        "--deployment-input",
+    ];
+    let actor_present = actor_options.iter().any(|key| args.contains_key(*key));
+    let settings = if actor_present {
+        if !actor_options.iter().all(|key| args.contains_key(*key))
+            || [
+                "--genesis-time",
+                "--evaluation-policy",
+                "--task-profile",
+                "--model-profile",
+            ]
+            .iter()
+            .any(|key| args.contains_key(*key))
+        {
+            return Err("ACTOR_DEPLOYMENT_OPTIONS".into());
+        }
+        if command == "task-fixture" {
+            return Err("ACTOR_EXPLICIT_SIGNATURE_REQUIRED".into());
+        }
+        if (matches!(command.as_str(), "mine" | "make" | "mine-loop")
+            || command == "serve" && args.contains_key("--mine"))
+            && !args.contains_key("--miner")
+        {
+            return Err("ACTOR_EXPLICIT_MINER_REQUIRED".into());
+        }
+        let (spec, model, input) = operator_inputs(&args)?;
+        let bundle = trnm_pon_node::operator_deployment::decode(
+            &trnm_pon_node::operator_deployment::offline::read_public(
+                Path::new(need(&args, "--deployment-bootstrap")?),
+                8192,
+            )?,
+        )?;
+        Settings::development_with_operator_actors(&spec, &bundle, &model, &input)?
+    } else {
+        Settings::development_with_model_profiles(
+            args.get("--genesis-time")
+                .map(|s| s.parse().map_err(|_| Error::from("GENESIS_TIME")))
+                .transpose()?,
+            evaluation_policy,
+            args.get("--task-profile")
+                .map(String::as_str)
+                .unwrap_or("legacy-task-v1"),
+            args.get("--model-profile")
+                .map(String::as_str)
+                .unwrap_or("linear-expert-dev-v1"),
+        )?
+    };
     if command == "serve" {
         let mining_options = [
             "--miner",
@@ -750,12 +879,8 @@ fn run() -> Result<Value> {
                                 .encode()
                                 .map_err(|e| Error::from(format!("TASK_MANIFEST:{e:?}")))?
                         };
-                        let (a, b) = trnm_pon_node::maintenance();
-                        (
-                            wire,
-                            a.iter().flat_map(|v| v.to_le_bytes()).collect::<Vec<_>>(),
-                            b.iter().flat_map(|v| v.to_le_bytes()).collect::<Vec<_>>(),
-                        )
+                        let (model, input, _, _) = node.settings().bootstrap_task_material()?;
+                        (wire, model, input)
                     } else {
                         if !files_present.iter().all(|present| *present) {
                             return Err("TASK_MATERIAL_REQUIRED".into());

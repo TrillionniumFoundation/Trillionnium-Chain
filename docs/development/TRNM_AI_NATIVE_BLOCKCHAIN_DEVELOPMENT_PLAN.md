@@ -585,3 +585,13 @@ distributed additions. Each successor requires its own source-bound observations
 independent work-cost and model-benefit obligations remain open. Child Python is explicitly bound to the observer environment and its actual
 executable/dependencies are checked against both qualification layers. Preserve the
 measured Git source history when publishing or merging evidence.
+
+
+The explicit [operator actors development profile](../protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md)
+adds canonical public genesis actors/allocations and source/requester offline approvals
+without implicit DEV signing in Node Settings. M05 still validates the native nonce/fee
+and parent-admitted task; M06 commits the selected roster/material under a fresh N/P/G;
+M15 composes public-only normal startup and explicit offline prepare/sign/finalize.
+Actual local native/CLI regressions do not prove random keys, independent custody,
+truthful demand, data retention, cheapest-miner hardness or public governance. All
+acceptance flags remain false, and historical constructors/golden bytes stay unchanged.

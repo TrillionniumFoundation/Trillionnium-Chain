@@ -127,6 +127,14 @@ pub struct MiningEvent {
     pub transactions: usize,
     pub transaction_bytes: usize,
     pub work_trials: u64,
+    /// Elapsed polling/lock acquisition, not CPU time or a service deadline.
+    pub initial_owner_wait_ns: u128,
+    pub pool_batch_ns: u128,
+    pub pre_search_batch_validation_ns: u128,
+    pub prepare_ns: u128,
+    pub search_ns: u128,
+    pub post_search_owner_wait_ns: u128,
+    pub post_search_batch_validation_ns: u128,
     pub make_ns: u128,
     pub admit_ns: u128,
     pub activate_ns: u128,
@@ -147,6 +155,19 @@ pub struct MiningReport {
     pub activated_blocks: u64,
     pub included_transactions: u64,
     pub observed_work_trials: u64,
+    /// Elapsed polling/lock acquisition, not CPU time or a service deadline.
+    pub initial_owner_wait_ns: u128,
+    pub pool_batch_ns: u128,
+    pub pre_search_batch_validation_ns: u128,
+    pub prepare_ns: u128,
+    pub search_ns: u128,
+    pub post_search_owner_wait_ns: u128,
+    pub post_search_batch_validation_ns: u128,
+    /// Existing event stage aggregates; make includes prepare plus search.
+    pub make_ns: u128,
+    pub admit_ns: u128,
+    pub activate_ns: u128,
+    pub reconcile_ns: u128,
     pub actual_elapsed_ns: u128,
     pub stage_preemption: bool,
     pub public_network_ready: bool,
@@ -282,11 +303,23 @@ where
         activated_blocks: 0,
         included_transactions: 0,
         observed_work_trials: 0,
+        initial_owner_wait_ns: 0,
+        pool_batch_ns: 0,
+        pre_search_batch_validation_ns: 0,
+        prepare_ns: 0,
+        search_ns: 0,
+        post_search_owner_wait_ns: 0,
+        post_search_batch_validation_ns: 0,
+        make_ns: 0,
+        admit_ns: 0,
+        activate_ns: 0,
+        reconcile_ns: 0,
         actual_elapsed_ns: 0,
         stage_preemption: false,
         public_network_ready: false,
         production_activation: false,
     };
+    let mut initial_owner_wait_ns = 0;
     while Instant::now() < end
         && !stop.load(Ordering::Acquire)
         && report.activated_blocks < config.max_blocks
@@ -295,14 +328,22 @@ where
         if Instant::now() >= end || stop.load(Ordering::Acquire) {
             break;
         }
+        let acquisition = Instant::now();
         let mut owner = match node.try_lock() {
             Ok(owner) => owner,
             Err(TryLockError::WouldBlock) => {
                 thread::sleep(Duration::from_millis(25));
+                let elapsed = acquisition.elapsed().as_nanos();
+                initial_owner_wait_ns += elapsed;
+                report.initial_owner_wait_ns += elapsed;
                 continue;
             }
             Err(TryLockError::Poisoned(_)) => return Err("MINING_OWNER".into()),
         };
+        let elapsed = acquisition.elapsed().as_nanos();
+        initial_owner_wait_ns += elapsed;
+        report.initial_owner_wait_ns += elapsed;
+        let acquired_wait = std::mem::take(&mut initial_owner_wait_ns);
         let (parent, generation) = owner.active()?;
         // A retained future timestamp is never converted into a logical mining clock.
         let now = ingress::now()?;
@@ -316,14 +357,6 @@ where
             next = Instant::now() + Duration::from_millis(25);
             continue;
         }
-        let batch = owner.pool_mining_batch(
-            parent,
-            generation,
-            config.max_transactions,
-            config.max_transaction_bytes,
-        )?;
-        ensure(batch.preview_miner == config.miner, "POOL_MINER")?;
-        owner.pool_validate_batch(&batch)?;
         let mut event = MiningEvent {
             schema: "native-wall-pool-mining-event-v1",
             kind: "activated",
@@ -337,9 +370,16 @@ where
                 .parent_height(parent)?
                 .checked_add(1)
                 .ok_or("HEIGHT")?,
-            transactions: batch.transactions.len(),
-            transaction_bytes: batch.transactions.iter().map(Vec::len).sum(),
+            transactions: 0,
+            transaction_bytes: 0,
             work_trials: 0,
+            initial_owner_wait_ns: acquired_wait,
+            pool_batch_ns: 0,
+            pre_search_batch_validation_ns: 0,
+            prepare_ns: 0,
+            search_ns: 0,
+            post_search_owner_wait_ns: 0,
+            post_search_batch_validation_ns: 0,
             make_ns: 0,
             admit_ns: 0,
             activate_ns: 0,
@@ -349,6 +389,44 @@ where
             public_network_ready: false,
             production_activation: false,
         };
+        let stage = Instant::now();
+        let batch_result = owner.pool_mining_batch(
+            parent,
+            generation,
+            config.max_transactions,
+            config.max_transaction_bytes,
+        );
+        event.pool_batch_ns = stage.elapsed().as_nanos();
+        report.pool_batch_ns += event.pool_batch_ns;
+        let batch = match batch_result {
+            Ok(batch) => batch,
+            Err(error) => {
+                event.kind = "failed";
+                event.failure_stage = Some("pool-batch");
+                event.failure = Some(error.to_string());
+                drop(owner);
+                observe(&event)?;
+                return Err(error);
+            }
+        };
+        event.transactions = batch.transactions.len();
+        event.transaction_bytes = batch.transactions.iter().map(Vec::len).sum();
+        let stage = Instant::now();
+        let validation = (|| {
+            ensure(batch.preview_miner == config.miner, "POOL_MINER")?;
+            owner.pool_validate_batch(&batch)
+        })();
+        event.pre_search_batch_validation_ns = stage.elapsed().as_nanos();
+        report.pre_search_batch_validation_ns += event.pre_search_batch_validation_ns;
+        if let Err(error) = validation {
+            event.kind = "failed";
+            event.failure_stage = Some("pre-search-batch-validation");
+            event.failure = Some(error.to_string());
+            drop(owner);
+            observe(&event)?;
+            return Err(error);
+        }
+        let make_stage = Instant::now();
         let stage = Instant::now();
         let prepared = match &config.material {
             MiningMaterial::LegacyDevelopment => {
@@ -376,11 +454,21 @@ where
                 input,
             ),
         };
+        event.prepare_ns = stage.elapsed().as_nanos();
+        report.prepare_ns += event.prepare_ns;
         drop(owner);
-        let made = prepared.and_then(|candidate| {
-            candidate.search_cooperative(config.search_attempts, &stop, Some(end))
-        });
-        event.make_ns = stage.elapsed().as_nanos();
+        let made = match prepared {
+            Ok(candidate) => {
+                let stage = Instant::now();
+                let made = candidate.search_cooperative(config.search_attempts, &stop, Some(end));
+                event.search_ns = stage.elapsed().as_nanos();
+                report.search_ns += event.search_ns;
+                made
+            }
+            Err(error) => Err(error),
+        };
+        event.make_ns = make_stage.elapsed().as_nanos();
+        report.make_ns += event.make_ns;
         report.attempted_searches += 1;
         let packet = match made {
             Ok(SearchOutcome::Found(packet)) => *packet,
@@ -418,10 +506,10 @@ where
             observe(&event)?;
             break;
         }
+        let acquisition = Instant::now();
         let owner = loop {
             if stop.load(Ordering::Acquire) || Instant::now() >= end {
                 event.kind = "stopped-before-admission";
-                observe(&event)?;
                 break None;
             }
             match node.try_lock() {
@@ -430,7 +518,10 @@ where
                 Err(TryLockError::Poisoned(_)) => return Err("MINING_OWNER".into()),
             }
         };
+        event.post_search_owner_wait_ns = acquisition.elapsed().as_nanos();
+        report.post_search_owner_wait_ns += event.post_search_owner_wait_ns;
         let Some(mut owner) = owner else {
+            observe(&event)?;
             break;
         };
         if !owner.pool_batch_is_current(&batch)? {
@@ -445,7 +536,11 @@ where
         // cooperative fence again afterwards, before starting durable admission.
         let mut failure_stage = "batch-revalidation";
         let completion: Result<bool> = (|| {
-            owner.pool_validate_batch(&batch)?;
+            let stage = Instant::now();
+            let validation = owner.pool_validate_batch(&batch);
+            event.post_search_batch_validation_ns = stage.elapsed().as_nanos();
+            report.post_search_batch_validation_ns += event.post_search_batch_validation_ns;
+            validation?;
             if stop.load(Ordering::Acquire) || Instant::now() >= end {
                 return Ok(false);
             }
@@ -453,6 +548,7 @@ where
             let stage = Instant::now();
             let admitted = owner.admit(&packet, ingress::now()?);
             event.admit_ns = stage.elapsed().as_nanos();
+            report.admit_ns += event.admit_ns;
             let id = admitted?;
             event.block = Some(hex::encode(id));
             event.admitted = true;
@@ -460,6 +556,7 @@ where
             let stage = Instant::now();
             let activated = owner.activate_observed(id, ingress::now()?);
             event.activate_ns = stage.elapsed().as_nanos();
+            report.activate_ns += event.activate_ns;
             activated?;
             // Preserve the durable fact even if the subsequent cache update or
             // observation sink fails. A cache failure never rolls back a block.
@@ -470,6 +567,7 @@ where
             let stage = Instant::now();
             let reconciled = owner.pool_reconcile();
             event.reconcile_ns = stage.elapsed().as_nanos();
+            report.reconcile_ns += event.reconcile_ns;
             reconciled?;
             Ok(true)
         })();

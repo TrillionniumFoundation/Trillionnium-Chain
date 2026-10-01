@@ -24,6 +24,7 @@
 #![forbid(unsafe_code)]
 
 mod codec;
+pub mod deployment_actors;
 pub mod deterministic_parallel_v1;
 mod engine;
 mod error;

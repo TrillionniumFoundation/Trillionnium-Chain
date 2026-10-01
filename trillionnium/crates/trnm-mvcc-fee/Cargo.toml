@@ -20,6 +20,7 @@ default = []
 trnm-verification-profiles = { path = "../trnm-verification-profiles" }
 trnm-protocol = { path = "../trnm-protocol" }
 trnm-crypto-primitives = { path = "../trnm-crypto-primitives" }
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 hex = "0.4"
 borsh = { version = "1", features = ["derive"] }
@@ -27,6 +28,5 @@ rusqlite = { version = "0.32", features = ["bundled"] }
 sha2 = "0.10"
 
 [dev-dependencies]
-serde = "1"
 serde_json = "1"
 tempfile = "3"

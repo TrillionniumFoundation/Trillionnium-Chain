@@ -109,3 +109,9 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 - `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_boolean_before_value_does_not_alias_integer_zero`.
 - `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_lost_reply_discards_advanced_cache_and_retries_same_input`.
 - `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_exact_predecessor_memo_does_not_skip_returned_root_verification`.
+
+
+The explicit [operator actor context](../protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md)
+uses the existing module owner and fresh public descriptor/signature-bound N/P/G.
+This changes development bootstrap custody and role pins only; native admission,
+execution and confirmation remain required, and no independent/public flag is accepted.

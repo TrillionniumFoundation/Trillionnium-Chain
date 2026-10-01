@@ -33,6 +33,13 @@ Its `max_gas` bridge is the configured command base-fee plus encoded-byte fee, a
 bounds; PNX1 has no signed gas field and this is not arbitrary-program gas metering,
 a measured CPU lower bound or a computational-hardness certificate.
 
+Ready metadata is bound using an invocation-local bounded digest-to-original-raw
+index. Duplicate digests refuse before any replacement; each ready digest consumes
+one entry, its body must match every original byte, and successful draining leaves
+no unmatched entry. This removes repeated reverse scans and PNX1 decoding solely
+from this binding step. Full canonical/signature M05 checks and whole-prefix M06
+execution remain unchanged; there is no reusable verification or state cache.
+
 After typed checks, M06 executes the whole candidate prefix against one immutable
 parent using the configured preview miner. This handles actual funds/fees, nonce
 sequences, funding dependencies, profile gates and control semantics. Success is a
@@ -131,6 +138,23 @@ rejection. An explicitly invoked ignored selector also executes4500 signed nonce
 raws in563 actual native packets with an eight-record retained pool and one restart;
 its logical chain timestamps do not measure sustained wall-clock or public service.
 These are scoped tests, not independent public-security or economics acceptance.
+
+The exact raw index optimizes only ready-metadata binding. An explicitly invoked
+ignored unit selector compares that component on256 ordinary signed transfer raws
+and reports32 elapsed samples for the previous scan and the bounded index. Signature
+validity is checked before those timers. It excludes whole M05/M06 execution,
+reconciliation, proofs, SQLite, owner contention and transport; its measurements
+cannot certify endpoint throughput or public fairness.
+
+One reconciliation still executes each accepted growing group prefix in full.
+With256 single-member groups this revisits32896 transaction positions; with16 groups
+of16 it revisits2176. These are operation counts for fully valid prefixes, not measured
+runtime bounds. The16-member cap applies per group, not to the number of groups.
+M05 and M06 each retain their signature checks. Every preview clones its parent,
+runs mandatory transitions, enforces conservation and constructs its final state root.
+Calling the finalized block executor incrementally once per group would incorrectly
+repeat mandatory transitions and subsidy issuance; an incremental prefix design
+requires a separate staged transition boundary and one finalization per candidate.
 
 Reconciliation reconstructs bounded queues and validates prefixes conservatively;
 its work can grow with configured queue size. It is local synchronous work, not a
