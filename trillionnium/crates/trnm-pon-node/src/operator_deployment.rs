@@ -108,6 +108,20 @@ fn objects(
     SignedLifecycleTaskV2,
 )> {
     let app = Config::installed_with_operator_actors(spec)?;
+    objects_with_config(spec, model, input, app)
+}
+pub(crate) fn objects_with_config(
+    spec: &OperatorDeploymentSpec,
+    model: &[u8],
+    input: &[u8],
+    app: Config,
+) -> Result<(
+    Config,
+    BootstrapTaskMaterial,
+    DemandLeaseV2,
+    SignedLifecycleTaskV2,
+)> {
+    spec.validate()?;
     let material = material(spec, model, input)?;
     let mut lease = DemandLeaseV2 {
         slot: 0,
@@ -337,6 +351,7 @@ impl Settings {
             initial,
             operator_bootstrap: Some(bootstrap),
             operator_material: Some(material),
+            checkpoint_tile_paths: None,
         })
     }
     pub fn operator_actor_profile(&self) -> Option<&str> {

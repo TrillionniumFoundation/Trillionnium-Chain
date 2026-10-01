@@ -178,6 +178,11 @@ The explicit [operator actor context](../protocol/pon-nakamoto-v1/details/OPERAT
 uses the existing module owner and fresh public descriptor/signature-bound N/P/G.
 This changes development bootstrap custody and role pins only; native admission,
 execution and confirmation remain required, and no independent/public flag is accepted.
+The separate explicit revision10 [checkpoint tile task selector](../protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md)
+adds full original material replay before store creation and on reopen, with a fresh
+operator/policy N/P/G and unchanged source/lease wire codecs. Config policy construction
+alone performs no file replay; only Maintenance/output0 is selected and all public,
+model-quality, useful-contribution and hardness acceptances remain false.
 
 ## Checked derived state-root calculation
 

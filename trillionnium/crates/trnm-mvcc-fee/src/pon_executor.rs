@@ -2,6 +2,7 @@
 //! Parallel workers speculate against one immutable snapshot; exact key and prefix
 //! reads are validated in canonical order. Conflict or speculative rejection is
 //! re-executed ONCE against that order's current state, never an unbounded retry loop.
+use crate::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
 use crate::public_evaluation;
 use crate::qualified_task_lifecycle;
 use serde_json::{json, Value};
@@ -274,6 +275,7 @@ impl Config {
                     &[&canonical(&registry)?]
                 )));
             }
+            CHECKPOINT_TASK_PROFILE => return Err("CHECKPOINT_POLICY_REQUIRED"),
             _ => return Err("WORK_TASK_PROFILE"),
         }
         if policy == public_evaluation::PROFILE {
@@ -700,7 +702,7 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
         tx.tag != 22
             || matches!(
                 cfg.task_profile(),
-                ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
+                ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE | CHECKPOINT_TASK_PROFILE
             ),
         "WORK_TASK_PROFILE",
     )?;

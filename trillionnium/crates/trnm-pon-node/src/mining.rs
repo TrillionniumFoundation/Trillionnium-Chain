@@ -227,7 +227,8 @@ impl Node {
         let admission = match self.settings().task_profile() {
             "signed-task-lifecycle-dev-v2"
             | "signed-task-lifecycle-dev-v3"
-            | "signed-task-lifecycle-dev-v4" => {
+            | "signed-task-lifecycle-dev-v4"
+            | "signed-checkpoint-tile-maintenance-dev-v1" => {
                 let eligible = qualified_task_lifecycle::eligible_task(
                     &state,
                     task,

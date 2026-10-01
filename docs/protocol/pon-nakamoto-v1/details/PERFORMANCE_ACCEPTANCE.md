@@ -205,3 +205,10 @@ made. Cancellation discards the result rather than caching incomplete currentnes
 Native socket tests with concurrent false transcripts and honest confirmation requests
 exercise the real entry, but bounded same-host concurrency is not a sustained public
 arrival process, Sybil churn, latency-tail qualification or independently operated load.
+
+Qualification timeouts remain failed observations when process-group termination
+prevents GNU time from writing its summary. Keep the actual exit and timeout, preserve
+the raw log, and record missing peak RSS as null. Never infer completion from a partial
+test count. SHA2-only test optimization retains debug assertions, overflow checks and
+all boundary instances; compare performance only between the explicitly recorded build
+profiles. That test setting does not change the release runtime or certify its capacity.

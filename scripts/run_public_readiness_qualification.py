@@ -9,7 +9,7 @@ import argparse, hashlib, json, os, platform, signal, subprocess, sys, time
 from importlib.metadata import version
 from cryptography.hazmat.backends.openssl.backend import backend as openssl_backend
 from pathlib import Path
-from qualification_runtime import bind_python_runtime
+from qualification_runtime import bind_python_runtime, read_gnu_time_peak_rss
 
 ROOT = Path(__file__).resolve().parents[1]
 FLAGS = ('public_network_ready', 'production_activation', 'independent_accepted',
@@ -62,9 +62,7 @@ def run(args):
                 expired=True; os.killpg(process.pid,signal.SIGKILL); code=process.wait()
         row=dict(name=name,command=command,returncode=code,timed_out=expired,
                  elapsed_ns=time.monotonic_ns()-started,log=str(log.relative_to(out)),peak_rss_kib=None,vram_bytes=None)
-        if usage.exists():
-            values=usage.read_text().splitlines()[-1].split()
-            if len(values)==3 and values[0].isdigit(): row['peak_rss_kib']=int(values[0])
+        row['peak_rss_kib']=read_gnu_time_peak_rss(usage)
         records.append(row); print(json.dumps(row),flush=True)
         if code or expired: raise RuntimeError('QUALIFICATION_FAILED:'+name)
         if git('rev-parse','HEAD')!=commit or git('status','--porcelain'): raise ValueError('SOURCE_CHANGED')

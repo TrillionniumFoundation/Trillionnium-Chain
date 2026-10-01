@@ -1,6 +1,7 @@
 //! Bounded lifecycle transitions under the existing native ledger owner. This module
 //! does not authenticate the main envelope, charge its fee, issue mining rewards,
 //! change the work relation, or replace local irrevocable withdrawal/effect history.
+use crate::checkpoint_tile_policy_v1::{self, PROFILE as CHECKPOINT_PROFILE};
 use crate::pon_executor::{Config, Result, State};
 use serde_json::{json, Value};
 use trnm_crypto_primitives::qualified_work_task::lifecycle_v2::verify_lifecycle_statement;
@@ -23,7 +24,7 @@ use trnm_protocol::{
 pub fn enabled(cfg: &Config) -> bool {
     matches!(
         cfg.task_profile(),
-        PROFILE | ATOMIC_PROFILE | OVERLAP_PROFILE
+        PROFILE | ATOMIC_PROFILE | OVERLAP_PROFILE | CHECKPOINT_PROFILE
     )
 }
 
@@ -43,6 +44,10 @@ pub struct BootstrapLifecycleTask {
 /// or private production custody. Returned state contains lifecycle keys only.
 pub fn bootstrap_state(cfg: &Config, model: &[u8], input: &[u8]) -> Result<BootstrapLifecycleTask> {
     ensure(enabled(cfg), "WORK_TASK_PROFILE")?;
+    ensure(
+        cfg.task_profile() != CHECKPOINT_PROFILE,
+        "CHECKPOINT_EXPLICIT_BOOTSTRAP_REQUIRED",
+    )?;
     ensure(
         cfg.params["actor_profile"].is_null(),
         "ACTOR_EXPLICIT_BOOTSTRAP_REQUIRED",
@@ -293,7 +298,14 @@ fn context(current: &DemandLeaseV2, cfg: &Config) -> Result<()> {
     ensure(
         current.network == cfg.network && current.parameters == cfg.parameters,
         "TASK_CONTEXT",
-    )
+    )?;
+    if cfg.task_profile() == CHECKPOINT_PROFILE {
+        ensure(
+            current.purpose == TaskPurpose::Maintenance && current.cost_class == 1,
+            "CHECKPOINT_TASK_PURPOSE",
+        )?;
+    }
+    Ok(())
 }
 fn open(view: &mut impl LifecycleState, tx: &Envelope, height: u64, cfg: &Config) -> Result<()> {
     let request = DemandLeaseV2::decode(&tx.payload).map_err(|_| "TASK_DEMAND_LEASE")?;
@@ -360,8 +372,8 @@ fn renewed_record(
         successor.revision == previous.revision.checked_add(1).ok_or("TASK_REVISION")?,
         "TASK_REVISION",
     )?;
-    let signed_window = if cfg.task_profile() == OVERLAP_PROFILE {
-        // Only fresh V4 atomic22 uses the overlap rule. Its source statement is
+    let signed_window = if matches!(cfg.task_profile(), OVERLAP_PROFILE | CHECKPOINT_PROFILE) {
+        // Fresh V4 and checkpoint-maintenance atomic22 use the overlap rule. Its source statement is
         // still independently verified at the actual containing height below.
         previous.not_before <= successor.not_before && successor.not_before <= height
     } else {
@@ -442,6 +454,7 @@ fn registered_record(
         ("bound_task", signed.manifest.matrix_task),
         ("bound_meter", signed.manifest.output_meter),
     ];
+    checkpoint_tile_policy_v1::check_manifest(cfg, &signed.manifest)?;
     for (field, value) in material_fields {
         if !record[field].is_null() {
             ensure(record[field] == hex::encode(value), "TASK_RENEW_MATERIAL")?;
@@ -523,7 +536,12 @@ pub fn apply_verified_command(
     match tx.tag {
         OPEN_TAG => open(view, tx, height, cfg),
         RENEW_TAG if cfg.task_profile() == PROFILE => renew(view, tx, height, cfg),
-        ATOMIC_RENEW_TAG if matches!(cfg.task_profile(), ATOMIC_PROFILE | OVERLAP_PROFILE) => {
+        ATOMIC_RENEW_TAG
+            if matches!(
+                cfg.task_profile(),
+                ATOMIC_PROFILE | OVERLAP_PROFILE | CHECKPOINT_PROFILE
+            ) =>
+        {
             atomic_renew(view, tx, height, cfg)
         }
         REVOKE_TAG => revoke(view, tx, height, cfg),
@@ -586,6 +604,7 @@ pub fn eligible_task(
             number(record, "source_sequence")? == statement.manifest().demand_nonce,
             "TASK_SOURCE_NONCE",
         )?;
+        checkpoint_tile_policy_v1::check_manifest(cfg, statement.manifest())?;
         for (field, value) in [
             ("bound_model", statement.manifest().model),
             ("bound_input", statement.manifest().input),

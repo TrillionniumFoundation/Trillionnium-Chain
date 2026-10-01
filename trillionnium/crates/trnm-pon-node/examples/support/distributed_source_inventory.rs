@@ -15,6 +15,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/checkpoint-tile-task-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/checkpoint-tile-task-v1.json"
+        )),
+    ),
+    (
         "config/pon/devnet-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -75,6 +82,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../config/pon/operator-actors-dev-v1.json"
+        )),
+    ),
+    (
+        "config/pon/operator-checkpoint-tile-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/operator-checkpoint-tile-v1.json"
         )),
     ),
     (
@@ -2017,6 +2031,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_policy_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_policy_v1.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/src/codec.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2028,6 +2049,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-mvcc-fee/src/deployment_actors.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-mvcc-fee/src/deployment_checkpoint_tile_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/deployment_checkpoint_tile_v1.rs"
         )),
     ),
     (
@@ -2119,6 +2147,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-mvcc-fee/tests/checkpoint_tile_material_v1.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-mvcc-fee/tests/checkpoint_tile_policy_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/tests/checkpoint_tile_policy_v1.rs"
         )),
     ),
     (
@@ -2535,6 +2570,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/operator_checkpoint_tile.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_checkpoint_tile.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/operator_deployment.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2588,6 +2630,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/checkpoint_tile_operator.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/checkpoint_tile_operator.rs"
         )),
     ),
     (

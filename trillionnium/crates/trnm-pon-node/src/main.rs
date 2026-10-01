@@ -360,6 +360,15 @@ fn operator_inputs(
     Ok((spec, model, input))
 }
 fn operator_command(command: &str, args: &BTreeMap<String, String>) -> Result<Value> {
+    if args.get("--actor-profile").map(String::as_str)
+        == Some(trnm_pon_node::operator_checkpoint_tile::PROFILE)
+    {
+        return checkpoint_operator_command(command, args);
+    }
+    if args.contains_key("--deployment-checkpoint") || args.contains_key("--deployment-activation")
+    {
+        return Err("CHECKPOINT_ACTOR_PROFILE".into());
+    }
     use trnm_pon_node::operator_deployment::{self as actors, offline};
     let (spec, model, input) = operator_inputs(args)?;
     let expected = actors::prepare(&spec, &model, &input)?;
@@ -399,6 +408,83 @@ fn operator_command(command: &str, args: &BTreeMap<String, String>) -> Result<Va
             // Finalization independently constructs the full public state; a forged
             // template or merely well-shaped approval cannot produce a genesis.
             Settings::development_with_operator_actors(&spec, &bundle, &model, &input)?;
+            serde_json::to_value(bundle)?
+        }
+        _ => return Err("UNKNOWN_COMMAND".into()),
+    };
+    if let Some(path) = args.get("--output") {
+        offline::write_new_public(Path::new(path), &actors::canonical(&value)?)?;
+    }
+    Ok(value)
+}
+fn checkpoint_operator_inputs(
+    args: &BTreeMap<String, String>,
+) -> Result<(
+    trnm_pon_node::operator_checkpoint_tile::OperatorCheckpointTileSpecV1,
+    Vec<u8>,
+    Vec<u8>,
+    trnm_pon_node::operator_checkpoint_tile::CheckpointTileRuntimePaths,
+)> {
+    use trnm_pon_node::{operator_checkpoint_tile as tile, operator_deployment::offline};
+    if need(args, "--actor-profile")? != tile::PROFILE {
+        return Err("CHECKPOINT_ACTOR_PROFILE".into());
+    }
+    let spec = tile::OperatorCheckpointTileSpecV1::decode(&offline::read_public(
+        Path::new(need(args, "--deployment-spec")?),
+        tile::SPEC_BYTES as u64,
+    )?)?;
+    let model = offline::read_public(Path::new(need(args, "--deployment-model")?), 16384)?;
+    let input = offline::read_public(Path::new(need(args, "--deployment-input")?), 16384)?;
+    let paths = tile::CheckpointTileRuntimePaths::new(
+        need(args, "--deployment-checkpoint")?.into(),
+        need(args, "--deployment-activation")?.into(),
+    );
+    Ok((spec, model, input, paths))
+}
+fn checkpoint_operator_command(command: &str, args: &BTreeMap<String, String>) -> Result<Value> {
+    use trnm_pon_node::{
+        operator_checkpoint_tile as tile,
+        operator_deployment::{self as actors, offline},
+    };
+    let (spec, model, input, paths) = checkpoint_operator_inputs(args)?;
+    let expected = tile::prepare(&spec, &model, &input, &paths)?;
+    let value = match command {
+        "genesis-prepare" => serde_json::to_value(expected)?,
+        "genesis-sign" => {
+            let template: actors::BootstrapTemplate = actors::decode(&offline::read_public(
+                Path::new(need(args, "--deployment-template")?),
+                8192,
+            )?)?;
+            serde_json::to_value(tile::sign_approval_from_file(
+                &spec,
+                &template,
+                &model,
+                &input,
+                &paths,
+                need(args, "--role")?,
+                Path::new(need(args, "--signer-secret")?),
+            )?)?
+        }
+        "genesis-finalize" => {
+            let template: actors::BootstrapTemplate = actors::decode(&offline::read_public(
+                Path::new(need(args, "--deployment-template")?),
+                8192,
+            )?)?;
+            if template != expected {
+                return Err("CHECKPOINT_TEMPLATE".into());
+            }
+            let source = actors::decode(&offline::read_public(
+                Path::new(need(args, "--source-approval")?),
+                8192,
+            )?)?;
+            let requester = actors::decode(&offline::read_public(
+                Path::new(need(args, "--requester-approval")?),
+                8192,
+            )?)?;
+            let bundle = tile::assemble(&expected, &source, &requester)?;
+            Settings::development_with_operator_checkpoint_tile(
+                &spec, &bundle, &model, &input, paths,
+            )?;
             serde_json::to_value(bundle)?
         }
         _ => return Err("UNKNOWN_COMMAND".into()),
@@ -476,7 +562,7 @@ fn run() -> Result<Value> {
         _ => "",
     };
     let allowed = format!(
-        "--development --store --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile --actor-profile --deployment-spec --deployment-bootstrap --deployment-model --deployment-input {authentication_options} {admission_options} {extra}"
+        "--development --store --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile --actor-profile --deployment-spec --deployment-bootstrap --deployment-model --deployment-input --deployment-checkpoint --deployment-activation {authentication_options} {admission_options} {extra}"
     );
     for key in args.keys() {
         if !allowed.split_whitespace().any(|k| k == key) {
@@ -611,15 +697,40 @@ fn run() -> Result<Value> {
         {
             return Err("ACTOR_EXPLICIT_MINER_REQUIRED".into());
         }
-        let (spec, model, input) = operator_inputs(&args)?;
-        let bundle = trnm_pon_node::operator_deployment::decode(
-            &trnm_pon_node::operator_deployment::offline::read_public(
-                Path::new(need(&args, "--deployment-bootstrap")?),
-                8192,
-            )?,
-        )?;
-        Settings::development_with_operator_actors(&spec, &bundle, &model, &input)?
+        if args.get("--actor-profile").map(String::as_str)
+            == Some(trnm_pon_node::operator_checkpoint_tile::PROFILE)
+        {
+            let (spec, model, input, paths) = checkpoint_operator_inputs(&args)?;
+            let bundle = trnm_pon_node::operator_deployment::decode(
+                &trnm_pon_node::operator_deployment::offline::read_public(
+                    Path::new(need(&args, "--deployment-bootstrap")?),
+                    8192,
+                )?,
+            )?;
+            Settings::development_with_operator_checkpoint_tile(
+                &spec, &bundle, &model, &input, paths,
+            )?
+        } else {
+            if args.contains_key("--deployment-checkpoint")
+                || args.contains_key("--deployment-activation")
+            {
+                return Err("CHECKPOINT_ACTOR_PROFILE".into());
+            }
+            let (spec, model, input) = operator_inputs(&args)?;
+            let bundle = trnm_pon_node::operator_deployment::decode(
+                &trnm_pon_node::operator_deployment::offline::read_public(
+                    Path::new(need(&args, "--deployment-bootstrap")?),
+                    8192,
+                )?,
+            )?;
+            Settings::development_with_operator_actors(&spec, &bundle, &model, &input)?
+        }
     } else {
+        if args.contains_key("--deployment-checkpoint")
+            || args.contains_key("--deployment-activation")
+        {
+            return Err("CHECKPOINT_ACTOR_PROFILE".into());
+        }
         Settings::development_with_model_profiles(
             args.get("--genesis-time")
                 .map(|s| s.parse().map_err(|_| Error::from("GENESIS_TIME")))
@@ -925,6 +1036,7 @@ fn run() -> Result<Value> {
                         | "signed-task-lifecycle-dev-v2"
                         | "signed-task-lifecycle-dev-v3"
                         | "signed-task-lifecycle-dev-v4"
+                        | "signed-checkpoint-tile-maintenance-dev-v1"
                 ) {
                     if bootstrap && files_present.iter().any(|present| *present) {
                         return Err("TASK_OPTIONS".into());
@@ -935,6 +1047,7 @@ fn run() -> Result<Value> {
                             "signed-task-lifecycle-dev-v2"
                                 | "signed-task-lifecycle-dev-v3"
                                 | "signed-task-lifecycle-dev-v4"
+                                | "signed-checkpoint-tile-maintenance-dev-v1"
                         ) {
                             node.settings()
                                 .bootstrap_lifecycle_task()?
@@ -964,6 +1077,7 @@ fn run() -> Result<Value> {
                         "signed-task-lifecycle-dev-v2"
                             | "signed-task-lifecycle-dev-v3"
                             | "signed-task-lifecycle-dev-v4"
+                            | "signed-checkpoint-tile-maintenance-dev-v1"
                     );
                     let manifest = if lifecycle {
                         trnm_protocol::qualified_work_task::lifecycle_v2::SignedLifecycleTaskV2::decode(&wire).map_err(|e|Error::from(format!("TASK_MANIFEST:{e:?}")))?.manifest

@@ -23,6 +23,7 @@ use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{
     derive_matrices, verify_development_statement, DevelopmentTaskAdmission, TaskMaterial,
 };
+use trnm_mvcc_fee::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
 use trnm_mvcc_fee::pon_commitment::{
     self, CacheLimits, CheckedCommitment, CommitmentObservation, ExecutionRequest,
     PreparedCommitment,
@@ -370,6 +371,7 @@ impl Node {
         mut hook: Option<&mut Hook<'_>>,
     ) -> Result<Self> {
         ensure([1, 2, 4, 8].contains(&workers), "WORKERS")?;
+        settings.replay_checkpoint_tile_material()?;
         if !path.exists() {
             fs::create_dir_all(path)?;
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
@@ -1686,6 +1688,7 @@ impl Node {
                     | LIFECYCLE_TASK_PROFILE
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
+                    | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
         )?;
@@ -1726,6 +1729,7 @@ impl Node {
                     | LIFECYCLE_TASK_PROFILE
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
+                    | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
         )?;
@@ -1786,7 +1790,10 @@ impl Node {
     ) -> Result<ParentTaskEligibility> {
         if matches!(
             self.settings.task_profile(),
-            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
+            LIFECYCLE_TASK_PROFILE
+                | ATOMIC_TASK_PROFILE
+                | OVERLAP_TASK_PROFILE
+                | CHECKPOINT_TASK_PROFILE
         ) {
             let eligible =
                 qualified_task_lifecycle::eligible_task(state, task, height, &self.settings.app)?;

@@ -658,9 +658,13 @@ checks complete original checkpoint bytes, actual tensor coordinates, original i
 bits and exact integer quantization against all derived A/B values, under a new
 closed descriptor/policy domain. Its private checked result binds the unchanged
 crypto source/context manifest; actual native parent slot eligibility, withdrawal,
-replay and output consumption remain with the existing owner. The library adds no
-task selector, State, ledger wire or signed source authority. A future mandatory
-material policy requires its own fresh N/P/G and explicit binding/availability rules.
+replay and output consumption remain with the existing owner. The library alone adds no
+task selector, State, ledger wire or signed source authority. The explicit revision10
+[checkpoint tile task selector](../protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md)
+commits a context-free policy and new operator specification before deriving fresh
+N/P/G. Settings construction and every Node open replay complete original materials;
+Config policy construction alone does not. Only the installed Maintenance/output0
+relation is selected; original parent/source eligibility and native execution remain required.
 Full-file membership and material density do not qualify cheapest-miner hardness,
 true demand, full-model execution, marginal contribution or independent custody.
 

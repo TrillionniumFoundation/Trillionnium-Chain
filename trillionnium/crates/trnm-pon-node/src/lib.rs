@@ -4,6 +4,7 @@ mod ancestry_index;
 pub mod consensus;
 pub mod ingress;
 pub mod mining;
+pub mod operator_checkpoint_tile;
 pub mod operator_deployment;
 pub mod peer_polling;
 mod store;
@@ -195,6 +196,7 @@ pub struct Settings {
     pub(crate) initial: State,
     pub(crate) operator_bootstrap: Option<qualified_task_lifecycle::BootstrapLifecycleTask>,
     pub(crate) operator_material: Option<BootstrapTaskMaterial>,
+    pub(crate) checkpoint_tile_paths: Option<operator_checkpoint_tile::CheckpointTileRuntimePaths>,
 }
 impl Settings {
     /// An explicit new timestamp selects a distinct valueless devnet, not a hot upgrade.
@@ -358,6 +360,7 @@ impl Settings {
             initial,
             operator_bootstrap: None,
             operator_material: None,
+            checkpoint_tile_paths: None,
         })
     }
     pub fn network(&self) -> Hash {

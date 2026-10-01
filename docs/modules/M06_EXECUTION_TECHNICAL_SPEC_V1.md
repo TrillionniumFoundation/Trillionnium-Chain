@@ -157,4 +157,8 @@ checks a complete pinned safetensors file, exact tensor coordinates, original in
 bits and integer quantization against all A/B bytes. Its private checked result can
 bind a source-signature/context-checked QWT1 manifest. It neither replaces actual
 parent eligibility nor proves model forward, genuine demand, hardware cost, useful
-contribution or a qualified consensus cost class; no current chain selector is installed.
+contribution or a qualified consensus cost class. The separate explicit revision10
+[checkpoint tile task selector](../protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md)
+requires full original replay in Settings construction and every Node open, binds a fresh
+operator/policy N/P/G and only admits the installed Maintenance/output0 relation.
+Its material replay does not replace actual parent/source eligibility or native execution.

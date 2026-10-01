@@ -174,6 +174,18 @@ It hashes its source and binary, records actual tool/runtime versions and produc
 public acceptance. Earlier packages remain immutable and are checked against their
 original source. Documentation publication alone never reruns a historical measurement.
 
+The qualification owners record the actual child exit and timeout even when GNU time
+does not emit a resource summary. Missing, empty, unreadable or malformed usage records
+leave peak RSS null; an unavailable observation is never converted to zero or success.
+The [runtime controls](../../../../scripts/test_qualification_runtime.py) exercise both
+owners with actual successful, failing and process-group-terminated local children.
+They do not replace the complete qualification or change its command matrix, timeouts
+or rejection conditions. The SHA2 package alone uses test optimization level3 with
+debug assertions and overflow checks explicitly enabled in
+[Cargo profiles](../../../../trillionnium/Cargo.toml). Every original test instance and
+assertion remains required. A test build setting supplies no production throughput,
+work-hardness, model-quality or public availability evidence.
+
 The development status remains a candidate. Independent reviewers, genuine prospective
 tasks, deployment resources and cryptographic hardness evidence must be supplied by
 their actual owners; source code and local subprocesses cannot fabricate those facts.

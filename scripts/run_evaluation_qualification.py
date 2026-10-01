@@ -3,7 +3,7 @@
 from __future__ import annotations
 import argparse,hashlib,json,os,platform,re,signal,subprocess,sys,time
 from pathlib import Path
-from qualification_runtime import bind_python_runtime
+from qualification_runtime import bind_python_runtime, read_gnu_time_peak_rss
 
 ROOT=Path(__file__).resolve().parents[1]
 PYTHON_TESTS=['test_reference','test_contracts','test_invariants','test_evaluation',
@@ -47,9 +47,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
        'elapsed_ns':time.monotonic_ns()-started,'log':str(log.relative_to(out)),
        'environment_overrides':extra or {},
        'peak_rss_kib':None,'vram_bytes':None,'included_transactions':None,'client_confirmed_transactions':None}
-  if usage.exists():
-   values=usage.read_text().splitlines()[-1].split()
-   if len(values)==3 and values[0].isdigit():row['peak_rss_kib']=int(values[0])
+  row['peak_rss_kib']=read_gnu_time_peak_rss(usage)
   text=log.read_text(errors='replace')
   match=re.search(r'Ran (\d+) tests?\b',text)
   if match:row['python_tests']=int(match[1])
