@@ -119,6 +119,30 @@ Every public bound and phase deadline is committed by `PublicPolicy::id()`, alon
 with bits and lifetime. Changing them requires a new pinned digest. This does not
 change ledger validity by a local arbitrary allowlist.
 
+Resource revision r2 retains the original totals and partitions them: mutation
+body grants can use at most 8 MiB minus 128 KiB; non-Head outputs can use at most
+32 MiB minus 512 KiB. Head can use these reserves. Before Ready, a valid ticket
+and caller signature must obtain one of eight mutation grants or eight read
+grants. Connection and task jointly retain the grant through body, queue, native
+work and output cleanup; a disconnected running task retains it until completion.
+Eight tokens in the existing challenge bucket are reserved from mutation Hellos
+for reads. Key rotation does not raise these global limits. The shared initial
+connection cap, unpaid reads and pre-ticket resources remain susceptible to
+saturation; this is finite lane isolation, not anonymous honest fairness.
+
+An Await EOF, phase expiry or shutdown cancels queued work and subsequent native
+stages. Workers check the original deadline/cancellation before dispatch, while
+waiting for the owner and between complete context/work/admission stages. Running
+transcript, M06 or SQLite operations remain nonpreemptive. Clients must keep both
+TCP halves open until the response: `shutdown(Write)` after a body also yields
+Await EOF and cancels the request. The ordinary client already follows this rule.
+Native durable facts cannot be rolled back when a requesting socket disappears.
+
+The r2 policy digest binds these changes explicitly; previous pinned policy
+digests refuse without fallback. PPH2/PPS2, the closed operations, signature
+domains, one-hour service bound and Node-owning public API retain their bytes and
+roles. No pool/miner or second durable owner is introduced.
+
 ## Bounded reads and actual validation
 
 Head invokes `Node::public_head_metadata()` rather than `Node::stats()`. It reads

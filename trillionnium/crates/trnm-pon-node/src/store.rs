@@ -1,4 +1,6 @@
 //! M07/M08 native branch persistence and recovery using the existing M06 executor.
+pub mod evaluation_observation;
+pub mod evaluation_round_observation;
 pub mod mempool;
 use crate::{
     consensus::{self, Work},

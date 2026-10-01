@@ -144,3 +144,17 @@ The explicit [operator actor context](../protocol/pon-nakamoto-v1/details/OPERAT
 uses the existing module owner and fresh public descriptor/signature-bound N/P/G.
 This changes development bootstrap custody and role pins only; native admission,
 execution and confirmation remain required, and no independent/public flag is accepted.
+
+The optional [derived state commitment](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md)
+uses an allocation-free ordered difference preflight, complete canonical root fallback
+and unchanged public delta bytes. A disjoint pair of valid65536-key states can produce
+131072 changes; the delta budget selects fallback before cloning that change vector.
+Cache accounting and implementation-conditioned workspace bounds are not protocol
+payload limits, hard allocation/RSS limits or proof of a reachable native workload.
+
+The independent [checkpoint tile material replay](../protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_MATERIAL_V1.md)
+checks a complete pinned safetensors file, exact tensor coordinates, original input
+bits and integer quantization against all A/B bytes. Its private checked result can
+bind a source-signature/context-checked QWT1 manifest. It neither replaces actual
+parent eligibility nor proves model forward, genuine demand, hardware cost, useful
+contribution or a qualified consensus cost class; no current chain selector is installed.

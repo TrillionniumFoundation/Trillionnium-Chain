@@ -357,6 +357,145 @@ fn payload_budget_fallback_is_explicit_and_real_root_is_unchanged() {
     );
     assert!(over.snapshot.is_none());
 }
+
+#[test]
+fn maximum_keys_and_payload_combination_checks_exact_minus_and_plus_one() {
+    // Component-only canonical State shape; no claim that native commands can
+    // create arbitrary kXXXXX/string rows from an installed genesis.
+    let exact: State = (0..65536)
+        .map(|i| (format!("k{i:05}"), json!("x".repeat(120))))
+        .collect();
+    let expected = pon_executor::root(&exact).unwrap();
+    let base =
+        pon_commitment::checked_snapshot(&exact, expected, None, CacheLimits::default()).unwrap();
+    assert_eq!(base.observation.actual_keys, 65536);
+    assert_eq!(base.observation.actual_payload_bytes, 8 * 1024 * 1024);
+    assert_eq!(base.observation.method, CommitmentMethod::RebuiltTree);
+    assert!(base.snapshot.is_some());
+    let mut below = exact.clone();
+    below.insert("k00000".into(), json!("x".repeat(119)));
+    let below_root = pon_executor::root(&below).unwrap();
+    let selected = pon_commitment::checked_snapshot(
+        &below,
+        below_root,
+        base.snapshot.as_ref(),
+        CacheLimits::default(),
+    )
+    .unwrap();
+    assert_eq!(
+        selected.observation.actual_payload_bytes,
+        8 * 1024 * 1024 - 1
+    );
+    assert_eq!(selected.observation.method, CommitmentMethod::CheckedApply);
+    assert_eq!(replay_changes(&exact, &selected.changes), below);
+    let mut above = exact.clone();
+    above.insert("k00000".into(), json!("x".repeat(121)));
+    let above_root = pon_executor::root(&above).unwrap();
+    let fallback = pon_commitment::checked_snapshot(
+        &above,
+        above_root,
+        base.snapshot.as_ref(),
+        CacheLimits::default(),
+    )
+    .unwrap();
+    assert_eq!(
+        fallback.observation.actual_payload_bytes,
+        8 * 1024 * 1024 + 1
+    );
+    assert_eq!(fallback.root, above_root);
+    assert_eq!(
+        fallback.observation.method,
+        CommitmentMethod::FullRoot(FullRootReason::PayloadBudget)
+    );
+    assert!(fallback.snapshot.is_none());
+    assert_eq!(replay_changes(&exact, &fallback.changes), above);
+    assert_eq!(base.snapshot.as_ref().unwrap().root(), expected);
+    // Payload exceeds its selected budget and workspace is simultaneously too
+    // small: retain the established PayloadBudget-before-WorkspaceBudget order.
+    let both = pon_commitment::checked_snapshot(
+        &above,
+        above_root,
+        base.snapshot.as_ref(),
+        CacheLimits {
+            max_workspace_charge_bytes: 1,
+            ..CacheLimits::default()
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        both.observation.method,
+        CommitmentMethod::FullRoot(FullRootReason::PayloadBudget)
+    );
+    let mut overflow = exact;
+    overflow.insert("overflow".into(), json!(0));
+    assert_eq!(pon_executor::root(&overflow).unwrap_err(), "LIMIT");
+    assert_eq!(
+        pon_commitment::derive_snapshot(&overflow, base.snapshot.as_ref(), CacheLimits::default())
+            .unwrap_err(),
+        "LIMIT"
+    );
+    overflow.insert("zz-last".into(), json!(1.5));
+    assert_eq!(
+        pon_commitment::derive_snapshot(&overflow, base.snapshot.as_ref(), CacheLimits::default())
+            .unwrap_err(),
+        pon_executor::root(&overflow).unwrap_err()
+    );
+    println!("combined65536-payload: {:?}", base.observation);
+}
+
+#[test]
+fn actual_workspace_charge_exact_minus_plus_one_preserves_complete_large_deltas() {
+    let before: State = (0..2048)
+        .map(|i| (format!("{i:04x}"), json!("x".repeat(4090))))
+        .collect();
+    let after: State = (0..2048)
+        .map(|i| (format!("{i:04x}"), json!("y".repeat(4090))))
+        .collect();
+    let before_root = pon_executor::root(&before).unwrap();
+    let after_root = pon_executor::root(&after).unwrap();
+    let base = pon_commitment::checked_snapshot(&before, before_root, None, CacheLimits::default())
+        .unwrap();
+    let measured = pon_commitment::checked_snapshot(
+        &after,
+        after_root,
+        base.snapshot.as_ref(),
+        CacheLimits::default(),
+    )
+    .unwrap();
+    let charge = measured.observation.workspace_charge_bytes;
+    assert!(charge > 0 && charge < pon_commitment::MAX_WORKSPACE_CHARGE_BYTES);
+    assert_eq!(measured.observation.actual_payload_bytes, 8 * 1024 * 1024);
+    assert_eq!(
+        measured.observation.changed_payload_bytes,
+        2048 * (4 + 2 * 4092)
+    );
+    for (limit, method) in [
+        (
+            charge - 1,
+            CommitmentMethod::FullRoot(FullRootReason::WorkspaceBudget),
+        ),
+        (charge, CommitmentMethod::CheckedApply),
+        (charge + 1, CommitmentMethod::CheckedApply),
+    ] {
+        let result = pon_commitment::checked_snapshot(
+            &after,
+            after_root,
+            base.snapshot.as_ref(),
+            CacheLimits {
+                max_workspace_charge_bytes: limit,
+                ..CacheLimits::default()
+            },
+        )
+        .unwrap();
+        assert_eq!(result.observation.workspace_charge_bytes, charge);
+        assert_eq!(result.observation.method, method);
+        assert_eq!(result.root, after_root);
+        assert_eq!(result.changes.len(), 2048);
+        assert_eq!(replay_changes(&before, &result.changes), after);
+        assert_eq!(base.snapshot.as_ref().unwrap().root(), before_root);
+    }
+    println!("workspace-selected-Q-minus-exact-plus: {{\"Q\":{charge},\"default512MiB_boundary_measured\":false}}");
+}
 #[test]
 fn protocol_bounds_canonical_errors_and_full_key_limit_remain_enforced() {
     for state in [

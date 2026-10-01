@@ -23,6 +23,7 @@
 
 #![forbid(unsafe_code)]
 
+pub mod checkpoint_tile_material_v1;
 mod codec;
 pub mod deployment_actors;
 pub mod deterministic_parallel_v1;

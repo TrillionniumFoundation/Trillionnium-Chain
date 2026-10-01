@@ -396,6 +396,13 @@ where
             public_network_ready: false,
             production_activation: false,
         };
+        if stop.load(Ordering::Acquire) || Instant::now() >= end {
+            event.kind = "stopped-before-search";
+            event.failure_stage = Some("parent-observation");
+            drop(owner);
+            observe(&event)?;
+            break;
+        }
         let stage = Instant::now();
         let batch_result = owner.pool_mining_batch(
             parent,
@@ -418,11 +425,19 @@ where
         };
         event.transactions = batch.transactions.len();
         event.transaction_bytes = batch.transactions.iter().map(Vec::len).sum();
+        if stop.load(Ordering::Acquire) || Instant::now() >= end {
+            event.kind = "stopped-before-search";
+            event.failure_stage = Some("pool-batch");
+            drop(owner);
+            observe(&event)?;
+            break;
+        }
         let stage = Instant::now();
-        let validation = (|| {
-            ensure(batch.preview_miner == config.miner, "POOL_MINER")?;
-            owner.pool_validate_batch(&batch)
-        })();
+        // Selection already performed complete M05/M06 against the actual
+        // parent and retained raws under this same uninterrupted owner guard.
+        // This local batch has no mutable external alias. Only the producer's
+        // separately supplied miner still needs its configuration binding.
+        let validation = ensure(batch.preview_miner == config.miner, "POOL_MINER");
         event.pre_search_batch_validation_ns = stage.elapsed().as_nanos();
         report.pre_search_batch_validation_ns += event.pre_search_batch_validation_ns;
         if let Err(error) = validation {
@@ -433,9 +448,16 @@ where
             observe(&event)?;
             return Err(error);
         }
+        if stop.load(Ordering::Acquire) || Instant::now() >= end {
+            event.kind = "stopped-before-search";
+            event.failure_stage = Some("pre-search-batch-validation");
+            drop(owner);
+            observe(&event)?;
+            break;
+        }
         let make_stage = Instant::now();
         let stage = Instant::now();
-        let prepared = match &config.material {
+        let prepared = (|| match &config.material {
             MiningMaterial::LegacyDevelopment => {
                 ensure(
                     owner.settings().task_profile() == "legacy-task-v1",
@@ -460,23 +482,36 @@ where
                 model,
                 input,
             ),
-        };
+        })();
         event.prepare_ns = stage.elapsed().as_nanos();
         report.prepare_ns += event.prepare_ns;
         drop(owner);
-        let made = match prepared {
-            Ok(candidate) => {
-                let stage = Instant::now();
-                let made = candidate.search_cooperative(config.search_attempts, &stop, Some(end));
-                event.search_ns = stage.elapsed().as_nanos();
-                report.search_ns += event.search_ns;
-                made
+        let candidate = match prepared {
+            Ok(candidate) => candidate,
+            Err(error) => {
+                event.make_ns = make_stage.elapsed().as_nanos();
+                event.kind = "failed";
+                event.failure = Some(error.to_string());
+                event.failure_stage = Some("prepare");
+                observe(&event)?;
+                return Err(error);
             }
-            Err(error) => Err(error),
         };
+        if stop.load(Ordering::Acquire) || Instant::now() >= end {
+            event.make_ns = make_stage.elapsed().as_nanos();
+            report.make_ns += event.make_ns;
+            event.kind = "stopped-before-search";
+            event.failure_stage = Some("prepare");
+            observe(&event)?;
+            break;
+        }
+        report.attempted_searches += 1;
+        let stage = Instant::now();
+        let made = candidate.search_cooperative(config.search_attempts, &stop, Some(end));
+        event.search_ns = stage.elapsed().as_nanos();
+        report.search_ns += event.search_ns;
         event.make_ns = make_stage.elapsed().as_nanos();
         report.make_ns += event.make_ns;
-        report.attempted_searches += 1;
         let packet = match made {
             Ok(SearchOutcome::Found(packet)) => *packet,
             Ok(SearchOutcome::Exhausted(trials)) => {
@@ -499,7 +534,7 @@ where
             Err(error) => {
                 event.kind = "failed";
                 event.failure = Some(error.to_string());
-                event.failure_stage = Some("prepare-or-search");
+                event.failure_stage = Some("search");
                 observe(&event)?;
                 return Err(error);
             }
@@ -538,6 +573,13 @@ where
             observe(&event)?;
             next = Instant::now() + config.pace;
             continue;
+        }
+        if stop.load(Ordering::Acquire) || Instant::now() >= end {
+            event.kind = "stopped-before-admission";
+            event.failure_stage = Some("parent-fence");
+            drop(owner);
+            observe(&event)?;
+            break;
         }
         // Rechecking the whole native prefix is nonpreemptive. Inspect the
         // cooperative fence again afterwards, before starting durable admission.
@@ -583,6 +625,7 @@ where
             Ok(true) => {}
             Ok(false) => {
                 event.kind = "stopped-before-admission";
+                event.failure_stage = Some("batch-revalidation");
                 observe(&event)?;
                 break;
             }

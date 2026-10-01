@@ -482,6 +482,47 @@ fn client_binds_ready_profile_before_searching_challenge() {
 }
 
 #[test]
+fn previous_zero_opportunity_profile_is_rejected_without_legacy_work_fallback() {
+    let (_directory, settings, node, packet) = fixture();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    let server_stop = stop.clone();
+    let server = thread::spawn(move || {
+        ingress::serve_protected(
+            listener,
+            node,
+            Duration::from_secs(5),
+            server_stop,
+            AdmissionPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .unwrap()
+    });
+    let (stream, wire, mut challenge) = connect(address, &request(&packet));
+    let current_profile = challenge.profile.clone();
+    let old = hash(b"native-transport-admission-profile-v1", &[
+        b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry256-5s/refusal128chars-100ms/reserved-hello-yield2ms/hello-rendezvous0/proof-recv-before-accept2ms/original-deadlines/socket-ceiling3",
+        &[challenge.bits], &challenge.lifetime_ms.to_le_bytes(),
+    ]);
+    assert_ne!(current_profile, hex::encode(old));
+    challenge.profile = hex::encode(old);
+    assert_eq!(
+        ingress::solve_admission_challenge(&challenge, &wire, &settings)
+            .unwrap_err()
+            .to_string(),
+        "ADMISSION_PROFILE"
+    );
+    drop(stream);
+    let head = ingress::call_protected(address, &Request::Head, &settings).unwrap();
+    assert_eq!(head["height"], 0);
+    stop.store(true, Ordering::Release);
+    let metrics = server.join().unwrap();
+    assert_eq!(metrics.work_verifications, 0);
+    assert_eq!(metrics.admission_accepted, 0);
+    assert_eq!(metrics.completed_requests, 1);
+}
+
+#[test]
 fn slow_hello_bodies_cannot_take_the_reserved_read_only_worker() {
     let (_directory, _settings, node, packet) = fixture();
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();

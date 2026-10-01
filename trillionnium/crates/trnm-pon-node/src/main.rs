@@ -442,6 +442,8 @@ fn run() -> Result<Value> {
         "genesis-sign" => "--deployment-template --role --signer-secret --output",
         "genesis-finalize" => "--deployment-template --source-approval --requester-approval --output",
         "status" | "recover" | "pool-status" => "",
+        "evaluation-observe" => "--candidate --ancestry-blocks",
+        "evaluation-round-observe" => "--candidate --round-blocks",
         "pool-submit" => "--transactions --pool-policy",
         "pool-push" => "--peer --transactions --pool-context",
         "pool-status-remote" => "--peer",
@@ -452,7 +454,7 @@ fn run() -> Result<Value> {
         "export" => "--block --output",
         "confirm" => "--transaction --block",
         "confirm-batch" => "--queries",
-        "sync" => "--peer --tip --after --pages",
+        "sync" => "--peer --tip --after --pages --evaluation-candidate --evaluation-round-blocks",
         "head" => "--peer",
         "history" => "--peer --tip --after",
         "serve" => "--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --peers --peer-poll-ms --peer-pages",
@@ -481,6 +483,51 @@ fn run() -> Result<Value> {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
         }
     }
+    // Local evaluation query inputs reject before Node::open can create/recover a
+    // store. Existing --logical-now is explicit trusted test input, never height.
+    let evaluation_query = if command == "evaluation-observe" {
+        let candidate = digest(need(&args, "--candidate")?)?;
+        let bound = number(&args, "--ancestry-blocks", 4096)?;
+        if !(1..=4096).contains(&bound) {
+            return Err("EVALUATION_OBSERVATION_LIMIT".into());
+        }
+        Some((candidate, bound))
+    } else {
+        None
+    };
+    let evaluation_round_query = if command == "evaluation-round-observe" {
+        let candidate = digest(need(&args, "--candidate")?)?;
+        let bound = number(&args, "--round-blocks", 4096)?;
+        if !(1..=4096).contains(&bound) {
+            return Err("EVALUATION_OBSERVATION_LIMIT".into());
+        }
+        Some((candidate, bound))
+    } else {
+        None
+    };
+    let sync_evaluation_query = if command == "sync" {
+        match args.get("--evaluation-candidate") {
+            Some(candidate) => {
+                let candidate = digest(candidate)?;
+                let bound = number(&args, "--evaluation-round-blocks", 4096)?;
+                if !(1..=4096).contains(&bound) {
+                    return Err("EVALUATION_OBSERVATION_LIMIT".into());
+                }
+                if !public_profile(&args) {
+                    return Err("EVALUATION_SYNC_PUBLIC_PROFILE".into());
+                }
+                Some((candidate, bound))
+            }
+            None => {
+                if args.contains_key("--evaluation-round-blocks") {
+                    return Err("EVALUATION_SYNC_CANDIDATE_REQUIRED".into());
+                }
+                None
+            }
+        }
+    } else {
+        None
+    };
     if matches!(
         command.as_str(),
         "genesis-prepare" | "genesis-sign" | "genesis-finalize"
@@ -782,6 +829,15 @@ fn run() -> Result<Value> {
     )?;
     let value = match command.as_str() {
         "status" | "recover" => node.stats()?,
+        "evaluation-observe" => {
+            let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
+            serde_json::to_value(node.evaluation_observation(candidate, clock, bound)?)?
+        }
+        "evaluation-round-observe" => {
+            let (candidate, bound) =
+                evaluation_round_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
+            serde_json::to_value(node.evaluation_round_observation(candidate, clock, bound)?)?
+        }
         "pool-status" => serde_json::to_value(node.pool_status()?)?,
         "pool-submit" => {
             let policy: PoolLimits = serde_json::from_slice(&read_owned_configuration(
@@ -1031,7 +1087,29 @@ fn run() -> Result<Value> {
                 }
                 // A signed remote page is only transport evidence; receive_page owns
                 // complete native verification and activation of the fixed tip.
-                json!({"verified_tip":hex::encode(cursor),"state":node.stats()?,"transport_solve_trials":trials,"public_network_ready":false})
+                let mut result = json!({"verified_tip":hex::encode(cursor),"state":node.stats()?,"transport_solve_trials":trials,"public_network_ready":false});
+                if let Some((candidate, bound)) = sync_evaluation_query {
+                    // The same exclusive local owner has completed native sync.
+                    // A refused query cannot undo those committed sync facts.
+                    let (active_tip, generation) = node.active()?;
+                    let observed_now = ingress::now()?;
+                    let observation = node
+                        .evaluation_round_observation(candidate, observed_now, bound)
+                        .map_err(|error| Error::from(format!(
+                            "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED:verified_tip={}:active_tip={}:generation={generation}:{error}",
+                            hex::encode(cursor), hex::encode(active_tip),
+                        )))?;
+                    result["evaluation_observation"] = serde_json::to_value(observation)?;
+                    result["evaluation_observation_scope"] = json!({
+                        "schema":"native-sync-evaluation-observation-v1",
+                        "same_exclusive_local_owner":true,
+                        "complete_native_sync":true,
+                        "unsigned_local_observation":true,
+                        "transport_phase_authority":false,
+                        "public_ready":false,
+                    });
+                }
+                result
             } else if let Some(authentication) = authenticated_client(&args)? {
                 let verified = ingress::sync_from_authenticated_durable(
                     &mut node,

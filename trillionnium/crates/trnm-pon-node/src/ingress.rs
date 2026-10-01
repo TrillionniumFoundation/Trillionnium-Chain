@@ -38,6 +38,10 @@ const PROTECTED_ERROR_CHARS: usize = 128;
 const RESERVED_READ_ONLY_BUSY: &str = "ADMISSION_BUSY_READ_ONLY_RESERVED";
 const RESERVED_HELLO_YIELD: Duration = Duration::from_millis(2);
 const PROOF_HANDOFF_POLL: Duration = Duration::from_millis(2);
+const HELLO_HANDOFF_OPPORTUNITY: Duration = Duration::from_millis(2);
+const HELLO_HANDOFF_RETRY_PAUSE: Duration = Duration::from_micros(100);
+const HELLO_CLIENT_ATTEMPTS: usize = 512;
+const HELLO_CLIENT_BUDGET: Duration = Duration::from_secs(5);
 
 /// Connection-local transport CPU protection, never ledger work or a Sybil theorem.
 /// The old development listeners remain separate and do not silently adopt this profile.
@@ -65,7 +69,7 @@ impl AdmissionPolicy {
         hash(
             b"native-transport-admission-profile-v1",
             &[
-                b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry256-5s/refusal128chars-100ms/reserved-hello-yield2ms/hello-rendezvous0/proof-recv-before-accept2ms/original-deadlines/socket-ceiling3",
+                b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry512-5s/refusal128chars-100ms/reserved-hello-yield2ms/hello-rendezvous0/handoff-opportunity2ms/poll100us/proof-recv-before-accept2ms/original-deadlines/socket-ceiling3",
                 &[self.bits],
                 &self.lifetime_ms.to_le_bytes(),
             ],
@@ -865,13 +869,13 @@ fn write_protected_request_bound(
             request_digest: hex::encode(hash(b"native-transport-admission-wire-v1", &[wire])),
         };
         let hello_wire = serde_json::to_vec(&hello)?;
-        let deadline = Instant::now() + Duration::from_secs(5);
+        let deadline = Instant::now() + HELLO_CLIENT_BUDGET;
         let mut negotiated = None;
-        for attempt in 0..256 {
+        for attempt in 0..HELLO_CLIENT_ATTEMPTS {
             write_frame_deadline(stream, &hello_wire, deadline)?;
             let ready_wire = read_frame_deadline(stream, deadline)?;
             if serde_json::from_slice::<Value>(&ready_wire)?["error"] == RESERVED_READ_ONLY_BUSY {
-                ensure(attempt < 255, RESERVED_READ_ONLY_BUSY)?;
+                ensure(attempt + 1 < HELLO_CLIENT_ATTEMPTS, RESERVED_READ_ONLY_BUSY)?;
                 let remaining = deadline
                     .checked_duration_since(Instant::now())
                     .filter(|remaining| !remaining.is_zero())
@@ -919,8 +923,11 @@ fn admission_hello(first: &[u8]) -> Result<Option<AdmissionHello>> {
 }
 
 /// An accepted socket belongs to exactly one of the three existing workers.
-/// The zero-capacity channels only transfer it to a proof worker already waiting;
-/// no pending sockets, fresh accept time or renewed preface budget are created.
+/// Zero-capacity channels transfer it only to a proof worker actually receiving.
+/// The current reserved worker may retain this same socket for up to 2 ms of
+/// additional opportunities, clamped to its original deadlines. There is no
+/// pending socket queue, fresh accept time or renewed preface budget. Scheduling
+/// delay can overshoot a requested sleep; every subsequent offer checks expiry.
 struct PrefacedSocket {
     socket: TcpStream,
     address: SocketAddr,
@@ -933,15 +940,36 @@ fn try_handoff_hello(
     mut connection: PrefacedSocket,
     senders: &[SyncSender<PrefacedSocket>],
 ) -> std::result::Result<(), PrefacedSocket> {
-    for sender in senders {
-        match sender.try_send(connection) {
-            Ok(()) => return Ok(()),
-            Err(TrySendError::Full(returned) | TrySendError::Disconnected(returned)) => {
-                connection = returned;
+    let deadline = connection
+        .preface_deadline
+        .min(connection.request_deadline)
+        .min(Instant::now() + HELLO_HANDOFF_OPPORTUNITY);
+    loop {
+        let mut receiver_exists = false;
+        for sender in senders {
+            match sender.try_send(connection) {
+                Ok(()) => return Ok(()),
+                Err(TrySendError::Full(returned)) => {
+                    receiver_exists = true;
+                    connection = returned;
+                }
+                Err(TrySendError::Disconnected(returned)) => connection = returned,
             }
         }
+        let Some(remaining) = deadline.checked_duration_since(Instant::now()) else {
+            return Err(connection);
+        };
+        if !receiver_exists || remaining.is_zero() {
+            return Err(connection);
+        }
+        thread::sleep(HELLO_HANDOFF_RETRY_PAUSE.min(remaining));
+        // Keep the previous immediate-offer behavior for the initial round; an
+        // expired transferred socket still fails its original Ready/body IO.
+        // No extra retry round can start after either original deadline.
+        if Instant::now() >= deadline {
+            return Err(connection);
+        }
     }
-    Err(connection)
 }
 
 fn receive_protected_request(
@@ -2166,6 +2194,114 @@ mod tests {
     }
 
     #[test]
+    fn protected_hello_additional_opportunities_never_refresh_expired_original_deadlines() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let _client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (socket, address) = listener.accept().unwrap();
+        let (sender, _receiver) = mpsc::sync_channel::<PrefacedSocket>(0);
+        let expired = Instant::now() - Duration::from_millis(1);
+        let returned = try_handoff_hello(
+            PrefacedSocket {
+                socket,
+                address,
+                request_deadline: Instant::now() + Duration::from_secs(10),
+                preface_deadline: expired,
+                first: vec![1],
+            },
+            &[sender],
+        )
+        .err()
+        .unwrap();
+        assert_eq!(returned.preface_deadline, expired);
+        assert_eq!(HELLO_HANDOFF_OPPORTUNITY, Duration::from_millis(2));
+        assert_eq!(HELLO_HANDOFF_RETRY_PAUSE, Duration::from_micros(100));
+        assert_eq!(HELLO_CLIENT_BUDGET, Duration::from_secs(5));
+        // A 256*10ms ceiling would end before the registered absolute budget;
+        // 512 is only an additional finite ceiling, never a fresh time budget.
+        assert!(HELLO_CLIENT_ATTEMPTS as u64 * 10 >= 5000);
+    }
+
+    #[test]
+    fn protected_client_can_negotiate_after_260_busy_replies_then_full_native_admission() {
+        let (_dir, node, packet) = pending_packet();
+        let settings = node.lock().unwrap().settings().clone();
+        let expected = packet.id().unwrap();
+        let request = Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        };
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let proof_settings = settings.clone();
+        let server = thread::spawn(move || -> Result<Metrics> {
+            let server_deadline = Instant::now() + Duration::from_secs(8);
+            let accept = || -> Result<TcpStream> {
+                loop {
+                    ensure(Instant::now() < server_deadline, "TEST_ACCEPT_DEADLINE")?;
+                    match listener.accept() {
+                        Ok((stream, _)) => {
+                            stream.set_nodelay(true)?;
+                            return Ok(stream);
+                        }
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                            thread::sleep(Duration::from_micros(100))
+                        }
+                        Err(error) => return Err(error.into()),
+                    }
+                }
+            };
+            for _ in 0..260 {
+                let mut socket = accept()?;
+                let first = read_frame_deadline(&mut socket, server_deadline)?;
+                ensure(admission_hello(&first)?.is_some(), "TEST_HELLO")?;
+                write_untrusted_error(&mut socket, &RESERVED_READ_ONLY_BUSY, true)?;
+            }
+            let mut socket = accept()?;
+            let first = read_frame_deadline(&mut socket, server_deadline)?;
+            let (wire, negotiated) = receive_protected_request(
+                &mut socket,
+                first,
+                Some(AdmissionPolicy::new(8, Duration::from_secs(2))?),
+                server_deadline,
+                true,
+            )?;
+            let request: Request = serde_json::from_slice(&wire)?;
+            let metrics = Mutex::new(Metrics::default());
+            let mut progress =
+                |_| ensure(Instant::now() < server_deadline, "TEST_REQUEST_DEADLINE");
+            protect_submit(
+                &mut socket,
+                &request,
+                &wire,
+                AdmissionHost {
+                    settings: &proof_settings,
+                    policy: Some(AdmissionPolicy::new(8, Duration::from_secs(2))?),
+                    authentication: None,
+                    metrics: &metrics,
+                    negotiated,
+                },
+                &mut progress,
+            )?;
+            let reply = dispatch_shared_with(&node, request, &mut progress, |packet| {
+                measured_work_verify(packet, &metrics)
+            })?;
+            write_frame_deadline(&mut socket, &serde_json::to_vec(&reply)?, server_deadline)?;
+            ensure(
+                node.lock().map_err(|_| "NODE_POISONED")?.stats()?["height"] == 1,
+                "TEST_HEIGHT",
+            )?;
+            metrics.into_inner().map_err(|_| "METRICS_POISONED".into())
+        });
+        let result = call_protected(address, &request, &settings);
+        let metrics = server.join().unwrap().unwrap();
+        assert_eq!(result.unwrap()["block"], hex::encode(expected));
+        assert_eq!(metrics.admission_challenges, 1);
+        assert_eq!(metrics.admission_accepted, 1);
+        assert_eq!(metrics.work_verifications, 1);
+        assert_eq!(metrics.admission_rejected_before_work, 0);
+    }
+
+    #[test]
     fn protected_hello_rendezvous_expired_original_preface_cannot_send_ready() {
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let mut client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
@@ -2220,7 +2356,7 @@ mod tests {
         let old = hash(
             b"native-transport-admission-profile-v1",
             &[
-                b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry256-5s/refusal128chars-100ms/reserved-hello-yield2ms",
+                b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry256-5s/refusal128chars-100ms/reserved-hello-yield2ms/hello-rendezvous0/proof-recv-before-accept2ms/original-deadlines/socket-ceiling3",
                 &[policy.bits],
                 &policy.lifetime_ms.to_le_bytes(),
             ],

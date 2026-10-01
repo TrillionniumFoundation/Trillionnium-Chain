@@ -610,3 +610,65 @@ M15 composes public-only normal startup and explicit offline prepare/sign/finali
 Actual local native/CLI regressions do not prove random keys, independent custody,
 truthful demand, data retention, cheapest-miner hardness or public governance. All
 acceptance flags remain false, and historical constructors/golden bytes stay unchanged.
+
+The current convergence continues with [public V2](../protocol/pon-nakamoto-v1/details/PUBLIC_INTAKE_V2.md)
+and [V3](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md) resource revision r2.
+Within the existing totals it reserves read-body and control-output capacity, separates
+paid mutation/read grants and read challenge tokens, retains grants through native work
+and output, and checks disconnect/expiry fences between complete stages. EOF, including
+a write-half-close, cancels the request; clients keep both halves open until the reply.
+New resource digests reject old cookies without fallback. These component controls do
+not establish anonymous scheduling, remove full-verifier cost amplification or qualify
+independent public hostile service. The separate connection-work-v1 transport now gives
+its original socket/deadlines an at most2ms zero-capacity handoff opportunity and up to512
+Busy attempts within its existing absolute5s budget, under a fresh profile digest.
+
+The same [continuous miner](../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md)
+checks cooperative stop/deadline fences after owner/parent observation, actual pool
+selection, miner binding and preparation, and before and after postsearch revalidation.
+Selection already performs full M05/M06 under the uninterrupted owner; its immediately
+duplicated presearch preview is removed only for the locally owned batch. Public mutable
+batch validation, postsearch validation, native admission and durable activation remain
+complete. Stage timing names and nonpreemptive overruns are specified explicitly.
+Actual SQLite-blocked stopping and injected native failure controls retain state and
+queue invariants; failed predecessor observations remain bound to their source.
+
+The [M06 derived commitment](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md)
+preflights ordered differences without cloning payloads, selects resource or excessive
+delta fallback before building the public change vector, and computes the complete
+original root before fallback materialization. Complete delta bytes and root authority
+remain unchanged. The65536-key disjoint-state control has131072 changes; it is a finite
+component resource/root equivalence control, not a native reachable workload or public
+availability certificate. Cache budgets are separate from canonical-state limits and
+do not bound all required canonical/delta allocations or allocator RSS.
+
+The [V1 evaluation observer](../protocol/pon-nakamoto-v1/details/EVALUATION_CONFIRMED_OBSERVATION_V1.md)
+and its CLI check actual candidate membership, frozen rounds, active generation and
+installed confirmation policy through a complete ancestry bounded at4096 blocks.
+The separate [V2 round observer](../protocol/pon-nakamoto-v1/details/EVALUATION_CONFIRMED_ROUND_OBSERVATION_V2.md)
+checks a complete bounded round window at later chain heights, actual reverse deltas and
+parent roots, and cross-checks the existing ancestry index. Its base anchor, earlier
+global confirmation and earlier clock history are explicitly unevaluated. A private
+typed local observation is neither a public session receipt nor adoption/reward
+authority. Reorg invalidation, public operation consumption and independent evaluator
+governance remain in the existing convergence requirements.
+
+The independent [checkpoint tile material replay](../protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_MATERIAL_V1.md)
+checks complete original checkpoint bytes, actual tensor coordinates, original input
+bits and exact integer quantization against all derived A/B values, under a new
+closed descriptor/policy domain. Its private checked result binds the unchanged
+crypto source/context manifest; actual native parent slot eligibility, withdrawal,
+replay and output consumption remain with the existing owner. The library adds no
+task selector, State, ledger wire or signed source authority. A future mandatory
+material policy requires its own fresh N/P/G and explicit binding/availability rules.
+Full-file membership and material density do not qualify cheapest-miner hardness,
+true demand, full-model execution, marginal contribution or independent custody.
+
+Public sync can explicitly request the [same-owner evaluation observation](../protocol/pon-nakamoto-v1/details/SYNC_EVALUATION_OBSERVATION_V1.md)
+after its complete actual work/state sync succeeds. Partial sync cannot create a
+phase result. Observation failures retain and report the already completed sync
+fact; omission preserves the previous result fields. This composes existing owners
+without new evaluation RPC, guest permission, durable schema or decoded observation
+authority. Applications consuming observations still need their own durable effect
+identity and reorg/retirement rules; native evaluation transactions continue to use
+the actual roster, current State, branch heights and funded conditions.

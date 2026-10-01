@@ -160,8 +160,9 @@ without changing the committed parent. Protocol overflow must not be accepted as
 successful cache fallback.
 Record actual canonical payload, retained-cache/software-workspace
 charges, selected method and complete-root fallback separately. The 8 MiB payload and
-512 MiB workspace-charge ceilings apply; the protocol state limit remains 65,536
-keys. Report continuous owner-held operation windows against the public request work
+512 MiB workspace-charge ceilings govern the optional derived cache; a valid state
+outside a cache budget still needs the complete root and must not become a consensus
+refusal. The protocol state limit remains 65,536 keys. Report continuous owner-held operation windows against the public request work
 deadline, including every failed Head, History and PoolStatus attempt. Successful
 inclusion or a faster root component cannot waive honest request failures, final
 confirmation or closed-store convergence in the same registered campaign.

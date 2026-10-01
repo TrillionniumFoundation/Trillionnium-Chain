@@ -44,16 +44,23 @@ before its requested runtime or block limit; neither is an indefinite liveness c
    timestamp is not earlier than the current clock, wait for the real clock.
 3. Reconcile and select complete retained queue groups with actual M05 admission
    and M06 execution. Bind the exact parent/generation, pool context and miner.
+   Check stop/deadline after selection and again after the configured miner check;
+   an exhausted budget does not start the next owner-held stage.
+   The newly selected, locally owned batch is not passed outside the uninterrupted
+   owner guard. Its complete M05/M06 preview is not repeated at this point; the
+   producer miner must still match the pool's preview miner. The public mutable
+   `PoolBatch` API keeps its full exact-raw revalidation requirement.
 4. Under the owner, verify current task/source/material, execute the candidate
    state, bind transaction/state/receipt roots, target and task, and prepare the
    actual arithmetic work. This creates no block or pool-consumption certificate.
+   Check stop/deadline after preparation before starting proof search.
 5. Release the Node/SQLite lock before proof search. Check stop/deadline before
    each nonce attempt. A single transcript calculation is not preemptible; search
    does not hold a lock that prevents public status or new pool submission.
 6. On a winning proof, reacquire the owner cooperatively and check the remaining
    budget, actual parent/generation and exact retained batch. A changed active
    branch discards the candidate as `stale-search`, without storing/activating it.
-   Check stop/deadline again after the nonpreemptive native batch revalidation.
+   Check stop/deadline before and after the nonpreemptive native batch revalidation.
 7. Native `admit` completely verifies work and execution; `activate_observed`
    applies the existing branch policy using the actual wall clock. Reconcile the
    local pool against that actual branch, release the owner and emit diagnostics.
@@ -69,7 +76,7 @@ transaction authority, fork validity and confirmation policy are separate issues
 `native-wall-pool-mining-event-v1` records the observed wall time, parent/generation,
 height, optional actual block id, selected transaction count/bytes, completed proof
 trials, make/admit/activate/reconcile elapsed nanoseconds and failure. Kinds include
-`activated`, `search-exhausted`, `search-stopped`, `stopped-before-admission`,
+`activated`, `search-exhausted`, `search-stopped`, `stopped-before-search`, `stopped-before-admission`,
 `stale-search`, `failed`. `make_ns` includes preparation and proof search; it is
 elapsed time including scheduling, not CPU cycles. Search errors before a proof
 completes do not invent a partial trial count. Selected transactions in a failed
@@ -89,6 +96,18 @@ reconciliation can recover the stale cache. The synchronous observation sink and
 CLI stdout flush have no enforced deadline; a blocked sink can delay shutdown.
 `public_network_ready`, `production_activation` remain false.
 
+`stopped-before-search` identifies the last completed stage in `failure_stage`
+(`parent-observation`, `pool-batch`, `pre-search-batch-validation`, or `prepare`). It records real work
+already performed, emits after releasing the owner, and does not increment
+`attempted_searches` or manufacture a proof trial. Preparation errors also do not
+count as a started search. A SQLite writer-lock regression exercises both runtime
+expiry and an explicit stop during the real nonpreemptive batch; after that batch
+returns, subsequent validation, preparation, search and durable admission stay at
+zero while the original queued transaction and active state remain intact. A stop
+after complete postsearch validation emits `stopped-before-admission` with
+`failure_stage=batch-revalidation`. This
+does not bound the duration of the already running batch or imply public fairness.
+
 Important refusals include `MINING_LIMITS`, `POOL_MINER`, `MINING_OWNER`,
 `EXPLICIT_TASK_REQUIRED`, `SIGNED_TASK_PROFILE_REQUIRED`, source/material/lease
 admission errors, pool batch/context errors, and ordinary native storage/branch
@@ -103,6 +122,13 @@ fields and add `initial_owner_wait_ns`, `pool_batch_ns`,
 `post_search_owner_wait_ns` and `post_search_batch_validation_ns`. Reports aggregate
 these elapsed stages; existing event stage aggregates are also returned. `make_ns`
 includes preparation and search and must not be added again to those two sub-stages.
+
+The retained `pre_search_batch_validation_ns` field now measures the configured
+miner binding after the complete `pool_batch_ns` selection/preview. It does not
+represent a second native prefix execution. After search releases the owner,
+`post_search_batch_validation_ns` still measures the complete current batch/raw
+M05/M06 revalidation before full native block admission. Cross-version comparisons
+must retain this change in stage meaning; no earlier execution receipt is replaced.
 Owner-wait fields measure polling acquisition attempts and their retry sleeps, not
 synchronous native execution. Actual run time also includes pace, initial metadata
 reads, context fences, observer calls and other uninstrumented overhead. Aggregate

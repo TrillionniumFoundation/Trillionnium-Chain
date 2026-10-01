@@ -7,7 +7,8 @@
 //! they never reduce protocol state limits. Charges are software accounting,
 //! not a bound on process RSS or allocations in the executor/SQLite/proof code.
 use crate::pon_executor::{self, BlockExecution, Config, Output, Result, State};
-use std::collections::{BTreeMap, BTreeSet};
+use std::cmp::Ordering;
+use std::collections::BTreeMap;
 use std::sync::Arc;
 use trnm_protocol::pon_state::{Change, StateTree};
 use trnm_protocol::pon_wire::{state_root, Hash};
@@ -53,6 +54,7 @@ pub enum FullRootReason {
     KeyBudget,
     PayloadBudget,
     WorkspaceBudget,
+    DeltaBudget,
     InternalSnapshotMismatch,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -67,6 +69,9 @@ pub struct CommitmentObservation {
     pub actual_keys: usize,
     pub actual_payload_bytes: usize,
     pub changed_keys: usize,
+    /// Logical key/before/after bytes in the complete returned changes. This is
+    /// neither Vec capacity nor a process memory observation.
+    pub changed_payload_bytes: usize,
     pub compressed_nodes: Option<usize>,
     pub workspace_charge_bytes: usize,
 }
@@ -173,16 +178,99 @@ fn charges(values: &CanonicalValues) -> Result<Charges> {
         nodes,
     })
 }
-fn differences(before: &CanonicalValues, after: &CanonicalValues) -> Vec<Change> {
-    let keys: BTreeSet<_> = before.keys().chain(after.keys()).collect();
-    keys.into_iter()
-        .filter(|key| before.get(*key) != after.get(*key))
-        .map(|key| Change {
-            key: key.clone(),
-            before: before.get(key).cloned(),
-            after: after.get(key).cloned(),
-        })
-        .collect()
+/// Visit every actual difference in key order without allocating a union of keys
+/// or cloning canonical values. Both passes use these same borrowed comparisons.
+fn visit_differences(
+    before: &CanonicalValues,
+    after: &CanonicalValues,
+    mut visit: impl FnMut(&Vec<u8>, Option<&Vec<u8>>, Option<&Vec<u8>>) -> Result<()>,
+) -> Result<()> {
+    let mut old = before.iter().peekable();
+    let mut new = after.iter().peekable();
+    loop {
+        match (old.peek(), new.peek()) {
+            (Some((old_key, old_value)), Some((new_key, new_value))) => {
+                match old_key.cmp(new_key) {
+                    Ordering::Less => {
+                        visit(old_key, Some(old_value), None)?;
+                        old.next();
+                    }
+                    Ordering::Greater => {
+                        visit(new_key, None, Some(new_value))?;
+                        new.next();
+                    }
+                    Ordering::Equal => {
+                        if old_value != new_value {
+                            visit(old_key, Some(old_value), Some(new_value))?;
+                        }
+                        old.next();
+                        new.next();
+                    }
+                }
+            }
+            (Some((key, value)), None) => {
+                visit(key, Some(value), None)?;
+                old.next();
+            }
+            (None, Some((key, value))) => {
+                visit(key, None, Some(value))?;
+                new.next();
+            }
+            (None, None) => return Ok(()),
+        }
+    }
+}
+#[derive(Clone, Copy, Default)]
+struct DifferencePlan {
+    count: usize,
+    payload: usize,
+}
+fn plan_differences(before: &CanonicalValues, after: &CanonicalValues) -> Result<DifferencePlan> {
+    let mut plan = DifferencePlan::default();
+    visit_differences(before, after, |key, old, new| {
+        plan.count = add(plan.count, 1)?;
+        plan.payload = add(
+            plan.payload,
+            add(
+                key.len(),
+                add(old.map_or(0, Vec::len), new.map_or(0, Vec::len))?,
+            )?,
+        )?;
+        Ok(())
+    })?;
+    Ok(plan)
+}
+fn materialize_differences(
+    before: Option<&CanonicalValues>,
+    after: &CanonicalValues,
+    plan: DifferencePlan,
+) -> Result<Vec<Change>> {
+    mark_stage("changes-allocation");
+    let mut changes = Vec::with_capacity(plan.count);
+    if let Some(before) = before {
+        visit_differences(before, after, |key, old, new| {
+            changes.push(Change {
+                key: key.clone(),
+                before: old.cloned(),
+                after: new.cloned(),
+            });
+            Ok(())
+        })?;
+    }
+    debug_assert_eq!(changes.len(), plan.count);
+    Ok(changes)
+}
+// Test-only markers bracket real full-root computation and the actual allocation
+// sites. They do not measure allocator bytes/RSS and disappear from production.
+#[cfg(test)]
+std::thread_local! {
+    static ALLOCATION_STAGES: std::cell::RefCell<Vec<&'static str>> = const {
+        std::cell::RefCell::new(Vec::new())
+    };
+}
+fn mark_stage(_stage: &'static str) {
+    #[cfg(test)]
+    ALLOCATION_STAGES.with(|stages| stages.borrow_mut().push(_stage));
 }
 fn prepare_values(
     values: CanonicalValues,
@@ -193,7 +281,10 @@ fn prepare_values(
     limits.validate()?;
     let current = charges(&values)?;
     let before = actual_before.or_else(|| prior.map(|p| p.values.as_ref()));
-    let changes = before.map_or_else(Vec::new, |p| differences(p, &values));
+    let difference_plan = before
+        .map(|previous| plan_differences(previous, &values))
+        .transpose()?
+        .unwrap_or_default();
     let preceding = before.map(charges).transpose()?.unwrap_or(current);
     let maximum = Charges {
         payload: current.payload.max(preceding.payload),
@@ -207,7 +298,7 @@ fn prepare_values(
         mul(add(maximum.map, maximum.tree)?, 3)?,
         add(
             mul(maximum.payload, 2)?,
-            mul(changes.len(), CHANGE_ENTRY_CHARGE)?,
+            mul(difference_plan.count, CHANGE_ENTRY_CHARGE)?,
         )?,
     )?;
     let reason = if values.len() > limits.max_keys {
@@ -216,26 +307,40 @@ fn prepare_values(
         Some(FullRootReason::PayloadBudget)
     } else if workspace > limits.max_workspace_charge_bytes {
         Some(FullRootReason::WorkspaceBudget)
+    } else if prior.is_some() && difference_plan.count > MAX_CACHE_KEYS {
+        // StateTree::apply bounds its complete batch to the protocol key limit.
+        // A valid successor can differ by more keys (removals plus insertions).
+        // This known limit is checked before cloning its mandatory public delta.
+        Some(FullRootReason::DeltaBudget)
     } else {
         None
     };
+    mark_stage("budget-selected");
     let mut observation = CommitmentObservation {
         method: CommitmentMethod::RebuiltTree,
         actual_keys: values.len(),
         actual_payload_bytes: current.payload,
-        changed_keys: changes.len(),
+        changed_keys: difference_plan.count,
+        changed_payload_bytes: difference_plan.payload,
         compressed_nodes: None,
         workspace_charge_bytes: workspace,
     };
     if let Some(reason) = reason {
         observation.method = CommitmentMethod::FullRoot(reason);
+        // Complete-root temporaries must finish before the mandatory public
+        // delta clones are allocated. Full canonical maps remain actual input.
+        let root = state_root(&values).map_err(|_| "LIMIT")?;
+        mark_stage("full-root-completed");
+        let changes = materialize_differences(before, &values, difference_plan)?;
         return Ok(PreparedCommitment {
-            root: state_root(&values).map_err(|_| "LIMIT")?,
+            root,
             snapshot: None,
             changes,
             observation,
         });
     }
+    let changes = materialize_differences(before, &values, difference_plan)?;
+    mark_stage("tree-allocation");
     let tree = if let Some(previous) = prior {
         match previous.tree.apply(previous.root, &changes) {
             Ok(tree) => {
@@ -350,6 +455,213 @@ pub fn execute_checked(
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order() {
+        let old: State = (0..32768).map(|i| (format!("a{i:05}"), json!(0))).collect();
+        let root = pon_executor::root(&old).unwrap();
+        let base = checked_snapshot(&old, root, None, CacheLimits::default()).unwrap();
+        for (count, method) in [
+            (32768, CommitmentMethod::CheckedApply),
+            (
+                32769,
+                CommitmentMethod::FullRoot(FullRootReason::DeltaBudget),
+            ),
+        ] {
+            let new: State = (0..count).map(|i| (format!("b{i:05}"), json!(0))).collect();
+            let expected = pon_executor::root(&new).unwrap();
+            ALLOCATION_STAGES.with(|stages| stages.borrow_mut().clear());
+            let result = checked_snapshot(
+                &new,
+                expected,
+                base.snapshot.as_ref(),
+                CacheLimits::default(),
+            )
+            .unwrap();
+            let stages = ALLOCATION_STAGES.with(|stages| stages.borrow().clone());
+            assert_eq!(result.observation.method, method);
+            assert_eq!(result.changes.len(), 32768 + count);
+            assert_eq!(result.root, expected);
+            let expected_stages = if count == 32768 {
+                ["budget-selected", "changes-allocation", "tree-allocation"]
+            } else {
+                [
+                    "budget-selected",
+                    "full-root-completed",
+                    "changes-allocation",
+                ]
+            };
+            assert_eq!(stages, expected_stages);
+            let before = encode(&old).unwrap();
+            let after = encode(&new).unwrap();
+            let keys: std::collections::BTreeSet<_> = before.keys().chain(after.keys()).collect();
+            let reference: Vec<_> = keys
+                .into_iter()
+                .map(|key| {
+                    (
+                        key.clone(),
+                        before.get(key).cloned(),
+                        after.get(key).cloned(),
+                    )
+                })
+                .collect();
+            let actual: Vec<_> = result
+                .changes
+                .iter()
+                .map(|change| {
+                    (
+                        change.key.clone(),
+                        change.before.clone(),
+                        change.after.clone(),
+                    )
+                })
+                .collect();
+            assert_eq!(actual, reference);
+            if count == 32769 {
+                let resource_first = checked_snapshot(
+                    &new,
+                    expected,
+                    base.snapshot.as_ref(),
+                    CacheLimits {
+                        max_workspace_charge_bytes: 1,
+                        ..CacheLimits::default()
+                    },
+                )
+                .unwrap();
+                assert_eq!(
+                    resource_first.observation.method,
+                    CommitmentMethod::FullRoot(FullRootReason::WorkspaceBudget)
+                );
+                // No retained tree means rebuild, without StateTree::apply's batch limit.
+                let rebuilt =
+                    checked_snapshot(&new, expected, None, CacheLimits::default()).unwrap();
+                assert_eq!(rebuilt.observation.method, CommitmentMethod::RebuiltTree);
+            }
+            println!(
+                "{}",
+                json!({"case":"disjoint-delta-allocation-order", "changed_keys":result.changes.len(),"method":format!("{:?}",method),"stages":stages,"complete_root_and_delta_parity":true})
+            );
+        }
+        assert_eq!(base.snapshot.as_ref().unwrap().root(), root);
+    }
+
+    #[test]
+    fn resource_fallback_finishes_full_root_before_required_change_clones() {
+        let old: State = (0..32)
+            .map(|i| (format!("k{i:04}"), json!("x".repeat(4000))))
+            .collect();
+        let new: State = (0..32)
+            .map(|i| (format!("k{i:04}"), json!("y".repeat(4000))))
+            .collect();
+        let old_root = pon_executor::root(&old).unwrap();
+        let expected = pon_executor::root(&new).unwrap();
+        let base = checked_snapshot(&old, old_root, None, CacheLimits::default()).unwrap();
+        ALLOCATION_STAGES.with(|stages| stages.borrow_mut().clear());
+        let fallback = checked_snapshot(
+            &new,
+            expected,
+            base.snapshot.as_ref(),
+            CacheLimits {
+                max_workspace_charge_bytes: 1,
+                ..CacheLimits::default()
+            },
+        )
+        .unwrap();
+        let fallback_stages = ALLOCATION_STAGES.with(|stages| stages.borrow().clone());
+        assert_eq!(
+            fallback_stages,
+            [
+                "budget-selected",
+                "full-root-completed",
+                "changes-allocation"
+            ]
+        );
+        assert_eq!(fallback.root, expected);
+        assert!(fallback.snapshot.is_none());
+        assert_eq!(fallback.changes.len(), 32);
+        assert_eq!(fallback.observation.changed_keys, 32);
+        assert_eq!(
+            fallback.observation.changed_payload_bytes,
+            32 * (5 + 4002 * 2)
+        );
+        // Independent old union algorithm checks the entire returned public delta.
+        let before = encode(&old).unwrap();
+        let after = encode(&new).unwrap();
+        let keys: std::collections::BTreeSet<_> = before.keys().chain(after.keys()).collect();
+        let reference: Vec<_> = keys
+            .into_iter()
+            .filter(|key| before.get(*key) != after.get(*key))
+            .map(|key| {
+                (
+                    key.clone(),
+                    before.get(key).cloned(),
+                    after.get(key).cloned(),
+                )
+            })
+            .collect();
+        let actual: Vec<_> = fallback
+            .changes
+            .iter()
+            .map(|change| {
+                (
+                    change.key.clone(),
+                    change.before.clone(),
+                    change.after.clone(),
+                )
+            })
+            .collect();
+        assert_eq!(actual, reference);
+        ALLOCATION_STAGES.with(|stages| stages.borrow_mut().clear());
+        let cached = checked_snapshot(
+            &new,
+            expected,
+            base.snapshot.as_ref(),
+            CacheLimits::default(),
+        )
+        .unwrap();
+        let cached_stages = ALLOCATION_STAGES.with(|stages| stages.borrow().clone());
+        assert_eq!(
+            cached_stages,
+            ["budget-selected", "changes-allocation", "tree-allocation"]
+        );
+        assert_eq!(cached.root, expected);
+        assert_eq!(
+            cached.observation.changed_payload_bytes,
+            fallback.observation.changed_payload_bytes
+        );
+        assert_eq!(base.snapshot.as_ref().unwrap().root(), old_root);
+        println!(
+            "resource-allocation-order-control: {}",
+            serde_json::json!({"fallback":fallback_stages,"cached":cached_stages,
+                "changed_keys":32,"logical_change_bytes":fallback.observation.changed_payload_bytes,
+                "allocator_or_RSS_measurement":false})
+        );
+    }
+
+    #[test]
+    fn late_canonical_error_precedes_cache_choice_and_all_change_clones() {
+        let mut state = State::from([("a".into(), json!("x".repeat(4000)))]);
+        let root = pon_executor::root(&state).unwrap();
+        let prior = checked_snapshot(&state, root, None, CacheLimits::default()).unwrap();
+        state.insert("zz-late".into(), json!("非ASCII"));
+        ALLOCATION_STAGES.with(|stages| stages.borrow_mut().clear());
+        assert_eq!(
+            checked_snapshot(
+                &state,
+                root,
+                prior.snapshot.as_ref(),
+                CacheLimits {
+                    max_keys: 0,
+                    max_payload_bytes: 0,
+                    max_workspace_charge_bytes: 0,
+                }
+            )
+            .unwrap_err(),
+            pon_executor::root(&state).unwrap_err()
+        );
+        assert!(ALLOCATION_STAGES.with(|stages| stages.borrow().is_empty()));
+        assert_eq!(prior.snapshot.as_ref().unwrap().root(), root);
+    }
 
     #[test]
     fn internal_tree_mismatch_uses_complete_root_without_mutating_snapshot() {

@@ -31,6 +31,9 @@ This document adds no automatic firewall or acceptance-gate listener prohibition
 | finite continuous mining | `mine-loop --miner --pool-policy`, or public V3 `serve --mine --miner --pool-policy` | [wall-clock mining](CONTINUOUS_MINING_V1.md) selects exact queued groups and current parent task/source material under the same Node owner; attempts, runtime and block limits are finite; proof search releases the owner and rechecks parent/generation before native admission |
 | operator-pinned peer following | public V3 `serve --peers`, optional `--peer-poll-ms` / `--peer-pages` | [bounded pinned polling](PINNED_PEER_POLLING.md) verifies the configured peer/context/history under the same owner; operator pins addresses and server keys, with no open discovery or independent-operator claim |
 | protected ingress/client | `serve` / `push --admission-profile connection-work-v1` | hello/ready before Submit body, exact-wire challenge and single connection-local solution; strict clients refuse downgrade before exposing Submit; ordinary read-only requests retain their bounded path |
+| complete finite evaluation observation | `evaluation-observe --candidate HEX --ancestry-blocks N` | [V1](EVALUATION_CONFIRMED_OBSERVATION_V1.md) checks the complete active ancestry to genesis, with N in1..4096; longer histories refuse rather than truncate |
+| bounded evaluation round observation | `evaluation-round-observe --candidate HEX --round-blocks N` | [V2](EVALUATION_CONFIRMED_ROUND_OBSERVATION_V2.md) checks the actual round window, parent roots and index consistency at any chain height, with N in1..4096; its preceding base anchor and global confirmation/clock history are explicitly unevaluated |
+| synchronized local evaluation observation | public V2/V3 `sync --evaluation-candidate HEX --evaluation-round-blocks N` | [same-owner observation](SYNC_EVALUATION_OBSERVATION_V1.md) runs only after complete native sync, with N in1..4096; partial sync has no phase result, and an observation refusal preserves the already completed sync fact |
 
 Protected `serve` additionally accepts `--admission-bits`8..20 and
 `--admission-ttl-ms`100..2000. Default16 bits/2000ms is a development experiment,
@@ -44,14 +47,22 @@ are transport-profile committed, separately from the chain context.
 
 The connection-work-v1 protected development listener has two proof-capable socket workers and one
 reserved read-only worker. Initial frame and Hello/body reads share a100ms absolute
-budget; the reserved worker refuses proof Hello traffic before accepting a body.
+budget; the reserved worker transfers the exact proof Hello socket within an
+at most2ms zero-capacity rendezvous opportunity and its original deadlines.
 After such a refusal it yields for2ms to reduce accept competition with proof workers;
 this bounded delay does not guarantee fair scheduling.
-The client allows at most256 Busy retries within one5-second deadline and searches
+The client allows at most512 total Hello attempts and reconnects after Busy within one5-second deadline, and searches
 at most1,048,576 puzzle nonces per challenge. These finite bounds and the retained
 read-only service test do not guarantee public service under arbitrary occupancy.
 Untrusted protected parse/auth/preface refusals have at most128 Unicode characters
 and a100ms absolute response budget, also committed by the transport profile.
+
+[Public V3 resource revision r2](PUBLIC_POOL_INTAKE_V3.md) independently reserves
+read body/output/challenge budgets within its existing totals, limits paid grants
+per operation lane, and cancels disconnected queued work between complete native
+stages. Its resource digest changes explicitly. The retained 26/27 honest Submit
+result in the short unpaid campaign belongs to `connection-work-v1`, not V3;
+V3 component fixes do not close that separate observation or certify public service.
 
 Authoritative implementations are `trnm-pon-node/src/main.rs`, `src/ingress.rs`,
 `src/ingress/public_v2.rs`, `src/ingress/public_v3.rs`, `src/store.rs`,
@@ -86,9 +97,9 @@ possession and bindings, not genuine demand, independent owners or an accepted w
 
 | Priority / gate | Executable progress | Required before public acceptance |
 |---|---|---|
-| P0 hostile public proof intake | versioned transport challenge; complete rejection remains; strict downgrade, replay, expiry and mixed real-socket tests | calibrated adversarial CPU/GPU/hash budget; paid/unpaid attacks; identity rotation; bandwidth/connection exhaustion; realistic valid/invalid mixes; honest waiting time and service success under sustained attack; independent deployment |
-| P0 qualified neural tasks | exact material-bound source statement; native renewable/revocable leases; parent eligibility, retained sequences, generation-safe recycling and one-output meters | genuinely admitted task owners; sustainable maintenance/renewal policy; DA/retention funding; cheapest valid instance and structural shortcuts; cross-challenge preprocessing/reuse analysis; independent cheapest-miner bound |
-| P1 public evaluation/reward | frozen native commit/reveal rounds and all-eligible minimum; mandatory timeout abort; strict signed conflict evidence, next-round key exclusions, bounded archived appeals and funded release/claim gating | public roster governance and independent evaluator ownership; confirmed-chain phase observation policy; withheld/low-score/cartel incentives; objective ML fraud versus subjective quality disagreement; funded appeal adjudication and sanctions for past paid rewards |
+| P0 hostile public proof intake | versioned transport challenge; complete rejection remains; strict downgrade, replay, expiry and mixed real-socket tests; V2/V3 r2 resource reserves, paid grant lifetime and cooperative disconnect fences; protected original-deadline rendezvous | calibrated adversarial CPU/GPU/hash budget; paid/unpaid attacks; identity rotation; bandwidth/connection exhaustion; realistic valid/invalid mixes; honest waiting time and service success under sustained attack; independent deployment |
+| P0 qualified neural tasks | exact material-bound source statement; native renewable/revocable leases; parent eligibility, retained sequences, generation-safe recycling and one-output meters; independent [full checkpoint to A/B replay](CHECKPOINT_TILE_MATERIAL_V1.md) under its own material descriptor, without chain activation | genuinely admitted task owners; explicit versioned native source/material policy; sustainable maintenance/renewal policy; DA/retention funding; cheapest valid instance and structural shortcuts; cross-challenge preprocessing/reuse analysis; independent cheapest-miner bound |
+| P1 public evaluation/reward | frozen native commit/reveal rounds and all-eligible minimum; mandatory timeout abort; strict signed conflict evidence, next-round key exclusions, bounded archived appeals and funded release/claim gating; local typed [complete-history V1](EVALUATION_CONFIRMED_OBSERVATION_V1.md) and [bounded-round V2](EVALUATION_CONFIRMED_ROUND_OBSERVATION_V2.md) observers/CLI, with [same-owner public sync consumption](SYNC_EVALUATION_OBSERVATION_V1.md) | public roster governance and independent evaluator ownership; application durable operation IDs and external-effect reorg/retirement policy where confirmed observations are used; withheld/low-score/cartel incentives; objective ML fraud versus subjective quality disagreement; funded appeal adjudication and sanctions for past paid rewards |
 | P1 target model attribution | exact integer BA equivalence/common-root budgets; pinned135M decoder/rank4 LoRA CPU execution with all four strong controls; native zero-gain no-adoption/no-reward experiment | independent future tasks; prospective registration; reproducible positive efficacy; poisoning/backdoor/forgetting, functional-copy handling and inference/memory costs; no general circuit-optimum claim |
 | P1 useful-work efficiency | arithmetic output meter counts fixed AB once; branch-relative adopted-output observer records explicitly supplied attempt and validator costs | real downstream use receipts; count duplicate, failed, stale/orphan work and every verifier; include training/load/retention/DA costs; report accepted unique benefit per aggregate resource budget |
 | P1 sustained end-to-end capacity | durable TCP pipeline and [separate processes](DISTRIBUTED_PIPELINE.md); explicitly selected native pool/public V3 queue intake, finite wall-clock miner and pinned peer following share one Node owner | measured queued-transaction latency and saturation; long steady-state campaigns, state/history scaling, tail confidence, mixed commands/conflicts, attack availability, WAN independent nodes and measured deployment GPU/VRAM |

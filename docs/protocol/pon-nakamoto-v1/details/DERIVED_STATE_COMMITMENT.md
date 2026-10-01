@@ -54,6 +54,7 @@ maximum-state throughput, an allocator/RSS bound, or any public service guarante
 | Condition | Adapter result | Caller requirement |
 |---|---|---|
 | Cache key, payload or workspace charge exceeds its limit | `FullRoot(KeyBudget/PayloadBudget/WorkspaceBudget)`, `snapshot=None` | Continue existing valid-state execution; do not reject a block because this optional cache cannot retain it. |
+| A retained predecessor would require more than 65,536 complete changes for `StateTree::apply` | `FullRoot(DeltaBudget)`, `snapshot=None` | Compute the complete root before cloning the required full delta. Removals plus insertions can exceed this batch limit while both complete states remain valid. |
 | Internal tree application cannot reproduce the checked predecessor | `FullRoot(InternalSnapshotMismatch)`, `snapshot=None` | Use the complete root result and retain the expected-root comparison; never repair actual KV from the cache. |
 | Actual state root differs from expected root | `COMMITMENT_ROOT` | Reject the state through the owner's existing root-error boundary. A cache miss is not permission to accept corrupted state. |
 | `execute_checked` receives a predecessor with different complete canonical bytes | `COMMITMENT_PARENT` | An internal caller must discard/reseed an unrelated cache before execution; a wrong cache context must not become a new consensus verdict against an otherwise valid block. |
@@ -61,9 +62,63 @@ maximum-state throughput, an allocator/RSS bound, or any public service guarante
 | Invalid cache ceilings or arithmetic overflow | `COMMITMENT_CACHE_LIMIT` / `COMMITMENT_CHARGE` | Fail the internal computation/configuration; do not publish a staged result. |
 
 `CommitmentObservation` reports method, actual keys/payload bytes, changed keys,
-compressed nodes when available and workspace charge. These counters are computation
+logical changed payload bytes, compressed nodes when available and workspace charge.
+`changed_payload_bytes` sums each changed key and its present canonical before/after
+values. It is not Vec capacity, allocated bytes or RSS. These counters are computation
 observations. They are neither throughput measurements nor certificates of public
 availability, model contribution, useful-task demand or proof-cost hardness.
+
+### Allocation order and independent limits
+
+The adapter still completely canonicalizes actual state before selecting an optional
+cache method. This preserves late canonical errors before protocol `LIMIT` and preserves
+the owner's complete actual-state/root checks. It cannot turn the 8 MiB or 512 MiB
+software policies into a limit on initial JSON State or canonical-map allocation.
+
+After encoding, an ordered merge of the two actual canonical maps counts every changed,
+new and deleted key and its logical before/after bytes using checked arithmetic. The
+planning pass borrows entries: it allocates neither a union `BTreeSet` nor a `Change`
+payload. Key/payload/workspace selection occurs before tree construction or complete
+public change cloning. If resource selection chooses `FullRoot`, the complete
+`state_root` call finishes and its temporary root work is released before allocating
+the required returned `Vec<Change>`. The cached path allocates that exact-count vector
+after budget selection and then performs checked tree application. Delta content and
+key order are unchanged; a fallback never drops changes. An internal tree-application
+failure is discovered after its necessary changes exist and still performs the original
+complete-root fallback. This ordering improvement does not bound that path's RSS.
+
+For `N` entries, let `C` be the sum of the **actual** canonical key/value Vec capacities,
+`P` the sum of their byte lengths, and `D` the count of complete old/new differences.
+The existing software formulas are:
+
+```
+map   = C + 1024*N
+tree  = C + 256*max(2*N-1,0) + 257*32
+workspace = 3*(max(old.map,new.map) + max(old.tree,new.tree))
+            + 2*max(old.P,new.P) + 256*D
+```
+
+No length-only estimate replaces `C`. The default thresholds are inclusive: an exact
+limit remains eligible; one byte above a selected payload/workspace limit selects the
+full root. Key, payload and workspace reasons retain that order when several limits
+are exceeded. With a retained predecessor, `D > 65536` then selects `DeltaBudget`
+before any delta/tree allocation. Without one, tree rebuilding has no apply-batch
+limit. This known capacity case is distinct from an unexpected internal snapshot
+application failure. `D` may include removed and newly introduced keys, not just writes in a
+transaction. The complete root and returned delta remain mandatory even on fallback.
+
+For the currently inspected Rust 1.95.0 implementation (commit
+[`59807616e`](https://github.com/rust-lang/rust/blob/59807616e1fa2540724bfbac14d7976d7e4a3860/library/alloc/src/raw_vec/mod.rs#L463))
+and locked serde_json 1.0.149, serialization starts with capacity 128 and only appends;
+Vec growth records `max(2*capacity, required)`. Key `to_vec` copies have the requested
+length capacity. In this **implementation-specific domain**, `C <= 2*P + 128*N`.
+If both actual states have at most 65,536 keys and at most 8 MiB payload, even disjoint
+key sets have `D <= 131072`; substituting these bounds gives workspace at most
+503,340,384 bytes, below 512 MiB. Thus the default workspace guard is redundant in
+that domain. This is not a protocol or stable allocator/API guarantee; the adapter
+still uses actual capacities and retains the guard. An execution parent beyond
+the cache payload limit, another runtime's allocation behavior or lower selected
+limits is outside that argument. It does not bound physical allocation or RSS.
 
 ## Durable-owner integration requirements
 
@@ -110,9 +165,10 @@ optional retained active cache, not a cache per admitted block or pending prefix
 `derived_commitment_status` reports optional cached root/key count/software charge
 and the last calculation observation. A last observation can describe an abandoned
 preview; it is not evidence that its state was activated or its transaction confirmed.
-The complete actual-state encoding and differences occur before the optional cache
-budget decision. The 512 MiB software charge therefore does not establish a hard
-allocation limit or bound the complete-root fallback's physical resource consumption.
+The complete actual-state encoding and borrowed difference count occur before the
+optional cache budget decision; complete change cloning follows it. The 512 MiB
+software charge therefore does not establish a hard allocation limit or bound the
+complete-root fallback's physical resource consumption.
 
 ## Required evidence
 
@@ -123,6 +179,33 @@ counts, sequential successors/reward maturity, late invalid signatures/nonces/fu
 changed actual state with unchanged context, removals/empty values, wrong roots and cache
 parents, branch staging and cache/protocol capacity boundaries. Internal cache damage
 must fall back to complete computation while still rejecting an incorrect actual root.
+
+The resource controls also compare exact 65,536 keys combined with exactly 8 MiB
+canonical payload, payload minus/plus one byte, and the unchanged 65,537-key `LIMIT`.
+They use complete original roots, test complete returned deltas and preserve late bad
+canonical/error precedence. Workspace controls measure a real software charge `Q`
+from actual canonical Vec capacities and select local limits `Q-1`, `Q`, `Q+1`.
+They prove the inclusive **selected** threshold; they do not pretend `Q` is 512 MiB.
+Test-only markers bracket real change-buffer construction and root computation to
+check the prior/new allocation order. They do not count allocator bytes and are absent
+from production observations.
+
+The finite [component example](../../../../trillionnium/crates/trnm-mvcc-fee/examples/pon_commitment_resource_bounds.rs)
+emits exact shape/charge/method/elapsed records and compares every result with the
+original full root. It also exercises disjoint 65,536-key states, each exactly 8 MiB,
+including values just above serializer capacity 128. Their 131,072 complete changes
+select `DeltaBudget` before allocation and retain the complete returned delta and
+original full root. Exact 65,536 and 65,537 differences also test this selector and
+complete old/new delta parity. Its `kXXXXX`
+and disjoint-prefix rows exercise the generic canonical-State
+space; installed commands provide typed account/task/evaluation records rather than
+an arbitrary key/value writer. The example is not evidence that native transactions
+can reach all of those shapes from an installed genesis. Existing signed-prefix tests
+continue to check real M06 command rules. A native reachable payload/workspace case
+must separately identify its command/profile, funded/authorized initial state, complete
+transaction sequence, mandatory cleanup and full original state/receipt checks.
+Current tag1 growth alone, even at 65,536 keys, does not grant payload/workspace
+combination or maximum-state real-time capacity acceptance.
 
 Node integration additionally needs actual packets, pool pre/post validation, first and
 repeated task outputs, signed atomic renewal, fork/reorganization, reopen, same-context

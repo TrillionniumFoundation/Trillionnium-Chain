@@ -6,8 +6,10 @@ readiness, independence, fair access under saturation, exact transaction inclusi
 confirmation, model efficacy, or economic work. V2 retains its separate signed domains
 and one-hour service bound. Both modules bind the current derived ancestry index
 with at most1024 SQL lookups in a fresh resource-policy digest; see
-[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3's separate module currently duplicates the V2 reactor
-so V2's contract is preserved; future security fixes must be reviewed for both.
+[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r2 separately
+partitions paid body/output grants and cancels disconnected work. V2 retains its
+own resource digest; these changes do not silently alter its contract. Security
+fixes still require review of both modules.
 
 ## Exact boundary
 
@@ -27,6 +29,35 @@ serialization; history retains its separate larger limit. Native stages are
 nonpreemptive: the 10-second work deadline bounds admission/lock waiting and socket
 phases; it is not a hard interruption guarantee for a running M06 preview. A
 successful durable pool reservation can outlive the requesting socket or response.
+
+Resource revision r2 binds every new limit in `PublicPolicy::id()`. It reserves
+131,072 bytes of the existing 8 MiB body pool and 524,288 bytes of the existing
+32 MiB output pool for Head/PoolStatus control responses. Mutation body permits
+and non-control output permits cannot exhaust these reserves.
+After a valid ticket and caller signature, before sending Ready, the server grants
+at most eight mutation requests and eight read requests. Each grant remains held
+through body collection, queue/work execution and output cleanup. Rotating caller
+keys cannot increase these global lane limits. Eight challenge tokens are reserved
+from the existing global bucket for reads. These reservations introduce no extra
+worker, queue, Node owner, ledger authorization or retained guest identity.
+
+The reactor cancels an Await task on disconnect, expiry or shutdown. Workers check
+its cancellation and original deadline when taking a queued task, while waiting
+for the owner, and between context checking, complete work verification and native
+admission. An already running transcript, M06 preview or SQLite operation remains
+nonpreemptive; cancellation cannot erase a committed fact. A fresh profile digest
+is mandatory: a client pinning the previous digest refuses r2, without fallback.
+The V3 magic, cookie/caller signature domains and canonical request/response wires
+remain unchanged. The initial shared connection cap and pre-ticket processing can
+still be exhausted; lane isolation does not establish anonymous honest fairness.
+
+The r2 client contract keeps both TCP halves open until receiving the response.
+An EOF while awaiting native work cancels the task; TCP does not distinguish a
+peer's full close from `shutdown(Write)` at this point. A client that half-closes
+its write side after sending a body therefore forfeits the response. Ordinary V3
+clients already keep both halves open. The signed localhost control preserves a
+half-closed client's read side, observes cancellation without work/admission, then
+submits the identical valid packet normally through complete native verification.
 
 V3 uses `PPH3` and `PPS3`, `public-protected-development-v3`, and fresh signed cookie,
 caller, ticket, body, response, peer-binding and profile domains. There is no
@@ -131,9 +162,12 @@ signature rejection, no partial rows/no ledger nonce consumption, operator minin
 stale read-only snapshot, explicit operator reconcile and persistent reopen. Both
 actual cross-version socket clients reject V2/V3 mixing and later honest requests
 still succeed. Startup cannot enable an unconfigured pool; invalid lifetime bounds
-are rejected. Eleven V3 unit tests exercise body guards, closed ops, profile/magic/
+are rejected. Sixteen V3 unit tests exercise body guards, closed ops, profile/magic/
 signature domains, cookie tampering/restart epochs, paid reservations, slow frames,
-fragmented honest traffic, expired connections and cleanup.
+fragmented honest traffic, expired connections and cleanup. Resource revision r2
+also exercises the actual signed Head under near-full mutation body occupancy,
+grant retention across queued tasks and replies, disconnect/half-close cancellation,
+and a ticket-passing Product rejection followed by valid native acceptance.
 
 These tests are local component evidence. The root integration must replay on the
 final committed Cargo graph with the actual pool and continuous miner, complete

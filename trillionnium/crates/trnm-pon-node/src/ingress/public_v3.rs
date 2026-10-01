@@ -58,6 +58,11 @@ const MAX_SERVICE_SECONDS: u64 = 72 * 3600;
 const MAX_RESPONSE: usize = 2 * MAX_PACKET + 4096;
 const MAX_CONNECTIONS: usize = 64;
 const MAX_PAID_BODY_BYTES: usize = 8 * 1024 * 1024;
+// Reservations partition the existing totals; they add no socket/worker/queue.
+const READ_BODY_RESERVE: usize = 128 * 1024;
+const CONTROL_OUTPUT_RESERVE: usize = 512 * 1024;
+const MAX_MUTATING_GRANTS: usize = 8;
+const MAX_READ_GRANTS: usize = 8;
 const MAX_SPENT: usize = 1024;
 const MAX_HISTORY_STEPS: u64 = 1024;
 const PREFIX_MS: u64 = 2000;
@@ -69,6 +74,7 @@ const OUTPUT_MS: u64 = 5000;
 const WORK_MS: u64 = 10_000;
 const CHALLENGES_PER_SECOND: u64 = 128;
 const CHALLENGE_BURST: u64 = 32;
+const READ_CHALLENGE_RESERVE: u64 = 8;
 const IO_QUANTUM: usize = 64 * 1024;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -93,7 +99,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/output-conservative32MiB/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-native-stages-nonpreemptive/no-durable-guest-rows",&[self.bits],&self.lifetime_ms.to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r2/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-native-stages-nonpreemptive/no-durable-guest-rows",&[self.bits],&self.lifetime_ms.to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -107,6 +113,12 @@ pub struct PublicMetrics {
     pub signature_refusals: u64,
     pub spent_capacity_refusals: u64,
     pub paid_body_capacity_refusals: u64,
+    pub lane_capacity_refusals: u64,
+    pub disconnected_await_requests: u64,
+    pub tasks_skipped_before_dispatch: u64,
+    pub abandoned_tasks: u64,
+    pub tasks_enqueued: u64,
+    pub tasks_dequeued: u64,
     pub replay_refusals: u64,
     pub queue_refusals: u64,
     pub parse_refusals: u64,
@@ -130,6 +142,8 @@ pub struct PublicMetrics {
     pub output_serialization_failures: u64,
     pub peak_connections: usize,
     pub peak_paid_body_bytes: usize,
+    pub peak_mutating_grants: usize,
+    pub peak_read_grants: usize,
     pub peak_spent: usize,
     pub peak_output_reserved_bytes: usize,
     pub delivered_response_frames: u64,
@@ -140,6 +154,8 @@ pub struct PublicMetrics {
     pub unknown_caller_durable_rows: u64,
     pub paid_body_reserved_bytes_after_shutdown: usize,
     pub output_reserved_bytes_after_shutdown: usize,
+    pub mutating_grants_after_shutdown: usize,
+    pub read_grants_after_shutdown: usize,
 }
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -584,10 +600,12 @@ impl Drop for BufferPermit {
 }
 struct Task {
     _permit: BufferPermit,
+    _lane_permit: Arc<BufferPermit>,
     id: u64,
     cookie: Cookie,
     request: Request,
     deadline: Instant,
+    cancelled: Arc<AtomicBool>,
 }
 struct Finished {
     permit: Option<BufferPermit>,
@@ -642,6 +660,23 @@ struct Connection {
     stage: Stage,
     total_deadline: Instant,
     permit: Option<BufferPermit>,
+    lane_permit: Option<Arc<BufferPermit>>,
+    cancelled: Arc<AtomicBool>,
+}
+impl Drop for Connection {
+    fn drop(&mut self) {
+        self.cancelled.store(true, Ordering::Release);
+    }
+}
+fn task_alive(deadline: Instant, stop: &AtomicBool, cancelled: &AtomicBool) -> Result<()> {
+    ensure(
+        !cancelled.load(Ordering::Acquire),
+        "PUBLIC_REQUEST_CANCELLED",
+    )?;
+    ensure(
+        !stop.load(Ordering::Acquire) && Instant::now() < deadline,
+        "PUBLIC_REQUEST_DEADLINE",
+    )
 }
 fn read_available(socket: &mut TcpStream, bytes: &mut Vec<u8>, expected: usize) -> Result<bool> {
     ensure(bytes.len() <= expected, "PUBLIC_READ_OVERFLOW")?;
@@ -690,13 +725,11 @@ fn public_dispatch(
     request: Request,
     deadline: Instant,
     stop: &AtomicBool,
+    cancelled: &AtomicBool,
     metrics: &Mutex<PublicMetrics>,
 ) -> Result<Value> {
     let mut progress = |steps: u64| {
-        ensure(
-            !stop.load(Ordering::Acquire) && Instant::now() < deadline,
-            "PUBLIC_REQUEST_DEADLINE",
-        )?;
+        task_alive(deadline, stop, cancelled)?;
         ensure(steps <= MAX_HISTORY_STEPS, "PUBLIC_HISTORY_STEPS")
     };
     match request {
@@ -705,6 +738,9 @@ fn public_dispatch(
             NativeRequest::Submit { packet },
             &mut progress,
             |packet| {
+                // The context check may have waited for the only Node owner.
+                // An abandoned caller must not start a fresh full work replay.
+                task_alive(deadline, stop, cancelled)?;
                 let start = Instant::now();
                 metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
                 let result = WorkCheckedPacket::verify(packet);
@@ -886,6 +922,8 @@ pub fn serve_public_protected_v3_with_metrics(
     let mut spent = Spent::new();
     let body_pool = Arc::new(Mutex::new(0usize));
     let output_pool = Arc::new(Mutex::new(0usize));
+    let mutating_grants = Arc::new(Mutex::new(0usize));
+    let read_grants = Arc::new(Mutex::new(0usize));
     let mut challenge_tokens = CHALLENGE_BURST;
     let mut refill = Instant::now();
     let mut last_cleanup = Instant::now();
@@ -909,11 +947,24 @@ pub fn serve_public_protected_v3_with_metrics(
                     let task = queue.lock().map_err(|_| "PUBLIC_QUEUE")?.try_recv();
                     match task {
                         Ok(task) => {
+                            metrics.lock().map_err(|_| "PUBLIC_METRICS")?.tasks_dequeued += 1;
+                            if task_alive(task.deadline, &stop, &task.cancelled).is_err() {
+                                let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+                                m.tasks_skipped_before_dispatch += 1;
+                                if task.cancelled.load(Ordering::Acquire) {
+                                    m.abandoned_tasks += 1;
+                                }
+                                continue;
+                            }
                             let response_max = response_maximum(task.cookie.op);
                             let permit = BufferPermit::acquire(
                                 output_pool.clone(),
                                 response_max * 4,
-                                MAX_OUTPUT_BYTES,
+                                if matches!(task.cookie.op, 2 | 5) {
+                                    MAX_OUTPUT_BYTES
+                                } else {
+                                    MAX_OUTPUT_BYTES - CONTROL_OUTPUT_RESERVE
+                                },
                             );
                             let (permit, outcome) = match permit {
                                 Ok(permit) => (
@@ -923,6 +974,7 @@ pub fn serve_public_protected_v3_with_metrics(
                                         task.request,
                                         task.deadline,
                                         &stop,
+                                        &task.cancelled,
                                         &metrics,
                                     ),
                                 ),
@@ -950,6 +1002,13 @@ pub fn serve_public_protected_v3_with_metrics(
                                 m.executor_refusals += 1;
                             }
                             drop(m);
+                            if task.cancelled.load(Ordering::Acquire) {
+                                metrics
+                                    .lock()
+                                    .map_err(|_| "PUBLIC_METRICS")?
+                                    .abandoned_tasks += 1;
+                                continue;
+                            }
                             // Sign and serialize in the worker, after reserving output
                             // capacity. The socket reactor only copies bounded chunks.
                             let bytes = response(server, settings, &task.cookie, outcome);
@@ -1019,6 +1078,8 @@ pub fn serve_public_protected_v3_with_metrics(
                                     total_deadline: Instant::now()
                                         + Duration::from_millis(OVERALL_MS),
                                     permit: None,
+                                    lane_permit: None,
+                                    cancelled: Arc::new(AtomicBool::new(false)),
                                 },
                             );
                             m.peak_connections = m.peak_connections.max(connections.len());
@@ -1082,7 +1143,10 @@ pub fn serve_public_protected_v3_with_metrics(
                                     return Ok(Stage::Hello(bytes));
                                 }
                                 let hello = Hello::parse(&bytes)?;
-                                if challenge_tokens == 0 {
+                                if challenge_tokens == 0
+                                    || (mutating_operation(hello.op)
+                                        && challenge_tokens <= READ_CHALLENGE_RESERVE)
+                                {
                                     metrics
                                         .lock()
                                         .map_err(|_| "PUBLIC_METRICS")?
@@ -1181,10 +1245,38 @@ pub fn serve_public_protected_v3_with_metrics(
                                     m.peak_spent = m.peak_spent.max(spent.rows.len());
                                 }
                                 let n = cookie.body_len as usize;
+                                let mutation = mutating_operation(cookie.op);
+                                let grant_pool = if mutation {
+                                    mutating_grants.clone()
+                                } else {
+                                    read_grants.clone()
+                                };
+                                let lane = match BufferPermit::acquire(
+                                    grant_pool.clone(),
+                                    1,
+                                    if mutation {
+                                        MAX_MUTATING_GRANTS
+                                    } else {
+                                        MAX_READ_GRANTS
+                                    },
+                                ) {
+                                    Ok(p) => p,
+                                    Err(e) => {
+                                        metrics
+                                            .lock()
+                                            .map_err(|_| "PUBLIC_METRICS")?
+                                            .lane_capacity_refusals += 1;
+                                        return Err(e);
+                                    }
+                                };
                                 let permit = match BufferPermit::acquire(
                                     body_pool.clone(),
                                     n * 3,
-                                    MAX_PAID_BODY_BYTES,
+                                    if mutation {
+                                        MAX_PAID_BODY_BYTES - READ_BODY_RESERVE
+                                    } else {
+                                        MAX_PAID_BODY_BYTES
+                                    },
                                 ) {
                                     Ok(p) => p,
                                     Err(e) => {
@@ -1196,11 +1288,19 @@ pub fn serve_public_protected_v3_with_metrics(
                                     }
                                 };
                                 conn.permit = Some(permit);
+                                conn.lane_permit = Some(Arc::new(lane));
                                 {
                                     let used =
                                         *body_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
                                     let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                                     m.peak_paid_body_bytes = m.peak_paid_body_bytes.max(used);
+                                    let grants =
+                                        *grant_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
+                                    if mutation {
+                                        m.peak_mutating_grants = m.peak_mutating_grants.max(grants);
+                                    } else {
+                                        m.peak_read_grants = m.peak_read_grants.max(grants);
+                                    }
                                 }
                                 let frame = framed(
                                     serde_json::to_vec(
@@ -1267,15 +1367,25 @@ pub fn serve_public_protected_v3_with_metrics(
                                 };
                                 let task = Task {
                                     _permit: conn.permit.take().ok_or("PUBLIC_BODY_PERMIT")?,
+                                    _lane_permit: conn
+                                        .lane_permit
+                                        .as_ref()
+                                        .ok_or("PUBLIC_LANE_PERMIT")?
+                                        .clone(),
                                     id: conn.id,
                                     cookie,
                                     request,
                                     deadline: conn
                                         .total_deadline
                                         .min(Instant::now() + Duration::from_millis(WORK_MS)),
+                                    cancelled: conn.cancelled.clone(),
                                 };
                                 match sender.try_send(task) {
                                     Ok(()) => {
+                                        metrics
+                                            .lock()
+                                            .map_err(|_| "PUBLIC_METRICS")?
+                                            .tasks_enqueued += 1;
                                         conn.deadline = conn
                                             .total_deadline
                                             .min(Instant::now() + Duration::from_millis(WORK_MS));
@@ -1293,7 +1403,33 @@ pub fn serve_public_protected_v3_with_metrics(
                                     }
                                 }
                             }
-                            Stage::Await => Ok(Stage::Await),
+                            Stage::Await => {
+                                // R2 requires the caller's write half to remain open
+                                // until the response. TCP cannot distinguish a full
+                                // close from shutdown(Write): either EOF cancels
+                                // queued/owner-waiting work. The ordinary client keeps
+                                // both halves open. This is no ledger verdict.
+                                match conn.socket.peek(&mut [0; 1]) {
+                                    Ok(0) => {
+                                        metrics
+                                            .lock()
+                                            .map_err(|_| "PUBLIC_METRICS")?
+                                            .disconnected_await_requests += 1;
+                                        conn.cancelled.store(true, Ordering::Release);
+                                        Err("PUBLIC_EOF".into())
+                                    }
+                                    Err(e)
+                                        if !matches!(
+                                            e.kind(),
+                                            std::io::ErrorKind::WouldBlock
+                                                | std::io::ErrorKind::Interrupted
+                                        ) =>
+                                    {
+                                        Err(e.into())
+                                    }
+                                    _ => Ok(Stage::Await),
+                                }
+                            }
                             Stage::Output {
                                 bytes,
                                 mut cursor,
@@ -1367,6 +1503,9 @@ pub fn serve_public_protected_v3_with_metrics(
                 *body_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
             m.output_reserved_bytes_after_shutdown =
                 *output_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
+            m.mutating_grants_after_shutdown =
+                *mutating_grants.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
+            m.read_grants_after_shutdown = *read_grants.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
         }
         outcome
     })?;
@@ -1636,6 +1775,417 @@ mod tests {
             client_nonce: [4; 32],
         }
     }
+    // Real authenticated ticket exchange. Returning before the body lets these
+    // socket tests hold a bounded grant without invoking any fake work verifier.
+    fn paid_grant(
+        address: SocketAddr,
+        hello: Hello,
+        caller: &DevelopmentIdentity,
+        policy: PublicPolicy,
+    ) -> Result<TcpStream> {
+        let mut socket = TcpStream::connect(address)?;
+        socket.set_nodelay(true)?;
+        let deadline = Instant::now() + Duration::from_secs(2);
+        client_write(&mut socket, &hello.encode(), deadline)?;
+        let raw = client_frame(&mut socket, 2048, deadline)?;
+        let cookie: Cookie = serde_json::from_slice(&raw)?;
+        ensure(cookie.profile == hex::encode(policy.id()), "TEST_PROFILE")?;
+        verify_hex_strict(
+            identity(71).public_key(),
+            &cookie.server_message()?,
+            &cookie.signature,
+        )
+        .map_err(|_| "TEST_SERVER_SIGNATURE")?;
+        let id = cookie.id()?;
+        let nonce = (0..1_048_576u64)
+            .find(|n| winner(id, *n, policy.bits))
+            .ok_or("TEST_SOLUTION")?;
+        let mut solution = b"PPS3".to_vec();
+        solution.extend(id);
+        solution.extend(nonce.to_le_bytes());
+        solution.extend(
+            hex::decode(caller.sign(&hash(
+                b"public-caller-sign-v3",
+                &[&id, &nonce.to_le_bytes()],
+            ))?)
+            .map_err(|_| "TEST_CALLER_SIGNATURE")?,
+        );
+        client_write(&mut socket, &solution, deadline)?;
+        let ready: Value = serde_json::from_slice(&client_frame(&mut socket, 256, deadline)?)?;
+        ensure(
+            ready["schema"] == "public-body-ready-v3" && ready["cookie_digest"] == hex::encode(id),
+            "TEST_READY",
+        )?;
+        Ok(socket)
+    }
+    fn wait_metric(metrics: &Mutex<PublicMetrics>, predicate: impl Fn(&PublicMetrics) -> bool) {
+        let end = Instant::now() + Duration::from_secs(2);
+        loop {
+            if predicate(&metrics.lock().unwrap()) {
+                return;
+            }
+            assert!(Instant::now() < end, "actual reactor observation timed out");
+            thread::sleep(Duration::from_millis(2));
+        }
+    }
+    #[test]
+    fn paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let owner = shared(Node::open(directory.path(), settings.clone(), 2).unwrap());
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let signal = stop.clone();
+        let counters = metrics.clone();
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_metrics(
+                listener,
+                owner,
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+            )
+            .unwrap()
+        });
+        let sizes = [
+            MAX_BODY,
+            (MAX_PAID_BODY_BYTES - READ_BODY_RESERVE) / 3 - MAX_BODY,
+        ];
+        let mut held = Vec::new();
+        for (index, size) in sizes.into_iter().enumerate() {
+            let caller = identity(80 + index as u8);
+            let mut h = hello(1, size);
+            h.caller = digest(caller.public_key()).unwrap();
+            held.push(paid_grant(address, h, &caller, policy).unwrap());
+        }
+        assert_eq!(
+            metrics.lock().unwrap().peak_paid_body_bytes,
+            MAX_PAID_BODY_BYTES - READ_BODY_RESERVE
+        );
+        let caller = identity(83);
+        let mut h = hello(1, 1);
+        h.caller = digest(caller.public_key()).unwrap();
+        assert!(paid_grant(address, h, &caller, policy).is_err());
+        let reply = call_public_protected_v3(
+            address,
+            &Request::Head,
+            &settings,
+            identity(71).public_key(),
+            &identity(84),
+            policy,
+        )
+        .unwrap();
+        assert!(reply.ok);
+        assert_eq!(reply.value["height"], 0);
+        drop(held);
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(m.paid_body_capacity_refusals, 1);
+        assert_eq!(m.completed_read, 1);
+        assert_eq!(m.work_started, 0);
+        assert!(m.peak_paid_body_bytes <= MAX_PAID_BODY_BYTES);
+        assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
+        assert_eq!(m.mutating_grants_after_shutdown, 0);
+        assert_eq!(m.read_grants_after_shutdown, 0);
+    }
+    #[test]
+    fn paid_mutation_grants_are_global_across_identity_rotation_and_release_on_eof() {
+        let directory = tempfile::tempdir().unwrap();
+        let clock = super::super::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let source = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let packet = source
+            .make(
+                source.active().unwrap().0,
+                vec![],
+                crate::development_public(0).unwrap(),
+                clock - 50,
+                4096,
+            )
+            .unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let signal = stop.clone();
+        let counters = metrics.clone();
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_metrics(
+                listener,
+                shared(source),
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+            )
+            .unwrap()
+        });
+        let mut held = Vec::new();
+        for index in 0..MAX_MUTATING_GRANTS {
+            let caller = identity(80 + index as u8);
+            let mut h = hello(1, 1);
+            h.caller = digest(caller.public_key()).unwrap();
+            held.push(paid_grant(address, h, &caller, policy).unwrap());
+        }
+        let caller = identity(90);
+        let mut h = hello(1, 1);
+        h.caller = digest(caller.public_key()).unwrap();
+        assert!(paid_grant(address, h, &caller, policy).is_err());
+        let reply = call_public_protected_v3(
+            address,
+            &Request::Head,
+            &settings,
+            identity(71).public_key(),
+            &identity(91),
+            policy,
+        )
+        .unwrap();
+        assert!(reply.ok);
+        drop(held);
+        wait_metric(&metrics, |m| {
+            m.retained_phase_errors.get("body").copied().unwrap_or(0) >= MAX_MUTATING_GRANTS as u64
+        });
+        let reply = call_public_protected_v3(
+            address,
+            &Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            },
+            &settings,
+            identity(71).public_key(),
+            &identity(92),
+            policy,
+        )
+        .unwrap();
+        assert!(reply.ok, "{}", reply.value);
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(m.lane_capacity_refusals, 1);
+        assert_eq!(m.peak_mutating_grants, MAX_MUTATING_GRANTS);
+        assert_eq!(m.work_started, 1);
+        assert_eq!(m.work_finished, 1);
+        assert_eq!(m.work_failed, 0);
+        assert_eq!(m.completed_submit, 1);
+        assert_eq!(m.mutating_grants_after_shutdown, 0);
+        assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
+    }
+    #[test]
+    fn write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work() {
+        let directory = tempfile::tempdir().unwrap();
+        let clock = super::super::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let source = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let packet = source
+            .make(
+                source.active().unwrap().0,
+                vec![],
+                crate::development_public(0).unwrap(),
+                clock - 50,
+                4096,
+            )
+            .unwrap();
+        let request = Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        };
+        let raw = serde_json::to_vec(&request).unwrap();
+        let owner = shared(source);
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let (signal, counters, node) = (stop.clone(), metrics.clone(), owner.clone());
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_metrics(
+                listener,
+                node,
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+            )
+            .unwrap()
+        });
+        assert!(
+            call_public_protected_v3(
+                address,
+                &Request::Head,
+                &settings,
+                identity(71).public_key(),
+                &identity(72),
+                policy
+            )
+            .unwrap()
+            .ok
+        );
+        let locked = owner.lock().unwrap();
+        let before = locked.active().unwrap();
+        let caller = identity(80);
+        let mut h = hello(1, raw.len());
+        h.caller = digest(caller.public_key()).unwrap();
+        h.digest = hash(b"public-request-body-v3", &[&raw]);
+        let mut sockets = Vec::new();
+        for _ in 0..3 {
+            let mut socket = paid_grant(address, h, &caller, policy).unwrap();
+            socket.write_all(&raw).unwrap();
+            sockets.push(socket);
+        }
+        // Initial Head was one task. Two Submit workers are waiting for this
+        // actual owner lock, leaving the third preserved request in the queue.
+        wait_metric(&metrics, |m| m.tasks_enqueued == 4 && m.tasks_dequeued == 3);
+        sockets[0].shutdown(std::net::Shutdown::Write).unwrap();
+        for socket in &sockets[1..] {
+            socket.shutdown(std::net::Shutdown::Both).unwrap();
+        }
+        wait_metric(&metrics, |m| m.disconnected_await_requests == 3);
+        // Keep the first caller's read half open: it receives EOF because the
+        // server explicitly cancels R2 write-half-closed requests.
+        assert!(client_frame(
+            &mut sockets[0],
+            MAX_RESPONSE,
+            Instant::now() + Duration::from_secs(2)
+        )
+        .is_err());
+        drop(sockets);
+        drop(locked);
+        wait_metric(&metrics, |m| m.abandoned_tasks == 3);
+        assert_eq!(metrics.lock().unwrap().work_started, 0);
+        assert_eq!(owner.lock().unwrap().active().unwrap(), before);
+        let reply = call_public_protected_v3(
+            address,
+            &request,
+            &settings,
+            identity(71).public_key(),
+            &identity(81),
+            policy,
+        )
+        .unwrap();
+        assert!(reply.ok, "{}", reply.value);
+        assert_eq!(owner.lock().unwrap().stats().unwrap()["height"], 1);
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(m.disconnected_await_requests, 3);
+        assert_eq!(m.abandoned_tasks, 3);
+        assert_eq!(m.work_started, 1);
+        assert_eq!(m.completed_submit, 1);
+        assert_eq!(m.mutating_grants_after_shutdown, 0);
+        assert_eq!(m.output_reserved_bytes_after_shutdown, 0);
+    }
+    #[test]
+    fn paid_wrong_product_is_fully_rejected_and_the_preserved_valid_packet_is_activated() {
+        let directory = tempfile::tempdir().unwrap();
+        let clock = super::super::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let source = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let packet = source
+            .make(
+                source.active().unwrap().0,
+                vec![],
+                crate::development_public(0).unwrap(),
+                clock - 50,
+                4096,
+            )
+            .unwrap();
+        let mut bad = packet.clone();
+        let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+        let original = u32::from_le_bytes(bad.proof[offset..offset + 4].try_into().unwrap());
+        let replacement = if original == 0 { 1u32 } else { 0u32 };
+        bad.proof[offset..offset + 4].copy_from_slice(&replacement.to_le_bytes());
+        // Only a canonical product field changes. Challenge/trace/ticket remain
+        // the actual producer's valid bytes; no forged-ticket search is used.
+        assert_eq!(bad.header, packet.header);
+        let owner = shared(source);
+        let before = owner.lock().unwrap().read_active().unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let (signal, counters, node) = (stop.clone(), metrics.clone(), owner.clone());
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_metrics(
+                listener,
+                node,
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+            )
+            .unwrap()
+        });
+        let call = |packet: &crate::Packet| {
+            call_public_protected_v3(
+                address,
+                &Request::Submit {
+                    packet: hex::encode(packet.encode().unwrap()),
+                },
+                &settings,
+                identity(71).public_key(),
+                &identity(80),
+                policy,
+            )
+            .unwrap()
+        };
+        let rejected = call(&bad);
+        assert!(!rejected.ok);
+        assert_eq!(rejected.value["error"], "WORK:Product");
+        assert_eq!(owner.lock().unwrap().read_active().unwrap(), before);
+        assert!(call(&packet).ok);
+        assert_eq!(owner.lock().unwrap().stats().unwrap()["height"], 1);
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(m.work_started, 2);
+        assert_eq!(m.work_finished, 2);
+        assert_eq!(m.work_failed, 1);
+        assert_eq!(m.completed_submit, 1);
+        assert_eq!(m.executor_refusals, 1);
+        assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
+    }
+    #[test]
+    fn resource_revision_r2_rejects_a_signed_r1_cookie_and_preserves_control_output_reserve() {
+        let s = Settings::development(Some(1)).unwrap();
+        let server = server();
+        assert_eq!(
+            hex::encode(server.policy.id()),
+            "b32629eb243707bb1baad647ece89f22845593b91dd58490dbd6ccc695528c1d"
+        );
+        let mut c = server
+            .cookie(&s, hello(2, 1), "127.0.0.1:1".parse().unwrap())
+            .unwrap();
+        c.profile = "fdc9af27f01e2ffdb8e6a24b2303ed90d5d1d3ad88f2f08d686d780e29f0bd41".into();
+        c.mac = hex::encode(hmac(&server.secret, &c.unsigned().unwrap()));
+        c.signature = server.identity.sign(&c.server_message().unwrap()).unwrap();
+        verify_hex_strict(
+            server.identity.public_key(),
+            &c.server_message().unwrap(),
+            &c.signature,
+        )
+        .unwrap();
+        assert_eq!(
+            server.validate(&c, &s, true).unwrap_err().to_string(),
+            "PUBLIC_COOKIE_CONTEXT"
+        );
+        let pool = Arc::new(Mutex::new(0));
+        let bulk = BufferPermit::acquire(
+            pool.clone(),
+            MAX_OUTPUT_BYTES - CONTROL_OUTPUT_RESERVE,
+            MAX_OUTPUT_BYTES - CONTROL_OUTPUT_RESERVE,
+        )
+        .unwrap();
+        assert!(
+            BufferPermit::acquire(pool.clone(), 1, MAX_OUTPUT_BYTES - CONTROL_OUTPUT_RESERVE)
+                .is_err()
+        );
+        let control =
+            BufferPermit::acquire(pool.clone(), response_maximum(2) * 4, MAX_OUTPUT_BYTES).unwrap();
+        assert!(*pool.lock().unwrap() <= MAX_OUTPUT_BYTES);
+        drop((bulk, control));
+        assert_eq!(*pool.lock().unwrap(), 0);
+    }
     #[test]
     fn pool_body_guard_checks_shape_before_vector_allocation_and_closed_metadata() {
         let request = Request::PoolSubmitBundle {
@@ -1779,6 +2329,8 @@ mod tests {
         assert_eq!(m.delivered_response_frames, 1);
         assert_eq!(m.output_reserved_bytes_after_shutdown, 0);
         assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
+        assert_eq!(m.mutating_grants_after_shutdown, 0);
+        assert_eq!(m.read_grants_after_shutdown, 0);
     }
     #[test]
     fn fixed_preface_checks_all_bounds_before_paid_body_allocation() {
@@ -1903,6 +2455,19 @@ mod tests {
     }
     #[test]
     fn reservations_survive_queues_and_release_on_disconnect_and_dropped_output() {
+        let lanes = Arc::new(Mutex::new(0));
+        let connection_lane =
+            Arc::new(BufferPermit::acquire(lanes.clone(), 1, MAX_READ_GRANTS).unwrap());
+        let task_lane = connection_lane.clone();
+        // Task completion leaves the connection's Output-stage reservation.
+        drop(task_lane);
+        assert_eq!(*lanes.lock().unwrap(), 1);
+        let running_task_lane = connection_lane.clone();
+        // Disconnect cannot release a grant still held by native execution.
+        drop(connection_lane);
+        assert_eq!(*lanes.lock().unwrap(), 1);
+        drop(running_task_lane);
+        assert_eq!(*lanes.lock().unwrap(), 0);
         let pool = Arc::new(Mutex::new(0));
         let permit =
             BufferPermit::acquire(pool.clone(), MAX_BODY * 3, MAX_PAID_BODY_BYTES).unwrap();

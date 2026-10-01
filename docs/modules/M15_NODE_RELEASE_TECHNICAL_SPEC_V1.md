@@ -194,3 +194,22 @@ are specified in
 [DERIVED_STATE_COMMITMENT](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md).
 This calculation changes no durable owner, state namespace or signed domain. A new
 performance result requires its own committed source and binary binding.
+
+## Bounded local evaluation observations
+
+The [complete-history V1 observer](../protocol/pon-nakamoto-v1/details/EVALUATION_CONFIRMED_OBSERVATION_V1.md)
+and [round-window V2 observer](../protocol/pon-nakamoto-v1/details/EVALUATION_CONFIRMED_ROUND_OBSERVATION_V2.md)
+have explicit CLI queries and private native result construction. They check actual
+membership, branch/generation, frozen evaluation records and installed confirmation
+policy. V1 refuses histories exceeding4096 blocks; V2 can assess a complete bounded
+round window later in history while explicitly leaving its predecessor and earlier
+global confirmation/clock history unevaluated. Original State/root ownership remains
+necessary. These unsigned local observations grant no transaction, execution,
+adoption, reward, independent evaluator or public-network authority.
+
+The optional [sync evaluation query](../protocol/pon-nakamoto-v1/details/SYNC_EVALUATION_OBSERVATION_V1.md)
+performs the bounded V2 observation on that same exclusive Node only after complete
+public V2/V3 synchronization. Partial sync never produces a phase result. A later
+observation refusal reports the completed sync fact without rewinding admitted blocks
+or printing a success phase. Omission preserves the original sync result. This local
+composition adds no remote evaluation operation or economic permission.

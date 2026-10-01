@@ -341,6 +341,22 @@ fn bounded_stop_runtime_and_invalid_material_do_not_mine_or_consume_pending_tran
     assert_eq!(report.pool_batch_ns, 0);
     assert_eq!(report.post_search_owner_wait_ns, 0);
     drop(guard);
+    let mut wrong_miner = config.clone();
+    wrong_miner.miner = development_public(4).unwrap();
+    let mut miner_failures = 0;
+    let error = run_pool_mining(owner.clone(), wrong_miner, stop.clone(), |event| {
+        assert_eq!(event.kind, "failed");
+        assert_eq!(event.failure_stage, Some("pre-search-batch-validation"));
+        assert_eq!(event.failure.as_deref(), Some("POOL_MINER"));
+        assert!(event.pool_batch_ns > 0);
+        assert_eq!(event.prepare_ns, 0);
+        assert_eq!(event.work_trials, 0);
+        miner_failures += 1;
+        Ok(())
+    })
+    .unwrap_err();
+    assert_eq!(error.to_string(), "POOL_MINER");
+    assert_eq!(miner_failures, 1);
     let mut wrong = config;
     wrong.material = MiningMaterial::Registered {
         model: vec![0; 16384],
@@ -361,6 +377,113 @@ fn bounded_stop_runtime_and_invalid_material_do_not_mine_or_consume_pending_tran
         node.pool_status().unwrap().groups[0].state,
         PoolState::Queued
     );
+}
+
+#[test]
+fn completed_sqlite_blocked_batch_observes_stop_before_revalidation_or_preparation() {
+    // A real second SQLite writer holds the reconciliation transaction. Neither
+    // the batch nor its SQLite work is made preemptible by the cooperative fence.
+    for requested_stop in [false, true] {
+        let dir = tempfile::tempdir().unwrap();
+        let (mut node, settings, mut config, _) = setup(dir.path());
+        let raw = transfer(&settings, 0, 1, 2, 5);
+        node.pool_submit(raw.clone()).unwrap();
+        let before = node.active().unwrap();
+        let state = node.state_at(before.0).unwrap();
+        config.runtime = if requested_stop {
+            Duration::from_secs(10)
+        } else {
+            Duration::from_millis(150)
+        };
+        let fixture = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
+        fixture.execute_batch("BEGIN IMMEDIATE").unwrap();
+        let owner = Arc::new(Mutex::new(node));
+        let worker_owner = owner.clone();
+        let observer_owner = owner.clone();
+        let stop = Arc::new(AtomicBool::new(false));
+        let worker_stop = stop.clone();
+        let worker = std::thread::spawn(move || {
+            let mut events = Vec::new();
+            let result = run_pool_mining(worker_owner, config, worker_stop, |event| {
+                // Diagnostics must run after releasing the exclusive owner.
+                assert!(observer_owner.try_lock().is_ok());
+                events.push(serde_json::to_value(event)?);
+                Ok(())
+            });
+            (result, events)
+        });
+        let acquisition_deadline = Instant::now() + Duration::from_secs(3);
+        loop {
+            match owner.try_lock() {
+                Err(std::sync::TryLockError::WouldBlock) => break,
+                Err(std::sync::TryLockError::Poisoned(_)) => panic!("mining owner poisoned"),
+                Ok(guard) => drop(guard),
+            }
+            assert!(
+                Instant::now() < acquisition_deadline,
+                "mining did not acquire owner"
+            );
+            std::thread::yield_now();
+        }
+        std::thread::sleep(Duration::from_millis(250));
+        assert!(matches!(
+            owner.try_lock(),
+            Err(std::sync::TryLockError::WouldBlock)
+        ));
+        if requested_stop {
+            stop.store(true, Ordering::Release);
+        }
+        fixture.execute_batch("ROLLBACK").unwrap();
+        let (result, events) = worker.join().unwrap();
+        let report = result.unwrap();
+        assert_eq!(
+            report.stop_reason,
+            if requested_stop {
+                "stop-request"
+            } else {
+                "runtime"
+            }
+        );
+        assert_eq!(report.attempted_searches, 0);
+        assert_eq!(report.activated_blocks, 0);
+        assert_eq!(report.observed_work_trials, 0);
+        assert!(!report.stage_preemption);
+        assert_eq!(events.len(), 1);
+        let event = &events[0];
+        assert_eq!(event["kind"], "stopped-before-search");
+        assert_eq!(event["failure_stage"], "pool-batch");
+        assert_eq!(event["transactions"], 1);
+        assert!(event["pool_batch_ns"].as_u64().unwrap() >= 250_000_000);
+        for field in [
+            "pre_search_batch_validation_ns",
+            "prepare_ns",
+            "search_ns",
+            "make_ns",
+            "post_search_owner_wait_ns",
+            "post_search_batch_validation_ns",
+            "admit_ns",
+            "activate_ns",
+            "reconcile_ns",
+        ] {
+            assert_eq!(event[field], 0);
+            assert_eq!(serde_json::to_value(&report).unwrap()[field], 0);
+        }
+        assert_eq!(event["admitted"], false);
+        assert_eq!(event["activated"], false);
+        let mut node = owner.lock().unwrap();
+        assert_eq!(node.active().unwrap(), before);
+        assert_eq!(node.state_at(before.0).unwrap(), state);
+        assert_eq!(node.next_nonce(development_public(0).unwrap()).unwrap(), 1);
+        let status = node.pool_status().unwrap();
+        assert_eq!(status.retained_records, 1);
+        assert_eq!(status.groups[0].state, PoolState::Queued);
+        assert_eq!(
+            node.pool_mining_batch(before.0, before.1, 256, 524288)
+                .unwrap()
+                .transactions,
+            vec![raw]
+        );
+    }
 }
 
 #[test]
@@ -498,15 +621,17 @@ fn failed_pool_batch_retains_elapsed_before_any_search_or_admission() {
 }
 
 #[test]
-fn failed_pre_and_post_search_revalidation_retain_elapsed_without_admission() {
-    for threshold in [2, 3] {
+fn failed_post_search_revalidation_retains_elapsed_without_admission() {
+    // There is one complete selection preview under the initial owner guard.
+    // The second reconciliation follows search and must still fail closed.
+    {
         let dir = tempfile::tempdir().unwrap();
         let (mut node, settings, mut config, _) = setup(dir.path());
         node.pool_submit(transfer(&settings, 0, 1, 2, 5)).unwrap();
         config.max_blocks = 1;
         let before = node.active().unwrap();
         let fixture = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
-        fixture.execute_batch(&format!("CREATE TABLE fixture_rechecks(n INTEGER NOT NULL); INSERT INTO fixture_rechecks VALUES(0); CREATE TRIGGER revalidation_cut BEFORE UPDATE ON local_pool_groups BEGIN UPDATE fixture_rechecks SET n=n+1; SELECT CASE WHEN (SELECT n FROM fixture_rechecks)>={threshold} THEN RAISE(ABORT,'owned-revalidation-cut') END; END;")).unwrap();
+        fixture.execute_batch("CREATE TABLE fixture_rechecks(n INTEGER NOT NULL); INSERT INTO fixture_rechecks VALUES(0); CREATE TRIGGER revalidation_cut BEFORE UPDATE ON local_pool_groups BEGIN UPDATE fixture_rechecks SET n=n+1; SELECT CASE WHEN (SELECT n FROM fixture_rechecks)>=2 THEN RAISE(ABORT,'owned-revalidation-cut') END; END;").unwrap();
         let owner = Arc::new(Mutex::new(node));
         let mut events = Vec::new();
         let error = run_pool_mining(
@@ -524,15 +649,9 @@ fn failed_pre_and_post_search_revalidation_retain_elapsed_without_admission() {
         let event = &events[0];
         assert!(event["pool_batch_ns"].as_u64().unwrap() > 0);
         assert!(event["pre_search_batch_validation_ns"].as_u64().unwrap() > 0);
-        if threshold == 2 {
-            assert_eq!(event["failure_stage"], "pre-search-batch-validation");
-            assert_eq!(event["make_ns"], 0);
-            assert_eq!(event["post_search_batch_validation_ns"], 0);
-        } else {
-            assert_eq!(event["failure_stage"], "batch-revalidation");
-            assert!(event["make_ns"].as_u64().unwrap() > 0);
-            assert!(event["post_search_batch_validation_ns"].as_u64().unwrap() > 0);
-        }
+        assert_eq!(event["failure_stage"], "batch-revalidation");
+        assert!(event["make_ns"].as_u64().unwrap() > 0);
+        assert!(event["post_search_batch_validation_ns"].as_u64().unwrap() > 0);
         assert_eq!(event["admit_ns"], 0);
         assert_eq!(event["admitted"], false);
         assert_eq!(event["activated"], false);

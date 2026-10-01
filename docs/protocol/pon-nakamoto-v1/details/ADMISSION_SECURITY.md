@@ -197,19 +197,25 @@ Two workers may process negotiated proof requests; the third remains eligible fo
 read-only frames. Each proof worker first waits at most 2 ms for a connection on
 its own zero-capacity rendezvous channel, then tries the existing listener. After
 the read-only worker reads a canonical, request-digest-bound Hello, it tries to transfer
-that exact socket and already-read frame to either proof worker currently waiting.
-`try_send` never waits and the channels retain no pending sockets. A successful
+that exact socket and already-read frame to either proof worker. The first
+`try_send` remains immediate. If neither receiver is ready, the same worker sleeps
+for at most100 microseconds between opportunities for up to2 ms, bounded by the
+original request and preface deadlines. Actual scheduling can overshoot the
+requested sleep; the next opportunity first checks the original absolute expiry.
+The zero-capacity channels retain no pending sockets. A successful
 transfer reuses the original 10-second request deadline and 100 ms preface deadline;
 it neither repeats accept/frame reading nor increments socket accepts again. The
 three workers still own at most three sockets in total. The read-only worker does
-not receive a proof body, solve/verify the puzzle, acquire a proof permit or wait for
-a proof worker. If neither receiver is waiting, the existing
+not receive a proof body, solve/verify the puzzle or acquire a proof permit. This
+bounded transfer opportunity still holds its original accepted socket. If no proof
+worker takes ownership within that original budget, the existing
 `ADMISSION_BUSY_READ_ONLY_RESERVED` refusal and bounded 2 ms yield remain. This
 reduces repeated wrong-lane acceptance without guaranteeing anonymous scheduling,
 an operating-system wakeup bound or public fairness.
 
 The profile hash explicitly commits to `hello-rendezvous0`,
-`proof-recv-before-accept2ms`, `original-deadlines` and `socket-ceiling3`, alongside
+`handoff-opportunity2ms`, `poll100us`, `proof-recv-before-accept2ms`,
+`original-deadlines` and `socket-ceiling3`, alongside
 `reserved-hello-yield2ms`. This changes the protected transport profile digest;
 same-profile peers and fresh transport contexts must use the new digest. Old
 protected peers cannot silently negotiate a fallback. It changes no PoN work,
@@ -223,10 +229,13 @@ untrusted preface, request-decoding and authentication errors return at most 128
 characters under a separate 100 ms write budget. Both limits are profile committed.
 A huge malformed operation therefore cannot select a huge echoed error response.
 Clients may reconnect to the identical destination after the nonterminal reserved
-lane refusal, at most 256 attempts, with 10 ms backoff and one five-second absolute
+lane refusal, at most512 total Hello attempts, with10 ms backoff and one five-second absolute
 negotiation deadline. Retries transmit only the nonmutating Hello before acceptance;
 they never replace the durable signed request, advance its nonce or downgrade the
-protocol. Raw Busy negotiation responses convey no authentication authority.
+protocol. The larger finite retry ceiling can cover the original five-second budget;
+it never renews that budget. Both the retry ceiling and handoff opportunity are
+committed by the new profile digest; an old profile rejects with `ADMISSION_PROFILE`.
+Raw Busy negotiation responses convey no authentication authority.
 No puzzle holds a proof or recovery permit. Slow initial frames can still occupy
 all three workers for the short preface budget, and repeated anonymous connections
 can still compete for socket acceptance. Slow links may fail the experimental
@@ -309,3 +318,15 @@ remain authoritative. Native calls already in execution are not preempted by a
 connection deadline. Saturation and serialized persistence can still deny honest
 service; physical deployment and a predeclared attack/service budget remain
 required. Local conformance does not remove the experimental work-profile gate.
+
+Public V2 and [V3](PUBLIC_POOL_INTAKE_V3.md) resource revision r2 partition their
+existing body/output totals, retain per-lane grants through socket/task completion
+and cancel disconnected requests between native stages. Each uses its own new
+pinned resource digest while preserving its separate wire and signing domains.
+The signed socket controls fill paid mutation budgets with different callers,
+preserve Head service, cancel two owner-waiting and one queued request, and then
+fully verify the original valid packet. A changed product with the original trace
+is still rejected by the complete verifier. These component controls neither
+certify sustained attacker budgets nor repair the separate connection-work-v1
+26/27 short unpaid-phase observation. Shared pre-ticket/connection resources and
+the single native owner remain relevant to public availability.

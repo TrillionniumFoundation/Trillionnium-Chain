@@ -9,6 +9,10 @@ pub mod peer_polling;
 mod store;
 use serde_json::{json, Value};
 use std::{error, fmt};
+pub use store::evaluation_observation::{EvaluationAnchor, EvaluationObservation, EvaluationPhase};
+pub use store::evaluation_round_observation::{
+    EvaluationRoundAnchor, EvaluationRoundBaseAnchor, EvaluationRoundObservation,
+};
 pub use store::mempool::{
     PoolBatch, PoolGcSummary, PoolGroupStatus, PoolLimits, PoolReceipt, PoolState, PoolStatus,
     LOCAL_POOL_PROFILE,
