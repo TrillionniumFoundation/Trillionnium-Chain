@@ -4,6 +4,24 @@ The pure [checked derived commitment contract](../protocol/pon-nakamoto-v1/detai
 adds bounded root computation for complete actual states. It retains existing execution,
 receipt and reversible-delta rules; the durable Node owner commits and publishes results.
 
+Within one Node preparation or checked-admission operation, the first actual
+`state_at(parent)` read may supply both execution and parent task eligibility.
+This still reads complete canonical KV (or checked snapshot/deltas for an inactive
+branch) and checks its admitted root. The private eligibility is dropped with that
+operation; neither Node nor the unlocked proof search retains it as authority.
+Registered preparation preserves lifecycle eligibility before source admission and
+V1 registry eligibility after source admission. Output accounting uses that parent
+eligibility against the separately executed successor, including maintenance,
+renewal, revocation, slot/generation and product-conflict checks. It does not grant
+a new registration authority over its containing block. Initial admission context
+and checked-work re-entry remain independent checks; search completion still
+rechecks the current parent/generation, exact pool batch and full native admission.
+There is no new SQL isolation guarantee for writers outside the sole Node owner.
+Actual selectors `trnm-pon-node --test operation_local_parent --test task_output_root_parity`
+cover complete packet parity, active/inactive/reopened parents, independent later
+KV corruption and the complete successor-root/output-accounting path. These local
+checks do not establish a throughput improvement or public qualification.
+
 Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 [Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 

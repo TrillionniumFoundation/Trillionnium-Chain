@@ -1,5 +1,6 @@
 //! Bounded wall-clock mining driven by the existing Node and local pool owner.
 //! No independent scheduler, execution certificate or automatically signed task.
+use crate::store::ParentTaskEligibility;
 use crate::{ensure, ingress, Node, Packet, Result};
 use serde::Serialize;
 use std::{
@@ -222,6 +223,7 @@ impl Node {
             a: &a,
             b: &b,
         };
+        let mut eligibility = None;
         let admission = match self.settings().task_profile() {
             "signed-task-lifecycle-dev-v2"
             | "signed-task-lifecycle-dev-v3"
@@ -239,8 +241,11 @@ impl Node {
                 ensure(encoded.len() == 1368, "TASK_STATEMENT")?;
                 let wire = hex::decode(encoded).map_err(|_| "TASK_STATEMENT")?;
                 ensure(hex::encode(&wire) == encoded, "TASK_STATEMENT")?;
-                verify_lifecycle_admission(&wire, material(), eligible.lease(), height)
-                    .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?
+                let admission =
+                    verify_lifecycle_admission(&wire, material(), eligible.lease(), height)
+                        .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?;
+                eligibility = Some(ParentTaskEligibility::Lifecycle(Box::new(eligible)));
+                admission
             }
             "signed-task-dev-v1" => {
                 let record = state
@@ -259,7 +264,7 @@ impl Node {
             }
             _ => return Err("SIGNED_TASK_PROFILE_REQUIRED".into()),
         };
-        self.prepare_with_task(
+        self.prepare_with_task_from_parent(
             parent,
             transactions,
             miner,
@@ -267,6 +272,8 @@ impl Node {
             attempts,
             &admission,
             material(),
+            &state,
+            eligibility,
         )
     }
 }

@@ -84,6 +84,23 @@ type ReplayRow = (
 );
 const AUTH_RESPONSE_RETENTION: u64 = 16;
 
+/// Parent authority for one owner operation only. Never retained by Node or proof
+/// search; the successor is separately checked by M06 and consume_output.
+pub(crate) enum ParentTaskEligibility {
+    Legacy,
+    Signed(Box<QualifiedWorkTask>),
+    Lifecycle(Box<qualified_task_lifecycle::EligibleLifecycleTask>),
+}
+impl ParentTaskEligibility {
+    fn manifest(&self) -> Option<&QualifiedWorkTask> {
+        match self {
+            Self::Legacy => None,
+            Self::Signed(manifest) => Some(manifest),
+            Self::Lifecycle(eligible) => Some(eligible.manifest()),
+        }
+    }
+}
+
 fn json_value(value: String) -> Value {
     Value::String(value)
 }
@@ -1524,7 +1541,7 @@ impl Node {
         let id = packet.id()?;
         let parent = self.record(h.parent)?;
         let prior = self.state_at(h.parent)?;
-        let registered_task = self.eligible_work_task(h.parent, h.work_task, h.height)?;
+        let registered_task = self.eligible_work_task_from_state(&prior, h.work_task, h.height)?;
         let executed = self.execute_derived(
             &prior,
             h.parent,
@@ -1535,19 +1552,13 @@ impl Node {
         )?;
         let mut output = executed.output;
         let commitment = executed.commitment;
-        if let Some(manifest) = registered_task {
+        if registered_task.manifest().is_some() {
             let product: Vec<u8> = verified_work
                 .product()
                 .iter()
                 .flat_map(|value| value.to_le_bytes())
                 .collect();
-            if self.record_task_output(
-                h.parent,
-                h.height,
-                &mut output.state,
-                &manifest,
-                &product,
-            )? {
+            if self.record_task_output(h.height, &mut output.state, &registered_task, &product)? {
                 output.root = self
                     .derive_successor(&output.state, commitment.snapshot.as_ref())?
                     .root;
@@ -1676,23 +1687,55 @@ impl Node {
             ),
             "WORK_TASK_PROFILE",
         )?;
+        self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
+        let actual = self.state_at(parent)?;
+        self.prepare_with_task_from_parent(
+            parent,
+            transactions,
+            miner,
+            timestamp,
+            max_attempts,
+            admission,
+            material,
+            &actual,
+            None,
+        )
+    }
+    /// The registered-material route supplies its first actual parent read. Its
+    /// lifecycle eligibility was checked before source admission; V1 eligibility
+    /// remains after source admission, preserving the original error order.
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn prepare_with_task_from_parent(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        max_attempts: u64,
+        admission: &DevelopmentTaskAdmission,
+        material: TaskMaterial<'_>,
+        actual: &State,
+        eligibility: Option<ParentTaskEligibility>,
+    ) -> Result<crate::mining::PreparedCandidate> {
+        ensure(
+            matches!(
+                self.settings.task_profile(),
+                SIGNED_TASK_PROFILE
+                    | LIFECYCLE_TASK_PROFILE
+                    | ATOMIC_TASK_PROFILE
+                    | OVERLAP_TASK_PROFILE
+            ),
+            "WORK_TASK_PROFILE",
+        )?;
         let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
-        let signed = self
-            .eligible_work_task(parent, admission.matrix_task(), height)?
-            .ok_or("TASK_MANIFEST")?;
-        let statement_id = if matches!(
-            self.settings.task_profile(),
-            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
-        ) {
-            qualified_task_lifecycle::eligible_task(
-                &self.state_at(parent)?,
-                admission.matrix_task(),
-                height,
-                &self.settings.app,
-            )?
-            .statement_id()
-        } else {
-            signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?
+        let eligible = match eligibility {
+            Some(eligible) => eligible,
+            None => self.eligible_work_task_from_state(actual, admission.matrix_task(), height)?,
+        };
+        let signed = eligible.manifest().ok_or("TASK_MANIFEST")?;
+        let statement_id = match &eligible {
+            ParentTaskEligibility::Lifecycle(task) => task.statement_id(),
+            _ => signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?,
         };
         ensure(
             statement_id == admission.manifest_id(),
@@ -1711,7 +1754,16 @@ impl Node {
             "TASK_MATRIX_BINDING",
         )?;
         ensure((1..=4096).contains(&max_attempts), "WORK_BUDGET")?;
-        self.prepare_from_matrices(parent, transactions, miner, timestamp, &a, &b)
+        self.prepare_from_checked_parent(
+            parent,
+            transactions,
+            miner,
+            timestamp,
+            &a,
+            &b,
+            actual,
+            &eligible,
+        )
     }
     fn eligible_work_task(
         &self,
@@ -1719,21 +1771,31 @@ impl Node {
         task: Hash,
         height: u64,
     ) -> Result<Option<QualifiedWorkTask>> {
-        let state = self.state_at(parent)?;
+        Ok(self
+            .eligible_work_task_from_state(&self.state_at(parent)?, task, height)?
+            .manifest()
+            .cloned())
+    }
+    fn eligible_work_task_from_state(
+        &self,
+        state: &State,
+        task: Hash,
+        height: u64,
+    ) -> Result<ParentTaskEligibility> {
         if matches!(
             self.settings.task_profile(),
             LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
         ) {
             let eligible =
-                qualified_task_lifecycle::eligible_task(&state, task, height, &self.settings.app)?;
-            return Ok(Some(eligible.manifest().clone()));
+                qualified_task_lifecycle::eligible_task(state, task, height, &self.settings.app)?;
+            return Ok(ParentTaskEligibility::Lifecycle(Box::new(eligible)));
         }
         let registered = state
             .get(&format!("work:{}", hex::encode(task)))
             .ok_or("TASK")?;
         if self.settings.task_profile() != SIGNED_TASK_PROFILE {
             ensure(registered == &Value::Bool(true), "TASK")?;
-            return Ok(None);
+            return Ok(ParentTaskEligibility::Legacy);
         }
         ensure(
             registered["schema"] == "qualified-work-registration-v1",
@@ -1790,7 +1852,7 @@ impl Node {
             source_nonce >= signed.manifest.demand_nonce,
             "TASK_SOURCE_NONCE",
         )?;
-        Ok(Some(signed.manifest))
+        Ok(ParentTaskEligibility::Signed(Box::new(signed.manifest)))
     }
     #[allow(clippy::too_many_arguments)]
     fn make_from_matrices(
@@ -1819,26 +1881,51 @@ impl Node {
         self.ready()?;
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
-        let registered_task = self.eligible_work_task(parent, task, height)?;
         let actual = self.state_at(parent)?;
+        let registered_task = self.eligible_work_task_from_state(&actual, task, height)?;
+        self.prepare_from_checked_parent(
+            parent,
+            transactions,
+            miner,
+            timestamp,
+            a,
+            b,
+            &actual,
+            &registered_task,
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn prepare_from_checked_parent(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        a: &[u32],
+        b: &[u32],
+        actual: &State,
+        registered_task: &ParentTaskEligibility,
+    ) -> Result<crate::mining::PreparedCandidate> {
+        self.ready()?;
+        let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
+        let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
         let executed =
-            self.execute_derived(&actual, parent, &transactions, height, miner, self.workers)?;
+            self.execute_derived(actual, parent, &transactions, height, miner, self.workers)?;
         let mut output = executed.output;
         let commitment = executed.commitment;
         let prepared =
             pon_work::PreparedTask::new(a, b).map_err(|e| Error::from(format!("WORK:{e:?}")))?;
-        if let Some(manifest) = registered_task {
-            if self.record_task_output(
-                parent,
+        if registered_task.manifest().is_some()
+            && self.record_task_output(
                 height,
                 &mut output.state,
-                &manifest,
+                registered_task,
                 prepared.product_bytes(),
-            )? {
-                output.root = self
-                    .derive_successor(&output.state, commitment.snapshot.as_ref())?
-                    .root;
-            }
+            )?
+        {
+            output.root = self
+                .derive_successor(&output.state, commitment.snapshot.as_ref())?
+                .root;
         }
         let header = Header {
             network: self.settings.network(),
@@ -1862,31 +1949,23 @@ impl Node {
     }
     fn record_task_output(
         &self,
-        parent: Hash,
         height: u64,
         state: &mut State,
-        manifest: &QualifiedWorkTask,
+        eligible: &ParentTaskEligibility,
         product: &[u8],
     ) -> Result<bool> {
-        if matches!(
-            self.settings.task_profile(),
-            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
-        ) {
-            ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
-            let eligible = qualified_task_lifecycle::eligible_task(
-                &self.state_at(parent)?,
-                manifest.matrix_task,
-                height,
-                &self.settings.app,
-            )?;
-            Ok(qualified_task_lifecycle::consume_output(
-                state,
-                &eligible,
-                hash(b"qualified-task-product-v1", &[product]),
-                height,
-            )?)
-        } else {
-            record_task_output(state, manifest, product)
+        match eligible {
+            ParentTaskEligibility::Lifecycle(task) => {
+                ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
+                Ok(qualified_task_lifecycle::consume_output(
+                    state,
+                    task,
+                    hash(b"qualified-task-product-v1", &[product]),
+                    height,
+                )?)
+            }
+            ParentTaskEligibility::Signed(manifest) => record_task_output(state, manifest, product),
+            ParentTaskEligibility::Legacy => Ok(false),
         }
     }
     pub fn mine(
