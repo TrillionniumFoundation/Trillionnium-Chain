@@ -2,10 +2,10 @@
 use serde_json::{json, Value};
 use std::{
     fs,
-    io::{BufRead, BufReader},
+    io::{BufRead, BufReader, Read},
     os::unix::fs::PermissionsExt,
     path::Path,
-    process::{Child, Command, Stdio},
+    process::{Child, Command, Output, Stdio},
     sync::mpsc,
     thread,
     time::{Duration, Instant},
@@ -33,16 +33,6 @@ fn command(name: &str, store: &Path, genesis: u64) -> Command {
         .arg("--store")
         .arg(store);
     command
-}
-fn successful(command: &mut Command) -> Value {
-    let out = command.output().unwrap();
-    assert!(
-        out.status.success(),
-        "stderr={} stdout={}",
-        String::from_utf8_lossy(&out.stderr),
-        String::from_utf8_lossy(&out.stdout)
-    );
-    serde_json::from_slice(&out.stdout).unwrap()
 }
 fn signature(who: u64, message: &[u8]) -> [u8; 64] {
     let key =
@@ -82,8 +72,105 @@ impl Drop for Running {
     }
 }
 
+/// One actual CLI call, without retries or accepting a transport failure. Keep
+/// the serving process alive for the entire phase and bound this child too, so
+/// a failed test cannot wait indefinitely or hide the service's early exit.
+fn output_while_serving(
+    command: &mut Command,
+    service: &mut Running,
+    phase: &str,
+    deadline: Instant,
+) -> Output {
+    assert!(Instant::now() < deadline, "{phase}: phase budget exhausted");
+    assert!(
+        service.0.try_wait().unwrap().is_none(),
+        "{phase}: service exited before the client call"
+    );
+    let mut client = Running(
+        command
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap(),
+    );
+    let stdout = client.0.stdout.take().unwrap();
+    let stderr = client.0.stderr.take().unwrap();
+    let read = |mut stream: Box<dyn Read + Send>| {
+        thread::spawn(move || {
+            let mut bytes = Vec::new();
+            stream.read_to_end(&mut bytes).unwrap();
+            bytes
+        })
+    };
+    let stdout = read(Box::new(stdout));
+    let stderr = read(Box::new(stderr));
+    let mut failure = None;
+    let status = loop {
+        if let Some(status) = client.0.try_wait().unwrap() {
+            break status;
+        }
+        if let Some(status) = service.0.try_wait().unwrap() {
+            failure = Some(format!("service exited during the client call: {status}"));
+        } else if Instant::now() >= deadline {
+            failure = Some("client phase budget exhausted".into());
+        }
+        if failure.is_some() {
+            client.0.kill().unwrap();
+            break client.0.wait().unwrap();
+        }
+        thread::sleep(Duration::from_millis(10));
+    };
+    let output = Output {
+        status,
+        stdout: stdout.join().unwrap(),
+        stderr: stderr.join().unwrap(),
+    };
+    assert!(
+        failure.is_none(),
+        "{phase}: {failure:?}; stderr={} stdout={}",
+        String::from_utf8_lossy(&output.stderr),
+        String::from_utf8_lossy(&output.stdout)
+    );
+    output
+}
+
+fn successful_while_serving(
+    command: &mut Command,
+    service: &mut Running,
+    phase: &str,
+    deadline: Instant,
+) -> Value {
+    let out = output_while_serving(command, service, phase, deadline);
+    assert!(
+        out.status.success(),
+        "{phase}: stderr={} stdout={}",
+        String::from_utf8_lossy(&out.stderr),
+        String::from_utf8_lossy(&out.stdout)
+    );
+    serde_json::from_slice(&out.stdout).unwrap()
+}
+
 #[test]
 fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver() {
+    // These are finite test phase budgets, not network latency or capacity SLAs.
+    // The old twelve-second service raced eight paced blocks plus two independent
+    // full-native sync processes on the debug CI runner. Reserve both sync phases
+    // explicitly; completing the miner must not consume their service lifetime.
+    let ready_budget = Duration::from_secs(5);
+    let first_block_budget = Duration::from_secs(2);
+    let submission_budget = Duration::from_secs(2);
+    let inclusion_budget = Duration::from_secs(5);
+    let sync_budget = Duration::from_secs(8);
+    let remaining_mining_budget = Duration::from_secs(7);
+    let shutdown_budget = Duration::from_secs(1);
+    let service_budget = ready_budget
+        + first_block_budget
+        + submission_budget
+        + inclusion_budget
+        + sync_budget
+        + remaining_mining_budget
+        + sync_budget
+        + shutdown_budget;
     let dir = tempfile::tempdir().unwrap();
     let genesis = ingress::now().unwrap() - 100;
     let settings = Settings::development_with_profiles(
@@ -152,6 +239,7 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
         serde_json::to_vec(&raws.iter().map(hex::encode).collect::<Vec<_>>()).unwrap(),
     )
     .unwrap();
+    let service_started = Instant::now();
     let mut child = command("serve", &store, genesis)
         .args([
             "--admission-profile",
@@ -160,7 +248,7 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
             "--mine",
             "--task-bootstrap",
             "--seconds",
-            "12",
+            &service_budget.as_secs().to_string(),
             "--blocks",
             "8",
             "--pace-ms",
@@ -186,8 +274,7 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
         tx.send(lines.next().unwrap().unwrap()).unwrap();
         lines.collect::<std::io::Result<Vec<_>>>().unwrap()
     });
-    let ready: Value =
-        serde_json::from_str(&rx.recv_timeout(Duration::from_secs(5)).unwrap()).unwrap();
+    let ready: Value = serde_json::from_str(&rx.recv_timeout(ready_budget).unwrap()).unwrap();
     assert_eq!(ready["mining_enabled"], true);
     assert_eq!(ready["server_public"], public);
     let address = ready["address"].as_str().unwrap();
@@ -211,9 +298,14 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
     // Atomic V3 verifies the successor statement at its actual containing
     // height. Wait for the first native block before submitting the height2
     // successor; never pretend that a future-height statement is valid in block1.
-    let first_end = Instant::now() + Duration::from_secs(2);
+    let first_end = Instant::now() + first_block_budget;
     loop {
-        let first = successful(&mut client("head"));
+        let first = successful_while_serving(
+            &mut client("head"),
+            &mut running,
+            "first actual block",
+            first_end,
+        );
         let height = first["value"]["height"].as_u64().unwrap();
         if height == 1 {
             break;
@@ -225,13 +317,17 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
         );
         thread::sleep(Duration::from_millis(10));
     }
-    let refused = client("pool-push")
-        .arg("--client-observations")
-        .arg("--transactions")
-        .arg(&file)
-        .args(["--pool-context", &"ab".repeat(32)])
-        .output()
-        .unwrap();
+    let submission_end = Instant::now() + submission_budget;
+    let refused = output_while_serving(
+        client("pool-push")
+            .arg("--client-observations")
+            .arg("--transactions")
+            .arg(&file)
+            .args(["--pool-context", &"ab".repeat(32)]),
+        &mut running,
+        "wrong pool context denial",
+        submission_end,
+    );
     assert_eq!(refused.status.code(), Some(2));
     let denial: Value = serde_json::from_slice(&refused.stdout).unwrap();
     assert_eq!(denial["ok"], false);
@@ -239,11 +335,14 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
     assert_eq!(observation["observations"]["failed_stage"], Value::Null);
     assert_eq!(observation["observations"]["solution_found"], true);
     assert!(denial["value"].to_string().contains("PUBLIC_POOL_CONTEXT"));
-    let submitted = successful(
+    let submitted = successful_while_serving(
         client("pool-push")
             .arg("--transactions")
             .arg(&file)
             .args(["--pool-context", context]),
+        &mut running,
+        "exact height-two bundle submission",
+        submission_end,
     );
     assert_eq!(submitted["ok"], true);
     assert_eq!(submitted["value"]["receipt"]["state"], "Queued");
@@ -251,10 +350,20 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
         !receiver.exists(),
         "remote submission must not create a second local owner"
     );
-    let deadline = Instant::now() + Duration::from_secs(5);
+    let deadline = Instant::now() + inclusion_budget;
     let head = loop {
-        let snapshot = successful(&mut client("pool-status-remote"));
-        let head = successful(&mut client("head"));
+        let snapshot = successful_while_serving(
+            &mut client("pool-status-remote"),
+            &mut running,
+            "bundle native inclusion status",
+            deadline,
+        );
+        let head = successful_while_serving(
+            &mut client("head"),
+            &mut running,
+            "bundle native inclusion head",
+            deadline,
+        );
         if snapshot["value"]["sequence_consumed_groups"] == 1
             && head["value"]["height"].as_u64().unwrap() >= 3
         {
@@ -267,7 +376,12 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
         thread::sleep(Duration::from_millis(40));
     };
     let tip = head["value"]["tip"].as_str().unwrap();
-    let synced = successful(client("sync").args(["--tip", tip, "--pages", "16"]));
+    let synced = successful_while_serving(
+        client("sync").args(["--tip", tip, "--pages", "16"]),
+        &mut running,
+        "first independent full-native sync",
+        Instant::now() + sync_budget,
+    );
     assert_eq!(synced["result"]["verified_tip"], tip);
     assert_eq!(
         synced["result"]["state"]["state_root"],
@@ -294,9 +408,14 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
     drop(receiver_node);
     // A completed finite miner must leave its last block retrievable while the
     // service still has a budget. This is necessary for peer catch-up.
-    let catchup_end = Instant::now() + Duration::from_secs(7);
+    let catchup_end = Instant::now() + remaining_mining_budget;
     let final_head = loop {
-        let head = successful(&mut client("head"));
+        let head = successful_while_serving(
+            &mut client("head"),
+            &mut running,
+            "finite miner block limit",
+            catchup_end,
+        );
         if head["value"]["height"] == 8 {
             break head;
         }
@@ -307,14 +426,31 @@ fn actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver(
         thread::sleep(Duration::from_millis(50));
     };
     let final_tip = final_head["value"]["tip"].as_str().unwrap();
-    let caught_up =
-        successful(client("sync").args(["--tip", final_tip, "--after", tip, "--pages", "16"]));
+    let caught_up = successful_while_serving(
+        client("sync").args(["--tip", final_tip, "--after", tip, "--pages", "16"]),
+        &mut running,
+        "post-miner independent full-native catchup",
+        Instant::now() + sync_budget,
+    );
     assert_eq!(caught_up["result"]["verified_tip"], final_tip);
     assert_eq!(
         caught_up["result"]["state"]["state_root"],
         final_head["value"]["state_root"]
     );
-    assert!(running.0.wait().unwrap().success());
+    // A service/worker shutdown regression must fail within the declared budget,
+    // rather than leaving the test blocked in Child::wait indefinitely.
+    let shutdown_end = service_started + service_budget + shutdown_budget;
+    let status = loop {
+        if let Some(status) = running.0.try_wait().unwrap() {
+            break status;
+        }
+        assert!(
+            Instant::now() < shutdown_end,
+            "service did not close within its budget"
+        );
+        thread::sleep(Duration::from_millis(10));
+    };
+    assert!(status.success());
     let lines = reader.join().unwrap();
     let rows: Vec<Value> = lines
         .iter()
