@@ -3,7 +3,7 @@ use rusqlite::{params, Connection};
 use serde_json::{json, Value};
 use trnm_crypto_primitives::{pon_work, sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::{
-    pon_commitment::{CommitmentMethod, FullRootReason},
+    pon_commitment::CommitmentMethod,
     pon_executor::{self, Config, State},
 };
 use trnm_pon_node::{development_public, maintenance, sequence_root, Node, Packet, Settings};
@@ -329,7 +329,7 @@ fn actual_heavier_fork_cut_invalidates_then_recovers_full_canonical_state() {
     assert!(!expected.contains_key(&format!("account:{}", hex::encode(public(1)))));
 }
 #[test]
-fn actual_valid_growth_above_cache_key_budget_uses_full_root_and_reopens() {
+fn actual_valid_growth_above_previous_8192_budget_keeps_checked_snapshot_and_reopens() {
     let temp = tempfile::tempdir().unwrap();
     let settings = Settings::development(Some(1)).unwrap();
     let mut node = Node::open(temp.path(), settings.clone(), 2).unwrap();
@@ -356,11 +356,11 @@ fn actual_valid_growth_above_cache_key_budget_uses_full_root_and_reopens() {
     }
     assert!(expected.len() > 8192);
     let status = node.derived_commitment_status();
-    assert_eq!(status.cache_root, None);
     assert_eq!(
-        status.last.unwrap().method,
-        CommitmentMethod::FullRoot(FullRootReason::KeyBudget)
+        status.cache_root,
+        Some(pon_executor::root(&expected).unwrap())
     );
+    assert_eq!(status.last.unwrap().method, CommitmentMethod::CheckedApply);
     assert_eq!(
         expected[&format!("account:{}", hex::encode(development_public(0).unwrap()))]["nonce"],
         8192

@@ -31,7 +31,7 @@ Serial and parallel execution retain the existing canonical replay and receipt o
 
 ## Resource selection and errors
 
-The default retained-cache limits are 8,192 keys and 8 MiB of canonical key/value
+The default retained-cache limits are 16,384 keys and 8 MiB of canonical key/value
 payload. The workspace software-charge ceiling is 128 MiB. Operators may select lower
 adapter limits; they cannot use this API to increase those ceilings. Charges include
 canonical maps, compressed tree nodes and staged changes with checked arithmetic.
@@ -131,7 +131,9 @@ compare nine inactive extensions with complete executor State/root/receipts and 
 stored deltas; mutate, add and corrupt actual KV bytes under an unchanged active tip;
 reject a correctly proven packet with a wrong state root; inject SQLite admission and
 activation failures; interrupt a heavier-fork switch and reopen; and execute 8,192
-distinct signed transfers through the valid-state cache-budget fallback. Their oracle
+distinct signed transfers while retaining a checked snapshot above the previous
+8,192-key software limit. M06 controls separately retain explicit lower-limit,
+16,385-key, payload and workspace full-root fallback coverage. Their oracle
 rebuilds configuration from installed constants and the specified development settings,
 then separately checks packet network/parameters. Existing task-output parity,
 signed-task lifecycle, pool and native fault/recovery controls remain required.

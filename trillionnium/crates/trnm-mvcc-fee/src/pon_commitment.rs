@@ -13,7 +13,7 @@ use trnm_protocol::pon_state::{Change, StateTree};
 use trnm_protocol::pon_wire::{state_root, Hash};
 
 type CanonicalValues = BTreeMap<Vec<u8>, Vec<u8>>;
-pub const MAX_CACHE_KEYS: usize = 8192;
+pub const MAX_CACHE_KEYS: usize = 16384;
 pub const MAX_CACHE_PAYLOAD_BYTES: usize = 8 * 1024 * 1024;
 pub const MAX_WORKSPACE_CHARGE_BYTES: usize = 128 * 1024 * 1024;
 // Deliberate conservative software charges, not claims about an allocator ABI.

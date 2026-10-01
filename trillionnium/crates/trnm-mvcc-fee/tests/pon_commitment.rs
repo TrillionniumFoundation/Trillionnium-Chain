@@ -294,24 +294,22 @@ fn disabled_cache_still_executes_real_full_rules_and_exact_deltas() {
     );
 }
 #[test]
-fn cache_key_and_workspace_limits_are_fallbacks_not_protocol_rejections() {
+fn explicitly_selected_8192_key_and_workspace_limits_remain_full_root_fallbacks() {
+    let limits = CacheLimits {
+        max_keys: 8192,
+        ..CacheLimits::default()
+    };
     let mut state = State::new();
     for i in 0..8192 {
         state.insert(format!("k{i:05}"), json!(0));
     }
     let root = pon_executor::root(&state).unwrap();
-    let before =
-        pon_commitment::checked_snapshot(&state, root, None, CacheLimits::default()).unwrap();
+    let before = pon_commitment::checked_snapshot(&state, root, None, limits).unwrap();
     assert_eq!(before.snapshot.as_ref().unwrap().keys(), 8192);
     state.insert("extra".into(), json!(0));
     let root = pon_executor::root(&state).unwrap();
-    let after = pon_commitment::checked_snapshot(
-        &state,
-        root,
-        before.snapshot.as_ref(),
-        CacheLimits::default(),
-    )
-    .unwrap();
+    let after =
+        pon_commitment::checked_snapshot(&state, root, before.snapshot.as_ref(), limits).unwrap();
     assert!(after.snapshot.is_none());
     assert_eq!(after.root, root);
     assert_eq!(
@@ -482,4 +480,204 @@ fn full_actual_difference_checks_removals_empty_values_and_late_bad_value() {
     .unwrap();
     assert_eq!(deleted.snapshot.as_ref().unwrap().keys(), 0);
     assert_eq!(replay_changes(&original, &deleted.changes), empty);
+}
+
+#[test]
+fn default_16384_boundary_is_checked_and_16385_remains_a_full_root_fallback() {
+    assert_eq!(pon_commitment::MAX_CACHE_KEYS, 16384);
+    let mut state: State = (0..16384).map(|i| (format!("k{i:05}"), json!(0))).collect();
+    let root = pon_executor::root(&state).unwrap();
+    let base =
+        pon_commitment::checked_snapshot(&state, root, None, CacheLimits::default()).unwrap();
+    println!("boundary16384: {:?}", base.observation);
+    assert_eq!(base.snapshot.as_ref().unwrap().keys(), 16384);
+    assert_eq!(base.observation.method, CommitmentMethod::RebuiltTree);
+    assert!(base.observation.workspace_charge_bytes <= pon_commitment::MAX_WORKSPACE_CHARGE_BYTES);
+    state.insert("k00000".into(), json!(1));
+    let root = pon_executor::root(&state).unwrap();
+    let changed = pon_commitment::checked_snapshot(
+        &state,
+        root,
+        base.snapshot.as_ref(),
+        CacheLimits::default(),
+    )
+    .unwrap();
+    assert_eq!(changed.observation.method, CommitmentMethod::CheckedApply);
+    assert_eq!(changed.observation.changed_keys, 1);
+    assert_eq!(changed.root, root);
+    assert_eq!(base.snapshot.as_ref().unwrap().root(), base.root);
+    state.insert("extra".into(), json!(0));
+    let root = pon_executor::root(&state).unwrap();
+    let over = pon_commitment::checked_snapshot(
+        &state,
+        root,
+        changed.snapshot.as_ref(),
+        CacheLimits::default(),
+    )
+    .unwrap();
+    assert_eq!(
+        over.observation.method,
+        CommitmentMethod::FullRoot(FullRootReason::KeyBudget)
+    );
+    assert_eq!(over.root, root);
+    println!("boundary16385: {:?}", over.observation);
+    assert!(over.snapshot.is_none());
+    assert_eq!(over.changes.len(), 1);
+    assert_eq!(
+        replay_changes(
+            &State::from_iter(
+                state
+                    .iter()
+                    .filter(|(key, _)| key.as_str() != "extra")
+                    .map(|(key, value)| (key.clone(), value.clone()))
+            ),
+            &over.changes
+        ),
+        state
+    );
+}
+#[test]
+fn workspace_budget_still_falls_back_below_key_and_payload_limits() {
+    let state: State = (0..16384)
+        .map(|i| (format!("k{i:05}"), json!("x".repeat(400))))
+        .collect();
+    let root = pon_executor::root(&state).unwrap();
+    let fallback =
+        pon_commitment::checked_snapshot(&state, root, None, CacheLimits::default()).unwrap();
+    println!("independent-workspace-boundary: {:?}", fallback.observation);
+    assert!(fallback.observation.actual_keys <= pon_commitment::MAX_CACHE_KEYS);
+    assert!(fallback.observation.actual_payload_bytes <= pon_commitment::MAX_CACHE_PAYLOAD_BYTES);
+    assert!(
+        fallback.observation.workspace_charge_bytes > pon_commitment::MAX_WORKSPACE_CHARGE_BYTES
+    );
+    assert_eq!(
+        fallback.observation.method,
+        CommitmentMethod::FullRoot(FullRootReason::WorkspaceBudget)
+    );
+    assert_eq!(fallback.root, root);
+    assert!(fallback.snapshot.is_none());
+}
+#[test]
+fn increasing_the_software_key_budget_does_not_permit_invalid_cache_limits() {
+    let state = initial();
+    for limits in [
+        CacheLimits {
+            max_keys: 16385,
+            ..CacheLimits::default()
+        },
+        CacheLimits {
+            max_payload_bytes: pon_commitment::MAX_CACHE_PAYLOAD_BYTES + 1,
+            ..CacheLimits::default()
+        },
+        CacheLimits {
+            max_workspace_charge_bytes: pon_commitment::MAX_WORKSPACE_CHARGE_BYTES + 1,
+            ..CacheLimits::default()
+        },
+    ] {
+        assert_eq!(
+            pon_commitment::derive_snapshot(&state, None, limits).unwrap_err(),
+            "COMMITMENT_CACHE_LIMIT"
+        );
+    }
+}
+
+#[test]
+fn signed_large_parent_prefixes_keep_full_rules_roots_receipts_and_exact_delta_parity() {
+    let cfg = Config::installed().unwrap();
+    let mut parent = initial();
+    for i in 1000..9219 {
+        parent.insert(
+            format!("account:{}", hex::encode(public(i))),
+            json!({"balance":0,"nonce":0}),
+        );
+    }
+    assert_eq!(parent.len(), 8223);
+    let root = pon_executor::root(&parent).unwrap();
+    let old = CacheLimits {
+        max_keys: 8192,
+        ..CacheLimits::default()
+    };
+    let old_parent = pon_commitment::checked_snapshot(&parent, root, None, old).unwrap();
+    assert_eq!(
+        old_parent.observation.method,
+        CommitmentMethod::FullRoot(FullRootReason::KeyBudget)
+    );
+    let new_parent =
+        pon_commitment::checked_snapshot(&parent, root, None, CacheLimits::default()).unwrap();
+    let snapshot = new_parent.snapshot.as_ref().unwrap();
+    let raws: Vec<_> = (1..=8).map(|n| transfer(&cfg, 0, n, 20000 + n)).collect();
+    for workers in [1, 4] {
+        for length in [1, 8] {
+            let txs = &raws[..length];
+            let full =
+                pon_executor::execute(&parent, txs, 1, public(3), [1; 32], workers, &cfg).unwrap();
+            let before = pon_commitment::execute_checked(
+                &parent,
+                root,
+                None,
+                request(txs, 1, workers),
+                &cfg,
+                old,
+            )
+            .unwrap();
+            let after = pon_commitment::execute_checked(
+                &parent,
+                root,
+                Some(snapshot),
+                request(txs, 1, workers),
+                &cfg,
+                CacheLimits::default(),
+            )
+            .unwrap();
+            for result in [&before, &after] {
+                assert_eq!(result.output.state, full.state);
+                assert_eq!(result.output.root, full.root);
+                assert_eq!(result.output.receipts, full.receipts);
+                assert_eq!(
+                    result.output.metrics.signature_verifications,
+                    full.metrics.signature_verifications
+                );
+                assert_eq!(
+                    replay_changes(&parent, &result.commitment.changes),
+                    full.state
+                );
+            }
+            assert_eq!(
+                before.commitment.changes.len(),
+                after.commitment.changes.len()
+            );
+            for (old, new) in before
+                .commitment
+                .changes
+                .iter()
+                .zip(&after.commitment.changes)
+            {
+                assert_eq!(old.key, new.key);
+                assert_eq!(old.before, new.before);
+                assert_eq!(old.after, new.after);
+            }
+            assert_eq!(
+                after.commitment.observation.method,
+                CommitmentMethod::CheckedApply
+            );
+            assert_eq!(snapshot.root(), root);
+        }
+    }
+    let mut invalid = raws.clone();
+    *invalid.last_mut().unwrap().last_mut().unwrap() ^= 1;
+    let expected =
+        pon_executor::execute(&parent, &invalid, 1, public(3), [1; 32], 4, &cfg).unwrap_err();
+    assert_eq!(
+        pon_commitment::execute_checked(
+            &parent,
+            root,
+            Some(snapshot),
+            request(&invalid, 1, 4),
+            &cfg,
+            CacheLimits::default()
+        )
+        .unwrap_err(),
+        expected
+    );
+    assert_eq!(snapshot.root(), root);
 }

@@ -154,6 +154,15 @@ all KV rows; full root computation and the reference/native bridge still require
 The [checked derived commitment adapter](DERIVED_STATE_COMMITMENT.md) specifies complete
 actual-state validation, immutable staged roots, cache limits and explicit full-root
 fallback. Its component controls do not establish a Node or network performance result.
+Growth acceptance must cross the previous 8,192-key cache boundary and the current
+16,384-key boundary. Record actual canonical payload, retained-cache/software-workspace
+charges, selected method and complete-root fallback separately. The 8 MiB payload and
+128 MiB workspace-charge ceilings still apply; the protocol state limit remains 65,536
+keys. Report continuous owner-held operation windows against the public request work
+deadline, including every failed Head, History and PoolStatus attempt. Successful
+inclusion or a faster root component cannot waive honest request failures, final
+confirmation or closed-store convergence in the same registered campaign.
+
 Optimize the measured bottleneck rather than prescribing another worker pool. Candidate
 work includes measurement and scaling of the implemented durable-owner root integration,
 bounded native state residency, explicit
