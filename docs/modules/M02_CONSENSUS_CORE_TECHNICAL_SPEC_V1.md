@@ -15,6 +15,8 @@ The claims below apply to their named component and tests, not to an independent
 
 Resolve parent, exact height/target/median/profile and parent-admitted task; verify real work and all signatures; execute and compare state/receipt/tx roots; derive required work; persist only complete valid block.
 
+PNW1 verification recomputes the entire transcript before comparing its submitted final digest; a digest mismatch returns `Transcript` before product corrections, while a matching digest still requires both corrections and the exact product check. This preserves proof bytes and rejection order and does not qualify adversarial ingress cost or public work hardness.
+
 **Atomic/commit boundary:** Single block+deltas transaction owned by M07; no partial accepted header.
 
 ### M02.ChooseBranch

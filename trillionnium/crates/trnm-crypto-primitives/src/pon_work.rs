@@ -107,9 +107,22 @@ fn mul(a: &[u32], b: &[u32], rows: usize, inner: usize, cols: usize) -> Vec<u32>
     }
     out
 }
-/// Exact useful matrix product plus the bound transcript digest.
-/// The entire fixed-size job is evaluated; no proof-randomness lottery is offered.
-pub fn evaluate(challenge: Hash, a: &[u32], b: &[u32]) -> Result<(Vec<u32>, Hash), WorkError> {
+// Operation-local arithmetic intermediates, never a verified-work capability or cache.
+struct TranscriptEvaluation {
+    cp: Vec<u32>,
+    el: Vec<u32>,
+    er: Vec<u32>,
+    fl: Vec<u32>,
+    fr: Vec<u32>,
+    bp: Vec<u32>,
+    trace: Hash,
+}
+
+fn evaluate_transcript(
+    challenge: Hash,
+    a: &[u32],
+    b: &[u32],
+) -> Result<TranscriptEvaluation, WorkError> {
     validate(a)?;
     validate(b)?;
     let el = expand(challenge, 0, N * R)?;
@@ -148,15 +161,48 @@ pub fn evaluate(challenge: Hash, a: &[u32], b: &[u32]) -> Result<(Vec<u32>, Hash
             }
         }
     }
-    let correction1 = mul(&mul(a, &fl, N, N, R), &fr, N, R, N);
-    let correction2 = mul(&el, &mul(&er, &bp, R, N, N), N, R, N);
-    let product = cp
+    Ok(TranscriptEvaluation {
+        cp,
+        el,
+        er,
+        fl,
+        fr,
+        bp,
+        trace: transcript.finalize().into(),
+    })
+}
+
+#[cfg(test)]
+thread_local! {
+    static PRODUCT_RECONSTRUCTIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
+fn finish_product(a: &[u32], evaluated: TranscriptEvaluation) -> Vec<u32> {
+    #[cfg(test)]
+    PRODUCT_RECONSTRUCTIONS.with(|count| count.set(count.get() + 1));
+    let correction1 = mul(&mul(a, &evaluated.fl, N, N, R), &evaluated.fr, N, R, N);
+    let correction2 = mul(
+        &evaluated.el,
+        &mul(&evaluated.er, &evaluated.bp, R, N, N),
+        N,
+        R,
+        N,
+    );
+    evaluated
+        .cp
         .iter()
         .zip(correction1)
         .zip(correction2)
         .map(|((x, y), z)| ((u128::from(*x) + 2 * Q - u128::from(y) - u128::from(z)) % Q) as u32)
-        .collect();
-    Ok((product, transcript.finalize().into()))
+        .collect()
+}
+
+/// Exact useful matrix product plus the bound transcript digest.
+/// The entire fixed-size job is evaluated; no proof-randomness lottery is offered.
+pub fn evaluate(challenge: Hash, a: &[u32], b: &[u32]) -> Result<(Vec<u32>, Hash), WorkError> {
+    let evaluated = evaluate_transcript(challenge, a, b)?;
+    let trace = evaluated.trace;
+    Ok((finish_product(a, evaluated), trace))
 }
 pub fn prove(challenge: Hash, a: &[u32], b: &[u32]) -> Result<Vec<u8>, WorkError> {
     let (product, trace) = evaluate(challenge, a, b)?;
@@ -201,10 +247,13 @@ pub fn verify(
     if ticket > target {
         return Err(WorkError::Target);
     }
-    let (product, trace) = evaluate(challenge, a, b)?;
-    if trace.as_slice() != trace_claim {
+    let evaluated = evaluate_transcript(challenge, a, b)?;
+    // PNW1 submits only a final digest: every transcript update is still replayed.
+    // A mismatch skips product corrections; a matching digest is not yet VerifiedWork.
+    if evaluated.trace.as_slice() != trace_claim {
         return Err(WorkError::Transcript);
     }
+    let product = finish_product(a, evaluated);
     if product != claimed {
         return Err(WorkError::Product);
     }
@@ -430,6 +479,149 @@ mod tests {
         assert_eq!(
             verify([3; 32], task, [0; 32], &proof).unwrap_err(),
             WorkError::Target
+        );
+    }
+    fn assert_verification_error(
+        challenge: Hash,
+        task: Hash,
+        target: Hash,
+        proof: &[u8],
+        expected: WorkError,
+        product_reconstructions: usize,
+    ) {
+        PRODUCT_RECONSTRUCTIONS.with(|count| count.set(0));
+        assert_eq!(
+            verify(challenge, task, target, proof).unwrap_err(),
+            expected
+        );
+        PRODUCT_RECONSTRUCTIONS.with(|count| {
+            assert_eq!(count.get(), product_reconstructions);
+        });
+    }
+    #[test]
+    fn transcript_mismatch_skips_corrections_but_matching_digest_requires_product() {
+        let (a, b) = matrices();
+        let challenge = [3; 32];
+        let task = task_id(&a, &b).unwrap();
+        let proof = prove(challenge, &a, &b).unwrap();
+        let mut bad_product = proof.clone();
+        bad_product[4 + 8 * CELLS] ^= 1;
+        let mut bad_both = bad_product.clone();
+        bad_both[PROOF_BYTES - 1] ^= 1;
+        assert_verification_error(
+            challenge,
+            task,
+            [255; 32],
+            &bad_both,
+            WorkError::Transcript,
+            0,
+        );
+        assert_verification_error([4; 32], task, [255; 32], &proof, WorkError::Transcript, 0);
+        assert_verification_error(
+            challenge,
+            task,
+            [255; 32],
+            &bad_product,
+            WorkError::Product,
+            1,
+        );
+        PRODUCT_RECONSTRUCTIONS.with(|count| count.set(0));
+        let verified = verify(challenge, task, [255; 32], &proof).unwrap();
+        assert_eq!(verified.product(), mul(&a, &b, N, N, N));
+        PRODUCT_RECONSTRUCTIONS.with(|count| assert_eq!(count.get(), 1));
+    }
+    #[test]
+    fn verifier_error_precedence_is_preserved_before_deferred_product() {
+        let (a, b) = matrices();
+        let challenge = [11; 32];
+        let task = task_id(&a, &b).unwrap();
+        let wrong_task = [0; 32];
+        assert_ne!(task, wrong_task);
+        let proof = prove(challenge, &a, &b).unwrap();
+        let mut bad_fields = proof.clone();
+        for pos in [4, 4 + 4 * CELLS, 4 + 8 * CELLS] {
+            bad_fields[pos..pos + 4].copy_from_slice(&u32::MAX.to_le_bytes());
+        }
+        bad_fields[0] = b'X';
+        assert_verification_error(
+            challenge,
+            wrong_task,
+            [0; 32],
+            &bad_fields[..PROOF_BYTES - 1],
+            WorkError::Length,
+            0,
+        );
+        assert_verification_error(
+            challenge,
+            wrong_task,
+            [0; 32],
+            &bad_fields,
+            WorkError::Version,
+            0,
+        );
+        bad_fields[0] = b'P';
+        assert_verification_error(
+            challenge,
+            wrong_task,
+            [0; 32],
+            &bad_fields,
+            WorkError::Target,
+            0,
+        );
+        assert_verification_error(
+            challenge,
+            wrong_task,
+            [255; 32],
+            &bad_fields,
+            WorkError::Field,
+            0,
+        );
+        for pos in [4, 4 + 4 * CELLS] {
+            let mut bad_input = proof.clone();
+            bad_input[pos..pos + 4].copy_from_slice(&u32::MAX.to_le_bytes());
+            assert_verification_error(
+                challenge,
+                wrong_task,
+                [255; 32],
+                &bad_input,
+                WorkError::Field,
+                0,
+            );
+        }
+        let mut bad_both = proof.clone();
+        bad_both[4 + 8 * CELLS] ^= 1;
+        bad_both[PROOF_BYTES - 1] ^= 1;
+        let ticket = hash(b"ticket", &[&challenge, &bad_both[PROOF_BYTES - 32..]]);
+        let mut lower_target = ticket;
+        for byte in lower_target.iter_mut().rev() {
+            if *byte != 0 {
+                *byte -= 1;
+                break;
+            }
+            *byte = 255;
+        }
+        assert_ne!(lower_target, [0; 32]);
+        assert!(lower_target < ticket);
+        assert_verification_error(
+            challenge,
+            wrong_task,
+            lower_target,
+            &bad_both,
+            WorkError::Task,
+            0,
+        );
+        assert_verification_error(
+            challenge,
+            task,
+            lower_target,
+            &bad_both,
+            WorkError::Target,
+            0,
+        );
+        assert_eq!(evaluate(challenge, &[], &b), Err(WorkError::Length));
+        assert_eq!(
+            evaluate(challenge, &vec![u32::MAX; CELLS], &[]),
+            Err(WorkError::Field)
         );
     }
     #[test]

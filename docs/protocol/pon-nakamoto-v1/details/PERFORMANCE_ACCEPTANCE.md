@@ -155,7 +155,8 @@ The [checked derived commitment adapter](DERIVED_STATE_COMMITMENT.md) specifies 
 actual-state validation, immutable staged roots, cache limits and explicit full-root
 fallback. Its component controls do not establish a Node or network performance result.
 Optimize the measured bottleneck rather than prescribing another worker pool. Candidate
-work includes durable-owner integration of those roots, bounded native state residency, explicit
+work includes measurement and scaling of the implemented durable-owner root integration,
+bounded native state residency, explicit
 access/dependency scheduling and serial hotspot degradation while preserving the existing
 single durable owner. A changed backend needs exact state/receipt/error/recovery parity
 before its speed can count. A faster executor cannot expand the 256-slot/10-second nominal
