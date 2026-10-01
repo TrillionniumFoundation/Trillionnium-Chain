@@ -204,11 +204,85 @@ def decode_packet(raw):
     return raw[:318], txs, raw[pos:]
 
 
-def validate_durable_store(root, folder, summary, packets, roots, cumulative, state, canonical, H):
+def native_durable_schema(root):
+    """Only the explicitly implemented literal V1 or composed V2 source contract.
+
+    This is not a Rust evaluator. Unknown composition/literal syntax fails closed;
+    source binding is independently enforced by the evidence checker.
+    """
     source = safe(root,'trillionnium/crates/trnm-pon-node/src/store.rs').read_text()
-    ddl = re.search(r'const DDL:&str="(.*?)";',source,re.S)
-    require(ddl is not None, 'durable schema source')
-    ddl = ddl[1]
+    def literal(text, name):
+        matches = re.findall(r'\bconst\s+'+name+r'\s*:\s*&str\s*=\s*"([^"\\]*)"\s*;',text,re.S)
+        require(len(matches) == 1, 'durable schema literal '+name)
+        return matches[0]
+    if re.search(r'\bconst\s+BASE_DDL\b',source):
+        base = literal(source,'BASE_DDL')
+        require(re.search(r'fn\s+ddl\s*\(\s*\)\s*->\s*String\s*\{\s*format!\(\s*"\{\}\{\}"\s*,\s*BASE_DDL\s*,\s*crate::ancestry_index::DDL\s*\)\s*\}',source), 'durable V2 schema composition')
+        require(re.search(r'hash\(\s*b"native-branch-schema-v2"\s*,\s*&\[\s*ddl\.as_bytes\(\)\s*\]\s*\)',source), 'durable V2 schema domain')
+        require(not re.search(r'\bconst\s+DDL\b',source), 'ambiguous durable schema')
+        index = safe(root,'trillionnium/crates/trnm-pon-node/src/ancestry_index.rs').read_text()
+        return base+literal(index,'DDL'), 'native-branch-schema-v2'
+    ddl = literal(source,'DDL')
+    require(re.search(r'hash\(\s*b"native-branch-schema-v1"\s*,\s*&\[\s*DDL\.as_bytes\(\)\s*\]\s*\)',source), 'durable V1 schema domain')
+    return ddl, 'native-branch-schema-v1'
+
+
+def validate_native_ancestry(database, summary, rows, H):
+    """Full finite evidence-dump integrity check, not a keyed/independent certificate.
+
+    The native runtime validates visited rows lazily. Here every retained block's
+    derived rows are recomputed from the already replay-bound blocks; neither
+    scope resists an owner rewriting all authoritative inputs and resealing them.
+    """
+    context = tuple(bytes.fromhex(summary[key]) for key in ('network','parameters','genesis'))
+    require(all(len(v) == 32 for v in context), 'ancestry context')
+    metadata = {}
+    for block,parent,height,_,packet,state_root in rows:
+        require(isinstance(block,bytes) and len(block) == 32 and len(state_root) == 32
+                and type(height) is int and 0 <= height < 2**63, 'ancestry block metadata')
+        if block == context[2]:
+            require(height == 0 and parent is None and packet is None, 'ancestry genesis metadata')
+        else:
+            require(isinstance(parent,bytes) and len(parent) == 32 and height > 0
+                    and isinstance(packet,bytes) and len(packet) <= 1048576, 'ancestry packet metadata')
+            header,_,proof = decode_packet(packet)
+            require(header[6:38] == context[0] and header[38:70] == context[1]
+                    and header[70:102] == parent and int.from_bytes(header[102:110],'little') == height
+                    and header[214:246] == state_root and H('block',header,proof[-32:]) == block,
+                    'ancestry header context/identity')
+        require(block not in metadata, 'duplicate ancestry block')
+        metadata[block] = (parent,height)
+    require(context[2] in metadata, 'ancestry genesis missing')
+    expected = {}; zero = bytes(32)
+    for block,parent,height,_,_,_ in rows:
+        if not height: continue
+        require(parent in metadata and metadata[parent][1]+1 == height, 'ancestry parent height')
+        for level in range(height.bit_length()):
+            if level == 0:
+                ancestor,ancestor_height,left_seal,right_seal = parent,height-1,zero,zero
+            else:
+                left = expected.get((block,level-1))
+                require(left is not None, 'ancestry left half missing')
+                right = expected.get((left[0],level-1))
+                require(right is not None, 'ancestry right half missing')
+                ancestor,ancestor_height,left_seal,right_seal = right[0],right[1],left[4],right[4]
+            require(ancestor in metadata and metadata[ancestor][1] == height-(1<<level)
+                    and ancestor_height == height-(1<<level), 'ancestry ancestor height')
+            seal = H('native-derived-ancestry-row-v1',*context,block,parent,height.to_bytes(8,'little'),
+                     bytes([level]),ancestor,ancestor_height.to_bytes(8,'little'),left_seal,right_seal)
+            expected[(block,level)] = (ancestor,ancestor_height,left_seal,right_seal,seal)
+    require(database.execute('SELECT count(*) FROM ancestry_jump').fetchone()[0] == len(expected),
+            'ancestry derived row count')
+    actual = {}
+    for block,level,ancestor,height,left,right,seal in database.execute('SELECT block,level,ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump'):
+        key = (block,level)
+        require(key not in actual, 'duplicate ancestry derived row')
+        actual[key] = (ancestor,height,left,right,seal)
+    require(actual == expected, 'ancestry derived row/half-link/seal differs')
+
+
+def validate_durable_store(root, folder, summary, packets, roots, cumulative, state, canonical, H):
+    ddl, schema_domain = native_durable_schema(root)
     schema_names = set(re.findall(r'CREATE (?:TABLE|INDEX) (\w+)',ddl))
     expected_sql = {match[1]:' '.join(match[0][:-1].split())
                     for match in re.finditer(r'CREATE (?:TABLE|INDEX) (\w+).*?;',ddl,re.S)}
@@ -224,7 +298,7 @@ def validate_durable_store(root, folder, summary, packets, roots, cumulative, st
             schema = dict(database.execute("SELECT name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'"))
             require(set(schema) == schema_names and {name:' '.join(sql.split()) for name,sql in schema.items()} == expected_sql, 'durable schema additions/omissions/changes')
             metadata = dict(database.execute('SELECT key,value FROM metadata'))
-            require(metadata == {'schema':H('native-branch-schema-v1',ddl.encode()),
+            require(metadata == {'schema':H(schema_domain,ddl.encode()),
                                   'parameters':bytes.fromhex(summary['parameters']),
                                   'genesis':bytes.fromhex(summary['genesis'])}, 'durable metadata/context')
             tip,generation,slot = database.execute('SELECT tip,generation,state_slot FROM active WHERE singleton=1').fetchone()
@@ -241,6 +315,8 @@ def validate_durable_store(root, folder, summary, packets, roots, cumulative, st
                 require(block.hex() == summary['records'][index-1]['block'] and parent == previous
                         and height == index and work == cumulative[index].to_bytes(64,'big')
                         and packet == raw and root == roots[index], 'durable packet/state/work differs from replay')
+            if schema_domain == 'native-branch-schema-v2':
+                validate_native_ancestry(database,summary,rows,H)
 
 
 def validate_observations(batch, row, tx_ids, summary, headers, cumulative, *, confirmed):

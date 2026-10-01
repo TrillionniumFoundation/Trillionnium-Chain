@@ -335,25 +335,55 @@ class DurableStoreTests(unittest.TestCase):
         sys.path.insert(0,str(check.ROOT/'formal/pon-nakamoto-v1'))
         from contract_wire import H,canonical
         self.H,self.canonical = H,canonical
-        source = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/store.rs').read_text()
-        ddl = re.search(r'const DDL:&str="(.*?)";',source,re.S)[1]
-        self.state = {'test:exact':1}; self.roots = [bytes([1])*32,bytes([2])*32]
-        self.packets = [b'owned-test-packet']; self.cumulative = [0,2]
-        self.summary = {'genesis':'3'*64,'parameters':'4'*64,'records':[{'block':'5'*64}],
-                        'producer_final_state':{'tip':'5'*64}}
+        ddl, self.schema_domain = check.native_durable_schema(check.ROOT)
+        self.state = {'test:exact':1}; self.roots = [bytes([i])*32 for i in range(1,5)]
+        self.packets = []; self.cumulative = [0,2,4,6]
+        self.summary = {'genesis':'3'*64,'parameters':'4'*64,'network':'6'*64,'records':[]}
+        from contract_wire import header_encode
+        parent = bytes.fromhex(self.summary['genesis'])
+        # Actual current SQLite schema and exact native header/index formulas.
+        # These opaque work bytes exercise only the durable-store stage; PoN
+        # validity is separately checked by packet tests and full native replay.
+        self.blocks = []
+        for height in range(1,4):
+            header = header_encode(dict(network=bytes.fromhex(self.summary['network']),
+                parameters=bytes.fromhex(self.summary['parameters']),parent=parent,height=height,
+                timestamp=height*10,target=bytes([255])*32,miner=bytes(32),transactions=bytes(32),
+                state=self.roots[height],receipts=bytes(32),work_task=bytes(32),nonce=height))
+            proof = bytes(49156)+H('owned-store-fixture-trace',height.to_bytes(8,'little'))
+            packet = header+b'\x00\x00'+proof; block = H('block',header,proof[-32:])
+            self.packets.append(packet); self.blocks.append((block,parent,height))
+            self.summary['records'].append({'block':block.hex()}); parent = block
+        self.summary['producer_final_state'] = {'tip':parent.hex()}
         for owner in ('producer','validator'):
             directory = self.folder/owner; directory.mkdir()
             with sqlite3.connect(directory/'native.sqlite') as database:
                 database.executescript(ddl)
                 database.executemany('INSERT INTO metadata VALUES(?,?)',[
-                    ('schema',H('native-branch-schema-v1',ddl.encode())),
+                    ('schema',H(self.schema_domain,ddl.encode())),
                     ('parameters',bytes.fromhex(self.summary['parameters'])),('genesis',bytes.fromhex(self.summary['genesis']))])
-                database.execute('INSERT INTO active VALUES(1,?,1,0)',(bytes.fromhex('5'*64),))
+                database.execute('INSERT INTO active VALUES(1,?,3,0)',(parent,))
                 database.execute('INSERT INTO kv VALUES(0,?,?)',('test:exact',canonical(1)))
                 database.execute('INSERT INTO blocks VALUES(?,NULL,0,?,NULL,?)',
                     (bytes.fromhex('3'*64),bytes(64),self.roots[0]))
-                database.execute('INSERT INTO blocks VALUES(?,?,1,?,?,?)',
-                    (bytes.fromhex('5'*64),bytes.fromhex('3'*64),(2).to_bytes(64,'big'),self.packets[0],self.roots[1]))
+                for block,previous,height in self.blocks:
+                    database.execute('INSERT INTO blocks VALUES(?,?,?,?,?,?)',
+                        (block,previous,height,self.cumulative[height].to_bytes(64,'big'),
+                         self.packets[height-1],self.roots[height]))
+                if self.schema_domain == 'native-branch-schema-v2':
+                    index = {}; zero = bytes(32)
+                    for block,previous,height in self.blocks:
+                        for level in range(height.bit_length()):
+                            if level == 0: ancestor,ancestor_height,left,right = previous,height-1,zero,zero
+                            else:
+                                half = index[(block,level-1)]; other = index[(half[0],level-1)]
+                                ancestor,ancestor_height,left,right = other[0],other[1],half[4],other[4]
+                            seal = H('native-derived-ancestry-row-v1',bytes.fromhex(self.summary['network']),
+                                bytes.fromhex(self.summary['parameters']),bytes.fromhex(self.summary['genesis']),
+                                block,previous,height.to_bytes(8,'little'),bytes([level]),ancestor,
+                                ancestor_height.to_bytes(8,'little'),left,right)
+                            row = (ancestor,ancestor_height,left,right,seal);index[(block,level)] = row
+                            database.execute('INSERT INTO ancestry_jump VALUES(?,?,?,?,?,?,?)',(block,level,*row))
         self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
 
     def tearDown(self): self.temporary.cleanup()
@@ -380,6 +410,75 @@ class DurableStoreTests(unittest.TestCase):
             database.execute('UPDATE kv SET value=?',(self.canonical(1),))
             database.execute('CREATE TRIGGER injected AFTER INSERT ON metadata BEGIN SELECT 1; END')
         with self.assertRaises(ValueError): self.verify()
+
+    def test_current_v2_schema_and_complete_index_positive_control(self):
+        self.assertEqual(self.schema_domain,'native-branch-schema-v2')
+        self.verify()
+        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+            self.assertEqual(database.execute('SELECT count(*) FROM ancestry_jump').fetchone()[0],5)
+
+    def test_v2_schema_metadata_cannot_use_legacy_hash_domain(self):
+        ddl,_ = check.native_durable_schema(check.ROOT)
+        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+            database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                             (self.H('native-branch-schema-v1',ddl.encode()),))
+        with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+
+    def test_resealed_wrong_half_link_is_not_accepted_as_derived_structure(self):
+        block,previous,height = self.blocks[1]
+        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+            ancestor,ancestor_height,_,right,_ = database.execute(
+                'SELECT ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump WHERE block=? AND level=1',(block,)).fetchone()
+            left = bytes([9])*32
+            seal = self.H('native-derived-ancestry-row-v1',bytes.fromhex(self.summary['network']),
+                bytes.fromhex(self.summary['parameters']),bytes.fromhex(self.summary['genesis']),
+                block,previous,height.to_bytes(8,'little'),bytes([1]),ancestor,
+                ancestor_height.to_bytes(8,'little'),left,right)
+            database.execute('UPDATE ancestry_jump SET left_seal=?,seal=? WHERE block=? AND level=1',(left,seal,block))
+        with self.assertRaisesRegex(ValueError,'ancestry derived row/half-link/seal'): self.verify()
+
+    def test_missing_extra_or_changed_derived_rows_are_refused(self):
+        for mode in ('missing','extra','seal','ancestor'):
+            with self.subTest(mode=mode):
+                database = sqlite3.connect(self.folder/'validator/native.sqlite')
+                try:
+                    row = database.execute('SELECT * FROM ancestry_jump WHERE level=1 LIMIT 1').fetchone()
+                    if mode == 'missing':
+                        database.execute('DELETE FROM ancestry_jump WHERE block=? AND level=?',row[:2])
+                    elif mode == 'extra':
+                        database.execute('INSERT INTO ancestry_jump VALUES(?,?,?,?,?,?,?)',(row[0],2,*row[2:]))
+                    elif mode == 'seal':
+                        database.execute('UPDATE ancestry_jump SET seal=? WHERE block=? AND level=?',(bytes(32),*row[:2]))
+                    else:
+                        database.execute('UPDATE ancestry_jump SET ancestor=? WHERE block=? AND level=?',(bytes([8])*32,*row[:2]))
+                    database.commit()
+                    with self.assertRaisesRegex(ValueError,'ancestry derived row'): self.verify()
+                finally:
+                    database.execute('DELETE FROM ancestry_jump WHERE block=? AND level=2',(row[0],))
+                    database.execute('DELETE FROM ancestry_jump WHERE block=? AND level=?',row[:2])
+                    database.execute('INSERT INTO ancestry_jump VALUES(?,?,?,?,?,?,?)',row)
+                    database.commit(); database.close()
+        self.verify()
+
+    def test_schema_extraction_is_explicit_versioned_and_unknown_composition_fails_closed(self):
+        root = self.folder/'source-fixture'
+        store = root/'trillionnium/crates/trnm-pon-node/src/store.rs';store.parent.mkdir(parents=True)
+        ddl = 'CREATE TABLE exact(key BLOB);'
+        legacy = 'const DDL : &str = "'+ddl+'";fn open(){let id=hash(b"native-branch-schema-v1", &[ DDL.as_bytes() ]);}'
+        store.write_text(legacy)
+        self.assertEqual(check.native_durable_schema(root),(ddl,'native-branch-schema-v1'))
+        for mutated in (legacy.replace('native-branch-schema-v1','native-branch-schema-unknown'),
+                        legacy+legacy,legacy.replace('const DDL','const OTHER')):
+            store.write_text(mutated)
+            with self.assertRaises(ValueError): check.native_durable_schema(root)
+        current = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/store.rs').read_text()
+        index = store.with_name('ancestry_index.rs')
+        index.write_text((check.ROOT/'trillionnium/crates/trnm-pon-node/src/ancestry_index.rs').read_text())
+        store.write_text(current)
+        self.assertEqual(check.native_durable_schema(root),check.native_durable_schema(check.ROOT))
+        store.write_text(current.replace('format!("{}{}", BASE_DDL, crate::ancestry_index::DDL)',
+                                        'format!("{}", BASE_DDL)'))
+        with self.assertRaisesRegex(ValueError,'durable V2 schema composition'): check.native_durable_schema(root)
 
 
 if __name__ == '__main__': unittest.main(verbosity=2)

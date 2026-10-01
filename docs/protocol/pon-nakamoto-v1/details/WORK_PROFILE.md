@@ -161,7 +161,7 @@ not proof of whole-model training, data rights or future quality.
 |---|---|---|
 | Keep full recomputation | Fastest implemented shortcuts for selected/sparse/low-rank tasks; preprocessing amortization; hardware advantage; same-target valid/invalid cost and honest public service budget | Existing executable reference; no qualified public-cost bound. |
 | Add a compact proof | Exact challenged relation, canonical output and ticket binding; proof soundness/setup; bounded malformed-proof verifier cost; proof-generation overhead and inability to grind randomized proofs | Research candidate only; proof of correct execution alone does not establish expended work hardness. |
-| Add separate admission protection | Anonymous/permissionless access assumptions; replay/context binding; quantified defender/attacker resource accounting and honest service under identity churn | Research candidate only. An admission hash filter cannot replace useful-work validity or change fork weight. |
+| Add separate admission protection | Anonymous/permissionless access assumptions; replay/context binding; quantified defender/attacker resource accounting and honest service under identity churn | Bounded development V2/V3 intake is implemented; public fairness and independent hostile-cost qualification remain unaccepted. Admission tickets cannot replace useful-work validity or change fork weight; see [PUBLIC_INTAKE_V2.md](PUBLIC_INTAKE_V2.md) and [PUBLIC_POOL_INTAKE_V3.md](PUBLIC_POOL_INTAKE_V3.md). |
 
 No alternative is enabled by this table. Qualification requires exact versioned bytes,
 independent attack implementation/reproduction and declared assumptions, not an
