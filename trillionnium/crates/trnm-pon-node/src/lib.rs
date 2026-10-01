@@ -13,7 +13,7 @@ pub use store::mempool::{
     PoolBatch, PoolGcSummary, PoolGroupStatus, PoolLimits, PoolReceipt, PoolState, PoolStatus,
     LOCAL_POOL_PROFILE,
 };
-pub use store::{ConfirmationBatch, Node, Observation};
+pub use store::{ConfirmationBatch, DerivedCommitmentStatus, Node, Observation};
 use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};
 use trnm_mvcc_fee::pon_executor::{self, Config, State};

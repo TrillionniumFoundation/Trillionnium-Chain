@@ -284,6 +284,7 @@ fn validate_pending(
     parent: Hash,
     cfg: &Config,
     limits: &PoolLimits,
+    node: &Node,
 ) -> Result<usize> {
     let mut gate = TypedAdmissionGate::new(limits.max_records, limits.critical_reserve, 2048);
     let mut next = BTreeMap::new();
@@ -332,7 +333,7 @@ fn validate_pending(
         bindings.is_empty() && ready == raws.len(),
         "POOL_TYPED_BINDING",
     )?;
-    pon_executor::execute(state, raws, height, limits.preview_miner, parent, 1, cfg)?;
+    node.execute_derived(state, parent, raws, height, limits.preview_miner, 1)?;
     Ok(ready)
 }
 impl Node {
@@ -548,6 +549,7 @@ impl Node {
                     parent,
                     &self.settings.app,
                     &limits,
+                    self,
                 ) {
                     Ok(_) => {
                         accepted = candidate;
@@ -782,6 +784,7 @@ impl Node {
             parent,
             &self.settings.app,
             &limits,
+            self,
         )?;
         let tx = self
             .db
@@ -850,6 +853,7 @@ impl Node {
             parent,
             &self.settings.app,
             &limits,
+            self,
         )?;
         ensure(self.active()? == (parent, generation), "POOL_STALE_PARENT")?;
         Ok(PoolBatch {
@@ -899,6 +903,7 @@ impl Node {
             batch.parent,
             &self.settings.app,
             &limits,
+            self,
         )?;
         ensure(
             self.active()? == (batch.parent, batch.generation),

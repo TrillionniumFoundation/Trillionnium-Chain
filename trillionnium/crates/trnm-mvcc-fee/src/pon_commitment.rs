@@ -281,15 +281,26 @@ pub fn checked_snapshot(
     prior: Option<&CheckedCommitment>,
     limits: CacheLimits,
 ) -> Result<PreparedCommitment> {
-    let prepared = prepare_values(encode(actual_state)?, prior, None, limits)?;
+    let prepared = derive_snapshot(actual_state, prior, limits)?;
     if prepared.root != expected_root {
         return Err("COMMITMENT_ROOT");
     }
     Ok(prepared)
 }
+/// Compute a successor commitment from complete actual state values. This is
+/// only a calculation: an admitted context must use checked_snapshot or compare
+/// its expected root separately. No state setter or eligibility fact is created.
+pub fn derive_snapshot(
+    actual_state: &State,
+    prior: Option<&CheckedCommitment>,
+    limits: CacheLimits,
+) -> Result<PreparedCommitment> {
+    prepare_values(encode(actual_state)?, prior, None, limits)
+}
 /// Pure full-rule execution. Never advances or mutates the supplied snapshot.
-/// A wrong internal snapshot is rejected before any transaction execution; an
-/// owner can explicitly discard/reseed it via checked_snapshot/None. None uses
+/// A canonical byte/root mismatch is rejected before transaction execution;
+/// internal tree inconsistency takes the complete-root fallback during staging.
+/// An owner can explicitly discard/reseed via checked_snapshot/None. None uses
 /// actual full-root validation and still returns a budgeted staged successor.
 pub fn execute_checked(
     actual_parent: &State,

@@ -104,19 +104,23 @@ fn socket_admission_binds_exact_challenge_and_keeps_fake_work_invalid() {
     let address = listener.local_addr().unwrap();
     let stop = Arc::new(AtomicBool::new(false));
     let server_stop = stop.clone();
+    // Binding/negative controls need a solved challenge, not a 16-bit cost
+    // measurement. Keep the production TTL while reducing this test's variance.
+    let binding_policy = AdmissionPolicy::new(8, Duration::from_secs(2)).unwrap();
     let server = thread::spawn(move || {
         ingress::serve_protected(
             listener,
             node,
             Duration::from_secs(15),
             server_stop,
-            AdmissionPolicy::development(),
+            binding_policy,
         )
         .unwrap()
     });
 
     let submitted = request(&forged);
     let (mut first, wire, challenge) = connect(address, &submitted);
+    assert_eq!((challenge.bits, challenge.lifetime_ms), (8, 2000));
     let started = Instant::now();
     let (solution, hash_trials) =
         ingress::solve_admission_challenge(&challenge, &wire, &settings).unwrap();
@@ -134,10 +138,12 @@ fn socket_admission_binds_exact_challenge_and_keeps_fake_work_invalid() {
     assert_eq!(refusal["error"], "ADMISSION_REPLAY_OR_CONTEXT");
 
     let (mut target_failure, wire, challenge) = connect(address, &submitted);
-    let (mut wrong_target, _) =
-        ingress::solve_admission_challenge(&challenge, &wire, &settings).unwrap();
-    let statement = trnm_pon_node::digest(&wrong_target.challenge_digest).unwrap();
-    wrong_target.nonce = (0..1024_u64)
+    assert_eq!(wire, serde_json::to_vec(&submitted).unwrap());
+    let statement = hash(
+        b"native-transport-admission-challenge-v1",
+        &[&serde_json::to_vec(&challenge).unwrap()],
+    );
+    let invalid_nonce = (0..1024_u64)
         .find(|nonce| {
             let digest = hash(
                 b"native-transport-admission-solution-v1",
@@ -147,6 +153,11 @@ fn socket_admission_binds_exact_challenge_and_keeps_fake_work_invalid() {
                 < u32::from(challenge.bits)
         })
         .unwrap();
+    let wrong_target = AdmissionSolution {
+        schema: "trnm-pon-admission-solution-v1".into(),
+        challenge_digest: hex::encode(statement),
+        nonce: invalid_nonce,
+    };
     send(
         &mut target_failure,
         &serde_json::to_vec(&wrong_target).unwrap(),

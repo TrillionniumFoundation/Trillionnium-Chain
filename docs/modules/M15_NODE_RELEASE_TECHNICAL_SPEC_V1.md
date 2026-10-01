@@ -176,3 +176,19 @@ The explicit [operator actor context](../protocol/pon-nakamoto-v1/details/OPERAT
 uses the existing module owner and fresh public descriptor/signature-bound N/P/G.
 This changes development bootstrap custody and role pins only; native admission,
 execution and confirmation remain required, and no independent/public flag is accepted.
+
+## Checked derived state-root calculation
+
+The existing native SQLite owner may retain one optional M06-derived commitment,
+fenced by active block, generation and state slot. Actual KV/canonical values remain
+the input on every read; preview, mining and admission do not publish speculative
+successors. Direct activation publishes only after its database COMMIT; reorganization
+and recovery discard unrelated context. Historical reconstruction checks actual delta
+before bytes and every intermediate root. Exceeding the optional cache budget takes
+the complete-root path without reducing protocol state limits.
+
+The interfaces, software accounting, fallback/error rules and exact parity controls
+are specified in
+[DERIVED_STATE_COMMITMENT](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md).
+This calculation changes no durable owner, state namespace or signed domain. A new
+performance result requires its own committed source and binary binding.

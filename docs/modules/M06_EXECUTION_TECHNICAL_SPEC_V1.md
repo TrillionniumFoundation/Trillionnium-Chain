@@ -1,5 +1,9 @@
 # M06 Deterministic application execution and reversible deltas
 
+The pure [checked derived commitment contract](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md)
+adds bounded root computation for complete actual states. It retains existing execution,
+receipt and reversible-delta rules; the durable Node owner commits and publishes results.
+
 Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 [Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 

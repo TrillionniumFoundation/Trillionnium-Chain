@@ -10,6 +10,7 @@ use serde::Serialize;
 use serde_json::Value;
 use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
 use std::{
+    cell::RefCell,
     collections::BTreeMap,
     fs::{self, File, OpenOptions},
     io::{Read, Seek, SeekFrom, Write},
@@ -20,8 +21,12 @@ use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{
     derive_matrices, verify_development_statement, DevelopmentTaskAdmission, TaskMaterial,
 };
+use trnm_mvcc_fee::pon_commitment::{
+    self, CacheLimits, CheckedCommitment, CommitmentObservation, ExecutionRequest,
+    PreparedCommitment,
+};
 use trnm_mvcc_fee::pon_executor::SIGNED_TASK_PROFILE;
-use trnm_mvcc_fee::pon_executor::{execute, root, State};
+use trnm_mvcc_fee::pon_executor::{root, State};
 use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
@@ -289,6 +294,23 @@ pub struct Node {
     database_id: (u64, u64),
     settings: Settings,
     workers: usize,
+    // One derived snapshot only; State always comes from actual KV/snapshot/deltas.
+    commitment_cache: RefCell<Option<ActiveCommitment>>,
+    commitment_observation: RefCell<Option<CommitmentObservation>>,
+}
+struct ActiveCommitment {
+    tip: Hash,
+    generation: u64,
+    slot: u64,
+    snapshot: CheckedCommitment,
+}
+#[derive(Clone, Debug)]
+pub struct DerivedCommitmentStatus {
+    pub cache_root: Option<Hash>,
+    pub cache_keys: usize,
+    /// Conservative software charge, not process RSS.
+    pub software_charge_bytes: usize,
+    pub last: Option<CommitmentObservation>,
 }
 #[derive(Debug, Serialize)]
 pub struct Observation {
@@ -490,11 +512,14 @@ impl Node {
             database_id: (dm.dev(), dm.ino()),
             settings,
             workers,
+            commitment_cache: RefCell::new(None),
+            commitment_observation: RefCell::new(None),
         };
         node.read_active()?;
         node.validate_authenticated_replay()?;
         node.validate_authenticated_outbox()?;
         node.recover()?;
+        node.read_active()?;
         crate::ancestry_index::validate_tip(&node.db, node.ancestry_context(), node.active()?.0)?;
         Ok(node)
     }
@@ -1103,11 +1128,139 @@ impl Node {
         }
         Ok(state)
     }
+    fn invalidate_commitment(&self) {
+        *self.commitment_cache.borrow_mut() = None;
+    }
+    /// Local calculation observation only, never a state/confirmation authority.
+    pub fn derived_commitment_status(&self) -> DerivedCommitmentStatus {
+        let cache = self.commitment_cache.borrow();
+        DerivedCommitmentStatus {
+            cache_root: cache.as_ref().map(|c| c.snapshot.root()),
+            cache_keys: cache.as_ref().map_or(0, |c| c.snapshot.keys()),
+            software_charge_bytes: cache
+                .as_ref()
+                .map_or(0, |c| c.snapshot.retained_charge_bytes()),
+            last: self.commitment_observation.borrow().clone(),
+        }
+    }
+    fn checked_commitment(
+        &self,
+        actual: &State,
+        expected: Hash,
+        prior: Option<&CheckedCommitment>,
+    ) -> Result<PreparedCommitment> {
+        let result =
+            pon_commitment::checked_snapshot(actual, expected, prior, CacheLimits::default());
+        match result {
+            Ok(prepared) => {
+                *self.commitment_observation.borrow_mut() = Some(prepared.observation.clone());
+                Ok(prepared)
+            }
+            Err("COMMITMENT_ROOT") => {
+                self.invalidate_commitment();
+                Err("ROOT".into())
+            }
+            Err(error) => Err(error.into()),
+        }
+    }
+    fn cached_parent(&self, parent: Hash) -> Result<Option<CheckedCommitment>> {
+        let (tip, generation) = self.active()?;
+        let slot = self.slot()?;
+        Ok(self
+            .commitment_cache
+            .borrow()
+            .as_ref()
+            .filter(|cache| {
+                parent == tip
+                    && cache.tip == tip
+                    && cache.generation == generation
+                    && cache.slot == slot
+            })
+            .map(|cache| cache.snapshot.clone()))
+    }
+    fn publish_commitment(
+        &self,
+        tip: Hash,
+        generation: u64,
+        slot: u64,
+        prepared: PreparedCommitment,
+    ) {
+        *self.commitment_observation.borrow_mut() = Some(prepared.observation);
+        *self.commitment_cache.borrow_mut() = prepared.snapshot.map(|snapshot| ActiveCommitment {
+            tip,
+            generation,
+            slot,
+            snapshot,
+        });
+    }
+    fn execute_derived(
+        &self,
+        actual: &State,
+        parent: Hash,
+        transactions: &[Vec<u8>],
+        height: u64,
+        miner: Hash,
+        workers: usize,
+    ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
+        let prior = self.cached_parent(parent)?;
+        // Always encode/compare the actual supplied parent with its admitted root.
+        // This also explicitly reseeds unknown/inactive/fork contexts.
+        let checked = self.checked_commitment(actual, self.record(parent)?.root, prior.as_ref())?;
+        let request = || ExecutionRequest {
+            transactions,
+            height,
+            miner,
+            parent_id: parent,
+            workers,
+        };
+        let result = pon_commitment::execute_checked(
+            actual,
+            checked.root,
+            checked.snapshot.as_ref(),
+            request(),
+            &self.settings.app,
+            CacheLimits::default(),
+        );
+        match result {
+            Ok(output) => {
+                *self.commitment_observation.borrow_mut() =
+                    Some(output.commitment.observation.clone());
+                Ok(output)
+            }
+            Err("COMMITMENT_PARENT" | "COMMITMENT_ROOT") => {
+                // A wrong internal snapshot cannot reject an otherwise valid
+                // ledger state; the full actual-root path still checks context.
+                self.invalidate_commitment();
+                pon_commitment::execute_checked(
+                    actual,
+                    self.record(parent)?.root,
+                    None,
+                    request(),
+                    &self.settings.app,
+                    CacheLimits::default(),
+                )
+                .map_err(Into::into)
+            }
+            Err(error) => Err(error.into()),
+        }
+    }
+    fn derive_successor(
+        &self,
+        actual: &State,
+        prior: Option<&CheckedCommitment>,
+    ) -> Result<PreparedCommitment> {
+        let prepared = pon_commitment::derive_snapshot(actual, prior, CacheLimits::default())?;
+        *self.commitment_observation.borrow_mut() = Some(prepared.observation.clone());
+        Ok(prepared)
+    }
     pub fn read_active(&self) -> Result<(Hash, u64, State)> {
         self.namespace()?;
         let (tip, generation) = self.active()?;
-        let state = self.slot_state(self.slot()?)?;
-        ensure(root(&state)? == self.record(tip)?.root, "ROOT")?;
+        let slot = self.slot()?;
+        let state = self.slot_state(slot)?;
+        let prior = self.cached_parent(tip)?;
+        let prepared = self.checked_commitment(&state, self.record(tip)?.root, prior.as_ref())?;
+        self.publish_commitment(tip, generation, slot, prepared);
         Ok((tip, generation, state))
     }
     fn ready(&self) -> Result<()> {
@@ -1187,7 +1340,7 @@ impl Node {
         let mut path = tempfile::tempfile()?;
         let mut count = 0u64;
         let mut cur = tip;
-        let mut state: State = loop {
+        let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
             let row = self.record(cur)?;
             if let Some(bytes) = self
                 .db
@@ -1199,8 +1352,8 @@ impl Node {
                 .optional()?
             {
                 let state: State = serde_json::from_slice(&bytes)?;
-                ensure(root(&state)? == row.root, "ROOT")?;
-                break state;
+                let commitment = self.checked_commitment(&state, row.root, None)?.snapshot;
+                break (state, commitment);
             }
             path.write_all(&cur)?;
             count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
@@ -1221,7 +1374,9 @@ impl Node {
                     state.remove(&key);
                 }
             }
-            ensure(root(&state)? == self.record(id)?.root, "ROOT")?;
+            commitment = self
+                .checked_commitment(&state, self.record(id)?.root, commitment.as_ref())?
+                .snapshot;
         }
         Ok(state)
     }
@@ -1370,15 +1525,16 @@ impl Node {
         let parent = self.record(h.parent)?;
         let prior = self.state_at(h.parent)?;
         let registered_task = self.eligible_work_task(h.parent, h.work_task, h.height)?;
-        let mut output = execute(
+        let executed = self.execute_derived(
             &prior,
+            h.parent,
             &packet.transactions,
             h.height,
             h.miner,
-            h.parent,
             self.workers,
-            &self.settings.app,
         )?;
+        let mut output = executed.output;
+        let commitment = executed.commitment;
         if let Some(manifest) = registered_task {
             let product: Vec<u8> = verified_work
                 .product()
@@ -1392,7 +1548,9 @@ impl Node {
                 &manifest,
                 &product,
             )? {
-                output.root = root(&output.state)?;
+                output.root = self
+                    .derive_successor(&output.state, commitment.snapshot.as_ref())?
+                    .root;
             }
         }
         ensure(
@@ -1662,15 +1820,11 @@ impl Node {
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
         let registered_task = self.eligible_work_task(parent, task, height)?;
-        let mut output = execute(
-            &self.state_at(parent)?,
-            &transactions,
-            height,
-            miner,
-            parent,
-            self.workers,
-            &self.settings.app,
-        )?;
+        let actual = self.state_at(parent)?;
+        let executed =
+            self.execute_derived(&actual, parent, &transactions, height, miner, self.workers)?;
+        let mut output = executed.output;
+        let commitment = executed.commitment;
         let prepared =
             pon_work::PreparedTask::new(a, b).map_err(|e| Error::from(format!("WORK:{e:?}")))?;
         if let Some(manifest) = registered_task {
@@ -1681,7 +1835,9 @@ impl Node {
                 &manifest,
                 prepared.product_bytes(),
             )? {
-                output.root = root(&output.state)?;
+                output.root = self
+                    .derive_successor(&output.state, commitment.snapshot.as_ref())?
+                    .root;
             }
         }
         let header = Header {
@@ -1807,12 +1963,15 @@ impl Node {
             .ok_or("GENERATION")?;
         if self.record(target)?.parent == Some(old) && hook.is_none() {
             let slot = self.slot()?;
+            let prior = self.cached_parent(old)?;
+            let mut staged = None;
             self.atomic(|| {
                 self.apply_delta(target, slot, false)?;
-                ensure(
-                    root(&self.slot_state(slot)?)? == self.record(target)?.root,
-                    "ROOT",
-                )?;
+                staged = Some(self.checked_commitment(
+                    &self.slot_state(slot)?,
+                    self.record(target)?.root,
+                    prior.as_ref(),
+                )?);
                 self.db.execute(
                     "UPDATE active SET tip=?,generation=? WHERE singleton=1",
                     params![target.as_slice(), next],
@@ -1823,8 +1982,16 @@ impl Node {
                 )?;
                 Ok(())
             })?;
+            ensure(
+                self.active()? == (target, next) && self.slot()? == slot,
+                "GENERATION",
+            )?;
+            self.publish_commitment(target, next, slot, staged.ok_or("ROOT")?);
             return Ok(target);
         }
+        // Reorganizations retain the independent full-root path and reseed only
+        // after actual durable publication/recovery, never from a stale preview.
+        self.invalidate_commitment();
         self.atomic(|| {
             self.db.execute("DELETE FROM kv WHERE slot=?", [next])?;
             self.db.execute(
@@ -1926,6 +2093,7 @@ impl Node {
         if done == 1 {
             return Ok(self.active()?.0);
         }
+        self.invalidate_commitment();
         let old = bytes32(old)?;
         let target = bytes32(target)?;
         ensure(g > 0 && self.active()? == (old, g - 1), "GENERATION")?;
@@ -1971,6 +2139,7 @@ impl Node {
         Ok(target)
     }
     pub fn recover(&mut self) -> Result<Hash> {
+        self.invalidate_commitment();
         self.namespace()?;
         self.resume_intent(&mut None)?;
         let best: Vec<u8> = self.db.query_row(
