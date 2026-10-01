@@ -86,9 +86,9 @@ fn record_task_output(
     state: &mut State,
     manifest: &QualifiedWorkTask,
     product: &[u8],
-) -> Result<()> {
+) -> Result<bool> {
     if manifest.purpose == TaskPurpose::Maintenance {
-        return Ok(());
+        return Ok(false);
     }
     ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
     let key = format!("work-output:{}", hex::encode(manifest.output_meter));
@@ -98,10 +98,11 @@ fn record_task_output(
             prior["product"] == digest && prior["arithmetic_output_count"] == 1,
             "TASK_OUTPUT",
         )?;
+        Ok(false)
     } else {
         state.insert(key,serde_json::json!({"product":digest,"arithmetic_output_count":1,"matrix_task":hex::encode(manifest.matrix_task),"scope":"source-attested-fixed-contraction-not-model-value"}));
+        Ok(true)
     }
-    Ok(())
 }
 
 #[derive(Debug)]
@@ -1384,8 +1385,15 @@ impl Node {
                 .iter()
                 .flat_map(|value| value.to_le_bytes())
                 .collect();
-            self.record_task_output(h.parent, h.height, &mut output.state, &manifest, &product)?;
-            output.root = root(&output.state)?;
+            if self.record_task_output(
+                h.parent,
+                h.height,
+                &mut output.state,
+                &manifest,
+                &product,
+            )? {
+                output.root = root(&output.state)?;
+            }
         }
         ensure(
             h.state == output.root && h.receipts == sequence_root("receipts", &output.receipts),
@@ -1666,14 +1674,15 @@ impl Node {
         let prepared =
             pon_work::PreparedTask::new(a, b).map_err(|e| Error::from(format!("WORK:{e:?}")))?;
         if let Some(manifest) = registered_task {
-            self.record_task_output(
+            if self.record_task_output(
                 parent,
                 height,
                 &mut output.state,
                 &manifest,
                 prepared.product_bytes(),
-            )?;
-            output.root = root(&output.state)?;
+            )? {
+                output.root = root(&output.state)?;
+            }
         }
         let header = Header {
             network: self.settings.network(),
@@ -1702,7 +1711,7 @@ impl Node {
         state: &mut State,
         manifest: &QualifiedWorkTask,
         product: &[u8],
-    ) -> Result<()> {
+    ) -> Result<bool> {
         if matches!(
             self.settings.task_profile(),
             LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
@@ -1714,13 +1723,12 @@ impl Node {
                 height,
                 &self.settings.app,
             )?;
-            qualified_task_lifecycle::consume_output(
+            Ok(qualified_task_lifecycle::consume_output(
                 state,
                 &eligible,
                 hash(b"qualified-task-product-v1", &[product]),
                 height,
-            )?;
-            Ok(())
+            )?)
         } else {
             record_task_output(state, manifest, product)
         }
