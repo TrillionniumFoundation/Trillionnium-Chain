@@ -73,7 +73,7 @@ Historical v1/v3/v4 results are never repinned. The sole plan selects further wo
 
 ## Native development continuation and remaining scope
 
-Node::make uses a bounded prepared-task producer and commits no chain state before validation. CLI output is create-new and synced before local publication. Durable continuous mining, stale-job cancellation, wallet custody and provider/effect reconciliation remain unimplemented.
+Node::make uses a bounded prepared-task producer and commits no chain state before validation. CLI output is create-new and synced before local publication. The [finite native miner](../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md) provides cooperative stop and stale parent/generation rejection. Durable in-progress search recovery, wallet custody and provider/effect reconciliation remain unimplemented.
 
 The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,

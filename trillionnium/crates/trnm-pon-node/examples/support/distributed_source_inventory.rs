@@ -2570,6 +2570,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

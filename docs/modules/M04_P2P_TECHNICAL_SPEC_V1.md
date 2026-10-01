@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Native admission components, the bounded loopback endpoint and an explicit allowlisted signed private-development profile; none is an open or independently accepted public network service.
+Native admission components, the bounded loopback endpoint and an explicit allowlisted signed private-development profile. Separately selected [public V2](../protocol/pon-nakamoto-v1/details/PUBLIC_INTAKE_V2.md), [public V3 pool intake](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md) and [pinned peer following](../protocol/pon-nakamoto-v1/details/PINNED_PEER_POLLING.md) have their own resource and identity contracts; none grants independent public-network acceptance.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -13,7 +13,7 @@ The claims below apply to their named component and tests, not to an independent
 
 ### M04.ReadFrame
 
-Use one absolute five-second frame deadline; require 1..2097152 before allocation and read exactly that many bytes. Plain service is loopback-only. The explicit authenticated development mode verifies canonical context-bound signatures before dispatch. Submit payload still goes through full M02 validation, never through an accept flag.
+For the plain and allowlisted private profiles, use one absolute five-second frame deadline; require 1..2097152 before allocation and read exactly that many bytes. Plain service is loopback-only. The explicit authenticated development mode verifies canonical context-bound signatures before dispatch. The separately selected public profiles use their specified bounded phases and resource tickets; guest transport identity grants no source, evaluator or ledger permission. Submit payload still goes through full M02 validation, never through an accept flag.
 
 **Atomic/commit boundary:** Transport has no chain authority. Authenticated replay reservation is durable before execution; M07/M08 remain the only block/state commit owner.
 
@@ -33,7 +33,7 @@ Derive one session from network, parameters, genesis, authentication profile, bo
 
 **Invariant:** Public verification cannot consume or duplicate-pin a local recovery slot; stopped generations retain live accounting until every permit drops.
 
-**Scope:** Native admission components, the bounded loopback endpoint and an explicit allowlisted signed private-development profile; none is an open or independently accepted public network service.
+**Scope:** Native admission components, the bounded loopback endpoint and explicit private/public development profiles with separate resource contracts; none is an independently accepted public network service.
 
 **Atomic boundary:** One mutex owns counts and per-lane duplicate identities; only the local recovery capability can select its lane; RAII releases each live permit.
 

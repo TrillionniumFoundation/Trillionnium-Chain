@@ -13,7 +13,7 @@ The claims below apply to their named component and tests, not to an independent
 
 ### M15.StartExecutableSpecPeer
 
-Acquire the exclusive store owner, verify parameters, and recover unfinished branch, replay and outbox state before binding. Plain service may bind loopback only. A selected non-loopback development bind additionally requires the explicit authenticated flag, a no-follow single-link owner-private key, an exact allowlist and a positive session generation. No network admission precedes recovery.
+Acquire the exclusive store owner, verify parameters, and recover unfinished branch, replay and outbox state before binding. Plain service may bind loopback only. The private signed profile additionally requires the explicit authenticated flag, a no-follow single-link owner-private key, an exact allowlist and a positive session generation for a non-loopback bind. Separately selected public V2/V3 development profiles use their resource-ticket contracts and grant guests no ledger, source or evaluator authority. No network admission precedes recovery.
 
 **Atomic/commit boundary:** One Node owns branch state, inbound replay and outbound exact-wire state in a private current-schema namespace.
 
@@ -152,6 +152,8 @@ The explicit V2 local profile adds admission-triggered wholly terminal cache evi
 operator removal digests remain monotonic and separately finite. See
 [LOCAL_MEMPOOL_CACHE_V2](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_CACHE_V2.md).
 Public-v2 transport operations and acceptance flags are unchanged by this local owner.
+
+For public V3 `serve --mine`, `--mining-seconds N` optionally selects1..259200 seconds no greater than service `--seconds`; omission uses the service budget. This choice is checked before store creation. Successful miner runtime or block-limit completion leaves ingress serving retained Head/History until the service budget ends; mining failure or service completion stops the shared runtime. Native stages remain nonpreemptive, so neither budget guarantees an exact stop or successful peer catch-up.
 
 The integrated current entrypoints, cooperative stop/failure behavior and actual tests
 are [CONTINUOUS_MINING_V1](../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md)

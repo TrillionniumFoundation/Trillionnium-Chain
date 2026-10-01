@@ -93,7 +93,7 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 
 ## Native development continuation and remaining scope
 
-Native history export spools ancestry to disk and emits bounded full packets; native sync recomputes admission and retains valid interrupted prefixes. Native snapshots/delta replay do not impose a height finality threshold. Each history request and confirmation still has history-sized work.
+Native history export spools ancestry to disk and emits bounded full packets; native sync recomputes admission and retains valid interrupted prefixes. Native snapshots/delta replay do not impose a height finality threshold. Export and complete ancestry confirmation retain history-sized work. Current public one-packet page location uses the [derived ancestry index](../protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md) with a1024-step budget; each received packet still undergoes full native admission.
 
 The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,

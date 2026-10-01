@@ -144,9 +144,14 @@ operator policy. Standalone `mine-loop` provides neither gossip nor automatic WA
 propagation. The explicit V3 CLI composition is
 `serve --admission-profile public-protected-development-v3 --public-development-network
 --pool-policy FILE --mine --task-bootstrap`. Both service and optional miner share
-one Node, owner mutex and stop signal. Service completion or a mining failure stops and joins both
-workers. A successful miner block limit leaves ingress available until the service
-budget expires, so other nodes can retrieve the final retained blocks. Without `--mine`, mining-only options
+one Node, owner mutex and stop signal. Optional `--mining-seconds N` selects the miner's
+runtime independently of service `--seconds`:1..259200 seconds and no greater than the
+service budget, checked before creating a store. Omission retains the service runtime.
+Service completion or a mining failure stops and joins both workers. A successful miner
+runtime or block-limit completion leaves ingress available until the service budget
+expires, so other nodes can request the final retained blocks. Native stages remain
+nonpreemptive; the interval is an opportunity for catch-up, not a guarantee of it or an
+exact stopping deadline. Without `--mine`, mining-only options
 refuse. V2 refuses these V3-specific options. `pool-push` and
 `pool-status-remote` use the separate [public pool contract](PUBLIC_POOL_INTAKE_V3.md).
 
@@ -158,3 +163,8 @@ and invoke the real CLI including its logical-clock refusal. Existing native pac
 task and fork regressions must also pass after the preparation refactor. These finite
 local tests do not replace sustained WAN, state-growth, attack-budget, independent
 operator or genuine task/model acceptance.
+
+`tests/mining_service_budget.rs` additionally waits for actual runtime-ended mining,
+then exercises paid Head/History and a fresh full-native follower, checks complete state,
+sender nonce and installed confirmation, and verifies natural service shutdown. Invalid,
+unused and non-V3 `--mining-seconds` choices reject before a namespace is created.

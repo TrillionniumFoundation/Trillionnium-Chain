@@ -19,7 +19,7 @@ Require exact network, signature, nonce=current+1, height<=expiry and sufficient
 
 ### M05.ReconsiderAfterReorg
 
-Invalidate branch-relative inclusion; rerun nonce/grant/funds checks against new state. Never replay an irreversible operation because chain nonce vanished. Native mempool event wiring remains integration work.
+Invalidate branch-relative inclusion; rerun nonce/grant/funds checks against new state. Never replay an irreversible operation because chain nonce vanished. The native bounded local pool reconciles against the current active branch; local removal history stays outside chain undo.
 
 **Atomic/commit boundary:** Persistent local effect tombstones stay outside chain undo.
 
@@ -51,7 +51,7 @@ These exact functions contain executable assertions. The registry only checks bi
 
 Nonce contention, stale reservations, replay after reorg and hidden shared sponsor keys.
 
-Future-nonce parking, replacement policy and mempool reorg events still require native host integration.
+Future-nonce parking and replacement policy remain unimplemented. Public pool fairness and sustained capacity remain unaccepted.
 
 ## Current source and verification
 

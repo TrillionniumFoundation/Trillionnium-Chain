@@ -316,7 +316,11 @@ fn mining_configuration(
             .map_err(|_| "MINING_LIMITS")?,
         search_attempts: number(args, "--search-attempts", 4096)?,
         pace: Duration::from_millis(number(args, "--pace-ms", 10000)?),
-        runtime: Duration::from_secs(number(args, "--seconds", default_seconds)?),
+        runtime: Duration::from_secs(number(
+            args,
+            "--mining-seconds",
+            number(args, "--seconds", default_seconds)?,
+        )?),
         max_blocks: number(args, "--blocks", 100000)?,
     };
     config.validate()?;
@@ -451,7 +455,7 @@ fn run() -> Result<Value> {
         "sync" => "--peer --tip --after --pages",
         "head" => "--peer",
         "history" => "--peer --tip --after",
-        "serve" => "--listen --seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --peers --peer-poll-ms --peer-pages",
+        "serve" => "--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --peers --peer-poll-ms --peer-pages",
         _ => return Err("UNKNOWN_COMMAND".into()),
     };
     let authentication_options = match command.as_str() {
@@ -584,6 +588,7 @@ fn run() -> Result<Value> {
     };
     if command == "serve" {
         let mining_options = [
+            "--mining-seconds",
             "--miner",
             "--blocks",
             "--pace-ms",
@@ -607,6 +612,13 @@ fn run() -> Result<Value> {
         if !args.contains_key("--mine") && mining_options.iter().any(|key| args.contains_key(*key))
         {
             return Err("MINING_OPTIONS_REQUIRE_MINE".into());
+        }
+        if args.contains_key("--mining-seconds") {
+            let mining_seconds = number(&args, "--mining-seconds", 30)?;
+            let service_seconds = number(&args, "--seconds", 30)?;
+            if !(1..=259200).contains(&mining_seconds) || mining_seconds > service_seconds {
+                return Err("MINING_RUNTIME".into());
+            }
         }
         if !args.contains_key("--peers")
             && (args.contains_key("--peer-poll-ms") || args.contains_key("--peer-pages"))
