@@ -193,15 +193,28 @@ experimental resource parameters, not approved public deployment values. Clients
 refuse out-of-cap policies, wrong context/request/server, expired challenges and
 searches exceeding 1,048,576 trials. Protected listeners retain three fixed socket
 workers, the existing frame/connection limits and local recovery permit isolation.
-Two workers may process negotiated proof requests; the third refuses proof hellos
-as `ADMISSION_BUSY_READ_ONLY_RESERVED` before receiving their bodies and remains
-eligible for read-only frames. After sending this refusal it yields for 2 ms before
-accepting another connection, bounded by the server lifetime. This avoids an
-immediate refusal/accept loop outpacing the two proof workers' idle polling; it does
-not guarantee that an idle proof worker wins every accept race. The profile commits
-to this policy as `reserved-hello-yield2ms`. Its nominal local backoff is 2 ms;
-operating-system scheduling may extend observed wakeup delay. Protected read-only requests do not consume proof
-permits. Every protected initial frame and Hello/body exchange shares a 100 ms
+Two workers may process negotiated proof requests; the third remains eligible for
+read-only frames. Each proof worker first waits at most 2 ms for a connection on
+its own zero-capacity rendezvous channel, then tries the existing listener. After
+the read-only worker reads a canonical, request-digest-bound Hello, it tries to transfer
+that exact socket and already-read frame to either proof worker currently waiting.
+`try_send` never waits and the channels retain no pending sockets. A successful
+transfer reuses the original 10-second request deadline and 100 ms preface deadline;
+it neither repeats accept/frame reading nor increments socket accepts again. The
+three workers still own at most three sockets in total. The read-only worker does
+not receive a proof body, solve/verify the puzzle, acquire a proof permit or wait for
+a proof worker. If neither receiver is waiting, the existing
+`ADMISSION_BUSY_READ_ONLY_RESERVED` refusal and bounded 2 ms yield remain. This
+reduces repeated wrong-lane acceptance without guaranteeing anonymous scheduling,
+an operating-system wakeup bound or public fairness.
+
+The profile hash explicitly commits to `hello-rendezvous0`,
+`proof-recv-before-accept2ms`, `original-deadlines` and `socket-ceiling3`, alongside
+`reserved-hello-yield2ms`. This changes the protected transport profile digest;
+same-profile peers and fresh transport contexts must use the new digest. Old
+protected peers cannot silently negotiate a fallback. It changes no PoN work,
+chain weight, ledger schema or signed transaction domain. Protected read-only
+requests do not consume proof permits. Every protected initial frame and Hello/body exchange shares a 100 ms
 absolute preface deadline. Slow fragments cannot renew that budget. The profile
 hash commits to this allocation and deadline as well as the puzzle parameters.
 Frame helpers recheck the absolute deadline after the final successful syscall;
@@ -233,6 +246,14 @@ check/replay durations. Malformed hellos remain separate malformed-frame counter
 Socket accepts, protected preface refusals and reserved read-only worker refusals
 are counted separately from solved or rejected admission challenges. A retry can
 create multiple socket accepts for one ultimately submitted request.
+`admission_hello_handoffs` counts successful zero-capacity ownership transfers;
+it is a subset of accepted connections, not a new request or another socket accept.
+The controlled real-socket rendezvous regression forces the reserved-side first
+accept and runs actual native work/admission. A separate production-listener test
+replays serial 250-member read-only bursts before subsequent protected submissions;
+its repeated observations are not new independent confirmations. The existing
+occupied-proof-worker Head, expiry, replay and authentication controls remain
+required. These finite regressions do not accept a public availability gate.
 Nanosecond durations use the monotonic elapsed clock and include actual scheduling;
 they are not CPU-cycle lower bounds or sustained request-rate estimates. Reporting
 must include bits, TTL, hash trials, request bytes, hardware, operator identities,

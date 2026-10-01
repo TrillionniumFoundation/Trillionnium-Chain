@@ -31,8 +31,8 @@ Serial and parallel execution retain the existing canonical replay and receipt o
 
 ## Resource selection and errors
 
-The default retained-cache limits are 16,384 keys and 8 MiB of canonical key/value
-payload. The workspace software-charge ceiling is 128 MiB. Operators may select lower
+The default retained-cache limits are 65,536 keys and 8 MiB of canonical key/value
+payload. The workspace software-charge ceiling is 512 MiB. Operators may select lower
 adapter limits; they cannot use this API to increase those ceilings. Charges include
 canonical maps, compressed tree nodes and staged changes with checked arithmetic.
 They are conservative software accounting, not a measurement or physical bound on
@@ -41,9 +41,15 @@ Callers must bound retained snapshot versions; an unbounded collection of Arc cl
 would violate this contract even if every individual snapshot fits.
 
 Cache limits select the computation method. They do not reduce the protocol's existing
-65,536-key, 160-byte-key and 4,096-byte-value limits. A valid state beyond a cache limit
+65,536-key, 160-byte-key and 4,096-byte-value limits. A valid state beyond a selected cache limit
 uses the complete root computation, retains no oversized snapshot and reports the
 reason. The fallback still performs actual canonicalization and protocol validation.
+With the default key ceiling equal to the protocol ceiling, a 65,537-key state is
+rejected with `LIMIT`; it is not a cache fallback. Historical 8,192- and 16,384-key
+local policies remain selectable and retain their full-root fallback behavior.
+The larger software ceiling permits retaining a checked tree at the protocol key
+ceiling when the payload and actual workspace charges fit. It does not qualify
+maximum-state throughput, an allocator/RSS bound, or any public service guarantee.
 
 | Condition | Adapter result | Caller requirement |
 |---|---|---|
@@ -105,7 +111,7 @@ optional retained active cache, not a cache per admitted block or pending prefix
 and the last calculation observation. A last observation can describe an abandoned
 preview; it is not evidence that its state was activated or its transaction confirmed.
 The complete actual-state encoding and differences occur before the optional cache
-budget decision. The 128 MiB software charge therefore does not establish a hard
+budget decision. The 512 MiB software charge therefore does not establish a hard
 allocation limit or bound the complete-root fallback's physical resource consumption.
 
 ## Required evidence

@@ -380,7 +380,34 @@ fn protocol_bounds_canonical_errors_and_full_key_limit_remain_enforced() {
     let exact =
         pon_commitment::checked_snapshot(&state, root, None, CacheLimits::default()).unwrap();
     assert_eq!(exact.root, root);
-    assert!(exact.snapshot.is_none());
+    assert_eq!(exact.snapshot.as_ref().unwrap().keys(), 65536);
+    assert_eq!(exact.observation.method, CommitmentMethod::RebuiltTree);
+    assert!(exact.observation.workspace_charge_bytes <= pon_commitment::MAX_WORKSPACE_CHARGE_BYTES);
+    state.insert("k00000".into(), json!(1));
+    let changed_root = pon_executor::root(&state).unwrap();
+    let changed = pon_commitment::checked_snapshot(
+        &state,
+        changed_root,
+        exact.snapshot.as_ref(),
+        CacheLimits::default(),
+    )
+    .unwrap();
+    assert_eq!(changed.observation.method, CommitmentMethod::CheckedApply);
+    assert_eq!(changed.observation.changed_keys, 1);
+    assert_eq!(changed.root, changed_root);
+    assert_eq!(exact.snapshot.as_ref().unwrap().root(), root);
+    state.insert("k65535".into(), json!(1.5));
+    assert_eq!(
+        pon_commitment::checked_snapshot(
+            &state,
+            changed_root,
+            changed.snapshot.as_ref(),
+            CacheLimits::default(),
+        )
+        .unwrap_err(),
+        pon_executor::root(&state).unwrap_err()
+    );
+    state.insert("k65535".into(), json!(0));
     state.insert("over".into(), json!(0));
     assert_eq!(pon_executor::root(&state).unwrap_err(), "LIMIT");
     assert_eq!(
@@ -483,38 +510,30 @@ fn full_actual_difference_checks_removals_empty_values_and_late_bad_value() {
 }
 
 #[test]
-fn default_16384_boundary_is_checked_and_16385_remains_a_full_root_fallback() {
-    assert_eq!(pon_commitment::MAX_CACHE_KEYS, 16384);
+fn explicitly_selected_16384_boundary_is_checked_and_16385_remains_a_full_root_fallback() {
+    let limits = CacheLimits {
+        max_keys: 16384,
+        ..CacheLimits::default()
+    };
     let mut state: State = (0..16384).map(|i| (format!("k{i:05}"), json!(0))).collect();
     let root = pon_executor::root(&state).unwrap();
-    let base =
-        pon_commitment::checked_snapshot(&state, root, None, CacheLimits::default()).unwrap();
+    let base = pon_commitment::checked_snapshot(&state, root, None, limits).unwrap();
     println!("boundary16384: {:?}", base.observation);
     assert_eq!(base.snapshot.as_ref().unwrap().keys(), 16384);
     assert_eq!(base.observation.method, CommitmentMethod::RebuiltTree);
     assert!(base.observation.workspace_charge_bytes <= pon_commitment::MAX_WORKSPACE_CHARGE_BYTES);
     state.insert("k00000".into(), json!(1));
     let root = pon_executor::root(&state).unwrap();
-    let changed = pon_commitment::checked_snapshot(
-        &state,
-        root,
-        base.snapshot.as_ref(),
-        CacheLimits::default(),
-    )
-    .unwrap();
+    let changed =
+        pon_commitment::checked_snapshot(&state, root, base.snapshot.as_ref(), limits).unwrap();
     assert_eq!(changed.observation.method, CommitmentMethod::CheckedApply);
     assert_eq!(changed.observation.changed_keys, 1);
     assert_eq!(changed.root, root);
     assert_eq!(base.snapshot.as_ref().unwrap().root(), base.root);
     state.insert("extra".into(), json!(0));
     let root = pon_executor::root(&state).unwrap();
-    let over = pon_commitment::checked_snapshot(
-        &state,
-        root,
-        changed.snapshot.as_ref(),
-        CacheLimits::default(),
-    )
-    .unwrap();
+    let over =
+        pon_commitment::checked_snapshot(&state, root, changed.snapshot.as_ref(), limits).unwrap();
     assert_eq!(
         over.observation.method,
         CommitmentMethod::FullRoot(FullRootReason::KeyBudget)
@@ -538,18 +557,19 @@ fn default_16384_boundary_is_checked_and_16385_remains_a_full_root_fallback() {
 }
 #[test]
 fn workspace_budget_still_falls_back_below_key_and_payload_limits() {
+    let limits = CacheLimits {
+        max_workspace_charge_bytes: 128 * 1024 * 1024,
+        ..CacheLimits::default()
+    };
     let state: State = (0..16384)
         .map(|i| (format!("k{i:05}"), json!("x".repeat(400))))
         .collect();
     let root = pon_executor::root(&state).unwrap();
-    let fallback =
-        pon_commitment::checked_snapshot(&state, root, None, CacheLimits::default()).unwrap();
+    let fallback = pon_commitment::checked_snapshot(&state, root, None, limits).unwrap();
     println!("independent-workspace-boundary: {:?}", fallback.observation);
     assert!(fallback.observation.actual_keys <= pon_commitment::MAX_CACHE_KEYS);
     assert!(fallback.observation.actual_payload_bytes <= pon_commitment::MAX_CACHE_PAYLOAD_BYTES);
-    assert!(
-        fallback.observation.workspace_charge_bytes > pon_commitment::MAX_WORKSPACE_CHARGE_BYTES
-    );
+    assert!(fallback.observation.workspace_charge_bytes > limits.max_workspace_charge_bytes);
     assert_eq!(
         fallback.observation.method,
         CommitmentMethod::FullRoot(FullRootReason::WorkspaceBudget)
@@ -562,7 +582,7 @@ fn increasing_the_software_key_budget_does_not_permit_invalid_cache_limits() {
     let state = initial();
     for limits in [
         CacheLimits {
-            max_keys: 16385,
+            max_keys: pon_commitment::MAX_CACHE_KEYS + 1,
             ..CacheLimits::default()
         },
         CacheLimits {

@@ -12,6 +12,7 @@ use std::{
     net::{SocketAddr, TcpListener, TcpStream},
     sync::{
         atomic::{AtomicBool, Ordering},
+        mpsc::{self, SyncSender, TrySendError},
         Arc, Mutex, MutexGuard, TryLockError,
     },
     thread,
@@ -36,6 +37,7 @@ const PROTECTED_PREFACE_BUDGET: Duration = Duration::from_millis(100);
 const PROTECTED_ERROR_CHARS: usize = 128;
 const RESERVED_READ_ONLY_BUSY: &str = "ADMISSION_BUSY_READ_ONLY_RESERVED";
 const RESERVED_HELLO_YIELD: Duration = Duration::from_millis(2);
+const PROOF_HANDOFF_POLL: Duration = Duration::from_millis(2);
 
 /// Connection-local transport CPU protection, never ledger work or a Sybil theorem.
 /// The old development listeners remain separate and do not silently adopt this profile.
@@ -63,7 +65,7 @@ impl AdmissionPolicy {
         hash(
             b"native-transport-admission-profile-v1",
             &[
-                b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry256-5s/refusal128chars-100ms/reserved-hello-yield2ms",
+                b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry256-5s/refusal128chars-100ms/reserved-hello-yield2ms/hello-rendezvous0/proof-recv-before-accept2ms/original-deadlines/socket-ceiling3",
                 &[self.bits],
                 &self.lifetime_ms.to_le_bytes(),
             ],
@@ -618,6 +620,7 @@ pub struct Metrics {
     pub admission_rejected_before_work: u64,
     pub admission_unnegotiated_requests: u64,
     pub admission_reserved_read_only_refusals: u64,
+    pub admission_hello_handoffs: u64,
     pub protected_preface_refusals: u64,
     pub admission_verification_ns: u64,
     pub work_verifications: u64,
@@ -901,6 +904,46 @@ fn write_protected_request_bound(
     write_frame(stream, wire)?;
     Ok(profile)
 }
+fn admission_hello(first: &[u8]) -> Result<Option<AdmissionHello>> {
+    let Ok(hello) = serde_json::from_slice::<AdmissionHello>(first) else {
+        return Ok(None);
+    };
+    ensure(
+        first.len() <= 512
+            && serde_json::to_vec(&hello)? == first
+            && hello.schema == ADMISSION_HELLO_SCHEMA,
+        "ADMISSION_HELLO",
+    )?;
+    digest(&hello.request_digest)?;
+    Ok(Some(hello))
+}
+
+/// An accepted socket belongs to exactly one of the three existing workers.
+/// The zero-capacity channels only transfer it to a proof worker already waiting;
+/// no pending sockets, fresh accept time or renewed preface budget are created.
+struct PrefacedSocket {
+    socket: TcpStream,
+    address: SocketAddr,
+    request_deadline: Instant,
+    preface_deadline: Instant,
+    first: Vec<u8>,
+}
+
+fn try_handoff_hello(
+    mut connection: PrefacedSocket,
+    senders: &[SyncSender<PrefacedSocket>],
+) -> std::result::Result<(), PrefacedSocket> {
+    for sender in senders {
+        match sender.try_send(connection) {
+            Ok(()) => return Ok(()),
+            Err(TrySendError::Full(returned) | TrySendError::Disconnected(returned)) => {
+                connection = returned;
+            }
+        }
+    }
+    Err(connection)
+}
+
 fn receive_protected_request(
     stream: &mut TcpStream,
     first: Vec<u8>,
@@ -911,16 +954,9 @@ fn receive_protected_request(
     let Some(policy) = policy else {
         return Ok((first, false));
     };
-    let Ok(hello) = serde_json::from_slice::<AdmissionHello>(&first) else {
+    let Some(hello) = admission_hello(&first)? else {
         return Ok((first, false));
     };
-    ensure(
-        first.len() <= 512
-            && serde_json::to_vec(&hello)? == first
-            && hello.schema == ADMISSION_HELLO_SCHEMA,
-        "ADMISSION_HELLO",
-    )?;
-    digest(&hello.request_digest)?;
     ensure(proof_enabled, RESERVED_READ_ONLY_BUSY)?;
     let ready = AdmissionReady {
         schema: ADMISSION_READY_SCHEMA.into(),
@@ -1148,10 +1184,20 @@ fn serve_inner(
     let metrics = Arc::new(Mutex::new(Metrics::default()));
     let active_requests = Arc::new(Mutex::new(BTreeSet::new()));
     let (public, _local_recovery) = bounded_ingress();
+    let mut handoff_senders = Vec::new();
+    let mut handoff_receivers = Vec::new();
+    for _ in 0..2 {
+        let (sender, receiver) = mpsc::sync_channel::<PrefacedSocket>(0);
+        handoff_senders.push(sender);
+        handoff_receivers.push(Some(receiver));
+    }
+    handoff_receivers.push(None);
     let deadline = Instant::now() + lifetime;
     thread::scope(|scope| -> Result<()> {
         let mut workers = Vec::new();
-        for (worker_index, listener) in listeners.into_iter().enumerate() {
+        for (worker_index, (listener, handoff_receiver)) in
+            listeners.into_iter().zip(handoff_receivers).enumerate()
+        {
             let node = node.clone();
             let metrics = metrics.clone();
             let active_requests = active_requests.clone();
@@ -1159,48 +1205,101 @@ fn serve_inner(
             let stop = stop.clone();
             let authentication = authentication.clone();
             let settings = settings.clone();
+            let handoff_senders = handoff_senders.clone();
             workers.push(scope.spawn(move || -> Result<()> {
                 while !stop.load(Ordering::Acquire) && Instant::now() < deadline {
-                    let (mut socket, address) = match listener.accept() {
-                        Ok(pair) => pair,
-                        Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                            thread::sleep(Duration::from_millis(2));
-                            continue;
-                        }
-                        Err(e) => return Err(e.into()),
+                    let handed = if admission.is_some() {
+                        handoff_receiver.as_ref().and_then(|receiver| {
+                            receiver
+                                .recv_timeout(
+                                    PROOF_HANDOFF_POLL
+                                        .min(deadline.saturating_duration_since(Instant::now())),
+                                )
+                                .ok()
+                        })
+                    } else {
+                        None
                     };
-                    let request_deadline = deadline.min(Instant::now() + Duration::from_secs(10));
-                    metrics
-                        .lock()
-                        .map_err(|_| "METRICS_POISONED")?
-                        .socket_connections += 1;
-                    socket.set_nonblocking(false)?;
-                    if admission.is_some() {
-                        socket.set_nodelay(true)?;
+                    if stop.load(Ordering::Acquire) || Instant::now() >= deadline {
+                        break;
                     }
-                    socket.set_read_timeout(Some(Duration::from_secs(5)))?;
-                    socket.set_write_timeout(Some(Duration::from_secs(5)))?;
-                    let preface_deadline = request_deadline.min(
-                        Instant::now()
-                            + if admission.is_some() {
-                                PROTECTED_PREFACE_BUDGET
-                            } else {
-                                Duration::from_secs(5)
-                            },
-                    );
-                    let bytes = match read_frame_deadline(&mut socket, preface_deadline) {
-                        Ok(bytes) => bytes,
-                        Err(e) => {
-                            let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
-                            counts.malformed_requests += 1;
-                            if admission.is_some() {
-                                counts.protected_preface_refusals += 1;
+                    let connection = if let Some(connection) = handed {
+                        connection
+                    } else {
+                        let (mut socket, address) = match listener.accept() {
+                            Ok(pair) => pair,
+                            Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                                thread::sleep(Duration::from_millis(2));
+                                continue;
                             }
-                            drop(counts);
-                            let _ = write_untrusted_error(&mut socket, &e, admission.is_some());
-                            continue;
+                            Err(e) => return Err(e.into()),
+                        };
+                        let request_deadline =
+                            deadline.min(Instant::now() + Duration::from_secs(10));
+                        metrics
+                            .lock()
+                            .map_err(|_| "METRICS_POISONED")?
+                            .socket_connections += 1;
+                        socket.set_nonblocking(false)?;
+                        if admission.is_some() {
+                            socket.set_nodelay(true)?;
+                        }
+                        socket.set_read_timeout(Some(Duration::from_secs(5)))?;
+                        socket.set_write_timeout(Some(Duration::from_secs(5)))?;
+                        let preface_deadline = request_deadline.min(
+                            Instant::now()
+                                + if admission.is_some() {
+                                    PROTECTED_PREFACE_BUDGET
+                                } else {
+                                    Duration::from_secs(5)
+                                },
+                        );
+                        let bytes = match read_frame_deadline(&mut socket, preface_deadline) {
+                            Ok(bytes) => bytes,
+                            Err(e) => {
+                                let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
+                                counts.malformed_requests += 1;
+                                if admission.is_some() {
+                                    counts.protected_preface_refusals += 1;
+                                }
+                                drop(counts);
+                                let _ = write_untrusted_error(&mut socket, &e, admission.is_some());
+                                continue;
+                            }
+                        };
+                        PrefacedSocket {
+                            socket,
+                            address,
+                            request_deadline,
+                            preface_deadline,
+                            first: bytes,
                         }
                     };
+                    let connection = if admission.is_some()
+                        && worker_index == 2
+                        && connection.first.len() <= 512
+                        && admission_hello(&connection.first).is_ok_and(|hello| hello.is_some())
+                    {
+                        match try_handoff_hello(connection, &handoff_senders) {
+                            Ok(()) => {
+                                metrics
+                                    .lock()
+                                    .map_err(|_| "METRICS_POISONED")?
+                                    .admission_hello_handoffs += 1;
+                                continue;
+                            }
+                            Err(connection) => connection,
+                        }
+                    } else {
+                        connection
+                    };
+                    let PrefacedSocket {
+                        mut socket,
+                        address,
+                        request_deadline,
+                        preface_deadline,
+                        first: bytes,
+                    } = connection;
                     let (bytes, negotiated) = match receive_protected_request(
                         &mut socket,
                         bytes,
@@ -1944,6 +2043,242 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
+        let (_dir, node, packet) = pending_packet();
+        let settings = node.lock().unwrap().settings().clone();
+        let expected = packet.id().unwrap();
+        let request = Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        };
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let (sender, receiver) = mpsc::sync_channel::<PrefacedSocket>(0);
+        let (waiting_sender, waiting_receiver) = mpsc::channel();
+        let (deadlines_sender, deadlines_receiver) = mpsc::channel();
+        let policy = AdmissionPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let proof_settings = settings.clone();
+        let proof = thread::spawn(move || {
+            waiting_sender.send(()).unwrap();
+            // This controlled receiver is idle before the only listener accepts.
+            // The production workers use the same zero-capacity channel with a
+            // 2 ms receive/accept alternation; no stub verifier is injected here.
+            let mut connection = receiver.recv_timeout(Duration::from_secs(2)).unwrap();
+            let (request_deadline, preface_deadline, accepted_address) =
+                deadlines_receiver.recv().unwrap();
+            assert_eq!(connection.request_deadline, request_deadline);
+            assert_eq!(connection.preface_deadline, preface_deadline);
+            assert_eq!(connection.address, accepted_address);
+            let (wire, negotiated) = receive_protected_request(
+                &mut connection.socket,
+                connection.first,
+                Some(policy),
+                connection.preface_deadline,
+                true,
+            )
+            .unwrap();
+            let request: Request = serde_json::from_slice(&wire).unwrap();
+            let metrics = Mutex::new(Metrics::default());
+            let mut progress = |_| ensure(Instant::now() < request_deadline, "REQUEST_DEADLINE");
+            protect_submit(
+                &mut connection.socket,
+                &request,
+                &wire,
+                AdmissionHost {
+                    settings: &proof_settings,
+                    policy: Some(policy),
+                    authentication: None,
+                    metrics: &metrics,
+                    negotiated,
+                },
+                &mut progress,
+            )
+            .unwrap();
+            let reply = dispatch_shared_with(&node, request, &mut progress, |packet| {
+                measured_work_verify(packet, &metrics)
+            })
+            .unwrap();
+            write_frame(&mut connection.socket, &serde_json::to_vec(&reply).unwrap()).unwrap();
+            assert_eq!(node.lock().unwrap().stats().unwrap()["height"], 1);
+            metrics.into_inner().unwrap()
+        });
+        waiting_receiver.recv().unwrap();
+        let client = thread::spawn(move || call_protected(address, &request, &settings).unwrap());
+        // This is deliberately the reserved-side first accept, not a scheduler
+        // race in which a proof worker might receive the connection directly.
+        let (mut socket, accepted_address) = listener.accept().unwrap();
+        let request_deadline = Instant::now() + Duration::from_secs(10);
+        let preface_deadline = Instant::now() + PROTECTED_PREFACE_BUDGET;
+        let first = read_frame_deadline(&mut socket, preface_deadline).unwrap();
+        assert!(admission_hello(&first).unwrap().is_some());
+        deadlines_sender
+            .send((request_deadline, preface_deadline, accepted_address))
+            .unwrap();
+        assert!(try_handoff_hello(
+            PrefacedSocket {
+                socket,
+                address: accepted_address,
+                request_deadline,
+                preface_deadline,
+                first,
+            },
+            &[sender],
+        )
+        .is_ok());
+        assert_eq!(client.join().unwrap()["block"], hex::encode(expected));
+        let metrics = proof.join().unwrap();
+        assert_eq!(metrics.admission_challenges, 1);
+        assert_eq!(metrics.admission_accepted, 1);
+        assert_eq!(metrics.work_verifications, 1);
+        assert_eq!(metrics.admission_rejected_before_work, 0);
+    }
+
+    #[test]
+    fn protected_hello_rendezvous_has_no_pending_queue_or_refreshed_deadlines() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (socket, address) = listener.accept().unwrap();
+        let (sender, _receiver) = mpsc::sync_channel::<PrefacedSocket>(0);
+        let request_deadline = Instant::now() + Duration::from_secs(10);
+        let preface_deadline = Instant::now() + PROTECTED_PREFACE_BUDGET;
+        let first = b"exact already-read first frame".to_vec();
+        let returned = try_handoff_hello(
+            PrefacedSocket {
+                socket,
+                address,
+                request_deadline,
+                preface_deadline,
+                first: first.clone(),
+            },
+            &[sender],
+        )
+        .err()
+        .unwrap();
+        assert_eq!(
+            returned.socket.peer_addr().unwrap(),
+            client.local_addr().unwrap()
+        );
+        assert_eq!(returned.address, address);
+        assert_eq!(returned.request_deadline, request_deadline);
+        assert_eq!(returned.preface_deadline, preface_deadline);
+        assert_eq!(returned.first, first);
+    }
+
+    #[test]
+    fn protected_hello_rendezvous_expired_original_preface_cannot_send_ready() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let mut client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (socket, address) = listener.accept().unwrap();
+        let first = serde_json::to_vec(&AdmissionHello {
+            schema: ADMISSION_HELLO_SCHEMA.into(),
+            request_digest: hex::encode([1; 32]),
+        })
+        .unwrap();
+        let (sender, receiver) = mpsc::sync_channel::<PrefacedSocket>(0);
+        let (waiting_sender, waiting_receiver) = mpsc::channel();
+        let expired = Instant::now() - Duration::from_millis(1);
+        let proof = thread::spawn(move || {
+            waiting_sender.send(()).unwrap();
+            let mut connection = receiver.recv_timeout(Duration::from_secs(2)).unwrap();
+            assert_eq!(connection.preface_deadline, expired);
+            assert_eq!(
+                receive_protected_request(
+                    &mut connection.socket,
+                    connection.first,
+                    Some(AdmissionPolicy::development()),
+                    connection.preface_deadline,
+                    true,
+                )
+                .unwrap_err()
+                .to_string(),
+                "FRAME_DEADLINE"
+            );
+        });
+        waiting_receiver.recv().unwrap();
+        // The receive thread announces immediately before blocking. A successful
+        // rendezvous is required here; it must not allocate a pending queue.
+        thread::sleep(Duration::from_millis(2));
+        assert!(try_handoff_hello(
+            PrefacedSocket {
+                socket,
+                address,
+                request_deadline: Instant::now() + Duration::from_secs(10),
+                preface_deadline: expired,
+                first,
+            },
+            &[sender],
+        )
+        .is_ok());
+        proof.join().unwrap();
+        assert_eq!(client.read(&mut [0u8]).unwrap(), 0);
+    }
+
+    #[test]
+    fn protected_hello_rendezvous_changes_the_explicit_transport_profile() {
+        let policy = AdmissionPolicy::development();
+        let old = hash(
+            b"native-transport-admission-profile-v1",
+            &[
+                b"hello-first/connection-local/sha256/exact-wire/monotonic-expiry/preface100ms/proof2-readonly1/readonly-no-proof-permit/hello-retry256-5s/refusal128chars-100ms/reserved-hello-yield2ms",
+                &[policy.bits],
+                &policy.lifetime_ms.to_le_bytes(),
+            ],
+        );
+        assert_ne!(policy.profile(), old);
+    }
+
+    #[test]
+    fn protected_hello_rendezvous_preserves_validation_before_reserved_refusal() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let _client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (mut socket, _) = listener.accept().unwrap();
+        let deadline = Instant::now() + PROTECTED_PREFACE_BUDGET;
+        let mut hello = AdmissionHello {
+            schema: "wrong-schema".into(),
+            request_digest: "not-a-digest".into(),
+        };
+        assert_eq!(
+            receive_protected_request(
+                &mut socket,
+                serde_json::to_vec(&hello).unwrap(),
+                Some(AdmissionPolicy::development()),
+                deadline,
+                false,
+            )
+            .unwrap_err()
+            .to_string(),
+            "ADMISSION_HELLO"
+        );
+        hello.schema = ADMISSION_HELLO_SCHEMA.into();
+        let digest_error = digest(&hello.request_digest).unwrap_err().to_string();
+        assert_eq!(
+            receive_protected_request(
+                &mut socket,
+                serde_json::to_vec(&hello).unwrap(),
+                Some(AdmissionPolicy::development()),
+                deadline,
+                false,
+            )
+            .unwrap_err()
+            .to_string(),
+            digest_error
+        );
+        hello.request_digest = hex::encode([1; 32]);
+        assert_eq!(
+            receive_protected_request(
+                &mut socket,
+                serde_json::to_vec(&hello).unwrap(),
+                Some(AdmissionPolicy::development()),
+                deadline,
+                false,
+            )
+            .unwrap_err()
+            .to_string(),
+            RESERVED_READ_ONLY_BUSY
+        );
+    }
+
     #[test]
     fn test_slow_partial_frame_cannot_extend_the_absolute_deadline() {
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();

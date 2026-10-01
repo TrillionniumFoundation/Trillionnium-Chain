@@ -59,8 +59,9 @@ Their presence does not make an earlier absence claim the current API specificat
 | --- | --- | --- |
 | Retained signed transactions | [Local pool](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md), [cache V2](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_CACHE_V2.md) | Logical cache bounds do not bound physical chain/SQLite/WAL growth or operator tombstone lifetime. |
 | Continuous native work | [Wall-clock mining](../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md) | Preparation, one transcript, native commit and diagnostic sinks remain nonpreemptive. |
-| Parent task and execution state | [Operation-local actual parent](../modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md) | One operation can reuse its first checked full parent read; new operations and admission re-entry still read actual state. The checked derived cache may retain up to 16,384 keys under the unchanged 8 MiB payload/128 MiB workspace-charge ceilings, with complete-root fallback. This adds no authority cache, SQL isolation guarantee, throughput claim or work qualification. |
+| Parent task and execution state | [Operation-local actual parent](../modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md) | One operation can reuse its first checked full parent read; new operations and admission re-entry still read actual state. The checked derived cache may retain up to the existing 65,536-key protocol limit under 8 MiB payload/512 MiB workspace-charge ceilings, with complete-root fallback when a selected cache budget is exceeded. Protocol overflow still rejects. This adds no authority cache, SQL isolation guarantee, throughput claim or work qualification. |
 | Guest transaction intake | [Public V3](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md) | Resource tickets and separate read queues do not certify hostile-load fairness. |
+| Protected proof transport | [Admission security](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) | A zero-capacity Hello handoff preserves original deadlines and three socket workers. Its new explicit transport digest requires same-profile peers. A finite regression does not prove public scheduling or availability. |
 | Atomic task renewal | [V3 exact inclusion](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md), [fresh V4 overlap](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md) | Source/requester signatures and actual task availability remain required; no automatic qualification or indefinite lease. |
 | Long retained history | [Native ancestry index](../protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md) | Local derived index integrity is not a remote ancestry certificate; receivers still verify full packets. |
 | Explicit neighbor following | [Pinned peer polling](../protocol/pon-nakamoto-v1/details/PINNED_PEER_POLLING.md) | Paid Head/History and fixed cursors do not supply discovery, gossip, independent operators or eclipse resistance. |
@@ -69,6 +70,19 @@ Same-administrator Tailscale campaigns and task-owned delayed/interrupted TCP
 proxies are simulation evidence. Record actual direct/DERP routes, every failed
 attempt, native inclusion and stopped-store verification; do not promote independent
 operators, prospective model tasks, computational hardness or public readiness from them.
+
+The immutable `fefe235bdb25bd18a8b48876c2114448da0a4a86` near-limit
+normal-load attempt requested 262 blocks of 250 transfers, followed by six drain
+blocks, at 10-second live pacing. It failed with
+`ADMISSION_BUSY_READ_ONLY_RESERVED` on the next submission after 116 completed
+blocks: 29,000 transactions were accepted and 27,500 confirmed. The producer had
+29,277 state keys and the validator 29,027; their heads differed. This was an actual
+service failure before budget exhaustion, not a passed maximum-state acceptance.
+The current Hello handoff and larger optional derived-cache budgets require a
+fresh committed-source rerun of that unchanged load and independent complete
+reference replay. The earlier passed 16,411-key case remains scoped to its original
+source. Reaching 65,536 keys, rejecting 65,537 without changing parent state, large
+payload/workspace cases and hostile availability remain separate obligations.
 
 ## 1. Product mission: shared intelligence from real work
 

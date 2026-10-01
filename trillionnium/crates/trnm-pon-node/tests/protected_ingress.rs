@@ -14,7 +14,7 @@ use trnm_pon_node::{
     development_public,
     ingress::{
         self, AdmissionChallenge, AdmissionPolicy, AdmissionSolution, AuthenticatedClient,
-        AuthenticatedServer, DevelopmentIdentity, Request,
+        AuthenticatedServer, ConfirmationQuery, DevelopmentIdentity, Request,
     },
     Node, Packet, Settings,
 };
@@ -533,6 +533,187 @@ fn slow_hello_bodies_cannot_take_the_reserved_read_only_worker() {
     assert_eq!(metrics.work_verifications, 0);
     assert_eq!(metrics.completed_requests, 1);
     assert_eq!(metrics.protected_preface_refusals, 2);
+}
+
+#[test]
+fn protected_rendezvous_busy_proof_workers_keep_read_only_head_and_zero_pending_sockets() {
+    let (_directory, settings, node, packet) = fixture();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    let server_stop = stop.clone();
+    let server = thread::spawn(move || {
+        ingress::serve_protected(
+            listener,
+            node,
+            Duration::from_secs(5),
+            server_stop,
+            AdmissionPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .unwrap()
+    });
+    // Both proof workers hold a legitimate challenge while awaiting a solution.
+    // This does not occupy a proof permit or commit any block.
+    let submitted = request(&packet);
+    let (first, _, _) = connect(address, &submitted);
+    let (second, wire, _) = connect(address, &submitted);
+    let mut third = TcpStream::connect(address).unwrap();
+    third.set_nodelay(true).unwrap();
+    third
+        .set_read_timeout(Some(Duration::from_secs(1)))
+        .unwrap();
+    let hello = json!({
+        "schema":"trnm-pon-admission-hello-v1",
+        "request_digest":hex::encode(hash(b"native-transport-admission-wire-v1", &[&wire])),
+    });
+    // json! emits a different key order; use the closed Hello serialization.
+    let hello_wire = format!(
+        "{{\"schema\":\"{}\",\"request_digest\":\"{}\"}}",
+        hello["schema"].as_str().unwrap(),
+        hello["request_digest"].as_str().unwrap(),
+    );
+    send(&mut third, hello_wire.as_bytes());
+    let refused: Value = serde_json::from_slice(&read(&mut third)).unwrap();
+    assert_eq!(refused["error"], "ADMISSION_BUSY_READ_ONLY_RESERVED");
+    let head = ingress::call_protected(address, &Request::Head, &settings).unwrap();
+    assert_eq!(head["height"], 0);
+    drop((first, second, third));
+    stop.store(true, Ordering::Release);
+    let metrics = server.join().unwrap();
+    assert_eq!(metrics.admission_challenges, 2);
+    assert_eq!(metrics.admission_accepted, 0);
+    assert_eq!(metrics.admission_rejected_before_work, 2);
+    assert_eq!(metrics.work_verifications, 0);
+    assert_eq!(metrics.completed_requests, 1);
+    assert!(metrics.admission_reserved_read_only_refusals >= 1);
+    assert_eq!(
+        metrics.socket_connections,
+        metrics.completed_requests
+            + metrics.admission_challenges
+            + metrics.admission_reserved_read_only_refusals
+    );
+}
+
+#[test]
+fn protected_rendezvous_serial_confirmation_bursts_preserve_native_chain_and_socket_counts() {
+    use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+    use trnm_protocol::pon_wire::Envelope;
+
+    let (_directory, settings, node, _) = fixture_at_age(200);
+    let producer_directory = tempfile::tempdir().unwrap();
+    let mut producer = Node::open(producer_directory.path(), settings.clone(), 2).unwrap();
+    let seed = hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]);
+    let key = signing_key_from_hex(&hex::encode(seed)).unwrap();
+    let transactions: Vec<_> = (1..=250_u64)
+        .map(|nonce| {
+            let mut payload =
+                hash(b"rendezvous-regression-recipient", &[&nonce.to_le_bytes()]).to_vec();
+            payload.extend(1_u64.to_le_bytes());
+            let mut envelope = Envelope {
+                network: settings.network(),
+                sender: development_public(0).unwrap(),
+                nonce,
+                expiry: 10_000,
+                fee_limit: 1_000_000,
+                tag: 1,
+                payload,
+                signature: [0; 64],
+            };
+            envelope.signature = hex::decode(sign_hex(&key, &envelope.signing_digest().unwrap()))
+                .unwrap()
+                .try_into()
+                .unwrap();
+            envelope.encode().unwrap()
+        })
+        .collect();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    let server_stop = stop.clone();
+    let server = thread::spawn(move || {
+        ingress::serve_protected(
+            listener,
+            node,
+            Duration::from_secs(30),
+            server_stop,
+            AdmissionPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .unwrap()
+    });
+    let genesis_timestamp = ingress::now().unwrap() - 200;
+    let mut queries = Vec::new();
+    for height in 1..=8_u64 {
+        let parent = producer.active().unwrap().0;
+        let packet = producer
+            .make(
+                parent,
+                if height == 1 {
+                    transactions.clone()
+                } else {
+                    vec![]
+                },
+                development_public(0).unwrap(),
+                genesis_timestamp + height * 10,
+                4096,
+            )
+            .unwrap();
+        let id = producer.admit(&packet, ingress::now().unwrap()).unwrap();
+        producer
+            .activate_observed(id, ingress::now().unwrap())
+            .unwrap();
+        let reply = ingress::call_protected(address, &request(&packet), &settings).unwrap();
+        assert_eq!(reply["block"], hex::encode(id));
+        if height == 1 {
+            queries = transactions
+                .iter()
+                .map(|raw| ConfirmationQuery {
+                    transaction: hex::encode(Envelope::decode(raw).unwrap().id().unwrap()),
+                    block: hex::encode(id),
+                })
+                .collect();
+        }
+        // Seven sequential 250-member read-only calls reproduce the normal
+        // pending-confirmation burst before the next protected Submit. These
+        // repeated observations are not independent transaction confirmations.
+        for _ in 0..7 {
+            let observed = ingress::call_protected(
+                address,
+                &Request::ConfirmMany {
+                    queries: queries.clone(),
+                },
+                &settings,
+            )
+            .unwrap();
+            let observations = observed["observations"].as_array().unwrap();
+            assert_eq!(observations.len(), 250);
+            assert!(observations.iter().all(|value| {
+                value["included_height"] == 1
+                    && value["observed_height"] == height
+                    && value["reorged"] == false
+                    && value["execution_authority"] == false
+            }));
+        }
+    }
+    let head = ingress::call_protected(address, &Request::Head, &settings).unwrap();
+    let expected = producer.stats().unwrap();
+    for field in ["tip", "height", "state_root", "chainwork_hex", "state_keys"] {
+        assert_eq!(head[field], expected[field]);
+    }
+    assert_eq!(head["height"], 8);
+    stop.store(true, Ordering::Release);
+    let metrics = server.join().unwrap();
+    assert_eq!(metrics.completed_requests, 8 + 8 * 7 + 1);
+    assert_eq!(metrics.admission_challenges, 8);
+    assert_eq!(metrics.admission_accepted, 8);
+    assert_eq!(metrics.work_verifications, 8);
+    assert_eq!(metrics.malformed_requests, 0);
+    assert_eq!(metrics.rejected_requests, 0);
+    assert_eq!(metrics.busy_requests, 0);
+    assert_eq!(metrics.admission_rejected_before_work, 0);
+    assert_eq!(
+        metrics.socket_connections,
+        metrics.completed_requests + metrics.admission_reserved_read_only_refusals
+    );
 }
 
 #[test]
