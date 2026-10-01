@@ -52,7 +52,7 @@ fn hash32(s: &str) -> Result<Hash> {
     hex::decode_to_slice(s, &mut h).map_err(|_| "NONCANONICAL")?;
     Ok(h)
 }
-fn canonical(v: &Value) -> Result<Vec<u8>> {
+pub(crate) fn canonical(v: &Value) -> Result<Vec<u8>> {
     fn visit(v: &Value) -> Result<()> {
         match v {
             Value::Null | Value::Bool(_) => Ok(()),
@@ -1482,14 +1482,14 @@ pub fn execute(
         |_, next| root(next),
     )
 }
-struct BlockExecution<'a> {
-    transactions: &'a [Vec<u8>],
-    height: u64,
-    miner: Hash,
-    parent_id: Hash,
-    workers: usize,
+pub(crate) struct BlockExecution<'a> {
+    pub(crate) transactions: &'a [Vec<u8>],
+    pub(crate) height: u64,
+    pub(crate) miner: Hash,
+    pub(crate) parent_id: Hash,
+    pub(crate) workers: usize,
 }
-fn execute_with_commitment(
+pub(crate) fn execute_with_commitment(
     parent: &State,
     block: BlockExecution<'_>,
     cfg: &Config,

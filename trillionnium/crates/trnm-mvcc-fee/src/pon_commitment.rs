@@ -1,0 +1,374 @@
+//! Pure derived commitment computation for the existing PoN executor.
+//!
+//! Every call encodes the complete actual State. A snapshot is neither a state
+//! setter nor a transaction/admission verdict. The caller must still read actual
+//! KV, check its committed root and publish any staged snapshot only after its
+//! own durable commit. Cache limits select the unchanged full-root algorithm;
+//! they never reduce protocol state limits. Charges are software accounting,
+//! not a bound on process RSS or allocations in the executor/SQLite/proof code.
+use crate::pon_executor::{self, BlockExecution, Config, Output, Result, State};
+use std::collections::{BTreeMap, BTreeSet};
+use std::sync::Arc;
+use trnm_protocol::pon_state::{Change, StateTree};
+use trnm_protocol::pon_wire::{state_root, Hash};
+
+type CanonicalValues = BTreeMap<Vec<u8>, Vec<u8>>;
+pub const MAX_CACHE_KEYS: usize = 8192;
+pub const MAX_CACHE_PAYLOAD_BYTES: usize = 8 * 1024 * 1024;
+pub const MAX_WORKSPACE_CHARGE_BYTES: usize = 128 * 1024 * 1024;
+// Deliberate conservative software charges, not claims about an allocator ABI.
+const MAP_ENTRY_CHARGE: usize = 1024;
+const COMPRESSED_NODE_CHARGE: usize = 256;
+const CHANGE_ENTRY_CHARGE: usize = 256;
+const EMPTY_TABLE_CHARGE: usize = 257 * 32;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct CacheLimits {
+    pub max_keys: usize,
+    pub max_payload_bytes: usize,
+    pub max_workspace_charge_bytes: usize,
+}
+impl Default for CacheLimits {
+    fn default() -> Self {
+        Self {
+            max_keys: MAX_CACHE_KEYS,
+            max_payload_bytes: MAX_CACHE_PAYLOAD_BYTES,
+            max_workspace_charge_bytes: MAX_WORKSPACE_CHARGE_BYTES,
+        }
+    }
+}
+impl CacheLimits {
+    fn validate(self) -> Result<()> {
+        if self.max_keys > MAX_CACHE_KEYS
+            || self.max_payload_bytes > MAX_CACHE_PAYLOAD_BYTES
+            || self.max_workspace_charge_bytes > MAX_WORKSPACE_CHARGE_BYTES
+        {
+            return Err("COMMITMENT_CACHE_LIMIT");
+        }
+        Ok(())
+    }
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FullRootReason {
+    KeyBudget,
+    PayloadBudget,
+    WorkspaceBudget,
+    InternalSnapshotMismatch,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CommitmentMethod {
+    RebuiltTree,
+    CheckedApply,
+    FullRoot(FullRootReason),
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CommitmentObservation {
+    pub method: CommitmentMethod,
+    pub actual_keys: usize,
+    pub actual_payload_bytes: usize,
+    pub changed_keys: usize,
+    pub compressed_nodes: Option<usize>,
+    pub workspace_charge_bytes: usize,
+}
+/// Opaque immutable canonical bytes and structurally shared compressed tree.
+/// Clone shares Arcs; it does not copy the entire state/tree. Retaining unbounded
+/// clones would retain unbounded versions: callers must bound retained snapshots.
+#[derive(Clone)]
+pub struct CheckedCommitment {
+    values: Arc<CanonicalValues>,
+    tree: StateTree,
+    root: Hash,
+    charges: Charges,
+}
+impl std::fmt::Debug for CheckedCommitment {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("CheckedCommitment")
+            .field("root", &self.root)
+            .field("keys", &self.values.len())
+            .finish_non_exhaustive()
+    }
+}
+impl CheckedCommitment {
+    pub fn root(&self) -> Hash {
+        self.root
+    }
+    pub fn keys(&self) -> usize {
+        self.values.len()
+    }
+    pub fn payload_bytes(&self) -> usize {
+        self.charges.payload
+    }
+    /// Software charge for this canonical map/tree, excluding any actual State.
+    pub fn retained_charge_bytes(&self) -> usize {
+        self.charges.map + self.charges.tree
+    }
+}
+#[derive(Clone, Debug)]
+pub struct PreparedCommitment {
+    pub root: Hash,
+    pub snapshot: Option<CheckedCommitment>,
+    pub changes: Vec<Change>,
+    pub observation: CommitmentObservation,
+}
+#[derive(Debug)]
+pub struct StagedOutput {
+    pub output: Output,
+    pub commitment: PreparedCommitment,
+}
+/// All ordinary execution inputs; keeps the adapter independent of any Node owner.
+pub struct ExecutionRequest<'a> {
+    pub transactions: &'a [Vec<u8>],
+    pub height: u64,
+    pub miner: Hash,
+    pub parent_id: Hash,
+    pub workers: usize,
+}
+#[derive(Clone, Copy)]
+struct Charges {
+    payload: usize,
+    map: usize,
+    tree: usize,
+    nodes: usize,
+}
+fn add(a: usize, b: usize) -> Result<usize> {
+    a.checked_add(b).ok_or("COMMITMENT_CHARGE")
+}
+fn mul(a: usize, b: usize) -> Result<usize> {
+    a.checked_mul(b).ok_or("COMMITMENT_CHARGE")
+}
+fn encode(state: &State) -> Result<CanonicalValues> {
+    // Preserve the original root() canonical error order, before protocol bounds.
+    let mut values = BTreeMap::new();
+    for (key, value) in state {
+        values.insert(key.as_bytes().to_vec(), pon_executor::canonical(value)?);
+    }
+    if values.len() > 65_536
+        || values
+            .iter()
+            .any(|(key, value)| key.len() > 160 || value.len() > 4096)
+    {
+        return Err("LIMIT");
+    }
+    Ok(values)
+}
+fn charges(values: &CanonicalValues) -> Result<Charges> {
+    let mut payload = 0;
+    let mut capacities = 0;
+    for (key, value) in values {
+        payload = add(payload, add(key.len(), value.len())?)?;
+        capacities = add(capacities, add(key.capacity(), value.capacity())?)?;
+    }
+    let nodes = values
+        .len()
+        .checked_mul(2)
+        .ok_or("COMMITMENT_CHARGE")?
+        .saturating_sub(1);
+    Ok(Charges {
+        payload,
+        map: add(capacities, mul(values.len(), MAP_ENTRY_CHARGE)?)?,
+        tree: add(
+            add(capacities, mul(nodes, COMPRESSED_NODE_CHARGE)?)?,
+            EMPTY_TABLE_CHARGE,
+        )?,
+        nodes,
+    })
+}
+fn differences(before: &CanonicalValues, after: &CanonicalValues) -> Vec<Change> {
+    let keys: BTreeSet<_> = before.keys().chain(after.keys()).collect();
+    keys.into_iter()
+        .filter(|key| before.get(*key) != after.get(*key))
+        .map(|key| Change {
+            key: key.clone(),
+            before: before.get(key).cloned(),
+            after: after.get(key).cloned(),
+        })
+        .collect()
+}
+fn prepare_values(
+    values: CanonicalValues,
+    prior: Option<&CheckedCommitment>,
+    actual_before: Option<&CanonicalValues>,
+    limits: CacheLimits,
+) -> Result<PreparedCommitment> {
+    limits.validate()?;
+    let current = charges(&values)?;
+    let before = actual_before.or_else(|| prior.map(|p| p.values.as_ref()));
+    let changes = before.map_or_else(Vec::new, |p| differences(p, &values));
+    let preceding = before.map(charges).transpose()?.unwrap_or(current);
+    let maximum = Charges {
+        payload: current.payload.max(preceding.payload),
+        map: current.map.max(preceding.map),
+        tree: current.tree.max(preceding.tree),
+        nodes: current.nodes.max(preceding.nodes),
+    };
+    // At most old base, previous staged and newly built path roots while apply
+    // replaces an Arc. Full maps/diffs are still encoded/checked on every call.
+    let workspace = add(
+        mul(add(maximum.map, maximum.tree)?, 3)?,
+        add(
+            mul(maximum.payload, 2)?,
+            mul(changes.len(), CHANGE_ENTRY_CHARGE)?,
+        )?,
+    )?;
+    let reason = if values.len() > limits.max_keys {
+        Some(FullRootReason::KeyBudget)
+    } else if current.payload > limits.max_payload_bytes {
+        Some(FullRootReason::PayloadBudget)
+    } else if workspace > limits.max_workspace_charge_bytes {
+        Some(FullRootReason::WorkspaceBudget)
+    } else {
+        None
+    };
+    let mut observation = CommitmentObservation {
+        method: CommitmentMethod::RebuiltTree,
+        actual_keys: values.len(),
+        actual_payload_bytes: current.payload,
+        changed_keys: changes.len(),
+        compressed_nodes: None,
+        workspace_charge_bytes: workspace,
+    };
+    if let Some(reason) = reason {
+        observation.method = CommitmentMethod::FullRoot(reason);
+        return Ok(PreparedCommitment {
+            root: state_root(&values).map_err(|_| "LIMIT")?,
+            snapshot: None,
+            changes,
+            observation,
+        });
+    }
+    let tree = if let Some(previous) = prior {
+        match previous.tree.apply(previous.root, &changes) {
+            Ok(tree) => {
+                observation.method = CommitmentMethod::CheckedApply;
+                tree
+            }
+            Err(_) => {
+                // Internal cache damage cannot become a new ledger rejection or
+                // repair the actual state. The caller still compares the full root.
+                observation.method =
+                    CommitmentMethod::FullRoot(FullRootReason::InternalSnapshotMismatch);
+                return Ok(PreparedCommitment {
+                    root: state_root(&values).map_err(|_| "LIMIT")?,
+                    snapshot: None,
+                    changes,
+                    observation,
+                });
+            }
+        }
+    } else {
+        StateTree::from_values(&values).map_err(|_| "LIMIT")?
+    };
+    let root = tree.root();
+    observation.compressed_nodes = Some(current.nodes);
+    Ok(PreparedCommitment {
+        root,
+        snapshot: Some(CheckedCommitment {
+            values: Arc::new(values),
+            tree,
+            root,
+            charges: current,
+        }),
+        changes,
+        observation,
+    })
+}
+/// Validate a complete actual State against its owner-selected committed root.
+/// A prior snapshot only accelerates computation; changed actual KV is always
+/// encoded and checked. Unknown/fork contexts may simply pass None.
+pub fn checked_snapshot(
+    actual_state: &State,
+    expected_root: Hash,
+    prior: Option<&CheckedCommitment>,
+    limits: CacheLimits,
+) -> Result<PreparedCommitment> {
+    let prepared = prepare_values(encode(actual_state)?, prior, None, limits)?;
+    if prepared.root != expected_root {
+        return Err("COMMITMENT_ROOT");
+    }
+    Ok(prepared)
+}
+/// Pure full-rule execution. Never advances or mutates the supplied snapshot.
+/// A wrong internal snapshot is rejected before any transaction execution; an
+/// owner can explicitly discard/reseed it via checked_snapshot/None. None uses
+/// actual full-root validation and still returns a budgeted staged successor.
+pub fn execute_checked(
+    actual_parent: &State,
+    expected_parent_root: Hash,
+    predecessor: Option<&CheckedCommitment>,
+    request: ExecutionRequest<'_>,
+    config: &Config,
+    limits: CacheLimits,
+) -> Result<StagedOutput> {
+    limits.validate()?;
+    let actual = encode(actual_parent)?;
+    if let Some(snapshot) = predecessor {
+        if actual != *snapshot.values {
+            return Err("COMMITMENT_PARENT");
+        }
+        if snapshot.root != expected_parent_root {
+            return Err("COMMITMENT_ROOT");
+        }
+    } else if state_root(&actual).map_err(|_| "LIMIT")? != expected_parent_root {
+        return Err("COMMITMENT_ROOT");
+    }
+    let mut staged = None;
+    let output = pon_executor::execute_with_commitment(
+        actual_parent,
+        BlockExecution {
+            transactions: request.transactions,
+            height: request.height,
+            miner: request.miner,
+            parent_id: request.parent_id,
+            workers: request.workers,
+        },
+        config,
+        |_, after| {
+            let prepared = prepare_values(encode(after)?, predecessor, Some(&actual), limits)?;
+            let root = prepared.root;
+            staged = Some(prepared);
+            Ok(root)
+        },
+    )?;
+    Ok(StagedOutput {
+        output,
+        commitment: staged.ok_or("COMMITMENT_STAGED")?,
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn internal_tree_mismatch_uses_complete_root_without_mutating_snapshot() {
+        let state = State::from([("real".into(), json!(7))]);
+        let expected = pon_executor::root(&state).unwrap();
+        let mut snapshot = checked_snapshot(&state, expected, None, CacheLimits::default())
+            .unwrap()
+            .snapshot
+            .unwrap();
+        snapshot.tree = StateTree::default();
+        let fallback =
+            checked_snapshot(&state, expected, Some(&snapshot), CacheLimits::default()).unwrap();
+        assert_eq!(fallback.root, expected);
+        assert_eq!(
+            fallback.observation.method,
+            CommitmentMethod::FullRoot(FullRootReason::InternalSnapshotMismatch)
+        );
+        assert!(fallback.snapshot.is_none());
+        assert!(snapshot.tree.is_empty());
+        let mut corrupted_actual = state;
+        corrupted_actual.insert("real".into(), json!(8));
+        assert_eq!(
+            checked_snapshot(
+                &corrupted_actual,
+                expected,
+                Some(&snapshot),
+                CacheLimits::default()
+            )
+            .unwrap_err(),
+            "COMMITMENT_ROOT"
+        );
+    }
+}

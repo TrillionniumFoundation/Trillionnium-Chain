@@ -46,3 +46,6 @@ mod tests;
 
 /// Revision-2 PoN commands with validated ordered speculation.
 pub mod pon_executor;
+
+/// Pure derived state commitments; no ledger owner or admission authority.
+pub mod pon_commitment;
