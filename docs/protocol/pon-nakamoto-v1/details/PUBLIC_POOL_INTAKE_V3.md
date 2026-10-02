@@ -6,8 +6,9 @@ readiness, independence, fair access under saturation, exact transaction inclusi
 confirmation, model efficacy, or economic work. V2 retains its separate signed domains
 and one-hour service bound. Both modules bind the current derived ancestry index
 with at most1024 SQL lookups in a fresh resource-policy digest; see
-[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r2 separately
-partitions paid body/output grants and cancels disconnected work. V2 retains its
+[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r3 retains the r2 paid body/output partitions and disconnect
+fences, and keeps already-paid requests inside bounded connections while queue
+capacity is temporarily unavailable. V2 retains its
 own resource digest; these changes do not silently alter its contract. Security
 fixes still require review of both modules.
 
@@ -30,7 +31,7 @@ nonpreemptive: the 10-second work deadline bounds admission/lock waiting and soc
 phases; it is not a hard interruption guarantee for a running M06 preview. A
 successful durable pool reservation can outlive the requesting socket or response.
 
-Resource revision r2 binds every new limit in `PublicPolicy::id()`. It reserves
+Resource revision r3 binds these limits and finite enqueue behavior in `PublicPolicy::id()`. It reserves
 131,072 bytes of the existing 8 MiB body pool and 524,288 bytes of the existing
 32 MiB output pool for Head/PoolStatus control responses. Mutation body permits
 and non-control output permits cannot exhaust these reserves.
@@ -41,17 +42,28 @@ keys cannot increase these global lane limits. Eight challenge tokens are reserv
 from the existing global bucket for reads. These reservations introduce no extra
 worker, queue, Node owner, ledger authorization or retained guest identity.
 
-The reactor cancels an Await task on disconnect, expiry or shutdown. Workers check
+A full worker channel retains its canonical Task in `Stage::Enqueue` on the same
+bounded Connection, body and lane permit. The reactor attempts pending enqueue in
+connection-ID order without adding workers or channel entries. It preserves the
+original body-ready10-second work and accept-based30-second total deadlines;
+polling never renews either deadline. EOF is checked before dispatch, and dropping
+a pending connection releases its task/permits. This is finite local scheduling,
+not FIFO completion or a fairness guarantee under identity churn.
+
+The reactor cancels an Enqueue/Await task on disconnect, expiry or shutdown. Workers check
 its cancellation and original deadline when taking a queued task, while waiting
 for the owner, and between context checking, complete work verification and native
 admission. An already running transcript, M06 preview or SQLite operation remains
 nonpreemptive; cancellation cannot erase a committed fact. A fresh profile digest
-is mandatory: a client pinning the previous digest refuses r2, without fallback.
+is mandatory: correctly signed r1/r2 cookies and old client pins refuse r3, without fallback.
+For bits8/lifetime2000ms the digest is
+`ff9e0505125c8589cc29cdf359566986eb671409377fc01aac2abb41739f1dfe`;
+for default bits16/lifetime2000ms it is `a1e5ce40d60361a56dadbb9c47cfd41b785a94b3da674a39e1d6a2deaa3e8e87`.
 The V3 magic, cookie/caller signature domains and canonical request/response wires
 remain unchanged. The initial shared connection cap and pre-ticket processing can
 still be exhausted; lane isolation does not establish anonymous honest fairness.
 
-The r2 client contract keeps both TCP halves open until receiving the response.
+The retained r3 client contract keeps both TCP halves open until receiving the response.
 An EOF while awaiting native work cancels the task; TCP does not distinguish a
 peer's full close from `shutdown(Write)` at this point. A client that half-closes
 its write side after sending a body therefore forfeits the response. Ordinary V3
@@ -162,12 +174,15 @@ signature rejection, no partial rows/no ledger nonce consumption, operator minin
 stale read-only snapshot, explicit operator reconcile and persistent reopen. Both
 actual cross-version socket clients reject V2/V3 mixing and later honest requests
 still succeed. Startup cannot enable an unconfigured pool; invalid lifetime bounds
-are rejected. Sixteen V3 unit tests exercise body guards, closed ops, profile/magic/
+are rejected. Nineteen V3 unit tests exercise body guards, closed ops, profile/magic/
 signature domains, cookie tampering/restart epochs, paid reservations, slow frames,
-fragmented honest traffic, expired connections and cleanup. Resource revision r2
+fragmented honest traffic, expired connections and cleanup. Resource revision r3
 also exercises the actual signed Head under near-full mutation body occupancy,
 grant retention across queued tasks and replies, disconnect/half-close cancellation,
 and a ticket-passing Product rejection followed by valid native acceptance.
+Finite queue controls hold four paid tasks beyond two occupied queue entries,
+retain deadlines, accept eight actual submissions, and cancel four disconnected
+pending requests without allocating new queue capacity.
 
 These tests are local component evidence. The root integration must replay on the
 final committed Cargo graph with the actual pool and continuous miner, complete
@@ -195,3 +210,35 @@ The signed reply remains on stdout, and unsuccessful calls retain exit2. Parsing
 or identity-file errors before constructing the observed call have no stage receipt.
 V2 and other profiles refuse this option. Controller wall time includes process
 startup too and must remain separate from the client's stage observations.
+
+`queue_backpressure_events` counts repeated Full polls, not refusals or failed
+requests. `enqueued_after_backpressure` counts eventual task dispatches;
+`queue_wait_ns` measures body-ready to enqueue elapsed time, not CPU/owner-lock
+occupancy. `peak_pending_enqueue` counts bounded existing connection stages.
+Per-request transport, business refusal and complete native rejection denominators
+remain separate from these scheduling observations.
+
+The isolated r3 component observation preregistration
+`1eb224ab08985bc97b690e2b90e1c1f4a8c292c908649be3cbf158ba407001ac`
+used three10s localhost phases. All180 scheduled honest requests succeeded:
+20 Submit/20 Head/20 History in each phase. Cached invalid traffic recorded800
+attempts (8 Product,792 DUPLICATE_CONTENT); distinct-fork invalid traffic recorded800
+(799 Product,1 paid-grant client refusal). Queue refusals were0;71 Full polls were
+backpressure observations. Original independently coded scalar/State/ordered-
+receipt replay accepted22 distinct valid packets: the anchor,20 linear successor
+packets, and one independently constructed valid fork template. Each of the three
+closed service stores instead contains genesis plus the21 linear packets (66 total
+stored rows, including3 genesis rows). The valid fork was admitted only in its setup
+Node and independently replayed; the three service stores did not admit it. Its
+product-only mutation rejected as PRODUCT. This is same-operator loopback engineering evidence, not
+800 full verifications of cached duplicates, live mining, new combined-source
+qualification, WAN/SLA, task hardness or public acceptance. The prior1c mixed
+observation accepted9 of20 honest Submit opportunities and recorded7 queue
+refusals; these historical facts are not relabelled by this successor.
+
+The three-phase observer used the historical legacy task context and precomputed
+valid empty blocks, not revision10 checkpoint tasks or revision11 factor candidates.
+For each phase's20 honest Submit opportunities, observed maximum/p95 elapsed
+latencies in milliseconds were baseline47.16/36.27, cached139.07/41.06, and
+distinct-fork31.71/30.94. These include observer scheduling/waits, are not CPU
+measurements or TPS, and provide no p99 estimate (fewer than100 samples).

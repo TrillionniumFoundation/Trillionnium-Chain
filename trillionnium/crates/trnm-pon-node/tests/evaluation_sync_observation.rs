@@ -11,7 +11,7 @@ use std::{
         Arc, Mutex,
     },
     thread,
-    time::Duration,
+    time::{Duration, Instant},
 };
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::{pon_executor::Config, public_evaluation as evaluation};
@@ -76,8 +76,7 @@ fn refusal(output: Output, expected: &str) -> String {
     assert!(error.contains(expected), "{error}");
     error
 }
-fn success(c: &mut Command) -> Value {
-    let output = c.output().unwrap();
+fn success(output: Output) -> Value {
     retain_output(&output);
     assert!(
         output.status.success(),
@@ -202,6 +201,56 @@ impl Drop for Server {
     }
 }
 
+fn network_call(
+    node: &Arc<Mutex<Node>>,
+    stage: &str,
+    store: &Path,
+    genesis: u64,
+    key: &Path,
+    tip: Hash,
+    extra: &[&str],
+) -> Output {
+    // A listener lease covers one real network command. Receiver recovery,
+    // API checks and offline fork construction do not consume another call's
+    // unchanged 120-second lease. Each new server has its own cookie state.
+    let server = Server::start(node.clone());
+    let mut command = server.client(store, genesis, key, tip);
+    command.args(extra);
+    let argv: Vec<_> = std::iter::once(command.get_program())
+        .chain(command.get_args())
+        .map(|value| value.to_string_lossy().into_owned())
+        .collect();
+    eprintln!("network stage {stage} begin: {argv:?}");
+    let began = Instant::now();
+    let output = command.output().unwrap();
+    let command_elapsed_ns = began.elapsed().as_nanos();
+    eprintln!(
+        "network stage {stage} child waited: returncode={:?}, elapsed_ns={command_elapsed_ns}",
+        output.status.code()
+    );
+    // Stop and join this actual listener before opening another lease. This
+    // does not assert a hard native stage deadline or continuous availability.
+    drop(server);
+    eprintln!("network stage {stage} listener stopped and joined");
+    if let Some(directory) = std::env::var_os("EVALUATION_SYNC_OBSERVATION_EVIDENCE_DIR") {
+        let directory = std::path::PathBuf::from(directory);
+        fs::create_dir_all(&directory).unwrap();
+        let receipt = json!({"stage":stage,"argv":argv,
+            "actual_returncode":output.status.code(),"command_elapsed_ns":command_elapsed_ns,
+            "actual_child_wait_completed":true,"actual_listener_stop_and_join_completed":true,
+            "listener_limit_seconds":120,"one_network_command_per_listener":true,
+            "continuous_uptime_qualified":false,"public_ready":false});
+        let mut file = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(directory.join(format!("network-stage-{stage}.json")))
+            .unwrap();
+        std::io::Write::write_all(&mut file, &serde_json::to_vec_pretty(&receipt).unwrap())
+            .unwrap();
+    }
+    output
+}
+
 #[test]
 fn optional_sync_inputs_reject_before_open_without_changing_old_defaults() {
     let dir = tempfile::tempdir().unwrap();
@@ -312,19 +361,24 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
     })
     .unwrap();
     let shared = Arc::new(Mutex::new(node));
-    let server = Server::start(shared.clone());
     let key = dir.path().join("development-caller.key");
     fs::write(&key, hex::encode([92; 32])).unwrap();
     fs::set_permissions(&key, fs::Permissions::from_mode(0o600)).unwrap();
-    let mut c = server.client(&receiver, genesis, &key, tip);
-    c.args([
-        "--evaluation-candidate",
-        &hex::encode(cid),
-        "--evaluation-round-blocks",
-        "64",
-    ]);
     let before_sync_clock = ingress::now().unwrap();
-    let first = success(&mut c);
+    let first = success(network_call(
+        &shared,
+        "first-full-64",
+        &receiver,
+        genesis,
+        &key,
+        tip,
+        &[
+            "--evaluation-candidate",
+            &hex::encode(cid),
+            "--evaluation-round-blocks",
+            "64",
+        ],
+    ));
     let after_sync_clock = ingress::now().unwrap();
     let local = Node::open(&receiver, settings.clone(), 2).unwrap();
     let query_clock = first["result"]["evaluation_observation"]["observed_now"]
@@ -371,11 +425,15 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         first["result"]["evaluation_observation"]["closed_result"]["status"],
         "aborted"
     );
-    let default = success(
-        server
-            .client(&receiver, genesis, &key, tip)
-            .args(["--after", &hex::encode(tip)]),
-    );
+    let default = success(network_call(
+        &shared,
+        "default-after-64",
+        &receiver,
+        genesis,
+        &key,
+        tip,
+        &["--after", &hex::encode(tip)],
+    ));
     let keys: Vec<_> = default["result"]
         .as_object()
         .unwrap()
@@ -397,18 +455,22 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         ("window", cid, 63, "EVALUATION_OBSERVATION_LIMIT"),
     ] {
         let error_text = refusal(
-            server
-                .client(&receiver, genesis, &key, tip)
-                .args([
+            network_call(
+                &shared,
+                label,
+                &receiver,
+                genesis,
+                &key,
+                tip,
+                &[
                     "--after",
                     &hex::encode(tip),
                     "--evaluation-candidate",
                     &hex::encode(id),
                     "--evaluation-round-blocks",
                     &bound.to_string(),
-                ])
-                .output()
-                .unwrap(),
+                ],
+            ),
             "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED",
         );
         assert!(error_text.contains(error), "{label}: {error_text}");
@@ -418,11 +480,15 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
     }
     let partial = dir.path().join("partial");
     refusal(
-        server
-            .client(&partial, genesis, &key, tip)
-            .args(["--pages", "1", "--evaluation-candidate", &hex::encode(cid)])
-            .output()
-            .unwrap(),
+        network_call(
+            &shared,
+            "partial-history",
+            &partial,
+            genesis,
+            &key,
+            tip,
+            &["--pages", "1", "--evaluation-candidate", &hex::encode(cid)],
+        ),
         "INCOMPLETE_HISTORY",
     );
     let local = Node::open(&partial, settings.clone(), 2).unwrap();
@@ -437,11 +503,15 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
     drop(local);
     let wrong = dir.path().join("wrong-context");
     refusal(
-        server
-            .client(&wrong, genesis + 1, &key, tip)
-            .args(["--evaluation-candidate", &hex::encode(cid)])
-            .output()
-            .unwrap(),
+        network_call(
+            &shared,
+            "wrong-context",
+            &wrong,
+            genesis + 1,
+            &key,
+            tip,
+            &["--evaluation-candidate", &hex::encode(cid)],
+        ),
         "PUBLIC_CHALLENGE_CONTEXT",
     );
     let mut parent = root;
@@ -453,11 +523,15 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         owner.activate_observed(parent, now).unwrap();
     }
     let refused = refusal(
-        server
-            .client(&receiver, genesis, &key, parent)
-            .args(["--evaluation-candidate", &hex::encode(cid)])
-            .output()
-            .unwrap(),
+        network_call(
+            &shared,
+            "heavier-fork-65",
+            &receiver,
+            genesis,
+            &key,
+            parent,
+            &["--evaluation-candidate", &hex::encode(cid)],
+        ),
         "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED",
     );
     assert!(refused.contains(":STATE"));
@@ -474,26 +548,26 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
     // Complete delivery of the known lighter candidate branch cannot replace
     // the receiver's heavier active fork or provide that old branch's phase.
     refusal(
-        server
-            .client(&receiver, genesis, &key, tip)
-            .args([
+        network_call(
+            &shared,
+            "lighter-candidate-64",
+            &receiver,
+            genesis,
+            &key,
+            tip,
+            &[
                 "--after",
                 &hex::encode(tip),
                 "--evaluation-candidate",
                 &hex::encode(cid),
-            ])
-            .output()
-            .unwrap(),
+            ],
+        ),
         "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED",
     );
     let local = Node::open(&receiver, settings.clone(), 2).unwrap();
     assert_eq!(local.active().unwrap().0, parent);
     drop(local);
-    // The offline native archive construction is not a network-service phase.
-    // Close and join its current finite listener before building that history;
-    // otherwise an unoptimized full-work build can consume its 120-second lease
-    // and replace the intended archive refusal with Connection refused.
-    drop(server);
+    // No listener is running during this offline native archive construction.
     // Extend the original candidate branch past actual native archive retention,
     // then select its heavier tip. No archive KV is fabricated or deleted here.
     let mut retired = tip;
@@ -504,21 +578,21 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         }
         owner.activate_observed(retired, now).unwrap();
     }
-    // This listener has the same original 120-second bound and the same native
-    // owner, chain context, identity and public policy. Every client still pins
-    // its actual address; this test makes no continuous-uptime service claim.
-    let server = Server::start(shared.clone());
     let retired_error = refusal(
-        server
-            .client(&receiver, genesis, &key, retired)
-            .args([
+        network_call(
+            &shared,
+            "retired-archive-241",
+            &receiver,
+            genesis,
+            &key,
+            retired,
+            &[
                 "--after",
                 &hex::encode(tip),
                 "--evaluation-candidate",
                 &hex::encode(cid),
-            ])
-            .output()
-            .unwrap(),
+            ],
+        ),
         "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED",
     );
     assert!(retired_error.contains(":STATE"));
@@ -530,5 +604,4 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         .2
         .contains_key(&format!("evaluation-archive:{}", hex::encode(cid))));
     drop(local);
-    drop(server);
 }

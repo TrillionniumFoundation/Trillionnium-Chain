@@ -319,7 +319,7 @@ connection deadline. Saturation and serialized persistence can still deny honest
 service; physical deployment and a predeclared attack/service budget remain
 required. Local conformance does not remove the experimental work-profile gate.
 
-Public V2 and [V3](PUBLIC_POOL_INTAKE_V3.md) resource revision r2 partition their
+Public V2 r2 and [V3 r3](PUBLIC_POOL_INTAKE_V3.md) resource policies partition their
 existing body/output totals, retain per-lane grants through socket/task completion
 and cancel disconnected requests between native stages. Each uses its own new
 pinned resource digest while preserving its separate wire and signing domains.
@@ -330,3 +330,14 @@ is still rejected by the complete verifier. These component controls neither
 certify sustained attacker budgets nor repair the separate connection-work-v1
 26/27 short unpaid-phase observation. Shared pre-ticket/connection resources and
 the single native owner remain relevant to public availability.
+
+V3 r3 additionally retains a paid canonical request in the original bounded
+connection's Enqueue stage when its unchanged two-entry worker channel is Full.
+Connection-ID polling preserves original work/total deadlines and paid permits;
+EOF/expiry/shutdown cancels before dispatch. The64 connection cap,8/8 grants,
+2 proof/1 read workers,2+2 queues and body/output totals do not increase.
+New policy digests reject r1/r2 cookies. Full polls are scheduling observations,
+not request refusal counts. The finite localhost three-phase control accepted all
+180 honest Submit/Head/History requests while cached and distinct-fork Product
+mutations were refused; it does not establish unknown-caller Sybil fairness or
+restore the separately unexecuted remote mixed-hostile qualification.

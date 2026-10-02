@@ -52,3 +52,6 @@ pub mod pon_executor;
 
 /// Pure derived state commitments; no ledger owner or admission authority.
 pub mod pon_commitment;
+
+/// Fresh model profile with complete native parent and factor witnesses.
+pub mod integer_factor_candidate_v2;

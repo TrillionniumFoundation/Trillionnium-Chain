@@ -23,6 +23,44 @@ Verify bundle minimum positive score; bind exact components root, accepted leaf 
 
 **Atomic/commit boundary:** Same state transition and block delta; reorg reverses pointer/escrow but not historical inference.
 
+### M10.SubmitFactorContribution
+
+Only `linear-factor-witness-dev-v2`, native public evaluation and the legacy task
+profile select revision11/tag23. M00 decodes the full ILF2 rank1..2 B/A witness;
+M06 `integer_factor_candidate_v2::admit` loads the actual current ILM2 model (or the
+actual adopted release's full artifact), authenticates its chunks/family/hash and
+recomputes all771 BA coordinates and all3855 candidate coefficients. Its complete
+candidate and context-bound duplicate rows enter the original staged State.
+Equivalent basis, sign and zero-padding witnesses over the same parent/round/slot
+are refused across authors; different BA does not prove different model behavior.
+`build_witness` is producer convenience, not admission or evaluation authority.
+
+**Atomic/commit boundary:** Original M06 full State/receipts/reversible deltas;
+Node publishes only through its existing durable admission/activation. Same-parent
+same128-block-round markers survive expiry/abort, and fork/reopen restore the actual
+branch facts. No new SQL owner, durable schema or reward ledger is introduced.
+
+**Dedicated error summary and bounds:** `FACTOR_PROFILE`, `FACTOR_PARENT`, `FACTOR_MODEL_HASH`,
+`FACTOR_MODEL_RANGE`, `FACTOR_COMPUTED_HASH`, `FACTOR_NOOP`,
+`DUPLICATE_FUNCTION_UPDATE`; rank1..2, slot0..2, scale1024, i16 coefficients
+[-32767,32767], signed transaction921/1441B within2048B, complete model7756B in
+8 raw1024B chunks, at most1542 checked products, unchanged65536 State keys.
+The [complete layered error catalogue](../protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md#errors-and-validation-order)
+separates witness codec, model/parent, duplicate and inherited execution refusals;
+this short list is not exhaustive.
+
+The actual component receipt names four Rust `#[test]` controls in
+[`integer_factor_candidate_v2.rs`](../../trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs):
+`exact_variants_refuse_and_real_fork_restores_duplicate_window`,
+`missing_score_abort_keeps_same_round_marker_and_new_round_allows_update`,
+`loaded_release_parent_full_range_and_new_round_are_native`, and
+`cli_selects_fresh_profile_and_genesis_before_any_candidate`.
+These include real signed admission,128-block adoption, loaded parents and fork/reopen.
+The Python receipt navigator leaves this operation's observed selectors empty;
+source/test-name traceability is separate from an actual component receipt or a new
+whole-source qualification. Source-group budgets, general functional attribution,
+independent evaluator governance, positive ML gain and public acceptance remain open.
+
 ## M10.PendingNotHistory
 
 **Invariant:** Inactive contributions cannot exhaust pending capacity forever; signed intake windows bound same-parent history, reject expired-window replay, and preserve independently rooted release claims. Published release metadata retains the exact model artifact/family/parent after candidate reclamation.

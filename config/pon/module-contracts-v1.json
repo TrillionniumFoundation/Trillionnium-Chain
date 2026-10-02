@@ -27,7 +27,8 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/contract_wire.py",
-        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs"
       ],
       "test_classes": [
         "CodecTests",
@@ -285,7 +286,8 @@
         "formal/pon-nakamoto-v1/ledger.py",
         "formal/pon-nakamoto-v1/native_execution.py",
         "trillionnium/crates/trnm-mvcc-fee/src/engine.rs",
-        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs"
       ],
       "test_classes": [
         "ExecutionTests",
@@ -435,12 +437,23 @@
           "commit": "Same state transition and block delta; reorg reverses pointer/escrow but not historical inference.",
           "errors": "EVIDENCE, ROOT, FUNDS, DUPLICATE",
           "limits": "1..16 allocation entries;20-block rewardmaturity"
+        },
+        {
+          "id": "M10.SubmitFactorContribution",
+          "inputs": "full ILF2 rank1..2 i16 B,A witness; actual loaded ILM2 parent; context and signature",
+          "output": "native verified complete candidate model plus context-bound full BA duplicate marker",
+          "algorithm": "New revision11 profile only: load exact parent chunks and hash, recompute full BA and all-model coefficient range, reject no-op or repeated complete update, freeze original public evaluation roster. No old tag6 reinterpretation.",
+          "commit": "Original M06 State and reorg deltas; exact same-parent same-round marker retention; paid/current model references retained.",
+          "errors": "Dedicated summary: FACTOR_PROFILE, FACTOR_PARENT, FACTOR_MODEL_HASH, FACTOR_MODEL_RANGE, FACTOR_COMPUTED_HASH, FACTOR_NOOP, DUPLICATE_FUNCTION_UPDATE, SUBMISSION_ROUND; complete codec/model/duplicate and inherited execution errors in NATIVE_INTEGER_FACTOR_CANDIDATE_V2.",
+          "limits": "rank1..2; 921/1441B signed transaction; complete7756B model; <=64 1024B chunks; existing65536 State key cap."
         }
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/experiments/settle_model.py",
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+        "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs"
       ],
       "test_classes": [
         "ExecutionTests"
@@ -481,7 +494,9 @@
       "source_refs": [
         "formal/pon-nakamoto-v1/evaluation.py",
         "formal/pon-nakamoto-v1/experiments/model_loop.py",
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs",
+        "trillionnium/crates/trnm-verification-profiles/tests/exact_integer_linear_v1.rs"
       ],
       "test_classes": [
         "ExecutionTests"

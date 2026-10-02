@@ -49,6 +49,19 @@ Require one of three named development evaluators, not author, unique sender, ex
 
 These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
+## Bounded integer normal form reused by native admission
+
+[`exact_integer_linear_v1::verify_integer_linear_v1`](../../trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs)
+checks its frozen3×257 integer family, rank1..8, scale/range and full BA values.
+Its opaque result authenticates that arithmetic contract, not a caller's current
+model, State parent, source permission, functional behavior or reward. The explicit
+[M06 revision11 admission](../protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md)
+separately loads the complete V2 model and restricts rank to1..2 before reusing this
+kernel. The two family domains are distinct. The
+[component contract](../protocol/pon-nakamoto-v1/details/INTEGER_LINEAR_NORMAL_FORM_COMPONENT_V1.md)
+records canonical identity and exact bounds; it is not FP32 LoRA equivalence,
+complementary-bundle attribution or an independent strongest-control quality test.
+
 ## Module-specific threat and residual work
 
 Weak baselines, correlated samples, adaptive holdout reuse, poisoned evaluators and first-two arrival manipulation.

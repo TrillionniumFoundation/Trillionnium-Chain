@@ -136,7 +136,12 @@ evaluation14..17, lifecycle18..21, and the revision8
 and revision9 [V4 signed overlap](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md)
 have distinct context and gate rules; V3/V4 refuse standalone19. V3 requires the exact
 containing height; V4 permits delayed inclusion while both signed authority windows
-remain valid. Historical twelve-command
+remain valid. The explicit revision11
+[integer factor candidate23](../protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md)
+adds `M10.SubmitFactorContribution`, bringing the current typed responsibility
+inventory to39 across the same18 modules,25 packages and17 normal dependency edges.
+It loads the actual complete ILM2 parent and reuses bounded integer BA computation;
+old tag6/model/task contexts do not silently select this profile. Historical twelve-command
 parity and transfer benchmarks retain their original scope. This is not an arbitrary user-contract VM. No EVM, Move or WASM backend is
 selected. Fees and performance evidence apply to the named closed commands. A future
 VM decision needs explicit bytecode safety, deterministic metering, ABI, storage,
@@ -346,7 +351,7 @@ selectors actually ran. Neither mechanism supplies independent scientific author
 | P0 work and public admission | Exact experimental transcript and full scalar verification; a mismatching final digest skips product corrections after the complete transcript replay, while matching digests still require exact product verification; native PreparedTask removes avoidable repeated product work; paired valid-producer costs and bounded development ingress retain open hostile-proof/Sybil qualification | Implement/reproduce adversarial shortcuts and same-target costs; join ordinary public ingress and demonstrate honest service under stated sustained attack. No queue count grants work hardness. |
 | P0 one native node | Native development CLI owns work/target decisions, branch persistence/reorg, receiver sync/confirmation an allowlisted signed private-development ingress with durable inbound replay/client outbox, and explicit public-development-v2 resource-ticket intake with bounded Head/History and no durable guest authority; original M00/M01/M06 are reused | The explicitly enabled [local queued owner](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md) provides bounded durable groups, typed M05 checks/M06 preview and branch/restart reconciliation; its explicit wall-clock miner, fresh V4 signed-overlap renewal, paid V3 transaction intake and operator-pinned peer following share one native owner; qualify measured sustained operation, open public discovery/gossip plus confidentiality, interruptible native work and ordinary Hepta/resource/effect integration. Both transport profiles remain development candidates; public-v2 resource bounds and local conformance do not grant public-service or complete product acceptance. |
 | P1 long-lived state and confirmation | Native branch/delta/checkpoint persistence, receiver verification and exact signed-request replay/outbox state coexist with the independent reference oracle; root maps/history scans still incur full-size costs | Persistent incremental authenticated roots and real WAN/open-peer integration; the controlled receiver is full-verifying, not succinct or globally fresh. Verify deep history without treating private authentication, transport budgets or retention as finality. |
-| P1 independent model value | E3 seals actual parent/candidate/strong controls/calibration/partitions; no-gain remains zero adoption and reward | Authorized new tasks, independent source/evaluation/withdrawal owners, untouched future windows and budget-matched strong controls. Retrospective splits or configured identities do not satisfy independence. |
+| P1 independent model value | E3 seals actual parent/candidate/strong controls/calibration/partitions; explicit revision11 factor admission loads the complete current parent and rejects exact same-context BA copies; no-gain remains zero adoption and reward | Authorized new tasks, independent source/evaluation/withdrawal owners, untouched future windows and budget-matched strong controls. Retrospective splits or configured identities do not satisfy independence. |
 | P1 real resources and failures | Closed service receipt, finite quota/reward conservation and same-admin process/host fault observations | Real storage/serving obligations and funding, target-side effect reconciliation, independent operators, physical power loss and hostile public network. No chain undo may repeat a physical action. |
 | P2 end-to-end capacity | Source-bound worker/session comparisons plus real native CLI, process-cut and loopback socket regressions; no sustained public capacity claim | Same profile, source, state size and load through submission, inclusion and client-verified depth/work confirmation, with latency tails, hotspot degradation, resources and attack availability. Executor speed alone is not TPS. |
 
@@ -612,7 +617,10 @@ truthful demand, data retention, cheapest-miner hardness or public governance. A
 acceptance flags remain false, and historical constructors/golden bytes stay unchanged.
 
 The current convergence continues with [public V2](../protocol/pon-nakamoto-v1/details/PUBLIC_INTAKE_V2.md)
-and [V3](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md) resource revision r2.
+resource revision r2 and [V3](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
+resource revision r3. V3 retains paid canonical requests within the same bounded
+connection while its original worker channel is Full, attempting enqueue in
+connection-ID order without increasing queues, grants or absolute deadlines.
 Within the existing totals it reserves read-body and control-output capacity, separates
 paid mutation/read grants and read challenge tokens, retains grants through native work
 and output, and checks disconnect/expiry fences between complete stages. EOF, including
@@ -676,3 +684,19 @@ without new evaluation RPC, guest permission, durable schema or decoded observat
 authority. Applications consuming observations still need their own durable effect
 identity and reorg/retirement rules; native evaluation transactions continue to use
 the actual roster, current State, branch heights and funded conditions.
+
+The isolated public V3 r3 localhost successor completed three10s phases with
+180/180 honest Submit/Head/History requests. Cached invalid800 attempts produced
+792 duplicate-content refusals and8 Product rejections; distinct-fork800 produced
+799 Product rejections and1 paid-grant client refusal. Queue refusals were0;
+71 Full polls were not71 failed requests. Original independently coded scalar/State/
+ordered-receipt replay checked the anchor,20 linear successors and one separate
+valid fork template (22 packets). Each closed service store contains genesis and
+21 linear packets, giving66 stored rows including3 genesis; the fork is not in
+those stores. Its product-only mutation was refused as PRODUCT.
+The original1c observation (9 of20 honest Submit accepted,7 queue refusals,788 duplicate-content
+and6 Product rejections) remains a retained failure/saturation observation.
+These component results do not qualify the newly combined source, WAN/SLA,
+anonymous fairness, model efficacy, useful task demand, mining hardness or public
+readiness. General functional-copy attribution and independent evaluation/source
+budgets remain open; all six public acceptance gates remain false.

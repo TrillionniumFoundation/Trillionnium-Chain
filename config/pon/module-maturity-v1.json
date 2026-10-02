@@ -769,6 +769,33 @@
             "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement"
           ],
           "remaining": "Synthetic signed release transitions are not three improving public-model generations."
+        },
+        {
+          "operation": "M10.SubmitFactorContribution",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+              "symbol": "admit"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+              "symbol": "build_witness"
+            },
+            {
+              "path": "trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs",
+              "symbol": "verify_integer_linear_v1"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+            "symbol": "execute"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Explicit revision11 native signed tag23: M00 ILF2 codec, M06 actual ILM2 parent loading/complete BA and model checks, reused pure M11 integer kernel; existing Node persists staged State/deltas.",
+          "persistence_owner": null,
+          "evidence_selectors": [],
+          "remaining": "The four actual Rust component controls are named in the M10 specification and retained component receipts; this Python-receipt navigator has no Rust observed-result selector. Source binding is not execution or whole-source qualification. General functional equivalence, source budgets, independent evaluation, positive utility and public acceptance remain unqualified."
         }
       ]
     },

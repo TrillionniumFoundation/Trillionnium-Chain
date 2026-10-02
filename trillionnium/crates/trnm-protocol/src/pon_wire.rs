@@ -175,6 +175,10 @@ fn payload_len(tag: u8, p: &[u8]) -> Result<(), WireError> {
         20 => crate::qualified_work_task::lifecycle_v2::DEMAND_REVOCATION_BYTES,
         21 => crate::qualified_work_task::lifecycle_v2::LIFECYCLE_TASK_BYTES,
         22 => crate::qualified_work_task::lifecycle_v3::ATOMIC_RENEW_BYTES,
+        23 => {
+            crate::integer_factor_v2::FactorWitnessV2::decode(p)?;
+            p.len()
+        }
         9 => {
             if p.len() < 73 {
                 return Err(WireError::Length);

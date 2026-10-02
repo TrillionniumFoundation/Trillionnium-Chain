@@ -36,6 +36,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/integer-factor-candidate-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/integer-factor-candidate-v2.json"
+        )),
+    ),
+    (
         "config/pon/invariants-v2.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -47,6 +54,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../config/pon/ledger-v1.json"
+        )),
+    ),
+    (
+        "config/pon/model-family-integer-factor-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/model-family-integer-factor-v2.json"
         )),
     ),
     (
@@ -2080,6 +2094,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2689,6 +2710,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2840,6 +2868,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-protocol/examples/pon_wire.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs"
         )),
     ),
     (
@@ -3781,6 +3816,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-verification-profiles/examples/integer_linear_normal_form.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-verification-profiles/examples/integer_linear_normal_form.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-verification-profiles/src/closed_round.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3788,10 +3830,24 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-verification-profiles/src/lib.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-verification-profiles/src/lib.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-verification-profiles/tests/exact_integer_linear_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-verification-profiles/tests/exact_integer_linear_v1.rs"
         )),
     ),
     (

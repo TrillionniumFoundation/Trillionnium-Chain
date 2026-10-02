@@ -68,9 +68,12 @@ measured and remains a public-network blocker, not a hidden fallback.
 [S2 persistence/reorg](details/STATE_RECOVERY.md) · [M1 model/evaluation](details/MODEL_EVALUATION.md) ·
 [N1 network/clients](details/NETWORK_CLIENT.md) · [P1 performance/acceptance](details/PERFORMANCE_ACCEPTANCE.md).
 
-[Procedure registry](../../../config/pon/module-contracts-v1.json) has38 typed operations
+[Procedure registry](../../../config/pon/module-contracts-v1.json) has39 typed operations
 for all18 existing modules. [Maturity](../../../config/pon/module-maturity-v1.json)
 separates document, component, executable contract, native product and independent acceptance.
+The explicitly selected revision11 [integer factor candidate](details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md)
+adds native tag23 and one responsibility; the original twelve-command wire registry
+and its historical reference outcomes remain unchanged.
 
 ## Revision2 invariant continuation
 

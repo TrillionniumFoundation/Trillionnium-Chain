@@ -83,6 +83,21 @@ Stop admission, requestchild stop, wait bounded5seconds, kill+reap ifunresponsiv
 
 These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
+## Public development queue revision r3
+
+[Public V3](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md) retains
+its existing64 connections,8 mutation/8 read grants,2 proof/1 read workers and
+2+2 queue slots. A paid canonical body may remain in the original connection's
+`Enqueue` stage while its original10s work and30s total deadlines run; finite
+connection-ID polling does not add an unbounded queue, owner or authority.
+EOF/expiry/shutdown cancel pending tasks, with full native stage fences retained.
+`queue_backpressure_events` counts Full polls, not failed requests; elapsed metrics
+include scheduling and waits and are not CPU or mutex-held time. New resource
+profile digests refuse old r1/r2 cookies. Local honest service controls do not grant
+WAN/SLA or anonymous Sybil fairness. The ordinary CLI can also select the explicit
+[revision11 factor model](../protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md);
+old task/model/actor contexts do not silently select it.
+
 ## Module-specific threat and residual work
 
 Fallback masking missing modules, startup before recovery, task starvation and authority conflation.

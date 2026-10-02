@@ -291,6 +291,12 @@ impl Settings {
             json!(count.checked_mul(funding).ok_or("CONFIG")?),
         );
         initial.insert("model:current".into(), json!(hex::encode([0; 32])));
+        if trnm_mvcc_fee::integer_factor_candidate_v2::enabled(&app) {
+            initial.extend(
+                trnm_mvcc_fee::integer_factor_candidate_v2::bootstrap_state(&app)
+                    .map_err(Error::from)?,
+            );
+        }
         if matches!(
             task_profile,
             LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE

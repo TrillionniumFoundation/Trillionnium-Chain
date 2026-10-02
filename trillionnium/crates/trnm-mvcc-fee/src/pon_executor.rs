@@ -92,7 +92,7 @@ pub struct Config {
     pub family: Hash,
     pub plan: Hash,
     pub evaluators: BTreeSet<String>,
-    pub fees: [u64; 23],
+    pub fees: [u64; 24],
     pub params: Value,
     pub model_registry: Value,
 }
@@ -290,6 +290,59 @@ impl Config {
                 serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
                     .map_err(|_| "CONFIG")?
             }
+            crate::integer_factor_candidate_v2::PROFILE => {
+                require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
+                require(task_profile == LEGACY_TASK_PROFILE, "MODEL_PROFILE_TASK")?;
+                let factor_policy: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/integer-factor-candidate-v2.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    factor_policy["production_activation"] == false
+                        && factor_policy["tag"] == 23
+                        && factor_policy["artifact_exact_bytes"]
+                            == crate::integer_factor_candidate_v2::MODEL_BYTES
+                        && factor_policy["rank_max"] == 2,
+                    "CONFIG",
+                )?;
+                for (key, expected) in [
+                    ("schema", json!("native-integer-factor-candidate-v2")),
+                    (
+                        "profile",
+                        json!(crate::integer_factor_candidate_v2::PROFILE),
+                    ),
+                    ("consensus_revision", json!(11)),
+                    ("magic", json!("ILF2")),
+                    ("rank_min", json!(1)),
+                    ("scale", json!(1024)),
+                    ("coefficient_min", json!(-32767)),
+                    ("coefficient_max", json!(32767)),
+                    ("payload_bytes", json!([762, 1282])),
+                    ("envelope_bytes", json!([921, 1441])),
+                    ("artifact_max_bytes", json!(65536)),
+                    ("chunk_bytes", json!(1024)),
+                    ("chunk_count_max", json!(64)),
+                    ("base_fee_units", json!(200)),
+                    ("no_op_rejected", json!(true)),
+                    ("source_budget_enforced", json!(false)),
+                    ("quality_qualified", json!(false)),
+                    ("general_model_equivalence", json!(false)),
+                ] {
+                    require(factor_policy[key] == expected, "CONFIG")?;
+                }
+                params["consensus_revision"] = json!(11);
+                params["model_profile"] = json!(model_profile);
+                params["chain_label"] =
+                    json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
+                params["factor_candidate_policy_hash"] = json!(hex::encode(hash(
+                    b"integer-factor-candidate-policy-v2",
+                    &[&canonical(&factor_policy)?]
+                )));
+                serde_json::from_str(include_str!(
+                    "../../../../config/pon/model-family-integer-factor-v2.json"
+                ))
+                .map_err(|_| "CONFIG")?
+            }
             "smollm2-135m-cpu-dev-v1" => {
                 require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
                 params["model_profile"] = json!(model_profile);
@@ -310,6 +363,38 @@ impl Config {
             )?;
             params["max_artifact_bytes"] = json!(maximum);
         }
+        if model_profile == crate::integer_factor_candidate_v2::PROFILE {
+            for (key, expected) in [
+                ("schema", json!("integer-linear-factor-family-v2")),
+                ("version", json!(2)),
+                ("dimensions", json!(257)),
+                ("experts", json!(3)),
+                ("logit_outputs", json!(3)),
+                ("weight_scale", json!(1024)),
+                ("weight_min", json!(-32767)),
+                ("weight_max", json!(32767)),
+                ("artifact_encoding", json!("ILM2-le-i16-complete-model-v2")),
+                (
+                    "artifact_exact_bytes",
+                    json!(crate::integer_factor_candidate_v2::MODEL_BYTES),
+                ),
+                ("genesis_model", json!("canonical-full-zero-model-v2")),
+                ("native_factor_rank_min", json!(1)),
+                ("native_factor_rank_max", json!(2)),
+                (
+                    "tensor_shapes",
+                    json!({"base":[3,257],"router":[3,257],"deltas":[3,3,257]}),
+                ),
+                ("consensus_authority", json!(false)),
+                ("general_model_equivalence", json!(false)),
+                ("model_utility_qualified", json!(false)),
+            ] {
+                require(model[key] == expected, "CONFIG")?;
+            }
+            let family = hash(b"family", &[&canonical(&model)?]);
+            let artifact = crate::integer_factor_candidate_v2::IntegerModelV2::genesis(family);
+            params["factor_genesis_artifact"] = json!(hex::encode(artifact.id()));
+        }
         let wire: Value =
             serde_json::from_str(include_str!("../../../../config/pon/ledger-v1.json"))
                 .map_err(|_| "CONFIG")?;
@@ -327,7 +412,17 @@ impl Config {
             ],
         );
         let family = hash(b"family", &[&canonical(&model)?]);
-        let plan = if model_profile != "linear-expert-dev-v1" {
+        let plan = if model_profile == crate::integer_factor_candidate_v2::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-factor-evaluation-v2",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile != "linear-expert-dev-v1" {
             hash(
                 b"plan",
                 &[
@@ -347,7 +442,7 @@ impl Config {
                 ],
             )
         };
-        let mut fees = [0; 23];
+        let mut fees = [0; 24];
         let mut tags = BTreeSet::new();
         for c in wire["commands"].as_array().ok_or("CONFIG")? {
             let tag = field(c, "tag")? as usize;
@@ -365,6 +460,7 @@ impl Config {
             *fee = 100;
         }
         fees[22] = 200;
+        fees[23] = 200;
         let mut evaluators = BTreeSet::new();
         for i in 0_u64..3 {
             let seed = hash(b"DEV-ONLY-KEY", &[&i.to_le_bytes()]);
@@ -593,6 +689,17 @@ impl qualified_task_lifecycle::LifecycleState for View<'_> {
         self.scan(prefix)
     }
 }
+impl crate::integer_factor_candidate_v2::FactorState for View<'_> {
+    fn get(&mut self, key: &str) -> Option<Value> {
+        self.get(key)
+    }
+    fn put(&mut self, key: String, value: Value) {
+        self.put(key, value);
+    }
+    fn scan(&mut self, prefix: &str) -> State {
+        self.scan(prefix)
+    }
+}
 impl Patch {
     fn current(&self, state: &State) -> bool {
         self.reads.iter().all(|(k, v)| state.get(k) == v.as_ref())
@@ -722,6 +829,14 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
         tx.tag != 12 || cfg.task_profile() == LEGACY_TASK_PROFILE,
         "WORK_TASK_PROFILE",
     )?;
+    require(
+        tx.tag != 23 || crate::integer_factor_candidate_v2::enabled(cfg),
+        "FACTOR_PROFILE",
+    )?;
+    require(
+        tx.tag != 6 || !crate::integer_factor_candidate_v2::enabled(cfg),
+        "FACTOR_PROFILE",
+    )?;
     require(tx.network == cfg.network, "NETWORK")?;
     require(height <= tx.expiry, "EXPIRED")?;
     let sender = hex::encode(tx.sender);
@@ -829,6 +944,45 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             o["remaining"] = json!(0);
             o["status"] = json!("settled");
             s.put(k, o);
+        }
+        23 => {
+            let witness = trnm_protocol::integer_factor_v2::FactorWitnessV2::decode(&tx.payload)
+                .map_err(|_| "FACTOR_ENCODING")?;
+            let current = s
+                .get("model:current")
+                .and_then(|v| v.as_str().map(str::to_owned))
+                .ok_or("STATE")?;
+            let history = s.scan("contribution:");
+            require(
+                (history.len() as u64) < cfg.limit("max_candidate_history_per_round")?,
+                "CANDIDATE_WINDOW_FULL",
+            )?;
+            let active = history
+                .values()
+                .map(|v| active_candidate(v, &current, height, cfg))
+                .collect::<Result<Vec<_>>>()?
+                .into_iter()
+                .filter(|b| *b)
+                .count();
+            require(
+                (active as u64) < cfg.limit("max_model_candidates")?,
+                "LIMIT",
+            )?;
+            let key = format!("contribution:{}", hex::encode(witness.contribution_id));
+            require(s.get(&key).is_none(), "DUPLICATE")?;
+            let mut contribution = crate::integer_factor_candidate_v2::admit(
+                &mut s, cfg, tx.sender, height, &witness,
+            )?;
+            let excluded = public_evaluation::excluded(&s.scan("evaluation-disqualified:"));
+            contribution["public_evaluation"] = public_evaluation::freeze(
+                cfg,
+                witness.contribution_id,
+                &contribution,
+                height,
+                &excluded,
+            )?;
+            s.put(key, contribution);
+            p.pos = p.bytes.len();
         }
         6 => {
             let cid = p.h()?;
@@ -1457,6 +1611,7 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
             credit_state(state, text(&reward, "owner")?, field(&reward, "amount")?)?;
         }
     }
+    crate::integer_factor_candidate_v2::cleanup(state, height, cfg)?;
     Ok(receipts)
 }
 
@@ -1534,7 +1689,7 @@ pub(crate) fn execute_with_commitment(
         let prepared = prepare(raw, height, cfg, &signatures);
         let range_command = prepared
             .as_ref()
-            .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10));
+            .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10 | 23));
         // Prefix-capacity operations remain canonical: do not retain one full
         // prefix snapshot per transaction merely to parallelize shared budgets.
         let patch = if serial_state || range_command {

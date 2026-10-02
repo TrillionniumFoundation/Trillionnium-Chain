@@ -47,7 +47,12 @@ interfaces, payloads, errors, windows and retention bounds are in
 [QUALIFIED_TASK_LIFECYCLE_V2](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V2.md),
 [V3 atomic renewal](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md),
 [V4 signed overlap](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md)
-and [PUBLIC_EVALUATION_LIFECYCLE](../protocol/pon-nakamoto-v1/details/PUBLIC_EVALUATION_LIFECYCLE.md).
+[PUBLIC_EVALUATION_LIFECYCLE](../protocol/pon-nakamoto-v1/details/PUBLIC_EVALUATION_LIFECYCLE.md)
+and the explicit revision11 [integer factor candidate](../protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md).
+The latter loads the complete actual ILM2 parent from State, recomputes771 BA
+coordinates and the complete candidate model, and persists context-bound duplicate
+rows through the existing staged State/deltas. It neither reinterprets old tag6
+nor proves general model-function equivalence or useful quality.
 Lifecycle18 OPEN/20 REVOKE/21 REGISTER retain their selected contract; standalone19
 RENEW is V2-only, and atomic22 is V3/V4-only. V3/V4 refuse19; V4 selects revision9.
 Native selectors `trnm-pon-node --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation` exercise
@@ -68,7 +73,7 @@ For sorted union of keys compare canonical values; emit only changed entries, en
 **Invariant:** The historical twelve core commands produce identical state, receipts, fees and root at one, two, four and eight workers.
 
 **Scope:** Historical default-context native/Python parity. Signed task13, native
-evaluation14..17 and selected lifecycle18..22 have separate native contracts and tests;
+evaluation14..17, selected lifecycle18..22 and revision11 factor23 have separate native contracts and tests;
 this invariant does not claim full Python transition parity for those extensions.
 
 **Atomic boundary:** Mandatory transitions first, parallel local proposals, canonical read-set validation, one re-execution on conflict, then final conservation and subsidy.

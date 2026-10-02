@@ -99,7 +99,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r2/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-native-stages-nonpreemptive/no-durable-guest-rows",&[self.bits],&self.lifetime_ms.to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r3/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-native-stages-nonpreemptive/no-durable-guest-rows",&[self.bits],&self.lifetime_ms.to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -121,6 +121,11 @@ pub struct PublicMetrics {
     pub tasks_dequeued: u64,
     pub replay_refusals: u64,
     pub queue_refusals: u64,
+    pub queue_backpressure_events: u64,
+    pub enqueued_after_backpressure: u64,
+    pub queue_wait_ns: u64,
+    pub peak_pending_enqueue: usize,
+    pub disconnected_before_enqueue: u64,
     pub parse_refusals: u64,
     pub work_started: u64,
     pub work_finished: u64,
@@ -604,6 +609,8 @@ struct Task {
     id: u64,
     cookie: Cookie,
     request: Request,
+    ready_at: Instant,
+    backpressure_seen: bool,
     deadline: Instant,
     cancelled: Arc<AtomicBool>,
 }
@@ -632,6 +639,7 @@ enum Stage {
         cookie: Cookie,
         bytes: Vec<u8>,
     },
+    Enqueue(Box<Task>),
     Await,
     Output {
         bytes: Vec<u8>,
@@ -647,6 +655,7 @@ impl Stage {
             Self::Solution { .. } => "solution",
             Self::Ready { .. } => "ready",
             Self::Body { .. } => "body",
+            Self::Enqueue(_) => "queue",
             Self::Await => "work",
             Self::Output { .. } => "output",
         }
@@ -718,6 +727,60 @@ fn write_available(socket: &mut TcpStream, bytes: &[u8], cursor: &mut usize) -> 
             Ok(false)
         }
         Err(e) => Err(e.into()),
+    }
+}
+// A full channel retains this already paid request in its bounded connection.
+// Existing body/lane permits own every pending task. Reactor iteration order is
+// connection ID order. Retries preserve the original work and overall deadlines.
+fn enqueue_paid_task(
+    task: Task,
+    sender: &mpsc::SyncSender<Task>,
+    metrics: &Mutex<PublicMetrics>,
+) -> Result<Stage> {
+    let waited = elapsed_ns(task.ready_at);
+    let backpressure_seen = task.backpressure_seen;
+    match sender.try_send(task) {
+        Ok(()) => {
+            let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+            m.tasks_enqueued += 1;
+            m.queue_wait_ns = m.queue_wait_ns.saturating_add(waited);
+            m.enqueued_after_backpressure += u64::from(backpressure_seen);
+            Ok(Stage::Await)
+        }
+        Err(TrySendError::Full(mut task)) => {
+            task.backpressure_seen = true;
+            metrics
+                .lock()
+                .map_err(|_| "PUBLIC_METRICS")?
+                .queue_backpressure_events += 1;
+            Ok(Stage::Enqueue(Box::new(task)))
+        }
+        Err(TrySendError::Disconnected(_)) => Err("PUBLIC_QUEUE_CLOSED".into()),
+    }
+}
+fn caller_write_half_alive(
+    socket: &TcpStream,
+    cancelled: &AtomicBool,
+    metrics: &Mutex<PublicMetrics>,
+) -> Result<()> {
+    match socket.peek(&mut [0; 1]) {
+        Ok(0) => {
+            metrics
+                .lock()
+                .map_err(|_| "PUBLIC_METRICS")?
+                .disconnected_await_requests += 1;
+            cancelled.store(true, Ordering::Release);
+            Err("PUBLIC_EOF".into())
+        }
+        Err(e)
+            if !matches!(
+                e.kind(),
+                std::io::ErrorKind::WouldBlock | std::io::ErrorKind::Interrupted
+            ) =>
+        {
+            Err(e.into())
+        }
+        _ => Ok(()),
     }
 }
 fn public_dispatch(
@@ -1360,11 +1423,7 @@ pub fn serve_public_protected_v3_with_metrics(
                                 )?;
                                 let request = canonical_request(&bytes, cookie.op)?;
                                 server.validate(&cookie, &settings, false)?;
-                                let sender = if mutating_operation(cookie.op) {
-                                    &proof_tx
-                                } else {
-                                    &read_tx
-                                };
+                                let ready_at = Instant::now();
                                 let task = Task {
                                     _permit: conn.permit.take().ok_or("PUBLIC_BODY_PERMIT")?,
                                     _lane_permit: conn
@@ -1375,33 +1434,33 @@ pub fn serve_public_protected_v3_with_metrics(
                                     id: conn.id,
                                     cookie,
                                     request,
+                                    ready_at,
+                                    backpressure_seen: false,
                                     deadline: conn
                                         .total_deadline
-                                        .min(Instant::now() + Duration::from_millis(WORK_MS)),
+                                        .min(ready_at + Duration::from_millis(WORK_MS)),
                                     cancelled: conn.cancelled.clone(),
                                 };
-                                match sender.try_send(task) {
-                                    Ok(()) => {
-                                        metrics
-                                            .lock()
-                                            .map_err(|_| "PUBLIC_METRICS")?
-                                            .tasks_enqueued += 1;
-                                        conn.deadline = conn
-                                            .total_deadline
-                                            .min(Instant::now() + Duration::from_millis(WORK_MS));
-                                        Ok(Stage::Await)
-                                    }
-                                    Err(TrySendError::Full(_)) => {
-                                        metrics
-                                            .lock()
-                                            .map_err(|_| "PUBLIC_METRICS")?
-                                            .queue_refusals += 1;
-                                        Err("PUBLIC_QUEUE_BUSY".into())
-                                    }
-                                    Err(TrySendError::Disconnected(_)) => {
-                                        Err("PUBLIC_QUEUE_CLOSED".into())
-                                    }
+                                conn.deadline = task.deadline;
+                                Ok(Stage::Enqueue(Box::new(task)))
+                            }
+                            Stage::Enqueue(task) => {
+                                task_alive(task.deadline, &stop, &task.cancelled)?;
+                                if let Err(error) =
+                                    caller_write_half_alive(&conn.socket, &conn.cancelled, &metrics)
+                                {
+                                    metrics
+                                        .lock()
+                                        .map_err(|_| "PUBLIC_METRICS")?
+                                        .disconnected_before_enqueue += 1;
+                                    return Err(error);
                                 }
+                                let sender = if mutating_operation(task.cookie.op) {
+                                    &proof_tx
+                                } else {
+                                    &read_tx
+                                };
+                                enqueue_paid_task(*task, sender, &metrics)
                             }
                             Stage::Await => {
                                 // R2 requires the caller's write half to remain open
@@ -1409,26 +1468,8 @@ pub fn serve_public_protected_v3_with_metrics(
                                 // close from shutdown(Write): either EOF cancels
                                 // queued/owner-waiting work. The ordinary client keeps
                                 // both halves open. This is no ledger verdict.
-                                match conn.socket.peek(&mut [0; 1]) {
-                                    Ok(0) => {
-                                        metrics
-                                            .lock()
-                                            .map_err(|_| "PUBLIC_METRICS")?
-                                            .disconnected_await_requests += 1;
-                                        conn.cancelled.store(true, Ordering::Release);
-                                        Err("PUBLIC_EOF".into())
-                                    }
-                                    Err(e)
-                                        if !matches!(
-                                            e.kind(),
-                                            std::io::ErrorKind::WouldBlock
-                                                | std::io::ErrorKind::Interrupted
-                                        ) =>
-                                    {
-                                        Err(e.into())
-                                    }
-                                    _ => Ok(Stage::Await),
-                                }
+                                caller_write_half_alive(&conn.socket, &conn.cancelled, &metrics)?;
+                                Ok(Stage::Await)
                             }
                             Stage::Output {
                                 bytes,
@@ -1481,6 +1522,13 @@ pub fn serve_public_protected_v3_with_metrics(
                 for id in remove {
                     connections.remove(&id);
                 }
+                let pending = connections
+                    .values()
+                    .filter(|conn| matches!(conn.stage, Stage::Enqueue(_)))
+                    .count();
+                let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+                m.peak_pending_enqueue = m.peak_pending_enqueue.max(pending);
+                drop(m);
                 thread::sleep(Duration::from_millis(1));
             }
             Ok(())
@@ -2076,6 +2124,277 @@ mod tests {
         assert_eq!(m.output_reserved_bytes_after_shutdown, 0);
     }
     #[test]
+    fn disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work() {
+        let directory = tempfile::tempdir().unwrap();
+        let clock = super::super::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let source = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let packet = source
+            .make(
+                source.active().unwrap().0,
+                vec![],
+                crate::development_public(0).unwrap(),
+                clock - 50,
+                4096,
+            )
+            .unwrap();
+        let request = Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        };
+        let raw = serde_json::to_vec(&request).unwrap();
+        let owner = shared(source);
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let (signal, counters, node) = (stop.clone(), metrics.clone(), owner.clone());
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_metrics(
+                listener,
+                node,
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+            )
+            .unwrap()
+        });
+        assert!(
+            call_public_protected_v3(
+                address,
+                &Request::Head,
+                &settings,
+                identity(71).public_key(),
+                &identity(72),
+                policy
+            )
+            .unwrap()
+            .ok
+        );
+        let locked = owner.lock().unwrap();
+        let before = locked.active().unwrap();
+        let caller = identity(80);
+        let mut h = hello(1, raw.len());
+        h.caller = digest(caller.public_key()).unwrap();
+        h.digest = hash(b"public-request-body-v3", &[&raw]);
+        let mut sockets = Vec::new();
+        for _ in 0..8 {
+            let mut socket = paid_grant(address, h, &caller, policy).unwrap();
+            socket.write_all(&raw).unwrap();
+            sockets.push(socket);
+        }
+        // Initial Head was one task. Two Submit workers are waiting for this
+        // actual owner lock, leaving two in the channel and four inside bounded pending connections.
+        wait_metric(&metrics, |m| {
+            m.tasks_enqueued == 5 && m.tasks_dequeued == 3 && m.peak_pending_enqueue == 4
+        });
+        sockets[0].shutdown(std::net::Shutdown::Write).unwrap();
+        for socket in &sockets[1..] {
+            socket.shutdown(std::net::Shutdown::Both).unwrap();
+        }
+        wait_metric(&metrics, |m| m.disconnected_await_requests == 8);
+        // Keep the first caller's read half open: it receives EOF because the
+        // server explicitly cancels R2 write-half-closed requests.
+        assert!(client_frame(
+            &mut sockets[0],
+            MAX_RESPONSE,
+            Instant::now() + Duration::from_secs(2)
+        )
+        .is_err());
+        drop(sockets);
+        drop(locked);
+        wait_metric(&metrics, |m| m.abandoned_tasks == 4);
+        assert_eq!(metrics.lock().unwrap().work_started, 0);
+        assert_eq!(owner.lock().unwrap().active().unwrap(), before);
+        let reply = call_public_protected_v3(
+            address,
+            &request,
+            &settings,
+            identity(71).public_key(),
+            &identity(81),
+            policy,
+        )
+        .unwrap();
+        assert!(reply.ok, "{}", reply.value);
+        assert_eq!(owner.lock().unwrap().stats().unwrap()["height"], 1);
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(m.disconnected_await_requests, 8);
+        assert_eq!(m.disconnected_before_enqueue, 4);
+        assert_eq!(m.abandoned_tasks, 4);
+        assert_eq!(m.work_started, 1);
+        assert_eq!(m.completed_submit, 1);
+        assert_eq!(m.mutating_grants_after_shutdown, 0);
+        assert_eq!(m.output_reserved_bytes_after_shutdown, 0);
+    }
+    #[test]
+    fn eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline() {
+        let directory = tempfile::tempdir().unwrap();
+        let clock = super::super::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let source = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let parent = source.active().unwrap().0;
+        let packets: Vec<_> = (0..MAX_MUTATING_GRANTS)
+            .map(|index| {
+                source
+                    .make(
+                        parent,
+                        vec![],
+                        crate::development_public(index as u64).unwrap(),
+                        clock - 50,
+                        4096,
+                    )
+                    .unwrap()
+            })
+            .collect();
+        let owner = shared(source);
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let (signal, counters, node) = (stop.clone(), metrics.clone(), owner.clone());
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_metrics(
+                listener,
+                node,
+                Duration::from_secs(12),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+            )
+            .unwrap()
+        });
+        assert!(
+            call_public_protected_v3(
+                address,
+                &Request::Head,
+                &settings,
+                identity(71).public_key(),
+                &identity(72),
+                policy
+            )
+            .unwrap()
+            .ok
+        );
+        let locked = owner.lock().unwrap();
+        let mut sockets = Vec::new();
+        for (index, packet) in packets.iter().enumerate() {
+            let raw = serde_json::to_vec(&Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            })
+            .unwrap();
+            let caller = identity(80 + index as u8);
+            let mut h = hello(1, raw.len());
+            h.caller = digest(caller.public_key()).unwrap();
+            h.digest = hash(b"public-request-body-v3", &[&raw]);
+            let mut socket = paid_grant(address, h, &caller, policy).unwrap();
+            socket.write_all(&raw).unwrap();
+            sockets.push(socket);
+        }
+        wait_metric(&metrics, |m| {
+            m.tasks_enqueued == 5
+                && m.tasks_dequeued == 3
+                && m.peak_pending_enqueue == 4
+                && m.queue_backpressure_events >= 4
+        });
+        // The two workers and two channel slots are occupied. Four complete paid
+        // requests retain their permits inside bounded connections, not a new queue.
+        assert_eq!(metrics.lock().unwrap().queue_refusals, 0);
+        drop(locked);
+        for (socket, packet) in sockets.iter_mut().zip(&packets) {
+            let bytes = client_frame(
+                socket,
+                MAX_RESPONSE,
+                Instant::now() + Duration::from_secs(3),
+            )
+            .unwrap();
+            let response: Response = serde_json::from_slice(&bytes).unwrap();
+            assert_eq!(response.profile, hex::encode(policy.id()));
+            verify_hex_strict(
+                identity(71).public_key(),
+                &response.message().unwrap(),
+                &response.signature,
+            )
+            .unwrap();
+            assert!(response.ok, "{}", response.value);
+            assert_eq!(response.value["block"], hex::encode(packet.id().unwrap()));
+        }
+        drop(sockets);
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(m.work_started, 8);
+        assert_eq!(m.work_finished, 8);
+        assert_eq!(m.work_failed, 0);
+        assert_eq!(m.completed_submit, 8);
+        assert_eq!(m.queue_refusals, 0);
+        assert_eq!(m.enqueued_after_backpressure, 4);
+        assert!(m.queue_wait_ns > 0);
+        assert_eq!(m.peak_mutating_grants, MAX_MUTATING_GRANTS);
+        assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
+        assert_eq!(m.output_reserved_bytes_after_shutdown, 0);
+        assert_eq!(m.mutating_grants_after_shutdown, 0);
+        assert_eq!(m.read_grants_after_shutdown, 0);
+    }
+    #[test]
+    fn queue_backpressure_preserves_deadline_and_releases_permits_on_drop() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let server = server();
+        let cookie = server
+            .cookie(&settings, hello(2, 1), "127.0.0.1:1".parse().unwrap())
+            .unwrap();
+        let body_pool = Arc::new(Mutex::new(0));
+        let lane_pool = Arc::new(Mutex::new(0));
+        let metrics = Mutex::new(PublicMetrics::default());
+        let (sender, receiver) = mpsc::sync_channel(2);
+        let ready_at = Instant::now();
+        let deadline = ready_at + Duration::from_millis(WORK_MS);
+        let make_task = |id| Task {
+            _permit: BufferPermit::acquire(body_pool.clone(), 3, MAX_PAID_BODY_BYTES).unwrap(),
+            _lane_permit: Arc::new(
+                BufferPermit::acquire(lane_pool.clone(), 1, MAX_READ_GRANTS).unwrap(),
+            ),
+            id,
+            cookie: cookie.clone(),
+            request: Request::Head,
+            ready_at,
+            backpressure_seen: false,
+            deadline,
+            cancelled: Arc::new(AtomicBool::new(false)),
+        };
+        assert!(matches!(
+            enqueue_paid_task(make_task(1), &sender, &metrics).unwrap(),
+            Stage::Await
+        ));
+        assert!(matches!(
+            enqueue_paid_task(make_task(2), &sender, &metrics).unwrap(),
+            Stage::Await
+        ));
+        let mut task = make_task(3);
+        for _ in 0..4 {
+            let Stage::Enqueue(pending) = enqueue_paid_task(task, &sender, &metrics).unwrap()
+            else {
+                panic!("full channel must retain paid task");
+            };
+            assert_eq!(pending.deadline, deadline);
+            assert_eq!(pending.ready_at, ready_at);
+            assert!(pending.backpressure_seen);
+            assert_eq!(*body_pool.lock().unwrap(), 9);
+            assert_eq!(*lane_pool.lock().unwrap(), 3);
+            task = *pending;
+        }
+        drop(task);
+        assert_eq!(*body_pool.lock().unwrap(), 6);
+        assert_eq!(*lane_pool.lock().unwrap(), 2);
+        drop(receiver.try_recv().unwrap());
+        drop(receiver.try_recv().unwrap());
+        assert_eq!(*body_pool.lock().unwrap(), 0);
+        assert_eq!(*lane_pool.lock().unwrap(), 0);
+        assert_eq!(metrics.lock().unwrap().queue_backpressure_events, 4);
+        assert_eq!(metrics.lock().unwrap().queue_refusals, 0);
+    }
+    #[test]
     fn paid_wrong_product_is_fully_rejected_and_the_preserved_valid_packet_is_activated() {
         let directory = tempfile::tempdir().unwrap();
         let clock = super::super::now().unwrap();
@@ -2146,29 +2465,34 @@ mod tests {
         assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
     }
     #[test]
-    fn resource_revision_r2_rejects_a_signed_r1_cookie_and_preserves_control_output_reserve() {
+    fn resource_revision_r3_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
             hex::encode(server.policy.id()),
-            "b32629eb243707bb1baad647ece89f22845593b91dd58490dbd6ccc695528c1d"
+            "ff9e0505125c8589cc29cdf359566986eb671409377fc01aac2abb41739f1dfe"
         );
         let mut c = server
             .cookie(&s, hello(2, 1), "127.0.0.1:1".parse().unwrap())
             .unwrap();
-        c.profile = "fdc9af27f01e2ffdb8e6a24b2303ed90d5d1d3ad88f2f08d686d780e29f0bd41".into();
-        c.mac = hex::encode(hmac(&server.secret, &c.unsigned().unwrap()));
-        c.signature = server.identity.sign(&c.server_message().unwrap()).unwrap();
-        verify_hex_strict(
-            server.identity.public_key(),
-            &c.server_message().unwrap(),
-            &c.signature,
-        )
-        .unwrap();
-        assert_eq!(
-            server.validate(&c, &s, true).unwrap_err().to_string(),
-            "PUBLIC_COOKIE_CONTEXT"
-        );
+        for old_profile in [
+            "fdc9af27f01e2ffdb8e6a24b2303ed90d5d1d3ad88f2f08d686d780e29f0bd41",
+            "b32629eb243707bb1baad647ece89f22845593b91dd58490dbd6ccc695528c1d",
+        ] {
+            c.profile = old_profile.into();
+            c.mac = hex::encode(hmac(&server.secret, &c.unsigned().unwrap()));
+            c.signature = server.identity.sign(&c.server_message().unwrap()).unwrap();
+            verify_hex_strict(
+                server.identity.public_key(),
+                &c.server_message().unwrap(),
+                &c.signature,
+            )
+            .unwrap();
+            assert_eq!(
+                server.validate(&c, &s, true).unwrap_err().to_string(),
+                "PUBLIC_COOKIE_CONTEXT"
+            );
+        }
         let pool = Arc::new(Mutex::new(0));
         let bulk = BufferPermit::acquire(
             pool.clone(),

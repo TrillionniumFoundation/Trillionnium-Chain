@@ -29,7 +29,7 @@ legacy appendices and jobs are removed; Git alone retains historical content.
 
 ## Executable detail and maturity
 
-[38 typed procedures](../../config/pon/module-contracts-v1.json) bind all18 modules to
+[39 typed procedures](../../config/pon/module-contracts-v1.json) bind all18 modules to
 exact shared wire, work, state/recovery, model/evaluation and network/acceptance details.
 [Per-module maturity](../../config/pon/module-maturity-v1.json) separates documented,
 native component, executable reference, native product integration and independent acceptance.
@@ -44,6 +44,10 @@ plus explicit profile-gated signed task13, native evaluation14..17 and lifecycle
 in [V3](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md) and
 [V4](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md).
 V3/V4 refuse standalone19; V4 selects fresh revision9 signed-overlap semantics.
+The explicit revision11 [integer factor candidate](../protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md)
+adds tag23 and `M10.SubmitFactorContribution` only in its new model context. Its
+complete-parent checks reuse the bounded M11 arithmetic kernel; the historical
+twelve-command reference contract is unchanged.
 Historical parity measurements keep their original scope. The native development
 composition adds M02 decisions, the distinct M07/M08 SQLite owner and signed private
 ingress/outbox. It also implements an explicitly enabled [bounded local pool](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md),
