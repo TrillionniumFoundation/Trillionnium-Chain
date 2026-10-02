@@ -7,13 +7,14 @@ use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
 const NOW: u64 = 1_800_010_000;
 
-fn signed(cfg: &Config, who: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn signed(cfg: &Config, who: u64, transaction_sequence: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
     let key =
         signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&who.to_le_bytes()]))).unwrap();
     let mut tx = Envelope {
         network: cfg.network,
         sender: development_public(who).unwrap(),
-        nonce,
+        // Public account sequence for replay protection, not a cryptographic signing nonce.
+        nonce: transaction_sequence,
         expiry: 256,
         fee_limit: 1_000_000,
         tag,
@@ -26,7 +27,12 @@ fn signed(cfg: &Config, who: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<
         .unwrap();
     tx.encode().unwrap()
 }
-fn contribution(cfg: &Config, nonce: u64, artifact: Hash, components: Hash) -> (Hash, Vec<u8>) {
+fn contribution(
+    cfg: &Config,
+    transaction_sequence: u64,
+    artifact: Hash,
+    components: Hash,
+) -> (Hash, Vec<u8>) {
     let owner = development_public(3).unwrap();
     let cid = hash(
         b"contribution-v3",
@@ -46,9 +52,16 @@ fn contribution(cfg: &Config, nonce: u64, artifact: Hash, components: Hash) -> (
     payload.extend(1024_u64.to_le_bytes());
     payload.extend(components);
     payload.extend(0_u64.to_le_bytes());
-    (cid, signed(cfg, 3, nonce, 6, payload))
+    (cid, signed(cfg, 3, transaction_sequence, 6, payload))
 }
-fn commit(cfg: &Config, cid: Hash, e: &Value, who: u64, score: u64, nonce: u64) -> Vec<u8> {
+fn commit(
+    cfg: &Config,
+    cid: Hash,
+    e: &Value,
+    who: u64,
+    score: u64,
+    transaction_sequence: u64,
+) -> Vec<u8> {
     let round = evaluation::round(e).unwrap();
     let commitment = evaluation::reveal_commitment(
         round,
@@ -62,16 +75,16 @@ fn commit(cfg: &Config, cid: Hash, e: &Value, who: u64, score: u64, nonce: u64) 
     let mut p = cid.to_vec();
     p.extend(round);
     p.extend(commitment);
-    signed(cfg, who, nonce, 14, p)
+    signed(cfg, who, transaction_sequence, 14, p)
 }
-fn reveal(cfg: &Config, cid: Hash, e: &Value, who: u64, nonce: u64) -> Vec<u8> {
+fn reveal(cfg: &Config, cid: Hash, e: &Value, who: u64, transaction_sequence: u64) -> Vec<u8> {
     let mut p = cid.to_vec();
     for h in [evaluation::round(e).unwrap(), cfg.plan, [9; 32]] {
         p.extend(h);
     }
     p.extend(10_u64.to_le_bytes());
     p.extend([who as u8 + 1; 32]);
-    signed(cfg, who, nonce, 15, p)
+    signed(cfg, who, transaction_sequence, 15, p)
 }
 fn append(node: &mut Node, height: u64, txs: Vec<Vec<u8>>) -> Hash {
     let packet = node

@@ -58,6 +58,10 @@ unqualified; bounded development networking does not supply those acceptances.
 
 ## Responsibility and evidence
 
+[Source-bound local observations](../../evidence/pon-four-priority-audit-v1/README.md)
+retain the `3c63c836` work-cost and M06 preview measurements with their limits;
+component timing and local diagnostics do not promote module acceptance.
+
 The [canonical applicability table](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md#current-applicability-and-evidence-classes)
 joins these module documents to source owners, entrypoints, exact test selectors and
 evidence classes. Its [registry](../../config/pon/applicability-v1.json) also checks

@@ -92,6 +92,9 @@ case "${1:?required job}" in
     python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-session-v1/work-cost --historical
     python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-node-v1/work-cost --historical
     python3 scripts/pon_work_cost_report.py --verify evidence/pon-closed-round-v1/work-cost --historical
+    python3 scripts/ci/check_four_priority_evidence.py
+    python3 scripts/ci/test_four_priority_evidence.py
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-four-priority-audit-v1/work-cost --historical
     ;;
   *) printf '%s\n' 'unknown CI job' >&2; exit 2 ;;
 esac

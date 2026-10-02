@@ -9,13 +9,14 @@ use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 const GENESIS: u64 = 1_800_000_000;
 const NOW: u64 = GENESIS + 100_000;
 
-fn signed(cfg: &Config, who: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn signed(cfg: &Config, who: u64, transaction_sequence: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
     let key =
         signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&who.to_le_bytes()]))).unwrap();
     let mut tx = Envelope {
         network: cfg.network,
         sender: development_public(who).unwrap(),
-        nonce,
+        // Public account sequence for replay protection, not a cryptographic signing nonce.
+        nonce: transaction_sequence,
         expiry: 8192,
         fee_limit: 1_000_000,
         tag,
@@ -28,7 +29,12 @@ fn signed(cfg: &Config, who: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<
         .unwrap();
     tx.encode().unwrap()
 }
-fn contribution(cfg: &Config, nonce: u64, artifact: Hash, round: u64) -> (Hash, Vec<u8>) {
+fn contribution(
+    cfg: &Config,
+    transaction_sequence: u64,
+    artifact: Hash,
+    round: u64,
+) -> (Hash, Vec<u8>) {
     let owner = development_public(3).unwrap();
     let components = [8; 32];
     let cid = hash(
@@ -49,7 +55,7 @@ fn contribution(cfg: &Config, nonce: u64, artifact: Hash, round: u64) -> (Hash, 
     p.extend(1024_u64.to_le_bytes());
     p.extend(components);
     p.extend(round.to_le_bytes());
-    (cid, signed(cfg, 3, nonce, 6, p))
+    (cid, signed(cfg, 3, transaction_sequence, 6, p))
 }
 fn commit(cfg: &Config, cid: Hash, e: &Value, who: u64) -> Vec<u8> {
     let round = evaluation::round(e).unwrap();

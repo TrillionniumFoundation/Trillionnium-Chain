@@ -98,11 +98,18 @@ pub fn fixture() -> (
         Settings::development_with_operator_actors(&spec, &bundle, &model, &input).unwrap();
     (spec, bundle, model, input, settings)
 }
-pub fn transaction(s: &Settings, who: u8, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+pub fn transaction(
+    s: &Settings,
+    who: u8,
+    transaction_sequence: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
     let mut tx = Envelope {
         network: s.network(),
         sender: key(who),
-        nonce,
+        // Public account sequence for replay protection, not a cryptographic signing nonce.
+        nonce: transaction_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag,
@@ -112,10 +119,16 @@ pub fn transaction(s: &Settings, who: u8, nonce: u64, tag: u8, payload: Vec<u8>)
     tx.signature = signature(who, &tx.signing_digest().unwrap());
     tx.encode().unwrap()
 }
-pub fn transfer(s: &Settings, who: u8, nonce: u64, receiver: u8, amount: u64) -> Vec<u8> {
+pub fn transfer(
+    s: &Settings,
+    who: u8,
+    transaction_sequence: u64,
+    receiver: u8,
+    amount: u64,
+) -> Vec<u8> {
     let mut p = key(receiver).to_vec();
     p.extend(amount.to_le_bytes());
-    transaction(s, who, nonce, 1, p)
+    transaction(s, who, transaction_sequence, 1, p)
 }
 pub fn make(
     node: &Node,

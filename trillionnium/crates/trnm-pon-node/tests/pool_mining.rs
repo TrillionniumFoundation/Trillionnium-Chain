@@ -25,11 +25,18 @@ fn signature(who: u64, message: &[u8]) -> [u8; 64] {
         .try_into()
         .unwrap()
 }
-fn transaction(settings: &Settings, who: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+fn transaction(
+    settings: &Settings,
+    who: u64,
+    transaction_sequence: u64,
+    tag: u8,
+    payload: Vec<u8>,
+) -> Vec<u8> {
     let mut tx = Envelope {
         network: settings.network(),
         sender: development_public(who).unwrap(),
-        nonce,
+        // Public account sequence for replay protection, not a cryptographic signing nonce.
+        nonce: transaction_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,
         tag,
@@ -39,10 +46,16 @@ fn transaction(settings: &Settings, who: u64, nonce: u64, tag: u8, payload: Vec<
     tx.signature = signature(who, &tx.signing_digest().unwrap());
     tx.encode().unwrap()
 }
-fn transfer(settings: &Settings, who: u64, nonce: u64, receiver: u64, amount: u64) -> Vec<u8> {
+fn transfer(
+    settings: &Settings,
+    who: u64,
+    transaction_sequence: u64,
+    receiver: u64,
+    amount: u64,
+) -> Vec<u8> {
     let mut payload = development_public(receiver).unwrap().to_vec();
     payload.extend(amount.to_le_bytes());
-    transaction(settings, who, nonce, 1, payload)
+    transaction(settings, who, transaction_sequence, 1, payload)
 }
 fn setup(path: &std::path::Path) -> (Node, Settings, MiningConfig, PoolLimits) {
     setup_profile(path, PROFILE)

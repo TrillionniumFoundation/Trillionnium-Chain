@@ -83,6 +83,10 @@ is promoted by implementation or by adding a diagnostic checker.
    does not prove future-task custody, consent, independent operation, real serving
    or physical retention; those external obligations remain unaccepted.
 
+[Source-bound local observation package](../../evidence/pon-four-priority-audit-v1/README.md)
+retains the measured `3c63c836` work-cost diagnostic (expected exit 2) and scoped
+M06 preview timings; it promotes no acceptance or end-to-end throughput claim.
+
 New local checker results apply only to the source and environment actually tested.
 Full Rust qualification, exact committed-head/prospective-merge CI, physical-host
 measurements and independent model/security acceptance require their own retained
