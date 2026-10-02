@@ -12,6 +12,12 @@ capacity is temporarily unavailable. V2 retains its
 own resource digest; these changes do not silently alter its contract. Security
 fixes still require review of both modules.
 
+An operator can select the bounded local
+[request resource observer](PUBLIC_REQUEST_RESOURCE_OBSERVATION.md) to capture
+actual worker-thread CPU intervals and application-frame byte progress. This
+optional API preserves the signed r3 policy and native request rules; its nested
+CPU intervals and stream bytes are not energy or physical network measurements.
+
 ## Exact boundary
 
 `ingress::public_v3::serve_public_protected_v3` accepts the **existing**

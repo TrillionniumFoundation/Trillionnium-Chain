@@ -7,6 +7,12 @@ use super::{
     digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node,
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
+mod request_observation;
+pub use request_observation::{
+    ApplicationFrameBytes, ApplicationFramePhase, PublicRequestObservation,
+    PublicRequestObservationSnapshot, PublicRequestObserver, MAX_REQUEST_OBSERVATION_RECORDS,
+};
+use request_observation::{ConnectionObservation, TaskObservation, ThreadCpuStamp};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
@@ -604,6 +610,7 @@ impl Drop for BufferPermit {
     }
 }
 struct Task {
+    observation: Option<TaskObservation>,
     _permit: BufferPermit,
     _lane_permit: Arc<BufferPermit>,
     id: u64,
@@ -662,6 +669,7 @@ impl Stage {
     }
 }
 struct Connection {
+    observation: Option<ConnectionObservation>,
     id: u64,
     socket: TcpStream,
     peer: SocketAddr,
@@ -729,6 +737,34 @@ fn write_available(socket: &mut TcpStream, bytes: &[u8], cursor: &mut usize) -> 
         Err(e) => Err(e.into()),
     }
 }
+fn read_available_observed(
+    socket: &mut TcpStream,
+    bytes: &mut Vec<u8>,
+    expected: usize,
+    observation: Option<&ConnectionObservation>,
+    phase: usize,
+) -> Result<bool> {
+    let before = bytes.len();
+    let result = read_available(socket, bytes, expected);
+    if let Some(record) = observation {
+        record.frame(phase, bytes.len() - before, 0, matches!(&result, Ok(true)));
+    }
+    result
+}
+fn write_available_observed(
+    socket: &mut TcpStream,
+    bytes: &[u8],
+    cursor: &mut usize,
+    observation: Option<&ConnectionObservation>,
+    phase: usize,
+) -> Result<bool> {
+    let before = *cursor;
+    let result = write_available(socket, bytes, cursor);
+    if let Some(record) = observation {
+        record.frame(phase, 0, *cursor - before, matches!(&result, Ok(true)));
+    }
+    result
+}
 // A full channel retains this already paid request in its bounded connection.
 // Existing body/lane permits own every pending task. Reactor iteration order is
 // connection ID order. Retries preserve the original work and overall deadlines.
@@ -790,6 +826,7 @@ fn public_dispatch(
     stop: &AtomicBool,
     cancelled: &AtomicBool,
     metrics: &Mutex<PublicMetrics>,
+    observation: Option<&TaskObservation>,
 ) -> Result<Value> {
     let mut progress = |steps: u64| {
         task_alive(deadline, stop, cancelled)?;
@@ -806,7 +843,15 @@ fn public_dispatch(
                 task_alive(deadline, stop, cancelled)?;
                 let start = Instant::now();
                 metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
+                if let Some(record) = observation {
+                    record.work_started();
+                }
+                let cpu = observation.and_then(|_| ThreadCpuStamp::start());
                 let result = WorkCheckedPacket::verify(packet);
+                let cpu = cpu.and_then(ThreadCpuStamp::finish);
+                if let Some(record) = observation {
+                    record.work_finished(cpu, result.is_ok());
+                }
                 let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                 m.work_ns = m.work_ns.saturating_add(elapsed_ns(start));
                 m.work_finished += 1;
@@ -956,6 +1001,39 @@ pub fn serve_public_protected_v3_with_metrics(
     server: PublicServer,
     metrics: Arc<Mutex<PublicMetrics>>,
 ) -> Result<PublicMetrics> {
+    serve_public_protected_v3_inner(listener, node, lifetime, stop, server, (metrics, None))
+}
+
+/// Optional trusted local measurements, bounded by observer capacity. Never guest
+/// authority. Default service paths do not allocate records or read CPU clocks.
+pub fn serve_public_protected_v3_with_request_observer(
+    listener: TcpListener,
+    node: Arc<Mutex<Node>>,
+    lifetime: Duration,
+    stop: Arc<AtomicBool>,
+    server: PublicServer,
+    metrics: Arc<Mutex<PublicMetrics>>,
+    observer: PublicRequestObserver,
+) -> Result<PublicMetrics> {
+    serve_public_protected_v3_inner(
+        listener,
+        node,
+        lifetime,
+        stop,
+        server,
+        (metrics, Some(observer)),
+    )
+}
+
+fn serve_public_protected_v3_inner(
+    listener: TcpListener,
+    node: Arc<Mutex<Node>>,
+    lifetime: Duration,
+    stop: Arc<AtomicBool>,
+    server: PublicServer,
+    observations: (Arc<Mutex<PublicMetrics>>, Option<PublicRequestObserver>),
+) -> Result<PublicMetrics> {
+    let (metrics, observer) = observations;
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(MAX_SERVICE_SECONDS),
         "PUBLIC_LIFETIME",
@@ -1030,17 +1108,29 @@ pub fn serve_public_protected_v3_with_metrics(
                                 },
                             );
                             let (permit, outcome) = match permit {
-                                Ok(permit) => (
-                                    Some(permit),
-                                    public_dispatch(
+                                Ok(permit) => {
+                                    if let Some(record) = &task.observation {
+                                        record.dispatch_started();
+                                    }
+                                    let cpu = task
+                                        .observation
+                                        .as_ref()
+                                        .and_then(|_| ThreadCpuStamp::start());
+                                    let outcome = public_dispatch(
                                         &node,
                                         task.request,
                                         task.deadline,
                                         &stop,
                                         &task.cancelled,
                                         &metrics,
-                                    ),
-                                ),
+                                        task.observation.as_ref(),
+                                    );
+                                    let cpu = cpu.and_then(ThreadCpuStamp::finish);
+                                    if let Some(record) = &task.observation {
+                                        record.dispatch_finished(cpu, outcome.is_ok());
+                                    }
+                                    (Some(permit), outcome)
+                                }
                                 Err(e) => (None, Err(e)),
                             };
                             let reserved = *output_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
@@ -1121,18 +1211,28 @@ pub fn serve_public_protected_v3_with_metrics(
                 for _ in 0..8 {
                     match listener.accept() {
                         Ok((socket, peer)) => {
+                            let observation = observer
+                                .as_ref()
+                                .and_then(PublicRequestObserver::connection);
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                             m.accepted_connections += 1;
                             if connections.len() >= MAX_CONNECTIONS {
                                 m.capacity_refusals += 1;
+                                if let Some(record) = &observation {
+                                    record.terminal("capacity");
+                                }
                                 continue;
                             }
                             socket.set_nonblocking(true)?;
                             socket.set_nodelay(true)?;
                             next_id = next_id.checked_add(1).ok_or("PUBLIC_CONNECTION_ID")?;
+                            if let Some(record) = &observation {
+                                record.identity(next_id);
+                            }
                             connections.insert(
                                 next_id,
                                 Connection {
+                                    observation,
                                     id: next_id,
                                     socket,
                                     peer,
@@ -1168,6 +1268,9 @@ pub fn serve_public_protected_v3_with_metrics(
                                             .entry("output".into())
                                             .or_default() += 1;
                                         drop(m);
+                                        if let Some(record) = &conn.observation {
+                                            record.terminal("serialization");
+                                        }
                                         connections.remove(&done.id);
                                         continue;
                                     }
@@ -1194,6 +1297,9 @@ pub fn serve_public_protected_v3_with_metrics(
                         *m.expired_phase_counts
                             .entry(conn.stage.phase().into())
                             .or_default() += 1;
+                        if let Some(record) = &conn.observation {
+                            record.terminal(conn.stage.phase());
+                        }
                         remove.push(*id);
                         continue;
                     }
@@ -1202,10 +1308,19 @@ pub fn serve_public_protected_v3_with_metrics(
                     let advanced = (|| -> Result<Stage> {
                         match current {
                             Stage::Hello(mut bytes) => {
-                                if !read_available(&mut conn.socket, &mut bytes, HELLO_BYTES)? {
+                                if !read_available_observed(
+                                    &mut conn.socket,
+                                    &mut bytes,
+                                    HELLO_BYTES,
+                                    conn.observation.as_ref(),
+                                    0,
+                                )? {
                                     return Ok(Stage::Hello(bytes));
                                 }
                                 let hello = Hello::parse(&bytes)?;
+                                if let Some(record) = &conn.observation {
+                                    record.request(hello.op, hello.digest);
+                                }
                                 if challenge_tokens == 0
                                     || (mutating_operation(hello.op)
                                         && challenge_tokens <= READ_CHALLENGE_RESERVE)
@@ -1237,7 +1352,13 @@ pub fn serve_public_protected_v3_with_metrics(
                                 bytes,
                                 mut cursor,
                             } => {
-                                if write_available(&mut conn.socket, &bytes, &mut cursor)? {
+                                if write_available_observed(
+                                    &mut conn.socket,
+                                    &bytes,
+                                    &mut cursor,
+                                    conn.observation.as_ref(),
+                                    1,
+                                )? {
                                     conn.deadline = conn.total_deadline.min(
                                         server.started
                                             + Duration::from_millis(cookie.expires_tick_ms),
@@ -1255,7 +1376,13 @@ pub fn serve_public_protected_v3_with_metrics(
                                 }
                             }
                             Stage::Solution { cookie, mut bytes } => {
-                                if !read_available(&mut conn.socket, &mut bytes, SOLUTION_BYTES)? {
+                                if !read_available_observed(
+                                    &mut conn.socket,
+                                    &mut bytes,
+                                    SOLUTION_BYTES,
+                                    conn.observation.as_ref(),
+                                    2,
+                                )? {
                                     return Ok(Stage::Solution { cookie, bytes });
                                 }
                                 server.validate(&cookie, &settings, true)?;
@@ -1385,7 +1512,13 @@ pub fn serve_public_protected_v3_with_metrics(
                                 bytes,
                                 mut cursor,
                             } => {
-                                if write_available(&mut conn.socket, &bytes, &mut cursor)? {
+                                if write_available_observed(
+                                    &mut conn.socket,
+                                    &bytes,
+                                    &mut cursor,
+                                    conn.observation.as_ref(),
+                                    3,
+                                )? {
                                     let len = cookie.body_len as usize;
                                     conn.deadline = conn
                                         .total_deadline
@@ -1404,10 +1537,12 @@ pub fn serve_public_protected_v3_with_metrics(
                             }
                             Stage::Body { cookie, mut bytes } => {
                                 let before = bytes.len();
-                                let complete = read_available(
+                                let complete = read_available_observed(
                                     &mut conn.socket,
                                     &mut bytes,
                                     cookie.body_len as usize,
+                                    conn.observation.as_ref(),
+                                    4,
                                 )?;
                                 metrics
                                     .lock()
@@ -1425,6 +1560,10 @@ pub fn serve_public_protected_v3_with_metrics(
                                 server.validate(&cookie, &settings, false)?;
                                 let ready_at = Instant::now();
                                 let task = Task {
+                                    observation: conn
+                                        .observation
+                                        .as_ref()
+                                        .map(ConnectionObservation::task),
                                     _permit: conn.permit.take().ok_or("PUBLIC_BODY_PERMIT")?,
                                     _lane_permit: conn
                                         .lane_permit
@@ -1477,7 +1616,13 @@ pub fn serve_public_protected_v3_with_metrics(
                                 _permit,
                             } => {
                                 let before = cursor;
-                                if write_available(&mut conn.socket, &bytes, &mut cursor)? {
+                                if write_available_observed(
+                                    &mut conn.socket,
+                                    &bytes,
+                                    &mut cursor,
+                                    conn.observation.as_ref(),
+                                    5,
+                                )? {
                                     metrics
                                         .lock()
                                         .map_err(|_| "PUBLIC_METRICS")?
@@ -1486,6 +1631,9 @@ pub fn serve_public_protected_v3_with_metrics(
                                         .lock()
                                         .map_err(|_| "PUBLIC_METRICS")?
                                         .delivered_response_frames += 1;
+                                    if let Some(record) = &conn.observation {
+                                        record.terminal("response");
+                                    }
                                     remove.push(*id);
                                     Ok(Stage::Await)
                                 } else {
@@ -1505,6 +1653,9 @@ pub fn serve_public_protected_v3_with_metrics(
                     match advanced {
                         Ok(next) => conn.stage = next,
                         Err(_) => {
+                            if let Some(record) = &conn.observation {
+                                record.terminal(phase);
+                            }
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                             *m.retained_phase_errors.entry(phase.into()).or_default() += 1;
                             match phase {
@@ -1541,6 +1692,11 @@ pub fn serve_public_protected_v3_with_metrics(
             .lock()
             .map_err(|_| "PUBLIC_METRICS")?
             .connections_closed_on_shutdown = connections.len();
+        for conn in connections.values() {
+            if let Some(record) = &conn.observation {
+                record.terminal("shutdown");
+            }
+        }
         connections.clear();
         for worker in workers {
             worker.join().map_err(|_| "PUBLIC_WORKER_PANIC")??;
@@ -1831,11 +1987,20 @@ mod tests {
         caller: &DevelopmentIdentity,
         policy: PublicPolicy,
     ) -> Result<TcpStream> {
+        paid_grant_counted(address, hello, caller, policy).map(|(socket, _)| socket)
+    }
+    fn paid_grant_counted(
+        address: SocketAddr,
+        hello: Hello,
+        caller: &DevelopmentIdentity,
+        policy: PublicPolicy,
+    ) -> Result<(TcpStream, [usize; 2])> {
         let mut socket = TcpStream::connect(address)?;
         socket.set_nodelay(true)?;
         let deadline = Instant::now() + Duration::from_secs(2);
         client_write(&mut socket, &hello.encode(), deadline)?;
         let raw = client_frame(&mut socket, 2048, deadline)?;
+        let challenge_bytes = 4 + raw.len();
         let cookie: Cookie = serde_json::from_slice(&raw)?;
         ensure(cookie.profile == hex::encode(policy.id()), "TEST_PROFILE")?;
         verify_hex_strict(
@@ -1859,12 +2024,13 @@ mod tests {
             .map_err(|_| "TEST_CALLER_SIGNATURE")?,
         );
         client_write(&mut socket, &solution, deadline)?;
-        let ready: Value = serde_json::from_slice(&client_frame(&mut socket, 256, deadline)?)?;
+        let ready_raw = client_frame(&mut socket, 256, deadline)?;
+        let ready: Value = serde_json::from_slice(&ready_raw)?;
         ensure(
             ready["schema"] == "public-body-ready-v3" && ready["cookie_digest"] == hex::encode(id),
             "TEST_READY",
         )?;
-        Ok(socket)
+        Ok((socket, [challenge_bytes, 4 + ready_raw.len()]))
     }
     fn wait_metric(metrics: &Mutex<PublicMetrics>, predicate: impl Fn(&PublicMetrics) -> bool) {
         let end = Instant::now() + Duration::from_secs(2);
@@ -1875,6 +2041,141 @@ mod tests {
             assert!(Instant::now() < end, "actual reactor observation timed out");
             thread::sleep(Duration::from_millis(2));
         }
+    }
+    #[test]
+    fn request_observer_matches_independent_client_received_signed_frame_lengths() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let owner = shared(Node::open(directory.path(), settings, 1).unwrap());
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let signal = stop.clone();
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let records = observer.clone();
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_request_observer(
+                listener,
+                owner,
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                Arc::new(Mutex::new(PublicMetrics::default())),
+                records,
+            )
+            .unwrap()
+        });
+        let raw = serde_json::to_vec(&Request::Head).unwrap();
+        let mut h = hello(2, raw.len());
+        h.digest = hash(b"public-request-body-v3", &[&raw]);
+        let (mut socket, sizes) = paid_grant_counted(address, h, &identity(72), policy).unwrap();
+        client_write(&mut socket, &raw, Instant::now() + Duration::from_secs(2)).unwrap();
+        let response_raw =
+            client_frame(&mut socket, 16384, Instant::now() + Duration::from_secs(2)).unwrap();
+        let response: Response = serde_json::from_slice(&response_raw).unwrap();
+        assert!(response.ok);
+        verify_hex_strict(
+            identity(71).public_key(),
+            &response.message().unwrap(),
+            &response.signature,
+        )
+        .unwrap();
+        stop.store(true, Ordering::Release);
+        worker.join().unwrap();
+        let snapshot = observer.snapshot();
+        let row = &snapshot.records[0];
+        assert!(row.complete && row.frames.iter().all(|frame| frame.complete));
+        assert_eq!(row.frames[1].bytes_written, sizes[0] as u64);
+        assert_eq!(row.frames[3].bytes_written, sizes[1] as u64);
+        assert_eq!(row.frames[5].bytes_written, (4 + response_raw.len()) as u64);
+        assert_eq!(
+            row.application_bytes_read,
+            Some((HELLO_BYTES + SOLUTION_BYTES + raw.len()) as u64)
+        );
+        assert_eq!(
+            row.application_bytes_written,
+            Some((sizes[0] + sizes[1] + 4 + response_raw.len()) as u64)
+        );
+    }
+    #[test]
+    fn request_observer_records_actual_partial_read_eof_and_quantum_writes() {
+        use std::net::Shutdown;
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let mut client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (mut socket, _) = listener.accept().unwrap();
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let record = observer.connection().unwrap();
+        client.write_all(&[1, 2, 3, 4, 5]).unwrap();
+        client.shutdown(Shutdown::Write).unwrap();
+        let mut bytes = Vec::new();
+        assert!(
+            !read_available_observed(&mut socket, &mut bytes, HELLO_BYTES, Some(&record), 0)
+                .unwrap()
+        );
+        assert!(
+            read_available_observed(&mut socket, &mut bytes, HELLO_BYTES, Some(&record), 0)
+                .is_err()
+        );
+        assert_eq!(bytes, [1, 2, 3, 4, 5]);
+        let output = vec![9; IO_QUANTUM + 17];
+        let mut cursor = 0;
+        assert!(
+            !write_available_observed(&mut socket, &output, &mut cursor, Some(&record), 5).unwrap()
+        );
+        assert_eq!(cursor, IO_QUANTUM);
+        let mut received = vec![0; IO_QUANTUM];
+        client.read_exact(&mut received).unwrap();
+        assert_eq!(received, output[..IO_QUANTUM]);
+        assert!(
+            write_available_observed(&mut socket, &output, &mut cursor, Some(&record), 5).unwrap()
+        );
+        let mut tail = [0; 17];
+        client.read_exact(&mut tail).unwrap();
+        assert_eq!(tail, [9; 17]);
+        record.terminal("hello");
+        drop(record);
+        let snapshot = observer.snapshot();
+        let row = &snapshot.records[0];
+        assert_eq!(row.frames[0].bytes_read, 5);
+        assert!(!row.frames[0].complete);
+        assert_eq!(row.frames[5].bytes_written, output.len() as u64);
+        assert!(row.frames[5].complete && row.response_frame_complete && row.complete);
+        assert_eq!(row.application_bytes_read, Some(5));
+        assert_eq!(row.application_bytes_written, Some(output.len() as u64));
+        assert_eq!(row.dispatch_thread_cpu_ns, None);
+        assert_eq!(row.full_work_thread_cpu_ns, None);
+    }
+    #[test]
+    fn request_observer_retains_partial_output_bytes_after_actual_write_error() {
+        use std::net::Shutdown;
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let mut client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (mut socket, _) = listener.accept().unwrap();
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let record = observer.connection().unwrap();
+        let output = vec![7; IO_QUANTUM + 17];
+        let mut cursor = 0;
+        assert!(
+            !write_available_observed(&mut socket, &output, &mut cursor, Some(&record), 5).unwrap()
+        );
+        let mut received = vec![0; IO_QUANTUM];
+        client.read_exact(&mut received).unwrap();
+        assert_eq!(received, output[..IO_QUANTUM]);
+        socket.shutdown(Shutdown::Write).unwrap();
+        assert!(
+            write_available_observed(&mut socket, &output, &mut cursor, Some(&record), 5).is_err()
+        );
+        assert_eq!(cursor, IO_QUANTUM);
+        record.terminal("output");
+        drop(record);
+        let snapshot = observer.snapshot();
+        let row = &snapshot.records[0];
+        assert!(row.complete && !row.response_frame_complete);
+        assert_eq!(row.frames[5].bytes_written, IO_QUANTUM as u64);
+        assert_eq!(row.application_bytes_written, Some(IO_QUANTUM as u64));
+        assert!(!row.frames[5].complete);
+        assert_eq!(row.physical_network_bytes, None);
     }
     #[test]
     fn paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers() {
@@ -2351,6 +2652,7 @@ mod tests {
         let ready_at = Instant::now();
         let deadline = ready_at + Duration::from_millis(WORK_MS);
         let make_task = |id| Task {
+            observation: None,
             _permit: BufferPermit::acquire(body_pool.clone(), 3, MAX_PAID_BODY_BYTES).unwrap(),
             _lane_permit: Arc::new(
                 BufferPermit::acquire(lane_pool.clone(), 1, MAX_READ_GRANTS).unwrap(),
