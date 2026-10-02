@@ -69,6 +69,10 @@ admission when actual terminal cache is available, rather than exhausting that b
 solely because old valid transactions passed through the chain. It does not guarantee
 capacity when protected groups fill the pool. Growing chain/archive/SQLite/WAL/freelist
 physical bytes and synchronous prefix-preview CPU remain outside those logical caps.
+Reconciliation now reuses one immutable operation-local parent binding and rolls back
+only the latest raw scratch append on failure; complete prefix execution and its
+quadratic transaction-position count remain. See [operation-local parent preparation](LOCAL_MEMPOOL_LIFECYCLE.md#operation-local-parent-preparation-and-remaining-cost)
+for the exact lifetime, measurements and physical-resource limitations.
 No indefinite daemon, wall-clock72-hour run, WAN fairness or physical-disk bound is claimed.
 
 ## Actual selectors and evidence scope

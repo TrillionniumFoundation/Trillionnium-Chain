@@ -15,6 +15,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/applicability-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/applicability-v1.json"
+        )),
+    ),
+    (
         "config/pon/checkpoint-tile-task-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -131,6 +138,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../config/pon/work-profile-v1.json"
+        )),
+    ),
+    (
+        "config/pon/work-security-acceptance-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/work-security-acceptance-v1.json"
         )),
     ),
     (

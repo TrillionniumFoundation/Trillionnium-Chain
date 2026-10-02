@@ -845,3 +845,83 @@ fn exact_v1_metadata_schema_fixture_is_refused_before_database_mutation() {
     );
     assert_eq!(std::fs::read(path).unwrap(), before);
 }
+
+#[test]
+fn blocked_middle_prefix_rolls_back_scratch_and_cold_reopen_preserves_later_group() {
+    let dir = tempfile::tempdir().unwrap();
+    let s = Settings::development_with_profiles(None, POLICY, PROFILE).unwrap();
+    let policy = limits(16, 32768);
+    let mut node = Node::open(dir.path(), s.clone(), 1).unwrap();
+    node.enable_local_mempool(policy.clone()).unwrap();
+    let first = transfer(&s, 2, 1, 1, 1);
+    let funding = transfer(&s, 0, 1, 4, 1000);
+    let dependent = transfer(&s, 4, 1, 2, 100);
+    let later = transfer(&s, 1, 1, 2, 1);
+    for raw in [&first, &funding, &dependent, &later] {
+        node.pool_submit(raw.clone()).unwrap();
+    }
+    // Consume the funding sequence with a different transaction. Account4's
+    // dependent group now fails, but the following independent group remains valid.
+    let boot = s.bootstrap_lifecycle_task().unwrap();
+    let (m, i, _, _) = s.bootstrap_task_material().unwrap();
+    let packet = make(
+        &node,
+        s.genesis(),
+        vec![transfer(&s, 0, 1, 2, 1)],
+        &boot.signed,
+        &boot.lease,
+        &m,
+        &i,
+    );
+    admit(&mut node, &packet);
+    let expected = vec![
+        PoolState::Queued,
+        PoolState::SequenceConsumed,
+        PoolState::Blocked,
+        PoolState::Queued,
+    ];
+    let before = node.read_active().unwrap();
+    let status = node.pool_reconcile().unwrap();
+    assert_eq!(
+        status
+            .groups
+            .iter()
+            .map(|g| g.state.clone())
+            .collect::<Vec<_>>(),
+        expected
+    );
+    let reasons = status
+        .groups
+        .iter()
+        .map(|g| g.reason.clone())
+        .collect::<Vec<_>>();
+    let (parent, generation) = node.active().unwrap();
+    let batch = node
+        .pool_mining_batch(parent, generation, 16, 32768)
+        .unwrap();
+    assert_eq!(batch.transactions, vec![first, later]);
+    assert_eq!(node.pool_validate_batch(&batch).unwrap(), 2);
+    assert_eq!(node.read_active().unwrap(), before);
+    drop(node);
+    let mut reopened = Node::open(dir.path(), s, 1).unwrap();
+    reopened.enable_local_mempool(policy).unwrap();
+    let status = reopened.pool_reconcile().unwrap();
+    assert_eq!(
+        status
+            .groups
+            .iter()
+            .map(|g| g.state.clone())
+            .collect::<Vec<_>>(),
+        expected
+    );
+    assert_eq!(
+        status
+            .groups
+            .iter()
+            .map(|g| g.reason.clone())
+            .collect::<Vec<_>>(),
+        reasons
+    );
+    assert_eq!(reopened.pool_validate_batch(&batch).unwrap(), 2);
+    assert_eq!(reopened.read_active().unwrap(), before);
+}

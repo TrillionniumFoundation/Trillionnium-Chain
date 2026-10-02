@@ -56,9 +56,9 @@ class ResponsibilityBindingTests(unittest.TestCase):
         self.mutate(lambda d: d['modules'][3]['responsibilities'][0].update(
             ordinary_product_entrypoint={'path': 'formal/pon-nakamoto-v1/ledger.py', 'symbol': 'Ledger.make'}))
 
-    def test_specified_mempool_consumer_cannot_claim_controlled_entry(self):
+    def test_specified_owner_cannot_claim_controlled_entry(self):
         self.mutate(lambda d: d['modules'][5]['responsibilities'][1].update(
-            controlled_entrypoint={'path': 'formal/pon-nakamoto-v1/ledger.py', 'symbol': 'Ledger.admit'}))
+            implementation_kind='specified-not-integrated'))
 
     def test_missing_callable_rejects(self):
         self.mutate(lambda d: d['modules'][0]['responsibilities'][0]['runtime_symbols'][0].update(symbol='accept_all'))

@@ -38,7 +38,7 @@ index. Duplicate digests refuse before any replacement; each ready digest consum
 one entry, its body must match every original byte, and successful draining leaves
 no unmatched entry. This removes repeated reverse scans and PNX1 decoding solely
 from this binding step. Full canonical/signature M05 checks and whole-prefix M06
-execution remain unchanged; there is no reusable verification or state cache.
+execution remain unchanged; there is no reusable signature or admission-verdict cache.
 
 After typed checks, M06 executes the whole candidate prefix against one immutable
 parent using the configured preview miner. This handles actual funds/fees, nonce
@@ -46,6 +46,55 @@ sequences, funding dependencies, profile gates and control semantics. Success is
 local execution preview; its proposed state, fees, nonce, subsidy and receipts are
 never installed into chain state by queue admission. Actual block creation/admission
 must run the existing authoritative work and execution path again.
+
+## Operation-local parent preparation and remaining cost
+
+Reconciliation reads and root-checks the actual active parent on every invocation.
+After the first successful typed check it binds that immutable State and its complete
+canonical bytes once, using `CheckedExecutionParent`. Rust's shared borrow prevents
+mutation of that State during the binding lifetime. Every subsequent group preview in
+that same reconciliation uses the same parent; it never uses a previous preview's
+successor. The binding is dropped before returning and is never persisted, published
+as an active commitment, or shared with another invocation. Cold reopen, admission,
+mining-batch creation and batch validation still obtain and check their actual parent.
+The existing parent/generation SQL fence remains mandatory before status publication.
+This relies on the existing single-owner boundary and adds no SQL snapshot isolation
+or guarantee against a rogue second connection mutating chain records mid-operation.
+
+Accepted raw scratch storage appends one group's original bodies and truncates that
+append on failure. It no longer clones all previously accepted raw bodies per group.
+The group order, typed checks and first-error classifications are unchanged, including
+a blocked middle group followed by an independent valid group. Parent binding is lazy
+so a typed admission error still precedes parent execution preparation errors.
+
+This removes repeated canonical-parent preparation within reconciliation, not complete
+prefix execution. For N accepted single-member groups, the executor still processes
+N(N+1)/2 transaction positions; each preview starts full maintenance and applies final
+fees, subsidy, conservation, receipts and root rules. Reusing a staged successor as
+if it were an incremental prefix could change those rules and is deliberately avoided.
+The single Node owner still holds its lock and synchronous work is non-preemptible;
+this optimization is not a service-latency, concurrency or public throughput guarantee.
+
+The ignored `immutable_parent_preview_component_timing` test compares fresh parent
+preparation per prefix with an operation-local binding on 16 signed prefixes and 4099
+state keys, checking every root. Cold and warm parent-cache paths are reported separately
+in four rotating arms with eight samples each. They include M06 execution and commitments,
+but exclude M05 admission, SQLite, lock waiting and concurrent clients. The ordinary
+`immutable_parent_previews_match_full_execution_including_failures_and_rebind` selector
+checks exact state/root/receipts and failure strings against full execution, including
+invalid signatures, nonce ordering, cold binding and zero optional-cache budgets.
+
+Resource limits remain distinct: retained raws are capped at 524288 bytes; valid
+protocol canonical state is at most 65536 keys, 160 key bytes and 4096 value bytes per
+entry (266 MiB of key/value payload at all maxima). The optional derived-cache limits
+are 8 MiB payload and 512 MiB software workspace charge; exceeding those selects full
+root computation, not rejection of otherwise valid protocol state. The operation-local
+binding retains canonical parent bytes for the operation and does not lower those
+protocol limits. These figures exclude JSON/allocator overhead, cloned executor State,
+SQLite page cache and WAL, process RSS and filesystem allocation. No physical memory,
+physical disk or execution deadline cap is implemented by this change. Such limits need
+separate process/storage enforcement and an explicit failure/recovery policy, rather
+than silently redefining valid state or labelling a software charge as a physical bound.
 
 ## Admission-triggered terminal cache eviction V2
 

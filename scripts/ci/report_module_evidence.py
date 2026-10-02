@@ -78,6 +78,64 @@ def check_symbol(root: Path, ref: dict[str, str]) -> None:
         raise ValueError('unsupported callable source ' + ref['path'])
 
 
+def rust_code(text: str) -> str:
+    """Mask comments/string literals, preserving layout for source-only test binding."""
+    out = list(text)
+    raw_start = re.compile(r'(?:br|r)(#*)"')
+    i = 0
+    while i < len(text):
+        start = i
+        if text.startswith('//', i):
+            end = text.find('\n', i)
+            i = len(text) if end < 0 else end
+        elif text.startswith('/*', i):
+            i += 2
+            depth = 1
+            while i < len(text) and depth:
+                if text.startswith('/*', i):
+                    depth += 1
+                    i += 2
+                elif text.startswith('*/', i):
+                    depth -= 1
+                    i += 2
+                else:
+                    i += 1
+        elif text[i] in 'br' and (raw := raw_start.match(text, i)):
+            terminator = '"' + raw[1]
+            end = text.find(terminator, raw.end())
+            i = len(text) if end < 0 else end + len(terminator)
+        elif text[i] == '"':
+            i += 1
+            while i < len(text):
+                if text[i] == '\\':
+                    i += 2
+                elif text[i] == '"':
+                    i += 1
+                    break
+                else:
+                    i += 1
+        else:
+            i += 1
+            continue
+        for j in range(start, min(i, len(text))):
+            if text[j] != '\n':
+                out[j] = ' '
+    return ''.join(out)
+
+
+def check_test_selector(root: Path, selector: str) -> None:
+    """Bind a real test, including Rust tests whose names do not start with test_."""
+    path, symbol = selector.split('::', 1)
+    check_symbol(root, {'path': path, 'symbol': symbol})
+    if path.endswith('.rs'):
+        text = rust_code(safe(root, path).read_text())
+        require(re.search(r'#\[test\]\s*(?:#\[[^\n]*\]\s*)*fn\s+' +
+                          re.escape(symbol) + r'\s*\(', text),
+                'not an attributed Rust test selector')
+    else:
+        require(symbol.split('.')[-1].startswith('test_'), 'not an executable test selector')
+
+
 def validate_contract(root: Path = ROOT) -> dict[str, Any]:
     """Validate relationships, not paragraph lengths, heading counts or pass quotas."""
     root = Path(root).resolve()
@@ -128,9 +186,7 @@ def validate_contract(root: Path = ROOT) -> dict[str, Any]:
             require(isinstance(selectors, list) and len(selectors) == len(set(selectors)),
                     'duplicate evidence selector')
             for selector in selectors:
-                path, symbol = selector.split('::', 1)
-                check_symbol(root, {'path': path, 'symbol': symbol})
-                require(symbol.split('.')[-1].startswith('test_'), 'not an executable test selector')
+                check_test_selector(root, selector)
             operations += 1
     return {'responsibilities': operations, 'bindings_consistent': True,
             'tests_executed_by_this_checker': False, 'acceptance_granted': False}

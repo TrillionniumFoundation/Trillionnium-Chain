@@ -14,13 +14,15 @@ import os
 from pathlib import Path
 import re
 import signal
+import shutil
 import subprocess
 import sys
 import tempfile
 import time
 import unittest
 
-from qualification_runtime import read_gnu_time_peak_rss
+from qualification_runtime import (GNU_TIME_EXECUTABLE_LIMIT, bind_gnu_time,
+                                   read_gnu_time_peak_rss, verify_gnu_time)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -79,7 +81,7 @@ class QualificationRuntimeTests(unittest.TestCase):
         results.extend((dict(control='missing', result=None), dict(control='unreadable-directory', result=None)))
         (path.parent / 'controls.json').write_text(json.dumps(results, indent=2) + '\n')
 
-    def owner_execute(self, owner, out, records):
+    def owner_execute(self, owner, out, records, observer=None):
         parsed = ast.parse((ROOT / 'scripts' / owner).read_text())
         functions = [node for node in ast.walk(parsed)
                      if isinstance(node, ast.FunctionDef) and node.name == 'execute']
@@ -92,9 +94,12 @@ class QualificationRuntimeTests(unittest.TestCase):
             if args == ('status', '--porcelain'):
                 return ''
             raise AssertionError('unexpected source-observer query')
-        namespace = dict(ROOT=ROOT, out=out, env=dict(os.environ), records=records,
+        environment, actual_observer = bind_gnu_time(os.environ)
+        namespace = dict(ROOT=ROOT, out=out, env=environment, records=records,
+                         resource_observer=observer or actual_observer,
                          commit='test-source-observer', git=observed_git,
                          read_gnu_time_peak_rss=read_gnu_time_peak_rss,
+                         verify_gnu_time=verify_gnu_time,
                          os=os, signal=signal, subprocess=subprocess, time=time,
                          json=json, re=re)
         module = ast.Module(body=functions, type_ignores=[])
@@ -117,6 +122,8 @@ class QualificationRuntimeTests(unittest.TestCase):
         self.assertEqual(len(records), 1)
         row = records[0]
         self.assertEqual(row['command'], command)
+        _, observer = bind_gnu_time(os.environ)
+        self.assertEqual(row['resource_observer'], observer)
         self.assertEqual(row['returncode'], expected_code)
         self.assertIs(row['timed_out'], expired)
         self.assertGreater(row['elapsed_ns'], 0)
@@ -131,6 +138,126 @@ class QualificationRuntimeTests(unittest.TestCase):
             self.assertIsInstance(row['peak_rss_kib'], int)
             self.assertGreater(row['peak_rss_kib'], 0)
         (out / 'result.json').write_text(json.dumps(row, indent=2) + '\n')
+
+    def test_actual_observer_identity(self):
+        environment, observer = bind_gnu_time(os.environ)
+        self.assertEqual(environment['TRNM_GNU_TIME'], observer['executable'])
+        self.assertTrue(Path(observer['executable']).is_absolute())
+        self.assertRegex(observer['sha256'], r'^[0-9a-f]{64}$')
+        self.assertRegex(observer['identity'], r'^time \(GNU [Tt]ime\)')
+        nested_env, nested_observer = bind_gnu_time(environment)
+        self.assertEqual(observer, nested_observer)
+        self.assertEqual(environment, nested_env)
+
+    def test_invalid_observer_selection(self):
+        for selected in ('time', '', '/nonexistent/trnm-gnu-time'):
+            with self.subTest(selected=selected):
+                with self.assertRaises((ValueError, OSError)):
+                    bind_gnu_time({'TRNM_GNU_TIME': selected})
+        invalid = self.scratch('invalid-identity') / 'not-gnu-time'
+        invalid.write_text('#!' + sys.executable + '\nprint("not a GNU observer")\n')
+        invalid.chmod(0o700)
+        with self.assertRaisesRegex(ValueError, 'GNU_TIME_IDENTITY_REQUIRED'):
+            bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(invalid)))
+
+    def test_nested_runner_observer_sanitization(self):
+        # Execute the actual owner sanitization loops, not a substitute copy.
+        for owner in OWNERS:
+            with self.subTest(owner=owner):
+                parsed = ast.parse((ROOT / 'scripts' / owner).read_text())
+                run = next(node for node in parsed.body
+                           if isinstance(node, ast.FunctionDef) and node.name == 'run')
+                sanitize = next(node for node in run.body if isinstance(node, ast.For))
+                environment, observer = bind_gnu_time(os.environ)
+                environment['TRNM_UNRELATED_TEST_CONTROL'] = 'must-be-removed'
+                namespace = dict(env=environment)
+                exec(compile(ast.Module(body=[sanitize], type_ignores=[]), owner, 'exec'), namespace)
+                self.assertEqual(environment['TRNM_GNU_TIME'], observer['executable'])
+                self.assertNotIn('TRNM_UNRELATED_TEST_CONTROL', environment)
+                _, nested = bind_gnu_time(environment)
+                self.assertEqual(observer, nested)
+
+    def test_actual_observer_launch_failure(self):
+        for owner in OWNERS:
+            with self.subTest(owner=owner):
+                out = self.scratch(owner.removesuffix('.py') + '-launch-failure')
+                (out / 'logs').mkdir()
+                records = []
+                execute = self.owner_execute(owner, out, records,
+                                             dict(executable=str(out / 'absent-time')))
+                with self.assertRaises(FileNotFoundError):
+                    execute('launch-failure', [sys.executable, '-c', 'pass'])
+                self.assertEqual(records, [])
+                self.assertFalse((out / 'logs' / 'launch-failure.usage').exists())
+
+    def test_oversize_observer_executable_rejected(self):
+        executable = self.scratch('oversize-executable') / 'time'
+        with executable.open('wb') as stream:
+            stream.truncate(GNU_TIME_EXECUTABLE_LIMIT + 1)
+        executable.chmod(0o700)
+        with self.assertRaisesRegex(ValueError, 'GNU_TIME_EXECUTABLE_LIMIT'):
+            bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))
+
+    def test_probe_output_caps(self):
+        # Deliberately invalid probe fixtures; never used for resource measurement.
+        for stream in ('stdout', 'stderr'):
+            with self.subTest(stream=stream):
+                executable = self.scratch('oversize-probe-' + stream) / 'invalid-observer'
+                executable.write_text('#!' + sys.executable + '\nimport sys\n'
+                                      + 'sys.' + stream + '.write("x" * 65536)\n')
+                executable.chmod(0o700)
+                with self.assertRaisesRegex(ValueError, 'NATIVE_' + stream.upper() + '_LIMIT'):
+                    bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))
+
+    def test_observer_replacement_before_launch_rejected(self):
+        _, actual = bind_gnu_time(os.environ)
+        for owner in OWNERS:
+            with self.subTest(owner=owner):
+                out = self.scratch(owner.removesuffix('.py') + '-replacement-before')
+                (out / 'logs').mkdir()
+                executable = out / 'time'
+                shutil.copy2(actual['executable'], executable)
+                _, observer = bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))
+                executable.write_bytes(b'replaced')
+                records = []
+                execute = self.owner_execute(owner, out, records, observer)
+                with self.assertRaisesRegex(ValueError, 'GNU_TIME_EXECUTABLE_CHANGED'):
+                    execute('replacement-before', [sys.executable, '-c', 'pass'])
+                self.assertEqual(records, [])
+
+    def test_observer_replacement_after_launch_retains_rows(self):
+        _, actual = bind_gnu_time(os.environ)
+        for owner in OWNERS:
+            for name, ending, timeout, expected, expired in (
+                ('normal', '', 10, 0, False),
+                ('nonzero', '; sys.exit(7)', 10, 7, False),
+                ('timeout', '; time.sleep(30)', 0.5, -signal.SIGKILL, True),
+            ):
+                with self.subTest(owner=owner, control=name):
+                    out = self.scratch(owner.removesuffix('.py') + '-replacement-' + name)
+                    (out / 'logs').mkdir()
+                    executable = out / 'time'
+                    shutil.copy2(actual['executable'], executable)
+                    _, observer = bind_gnu_time(dict(os.environ, TRNM_GNU_TIME=str(executable)))
+                    replacement = out / 'replacement'
+                    replacement.write_bytes(b'replaced observer')
+                    records = []
+                    execute = self.owner_execute(owner, out, records, observer)
+                    script = ('import os, sys, time; os.replace(' + repr(str(replacement))
+                              + ', ' + repr(str(executable)) + ')' + ending)
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        with self.assertRaisesRegex(RuntimeError, 'OBSERVER_CHANGED'):
+                            execute(name, [sys.executable, '-c', script], timeout=timeout)
+                    self.assertEqual(len(records), 1)
+                    row = records[0]
+                    self.assertEqual(row['returncode'], expected)
+                    self.assertEqual(row['timed_out'], expired)
+                    self.assertEqual(row['resource_observer_error'], 'GNU_TIME_EXECUTABLE_CHANGED')
+                    if expired:
+                        self.assertIsNone(row['peak_rss_kib'])
+                    else:
+                        self.assertGreater(row['peak_rss_kib'], 0)
+                    (out / 'result.json').write_text(json.dumps(row, indent=2) + '\n')
 
     def test_actual_normal_exit_rows(self):
         for owner in OWNERS:

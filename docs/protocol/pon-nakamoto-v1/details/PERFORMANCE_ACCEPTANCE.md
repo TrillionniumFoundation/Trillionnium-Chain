@@ -212,3 +212,58 @@ the raw log, and record missing peak RSS as null. Never infer completion from a 
 test count. SHA2-only test optimization retains debug assertions, overflow checks and
 all boundary instances; compare performance only between the explicitly recorded build
 profiles. That test setting does not change the release runtime or certify its capacity.
+
+## Executable work-security cost and honest-service screening
+
+Use the existing collector's native raw observations and the existing paired producer
+example, rather than a second benchmark algorithm:
+
+    python scripts/pon_work_cost_report.py \
+      --input PATH/native-work.json --prepared PATH/prepared-cost.json \
+      --expected-target 7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff \
+      --require-local-acceptance
+
+The command prints a complete JSON report and exits 2 if any local cost gate fails or
+service evidence is missing/fails. Without the last option it remains a summarizer;
+exit 0 then means parsing/reporting succeeded, NOT security acceptance. Inputs have
+strict field/type/identity checks, all four task classes, exactly the existing 64 paired
+producer observations, at least eight invalid-cost observations per class, setup
+arithmetic, canonical targets, and positive denominators. Raw inputs are not rewritten.
+Semantic input hashes and policy hash bind the calculation. Existing clean-source
+receipt verifiers must separately verify source/binary/command identity and current
+applicability: this summarizer explicitly does NOT authenticate those claims or create
+fresh measurements. Historical evidence remains historical.
+
+Optional `--service PATH/events.json` supplies schema `pon-work-service-events-v1`:
+`target`, `window_ns`, `acceptance_profile_sha256`, `attacker_setup_cpu_ns`, `honest` and
+`attacker` arrays, `scope: controlled-local`, and false `independent_accepted` and
+`production_activation`. Each event contains a unique integer `id`, `offered_ns`,
+`finished_ns` (null only for timeout/drop), and `outcome` (accepted/rejected/timeout/dropped).
+All times are integer nanoseconds relative to the same observed window. Attacker events
+add positive `construction_cpu_ns`, `encoded_bytes` and `rejection_cpu_ns`. CPU counters
+are actual charged resource time, not elapsed latency; setup/precomputation is charged
+once in the top-level setup field and never omitted or counted as free. A capture lacking
+CPU accounting cannot be converted to zero-cost samples. This schema is an import
+contract for actual observations, not an implemented public traffic generator or proof
+that an operator included every event.
+
+The versioned proposed diagnostic policy checks an observed >=60-second window and >=49-second offer
+span for EACH population; a nominal long window around an instantaneous burst fails.
+All >=100 offered honest requests form the denominator, including rejection, timeout,
+drop and late success. No honest failures are allowed; nearest-rank p99 must be <=2s.
+The attack must include >=100 offered requests, no accepted forged work, <=60 CPU-seconds
+INCLUDING setup, and <=64MiB encoded traffic. These finite single-host screening budgets
+are not preregistered/deployment acceptance or a sustained public adversary capacity claim.
+This service gate checks only input-contract consistency: budget maxima and minimum
+request counts cannot establish attack saturation, adversarial mix or sufficient hostile
+intensity. An externally reviewed registered arrival/mix plan and observed execution
+against it are still required; a weak attack within budget must never qualify public service. Deadline failures, uncompleted
+requests, construction/setup CPU and defender rejection CPU remain separately visible.
+A missing ledger yields `unmeasured`, never an inferred zero failure rate. No existing
+network campaign is implicitly relabelled as this event ledger.
+
+A local pass still leaves external acceptance unmeasured and all production/public/work
+hardness flags false. Independently authored/reproduced algorithms, identified external
+reviewers/operators, source-bound public ordinary-ingress measurements and an accepted
+security argument remain separate prerequisites. The supplied Rust/Python implementations
+share development authorship and cannot satisfy that external obligation themselves.

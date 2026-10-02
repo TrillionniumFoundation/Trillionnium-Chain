@@ -265,3 +265,13 @@ next-round key exclusions, and retains bounded record-only appeals. The historic
 revision4 closed-round profile remains unchanged. Neither successor supplies public
 roster governance, prospective independence, objective ML truth or funded appeal
 adjudication; minimum scores cannot establish those facts.
+
+## Joined reported model/operations acceptance
+
+[MODEL_OPERATIONS_ACCEPTANCE_V1](MODEL_OPERATIONS_ACCEPTANCE_V1.md) joins the existing
+target-decoder run replay to one externally pinned preregistration and receipt for
+strong controls, poison/backdoor/forgetting probes, consumer observations and bounded
+retention costs/material. It rejects contradictory or substituted records while
+preserving failed gates and unknown GPU cost. This offline contract cannot certify
+prospective independence, licensed provenance, authenticated consumer use or fulfilled
+DA; all independent/public acceptance flags remain false even for a complete fixture.

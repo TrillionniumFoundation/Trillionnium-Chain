@@ -10,6 +10,9 @@ use trnm_mempool::{
     SignedAdmissionHooks, SignedEnvelopeMetadata, SignedEnvelopeView, TypedAdmissionGate,
     TypedAdmitOutcome,
 };
+use trnm_mvcc_fee::pon_commitment::{
+    CacheLimits, CheckedExecutionParent, CommitmentObservation, ExecutionRequest,
+};
 use trnm_mvcc_fee::pon_executor::{self, Config, State};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
@@ -286,56 +289,139 @@ fn validate_pending(
     limits: &PoolLimits,
     node: &Node,
 ) -> Result<usize> {
-    let mut gate = TypedAdmissionGate::new(limits.max_records, limits.critical_reserve, 2048);
-    let mut next = BTreeMap::new();
-    let mut exhausted = BTreeSet::new();
-    let mut bindings = RawBindings::new(limits.max_records);
-    for raw in raws {
-        let view = PnxView::new(raw, cfg)?;
-        bindings.insert(view.digest.as_bytes(), raw)?;
-        ensure(!exhausted.contains(&view.envelope.sender), "NONCE_OVERFLOW")?;
-        let expected = match next.get(&view.envelope.sender) {
-            Some(value) => *value,
-            None => chain_nonce(state, view.envelope.sender)?
-                .checked_add(1)
-                .ok_or("NONCE_OVERFLOW")?,
-        };
-        let mut hooks = Hooks {
+    PendingPreview {
+        height,
+        state,
+        parent,
+        cfg,
+        limits,
+        node,
+        checked: None,
+        parent_observation: None,
+    }
+    .validate(raws)
+}
+
+/// This value never escapes one owner operation. No staged successor is reused
+/// as a parent: each full prefix starts from the same checked immutable State.
+struct PendingPreview<'a> {
+    height: u64,
+    state: &'a State,
+    parent: Hash,
+    cfg: &'a Config,
+    limits: &'a PoolLimits,
+    node: &'a Node,
+    checked: Option<CheckedExecutionParent<'a>>,
+    parent_observation: Option<CommitmentObservation>,
+}
+impl PendingPreview<'_> {
+    fn validate(&mut self, raws: &[Vec<u8>]) -> Result<usize> {
+        let Self {
             height,
+            state,
+            parent,
             cfg,
-            expected_nonce: expected,
-        };
-        let class = if (14..=22).contains(&view.envelope.tag) {
-            IngressClass::Critical
-        } else {
-            IngressClass::Normal
-        };
-        match gate.admit_signed(&view, class, &mut hooks) {
-            TypedAdmitOutcome::Accepted => {}
-            TypedAdmitOutcome::Backpressured => return Err("POOL_BACKPRESSURED".into()),
-            TypedAdmitOutcome::Duplicate => return Err("POOL_DUPLICATE_MEMBER".into()),
-            TypedAdmitOutcome::Rejected(reason) => {
-                return Err(format!("POOL_TYPED:{reason:?}").into())
+            limits,
+            node,
+            ..
+        } = *self;
+        let mut gate = TypedAdmissionGate::new(limits.max_records, limits.critical_reserve, 2048);
+        let mut next = BTreeMap::new();
+        let mut exhausted = BTreeSet::new();
+        let mut bindings = RawBindings::new(limits.max_records);
+        for raw in raws {
+            let view = PnxView::new(raw, cfg)?;
+            bindings.insert(view.digest.as_bytes(), raw)?;
+            ensure(!exhausted.contains(&view.envelope.sender), "NONCE_OVERFLOW")?;
+            let expected = match next.get(&view.envelope.sender) {
+                Some(value) => *value,
+                None => chain_nonce(state, view.envelope.sender)?
+                    .checked_add(1)
+                    .ok_or("NONCE_OVERFLOW")?,
+            };
+            let mut hooks = Hooks {
+                height,
+                cfg,
+                expected_nonce: expected,
+            };
+            let class = if (14..=22).contains(&view.envelope.tag) {
+                IngressClass::Critical
+            } else {
+                IngressClass::Normal
+            };
+            match gate.admit_signed(&view, class, &mut hooks) {
+                TypedAdmitOutcome::Accepted => {}
+                TypedAdmitOutcome::Backpressured => return Err("POOL_BACKPRESSURED".into()),
+                TypedAdmitOutcome::Duplicate => return Err("POOL_DUPLICATE_MEMBER".into()),
+                TypedAdmitOutcome::Rejected(reason) => {
+                    return Err(format!("POOL_TYPED:{reason:?}").into())
+                }
+            }
+            if let Some(successor) = expected.checked_add(1) {
+                next.insert(view.envelope.sender, successor);
+            } else {
+                exhausted.insert(view.envelope.sender);
             }
         }
-        if let Some(successor) = expected.checked_add(1) {
-            next.insert(view.envelope.sender, successor);
-        } else {
-            exhausted.insert(view.envelope.sender);
+        let mut ready = 0;
+        while let Some(metadata) = gate.pop_ready() {
+            bindings.consume(metadata.digest().as_bytes(), metadata.body())?;
+            ready += 1;
         }
+        ensure(
+            bindings.is_empty() && ready == raws.len(),
+            "POOL_TYPED_BINDING",
+        )?;
+        // Bind lazily, after the first successful typed gate, preserving typed error
+        // precedence. Subsequent prefixes borrow the same immutable actual parent.
+        if self.checked.is_none() {
+            let prior = node.cached_parent(parent)?;
+            let checked =
+                node.checked_commitment(state, node.record(parent)?.root, prior.as_ref())?;
+            self.parent_observation = Some(checked.observation.clone());
+            let binding = CheckedExecutionParent::bind(
+                state,
+                checked.root,
+                checked.snapshot.as_ref(),
+                CacheLimits::default(),
+            );
+            self.checked = Some(match binding {
+                Ok(binding) => binding,
+                Err("COMMITMENT_PARENT" | "COMMITMENT_ROOT") => {
+                    // Match execute_derived's defensive full-root retry, even though
+                    // the just-checked snapshot and immutable State normally agree.
+                    node.invalidate_commitment();
+                    CheckedExecutionParent::bind(
+                        state,
+                        node.record(parent)?.root,
+                        None,
+                        CacheLimits::default(),
+                    )?
+                }
+                Err(error) => return Err(error.into()),
+            });
+        }
+        // Preserve the existing diagnostic observation if execution itself fails.
+        *node.commitment_observation.borrow_mut() = self.parent_observation.clone();
+        let output = self
+            .checked
+            .as_ref()
+            .ok_or("POOL_PARENT_BINDING")?
+            .execute(
+                ExecutionRequest {
+                    transactions: raws,
+                    height,
+                    miner: limits.preview_miner,
+                    parent_id: parent,
+                    workers: 1,
+                },
+                cfg,
+            )?;
+        *node.commitment_observation.borrow_mut() = Some(output.commitment.observation);
+        Ok(ready)
     }
-    let mut ready = 0;
-    while let Some(metadata) = gate.pop_ready() {
-        bindings.consume(metadata.digest().as_bytes(), metadata.body())?;
-        ready += 1;
-    }
-    ensure(
-        bindings.is_empty() && ready == raws.len(),
-        "POOL_TYPED_BINDING",
-    )?;
-    node.execute_derived(state, parent, raws, height, limits.preview_miner, 1)?;
-    Ok(ready)
 }
+
 impl Node {
     /// Explicit opt-in on a fresh DDL identity; no import or migration of older pools.
     pub fn enable_local_mempool(&mut self, limits: PoolLimits) -> Result<Hash> {
@@ -523,6 +609,16 @@ impl Node {
         let state = self.state_at(parent)?;
         let groups = self.pool_groups(&limits)?;
         let mut accepted = Vec::new();
+        let mut preview = PendingPreview {
+            height,
+            state: &state,
+            parent,
+            cfg: &self.settings.app,
+            limits: &limits,
+            node: self,
+            checked: None,
+            parent_observation: None,
+        };
         let mut updates = Vec::new();
         for group in groups {
             let (status, reason) = if group.rows.iter().any(|row| height > row.expiry) {
@@ -540,25 +636,19 @@ impl Node {
                     "ACTIVE_CHAIN_SEQUENCE_CONSUMED_NOT_INCLUSION_PROOF".to_owned(),
                 )
             } else {
-                let mut candidate = accepted.clone();
-                candidate.extend(group.rows.iter().map(|row| row.raw.clone()));
-                match validate_pending(
-                    &candidate,
-                    height,
-                    &state,
-                    parent,
-                    &self.settings.app,
-                    &limits,
-                    self,
-                ) {
-                    Ok(_) => {
-                        accepted = candidate;
-                        (
-                            PoolState::Queued,
-                            "EXACT_PENDING_PREFIX_RECHECKED".to_owned(),
-                        )
+                let previous_len = accepted.len();
+                accepted.extend(group.rows.into_iter().map(|row| row.raw));
+                match preview.validate(&accepted) {
+                    Ok(_) => (
+                        PoolState::Queued,
+                        "EXACT_PENDING_PREFIX_RECHECKED".to_owned(),
+                    ),
+                    Err(error) => {
+                        // Roll back only this group's scratch raws. Later groups
+                        // see exactly the same accepted prefix as the old copy path.
+                        accepted.truncate(previous_len);
+                        (PoolState::Blocked, error.to_string())
                     }
-                    Err(error) => (PoolState::Blocked, error.to_string()),
                 }
             };
             updates.push((group.id, status, reason));

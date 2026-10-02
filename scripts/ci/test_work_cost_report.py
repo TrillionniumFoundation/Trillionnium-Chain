@@ -211,5 +211,157 @@ class CostEvidenceVerificationTests(unittest.TestCase):
         self.assertFalse(result['experiment_reexecuted_by_verifier'])
 
 
+
+class WorkSecurityAcceptanceTests(unittest.TestCase):
+    def setUp(self):
+        self.raw = fixture()
+        self.raw['samples'] = [dict(row, sample=i) for row in self.raw['samples'] for i in range(8)]
+        self.prepared = {'schema': 'pon-prepared-producer-cost-v1',
+                         'fastest_adversary_qualified': False, 'public_service_measured': False,
+                         'production_activation': False, 'samples': [
+            {'class': c, 'target': t, 'sample': i, 'baseline_first': i % 2 == 0,
+             'attempts': 2, 'baseline_ns': 8000, 'prepared_setup_ns': 4000,
+             'prepared_search_ns': 2000, 'prepared_total_ns': 6000,
+             'original_verifier_ns': 4000, 'proof_bytes': 49188, 'proof_commitment': 'a' * 64}
+            for c in sorted(cost.CLASSES) for t in [TARGET, '07' + 'f' * 62] for i in range(8)]}
+        self.policy = cost.load(cost.ACCEPTANCE_PROFILE)['service']
+        self.service = {'schema': 'pon-work-service-events-v1', 'target': TARGET,
+                        'window_ns': 60_000_000_000, 'scope': 'controlled-local',
+                        'acceptance_profile_sha256': cost.digest(cost.ACCEPTANCE_PROFILE.read_bytes()),
+                        'attacker_setup_cpu_ns': 100,
+                        'independent_accepted': False, 'production_activation': False,
+                        'honest': [{'id': i, 'offered_ns': i * 500_000_000, 'finished_ns': i * 500_000_000 + 10,
+                                    'outcome': 'accepted'} for i in range(100)],
+                        'attacker': [{'id': i, 'offered_ns': i * 500_000_000, 'finished_ns': i * 500_000_000 + 10,
+                                      'outcome': 'rejected', 'construction_cpu_ns': 10,
+                                      'encoded_bytes': 49188, 'rejection_cpu_ns': 1000}
+                                     for i in range(100)]}
+
+    def evaluate(self):
+        return cost.acceptance(self.raw, self.prepared, TARGET)
+
+    def service_result(self):
+        return cost.service_acceptance(self.service, TARGET, self.policy)
+
+    def test_cheapest_implemented_miner_and_setup_amortization(self):
+        rows = self.evaluate()['costs']
+        dense = [r for r in rows if r['class'] == 'dense']
+        self.assertEqual([r['prepared_mean_winner_ns'] for r in dense], [6000, 2500, 2062.5])
+        self.assertTrue(dense[0]['winning_cost_gate'])
+        self.assertFalse(dense[1]['winning_cost_gate'])
+        self.assertEqual(dense[0]['honest_attempts'], 16)
+        self.assertFalse(dense[0]['invalid_cost_gate'])
+
+    def test_missing_service_stays_unmeasured_and_no_activation(self):
+        result = self.evaluate()
+        self.assertEqual(result['service']['status'], 'unmeasured')
+        self.assertEqual(result['local_observation_gate'], 'not-accepted')
+        self.assertFalse(result['source_applicability_verified'])
+        for flag in cost.FALSE_FLAGS:
+            self.assertIs(result[flag], False)
+
+    def test_all_rows_used_in_implementation_choice_not_sample_minima(self):
+        for row in self.prepared['samples']:
+            row['prepared_search_ns'] = 16000 if row['sample'] else 1
+            row['prepared_total_ns'] = row['prepared_setup_ns'] + row['prepared_search_ns']
+        self.assertTrue(all(r['cheapest_supplied_valid_producer'] == 'baseline' for r in self.evaluate()['costs']))
+
+    def test_prepared_invalid_samples_fail_closed(self):
+        for field, value in [('attempts', True), ('prepared_setup_ns', 0),
+                             ('prepared_total_ns', 2000), ('baseline_first', 1),
+                             ('proof_bytes', 1), ('proof_commitment', 'bad'),
+                             ('prepared_search_ns', float('nan')), ('baseline_ns', float('inf'))]:
+            raw = copy.deepcopy(self.prepared)
+            raw['samples'][0][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                cost.prepared_samples(raw)
+
+    def test_missing_or_duplicated_prepared_rows_reject(self):
+        for samples in [self.prepared['samples'][:-1], self.prepared['samples'] + self.prepared['samples'][:1]]:
+            raw = dict(self.prepared, samples=samples)
+            with self.assertRaises(ValueError): cost.prepared_samples(raw)
+
+    def test_insufficient_invalid_samples_cannot_pass(self):
+        with self.assertRaises(ValueError): cost.acceptance(fixture(), self.prepared, TARGET)
+
+    def test_event_local_pass_is_not_external_acceptance(self):
+        self.assertEqual(self.service_result()['status'], 'pass')
+        report = cost.acceptance(self.raw, self.prepared, TARGET, self.service)
+        self.assertFalse(report['honest_public_service_measured'])
+        self.assertFalse(report['independent_accepted'])
+
+    def test_timeout_and_drop_stay_in_offered_denominator(self):
+        for outcome in ['timeout', 'dropped']:
+            self.service['honest'][0].update(outcome=outcome, finished_ns=None)
+            result = self.service_result()
+            self.assertEqual(result['honest_offered'], 100)
+            self.assertEqual(result['honest_completed'], 99)
+            self.assertEqual(result['honest_failures'], 1)
+            self.assertEqual(result['status'], 'fail')
+
+    def test_slow_success_fails_tail_latency_gate(self):
+        for row in self.service['honest'][:2]: row['finished_ns'] = row['offered_ns'] + 3_000_000_000
+        self.assertFalse(self.service_result()['checks']['honest_p99_deadline'])
+
+    def test_small_success_only_denominator_fails(self):
+        self.service['honest'] = self.service['honest'][:1]
+        self.assertEqual(self.service_result()['status'], 'fail')
+
+    def test_nominal_window_cannot_hide_instantaneous_burst(self):
+        for row in self.service['attacker']:
+            row['offered_ns'] = 0
+        self.assertFalse(self.service_result()['checks']['attacker_offer_span'])
+
+    def test_empty_attack_is_not_attack_acceptance(self):
+        self.service['attacker'] = []
+        self.assertFalse(self.service_result()['checks']['attacker_offered_denominator'])
+
+    def test_attacker_cpu_and_byte_budgets_are_enforced(self):
+        self.service['attacker'][0]['construction_cpu_ns'] = 60_000_000_001
+        self.service['attacker'][0]['encoded_bytes'] = 67_108_865
+        checks = self.service_result()['checks']
+        self.assertFalse(checks['attacker_cpu_budget'])
+        self.assertFalse(checks['attacker_byte_budget'])
+
+    def test_wrong_service_target_or_claim_rejects(self):
+        for key, value in [('target', '3' + 'f' * 63), ('scope', 'public'), ('independent_accepted', True), ('acceptance_profile_sha256', '0' * 64)]:
+            raw = dict(self.service, **{key: value})
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                cost.service_acceptance(raw, TARGET, self.policy)
+
+    def test_duplicate_events_cannot_inflate_denominator(self):
+        self.service['honest'].append(self.service['honest'][0])
+        with self.assertRaises(ValueError): self.service_result()
+
+    def test_even_all_diagnostic_gates_pass_never_certifies_security(self):
+        for row in self.raw['samples']:
+            row['forgery_ns'] = row['invalid_verify_ns']
+        for row in self.prepared['samples']:
+            row['original_verifier_ns'] = 1000
+        report = cost.acceptance(self.raw, self.prepared, TARGET, self.service)
+        self.assertEqual(report['local_observation_gate'], 'pass')
+        self.assertFalse(report['service']['hostile_service_qualified'])
+        for flag in cost.FALSE_FLAGS:
+            self.assertIs(report[flag], False)
+
+    def test_rejected_terminal_response_is_completed_but_not_accepted(self):
+        self.service['honest'][0]['outcome'] = 'rejected'
+        result = self.service_result()
+        self.assertEqual(result['honest_completed'], 100)
+        self.assertEqual(result['honest_accepted'], 99)
+        self.assertEqual(result['status'], 'fail')
+
+    def test_forged_work_acceptance_rejects(self):
+        self.service['attacker'][0]['outcome'] = 'accepted'
+        with self.assertRaises(ValueError): self.service_result()
+
+    def test_future_event_and_missing_success_completion_reject(self):
+        for change in [{'offered_ns': 60_000_000_000}, {'finished_ns': None}, {'finished_ns': True}]:
+            original = self.service['honest'][0]
+            self.service['honest'][0] = dict(original, **change)
+            with self.assertRaises(ValueError): self.service_result()
+            self.service['honest'][0] = original
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

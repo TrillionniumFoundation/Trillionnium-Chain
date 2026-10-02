@@ -223,3 +223,34 @@ all slower samples and forged-ticket rejection separately. The fastest observed 
 implementation is not the fastest possible adversary. A faster miner can worsen the
 claimed mining/verifier asymmetry; public admission and useful-work security remain
 unqualified until their own sustained adversarial evidence exists.
+
+## Executable work-security observation gate
+
+The reporting-only [work security policy](../../../../config/pon/work-security-acceptance-v1.json)
+is deliberately outside the genesis commitment. It changes no accepted proof, target,
+wire byte, fork weight or admission rule. The existing
+[`pon_work_cost_report.py`](../../../../scripts/pon_work_cost_report.py) now consumes BOTH
+`pon_adversarial_cost` and `pon_prepared_cost` observations. The latter compares the
+original producer and the separately coded optimized `PreparedTask` kernel against the
+original verifier. The Python oracle remains a separate arithmetic/byte implementation;
+neither same-author implementation counts as external independent review.
+
+For each of dense, zero, rank-one and sparse tasks at the explicitly requested common
+target, the reporter compares the mean cost of each complete supplied implementation.
+It does not cherry-pick the faster member of each paired sample. Original cost includes
+all losing attempts. Prepared cost is mean search plus mean preparation divided by a
+declared reuse horizon of 1, 8 or 64 winning searches. Actual attempt and forged-hash
+trial denominators are retained. Horizons above one are amortization scenarios, not
+newly executed reuse measurements. A wider/narrower benchmark target cannot be silently
+substituted for the admitted target, and independent nonce streams are not called paired.
+
+The forgery's marginal construction cost and rejection cost are reported separately.
+Existing samples begin with an obtained proof prefix: an additional conservative setup
+scenario charges its measured honest winning cost once per horizon. This is NOT the
+cheapest possible forged-prefix preparation and does not hide the attack behind that
+expensive setup. The gate always uses marginal rejection amplification. The local policy
+requires winner/verification >=1 and marginal invalid rejection/construction <=1 for
+EVERY class/horizon. These conservative screening thresholds are proposed local diagnostics, not
+preregistered scientific acceptance, deployment criteria or a qualified security bound. Failure is retained;
+passing cannot discharge algebraic, task-choice, accelerator, preprocessing, pooling or
+lottery assumptions. No output can set work hardness or production acceptance true.

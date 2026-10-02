@@ -10,7 +10,9 @@ case "${1:?required job}" in
     python3 scripts/ci/test_repository.py
     python3 scripts/ci/test_invariants_registry.py
     python3 scripts/ci/test_responsibility_evidence.py
+    python3 scripts/ci/test_applicability.py
     python3 scripts/ci/test_work_cost_report.py
+    python3 scripts/test_qualification_runtime.py
     ;;
   protocol-contract)
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
@@ -28,6 +30,7 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_work_utility.py
     python3 formal/pon-nakamoto-v1/test_public_evaluation_lifecycle.py
     python3 formal/pon-nakamoto-v1/test_llm_adapter_contract.py
+    python3 formal/pon-nakamoto-v1/test_model_acceptance.py
     "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuous_pipeline" "${RUNNER_TEMP:-/tmp}/trnm-pipeline-smoke-$$" 2 4 0 growth protected
     python3 formal/pon-nakamoto-v1/test_evaluation_round.py
     python3 formal/pon-nakamoto-v1/test_evaluation.py

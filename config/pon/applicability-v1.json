@@ -1,0 +1,174 @@
+{
+  "schema": "pon-applicability-v1",
+  "module_contracts": "config/pon/module-contracts-v1.json",
+  "module_maturity": "config/pon/module-maturity-v1.json",
+  "source_inventory": "config/portability-inventory-v1.json",
+  "evidence_classes": {
+    "source-binding": "Checked document/configuration/callable/test references; no execution claim.",
+    "local-execution": "Actual local command and outcome on identified source/environment; not hosted CI or independent acceptance.",
+    "historical-receipt": "Immutable measured source and artifacts; current applicability must be derived, never repinned.",
+    "hosted-head-check": "Hosted required checks for the exact candidate commit, independently fetched from CI.",
+    "prospective-merge-check": "Hosted checks for the exact prospective merge commit and base.",
+    "external-acceptance": "Independent operators, real prospective task outcomes or physical-host/security measurements within their actual scope."
+  },
+  "delivery": {
+    "candidate_identity": "derive-from-git-at-verification",
+    "hosted_head_status": "not-established-by-this-registry",
+    "prospective_merge_status": "not-established-by-this-registry",
+    "production_activation": false
+  },
+  "profiles": [
+    {
+      "id": "evaluation-v1",
+      "modules": [
+        "M06",
+        "M11",
+        "M15"
+      ],
+      "configuration": "config/pon/public-evaluation-native-v1.json",
+      "revision_pointer": "genesis_overrides.consensus_revision",
+      "consensus_revision": 6,
+      "document": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_EVALUATION_LIFECYCLE.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/tests/public_evaluation.rs::every_arrival_order_closes_identically_and_missing_is_abort"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "lifecycle-v2",
+      "modules": [
+        "M01",
+        "M05",
+        "M06",
+        "M15"
+      ],
+      "configuration": "config/pon/qualified-task-lifecycle-v2.json",
+      "revision_pointer": "consensus_revision",
+      "consensus_revision": 7,
+      "document": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V2.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/tests/task_lifecycle.rs::renew_keeps_one_output_revoke_stops_new_work_and_reopen_reorg_are_real"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "lifecycle-v3",
+      "modules": [
+        "M01",
+        "M05",
+        "M06",
+        "M15"
+      ],
+      "configuration": "config/pon/qualified-task-lifecycle-v3.json",
+      "revision_pointer": "consensus_revision",
+      "consensus_revision": 8,
+      "document": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v3.rs::sole_task_atomic_renew_rejects_partial_legacy_bad_signature_window_sequence_without_mutation"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "lifecycle-v4",
+      "modules": [
+        "M01",
+        "M05",
+        "M06",
+        "M15"
+      ],
+      "configuration": "config/pon/qualified-task-lifecycle-v4.json",
+      "revision_pointer": "consensus_revision",
+      "consensus_revision": 9,
+      "document": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/tests/task_lifecycle_v4.rs::delayed_atomic_renew_preserves_used_output_meter_and_revoke_reorg_state"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "checkpoint-tile-v1",
+      "modules": [
+        "M01",
+        "M05",
+        "M06",
+        "M15"
+      ],
+      "configuration": "config/pon/checkpoint-tile-task-v1.json",
+      "revision_pointer": "consensus_revision",
+      "consensus_revision": 10,
+      "document": "docs/protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/tests/checkpoint_tile_operator.rs::native_revision10_replay_renew_reorg_reopen_and_original_profiles_are_distinct"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "local-pool-reconciliation",
+      "modules": [
+        "M05",
+        "M06",
+        "M07",
+        "M08",
+        "M15"
+      ],
+      "configuration": null,
+      "revision_pointer": null,
+      "consensus_revision": null,
+      "document": "docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+        "symbol": "Node::pool_reconcile"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::retained_groups_restore_after_real_heavier_fork_and_terminal_prune_is_monotonic"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "protected-hello-handoff",
+      "modules": [
+        "M04",
+        "M15"
+      ],
+      "configuration": null,
+      "revision_pointer": null,
+      "consensus_revision": null,
+      "document": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "symbol": "try_handoff_hello"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::protected_hello_additional_opportunities_never_refresh_expired_original_deadlines"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    }
+  ]
+}

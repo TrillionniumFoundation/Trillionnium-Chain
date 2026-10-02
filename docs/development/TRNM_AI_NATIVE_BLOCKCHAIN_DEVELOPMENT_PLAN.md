@@ -51,6 +51,44 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Current native development contracts
 
+The [checked applicability registry](../../config/pon/applicability-v1.json) and
+[canonical procedure/profile table](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md#current-applicability-and-evidence-classes)
+separate current source bindings from local execution, historical receipts, hosted-head
+checks, prospective-merge checks and external acceptance. This plan records no current
+PR pass: derive exact candidate/base/merge identities and retrieve their actual CI results.
+
+#### Current four-priority development scope
+
+These changes continue this plan and its existing module owners; no acceptance axis
+is promoted by implementation or by adding a diagnostic checker.
+
+1. **Applicability and evidence consistency:** the checked registry above joins all
+   module documents, actual source owners, controlled entrypoints and test selectors.
+   M05 explicit reconciliation and M06 native execution/deltas are mapped to the Node
+   owner; historical receipts and exact current delivery checks remain separate.
+2. **Work security diagnostics:** the [proposed local diagnostic profile](../../config/pon/work-security-acceptance-v1.json)
+   and [work report contract](../protocol/pon-nakamoto-v1/details/WORK_PROFILE.md)
+   bind cost classes, setup amortization, rejection amplification and scoped hostile
+   service observations. Its thresholds are proposed screening policy, not
+   preregistered scientific acceptance, consensus parameters or a hardness proof.
+3. **Conservative execution/resource improvements:** the [local pool contract](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md)
+   reuses one checked actual parent within a pool operation while preserving full
+   growing-prefix execution, nonce/signature checks and operation-boundary rereads.
+   [Derived commitment](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md)
+   changes retain complete-root authority and bounded fallback. These changes do
+   not claim incremental prefix execution, SQL isolation or measured endpoint TPS.
+4. **Model and operations evidence:** the [reported-acceptance sidecar](../protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md)
+   joins a pinned run plan, strongest-control gain, adversarial probes, reported
+   consumer uses and material/retention obligations. Supplied-record consistency
+   does not prove future-task custody, consent, independent operation, real serving
+   or physical retention; those external obligations remain unaccepted.
+
+New local checker results apply only to the source and environment actually tested.
+Full Rust qualification, exact committed-head/prospective-merge CI, physical-host
+measurements and independent model/security acceptance require their own retained
+observations; this section declares none of them passed. Earlier failed campaigns
+and their source identities remain unchanged.
+
 The following contracts describe the current candidate under M05/M06/M15 ownership.
 Older evidence and historical sections below retain their original source and profile.
 Their presence does not make an earlier absence claim the current API specification.
@@ -78,7 +116,8 @@ blocks, at 10-second live pacing. It failed with
 blocks: 29,000 transactions were accepted and 27,500 confirmed. The producer had
 29,277 state keys and the validator 29,027; their heads differed. This was an actual
 service failure before budget exhaustion, not a passed maximum-state acceptance.
-The current Hello handoff and larger optional derived-cache budgets require a
+The failed source predates the bounded repeated Hello handoff opportunities described
+in the current admission contract. Those opportunities and larger optional derived-cache budgets require a
 fresh committed-source rerun of that unchanged load and independent complete
 reference replay. The earlier passed 16,411-key case remains scoped to its original
 source. Reaching 65,536 keys, rejecting 65,537 without changing parent state, large

@@ -1,6 +1,8 @@
 //! Pure derived commitment computation for the existing PoN executor.
 //!
-//! Every call encodes the complete actual State. A snapshot is neither a state
+//! Each new binding encodes the complete actual State. Within one operation,
+//! CheckedExecutionParent can reuse those bytes while immutably borrowing State.
+//! A snapshot is neither a state
 //! setter nor a transaction/admission verdict. The caller must still read actual
 //! KV, check its committed root and publish any staged snapshot only after its
 //! own durable commit. Cache limits select the unchanged full-root algorithm;
@@ -293,7 +295,7 @@ fn prepare_values(
         nodes: current.nodes.max(preceding.nodes),
     };
     // At most old base, previous staged and newly built path roots while apply
-    // replaces an Arc. Full maps/diffs are still encoded/checked on every call.
+    // replaces an Arc. Full successor maps/diffs are encoded/checked on every call.
     let workspace = add(
         mul(add(maximum.map, maximum.tree)?, 3)?,
         add(
@@ -415,46 +417,322 @@ pub fn execute_checked(
     config: &Config,
     limits: CacheLimits,
 ) -> Result<StagedOutput> {
-    limits.validate()?;
-    let actual = encode(actual_parent)?;
-    if let Some(snapshot) = predecessor {
-        if actual != *snapshot.values {
-            return Err("COMMITMENT_PARENT");
-        }
-        if snapshot.root != expected_parent_root {
+    CheckedExecutionParent::bind(actual_parent, expected_parent_root, predecessor, limits)?
+        .execute(request, config)
+}
+
+/// Operation-local immutable binding of actual parent bytes to its admitted root.
+/// The borrow prevents changing the State while this value exists; it is not a
+/// branch/generation fence and must not be retained across owner operations.
+/// Every preview still runs complete block rules from the original parent,
+/// including maintenance, nonce/fee rules, subsidy, receipts and successor root.
+pub struct CheckedExecutionParent<'a> {
+    state: &'a State,
+    actual: CanonicalValues,
+    predecessor: Option<CheckedCommitment>,
+    limits: CacheLimits,
+}
+impl<'a> CheckedExecutionParent<'a> {
+    pub fn bind(
+        actual_parent: &'a State,
+        expected_parent_root: Hash,
+        predecessor: Option<&CheckedCommitment>,
+        limits: CacheLimits,
+    ) -> Result<Self> {
+        limits.validate()?;
+        let actual = encode(actual_parent)?;
+        if let Some(snapshot) = predecessor {
+            if actual != *snapshot.values {
+                return Err("COMMITMENT_PARENT");
+            }
+            if snapshot.root != expected_parent_root {
+                return Err("COMMITMENT_ROOT");
+            }
+        } else if state_root(&actual).map_err(|_| "LIMIT")? != expected_parent_root {
             return Err("COMMITMENT_ROOT");
         }
-    } else if state_root(&actual).map_err(|_| "LIMIT")? != expected_parent_root {
-        return Err("COMMITMENT_ROOT");
+        Ok(Self {
+            state: actual_parent,
+            actual,
+            predecessor: predecessor.cloned(),
+            limits,
+        })
     }
-    let mut staged = None;
-    let output = pon_executor::execute_with_commitment(
-        actual_parent,
-        BlockExecution {
-            transactions: request.transactions,
-            height: request.height,
-            miner: request.miner,
-            parent_id: request.parent_id,
-            workers: request.workers,
-        },
-        config,
-        |_, after| {
-            let prepared = prepare_values(encode(after)?, predecessor, Some(&actual), limits)?;
-            let root = prepared.root;
-            staged = Some(prepared);
-            Ok(root)
-        },
-    )?;
-    Ok(StagedOutput {
-        output,
-        commitment: staged.ok_or("COMMITMENT_STAGED")?,
-    })
+
+    pub fn execute(&self, request: ExecutionRequest<'_>, config: &Config) -> Result<StagedOutput> {
+        let mut staged = None;
+        let output = pon_executor::execute_with_commitment(
+            self.state,
+            BlockExecution {
+                transactions: request.transactions,
+                height: request.height,
+                miner: request.miner,
+                parent_id: request.parent_id,
+                workers: request.workers,
+            },
+            config,
+            |_, after| {
+                let prepared = prepare_values(
+                    encode(after)?,
+                    self.predecessor.as_ref(),
+                    Some(&self.actual),
+                    self.limits,
+                )?;
+                let root = prepared.root;
+                staged = Some(prepared);
+                Ok(root)
+            },
+        )?;
+        Ok(StagedOutput {
+            output,
+            commitment: staged.ok_or("COMMITMENT_STAGED")?,
+        })
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use serde_json::json;
+
+    fn preview_fixture() -> (State, Config, Vec<Vec<u8>>) {
+        use trnm_crypto_primitives::{public_key_hex, sign_hex, signing_key_from_hex};
+        use trnm_protocol::pon_wire::Envelope;
+        let cfg = Config::installed().unwrap();
+        let key = signing_key_from_hex(&hex::encode([7; 32])).unwrap();
+        let public = public_key_hex(&key);
+        let sender = hex::decode(&public).unwrap().try_into().unwrap();
+        let state = State::from([
+            ("meta:issued".into(), json!(1_000_000_000u64)),
+            ("model:current".into(), json!(hex::encode([0; 32]))),
+            (
+                format!("account:{public}"),
+                json!({"balance":1_000_000_000u64,"nonce":0}),
+            ),
+        ]);
+        let raws = (1..=16)
+            .map(|nonce| {
+                let mut payload = [2; 32].to_vec();
+                payload.extend(1u64.to_le_bytes());
+                let mut tx = Envelope {
+                    network: cfg.network,
+                    sender,
+                    nonce,
+                    expiry: 2000,
+                    fee_limit: 1_000_000,
+                    tag: 1,
+                    payload,
+                    signature: [0; 64],
+                };
+                tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+                    .unwrap()
+                    .try_into()
+                    .unwrap();
+                tx.encode().unwrap()
+            })
+            .collect();
+        (state, cfg, raws)
+    }
+
+    #[test]
+    fn immutable_parent_previews_match_full_execution_including_failures_and_rebind() {
+        let (state, cfg, raws) = preview_fixture();
+        let root = pon_executor::root(&state).unwrap();
+        for limits in [
+            CacheLimits::default(),
+            CacheLimits {
+                max_keys: 0,
+                max_payload_bytes: 0,
+                max_workspace_charge_bytes: 0,
+            },
+        ] {
+            let checked = checked_snapshot(&state, root, None, limits).unwrap();
+            let parent =
+                CheckedExecutionParent::bind(&state, root, checked.snapshot.as_ref(), limits)
+                    .unwrap();
+            let mut cases = (0..=raws.len())
+                .map(|n| raws[..n].to_vec())
+                .collect::<Vec<_>>();
+            cases.push(vec![raws[1].clone()]); // nonce failure
+            let mut invalid = raws[0].clone();
+            *invalid.last_mut().unwrap() ^= 1;
+            cases.push(vec![invalid.clone()]); // signature failure
+            cases.push(vec![raws[1].clone(), invalid]); // first error precedence
+            cases.push(vec![vec![0; 2049]]);
+            for transactions in cases {
+                let expected =
+                    pon_executor::execute(&state, &transactions, 1, [3; 32], [4; 32], 1, &cfg);
+                let actual = parent.execute(
+                    ExecutionRequest {
+                        transactions: &transactions,
+                        height: 1,
+                        miner: [3; 32],
+                        parent_id: [4; 32],
+                        workers: 1,
+                    },
+                    &cfg,
+                );
+                match (expected, actual) {
+                    (Ok(expected), Ok(actual)) => {
+                        assert_eq!(actual.output.state, expected.state);
+                        assert_eq!(actual.output.root, expected.root);
+                        assert_eq!(actual.output.receipts, expected.receipts);
+                        assert_eq!(
+                            actual.output.metrics.signature_verifications,
+                            expected.metrics.signature_verifications
+                        );
+                    }
+                    (Err(expected), Err(actual)) => assert_eq!(actual, expected),
+                    results => panic!("differential mismatch: {results:?}"),
+                }
+            }
+            assert_eq!(pon_executor::root(&state).unwrap(), root);
+            let mut changed = state.clone();
+            changed.insert("meta:issued".into(), json!(0));
+            assert!(CheckedExecutionParent::bind(
+                &changed,
+                root,
+                checked.snapshot.as_ref(),
+                limits
+            )
+            .is_err());
+            assert!(CheckedExecutionParent::bind(
+                &state,
+                [9; 32],
+                checked.snapshot.as_ref(),
+                limits
+            )
+            .is_err());
+            // Cold binding needs no retained snapshot or previous successful preview.
+            CheckedExecutionParent::bind(&state, root, None, limits).unwrap();
+        }
+    }
+
+    #[test]
+    fn immutable_parent_corrupt_tree_fallback_matches_full_execution() {
+        let (state, cfg, raws) = preview_fixture();
+        let root = pon_executor::root(&state).unwrap();
+        let mut snapshot = checked_snapshot(&state, root, None, CacheLimits::default())
+            .unwrap()
+            .snapshot
+            .unwrap();
+        snapshot.tree = StateTree::default();
+        let parent =
+            CheckedExecutionParent::bind(&state, root, Some(&snapshot), CacheLimits::default())
+                .unwrap();
+        let expected = pon_executor::execute(&state, &raws, 1, [3; 32], [4; 32], 1, &cfg).unwrap();
+        let actual = parent
+            .execute(
+                ExecutionRequest {
+                    transactions: &raws,
+                    height: 1,
+                    miner: [3; 32],
+                    parent_id: [4; 32],
+                    workers: 1,
+                },
+                &cfg,
+            )
+            .unwrap();
+        assert_eq!(actual.output.root, expected.root);
+        assert_eq!(actual.output.state, expected.state);
+        assert_eq!(actual.output.receipts, expected.receipts);
+        assert_eq!(
+            actual.commitment.observation.method,
+            CommitmentMethod::FullRoot(FullRootReason::InternalSnapshotMismatch)
+        );
+        assert!(snapshot.tree.is_empty());
+    }
+
+    #[test]
+    #[ignore = "explicit component timing; excludes SQLite, M05 and Node lock wait"]
+    fn immutable_parent_preview_component_timing() {
+        use std::time::Instant;
+        let (mut state, cfg, raws) = preview_fixture();
+        for n in 0..4096 {
+            state.insert(format!("inert:{n:05}"), json!("x".repeat(128)));
+        }
+        let root = pon_executor::root(&state).unwrap();
+        let seed = checked_snapshot(&state, root, None, CacheLimits::default()).unwrap();
+        let mut samples: [Vec<u128>; 4] = Default::default();
+        let expected: Vec<_> = (1..=raws.len())
+            .map(|n| {
+                pon_executor::execute(&state, &raws[..n], 1, [3; 32], [4; 32], 1, &cfg)
+                    .unwrap()
+                    .root
+            })
+            .collect();
+        for sample in 0usize..8 {
+            // Rotate all four arms so cold/warm and fresh/bound do not always
+            // receive the same cache/thermal/order advantage.
+            for offset in 0..4 {
+                let arm = (sample + offset) % 4;
+                let prior = if arm >= 2 {
+                    seed.snapshot.as_ref()
+                } else {
+                    None
+                };
+                let start = Instant::now();
+                if arm.is_multiple_of(2) {
+                    for n in 1..=raws.len() {
+                        let checked =
+                            checked_snapshot(&state, root, prior, CacheLimits::default()).unwrap();
+                        let actual = execute_checked(
+                            &state,
+                            root,
+                            checked.snapshot.as_ref(),
+                            ExecutionRequest {
+                                transactions: &raws[..n],
+                                height: 1,
+                                miner: [3; 32],
+                                parent_id: [4; 32],
+                                workers: 1,
+                            },
+                            &cfg,
+                            CacheLimits::default(),
+                        )
+                        .unwrap();
+                        assert_eq!(actual.output.root, expected[n - 1]);
+                    }
+                } else {
+                    let checked =
+                        checked_snapshot(&state, root, prior, CacheLimits::default()).unwrap();
+                    let parent = CheckedExecutionParent::bind(
+                        &state,
+                        root,
+                        checked.snapshot.as_ref(),
+                        CacheLimits::default(),
+                    )
+                    .unwrap();
+                    for n in 1..=raws.len() {
+                        let actual = parent
+                            .execute(
+                                ExecutionRequest {
+                                    transactions: &raws[..n],
+                                    height: 1,
+                                    miner: [3; 32],
+                                    parent_id: [4; 32],
+                                    workers: 1,
+                                },
+                                &cfg,
+                            )
+                            .unwrap();
+                        assert_eq!(actual.output.root, expected[n - 1]);
+                    }
+                }
+                samples[arm].push(start.elapsed().as_nanos());
+            }
+        }
+        println!(
+            "{}",
+            serde_json::json!({"schema":"immutable-parent-preview-component-v1",
+            "state_keys":state.len(),"prefixes":raws.len(),"samples_per_arm":8,
+            "cold_fresh_check_each_prefix_ns":samples[0],"cold_operation_bound_ns":samples[1],
+            "warm_fresh_check_each_prefix_ns":samples[2],"warm_operation_bound_ns":samples[3],
+            "order":"four rotating arms",
+            "scope":"complete signed M06 prefixes and commitments; excludes M05, SQLite, Node lock wait and concurrency",
+            "physical_memory_bound":false,"public_network_ready":false})
+        );
+    }
 
     #[test]
     fn disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order() {

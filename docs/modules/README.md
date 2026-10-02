@@ -58,12 +58,19 @@ unqualified; bounded development networking does not supply those acceptances.
 
 ## Responsibility and evidence
 
+The [canonical applicability table](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md#current-applicability-and-evidence-classes)
+joins these module documents to source owners, entrypoints, exact test selectors and
+evidence classes. Its [registry](../../config/pon/applicability-v1.json) also checks
+revision6..10 profile distinctions; navigation is not an executed receipt.
+
 Module-level flags describe inventory, not percent complete. The existing
 [module maturity file](../../config/pon/module-maturity-v1.json) now maps every registered
 procedure to actual callable symbols, its controlled entrypoint, backend, persistent
 owner, exact test selectors and remaining scope. `ordinary_product_entrypoint: null`
 means the normal native product route has not been supplied. A reusable checkpoint,
-release or import package does not fill that null. A specified-only responsibility may
+release or import package does not fill that null. M05 now names the implemented explicit local reconciliation owner and real fork/restart
+test selectors; ordinary external-event/product and physical-effect integration remain
+separate. A specified-only responsibility may
 name a prerequisite without pretending that prerequisite is the missing consumer.
 
 Use the read-only reporter from a checkout with the declared evidence Git objects:
