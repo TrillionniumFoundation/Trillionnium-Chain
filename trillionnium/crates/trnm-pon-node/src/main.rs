@@ -73,6 +73,127 @@ fn read_owned_configuration(
     Ok(bytes)
 }
 
+const MAX_REQUEST_OBSERVATION_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
+
+/// Local diagnostics only. Keep one descriptor from before Node::open until
+/// after all scoped workers join; never reopen a mutable output path.
+struct RequestObservationExport {
+    file: File,
+    observer: ingress::public_v3::PublicRequestObserver,
+}
+
+fn request_observation_export(
+    command: &str,
+    args: &BTreeMap<String, String>,
+) -> Result<Option<RequestObservationExport>> {
+    let Some(path) = args.get("--request-observation-output") else {
+        if args.contains_key("--request-observation-capacity") {
+            return Err("REQUEST_OBSERVATION_OUTPUT_REQUIRED".into());
+        }
+        return Ok(None);
+    };
+    if command != "serve"
+        || !public_pool_profile(args)
+        || args.get("--public-development-network").map(String::as_str) != Some("true")
+    {
+        return Err("REQUEST_OBSERVATION_EXPLICIT_PUBLIC_V3_REQUIRED".into());
+    }
+    let capacity = number(args, "--request-observation-capacity", 1024)?;
+    if !(1..=ingress::public_v3::MAX_REQUEST_OBSERVATION_RECORDS as u64).contains(&capacity) {
+        return Err("PUBLIC_OBSERVATION_CAPACITY".into());
+    }
+    let observer = ingress::public_v3::PublicRequestObserver::new(capacity as usize)?;
+    let file = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .mode(0o600)
+        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
+        .open(path)
+        .map_err(|_| Error::from("REQUEST_OBSERVATION_OUTPUT_FILE"))?;
+    file.set_permissions(std::fs::Permissions::from_mode(0o600))
+        .map_err(|_| Error::from("REQUEST_OBSERVATION_OUTPUT_FILE"))?;
+    check_request_observation_descriptor(&file)?;
+    Ok(Some(RequestObservationExport { file, observer }))
+}
+
+fn check_request_observation_descriptor(file: &File) -> Result<()> {
+    let metadata = file
+        .metadata()
+        .map_err(|_| Error::from("REQUEST_OBSERVATION_OUTPUT_FILE"))?;
+    if !metadata.is_file()
+        || metadata.nlink() != 1
+        || metadata.permissions().mode() & 0o7777 != 0o600
+    {
+        return Err("REQUEST_OBSERVATION_OUTPUT_FILE".into());
+    }
+    Ok(())
+}
+
+struct BoundedObservationBuffer(Vec<u8>);
+impl Write for BoundedObservationBuffer {
+    fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+        if bytes.len() > MAX_REQUEST_OBSERVATION_OUTPUT_BYTES.saturating_sub(self.0.len()) {
+            return Err(std::io::Error::other("REQUEST_OBSERVATION_OUTPUT_LIMIT"));
+        }
+        self.0.extend_from_slice(bytes);
+        Ok(bytes.len())
+    }
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+impl RequestObservationExport {
+    fn write_after_join(
+        &mut self,
+        context: Value,
+        service_succeeded: bool,
+        mining_succeeded: Option<bool>,
+        polling_succeeded: Option<bool>,
+    ) -> Result<()> {
+        let snapshot = self.observer.snapshot();
+        let coverage_complete = snapshot.records_not_retained == 0
+            && snapshot.measurement_failures == 0
+            && !snapshot.counter_overflow
+            && snapshot.accepted_connections_seen == snapshot.records.len() as u64
+            && snapshot.records.iter().all(|record| record.complete);
+        let value = json!({
+            "schema":"public-v3-local-cli-request-observation-v1",
+            "context":context,
+            "source_claim":{"commit":null,"tree":null,"runtime_source_attestation":false,
+                "scope":"Externally bind the actual binary and exact source; this mutable local process does not attest Git bytes."},
+            "completion":{"service_returned":true,"all_scoped_workers_joined":true,
+                "service_succeeded":service_succeeded,"mining_succeeded":mining_succeeded,
+                "peer_polling_succeeded":polling_succeeded,"capture_coverage_complete":coverage_complete},
+            "snapshot":snapshot,
+            "scope":{"unsigned_local_observation":true,"operation_body_digest_is_commitment_only":true,
+                "guest_identity_or_body_or_peer_locator_exported":false,
+                "application_syscall_bytes_not_physical_network_bytes":true,
+                "full_work_CPU_nested_in_dispatch_not_additive":true,
+                "reactor_authentication_response_signing_CPU_excluded":true,
+                "native_stages_nonpreemptive":true,"ledger_effects_not_rolled_back_by_export_failure":true,
+                "kill_before_join_or_during_write_leaves_empty_or_incomplete_output":true},
+            "public_network_ready":false,"production_activation":false,"independent_accepted":false,
+            "work_profile_qualified":false,"model_quality_qualified":false,"public_sla_qualified":false
+        });
+        let mut write = || -> Result<()> {
+            check_request_observation_descriptor(&self.file)?;
+            let mut bytes = BoundedObservationBuffer(Vec::new());
+            serde_json::to_writer(&mut bytes, &value)
+                .map_err(|_| Error::from("REQUEST_OBSERVATION_OUTPUT_LIMIT"))?;
+            bytes.write_all(b"\n")?;
+            self.file.write_all(&bytes.0)?;
+            self.file.flush()?;
+            self.file.sync_all()?;
+            check_request_observation_descriptor(&self.file)?;
+            Ok(())
+        };
+        write().map_err(|_| Error::from(format!(
+            "REQUEST_OBSERVATION_OUTPUT_IO:service_returned=true:all_scoped_workers_joined=true:service_succeeded={service_succeeded}:mining_succeeded={mining_succeeded:?}:peer_polling_succeeded={polling_succeeded:?}:ledger_effects_not_rolled_back=true"
+        )))
+    }
+}
+
 fn secret_identity(path: &str) -> Result<ingress::DevelopmentIdentity> {
     let bytes = read_owned_configuration(path, 65, true, "AUTH_SECRET_FILE", "AUTH_SECRET_LENGTH")?;
     let text = std::str::from_utf8(&bytes).map_err(|_| Error::from("AUTH_SECRET_ENCODING"))?;
@@ -543,7 +664,7 @@ fn run() -> Result<Value> {
         "sync" => "--peer --tip --after --pages --evaluation-candidate --evaluation-round-blocks",
         "head" => "--peer",
         "history" => "--peer --tip --after",
-        "serve" => "--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --peers --peer-poll-ms --peer-pages",
+        "serve" => "--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --peers --peer-poll-ms --peer-pages --request-observation-output --request-observation-capacity",
         _ => return Err("UNKNOWN_COMMAND".into()),
     };
     let authentication_options = match command.as_str() {
@@ -569,6 +690,10 @@ fn run() -> Result<Value> {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
         }
     }
+    // Invalid option/profile/capacity combinations and output descriptor checks
+    // must precede any Node::open creation or recovery. Later initialization
+    // errors may leave this new file empty: that is explicitly not a completion.
+    let mut request_observation = request_observation_export(&command, &args)?;
     // Local evaluation query inputs reject before Node::open can create/recover a
     // store. Existing --logical-now is explicit trusted test input, never height.
     let evaluation_query = if command == "evaluation-observe" {
@@ -1295,6 +1420,18 @@ fn run() -> Result<Value> {
                     std::io::stdout().flush()?;
                     let owner = Arc::new(Mutex::new(node));
                     let stop = Arc::new(AtomicBool::new(false));
+                    let observation_context = if request_observation.is_some() {
+                        let owner = owner.lock().map_err(|_| "PUBLIC_OWNER")?;
+                        Some(json!({"network":hex::encode(owner.settings().network()),
+                            "parameters":hex::encode(owner.settings().parameters()),
+                            "genesis":hex::encode(owner.settings().genesis()),
+                            "task_profile":owner.settings().task_profile(),
+                            "admission_profile":ingress::public_v3::PROFILE,
+                            "admission_policy_id":hex::encode(policy.id()),
+                            "pool_context":hex::encode(pool_context)}))
+                    } else {
+                        None
+                    };
                     let (service, mining_result, polling_result) = std::thread::scope(|scope| {
                         let miner = mining.map(|config| {
                             let owner = owner.clone();
@@ -1336,13 +1473,25 @@ fn run() -> Result<Value> {
                                 result
                             })
                         });
-                        let service = ingress::public_v3::serve_public_protected_v3(
-                            listener,
-                            owner,
-                            lifetime,
-                            stop.clone(),
-                            server,
-                        );
+                        let service = if let Some(output) = request_observation.as_ref() {
+                            ingress::public_v3::serve_public_protected_v3_with_request_observer(
+                                listener,
+                                owner,
+                                lifetime,
+                                stop.clone(),
+                                server,
+                                Arc::new(Mutex::new(ingress::public_v3::PublicMetrics::default())),
+                                output.observer.clone(),
+                            )
+                        } else {
+                            ingress::public_v3::serve_public_protected_v3(
+                                listener,
+                                owner,
+                                lifetime,
+                                stop.clone(),
+                                server,
+                            )
+                        };
                         stop.store(true, Ordering::Release);
                         let mining_result = miner.map(|handle| {
                             handle
@@ -1359,6 +1508,16 @@ fn run() -> Result<Value> {
                         (service, mining_result, polling_result)
                     });
                     // All scoped workers have stopped before returning any error.
+                    // Capture diagnostics before propagating service/miner/poller
+                    // failures, without changing their native effects or authority.
+                    if let Some(output) = request_observation.as_mut() {
+                        output.write_after_join(
+                            observation_context.ok_or("REQUEST_OBSERVATION_CONTEXT")?,
+                            service.is_ok(),
+                            mining_result.as_ref().map(|result| result.is_ok()),
+                            polling_result.as_ref().map(|result| result.is_ok()),
+                        )?;
+                    }
                     let metrics = service?;
                     let mining_report = mining_result.transpose()?;
                     let polling_report = polling_result.transpose()?;
@@ -1484,6 +1643,29 @@ fn main() {
 mod tests {
     use super::*;
     use std::os::unix::fs::{symlink, PermissionsExt};
+
+    #[test]
+    fn request_observation_output_has_a_closed_byte_limit() {
+        let mut bytes = BoundedObservationBuffer(Vec::new());
+        bytes
+            .write_all(&vec![b'x'; MAX_REQUEST_OBSERVATION_OUTPUT_BYTES])
+            .unwrap();
+        assert_eq!(bytes.0.len(), MAX_REQUEST_OBSERVATION_OUTPUT_BYTES);
+        assert!(bytes.write_all(b"\n").is_err());
+        assert_eq!(bytes.0.len(), MAX_REQUEST_OBSERVATION_OUTPUT_BYTES);
+    }
+
+    #[test]
+    fn request_observation_descriptor_refuses_special_permission_bits() {
+        let temp = tempfile::tempdir().unwrap();
+        let file = File::create(temp.path().join("new-output")).unwrap();
+        file.set_permissions(std::fs::Permissions::from_mode(0o600))
+            .unwrap();
+        assert!(check_request_observation_descriptor(&file).is_ok());
+        file.set_permissions(std::fs::Permissions::from_mode(0o4600))
+            .unwrap();
+        assert!(check_request_observation_descriptor(&file).is_err());
+    }
 
     #[test]
     fn test_authentication_configuration_uses_the_opened_file_identity() {
