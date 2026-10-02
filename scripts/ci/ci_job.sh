@@ -5,6 +5,7 @@ case "${1:?required job}" in
   repository-truth)
     bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_project_boundary.py
+    python3 scripts/ci/test_source_check_efficiency.py
     python3 scripts/ci/check_repository.py
     python3 scripts/refresh_distributed_source_inventory.py --check
     python3 scripts/ci/test_repository.py
@@ -54,7 +55,8 @@ case "${1:?required job}" in
     TRNM_NATIVE_MODE=release python3 scripts/ci/test_pon_accepted_block.py
     ;;
   fuzz-smoke)
-    python3 scripts/ci/test_repository.py
+    # Full repository mutants run in the required repository-truth job for this
+    # exact SHA. Keep this job focused on reference fuzzing and hash text inputs.
     python3 formal/pon-nakamoto-v1/test_reference.py
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives fixed_hash_text -- --nocapture
     ;;

@@ -4,10 +4,10 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
-import shutil
 import tempfile
 import unittest
 from pathlib import Path
+from source_binding_fixture import copy_source_bindings
 
 from report_module_evidence import (
     ROOT, MATURITY, check_symbol, match_sources, observed_selector,
@@ -20,8 +20,7 @@ class ResponsibilityBindingTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory(prefix='pon-responsibility-')
         cls.root = Path(cls.temp.name) / 'source'
-        shutil.copytree(ROOT, cls.root, ignore=shutil.ignore_patterns(
-            '.git', 'target', '__pycache__', '.pytest_cache', 'node_modules'))
+        copy_source_bindings(ROOT, cls.root)
 
     @classmethod
     def tearDownClass(cls):

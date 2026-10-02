@@ -11,6 +11,7 @@ import argparse
 import ast
 import hashlib
 import json
+from functools import lru_cache
 import re
 import subprocess
 from pathlib import Path
@@ -36,7 +37,10 @@ FIELDS = {
 }
 
 
-def python_symbols(text: str) -> set[str]:
+# Cache pure analysis by exact source bytes, never by path/mtime. A mutation is
+# always reread and cannot inherit a previous result. Bound retained source text.
+@lru_cache(maxsize=32)
+def python_symbols(text: str) -> frozenset[str]:
     found: set[str] = set()
 
     def visit(nodes: list[ast.stmt], prefix: str = '') -> None:
@@ -46,7 +50,7 @@ def python_symbols(text: str) -> set[str]:
                 found.add(name)
                 visit(node.body, name + '.')
     visit(ast.parse(text).body)
-    return found
+    return frozenset(found)
 
 
 def check_symbol(root: Path, ref: dict[str, str]) -> None:
@@ -78,6 +82,7 @@ def check_symbol(root: Path, ref: dict[str, str]) -> None:
         raise ValueError('unsupported callable source ' + ref['path'])
 
 
+@lru_cache(maxsize=32)
 def rust_code(text: str) -> str:
     """Mask comments/string literals, preserving layout for source-only test binding."""
     out = list(text)

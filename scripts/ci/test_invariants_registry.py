@@ -1,11 +1,12 @@
-import json,shutil,tempfile,unittest
+import json,tempfile,unittest
+from source_binding_fixture import copy_source_bindings
 from pathlib import Path
 from check_invariants import validate
 ROOT=Path(__file__).resolve().parents[2]
 class InvariantRegistryTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.tmp=tempfile.TemporaryDirectory();cls.root=Path(cls.tmp.name)/'tree';shutil.copytree(ROOT,cls.root,ignore=shutil.ignore_patterns('.git','__pycache__','target'))
+        cls.tmp=tempfile.TemporaryDirectory();cls.root=Path(cls.tmp.name)/'tree';copy_source_bindings(ROOT,cls.root)
     @classmethod
     def tearDownClass(cls):cls.tmp.cleanup()
     def reject(self,change):

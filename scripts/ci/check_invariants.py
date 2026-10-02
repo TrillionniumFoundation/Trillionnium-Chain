@@ -2,9 +2,11 @@
 """Exact invariant-to-test/source binding. Does not run tests or grant readiness."""
 from pathlib import Path
 import ast,json,re
+from functools import lru_cache
 FIELDS={'module','id','claim','scope','atomic','cuts','tests','source','limit','threat','remaining'}
 def require(ok,message):
     if not ok:raise ValueError(message)
+@lru_cache(maxsize=32)
 def functions(text):
     found=set()
     def walk(nodes,prefix=''):
@@ -13,7 +15,7 @@ def functions(text):
                 name=prefix+node.name
                 if isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef)):found.add(name)
                 walk(node.body,name+'.')
-    walk(ast.parse(text).body);return found
+    walk(ast.parse(text).body);return frozenset(found)
 def validate(root):
     root=Path(root).resolve()
     data=json.loads((root/'config/pon/invariants-v2.json').read_text())

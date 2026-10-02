@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Counterexamples to stale profiles and promoted navigation/CI evidence."""
 import json
-import shutil
 import tempfile
 import unittest
 from pathlib import Path
+from source_binding_fixture import copy_source_bindings
 from check_applicability import ROOT, REGISTRY, validate, markdown
 from report_module_evidence import check_test_selector
 
@@ -14,8 +14,7 @@ class ApplicabilityTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory(prefix='pon-applicability-')
         cls.root = Path(cls.temp.name) / 'source'
-        shutil.copytree(ROOT, cls.root, ignore=shutil.ignore_patterns(
-            '.git', 'target', '__pycache__', '.pytest_cache', 'node_modules'))
+        copy_source_bindings(ROOT, cls.root)
 
     @classmethod
     def tearDownClass(cls):

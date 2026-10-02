@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read-only portable-source integrity. Does not certify a runnable consensus."""
 from __future__ import annotations
-import hashlib,json,pathlib,re,subprocess,sys,tomllib
+import hashlib,json,os,pathlib,re,subprocess,sys,tomllib
 from urllib.parse import unquote,urlsplit
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 MODULES={f'M{i:02d}' for i in range(18)}
@@ -41,7 +41,15 @@ def graph_acyclic(graph):
         visiting.remove(node);done.add(node)
     for node in graph:visit(node)
 def all_files(root):
-    return sorted(p for p in root.rglob('*') if p.is_file() and not any(s in {'.git','target','__pycache__','.pytest_cache','node_modules'} for s in p.relative_to(root).parts))
+    # Prune before traversal: filtering rglob results still walks every build/cache
+    # directory, once per source mutant, even though none of its files are checked.
+    excluded={'.git','target','__pycache__','.pytest_cache','node_modules'}
+    files=[]
+    for directory,dirs,names in os.walk(root,followlinks=False):
+        dirs[:]=[name for name in dirs if name not in excluded]
+        files.extend(pathlib.Path(directory)/name for name in names
+                     if name not in excluded and (pathlib.Path(directory)/name).is_file())
+    return sorted(files)
 def check(root=ROOT):
     inventory=load(root/'config/portability-inventory-v1.json')
     rows=inventory['packages'];names=[r['package'] for r in rows]

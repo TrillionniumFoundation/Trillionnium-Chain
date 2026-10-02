@@ -26,8 +26,11 @@ class WorkExamples(unittest.TestCase):
         first = Branch('valid', (9999,))
         self.assertIs(preferred(first, [Branch('header-only', (1,), True, False)]), first)
     def test_lucky_digest_not_an_input(self):
-        self.assertEqual(work(12345), work(12345))
-        self.assertNotIn('digest', work.__code__.co_varnames[:work.__code__.co_argcount])
+        # Exercise the caller boundary, rather than compare a value to itself
+        # or merely inspect argument names (which misses a **kwargs bypass).
+        for digest in [bytes(32), bytes([255]) * 32]:
+            with self.assertRaises(TypeError):
+                work(12345, digest=digest)
     def test_initial_tip_requires_valid_candidate(self):
         self.assertIsNone(preferred(None, [Branch('invalid', (1,), False)]))
     def test_no_quality_or_stake_input(self):
