@@ -2,7 +2,8 @@ name: trnm-required-baseline
 on:
   pull_request:
   push:
-    branches: [main]
+    # Task-scoped verification without opening a PR or changing protected main.
+    branches: [main, chore/chain-development-overhead-20261002]
   workflow_dispatch:
 permissions:
   contents: read

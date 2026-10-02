@@ -7,7 +7,7 @@ The reviewed candidate starts at `47864b93461c783e684454b24358e23eed6dba1c`
 `9fedf7ecbbe07177069c030592b4e03dcffebb81`. This is an audit record, not a
 replacement for the [canonical development plan](TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 
-Inventory: 25 Cargo packages, 286 Cargo targets, 701 Rust files / 207,478
+Starting inventory: 25 Cargo packages, 286 Cargo targets, 701 Rust files / 207,478
 Rust lines, 77 documentation files, 46 scripts, 93 formal/reference files,
 and 2,315 retained evidence files. Evidence occupies approximately 585 MiB.
 The inventory includes disconnected source candidates; file counts are not
@@ -68,6 +68,19 @@ acceptance, and does not claim that every possible runtime optimization is exhau
    test. All 28 reference tests pass with the actual implementation. This is a
    caller-boundary regression test, not work-hardness acceptance.
 
+8. Removed the final 38 disconnected mempool files (4,849 lines) and 176
+   disconnected worker files (12,240 lines), after the same independent review.
+   All 762 tests across 166 targets pass before/after. All 190 active source files
+   and 169 compiler dependency files retain identical bytes. Worker platform
+   guards select an inline Unix process collector or explicit non-Unix error;
+   neither branch loads any removed file. The owning distributed example checks
+   again after canonical inventory regeneration.
+9. Added only the exact audit task branch to this workflow's push trigger, so
+   the isolated task can receive the same five hosted checks without creating a
+   PR. Main, pull-request and manual triggers, read-only permissions, credential
+   non-persistence and exact-head verification remain unchanged. This is a
+   task-scoped validation trigger, not a production deployment path.
+
 ## Measurements
 
 Measurements are local observations, not hosted-CI timing promises. Other
@@ -107,6 +120,21 @@ validation work was running on the same machine.
   platform, module, generated-inventory and explicit-reference review, plus
   compiler/test evidence. No mass deletion is justified by this count.
 
+## Final source re-audit
+
+In total, 282 disconnected Rust files / 29,109 lines were removed, plus their
+1,974 generated inventory lines. The 1,404 actual tests exercised across the
+five affected packages are retained and pass unchanged; no Cargo target or
+package was removed. All 286 declared Cargo targets still exist.
+
+The final tree has 419 Rust files: 413 distinct canonical paths reached by
+`cargo fmt --all -- --check`, plus the six explicit live peer-lease `include!`
+parts. All six are retained. No unclassified file remains in this reachability
+scan. A second review found no additional proven safe removal in this scope.
+This does not prove that every future optimization, dynamic behavior or platform
+has been exhaustively analyzed. Existing load/delay acceptance failures and
+unqualified production/model/work-security claims were not reclassified.
+
 ## Retained review artifacts
 
 The [audit evidence package](../../evidence/development-overhead-audit-v1/README.md)
@@ -130,7 +158,8 @@ and dependency closures are explicit rather than inferred from file counts.
   pass.
 - Bounded executor baseline: locked offline all-target/all-feature tests pass
   262/262 with one build job, incremental compilation disabled and debug info
-  disabled. This is not a full-workspace Rust validation.
+  disabled. Types/oracle also pass 380/380, and mempool/worker pass 762/762,
+  each before and after removal. This is not a full-workspace Rust validation.
 - The complete unchanged `external-evidence-contract` job passes before dead-file
   cleanup. It verifies original artifact bodies and recomputes historical
   semantics, including negative receipt/hash/source mutation tests. A final
