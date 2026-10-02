@@ -31,3 +31,6 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 
 # New successor qualification retains raw successful and failed output unchanged.
 /evidence/pon-closed-round-v1/**/*.log -text -whitespace
+
+# Audit command transcripts retain exact bytes, including trailing blank output.
+/evidence/development-overhead-audit-v1/*.log -text -whitespace

@@ -1,0 +1,487 @@
+{"result": "PASS", "mode": "--audit", "project": "trillionnium-chain", "packages": 25, "branch": "chore/chain-development-overhead-20261002", "remote_policy_mutated": false}
+test_activation_and_preservation_policy_are_not_relaxed (__main__.ProjectBoundaryTests.test_activation_and_preservation_policy_are_not_relaxed) ... ok
+test_canonical_push_target_does_not_rescue_foreign_origin (__main__.ProjectBoundaryTests.test_canonical_push_target_does_not_rescue_foreign_origin) ... ok
+test_checker_does_not_modify_refs_config_or_tracked_files (__main__.ProjectBoundaryTests.test_checker_does_not_modify_refs_config_or_tracked_files) ... ok
+test_checkout_https_without_suffix_audits_detached_head (__main__.ProjectBoundaryTests.test_checkout_https_without_suffix_audits_detached_head) ... ok
+test_detached_source_is_audit_only (__main__.ProjectBoundaryTests.test_detached_source_is_audit_only) ... ok
+test_exact_repository_spellings_allow_audit_and_dev (__main__.ProjectBoundaryTests.test_exact_repository_spellings_allow_audit_and_dev) ... ok
+test_foreign_or_decorated_origins_are_not_normalized (__main__.ProjectBoundaryTests.test_foreign_or_decorated_origins_are_not_normalized) ... ok
+test_missing_updates_deletion_and_unchecked_sha_reject (__main__.ProjectBoundaryTests.test_missing_updates_deletion_and_unchecked_sha_reject) ... ok
+test_new_branch_must_be_the_checked_out_continuation (__main__.ProjectBoundaryTests.test_new_branch_must_be_the_checked_out_continuation) ... ok
+test_non_fast_forward_update_is_rejected (__main__.ProjectBoundaryTests.test_non_fast_forward_update_is_rejected) ... ok
+test_protected_branch_cannot_become_a_development_branch (__main__.ProjectBoundaryTests.test_protected_branch_cannot_become_a_development_branch) ... ok
+test_protected_remote_branch_and_mixed_updates_reject (__main__.ProjectBoundaryTests.test_protected_remote_branch_and_mixed_updates_reject) ... ok
+test_push_hook_accepts_only_canonical_repository_spellings (__main__.ProjectBoundaryTests.test_push_hook_accepts_only_canonical_repository_spellings) ... ok
+test_push_remote_name_and_destination_still_reject (__main__.ProjectBoundaryTests.test_push_remote_name_and_destination_still_reject) ... ok
+test_source_inventory_and_external_path_dependency_still_reject (__main__.ProjectBoundaryTests.test_source_inventory_and_external_path_dependency_still_reject) ... ok
+test_staged_and_push_modes_read_their_own_source (__main__.ProjectBoundaryTests.test_staged_and_push_modes_read_their_own_source) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 2.625s
+
+OK
+test_cached_python_symbols_cannot_be_mutated (__main__.SourceAnalysisCacheTests.test_cached_python_symbols_cannot_be_mutated) ... ok
+test_changed_source_at_same_path_is_revalidated (__main__.SourceAnalysisCacheTests.test_changed_source_at_same_path_is_revalidated) ... ok
+test_identical_content_analyzed_once_with_bounded_caches (__main__.SourceAnalysisCacheTests.test_identical_content_analyzed_once_with_bounded_caches) ... ok
+test_missing_declared_metadata_is_not_replaced_with_stub (__main__.SourceBindingFixtureTests.test_missing_declared_metadata_is_not_replaced_with_stub) ... ok
+test_only_declared_evidence_metadata_is_copied_independently (__main__.SourceBindingFixtureTests.test_only_declared_evidence_metadata_is_copied_independently) ... ok
+test_pruned_walk_matches_previous_selection (__main__.SourceTraversalTests.test_pruned_walk_matches_previous_selection) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.004s
+
+OK
+{"activation": false, "head": "47864b93461c783e684454b24358e23eed6dba1c", "local_links": 618, "normal_dependency_edges": 17, "result": "PASS", "runtime_implemented": false, "rust_files": 701, "source_state": "dirty-candidate", "tree": "26e5d6fd51255d5da0524d1632b822054fcd5b75", "workspace_packages": 25}
+distributed source inventory: PASS
+test_acyclic (__main__.DependencyTests.test_acyclic) ... ok
+test_cycle_rejected (__main__.DependencyTests.test_cycle_rejected) ... ok
+test_self_cycle_rejected (__main__.DependencyTests.test_self_cycle_rejected) ... ok
+test_undeclared_dependency_rejected (__main__.DependencyTests.test_undeclared_dependency_rejected) ... ok
+test_current_claims_are_unactivated (__main__.EvidenceBoundaryTests.test_current_claims_are_unactivated) ... ok
+test_duplicate_json_claims (__main__.EvidenceBoundaryTests.test_duplicate_json_claims) ... ok
+test_explicit_missing_native_core (__main__.EvidenceBoundaryTests.test_explicit_missing_native_core) ... ok
+test_false_is_not_integer_zero (__main__.EvidenceBoundaryTests.test_false_is_not_integer_zero) ... ok
+test_no_release_from_nested_report (__main__.EvidenceBoundaryTests.test_no_release_from_nested_report) ... ok
+test_no_runtime_claim (__main__.EvidenceBoundaryTests.test_no_runtime_claim) ... ok
+test_no_work_qualification_from_reference (__main__.EvidenceBoundaryTests.test_no_work_qualification_from_reference) ... ok
+test_old_protocol_is_not_supported (__main__.EvidenceBoundaryTests.test_old_protocol_is_not_supported) ... ok
+test_actual_source (__main__.RepositoryMutants.test_actual_source) ... ok
+test_algorithm_cannot_be_replaced_with_tbd (__main__.RepositoryMutants.test_algorithm_cannot_be_replaced_with_tbd) ... ok
+test_broken_navigation (__main__.RepositoryMutants.test_broken_navigation) ... ok
+test_candidate_profile_is_not_production_qualified (__main__.RepositoryMutants.test_candidate_profile_is_not_production_qualified) ... ok
+test_duplicate_package (__main__.RepositoryMutants.test_duplicate_package) ... ok
+test_every_job_has_runner_stage_cargo_isolation (__main__.RepositoryMutants.test_every_job_has_runner_stage_cargo_isolation) ... ok
+test_external_path_dependency (__main__.RepositoryMutants.test_external_path_dependency) ... ok
+test_fake_public_model_efficacy (__main__.RepositoryMutants.test_fake_public_model_efficacy) ... ok
+test_fake_qualified_primitive (__main__.RepositoryMutants.test_fake_qualified_primitive) ... ok
+test_fault_harness_isolation_remains_explicit (__main__.RepositoryMutants.test_fault_harness_isolation_remains_explicit) ... ok
+test_job_env_cannot_use_unallocated_runner_context (__main__.RepositoryMutants.test_job_env_cannot_use_unallocated_runner_context) ... ok
+test_legacy_appendix_cannot_return (__main__.RepositoryMutants.test_legacy_appendix_cannot_return) ... ok
+test_missing_implementation_axis (__main__.RepositoryMutants.test_missing_implementation_axis) ... ok
+test_missing_module_contract (__main__.RepositoryMutants.test_missing_module_contract) ... ok
+test_missing_native_contract_test_is_rejected (__main__.RepositoryMutants.test_missing_native_contract_test_is_rejected) ... ok
+test_missing_procedure_commit_is_rejected (__main__.RepositoryMutants.test_missing_procedure_commit_is_rejected) ... ok
+test_missing_runtime_claim_is_not_false_evidence (__main__.RepositoryMutants.test_missing_runtime_claim_is_not_false_evidence) ... ok
+test_no_automatic_fallback (__main__.RepositoryMutants.test_no_automatic_fallback) ... ok
+test_no_checkout_credential_persistence (__main__.RepositoryMutants.test_no_checkout_credential_persistence) ... ok
+test_no_persistent_runner_for_untrusted_pr (__main__.RepositoryMutants.test_no_persistent_runner_for_untrusted_pr) ... ok
+test_no_privileged_pr_event (__main__.RepositoryMutants.test_no_privileged_pr_event) ... ok
+test_no_write_permission_for_untrusted_pr (__main__.RepositoryMutants.test_no_write_permission_for_untrusted_pr) ... ok
+test_omitted_package (__main__.RepositoryMutants.test_omitted_package) ... ok
+test_owner_unknown (__main__.RepositoryMutants.test_owner_unknown) ... ok
+test_quality_cannot_be_work (__main__.RepositoryMutants.test_quality_cannot_be_work) ... ok
+test_reference_does_not_imply_native_product_integration (__main__.RepositoryMutants.test_reference_does_not_imply_native_product_integration) ... ok
+test_removed_core_cannot_return_as_dependency (__main__.RepositoryMutants.test_removed_core_cannot_return_as_dependency) ... ok
+test_removed_decoder_requirement_cannot_return (__main__.RepositoryMutants.test_removed_decoder_requirement_cannot_return) ... ok
+test_removed_vote_symbol (__main__.RepositoryMutants.test_removed_vote_symbol) ... ok
+test_required_job_not_dropped (__main__.RepositoryMutants.test_required_job_not_dropped) ... ok
+test_review_policy_matches_owner_decision (__main__.RepositoryMutants.test_review_policy_matches_owner_decision) ... ok
+test_source_authority_cannot_be_issued (__main__.RepositoryMutants.test_source_authority_cannot_be_issued) ... ok
+test_undeclared_crate_directory (__main__.RepositoryMutants.test_undeclared_crate_directory) ... ok
+test_unknown_concrete_work_profile_rejected (__main__.RepositoryMutants.test_unknown_concrete_work_profile_rejected) ... ok
+test_unknown_implementation_axis (__main__.RepositoryMutants.test_unknown_implementation_axis) ... ok
+test_vote_cannot_return (__main__.RepositoryMutants.test_vote_cannot_return) ... ok
+test_wrong_fork_choice (__main__.RepositoryMutants.test_wrong_fork_choice) ... ok
+test_wrong_wire_width_is_rejected (__main__.RepositoryMutants.test_wrong_wire_width_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 50 tests in 48.374s
+
+OK
+test_binding_cannot_grant_execution (__main__.InvariantRegistryTests.test_binding_cannot_grant_execution) ... ok
+test_boolean_revision_is_not_integer (__main__.InvariantRegistryTests.test_boolean_revision_is_not_integer) ... ok
+test_class_name_is_not_a_test_function (__main__.InvariantRegistryTests.test_class_name_is_not_a_test_function) ... ok
+test_duplicate_identity_rejected (__main__.InvariantRegistryTests.test_duplicate_identity_rejected) ... ok
+test_independence_cannot_be_granted (__main__.InvariantRegistryTests.test_independence_cannot_be_granted) ... ok
+test_known_revoke_obligation_cannot_be_omitted (__main__.InvariantRegistryTests.test_known_revoke_obligation_cannot_be_omitted) ... ok
+test_missing_atomic_boundary (__main__.InvariantRegistryTests.test_missing_atomic_boundary) ... ok
+test_no_counterexample_schedule (__main__.InvariantRegistryTests.test_no_counterexample_schedule) ... ok
+test_prose_rephrase_and_heading_change_do_not_fake_a_failure (__main__.InvariantRegistryTests.test_prose_rephrase_and_heading_change_do_not_fake_a_failure) ... ok
+test_real_function_bindings (__main__.InvariantRegistryTests.test_real_function_bindings) ... ok
+test_stale_genesis_revision_rejected (__main__.InvariantRegistryTests.test_stale_genesis_revision_rejected) ... ok
+test_wrong_test_selector_rejected (__main__.InvariantRegistryTests.test_wrong_test_selector_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.496s
+
+OK
+test_boolean_exit_code_is_not_integer_success (__main__.ExactObservationTests.test_boolean_exit_code_is_not_integer_success) ... ok
+test_exact_file_class_method_observed (__main__.ExactObservationTests.test_exact_file_class_method_observed) ... ok
+test_failed_process_cannot_supply_passing_selector (__main__.ExactObservationTests.test_failed_process_cannot_supply_passing_selector) ... ok
+test_missing_suite_summary_is_not_success (__main__.ExactObservationTests.test_missing_suite_summary_is_not_success) ... ok
+test_native_selector_is_not_guessed_from_test_name (__main__.ExactObservationTests.test_native_selector_is_not_guessed_from_test_name) ... ok
+test_other_registered_selector_remains_unobserved (__main__.ExactObservationTests.test_other_registered_selector_remains_unobserved) ... ok
+test_same_method_other_class_is_not_evidence (__main__.ExactObservationTests.test_same_method_other_class_is_not_evidence) ... ok
+test_same_named_method_in_other_file_is_not_evidence (__main__.ExactObservationTests.test_same_named_method_in_other_file_is_not_evidence) ... ok
+test_skipped_test_is_not_observed_pass (__main__.ExactObservationTests.test_skipped_test_is_not_observed_pass) ... ok
+test_timed_out_process_is_not_success (__main__.ExactObservationTests.test_timed_out_process_is_not_success) ... ok
+test_exact_package_target_and_success_are_required (__main__.NativeSelectorTests.test_exact_package_target_and_success_are_required) ... ok
+test_actual_bindings_are_not_execution (__main__.ResponsibilityBindingTests.test_actual_bindings_are_not_execution) ... ok
+test_archive_path_does_not_become_new_measured_commit (__main__.ResponsibilityBindingTests.test_archive_path_does_not_become_new_measured_commit) ... ok
+test_duplicate_owner_does_not_fill_a_gap (__main__.ResponsibilityBindingTests.test_duplicate_owner_does_not_fill_a_gap) ... ok
+test_duplicate_test_does_not_create_more_evidence (__main__.ResponsibilityBindingTests.test_duplicate_test_does_not_create_more_evidence) ... ok
+test_invented_test_class_rejects (__main__.ResponsibilityBindingTests.test_invented_test_class_rejects) ... ok
+test_m08_names_actual_distinct_phases (__main__.ResponsibilityBindingTests.test_m08_names_actual_distinct_phases) ... ok
+test_missing_backend_or_scope_rejects (__main__.ResponsibilityBindingTests.test_missing_backend_or_scope_rejects) ... ok
+test_missing_callable_rejects (__main__.ResponsibilityBindingTests.test_missing_callable_rejects) ... ok
+test_missing_manifest_rejects (__main__.ResponsibilityBindingTests.test_missing_manifest_rejects) ... ok
+test_missing_procedure_owner_rejects (__main__.ResponsibilityBindingTests.test_missing_procedure_owner_rejects) ... ok
+test_native_method_must_belong_to_named_impl (__main__.ResponsibilityBindingTests.test_native_method_must_belong_to_named_impl) ... ok
+test_reusable_component_cannot_fill_ordinary_product_entry (__main__.ResponsibilityBindingTests.test_reusable_component_cannot_fill_ordinary_product_entry) ... ok
+test_source_path_escape_rejects (__main__.ResponsibilityBindingTests.test_source_path_escape_rejects) ... ok
+test_specified_owner_cannot_claim_controlled_entry (__main__.ResponsibilityBindingTests.test_specified_owner_cannot_claim_controlled_entry) ... ok
+test_unknown_implementation_kind_rejects (__main__.ResponsibilityBindingTests.test_unknown_implementation_kind_rejects) ... ok
+test_absent_subject_is_not_assumed_covered (__main__.SourceApplicabilityTests.test_absent_subject_is_not_assumed_covered) ... ok
+test_added_runtime_invalidates_complete_match (__main__.SourceApplicabilityTests.test_added_runtime_invalidates_complete_match) ... ok
+test_changed_dependency_does_not_hide_behind_subject_match (__main__.SourceApplicabilityTests.test_changed_dependency_does_not_hide_behind_subject_match) ... ok
+test_class_and_method_source_bindings_are_distinct (__main__.SourceApplicabilityTests.test_class_and_method_source_bindings_are_distinct) ... ok
+test_empty_recorded_runtime_cannot_be_current (__main__.SourceApplicabilityTests.test_empty_recorded_runtime_cannot_be_current) ... ok
+test_no_subject_is_not_a_positive_identity_claim (__main__.SourceApplicabilityTests.test_no_subject_is_not_a_positive_identity_claim) ... ok
+test_removed_runtime_invalidates_complete_match (__main__.SourceApplicabilityTests.test_removed_runtime_invalidates_complete_match) ... ok
+test_report_does_not_rewrite_original_hashes (__main__.SourceApplicabilityTests.test_report_does_not_rewrite_original_hashes) ... ok
+test_unchanged_recorded_subject_and_runtime (__main__.SourceApplicabilityTests.test_unchanged_recorded_subject_and_runtime) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 0.420s
+
+OK
+test_claimed_ci_pass_rejects (__main__.ApplicabilityTests.test_claimed_ci_pass_rejects) ... ok
+test_claimed_merge_pass_rejects (__main__.ApplicabilityTests.test_claimed_merge_pass_rejects) ... ok
+test_commented_or_string_literal_test_is_not_executable (__main__.ApplicabilityTests.test_commented_or_string_literal_test_is_not_executable) ... ok
+test_current_table_binds_all_procedures_without_execution (__main__.ApplicabilityTests.test_current_table_binds_all_procedures_without_execution) ... ok
+test_duplicate_profile_rejects (__main__.ApplicabilityTests.test_duplicate_profile_rejects) ... ok
+test_factor_and_public_queue_bind_real_tests_without_execution (__main__.ApplicabilityTests.test_factor_and_public_queue_bind_real_tests_without_execution) ... ok
+test_helper_is_not_a_test_even_when_callable (__main__.ApplicabilityTests.test_helper_is_not_a_test_even_when_callable) ... ok
+test_local_policy_cannot_claim_consensus_revision (__main__.ApplicabilityTests.test_local_policy_cannot_claim_consensus_revision) ... ok
+test_missing_doc_rejects (__main__.ApplicabilityTests.test_missing_doc_rejects) ... ok
+test_missing_entry_rejects (__main__.ApplicabilityTests.test_missing_entry_rejects) ... ok
+test_missing_profile_rejects (__main__.ApplicabilityTests.test_missing_profile_rejects) ... ok
+test_native_m05_reconciliation_is_explicit_not_ordinary_product (__main__.ApplicabilityTests.test_native_m05_reconciliation_is_explicit_not_ordinary_product) ... ok
+test_native_m06_execution_and_delta_name_actual_node_owner (__main__.ApplicabilityTests.test_native_m06_execution_and_delta_name_actual_node_owner) ... ok
+test_source_binding_cannot_be_promoted_to_measurement (__main__.ApplicabilityTests.test_source_binding_cannot_be_promoted_to_measurement) ... ok
+test_source_binding_cannot_invent_receipt (__main__.ApplicabilityTests.test_source_binding_cannot_invent_receipt) ... ok
+test_stale_documented_profile_revision_rejects (__main__.ApplicabilityTests.test_stale_documented_profile_revision_rejects) ... ok
+test_stale_snapshot_package_count_rejects (__main__.ApplicabilityTests.test_stale_snapshot_package_count_rejects) ... ok
+test_wrong_profile_revision_rejects (__main__.ApplicabilityTests.test_wrong_profile_revision_rejects) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 2.560s
+
+OK
+test_authentic_receipt_reports_no_new_execution (__main__.CostEvidenceVerificationTests.test_authentic_receipt_reports_no_new_execution) ... ok
+test_boolean_return_code_is_not_success (__main__.CostEvidenceVerificationTests.test_boolean_return_code_is_not_success) ... ok
+test_different_build_command_cannot_supply_recorded_native_cost (__main__.CostEvidenceVerificationTests.test_different_build_command_cannot_supply_recorded_native_cost) ... ok
+test_modified_raw_cost_rejects_before_summary (__main__.CostEvidenceVerificationTests.test_modified_raw_cost_rejects_before_summary) ... ok
+test_old_costs_remain_historical_after_source_change (__main__.CostEvidenceVerificationTests.test_old_costs_remain_historical_after_source_change) ... ok
+test_rehashed_missing_source_cannot_claim_historical_verification (__main__.CostEvidenceVerificationTests.test_rehashed_missing_source_cannot_claim_historical_verification) ... ok
+test_rehashed_target_change_cannot_replace_measured_configuration (__main__.CostEvidenceVerificationTests.test_rehashed_target_change_cannot_replace_measured_configuration) ... ok
+test_rehashed_wrong_summary_is_not_measurement (__main__.CostEvidenceVerificationTests.test_rehashed_wrong_summary_is_not_measurement) ... ok
+test_actual_retained_samples_can_be_summarized_without_rerun (__main__.WorkCostAccountingTests.test_actual_retained_samples_can_be_summarized_without_rerun) ... ok
+test_arbitrary_security_flag_rejects (__main__.WorkCostAccountingTests.test_arbitrary_security_flag_rejects) ... ok
+test_boolean_attempt_count_rejects (__main__.WorkCostAccountingTests.test_boolean_attempt_count_rejects) ... ok
+test_boolean_duration_rejects (__main__.WorkCostAccountingTests.test_boolean_duration_rejects) ... ok
+test_boolean_sample_identity_rejects (__main__.WorkCostAccountingTests.test_boolean_sample_identity_rejects) ... ok
+test_counter_outside_native_budget_rejects (__main__.WorkCostAccountingTests.test_counter_outside_native_budget_rejects) ... ok
+test_duplicate_samples_cannot_inflate_evidence (__main__.WorkCostAccountingTests.test_duplicate_samples_cannot_inflate_evidence) ... ok
+test_empty_sample_set_rejects (__main__.WorkCostAccountingTests.test_empty_sample_set_rejects) ... ok
+test_extra_scope_claim_rejects (__main__.WorkCostAccountingTests.test_extra_scope_claim_rejects) ... ok
+test_fastest_honest_code_is_not_fastest_attacker (__main__.WorkCostAccountingTests.test_fastest_honest_code_is_not_fastest_attacker) ... ok
+test_float_duration_rejects (__main__.WorkCostAccountingTests.test_float_duration_rejects) ... ok
+test_integer_zero_cannot_replace_false_scope (__main__.WorkCostAccountingTests.test_integer_zero_cannot_replace_false_scope) ... ok
+test_inventory_includes_native_sources_but_not_doc_edits (__main__.WorkCostAccountingTests.test_inventory_includes_native_sources_but_not_doc_edits) ... ok
+test_missing_structured_comparison_rejects (__main__.WorkCostAccountingTests.test_missing_structured_comparison_rejects) ... ok
+test_mixed_target_is_not_comparable (__main__.WorkCostAccountingTests.test_mixed_target_is_not_comparable) ... ok
+test_negative_duration_rejects (__main__.WorkCostAccountingTests.test_negative_duration_rejects) ... ok
+test_per_sample_target_cannot_hide_mixed_context (__main__.WorkCostAccountingTests.test_per_sample_target_cannot_hide_mixed_context) ... ok
+test_same_target_ratios_and_probability (__main__.WorkCostAccountingTests.test_same_target_ratios_and_probability) ... ok
+test_source_inventory_cannot_omit_collector_or_configuration (__main__.WorkCostAccountingTests.test_source_inventory_cannot_omit_collector_or_configuration) ... ok
+test_summary_does_not_mutate_raw_observations (__main__.WorkCostAccountingTests.test_summary_does_not_mutate_raw_observations) ... ok
+test_target_is_canonical_positive_fixed_width (__main__.WorkCostAccountingTests.test_target_is_canonical_positive_fixed_width) ... ok
+test_unhashable_class_rejects_as_input_error (__main__.WorkCostAccountingTests.test_unhashable_class_rejects_as_input_error) ... ok
+test_zero_denominator_rejects (__main__.WorkCostAccountingTests.test_zero_denominator_rejects) ... ok
+test_all_rows_used_in_implementation_choice_not_sample_minima (__main__.WorkSecurityAcceptanceTests.test_all_rows_used_in_implementation_choice_not_sample_minima) ... ok
+test_attacker_cpu_and_byte_budgets_are_enforced (__main__.WorkSecurityAcceptanceTests.test_attacker_cpu_and_byte_budgets_are_enforced) ... ok
+test_cheapest_implemented_miner_and_setup_amortization (__main__.WorkSecurityAcceptanceTests.test_cheapest_implemented_miner_and_setup_amortization) ... ok
+test_duplicate_events_cannot_inflate_denominator (__main__.WorkSecurityAcceptanceTests.test_duplicate_events_cannot_inflate_denominator) ... ok
+test_empty_attack_is_not_attack_acceptance (__main__.WorkSecurityAcceptanceTests.test_empty_attack_is_not_attack_acceptance) ... ok
+test_even_all_diagnostic_gates_pass_never_certifies_security (__main__.WorkSecurityAcceptanceTests.test_even_all_diagnostic_gates_pass_never_certifies_security) ... ok
+test_event_local_pass_is_not_external_acceptance (__main__.WorkSecurityAcceptanceTests.test_event_local_pass_is_not_external_acceptance) ... ok
+test_forged_work_acceptance_rejects (__main__.WorkSecurityAcceptanceTests.test_forged_work_acceptance_rejects) ... ok
+test_future_event_and_missing_success_completion_reject (__main__.WorkSecurityAcceptanceTests.test_future_event_and_missing_success_completion_reject) ... ok
+test_insufficient_invalid_samples_cannot_pass (__main__.WorkSecurityAcceptanceTests.test_insufficient_invalid_samples_cannot_pass) ... ok
+test_missing_or_duplicated_prepared_rows_reject (__main__.WorkSecurityAcceptanceTests.test_missing_or_duplicated_prepared_rows_reject) ... ok
+test_missing_service_stays_unmeasured_and_no_activation (__main__.WorkSecurityAcceptanceTests.test_missing_service_stays_unmeasured_and_no_activation) ... ok
+test_nominal_window_cannot_hide_instantaneous_burst (__main__.WorkSecurityAcceptanceTests.test_nominal_window_cannot_hide_instantaneous_burst) ... ok
+test_prepared_invalid_samples_fail_closed (__main__.WorkSecurityAcceptanceTests.test_prepared_invalid_samples_fail_closed) ... ok
+test_rejected_terminal_response_is_completed_but_not_accepted (__main__.WorkSecurityAcceptanceTests.test_rejected_terminal_response_is_completed_but_not_accepted) ... ok
+test_slow_success_fails_tail_latency_gate (__main__.WorkSecurityAcceptanceTests.test_slow_success_fails_tail_latency_gate) ... ok
+test_small_success_only_denominator_fails (__main__.WorkSecurityAcceptanceTests.test_small_success_only_denominator_fails) ... ok
+test_timeout_and_drop_stay_in_offered_denominator (__main__.WorkSecurityAcceptanceTests.test_timeout_and_drop_stay_in_offered_denominator) ... ok
+test_wrong_service_target_or_claim_rejects (__main__.WorkSecurityAcceptanceTests.test_wrong_service_target_or_claim_rejects) ... ok
+
+----------------------------------------------------------------------
+Ran 50 tests in 0.032s
+
+OK
+EEEEEEEEE.EEEE...
+======================================================================
+ERROR: test_actual_group_timeout_empty_usage_rows (__main__.QualificationRuntimeTests.test_actual_group_timeout_empty_usage_rows) (owner='run_evaluation_qualification.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 276, in test_actual_group_timeout_empty_usage_rows
+    self.run_owner_control(owner, 'timeout',
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 113, in run_owner_control
+    execute = self.owner_execute(owner, out, records)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 97, in owner_execute
+    environment, actual_observer = bind_gnu_time(os.environ)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_actual_group_timeout_empty_usage_rows (__main__.QualificationRuntimeTests.test_actual_group_timeout_empty_usage_rows) (owner='run_public_readiness_qualification.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 276, in test_actual_group_timeout_empty_usage_rows
+    self.run_owner_control(owner, 'timeout',
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 113, in run_owner_control
+    execute = self.owner_execute(owner, out, records)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 97, in owner_execute
+    environment, actual_observer = bind_gnu_time(os.environ)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_actual_nonzero_exit_rows (__main__.QualificationRuntimeTests.test_actual_nonzero_exit_rows) (owner='run_evaluation_qualification.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 270, in test_actual_nonzero_exit_rows
+    self.run_owner_control(owner, 'nonzero',
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 113, in run_owner_control
+    execute = self.owner_execute(owner, out, records)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 97, in owner_execute
+    environment, actual_observer = bind_gnu_time(os.environ)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_actual_nonzero_exit_rows (__main__.QualificationRuntimeTests.test_actual_nonzero_exit_rows) (owner='run_public_readiness_qualification.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 270, in test_actual_nonzero_exit_rows
+    self.run_owner_control(owner, 'nonzero',
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 113, in run_owner_control
+    execute = self.owner_execute(owner, out, records)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 97, in owner_execute
+    environment, actual_observer = bind_gnu_time(os.environ)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_actual_normal_exit_rows (__main__.QualificationRuntimeTests.test_actual_normal_exit_rows) (owner='run_evaluation_qualification.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 265, in test_actual_normal_exit_rows
+    self.run_owner_control(owner, 'normal', "print('ordinary-child-started')", 10, 0, False)
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 113, in run_owner_control
+    execute = self.owner_execute(owner, out, records)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 97, in owner_execute
+    environment, actual_observer = bind_gnu_time(os.environ)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_actual_normal_exit_rows (__main__.QualificationRuntimeTests.test_actual_normal_exit_rows) (owner='run_public_readiness_qualification.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 265, in test_actual_normal_exit_rows
+    self.run_owner_control(owner, 'normal', "print('ordinary-child-started')", 10, 0, False)
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 113, in run_owner_control
+    execute = self.owner_execute(owner, out, records)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 97, in owner_execute
+    environment, actual_observer = bind_gnu_time(os.environ)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_actual_observer_identity (__main__.QualificationRuntimeTests.test_actual_observer_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 143, in test_actual_observer_identity
+    environment, observer = bind_gnu_time(os.environ)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_actual_observer_launch_failure (__main__.QualificationRuntimeTests.test_actual_observer_launch_failure) (owner='run_evaluation_qualification.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 186, in test_actual_observer_launch_failure
+    execute = self.owner_execute(owner, out, records,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 97, in owner_execute
+    environment, actual_observer = bind_gnu_time(os.environ)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_actual_observer_launch_failure (__main__.QualificationRuntimeTests.test_actual_observer_launch_failure) (owner='run_public_readiness_qualification.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 186, in test_actual_observer_launch_failure
+    execute = self.owner_execute(owner, out, records,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 97, in owner_execute
+    environment, actual_observer = bind_gnu_time(os.environ)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_nested_runner_observer_sanitization (__main__.QualificationRuntimeTests.test_nested_runner_observer_sanitization) (owner='run_evaluation_qualification.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 171, in test_nested_runner_observer_sanitization
+    environment, observer = bind_gnu_time(os.environ)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_nested_runner_observer_sanitization (__main__.QualificationRuntimeTests.test_nested_runner_observer_sanitization) (owner='run_public_readiness_qualification.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 171, in test_nested_runner_observer_sanitization
+    environment, observer = bind_gnu_time(os.environ)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_observer_replacement_after_launch_retains_rows (__main__.QualificationRuntimeTests.test_observer_replacement_after_launch_retains_rows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 229, in test_observer_replacement_after_launch_retains_rows
+    _, actual = bind_gnu_time(os.environ)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+======================================================================
+ERROR: test_observer_replacement_before_launch_rejected (__main__.QualificationRuntimeTests.test_observer_replacement_before_launch_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/test_qualification_runtime.py", line 213, in test_observer_replacement_before_launch_rejected
+    _, actual = bind_gnu_time(os.environ)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/aebafee84981/Trillionnium-Chain-overhead/scripts/qualification_runtime.py", line 60, in bind_gnu_time
+    executable = Path(selected).resolve(strict=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/time'
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.064s
+
+FAILED (errors=13)

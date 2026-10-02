@@ -1,0 +1,15 @@
+{
+  "README.md": "4fc425431a8e6e48740074ba46a4c686bafb8062fdebf29752834c8bafe642eb",
+  "distributed-example-after-executor.log": "5e97e33d29e352d1b18960b0dce5f4065fd74a45ce14962cf3c3492925e87790",
+  "distributed-example-after-types-oracle.log": "67759dfede28d7e067408036143754e672de12f6ef24e85265abb4e5542b92e0",
+  "executor-after.log": "7c06d72794661eb521a49a0d040a81269b21562cf80b68f7de89598b0d426f8b",
+  "executor-before.log": "766cec75c2a49efe63fd365a17dd317bdc2b38290531a81181ccb54ef129f779",
+  "external-evidence-before-cleanup.log": "e5321c4d2f926511164cca3c011ae6151fd4b3e252fa4cd255c63149db232ee8",
+  "external-evidence-unstaged-removal.log": "3450eb7b4983feae3a1d675a9febcb40b10e185ec6d0b6c737e424c616c45c1f",
+  "repository-truth-configured.log": "bdc655d6bcd66d3c30be7cc5af85adeaed40c1da0f129ded575cfd4bb3a84fb1",
+  "repository-truth-missing-observer.log": "459b08d43ba617eccf1a09370b3b0e8fc68f271cc481e4b645ad08bb26cdebd3",
+  "source-check-comparison.json": "b3ab2572929c1b0022bb753c98be2d5960eae3a84ad7a5becc4816b8312e5908",
+  "source-equivalence.json": "7102f7c6abcece226650a28abfbae2b2ec27fb53cf492d2f52ac043b47d2d1a3",
+  "types-oracle-after.log": "fe4efad8a179be51878fb885bad91e60c6816df4db947c3379d2f0a526d71a8e",
+  "types-oracle-before.log": "9fa2c8dd2c42757039375cb9865e297311d64114dfdbf50c073fda53969faa94"
+}

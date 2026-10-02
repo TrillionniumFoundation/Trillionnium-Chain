@@ -1,0 +1,495 @@
+    Finished `test` profile [unoptimized] target(s) in 0.07s
+     Running unittests src/lib.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_oracle-2c9a1f9d81e80a6b)
+
+running 118 tests
+test tests::accepts_deserialized_repeated_observations_with_matching_hash ... ok
+test tests::accepts_deserialized_sample_count_exactly_at_update_rate_cap_with_matching_hash ... ok
+test tests::accepts_deserialized_snapshot_timestamp_exactly_at_window_end_boundary ... ok
+test tests::accepts_deserialized_zero_width_window_at_boundary_with_matching_hash ... ok
+test tests::accepts_policy_when_max_deviation_bps_hits_guardrail_cap ... ok
+test tests::accepts_policy_when_min_sources_matches_update_rate_cap ... ok
+test tests::accepts_repeated_observations_when_sample_count_exceeds_unique_sources ... ok
+test tests::accepts_sample_count_exactly_at_update_rate_cap ... ok
+test tests::accepts_snapshot_timestamp_exactly_at_window_end_boundary ... ok
+test tests::accepts_zero_width_window_at_boundary ... ok
+test tests::bridge_contract_consistent_accepts_unclassified_update_rate_fail_closed_report ... ok
+test tests::bridge_contract_consistent_rejects_accepted_report_with_zero_source_cardinality ... ok
+test tests::bridge_contract_consistent_rejects_blank_unclassified_error_label ... ok
+test tests::bridge_contract_consistent_rejects_classified_error_label_without_classified_counters ... ok
+test tests::bridge_contract_consistent_rejects_empty_bridge_sample_even_when_counters_align ... ok
+test tests::bridge_contract_consistent_rejects_metrics_sample_count_mismatch ... ok
+test tests::bridge_contract_consistent_rejects_ok_error_coherence_drift ... ok
+test tests::bridge_contract_consistent_rejects_unclassified_error_label_with_classified_counters ... ok
+test tests::deviation_bps_saturates_at_cap_for_extreme_values ... ok
+test tests::observation_helpers_keep_unclassified_errors_out_of_classified_totals ... ok
+test tests::observation_helpers_match_metrics_helpers_for_classified_outcomes ... ok
+test tests::observed_report_accepts_exact_match_under_zero_deviation_policy ... ok
+test tests::observed_report_accepts_sample_count_exactly_at_update_rate_cap ... ok
+test tests::observed_report_accepts_snapshot_timestamp_exactly_at_window_end_boundary ... ok
+test tests::observed_report_caps_extreme_drift_boundary_to_guardrail_ceiling ... ok
+test tests::observed_report_classifies_empty_snapshot_hash_as_quorum_failure ... ok
+test tests::observed_report_classifies_empty_source_id_as_quorum_failure ... ok
+test tests::observed_report_classifies_future_snapshot_as_stale_temporal_failure ... ok
+test tests::observed_report_classifies_invalid_snapshot_hash_format_as_quorum_failure ... ok
+test tests::observed_report_classifies_non_canonical_snapshot_hash_as_quorum_failure ... ok
+test tests::observed_report_classifies_non_canonical_source_id_as_quorum_failure ... ok
+test tests::observed_report_classifies_non_canonical_source_ordering_as_quorum_failure ... ok
+test tests::observed_report_deduplicates_mixed_alias_blank_and_duplicate_sources_for_cardinality ... ok
+test tests::observed_report_deduplicates_tab_and_newline_wrapped_source_aliases_for_cardinality ... ok
+test tests::observed_report_excludes_all_blank_source_ids_from_canonical_source_cardinality ... ok
+test tests::observed_report_excludes_blank_source_ids_from_canonical_source_cardinality ... ok
+test tests::observed_report_helpers_exclude_unclassified_errors_from_reject_total ... ok
+test tests::observed_report_keeps_single_snapshot_source_cardinality_on_unclassified_error ... ok
+test tests::observed_report_keeps_source_cardinality_distinct_from_repeated_observation_count ... ok
+test tests::observed_report_keeps_source_cardinality_on_invalid_quorum_floor_policy_error ... ok
+test tests::observed_report_keeps_source_cardinality_on_zero_staleness_policy_error ... ok
+test tests::observed_report_keeps_source_cardinality_on_zero_update_rate_policy_error ... ok
+test tests::observed_report_maps_drift_rejection_to_stable_error_label ... ok
+test tests::observed_report_maps_future_snapshot_to_stale_error_label ... ok
+test tests::observed_report_maps_inconsistent_sample_count_to_quorum_error_label ... ok
+test tests::observed_report_maps_invalid_window_timestamp_to_stale_without_counter_drift ... ok
+test tests::observed_report_maps_invalid_window_to_stale_without_counter_drift ... ok
+test tests::observed_report_maps_quorum_rejection_to_stable_error_label ... ok
+test tests::observed_report_maps_stale_rejection_to_stable_error_label ... ok
+test tests::observed_report_maps_success_to_stable_metrics_contract ... ok
+test tests::observed_report_maps_update_rate_rejection_to_stable_error_label ... ok
+test tests::observed_report_prefers_future_stale_label_over_quorum_and_drift_failures ... ok
+test tests::observed_report_prefers_future_stale_label_over_rate_failure ... ok
+test tests::observed_report_preserves_canonical_source_cardinality_under_empty_feed_guard ... ok
+test tests::observed_report_preserves_empty_feed_id_error_without_counter_drift ... ok
+test tests::observed_report_preserves_exact_drift_boundary_as_drift_label ... ok
+test tests::observed_report_preserves_invalid_policy_error_without_counter_drift ... ok
+test tests::observed_report_preserves_invalid_quorum_floor_policy_error_without_counter_drift ... ok
+test tests::observed_report_preserves_non_canonical_feed_id_error_without_counter_drift ... ok
+test tests::observed_report_preserves_single_snapshot_counter_conservation_for_classified_outcomes ... ok
+test tests::observed_report_preserves_snapshot_hash_mismatch_details_with_classified_quorum_failure ... ok
+test tests::observed_report_preserves_snapshot_hash_mismatch_details_with_quorum_accounting ... ok
+test tests::observed_report_preserves_source_cardinality_on_future_snapshot_stale_label ... ok
+test tests::observed_report_preserves_unsorted_source_error_without_counter_drift ... ok
+test tests::observed_report_preserves_zero_deviation_boundary_as_drift_label ... ok
+test tests::observed_report_preserves_zero_sample_count_error_without_counter_drift ... ok
+test tests::observed_report_preserves_zero_staleness_policy_error_without_counter_drift ... ok
+test tests::observed_report_preserves_zero_update_rate_policy_error_without_counter_drift ... ok
+test tests::observed_report_treats_deserialized_duplicate_sources_as_contract_consistent_quorum_failure ... ok
+test tests::observed_report_treats_exact_staleness_boundary_as_accepted_without_counter_drift ... ok
+test tests::observed_report_uses_canonical_source_cardinality_for_deserialized_duplicates ... ok
+test tests::observed_report_uses_canonical_source_cardinality_for_deserialized_source_aliases ... ok
+test tests::policy_accepts_snapshot_exactly_at_staleness_boundary ... ok
+test tests::rejects_deserialized_blank_snapshot_hash_before_digest_compare ... ok
+test tests::rejects_deserialized_duplicate_source_aliases_even_with_matching_hash ... ok
+test tests::rejects_deserialized_duplicate_sources_even_with_matching_hash ... ok
+test tests::rejects_deserialized_empty_feed_id_even_with_matching_hash ... ok
+test tests::rejects_deserialized_empty_source_id_even_with_matching_hash ... ok
+test tests::rejects_deserialized_insufficient_sources_even_with_matching_hash ... ok
+test tests::rejects_deserialized_invalid_window_even_with_matching_hash ... ok
+test tests::rejects_deserialized_non_canonical_feed_id_even_with_matching_hash ... ok
+test tests::rejects_deserialized_non_canonical_snapshot_hash_before_digest_compare ... ok
+test tests::rejects_deserialized_non_canonical_source_id_even_with_matching_hash ... ok
+test tests::rejects_deserialized_non_canonical_source_ordering_even_with_matching_hash ... ok
+test tests::rejects_deserialized_snapshot_timestamp_before_window_end ... ok
+test tests::rejects_deserialized_unsorted_sources_even_with_matching_hash ... ok
+test tests::rejects_deserialized_zero_sample_count_even_with_matching_hash ... ok
+test tests::rejects_deviation_exactly_at_threshold ... ok
+test tests::rejects_deviation_exceeded ... ok
+test tests::rejects_duplicate_sources_when_building_snapshot ... ok
+test tests::rejects_empty_feed_id_when_building_snapshot ... ok
+test tests::rejects_feed_id_with_internal_whitespace_and_control_chars ... ok
+test tests::rejects_future_snapshot_timestamp ... ok
+test tests::rejects_insufficient_sources ... ok
+test tests::rejects_non_canonical_feed_id_when_building_snapshot ... ok
+test tests::rejects_non_canonical_source_id_when_building_snapshot ... ok
+test tests::rejects_policy_when_max_staleness_is_zero ... ok
+test tests::rejects_policy_when_max_update_rate_is_zero ... ok
+test tests::rejects_policy_when_min_sources_exceeds_update_rate_cap ... ok
+test tests::rejects_policy_when_min_sources_is_zero ... ok
+test tests::rejects_sample_count_above_update_rate_cap ... ok
+test tests::rejects_sample_count_below_distinct_source_count ... ok
+test tests::rejects_sample_count_below_source_cardinality ... ok
+test tests::rejects_snapshot_timestamp_before_window_end_when_building_snapshot ... ok
+test tests::rejects_stale_snapshot ... ok
+test tests::rejects_zero_sample_count_as_invalid_accounting ... ok
+test tests::rejects_zero_sample_count_even_when_multiple_sources_are_present ... ok
+test tests::snapshot_hash_is_reproducible ... ok
+test tests::sorts_sources_canonically_when_building_snapshot ... ok
+test tests::source_id_parse_rejects_internal_whitespace_and_control_chars ... ok
+test tests::source_id_parse_rejects_non_canonical_whitespace_and_uppercase ... ok
+test tests::source_order_canonicalization_stabilizes_snapshot_hash ... ok
+test tests::validate_hash_rejects_non_hex_snapshot_digest_surface ... ok
+test tests::validate_hash_rejects_short_snapshot_digest_surface ... ok
+test tests::validate_hash_rejects_uppercase_snapshot_digest_surface ... ok
+test tests::validate_hash_rejects_whitespace_padded_snapshot_digest_surface ... ok
+test tests::zero_baseline_cap_boundary_is_treated_as_drift_guardrail ... ok
+test tests::zero_deviation_policy_accepts_only_exact_median_matches ... ok
+
+test result: ok. 118 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_types-2fff75d3098b8795)
+
+running 200 tests
+test interop_identity::tests::capability_expiry_is_inclusive_at_expiry_height ... ok
+test interop_identity::tests::capability_is_not_active_before_issue_height ... ok
+test interop_identity::tests::capability_revocation_respects_historical_heights ... ok
+test interop_identity::tests::content_hash_changes_when_audit_note_differs ... ok
+test interop_identity::tests::did_capability_revocation_appends_audit_trail ... ok
+test interop_identity::tests::issue_capability_failure_does_not_consume_token_sequence ... ok
+test interop_identity::tests::issue_capability_rejects_actor_that_is_not_did_controller_without_side_effects ... ok
+test interop_identity::tests::issue_capability_rejects_expiry_before_issue_height ... ok
+test interop_identity::tests::issue_capability_rejects_height_before_did_creation_without_side_effects ... ok
+test interop_identity::tests::issue_capability_rejects_noncanonical_actor_identity_without_side_effects ... ok
+test interop_identity::tests::issue_capability_rejects_noncanonical_subject_did_without_side_effects ... ok
+test interop_identity::tests::issue_capability_rejects_revoked_did_without_side_effects ... ok
+test interop_identity::tests::market_capability_scopes_work_as_expected ... ok
+test interop_identity::tests::register_did_rejects_bidi_or_invisible_format_controls_without_side_effects ... ok
+test interop_identity::tests::register_did_rejects_blank_or_noncanonical_identifiers_without_side_effects ... ok
+test interop_identity::tests::register_did_rejects_did_case_and_length_boundary_violations_without_side_effects ... ok
+test interop_identity::tests::register_did_rejects_duplicate_without_side_effects ... ok
+test interop_identity::tests::renew_capability_at_expiry_boundary_keeps_token_active_and_audited ... ok
+test interop_identity::tests::renew_capability_extends_expiry_and_appends_audit ... ok
+test interop_identity::tests::renew_capability_rejects_actor_that_is_not_did_controller_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_arabic_letter_mark_actor_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_at_revocation_boundary_fail_closed ... ok
+test interop_identity::tests::renew_capability_rejects_blank_actor_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_bom_actor_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_clearing_existing_expiry_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_control_character_actor_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_expiry_before_renew_height_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_expiry_regression_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_height_before_issue_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_missing_subject_did_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_noncanonical_actor_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_previously_revoked_token_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_revoked_did_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_unknown_token_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_when_renew_height_equals_did_revocation_boundary ... ok
+test interop_identity::tests::renew_capability_rejects_when_renew_height_equals_revocation_height ... ok
+test interop_identity::tests::renew_capability_rejects_word_joiner_actor_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_zero_width_actor_without_side_effects ... ok
+test interop_identity::tests::renew_capability_rejects_zero_width_non_joiner_actor_without_side_effects ... ok
+test interop_identity::tests::renew_capability_with_non_expiring_token_is_idempotent_without_new_audit ... ok
+test interop_identity::tests::renew_capability_with_same_expiry_is_idempotent_without_new_audit ... ok
+test interop_identity::tests::revoke_capability_audit_note_strips_invisibles_and_collapses_whitespace ... ok
+test interop_identity::tests::revoke_capability_audit_note_with_only_controls_after_trim_is_none ... ok
+test interop_identity::tests::revoke_capability_bidi_controls_only_audit_note_is_normalized_to_none ... ok
+test interop_identity::tests::revoke_capability_blank_audit_note_is_normalized_to_none ... ok
+test interop_identity::tests::revoke_capability_is_idempotent_for_audit_and_timestamp ... ok
+test interop_identity::tests::revoke_capability_keeps_controller_check_even_after_token_is_revoked ... ok
+test interop_identity::tests::revoke_capability_makes_token_inactive_at_same_height_fail_closed ... ok
+test interop_identity::tests::revoke_capability_rejects_actor_that_is_not_did_controller_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_rejects_arabic_letter_mark_actor_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_rejects_blank_actor_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_rejects_bom_actor_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_rejects_control_character_actor_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_rejects_height_before_issue_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_rejects_word_joiner_actor_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_rejects_zero_width_actor_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_rejects_zero_width_non_joiner_actor_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_replay_with_older_height_is_rejected_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_replay_with_same_height_is_idempotent_without_side_effects ... ok
+test interop_identity::tests::revoke_capability_trims_audit_note_for_compliance_provenance ... ok
+test interop_identity::tests::revoke_capability_zero_width_audit_note_is_normalized_to_none ... ok
+test interop_identity::tests::revoke_did_cascade_does_not_backdate_capability_before_issue_height ... ok
+test interop_identity::tests::revoke_did_does_not_override_previously_revoked_capability ... ok
+test interop_identity::tests::revoke_did_is_idempotent_for_audit_and_timestamp ... ok
+test interop_identity::tests::revoke_did_rejects_actor_that_is_not_did_controller_without_side_effects ... ok
+test interop_identity::tests::revoke_did_rejects_height_before_creation_without_side_effects ... ok
+test interop_identity::tests::revoke_did_rejects_noncanonical_did_without_side_effects ... ok
+test interop_identity::tests::revoke_did_replay_preserves_issue_height_floor_when_repairing_legacy_token ... ok
+test interop_identity::tests::revoke_did_replay_repairs_legacy_uncascaded_capability_without_rewriting_did_timestamp ... ok
+test interop_identity::tests::revoke_did_replay_with_older_height_is_rejected_without_side_effects ... ok
+test interop_identity::tests::settlement_evidence_path_avoids_windows_reserved_device_names ... ok
+test interop_identity::tests::settlement_evidence_path_avoids_windows_reserved_device_names_with_extension_alias ... ok
+test interop_identity::tests::settlement_evidence_path_avoids_windows_reserved_device_names_with_trailing_dot_or_space ... ok
+test interop_identity::tests::settlement_evidence_path_avoids_windows_reserved_device_names_with_unicode_space_padding ... ok
+test interop_identity::tests::settlement_evidence_path_encodes_dual_chain_route_and_state ... ok
+test interop_identity::tests::settlement_evidence_path_replaces_empty_route_segments_with_placeholder ... ok
+test interop_identity::tests::settlement_evidence_path_rewrites_dot_segments_to_placeholder ... ok
+test interop_identity::tests::settlement_evidence_path_sanitizes_arabic_letter_mark_controls ... ok
+test interop_identity::tests::settlement_evidence_path_sanitizes_bidi_and_zero_width_format_controls ... ok
+test interop_identity::tests::settlement_evidence_path_sanitizes_colon_for_cross_platform_filesystem_safety ... ok
+test interop_identity::tests::settlement_evidence_path_sanitizes_nested_path_aliases_without_false_reserved_suffixes ... ok
+test interop_identity::tests::settlement_evidence_path_sanitizes_nested_reserved_device_aliases_with_trailing_dot_or_space ... ok
+test interop_identity::tests::settlement_evidence_path_sanitizes_route_segments_for_filesystem_safety ... ok
+test interop_identity::tests::settlement_evidence_path_sanitizes_unicode_whitespace_segments ... ok
+test interop_identity::tests::settlement_evidence_path_sanitizes_windows_reserved_punctuation ... ok
+test interop_identity::tests::settlement_evidence_path_sanitizes_windows_separators_and_control_whitespace ... ok
+test interop_identity::tests::settlement_evidence_path_sanitizes_word_joiner_controls ... ok
+test interop_identity::tests::settlement_evidence_path_tracks_terminal_state_machine_outcome ... ok
+test interop_identity::tests::settlement_evidence_path_trims_trailing_dot_or_space_for_non_reserved_segments ... ok
+test interop_identity::tests::settlement_finalize_requires_non_empty_settlement_tx ... ok
+test interop_identity::tests::settlement_pending_reapply_scrubs_terminal_payload_fields ... ok
+test interop_identity::tests::settlement_reapply_same_terminal_status_is_idempotent ... ok
+test interop_identity::tests::settlement_revert_and_finalize_fields_are_mutually_exclusive ... ok
+test interop_identity::tests::settlement_revert_reason_normalization_keeps_non_proof_reason ... ok
+test interop_identity::tests::settlement_revert_reason_normalizes_proof_adapter_aliases ... ok
+test interop_identity::tests::settlement_revert_reason_reapply_accepts_compact_legacy_alias ... ok
+test interop_identity::tests::settlement_revert_reason_reapply_accepts_delimiter_variant_alias ... ok
+test interop_identity::tests::settlement_revert_reason_reapply_accepts_equivalent_canonical_alias ... ok
+test interop_identity::tests::settlement_revert_requires_non_empty_reason ... ok
+test interop_identity::tests::settlement_state_machine_enforces_pending_terminal_model ... ok
+test interop_identity::tests::settlement_state_machine_enforces_receipt_success_for_finalization ... ok
+test interop_identity::tests::settlement_status_update_rejects_height_regression_without_side_effects ... ok
+test interop_identity::tests::settlement_terminal_idempotent_reapply_accepts_legacy_revert_reason_alias ... ok
+test interop_identity::tests::settlement_terminal_idempotent_reapply_accepts_whitespace_equivalent_payload ... ok
+test interop_identity::tests::settlement_terminal_idempotent_reapply_ignores_blank_payload_overrides ... ok
+test interop_identity::tests::settlement_terminal_idempotent_reapply_rejects_conflicting_payload_override ... ok
+test interop_identity::tests::settlement_terminal_idempotent_reapply_still_rejects_height_regression ... ok
+test interop_identity::tests::settlement_terminal_payloads_are_trimmed_before_persisting ... ok
+test interop_identity::tests::verify_capability_accepts_active_controller_and_matching_scope ... ok
+test interop_identity::tests::verify_capability_accepts_height_equal_to_expiry_boundary ... ok
+test interop_identity::tests::verify_capability_allows_historical_height_before_did_revocation ... ok
+test interop_identity::tests::verify_capability_rejects_arabic_letter_mark_actor_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_blank_actor_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_bom_actor_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_control_character_actor_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_expired_token_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_height_before_issue_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_height_equal_to_did_revocation_boundary ... ok
+test interop_identity::tests::verify_capability_rejects_inactive_or_unauthorized_actor ... ok
+test interop_identity::tests::verify_capability_rejects_missing_subject_did_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_noncanonical_actor_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_revoked_did_even_if_token_looks_active ... ok
+test interop_identity::tests::verify_capability_rejects_scope_mismatch_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_unknown_token_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_word_joiner_actor_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_zero_width_actor_without_side_effects ... ok
+test interop_identity::tests::verify_capability_rejects_zero_width_non_joiner_actor_without_side_effects ... ok
+test interop_identity::tests::verify_capability_unauthorized_actor_does_not_mutate_registry ... ok
+test market_reputation::tests::reputation_score_clamps_input_rates_above_bps_ceiling ... ok
+test market_reputation::tests::reputation_score_is_clamped_to_zero ... ok
+test market_reputation::tests::reputation_score_never_exceeds_bps_ceiling ... ok
+test market_reputation::tests::reputation_score_penalty_events_reduce_score_monotonically ... ok
+test market_reputation::tests::reputation_tier_thresholds_are_stable ... ok
+test relay::tests::relay_auth_allows_same_nonce_for_different_senders ... ok
+test relay::tests::relay_auth_allows_same_nonce_for_different_task_ids ... ok
+test relay::tests::relay_auth_cross_chain_replay_rejected_by_domain_signature ... ok
+test relay::tests::relay_auth_legacy_v0_compat_allowed_by_default ... ok
+test relay::tests::relay_auth_legacy_v0_rejected_in_strict_mode ... ok
+test relay::tests::relay_auth_missing_required_fields_rejected ... ok
+test relay::tests::relay_auth_negative_matrix_min12_cases ... ok
+test relay::tests::relay_auth_rejects_delimiter_injection_in_signed_fields ... ok
+test relay::tests::relay_auth_verify_bad_version_rejected ... ok
+test relay::tests::relay_auth_verify_fail_bad_signature ... ok
+test relay::tests::relay_auth_verify_pass ... ok
+test relay::tests::relay_auth_verify_rejects_noncanonical_chain_id_whitespace ... ok
+test relay::tests::relay_auth_verify_rejects_noncanonical_session_id_whitespace ... ok
+test relay::tests::relay_auth_verify_replay_nonce_rejected ... ok
+test relay::tests::relay_auth_verify_seq_regression_rejected ... ok
+test relay::tests::relay_auth_verify_time_skew_rejected ... ok
+test relay::tests::relay_auth_verify_unsupported_type_rejected ... ok
+test relay::tests::relay_auth_wrong_domain_signature_rejected ... ok
+test relay::tests::relay_envelope_json_roundtrip ... ok
+test request_status::tests::illegal_transition_is_stable_error ... ok
+test request_status::tests::legal_transitions_pass ... ok
+test request_status::tests::parse_accepts_case_insensitive_and_whitespace_wrapped_inputs ... ok
+test request_status::tests::parse_unknown_state_is_stable_error ... ok
+test request_status::tests::same_state_transition_is_idempotent ... ok
+test request_status::tests::terminal_states_are_irreversible ... ok
+test request_status::tests::transition_matrix_matches_spec_and_returns_stable_errors ... ok
+test tests::basic_structs ... ok
+test tests::gov_param_key_enforces_reserved_key_id_bindings_fail_closed ... ok
+test tests::gov_param_key_roundtrips_canonical_registry_strings ... ok
+test tests::task_metadata_backward_compatible_with_legacy_note_only_payload ... ok
+test tests::task_metadata_compatibility_findings_serialize_with_stable_query_facing_names ... ok
+test tests::task_metadata_compatibility_helpers_preserve_typed_finding_order ... ok
+test tests::task_metadata_compatibility_profile_flags_incomplete_metering_even_when_other_fields_are_canonical ... ok
+test tests::task_metadata_compatibility_profile_flags_non_canonical_legacy_note_only_payload ... ok
+test tests::task_metadata_compatibility_profile_marks_legacy_note_only_payload ... ok
+test tests::task_metadata_compatibility_profile_rejects_non_canonical_metering_core_fields ... ok
+test tests::task_metadata_compatibility_profile_rejects_non_canonical_model_and_provenance_fields ... ok
+test tests::task_metadata_compatibility_report_keeps_legacy_note_only_with_fallback_settlement ... ok
+test tests::task_metadata_compatibility_report_keeps_legacy_note_only_with_incomplete_fallback_settlement ... ok
+test tests::task_metadata_compatibility_report_omits_empty_findings_array ... ok
+test tests::task_metadata_compatibility_report_prefers_threaded_settlement_snapshot ... ok
+test tests::task_metadata_compatibility_report_serializes_threaded_settlement_source_when_present ... ok
+test tests::task_metadata_compatibility_report_serializes_with_stable_query_facing_shape ... ok
+test tests::task_metadata_compatibility_report_stays_consistent_with_helper_accessors ... ok
+test tests::task_metadata_compatibility_report_treats_threaded_settlement_as_non_legacy_shape ... ok
+test tests::task_metadata_compatibility_report_uses_inline_settlement_snapshot ... ok
+test tests::task_metadata_compatibility_report_with_settlement_snapshot_keeps_settlement_verdict_distinct ... ok
+test tests::task_metadata_roundtrip_with_schema_core_fields ... ok
+test tests::task_metadata_settlement_alias_deserializes_into_threaded_settlement ... ok
+test tests::task_metadata_settlement_alias_yields_to_canonical_settlement_when_both_are_present ... ok
+test tests::task_metadata_settlement_snapshot_helper_accessors_share_fallback_logic ... ok
+test tests::task_metadata_settlement_snapshot_source_distinguishes_threaded_from_legacy_fallback ... ok
+test tests::task_object_defaults_proof_type_when_legacy_payload_omits_it ... ok
+test tests::task_settlement_snapshot_core_fields_accept_output_root_binding ... ok
+test tests::task_settlement_snapshot_core_fields_accept_output_span_commitment_binding ... ok
+test transcript::tests::transcript_batch_proof_hash_pair_count_estimate_is_lower ... ok
+test transcript::tests::transcript_batch_proofs_match_single_proof_api ... ok
+test transcript::tests::transcript_batch_proofs_reject_empty_targets ... ok
+test transcript::tests::transcript_envelope_hash_uses_stable_field_order ... ok
+test transcript::tests::transcript_proof_verify_fail_tampered_leaf ... ok
+test transcript::tests::transcript_proof_verify_pass ... ok
+test transcript::tests::transcript_segment_root_rejects_order_mismatch ... ok
+test transcript::tests::transcript_single_proof_api_rejects_empty_batch_indirectly ... ok
+test transfer::tests::transfer_tx_basic_validate_ok ... ok
+test transfer::tests::transfer_tx_missing_signature_rejected ... ok
+test transfer::tests::transfer_tx_reject_address_mismatch ... ok
+test transfer::tests::transfer_tx_reject_tampered_signature ... ok
+
+test result: ok. 200 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/i1_did_activity_boundary.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i1_did_activity_boundary-631cc7f53c023255)
+
+running 3 tests
+test did_is_inactive_before_creation_and_starting_at_revocation_height ... ok
+test did_revoked_at_creation_height_is_never_active ... ok
+test did_without_revocation_stays_active_from_creation_height_onward ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i2_capability_expiry_inclusive_boundary.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_expiry_inclusive_boundary-cddde16664182e46)
+
+running 1 test
+test expiring_capability_is_active_through_expiry_height_only ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i2_capability_expiry_revoke_boundary.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_expiry_revoke_boundary-d73d1dd94bc17ed9)
+
+running 1 test
+test capability_revocation_takes_precedence_over_expiry_window ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i2_capability_issue_revoke_same_height.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_issue_revoke_same_height-570b3a0e31f6fbde)
+
+running 1 test
+test capability_revoked_at_issue_height_is_never_active ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i2_capability_nonexpiring_revocation_boundary.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_nonexpiring_revocation_boundary-69c5604d4044c0c9)
+
+running 1 test
+test non_expiring_capability_still_honors_revocation_boundary ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i2_capability_renew_rejects_revocation_boundary.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_renew_rejects_revocation_boundary-20310bbcca203eb6)
+
+running 1 test
+test renew_capability_rejects_height_equal_to_revocation_boundary ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i3_capability_fail_closed_precedence.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_capability_fail_closed_precedence-17473d8667f8b0fe)
+
+running 16 tests
+test i3_capability_fail_closed_precedence_boundary::pre_revocation_height_with_unauthorized_actor_returns_unauthorized_not_did_revoked ... ok
+test i3_capability_fail_closed_precedence_did::revoked_did_before_token_issue_still_returns_did_revoked_fail_closed ... ok
+test i3_capability_fail_closed_precedence_did::revoked_did_with_expired_token_and_scope_mismatch_still_returns_did_revoked_fail_closed ... ok
+test i3_capability_fail_closed_precedence_did::revoked_did_with_expired_token_and_unauthorized_actor_still_returns_did_revoked_fail_closed ... ok
+test i3_capability_fail_closed_precedence_did::revoked_did_with_revoked_token_and_scope_mismatch_still_returns_did_revoked_fail_closed ... ok
+test i3_capability_fail_closed_precedence_did::revoked_did_with_scope_mismatch_returns_did_revoked_fail_closed ... ok
+test i3_capability_fail_closed_precedence_did::revoked_did_with_unauthorized_actor_still_returns_did_revoked_fail_closed ... ok
+test i3_capability_fail_closed_precedence_token::expired_token_with_scope_mismatch_returns_inactive_fail_closed ... ok
+test i3_capability_fail_closed_precedence_token::expired_token_with_unauthorized_actor_returns_inactive_fail_closed ... ok
+test i3_capability_fail_closed_precedence_token::preissued_revoked_token_with_unauthorized_actor_and_scope_mismatch_stays_inactive_fail_closed ... ok
+test i3_capability_fail_closed_precedence_token::preissued_token_with_scope_mismatch_returns_inactive_fail_closed ... ok
+test i3_capability_fail_closed_precedence_token::preissued_token_with_unauthorized_actor_returns_inactive_fail_closed ... ok
+test i3_capability_fail_closed_precedence_token::revoked_and_expired_token_with_scope_mismatch_returns_inactive_fail_closed ... ok
+test i3_capability_fail_closed_precedence_token::revoked_and_expired_token_with_unauthorized_actor_returns_inactive_fail_closed ... ok
+test i3_capability_fail_closed_precedence_token::revoked_token_with_scope_mismatch_returns_inactive_fail_closed ... ok
+test i3_capability_fail_closed_precedence_token::revoked_token_with_unauthorized_actor_returns_inactive_fail_closed ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i3_capability_issue_renew_revoke_competition.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_capability_issue_renew_revoke_competition-dd18240bf439c8a6)
+
+running 9 tests
+test i3_capability_issue_renew_revoke_competition_did_boundary::issue_at_did_revocation_boundary_is_fail_closed_and_sequence_safe ... ok
+test i3_capability_issue_renew_revoke_competition_did_boundary::revoke_at_issue_boundary_is_immediately_fail_closed_and_side_effect_free_for_renew ... ok
+test i3_capability_issue_renew_revoke_competition_race::rejected_boundary_renew_after_same_height_revoke_keeps_audit_and_token_stable ... ok
+test i3_capability_issue_renew_revoke_competition_race::rejected_post_boundary_renew_after_same_height_renew_then_revoke_is_side_effect_free ... ok
+test i3_capability_issue_renew_revoke_competition_race::renew_at_revocation_boundary_is_fail_closed_when_revoke_lands_first ... ok
+test i3_capability_issue_renew_revoke_competition_race::revoke_dominates_issue_renew_revoke_competition_at_same_height ... ok
+test i3_capability_issue_renew_revoke_competition_race::same_height_revoke_replay_after_renew_then_revoke_is_idempotent_without_side_effects ... ok
+test i3_capability_issue_renew_revoke_competition_verify::verify_at_revocation_boundary_is_fail_closed_after_same_height_renew_revoke_race ... ok
+test i3_capability_issue_renew_revoke_competition_verify::verify_before_revocation_boundary_stays_active_after_same_height_renew_revoke_race ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i3_capability_nonexpiring_revoke_competition.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_capability_nonexpiring_revoke_competition-8d8047778260d290)
+
+running 4 tests
+test i3_capability_nonexpiring_revoke_competition_boundary::nonexpiring_same_height_renew_then_revoke_preserves_historical_pre_boundary_verify ... ok
+test i3_capability_nonexpiring_revoke_competition_boundary::nonexpiring_same_height_renew_then_revoke_still_fails_closed_at_boundary ... ok
+test i3_capability_nonexpiring_revoke_competition_boundary::nonexpiring_token_revoke_then_same_height_renew_is_fail_closed ... ok
+test i3_capability_nonexpiring_revoke_competition_side_effects::nonexpiring_rejected_post_boundary_renew_after_same_height_renew_then_revoke_is_side_effect_free ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i3_did_revoke_cascade_same_height.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_did_revoke_cascade_same_height-fab16ac91c14dfa5)
+
+running 2 tests
+test did_revoke_cascade_same_height_fail_closed_for_all_subject_tokens ... ok
+test did_revoke_same_height_replay_is_idempotent_without_duplicate_cascade_audit ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i3_did_token_revoke_same_height_precedence.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_did_token_revoke_same_height_precedence-f3009b2aed54ae33)
+
+running 1 test
+test did_revoke_dominates_token_revoke_at_same_height_for_verifier_shape ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/i3_issue_renew_revoke_same_height.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_issue_renew_revoke_same_height-23b5e472526fef50)
+
+running 1 test
+test issue_renew_revoke_same_height_is_fail_closed_at_boundary ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/m2_reputation_upper_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/m2_reputation_upper_bound-f51c136bf372b359)
+
+running 1 test
+test m2_reputation_score_clamps_to_upper_bound_and_stays_trusted ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_metadata_compatibility_truth_table.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/task_metadata_compatibility_truth_table-a5ffe5ddfe25b4fe)
+
+running 11 tests
+test task_metadata_compatibility_truth_table_preserves_typed_governance_upgrade_decisions ... ok
+test task_metadata_compatibility_truth_table_settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_incomplete_snapshot ... ok
+test task_metadata_compatibility_truth_table_settlement_threading_prefers_incomplete_inline_settlement_over_complete_legacy_fallback ... ok
+test task_metadata_compatibility_truth_table_settlement_threading_promotes_legacy_fallback_without_breaking_note_only_compatibility ... ok
+test task_metadata_compatibility_truth_table_settlement_threading_report_serialization_preserves_fallback_vs_threaded_source ... ok
+test task_metadata_compatibility_truth_table_settlement_threading_serialization_keeps_legacy_note_only_shape_compact ... ok
+test task_metadata_compatibility_truth_table_task_object_report_tracks_legacy_fallback_to_threaded_transition ... ok
+test task_metadata_compatibility_truth_table_task_object_settlement_helpers_preserve_absent_fallback_and_threaded_precedence ... ok
+test task_metadata_compatibility_truth_table_task_object_threading_creates_metadata_when_absent ... ok
+test task_metadata_compatibility_truth_table_task_object_threading_does_not_clobber_existing_inline_settlement ... ok
+test task_metadata_compatibility_truth_table_task_object_threading_ignores_absent_fallback_without_materializing_metadata ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_metadata_settlement_alias.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/task_metadata_settlement_alias-d33f6d7c9f7b3b77)
+
+running 3 tests
+test canonical_settlement_wins_when_transitional_payload_sends_both_keys ... ok
+test settlement_snapshot_alias_deserializes_into_threaded_task_metadata ... ok
+test settlement_snapshot_alias_serializes_back_under_canonical_settlement_key ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_metadata_settlement_threading.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/task_metadata_settlement_threading-b6598f3c6a02a774)
+
+running 3 tests
+test thread_settlement_snapshot_does_not_clobber_existing_inline_settlement ... ok
+test thread_settlement_snapshot_ignores_absent_fallback ... ok
+test thread_settlement_snapshot_lifts_legacy_fallback_into_metadata ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/x3_settlement_stale_pending_replay.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/x3_settlement_stale_pending_replay-9600b8868f8ddc80)
+
+running 3 tests
+test settlement_finalization_rejects_failed_tx_receipt ... ok
+test stale_pending_replay_after_finalize_is_rejected_without_mutation ... ok
+test terminal_finalize_replay_with_failed_tx_receipt_is_rejected_without_mutation ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

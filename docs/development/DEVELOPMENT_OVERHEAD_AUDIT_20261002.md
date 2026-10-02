@@ -107,6 +107,14 @@ validation work was running on the same machine.
   platform, module, generated-inventory and explicit-reference review, plus
   compiler/test evidence. No mass deletion is justified by this count.
 
+## Retained review artifacts
+
+The [audit evidence package](../../evidence/development-overhead-audit-v1/README.md)
+retains raw before/after test logs, both initial failures, benchmark samples,
+artifact hashes and a machine-readable source-equivalence record. Its first
+reviewed code head is `86b6b08478fd2ac77a660882349208a23c365ae6`; source hashes
+and dependency closures are explicit rather than inferred from file counts.
+
 ## Verification record
 
 - Eight new traversal/cache/fixture negative tests pass.

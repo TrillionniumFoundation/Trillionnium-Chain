@@ -1,0 +1,564 @@
+{
+  "schema": "development-overhead-source-equivalence-v1",
+  "baseline_head": "47864b93461c783e684454b24358e23eed6dba1c",
+  "reviewed_code_head": "86b6b08478fd2ac77a660882349208a23c365ae6",
+  "reviewed_code_tree": "87941789294817e17c089afad541b3e861781f37",
+  "scope": "source maintenance and local test evidence, not production or independent acceptance",
+  "historical_evidence_tree_unchanged": true,
+  "environment": {
+    "rust_toolchain": "1.95.0-x86_64-unknown-linux-gnu",
+    "cargo_build_jobs": 1,
+    "cargo_profile_dev_debug": 0,
+    "cargo_profile_test_debug": 0,
+    "cargo_incremental": 0,
+    "rust_test_threads": 1,
+    "cargo_network": "offline",
+    "lockfile": "locked"
+  },
+  "test_results": {
+    "executor": {
+      "before": 262,
+      "after": 262,
+      "failed": 0
+    },
+    "types_and_oracle": {
+      "targets": 19,
+      "before": 380,
+      "after": 380,
+      "failed": 0
+    }
+  },
+  "groups": [
+    {
+      "package": "trnm-executor",
+      "features": {},
+      "active_source_sha256_before_and_after": {
+        "trillionnium/crates/trnm-executor/src/lib.rs": "d5cf48dfe4daa00bd739b39bd3dbbc2148f6bddf171eb0e356b0f1df434db5f4",
+        "trillionnium/crates/trnm-executor/src/tests/hot_bucket_tests.rs": "d43c54cd94a69d7906bf6c1669a5d82678e4346b5d104bfe4344a71a7210217b"
+      },
+      "compiler_dependency_files_before_and_after": {
+        "trnm_executor-1c56d483f88db8e9.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_executor-1c56d483f88db8e9.d: crates/trnm-executor/src/lib.rs crates/trnm-executor/src/tests/hot_bucket_tests.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_executor-1c56d483f88db8e9: crates/trnm-executor/src/lib.rs crates/trnm-executor/src/tests/hot_bucket_tests.rs\n\ncrates/trnm-executor/src/lib.rs:\ncrates/trnm-executor/src/tests/hot_bucket_tests.rs:\n"
+      },
+      "removed_baseline_sources": {
+        "trillionnium/crates/trnm-executor/src/adaptive.rs": {
+          "sha256": "99e63f601d223cd4da2933e75ed117033768714eda856188b46389dc8dd5855a",
+          "lines": 127
+        },
+        "trillionnium/crates/trnm-executor/src/aggressive_profile.rs": {
+          "sha256": "069202d68d0758d1bd2381fbfae2039bf3986b32a7352f88ee38897f2ff2a606",
+          "lines": 262
+        },
+        "trillionnium/crates/trnm-executor/src/conflict.rs": {
+          "sha256": "db2119469afa92161b63a6bbf5e2ecca79a9d86168c4cd5dcd1798095b8d048e",
+          "lines": 523
+        },
+        "trillionnium/crates/trnm-executor/src/env_config.rs": {
+          "sha256": "6bf7284ddfb905434b540985758224958e8ae7d11f594c806ef153b6ac962edf",
+          "lines": 383
+        },
+        "trillionnium/crates/trnm-executor/src/reorder.rs": {
+          "sha256": "55bea786108b8dbe284dd67be32fb6b8e666d639026ac9d612980f31f8a5990c",
+          "lines": 245
+        },
+        "trillionnium/crates/trnm-executor/src/tests/conflict_tests.rs": {
+          "sha256": "eadb6af68c49721955dee2a0168056e7b94752eca569590d3aec849cb89d2433",
+          "lines": 253
+        },
+        "trillionnium/crates/trnm-executor/src/tests/env_auto_tests.rs": {
+          "sha256": "2be107e1cb50e8fa8a576fee0d75c6478559475fa4ffa72f5bdf4e7f8f826311",
+          "lines": 12
+        },
+        "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_fail_closed_tests.rs": {
+          "sha256": "e67b378edc296d02fb251f99c7dfc6521fd1be7d1e9cc9ef1d021ba883c46b19",
+          "lines": 312
+        },
+        "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_hotspot_boundary_tests.rs": {
+          "sha256": "87fde03679e96e25835ea07c5f07721fc6503405fe69ca4e6722d210a4ecf3bf",
+          "lines": 436
+        },
+        "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_sampling_tests.rs": {
+          "sha256": "abfcf65c287f6449f4c1d729e52397d4ba8678ebcf30d4e0a90929462b98d2c4",
+          "lines": 248
+        },
+        "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/aggressive_env_knobs_tests.rs": {
+          "sha256": "60bffb4c1f1d5c1d1482d053e22b1cadab2d2e4889a5823ca9373fc01344d368",
+          "lines": 201
+        },
+        "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/auto_numeric_parser_tests.rs": {
+          "sha256": "b1c3f9db5371a3056023588d21c40dbf81589e9444f3b5ef8bf1d06d8059227a",
+          "lines": 460
+        },
+        "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/mod.rs": {
+          "sha256": "986a4f159fe810589fac93e2221c1b535c4a8233e8d053e3c681e829c7e3de0c",
+          "lines": 7
+        },
+        "trillionnium/crates/trnm-executor/src/tests/grouping_tests.rs": {
+          "sha256": "0525bb6b1e4e1aa21dea237ed462ba5fa00efecaba33ba43a4c5284260580b3f",
+          "lines": 599
+        }
+      },
+      "historical_reference_files": [
+        "evidence/pon-client-confirmation-v1/failures/initial-qualification/qualification.json",
+        "evidence/pon-client-confirmation-v1/qualification.json",
+        "evidence/pon-closed-round-v1/qualification.json",
+        "evidence/pon-closed-round-v1/work-cost/execution.json",
+        "evidence/pon-contract-authority-v1/qualification/report.json",
+        "evidence/pon-contract-authority-v1/work-cost/execution.json",
+        "evidence/pon-evaluation-bundle-v1/qualification.json",
+        "evidence/pon-four-priority-audit-v1/work-cost/execution.json",
+        "evidence/pon-four-priority-audit-v1/work-cost/paired/execution.json",
+        "evidence/pon-native-node-v1/qualification.json",
+        "evidence/pon-native-node-v1/work-cost/execution.json",
+        "evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/qualification.json",
+        "evidence/pon-native-session-v1/qualification.json",
+        "evidence/pon-native-session-v1/work-cost/execution.json",
+        "evidence/pon-public-readiness-v1/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-a/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-a/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-e/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-e/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-b/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-c/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-c/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-d/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-d/qualification.json",
+        "evidence/pon-public-readiness-v1/qualification.json",
+        "evidence/pon-v1/manifest.json",
+        "evidence/pon-v3/campaign-execution.json",
+        "evidence/pon-v3/campaign-initial-invocation-failure.json",
+        "evidence/pon-v3/qualification/report.json",
+        "evidence/pon-v4/qualification/report.json",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ]
+    },
+    {
+      "package": "trnm-types",
+      "features": {},
+      "active_source_sha256_before_and_after": {
+        "trillionnium/crates/trnm-types/src/interop_identity.rs": "7a90dcc212b76bfb18ebcd8cd8697f1fc6d052371b9df900a714b92293ba99e9",
+        "trillionnium/crates/trnm-types/src/lib.rs": "ab9e48f0e70c44e714394b0455d1d12c5a52f280a4a51f1490525400d2b793d4",
+        "trillionnium/crates/trnm-types/src/market_reputation.rs": "e27ce377793f6230d97fed3cc05a1337fd19cff64aca5859bea5be0f8c269b0a",
+        "trillionnium/crates/trnm-types/src/relay.rs": "1ad2214c17c5b703dc0721c28bc7b33ed8c49cd41fb904655db6a39b03bb4ba9",
+        "trillionnium/crates/trnm-types/src/request_status/mod.rs": "aa4d560b942fa646ea02846a4e0a2f3844ee315475adba243d500250c175a496",
+        "trillionnium/crates/trnm-types/src/request_status/models.rs": "b6edaa492be5f74533955f11ba02d67ca1f3fbca2da7e92de5ede7e9fe845312",
+        "trillionnium/crates/trnm-types/src/request_status/parsing.rs": "d65153081265d25212b1460efd31f968a12d5e375fda699741916628d42365c7",
+        "trillionnium/crates/trnm-types/src/request_status/transitions.rs": "48067606ba9612669f198b20541d82ce312bb99f34b866d3fd4d69ed22d1aa7f",
+        "trillionnium/crates/trnm-types/src/transcript/mod.rs": "148f9b49806364b04ca14002595356ffd0756883730893e5ceaab73c569b2ea6",
+        "trillionnium/crates/trnm-types/src/transcript/normalization.rs": "796f7c2fe656bb9912d25eb3d6f0b61b89ed10a428a315c60aeee8c452c35bd3",
+        "trillionnium/crates/trnm-types/src/transcript/records.rs": "bfac6fff2efbee48450234aa61be9c725332f5cea1a8c34515787ebc75870376",
+        "trillionnium/crates/trnm-types/src/transcript/verification.rs": "7335373a5d2cc7edac0da2f1e68e32deb214b70334b6ed349ccd9825234a2b99",
+        "trillionnium/crates/trnm-types/src/transfer.rs": "b707b1f094ee4fa38dfb397877b021ed73ea5bc9d676742d952ef415804985d1",
+        "trillionnium/crates/trnm-types/tests/i1_did_activity_boundary.rs": "53004a2b9e4e131420717a45a1817251ba13ba6084d4b22624869162634ff460",
+        "trillionnium/crates/trnm-types/tests/i2_capability_expiry_inclusive_boundary.rs": "dc8a18e5d43b7922539e5be9d3a7bdf032180a6e10b9518a2ae679bbb3421fb3",
+        "trillionnium/crates/trnm-types/tests/i2_capability_expiry_revoke_boundary.rs": "c74a9d1f41d9b44c7284d8451275d7938c2ffb66e22d3772170af08ac1651d51",
+        "trillionnium/crates/trnm-types/tests/i2_capability_issue_revoke_same_height.rs": "d6014c60f359e66e02da5060658bf9aa0b6754dd68fa33d2b3569231a02d9d5b",
+        "trillionnium/crates/trnm-types/tests/i2_capability_nonexpiring_revocation_boundary.rs": "4e90315d1e82422891f71f68659899ea7896f36d3925bfae58d1af4478a64299",
+        "trillionnium/crates/trnm-types/tests/i2_capability_renew_rejects_revocation_boundary.rs": "bf1d65ef8468ab36c3a820a4082c00560d8c6cc6af8f84f6177038a3f45577ff",
+        "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence.rs": "11a768602f3a8ae2b8dd2c273c7613b673b1b3c6b31ef5c0bde514f9c38e4a60",
+        "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_boundary.rs": "8deef5caf37ddb564268a52b7645d2a4832028c58f7938608b03a749278e0e55",
+        "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_did.rs": "a2601c431523667f9a635faca3dfe1ac234906215ff1f1e16befa1becf9c6bae",
+        "trillionnium/crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_token.rs": "e1acf63ff90f1f80b589ad8553f33f1211b6dbd260111a2ea9c2ab3afeeeb5f7",
+        "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition.rs": "a7789d485a3994313e0cdb9c07d3702dcda3b87613254f8d51a82faee0b91e51",
+        "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_did_boundary.rs": "63aa6be3487f0e192b760ffbf122b2a0b0500cc3c80f7e025f23a4e0fb4f3348",
+        "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_race.rs": "6bd430c7dbc44d44a9dd20926285e4581836a7971f8f71716d755a7c12c662fb",
+        "trillionnium/crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_verify.rs": "1b990b53add020419971d7e79bb23de9824c7fad3ebde74583ac36f301500f3a",
+        "trillionnium/crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition.rs": "53dfbd8f3d4575cad6ef5cd95a1e738edc84e3153f3299ae0bec54459ad6b34c",
+        "trillionnium/crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_boundary.rs": "4414a438a241cb5cf3fdfcba34a78cacf5843c82e72e80f056fbc4173af66a5d",
+        "trillionnium/crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_side_effects.rs": "d9e8b180ce04f45c7663dffe2d27f2275399d971b006586f0fd9abc393ebd498",
+        "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height.rs": "086841d751fc31e9d0f1d81bbfa488626961f5cd1d327f75fec9d3460ab28dd8",
+        "trillionnium/crates/trnm-types/tests/i3_did_token_revoke_same_height_precedence.rs": "ede4300d453a7bc9c7e146afb14dc1b238da469a459577f1fdef50964093fc9c",
+        "trillionnium/crates/trnm-types/tests/i3_issue_renew_revoke_same_height.rs": "5175d5c389869848810bb48b0e4b4f8a809411dde302e4977bcc232de6a383b4",
+        "trillionnium/crates/trnm-types/tests/m2_reputation_upper_bound.rs": "a7161479ffedd45c49213c686a2aec4de4289a7ae9eb648b563e7e5ae1a9a1bb",
+        "trillionnium/crates/trnm-types/tests/task_metadata_compatibility_truth_table.rs": "22473eabc3f11852f576c21e404257313b6382977751925cd3e916cf007ffa0d",
+        "trillionnium/crates/trnm-types/tests/task_metadata_settlement_alias.rs": "4104f12ce74ce8169726e4a2436637145fd273357e30119d806475a43fb86c7d",
+        "trillionnium/crates/trnm-types/tests/task_metadata_settlement_threading.rs": "c3d7b220eb1f4f275b116b96a4184a30f484093be3e13665b557dc9cb88410d9",
+        "trillionnium/crates/trnm-types/tests/x3_settlement_stale_pending_replay.rs": "2a9d4efa112c9d0b8afdd00fb54f29b636eafd7948d220f61a78b37c0b5087f5"
+      },
+      "compiler_dependency_files_before_and_after": {
+        "x3_settlement_stale_pending_replay-9600b8868f8ddc80.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/x3_settlement_stale_pending_replay-9600b8868f8ddc80.d: crates/trnm-types/tests/x3_settlement_stale_pending_replay.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/x3_settlement_stale_pending_replay-9600b8868f8ddc80: crates/trnm-types/tests/x3_settlement_stale_pending_replay.rs\n\ncrates/trnm-types/tests/x3_settlement_stale_pending_replay.rs:\n",
+        "i3_capability_fail_closed_precedence-17473d8667f8b0fe.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_capability_fail_closed_precedence-17473d8667f8b0fe.d: crates/trnm-types/tests/i3_capability_fail_closed_precedence.rs crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_token.rs crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_did.rs crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_boundary.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_capability_fail_closed_precedence-17473d8667f8b0fe: crates/trnm-types/tests/i3_capability_fail_closed_precedence.rs crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_token.rs crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_did.rs crates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_boundary.rs\n\ncrates/trnm-types/tests/i3_capability_fail_closed_precedence.rs:\ncrates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_token.rs:\ncrates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_did.rs:\ncrates/trnm-types/tests/i3_capability_fail_closed_precedence/i3_capability_fail_closed_precedence_boundary.rs:\n",
+        "task_metadata_settlement_threading-b6598f3c6a02a774.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/task_metadata_settlement_threading-b6598f3c6a02a774.d: crates/trnm-types/tests/task_metadata_settlement_threading.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/task_metadata_settlement_threading-b6598f3c6a02a774: crates/trnm-types/tests/task_metadata_settlement_threading.rs\n\ncrates/trnm-types/tests/task_metadata_settlement_threading.rs:\n",
+        "i3_did_revoke_cascade_same_height-fab16ac91c14dfa5.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_did_revoke_cascade_same_height-fab16ac91c14dfa5.d: crates/trnm-types/tests/i3_did_revoke_cascade_same_height.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_did_revoke_cascade_same_height-fab16ac91c14dfa5: crates/trnm-types/tests/i3_did_revoke_cascade_same_height.rs\n\ncrates/trnm-types/tests/i3_did_revoke_cascade_same_height.rs:\n",
+        "i1_did_activity_boundary-631cc7f53c023255.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i1_did_activity_boundary-631cc7f53c023255.d: crates/trnm-types/tests/i1_did_activity_boundary.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i1_did_activity_boundary-631cc7f53c023255: crates/trnm-types/tests/i1_did_activity_boundary.rs\n\ncrates/trnm-types/tests/i1_did_activity_boundary.rs:\n",
+        "task_metadata_compatibility_truth_table-a5ffe5ddfe25b4fe.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/task_metadata_compatibility_truth_table-a5ffe5ddfe25b4fe.d: crates/trnm-types/tests/task_metadata_compatibility_truth_table.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/task_metadata_compatibility_truth_table-a5ffe5ddfe25b4fe: crates/trnm-types/tests/task_metadata_compatibility_truth_table.rs\n\ncrates/trnm-types/tests/task_metadata_compatibility_truth_table.rs:\n",
+        "trnm_types-2fff75d3098b8795.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_types-2fff75d3098b8795.d: crates/trnm-types/src/lib.rs crates/trnm-types/src/interop_identity.rs crates/trnm-types/src/market_reputation.rs crates/trnm-types/src/relay.rs crates/trnm-types/src/request_status/mod.rs crates/trnm-types/src/request_status/models.rs crates/trnm-types/src/request_status/parsing.rs crates/trnm-types/src/request_status/transitions.rs crates/trnm-types/src/transcript/mod.rs crates/trnm-types/src/transcript/normalization.rs crates/trnm-types/src/transcript/records.rs crates/trnm-types/src/transcript/verification.rs crates/trnm-types/src/transfer.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_types-2fff75d3098b8795: crates/trnm-types/src/lib.rs crates/trnm-types/src/interop_identity.rs crates/trnm-types/src/market_reputation.rs crates/trnm-types/src/relay.rs crates/trnm-types/src/request_status/mod.rs crates/trnm-types/src/request_status/models.rs crates/trnm-types/src/request_status/parsing.rs crates/trnm-types/src/request_status/transitions.rs crates/trnm-types/src/transcript/mod.rs crates/trnm-types/src/transcript/normalization.rs crates/trnm-types/src/transcript/records.rs crates/trnm-types/src/transcript/verification.rs crates/trnm-types/src/transfer.rs\n\ncrates/trnm-types/src/lib.rs:\ncrates/trnm-types/src/interop_identity.rs:\ncrates/trnm-types/src/market_reputation.rs:\ncrates/trnm-types/src/relay.rs:\ncrates/trnm-types/src/request_status/mod.rs:\ncrates/trnm-types/src/request_status/models.rs:\ncrates/trnm-types/src/request_status/parsing.rs:\ncrates/trnm-types/src/request_status/transitions.rs:\ncrates/trnm-types/src/transcript/mod.rs:\ncrates/trnm-types/src/transcript/normalization.rs:\ncrates/trnm-types/src/transcript/records.rs:\ncrates/trnm-types/src/transcript/verification.rs:\ncrates/trnm-types/src/transfer.rs:\n",
+        "task_metadata_settlement_alias-d33f6d7c9f7b3b77.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/task_metadata_settlement_alias-d33f6d7c9f7b3b77.d: crates/trnm-types/tests/task_metadata_settlement_alias.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/task_metadata_settlement_alias-d33f6d7c9f7b3b77: crates/trnm-types/tests/task_metadata_settlement_alias.rs\n\ncrates/trnm-types/tests/task_metadata_settlement_alias.rs:\n",
+        "i2_capability_renew_rejects_revocation_boundary-20310bbcca203eb6.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_renew_rejects_revocation_boundary-20310bbcca203eb6.d: crates/trnm-types/tests/i2_capability_renew_rejects_revocation_boundary.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_renew_rejects_revocation_boundary-20310bbcca203eb6: crates/trnm-types/tests/i2_capability_renew_rejects_revocation_boundary.rs\n\ncrates/trnm-types/tests/i2_capability_renew_rejects_revocation_boundary.rs:\n",
+        "i2_capability_nonexpiring_revocation_boundary-69c5604d4044c0c9.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_nonexpiring_revocation_boundary-69c5604d4044c0c9.d: crates/trnm-types/tests/i2_capability_nonexpiring_revocation_boundary.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_nonexpiring_revocation_boundary-69c5604d4044c0c9: crates/trnm-types/tests/i2_capability_nonexpiring_revocation_boundary.rs\n\ncrates/trnm-types/tests/i2_capability_nonexpiring_revocation_boundary.rs:\n",
+        "i3_capability_issue_renew_revoke_competition-dd18240bf439c8a6.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_capability_issue_renew_revoke_competition-dd18240bf439c8a6.d: crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition.rs crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_race.rs crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_verify.rs crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_did_boundary.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_capability_issue_renew_revoke_competition-dd18240bf439c8a6: crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition.rs crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_race.rs crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_verify.rs crates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_did_boundary.rs\n\ncrates/trnm-types/tests/i3_capability_issue_renew_revoke_competition.rs:\ncrates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_race.rs:\ncrates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_verify.rs:\ncrates/trnm-types/tests/i3_capability_issue_renew_revoke_competition/i3_capability_issue_renew_revoke_competition_did_boundary.rs:\n",
+        "m2_reputation_upper_bound-f51c136bf372b359.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/m2_reputation_upper_bound-f51c136bf372b359.d: crates/trnm-types/tests/m2_reputation_upper_bound.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/m2_reputation_upper_bound-f51c136bf372b359: crates/trnm-types/tests/m2_reputation_upper_bound.rs\n\ncrates/trnm-types/tests/m2_reputation_upper_bound.rs:\n",
+        "i3_issue_renew_revoke_same_height-23b5e472526fef50.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_issue_renew_revoke_same_height-23b5e472526fef50.d: crates/trnm-types/tests/i3_issue_renew_revoke_same_height.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_issue_renew_revoke_same_height-23b5e472526fef50: crates/trnm-types/tests/i3_issue_renew_revoke_same_height.rs\n\ncrates/trnm-types/tests/i3_issue_renew_revoke_same_height.rs:\n",
+        "i3_capability_nonexpiring_revoke_competition-8d8047778260d290.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_capability_nonexpiring_revoke_competition-8d8047778260d290.d: crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition.rs crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_boundary.rs crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_side_effects.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_capability_nonexpiring_revoke_competition-8d8047778260d290: crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition.rs crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_boundary.rs crates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_side_effects.rs\n\ncrates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition.rs:\ncrates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_boundary.rs:\ncrates/trnm-types/tests/i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_side_effects.rs:\n",
+        "i2_capability_issue_revoke_same_height-570b3a0e31f6fbde.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_issue_revoke_same_height-570b3a0e31f6fbde.d: crates/trnm-types/tests/i2_capability_issue_revoke_same_height.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_issue_revoke_same_height-570b3a0e31f6fbde: crates/trnm-types/tests/i2_capability_issue_revoke_same_height.rs\n\ncrates/trnm-types/tests/i2_capability_issue_revoke_same_height.rs:\n",
+        "trnm_types-6c0b0355fc887935.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_types-6c0b0355fc887935.d: crates/trnm-types/src/lib.rs crates/trnm-types/src/interop_identity.rs crates/trnm-types/src/market_reputation.rs crates/trnm-types/src/relay.rs crates/trnm-types/src/request_status/mod.rs crates/trnm-types/src/request_status/models.rs crates/trnm-types/src/request_status/parsing.rs crates/trnm-types/src/request_status/transitions.rs crates/trnm-types/src/transcript/mod.rs crates/trnm-types/src/transcript/normalization.rs crates/trnm-types/src/transcript/records.rs crates/trnm-types/src/transcript/verification.rs crates/trnm-types/src/transfer.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/libtrnm_types-6c0b0355fc887935.rlib: crates/trnm-types/src/lib.rs crates/trnm-types/src/interop_identity.rs crates/trnm-types/src/market_reputation.rs crates/trnm-types/src/relay.rs crates/trnm-types/src/request_status/mod.rs crates/trnm-types/src/request_status/models.rs crates/trnm-types/src/request_status/parsing.rs crates/trnm-types/src/request_status/transitions.rs crates/trnm-types/src/transcript/mod.rs crates/trnm-types/src/transcript/normalization.rs crates/trnm-types/src/transcript/records.rs crates/trnm-types/src/transcript/verification.rs crates/trnm-types/src/transfer.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/libtrnm_types-6c0b0355fc887935.rmeta: crates/trnm-types/src/lib.rs crates/trnm-types/src/interop_identity.rs crates/trnm-types/src/market_reputation.rs crates/trnm-types/src/relay.rs crates/trnm-types/src/request_status/mod.rs crates/trnm-types/src/request_status/models.rs crates/trnm-types/src/request_status/parsing.rs crates/trnm-types/src/request_status/transitions.rs crates/trnm-types/src/transcript/mod.rs crates/trnm-types/src/transcript/normalization.rs crates/trnm-types/src/transcript/records.rs crates/trnm-types/src/transcript/verification.rs crates/trnm-types/src/transfer.rs\n\ncrates/trnm-types/src/lib.rs:\ncrates/trnm-types/src/interop_identity.rs:\ncrates/trnm-types/src/market_reputation.rs:\ncrates/trnm-types/src/relay.rs:\ncrates/trnm-types/src/request_status/mod.rs:\ncrates/trnm-types/src/request_status/models.rs:\ncrates/trnm-types/src/request_status/parsing.rs:\ncrates/trnm-types/src/request_status/transitions.rs:\ncrates/trnm-types/src/transcript/mod.rs:\ncrates/trnm-types/src/transcript/normalization.rs:\ncrates/trnm-types/src/transcript/records.rs:\ncrates/trnm-types/src/transcript/verification.rs:\ncrates/trnm-types/src/transfer.rs:\n",
+        "i2_capability_expiry_revoke_boundary-d73d1dd94bc17ed9.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_expiry_revoke_boundary-d73d1dd94bc17ed9.d: crates/trnm-types/tests/i2_capability_expiry_revoke_boundary.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_expiry_revoke_boundary-d73d1dd94bc17ed9: crates/trnm-types/tests/i2_capability_expiry_revoke_boundary.rs\n\ncrates/trnm-types/tests/i2_capability_expiry_revoke_boundary.rs:\n",
+        "i2_capability_expiry_inclusive_boundary-cddde16664182e46.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_expiry_inclusive_boundary-cddde16664182e46.d: crates/trnm-types/tests/i2_capability_expiry_inclusive_boundary.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i2_capability_expiry_inclusive_boundary-cddde16664182e46: crates/trnm-types/tests/i2_capability_expiry_inclusive_boundary.rs\n\ncrates/trnm-types/tests/i2_capability_expiry_inclusive_boundary.rs:\n",
+        "i3_did_token_revoke_same_height_precedence-f3009b2aed54ae33.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_did_token_revoke_same_height_precedence-f3009b2aed54ae33.d: crates/trnm-types/tests/i3_did_token_revoke_same_height_precedence.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/i3_did_token_revoke_same_height_precedence-f3009b2aed54ae33: crates/trnm-types/tests/i3_did_token_revoke_same_height_precedence.rs\n\ncrates/trnm-types/tests/i3_did_token_revoke_same_height_precedence.rs:\n"
+      },
+      "removed_baseline_sources": {
+        "trillionnium/crates/trnm-types/src/interop_identity/error.rs": {
+          "sha256": "142cfdbeef3339353304b299e4d609213522415b8645b00b3e3bd8e6eb071c18",
+          "lines": 235
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/hashing.rs": {
+          "sha256": "de90fa6d5444493bbde4a5013436c9912bf7a023b1abb7fc4d588a035981510f",
+          "lines": 72
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/identity.rs": {
+          "sha256": "ed49366431a246740dddf8482cc9f7c72d2f19df3b05dbf423d64b4871e98c04",
+          "lines": 170
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/identity/audit.rs": {
+          "sha256": "653f5c68e0d51f551473aba3990ab673cb977dc600b1f3d638b198015b137c28",
+          "lines": 64
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/identity/capability.rs": {
+          "sha256": "f5b18ad7f433304daf6cee0524f032ec10d58c96ef256df15429c74891b8eddb",
+          "lines": 210
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/identity/did_validation.rs": {
+          "sha256": "d9cd4e6823f8ad289e02e414c5771b16a825113fa03e7b1ff73ceafe20d74b03",
+          "lines": 154
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/normalize.rs": {
+          "sha256": "fd180288e5c247aa10736286b1b17f33f9c5e22f1367b599cbc4d3fb2f1ee5d6",
+          "lines": 104
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/settlement.rs": {
+          "sha256": "dc1c4d75677607a25534831ae1d7d89ee59526f851d566c7be00f7cfc5d14bd1",
+          "lines": 175
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/mod.rs": {
+          "sha256": "7dd23e7ba58eb27ada79c4a60d8ca4be4ef1f16c559f4481fe456004969286ae",
+          "lines": 4
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry.rs": {
+          "sha256": "ca38d2a6ab1370be6f00c07559a3988fe2f77d121487c7940f1a70d86828884e",
+          "lines": 14
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/audit.rs": {
+          "sha256": "3f27e5bdafabaf9372dd9456f028664a9578dbc835bbac88e8c863e245dbf765",
+          "lines": 256
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability.rs": {
+          "sha256": "2cf9d42e00a1e2762fd3224517aa4f0488b6815ae0a7b63d0c3b4ee21ba46ce9",
+          "lines": 12
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/activity_windows.rs": {
+          "sha256": "27bbbbbbfdc8815499a37ff60d91720673e0d99c25650987efba0d0d5a85b98c",
+          "lines": 60
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/issuance.rs": {
+          "sha256": "9d68cad00ef645dab18c52b91885e0f0059668afa9d9c8b633edade79087ebd9",
+          "lines": 69
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal.rs": {
+          "sha256": "801eeb60f065f5eeff1625299571596544e8a13128e5fce7b83d2d217a4bfccf",
+          "lines": 190
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal_error_paths.rs": {
+          "sha256": "6571dd9266cfb50aa61d770418c101234a3c2488bfe32cdb60e5919c1da7c103",
+          "lines": 154
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/revocation.rs": {
+          "sha256": "bafe0ffacf1a3bfebb10397aef8830b22ab78d740719baaac219fe661ed64b8d",
+          "lines": 217
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/did.rs": {
+          "sha256": "e5528c6acf9610bb03165014b7d0e9a9acce6a3451e83422849fac0d10eba61d",
+          "lines": 324
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths.rs": {
+          "sha256": "462d21721be07de66a0fe18db162970dca4ce5facccb0d3010333409ce1a233c",
+          "lines": 14
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/controller_mismatch.rs": {
+          "sha256": "d5b237562b6c6d521a08aca4f2ec12a313414503b16e20de58aae8941ecc5fd2",
+          "lines": 158
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/lifecycle_and_issue_inputs.rs": {
+          "sha256": "40a986f4ab75d78793bc2cf03e1502c09911853d83f8bbcb1bb179ec0a38c8f2",
+          "lines": 249
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/missing_subject_and_unknown_token.rs": {
+          "sha256": "2c5aed83e848dab466ab426aff51ad92459adb0bc90b96a9e4608a45e31e8537",
+          "lines": 126
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/renew_actor_sanitation.rs": {
+          "sha256": "97f8591533593300dfcead07e47e2939a1f6d24501436bdb0d2f9164364ca10a",
+          "lines": 299
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/revoke_actor_sanitation.rs": {
+          "sha256": "04b4d0d0f4e6073efb234c8f77fdf75bd47c8d9eebb549edb45d735d3e41c4c3",
+          "lines": 219
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/verify_actor_sanitation.rs": {
+          "sha256": "62fcb2737f1befdb8af6a3205fd8e18dfb010773d18706efe10df75fd404c783",
+          "lines": 301
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/registry_core.rs": {
+          "sha256": "ecbd08c54b28303db1d6c9055db8e4321cf1f0c399aff8e00f9636d1e3483b1a",
+          "lines": 383
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify.rs": {
+          "sha256": "d9ec28b8e5f96cb22a5d687dcde14c26d2633c9edf5ec90c5f327c39de757891",
+          "lines": 10
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/controller.rs": {
+          "sha256": "b3cf0a3a2b0745126e4d5d7f8c6197510269943e372a5bfdc69629814f6d8c51",
+          "lines": 113
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/error_paths.rs": {
+          "sha256": "b1255b15c05c49163809c0a151faab16051b9836b8da65c8bd40dac641c0ecde",
+          "lines": 212
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/happy_path.rs": {
+          "sha256": "ea8aaeafe99382dad4673df3f78af46cf39f4b8150070b56e538f9b428a4ac09",
+          "lines": 98
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/proof_claim_binding.rs": {
+          "sha256": "42b145e46c05ffd33125d65ed5cad2e71dfd42e2c95c3f1f742957611d7cb34a",
+          "lines": 90
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement.rs": {
+          "sha256": "6a417085ff58fbd317109fdeb8b5f0f03679b823a1e6f2d84881c349408a205e",
+          "lines": 6
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/error_paths.rs": {
+          "sha256": "813d6a25fac9e2afd460b939a41465b09b13406420ded52e7ed2994da9623fbc",
+          "lines": 97
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle.rs": {
+          "sha256": "18b49dd0bc562369dae41c6ab2fc21c84f586e8b074b58e2591603b404909176",
+          "lines": 8
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/revert_reason_aliases.rs": {
+          "sha256": "fea9edd4b6ba2292ae0066f97b714d54a396465f94ea13781f115e5462d14e26",
+          "lines": 107
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_conflicts.rs": {
+          "sha256": "abf23c37feaea6020e95448e8376e2a3bab7dffb650cfcfeefffb950485673a9",
+          "lines": 212
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_reapply.rs": {
+          "sha256": "eb071c9b7bdac807143ed69179e0547747ee12e782b6391f2701ecb84c59e18b",
+          "lines": 121
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/route.rs": {
+          "sha256": "4a0f911d1a4af6d682d38f6e0a23d12a29c4840ff05823dceee86d71507ddad3",
+          "lines": 430
+        },
+        "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/status.rs": {
+          "sha256": "499beca6aa11baa102fee173d1b9dffc8cd36eb5ebca2b158bd7914927054906",
+          "lines": 282
+        },
+        "trillionnium/crates/trnm-types/src/relay/auth_envelope.rs": {
+          "sha256": "c67c1ad0cb77fbd71b59aa40acb593ab5abffb138a8992ff211a8388132d281d",
+          "lines": 129
+        },
+        "trillionnium/crates/trnm-types/src/relay/records.rs": {
+          "sha256": "ec7a92c3c19b72c78d7fa84457e2f3e04543ce3849670a1d66f53f4d1ff20ec0",
+          "lines": 27
+        },
+        "trillionnium/crates/trnm-types/src/relay/verifier.rs": {
+          "sha256": "4528d2e108d16bb395b1be9ea08da1ca49cce8a9f5c28036593a889a594cadc6",
+          "lines": 291
+        },
+        "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_boundary.rs": {
+          "sha256": "edbd5423ecb68949787f06301a72f7a80434c4c876dac7936304ba101e640804",
+          "lines": 93
+        },
+        "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_replay.rs": {
+          "sha256": "df455e446870f3e4d5faefd1b47910972cbc83fc6b7af7d7844aa11a1fd3a42c",
+          "lines": 50
+        }
+      },
+      "historical_reference_files": [
+        "evidence/pon-client-confirmation-v1/failures/initial-qualification/qualification.json",
+        "evidence/pon-client-confirmation-v1/qualification.json",
+        "evidence/pon-closed-round-v1/qualification.json",
+        "evidence/pon-closed-round-v1/work-cost/execution.json",
+        "evidence/pon-contract-authority-v1/qualification/report.json",
+        "evidence/pon-contract-authority-v1/work-cost/execution.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/cycle-1/calibration.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/cycle-1/evaluation-bundle.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/cycle-1/train.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/cycle-2/calibration.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/cycle-2/evaluation-bundle.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/cycle-2/evaluation.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/cycle-2/train.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/cycle-3/calibration.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/cycle-3/evaluation-bundle.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/cycle-3/train.json",
+        "evidence/pon-evaluation-bundle-v1/cycles/report.json",
+        "evidence/pon-evaluation-bundle-v1/logs/learning-cycles.log",
+        "evidence/pon-evaluation-bundle-v1/model/calibration.json",
+        "evidence/pon-evaluation-bundle-v1/model/consumer.json",
+        "evidence/pon-evaluation-bundle-v1/model/evaluation-bundle.json",
+        "evidence/pon-evaluation-bundle-v1/model/evaluation_b.json",
+        "evidence/pon-evaluation-bundle-v1/model/train.json",
+        "evidence/pon-evaluation-bundle-v1/qualification.json",
+        "evidence/pon-four-priority-audit-v1/work-cost/execution.json",
+        "evidence/pon-four-priority-audit-v1/work-cost/paired/execution.json",
+        "evidence/pon-native-node-v1/model-current/cycles/cycle-1/calibration.json",
+        "evidence/pon-native-node-v1/model-current/cycles/cycle-1/evaluation-bundle.json",
+        "evidence/pon-native-node-v1/model-current/cycles/cycle-1/train.json",
+        "evidence/pon-native-node-v1/model-current/cycles/cycle-2/calibration.json",
+        "evidence/pon-native-node-v1/model-current/cycles/cycle-2/evaluation-bundle.json",
+        "evidence/pon-native-node-v1/model-current/cycles/cycle-2/evaluation.json",
+        "evidence/pon-native-node-v1/model-current/cycles/cycle-2/train.json",
+        "evidence/pon-native-node-v1/model-current/cycles/cycle-3/calibration.json",
+        "evidence/pon-native-node-v1/model-current/cycles/cycle-3/evaluation-bundle.json",
+        "evidence/pon-native-node-v1/model-current/cycles/cycle-3/train.json",
+        "evidence/pon-native-node-v1/model-current/cycles/report.json",
+        "evidence/pon-native-node-v1/model-current/learning-cycles.log",
+        "evidence/pon-native-node-v1/model-current/model/calibration.json",
+        "evidence/pon-native-node-v1/model-current/model/consumer.json",
+        "evidence/pon-native-node-v1/model-current/model/evaluation-bundle.json",
+        "evidence/pon-native-node-v1/model-current/model/evaluation_b.json",
+        "evidence/pon-native-node-v1/model-current/model/train.json",
+        "evidence/pon-native-node-v1/qualification.json",
+        "evidence/pon-native-node-v1/work-cost/execution.json",
+        "evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/qualification.json",
+        "evidence/pon-native-session-v1/qualification.json",
+        "evidence/pon-native-session-v1/work-cost/execution.json",
+        "evidence/pon-public-readiness-v1/attribution/evaluation_b-consumer-tasks.json",
+        "evidence/pon-public-readiness-v1/attribution/evaluation_b-plan.json",
+        "evidence/pon-public-readiness-v1/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-a/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-a/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-e/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-e/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-b/attribution/evaluation_b-consumer-tasks.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-b/attribution/evaluation_b-plan.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-b/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-c/attribution/evaluation_b-consumer-tasks.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-c/attribution/evaluation_b-plan.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-c/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-c/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-d/attribution/evaluation_b-consumer-tasks.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-d/attribution/evaluation_b-plan.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-d/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-d/qualification.json",
+        "evidence/pon-public-readiness-v1/qualification.json",
+        "evidence/pon-v1/manifest.json",
+        "evidence/pon-v3/campaign-execution.json",
+        "evidence/pon-v3/campaign-initial-invocation-failure.json",
+        "evidence/pon-v3/learning/cycle-1/calibration.json",
+        "evidence/pon-v3/learning/cycle-1/locked-plan.json",
+        "evidence/pon-v3/learning/cycle-2/evaluation.json",
+        "evidence/pon-v3/learning/cycle-2/locked-plan.json",
+        "evidence/pon-v3/learning/cycle-2/train.json",
+        "evidence/pon-v3/learning/cycle-3/calibration.json",
+        "evidence/pon-v3/learning/cycle-3/evaluation.json",
+        "evidence/pon-v3/learning/cycle-3/locked-plan.json",
+        "evidence/pon-v3/learning/cycle-3/train.json",
+        "evidence/pon-v3/learning/raw.log",
+        "evidence/pon-v3/learning/report.json",
+        "evidence/pon-v3/qualification/report.json",
+        "evidence/pon-v4/qualification/report.json",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ]
+    },
+    {
+      "package": "trnm-oracle",
+      "features": {},
+      "active_source_sha256_before_and_after": {
+        "trillionnium/crates/trnm-oracle/src/lib.rs": "44a3913d7cbf682912147ef41e7f8be53e6130c1219a65ff9e1440ac697621ad"
+      },
+      "compiler_dependency_files_before_and_after": {
+        "trnm_oracle-2c9a1f9d81e80a6b.d": "/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_oracle-2c9a1f9d81e80a6b.d: crates/trnm-oracle/src/lib.rs\n\n/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_oracle-2c9a1f9d81e80a6b: crates/trnm-oracle/src/lib.rs\n\ncrates/trnm-oracle/src/lib.rs:\n"
+      },
+      "removed_baseline_sources": {
+        "trillionnium/crates/trnm-oracle/src/snapshot.rs": {
+          "sha256": "b31b5419c9a8d448090f5940d03e100a695655ce772f72eeb1aae6b2ec03a432",
+          "lines": 136
+        },
+        "trillionnium/crates/trnm-oracle/src/tests/mod.rs": {
+          "sha256": "721daa7bfde83cd0d5d4e6ff2bf41c2f356897bfe115eb637d9daab12f1f32b6",
+          "lines": 7
+        },
+        "trillionnium/crates/trnm-oracle/src/tests/observed_report/formatting.rs": {
+          "sha256": "d561a0daac9ab17930a65d6e61852c0ab453f21227efb944ec61ae94809db778",
+          "lines": 156
+        },
+        "trillionnium/crates/trnm-oracle/src/tests/observed_report/mod.rs": {
+          "sha256": "7bc44c01c18765b318151f13d38b4dcdf9d47c0b39ddb75fbd10dc6b34dacb30",
+          "lines": 6
+        },
+        "trillionnium/crates/trnm-oracle/src/tests/observed_report/policy.rs": {
+          "sha256": "aefaafca9521475966f3e460b6961367d243329cdd7e9eb3bc040986e4c27a16",
+          "lines": 149
+        },
+        "trillionnium/crates/trnm-oracle/src/tests/observed_report/validation.rs": {
+          "sha256": "b6dce67b284b30fd71ba95c80a495c768e54bdec1b3571421e29baf538600f47",
+          "lines": 278
+        },
+        "trillionnium/crates/trnm-oracle/src/tests/policy.rs": {
+          "sha256": "d46a3ebf25f1729bad57f591df27ed28161334348c642191fb810882e54d5e82",
+          "lines": 176
+        },
+        "trillionnium/crates/trnm-oracle/src/tests/shared.rs": {
+          "sha256": "4002ad46d587d7d3d626d2004488620a240ee537755ef540017c6a9fe69d7839",
+          "lines": 29
+        },
+        "trillionnium/crates/trnm-oracle/src/tests/snapshot.rs": {
+          "sha256": "a00a0fbe4d3ec8703f33c33aece09ed9809573e4527840e9f8ab34621823b47d",
+          "lines": 296
+        },
+        "trillionnium/crates/trnm-oracle/src/validation/policy.rs": {
+          "sha256": "22c8363534965ca7a958a39e6a92f8b8e7c0c58746f831c3bfdd1c2855c14ee8",
+          "lines": 110
+        }
+      },
+      "historical_reference_files": [
+        "evidence/pon-client-confirmation-v1/failures/initial-qualification/qualification.json",
+        "evidence/pon-client-confirmation-v1/qualification.json",
+        "evidence/pon-closed-round-v1/qualification.json",
+        "evidence/pon-closed-round-v1/work-cost/execution.json",
+        "evidence/pon-contract-authority-v1/qualification/report.json",
+        "evidence/pon-contract-authority-v1/work-cost/execution.json",
+        "evidence/pon-evaluation-bundle-v1/qualification.json",
+        "evidence/pon-four-priority-audit-v1/work-cost/execution.json",
+        "evidence/pon-four-priority-audit-v1/work-cost/paired/execution.json",
+        "evidence/pon-native-node-v1/qualification.json",
+        "evidence/pon-native-node-v1/work-cost/execution.json",
+        "evidence/pon-native-session-v1/failures/initial-candidate/selected-matrix/qualification.json",
+        "evidence/pon-native-session-v1/qualification.json",
+        "evidence/pon-native-session-v1/work-cost/execution.json",
+        "evidence/pon-public-readiness-v1/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-a/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-a/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-e/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/failed-qualification-e/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-b/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-c/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-c/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-d/baseline/qualification.json",
+        "evidence/pon-public-readiness-v1/observations/pre-correction-d/qualification.json",
+        "evidence/pon-public-readiness-v1/qualification.json",
+        "evidence/pon-v1/manifest.json",
+        "evidence/pon-v3/campaign-execution.json",
+        "evidence/pon-v3/campaign-initial-invocation-failure.json",
+        "evidence/pon-v3/qualification/report.json",
+        "evidence/pon-v4/qualification/report.json",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ]
+    }
+  ],
+  "generated_inventory": {
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "before_sha256": "dace2fc13f8952afeb2fdcff90feaa4c1337baa7660fa6f22e26e4b2f586f20f",
+    "after_sha256": "0f62c2a0cc43cf49ccf4b0f277c66f923e52a44bea61f431df90cc326b96be94",
+    "verification": "canonical generator --check and owning distributed_pipeline example cargo check pass"
+  },
+  "limitations": [
+    "Historical receipt validity does not qualify this changed source identity.",
+    "These targeted Rust tests are not a full workspace Rust test or Clippy pass.",
+    "Benchmark used fresh processes over the same uncommitted pre-cleanup source tree; it is a local timing observation, not a hosted CI performance receipt.",
+    "Initial missing /usr/bin/time and unstaged deletion inventory failures are retained verbatim; observer selection and staged index resolved them without weakening validators."
+  ]
+}

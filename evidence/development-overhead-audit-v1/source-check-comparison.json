@@ -1,0 +1,76 @@
+{
+  "baseline": {
+    "seconds": [
+      4.892160985000373,
+      4.839025055000093,
+      5.153759888999048
+    ],
+    "median": 4.892160985000373,
+    "reports": [
+      {
+        "activation": false,
+        "local_links": 618,
+        "normal_dependency_edges": 17,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 701,
+        "workspace_packages": 25
+      },
+      {
+        "activation": false,
+        "local_links": 618,
+        "normal_dependency_edges": 17,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 701,
+        "workspace_packages": 25
+      },
+      {
+        "activation": false,
+        "local_links": 618,
+        "normal_dependency_edges": 17,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 701,
+        "workspace_packages": 25
+      }
+    ]
+  },
+  "optimized": {
+    "seconds": [
+      3.4893392189987935,
+      3.426783997005259,
+      3.557521470997017
+    ],
+    "median": 3.4893392189987935,
+    "reports": [
+      {
+        "activation": false,
+        "local_links": 618,
+        "normal_dependency_edges": 17,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 701,
+        "workspace_packages": 25
+      },
+      {
+        "activation": false,
+        "local_links": 618,
+        "normal_dependency_edges": 17,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 701,
+        "workspace_packages": 25
+      },
+      {
+        "activation": false,
+        "local_links": 618,
+        "normal_dependency_edges": 17,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 701,
+        "workspace_packages": 25
+      }
+    ]
+  }
+}
