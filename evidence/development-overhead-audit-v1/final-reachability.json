@@ -1,0 +1,13 @@
+{
+  "rust_files": 419,
+  "formatter_traversed": 413,
+  "explicit_include_sources": [
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_01_types.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_04_io_ack.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_05_tests.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_06_projection.rs"
+  ],
+  "unexplained_sources": []
+}

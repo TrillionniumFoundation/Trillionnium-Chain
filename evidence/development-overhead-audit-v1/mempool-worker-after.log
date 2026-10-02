@@ -1,0 +1,1759 @@
+    Finished `test` profile [unoptimized] target(s) in 0.12s
+     Running unittests src/lib.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_mempool-020d030cb06de16f)
+
+running 153 tests
+test tests::backpressured_tx_id_is_not_marked_seen_and_can_be_admitted_after_drain ... ok
+test tests::borrowed_last_critical_slot_probe_noise_keeps_qos_snapshot_flat_until_drain ... ok
+test tests::borrowed_last_critical_slot_same_class_duplicate_probe_keeps_qos_snapshot_flat ... ok
+test tests::borrowed_last_idle_critical_slot_keeps_cross_class_fresh_retry_unpoisoned_until_drain ... ok
+test tests::borrowed_last_idle_critical_slot_reopens_critical_retry_after_drain ... ok
+test tests::critical_backpressured_tx_id_can_admit_from_other_class_after_drain ... ok
+test tests::critical_lane_makes_progress_under_flood ... ok
+test tests::critical_lane_spills_over_to_free_normal_capacity ... ok
+test tests::critical_spillover_can_fill_normal_lane_until_global_capacity ... ok
+test tests::critical_spillover_duplicate_probe_keeps_qos_flat_until_final_dedicated_normal_slot_is_claimed ... ok
+test tests::critical_spillover_duplicate_probe_stays_globally_duplicate_until_spilled_copy_drains ... ok
+test tests::critical_spillover_only_headroom_keeps_normal_closed_across_duplicate_and_retry_noise ... ok
+test tests::critical_spillover_stays_fail_closed_once_dedicated_normal_headroom_is_gone ... ok
+test tests::drained_ghost_id_from_repaired_seen_global_can_reenter_as_fresh ... ok
+test tests::drained_standalone_duplicate_metadata_reopens_as_fresh_after_real_queue_drain ... ok
+test tests::drained_standalone_fresh_retry_reopens_cleanly_across_idle_polls ... ok
+test tests::duplicate_is_rejected_across_ingress_classes_until_drained ... ok
+test tests::duplicate_or_backpressured_probe_noise_does_not_mutate_fairness_state ... ok
+test tests::duplicate_probe_does_not_consume_reopened_zero_reserve_shared_slot ... ok
+test tests::duplicate_semantics_survive_stale_seen_global_under_saturation ... ok
+test tests::duplicate_stays_duplicate_when_lane_is_globally_full ... ok
+test tests::equal_cardinality_cross_lane_and_global_skew_self_heals_without_false_duplicate_or_poisoned_retry ... ok
+test tests::equal_cardinality_lane_seen_skew_does_not_false_duplicate_fresh_id ... ok
+test tests::equal_cardinality_seen_global_skew_still_preserves_duplicate_semantics ... ok
+test tests::equal_cardinality_skew_under_saturation_keeps_fresh_ids_backpressured_not_duplicated ... ok
+test tests::fairness_warmup_does_not_slow_critical_when_normal_lane_drains ... ok
+test tests::final_pop_clears_ghost_seen_global_when_drained_id_is_already_missing ... ok
+test tests::full_critical_reserve_allows_normal_to_use_free_headroom_while_critical_busy ... ok
+test tests::full_critical_reserve_allows_normal_when_critical_lane_idle ... ok
+test tests::full_drain_clears_stale_lane_local_seen_without_waiting_for_next_admit ... ok
+test tests::full_drain_clears_stale_seen_ghosts_before_next_fresh_admission ... ok
+test tests::full_drain_cold_resets_fairness_even_when_pop_self_heals_seen_global ... ok
+test tests::full_drain_resets_fairness_streak_immediately_without_waiting_for_next_admit ... ok
+test tests::ghost_lane_seen_entry_does_not_misclassify_fresh_ingress_as_duplicate ... ok
+test tests::ghost_seen_global_entry_with_matching_cardinality_does_not_poison_fresh_admit ... ok
+test tests::guarded_last_reserved_slot_keeps_cross_class_normal_duplicate_flat ... ok
+test tests::guarded_last_reserved_slot_keeps_queued_normal_retry_duplicate ... ok
+test tests::guarded_last_reserved_slot_recloses_qos_after_fresh_critical_claims_it ... ok
+test tests::guarded_normal_retry_can_escalate_via_critical_path_without_pre_poisoning_duplicate_state ... ok
+test tests::guarded_normal_retry_stays_fresh_until_all_active_critical_backlog_clears ... ok
+test tests::hard_stop_cross_class_duplicate_and_fresh_probe_noise_keeps_qos_flat_through_idle_poll ... ok
+test tests::hard_stop_fresh_retry_burst_keeps_backpressure_guard_flat_across_classes ... ok
+test tests::hard_stop_idle_polls_preserve_lane_local_duplicates_without_reviving_queue_state ... ok
+test tests::hard_stop_idle_polls_preserve_mixed_restored_duplicate_sources_and_flat_qos ... ok
+test tests::hard_stop_idle_pop_preserves_restored_duplicate_metadata ... ok
+test tests::hard_stop_lane_local_duplicate_probe_noise_keeps_qos_snapshot_flat_without_seen_global ... ok
+test tests::hard_stop_lane_local_duplicates_keep_qos_fail_closed_through_idle_polls ... ok
+test tests::hard_stop_mode_lane_local_duplicate_survives_repeated_cross_class_probes_without_poisoning_fresh_ids ... ok
+test tests::hard_stop_mode_preserves_duplicate_semantics_across_ingress_classes ... ok
+test tests::hard_stop_mode_preserves_duplicate_semantics_for_restored_backlog ... ok
+test tests::hard_stop_probe_noise_keeps_qos_snapshot_and_queue_counts_flat ... ok
+test tests::hard_stop_seen_global_only_duplicate_survives_cross_class_retries_and_idle_polls ... ok
+test tests::idle_lane_ghost_seen_entry_is_cleared_before_first_fresh_admission ... ok
+test tests::idle_pop_clears_nonzero_capacity_ghost_seen_before_next_fresh_retry ... ok
+test tests::idle_pop_ready_self_heals_stale_restored_state_without_waiting_for_admit ... ok
+test tests::idle_self_heal_resets_stale_fairness_streak_before_new_mixed_ingress ... ok
+test tests::lane_gate_enforces_global_capacity_even_when_lane_mins_apply ... ok
+test tests::missing_lane_local_membership_rebuilds_seen_caches_before_repeated_duplicate_probe ... ok
+test tests::newly_arrived_critical_backlog_preempts_normal_flood_without_waiting_for_burst_reset ... ok
+test tests::newly_arrived_normal_backlog_gets_turn_during_critical_flood ... ok
+test tests::normal_fairness_warmup_survives_active_critical_refill ... ok
+test tests::normal_lane_can_borrow_last_critical_slot_when_critical_lane_idle ... ok
+test tests::normal_lane_can_borrow_only_surplus_critical_headroom ... ok
+test tests::normal_lane_can_still_borrow_surplus_reserved_headroom_while_critical_backlog_is_active ... ok
+test tests::normal_lane_does_not_spill_when_critical_lane_is_busy ... ok
+test tests::normal_lane_gets_turn_after_bounded_critical_burst ... ok
+test tests::oversized_critical_reserve_clamp_preserves_zero_capacity_hard_stop ... ok
+test tests::oversized_critical_reserve_clamp_reopens_both_classes_after_one_drain ... ok
+test tests::oversized_critical_reserve_clamps_to_reserve_only_without_leaking_fake_normal_headroom ... ok
+test tests::pop_ready_self_heals_stale_seen_global_without_new_admission ... ok
+test tests::pop_ready_self_heals_when_ghost_id_survives_successful_remove ... ok
+test tests::pop_self_heal_prunes_ghost_seen_global_so_cross_class_retry_can_admit_after_drain ... ok
+test tests::qos_snapshot_exposes_guarded_class_admissibility_not_just_raw_headroom ... ok
+test tests::qos_snapshot_fail_closes_in_zero_capacity_hard_stop_mode ... ok
+test tests::qos_snapshot_keeps_last_reserved_critical_slot_guarded_under_active_backlog ... ok
+test tests::qos_snapshot_keeps_normal_closed_until_last_active_critical_backlog_entry_drains ... ok
+test tests::qos_snapshot_keeps_normal_closed_when_only_critical_spillover_headroom_remains ... ok
+test tests::qos_snapshot_reopens_borrowed_last_critical_slot_after_critical_lane_drains ... ok
+test tests::qos_snapshot_reopens_both_classes_immediately_after_one_reserve_only_drain ... ok
+test tests::qos_snapshot_reopens_critical_admissibility_as_soon_as_dedicated_reserve_reopens ... ok
+test tests::qos_snapshot_reopens_normal_only_after_critical_backlog_fully_clears ... ok
+test tests::qos_snapshot_reports_borrowed_last_critical_slot_as_consumed ... ok
+test tests::qos_snapshot_reports_lane_and_global_headroom ... ok
+test tests::qos_snapshot_resets_cleanly_after_reserve_only_full_drain_and_idle_poll ... ok
+test tests::qos_snapshot_resets_cleanly_after_spillover_full_drain_and_idle_poll ... ok
+test tests::qos_snapshot_stays_flat_across_guarded_duplicate_and_fresh_normal_probe_noise ... ok
+test tests::qos_snapshot_stays_flat_across_guarded_same_class_duplicate_probe_noise ... ok
+test tests::qos_snapshot_stays_hard_stopped_while_restored_duplicate_metadata_survives_idle_polls ... ok
+test tests::qos_snapshot_stops_advertising_fresh_critical_after_reserve_only_normal_borrows_last_slot ... ok
+test tests::qos_snapshot_stops_advertising_fresh_normal_after_reserve_only_critical_consumes_last_slot ... ok
+test tests::qos_snapshot_tracks_critical_spillover_into_free_normal_headroom ... ok
+test tests::qos_snapshot_tracks_reserve_only_headroom_while_critical_backlog_is_active ... ok
+test tests::qos_snapshot_tracks_zero_reserve_spillover_headroom ... ok
+test tests::qos_snapshot_zero_reserve_recloses_after_critical_spillover_consumes_last_normal_slot ... ok
+test tests::qos_snapshot_zero_reserve_recloses_after_normal_ingress_consumes_last_shared_slot ... ok
+test tests::queued_counts_track_spillover_and_drain ... ok
+test tests::reopened_dedicated_critical_reserve_keeps_qos_snapshot_flat_under_duplicate_probe_noise ... ok
+test tests::reopened_surplus_reserved_headroom_is_borrowable_before_final_guard_slot ... ok
+test tests::reserve_guard_seen_cache_skew_does_not_poison_fresh_retry_after_critical_backlog_clears ... ok
+test tests::reserve_guarded_fresh_normal_retry_stays_fresh_until_critical_backlog_clears ... ok
+test tests::reserve_guarded_normal_duplicate_probe_stays_duplicate_until_critical_copy_drains ... ok
+test tests::reserve_guarded_normal_retry_burst_keeps_queue_counts_flat_until_critical_slot_reopens ... ok
+test tests::reserve_only_active_critical_backlog_fresh_normal_retry_keeps_qos_snapshot_flat ... ok
+test tests::reserve_only_backpressured_tx_id_stays_fresh_until_headroom_reopens ... ok
+test tests::reserve_only_borrowed_last_slot_probe_noise_keeps_qos_snapshot_flat_until_drain ... ok
+test tests::reserve_only_idle_self_heal_clears_stale_fairness_before_new_mixed_ingress ... ok
+test tests::reserve_only_mode_keeps_fairness_streak_cold_during_spillover_drains ... ok
+test tests::reserve_only_normal_borrowed_admission_is_globally_idempotent_until_drained ... ok
+test tests::reserve_only_normal_borrowed_admission_stays_globally_idempotent ... ok
+test tests::reserve_only_normal_borrowing_does_not_preempt_critical_drain_order ... ok
+test tests::reserve_only_reopened_shared_slot_ignores_stale_critical_seen_metadata ... ok
+test tests::reserve_only_stale_hot_fairness_does_not_synthesize_normal_preemption ... ok
+test tests::reserve_only_stale_seen_metadata_does_not_hide_reopened_shared_slot ... ok
+test tests::saturated_cross_lane_and_seen_global_skew_keeps_real_duplicate_and_ghost_retry_distinct ... ok
+test tests::saturated_cross_lane_seen_membership_skew_keeps_duplicate_semantics ... ok
+test tests::saturated_equal_cardinality_lane_local_ghost_seen_id_stays_backpressured_not_duplicate ... ok
+test tests::saturated_retry_burst_stays_backpressured_until_headroom_reopens ... ok
+test tests::seen_global_duplicate_without_lane_local_membership_self_heals_and_stays_duplicate ... ok
+test tests::seen_global_len_matches_lane_queues_across_spillover_and_drain ... ok
+test tests::spillover_admission_remains_globally_idempotent_until_drained ... ok
+test tests::stale_cross_lane_seen_membership_self_heals_before_duplicate_classification ... ok
+test tests::stale_dual_lane_seen_flags_do_not_poison_fresh_admission ... ok
+test tests::stale_seen_global_ghost_id_cross_class_retry_stays_backpressured_until_drain ... ok
+test tests::stale_seen_global_ghost_id_does_not_poison_fresh_admission_after_self_heal ... ok
+test tests::stale_seen_global_ghost_id_is_healed_without_false_duplicate_under_saturation ... ok
+test tests::stale_seen_global_self_heals_without_dropping_duplicate_or_fresh_semantics ... ok
+test tests::sustained_dual_lane_backlog_keeps_normal_progress_after_first_fairness_turn ... ok
+test tests::zero_capacity_admission_gate_does_not_poison_idempotency_after_backpressure ... ok
+test tests::zero_capacity_admission_gate_preserves_restored_duplicate_metadata_across_idle_polls ... ok
+test tests::zero_capacity_hard_stop_duplicate_probe_noise_keeps_qos_snapshot_flat ... ok
+test tests::zero_capacity_hard_stop_idle_polls_preserve_restored_duplicate_knowledge_from_all_seen_caches ... ok
+test tests::zero_critical_reserve_preserves_normal_capacity_with_critical_spillover ... ok
+test tests::zero_reserve_full_shared_queue_keeps_qos_flat_across_cross_class_duplicate_and_retry_noise ... ok
+test tests::zero_total_capacity_lane_gate_backpressures_all_ingress_without_poisoning_seen_ids ... ok
+test tests::zero_total_capacity_preserves_duplicate_semantics_for_restored_seen_ids ... ok
+test typed_admission::tests::duplicate_index_ghost_fails_closed_instead_of_returning_duplicate ... ok
+test typed_admission::tests::duplicate_probe_revalidates_canonical_identity_and_queued_metadata ... ok
+test typed_admission::tests::malformed_body_nonce_and_resource_claims_are_rejected ... ok
+test typed_admission::tests::missing_canonical_validation_fails_closed_before_signature_hook ... ok
+test typed_admission::tests::missing_signer_identity_fails_closed_before_signature_hook ... ok
+test typed_admission::tests::mutable_envelope_digest_cannot_change_between_probe_and_snapshot ... ok
+test typed_admission::tests::omitted_replay_or_recheck_authority_is_not_an_acceptance_path ... ok
+test typed_admission::tests::pending_nonce_authority_rejection_is_fail_closed ... ok
+test typed_admission::tests::pending_nonce_cancel_and_legacy_pop_release_once ... ok
+test typed_admission::tests::pending_nonce_capacity_preflight_does_not_reserve ... ok
+test typed_admission::tests::pending_nonce_duplicate_does_not_reserve_twice_and_scopes_nonce_by_signer ... ok
+test typed_admission::tests::pending_nonce_handoff_and_commit_are_exactly_once ... ok
+test typed_admission::tests::pending_nonce_recheck_failure_releases_once_and_can_retry ... ok
+test typed_admission::tests::replay_hook_can_scope_nonce_to_canonical_signer_identity ... ok
+test typed_admission::tests::saturated_retry_does_not_reserve_replay_state_before_capacity_reopens ... ok
+test typed_admission::tests::signature_replay_and_recheck_hooks_each_fail_closed ... ok
+test typed_admission::tests::typed_gate_retains_exact_metadata_and_dedupes_digest_across_lanes ... ok
+test typed_admission::tests::valid_fresh_envelope_backpressures_without_mutating_digest_index ... ok
+
+test result: ok. 153 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/main.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_mempool-8e547453d53ea30d)
+
+running 46 tests
+test tests::accepted_retry_compacts_stale_backpressure_fifo_without_new_ingress ... ok
+test tests::accepted_retry_id_is_removed_from_backpressure_set ... ok
+test tests::admit_fast_path_clears_stale_retry_fifo_when_retry_set_is_empty ... ok
+test tests::admitting_last_known_retry_clears_stale_retry_fifo_markers_immediately ... ok
+test tests::backpressure_retry_cache_is_bounded_by_capacity ... ok
+test tests::backpressure_retry_memory_survives_partial_drain_and_resaturation ... ok
+test tests::burst_capacity_release_only_defers_fresh_ingress_for_known_retry_budget ... ok
+test tests::capacity_exhaustion_triggers_backpressure ... ok
+test tests::compaction_clears_stale_fifo_immediately_when_retry_set_is_empty ... ok
+test tests::compaction_triggers_at_threshold_to_bound_stale_fifo_growth ... ok
+test tests::draining_last_known_retry_clears_stale_fairness_reservations ... ok
+test tests::duplicate_admission_is_idempotent ... ok
+test tests::fairness_armed_fresh_acceptance_keeps_known_retry_memory_intact ... ok
+test tests::fairness_deferral_does_not_evict_older_retries_from_bounded_memory ... ok
+test tests::fairness_deferral_duplicate_increments_backpressure_duplicate_metric ... ok
+test tests::fairness_deferred_repeat_stays_duplicate_after_queue_resaturates ... ok
+test tests::fairness_marker_does_not_shadow_known_retry_id_admission ... ok
+test tests::fairness_only_deferral_clears_stale_fifo_before_first_new_retry_marker ... ok
+test tests::fairness_only_deferral_path_compacts_stale_fifo_markers ... ok
+test tests::fairness_reservation_does_not_deadlock_fresh_ingress_when_retries_disappear ... ok
+test tests::fairness_reservation_preserves_free_ingress_when_spare_capacity_exists ... ok
+test tests::metrics_counters_saturate_instead_of_overflowing ... ok
+test tests::opened_capacity_is_reserved_for_known_retries_before_fresh_ingress ... ok
+test tests::pop_ready_clears_stale_fairness_marker_when_retry_memory_is_empty ... ok
+test tests::pop_ready_compacts_oversized_retry_fifo_when_retry_memory_is_non_empty ... ok
+test tests::released_slot_allows_new_admission ... ok
+test tests::repeated_backpressured_retry_is_idempotent_until_capacity_opens ... ok
+test tests::repeated_fairness_deferral_of_same_fresh_id_is_idempotent ... ok
+test tests::repeated_single_slot_fairness_deferral_stays_idempotent ... ok
+test tests::restored_retry_ids_rehydrate_fifo_before_bounded_eviction ... ok
+test tests::restored_retry_set_trim_preserves_newly_backpressured_id_when_fifo_markers_missing ... ok
+test tests::restored_retry_set_without_fifo_markers_is_rebounded_to_capacity ... ok
+test tests::restored_retry_trim_rebuilds_fifo_after_stale_marker_eviction_fallback ... ok
+test tests::retry_acceptance_clears_tracking_even_without_active_fairness_reservations ... ok
+test tests::retry_reservation_is_capped_by_known_retry_population ... ok
+test tests::saturated_known_retry_duplicate_does_not_churn_retry_fifo ... ok
+test tests::saturated_retry_remains_idempotent_when_stale_fairness_marker_points_to_known_retry ... ok
+test tests::stale_fairness_marker_is_cleared_after_successful_admission ... ok
+test tests::stale_fairness_marker_without_known_retries_does_not_force_duplicate ... ok
+test tests::stale_fifo_entries_do_not_break_bounded_retry_tracking ... ok
+test tests::stale_retry_bookkeeping_is_cleared_before_free_ingress_admission ... ok
+test tests::stale_retry_fifo_is_compacted_under_high_churn ... ok
+test tests::stale_retry_reservation_is_clamped_before_fairness_deferral ... ok
+test tests::stale_retry_reservations_are_clamped_before_fresh_ingress_deferral ... ok
+test tests::zero_capacity_configuration_still_allows_progress ... ok
+test tests::zero_capacity_is_clamped_to_keep_forward_progress ... ok
+
+test result: ok. 46 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_anti_starvation_warmup_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_anti_starvation_warmup_bound-779cc2992cb81f06)
+
+running 1 test
+test newly_arrived_normal_backlog_gets_a_turn_within_one_dequeue_under_critical_pressure ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_duplicate_probe_critical_refill_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_duplicate_probe_critical_refill_bound-f13a84d087bc7c79)
+
+running 1 test
+test borrowed_slot_duplicate_probe_noise_does_not_delay_next_real_critical_refill ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_duplicate_probe_fairness_reset_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_duplicate_probe_fairness_reset_bound-c089cf4d5643df20)
+
+running 1 test
+test borrowed_duplicate_probe_full_drain_does_not_poison_next_mixed_batch_fairness ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_duplicate_probe_full_drain_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_duplicate_probe_full_drain_reuse_bound-f9a059da57157bb6)
+
+running 1 test
+test borrowed_duplicate_probe_noise_does_not_poison_cross_class_reuse_after_full_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_last_slot_backpressured_retry_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_last_slot_backpressured_retry_reuse_bound-4aa29a3f33a217d0)
+
+running 17 tests
+test borrowed_idle_tail_slot_flips_from_borrowable_to_guarded_once_critical_backlog_appears ... ok
+test borrowed_last_idle_critical_slot_duplicate_retry_wins_under_open_headroom_guard ... ok
+test borrowed_last_idle_critical_slot_guarded_small_retry_burst_uses_stable_lane_snapshot ... ok
+test borrowed_last_idle_critical_slot_keeps_backpressured_critical_retry_fresh_after_full_drain ... ok
+test borrowed_last_idle_critical_slot_keeps_cross_class_duplicate_ahead_of_guarded_fresh_retries ... ok
+test borrowed_last_idle_critical_slot_mixed_retry_burst_keeps_fresh_and_duplicate_outcomes_partitioned ... ok
+test borrowed_last_idle_critical_slot_never_leaks_final_reserved_slot_once_critical_backlog_warms ... ok
+test borrowed_last_idle_critical_slot_preserves_duplicate_before_guard_reopens ... ok
+test borrowed_last_idle_critical_slot_repeated_guard_probes_do_not_flip_fresh_retry_duplicate ... ok
+test borrowed_last_idle_critical_slot_small_retry_burst_keeps_guard_outcomes_stable ... ok
+test guarded_last_critical_slot_critical_retry_stays_backpressured_until_reserved_headroom_reopens ... ok
+test guarded_last_critical_slot_cross_class_retry_burst_flips_once_fresh_id_is_admitted ... ok
+test guarded_last_critical_slot_duplicate_probe_wins_before_and_after_guard_block ... ok
+test guarded_last_critical_slot_keeps_normal_retry_guard_stable_until_critical_fill_then_dedupes ... ok
+test guarded_last_critical_slot_keeps_small_cross_class_retry_burst_stable_until_reopen ... ok
+test guarded_last_critical_slot_preserves_cross_class_duplicate_before_reopen ... ok
+test guarded_last_critical_slot_retry_burst_keeps_fresh_and_duplicate_outcomes_partitioned ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_last_slot_cross_class_normal_reopen_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_last_slot_cross_class_normal_reopen_bound-6d121ef2f371d0c8)
+
+running 1 test
+test borrowed_last_idle_critical_slot_keeps_cross_class_fresh_retry_unpoisoned_until_normal_reopens ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_last_slot_full_drain_retry_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_last_slot_full_drain_retry_reuse_bound-954b6b21aa1c8beb)
+
+running 1 test
+test borrowed_last_critical_slot_reuse_stays_fresh_after_full_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_last_slot_idempotency_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_last_slot_idempotency_bound-4e34676aab3e3625)
+
+running 1 test
+test borrowed_last_idle_critical_slot_stays_globally_idempotent_under_saturation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_last_slot_probe_noise_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_last_slot_probe_noise_stability_bound-41bbc782c4df8d2e)
+
+running 1 test
+test borrowed_last_idle_critical_slot_probe_noise_keeps_qos_snapshot_flat ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_last_slot_qos_snapshot_duplicate_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_last_slot_qos_snapshot_duplicate_stability_bound-80a528fbb404c7ce)
+
+running 1 test
+test borrowed_last_idle_critical_slot_duplicate_and_fresh_probe_noise_keep_qos_snapshot_flat_until_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_last_slot_qos_snapshot_guard_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_last_slot_qos_snapshot_guard_bound-97034e3e0e3ea0cd)
+
+running 1 test
+test borrowed_last_idle_critical_slot_snapshot_closes_normal_headroom_until_active_critical_backlog_truly_clears ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_reserve_guard_before_critical_arrival_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_reserve_guard_before_critical_arrival_bound-864868762bbc6006)
+
+running 1 test
+test borrowed_normal_spillover_guards_final_reserved_slot_before_any_critical_arrives ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_slot_critical_refill_closes_normal_headroom_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_slot_critical_refill_closes_normal_headroom_bound-d9d19b0231eaf56a)
+
+running 1 test
+test borrowed_critical_headroom_closes_to_normal_ingress_after_real_critical_refill ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_slot_duplicate_probe_recovery_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_slot_duplicate_probe_recovery_bound-385ee30f7e7d5805)
+
+running 1 test
+test borrowed_last_critical_slot_duplicate_probe_does_not_delay_critical_recovery_after_one_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_slot_qos_snapshot_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_slot_qos_snapshot_stability_bound-1e696e92b38722fd)
+
+running 1 test
+test borrowed_last_idle_critical_slot_keeps_qos_snapshot_flat_across_retry_and_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_borrowed_slot_saturation_idempotency_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_borrowed_slot_saturation_idempotency_bound-3161fb705707bf3d)
+
+running 1 test
+test borrowed_last_reserved_slot_keeps_duplicate_semantics_while_saturated ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_critical_preemption_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_critical_preemption_bound-8b16fa45fae462cd)
+
+running 1 test
+test newly_arrived_critical_backlog_preempts_normal_flood_on_next_dequeue ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_critical_preemption_warm_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_critical_preemption_warm_bound-c2a411d300033722)
+
+running 1 test
+test newly_arrived_critical_backlog_preempts_normal_flood_without_extra_normal_turn ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_critical_spillover_dedicated_normal_headroom_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_critical_spillover_dedicated_normal_headroom_bound-4efa7d3bce487e22)
+
+running 1 test
+test critical_spillover_requires_real_dedicated_normal_headroom_and_reopens_after_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_critical_spillover_headroom_qos_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_critical_spillover_headroom_qos_stability_bound-dfdb58b96b42eea6)
+
+running 1 test
+test critical_only_spillover_headroom_keeps_normal_closed_until_real_critical_refill ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_critical_spillover_only_headroom_qos_contract_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_critical_spillover_only_headroom_qos_contract_bound-13a67282166081d3)
+
+running 1 test
+test critical_spillover_only_headroom_keeps_normal_closed_across_duplicate_and_retry_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_cross_class_duplicate_probe_no_prewarm_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_cross_class_duplicate_probe_no_prewarm_bound-7a69ec7dc3f445fd)
+
+running 1 test
+test cross_class_duplicate_probe_does_not_prewarm_fairness_before_real_normal_backlog ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_duplicate_probe_warm_fairness_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_duplicate_probe_warm_fairness_bound-3ff17af00cd95203)
+
+running 1 test
+test duplicate_probe_noise_does_not_cool_warm_fairness_with_active_dual_backlog ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_fairness_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_fairness_bound-0cef3e59590b56ad)
+
+running 8 tests
+test critical_spillover_in_normal_lane_gets_turn_within_one_pop_under_critical_pressure ... ok
+test duplicate_probe_noise_does_not_make_warm_fairness_skip_oldest_normal ... ok
+test fairness_warmup_serves_oldest_normal_first_under_active_critical_backlog ... ok
+test full_drain_resets_fairness_streak_so_next_critical_is_not_delayed ... ok
+test mixed_batch_after_full_drain_still_grants_normal_turn_within_one_pop ... ok
+test normal_backlog_gets_service_within_one_pop_after_arrival_under_critical_pressure ... ok
+test reserve_only_borrowed_normal_does_not_preempt_already_queued_critical ... ok
+test sustained_critical_pressure_with_normal_backlog_keeps_normal_latency_bounded ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_fairness_idle_reset_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_fairness_idle_reset_bound-cb93ee9d18281f1a)
+
+running 1 test
+test drained_lane_resets_fairness_before_new_critical_arrival ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_fairness_warm_persistence_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_fairness_warm_persistence_bound-5bf9dc9901f682d1)
+
+running 1 test
+test fairness_stays_warm_after_serving_one_normal_while_dual_backlog_remains ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_fairness_warm_saturated_probe_persistence_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_fairness_warm_saturated_probe_persistence_bound-b0e2e48dd25a37b1)
+
+running 1 test
+test warmed_fairness_survives_saturated_fresh_probe_noise_after_first_normal_turn ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_free_ingress_recovery_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_free_ingress_recovery_bound-d595a250169db765)
+
+running 8 tests
+test active_critical_backlog_blocks_normal_from_borrowing_last_reserved_slot ... ok
+test active_critical_backlog_reopens_normal_retry_only_after_reserved_slot_is_truly_free ... ok
+test borrowed_last_critical_slot_keeps_duplicate_probe_duplicate_while_guarded ... ok
+test borrowed_last_critical_slot_keeps_fresh_critical_retry_backpressured_until_drain ... ok
+test borrowed_last_critical_slot_recovers_to_critical_progress_after_one_dequeue ... ok
+test reserve_only_backpressured_critical_id_remains_fresh_after_one_drain ... ok
+test reserve_only_backpressured_critical_id_stays_fresh_across_cross_class_retries_until_drain ... ok
+test reserve_only_backpressured_normal_id_stays_fresh_across_cross_class_retries_until_drain ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_free_ingress_throughput_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_free_ingress_throughput_bound-3ab02192fd3ea749)
+
+running 12 tests
+test reserve_only_borrowed_normal_ingress_preserves_cross_class_idempotency_until_drain ... ok
+test reserve_only_critical_ingress_preserves_cross_class_idempotency_until_drain ... ok
+test reserve_only_full_drain_resets_idempotency_for_immediate_free_ingress_reuse ... ok
+test reserve_only_mixed_ingress_keeps_fifo_progress_without_fairness_detours ... ok
+test reserve_only_split_backpressured_id_is_not_poisoned_across_class_after_drain ... ok
+test reserve_only_split_backpressured_id_is_not_poisoned_on_same_class_retry_after_drain ... ok
+test reserve_only_split_backpressures_fresh_normal_ingress_once_borrowed_headroom_is_full ... ok
+test reserve_only_split_fresh_backpressured_id_stays_backpressured_across_retries_until_drain ... ok
+test reserve_only_split_keeps_normal_free_ingress_live_while_critical_headroom_exists ... ok
+test reserve_only_split_repeated_retry_noise_keeps_fresh_backpressured_id_recoverable ... ok
+test zero_capacity_duplicate_probe_noise_does_not_poison_cross_class_retry_after_recovery ... ok
+test zero_reserve_critical_ingress_uses_free_normal_headroom_without_dedicated_critical_lane ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_full_drain_backpressured_retry_recovery_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_full_drain_backpressured_retry_recovery_bound-cd40dc4af07e9d04)
+
+running 8 tests
+test critical_retry_bursts_stay_backpressured_once_normal_headroom_is_exhausted ... ok
+test full_drain_after_saturated_backpressure_keeps_fresh_cross_class_retry_admissible ... ok
+test repeated_idle_polls_after_full_drain_do_not_resurrect_backpressured_retry_metadata ... ok
+test repeated_same_id_saturated_retries_stay_backpressured_until_one_slot_reopens ... ok
+test reserved_critical_slot_accepts_one_critical_retry_then_rebounds_normal_retries ... ok
+test reserved_critical_slot_keeps_unsaturated_normal_retry_burst_backpressured_until_drain ... ok
+test reserved_slot_reopens_normal_retry_once_critical_backlog_clears ... ok
+test saturated_retry_burst_keeps_queue_counts_stable_until_headroom_reopens ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_full_drain_saturated_probe_reset_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_full_drain_saturated_probe_reset_bound-aa96f3ca094c9196)
+
+running 1 test
+test saturated_probe_noise_before_full_drain_does_not_warm_next_batch ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_full_drain_warm_duplicate_probe_fairness_reset_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_full_drain_warm_duplicate_probe_fairness_reset_bound-bba1f0482ba8e791)
+
+running 1 test
+test full_drain_after_warm_duplicate_probes_cold_resets_next_mixed_batch ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_guarded_critical_refill_duplicate_qos_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_guarded_critical_refill_duplicate_qos_stability_bound-6410ffdaa54f142c)
+
+running 1 test
+test guarded_critical_refill_duplicate_probes_keep_qos_and_queue_counts_flat ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_guarded_critical_refill_fresh_normal_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_guarded_critical_refill_fresh_normal_probe_stability_bound-fd235dc82464fac7)
+
+running 1 test
+test guarded_critical_refill_fresh_normal_probes_keep_qos_and_queue_counts_flat_until_real_critical_refill ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_guarded_fresh_critical_cross_class_retry_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_guarded_fresh_critical_cross_class_retry_bound-8feabd515b04154a)
+
+running 1 test
+test guarded_fresh_critical_cross_class_retry_stays_fresh_and_admits_on_critical_path ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_guarded_fresh_normal_reopens_after_final_critical_drain_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_guarded_fresh_normal_reopens_after_final_critical_drain_bound-761012f6e8688564)
+
+running 1 test
+test guarded_fresh_normal_reopens_as_fresh_after_final_critical_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_guarded_fresh_normal_retry_cross_class_critical_claim_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_guarded_fresh_normal_retry_cross_class_critical_claim_bound-344225f99d5a5be3)
+
+running 1 test
+test guarded_fresh_normal_retry_does_not_poison_cross_class_critical_claim_on_last_reserved_slot ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_guarded_last_reserved_public_contract_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_guarded_last_reserved_public_contract_bound-f74e150f8dedccdb)
+
+running 1 test
+test guarded_last_reserved_slot_keeps_public_qos_surface_honest ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_guarded_last_reserved_reopen_duplicate_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_guarded_last_reserved_reopen_duplicate_stability_bound-e8827be22225786d)
+
+running 1 test
+test guarded_last_reserved_reopens_cleanly_after_final_critical_drain_despite_cross_class_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_guarded_normal_retry_qos_reopen_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_guarded_normal_retry_qos_reopen_bound-30425f7f7b734707)
+
+running 1 test
+test guarded_normal_retry_noise_stays_fresh_and_qos_flat_until_reserved_slot_reopens ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_guarded_slot_accounting_partition_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_guarded_slot_accounting_partition_bound-8e7fb09368826d89)
+
+running 1 test
+test guarded_last_reserved_slot_keeps_duplicate_vs_fresh_retry_accounting_flat_until_reopen ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_guarded_slot_duplicate_partition_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_guarded_slot_duplicate_partition_bound-89526829d2d6b388)
+
+running 1 test
+test guarded_last_reserved_slot_keeps_fresh_normal_backpressured_while_duplicate_critical_stays_duplicate ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_idempotency_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_idempotency_bound-7afd14869bcdcae2)
+
+running 3 tests
+test backpressured_id_does_not_poison_cross_class_retry_after_capacity_recovers ... ok
+test reserve_only_saturated_lane_keeps_borrowed_duplicate_classification ... ok
+test saturated_lane_preserves_duplicate_vs_backpressure_contract ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_idle_last_slot_stale_duplicate_borrow_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_idle_last_slot_stale_duplicate_borrow_bound-1344163b336d44f0)
+
+running 1 test
+test stale_duplicate_memory_after_full_critical_drain_does_not_block_idle_last_slot_borrow ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_idle_pop_noop_reset_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_idle_pop_noop_reset_bound-72af507d803d91c9)
+
+running 1 test
+test repeated_empty_pop_after_full_drain_does_not_poison_next_batch_fairness_or_reuse ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_idle_reset_cross_class_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_idle_reset_cross_class_reuse_bound-ffca2490d156b9f0)
+
+running 1 test
+test drained_lane_allows_cross_class_reuse_without_stale_duplicate_or_fairness_bias ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_oversized_reserve_single_slot_reopen_duplicate_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_oversized_reserve_single_slot_reopen_duplicate_stability_bound-4cb773ffc188f248)
+
+running 1 test
+test oversized_reserve_single_slot_reopen_stays_stable_across_duplicate_probe_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_probe_warm_fairness_persistence_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_probe_warm_fairness_persistence_bound-7f6cc1be9c987dd0)
+
+running 1 test
+test duplicate_probe_noise_does_not_cool_warm_fairness_with_dual_backlog ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_borrowed_last_slot_reopen_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_borrowed_last_slot_reopen_bound-68c38afaf21dce4b)
+
+running 1 test
+test qos_snapshot_reopens_borrowable_last_reserved_slot_after_borrowed_occupant_drains ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_borrowed_slot_guard_flip_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_borrowed_slot_guard_flip_bound-c6140fb5f45daf76)
+
+running 1 test
+test qos_snapshot_flips_from_borrowable_to_guarded_once_critical_backlog_claims_final_reserved_slot ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_guard_mixed_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_guard_mixed_probe_stability_bound-ad20274ebf91dc8c)
+
+running 1 test
+test qos_snapshot_stays_flat_across_mixed_probe_noise_while_last_reserved_slot_is_guarded ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_guard_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_guard_probe_stability_bound-073e9008637b0ea7)
+
+running 1 test
+test qos_snapshot_stays_stable_while_last_reserved_critical_slot_is_guarded ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_guard_reopen_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_guard_reopen_bound-8dd5b498b8b3424b)
+
+running 1 test
+test qos_snapshot_keeps_normal_guard_closed_until_last_active_critical_slot_truly_clears ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_guard_reopen_duplicate_noise_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_guard_reopen_duplicate_noise_bound-72beb90cda0ed7f6)
+
+running 1 test
+test qos_snapshot_keeps_reopened_last_reserved_critical_slot_stable_under_duplicate_and_retry_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_guarded_reopen_cross_class_retry_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_guarded_reopen_cross_class_retry_stability_bound-761870c6f215f88e)
+
+running 1 test
+test reopened_last_reserved_critical_slot_stays_guarded_across_cross_class_duplicate_and_retry_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_guarded_reopen_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_guarded_reopen_probe_stability_bound-4991787e15187c5f)
+
+running 1 test
+test qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_after_reopen ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_probe_stability_bound-85542a6c9094d845)
+
+running 1 test
+test qos_snapshot_stays_stable_across_guarded_fresh_and_duplicate_probe_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound-e76c969454796638)
+
+running 1 test
+test reserve_only_drain_only_duplicate_retention_keeps_shared_snapshot_closed_until_survivor_drains ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drain_only_full_drain_releases_duplicate_retention_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drain_only_full_drain_releases_duplicate_retention_bound-e261210e5f259e25)
+
+running 1 test
+test reserve_only_drain_only_full_drain_releases_duplicate_retention_and_restores_shared_headroom ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drain_only_full_drain_releases_multi_refill_duplicate_retention_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drain_only_full_drain_releases_multi_refill_duplicate_retention_bound-427356c69d205c7c)
+
+running 1 test
+test reserve_only_drain_only_full_drain_releases_multi_refill_duplicate_retention_and_restores_cross_class_reuse ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drain_only_full_drain_releases_refilled_duplicate_retention_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drain_only_full_drain_releases_refilled_duplicate_retention_bound-8641157ce1715ca9)
+
+running 1 test
+test reserve_only_drain_only_full_drain_releases_refilled_duplicate_retention_and_restores_shared_reuse ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drain_only_multi_refill_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drain_only_multi_refill_probe_stability_bound-49656a6c944440b4)
+
+running 1 test
+test reserve_only_drain_only_qos_snapshot_preserves_multi_slot_refill_visibility_across_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drain_only_refilled_survivor_duplicate_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drain_only_refilled_survivor_duplicate_stability_bound-a42049fef2efdeca)
+
+running 1 test
+test reserve_only_drain_only_refilled_lane_keeps_survivor_duplicate_noise_from_masking_reopened_headroom ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drained_id_cross_class_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drained_id_cross_class_reuse_bound-4a96eacf22a056af)
+
+running 1 test
+test reserve_only_drained_id_can_cross_class_reuse_reopened_slot_while_survivor_stays_duplicate ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drained_retry_duplicate_noise_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drained_retry_duplicate_noise_bound-a987bd0938456965)
+
+running 1 test
+test reserve_only_reopened_snapshot_survives_duplicate_noise_before_drained_retry_resaturates ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drained_retry_reopen_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drained_retry_reopen_bound-1abc9216479cfd7f)
+
+running 1 test
+test reserve_only_qos_snapshot_reopen_allows_drained_id_retry_across_ingress_classes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound-d2eacf13602c1ef8)
+
+running 1 test
+test reserve_only_drained_retry_resaturates_snapshot_and_backpressures_fresh_cross_class_probe ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_drained_retry_same_class_noise_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_drained_retry_same_class_noise_bound-da6113a366f3edf5)
+
+running 1 test
+test reserve_only_reopened_snapshot_survives_duplicate_noise_before_same_class_drained_retry_resaturates ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_duplicate_then_refill_cross_class_freeze_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_duplicate_then_refill_cross_class_freeze_bound-2d1af9fd531cd57d)
+
+running 1 test
+test reserve_only_duplicate_probe_does_not_consume_reopened_shared_slot_before_cross_class_refill_refreezes_it ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_duplicate_then_refill_cross_class_freeze_symmetry_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_duplicate_then_refill_cross_class_freeze_symmetry_bound-4eebf37a730aaf7f)
+
+running 1 test
+test reserve_only_duplicate_probe_does_not_consume_reopened_shared_slot_before_cross_class_refill_refreezes_it_symmetrically ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_full_drain_releases_duplicate_retention_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_full_drain_releases_duplicate_retention_bound-0334ccdaa97b5a63)
+
+running 1 test
+test reserve_only_full_drain_releases_duplicate_retention_and_restores_shared_headroom ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_full_drain_releases_refilled_duplicate_retention_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_full_drain_releases_refilled_duplicate_retention_bound-bf6f1d21a2cd0a9d)
+
+running 1 test
+test reserve_only_full_drain_releases_refilled_duplicate_retention_and_restores_cross_class_reuse ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_idle_poll_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_idle_poll_stability_bound-f691b0daa463b00b)
+
+running 1 test
+test reserve_only_qos_snapshot_stays_cold_and_reopened_across_idle_polls_after_full_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_immediate_reopen_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_immediate_reopen_bound-4947bb96fbae240e)
+
+running 1 test
+test reserve_only_qos_snapshot_reopens_immediately_after_last_borrowed_slot_drains ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_multi_refill_mixed_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_multi_refill_mixed_probe_stability_bound-55b92ec01d43e6d5)
+
+running 1 test
+test reserve_only_qos_snapshot_preserves_multi_slot_refill_visibility_across_mixed_probe_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_multi_refill_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_multi_refill_probe_stability_bound-da9721ad195afc23)
+
+running 1 test
+test reserve_only_qos_snapshot_preserves_multi_slot_refill_visibility_across_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_probe_stability_bound-f61b34e540d9fe23)
+
+running 1 test
+test reserve_only_qos_snapshot_stays_stable_across_shared_lane_probe_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_refill_boundary_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_refill_boundary_bound-9cefa6a2167cf49a)
+
+running 1 test
+test reserve_only_qos_snapshot_preserves_refill_visibility_across_duplicate_probe_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_refill_cross_class_noise_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_refill_cross_class_noise_bound-0b8028f62281741a)
+
+running 1 test
+test reserve_only_refilled_shared_slot_stays_closed_under_cross_class_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_refill_duplicate_retention_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_refill_duplicate_retention_bound-672e4899403a3e5b)
+
+running 1 test
+test reserve_only_refilled_shared_slot_keeps_duplicate_retention_without_masking_reopened_headroom ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_refill_from_critical_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_refill_from_critical_bound-6816044cb5af75f9)
+
+running 1 test
+test reserve_only_qos_snapshot_closes_when_critical_consumes_last_refill_slot_after_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_refill_from_normal_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_refill_from_normal_bound-ce67db99b04ec987)
+
+running 1 test
+test reserve_only_qos_snapshot_closes_when_normal_consumes_last_refill_slot_after_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_refilled_survivor_reopen_duplicate_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_refilled_survivor_reopen_duplicate_stability_bound-0121e19eb1ab2a4a)
+
+running 1 test
+test reserve_only_refilled_survivor_drain_reopens_shared_slot_without_duplicate_masking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_reopen_critical_refill_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_reopen_critical_refill_bound-279948a7d4d692f2)
+
+running 1 test
+test reserve_only_qos_snapshot_closes_when_critical_consumes_reopened_shared_slot_after_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_reopen_cross_class_duplicate_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_reopen_cross_class_duplicate_stability_bound-f99e4486b8713446)
+
+running 1 test
+test reserve_only_qos_snapshot_reopened_shared_slot_survives_cross_class_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_reopen_idle_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_reopen_idle_stability_bound-009e570607b84708)
+
+running 1 test
+test reserve_only_qos_snapshot_keeps_reopened_shared_slot_visible_across_idle_polls_and_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_reopen_mixed_duplicate_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_reopen_mixed_duplicate_stability_bound-72f2facefbe2fb6b)
+
+running 1 test
+test reserve_only_qos_snapshot_reopened_shared_slot_survives_mixed_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_reopen_normal_refill_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_reopen_normal_refill_bound-4d1bf165a6ad6825)
+
+running 1 test
+test reserve_only_qos_snapshot_closes_when_normal_consumes_reopened_shared_slot_after_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_reopen_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_reopen_probe_stability_bound-56df5de1b1394b72)
+
+running 1 test
+test reserve_only_qos_snapshot_stays_stable_across_probe_noise_after_reopen ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_reserve_only_reopen_same_class_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_reserve_only_reopen_same_class_probe_stability_bound-2d64485c60d0592d)
+
+running 1 test
+test reserve_only_qos_snapshot_reopened_shared_slot_survives_same_class_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_spillover_full_drain_immediate_reopen_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_spillover_full_drain_immediate_reopen_bound-68ed3da05893268b)
+
+running 1 test
+test qos_snapshot_reopens_immediately_after_spillover_full_drain_without_idle_poll ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_spillover_full_drain_reuse_observability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_spillover_full_drain_reuse_observability_bound-00fa930d4850ed53)
+
+running 1 test
+test qos_snapshot_stays_consistent_when_spillover_lane_reuses_drained_id_after_full_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_zero_capacity_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_zero_capacity_stability_bound-c66ec85641097033)
+
+running 1 test
+test zero_capacity_qos_snapshot_stays_hard_stopped_across_probe_noise_and_idle_polls ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_qos_snapshot_zero_reserve_reuse_observability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_qos_snapshot_zero_reserve_reuse_observability_bound-3a4d2e79bb6878d1)
+
+running 1 test
+test zero_reserve_qos_snapshot_reopens_cleanly_for_cross_class_reuse_after_full_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_queued_count_full_drain_idle_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_queued_count_full_drain_idle_reuse_bound-b44aa38a41a90bfb)
+
+running 1 test
+test queued_counts_reset_cleanly_after_spillover_full_drain_and_idle_poll ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_queued_counts_idempotency_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_queued_counts_idempotency_bound-b72c94add4ee4c7b)
+
+running 1 test
+test queued_counts_stay_stable_across_duplicate_and_backpressured_retries ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reopened_dedicated_reserve_public_contract_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reopened_dedicated_reserve_public_contract_bound-36d1d0765bf577c2)
+
+running 1 test
+test reopened_dedicated_critical_reserve_stays_visible_through_cross_class_duplicate_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reopened_surplus_reserved_borrow_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reopened_surplus_reserved_borrow_bound-733a7b16c5560786)
+
+running 1 test
+test reopened_surplus_reserved_headroom_is_borrowable_before_final_guard_slot ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_clamp_borrow_policy_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_clamp_borrow_policy_bound-d35d918d52b5f529)
+
+running 1 test
+test oversized_reserve_clamp_keeps_last_free_shared_slot_borrowable_under_active_backlog ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_clamp_full_drain_reset_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_clamp_full_drain_reset_bound-b74a58839fdc85b2)
+
+running 1 test
+test oversized_critical_reserve_full_drain_resets_for_cross_class_reuse_and_cold_fifo_progress ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_clamp_idempotency_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_clamp_idempotency_bound-f92b4c132dd8c5eb)
+
+running 1 test
+test oversized_critical_reserve_clamps_to_total_and_preserves_reserve_only_idempotency ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_clamp_idle_reset_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_clamp_idle_reset_reuse_bound-c2202023f8fed2d4)
+
+running 1 test
+test oversized_critical_reserve_full_drain_and_idle_polls_do_not_poison_next_batch_reuse_or_fifo ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_clamp_mixed_reopen_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_clamp_mixed_reopen_stability_bound-e9698a68ccb0a0d0)
+
+running 1 test
+test oversized_reserve_clamp_mixed_backlog_reopens_shared_slot_without_stale_duplicate_poison ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_clamp_qos_snapshot_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_clamp_qos_snapshot_bound-74f1a3a1dbe3633d)
+
+running 1 test
+test oversized_critical_reserve_clamps_qos_snapshot_to_reserve_only_contract ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_clamp_qos_snapshot_reopen_duplicate_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_clamp_qos_snapshot_reopen_duplicate_stability_bound-d2e587bf349c8423)
+
+running 1 test
+test oversized_reserve_clamp_reopen_keeps_qos_snapshot_flat_across_duplicate_probe_noise_until_refill ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_clamp_saturated_probe_full_drain_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_clamp_saturated_probe_full_drain_reuse_bound-c517940749f7c2c2)
+
+running 1 test
+test oversized_critical_reserve_saturated_duplicate_probe_then_full_drain_allows_cold_cross_class_reuse ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_clamp_single_slot_boundary_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_clamp_single_slot_boundary_bound-e1f8b1539d0f7ee8)
+
+running 1 test
+test oversized_reserve_single_slot_clamp_preserves_fail_closed_and_reopen_contract ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_cross_class_retry_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_cross_class_retry_reuse_bound-3f614c2855bb3db8)
+
+running 1 test
+test reserve_only_fresh_normal_retry_does_not_poison_later_cross_class_critical_admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_duplicate_probe_idle_reset_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_duplicate_probe_idle_reset_reuse_bound-ff0dfac32eedd254)
+
+running 1 test
+test reserve_only_duplicate_probe_noise_and_idle_polls_do_not_poison_cross_class_reuse ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_duplicate_probe_recovery_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_duplicate_probe_recovery_bound-8280cea28ddba88b)
+
+running 1 test
+test reserve_only_borrowed_duplicate_probe_does_not_delay_fresh_critical_retry_after_one_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_full_drain_cross_class_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_full_drain_cross_class_reuse_bound-6fb24ba9fd63721f)
+
+running 1 test
+test reserve_only_full_drain_allows_cross_class_reuse_without_stale_duplicate_poisoning ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_idle_pop_noop_reset_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_idle_pop_noop_reset_bound-17f127f96c0b8d05)
+
+running 1 test
+test repeated_empty_pop_after_reserve_only_full_drain_does_not_poison_next_batch_reuse_or_fifo ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_idle_reset_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_idle_reset_reuse_bound-8b6cc095125f35a2)
+
+running 1 test
+test reserve_only_full_drain_resets_for_cross_class_reuse_and_fresh_critical_progress ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_qos_snapshot_duplicate_noise_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_qos_snapshot_duplicate_noise_stability_bound-ea1695935be3c2c2)
+
+running 1 test
+test reserve_only_duplicate_noise_does_not_reopen_hard_stopped_qos_snapshot ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_queued_counts_idempotency_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_queued_counts_idempotency_bound-ade07bc0146f9eaa)
+
+running 1 test
+test reserve_only_queued_counts_stay_stable_across_borrowed_duplicates_and_recovered_retry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_reopened_cross_class_fresh_retry_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_reopened_cross_class_fresh_retry_bound-68e26e8cc4946ae0)
+
+running 1 test
+test reserve_only_reopened_shared_slot_admits_prior_cross_class_fresh_retry_without_stale_duplicate_poisoning ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_saturated_probe_full_drain_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_saturated_probe_full_drain_reuse_bound-6ac07224ab4e9bb3)
+
+running 1 test
+test reserve_only_saturated_fresh_probe_noise_full_drain_allows_immediate_cross_class_reuse ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_shared_lane_duplicate_refill_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_shared_lane_duplicate_refill_bound-28a0642e8b29311a)
+
+running 1 test
+test reserve_only_shared_lane_duplicate_probe_does_not_poison_following_critical_refill ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_shared_lane_normal_refill_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_shared_lane_normal_refill_bound-584fc35b1f3d2870)
+
+running 1 test
+test reserve_only_shared_lane_duplicate_probe_does_not_poison_following_normal_refill ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_shared_lane_qos_snapshot_backpressure_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_shared_lane_qos_snapshot_backpressure_stability_bound-816d2b772666f443)
+
+running 1 test
+test reserve_only_shared_lane_fresh_retry_noise_keeps_qos_snapshot_stable_until_real_refill ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_shared_lane_qos_snapshot_duplicate_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_shared_lane_qos_snapshot_duplicate_stability_bound-9eb62e564714f078)
+
+running 1 test
+test reserve_only_shared_lane_duplicate_probe_keeps_qos_snapshot_stable_until_real_refill ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserve_only_shared_lane_qos_snapshot_reopen_after_probe_noise_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserve_only_shared_lane_qos_snapshot_reopen_after_probe_noise_bound-63691bc37724314c)
+
+running 1 test
+test reserve_only_shared_lane_probe_noise_keeps_qos_snapshot_flat_until_one_real_drain_reopens_both_classes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_reserved_slot_guard_retry_snapshot_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_reserved_slot_guard_retry_snapshot_stability_bound-13df123ae8b31bd6)
+
+running 1 test
+test guarded_last_critical_slot_keeps_qos_snapshot_stable_across_repeated_normal_retries ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_saturated_duplicate_probe_warm_fairness_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_saturated_duplicate_probe_warm_fairness_bound-832089a8f6644677)
+
+running 1 test
+test saturated_duplicate_probe_noise_does_not_cool_warm_fairness_with_dual_backlog ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_saturated_probe_warm_fairness_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_saturated_probe_warm_fairness_bound-93ff5f1c32ca3ec5)
+
+running 1 test
+test saturated_fresh_probe_noise_does_not_cool_warm_fairness_with_dual_backlog ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_saturation_probe_fairness_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_saturation_probe_fairness_bound-29cb8bc34e218e6e)
+
+running 1 test
+test saturated_duplicate_probes_do_not_disturb_next_fair_normal_turn ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_backpressure_full_drain_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_backpressure_full_drain_reuse_bound-68d9c0a3f7d56d22)
+
+running 4 tests
+test repeated_spillover_backpressure_retries_stay_flat_across_a_small_burst ... ok
+test spillover_backpressure_small_burst_keeps_duplicates_and_fresh_retries_bounded ... ok
+test spillover_backpressured_cross_class_retries_leave_queue_accounting_flat_until_recovery ... ok
+test spillover_backpressured_id_recovers_then_becomes_reusable_after_full_drain ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_backpressure_recovery_idempotency_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_backpressure_recovery_idempotency_bound-335fa99a9442a5eb)
+
+running 2 tests
+test spillover_saturation_backpressured_id_recovers_after_one_drain_and_then_dedupes_globally ... ok
+test spillover_saturation_preserves_duplicate_before_fresh_normal_retry_recovers ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_duplicate_probe_fairness_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_duplicate_probe_fairness_bound-f8621fee45519367)
+
+running 1 test
+test duplicate_probe_against_spillovered_critical_does_not_cool_first_real_normal_turn ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_duplicate_probe_full_drain_fairness_reset_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_duplicate_probe_full_drain_fairness_reset_bound-39ddbebf17f5cb7d)
+
+running 1 test
+test critical_spillover_duplicate_probe_full_drain_does_not_poison_next_mixed_batch_fairness ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_fail_closed_public_contract_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_fail_closed_public_contract_bound-9cc7bd83fa3658da)
+
+running 1 test
+test exhausted_spillover_headroom_keeps_public_qos_surface_fail_closed ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_full_drain_retry_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_full_drain_retry_reuse_bound-23bd457a36adf8d7)
+
+running 1 test
+test spillover_duplicate_probe_id_can_reenter_as_fresh_after_full_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_idle_pop_reset_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_idle_pop_reset_reuse_bound-10a1e4b4a7f56919)
+
+running 1 test
+test repeated_empty_pop_after_spillover_full_drain_does_not_poison_cross_class_reuse_or_cold_progress ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_pop_reuse_fairness_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_pop_reuse_fairness_bound-64354c165bc4fbf9)
+
+running 1 test
+test popped_spillover_id_can_reenter_without_cooling_warm_fairness ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_post_head_probe_accounting_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_post_head_probe_accounting_bound-20e5b2c892f679d6)
+
+running 1 test
+test spillover_head_drain_probe_noise_keeps_queue_accounting_and_next_normal_turn_stable ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_qos_snapshot_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_qos_snapshot_probe_stability_bound-9f79702e6a5f6ef0)
+
+running 1 test
+test spillover_qos_snapshot_stays_stable_across_saturated_fresh_and_duplicate_probe_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_recovered_qos_snapshot_duplicate_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_recovered_qos_snapshot_duplicate_stability_bound-c7002650fb7db9c0)
+
+running 1 test
+test spillover_recovered_id_duplicate_probe_keeps_qos_snapshot_stable_until_next_real_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_recovered_retry_accounting_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_recovered_retry_accounting_bound-e0aa2ce977c54096)
+
+running 3 tests
+test spillover_recovered_id_and_next_fresh_admit_keep_cross_class_dedup_and_queue_accounting_stable ... ok
+test spillover_recovered_id_keeps_cross_class_duplicate_contract_without_queue_count_drift ... ok
+test spillover_recovered_id_re_dedupes_without_perturbing_queue_accounting ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_reentry_dedup_fairness_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_reentry_dedup_fairness_bound-a44ac89205c66d34)
+
+running 1 test
+test spillover_head_reentry_rededupes_across_classes_without_cooling_next_real_normal_turn ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_reopened_last_idle_reserve_recloses_qos_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_reopened_last_idle_reserve_recloses_qos_bound-799d57e8d7890b73)
+
+running 1 test
+test spillover_reopened_last_idle_reserve_admits_one_fresh_normal_borrow_then_recloses_qos ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_saturated_probe_fairness_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_saturated_probe_fairness_bound-d11ca0923e6bc959)
+
+running 1 test
+test spillover_warm_fairness_survives_saturated_fresh_probe_noise_before_first_real_normal_turn ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_saturated_probe_full_drain_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_saturated_probe_full_drain_reuse_bound-fcb20ded9eefc25b)
+
+running 1 test
+test spillover_saturated_fresh_probe_noise_full_drain_allows_immediate_cross_class_reuse ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_warm_persistence_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_warm_persistence_bound-f69f32d1f4eda3a9)
+
+running 1 test
+test spillover_warm_fairness_stays_live_after_first_spillover_turn_with_refill_and_probe_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_spillover_warmup_fairness_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_spillover_warmup_fairness_bound-dc0288f1090495d4)
+
+running 1 test
+test critical_spillover_warms_fairness_for_subsequent_normal_backlog ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_capacity_cross_class_retry_contract_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_capacity_cross_class_retry_contract_bound-af318cb1619eb772)
+
+running 1 test
+test zero_capacity_cross_class_fresh_retry_noise_stays_fail_closed ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_capacity_distinct_probe_qos_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_capacity_distinct_probe_qos_stability_bound-ce98ca732eef4225)
+
+running 1 test
+test zero_total_capacity_distinct_cross_class_probe_noise_keeps_qos_snapshot_hard_stopped ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_capacity_idle_duplicate_metadata_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_capacity_idle_duplicate_metadata_bound-e9f96a61e1da90b1)
+
+running 2 tests
+test zero_total_capacity_idle_polls_do_not_change_retry_semantics_or_fabricate_queue_state ... ok
+test zero_total_capacity_qos_snapshot_stays_hard_stopped_across_fresh_retry_noise_and_idle_polls ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_capacity_idle_poll_public_invariants_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_capacity_idle_poll_public_invariants_bound-085e36564fc9616f)
+
+running 1 test
+test hard_stop_idle_polls_keep_public_queue_and_qos_invariants_flat_across_fresh_retry_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_capacity_public_contract_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_capacity_public_contract_bound-fd2fd58e29134559)
+
+running 1 test
+test zero_total_capacity_keeps_fresh_retries_backpressured_without_duplicate_poisoning ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_capacity_restored_duplicate_qos_contract_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_capacity_restored_duplicate_qos_contract_bound-da4941c917aaa7c5)
+
+running 1 test
+test reserve_only_backpressured_retry_keeps_public_qos_surface_frozen_until_real_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_duplicate_probe_recovery_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_duplicate_probe_recovery_bound-9626810ff5cbd5bd)
+
+running 1 test
+test zero_reserve_spillover_duplicate_probe_does_not_block_fresh_retry_after_one_drain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_full_drain_fairness_reset_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_full_drain_fairness_reset_bound-8220b7594434ad98)
+
+running 1 test
+test zero_reserve_full_drain_resets_fairness_so_fresh_critical_is_not_delayed ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_full_drain_retry_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_full_drain_retry_reuse_bound-83efd3500f040377)
+
+running 1 test
+test zero_reserve_saturated_retry_then_full_drain_allows_cross_class_reuse_of_same_id ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_full_drain_reuse_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_full_drain_reuse_bound-b94014f8c4af9a88)
+
+running 1 test
+test zero_reserve_full_drain_allows_cross_class_reuse_without_stale_duplicate_state ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_idle_pop_reset_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_idle_pop_reset_bound-226bc8b4ad6f33db)
+
+running 1 test
+test repeated_empty_pop_after_zero_reserve_full_drain_does_not_poison_next_batch_reuse_or_priority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_idle_reuse_spillover_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_idle_reuse_spillover_bound-de5b348865261d21)
+
+running 1 test
+test zero_reserve_full_drain_allows_reuse_of_prior_critical_spillover_id_in_next_mixed_batch ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_qos_snapshot_probe_stability_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_qos_snapshot_probe_stability_bound-f4ddfe247734fb6c)
+
+running 1 test
+test zero_reserve_qos_snapshot_stays_stable_across_saturated_fresh_and_duplicate_probe_noise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_qos_snapshot_reopen_after_one_drain_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_qos_snapshot_reopen_after_one_drain_bound-647e1db62a80489b)
+
+running 1 test
+test zero_reserve_qos_snapshot_reopens_both_classes_after_one_shared_slot_drains ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_qos_snapshot_reopen_after_probe_noise_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_qos_snapshot_reopen_after_probe_noise_bound-bc0e77f0be50c4b0)
+
+running 1 test
+test zero_reserve_probe_noise_keeps_qos_snapshot_flat_until_one_real_drain_reopens_both_classes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_shared_fifo_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_shared_fifo_bound-63fdd6331da40cf1)
+
+running 1 test
+test zero_reserve_mixed_ingress_preserves_shared_queue_fifo_order ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_single_slot_boundary_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_single_slot_boundary_bound-fe62be8065807a93)
+
+running 1 test
+test zero_reserve_single_shared_slot_preserves_fail_closed_and_reopen_contract ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lane_zero_reserve_spillover_idempotency_bound.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/lane_zero_reserve_spillover_idempotency_bound-4263c89bc32a1c83)
+
+running 2 tests
+test zero_reserve_critical_spillover_retry_stays_fresh_until_drain_and_then_dedupes ... ok
+test zero_reserve_full_drain_resets_cross_class_reuse_without_stale_duplicate_state ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/typed_admission_contract.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/typed_admission_contract-ce4467352d1ced2e)
+
+running 1 test
+test typed_admission_stays_key_free_and_explicitly_non_durable ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/workspace/scratch/aebafee84981/chain-overhead-target/debug/deps/trnm_worker_agent-0639e57f4035fdc0)
+
+running 342 tests
+test assigned::tests::format_skip_summary_keeps_reason_counts_sorted_for_grep_stability ... ok
+test assigned::tests::format_skip_summary_preserves_none_sentinel_for_zero_skip_runs ... ok
+test assigned::tests::run_assigned_summary_line_keeps_operator_visible_handoff_tokens_stable ... ok
+test command_runtime_exec::tests::real_llm_caller_parses_json_above_pipe_capacity ... ok
+test command_runtime_exec::tests::successful_leader_still_cleans_descendants_that_close_their_pipes ... ok
+test command_runtime_exec::tests::worker_deadline_includes_descendant_pipe_lifetime ... ok
+test command_runtime_exec::tests::worker_drains_both_streams_above_pipe_capacity ... ok
+test command_runtime_exec::tests::worker_rejects_aggregate_output_over_budget ... ok
+test command_runtime_exec::tests::worker_stdin_is_eof_and_nonzero_status_is_preserved ... ok
+test command_runtime_exec::tests::worker_timeout_kills_group_before_delayed_effect ... ok
+test command_runtime_exec::tests::worker_zero_deadline_refuses_before_spawn ... ok
+test command_runtime_exec::unix::permission_failure_is_never_excused_for_a_live_child ... ok
+test flush_submission::tests::classify_flush_ack_does_not_reuse_persisted_reveal_hash_without_duplicate_receipt ... ok
+test flush_submission::tests::classify_flush_ack_keeps_blank_persisted_commit_receipt_fail_closed_during_duplicate_resume ... ok
+test flush_submission::tests::classify_flush_ack_keeps_blank_persisted_reveal_receipt_fail_closed_during_duplicate_resume ... ok
+test flush_submission::tests::classify_flush_ack_prefers_rejection_on_terminal_commit ... ok
+test flush_submission::tests::classify_flush_ack_reports_idempotent_when_hashes_present ... ok
+test flush_submission::tests::classify_flush_ack_reuses_trimmed_persisted_hashes_during_duplicate_resume ... ok
+test flush_submission::tests::classify_flush_ack_treats_blank_live_receipt_hashes_as_missing_evidence ... ok
+test flush_submission::tests::normalize_adapter_tx_hash_trims_bom_and_zero_width_fillers ... ok
+test flush_submission::tests::receipt_hash_observed_only_reuses_trimmed_previous_hash_for_duplicates ... ok
+test flush_submission::tests::stage_tx_hash_for_ack_canonicalizes_boundary_fillers_in_persisted_duplicate_receipts ... ok
+test flush_submission::tests::stage_tx_hash_for_ack_does_not_reuse_previous_hash_for_non_duplicate_blank_receipt ... ok
+test flush_submission::tests::stage_tx_hash_for_ack_prefers_fresh_duplicate_receipt_over_persisted_hash ... ok
+test flush_submission::tests::stage_tx_hash_for_ack_reuses_previous_hash_when_duplicate_receipt_has_only_invisible_fillers ... ok
+test flush_submission::tests::stage_tx_hash_for_ack_reuses_previous_hash_when_duplicate_receipt_is_blank ... ok
+test flush_submission::tests::verifier_status_mapping_keeps_retryable_flush_failures_distinct_from_rejections ... ok
+test proof_adapter::tests::adapter_label_normalization_peels_nested_and_shell_escaped_quote_wrappers ... ok
+test proof_adapter::tests::adapter_label_normalization_peels_smart_and_localized_quote_wrappers ... ok
+test proof_adapter::tests::build_proof_adapter_accepts_default_and_fraud_and_tee_receipt_and_zk_aliases ... ok
+test proof_adapter::tests::build_proof_adapter_accepts_separator_aliases_for_receipt_modes ... ok
+test proof_adapter::tests::last_balanced_json_object_ignores_braces_inside_strings ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_crlf_fenced_multiline_json_payload ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_after_ansi_apc_logs ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_after_ansi_csi_logs ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_after_ansi_dcs_logs ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_after_ansi_osc_logs ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_after_ansi_pm_logs ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_after_raw_control_byte_noise ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_embedded_in_log_line ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_prefix_before_trailing_logs ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_with_raw_control_byte_prefix ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_with_utf8_bom_prefix ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_with_whitespace_then_bom_prefix ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_json_with_zero_width_filler_prefix ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_last_json_line_after_noise ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_accepts_multiline_json_payload ... ok
+test proof_adapter::tests::standard_proof_adapter_parse_response_rejects_without_json_line ... ok
+test proof_adapter::tests::standard_proof_adapter_reports_verifier_decision_and_reason_code ... ok
+test proof_adapter::tests::tee_receipt_adapter_parse_response_requires_auditable_fields ... ok
+test proof_adapter::tests::zk_receipt_adapter_parse_response_requires_auditable_fields ... ok
+test tests::adapter_error_classification_enforces_contract_precedence_for_ambiguous_contexts ... ok
+test tests::adapter_error_classification_is_unified_failed_adapter ... ok
+test tests::adapter_error_classification_maps_mv2_fail_closed_receipt_contract_codes ... ok
+test tests::adapter_error_signal_maps_retryability_to_penalty_tier ... ok
+test tests::assigned_skip_reason_reports_devnet_smoke_gating_causes ... ok
+test tests::attach_llm_provenance_accepts_agent_protocol_aliases ... ok
+test tests::attach_llm_provenance_drops_overlong_and_controlled_v1_labels ... ok
+test tests::attach_llm_provenance_drops_unsupported_agent_protocol ... ok
+test tests::attach_llm_provenance_keeps_schema_empty_without_structured_fields ... ok
+test tests::attach_llm_provenance_keeps_v1_when_v2_fields_are_invalid ... ok
+test tests::attach_llm_provenance_normalizes_agent_protocol_casing ... ok
+test tests::attach_llm_provenance_normalizes_compliance_profile_casing ... ok
+test tests::attach_llm_provenance_normalizes_space_separated_compliance_profile ... ok
+test tests::attach_llm_provenance_persists_provider_request_id ... ok
+test tests::attach_llm_provenance_rejects_boundary_separators_in_compliance_profile ... ok
+test tests::attach_llm_provenance_rejects_invalid_compliance_profile_chars ... ok
+test tests::attach_llm_provenance_rejects_invisible_fillers_in_v1_labels ... ok
+test tests::attach_llm_provenance_rejects_mixed_adjacent_separators_in_compliance_profile ... ok
+test tests::attach_llm_provenance_rejects_non_ascii_or_invisible_agent_protocol_aliases ... ok
+test tests::attach_llm_provenance_rejects_non_canonical_provider_request_id ... ok
+test tests::attach_llm_provenance_rejects_repeated_separators_in_compliance_profile ... ok
+test tests::attach_llm_provenance_trims_whitespace_and_drops_empty_fields ... ok
+test tests::attach_llm_provenance_uses_v2_when_protocol_or_compliance_present ... ok
+test tests::backoff_delay_is_exponential_and_saturating ... ok
+test tests::backoff_delay_keeps_63rd_shift_for_small_base_before_saturating ... ok
+test tests::backoff_delay_saturates_at_attempt_64_even_for_small_base ... ok
+test tests::backoff_delay_stays_monotonic_after_saturation ... ok
+test tests::config_defaults_apply_when_cli_and_env_missing ... ok
+test tests::config_invalid_values_fallback_to_default ... ok
+test tests::deterministic_rejection_codes_are_stable ... ok
+test tests::duplicate_commit_still_executes_reveal_gate ... ok
+test tests::enterprise_audit_export_accepts_case_and_whitespace_drift_for_v2_schema ... ok
+test tests::enterprise_audit_export_accepts_separator_aliases_for_schema_version ... ok
+test tests::enterprise_audit_export_accepts_separator_aliases_for_v1_schema_version ... ok
+test tests::enterprise_audit_export_drops_v2_only_fields_when_schema_is_not_v2 ... ok
+test tests::enterprise_audit_export_fail_closed_on_noncanonical_schema_tag ... ok
+test tests::enterprise_audit_export_flattens_v2_provenance_for_agent_and_compliance ... ok
+test tests::enterprise_audit_export_gates_fingerprint_when_schema_exists_without_labels ... ok
+test tests::enterprise_audit_export_keeps_backward_compat_when_provenance_absent ... ok
+test tests::enterprise_audit_export_normalizes_mcp_sse_aliases_for_v2_schema ... ok
+test tests::enterprise_audit_export_normalizes_mcp_streamable_http_aliases_for_v2_schema ... ok
+test tests::enterprise_audit_export_normalizes_mcp_websocket_aliases_for_v2_schema ... ok
+test tests::enterprise_audit_export_re_normalizes_legacy_persisted_provenance_fields ... ok
+test tests::enterprise_audit_export_re_normalizes_legacy_provider_request_id ... ok
+test tests::enterprise_audit_export_trims_boundary_bom_from_provider_request_id ... ok
+test tests::exp_backoff_delay_keeps_63rd_shift_for_small_base_before_saturating ... ok
+test tests::exp_backoff_delay_saturates_at_attempt_64_even_for_small_base ... ok
+test tests::exp_backoff_delay_saturates_without_overflow ... ok
+test tests::export_audit_detects_markdown_output_extension ... ok
+test tests::export_audit_index_contains_task_status_provider_model_and_fingerprint_keys ... ok
+test tests::export_audit_index_drops_non_ascii_or_controlled_fingerprints ... ok
+test tests::export_audit_index_normalizes_agent_protocol_aliases_to_canonical_keys ... ok
+test tests::export_audit_index_normalizes_compliance_profile_aliases_to_canonical_keys ... ok
+test tests::export_audit_index_normalizes_uppercase_fingerprint_variants ... ok
+test tests::export_audit_index_trims_and_drops_blank_provider_model_or_fingerprint_values ... ok
+test tests::export_audit_markdown_contains_provenance_fingerprint_fields ... ok
+test tests::export_audit_markdown_normalizes_multiline_cells_to_single_line ... ok
+test tests::flush_submissions_requires_tx_hash_receipts_for_terminal_acceptance ... ok
+test tests::flush_submissions_reuses_persisted_reveal_tx_hash_for_duplicate_reveal_resume ... ok
+test tests::flush_submissions_reuses_persisted_tx_hash_for_duplicate_resume_acceptance ... ok
+test tests::idempotent_only_accepts_duplicate ... ok
+test tests::is_task_acked_only_true_for_accepted_records ... ok
+test tests::llm_adapter_accepts_last_json_line_when_stdout_has_noise ... ok
+test tests::llm_adapter_non_retriable_fails_fast ... ok
+test tests::llm_adapter_non_timeout_path_is_ok ... ok
+test tests::llm_adapter_policy_rejects_zero_timeout_and_falls_back_to_default ... ok
+test tests::llm_adapter_prompt_shell_chars_are_treated_as_plain_text ... ok
+test tests::llm_adapter_rejects_stdout_without_any_json_line ... ok
+test tests::llm_adapter_retry_budget_exhausted_returns_last_error ... ok
+test tests::llm_adapter_retry_skips_zero_backoff_sleep_between_retriable_attempts ... ok
+test tests::llm_adapter_retry_succeeds_within_budget ... ok
+test tests::llm_adapter_tee_receipt_path_uses_adapter_parse_response_validation ... ok
+test tests::llm_adapter_timeout_triggers ... ok
+test tests::market_verification_reputation_tiers_remain_strictly_ordered ... ok
+test tests::message_ingress_backward_compat_defaults_provider_request_id ... ok
+test tests::normalized_agent_protocol_accepts_future_version_suffixes ... ok
+test tests::normalized_agent_protocol_accepts_punctuation_variants_for_aliases ... ok
+test tests::normalized_agent_protocol_accepts_websocket_aliases ... ok
+test tests::normalized_agent_protocol_rejects_oversized_alias_input ... ok
+test tests::normalized_compliance_profile_accepts_64_char_boundary ... ok
+test tests::normalized_compliance_profile_accepts_alphanumeric_when_contains_alpha ... ok
+test tests::normalized_compliance_profile_accepts_backslash_separators_and_normalizes_to_hyphen ... ok
+test tests::normalized_compliance_profile_accepts_dot_separators_and_normalizes_to_hyphen ... ok
+test tests::normalized_compliance_profile_accepts_slash_separators_and_normalizes_to_hyphen ... ok
+test tests::normalized_compliance_profile_accepts_space_separators_and_normalizes_to_hyphen ... ok
+test tests::normalized_compliance_profile_canonicalizes_underscore_to_hyphen ... ok
+test tests::normalized_compliance_profile_rejects_adjacent_dot_separators ... ok
+test tests::normalized_compliance_profile_rejects_adjacent_mixed_path_separators ... ok
+test tests::normalized_compliance_profile_rejects_adjacent_space_separators ... ok
+test tests::normalized_compliance_profile_rejects_control_whitespace_separators ... ok
+test tests::normalized_compliance_profile_rejects_newline_separators ... ok
+test tests::normalized_compliance_profile_rejects_numeric_only_values ... ok
+test tests::normalized_compliance_profile_rejects_over_64_chars ... ok
+test tests::normalized_compliance_profile_rejects_single_token_values ... ok
+test tests::normalized_compliance_profile_rejects_values_starting_with_digit ... ok
+test tests::normalized_provenance_label_accepts_ascii_audit_text ... ok
+test tests::normalized_provenance_label_rejects_embedded_control_characters ... ok
+test tests::normalized_provenance_label_rejects_non_ascii_homoglyphs ... ok
+test tests::normalized_provider_request_id_accepts_boundary_and_rejects_overflow ... ok
+test tests::normalized_provider_request_id_rejects_colon_and_non_alnum_edges ... ok
+test tests::parse_command_spec_accepts_non_shell_binary ... ok
+test tests::parse_command_spec_rejects_invalid_quote ... ok
+test tests::parse_command_spec_rejects_shell_interpreter_programs ... ok
+test tests::parse_tx_hash_accepts_128_char_receipts_for_real_cli_compat ... ok
+test tests::parse_tx_hash_accepts_angle_bracket_wrapped_receipts ... ok
+test tests::parse_tx_hash_accepts_backtick_wrapped_receipt_keys ... ok
+test tests::parse_tx_hash_accepts_colon_style_receipts ... ok
+test tests::parse_tx_hash_accepts_fullwidth_bracket_wrapped_receipts ... ok
+test tests::parse_tx_hash_accepts_fullwidth_delimiter_receipts ... ok
+test tests::parse_tx_hash_accepts_hyphenated_json_receipt_keys ... ok
+test tests::parse_tx_hash_accepts_json_receipts_embedded_in_log_lines ... ok
+test tests::parse_tx_hash_accepts_json_receipts_without_quotes_around_hash ... ok
+test tests::parse_tx_hash_accepts_json_style_receipts_with_newlines_and_tabs_around_colon ... ok
+test tests::parse_tx_hash_accepts_json_style_receipts_with_whitespace_after_colon ... ok
+test tests::parse_tx_hash_accepts_json_style_receipts_with_whitespace_before_colon ... ok
+test tests::parse_tx_hash_accepts_localized_quote_wrapped_receipts ... ok
+test tests::parse_tx_hash_accepts_mixed_case_json_alias_receipts ... ok
+test tests::parse_tx_hash_accepts_nested_shell_escaped_and_localized_quote_wrapped_receipts ... ok
+test tests::parse_tx_hash_accepts_quoted_and_trailing_punctuated_tokens ... ok
+test tests::parse_tx_hash_accepts_shell_escaped_quote_wrapped_receipt_values ... ok
+test tests::parse_tx_hash_accepts_short_failure_receipts_without_0x_prefix ... ok
+test tests::parse_tx_hash_accepts_single_quoted_json_style_receipts ... ok
+test tests::parse_tx_hash_accepts_smart_quoted_receipt_keys ... ok
+test tests::parse_tx_hash_accepts_smart_quoted_receipts ... ok
+test tests::parse_tx_hash_accepts_smart_quoted_transaction_hash_alias_with_fullwidth_colon ... ok
+test tests::parse_tx_hash_accepts_space_separated_receipt_keys ... ok
+test tests::parse_tx_hash_accepts_space_separated_receipt_keys_with_tab_delimiter_padding ... ok
+test tests::parse_tx_hash_accepts_transaction_hash_alias_receipts ... ok
+test tests::parse_tx_hash_accepts_unicode_dash_receipt_keys ... ok
+test tests::parse_tx_hash_accepts_uppercase_receipt_keys ... ok
+test tests::parse_tx_hash_ignores_invisible_fillers_inside_receipt_key ... ok
+test tests::parse_tx_hash_rejects_malformed_or_partial_values ... ok
+test tests::parse_tx_hash_rejects_receipts_over_128_chars ... ok
+test tests::parse_tx_hash_strips_bom_and_zero_width_fillers_around_receipt_value ... ok
+test tests::persisted_ack_hashes_for_task_canonicalizes_legacy_wrapped_hex_receipts ... ok
+test tests::persisted_ack_hashes_for_task_canonicalizes_shell_escaped_quote_wrapped_hex_receipts ... ok
+test tests::persisted_ack_hashes_for_task_extracts_tx_hash_from_receipt_blob_entries ... ok
+test tests::persisted_ack_hashes_for_task_ignores_blank_wrapped_hash_entries ... ok
+test tests::persisted_ack_hashes_for_task_ignores_newer_other_task_records ... ok
+test tests::persisted_ack_hashes_for_task_merges_hashes_across_failed_resume_attempts ... ok
+test tests::query_audit_export_by_provenance_fingerprint_accepts_deeply_nested_quotes ... ok
+test tests::query_audit_export_by_provenance_fingerprint_accepts_outer_quote_wrappers_before_validation ... ok
+test tests::query_audit_export_by_provenance_fingerprint_accepts_quoted_lookup ... ok
+test tests::query_audit_export_by_provenance_fingerprint_accepts_repeated_nested_quote_wrappers ... ok
+test tests::query_audit_export_by_provenance_fingerprint_accepts_repeated_shell_escaped_quote_wrappers ... ok
+test tests::query_audit_export_by_provenance_fingerprint_accepts_shell_escaped_outer_quote_wrappers ... ok
+test tests::query_audit_export_by_provenance_fingerprint_accepts_very_deep_quote_wrappers ... ok
+test tests::query_audit_export_by_provenance_fingerprint_normalizes_lookup ... ok
+test tests::query_audit_export_by_provenance_fingerprint_rejects_blank_or_oversized_lookup ... ok
+test tests::query_audit_export_by_provenance_fingerprint_trims_boundary_bom_before_lookup ... ok
+test tests::query_audit_export_by_provenance_fingerprint_trims_fillers_after_quote_peeling ... ok
+test tests::query_audit_export_by_task_id_uses_index_offsets ... ok
+test tests::query_audit_output_serializes_normalized_fingerprint_only_when_present ... ok
+test tests::query_audit_rejects_markdown_exports_fail_closed ... ok
+test tests::reputation_delta_maps_market_penalty_and_reward_signals ... ok
+test tests::reputation_label_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::reputation_score_impact_pair_round_trips_fail_closed_on_hybrid_tuples ... ok
+test tests::reputation_surface_axes_fail_closed_on_cross_signal_hybrids ... ok
+test tests::reputation_surface_axes_round_trip_back_to_canonical_signal_and_impact ... ok
+test tests::reputation_tier_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::run_adapter_with_retry_does_not_sleep_after_deterministic_terminal_rejection ... ok
+test tests::run_adapter_with_retry_does_not_sleep_after_retry_budget_exhaustion ... ok
+test tests::run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_duplicate_hash_is_malformed ... ok
+test tests::run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_slo_violation_hash_is_malformed ... ok
+test tests::run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_success_hash_is_malformed ... ok
+test tests::run_adapter_with_retry_ignores_malformed_duplicate_receipt_hash_and_keeps_last_seen_hash ... ok
+test tests::run_adapter_with_retry_ignores_malformed_nonce_rejected_receipt_hash_and_keeps_last_seen_hash ... ok
+test tests::run_adapter_with_retry_keeps_last_seen_tx_hash_after_retriable_exhaustion ... ok
+test tests::run_adapter_with_retry_prefers_latest_success_receipt_hash_over_prior_retry_hash ... ok
+test tests::run_adapter_with_retry_prefers_newest_tx_hash_from_duplicate_terminal_receipt ... ok
+test tests::run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_duplicate_terminal_receipt ... ok
+test tests::run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_nonce_rejected_terminal_receipt ... ok
+test tests::run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_slo_violation_terminal_receipt ... ok
+test tests::run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_successful_retry ... ok
+test tests::run_adapter_with_retry_preserves_last_seen_tx_hash_after_successful_retry ... ok
+test tests::run_adapter_with_retry_preserves_last_seen_tx_hash_before_duplicate_terminal_stop ... ok
+test tests::run_adapter_with_retry_preserves_last_seen_tx_hash_before_slo_violation_terminal_stop ... ok
+test tests::run_adapter_with_retry_retries_with_exponential_backoff_schedule ... ok
+test tests::run_adapter_with_retry_skips_zero_backoff_sleep_between_retriable_attempts ... ok
+test tests::run_adapter_with_retry_stops_after_duplicate_terminal_receipt ... ok
+test tests::run_adapter_with_retry_stops_after_nonce_rejected_terminal_receipt ... ok
+test tests::run_adapter_with_retry_stops_after_slo_violation_terminal_receipt ... ok
+test tests::slo_violation_commit_skips_reveal_execution_gate ... ok
+test tests::task_lock_prevents_parallel_replay_for_same_task ... ok
+test tests::terminal_commit_reject_skips_reveal_execution_gate ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_error::tests_adapter_path_classification_error_maps::tests_adapter_path_classification_error_maps_core::adapter_error_classification_maps_mv2_fail_closed_receipt_contract_codes_core ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_error::tests_adapter_path_classification_error_maps::tests_adapter_path_classification_error_maps_tail::adapter_error_classification_maps_mv2_fail_closed_receipt_contract_codes_tail ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_error::tests_adapter_path_classification_error_precedence::adapter_error_classification_enforces_contract_precedence_for_ambiguous_contexts ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_error::tests_adapter_path_classification_error_unified::adapter_error_classification_is_unified_failed_adapter ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_output::verify_model_output_enforces_trimmed_empty_and_char_limit_boundaries ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::adapter_error_signal_maps_retryability_to_penalty_tier ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::apply_reputation_signal_updates_record_via_single_mapping_path ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::canonical_reputation_impact_table_matches_signal_order_and_mapping_helpers ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::canonical_reputation_signal_order_matches_descending_tier_and_delta ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::canonical_reputation_surfaces_export_single_deterministic_table ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::canonical_reputation_surfaces_form_a_strictly_descending_score_ladder ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::canonical_reputation_surfaces_keep_all_score_axes_unique_per_signal ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::canonical_reputation_table_keeps_dense_tiers_and_unit_penalty_steps ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::canonical_reputation_table_keeps_label_delta_and_tier_lookups_one_to_one ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::canonical_reputation_weight_bps_descends_monotonically_with_tiers ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::market_verification_reputation_tiers_remain_strictly_ordered ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_delta_maps_market_penalty_and_reward_signals ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_delta_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_impact_exposes_stable_labels_deltas_and_tiers ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_label_lookup_accepts_benign_formatting_variants ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_label_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_rank_ordinal_matches_canonical_signal_order ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_score_impact_exposes_stable_labels_and_deltas ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_score_impact_pair_round_trips_fail_closed_on_hybrid_tuples ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_score_impact_remains_one_to_one_across_signals ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_surface_exposes_label_delta_tier_and_weight_via_single_mapping_path ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_surface_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_tier_delta_and_label_ordering_stay_monotonic ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_tier_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_tiers_match_score_ordering ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_weight_bps_exposes_dense_deterministic_rank_surface ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::reputation_weight_bps_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation::verifier_rejection_penalty_sits_between_retryable_and_non_retriable_adapter_failures ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_gap_bps_from_best_exposes_deterministic_distance_from_accepted ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_gap_bps_from_best_lookup_fails_closed_on_non_canonical_values ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_gap_bps_from_best_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_gap_bps_from_best_stays_strictly_increasing_across_canonical_order ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_gap_bps_from_worst_exposes_deterministic_distance_from_lowest_surface ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_gap_bps_from_worst_lookup_fails_closed_on_non_canonical_values ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_gap_bps_from_worst_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_gap_pair_lookup_fails_closed_on_cross_signal_hybrids ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_gap_pair_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_numeric_surface_exports_stay_one_to_one_per_signal ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_rank_gap_and_score_axes_stay_in_lockstep ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_score_bps_lookup_fails_closed_on_non_canonical_values ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_score_bps_normalizes_canonical_deltas_into_signed_basis_points ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_score_bps_round_trips_back_to_canonical_signal_and_impact ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_score_bps::reputation_score_bps_stays_strictly_descending_across_canonical_order ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_surface_export::exported_canonical_reputation_surfaces_fail_closed_on_cross_signal_hybrids ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_surface_export::exported_canonical_reputation_surfaces_keep_strictly_descending_score_bps ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_surface_export::exported_canonical_reputation_surfaces_keep_unique_score_bps_per_signal ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_reputation_surface_export::exported_canonical_reputation_surfaces_round_trip_through_all_helper_axes ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::exp_backoff_delay_saturates_without_overflow ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::exp_backoff_delay_stays_monotonic_across_shift_cap_and_saturation ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::llm_adapter_non_retriable_fails_fast ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::llm_adapter_retry_budget_exhausted_returns_last_error ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::llm_adapter_retry_succeeds_within_budget ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_nonce_rejected_hash_is_malformed ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::run_adapter_with_retry_ignores_malformed_nonce_rejected_receipt_hash_and_keeps_last_seen_hash ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::run_adapter_with_retry_prefers_latest_nonce_rejected_receipt_hash_and_stops ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::run_adapter_with_retry_prefers_latest_slo_violation_receipt_hash_and_stops ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_nonce_rejected_terminal_receipt ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_slo_violation_terminal_receipt ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::run_adapter_with_retry_stops_after_retriable_failure_followed_by_deterministic_rejection ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::run_adapter_with_retry_zero_backoff_retries_successfully ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::tx_backoff_delay_saturates_without_overflow ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::tx_backoff_delay_stays_monotonic_across_shift_cap_and_saturation ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::tx_retry_policy_falls_back_per_field_when_other_env_value_is_invisible_filler_only ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::tx_retry_policy_mixes_partial_cli_overrides_with_env_fallbacks ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::tx_retry_policy_strips_bidi_isolates_and_variation_selectors_inside_env_values ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::tx_retry_policy_strips_invisible_fillers_around_env_values ... ok
+test tests::tests_adapter_path_classification::tests_adapter_path_classification_retry::tx_retry_policy_treats_invisible_filler_only_env_values_as_missing ... ok
+test tests::transition_request_status_accepts_benign_formatting_variants ... ok
+test tests::transition_request_status_rejects_malformed_state_with_stable_diagnostic ... ok
+test tests::truncate_for_error_marks_truncated_payloads ... ok
+test tests::tx_retry_policy_accepts_fullwidth_digits_and_signs_from_env_values ... ok
+test tests::tx_retry_policy_accepts_zero_and_cli_overrides_invalid_env ... ok
+test tests::tx_retry_policy_allows_per_field_cli_override_while_preserving_other_env_value ... ok
+test tests::tx_retry_policy_falls_back_per_field_when_only_one_env_value_is_invalid ... ok
+test tests::tx_retry_policy_ignores_embedded_bom_fillers_in_env_values ... ok
+test tests::tx_retry_policy_ignores_embedded_control_wrappers_in_env_values ... ok
+test tests::tx_retry_policy_ignores_embedded_invisible_fillers_in_env_values ... ok
+test tests::tx_retry_policy_reads_process_env_and_preserves_cli_precedence ... ok
+test tests::tx_retry_policy_rejects_negative_env_values_per_field ... ok
+test tests::tx_retry_policy_rejects_negative_fullwidth_env_values ... ok
+test tests::tx_retry_policy_rejects_negative_unicode_minus_env_values ... ok
+test tests::tx_retry_policy_resolves_cli_and_env_sources_without_process_env_mutation ... ok
+test tests::tx_retry_policy_treats_blank_env_values_as_missing ... ok
+test tests::tx_retry_policy_trims_bom_and_invisible_fillers_around_env_values ... ok
+test tests::tx_retry_policy_trims_control_wrappers_around_env_values ... ok
+test tests::tx_retry_policy_trims_fullwidth_spaces_around_unicode_env_values ... ok
+test tests::tx_retry_policy_trims_quote_wrapped_env_values ... ok
+test tests::tx_retry_policy_trims_unicode_quotes_wrapped_env_values ... ok
+test tests::tx_retry_policy_trims_whitespace_wrapped_env_values ... ok
+test tests::validate_audit_export_index_accepts_current_version ... ok
+test tests::validate_audit_export_index_rejects_out_of_bounds_offsets_fail_closed ... ok
+test tests::validate_audit_export_index_rejects_total_record_mismatch_fail_closed ... ok
+test tests::validate_audit_export_index_rejects_unknown_version_fail_closed ... ok
+test tests::verifier_rejection_penalty_sits_between_retryable_and_non_retriable_adapter_failures ... ok
+test tests::verify_model_output_enforces_trimmed_empty_and_char_limit_boundaries ... ok
+test tests::zero_backoff_delay_remains_zero_across_retries ... ok
+test workflow_ops::tests::build_commit_and_reveal_templates_are_stable ... ok
+test workflow_ops::tests::build_run_once_output_carries_expected_fields ... ok
+test workflow_ops::tests::compute_commit_hash_stays_deterministic ... ok
+test workflow_ops::tests::compute_result_and_salt_matches_core_payload_hashing ... ok
+test workflow_ops::tests::submit_log_contract_line_keeps_operator_handoff_tokens_stable ... ok
+
+test result: ok. 342 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.56s
+

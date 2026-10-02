@@ -3,7 +3,7 @@
 This package records local maintenance verification, including initial failures.
 It does not qualify a public network, work primitive, model product or release.
 
-The [source-equivalence record](source-equivalence.json) names the original
+The [first-tranche source-equivalence record](source-equivalence.json) names the original
 PR #204 head and the reviewed first-tranche code commit, inventories each removed
 source by its original SHA-256, and retains exact compiled-source hashes and
 compiler dependency files before/after. Removed source remains retrievable from
@@ -30,3 +30,9 @@ Notable negative observations:
   historical measured inputs do not match current source.
 
 Neither failure was handled by a stub, a reduced threshold or a validator bypass.
+
+The [final-tranche record](final-source-equivalence.json) adds the remaining
+214 compiler-proven removals, all 762 before/after tests and the
+[final reachability audit](final-reachability.json). Both recorded heads are
+local code identities; publication may map them to different commit IDs with
+identical trees. Published-head checks are reported separately.

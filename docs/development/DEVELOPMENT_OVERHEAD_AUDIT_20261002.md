@@ -112,7 +112,7 @@ validation work was running on the same machine.
 - Source-binding checks explicitly do not execute the named tests or establish
   acceptance. Replacing them with fabricated pass receipts would weaken the
   project boundary rather than improve development speed.
-- Cargo formatting traversal leaves 288 Rust files unvisited across six crates.
+- Initial Cargo formatting traversal left 288 Rust files unvisited across six crates.
   This is a lead, not a deletion proof. The six peer-lease parts are explicitly
   `include!`d by the active recovery module and were therefore retained; they
   were false positives of formatter-only discovery. Some source/data inclusion
@@ -140,8 +140,11 @@ unqualified production/model/work-security claims were not reclassified.
 The [audit evidence package](../../evidence/development-overhead-audit-v1/README.md)
 retains raw before/after test logs, both initial failures, benchmark samples,
 artifact hashes and a machine-readable source-equivalence record. Its first
-reviewed code head is `86b6b08478fd2ac77a660882349208a23c365ae6`; source hashes
-and dependency closures are explicit rather than inferred from file counts.
+reviewed local code head is `86b6b08478fd2ac77a660882349208a23c365ae6`; the
+final tranche is `cbfb42a1bc32e10e67b14564e13f16bd532fcf83`. Source hashes and
+dependency closures are explicit rather than inferred from file counts.
+Connector publication may map these local identities to different commit IDs
+with identical trees; published-head checks are reported separately.
 
 ## Verification record
 
