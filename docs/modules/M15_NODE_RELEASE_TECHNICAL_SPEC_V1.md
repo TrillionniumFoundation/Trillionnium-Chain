@@ -233,3 +233,9 @@ public V2/V3 synchronization. Partial sync never produces a phase result. A late
 observation refusal reports the completed sync fact without rewinding admitted blocks
 or printing a success phase. Omission preserves the original sync result. This local
 composition adds no remote evaluation operation or economic permission.
+
+Its retirement fixture uses explicit64+64+64+49 page-budget commands and durable
+cursor/ancestry checks, with an original120-second listener owned and joined by each
+phase. It preserves all241 real successor blocks and the final archive refusal,
+without certifying uninterrupted241-block delivery within one listener lease. The
+historical single-transfer timeout remains outside this resumed-fixture scope.

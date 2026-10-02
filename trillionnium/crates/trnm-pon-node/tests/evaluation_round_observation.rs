@@ -15,6 +15,7 @@ fn signed(cfg: &Config, who: u64, account_sequence: u64, tag: u8, payload: Vec<u
     let mut tx = Envelope {
         network: cfg.network,
         sender: development_public(who).unwrap(),
+        // Public account sequence for replay protection, not a cryptographic signing nonce.
         nonce: account_sequence,
         expiry: 8192,
         fee_limit: 1_000_000,

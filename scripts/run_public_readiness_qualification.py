@@ -3,13 +3,24 @@
 
 Preserves every failed command and delegates the full existing native/reference
 regression to its actual owner. Long live-clock TCP campaigns are additional evidence.
+
+Resource observer: defaults to /usr/bin/time. To use an officially installed or
+extracted GNU time elsewhere, set TRNM_GNU_TIME to its absolute executable path.
+The selected observer is probed with a five-second timeout; its resolved path,
+SHA-256 and reported identity are retained in each result and the environment.
+This explicit selection survives nested qualification environment sanitization.
+Executable hashes are bounded to 16 MiB and probe streams to 16 KiB each.
+Hashes are checked before and after commands; post-launch failures retain rows.
+These are software file observations, not cryptographic execution attestation or
+package provenance authentication; replacement races cannot be excluded.
+No shell builtin, PATH fallback, or successful unmeasured mode is provided.
 """
 from __future__ import annotations
 import argparse, hashlib, json, os, platform, signal, subprocess, sys, time
 from importlib.metadata import version
 from cryptography.hazmat.backends.openssl.backend import backend as openssl_backend
 from pathlib import Path
-from qualification_runtime import bind_python_runtime, read_gnu_time_peak_rss
+from qualification_runtime import bind_gnu_time, bind_python_runtime, read_gnu_time_peak_rss, verify_gnu_time
 
 ROOT = Path(__file__).resolve().parents[1]
 FLAGS = ('public_network_ready', 'production_activation', 'independent_accepted',
@@ -34,16 +45,17 @@ def run(args):
     (out/'logs').mkdir()
     env = dict(os.environ)
     for key in list(env):
-        if key.startswith('TRNM_'): env.pop(key)
+        if key.startswith('TRNM_') and key != 'TRNM_GNU_TIME': env.pop(key)
     env.update(CARGO_HOME=str(Path(args.cargo_home).resolve()), CARGO_TARGET_DIR=str(Path(args.target).resolve()),
                CARGO_BUILD_JOBS='2', CARGO_NET_OFFLINE='true', RUST_TEST_THREADS='1',
                PYTHONDONTWRITEBYTECODE='1', OPENBLAS_NUM_THREADS='1', OMP_NUM_THREADS='1')
     env, child_python3 = bind_python_runtime(env)
+    env, resource_observer = bind_gnu_time(env)
     records = []
     report = dict(schema='trnm-public-readiness-engineering-v1', source_commit=commit, source_tree=tree,
         source_clean=True, all_commands_passed=False, source_files_sha256={p:sha(ROOT/p) for p in git('ls-files').splitlines() if relevant(p)},
         environment=dict(platform=platform.platform(), python=platform.python_version(),
-            child_python3=child_python3,
+            child_python3=child_python3, resource_observer=resource_observer,
             numpy=__import__('numpy').__version__, cryptography=__import__('cryptography').__version__,
             cryptography_openssl=openssl_backend.openssl_version_text(), cffi=version('cffi'),
             rust=subprocess.check_output(['rustc','--version'],text=True).strip(),
@@ -54,16 +66,20 @@ def run(args):
     def execute(name, command, timeout=2400):
         log=out/'logs'/(name+'.log'); usage=out/'logs'/(name+'.usage')
         started=time.monotonic_ns(); expired=False
+        verify_gnu_time(resource_observer)
         with log.open('w') as stream:
-            process=subprocess.Popen(['/usr/bin/time','-f','%M %U %S','-o',str(usage),*command],
+            process=subprocess.Popen([resource_observer['executable'],'-f','%M %U %S','-o',str(usage),*command],
                 cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)
             try: code=process.wait(timeout=timeout)
             except subprocess.TimeoutExpired:
                 expired=True; os.killpg(process.pid,signal.SIGKILL); code=process.wait()
         row=dict(name=name,command=command,returncode=code,timed_out=expired,
-                 elapsed_ns=time.monotonic_ns()-started,log=str(log.relative_to(out)),peak_rss_kib=None,vram_bytes=None)
+                 resource_observer=resource_observer,elapsed_ns=time.monotonic_ns()-started,log=str(log.relative_to(out)),peak_rss_kib=None,vram_bytes=None)
         row['peak_rss_kib']=read_gnu_time_peak_rss(usage)
+        try: verify_gnu_time(resource_observer)
+        except (OSError,ValueError) as error: row['resource_observer_error']=str(error)
         records.append(row); print(json.dumps(row),flush=True)
+        if row.get('resource_observer_error'): raise RuntimeError('QUALIFICATION_FAILED:OBSERVER_CHANGED:'+name)
         if code or expired: raise RuntimeError('QUALIFICATION_FAILED:'+name)
         if git('rev-parse','HEAD')!=commit or git('status','--porcelain'): raise ValueError('SOURCE_CHANGED')
     try:

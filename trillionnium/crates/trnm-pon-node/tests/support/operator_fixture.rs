@@ -108,6 +108,7 @@ pub fn transaction(
     let mut tx = Envelope {
         network: s.network(),
         sender: key(who),
+        // Public account sequence for replay protection, not a cryptographic signing nonce.
         nonce: account_sequence,
         expiry: 2000,
         fee_limit: 1_000_000,

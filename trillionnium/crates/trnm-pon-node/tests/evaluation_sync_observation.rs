@@ -68,6 +68,7 @@ fn command(store: &Path, genesis: u64) -> Command {
     .arg(store);
     c
 }
+#[track_caller]
 fn refusal(output: Output, expected: &str) -> String {
     retain_output(&output);
     assert_eq!(output.status.code(), Some(2));
@@ -76,7 +77,9 @@ fn refusal(output: Output, expected: &str) -> String {
     assert!(error.contains(expected), "{error}");
     error
 }
-fn success(output: Output) -> Value {
+#[track_caller]
+fn success(c: &mut SyncCommand) -> Value {
+    let output = c.output().unwrap();
     retain_output(&output);
     assert!(
         output.status.success(),
@@ -192,63 +195,87 @@ impl Server {
         c
     }
 }
-impl Drop for Server {
-    fn drop(&mut self) {
-        self.stop.store(true, Ordering::Release);
-        if let Some(worker) = self.worker.take() {
-            worker.join().unwrap().unwrap();
+// Each command owns its listener, including its stop signal and joined worker.
+// The 120-second lease is a watchdog for that network phase, never a budget for
+// unrelated local recovery, assertions, or native fork/archive construction.
+struct SyncCommand {
+    phase: &'static str,
+    server: Server,
+    command: Command,
+    started: Instant,
+}
+impl SyncCommand {
+    fn args(&mut self, args: impl IntoIterator<Item = impl AsRef<std::ffi::OsStr>>) -> &mut Self {
+        self.command.args(args);
+        self
+    }
+    fn output(&mut self) -> std::io::Result<Output> {
+        let output = self.command.output();
+        let worker = self.server.worker.take().expect("one command per listener");
+        let exited_before_stop = worker.is_finished();
+        self.server.stop.store(true, Ordering::Release);
+        let result = worker.join();
+        eprintln!(
+            "sync phase={} elapsed={:?} command={:?} address={} \
+             server_exited_before_stop={} server_result={:?} child={:?}",
+            self.phase,
+            self.started.elapsed(),
+            self.command,
+            self.server.address,
+            exited_before_stop,
+            result,
+            output.as_ref().map(|o| (
+                o.status,
+                String::from_utf8_lossy(&o.stdout),
+                String::from_utf8_lossy(&o.stderr)
+            ))
+        );
+        // A finite service may finish naturally after its final response while
+        // the child is still validating local proofs. Record that timing, but
+        // let the actual CLI outcome and state assertions decide its validity.
+        let listener_ok = matches!(result, Ok(Ok(_)));
+        if !listener_ok {
+            if let Ok(output) = &output {
+                // Preserve actual child failure evidence even when the service
+                // lifecycle assertion fires before success/refusal validation.
+                retain_output(output);
+            }
         }
+        assert!(
+            listener_ok,
+            "sync phase={} listener failed; see command/server diagnostics",
+            self.phase
+        );
+        output
     }
 }
-
-fn network_call(
+fn sync_client(
     node: &Arc<Mutex<Node>>,
-    stage: &str,
+    phase: &'static str,
     store: &Path,
     genesis: u64,
     key: &Path,
     tip: Hash,
-    extra: &[&str],
-) -> Output {
-    // A listener lease covers one real network command. Receiver recovery,
-    // API checks and offline fork construction do not consume another call's
-    // unchanged 120-second lease. Each new server has its own cookie state.
+) -> SyncCommand {
+    let started = Instant::now();
     let server = Server::start(node.clone());
-    let mut command = server.client(store, genesis, key, tip);
-    command.args(extra);
-    let argv: Vec<_> = std::iter::once(command.get_program())
-        .chain(command.get_args())
-        .map(|value| value.to_string_lossy().into_owned())
-        .collect();
-    eprintln!("network stage {stage} begin: {argv:?}");
-    let began = Instant::now();
-    let output = command.output().unwrap();
-    let command_elapsed_ns = began.elapsed().as_nanos();
-    eprintln!(
-        "network stage {stage} child waited: returncode={:?}, elapsed_ns={command_elapsed_ns}",
-        output.status.code()
-    );
-    // Stop and join this actual listener before opening another lease. This
-    // does not assert a hard native stage deadline or continuous availability.
-    drop(server);
-    eprintln!("network stage {stage} listener stopped and joined");
-    if let Some(directory) = std::env::var_os("EVALUATION_SYNC_OBSERVATION_EVIDENCE_DIR") {
-        let directory = std::path::PathBuf::from(directory);
-        fs::create_dir_all(&directory).unwrap();
-        let receipt = json!({"stage":stage,"argv":argv,
-            "actual_returncode":output.status.code(),"command_elapsed_ns":command_elapsed_ns,
-            "actual_child_wait_completed":true,"actual_listener_stop_and_join_completed":true,
-            "listener_limit_seconds":120,"one_network_command_per_listener":true,
-            "continuous_uptime_qualified":false,"public_ready":false});
-        let mut file = fs::OpenOptions::new()
-            .write(true)
-            .create_new(true)
-            .open(directory.join(format!("network-stage-{stage}.json")))
-            .unwrap();
-        std::io::Write::write_all(&mut file, &serde_json::to_vec_pretty(&receipt).unwrap())
-            .unwrap();
+    let command = server.client(store, genesis, key, tip);
+    SyncCommand {
+        phase,
+        server,
+        command,
+        started,
     }
-    output
+}
+impl Drop for Server {
+    fn drop(&mut self) {
+        self.stop.store(true, Ordering::Release);
+        if let Some(worker) = self.worker.take() {
+            // Normal execution checks the join result in SyncCommand::output.
+            // Unwinding must still join without causing a second panic.
+            let _ = worker.join();
+        }
+    }
 }
 
 #[test]
@@ -364,21 +391,15 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
     let key = dir.path().join("development-caller.key");
     fs::write(&key, hex::encode([92; 32])).unwrap();
     fs::set_permissions(&key, fs::Permissions::from_mode(0o600)).unwrap();
+    let mut c = sync_client(&shared, "full-sync", &receiver, genesis, &key, tip);
+    c.args([
+        "--evaluation-candidate",
+        &hex::encode(cid),
+        "--evaluation-round-blocks",
+        "64",
+    ]);
     let before_sync_clock = ingress::now().unwrap();
-    let first = success(network_call(
-        &shared,
-        "first-full-64",
-        &receiver,
-        genesis,
-        &key,
-        tip,
-        &[
-            "--evaluation-candidate",
-            &hex::encode(cid),
-            "--evaluation-round-blocks",
-            "64",
-        ],
-    ));
+    let first = success(&mut c);
     let after_sync_clock = ingress::now().unwrap();
     let local = Node::open(&receiver, settings.clone(), 2).unwrap();
     let query_clock = first["result"]["evaluation_observation"]["observed_now"]
@@ -425,15 +446,10 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         first["result"]["evaluation_observation"]["closed_result"]["status"],
         "aborted"
     );
-    let default = success(network_call(
-        &shared,
-        "default-after-64",
-        &receiver,
-        genesis,
-        &key,
-        tip,
-        &["--after", &hex::encode(tip)],
-    ));
+    let default = success(
+        sync_client(&shared, "default-query", &receiver, genesis, &key, tip)
+            .args(["--after", &hex::encode(tip)]),
+    );
     let keys: Vec<_> = default["result"]
         .as_object()
         .unwrap()
@@ -455,22 +471,17 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         ("window", cid, 63, "EVALUATION_OBSERVATION_LIMIT"),
     ] {
         let error_text = refusal(
-            network_call(
-                &shared,
-                label,
-                &receiver,
-                genesis,
-                &key,
-                tip,
-                &[
+            sync_client(&shared, label, &receiver, genesis, &key, tip)
+                .args([
                     "--after",
                     &hex::encode(tip),
                     "--evaluation-candidate",
                     &hex::encode(id),
                     "--evaluation-round-blocks",
                     &bound.to_string(),
-                ],
-            ),
+                ])
+                .output()
+                .unwrap(),
             "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED",
         );
         assert!(error_text.contains(error), "{label}: {error_text}");
@@ -480,15 +491,10 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
     }
     let partial = dir.path().join("partial");
     refusal(
-        network_call(
-            &shared,
-            "partial-history",
-            &partial,
-            genesis,
-            &key,
-            tip,
-            &["--pages", "1", "--evaluation-candidate", &hex::encode(cid)],
-        ),
+        sync_client(&shared, "partial", &partial, genesis, &key, tip)
+            .args(["--pages", "1", "--evaluation-candidate", &hex::encode(cid)])
+            .output()
+            .unwrap(),
         "INCOMPLETE_HISTORY",
     );
     let local = Node::open(&partial, settings.clone(), 2).unwrap();
@@ -503,15 +509,10 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
     drop(local);
     let wrong = dir.path().join("wrong-context");
     refusal(
-        network_call(
-            &shared,
-            "wrong-context",
-            &wrong,
-            genesis + 1,
-            &key,
-            tip,
-            &["--evaluation-candidate", &hex::encode(cid)],
-        ),
+        sync_client(&shared, "wrong-context", &wrong, genesis + 1, &key, tip)
+            .args(["--evaluation-candidate", &hex::encode(cid)])
+            .output()
+            .unwrap(),
         "PUBLIC_CHALLENGE_CONTEXT",
     );
     let mut parent = root;
@@ -523,15 +524,10 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         owner.activate_observed(parent, now).unwrap();
     }
     let refused = refusal(
-        network_call(
-            &shared,
-            "heavier-fork-65",
-            &receiver,
-            genesis,
-            &key,
-            parent,
-            &["--evaluation-candidate", &hex::encode(cid)],
-        ),
+        sync_client(&shared, "reorganization", &receiver, genesis, &key, parent)
+            .args(["--evaluation-candidate", &hex::encode(cid)])
+            .output()
+            .unwrap(),
         "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED",
     );
     assert!(refused.contains(":STATE"));
@@ -548,54 +544,114 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
     // Complete delivery of the known lighter candidate branch cannot replace
     // the receiver's heavier active fork or provide that old branch's phase.
     refusal(
-        network_call(
-            &shared,
-            "lighter-candidate-64",
-            &receiver,
-            genesis,
-            &key,
-            tip,
-            &[
+        sync_client(&shared, "lighter-branch", &receiver, genesis, &key, tip)
+            .args([
                 "--after",
                 &hex::encode(tip),
                 "--evaluation-candidate",
                 &hex::encode(cid),
-            ],
-        ),
+            ])
+            .output()
+            .unwrap(),
         "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED",
     );
     let local = Node::open(&receiver, settings.clone(), 2).unwrap();
     assert_eq!(local.active().unwrap().0, parent);
     drop(local);
-    // No listener is running during this offline native archive construction.
+    // No listener survives a CLI command, so offline native construction cannot
+    // consume the next command's finite service lease (including the fork above).
     // Extend the original candidate branch past actual native archive retention,
     // then select its heavier tip. No archive KV is fabricated or deleted here.
     let mut retired = tip;
+    let mut retirement_branch = Vec::new();
     {
         let mut owner = shared.lock().unwrap();
         for height in 65..=305 {
-            retired = append(&mut owner, retired, height, genesis, now, vec![]);
+            let previous = retired;
+            retired = append(&mut owner, previous, height, genesis, now, vec![]);
+            retirement_branch.push((retired, previous));
         }
         owner.activate_observed(retired, now).unwrap();
     }
+    // Hosted job 110682210746 exhausted the unchanged 120-second lease after
+    // 150 real history responses in one 241-successor retirement sync. Exercise
+    // the explicit page-budget/resume contract instead: these are planned,
+    // bounded commands, not retries of an arbitrary transport failure. This
+    // test does not claim uninterrupted 241-block delivery within that lease.
+    let mut after = tip;
+    for (chunk, phase) in [
+        "retirement-pages-1",
+        "retirement-pages-2",
+        "retirement-pages-3",
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let error = refusal(
+            sync_client(&shared, phase, &receiver, genesis, &key, retired)
+                .args([
+                    "--after",
+                    &hex::encode(after),
+                    "--pages",
+                    "64",
+                    "--evaluation-candidate",
+                    &hex::encode(cid),
+                ])
+                .output()
+                .unwrap(),
+            "INCOMPLETE_HISTORY:page_budget:after=",
+        );
+        let cursor_text = error
+            .strip_prefix("INCOMPLETE_HISTORY:page_budget:after=")
+            .unwrap()
+            .strip_suffix('\n')
+            .unwrap();
+        let cursor: Hash = hex::decode(cursor_text).unwrap().try_into().unwrap();
+        assert_eq!(cursor_text, hex::encode(cursor));
+        let start = chunk * 64;
+        let end = start + 64;
+        assert_eq!(cursor, retirement_branch[end - 1].0);
+        assert_ne!(cursor, after);
+        assert_ne!(cursor, retired);
+        // Reopen only after the child's listener has stopped and joined. Every
+        // advertised cursor and its preceding page packets must actually exist
+        // in the durable receiver on the native source's expected ancestry.
+        let local = Node::open(&receiver, settings.clone(), 2).unwrap();
+        let mut previous = after;
+        for (offset, &(id, source_parent)) in retirement_branch[start..end].iter().enumerate() {
+            let packet = local.packet(id).unwrap();
+            assert_eq!(packet.id().unwrap(), id);
+            assert_eq!(packet.header.parent, source_parent);
+            assert_eq!(packet.header.parent, previous);
+            assert_eq!(packet.header.height, (65 + start + offset) as u64);
+            previous = id;
+        }
+        assert_eq!(previous, cursor);
+        assert!(local.packet(retirement_branch[end].0).is_err());
+        assert!(local.packet(retired).is_err());
+        drop(local);
+        after = cursor;
+    }
     let retired_error = refusal(
-        network_call(
-            &shared,
-            "retired-archive-241",
-            &receiver,
-            genesis,
-            &key,
-            retired,
-            &[
+        sync_client(&shared, "retirement", &receiver, genesis, &key, retired)
+            .args([
                 "--after",
-                &hex::encode(tip),
+                &hex::encode(after),
+                "--pages",
+                "64",
                 "--evaluation-candidate",
                 &hex::encode(cid),
-            ],
-        ),
+            ])
+            .output()
+            .unwrap(),
         "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED",
     );
-    assert!(retired_error.contains(":STATE"));
+    assert!(retired_error.starts_with(&format!(
+        "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED:verified_tip={}:active_tip={}:generation=",
+        hex::encode(retired),
+        hex::encode(retired)
+    )));
+    assert!(retired_error.ends_with(":STATE\n"));
     let local = Node::open(&receiver, settings, 2).unwrap();
     assert_eq!(local.active().unwrap().0, retired);
     assert!(!local

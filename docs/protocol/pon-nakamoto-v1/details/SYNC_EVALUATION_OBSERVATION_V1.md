@@ -79,5 +79,14 @@ It checks same-owner API/output identity, unchanged default output, incomplete r
 unknown/window/context refusals, actual-clock capture and the network test-clock guard,
 plus an API-only low-clock refusal, heavier-fork invalidation of the old typed
 observation, lighter-branch reception and actual archive retirement. Each CLI child is
-waited; the finite public worker is stopped and joined. These controlled development
-tests do not imply independent operators, WAN capacity or public readiness.
+waited; each network CLI phase owns a fresh original120-second listener that is stopped
+and joined before offline construction or another phase. The retirement fixture
+receives all241 real successors using three planned64-page partial syncs followed by
+the final49-page completion. Each partial result's canonical cursor, stored ancestry
+and missing next page are checked after reopen; the final retired evaluation query
+refuses with the actual `STATE` result. This is12 network CLI phases across the two
+tests, not an uninterrupted241-block transfer or the earlier9-command fixture.
+The historical hosted failure after150 responses within one120-second lease remains
+unresolved as a single-transfer performance boundary. Planned page-budget resume is
+not a retry of arbitrary transport failure. These controlled development tests do
+not imply independent operators, WAN capacity or public readiness.

@@ -56,9 +56,10 @@ The actual component receipt names four Rust `#[test]` controls in
 `loaded_release_parent_full_range_and_new_round_are_native`, and
 `cli_selects_fresh_profile_and_genesis_before_any_candidate`.
 These include real signed admission,128-block adoption, loaded parents and fork/reopen.
-The Python receipt navigator leaves this operation's observed selectors empty;
-source/test-name traceability is separate from an actual component receipt or a new
-whole-source qualification. Source-group budgets, general functional attribution,
+The responsibility registry binds these four real attributed Rust tests. The navigator
+checks their source selectors separately from whether an exact recorded invocation
+actually ran them; a source binding is not a component receipt or a new whole-source
+qualification. Source-group budgets, general functional attribution,
 independent evaluator governance, positive ML gain and public acceptance remain open.
 
 ## M10.PendingNotHistory

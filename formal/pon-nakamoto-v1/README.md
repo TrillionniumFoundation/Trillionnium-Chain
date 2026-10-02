@@ -105,3 +105,12 @@ The session is a bounded disposable compute cache owned by the reference Ledger,
 native persistent node or new database. Run `test_native_session.py` and
 `test_work_precheck.py`; client single/batch confirmation retains complete-ancestry
 clock checks. Missing/changed binaries and ambiguous replies cannot silently fall back.
+
+## Model operations reported-acceptance sidecar
+
+Run `python3 formal/pon-nakamoto-v1/test_model_acceptance.py` for synthetic adversarial
+and package-ingestion regressions. The owner-pinned offline verifier and exact package
+contract are in [Model operations acceptance](../../docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md).
+It replays existing target-decoder controls and adds prospective-record separation,
+poison/backdoor/forgetting probes, unique reported consumer uses and retention costs.
+A contract pass never establishes real model efficacy or independent acceptance.

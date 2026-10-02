@@ -1,9 +1,20 @@
 #!/usr/bin/env python3
-"""Execute source-bound current regressions and real controlled learning; no deployment."""
+"""Execute source-bound current regressions and real controlled learning; no deployment.
+Resource observer: defaults to /usr/bin/time. To use an officially installed or
+extracted GNU time elsewhere, set TRNM_GNU_TIME to its absolute executable path.
+The selected observer is probed with a five-second timeout; its resolved path,
+SHA-256 and reported identity are retained in each result and the environment.
+This explicit selection survives nested qualification environment sanitization.
+Executable hashes are bounded to 16 MiB and probe streams to 16 KiB each.
+Hashes are checked before and after commands; post-launch failures retain rows.
+These are software file observations, not cryptographic execution attestation or
+package provenance authentication; replacement races cannot be excluded.
+No shell builtin, PATH fallback, or successful unmeasured mode is provided.
+"""
 from __future__ import annotations
 import argparse,hashlib,json,os,platform,re,signal,subprocess,sys,time
 from pathlib import Path
-from qualification_runtime import bind_python_runtime, read_gnu_time_peak_rss
+from qualification_runtime import bind_gnu_time, bind_python_runtime, read_gnu_time_peak_rss, verify_gnu_time
 
 ROOT=Path(__file__).resolve().parents[1]
 PYTHON_TESTS=['test_reference','test_contracts','test_invariants','test_evaluation',
@@ -27,17 +38,19 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
  files=git('ls-files').splitlines();source_files={p:sha(ROOT/p)for p in files if runtime(p)or p in {'config/pon/invariants-v2.json','scripts/run_evaluation_qualification.py','scripts/qualification_runtime.py'}}
  env=os.environ.copy()
  for name in list(env):
-  if name.startswith('TRNM_'):env.pop(name)
+  if name.startswith('TRNM_') and name != 'TRNM_GNU_TIME':env.pop(name)
  env.update(CARGO_HOME=str(Path(cargo_home).resolve()),CARGO_TARGET_DIR=str(Path(target).resolve()),
   CARGO_BUILD_JOBS='2',CARGO_NET_OFFLINE='true',RUST_TEST_THREADS='1',PYTHONDONTWRITEBYTECODE='1',
   OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1',TRNM_NATIVE_MODE='release',TMPDIR='/tmp')
  env,child_python3=bind_python_runtime(env)
+ env,resource_observer=bind_gnu_time(env)
  (out/'logs').mkdir();records=[]
  def execute(name,command,timeout=1200,extra=None):
   log=out/'logs'/(name+'.log');usage=out/'logs'/(name+'.usage')
-  actual=['/usr/bin/time','-f','%M %U %S','-o',str(usage),*command]
+  actual=[resource_observer['executable'],'-f','%M %U %S','-o',str(usage),*command]
   child_env=dict(env);child_env.update(extra or {})
   started=time.monotonic_ns();timed_out=False
+  verify_gnu_time(resource_observer)
   with log.open('w')as stream:
    child=subprocess.Popen(actual,cwd=ROOT,env=child_env,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)
    try:code=child.wait(timeout=timeout)
@@ -45,7 +58,7 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
     timed_out=True;os.killpg(child.pid,signal.SIGKILL);code=child.wait()
   row={'name':name,'command':command,'returncode':code,'timed_out':timed_out,
        'elapsed_ns':time.monotonic_ns()-started,'log':str(log.relative_to(out)),
-       'environment_overrides':extra or {},
+       'environment_overrides':extra or {},'resource_observer':resource_observer,
        'peak_rss_kib':None,'vram_bytes':None,'included_transactions':None,'client_confirmed_transactions':None}
   row['peak_rss_kib']=read_gnu_time_peak_rss(usage)
   text=log.read_text(errors='replace')
@@ -57,14 +70,17 @@ def run(output,source,target,cargo_home,hosts,client_only=False,session_only=Fal
     values=re.findall(r'test result: (\w+)\. (\d+) passed; (\d+) failed; (\d+) ignored',section)
     if values:counts.append(values[-1])
    row.update(native_passed=sum(int(v[1])for v in counts),native_failed=sum(int(v[2])for v in counts),native_ignored=sum(int(v[3])for v in counts))
+  try:verify_gnu_time(resource_observer)
+  except (OSError,ValueError) as error:row['resource_observer_error']=str(error)
   records.append(row);print(json.dumps(row),flush=True)
+  if row.get('resource_observer_error'):raise RuntimeError('QUALIFICATION_FAILED OBSERVER_CHANGED '+name)
   if code or timed_out:raise RuntimeError('QUALIFICATION_FAILED '+name)
   if git('rev-parse','HEAD')!=commit or git('status','--porcelain'):raise ValueError('SOURCE_CHANGED')
   return text
  report={'schema':'pon-evaluation-qualification-v1','source_commit':commit,'source_tree':tree,
          'source_clean':True,'source_files_sha256':source_files,'input_source_commit':source,'input_source_tree':source_tree,
          'environment':{'platform':platform.platform(),'python':platform.python_version(),
-          'child_python3':child_python3,
+          'child_python3':child_python3,'resource_observer':resource_observer,
           'numpy':__import__('numpy').__version__,'cryptography':__import__('cryptography').__version__,
           'rust':subprocess.check_output(['rustc','--version'],text=True).strip(),
           'temporary_filesystem':subprocess.check_output(['findmnt','-T','/tmp','-n','-o','FSTYPE,TARGET'],text=True).strip(),
