@@ -489,6 +489,11 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
     let local = Node::open(&receiver, settings.clone(), 2).unwrap();
     assert_eq!(local.active().unwrap().0, parent);
     drop(local);
+    // The offline native archive construction is not a network-service phase.
+    // Close and join its current finite listener before building that history;
+    // otherwise an unoptimized full-work build can consume its 120-second lease
+    // and replace the intended archive refusal with Connection refused.
+    drop(server);
     // Extend the original candidate branch past actual native archive retention,
     // then select its heavier tip. No archive KV is fabricated or deleted here.
     let mut retired = tip;
@@ -499,6 +504,10 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
         }
         owner.activate_observed(retired, now).unwrap();
     }
+    // This listener has the same original 120-second bound and the same native
+    // owner, chain context, identity and public policy. Every client still pins
+    // its actual address; this test makes no continuous-uptime service claim.
+    let server = Server::start(shared.clone());
     let retired_error = refusal(
         server
             .client(&receiver, genesis, &key, retired)

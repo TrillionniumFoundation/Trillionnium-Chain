@@ -257,9 +257,11 @@ content output twice. Positive verification alone is not downstream adoption. Th
 real campaign uses existing training/inference owners and records actual versions;
 retrospective source tasks remain exploratory, with no public reward authority.
 
-[PUBLIC_EVALUATION_LIFECYCLE](PUBLIC_EVALUATION_LIFECYCLE.md) defines a separately
-named bounded off-chain policy: pre-candidate roster/lineage/context freeze, strict
-signed commit/reveal, deterministic deadlines, explicit missing-reveal abort, signature
-conflict evidence and next-round disqualification, plus signed appeals that do not
-silently replace the closed result. Native revision4 remains unchanged; governance,
-prospective independence and objective evaluation cannot be supplied by minimum scores.
+[PUBLIC_EVALUATION_LIFECYCLE](PUBLIC_EVALUATION_LIFECYCLE.md) separates the bounded
+off-chain policy from the explicitly selected `native-public-evaluation-dev-v1`
+successor. The native successor freezes the candidate/context/roster, checks strict
+commit/reveal and height phases, aborts missing reveals, records signature conflicts and
+next-round key exclusions, and retains bounded record-only appeals. The historical
+revision4 closed-round profile remains unchanged. Neither successor supplies public
+roster governance, prospective independence, objective ML truth or funded appeal
+adjudication; minimum scores cannot establish those facts.
