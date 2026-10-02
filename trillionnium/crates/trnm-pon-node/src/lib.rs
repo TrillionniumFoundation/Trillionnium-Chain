@@ -7,6 +7,7 @@ pub mod mining;
 pub mod operator_checkpoint_tile;
 pub mod operator_deployment;
 pub mod peer_polling;
+pub mod public_submit;
 mod store;
 use serde_json::{json, Value};
 use std::{error, fmt};

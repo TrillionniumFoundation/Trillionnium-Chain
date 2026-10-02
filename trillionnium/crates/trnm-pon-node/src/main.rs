@@ -10,7 +10,7 @@ use std::{
         atomic::{AtomicBool, Ordering},
         Arc, Mutex,
     },
-    time::Duration,
+    time::{Duration, Instant},
 };
 use trnm_crypto_primitives::qualified_work_task::{
     derive_matrices, verify_development_admission, TaskMaterial,
@@ -292,6 +292,48 @@ fn public_profile(args: &BTreeMap<String, String>) -> bool {
 }
 fn public_pool_profile(args: &BTreeMap<String, String>) -> bool {
     args.get("--admission-profile").map(String::as_str) == Some(ingress::public_v3::PROFILE)
+}
+
+fn reliable_submit_plan(
+    command: &str,
+    args: &BTreeMap<String, String>,
+    started: Instant,
+) -> Result<Option<trnm_pon_node::public_submit::SubmitRecoveryPlan>> {
+    use trnm_pon_node::public_submit::SubmitRecoveryPlan;
+    let options = [
+        "--submit-deadline-ms",
+        "--submit-attempts",
+        "--submit-call-cap",
+        "--submit-parent-depth",
+    ];
+    if !args.contains_key("--reliable-submit") {
+        if options.iter().any(|option| args.contains_key(*option)) {
+            return Err("SUBMIT_RECOVERY_OPT_IN_REQUIRED".into());
+        }
+        return Ok(None);
+    }
+    if command != "push" || !public_pool_profile(args) {
+        return Err("SUBMIT_RECOVERY_PUBLIC_V3_PUSH_REQUIRED".into());
+    }
+    let budget = Duration::from_millis(number(args, "--submit-deadline-ms", 60_000)?);
+    let plan = SubmitRecoveryPlan {
+        started,
+        deadline: started
+            .checked_add(budget)
+            .ok_or("SUBMIT_RECOVERY_LIMITS")?,
+        max_submit_attempts: number(args, "--submit-attempts", 3)?
+            .try_into()
+            .map_err(|_| "SUBMIT_RECOVERY_LIMITS")?,
+        max_calls: number(args, "--submit-call-cap", 16)?
+            .try_into()
+            .map_err(|_| "SUBMIT_RECOVERY_LIMITS")?,
+        max_parent_packets: number(args, "--submit-parent-depth", 1)?
+            .try_into()
+            .map_err(|_| "SUBMIT_RECOVERY_LIMITS")?,
+        retry_pause: Duration::from_millis(100),
+    };
+    plan.validate()?;
+    Ok(Some(plan))
 }
 fn public_policy(args: &BTreeMap<String, String>) -> Result<ingress::public_v2::PublicPolicy> {
     ingress::public_v2::PublicPolicy::new(
@@ -616,6 +658,7 @@ fn checkpoint_operator_command(command: &str, args: &BTreeMap<String, String>) -
     Ok(value)
 }
 fn run() -> Result<Value> {
+    let command_started = Instant::now();
     let mut raw = std::env::args().skip(1);
     let command = raw
         .next()
@@ -630,6 +673,7 @@ fn run() -> Result<Value> {
                 | "--task-bootstrap"
                 | "--mine"
                 | "--client-observations"
+                | "--reliable-submit"
         ) {
             "true".into()
         } else {
@@ -657,7 +701,8 @@ fn run() -> Result<Value> {
         "mine-loop" => "--miner --pool-policy --seconds --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input",
         "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input",
         "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
-        "submit" | "push" => "--packet --peer",
+        "submit" => "--packet --peer",
+        "push" => "--packet --peer --reliable-submit --submit-deadline-ms --submit-attempts --submit-call-cap --submit-parent-depth",
         "export" => "--block --output",
         "confirm" => "--transaction --block",
         "confirm-batch" => "--queries",
@@ -694,6 +739,7 @@ fn run() -> Result<Value> {
     // must precede any Node::open creation or recovery. Later initialization
     // errors may leave this new file empty: that is explicitly not a completion.
     let mut request_observation = request_observation_export(&command, &args)?;
+    let recovery_plan = reliable_submit_plan(&command, &args, command_started)?;
     // Local evaluation query inputs reject before Node::open can create/recover a
     // store. Existing --logical-now is explicit trusted test input, never height.
     let evaluation_query = if command == "evaluation-observe" {
@@ -1020,6 +1066,39 @@ fn run() -> Result<Value> {
         let address = need(&args, "--peer")?
             .parse()
             .map_err(|_| Error::from("PEER_ADDRESS"))?;
+        if let Some(plan) = recovery_plan {
+            use trnm_pon_node::public_submit::{
+                submit_with_verified_parent_recovery, PinnedPublicClient,
+            };
+            let pinned_server = need(&args, "--server-public")?;
+            digest(pinned_server)?;
+            let identity = public_identity(&args)?;
+            let policy = ingress::public_v3::PublicPolicy::new(
+                u8::try_from(number(&args, "--admission-bits", 16)?)
+                    .map_err(|_| "PUBLIC_POLICY")?,
+                Duration::from_millis(number(&args, "--admission-ttl-ms", 2000)?),
+            )?;
+            let store = Path::new(need(&args, "--store")?);
+            if !store.join("native.sqlite").is_file() {
+                return Err("SUBMIT_RECOVERY_EXISTING_PRODUCER_REQUIRED".into());
+            }
+            if Instant::now() >= plan.deadline {
+                return Err("SUBMIT_RECOVERY_DEADLINE".into());
+            }
+            let owner = Node::open(store, settings, number(&args, "--workers", 1)? as usize)?;
+            let outcome = submit_with_verified_parent_recovery(
+                &owner,
+                PinnedPublicClient {
+                    address,
+                    server_public: pinned_server,
+                    identity: &identity,
+                    policy,
+                },
+                &packet,
+                plan,
+            );
+            return Ok(serde_json::to_value(outcome)?);
+        }
         let request = ingress::Request::Submit {
             packet: hex::encode(packet.encode()?),
         };

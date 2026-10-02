@@ -105,7 +105,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r3/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-native-stages-nonpreemptive/no-durable-guest-rows",&[self.bits],&self.lifetime_ms.to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r4/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-native-stages-nonpreemptive/no-durable-guest-rows",&[self.bits],&self.lifetime_ms.to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -114,12 +114,22 @@ pub struct PublicMetrics {
     pub capacity_refusals: u64,
     pub preface_refusals: u64,
     pub challenge_budget_refusals: u64,
+    pub pending_challenge_entered: u64,
+    pub pending_challenge_granted: u64,
+    pub pending_challenge_closed: u64,
+    pub pending_challenge_wait_ns: u64,
+    pub peak_pending_challenge: usize,
     pub issued_challenges: u64,
     pub ticket_refusals: u64,
     pub signature_refusals: u64,
     pub spent_capacity_refusals: u64,
     pub paid_body_capacity_refusals: u64,
     pub lane_capacity_refusals: u64,
+    pub pending_grant_entered: u64,
+    pub pending_grant_granted: u64,
+    pub pending_grant_closed: u64,
+    pub pending_grant_wait_ns: u64,
+    pub peak_pending_grant: usize,
     pub disconnected_await_requests: u64,
     pub tasks_skipped_before_dispatch: u64,
     pub abandoned_tasks: u64,
@@ -156,6 +166,7 @@ pub struct PublicMetrics {
     pub peak_mutating_grants: usize,
     pub peak_read_grants: usize,
     pub peak_spent: usize,
+    pub spent_reservations: u64,
     pub peak_output_reserved_bytes: usize,
     pub delivered_response_frames: u64,
     pub retained_phase_errors: BTreeMap<String, u64>,
@@ -592,14 +603,16 @@ struct BufferPermit {
 }
 impl BufferPermit {
     fn acquire(pool: Arc<Mutex<usize>>, bytes: usize, maximum: usize) -> Result<Self> {
+        Self::try_acquire(pool, bytes, maximum)?.ok_or_else(|| "PUBLIC_BUFFER_CAPACITY".into())
+    }
+    fn try_acquire(pool: Arc<Mutex<usize>>, bytes: usize, maximum: usize) -> Result<Option<Self>> {
         let mut used = pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
-        ensure(
-            bytes <= maximum.saturating_sub(*used),
-            "PUBLIC_BUFFER_CAPACITY",
-        )?;
+        if bytes > maximum.saturating_sub(*used) {
+            return Ok(None);
+        }
         *used += bytes;
         drop(used);
-        Ok(Self { pool, bytes })
+        Ok(Some(Self { pool, bytes }))
     }
 }
 impl Drop for BufferPermit {
@@ -608,6 +621,49 @@ impl Drop for BufferPermit {
             *used = used.saturating_sub(self.bytes);
         }
     }
+}
+fn try_paid_permits(
+    cookie: &Cookie,
+    mutating_grants: &Arc<Mutex<usize>>,
+    read_grants: &Arc<Mutex<usize>>,
+    body_pool: &Arc<Mutex<usize>>,
+) -> Result<Option<(BufferPermit, BufferPermit)>> {
+    let mutation = mutating_operation(cookie.op);
+    let grant_pool = if mutation {
+        mutating_grants
+    } else {
+        read_grants
+    };
+    let Some(lane) = BufferPermit::try_acquire(
+        grant_pool.clone(),
+        1,
+        if mutation {
+            MAX_MUTATING_GRANTS
+        } else {
+            MAX_READ_GRANTS
+        },
+    )?
+    else {
+        return Ok(None);
+    };
+    let bytes = (cookie.body_len as usize)
+        .checked_mul(3)
+        .ok_or("PUBLIC_BODY_LIMIT")?;
+    let Some(body) = BufferPermit::try_acquire(
+        body_pool.clone(),
+        bytes,
+        if mutation {
+            MAX_PAID_BODY_BYTES - READ_BODY_RESERVE
+        } else {
+            MAX_PAID_BODY_BYTES
+        },
+    )?
+    else {
+        // Dropping this temporary lane is mandatory: a waiting connection
+        // cannot hold a grant while the shared body budget is unavailable.
+        return Ok(None);
+    };
+    Ok(Some((lane, body)))
 }
 struct Task {
     observation: Option<TaskObservation>,
@@ -626,8 +682,31 @@ struct Finished {
     id: u64,
     bytes: Result<Vec<u8>>,
 }
+#[derive(Clone, Copy)]
+struct PendingOrder {
+    sequence: u64,
+    entered_at: Instant,
+}
+impl PendingOrder {
+    fn next(sequence: &mut u64) -> Result<Self> {
+        *sequence = sequence.checked_add(1).ok_or("PUBLIC_PENDING_ORDER")?;
+        Ok(Self {
+            sequence: *sequence,
+            entered_at: Instant::now(),
+        })
+    }
+}
+#[derive(Clone, Copy)]
+enum PendingKind {
+    Challenge,
+    Grant,
+}
 enum Stage {
     Hello(Vec<u8>),
+    WaitChallenge {
+        hello: Hello,
+        pending: PendingOrder,
+    },
     Challenge {
         cookie: Cookie,
         bytes: Vec<u8>,
@@ -636,6 +715,12 @@ enum Stage {
     Solution {
         cookie: Cookie,
         bytes: Vec<u8>,
+    },
+    // A private state entered only after the original full Solution checks and
+    // one spent reservation. It owns no body, lane grant or canonical Task.
+    WaitGrant {
+        cookie: Cookie,
+        pending: PendingOrder,
     },
     Ready {
         cookie: Cookie,
@@ -657,14 +742,77 @@ enum Stage {
 impl Stage {
     fn phase(&self) -> &'static str {
         match self {
-            Self::Hello(_) => "hello",
+            Self::Hello(_) | Self::WaitChallenge { .. } => "hello",
             Self::Challenge { .. } => "challenge",
-            Self::Solution { .. } => "solution",
+            Self::Solution { .. } | Self::WaitGrant { .. } => "solution",
             Self::Ready { .. } => "ready",
             Self::Body { .. } => "body",
             Self::Enqueue(_) => "queue",
             Self::Await => "work",
             Self::Output { .. } => "output",
+        }
+    }
+    fn pending(&self) -> Option<(PendingKind, PendingOrder)> {
+        match self {
+            Self::WaitChallenge { pending, .. } => Some((PendingKind::Challenge, *pending)),
+            Self::WaitGrant { pending, .. } => Some((PendingKind::Grant, *pending)),
+            _ => None,
+        }
+    }
+}
+// Four logical FIFO heads refer only to the existing bounded Connection map.
+// A partial prefix or unsolved cookie has no order and cannot block a ready item.
+#[derive(Default)]
+struct PendingHeads {
+    challenge: [Option<(u64, u64)>; 2],
+    grant: [Option<(u64, u64)>; 2],
+}
+impl PendingHeads {
+    fn collect(connections: &BTreeMap<u64, Connection>, now: Instant) -> Self {
+        let mut heads = Self::default();
+        for (id, conn) in connections {
+            if now >= conn.deadline {
+                continue;
+            }
+            let (slots, op, order) = match &conn.stage {
+                Stage::WaitChallenge { hello, pending } => {
+                    (&mut heads.challenge, hello.op, pending.sequence)
+                }
+                Stage::WaitGrant { cookie, pending } => {
+                    (&mut heads.grant, cookie.op, pending.sequence)
+                }
+                _ => continue,
+            };
+            let slot = &mut slots[usize::from(mutating_operation(op))];
+            let candidate = (order, *id);
+            if slot.is_none_or(|head| candidate < head) {
+                *slot = Some(candidate);
+            }
+        }
+        heads
+    }
+    fn is_head(&self, kind: PendingKind, op: u8, id: u64) -> bool {
+        let slots = match kind {
+            PendingKind::Challenge => &self.challenge,
+            PendingKind::Grant => &self.grant,
+        };
+        slots[usize::from(mutating_operation(op))].is_some_and(|(_, head)| head == id)
+    }
+}
+fn close_pending(metrics: &mut PublicMetrics, pending: Option<(PendingKind, PendingOrder)>) {
+    if let Some((kind, order)) = pending {
+        let waited = elapsed_ns(order.entered_at);
+        match kind {
+            PendingKind::Challenge => {
+                metrics.pending_challenge_closed += 1;
+                metrics.pending_challenge_wait_ns =
+                    metrics.pending_challenge_wait_ns.saturating_add(waited);
+            }
+            PendingKind::Grant => {
+                metrics.pending_grant_closed += 1;
+                metrics.pending_grant_wait_ns =
+                    metrics.pending_grant_wait_ns.saturating_add(waited);
+            }
         }
     }
 }
@@ -799,15 +947,19 @@ fn caller_write_half_alive(
     cancelled: &AtomicBool,
     metrics: &Mutex<PublicMetrics>,
 ) -> Result<()> {
+    if !caller_write_half_open(socket)? {
+        metrics
+            .lock()
+            .map_err(|_| "PUBLIC_METRICS")?
+            .disconnected_await_requests += 1;
+        cancelled.store(true, Ordering::Release);
+        return Err("PUBLIC_EOF".into());
+    }
+    Ok(())
+}
+fn caller_write_half_open(socket: &TcpStream) -> Result<bool> {
     match socket.peek(&mut [0; 1]) {
-        Ok(0) => {
-            metrics
-                .lock()
-                .map_err(|_| "PUBLIC_METRICS")?
-                .disconnected_await_requests += 1;
-            cancelled.store(true, Ordering::Release);
-            Err("PUBLIC_EOF".into())
-        }
+        Ok(0) => Ok(false),
         Err(e)
             if !matches!(
                 e.kind(),
@@ -816,8 +968,16 @@ fn caller_write_half_alive(
         {
             Err(e.into())
         }
-        _ => Ok(()),
+        _ => Ok(true),
     }
+}
+fn pending_alive(conn: &Connection, stop: &AtomicBool) -> Result<()> {
+    task_alive(conn.deadline, stop, &conn.cancelled)?;
+    if !caller_write_half_open(&conn.socket)? {
+        conn.cancelled.store(true, Ordering::Release);
+        return Err("PUBLIC_EOF".into());
+    }
+    Ok(())
 }
 fn public_dispatch(
     node: &Mutex<Node>,
@@ -1066,6 +1226,7 @@ fn serve_public_protected_v3_inner(
     let mutating_grants = Arc::new(Mutex::new(0usize));
     let read_grants = Arc::new(Mutex::new(0usize));
     let mut challenge_tokens = CHALLENGE_BURST;
+    let mut next_pending_order = 0u64;
     let mut refill = Instant::now();
     let mut last_cleanup = Instant::now();
     thread::scope(|scope| -> Result<()> {
@@ -1289,11 +1450,13 @@ fn serve_public_protected_v3_inner(
                         Err(TryRecvError::Disconnected) => return Err("PUBLIC_WORKERS_GONE".into()),
                     }
                 }
+                let heads = PendingHeads::collect(&connections, Instant::now());
                 let mut remove = Vec::new();
                 for (id, conn) in &mut connections {
                     if Instant::now() >= conn.deadline {
                         let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                         m.expired_connections += 1;
+                        close_pending(&mut m, conn.stage.pending());
                         *m.expired_phase_counts
                             .entry(conn.stage.phase().into())
                             .or_default() += 1;
@@ -1305,6 +1468,7 @@ fn serve_public_protected_v3_inner(
                     }
                     let current = std::mem::replace(&mut conn.stage, Stage::Await);
                     let phase = current.phase();
+                    let pending_before = current.pending();
                     let advanced = (|| -> Result<Stage> {
                         match current {
                             Stage::Hello(mut bytes) => {
@@ -1321,15 +1485,21 @@ fn serve_public_protected_v3_inner(
                                 if let Some(record) = &conn.observation {
                                     record.request(hello.op, hello.digest);
                                 }
-                                if challenge_tokens == 0
+                                let pending = PendingOrder::next(&mut next_pending_order)?;
+                                metrics
+                                    .lock()
+                                    .map_err(|_| "PUBLIC_METRICS")?
+                                    .pending_challenge_entered += 1;
+                                Ok(Stage::WaitChallenge { hello, pending })
+                            }
+                            Stage::WaitChallenge { hello, pending } => {
+                                pending_alive(conn, &stop)?;
+                                if !heads.is_head(PendingKind::Challenge, hello.op, *id)
+                                    || challenge_tokens == 0
                                     || (mutating_operation(hello.op)
                                         && challenge_tokens <= READ_CHALLENGE_RESERVE)
                                 {
-                                    metrics
-                                        .lock()
-                                        .map_err(|_| "PUBLIC_METRICS")?
-                                        .challenge_budget_refusals += 1;
-                                    return Err("PUBLIC_CHALLENGE_BUDGET".into());
+                                    return Ok(Stage::WaitChallenge { hello, pending });
                                 }
                                 challenge_tokens -= 1;
                                 let cookie = server.cookie(&settings, hello, conn.peer)?;
@@ -1338,6 +1508,13 @@ fn serve_public_protected_v3_inner(
                                     .lock()
                                     .map_err(|_| "PUBLIC_METRICS")?
                                     .issued_challenges += 1;
+                                {
+                                    let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+                                    m.pending_challenge_granted += 1;
+                                    m.pending_challenge_wait_ns = m
+                                        .pending_challenge_wait_ns
+                                        .saturating_add(elapsed_ns(pending.entered_at));
+                                }
                                 conn.deadline = conn
                                     .total_deadline
                                     .min(Instant::now() + Duration::from_millis(CHALLENGE_MS));
@@ -1433,71 +1610,67 @@ fn serve_public_protected_v3_inner(
                                 {
                                     let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                                     m.peak_spent = m.peak_spent.max(spent.rows.len());
+                                    m.spent_reservations += 1;
                                 }
-                                let n = cookie.body_len as usize;
-                                let mutation = mutating_operation(cookie.op);
-                                let grant_pool = if mutation {
-                                    mutating_grants.clone()
-                                } else {
-                                    read_grants.clone()
-                                };
-                                let lane = match BufferPermit::acquire(
-                                    grant_pool.clone(),
-                                    1,
-                                    if mutation {
-                                        MAX_MUTATING_GRANTS
-                                    } else {
-                                        MAX_READ_GRANTS
-                                    },
-                                ) {
-                                    Ok(p) => p,
-                                    Err(e) => {
-                                        metrics
-                                            .lock()
-                                            .map_err(|_| "PUBLIC_METRICS")?
-                                            .lane_capacity_refusals += 1;
-                                        return Err(e);
-                                    }
-                                };
-                                let permit = match BufferPermit::acquire(
-                                    body_pool.clone(),
-                                    n * 3,
-                                    if mutation {
-                                        MAX_PAID_BODY_BYTES - READ_BODY_RESERVE
-                                    } else {
-                                        MAX_PAID_BODY_BYTES
-                                    },
-                                ) {
-                                    Ok(p) => p,
-                                    Err(e) => {
-                                        metrics
-                                            .lock()
-                                            .map_err(|_| "PUBLIC_METRICS")?
-                                            .paid_body_capacity_refusals += 1;
-                                        return Err(e);
-                                    }
-                                };
-                                conn.permit = Some(permit);
-                                conn.lane_permit = Some(Arc::new(lane));
-                                {
-                                    let used =
-                                        *body_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
-                                    let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                                    m.peak_paid_body_bytes = m.peak_paid_body_bytes.max(used);
-                                    let grants =
-                                        *grant_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
-                                    if mutation {
-                                        m.peak_mutating_grants = m.peak_mutating_grants.max(grants);
-                                    } else {
-                                        m.peak_read_grants = m.peak_read_grants.max(grants);
-                                    }
+                                let pending = PendingOrder::next(&mut next_pending_order)?;
+                                metrics
+                                    .lock()
+                                    .map_err(|_| "PUBLIC_METRICS")?
+                                    .pending_grant_entered += 1;
+                                Ok(Stage::WaitGrant { cookie, pending })
+                            }
+                            Stage::WaitGrant { cookie, pending } => {
+                                pending_alive(conn, &stop)?;
+                                if !heads.is_head(PendingKind::Grant, cookie.op, *id) {
+                                    return Ok(Stage::WaitGrant { cookie, pending });
                                 }
+                                // This private stage already validated the immutable cookie,
+                                // target, signature and spent id once. Only the original
+                                // absolute expiry is checked again; polling does no crypto.
+                                ensure(
+                                    server.tick()? < cookie.expires_tick_ms,
+                                    "PUBLIC_COOKIE_EXPIRED",
+                                )?;
+                                let Some((lane, permit)) = try_paid_permits(
+                                    &cookie,
+                                    &mutating_grants,
+                                    &read_grants,
+                                    &body_pool,
+                                )?
+                                else {
+                                    return Ok(Stage::WaitGrant { cookie, pending });
+                                };
                                 let frame = framed(
                                     serde_json::to_vec(
                                         &json!({"schema":"public-body-ready-v3","cookie_digest":hex::encode(cookie.id()?)}),
                                     )?,
                                     256,
                                 )?;
+                                pending_alive(conn, &stop)?;
+                                conn.permit = Some(permit);
+                                conn.lane_permit = Some(Arc::new(lane));
+                                {
+                                    let used =
+                                        *body_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
+                                    let grant_pool = if mutating_operation(cookie.op) {
+                                        &mutating_grants
+                                    } else {
+                                        &read_grants
+                                    };
+                                    let grants =
+                                        *grant_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
+                                    let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+                                    m.peak_paid_body_bytes = m.peak_paid_body_bytes.max(used);
+                                    if mutating_operation(cookie.op) {
+                                        m.peak_mutating_grants = m.peak_mutating_grants.max(grants);
+                                    } else {
+                                        m.peak_read_grants = m.peak_read_grants.max(grants);
+                                    }
+                                    m.pending_grant_granted += 1;
+                                    m.pending_grant_wait_ns = m
+                                        .pending_grant_wait_ns
+                                        .saturating_add(elapsed_ns(pending.entered_at));
+                                }
                                 conn.deadline = conn
                                     .total_deadline
                                     .min(Instant::now() + Duration::from_millis(CHALLENGE_MS));
@@ -1657,6 +1830,7 @@ fn serve_public_protected_v3_inner(
                                 record.terminal(phase);
                             }
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+                            close_pending(&mut m, pending_before);
                             *m.retained_phase_errors.entry(phase.into()).or_default() += 1;
                             match phase {
                                 "hello" => m.preface_refusals += 1,
@@ -1679,6 +1853,18 @@ fn serve_public_protected_v3_inner(
                     .count();
                 let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                 m.peak_pending_enqueue = m.peak_pending_enqueue.max(pending);
+                m.peak_pending_challenge = m.peak_pending_challenge.max(
+                    connections
+                        .values()
+                        .filter(|c| matches!(c.stage, Stage::WaitChallenge { .. }))
+                        .count(),
+                );
+                m.peak_pending_grant = m.peak_pending_grant.max(
+                    connections
+                        .values()
+                        .filter(|c| matches!(c.stage, Stage::WaitGrant { .. }))
+                        .count(),
+                );
                 drop(m);
                 thread::sleep(Duration::from_millis(1));
             }
@@ -1693,6 +1879,9 @@ fn serve_public_protected_v3_inner(
             .map_err(|_| "PUBLIC_METRICS")?
             .connections_closed_on_shutdown = connections.len();
         for conn in connections.values() {
+            let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+            close_pending(&mut m, conn.stage.pending());
+            drop(m);
             if let Some(record) = &conn.observation {
                 record.terminal("shutdown");
             }
@@ -1761,11 +1950,37 @@ pub fn call_public_protected_v3_with_metrics(
     caller: &DevelopmentIdentity,
     policy: PublicPolicy,
 ) -> (Result<PublicReply>, PublicClientMetrics) {
+    call_public_protected_v3_with_deadline(
+        address,
+        request,
+        settings,
+        pinned_server,
+        caller,
+        policy,
+        None,
+    )
+}
+
+/// Optional caller-local absolute deadline. It only shortens the existing call
+/// and phase limits; it changes no signed bytes, cookie policy or server budget.
+/// The ordinary client passes None and retains its original behavior.
+pub fn call_public_protected_v3_with_deadline(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    pinned_server: &str,
+    caller: &DevelopmentIdentity,
+    policy: PublicPolicy,
+    outer_deadline: Option<Instant>,
+) -> (Result<PublicReply>, PublicClientMetrics) {
     let call_start = Instant::now();
     let mut phase_start = call_start;
     let mut phase = "construction";
     let mut metrics = PublicClientMetrics::default();
     let result = (|| -> Result<PublicReply> {
+        if let Some(deadline) = outer_deadline {
+            ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;
+        }
         PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
         let raw = serde_json::to_vec(request)?;
         let op = request_op(request)?;
@@ -1781,8 +1996,20 @@ pub fn call_public_protected_v3_with_metrics(
         metrics.construction_ns = elapsed_ns(phase_start);
         phase = "challenge";
         phase_start = Instant::now();
-        let total_deadline = Instant::now() + Duration::from_millis(OVERALL_MS);
-        let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(2))?;
+        let original_deadline = Instant::now() + Duration::from_millis(OVERALL_MS);
+        let total_deadline = outer_deadline
+            .map(|deadline| deadline.min(original_deadline))
+            .unwrap_or(original_deadline);
+        let connect_budget = if outer_deadline.is_some() {
+            total_deadline
+                .checked_duration_since(Instant::now())
+                .filter(|duration| !duration.is_zero())
+                .ok_or("PUBLIC_CLIENT_DEADLINE")?
+                .min(Duration::from_secs(2))
+        } else {
+            Duration::from_secs(2)
+        };
+        let mut stream = TcpStream::connect_timeout(&address, connect_budget)?;
         stream.set_read_timeout(Some(Duration::from_secs(5)))?;
         stream.set_write_timeout(Some(Duration::from_secs(5)))?;
         client_write(
@@ -1796,27 +2023,15 @@ pub fn call_public_protected_v3_with_metrics(
             total_deadline.min(Instant::now() + Duration::from_millis(CHALLENGE_MS)),
         )?;
         let cookie: Cookie = serde_json::from_slice(&bytes)?;
-        ensure(
-            serde_json::to_vec(&cookie)? == bytes
-                && cookie.schema == "public-resource-cookie-v3"
-                && cookie.profile == hex::encode(policy.id())
-                && cookie.network == hex::encode(settings.network())
-                && cookie.parameters == hex::encode(settings.parameters())
-                && cookie.genesis == hex::encode(settings.genesis())
-                && cookie.server == pinned_server
-                && cookie.caller == caller.public_key()
-                && cookie.op == op
-                && cookie.body_len as usize == raw.len()
-                && cookie.body_digest == hex::encode(hello.digest)
-                && cookie.client_nonce == hex::encode(hello.client_nonce)
-                && cookie.bits == policy.bits
-                && cookie.lifetime_ms == policy.lifetime_ms
-                && cookie.expires_tick_ms.checked_sub(cookie.issued_tick_ms)
-                    == Some(policy.lifetime_ms),
-            "PUBLIC_CHALLENGE_CONTEXT",
+        validate_challenge_context(
+            &bytes,
+            &cookie,
+            &hello,
+            settings,
+            pinned_server,
+            policy,
+            policy.id(),
         )?;
-        verify_hex_strict(pinned_server, &cookie.server_message()?, &cookie.signature)
-            .map_err(|_| "PUBLIC_CHALLENGE_SIGNATURE")?;
         metrics.challenge_ns = elapsed_ns(phase_start);
         phase = "solution-search";
         phase_start = Instant::now();
@@ -1825,6 +2040,9 @@ pub fn call_public_protected_v3_with_metrics(
         let mut solved = None;
         for nonce in 0..1_048_576u64 {
             if nonce % 256 == 0 {
+                if outer_deadline.is_some() {
+                    ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+                }
                 ensure(
                     started.elapsed() < Duration::from_millis(policy.lifetime_ms),
                     "PUBLIC_SOLVE_EXPIRED",
@@ -1891,6 +2109,9 @@ pub fn call_public_protected_v3_with_metrics(
         )?;
         verify_hex_strict(pinned_server, &r.message()?, &r.signature)
             .map_err(|_| "PUBLIC_RESPONSE_SIGNATURE")?;
+        if outer_deadline.is_some() {
+            ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+        }
         metrics.solution_body_response_ns = elapsed_ns(phase_start);
         phase = "complete";
         Ok(PublicReply {
@@ -1916,6 +2137,38 @@ pub fn call_public_protected_v3_with_metrics(
     }
     metrics.total_elapsed_ns = elapsed_ns(call_start);
     (result, metrics)
+}
+
+fn validate_challenge_context(
+    raw: &[u8],
+    cookie: &Cookie,
+    hello: &Hello,
+    settings: &Settings,
+    pinned_server: &str,
+    policy: PublicPolicy,
+    expected_profile: Hash,
+) -> Result<()> {
+    ensure(
+        serde_json::to_vec(cookie)? == raw
+            && cookie.schema == "public-resource-cookie-v3"
+            && cookie.profile == hex::encode(expected_profile)
+            && cookie.network == hex::encode(settings.network())
+            && cookie.parameters == hex::encode(settings.parameters())
+            && cookie.genesis == hex::encode(settings.genesis())
+            && cookie.server == pinned_server
+            && cookie.caller == hex::encode(hello.caller)
+            && cookie.op == hello.op
+            && cookie.body_len as usize == hello.len
+            && cookie.body_digest == hex::encode(hello.digest)
+            && cookie.client_nonce == hex::encode(hello.client_nonce)
+            && cookie.bits == policy.bits
+            && cookie.lifetime_ms == policy.lifetime_ms
+            && cookie.expires_tick_ms.checked_sub(cookie.issued_tick_ms)
+                == Some(policy.lifetime_ms),
+        "PUBLIC_CHALLENGE_CONTEXT",
+    )?;
+    verify_hex_strict(pinned_server, &cookie.server_message()?, &cookie.signature)
+        .map_err(|_| "PUBLIC_CHALLENGE_SIGNATURE".into())
 }
 
 fn client_frame(stream: &mut TcpStream, maximum: usize, deadline: Instant) -> Result<Vec<u8>> {
@@ -1995,6 +2248,23 @@ mod tests {
         caller: &DevelopmentIdentity,
         policy: PublicPolicy,
     ) -> Result<(TcpStream, [usize; 2])> {
+        let (mut socket, cookie, challenge_bytes, deadline) =
+            paid_solution_only(address, hello, caller, policy)?;
+        let id = cookie.id()?;
+        let ready_raw = client_frame(&mut socket, 256, deadline)?;
+        let ready: Value = serde_json::from_slice(&ready_raw)?;
+        ensure(
+            ready["schema"] == "public-body-ready-v3" && ready["cookie_digest"] == hex::encode(id),
+            "TEST_READY",
+        )?;
+        Ok((socket, [challenge_bytes, 4 + ready_raw.len()]))
+    }
+    fn paid_solution_only(
+        address: SocketAddr,
+        hello: Hello,
+        caller: &DevelopmentIdentity,
+        policy: PublicPolicy,
+    ) -> Result<(TcpStream, Cookie, usize, Instant)> {
         let mut socket = TcpStream::connect(address)?;
         socket.set_nodelay(true)?;
         let deadline = Instant::now() + Duration::from_secs(2);
@@ -2024,13 +2294,7 @@ mod tests {
             .map_err(|_| "TEST_CALLER_SIGNATURE")?,
         );
         client_write(&mut socket, &solution, deadline)?;
-        let ready_raw = client_frame(&mut socket, 256, deadline)?;
-        let ready: Value = serde_json::from_slice(&ready_raw)?;
-        ensure(
-            ready["schema"] == "public-body-ready-v3" && ready["cookie_digest"] == hex::encode(id),
-            "TEST_READY",
-        )?;
-        Ok((socket, [challenge_bytes, 4 + ready_raw.len()]))
+        Ok((socket, cookie, challenge_bytes, deadline))
     }
     fn wait_metric(metrics: &Mutex<PublicMetrics>, predicate: impl Fn(&PublicMetrics) -> bool) {
         let end = Instant::now() + Duration::from_secs(2);
@@ -2233,7 +2497,12 @@ mod tests {
         drop(held);
         stop.store(true, Ordering::Release);
         let m = worker.join().unwrap();
-        assert_eq!(m.paid_body_capacity_refusals, 1);
+        assert_eq!(m.paid_body_capacity_refusals, 0);
+        assert_eq!(m.pending_grant_closed, 1);
+        assert_eq!(
+            m.pending_grant_entered,
+            m.pending_grant_granted + m.pending_grant_closed
+        );
         assert_eq!(m.completed_read, 1);
         assert_eq!(m.work_started, 0);
         assert!(m.peak_paid_body_bytes <= MAX_PAID_BODY_BYTES);
@@ -2313,7 +2582,12 @@ mod tests {
         assert!(reply.ok, "{}", reply.value);
         stop.store(true, Ordering::Release);
         let m = worker.join().unwrap();
-        assert_eq!(m.lane_capacity_refusals, 1);
+        assert_eq!(m.lane_capacity_refusals, 0);
+        assert_eq!(m.pending_grant_closed, 1);
+        assert_eq!(
+            m.pending_grant_entered,
+            m.pending_grant_granted + m.pending_grant_closed
+        );
         assert_eq!(m.peak_mutating_grants, MAX_MUTATING_GRANTS);
         assert_eq!(m.work_started, 1);
         assert_eq!(m.work_finished, 1);
@@ -2767,12 +3041,16 @@ mod tests {
         assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
     }
     #[test]
-    fn resource_revision_r3_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r4_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
             hex::encode(server.policy.id()),
-            "ff9e0505125c8589cc29cdf359566986eb671409377fc01aac2abb41739f1dfe"
+            "5eb1d63ec9effefbc7acaeeb8ec059e5acdbc63f31e6f1c9d005a8d2dd842efd"
+        );
+        assert_eq!(
+            hex::encode(PublicPolicy::development().id()),
+            "cf406b884745823ae050d3d51087d43da10c1abcbd655af9c29e84dd1492e0ec"
         );
         let mut c = server
             .cookie(&s, hello(2, 1), "127.0.0.1:1".parse().unwrap())
@@ -2780,6 +3058,7 @@ mod tests {
         for old_profile in [
             "fdc9af27f01e2ffdb8e6a24b2303ed90d5d1d3ad88f2f08d686d780e29f0bd41",
             "b32629eb243707bb1baad647ece89f22845593b91dd58490dbd6ccc695528c1d",
+            "ff9e0505125c8589cc29cdf359566986eb671409377fc01aac2abb41739f1dfe",
         ] {
             c.profile = old_profile.into();
             c.mac = hex::encode(hmac(&server.secret, &c.unsigned().unwrap()));
@@ -2795,6 +3074,51 @@ mod tests {
                 "PUBLIC_COOKIE_CONTEXT"
             );
         }
+        let default_server = PublicServer::new(identity(71), PublicPolicy::development()).unwrap();
+        let h = hello(2, 1);
+        let current = default_server
+            .cookie(&s, h, "127.0.0.1:1".parse().unwrap())
+            .unwrap();
+        let old =
+            digest("a1e5ce40d60361a56dadbb9c47cfd41b785a94b3da674a39e1d6a2deaa3e8e87").unwrap();
+        let mut legacy = current.clone();
+        legacy.profile = hex::encode(old);
+        legacy.mac = hex::encode(hmac(&default_server.secret, &legacy.unsigned().unwrap()));
+        legacy.signature = default_server
+            .identity
+            .sign(&legacy.server_message().unwrap())
+            .unwrap();
+        validate_challenge_context(
+            &serde_json::to_vec(&legacy).unwrap(),
+            &legacy,
+            &h,
+            &s,
+            default_server.identity.public_key(),
+            default_server.policy,
+            old,
+        )
+        .unwrap();
+        assert_eq!(
+            default_server
+                .validate(&legacy, &s, true)
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_COOKIE_CONTEXT"
+        );
+        assert_eq!(
+            validate_challenge_context(
+                &serde_json::to_vec(&current).unwrap(),
+                &current,
+                &h,
+                &s,
+                default_server.identity.public_key(),
+                default_server.policy,
+                old
+            )
+            .unwrap_err()
+            .to_string(),
+            "PUBLIC_CHALLENGE_CONTEXT"
+        );
         let pool = Arc::new(Mutex::new(0));
         let bulk = BufferPermit::acquire(
             pool.clone(),
@@ -2811,6 +3135,588 @@ mod tests {
         assert!(*pool.lock().unwrap() <= MAX_OUTPUT_BYTES);
         drop((bulk, control));
         assert_eq!(*pool.lock().unwrap(), 0);
+    }
+    #[test]
+    fn r4_typed_full_and_poison_keep_lane_body_reservations_atomic() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let server = server();
+        let mut cookie = server
+            .cookie(&settings, hello(1, 1), "127.0.0.1:1".parse().unwrap())
+            .unwrap();
+        let mutation = Arc::new(Mutex::new(0));
+        let reads = Arc::new(Mutex::new(0));
+        let body = Arc::new(Mutex::new(0));
+        let full = BufferPermit::acquire(
+            body.clone(),
+            MAX_PAID_BODY_BYTES - READ_BODY_RESERVE,
+            MAX_PAID_BODY_BYTES,
+        )
+        .unwrap();
+        for _ in 0..64 {
+            assert!(try_paid_permits(&cookie, &mutation, &reads, &body)
+                .unwrap()
+                .is_none());
+            assert_eq!(
+                *mutation.lock().unwrap(),
+                0,
+                "temporary lane must roll back"
+            );
+            assert_eq!(*reads.lock().unwrap(), 0);
+            assert_eq!(
+                *body.lock().unwrap(),
+                MAX_PAID_BODY_BYTES - READ_BODY_RESERVE
+            );
+        }
+        cookie.op = 2;
+        let read = try_paid_permits(&cookie, &mutation, &reads, &body)
+            .unwrap()
+            .unwrap();
+        assert_eq!(*reads.lock().unwrap(), 1);
+        drop(read);
+        assert_eq!(*reads.lock().unwrap(), 0);
+        drop(full);
+        cookie.op = 1;
+        let held: Vec<_> = (0..MAX_MUTATING_GRANTS)
+            .map(|_| BufferPermit::acquire(mutation.clone(), 1, MAX_MUTATING_GRANTS).unwrap())
+            .collect();
+        assert!(try_paid_permits(&cookie, &mutation, &reads, &body)
+            .unwrap()
+            .is_none());
+        assert_eq!(*body.lock().unwrap(), 0);
+        drop(held);
+        let accepted = try_paid_permits(&cookie, &mutation, &reads, &body)
+            .unwrap()
+            .unwrap();
+        assert_eq!(*mutation.lock().unwrap(), 1);
+        assert_eq!(*body.lock().unwrap(), 3);
+        drop(accepted);
+        assert_eq!(*mutation.lock().unwrap(), 0);
+        assert_eq!(*body.lock().unwrap(), 0);
+        let poison = body.clone();
+        assert!(thread::spawn(move || {
+            let _held = poison.lock().unwrap();
+            panic!("controlled poison");
+        })
+        .join()
+        .is_err());
+        assert_eq!(
+            try_paid_permits(&cookie, &mutation, &reads, &body)
+                .err()
+                .unwrap()
+                .to_string(),
+            "PUBLIC_BUFFER_POOL"
+        );
+        assert_eq!(
+            *mutation.lock().unwrap(),
+            0,
+            "poison must release its temporary lane"
+        );
+        assert_eq!(*reads.lock().unwrap(), 0);
+    }
+    #[test]
+    fn r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let server = server();
+        let epoch = Instant::now();
+        let expiry = epoch + Duration::from_millis(2000);
+        let mut connections = BTreeMap::new();
+        let mut peers = Vec::new();
+        for id in 0..8u64 {
+            peers.push(TcpStream::connect(address).unwrap());
+            let (socket, peer) = listener.accept().unwrap();
+            socket.set_nonblocking(true).unwrap();
+            let op = if id % 2 == 0 { 1 } else { 2 };
+            let order = PendingOrder {
+                sequence: 8 - id,
+                entered_at: epoch,
+            };
+            let stage = match id {
+                0 => Stage::Solution {
+                    cookie: server.cookie(&settings, hello(op, 1), peer).unwrap(),
+                    bytes: vec![],
+                },
+                1 => Stage::Hello(vec![]),
+                2..=5 => Stage::WaitChallenge {
+                    hello: hello(op, 1),
+                    pending: order,
+                },
+                _ => Stage::WaitGrant {
+                    cookie: server.cookie(&settings, hello(op, 1), peer).unwrap(),
+                    pending: order,
+                },
+            };
+            connections.insert(
+                id,
+                Connection {
+                    observation: None,
+                    id,
+                    socket,
+                    peer,
+                    deadline: expiry,
+                    stage,
+                    total_deadline: epoch + Duration::from_secs(30),
+                    permit: None,
+                    lane_permit: None,
+                    cancelled: Arc::new(AtomicBool::new(false)),
+                },
+            );
+        }
+        let heads = PendingHeads::collect(&connections, expiry - Duration::from_nanos(1));
+        assert!(heads.is_head(PendingKind::Challenge, 1, 4));
+        assert!(heads.is_head(PendingKind::Challenge, 2, 5));
+        assert!(heads.is_head(PendingKind::Grant, 1, 6));
+        assert!(heads.is_head(PendingKind::Grant, 2, 7));
+        assert!(
+            !heads.is_head(PendingKind::Challenge, 1, 0),
+            "older unsolved accept is not a ready head"
+        );
+        for now in [expiry, expiry + Duration::from_nanos(1)] {
+            let expired = PendingHeads::collect(&connections, now);
+            assert!(expired
+                .challenge
+                .iter()
+                .chain(&expired.grant)
+                .all(Option::is_none));
+        }
+        for _ in 0..64 {
+            let _ = PendingHeads::collect(&connections, epoch);
+        }
+        assert!(connections.values().all(|c| c.deadline == expiry
+            && c.total_deadline == epoch + Duration::from_secs(30)
+            && c.permit.is_none()
+            && c.lane_permit.is_none()));
+        let mut order = u64::MAX;
+        assert_eq!(
+            PendingOrder::next(&mut order).err().unwrap().to_string(),
+            "PUBLIC_PENDING_ORDER"
+        );
+        assert_eq!(order, u64::MAX);
+        drop((connections, peers));
+    }
+    #[test]
+    fn r4_correctly_signed_old_and_new_challenges_are_incompatible_both_directions() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let server = server();
+        let hello = hello(2, 1);
+        let current = server
+            .cookie(&settings, hello, "127.0.0.1:1".parse().unwrap())
+            .unwrap();
+        validate_challenge_context(
+            &serde_json::to_vec(&current).unwrap(),
+            &current,
+            &hello,
+            &settings,
+            server.identity.public_key(),
+            server.policy,
+            server.policy.id(),
+        )
+        .unwrap();
+        for old in [
+            "fdc9af27f01e2ffdb8e6a24b2303ed90d5d1d3ad88f2f08d686d780e29f0bd41",
+            "b32629eb243707bb1baad647ece89f22845593b91dd58490dbd6ccc695528c1d",
+            "ff9e0505125c8589cc29cdf359566986eb671409377fc01aac2abb41739f1dfe",
+        ] {
+            let expected = digest(old).unwrap();
+            let mut legacy = current.clone();
+            legacy.profile = old.into();
+            legacy.mac = hex::encode(hmac(&server.secret, &legacy.unsigned().unwrap()));
+            legacy.signature = server
+                .identity
+                .sign(&legacy.server_message().unwrap())
+                .unwrap();
+            verify_hex_strict(
+                server.identity.public_key(),
+                &legacy.server_message().unwrap(),
+                &legacy.signature,
+            )
+            .unwrap();
+            validate_challenge_context(
+                &serde_json::to_vec(&legacy).unwrap(),
+                &legacy,
+                &hello,
+                &settings,
+                server.identity.public_key(),
+                server.policy,
+                expected,
+            )
+            .unwrap();
+            assert_eq!(
+                server
+                    .validate(&legacy, &settings, true)
+                    .unwrap_err()
+                    .to_string(),
+                "PUBLIC_COOKIE_CONTEXT"
+            );
+            assert_eq!(
+                validate_challenge_context(
+                    &serde_json::to_vec(&legacy).unwrap(),
+                    &legacy,
+                    &hello,
+                    &settings,
+                    server.identity.public_key(),
+                    server.policy,
+                    server.policy.id()
+                )
+                .unwrap_err()
+                .to_string(),
+                "PUBLIC_CHALLENGE_CONTEXT"
+            );
+            assert_eq!(
+                validate_challenge_context(
+                    &serde_json::to_vec(&current).unwrap(),
+                    &current,
+                    &hello,
+                    &settings,
+                    server.identity.public_key(),
+                    server.policy,
+                    expected
+                )
+                .unwrap_err()
+                .to_string(),
+                "PUBLIC_CHALLENGE_CONTEXT"
+            );
+        }
+    }
+    #[test]
+    fn r4_real_paid_fifo_read_service_and_native_admission_after_holder_release() {
+        let directory = tempfile::tempdir().unwrap();
+        let clock = super::super::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let source = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let packet = source
+            .make(
+                source.active().unwrap().0,
+                vec![],
+                crate::development_public(0).unwrap(),
+                clock - 50,
+                4096,
+            )
+            .unwrap();
+        let raw = serde_json::to_vec(&Request::Submit {
+            packet: hex::encode(packet.encode().unwrap()),
+        })
+        .unwrap();
+        let owner = shared(source);
+        let observer = PublicRequestObserver::new(32).unwrap();
+        let records = observer.clone();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let (signal, counters, node) = (stop.clone(), metrics.clone(), owner.clone());
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_request_observer(
+                listener,
+                node,
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+                records,
+            )
+            .unwrap()
+        });
+        let mut held = Vec::new();
+        for i in 0..8 {
+            let caller = identity(80 + i);
+            let mut h = hello(1, 1);
+            h.caller = digest(caller.public_key()).unwrap();
+            held.push(paid_grant(address, h, &caller, policy).unwrap());
+        }
+        let mut pending = Vec::new();
+        for i in 0..3 {
+            let caller = identity(90 + i);
+            let mut h = hello(1, if i == 0 { raw.len() } else { 1 });
+            h.caller = digest(caller.public_key()).unwrap();
+            if i == 0 {
+                h.digest = hash(b"public-request-body-v3", &[&raw]);
+            }
+            pending.push(paid_solution_only(address, h, &caller, policy).unwrap());
+            wait_metric(&metrics, |m| m.pending_grant_entered == 9 + u64::from(i));
+        }
+        let read = call_public_protected_v3(
+            address,
+            &Request::Head,
+            &settings,
+            identity(71).public_key(),
+            &identity(99),
+            policy,
+        )
+        .unwrap();
+        assert!(read.ok);
+        assert_eq!(read.value["height"], 0);
+        drop(held.pop());
+        let (mut first, cookie, _, deadline) = pending.remove(0);
+        let ready: Value =
+            serde_json::from_slice(&client_frame(&mut first, 256, deadline).unwrap()).unwrap();
+        assert_eq!(ready["cookie_digest"], hex::encode(cookie.id().unwrap()));
+        for (socket, _, _, _) in &pending {
+            socket.set_nonblocking(true).unwrap();
+            assert_eq!(
+                socket.peek(&mut [0; 1]).unwrap_err().kind(),
+                std::io::ErrorKind::WouldBlock
+            );
+            socket.set_nonblocking(false).unwrap();
+        }
+        client_write(&mut first, &raw, deadline).unwrap();
+        let response: Response = serde_json::from_slice(
+            &client_frame(
+                &mut first,
+                response_maximum(1),
+                Instant::now() + Duration::from_secs(2),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        verify_hex_strict(
+            identity(71).public_key(),
+            &response.message().unwrap(),
+            &response.signature,
+        )
+        .unwrap();
+        assert!(response.ok, "{}", response.value);
+        drop(first);
+        let (mut second, cookie, _, deadline) = pending.remove(0);
+        let ready: Value =
+            serde_json::from_slice(&client_frame(&mut second, 256, deadline).unwrap()).unwrap();
+        assert_eq!(ready["cookie_digest"], hex::encode(cookie.id().unwrap()));
+        pending[0].0.set_nonblocking(true).unwrap();
+        assert_eq!(
+            pending[0].0.peek(&mut [0; 1]).unwrap_err().kind(),
+            std::io::ErrorKind::WouldBlock
+        );
+        pending[0].0.set_nonblocking(false).unwrap();
+        drop(second);
+        let (mut third, cookie, _, deadline) = pending.remove(0);
+        let ready: Value =
+            serde_json::from_slice(&client_frame(&mut third, 256, deadline).unwrap()).unwrap();
+        assert_eq!(ready["cookie_digest"], hex::encode(cookie.id().unwrap()));
+        drop((third, held));
+        assert_eq!(owner.lock().unwrap().stats().unwrap()["height"], 1);
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(m.completed_submit, 1);
+        assert_eq!(m.work_started, 1);
+        assert_eq!(m.work_finished, 1);
+        assert_eq!(m.work_failed, 0);
+        assert_eq!(m.peak_mutating_grants, 8);
+        assert_eq!(m.lane_capacity_refusals, 0);
+        assert_eq!(
+            m.pending_challenge_entered,
+            m.pending_challenge_granted + m.pending_challenge_closed
+        );
+        assert_eq!(
+            m.pending_grant_entered,
+            m.pending_grant_granted + m.pending_grant_closed
+        );
+        assert_eq!(m.mutating_grants_after_shutdown, 0);
+        assert_eq!(m.read_grants_after_shutdown, 0);
+        assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.measurement_failures, 0);
+        assert_eq!(snapshot.records_not_retained, 0);
+        assert!(snapshot
+            .records
+            .iter()
+            .all(|r| r.complete && r.physical_network_bytes.is_none()));
+        assert_eq!(
+            snapshot
+                .records
+                .iter()
+                .filter(|r| r.full_work_started)
+                .count(),
+            1
+        );
+        assert!(snapshot
+            .records
+            .iter()
+            .filter(|r| !r.task_created)
+            .all(|r| !r.full_work_started && r.full_work_thread_cpu_ns.is_none()));
+    }
+    #[test]
+    fn r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let node = shared(Node::open(directory.path(), settings, 2).unwrap());
+        let before = node.lock().unwrap().read_active().unwrap();
+        let observer = PublicRequestObserver::new(16).unwrap();
+        let records = observer.clone();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let (signal, counters, owner) = (stop.clone(), metrics.clone(), node.clone());
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_request_observer(
+                listener,
+                owner,
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+                records,
+            )
+            .unwrap()
+        });
+        let mut holders = Vec::new();
+        for i in 0..8 {
+            let caller = identity(80 + i);
+            let mut h = hello(1, 1);
+            h.caller = digest(caller.public_key()).unwrap();
+            holders.push(paid_grant(address, h, &caller, policy).unwrap());
+        }
+        let create = |n| {
+            let caller = identity(n);
+            let mut h = hello(1, 1);
+            h.caller = digest(caller.public_key()).unwrap();
+            paid_solution_only(address, h, &caller, policy).unwrap()
+        };
+        let cancelled = create(90);
+        wait_metric(&metrics, |m| m.pending_grant_entered == 9);
+        drop(cancelled);
+        wait_metric(&metrics, |m| m.pending_grant_closed == 1);
+        let (mut expired, cookie, _, _) = create(91);
+        wait_metric(&metrics, |m| m.pending_grant_entered == 10);
+        let original_interval = (cookie.issued_tick_ms, cookie.expires_tick_ms);
+        // The inspection read deliberately waits longer than the server's2s
+        // cookie to distinguish server expiry from a client's earlier timeout.
+        // It is not a change to the public client's original read budget.
+        assert_eq!(
+            client_frame(&mut expired, 256, Instant::now() + Duration::from_secs(3))
+                .unwrap_err()
+                .to_string(),
+            "FRAME_EOF"
+        );
+        assert_eq!(
+            (cookie.issued_tick_ms, cookie.expires_tick_ms),
+            original_interval
+        );
+        wait_metric(&metrics, |m| m.pending_grant_closed == 2);
+        assert!(
+            metrics
+                .lock()
+                .unwrap()
+                .expired_phase_counts
+                .get("solution")
+                .copied()
+                .unwrap_or(0)
+                >= 1
+        );
+        let stopping = create(92);
+        wait_metric(&metrics, |m| m.pending_grant_entered == 11);
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(
+            m.spent_reservations, 11,
+            "one reservation per complete valid Solution"
+        );
+        assert_eq!(m.pending_grant_granted, 8);
+        assert_eq!(m.pending_grant_closed, 3);
+        assert_eq!(
+            m.pending_grant_entered,
+            m.pending_grant_granted + m.pending_grant_closed
+        );
+        assert_eq!(m.work_started, 0);
+        assert_eq!(m.tasks_enqueued, 0);
+        assert_eq!(m.body_bytes_received, 0);
+        assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
+        assert_eq!(m.mutating_grants_after_shutdown, 0);
+        assert_eq!(m.read_grants_after_shutdown, 0);
+        assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+        drop((expired, stopping, holders));
+        let snap = observer.snapshot();
+        assert_eq!(snap.accepted_connections_seen, 11);
+        assert_eq!(snap.records_not_retained, 0);
+        assert_eq!(snap.measurement_failures, 0);
+        let pending: Vec<_> = snap
+            .records
+            .iter()
+            .filter(|r| r.frames[2].complete && !r.frames[3].complete)
+            .collect();
+        assert_eq!(pending.len(), 3);
+        assert!(pending.iter().all(|r| r.complete
+            && !r.task_created
+            && !r.dispatch_started
+            && !r.full_work_started
+            && r.full_work_thread_cpu_ns.is_none()
+            && r.dispatch_thread_cpu_ns.is_none()
+            && r.frames[4].bytes_read == 0));
+    }
+    #[test]
+    fn r4_challenge_burst_waits_with_existing_read_reserve_and_actual_shutdown() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let node = shared(Node::open(directory.path(), settings.clone(), 2).unwrap());
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let (signal, counters) = (stop.clone(), metrics.clone());
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_metrics(
+                listener,
+                node,
+                Duration::from_secs(4),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+            )
+            .unwrap()
+        });
+        let mut held = Vec::new();
+        let deadline = Instant::now() + Duration::from_secs(2);
+        for i in 0..48u8 {
+            let mut socket = TcpStream::connect(address).unwrap();
+            let mut h = hello(1, 1);
+            h.caller = digest(identity(80 + i).public_key()).unwrap();
+            client_write(&mut socket, &h.encode(), deadline).unwrap();
+            held.push(socket);
+        }
+        let read = call_public_protected_v3(
+            address,
+            &Request::Head,
+            &settings,
+            identity(71).public_key(),
+            &identity(129),
+            policy,
+        )
+        .unwrap();
+        assert!(read.ok);
+        for socket in &mut held {
+            let c: Cookie =
+                serde_json::from_slice(&client_frame(socket, 2048, deadline).unwrap()).unwrap();
+            verify_hex_strict(
+                identity(71).public_key(),
+                &c.server_message().unwrap(),
+                &c.signature,
+            )
+            .unwrap();
+        }
+        drop(held);
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(m.issued_challenges, 49);
+        assert_eq!(m.challenge_budget_refusals, 0);
+        assert!(m.peak_pending_challenge > 1);
+        assert!(m.peak_connections <= MAX_CONNECTIONS);
+        assert_eq!(
+            m.pending_challenge_entered,
+            m.pending_challenge_granted + m.pending_challenge_closed
+        );
+        assert_eq!(
+            m.pending_grant_entered,
+            m.pending_grant_granted + m.pending_grant_closed
+        );
+        assert_eq!(m.completed_read, 1);
+        assert_eq!(m.work_started, 0);
+        assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
+        assert_eq!(m.mutating_grants_after_shutdown, 0);
+        assert_eq!(m.read_grants_after_shutdown, 0);
     }
     #[test]
     fn pool_body_guard_checks_shape_before_vector_allocation_and_closed_metadata() {

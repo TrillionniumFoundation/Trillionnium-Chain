@@ -60,12 +60,25 @@ read-only service test do not guarantee public service under arbitrary occupancy
 Untrusted protected parse/auth/preface refusals have at most128 Unicode characters
 and a100ms absolute response budget, also committed by the transport profile.
 
-[Public V3 resource revision r3](PUBLIC_POOL_INTAKE_V3.md) independently reserves
+[Public V3 resource revision r4](PUBLIC_POOL_INTAKE_V3.md) independently reserves
 read body/output/challenge budgets within its existing totals, limits paid grants
 per operation lane, and cancels disconnected queued work between complete native
-stages. Its resource digest changes explicitly. The retained 26/27 honest Submit
+stages. Complete Hello and validated Solution requests wait in separate bounded
+lane FIFOs before challenge/grant readiness, under their original deadlines;
+waiting does not hold a grant or allocate the request body. The original connection,
+worker, queue, byte and challenge limits remain unchanged. Its resource digest
+changes explicitly, and historical resource revisions refuse. The retained 26/27 honest Submit
 result in the short unpaid campaign belongs to `connection-work-v1`, not V3;
 V3 component fixes do not close that separate observation or certify public service.
+
+An already admitted local packet can use [bounded Submit recovery](PUBLIC_SUBMIT_RECOVERY_V1.md)
+with `push --reliable-submit --store EXISTING_LOCAL_PRODUCER`. The opt-in client
+clips every RPC and retry to one absolute deadline, restores only a bounded path
+of actual local parents, and requires authenticated history plus a stable pinned
+head and complete local State/root checks before reporting dependency readiness.
+Every failed attempt and uncertain outcome remains recorded. Dependency readiness
+does not establish confirmation depth or remote durable persistence. Default push
+behavior remains unchanged, and recovery does not supply receiver fairness.
 
 Authoritative implementations are `trnm-pon-node/src/main.rs`, `src/ingress.rs`,
 `src/ingress/public_v2.rs`, `src/ingress/public_v3.rs`, `src/store.rs`,
@@ -100,7 +113,7 @@ possession and bindings, not genuine demand, independent owners or an accepted w
 
 | Priority / gate | Executable progress | Required before public acceptance |
 |---|---|---|
-| P0 hostile public proof intake | versioned transport challenge; complete rejection remains; strict downgrade, replay, expiry and mixed real-socket tests; V2 r2/V3 r3 resource reserves, paid grant lifetime, bounded same-connection enqueue and cooperative disconnect fences; protected original-deadline rendezvous | calibrated adversarial CPU/GPU/hash budget; paid/unpaid attacks; identity rotation; bandwidth/connection exhaustion; realistic valid/invalid mixes; honest waiting time and service success under sustained attack; independent deployment |
+| P0 hostile public proof intake | versioned transport challenge; complete rejection remains; strict downgrade, replay, expiry and mixed real-socket tests; V2 r2/V3 r4 resource reserves, bounded pre-ready lane FIFOs, paid grant lifetime, bounded same-connection enqueue and cooperative disconnect fences; protected original-deadline rendezvous; optional bounded Submit dependency recovery | calibrated adversarial CPU/GPU/hash budget; paid/unpaid attacks; identity rotation; bandwidth/connection exhaustion; realistic valid/invalid mixes; honest waiting time and service success under sustained attack; independent deployment |
 | P0 qualified neural tasks | exact material-bound source statement; native renewable/revocable leases; parent eligibility, retained sequences, generation-safe recycling and one-output meters; independent [full checkpoint to A/B replay](CHECKPOINT_TILE_MATERIAL_V1.md), plus the explicit fresh [revision10 native source/material selector](CHECKPOINT_TILE_TASK_V1.md) restricted to Maintenance/output0 | genuinely admitted task owners; qualified maintenance supply and sustained explicit signer/renewal operation; DA/retention funding; cheapest valid instance and structural shortcuts; cross-challenge preprocessing/reuse analysis; independent cheapest-miner bound |
 | P1 public evaluation/reward | frozen native commit/reveal rounds and all-eligible minimum; mandatory timeout abort; strict signed conflict evidence, next-round key exclusions, bounded archived appeals and funded release/claim gating; local typed [complete-history V1](EVALUATION_CONFIRMED_OBSERVATION_V1.md) and [bounded-round V2](EVALUATION_CONFIRMED_ROUND_OBSERVATION_V2.md) observers/CLI, with [same-owner public sync consumption](SYNC_EVALUATION_OBSERVATION_V1.md) | public roster governance and independent evaluator ownership; application durable operation IDs and external-effect reorg/retirement policy where confirmed observations are used; withheld/low-score/cartel incentives; objective ML fraud versus subjective quality disagreement; funded appeal adjudication and sanctions for past paid rewards |
 | P1 target model attribution | exact bounded integer BA normal form plus explicit revision11 full-parent factor candidate admission and same-context duplicate retention; common-root budgets; pinned135M decoder/rank4 LoRA CPU execution with all four strong controls; native zero-gain no-adoption/no-reward experiment | independent future tasks; prospective registration; reproducible positive efficacy; poisoning/backdoor/forgetting, functional-copy handling and inference/memory costs; no general circuit-optimum claim |
@@ -183,8 +196,9 @@ leave peak RSS null; an unavailable observation is never converted to zero or su
 The [runtime controls](../../../../scripts/test_qualification_runtime.py) exercise both
 owners with actual successful, failing and process-group-terminated local children.
 They do not replace the complete qualification or change its command matrix, timeouts
-or rejection conditions. The SHA2 package alone uses test optimization level3 with
-debug assertions and overflow checks explicitly enabled in
+or rejection conditions. The [test-profile cost boundary](TEST_PROFILE_COST_BOUNDARY.md)
+records the SHA2, protocol and MVCC test-package optimization settings, with debug
+assertions and overflow checks explicitly enabled in
 [Cargo profiles](../../../../trillionnium/Cargo.toml). Every original test instance and
 assertion remains required. A test build setting supplies no production throughput,
 work-hardness, model-quality or public availability evidence.

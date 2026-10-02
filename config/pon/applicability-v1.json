@@ -197,7 +197,7 @@
       "receipt": null
     },
     {
-      "id": "public-intake-v3-r3",
+      "id": "public-intake-v3-r4",
       "modules": [
         "M04",
         "M15"
@@ -212,7 +212,9 @@
       },
       "tests": [
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline",
-        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r3_rejects_signed_old_cookies_and_preserves_control_output_reserve"
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r4_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries"
       ],
       "evidence_class": "source-binding",
       "receipt": null
