@@ -77,7 +77,9 @@ this optimization is not a service-latency, concurrency or public throughput gua
 
 The ignored `immutable_parent_preview_component_timing` test compares fresh parent
 preparation per prefix with an operation-local binding on 16 signed prefixes and 4099
-state keys, checking every root. Cold and warm parent-cache paths are reported separately
+state keys (4096 inert synthetic padding entries), checking every root. This state
+shape is a component fixture, not proof that native transactions generate that state.
+Cold and warm parent-cache paths are reported separately
 in four rotating arms with eight samples each. They include M06 execution and commitments,
 but exclude M05 admission, SQLite, lock waiting and concurrent clients. The ordinary
 `immutable_parent_previews_match_full_execution_including_failures_and_rebind` selector
