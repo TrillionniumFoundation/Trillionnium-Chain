@@ -49,3 +49,15 @@ opt-level = 3
 opt-level = 3
 debug-assertions = true
 overflow-checks = true
+
+# Preserve test checks while compiling repeated full-state traversal efficiently.
+# These overrides do not change development or release build profiles.
+[profile.test.package.trnm-protocol]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.trnm-mvcc-fee]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true

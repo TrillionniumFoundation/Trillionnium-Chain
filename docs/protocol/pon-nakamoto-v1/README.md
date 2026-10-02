@@ -68,6 +68,9 @@ measured and remains a public-network blocker, not a hidden fallback.
 [S2 persistence/reorg](details/STATE_RECOVERY.md) · [M1 model/evaluation](details/MODEL_EVALUATION.md) ·
 [N1 network/clients](details/NETWORK_CLIENT.md) · [P1 performance/acceptance](details/PERFORMANCE_ACCEPTANCE.md).
 
+[Test compilation and measurement boundary](details/TEST_PROFILE_COST_BOUNDARY.md)
+retains full verification and the registered resource limits when compiling test code.
+
 [Procedure registry](../../../config/pon/module-contracts-v1.json) has39 typed operations
 for all18 existing modules. [Maturity](../../../config/pon/module-maturity-v1.json)
 separates document, component, executable contract, native product and independent acceptance.
