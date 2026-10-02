@@ -60,6 +60,9 @@ case "${1:?required job}" in
     ;;
   rust-baseline)
     cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+    # Exercise the real finite-listener lifecycle before the expensive workspace
+    # matrix. The full suite below remains unchanged and still includes this target.
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-features --test evaluation_sync_observation
     cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features
     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings
