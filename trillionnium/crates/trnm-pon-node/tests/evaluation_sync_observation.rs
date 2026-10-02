@@ -563,18 +563,82 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
     // Extend the original candidate branch past actual native archive retention,
     // then select its heavier tip. No archive KV is fabricated or deleted here.
     let mut retired = tip;
+    let mut retirement_branch = Vec::new();
     {
         let mut owner = shared.lock().unwrap();
         for height in 65..=305 {
-            retired = append(&mut owner, retired, height, genesis, now, vec![]);
+            let previous = retired;
+            retired = append(&mut owner, previous, height, genesis, now, vec![]);
+            retirement_branch.push((retired, previous));
         }
         owner.activate_observed(retired, now).unwrap();
+    }
+    // Hosted job 110682210746 exhausted the unchanged 120-second lease after
+    // 150 real history responses in one 241-successor retirement sync. Exercise
+    // the explicit page-budget/resume contract instead: these are planned,
+    // bounded commands, not retries of an arbitrary transport failure. This
+    // test does not claim uninterrupted 241-block delivery within that lease.
+    let mut after = tip;
+    for (chunk, phase) in [
+        "retirement-pages-1",
+        "retirement-pages-2",
+        "retirement-pages-3",
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let error = refusal(
+            sync_client(&shared, phase, &receiver, genesis, &key, retired)
+                .args([
+                    "--after",
+                    &hex::encode(after),
+                    "--pages",
+                    "64",
+                    "--evaluation-candidate",
+                    &hex::encode(cid),
+                ])
+                .output()
+                .unwrap(),
+            "INCOMPLETE_HISTORY:page_budget:after=",
+        );
+        let cursor_text = error
+            .strip_prefix("INCOMPLETE_HISTORY:page_budget:after=")
+            .unwrap()
+            .strip_suffix('\n')
+            .unwrap();
+        let cursor: Hash = hex::decode(cursor_text).unwrap().try_into().unwrap();
+        assert_eq!(cursor_text, hex::encode(cursor));
+        let start = chunk * 64;
+        let end = start + 64;
+        assert_eq!(cursor, retirement_branch[end - 1].0);
+        assert_ne!(cursor, after);
+        assert_ne!(cursor, retired);
+        // Reopen only after the child's listener has stopped and joined. Every
+        // advertised cursor and its preceding page packets must actually exist
+        // in the durable receiver on the native source's expected ancestry.
+        let local = Node::open(&receiver, settings.clone(), 2).unwrap();
+        let mut previous = after;
+        for (offset, &(id, source_parent)) in retirement_branch[start..end].iter().enumerate() {
+            let packet = local.packet(id).unwrap();
+            assert_eq!(packet.id().unwrap(), id);
+            assert_eq!(packet.header.parent, source_parent);
+            assert_eq!(packet.header.parent, previous);
+            assert_eq!(packet.header.height, (65 + start + offset) as u64);
+            previous = id;
+        }
+        assert_eq!(previous, cursor);
+        assert!(local.packet(retirement_branch[end].0).is_err());
+        assert!(local.packet(retired).is_err());
+        drop(local);
+        after = cursor;
     }
     let retired_error = refusal(
         sync_client(&shared, "retirement", &receiver, genesis, &key, retired)
             .args([
                 "--after",
-                &hex::encode(tip),
+                &hex::encode(after),
+                "--pages",
+                "64",
                 "--evaluation-candidate",
                 &hex::encode(cid),
             ])
@@ -582,7 +646,12 @@ fn actual_public_full_sync_query_partial_refusals_reorg_and_retirement() {
             .unwrap(),
         "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED",
     );
-    assert!(retired_error.contains(":STATE"));
+    assert!(retired_error.starts_with(&format!(
+        "SYNC_COMPLETED_EVALUATION_OBSERVATION_REFUSED:verified_tip={}:active_tip={}:generation=",
+        hex::encode(retired),
+        hex::encode(retired)
+    )));
+    assert!(retired_error.ends_with(":STATE\n"));
     let local = Node::open(&receiver, settings, 2).unwrap();
     assert_eq!(local.active().unwrap().0, retired);
     assert!(!local
