@@ -6,16 +6,17 @@ readiness, independence, fair access under saturation, exact transaction inclusi
 confirmation, model efficacy, or economic work. V2 retains its separate signed domains
 and one-hour service bound. Both modules bind the current derived ancestry index
 with at most1024 SQL lookups in a fresh resource-policy digest; see
-[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r4 retains the r3 paid body/output partitions, disconnect
-fences and paid enqueue waits, and adds bounded pre-Challenge/pre-Ready waits
-inside the same connections while original resource capacity is unavailable. V2 retains its
+[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r5 retains the r4 paid body/output partitions, disconnect
+fences and paid enqueue waits, and retains bounded pre-Challenge/pre-Ready waits
+inside the same connections while original resource capacity is unavailable. It adds
+local measured mutation CPU reservation/accounting under the r5 digest. V2 retains its
 own resource digest; these changes do not silently alter its contract. Security
 fixes still require review of both modules.
 
 An operator can select the bounded local
 [request resource observer](PUBLIC_REQUEST_RESOURCE_OBSERVATION.md) to capture
 actual worker-thread CPU intervals and application-frame byte progress. This
-optional API preserves the selected signed r4 policy and native request rules; its nested
+optional API preserves the selected signed r5 policy and native request rules; its nested
 CPU intervals and stream bytes are not energy or physical network measurements.
 
 ## Exact boundary
@@ -37,7 +38,7 @@ nonpreemptive: the 10-second work deadline bounds admission/lock waiting and soc
 phases; it is not a hard interruption guarantee for a running M06 preview. A
 successful durable pool reservation can outlive the requesting socket or response.
 
-Resource revision r4 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
+Resource revision r5 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
 131,072 bytes of the existing 8 MiB body pool and 524,288 bytes of the existing
 32 MiB output pool for Head/PoolStatus control responses. Mutation body permits
 and non-control output permits cannot exhaust these reserves.
@@ -48,7 +49,7 @@ keys cannot increase these global lane limits. Eight challenge tokens are reserv
 from the existing global bucket for reads. These reservations introduce no extra
 worker, queue, Node owner, ledger authorization or retained guest identity.
 
-The r4 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
+The r5 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
 Connections. `WaitChallenge` holds a complete validated fixed Hello;
 `WaitGrant` holds its immutable Cookie after the original complete Solution
 context/expiry, ticket, strict caller signature and **single** spent reservation.
@@ -91,7 +92,7 @@ polling does not count as a new failed request. Pending terminal phases remain
 Hello/Solution, never Body/Work. A pending request has no Task or full-work CPU;
 CPU remains absent rather than a fabricated zero. Wait elapsed is not CPU. Closed
 shutdown requires zero original lane/body/output reservations and actual worker
-joins. The legacy r3 refusal counters are retained fields; r4 resource fullness
+joins. The legacy r3 refusal counters are retained fields; r5 resource fullness
 waits and can expire instead of immediately incrementing a refusal counter.
 
 A full worker channel retains its canonical Task in `Stage::Enqueue` on the same
@@ -107,10 +108,10 @@ its cancellation and original deadline when taking a queued task, while waiting
 for the owner, and between context checking, complete work verification and native
 admission. An already running transcript, M06 preview or SQLite operation remains
 nonpreemptive; cancellation cannot erase a committed fact. A fresh profile digest
-is mandatory: correctly signed r1/r2/r3 cookies and old client pins refuse r4, without fallback.
+is mandatory: correctly signed r1/r2/r3/r4 cookies and old client pins refuse r5, without fallback.
 For bits8/lifetime2000ms the digest is
-`5eb1d63ec9effefbc7acaeeb8ec059e5acdbc63f31e6f1c9d005a8d2dd842efd`;
-for default bits16/lifetime2000ms it is `cf406b884745823ae050d3d51087d43da10c1abcbd655af9c29e84dd1492e0ec`.
+`6f7b5a6018a8f78044c932b9559af21a3a02808c2773447ba96de0935816a41e`;
+for default bits16/lifetime2000ms it is `bcc5e234fe15a83f3e1921d810acf1e64f8c53350d5c211c9f879c9544854a48`.
 The V3 magic, cookie/caller signature domains and canonical request/response wires
 remain unchanged. The initial shared connection cap and pre-ticket processing can
 still be exhausted; lane isolation does not establish anonymous honest fairness.
@@ -132,6 +133,59 @@ transport identity confers no ledger key, source authorization, model ownership,
 chain work, voting power, or reward claim. Guest identities/replay operations are
 not stored durably; **valid signed transaction facts** are stored in the operator's
 actual pool.
+
+## Local paid mutation CPU reserve
+
+Resource revision r5 adds one volatile account to each PublicServer epoch, shared
+by its two mutation workers and all caller identities. It starts with two CPU
+seconds of credit, refills at250 million CPU nanoseconds per wall second up to
+a ceiling reduced by outstanding start reservations, and reserves100 million CPU nanoseconds before each actual mutation
+dispatch. These are explicit local service parameters, committed as numeric
+fields in the policy digest. They are not a ticket difficulty, attacker cost
+floor, hardware-independent price or hardness calibration. Reads use their
+existing separate worker and permits and do not debit this account.
+
+Linux uses the existing checked thread clock. Unsupported/unavailable clocks,
+invalid subtraction and poisoned accounting refuse future mutations with
+`PUBLIC_MUTATION_CPU_UNAVAILABLE`; insufficient credit or the two in-flight
+limit returns `PUBLIC_MUTATION_CPU_BUDGET`. Refusal occurs after the original
+paid protocol and canonical body/queue checks but before starting native
+dispatch or full proof verification. No new queue, worker, Node owner, State
+cache or durable caller row is added. Key rotation cannot reset the account.
+Restart begins a new explicit volatile service epoch; this is not a host-global
+CPU quota across listeners, private ingress, miner threads or service restarts.
+
+The outer actual worker-thread dispatch interval is charged exactly once. When
+Submit executes full work verification, its measured subset is reported
+separately and subtracted from the outer interval to report the remaining
+native dispatch CPU. The full-work subset and remainder sum to charged CPU;
+the optional observer's nested full-work and total fields still must not be
+added. Actual failed proofs and native refusals consume their measured CPU.
+Context/signature/State checks inside dispatch are included; reactor parsing,
+caller/ticket authentication, response signing/output and other threads are
+excluded. A completed mutation's accounting failure disables future starts
+without replacing its actual native outcome or signed success. No completed
+fact is undone, and no failed measurement is refunded as zero.
+
+A call may exceed its start reservation. Its actual CPU becomes debt, which
+blocks new starts until refill repays it. At most two existing calls may still
+be executing, because the original two mutation workers are unchanged. This
+bounds the number of nonpreemptive overshoots, not each call's CPU or duration.
+SQLite/M06 execution, lock occupancy and read latency remain nonpreemptive;
+the account does not promise a hard process CPU limit, honest Submit fairness,
+Head SLA or public readiness. A dropped running permit disables further starts
+rather than silently refunding an unknown charge. Budget exhaustion can deny
+honest mutation callers as well as expensive invalid work.
+
+`mutation_cpu_*` counters expose reservations, refusals, unavailable clocks,
+actual charged CPU and shutdown credit/debt/in-flight status.
+`mutation_full_work_cpu_ns` and `mutation_dispatch_excluding_work_cpu_ns` are
+disjoint aggregates. They do not identify individual remote attackers or
+establish physical host CPU attribution. The source control checks actual
+signed native admission, post-success clock failure, read availability under
+controlled debt, rotated callers, debt/refill arithmetic and missing clocks.
+Fresh runtime evidence is required for any new source or resource digest;
+historical r4 loopback and Tailnet results retain their original scope.
 
 ## Closed operations
 

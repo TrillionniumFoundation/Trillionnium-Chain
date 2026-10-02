@@ -671,6 +671,16 @@ resource revision r2 and [V3](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_IN
 resource revision r3. V3 retains paid canonical requests within the same bounded
 connection while its original worker channel is Full, attempting enqueue in
 connection-ID order without increasing queues, grants or absolute deadlines.
+The current V3 resource r5 additionally reserves local actual mutation-thread CPU
+before native dispatch, charges its total once and records disjoint full-work and
+remaining dispatch intervals. One service-epoch account spans caller identities;
+measured debt stops new starts, and unavailable accounting disables future
+mutation starts while preserving already completed native outcomes. Original
+read reservations remain. Two nonpreemptive calls may exceed their reservations;
+individual CPU, Node lock occupancy, honest fairness and Head SLA are not bounded
+by this local account. It is a development resource policy, not ticket cost or
+hardness calibration, host-global governance or public qualification.
+
 Within the existing totals it reserves read-body and control-output capacity, separates
 paid mutation/read grants and read challenge tokens, retains grants through native work
 and output, and checks disconnect/expiry fences between complete stages. EOF, including

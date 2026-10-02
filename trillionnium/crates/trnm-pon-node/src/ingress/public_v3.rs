@@ -17,6 +17,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
+    cell::Cell,
     collections::BTreeMap,
     io::{Read, Write},
     net::{SocketAddr, TcpListener, TcpStream},
@@ -82,6 +83,168 @@ const CHALLENGES_PER_SECOND: u64 = 128;
 const CHALLENGE_BURST: u64 = 32;
 const READ_CHALLENGE_RESERVE: u64 = 8;
 const IO_QUANTUM: usize = 64 * 1024;
+// Local receiver policy, independent of the caller's ticket-search algorithm.
+const MUTATION_CPU_BURST_NS: u64 = 2_000_000_000;
+const MUTATION_CPU_REFILL_NS_PER_SECOND: u64 = 250_000_000;
+const MUTATION_CPU_START_RESERVE_NS: u64 = 100_000_000;
+const MUTATION_CPU_WORKERS: usize = 2;
+
+/// Volatile service-epoch accounting, never ledger or caller identity authority.
+struct PaidMutationCpuBudget {
+    credit_ns: i128,
+    updated: Instant,
+    in_flight: usize,
+    unavailable: bool,
+}
+impl PaidMutationCpuBudget {
+    fn new() -> Self {
+        Self {
+            credit_ns: i128::from(MUTATION_CPU_BURST_NS),
+            updated: Instant::now(),
+            in_flight: 0,
+            unavailable: false,
+        }
+    }
+    fn refill(&mut self, now: Instant) {
+        let elapsed = now.saturating_duration_since(self.updated).as_nanos();
+        self.updated = now;
+        let Some(credit) = elapsed
+            .checked_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))
+            .map(|n| n / 1_000_000_000)
+            .and_then(|n| i128::try_from(n).ok())
+            .and_then(|n| self.credit_ns.checked_add(n))
+        else {
+            self.unavailable = true;
+            return;
+        };
+        // Refill cannot mint a second burst on top of outstanding start reserves.
+        self.credit_ns = credit.min(self.credit_ceiling());
+    }
+    fn credit_ceiling(&self) -> i128 {
+        i128::from(MUTATION_CPU_BURST_NS)
+            - (self.in_flight as i128) * i128::from(MUTATION_CPU_START_RESERVE_NS)
+    }
+    fn reserve(&mut self, now: Instant) -> Result<()> {
+        self.refill(now);
+        ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        ensure(
+            self.in_flight < MUTATION_CPU_WORKERS
+                && self.credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS),
+            "PUBLIC_MUTATION_CPU_BUDGET",
+        )?;
+        self.credit_ns -= i128::from(MUTATION_CPU_START_RESERVE_NS);
+        self.in_flight += 1;
+        Ok(())
+    }
+    fn settle(&mut self, now: Instant, measured: Option<u64>) {
+        self.refill(now);
+        self.in_flight = self.in_flight.saturating_sub(1);
+        if let Some(measured) = measured {
+            match self
+                .credit_ns
+                .checked_add(i128::from(MUTATION_CPU_START_RESERVE_NS) - i128::from(measured))
+            {
+                Some(credit) => self.credit_ns = credit.min(self.credit_ceiling()),
+                None => self.unavailable = true,
+            }
+        } else {
+            // No fabricated zero or refund when actual accounting is unavailable.
+            self.unavailable = true;
+        }
+    }
+}
+#[derive(Default)]
+struct MutationCpuMeasurement {
+    full_work_ns: Cell<Option<u64>>,
+    unavailable: Cell<bool>,
+}
+struct PaidMutationCpuPermit {
+    budget: Arc<Mutex<PaidMutationCpuBudget>>,
+    stamp: Option<ThreadCpuStamp>,
+    settled: bool,
+}
+impl PaidMutationCpuPermit {
+    fn acquire(server: &PublicServer, metrics: &Mutex<PublicMetrics>) -> Result<Self> {
+        let stamp = ThreadCpuStamp::start();
+        #[cfg(test)]
+        let stamp = if server.fail_next_cpu_start.swap(false, Ordering::AcqRel) {
+            None
+        } else {
+            stamp
+        };
+        let mut budget = server
+            .mutation_cpu
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        if stamp.is_none() {
+            budget.unavailable = true;
+        }
+        let result = budget.reserve(Instant::now());
+        drop(budget);
+        if let Ok(mut m) = metrics.lock() {
+            if result.is_err() {
+                m.mutation_cpu_refusals += 1;
+                m.mutation_cpu_clock_failures += u64::from(stamp.is_none());
+            } else {
+                m.mutation_cpu_reservations += 1;
+            }
+        }
+        result?;
+        Ok(Self {
+            budget: server.mutation_cpu.clone(),
+            stamp,
+            settled: false,
+        })
+    }
+    // Settlement cannot replace an already completed native outcome or ACK.
+    fn finish(
+        mut self,
+        measurement: &MutationCpuMeasurement,
+        server: &PublicServer,
+        metrics: &Mutex<PublicMetrics>,
+    ) -> Option<u64> {
+        let total = self.stamp.take().and_then(ThreadCpuStamp::finish);
+        #[cfg(test)]
+        let total = if server.fail_next_cpu_finish.swap(false, Ordering::AcqRel) {
+            None
+        } else {
+            total
+        };
+        #[cfg(not(test))]
+        let _ = server;
+        let work = measurement.full_work_ns.get().unwrap_or(0);
+        let remainder = total.and_then(|n| n.checked_sub(work));
+        let charged = if measurement.unavailable.get() || remainder.is_none() {
+            None
+        } else {
+            total
+        };
+        if let Ok(mut budget) = self.budget.lock() {
+            budget.settle(Instant::now(), charged);
+        }
+        self.settled = true;
+        if let Ok(mut m) = metrics.lock() {
+            m.mutation_cpu_clock_failures += u64::from(charged.is_none());
+            if let (Some(total), Some(dispatch)) = (charged, remainder) {
+                m.mutation_cpu_charged_ns = m.mutation_cpu_charged_ns.saturating_add(total);
+                m.mutation_full_work_cpu_ns = m.mutation_full_work_cpu_ns.saturating_add(work);
+                m.mutation_dispatch_excluding_work_cpu_ns = m
+                    .mutation_dispatch_excluding_work_cpu_ns
+                    .saturating_add(dispatch);
+            }
+        }
+        total
+    }
+}
+impl Drop for PaidMutationCpuPermit {
+    fn drop(&mut self) {
+        if !self.settled {
+            if let Ok(mut budget) = self.budget.lock() {
+                budget.settle(Instant::now(), None);
+            }
+        }
+    }
+}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -105,11 +268,21 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r4/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-native-stages-nonpreemptive/no-durable-guest-rows",&[self.bits],&self.lifetime_ms.to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r5/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-native-stages-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-dispatch-charge-outer-once-work-plus-nonwork-no-double-debit/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
 pub struct PublicMetrics {
+    pub mutation_cpu_reservations: u64,
+    pub mutation_cpu_refusals: u64,
+    pub mutation_cpu_clock_failures: u64,
+    pub mutation_cpu_charged_ns: u64,
+    pub mutation_full_work_cpu_ns: u64,
+    pub mutation_dispatch_excluding_work_cpu_ns: u64,
+    pub mutation_cpu_in_flight_after_shutdown: usize,
+    pub mutation_cpu_credit_ns_after_shutdown: u64,
+    pub mutation_cpu_debt_ns_after_shutdown: u64,
+    pub mutation_cpu_unavailable_after_shutdown: bool,
     pub accepted_connections: u64,
     pub capacity_refusals: u64,
     pub preface_refusals: u64,
@@ -371,8 +544,13 @@ pub struct PublicServer {
     secret: Hash,
     epoch: Hash,
     started: Instant,
+    mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
     #[cfg(test)]
     fail_next_output: AtomicBool,
+    #[cfg(test)]
+    fail_next_cpu_start: AtomicBool,
+    #[cfg(test)]
+    fail_next_cpu_finish: AtomicBool,
 }
 impl PublicServer {
     pub fn new(identity: DevelopmentIdentity, policy: PublicPolicy) -> Result<Self> {
@@ -383,8 +561,13 @@ impl PublicServer {
             secret: entropy()?,
             epoch: entropy()?,
             started: Instant::now(),
+            mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
+            #[cfg(test)]
+            fail_next_cpu_start: AtomicBool::new(false),
+            #[cfg(test)]
+            fail_next_cpu_finish: AtomicBool::new(false),
         })
     }
     fn tick(&self) -> Result<u64> {
@@ -986,8 +1169,9 @@ fn public_dispatch(
     stop: &AtomicBool,
     cancelled: &AtomicBool,
     metrics: &Mutex<PublicMetrics>,
-    observation: Option<&TaskObservation>,
+    observation: (Option<&TaskObservation>, Option<&MutationCpuMeasurement>),
 ) -> Result<Value> {
+    let (observation, mutation_cpu) = observation;
     let mut progress = |steps: u64| {
         task_alive(deadline, stop, cancelled)?;
         ensure(steps <= MAX_HISTORY_STEPS, "PUBLIC_HISTORY_STEPS")
@@ -1001,14 +1185,26 @@ fn public_dispatch(
                 // The context check may have waited for the only Node owner.
                 // An abandoned caller must not start a fresh full work replay.
                 task_alive(deadline, stop, cancelled)?;
+                let cpu = (observation.is_some() || mutation_cpu.is_some())
+                    .then(ThreadCpuStamp::start)
+                    .flatten();
+                if let Some(charge) = mutation_cpu {
+                    if cpu.is_none() {
+                        charge.unavailable.set(true);
+                        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                    }
+                }
                 let start = Instant::now();
                 metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
                 if let Some(record) = observation {
                     record.work_started();
                 }
-                let cpu = observation.and_then(|_| ThreadCpuStamp::start());
                 let result = WorkCheckedPacket::verify(packet);
                 let cpu = cpu.and_then(ThreadCpuStamp::finish);
+                if let Some(charge) = mutation_cpu {
+                    charge.full_work_ns.set(cpu);
+                    charge.unavailable.set(cpu.is_none());
+                }
                 if let Some(record) = observation {
                     record.work_finished(cpu, result.is_ok());
                 }
@@ -1165,7 +1361,8 @@ pub fn serve_public_protected_v3_with_metrics(
 }
 
 /// Optional trusted local measurements, bounded by observer capacity. Never guest
-/// authority. Default service paths do not allocate records or read CPU clocks.
+/// authority. Default service paths do not allocate optional records. R5 mutation
+/// admission uses mandatory checked thread clocks independently of capture.
 pub fn serve_public_protected_v3_with_request_observer(
     listener: TcpListener,
     node: Arc<Mutex<Node>>,
@@ -1270,26 +1467,50 @@ fn serve_public_protected_v3_inner(
                             );
                             let (permit, outcome) = match permit {
                                 Ok(permit) => {
-                                    if let Some(record) = &task.observation {
-                                        record.dispatch_started();
-                                    }
-                                    let cpu = task
-                                        .observation
-                                        .as_ref()
-                                        .and_then(|_| ThreadCpuStamp::start());
-                                    let outcome = public_dispatch(
-                                        &node,
-                                        task.request,
-                                        task.deadline,
-                                        &stop,
-                                        &task.cancelled,
-                                        &metrics,
-                                        task.observation.as_ref(),
-                                    );
-                                    let cpu = cpu.and_then(ThreadCpuStamp::finish);
-                                    if let Some(record) = &task.observation {
-                                        record.dispatch_finished(cpu, outcome.is_ok());
-                                    }
+                                    let cpu_permit = if mutating_operation(task.cookie.op) {
+                                        PaidMutationCpuPermit::acquire(server, &metrics).map(Some)
+                                    } else {
+                                        Ok(None)
+                                    };
+                                    let outcome = match cpu_permit {
+                                        Err(e) => Err(e),
+                                        Ok(cpu_permit) => {
+                                            if let Some(record) = &task.observation {
+                                                record.dispatch_started();
+                                            }
+                                            let cpu = if cpu_permit.is_none() {
+                                                task.observation
+                                                    .as_ref()
+                                                    .and_then(|_| ThreadCpuStamp::start())
+                                            } else {
+                                                None
+                                            };
+                                            let measurement = MutationCpuMeasurement::default();
+                                            let outcome = public_dispatch(
+                                                &node,
+                                                task.request,
+                                                task.deadline,
+                                                &stop,
+                                                &task.cancelled,
+                                                &metrics,
+                                                (
+                                                    task.observation.as_ref(),
+                                                    cpu_permit.as_ref().map(|_| &measurement),
+                                                ),
+                                            );
+                                            let cpu = match cpu_permit {
+                                                Some(permit) => {
+                                                    permit.finish(&measurement, server, &metrics)
+                                                }
+                                                None => cpu.and_then(ThreadCpuStamp::finish),
+                                            };
+                                            if let Some(record) = &task.observation {
+                                                record.dispatch_finished(cpu, outcome.is_ok());
+                                            }
+                                            outcome
+                                        }
+                                    };
+                                    // Accounting failure after native dispatch never rewrites outcome.
                                     (Some(permit), outcome)
                                 }
                                 Err(e) => (None, Err(e)),
@@ -1899,6 +2120,16 @@ fn serve_public_protected_v3_inner(
             m.mutating_grants_after_shutdown =
                 *mutating_grants.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
             m.read_grants_after_shutdown = *read_grants.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
+            let cpu = server
+                .mutation_cpu
+                .lock()
+                .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+            m.mutation_cpu_in_flight_after_shutdown = cpu.in_flight;
+            m.mutation_cpu_credit_ns_after_shutdown =
+                u64::try_from(cpu.credit_ns.max(0)).unwrap_or(u64::MAX);
+            m.mutation_cpu_debt_ns_after_shutdown =
+                u64::try_from((-cpu.credit_ns).max(0)).unwrap_or(u64::MAX);
+            m.mutation_cpu_unavailable_after_shutdown = cpu.unavailable;
         }
         outcome
     })?;
@@ -3039,23 +3270,236 @@ mod tests {
         assert_eq!(m.completed_submit, 1);
         assert_eq!(m.executor_refusals, 1);
         assert_eq!(m.paid_body_reserved_bytes_after_shutdown, 0);
+        assert_eq!(m.mutation_cpu_reservations, 2);
+        assert!(m.mutation_full_work_cpu_ns > 0);
+        assert_eq!(
+            m.mutation_full_work_cpu_ns + m.mutation_dispatch_excluding_work_cpu_ns,
+            m.mutation_cpu_charged_ns
+        );
+        assert!(m.mutation_cpu_charged_ns > 0);
     }
     #[test]
-    fn resource_revision_r4_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn cpu_budget_reserves_two_starts_and_carries_actual_debt_before_refill() {
+        let mut b = PaidMutationCpuBudget::new();
+        let now = b.updated;
+        b.reserve(now).unwrap();
+        b.reserve(now).unwrap();
+        assert_eq!(
+            b.reserve(now).unwrap_err().to_string(),
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+        // Nonpreemptive execution can exceed its start reservation; debit actual CPU.
+        b.settle(now, Some(MUTATION_CPU_BURST_NS + 1_000_000_000));
+        b.settle(now, Some(1_000_000_000));
+        assert_eq!(b.in_flight, 0);
+        assert_eq!(b.credit_ns, -2_000_000_000);
+        assert!(b.reserve(now + Duration::from_secs(8)).is_err());
+        b.reserve(now + Duration::from_secs(9)).unwrap();
+        b.settle(now + Duration::from_secs(9), Some(0));
+        assert_eq!(b.credit_ns, 250_000_000);
+        b.refill(now + Duration::from_secs(100));
+        assert_eq!(b.credit_ns, i128::from(MUTATION_CPU_BURST_NS));
+        b.reserve(now + Duration::from_secs(100)).unwrap();
+        b.refill(now + Duration::from_secs(200));
+        assert_eq!(
+            b.credit_ns + i128::from(MUTATION_CPU_START_RESERVE_NS),
+            i128::from(MUTATION_CPU_BURST_NS)
+        );
+    }
+    #[test]
+    fn cpu_budget_missing_measurement_or_dropped_permit_disables_future_starts() {
+        let mut budget = PaidMutationCpuBudget::new();
+        let now = budget.updated;
+        budget.reserve(now).unwrap();
+        budget.settle(now, None);
+        assert_eq!(budget.in_flight, 0);
+        assert_eq!(
+            budget
+                .reserve(now + Duration::from_secs(100))
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE"
+        );
+        let server = server();
+        let metrics = Mutex::new(PublicMetrics::default());
+        let permit = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
+        drop(permit);
+        let b = server.mutation_cpu.lock().unwrap();
+        assert!(b.unavailable);
+        assert_eq!(b.in_flight, 0);
+    }
+    #[test]
+    fn cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt() {
+        // Both cases use actual producer proof and native state admission; fault only the clock.
+        for fail_at_finish in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let clock = super::super::now().unwrap();
+            let settings = Settings::development(Some(clock - 100)).unwrap();
+            let native = Node::open(directory.path(), settings.clone(), 2).unwrap();
+            let packet = native
+                .make(
+                    native.active().unwrap().0,
+                    vec![],
+                    crate::development_public(0).unwrap(),
+                    clock - 50,
+                    4096,
+                )
+                .unwrap();
+            let owner = shared(native);
+            let before = owner.lock().unwrap().read_active().unwrap();
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let stop = Arc::new(AtomicBool::new(false));
+            let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+            let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+            let server = PublicServer::new(identity(71), policy).unwrap();
+            let budget = server.mutation_cpu.clone();
+            if fail_at_finish {
+                server.fail_next_cpu_finish.store(true, Ordering::Release);
+            }
+            let (node, signal, counters) = (owner.clone(), stop.clone(), metrics.clone());
+            let worker = thread::spawn(move || {
+                serve_public_protected_v3_with_metrics(
+                    listener,
+                    node,
+                    Duration::from_secs(8),
+                    signal,
+                    server,
+                    counters,
+                )
+                .unwrap()
+            });
+            let submit = Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            };
+            let call = |r: &Request, caller: u8| {
+                call_public_protected_v3(
+                    address,
+                    r,
+                    &settings,
+                    identity(71).public_key(),
+                    &identity(caller),
+                    policy,
+                )
+                .unwrap()
+            };
+            let success = call(&submit, 80);
+            assert!(success.ok, "{}", success.value);
+            assert_eq!(success.value["block"], hex::encode(packet.id().unwrap()));
+            let installed = owner.lock().unwrap().read_active().unwrap();
+            assert_ne!(installed, before);
+            if !fail_at_finish {
+                // Controlled exhausted local account; clock readings and native calls stay real.
+                let mut b = budget.lock().unwrap();
+                b.credit_ns = -10_000_000_000;
+                b.updated = Instant::now();
+            }
+            for caller in [81, 82, 83] {
+                let denied = call(&submit, caller);
+                assert!(!denied.ok);
+                assert_eq!(
+                    denied.value["error"],
+                    if fail_at_finish {
+                        "PUBLIC_MUTATION_CPU_UNAVAILABLE"
+                    } else {
+                        "PUBLIC_MUTATION_CPU_BUDGET"
+                    }
+                );
+            }
+            assert!(call(&Request::Head, 84).ok);
+            assert!(
+                call(
+                    &Request::History {
+                        tip: hex::encode(packet.id().unwrap()),
+                        after: hex::encode(settings.genesis())
+                    },
+                    85
+                )
+                .ok
+            );
+            assert_eq!(owner.lock().unwrap().read_active().unwrap(), installed);
+            stop.store(true, Ordering::Release);
+            let m = worker.join().unwrap();
+            assert_eq!(
+                (m.work_started, m.work_finished, m.completed_submit),
+                (1, 1, 1)
+            );
+            assert_eq!(m.mutation_cpu_reservations, 1);
+            assert_eq!(m.mutation_cpu_refusals, 3);
+            assert_eq!(m.completed_read, 2);
+            assert_eq!(m.mutation_cpu_in_flight_after_shutdown, 0);
+            assert_eq!(m.mutation_cpu_unavailable_after_shutdown, fail_at_finish);
+            assert_eq!(
+                m.mutation_full_work_cpu_ns + m.mutation_dispatch_excluding_work_cpu_ns,
+                m.mutation_cpu_charged_ns
+            );
+            if fail_at_finish {
+                assert_eq!(m.mutation_cpu_clock_failures, 1);
+            } else {
+                assert!(m.mutation_cpu_charged_ns > 0);
+            }
+            println!(
+                "r5 postclockfailure={fail_at_finish} metrics={}",
+                serde_json::to_string(&m).unwrap()
+            );
+        }
+    }
+    #[test]
+    fn cpu_budget_missing_start_clock_refuses_before_full_verification() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let owner = shared(Node::open(directory.path(), settings.clone(), 2).unwrap());
+        let before = owner.lock().unwrap().read_active().unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let server = PublicServer::new(identity(71), policy).unwrap();
+        server.fail_next_cpu_start.store(true, Ordering::Release);
+        let (node, signal) = (owner.clone(), stop.clone());
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3(listener, node, Duration::from_secs(5), signal, server)
+                .unwrap()
+        });
+        let result = call_public_protected_v3(
+            address,
+            &Request::Submit {
+                packet: "00".into(),
+            },
+            &settings,
+            identity(71).public_key(),
+            &identity(80),
+            policy,
+        )
+        .unwrap();
+        assert!(!result.ok);
+        assert_eq!(result.value["error"], "PUBLIC_MUTATION_CPU_UNAVAILABLE");
+        assert_eq!(owner.lock().unwrap().read_active().unwrap(), before);
+        stop.store(true, Ordering::Release);
+        let m = worker.join().unwrap();
+        assert_eq!(m.work_started, 0);
+        assert_eq!(m.mutation_cpu_reservations, 0);
+        assert_eq!(m.mutation_cpu_refusals, 1);
+        assert!(m.mutation_cpu_unavailable_after_shutdown);
+    }
+    #[test]
+    fn resource_revision_r5_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
             hex::encode(server.policy.id()),
-            "5eb1d63ec9effefbc7acaeeb8ec059e5acdbc63f31e6f1c9d005a8d2dd842efd"
+            "6f7b5a6018a8f78044c932b9559af21a3a02808c2773447ba96de0935816a41e"
         );
         assert_eq!(
             hex::encode(PublicPolicy::development().id()),
-            "cf406b884745823ae050d3d51087d43da10c1abcbd655af9c29e84dd1492e0ec"
+            "bcc5e234fe15a83f3e1921d810acf1e64f8c53350d5c211c9f879c9544854a48"
         );
         let mut c = server
             .cookie(&s, hello(2, 1), "127.0.0.1:1".parse().unwrap())
             .unwrap();
         for old_profile in [
+            "5eb1d63ec9effefbc7acaeeb8ec059e5acdbc63f31e6f1c9d005a8d2dd842efd",
+            "cf406b884745823ae050d3d51087d43da10c1abcbd655af9c29e84dd1492e0ec",
             "fdc9af27f01e2ffdb8e6a24b2303ed90d5d1d3ad88f2f08d686d780e29f0bd41",
             "b32629eb243707bb1baad647ece89f22845593b91dd58490dbd6ccc695528c1d",
             "ff9e0505125c8589cc29cdf359566986eb671409377fc01aac2abb41739f1dfe",

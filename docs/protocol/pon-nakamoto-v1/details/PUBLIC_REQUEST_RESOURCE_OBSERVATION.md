@@ -1,7 +1,7 @@
 # Optional local public V3 request resource observations
 
 This M15 observer is an operator-selected measurement API. It does not authorize
-requests, change the r3 resource policy or signed frames, add ledger operations,
+requests, change the selected resource policy or signed frames, add ledger operations,
 or persist guest identities. It adds no Node, scheduler, worker, queue or database
 owner. Existing service/client APIs retain their signed bytes and native checks.
 The new measurements are not backfilled into earlier observations whose CPU or
@@ -57,7 +57,12 @@ Worker lock waiting may increase elapsed time without increasing that thread's
 CPU time. These are not process CPU, lock occupancy, energy, economic minimum
 cost or the fastest possible attacker/producer cost. Clock/capture overhead is
 real observation overhead and is not subtracted. Default service APIs allocate
-no request records and read no request CPU clocks.
+no request records. The separately specified V3 r5 paid mutation CPU account
+uses the same checked thread clock even when optional capture is absent.
+Mutation dispatch totals can include bounded reservation/accounting start
+overhead; its disjoint full-work/remainder counters are charged once. Optional
+capture failure does not alter admission; mandatory r5 accounting failure
+separately prevents future mutation starts while preserving completed outcomes.
 
 ## Actual application-frame byte counters
 
