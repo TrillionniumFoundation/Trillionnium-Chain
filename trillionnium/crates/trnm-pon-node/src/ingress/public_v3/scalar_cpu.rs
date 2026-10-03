@@ -519,3 +519,69 @@ impl ServiceMutationCpuDomain {
         self.budget.lock().is_ok_and(|budget| !budget.unavailable)
     }
 }
+
+/// Consume an outside-pinned known clean cold-close token. This never starts a
+/// fresh burst: only the original time refill can create new volatile credit.
+impl ServiceMutationCpuDomain {
+    pub(crate) fn from_clean_continuous_restart(
+        _checkpoint: crate::operator_continuous_history::VerifiedCleanRestart,
+    ) -> Self {
+        let mut budget = PaidMutationCpuBudget::new();
+        budget.credit_ns = 0;
+        Self {
+            budget: Arc::new(Mutex::new(budget)),
+        }
+    }
+}
+impl ServiceMutationCpuCheckpoint {
+    pub(crate) fn actual_live_paid_cpu_ns(&self) -> Result<u64> {
+        let state = self
+            .live
+            .state
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        ensure(!state.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        Ok(state.charged_ns)
+    }
+}
+
+impl ServiceMutationCpuCheckpoint {
+    pub(super) fn from_actual_live(live: Arc<LiveRequestCpu>) -> Self {
+        Self { live }
+    }
+}
+impl ServiceMutationCpuDomain {
+    pub(super) fn shared_budget(&self) -> Arc<Mutex<PaidMutationCpuBudget>> {
+        self.budget.clone()
+    }
+}
+
+impl ServiceMutationCpuDomain {
+    /// Only the already retained zero-credit epoch waits. Original refill and
+    /// ceiling are used unchanged; Root's absolute business deadline clips wait.
+    pub(crate) fn await_startup_credit(&self, deadline: Instant) -> Result<()> {
+        loop {
+            ensure(
+                Instant::now() < deadline,
+                "OWNER_CONTINUOUS_STARTUP_DEADLINE",
+            )?;
+            let ready = {
+                let mut budget = self
+                    .budget
+                    .lock()
+                    .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+                budget.refill(Instant::now());
+                ensure(!budget.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+                budget.in_flight == 0 && budget.credit_ns >= i128::from(MUTATION_CPU_BURST_NS)
+            };
+            if ready {
+                return Ok(());
+            }
+            thread::sleep(
+                deadline
+                    .saturating_duration_since(Instant::now())
+                    .min(std::time::Duration::from_millis(50)),
+            );
+        }
+    }
+}

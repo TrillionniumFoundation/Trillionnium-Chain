@@ -947,3 +947,12 @@ All new source/binary/Native/full-reference/SQL/network/scientific actual refs a
 pending Root execution. Only Root applies, formats, builds, signs and runs.
 
 Navigation: [finite mode3 interface and acceptance](../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_FINITE_MINING_MODE3.md).
+
+
+### Fresh retained-budget Mode4 implementation candidate
+
+A new source candidate from actual qualified Mode3 978e775/3c8e7c6 adds the protected `operator-continuous` Node entry, distinct two-role global recipient authorization, complete budget-level Registry2 delegation, retained incremental task/class/global journal and durable original owner/scoped CPU settlement. Startup, receiver and local mining purposes remain separated. Unknown settlement/metadata or unfinished Drop remains terminal; no refund, migration or refreshed CPU burst is permitted. New compilation and Native/reference/SQL acceptance are pending Root, not inherited from the finite Mode3 cycle.
+
+The executable short cycle does not close automatic PoolPush/status/prune, lease-changing declarations, old serve--mine, or the original 8193 normal network campaign. Those remain explicit engineering HOLD and retain their complete denominators. Operator source/class/budget/funding declarations are not proof of licensing, physical cost, fairness, usefulness or permissionless readiness.
+
+Navigation: [Mode4 entry, complete context and required acceptance](../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE4.md).

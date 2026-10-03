@@ -763,6 +763,110 @@ fn checkpoint_operator_command(command: &str, args: &BTreeMap<String, String>) -
     }
     Ok(value)
 }
+
+fn continuous_next_frame(pending: &mut Vec<u8>, deadline: Instant) -> Result<Option<Vec<u8>>> {
+    use trnm_pon_node::operator_continuous_controller::MAX_FRAME_BYTES;
+    loop {
+        if let Some(end) = pending.iter().position(|b| *b == b'\n') {
+            let frame: Vec<_> = pending.drain(..=end).collect();
+            if frame.len() > MAX_FRAME_BYTES {
+                return Err("OWNER_CONTINUOUS_FRAME_LIMIT".into());
+            }
+            return Ok(Some(frame));
+        }
+        if pending.len() > MAX_FRAME_BYTES || Instant::now() >= deadline {
+            return Err("OWNER_CONTINUOUS_FRAME_DEADLINE".into());
+        }
+        let mut descriptor = libc::pollfd {
+            fd: libc::STDIN_FILENO,
+            events: libc::POLLIN,
+            revents: 0,
+        };
+        let wait = deadline
+            .saturating_duration_since(Instant::now())
+            .min(Duration::from_millis(50));
+        // SAFETY: initialized one-element storage remains valid for this synchronous call.
+        let ready = unsafe { libc::poll(&mut descriptor, 1, wait.as_millis().max(1) as i32) };
+        if ready < 0 {
+            let error = std::io::Error::last_os_error();
+            if error.kind() == std::io::ErrorKind::Interrupted {
+                continue;
+            }
+            return Err(error.into());
+        }
+        if ready == 0 {
+            continue;
+        }
+        if descriptor.revents & (libc::POLLERR | libc::POLLNVAL) != 0 {
+            return Err("OWNER_CONTINUOUS_STDIN".into());
+        }
+        let mut bytes = [0u8; 4096];
+        // SAFETY: writable initialized buffer and Root-owned stdin FD are valid during read.
+        let n = unsafe { libc::read(libc::STDIN_FILENO, bytes.as_mut_ptr().cast(), bytes.len()) };
+        if n < 0 {
+            let error = std::io::Error::last_os_error();
+            if error.kind() == std::io::ErrorKind::Interrupted {
+                continue;
+            }
+            return Err(error.into());
+        }
+        if n == 0 {
+            return if pending.is_empty() {
+                Ok(None)
+            } else {
+                Ok(Some(std::mem::take(pending)))
+            };
+        }
+        pending.extend_from_slice(&bytes[..n as usize]);
+    }
+}
+fn continuous_publish(value: &Value) -> Result<()> {
+    let raw = serde_json::to_vec(value)?;
+    if raw.len() > 2 * 1024 * 1024 {
+        return Err("OWNER_CONTINUOUS_OUTPUT_LIMIT".into());
+    }
+    let mut out = std::io::stdout().lock();
+    out.write_all(&raw)?;
+    out.write_all(b"\n")?;
+    out.flush()?;
+    Ok(())
+}
+fn continuous_command(args: &BTreeMap<String, String>, started: Instant) -> Result<Value> {
+    use trnm_pon_node::operator_continuous_controller::{Controller, OutsideLaunch};
+    const OPTIONS: [&str; 7] = [
+        "--launch",
+        "--launch-sha256",
+        "--registry-key",
+        "--task-key",
+        "--source-commit",
+        "--policy-source",
+        "--registry2-package",
+    ];
+    if args.len() != OPTIONS.len() || args.keys().any(|k| !OPTIONS.contains(&k.as_str())) {
+        return Err("OWNER_CONTINUOUS_ARGUMENTS".into());
+    }
+    let mut controller = Controller::open_pinned(
+        OutsideLaunch {
+            path: Path::new(need(args, "--launch")?),
+            sha256: need(args, "--launch-sha256")?,
+            registry_key: need(args, "--registry-key")?,
+            task_key: need(args, "--task-key")?,
+            source_commit: need(args, "--source-commit")?,
+            node_policy_source: need(args, "--policy-source")?,
+            registry2_package: need(args, "--registry2-package")?,
+        },
+        started,
+    )?;
+    continuous_publish(
+        &json!({"schema":"restricted-owner-continuous-startup-v1","startup_scope":controller.startup(),"public_network_ready":false,"original8193_qualification":false}),
+    )?;
+    let mut pending = Vec::new();
+    while let Some(frame) = continuous_next_frame(&mut pending, controller.deadline())? {
+        continuous_publish(&controller.apply(&frame)?)?;
+    }
+    controller.close()
+}
+
 fn run() -> Result<Value> {
     let command_started = Instant::now();
     let mut raw = std::env::args().skip(1);
@@ -788,6 +892,9 @@ fn run() -> Result<Value> {
         if args.insert(key, value).is_some() {
             return Err("DUPLICATE_OPTION".into());
         }
+    }
+    if command == "operator-continuous" {
+        return continuous_command(&args, command_started);
     }
     if args.get("--development").map(String::as_str) != Some("true") {
         return Err(

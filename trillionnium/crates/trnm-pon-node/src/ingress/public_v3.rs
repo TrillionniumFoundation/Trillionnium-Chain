@@ -21,7 +21,8 @@ use scalar_cpu::{
     MUTATION_CPU_REFILL_NS_PER_SECOND, MUTATION_CPU_START_RESERVE_NS, MUTATION_CPU_WORKERS,
 };
 pub use scalar_cpu::{
-    ServiceMutationCpuDomain, ServiceMutationCpuOperation, ServiceMutationCpuSettlement,
+    ServiceMutationCpuCheckpoint, ServiceMutationCpuDomain, ServiceMutationCpuOperation,
+    ServiceMutationCpuSettlement,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -29,7 +30,7 @@ use sha2::{Digest, Sha256};
 #[cfg(test)]
 use std::sync::atomic::AtomicU64;
 use std::{
-    cell::Cell,
+    cell::{Cell, RefCell},
     collections::BTreeMap,
     io::{Read, Write},
     net::{SocketAddr, TcpListener, TcpStream},
@@ -101,6 +102,7 @@ struct MutationCpuMeasurement {
     full_work_ns: Cell<Option<u64>>,
     unavailable: Cell<bool>,
     workers: ScopedWorkerCpu,
+    continuous_scope: RefCell<Option<crate::store::PublicContinuousScope>>,
 }
 impl MutationCpuMeasurement {
     fn for_permit(permit: Option<&PaidMutationCpuPermit>) -> Self {
@@ -201,9 +203,12 @@ impl PaidMutationCpuPermit {
             .zip(already_charged)
             .and_then(|(total, paid)| total.checked_sub(paid));
         let live_refused = self.live.was_refused();
-        if let Ok(mut budget) = self.budget.lock() {
+        let budget_settled = if let Ok(mut budget) = self.budget.lock() {
             budget.settle(Instant::now(), residual);
-        }
+            true
+        } else {
+            false
+        };
         self.settled = true;
         if let Ok(mut m) = metrics.lock() {
             m.mutation_cpu_clock_failures += u64::from(residual.is_none());
@@ -215,6 +220,24 @@ impl PaidMutationCpuPermit {
                     .mutation_dispatch_excluding_work_cpu_ns
                     .saturating_add(dispatch);
             }
+        }
+        if let Some(scope) = measurement.continuous_scope.borrow_mut().take() {
+            let actual = ServiceMutationCpuSettlement {
+                schema: "service-owner-scoped-thread-cpu-settlement-v1",
+                owner_cpu_ns: outer,
+                scoped_worker_cpu_ns: children,
+                total_cpu_ns: charged,
+                live_paid_cpu_ns: already_charged,
+                residual_cpu_ns: residual,
+                spawned_workers: measurement.workers.spawned.load(Ordering::Acquire),
+                started_workers: measurement.workers.started.load(Ordering::Acquire),
+                finished_workers: measurement.workers.finished.load(Ordering::Acquire),
+                known_workers: measurement.workers.known.load(Ordering::Acquire),
+                live_refused,
+                accounting_unavailable: residual.is_none() || !budget_settled,
+            };
+            // Journal failure latches future mutation. Native outcome/ACK remain factual.
+            let _persisted = scope.finish(&actual);
         }
         // The existing dispatch observer measures only its own actual thread.
         outer
@@ -567,6 +590,17 @@ impl PublicServer {
     /// local owner. It is a meter, not task or packet admission authority.
     pub fn mutation_cpu_domain(&self) -> ServiceMutationCpuDomain {
         ServiceMutationCpuDomain::from_shared(self.mutation_cpu.clone())
+    }
+    /// Trusted same-operator service binds the Node's existing scalar domain,
+    /// including zero credit after clean cold reopen. No fresh burst is minted.
+    pub fn with_continuous_domain(
+        identity: DevelopmentIdentity,
+        policy: PublicPolicy,
+        domain: &ServiceMutationCpuDomain,
+    ) -> Result<Self> {
+        let mut server = Self::new(identity, policy)?;
+        server.mutation_cpu = domain.shared_budget();
+        Ok(server)
     }
     fn tick(&self) -> Result<u64> {
         u64::try_from(self.started.elapsed().as_millis()).map_err(|_| "PUBLIC_CLOCK".into())
@@ -1179,63 +1213,100 @@ fn public_dispatch(
         ensure(steps <= MAX_HISTORY_STEPS, "PUBLIC_HISTORY_STEPS")
     };
     match request {
-        Request::Submit { packet } => super::dispatch_shared_with_execution_control(
-            node,
-            NativeRequest::Submit { packet },
-            &mut progress,
-            |packet| {
-                // The context check may have waited for the only Node owner.
-                // An abandoned caller must not start a fresh full work replay.
-                task_alive(deadline, stop, cancelled)?;
-                if let Some(cpu) = live_cpu {
-                    cpu.checkpoint()?;
-                }
-                let cpu = (observation.is_some() || mutation_cpu.is_some())
-                    .then(ThreadCpuStamp::start)
-                    .flatten();
-                if let Some(charge) = mutation_cpu {
-                    if cpu.is_none() {
-                        charge.unavailable.set(true);
-                        charge.workers.unknown();
-                        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        Request::Submit { packet } => {
+            let continuous_progress = {
+                let owner = lock_owner(node, &mut progress)?;
+                if owner.is_continuous() {
+                    let measurement =
+                        mutation_cpu.ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
+                    let live = measurement
+                        .workers
+                        .live
+                        .as_ref()
+                        .ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
+                    let decoded = super::hex_packet(&packet)?;
+                    let scope = owner.begin_continuous_public_scope(
+                        &decoded,
+                        ServiceMutationCpuCheckpoint::from_actual_live(live.clone()),
+                    )?;
+                    let checkpoint = scope.as_ref().map(|scope| scope.checkpoint()).transpose()?;
+                    let has_scope = scope.is_some();
+                    *measurement.continuous_scope.borrow_mut() = scope;
+                    if has_scope {
+                        owner.check_continuous_public_packet_binding(&decoded)?;
                     }
+                    checkpoint
+                } else {
+                    None
                 }
-                let start = Instant::now();
-                metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
-                if let Some(record) = observation {
-                    record.work_started();
-                }
-                let result = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
+            };
+            super::dispatch_shared_with_execution_control(
+                node,
+                NativeRequest::Submit { packet },
+                &mut progress,
+                |packet| {
+                    // The context check may have waited for the only Node owner.
+                    // An abandoned caller must not start a fresh full work replay.
                     task_alive(deadline, stop, cancelled)?;
-                    live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
-                });
-                let cpu = cpu.and_then(ThreadCpuStamp::finish);
-                if let Some(charge) = mutation_cpu {
-                    charge.full_work_ns.set(cpu);
-                    charge.unavailable.set(cpu.is_none());
-                    if cpu.is_none() {
-                        charge.workers.unknown();
+                    if let Some(checkpoint) = &continuous_progress {
+                        checkpoint.check()?;
                     }
-                }
-                if let Some(record) = observation {
-                    record.work_finished(cpu, result.is_ok());
-                }
-                let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                m.work_ns = m.work_ns.saturating_add(elapsed_ns(start));
-                m.work_finished += 1;
-                if result.is_err() {
-                    m.work_failed += 1;
-                }
-                result
-            },
-            &ExecutionControl::new(
-                &|_| {
-                    task_alive(deadline, stop, cancelled)?;
-                    live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+                    if let Some(cpu) = live_cpu {
+                        cpu.checkpoint()?;
+                    }
+                    let cpu = (observation.is_some() || mutation_cpu.is_some())
+                        .then(ThreadCpuStamp::start)
+                        .flatten();
+                    if let Some(charge) = mutation_cpu {
+                        if cpu.is_none() {
+                            charge.unavailable.set(true);
+                            charge.workers.unknown();
+                            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                        }
+                    }
+                    let start = Instant::now();
+                    metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
+                    if let Some(record) = observation {
+                        record.work_started();
+                    }
+                    let result = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
+                        task_alive(deadline, stop, cancelled)?;
+                        if let Some(checkpoint) = &continuous_progress {
+                            checkpoint.check()?;
+                        }
+                        live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+                    });
+                    let cpu = cpu.and_then(ThreadCpuStamp::finish);
+                    if let Some(charge) = mutation_cpu {
+                        charge.full_work_ns.set(cpu);
+                        charge.unavailable.set(cpu.is_none());
+                        if cpu.is_none() {
+                            charge.workers.unknown();
+                        }
+                    }
+                    if let Some(record) = observation {
+                        record.work_finished(cpu, result.is_ok());
+                    }
+                    let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+                    m.work_ns = m.work_ns.saturating_add(elapsed_ns(start));
+                    m.work_finished += 1;
+                    if result.is_err() {
+                        m.work_failed += 1;
+                    }
+                    result
                 },
-                mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
-            ),
-        ),
+                &ExecutionControl::new(
+                    &|_| {
+                        task_alive(deadline, stop, cancelled)?;
+                        if let Some(checkpoint) = &continuous_progress {
+                            checkpoint.check()?;
+                        }
+                        live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+                    },
+                    mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
+                ),
+            )
+        }
         Request::Head => {
             let owner = lock_owner(node, &mut progress)?;
             owner.public_head_metadata()
@@ -1433,7 +1504,13 @@ fn serve_public_protected_v3_inner(
             )
         };
         let owner = lock_owner(&node, &mut progress)?;
-        owner.pool_status_snapshot()?; // Explicit operator enable is required; never enable from the guest listener.
+        ensure(
+            owner.continuous_domain_matches(&server.mutation_cpu_domain()),
+            "OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN",
+        )?;
+        if !owner.is_continuous() {
+            owner.pool_status_snapshot()?;
+        } // Never enable a pool from the guest listener.
         progress(0)?;
         owner.settings().clone()
     };

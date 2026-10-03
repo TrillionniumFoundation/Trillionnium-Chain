@@ -5,6 +5,11 @@ pub mod consensus;
 pub mod ingress;
 pub mod mining;
 pub mod operator_checkpoint_tile;
+pub mod operator_continuous_controller;
+mod operator_continuous_cpu;
+mod operator_continuous_history;
+pub mod operator_continuous_policy;
+mod operator_continuous_recipient;
 pub mod operator_deployment;
 pub mod operator_mining_controller;
 pub mod operator_mining_policy;
@@ -23,8 +28,8 @@ pub use store::mempool::{
     LOCAL_POOL_PROFILE,
 };
 pub use store::{
-    ConfirmationBatch, DerivedCommitmentStatus, MiningEpochCancellation, Node, Observation,
-    OwnedMutationResult, OwnedSearchResult,
+    ConfirmationBatch, ContinuousSearchRequest, DerivedCommitmentStatus, MiningEpochCancellation,
+    Node, Observation, OwnedMutationResult, OwnedSearchResult,
 };
 use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};
@@ -558,3 +563,6 @@ pub fn development_public(i: u64) -> Result<Hash> {
         .map_err(|_| Error::from("DEV_KEY"))?;
     digest(&trnm_crypto_primitives::public_key_hex(&key))
 }
+
+#[cfg(all(test, target_os = "linux"))]
+mod operator_continuous_test_support;

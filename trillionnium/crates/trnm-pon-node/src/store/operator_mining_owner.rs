@@ -333,7 +333,7 @@ impl Node {
             None,
         )?;
         Self::install_mining_marker(path, inputs.expected_uid, &owner.marker)?;
-        let result = Self::open_inner(path, settings, workers, None, None, Some(owner));
+        let result = Self::open_inner(path, settings, workers, None, None, Some(owner), None);
         let measured = operation.finish();
         let persistence_failed =
             measured.accounting_unavailable && fault.persist_unknown().is_err();
@@ -458,7 +458,7 @@ impl Node {
             Self::finish_mining_open(path, settings, 1, &inputs, owner, permit, operation, fault)?;
         Ok((node, model, input))
     }
-    fn install_mining_marker(path: &Path, uid: u32, expected: &[u8]) -> Result<()> {
+    pub(super) fn install_mining_marker(path: &Path, uid: u32, expected: &[u8]) -> Result<()> {
         if !path.try_exists()? {
             fs::create_dir(path)?;
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;

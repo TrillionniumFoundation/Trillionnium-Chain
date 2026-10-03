@@ -2,12 +2,15 @@
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
 pub mod mempool;
+mod operator_continuous_owner;
 mod operator_mining_owner;
 use crate::{
     consensus::{self, Work},
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
 };
 use fs2::FileExt;
+pub use operator_continuous_owner::ContinuousSearchRequest;
+pub(crate) use operator_continuous_owner::PublicContinuousScope;
 pub use operator_mining_owner::{MiningEpochCancellation, OwnedMutationResult, OwnedSearchResult};
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension};
 use serde::Serialize;
@@ -357,6 +360,7 @@ pub struct Node {
     commitment_observation: RefCell<Option<CommitmentObservation>>,
     owner_policy: Option<OwnerPolicy>,
     mining_owner: Option<operator_mining_owner::MiningOwner>,
+    continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
 }
 struct OwnerPolicy {
     pool_policies: Vec<std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>>,
@@ -487,7 +491,7 @@ impl Node {
     ) -> Result<Self> {
         // The legacy opener is never a fallback for a required-policy namespace.
         ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
-        Self::open_inner(path, settings, workers, hook, None, None)
+        Self::open_inner(path, settings, workers, hook, None, None, None)
     }
     /// Explicit local operator policy; neither permissionless nor consensus authority.
     /// Inputs must be supplied from protected operator configuration, not a Request.
@@ -598,7 +602,7 @@ impl Node {
             journal: RefCell::new(journal),
             unavailable: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false)),
         };
-        Self::open_inner(path, settings, workers, None, Some(owner), None)
+        Self::open_inner(path, settings, workers, None, Some(owner), None, None)
     }
     fn open_inner(
         path: &Path,
@@ -607,15 +611,20 @@ impl Node {
         mut hook: Option<&mut Hook<'_>>,
         owner_policy: Option<OwnerPolicy>,
         mining_owner: Option<operator_mining_owner::MiningOwner>,
+        continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
     ) -> Result<Self> {
         ensure(
-            !(owner_policy.is_some() && mining_owner.is_some()),
+            usize::from(owner_policy.is_some())
+                + usize::from(mining_owner.is_some())
+                + usize::from(continuous_owner.is_some())
+                <= 1,
             "OWNER_MODE_AMBIGUOUS",
         )?;
         let required_owner_marker = owner_policy
             .as_ref()
             .map(|p| p.required_marker.as_slice())
-            .or_else(|| mining_owner.as_ref().map(|p| p.marker.as_slice()));
+            .or_else(|| mining_owner.as_ref().map(|p| p.marker.as_slice()))
+            .or_else(|| continuous_owner.as_ref().map(|p| p.marker.as_slice()));
         ensure([1, 2, 4, 8].contains(&workers), "WORKERS")?;
         settings.replay_checkpoint_tile_material()?;
         if !path.exists() {
@@ -806,6 +815,7 @@ impl Node {
             commitment_observation: RefCell::new(None),
             owner_policy,
             mining_owner,
+            continuous_owner,
         };
         node.read_active()?;
         node.validate_authenticated_replay()?;
@@ -1537,10 +1547,15 @@ impl Node {
         if let Some(permit) = owner_permit {
             permit.progress()?;
         }
+        self.continuous_execution_gate(&block)?;
         self.mining_execution_gate(&block)?;
         let mining_progress = self.mining_progress_snapshot()?;
+        let continuous_progress = self.continuous_progress_snapshot()?;
         let guarded_mining_progress = |point| -> Result<()> {
             (control.progress)(point)?;
+            if let Some(p) = &continuous_progress {
+                p.check()?;
+            }
             if let Some(p) = &mining_progress {
                 p.check()?;
             }
@@ -1889,6 +1904,7 @@ impl Node {
         self.admit_work_checked(checked, observed_now)
     }
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
+        self.continuous_packet_gate(packet)?;
         self.mining_packet_gate(packet)?;
         if let Some(owner) = &self.owner_policy {
             ensure(
@@ -2091,7 +2107,7 @@ impl Node {
     }
     fn owner_pool_configured(&self) -> Result<()> {
         ensure(
-            self.mining_owner.is_none(),
+            self.mining_owner.is_none() && self.continuous_owner.is_none(),
             "OWNER_MINING_POOL_PURPOSE_PENDING",
         )?;
         if let Some(owner) = &self.owner_policy {
@@ -2109,7 +2125,7 @@ impl Node {
         context: Hash,
     ) -> Result<Option<OwnerPoolPermit>> {
         ensure(
-            self.mining_owner.is_none(),
+            self.mining_owner.is_none() && self.continuous_owner.is_none(),
             "OWNER_MINING_POOL_PURPOSE_PENDING",
         )?;
         let Some(owner) = &self.owner_policy else {
@@ -2195,7 +2211,7 @@ impl Node {
     }
     fn recheck_owner_pool(&self, permit: Option<&OwnerPoolPermit>) -> Result<()> {
         ensure(
-            self.mining_owner.is_none(),
+            self.mining_owner.is_none() && self.continuous_owner.is_none(),
             "OWNER_MINING_POOL_PURPOSE_PENDING",
         )?;
         ensure(
@@ -2247,6 +2263,7 @@ impl Node {
         Ok(())
     }
     fn owner_preview_available(&self) -> Result<()> {
+        self.continuous_preview_gate()?;
         self.mining_preview_gate()?;
         ensure(
             self.owner_policy.is_none(),
@@ -2331,8 +2348,12 @@ impl Node {
         // Only immutable permit/atomic flags are consulted while M06 or SQL run.
         // No journal mutex/RefCell guard or filesystem write is held across either.
         let mining_progress = self.mining_progress_snapshot()?;
+        let continuous_progress = self.continuous_progress_snapshot()?;
         let guarded_progress = |point: ExecutionProgress| -> Result<()> {
             (control.progress)(point)?;
+            if let Some(p) = &continuous_progress {
+                p.check()?;
+            }
             if let Some(p) = &mining_progress {
                 p.check()?;
             }
@@ -2939,6 +2960,7 @@ impl Node {
             rusqlite::TransactionBehavior::Immediate,
         )?;
         let result = run()?;
+        self.continuous_scope_checkpoint()?;
         self.mining_scope_checkpoint()?;
         tx.commit()?;
         Ok(result)
@@ -2979,6 +3001,7 @@ impl Node {
         target: Hash,
         mut hook: Option<&mut Hook<'_>>,
     ) -> Result<Hash> {
+        self.continuous_activation_gate(target)?;
         self.mining_activation_gate(target)?;
         self.namespace()?;
         self.resume_intent(&mut hook)?;
@@ -3168,6 +3191,9 @@ impl Node {
         Ok(target)
     }
     pub fn recover(&mut self) -> Result<Hash> {
+        if let Some(tip) = self.continuous_recovery_unchanged()? {
+            return Ok(tip);
+        }
         if let Some(tip) = self.mining_recovery_unchanged()? {
             return Ok(tip);
         }
@@ -3194,6 +3220,7 @@ impl Node {
         Ok(())
     }
     pub fn activate_observed(&mut self, tip: Hash, observed_now: u64) -> Result<Hash> {
+        self.continuous_activation_gate(tip)?;
         self.mining_activation_gate(tip)?;
         self.check_observed_history(tip, observed_now)?;
         self.activate(tip)
