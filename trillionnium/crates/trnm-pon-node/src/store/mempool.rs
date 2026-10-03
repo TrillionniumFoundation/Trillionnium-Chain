@@ -13,7 +13,10 @@ use trnm_mempool::{
 use trnm_mvcc_fee::pon_commitment::{
     CacheLimits, CheckedExecutionParent, CommitmentObservation, ExecutionRequest,
 };
-use trnm_mvcc_fee::pon_executor::{self, Config, ExecutionWorkerAccounting, State};
+use trnm_mvcc_fee::pon_executor::{
+    self, Config, ExecutionControl, ExecutionError, ExecutionProgress, ExecutionWorkerAccounting,
+    State,
+};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
 pub const LOCAL_POOL_PROFILE: &str = "native-local-queued-pnx1-v2";
@@ -298,13 +301,40 @@ fn validate_pending(
         node,
         checked: None,
         parent_observation: None,
-        worker_accounting: &(),
+        control: &ExecutionControl::new(&|_| Ok(()), &()),
     }
     .validate(raws)
+    .map_err(PoolPreviewError::into_error)
 }
 
 /// This value never escapes one owner operation. No staged successor is reused
 /// as a parent: each full prefix starts from the same checked immutable State.
+enum PoolPreviewError {
+    Native(crate::Error),
+    Cancelled(crate::Error),
+}
+impl From<crate::Error> for PoolPreviewError {
+    fn from(error: crate::Error) -> Self {
+        Self::Native(error)
+    }
+}
+impl From<&str> for PoolPreviewError {
+    fn from(error: &str) -> Self {
+        Self::Native(error.into())
+    }
+}
+impl From<String> for PoolPreviewError {
+    fn from(error: String) -> Self {
+        Self::Native(error.into())
+    }
+}
+impl PoolPreviewError {
+    fn into_error(self) -> crate::Error {
+        match self {
+            Self::Native(error) | Self::Cancelled(error) => error,
+        }
+    }
+}
 struct PendingPreview<'state, 'operation> {
     height: u64,
     state: &'state State,
@@ -314,10 +344,10 @@ struct PendingPreview<'state, 'operation> {
     node: &'operation Node,
     checked: Option<CheckedExecutionParent<'state>>,
     parent_observation: Option<CommitmentObservation>,
-    worker_accounting: &'operation dyn ExecutionWorkerAccounting,
+    control: &'operation ExecutionControl<'operation, crate::Error>,
 }
 impl PendingPreview<'_, '_> {
-    fn validate(&mut self, raws: &[Vec<u8>]) -> Result<usize> {
+    fn validate(&mut self, raws: &[Vec<u8>]) -> std::result::Result<usize, PoolPreviewError> {
         let Self {
             height,
             state,
@@ -331,7 +361,9 @@ impl PendingPreview<'_, '_> {
         let mut next = BTreeMap::new();
         let mut exhausted = BTreeSet::new();
         let mut bindings = RawBindings::new(limits.max_records);
-        for raw in raws {
+        for (index, raw) in raws.iter().enumerate() {
+            (self.control.progress)(ExecutionProgress::BeforePrepare { index })
+                .map_err(PoolPreviewError::Cancelled)?;
             let view = PnxView::new(raw, cfg)?;
             bindings.insert(view.digest.as_bytes(), raw)?;
             ensure(!exhausted.contains(&view.envelope.sender), "NONCE_OVERFLOW")?;
@@ -364,6 +396,8 @@ impl PendingPreview<'_, '_> {
             } else {
                 exhausted.insert(view.envelope.sender);
             }
+            (self.control.progress)(ExecutionProgress::AfterPrepare { index })
+                .map_err(PoolPreviewError::Cancelled)?;
         }
         let mut ready = 0;
         while let Some(metadata) = gate.pop_ready() {
@@ -409,7 +443,7 @@ impl PendingPreview<'_, '_> {
             .checked
             .as_ref()
             .ok_or("POOL_PARENT_BINDING")?
-            .execute_with_accounting(
+            .execute_with_control(
                 ExecutionRequest {
                     transactions: raws,
                     height,
@@ -418,8 +452,12 @@ impl PendingPreview<'_, '_> {
                     workers: 1,
                 },
                 cfg,
-                self.worker_accounting,
-            )?;
+                self.control,
+            )
+            .map_err(|error| match error {
+                ExecutionError::Relation(error) => PoolPreviewError::Native(error.into()),
+                ExecutionError::Cancelled(error) => PoolPreviewError::Cancelled(error),
+            })?;
         *node.commitment_observation.borrow_mut() = Some(output.commitment.observation);
         Ok(ready)
     }
@@ -644,13 +682,17 @@ impl Node {
         limits: &PoolLimits,
         actual: &'a PoolParent,
     ) -> Result<PreviewBinding<'a>> {
-        self.pool_reconcile_parent_with_accounting(limits, actual, &())
+        self.pool_reconcile_parent_with_control(
+            limits,
+            actual,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+        )
     }
-    fn pool_reconcile_parent_with_accounting<'a>(
+    fn pool_reconcile_parent_with_control<'a>(
         &mut self,
         limits: &PoolLimits,
         actual: &'a PoolParent,
-        worker_accounting: &dyn ExecutionWorkerAccounting,
+        control: &ExecutionControl<'_, crate::Error>,
     ) -> Result<PreviewBinding<'a>> {
         let PoolParent {
             id: parent,
@@ -671,7 +713,7 @@ impl Node {
             node: self,
             checked: None,
             parent_observation: None,
-            worker_accounting,
+            control,
         };
         let mut updates = Vec::new();
         for group in groups {
@@ -697,7 +739,8 @@ impl Node {
                         PoolState::Queued,
                         "EXACT_PENDING_PREFIX_RECHECKED".to_owned(),
                     ),
-                    Err(error) => {
+                    Err(PoolPreviewError::Cancelled(error)) => return Err(error),
+                    Err(PoolPreviewError::Native(error)) => {
                         // Roll back only this group's scratch raws. Later groups
                         // see exactly the same accepted prefix as the old copy path.
                         accepted.truncate(previous_len);
@@ -714,11 +757,13 @@ impl Node {
             observation: preview.parent_observation.take(),
         };
         drop(preview);
+        (control.progress)(ExecutionProgress::BeforePersistence)?;
         let tx = self
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         fence(&tx, parent, generation)?;
-        for (id, status, reason) in updates {
+        for (index, (id, status, reason)) in updates.into_iter().enumerate() {
+            (control.progress)(ExecutionProgress::PersistenceDelta { index })?;
             ensure(reason.len() <= 128, "POOL_STATE")?;
             tx.execute(
                 "UPDATE local_pool_groups SET status=?,reason=? WHERE id=?",
@@ -726,6 +771,7 @@ impl Node {
             )?;
         }
         tx.execute("UPDATE local_pool_metadata SET checked_parent=?,checked_generation=? WHERE singleton=1",params![parent.as_slice(),generation])?;
+        (control.progress)(ExecutionProgress::BeforeDurableCommit)?;
         tx.commit()?;
         Ok(binding)
     }
@@ -793,6 +839,16 @@ impl Node {
         raws: Vec<Vec<u8>>,
         worker_accounting: &dyn ExecutionWorkerAccounting,
     ) -> Result<PoolReceipt> {
+        self.pool_submit_bundle_with_control(
+            raws,
+            &ExecutionControl::new(&|_| Ok(()), worker_accounting),
+        )
+    }
+    pub(crate) fn pool_submit_bundle_with_control(
+        &mut self,
+        raws: Vec<Vec<u8>>,
+        control: &ExecutionControl<'_, crate::Error>,
+    ) -> Result<PoolReceipt> {
         let (context, limits) = self.pool_policy()?;
         ensure(
             !raws.is_empty() && raws.len() <= limits.max_group_members,
@@ -805,8 +861,7 @@ impl Node {
         let total: usize = raws.iter().map(Vec::len).sum();
         ensure(total <= limits.max_bytes, "POOL_BYTE_LIMIT")?;
         let actual = self.pool_parent()?;
-        let binding =
-            self.pool_reconcile_parent_with_accounting(&limits, &actual, worker_accounting)?;
+        let binding = self.pool_reconcile_parent_with_control(&limits, &actual, control)?;
         // Preserve the original reconcile snapshot checks and error precedence.
         self.pool_status_snapshot()?;
         let groups = self.pool_groups(&limits)?;
@@ -955,14 +1010,17 @@ impl Node {
             node: self,
             checked: binding.checked,
             parent_observation: binding.observation,
-            worker_accounting,
+            control,
         }
-        .validate(&candidate)?;
+        .validate(&candidate)
+        .map_err(PoolPreviewError::into_error)?;
+        (control.progress)(ExecutionProgress::BeforePersistence)?;
         let tx = self
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         fence(&tx, parent, generation)?;
-        for group in evictions {
+        for (index, group) in evictions.into_iter().enumerate() {
+            (control.progress)(ExecutionProgress::PersistenceDelta { index })?;
             tx.execute(
                 "DELETE FROM local_pool_groups WHERE id=?",
                 [group.id.as_slice()],
@@ -973,6 +1031,7 @@ impl Node {
                 gc.evicted_raw_bytes.to_le_bytes().as_slice(),gc_head.as_slice()])?;
         tx.execute("INSERT INTO local_pool_groups(id,status,reason) VALUES(?,0,'EXACT_PENDING_PREFIX_RECHECKED')",[id.as_slice()])?;
         for (position, view) in views.iter().enumerate() {
+            (control.progress)(ExecutionProgress::PersistenceDelta { index: position })?;
             tx.execute(
                 "INSERT INTO local_pool_rows VALUES(?,?,?,?,?,?,?,?)",
                 params![
@@ -987,6 +1046,7 @@ impl Node {
                 ],
             )?;
         }
+        (control.progress)(ExecutionProgress::BeforeDurableCommit)?;
         tx.commit()?;
         Ok(PoolReceipt{group:hex::encode(id),duplicate:false,state:PoolState::Queued,typed_gate_admissions:admitted,typed_gate_ready_metadata:admitted,scope:"M05 typed queue checks plus M06 local prefix preview, SQLite group commit and admission-triggered terminal cache eviction; no block execution, irreversible cache drop or confirmation authority"})
     }

@@ -6,7 +6,7 @@ readiness, independence, fair access under saturation, exact transaction inclusi
 confirmation, model efficacy, or economic work. V2 retains its separate signed domains
 and one-hour service bound. Both modules bind the current derived ancestry index
 with at most1024 SQL lookups in a fresh resource-policy digest; see
-[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r8 retains
+[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r9 retains
 the r5 paid body/output partitions, disconnect fences, paid enqueue waits and local
 measured mutation CPU reservation/accounting. Bounded pre-Challenge/pre-Ready waits
 remain inside the same connections while original resource capacity is unavailable.
@@ -18,7 +18,7 @@ fixes still require review of both modules.
 An operator can select the bounded local
 [request resource observer](PUBLIC_REQUEST_RESOURCE_OBSERVATION.md) to capture
 actual worker-thread CPU intervals and application-frame byte progress. This
-optional API preserves the selected signed r8 policy and native request rules; its nested
+optional API preserves the selected signed r9 policy and native request rules; its nested
 CPU intervals and stream bytes are not energy or physical network measurements.
 
 ## Exact boundary
@@ -41,7 +41,7 @@ same deadline cooperatively; this does not interrupt an individual signature,
 deep State operation, root/history computation or SQLite call. A
 successful durable pool reservation can outlive the requesting socket or response.
 
-Resource revision r8 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
+Resource revision r9 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
 131,072 bytes of the existing 8 MiB body pool and 524,288 bytes of the existing
 32 MiB output pool for Head/PoolStatus control responses. Mutation body permits
 and non-control output permits cannot exhaust these reserves.
@@ -52,7 +52,7 @@ keys cannot increase these global lane limits. Eight challenge tokens are reserv
 from the existing global bucket for reads. These reservations introduce no extra
 worker, queue, Node owner, ledger authorization or retained guest identity.
 
-The r8 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
+The r9 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
 Connections. `WaitChallenge` holds a complete validated fixed Hello;
 `WaitGrant` holds its immutable Cookie after the original complete Solution
 context/expiry, ticket, strict caller signature and **single** spent reservation.
@@ -95,7 +95,7 @@ polling does not count as a new failed request. Pending terminal phases remain
 Hello/Solution, never Body/Work. A pending request has no Task or full-work CPU;
 CPU remains absent rather than a fabricated zero. Wait elapsed is not CPU. Closed
 shutdown requires zero original lane/body/output reservations and actual worker
-joins. The legacy r3 refusal counters are retained fields; r8 resource fullness
+joins. The legacy r3 refusal counters are retained fields; r9 resource fullness
 waits and can expire instead of immediately incrementing a refusal counter.
 
 A full worker channel retains its canonical Task in `Stage::Enqueue` on the same
@@ -135,18 +135,22 @@ success remain true even if cancellation then becomes visible.
 These checkpoints bound work between observations, not CPU seconds or physical
 preemption. A single signature, State clone/mandatory/apply operation, canonical
 encoding/full root, task-output processing, history, lock wait and SQLite call
-remain indivisible. Pool bundle execution retains its original stage fences and
-is not newly interrupted inside M06 by this Submit slice. All observations reuse
+remain indivisible. The explicit public Pool bundle path also passes the request callback through
+its original fixed-workers1 complete prefix execution. Ordinary pool callers
+keep the no-cancellation wrapper and canonical behavior. Local cancellation
+returns immediately instead of being classified as a Blocked relation error;
+already committed reconciliation remains committed, and an uncommitted new
+bundle rolls back at the original persistence boundaries. All observations reuse
 the original immutable stop/cancellation flags and absolute task deadline; no
 new TTL, CPU-second limit or resource allowance is introduced.
-A fresh profile digest is mandatory: correctly signed r1/r2/r3/r4/r5/r6/r7 cookies and
-old client pins refuse r8, without fallback. For bits8/lifetime2000ms the
+A fresh profile digest is mandatory: correctly signed r1/r2/r3/r4/r5/r6/r7/r8 cookies and
+old client pins refuse r9, without fallback. For bits8/lifetime2000ms the
 source-derived digest is
-`55f555756953a4c4ba713686909c6e0554238af4048864befc6ea54aaff35b67`;
-for bits12 it is `fe94b595d72e5bfe3019e84ecdd95a87a043d46927bae77657199307ecb58ad5`;
-for default bits16 it is `8f3026d7ba045e5c473b1655c8062e67e9334601d4d159f42c15ca28f30049f3`.
+`947e9272b16ca79e339bda28b9c0c26e31d898ead9828bb5f1ca9e2e7c382bbd`;
+for bits12 it is `ada335c79bef025337d8b551ce1365fde15637ba28b15c063880e923d63d7177`;
+for default bits16 it is `31dd4c31841a1416a2ad7e0d8026e7acaa234cddd8f89e9b1bca3f2ad2a1f6bc`.
 Actual CLI capture and qualification on the committed successor remain necessary;
-these source-derived values do not relabel any historical r5/r6/r7 result. Existing
+these source-derived values do not relabel any historical r5/r6/r7/r8 result. Existing
 `work_failed` observations include an abandoned replay as well as invalid relations;
 the returned local cancellation error retains the actual reason. CPU spent before
 cancellation remains included in measured full-work and outer mutation accounting.
@@ -174,7 +178,7 @@ actual pool.
 
 ## Local paid mutation CPU reserve
 
-Resource revision r5 introduced the volatile account retained by r8 to each PublicServer epoch, shared
+Resource revision r5 introduced the volatile account retained by r9 in each PublicServer epoch, shared
 by its two mutation workers and all caller identities. It starts with two CPU
 seconds of credit, refills at250 million CPU nanoseconds per wall second up to
 a ceiling reduced by outstanding start reservations, and reserves100 million CPU nanoseconds before each actual mutation
@@ -186,14 +190,14 @@ existing separate worker and permits and do not debit this account.
 Linux uses the existing checked thread clock. Unsupported/unavailable clocks,
 invalid subtraction and poisoned accounting refuse future mutations with
 `PUBLIC_MUTATION_CPU_UNAVAILABLE`; insufficient credit or the two in-flight
-limit returns `PUBLIC_MUTATION_CPU_BUDGET`. Refusal occurs after the original
-paid protocol and canonical body/queue checks but before starting native
-dispatch or full proof verification. No new queue, worker, Node owner, State
+limit returns `PUBLIC_MUTATION_CPU_BUDGET`. Start refusal occurs after the original paid protocol and canonical body/queue
+checks but before native dispatch or full proof verification. Revision r9 also
+observes exhaustion during the request at the existing cooperative checkpoints. No new queue, worker, Node owner, State
 cache or durable caller row is added. Key rotation cannot reset the account.
 Restart begins a new explicit volatile service epoch; this is not a host-global
 CPU quota across listeners, private ingress, miner threads or service restarts.
 
-Resource revision r8 charges the measured outer worker interval O plus the
+Historical revision r8 introduced the measured outer worker interval O plus the
 checked sum C of every actual scoped M06 worker interval, exactly once. Guards
 sample the existing thread clock on the same actual worker at entry and exit,
 including canonical rejection, cancellation and panic unwind. All successfully
@@ -202,6 +206,34 @@ finished and known interval counts must agree before C is usable; no absent
 Output is mistaken for zero CPU. Every defensive preview retry shares this
 request-local collector. PoolBundle forwards it through every full prefix
 preview; its existing fixed workers1 path actually spawns no scoped workers.
+
+Revision r9 samples newly consumed CPU on the actual current owner or scoped
+worker at those existing progress callbacks. Each real worker retains a separate
+same-thread stamp; its RAII exit samples the final tail even on panic or cancel.
+One request-local collector spans sequential previews and every defensive retry.
+It keeps only live thread identities/stamps and scalar debit, never State, packet
+or admission authority. Entries are removed at actual scope exit, so sequential
+scopes may exceed eight lifetime starts without inventing parallel capacity.
+The available credit is debited immediately under a short global-account lock.
+The unchanged100ms start reserve stays outstanding until final settlement;
+available credit plus those reserves never gains another burst through refill.
+Negative credit makes request cancellation sticky at its next observed progress,
+while final tails still debit actual CPU. A missing/poisoned clock, registry or
+checked sum makes the account unavailable immediately; it does not report zero.
+Neither request-account nor budget locks span math, a worker join or SQLite.
+
+After all started workers join, original full intervals remain authoritative.
+Final settlement debits only `(O+C)-already_debited`, then returns the one original
+start reserve. A partial sum greater than the measured full total is an accounting
+failure. This subtraction prevents double charging W, scoped CPU and prior live
+increments. No new cancellation fence follows durable commit; a final-tail clock
+failure/debt disables future mutations while preserving the actual signed ACK.
+A missing scoped-worker end clock before persistence cancels that request and
+leaves active State, pool records and all typed SQLite table rows unchanged; it
+cannot produce an ACK. These precommit and postcommit faults are separate tests.
+The charged metrics remain the complete O+C total, not the residual alone. An
+in-progress request has only the global credit/debt observation until it closes;
+no per-request telemetry schema or physical hard CPU-second cap is added.
 
 When Submit executes M05 verification, its measured W remains nested in O.
 Charged CPU is O+C; the existing full-work and excluding-work counters report W

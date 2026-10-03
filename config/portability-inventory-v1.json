@@ -202,7 +202,7 @@
       "package": "trnm-pon-node",
       "module": "M15",
       "path": "trillionnium/crates/trnm-pon-node",
-      "role": "Native experimental composition of M02 work/target decisions, M07 branch storage, M08 reorg and M14 confirmation using existing M00/M01/M04/M06 components. Separate fresh namespace; not public-network or production qualification.",
+      "role": "Native experimental composition of M02 work/target decisions, M07 branch storage, M08 reorg and M14 confirmation using existing M00/M01/M04/M06 components. Separate fresh namespace; not public-network or production qualification. Explicit public resource policy supports request-local cooperative owner/scoped CPU accounting; no physical CPU hard limit or independent fairness authority.",
       "consensus_authority": false,
       "production_activation": false
     }

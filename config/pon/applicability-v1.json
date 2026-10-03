@@ -197,7 +197,7 @@
       "receipt": null
     },
     {
-      "id": "public-intake-v3-r8",
+      "id": "public-intake-v3-r9",
       "modules": [
         "M04",
         "M05",
@@ -214,7 +214,7 @@
       },
       "tests": [
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline",
-        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r8_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r9_rejects_signed_old_cookies_and_preserves_control_output_reserve",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt",
@@ -224,9 +224,15 @@
         "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs::controlled_cancellation_joins_every_started_scoped_worker_before_return",
         "trillionnium/crates/trnm-pon-node/src/store.rs::local_state_cancellation_rolls_back_all_packet_rows_and_reopens_original_state",
         "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs::cancelled_panicked_and_partially_started_workers_all_finish_and_join",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_partial_debits_and_residual_settlement_do_not_charge_twice",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_owner_cpu_is_observed_before_finish_and_full_interval_remains_authority",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_unknown_sample_and_overflow_disable_future_without_zero_refund",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_pool_budget_cancellation_does_not_classify_or_commit_abandoned_bundle",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::aggregate_scoped_cpu_charges_real_parallel_intervals_once_and_preserves_state",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts",
-        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::public_submit_and_pool_paths_keep_thread_observer_scope_and_preserve_ack_on_child_clock_failure"
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::public_submit_and_pool_paths_keep_thread_observer_scope_and_refuse_precommit_child_clock_failure"
       ],
       "evidence_class": "source-binding",
       "receipt": null

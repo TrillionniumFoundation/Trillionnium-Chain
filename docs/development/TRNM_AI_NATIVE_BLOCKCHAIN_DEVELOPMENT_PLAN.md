@@ -672,7 +672,7 @@ revision r3 introduced retention of paid canonical requests within the same boun
 connection while its original worker channel is Full, attempting enqueue in
 connection-ID order without increasing queues, grants or absolute deadlines.
 Revision r5 introduced the local mutation-thread CPU account retained by the
-current r8 source. This account reserves local actual mutation-thread CPU
+current r9 source. This account reserves local actual mutation-thread CPU
 before native dispatch, charges its total once and records disjoint full-work and
 remaining dispatch intervals. One service-epoch account spans caller identities;
 measured debt stops new starts, and unavailable accounting disables future
@@ -695,7 +695,7 @@ Individual signatures, State clone/mandatory/apply internals, encoding/root,
 history and SQLite remain nonpreemptive; the Pool bundle path retains its original
 stage fences. No request CPU-second cap, anonymous fairness or physical preemption
 is claimed. The [V3 contract](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
-records the original r7 cooperative scope and the current r8 digest separately;
+records the original r7 cooperative scope and the current r9 digest separately;
 historical r5/r6 results keep their original policy and scope.
 
 The isolated V3 resource r8 candidate additionally debits every actual scoped
@@ -710,6 +710,31 @@ work or replacing native durable success. No State/Output/metrics schema, cap,
 identity privilege, deep-stage preemption or fairness qualification is added;
 startup/teardown and post-sample bookkeeping are outside these measured intervals.
 Fresh qualification/captures are required and historical r7 results remain r7.
+
+The isolated V3 resource r9 source candidate adds immediate debit of actual
+same-thread CPU increments at existing owner/scoped progress boundaries. The
+request-local live stamps are separate from original full interval stamps; after
+all joins, settlement debits only full O+C minus already charged CPU and returns
+the unchanged100ms reserve once. Unknown clocks/overflow/poisoned bookkeeping
+immediately deny future mutations, and live budget debt causes cooperative
+cancellation. Native durable results and signed ACKs survive final accounting
+failure/debt; no fence is added after commit. The explicit controlled Pool path
+checks complete fixed-workers1 prefixes and precommit persistence, propagates
+Cancelled instead of classifying it Blocked, and preserves already committed
+reconciliation. Ordinary wrappers remain no-op and all M05/M06 arithmetic, State,
+receipts, root and wire bytes remain unchanged. No accounting lock spans math,
+join or SQL. The original2s credit/.25 CPU-second refill/100ms reserve/2workers,
+35 resource constants, metrics schema and read reservations remain. Signatures,
+deep roots and SQLite are still nonpreemptive, so this is not a hard per-request
+CPU cap, independent fairness, cheapest-miner bound or public-service acceptance.
+The first r9 focused run failed: Node tests returned113 passed,2 failed and1
+ignored. A precommit scoped-child clock fault was wrongly expected to ACK, and
+the test/document policy hashes did not match the complete signed descriptor.
+The successor preserves that actual failure and fixes only those expectations,
+precommit no-persistence checks and applicability navigation. The descriptor and
+production behavior remain unchanged. Its corrected tests have not executed;
+Root alone formats/builds/tests it before exact committed-source qualification.
+Historical r8 source receipts and all earlier failures keep their original scope.
 
 The opt-in [public Submit recovery client](../protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md)
 also handles a signed `PUBLIC_MUTATION_CPU_BUDGET` refusal within its existing

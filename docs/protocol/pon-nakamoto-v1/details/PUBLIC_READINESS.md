@@ -60,7 +60,7 @@ read-only service test do not guarantee public service under arbitrary occupancy
 Untrusted protected parse/auth/preface refusals have at most128 Unicode characters
 and a100ms absolute response budget, also committed by the transport profile.
 
-[Public V3 resource revision r8](PUBLIC_POOL_INTAKE_V3.md) independently reserves
+[Public V3 resource revision r9](PUBLIC_POOL_INTAKE_V3.md) independently reserves
 read body/output/challenge budgets within its existing totals, limits paid grants
 per operation lane, and cancels disconnected queued work between complete native
 stages. Complete Hello and validated Solution requests wait in separate bounded
@@ -70,7 +70,7 @@ worker, queue, byte and challenge limits remain unchanged. Its resource digest
 changes explicitly, and historical resource revisions refuse. The retained 26/27 honest Submit
 result in the short unpaid campaign belongs to `connection-work-v1`, not V3;
 V3 component fixes do not close that separate observation or certify public service.
-Revision r5 introduced the local mutation-thread CPU account retained by r8;
+Revision r5 introduced the local mutation-thread CPU account retained by r9;
 it reserves across caller identities and charges actual dispatch once. Debt/unavailable accounting prevents further
 starts while already completed native outcomes are preserved. Two existing
 nonpreemptive mutation calls may overshoot; read latency and physical host CPU
@@ -79,11 +79,22 @@ Revision r8 includes actual scoped M06 worker intervals in the same request debi
 the dispatch observer remains its single outer-thread interval. Missing worker
 clocks disable future mutation starts without rewriting durable results.
 
-Current r8 also observes the original deadline/cancellation during bounded M05
+Revision r9 additionally debits same-thread owner and actual scoped-worker CPU
+increments during those progress observations. Final settlement charges only the
+remaining portion of the original O+C intervals; W stays nested in O. Local debt
+cancels cooperative continuation, and unknown measurements disable future mutation
+starts. The explicit controlled Pool path propagates cancellation through every
+complete prefix without treating it as a Blocked relation; uncommitted rows roll
+back and already committed reconciliation or native success remains true.
+No accounting mutex spans native math, joins or SQLite. The reserve/refill/capacity
+numbers are unchanged, and deep operations may overshoot before another checkpoint.
+Current r9 source still requires its own actual captures and complete qualification.
+
+Current r9 also observes the original deadline/cancellation during bounded M05
 replay and M06 envelope/canonical-apply/precommit boundaries. Individual
 signatures, deep State/root/history and SQLite calls remain nonpreemptive;
 uncommitted changes roll back and committed native facts remain true. These are current source contracts, not a rerun or
-relabeling of historical r5/r6/r7 measurements or a public fairness qualification.
+relabeling of historical r5/r6/r7/r8 measurements or a public fairness qualification.
 
 An already admitted local packet can use [bounded Submit recovery](PUBLIC_SUBMIT_RECOVERY_V1.md)
 with `push --reliable-submit --store EXISTING_LOCAL_PRODUCER`. The opt-in client

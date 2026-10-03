@@ -341,6 +341,7 @@ impl Drop for TaskObservation {
     }
 }
 
+#[derive(Clone)]
 pub(super) struct ThreadCpuStamp {
     thread: ThreadId,
     ns: u64,
@@ -357,6 +358,17 @@ impl ThreadCpuStamp {
             return None;
         }
         thread_cpu_ns()?.checked_sub(self.ns)
+    }
+    /// Advance only an interval owned by this actual thread. A failed sample
+    /// never resets its baseline or manufactures a zero charge.
+    pub(super) fn checkpoint(&mut self) -> Option<u64> {
+        if self.thread != thread::current().id() {
+            return None;
+        }
+        let now = thread_cpu_ns()?;
+        let elapsed = now.checked_sub(self.ns)?;
+        self.ns = now;
+        Some(elapsed)
     }
 }
 
