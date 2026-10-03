@@ -2,11 +2,13 @@
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
 pub mod mempool;
+mod operator_mining_owner;
 use crate::{
     consensus::{self, Work},
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
 };
 use fs2::FileExt;
+pub use operator_mining_owner::{MiningEpochCancellation, OwnedMutationResult, OwnedSearchResult};
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension};
 use serde::Serialize;
 use serde_json::Value;
@@ -354,6 +356,7 @@ pub struct Node {
     commitment_cache: RefCell<Option<ActiveCommitment>>,
     commitment_observation: RefCell<Option<CommitmentObservation>>,
     owner_policy: Option<OwnerPolicy>,
+    mining_owner: Option<operator_mining_owner::MiningOwner>,
 }
 struct OwnerPolicy {
     pool_policies: Vec<std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>>,
@@ -484,7 +487,7 @@ impl Node {
     ) -> Result<Self> {
         // The legacy opener is never a fallback for a required-policy namespace.
         ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
-        Self::open_inner(path, settings, workers, hook, None)
+        Self::open_inner(path, settings, workers, hook, None, None)
     }
     /// Explicit local operator policy; neither permissionless nor consensus authority.
     /// Inputs must be supplied from protected operator configuration, not a Request.
@@ -595,7 +598,7 @@ impl Node {
             journal: RefCell::new(journal),
             unavailable: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false)),
         };
-        Self::open_inner(path, settings, workers, None, Some(owner))
+        Self::open_inner(path, settings, workers, None, Some(owner), None)
     }
     fn open_inner(
         path: &Path,
@@ -603,7 +606,16 @@ impl Node {
         workers: usize,
         mut hook: Option<&mut Hook<'_>>,
         owner_policy: Option<OwnerPolicy>,
+        mining_owner: Option<operator_mining_owner::MiningOwner>,
     ) -> Result<Self> {
+        ensure(
+            !(owner_policy.is_some() && mining_owner.is_some()),
+            "OWNER_MODE_AMBIGUOUS",
+        )?;
+        let required_owner_marker = owner_policy
+            .as_ref()
+            .map(|p| p.required_marker.as_slice())
+            .or_else(|| mining_owner.as_ref().map(|p| p.marker.as_slice()));
         ensure([1, 2, 4, 8].contains(&workers), "WORKERS")?;
         settings.replay_checkpoint_tile_material()?;
         if !path.exists() {
@@ -649,7 +661,8 @@ impl Node {
                 let name = entry?.file_name();
                 ensure(
                     name == "owner.lock"
-                        || (owner_policy.is_some() && name == "owner-task-policy.required"),
+                        || (required_owner_marker.is_some()
+                            && name == "owner-task-policy.required"),
                     "NAMESPACE_NOT_EMPTY",
                 )?;
             }
@@ -693,8 +706,7 @@ impl Node {
                     )
                     .optional()?;
                 ensure(
-                    required.as_deref()
-                        == owner_policy.as_ref().map(|o| o.required_marker.as_slice()),
+                    required.as_deref() == required_owner_marker,
                     "OWNER_TASK_POLICY_REQUIRED",
                 )?;
                 for (key, value) in [
@@ -746,10 +758,10 @@ impl Node {
                     params![key, value.as_slice()],
                 )?;
             }
-            if let Some(policy) = &owner_policy {
+            if let Some(marker) = required_owner_marker {
                 tx.execute(
                     "INSERT INTO metadata VALUES('operator_task_policy',?)",
-                    [policy.required_marker.as_slice()],
+                    [marker],
                 )?;
             }
             tx.execute(
@@ -793,6 +805,7 @@ impl Node {
             commitment_cache: RefCell::new(None),
             commitment_observation: RefCell::new(None),
             owner_policy,
+            mining_owner,
         };
         node.read_active()?;
         node.validate_authenticated_replay()?;
@@ -1524,6 +1537,18 @@ impl Node {
         if let Some(permit) = owner_permit {
             permit.progress()?;
         }
+        self.mining_execution_gate(&block)?;
+        let mining_progress = self.mining_progress_snapshot()?;
+        let guarded_mining_progress = |point| -> Result<()> {
+            (control.progress)(point)?;
+            if let Some(p) = &mining_progress {
+                p.check()?;
+            }
+            Ok(())
+        };
+        let mining_control =
+            ExecutionControl::new(&guarded_mining_progress, control.worker_accounting);
+        let control = &mining_control;
         let progress = control.progress;
         progress(ExecutionProgress::BeforeParentBinding)?;
         let parent = block.parent_id;
@@ -1864,6 +1889,7 @@ impl Node {
         self.admit_work_checked(checked, observed_now)
     }
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
+        self.mining_packet_gate(packet)?;
         if let Some(owner) = &self.owner_policy {
             ensure(
                 !owner.unavailable.load(std::sync::atomic::Ordering::Acquire),
@@ -2064,6 +2090,10 @@ impl Node {
         Ok(())
     }
     fn owner_pool_configured(&self) -> Result<()> {
+        ensure(
+            self.mining_owner.is_none(),
+            "OWNER_MINING_POOL_PURPOSE_PENDING",
+        )?;
         if let Some(owner) = &self.owner_policy {
             ensure(
                 !owner.pool_policies.is_empty(),
@@ -2078,6 +2108,10 @@ impl Node {
         raws: &[Vec<u8>],
         context: Hash,
     ) -> Result<Option<OwnerPoolPermit>> {
+        ensure(
+            self.mining_owner.is_none(),
+            "OWNER_MINING_POOL_PURPOSE_PENDING",
+        )?;
         let Some(owner) = &self.owner_policy else {
             return Ok(None);
         };
@@ -2161,6 +2195,10 @@ impl Node {
     }
     fn recheck_owner_pool(&self, permit: Option<&OwnerPoolPermit>) -> Result<()> {
         ensure(
+            self.mining_owner.is_none(),
+            "OWNER_MINING_POOL_PURPOSE_PENDING",
+        )?;
+        ensure(
             self.owner_policy.is_some() == permit.is_some(),
             "OWNER_POOL_PERMIT_REQUIRED",
         )?;
@@ -2209,6 +2247,7 @@ impl Node {
         Ok(())
     }
     fn owner_preview_available(&self) -> Result<()> {
+        self.mining_preview_gate()?;
         ensure(
             self.owner_policy.is_none(),
             "OWNER_TASK_POOL_PREVIEW_PENDING",
@@ -2291,8 +2330,12 @@ impl Node {
         }
         // Only immutable permit/atomic flags are consulted while M06 or SQL run.
         // No journal mutex/RefCell guard or filesystem write is held across either.
+        let mining_progress = self.mining_progress_snapshot()?;
         let guarded_progress = |point: ExecutionProgress| -> Result<()> {
             (control.progress)(point)?;
+            if let Some(p) = &mining_progress {
+                p.check()?;
+            }
             if let Some(permit) = &owner_permit {
                 permit.progress()?;
             }
@@ -2540,6 +2583,70 @@ impl Node {
             &eligible,
         )
     }
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn prepare_with_task_from_parent_controlled(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        max_attempts: u64,
+        admission: &DevelopmentTaskAdmission,
+        material: TaskMaterial<'_>,
+        actual: &State,
+        eligibility: Option<ParentTaskEligibility>,
+        control: &ExecutionControl<'_, Error>,
+    ) -> Result<crate::mining::PreparedCandidate> {
+        ensure(
+            matches!(
+                self.settings.task_profile(),
+                SIGNED_TASK_PROFILE
+                    | LIFECYCLE_TASK_PROFILE
+                    | ATOMIC_TASK_PROFILE
+                    | OVERLAP_TASK_PROFILE
+                    | CHECKPOINT_TASK_PROFILE
+            ),
+            "WORK_TASK_PROFILE",
+        )?;
+        let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
+        let eligible = match eligibility {
+            Some(eligible) => eligible,
+            None => self.eligible_work_task_from_state(actual, admission.matrix_task(), height)?,
+        };
+        let signed = eligible.manifest().ok_or("TASK_MANIFEST")?;
+        let statement_id = match &eligible {
+            ParentTaskEligibility::Lifecycle(task) => task.statement_id(),
+            _ => signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?,
+        };
+        ensure(
+            statement_id == admission.manifest_id(),
+            "TASK_ADMISSION_CONTEXT",
+        )?;
+        ensure(
+            hash(b"artifact", &[material.model]) == signed.model
+                && hash(b"qualified-task-input-v1", &[material.input]) == signed.input,
+            "TASK_MATERIAL",
+        )?;
+        let (a, b) = derive_matrices(material.model, material.input)
+            .map_err(|e| Error::from(format!("TASK_MATERIAL:{e:?}")))?;
+        ensure(material.a == a && material.b == b, "TASK_MATRIX_BINDING")?;
+        ensure(
+            pon_work::task_id(&a, &b).map_err(|_| Error::from("WORK_TASK"))? == signed.matrix_task,
+            "TASK_MATRIX_BINDING",
+        )?;
+        ensure((1..=4096).contains(&max_attempts), "WORK_BUDGET")?;
+        self.prepare_from_checked_parent_controlled(
+            parent,
+            transactions,
+            miner,
+            timestamp,
+            &a,
+            &b,
+            actual,
+            &eligible,
+            control,
+        )
+    }
     fn eligible_work_task(
         &self,
         parent: Hash,
@@ -2725,6 +2832,69 @@ impl Node {
             prepared,
         })
     }
+    #[allow(clippy::too_many_arguments)]
+    fn prepare_from_checked_parent_controlled(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        a: &[u32],
+        b: &[u32],
+        actual: &State,
+        registered_task: &ParentTaskEligibility,
+        control: &ExecutionControl<'_, Error>,
+    ) -> Result<crate::mining::PreparedCandidate> {
+        self.ready()?;
+        let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
+        let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
+        let executed = self.execute_derived_with_control(
+            actual,
+            ExecutionRequest {
+                transactions: &transactions,
+                height,
+                miner,
+                parent_id: parent,
+                workers: self.workers,
+            },
+            control,
+        )?;
+        let mut output = executed.output;
+        let commitment = executed.commitment;
+        let prepared =
+            pon_work::PreparedTask::new(a, b).map_err(|e| Error::from(format!("WORK:{e:?}")))?;
+        if registered_task.manifest().is_some()
+            && self.record_task_output(
+                height,
+                &mut output.state,
+                registered_task,
+                prepared.product_bytes(),
+            )?
+        {
+            output.root = self
+                .derive_successor(&output.state, commitment.snapshot.as_ref())?
+                .root;
+        }
+        let header = Header {
+            network: self.settings.network(),
+            parameters: self.settings.parameters(),
+            parent,
+            height,
+            timestamp,
+            target: self.expected_target(parent)?,
+            miner,
+            transactions: sequence_root("transactions", &transactions),
+            state: output.root,
+            receipts: sequence_root("receipts", &output.receipts),
+            work_task: task,
+            nonce: 0,
+        };
+        Ok(crate::mining::PreparedCandidate {
+            header,
+            transactions,
+            prepared,
+        })
+    }
     fn record_task_output(
         &self,
         height: u64,
@@ -2769,6 +2939,7 @@ impl Node {
             rusqlite::TransactionBehavior::Immediate,
         )?;
         let result = run()?;
+        self.mining_scope_checkpoint()?;
         tx.commit()?;
         Ok(result)
     }
@@ -2808,6 +2979,7 @@ impl Node {
         target: Hash,
         mut hook: Option<&mut Hook<'_>>,
     ) -> Result<Hash> {
+        self.mining_activation_gate(target)?;
         self.namespace()?;
         self.resume_intent(&mut hook)?;
         let (old, g) = self.active()?;
@@ -2996,6 +3168,9 @@ impl Node {
         Ok(target)
     }
     pub fn recover(&mut self) -> Result<Hash> {
+        if let Some(tip) = self.mining_recovery_unchanged()? {
+            return Ok(tip);
+        }
         self.invalidate_commitment();
         self.namespace()?;
         self.resume_intent(&mut None)?;
@@ -3019,6 +3194,7 @@ impl Node {
         Ok(())
     }
     pub fn activate_observed(&mut self, tip: Hash, observed_now: u64) -> Result<Hash> {
+        self.mining_activation_gate(tip)?;
         self.check_observed_history(tip, observed_now)?;
         self.activate(tip)
     }

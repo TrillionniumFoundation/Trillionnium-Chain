@@ -28,6 +28,23 @@ pub(crate) struct PreparedCandidate {
     pub(crate) transactions: Vec<Vec<u8>>,
     pub(crate) prepared: trnm_crypto_primitives::pon_work::PreparedTask,
 }
+#[derive(Serialize)]
+pub struct OwnedNonceTrial {
+    pub ordinal: u64,
+    pub nonce: u64,
+    pub challenge: String,
+    pub full_proof_sha256: Option<String>,
+    pub complete_proof: bool,
+    pub ticket_accepted: Option<bool>,
+    pub fence_passed: bool,
+    pub status: &'static str,
+}
+pub(crate) struct OwnedWindowTrace {
+    pub(crate) packet: Option<Packet>,
+    pub(crate) trials: Vec<OwnedNonceTrial>,
+    pub(crate) stopped: bool,
+    pub(crate) error: Option<String>,
+}
 enum SearchOutcome {
     Found(Box<Packet>),
     Exhausted(u64),
@@ -40,6 +57,79 @@ impl PreparedCandidate {
             SearchOutcome::Exhausted(_) => Err("WORK_BUDGET".into()),
             SearchOutcome::Stopped(_) => Err("MINING_STOPPED".into()),
         }
+    }
+    /// A finite, positive outside-signed nonce window. Each started proof is
+    /// retained, including errors and the completed proof at a cancelling fence.
+    /// The original PreparedTask::prove and ticket predicate are unchanged.
+    pub(crate) fn search_owned_window(
+        mut self,
+        first: u64,
+        count: u64,
+        progress: &impl Fn() -> Result<()>,
+    ) -> Result<OwnedWindowTrace> {
+        ensure(
+            first > 0 && (1..=4096).contains(&count) && first.checked_add(count - 1).is_some(),
+            "OWNER_MINING_NONCE_WINDOW",
+        )?;
+        let mut trace = OwnedWindowTrace {
+            packet: None,
+            trials: Vec::new(),
+            stopped: false,
+            error: None,
+        };
+        for ordinal in 0..count {
+            if progress().is_err() {
+                trace.stopped = true;
+                break;
+            }
+            self.header.nonce = first
+                .checked_add(ordinal)
+                .ok_or("OWNER_MINING_NONCE_WINDOW")?;
+            let challenge = self.header.challenge();
+            let mut row = OwnedNonceTrial {
+                ordinal,
+                nonce: self.header.nonce,
+                challenge: hex::encode(challenge),
+                full_proof_sha256: None,
+                complete_proof: false,
+                ticket_accepted: None,
+                fence_passed: false,
+                status: "proof-error",
+            };
+            let proof = match self.prepared.prove(challenge) {
+                Ok(proof) => proof,
+                Err(error) => {
+                    trace.error = Some(format!("WORK:{error:?}"));
+                    trace.trials.push(row);
+                    break;
+                }
+            };
+            row.complete_proof = true;
+            row.full_proof_sha256 = Some(crate::operator_task_policy::digest_bytes(&proof));
+            // This complete original predicate is evaluated for every complete
+            // proof, even if the following epoch/CPU fence rejects its reuse.
+            let ticket =
+                hash(b"ticket", &[&challenge, &proof[proof.len() - 32..]]) <= self.header.target;
+            row.ticket_accepted = Some(ticket);
+            if progress().is_err() {
+                row.status = "stop-after-complete-proof";
+                trace.trials.push(row);
+                trace.stopped = true;
+                break;
+            }
+            row.fence_passed = true;
+            row.status = if ticket { "winner" } else { "ticket-miss" };
+            trace.trials.push(row);
+            if ticket {
+                trace.packet = Some(Packet {
+                    header: self.header,
+                    transactions: self.transactions,
+                    proof,
+                });
+                break;
+            }
+        }
+        Ok(trace)
     }
     fn search_cooperative(
         mut self,
@@ -275,6 +365,84 @@ impl Node {
             material(),
             &state,
             eligibility,
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn prepare_registered_material_controlled(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        attempts: u64,
+        model: &[u8],
+        input: &[u8],
+        control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, crate::Error>,
+    ) -> Result<PreparedCandidate> {
+        let (a, b) = derive_matrices(model, input).map_err(|e| format!("TASK_MATERIAL:{e:?}"))?;
+        let task = trnm_crypto_primitives::pon_work::task_id(&a, &b)
+            .map_err(|e| format!("TASK_MATRIX:{e:?}"))?;
+        let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
+        let state = self.state_at(parent)?;
+        let material = || TaskMaterial {
+            model,
+            input,
+            a: &a,
+            b: &b,
+        };
+        let mut eligibility = None;
+        let admission = match self.settings().task_profile() {
+            "signed-task-lifecycle-dev-v2"
+            | "signed-task-lifecycle-dev-v3"
+            | "signed-task-lifecycle-dev-v4"
+            | "signed-checkpoint-tile-maintenance-dev-v1" => {
+                let eligible = qualified_task_lifecycle::eligible_task(
+                    &state,
+                    task,
+                    height,
+                    &self.settings().app,
+                )?;
+                let record = state
+                    .get(&qualified_task_lifecycle::slot_key(eligible.lease().slot)?)
+                    .ok_or("TASK_DEMAND")?;
+                let encoded = record["statement"].as_str().ok_or("TASK_STATEMENT")?;
+                ensure(encoded.len() == 1368, "TASK_STATEMENT")?;
+                let wire = hex::decode(encoded).map_err(|_| "TASK_STATEMENT")?;
+                ensure(hex::encode(&wire) == encoded, "TASK_STATEMENT")?;
+                let admission =
+                    verify_lifecycle_admission(&wire, material(), eligible.lease(), height)
+                        .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?;
+                eligibility = Some(ParentTaskEligibility::Lifecycle(Box::new(eligible)));
+                admission
+            }
+            "signed-task-dev-v1" => {
+                let record = state
+                    .get(&format!("work:{}", hex::encode(task)))
+                    .ok_or("TASK")?;
+                let encoded = record["manifest"].as_str().ok_or("TASK_MANIFEST")?;
+                ensure(encoded.len() == 1304, "TASK_MANIFEST")?;
+                let wire = hex::decode(encoded).map_err(|_| "TASK_MANIFEST")?;
+                ensure(hex::encode(&wire) == encoded, "TASK_MANIFEST")?;
+                let signed = SignedQualifiedWorkTask::decode(&wire).map_err(|_| "TASK_MANIFEST")?;
+                let context = self
+                    .settings()
+                    .qualified_task_context(signed.manifest.demand_id, height)?;
+                verify_development_admission(&wire, material(), &context)
+                    .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?
+            }
+            _ => return Err("SIGNED_TASK_PROFILE_REQUIRED".into()),
+        };
+        self.prepare_with_task_from_parent_controlled(
+            parent,
+            transactions,
+            miner,
+            timestamp,
+            attempts,
+            &admission,
+            material(),
+            &state,
+            eligibility,
+            control,
         )
     }
 }

@@ -2528,6 +2528,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/examples/operator_owned_finite_mining.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/operator_owned_finite_mining.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/examples/operator_pool_fixture.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2647,6 +2654,34 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/operator_mining_controller.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_mining_controller.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/operator_mining_controller_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_mining_controller_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/operator_mining_policy.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_mining_policy.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/operator_pool_policy.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2728,6 +2763,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/mempool.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs"
         )),
     ),
     (

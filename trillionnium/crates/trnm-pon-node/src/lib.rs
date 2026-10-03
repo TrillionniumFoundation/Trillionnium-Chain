@@ -6,6 +6,8 @@ pub mod ingress;
 pub mod mining;
 pub mod operator_checkpoint_tile;
 pub mod operator_deployment;
+pub mod operator_mining_controller;
+pub mod operator_mining_policy;
 pub mod operator_task_policy;
 pub mod peer_polling;
 pub mod public_submit;
@@ -20,7 +22,10 @@ pub use store::mempool::{
     PoolBatch, PoolGcSummary, PoolGroupStatus, PoolLimits, PoolReceipt, PoolState, PoolStatus,
     LOCAL_POOL_PROFILE,
 };
-pub use store::{ConfirmationBatch, DerivedCommitmentStatus, Node, Observation};
+pub use store::{
+    ConfirmationBatch, DerivedCommitmentStatus, MiningEpochCancellation, Node, Observation,
+    OwnedMutationResult, OwnedSearchResult,
+};
 use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};
 use trnm_mvcc_fee::pon_executor::{self, Config, State};

@@ -493,3 +493,29 @@ impl Drop for ServiceMutationCpuOperation {
 #[cfg(all(test, target_os = "linux"))]
 #[path = "scalar_cpu_tests.rs"]
 mod tests;
+
+/// Same actual operation's live sampler, with no new budget or worker scope.
+/// A worker can sample only after its original RAII accounting registration.
+#[derive(Clone)]
+pub struct ServiceMutationCpuCheckpoint {
+    live: Arc<LiveRequestCpu>,
+}
+impl ServiceMutationCpuCheckpoint {
+    pub fn checkpoint(&self) -> Result<()> {
+        self.live.checkpoint()
+    }
+}
+impl ServiceMutationCpuOperation {
+    pub fn checkpoint_handle(&self) -> ServiceMutationCpuCheckpoint {
+        ServiceMutationCpuCheckpoint {
+            live: self.live.clone(),
+        }
+    }
+}
+impl ServiceMutationCpuDomain {
+    /// This reads no balance and changes no credit. A failed begin can separate
+    /// unknown/poisoned accounting from the existing known budget refusal.
+    pub fn accounting_available(&self) -> bool {
+        self.budget.lock().is_ok_and(|budget| !budget.unavailable)
+    }
+}

@@ -911,3 +911,39 @@ Pool compiler repair successor 8 retains the original release-build PASS and tes
 Shared CPU source candidate: original r9 scalar budget/live owner/scoped implementation moves into ingress/public_v3/scalar_cpu.rs with exact arithmetic inverse and unchanged Public dispatch settlement/tests/policy constants. PublicServer exposes an opaque same-Arc domain; new actual owner/scoped metering API is available for the separately guarded mining successor. Domain metering is not task permission. Six meaningful new test definitions are unexecuted; build/Native/public readiness remain pending Root. Original full CPU+worker accounting and residual-only settlement, unknown-clock refusal, exact resource constants and deep-stage nonpreemption remain unchanged. No frozen/Root worktree edits or dependency changes.
 
 Navigation: [shared CPU domain source scope](../protocol/pon-nakamoto-v1/details/RESTRICTED_MINING_CPU_DOMAIN_V1.md). Root alone executes any qualification; Pool7 failed test-import compile and Pool8 source-only repairs remain separately preserved.
+
+
+Shared CPU5 basis is now actually qualified and committed by Root: 315 passed,
+zero failed, 12 ignored, release build and strict Clippy, original source controls
+and inventory, commit fa77a4bec0af1a8a2412f6b73eea68782e1d9e22/tree
+dda23bbd7e8215a2ef53b9c31b0de230f49a2fc9. The earlier Pool/CPU compiler and
+inventory failures remain historical failures. That qualification applies to the
+3344-source basis, never to the following new mode3 candidate.
+
+Restricted finite mining mode3 is a source-only successor from those exact
+Root-formatted 18 owned files and the full 3344 map. It separates TaskView,
+StartupCatalog, unchanged ParentReconcile, Search, WinnerValidation and Activate
+from packet and Pool domains. Full material signatures, original task lease,
+positive finite nonce window, exact ordinary-byte allowlist/ordered digest and
+original-parent M06 remain mandatory. A complete Root-protected local controller
+keeps one actual Node and shared CPU epoch across linked signed next views. It
+retains every started proof including failed and cancelled-after-proof nonces.
+A held-directory fault sink survives initialization failure or unwind without
+changing original Native results. Unknown/faulted journal recovery is HOLD;
+claims survive crashes without automatic refund. Any failed persistence is an
+explicit error, not evidence of a durable fault marker.
+
+Mode3's 256 total journal claims and 32 finite controller steps support only a
+short bounded end-to-end experiment. Startup consumes two distinct claims and
+each successful Search/Validation/Activate chain consumes three more. This does
+not qualify the original 241-block/8193-input continuous normal campaign. No
+reset, rotation, erased claims or shortened workload may inherit that acceptance.
+Automatic Pool selection/status/prune, generic maintenance mining and anonymous
+continuous issuance are HOLD in mode3. The existing mode2 Pool implementation is
+unchanged. Signed CPU/material/DA/funding reservations remain operator
+declarations; actual CPU accounting enforces the original service domain, not
+physical class costs, verified balances, hard preemption or anonymous fairness.
+All new source/binary/Native/full-reference/SQL/network/scientific actual refs are
+pending Root execution. Only Root applies, formats, builds, signs and runs.
+
+Navigation: [finite mode3 interface and acceptance](../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_FINITE_MINING_MODE3.md).

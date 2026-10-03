@@ -701,6 +701,10 @@ impl Node {
     /// Classification is branch-relative. SequenceConsumed does not assert that
     /// this exact transaction was mined or confirmed; use normal chain observation.
     pub fn pool_reconcile(&mut self) -> Result<PoolStatus> {
+        ensure(
+            self.mining_owner.is_none(),
+            "OWNER_MINING_POOL_PURPOSE_PENDING",
+        )?;
         self.owner_pool_configured()?;
         let (context, limits) = self.pool_policy()?;
         let owner_permit = self.begin_owner_pool("reconcile", &[], context)?;
