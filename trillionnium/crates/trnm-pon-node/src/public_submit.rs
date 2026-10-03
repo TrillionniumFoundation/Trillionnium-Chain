@@ -117,6 +117,8 @@ pub struct SubmitRecoveryOutcome {
     pub submit_attempt_limit_per_packet: u8,
     pub rpc_attempt_limit: u8,
     pub parent_packet_limit: u8,
+    /// Configured short retry pause and minimum CPU-budget retry pause; not
+    /// the actual duration of every wait. Call timestamps retain elapsed facts.
     pub retry_pause_ns: u64,
     pub native_stages_nonpreemptive: bool,
     pub remote_persistence_proved: bool,
@@ -167,14 +169,35 @@ struct Session<'a, 'b> {
 }
 impl Session<'_, '_> {
     fn pause(&self) -> Result<()> {
+        self.pause_for(self.plan.retry_pause)
+    }
+
+    fn pause_for(&self, pause: Duration) -> Result<()> {
         self.plan.alive()?;
         let remaining = self.plan.deadline.saturating_duration_since(Instant::now());
-        ensure(
-            self.plan.retry_pause < remaining,
-            "SUBMIT_RECOVERY_DEADLINE",
-        )?;
-        thread::sleep(self.plan.retry_pause);
+        ensure(pause < remaining, "SUBMIT_RECOVERY_DEADLINE")?;
+        thread::sleep(pause);
         self.plan.alive()
+    }
+
+    fn pause_after_cpu_budget(&self, id: Hash) -> Result<()> {
+        self.plan.alive()?;
+        let used = self.submit_counts.get(&id).copied().unwrap_or_default();
+        let remaining_submits = self.plan.max_submit_attempts.saturating_sub(used);
+        ensure(remaining_submits > 0, "SUBMIT_RECOVERY_ATTEMPT_LIMIT")?;
+        ensure(
+            self.outcome.attempts.len() < self.plan.max_calls as usize,
+            "SUBMIT_RECOVERY_CALL_LIMIT",
+        )?;
+        // This is the original absolute epoch after a real absent-membership
+        // observation. Keep time for each remaining Submit and its membership
+        // reads instead of spending every finite attempt in one short burst.
+        let remaining = self.plan.deadline.saturating_duration_since(Instant::now());
+        let pause = self
+            .plan
+            .retry_pause
+            .max(remaining / (u32::from(remaining_submits) + 1));
+        self.pause_for(pause)
     }
 
     fn call(
@@ -457,7 +480,7 @@ impl Session<'_, '_> {
                         }
                         // Absent membership is not admission. A fresh attempt
                         // consumes the original per-packet/call/epoch limits.
-                        self.pause()?;
+                        self.pause_after_cpu_budget(id)?;
                     } else {
                         return Err(error.into());
                     }

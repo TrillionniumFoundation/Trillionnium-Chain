@@ -28,8 +28,9 @@ These options require `--reliable-submit`, command `push`, and explicit PublicV3
 Other commands/profiles and invalid combinations reject before opening a store.
 The CLI starts one epoch before parsing, Settings, packet input and `Node::open`.
 All construction, cookie acquisition, solution search, Submit/Head/History calls,
-parent restoration and 100ms retry pauses consume that same deadline and total
-call cap. The library exposes a 0..1000ms pause within the same plan.
+parent restoration and retry waits consume that same deadline and total call
+cap. Ordinary transport/read retries use the configured 100ms short pause.
+The library exposes a 0..1000ms short pause within the same plan.
 
 The optional client deadline only shortens the original 30s call and existing
 phase bounds. It retains the original cookie policy, nonce search bound and
@@ -57,8 +58,14 @@ An authenticated `PUBLIC_MUTATION_CPU_BUDGET` Submit refusal also permits the
 same bounded active-membership check. The complete refusal stays in the attempt
 record. A packet already present on the observed active branch can resolve the
 dependency without another Submit; the client invents no ACK. If membership is
-absent, the original retry pause, absolute epoch, total RPC cap and per-packet
-Submit limit apply before another identical Submit. Read failures, a different
+absent and another Submit and RPC remain permitted, the wait is the greater of
+the configured short pause and the remaining absolute epoch divided by the
+remaining per-packet Submit opportunities plus one. This allocates the original
+finite attempts over available time, leaving a share for the next Submit and
+its membership reads; it does not assume an attack duration or a server refill
+schedule. No wait or extra call occurs once either cap is exhausted. The wait
+must fit the same deadline, and an expired wakeup refuses before any new RPC.
+Read failures, a different
 branch, changed generation, unmatched bytes or a late native return refuse.
 `PUBLIC_MUTATION_CPU_UNAVAILABLE` and all other permanent signed errors still
 refuse immediately; they do not trigger this recovery.
@@ -108,6 +115,10 @@ denominator. Stage elapsed times overlap and are not server CPU or physical
 wire bytes. Records omit request bodies, peer addresses and guest identities;
 returned error/reply facts remain local operator diagnostics. A response-lost
 Submit can resolve by complete membership without inventing a missing ACK.
+`retry_pause_ns` is the configured short pause and minimum budget-retry wait,
+not a measurement of every actual wait. Actual per-call epoch elapsed and
+remaining-time observations retain the executed timing. Waiting adds no RPC
+or ACK and does not extend the epoch, per-call IO bound or Submit count.
 
 All public readiness, production, identity authority, fairness, independence,
 hardness and model-utility claims remain false. This repair does not protect a

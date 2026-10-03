@@ -154,6 +154,7 @@ enum Interruption {
     HoldNativeAckUntilDeadline,
     AfterNativeAckFork(Vec<Packet>, Arc<Mutex<Node>>),
     BudgetBeforeNativeOnce,
+    BudgetBeforeNativeTwice,
     RefusalBeforeEverySubmit(&'static str),
     BudgetAfterNativeAck,
     WrongSignatureBudgetAfterNativeAck,
@@ -279,7 +280,8 @@ impl Proxy {
                 caller.read_exact(&mut body).unwrap();
                 if parsed["op"] == 1 {
                     let scripted = match intervention.as_ref() {
-                        Some(Interruption::BudgetBeforeNativeOnce) => {
+                        Some(Interruption::BudgetBeforeNativeOnce)
+                        | Some(Interruption::BudgetBeforeNativeTwice) => {
                             Some("PUBLIC_MUTATION_CPU_BUDGET")
                         }
                         Some(Interruption::RefusalBeforeEverySubmit(error)) => Some(*error),
@@ -289,6 +291,11 @@ impl Proxy {
                         let response = signed_refusal(&cookie[4..], error, 101);
                         if matches!(intervention, Some(Interruption::BudgetBeforeNativeOnce)) {
                             intervention.take();
+                        } else if matches!(
+                            intervention,
+                            Some(Interruption::BudgetBeforeNativeTwice)
+                        ) {
+                            intervention = Some(Interruption::BudgetBeforeNativeOnce);
                         }
                         // No request body reaches Native on this attempt.
                         caller.write_all(&response).unwrap();
@@ -332,6 +339,7 @@ impl Proxy {
                         Some(Interruption::BeforeHelloAdmission) => unreachable!(),
                         Some(Interruption::BeforeEverySubmit) => unreachable!(),
                         Some(Interruption::BudgetBeforeNativeOnce)
+                        | Some(Interruption::BudgetBeforeNativeTwice)
                         | Some(Interruption::RefusalBeforeEverySubmit(_))
                         | Some(Interruption::ForkAfterHistory(_, _))
                         | Some(Interruption::ForgeHistory) => unreachable!(),
@@ -662,6 +670,153 @@ fn actual_signed_cpu_budget_without_membership_retains_all_three_refusals() {
         server.node.lock().unwrap().active().unwrap().0,
         settings.genesis()
     );
+}
+
+#[test]
+fn actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    let proxy = Proxy::start(server.address, Interruption::BudgetBeforeNativeTwice);
+    let guest = identity(124);
+    let limited = SubmitRecoveryPlan::new(Duration::from_secs(3)).unwrap();
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        limited,
+    );
+    assert!(outcome.ok && outcome.may_advance_dependency, "{outcome:?}");
+    let submits: Vec<_> = outcome
+        .attempts
+        .iter()
+        .filter(|r| r.operation == "submit")
+        .collect();
+    assert_eq!(submits.len(), 3);
+    assert_eq!(outcome.attempts.len(), 8);
+    for (index, remaining_submits) in [(1usize, 2u64), (2, 1)] {
+        let earlier_head = &outcome.attempts[index * 2 - 1];
+        assert_eq!(earlier_head.operation, "head");
+        let next_call_started = outcome.budget_ns - submits[index].remaining_before_call_ns;
+        let gap = next_call_started - earlier_head.elapsed_since_epoch_ns;
+        // The observed call start includes the actual absent-membership work
+        // and the scheduled wait. No unobserved server CPU time is inferred.
+        assert!(
+            gap + 1_000_000 >= submits[index].remaining_before_call_ns / remaining_submits,
+            "gap={gap}, next={:?}",
+            submits[index]
+        );
+        assert_eq!(
+            submits[index - 1].authenticated_reply.as_ref().unwrap()["value"]["error"],
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+        assert_eq!(
+            submits[index].request_body_digest,
+            submits[0].request_body_digest
+        );
+    }
+    assert_eq!(
+        outcome.acknowledged_packets,
+        vec![hex::encode(packets[0].id().unwrap())]
+    );
+    assert!(!outcome.submission_outcome_uncertain);
+    assert_eq!(
+        server.node.lock().unwrap().active().unwrap().0,
+        packets[0].id().unwrap()
+    );
+}
+
+#[test]
+fn actual_budget_absence_with_two_call_cap_stops_without_another_submit() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    let proxy = Proxy::start(
+        server.address,
+        Interruption::RefusalBeforeEverySubmit("PUBLIC_MUTATION_CPU_BUDGET"),
+    );
+    let guest = identity(125);
+    let mut capped = plan();
+    capped.max_calls = 2;
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        capped,
+    );
+    assert_eq!(
+        outcome.failure.as_deref(),
+        Some("SUBMIT_RECOVERY_CALL_LIMIT")
+    );
+    assert_eq!(outcome.attempts.len(), 2);
+    assert_eq!(outcome.attempts[0].operation, "submit");
+    assert_eq!(outcome.attempts[1].operation, "head");
+    assert!(outcome.acknowledged_packets.is_empty() && !outcome.may_advance_dependency);
+    assert_eq!(
+        server.node.lock().unwrap().active().unwrap().0,
+        settings.genesis()
+    );
+}
+
+#[test]
+fn actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    let proxy = Proxy::start(
+        server.address,
+        Interruption::RefusalBeforeEverySubmit("PUBLIC_MUTATION_CPU_BUDGET"),
+    );
+    let guest = identity(126);
+    let mut capped = SubmitRecoveryPlan::new(Duration::from_secs(2)).unwrap();
+    capped.max_submit_attempts = 1;
+    capped.retry_pause = Duration::from_secs(1);
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        capped,
+    );
+    assert_eq!(
+        outcome.failure.as_deref(),
+        Some("SUBMIT_RECOVERY_ATTEMPT_LIMIT")
+    );
+    assert_eq!(outcome.attempts.len(), 2);
+    // Native membership remains real; no extra one-second pause is made once
+    // no further Submit is permitted. Bound this observation to the recorded
+    // last call rather than to total fixture or host setup time.
+    assert!(outcome.total_elapsed_ns - outcome.attempts[1].elapsed_since_epoch_ns < 1_000_000_000);
+    assert!(outcome.acknowledged_packets.is_empty() && !outcome.may_advance_dependency);
+    assert_eq!(
+        server.node.lock().unwrap().active().unwrap().0,
+        settings.genesis()
+    );
+}
+
+#[test]
+fn actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    let proxy = Proxy::start(server.address, Interruption::BeforeHelloAdmission);
+    let guest = identity(127);
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        plan(),
+    );
+    assert!(outcome.ok, "{outcome:?}");
+    assert_eq!(outcome.attempts.len(), 6);
+    let head = &outcome.attempts[1];
+    let next_submit = &outcome.attempts[2];
+    let next_start = outcome.budget_ns - next_submit.remaining_before_call_ns;
+    assert!(next_start - head.elapsed_since_epoch_ns < next_submit.remaining_before_call_ns / 2);
+    assert_eq!(
+        outcome.attempts[0].client_error.as_deref(),
+        Some("FRAME_EOF")
+    );
+    assert!(outcome.submission_outcome_uncertain);
 }
 
 #[test]

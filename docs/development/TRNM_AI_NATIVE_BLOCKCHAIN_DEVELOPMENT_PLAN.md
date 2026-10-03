@@ -686,8 +686,11 @@ also handles a signed `PUBLIC_MUTATION_CPU_BUDGET` refusal within its existing
 absolute deadline, RPC and Submit-attempt limits. It first checks exact packet
 membership through locally admitted bytes and a stable signed Head/History/Head
 view; an absent packet may be retried within those same limits. A membership
-result keeps the refused Submit reply and does not invent a server ACK. Accounting
-unavailability, invalid signatures and permanent errors remain immediate failures.
+result keeps the refused Submit reply and does not invent a server ACK.
+Budget retries after verified absence divide the remaining original deadline
+among the remaining Submit opportunities and membership work; ordinary EOF/read
+retries retain the short pause. Neither schedule adds a call or a deadline.
+Accounting unavailability, invalid signatures and permanent errors remain immediate failures.
 This client behavior does not establish service fairness for fresh anonymous writes;
 actual pressure and end-to-end acceptance remain separate gates.
 
