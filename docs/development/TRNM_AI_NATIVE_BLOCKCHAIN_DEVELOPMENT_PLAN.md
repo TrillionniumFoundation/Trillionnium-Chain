@@ -853,3 +853,22 @@ These component results do not qualify the newly combined source, WAN/SLA,
 anonymous fairness, model efficacy, useful task demand, mining hardness or public
 readiness. General functional-copy attribution and independent evaluation/source
 budgets remain open; all six public acceptance gates remain false.
+
+
+The restricted-owner-node-v1 source candidate composes the existing packet Work,
+State and durable branch owner with a new protected operator grant domain. Two
+outside pinned roles authorize an exact full packet, actual parent, full lease,
+material catalog and registered task/class reservation. The private owner journal
+retains reservations and monotonically anchored views across failed Work, restart
+and branch reorganization; no automatic refund or migration exists. The CLI uses
+one protected opener for server, sync and local mutation, and legacy openers refuse
+required-policy stores. Pool preview/mining are explicitly held by this first core;
+normal Pool support must be restored by a separately reviewed typed operation scope.
+This paragraph describes unexecuted source: candidate compilation, tests, full new
+qualification and actual legitimate two-stage packet admission remain pending.
+CPU/DA/funding reservations are signed declarations, not per-operation measured CPU,
+proof of balances, source independence, model origin, task hardness or fair access.
+The existing request CPU owner remains responsible for its unchanged O+C sampler;
+all six public scientific gates remain false. This is an opt-in local service mode
+with fresh durable namespaces, not a new PNW1/PNX consensus version or permissionless
+reward qualification. Continuous miner/view-refresh integration remains pending.

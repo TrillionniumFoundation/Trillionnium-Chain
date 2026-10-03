@@ -73,6 +73,112 @@ fn read_owned_configuration(
     Ok(bytes)
 }
 
+const OWNER_CONFIG_OPTIONS: [&str; 5] = [
+    "--operator-task-config",
+    "--operator-task-config-sha256",
+    "--operator-task-source-commit",
+    "--operator-task-policy-source-sha256",
+    "--operator-task-registry2-package",
+];
+fn operator_task_inputs(
+    args: &BTreeMap<String, String>,
+) -> Result<Option<trnm_pon_node::operator_task_policy::RestrictedNodeInputs>> {
+    let mode = args.get("--operator-task-mode");
+    let any = OWNER_CONFIG_OPTIONS
+        .iter()
+        .any(|key| args.contains_key(*key));
+    if mode.is_none() && !any {
+        return Ok(None);
+    }
+    if mode.map(String::as_str) != Some(trnm_pon_node::operator_task_policy::MODE)
+        || !OWNER_CONFIG_OPTIONS
+            .iter()
+            .all(|key| args.contains_key(*key))
+    {
+        return Err("OWNER_TASK_COMPLETE_CONFIG_REQUIRED".into());
+    }
+    let path = Path::new(need(args, "--operator-task-config")?);
+    if !path.is_absolute() {
+        return Err("OWNER_TASK_CONFIG_ABSOLUTE".into());
+    }
+    let before =
+        std::fs::symlink_metadata(path).map_err(|_| Error::from("OWNER_TASK_CONFIG_FILE"))?;
+    let uid = rustix::process::geteuid().as_raw();
+    if !before.is_file()
+        || before.uid() != uid
+        || before.nlink() != 1
+        || before.mode() & 0o7777 != 0o600
+        || before.len() == 0
+        || before.len() > 262_144
+    {
+        return Err("OWNER_TASK_CONFIG_FILE".into());
+    }
+    let mut file = OpenOptions::new()
+        .read(true)
+        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
+        .open(path)
+        .map_err(|_| Error::from("OWNER_TASK_CONFIG_FILE"))?;
+    let mut raw = Vec::new();
+    (&mut file)
+        .take(262_145)
+        .read_to_end(&mut raw)
+        .map_err(|_| Error::from("OWNER_TASK_CONFIG_FILE"))?;
+    let after = file
+        .metadata()
+        .map_err(|_| Error::from("OWNER_TASK_CONFIG_FILE"))?;
+    let visible =
+        std::fs::symlink_metadata(path).map_err(|_| Error::from("OWNER_TASK_CONFIG_FILE"))?;
+    let identity = |m: &std::fs::Metadata| {
+        (
+            m.dev(),
+            m.ino(),
+            m.len(),
+            m.mode(),
+            m.uid(),
+            m.nlink(),
+            m.mtime(),
+            m.mtime_nsec(),
+            m.ctime(),
+            m.ctime_nsec(),
+        )
+    };
+    if identity(&before) != identity(&after)
+        || identity(&after) != identity(&visible)
+        || raw.len() as u64 != before.len()
+    {
+        return Err("OWNER_TASK_CONFIG_CHANGED".into());
+    }
+    use sha2::{Digest, Sha256};
+    let expected = digest(need(args, "--operator-task-config-sha256")?)?;
+    if <[u8; 32]>::from(Sha256::digest(&raw)) != expected {
+        return Err("OWNER_TASK_CONFIG_SHA".into());
+    }
+    let inputs: trnm_pon_node::operator_task_policy::RestrictedNodeInputs =
+        serde_json::from_slice(&raw).map_err(|_| Error::from("OWNER_TASK_CONFIG_SCHEMA"))?;
+    if inputs.expected_uid != uid {
+        return Err("OWNER_TASK_CONFIG_UID".into());
+    }
+    trnm_pon_node::operator_task_policy::validate_protected_inputs(
+        &inputs,
+        need(args, "--operator-task-source-commit")?,
+        need(args, "--operator-task-policy-source-sha256")?,
+        need(args, "--operator-task-registry2-package")?,
+    )
+    .map_err(|_| Error::from("OWNER_TASK_CONFIG_AUTHORITY"))?;
+    Ok(Some(inputs))
+}
+fn open_operator_node(
+    path: &Path,
+    settings: Settings,
+    workers: usize,
+    inputs: Option<trnm_pon_node::operator_task_policy::RestrictedNodeInputs>,
+) -> Result<Node> {
+    match inputs {
+        Some(inputs) => Node::open_with_operator_task_policy(path, settings, workers, inputs),
+        None => Node::open(path, settings, workers),
+    }
+}
+
 const MAX_REQUEST_OBSERVATION_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
 
 /// Local diagnostics only. Keep one descriptor from before Node::open until
@@ -728,12 +834,28 @@ fn run() -> Result<Value> {
         _ => "",
     };
     let allowed = format!(
-        "--development --store --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile --actor-profile --deployment-spec --deployment-bootstrap --deployment-model --deployment-input --deployment-checkpoint --deployment-activation {authentication_options} {admission_options} {extra}"
+        "--development --store --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile --actor-profile --deployment-spec --deployment-bootstrap --deployment-model --deployment-input --deployment-checkpoint --deployment-activation --operator-task-mode --operator-task-config --operator-task-config-sha256 --operator-task-source-commit --operator-task-policy-source-sha256 --operator-task-registry2-package {authentication_options} {admission_options} {extra}"
     );
     for key in args.keys() {
         if !allowed.split_whitespace().any(|k| k == key) {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
         }
+    }
+    // Fixed outside authority is authenticated before any model/material loader.
+    let owner_task_config = operator_task_inputs(&args)?;
+    if owner_task_config.is_some()
+        && (matches!(
+            command.as_str(),
+            "genesis-prepare"
+                | "genesis-sign"
+                | "genesis-finalize"
+                | "task-fixture"
+                | "mine"
+                | "make"
+                | "mine-loop"
+        ) || args.contains_key("--mine"))
+    {
+        return Err("OWNER_TASK_BUILDER_PENDING".into());
     }
     // Invalid option/profile/capacity combinations and output descriptor checks
     // must precede any Node::open creation or recovery. Later initialization
@@ -1085,7 +1207,12 @@ fn run() -> Result<Value> {
             if Instant::now() >= plan.deadline {
                 return Err("SUBMIT_RECOVERY_DEADLINE".into());
             }
-            let owner = Node::open(store, settings, number(&args, "--workers", 1)? as usize)?;
+            let owner = open_operator_node(
+                store,
+                settings,
+                number(&args, "--workers", 1)? as usize,
+                owner_task_config,
+            )?;
             let outcome = submit_with_verified_parent_recovery(
                 &owner,
                 PinnedPublicClient {
@@ -1109,10 +1236,11 @@ fn run() -> Result<Value> {
         }
         let protected = admission_profile(&args)?;
         if let Some(authentication) = authenticated_client(&args)? {
-            let mut owner = Node::open(
+            let mut owner = open_operator_node(
                 Path::new(need(&args, "--store")?),
                 settings.clone(),
                 number(&args, "--workers", 1)? as usize,
+                owner_task_config,
             )?;
             let response = if protected {
                 ingress::call_authenticated_durable_protected(
@@ -1137,10 +1265,11 @@ fn run() -> Result<Value> {
         };
     }
     let clock = number(&args, "--logical-now", ingress::now()?)?;
-    let mut node = Node::open(
+    let mut node = open_operator_node(
         Path::new(need(&args, "--store")?),
         settings,
         number(&args, "--workers", 1)? as usize,
+        owner_task_config,
     )?;
     let value = match command.as_str() {
         "status" | "recover" => node.stats()?,
@@ -1818,3 +1947,7 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "operator_task_cli_tests.rs"]
+mod operator_task_cli_tests;

@@ -6,6 +6,7 @@ pub mod ingress;
 pub mod mining;
 pub mod operator_checkpoint_tile;
 pub mod operator_deployment;
+pub mod operator_task_policy;
 pub mod peer_polling;
 pub mod public_submit;
 mod store;

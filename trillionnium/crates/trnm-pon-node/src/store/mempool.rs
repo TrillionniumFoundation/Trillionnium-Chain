@@ -659,6 +659,7 @@ impl Node {
     /// Classification is branch-relative. SequenceConsumed does not assert that
     /// this exact transaction was mined or confirmed; use normal chain observation.
     pub fn pool_reconcile(&mut self) -> Result<PoolStatus> {
+        self.owner_preview_available()?;
         let (_, limits) = self.pool_policy()?;
         let actual = self.pool_parent()?;
         self.pool_reconcile_parent(&limits, &actual)?;
@@ -849,6 +850,7 @@ impl Node {
         raws: Vec<Vec<u8>>,
         control: &ExecutionControl<'_, crate::Error>,
     ) -> Result<PoolReceipt> {
+        self.owner_preview_available()?;
         let (context, limits) = self.pool_policy()?;
         ensure(
             !raws.is_empty() && raws.len() <= limits.max_group_members,
