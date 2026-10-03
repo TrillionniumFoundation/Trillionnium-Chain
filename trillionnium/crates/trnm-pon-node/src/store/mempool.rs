@@ -304,17 +304,17 @@ fn validate_pending(
 
 /// This value never escapes one owner operation. No staged successor is reused
 /// as a parent: each full prefix starts from the same checked immutable State.
-struct PendingPreview<'a> {
+struct PendingPreview<'state, 'operation> {
     height: u64,
-    state: &'a State,
+    state: &'state State,
     parent: Hash,
-    cfg: &'a Config,
-    limits: &'a PoolLimits,
-    node: &'a Node,
-    checked: Option<CheckedExecutionParent<'a>>,
+    cfg: &'operation Config,
+    limits: &'operation PoolLimits,
+    node: &'operation Node,
+    checked: Option<CheckedExecutionParent<'state>>,
     parent_observation: Option<CommitmentObservation>,
 }
-impl PendingPreview<'_> {
+impl PendingPreview<'_, '_> {
     fn validate(&mut self, raws: &[Vec<u8>]) -> Result<usize> {
         let Self {
             height,
@@ -420,6 +420,21 @@ impl PendingPreview<'_> {
         *node.commitment_observation.borrow_mut() = Some(output.commitment.observation);
         Ok(ready)
     }
+}
+
+/// Actual parent reconstructed for this one pool owner call. Pool writes do not
+/// change this State. A new owner call must reconstruct and verify it again.
+struct PoolParent {
+    id: Hash,
+    generation: u64,
+    height: u64,
+    root: Hash,
+    state: State,
+}
+
+struct PreviewBinding<'a> {
+    checked: Option<CheckedExecutionParent<'a>>,
+    observation: Option<CommitmentObservation>,
 }
 
 impl Node {
@@ -604,17 +619,44 @@ impl Node {
     /// this exact transaction was mined or confirmed; use normal chain observation.
     pub fn pool_reconcile(&mut self) -> Result<PoolStatus> {
         let (_, limits) = self.pool_policy()?;
+        let actual = self.pool_parent()?;
+        self.pool_reconcile_parent(&limits, &actual)?;
+        self.pool_status_snapshot()
+    }
+    fn pool_parent(&self) -> Result<PoolParent> {
         let (parent, generation) = self.active()?;
         let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
         let state = self.state_at(parent)?;
-        let groups = self.pool_groups(&limits)?;
+        let root = self.record(parent)?.root;
+        Ok(PoolParent {
+            id: parent,
+            generation,
+            height,
+            root,
+            state,
+        })
+    }
+    fn pool_reconcile_parent<'a>(
+        &mut self,
+        limits: &PoolLimits,
+        actual: &'a PoolParent,
+    ) -> Result<PreviewBinding<'a>> {
+        let PoolParent {
+            id: parent,
+            generation,
+            height,
+            state,
+            ..
+        } = actual;
+        let (parent, generation, height) = (*parent, *generation, *height);
+        let groups = self.pool_groups(limits)?;
         let mut accepted = Vec::new();
         let mut preview = PendingPreview {
             height,
-            state: &state,
+            state,
             parent,
             cfg: &self.settings.app,
-            limits: &limits,
+            limits,
             node: self,
             checked: None,
             parent_observation: None,
@@ -626,7 +668,7 @@ impl Node {
             } else if group
                 .rows
                 .iter()
-                .map(|row| chain_nonce(&state, row.sender).map(|n| row.nonce <= n))
+                .map(|row| chain_nonce(state, row.sender).map(|n| row.nonce <= n))
                 .collect::<Result<Vec<_>>>()?
                 .into_iter()
                 .any(|used| used)
@@ -653,6 +695,13 @@ impl Node {
             };
             updates.push((group.id, status, reason));
         }
+        // The binding borrows only actual State. Release the Node borrow before
+        // the pool SQL transaction; no staged successor or admission is retained.
+        let binding = PreviewBinding {
+            checked: preview.checked.take(),
+            observation: preview.parent_observation.take(),
+        };
+        drop(preview);
         let tx = self
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
@@ -666,7 +715,7 @@ impl Node {
         }
         tx.execute("UPDATE local_pool_metadata SET checked_parent=?,checked_generation=? WHERE singleton=1",params![parent.as_slice(),generation])?;
         tx.commit()?;
-        self.pool_status_snapshot()
+        Ok(binding)
     }
     pub fn pool_status(&mut self) -> Result<PoolStatus> {
         self.pool_reconcile()
@@ -736,7 +785,10 @@ impl Node {
         )?;
         let total: usize = raws.iter().map(Vec::len).sum();
         ensure(total <= limits.max_bytes, "POOL_BYTE_LIMIT")?;
-        self.pool_reconcile()?;
+        let actual = self.pool_parent()?;
+        let binding = self.pool_reconcile_parent(&limits, &actual)?;
+        // Preserve the original reconcile snapshot checks and error precedence.
+        self.pool_status_snapshot()?;
         let groups = self.pool_groups(&limits)?;
         let views = raws
             .iter()
@@ -790,8 +842,15 @@ impl Node {
             }
         }
         let (parent, generation) = self.active()?;
-        let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
-        let state = self.state_at(parent)?;
+        let record = self.record(parent)?;
+        let height = record.height.checked_add(1).ok_or("HEIGHT")?;
+        ensure(
+            (parent, generation, height) == (actual.id, actual.generation, actual.height),
+            "POOL_PARENT_CHANGED",
+        )?;
+        self.namespace()?;
+        ensure(record.root == actual.root, "ROOT")?;
+        let state = &actual.state;
         // Admission-triggered cache GC is branch-relative and never creates an
         // operator removal. A group classification can cover only one consumed
         // member: every original member must independently be terminal here.
@@ -813,7 +872,7 @@ impl Node {
             let wholly_terminal = group
                 .rows
                 .iter()
-                .map(|row| Ok(height > row.expiry || row.nonce <= chain_nonce(&state, row.sender)?))
+                .map(|row| Ok(height > row.expiry || row.nonce <= chain_nonce(state, row.sender)?))
                 .collect::<Result<Vec<bool>>>()?
                 .into_iter()
                 .all(|terminal| terminal);
@@ -867,15 +926,17 @@ impl Node {
             .flat_map(|g| g.rows.iter().map(|r| r.raw.clone()))
             .collect();
         candidate.extend(raws.clone());
-        let admitted = validate_pending(
-            &candidate,
+        let admitted = PendingPreview {
             height,
-            &state,
+            state,
             parent,
-            &self.settings.app,
-            &limits,
-            self,
-        )?;
+            cfg: &self.settings.app,
+            limits: &limits,
+            node: self,
+            checked: binding.checked,
+            parent_observation: binding.observation,
+        }
+        .validate(&candidate)?;
         let tx = self
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)?;

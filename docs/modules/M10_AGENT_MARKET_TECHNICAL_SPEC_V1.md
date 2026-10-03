@@ -94,6 +94,31 @@ independent evaluator governance, positive ML gain and public acceptance remain 
 
 These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
+## Worker command termination and wait ownership
+
+The real Worker LLM command collector in
+[`command_runtime_exec.rs`](../../trillionnium/crates/trnm-worker-agent/src/command_runtime_exec.rs)
+retains its requested command deadline, fair nonblocking stdout/stderr drains and
+8 MiB aggregate output bound. Cleanup has one additional absolute 1-second budget,
+shared by group termination, descendant waits and the final direct-leader wait.
+
+On Linux it enables process-wide child adoption once and never toggles that setting
+around concurrent calls. It keeps the direct leader unreaped while signalling its
+owned group and discovering adopted children through every `/proc/self/task/*/children`.
+Only children with this process as parent and the pinned leader's group qualify;
+starttime/parent/group are checked before and after opening a pidfd, and each wait
+uses that descriptor. Unknown children receive no signal or wait. A disappearing
+task requires another complete scan. The direct leader is reaped last, preserving
+its actual exit status. Missing proc/pidfd support, changed identity or incomplete
+cleanup refuses; expected descendant SIGKILL never changes a command refusal into success.
+
+Permanent adoption affects the Worker process. The separate transaction adapter's
+`ProcCommand::output` path retains its existing contract and is not certified by this
+bounded LLM collector. On Darwin the existing group-termination/direct-leader-wait
+contract remains; it does not assert Linux descendant adoption/reaping. Deliberate
+credential/group escapes and process/host failure are outside this ordinary
+same-group cleanup guarantee. This is not sandboxing or public service qualification.
+
 ## Module-specific threat and residual work
 
 Lifetime counters, generation-stale scores, duplicate rewards and unbounded same-parent spam.

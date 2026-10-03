@@ -691,6 +691,31 @@ unavailability, invalid signatures and permanent errors remain immediate failure
 This client behavior does not establish service fairness for fresh anonymous writes;
 actual pressure and end-to-end acceptance remain separate gates.
 
+The Linux [M10 bounded adapter runner](../modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md)
+installs process child adoption before spawn within the original request deadline.
+It pins the process-group leader while killing the owned group and reaping only
+actual adopted descendants whose parent, group and start time match a held pidfd.
+Descendants and the leader share the original one-second cleanup deadline; the
+leader is reaped last. Unrelated direct children remain available to their owners.
+The focused source completed all342 retained Worker tests and3 new nested/concurrent
+ownership controls, strict Clippy and an independently waiting outer owner with
+zero adopted descendants. The previous whole-qualification outer failure remains
+retained without a proved PID-to-test mapping. The combined committed source still
+requires complete qualification; other adapter paths, credential/group escapes
+and host failures are outside this bounded runner's Linux guarantee.
+
+The [local Pool owner](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md)
+now shares one freshly reconstructed, checked immutable parent within one submit
+operation. Every separate operation rereads actual KV; full growing-prefix M05/M06
+execution, roots, receipts, SQL fences and failed-bundle rollback remain required.
+All14 focused Pool controls passed. A finite36-operation/18-pair experiment closed
+228 complete prefix comparisons and36 same-packet `FUNDS`/SQL rollback controls.
+Five of six conditions improved in descriptive wall/CPU medians;1000 funded
+accounts with12 retained groups regressed from140.562 to172.387ms wall median,
+with two of three pairs slower. This tradeoff is retained explicitly; three pairs
+on a shared host do not establish universal speedup or public-service capacity.
+Full qualification on the combined committed source remains required.
+
 Within the existing totals it reserves read-body and control-output capacity, separates
 paid mutation/read grants and read challenge tokens, retains grants through native work
 and output, and checks disconnect/expiry fences between complete stages. EOF, including

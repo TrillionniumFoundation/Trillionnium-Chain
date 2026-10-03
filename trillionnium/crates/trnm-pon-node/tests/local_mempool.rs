@@ -925,3 +925,53 @@ fn blocked_middle_prefix_rolls_back_scratch_and_cold_reopen_preserves_later_grou
     assert_eq!(reopened.pool_validate_batch(&batch).unwrap(), 2);
     assert_eq!(reopened.read_active().unwrap(), before);
 }
+
+#[test]
+fn every_pool_operation_rereads_actual_kv_before_reusing_its_parent() {
+    let dir = tempfile::tempdir().unwrap();
+    let s = Settings::development_with_profiles(None, POLICY, PROFILE).unwrap();
+    let policy = limits(16, 32768);
+    let mut node = Node::open(dir.path(), s.clone(), 1).unwrap();
+    node.enable_local_mempool(policy.clone()).unwrap();
+    node.pool_submit(transfer(&s, 0, 1, 1, 1)).unwrap();
+    let before = node.read_active().unwrap();
+    let db = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
+    let key = format!("account:{}", hex::encode(development_public(0).unwrap()));
+    let (slot, raw): (u64, Vec<u8>) = db
+        .query_row(
+            "SELECT slot,value FROM kv WHERE key=? AND slot=(SELECT state_slot FROM active)",
+            [&key],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        )
+        .unwrap();
+    let mut changed: serde_json::Value = serde_json::from_slice(&raw).unwrap();
+    changed["balance"] = serde_json::json!(changed["balance"].as_u64().unwrap() + 1);
+    db.execute(
+        "UPDATE kv SET value=? WHERE slot=? AND key=?",
+        rusqlite::params![serde_json::to_vec(&changed).unwrap(), slot, &key],
+    )
+    .unwrap();
+    // Neither entry point may reuse the binding from the previous successful call.
+    assert_eq!(node.pool_reconcile().unwrap_err().to_string(), "ROOT");
+    assert_eq!(
+        node.pool_submit(transfer(&s, 1, 1, 2, 1))
+            .unwrap_err()
+            .to_string(),
+        "ROOT"
+    );
+    assert_eq!(node.pool_status_snapshot().unwrap().retained_records, 1);
+    db.execute(
+        "UPDATE kv SET value=? WHERE slot=? AND key=?",
+        rusqlite::params![raw, slot, &key],
+    )
+    .unwrap();
+    node.pool_submit(transfer(&s, 1, 1, 2, 1)).unwrap();
+    assert_eq!(node.pool_status().unwrap().retained_records, 2);
+    assert_eq!(node.read_active().unwrap(), before);
+    drop(db);
+    drop(node);
+    let mut reopened = Node::open(dir.path(), s, 1).unwrap();
+    reopened.enable_local_mempool(policy).unwrap();
+    assert_eq!(reopened.pool_status().unwrap().retained_records, 2);
+    assert_eq!(reopened.read_active().unwrap(), before);
+}

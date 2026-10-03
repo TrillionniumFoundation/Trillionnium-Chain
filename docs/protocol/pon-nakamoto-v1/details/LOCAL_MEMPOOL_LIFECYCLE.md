@@ -49,15 +49,21 @@ must run the existing authoritative work and execution path again.
 
 ## Operation-local parent preparation and remaining cost
 
-Reconciliation reads and root-checks the actual active parent on every invocation.
+Every pool owner invocation reads and root-checks the actual active parent.
 After the first successful typed check it binds that immutable State and its complete
 canonical bytes once, using `CheckedExecutionParent`. Rust's shared borrow prevents
 mutation of that State during the binding lifetime. Every subsequent group preview in
-that same reconciliation uses the same parent; it never uses a previous preview's
-successor. The binding is dropped before returning and is never persisted, published
-as an active commitment, or shared with another invocation. Cold reopen, admission,
-mining-batch creation and batch validation still obtain and check their actual parent.
-The existing parent/generation SQL fence remains mandatory before status publication.
+that same invocation uses the same parent; it never uses a previous preview's
+successor. A submit invocation also reuses that checked original parent for its final
+pending-prefix preview after reconciliation; pool-only writes cannot change the owned
+parent State. Before new admission it rechecks namespace, parent ID, generation,
+height and recorded root. `POOL_PARENT_CHANGED` refuses an unexpected ID, generation
+or height change during that same owner call; a recorded-root mismatch refuses `ROOT`.
+The binding is dropped before the public owner call returns and is never persisted,
+published as an active commitment, or shared with another invocation. Cold reopen,
+the next admission, mining-batch creation and batch validation still obtain and check
+their actual parent. Both existing parent/generation SQL fences remain mandatory
+before reconciliation publication and new admission commit.
 This relies on the existing single-owner boundary and adds no SQL snapshot isolation
 or guarantee against a rogue second connection mutating chain records mid-operation.
 
@@ -189,6 +195,28 @@ rejection. An explicitly invoked ignored selector also executes4500 signed nonce
 raws in563 actual native packets with an eight-record retained pool and one restart;
 its logical chain timestamps do not measure sustained wall-clock or public service.
 These are scoped tests, not independent public-security or economics acceptance.
+
+The operation-local parent test changes canonical actual KV between separate pool
+calls and requires `ROOT` refusal from both reconciliation and new admission without
+inserting a group. Restoring the original bytes permits ordinary admission again;
+previews and a cold reopen preserve the exact active chain State. This checks that
+the shared binding cannot become an authority cache across calls.
+
+A finite baseline/candidate experiment measured36 successful submit operations in
+18 pairs, with three pairs per condition on a shared host. Each condition used
+1000 or8000 funded accounts (1008 or8024 actual State keys), and0,4 or12 retained
+groups of16 members. All228 complete original-parent State/root/ordered-receipt
+comparisons and36 same-packet `FUNDS` refusals with complete SQL rollback passed.
+Operation wall medians in milliseconds, baseline to candidate, were respectively
+8.310 to7.028,40.933 to38.060 and140.562 to172.387 for1000 accounts;
+62.172 to53.432,96.195 to79.488 and294.997 to246.953 for8000 accounts.
+The1000-account/12-group condition regressed: two of its three pairs were slower.
+The other conditions' median improvements do not establish universal speedup,
+statistical significance, tail latency or an endpoint SLA. Timers cover only the
+actual submit operation; setup, reference replay and complete closed SQL checks
+remain in the whole experiment. Its closed parent receipt SHA-256 is
+`33afd7bc7d105fcb14ae972c673080df0136a3911f648b691dd383f20a22c965`.
+This private experiment does not replace qualification of the combined source.
 
 The exact raw index optimizes only ready-metadata binding. An explicitly invoked
 ignored unit selector compares that component on256 ordinary signed transfer raws
