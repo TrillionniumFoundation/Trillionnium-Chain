@@ -1,5 +1,6 @@
 //! Ordinary local Native packets and authenticated loopback responses. No remote load.
-use serde_json::Value;
+use serde::Serialize;
+use serde_json::{json, Value};
 use std::{
     fs,
     io::{Read, Write},
@@ -152,6 +153,74 @@ enum Interruption {
     AfterNativeAck,
     HoldNativeAckUntilDeadline,
     AfterNativeAckFork(Vec<Packet>, Arc<Mutex<Node>>),
+    BudgetBeforeNativeOnce,
+    RefusalBeforeEverySubmit(&'static str),
+    BudgetAfterNativeAck,
+    WrongSignatureBudgetAfterNativeAck,
+    BudgetAfterNativeAckFork(Vec<Packet>, Arc<Mutex<Node>>),
+    BudgetAfterNativeAckThenHistoryFork(Vec<Packet>, Arc<Mutex<Node>>),
+    ForkAfterHistory(Vec<Packet>, Arc<Mutex<Node>>),
+    BudgetAfterNativeAckThenForgedHistory,
+    ForgeHistory,
+}
+
+// This scripted test peer owns the real server development signing key. The
+// native cookie, resource solution and complete body traverse real sockets.
+// It observes no production CPU account and makes no claim that a real bucket
+// decision occurred; it exercises handling of an authentic signed refusal.
+#[derive(Serialize)]
+struct ScriptedResponse {
+    schema: String,
+    profile: String,
+    network: String,
+    parameters: String,
+    genesis: String,
+    server: String,
+    cookie_digest: String,
+    request_digest: String,
+    ok: bool,
+    value: Value,
+    signature: String,
+}
+fn signed_refusal(cookie_raw: &[u8], error: &str, signer: u8) -> Vec<u8> {
+    scripted_response(cookie_raw, false, json!({"error": error}), signer)
+}
+fn scripted_response(cookie_raw: &[u8], ok: bool, value: Value, signer: u8) -> Vec<u8> {
+    let cookie: Value = serde_json::from_slice(cookie_raw).unwrap();
+    let text = |name: &str| cookie[name].as_str().unwrap().to_owned();
+    let mut response = ScriptedResponse {
+        schema: "public-protected-response-v3".into(),
+        profile: text("profile"),
+        network: text("network"),
+        parameters: text("parameters"),
+        genesis: text("genesis"),
+        server: text("server"),
+        cookie_digest: hex::encode(hash(b"public-cookie-id-v3", &[cookie_raw])),
+        request_digest: text("body_digest"),
+        ok,
+        value,
+        signature: String::new(),
+    };
+    let message = hash(
+        b"public-response-sign-v3",
+        &[&serde_json::to_vec(&response).unwrap()],
+    );
+    response.signature = sign_hex(
+        &signing_key_from_hex(&hex::encode([signer; 32])).unwrap(),
+        &message,
+    );
+    let bytes = serde_json::to_vec(&response).unwrap();
+    let mut frame = (bytes.len() as u32).to_be_bytes().to_vec();
+    frame.extend(bytes);
+    frame
+}
+
+fn activate_scripted_fork(packets: Vec<Packet>, owner: Arc<Mutex<Node>>) {
+    let mut node = owner.lock().unwrap();
+    for packet in packets {
+        let id = node.admit(&packet, ingress::now().unwrap()).unwrap();
+        node.activate_observed(id, ingress::now().unwrap()).unwrap();
+    }
 }
 struct Proxy {
     address: SocketAddr,
@@ -208,8 +277,26 @@ impl Proxy {
                 caller.write_all(&frame(&mut server)).unwrap();
                 let mut body = vec![0; parsed["body_len"].as_u64().unwrap() as usize];
                 caller.read_exact(&mut body).unwrap();
+                if parsed["op"] == 1 {
+                    let scripted = match intervention.as_ref() {
+                        Some(Interruption::BudgetBeforeNativeOnce) => {
+                            Some("PUBLIC_MUTATION_CPU_BUDGET")
+                        }
+                        Some(Interruption::RefusalBeforeEverySubmit(error)) => Some(*error),
+                        _ => None,
+                    };
+                    if let Some(error) = scripted {
+                        let response = signed_refusal(&cookie[4..], error, 101);
+                        if matches!(intervention, Some(Interruption::BudgetBeforeNativeOnce)) {
+                            intervention.take();
+                        }
+                        // No request body reaches Native on this attempt.
+                        caller.write_all(&response).unwrap();
+                        continue;
+                    }
+                }
                 server.write_all(&body).unwrap();
-                let reply = frame(&mut server);
+                let mut reply = frame(&mut server);
                 let parsed_reply: Value = serde_json::from_slice(&reply[4..]).unwrap();
                 if parsed["op"] == 1 && parsed_reply["ok"] == true {
                     match intervention.take() {
@@ -222,16 +309,51 @@ impl Proxy {
                             continue;
                         }
                         Some(Interruption::AfterNativeAckFork(packets, owner)) => {
-                            let mut node = owner.lock().unwrap();
-                            for packet in packets {
-                                let id = node.admit(&packet, ingress::now().unwrap()).unwrap();
-                                node.activate_observed(id, ingress::now().unwrap()).unwrap();
-                            }
+                            activate_scripted_fork(packets, owner);
+                        }
+                        Some(Interruption::BudgetAfterNativeAck) => {
+                            reply = signed_refusal(&cookie[4..], "PUBLIC_MUTATION_CPU_BUDGET", 101);
+                        }
+                        Some(Interruption::WrongSignatureBudgetAfterNativeAck) => {
+                            reply = signed_refusal(&cookie[4..], "PUBLIC_MUTATION_CPU_BUDGET", 123);
+                        }
+                        Some(Interruption::BudgetAfterNativeAckFork(packets, owner)) => {
+                            activate_scripted_fork(packets, owner);
+                            reply = signed_refusal(&cookie[4..], "PUBLIC_MUTATION_CPU_BUDGET", 101);
+                        }
+                        Some(Interruption::BudgetAfterNativeAckThenHistoryFork(packets, owner)) => {
+                            intervention = Some(Interruption::ForkAfterHistory(packets, owner));
+                            reply = signed_refusal(&cookie[4..], "PUBLIC_MUTATION_CPU_BUDGET", 101);
+                        }
+                        Some(Interruption::BudgetAfterNativeAckThenForgedHistory) => {
+                            intervention = Some(Interruption::ForgeHistory);
+                            reply = signed_refusal(&cookie[4..], "PUBLIC_MUTATION_CPU_BUDGET", 101);
                         }
                         Some(Interruption::BeforeHelloAdmission) => unreachable!(),
                         Some(Interruption::BeforeEverySubmit) => unreachable!(),
+                        Some(Interruption::BudgetBeforeNativeOnce)
+                        | Some(Interruption::RefusalBeforeEverySubmit(_))
+                        | Some(Interruption::ForkAfterHistory(_, _))
+                        | Some(Interruption::ForgeHistory) => unreachable!(),
                         None => {}
                     }
+                }
+                if parsed["op"] == 3
+                    && matches!(intervention, Some(Interruption::ForkAfterHistory(_, _)))
+                {
+                    if let Some(Interruption::ForkAfterHistory(packets, owner)) =
+                        intervention.take()
+                    {
+                        activate_scripted_fork(packets, owner);
+                    }
+                }
+                if parsed["op"] == 3 && matches!(intervention, Some(Interruption::ForgeHistory)) {
+                    intervention.take();
+                    let mut page = parsed_reply["value"].clone();
+                    let mut bytes = hex::decode(page["packets"][0].as_str().unwrap()).unwrap();
+                    bytes[420] ^= 1; // Full stored proof bytes, not a cursor/height hint.
+                    page["packets"][0] = json!(hex::encode(bytes));
+                    reply = scripted_response(&cookie[4..], true, page, 101);
                 }
                 caller.write_all(&reply).unwrap();
             }
@@ -402,6 +524,371 @@ fn actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack(
             .count(),
         1
     );
+    assert_eq!(
+        server.node.lock().unwrap().read_active().unwrap().2,
+        node.read_active().unwrap().2
+    );
+}
+
+#[test]
+fn actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let receiver = dir.path().join("receiver");
+    let server = Server::start(&receiver, &settings);
+    let proxy = Proxy::start(server.address, Interruption::BudgetAfterNativeAck);
+    let guest = identity(114);
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        plan(),
+    );
+    assert!(outcome.ok && outcome.membership_observed && outcome.may_advance_dependency);
+    assert!(outcome.acknowledged_packets.is_empty());
+    assert!(!outcome.submission_outcome_uncertain);
+    assert_eq!(outcome.formal_confirmation_observed, None);
+    assert!(!outcome.resource_fairness_qualified && !outcome.remote_persistence_proved);
+    assert_eq!(outcome.attempts.len(), 4);
+    assert_eq!(outcome.attempts[0].operation, "submit");
+    assert_eq!(
+        outcome.attempts[0].authenticated_reply.as_ref().unwrap()["ok"],
+        false
+    );
+    assert_eq!(
+        outcome.attempts[0].authenticated_reply.as_ref().unwrap()["value"]["error"],
+        "PUBLIC_MUTATION_CPU_BUDGET"
+    );
+    assert!(outcome.attempts[0].client_error.is_none());
+    assert!(outcome.attempts[1..]
+        .iter()
+        .all(|r| r.operation != "submit"));
+    drop(proxy);
+    drop(server);
+    let reopened = Node::open(&receiver, settings, 1).unwrap();
+    assert_eq!(
+        reopened.read_active().unwrap().2,
+        node.read_active().unwrap().2
+    );
+    assert_eq!(
+        reopened
+            .packet(packets[0].id().unwrap())
+            .unwrap()
+            .encode()
+            .unwrap(),
+        packets[0].encode().unwrap()
+    );
+}
+
+#[test]
+fn actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    let proxy = Proxy::start(server.address, Interruption::BudgetBeforeNativeOnce);
+    let guest = identity(115);
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        plan(),
+    );
+    assert!(outcome.ok && outcome.may_advance_dependency, "{outcome:?}");
+    assert_eq!(outcome.attempts.len(), 6);
+    let submits: Vec<_> = outcome
+        .attempts
+        .iter()
+        .filter(|r| r.operation == "submit")
+        .collect();
+    assert_eq!(submits.len(), 2);
+    assert_eq!(
+        submits[0].request_body_digest,
+        submits[1].request_body_digest
+    );
+    assert_eq!(
+        submits[0].authenticated_reply.as_ref().unwrap()["value"]["error"],
+        "PUBLIC_MUTATION_CPU_BUDGET"
+    );
+    assert_eq!(
+        outcome.acknowledged_packets,
+        vec![hex::encode(packets[0].id().unwrap())]
+    );
+    assert_eq!(
+        server.node.lock().unwrap().read_active().unwrap().2,
+        node.read_active().unwrap().2
+    );
+}
+
+#[test]
+fn actual_signed_cpu_budget_without_membership_retains_all_three_refusals() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    let proxy = Proxy::start(
+        server.address,
+        Interruption::RefusalBeforeEverySubmit("PUBLIC_MUTATION_CPU_BUDGET"),
+    );
+    let guest = identity(116);
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        plan(),
+    );
+    assert_eq!(
+        outcome.failure.as_deref(),
+        Some("SUBMIT_RECOVERY_ATTEMPT_LIMIT")
+    );
+    assert!(!outcome.ok && !outcome.membership_observed && !outcome.may_advance_dependency);
+    assert!(outcome.acknowledged_packets.is_empty());
+    assert_eq!(outcome.attempts.len(), 6);
+    assert_eq!(
+        outcome
+            .attempts
+            .iter()
+            .filter(|r| r.operation == "submit")
+            .count(),
+        3
+    );
+    assert!(outcome
+        .attempts
+        .iter()
+        .filter(|r| r.operation == "submit")
+        .all(
+            |r| r.authenticated_reply.as_ref().unwrap()["value"]["error"]
+                == "PUBLIC_MUTATION_CPU_BUDGET"
+        ));
+    assert_eq!(
+        server.node.lock().unwrap().active().unwrap().0,
+        settings.genesis()
+    );
+}
+
+#[test]
+fn actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    let proxy = Proxy::start(
+        server.address,
+        Interruption::RefusalBeforeEverySubmit("PUBLIC_MUTATION_CPU_BUDGET"),
+    );
+    let guest = identity(117);
+    let mut capped = plan();
+    capped.max_calls = 1;
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        capped,
+    );
+    assert_eq!(
+        outcome.failure.as_deref(),
+        Some("SUBMIT_RECOVERY_CALL_LIMIT")
+    );
+    assert_eq!(outcome.attempts.len(), 1);
+    assert!(!outcome.may_advance_dependency && outcome.acknowledged_packets.is_empty());
+    let mut short = SubmitRecoveryPlan::new(Duration::from_millis(250)).unwrap();
+    short.retry_pause = Duration::from_secs(1);
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        short,
+    );
+    assert_eq!(outcome.failure.as_deref(), Some("SUBMIT_RECOVERY_DEADLINE"));
+    assert_eq!(outcome.attempts.len(), 2);
+    assert!(!outcome.may_advance_dependency && outcome.acknowledged_packets.is_empty());
+    assert_eq!(
+        server.node.lock().unwrap().active().unwrap().0,
+        settings.genesis()
+    );
+}
+
+#[test]
+fn actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    let guest = identity(118);
+    for error in ["PUBLIC_MUTATION_CPU_UNAVAILABLE", "SIGNATURE"] {
+        let proxy = Proxy::start(
+            server.address,
+            Interruption::RefusalBeforeEverySubmit(error),
+        );
+        let outcome = submit_with_verified_parent_recovery(
+            &node,
+            client(proxy.address, &server, &guest),
+            &packets[0],
+            plan(),
+        );
+        assert_eq!(outcome.failure.as_deref(), Some(error));
+        assert_eq!(outcome.attempts.len(), 1);
+        assert!(!outcome.may_advance_dependency && outcome.acknowledged_packets.is_empty());
+        assert_eq!(
+            server.node.lock().unwrap().active().unwrap().0,
+            settings.genesis()
+        );
+    }
+    let proxy = Proxy::start(
+        server.address,
+        Interruption::WrongSignatureBudgetAfterNativeAck,
+    );
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        plan(),
+    );
+    assert_eq!(
+        outcome.failure.as_deref(),
+        Some("PUBLIC_RESPONSE_SIGNATURE")
+    );
+    assert_eq!(outcome.attempts.len(), 1);
+    assert!(!outcome.may_advance_dependency && outcome.acknowledged_packets.is_empty());
+    assert!(outcome.submission_outcome_uncertain);
+    assert_eq!(
+        server.node.lock().unwrap().active().unwrap().0,
+        packets[0].id().unwrap()
+    );
+}
+
+#[test]
+fn actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let first = node
+        .make(
+            settings.genesis(),
+            vec![],
+            development_public(1).unwrap(),
+            settings.genesis_time() + 11,
+            4096,
+        )
+        .unwrap();
+    let first_id = node.admit(&first, ingress::now().unwrap()).unwrap();
+    let second = node
+        .make(
+            first_id,
+            vec![],
+            development_public(1).unwrap(),
+            settings.genesis_time() + 12,
+            4096,
+        )
+        .unwrap();
+    let second_id = node.admit(&second, ingress::now().unwrap()).unwrap();
+    for (index, after_history) in [false, true].into_iter().enumerate() {
+        let server = Server::start(&dir.path().join(format!("receiver-{index}")), &settings);
+        let mutation = if after_history {
+            Interruption::BudgetAfterNativeAckThenHistoryFork(
+                vec![first.clone(), second.clone()],
+                server.node.clone(),
+            )
+        } else {
+            Interruption::BudgetAfterNativeAckFork(
+                vec![first.clone(), second.clone()],
+                server.node.clone(),
+            )
+        };
+        let proxy = Proxy::start(server.address, mutation);
+        let guest = identity(119);
+        let outcome = submit_with_verified_parent_recovery(
+            &node,
+            client(proxy.address, &server, &guest),
+            &packets[0],
+            plan(),
+        );
+        assert_eq!(
+            outcome.failure.as_deref(),
+            Some(if after_history {
+                "SUBMIT_RECOVERY_STALE_HEAD"
+            } else {
+                "SUBMIT_RECOVERY_STALE_BRANCH"
+            })
+        );
+        assert!(
+            !outcome.ok
+                && !outcome.may_advance_dependency
+                && outcome.acknowledged_packets.is_empty()
+        );
+        assert_eq!(
+            outcome.attempts[0].authenticated_reply.as_ref().unwrap()["value"]["error"],
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+        assert_eq!(server.node.lock().unwrap().active().unwrap().0, second_id);
+        assert_eq!(
+            outcome
+                .attempts
+                .iter()
+                .filter(|r| r.operation == "submit")
+                .count(),
+            1
+        );
+    }
+}
+
+#[test]
+fn actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let equal = node
+        .make(
+            settings.genesis(),
+            vec![],
+            development_public(1).unwrap(),
+            settings.genesis_time() + 11,
+            4096,
+        )
+        .unwrap();
+    node.admit(&equal, ingress::now().unwrap()).unwrap();
+    let server = Server::start(&dir.path().join("equal-receiver"), &settings);
+    {
+        let mut owner = server.node.lock().unwrap();
+        let id = owner.admit(&packets[0], ingress::now().unwrap()).unwrap();
+        owner
+            .activate_observed(id, ingress::now().unwrap())
+            .unwrap();
+    }
+    let proxy = Proxy::start(server.address, Interruption::BudgetAfterNativeAck);
+    let guest = identity(120);
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &equal,
+        plan(),
+    );
+    assert_eq!(
+        outcome.failure.as_deref(),
+        Some("SUBMIT_RECOVERY_STALE_BRANCH")
+    );
+    assert!(!outcome.may_advance_dependency && outcome.acknowledged_packets.is_empty());
+    assert_eq!(
+        server.node.lock().unwrap().active().unwrap().0,
+        packets[0].id().unwrap()
+    );
+    let server = Server::start(&dir.path().join("forged-history-receiver"), &settings);
+    let proxy = Proxy::start(
+        server.address,
+        Interruption::BudgetAfterNativeAckThenForgedHistory,
+    );
+    let outcome = submit_with_verified_parent_recovery(
+        &node,
+        client(proxy.address, &server, &guest),
+        &packets[0],
+        plan(),
+    );
+    assert_eq!(
+        outcome.failure.as_deref(),
+        Some("SUBMIT_RECOVERY_HISTORY_BYTES")
+    );
+    assert!(!outcome.may_advance_dependency && outcome.acknowledged_packets.is_empty());
+    assert_eq!(outcome.attempts.len(), 3);
+    assert_eq!(outcome.attempts[2].operation, "history");
+    assert_eq!(
+        outcome.attempts[2].authenticated_reply.as_ref().unwrap()["ok"],
+        true
+    );
+    assert!(outcome.attempts[2].client_error.is_none());
     assert_eq!(
         server.node.lock().unwrap().read_active().unwrap().2,
         node.read_active().unwrap().2

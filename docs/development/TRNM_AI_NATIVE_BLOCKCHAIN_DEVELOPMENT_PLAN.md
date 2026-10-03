@@ -681,6 +681,16 @@ individual CPU, Node lock occupancy, honest fairness and Head SLA are not bounde
 by this local account. It is a development resource policy, not ticket cost or
 hardness calibration, host-global governance or public qualification.
 
+The opt-in [public Submit recovery client](../protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md)
+also handles a signed `PUBLIC_MUTATION_CPU_BUDGET` refusal within its existing
+absolute deadline, RPC and Submit-attempt limits. It first checks exact packet
+membership through locally admitted bytes and a stable signed Head/History/Head
+view; an absent packet may be retried within those same limits. A membership
+result keeps the refused Submit reply and does not invent a server ACK. Accounting
+unavailability, invalid signatures and permanent errors remain immediate failures.
+This client behavior does not establish service fairness for fresh anonymous writes;
+actual pressure and end-to-end acceptance remain separate gates.
+
 Within the existing totals it reserves read-body and control-output capacity, separates
 paid mutation/read grants and read challenge tokens, retains grants through native work
 and output, and checks disconnect/expiry fences between complete stages. EOF, including

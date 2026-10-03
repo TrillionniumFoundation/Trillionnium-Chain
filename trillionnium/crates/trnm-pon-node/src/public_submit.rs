@@ -447,6 +447,17 @@ impl Session<'_, '_> {
                     let error = remote_error(&reply)?;
                     if error == "UNKNOWN_PARENT" && allow_parent_repair {
                         self.restore_parent(packet.header.parent)?;
+                    } else if error == "PUBLIC_MUTATION_CPU_BUDGET" {
+                        // This signed Submit refusal remains in attempts. An
+                        // earlier admission may already have placed the exact
+                        // retained packet on the current remote active branch;
+                        // full membership can resolve that fact without an ACK.
+                        if self.membership(packet)? {
+                            return Ok(());
+                        }
+                        // Absent membership is not admission. A fresh attempt
+                        // consumes the original per-packet/call/epoch limits.
+                        self.pause()?;
                     } else {
                         return Err(error.into());
                     }

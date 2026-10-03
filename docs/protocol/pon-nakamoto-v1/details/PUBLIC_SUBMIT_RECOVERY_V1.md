@@ -41,8 +41,8 @@ guarantee, an SLA, a fastest-producer bound, or a combined physical-memory bound
 ## Recovery and dependency readiness
 
 Every call is recorded, including every transport failure and authenticated
-business refusal. Only exact `FRAME_EOF` observed in `challenge` or
-`solution-body-response` permits a bounded retry. A generic CLI exit2, IO string,
+business refusal. Exact `FRAME_EOF` observed in `challenge` or
+`solution-body-response` permits a bounded transport retry. A generic CLI exit2, IO string,
 external timeout, signature/context failure, clock deferral, or unknown error
 does not. Retrying retains the original complete packet bytes; transport cookies
 and their nonces are fresh, while account sequences and packet work do not change.
@@ -53,13 +53,23 @@ locally. Unknown local Head, a different fork, missing records or a path beyond
 the bound refuses. A planned parent repair does not recursively expand its
 budget after an unexpected branch change.
 
+An authenticated `PUBLIC_MUTATION_CPU_BUDGET` Submit refusal also permits the
+same bounded active-membership check. The complete refusal stays in the attempt
+record. A packet already present on the observed active branch can resolve the
+dependency without another Submit; the client invents no ACK. If membership is
+absent, the original retry pause, absolute epoch, total RPC cap and per-packet
+Submit limit apply before another identical Submit. Read failures, a different
+branch, changed generation, unmatched bytes or a late native return refuse.
+`PUBLIC_MUTATION_CPU_UNAVAILABLE` and all other permanent signed errors still
+refuse immediately; they do not trigger this recovery.
+
 The Native same-byte duplicate path can acknowledge an already admitted packet.
 `DUPLICATE_CONTENT` instead means the same block id with different complete
 bytes and is a permanent refusal. Neither a fresh ACK nor a same-byte duplicate
 ACK alone proves active membership: strict-greater-chainwork activation can
 leave an equal-work or inactive fork unadopted.
 
-After an ACK or uncertain lost response, the helper checks a fixed signed Head
+After an ACK, uncertain lost response, or signed CPU-budget refusal, the helper checks a fixed signed Head
 against a real locally admitted block, full State/root and current local clock.
 The existing checked ancestry owner must place the pending packet on that Head's
 actual path. Signed History must return exactly that packet's complete canonical
@@ -105,3 +115,22 @@ receiver from Sybil starvation, confer privileges on a caller/IP, or change an
 old failed workload into a passing run. Any future dependency-aware measurement
 needs its own source-bound preregistration, all failure denominators and actual
 finite closure.
+
+The receiver's shared CPU bucket, start reservation, refill, signature domains,
+ordinary single-call API and anonymous admission policy are unchanged. A signed
+budget refusal does not mean that an earlier identical packet is absent. The
+client can recover only a fully observed membership fact or make a finite retry;
+it cannot guarantee admission of a new anonymous write when other valid callers
+consume the shared resources. The existing 8bit and default16 pressure runs retain
+their failed original 120/120 Submit predicates. Fixed-payload negative caching
+would be a different server experiment, and fresh valid Work/body variants can
+bypass such a cache; this client repair adds no negative-result cache.
+
+Ordinary socket controls use the actual Native server, its signed cookie/Ready,
+fresh genuine client ticket and complete body. A task-owned scripted peer holds
+the development server signing key and emits authentic CPU-budget refusals before
+body admission or after a genuine Native admission, then serves real Head/History.
+These controls test refusal handling and exact membership, not a measured live
+CPU-bucket decision. They also exercise missing membership, all original caps,
+permanent/unavailable errors, forged signatures, branch changes and generation
+changes; no synthetic refusal is promoted to a receiver-pressure result.
