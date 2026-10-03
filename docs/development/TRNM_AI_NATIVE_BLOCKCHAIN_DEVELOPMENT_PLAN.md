@@ -872,3 +872,38 @@ The existing request CPU owner remains responsible for its unchanged O+C sampler
 all six public scientific gates remain false. This is an opt-in local service mode
 with fresh durable namespaces, not a new PNW1/PNX consensus version or permissionless
 reward qualification. Continuous miner/view-refresh integration remains pending.
+
+The restricted-owner-node-v2 Pool source successor starts from the Root-formatted
+v1 files pinned by the closed e5fc6a45 format receipt. It defines a separate
+POOL-GRANT1 domain for exact enable, reconcile and ordered ordinary-bundle commands,
+not a proof-task substitute. Each expensive operation reserves one outside-fixed
+operation before actual parent State reconstruction. Every old retained group
+requires its original durable admission reservation and a separately signed current
+retained-group permission; the full prefix still executes M05 and M06 from the
+same reconstructed original parent, with both original SQL generation fences.
+The r9 ExecutionControl worker accountant is preserved. CPU/DA/funding reservation
+amounts still describe operator declarations; no new actual CPU-class meter or
+balance proof is claimed. Fresh v2 namespace/journal/Work signing domain refuses v1
+stores, with no automatic migration or discarded journal history.
+
+A trusted typed refresh entry accepts only two externally fixed original keys,
+the same source/context namespace and a linked next latest view. It authenticates
+all new finite Pool grants and full six-file catalog before fsyncing the new journal
+anchor, then cancels old in-flight capabilities through an epoch fence. Stop/reopen
+uses the same protected CLI loader and monotonic journal. There is no anonymous
+reload RPC, startup list is not permanent authority, and neither old packet view
+nor new incoming bundle alone authorizes old prefix transactions. History/recovery
+reads keep the original complete checks; uncommitted reservations never refund.
+Mining-batch/validate/prune remain explicit purpose HOLD until independently
+specified exact grants are implemented. All source2 compilation, real new Node
+admission, Pool normal-load and scientific qualification are pending Root execution;
+original core1 tests cannot authorize this successor. Permissionless reward,
+source truth, physical costs, useful demand, hardness and fairness remain false.
+
+Pool source-only successor 4 retains the immutable successor 3. Restricted enable metadata uses the permission-captured parent/generation at its SQL fence; the existing unrestricted branch is unchanged. A new local SQL fence test definition covers intervening parent/generation changes. The real Work reservation test has a fixed eight-timestamp positive-nonce fixture and fails on exhaustion, preserving the original positive-nonce admission rule. These source fixes have no author Cargo, test, Native, Work/State, SQL, signing or network execution; new qualification remains pending.
+
+Pool compiler repair successor 6 retains the original failed Pool5 build receipt. Three new Pool identity hex decodes now explicitly map malformed input into the existing Node Error type; no global error conversion or validation rule changes. Root preflight precedes the edits. New full build, tests, Clippy and Native admission remain pending; prior core1 qualification does not qualify this successor.
+
+Pool compiler repair successor 7 retains both original failed build receipts. The new mempool error mapping now names crate::Error explicitly; the original Error type and all validation rules remain unchanged. Root preflight precedes the edits. New full build, tests, Clippy and Native admission remain pending; prior core1 qualification does not qualify this successor.
+
+Pool compiler repair successor 8 retains the original release-build PASS and test-compilation FAIL of successor 7. Two test-only imports name the existing PoolLimits type and PermissionsExt trait explicitly; no production or validation code changes. Root preflight precedes the edits. New full build, tests, Clippy and Native admission remain pending; prior core1 qualification does not qualify this successor.

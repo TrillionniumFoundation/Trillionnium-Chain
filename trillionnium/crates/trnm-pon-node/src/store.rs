@@ -356,16 +356,51 @@ pub struct Node {
     owner_policy: Option<OwnerPolicy>,
 }
 struct OwnerPolicy {
+    pool_policies: Vec<std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>>,
+    epoch: std::sync::Arc<std::sync::atomic::AtomicU64>,
+    outside_keys: (String, String),
     policy: std::sync::Arc<crate::operator_task_policy::VerifiedPolicy>,
     required_marker: Vec<u8>,
     journal: RefCell<crate::operator_task_policy::Journal>,
     unavailable: std::sync::Arc<std::sync::atomic::AtomicBool>,
 }
 pub(crate) struct OwnerPacketPermit {
+    epoch: std::sync::Arc<std::sync::atomic::AtomicU64>,
+    expected_epoch: u64,
     policy: std::sync::Arc<crate::operator_task_policy::VerifiedPolicy>,
     unavailable: std::sync::Arc<std::sync::atomic::AtomicBool>,
     facts: crate::operator_task_policy::NativeFacts,
     reservation: crate::operator_task_policy::Reservation,
+}
+pub(crate) struct OwnerPoolPermit {
+    policy: std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>,
+    unavailable: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    epoch: std::sync::Arc<std::sync::atomic::AtomicU64>,
+    expected_epoch: u64,
+    facts: crate::operator_task_policy::pool::PoolFacts,
+    reservation: crate::operator_task_policy::pool::PoolReservation,
+}
+impl OwnerPoolPermit {
+    fn progress(&self) -> Result<()> {
+        ensure(
+            !self.unavailable.load(std::sync::atomic::Ordering::Acquire),
+            "OWNER_TASK_UNAVAILABLE",
+        )?;
+        ensure(
+            self.epoch.load(std::sync::atomic::Ordering::Acquire) == self.expected_epoch,
+            "OWNER_TASK_VIEW_CHANGED",
+        )?;
+        self.policy
+            .check(
+                &self.facts,
+                crate::operator_task_policy::now_ns().map_err(owner_error)?,
+            )
+            .map_err(owner_error)
+    }
+    fn check_prefix(&self, raws: &[Vec<u8>]) -> Result<()> {
+        self.progress()?;
+        self.policy.check_prefix_commands(raws).map_err(owner_error)
+    }
 }
 fn owner_marker_present(path: &Path) -> Result<bool> {
     match fs::symlink_metadata(path.join("owner-task-policy.required")) {
@@ -379,6 +414,10 @@ fn owner_error(error: crate::operator_task_policy::PolicyError) -> Error {
 }
 impl OwnerPacketPermit {
     fn progress(&self) -> Result<()> {
+        ensure(
+            self.epoch.load(std::sync::atomic::Ordering::Acquire) == self.expected_epoch,
+            "OWNER_TASK_VIEW_CHANGED",
+        )?;
         ensure(
             !self.unavailable.load(std::sync::atomic::Ordering::Acquire),
             "OWNER_TASK_UNAVAILABLE",
@@ -466,6 +505,29 @@ impl Node {
                 && policy.context().parameters == hex::encode(settings.parameters()),
             "OWNER_TASK_CONTEXT",
         )?;
+        ensure(
+            inputs.pool_permissions.len() <= 64,
+            "OWNER_POOL_PERMISSION_LIMIT",
+        )?;
+        let mut pool_policies = Vec::new();
+        for permission in &inputs.pool_permissions {
+            let verified = crate::operator_task_policy::pool::authenticate_pool(
+                permission,
+                &inputs.authority,
+                &policy,
+                crate::operator_task_policy::now_ns().map_err(owner_error)?,
+            )
+            .map_err(owner_error)?;
+            ensure(
+                !pool_policies.iter().any(
+                    |p: &std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>| {
+                        p.same_operation(&verified)
+                    },
+                ),
+                "OWNER_POOL_DUPLICATE_PERMISSION",
+            )?;
+            pool_policies.push(std::sync::Arc::new(verified));
+        }
         crate::operator_task_policy::verify_catalog(&inputs, &policy).map_err(owner_error)?;
         let expected_marker = policy.marker(&inputs.journal_path).map_err(owner_error)?;
         let journal = crate::operator_task_policy::Journal::open(
@@ -522,6 +584,12 @@ impl Node {
             sync_dir(path)?;
         }
         let owner = OwnerPolicy {
+            pool_policies,
+            epoch: std::sync::Arc::new(std::sync::atomic::AtomicU64::new(1)),
+            outside_keys: (
+                inputs.authority.registry_key.clone(),
+                inputs.authority.task_key.clone(),
+            ),
             policy: std::sync::Arc::new(policy),
             required_marker: expected_marker,
             journal: RefCell::new(journal),
@@ -1681,6 +1749,14 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
     ) -> Result<Option<Hash>> {
+        self.check_admission_context_for_permit(packet, observed_now, None)
+    }
+    fn check_admission_context_for_permit(
+        &self,
+        packet: &Packet,
+        observed_now: u64,
+        reserved: Option<&OwnerPacketPermit>,
+    ) -> Result<Option<Hash>> {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
         self.ready()?;
@@ -1708,6 +1784,24 @@ impl Node {
                 "TIME_DEFERRED",
             )?;
             return Ok(Some(id));
+        }
+        if let Some(owner) = &self.owner_policy {
+            if owner.journal.borrow().work_operation_is_used(&owner.policy) {
+                // A reservation without a durable exact block is in-flight or
+                // uncertain/failed, not another authorization to reconstruct State.
+                let permit = reserved.ok_or("OWNER_TASK_OPERATION_USED")?;
+                permit.progress()?;
+                owner
+                    .journal
+                    .borrow()
+                    .recheck_before_commit(
+                        &owner.policy,
+                        &permit.reservation,
+                        &permit.facts,
+                        crate::operator_task_policy::now_ns().map_err(owner_error)?,
+                    )
+                    .map_err(owner_error)?;
+            }
         }
         let parent = self.record(h.parent)?;
         ensure(
@@ -1850,6 +1944,8 @@ impl Node {
             )
             .map_err(owner_error)?;
         Ok(Some(OwnerPacketPermit {
+            epoch: std::sync::Arc::clone(&owner.epoch),
+            expected_epoch: owner.epoch.load(std::sync::atomic::Ordering::Acquire),
             policy: std::sync::Arc::clone(&owner.policy),
             unavailable: std::sync::Arc::clone(&owner.unavailable),
             facts,
@@ -1875,6 +1971,242 @@ impl Node {
         }
         checked.owner_permit = permit;
         Ok(checked)
+    }
+    /// Trusted operator-only typed refresh. There is deliberately no anonymous RPC
+    /// or candidate-selected latest source. CLI may stop/reopen using the same protected
+    /// loader; an embedding owner must supply the externally fixed full descriptor.
+    pub fn refresh_operator_task_policy(
+        &mut self,
+        inputs: crate::operator_task_policy::RestrictedNodeInputs,
+    ) -> Result<()> {
+        let owner = self
+            .owner_policy
+            .as_ref()
+            .ok_or("OWNER_TASK_POLICY_REQUIRED")?;
+        ensure(
+            inputs.expected_uid == rustix::process::geteuid().as_raw(),
+            "OWNER_TASK_UID",
+        )?;
+        ensure(
+            (
+                inputs.authority.registry_key.as_str(),
+                inputs.authority.task_key.as_str(),
+            ) == (owner.outside_keys.0.as_str(), owner.outside_keys.1.as_str()),
+            "OWNER_TASK_KEYS_CHANGED",
+        )?;
+        let policy = crate::operator_task_policy::authenticate(
+            &inputs.raw_policy,
+            &inputs.authority,
+            crate::operator_task_policy::now_ns().map_err(owner_error)?,
+        )
+        .map_err(owner_error)?;
+        let old = owner.policy.context();
+        let new = policy.context();
+        ensure(
+            new.source_commit == old.source_commit
+                && new.node_policy_source == old.node_policy_source
+                && new.registry2_package == old.registry2_package
+                && policy.marker(&inputs.journal_path).map_err(owner_error)?
+                    == owner.required_marker,
+            "OWNER_TASK_NAMESPACE",
+        )?;
+        ensure(
+            policy.next_view_of(&owner.policy),
+            "OWNER_TASK_NEXT_VIEW_REQUIRED",
+        )?;
+        ensure(
+            inputs.pool_permissions.len() <= 64,
+            "OWNER_POOL_PERMISSION_LIMIT",
+        )?;
+        let mut pool_policies = Vec::new();
+        for permission in &inputs.pool_permissions {
+            let p = crate::operator_task_policy::pool::authenticate_pool(
+                permission,
+                &inputs.authority,
+                &policy,
+                crate::operator_task_policy::now_ns().map_err(owner_error)?,
+            )
+            .map_err(owner_error)?;
+            ensure(
+                !pool_policies.iter().any(
+                    |p0: &std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>| {
+                        p0.same_operation(&p)
+                    },
+                ),
+                "OWNER_POOL_DUPLICATE_PERMISSION",
+            )?;
+            pool_policies.push(std::sync::Arc::new(p));
+        }
+        crate::operator_task_policy::verify_catalog(&inputs, &policy).map_err(owner_error)?;
+        let next_epoch = owner
+            .epoch
+            .load(std::sync::atomic::Ordering::Acquire)
+            .checked_add(1)
+            .ok_or("OWNER_TASK_EPOCH_OVERFLOW")?;
+        let advanced = owner.journal.borrow_mut().advance(&policy);
+        if let Err(error) = advanced {
+            owner
+                .unavailable
+                .store(true, std::sync::atomic::Ordering::Release);
+            return Err(owner_error(error));
+        }
+        // The durable anchor is now visible; invalidate outstanding old capabilities
+        // before publishing new ones. No previously committed block is rewritten.
+        owner
+            .epoch
+            .store(next_epoch, std::sync::atomic::Ordering::Release);
+        let owner = self
+            .owner_policy
+            .as_mut()
+            .ok_or("OWNER_TASK_POLICY_REQUIRED")?;
+        owner.policy = std::sync::Arc::new(policy);
+        owner.pool_policies = pool_policies;
+        Ok(())
+    }
+    fn owner_pool_configured(&self) -> Result<()> {
+        if let Some(owner) = &self.owner_policy {
+            ensure(
+                !owner.pool_policies.is_empty(),
+                "OWNER_POOL_EXACT_COMMAND_REQUIRED",
+            )?;
+        }
+        Ok(())
+    }
+    fn begin_owner_pool(
+        &self,
+        command: &str,
+        raws: &[Vec<u8>],
+        context: Hash,
+    ) -> Result<Option<OwnerPoolPermit>> {
+        let Some(owner) = &self.owner_policy else {
+            return Ok(None);
+        };
+        ensure(
+            !owner.unavailable.load(std::sync::atomic::Ordering::Acquire),
+            "OWNER_TASK_UNAVAILABLE",
+        )?;
+        owner
+            .policy
+            .check_window(crate::operator_task_policy::now_ns().map_err(owner_error)?)
+            .map_err(owner_error)?;
+        let payload = crate::operator_task_policy::pool::pool_payload_sha256(command, raws)
+            .map_err(owner_error)?;
+        let matches: Vec<_> = owner
+            .pool_policies
+            .iter()
+            .filter(|p| p.matches(command, &payload))
+            .collect();
+        ensure(matches.len() == 1, "OWNER_POOL_EXACT_COMMAND_REQUIRED")?;
+        let policy = std::sync::Arc::clone(matches[0]);
+        ensure(
+            !owner.journal.borrow().pool_operation_is_used(&policy),
+            "OWNER_POOL_OPERATION_USED",
+        )?;
+        // Exact command equality precedes all parent-State/lease reconstruction.
+        let (parent, generation) = self.active()?;
+        policy
+            .check_parent(&hex::encode(parent), generation, &hex::encode(context))
+            .map_err(owner_error)?;
+        let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
+        let task =
+            bytes32(hex::decode(policy.task()).map_err(|_| Error::from("OWNER_POOL_TASK_HEX"))?)?;
+        let manifest = self
+            .eligible_work_task(parent, task, height)?
+            .ok_or("OWNER_TASK_COMPLETE_REGISTRATION_REQUIRED")?;
+        ensure(
+            manifest.purpose == TaskPurpose::Maintenance,
+            "OWNER_TASK_PURPOSE_PENDING",
+        )?;
+        ensure(
+            hex::encode(manifest.model) == owner.policy.task().native_model
+                && hex::encode(manifest.input) == owner.policy.task().native_input,
+            "OWNER_POOL_TASK_MATERIAL_CONTEXT",
+        )?;
+        let lease = self
+            .lifecycle_task_lease(parent, task, height)?
+            .encode()
+            .map_err(|_| Error::from("OWNER_TASK_LEASE"))?;
+        let facts = crate::operator_task_policy::pool::PoolFacts {
+            parent: hex::encode(parent),
+            generation,
+            pool_context: hex::encode(context),
+            registered_task: hex::encode(task),
+            lease_sha256: crate::operator_task_policy::digest_bytes(&lease),
+            command: command.into(),
+            payload_sha256: payload,
+        };
+        policy
+            .check(
+                &facts,
+                crate::operator_task_policy::now_ns().map_err(owner_error)?,
+            )
+            .map_err(owner_error)?;
+        let reservation = owner
+            .journal
+            .borrow_mut()
+            .reserve_pool(
+                &policy,
+                &facts,
+                crate::operator_task_policy::now_ns().map_err(owner_error)?,
+            )
+            .map_err(owner_error)?;
+        Ok(Some(OwnerPoolPermit {
+            policy,
+            unavailable: std::sync::Arc::clone(&owner.unavailable),
+            epoch: std::sync::Arc::clone(&owner.epoch),
+            expected_epoch: owner.epoch.load(std::sync::atomic::Ordering::Acquire),
+            facts,
+            reservation,
+        }))
+    }
+    fn recheck_owner_pool(&self, permit: Option<&OwnerPoolPermit>) -> Result<()> {
+        ensure(
+            self.owner_policy.is_some() == permit.is_some(),
+            "OWNER_POOL_PERMIT_REQUIRED",
+        )?;
+        if let (Some(owner), Some(permit)) = (&self.owner_policy, permit) {
+            permit.progress()?;
+            owner
+                .journal
+                .borrow()
+                .recheck_pool(
+                    &permit.policy,
+                    &permit.reservation,
+                    &permit.facts,
+                    crate::operator_task_policy::now_ns().map_err(owner_error)?,
+                )
+                .map_err(owner_error)?;
+            ensure(
+                self.active()?
+                    == (
+                        bytes32(
+                            hex::decode(&permit.facts.parent)
+                                .map_err(|_| Error::from("OWNER_POOL_PARENT_HEX"))?,
+                        )?,
+                        permit.facts.generation,
+                    ),
+                "OWNER_POOL_PARENT_CHANGED",
+            )?;
+        }
+        Ok(())
+    }
+    fn check_owner_pool_retained(
+        &self,
+        permit: Option<&OwnerPoolPermit>,
+        raws: &[Vec<u8>],
+    ) -> Result<()> {
+        self.recheck_owner_pool(permit)?;
+        if let (Some(owner), Some(permit)) = (&self.owner_policy, permit) {
+            let payload =
+                crate::operator_task_policy::pool::pool_payload_sha256("submit-bundle", raws)
+                    .map_err(owner_error)?;
+            owner
+                .journal
+                .borrow()
+                .prefix_group_authorized(&permit.policy, &payload)
+                .map_err(owner_error)?;
+        }
+        Ok(())
     }
     fn owner_preview_available(&self) -> Result<()> {
         ensure(
@@ -1927,7 +2259,9 @@ impl Node {
             work: verified_work,
             owner_permit,
         } = checked;
-        if let Some(id) = self.check_admission_context(&packet, observed_now)? {
+        if let Some(id) =
+            self.check_admission_context_for_permit(&packet, observed_now, owner_permit.as_ref())?
+        {
             return Ok(id);
         }
         ensure(

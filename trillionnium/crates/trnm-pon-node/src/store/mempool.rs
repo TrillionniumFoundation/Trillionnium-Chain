@@ -292,6 +292,7 @@ fn validate_pending(
     limits: &PoolLimits,
     node: &Node,
 ) -> Result<usize> {
+    node.owner_preview_available()?;
     PendingPreview {
         height,
         state,
@@ -302,6 +303,7 @@ fn validate_pending(
         checked: None,
         parent_observation: None,
         control: &ExecutionControl::new(&|_| Ok(()), &()),
+        owner_permit: None,
     }
     .validate(raws)
     .map_err(PoolPreviewError::into_error)
@@ -345,9 +347,18 @@ struct PendingPreview<'state, 'operation> {
     checked: Option<CheckedExecutionParent<'state>>,
     parent_observation: Option<CommitmentObservation>,
     control: &'operation ExecutionControl<'operation, crate::Error>,
+    owner_permit: Option<&'operation super::OwnerPoolPermit>,
 }
 impl PendingPreview<'_, '_> {
     fn validate(&mut self, raws: &[Vec<u8>]) -> std::result::Result<usize, PoolPreviewError> {
+        self.node
+            .recheck_owner_pool(self.owner_permit)
+            .map_err(PoolPreviewError::Cancelled)?;
+        if let Some(permit) = self.owner_permit {
+            permit
+                .check_prefix(raws)
+                .map_err(PoolPreviewError::Cancelled)?;
+        }
         let Self {
             height,
             state,
@@ -493,6 +504,8 @@ impl Node {
                 &raw,
             ],
         );
+        let owner_permit =
+            self.begin_owner_pool("enable-pool", std::slice::from_ref(&raw), context)?;
         let old: Option<(Vec<u8>, Vec<u8>)> = self
             .db
             .query_row(
@@ -503,13 +516,42 @@ impl Node {
             .optional()?;
         if let Some((saved, policy)) = old {
             ensure(saved == context && policy == raw, "POOL_CONTEXT")?
+        } else if let Some(permit) = &owner_permit {
+            self.recheck_owner_pool(Some(permit))?;
+            let parent = bytes32(
+                hex::decode(&permit.facts.parent)
+                    .map_err(|_| crate::Error::from("OWNER_POOL_PARENT_HEX"))?,
+            )?;
+            let generation = permit.facts.generation;
+            let tx = self
+                .db
+                .transaction_with_behavior(TransactionBehavior::Immediate)?;
+            fence(&tx, parent, generation)?;
+            permit.progress()?;
+            tx.execute(
+                "INSERT INTO local_pool_metadata(singleton,context,limits) VALUES(1,?,?)",
+                params![context.as_slice(), raw],
+            )?;
+            permit.progress()?;
+            tx.commit()?;
         } else {
             self.db.execute(
                 "INSERT INTO local_pool_metadata(singleton,context,limits) VALUES(1,?,?)",
                 params![context.as_slice(), raw],
             )?;
         }
-        self.pool_reconcile()?;
+        if let Some(permit) = &owner_permit {
+            let actual = self.pool_parent()?;
+            let progress = |_| permit.progress();
+            self.pool_reconcile_parent_with_control(
+                &limits,
+                &actual,
+                &ExecutionControl::new(&progress, &()),
+                Some(permit),
+            )?;
+        } else {
+            self.pool_reconcile()?;
+        }
         Ok(context)
     }
     fn pool_policy(&self) -> Result<(Hash, PoolLimits)> {
@@ -659,10 +701,20 @@ impl Node {
     /// Classification is branch-relative. SequenceConsumed does not assert that
     /// this exact transaction was mined or confirmed; use normal chain observation.
     pub fn pool_reconcile(&mut self) -> Result<PoolStatus> {
-        self.owner_preview_available()?;
-        let (_, limits) = self.pool_policy()?;
+        self.owner_pool_configured()?;
+        let (context, limits) = self.pool_policy()?;
+        let owner_permit = self.begin_owner_pool("reconcile", &[], context)?;
         let actual = self.pool_parent()?;
-        self.pool_reconcile_parent(&limits, &actual)?;
+        let progress = |_| match &owner_permit {
+            Some(permit) => permit.progress(),
+            None => Ok(()),
+        };
+        self.pool_reconcile_parent_with_control(
+            &limits,
+            &actual,
+            &ExecutionControl::new(&progress, &()),
+            owner_permit.as_ref(),
+        )?;
         self.pool_status_snapshot()
     }
     fn pool_parent(&self) -> Result<PoolParent> {
@@ -678,23 +730,14 @@ impl Node {
             state,
         })
     }
-    fn pool_reconcile_parent<'a>(
-        &mut self,
-        limits: &PoolLimits,
-        actual: &'a PoolParent,
-    ) -> Result<PreviewBinding<'a>> {
-        self.pool_reconcile_parent_with_control(
-            limits,
-            actual,
-            &ExecutionControl::new(&|_| Ok(()), &()),
-        )
-    }
     fn pool_reconcile_parent_with_control<'a>(
         &mut self,
         limits: &PoolLimits,
         actual: &'a PoolParent,
         control: &ExecutionControl<'_, crate::Error>,
+        owner_permit: Option<&super::OwnerPoolPermit>,
     ) -> Result<PreviewBinding<'a>> {
+        self.recheck_owner_pool(owner_permit)?;
         let PoolParent {
             id: parent,
             generation,
@@ -704,6 +747,12 @@ impl Node {
         } = actual;
         let (parent, generation, height) = (*parent, *generation, *height);
         let groups = self.pool_groups(limits)?;
+        // Prior admission and current signed retained-group permission are both
+        // required before branch-relative status/State processing of each group.
+        for group in &groups {
+            let raws: Vec<_> = group.rows.iter().map(|row| row.raw.clone()).collect();
+            self.check_owner_pool_retained(owner_permit, &raws)?;
+        }
         let mut accepted = Vec::new();
         let mut preview = PendingPreview {
             height,
@@ -715,6 +764,7 @@ impl Node {
             checked: None,
             parent_observation: None,
             control,
+            owner_permit,
         };
         let mut updates = Vec::new();
         for group in groups {
@@ -758,6 +808,7 @@ impl Node {
             observation: preview.parent_observation.take(),
         };
         drop(preview);
+        self.recheck_owner_pool(owner_permit)?;
         (control.progress)(ExecutionProgress::BeforePersistence)?;
         let tx = self
             .db
@@ -850,7 +901,7 @@ impl Node {
         raws: Vec<Vec<u8>>,
         control: &ExecutionControl<'_, crate::Error>,
     ) -> Result<PoolReceipt> {
-        self.owner_preview_available()?;
+        self.owner_pool_configured()?;
         let (context, limits) = self.pool_policy()?;
         ensure(
             !raws.is_empty() && raws.len() <= limits.max_group_members,
@@ -862,8 +913,23 @@ impl Node {
         )?;
         let total: usize = raws.iter().map(Vec::len).sum();
         ensure(total <= limits.max_bytes, "POOL_BYTE_LIMIT")?;
+        let owner_permit = self.begin_owner_pool("submit-bundle", &raws, context)?;
+        let progress = |point| {
+            (control.progress)(point)?;
+            if let Some(permit) = &owner_permit {
+                permit.progress()?;
+            }
+            Ok(())
+        };
+        let guarded_control = ExecutionControl::new(&progress, control.worker_accounting);
+        let control = &guarded_control;
         let actual = self.pool_parent()?;
-        let binding = self.pool_reconcile_parent_with_control(&limits, &actual, control)?;
+        let binding = self.pool_reconcile_parent_with_control(
+            &limits,
+            &actual,
+            control,
+            owner_permit.as_ref(),
+        )?;
         // Preserve the original reconcile snapshot checks and error precedence.
         self.pool_status_snapshot()?;
         let groups = self.pool_groups(&limits)?;
@@ -1013,9 +1079,11 @@ impl Node {
             checked: binding.checked,
             parent_observation: binding.observation,
             control,
+            owner_permit: owner_permit.as_ref(),
         }
         .validate(&candidate)
         .map_err(PoolPreviewError::into_error)?;
+        self.recheck_owner_pool(owner_permit.as_ref())?;
         (control.progress)(ExecutionProgress::BeforePersistence)?;
         let tx = self
             .db
@@ -1059,6 +1127,7 @@ impl Node {
         max_records: usize,
         max_bytes: usize,
     ) -> Result<PoolBatch> {
+        self.owner_preview_available()?;
         ensure(self.active()? == (parent, generation), "POOL_STALE_PARENT")?;
         let (context, limits) = self.pool_policy()?;
         ensure(
@@ -1103,6 +1172,7 @@ impl Node {
     /// Exact retained group/raw recheck immediately before the mining owner uses
     /// a batch. A fence comparison alone never authenticates mutable batch fields.
     pub fn pool_validate_batch(&mut self, batch: &PoolBatch) -> Result<usize> {
+        self.owner_preview_available()?;
         ensure(self.pool_batch_is_current(batch)?, "POOL_STALE_PARENT")?;
         let (_, limits) = self.pool_policy()?;
         ensure(
@@ -1154,6 +1224,7 @@ impl Node {
     /// Explicit terminal pruning is local and monotonic, never a branch rollback.
     /// Removed groups cannot be silently resurrected by resubmission or reorg.
     pub fn pool_prune_terminal(&mut self, id: Hash) -> Result<()> {
+        self.owner_preview_available()?;
         self.pool_reconcile()?;
         let (_, limits) = self.pool_policy()?;
         let groups = self.pool_groups(&limits)?;
@@ -1184,6 +1255,61 @@ fn fence(db: &rusqlite::Transaction<'_>, parent: Hash, generation: u64) -> Resul
         |r| Ok((r.get(0)?, r.get(1)?)),
     )?;
     ensure(tip == parent && recorded == generation, "POOL_STALE_PARENT")
+}
+
+#[cfg(test)]
+mod owner_enable_fence_tests {
+    use super::*;
+
+    #[test]
+    fn captured_enable_fence_refuses_changed_parent_or_generation_before_metadata_write() {
+        for change_parent in [false, true] {
+            let directory = crate::operator_task_policy::tests::directory();
+            let mut node = Node::open(
+                directory.path(),
+                crate::Settings::development(Some(1)).unwrap(),
+                1,
+            )
+            .unwrap();
+            let captured = node.active().unwrap();
+            let changed_parent = if change_parent { [7; 32] } else { captured.0 };
+            let changed_generation = if change_parent {
+                captured.1
+            } else {
+                captured.1 + 1
+            };
+            // Simulate a distinct active-row writer between permit recheck and
+            // the metadata transaction. No network or proof is involved.
+            node.db
+                .execute(
+                    "UPDATE active SET tip=?,generation=? WHERE singleton=1",
+                    params![changed_parent.as_slice(), changed_generation],
+                )
+                .unwrap();
+            let actual = node.active().unwrap();
+            assert_ne!(actual, captured);
+            let tx = node
+                .db
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .unwrap();
+            assert_eq!(
+                fence(&tx, captured.0, captured.1)
+                    .err()
+                    .unwrap()
+                    .to_string(),
+                "POOL_STALE_PARENT"
+            );
+            assert_eq!(
+                tx.query_row("SELECT COUNT(*) FROM local_pool_metadata", [], |row| row
+                    .get::<_, u64>(0))
+                    .unwrap(),
+                0
+            );
+            // Rebinding to the fresh active pair would pass this SQL fence,
+            // which is why a restricted enable must retain its permit pair.
+            assert!(fence(&tx, actual.0, actual.1).is_ok());
+        }
+    }
 }
 
 #[cfg(test)]

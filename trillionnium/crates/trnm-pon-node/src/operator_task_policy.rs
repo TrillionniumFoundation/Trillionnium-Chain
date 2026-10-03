@@ -13,8 +13,10 @@ use std::os::unix::fs::{MetadataExt, OpenOptionsExt};
 use std::path::{Path, PathBuf};
 use trnm_crypto_primitives::verify_hex_strict;
 
-pub const MODE: &str = "restricted-owner-node-v1";
-const DOMAIN: &[u8] = b"TRNM-RESTRICTED-NODE-GRANT1";
+pub const MODE: &str = "restricted-owner-node-v2";
+#[path = "operator_pool_policy.rs"]
+pub mod pool;
+const DOMAIN: &[u8] = b"TRNM-RESTRICTED-NODE-GRANT2";
 const MAX_POLICY_BYTES: usize = 64 << 10;
 const MAX_FILES: usize = 256;
 const MAX_WINDOW_NS: u64 = 86_400_000_000_000;
@@ -183,6 +185,7 @@ pub struct MaterialInput {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RestrictedNodeInputs {
+    pub pool_permissions: Vec<pool::PoolExternalPermission>,
     pub raw_policy: Vec<u8>,
     pub authority: ExternalAuthority,
     pub journal_path: PathBuf,
@@ -321,7 +324,12 @@ pub fn validate_protected_inputs(
             && context.registry2_package == registry2_package,
         PolicyError::ExternalContext,
     )?;
-    authenticate(&inputs.raw_policy, &inputs.authority, now_ns()?)?;
+    let now = now_ns()?;
+    let policy = authenticate(&inputs.raw_policy, &inputs.authority, now)?;
+    require(inputs.pool_permissions.len() <= 64, PolicyError::Capacity)?;
+    for permission in &inputs.pool_permissions {
+        pool::authenticate_pool(permission, &inputs.authority, &policy, now)?;
+    }
     Ok(())
 }
 pub enum SigningRole {
@@ -673,6 +681,11 @@ impl VerifiedPolicy {
     pub(crate) fn context(&self) -> &Context {
         &self.body.context
     }
+    pub(crate) fn next_view_of(&self, old: &Self) -> bool {
+        old.body.registry_sequence.checked_add(1) == Some(self.body.registry_sequence)
+            && self.body.registry_previous_digest.as_deref()
+                == Some(old.body.registry_digest.as_str())
+    }
     pub(crate) fn marker(&self, journal: &Path) -> Result<Vec<u8>> {
         require(journal.is_absolute(), PolicyError::Input)?;
         let value = serde_json::json!({"schema": MODE, "registry": self.body.context.registry_id,
@@ -778,6 +791,7 @@ pub struct Journal {
     anchor_sequence: u64,
     anchor_digest: String,
     claims: Vec<Claim>,
+    pool_claims: Vec<pool::PoolClaim>,
     unavailable: bool,
 }
 pub(crate) struct Reservation {
@@ -909,7 +923,7 @@ impl Journal {
             .map_err(|_| PolicyError::Busy)?;
         let c = &policy.body.context;
         let identity = JournalIdentity {
-            schema: "restricted-owner-node-journal-v1".into(),
+            schema: "restricted-owner-node-journal-v2".into(),
             registry: c.registry_id.clone(),
             operator: c.operator_id.clone(),
             network: c.network.clone(),
@@ -933,6 +947,7 @@ impl Journal {
         }
         let mut anchors = Vec::new();
         let mut claims = Vec::new();
+        let mut pool_claims = Vec::new();
         let mut entries = 0;
         for entry in io(fs::read_dir(&pinned))? {
             entries += 1;
@@ -965,6 +980,14 @@ impl Journal {
                     hash_hex(h, 32)?;
                 }
                 anchors.push(anchor);
+            } else if let Some(suffix) = name
+                .strip_prefix("pool-claim-")
+                .and_then(|s| s.strip_suffix(".json"))
+            {
+                let claim: pool::PoolClaim = read_json(&pinned.join(&name), uid)?;
+                pool::validate_retained_claim(&claim, &identity)?;
+                require(suffix == claim.operation, PolicyError::Journal)?;
+                pool_claims.push(claim);
             } else if let Some(suffix) = name
                 .strip_prefix("claim-")
                 .and_then(|s| s.strip_suffix(".json"))
@@ -1004,7 +1027,7 @@ impl Journal {
             }
         }
         require(
-            anchors.len() <= MAX_FILES && claims.len() <= MAX_FILES,
+            anchors.len() <= MAX_FILES && claims.len() + pool_claims.len() <= MAX_FILES,
             PolicyError::Capacity,
         )?;
         anchors.sort_by_key(|a| a.sequence);
@@ -1022,6 +1045,12 @@ impl Journal {
                 .ok_or(PolicyError::Journal)?;
             require(anchor.digest == claim.registry_digest, PolicyError::Journal)?;
         }
+        for claim in &pool_claims {
+            let anchor = anchors
+                .get((claim.sequence - 1) as usize)
+                .ok_or(PolicyError::Journal)?;
+            require(anchor.digest == claim.registry_digest, PolicyError::Journal)?;
+        }
         let last = anchors.last();
         let mut owner = Self {
             path: path.to_owned(),
@@ -1032,6 +1061,7 @@ impl Journal {
             anchor_sequence: last.map_or(0, |a| a.sequence),
             anchor_digest: last.map_or_else(String::new, |a| a.digest.clone()),
             claims,
+            pool_claims,
             unavailable: false,
         };
         owner.advance(policy)?;
@@ -1114,6 +1144,11 @@ impl Journal {
         self.anchor_digest = g.registry_digest.clone();
         Ok(())
     }
+    pub(crate) fn work_operation_is_used(&self, policy: &VerifiedPolicy) -> bool {
+        self.claims
+            .iter()
+            .any(|claim| claim.operation == policy.body.operation_id)
+    }
     pub(crate) fn reserve(
         &mut self,
         policy: &VerifiedPolicy,
@@ -1129,7 +1164,10 @@ impl Journal {
             !self.claims.iter().any(|c| c.operation == id),
             PolicyError::Replay,
         )?;
-        require(self.claims.len() < MAX_FILES, PolicyError::Capacity)?;
+        require(
+            self.claims.len() + self.pool_claims.len() < MAX_FILES,
+            PolicyError::Capacity,
+        )?;
         // Aggregate by registered Native task and declared class, rather than by
         // declaration/view/source epoch. A new envelope cannot reset its usage.
         let rows: Vec<_> = self
@@ -1147,12 +1185,23 @@ impl Journal {
             funding_units: 0,
             reuse_uses: 0,
         };
+        let pool_rows: Vec<_> = self
+            .pool_claims
+            .iter()
+            .filter(|c| {
+                c.native_task == policy.body.task.native_task
+                    && c.instance_class == policy.body.instance_class
+            })
+            .collect();
         for claim in &rows {
+            usage = add(&usage, &claim.allocation)?;
+        }
+        for claim in &pool_rows {
             usage = add(&usage, &claim.allocation)?;
         }
         usage = add(&usage, &policy.body.allocation)?;
         require(
-            (rows.len() as u64) < policy.body.limits.operations
+            ((rows.len() + pool_rows.len()) as u64) < policy.body.limits.operations
                 && within(&usage, &policy.body.limits.allocation),
             PolicyError::Budget,
         )?;
