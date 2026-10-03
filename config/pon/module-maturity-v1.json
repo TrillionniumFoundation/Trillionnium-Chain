@@ -8,7 +8,60 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M00.DecodeHeader",
+          "implementation_kind": "pure-component",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/contract_wire.py",
+              "symbol": "header_decode"
+            },
+            {
+              "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+              "symbol": "Header::decode"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/contract_wire.py",
+            "symbol": "header_decode"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Python codec and native Rust codec",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_contracts.py::CodecTests.test_header_mutations_bind_all_fields",
+            "formal/pon-nakamoto-v1/test_interop.py::InteropTests.test_rejection_vectors"
+          ],
+          "remaining": "Independent implementation and production upgrade acceptance; decoding is not admission."
+        },
+        {
+          "operation": "M00.DecodeTransaction",
+          "implementation_kind": "pure-component",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/contract_wire.py",
+              "symbol": "tx_decode"
+            },
+            {
+              "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+              "symbol": "Envelope::decode"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/contract_wire.py",
+            "symbol": "tx_decode"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Python codec and native Rust codec",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_interop.py::InteropTests.test_rejection_vectors"
+          ],
+          "remaining": "No nonce reservation or balance authority from decoded bytes."
+        }
+      ]
     },
     {
       "id": "M01",
@@ -17,16 +70,136 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M01.VerifyWork",
+          "implementation_kind": "native-component-with-reference-caller",
+          "runtime_symbols": [
+            {
+              "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+              "symbol": "verify"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/work_backend.py",
+              "symbol": "verify"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/work_backend.py",
+            "symbol": "verify"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Explicit TRNM_NATIVE_WORK or separately named Python reference",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_work_backend.py::NativeWorkBridgeTests.test_proof_bytes_and_verified_product_equal_oracle",
+            "formal/pon-nakamoto-v1/test_work_backend.py::NativeWorkBridgeTests.test_wrong_statement_and_bad_trace_reject_without_fallback"
+          ],
+          "remaining": "Fastest-adversary work cost, public ingress fairness and complete native host remain unqualified."
+        },
+        {
+          "operation": "M01.VerifyTransactionSignature",
+          "implementation_kind": "native-component-with-reference-caller",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "execute_reference"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "execute"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/native_execution.py",
+            "symbol": "execute_native"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "M06 strict native main-envelope and state-bound quota verification",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_bad_signature_rejects_entire_block_without_parent_mutation",
+            "formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_native_and_reference_reject_weak_sender_without_state_change"
+          ],
+          "remaining": "Component signature parity does not establish independent cryptographic acceptance."
+        }
+      ]
     },
     {
       "id": "M02",
       "documented": true,
-      "has_native_component": false,
+      "has_native_component": true,
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M02.AdmitBlock",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.admit"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::admit"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_root_substitution_rejects_before_persistence",
+            "formal/pon-nakamoto-v1/test_invariants.py::CheapAdmissionTests.test_transaction_count_rejects_before_root_or_work_replay",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_golden_native_state_matches_separate_oracle_and_duplicate_is_idempotent"
+          ],
+          "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
+        },
+        {
+          "operation": "M02.ChooseBranch",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.recover"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.activate"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::recover"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_admitted_before_activation_is_selected_on_restart",
+            "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_same_work_keeps_existing_tip",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_every_reorg_process_cut_and_admission_gap_recovers_once"
+          ],
+          "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
+        }
+      ]
     },
     {
       "id": "M03",
@@ -35,7 +208,67 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M03.RunWorkAttempt",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.make"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::make"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_confirmed_transfer_is_removed_by_a_real_heavier_fork"
+          ],
+          "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
+        },
+        {
+          "operation": "M03.EnterExternalEffect",
+          "implementation_kind": "reference-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "EffectJournal.enter"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "EffectJournal.revoke"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/ledger.py",
+            "symbol": "EffectJournal.enter"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Independent SQLite WAL/FULL effect journal",
+          "persistence_owner": {
+            "path": "formal/pon-nakamoto-v1/ledger.py",
+            "symbol": "EffectJournal"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_invariants.py::EffectLinearizationTests.test_revoke_committed_first_prevents_entry",
+            "formal/pon-nakamoto-v1/test_invariants.py::EffectLinearizationTests.test_crash_after_entry_commit_rejects_replay"
+          ],
+          "remaining": "Entry is not actual dispatch, target-side exactly-once, final-use authority or coherent rollback protection."
+        }
+      ]
     },
     {
       "id": "M04",
@@ -44,7 +277,111 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M04.ReadFrame",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "read_frame"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "serve"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "serve_authenticated"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+            "symbol": "serve_authenticated"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native BE32 socket entry: loopback without authentication or explicit allowlisted signed private-development mode.",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_slow_partial_frame_cannot_extend_the_absolute_deadline",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry"
+          ],
+          "remaining": "No confidentiality, peer discovery, open gossip, Sybil fairness, WAN qualification or public service acceptance."
+        },
+        {
+          "operation": "M04.PropagateVerifiedBlock",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "call"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "call_authenticated_durable"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "sync_from_authenticated_durable"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+            "symbol": "call_authenticated_durable"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development request path with independently validating destination Node and optional durable signed client outbox.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_socket_history_uses_real_native_validation_and_separate_stores",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"
+          ],
+          "remaining": "Allowlisted same-owner development delivery is not open discovery, independent operation, WAN liveness or public attack acceptance."
+        },
+        {
+          "operation": "M04.AuthenticateRequest",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "authenticate_request"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "serve_authenticated"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::begin_authenticated_request"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::finish_authenticated_request"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+            "symbol": "serve_authenticated"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Canonical strict-Ed25519 private-development session with durable inbound replay reservation and signed response cache.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_authenticated_bytes_bind_session_signature_and_canonical_request",
+            "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_pending_request_recovers_and_completed_response_replays",
+            "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_committed_submit_with_missing_auth_ack_recovers_without_work_replay",
+            "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_cached_terminal_error_is_reverified_and_counted_as_rejected"
+          ],
+          "remaining": "Authentication supplies identity/integrity/replay control only; confidentiality, permissionless identity, public fairness and independent operators remain absent."
+        }
+      ]
     },
     {
       "id": "M05",
@@ -53,7 +390,64 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M05.ValidateTransaction",
+          "implementation_kind": "native-component-with-reference-caller",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "execute_reference"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "execute"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/native_execution.py",
+            "symbol": "execute_native"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native canonical command validation plus independent Python reference",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_contracts.py::ExecutionTests.test_signature_nonce_and_no_write_on_reject",
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_later_invalid_signature_does_not_change_canonical_error"
+          ],
+          "remaining": "Native mempool reservation and ordinary peer event wiring remain separate."
+        },
+        {
+          "operation": "M05.ReconsiderAfterReorg",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+              "symbol": "Node::pool_reconcile"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+              "symbol": "Node::pool_status_snapshot"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+            "symbol": "Node::pool_status"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Explicit local reconciliation against actual active parent; complete original signed groups revalidated through M05/M06 in insertion order. Read-only snapshots expose stale classification.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::queued_facts_reopen_exact_raws_real_typed_gate_and_funding_nonce_dependencies",
+            "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::retained_groups_restore_after_real_heavier_fork_and_terminal_prune_is_monotonic"
+          ],
+          "remaining": "Explicit local pool/status/miner callers are implemented; automatic external event consumption, ordinary product integration, public fairness and physical-effect reconciliation remain unqualified. Source bindings do not assert a fresh executed receipt."
+        }
+      ]
     },
     {
       "id": "M06",
@@ -62,25 +456,243 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M06.ExecuteCandidate",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "execute_reference"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "execute"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "ExecutionSession::execute"
+            },
+            {
+              "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+              "symbol": "StateTree::apply"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/native_session.py",
+              "symbol": "NativeExecutionSession.execute"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::execute_derived"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::admit"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native Node executes actual parent state through M06 and owns durable admission; separate Python/reference and bridge-session callers remain independently scoped.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_all_twelve_tags_match_for_1_2_4_8_workers",
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict",
+            "formal/pon-nakamoto-v1/test_native_session.py::NativeSessionTests.test_all_twelve_tags_run_in_1_2_4_8_worker_persistent_sessions",
+            "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_boolean_before_value_does_not_alias_integer_zero",
+            "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_lost_reply_discards_advanced_cache_and_retries_same_input",
+            "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_exact_predecessor_memo_does_not_skip_returned_root_verification",
+            "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs::inactive_extensions_full_state_receipts_deltas_and_reopen_match_complete_execution"
+          ],
+          "remaining": "Derived commitments remain disposable computations, not authority or native paged persistence. Ordinary product integration, public service qualification and physical power-loss acceptance remain open."
+        },
+        {
+          "operation": "M06.DeriveBranchDelta",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.admit"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger._apply_delta"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::derive_successor"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::admit"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::admit"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native Node derives complete ordered before/after changes and commits branch data through its SQLite owner; separate reference oracle remains available.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly",
+            "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs::inactive_extensions_full_state_receipts_deltas_and_reopen_match_complete_execution",
+            "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs::actual_heavier_fork_cut_invalidates_then_recovers_full_canonical_state"
+          ],
+          "remaining": "Native development branch persistence is distinct from reusable local MVCC stores. Derived caches do not grant authority; physical power-loss, external effects and ordinary product integration remain unqualified."
+        }
+      ]
     },
     {
       "id": "M07",
       "documented": true,
-      "has_native_component": false,
+      "has_native_component": true,
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M07.OpenNamespace",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.__init__"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::open"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_every_initialization_cut_recovers_only_our_exact_intent",
+            "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_injected_trigger_rejects_before_writable_open",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_initialization_process_cuts_recover_only_the_owned_context"
+          ],
+          "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
+        },
+        {
+          "operation": "M07.StageBranch",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.admit"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::admit"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_root_substitution_rejects_before_persistence",
+            "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_admitted_before_activation_is_selected_on_restart",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_malformed_work_and_changed_duplicate_never_mutate_state"
+          ],
+          "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
+        }
+      ]
     },
     {
       "id": "M08",
       "documented": true,
-      "has_native_component": false,
+      "has_native_component": true,
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M08.PlanReorg",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.activate"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::activate_with_fault"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly",
+            "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_append_retains_one_physical_state_slot",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_every_reorg_process_cut_and_admission_gap_recovers_once"
+          ],
+          "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
+        },
+        {
+          "operation": "M08.RecoverAndPublish",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger._recover_intent"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.recover"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::resume_intent"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly",
+            "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_admitted_before_activation_is_selected_on_restart",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_every_reorg_process_cut_and_admission_gap_recovers_once"
+          ],
+          "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
+        }
+      ]
     },
     {
       "id": "M09",
@@ -89,7 +701,50 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M09.ValidateArtifact",
+          "implementation_kind": "pure-component",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/model_contract.py",
+              "symbol": "load_model_bytes"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/model_contract.py",
+            "symbol": "load_model"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Bounded non-executable 64KiB integer-model loader",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_exact_expected_artifact_not_mutable_path",
+            "formal/pon-nakamoto-v1/test_artifacts.py::ArtifactBindingTests.test_loader_size_is_bounded_before_json_decode"
+          ],
+          "remaining": "Not arbitrary large-model loading, model provenance or a public export grant."
+        },
+        {
+          "operation": "M09.FetchWithoutAuthor",
+          "implementation_kind": "controlled-experiment",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/experiments/settle_model.py",
+              "symbol": "run"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/experiments/settle_model.py",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Controlled verified-copy experiment only",
+          "persistence_owner": null,
+          "evidence_selectors": [],
+          "remaining": "Current zero-adoption E3 run is not a new author-loss/DA campaign; use historical artifacts for their actual scope. Independent long-term custodians and repair remain open."
+        }
+      ]
     },
     {
       "id": "M10",
@@ -98,7 +753,92 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M10.SubmitContribution",
+          "implementation_kind": "native-component-with-reference-caller",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "execute_reference"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "execute"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/native_execution.py",
+            "symbol": "execute_native"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native signed contribution command and Python reference",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_invariants.py::CandidateWindowTests.test_round_is_part_of_contribution_and_signature_identity",
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_native_round_boundary_retires_history_and_rejects_old_signature"
+          ],
+          "remaining": "Bounded windows are not public economic Sybil fairness or authentic task provenance."
+        },
+        {
+          "operation": "M10.PublishEvaluatedRelease",
+          "implementation_kind": "native-component-with-reference-caller",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "execute_reference"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "execute"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/native_execution.py",
+            "symbol": "execute_native"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native publication command with scored roots and reference oracle",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement"
+          ],
+          "remaining": "Synthetic signed release transitions are not three improving public-model generations."
+        },
+        {
+          "operation": "M10.SubmitFactorContribution",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+              "symbol": "admit"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+              "symbol": "build_witness"
+            },
+            {
+              "path": "trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs",
+              "symbol": "verify_integer_linear_v1"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+            "symbol": "execute"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Explicit revision11 native signed tag23: M00 ILF2 codec, M06 actual ILM2 parent loading/complete BA and model checks, reused pure M11 integer kernel; existing Node persists staged State/deltas.",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::exact_variants_refuse_and_real_fork_restores_duplicate_window",
+            "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::missing_score_abort_keeps_same_round_marker_and_new_round_allows_update",
+            "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::loaded_release_parent_full_range_and_new_round_are_native",
+            "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs::cli_selects_fresh_profile_and_genesis_before_any_candidate"
+          ],
+          "remaining": "The four real attributed Rust test selectors are source bindings; exact component execution remains in its retained receipts and is not whole-source qualification. General functional equivalence, source budgets, independent evaluation, positive utility and public acceptance remain unqualified."
+        }
+      ]
     },
     {
       "id": "M11",
@@ -107,7 +847,74 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M11.EvaluateFrozenModel",
+          "implementation_kind": "controlled-experiment",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
+              "symbol": "evaluate_bundle"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
+              "symbol": "verify_calibration"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/experiments/model_loop.py",
+            "symbol": "worker"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "E3 sealed evaluation with recomputed empirical value and fixed-objective accuracy-bound claim; not prospective or general-circuit acceptance",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_self_consistent_rehashed_calibration_score_still_requires_actual_replay",
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::EvaluationWorkerTests.test_legacy_unbound_reference_cannot_authorize_evaluation",
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_empirical_optimum_certificate_is_bound_to_only_the_committed_dataset",
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_empirical_optimality_gap_is_recomputed_not_inferred_from_positive_gain",
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_rehashed_value_claim_cannot_promote_future_or_general_optimality"
+          ],
+          "remaining": "Future-window, independent evaluator, provenance and poisoning acceptance remain open."
+        },
+        {
+          "operation": "M11.AdmitEvaluation",
+          "implementation_kind": "native-component-with-reference-caller",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "execute_reference"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "execute"
+            },
+            {
+              "path": "trillionnium/crates/trnm-verification-profiles/src/closed_round.rs",
+              "symbol": "complete_score"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/evaluation_round.py",
+              "symbol": "complete_score"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/native_execution.py",
+            "symbol": "execute_native"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Legacy revision3 first-two default, or explicitly selected fresh revision4 all-eligible minimum in existing M11/M06 native and independent Python owners",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_all_twelve_tags_match_for_1_2_4_8_workers",
+            "formal/pon-nakamoto-v1/test_contracts.py::ExecutionTests.test_contribution_cannot_swap_parent_family_or_claim_self_eval",
+            "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_all_six_arrival_orders_close_to_the_same_state_with_all_workers",
+            "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_two_fast_high_scores_do_not_unlock_and_missing_vote_expires"
+          ],
+          "remaining": "Complete-roster aggregation is order-independent for a fixed set; availability, objective disputes, functional-copy attribution and independent evaluator/model authority remain unaccepted."
+        }
+      ]
     },
     {
       "id": "M12",
@@ -116,7 +923,70 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M12.ClaimContributionReward",
+          "implementation_kind": "native-component-with-reference-caller",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "execute_reference"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "execute"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/native_execution.py",
+            "symbol": "execute_native"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native root-bound finite reward and refund command",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_unclaimed_release_budget_refunds_at_reserved_deadline",
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_sixteen_expiry_receipts_precede_same_block_transaction",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_empty_expiry_block_runs_through_real_ledger_and_restart",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_expiry_receipt_drop_reorder_and_substitution_cannot_be_rehashed",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_real_quota_and_release_expiry_share_existing_receipt_semantics",
+            "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_complete_round_can_publish_mature_and_claim_exactly_once"
+          ],
+          "remaining": "No monetary-value, fairness or external payout reconciliation claim."
+        },
+        {
+          "operation": "M12.ConsumeSponsoredQuota",
+          "implementation_kind": "native-component-with-reference-caller",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "execute_reference"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "execute"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/native_execution.py",
+            "symbol": "execute_native"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native provider command plus state-bound consumer signature",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_spent_quota_retirement_preserves_consent_identity",
+            "formal/pon-nakamoto-v1/test_contracts.py::ExecutionTests.test_free_consumer_is_not_charged_or_implicitly_authorized",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_sixteen_expiry_receipts_precede_same_block_transaction",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_empty_expiry_block_runs_through_real_ledger_and_restart",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_expiry_receipt_drop_reorder_and_substitution_cannot_be_rehashed",
+            "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_real_quota_and_release_expiry_share_existing_receipt_semantics"
+          ],
+          "remaining": "Real GPU availability, delivery evidence, sponsor self-traffic and sustainable funding remain separate."
+        }
+      ]
     },
     {
       "id": "M13",
@@ -125,16 +995,181 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M13.RebuildBranchState",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.state_at"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::state_at"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_invariants.py::StreamingReplayTests.test_missing_checkpoints_spill_and_cancel_without_height_veto",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_confirmed_transfer_is_removed_by_a_real_heavier_fork"
+          ],
+          "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
+        },
+        {
+          "operation": "M13.VerifyIncomingHistory",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/client_confirmation.py",
+              "symbol": "history_pages"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/client_confirmation.py",
+              "symbol": "receive_page"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/client_confirmation.py",
+              "symbol": "receive_stream"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::admit"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::history_with_progress"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_full_work_state_and_transaction_confirmation",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_disk_reopen_resume_uses_verified_block_cursor",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_cancel_retains_only_fully_verified_prefix_and_can_resume",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_duplicate_page_rechecks_clock_without_repeating_work",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_empty_terminal_page_checks_previously_imported_ancestry",
+            "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_client_pages_confirm_and_reorg_with_explicit_session_after_restart",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_socket_history_uses_real_native_validation_and_separate_stores",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache"
+          ],
+          "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
+        }
+      ]
     },
     {
       "id": "M14",
       "documented": true,
-      "has_native_component": false,
+      "has_native_component": true,
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M14.QueryCurrentState",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/client_confirmation.py",
+              "symbol": "confirmation"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/ledger.py",
+              "symbol": "Ledger.read_active"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/client_confirmation.py",
+              "symbol": "confirmations"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::confirmation"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::confirmations"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::confirmations_with_progress"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_fork_replay_invalidates_old_confirmation",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_forged_work_total_or_confirmation_flags_reject",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_logical_import_does_not_masquerade_as_live_confirmation",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_future_ancestor_cannot_hide_behind_earlier_tip_clock",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_future_ancestor_below_inclusion_is_also_checked",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_confirmation_cancel_is_read_only_and_can_retry",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_generation_change_during_observation_cannot_escape",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_distinct_memberships_share_only_one_coherent_observation",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_rechecks_future_spike_below_all_requested_inclusions",
+            "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_cancellation_cannot_leave_reusable_currentness",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_cached_work_never_reuses_an_old_clock_verdict",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_checks_one_history_and_one_shared_body",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_rechecks_future_ancestor_below_all_inclusions",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_actual_heavier_reorg_removes_all_confirmations",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_cli_uses_the_real_persisted_owner",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry"
+          ],
+          "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
+        },
+        {
+          "operation": "M14.ConsumePublishedModel",
+          "implementation_kind": "pure-component",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/inference_receipt.py",
+              "symbol": "verify"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/model_contract.py",
+              "symbol": "infer"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/inference_receipt.py",
+            "symbol": "verify"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Integer model inference and strict expected service receipt",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_cost_nonce_and_returned_output_cannot_be_omitted"
+          ],
+          "remaining": "Not an ordinary Hepta destination, a final-use token or a proof of actual provider delivery."
+        }
+      ]
     },
     {
       "id": "M15",
@@ -143,7 +1178,109 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M15.StartExecutableSpecPeer",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+              "symbol": "run"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "serve"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "serve_authenticated"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::open"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Native development CLI and one Rust branch/replay/outbox SQLite owner. Plain sockets are loopback-only; explicit allowlisted signed development transport may bind a selected address. No Python fallback.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_cli_replays_the_existing_signed_vector_without_a_reference_backend",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authentication_options_are_scoped_to_network_commands",
+            "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_ordinary_native_cli_uses_successor_and_reopens_only_its_namespace"
+          ],
+          "remaining": "Open public P2P/discovery, confidentiality, continuous mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resources/effects and independent work acceptance remain unqualified."
+        },
+        {
+          "operation": "M15.SendDurableAuthenticatedRequest",
+          "implementation_kind": "native-development-owner",
+          "runtime_symbols": [
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "call_authenticated_durable"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "symbol": "sync_from_authenticated_durable"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::reserve_authenticated_outbound"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::finish_authenticated_outbound"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+            "symbol": "call_authenticated_durable"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Caller-owned exact signed-wire outbox in the same private native Node namespace, retried after restart until a verified terminal server response.",
+          "persistence_owner": {
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::open"
+          },
+          "evidence_selectors": [
+            "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_client_outbox_survives_network_loss_and_rejects_changed_request",
+            "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_client_retries_exact_wire_after_lost_server_response",
+            "trillionnium/crates/trnm-pon-node/src/main.rs::test_authentication_configuration_uses_the_opened_file_identity",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"
+          ],
+          "remaining": "This closes exact retry for the private development request path, not target-side physical exactly-once, confidential transport, public routing or production custody."
+        },
+        {
+          "operation": "M15.StopAndReconcile",
+          "implementation_kind": "controlled-experiment",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/bounded_process.py",
+              "symbol": "run_bounded"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/bounded_process.py",
+            "symbol": "run_bounded"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Bounded child process ownership, pipe draining and owned-session termination",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_timeout_reaps_own_child",
+            "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_stdout_flood_is_killed_and_reaped"
+          ],
+          "remaining": "Child cleanup tests do not prove full node shutdown, durable miner stop or physical target reconciliation."
+        }
+      ]
     },
     {
       "id": "M16",
@@ -152,7 +1289,58 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M16.TrainCompatibleCandidate",
+          "implementation_kind": "controlled-experiment",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/experiments/model_loop.py",
+              "symbol": "train"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/experiments/model_loop.py",
+              "symbol": "run"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/experiments/model_loop.py",
+            "symbol": "run"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Public retrospective source task, bounded softmax optimization and quantization",
+          "persistence_owner": null,
+          "evidence_selectors": [],
+          "remaining": "Training executions are retained campaign observations, not a unit-test result or real future user-task generation."
+        },
+        {
+          "operation": "M16.CompareOrAbstain",
+          "implementation_kind": "controlled-experiment",
+          "runtime_symbols": [
+            {
+              "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
+              "symbol": "freeze_bundle"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
+              "symbol": "evaluate_bundle"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "formal/pon-nakamoto-v1/experiments/model_loop.py",
+            "symbol": "worker"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Existing E3 controls and source-group gates",
+          "persistence_owner": null,
+          "evidence_selectors": [
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_control_current_must_be_actual_parent",
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::StatisticalBoundaryTests.test_caller_future_flag_is_not_observation_or_reward"
+          ],
+          "remaining": "Three no-update attempts do not establish prospective improving generations."
+        }
+      ]
     },
     {
       "id": "M17",
@@ -161,8 +1349,103 @@
       "has_executable_contract": true,
       "native_product_integrated": false,
       "independent_accepted": false,
-      "evidence_scope": "controlled-local-conformance-not-production"
+      "evidence_scope": "controlled-local-conformance-not-production",
+      "responsibilities": [
+        {
+          "operation": "M17.CheckDetailedContracts",
+          "implementation_kind": "pure-component",
+          "runtime_symbols": [
+            {
+              "path": "scripts/ci/check_detailed_contracts.py",
+              "symbol": "validate"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "scripts/ci/check_repository.py",
+            "symbol": "check"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Read-only source/procedure binding checker",
+          "persistence_owner": null,
+          "evidence_selectors": [],
+          "remaining": "Current checker-source changes need their own executed PR checks; historic source-contract logs are not proof of this checker revision."
+        },
+        {
+          "operation": "M17.QualifyExecutedCampaign",
+          "implementation_kind": "pure-component",
+          "runtime_symbols": [
+            {
+              "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+              "symbol": "validate"
+            }
+          ],
+          "controlled_entrypoint": {
+            "path": "scripts/ci/check_evaluation_bundle_evidence.py",
+            "symbol": "validate"
+          },
+          "ordinary_product_entrypoint": null,
+          "backend": "Read-only immutable receipt and original-source validator",
+          "persistence_owner": null,
+          "evidence_selectors": [],
+          "remaining": "Does not execute old tests again, confer scientific independence or grant deployment authority."
+        }
+      ]
     }
   ],
-  "production_activation": false
+  "production_activation": false,
+  "responsibility_semantics": "Module flags are navigation only; each procedure names its actual owner and executed scope. Subject-byte identity is not a fresh run, transitive closure proof, integration or independent acceptance.",
+  "evidence_packages": {
+    "v1": {
+      "manifest": "evidence/pon-v1/manifest.json",
+      "qualification": null,
+      "log_prefix": "",
+      "scope": "Original revision1 work, ledger, model and loopback experiments; historical only.",
+      "source_archive": {
+        "commit": "5d59b9540268914794a62e8fa237caf999499314",
+        "tree": "30ee65c0752693f4eecc90f924972279f00c0c73"
+      }
+    },
+    "v3": {
+      "manifest": "evidence/pon-v3/manifest.json",
+      "qualification": "qualification/report.json",
+      "log_prefix": "qualification/",
+      "scope": "Recorded native/reference invariants, long history, work costs and same-admin host campaigns.",
+      "source_archive": null
+    },
+    "v4": {
+      "manifest": "evidence/pon-v4/manifest.json",
+      "qualification": "qualification/report.json",
+      "log_prefix": "qualification/",
+      "scope": "Block-scoped native comparison and same-admin binary parity; no public TPS.",
+      "source_archive": null
+    },
+    "e3": {
+      "manifest": "evidence/pon-evaluation-bundle-v1/manifest.json",
+      "qualification": "qualification.json",
+      "log_prefix": "",
+      "scope": "Sealed evaluation and full consent; actual zero adoption/reward and same-admin evaluator parity.",
+      "source_archive": null
+    },
+    "client_confirmation": {
+      "manifest": "evidence/pon-client-confirmation-v1/manifest.json",
+      "qualification": "qualification.json",
+      "log_prefix": "",
+      "scope": "Full regression and two receiver-verifying client backends; no rerun of model efficacy, public network or native full node",
+      "source_archive": null
+    },
+    "native_session": {
+      "manifest": "evidence/pon-native-session-v1/manifest.json",
+      "qualification": "qualification.json",
+      "log_prefix": "",
+      "scope": "Exact-source native compute cache, incremental root, early precheck and controlled receiver confirmation; no full native node or public capacity.",
+      "source_archive": null
+    },
+    "native_node": {
+      "manifest": "evidence/pon-native-node-v1/manifest.json",
+      "qualification": "qualification.json",
+      "log_prefix": "",
+      "scope": "Native development consensus/storage/CLI plus bounded batches; separate current model supplement. No public-node, future-value or independent acceptance.",
+      "source_archive": null
+    }
+  }
 }

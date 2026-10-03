@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Fresh revision3 SQLite namespace, not an in-place historical database upgrade.
+Distinct fresh native-development and reference revision3 SQLite namespaces; each has one writer. Neither silently upgrades or writes the other namespace.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -27,7 +27,7 @@ BEGIN IMMEDIATE, insert immutable block, insert changed-key deltas, COMMIT. Any 
 
 **Invariant:** Every owned initialization crash cut can recover; foreign incomplete databases and injected schema objects reject without writable mutation.
 
-**Scope:** Fresh revision3 SQLite namespace, not an in-place historical database upgrade.
+**Scope:** Distinct fresh native-development and reference revision3 SQLite namespaces; each has one writer. Neither silently upgrades or writes the other namespace.
 
 **Atomic boundary:** Fsync exact initialization intent, create schema plus genesis in one transaction, remove marker after commit; compare exact schema projection on reopen.
 
@@ -53,18 +53,31 @@ These exact functions contain executable assertions. The registry only checks bi
 
 Initialization gaps, trigger/schema substitution, disk full, path replacement and unbounded full-state copies.
 
-Full descriptor/sidecar fencing, incremental authenticated native state tree and physical power-loss tests remain pending.
+Full descriptor/sidecar fencing, incremental authenticated native persistent state and physical power-loss tests remain pending.
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.
 
 ## Executed evidence and scope
 
-The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
-raw command exits and concrete invariant test results. Its verifier distinguishes
-runtime byte identity from documentation edits and cannot grant independent acceptance.
-Module-specific limitations above remain in force even when the referenced local test
-passes. The development plan, not this link or a count of procedures, selects next work.
+[Responsibility-level evidence navigation](README.md#responsibility-and-evidence) reads
+measured commits from immutable receipts. The module's entries in
+[module-maturity-v1.json](../../config/pon/module-maturity-v1.json) identify actual callable
+owners, controlled entrypoints, backends, persistence and exact observed test selectors.
+Run `python3 scripts/ci/report_module_evidence.py --module M07` from the repository
+root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
+not observed in each package. A byte match is not a new test run or product acceptance.
+Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
+
+## Native development continuation and remaining scope
+
+Node is now a native single-writer fresh-namespace SQLite owner for blocks/deltas, staged KV, snapshots and active generation. Existing Python storage remains a separate oracle. Descriptor/sidecar races, physical power loss, long-run growth and incremental persistent roots remain unqualified.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

@@ -1,11 +1,35 @@
 # M06 Deterministic application execution and reversible deltas
 
+The pure [checked derived commitment contract](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md)
+adds bounded root computation for complete actual states. It retains existing execution,
+receipt and reversible-delta rules; the durable Node owner commits and publishes results.
+
+Within one Node preparation or checked-admission operation, the first actual
+`state_at(parent)` read may supply both execution and parent task eligibility.
+This still reads complete canonical KV (or checked snapshot/deltas for an inactive
+branch) and checks its admitted root. The private eligibility is dropped with that
+operation; neither Node nor the unlocked proof search retains it as authority.
+Registered preparation preserves lifecycle eligibility before source admission and
+V1 registry eligibility after source admission. Output accounting uses that parent
+eligibility against the separately executed successor, including maintenance,
+renewal, revocation, slot/generation and product-conflict checks. It does not grant
+a new registration authority over its containing block. Initial admission context
+and checked-work re-entry remain independent checks; search completion still
+rechecks the current parent/generation, exact pool batch and full native admission.
+There is no new SQL isolation guarantee for writers outside the sole Node owner.
+Actual selectors `trnm-pon-node --test operation_local_parent --test task_output_root_parity`
+cover complete packet parity, active/inactive/reopened parents, independent later
+KV corruption and the complete successor-root/output-accounting path. These local
+checks do not establish a throughput improvement or public qualification.
+
 Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 [Sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md); [exact invariant registry](../../config/pon/invariants-v2.json).
 
 ## Scope and ownership
 
-Native implementation inside existing trnm-mvcc-fee and separately coded Python reference.
+Native execution is owned by existing `trnm-mvcc-fee`. The separately coded Python
+reference and twelve-command parity below cover the historical default core; they do
+not establish general reference execution of every gated native extension.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -13,7 +37,28 @@ The claims below apply to their named component and tests, not to an independent
 
 ### M06.ExecuteCandidate
 
-Run deterministic due expiry and maturity before txs; execute exactly12 closed commands; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition.
+Run deterministic due expiry and maturity before txs; execute the closed command set enabled by the exact context; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition.
+
+The12-command equivalence claim below applies to the historical default context.
+Explicit successors additionally gate signed task registration, renewable requester
+leases and native frozen evaluation transitions by committed profile. Their exact
+interfaces, payloads, errors, windows and retention bounds are in
+[LEDGER_WIRE](../protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md),
+[QUALIFIED_TASK_LIFECYCLE_V2](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V2.md),
+[V3 atomic renewal](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md),
+[V4 signed overlap](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md)
+[PUBLIC_EVALUATION_LIFECYCLE](../protocol/pon-nakamoto-v1/details/PUBLIC_EVALUATION_LIFECYCLE.md)
+and the explicit revision11 [integer factor candidate](../protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md).
+The latter loads the complete actual ILM2 parent from State, recomputes771 BA
+coordinates and the complete candidate model, and persists context-bound duplicate
+rows through the existing staged State/deltas. It neither reinterprets old tag6
+nor proves general model-function equivalence or useful quality.
+Lifecycle18 OPEN/20 REVOKE/21 REGISTER retain their selected contract; standalone19
+RENEW is V2-only, and atomic22 is V3/V4-only. V3/V4 refuse19; V4 selects revision9.
+Native selectors `trnm-pon-node --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation` exercise
+their actual signed execution, material-bound work, persistence/reopen and heavier-fork
+behavior. Controlled scores and public development authorities do not qualify objective
+ML quality, task demand or evaluator independence.
 
 **Atomic/commit boundary:** Return complete state/delta intent; caller M07 owns persistence.
 
@@ -25,9 +70,11 @@ For sorted union of keys compare canonical values; emit only changed entries, en
 
 ## M06.TwelveCommandEquivalence
 
-**Invariant:** All twelve commands produce identical state, receipts, fees and root at one, two, four and eight workers.
+**Invariant:** The historical twelve core commands produce identical state, receipts, fees and root at one, two, four and eight workers.
 
-**Scope:** Native implementation inside existing trnm-mvcc-fee and separately coded Python reference.
+**Scope:** Historical default-context native/Python parity. Signed task13, native
+evaluation14..17, selected lifecycle18..22 and revision11 factor23 have separate native contracts and tests;
+this invariant does not claim full Python transition parity for those extensions.
 
 **Atomic boundary:** Mandatory transitions first, parallel local proposals, canonical read-set validation, one re-execution on conflict, then final conservation and subsidy.
 
@@ -61,11 +108,14 @@ No test binding or local campaign grants independent acceptance, ordinary Hepta 
 
 ## Executed evidence and scope
 
-The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
-raw command exits and concrete invariant test results. Its verifier distinguishes
-runtime byte identity from documentation edits and cannot grant independent acceptance.
-Module-specific limitations above remain in force even when the referenced local test
-passes. The development plan, not this link or a count of procedures, selects next work.
+[Responsibility-level evidence navigation](README.md#responsibility-and-evidence) reads
+measured commits from immutable receipts. The module's entries in
+[module-maturity-v1.json](../../config/pon/module-maturity-v1.json) identify actual callable
+owners, controlled entrypoints, backends, persistence and exact observed test selectors.
+Run `python3 scripts/ci/report_module_evidence.py --module M06` from the repository
+root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
+not observed in each package. A byte match is not a new test run or product acceptance.
+Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
 
 ## Block-scoped execution continuation
 
@@ -84,3 +134,36 @@ Exact continuation selectors (each must appear as actually executed in a current
 - `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots`
 - `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_later_invalid_signature_does_not_change_canonical_error`
 - `formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_single_signature_context_cannot_be_reused_for_another_payload`
+
+## Native cache / receiver continuation
+
+The exact continuation is specified in [native execution](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md), [admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) and [client/recovery](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md). It does not promote native persistence, independent acceptance or public-network capacity. Exact additional counterexamples:
+
+- `formal/pon-nakamoto-v1/test_native_session.py::NativeSessionTests.test_all_twelve_tags_run_in_1_2_4_8_worker_persistent_sessions`.
+- `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_boolean_before_value_does_not_alias_integer_zero`.
+- `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_lost_reply_discards_advanced_cache_and_retries_same_input`.
+- `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_exact_predecessor_memo_does_not_skip_returned_root_verification`.
+
+
+The explicit [operator actor context](../protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md)
+uses the existing module owner and fresh public descriptor/signature-bound N/P/G.
+This changes development bootstrap custody and role pins only; native admission,
+execution and confirmation remain required, and no independent/public flag is accepted.
+
+The optional [derived state commitment](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md)
+uses an allocation-free ordered difference preflight, complete canonical root fallback
+and unchanged public delta bytes. A disjoint pair of valid65536-key states can produce
+131072 changes; the delta budget selects fallback before cloning that change vector.
+Cache accounting and implementation-conditioned workspace bounds are not protocol
+payload limits, hard allocation/RSS limits or proof of a reachable native workload.
+
+The independent [checkpoint tile material replay](../protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_MATERIAL_V1.md)
+checks a complete pinned safetensors file, exact tensor coordinates, original input
+bits and integer quantization against all A/B bytes. Its private checked result can
+bind a source-signature/context-checked QWT1 manifest. It neither replaces actual
+parent eligibility nor proves model forward, genuine demand, hardware cost, useful
+contribution or a qualified consensus cost class. The separate explicit revision10
+[checkpoint tile task selector](../protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md)
+requires full original replay in Settings construction and every Node open, binds a fresh
+operator/policy N/P/G and only admits the installed Maintenance/output0 relation.
+Its material replay does not replace actual parent/source eligibility or native execution.

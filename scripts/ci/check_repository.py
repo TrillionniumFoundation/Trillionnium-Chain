@@ -126,6 +126,8 @@ def check(root=ROOT):
     require('pull_request_target' not in text,'privileged pull request event')
     from check_detailed_contracts import validate as detailed_validate
     detailed_validate(root)
+    from check_applicability import validate as applicability_validate
+    applicability_validate(root)
     from check_invariants import validate as invariant_validate
     invariant_validate(root)
     return {'result':'PASS','workspace_packages':len(names),'rust_files':source_count,'local_links':links,'runtime_implemented':False,'activation':False,'normal_dependency_edges':sum(map(len,normal_graph.values()))}

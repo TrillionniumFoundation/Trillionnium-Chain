@@ -151,6 +151,34 @@ fn payload_len(tag: u8, p: &[u8]) -> Result<(), WireError> {
         10 => 112,
         11 => 136,
         12 => 32,
+        // Decoding this candidate payload does not activate it in historical contexts.
+        13 => crate::qualified_work_task::SIGNED_TASK_BYTES,
+        14 => 96,
+        15 => 168,
+        16 => {
+            if p.len() < 36 {
+                return Err(WireError::Length);
+            }
+            let first = u16::from_le_bytes([p[32], p[33]]) as usize;
+            if !(159..=512).contains(&first) || p.len() < 36 + first {
+                return Err(WireError::Length);
+            }
+            let offset = 34 + first;
+            let second = u16::from_le_bytes([p[offset], p[offset + 1]]) as usize;
+            if !(159..=512).contains(&second) {
+                return Err(WireError::Length);
+            }
+            36 + first + second
+        }
+        17 => 128,
+        18 | 19 => crate::qualified_work_task::lifecycle_v2::DEMAND_LEASE_BYTES,
+        20 => crate::qualified_work_task::lifecycle_v2::DEMAND_REVOCATION_BYTES,
+        21 => crate::qualified_work_task::lifecycle_v2::LIFECYCLE_TASK_BYTES,
+        22 => crate::qualified_work_task::lifecycle_v3::ATOMIC_RENEW_BYTES,
+        23 => {
+            crate::integer_factor_v2::FactorWitnessV2::decode(p)?;
+            p.len()
+        }
         9 => {
             if p.len() < 73 {
                 return Err(WireError::Length);

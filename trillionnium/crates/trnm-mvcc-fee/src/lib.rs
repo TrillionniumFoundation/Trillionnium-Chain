@@ -23,10 +23,16 @@
 
 #![forbid(unsafe_code)]
 
+pub mod checkpoint_tile_material_v1;
+pub mod checkpoint_tile_policy_v1;
 mod codec;
+pub mod deployment_actors;
+pub mod deployment_checkpoint_tile_v1;
 pub mod deterministic_parallel_v1;
 mod engine;
 mod error;
+pub mod public_evaluation;
+pub mod qualified_task_lifecycle;
 mod store;
 mod types;
 
@@ -43,3 +49,9 @@ mod tests;
 
 /// Revision-2 PoN commands with validated ordered speculation.
 pub mod pon_executor;
+
+/// Pure derived state commitments; no ledger owner or admission authority.
+pub mod pon_commitment;
+
+/// Fresh model profile with complete native parent and factor witnesses.
+pub mod integer_factor_candidate_v2;

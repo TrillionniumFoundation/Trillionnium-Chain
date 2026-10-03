@@ -76,11 +76,14 @@ No test binding or local campaign grants independent acceptance, ordinary Hepta 
 
 ## Executed evidence and scope
 
-The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
-raw command exits and concrete invariant test results. Its verifier distinguishes
-runtime byte identity from documentation edits and cannot grant independent acceptance.
-Module-specific limitations above remain in force even when the referenced local test
-passes. The development plan, not this link or a count of procedures, selects next work.
+[Responsibility-level evidence navigation](README.md#responsibility-and-evidence) reads
+measured commits from immutable receipts. The module's entries in
+[module-maturity-v1.json](../../config/pon/module-maturity-v1.json) identify actual callable
+owners, controlled entrypoints, backends, persistence and exact observed test selectors.
+Run `python3 scripts/ci/report_module_evidence.py --module M01` from the repository
+root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
+not observed in each package. A byte match is not a new test run or product acceptance.
+Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
 
 ## Block-scoped execution continuation
 
@@ -91,3 +94,26 @@ consumer signatures still bind actual quota state. See the exact algorithm, erro
 counterexamples in [EXECUTION_PARALLEL](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md).
 Complete-state root construction, full native node assembly and Hepta ownership remain
 separate work; worker counts do not establish throughput or independent acceptance.
+
+## Native cache / receiver continuation
+
+The exact continuation is specified in [native execution](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md), [admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) and [client/recovery](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md). It does not promote native persistence, independent acceptance or public-network capacity. Exact additional counterexamples:
+
+- `formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_bad_field_and_task_reject_before_state_replay_or_full_verification`.
+- `formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_forged_passing_ticket_does_not_become_verified_work`.
+
+## Current work-cost applicability
+
+[Native-session-source cost observations](../../evidence/pon-native-session-v1/work-cost/README.md)
+carry their own measured commit, binary, source inventory and same-target samples.
+The old cost package remains historical. Neither collection establishes a fastest-
+adversary lower bound, public admission fairness or independent work qualification.
+
+## Native development continuation and remaining scope
+
+PreparedTask is now a valid producer-side fixed-task optimization, not a new work relation or verified capability. Original full verification remains unchanged. Paired cost measurements distinguish setup, search, narrower targets, slower samples and the still-open invalid-proof admission problem.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

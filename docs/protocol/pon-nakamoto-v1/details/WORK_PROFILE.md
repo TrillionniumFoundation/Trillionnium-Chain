@@ -9,6 +9,11 @@ oracle is `formal/pon-nakamoto-v1/work_oracle.py`. They share bytes and vectors,
 implementation. Both were authored in this development increment. Cross-language
 agreement is not external independent security acceptance.
 
+The [external checkpoint tile recipe](CHECKPOINT_TILE_PROVENANCE_V1.md) specifies
+exact source/activation/quantization replay and structured preparation limits. Current
+QWT1 layer/recipe IDs bind derived 64x64 field material; they do not activate checkpoint
+coordinate provenance, full LLM execution or marginal-contribution acceptance.
+
 ## W1.1 Exact arithmetic and byte grammar
 
 Let n=64, r=8 and q=4,294,967,291. Every field element is a canonical little-endian u32
@@ -130,3 +135,122 @@ Required vectors cover canonical product identity, every changed header context,
 product, false trace, malformed length/field, zero matrix with a forged trace and native
 versus Python byte identity. Reference evaluation is executable; hardness and external
 acceptance remain false. No old BFT or hash-only fallback fills that gap.
+
+## W1.7 Search difficulty, verification and useful-output accounting
+
+Distinguish one attempt from one winning block. Under the explicitly unqualified uniform
+independent-ticket and equal-cost assumptions, p=(T+1)/2^256, expected winning work is
+C_attempt/p, and a verifier checks one presented proof at C_verify. Full recomputation
+can still have search/verification asymmetry at small p; it is incorrect to infer the
+absence of PoW search difficulty solely from C_attempt approximately equaling C_verify.
+The current initial/pow-limit target is 2^255-1, so p=1/2 at that target. Those development
+parameters do not establish production asymmetry or permissionless safety.
+
+Invalid admission is a different experiment. A forged trace can pass the cheap ticket
+predicate after expected 1/p hash trials while rejection still replays work. Report the
+attacker's actual construction budget and defender's rejection budget at the SAME target.
+Neither a wide-target amplification ratio nor a local queue cap proves an attack rate,
+public fairness, or adequate safety at another target. Target increase/decrease, timestamp
+choices, task choices, proof preprocessing and shared hardware must all be explicit.
+
+For fixed A and B the decoded useful output remains AB across header/nonce challenges.
+Fresh consensus work therefore need not be a new useful result or a model improvement.
+Count unique task/output identities, actual downstream adoption, stale/lost attempts,
+encoding/transcript cost and every verifier's repeated computation separately. Do not
+label all mining FLOPs as useful training. The retained 64-coordinate contraction is
+not proof of whole-model training, data rights or future quality.
+
+### Candidate analysis without silently changing the admitted profile
+
+| Candidate | What must be specified and falsified | Current status |
+|---|---|---|
+| Keep full recomputation | Fastest implemented shortcuts for selected/sparse/low-rank tasks; preprocessing amortization; hardware advantage; same-target valid/invalid cost and honest public service budget | Existing executable reference; no qualified public-cost bound. |
+| Add a compact proof | Exact challenged relation, canonical output and ticket binding; proof soundness/setup; bounded malformed-proof verifier cost; proof-generation overhead and inability to grind randomized proofs | Research candidate only; proof of correct execution alone does not establish expended work hardness. |
+| Add separate admission protection | Anonymous/permissionless access assumptions; replay/context binding; quantified defender/attacker resource accounting and honest service under identity churn | Bounded development V2/V3 intake is implemented; public fairness and independent hostile-cost qualification remain unaccepted. Admission tickets cannot replace useful-work validity or change fork weight; see [PUBLIC_INTAKE_V2.md](PUBLIC_INTAKE_V2.md) and [PUBLIC_POOL_INTAKE_V3.md](PUBLIC_POOL_INTAKE_V3.md). |
+
+No alternative is enabled by this table. Qualification requires exact versioned bytes,
+independent attack implementation/reproduction and declared assumptions, not an
+unconditional complexity lower bound or a prescribed count of successful experiments.
+The cited matrix-work paper's conjectured security and asymptotic costs remain separate
+from this concrete profile's parameters and implementation.
+
+### Fixed-task producer preparation: implemented comparison, not hardness qualification
+
+`pon_work::PreparedTask` caches the exact canonical A/B/product prefix once for a fixed
+admitted task. For EVERY new challenge it still expands all challenge noise, computes
+the challenged tile accumulations and hashes every required intermediate in the exact
+original order. The original `evaluate`, `prove` and full `verify` are unchanged. The
+new native development miner calls this producer; a cached prefix is not VerifiedWork.
+Cross-challenge dense/zero/rank-one/sparse regressions require byte-identical certificates
+and successful ORIGINAL verification. Invalid sizes and field elements still reject.
+
+For this scalar algorithm, original generation performs 458,752 field multiplications
+per attempt. The prepared producer pays 262,144 once for AB and 327,680 per attempt.
+These are operation counts from the loops, not measured CPU ratios or adversary lower
+bounds. For k attempts, preparation reduces that count only when k>2; at the half-range
+development target E[k]=2 under the unqualified uniform-ticket assumption. Caching
+across later challenges has another amortization scope and cannot be hidden as free work.
+
+`pon_prepared_cost` compares both producers on identical task/challenge/nonce streams
+at targets 7fff... and 07ff..., alternating invocation order. It retains setup, search,
+total and original-verifier costs, actual attempts, certificate commitment and slower
+samples. The narrower target is an explicit relation microbenchmark, not a new genesis
+or silent change to the branch-derived required target. It measures two actual valid
+implementations, not the globally fastest algorithm, permissionless admission or new
+model utility. Cheap fabricated transcript admission and further algebraic/preprocessing,
+hardware and task-choice shortcuts remain open. The old full-prover cost remains useful
+as a named baseline but must not be presented as unavoidable effective mining work.
+
+## Same-relation alternative producer and explicit arithmetic bound
+
+`PreparedTask` now uses a separately implemented producer kernel: transposed operands,
+exact pseudo-Mersenne reduction, one retained 8x8 accumulation tile and batched transcript
+hash updates. The original full verifier still uses its u128 remainder/recomputation.
+Proof bytes, field bounds, complete transcript order, task/output and lottery identities
+are unchanged. New task preparation is charged separately; it is not free training.
+
+For x < 2^70 and q=2^32-5, write x=x0+2^32*x1 and fold y=x0+5*x1.
+Fold again z=(y mod 2^32)+5*floor(y/2^32). Both folds preserve x mod q;
+z < 2*q, so one conditional subtraction is sufficient. The admitted dot products have
+at most 64 canonical products plus one canonical accumulator and obey that bound.
+Boundary and deterministic-sample tests compare against exact `% q`; extreme-field,
+zero, structured and sparse proofs compare complete bytes with the original verifier.
+This is an arithmetic equivalence argument, not a theorem of work-cost hardness.
+
+The existing same-target prepared-cost collector compares the new valid producer with
+full generation and verification on the same task/target. Retain setup, every attempt,
+all slower samples and forged-ticket rejection separately. The fastest observed supplied
+implementation is not the fastest possible adversary. A faster miner can worsen the
+claimed mining/verifier asymmetry; public admission and useful-work security remain
+unqualified until their own sustained adversarial evidence exists.
+
+## Executable work-security observation gate
+
+The reporting-only [work security policy](../../../../config/pon/work-security-acceptance-v1.json)
+is deliberately outside the genesis commitment. It changes no accepted proof, target,
+wire byte, fork weight or admission rule. The existing
+[`pon_work_cost_report.py`](../../../../scripts/pon_work_cost_report.py) now consumes BOTH
+`pon_adversarial_cost` and `pon_prepared_cost` observations. The latter compares the
+original producer and the separately coded optimized `PreparedTask` kernel against the
+original verifier. The Python oracle remains a separate arithmetic/byte implementation;
+neither same-author implementation counts as external independent review.
+
+For each of dense, zero, rank-one and sparse tasks at the explicitly requested common
+target, the reporter compares the mean cost of each complete supplied implementation.
+It does not cherry-pick the faster member of each paired sample. Original cost includes
+all losing attempts. Prepared cost is mean search plus mean preparation divided by a
+declared reuse horizon of 1, 8 or 64 winning searches. Actual attempt and forged-hash
+trial denominators are retained. Horizons above one are amortization scenarios, not
+newly executed reuse measurements. A wider/narrower benchmark target cannot be silently
+substituted for the admitted target, and independent nonce streams are not called paired.
+
+The forgery's marginal construction cost and rejection cost are reported separately.
+Existing samples begin with an obtained proof prefix: an additional conservative setup
+scenario charges its measured honest winning cost once per horizon. This is NOT the
+cheapest possible forged-prefix preparation and does not hide the attack behind that
+expensive setup. The gate always uses marginal rejection amplification. The local policy
+requires winner/verification >=1 and marginal invalid rejection/construction <=1 for
+EVERY class/horizon. These conservative screening thresholds are proposed local diagnostics, not
+preregistered scientific acceptance, deployment criteria or a qualified security bound. Failure is retained;
+passing cannot discharge algebraic, task-choice, accelerator, preprocessing, pooling or
+lottery assumptions. No output can set work hardness or production acceptance true.

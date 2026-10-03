@@ -17,8 +17,10 @@ consensus_authority = false
 default = []
 
 [dependencies]
+trnm-verification-profiles = { path = "../trnm-verification-profiles" }
 trnm-protocol = { path = "../trnm-protocol" }
 trnm-crypto-primitives = { path = "../trnm-crypto-primitives" }
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 hex = "0.4"
 borsh = { version = "1", features = ["derive"] }

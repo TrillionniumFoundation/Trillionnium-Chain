@@ -25,6 +25,7 @@ members = [
   "crates/trnm-crypto-primitives",
   "crates/trnm-verification-profiles",
   "crates/trnm-transport",
+  "crates/trnm-pon-node",
 ]
 
 [workspace.package]
@@ -43,3 +44,20 @@ opt-level = 3
 
 [profile.test.package.ed25519-dalek]
 opt-level = 3
+
+[profile.test.package.sha2]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+# Preserve test checks while compiling repeated full-state traversal efficiently.
+# These overrides do not change development or release build profiles.
+[profile.test.package.trnm-protocol]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.trnm-mvcc-fee]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true

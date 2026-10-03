@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Two SQLite connections to one local operation namespace. This is not physical effect cancellation.
+Native bounded development mining plus the separate reference local-effect experiment. Its two SQLite connections demonstrate local entry linearization, not physical effect cancellation or a durable continuous miner.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -27,7 +27,7 @@ If revoke commits before entry, the same operation cannot create an effects row;
 
 **Invariant:** If revoke commits before entry, the same operation cannot create an effects row; a committed entry cannot be repeated after crash.
 
-**Scope:** Two SQLite connections to one local operation namespace. This is not physical effect cancellation.
+**Scope:** Native bounded development mining plus the separate reference local-effect experiment. Its two SQLite connections demonstrate local entry linearization, not physical effect cancellation or a durable continuous miner.
 
 **Atomic boundary:** BEGIN IMMEDIATE encloses revocation check, duplicate check and insert; revoke uses the same serialization point.
 
@@ -55,14 +55,33 @@ Normal Hepta final-use token, independent rollback frontier and target-side reco
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.
 
 ## Executed evidence and scope
 
-The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
-raw command exits and concrete invariant test results. Its verifier distinguishes
-runtime byte identity from documentation edits and cannot grant independent acceptance.
-Module-specific limitations above remain in force even when the referenced local test
-passes. The development plan, not this link or a count of procedures, selects next work.
+[Responsibility-level evidence navigation](README.md#responsibility-and-evidence) reads
+measured commits from immutable receipts. The module's entries in
+[module-maturity-v1.json](../../config/pon/module-maturity-v1.json) identify actual callable
+owners, controlled entrypoints, backends, persistence and exact observed test selectors.
+Run `python3 scripts/ci/report_module_evidence.py --module M03` from the repository
+root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
+not observed in each package. A byte match is not a new test run or product acceptance.
+Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
+
+## Native development continuation and remaining scope
+
+Node::make uses a bounded prepared-task producer and commits no chain state before validation. CLI output is create-new and synced before local publication. The [finite native miner](../protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md) provides cooperative stop and stale parent/generation rejection. Durable in-progress search recovery, wallet custody and provider/effect reconciliation remain unimplemented.
+
+Preparation may share its first checked actual parent state with task eligibility
+and execution within that operation, as specified by [M06](M06_EXECUTION_TECHNICAL_SPEC_V1.md).
+That parent authority is dropped before unlocked proof search. Full native admission
+after search still checks actual state, current parent/generation and the exact pool
+batch; a task registered in the candidate cannot authorize that candidate's work.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.

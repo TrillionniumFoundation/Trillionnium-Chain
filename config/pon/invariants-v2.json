@@ -5,20 +5,23 @@
     {
       "module": "M00",
       "id": "CanonicalBytes",
-      "claim": "Replacing any header field changes its challenge; malformed transaction bytes reject without nonce or balance authority.",
-      "scope": "Native and Python wire codecs, not application acceptance.",
-      "atomic": "Decode is pure and bounded; signature verification and state publication are later independent boundaries.",
+      "claim": "Replacing any header field changes its challenge; malformed transaction bytes reject without nonce or balance authority. Incremental compressed commitments equal the full state-root builder; failed batches preserve immutable predecessor snapshots.",
+      "scope": "Native/Python codecs and pure in-memory state commitments, not application acceptance or native persistent storage.",
+      "atomic": "Decode is pure and bounded; signature verification and state publication are later independent boundaries. StateTree checks the whole before/root batch before returning a staged immutable tree.",
       "cuts": [
         "Every header field mutation",
         "Truncation, trailing bytes, zero nonce, unknown tag"
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_contracts.py::CodecTests.test_header_mutations_bind_all_fields",
-        "formal/pon-nakamoto-v1/test_interop.py::InteropTests.test_rejection_vectors"
+        "formal/pon-nakamoto-v1/test_interop.py::InteropTests.test_rejection_vectors",
+        "trillionnium/crates/trnm-protocol/src/pon_state.rs::mixed_batches_match_full_builder_and_inverse_restores_predecessor",
+        "trillionnium/crates/trnm-protocol/src/pon_state.rs::all_deletions_return_empty_and_values_remain_bounded"
       ],
       "source": [
         "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
-        "formal/pon-nakamoto-v1/contract_wire.py"
+        "formal/pon-nakamoto-v1/contract_wire.py",
+        "trillionnium/crates/trnm-protocol/src/pon_state.rs"
       ],
       "limit": "318-byte header, 2048-byte envelope, closed twelve tags.",
       "threat": "Encoding ambiguity, cross-genesis replay and unsafe unversioned upgrades.",
@@ -45,7 +48,9 @@
         "formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_native_and_reference_reject_weak_sender_without_state_change",
         "formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_weak_consumer_cannot_authorize_quota",
         "formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_rfc8032_known_vector",
-        "formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_all_declared_order_eight_points_reject"
+        "formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_all_declared_order_eight_points_reject",
+        "formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_bad_field_and_task_reject_before_state_replay_or_full_verification",
+        "formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_forged_passing_ticket_does_not_become_verified_work"
       ],
       "source": [
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
@@ -53,7 +58,8 @@
         "formal/pon-nakamoto-v1/work_backend.py",
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs",
         "formal/pon-nakamoto-v1/strict_signature.py",
-        "trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+        "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+        "formal/pon-nakamoto-v1/work_oracle.py"
       ],
       "limit": "49188-byte work certificate; failed proof still requires substantial computation.",
       "threat": "Cheap forgery amplification, structured-input shortcuts, hardware advantage and weak-key disagreement.",
@@ -180,12 +186,18 @@
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_funding_dependency_replays_state_not_main_signature",
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots",
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_later_invalid_signature_does_not_change_canonical_error",
-        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_single_signature_context_cannot_be_reused_for_another_payload"
+        "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_single_signature_context_cannot_be_reused_for_another_payload",
+        "formal/pon-nakamoto-v1/test_native_session.py::NativeSessionTests.test_all_twelve_tags_run_in_1_2_4_8_worker_persistent_sessions",
+        "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_boolean_before_value_does_not_alias_integer_zero",
+        "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_lost_reply_discards_advanced_cache_and_retries_same_input",
+        "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_exact_predecessor_memo_does_not_skip_returned_root_verification"
       ],
       "source": [
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
         "formal/pon-nakamoto-v1/native_execution.py",
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "formal/pon-nakamoto-v1/native_session.py",
+        "trillionnium/crates/trnm-protocol/src/pon_state.rs"
       ],
       "limit": "256 envelopes; at most1/2/4/8 created workers per block; one main signature check per valid envelope; range capacity commands commit canonically; at most one state replay per other transaction. No per-worker full-state clone.",
       "threat": "Incorrect conflict sets, receipt order changes, unbounded retries and successful fallback masking missing implementation.",
@@ -358,12 +370,17 @@
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_spent_quota_retirement_preserves_consent_identity",
         "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_mutating_both_summary_and_evaluator_score_does_not_authorize_reward",
         "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_zero_marginal_candidate_creates_no_ledger_or_reward",
-        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_undeclared_bundle_cannot_be_read_from_summary_as_authority"
+        "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_undeclared_bundle_cannot_be_read_from_summary_as_authority",
+        "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_sixteen_expiry_receipts_precede_same_block_transaction",
+        "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_empty_expiry_block_runs_through_real_ledger_and_restart",
+        "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_expiry_receipt_drop_reorder_and_substitution_cannot_be_rehashed",
+        "formal/pon-nakamoto-v1/test_native_session.py::ExpiryAndBudgetTests.test_real_quota_and_release_expiry_share_existing_receipt_semantics"
       ],
       "source": [
         "formal/pon-nakamoto-v1/ledger.py",
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
-        "formal/pon-nakamoto-v1/experiments/settle_model.py"
+        "formal/pon-nakamoto-v1/experiments/settle_model.py",
+        "formal/pon-nakamoto-v1/native_session.py"
       ],
       "limit": "20-block maturity plus1000-block claim window;16 due slots per height shared with tasks and quotas.",
       "threat": "Replay, uncompensated liabilities, expiry starvation, sponsor self-traffic and orphaned external payouts.",
@@ -383,10 +400,12 @@
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_storage_replay_beyond_4096_does_not_invent_finality",
-        "formal/pon-nakamoto-v1/test_invariants.py::StreamingReplayTests.test_missing_checkpoints_spill_and_cancel_without_height_veto"
+        "formal/pon-nakamoto-v1/test_invariants.py::StreamingReplayTests.test_missing_checkpoints_spill_and_cancel_without_height_veto",
+        "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_client_pages_confirm_and_reorg_with_explicit_session_after_restart"
       ],
       "source": [
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "formal/pon-nakamoto-v1/client_confirmation.py"
       ],
       "limit": "Checkpoints every128 heights,64 plus genesis; missing-checkpoint ancestry spills above8KiB; per256-record progress can cancel without a permanent height veto.",
       "threat": "Pruning treated as finality, false checkpoint trust, unavailable profiles and replay memory growth.",
@@ -395,9 +414,9 @@
     {
       "module": "M14",
       "id": "ServiceReceiptBinding",
-      "claim": "Consumer consent binds every expected network, model, request, input/output, provider, quota, units and provider nonce; omitted cost fields cannot be inferred from untrusted receipt bytes.",
-      "scope": "Closed receipt before quota-use signing, distinct from a local capability.",
-      "atomic": "Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context.",
+      "claim": "Consumer consent binds every expected network, model, request, input/output, provider, quota, units and provider nonce; omitted cost fields cannot be inferred from untrusted receipt bytes. Transaction confirmation batches share one complete ancestry/clock observation and reject missing membership or changed active generation.",
+      "scope": "Closed service-consent receipts and fully verifying reference client observations; neither is a local capability.",
+      "atomic": "Check exact consumer expectations and canonical bytes; signature also binds full genesis parameter context. Confirmation reads one active view, validates all memberships, and checks that tip/generation still match before returning.",
       "cuts": [
         "Replace every receipt field",
         "Missing expected identities",
@@ -412,11 +431,15 @@
         "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_duplicate_or_implicit_receipt_fields_reject",
         "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_cost_nonce_and_returned_output_cannot_be_omitted",
         "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_oversized_receipt_rejects_before_json",
-        "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_boolean_counter_alias_rejects"
+        "formal/pon-nakamoto-v1/test_inference_receipt.py::InferenceBindingTests.test_expected_boolean_counter_alias_rejects",
+        "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_distinct_memberships_share_only_one_coherent_observation",
+        "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_rechecks_future_spike_below_all_requested_inclusions",
+        "formal/pon-nakamoto-v1/test_client_confirmation.py::VerifiedHistoryTests.test_batch_cancellation_cannot_leave_reusable_currentness"
       ],
       "source": [
         "formal/pon-nakamoto-v1/inference_receipt.py",
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "formal/pon-nakamoto-v1/client_confirmation.py"
       ],
       "limit": "Fixed digest identities, positive bounded counters and no hidden reduced deployment profile.",
       "threat": "Stale confirmation, input/model substitution, cross-genesis signatures and unsafe remote-result authority.",
@@ -442,12 +465,15 @@
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_wrong_native_context_rejects_even_an_empty_block",
         "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_concurrent_pipe_drain_before_large_input",
         "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_stdout_flood_is_killed_and_reaped",
-        "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_timeout_reaps_own_child"
+        "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_timeout_reaps_own_child",
+        "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_multiple_selected_backends_reject_before_starting_cache",
+        "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_changed_selected_binary_cannot_reuse_previous_success"
       ],
       "source": [
         "formal/pon-nakamoto-v1/native_execution.py",
         "formal/pon-nakamoto-v1/ledger.py",
-        "formal/pon-nakamoto-v1/bounded_process.py"
+        "formal/pon-nakamoto-v1/bounded_process.py",
+        "formal/pon-nakamoto-v1/native_session.py"
       ],
       "limit": "16MiB bridge input,32MiB stdout,64KiB stderr,30-second deadline; both pipes drained while writing; only the owned child session is terminated.",
       "threat": "Fallback masking missing modules, startup before recovery, task starvation and authority conflation.",
@@ -509,6 +535,91 @@
       "limit": "Binding validation is read-only and does not execute tests or award deployment authority.",
       "threat": "Heading/class-count theatre, stale measurements, omitted failures and same-operator processes called independent.",
       "remaining": "Every final result needs actual source, command, filesystem, backend and honest unexecuted scope."
+    },
+    {
+      "module": "M11",
+      "id": "CompleteEvaluatorRound",
+      "claim": "The explicit successor closes only the complete frozen eligible roster; equal score sets produce equal final state regardless of arrival order.",
+      "scope": "Fresh revision4 development context only; revision3 remains the legacy first-two profile. Attestations are not model truth or chainwork.",
+      "atomic": "Existing M06 speculative transition and M07 block/delta commit; no separate evaluator database.",
+      "cuts": [
+        "All six 10/100/100 permutations",
+        "Two fast high scores with missing final evaluator",
+        "Candidate expiry before missing vote",
+        "Cross-profile signed packet and store reopen"
+      ],
+      "tests": [
+        "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_all_six_arrival_orders_close_to_the_same_state_with_all_workers",
+        "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_two_fast_high_scores_do_not_unlock_and_missing_vote_expires"
+      ],
+      "source": [
+        "config/pon/evaluation-round-v1.json",
+        "trillionnium/crates/trnm-verification-profiles/src/closed_round.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "formal/pon-nakamoto-v1/evaluation_round.py"
+      ],
+      "limit": "Two or three eligible configured identities, bounded unsigned scores and existing candidate lifetime/intake window.",
+      "threat": "First-arrival score selection, withheld evaluator, duplicate replacement and cross-profile replay.",
+      "remaining": "Evaluator independence, objective dispute adjudication, functional-copy attribution and public production acceptance remain unqualified."
+    },
+    {
+      "module": "M04",
+      "id": "AuthenticatedReplay",
+      "claim": "One exact authenticated session nonce executes at most one active copy and replays only the same reverified signed terminal response; a different payload at that nonce rejects.",
+      "scope": "Allowlisted signed private development transport; no confidentiality, permissionless identity or public-network acceptance.",
+      "atomic": "Reserve session, nonce, digest and payload before execution; terminal signed response and acknowledged nonce commit together. Work verification occurs outside the durable owner lock and context is rechecked before block commit.",
+      "cuts": [
+        "Restart with a pending request",
+        "Lose the first terminal response",
+        "Concurrent duplicate while pending",
+        "Changed payload at the same nonce",
+        "Replay a terminal error",
+        "Alter canonical session or request bytes"
+      ],
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_authenticated_bytes_bind_session_signature_and_canonical_request",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_pending_request_recovers_and_completed_response_replays",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_committed_submit_with_missing_auth_ack_recovers_without_work_replay",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_authenticated_socket_replays_response_after_client_loses_first_ack",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_cached_terminal_error_is_reverified_and_counted_as_rejected"
+      ],
+      "source": [
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
+      ],
+      "limit": "At most64 peers, one pending nonce per session,16 retained response bodies,2MiB frames,three public workers and absolute deadlines.",
+      "threat": "Key theft, roster substitution, replay conflict, lost acknowledgement, disk corruption, identity churn and public Sybil admission.",
+      "remaining": "No encrypted channel, automated trust distribution, open discovery/gossip, permissionless fairness, WAN campaign or independent operator acceptance."
+    },
+    {
+      "module": "M15",
+      "id": "DurableOutbox",
+      "claim": "A native authenticated client commits one exact signed wire before network I/O, retries only those bytes after restart and advances its nonce only after a verified terminal response.",
+      "scope": "Caller-owned private development Node namespace; not a wallet, production key service or remote physical-effect exactly-once protocol.",
+      "atomic": "peer_outbox stores payload, wire and digests before connect/write; verified terminal acknowledgement atomically advances highest_ack and clears every pending field.",
+      "cuts": [
+        "Connection refused after reservation",
+        "Response lost after server commit",
+        "Client restart with pending bytes",
+        "Different request attempted while pending",
+        "Wrong server signature or session",
+        "Symlink, hard-link or group-readable secret file"
+      ],
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_client_outbox_survives_network_loss_and_rejects_changed_request",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::test_durable_client_retries_exact_wire_after_lost_server_response",
+        "trillionnium/crates/trnm-pon-node/src/main.rs::test_authentication_configuration_uses_the_opened_file_identity",
+        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authentication_options_are_scoped_to_network_commands",
+        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"
+      ],
+      "source": [
+        "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
+      ],
+      "limit": "One pending request per session,2MiB wire,positive signed generation/nonce and descriptor-checked single-link private secret input.",
+      "threat": "Secret substitution, ambiguous retry, nonce gaps, response spoofing, client crash and request changes after reservation.",
+      "remaining": "No HSM custody, TLS/noise confidentiality, public peer routing, target-side physical exactly-once reconciliation or production lifecycle."
     }
   ],
   "binding_is_execution": false,

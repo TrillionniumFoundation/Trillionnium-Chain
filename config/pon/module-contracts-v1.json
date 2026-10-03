@@ -27,7 +27,8 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/contract_wire.py",
-        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs"
       ],
       "test_classes": [
         "CodecTests",
@@ -109,14 +110,17 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "formal/pon-nakamoto-v1/reference.py"
+        "formal/pon-nakamoto-v1/reference.py",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests",
         "WorkExamples"
       ],
-      "native_packages": [],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_packages": [
+        "trnm-pon-node"
+      ],
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -146,16 +150,18 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-checkpoint-types/src/record.rs"
+        "trillionnium/crates/trnm-checkpoint-types/src/record.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
       ],
       "native_packages": [
         "trnm-checkpoint-store",
-        "trnm-checkpoint-types"
+        "trnm-checkpoint-types",
+        "trnm-pon-node"
       ],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -166,36 +172,49 @@
       "operations": [
         {
           "id": "M04.ReadFrame",
-          "inputs": "socket and BE32 length prefix",
-          "output": "bounded exact message or transport error",
-          "algorithm": "Read four bytes with10-second timeout; require 1..2097152 before allocating; read exactly length and reject duplicate JSON keys. Submit payload goes through full M02 validation, never through an accept flag.",
-          "commit": "Transport has no chain authority; each child owns a different ledger.",
-          "errors": "FRAME_LIMIT, SHORT_FRAME, OPERATION, ROOT",
-          "limits": "127.0.0.1 experiment only;backlog16;timeout10seconds"
+          "inputs": "socket, BE32 length prefix and optional canonical signed development envelope",
+          "output": "bounded exact request or authenticated transport error",
+          "algorithm": "Use one absolute five-second frame deadline; require 1..2097152 before allocation and read exactly that many bytes. Unauthenticated service is loopback-only. The explicit private development profile verifies canonical context-bound signatures before dispatch.",
+          "commit": "Transport has no chain authority. Authenticated replay reservation is durable before execution; M07/M08 remain the only block/state commit owner.",
+          "errors": "FRAME_LIMIT, FRAME_DEADLINE, AUTH_NONCANONICAL, AUTH_SIGNATURE, BUSY",
+          "limits": "three fixed server workers;10-second request budget;64 allowlisted peers;no confidentiality or public Sybil claim"
         },
         {
           "id": "M04.PropagateVerifiedBlock",
-          "inputs": "fixed header,txs,certificate and three peer endpoints",
-          "output": "per-peer read-back tip/root/generation",
-          "algorithm": "Send identical block to separate processes; each rechecks full work and state before ack. Retain failed/unavailable outcomes. Native peer identity/replay comes from retained authenticated frame components, not the test TCP wrapper.",
-          "commit": "M07/M08 own receipt persistence; transport never writes ledger tables.",
-          "errors": "UNAVAILABLE, UNKNOWN_PARENT, TRANSCRIPT",
-          "limits": "native target peer inflight4;globalproof4;independent queues"
+          "inputs": "fixed packet and a loopback or allowlisted authenticated development endpoint",
+          "output": "signed terminal response or retained exact pending request",
+          "algorithm": "Send one canonical packet through the normal native request path; the receiver rechecks work, state and local clock before commit. Authenticated clients persist the exact signed wire before I/O and retry that wire after loss.",
+          "commit": "M07/M08 own block persistence; inbound replay state and outbound pending wire use the same private Node namespace in separate atomic tables.",
+          "errors": "UNAVAILABLE, AUTH_OUTBOX_PENDING, AUTH_CONFLICTING_REPLAY, UNKNOWN_PARENT, TRANSCRIPT",
+          "limits": "one pending request per session;2MiB frame;bounded response retention;independent local recovery lane"
+        },
+        {
+          "id": "M04.AuthenticateRequest",
+          "inputs": "canonical request,peer/server Ed25519 identities,network/parameters/genesis/profile,generation and replay nonce",
+          "output": "one replay-qualified request or the exact previously signed terminal response",
+          "algorithm": "Derive the session from complete context and both identities; verify strict Ed25519 over canonical request bytes; reserve nonce and payload digest durably; execute at most one active copy; reverify any retained signed response before replay. A changed payload at the same nonce rejects.",
+          "commit": "peer_replay and peer_request_audit reserve the exact request in one transaction before execution; terminal signed response and acknowledged nonce commit together.",
+          "errors": "AUTH_SESSION_CONTEXT, AUTH_SIGNATURE, AUTH_REPLAY, AUTH_CONFLICTING_REPLAY, AUTH_PENDING_BUSY, AUTH_RESPONSE_CONFLICT",
+          "limits": "generation and nonce in1..i64::MAX;16 retained response bodies;allowlist<=64;development private transport without confidentiality"
         }
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/experiments/local_network.py",
         "trillionnium/crates/trnm-transport/src/lib.rs",
-        "trillionnium/crates/trnm-transport/src/proof_admission.rs"
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/main.rs"
       ],
       "test_classes": [
         "InteropTests"
       ],
       "native_packages": [
         "trnm-peer-lease",
-        "trnm-transport"
+        "trnm-transport",
+        "trnm-pon-node"
       ],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -267,7 +286,8 @@
         "formal/pon-nakamoto-v1/ledger.py",
         "formal/pon-nakamoto-v1/native_execution.py",
         "trillionnium/crates/trnm-mvcc-fee/src/engine.rs",
-        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs"
       ],
       "test_classes": [
         "ExecutionTests",
@@ -306,13 +326,16 @@
         }
       ],
       "source_refs": [
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
       ],
-      "native_packages": [],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_packages": [
+        "trnm-pon-node"
+      ],
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -323,31 +346,34 @@
       "operations": [
         {
           "id": "M08.PlanReorg",
-          "inputs": "old/new validated tips and active generation",
-          "output": "durable ordered detach/attach intent",
-          "algorithm": "All eight reorg process-crash cuts recover the same root and one event set while irreversible local records survive. Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
-          "commit": "Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
-          "errors": "UNKNOWN_PARENT, GENERATION, REORG_IN_PROGRESS",
-          "limits": "Ordinary append avoids full copies; real forks use a staging slot; readers retain SQLite transaction snapshots."
+          "inputs": "Ledger exclusive owner; fully verified stored target BlockId; active(old_tip,generation,state_slot); optional crash-cut callback",
+          "output": "Existing tip for no strictly greater work, direct-extension publication, or committed staging intent consumed by RecoverAndPublish",
+          "algorithm": "This is the planning phase inside Ledger.activate, not a separate public API. Finish an existing staging intent first and reread active state. Compare stored 512-bit work; equal/lower returns old tip without new events. A direct child with no fault callback applies deltas and publishes on the existing slot in one transaction. Otherwise walk old/new ancestry by height to the common ancestor; order detach tip-to-fork and attach fork-to-tip; copy the active slot and write old/new tips, next generation, ordered steps and cursor zero in one IMMEDIATE transaction. Never accept caller-supplied work totals or step lists.",
+          "commit": "Direct extension: delta, active tip/generation and attach event commit atomically. Fork: staging copy plus reorg intent commit together before any detach; active pointer remains unchanged.",
+          "errors": "UNKNOWN_PARENT; UNDO_ROOT or ROOT on direct append; existing-intent GENERATION/SCHEMA failures; propagated SQLite/OSError. Resource exhaustion is a local failure, not consensus-invalid history.",
+          "limits": "One owner and one pending intent. Actual planning currently holds detach/attach lists and a full staging copy; bounded native planning is not implemented. No fixed depth becomes finality."
         },
         {
           "id": "M08.RecoverAndPublish",
-          "inputs": "persisted intent,position,staged generation",
-          "output": "new coherent active root and unique events",
-          "algorithm": "All eight reorg process-crash cuts recover the same root and one event set while irreversible local records survive. Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
-          "commit": "Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
-          "errors": "UNDO_ROOT, ROOT, GENERATION",
-          "limits": "Ordinary append avoids full copies; real forks use a staging slot; readers retain SQLite transaction snapshots."
+          "inputs": "Ledger._recover_intent reads the persisted singleton(old_tip,new_tip,generation,steps,position,status); optional crash-cut callback",
+          "output": "No pending/done intent: active tip unchanged. Successful recovery: target tip with coherent generation, root and one ordered remove/add event set",
+          "algorithm": "This is Ledger._recover_intent, called by activate and recover. Require active==(old_tip,generation-1). From persisted cursor, check detach/attach kind and each delta before-image, then apply that step and advance its cursor in one IMMEDIATE transaction. After all steps, recompute the staged target root. Publish active tip/generation/state_slot, events, done status and old-slot retirement in one transaction. Ledger.recover then selects any fully verified indexed strictly heavier tip; completing one intent alone is not best-chain selection.",
+          "commit": "Every delta step and cursor commit together; final active tuple, ordered events, done flag and old-slot deletion have a separate single commit. Independent EffectJournal is never part of undo.",
+          "errors": "GENERATION for stale active tuple; SCHEMA for invalid step kind; UNDO_ROOT for before-image mismatch; ROOT before publication; UNKNOWN_PARENT or propagated SQLite/OSError. Do not label any failure as an executed remote effect.",
+          "limits": "Resume committed cursor after interruption; done/no intent is idempotent and creates no repeated events. On root/generation corruption retain the intent and fence new admission for diagnosis; do not auto-clear it. Full staged state/root replay and physical power-loss qualification remain open."
         }
       ],
       "source_refs": [
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
       ],
-      "native_packages": [],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_packages": [
+        "trnm-pon-node"
+      ],
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -411,12 +437,23 @@
           "commit": "Same state transition and block delta; reorg reverses pointer/escrow but not historical inference.",
           "errors": "EVIDENCE, ROOT, FUNDS, DUPLICATE",
           "limits": "1..16 allocation entries;20-block rewardmaturity"
+        },
+        {
+          "id": "M10.SubmitFactorContribution",
+          "inputs": "full ILF2 rank1..2 i16 B,A witness; actual loaded ILM2 parent; context and signature",
+          "output": "native verified complete candidate model plus context-bound full BA duplicate marker",
+          "algorithm": "New revision11 profile only: load exact parent chunks and hash, recompute full BA and all-model coefficient range, reject no-op or repeated complete update, freeze original public evaluation roster. No old tag6 reinterpretation.",
+          "commit": "Original M06 State and reorg deltas; exact same-parent same-round marker retention; paid/current model references retained.",
+          "errors": "Dedicated summary: FACTOR_PROFILE, FACTOR_PARENT, FACTOR_MODEL_HASH, FACTOR_MODEL_RANGE, FACTOR_COMPUTED_HASH, FACTOR_NOOP, DUPLICATE_FUNCTION_UPDATE, SUBMISSION_ROUND; complete codec/model/duplicate and inherited execution errors in NATIVE_INTEGER_FACTOR_CANDIDATE_V2.",
+          "limits": "rank1..2; 921/1441B signed transaction; complete7756B model; <=64 1024B chunks; existing65536 State key cap."
         }
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/experiments/settle_model.py",
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+        "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs"
       ],
       "test_classes": [
         "ExecutionTests"
@@ -457,7 +494,9 @@
       "source_refs": [
         "formal/pon-nakamoto-v1/evaluation.py",
         "formal/pon-nakamoto-v1/experiments/model_loop.py",
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs",
+        "trillionnium/crates/trnm-verification-profiles/tests/exact_integer_linear_v1.rs"
       ],
       "test_classes": [
         "ExecutionTests"
@@ -526,26 +565,29 @@
         },
         {
           "id": "M13.VerifyIncomingHistory",
-          "inputs": "ordered block/certificate/tx stream,expectedgenesis",
-          "output": "fully verified retained ancestry",
-          "algorithm": "For each block use M02 exact parent work and M06 state validation. Work matrices/certificate remain self-contained; model retention is separate. Never interpret a local checkpoint or old proof as a new finality certificate.",
-          "commit": "Append valid branch rows/deltas only; incomplete import not active.",
-          "errors": "NETWORK, WORK, ROOT, UNKNOWN_PARENT",
-          "limits": "block1MiB; bounded proof jobs; no permanent pruning-depth fork rejection"
+          "inputs": "bounded page bytes, caller-pinned expected tip and locally verified block cursor, local clock",
+          "output": "verified continuation cursor plus completed/requested-tip-active separately",
+          "algorithm": "Decode bounded closed page before work; check consecutive parents, fixed context and exact next cursor; use Ledger.admit for each actual work/signature/state block. Activate only a complete target under local cumulative-work selection. Interrupted valid prefixes remain resumable.",
+          "commit": "Existing Ledger owns each fully verified block+deltas transaction. No peer snapshot or chainwork field is imported. Failure may retain valid prefixes but cannot claim requested-tip completion.",
+          "errors": "PAGE_BYTES, PAGE_CONTEXT, PAGE_CONTINUATION, UNKNOWN_PARENT, NETWORK, TIME_DEFERRED, WORK, ROOT, INCOMPLETE_HISTORY",
+          "limits": "At most16 blocks and2MiB per page, 8KiB ancestry spool; no total-height finality cutoff. Native bridge limits remain separate."
         }
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-state-import/src/lib.rs"
+        "trillionnium/crates/trnm-state-import/src/lib.rs",
+        "formal/pon-nakamoto-v1/client_confirmation.py",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "DiskReorgTests",
         "InteropTests"
       ],
       "native_packages": [
-        "trnm-state-import"
+        "trnm-state-import",
+        "trnm-pon-node"
       ],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -556,12 +598,12 @@
       "operations": [
         {
           "id": "M14.QueryCurrentState",
-          "inputs": "active generation and optional event cursor",
-          "output": "tip,root,generation and branch-relative status",
-          "algorithm": "Read active pointer and generation kv in one snapshot and recompute root; return no unconditional finalized flag. A production confirmation adds depth/work evidence and freshness; localhost ACK is not independent proof.",
-          "commit": "Indexer is derived; cursor(generation,ordinal), no new balanceauthority.",
-          "errors": "ROOT, UNAVAILABLE",
-          "limits": "responsebounded; socket10seconds in executableharness"
+          "inputs": "locally verified ledger, exact transaction id and included block, local observation clock",
+          "output": "included/confirmed/reorged with observed tip, generation, membership index, depth and locally derived work delta",
+          "algorithm": "Read coherent active state; recheck included body commitment and exact transaction membership; walk active ancestry, derive depth and work delta against fixed policy; reject future clock and changed generation. Never accept remote confirmed/work flags.",
+          "commit": "Read-only local projection of existing Ledger. No irreversible-finality or execution-authority token is returned.",
+          "errors": "NO_TRANSACTION, ROOT, TIME_DEFERRED, STALE_VIEW, UNKNOWN_PARENT",
+          "limits": "Full-verifying client, not succinct; ancestry time may grow with distance while path memory remains bounded."
         },
         {
           "id": "M14.ConsumePublishedModel",
@@ -577,14 +619,18 @@
         "formal/pon-nakamoto-v1/experiments/local_network.py",
         "formal/pon-nakamoto-v1/experiments/model_loop.py",
         "formal/pon-nakamoto-v1/inference_receipt.py",
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "formal/pon-nakamoto-v1/client_confirmation.py",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
       ],
       "test_classes": [
         "CodecTests",
         "ExecutionTests"
       ],
-      "native_packages": [],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "native_packages": [
+        "trnm-pon-node"
+      ],
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },
@@ -595,12 +641,21 @@
       "operations": [
         {
           "id": "M15.StartExecutableSpecPeer",
-          "inputs": "privateledgerdir,exactconfig",
-          "output": "ready localhostport or failure",
-          "algorithm": "Acquire exclusive store owner, verify parameters, recover unfinishedintent, then bind127.0.0.1 and announcegenesis. No network admission before recovery. This is not the native production node assembly.",
-          "commit": "Own one ledger writer perprocess; private directory; current schemaonly.",
-          "errors": "WRITER_BUSY, NETWORK, ROOT, NODE_START_TIMEOUT",
-          "limits": "startup20seconds,listen16,request10seconds,inactivity30seconds"
+          "inputs": "private ledger directory,exact development context and optional allowlisted authentication profile",
+          "output": "recovered bounded native endpoint or failure",
+          "algorithm": "Acquire the exclusive store owner, verify parameters, recover reorg plus replay/outbox state, then bind. Plain service is loopback-only; a non-loopback development bind requires the explicit authenticated flag, a descriptor-checked private key, an exact peer roster and a positive session generation.",
+          "commit": "One Node owns branch state, inbound replay and outbound exact-wire state. No admission occurs before all recovery checks finish.",
+          "errors": "WRITER_BUSY, STORAGE_CONTEXT, AUTH_SECRET_FILE, AUTH_ROSTER, AUTH_RECOVERY, NETWORK",
+          "limits": "fresh current schema only;three workers;5-second frame and10-second request budgets;no unattended production service"
+        },
+        {
+          "id": "M15.SendDurableAuthenticatedRequest",
+          "inputs": "Node owner,peer address,canonical request,client key,expected server key and session generation",
+          "output": "verified signed terminal response or the unchanged pending exact wire for retry",
+          "algorithm": "Create and sign one canonical request; commit its exact payload, wire and digests before network I/O; on restart retry only those bytes; clear the pending row and advance the nonce only after a context-matching strict server signature with terminal=true. A different request while pending rejects.",
+          "commit": "peer_outbox reservation commits before connect/write; terminal acknowledgement clears pending bytes and advances highest_ack in one transaction.",
+          "errors": "AUTH_OUTBOX_CONTEXT, AUTH_OUTBOX_PENDING, AUTH_OUTBOX_CONFLICT, AUTH_RESPONSE_CONTEXT, AUTH_RESPONSE_SIGNATURE, REMOTE_RETRYABLE",
+          "limits": "one pending request per session;wire<=2MiB;secret file is no-follow,single-link and owner-private;network commands alone accept authentication options"
         },
         {
           "id": "M15.StopAndReconcile",
@@ -616,15 +671,19 @@
         "formal/pon-nakamoto-v1/experiments/local_network.py",
         "formal/pon-nakamoto-v1/ledger.py",
         "formal/pon-nakamoto-v1/native_execution.py",
-        "trillionnium/crates/trnm-release-bundle/src/lib.rs"
+        "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/main.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
       ],
       "native_packages": [
-        "trnm-release-bundle"
+        "trnm-release-bundle",
+        "trnm-pon-node"
       ],
-      "implementation_scope": "executable-spec-and-reusable-components",
+      "implementation_scope": "native-development-entry-and-separate-reference-not-public-production",
       "native_product_integrated": false,
       "independent_accepted": false
     },

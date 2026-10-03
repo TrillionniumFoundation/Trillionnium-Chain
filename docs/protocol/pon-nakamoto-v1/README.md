@@ -4,6 +4,11 @@ Status: selected development architecture; candidate specification, not a deploy
 Decision date: 2026-09-28. Primary owner M00; consensus M02; cross-module consumers M01-M17.
 The sole work sequence remains the [development plan](../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 Machine contract: [pon-nakamoto-v1.json](../../../config/pon-nakamoto-v1.json).
+Current entrypoint profiles and audit gates: [public readiness](details/PUBLIC_READINESS.md).
+Atomic task renewal: [lifecycle V3](details/QUALIFIED_TASK_LIFECYCLE_V3.md).
+Queued signed overlap: [lifecycle V4](details/QUALIFIED_TASK_LIFECYCLE_V4.md).
+Versioned public transport: [public intake v2](details/PUBLIC_INTAKE_V2.md).
+Pinned tool dependency review: [dependency security](details/DEPENDENCY_SECURITY.md).
 
 ## Architectural decision
 
@@ -17,7 +22,11 @@ old/new-validator-set handoff are RETIRED AS DEVELOPMENT TARGETS.
 No BFT checkpoint/finality committee or consumption/stake vote is hidden in PoN.
 Old PoCO source, protocol decoders, byte registries and runtime launchers are deleted
 from the active tree. Git retains history; only inventoried neutral components remain.
-A new PoN runtime and proof format remain to be built.
+The concrete experimental W1 work relation and 49,188-byte proof format are implemented
+in native Rust and a separate Python oracle. `trnm-pon-node` composes a native
+development consensus, branch owner and socket entrypoint. Work-profile security,
+independent integration acceptance and public-network qualification remain unfinished.
+The implementation and acceptance claims have separate evidence requirements.
 
 ## The product, not just a compute market
 
@@ -55,13 +64,19 @@ measured and remains a public-network blocker, not a hidden fallback.
 
 ## Implementable detail index
 
-[W1 work relation](details/WORK_PROFILE.md) · [L1 ledger bytes/state](details/LEDGER_WIRE.md) ·
-[S1 persistence/reorg](details/STATE_RECOVERY.md) · [M1 model/evaluation](details/MODEL_EVALUATION.md) ·
+[W1 work relation](details/WORK_PROFILE.md) · [L3 ledger bytes/state](details/LEDGER_WIRE.md) ·
+[S2 persistence/reorg](details/STATE_RECOVERY.md) · [M1 model/evaluation](details/MODEL_EVALUATION.md) ·
 [N1 network/clients](details/NETWORK_CLIENT.md) · [P1 performance/acceptance](details/PERFORMANCE_ACCEPTANCE.md).
 
-[Procedure registry](../../../config/pon/module-contracts-v1.json) has36 typed operations
+[Test compilation and measurement boundary](details/TEST_PROFILE_COST_BOUNDARY.md)
+retains full verification and the registered resource limits when compiling test code.
+
+[Procedure registry](../../../config/pon/module-contracts-v1.json) has39 typed operations
 for all18 existing modules. [Maturity](../../../config/pon/module-maturity-v1.json)
 separates document, component, executable contract, native product and independent acceptance.
+The explicitly selected revision11 [integer factor candidate](details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md)
+adds native tag23 and one responsibility; the original twelve-command wire registry
+and its historical reference outcomes remain unchanged.
 
 ## Revision2 invariant continuation
 
@@ -74,3 +89,13 @@ itself remains experimental and unqualified; all production/independent acceptan
 
 [Immutable evaluation inputs and full service consent](details/EVALUATION_BUNDLE.md)
 bind actual producer/evaluator/settlement calls; they do not grant export or deployment authority.
+
+## Six-finding engineering evidence
+
+The [source-bound local qualification](../../../evidence/pon-public-readiness-v1/README.md)
+retains the current full regression, four live continuous transfer workloads, protected
+socket attack phases and bounded model attribution campaign. Actual proofs, signatures,
+confirmations and durable database states are independently replayed. Earlier failed and
+pre-correction runs are preserved as observations. The measured runtime is identified
+separately from later documentation/evidence publication; all public, work-hardness,
+independent, future-window and production acceptance flags remain false.

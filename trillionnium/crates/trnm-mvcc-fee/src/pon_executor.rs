@@ -2,14 +2,101 @@
 //! Parallel workers speculate against one immutable snapshot; exact key and prefix
 //! reads are validated in canonical order. Conflict or speculative rejection is
 //! re-executed ONCE against that order's current state, never an unbounded retry loop.
+use crate::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
+use crate::public_evaluation;
+use crate::qualified_task_lifecycle;
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::atomic::{AtomicUsize, Ordering};
+use trnm_crypto_primitives::qualified_work_task::{verify_development_statement, AdmissionContext};
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_protocol::pon_wire::{hash, state_root, Envelope, Hash};
+use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::{SignedQualifiedWorkTask, TaskPurpose};
+
+pub const SIGNED_TASK_PROFILE: &str = "signed-task-dev-v1";
+pub const LEGACY_TASK_PROFILE: &str = "legacy-task-v1";
+pub const QUALIFIED_DEMANDS: u64 = 16;
 
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
+/// Caller-local observation only; no ledger byte or execution authority.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ExecutionProgress {
+    BeforeParentBinding,
+    BeforeStateClone,
+    AfterMandatory,
+    BeforePrepare { index: usize },
+    AfterPrepare { index: usize },
+    BeforeApply { index: usize },
+    AfterApply { index: usize },
+    BeforeReward,
+    BeforeCommitment,
+    AfterCommitment,
+    BeforeOutput,
+    BeforePersistence,
+    PersistenceDelta { index: usize },
+    BeforeDurableCommit,
+}
+/// An abandoned preview is separate from a canonical application rejection.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ExecutionError<E> {
+    Relation(&'static str),
+    Cancelled(E),
+}
+impl<E> From<&'static str> for ExecutionError<E> {
+    fn from(error: &'static str) -> Self {
+        Self::Relation(error)
+    }
+}
+pub type ControlledResult<T, E> = std::result::Result<T, ExecutionError<E>>;
+/// Request-local accounting only. A guard is created on the actual worker and
+/// dropped on that same worker on success, rejection, cancellation or unwind.
+pub trait ExecutionWorkerInterval {}
+pub trait ExecutionWorkerAccounting: Sync {
+    fn worker_started(&self) -> Option<Box<dyn ExecutionWorkerInterval + '_>>;
+    fn worker_spawn_succeeded(&self);
+    #[cfg(test)]
+    fn test_spawn_allowed(&self, _index: usize) -> bool {
+        true
+    }
+}
+impl ExecutionWorkerAccounting for () {
+    fn worker_started(&self) -> Option<Box<dyn ExecutionWorkerInterval + '_>> {
+        None
+    }
+    fn worker_spawn_succeeded(&self) {}
+}
+/// Keep progress and accounting together without changing canonical outputs.
+pub struct ExecutionControl<'a, E> {
+    pub progress: &'a (dyn Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+    pub worker_accounting: &'a dyn ExecutionWorkerAccounting,
+}
+impl<'a, E> ExecutionControl<'a, E> {
+    pub fn new(
+        progress: &'a (dyn Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+        worker_accounting: &'a dyn ExecutionWorkerAccounting,
+    ) -> Self {
+        Self {
+            progress,
+            worker_accounting,
+        }
+    }
+}
+pub(crate) fn relation_only<T>(result: ControlledResult<T, std::convert::Infallible>) -> Result<T> {
+    match result {
+        Ok(value) => Ok(value),
+        Err(ExecutionError::Relation(error)) => Err(error),
+        Err(ExecutionError::Cancelled(impossible)) => match impossible {},
+    }
+}
+pub(crate) fn no_cancellation(
+    _: ExecutionProgress,
+) -> std::result::Result<(), std::convert::Infallible> {
+    Ok(())
+}
 const ZERO: Hash = [0; 32];
 fn require(ok: bool, error: &'static str) -> Result<()> {
     if ok {
@@ -41,7 +128,7 @@ fn hash32(s: &str) -> Result<Hash> {
     hex::decode_to_slice(s, &mut h).map_err(|_| "NONCANONICAL")?;
     Ok(h)
 }
-fn canonical(v: &Value) -> Result<Vec<u8>> {
+pub(crate) fn canonical(v: &Value) -> Result<Vec<u8>> {
     fn visit(v: &Value) -> Result<()> {
         match v {
             Value::Null | Value::Bool(_) => Ok(()),
@@ -80,22 +167,309 @@ pub struct Config {
     pub family: Hash,
     pub plan: Hash,
     pub evaluators: BTreeSet<String>,
-    pub fees: [u64; 13],
+    pub fees: [u64; 24],
     pub params: Value,
+    pub model_registry: Value,
 }
 impl Config {
     /// Installed experimental genesis context, not caller-supplied authority booleans.
     pub fn installed() -> Result<Self> {
-        let params: Value =
+        Self::installed_with_evaluation_policy("legacy-first-two-v3")
+    }
+    /// Explicit successor selects different network/parameter commitments. The default
+    /// revision3 bytes and economics remain unchanged; this is not a hot upgrade.
+    pub fn installed_with_evaluation_policy(policy: &str) -> Result<Self> {
+        Self::installed_with_profiles(policy, LEGACY_TASK_PROFILE)
+    }
+    pub fn installed_with_profiles(policy: &str, task_profile: &str) -> Result<Self> {
+        Self::installed_with_model_profiles(policy, task_profile, "linear-expert-dev-v1")
+    }
+    pub fn installed_with_model_profiles(
+        policy: &str,
+        task_profile: &str,
+        model_profile: &str,
+    ) -> Result<Self> {
+        let mut params: Value =
             serde_json::from_str(include_str!("../../../../config/pon/devnet-v1.json"))
                 .map_err(|_| "CONFIG")?;
         require(
             params["consensus_revision"] == 3 && params["production_activation"] == false,
             "CONFIG",
         )?;
-        let model: Value =
-            serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
+        match policy {
+            "legacy-first-two-v3" => {}
+            trnm_verification_profiles::closed_round::PROFILE => {
+                let policy: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/evaluation-round-v1.json"
+                ))
                 .map_err(|_| "CONFIG")?;
+                require(policy["production_activation"] == false, "CONFIG")?;
+                for (key, value) in policy["genesis_overrides"].as_object().ok_or("CONFIG")? {
+                    params[key] = value.clone();
+                }
+                params["evaluation_policy_hash"] = json!(hex::encode(hash(
+                    b"evaluation-policy",
+                    &[&canonical(&policy)?]
+                )));
+            }
+            public_evaluation::PROFILE => {
+                let policy: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/public-evaluation-native-v1.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    policy["production_activation"] == false
+                        && policy["independent_governance_accepted"] == false
+                        && policy["objective_model_quality"] == false,
+                    "CONFIG",
+                )?;
+                require(
+                    policy["storage_revision"] == public_evaluation::STORAGE_REVISION
+                        && policy["maximum_record_bytes"] == 4096,
+                    "CONFIG",
+                )?;
+                for (name, expected) in [
+                    ("candidate_end_offset", public_evaluation::CANDIDATE_END),
+                    ("commit_end_offset", public_evaluation::COMMIT_END),
+                    ("reveal_end_offset", public_evaluation::REVEAL_END),
+                    ("adoption_start_offset", public_evaluation::ADOPTION_START),
+                    ("appeal_limit_per_candidate", 16),
+                    ("archive_retention_blocks", 256),
+                    ("round_blocks", 128),
+                    ("maximum_candidates_per_round", 512),
+                ] {
+                    require(field(&policy, name)? == expected, "CONFIG")?;
+                }
+                for tag in 14..=17 {
+                    require(
+                        field(&policy["base_fee_units"], &tag.to_string())? == 160,
+                        "CONFIG",
+                    )?;
+                }
+                require(
+                    field(&params, "candidate_round_blocks")? == 128
+                        && field(&params, "max_candidate_history_per_round")? == 512,
+                    "CONFIG",
+                )?;
+                for (key, value) in policy["genesis_overrides"].as_object().ok_or("CONFIG")? {
+                    params[key] = value.clone();
+                }
+                params["evaluation_policy_hash"] = json!(hex::encode(hash(
+                    b"evaluation-policy",
+                    &[&canonical(&policy)?]
+                )));
+            }
+            _ => return Err("EVALUATION_POLICY"),
+        }
+        match task_profile {
+            LEGACY_TASK_PROFILE => {}
+            SIGNED_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-work-task-v1.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false,
+                    "CONFIG",
+                )?;
+                let revision = if policy == public_evaluation::PROFILE {
+                    6
+                } else {
+                    5
+                };
+                params["consensus_revision"] = json!(revision);
+                params["chain_label"] =
+                    json!(format!("trnm-pon-signed-task-devnet-{revision}-{policy}"));
+                params["work_task_profile"] = json!(SIGNED_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v1",
+                    &[&canonical(&registry)?]
+                )));
+            }
+            LIFECYCLE_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-task-lifecycle-v2.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false,
+                    "CONFIG",
+                )?;
+                params["consensus_revision"] = json!(7);
+                params["chain_label"] = json!(format!("trnm-pon-task-lifecycle-devnet-7-{policy}"));
+                params["work_task_profile"] = json!(LIFECYCLE_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v2",
+                    &[&canonical(&registry)?]
+                )));
+            }
+            ATOMIC_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-task-lifecycle-v3.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false
+                        && registry["consensus_revision"] == 8
+                        && registry["standalone_renew_disabled"] == true
+                        && registry["exact_contract"]["atomic_renew_bytes"] == 1028
+                        && registry["exact_contract"]["base_fee_units"]["22"] == 200,
+                    "CONFIG",
+                )?;
+                params["consensus_revision"] = json!(8);
+                params["chain_label"] = json!(format!("trnm-pon-task-lifecycle-devnet-8-{policy}"));
+                params["work_task_profile"] = json!(ATOMIC_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v3",
+                    &[&canonical(&registry)?]
+                )));
+            }
+            OVERLAP_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-task-lifecycle-v4.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false
+                        && registry["consensus_revision"] == 9
+                        && registry["standalone_renew_disabled"] == true
+                        && registry["atomic_overlap_window"] == true
+                        && registry["exact_contract"]["atomic_renew_bytes"] == 1028
+                        && registry["exact_contract"]["base_fee_units"]["22"] == 200,
+                    "CONFIG",
+                )?;
+                params["consensus_revision"] = json!(9);
+                params["chain_label"] = json!(format!("trnm-pon-task-lifecycle-devnet-9-{policy}"));
+                params["work_task_profile"] = json!(OVERLAP_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v4",
+                    &[&canonical(&registry)?]
+                )));
+            }
+            CHECKPOINT_TASK_PROFILE => return Err("CHECKPOINT_POLICY_REQUIRED"),
+            _ => return Err("WORK_TASK_PROFILE"),
+        }
+        if policy == public_evaluation::PROFILE {
+            params["chain_label"] = json!(format!(
+                "{}-evaluation-storage{}",
+                text(&params, "chain_label")?,
+                public_evaluation::STORAGE_REVISION
+            ));
+        }
+        let model: Value = match model_profile {
+            "linear-expert-dev-v1" => {
+                serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
+                    .map_err(|_| "CONFIG")?
+            }
+            crate::integer_factor_candidate_v2::PROFILE => {
+                require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
+                require(task_profile == LEGACY_TASK_PROFILE, "MODEL_PROFILE_TASK")?;
+                let factor_policy: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/integer-factor-candidate-v2.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    factor_policy["production_activation"] == false
+                        && factor_policy["tag"] == 23
+                        && factor_policy["artifact_exact_bytes"]
+                            == crate::integer_factor_candidate_v2::MODEL_BYTES
+                        && factor_policy["rank_max"] == 2,
+                    "CONFIG",
+                )?;
+                for (key, expected) in [
+                    ("schema", json!("native-integer-factor-candidate-v2")),
+                    (
+                        "profile",
+                        json!(crate::integer_factor_candidate_v2::PROFILE),
+                    ),
+                    ("consensus_revision", json!(11)),
+                    ("magic", json!("ILF2")),
+                    ("rank_min", json!(1)),
+                    ("scale", json!(1024)),
+                    ("coefficient_min", json!(-32767)),
+                    ("coefficient_max", json!(32767)),
+                    ("payload_bytes", json!([762, 1282])),
+                    ("envelope_bytes", json!([921, 1441])),
+                    ("artifact_max_bytes", json!(65536)),
+                    ("chunk_bytes", json!(1024)),
+                    ("chunk_count_max", json!(64)),
+                    ("base_fee_units", json!(200)),
+                    ("no_op_rejected", json!(true)),
+                    ("source_budget_enforced", json!(false)),
+                    ("quality_qualified", json!(false)),
+                    ("general_model_equivalence", json!(false)),
+                ] {
+                    require(factor_policy[key] == expected, "CONFIG")?;
+                }
+                params["consensus_revision"] = json!(11);
+                params["model_profile"] = json!(model_profile);
+                params["chain_label"] =
+                    json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
+                params["factor_candidate_policy_hash"] = json!(hex::encode(hash(
+                    b"integer-factor-candidate-policy-v2",
+                    &[&canonical(&factor_policy)?]
+                )));
+                serde_json::from_str(include_str!(
+                    "../../../../config/pon/model-family-integer-factor-v2.json"
+                ))
+                .map_err(|_| "CONFIG")?
+            }
+            "smollm2-135m-cpu-dev-v1" => {
+                require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
+                params["model_profile"] = json!(model_profile);
+                params["chain_label"] =
+                    json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
+                serde_json::from_str(include_str!(
+                    "../../../../config/pon/model-family-smollm2-135m-v1.json"
+                ))
+                .map_err(|_| "CONFIG")?
+            }
+            _ => return Err("MODEL_PROFILE"),
+        };
+        if model_profile != "linear-expert-dev-v1" {
+            let maximum = field(&model, "artifact_max_bytes")?;
+            require(
+                maximum > 0 && maximum <= field(&params, "max_artifact_bytes")?,
+                "MODEL_PROFILE_LIMIT",
+            )?;
+            params["max_artifact_bytes"] = json!(maximum);
+        }
+        if model_profile == crate::integer_factor_candidate_v2::PROFILE {
+            for (key, expected) in [
+                ("schema", json!("integer-linear-factor-family-v2")),
+                ("version", json!(2)),
+                ("dimensions", json!(257)),
+                ("experts", json!(3)),
+                ("logit_outputs", json!(3)),
+                ("weight_scale", json!(1024)),
+                ("weight_min", json!(-32767)),
+                ("weight_max", json!(32767)),
+                ("artifact_encoding", json!("ILM2-le-i16-complete-model-v2")),
+                (
+                    "artifact_exact_bytes",
+                    json!(crate::integer_factor_candidate_v2::MODEL_BYTES),
+                ),
+                ("genesis_model", json!("canonical-full-zero-model-v2")),
+                ("native_factor_rank_min", json!(1)),
+                ("native_factor_rank_max", json!(2)),
+                (
+                    "tensor_shapes",
+                    json!({"base":[3,257],"router":[3,257],"deltas":[3,3,257]}),
+                ),
+                ("consensus_authority", json!(false)),
+                ("general_model_equivalence", json!(false)),
+                ("model_utility_qualified", json!(false)),
+            ] {
+                require(model[key] == expected, "CONFIG")?;
+            }
+            let family = hash(b"family", &[&canonical(&model)?]);
+            let artifact = crate::integer_factor_candidate_v2::IntegerModelV2::genesis(family);
+            params["factor_genesis_artifact"] = json!(hex::encode(artifact.id()));
+        }
         let wire: Value =
             serde_json::from_str(include_str!("../../../../config/pon/ledger-v1.json"))
                 .map_err(|_| "CONFIG")?;
@@ -113,8 +487,37 @@ impl Config {
             ],
         );
         let family = hash(b"family", &[&canonical(&model)?]);
-        let plan = hash(b"plan", &[b"public-source-file-disjoint-v1"]);
-        let mut fees = [0; 13];
+        let plan = if model_profile == crate::integer_factor_candidate_v2::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-factor-evaluation-v2",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile != "linear-expert-dev-v1" {
+            hash(
+                b"plan",
+                &[
+                    b"native-llm-strong-baseline-dev-v1",
+                    &family,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                ],
+            )
+        } else if policy == "legacy-first-two-v3" {
+            hash(b"plan", &[b"public-source-file-disjoint-v1"])
+        } else {
+            hash(
+                b"plan",
+                &[
+                    b"public-source-file-disjoint-v1",
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                ],
+            )
+        };
+        let mut fees = [0; 24];
         let mut tags = BTreeSet::new();
         for c in wire["commands"].as_array().ok_or("CONFIG")? {
             let tag = field(c, "tag")? as usize;
@@ -122,6 +525,17 @@ impl Config {
             fees[tag] = field(c, "base_fee_units")?;
         }
         require(tags.len() == 12, "CONFIG")?;
+        // The signed-task extension has an explicit fixed development base fee.
+        // It is refused under every historical context even though its codec exists.
+        fees[13] = 100;
+        for fee in &mut fees[14..=17] {
+            *fee = 160;
+        }
+        for fee in &mut fees[18..=21] {
+            *fee = 100;
+        }
+        fees[22] = 200;
+        fees[23] = 200;
         let mut evaluators = BTreeSet::new();
         for i in 0_u64..3 {
             let seed = hash(b"DEV-ONLY-KEY", &[&i.to_le_bytes()]);
@@ -137,10 +551,79 @@ impl Config {
             evaluators,
             fees,
             params,
+            model_registry: model,
         })
     }
     fn limit(&self, name: &str) -> Result<u64> {
         field(&self.params, name)
+    }
+    pub fn task_profile(&self) -> &str {
+        self.params["work_task_profile"]
+            .as_str()
+            .unwrap_or(LEGACY_TASK_PROFILE)
+    }
+    pub fn qualified_demand_id(&self, index: u64) -> Result<Hash> {
+        require(
+            self.task_profile() == SIGNED_TASK_PROFILE && index < QUALIFIED_DEMANDS,
+            "TASK_DEMAND",
+        )?;
+        Ok(hash(
+            b"qualified-development-demand-v1",
+            &[&self.network, &self.parameters, &index.to_le_bytes()],
+        ))
+    }
+    pub fn qualified_demand_purpose(index: u64) -> Result<TaskPurpose> {
+        require(index < QUALIFIED_DEMANDS, "TASK_DEMAND")?;
+        Ok(if index == 0 {
+            TaskPurpose::Maintenance
+        } else {
+            match index % 3 {
+                1 => TaskPurpose::InferenceContraction,
+                2 => TaskPurpose::EvaluationContraction,
+                _ => TaskPurpose::AdapterContraction,
+            }
+        })
+    }
+    pub fn qualified_task_context(&self, demand_id: Hash, height: u64) -> Result<AdmissionContext> {
+        require(
+            self.task_profile() == SIGNED_TASK_PROFILE,
+            "WORK_TASK_PROFILE",
+        )?;
+        let mut known = false;
+        for index in 0..QUALIFIED_DEMANDS {
+            known |= self.qualified_demand_id(index)? == demand_id;
+        }
+        require(known, "TASK_DEMAND")?;
+        let seed = hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]);
+        let key = trnm_crypto_primitives::signing_key_from_hex(&hex::encode(seed))
+            .map_err(|_| "CONFIG")?;
+        let source = key.verifying_key().to_bytes();
+        Ok(AdmissionContext {
+            network: self.network,
+            parameters: self.parameters,
+            source,
+            demand_id,
+            source_record: hash(
+                b"qualified-development-source-record-v1",
+                &[&demand_id, b"public-fixture-not-real-user-demand"],
+            ),
+            authorization_scope: hash(
+                b"qualified-development-authorization-v1",
+                &[
+                    &self.network,
+                    &self.parameters,
+                    b"development-attestation-not-local-permission",
+                ],
+            ),
+            withdrawal_head: hash(
+                b"qualified-development-withdrawal-v1",
+                &[&self.network, &self.parameters, &0_u64.to_le_bytes()],
+            ),
+            availability_manifest: hash(b"qualified-development-da-manifest-v1", &[&demand_id]),
+            availability_root: hash(b"qualified-development-da-attestation-v1", &[&demand_id]),
+            height,
+            required_retention_blocks: 100,
+        })
     }
 }
 
@@ -270,6 +753,28 @@ impl<'a> View<'a> {
         )
     }
 }
+impl qualified_task_lifecycle::LifecycleState for View<'_> {
+    fn get(&mut self, key: &str) -> Option<Value> {
+        self.get(key)
+    }
+    fn put(&mut self, key: String, value: Value) {
+        self.put(key, value);
+    }
+    fn scan(&mut self, prefix: &str) -> State {
+        self.scan(prefix)
+    }
+}
+impl crate::integer_factor_candidate_v2::FactorState for View<'_> {
+    fn get(&mut self, key: &str) -> Option<Value> {
+        self.get(key)
+    }
+    fn put(&mut self, key: String, value: Value) {
+        self.put(key, value);
+    }
+    fn scan(&mut self, prefix: &str) -> State {
+        self.scan(prefix)
+    }
+}
 impl Patch {
     fn current(&self, state: &State) -> bool {
         self.reads.iter().all(|(k, v)| state.get(k) == v.as_ref())
@@ -305,6 +810,13 @@ impl<'a> Payload<'a> {
     }
     fn h(&mut self) -> Result<Hash> {
         self.take()
+    }
+    fn blob(&mut self) -> Result<&'a [u8]> {
+        let length = u16::from_le_bytes(self.take()?) as usize;
+        let end = self.pos.checked_add(length).ok_or("LENGTH")?;
+        let value = self.bytes.get(self.pos..end).ok_or("LENGTH")?;
+        self.pos = end;
+        Ok(value)
     }
     fn byte(&mut self) -> Result<u8> {
         Ok(self.take::<1>()?[0])
@@ -353,8 +865,53 @@ struct Prepared {
     sender: String,
     encoded_len: usize,
 }
+/// Read-only native admission check for exact PNX1 canonical context, selected tag,
+/// expiry and strict main signature. This grants no nonce, funds or execution fact.
+pub fn validate_main_envelope(raw: &[u8], height: u64, cfg: &Config) -> Result<Envelope> {
+    Ok(prepare(raw, height, cfg, &AtomicUsize::new(0))?.envelope)
+}
 fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> Result<Prepared> {
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
+    require(
+        !(18..=21).contains(&tx.tag) || qualified_task_lifecycle::enabled(cfg),
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 19 || cfg.task_profile() == LIFECYCLE_TASK_PROFILE,
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 22
+            || matches!(
+                cfg.task_profile(),
+                ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE | CHECKPOINT_TASK_PROFILE
+            ),
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        !(14..=17).contains(&tx.tag) || public_evaluation::enabled(cfg),
+        "PUBLIC_EVAL_PROFILE",
+    )?;
+    require(
+        tx.tag != 7 || !public_evaluation::enabled(cfg),
+        "PUBLIC_EVAL_PROFILE",
+    )?;
+    require(
+        tx.tag != 13 || cfg.task_profile() == SIGNED_TASK_PROFILE,
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 12 || cfg.task_profile() == LEGACY_TASK_PROFILE,
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 23 || crate::integer_factor_candidate_v2::enabled(cfg),
+        "FACTOR_PROFILE",
+    )?;
+    require(
+        tx.tag != 6 || !crate::integer_factor_candidate_v2::enabled(cfg),
+        "FACTOR_PROFILE",
+    )?;
     require(tx.network == cfg.network, "NETWORK")?;
     require(height <= tx.expiry, "EXPIRED")?;
     let sender = hex::encode(tx.sender);
@@ -463,6 +1020,45 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             o["status"] = json!("settled");
             s.put(k, o);
         }
+        23 => {
+            let witness = trnm_protocol::integer_factor_v2::FactorWitnessV2::decode(&tx.payload)
+                .map_err(|_| "FACTOR_ENCODING")?;
+            let current = s
+                .get("model:current")
+                .and_then(|v| v.as_str().map(str::to_owned))
+                .ok_or("STATE")?;
+            let history = s.scan("contribution:");
+            require(
+                (history.len() as u64) < cfg.limit("max_candidate_history_per_round")?,
+                "CANDIDATE_WINDOW_FULL",
+            )?;
+            let active = history
+                .values()
+                .map(|v| active_candidate(v, &current, height, cfg))
+                .collect::<Result<Vec<_>>>()?
+                .into_iter()
+                .filter(|b| *b)
+                .count();
+            require(
+                (active as u64) < cfg.limit("max_model_candidates")?,
+                "LIMIT",
+            )?;
+            let key = format!("contribution:{}", hex::encode(witness.contribution_id));
+            require(s.get(&key).is_none(), "DUPLICATE")?;
+            let mut contribution = crate::integer_factor_candidate_v2::admit(
+                &mut s, cfg, tx.sender, height, &witness,
+            )?;
+            let excluded = public_evaluation::excluded(&s.scan("evaluation-disqualified:"));
+            contribution["public_evaluation"] = public_evaluation::freeze(
+                cfg,
+                witness.contribution_id,
+                &contribution,
+                height,
+                &excluded,
+            )?;
+            s.put(key, contribution);
+            p.pos = p.bytes.len();
+        }
         6 => {
             let cid = p.h()?;
             let family = p.h()?;
@@ -525,7 +1121,13 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                 s.get(&k).is_none() && s.get(&duplicate).is_none(),
                 "DUPLICATE",
             )?;
-            s.put(k,json!({"owner":sender,"artifact":hex::encode(artifact),"components_root":hex::encode(components),"family":hex::encode(family),"parent":hex::encode(parent),"votes":{},"score":0,"status":"submitted","submitted_height":height,"submission_round":round}));
+            let mut contribution = json!({"owner":sender,"artifact":hex::encode(artifact),"components_root":hex::encode(components),"family":hex::encode(family),"parent":hex::encode(parent),"votes":{},"score":0,"status":"submitted","submitted_height":height,"submission_round":round});
+            if public_evaluation::enabled(cfg) {
+                let excluded = public_evaluation::excluded(&s.scan("evaluation-disqualified:"));
+                contribution["public_evaluation"] =
+                    public_evaluation::freeze(cfg, cid, &contribution, height, &excluded)?;
+            }
+            s.put(k, contribution);
             s.put(duplicate, json!(hex::encode(cid)));
         }
         7 => {
@@ -549,7 +1151,32 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             )?;
             o["votes"][&sender] = json!({"score":score,"evidence":hex::encode(evidence)});
             let votes = o["votes"].as_object().ok_or("STATE")?;
-            if votes.len() as u64 >= cfg.limit("evaluation_threshold")? {
+            let complete = match text(&cfg.params, "evaluation_profile")? {
+                "explicit-attested-dev-profile-not-permissionless-utility" => {
+                    votes.len() as u64 >= cfg.limit("evaluation_threshold")?
+                }
+                trnm_verification_profiles::closed_round::PROFILE => {
+                    let author = text(&o, "owner")?;
+                    let eligible = cfg
+                        .evaluators
+                        .iter()
+                        .filter(|s| s.as_str() != author)
+                        .cloned()
+                        .collect();
+                    let scores = votes
+                        .iter()
+                        .map(|(signer, vote)| Ok((signer.clone(), field(vote, "score")?)))
+                        .collect::<Result<BTreeMap<_, _>>>()?;
+                    trnm_verification_profiles::closed_round::complete_score(
+                        &eligible,
+                        &scores,
+                        cfg.limit("max_evidence_score")?,
+                    )?
+                    .is_some()
+                }
+                _ => return Err("EVALUATION_POLICY"),
+            };
+            if complete {
                 let minimum = votes
                     .values()
                     .map(|v| field(v, "score"))
@@ -573,6 +1200,12 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             let current = s.get("model:current").ok_or("STATE")?;
             require(current == json!(hex::encode(parent)), "STATE")?;
             let (bk, mut bundle) = s.object("contribution:", bundle_id)?;
+            if public_evaluation::enabled(cfg) {
+                let records = s.scan(&public_evaluation::record_prefix(bundle_id));
+                let evaluation =
+                    public_evaluation::hydrate(&bundle["public_evaluation"], bundle_id, &records)?;
+                public_evaluation::adoption_allowed(&evaluation, height)?;
+            }
             require(
                 text(&bundle, "status")? == "evaluated"
                     && field(&bundle, "score")? >= cfg.limit("minimum_adoption_score")?,
@@ -590,6 +1223,12 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                 let cid = p.h()?;
                 let score = p.n()?;
                 let (k, mut o) = s.object("contribution:", cid)?;
+                if public_evaluation::enabled(cfg) {
+                    let records = s.scan(&public_evaluation::record_prefix(cid));
+                    let evaluation =
+                        public_evaluation::hydrate(&o["public_evaluation"], cid, &records)?;
+                    public_evaluation::adoption_allowed(&evaluation, height)?;
+                }
                 require(
                     text(&o, "status")? == "evaluated"
                         && o["parent"] == current
@@ -749,6 +1388,115 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             require(task != ZERO && s.get(&k).is_none(), "DUPLICATE")?;
             s.put(k, json!(true));
         }
+        13 => {
+            let signed =
+                SignedQualifiedWorkTask::decode(&tx.payload).map_err(|_| "TASK_MANIFEST")?;
+            let manifest = &signed.manifest;
+            let context = cfg.qualified_task_context(manifest.demand_id, height)?;
+            require(tx.sender == context.source, "TASK_SOURCE")?;
+            let statement = verify_development_statement(&tx.payload, &context)
+                .map_err(|_| "TASK_STATEMENT")?;
+            let registry_key = format!("work-demand-registry:{}", hex::encode(manifest.demand_id));
+            let registered = s.get(&registry_key).ok_or("TASK_DEMAND")?;
+            require(
+                field(&registered, "purpose")? == manifest.purpose as u64,
+                "TASK_PURPOSE",
+            )?;
+            let withdrawal_key = format!("work-withdrawal:{}", hex::encode(context.source));
+            require(
+                s.get(&withdrawal_key) == Some(json!(hex::encode(context.withdrawal_head))),
+                "TASK_WITHDRAWAL",
+            )?;
+            let sequence_key = format!("work-source:{}", hex::encode(context.source));
+            let previous_sequence = s.get(&sequence_key).ok_or("TASK_SOURCE")?;
+            require(
+                manifest.demand_nonce == add(num(&previous_sequence)?, 1)?,
+                "TASK_SOURCE_NONCE",
+            )?;
+            let demand_key = format!("work-demand:{}", hex::encode(manifest.demand_id));
+            let work_key = format!("work:{}", hex::encode(manifest.matrix_task));
+            require(
+                s.get(&demand_key).is_none() && s.get(&work_key).is_none(),
+                "TASK_REPLAY",
+            )?;
+            s.put(sequence_key, json!(manifest.demand_nonce));
+            s.put(demand_key, json!(hex::encode(statement.manifest_id())));
+            s.put(work_key, json!({"schema":"qualified-work-registration-v1","manifest":hex::encode(&tx.payload),"admitted_height":height,"manifest_id":hex::encode(statement.manifest_id())}));
+            p.pos = p.bytes.len();
+        }
+        18..=22 => {
+            qualified_task_lifecycle::apply_verified_command(&mut s, tx, height, cfg)?;
+            p.pos = tx.payload.len();
+        }
+        14..=17 => {
+            let cid = p.h()?;
+            let active_key = format!("contribution:{}", hex::encode(cid));
+            let archive_key = format!("evaluation-archive:{}", hex::encode(cid));
+            let (key, mut contribution) = if let Some(value) = s.get(&active_key) {
+                (active_key, value)
+            } else {
+                require(matches!(tx.tag, 16 | 17), "STATE")?;
+                (archive_key.clone(), s.get(&archive_key).ok_or("STATE")?)
+            };
+            let records = s.scan(&public_evaluation::record_prefix(cid));
+            contribution["public_evaluation"] =
+                public_evaluation::hydrate(&contribution["public_evaluation"], cid, &records)?;
+            let evaluation = &mut contribution["public_evaluation"];
+            require(
+                public_evaluation::enabled(cfg) && !evaluation.is_null(),
+                "PUBLIC_EVAL_PROFILE",
+            )?;
+            match tx.tag {
+                14 => public_evaluation::commit(evaluation, &sender, p.h()?, p.h()?, height)?,
+                15 => {
+                    let value = public_evaluation::Reveal {
+                        candidate: cid,
+                        round: p.h()?,
+                        evaluator: tx.sender,
+                        plan: p.h()?,
+                        evidence: p.h()?,
+                        score: p.n()?,
+                        salt: p.h()?,
+                    };
+                    public_evaluation::reveal(evaluation, value, height)?;
+                }
+                16 => {
+                    let first = p.blob()?;
+                    let second = p.blob()?;
+                    let disqualified =
+                        public_evaluation::conflict(evaluation, cfg, cid, first, second)?;
+                    s.put(format!("evaluation-disqualified:{disqualified}"),json!({"evidence_candidate":hex::encode(cid),"height":height,"scope":"exact development key; no hidden-controller independence claim"}));
+                }
+                17 => {
+                    let author = contribution["owner"].as_str().ok_or("STATE")?.to_owned();
+                    public_evaluation::appeal(
+                        &mut contribution["public_evaluation"],
+                        &author,
+                        &sender,
+                        p.h()?,
+                        p.h()?,
+                        p.h()?,
+                        height,
+                    )?;
+                }
+                _ => unreachable!(),
+            }
+            for (record_key, value) in
+                public_evaluation::record_rows(cid, &contribution["public_evaluation"])?
+            {
+                if let Some(previous) = records.get(&record_key) {
+                    require(previous == &value, "PUBLIC_EVAL_RECORD_MUTATION")?;
+                } else {
+                    s.put(record_key, value);
+                }
+            }
+            contribution["public_evaluation"] =
+                public_evaluation::compact(&contribution["public_evaluation"])?;
+            if !contribution["public_evaluation"]["closed"].is_null() {
+                s.put(archive_key, contribution.clone());
+            }
+            s.put(key, contribution);
+        }
         _ => return Err("VERSION"),
     }
     require(p.pos == p.bytes.len(), "LENGTH")?;
@@ -800,6 +1548,37 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
         .ok_or("STATE")?
         .to_owned();
     let keys: Vec<_> = state.keys().cloned().collect();
+    if public_evaluation::enabled(cfg) {
+        let candidates: Vec<_> = keys
+            .iter()
+            .filter(|key| key.starts_with("contribution:"))
+            .cloned()
+            .collect();
+        for key in candidates {
+            let cid = hash32(key.strip_prefix("contribution:").ok_or("STATE")?)?;
+            let mut evaluation = public_evaluation::read_evaluation(state, cid)?;
+            let closed = public_evaluation::close(&mut evaluation, height)?;
+            let value = state.get_mut(&key).ok_or("STATE")?;
+            value["public_evaluation"] = public_evaluation::compact(&evaluation)?;
+            if let Some(score) = closed {
+                value["score"] = json!(score);
+                value["status"] = json!("evaluated");
+            } else if value["public_evaluation"]["closed"]["status"] == "aborted" {
+                value["score"] = json!(0);
+                value["status"] = json!("evaluation-aborted");
+            }
+            if !value["public_evaluation"]["closed"].is_null() {
+                let archive = value.clone();
+                state.insert(
+                    format!(
+                        "evaluation-archive:{}",
+                        key.strip_prefix("contribution:").ok_or("STATE")?
+                    ),
+                    archive,
+                );
+            }
+        }
+    }
     for k in keys {
         if k.starts_with("contribution:") {
             let v = state.get_mut(&k).ok_or("STATE")?;
@@ -822,6 +1601,12 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
                     v["score"] = json!(0);
                 }
             }
+        } else if k.starts_with("evaluation-archive:") {
+            let value = state.get(&k).ok_or("STATE")?;
+            let closed = field(&value["public_evaluation"]["closed"], "closed_height")?;
+            if height.saturating_sub(closed) > 256 {
+                state.remove(&k);
+            }
         } else if k.starts_with("task:") || k.starts_with("quota:") {
             let value = state.get(&k).ok_or("STATE")?;
             if field(value, "remaining")? == 0 && field(value, "deadline")? < height {
@@ -833,6 +1618,26 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
             if parts.len() != 4 || parts[1] != current || parts[2] != round {
                 state.remove(&k);
             }
+        }
+    }
+    if public_evaluation::enabled(cfg) {
+        // Remove records only after both active candidate and retained archive vanish.
+        // Branch state cleanup never touches physical/local operation journals.
+        let orphaned: Vec<_> = state
+            .keys()
+            .filter(|key| key.starts_with(&format!("{}:", public_evaluation::RECORD_NAMESPACE)))
+            .filter(|key| {
+                key.strip_prefix(&format!("{}:", public_evaluation::RECORD_NAMESPACE))
+                    .and_then(|suffix| suffix.split_once(':'))
+                    .is_some_and(|(candidate, _)| {
+                        !state.contains_key(&format!("contribution:{candidate}"))
+                            && !state.contains_key(&format!("evaluation-archive:{candidate}"))
+                    })
+            })
+            .cloned()
+            .collect();
+        for key in orphaned {
+            state.remove(&key);
         }
     }
     let retired: Vec<_> = state
@@ -881,10 +1686,11 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
             credit_state(state, text(&reward, "owner")?, field(&reward, "amount")?)?;
         }
     }
+    crate::integer_factor_candidate_v2::cleanup(state, height, cfg)?;
     Ok(receipts)
 }
 
-/// Execute all twelve signed commands in exact ledger order. Failed blocks never
+/// Execute context-selected signed commands in exact ledger order. Failed blocks never
 /// mutate `parent`. Only observed dependencies cause one canonical re-execution.
 pub fn execute(
     parent: &State,
@@ -895,13 +1701,98 @@ pub fn execute(
     workers: usize,
     cfg: &Config,
 ) -> Result<Output> {
+    execute_with_commitment(
+        parent,
+        BlockExecution {
+            transactions,
+            height,
+            miner,
+            parent_id,
+            workers,
+        },
+        cfg,
+        |_, next| root(next),
+    )
+}
+/// Cooperative pure preview; all spawned workers are joined before any return.
+/// Individual signatures, State operations and root construction are not preempted.
+pub fn execute_with_progress<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    execute_with_commitment_and_progress(parent, block, cfg, |_, next| root(next), progress)
+}
+pub fn execute_with_control<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    control: &ExecutionControl<'_, E>,
+) -> ControlledResult<Output, E> {
+    execute_with_commitment_and_control(parent, block, cfg, |_, next| root(next), control)
+}
+/// Ordinary caller-supplied facts, not prepared execution or admission authority.
+pub struct BlockExecution<'a> {
+    pub transactions: &'a [Vec<u8>],
+    pub height: u64,
+    pub miner: Hash,
+    pub parent_id: Hash,
+    pub workers: usize,
+}
+pub(crate) fn execute_with_commitment(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    commitment: impl FnMut(&State, &State) -> Result<Hash>,
+) -> Result<Output> {
+    relation_only(execute_with_commitment_and_progress(
+        parent,
+        block,
+        cfg,
+        commitment,
+        &no_cancellation,
+    ))
+}
+pub(crate) fn execute_with_commitment_and_progress<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    execute_with_commitment_and_control(
+        parent,
+        block,
+        cfg,
+        commitment,
+        &ExecutionControl::new(progress, &()),
+    )
+}
+pub(crate) fn execute_with_commitment_and_control<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    control: &ExecutionControl<'_, E>,
+) -> ControlledResult<Output, E> {
+    let progress = control.progress;
+    let BlockExecution {
+        transactions,
+        height,
+        miner,
+        parent_id,
+        workers,
+    } = block;
     require([1, 2, 4, 8].contains(&workers), "WORKERS")?;
     require(
         transactions.len() as u64 <= cfg.limit("max_transactions")?,
         "LIMIT",
     )?;
+    progress(ExecutionProgress::BeforeStateClone).map_err(ExecutionError::Cancelled)?;
     let mut state = parent.clone();
     let mut receipts = mandatory(&mut state, height, cfg)?;
+    progress(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
     let mut fees = 0;
     let mut metrics = Metrics {
         workers,
@@ -921,11 +1812,13 @@ pub fn execute(
         prepared: Result<Prepared>,
         patch: Option<Result<Patch>>,
     }
-    let predict = |raw: &[u8]| {
+    let predict = |index: usize, raw: &[u8]| -> ControlledResult<Predicted, E> {
+        progress(ExecutionProgress::BeforePrepare { index }).map_err(ExecutionError::Cancelled)?;
         let prepared = prepare(raw, height, cfg, &signatures);
+        progress(ExecutionProgress::AfterPrepare { index }).map_err(ExecutionError::Cancelled)?;
         let range_command = prepared
             .as_ref()
-            .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10));
+            .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10 | 23));
         // Prefix-capacity operations remain canonical: do not retain one full
         // prefix snapshot per transaction merely to parallelize shared budgets.
         let patch = if serial_state || range_command {
@@ -938,50 +1831,77 @@ pub fn execute(
                     .and_then(|tx| apply_prepared(&state, tx, height, cfg)),
             )
         };
-        Predicted { prepared, patch }
+        Ok(Predicted { prepared, patch })
     };
     let count = workers.min(transactions.len());
     let predicted = if count <= 1 {
         transactions
             .iter()
-            .map(|raw| predict(raw))
-            .collect::<Vec<_>>()
+            .enumerate()
+            .map(|(index, raw)| predict(index, raw))
+            .collect::<ControlledResult<Vec<_>, E>>()?
     } else {
         // One bounded group of scoped workers PER BLOCK, not per short batch.
         // No clone of the full state per worker; everyone reads the same snapshot.
         metrics.workers_spawned = count;
-        std::thread::scope(|scope| -> Result<Vec<Predicted>> {
+        std::thread::scope(|scope| -> ControlledResult<Vec<Predicted>, E> {
             let mut handles = Vec::with_capacity(count);
             for worker in 0..count {
                 let work = &predict;
-                let handle = std::thread::Builder::new()
-                    .name(format!("pon-exec-{worker}"))
-                    .spawn_scoped(scope, move || {
-                        (worker..transactions.len())
-                            .step_by(count)
-                            .map(|index| (index, work(&transactions[index])))
-                            .collect::<Vec<_>>()
-                    });
+                #[cfg(test)]
+                let allowed = control.worker_accounting.test_spawn_allowed(worker);
+                #[cfg(not(test))]
+                let allowed = true;
+                let handle = if allowed {
+                    std::thread::Builder::new()
+                        .name(format!("pon-exec-{worker}"))
+                        .spawn_scoped(scope, move || {
+                            let _interval = control.worker_accounting.worker_started();
+                            (worker..transactions.len())
+                                .step_by(count)
+                                .map(|index| {
+                                    work(index, &transactions[index]).map(|value| (index, value))
+                                })
+                                .collect::<ControlledResult<Vec<_>, E>>()
+                        })
+                } else {
+                    Err(std::io::Error::other(
+                        "test-only partial worker start refusal",
+                    ))
+                };
                 match handle {
-                    Ok(h) => handles.push(h),
+                    Ok(h) => {
+                        control.worker_accounting.worker_spawn_succeeded();
+                        handles.push(h);
+                    }
                     Err(_) => {
                         // Join already started workers on partial-spawn failure too.
                         for h in handles {
                             let _ = h.join();
                         }
-                        return Err("WORKER_START");
+                        return Err("WORKER_START".into());
                     }
                 }
             }
             let mut rows = Vec::with_capacity(transactions.len());
             let mut panicked = false;
+            let mut cancelled = None;
             for handle in handles {
                 match handle.join() {
-                    Ok(mut values) => rows.append(&mut values),
+                    Ok(Ok(mut values)) => rows.append(&mut values),
+                    Ok(Err(error)) => {
+                        if cancelled.is_none() {
+                            cancelled = Some(error);
+                        }
+                    }
                     Err(_) => panicked = true,
                 }
             }
             require(!panicked, "WORKER_PANIC")?;
+            // Every handle is joined above before cancellation is returned.
+            if let Some(error) = cancelled {
+                return Err(error);
+            }
             rows.sort_by_key(|(index, _)| *index);
             require(rows.len() == transactions.len(), "WORKER_RESULT")?;
             Ok(rows.into_iter().map(|(_, result)| result).collect())
@@ -996,7 +1916,8 @@ pub fn execute(
     if serial_state && workers > 1 && !transactions.is_empty() {
         metrics.serial_conflict_batches = 1;
     }
-    for result in predicted {
+    for (index, result) in predicted.into_iter().enumerate() {
+        progress(ExecutionProgress::BeforeApply { index }).map_err(ExecutionError::Cancelled)?;
         // Consume failures at their canonical transaction position. A bad later
         // signature never bypasses an earlier state error or mutates the parent.
         let prepared = result.prepared?;
@@ -1020,8 +1941,10 @@ pub fn execute(
         fees = add(fees, patch.fee)?;
         receipts.push(patch.receipt.clone());
         patch.apply(&mut state);
+        progress(ExecutionProgress::AfterApply { index }).map_err(ExecutionError::Cancelled)?;
     }
     metrics.state_transition_ns = transition_start.elapsed().as_nanos();
+    progress(ExecutionProgress::BeforeReward).map_err(ExecutionError::Cancelled)?;
     let halvings = (height / cfg.limit("subsidy_halving_interval")?).min(64);
     let subsidy = cfg
         .limit("block_subsidy_units")?
@@ -1033,12 +1956,208 @@ pub fn execute(
     state.insert("meta:issued".into(), json!(issued));
     require(funds(&state)? == issued, "CONSERVATION")?;
     let root_start = std::time::Instant::now();
-    let root = root(&state)?;
+    progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
+    let root = commitment(parent, &state)?;
+    progress(ExecutionProgress::AfterCommitment).map_err(ExecutionError::Cancelled)?;
     metrics.state_root_ns = root_start.elapsed().as_nanos();
+    progress(ExecutionProgress::BeforeOutput).map_err(ExecutionError::Cancelled)?;
     Ok(Output {
         state,
         receipts,
         root,
         metrics,
     })
+}
+
+/// Compute cache only. The caller remains the sole authoritative ledger owner.
+/// A request must name the exact predecessor root and monotonically increasing sequence.
+/// Every failed transaction, commitment check or sequence mismatch preserves this session.
+pub struct ExecutionSession {
+    state: State,
+    tree: trnm_protocol::pon_state::StateTree,
+    config: Config,
+    sequence: u64,
+}
+#[derive(Debug)]
+pub struct SessionOutput {
+    pub predecessor: Hash,
+    pub root: Hash,
+    pub sequence: u64,
+    pub changes: Vec<(String, Option<Value>, Option<Value>)>,
+    pub receipts: Vec<Vec<u8>>,
+    pub metrics: Metrics,
+    pub commitment_nodes: usize,
+}
+impl ExecutionSession {
+    pub fn new(state: State, expected_root: Hash, config: Config) -> Result<Self> {
+        let mut bytes = BTreeMap::new();
+        for (key, value) in &state {
+            bytes.insert(key.as_bytes().to_vec(), canonical(value)?);
+        }
+        let tree =
+            trnm_protocol::pon_state::StateTree::from_values(&bytes).map_err(|_| "STATE_TREE")?;
+        require(tree.root() == expected_root, "SESSION_ROOT")?;
+        Ok(Self {
+            state,
+            tree,
+            config,
+            sequence: 0,
+        })
+    }
+    pub fn root(&self) -> Hash {
+        self.tree.root()
+    }
+    pub fn sequence(&self) -> u64 {
+        self.sequence
+    }
+    pub fn state(&self) -> &State {
+        &self.state
+    }
+    pub fn execute(
+        &mut self,
+        predecessor: (u64, Hash),
+        transactions: &[Vec<u8>],
+        height: u64,
+        miner: Hash,
+        parent_id: Hash,
+        workers: usize,
+    ) -> Result<SessionOutput> {
+        require(
+            predecessor == (self.sequence, self.tree.root()),
+            "SESSION_PREDECESSOR",
+        )?;
+        let sequence = self.sequence.checked_add(1).ok_or("SESSION_SEQUENCE")?;
+        let mut staged = None;
+        let mut changes = Vec::new();
+        let output = execute_with_commitment(
+            &self.state,
+            BlockExecution {
+                transactions,
+                height,
+                miner,
+                parent_id,
+                workers,
+            },
+            &self.config,
+            |before, after| {
+                use trnm_protocol::pon_state::Change;
+                let keys: BTreeSet<_> = before.keys().chain(after.keys()).collect();
+                let mut updates = Vec::new();
+                for key in keys {
+                    let old = before.get(key);
+                    let new = after.get(key);
+                    if old != new {
+                        updates.push(Change {
+                            key: key.as_bytes().to_vec(),
+                            before: old.map(canonical).transpose()?,
+                            after: new.map(canonical).transpose()?,
+                        });
+                        changes.push((key.clone(), old.cloned(), new.cloned()));
+                    }
+                }
+                let next = self
+                    .tree
+                    .apply(predecessor.1, &updates)
+                    .map_err(|_| "STATE_TREE")?;
+                let root = next.root();
+                staged = Some(next);
+                Ok(root)
+            },
+        )?;
+        let tree = staged.ok_or("STATE_TREE")?;
+        let result = SessionOutput {
+            predecessor: predecessor.1,
+            root: output.root,
+            sequence,
+            changes,
+            receipts: output.receipts,
+            metrics: output.metrics,
+            commitment_nodes: tree.allocated_nodes(),
+        };
+        self.state = output.state;
+        self.tree = tree;
+        self.sequence = sequence;
+        Ok(result)
+    }
+}
+
+#[cfg(test)]
+mod session_tests {
+    use super::*;
+
+    fn initial() -> State {
+        BTreeMap::from([
+            ("meta:issued".into(), json!(0)),
+            ("model:current".into(), json!(hex::encode([0; 32]))),
+        ])
+    }
+
+    #[test]
+    fn session_state_and_receipts_equal_existing_complete_builder() {
+        let state = initial();
+        let cfg = Config::installed().unwrap();
+        let old_root = root(&state).unwrap();
+        let mut session = ExecutionSession::new(state.clone(), old_root, cfg.clone()).unwrap();
+        for height in 1..=8 {
+            let expected = execute(
+                session.state(),
+                &[],
+                height,
+                [1; 32],
+                [height as u8; 32],
+                4,
+                &cfg,
+            )
+            .unwrap();
+            let observed = session
+                .execute(
+                    (session.sequence(), session.root()),
+                    &[],
+                    height,
+                    [1; 32],
+                    [height as u8; 32],
+                    4,
+                )
+                .unwrap();
+            assert_eq!(observed.root, expected.root);
+            assert_eq!(observed.receipts, expected.receipts);
+            assert_eq!(session.state(), &expected.state);
+            assert_eq!(session.sequence(), height);
+        }
+        assert_eq!(root(&state).unwrap(), old_root);
+    }
+
+    #[test]
+    fn invalid_context_transaction_and_sequence_never_publish_session_state() {
+        let state = initial();
+        let old_root = root(&state).unwrap();
+        let mut session =
+            ExecutionSession::new(state.clone(), old_root, Config::installed().unwrap()).unwrap();
+        assert_eq!(
+            session
+                .execute((99, old_root), &[], 1, [1; 32], [2; 32], 1)
+                .unwrap_err(),
+            "SESSION_PREDECESSOR"
+        );
+        assert_eq!(
+            session
+                .execute((0, [9; 32]), &[], 1, [1; 32], [2; 32], 1)
+                .unwrap_err(),
+            "SESSION_PREDECESSOR"
+        );
+        assert!(session
+            .execute((0, old_root), &[vec![0; 159]], 1, [1; 32], [2; 32], 8)
+            .is_err());
+        assert_eq!(session.sequence(), 0);
+        assert_eq!(session.root(), old_root);
+        assert_eq!(session.state(), &state);
+        session.sequence = u64::MAX;
+        assert_eq!(
+            session
+                .execute((u64::MAX, old_root), &[], 1, [1; 32], [2; 32], 1)
+                .unwrap_err(),
+            "SESSION_SEQUENCE"
+        );
+        assert_eq!(session.state(), &state);
+    }
 }
