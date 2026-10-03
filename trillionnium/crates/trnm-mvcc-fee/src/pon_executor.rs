@@ -22,6 +22,48 @@ pub const QUALIFIED_DEMANDS: u64 = 16;
 
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
+/// Caller-local observation only; no ledger byte or execution authority.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ExecutionProgress {
+    BeforeParentBinding,
+    BeforeStateClone,
+    AfterMandatory,
+    BeforePrepare { index: usize },
+    AfterPrepare { index: usize },
+    BeforeApply { index: usize },
+    AfterApply { index: usize },
+    BeforeReward,
+    BeforeCommitment,
+    AfterCommitment,
+    BeforeOutput,
+    BeforePersistence,
+    PersistenceDelta { index: usize },
+    BeforeDurableCommit,
+}
+/// An abandoned preview is separate from a canonical application rejection.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ExecutionError<E> {
+    Relation(&'static str),
+    Cancelled(E),
+}
+impl<E> From<&'static str> for ExecutionError<E> {
+    fn from(error: &'static str) -> Self {
+        Self::Relation(error)
+    }
+}
+pub type ControlledResult<T, E> = std::result::Result<T, ExecutionError<E>>;
+pub(crate) fn relation_only<T>(result: ControlledResult<T, std::convert::Infallible>) -> Result<T> {
+    match result {
+        Ok(value) => Ok(value),
+        Err(ExecutionError::Relation(error)) => Err(error),
+        Err(ExecutionError::Cancelled(impossible)) => match impossible {},
+    }
+}
+pub(crate) fn no_cancellation(
+    _: ExecutionProgress,
+) -> std::result::Result<(), std::convert::Infallible> {
+    Ok(())
+}
 const ZERO: Hash = [0; 32];
 fn require(ok: bool, error: &'static str) -> Result<()> {
     if ok {
@@ -1639,19 +1681,45 @@ pub fn execute(
         |_, next| root(next),
     )
 }
-pub(crate) struct BlockExecution<'a> {
-    pub(crate) transactions: &'a [Vec<u8>],
-    pub(crate) height: u64,
-    pub(crate) miner: Hash,
-    pub(crate) parent_id: Hash,
-    pub(crate) workers: usize,
+/// Cooperative pure preview; all spawned workers are joined before any return.
+/// Individual signatures, State operations and root construction are not preempted.
+pub fn execute_with_progress<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    execute_with_commitment_and_progress(parent, block, cfg, |_, next| root(next), progress)
+}
+/// Ordinary caller-supplied facts, not prepared execution or admission authority.
+pub struct BlockExecution<'a> {
+    pub transactions: &'a [Vec<u8>],
+    pub height: u64,
+    pub miner: Hash,
+    pub parent_id: Hash,
+    pub workers: usize,
 }
 pub(crate) fn execute_with_commitment(
     parent: &State,
     block: BlockExecution<'_>,
     cfg: &Config,
-    mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    commitment: impl FnMut(&State, &State) -> Result<Hash>,
 ) -> Result<Output> {
+    relation_only(execute_with_commitment_and_progress(
+        parent,
+        block,
+        cfg,
+        commitment,
+        &no_cancellation,
+    ))
+}
+pub(crate) fn execute_with_commitment_and_progress<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
     let BlockExecution {
         transactions,
         height,
@@ -1664,8 +1732,10 @@ pub(crate) fn execute_with_commitment(
         transactions.len() as u64 <= cfg.limit("max_transactions")?,
         "LIMIT",
     )?;
+    progress(ExecutionProgress::BeforeStateClone).map_err(ExecutionError::Cancelled)?;
     let mut state = parent.clone();
     let mut receipts = mandatory(&mut state, height, cfg)?;
+    progress(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
     let mut fees = 0;
     let mut metrics = Metrics {
         workers,
@@ -1685,8 +1755,10 @@ pub(crate) fn execute_with_commitment(
         prepared: Result<Prepared>,
         patch: Option<Result<Patch>>,
     }
-    let predict = |raw: &[u8]| {
+    let predict = |index: usize, raw: &[u8]| -> ControlledResult<Predicted, E> {
+        progress(ExecutionProgress::BeforePrepare { index }).map_err(ExecutionError::Cancelled)?;
         let prepared = prepare(raw, height, cfg, &signatures);
+        progress(ExecutionProgress::AfterPrepare { index }).map_err(ExecutionError::Cancelled)?;
         let range_command = prepared
             .as_ref()
             .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10 | 23));
@@ -1702,19 +1774,20 @@ pub(crate) fn execute_with_commitment(
                     .and_then(|tx| apply_prepared(&state, tx, height, cfg)),
             )
         };
-        Predicted { prepared, patch }
+        Ok(Predicted { prepared, patch })
     };
     let count = workers.min(transactions.len());
     let predicted = if count <= 1 {
         transactions
             .iter()
-            .map(|raw| predict(raw))
-            .collect::<Vec<_>>()
+            .enumerate()
+            .map(|(index, raw)| predict(index, raw))
+            .collect::<ControlledResult<Vec<_>, E>>()?
     } else {
         // One bounded group of scoped workers PER BLOCK, not per short batch.
         // No clone of the full state per worker; everyone reads the same snapshot.
         metrics.workers_spawned = count;
-        std::thread::scope(|scope| -> Result<Vec<Predicted>> {
+        std::thread::scope(|scope| -> ControlledResult<Vec<Predicted>, E> {
             let mut handles = Vec::with_capacity(count);
             for worker in 0..count {
                 let work = &predict;
@@ -1723,8 +1796,10 @@ pub(crate) fn execute_with_commitment(
                     .spawn_scoped(scope, move || {
                         (worker..transactions.len())
                             .step_by(count)
-                            .map(|index| (index, work(&transactions[index])))
-                            .collect::<Vec<_>>()
+                            .map(|index| {
+                                work(index, &transactions[index]).map(|value| (index, value))
+                            })
+                            .collect::<ControlledResult<Vec<_>, E>>()
                     });
                 match handle {
                     Ok(h) => handles.push(h),
@@ -1733,19 +1808,29 @@ pub(crate) fn execute_with_commitment(
                         for h in handles {
                             let _ = h.join();
                         }
-                        return Err("WORKER_START");
+                        return Err("WORKER_START".into());
                     }
                 }
             }
             let mut rows = Vec::with_capacity(transactions.len());
             let mut panicked = false;
+            let mut cancelled = None;
             for handle in handles {
                 match handle.join() {
-                    Ok(mut values) => rows.append(&mut values),
+                    Ok(Ok(mut values)) => rows.append(&mut values),
+                    Ok(Err(error)) => {
+                        if cancelled.is_none() {
+                            cancelled = Some(error);
+                        }
+                    }
                     Err(_) => panicked = true,
                 }
             }
             require(!panicked, "WORKER_PANIC")?;
+            // Every handle is joined above before cancellation is returned.
+            if let Some(error) = cancelled {
+                return Err(error);
+            }
             rows.sort_by_key(|(index, _)| *index);
             require(rows.len() == transactions.len(), "WORKER_RESULT")?;
             Ok(rows.into_iter().map(|(_, result)| result).collect())
@@ -1760,7 +1845,8 @@ pub(crate) fn execute_with_commitment(
     if serial_state && workers > 1 && !transactions.is_empty() {
         metrics.serial_conflict_batches = 1;
     }
-    for result in predicted {
+    for (index, result) in predicted.into_iter().enumerate() {
+        progress(ExecutionProgress::BeforeApply { index }).map_err(ExecutionError::Cancelled)?;
         // Consume failures at their canonical transaction position. A bad later
         // signature never bypasses an earlier state error or mutates the parent.
         let prepared = result.prepared?;
@@ -1784,8 +1870,10 @@ pub(crate) fn execute_with_commitment(
         fees = add(fees, patch.fee)?;
         receipts.push(patch.receipt.clone());
         patch.apply(&mut state);
+        progress(ExecutionProgress::AfterApply { index }).map_err(ExecutionError::Cancelled)?;
     }
     metrics.state_transition_ns = transition_start.elapsed().as_nanos();
+    progress(ExecutionProgress::BeforeReward).map_err(ExecutionError::Cancelled)?;
     let halvings = (height / cfg.limit("subsidy_halving_interval")?).min(64);
     let subsidy = cfg
         .limit("block_subsidy_units")?
@@ -1797,8 +1885,11 @@ pub(crate) fn execute_with_commitment(
     state.insert("meta:issued".into(), json!(issued));
     require(funds(&state)? == issued, "CONSERVATION")?;
     let root_start = std::time::Instant::now();
+    progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
     let root = commitment(parent, &state)?;
+    progress(ExecutionProgress::AfterCommitment).map_err(ExecutionError::Cancelled)?;
     metrics.state_root_ns = root_start.elapsed().as_nanos();
+    progress(ExecutionProgress::BeforeOutput).map_err(ExecutionError::Cancelled)?;
     Ok(Output {
         state,
         receipts,

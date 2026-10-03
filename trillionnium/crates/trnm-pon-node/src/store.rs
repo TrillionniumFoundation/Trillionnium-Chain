@@ -29,7 +29,7 @@ use trnm_mvcc_fee::pon_commitment::{
     PreparedCommitment,
 };
 use trnm_mvcc_fee::pon_executor::SIGNED_TASK_PROFILE;
-use trnm_mvcc_fee::pon_executor::{root, State};
+use trnm_mvcc_fee::pon_executor::{root, ExecutionError, ExecutionProgress, State};
 use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
@@ -320,6 +320,13 @@ impl WorkCheckedPacket {
             pon_work::VerificationError::Cancelled(error) => error,
         })?;
         Ok(Self { packet, work })
+    }
+}
+
+fn local_execution_error(error: ExecutionError<Error>) -> Error {
+    match error {
+        ExecutionError::Relation(error) => error.into(),
+        ExecutionError::Cancelled(error) => error,
     }
 }
 
@@ -1241,24 +1248,45 @@ impl Node {
         miner: Hash,
         workers: usize,
     ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
+        self.execute_derived_with_progress(
+            actual,
+            ExecutionRequest {
+                transactions,
+                height,
+                miner,
+                parent_id: parent,
+                workers,
+            },
+            &|_| Ok(()),
+        )
+    }
+    fn execute_derived_with_progress(
+        &self,
+        actual: &State,
+        block: ExecutionRequest<'_>,
+        progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
+    ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
+        progress(ExecutionProgress::BeforeParentBinding)?;
+        let parent = block.parent_id;
         let prior = self.cached_parent(parent)?;
         // Always encode/compare the actual supplied parent with its admitted root.
         // This also explicitly reseeds unknown/inactive/fork contexts.
         let checked = self.checked_commitment(actual, self.record(parent)?.root, prior.as_ref())?;
         let request = || ExecutionRequest {
-            transactions,
-            height,
-            miner,
+            transactions: block.transactions,
+            height: block.height,
+            miner: block.miner,
             parent_id: parent,
-            workers,
+            workers: block.workers,
         };
-        let result = pon_commitment::execute_checked(
+        let result = pon_commitment::execute_checked_with_progress(
             actual,
             checked.root,
             checked.snapshot.as_ref(),
             request(),
             &self.settings.app,
             CacheLimits::default(),
+            progress,
         );
         match result {
             Ok(output) => {
@@ -1266,21 +1294,22 @@ impl Node {
                     Some(output.commitment.observation.clone());
                 Ok(output)
             }
-            Err("COMMITMENT_PARENT" | "COMMITMENT_ROOT") => {
+            Err(ExecutionError::Relation("COMMITMENT_PARENT" | "COMMITMENT_ROOT")) => {
                 // A wrong internal snapshot cannot reject an otherwise valid
                 // ledger state; the full actual-root path still checks context.
                 self.invalidate_commitment();
-                pon_commitment::execute_checked(
+                pon_commitment::execute_checked_with_progress(
                     actual,
                     self.record(parent)?.root,
                     None,
                     request(),
                     &self.settings.app,
                     CacheLimits::default(),
+                    progress,
                 )
-                .map_err(Into::into)
+                .map_err(local_execution_error)
             }
-            Err(error) => Err(error.into()),
+            Err(error) => Err(local_execution_error(error)),
         }
     }
     fn derive_successor(
@@ -1551,6 +1580,14 @@ impl Node {
         checked: WorkCheckedPacket,
         observed_now: u64,
     ) -> Result<Hash> {
+        self.admit_work_checked_with_progress(checked, observed_now, &|_| Ok(()))
+    }
+    pub(crate) fn admit_work_checked_with_progress(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+        progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
+    ) -> Result<Hash> {
         let WorkCheckedPacket {
             packet,
             work: verified_work,
@@ -1564,13 +1601,16 @@ impl Node {
         let parent = self.record(h.parent)?;
         let prior = self.state_at(h.parent)?;
         let registered_task = self.eligible_work_task_from_state(&prior, h.work_task, h.height)?;
-        let executed = self.execute_derived(
+        let executed = self.execute_derived_with_progress(
             &prior,
-            h.parent,
-            &packet.transactions,
-            h.height,
-            h.miner,
-            self.workers,
+            ExecutionRequest {
+                transactions: &packet.transactions,
+                height: h.height,
+                miner: h.miner,
+                parent_id: h.parent,
+                workers: self.workers,
+            },
+            progress,
         )?;
         let mut output = executed.output;
         let commitment = executed.commitment;
@@ -1596,6 +1636,7 @@ impl Node {
         let mut keys: std::collections::BTreeSet<_> = prior.keys().collect();
         keys.extend(output.state.keys());
         let index_context = self.ancestry_context();
+        progress(ExecutionProgress::BeforePersistence)?;
         let tx = self
             .db
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
@@ -1611,7 +1652,8 @@ impl Node {
             ],
         )?;
         crate::ancestry_index::insert(&tx, index_context, id)?;
-        for key in keys {
+        for (index, key) in keys.into_iter().enumerate() {
+            progress(ExecutionProgress::PersistenceDelta { index })?;
             let before = prior.get(key).map(canonical).transpose()?;
             let after = output.state.get(key).map(canonical).transpose()?;
             if before != after {
@@ -1628,7 +1670,9 @@ impl Node {
             )?;
             tx.execute("DELETE FROM snapshots WHERE block!=? AND block NOT IN (SELECT snapshots.block FROM snapshots JOIN blocks ON blocks.id=snapshots.block ORDER BY blocks.height DESC,blocks.id LIMIT 64)",[self.settings.genesis.as_slice()])?;
         }
+        progress(ExecutionProgress::BeforeDurableCommit)?;
         tx.commit()?;
+        // No cancellation fence after commit: the native durable fact stays true.
         Ok(id)
     }
     pub fn make(
@@ -2618,6 +2662,107 @@ mod native_ancestry_tests {
         )
         .unwrap()
     }
+    #[test]
+    fn local_state_cancellation_rolls_back_all_packet_rows_and_reopens_original_state() {
+        for cancel_at in [
+            ExecutionProgress::AfterPrepare { index: 0 },
+            ExecutionProgress::AfterApply { index: 0 },
+            ExecutionProgress::AfterCommitment,
+            ExecutionProgress::BeforePersistence,
+            ExecutionProgress::PersistenceDelta { index: 0 },
+            ExecutionProgress::BeforeDurableCommit,
+        ] {
+            let dir = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(1)).unwrap();
+            let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+            let packet = make(&node, settings.genesis(), 1, 0, vec![transfer(&node)]);
+            let id = packet.id().unwrap();
+            let before = node.read_active().unwrap();
+            let sender = development_public(0).unwrap();
+            let nonce = node.next_nonce(sender).unwrap();
+            let tables = [
+                "blocks",
+                "deltas",
+                "ancestry_jump",
+                "snapshots",
+                "kv",
+                "events",
+                "steps",
+                "reorg",
+            ];
+            let counts = |owner: &Node| {
+                tables
+                    .iter()
+                    .map(|table| {
+                        owner
+                            .db
+                            .query_row(&format!("SELECT COUNT(*) FROM {table}"), [], |row| {
+                                row.get::<_, u64>(0)
+                            })
+                            .unwrap()
+                    })
+                    .collect::<Vec<_>>()
+            };
+            let original_counts = counts(&node);
+            let reached = std::sync::atomic::AtomicBool::new(false);
+            let checked = WorkCheckedPacket::verify(packet).unwrap();
+            let error = node
+                .admit_work_checked_with_progress(checked, 1000, &|point| {
+                    if point == cancel_at {
+                        reached.store(true, std::sync::atomic::Ordering::Release);
+                        Err("PUBLIC_REQUEST_CANCELLED".into())
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert_eq!(error.to_string(), "PUBLIC_REQUEST_CANCELLED");
+            assert!(reached.load(std::sync::atomic::Ordering::Acquire));
+            assert_eq!(counts(&node), original_counts);
+            assert!(node.record(id).is_err());
+            assert_eq!(node.read_active().unwrap(), before);
+            assert_eq!(node.next_nonce(sender).unwrap(), nonce);
+            drop(node);
+            let reopened = Node::open(dir.path(), settings, 2).unwrap();
+            assert_eq!(counts(&reopened), original_counts);
+            assert_eq!(reopened.read_active().unwrap(), before);
+            assert_eq!(reopened.next_nonce(sender).unwrap(), nonce);
+            assert!(reopened.record(id).is_err());
+        }
+    }
+
+    #[test]
+    fn local_cancel_named_like_commitment_error_never_retries_full_preview() {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let before = node.read_active().unwrap();
+        let calls = std::sync::atomic::AtomicUsize::new(0);
+        let error = node
+            .execute_derived_with_progress(
+                &before.2,
+                ExecutionRequest {
+                    transactions: &[],
+                    height: 1,
+                    miner: development_public(0).unwrap(),
+                    parent_id: settings.genesis(),
+                    workers: 2,
+                },
+                &|point| {
+                    if point == ExecutionProgress::BeforeOutput {
+                        calls.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        Err("COMMITMENT_ROOT".into())
+                    } else {
+                        Ok(())
+                    }
+                },
+            )
+            .unwrap_err();
+        assert_eq!(error.to_string(), "COMMITMENT_ROOT");
+        assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), 1);
+        assert_eq!(node.read_active().unwrap(), before);
+    }
+
     #[test]
     fn actual_work_index_abort_preserves_block_state_and_sender_nonce() {
         let dir = tempfile::tempdir().unwrap();

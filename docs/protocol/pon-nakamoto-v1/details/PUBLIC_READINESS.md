@@ -60,7 +60,7 @@ read-only service test do not guarantee public service under arbitrary occupancy
 Untrusted protected parse/auth/preface refusals have at most128 Unicode characters
 and a100ms absolute response budget, also committed by the transport profile.
 
-[Public V3 resource revision r5](PUBLIC_POOL_INTAKE_V3.md) independently reserves
+[Public V3 resource revision r7](PUBLIC_POOL_INTAKE_V3.md) independently reserves
 read body/output/challenge budgets within its existing totals, limits paid grants
 per operation lane, and cancels disconnected queued work between complete native
 stages. Complete Hello and validated Solution requests wait in separate bounded
@@ -70,11 +70,17 @@ worker, queue, byte and challenge limits remain unchanged. Its resource digest
 changes explicitly, and historical resource revisions refuse. The retained 26/27 honest Submit
 result in the short unpaid campaign belongs to `connection-work-v1`, not V3;
 V3 component fixes do not close that separate observation or certify public service.
-The r5 receiver also reserves local mutation-thread CPU across caller identities
-and charges actual dispatch once. Debt/unavailable accounting prevents further
+Revision r5 introduced the local mutation-thread CPU account retained by r7;
+it reserves across caller identities and charges actual dispatch once. Debt/unavailable accounting prevents further
 starts while already completed native outcomes are preserved. Two existing
 nonpreemptive mutation calls may overshoot; read latency and physical host CPU
 are not hard-bounded by this account.
+
+Current r7 also observes the original deadline/cancellation during bounded M05
+replay and M06 envelope/canonical-apply/precommit boundaries. Individual
+signatures, deep State/root/history and SQLite calls remain nonpreemptive;
+uncommitted changes roll back and committed native facts remain true. These are current source contracts, not a rerun or
+relabeling of historical r5 measurements or a public fairness qualification.
 
 An already admitted local packet can use [bounded Submit recovery](PUBLIC_SUBMIT_RECOVERY_V1.md)
 with `push --reliable-submit --store EXISTING_LOCAL_PRODUCER`. The opt-in client

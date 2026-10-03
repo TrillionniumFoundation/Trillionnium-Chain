@@ -8,7 +8,10 @@
 //! own durable commit. Cache limits select the unchanged full-root algorithm;
 //! they never reduce protocol state limits. Charges are software accounting,
 //! not a bound on process RSS or allocations in the executor/SQLite/proof code.
-use crate::pon_executor::{self, BlockExecution, Config, Output, Result, State};
+use crate::pon_executor::{
+    self, BlockExecution, Config, ControlledResult, ExecutionError, ExecutionProgress, Output,
+    Result, State,
+};
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::sync::Arc;
@@ -421,6 +424,21 @@ pub fn execute_checked(
         .execute(request, config)
 }
 
+/// Controlled full-rule preview. Cancellation never triggers snapshot fallback.
+pub fn execute_checked_with_progress<E: Send>(
+    actual_parent: &State,
+    expected_parent_root: Hash,
+    predecessor: Option<&CheckedCommitment>,
+    request: ExecutionRequest<'_>,
+    config: &Config,
+    limits: CacheLimits,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<StagedOutput, E> {
+    progress(ExecutionProgress::BeforeParentBinding).map_err(ExecutionError::Cancelled)?;
+    CheckedExecutionParent::bind(actual_parent, expected_parent_root, predecessor, limits)?
+        .execute_with_progress(request, config, progress)
+}
+
 /// Operation-local immutable binding of actual parent bytes to its admitted root.
 /// The borrow prevents changing the State while this value exists; it is not a
 /// branch/generation fence and must not be retained across owner operations.
@@ -460,8 +478,20 @@ impl<'a> CheckedExecutionParent<'a> {
     }
 
     pub fn execute(&self, request: ExecutionRequest<'_>, config: &Config) -> Result<StagedOutput> {
+        pon_executor::relation_only(self.execute_with_progress(
+            request,
+            config,
+            &pon_executor::no_cancellation,
+        ))
+    }
+    pub fn execute_with_progress<E: Send>(
+        &self,
+        request: ExecutionRequest<'_>,
+        config: &Config,
+        progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+    ) -> ControlledResult<StagedOutput, E> {
         let mut staged = None;
-        let output = pon_executor::execute_with_commitment(
+        let output = pon_executor::execute_with_commitment_and_progress(
             self.state,
             BlockExecution {
                 transactions: request.transactions,
@@ -482,6 +512,7 @@ impl<'a> CheckedExecutionParent<'a> {
                 staged = Some(prepared);
                 Ok(root)
             },
+            progress,
         )?;
         Ok(StagedOutput {
             output,
@@ -532,6 +563,167 @@ mod tests {
             })
             .collect();
         (state, cfg, raws)
+    }
+
+    #[test]
+    fn controlled_previews_preserve_full_state_receipts_and_canonical_errors_for_all_workers() {
+        let (state, cfg, raws) = preview_fixture();
+        let initial = state.clone();
+        let root = pon_executor::root(&state).unwrap();
+        let parent =
+            CheckedExecutionParent::bind(&state, root, None, CacheLimits::default()).unwrap();
+        let mut bad = raws.last().unwrap().clone();
+        *bad.last_mut().unwrap() ^= 1;
+        let mut late_bad = raws.clone();
+        *late_bad.last_mut().unwrap() = bad.clone();
+        let earlier_nonce_error = [raws[1].clone(), bad];
+        for workers in [1, 2, 4, 8] {
+            for (transactions, expected_error) in [
+                (&raws[..], None),
+                (&late_bad[..], Some("SIGNATURE")),
+                (&earlier_nonce_error[..], Some("NONCE")),
+            ] {
+                let expected =
+                    pon_executor::execute(&state, transactions, 1, [3; 32], [4; 32], workers, &cfg);
+                let observed = parent.execute_with_progress(
+                    ExecutionRequest {
+                        transactions,
+                        height: 1,
+                        miner: [3; 32],
+                        parent_id: [4; 32],
+                        workers,
+                    },
+                    &cfg,
+                    &|_| Ok::<_, ()>(()),
+                );
+                match (expected, observed) {
+                    (Ok(expected), Ok(observed)) => {
+                        assert_eq!(expected_error, None);
+                        assert_eq!(observed.output.state, expected.state);
+                        assert_eq!(observed.output.receipts, expected.receipts);
+                        assert_eq!(observed.output.root, expected.root);
+                        assert_eq!(
+                            observed.output.metrics.signature_verifications,
+                            expected.metrics.signature_verifications
+                        );
+                    }
+                    (Err(expected), Err(ExecutionError::Relation(observed))) => {
+                        assert_eq!(Some(expected), expected_error);
+                        assert_eq!(observed, expected)
+                    }
+                    results => panic!("controlled parity mismatch: {results:?}"),
+                }
+                assert_eq!(state, initial);
+            }
+        }
+    }
+
+    #[test]
+    fn cancelled_prepare_apply_and_staged_root_never_publish_output_or_change_parent() {
+        let (state, cfg, raws) = preview_fixture();
+        let initial = state.clone();
+        let root = pon_executor::root(&state).unwrap();
+        let parent =
+            CheckedExecutionParent::bind(&state, root, None, CacheLimits::default()).unwrap();
+        for workers in [1, 2, 4, 8] {
+            for cancel_at in [
+                ExecutionProgress::AfterPrepare {
+                    index: raws.len() - 1,
+                },
+                ExecutionProgress::AfterApply {
+                    index: raws.len() - 1,
+                },
+                ExecutionProgress::AfterCommitment,
+                ExecutionProgress::BeforeOutput,
+            ] {
+                let seen = std::sync::atomic::AtomicUsize::new(0);
+                let observed = parent.execute_with_progress(
+                    ExecutionRequest {
+                        transactions: &raws,
+                        height: 1,
+                        miner: [3; 32],
+                        parent_id: [4; 32],
+                        workers,
+                    },
+                    &cfg,
+                    &|point| {
+                        if point == cancel_at {
+                            seen.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            Err("local-stop")
+                        } else {
+                            Ok(())
+                        }
+                    },
+                );
+                assert!(matches!(
+                    observed,
+                    Err(ExecutionError::Cancelled("local-stop"))
+                ));
+                assert_eq!(seen.load(std::sync::atomic::Ordering::Relaxed), 1);
+                assert_eq!(state, initial);
+                assert_eq!(pon_executor::root(&state).unwrap(), root);
+                // The same immutable binding still performs the complete successful preview.
+                let retry = parent
+                    .execute(
+                        ExecutionRequest {
+                            transactions: &raws,
+                            height: 1,
+                            miner: [3; 32],
+                            parent_id: [4; 32],
+                            workers,
+                        },
+                        &cfg,
+                    )
+                    .unwrap();
+                let expected =
+                    pon_executor::execute(&state, &raws, 1, [3; 32], [4; 32], workers, &cfg)
+                        .unwrap();
+                assert_eq!(retry.output.state, expected.state);
+                assert_eq!(retry.output.root, expected.root);
+                assert_eq!(retry.output.receipts, expected.receipts);
+            }
+        }
+    }
+
+    #[test]
+    fn controlled_cancellation_joins_every_started_scoped_worker_before_return() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        let (state, cfg, raws) = preview_fixture();
+        for workers in [2, 4, 8] {
+            let started = AtomicUsize::new(0);
+            let completed = AtomicUsize::new(0);
+            let result = pon_executor::execute_with_progress(
+                &state,
+                BlockExecution {
+                    transactions: &raws,
+                    height: 1,
+                    miner: [3; 32],
+                    parent_id: [4; 32],
+                    workers,
+                },
+                &cfg,
+                &|point| {
+                    if let ExecutionProgress::BeforePrepare { index } = point {
+                        if index < workers {
+                            started.fetch_add(1, Ordering::AcqRel);
+                            if index == 0 {
+                                return Err("first-worker-cancel");
+                            }
+                            // Other real workers finish after the first worker has failed.
+                            std::thread::sleep(std::time::Duration::from_millis(2));
+                            completed.fetch_add(1, Ordering::Release);
+                        }
+                    }
+                    Ok(())
+                },
+            );
+            assert!(matches!(
+                result,
+                Err(ExecutionError::Cancelled("first-worker-cancel"))
+            ));
+            assert_eq!(started.load(Ordering::Acquire), workers);
+            assert_eq!(completed.load(Ordering::Acquire), workers - 1);
+        }
     }
 
     #[test]

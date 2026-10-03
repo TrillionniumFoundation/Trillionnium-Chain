@@ -197,9 +197,11 @@
       "receipt": null
     },
     {
-      "id": "public-intake-v3-r5",
+      "id": "public-intake-v3-r7",
       "modules": [
         "M04",
+        "M05",
+        "M06",
         "M15"
       ],
       "configuration": null,
@@ -212,11 +214,15 @@
       },
       "tests": [
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline",
-        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r5_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r7_rejects_signed_old_cookies_and_preserves_control_output_reserve",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt",
-        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_missing_start_clock_refuses_before_full_verification"
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_missing_start_clock_refuses_before_full_verification",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::product_row_and_final_cancellation_never_yield_verified_work",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs::cancellation_inside_last_work_tile_or_final_boundary_has_no_durable_packet",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs::controlled_cancellation_joins_every_started_scoped_worker_before_return",
+        "trillionnium/crates/trnm-pon-node/src/store.rs::local_state_cancellation_rolls_back_all_packet_rows_and_reopens_original_state"
       ],
       "evidence_class": "source-binding",
       "receipt": null

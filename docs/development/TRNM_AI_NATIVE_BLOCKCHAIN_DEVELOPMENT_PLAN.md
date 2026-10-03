@@ -666,12 +666,13 @@ Actual local native/CLI regressions do not prove random keys, independent custod
 truthful demand, data retention, cheapest-miner hardness or public governance. All
 acceptance flags remain false, and historical constructors/golden bytes stay unchanged.
 
-The current convergence continues with [public V2](../protocol/pon-nakamoto-v1/details/PUBLIC_INTAKE_V2.md)
-resource revision r2 and [V3](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
-resource revision r3. V3 retains paid canonical requests within the same bounded
+The retained [public V2](../protocol/pon-nakamoto-v1/details/PUBLIC_INTAKE_V2.md)
+contract selects resource revision r2. [V3](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
+revision r3 introduced retention of paid canonical requests within the same bounded
 connection while its original worker channel is Full, attempting enqueue in
 connection-ID order without increasing queues, grants or absolute deadlines.
-The current V3 resource r5 additionally reserves local actual mutation-thread CPU
+Revision r5 introduced the local mutation-thread CPU account retained by the
+current r7 source. This account reserves local actual mutation-thread CPU
 before native dispatch, charges its total once and records disjoint full-work and
 remaining dispatch intervals. One service-epoch account spans caller identities;
 measured debt stops new starts, and unavailable accounting disables future
@@ -681,17 +682,21 @@ individual CPU, Node lock occupancy, honest fairness and Head SLA are not bounde
 by this local account. It is a development resource policy, not ticket cost or
 hardness calibration, host-global governance or public qualification.
 
-The isolated V3 resource r6 candidate adds cooperative observations within the
-original full M05 Work replay: noise hashes, matrix rows, transcript tiles,
-product correction and final verification. It reuses the original public task
-cancellation/stop/deadline and preserves the ordinary no-cancellation verifier,
-PNW1 arithmetic and signed consensus domains. Local cancellation creates no
-verified-work capability or durable packet. M06 State/history/SQLite remain
-nonpreemptive, and completed durable facts retain their native outcome. No
-per-request CPU-second cap, honest fairness or physical preemption is claimed.
-The [V3 contract](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
-records the fresh r6 digest and tests required on the committed successor;
-historical r5 pressure/WAN results keep their original policy and scope.
+The isolated V3 resource r7 candidate retains complete M05 cooperative Work
+replay and adds M06 observations before/after envelope preparation and canonical
+apply, around staged root/output, and before/during uncommitted persistence.
+The shared observer uses the original public stop/cancellation flags and absolute
+deadline. All scoped workers join before return; cancellation is a separate local
+error, discards staged output and cannot trigger commitment fallback. A precommit
+error rolls back the uncommitted transaction; no added postcommit fence replaces
+original durable success or activation. Ordinary no-cancellation wrappers preserve
+complete Work/State, ordered receipts, roots, nonce rules and error precedence.
+Individual signatures, State clone/mandatory/apply internals, encoding/root,
+history and SQLite remain nonpreemptive; the Pool bundle path retains its original
+stage fences. No request CPU-second cap, anonymous fairness or physical preemption
+is claimed. The [V3 contract](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
+records the fresh r7 digest and tests required on the committed successor;
+historical r5/r6 results keep their original policy and scope.
 
 The opt-in [public Submit recovery client](../protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md)
 also handles a signed `PUBLIC_MUTATION_CPU_BUDGET` refusal within its existing

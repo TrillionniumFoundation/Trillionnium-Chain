@@ -1078,6 +1078,15 @@ fn dispatch_shared_with(
     progress: &mut dyn FnMut(u64) -> Result<()>,
     verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
 ) -> Result<Value> {
+    dispatch_shared_with_execution_progress(node, request, progress, verify, &|_| Ok(()))
+}
+fn dispatch_shared_with_execution_progress(
+    node: &Mutex<Node>,
+    request: Request,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+    verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
+    execution_progress: &(impl Fn(trnm_mvcc_fee::pon_executor::ExecutionProgress) -> Result<()> + Sync),
+) -> Result<Value> {
     match request {
         Request::Submit { packet } => {
             let packet = hex_packet(&packet)?;
@@ -1094,7 +1103,7 @@ fn dispatch_shared_with(
             progress(0)?;
             let mut owner = lock_owner(node, progress)?;
             let clock = now()?;
-            let id = owner.admit_work_checked(checked, clock)?;
+            let id = owner.admit_work_checked_with_progress(checked, clock, execution_progress)?;
             submit_result(&mut owner, id, clock)
         }
         other => {
@@ -2553,6 +2562,51 @@ mod tests {
             assert_eq!(reopened.stats().unwrap(), before);
             assert_eq!(reopened.read_active().unwrap(), active_before);
         }
+    }
+
+    #[test]
+    fn cancellation_set_at_durable_commit_boundary_preserves_submit_activation_and_reply() {
+        use trnm_mvcc_fee::pon_executor::ExecutionProgress;
+        let (dir, node, packet) = pending_packet();
+        let expected = packet.id().unwrap();
+        let settings = node.lock().unwrap().settings().clone();
+        let cancelled = AtomicBool::new(false);
+        let reply = dispatch_shared_with_execution_progress(
+            &node,
+            Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            },
+            &mut |_| {
+                ensure(
+                    !cancelled.load(Ordering::Acquire),
+                    "PUBLIC_REQUEST_CANCELLED",
+                )
+            },
+            WorkCheckedPacket::verify,
+            &|point| {
+                if point == ExecutionProgress::BeforeDurableCommit {
+                    // This final admitted observation succeeds. Cancellation becomes
+                    // visible before commit completes, without undoing its native fact.
+                    cancelled.store(true, Ordering::Release);
+                    Ok(())
+                } else {
+                    ensure(
+                        !cancelled.load(Ordering::Acquire),
+                        "PUBLIC_REQUEST_CANCELLED",
+                    )
+                }
+            },
+        )
+        .unwrap();
+        assert!(cancelled.load(Ordering::Acquire));
+        assert_eq!(reply["block"], hex::encode(expected));
+        let after = node.lock().unwrap().read_active().unwrap();
+        assert_eq!(after.0, expected);
+        assert_eq!(node.lock().unwrap().stats().unwrap()["height"], 1);
+        drop(node);
+        let reopened = Node::open(dir.path(), settings, 2).unwrap();
+        assert_eq!(reopened.read_active().unwrap(), after);
+        assert_eq!(reopened.packet(expected).unwrap().id().unwrap(), expected);
     }
 
     #[test]
