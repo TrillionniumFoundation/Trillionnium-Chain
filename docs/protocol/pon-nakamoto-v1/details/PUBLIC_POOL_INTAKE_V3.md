@@ -6,17 +6,18 @@ readiness, independence, fair access under saturation, exact transaction inclusi
 confirmation, model efficacy, or economic work. V2 retains its separate signed domains
 and one-hour service bound. Both modules bind the current derived ancestry index
 with at most1024 SQL lookups in a fresh resource-policy digest; see
-[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r5 retains the r4 paid body/output partitions, disconnect
-fences and paid enqueue waits, and retains bounded pre-Challenge/pre-Ready waits
-inside the same connections while original resource capacity is unavailable. It adds
-local measured mutation CPU reservation/accounting under the r5 digest. V2 retains its
+[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r6 retains
+the r5 paid body/output partitions, disconnect fences, paid enqueue waits and local
+measured mutation CPU reservation/accounting. Bounded pre-Challenge/pre-Ready waits
+remain inside the same connections while original resource capacity is unavailable.
+It adds cooperative cancellation within complete M05 Work replay. V2 retains its
 own resource digest; these changes do not silently alter its contract. Security
 fixes still require review of both modules.
 
 An operator can select the bounded local
 [request resource observer](PUBLIC_REQUEST_RESOURCE_OBSERVATION.md) to capture
 actual worker-thread CPU intervals and application-frame byte progress. This
-optional API preserves the selected signed r5 policy and native request rules; its nested
+optional API preserves the selected signed r6 policy and native request rules; its nested
 CPU intervals and stream bytes are not energy or physical network measurements.
 
 ## Exact boundary
@@ -33,12 +34,12 @@ That is an operator-selected maximum, not evidence of a 72-hour run. Per-connect
 phase deadlines, 64 active connections, the 8 MiB paid-body budget, 32 MiB output
 budget, two native/proof workers with a two-entry queue, and one read worker with
 a two-entry queue remain bounded. Scalar responses reserve 16 KiB capacity before
-serialization; history retains its separate larger limit. Native stages are
-nonpreemptive: the 10-second work deadline bounds admission/lock waiting and socket
-phases; it is not a hard interruption guarantee for a running M06 preview. A
+serialization; history retains its separate larger limit. The 10-second work deadline bounds admission/lock waiting and socket phases.
+M05 full transcript replay now observes that same deadline cooperatively; it is
+not a hard interruption guarantee for M06 preview or SQLite. A
 successful durable pool reservation can outlive the requesting socket or response.
 
-Resource revision r5 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
+Resource revision r6 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
 131,072 bytes of the existing 8 MiB body pool and 524,288 bytes of the existing
 32 MiB output pool for Head/PoolStatus control responses. Mutation body permits
 and non-control output permits cannot exhaust these reserves.
@@ -49,7 +50,7 @@ keys cannot increase these global lane limits. Eight challenge tokens are reserv
 from the existing global bucket for reads. These reservations introduce no extra
 worker, queue, Node owner, ledger authorization or retained guest identity.
 
-The r5 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
+The r6 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
 Connections. `WaitChallenge` holds a complete validated fixed Hello;
 `WaitGrant` holds its immutable Cookie after the original complete Solution
 context/expiry, ticket, strict caller signature and **single** spent reservation.
@@ -80,7 +81,7 @@ single-use until original expiry cleanup and is never refunded or live-evicted.
 Ready2s, Body5s, body-complete Work10s, Output5s and accept-based Total30s are the
 existing limits. Client frame reads also keep their original absolute deadlines:
 `read_exact_deadline` sets each socket timeout from the same remaining duration,
-not a fresh5-second budget. Original nonpreemptive native stages can still cross
+not a fresh5-second budget. M06 and SQLite stages can still cross
 an admission deadline. Eight slow granted bodies can outlive another Cookie2s;
 64 incomplete or unpaid Connections can still deny a new caller. This change is
 finite readiness scheduling, not a guarantee that any honest request completes.
@@ -92,7 +93,7 @@ polling does not count as a new failed request. Pending terminal phases remain
 Hello/Solution, never Body/Work. A pending request has no Task or full-work CPU;
 CPU remains absent rather than a fabricated zero. Wait elapsed is not CPU. Closed
 shutdown requires zero original lane/body/output reservations and actual worker
-joins. The legacy r3 refusal counters are retained fields; r5 resource fullness
+joins. The legacy r3 refusal counters are retained fields; r6 resource fullness
 waits and can expire instead of immediately incrementing a refusal counter.
 
 A full worker channel retains its canonical Task in `Stage::Enqueue` on the same
@@ -106,12 +107,31 @@ not FIFO completion or a fairness guarantee under identity churn.
 The reactor cancels an Enqueue/Await task on disconnect, expiry or shutdown. Workers check
 its cancellation and original deadline when taking a queued task, while waiting
 for the owner, and between context checking, complete work verification and native
-admission. An already running transcript, M06 preview or SQLite operation remains
-nonpreemptive; cancellation cannot erase a committed fact. A fresh profile digest
-is mandatory: correctly signed r1/r2/r3/r4 cookies and old client pins refuse r5, without fallback.
-For bits8/lifetime2000ms the digest is
-`6f7b5a6018a8f78044c932b9559af21a3a02808c2773447ba96de0935816a41e`;
-for default bits16/lifetime2000ms it is `bcc5e234fe15a83f3e1921d810acf1e64f8c53350d5c211c9f879c9544854a48`.
+admission. During full Work replay, `verify_with_progress` also checks before
+replay, every bounded noise hash, each matrix output row, each transcript tile,
+product reconstruction and the final verified result. The public callback uses
+the original task deadline, stop flag and connection cancellation flag; no new
+TTL or CPU allowance is created. An error returns local `Cancelled(error)`,
+separate from `WorkError`; it drops intermediates and cannot construct
+`VerifiedWork` or `WorkCheckedPacket`. The ordinary `verify` wrapper uses an
+infallible callback, retaining complete PNW1 bytes, arithmetic and cheap-error
+precedence. A matching transcript still requires the whole product relation.
+
+These checkpoints bound arithmetic between observations, not CPU seconds or
+physical preemption. M06 preview, State/history processing and SQLite operations
+remain nonpreemptive. Cancellation before the existing admission fence writes no
+packet; cancellation cannot erase a committed fact or replace its native success.
+A fresh profile digest is mandatory: correctly signed r1/r2/r3/r4/r5 cookies and
+old client pins refuse r6, without fallback. For bits8/lifetime2000ms the
+source-derived digest is
+`788393e580ec629f29bda7976c93b25f5df09cf327cfca139b8f239e6aee53e6`;
+for bits12 it is `6df9ff475a6c9e4696c2bb019ca480980b4b97a638542a28df3f7f4889a0432f`;
+for default bits16 it is `896ca15c2035acfd2f2c7e229b847e531e3c21a03eab8f466ca910f6c3213386`.
+Actual CLI capture and qualification on the committed successor remain necessary;
+these source-derived values do not relabel any historical r5 result. Existing
+`work_failed` observations include an abandoned replay as well as invalid relations;
+the returned local cancellation error retains the actual reason. CPU spent before
+cancellation remains included in measured full-work and outer mutation accounting.
 The V3 magic, cookie/caller signature domains and canonical request/response wires
 remain unchanged. The initial shared connection cap and pre-ticket processing can
 still be exhausted; lane isolation does not establish anonymous honest fairness.
@@ -136,7 +156,7 @@ actual pool.
 
 ## Local paid mutation CPU reserve
 
-Resource revision r5 adds one volatile account to each PublicServer epoch, shared
+Resource revision r5 introduced the volatile account retained by r6 to each PublicServer epoch, shared
 by its two mutation workers and all caller identities. It starts with two CPU
 seconds of credit, refills at250 million CPU nanoseconds per wall second up to
 a ceiling reduced by outstanding start reservations, and reserves100 million CPU nanoseconds before each actual mutation

@@ -2494,6 +2494,68 @@ mod tests {
     }
 
     #[test]
+    fn cancellation_inside_last_work_tile_or_final_boundary_has_no_durable_packet() {
+        use trnm_crypto_primitives::pon_work::{VerificationProgress, N, R};
+        for at_final_boundary in [false, true] {
+            let (dir, node, packet) = pending_packet();
+            let id = packet.id().unwrap();
+            let before = node.lock().unwrap().stats().unwrap();
+            let active_before = node.lock().unwrap().read_active().unwrap();
+            let settings = node.lock().unwrap().settings().clone();
+            let cancelled = AtomicBool::new(false);
+            let mut dispatch_progress = |_| {
+                ensure(
+                    !cancelled.load(Ordering::Acquire),
+                    "PUBLIC_REQUEST_CANCELLED",
+                )
+            };
+            let request = Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            };
+            let error = dispatch_shared_with(&node, request, &mut dispatch_progress, |packet| {
+                WorkCheckedPacket::verify_with_progress(packet, &mut |point| {
+                    let last_tile = VerificationProgress::TranscriptTile {
+                        row: N / R - 1,
+                        column: N / R - 1,
+                        inner: N / R - 1,
+                    };
+                    if point
+                        == if at_final_boundary {
+                            VerificationProgress::BeforeVerifiedWork
+                        } else {
+                            last_tile
+                        }
+                    {
+                        cancelled.store(true, Ordering::Release);
+                    }
+                    ensure(
+                        !cancelled.load(Ordering::Acquire),
+                        "PUBLIC_REQUEST_CANCELLED",
+                    )
+                })
+            })
+            .unwrap_err();
+            assert_eq!(error.to_string(), "PUBLIC_REQUEST_CANCELLED");
+            assert_eq!(node.lock().unwrap().stats().unwrap(), before);
+            assert_eq!(node.lock().unwrap().read_active().unwrap(), active_before);
+            let sql = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
+            let rows: u64 = sql
+                .query_row(
+                    "SELECT COUNT(*) FROM blocks WHERE id=?",
+                    [id.as_slice()],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(rows, 0);
+            drop(sql);
+            drop(node);
+            let reopened = Node::open(dir.path(), settings, 2).unwrap();
+            assert_eq!(reopened.stats().unwrap(), before);
+            assert_eq!(reopened.read_active().unwrap(), active_before);
+        }
+    }
+
+    #[test]
     fn context_reject_and_exact_duplicate_do_not_replay_work() {
         let (_dir, node, packet) = pending_packet();
         let mut wrong = packet.clone();

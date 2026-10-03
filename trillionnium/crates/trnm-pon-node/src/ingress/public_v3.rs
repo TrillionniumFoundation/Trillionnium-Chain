@@ -2,7 +2,7 @@
 //! Explicit development profile. No guest identity/replay row is persisted.
 //! Pool writes are exact signed transaction facts, under the existing shared Node owner.
 //! V2 retains separate signed domains; both select the current derived-index resource bound.
-//! All native stages are nonpreemptive; deadlines bound admission/wait stages, not a hard M06 interruption.
+//! M05 transcript replay checks local cancellation; M06/SQLite retain stage fences without hard preemption.
 use super::{
     digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node,
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
@@ -268,7 +268,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r5/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-native-stages-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-dispatch-charge-outer-once-work-plus-nonwork-no-double-debit/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r6/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-deadline-cancel-m06-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-dispatch-charge-outer-once-work-plus-nonwork-no-double-debit/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-cooperative-m06-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -1199,7 +1199,9 @@ fn public_dispatch(
                 if let Some(record) = observation {
                     record.work_started();
                 }
-                let result = WorkCheckedPacket::verify(packet);
+                let result = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
+                    task_alive(deadline, stop, cancelled)
+                });
                 let cpu = cpu.and_then(ThreadCpuStamp::finish);
                 if let Some(charge) = mutation_cpu {
                     charge.full_work_ns.set(cpu);
@@ -3278,6 +3280,52 @@ mod tests {
         );
         assert!(m.mutation_cpu_charged_ns > 0);
     }
+
+    #[test]
+    fn abandoned_public_work_preserves_cancel_then_deadline_order_without_admission() {
+        let directory = tempfile::tempdir().unwrap();
+        let clock = super::super::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let node = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                clock - 90,
+                4096,
+            )
+            .unwrap();
+        let owner = Mutex::new(node);
+        let before = owner.lock().unwrap().stats().unwrap();
+        for (cancelled_value, stop_value, expired, expected) in [
+            (true, true, true, "PUBLIC_REQUEST_CANCELLED"),
+            (false, true, false, "PUBLIC_REQUEST_DEADLINE"),
+            (false, false, true, "PUBLIC_REQUEST_DEADLINE"),
+        ] {
+            let metrics = Mutex::new(PublicMetrics::default());
+            let deadline = if expired {
+                Instant::now()
+            } else {
+                Instant::now() + Duration::from_secs(10)
+            };
+            let error = public_dispatch(
+                &owner,
+                Request::Submit {
+                    packet: hex::encode(packet.encode().unwrap()),
+                },
+                deadline,
+                &AtomicBool::new(stop_value),
+                &AtomicBool::new(cancelled_value),
+                &metrics,
+                (None, None),
+            )
+            .unwrap_err();
+            assert_eq!(error.to_string(), expected);
+            assert_eq!(metrics.lock().unwrap().work_started, 0);
+            assert_eq!(owner.lock().unwrap().stats().unwrap(), before);
+        }
+    }
     #[test]
     fn cpu_budget_reserves_two_starts_and_carries_actual_debt_before_refill() {
         let mut b = PaidMutationCpuBudget::new();
@@ -3483,21 +3531,22 @@ mod tests {
         assert!(m.mutation_cpu_unavailable_after_shutdown);
     }
     #[test]
-    fn resource_revision_r5_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r6_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
             hex::encode(server.policy.id()),
-            "6f7b5a6018a8f78044c932b9559af21a3a02808c2773447ba96de0935816a41e"
+            "788393e580ec629f29bda7976c93b25f5df09cf327cfca139b8f239e6aee53e6"
         );
         assert_eq!(
             hex::encode(PublicPolicy::development().id()),
-            "bcc5e234fe15a83f3e1921d810acf1e64f8c53350d5c211c9f879c9544854a48"
+            "896ca15c2035acfd2f2c7e229b847e531e3c21a03eab8f466ca910f6c3213386"
         );
         let mut c = server
             .cookie(&s, hello(2, 1), "127.0.0.1:1".parse().unwrap())
             .unwrap();
         for old_profile in [
+            "6f7b5a6018a8f78044c932b9559af21a3a02808c2773447ba96de0935816a41e",
             "5eb1d63ec9effefbc7acaeeb8ec059e5acdbc63f31e6f1c9d005a8d2dd842efd",
             "cf406b884745823ae050d3d51087d43da10c1abcbd655af9c29e84dd1492e0ec",
             "fdc9af27f01e2ffdb8e6a24b2303ed90d5d1d3ad88f2f08d686d780e29f0bd41",
@@ -3524,7 +3573,7 @@ mod tests {
             .cookie(&s, h, "127.0.0.1:1".parse().unwrap())
             .unwrap();
         let old =
-            digest("a1e5ce40d60361a56dadbb9c47cfd41b785a94b3da674a39e1d6a2deaa3e8e87").unwrap();
+            digest("bcc5e234fe15a83f3e1921d810acf1e64f8c53350d5c211c9f879c9544854a48").unwrap();
         let mut legacy = current.clone();
         legacy.profile = hex::encode(old);
         legacy.mac = hex::encode(hmac(&default_server.secret, &legacy.unsigned().unwrap()));

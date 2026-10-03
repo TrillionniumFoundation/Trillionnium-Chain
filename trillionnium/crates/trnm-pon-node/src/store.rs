@@ -303,6 +303,24 @@ impl WorkCheckedPacket {
             .map_err(|e| Error::from(format!("WORK:{e:?}")))?;
         Ok(Self { packet, work })
     }
+    pub(crate) fn verify_with_progress(
+        packet: Packet,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+    ) -> Result<Self> {
+        let h = &packet.header;
+        let work = pon_work::verify_with_progress(
+            h.challenge(),
+            h.work_task,
+            h.target,
+            &packet.proof,
+            progress,
+        )
+        .map_err(|error| match error {
+            pon_work::VerificationError::Relation(error) => Error::from(format!("WORK:{error:?}")),
+            pon_work::VerificationError::Cancelled(error) => error,
+        })?;
+        Ok(Self { packet, work })
+    }
 }
 
 /// One private native namespace; no reference subprocess or remote state setter exists.

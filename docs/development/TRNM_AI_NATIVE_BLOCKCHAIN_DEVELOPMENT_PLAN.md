@@ -681,6 +681,18 @@ individual CPU, Node lock occupancy, honest fairness and Head SLA are not bounde
 by this local account. It is a development resource policy, not ticket cost or
 hardness calibration, host-global governance or public qualification.
 
+The isolated V3 resource r6 candidate adds cooperative observations within the
+original full M05 Work replay: noise hashes, matrix rows, transcript tiles,
+product correction and final verification. It reuses the original public task
+cancellation/stop/deadline and preserves the ordinary no-cancellation verifier,
+PNW1 arithmetic and signed consensus domains. Local cancellation creates no
+verified-work capability or durable packet. M06 State/history/SQLite remain
+nonpreemptive, and completed durable facts retain their native outcome. No
+per-request CPU-second cap, honest fairness or physical preemption is claimed.
+The [V3 contract](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
+records the fresh r6 digest and tests required on the committed successor;
+historical r5 pressure/WAN results keep their original policy and scope.
+
 The opt-in [public Submit recovery client](../protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md)
 also handles a signed `PUBLIC_MUTATION_CPU_BUDGET` refusal within its existing
 absolute deadline, RPC and Submit-attempt limits. It first checks exact packet
