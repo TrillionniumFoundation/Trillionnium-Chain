@@ -22,7 +22,7 @@ use std::{
     io::{Read, Write},
     net::{SocketAddr, TcpListener, TcpStream},
     sync::{
-        atomic::{AtomicBool, Ordering},
+        atomic::{AtomicBool, AtomicU64, Ordering},
         mpsc::{self, TryRecvError, TrySendError},
         Arc, Mutex,
     },
@@ -30,6 +30,9 @@ use std::{
     time::{Duration, Instant},
 };
 use trnm_crypto_primitives::verify_hex_strict;
+use trnm_mvcc_fee::pon_executor::{
+    ExecutionControl, ExecutionWorkerAccounting, ExecutionWorkerInterval,
+};
 use trnm_protocol::pon_wire::Hash;
 
 /// Fresh signed/wire successor. V2 remains a separate unchanged byte contract.
@@ -157,6 +160,120 @@ impl PaidMutationCpuBudget {
 struct MutationCpuMeasurement {
     full_work_ns: Cell<Option<u64>>,
     unavailable: Cell<bool>,
+    workers: ScopedWorkerCpu,
+}
+impl MutationCpuMeasurement {
+    fn for_budget(budget: Option<Arc<Mutex<PaidMutationCpuBudget>>>) -> Self {
+        Self {
+            workers: ScopedWorkerCpu {
+                budget,
+                ..ScopedWorkerCpu::default()
+            },
+            ..Self::default()
+        }
+    }
+}
+/// Scalar, request-local intervals. No State/Output/observer schema changes.
+#[derive(Default)]
+struct ScopedWorkerCpu {
+    spawned: AtomicU64,
+    started: AtomicU64,
+    finished: AtomicU64,
+    known: AtomicU64,
+    total_ns: AtomicU64,
+    unavailable: AtomicBool,
+    budget: Option<Arc<Mutex<PaidMutationCpuBudget>>>,
+    #[cfg(test)]
+    fail_next_start: AtomicBool,
+    #[cfg(test)]
+    fail_next_finish: AtomicBool,
+}
+impl ScopedWorkerCpu {
+    fn unknown(&self) {
+        self.unavailable.store(true, Ordering::Release);
+        // A failed worker clock prevents another request start immediately;
+        // it does not replace this request's already completed native outcome.
+        if let Some(budget) = &self.budget {
+            if let Ok(mut budget) = budget.lock() {
+                budget.unavailable = true;
+            }
+        }
+    }
+    fn add(&self, cell: &AtomicU64, value: u64) {
+        if cell
+            .fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
+                old.checked_add(value)
+            })
+            .is_err()
+        {
+            self.unknown();
+        }
+    }
+    // The caller invokes this only after every actual scoped handle was joined.
+    fn complete(&self) -> Option<u64> {
+        let spawned = self.spawned.load(Ordering::Acquire);
+        let total = self.total_ns.load(Ordering::Acquire);
+        if self.unavailable.load(Ordering::Acquire)
+            || spawned != self.started.load(Ordering::Acquire)
+            || spawned != self.finished.load(Ordering::Acquire)
+            || spawned != self.known.load(Ordering::Acquire)
+            || (spawned == 0 && total != 0)
+        {
+            self.unknown();
+            None
+        } else {
+            Some(total)
+        }
+    }
+}
+struct ScopedWorkerInterval<'a> {
+    collector: &'a ScopedWorkerCpu,
+    stamp: Option<ThreadCpuStamp>,
+}
+impl ExecutionWorkerInterval for ScopedWorkerInterval<'_> {}
+impl Drop for ScopedWorkerInterval<'_> {
+    fn drop(&mut self) {
+        let measured = self.stamp.take().and_then(ThreadCpuStamp::finish);
+        #[cfg(test)]
+        let measured = if self
+            .collector
+            .fail_next_finish
+            .swap(false, Ordering::AcqRel)
+        {
+            None
+        } else {
+            measured
+        };
+        self.collector.add(&self.collector.finished, 1);
+        if let Some(cpu) = measured {
+            self.collector.add(&self.collector.total_ns, cpu);
+            self.collector.add(&self.collector.known, 1);
+        } else {
+            self.collector.unknown();
+        }
+    }
+}
+impl ExecutionWorkerAccounting for ScopedWorkerCpu {
+    fn worker_started(&self) -> Option<Box<dyn ExecutionWorkerInterval + '_>> {
+        let stamp = ThreadCpuStamp::start();
+        #[cfg(test)]
+        let stamp = if self.fail_next_start.swap(false, Ordering::AcqRel) {
+            None
+        } else {
+            stamp
+        };
+        self.add(&self.started, 1);
+        if stamp.is_none() {
+            self.unknown();
+        }
+        Some(Box::new(ScopedWorkerInterval {
+            collector: self,
+            stamp,
+        }))
+    }
+    fn worker_spawn_succeeded(&self) {
+        self.add(&self.spawned, 1);
+    }
 }
 struct PaidMutationCpuPermit {
     budget: Arc<Mutex<PaidMutationCpuBudget>>,
@@ -203,21 +320,27 @@ impl PaidMutationCpuPermit {
         server: &PublicServer,
         metrics: &Mutex<PublicMetrics>,
     ) -> Option<u64> {
-        let total = self.stamp.take().and_then(ThreadCpuStamp::finish);
+        let outer = self.stamp.take().and_then(ThreadCpuStamp::finish);
         #[cfg(test)]
-        let total = if server.fail_next_cpu_finish.swap(false, Ordering::AcqRel) {
+        let outer = if server.fail_next_cpu_finish.swap(false, Ordering::AcqRel) {
             None
         } else {
-            total
+            outer
         };
         #[cfg(not(test))]
         let _ = server;
         let work = measurement.full_work_ns.get().unwrap_or(0);
-        let remainder = total.and_then(|n| n.checked_sub(work));
+        let children = measurement.workers.complete();
+        let remainder = outer
+            .and_then(|n| n.checked_sub(work))
+            .zip(children)
+            .and_then(|(owner_nonwork, workers)| owner_nonwork.checked_add(workers));
         let charged = if measurement.unavailable.get() || remainder.is_none() {
             None
         } else {
-            total
+            outer
+                .zip(children)
+                .and_then(|(owner, workers)| owner.checked_add(workers))
         };
         if let Ok(mut budget) = self.budget.lock() {
             budget.settle(Instant::now(), charged);
@@ -233,7 +356,8 @@ impl PaidMutationCpuPermit {
                     .saturating_add(dispatch);
             }
         }
-        total
+        // The existing dispatch observer measures only its own actual thread.
+        outer
     }
 }
 impl Drop for PaidMutationCpuPermit {
@@ -268,7 +392,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r7/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-dispatch-charge-outer-once-work-plus-nonwork-no-double-debit/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r8/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-dispatch-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -551,6 +675,8 @@ pub struct PublicServer {
     fail_next_cpu_start: AtomicBool,
     #[cfg(test)]
     fail_next_cpu_finish: AtomicBool,
+    #[cfg(test)]
+    fail_next_worker_cpu_finish: AtomicBool,
 }
 impl PublicServer {
     pub fn new(identity: DevelopmentIdentity, policy: PublicPolicy) -> Result<Self> {
@@ -568,6 +694,8 @@ impl PublicServer {
             fail_next_cpu_start: AtomicBool::new(false),
             #[cfg(test)]
             fail_next_cpu_finish: AtomicBool::new(false),
+            #[cfg(test)]
+            fail_next_worker_cpu_finish: AtomicBool::new(false),
         })
     }
     fn tick(&self) -> Result<u64> {
@@ -1177,7 +1305,7 @@ fn public_dispatch(
         ensure(steps <= MAX_HISTORY_STEPS, "PUBLIC_HISTORY_STEPS")
     };
     match request {
-        Request::Submit { packet } => super::dispatch_shared_with_execution_progress(
+        Request::Submit { packet } => super::dispatch_shared_with_execution_control(
             node,
             NativeRequest::Submit { packet },
             &mut progress,
@@ -1218,7 +1346,10 @@ fn public_dispatch(
                 }
                 result
             },
-            &|_| task_alive(deadline, stop, cancelled),
+            &ExecutionControl::new(
+                &|_| task_alive(deadline, stop, cancelled),
+                mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
+            ),
         ),
         Request::Head => {
             let owner = lock_owner(node, &mut progress)?;
@@ -1278,7 +1409,10 @@ fn public_dispatch(
                 .lock()
                 .map_err(|_| "PUBLIC_METRICS")?
                 .pool_submit_started += 1;
-            let outcome = owner.pool_submit_bundle(raws);
+            let outcome = owner.pool_submit_bundle_with_accounting(
+                raws,
+                mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
+            );
             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
             m.pool_submit_finished += 1;
             m.pool_submit_ns = m.pool_submit_ns.saturating_add(elapsed_ns(start));
@@ -1488,7 +1622,18 @@ fn serve_public_protected_v3_inner(
                                             } else {
                                                 None
                                             };
-                                            let measurement = MutationCpuMeasurement::default();
+                                            let measurement = MutationCpuMeasurement::for_budget(
+                                                cpu_permit
+                                                    .as_ref()
+                                                    .map(|permit| permit.budget.clone()),
+                                            );
+                                            #[cfg(test)]
+                                            measurement.workers.fail_next_finish.store(
+                                                server
+                                                    .fail_next_worker_cpu_finish
+                                                    .swap(false, Ordering::AcqRel),
+                                                Ordering::Release,
+                                            );
                                             let outcome = public_dispatch(
                                                 &node,
                                                 task.request,
@@ -3355,6 +3500,448 @@ mod tests {
             i128::from(MUTATION_CPU_BURST_NS)
         );
     }
+
+    fn accounting_transactions(settings: &Settings, first: u64, count: u64) -> Vec<Vec<u8>> {
+        use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+        use trnm_protocol::pon_wire::Envelope;
+        let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])))
+            .unwrap();
+        (first..first + count)
+            .map(|nonce| {
+                let mut payload = crate::development_public(1).unwrap().to_vec();
+                payload.extend(1u64.to_le_bytes());
+                let mut envelope = Envelope {
+                    network: settings.network(),
+                    sender: crate::development_public(0).unwrap(),
+                    nonce,
+                    expiry: 2000,
+                    fee_limit: 1_000_000,
+                    tag: 1,
+                    payload,
+                    signature: [0; 64],
+                };
+                envelope.signature =
+                    hex::decode(sign_hex(&key, &envelope.signing_digest().unwrap()))
+                        .unwrap()
+                        .try_into()
+                        .unwrap();
+                envelope.encode().unwrap()
+            })
+            .collect()
+    }
+    #[test]
+    fn aggregate_scoped_cpu_charges_real_parallel_intervals_once_and_preserves_state() {
+        use trnm_mvcc_fee::pon_executor::{self, BlockExecution, ExecutionError};
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 8).unwrap();
+        let state = node.read_active().unwrap().2;
+        let transactions = accounting_transactions(&settings, 1, 16);
+        let mut invalid = transactions.clone();
+        *invalid.last_mut().unwrap().last_mut().unwrap() ^= 1;
+        for workers in [1, 2, 4, 8] {
+            let server = server();
+            let metrics = Mutex::new(PublicMetrics::default());
+            let permit = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
+            let measurement = MutationCpuMeasurement::for_budget(Some(permit.budget.clone()));
+            let rejected = pon_executor::execute_with_control(
+                &state,
+                BlockExecution {
+                    transactions: &invalid,
+                    height: 1,
+                    miner: crate::development_public(0).unwrap(),
+                    parent_id: settings.genesis(),
+                    workers,
+                },
+                &settings.app,
+                &ExecutionControl::new(&|_| Ok::<_, ()>(()), &measurement.workers),
+            );
+            assert!(matches!(
+                rejected,
+                Err(ExecutionError::Relation("SIGNATURE"))
+            ));
+            let first_children = measurement.workers.complete().unwrap();
+            assert_eq!(first_children == 0, workers == 1);
+            // One request collector spans every actual scope, including a
+            // failed preview followed by another complete preview. Eight is
+            // the per-scope bound, never a request-lifetime spawn-count cap.
+            let result = pon_executor::execute_with_control(
+                &state,
+                BlockExecution {
+                    transactions: &transactions,
+                    height: 1,
+                    miner: crate::development_public(0).unwrap(),
+                    parent_id: settings.genesis(),
+                    workers,
+                },
+                &settings.app,
+                &ExecutionControl::new(&|_| Ok::<_, ()>(()), &measurement.workers),
+            )
+            .unwrap();
+            let children = measurement.workers.complete().unwrap();
+            assert_eq!(
+                measurement.workers.spawned.load(Ordering::Acquire),
+                if workers == 1 { 0 } else { 2 * workers as u64 }
+            );
+            assert!(children >= first_children);
+            assert_eq!(children == 0, workers == 1);
+            let outer = permit.finish(&measurement, &server, &metrics).unwrap();
+            let m = metrics.lock().unwrap();
+            assert_eq!(
+                m.mutation_cpu_charged_ns,
+                outer.checked_add(children).unwrap()
+            );
+            assert_eq!(
+                m.mutation_dispatch_excluding_work_cpu_ns,
+                m.mutation_cpu_charged_ns
+            );
+            assert_eq!(m.mutation_full_work_cpu_ns, 0);
+            drop(m);
+            let expected = pon_executor::execute(
+                &state,
+                &transactions,
+                1,
+                crate::development_public(0).unwrap(),
+                settings.genesis(),
+                workers,
+                &settings.app,
+            )
+            .unwrap();
+            assert_eq!(result.state, expected.state);
+            assert_eq!(result.receipts, expected.receipts);
+            assert_eq!(result.root, expected.root);
+            assert_eq!(node.read_active().unwrap().2, state);
+        }
+        let pooled = shared(node);
+        let pool_accounting = ScopedWorkerCpu::default();
+        pooled
+            .lock()
+            .unwrap()
+            .pool_submit_bundle_with_accounting(transactions[..1].to_vec(), &pool_accounting)
+            .unwrap();
+        assert_eq!(pool_accounting.spawned.load(Ordering::Acquire), 0);
+        assert_eq!(pool_accounting.started.load(Ordering::Acquire), 0);
+        assert_eq!(pool_accounting.finished.load(Ordering::Acquire), 0);
+        assert_eq!(pool_accounting.known.load(Ordering::Acquire), 0);
+        assert_eq!(pool_accounting.complete(), Some(0));
+    }
+    #[test]
+    fn worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts() {
+        use trnm_mvcc_fee::pon_executor::{self, BlockExecution};
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 4).unwrap();
+        let state = node.read_active().unwrap().2;
+        let transactions = accounting_transactions(&settings, 1, 16);
+        for fail_end in [false, true] {
+            let server = server();
+            let metrics = Mutex::new(PublicMetrics::default());
+            let permit = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
+            let measurement = MutationCpuMeasurement::for_budget(Some(permit.budget.clone()));
+            if fail_end {
+                measurement
+                    .workers
+                    .fail_next_finish
+                    .store(true, Ordering::Release);
+            } else {
+                measurement
+                    .workers
+                    .fail_next_start
+                    .store(true, Ordering::Release);
+            }
+            let result = pon_executor::execute_with_control(
+                &state,
+                BlockExecution {
+                    transactions: &transactions,
+                    height: 1,
+                    miner: crate::development_public(0).unwrap(),
+                    parent_id: settings.genesis(),
+                    workers: 4,
+                },
+                &settings.app,
+                &ExecutionControl::new(&|_| Ok::<_, ()>(()), &measurement.workers),
+            )
+            .unwrap();
+            assert_eq!(measurement.workers.spawned.load(Ordering::Acquire), 4);
+            assert_eq!(measurement.workers.started.load(Ordering::Acquire), 4);
+            assert_eq!(measurement.workers.finished.load(Ordering::Acquire), 4);
+            assert_eq!(measurement.workers.complete(), None);
+            assert_eq!(
+                server
+                    .mutation_cpu
+                    .lock()
+                    .unwrap()
+                    .reserve(Instant::now())
+                    .unwrap_err()
+                    .to_string(),
+                "PUBLIC_MUTATION_CPU_UNAVAILABLE"
+            );
+            let _ = permit.finish(&measurement, &server, &metrics);
+            assert_eq!(metrics.lock().unwrap().mutation_cpu_charged_ns, 0);
+            assert!(server.mutation_cpu.lock().unwrap().unavailable);
+            assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 0);
+            let expected = pon_executor::execute(
+                &state,
+                &transactions,
+                1,
+                crate::development_public(0).unwrap(),
+                settings.genesis(),
+                4,
+                &settings.app,
+            )
+            .unwrap();
+            assert_eq!(result.state, expected.state);
+            assert_eq!(result.receipts, expected.receipts);
+            assert_eq!(result.root, expected.root);
+        }
+        for overflow in [false, true] {
+            let budget = Arc::new(Mutex::new(PaidMutationCpuBudget::new()));
+            let measured = ScopedWorkerCpu {
+                budget: Some(budget.clone()),
+                ..ScopedWorkerCpu::default()
+            };
+            if overflow {
+                measured.total_ns.store(u64::MAX, Ordering::Release);
+                measured.add(&measured.total_ns, 1);
+            } else {
+                measured.worker_spawn_succeeded();
+            }
+            assert_eq!(measured.complete(), None);
+            assert!(budget.lock().unwrap().unavailable);
+        }
+        let budget = Arc::new(Mutex::new(PaidMutationCpuBudget::new()));
+        let measured = ScopedWorkerCpu {
+            budget: Some(budget.clone()),
+            ..ScopedWorkerCpu::default()
+        };
+        measured.add(&measured.started, 1);
+        measured.worker_spawn_succeeded();
+        let guard = ScopedWorkerInterval {
+            collector: &measured,
+            stamp: Some(ThreadCpuStamp::start().unwrap()),
+        };
+        // The concrete test guard deliberately crosses threads; the production
+        // boxed interval is created and dropped inside the same scoped closure.
+        std::thread::scope(|scope| {
+            scope.spawn(move || drop(guard)).join().unwrap();
+        });
+        assert_eq!(measured.complete(), None);
+        assert!(budget.lock().unwrap().unavailable);
+    }
+    #[test]
+    fn public_submit_and_pool_paths_keep_thread_observer_scope_and_preserve_ack_on_child_clock_failure(
+    ) {
+        for fail_child_clock in [false, true] {
+            let dir = tempfile::tempdir().unwrap();
+            let clock = super::super::now().unwrap();
+            let settings = Settings::development(Some(clock - 100)).unwrap();
+            let source = Node::open(dir.path(), settings.clone(), 4).unwrap();
+            let packet = source
+                .make(
+                    source.active().unwrap().0,
+                    accounting_transactions(&settings, 1, 16),
+                    crate::development_public(0).unwrap(),
+                    clock - 50,
+                    4096,
+                )
+                .unwrap();
+            let packet_id = packet.id().unwrap();
+            let owner = shared(source);
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let stop = Arc::new(AtomicBool::new(false));
+            let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+            let observer = PublicRequestObserver::new(16).unwrap();
+            let server = server();
+            server
+                .fail_next_worker_cpu_finish
+                .store(fail_child_clock, Ordering::Release);
+            let policy = server.policy;
+            let (signal, counters, records, node) = (
+                stop.clone(),
+                metrics.clone(),
+                observer.clone(),
+                owner.clone(),
+            );
+            let worker = thread::spawn(move || {
+                serve_public_protected_v3_with_request_observer(
+                    listener,
+                    node,
+                    Duration::from_secs(8),
+                    signal,
+                    server,
+                    counters,
+                    records,
+                )
+                .unwrap()
+            });
+            let reply = call_public_protected_v3(
+                address,
+                &Request::Submit {
+                    packet: hex::encode(packet.encode().unwrap()),
+                },
+                &settings,
+                identity(71).public_key(),
+                &identity(72),
+                policy,
+            )
+            .unwrap();
+            assert!(reply.ok);
+            assert_eq!(owner.lock().unwrap().active().unwrap().0, packet_id);
+            let context = owner
+                .lock()
+                .unwrap()
+                .pool_status_snapshot()
+                .unwrap()
+                .context;
+            let pool = call_public_protected_v3(
+                address,
+                &Request::PoolSubmitBundle {
+                    pool_context: context,
+                    transactions: accounting_transactions(&settings, 17, 1)
+                        .into_iter()
+                        .map(hex::encode)
+                        .collect(),
+                },
+                &settings,
+                identity(71).public_key(),
+                &identity(73),
+                policy,
+            )
+            .unwrap();
+            assert_eq!(pool.ok, !fail_child_clock);
+            if fail_child_clock {
+                assert_eq!(pool.value["error"], "PUBLIC_MUTATION_CPU_UNAVAILABLE");
+            }
+            assert!(
+                call_public_protected_v3(
+                    address,
+                    &Request::Head,
+                    &settings,
+                    identity(71).public_key(),
+                    &identity(74),
+                    policy
+                )
+                .unwrap()
+                .ok
+            );
+            stop.store(true, Ordering::Release);
+            worker.join().unwrap();
+            let m = metrics.lock().unwrap();
+            if fail_child_clock {
+                assert!(m.mutation_cpu_unavailable_after_shutdown);
+                assert_eq!(m.completed_submit, 1);
+            } else {
+                assert_eq!(m.completed_submit, 1);
+                assert_eq!(m.completed_pool_submit, 1);
+                let snapshot = observer.snapshot();
+                let outer: u64 = snapshot
+                    .records
+                    .iter()
+                    .filter(|r| matches!(r.operation, Some(1 | 4)))
+                    .map(|r| r.dispatch_thread_cpu_ns.unwrap())
+                    .sum();
+                assert!(m.mutation_cpu_charged_ns > outer);
+                assert_eq!(
+                    m.mutation_cpu_charged_ns,
+                    m.mutation_full_work_cpu_ns + m.mutation_dispatch_excluding_work_cpu_ns
+                );
+            }
+            drop(m);
+            drop(owner);
+            let reopened = Node::open(dir.path(), settings, 4).unwrap();
+            assert_eq!(reopened.active().unwrap().0, packet_id);
+        }
+    }
+    #[test]
+    fn failed_scoped_previews_and_parallel_requests_keep_separate_complete_cpu() {
+        use trnm_mvcc_fee::pon_executor::{
+            self, BlockExecution, ExecutionError, ExecutionProgress,
+        };
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 4).unwrap();
+        let state = node.read_active().unwrap().2;
+        let transactions = accounting_transactions(&settings, 1, 16);
+        let server = server();
+        let metrics = Mutex::new(PublicMetrics::default());
+        let arrivals = AtomicU64::new(0);
+        std::thread::scope(|scope| {
+            let mut handles = Vec::new();
+            for panic_worker in [false, true] {
+                let (server, metrics, state, transactions, settings, arrivals) = (
+                    &server,
+                    &metrics,
+                    &state,
+                    &transactions,
+                    &settings,
+                    &arrivals,
+                );
+                handles.push(scope.spawn(move || {
+                    let permit = PaidMutationCpuPermit::acquire(server, metrics).unwrap();
+                    let measurement =
+                        MutationCpuMeasurement::for_budget(Some(permit.budget.clone()));
+                    let collector = &measurement.workers;
+                    let result = pon_executor::execute_with_control(
+                        state,
+                        BlockExecution {
+                            transactions,
+                            height: 1,
+                            miner: crate::development_public(0).unwrap(),
+                            parent_id: settings.genesis(),
+                            workers: 4,
+                        },
+                        &settings.app,
+                        &ExecutionControl::new(
+                            &|point| {
+                                if point == ExecutionProgress::BeforeStateClone {
+                                    arrivals.fetch_add(1, Ordering::AcqRel);
+                                    let began = Instant::now();
+                                    while arrivals.load(Ordering::Acquire) < 2 {
+                                        assert!(
+                                            began.elapsed() < Duration::from_secs(5),
+                                            "test rendezvous unavailable"
+                                        );
+                                        thread::yield_now();
+                                    }
+                                }
+                                if point == (ExecutionProgress::BeforePrepare { index: 0 }) {
+                                    assert!(!collector.unavailable.load(Ordering::Acquire));
+                                    if panic_worker {
+                                        panic!("genuine test worker unwind");
+                                    }
+                                    return Err("local-cancel");
+                                }
+                                Ok(())
+                            },
+                            &measurement.workers,
+                        ),
+                    );
+                    if panic_worker {
+                        assert!(matches!(
+                            result,
+                            Err(ExecutionError::Relation("WORKER_PANIC"))
+                        ));
+                    } else {
+                        assert!(matches!(
+                            result,
+                            Err(ExecutionError::Cancelled("local-cancel"))
+                        ));
+                    }
+                    let child = measurement.workers.complete().unwrap();
+                    assert!(child > 0);
+                    assert_eq!(measurement.workers.spawned.load(Ordering::Acquire), 4);
+                    let outer = permit.finish(&measurement, server, metrics).unwrap();
+                    outer.checked_add(child).unwrap()
+                }));
+            }
+            let expected: u64 = handles.into_iter().map(|h| h.join().unwrap()).sum();
+            assert_eq!(metrics.lock().unwrap().mutation_cpu_charged_ns, expected);
+        });
+        assert_eq!(node.read_active().unwrap().2, state);
+        assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 0);
+        assert!(!server.mutation_cpu.lock().unwrap().unavailable);
+    }
     #[test]
     fn cpu_budget_missing_measurement_or_dropped_permit_disables_future_starts() {
         let mut budget = PaidMutationCpuBudget::new();
@@ -3532,21 +4119,26 @@ mod tests {
         assert!(m.mutation_cpu_unavailable_after_shutdown);
     }
     #[test]
-    fn resource_revision_r7_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r8_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
             hex::encode(server.policy.id()),
-            "d6cf554e06987a2f2d271e9deca10c2332a15185aec3b9fb056e8c224ba71128"
+            "55f555756953a4c4ba713686909c6e0554238af4048864befc6ea54aaff35b67"
         );
         assert_eq!(
             hex::encode(PublicPolicy::development().id()),
-            "88d586d82a8708bf8b6718848bae990421b4efdec26da0c911a743f9d5750b8c"
+            "8f3026d7ba045e5c473b1655c8062e67e9334601d4d159f42c15ca28f30049f3"
+        );
+        assert_eq!(
+            hex::encode(PublicPolicy::new(12, Duration::from_secs(2)).unwrap().id()),
+            "fe94b595d72e5bfe3019e84ecdd95a87a043d46927bae77657199307ecb58ad5"
         );
         let mut c = server
             .cookie(&s, hello(2, 1), "127.0.0.1:1".parse().unwrap())
             .unwrap();
         for old_profile in [
+            "d6cf554e06987a2f2d271e9deca10c2332a15185aec3b9fb056e8c224ba71128",
             "788393e580ec629f29bda7976c93b25f5df09cf327cfca139b8f239e6aee53e6",
             "6f7b5a6018a8f78044c932b9559af21a3a02808c2773447ba96de0935816a41e",
             "5eb1d63ec9effefbc7acaeeb8ec059e5acdbc63f31e6f1c9d005a8d2dd842efd",
@@ -3574,46 +4166,50 @@ mod tests {
         let current = default_server
             .cookie(&s, h, "127.0.0.1:1".parse().unwrap())
             .unwrap();
-        let old =
-            digest("896ca15c2035acfd2f2c7e229b847e531e3c21a03eab8f466ca910f6c3213386").unwrap();
-        let mut legacy = current.clone();
-        legacy.profile = hex::encode(old);
-        legacy.mac = hex::encode(hmac(&default_server.secret, &legacy.unsigned().unwrap()));
-        legacy.signature = default_server
-            .identity
-            .sign(&legacy.server_message().unwrap())
-            .unwrap();
-        validate_challenge_context(
-            &serde_json::to_vec(&legacy).unwrap(),
-            &legacy,
-            &h,
-            &s,
-            default_server.identity.public_key(),
-            default_server.policy,
-            old,
-        )
-        .unwrap();
-        assert_eq!(
-            default_server
-                .validate(&legacy, &s, true)
-                .unwrap_err()
-                .to_string(),
-            "PUBLIC_COOKIE_CONTEXT"
-        );
-        assert_eq!(
+        for old_profile in [
+            "896ca15c2035acfd2f2c7e229b847e531e3c21a03eab8f466ca910f6c3213386",
+            "88d586d82a8708bf8b6718848bae990421b4efdec26da0c911a743f9d5750b8c",
+        ] {
+            let old = digest(old_profile).unwrap();
+            let mut legacy = current.clone();
+            legacy.profile = hex::encode(old);
+            legacy.mac = hex::encode(hmac(&default_server.secret, &legacy.unsigned().unwrap()));
+            legacy.signature = default_server
+                .identity
+                .sign(&legacy.server_message().unwrap())
+                .unwrap();
             validate_challenge_context(
-                &serde_json::to_vec(&current).unwrap(),
-                &current,
+                &serde_json::to_vec(&legacy).unwrap(),
+                &legacy,
                 &h,
                 &s,
                 default_server.identity.public_key(),
                 default_server.policy,
-                old
+                old,
             )
-            .unwrap_err()
-            .to_string(),
-            "PUBLIC_CHALLENGE_CONTEXT"
-        );
+            .unwrap();
+            assert_eq!(
+                default_server
+                    .validate(&legacy, &s, true)
+                    .unwrap_err()
+                    .to_string(),
+                "PUBLIC_COOKIE_CONTEXT"
+            );
+            assert_eq!(
+                validate_challenge_context(
+                    &serde_json::to_vec(&current).unwrap(),
+                    &current,
+                    &h,
+                    &s,
+                    default_server.identity.public_key(),
+                    default_server.policy,
+                    old
+                )
+                .unwrap_err()
+                .to_string(),
+                "PUBLIC_CHALLENGE_CONTEXT"
+            );
+        }
         let pool = Arc::new(Mutex::new(0));
         let bulk = BufferPermit::acquire(
             pool.clone(),

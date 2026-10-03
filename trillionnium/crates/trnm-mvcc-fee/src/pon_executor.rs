@@ -52,6 +52,39 @@ impl<E> From<&'static str> for ExecutionError<E> {
     }
 }
 pub type ControlledResult<T, E> = std::result::Result<T, ExecutionError<E>>;
+/// Request-local accounting only. A guard is created on the actual worker and
+/// dropped on that same worker on success, rejection, cancellation or unwind.
+pub trait ExecutionWorkerInterval {}
+pub trait ExecutionWorkerAccounting: Sync {
+    fn worker_started(&self) -> Option<Box<dyn ExecutionWorkerInterval + '_>>;
+    fn worker_spawn_succeeded(&self);
+    #[cfg(test)]
+    fn test_spawn_allowed(&self, _index: usize) -> bool {
+        true
+    }
+}
+impl ExecutionWorkerAccounting for () {
+    fn worker_started(&self) -> Option<Box<dyn ExecutionWorkerInterval + '_>> {
+        None
+    }
+    fn worker_spawn_succeeded(&self) {}
+}
+/// Keep progress and accounting together without changing canonical outputs.
+pub struct ExecutionControl<'a, E> {
+    pub progress: &'a (dyn Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+    pub worker_accounting: &'a dyn ExecutionWorkerAccounting,
+}
+impl<'a, E> ExecutionControl<'a, E> {
+    pub fn new(
+        progress: &'a (dyn Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+        worker_accounting: &'a dyn ExecutionWorkerAccounting,
+    ) -> Self {
+        Self {
+            progress,
+            worker_accounting,
+        }
+    }
+}
 pub(crate) fn relation_only<T>(result: ControlledResult<T, std::convert::Infallible>) -> Result<T> {
     match result {
         Ok(value) => Ok(value),
@@ -1691,6 +1724,14 @@ pub fn execute_with_progress<E: Send>(
 ) -> ControlledResult<Output, E> {
     execute_with_commitment_and_progress(parent, block, cfg, |_, next| root(next), progress)
 }
+pub fn execute_with_control<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    control: &ExecutionControl<'_, E>,
+) -> ControlledResult<Output, E> {
+    execute_with_commitment_and_control(parent, block, cfg, |_, next| root(next), control)
+}
 /// Ordinary caller-supplied facts, not prepared execution or admission authority.
 pub struct BlockExecution<'a> {
     pub transactions: &'a [Vec<u8>],
@@ -1717,9 +1758,25 @@ pub(crate) fn execute_with_commitment_and_progress<E: Send>(
     parent: &State,
     block: BlockExecution<'_>,
     cfg: &Config,
-    mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    commitment: impl FnMut(&State, &State) -> Result<Hash>,
     progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
 ) -> ControlledResult<Output, E> {
+    execute_with_commitment_and_control(
+        parent,
+        block,
+        cfg,
+        commitment,
+        &ExecutionControl::new(progress, &()),
+    )
+}
+pub(crate) fn execute_with_commitment_and_control<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    control: &ExecutionControl<'_, E>,
+) -> ControlledResult<Output, E> {
+    let progress = control.progress;
     let BlockExecution {
         transactions,
         height,
@@ -1791,18 +1848,32 @@ pub(crate) fn execute_with_commitment_and_progress<E: Send>(
             let mut handles = Vec::with_capacity(count);
             for worker in 0..count {
                 let work = &predict;
-                let handle = std::thread::Builder::new()
-                    .name(format!("pon-exec-{worker}"))
-                    .spawn_scoped(scope, move || {
-                        (worker..transactions.len())
-                            .step_by(count)
-                            .map(|index| {
-                                work(index, &transactions[index]).map(|value| (index, value))
-                            })
-                            .collect::<ControlledResult<Vec<_>, E>>()
-                    });
+                #[cfg(test)]
+                let allowed = control.worker_accounting.test_spawn_allowed(worker);
+                #[cfg(not(test))]
+                let allowed = true;
+                let handle = if allowed {
+                    std::thread::Builder::new()
+                        .name(format!("pon-exec-{worker}"))
+                        .spawn_scoped(scope, move || {
+                            let _interval = control.worker_accounting.worker_started();
+                            (worker..transactions.len())
+                                .step_by(count)
+                                .map(|index| {
+                                    work(index, &transactions[index]).map(|value| (index, value))
+                                })
+                                .collect::<ControlledResult<Vec<_>, E>>()
+                        })
+                } else {
+                    Err(std::io::Error::other(
+                        "test-only partial worker start refusal",
+                    ))
+                };
                 match handle {
-                    Ok(h) => handles.push(h),
+                    Ok(h) => {
+                        control.worker_accounting.worker_spawn_succeeded();
+                        handles.push(h);
+                    }
                     Err(_) => {
                         // Join already started workers on partial-spawn failure too.
                         for h in handles {

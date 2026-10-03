@@ -29,7 +29,9 @@ use trnm_mvcc_fee::pon_commitment::{
     PreparedCommitment,
 };
 use trnm_mvcc_fee::pon_executor::SIGNED_TASK_PROFILE;
-use trnm_mvcc_fee::pon_executor::{root, ExecutionError, ExecutionProgress, State};
+use trnm_mvcc_fee::pon_executor::{
+    root, ExecutionControl, ExecutionError, ExecutionProgress, State,
+};
 use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
@@ -1266,6 +1268,15 @@ impl Node {
         block: ExecutionRequest<'_>,
         progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
     ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
+        self.execute_derived_with_control(actual, block, &ExecutionControl::new(progress, &()))
+    }
+    fn execute_derived_with_control(
+        &self,
+        actual: &State,
+        block: ExecutionRequest<'_>,
+        control: &ExecutionControl<'_, Error>,
+    ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
+        let progress = control.progress;
         progress(ExecutionProgress::BeforeParentBinding)?;
         let parent = block.parent_id;
         let prior = self.cached_parent(parent)?;
@@ -1279,14 +1290,14 @@ impl Node {
             parent_id: parent,
             workers: block.workers,
         };
-        let result = pon_commitment::execute_checked_with_progress(
+        let result = pon_commitment::execute_checked_with_control(
             actual,
             checked.root,
             checked.snapshot.as_ref(),
             request(),
             &self.settings.app,
             CacheLimits::default(),
-            progress,
+            control,
         );
         match result {
             Ok(output) => {
@@ -1298,14 +1309,14 @@ impl Node {
                 // A wrong internal snapshot cannot reject an otherwise valid
                 // ledger state; the full actual-root path still checks context.
                 self.invalidate_commitment();
-                pon_commitment::execute_checked_with_progress(
+                pon_commitment::execute_checked_with_control(
                     actual,
                     self.record(parent)?.root,
                     None,
                     request(),
                     &self.settings.app,
                     CacheLimits::default(),
-                    progress,
+                    control,
                 )
                 .map_err(local_execution_error)
             }
@@ -1588,6 +1599,19 @@ impl Node {
         observed_now: u64,
         progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
     ) -> Result<Hash> {
+        self.admit_work_checked_with_control(
+            checked,
+            observed_now,
+            &ExecutionControl::new(progress, &()),
+        )
+    }
+    pub(crate) fn admit_work_checked_with_control(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+        control: &ExecutionControl<'_, Error>,
+    ) -> Result<Hash> {
+        let progress = control.progress;
         let WorkCheckedPacket {
             packet,
             work: verified_work,
@@ -1601,7 +1625,7 @@ impl Node {
         let parent = self.record(h.parent)?;
         let prior = self.state_at(h.parent)?;
         let registered_task = self.eligible_work_task_from_state(&prior, h.work_task, h.height)?;
-        let executed = self.execute_derived_with_progress(
+        let executed = self.execute_derived_with_control(
             &prior,
             ExecutionRequest {
                 transactions: &packet.transactions,
@@ -1610,7 +1634,7 @@ impl Node {
                 parent_id: h.parent,
                 workers: self.workers,
             },
-            progress,
+            control,
         )?;
         let mut output = executed.output;
         let commitment = executed.commitment;

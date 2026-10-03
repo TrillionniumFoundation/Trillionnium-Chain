@@ -78,7 +78,7 @@ class ApplicabilityTests(unittest.TestCase):
         result = validate(self.root)
         profiles = {p['id']: p for p in result['profiles']}
         self.assertEqual(profiles['integer-factor-v2']['consensus_revision'], 11)
-        self.assertIsNone(profiles['public-intake-v3-r7']['consensus_revision'])
+        self.assertIsNone(profiles['public-intake-v3-r8']['consensus_revision'])
         row = next(r for r in result['procedures']
                    if r['operation'] == 'M10.SubmitFactorContribution')
         self.assertEqual(len(row['evidence_selectors']), 4)

@@ -6,7 +6,7 @@ readiness, independence, fair access under saturation, exact transaction inclusi
 confirmation, model efficacy, or economic work. V2 retains its separate signed domains
 and one-hour service bound. Both modules bind the current derived ancestry index
 with at most1024 SQL lookups in a fresh resource-policy digest; see
-[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r7 retains
+[NATIVE_ANCESTRY_INDEX](NATIVE_ANCESTRY_INDEX.md). V3 resource revision r8 retains
 the r5 paid body/output partitions, disconnect fences, paid enqueue waits and local
 measured mutation CPU reservation/accounting. Bounded pre-Challenge/pre-Ready waits
 remain inside the same connections while original resource capacity is unavailable.
@@ -18,7 +18,7 @@ fixes still require review of both modules.
 An operator can select the bounded local
 [request resource observer](PUBLIC_REQUEST_RESOURCE_OBSERVATION.md) to capture
 actual worker-thread CPU intervals and application-frame byte progress. This
-optional API preserves the selected signed r7 policy and native request rules; its nested
+optional API preserves the selected signed r8 policy and native request rules; its nested
 CPU intervals and stream bytes are not energy or physical network measurements.
 
 ## Exact boundary
@@ -41,7 +41,7 @@ same deadline cooperatively; this does not interrupt an individual signature,
 deep State operation, root/history computation or SQLite call. A
 successful durable pool reservation can outlive the requesting socket or response.
 
-Resource revision r7 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
+Resource revision r8 binds these limits and finite readiness/enqueue behavior in `PublicPolicy::id()`. It reserves
 131,072 bytes of the existing 8 MiB body pool and 524,288 bytes of the existing
 32 MiB output pool for Head/PoolStatus control responses. Mutation body permits
 and non-control output permits cannot exhaust these reserves.
@@ -52,7 +52,7 @@ keys cannot increase these global lane limits. Eight challenge tokens are reserv
 from the existing global bucket for reads. These reservations introduce no extra
 worker, queue, Node owner, ledger authorization or retained guest identity.
 
-The r7 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
+The r8 receiver retains pre-Challenge and pre-Ready waiters in the same at-most64
 Connections. `WaitChallenge` holds a complete validated fixed Hello;
 `WaitGrant` holds its immutable Cookie after the original complete Solution
 context/expiry, ticket, strict caller signature and **single** spent reservation.
@@ -95,7 +95,7 @@ polling does not count as a new failed request. Pending terminal phases remain
 Hello/Solution, never Body/Work. A pending request has no Task or full-work CPU;
 CPU remains absent rather than a fabricated zero. Wait elapsed is not CPU. Closed
 shutdown requires zero original lane/body/output reservations and actual worker
-joins. The legacy r3 refusal counters are retained fields; r7 resource fullness
+joins. The legacy r3 refusal counters are retained fields; r8 resource fullness
 waits and can expire instead of immediately incrementing a refusal counter.
 
 A full worker channel retains its canonical Task in `Stage::Enqueue` on the same
@@ -139,14 +139,14 @@ remain indivisible. Pool bundle execution retains its original stage fences and
 is not newly interrupted inside M06 by this Submit slice. All observations reuse
 the original immutable stop/cancellation flags and absolute task deadline; no
 new TTL, CPU-second limit or resource allowance is introduced.
-A fresh profile digest is mandatory: correctly signed r1/r2/r3/r4/r5/r6 cookies and
-old client pins refuse r7, without fallback. For bits8/lifetime2000ms the
+A fresh profile digest is mandatory: correctly signed r1/r2/r3/r4/r5/r6/r7 cookies and
+old client pins refuse r8, without fallback. For bits8/lifetime2000ms the
 source-derived digest is
-`d6cf554e06987a2f2d271e9deca10c2332a15185aec3b9fb056e8c224ba71128`;
-for bits12 it is `33d82a3e9afccda1fc55534c0b2e29d027d36d4372ad2ef3d16cefc6a34e3e63`;
-for default bits16 it is `88d586d82a8708bf8b6718848bae990421b4efdec26da0c911a743f9d5750b8c`.
+`55f555756953a4c4ba713686909c6e0554238af4048864befc6ea54aaff35b67`;
+for bits12 it is `fe94b595d72e5bfe3019e84ecdd95a87a043d46927bae77657199307ecb58ad5`;
+for default bits16 it is `8f3026d7ba045e5c473b1655c8062e67e9334601d4d159f42c15ca28f30049f3`.
 Actual CLI capture and qualification on the committed successor remain necessary;
-these source-derived values do not relabel any historical r5/r6 result. Existing
+these source-derived values do not relabel any historical r5/r6/r7 result. Existing
 `work_failed` observations include an abandoned replay as well as invalid relations;
 the returned local cancellation error retains the actual reason. CPU spent before
 cancellation remains included in measured full-work and outer mutation accounting.
@@ -174,7 +174,7 @@ actual pool.
 
 ## Local paid mutation CPU reserve
 
-Resource revision r5 introduced the volatile account retained by r7 to each PublicServer epoch, shared
+Resource revision r5 introduced the volatile account retained by r8 to each PublicServer epoch, shared
 by its two mutation workers and all caller identities. It starts with two CPU
 seconds of credit, refills at250 million CPU nanoseconds per wall second up to
 a ceiling reduced by outstanding start reservations, and reserves100 million CPU nanoseconds before each actual mutation
@@ -193,15 +193,28 @@ cache or durable caller row is added. Key rotation cannot reset the account.
 Restart begins a new explicit volatile service epoch; this is not a host-global
 CPU quota across listeners, private ingress, miner threads or service restarts.
 
-The outer actual worker-thread dispatch interval is charged exactly once. When
-Submit executes full work verification, its measured subset is reported
-separately and subtracted from the outer interval to report the remaining
-native dispatch CPU. The full-work subset and remainder sum to charged CPU;
-the optional observer's nested full-work and total fields still must not be
-added. Actual failed proofs and native refusals consume their measured CPU.
-Context/signature/State checks inside dispatch are included; reactor parsing,
-caller/ticket authentication, response signing/output and other threads are
-excluded. A completed mutation's accounting failure disables future starts
+Resource revision r8 charges the measured outer worker interval O plus the
+checked sum C of every actual scoped M06 worker interval, exactly once. Guards
+sample the existing thread clock on the same actual worker at entry and exit,
+including canonical rejection, cancellation and panic unwind. All successfully
+spawned workers join even after a partial spawn failure. Spawned, started,
+finished and known interval counts must agree before C is usable; no absent
+Output is mistaken for zero CPU. Every defensive preview retry shares this
+request-local collector. PoolBundle forwards it through every full prefix
+preview; its existing fixed workers1 path actually spawns no scoped workers.
+
+When Submit executes M05 verification, its measured W remains nested in O.
+Charged CPU is O+C; the existing full-work and excluding-work counters report W
+and O-W+C without adding a metrics field or changing State/Output schemas.
+The optional observer's dispatch thread field still reports O, and its nested
+full-work and total fields must not be added. Failed proofs and native refusals
+consume their measured CPU. Unknown worker endpoints, mismatched closure counts
+or checked arithmetic immediately disable further mutation starts and settle
+without a fabricated zero or reserve refund. A completed native outcome and
+signed success remain unchanged. These are worker execution intervals, not exact
+OS thread lifetimes: startup, teardown and post-sample bookkeeping are excluded.
+Reactor parsing, caller/ticket authentication, response signing/output and
+unrelated service or miner threads remain outside this account. A completed mutation's accounting failure disables future starts
 without replacing its actual native outcome or signed success. No completed
 fact is undone, and no failed measurement is refunded as zero.
 

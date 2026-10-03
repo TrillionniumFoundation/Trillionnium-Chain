@@ -13,7 +13,7 @@ use trnm_mempool::{
 use trnm_mvcc_fee::pon_commitment::{
     CacheLimits, CheckedExecutionParent, CommitmentObservation, ExecutionRequest,
 };
-use trnm_mvcc_fee::pon_executor::{self, Config, State};
+use trnm_mvcc_fee::pon_executor::{self, Config, ExecutionWorkerAccounting, State};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
 pub const LOCAL_POOL_PROFILE: &str = "native-local-queued-pnx1-v2";
@@ -298,6 +298,7 @@ fn validate_pending(
         node,
         checked: None,
         parent_observation: None,
+        worker_accounting: &(),
     }
     .validate(raws)
 }
@@ -313,6 +314,7 @@ struct PendingPreview<'state, 'operation> {
     node: &'operation Node,
     checked: Option<CheckedExecutionParent<'state>>,
     parent_observation: Option<CommitmentObservation>,
+    worker_accounting: &'operation dyn ExecutionWorkerAccounting,
 }
 impl PendingPreview<'_, '_> {
     fn validate(&mut self, raws: &[Vec<u8>]) -> Result<usize> {
@@ -407,7 +409,7 @@ impl PendingPreview<'_, '_> {
             .checked
             .as_ref()
             .ok_or("POOL_PARENT_BINDING")?
-            .execute(
+            .execute_with_accounting(
                 ExecutionRequest {
                     transactions: raws,
                     height,
@@ -416,6 +418,7 @@ impl PendingPreview<'_, '_> {
                     workers: 1,
                 },
                 cfg,
+                self.worker_accounting,
             )?;
         *node.commitment_observation.borrow_mut() = Some(output.commitment.observation);
         Ok(ready)
@@ -641,6 +644,14 @@ impl Node {
         limits: &PoolLimits,
         actual: &'a PoolParent,
     ) -> Result<PreviewBinding<'a>> {
+        self.pool_reconcile_parent_with_accounting(limits, actual, &())
+    }
+    fn pool_reconcile_parent_with_accounting<'a>(
+        &mut self,
+        limits: &PoolLimits,
+        actual: &'a PoolParent,
+        worker_accounting: &dyn ExecutionWorkerAccounting,
+    ) -> Result<PreviewBinding<'a>> {
         let PoolParent {
             id: parent,
             generation,
@@ -660,6 +671,7 @@ impl Node {
             node: self,
             checked: None,
             parent_observation: None,
+            worker_accounting,
         };
         let mut updates = Vec::new();
         for group in groups {
@@ -774,6 +786,13 @@ impl Node {
     /// Atomic local group reservation. Block producers are not obligated to keep
     /// separate transactions together; consensus atomic renewal uses V3 tag22.
     pub fn pool_submit_bundle(&mut self, raws: Vec<Vec<u8>>) -> Result<PoolReceipt> {
+        self.pool_submit_bundle_with_accounting(raws, &())
+    }
+    pub(crate) fn pool_submit_bundle_with_accounting(
+        &mut self,
+        raws: Vec<Vec<u8>>,
+        worker_accounting: &dyn ExecutionWorkerAccounting,
+    ) -> Result<PoolReceipt> {
         let (context, limits) = self.pool_policy()?;
         ensure(
             !raws.is_empty() && raws.len() <= limits.max_group_members,
@@ -786,7 +805,8 @@ impl Node {
         let total: usize = raws.iter().map(Vec::len).sum();
         ensure(total <= limits.max_bytes, "POOL_BYTE_LIMIT")?;
         let actual = self.pool_parent()?;
-        let binding = self.pool_reconcile_parent(&limits, &actual)?;
+        let binding =
+            self.pool_reconcile_parent_with_accounting(&limits, &actual, worker_accounting)?;
         // Preserve the original reconcile snapshot checks and error precedence.
         self.pool_status_snapshot()?;
         let groups = self.pool_groups(&limits)?;
@@ -935,6 +955,7 @@ impl Node {
             node: self,
             checked: binding.checked,
             parent_observation: binding.observation,
+            worker_accounting,
         }
         .validate(&candidate)?;
         let tx = self

@@ -434,9 +434,29 @@ pub fn execute_checked_with_progress<E: Send>(
     limits: CacheLimits,
     progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
 ) -> ControlledResult<StagedOutput, E> {
-    progress(ExecutionProgress::BeforeParentBinding).map_err(ExecutionError::Cancelled)?;
+    execute_checked_with_control(
+        actual_parent,
+        expected_parent_root,
+        predecessor,
+        request,
+        config,
+        limits,
+        &pon_executor::ExecutionControl::new(progress, &()),
+    )
+}
+pub fn execute_checked_with_control<E: Send>(
+    actual_parent: &State,
+    expected_parent_root: Hash,
+    predecessor: Option<&CheckedCommitment>,
+    request: ExecutionRequest<'_>,
+    config: &Config,
+    limits: CacheLimits,
+    control: &pon_executor::ExecutionControl<'_, E>,
+) -> ControlledResult<StagedOutput, E> {
+    (control.progress)(ExecutionProgress::BeforeParentBinding)
+        .map_err(ExecutionError::Cancelled)?;
     CheckedExecutionParent::bind(actual_parent, expected_parent_root, predecessor, limits)?
-        .execute_with_progress(request, config, progress)
+        .execute_with_control(request, config, control)
 }
 
 /// Operation-local immutable binding of actual parent bytes to its admitted root.
@@ -478,10 +498,18 @@ impl<'a> CheckedExecutionParent<'a> {
     }
 
     pub fn execute(&self, request: ExecutionRequest<'_>, config: &Config) -> Result<StagedOutput> {
-        pon_executor::relation_only(self.execute_with_progress(
+        self.execute_with_accounting(request, config, &())
+    }
+    pub fn execute_with_accounting(
+        &self,
+        request: ExecutionRequest<'_>,
+        config: &Config,
+        worker_accounting: &dyn pon_executor::ExecutionWorkerAccounting,
+    ) -> Result<StagedOutput> {
+        pon_executor::relation_only(self.execute_with_control(
             request,
             config,
-            &pon_executor::no_cancellation,
+            &pon_executor::ExecutionControl::new(&pon_executor::no_cancellation, worker_accounting),
         ))
     }
     pub fn execute_with_progress<E: Send>(
@@ -490,8 +518,20 @@ impl<'a> CheckedExecutionParent<'a> {
         config: &Config,
         progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
     ) -> ControlledResult<StagedOutput, E> {
+        self.execute_with_control(
+            request,
+            config,
+            &pon_executor::ExecutionControl::new(progress, &()),
+        )
+    }
+    pub fn execute_with_control<E: Send>(
+        &self,
+        request: ExecutionRequest<'_>,
+        config: &Config,
+        control: &pon_executor::ExecutionControl<'_, E>,
+    ) -> ControlledResult<StagedOutput, E> {
         let mut staged = None;
-        let output = pon_executor::execute_with_commitment_and_progress(
+        let output = pon_executor::execute_with_commitment_and_control(
             self.state,
             BlockExecution {
                 transactions: request.transactions,
@@ -512,7 +552,7 @@ impl<'a> CheckedExecutionParent<'a> {
                 staged = Some(prepared);
                 Ok(root)
             },
-            progress,
+            control,
         )?;
         Ok(StagedOutput {
             output,
@@ -723,6 +763,143 @@ mod tests {
             ));
             assert_eq!(started.load(Ordering::Acquire), workers);
             assert_eq!(completed.load(Ordering::Acquire), workers - 1);
+        }
+    }
+
+    #[derive(Default)]
+    struct AccountedWorkers {
+        spawned: std::sync::atomic::AtomicUsize,
+        started: std::sync::atomic::AtomicUsize,
+        finished: std::sync::atomic::AtomicUsize,
+        refuse_spawn_at: Option<usize>,
+    }
+    struct AccountedInterval<'a>(&'a AccountedWorkers, std::thread::ThreadId);
+    impl pon_executor::ExecutionWorkerInterval for AccountedInterval<'_> {}
+    impl Drop for AccountedInterval<'_> {
+        fn drop(&mut self) {
+            assert_eq!(self.1, std::thread::current().id());
+            self.0
+                .finished
+                .fetch_add(1, std::sync::atomic::Ordering::AcqRel);
+        }
+    }
+    impl pon_executor::ExecutionWorkerAccounting for AccountedWorkers {
+        fn worker_started(&self) -> Option<Box<dyn pon_executor::ExecutionWorkerInterval + '_>> {
+            self.started
+                .fetch_add(1, std::sync::atomic::Ordering::AcqRel);
+            Some(Box::new(AccountedInterval(
+                self,
+                std::thread::current().id(),
+            )))
+        }
+        fn worker_spawn_succeeded(&self) {
+            self.spawned
+                .fetch_add(1, std::sync::atomic::Ordering::AcqRel);
+        }
+        fn test_spawn_allowed(&self, index: usize) -> bool {
+            self.refuse_spawn_at != Some(index)
+        }
+    }
+    impl AccountedWorkers {
+        fn assert_closed(&self, count: usize) {
+            use std::sync::atomic::Ordering;
+            assert_eq!(self.spawned.load(Ordering::Acquire), count);
+            assert_eq!(self.started.load(Ordering::Acquire), count);
+            assert_eq!(self.finished.load(Ordering::Acquire), count);
+        }
+    }
+    #[test]
+    fn scoped_accounting_preserves_all_workers_state_receipts_and_late_error_parity() {
+        let (state, cfg, raws) = preview_fixture();
+        let parent = CheckedExecutionParent::bind(
+            &state,
+            pon_executor::root(&state).unwrap(),
+            None,
+            CacheLimits::default(),
+        )
+        .unwrap();
+        let mut invalid = raws.clone();
+        *invalid.last_mut().unwrap().last_mut().unwrap() ^= 1;
+        for workers in [1, 2, 4, 8] {
+            for transactions in [&raws, &invalid] {
+                let accounting = AccountedWorkers::default();
+                let request = || ExecutionRequest {
+                    transactions,
+                    height: 1,
+                    miner: [3; 32],
+                    parent_id: [4; 32],
+                    workers,
+                };
+                let expected = parent.execute(request(), &cfg);
+                let measured = parent.execute_with_accounting(request(), &cfg, &accounting);
+                match (expected, measured) {
+                    (Ok(a), Ok(b)) => {
+                        assert_eq!(a.output.state, b.output.state);
+                        assert_eq!(a.output.receipts, b.output.receipts);
+                        assert_eq!(a.output.root, b.output.root);
+                        assert_eq!(
+                            a.output.metrics.signature_verifications,
+                            b.output.metrics.signature_verifications
+                        );
+                    }
+                    (Err(a), Err(b)) => assert_eq!(a, b),
+                    values => panic!("accounting changed canonical result: {values:?}"),
+                }
+                accounting.assert_closed(if workers == 1 { 0 } else { workers });
+            }
+        }
+    }
+    #[test]
+    fn cancelled_panicked_and_partially_started_workers_all_finish_and_join() {
+        let (state, cfg, raws) = preview_fixture();
+        let initial = state.clone();
+        for mode in 0..3 {
+            let accounting = AccountedWorkers {
+                refuse_spawn_at: (mode == 2).then_some(2),
+                ..AccountedWorkers::default()
+            };
+            let result = pon_executor::execute_with_control(
+                &state,
+                BlockExecution {
+                    transactions: &raws,
+                    height: 1,
+                    miner: [3; 32],
+                    parent_id: [4; 32],
+                    workers: 4,
+                },
+                &cfg,
+                &pon_executor::ExecutionControl::new(
+                    &|point| {
+                        if point == (ExecutionProgress::BeforePrepare { index: 0 }) {
+                            if mode == 0 {
+                                return Err("local-cancel");
+                            }
+                            if mode == 1 {
+                                panic!("test worker unwind");
+                            }
+                        }
+                        Ok(())
+                    },
+                    &accounting,
+                ),
+            );
+            match mode {
+                0 => assert!(matches!(
+                    result,
+                    Err(ExecutionError::Cancelled("local-cancel"))
+                )),
+                1 => assert!(matches!(
+                    result,
+                    Err(ExecutionError::Relation("WORKER_PANIC"))
+                )),
+                _ => assert!(matches!(
+                    result,
+                    Err(ExecutionError::Relation("WORKER_START"))
+                )),
+            }
+            // The injected third-spawn refusal joins two genuine earlier workers.
+            accounting.assert_closed(if mode == 2 { 2 } else { 4 });
+            assert_eq!(state, initial);
         }
     }
 

@@ -672,7 +672,7 @@ revision r3 introduced retention of paid canonical requests within the same boun
 connection while its original worker channel is Full, attempting enqueue in
 connection-ID order without increasing queues, grants or absolute deadlines.
 Revision r5 introduced the local mutation-thread CPU account retained by the
-current r7 source. This account reserves local actual mutation-thread CPU
+current r8 source. This account reserves local actual mutation-thread CPU
 before native dispatch, charges its total once and records disjoint full-work and
 remaining dispatch intervals. One service-epoch account spans caller identities;
 measured debt stops new starts, and unavailable accounting disables future
@@ -682,7 +682,7 @@ individual CPU, Node lock occupancy, honest fairness and Head SLA are not bounde
 by this local account. It is a development resource policy, not ticket cost or
 hardness calibration, host-global governance or public qualification.
 
-The isolated V3 resource r7 candidate retains complete M05 cooperative Work
+The retained V3 resource r7 source retains complete M05 cooperative Work
 replay and adds M06 observations before/after envelope preparation and canonical
 apply, around staged root/output, and before/during uncommitted persistence.
 The shared observer uses the original public stop/cancellation flags and absolute
@@ -695,8 +695,21 @@ Individual signatures, State clone/mandatory/apply internals, encoding/root,
 history and SQLite remain nonpreemptive; the Pool bundle path retains its original
 stage fences. No request CPU-second cap, anonymous fairness or physical preemption
 is claimed. The [V3 contract](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
-records the fresh r7 digest and tests required on the committed successor;
+records the original r7 cooperative scope and the current r8 digest separately;
 historical r5/r6 results keep their original policy and scope.
+
+The isolated V3 resource r8 candidate additionally debits every actual scoped
+M06 worker interval for the request, including cancellation, panic unwind,
+partial spawn and defensive retries. All joins precede checked closure counts.
+Outer dispatch O plus scoped C is charged once; M05 W remains nested in O, and
+the original metrics fields decompose W and O-W+C while the optional dispatch
+observer remains O. PoolBundle forwards the collector through the existing
+workers1 full-prefix execution, which has no scoped child intervals. Unknown
+clocks/counts/arithmetic disable new mutation starts without refunding unknown
+work or replacing native durable success. No State/Output/metrics schema, cap,
+identity privilege, deep-stage preemption or fairness qualification is added;
+startup/teardown and post-sample bookkeeping are outside these measured intervals.
+Fresh qualification/captures are required and historical r7 results remain r7.
 
 The opt-in [public Submit recovery client](../protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md)
 also handles a signed `PUBLIC_MUTATION_CPU_BUDGET` refusal within its existing

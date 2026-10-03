@@ -1087,6 +1087,21 @@ fn dispatch_shared_with_execution_progress(
     verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
     execution_progress: &(impl Fn(trnm_mvcc_fee::pon_executor::ExecutionProgress) -> Result<()> + Sync),
 ) -> Result<Value> {
+    dispatch_shared_with_execution_control(
+        node,
+        request,
+        progress,
+        verify,
+        &trnm_mvcc_fee::pon_executor::ExecutionControl::new(execution_progress, &()),
+    )
+}
+fn dispatch_shared_with_execution_control(
+    node: &Mutex<Node>,
+    request: Request,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+    verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
+    control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
+) -> Result<Value> {
     match request {
         Request::Submit { packet } => {
             let packet = hex_packet(&packet)?;
@@ -1103,7 +1118,7 @@ fn dispatch_shared_with_execution_progress(
             progress(0)?;
             let mut owner = lock_owner(node, progress)?;
             let clock = now()?;
-            let id = owner.admit_work_checked_with_progress(checked, clock, execution_progress)?;
+            let id = owner.admit_work_checked_with_control(checked, clock, control)?;
             submit_result(&mut owner, id, clock)
         }
         other => {
