@@ -102,3 +102,11 @@ commitments. Exhaustion and unsupported cases remain observations. Its extra
 stream-hashing cost is explicit, so measurements from older harness schemas are
 not interchangeable. Fewer field multiplications do not establish a faster miner
 or a lower bound on the cheapest valid work.
+
+The separate strict-zero producer keeps only small prefix factors and one current
+tile while emitting the same complete proof. Its dedicated locality cost schema
+compares all three zero-capable implementations, including every failed target
+attempt and actual setup. A signed native V4/continuity lifecycle regression checks
+that real zero-material registration, proof verification, renewal, revocation,
+expiry and parent changes still require their ordinary checks. This diagnostic
+producer is not installed as the Node's default miner or a source of verified types.

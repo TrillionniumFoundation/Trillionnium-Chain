@@ -77,11 +77,17 @@ Each architecture executes both fixed campaigns:
 | 1 | 2 | 4 | 8 | 1 |
 
 The release build has a 900-second subprocess budget; each campaign has a
-300-second budget. Each architecture job has a 30-minute cap, and the comparison
+300-second budget. Each architecture job has a 60-minute cap, and the comparison
 has a 10-minute cap. Matrix fail-fast is disabled. Both campaigns are attempted
 after a successful build even if the first campaign returns a failure. Timeout,
 nonzero status, malformed output and validation failures remain failed observations
 with their captured output. Artifact upload and final source checks run on failure.
+The architecture cap covers two suites, each with up to900 seconds of build,
+600 seconds of campaigns and90 seconds of identity commands, plus setup and
+source/artifact handling. The former30-minute cap cannot cover both suites' own
+bounded failure paths; retaining it would risk job cancellation before their final
+receipts and upload. Runner loss or platform-forced termination remains outside
+the subprocess capture guarantee.
 
 The native schema is `pon-w1-reused-search-v1`. Its seven explicit diagnostic
 materials include rank-checked full-field matrices, the existing structured cases,
@@ -130,6 +136,50 @@ actual host), with fresh isolated Cargo target and receipt paths. This runs the
 same bounded program and labels its context `local-native-preflight`. The hosted
 artifact checker explicitly refuses that context; setting runner-like environment
 names is not the local execution interface.
+
+### Separate zero-material locality suite
+
+The same two architecture jobs also invoke `run_cross_arch_cost.py` with
+`--suite zero-locality`. It builds and executes the separate `pon_zero_locality_cost`
+example under `pon-w1-zero-locality-v1`, retaining its own raw files and manifest.
+The same comparison job checks that suite separately. The old seven-material
+reused-search schema, artifact and comparison keep their original interpretation;
+the workflow still has thirteen jobs. Both fixed campaigns above run for the exact
+zero task, with three producers and two real setup modes. All six producer/mode
+positions are present at each target/sample, with starting order rotated by sample.
+
+The dedicated zero checker binds its independent challenge/stream domains, exact
+strategy/mode grid, canonical zero task, every search outcome and setup call, timing
+sums, winning challenge/proof commitments and complete attempted streams. Unsupported
+rows cannot replace one of these three zero-capable producers. Cross-architecture
+comparison removes only clocks; it cannot discard exhausted or slower observations.
+There is no speed threshold, work qualification or permission to compare absolute
+timings against the different old harness schema. Original failed output remains
+retained even when the later separate suite executes successfully.
+
+## Independent native transition and model observations
+
+`protocol-contract` builds the bounded M06 continuity transition example and supplies
+its actual absolute executable to `test_continuity_transitions.py`. Python constructs
+the small input states and expected complete state/root/receipt/capacity rows; Rust
+performs actual execution. The old continuity vector bridge still runs. Absence of a
+binary or a full required row is a failure, not a skip or an imported historical pass.
+
+`rust-baseline` creates a fresh exclusive `model-composition` directory under its
+current receipt and a unique run identifier in a subshell. Its existing single full
+workspace all-targets/all-features test execution exports exactly thirteen native
+model observation files. Immediately afterwards, the two Python suites recompute
+integer model arithmetic, inference, complete records, parent lineage, allocation
+and payouts from those observations. The export environment ends with that subshell,
+before documentation tests and Clippy. It neither repeats the two long native chains
+nor allows later checks to overwrite or supplement the observation set.
+
+The source contract and negative tests reject removed commands, `true` substitutions,
+wrong lanes/order, absent native selectors, reused directories, environment leakage
+and duplicate or skipped workspace tests. These checks establish executable wiring
+only; actual lane output must separately show the required native observations and
+successful independent comparisons. Neither oracle establishes work hardness, full
+independent ledger verification or future model efficacy.
 
 ## Mixed public-service execution
 

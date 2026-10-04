@@ -24,7 +24,8 @@ groups as specified below; queued/blocked or partly terminal groups stay protect
 full protected queue rejects explicitly. Each group preserves original order/bytes/digest/signer/nonce/expiry/fee-limit;
 fixed eight-byte nonce/expiry/fee columns preserve the full wire u64 range.
 
-The M05 adapter is private and immutable. It re-encodes canonical PNX1, checks the
+The M05 adapter privately borrows the immutable original raw slice rather than
+cloning that body merely to decode it. It re-encodes canonical PNX1, checks the
 exact H(tx-id, complete signed bytes) and signer, and invokes the existing M06 main
 preparation for the selected tag, network, expiry and strict Ed25519 signature.
 M05 signer-scoped replay/recheck operates against the exact pending sequence prefix.
@@ -37,7 +38,8 @@ Ready metadata is bound using an invocation-local bounded digest-to-original-raw
 index. Duplicate digests refuse before any replacement; each ready digest consumes
 one entry, its body must match every original byte, and successful draining leaves
 no unmatched entry. This removes repeated reverse scans and PNX1 decoding solely
-from this binding step. Full canonical/signature M05 checks remain required. M06
+from this binding step. Full canonical M05 checks remain required; successful
+same-operation main-signature facts may be reused as specified below. M06
 uses the operation-local suffix builder below for growing prefixes; no signature
 or admission verdict survives the owner operation.
 
@@ -74,6 +76,46 @@ append on failure. It no longer clones all previously accepted raw bodies per gr
 The group order, typed checks and first-error classifications are unchanged, including
 a blocked middle group followed by an independent valid group. Parent binding is lazy
 so a typed admission error still precedes parent execution preparation errors.
+
+### Same-operation M05 main-signature facts
+
+Each `PendingPreview` retains private `CheckedPnxSignature` values only after the
+entire candidate has passed the actual M05 gate and M06 preview. The real
+`Hooks::verify_signature` mints a value only after `validate_main_envelope` has
+checked canonical decoding, selected tag/profile, network, expiry and strict main
+signature, and its result matches the adapter and queued metadata. The value binds
+every original signed byte, the height, parent ID and shared-borrow identities of
+the actual parent State and complete Config. The Config snapshot is owned by the
+operation's `PoolParent`, so pool-only SQL writes cannot change or invalidate this
+immutable borrow. No Node cache, durable row or public API holds these facts.
+
+Reuse requires every retained raw at its original prefix position and the same
+complete context. A replacement, reorder, truncation or context mismatch selects
+ordinary native signature checking; it does not raise an earlier synthetic error.
+The unchanged M06 full-byte prefix check still runs after M05. Every invocation
+continues to reconstruct the actual `TypedAdmissionGate`, canonical metadata,
+digest/raw index, signer-scoped nonce progression, fee/resource checks, lane limits
+and ready bodies for all positions. Capacity-before-signature and all existing
+first-refusal ordering are retained. Both `BeforePrepare` and `AfterPrepare`
+cancellation callbacks remain around every M05 position, including reused ones.
+
+Fresh signature facts are staged beside the attempted suffix. Relation rejection,
+cancellation or unwind discards them without changing the accepted facts. Capacity
+for publication is reserved before M06 can commit its new in-memory prefix; success
+then moves initialized values without allocation. The same private vector may move
+from reconciliation to the final submit preview within that one owner call. A new
+owner call, mining-batch preview or batch validation starts with no signature facts.
+M06 keeps its own strict signature and all state-dependent checks.
+
+For N valid single-member groups, M05 main-envelope checks are N instead of
+N(N+1)/2 within one operation. The actual M05 lane admissions, canonical decoding,
+nonce/recheck operations and ready-body checks remain N(N+1)/2. Rejected suffix
+work is repeated on retry and is not subtracted from observed cost. Successful
+facts add at most 256 retained complete raws / 524288 body bytes, plus Vec,
+reference and allocator overhead; staged attempted facts and the existing gate,
+M06 prefix and output memory also remain. The bounded full-byte prefix comparison
+is nonpreemptive. This is neither a physical RSS bound nor an end-to-end complexity
+or latency guarantee.
 
 ### Same-block incremental M06 prefix
 
@@ -116,8 +158,9 @@ the new M06 suffix only; output State, receipts and deltas cover the entire pref
 There are no spawned M06 workers on this serial Pool preview path, and actual
 caller CPU accounting still covers its complete work.
 
-This is not an end-to-end linear-time claim. M05 still rebuilds and verifies the
-complete prefix at every candidate group. Every result retains full State encoding,
+This is not an end-to-end linear-time claim. M05 still rebuilds and admits the
+complete prefix at every candidate group; only its fixed-context main-signature
+facts have the bounded reuse above. Every result retains full State encoding,
 root/continuity/conservation checks and a complete output State; caller-defined
 cache limits still choose the complete-root fallback. Mining-batch selection and
 public mutable-batch validation still perform their own full checks after their
@@ -240,11 +283,34 @@ history from the component capacity fixture.
 `store::mempool::incremental_prefix_tests` observes actual M06 stage callbacks
 through native Pool reconciliation and submission. Six retained single-member
 groups plus one new group execute seven M06 transaction positions and one
-mandatory prologue. The resulting batch is mined and admitted through normal
+mandatory prologue. It also observes seven actual M05 main-envelope calls while
+all 28 M05 admission positions retain their callbacks. The next mining-batch call
+observes seven fresh reconciliation checks plus seven separate batch checks.
+The resulting batch is mined and admitted through normal
 Work/M06, compared with the complete original-parent reference, and cold reopened.
 Its second control checks cancellation and invalid new suffix rollback before a
 successful same-nonce retry. These are exact source test definitions; their
 execution status belongs to the committed-source qualification receipt.
+
+The same module compares twelve concrete signature, encoding, replay, duplicate,
+fee, funds, raw replacement/reorder/truncation refusals with a forced-fresh M05
+control on the same accepted M06 prefix. It checks actual native call counts,
+unchanged prior facts and a valid same-nonce retry. Real typed-gate checks rebind
+parent ID, State allocation, height and the complete Config allocation, including
+equal-byte copies, expired height and a wrong network. Five cancellation points
+and five caught unwind points preserve both prior prefixes before retry.
+The private adapter's original raw pointer is also checked, without claiming that
+metadata, decoded payload or commitment allocations have disappeared.
+
+The explicitly invoked `normal_m05_signature_reuse_component_timing` selector
+compares six alternating pairs on sixteen signed growing prefixes. Both arms use
+the current source and execute all real M05 gates, M06 epilogues and commitments;
+the repeated-check arm discards successful facts between prefixes, including that
+discard cost. Each arm observes 136 typed admissions and 136 or 16 actual main
+validation calls. Complete state, root and receipts are compared with fresh full
+M06 outside the timers. Parent SQL reads, Config snapshot, pool persistence,
+lock waiting, work proofs, transport and physical isolation are outside its scope.
+These results cannot be represented as historical-binary or endpoint speedup.
 
 `trnm-pon-node/tests/local_mempool.rs` exercises actual Node/M05/M06/SQLite behavior:
 queued funding across groups and sequential sender nonces, exact restart and policy
@@ -290,15 +356,16 @@ validity is checked before those timers. It excludes whole M05/M06 execution,
 reconciliation, proofs, SQLite, owner contention and transport; its measurements
 cannot certify endpoint throughput or public fairness.
 
-One reconciliation still executes each accepted growing group prefix in full.
-With256 single-member groups this revisits32896 transaction positions; with16 groups
-of16 it revisits2176. These are operation counts for fully valid prefixes, not measured
-runtime bounds. The16-member cap applies per group, not to the number of groups.
-M05 and M06 each retain their signature checks. Every preview clones its parent,
-runs mandatory transitions, enforces conservation and constructs its final state root.
-Calling the finalized block executor incrementally once per group would incorrectly
-repeat mandatory transitions and subsidy issuance; an incremental prefix design
-requires a separate staged transition boundary and one finalization per candidate.
+One reconciliation still admits every growing group prefix through the real M05
+queue. With256 single-member groups this revisits32896 admission positions; with16
+groups of16 it revisits2176. These are operation counts for fully valid prefixes,
+not measured runtime bounds. The16-member cap applies per group, not to the number
+of groups. Successful M05 main checks and M06 preparation/application now cover
+each retained transaction once within the operation, while M06 mandatory actions
+run once and every candidate still receives its complete epilogue, conservation
+checks, output State clone and root construction. The finalized block executor is
+not called as if each group were another block; the separate prefix boundary above
+retains the exact original parent, subsidy and mandatory-action semantics.
 
 Reconciliation reconstructs bounded queues and validates prefixes conservatively;
 its work can grow with configured queue size. It is local synchronous work, not a

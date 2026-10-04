@@ -582,7 +582,12 @@ impl Engine {
                 let owner = lock(node, end, stop)?;
                 match owner.parent_height(locator) {
                     Ok(_) => true,
-                    Err(error) if error.is(ErrorCode::UnknownParent) => false,
+                    Err(error)
+                        if error.is(ErrorCode::UnknownParent)
+                            && error.kind() == crate::ErrorKind::StaleContext =>
+                    {
+                        false
+                    }
                     Err(error) => return Err(error),
                 }
             };
@@ -1281,6 +1286,93 @@ mod tests {
         assert_eq!(engine.states[0].failures, 2);
         assert_eq!(engine.states[1].failures, 1);
     }
+    #[test]
+    fn actual_retained_header_fault_stops_poll_cycle_while_same_peer_diagnostic_retries() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut owner = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let block = append(&mut owner, settings.genesis(), 11, 0);
+        let id = block.id().unwrap();
+        let raw = block.encode().unwrap();
+        let mut damaged = raw.clone();
+        damaged[0] ^= 0xff;
+        let node = Mutex::new(owner);
+        let cfg = config(&settings);
+        let stop = AtomicBool::new(false);
+        let ctx = context(&node, &cfg, &settings, &stop);
+
+        let mut peer_page = page_value(&settings, id, settings.genesis(), Some(&block));
+        peer_page["packets"][0] = hex::encode(&damaged).into();
+        let mut incoming = Engine::new(&cfg, &settings);
+        incoming.states[0].target = Some(id);
+        for _ in 0..2 {
+            incoming
+                .cycle(
+                    &ctx,
+                    &mut |_, _| Ok(reply(true, peer_page.clone())),
+                    &mut |_| Ok(()),
+                )
+                .unwrap();
+        }
+        assert_eq!(incoming.calls, 2);
+        assert_eq!(incoming.states[0].failures, 2);
+        assert_eq!(incoming.states[0].cursor, settings.genesis());
+        assert_eq!(
+            incoming.states[0].last_error.as_ref().unwrap().message,
+            "HEADER_CODEC"
+        );
+        assert_eq!(incoming.verified, 0);
+        for message in [
+            "HEADER_CODEC",
+            "UNKNOWN_PARENT",
+            "AUTH_RECOVERY:peer recovery source rejected: AUTH_PENDING_AUDIT",
+        ] {
+            incoming
+                .cycle(
+                    &ctx,
+                    &mut |_, _| Ok(reply(false, serde_json::json!({"error":message}))),
+                    &mut |_| Ok(()),
+                )
+                .unwrap();
+        }
+        assert_eq!(incoming.calls, 5);
+        assert_eq!(incoming.states[0].cursor, settings.genesis());
+
+        // Mutate only this test's already-admitted local row; no network listener
+        // or public-service stress campaign is used for this provenance regression.
+        let db = rusqlite::Connection::open(directory.path().join("native.sqlite")).unwrap();
+        db.execute(
+            "UPDATE blocks SET packet=? WHERE id=?",
+            rusqlite::params![damaged, id.as_slice()],
+        )
+        .unwrap();
+        let mut retained = Engine::new(&cfg, &settings);
+        let error = retained
+            .cycle(
+                &ctx,
+                &mut |_, _| Ok(reply(true, serde_json::json!({"tip":hex::encode(id)}))),
+                &mut |_| Ok(()),
+            )
+            .unwrap_err();
+        assert!(error.is(ErrorCode::HeaderCodec));
+        assert_eq!(error.kind(), crate::ErrorKind::LocalStructure);
+        assert!(error.requires_owner_stop());
+        assert_eq!(error.to_string(), "HEADER_CODEC");
+        assert_eq!(retained.calls, 1);
+        assert_eq!(retained.states[0].failures, 1);
+        assert_eq!(retained.states[0].completed, 0);
+        assert_eq!(retained.states[0].cursor, settings.genesis());
+        db.execute(
+            "UPDATE blocks SET packet=? WHERE id=?",
+            rusqlite::params![raw, id.as_slice()],
+        )
+        .unwrap();
+        node.lock()
+            .unwrap()
+            .check_observed_history(id, 1000)
+            .unwrap();
+    }
+
     #[test]
     fn typed_local_structure_stops_but_remote_and_transport_failures_retain_cursor() {
         let settings = Settings::development(Some(1)).unwrap();

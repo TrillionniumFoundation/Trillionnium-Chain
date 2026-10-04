@@ -164,3 +164,10 @@ is embedded in the existing release row. Reorganization reverses that branch sta
 local irreversible operations retain their separate owner. Exact derivation does not
 prove training causality, general fair allocation or future usefulness. Revision13
 keeps its prior individual-component gate and namespaces.
+
+The independent Python comparator recomputes the actual native release identity,
+allocation root, complete composition record, floor payouts, source reservations and
+dust from the exported signed-lifecycle inputs. It also requires the second generation
+to use the first actual adopted model bytes and release reference. This closes an
+implementation conformance gap without treating the public fixed-corpus examples as
+new evidence of market demand, independent contributors or future model benefit.

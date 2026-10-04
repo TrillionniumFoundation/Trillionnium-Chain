@@ -180,6 +180,28 @@ impl Error {
                 )
             )
     }
+    /// Use only for a failed invariant of bytes/links already held by the local
+    /// store. The same diagnostic from a new packet or an unknown caller locator
+    /// has no authority to stop the owner. Do not wrap a progress callback or a
+    /// complete request: those can carry cancellation and peer-controlled input.
+    pub(crate) fn local_integrity(mut self) -> Self {
+        self.kind = ErrorKind::LocalStructure;
+        self
+    }
+    /// A failed reconstruction/recovery of the local replay journal. Preserve
+    /// its exact legacy diagnostic and the typed source; never infer this origin
+    /// by parsing an AUTH_* prefix received from the network.
+    pub(crate) fn local_replay_source(
+        prefix: &'static str,
+        source: impl error::Error + Send + Sync + 'static,
+    ) -> Self {
+        Self {
+            code: None,
+            kind: ErrorKind::LocalStructure,
+            message: format!("{prefix}:{source}"),
+            source: Some(Box::new(source)),
+        }
+    }
     /// Parse only after the caller has established its required reply authentication.
     /// Construction itself authenticates nothing and gives no local failure authority.
     pub(crate) fn remote(message: impl Into<String>) -> Self {
@@ -273,6 +295,39 @@ mod tests {
         let mut eof = Error::new(ErrorCode::FrameEof);
         eof.message = "peer closed the socket".into();
         assert!(eof.is(ErrorCode::FrameEof));
+    }
+
+    #[test]
+    fn local_integrity_origin_preserves_diagnostic_code_and_typed_cause() {
+        for message in ["HEADER_CODEC", "UNKNOWN_PARENT", "ANCESTRY_HEIGHT", "ROOT"] {
+            let untrusted = Error::from(message);
+            assert!(!untrusted.requires_owner_stop());
+            let mut stored = Error::from(message).local_integrity();
+            assert_eq!(stored.to_string(), message);
+            assert_eq!(stored.code(), untrusted.code());
+            assert_eq!(stored.kind(), ErrorKind::LocalStructure);
+            assert!(stored.requires_owner_stop());
+            stored.message = "changed diagnostic for the same local invariant".into();
+            assert!(stored.requires_owner_stop());
+            assert!(!Error::remote(message).requires_owner_stop());
+        }
+        let source = trnm_transport::PeerAdmissionErrorV0::InvalidRecoveryState;
+        let mut stored = Error::local_replay_source("AUTH_REPLAY", source);
+        let expected = format!("AUTH_REPLAY:{source}");
+        assert_eq!(stored.to_string(), expected);
+        assert_eq!(stored.code(), None);
+        assert_eq!(stored.kind(), ErrorKind::LocalStructure);
+        assert_eq!(
+            stored
+                .source()
+                .unwrap()
+                .downcast_ref::<trnm_transport::PeerAdmissionErrorV0>(),
+            Some(&source)
+        );
+        assert!(!Error::from(expected.clone()).requires_owner_stop());
+        assert!(!Error::remote(expected).requires_owner_stop());
+        stored.message = "changed local replay diagnostic".into();
+        assert!(stored.requires_owner_stop());
     }
 
     #[test]

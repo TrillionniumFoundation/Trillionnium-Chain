@@ -54,7 +54,7 @@ jobs:
   cross-arch-cost:
     name: cross-arch-cost (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -85,6 +85,9 @@ jobs:
         run: rustup toolchain install 1.95.0 --profile minimal
       - name: Execute native release setup and repeated-search costs
         run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"
+      - name: Execute native zero-matrix locality costs
+        if: always()
+        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite zero-locality
       - name: Verify source remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
@@ -119,6 +122,9 @@ jobs:
           merge-multiple: false
       - name: Check actual streams and source identity without a speed threshold
         run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-comparison.json"
+      - name: Check zero-matrix streams and exact source identity
+        if: always()
+        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-zero-locality-comparison.json" --suite zero-locality
       - name: Verify source remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"

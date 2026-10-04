@@ -94,6 +94,15 @@ operator removal digests remain monotonic and separately finite. See
 [LOCAL_MEMPOOL_CACHE_V2](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_CACHE_V2.md).
 Public-v2 transport operations and acceptance flags are unchanged by this local owner.
 
+Within one immutable actual-parent owner operation, pool prefixes can reuse a private
+successful M05 main-envelope fact. Exact raw bytes and position, actual State and
+complete Config reference identities, parent ID and height bind that fact; all M05
+state-dependent gates still execute on the entire prefix. Facts publish only after
+full M05/M06 success, and cancellation, unwind or refusal cannot advance them. Every
+new owner operation and independent batch preview performs fresh checks. The paired
+component counter/timing test compares complete outputs and retains both control and
+reuse costs; it is not a claim of linear total pool cost or endpoint throughput.
+
 
 The explicit [operator actor context](../protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md)
 uses the existing module owner and fresh public descriptor/signature-bound N/P/G.

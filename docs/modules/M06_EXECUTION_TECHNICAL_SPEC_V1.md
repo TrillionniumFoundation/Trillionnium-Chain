@@ -197,3 +197,12 @@ positive leave-one-out weights before an existing funded release is admitted. It
 fresh context and embedded release record preserve V3 semantics. Public fixed-task
 ablation does not establish training causality, future efficacy or fair universal
 attribution; a perfect25/25 parent saturates this finite development objective.
+
+Independent Python oracles now compute complete small continuity expiry/archive
+transitions and complete revision14 integer composition/release/claim expectations.
+Their native bridges export actual executor outcomes; exact case sets, canonical
+State/receipt bytes and run identities are checked without accepting native scores
+as expected answers. The seeded continuity inputs do not claim signed reachability,
+and the composition oracle does not independently verify signatures, roster closure
+or ILF2 witnesses. The separate full-capacity Node fixture covers real quota expiry,
+new-account reentry, two heavier reorganizations and three cold reopens.

@@ -159,3 +159,10 @@ the known cancelling-pair example; it does not establish coalition fairness, cau
 training effort or protection against general component splitting. The fixed corpus
 saturates at25/25 and supplies no next untouched evaluation window. Independent
 prospective usefulness and public model rewards remain unaccepted.
+
+A separate Python integer implementation now compares all42 named native codec,
+composition, inference, tie, range and exactly cancelling subset observations, and the
+actual signed lifecycle's full empirical/composition records. It recomputes expected
+scores and digests from model bytes and frozen tasks; reported native score fields
+cannot supply the answer. This conformance layer leaves signatures, roster closure,
+ILF2 witness validity and future-task custody as separately scoped premises.

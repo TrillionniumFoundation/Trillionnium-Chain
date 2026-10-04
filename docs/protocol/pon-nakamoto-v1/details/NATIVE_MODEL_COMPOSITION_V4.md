@@ -204,6 +204,39 @@ their actual execution status; source presence alone is not a successful native 
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test model_composition_v4
 ```
 
+### Independent arithmetic and observed-state comparison
+
+The [Python composition oracle](../../../../formal/pon-nakamoto-v1/model_composition_oracle.py)
+independently decodes and encodes complete ILM2 models, runs integer base/router/expert
+inference with the prescribed ties, computes parent-relative sums and every required
+zero-increment subset, and evaluates complete leave-one-out models. It also derives
+native empirical/composition record bytes, allocation Merkle roots, release identities,
+floor payouts, source budgets and dust. The Python subset enumeration uses combinations
+instead of the Rust mask traversal. It shares only canonical wire/hash/config helpers,
+not native arithmetic or native reported scores as its expected result.
+
+The cfg(test) M06 collector and the existing native lifecycle tests optionally export
+actual inputs, return values and before/after State observations to a fresh
+`TRNM_MODEL_COMPOSITION_VECTORS` directory, bound to
+`TRNM_MODEL_COMPOSITION_RUN_ID`. The
+[comparison](../../../../formal/pon-nakamoto-v1/test_model_composition.py) requires the
+exact thirteen files from that one run: one arithmetic collection with all42 required
+named boundaries, nine release observations and three claim observations. It verifies
+complete canonical records rather than accepting equal Python numeric values with
+different JSON types. The second-generation parent reference and full model bytes
+must equal the first generation's actual adopted release and bundle. Missing, renamed,
+extra, wrong-run or wrong-category observations fail; a native supplied score or digest
+is never copied into an expected record. Mutation controls also reject removed boundary
+coverage and changed derivation/allocation material.
+
+The existing full native workspace test execution can produce these observations once;
+the Python comparison runs immediately afterwards. It must not substitute stored old
+vectors or silently skip when the export is absent. This independent layer checks model
+arithmetic and observed release/claim outcomes. It does not independently verify M05
+signatures, evaluator roster closure, the ILF2 factor witness, all ledger transitions,
+training provenance or future efficacy. Those premises remain explicit native or
+external obligations.
+
 Public external model efficacy, rights/provenance, concealed-source identity,
 prospective datasets, independent operators, poisoning/forgetting, deployment costs,
 arbitrary model composition and mining-hardness qualification remain unaccepted.

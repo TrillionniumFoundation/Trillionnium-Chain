@@ -101,6 +101,22 @@ the same workload, hardware, compiler, filesystem and competing-load conditions.
 The bounded example does not replace native exact-capacity tests, independently
 operated public service campaigns, long retention or physical power-loss tests.
 
+A separate `pon-history-state-commitment-cost-v1` row at each sampled height records
+the actual state-read duration, the checked derived-cache method and retained software
+charge before and after that read and each confirmation batch. It also times a fresh
+authoritative `pon_executor::root` over the exact observed State and requires equality
+with the actual packet root and every reported cache root. This full-root control runs
+after all1/16/64-query batches, outside their clocks, and cannot populate or warm the
+Node cache. Original v2 read rows retain their schema and interpretation.
+
+The cache observations distinguish rebuilt trees, checked delta application and each
+explicit full-root fallback reason; they do not infer an incremental method from a
+short duration. Workspace and retained charge are bounded software accounting, not
+process RSS, allocator traffic or physical peak memory. The example still uses one
+owner without concurrent readers or writers, so these rows measure neither lock
+queueing nor the gain from a proposed reader/writer split. No old/new speedup follows
+from a single-source full-root control.
+
 The native129-height boundary regression crosses three SQL batches, cancels
 before the second query, restores and rechecks a corrupt boundary ancestor's
 height and trace, detects an intervening generation change, then reopens and

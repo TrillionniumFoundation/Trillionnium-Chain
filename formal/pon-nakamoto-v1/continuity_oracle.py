@@ -13,23 +13,32 @@ MAINTENANCE_KEY = 'consensus-maintenance-v1'
 CAP = 65536
 MATURITY = 20
 
-def context():
+def context(policy='legacy-first-two-v3'):
     params = development_parameters()
+    if policy == 'native-public-evaluation-dev-v1':
+        evaluation = read_config('config/pon/public-evaluation-native-v1.json')
+        assert evaluation['id'] == policy and evaluation['production_activation'] is False
+        params.update(evaluation['genesis_overrides'])
+        params['evaluation_policy_hash'] = H('evaluation-policy', canonical(evaluation)).hex()
+    elif policy != 'legacy-first-two-v3':
+        raise ValueError('EVALUATION_POLICY')
     rule = read_config('config/pon/continuity-v1.json')
     assert rule['id'] == PROFILE and rule['consensus_revision'] == 12
     params.update(consensus_revision=12, work_task_profile=PROFILE,
-                  chain_label='trnm-pon-continuity-devnet-12-legacy-first-two-v3',
+                  chain_label='trnm-pon-continuity-devnet-12-'+policy,
                   continuity_policy_hash=H('consensus-maintenance-continuity-policy-v1', canonical(rule)).hex())
     params['qualified_task_registry_hash'] = H('qualified-task-registry-v4',
         canonical(read_config('config/pon/qualified-task-lifecycle-v4.json'))).hex()
+    if policy == 'native-public-evaluation-dev-v1':
+        params['chain_label'] += '-evaluation-storage2'
     network = H('network', params['chain_label'].encode())
     parameters = H('parameters', canonical(params), canonical(read_config('config/pon/ledger-v1.json')),
                    canonical(read_config('config/pon/work-profile-v1.json')),
                    canonical(read_config('config/pon/model-family-v1.json')))
     return params, network, parameters
 
-def maintenance_record():
-    params, network, parameters = context()
+def maintenance_record(policy='legacy-first-two-v3'):
+    params, network, parameters = context(policy)
     a = [(13*i+17)%257 for i in range(4096)]
     b = [(29*i+31)%263 for i in range(4096)]
     model = b''.join(i.to_bytes(4,'little') for i in a)

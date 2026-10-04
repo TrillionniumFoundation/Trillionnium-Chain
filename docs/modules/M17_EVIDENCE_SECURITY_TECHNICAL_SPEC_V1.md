@@ -88,3 +88,12 @@ agree; measured speeds need not. Missing/failed architectures remain failures.
 An explicitly labelled local preflight cannot satisfy the hosted comparison.
 Runner/compiler/ELF observations and artifact hashes are retained, without
 promoting physical independence, GPU coverage, resource fairness or work hardness.
+
+The same thirteen jobs now retain a separate zero-locality suite in both architecture
+jobs and compare it under its own schema, without rewriting the original seven-class
+reused-search results. Existing protocol lanes run the independent continuity
+transition oracle; existing Rust lanes export fresh native model observations during
+their one workspace test execution and immediately run the independent Python
+comparison. Missing exact cases, source/run identities, native outputs or failed
+attempts are failures. Mathematical implementation agreement remains distinct from
+work hardness, independent operation and future model efficacy.

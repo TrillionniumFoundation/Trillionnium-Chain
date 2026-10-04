@@ -131,6 +131,7 @@ class ApplicabilityTests(unittest.TestCase):
             'trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::queued_facts_reopen_exact_raws_real_typed_gate_and_funding_nonce_dependencies',
             'trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::retained_groups_restore_after_real_heavier_fork_and_terminal_prune_is_monotonic',
             'trillionnium/crates/trnm-pon-node/src/store/mempool.rs::native_reconcile_and_submission_apply_each_retained_transaction_once_per_operation',
+            'trillionnium/crates/trnm-pon-node/src/store/mempool.rs::signature_cache_survives_cancellation_and_unwind_without_publishing_suffix',
         })
 
 

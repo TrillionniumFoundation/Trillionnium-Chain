@@ -145,8 +145,8 @@ pub(super) struct ContinuousPoolGroupSnapshot {
 }
 /// Private immutable adapter: resources are derived from the existing command and
 /// byte fee, never a fabricated signed gas field or arbitrary-program cost claim.
-struct PnxView {
-    raw: Vec<u8>,
+struct PnxView<'raw> {
+    raw: &'raw [u8],
     envelope: Envelope,
     digest: CanonicalTxDigest,
     signer: CanonicalSignerId,
@@ -158,8 +158,8 @@ fn minimum_fee(tx: &Envelope, bytes: usize, cfg: &Config) -> Result<u64> {
     base.checked_add((bytes as u64).checked_mul(byte).ok_or("POOL_FEE")?)
         .ok_or_else(|| "POOL_FEE".into())
 }
-impl PnxView {
-    fn new(raw: &[u8], cfg: &Config) -> Result<Self> {
+impl<'raw> PnxView<'raw> {
+    fn new(raw: &'raw [u8], cfg: &Config) -> Result<Self> {
         ensure(!raw.is_empty() && raw.len() <= 2048, "POOL_BODY_LIMIT")?;
         let envelope = Envelope::decode(raw).map_err(|_| "POOL_ENCODING")?;
         let digest = CanonicalTxDigest::from_bytes(envelope.id().map_err(|_| "POOL_ENCODING")?)
@@ -167,7 +167,7 @@ impl PnxView {
         let signer = CanonicalSignerId::from_bytes(envelope.sender).map_err(|_| "POOL_SIGNER")?;
         let fee = minimum_fee(&envelope, raw.len(), cfg)?;
         Ok(Self {
-            raw: raw.to_vec(),
+            raw,
             envelope,
             digest,
             signer,
@@ -175,7 +175,7 @@ impl PnxView {
         })
     }
 }
-impl SignedEnvelopeView for PnxView {
+impl SignedEnvelopeView for PnxView<'_> {
     fn canonical_digest(&self) -> CanonicalTxDigest {
         self.digest
     }
@@ -183,7 +183,7 @@ impl SignedEnvelopeView for PnxView {
         Ok(self.signer)
     }
     fn canonical_body(&self) -> &[u8] {
-        &self.raw
+        self.raw
     }
     fn nonce(&self) -> u64 {
         self.envelope.nonce
@@ -198,7 +198,7 @@ impl SignedEnvelopeView for PnxView {
         }
     }
     fn validate_canonical(&self) -> std::result::Result<(), AdmissionReject> {
-        if self.envelope.encode().ok().as_deref() != Some(self.raw.as_slice())
+        if self.envelope.encode().ok().as_deref() != Some(self.raw)
             || self.envelope.id().ok() != Some(self.digest.as_bytes())
             || self.envelope.sender != self.signer.as_bytes()
         {
@@ -207,25 +207,75 @@ impl SignedEnvelopeView for PnxView {
         Ok(())
     }
 }
-struct Hooks<'a> {
+/// Borrowed identities keep the actual parent and complete configuration immutable.
+/// A different allocation, even with equal bytes, requires a fresh native check.
+#[derive(Clone, Copy)]
+struct SignatureContext<'a> {
     height: u64,
+    parent: Hash,
+    state: &'a State,
     cfg: &'a Config,
+}
+/// Minted only by a successful native main-envelope check in the real M05 hook.
+/// It proves no replay, lane, fee, funds, M06 or persistence decision. These private
+/// facts are retained only after the entire candidate's M05/M06 preview succeeds.
+struct CheckedPnxSignature<'a> {
+    context: SignatureContext<'a>,
+    raw: Vec<u8>,
+}
+impl CheckedPnxSignature<'_> {
+    fn matches(&self, context: SignatureContext<'_>, raw: &[u8]) -> bool {
+        self.context.height == context.height
+            && self.context.parent == context.parent
+            && std::ptr::eq(self.context.state, context.state)
+            && std::ptr::eq(self.context.cfg, context.cfg)
+            && self.raw == raw
+    }
+}
+#[cfg(test)]
+thread_local! {
+    // Actual calls at the native M05 validation boundary, not inferred admissions.
+    static M05_MAIN_VALIDATIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+struct Hooks<'a, 'reuse> {
+    context: SignatureContext<'a>,
+    reused: Option<&'reuse CheckedPnxSignature<'a>>,
+    checked: Option<CheckedPnxSignature<'a>>,
     expected_nonce: u64,
 }
-impl SignedAdmissionHooks<PnxView> for Hooks<'_> {
+impl SignedAdmissionHooks<PnxView<'_>> for Hooks<'_, '_> {
     fn verify_signature(
         &mut self,
-        view: &PnxView,
+        view: &PnxView<'_>,
         metadata: &SignedEnvelopeMetadata,
     ) -> std::result::Result<(), AdmissionReject> {
-        let checked = pon_executor::validate_main_envelope(&view.raw, self.height, self.cfg)
+        let reused = self
+            .reused
+            .is_some_and(|checked| checked.matches(self.context, view.raw));
+        if !reused {
+            #[cfg(test)]
+            M05_MAIN_VALIDATIONS.with(|count| count.set(count.get() + 1));
+            let checked = pon_executor::validate_main_envelope(
+                view.raw,
+                self.context.height,
+                self.context.cfg,
+            )
             .map_err(|_| AdmissionReject::SignatureRejected)?;
-        if checked != view.envelope
-            || metadata.body() != view.raw
+            if checked != view.envelope {
+                return Err(AdmissionReject::CanonicalValidationFailed);
+            }
+        }
+        if metadata.body() != view.raw
             || metadata.digest() != view.digest
             || metadata.signer_id() != view.signer
         {
             return Err(AdmissionReject::CanonicalValidationFailed);
+        }
+        if !reused {
+            self.checked = Some(CheckedPnxSignature {
+                context: self.context,
+                raw: view.raw.to_vec(),
+            });
         }
         Ok(())
     }
@@ -315,6 +365,7 @@ fn validate_pending(
         node,
         checked: None,
         prefix: None,
+        signatures: Vec::new(),
         parent_observation: None,
         control: &control,
         owner_permit: owner_permit.as_ref(),
@@ -355,11 +406,12 @@ struct PendingPreview<'state, 'operation> {
     height: u64,
     state: &'state State,
     parent: Hash,
-    cfg: &'operation Config,
+    cfg: &'state Config,
     limits: &'operation PoolLimits,
     node: &'operation Node,
     checked: Option<CheckedExecutionParent<'state>>,
     prefix: Option<CheckedTransactionPrefix<'state>>,
+    signatures: Vec<CheckedPnxSignature<'state>>,
     parent_observation: Option<CommitmentObservation>,
     control: &'operation ExecutionControl<'operation, crate::Error>,
     owner_permit: Option<&'operation super::OwnerPoolPermit>,
@@ -383,6 +435,28 @@ impl PendingPreview<'_, '_> {
             node,
             ..
         } = *self;
+        let signature_context = SignatureContext {
+            height,
+            parent,
+            state,
+            cfg,
+        };
+        // A digest or matching suffix is insufficient: reuse requires the entire
+        // previously accepted raw prefix and the same immutable operation context.
+        // A mismatch selects full M05 checks, preserving their error precedence
+        // before the unchanged M06 PREFIX_BINDING check.
+        let reuse = if self.signatures.len() <= raws.len()
+            && self
+                .signatures
+                .iter()
+                .zip(raws)
+                .all(|(checked, raw)| checked.matches(signature_context, raw))
+        {
+            self.signatures.len()
+        } else {
+            0
+        };
+        let mut appended_signatures = Vec::with_capacity(raws.len() - reuse);
         let mut gate = TypedAdmissionGate::new(limits.max_records, limits.critical_reserve, 2048);
         let mut next = BTreeMap::new();
         let mut exhausted = BTreeSet::new();
@@ -400,8 +474,9 @@ impl PendingPreview<'_, '_> {
                     .ok_or("NONCE_OVERFLOW")?,
             };
             let mut hooks = Hooks {
-                height,
-                cfg,
+                context: signature_context,
+                reused: self.signatures.get(index).filter(|_| index < reuse),
+                checked: None,
                 expected_nonce: expected,
             };
             let class = if (14..=22).contains(&view.envelope.tag) {
@@ -416,6 +491,9 @@ impl PendingPreview<'_, '_> {
                 TypedAdmitOutcome::Rejected(reason) => {
                     return Err(format!("POOL_TYPED:{reason:?}").into())
                 }
+            }
+            if index >= reuse {
+                appended_signatures.push(hooks.checked.take().ok_or("POOL_TYPED_BINDING")?);
             }
             if let Some(successor) = expected.checked_add(1) {
                 next.insert(view.envelope.sender, successor);
@@ -434,6 +512,9 @@ impl PendingPreview<'_, '_> {
             bindings.is_empty() && ready == raws.len(),
             "POOL_TYPED_BINDING",
         )?;
+        // Reserve before M06 can publish its new in-memory prefix. Afterwards,
+        // signature publication moves initialized values without allocating.
+        self.signatures.reserve(appended_signatures.len());
         // Bind lazily after the first successful typed gate. Prefixes retain one
         // immutable actual-parent binding and one same-block unfinalized state.
         if self.checked.is_none() && self.prefix.is_none() {
@@ -495,6 +576,10 @@ impl PendingPreview<'_, '_> {
                 ExecutionError::Cancelled(error) => PoolPreviewError::Cancelled(error),
             })?;
         *node.commitment_observation.borrow_mut() = Some(output.commitment.observation);
+        if reuse != self.signatures.len() {
+            self.signatures.clear();
+        }
+        self.signatures.append(&mut appended_signatures);
         Ok(ready)
     }
 }
@@ -507,11 +592,14 @@ struct PoolParent {
     height: u64,
     root: Hash,
     state: State,
+    // Owned outside Node so its immutable borrow can survive pool-only SQL writes.
+    cfg: Config,
 }
 
 struct PreviewBinding<'a> {
     checked: Option<CheckedExecutionParent<'a>>,
     prefix: Option<CheckedTransactionPrefix<'a>>,
+    signatures: Vec<CheckedPnxSignature<'a>>,
     observation: Option<CommitmentObservation>,
 }
 
@@ -815,6 +903,7 @@ impl Node {
             height,
             root,
             state,
+            cfg: self.settings.app.clone(),
         })
     }
     fn pool_reconcile_parent_with_control<'a>(
@@ -845,11 +934,12 @@ impl Node {
             height,
             state,
             parent,
-            cfg: &self.settings.app,
+            cfg: &actual.cfg,
             limits,
             node: self,
             checked: None,
             prefix: None,
+            signatures: Vec::new(),
             parent_observation: None,
             control,
             owner_permit,
@@ -895,6 +985,7 @@ impl Node {
         let binding = PreviewBinding {
             checked: preview.checked.take(),
             prefix: preview.prefix.take(),
+            signatures: std::mem::take(&mut preview.signatures),
             observation: preview.parent_observation.take(),
         };
         drop(preview);
@@ -1163,11 +1254,12 @@ impl Node {
             height,
             state,
             parent,
-            cfg: &self.settings.app,
+            cfg: &actual.cfg,
             limits: &limits,
             node: self,
             checked: binding.checked,
             prefix: binding.prefix,
+            signatures: binding.signatures,
             parent_observation: binding.observation,
             control,
             owner_permit: owner_permit.as_ref(),
@@ -1420,13 +1512,24 @@ mod incremental_prefix_tests {
             Ok(())
         };
         let seventh = transfer(&node, 7, 1);
+        M05_MAIN_VALIDATIONS.with(|count| count.set(0));
         node.pool_submit_bundle_with_control(
             vec![seventh.clone()],
             &ExecutionControl::new(&progress, &()),
         )
         .unwrap();
+        assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 7);
         raws.push(seventh);
         let stages = stages.into_inner().unwrap();
+        // M05 still admits all 1+...+7 positions and preserves both cancellation
+        // points around each. M06 additionally prepares only its seven suffixes.
+        assert_eq!(
+            stages
+                .iter()
+                .filter(|p| matches!(p, ExecutionProgress::BeforePrepare { .. }))
+                .count(),
+            28 + 7
+        );
         assert_eq!(
             stages
                 .iter()
@@ -1448,9 +1551,13 @@ mod incremental_prefix_tests {
         assert_eq!(node.read_active().unwrap(), original);
 
         let (parent, generation) = node.active().unwrap();
+        M05_MAIN_VALIDATIONS.with(|count| count.set(0));
         let batch = node
             .pool_mining_batch(parent, generation, 32, 65536)
             .unwrap();
+        // A new owner call rechecks all seven, then the selected mining batch
+        // independently checks all seven in its own bounded preview scope.
+        assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 14);
         assert_eq!(batch.transactions, raws);
         let full =
             pon_executor::execute(&original.2, &raws, 1, miner, parent, 1, &settings.app).unwrap();
@@ -1530,6 +1637,468 @@ mod incremental_prefix_tests {
         node.pool_submit_bundle(vec![raw]).unwrap();
         assert_eq!(node.pool_status_snapshot().unwrap().retained_records, 4);
         assert_eq!(node.read_active().unwrap(), original);
+    }
+
+    fn preview<'a, 'operation>(
+        node: &'operation Node,
+        actual: &'a PoolParent,
+        limits: &'operation PoolLimits,
+        control: &'operation ExecutionControl<'operation, crate::Error>,
+    ) -> PendingPreview<'a, 'operation> {
+        PendingPreview {
+            height: actual.height,
+            state: &actual.state,
+            parent: actual.id,
+            cfg: &actual.cfg,
+            limits,
+            node,
+            checked: None,
+            prefix: None,
+            signatures: Vec::new(),
+            parent_observation: None,
+            control,
+            owner_permit: None,
+        }
+    }
+
+    fn preview_limits() -> PoolLimits {
+        PoolLimits {
+            max_records: 32,
+            max_bytes: 65536,
+            max_group_members: 8,
+            critical_reserve: 0,
+            max_removals: 32,
+            preview_miner: crate::development_public(3).unwrap(),
+        }
+    }
+
+    fn alter(raw: &[u8], change: impl FnOnce(&mut Envelope)) -> Vec<u8> {
+        let mut tx = Envelope::decode(raw).unwrap();
+        change(&mut tx);
+        let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])))
+            .unwrap();
+        tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+            .unwrap()
+            .try_into()
+            .unwrap();
+        tx.encode().unwrap()
+    }
+
+    #[test]
+    fn signature_reuse_requires_complete_raw_prefix_and_preserves_first_refusal() {
+        let temp = tempfile::tempdir().unwrap();
+        let node = Node::open(
+            temp.path(),
+            crate::Settings::development(Some(1)).unwrap(),
+            1,
+        )
+        .unwrap();
+        let actual = node.pool_parent().unwrap();
+        let limits = preview_limits();
+        let progress = |_| Ok(());
+        let control = ExecutionControl::new(&progress, &());
+        let mut cached = preview(&node, &actual, &limits, &control);
+        let base = vec![transfer(&node, 1, 1), transfer(&node, 2, 1)];
+        let third = transfer(&node, 3, 1);
+        assert_eq!(
+            cached
+                .validate(&base)
+                .map_err(PoolPreviewError::into_error)
+                .unwrap(),
+            2
+        );
+        let bad_signature = |raw: &[u8]| {
+            let mut tx = Envelope::decode(raw).unwrap();
+            tx.signature[63] ^= 1;
+            tx.encode().unwrap()
+        };
+        let append = |suffix: Vec<Vec<u8>>| {
+            let mut raws = base.clone();
+            raws.extend(suffix);
+            raws
+        };
+        let mut changed_prefix = base.clone();
+        changed_prefix[0] = transfer(&node, 1, 2);
+        let mut changed_signature = base.clone();
+        changed_signature[1] = bad_signature(&base[1]);
+        // The wire codec rejects zero nonce before M05 metadata can exist.
+        // Retain the deliberately malformed original bytes for that precedence.
+        let mut zero_nonce = bad_signature(&third);
+        zero_nonce[68..76].fill(0);
+        let cases = [
+            (append(vec![base[0].clone()]), "POOL_DUPLICATE_MEMBER", 0),
+            (append(vec![transfer(&node, 4, 1)]), "POOL_TYPED:Replay", 1),
+            (
+                append(vec![bad_signature(&third)]),
+                "POOL_TYPED:SignatureRejected",
+                1,
+            ),
+            (
+                append(vec![bad_signature(&transfer(&node, 4, 1))]),
+                "POOL_TYPED:SignatureRejected",
+                1,
+            ),
+            (append(vec![zero_nonce]), "POOL_ENCODING", 0),
+            (
+                append(vec![alter(&third, |tx| tx.fee_limit = 0)]),
+                "POOL_TYPED:RecheckFailed",
+                1,
+            ),
+            (append(vec![transfer(&node, 3, u64::MAX)]), "FUNDS", 1),
+            (
+                append(vec![third.clone(), transfer(&node, 4, u64::MAX)]),
+                "FUNDS",
+                2,
+            ),
+            (changed_prefix, "PREFIX_BINDING", 2),
+            (changed_signature, "POOL_TYPED:SignatureRejected", 2),
+            (
+                vec![base[1].clone(), base[0].clone()],
+                "POOL_TYPED:Replay",
+                1,
+            ),
+            (vec![base[0].clone()], "PREFIX_BINDING", 1),
+        ];
+        for (raws, expected, native_checks) in cases {
+            M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+            let error = cached
+                .validate(&raws)
+                .map_err(PoolPreviewError::into_error)
+                .unwrap_err();
+            assert_eq!(error.to_string(), expected);
+            assert_eq!(
+                M05_MAIN_VALIDATIONS.with(std::cell::Cell::get),
+                native_checks
+            );
+            assert_eq!(cached.signatures.len(), 2);
+            assert_eq!(cached.prefix.as_ref().unwrap().len(), 2);
+            assert!(cached
+                .signatures
+                .iter()
+                .zip(&base)
+                .all(|(checked, raw)| checked.raw == *raw));
+            // The control keeps the same accepted M06 prefix but forces all M05
+            // native checks. The first refusal must match, including replacement
+            // prefixes for which a complete-block replay would have other semantics.
+            let mut fresh = preview(&node, &actual, &limits, &control);
+            fresh
+                .validate(&base)
+                .map_err(PoolPreviewError::into_error)
+                .unwrap();
+            fresh.signatures.clear();
+            assert_eq!(
+                fresh
+                    .validate(&raws)
+                    .map_err(PoolPreviewError::into_error)
+                    .unwrap_err()
+                    .to_string(),
+                expected
+            );
+        }
+        M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+        assert_eq!(
+            cached
+                .validate(&append(vec![third]))
+                .map_err(PoolPreviewError::into_error)
+                .unwrap(),
+            3
+        );
+        assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 1);
+        assert_eq!(cached.signatures.len(), 3);
+        assert_eq!(node.read_active().unwrap().2, actual.state);
+    }
+
+    #[test]
+    fn real_signature_witness_rebinds_parent_state_height_and_complete_config() {
+        let temp = tempfile::tempdir().unwrap();
+        let node = Node::open(
+            temp.path(),
+            crate::Settings::development(Some(1)).unwrap(),
+            1,
+        )
+        .unwrap();
+        let actual = node.pool_parent().unwrap();
+        let raw = transfer(&node, 1, 1);
+        let view = PnxView::new(&raw, &actual.cfg).unwrap();
+        assert_eq!(view.raw.as_ptr(), raw.as_ptr());
+        let context = SignatureContext {
+            height: actual.height,
+            parent: actual.id,
+            state: &actual.state,
+            cfg: &actual.cfg,
+        };
+        let mut hooks = Hooks {
+            context,
+            reused: None,
+            checked: None,
+            expected_nonce: 1,
+        };
+        assert_eq!(
+            TypedAdmissionGate::new(8, 0, 2048).admit_signed(
+                &view,
+                IngressClass::Normal,
+                &mut hooks
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let checked = hooks.checked.take().unwrap();
+        let state_copy = actual.state.clone();
+        let config_copy = actual.cfg.clone();
+        let mut wrong_config = actual.cfg.clone();
+        wrong_config.network[0] ^= 1;
+        let contexts = [
+            (context, 0, TypedAdmitOutcome::Accepted),
+            (
+                SignatureContext {
+                    parent: [17; 32],
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Accepted,
+            ),
+            (
+                SignatureContext {
+                    state: &state_copy,
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Accepted,
+            ),
+            (
+                SignatureContext {
+                    cfg: &config_copy,
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Accepted,
+            ),
+            (
+                SignatureContext {
+                    height: 2,
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Accepted,
+            ),
+            (
+                SignatureContext {
+                    height: 2001,
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Rejected(AdmissionReject::SignatureRejected),
+            ),
+            (
+                SignatureContext {
+                    cfg: &wrong_config,
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Rejected(AdmissionReject::SignatureRejected),
+            ),
+        ];
+        for (context, count, expected) in contexts {
+            M05_MAIN_VALIDATIONS.with(|n| n.set(0));
+            let mut hooks = Hooks {
+                context,
+                reused: Some(&checked),
+                checked: None,
+                expected_nonce: 1,
+            };
+            assert_eq!(
+                TypedAdmissionGate::new(8, 0, 2048).admit_signed(
+                    &view,
+                    IngressClass::Normal,
+                    &mut hooks
+                ),
+                expected
+            );
+            assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), count);
+        }
+        // A valid signature fact cannot grant a different sequence or bypass
+        // the real capacity-before-signature precedence.
+        let mut hooks = Hooks {
+            context,
+            reused: Some(&checked),
+            checked: None,
+            expected_nonce: 2,
+        };
+        M05_MAIN_VALIDATIONS.with(|n| n.set(0));
+        assert_eq!(
+            TypedAdmissionGate::new(8, 0, 2048).admit_signed(
+                &view,
+                IngressClass::Normal,
+                &mut hooks
+            ),
+            TypedAdmitOutcome::Rejected(AdmissionReject::Replay)
+        );
+        assert_eq!(
+            TypedAdmissionGate::new(0, 0, 2048).admit_signed(
+                &view,
+                IngressClass::Normal,
+                &mut hooks
+            ),
+            TypedAdmitOutcome::Backpressured
+        );
+        assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 0);
+    }
+
+    #[test]
+    fn signature_cache_survives_cancellation_and_unwind_without_publishing_suffix() {
+        let temp = tempfile::tempdir().unwrap();
+        let node = Node::open(
+            temp.path(),
+            crate::Settings::development(Some(1)).unwrap(),
+            1,
+        )
+        .unwrap();
+        let actual = node.pool_parent().unwrap();
+        let limits = preview_limits();
+        let base = vec![transfer(&node, 1, 1), transfer(&node, 2, 1)];
+        let mut extended = base.clone();
+        extended.push(transfer(&node, 3, 1));
+        let target = Mutex::new(None::<(ExecutionProgress, bool)>);
+        let progress = |point| {
+            let mode = *target.lock().unwrap();
+            if let Some((at, unwind)) = mode {
+                if point == at {
+                    assert!(!unwind, "test-only signature-prefix unwind");
+                    return Err(crate::Error::from("CANCEL_SIGNATURE_PREFIX"));
+                }
+            }
+            Ok(())
+        };
+        let control = ExecutionControl::new(&progress, &());
+        let mut cached = preview(&node, &actual, &limits, &control);
+        cached
+            .validate(&base)
+            .map_err(PoolPreviewError::into_error)
+            .unwrap();
+        for point in [
+            ExecutionProgress::BeforePrepare { index: 0 },
+            ExecutionProgress::AfterPrepare { index: 1 },
+            ExecutionProgress::AfterPrepare { index: 2 },
+            ExecutionProgress::AfterApply { index: 2 },
+            ExecutionProgress::BeforeOutput,
+        ] {
+            for unwind in [false, true] {
+                *target.lock().unwrap() = Some((point, unwind));
+                if unwind {
+                    assert!(std::panic::catch_unwind(std::panic::AssertUnwindSafe(
+                        || cached.validate(&extended)
+                    ))
+                    .is_err());
+                } else {
+                    match cached.validate(&extended) {
+                        Err(PoolPreviewError::Cancelled(error)) => {
+                            assert_eq!(error.to_string(), "CANCEL_SIGNATURE_PREFIX")
+                        }
+                        _ => panic!("cancellation must remain distinct from a protocol rejection"),
+                    }
+                }
+                assert_eq!(cached.signatures.len(), 2);
+                assert_eq!(cached.prefix.as_ref().unwrap().len(), 2);
+                *target.lock().unwrap() = None;
+                M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+                assert_eq!(
+                    cached
+                        .validate(&base)
+                        .map_err(PoolPreviewError::into_error)
+                        .unwrap(),
+                    2
+                );
+                assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 0);
+            }
+        }
+        M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+        assert_eq!(
+            cached
+                .validate(&extended)
+                .map_err(PoolPreviewError::into_error)
+                .unwrap(),
+            3
+        );
+        assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 1);
+        assert_eq!(node.read_active().unwrap().2, actual.state);
+    }
+
+    #[test]
+    #[ignore = "explicit M05/M06 component timing, not endpoint or public service acceptance"]
+    fn normal_m05_signature_reuse_component_timing() {
+        let temp = tempfile::tempdir().unwrap();
+        let node = Node::open(
+            temp.path(),
+            crate::Settings::development(Some(1)).unwrap(),
+            1,
+        )
+        .unwrap();
+        let actual = node.pool_parent().unwrap();
+        let limits = preview_limits();
+        let raws: Vec<_> = (1..=16).map(|nonce| transfer(&node, nonce, 1)).collect();
+        let progress = |_| Ok(());
+        let control = ExecutionControl::new(&progress, &());
+        let full = pon_executor::execute(
+            &actual.state,
+            &raws,
+            actual.height,
+            limits.preview_miner,
+            actual.id,
+            1,
+            &actual.cfg,
+        )
+        .unwrap();
+        let mut observations = Vec::new();
+        for sample in 0..6 {
+            for reuse in if sample % 2 == 0 {
+                [false, true]
+            } else {
+                [true, false]
+            } {
+                node.invalidate_commitment();
+                M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+                let started = std::time::Instant::now();
+                let mut candidate = preview(&node, &actual, &limits, &control);
+                let mut admissions = 0;
+                for length in 1..=raws.len() {
+                    admissions += candidate
+                        .validate(&raws[..length])
+                        .map_err(PoolPreviewError::into_error)
+                        .unwrap();
+                    if !reuse {
+                        // Current-source repeated-check control, including the
+                        // cost of discarding its facts; not an older binary.
+                        candidate.signatures.clear();
+                    }
+                }
+                let elapsed_ns = started.elapsed().as_nanos();
+                let main_checks = M05_MAIN_VALIDATIONS.with(std::cell::Cell::get);
+                assert_eq!(main_checks, if reuse { 16 } else { 136 });
+                assert_eq!(admissions, 136);
+                // Complete independent full replay comparison remains outside
+                // these component timers. Both arms still execute every M06
+                // epilogue and complete state commitment inside the timers.
+                let output = candidate.prefix.as_mut().unwrap().execute(&raws).unwrap();
+                assert_eq!(output.output.state, full.state);
+                assert_eq!(output.output.root, full.root);
+                assert_eq!(output.output.receipts, full.receipts);
+                observations.push(serde_json::json!({
+                    "sample": sample, "reuse": reuse, "elapsed_ns": elapsed_ns,
+                    "m05_main_envelope_checks": main_checks, "typed_admissions": admissions,
+                    "complete_state_receipts_root_equal": true,
+                }));
+            }
+        }
+        println!(
+            "{}",
+            serde_json::json!({
+                "schema": "normal-m05-signature-reuse-component-timing-v1",
+                "signed_transactions": raws.len(), "growing_prefixes": raws.len(),
+                "state_keys": actual.state.len(), "samples_per_arm": 6,
+                "observations": observations,
+                "scope": "Current-source paired component: complete M05 typed gates plus incremental M06 previews, all epilogues and commitments; alternating repeated-check/reuse arms; excludes parent SQL read, config snapshot, pool persistence, locks, work proof, transport and physical isolation; fresh replay equality outside timers; main-check counters instrument actual M05 call sites and all timed envelopes have valid strict signatures",
+                "public_network_ready": false, "production_activation": false,
+            })
+        );
     }
 }
 

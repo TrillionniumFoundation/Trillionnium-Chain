@@ -23,6 +23,23 @@ including formatted work, task and authenticated-store diagnostics, remain
 migrated. A new structural code must be registered explicitly rather than
 inheriting a shutdown policy through its spelling.
 
+Stored-data provenance is assigned where the Node has actually selected an existing
+local record. `local_integrity` preserves the original diagnostic/code and typed cause
+while marking a failed retained header, ancestry link, canonical KV/root, undo delta,
+reorganization step or generation invariant as `LocalStructure`. The same code on a
+new packet or unknown caller-supplied locator has no such authority. In particular,
+`UNKNOWN_PARENT` from a missing ancestor of an already retained block stops the owner;
+an ordinary unknown polling locator remains `StaleContext` and keeps its bounded
+retry behavior. The polling lookup therefore tests both code and origin.
+
+`local_replay_source` similarly keeps the typed replay/outbox reconstruction or
+recovery cause and original `AUTH_REPLAY:`, `AUTH_RECOVERY:` and
+`AUTH_OUTBOX_RECOVERY:` text. It is applied to local retained journals, not incoming
+frame conflicts. No recovery/shutdown decision parses those prefixes. Progress
+callbacks, visitor errors, cancellation, clock deferral and reorganization fault hooks
+are deliberately outside these provenance conversions. Complete untrusted operations
+must never be wrapped merely because they can also access the store.
+
 The explicit revision14 composition refusals are also registered individually.
 Configuration/profile/current-parent mismatches are stale context; missing bundle
 gain, nonpositive marginal gain and exactly cancelling component subsets are policy
@@ -39,7 +56,7 @@ Its `REMOTE_TERMINAL:` and `REMOTE_RETRYABLE:` display strings remain unchanged.
 
 ## Recovery decisions
 
-| Path | Typed condition | Existing behavior retained |
+| Path | Typed condition | Recovery behavior |
 | --- | --- | --- |
 | Pinned polling | Local owner, namespace/database replacement, storage or validated ancestry structure failure | Preserve failure/cursor, return error, stop shared runtime |
 | Pinned polling | `ANCESTRY_INDEX_BUDGET` | Stop as before; kind is capacity, not a corruption diagnosis |
@@ -72,3 +89,10 @@ The retained real TCP `public_submit_recovery`, `pinned_peer_polling`,
 `protected_ingress`, `public_intake_v2` and `public_pool_v3` targets remain
 the behavior checks for wire compatibility, signed refusals, bounded retries,
 native membership, persisted recovery and original profile separation.
+
+The seven provenance regressions additionally mutate actual test-owned retained
+header/KV/undo/journal bytes, execute the real read, recovery and polling paths, and
+repair the exact rows before checking successful recovery and cold reopen. They
+compare the same diagnostic on an incoming peer response, preserve cancellations
+and clock deferral, and verify the concrete nested source type. These are bounded
+local integrity tests; they do not declare every legacy formatted error migrated.

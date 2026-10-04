@@ -4,6 +4,7 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{fs, time::Instant};
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+use trnm_mvcc_fee::pon_commitment::{CommitmentMethod, FullRootReason};
 use trnm_pon_node::{development_public, ingress, Node, Result, Settings};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
@@ -53,6 +54,38 @@ fn transfer(settings: &Settings, index: u64) -> Result<Vec<u8>> {
     .try_into()
     .map_err(|_| "SIGNATURE_LENGTH")?;
     tx.encode().map_err(|_| "TRANSACTION_CODEC".into())
+}
+
+fn commitment_status(node: &Node) -> Value {
+    let status = node.derived_commitment_status();
+    let last = status.last.map(|last| {
+        let (method, fallback) = match last.method {
+            CommitmentMethod::RebuiltTree => ("rebuilt-tree", None),
+            CommitmentMethod::CheckedApply => ("checked-apply", None),
+            CommitmentMethod::FullRoot(reason) => (
+                "full-root",
+                Some(match reason {
+                    FullRootReason::KeyBudget => "key-budget",
+                    FullRootReason::PayloadBudget => "payload-budget",
+                    FullRootReason::WorkspaceBudget => "workspace-budget",
+                    FullRootReason::DeltaBudget => "delta-budget",
+                    FullRootReason::InternalSnapshotMismatch => "internal-snapshot-mismatch",
+                }),
+            ),
+        };
+        json!({
+            "method":method,"fallback":fallback,"actual_keys":last.actual_keys,
+            "actual_payload_bytes":last.actual_payload_bytes,"changed_keys":last.changed_keys,
+            "changed_payload_bytes":last.changed_payload_bytes,
+            "compressed_nodes":last.compressed_nodes,
+            "workspace_charge_bytes":last.workspace_charge_bytes
+        })
+    });
+    json!({
+        "cache_root":status.cache_root.map(hex::encode),"cache_keys":status.cache_keys,
+        "retained_software_charge_bytes":status.software_charge_bytes,"last":last,
+        "process_rss_measured":false
+    })
 }
 
 fn run() -> Result<()> {
@@ -112,9 +145,12 @@ fn run() -> Result<()> {
             })
         );
         if height.is_power_of_two() || height == blocks {
+            let before_read = commitment_status(&node);
             let read_started = Instant::now();
             let (_, generation, state) = node.read_active()?;
             let read_ns = read_started.elapsed().as_nanos();
+            let after_read = commitment_status(&node);
+            let mut confirmation_methods = Vec::new();
             for count in [1usize, 16, 64] {
                 let before = node.history_read_counters();
                 let started = Instant::now();
@@ -142,7 +178,51 @@ fn run() -> Result<()> {
                         "owner_operation":"single local owner; no concurrent-lock or network measurement"
                     })
                 );
+                confirmation_methods.push(json!({
+                    "queries":count,"after":commitment_status(&node)
+                }));
             }
+            // A separately timed full-root reference runs after all confirmation
+            // batches, outside their clocks. It is not a KV-only timing, RSS sample,
+            // speedup comparison, or a substitute for the actual read fence.
+            let reference_started = Instant::now();
+            let reference_root = trnm_mvcc_fee::pon_executor::root(&state)?;
+            let reference_ns = reference_started.elapsed().as_nanos();
+            let expected_root = hex::encode(reference_root);
+            let observed_cache_roots_equal = std::iter::once(&before_read)
+                .chain(std::iter::once(&after_read))
+                .chain(confirmation_methods.iter().map(|row| &row["after"]))
+                .all(|status| match &status["cache_root"] {
+                    Value::Null => true,
+                    Value::String(root) => root == &expected_root,
+                    _ => false,
+                });
+            if reference_root != packet.header.state
+                || !observed_cache_roots_equal
+                || node
+                    .derived_commitment_status()
+                    .cache_root
+                    .is_some_and(|cached| cached != reference_root)
+            {
+                return Err("HISTORY_COST_REFERENCE_ROOT".into());
+            }
+            println!(
+                "{}",
+                json!({
+                    "schema":"pon-history-state-commitment-cost-v1","height":height,
+                    "state_keys":state.len(),"active_generation":generation,
+                    "actual_state_read_ns":read_ns,"full_reference_root_ns":reference_ns,
+                    "expected_root":hex::encode(packet.header.state),
+                    "full_reference_root":hex::encode(reference_root),
+                    "exact_root_equal":true,"observed_cache_roots_equal":true,
+                    "before_read":before_read,"after_read":after_read,
+                    "confirmation_methods":confirmation_methods,
+                    "full_reference_after_confirmation_batches":true,
+                    "timed_reference_mutates_node_cache":false,
+                    "public_network_ready":false,"independent_accepted":false,
+                    "owner_operation":"single local owner; no concurrent-lock or process-memory measurement"
+                })
+            );
             let expected = node.active()?;
             drop(node);
             let reopen_started = Instant::now();

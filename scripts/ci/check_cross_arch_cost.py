@@ -51,6 +51,7 @@ FALSE_FLAGS = ['fastest_adversary_qualified', 'work_hardness_accepted',
                'public_service_measured', 'input_provenance_verified', 'production_activation']
 TIMINGS = {'setup_elapsed_ns', 'search_elapsed_ns', 'total_elapsed_ns',
            'production_verifier_elapsed_ns', 'reference_verifier_elapsed_ns'}
+SUITES = ('reused', 'zero-locality')
 
 
 def require(condition: bool, message: str) -> None:
@@ -261,12 +262,50 @@ def validate_raw_report(data: dict, campaign: dict) -> dict:
             'deterministic_projection_sha256': projection_digest(data)}
 
 
-def validate_artifact(directory: Path, expected_source: str) -> tuple[dict, list[dict]]:
+def suite_contract(suite: str = 'reused') -> dict:
+    """Separate raw schemas and artifact namespaces; no normalization between them."""
+    require(suite in SUITES, 'explicit native cost suite')
+    common_inputs = ['rust-toolchain.toml', 'trillionnium/Cargo.lock',
+                     'scripts/ci/run_cross_arch_cost.py', 'scripts/ci/check_cross_arch_cost.py']
+    if suite == 'reused':
+        return {'directory': 'cross-arch-cost', 'example': 'pon_reused_cost',
+                'execution_schema': 'trnm-cross-arch-cost-execution-v1',
+                'comparison_schema': 'trnm-cross-arch-cost-comparison-v1',
+                'validate_raw_report': validate_raw_report,
+                'inputs': common_inputs + [
+                    'trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs',
+                    'trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs']}
+    from check_zero_locality_cost import validate_zero_report
+    return {'directory': 'cross-arch-zero-locality-cost', 'example': 'pon_zero_locality_cost',
+            'execution_schema': 'trnm-cross-arch-zero-locality-cost-execution-v1',
+            'comparison_schema': 'trnm-cross-arch-zero-locality-cost-comparison-v1',
+            'validate_raw_report': validate_zero_report,
+            'inputs': common_inputs + [
+                'trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs',
+                'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+                'trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs',
+                'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs',
+                'scripts/ci/check_zero_locality_cost.py']}
+
+
+def validate_artifact(directory: Path, expected_source: str, *, suite: str = 'reused') -> tuple[dict, list[dict]]:
+    contract = suite_contract(suite)
+    example = contract['example']
+    validate_raw = contract['validate_raw_report']
     require(directory.is_dir() and not directory.is_symlink(), 'artifact directory cannot be substituted')
     require(not any(p.is_symlink() for p in directory.rglob('*')), 'retained artifact cannot contain symlinks')
-    report = read_json(directory / 'cross-arch-cost/manifest.json')
-    require(report['schema'] == 'trnm-cross-arch-cost-execution-v1' and report['result'] == 'PASS',
+    report = read_json(directory / contract['directory'] / 'manifest.json')
+    require(report['schema'] == contract['execution_schema'] and report['result'] == 'PASS',
             'actual successful native execution required for each architecture')
+    if suite == 'zero-locality':
+        require(set(report) == {'schema', 'result', 'execution_context', 'architecture',
+                'runner_label', 'observations', 'campaigns', 'build_profile', 'compiler_channel',
+                'target', 'public_network_ready', 'independent_hardware_qualified',
+                'resource_fairness_qualified', 'work_profile_qualified', 'production_activation',
+                'runner_context', 'uname', 'source_before', 'source_after', 'source_changed',
+                'build_environment_overrides', 'binary_elf_machine', 'binary_sha256_before',
+                'binary_sha256_after', 'input_sha256', 'artifact_sha256'},
+                'exact successful zero execution manifest cannot retain a hidden error')
     require(report['execution_context'] == 'github-hosted', 'local preflight cannot replace hosted execution')
     arch = report['architecture']
     require(arch in ARCHITECTURES, 'native architecture inventory')
@@ -284,10 +323,7 @@ def validate_artifact(directory: Path, expected_source: str) -> tuple[dict, list
             before['tracked_worktree_verified'] is True, 'actual tracked source bound to the expected candidate')
     require(natural(before['tracked_entries'], 'tracked source entries') > 0 and
             natural(before['tracked_bytes'], 'tracked source bytes') > 0, 'nonempty tracked-byte verification')
-    require(set(report['input_sha256']) == {'rust-toolchain.toml', 'trillionnium/Cargo.lock',
-                'trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs',
-                'trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs',
-                'scripts/ci/run_cross_arch_cost.py', 'scripts/ci/check_cross_arch_cost.py'},
+    require(set(report['input_sha256']) == set(contract['inputs']),
             'compiler lock, native example/materials and evidence owners must be hashed')
     for value in report['input_sha256'].values():
         hash_text(value, 'source input digest')
@@ -297,12 +333,12 @@ def validate_artifact(directory: Path, expected_source: str) -> tuple[dict, list
     for flag in ['public_network_ready', 'independent_hardware_qualified', 'resource_fairness_qualified',
                  'work_profile_qualified', 'production_activation']:
         require(report[flag] is False, 'hosted VM observations cannot qualify ' + flag)
-    base = directory / 'cross-arch-cost'
+    base = directory / contract['directory']
     files = report['artifact_sha256']
     validate_files(base, files)
     require(report['binary_elf_machine'] == spec['elf_machine'] and
-            elf_machine(base / 'pon_reused_cost') == spec['elf_machine'], 'retained executable native architecture')
-    require(report['binary_sha256_before'] == report['binary_sha256_after'] == files['pon_reused_cost'],
+            elf_machine(base / example) == spec['elf_machine'], 'retained executable native architecture')
+    require(report['binary_sha256_before'] == report['binary_sha256_after'] == files[example],
             'same measured executable before and after all campaigns')
     compiler = (base / 'rustc.stdout').read_text()
     require('\nrelease: 1.95.0\n' in compiler and '\nhost: ' + spec['target'] + '\n' in compiler,
@@ -310,12 +346,20 @@ def validate_artifact(directory: Path, expected_source: str) -> tuple[dict, list
     require((base / 'cpuinfo.txt').stat().st_size > 0 and spec['machine'] in (base / 'uname.stdout').read_text(),
             'actual CPU and uname output retained')
     observations = report['observations']
+    if suite == 'zero-locality':
+        require(isinstance(observations, list) and all(type(o) is dict and set(o) == {
+                'command', 'cwd', 'exit_code', 'timed_out', 'timeout_seconds', 'stdout',
+                'stderr', 'elapsed_ns'} and type(o['exit_code']) is int and o['exit_code'] == 0
+                and o['timed_out'] is False for o in observations),
+                'exact actual zero command success cannot conceal launch errors or boolean aliases')
+        for observed in observations:
+            natural(observed['elapsed_ns'], 'zero command elapsed time')
     require(len(observations) == 6 and all(o['exit_code'] == 0 and not o['timed_out'] for o in observations),
             'actual identity, build and both campaign command statuses')
     commands = [['uname', '-a'], ['rustc', '+1.95.0', '-vV'], ['cargo', '+1.95.0', '--version'],
                 ['cargo', '+1.95.0', 'build', '--locked', '--release', '--manifest-path',
                  'trillionnium/Cargo.toml', '--target', spec['target'], '-p',
-                 'trnm-crypto-primitives', '--example', 'pon_reused_cost']]
+                 'trnm-crypto-primitives', '--example', example]]
     for observed, command, stem in zip(observations, commands, ['uname', 'rustc', 'cargo', 'build']):
         require(observed['command'] == command and observed['stdout'] == stem + '.stdout' and
                 observed['stderr'] == stem + '.stderr' and
@@ -326,24 +370,30 @@ def validate_artifact(directory: Path, expected_source: str) -> tuple[dict, list
     require(len(report['campaigns']) == len(CAMPAIGNS), 'both fixed finite campaigns must execute')
     data = []
     for index, (row, configuration) in enumerate(zip(report['campaigns'], CAMPAIGNS)):
+        if suite == 'zero-locality':
+            require(type(row) is dict and set(row) == {
+                    'configuration', 'observation', 'result', 'validated'},
+                    'exact successful zero campaign cannot retain a hidden failure')
         require(row['configuration'] == configuration and row['result'] == 'PASS', 'same fixed campaign configuration')
         observed = row['observation']
         require(observed == observations[index + 4] and observed['timeout_seconds'] == 300 and
                 observed['stdout'] == f'campaign-{index}.stdout' and
                 observed['stderr'] == f'campaign-{index}.stderr', 'actual bounded campaign stdout/stderr')
         require(isinstance(observed['command'], list) and len(observed['command']) == 9 and
-                Path(observed['command'][0]).name == 'pon_reused_cost' and
+                Path(observed['command'][0]).name == example and
                 observed['command'][1:] == benchmark_arguments(configuration), 'actual native benchmark CLI')
         raw = read_json(base / observed['stdout'])
-        require(row['validated'] == validate_raw_report(raw, configuration), 'native correctness summary replays')
+        require(row['validated'] == validate_raw(raw, configuration), 'native correctness summary replays')
         data.append(raw)
     return report, data
 
 
-def compare_artifacts(root: Path, expected_source: str) -> dict:
+def compare_artifacts(root: Path, expected_source: str, *, suite: str = 'reused') -> dict:
+    contract = suite_contract(suite)
     directories = sorted(p for p in root.iterdir() if p.is_dir())
     require(len(directories) == 2, 'exactly two current-run architecture artifacts required')
-    loaded = [validate_artifact(path, expected_source) for path in directories]
+    loaded = [(validate_artifact(path, expected_source) if suite == 'reused' else
+               validate_artifact(path, expected_source, suite=suite)) for path in directories]
     require({r['architecture'] for r, _ in loaded} == set(ARCHITECTURES), 'both architectures must actually execute')
     left, right = loaded
     for key in ['source_before', 'source_after', 'input_sha256']:
@@ -354,10 +404,11 @@ def compare_artifacts(root: Path, expected_source: str) -> dict:
     for index in range(len(CAMPAIGNS)):
         require(deterministic_projection(left[1][index]) == deterministic_projection(right[1][index]),
                 'same material/target/sample/search/proof streams across architectures')
-    return {'schema': 'trnm-cross-arch-cost-comparison-v1', 'result': 'PASS', 'source': expected_source,
+    return {'schema': contract['comparison_schema'], 'result': 'PASS', 'source': expected_source,
             'tree': left[0]['source_before']['tree'], 'architectures': sorted(ARCHITECTURES),
-            'campaigns': [validate_raw_report(raw, configuration) for raw, configuration in zip(left[1], CAMPAIGNS)],
-            'manifest_sha256': {path.name: digest(path / 'cross-arch-cost/manifest.json') for path in directories},
+            'campaigns': [contract['validate_raw_report'](raw, configuration)
+                          for raw, configuration in zip(left[1], CAMPAIGNS)],
+            'manifest_sha256': {path.name: digest(path / contract['directory'] / 'manifest.json') for path in directories},
             'speed_threshold_applied': False, 'independent_hardware_qualified': False,
             'resource_fairness_qualified': False, 'work_hardness_accepted': False, 'production_activation': False}
 
@@ -367,14 +418,15 @@ def main() -> int:
     parser.add_argument('--artifacts', type=Path, required=True)
     parser.add_argument('--expected-source', required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--suite', choices=SUITES, default='reused')
     args = parser.parse_args()
-    result = {'schema': 'trnm-cross-arch-cost-comparison-v1', 'result': 'FAIL',
+    result = {'schema': suite_contract(args.suite)['comparison_schema'], 'result': 'FAIL',
               'source': args.expected_source, 'speed_threshold_applied': False}
     try:
         current = source()
         require(current['commit'] == args.expected_source and current['source_state'] == 'committed-clean',
                 'comparison code must be the exact clean candidate')
-        result = compare_artifacts(args.artifacts, args.expected_source)
+        result = compare_artifacts(args.artifacts, args.expected_source, suite=args.suite)
         require(result['tree'] == current['tree'], 'observation tree equals the comparison code tree')
     except (OSError, ValueError, KeyError, TypeError, IndexError) as error:
         result['result'] = 'FAIL'

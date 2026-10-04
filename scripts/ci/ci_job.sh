@@ -14,6 +14,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_ci_contract.py
     python3 scripts/ci/test_ci_execution.py
     python3 scripts/ci/test_cross_arch_cost.py
+    python3 scripts/ci/test_zero_locality_cost.py
     python3 scripts/ci/report_current_implementation.py --check
     python3 scripts/ci/test_work_cost_report.py
     python3 scripts/test_qualification_runtime.py
@@ -23,6 +24,7 @@ case "${1:?required job}" in
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples
     TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_vectors")" python3 formal/pon-nakamoto-v1/test_continuity.py -v
+    TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
@@ -71,7 +73,20 @@ case "${1:?required job}" in
     # The full workspace matrix includes both evaluation_sync_observation tests.
     # Run that target once in this matrix; a separate pre-run duplicated over ten
     # minutes of actual sync work and left the hosted 45-minute job incomplete.
-    cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
+    (
+      trnm_model_receipt_root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
+      mkdir -p "$trnm_model_receipt_root"
+      export TRNM_MODEL_COMPOSITION_VECTORS="$trnm_model_receipt_root/model-composition"
+      test ! -e "$TRNM_MODEL_COMPOSITION_VECTORS"
+      test ! -L "$TRNM_MODEL_COMPOSITION_VECTORS"
+      mkdir "$TRNM_MODEL_COMPOSITION_VECTORS"
+      export TRNM_MODEL_COMPOSITION_RUN_ID="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+      test -n "$TRNM_MODEL_COMPOSITION_RUN_ID"
+      printf 'model-composition directory=%s run_id=%s\n' "$TRNM_MODEL_COMPOSITION_VECTORS" "$TRNM_MODEL_COMPOSITION_RUN_ID"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
+      python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
+      python3 formal/pon-nakamoto-v1/test_model_composition.py -v
+    )
     cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features
     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings
     ;;

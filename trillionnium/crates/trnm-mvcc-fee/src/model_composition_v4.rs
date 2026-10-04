@@ -304,6 +304,9 @@ pub(crate) fn validate(
 }
 
 #[cfg(test)]
+mod oracle_observations;
+
+#[cfg(test)]
 mod tests {
     use super::*;
 

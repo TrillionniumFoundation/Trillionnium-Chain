@@ -255,3 +255,11 @@ history, and evaluation observers retain their own explicit work/round boundarie
 reuses one checked original parent and only same-block scratch within an operation.
 Neither optimization changes wire results, durable single-writer ownership,
 reorganization rules or permission for retained groups.
+
+Retained local header/KV/reorg/replay integrity failures now preserve their concrete
+local origin and typed source through polling and recovery. Matching remote text,
+ordinary unknown locators, callback cancellation and clock deferral cannot acquire
+owner-stop authority. The history growth example separately checks a complete
+reference root and records actual derived-cache methods/software charges after read
+and confirmation operations; these observations do not measure concurrent lock cost,
+process RSS or persistent authenticated state performance.

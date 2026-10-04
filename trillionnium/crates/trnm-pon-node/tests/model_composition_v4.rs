@@ -1,7 +1,7 @@
 //! Exact composition, ablation rewards, and durable native state transitions.
 //! Every training row below is already public historical evaluation material.
 //! These deliberately memorizing fixtures make no prospective efficacy claim.
-use serde_json::Value;
+use serde_json::{json, Value};
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::{
     continuity_v1, integer_factor_candidate_v2 as factor, model_composition_v4 as composition,
@@ -628,6 +628,110 @@ fn assert_record(
     );
 }
 
+/// Optional observations from actual signed native execution. Python recomputes
+/// its answers from the retained full model bytes, never from fixture scores.
+fn observe(name: &str, kind: &str, input: Value, native: Value) {
+    let Ok(directory) = std::env::var("TRNM_MODEL_COMPOSITION_VECTORS") else {
+        return;
+    };
+    let run_id = std::env::var("TRNM_MODEL_COMPOSITION_RUN_ID").expect("explicit fresh run id");
+    assert!(!run_id.is_empty() && run_id.len() <= 256);
+    std::fs::create_dir_all(&directory).unwrap();
+    let path = std::path::Path::new(&directory).join(format!("{kind}-{name}.json"));
+    let file = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(path)
+        .expect("fresh observations must not overwrite a prior run");
+    serde_json::to_writer(
+        file,
+        &json!({
+            "schema":"model-composition-native-observation-v1", "run_id":run_id,
+            "kind":kind,"name":name,"input":input,"native":native,
+            "scope":"native-observation-for-independent-model-conformance-only",
+            "economic_accepted":false,"independent_operators_accepted":false,
+            "public_reward_eligible":false
+        }),
+    )
+    .unwrap();
+}
+
+fn source_reservations(state: &State, round: u64) -> Value {
+    let prefix = format!("model-source-v4:{round}:");
+    Value::Object(
+        state
+            .iter()
+            .filter(|(key, _)| key.starts_with(&prefix))
+            .map(|(_, value)| {
+                (
+                    value["source"].as_str().unwrap().to_owned(),
+                    value["reserved_units"].clone(),
+                )
+            })
+            .collect(),
+    )
+}
+
+fn observe_release(
+    name: &str,
+    before: &State,
+    c: &Config,
+    fixture: &Fixture,
+    budget: u64,
+    outcome: Result<&State, &str>,
+) {
+    if std::env::var_os("TRNM_MODEL_COMPOSITION_VECTORS").is_none() {
+        return;
+    }
+    let parent_ref = read_hash(&before["model:current"]);
+    let parent_artifact = before
+        .get(&format!("release:{}", hex::encode(parent_ref)))
+        .map(|record| read_hash(&record["artifact"]))
+        .unwrap_or(parent_ref);
+    let item = |cid: Hash| {
+        let contribution = object(before, cid);
+        json!({"id":hex::encode(cid),"contribution":contribution,
+            "model_hex":hex::encode(stored_model(before,c,read_hash(&contribution["artifact"])).encode()),
+            "native_evidence":composition::evidence(before,cid).unwrap()})
+    };
+    let components: Vec<_> = fixture
+        .allocations
+        .iter()
+        .map(|allocation| {
+            let mut value = item(allocation.cid);
+            value["weight"] = json!(allocation.weight);
+            value
+        })
+        .collect();
+    let (released, transaction) = fixture.release(before, c, budget);
+    let input = json!({
+        "context":{"network":hex::encode(c.network),"parameters":hex::encode(c.parameters),
+            "family":hex::encode(c.family),"plan":hex::encode(c.plan)},
+        "parent_ref":hex::encode(parent_ref),
+        "parent_model_hex":hex::encode(stored_model(before,c,parent_artifact).encode()),
+        "bundle":item(fixture.bundle.contribution_id),"components":components,"budget":budget,
+        "source_reserved":source_reservations(before,fixture.bundle.round),
+        "release":hex::encode(released),"signed_release_hex":hex::encode(transaction)
+    });
+    let native = match outcome {
+        Ok(after) => json!({"error":null,
+            "release":after[&format!("release:{}",hex::encode(released))],
+            "source_reserved":source_reservations(after,fixture.bundle.round)}),
+        Err(error) => json!({"error":error}),
+    };
+    observe(name, "release", input, native);
+}
+
+fn observe_claims(name: &str, state: &State, released: Hash) {
+    let record = &state[&format!("release:{}", hex::encode(released))];
+    observe(
+        name,
+        "claims",
+        json!({"release":hex::encode(released)}),
+        json!({"claims":record["claims"],"remaining":record["remaining"]}),
+    );
+}
+
 #[test]
 fn native_composition_rewards_reorg_reopen_and_continuity_cleanup() {
     let directory = tempfile::tempdir().unwrap();
@@ -773,6 +877,19 @@ fn native_composition_rewards_reorg_reopen_and_continuity_cleanup() {
                     fixture.release(&state, &c, 100_002).1,
                     "MODEL_EVIDENCE_SOURCE_BUDGET",
                 );
+                if std::env::var_os("TRNM_MODEL_COMPOSITION_VECTORS").is_some() {
+                    let error = pon_executor::execute(
+                        &state,
+                        &[fixture.release(&state, &c, 100_002).1],
+                        height,
+                        development_public(3).unwrap(),
+                        tip,
+                        4,
+                        &c,
+                    )
+                    .unwrap_err();
+                    observe_release("source-cap", &state, &c, &fixture, 100_002, Err(error));
+                }
                 let mut wrong = fixture.allocations.clone();
                 wrong[0].weight += 1;
                 refuse(
@@ -907,6 +1024,7 @@ fn native_composition_rewards_reorg_reopen_and_continuity_cleanup() {
             }
         }
         if height == 56 {
+            observe_release("asymmetric", &state, &c, &fixture, 100_001, Ok(&after));
             assert_eq!(after["model:current"], hex::encode(released));
             assert_eq!(after[&source_key]["reserved_units"], 100_000);
             assert_record(&after, &c, &fixture, released, &models, 25, 24);
@@ -916,6 +1034,7 @@ fn native_composition_rewards_reorg_reopen_and_continuity_cleanup() {
             );
         }
         if height == 76 {
+            observe_claims("asymmetric", &after, released);
             let record = &after[&format!("release:{}", hex::encode(released))];
             assert_eq!(record["remaining"], 1);
             assert_eq!(record["budget"], 100_001);
@@ -1149,10 +1268,12 @@ fn two_native_generations_use_the_actual_nonzero_parent_once() {
         let after = node.read_active().unwrap().2;
         continuity_v1::check_state(&after, height, &c).unwrap();
         if height == 56 {
+            observe_release("first-generation", &state, &c, &first, 100_000, Ok(&after));
             assert_record(&after, &c, &first, first_release, &first_models, 24, 21);
             assert_eq!(after["model:current"], hex::encode(first_release));
         }
         if height == 76 {
+            observe_claims("first-generation", &after, first_release);
             assert_eq!(
                 after[&format!("release:{}", hex::encode(first_release))]["remaining"],
                 0
@@ -1187,6 +1308,7 @@ fn two_native_generations_use_the_actual_nonzero_parent_once() {
         }
         if height == 184 {
             let fixture = second.as_ref().unwrap();
+            observe_release("nonzero-parent", &state, &c, fixture, 100_000, Ok(&after));
             assert_record(&after, &c, fixture, second_release, &second_models, 25, 24);
             assert_eq!(after["model:current"], hex::encode(second_release));
             assert_eq!(
@@ -1213,6 +1335,7 @@ fn two_native_generations_use_the_actual_nonzero_parent_once() {
     assert_eq!(completed.0, tip);
     let second = second.unwrap();
     let record = &completed.2[&format!("release:{}", hex::encode(second_release))];
+    observe_claims("nonzero-parent", &completed.2, second_release);
     assert_eq!(record["remaining"], 0);
     for allocation in &second.allocations {
         assert_eq!(record["claims"][hex::encode(allocation.cid)], 50_000);
@@ -1347,6 +1470,7 @@ fn signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_w
         .err()
         .unwrap();
         assert_eq!(error, expected, "{label}");
+        observe_release(label, &state, &c, &fixture, 1000, Err(error));
         // The actual executor refusal also retains an exact diagnostic identity
         // at the Node conversion boundary without stopping its durable owner.
         let node_error = trnm_pon_node::Error::from(error);

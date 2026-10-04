@@ -259,7 +259,10 @@
       "tests": [
         "trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens",
         "trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::explicit_maintenance_survives_all_optional_task_revocation_and_reopen",
-        "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup"
+        "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup",
+        "trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes",
+        "formal/pon-nakamoto-v1/test_continuity_transitions.py::NativeTransitions.test_real_native_context_state_root_receipt_capacity_and_rejection",
+        "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs::signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry"
       ],
       "evidence_class": "source-binding",
       "receipt": null
@@ -311,7 +314,12 @@
         "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs::exact_zero_subset_is_refused_even_when_full_bundle_is_nonzero",
         "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::native_composition_rewards_reorg_reopen_and_continuity_cleanup",
         "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::two_native_generations_use_the_actual_nonzero_parent_once",
-        "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights"
+        "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights",
+        "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4/oracle_observations.rs::native_arithmetic_observations_for_independent_python",
+        "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_full_signed_native_release_results_match_independent_computation",
+        "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_actual_native_codec_composition_inference_and_subset_boundaries",
+        "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_nonzero_parent_and_floored_source_limit_are_observed",
+        "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_stale_incomplete_or_noninteger_observations_are_rejected"
       ],
       "evidence_class": "source-binding",
       "receipt": null

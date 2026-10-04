@@ -144,6 +144,20 @@ revoke every optional task, check that its selected materials still reject, expl
 mine maintenance, reopen SQLite, and reject corrupted maintenance even when its state
 root has been recomputed.
 
+The separate `actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes`
+regression starts with one optional slot beyond the same20 reserved rewards. A real
+signed quota occupies that slot at height1. At heights21 and22 a signed transfer to
+an absent account must reject with `STATE_CAPACITY`, retaining the full active state
+and its sender nonce; the height22 failed candidate also rolls back its tentative
+mandatory refund. An accepted empty height22 refunds the quota but keeps the expired
+row. At height23 the ordinary mandatory cleanup removes that row before the same
+signed transfer admits its new recipient. Two actually heavier competing branches
+then remove and restore the recipient through ordinary reorganization. Three cold
+reopens check exact state and nonces. The fixture uses27 accepted native packets and
+two rejected growth attempts; its preallocated genesis is explicit. It establishes
+entry after a legitimate cleanup, not unlimited account growth when permanent
+accounts alone consume all capacity.
+
 The independent Python oracle and actual native comparison are
 [continuity_oracle.py](../../../../formal/pon-nakamoto-v1/continuity_oracle.py) and
 [test_continuity.py](../../../../formal/pon-nakamoto-v1/test_continuity.py). The
@@ -151,20 +165,38 @@ The independent Python oracle and actual native comparison are
 emits the actual context, materials and 24 native transition roots. Missing native
 execution is a test failure, not a skipped success.
 
+The separate [transition oracle](../../../../formal/pon-nakamoto-v1/continuity_transition_oracle.py)
+and [comparison](../../../../formal/pon-nakamoto-v1/test_continuity_transitions.py)
+own both small input fixtures and expected complete states, canonical roots, raw
+receipts and capacity obligations. The bounded
+[native bridge](../../../../trillionnium/crates/trnm-mvcc-fee/examples/continuity_transition_vectors.rs)
+only executes the supplied M06 transitions and returns actual observations. Six
+fixtures cover eleven successful transitions and one rejected malformed reward
+queue: funded16-plus-4 expiry, cleanup before refund, strict deadlines, overlapping
+recipients, zero rewards, public archive closure, age256/257 retention, orphan record
+cleanup and old-round candidate cleanup. These seeded application states do not
+claim signed reachability or replace the full-capacity Node regression. The original
+24-vector schema and default context keep their meaning; public fixtures use the
+actual evaluation-storage namespace. Missing native output or any mismatched full
+row fails the comparison.
+
 ```bash
 cargo test --locked -p trnm-mvcc-fee --test continuity_v1
 cargo test --locked -p trnm-pon-node --lib continuity_tests -- --test-threads=1
 cargo test --locked -p trnm-pon-node --test continuity_cli
 cargo build --locked -p trnm-mvcc-fee --example continuity_vectors
+cargo build --locked -p trnm-mvcc-fee --example continuity_transition_vectors
 ```
 
 Run the Python test from `formal/pon-nakamoto-v1`, with `TRNM_CONTINUITY_BINARY` naming
 that built example. Repository-wide tests, strict Clippy, formatting, source integrity
 and Markdown checks remain required on the integrated exact commit.
+Run `test_continuity_transitions.py -v` with
+`TRNM_CONTINUITY_TRANSITIONS_BINARY` naming the separately built transition example.
 
 ### Development observations
 
-The focused revision workspace passed six M06 tests, four native Node tests, the
+The original focused revision workspace passed six M06 tests, four native Node tests, the
 actual CLI test, and two independent Python/native tests. The existing V4 integration
 suite passed its three ordinary tests; its explicitly ignored release-only 1001-height
 campaign was not rerun here. Strict Clippy for all targets of the two changed packages

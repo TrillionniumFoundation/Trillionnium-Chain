@@ -5,6 +5,104 @@ task identity, challenge, ticket, target and fork weight. It changes local algor
 and adds an executable comparison. It does not activate a profile or establish mining
 hardness, permissionless admission safety, model usefulness or external acceptance.
 
+## Task sources and the preparation boundary
+
+The diagnostic input classes are distinct structures, not a measured distribution
+of user demand. Keep these source and admission cases separate:
+
+| Material | Actual boundary | Cost interpretation |
+|---|---|---|
+| Canonical zero, identity, rank-one, diagonal and hash-generated controls | The version-1 matrix recipe permits canonical 4096-element operands; a live source statement, lease and actual-parent registration are separate requirements | A constructible permitted structure, not proof of real demand or its frequency |
+| Bootstrap periodic material | Exact native development bootstrap with its own task and lease window | A fixed development input, not all registered tasks |
+| Continuity maintenance | Exact public policy formula and explicit maintenance selection | Persistent work availability, not resource-fairness or hardness qualification |
+| Checkpoint tile material | Exact pinned checkpoint, activation, quantization recipe and supplied A/B must replay under the selected checkpoint policy | Only that verified source tile; arbitrary replacement matrices are not eligible |
+
+Checkpoint extraction allows 1..64 real token columns and pads the remaining B
+columns with zeros. Consequently rank(B) is at most the number of real columns;
+quantization can add zero values and field encodings of negative coefficients.
+These are source-dependent structures, not grounds to call all full-rank or padded
+tasks equally costly. A supplied benchmark matrix file alone does not establish
+checkpoint provenance. Actual raw source availability and replay receipts remain
+necessary before giving such a row that description.
+
+`pon_reused_cost` measures only the mathematical producer constructor as setup.
+Native `prepare_from_checked_parent` constructs a new `PreparedTask` for each
+candidate; checking the parent, source signature, lease, material bytes and task
+binding occurs outside that constructor. Checkpoint source replay during Settings
+construction and Node opening is also outside the benchmark's setup measurement.
+The reused experiment does not implement native cross-parent or cross-renewal
+prepared caching. A mathematical task remains the same across some lease changes,
+but an old statement or withdrawn task cannot obtain current admission from that
+prepared object. Native admission continues to check the actual selected parent.
+
+The signed [zero-task lifecycle regression](../../../../trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs)
+executes both ordinary V4 and explicit continuity settings. It registers canonical
+zero operands through real signed source statements and leases, prepares full work
+against the actual parent, verifies and admits ordinary packets, renews the task, and
+rejects old statements, changed material, revoked and expired contexts. Real fork
+selection and cold reopen retain those boundaries. Explicit maintenance is separately
+constructed and admitted; a selected zero-task refusal never silently switches tasks.
+This is protocol conformance, not evidence of real user demand or a service-pressure
+campaign. The locality experiment's producer remains separate from Node selection.
+
+The lowest cost among the concrete producers on one supplied task is an observed
+implementation comparison, never a minimum possible complete-proof cost. Keep
+preprocessing lifetime, eligible input identity and task-independent algorithmic
+alternatives separate from the correctness of the accepted relation.
+
+## Blocked zero-prefix alternative
+
+`pon_work::blocked_zero::BlockedZeroPreparedTask` is a separate complete producer
+for exactly A=B=0. Noncanonical material returns the ordinary field/length error;
+other canonical operands return `None`. It grants neither `VerifiedWork` nor a
+current-parent task admission. The original zero producer, tiled kernels, native
+producer selection and both verifier implementations remain unchanged.
+
+The algebra is the same exact cumulative relation as the old zero producer:
+`S_k=ER[:,0:8k]*FL[0:8k,:]` and `C'_k=EL*S_k*FR`. The new algorithm retains eight
+8x8 middle matrices (2 KiB), then eight 8x8 left factors for just the current output
+row tile (another 2 KiB). Each original bi,bj,bk output tile is calculated and hashed
+immediately. It avoids materializing the old eight full 64x64 output prefixes
+(128 KiB). The stated 4 KiB is only these mathematical prefix arrays, not total
+stack/heap/process memory: noise vectors, a 2 KiB FR transpose, a 256-byte output
+tile, hashing state and the complete proof buffer also exist.
+
+Both zero algorithms perform 299,008 scalar multiplications per challenge and hash
+every one of the original 32,768 prefix words. This change targets intermediate
+storage and locality; no multiplication-count speedup is asserted. It cannot be
+selected for the nonzero continuity maintenance matrices, and does not improve
+their work qualification. Previous slower zero and Strassen observations remain
+historical evidence, even if a later implementation performs differently.
+
+The separate `pon_zero_locality_cost` example uses schema
+`pon-w1-zero-locality-v1`. It measures only the exact zero material under three
+strategies: `prepared-generic`, `structured-zero-reference`, and `blocked-zero`.
+Every strategy runs cold-per-search and reused-one-setup with real constructors;
+there is no unsupported task substitution or hidden warmed cache. CLI bounds and
+defaults match the numeric options of `pon_reused_cost`, but this example does
+not accept caller-supplied material. For example, after the actual source is built:
+
+    target/release/examples/pon_zero_locality_cost --samples 4 --searches 4 --attempt-budget 64 --seed 0
+    target/release/examples/pon_zero_locality_cost --samples 2 --searches 4 --attempt-budget 8 --seed 1
+
+Its challenge domain is `zero-locality-cost-v1`; full proof and ticket streams use
+separate `TRNM-PON-W1-ZERO-LOCALITY-*` hash domains. The six producer/mode positions
+rotate by sample. Every target miss, exhausted search, actual setup duration and
+winner is retained. Ordinary and scalar verifier costs are measured separately
+after all six generation runs; exact winning bytes and complete attempted-proof
+commitments must agree. Source/compiler/binary/runner receipts and failed process
+outputs remain necessary outside the example. Do not interpret this new schema
+using the old seven-material checker, or divide timings across schemas.
+
+`pon_zero_io` is the bounded complete-proof correctness bridge: select `generic`,
+`structured-zero-reference` or `blocked-zero`; stdin is exactly a 32-byte challenge
+followed by two canonical 16,384-byte matrix operands. Supported output is one
+complete 49,188-byte proof. Zero-only operations explicitly reject nonzero
+operands instead of selecting another structured method. The existing independent
+Python scalar oracle can compare complete bytes and check nonzero unsupported
+controls outside any native timing run. Correct byte parity is not a hardness
+certificate or permission to keep mining an expired or withdrawn task.
+
 ## Verifier boundary
 
 `trnm-crypto-primitives/src/pon_work.rs` retains two complete arithmetic paths:

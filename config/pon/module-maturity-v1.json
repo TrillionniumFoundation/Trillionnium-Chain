@@ -235,6 +235,10 @@
             {
               "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
               "symbol": "TiledPreparedTask::prove"
+            },
+            {
+              "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+              "symbol": "BlockedZeroPreparedTask::prove"
             }
           ],
           "controlled_entrypoint": {
@@ -251,7 +255,9 @@
             "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly",
             "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_confirmed_transfer_is_removed_by_a_real_heavier_fork",
             "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs::tiled_complete_proofs_match_scalar_and_independent_python_extreme_vectors",
-            "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs::actual_constructor_calls_and_all_winners_match_in_both_modes"
+            "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs::actual_constructor_calls_and_all_winners_match_in_both_modes",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs::complete_zero_certificates_match_independent_python_oracle_vectors",
+            "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs::signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry"
           ],
           "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
         },
@@ -426,13 +432,15 @@
             "symbol": "execute_native"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native canonical command validation plus independent Python reference",
+          "backend": "Native canonical command validation plus independent Python reference; operation-local pool prefixes may reuse successful private main-signature facts, bound to exact raw bytes/position, immutable State/Config identity, parent and height, while all state-dependent M05 gates still execute.",
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_contracts.py::ExecutionTests.test_signature_nonce_and_no_write_on_reject",
-            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_later_invalid_signature_does_not_change_canonical_error"
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_later_invalid_signature_does_not_change_canonical_error",
+            "trillionnium/crates/trnm-pon-node/src/store/mempool.rs::signature_reuse_requires_complete_raw_prefix_and_preserves_first_refusal",
+            "trillionnium/crates/trnm-pon-node/src/store/mempool.rs::real_signature_witness_rebinds_parent_state_height_and_complete_config"
           ],
-          "remaining": "Native mempool reservation and ordinary peer event wiring remain separate."
+          "remaining": "Full-prefix decoding and state-dependent gates, complete output roots, SQL/lock costs, ordinary peer event wiring and public service acceptance remain separately scoped."
         },
         {
           "operation": "M05.ReconsiderAfterReorg",
@@ -452,7 +460,7 @@
             "symbol": "Node::pool_status"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Explicit local reconciliation against actual active parent; complete original signed groups revalidated through M05/M06 in insertion order. Read-only snapshots expose stale classification.",
+          "backend": "Explicit local reconciliation against the actual active parent; complete original signed groups revalidated through state-dependent M05 gates and incremental M06 in insertion order. Private successful main-signature facts live only in that immutable owner operation. Read-only snapshots expose stale classification.",
           "persistence_owner": {
             "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
             "symbol": "Node::open"
@@ -460,7 +468,8 @@
           "evidence_selectors": [
             "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::queued_facts_reopen_exact_raws_real_typed_gate_and_funding_nonce_dependencies",
             "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::retained_groups_restore_after_real_heavier_fork_and_terminal_prune_is_monotonic",
-            "trillionnium/crates/trnm-pon-node/src/store/mempool.rs::native_reconcile_and_submission_apply_each_retained_transaction_once_per_operation"
+            "trillionnium/crates/trnm-pon-node/src/store/mempool.rs::native_reconcile_and_submission_apply_each_retained_transaction_once_per_operation",
+            "trillionnium/crates/trnm-pon-node/src/store/mempool.rs::signature_cache_survives_cancellation_and_unwind_without_publishing_suffix"
           ],
           "remaining": "Explicit local pool/status/miner callers are implemented; automatic external event consumption, ordinary product integration, public fairness and physical-effect reconciliation remain unqualified. Source bindings do not assert a fresh executed receipt."
         }
@@ -525,7 +534,7 @@
             "symbol": "Node::admit"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native Node executes actual parent state through M06 and owns durable admission; separate Python/reference and bridge-session callers remain independently scoped.",
+          "backend": "Native Node executes actual parent state through M06 and owns durable admission; independent Python comparisons cover complete seeded continuity transitions and actual native revision14 model observations, with explicit signature/roster/witness premises.",
           "persistence_owner": {
             "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
             "symbol": "Node::open"
@@ -546,7 +555,11 @@
             "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs::exact_zero_subset_is_refused_even_when_full_bundle_is_nonzero",
             "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::native_composition_rewards_reorg_reopen_and_continuity_cleanup",
             "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::two_native_generations_use_the_actual_nonzero_parent_once",
-            "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights"
+            "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights",
+            "trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes",
+            "formal/pon-nakamoto-v1/test_continuity_transitions.py::NativeTransitions.test_real_native_context_state_root_receipt_capacity_and_rejection",
+            "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4/oracle_observations.rs::native_arithmetic_observations_for_independent_python",
+            "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_full_signed_native_release_results_match_independent_computation"
           ],
           "remaining": "Derived commitments remain disposable computations, not authority or native paged persistence. Ordinary product integration, public service qualification and physical power-loss acceptance remain open."
         },
@@ -584,7 +597,8 @@
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly",
             "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs::inactive_extensions_full_state_receipts_deltas_and_reopen_match_complete_execution",
-            "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs::actual_heavier_fork_cut_invalidates_then_recovers_full_canonical_state"
+            "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs::actual_heavier_fork_cut_invalidates_then_recovers_full_canonical_state",
+            "trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes"
           ],
           "remaining": "Native development branch persistence is distinct from reusable local MVCC stores. Derived caches do not grant authority; physical power-loss, external effects and ordinary product integration remain unqualified."
         }
@@ -864,14 +878,16 @@
             "symbol": "execute_native"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native publication command with scored roots and reference oracle; explicit revision14 additionally verifies exact current-parent model composition and native leave-one-out allocation through the existing M06/Node owner.",
+          "backend": "Native publication command with scored roots and reference oracle; explicit revision14 additionally verifies exact current-parent model composition and native leave-one-out allocation through the existing M06/Node owner. Independent Python compares actual complete composition/release/claim observations and the adopted two-generation parent lineage.",
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement",
             "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::objective_release_shared_source_reward_reopen_and_review_fork_are_native",
             "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::native_composition_rewards_reorg_reopen_and_continuity_cleanup",
             "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::two_native_generations_use_the_actual_nonzero_parent_once",
-            "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights"
+            "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights",
+            "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_full_signed_native_release_results_match_independent_computation",
+            "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_nonzero_parent_and_floored_source_limit_are_observed"
           ],
           "remaining": "Synthetic signed release transitions and public retrospective integer-model generations do not certify improving public models, training causality, hidden-source independence or fair coalition allocation."
         },
@@ -944,7 +960,7 @@
             "symbol": "Node::admit"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Explicit model-evidence-v3 performs native integer inference on frozen historical source groups and all four retained controls; revision14 reuses that exact kernel for full components and each leave-one-out model. General model evaluation remains a separate controlled experiment.",
+          "backend": "Explicit model-evidence-v3 performs native integer inference on frozen historical source groups and all four retained controls; revision14 reuses that exact kernel for full components and each leave-one-out model. General model evaluation remains a separate controlled experiment. A separate integer Python implementation recomputes inference, exact derivation, omission weights and complete records from actual native observations.",
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_self_consistent_rehashed_calibration_score_still_requires_actual_replay",
@@ -954,7 +970,9 @@
             "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_rehashed_value_claim_cannot_promote_future_or_general_optimality",
             "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::zero_gain_and_noop_cannot_become_positive_by_consistent_signatures",
             "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::two_native_generations_use_the_actual_nonzero_parent_once",
-            "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights"
+            "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights",
+            "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_actual_native_codec_composition_inference_and_subset_boundaries",
+            "formal/pon-nakamoto-v1/test_model_composition.py::NativeModelCompositionTests.test_stale_incomplete_or_noninteger_observations_are_rejected"
           ],
           "remaining": "Independent prospective model utility, undisclosed common control, general-model proof and public evaluation governance are unaccepted. Public-corpus memorizer tests establish routing and rewards only."
         },
@@ -1299,7 +1317,8 @@
             "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_cli_replays_the_existing_signed_vector_without_a_reference_backend",
             "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
             "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authentication_options_are_scoped_to_network_commands",
-            "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_ordinary_native_cli_uses_successor_and_reopens_only_its_namespace"
+            "formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_ordinary_native_cli_uses_successor_and_reopens_only_its_namespace",
+            "trillionnium/crates/trnm-pon-node/src/store.rs::actual_replay_and_outbox_recovery_preserve_typed_local_sources"
           ],
           "remaining": "Open public P2P/discovery, confidentiality, continuous mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resources/effects and independent work acceptance remain unqualified."
         },
@@ -1360,12 +1379,15 @@
             "symbol": "run_bounded"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Bounded child process ownership, pipe draining and owned-session termination",
+          "backend": "Bounded child ownership and native typed owner-stop decisions based on actual retained header/KV/reorg/replay provenance; remote diagnostic lookalikes, cancellation and clock deferral do not acquire local corruption authority.",
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_timeout_reaps_own_child",
             "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_stdout_flood_is_killed_and_reaped",
-            "trillionnium/crates/trnm-pon-node/src/error.rs::prefix_lookalikes_and_remote_failures_cannot_stop_local_owner"
+            "trillionnium/crates/trnm-pon-node/src/error.rs::prefix_lookalikes_and_remote_failures_cannot_stop_local_owner",
+            "trillionnium/crates/trnm-pon-node/src/error.rs::local_integrity_origin_preserves_diagnostic_code_and_typed_cause",
+            "trillionnium/crates/trnm-pon-node/src/peer_polling.rs::actual_retained_header_fault_stops_poll_cycle_while_same_peer_diagnostic_retries",
+            "trillionnium/crates/trnm-pon-node/src/store.rs::durable_reorg_faults_stop_and_exact_repair_resumes_without_losing_hook_cancellation"
           ],
           "remaining": "Child cleanup tests do not prove full node shutdown, durable miner stop or physical target reconciliation."
         }
@@ -1470,6 +1492,10 @@
             {
               "path": "scripts/ci/check_cross_arch_cost.py",
               "symbol": "compare_artifacts"
+            },
+            {
+              "path": "scripts/ci/check_zero_locality_cost.py",
+              "symbol": "validate_zero_report"
             }
           ],
           "controlled_entrypoint": {
@@ -1481,7 +1507,10 @@
           "persistence_owner": null,
           "evidence_selectors": [
             "scripts/ci/test_cross_arch_cost.py::ArtifactComparisonTests.test_cross_architecture_stream_difference_rejected",
-            "scripts/ci/test_cross_arch_cost.py::NativeObservationTests.test_local_preflight_cannot_be_relabelled_as_hosted_artifact"
+            "scripts/ci/test_cross_arch_cost.py::NativeObservationTests.test_local_preflight_cannot_be_relabelled_as_hosted_artifact",
+            "scripts/ci/test_zero_locality_cost.py::ZeroRawContractTests.test_zero_success_cohorts_remain_valid_cost_observations",
+            "scripts/ci/test_zero_locality_cost.py::ZeroArtifactContractTests.test_consistent_but_different_cross_arch_proof_streams_rejected",
+            "scripts/ci/test_zero_locality_cost.py::ZeroArtifactContractTests.test_prior_run_attempt_cannot_satisfy_current_pair"
           ],
           "remaining": "Does not execute old tests again, confer scientific independence or grant deployment authority."
         }

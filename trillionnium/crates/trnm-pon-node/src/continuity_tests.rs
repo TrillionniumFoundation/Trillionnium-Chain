@@ -52,6 +52,39 @@ fn mine(node: &mut Node, height: u64, txs: Vec<Vec<u8>>) -> Hash {
     id
 }
 
+fn capacity_settings(spare_keys: usize) -> (Settings, String) {
+    let mut settings = settings();
+    let target = continuity_v1::MAX_KEYS - 20 - spare_keys;
+    let dormant = format!(
+        "account:{}",
+        hex::encode(hash(b"continuity-dormant-account", &[&0u64.to_le_bytes()]))
+    );
+    for index in 0u64.. {
+        if settings.initial.len() == target {
+            break;
+        }
+        settings.initial.insert(
+            format!(
+                "account:{}",
+                hex::encode(hash(b"continuity-dormant-account", &[&index.to_le_bytes()]))
+            ),
+            serde_json::json!({"balance":0,"nonce":7}),
+        );
+    }
+    // This is an explicit preallocated test genesis, not account creation history.
+    continuity_v1::check_state(&settings.initial, 0, &settings.app).unwrap();
+    settings.genesis = hash(
+        b"genesis",
+        &[
+            &settings.network(),
+            &settings.parameters(),
+            &root(&settings.initial).unwrap(),
+            &settings.genesis_time().to_le_bytes(),
+        ],
+    );
+    (settings, dormant)
+}
+
 #[test]
 fn explicit_maintenance_survives_all_optional_task_revocation_and_reopen() {
     let dir = tempfile::tempdir().unwrap();
@@ -150,36 +183,7 @@ fn explicit_maintenance_survives_all_optional_task_revocation_and_reopen() {
 #[test]
 fn actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens() {
     let dir = tempfile::tempdir().unwrap();
-    let mut settings = settings();
-    let target = continuity_v1::MAX_KEYS - 20;
-    let dormant = format!(
-        "account:{}",
-        hex::encode(hash(b"continuity-dormant-account", &[&0u64.to_le_bytes()]))
-    );
-    for index in 0u64.. {
-        if settings.initial.len() == target {
-            break;
-        }
-        settings.initial.insert(
-            format!(
-                "account:{}",
-                hex::encode(hash(b"continuity-dormant-account", &[&index.to_le_bytes()]))
-            ),
-            serde_json::json!({"balance":0,"nonce":7}),
-        );
-    }
-    // Bind the synthetic preallocation to its own exact genesis identity. All
-    // following 21 packets are built, work-verified, executed and stored natively.
-    continuity_v1::check_state(&settings.initial, 0, &settings.app).unwrap();
-    settings.genesis = hash(
-        b"genesis",
-        &[
-            &settings.network(),
-            &settings.parameters(),
-            &root(&settings.initial).unwrap(),
-            &settings.genesis_time().to_le_bytes(),
-        ],
-    );
+    let (settings, dormant) = capacity_settings(0);
     let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
     for height in 1..=20 {
         mine(&mut node, height, vec![]);
@@ -241,6 +245,153 @@ fn actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens() {
     assert_eq!(
         reopened.next_nonce(development_public(0).unwrap()).unwrap(),
         2
+    );
+}
+
+#[test]
+fn actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes() {
+    let dir = tempfile::tempdir().unwrap();
+    let (settings, dormant) = capacity_settings(1);
+    let owner = development_public(0).unwrap();
+    let owner_key = format!("account:{}", hex::encode(owner));
+    let consumer = development_public(1).unwrap();
+    let provider = development_public(2).unwrap();
+    let deadline = 22u64;
+    let units = 1u64;
+    let quota = hash(
+        b"quota-instance-v3",
+        &[
+            &settings.network(),
+            &settings.parameters(),
+            &owner,
+            &1u64.to_le_bytes(),
+            &consumer,
+            &provider,
+            &units.to_le_bytes(),
+            &deadline.to_le_bytes(),
+        ],
+    );
+    let quota_key = format!("quota:{}", hex::encode(quota));
+    let mut payload = quota.to_vec();
+    payload.extend(consumer);
+    payload.extend(provider);
+    payload.extend(units.to_le_bytes());
+    payload.extend(deadline.to_le_bytes());
+    let open = signed(&settings, 0, 1, 10, payload);
+    let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+    mine(&mut node, 1, vec![open]);
+    for height in 2..=20 {
+        mine(&mut node, height, vec![]);
+    }
+    let recipient = development_public(4).unwrap();
+    let recipient_key = format!("account:{}", hex::encode(recipient));
+    let mut payload = recipient.to_vec();
+    payload.extend(1u64.to_le_bytes());
+    let enter = signed(&settings, 0, 2, 1, payload);
+    // Expiry refunds at height22 but deliberately retains its row until height23.
+    // A failed candidate must roll back that tentative mandatory refund too.
+    for height in [21u64, 22] {
+        let before = node.read_active().unwrap();
+        assert_eq!(before.2.len(), continuity_v1::MAX_KEYS);
+        assert_eq!(
+            continuity_v1::capacity(&before.2, height - 1, &settings.app)
+                .unwrap()
+                .required_keys,
+            continuity_v1::MAX_KEYS
+        );
+        assert!(!before.2.contains_key(&recipient_key));
+        assert_eq!(before.2[&quota_key]["status"], "reserved");
+        assert_eq!(node.next_nonce(owner).unwrap(), 2);
+        let error = node
+            .make_consensus_maintenance(before.0, vec![enter.clone()], owner, 1 + height * 10, 4096)
+            .unwrap_err();
+        assert_eq!(error.to_string(), "STATE_CAPACITY");
+        assert_eq!(node.read_active().unwrap(), before);
+        assert_eq!(node.next_nonce(owner).unwrap(), 2);
+        let due_reward: u64 = before
+            .2
+            .iter()
+            .filter(|(key, value)| {
+                key.starts_with("reward:") && value["maturity"].as_u64() == Some(height)
+            })
+            .map(|(_, value)| value["amount"].as_u64().unwrap())
+            .sum();
+        let refund = if height == deadline {
+            before.2[&quota_key]["remaining"].as_u64().unwrap()
+        } else {
+            0
+        };
+        mine(&mut node, height, vec![]);
+        let after = node.read_active().unwrap().2;
+        assert_eq!(after.len(), continuity_v1::MAX_KEYS);
+        assert_eq!(
+            after[&owner_key]["balance"].as_u64().unwrap(),
+            before.2[&owner_key]["balance"].as_u64().unwrap() + due_reward + refund
+        );
+        assert_eq!(after[&dormant]["nonce"], 7);
+    }
+    let refunded = node.read_active().unwrap();
+    assert_eq!(refunded.2[&quota_key]["remaining"], 0);
+    assert_eq!(refunded.2[&quota_key]["status"], "expired");
+    assert!(!refunded.2.contains_key(&recipient_key));
+    drop(node);
+    let mut node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+    assert_eq!(node.read_active().unwrap(), refunded);
+
+    let admitted = mine(&mut node, 23, vec![enter]);
+    let entered = node.read_active().unwrap();
+    assert_eq!(entered.0, admitted);
+    assert_eq!(entered.2.len(), continuity_v1::MAX_KEYS);
+    assert!(!entered.2.contains_key(&quota_key));
+    assert_eq!(entered.2[&recipient_key]["balance"], 1);
+    assert_eq!(node.next_nonce(owner).unwrap(), 3);
+    assert_eq!(entered.2[&dormant]["nonce"], 7);
+
+    // Real competing packets replace the entry branch only after greater work.
+    // Both branches perform the same legitimate expiry cleanup; neither deletes
+    // an account or resets a retained nonce to manufacture admission capacity.
+    let fork23 = node
+        .make_consensus_maintenance(refunded.0, vec![], owner, 232, 4096)
+        .unwrap();
+    let fork23 = node.admit(&fork23, 100_000).unwrap();
+    assert_eq!(node.activate(fork23).unwrap(), admitted);
+    let fork24 = node
+        .make_consensus_maintenance(fork23, vec![], owner, 241, 4096)
+        .unwrap();
+    let fork24 = node.admit(&fork24, 100_000).unwrap();
+    assert_eq!(node.activate(fork24).unwrap(), fork24);
+    let detached = node.read_active().unwrap();
+    assert!(!detached.2.contains_key(&quota_key));
+    assert!(!detached.2.contains_key(&recipient_key));
+    assert_eq!(detached.2.len(), continuity_v1::MAX_KEYS - 1);
+    assert_eq!(node.next_nonce(owner).unwrap(), 2);
+    assert_eq!(detached.2[&dormant]["nonce"], 7);
+    drop(node);
+    let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+    assert_eq!(node.read_active().unwrap(), detached);
+
+    let main24 = node
+        .make_consensus_maintenance(admitted, vec![], owner, 241, 4096)
+        .unwrap();
+    let main24 = node.admit(&main24, 100_000).unwrap();
+    assert_eq!(node.activate(main24).unwrap(), fork24);
+    let main25 = node
+        .make_consensus_maintenance(main24, vec![], owner, 251, 4096)
+        .unwrap();
+    let main25 = node.admit(&main25, 100_000).unwrap();
+    assert_eq!(node.activate(main25).unwrap(), main25);
+    let restored = node.read_active().unwrap();
+    assert_eq!(restored.2.len(), continuity_v1::MAX_KEYS);
+    assert!(!restored.2.contains_key(&quota_key));
+    assert_eq!(restored.2[&recipient_key], entered.2[&recipient_key]);
+    assert_eq!(node.next_nonce(owner).unwrap(), 3);
+    assert_eq!(restored.2[&dormant]["nonce"], 7);
+    drop(node);
+    let reopened = Node::open(dir.path(), settings, 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap(), restored);
+    assert_eq!(reopened.next_nonce(owner).unwrap(), 3);
+    eprintln!(
+        "capacity reentry: accepted_native_packets=27, rejected_growth=2, reorgs=2, reopens=3, synthetic_preallocated_genesis=true"
     );
 }
 

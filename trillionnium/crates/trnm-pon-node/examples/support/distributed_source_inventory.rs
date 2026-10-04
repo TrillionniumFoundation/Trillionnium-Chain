@@ -372,6 +372,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -390,6 +404,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs"
         )),
     ),
     (
@@ -2080,6 +2101,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/examples/continuity_transition_vectors.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/examples/continuity_transition_vectors.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/examples/continuity_vectors.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2196,6 +2224,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4/oracle_observations.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4/oracle_observations.rs"
         )),
     ),
     (
@@ -3274,6 +3309,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/task_output_root_parity.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs"
         )),
     ),
     (

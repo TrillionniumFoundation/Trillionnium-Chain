@@ -14,7 +14,8 @@ import sys
 import time
 
 from ci_observation import ROOT, digest, receipt_root, source
-from check_cross_arch_cost import ARCHITECTURES, CAMPAIGNS, benchmark_arguments, elf_machine, validate_raw_report
+from check_cross_arch_cost import (ARCHITECTURES, CAMPAIGNS, SUITES, benchmark_arguments,
+                                   elf_machine, suite_contract)
 
 
 def capture(command: list[str], output: Path, stem: str, *, timeout: float,
@@ -49,13 +50,16 @@ def capture(command: list[str], output: Path, stem: str, *, timeout: float,
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--arch', choices=sorted(ARCHITECTURES), required=True)
+    parser.add_argument('--suite', choices=SUITES, default='reused')
     parser.add_argument('--local', action='store_true',
                         help='explicit local native preflight; cannot satisfy hosted artifact comparison')
     args = parser.parse_args()
-    output = receipt_root('cross-arch-cost')
+    contract = suite_contract(args.suite)
+    example = contract['example']
+    output = receipt_root(contract['directory'])
     spec = ARCHITECTURES[args.arch]
     observations: list[dict] = []
-    report = {'schema': 'trnm-cross-arch-cost-execution-v1', 'result': 'FAIL',
+    report = {'schema': contract['execution_schema'], 'result': 'FAIL',
               'execution_context': 'local-native-preflight' if args.local else 'github-hosted',
               'architecture': args.arch, 'runner_label': os.environ.get('TRNM_COST_RUNNER_LABEL'),
               'observations': observations, 'campaigns': [], 'build_profile': 'release',
@@ -107,13 +111,13 @@ def main() -> int:
         shutil.copyfile('/proc/cpuinfo', output / 'cpuinfo.txt')
         checked(['cargo', '+1.95.0', 'build', '--locked', '--release', '--manifest-path',
                  'trillionnium/Cargo.toml', '--target', spec['target'], '-p',
-                 'trnm-crypto-primitives', '--example', 'pon_reused_cost'], 'build', 900)
-        binary = Path(os.environ['CARGO_TARGET_DIR']) / spec['target'] / 'release/examples/pon_reused_cost'
+                 'trnm-crypto-primitives', '--example', example], 'build', 900)
+        binary = Path(os.environ['CARGO_TARGET_DIR']) / spec['target'] / 'release/examples' / example
         report['binary_elf_machine'] = elf_machine(binary)
         if report['binary_elf_machine'] != spec['elf_machine']:
             raise ValueError('compiled executable architecture differs from the actual host')
         report['binary_sha256_before'] = digest(binary)
-        shutil.copyfile(binary, output / 'pon_reused_cost')
+        shutil.copyfile(binary, output / example)
         failed = False
         for index, campaign in enumerate(CAMPAIGNS):
             observed = capture([str(binary), *benchmark_arguments(campaign)], output,
@@ -124,7 +128,7 @@ def main() -> int:
                 if observed['exit_code'] != 0 or observed['timed_out']:
                     raise ValueError('native campaign failed or timed out')
                 data = json.loads((output / observed['stdout']).read_text())
-                row['validated'] = validate_raw_report(data, campaign)
+                row['validated'] = contract['validate_raw_report'](data, campaign)
                 row['result'] = 'PASS'
             except (OSError, ValueError, KeyError, TypeError, IndexError) as error:
                 row['error'] = str(error)
@@ -149,10 +153,7 @@ def main() -> int:
             report['source_changed'] = True
         else:
             report['source_changed'] = False
-        inputs = ['rust-toolchain.toml', 'trillionnium/Cargo.lock',
-                  'trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs',
-                  'trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs',
-                  'scripts/ci/run_cross_arch_cost.py', 'scripts/ci/check_cross_arch_cost.py']
+        inputs = contract['inputs']
         report['input_sha256'] = {name: digest(ROOT / name) for name in inputs if (ROOT / name).is_file()}
         report['artifact_sha256'] = {p.relative_to(output).as_posix(): digest(p)
                                      for p in sorted(output.rglob('*')) if p.is_file()}
