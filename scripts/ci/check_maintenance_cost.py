@@ -13,11 +13,15 @@ MATERIAL_CLASS = 'continuity-maintenance-v1'
 MATERIAL_SOURCE = 'genesis-policy-public-deterministic-fixture'
 MATERIAL_TASK = 'c982eea0545c228d0bf48d6d06e623020b4031f2ba79da56cc6bdccde2c63496'
 TASK_PROFILE = 'consensus-maintenance-continuity-dev-v1'
-STRATEGIES = ['prepared-generic', 'tiled-classical', 'tiled-strassen-one-level', 'paired-product']
+V1_SCHEMA = 'pon-w1-maintenance-paired-v1'
+V2_SCHEMA = 'pon-w1-maintenance-preprocessing-v2'
+V1_STRATEGIES = ['prepared-generic', 'tiled-classical', 'tiled-strassen-one-level', 'paired-product']
+STRATEGIES = V1_STRATEGIES + ['maintenance-periodic-setup']
 METHODS = {'prepared-generic': 'generic-product-and-transcript',
            'tiled-classical': 'tiled-classical-full-transcript',
            'tiled-strassen-one-level': 'tiled-strassen-one-level-full-transcript',
-           'paired-product': 'paired-field-products-full-prefix-transcript'}
+           'paired-product': 'paired-field-products-full-prefix-transcript',
+           'maintenance-periodic-setup': 'maintenance-periodic-setup-full-transcript'}
 
 
 def winning_challenge(task: str, seed: int, sample: int, search_index: int,
@@ -30,14 +34,20 @@ def winning_challenge(task: str, seed: int, sample: int, search_index: int,
     return value.hexdigest()
 
 
-def validate_maintenance_report(data: dict, campaign: dict) -> dict:
+def validate_maintenance_report(data: dict, campaign: dict, *, version: int | None = None) -> dict:
     require(type(data) is dict and set(data) == {
         'schema', 'genesis_maintenance_material_only', 'task_profile', 'timing', 'timing_scope',
         'targets', 'seed', 'samples_per_case_target', 'searches_per_cohort', 'attempt_budget',
         'observations', *FALSE_FLAGS}, 'exact fixed-maintenance native fields')
-    require(data['schema'] == 'pon-w1-maintenance-paired-v1' and
+    schemas = {1: V1_SCHEMA, 2: V2_SCHEMA}
+    require(version is None or type(version) is int and version in schemas,
+            'explicit historical or current maintenance version')
+    require(data['schema'] in schemas.values() and
+            (version is None or data['schema'] == schemas[version]) and
             data['genesis_maintenance_material_only'] is True and data['task_profile'] == TASK_PROFILE,
             'fixed genesis policy material and profile cannot become general work qualification')
+    strategies = V1_STRATEGIES if data['schema'] == V1_SCHEMA else STRATEGIES
+    arms = len(strategies) * len(MODES)
     require(data['timing'] == 'monotonic-wall-elapsed-nanoseconds-not-cpu-accounting',
             'maintenance experiment clock scope')
     require(data['targets'] == TARGETS, 'the same two finite maintenance targets')
@@ -51,8 +61,8 @@ def validate_maintenance_report(data: dict, campaign: dict) -> dict:
     require(all(data[field] is False for field in FALSE_FLAGS),
             'maintenance experiment cannot promote hardness, fairness, provenance or service acceptance')
     rows = data['observations']
-    require(type(rows) is list and len(rows) == 2 * campaign['samples'] * 8,
-            'complete fixed-material/two-target/four-strategy/two-mode grid')
+    require(type(rows) is list and len(rows) == 2 * campaign['samples'] * arms,
+            'complete fixed-material/two-target/versioned-strategy/two-mode grid')
     statuses = Counter()
     groups = defaultdict(list)
     for position, row in enumerate(rows):
@@ -67,14 +77,14 @@ def validate_maintenance_report(data: dict, campaign: dict) -> dict:
                 natural(row['rank_b'], 'maintenance right rank') == 32,
                 'fixed maintenance ranks cannot be replaced with a structural zero task')
         require(type(row['sample']) is int and type(row['invocation_order']) is int and
-                row['target'] == TARGETS[position // (campaign['samples'] * 8)] and
-                row['sample'] == (position // 8) % campaign['samples'] and
-                row['invocation_order'] == position % 8,
+                row['target'] == TARGETS[position // (campaign['samples'] * arms)] and
+                row['sample'] == (position // arms) % campaign['samples'] and
+                row['invocation_order'] == position % arms,
                 'native maintenance target/sample/invocation order remains complete')
-        direction_offset = row['invocation_order'] if row['sample'] % 2 == 0 else 7 - row['invocation_order']
-        invocation = (row['sample'] // 2 + direction_offset) % 8
-        require(row['strategy'] == STRATEGIES[invocation // 2] and row['mode'] == MODES[invocation % 2],
-                'each paired maintenance sample reverses its shared rotation to balance all eight positions')
+        direction_offset = row['invocation_order'] if row['sample'] % 2 == 0 else arms - 1 - row['invocation_order']
+        invocation = (row['sample'] // 2 + direction_offset) % arms
+        require(row['strategy'] == strategies[invocation // 2] and row['mode'] == MODES[invocation % 2],
+                'each paired maintenance sample reverses its shared rotation across the exact versioned positions')
         require(row['method'] == METHODS[row['strategy']], 'actual selected maintenance producer method')
         require(type(row['proof_bytes']) is int and row['proof_bytes'] == 49188,
                 'maintenance still emits the complete canonical W1 certificate')
@@ -129,8 +139,8 @@ def validate_maintenance_report(data: dict, campaign: dict) -> dict:
         groups[(row['target'], row['sample'])].append(row)
     require(len(groups) == 2 * campaign['samples'], 'complete maintenance target/sample groups')
     for group in groups.values():
-        require(len(group) == 8 and {(row['strategy'], row['mode']) for row in group} ==
-                {(strategy, mode) for strategy in STRATEGIES for mode in MODES},
+        require(len(group) == arms and {(row['strategy'], row['mode']) for row in group} ==
+                {(strategy, mode) for strategy in strategies for mode in MODES},
                 'every maintenance producer and reuse mode actually executes')
         baseline = next(row for row in group if row['strategy'] == 'prepared-generic' and row['mode'] == MODES[0])
         expected = deterministic_projection(baseline['outcomes'])
@@ -138,3 +148,13 @@ def validate_maintenance_report(data: dict, campaign: dict) -> dict:
                 'every maintenance producer/mode must preserve full proof and ticket streams')
     return {'rows': len(rows), 'outcomes': sum(statuses.values()), 'statuses': dict(statuses),
             'deterministic_projection_sha256': projection_digest(data)}
+
+
+def validate_maintenance_v1_report(data: dict, campaign: dict) -> dict:
+    """Historical four-strategy meaning; never accepts a relabelled v2 grid."""
+    return validate_maintenance_report(data, campaign, version=1)
+
+
+def validate_maintenance_v2_report(data: dict, campaign: dict) -> dict:
+    """Current five-strategy execution cannot fall back to a historical v1 row."""
+    return validate_maintenance_report(data, campaign, version=2)

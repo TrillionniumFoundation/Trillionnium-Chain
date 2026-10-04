@@ -1,9 +1,10 @@
-//! Fixed genesis-maintenance paired-product comparison with actual cold/reused setup.
+//! Fixed genesis-maintenance preprocessing comparison with actual cold/reused setup.
 //! Every target miss and full-proof stream hash remains timed. These measurements
 //! are wall observations, not a cheapest-producer bound or native mining change.
 use sha2::{Digest, Sha256};
 use std::{env, error::Error, ffi::OsString, fmt::Write, hint::black_box, time::Instant};
 use trnm_crypto_primitives::pon_work::{
+    maintenance_periodic::MaintenancePeriodicPreparedTask,
     paired_product::PairedPreparedTask,
     structured::{TileKernel, TiledPreparedTask},
     *,
@@ -123,18 +124,27 @@ enum Strategy {
     Classical,
     Strassen,
     Paired,
+    Periodic,
 }
 impl Strategy {
-    const ALL: [Self; 4] = [Self::Generic, Self::Classical, Self::Strassen, Self::Paired];
+    const ALL: [Self; 5] = [
+        Self::Generic,
+        Self::Classical,
+        Self::Strassen,
+        Self::Paired,
+        Self::Periodic,
+    ];
     fn name(self) -> &'static str {
         match self {
             Self::Generic => "prepared-generic",
             Self::Classical => "tiled-classical",
             Self::Strassen => "tiled-strassen-one-level",
             Self::Paired => "paired-product",
+            Self::Periodic => "maintenance-periodic-setup",
         }
     }
 }
+const ARMS: usize = Strategy::ALL.len() * 2;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Mode {
     Cold,
@@ -153,6 +163,7 @@ enum Producer {
     Generic(PreparedTask),
     Tiled(TiledPreparedTask),
     Paired(PairedPreparedTask),
+    Periodic(MaintenancePeriodicPreparedTask),
 }
 impl Producer {
     fn method(&self) -> &'static str {
@@ -160,6 +171,7 @@ impl Producer {
             Self::Generic(_) => "generic-product-and-transcript",
             Self::Tiled(task) => task.method(),
             Self::Paired(task) => task.method(),
+            Self::Periodic(task) => task.method(),
         }
     }
     fn prove(&self, challenge: Hash) -> Result<Vec<u8>, WorkError> {
@@ -167,6 +179,7 @@ impl Producer {
             Self::Generic(task) => task.prove(challenge),
             Self::Tiled(task) => task.prove(challenge),
             Self::Paired(task) => task.prove(challenge),
+            Self::Periodic(task) => task.prove(challenge),
         }
     }
 }
@@ -191,6 +204,10 @@ fn prepare(material: &Material, strategy: Strategy) -> Result<Producer, WorkErro
             &material.a,
             &material.b,
         )?)),
+        Strategy::Periodic => Ok(Producer::Periodic(
+            MaintenancePeriodicPreparedTask::new(&material.a, &material.b)?
+                .ok_or(WorkError::Task)?,
+        )),
     }
 }
 
@@ -422,21 +439,21 @@ fn targets() -> [Hash; 2] {
 }
 
 // Adjacent samples execute the same rotated sequence forwards and backwards.
-// Every arm has mean position 3.5 in each complete pair, including the fixed
+// Every arm has mean position 4.5 in each complete pair, including the fixed
 // two/four-sample campaigns. This is no control of all cache or thermal effects.
 fn invocation(sample: u64, offset: usize) -> usize {
     let direction = if sample.is_multiple_of(2) {
         offset
     } else {
-        7 - offset
+        ARMS - 1 - offset
     };
-    ((sample / 2) as usize + direction) % 8
+    ((sample / 2) as usize + direction) % ARMS
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
     let options = Options::parse(env::args_os().skip(1))?;
     let targets = targets();
-    print!("{{\"schema\":\"pon-w1-maintenance-paired-v1\",\"genesis_maintenance_material_only\":true,\"task_profile\":\"consensus-maintenance-continuity-dev-v1\",\"targets\":[\"{}\",\"{}\"],\"seed\":{},\"samples_per_case_target\":{},\"searches_per_cohort\":{},\"attempt_budget\":{},\"timing\":\"monotonic-wall-elapsed-nanoseconds-not-cpu-accounting\",\"timing_scope\":{{\"actual_setup_per_mode\":true,\"all_attempts_including_target_misses\":true,\"challenge_ticket_and_full_proof_stream_hashing_in_search\":true,\"material_generation_rank_checks_and_cross_strategy_comparison_timed\":false,\"verifier_timing_after_generation\":true}},\"observations\":[", hex::encode(targets[0]), hex::encode(targets[1]), options.seed, options.samples, options.searches, options.attempts);
+    print!("{{\"schema\":\"pon-w1-maintenance-preprocessing-v2\",\"genesis_maintenance_material_only\":true,\"task_profile\":\"consensus-maintenance-continuity-dev-v1\",\"targets\":[\"{}\",\"{}\"],\"seed\":{},\"samples_per_case_target\":{},\"searches_per_cohort\":{},\"attempt_budget\":{},\"timing\":\"monotonic-wall-elapsed-nanoseconds-not-cpu-accounting\",\"timing_scope\":{{\"actual_setup_per_mode\":true,\"all_attempts_including_target_misses\":true,\"challenge_ticket_and_full_proof_stream_hashing_in_search\":true,\"material_generation_rank_checks_and_cross_strategy_comparison_timed\":false,\"verifier_timing_after_generation\":true}},\"observations\":[", hex::encode(targets[0]), hex::encode(targets[1]), options.seed, options.samples, options.searches, options.attempts);
     let mut first = true;
     for material in [Material::maintenance()] {
         let task = task_id(&material.a, &material.b).map_err(work_error)?;
@@ -456,8 +473,8 @@ fn run() -> Result<(), Box<dyn Error>> {
                     searches: options.searches,
                     budget: options.attempts,
                 };
-                let mut observations = Vec::with_capacity(8);
-                for offset in 0..8 {
+                let mut observations = Vec::with_capacity(ARMS);
+                for offset in 0..ARMS {
                     let invocation = invocation(sample, offset);
                     let strategy = Strategy::ALL[invocation / 2];
                     let mode = if invocation.is_multiple_of(2) {
@@ -475,7 +492,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 for row in &observations {
                     assert_same_outcomes(baseline, row);
                 }
-                // Verify only after all eight generation runs complete. Both verifier
+                // Verify only after all ten generation runs complete. Both verifier
                 // costs and output formatting remain outside setup/search timing.
                 for (order, row) in observations.iter().enumerate() {
                     let json =
@@ -676,14 +693,14 @@ mod tests {
             Err(WorkError::Length)
         ));
         for first_sample in (0..32).step_by(2) {
-            for arm in 0..8 {
-                let forward = (0..8)
+            for arm in 0..ARMS {
+                let forward = (0..ARMS)
                     .find(|offset| invocation(first_sample, *offset) == arm)
                     .unwrap();
-                let reverse = (0..8)
+                let reverse = (0..ARMS)
                     .find(|offset| invocation(first_sample + 1, *offset) == arm)
                     .unwrap();
-                assert_eq!(forward + reverse, 7);
+                assert_eq!(forward + reverse, ARMS - 1);
             }
         }
     }

@@ -1,6 +1,8 @@
 //! Explicit research sidecar for retained account bytes and bounded read witnesses.
 //!
-//! This is never opened by Node or used by M05/M06, mining, fork choice or admission.
+//! This is never installed by Node or used as a partial State by M05/M06, mining,
+//! fork choice or admission. The separate research account execution wrapper may
+//! gate semantic account accesses while retaining the complete native State.
 //! A checked projection binds supplied complete State bytes; it does not establish
 //! that the supplied transition was signed or admitted. Accounts are not deleted.
 //! Only a verified nonmembership witness can represent a never-created account.
@@ -834,7 +836,7 @@ impl AccountArchive {
     }
 }
 
-fn accounts(state: &State) -> Result<BTreeMap<Hash, Account>> {
+pub(crate) fn accounts(state: &State) -> Result<BTreeMap<Hash, Account>> {
     let mut out = BTreeMap::new();
     for (key, value) in state {
         let Some(owner) = key.strip_prefix("account:") else {

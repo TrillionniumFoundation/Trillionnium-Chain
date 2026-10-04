@@ -126,7 +126,12 @@ fn number(value: &Value, name: &str) -> Result<u64> {
         .and_then(Value::as_u64)
         .ok_or("CONTINUITY_STATE")
 }
-fn reserve_owner(state: &State, value: &Value, recipients: &mut BTreeSet<String>) -> Result<()> {
+fn reserve_owner(
+    state: &State,
+    value: &Value,
+    recipients: &mut BTreeSet<String>,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+) -> Result<()> {
     let owner = value
         .get("owner")
         .and_then(Value::as_str)
@@ -137,6 +142,9 @@ fn reserve_owner(state: &State, value: &Value, recipients: &mut BTreeSet<String>
             .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
     {
         return Err("CONTINUITY_STATE");
+    }
+    if let Some(access) = account_access {
+        access(owner)?;
     }
     let key = format!("account:{owner}");
     if !state.contains_key(&key) {
@@ -149,6 +157,14 @@ fn reserve_owner(state: &State, value: &Value, recipients: &mut BTreeSet<String>
 /// or decreases it: reward maturation consumes a recipient reservation, and each
 /// missing queue slot reserves the reward before the maturity queue is full.
 pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {
+    capacity_with_account_access(state, height, cfg, None)
+}
+fn capacity_with_account_access(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+) -> Result<Capacity> {
     if !enabled(cfg) {
         return Err("CONTINUITY_PROFILE");
     }
@@ -168,13 +184,13 @@ pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {
                 return Err("CONTINUITY_REWARD_QUEUE");
             }
             number(value, "amount")?;
-            reserve_owner(state, value, &mut recipients)?;
+            reserve_owner(state, value, &mut recipients, account_access)?;
         } else if key.starts_with("task:")
             || key.starts_with("quota:")
             || key.starts_with("release:")
         {
             if number(value, "remaining")? > 0 {
-                reserve_owner(state, value, &mut recipients)?;
+                reserve_owner(state, value, &mut recipients, account_access)?;
             }
         } else if crate::public_evaluation::enabled(cfg) && key.starts_with("contribution:") {
             let candidate = key
@@ -220,11 +236,19 @@ pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {
 /// Old profiles are byte-for-byte unchanged. New state and restored snapshots
 /// require both the immutable maintenance commitment and the capacity invariant.
 pub fn check_state(state: &State, height: u64, cfg: &Config) -> Result<()> {
+    check_state_with_account_access(state, height, cfg, None)
+}
+pub(crate) fn check_state_with_account_access(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+) -> Result<()> {
     if !enabled(cfg) {
         return Ok(());
     }
     check_maintenance(state, maintenance_task()?, cfg)?;
-    if capacity(state, height, cfg)?.required_keys > MAX_KEYS {
+    if capacity_with_account_access(state, height, cfg, account_access)?.required_keys > MAX_KEYS {
         return Err("STATE_CAPACITY");
     }
     Ok(())

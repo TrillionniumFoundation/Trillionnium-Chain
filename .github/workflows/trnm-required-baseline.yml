@@ -91,7 +91,7 @@ jobs:
       - name: Execute native one-zero rank-one locality costs
         if: always()
         run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite one-zero-locality
-      - name: Execute native fixed maintenance paired-product costs
+      - name: Execute native fixed maintenance producer and preparation costs
         if: always()
         run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite maintenance-paired
       - name: Verify source remained unchanged

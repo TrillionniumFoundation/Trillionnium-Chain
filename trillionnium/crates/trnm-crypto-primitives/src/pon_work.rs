@@ -4,6 +4,7 @@ use sha2::{Digest, Sha256};
 
 pub mod blocked_one_zero;
 pub mod blocked_zero;
+pub mod maintenance_periodic;
 pub mod paired_product;
 pub mod structured;
 
@@ -617,6 +618,33 @@ pub struct PreparedTask {
     b: Vec<u32>,
     prefix: Vec<u8>,
 }
+
+/// Local generation checkpoints, with no proof field or verification capability.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PreparedGenerationProgress {
+    BeforeReplay,
+    Noise {
+        label: u8,
+        counter: u32,
+    },
+    NoiseRow {
+        operand: u8,
+        row: usize,
+    },
+    TranscriptTile {
+        row: usize,
+        column: usize,
+        inner: usize,
+    },
+    BeforeProof,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum PreparedGenerationError<E> {
+    Relation(WorkError),
+    Cancelled(E),
+}
+
 impl PreparedTask {
     /// Cached mathematical result bytes for producer root planning. This is not
     /// a verified-work capability; admission still replays the original relation.
@@ -639,20 +667,63 @@ impl PreparedTask {
         })
     }
     pub fn prove(&self, challenge: Hash) -> Result<Vec<u8>, WorkError> {
-        let el = expand(challenge, 0, N * R)?;
-        let er = expand(challenge, 1, N * R)?;
-        let fl = expand(challenge, 2, N * R)?;
-        let fr = expand(challenge, 3, N * R)?;
+        match self.prove_with_progress(challenge, |_| Ok::<_, std::convert::Infallible>(())) {
+            Ok(proof) => Ok(proof),
+            Err(PreparedGenerationError::Relation(error)) => Err(error),
+            Err(PreparedGenerationError::Cancelled(impossible)) => match impossible {},
+        }
+    }
+
+    /// Same complete arithmetic and byte order as ordinary production. Each
+    /// observation precedes its bounded work; cancellation returns no proof and
+    /// leaves this exact mathematical cache available for a later fresh call.
+    pub fn prove_with_progress<E>(
+        &self,
+        challenge: Hash,
+        mut progress: impl FnMut(PreparedGenerationProgress) -> Result<(), E>,
+    ) -> Result<Vec<u8>, PreparedGenerationError<E>> {
+        progress(PreparedGenerationProgress::BeforeReplay)
+            .map_err(PreparedGenerationError::Cancelled)?;
+        let mut noise = |label| {
+            expand_with_progress(challenge, label, N * R, &mut |point| {
+                let VerificationProgress::Noise { label, counter } = point else {
+                    unreachable!("noise expansion emits only noise observations")
+                };
+                progress(PreparedGenerationProgress::Noise { label, counter })
+            })
+            .map_err(|error| match error {
+                VerificationError::Relation(error) => PreparedGenerationError::Relation(error),
+                VerificationError::Cancelled(error) => PreparedGenerationError::Cancelled(error),
+            })
+        };
+        let el = noise(0)?;
+        let er = noise(1)?;
+        let fl = noise(2)?;
+        let fr = noise(3)?;
+        let e = transposed_mul_with_progress(&el, &er, N, R, N, &mut |point| {
+            let VerificationProgress::MatrixRow { row } = point else {
+                unreachable!("matrix multiplication emits only row observations")
+            };
+            progress(PreparedGenerationProgress::NoiseRow { operand: 0, row })
+        })
+        .map_err(PreparedGenerationError::Cancelled)?;
         let ap: Vec<u32> = self
             .a
             .iter()
-            .zip(producer_mul(&el, &er, N, R, N))
+            .zip(e)
             .map(|(x, y)| ((u128::from(*x) + u128::from(y)) % Q) as u32)
             .collect();
+        let f = transposed_mul_with_progress(&fl, &fr, N, R, N, &mut |point| {
+            let VerificationProgress::MatrixRow { row } = point else {
+                unreachable!("matrix multiplication emits only row observations")
+            };
+            progress(PreparedGenerationProgress::NoiseRow { operand: 1, row })
+        })
+        .map_err(PreparedGenerationError::Cancelled)?;
         let bp: Vec<u32> = self
             .b
             .iter()
-            .zip(producer_mul(&fl, &fr, N, R, N))
+            .zip(f)
             .map(|(x, y)| ((u128::from(*x) + u128::from(y)) % Q) as u32)
             .collect();
         let mut bt = vec![0u32; CELLS];
@@ -669,6 +740,12 @@ impl PreparedTask {
                 let mut cells = [0u32; R * R];
                 let mut bytes = [0u8; R * R * 4];
                 for bk in 0..N / R {
+                    progress(PreparedGenerationProgress::TranscriptTile {
+                        row: bi,
+                        column: bj,
+                        inner: bk,
+                    })
+                    .map_err(PreparedGenerationError::Cancelled)?;
                     for i in 0..R {
                         for j in 0..R {
                             let pos = i * R + j;
@@ -685,6 +762,8 @@ impl PreparedTask {
                 }
             }
         }
+        progress(PreparedGenerationProgress::BeforeProof)
+            .map_err(PreparedGenerationError::Cancelled)?;
         let mut out = self.prefix.clone();
         out.extend_from_slice(&transcript.finalize());
         Ok(out)

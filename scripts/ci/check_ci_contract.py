@@ -31,7 +31,7 @@ ONE_ZERO_COMPARE_STEP = '''      - name: Check one-zero rank-one streams and exa
         if: always()
         run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-one-zero-locality-comparison.json" --suite one-zero-locality
 '''
-MAINTENANCE_RUN_STEP = '''      - name: Execute native fixed maintenance paired-product costs
+MAINTENANCE_RUN_STEP = '''      - name: Execute native fixed maintenance producer and preparation costs
         if: always()
         run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite maintenance-paired
 '''
@@ -47,6 +47,8 @@ MODEL_WINDOW_ORACLE = '    python3 formal/pon-nakamoto-v1/test_model_window_hist
 NODE_EXAMPLE_BUILD = '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples\n'
 ACCOUNT_ARCHIVE_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v\n'
                           '    python3 scripts/ci/run_account_archive_conformance.py\n')
+ACCOUNT_EXECUTION_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v\n'
+                            '    python3 scripts/ci/run_account_execution_conformance.py\n')
 RUST_ALL_TARGETS = 'cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features'
 RUST_DOCS = '    cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features\n'
 RUST_CLIPPY = '    cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings\n'
@@ -89,6 +91,9 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE in lanes['protocol-contract'] and
             script.count(ACCOUNT_ARCHIVE_ORACLE) == 1,
             'native archive vectors and the independent read-only oracle must execute after their actual release build')
+    require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE + ACCOUNT_EXECUTION_ORACLE in lanes['protocol-contract'] and
+            script.count(ACCOUNT_EXECUTION_ORACLE) == 1,
+            'native account execution and its independent JSON oracle must execute once after the actual Node release build')
     expected = ('    cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\n'
                 '    python3 scripts/ci/run_supply_chain.py\n' + MODEL_OBSERVATION_BLOCK + RUST_DOCS + RUST_CLIPPY)
     require(code_lines(lanes['rust-baseline']) == code_lines(expected),
@@ -222,6 +227,9 @@ def validate(root: Path = ROOT) -> dict:
     archive_negative = '    python3 scripts/ci/test_account_archive_conformance.py\n'
     require(archive_negative in dict(lane_pairs)['repository-truth'] and script.count(archive_negative) == 1,
             'archive native/oracle receipt negatives must execute once in repository-truth')
+    execution_negative = '    python3 scripts/ci/test_run_account_execution_conformance.py\n'
+    require(execution_negative in dict(lane_pairs)['repository-truth'] and script.count(execution_negative) == 1,
+            'account execution receipt negatives must execute once in repository-truth')
     require('    python3 scripts/run_public_v3_service_campaign.py --out ' in script,
             'source-bound mixed-service campaign and retained refusal checks missing')
     require(jobs['fuzz-smoke'].count('run: bash scripts/ci/install_ci_tools.sh fuzz') == 1 and

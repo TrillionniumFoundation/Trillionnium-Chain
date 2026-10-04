@@ -1,10 +1,19 @@
-//! Fixed-size complete-proof bridge for the independent paired producer.
+//! Fixed-size complete-proof bridge for paired and exact maintenance setup producers.
 //! It has no network, signing, parent-admission or verification authority.
 use std::io::{self, Read, Write};
-use trnm_crypto_primitives::pon_work::{paired_product::PairedPreparedTask, Hash, CELLS};
+use trnm_crypto_primitives::pon_work::{
+    maintenance_periodic::MaintenancePeriodicPreparedTask, paired_product::PairedPreparedTask,
+    Hash, CELLS,
+};
 
 fn run() -> Result<(), &'static str> {
-    if std::env::args().len() != 1 {
+    let mut arguments = std::env::args_os().skip(1);
+    let periodic = match arguments.next() {
+        None => false,
+        Some(value) if value == "maintenance-periodic" => true,
+        Some(_) => return Err("OPERATION"),
+    };
+    if arguments.next().is_some() {
         return Err("OPERATION");
     }
     let expected = 32 + 2 * CELLS * 4;
@@ -21,9 +30,17 @@ fn run() -> Result<(), &'static str> {
         .chunks_exact(4)
         .map(|bytes| u32::from_le_bytes(bytes.try_into().expect("four-byte chunk")))
         .collect();
-    let proof = PairedPreparedTask::new(&elements[..CELLS], &elements[CELLS..])
-        .and_then(|task| task.prove(challenge))
-        .map_err(|_| "WORK")?;
+    let proof = if periodic {
+        MaintenancePeriodicPreparedTask::new(&elements[..CELLS], &elements[CELLS..])
+            .map_err(|_| "WORK")?
+            .ok_or("UNSUPPORTED")?
+            .prove(challenge)
+            .map_err(|_| "WORK")?
+    } else {
+        PairedPreparedTask::new(&elements[..CELLS], &elements[CELLS..])
+            .and_then(|task| task.prove(challenge))
+            .map_err(|_| "WORK")?
+    };
     io::stdout().write_all(&proof).map_err(|_| "IO")?;
     Ok(())
 }

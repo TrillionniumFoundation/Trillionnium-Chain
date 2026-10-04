@@ -166,7 +166,8 @@
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs",
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs",
         "trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs",
-        "formal/pon-nakamoto-v1/test_paired_work.py"
+        "formal/pon-nakamoto-v1/test_paired_work.py",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -283,7 +284,7 @@
           "id": "M06.ExecuteCandidate",
           "inputs": "parent map, ordered signed txs,height,miner,parentId",
           "output": "next map, ordered receipts, state root",
-          "algorithm": "Run deterministic due expiry and maturity before txs; execute exactly12 closed commands; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition.",
+          "algorithm": "Run deterministic due expiry and maturity before txs; execute the closed command set enabled by the exact context; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition.",
           "commit": "Return complete state/delta intent; caller M07 owns persistence.",
           "errors": "EVIDENCE, AUTHORITY, STATE, FUNDS, CONSERVATION, LIMIT",
           "limits": "expiry16,task256,tx256,statekeys65536"
@@ -319,11 +320,17 @@
         "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs",
         "trillionnium/crates/trnm-pon-node/tests/account_archive_projection.rs",
         "formal/pon-nakamoto-v1/account_archive_oracle.py",
-        "formal/pon-nakamoto-v1/test_account_archive_oracle.py"
+        "formal/pon-nakamoto-v1/test_account_archive_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs",
+        "formal/pon-nakamoto-v1/account_execution_oracle.py",
+        "formal/pon-nakamoto-v1/test_account_execution_oracle.py",
+        "trillionnium/crates/trnm-pon-node/examples/account_execution_vectors.rs"
       ],
       "test_classes": [
         "ExecutionTests",
-        "DiskReorgTests"
+        "DiskReorgTests",
+        "AccountExecutionOracle"
       ],
       "native_packages": [
         "trnm-executor",
@@ -728,7 +735,10 @@
         "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs",
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
         "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
-        "trillionnium/crates/trnm-pon-node/examples/account_archive_vectors.rs"
+        "trillionnium/crates/trnm-pon-node/examples/account_archive_vectors.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs",
+        "trillionnium/crates/trnm-pon-node/examples/account_execution_vectors.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -816,12 +826,18 @@
         "scripts/ci/test_maintenance_cost.py",
         "formal/pon-nakamoto-v1/account_archive_oracle.py",
         "formal/pon-nakamoto-v1/test_paired_work.py",
-        "formal/pon-nakamoto-v1/model_window_history.py"
+        "formal/pon-nakamoto-v1/model_window_history.py",
+        "formal/pon-nakamoto-v1/account_execution_oracle.py",
+        "formal/pon-nakamoto-v1/test_account_execution_oracle.py",
+        "scripts/ci/run_account_execution_conformance.py",
+        "scripts/ci/test_run_account_execution_conformance.py",
+        "trillionnium/crates/trnm-pon-node/examples/account_execution_vectors.rs"
       ],
       "test_classes": [
         "CodecTests",
         "DiskReorgTests",
-        "InteropTests"
+        "InteropTests",
+        "AccountExecutionOracle"
       ],
       "native_packages": [
         "trnm-bench",

@@ -1,0 +1,534 @@
+//! Actual complete M06 blocks with original-parent account point-access proofs.
+//! Complete State remains the aggregate/root reference; this does not admit a
+//! larger account space or install the research wrapper in the Node lifecycle.
+use rusqlite::Connection;
+use serde_json::json;
+use std::path::{Path, PathBuf};
+use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+use trnm_mvcc_fee::{
+    continuity_v1,
+    pon_executor::{self, Config, ExecutionProgress},
+};
+use trnm_pon_node::{
+    account_archive_execution::{
+        self, BlockInput, CheckedExecutionError as E, CheckedExecutionOutput,
+    },
+    account_archive_prototype::{
+        AccountArchive, ArchiveError, Checkpoint, Context, Limits, Witness,
+    },
+    development_public, sequence_root, Node, Settings,
+};
+use trnm_protocol::pon_wire::{hash, Envelope, Hash};
+
+fn public(owner: u64) -> Hash {
+    development_public(owner).unwrap()
+}
+fn signed(settings: &Settings, sender: u64, nonce: u64, tag: u8, payload: Vec<u8>) -> Vec<u8> {
+    let mut tx = Envelope {
+        network: settings.network(),
+        sender: public(sender),
+        nonce,
+        expiry: 2000,
+        fee_limit: 1_000_000,
+        tag,
+        payload,
+        signature: [0; 64],
+    };
+    let key = signing_key_from_hex(&hex::encode(hash(
+        b"DEV-ONLY-KEY",
+        &[&sender.to_le_bytes()],
+    )))
+    .unwrap();
+    tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+        .unwrap()
+        .try_into()
+        .unwrap();
+    tx.encode().unwrap()
+}
+fn transfer(settings: &Settings, sender: u64, nonce: u64, recipient: u64, amount: u64) -> Vec<u8> {
+    let mut payload = public(recipient).to_vec();
+    payload.extend(amount.to_le_bytes());
+    signed(settings, sender, nonce, 1, payload)
+}
+fn transfer_fee(settings: &Settings) -> u64 {
+    // The fixture only reads installed fee constants here; actual Settings,
+    // signature context, complete transition and resulting state are Node-owned.
+    let cfg =
+        Config::installed_with_profiles("native-public-evaluation-dev-v1", continuity_v1::PROFILE)
+            .unwrap();
+    cfg.fees[1]
+        + transfer(settings, 0, 1, 1, 1).len() as u64
+            * cfg.params["byte_fee_units"].as_u64().unwrap()
+}
+fn rows(path: &Path) -> Vec<String> {
+    let db = Connection::open(path).unwrap();
+    db.prepare(
+        "SELECT 'meta:'||key||':'||hex(value) FROM archive_meta
+         UNION ALL SELECT 'node:'||hex(id)||':'||hex(data) FROM archive_nodes
+         UNION ALL SELECT 'checkpoint:'||hex(id)||':'||hex(branch)||':'||hex(data)
+                   FROM archive_checkpoints
+         UNION ALL SELECT 'active:'||singleton||':'||hex(checkpoint)||':'||generation
+                   FROM archive_active
+         ORDER BY 1",
+    )
+    .unwrap()
+    .query_map([], |row| row.get(0))
+    .unwrap()
+    .map(|row| row.unwrap())
+    .collect()
+}
+struct Fixture {
+    _dir: tempfile::TempDir,
+    archive_path: PathBuf,
+    settings: Settings,
+    node: Node,
+    archive: AccountArchive,
+    checkpoint: Checkpoint,
+}
+impl Fixture {
+    fn new() -> Self {
+        let settings = Settings::development_with_profiles(
+            Some(1),
+            "native-public-evaluation-dev-v1",
+            continuity_v1::PROFILE,
+        )
+        .unwrap();
+        Self::with_settings(settings)
+    }
+    fn with_settings(settings: Settings) -> Self {
+        let dir = tempfile::tempdir().unwrap();
+        let archive_path = dir.path().join("account-archive.sqlite");
+        // The ordinary worker-4 Node remains the independent execution route.
+        let node = Node::open(&dir.path().join("node"), settings.clone(), 4).unwrap();
+        let state = node.read_active().unwrap().2;
+        let mut archive = AccountArchive::open(
+            &archive_path,
+            Context {
+                network: settings.network(),
+                parameters: settings.parameters(),
+                genesis: settings.genesis(),
+            },
+            Limits::default(),
+        )
+        .unwrap();
+        let checkpoint = archive
+            .project_initial(&state, pon_executor::root(&state).unwrap())
+            .unwrap();
+        archive
+            .activate(None, checkpoint.id(), &mut || Ok(()))
+            .unwrap();
+        Self {
+            _dir: dir,
+            archive_path,
+            settings,
+            node,
+            archive,
+            checkpoint,
+        }
+    }
+    fn witnesses(&self, owners: &[u64]) -> Vec<Witness> {
+        owners
+            .iter()
+            .map(|&owner| {
+                self.archive
+                    .witness(self.checkpoint.id(), public(owner))
+                    .unwrap()
+                    .0
+            })
+            .collect()
+    }
+    fn execute(
+        &self,
+        txs: &[Vec<u8>],
+        miner: u64,
+        witnesses: &[Witness],
+    ) -> account_archive_execution::Result<CheckedExecutionOutput> {
+        let parent = self.node.state_at(self.checkpoint.branch()).unwrap();
+        account_archive_execution::execute(
+            &self.settings,
+            &self.archive,
+            self.checkpoint.id(),
+            &parent,
+            BlockInput {
+                transactions: txs,
+                height: self.checkpoint.height() + 1,
+                miner: public(miner),
+                parent_id: self.checkpoint.branch(),
+            },
+            witnesses,
+        )
+    }
+    fn accept(&mut self, txs: Vec<Vec<u8>>, miner: u64, owners: &[u64]) -> CheckedExecutionOutput {
+        let original_rows = rows(&self.archive_path);
+        let original_node = self.node.read_active().unwrap();
+        let witnesses = self.witnesses(owners);
+        let checked = self.execute(&txs, miner, &witnesses).unwrap();
+        assert_eq!(rows(&self.archive_path), original_rows);
+        assert_eq!(self.node.read_active().unwrap(), original_node);
+        let height = self.checkpoint.height() + 1;
+        let packet = if self.settings.task_profile() == pon_executor::LEGACY_TASK_PROFILE {
+            self.node.make(
+                self.checkpoint.branch(),
+                txs,
+                public(miner),
+                1 + height * 10,
+                4096,
+            )
+        } else {
+            self.node.make_consensus_maintenance(
+                self.checkpoint.branch(),
+                txs,
+                public(miner),
+                1 + height * 10,
+                4096,
+            )
+        }
+        .unwrap();
+        assert_eq!(packet.header.state, checked.output.root);
+        assert_eq!(
+            packet.header.receipts,
+            sequence_root("receipts", &checked.output.receipts)
+        );
+        let id = self.node.admit(&packet, 100_000).unwrap();
+        let after = self.node.state_at(id).unwrap();
+        assert_eq!(after, checked.output.state);
+        let next = self
+            .archive
+            .project_successor(
+                self.checkpoint.id(),
+                &original_node.2,
+                &after,
+                id,
+                height,
+                &mut || Ok(()),
+            )
+            .unwrap();
+        assert_eq!(
+            checked.observation.successor_account_root,
+            next.account_root()
+        );
+        assert_eq!(
+            checked.observation.successor_account_count,
+            next.account_count()
+        );
+        assert_eq!(self.node.activate(id).unwrap(), id);
+        self.archive
+            .activate(self.archive.active().unwrap(), next.id(), &mut || Ok(()))
+            .unwrap();
+        self.checkpoint = next;
+        checked
+    }
+}
+
+#[test]
+fn checked_accounts_execute_same_block_creation_spend_and_self_transfer_against_native_node() {
+    let mut f = Fixture::new();
+    let fee = transfer_fee(&f.settings);
+    let txs = vec![
+        transfer(&f.settings, 0, 1, 10, 10_000),
+        transfer(&f.settings, 10, 1, 1, 10_000 - fee),
+        transfer(&f.settings, 0, 2, 0, 1),
+    ];
+    let before_node = f.node.read_active().unwrap();
+    let before_rows = rows(&f.archive_path);
+    assert_eq!(
+        f.execute(&txs, 0, &f.witnesses(&[0, 1])).unwrap_err(),
+        E::MissingWitness { owner: public(10) }
+    );
+    assert_eq!(
+        f.execute(&txs, 0, &f.witnesses(&[0, 10])).unwrap_err(),
+        E::MissingWitness { owner: public(1) }
+    );
+    assert_eq!(
+        f.execute(&txs, 0, &f.witnesses(&[0, 1, 10, 2]))
+            .unwrap_err(),
+        E::UnusedWitness {
+            owners: vec![public(2)]
+        }
+    );
+    assert_eq!(f.node.read_active().unwrap(), before_node);
+    assert_eq!(rows(&f.archive_path), before_rows);
+    let checked = f.accept(txs, 0, &[0, 1, 10]);
+    assert_eq!(checked.observation.workers, 1);
+    assert_eq!(checked.observation.parent_account_count, 4);
+    assert_eq!(checked.observation.successor_account_count, 5);
+    assert_eq!(
+        checked.observation.used_owners,
+        checked.observation.requested_owners
+    );
+    assert_eq!(
+        checked.output.state[&format!("account:{}", hex::encode(public(10)))],
+        json!({"balance":0,"nonce":1})
+    );
+    // A replenishment does not erase the already-used nonce. The failed old
+    // signed command is evaluated after its earlier in-block funding command.
+    let replay = vec![
+        transfer(&f.settings, 0, 3, 10, 5000),
+        transfer(&f.settings, 10, 1, 1, 1),
+    ];
+    let original = f.node.read_active().unwrap();
+    let original_rows = rows(&f.archive_path);
+    assert_eq!(
+        f.execute(&replay, 0, &f.witnesses(&[0, 1, 10]))
+            .unwrap_err(),
+        E::Relation("NONCE")
+    );
+    assert_eq!(f.node.read_active().unwrap(), original);
+    assert_eq!(rows(&f.archive_path), original_rows);
+}
+
+#[test]
+fn checked_accounts_preserve_canonical_errors_source_binding_and_exact_witness_coverage() {
+    let f = Fixture::new();
+    let txs = vec![transfer(&f.settings, 0, 1, 1, 1)];
+    let parent = f.node.read_active().unwrap();
+    let original_rows = rows(&f.archive_path);
+    let valid = f.witnesses(&[0, 1]);
+    let input = BlockInput {
+        transactions: &txs,
+        height: 1,
+        miner: public(0),
+        parent_id: parent.0,
+    };
+    let mut wrong_nonaccount = parent.2.clone();
+    wrong_nonaccount.insert("meta:issued".into(), json!(1));
+    assert_eq!(
+        account_archive_execution::execute(
+            &f.settings,
+            &f.archive,
+            f.checkpoint.id(),
+            &wrong_nonaccount,
+            input,
+            &valid,
+        )
+        .unwrap_err(),
+        E::SourceRoot
+    );
+    for (input, error) in [
+        (
+            BlockInput {
+                parent_id: [99; 32],
+                ..input
+            },
+            E::Parent,
+        ),
+        (BlockInput { height: 2, ..input }, E::Height),
+    ] {
+        assert_eq!(
+            account_archive_execution::execute(
+                &f.settings,
+                &f.archive,
+                f.checkpoint.id(),
+                &parent.2,
+                input,
+                &valid,
+            )
+            .unwrap_err(),
+            error
+        );
+    }
+    let other_settings = Settings::development_with_profiles(
+        Some(2),
+        "native-public-evaluation-dev-v1",
+        continuity_v1::PROFILE,
+    )
+    .unwrap();
+    assert_eq!(
+        account_archive_execution::execute(
+            &other_settings,
+            &f.archive,
+            f.checkpoint.id(),
+            &parent.2,
+            input,
+            &valid,
+        )
+        .unwrap_err(),
+        E::Context
+    );
+    let mut tampered = valid.clone();
+    tampered[0].account = None;
+    assert_eq!(
+        f.execute(&txs, 0, &tampered).unwrap_err(),
+        E::Archive(ArchiveError::InvalidWitness)
+    );
+    let duplicated = vec![valid[0].clone(), valid[0].clone()];
+    assert_eq!(
+        f.execute(&txs, 0, &duplicated).unwrap_err(),
+        E::Archive(ArchiveError::InvalidWitness)
+    );
+    let owners: Vec<_> = (0..33).collect();
+    assert_eq!(
+        f.execute(&txs, 0, &f.witnesses(&owners)).unwrap_err(),
+        E::Budget
+    );
+    let priority = vec![
+        transfer(&f.settings, 0, 2, 1, 1),
+        transfer(&f.settings, 2, 1, 3, 1),
+    ];
+    // No proof for the later sender is supplied. Its missing witness cannot
+    // replace the earlier canonical nonce failure.
+    assert_eq!(
+        f.execute(&priority, 0, &f.witnesses(&[0])).unwrap_err(),
+        E::Relation("NONCE")
+    );
+    let mut wrong_signature = priority;
+    *wrong_signature[0].last_mut().unwrap() ^= 1;
+    assert_eq!(
+        f.execute(&wrong_signature, 0, &f.witnesses(&[0]))
+            .unwrap_err(),
+        E::Relation("SIGNATURE")
+    );
+    assert_eq!(f.node.read_active().unwrap(), parent);
+    assert_eq!(rows(&f.archive_path), original_rows);
+}
+
+#[test]
+fn checked_accounts_gate_new_miner_future_reservation_and_late_cancellation_without_publication() {
+    let f = Fixture::new();
+    let original = f.node.read_active().unwrap();
+    let original_rows = rows(&f.archive_path);
+    // An immature reward creates no account yet, but its future recipient must
+    // be authenticated under the selected continuity capacity relation.
+    assert_eq!(
+        f.execute(&[], 70, &[]).unwrap_err(),
+        E::MissingWitness { owner: public(70) }
+    );
+    let checked = f.execute(&[], 70, &f.witnesses(&[70])).unwrap();
+    assert_eq!(checked.observation.parent_account_count, 4);
+    assert_eq!(checked.observation.successor_account_count, 4);
+    assert_eq!(
+        checked
+            .observation
+            .successor_capacity
+            .unwrap()
+            .credit_account_reserve,
+        1
+    );
+    let witnesses = f.witnesses(&[70]);
+    assert_eq!(
+        account_archive_execution::execute_with_progress(
+            &f.settings,
+            &f.archive,
+            f.checkpoint.id(),
+            &original.2,
+            BlockInput {
+                transactions: &[],
+                height: 1,
+                miner: public(70),
+                parent_id: original.0,
+            },
+            &witnesses,
+            &|phase| {
+                if phase == ExecutionProgress::BeforeOutput {
+                    Err(E::Cancelled)
+                } else {
+                    Ok(())
+                }
+            },
+        )
+        .unwrap_err(),
+        E::Cancelled
+    );
+    assert_eq!(f.node.read_active().unwrap(), original);
+    assert_eq!(rows(&f.archive_path), original_rows);
+}
+
+#[test]
+fn checked_accounts_apply_reward_maturity_before_next_nonce_spend_and_refuse_old_branch_proof() {
+    let mut f = Fixture::new();
+    let fee = transfer_fee(&f.settings);
+    f.accept(
+        vec![
+            transfer(&f.settings, 0, 1, 10, fee + 7),
+            transfer(&f.settings, 10, 1, 1, 7),
+        ],
+        10,
+        &[0, 1, 10],
+    );
+    let prior_proof = f.witnesses(&[10]).remove(0);
+    for _height in 2..=20 {
+        f.accept(vec![], 0, &[0, 10]);
+    }
+    let before = f.node.read_active().unwrap();
+    assert_eq!(
+        before.2[&format!("account:{}", hex::encode(public(10)))],
+        json!({"balance":0,"nonce":1})
+    );
+    let txs = vec![transfer(&f.settings, 10, 2, 1, 1)];
+    let original_rows = rows(&f.archive_path);
+    assert_eq!(
+        f.execute(&txs, 0, &f.witnesses(&[0, 1])).unwrap_err(),
+        E::MissingWitness { owner: public(10) }
+    );
+    let mut stale = f.witnesses(&[0, 1]);
+    stale.push(prior_proof);
+    assert_eq!(
+        f.execute(&txs, 0, &stale).unwrap_err(),
+        E::Archive(ArchiveError::InvalidWitness)
+    );
+    assert_eq!(rows(&f.archive_path), original_rows);
+    let after = f.accept(txs, 0, &[0, 1, 10]);
+    assert_eq!(
+        after.output.state[&format!("account:{}", hex::encode(public(10)))]["nonce"],
+        2
+    );
+    assert!(
+        after.output.state[&format!("account:{}", hex::encode(public(10)))]["balance"]
+            .as_u64()
+            .unwrap()
+            > 0
+    );
+}
+
+#[test]
+fn checked_accounts_gate_real_legacy_expiry_refund_without_continuity_or_transaction_masking() {
+    let mut f = Fixture::with_settings(Settings::development(Some(1)).unwrap());
+    let budget = 1000_u64;
+    let deadline = 2_u64;
+    let nonce = 1_u64;
+    let task = hash(
+        b"task-instance-v3",
+        &[
+            &f.settings.network(),
+            &f.settings.parameters(),
+            &public(0),
+            &nonce.to_le_bytes(),
+            &public(2),
+            &budget.to_le_bytes(),
+            &deadline.to_le_bytes(),
+        ],
+    );
+    let mut payload = task.to_vec();
+    payload.extend(public(2));
+    payload.extend(budget.to_le_bytes());
+    payload.extend(deadline.to_le_bytes());
+    let reserve = signed(&f.settings, 0, nonce, 2, payload);
+    // Legacy rules do not consult the immature miner recipient's existence.
+    let first = f.accept(vec![reserve], 70, &[0]);
+    assert_eq!(first.observation.parent_capacity, None);
+    assert_eq!(first.observation.successor_capacity, None);
+    let parent = f.node.read_active().unwrap();
+    let original_rows = rows(&f.archive_path);
+    // At height2 there are no transactions or matured rewards. This missing
+    // witness is reached specifically by credit_state's expiry refund path.
+    assert_eq!(
+        f.execute(&[], 0, &[]).unwrap_err(),
+        E::MissingWitness { owner: public(0) }
+    );
+    assert_eq!(f.node.read_active().unwrap(), parent);
+    assert_eq!(rows(&f.archive_path), original_rows);
+    let after = f.accept(vec![], 0, &[0]);
+    let account = format!("account:{}", hex::encode(public(0)));
+    assert_eq!(
+        after.output.state[&account]["balance"].as_u64().unwrap(),
+        parent.2[&account]["balance"].as_u64().unwrap() + budget
+    );
+    assert_eq!(after.output.state[&account]["nonce"], 1);
+    let task_key = format!("task:{}", hex::encode(task));
+    assert_eq!(after.output.state[&task_key]["remaining"], 0);
+    assert_eq!(after.output.state[&task_key]["status"], "expired");
+    assert_eq!(
+        after.output.receipts,
+        vec![serde_json::to_vec(&json!({"expiry":task_key})).unwrap()]
+    );
+}

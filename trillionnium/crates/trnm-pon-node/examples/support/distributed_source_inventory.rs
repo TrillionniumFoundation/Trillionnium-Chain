@@ -449,6 +449,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2675,6 +2682,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/examples/account_execution_vectors.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/account_execution_vectors.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2749,6 +2763,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs"
         )),
     ),
     (
@@ -3127,6 +3148,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs"
         )),
     ),
     (

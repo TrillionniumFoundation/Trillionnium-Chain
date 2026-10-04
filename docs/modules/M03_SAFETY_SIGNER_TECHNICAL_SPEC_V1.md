@@ -123,7 +123,7 @@ orientations, cold/reused setup and complete winning/losing streams. See the
 This diagnostic does not replace native mining selection or independently qualify
 task cost, proof hardness, actual checkpoint utility or hardware efficiency.
 
-## Fixed maintenance paired-product research
+## Fixed maintenance producer research
 
 The separate `PairedPreparedTask` computes the same complete W1 relation using
 canonical paired products and separately charged row/column factors. Its fixed
@@ -134,3 +134,12 @@ stored separately. [W1 comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEM
 defines the algebra, actual genesis material, independent Python byte relation and
 balanced sample order. The default producer/verifier and task qualification remain
 unchanged; lower multiplication counts are not measured runtime or a work lower bound.
+
+The separate `MaintenancePeriodicPreparedTask` accepts only both exact public
+maintenance operands and computes their fixed product with integer row-prefix and
+sawtooth suffix sums. Actual checks, plans, sums, product and proof-prefix construction
+belong to its setup call. Every challenge delegates to the ordinary complete
+`PreparedTask` transcript and its cancellation checkpoints. The retained object
+contains exact material and product bytes, without parent, lease or admission
+authority. Its source-defined equivalence and rejection checks do not establish
+runtime savings, a cheapest-producer bound or a new mining selection.

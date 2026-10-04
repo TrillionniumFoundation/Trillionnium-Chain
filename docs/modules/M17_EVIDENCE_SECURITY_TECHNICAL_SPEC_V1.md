@@ -100,8 +100,11 @@ work hardness, independent operation and future model efficacy.
 
 ## Four native work-cost contracts
 
-The existing head/merge and x64/ARM64 lanes retain separate reused, both-zero and
-one-zero/nonzero-rank-one and fixed-genesis-maintenance paired-product schemas.
+The existing head/merge and x64/ARM64 lanes retain separate reused, both-zero,
+one-zero/nonzero-rank-one and fixed-genesis-maintenance cost contracts. The fourth
+suite's current preprocessing-v2 schema compares five complete producers, including
+exact periodic fixed-product setup, under ten balanced cold/reused positions.
+Explicit historical v1 comparison retains the original four-strategy meaning.
 Each complete raw stream, actual setup mode,
 source/binary identity and execution outcome must match its own contract. Strict
 success validation rejects failure-only fields even when empty, noninteger exit
@@ -110,10 +113,23 @@ artifact into execution of the new suite. See the [CI execution contract](../arc
 Same-job135-minute limits account for all four bounded captures; thirteen jobs,
 actual fuzz, exact prospective merges and all external-acceptance boundaries remain.
 
-The new paired-product bridge compares full original proof bytes against the
-independent scalar Python relation. The account-archive oracle independently
+The paired/periodic bridge's v2 report requires 20 full-proof comparisons and
+18 explicit refusals against the independent scalar Python relation. These are
+required invocation counts, not a declaration of a new executed result.
+The account-archive oracle independently
 reconstructs full sparse roots, strict witnesses and retained SQL records; actual
 native lifecycle effects still require their own observations. Offline model
 window-history tests preserve failed reported gates and mandatory record space.
 No source binding, synthetic fixture or independent arithmetic comparison
 substitutes for an exact executed source or external work/model/network acceptance.
+
+The separate signed checked-execution campaign compares native research point-access
+gating with complete-State M06 and ordinary Node admission. Its JSON-only Python
+oracle derives the configured genesis, supported tag1–5/10/11 transitions, full
+roots and proof coverage; it does not reexecute W1, fork choice, storage recovery
+or SQLite rows. The delivery wrapper separately checks the actual three-file
+snapshot receipt/header and unchanged export inventory. The required 43 native
+packets, 20 signed transactions, two reorganization records, three reopen records
+and 29 negative cases belong to this campaign; the earlier archive projection, synthetic
+large archive and their receipts retain their original scopes. See the
+[account archive execution contract](../protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md#signed-checked-execution-campaign).
