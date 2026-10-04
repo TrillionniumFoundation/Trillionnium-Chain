@@ -1,4 +1,7 @@
 //! Component research fixtures. Real signed Node projections are in the sibling test.
+#[path = "../examples/support/account_archive_artifact.rs"]
+mod account_archive_artifact;
+use account_archive_artifact::finish_archive_artifact;
 use rusqlite::{params, Connection};
 use serde_json::json;
 use std::collections::BTreeMap;
@@ -551,6 +554,52 @@ fn strict_checkpoint_identity_and_operator_budgets_reject_without_publication() 
 }
 
 #[test]
+fn archive_artifact_refuses_busy_checkpoint_and_closes_after_reader_release() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("archive.sqlite");
+    let blocked = directory.path().join("blocked");
+    let closed = directory.path().join("closed");
+    std::fs::create_dir(&blocked).unwrap();
+    std::fs::create_dir(&closed).unwrap();
+    let writer = Connection::open(&path).unwrap();
+    writer.busy_timeout(std::time::Duration::ZERO).unwrap();
+    writer
+        .execute_batch("PRAGMA journal_mode=WAL; PRAGMA wal_autocheckpoint=0; CREATE TABLE fixture(value INTEGER); INSERT INTO fixture VALUES(1);")
+        .unwrap();
+    let reader = Connection::open(&path).unwrap();
+    reader.execute_batch("BEGIN").unwrap();
+    assert_eq!(
+        reader
+            .query_row("SELECT COUNT(*) FROM fixture", [], |row| row
+                .get::<_, u64>(0))
+            .unwrap(),
+        1
+    );
+    writer.execute("INSERT INTO fixture VALUES(2)", []).unwrap();
+    assert!(finish_archive_artifact(writer, &path, &blocked).is_err());
+    let refused: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(blocked.join("finalization.json")).unwrap()).unwrap();
+    assert_eq!(refused["result"], "FAIL");
+    assert_eq!(refused["checkpoint"]["busy"], 1);
+    assert_eq!(refused["checkpoint_error"], serde_json::Value::Null);
+    assert_eq!(refused["control_connection_close"]["result"], "OK");
+    assert!(refused["wal_after_close"]["bytes"].as_u64().unwrap() > 0);
+    reader.execute_batch("ROLLBACK").unwrap();
+    reader.close().unwrap();
+    let control = Connection::open(&path).unwrap();
+    assert_eq!(
+        control
+            .query_row("SELECT COUNT(*) FROM fixture", [], |row| row
+                .get::<_, u64>(0))
+            .unwrap(),
+        2
+    );
+    let accepted = finish_archive_artifact(control, &path, &closed).unwrap();
+    assert_eq!(accepted.result, "PASS");
+    assert_eq!(accepted.checkpoint.unwrap().busy, 0);
+}
+
+#[test]
 #[ignore = "explicit release-only synthetic 65,537-account archive; not ledger admission"]
 fn synthetic_archive_beyond_legacy_cap_retains_nonce_and_bounds_views() -> Result<(), String> {
     if cfg!(debug_assertions) {
@@ -627,18 +676,16 @@ fn synthetic_archive_beyond_legacy_cap_retains_nonce_and_bounds_views() -> Resul
         reopened.witness(initial.id(), owner(1)).unwrap().0.account,
         update.before
     );
+    drop(reopened);
     let db = Connection::open(&path).unwrap();
     let page_count: u64 = db.query_row("PRAGMA page_count", [], |r| r.get(0)).unwrap();
     let page_size: u64 = db.query_row("PRAGMA page_size", [], |r| r.get(0)).unwrap();
-    drop(reopened);
-    db.execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
-        .unwrap();
-    drop(db);
+    let finalization = finish_archive_artifact(db, &path, &output)?;
     let input_accounts: Vec<_> = accounts
         .iter()
         .map(|(&owner, &account)| json!({"owner":owner,"account":account}))
         .collect();
-    let report = json!({"schema":"pon-account-archive-large-observation-v1","result":"PASS","context":context(),"accounts":input_accounts,"queries":queries,"update":update,"next_query":{"owner":owner(1),"witness":next_witness,"node_reads":next_reads,"binary_hex":hex::encode(next_witness.encode().unwrap())},"initial":initial,"after_update":next,"initial_storage":initial_storage,"after_update_storage":next_storage,"checked_view_accounts":32,"maximum_observed_node_reads":max_reads,"node_read_upper_bound":257,"maximum_witness_bytes":MAX_WITNESS_BYTES,"sqlite_page_count":page_count,"sqlite_page_size":page_size,"sqlite_logical_file_bytes":page_count*page_size,"reopened_active":active,"database":path,"actual_ledger_account_growth":false,"protocol_capacity_changed":false,"data_availability_accepted":false,"production_accepted":false});
+    let report = json!({"schema":"pon-account-archive-large-observation-v1","result":"PASS","context":context(),"accounts":input_accounts,"queries":queries,"update":update,"next_query":{"owner":owner(1),"witness":next_witness,"node_reads":next_reads,"binary_hex":hex::encode(next_witness.encode().unwrap())},"initial":initial,"after_update":next,"initial_storage":initial_storage,"after_update_storage":next_storage,"checked_view_accounts":32,"maximum_observed_node_reads":max_reads,"node_read_upper_bound":257,"maximum_witness_bytes":MAX_WITNESS_BYTES,"sqlite_page_count":page_count,"sqlite_page_size":page_size,"sqlite_logical_file_bytes":page_count*page_size,"reopened_active":active,"database":path,"finalization":finalization,"actual_ledger_account_growth":false,"protocol_capacity_changed":false,"data_availability_accepted":false,"production_accepted":false});
     std::fs::write(
         output.join("observation.json"),
         serde_json::to_vec(&report).unwrap(),

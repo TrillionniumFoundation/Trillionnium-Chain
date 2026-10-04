@@ -19,6 +19,7 @@ INPUTS = [
     'trillionnium/crates/trnm-pon-node/Cargo.toml',
     'trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs',
     'trillionnium/crates/trnm-pon-node/examples/account_archive_vectors.rs',
+    'trillionnium/crates/trnm-pon-node/examples/support/account_archive_artifact.rs',
     'formal/pon-nakamoto-v1/account_archive_oracle.py',
     'formal/pon-nakamoto-v1/test_account_archive_oracle.py',
     'scripts/ci/run_account_archive_conformance.py',

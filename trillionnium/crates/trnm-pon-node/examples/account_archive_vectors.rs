@@ -1,5 +1,8 @@
 //! Actual bounded archive observations for a separately implemented Python oracle.
 //! Usage: account_archive_vectors NEW_OUTPUT_DIRECTORY
+#[path = "support/account_archive_artifact.rs"]
+mod account_archive_artifact;
+use account_archive_artifact::finish_archive_artifact;
 use rusqlite::{params, Connection};
 use serde_json::{json, Value};
 use std::{collections::BTreeMap, fs, path::Path};
@@ -423,11 +426,15 @@ fn main() {
     assert_eq!(reopened.observation().unwrap(), final_storage);
     assert_eq!(rows(&path), final_rows);
     drop(reopened);
-    Connection::open(&path)
-        .unwrap()
-        .execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
+    let control = Connection::open(&path).unwrap();
+    let checkpoint_rows: u64 = control
+        .query_row("SELECT COUNT(*) FROM archive_checkpoints", [], |row| {
+            row.get(0)
+        })
         .unwrap();
-    let observed = json!({"schema":"pon-account-archive-native-observation-v1","context":context,"snapshots":snapshots,"operations":operations,"final_active":final_active,"final_storage":final_storage,"final_rows":final_rows,"database":path,"reopened":true,"archive_used_for_native_execution":false,"protocol_capacity_changed":false,"public_data_availability_accepted":false});
+    assert_eq!(checkpoint_rows, final_storage.checkpoint_rows);
+    let finalization = finish_archive_artifact(control, &path, &output).unwrap();
+    let observed = json!({"schema":"pon-account-archive-native-observation-v1","context":context,"snapshots":snapshots,"operations":operations,"final_active":final_active,"final_storage":final_storage,"final_rows":final_rows,"database":path,"finalization":finalization,"reopened":true,"archive_used_for_native_execution":false,"protocol_capacity_changed":false,"public_data_availability_accepted":false});
     let bytes = serde_json::to_vec(&observed).unwrap();
     fs::write(output.join("observation.json"), &bytes).unwrap();
     println!("{}", String::from_utf8(bytes).unwrap());

@@ -246,8 +246,22 @@ Both output paths must be new. The small
 records synthetic and native-source snapshots separately, exports complete account
 sets, exact checkpoints, all queried proofs and their binary bytes, original signed
 native packet bytes, and complete SQL table snapshots before and after negative
-operations. It closes and checkpoints the archive WAL before returning its retained
-database and observation JSON for independent read-only comparison. A separately
+operations. Both exporters finish all archive-handle scopes before opening their
+final control connection. Their shared research-fixture helper records the actual
+`wal_checkpoint(TRUNCATE)` three-column result, explicit control-connection close
+result, SQLite version and physical WAL sizes before checkpoint, after checkpoint
+and after close in `finalization.json`. It writes this receipt before checking the
+handoff conditions, so a failure retains its actual values. Successful export
+requires the exact tuple `(0,0,0)`, successful explicit control close, and an absent
+or zero-byte WAL after checkpoint and after close. The same receipt object is
+included in `observation.json`; the independent checker still inspects the actual
+WAL and database. No file is manually removed or truncated, and no failed
+checkpoint is silently retried. Archive handles use their existing RAII scopes;
+only the control connection has an observed explicit close result. A native
+regression holds a real reader snapshot across a second connection's write,
+retains and rejects the resulting busy checkpoint, then verifies closure after
+that reader is released. These handoff checks do not claim power-loss durability.
+A separately
 implemented Python oracle reconstructs the uncompressed root relation from complete
 account inputs and checks observations; agreement is implementation evidence, not
 independent network service or future protocol acceptance.
