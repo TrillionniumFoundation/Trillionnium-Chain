@@ -88,7 +88,10 @@ impl IntegerModelV2 {
             "FACTOR_MODEL_CONTEXT",
         )?;
         let coefficients: Vec<_> = raw[46..]
-            .chunks_exact(2)
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
             .map(|c| i16::from_le_bytes([c[0], c[1]]))
             .collect();
         ensure(!coefficients.contains(&i16::MIN), "FACTOR_MODEL_RANGE")?;
@@ -283,7 +286,10 @@ fn derive(s: &mut impl FactorState, cfg: &Config, w: &FactorWitnessV2) -> Result
         .map(<[i16]>::to_vec)
         .collect();
     let a: Vec<Vec<i16>> = w.factors[ROWS * rank..]
-        .chunks_exact(COLUMNS)
+        .as_chunks::<COLUMNS>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
         .map(<[i16]>::to_vec)
         .collect();
     let raw = canonical(
@@ -418,7 +424,10 @@ pub fn admit(
     let metadata = json!({"parent":hex::encode(derived.parent_ref),"parent_artifact":hex::encode(derived.parent_artifact),"round":w.round,"slot":w.slot,"family":hex::encode(cfg.family),"numeric":"exact-i16-BA-add-delta-scale1024-v2","contribution":hex::encode(w.contribution_id)});
     let rows: Vec<_> = derived
         .normal
-        .chunks_exact(COLUMNS)
+        .as_chunks::<COLUMNS>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
         .map(|c| json!(c))
         .collect();
     let rowprefix = format!("linear-normal-v2:{}:", hex::encode(derived.update));

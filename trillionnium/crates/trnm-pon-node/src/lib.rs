@@ -107,7 +107,10 @@ pub fn sequence_root(tag: &str, items: &[Vec<u8>]) -> Hash {
             leaves.push(*leaves.last().expect("nonempty"));
         }
         leaves = leaves
-            .chunks_exact(2)
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
             .map(|p| hash(format!("{tag}-node").as_bytes(), &[&p[0], &p[1]]))
             .collect();
     }

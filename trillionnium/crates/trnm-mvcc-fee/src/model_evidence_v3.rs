@@ -188,7 +188,10 @@ fn control_model(control: &Control, family: Hash) -> Result<IntegerModelV2> {
     )?;
     let raw = hex::decode(hex).map_err(|_| "MODEL_EVIDENCE_CONTROL")?;
     let coefficients = raw
-        .chunks_exact(2)
+        .as_chunks::<2>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
         .map(|b| i16::from_le_bytes([b[0], b[1]]))
         .collect();
     IntegerModelV2::from_coefficients(family, coefficients)

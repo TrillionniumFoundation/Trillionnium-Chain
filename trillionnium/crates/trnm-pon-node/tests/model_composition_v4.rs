@@ -244,7 +244,13 @@ fn allocation_root(allocations: &[Allocation]) -> Hash {
         if leaves.len() % 2 == 1 {
             leaves.push(*leaves.last().unwrap());
         }
-        leaves = leaves.chunks_exact(2).map(|x| pair(x[0], x[1])).collect();
+        leaves = leaves
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
+            .map(|x| pair(x[0], x[1]))
+            .collect();
     }
     leaves[0]
 }

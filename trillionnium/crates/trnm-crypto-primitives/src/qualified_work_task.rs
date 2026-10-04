@@ -83,7 +83,12 @@ pub fn derive_matrices(model: &[u8], input: &[u8]) -> Result<(Vec<u32>, Vec<u32>
             return Err(AdmissionError::MaterialLength);
         }
         let mut values = Vec::with_capacity(pon_work::CELLS);
-        for bytes in bytes.chunks_exact(4) {
+        for bytes in bytes
+            .as_chunks::<4>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
+        {
             let value = u32::from_le_bytes(
                 bytes
                     .try_into()

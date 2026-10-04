@@ -896,7 +896,13 @@ fn allocation_root(mut leaves: Vec<Hash>) -> Result<Hash> {
         if leaves.len() % 2 == 1 {
             leaves.push(*leaves.last().ok_or("ROOT")?);
         }
-        leaves = leaves.chunks_exact(2).map(|x| pair(x[0], x[1])).collect();
+        leaves = leaves
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
+            .map(|x| pair(x[0], x[1]))
+            .collect();
     }
     Ok(leaves[0])
 }

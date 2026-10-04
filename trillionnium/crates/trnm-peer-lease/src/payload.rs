@@ -1329,7 +1329,13 @@ fn parse_log(
     let mut frame_receipts = BTreeMap::<ReplayFrameIdentityV1, PayloadReplayReceiptV1>::new();
     let mut frame_positions = BTreeMap::<ReplayFramePositionV1, ReplayFrameIdentityV1>::new();
     let mut last_hash = [0; 32];
-    for (index, bytes) in bytes.chunks_exact(RECORD_BYTES_V1).enumerate() {
+    for (index, bytes) in bytes
+        .as_chunks::<RECORD_BYTES_V1>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
+        .enumerate()
+    {
         let decoded = decode_record(bytes)?;
         if decoded.index != index as u64
             || decoded.namespace_digest != namespace_digest

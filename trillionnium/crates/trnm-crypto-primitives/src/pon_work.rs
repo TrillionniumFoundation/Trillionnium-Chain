@@ -144,7 +144,12 @@ fn expand_with_progress<E>(
         progress(VerificationProgress::Noise { label, counter })
             .map_err(VerificationError::Cancelled)?;
         let bytes = hash(b"noise", &[&challenge, &[label], &counter.to_le_bytes()]);
-        for pair in bytes.chunks_exact(4) {
+        for pair in bytes
+            .as_chunks::<4>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
+        {
             let v = u32::from_le_bytes([pair[0], pair[1], pair[2], pair[3]]);
             if u128::from(v) < Q {
                 out.push(v);
@@ -411,7 +416,10 @@ fn verify_with_kernel<E>(
         return Err(WorkError::Target.into());
     }
     let matrices: Vec<u32> = bytes[4..4 + 3 * CELLS * 4]
-        .chunks_exact(4)
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
         .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
         .collect();
     let (a, tail) = matrices.split_at(CELLS);

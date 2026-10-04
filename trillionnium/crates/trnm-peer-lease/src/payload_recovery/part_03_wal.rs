@@ -97,7 +97,13 @@ fn verify_log(
     let mut states = BTreeMap::<PeerKeyV1, ReplayStateV1>::new();
     let mut seen_sessions = BTreeSet::<(PeerKeyV1, [u8; 32])>::new();
     let mut previous_hash = [0; 32];
-    for (index, record_bytes) in bytes.chunks_exact(RECORD_BYTES_V1).enumerate() {
+    for (index, record_bytes) in bytes
+        .as_chunks::<RECORD_BYTES_V1>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
+        .enumerate()
+    {
         let record = decode_record(record_bytes)?;
         if record.index != index as u64
             || record.namespace_digest != expected_namespace_digest

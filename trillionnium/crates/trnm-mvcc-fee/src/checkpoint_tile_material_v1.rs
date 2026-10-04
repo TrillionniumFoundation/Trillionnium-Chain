@@ -567,7 +567,7 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
     let mut a = Vec::with_capacity(4096);
     let mut b = vec![0; 4096];
     let (mut ca, mut cb) = (0, 0);
-    for bytes in tile.chunks_exact(2) {
+    for bytes in tile.as_chunks::<2>().0.iter().map(|chunk| chunk.as_slice()) {
         let (v, clipped) = quantize(
             u16::from_le_bytes(bytes.try_into().map_err(|_| "TILE_BITS")?) as u32,
             7,
@@ -578,7 +578,12 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
         ca += usize::from(clipped);
     }
     // Reject every original activation nonfinite, including unselected coordinates.
-    for bytes in hidden.chunks_exact(4) {
+    for bytes in hidden
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
+    {
         require(
             (u32::from_le_bytes(bytes.try_into().map_err(|_| "ACTIVATION_BITS")?) >> 23) & 255
                 != 255,

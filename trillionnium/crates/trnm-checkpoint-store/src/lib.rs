@@ -491,7 +491,12 @@ impl ExternalCheckpointAuthorityV2 {
                 "trailing partial checkpoint record",
             ));
         }
-        for chunk in bytes.chunks_exact(LOG_RECORD_BYTES_V2) {
+        for chunk in bytes
+            .as_chunks::<LOG_RECORD_BYTES_V2>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
+        {
             let record = decode_log_record_v2(chunk)?;
             if record.sequence != self.record_count.saturating_add(1)
                 || record.previous_hash != self.head_hash

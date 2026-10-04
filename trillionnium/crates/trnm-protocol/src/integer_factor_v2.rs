@@ -91,7 +91,10 @@ impl FactorWitnessV2 {
             components_root: digest(6),
             round: u64::from_le_bytes(raw[234..242].try_into().expect("bounded")),
             factors: raw[PREFIX_BYTES..]
-                .chunks_exact(2)
+                .as_chunks::<2>()
+                .0
+                .iter()
+                .map(|chunk| chunk.as_slice())
                 .map(|c| i16::from_le_bytes([c[0], c[1]]))
                 .collect(),
         };

@@ -43,7 +43,13 @@ impl Material {
 // elimination rather than trusting the fixture label or the producer's detector.
 fn rank(matrix: &[u32]) -> usize {
     let multiply = |a: u32, b: u32| (u128::from(a) * u128::from(b) % Q) as u32;
-    let mut rows: Vec<_> = matrix.chunks_exact(N).map(<[u32]>::to_vec).collect();
+    let mut rows: Vec<_> = matrix
+        .as_chunks::<N>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
+        .map(<[u32]>::to_vec)
+        .collect();
     let mut rank = 0;
     for column in 0..N {
         let Some(pivot) = (rank..N).find(|row| rows[*row][column] != 0) else {
