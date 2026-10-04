@@ -191,6 +191,15 @@ The sustained socket measurement uses `transport-admission-sustained-cost-v2`.
 successfully written attacker bodies and writes whose outcome is unknown. These are
 body-write observations, not total link bandwidth including handshake and responses.
 
+The [finite saved V3 service campaign](PUBLIC_V3_SERVICE_CAMPAIGN.md) adds 130
+actual mixed calls over two server/owner epochs, including paid false-transcript
+W1 and malformed-packet load, a real persistent-owner reopen, complete
+failed-call records and a recomputed honest Head completion gap that includes
+restart downtime. The header-bound forged tickets reach actual full W1
+transcript rejection, checked against signed responses and server work counts.
+It uses the current V3 policy and records local development target outcomes
+without granting public or independent acceptance.
+
 The workload is exactly signed transfer tag1. Four funded senders are available; hot
 uses one sender/receiver, disjoint4 uses four, and growth introduces new receiver keys.
 These are explicit conflicts within a dedicated command chain, not general-contract TPS.

@@ -2,6 +2,8 @@
 //! Full-transcript work on challenge-encoded matrices; verification recomputes it.
 use sha2::{Digest, Sha256};
 
+pub mod structured;
+
 pub const PROFILE: &str = "pon-matmul-transcript-64-v1";
 pub const N: usize = 64;
 pub const R: usize = 8;
@@ -328,7 +330,7 @@ pub fn verify(
         &mut no_cancellation,
     ))
 }
-/// Full independent PNW1 replay with caller-local cooperative cancellation.
+/// Full PNW1 replay with caller-local cooperative cancellation.
 /// A callback error drops all intermediates; only complete success creates VerifiedWork.
 /// Checkpoints bound arithmetic between observations, not physical CPU time or preemption.
 pub fn verify_with_progress<E>(
@@ -337,6 +339,65 @@ pub fn verify_with_progress<E>(
     target: Hash,
     bytes: &[u8],
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<VerifiedWork, VerificationError<E>> {
+    verify_with_kernel(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        progress,
+        VerificationKernel::Transposed,
+    )
+}
+
+/// Retained scalar verifier for differential checks and explicitly named cost baselines.
+/// This follows the same admission grammar but uses the original u128 remainder,
+/// row-major multiplication and per-cell transcript updates for the full relation.
+pub fn verify_reference(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+) -> Result<VerifiedWork, WorkError> {
+    relation_only(verify_reference_with_progress(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        &mut no_cancellation,
+    ))
+}
+
+pub fn verify_reference_with_progress<E>(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<VerifiedWork, VerificationError<E>> {
+    verify_with_kernel(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        progress,
+        VerificationKernel::ScalarReference,
+    )
+}
+
+#[derive(Clone, Copy)]
+enum VerificationKernel {
+    ScalarReference,
+    Transposed,
+}
+
+fn verify_with_kernel<E>(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+    kernel: VerificationKernel,
 ) -> Result<VerifiedWork, VerificationError<E>> {
     if bytes.len() != PROOF_BYTES {
         return Err(WorkError::Length.into());
@@ -366,14 +427,24 @@ pub fn verify_with_progress<E>(
         return Err(WorkError::Target.into());
     }
     progress(VerificationProgress::BeforeReplay).map_err(VerificationError::Cancelled)?;
-    let evaluated = evaluate_transcript_with_progress(challenge, a, b, progress)?;
+    let evaluated = match kernel {
+        VerificationKernel::ScalarReference => {
+            evaluate_transcript_with_progress(challenge, a, b, progress)?
+        }
+        VerificationKernel::Transposed => {
+            evaluate_transposed_with_progress(challenge, a, b, progress)?
+        }
+    };
     // PNW1 submits only a final digest: every transcript update is still replayed.
     // A mismatch skips product corrections; a matching digest is not yet VerifiedWork.
     if evaluated.trace.as_slice() != trace_claim {
         return Err(WorkError::Transcript.into());
     }
-    let product = finish_product_with_progress(a, evaluated, progress)
-        .map_err(VerificationError::Cancelled)?;
+    let product = match kernel {
+        VerificationKernel::ScalarReference => finish_product_with_progress(a, evaluated, progress),
+        VerificationKernel::Transposed => finish_transposed_with_progress(a, evaluated, progress),
+    }
+    .map_err(VerificationError::Cancelled)?;
     if product != claimed {
         return Err(WorkError::Product.into());
     }
@@ -387,8 +458,8 @@ pub fn verify_with_progress<E>(
 }
 
 // q = 2^32 - 5. A transcript sum is below 2^70; two folds followed by
-// one subtraction are exact. Only the producer uses this alternative arithmetic;
-// the independent verifier retains u128 remainder and full recomputation.
+// one subtraction are exact. The prepared producer and production verifier use
+// this arithmetic; the separately retained scalar reference uses u128 remainder.
 fn producer_reduce(x: u128) -> u32 {
     debug_assert!(x < (1_u128 << 70));
     let first = (x as u32 as u64) + 5 * ((x >> 32) as u64);
@@ -400,6 +471,19 @@ fn producer_reduce(x: u128) -> u32 {
     }
 }
 fn producer_mul(a: &[u32], b: &[u32], rows: usize, inner: usize, cols: usize) -> Vec<u32> {
+    match transposed_mul_with_progress(a, b, rows, inner, cols, &mut no_cancellation) {
+        Ok(product) => product,
+        Err(impossible) => match impossible {},
+    }
+}
+fn transposed_mul_with_progress<E>(
+    a: &[u32],
+    b: &[u32],
+    rows: usize,
+    inner: usize,
+    cols: usize,
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<Vec<u32>, E> {
     debug_assert!(inner <= N);
     let mut transposed = vec![0; b.len()];
     for k in 0..inner {
@@ -409,6 +493,7 @@ fn producer_mul(a: &[u32], b: &[u32], rows: usize, inner: usize, cols: usize) ->
     }
     let mut out = vec![0; rows * cols];
     for i in 0..rows {
+        progress(VerificationProgress::MatrixRow { row: i })?;
         for j in 0..cols {
             let mut sum = 0_u128;
             for k in 0..inner {
@@ -417,7 +502,109 @@ fn producer_mul(a: &[u32], b: &[u32], rows: usize, inner: usize, cols: usize) ->
             out[i * cols + j] = producer_reduce(sum);
         }
     }
-    out
+    Ok(out)
+}
+
+// Exact full replay. Transposition and batched hashing change neither transcript
+// order nor the original noise/row/tile observation sequence. Nothing is trusted
+// from the producer, a prior task, the claimed product or an earlier callback.
+fn evaluate_transposed_with_progress<E>(
+    challenge: Hash,
+    a: &[u32],
+    b: &[u32],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<TranscriptEvaluation, VerificationError<E>> {
+    validate(a)?;
+    validate(b)?;
+    let el = expand_with_progress(challenge, 0, N * R, progress)?;
+    let er = expand_with_progress(challenge, 1, R * N, progress)?;
+    let fl = expand_with_progress(challenge, 2, N * R, progress)?;
+    let fr = expand_with_progress(challenge, 3, R * N, progress)?;
+    let e = transposed_mul_with_progress(&el, &er, N, R, N, progress)
+        .map_err(VerificationError::Cancelled)?;
+    let f = transposed_mul_with_progress(&fl, &fr, N, R, N, progress)
+        .map_err(VerificationError::Cancelled)?;
+    let ap: Vec<u32> = a
+        .iter()
+        .zip(e)
+        .map(|(x, y)| producer_reduce(u128::from(*x) + u128::from(y)))
+        .collect();
+    let bp: Vec<u32> = b
+        .iter()
+        .zip(f)
+        .map(|(x, y)| producer_reduce(u128::from(*x) + u128::from(y)))
+        .collect();
+    let mut bt = vec![0u32; CELLS];
+    for k in 0..N {
+        for j in 0..N {
+            bt[j * N + k] = bp[k * N + j];
+        }
+    }
+    let mut cp = vec![0u32; CELLS];
+    let mut transcript = Sha256::new();
+    transcript.update(b"TRNM-PON-TRACE1\0");
+    transcript.update(challenge);
+    for bi in 0..N / R {
+        for bj in 0..N / R {
+            let mut cells = [0u32; R * R];
+            let mut bytes = [0u8; R * R * 4];
+            for bk in 0..N / R {
+                progress(VerificationProgress::TranscriptTile {
+                    row: bi,
+                    column: bj,
+                    inner: bk,
+                })
+                .map_err(VerificationError::Cancelled)?;
+                for i in 0..R {
+                    for j in 0..R {
+                        let pos = i * R + j;
+                        let mut sum = u128::from(cells[pos]);
+                        for k in bk * R..(bk + 1) * R {
+                            sum += u128::from(ap[(bi * R + i) * N + k])
+                                * u128::from(bt[(bj * R + j) * N + k]);
+                        }
+                        cells[pos] = producer_reduce(sum);
+                        bytes[pos * 4..pos * 4 + 4].copy_from_slice(&cells[pos].to_le_bytes());
+                    }
+                }
+                transcript.update(bytes);
+            }
+            for i in 0..R {
+                cp[(bi * R + i) * N + bj * R..(bi * R + i) * N + (bj + 1) * R]
+                    .copy_from_slice(&cells[i * R..(i + 1) * R]);
+            }
+        }
+    }
+    Ok(TranscriptEvaluation {
+        cp,
+        el,
+        er,
+        fl,
+        fr,
+        bp,
+        trace: transcript.finalize().into(),
+    })
+}
+
+fn finish_transposed_with_progress<E>(
+    a: &[u32],
+    evaluated: TranscriptEvaluation,
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<Vec<u32>, E> {
+    progress(VerificationProgress::BeforeProduct)?;
+    #[cfg(test)]
+    PRODUCT_RECONSTRUCTIONS.with(|count| count.set(count.get() + 1));
+    let left = transposed_mul_with_progress(a, &evaluated.fl, N, N, R, progress)?;
+    let correction1 = transposed_mul_with_progress(&left, &evaluated.fr, N, R, N, progress)?;
+    let right = transposed_mul_with_progress(&evaluated.er, &evaluated.bp, R, N, N, progress)?;
+    let correction2 = transposed_mul_with_progress(&evaluated.el, &right, N, R, N, progress)?;
+    Ok(evaluated
+        .cp
+        .iter()
+        .zip(correction1)
+        .zip(correction2)
+        .map(|((x, y), z)| producer_reduce(u128::from(*x) + 2 * Q - u128::from(y) - u128::from(z)))
+        .collect())
 }
 
 /// Bounded producer cache for one exact task. It carries no verification authority.
@@ -504,6 +691,130 @@ impl PreparedTask {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn checked_value(
+        result: Result<VerifiedWork, WorkError>,
+    ) -> Result<(Hash, Hash, Hash, Vec<u32>), WorkError> {
+        result.map(|work| (work.challenge(), work.task(), work.ticket(), work.product))
+    }
+
+    #[test]
+    fn fast_and_scalar_verifiers_match_extreme_products_and_error_precedence() {
+        let a: Vec<_> = (0..CELLS)
+            .map(|i| if i % 2 == 0 { (Q - 1) as u32 } else { 0 })
+            .collect();
+        let b: Vec<_> = (0..CELLS)
+            .map(|i| (Q - 1 - (i % 19) as u128) as u32)
+            .collect();
+        let challenge = [255; 32];
+        let task = task_id(&a, &b).unwrap();
+        let proof = prove(challenge, &a, &b).unwrap();
+        let mut cases = vec![(challenge, task, [255; 32], proof.clone())];
+        cases.push(([7; 32], task, [255; 32], proof.clone()));
+        cases.push((challenge, [0; 32], [255; 32], proof.clone()));
+        cases.push((challenge, task, [0; 32], proof.clone()));
+        for length in [0, 4, PROOF_BYTES - 1] {
+            cases.push((challenge, task, [255; 32], proof[..length].to_vec()));
+        }
+        let mut extra = proof.clone();
+        extra.push(0);
+        cases.push((challenge, task, [255; 32], extra));
+        for pos in [4, 4 + CELLS * 4, 4 + CELLS * 8] {
+            let mut bad = proof.clone();
+            bad[pos..pos + 4].copy_from_slice(&u32::MAX.to_le_bytes());
+            cases.push((challenge, [0; 32], [255; 32], bad));
+        }
+        let mut wrong_product = proof.clone();
+        wrong_product[4 + CELLS * 8..4 + CELLS * 8 + 4].copy_from_slice(&0u32.to_le_bytes());
+        // Use a guaranteed different canonical value even if the true cell is zero.
+        if wrong_product == proof {
+            wrong_product[4 + CELLS * 8] = 1;
+        }
+        cases.push((challenge, task, [255; 32], wrong_product.clone()));
+        wrong_product[PROOF_BYTES - 1] ^= 1;
+        cases.push((challenge, task, [255; 32], wrong_product));
+        let mut wrong_magic = proof.clone();
+        wrong_magic[0] ^= 1;
+        cases.push((challenge, [0; 32], [0; 32], wrong_magic));
+        for (c, t, target, bytes) in cases {
+            assert_eq!(
+                checked_value(verify(c, t, target, &bytes)),
+                checked_value(verify_reference(c, t, target, &bytes))
+            );
+        }
+    }
+
+    #[test]
+    fn fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results() {
+        let (a, b) = matrices();
+        let challenge = [23; 32];
+        let task = task_id(&a, &b).unwrap();
+        let proof = prove(challenge, &a, &b).unwrap();
+        let mut fast_points = Vec::new();
+        let fast = verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+            fast_points.push(point);
+            Ok::<(), usize>(())
+        })
+        .unwrap();
+        let mut scalar_points = Vec::new();
+        let scalar =
+            verify_reference_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+                scalar_points.push(point);
+                Ok::<(), usize>(())
+            })
+            .unwrap();
+        assert_eq!(fast_points, scalar_points);
+        assert_eq!(fast.product(), scalar.product());
+        let cuts: Vec<_> = scalar_points
+            .iter()
+            .enumerate()
+            .filter_map(|(index, point)| {
+                let selected = match point {
+                    VerificationProgress::BeforeReplay
+                    | VerificationProgress::BeforeProduct
+                    | VerificationProgress::BeforeVerifiedWork => true,
+                    VerificationProgress::Noise { counter, .. } => *counter == 0 || *counter == 63,
+                    VerificationProgress::MatrixRow { row } => [0, 7, 63].contains(row),
+                    VerificationProgress::TranscriptTile { row, column, inner } => {
+                        (*row, *column, *inner) == (0, 0, 0)
+                            || (*row, *column, *inner) == (4, 4, 4)
+                            || (*row, *column, *inner) == (7, 7, 7)
+                    }
+                };
+                selected.then_some(index)
+            })
+            .collect();
+        for cut in cuts {
+            let mut observed = 0;
+            let mut stop = |_| {
+                let current = observed;
+                observed += 1;
+                if current == cut {
+                    Err(cut)
+                } else {
+                    Ok(())
+                }
+            };
+            let fast_error =
+                verify_with_progress(challenge, task, [255; 32], &proof, &mut stop).unwrap_err();
+            assert_eq!(observed, cut + 1);
+            observed = 0;
+            let scalar_error =
+                verify_reference_with_progress(challenge, task, [255; 32], &proof, &mut |_| {
+                    let current = observed;
+                    observed += 1;
+                    if current == cut {
+                        Err(cut)
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert_eq!(observed, cut + 1);
+            assert_eq!(fast_error, VerificationError::Cancelled(cut));
+            assert_eq!(fast_error, scalar_error);
+        }
+    }
     #[test]
     fn producer_reduction_matches_remainder_at_boundaries_and_deterministic_samples() {
         let limit = 1_u128 << 70;

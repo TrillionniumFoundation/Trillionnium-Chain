@@ -70,7 +70,9 @@
         "formal/pon-nakamoto-v1/ledger.py",
         "formal/pon-nakamoto-v1/work_oracle.py",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
-        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_producer_comparison.rs"
       ],
       "test_classes": [
         "InteropTests",
@@ -151,7 +153,8 @@
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
         "trillionnium/crates/trnm-checkpoint-types/src/record.rs",
-        "trillionnium/crates/trnm-pon-node/src/store.rs"
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -287,7 +290,9 @@
         "formal/pon-nakamoto-v1/native_execution.py",
         "trillionnium/crates/trnm-mvcc-fee/src/engine.rs",
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
-        "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs"
       ],
       "test_classes": [
         "ExecutionTests",
@@ -327,7 +332,8 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-pon-node/src/store.rs"
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/examples/history_state_cost.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -365,7 +371,9 @@
       ],
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
-        "trillionnium/crates/trnm-pon-node/src/store.rs"
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/evaluation_observation.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/evaluation_round_observation.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -453,7 +461,8 @@
         "formal/pon-nakamoto-v1/ledger.py",
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
         "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
-        "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs"
+        "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs"
       ],
       "test_classes": [
         "ExecutionTests"
@@ -496,7 +505,8 @@
         "formal/pon-nakamoto-v1/experiments/model_loop.py",
         "formal/pon-nakamoto-v1/ledger.py",
         "trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs",
-        "trillionnium/crates/trnm-verification-profiles/tests/exact_integer_linear_v1.rs"
+        "trillionnium/crates/trnm-verification-profiles/tests/exact_integer_linear_v1.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs"
       ],
       "test_classes": [
         "ExecutionTests"
@@ -674,7 +684,8 @@
         "trillionnium/crates/trnm-release-bundle/src/lib.rs",
         "trillionnium/crates/trnm-pon-node/src/store.rs",
         "trillionnium/crates/trnm-pon-node/src/ingress.rs",
-        "trillionnium/crates/trnm-pon-node/src/main.rs"
+        "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "trillionnium/crates/trnm-pon-node/src/error.rs"
       ],
       "test_classes": [
         "DiskReorgTests"

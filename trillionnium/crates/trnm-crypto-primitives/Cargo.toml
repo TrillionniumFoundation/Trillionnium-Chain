@@ -17,6 +17,6 @@ anyhow = "1"
 sha2 = "0.10"
 hex = "0.4"
 ed25519-dalek = "2"
-trnm-protocol = { path = "../trnm-protocol" }
+trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
 
 [dev-dependencies]

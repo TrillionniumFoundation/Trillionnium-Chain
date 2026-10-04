@@ -74,7 +74,7 @@
       "responsibilities": [
         {
           "operation": "M01.VerifyWork",
-          "implementation_kind": "native-component-with-reference-caller",
+          "implementation_kind": "native-development-owner",
           "runtime_symbols": [
             {
               "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
@@ -83,18 +83,28 @@
             {
               "path": "formal/pon-nakamoto-v1/work_backend.py",
               "symbol": "verify"
+            },
+            {
+              "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+              "symbol": "verify_reference"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "WorkCheckedPacket::verify"
             }
           ],
           "controlled_entrypoint": {
-            "path": "formal/pon-nakamoto-v1/work_backend.py",
-            "symbol": "verify"
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::admit"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Explicit TRNM_NATIVE_WORK or separately named Python reference",
+          "backend": "Native Node full W1 relation with optimized arithmetic; explicit independent scalar kernel and separate Python conformance oracle remain. No succinct proof or fastest-adversary qualification.",
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_work_backend.py::NativeWorkBridgeTests.test_proof_bytes_and_verified_product_equal_oracle",
-            "formal/pon-nakamoto-v1/test_work_backend.py::NativeWorkBridgeTests.test_wrong_statement_and_bad_trace_reject_without_fallback"
+            "formal/pon-nakamoto-v1/test_work_backend.py::NativeWorkBridgeTests.test_wrong_statement_and_bad_trace_reject_without_fallback",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::fast_and_scalar_verifiers_match_extreme_products_and_error_precedence",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results"
           ],
           "remaining": "Fastest-adversary work cost, public ingress fairness and complete native host remain unqualified."
         },
@@ -485,6 +495,14 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
               "symbol": "Node::execute_derived"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+              "symbol": "check_state"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+              "symbol": "admit"
             }
           ],
           "controlled_entrypoint": {
@@ -504,7 +522,8 @@
             "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_boolean_before_value_does_not_alias_integer_zero",
             "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_lost_reply_discards_advanced_cache_and_retries_same_input",
             "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_exact_predecessor_memo_does_not_skip_returned_root_verification",
-            "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs::inactive_extensions_full_state_receipts_deltas_and_reopen_match_complete_execution"
+            "trillionnium/crates/trnm-pon-node/tests/derived_commitment.rs::inactive_extensions_full_state_receipts_deltas_and_reopen_match_complete_execution",
+            "trillionnium/crates/trnm-mvcc-fee/tests/continuity_v1.rs::real_empty_execution_preserves_liability_bound_and_account_nonces"
           ],
           "remaining": "Derived commitments remain disposable computations, not authority or native paged persistence. Ordinary product integration, public service qualification and physical power-loss acceptance remain open."
         },
@@ -568,6 +587,10 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
               "symbol": "Node::open"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::read_active_with_progress"
             }
           ],
           "controlled_entrypoint": {
@@ -583,7 +606,8 @@
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_every_initialization_cut_recovers_only_our_exact_intent",
             "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_injected_trigger_rejects_before_writable_open",
-            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_initialization_process_cuts_recover_only_the_owned_context"
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_initialization_process_cuts_recover_only_the_owned_context",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_active_state_rechecks_generation_before_publishing_a_derived_snapshot"
           ],
           "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
         },
@@ -673,6 +697,10 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
               "symbol": "Node::resume_intent"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+              "symbol": "Node::stored_header_link"
             }
           ],
           "controlled_entrypoint": {
@@ -688,7 +716,8 @@
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly",
             "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_admitted_before_activation_is_selected_on_restart",
-            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_every_reorg_process_cut_and_admission_gap_recovers_once"
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_every_reorg_process_cut_and_admission_gap_recovers_once",
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_checks_one_history_and_one_shared_body"
           ],
           "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
         }
@@ -792,6 +821,10 @@
             {
               "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
               "symbol": "execute"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+              "symbol": "reserve_release"
             }
           ],
           "controlled_entrypoint": {
@@ -802,7 +835,8 @@
           "backend": "Native publication command with scored roots and reference oracle",
           "persistence_owner": null,
           "evidence_selectors": [
-            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement"
+            "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement",
+            "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::objective_release_shared_source_reward_reopen_and_review_fork_are_native"
           ],
           "remaining": "Synthetic signed release transitions are not three improving public-model generations."
         },
@@ -851,7 +885,7 @@
       "responsibilities": [
         {
           "operation": "M11.EvaluateFrozenModel",
-          "implementation_kind": "controlled-experiment",
+          "implementation_kind": "native-development-owner",
           "runtime_symbols": [
             {
               "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
@@ -860,23 +894,28 @@
             {
               "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
               "symbol": "verify_calibration"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+              "symbol": "record"
             }
           ],
           "controlled_entrypoint": {
-            "path": "formal/pon-nakamoto-v1/experiments/model_loop.py",
-            "symbol": "worker"
+            "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "symbol": "Node::admit"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "E3 sealed evaluation with recomputed empirical value and fixed-objective accuracy-bound claim; not prospective or general-circuit acceptance",
+          "backend": "Explicit model-evidence-v3 performs native integer inference on frozen historical source groups and all four retained controls; general model evaluation remains a separate controlled experiment.",
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_self_consistent_rehashed_calibration_score_still_requires_actual_replay",
             "formal/pon-nakamoto-v1/test_evaluation_bundle.py::EvaluationWorkerTests.test_legacy_unbound_reference_cannot_authorize_evaluation",
             "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_empirical_optimum_certificate_is_bound_to_only_the_committed_dataset",
             "formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_empirical_optimality_gap_is_recomputed_not_inferred_from_positive_gain",
-            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_rehashed_value_claim_cannot_promote_future_or_general_optimality"
+            "formal/pon-nakamoto-v1/test_evaluation_bundle.py::SettlementObservationTests.test_rehashed_value_claim_cannot_promote_future_or_general_optimality",
+            "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::zero_gain_and_noop_cannot_become_positive_by_consistent_signatures"
           ],
-          "remaining": "Future-window, independent evaluator, provenance and poisoning acceptance remain open."
+          "remaining": "Independent prospective model utility, undisclosed common control, general-model proof and public evaluation governance are unaccepted. Public-corpus memorizer tests establish routing and rewards only."
         },
         {
           "operation": "M11.AdmitEvaluation",
@@ -897,6 +936,10 @@
             {
               "path": "formal/pon-nakamoto-v1/evaluation_round.py",
               "symbol": "complete_score"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+              "symbol": "check_reveal"
             }
           ],
           "controlled_entrypoint": {
@@ -1265,6 +1308,10 @@
             {
               "path": "formal/pon-nakamoto-v1/bounded_process.py",
               "symbol": "run_bounded"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+              "symbol": "Error::requires_owner_stop"
             }
           ],
           "controlled_entrypoint": {
@@ -1276,7 +1323,8 @@
           "persistence_owner": null,
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_timeout_reaps_own_child",
-            "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_stdout_flood_is_killed_and_reaped"
+            "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_stdout_flood_is_killed_and_reaped",
+            "trillionnium/crates/trnm-pon-node/src/error.rs::prefix_lookalikes_and_remote_failures_cannot_stop_local_owner"
           ],
           "remaining": "Child cleanup tests do not prove full node shutdown, durable miner stop or physical target reconciliation."
         }

@@ -3,6 +3,7 @@
 //! reads are validated in canonical order. Conflict or speculative rejection is
 //! re-executed ONCE against that order's current state, never an unbounded retry loop.
 use crate::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
+use crate::continuity_v1::{self, PROFILE as CONTINUITY_TASK_PROFILE};
 use crate::public_evaluation;
 use crate::qualified_task_lifecycle;
 use serde_json::{json, Value};
@@ -350,6 +351,7 @@ impl Config {
                     &[&canonical(&registry)?]
                 )));
             }
+            CONTINUITY_TASK_PROFILE => continuity_v1::configure(&mut params, policy)?,
             CHECKPOINT_TASK_PROFILE => return Err("CHECKPOINT_POLICY_REQUIRED"),
             _ => return Err("WORK_TASK_PROFILE"),
         }
@@ -365,9 +367,14 @@ impl Config {
                 serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
                     .map_err(|_| "CONFIG")?
             }
-            crate::integer_factor_candidate_v2::PROFILE => {
+            crate::integer_factor_candidate_v2::PROFILE | crate::model_evidence_v3::PROFILE => {
                 require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
-                require(task_profile == LEGACY_TASK_PROFILE, "MODEL_PROFILE_TASK")?;
+                require(
+                    task_profile == LEGACY_TASK_PROFILE
+                        || (model_profile == crate::model_evidence_v3::PROFILE
+                            && task_profile == "consensus-maintenance-continuity-dev-v1"),
+                    "MODEL_PROFILE_TASK",
+                )?;
                 let factor_policy: Value = serde_json::from_str(include_str!(
                     "../../../../config/pon/integer-factor-candidate-v2.json"
                 ))
@@ -405,7 +412,13 @@ impl Config {
                 ] {
                     require(factor_policy[key] == expected, "CONFIG")?;
                 }
-                params["consensus_revision"] = json!(11);
+                params["consensus_revision"] = json!(if model_profile
+                    == crate::model_evidence_v3::PROFILE
+                {
+                    crate::model_evidence_v3::REVISION.max(field(&params, "consensus_revision")?)
+                } else {
+                    11
+                });
                 params["model_profile"] = json!(model_profile);
                 params["chain_label"] =
                     json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
@@ -413,10 +426,15 @@ impl Config {
                     b"integer-factor-candidate-policy-v2",
                     &[&canonical(&factor_policy)?]
                 )));
-                serde_json::from_str(include_str!(
+                let mut model: Value = serde_json::from_str(include_str!(
                     "../../../../config/pon/model-family-integer-factor-v2.json"
                 ))
-                .map_err(|_| "CONFIG")?
+                .map_err(|_| "CONFIG")?;
+                if model_profile == crate::model_evidence_v3::PROFILE {
+                    crate::model_evidence_v3::install(&mut params)?;
+                    model["native_admission_profile"] = json!(model_profile);
+                }
+                model
             }
             "smollm2-135m-cpu-dev-v1" => {
                 require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
@@ -438,7 +456,10 @@ impl Config {
             )?;
             params["max_artifact_bytes"] = json!(maximum);
         }
-        if model_profile == crate::integer_factor_candidate_v2::PROFILE {
+        if matches!(
+            model_profile,
+            crate::integer_factor_candidate_v2::PROFILE | crate::model_evidence_v3::PROFILE
+        ) {
             for (key, expected) in [
                 ("schema", json!("integer-linear-factor-family-v2")),
                 ("version", json!(2)),
@@ -487,7 +508,19 @@ impl Config {
             ],
         );
         let family = hash(b"family", &[&canonical(&model)?]);
-        let plan = if model_profile == crate::integer_factor_candidate_v2::PROFILE {
+        let plan = if model_profile == crate::model_evidence_v3::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-model-evidence-plan-v3",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::integer_factor_candidate_v2::PROFILE {
             hash(
                 b"plan",
                 &[
@@ -884,7 +917,10 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
         tx.tag != 22
             || matches!(
                 cfg.task_profile(),
-                ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE | CHECKPOINT_TASK_PROFILE
+                ATOMIC_TASK_PROFILE
+                    | OVERLAP_TASK_PROFILE
+                    | CHECKPOINT_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
             ),
         "WORK_TASK_PROFILE",
     )?;
@@ -1047,6 +1083,12 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             require(s.get(&key).is_none(), "DUPLICATE")?;
             let mut contribution = crate::integer_factor_candidate_v2::admit(
                 &mut s, cfg, tx.sender, height, &witness,
+            )?;
+            crate::model_evidence_v3::admit(
+                &mut s,
+                cfg,
+                witness.contribution_id,
+                &mut contribution,
             )?;
             let excluded = public_evaluation::excluded(&s.scan("evaluation-disqualified:"));
             contribution["public_evaluation"] = public_evaluation::freeze(
@@ -1218,6 +1260,7 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             )?;
             let mut leaves = Vec::new();
             let mut adopted = Vec::new();
+            let mut evidence_allocations = Vec::new();
             let mut total = 0_u64;
             for _ in 0..count {
                 let cid = p.h()?;
@@ -1238,12 +1281,24 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                 )?;
                 leaves.push(allocation_leaf(cid, hash32(text(&o, "owner")?)?, score));
                 total = add(total, score)?;
+                if crate::model_evidence_v3::enabled(cfg) {
+                    evidence_allocations.push((cid, o.clone(), score));
+                }
                 o["status"] = json!("adopted");
                 adopted.push((k, o));
             }
             require(
                 allocation_root(leaves)? == supplied_root && total == supplied_total,
                 "ROOT",
+            )?;
+            crate::model_evidence_v3::reserve_release(
+                &mut s,
+                cfg,
+                bundle_id,
+                &bundle,
+                &evidence_allocations,
+                budget,
+                total,
             )?;
             require(
                 release
@@ -1458,7 +1513,12 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                         score: p.n()?,
                         salt: p.h()?,
                     };
-                    public_evaluation::reveal(evaluation, value, height)?;
+                    crate::model_evidence_v3::check_reveal(cfg, &contribution, &value)?;
+                    public_evaluation::reveal(
+                        &mut contribution["public_evaluation"],
+                        value,
+                        height,
+                    )?;
                 }
                 16 => {
                     let first = p.blob()?;
@@ -1687,6 +1747,7 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
         }
     }
     crate::integer_factor_candidate_v2::cleanup(state, height, cfg)?;
+    crate::model_evidence_v3::cleanup(state, cfg, height)?;
     Ok(receipts)
 }
 
@@ -1790,6 +1851,9 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         "LIMIT",
     )?;
     progress(ExecutionProgress::BeforeStateClone).map_err(ExecutionError::Cancelled)?;
+    if continuity_v1::enabled(cfg) {
+        continuity_v1::check_state(parent, height.checked_sub(1).ok_or("HEIGHT")?, cfg)?;
+    }
     let mut state = parent.clone();
     let mut receipts = mandatory(&mut state, height, cfg)?;
     progress(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
@@ -1955,6 +2019,7 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
     let issued = add(num(state.get("meta:issued").ok_or("STATE")?)?, subsidy)?;
     state.insert("meta:issued".into(), json!(issued));
     require(funds(&state)? == issued, "CONSERVATION")?;
+    continuity_v1::check_state(&state, height, cfg)?;
     let root_start = std::time::Instant::now();
     progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
     let root = commitment(parent, &state)?;

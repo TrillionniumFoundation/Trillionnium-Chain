@@ -34,7 +34,7 @@ fn h(value: &str) -> Result<Hash> {
     Ok(out)
 }
 pub fn enabled(cfg: &Config) -> bool {
-    cfg.params["model_profile"] == PROFILE
+    cfg.params["model_profile"] == PROFILE || crate::model_evidence_v3::enabled(cfg)
 }
 
 /// Complete canonical model: header, base, router, three delta slots. No hash-only parent.
@@ -44,6 +44,17 @@ pub struct IntegerModelV2 {
     coefficients: Vec<i16>,
 }
 impl IntegerModelV2 {
+    pub fn from_coefficients(family: Hash, coefficients: Vec<i16>) -> Result<Self> {
+        ensure(
+            coefficients.len() == ROWS * COLUMNS * 5,
+            "FACTOR_MODEL_LENGTH",
+        )?;
+        ensure(!coefficients.contains(&i16::MIN), "FACTOR_MODEL_RANGE")?;
+        Ok(Self {
+            family,
+            coefficients,
+        })
+    }
     pub fn genesis(family: Hash) -> Self {
         Self {
             family,
@@ -143,7 +154,11 @@ fn store_model(s: &mut impl FactorState, model: &IntegerModelV2) -> Result<()> {
     }
     Ok(())
 }
-fn load_model(s: &mut impl FactorState, id: Hash, family: Hash) -> Result<IntegerModelV2> {
+pub(crate) fn load_model(
+    s: &mut impl FactorState,
+    id: Hash,
+    family: Hash,
+) -> Result<IntegerModelV2> {
     let p = prefix(id);
     let entries = s.scan(&p);
     let meta = entries
@@ -233,6 +248,11 @@ pub fn bootstrap_state(cfg: &Config) -> Result<State> {
     }
     let mut state = Writer(State::new());
     store_model(&mut state, &model)?;
+    if crate::model_evidence_v3::enabled(cfg) {
+        for control in crate::model_evidence_v3::controls(cfg)? {
+            store_model(&mut state, &control)?;
+        }
+    }
     state.put("model:current".into(), json!(hex::encode(model.id())));
     Ok(state.0)
 }
@@ -475,6 +495,11 @@ pub fn cleanup(state: &mut State, height: u64, cfg: &Config) -> Result<()> {
     let mut view = ReadState(state);
     let (_, currentmodel) = parent(&mut view, cfg)?;
     needed.insert(hex::encode(currentmodel.id()));
+    if crate::model_evidence_v3::enabled(cfg) {
+        for control in crate::model_evidence_v3::controls(cfg)? {
+            needed.insert(hex::encode(control.id()));
+        }
+    }
     for (k, v) in state.iter() {
         if (k.starts_with("contribution:")
             || k.starts_with("evaluation-archive:")

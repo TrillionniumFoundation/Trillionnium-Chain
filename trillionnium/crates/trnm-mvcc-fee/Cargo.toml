@@ -17,9 +17,9 @@ consensus_authority = false
 default = []
 
 [dependencies]
-trnm-verification-profiles = { path = "../trnm-verification-profiles" }
-trnm-protocol = { path = "../trnm-protocol" }
-trnm-crypto-primitives = { path = "../trnm-crypto-primitives" }
+trnm-verification-profiles = { version = "=0.1.0", path = "../trnm-verification-profiles" }
+trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
+trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 hex = "0.4"

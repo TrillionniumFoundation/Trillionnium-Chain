@@ -7,12 +7,17 @@ of reported outputs. It imports the existing wire/hash owner, requires no new
 trainer or economic ledger, and changes no existing model artifact, native work
 profile, evaluation/reward policy or Hepta release owner.
 
-This is an executable interface contract, **not an executed target LLM**. No target
-weights, real tokenizer, authorized future task release or deployment GPU have been
-supplied. The test fixtures are fabricated: one tiny zero-byte tensor set and a
+This interface contract alone is **not execution of a target LLM**. Its test
+fixtures are fabricated: one tiny zero-byte tensor set and a
 32-layer shape declaration with unavailable placeholder weight digests. Neither is
 model efficacy evidence. The existing attribution campaign still runs the original
 257-feature model through its actual learning/inference owners.
+
+The separate [bounded runtime pilot](../../../../scripts/llm_runtime_README.md)
+now loads actual pinned SmolLM2-135M weights/tokenizer and trains all declared CPU
+controls. Its tiny public same-operator fixture records zero gain over the strongest
+control. No authorized independent future task release, deployment-GPU qualification
+or positive target-model efficacy is supplied by that pilot or this interface.
 
 ## Exact model, tokenizer and insertion context
 

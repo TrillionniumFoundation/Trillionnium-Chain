@@ -15,6 +15,7 @@ use trnm_crypto_primitives::qualified_work_task::{
     derive_matrices, lifecycle_v2::verify_lifecycle_admission, verify_development_admission,
     TaskMaterial,
 };
+use trnm_mvcc_fee::continuity_v1;
 use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::{
     pon_wire::{hash, Hash, Header},
@@ -307,6 +308,27 @@ impl Node {
             .map_err(|e| format!("TASK_MATRIX:{e:?}"))?;
         let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
         let state = self.state_at(parent)?;
+        if continuity_v1::enabled(&self.settings().app)
+            && task == continuity_v1::maintenance_task()?
+        {
+            continuity_v1::check_maintenance(&state, task, &self.settings().app)?;
+            let expected = continuity_v1::maintenance_material();
+            ensure(
+                model == expected.0 && input == expected.1,
+                "CONTINUITY_MATERIAL",
+            )?;
+            ensure((1..=4096).contains(&attempts), "WORK_BUDGET")?;
+            return self.prepare_from_checked_parent(
+                parent,
+                transactions,
+                miner,
+                timestamp,
+                &a,
+                &b,
+                &state,
+                &ParentTaskEligibility::ConsensusMaintenance,
+            );
+        }
         let material = || TaskMaterial {
             model,
             input,
@@ -318,6 +340,7 @@ impl Node {
             "signed-task-lifecycle-dev-v2"
             | "signed-task-lifecycle-dev-v3"
             | "signed-task-lifecycle-dev-v4"
+            | continuity_v1::PROFILE
             | "signed-checkpoint-tile-maintenance-dev-v1" => {
                 let eligible = qualified_task_lifecycle::eligible_task(
                     &state,
@@ -384,6 +407,28 @@ impl Node {
             .map_err(|e| format!("TASK_MATRIX:{e:?}"))?;
         let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
         let state = self.state_at(parent)?;
+        if continuity_v1::enabled(&self.settings().app)
+            && task == continuity_v1::maintenance_task()?
+        {
+            continuity_v1::check_maintenance(&state, task, &self.settings().app)?;
+            let expected = continuity_v1::maintenance_material();
+            ensure(
+                model == expected.0 && input == expected.1,
+                "CONTINUITY_MATERIAL",
+            )?;
+            ensure((1..=4096).contains(&attempts), "WORK_BUDGET")?;
+            return self.prepare_from_checked_parent_controlled(
+                parent,
+                transactions,
+                miner,
+                timestamp,
+                &a,
+                &b,
+                &state,
+                &ParentTaskEligibility::ConsensusMaintenance,
+                control,
+            );
+        }
         let material = || TaskMaterial {
             model,
             input,
@@ -395,6 +440,7 @@ impl Node {
             "signed-task-lifecycle-dev-v2"
             | "signed-task-lifecycle-dev-v3"
             | "signed-task-lifecycle-dev-v4"
+            | continuity_v1::PROFILE
             | "signed-checkpoint-tile-maintenance-dev-v1" => {
                 let eligible = qualified_task_lifecycle::eligible_task(
                     &state,

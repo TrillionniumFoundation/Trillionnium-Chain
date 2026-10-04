@@ -142,3 +142,7 @@ Run `python3 scripts/ci/report_module_evidence.py --module M10` from the reposit
 root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
 not observed in each package. A byte match is not a new test run or product acceptance.
 Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
+
+## Bounded empirical evidence and source budgets
+
+The explicit [native model evidence v3](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) binds candidate admission and release allocation to actual full integer inference and known-source budgets. A pre-adoption participant objection ends that candidate attempt without funding an indefinite escrow. Public historical-task memorizer successes are test fixtures; prospective usefulness remains separate.

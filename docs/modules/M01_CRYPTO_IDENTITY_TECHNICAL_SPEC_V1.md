@@ -117,3 +117,7 @@ The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
 the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
 No historical receipt is relabelled as executing this source.
+
+## Exact optimized verifier and structural producer comparison
+
+The ordinary native verifier now uses the same complete W1 relation with transposed arithmetic and tile-batched hashing. The explicit scalar verifier, retained Python oracle, error/progress equivalence and real structural producer comparisons are specified in [W1 implementation comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md). This changes verification cost without reducing the proof relation or granting a work-cost lower bound.

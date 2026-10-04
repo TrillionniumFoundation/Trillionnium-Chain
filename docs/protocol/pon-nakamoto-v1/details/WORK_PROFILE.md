@@ -179,10 +179,10 @@ from this concrete profile's parameters and implementation.
 `pon_work::PreparedTask` caches the exact canonical A/B/product prefix once for a fixed
 admitted task. For EVERY new challenge it still expands all challenge noise, computes
 the challenged tile accumulations and hashes every required intermediate in the exact
-original order. The original `evaluate`, `prove` and full `verify` are unchanged. The
-new native development miner calls this producer; a cached prefix is not VerifiedWork.
+original order. The original scalar `evaluate` and `prove` remain reference paths. The
+native development miner calls this producer; a cached prefix is not VerifiedWork.
 Cross-challenge dense/zero/rank-one/sparse regressions require byte-identical certificates
-and successful ORIGINAL verification. Invalid sizes and field elements still reject.
+and successful complete verification. Invalid sizes and field elements still reject.
 
 For this scalar algorithm, original generation performs 458,752 field multiplications
 per attempt. The prepared producer pays 262,144 once for AB and 327,680 per attempt.
@@ -205,7 +205,7 @@ as a named baseline but must not be presented as unavoidable effective mining wo
 
 `PreparedTask` now uses a separately implemented producer kernel: transposed operands,
 exact pseudo-Mersenne reduction, one retained 8x8 accumulation tile and batched transcript
-hash updates. The original full verifier still uses its u128 remainder/recomputation.
+hash updates. `verify_reference` retains the original u128 remainder/recomputation.
 Proof bytes, field bounds, complete transcript order, task/output and lottery identities
 are unchanged. New task preparation is charged separately; it is not free training.
 
@@ -216,6 +216,21 @@ at most 64 canonical products plus one canonical accumulator and obey that bound
 Boundary and deterministic-sample tests compare against exact `% q`; extreme-field,
 zero, structured and sparse proofs compare complete bytes with the original verifier.
 This is an arithmetic equivalence argument, not a theorem of work-cost hardness.
+
+The production `verify`/`verify_with_progress` now also use transposed operands, exact
+two-fold reduction and one 256-byte SHA update per tile accumulation. They still expand
+every noise word, replay every cumulative cell, reconstruct the product and compare it
+exactly. The original noise/row/tile progress sequence, cheap-rejection precedence,
+transcript-before-product rejection and final cancellation boundary are preserved.
+`verify_reference`/`verify_reference_with_progress` retain the scalar kernel for direct
+differential checks; the Python oracle remains unchanged. Shared parsing does not make
+these same-author implementations independent external security review.
+
+The [implementation comparison](W1_IMPLEMENTATION_COMPARISON.md) adds an actual zero
+transcript reassociation and checked zero/identity/diagonal/rank-one product preparation.
+These are explicit legal algorithm alternatives. Their operation counts cannot be used
+as wall-time gains or adversarial lower bounds. A structured producer cannot substitute
+different matrix bytes for a parent-registered or externally pinned task.
 
 The existing same-target prepared-cost collector compares the new valid producer with
 full generation and verification on the same task/target. Retain setup, every attempt,
@@ -234,6 +249,14 @@ wire byte, fork weight or admission rule. The existing
 original producer and the separately coded optimized `PreparedTask` kernel against the
 original verifier. The Python oracle remains a separate arithmetic/byte implementation;
 neither same-author implementation counts as external independent review.
+
+`pon_prepared_cost` explicitly calls `verify_reference`, preserving the meaning of its
+existing `original_verifier_ns` field and 64-row schema. Its valid-cost ratio is therefore
+a named scalar-reference baseline, not a current production-verifier measurement.
+`pon_adversarial_cost` continues to measure the ordinary production verifier. Use the
+separate `pon_producer_comparison` schema for paired production/reference verifier times,
+structured strategies, full-rank inputs, optional supplied materials and exhausted searches.
+Do not pool the two verifier implementations into one unlabeled acceptance ratio.
 
 For each of dense, zero, rank-one and sparse tasks at the explicitly requested common
 target, the reporter compares the mean cost of each complete supplied implementation.

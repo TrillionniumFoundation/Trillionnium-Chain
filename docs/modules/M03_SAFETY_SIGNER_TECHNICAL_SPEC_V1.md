@@ -85,3 +85,7 @@ The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
 the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
 No historical receipt is relabelled as executing this source.
+
+## Explicit continuity maintenance work
+
+[Continuity v1](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) adds a genesis-committed maintenance material and an explicit native mining choice. It grants zero useful-output credit, preserves full W1 verification and does not fabricate an external lease or override an owner withdrawal. The original profile remains unchanged.

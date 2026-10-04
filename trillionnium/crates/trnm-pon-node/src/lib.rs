@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 mod ancestry_index;
 pub mod consensus;
+mod error;
 pub mod ingress;
 pub mod mining;
 pub mod operator_checkpoint_tile;
@@ -20,8 +21,8 @@ pub mod operator_task_policy;
 pub mod peer_polling;
 pub mod public_submit;
 mod store;
+pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
-use std::{error, fmt};
 pub use store::evaluation_observation::{EvaluationAnchor, EvaluationObservation, EvaluationPhase};
 pub use store::evaluation_round_observation::{
     EvaluationRoundAnchor, EvaluationRoundBaseAnchor, EvaluationRoundObservation,
@@ -37,6 +38,7 @@ pub use store::{
 };
 use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};
+use trnm_mvcc_fee::continuity_v1::{self, PROFILE as CONTINUITY_TASK_PROFILE};
 use trnm_mvcc_fee::pon_executor::{self, Config, State};
 use trnm_mvcc_fee::pon_executor::{LEGACY_TASK_PROFILE, QUALIFIED_DEMANDS, SIGNED_TASK_PROFILE};
 use trnm_mvcc_fee::qualified_task_lifecycle;
@@ -49,39 +51,6 @@ use trnm_protocol::qualified_work_task::{
     MATRIX_ARTIFACT_BYTES,
 };
 
-#[derive(Debug)]
-pub struct Error(String);
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(&self.0)
-    }
-}
-impl error::Error for Error {}
-impl From<&str> for Error {
-    fn from(e: &str) -> Self {
-        Self(e.into())
-    }
-}
-impl From<String> for Error {
-    fn from(e: String) -> Self {
-        Self(e)
-    }
-}
-impl From<std::io::Error> for Error {
-    fn from(e: std::io::Error) -> Self {
-        Self(format!("IO: {e}"))
-    }
-}
-impl From<rusqlite::Error> for Error {
-    fn from(e: rusqlite::Error) -> Self {
-        Self(format!("STORAGE: {e}"))
-    }
-}
-impl From<serde_json::Error> for Error {
-    fn from(e: serde_json::Error) -> Self {
-        Self(format!("JSON: {e}"))
-    }
-}
 pub type Result<T> = std::result::Result<T, Error>;
 /// (model bytes, input bytes, derived A, derived B) for the public maintenance fixture.
 pub type BootstrapTaskMaterial = (Vec<u8>, Vec<u8>, Vec<u32>, Vec<u32>);
@@ -249,7 +218,10 @@ impl Settings {
             app.params["genesis_timestamp"] = json!(time);
             let label = if matches!(
                 task_profile,
-                LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
+                LIFECYCLE_TASK_PROFILE
+                    | ATOMIC_TASK_PROFILE
+                    | OVERLAP_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
             ) {
                 format!(
                     "trnm-pon-task-lifecycle-wall-devnet-{}-{policy}-{time}",
@@ -315,7 +287,10 @@ impl Settings {
         }
         if matches!(
             task_profile,
-            LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
+            LIFECYCLE_TASK_PROFILE
+                | ATOMIC_TASK_PROFILE
+                | OVERLAP_TASK_PROFILE
+                | CONTINUITY_TASK_PROFILE
         ) {
             let model: Vec<u8> = a.iter().flat_map(|v| v.to_le_bytes()).collect();
             let input: Vec<u8> = b.iter().flat_map(|v| v.to_le_bytes()).collect();
@@ -366,6 +341,10 @@ impl Settings {
                 json!({"balance":funding,"nonce":0}),
             );
         }
+        if continuity_v1::enabled(&app) {
+            initial.extend(continuity_v1::bootstrap_state(&app)?);
+            continuity_v1::check_state(&initial, 0, &app)?;
+        }
         let time = app.params["genesis_timestamp"].as_u64().ok_or("CONFIG")?;
         let genesis = hash(
             b"genesis",
@@ -394,6 +373,14 @@ impl Settings {
     pub fn task_profile(&self) -> &str {
         self.app.task_profile()
     }
+    /// Explicit perpetual genesis maintenance material. This fixture makes no
+    /// source signature, real user demand, useful-output or work hardness claim.
+    pub fn consensus_maintenance_material(&self) -> Result<BootstrapTaskMaterial> {
+        ensure(continuity_v1::enabled(&self.app), "CONTINUITY_PROFILE")?;
+        let (model, input) = continuity_v1::maintenance_material();
+        let (a, b) = continuity_v1::maintenance_matrices();
+        Ok((model, input, a, b))
+    }
     pub fn qualified_task_context(&self, demand_id: Hash, height: u64) -> Result<AdmissionContext> {
         Ok(self.app.qualified_task_context(demand_id, height)?)
     }
@@ -415,6 +402,7 @@ impl Settings {
                     | LIFECYCLE_TASK_PROFILE
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
             ),
             "TASK_PROFILE",
         )?;
@@ -432,7 +420,10 @@ impl Settings {
         ensure(
             matches!(
                 self.task_profile(),
-                LIFECYCLE_TASK_PROFILE | ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE
+                LIFECYCLE_TASK_PROFILE
+                    | ATOMIC_TASK_PROFILE
+                    | OVERLAP_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
             ),
             "TASK_PROFILE",
         )?;

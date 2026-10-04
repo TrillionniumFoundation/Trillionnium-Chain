@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 3).
-Effective: 2026-09-28; applicability clarification: 2026-09-29. Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 4).
+Effective: 2026-09-28; priority implementation revision: 2026-10-04. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -45,8 +45,9 @@ No machine flag is promoted. The current implementation projection is:
     public_testnet_ready = false
     release_ready = false
 
-New PoN implementation, work-profile qualification, cryptographic security, public-model
-efficacy and activation are also false. Source work and documentation may proceed now;
+The registry keeps full runtime acceptance, work-profile qualification, cryptographic
+security, public-model efficacy and activation unaccepted. This does not deny the native
+development code and controlled entrypoints below. Source work and documentation may proceed now;
 release requires their own real evidence, not completion of the retired PoCO roadmap.
 
 ### Current native development contracts
@@ -57,7 +58,49 @@ separate current source bindings from local execution, historical receipts, host
 checks, prospective-merge checks and external acceptance. This plan records no current
 PR pass: derive exact candidate/base/merge identities and retrieve their actual CI results.
 
-#### Current four-priority development scope
+#### Priority implementation revision: capacity, work, model evidence and engineering
+
+The current generated [implementation/profile view](../architecture/CURRENT_IMPLEMENTATION.md)
+comes from the existing registries and is checked for drift. It is not another plan,
+a runtime test result or a declaration of independent acceptance. The package graph
+remains 25 packages and 39 responsibilities; explicit native development ownership now
+includes W1 verification and the bounded revision13 empirical scorer.
+
+This revision preserves full header/challenge binding, parent-derived difficulty,
+required-work fork choice, complete proof verification before the private verified
+work type, ordered application execution, the single durable writer and the separation
+between reorganizable branch state and irreversible local operation facts. Model
+scores do not change chainwork. Earlier failures and zero rewards remain retained.
+
+| Priority | Implemented development boundary | Required acceptance still separate |
+| --- | --- | --- |
+| P0 capacity | [Continuity revision12](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) reserves absent mandatory recipients, future archives and unfilled reward slots before admitting state growth. Existing funded accounts can continue at the actual65,536-key cap. | Fixed-cap storage still needs a longer-term growth/rent design; a new arbitrary account is not promised admission at saturation. |
+| P0 work cost | [W1 comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md) executes scalar, prepared and structural producers with identical ticket streams and counts setup, failed attempts and exhausted budgets. | Fastest-adversary cost, broad hardware comparison, equal-cost task qualification and hardness are not proven by these algorithms or a single-host measurement. |
+| P0 work availability | Revision12 commits a separate immutable maintenance material/identity, zero useful-output credit and an explicit Node/CLI choice; optional signed V4 tasks retain expiry/revocation. | Availability is not computational qualification. Owner-side grants/withdrawals still fence local operations. There is no fabricated indefinite lease or automatic fallback. |
+| P1 verification | Current W1 verifier uses transposition, exact modulus folding and tiled hash updates; explicit scalar reference, byte-equivalence and cancellation checks remain. | The verifier still replays the full transcript. A succinct new proof relationship requires a separate version, security argument and independent review. |
+| P1 state/history | [Resource bounds](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) combine ancestor metadata into one checked SELECT, reuse delta SQL statements and add cancellable actual-state reads and a native growth/reopen measurement example. | Full-state reads/root construction and full-history confirmation are still linear; global disk retention, incremental execution and reader/writer separation remain open. |
+| P1 model | [Model evidence revision13](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) recomputes integer inference and strongest-control gain, binds every reveal, enforces known-source intake/payout budgets and a finite pre-publication objection window. | The corpus is historical/public. Memorizer positives are tests, not future efficacy. Allocation membership does not establish bundle derivation, causal/complementary contribution or superiority over every fresh component. Hidden common control, general-model correctness and public evaluation governance remain unaccepted. |
+| P1 public service | Existing V3 service/queue and protected transport tests remain actual bounded native campaigns; each mixed-service/restart report must keep errors, timeout outcomes and honest-service gaps. | Independent operators, WAN/partition campaigns and long-running public service targets require actual external operation. Local tests cannot set those flags. |
+| P2 errors | [Typed local errors](../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) separate stable local identity/cause from human text and authenticated remote refusal. | Formatted legacy diagnostics still explicitly remain Unclassified; new local structural errors must be registered and tested. |
+| P2 CI/docs | [Execution contract](../architecture/CI_EXECUTION_CONTRACT.md) adds actual coverage-guided fuzz, pinned/frozen dependency checks, exact prospective-merge lanes and generated current navigation. | The original five required head names remain. New merge lanes do not themselves change remote branch-protection rules, and CI is not independent protocol acceptance. |
+
+All incompatible consensus rules require fresh explicit profile/context selection.
+The old revision3/6/7/8/9/10/11 vectors and namespaces retain their meaning. The
+combined continuity-task12/model13 context has a separate native regression through
+306 actually mined/admitted heights, archive reservation conversion, native rewards,
+source/retention cleanup and cold reopens. Its source-bound execution remains a
+development conformance result, separate from the full-capacity fixture and external
+acceptance. Transaction tags,
+wire error codes and the branch SQLite schema do not change in these improvements.
+
+For every delivered source, execute the existing complete Cargo graph/lock/fmt/test/
+Clippy gates, protocol bridges, negative repository/evidence checks and actual fuzz.
+Measure release binaries only after freezing source and without concurrent builds;
+retain exact commands, toolchain, binary hashes, inputs, failures and environment.
+A hosted head check and a prospective merge check must name their own exact commits.
+Neither results from this prose nor from the generated navigation table.
+
+#### Retained four-priority development scope
 
 These changes continue this plan and its existing module owners; no acceptance axis
 is promoted by implementation or by adding a diagnostic checker.
@@ -66,7 +109,7 @@ is promoted by implementation or by adding a diagnostic checker.
    module documents, actual source owners, controlled entrypoints and test selectors.
    M05 explicit reconciliation and M06 native execution/deltas are mapped to the Node
    owner; the39 responsibilities also bind revision11 factor admission and public V3
-   resource-r3 to their exact source/tests, without granting execution evidence.
+   resource-r9 to their exact source/tests, without granting execution evidence.
    Historical receipts and exact current delivery checks remain separate.
 2. **Work security diagnostics:** the [proposed local diagnostic profile](../../config/pon/work-security-acceptance-v1.json)
    and [work report contract](../protocol/pon-nakamoto-v1/details/WORK_PROFILE.md)

@@ -239,3 +239,7 @@ cursor/ancestry checks, with an original120-second listener owned and joined by 
 phase. It preserves all241 real successor blocks and the final archive refusal,
 without certifying uninterrupted241-block delivery within one listener lease. The
 historical single-transfer timeout remains outside this resumed-fixture scope.
+
+## Typed owner failures and explicit continuity
+
+[Typed error identity](../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) preserves display/wire text while separating stable local cause from signed remote refusal. [Continuity v1](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) adds an explicit maintenance choice under a fresh context; all local owner/revocation gates remain. Neither change authorizes a deployment.

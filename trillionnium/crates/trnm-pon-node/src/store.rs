@@ -19,7 +19,7 @@ use serde::Serialize;
 use serde_json::Value;
 use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
 use std::{
-    cell::RefCell,
+    cell::{Cell, RefCell},
     collections::BTreeMap,
     fs::{self, File, OpenOptions},
     io::{Read, Seek, SeekFrom, Write},
@@ -31,6 +31,7 @@ use trnm_crypto_primitives::qualified_work_task::{
     derive_matrices, verify_development_statement, DevelopmentTaskAdmission, TaskMaterial,
 };
 use trnm_mvcc_fee::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
+use trnm_mvcc_fee::continuity_v1::{self, PROFILE as CONTINUITY_TASK_PROFILE};
 use trnm_mvcc_fee::pon_commitment::{
     self, CacheLimits, CheckedCommitment, CommitmentObservation, ExecutionRequest,
     PreparedCommitment,
@@ -100,13 +101,14 @@ const AUTH_RESPONSE_RETENTION: u64 = 16;
 /// search; the successor is separately checked by M06 and consume_output.
 pub(crate) enum ParentTaskEligibility {
     Legacy,
+    ConsensusMaintenance,
     Signed(Box<QualifiedWorkTask>),
     Lifecycle(Box<qualified_task_lifecycle::EligibleLifecycleTask>),
 }
 impl ParentTaskEligibility {
     fn manifest(&self) -> Option<&QualifiedWorkTask> {
         match self {
-            Self::Legacy => None,
+            Self::Legacy | Self::ConsensusMaintenance => None,
             Self::Signed(manifest) => Some(manifest),
             Self::Lifecycle(eligible) => Some(eligible.manifest()),
         }
@@ -299,6 +301,19 @@ struct Record {
     work: Work,
     root: Hash,
 }
+struct StoredHeaderLink {
+    header: Header,
+    record: Record,
+    parent_work: Work,
+}
+
+/// Local SQL projection counters, not a work, state or confirmation certificate.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct HistoryReadCounters {
+    pub header_link_queries: u64,
+    /// Header and trace bytes returned to Rust; excludes SQLite page reads.
+    pub header_trace_bytes: u64,
+}
 /// Owns the exact packet whose work was actually verified. Not state or clock authority.
 /// Private fields prevent replacing the header/body/proof after verification.
 pub(crate) struct WorkCheckedPacket {
@@ -360,6 +375,7 @@ pub struct Node {
     // One derived snapshot only; State always comes from actual KV/snapshot/deltas.
     commitment_cache: RefCell<Option<ActiveCommitment>>,
     commitment_observation: RefCell<Option<CommitmentObservation>>,
+    history_read_counters: Cell<HistoryReadCounters>,
     owner_policy: Option<OwnerPolicy>,
     mining_owner: Option<operator_mining_owner::MiningOwner>,
     continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
@@ -837,6 +853,7 @@ impl Node {
             workers,
             commitment_cache: RefCell::new(None),
             commitment_observation: RefCell::new(None),
+            history_read_counters: Cell::new(HistoryReadCounters::default()),
             owner_policy,
             mining_owner,
             continuous_owner,
@@ -1439,6 +1456,14 @@ impl Node {
             })?)
     }
     fn slot_state(&self, slot: u64) -> Result<State> {
+        self.slot_state_with_progress(slot, &mut || Ok(()))
+    }
+    fn slot_state_with_progress(
+        &self,
+        slot: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<State> {
+        progress()?;
         let mut stmt = self
             .db
             .prepare("SELECT key,value FROM kv WHERE slot=? ORDER BY key")?;
@@ -1446,12 +1471,16 @@ impl Node {
             Ok((r.get::<_, String>(0)?, r.get::<_, Vec<u8>>(1)?))
         })?;
         let mut state = State::new();
-        for row in values {
+        for (index, row) in values.enumerate() {
+            if index.is_multiple_of(256) {
+                progress()?;
+            }
             let (key, bytes) = row?;
             let value: Value = serde_json::from_slice(&bytes)?;
             ensure(canonical(&value)? == bytes, "STATE_BYTES")?;
             state.insert(key, value);
         }
+        progress()?;
         Ok(state)
     }
     fn invalidate_commitment(&self) {
@@ -1645,12 +1674,28 @@ impl Node {
         Ok(prepared)
     }
     pub fn read_active(&self) -> Result<(Hash, u64, State)> {
+        self.read_active_with_progress(&mut || Ok(()))
+    }
+    /// Rechecks actual KV bytes and root, with cancellation at most 256 rows apart.
+    /// Root arithmetic is still bounded by the state limit and checked as one stage.
+    pub fn read_active_with_progress(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<(Hash, u64, State)> {
+        progress()?;
         self.namespace()?;
         let (tip, generation) = self.active()?;
         let slot = self.slot()?;
-        let state = self.slot_state(slot)?;
+        let state = self.slot_state_with_progress(slot, progress)?;
+        continuity_v1::check_state(&state, self.record(tip)?.height, &self.settings.app)?;
         let prior = self.cached_parent(tip)?;
+        progress()?;
         let prepared = self.checked_commitment(&state, self.record(tip)?.root, prior.as_ref())?;
+        progress()?;
+        ensure(
+            self.active()? == (tip, generation) && self.slot()? == slot,
+            "STALE_VIEW",
+        )?;
         self.publish_commitment(tip, generation, slot, prepared);
         Ok((tip, generation, state))
     }
@@ -1679,25 +1724,67 @@ impl Node {
         )?;
         Ok(packet)
     }
-    /// Reads only the committed header and trace of an already admitted local block.
-    /// This does not verify new work or replace inclusion-body validation.
-    fn stored_header(&self, id: Hash) -> Result<Header> {
-        let row = self.record(id)?;
-        let (prefix, trace, length): (Option<Vec<u8>>, Option<Vec<u8>>, Option<usize>) = self
-            .db
-            .query_row(
-            "SELECT substr(packet,1,?),substr(packet,-32),length(packet) FROM blocks WHERE id=?",
-            params![HEADER_BYTES, id.as_slice()],
-            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+    /// Reuses only a prepared SQL statement, never a previous clock or ancestry verdict.
+    /// The JOIN checks the parent in the same SQLite statement as the bounded header.
+    fn stored_header_link(&self, id: Hash) -> Result<StoredHeaderLink> {
+        struct Projection {
+            parent: Option<Vec<u8>>,
+            height: u64,
+            work: Vec<u8>,
+            root: Vec<u8>,
+            prefix: Option<Vec<u8>>,
+            trace: Option<Vec<u8>>,
+            length: Option<usize>,
+            parent_height: Option<u64>,
+            parent_work: Option<Vec<u8>>,
+            parent_parent: Option<Vec<u8>>,
+            parent_root: Option<Vec<u8>>,
+        }
+        let mut statement = self.db.prepare_cached(
+            "SELECT b.parent,b.height,b.chainwork,b.state_root,substr(b.packet,1,?),
+             substr(b.packet,-32),length(b.packet),p.height,p.chainwork,p.parent,p.state_root
+             FROM blocks b LEFT JOIN blocks p ON p.id=b.parent WHERE b.id=?",
         )?;
+        let mut counters = self.history_read_counters.get();
+        counters.header_link_queries = counters.header_link_queries.saturating_add(1);
+        self.history_read_counters.set(counters);
+        let projection = statement
+            .query_row(params![HEADER_BYTES, id.as_slice()], |r| {
+                Ok(Projection {
+                    parent: r.get(0)?,
+                    height: r.get(1)?,
+                    work: r.get(2)?,
+                    root: r.get(3)?,
+                    prefix: r.get(4)?,
+                    trace: r.get(5)?,
+                    length: r.get(6)?,
+                    parent_height: r.get(7)?,
+                    parent_work: r.get(8)?,
+                    parent_parent: r.get(9)?,
+                    parent_root: r.get(10)?,
+                })
+            })
+            .optional()?
+            .ok_or("UNKNOWN_PARENT")?;
+        let row = Record {
+            parent: projection.parent.map(bytes32).transpose()?,
+            height: projection.height,
+            work: Work::from_bytes(bytes64(projection.work)?),
+            root: bytes32(projection.root)?,
+        };
         ensure(
             (HEADER_BYTES + 2 + pon_work::PROOF_BYTES..=1_048_576)
-                .contains(&length.ok_or("GENESIS_HAS_NO_PACKET")?),
+                .contains(&projection.length.ok_or("GENESIS_HAS_NO_PACKET")?),
             "PACKET_LIMIT",
         )?;
-        let header = Header::decode(&prefix.ok_or("GENESIS_HAS_NO_PACKET")?)
-            .map_err(|_| Error::from("HEADER_CODEC"))?;
-        let trace = bytes32(trace.ok_or("GENESIS_HAS_NO_PACKET")?)?;
+        let prefix = projection.prefix.ok_or("GENESIS_HAS_NO_PACKET")?;
+        let trace = projection.trace.ok_or("GENESIS_HAS_NO_PACKET")?;
+        counters.header_trace_bytes = counters
+            .header_trace_bytes
+            .saturating_add((prefix.len() + trace.len()) as u64);
+        self.history_read_counters.set(counters);
+        let header = Header::decode(&prefix).map_err(|_| Error::from("HEADER_CODEC"))?;
+        let trace = bytes32(trace)?;
         ensure(
             header.block_id(trace) == id
                 && Some(header.parent) == row.parent
@@ -1705,7 +1792,33 @@ impl Node {
                 && header.state == row.root,
             "STORAGE_PACKET",
         )?;
-        Ok(header)
+        ensure(
+            projection
+                .parent_height
+                .ok_or("UNKNOWN_PARENT")?
+                .checked_add(1)
+                == Some(row.height),
+            "ANCESTRY_HEIGHT",
+        )?;
+        let parent_work =
+            Work::from_bytes(bytes64(projection.parent_work.ok_or("UNKNOWN_PARENT")?)?);
+        // Preserve the complete parent-record shape checks, including at genesis
+        // where the ancestry loop stops without reading another header.
+        let _ = projection.parent_parent.map(bytes32).transpose()?;
+        let _ = bytes32(projection.parent_root.ok_or("UNKNOWN_PARENT")?)?;
+        Ok(StoredHeaderLink {
+            header,
+            record: row,
+            parent_work,
+        })
+    }
+    /// Reads only the committed header and trace of an already admitted local block.
+    /// This does not verify new work or replace inclusion-body validation.
+    fn stored_header(&self, id: Hash) -> Result<Header> {
+        Ok(self.stored_header_link(id)?.header)
+    }
+    pub fn history_read_counters(&self) -> HistoryReadCounters {
+        self.history_read_counters.get()
     }
 
     fn parent(&self, id: Hash) -> Result<Hash> {
@@ -1743,6 +1856,7 @@ impl Node {
                 .optional()?
             {
                 let state: State = serde_json::from_slice(&bytes)?;
+                continuity_v1::check_state(&state, row.height, &self.settings.app)?;
                 let commitment = self.checked_commitment(&state, row.root, None)?.snapshot;
                 break (state, commitment);
             }
@@ -1768,6 +1882,7 @@ impl Node {
             commitment = self
                 .checked_commitment(&state, self.record(id)?.root, commitment.as_ref())?
                 .snapshot;
+            continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)?;
         }
         Ok(state)
     }
@@ -2501,15 +2616,15 @@ impl Node {
             ],
         )?;
         crate::ancestry_index::insert(&tx, index_context, id)?;
-        for (index, key) in keys.into_iter().enumerate() {
-            progress(ExecutionProgress::PersistenceDelta { index })?;
-            let before = prior.get(key).map(canonical).transpose()?;
-            let after = output.state.get(key).map(canonical).transpose()?;
-            if before != after {
-                tx.execute(
-                    "INSERT INTO deltas VALUES(?,?,?,?)",
-                    params![id.as_slice(), key, before, after],
-                )?;
+        {
+            let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
+            for (index, key) in keys.into_iter().enumerate() {
+                progress(ExecutionProgress::PersistenceDelta { index })?;
+                let before = prior.get(key).map(canonical).transpose()?;
+                let after = output.state.get(key).map(canonical).transpose()?;
+                if before != after {
+                    insert.execute(params![id.as_slice(), key, before, after])?;
+                }
             }
         }
         if h.height.is_multiple_of(128) {
@@ -2537,6 +2652,23 @@ impl Node {
             "EXPLICIT_TASK_REQUIRED",
         )?;
         let (a, b) = maintenance();
+        self.make_from_matrices(parent, transactions, miner, timestamp, max_attempts, &a, &b)
+    }
+    /// Explicit genesis-maintenance choice; never substitutes for rejected signed
+    /// work. Admission and proof verification still use the original Node owner.
+    pub fn make_consensus_maintenance(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        max_attempts: u64,
+    ) -> Result<Packet> {
+        ensure(
+            continuity_v1::enabled(&self.settings.app),
+            "CONTINUITY_PROFILE",
+        )?;
+        let (a, b) = continuity_v1::maintenance_matrices();
         self.make_from_matrices(parent, transactions, miner, timestamp, max_attempts, &a, &b)
     }
     pub fn parent_height(&self, parent: Hash) -> Result<u64> {
@@ -2599,6 +2731,7 @@ impl Node {
                     | LIFECYCLE_TASK_PROFILE
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -2640,6 +2773,7 @@ impl Node {
                     | LIFECYCLE_TASK_PROFILE
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -2703,6 +2837,7 @@ impl Node {
                     | LIFECYCLE_TASK_PROFILE
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -2763,11 +2898,17 @@ impl Node {
         task: Hash,
         height: u64,
     ) -> Result<ParentTaskEligibility> {
+        if continuity_v1::enabled(&self.settings.app) && task == continuity_v1::maintenance_task()?
+        {
+            continuity_v1::check_maintenance(state, task, &self.settings.app)?;
+            return Ok(ParentTaskEligibility::ConsensusMaintenance);
+        }
         if matches!(
             self.settings.task_profile(),
             LIFECYCLE_TASK_PROFILE
                 | ATOMIC_TASK_PROFILE
                 | OVERLAP_TASK_PROFILE
+                | CONTINUITY_TASK_PROFILE
                 | CHECKPOINT_TASK_PROFILE
         ) {
             let eligible =
@@ -2879,7 +3020,7 @@ impl Node {
         )
     }
     #[allow(clippy::too_many_arguments)]
-    fn prepare_from_checked_parent(
+    pub(crate) fn prepare_from_checked_parent(
         &self,
         parent: Hash,
         transactions: Vec<Vec<u8>>,
@@ -2932,7 +3073,7 @@ impl Node {
         })
     }
     #[allow(clippy::too_many_arguments)]
-    fn prepare_from_checked_parent_controlled(
+    pub(crate) fn prepare_from_checked_parent_controlled(
         &self,
         parent: Hash,
         transactions: Vec<Vec<u8>>,
@@ -3012,7 +3153,9 @@ impl Node {
                 )?)
             }
             ParentTaskEligibility::Signed(manifest) => record_task_output(state, manifest, product),
-            ParentTaskEligibility::Legacy => Ok(false),
+            ParentTaskEligibility::Legacy | ParentTaskEligibility::ConsensusMaintenance => {
+                Ok(false)
+            }
         }
     }
     pub fn mine(
@@ -3044,29 +3187,29 @@ impl Node {
         Ok(result)
     }
     fn apply_delta(&self, id: Hash, slot: u64, detach: bool) -> Result<()> {
+        let mut read = self
+            .db
+            .prepare_cached("SELECT value FROM kv WHERE slot=? AND key=?")?;
+        let mut write = self
+            .db
+            .prepare_cached("INSERT OR REPLACE INTO kv VALUES(?,?,?)")?;
+        let mut delete = self
+            .db
+            .prepare_cached("DELETE FROM kv WHERE slot=? AND key=?")?;
         for (key, before, after) in self.delta_rows(id)? {
             let (expected, new) = if detach {
                 (after, before)
             } else {
                 (before, after)
             };
-            let actual: Option<Vec<u8>> = self
-                .db
-                .query_row(
-                    "SELECT value FROM kv WHERE slot=? AND key=?",
-                    params![slot, &key],
-                    |r| r.get(0),
-                )
+            let actual: Option<Vec<u8>> = read
+                .query_row(params![slot, &key], |r| r.get(0))
                 .optional()?;
             ensure(actual == expected, "UNDO_ROOT")?;
             if let Some(value) = new {
-                self.db.execute(
-                    "INSERT OR REPLACE INTO kv VALUES(?,?,?)",
-                    params![slot, key, value],
-                )?;
+                write.execute(params![slot, key, value])?;
             } else {
-                self.db
-                    .execute("DELETE FROM kv WHERE slot=? AND key=?", params![slot, key])?;
+                delete.execute(params![slot, key])?;
             }
         }
         Ok(())
@@ -3097,8 +3240,14 @@ impl Node {
             let mut staged = None;
             self.atomic(|| {
                 self.apply_delta(target, slot, false)?;
+                let state = self.slot_state(slot)?;
+                continuity_v1::check_state(
+                    &state,
+                    self.record(target)?.height,
+                    &self.settings.app,
+                )?;
                 staged = Some(self.checked_commitment(
-                    &self.slot_state(slot)?,
+                    &state,
                     self.record(target)?.root,
                     prior.as_ref(),
                 )?);
@@ -3246,10 +3395,9 @@ impl Node {
                 &format!("{}:{index}", if kind == 0 { "detach" } else { "attach" }),
             )?;
         }
-        ensure(
-            root(&self.slot_state(g)?)? == self.record(target)?.root,
-            "ROOT",
-        )?;
+        let state = self.slot_state(g)?;
+        continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)?;
+        ensure(root(&state)? == self.record(target)?.root, "ROOT")?;
         cut(hook, "before-publish")?;
         self.atomic(|| {
             self.db.execute(
@@ -3289,11 +3437,9 @@ impl Node {
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         let mut current = tip;
         while current != self.settings.genesis() {
-            ensure(
-                self.stored_header(current)?.timestamp as u128 <= bound,
-                "TIME_DEFERRED",
-            )?;
-            current = self.parent(current)?;
+            let header = self.stored_header(current)?;
+            ensure(header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
+            current = header.parent;
         }
         Ok(())
     }
@@ -3335,7 +3481,7 @@ impl Node {
         ensure(unique.len() == queries.len(), "DUPLICATE_QUERY")?;
         progress(0)?;
         self.ready()?;
-        let (tip, generation, _) = self.read_active()?;
+        let (tip, generation, _) = self.read_active_with_progress(&mut || progress(0))?;
         let mut included = BTreeMap::new();
         for (transaction, block) in queries {
             if !included.contains_key(block) {
@@ -3367,11 +3513,9 @@ impl Node {
             if included.contains_key(&current) {
                 found.insert(current);
             }
-            ensure(
-                self.stored_header(current)?.timestamp as u128 <= bound,
-                "TIME_DEFERRED",
-            )?;
-            current = self.parent(current)?;
+            let header = self.stored_header(current)?;
+            ensure(header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
+            current = header.parent;
             checked = checked.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
         }
         let depth_required = self.settings.limit("confirmation_depth")?;
@@ -3891,3 +4035,7 @@ mod native_ancestry_tests {
 #[cfg(test)]
 #[path = "operator_task_store_tests.rs"]
 mod operator_task_store_tests;
+
+#[cfg(test)]
+#[path = "continuity_tests.rs"]
+mod continuity_tests;

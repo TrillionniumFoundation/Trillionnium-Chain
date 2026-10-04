@@ -4,6 +4,10 @@
 [PoN protocol](protocol/pon-nakamoto-v1/README.md), [M00-M17](modules/README.md),
 [actual portable source](../config/portability-inventory-v1.json).
 
+[Current implementation and explicit profiles](architecture/CURRENT_IMPLEMENTATION.md)
+is generated from the existing module/source/applicability registries and checked in CI.
+It distinguishes native development owners from ordinary product entrypoints and acceptance.
+
 Retired consensus source, protocol trees, legacy appendices, launchers and workflows are
 deleted. Historical content remains only in Git. Native candidates and a real executable contract now accompany portable components;
 they are not a qualified production node. Production remains disabled.

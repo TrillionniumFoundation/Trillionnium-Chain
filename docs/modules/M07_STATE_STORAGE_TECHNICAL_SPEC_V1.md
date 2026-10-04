@@ -81,3 +81,7 @@ The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
 the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
 No historical receipt is relabelled as executing this source.
+
+## Actual-state cancellation and statement reuse
+
+The [history/state resource contract](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) preserves the actual KV/root check and adds cancellation every256 rows, a final tip/generation/slot check and reused delta statements. The SQLite schema and atomic transaction boundary remain unchanged. Complete root construction and retained history still have their stated growth costs.

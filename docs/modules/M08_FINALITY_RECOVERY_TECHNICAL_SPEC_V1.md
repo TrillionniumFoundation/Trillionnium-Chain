@@ -91,3 +91,7 @@ The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
 the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
 No historical receipt is relabelled as executing this source.
+
+## Joined full-history projection
+
+The [history/state resource contract](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) reduces a full-confirmation ancestor step to one checked joined metadata query. Full observed-clock ancestry, inclusion-body roots, membership, cancellation and final generation checks remain. This does not cache an old clock verdict or claim constant-time confirmation/recovery.

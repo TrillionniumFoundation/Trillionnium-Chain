@@ -167,3 +167,7 @@ contribution or a qualified consensus cost class. The separate explicit revision
 requires full original replay in Settings construction and every Node open, binds a fresh
 operator/policy N/P/G and only admits the installed Maintenance/output0 relation.
 Its material replay does not replace actual parent/source eligibility or native execution.
+
+## Mandatory capacity and native model evidence
+
+[Continuity v1](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) checks mandatory future key liabilities in both accepted parent and successor state. [Model evidence v3](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) adds native frozen-task inference, strongest-control-positive scoring, exact reveal binding and known-source budgets. These are explicit new contexts under the existing executor and branch owner; earlier profile vectors and authority limits remain.

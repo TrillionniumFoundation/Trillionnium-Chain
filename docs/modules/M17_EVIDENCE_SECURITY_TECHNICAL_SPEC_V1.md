@@ -76,3 +76,7 @@ Presence and matching hashes in the author's directory do not establish a comple
 checkout. The publication tests exercise actual Git index omission and byte-preserving
 addition. Externally supplied historical packages remain explicitly separate from
 claims about which files existed in their original measured source tree.
+
+## Executed CI and current navigation
+
+The [CI execution contract](../architecture/CI_EXECUTION_CONTRACT.md) pins real libFuzzer and dependency tools, retains failed receipts/corpora and verifies exact head or prospective-merge identities. The [current implementation table](../architecture/CURRENT_IMPLEMENTATION.md) is regenerated from existing authorities. Source checks still do not establish independent work hardness or model/public-service qualification.

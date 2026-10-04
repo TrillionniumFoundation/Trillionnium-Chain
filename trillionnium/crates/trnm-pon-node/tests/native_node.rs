@@ -488,8 +488,15 @@ fn batch_fixture(path: &Path, settings: Settings) -> (Node, Vec<(Hash, Hash)>) {
 fn test_native_batch_checks_one_history_and_one_shared_body() {
     let temp = tempfile::tempdir().unwrap();
     let (node, queries) = batch_fixture(temp.path(), Settings::development(None).unwrap());
+    let before = node.history_read_counters();
     let batch = node.confirmations(&queries, CLOCK).unwrap();
+    let after = node.history_read_counters();
     assert_eq!(batch.ancestry_checked, 7);
+    assert_eq!(after.header_link_queries - before.header_link_queries, 7);
+    assert_eq!(
+        after.header_trace_bytes - before.header_trace_bytes,
+        7 * (trnm_protocol::pon_wire::HEADER_BYTES as u64 + 32)
+    );
     assert_eq!(batch.distinct_bodies_checked, 1);
     assert_eq!(batch.observations.len(), 4);
     for (query, observation) in queries.iter().zip(batch.observations) {
@@ -502,6 +509,87 @@ fn test_native_batch_checks_one_history_and_one_shared_body() {
             serde_json::to_value(node.confirmation(query.0, query.1, CLOCK).unwrap()).unwrap()
         );
     }
+}
+#[test]
+fn test_joined_history_projection_rejects_corrupt_genesis_record_shapes() {
+    let temp = tempfile::tempdir().unwrap();
+    let settings = Settings::development(None).unwrap();
+    let genesis = settings.genesis();
+    let (node, queries) = batch_fixture(temp.path(), settings);
+    let db = rusqlite::Connection::open(temp.path().join("native.sqlite")).unwrap();
+    for column in ["parent", "state_root"] {
+        let prior: Option<Vec<u8>> = db
+            .query_row(
+                &format!("SELECT {column} FROM blocks WHERE id=?"),
+                [genesis.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        db.execute(
+            &format!("UPDATE blocks SET {column}=? WHERE id=?"),
+            rusqlite::params![vec![0u8; 33], genesis.as_slice()],
+        )
+        .unwrap();
+        assert_eq!(
+            node.confirmations(&queries, CLOCK).unwrap_err().to_string(),
+            "STORAGE_HASH",
+            "malformed genesis {column} must retain the prior full-record check"
+        );
+        db.execute(
+            &format!("UPDATE blocks SET {column}=? WHERE id=?"),
+            rusqlite::params![prior, genesis.as_slice()],
+        )
+        .unwrap();
+        assert_eq!(
+            node.confirmations(&queries, CLOCK)
+                .unwrap()
+                .ancestry_checked,
+            7
+        );
+    }
+}
+
+#[test]
+fn test_active_state_cancellation_does_not_publish_a_commitment_or_change_generation() {
+    let temp = tempfile::tempdir().unwrap();
+    let node = open(temp.path());
+    let before = node.active().unwrap();
+    let root = node.derived_commitment_status().cache_root;
+    let mut checkpoints = 0;
+    let error = node
+        .read_active_with_progress(&mut || {
+            checkpoints += 1;
+            if checkpoints == 4 {
+                Err("CANCELLED".into())
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+    assert_eq!(error.to_string(), "CANCELLED");
+    assert_eq!(node.active().unwrap(), before);
+    assert_eq!(node.derived_commitment_status().cache_root, root);
+    assert_eq!(node.read_active().unwrap().0, before.0);
+}
+
+#[test]
+fn test_active_state_rechecks_generation_before_publishing_a_derived_snapshot() {
+    let temp = tempfile::tempdir().unwrap();
+    let node = open(temp.path());
+    let db = rusqlite::Connection::open(temp.path().join("native.sqlite")).unwrap();
+    let mut checkpoints = 0;
+    // After the root stage, change only the generation through a separate connection.
+    let error = node
+        .read_active_with_progress(&mut || {
+            checkpoints += 1;
+            if checkpoints == 6 {
+                db.execute("UPDATE active SET generation=generation+1", [])?;
+            }
+            Ok(())
+        })
+        .unwrap_err();
+    assert_eq!(error.to_string(), "STALE_VIEW");
+    assert_eq!(checkpoints, 6);
 }
 #[test]
 fn test_native_batch_invalid_tail_duplicate_and_limits_return_no_partial_success() {

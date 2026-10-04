@@ -70,6 +70,12 @@ Update markers and complete normal rows survive candidate expiration, missing-sc
 
 The original native public evaluation freeze/commit/reveal/closure and adoption/reward rules are reused. Those signed test scores are not independent scientific evaluations. This change does not enforce a source-group work budget, complementary bundle attribution, fair payout across sources, a strongest-control positive quality gain, useful demand, or LLM execution. Those remain explicit integration/qualification gaps. Historical inference or application use is not reversed by these branch-state rules.
 
+The separately selected [native model evidence V3](NATIVE_MODEL_EVIDENCE_V3.md)
+adds full fixed-dataset integer replay against four retained controls and the current
+parent, exact reveal-score/digest binding, declared-source round caps and a bounded
+pre-adoption objection gate. Revision11 above retains its original behavior. The V3
+empirical gate is not independent prospective quality or general functional-copy proof.
+
 ## Verification and usable local entry
 
 The ordinary local CLI already accepts this explicit `--model-profile`; `status` installs the context and `mine --transactions <JSON hex list> --output <packet>` executes a full signed tag23. `build_witness` is producer convenience only: it loads actual supplied State and computes claims; native M06 independently repeats all checks. No new network RPC or actor permission exists. Local `mine --logical-now` is a declared trusted test clock; network sync/serve retain their wall-clock guard.

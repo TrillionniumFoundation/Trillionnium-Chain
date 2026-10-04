@@ -126,6 +126,9 @@ until budgets expire or the operator explicitly starts a fresh runtime.
 Normal runtime, shared-stop or call-budget completion returns a report and
 does **not** stop the public service. A storage/owner structural failure or
 observer failure returns an error and sets the shared stop signal. Runtime
+decisions use [typed internal error identities](INTERNAL_ERROR_IDENTITY.md),
+not display text or a storage/ancestry prefix; a remote refusal never acquires
+local structural authority. Runtime
 and stop checks bound waiting and future calls. Existing V3 socket deadlines
 bound each call; a currently running native proof, state reconstruction or
 SQLite transaction is not preemptible and can finish after the requested
@@ -150,10 +153,12 @@ already valid packets and cannot invent future demand or evaluator authority.
 
 ## Retained tests
 
-Nine module tests cover exact configuration and file limits, bounded UTF-8
+Module tests cover exact configuration and file limits, bounded UTF-8
 failure evidence, page shape/caps, global call/page budgets and rotation,
 normal/fatal stop behavior, actual valid-work false-state rejection, fixed
 native target under disconnect, initial fallback and lower-work activation.
+The typed rejection test also preserves cursor/failure events while separating
+local structural and SQLite failures from remote/transport lookalikes.
 The actual `pinned_peer_polling` TCP test runs paid pinned signed V3 replies
 against a separate persisted native owner using
 `signed-task-lifecycle-dev-v3`. After A3 completes, the real server creates a

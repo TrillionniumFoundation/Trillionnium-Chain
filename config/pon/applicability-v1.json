@@ -232,7 +232,120 @@
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::live_pool_budget_cancellation_does_not_classify_or_commit_abandoned_bundle",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::aggregate_scoped_cpu_charges_real_parallel_intervals_once_and_preserves_state",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts",
-        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::public_submit_and_pool_paths_keep_thread_observer_scope_and_refuse_precommit_child_clock_failure"
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::public_submit_and_pool_paths_keep_thread_observer_scope_and_refuse_precommit_child_clock_failure",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs::public_v3_mixed_calls_reopen_with_complete_failure_denominators"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "continuity-v1",
+      "modules": [
+        "M03",
+        "M06",
+        "M07",
+        "M15"
+      ],
+      "configuration": "config/pon/continuity-v1.json",
+      "revision_pointer": "consensus_revision",
+      "consensus_revision": 12,
+      "document": "docs/protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens",
+        "trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::explicit_maintenance_survives_all_optional_task_revocation_and_reopen",
+        "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "model-evidence-v3",
+      "modules": [
+        "M06",
+        "M10",
+        "M11",
+        "M15"
+      ],
+      "configuration": "config/pon/model-evidence-v3.json",
+      "revision_pointer": "consensus_revision",
+      "consensus_revision": 13,
+      "document": "docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::objective_release_shared_source_reward_reopen_and_review_fork_are_native",
+        "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::zero_gain_and_noop_cannot_become_positive_by_consistent_signatures",
+        "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "w1-verifier-equivalence",
+      "modules": [
+        "M01",
+        "M03"
+      ],
+      "configuration": null,
+      "revision_pointer": null,
+      "consensus_revision": null,
+      "document": "docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "symbol": "verify"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::fast_and_scalar_verifiers_match_extreme_products_and_error_precedence",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "history-state-resource-bounds",
+      "modules": [
+        "M07",
+        "M08"
+      ],
+      "configuration": null,
+      "revision_pointer": null,
+      "consensus_revision": null,
+      "document": "docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "symbol": "Node::confirmations_with_progress"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_checks_one_history_and_one_shared_body",
+        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_active_state_rechecks_generation_before_publishing_a_derived_snapshot",
+        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_joined_history_projection_rejects_corrupt_genesis_record_shapes"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
+      "id": "internal-error-identity",
+      "modules": [
+        "M04",
+        "M15"
+      ],
+      "configuration": null,
+      "revision_pointer": null,
+      "consensus_revision": null,
+      "document": "docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+        "symbol": "Error::requires_owner_stop"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-pon-node/src/error.rs::display_changes_cannot_change_typed_retry_or_owner_stop_identity",
+        "trillionnium/crates/trnm-pon-node/src/error.rs::prefix_lookalikes_and_remote_failures_cannot_stop_local_owner"
       ],
       "evidence_class": "source-binding",
       "receipt": null

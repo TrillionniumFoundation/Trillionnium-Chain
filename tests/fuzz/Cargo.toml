@@ -1,0 +1,34 @@
+[package]
+name = "trnm-development-fuzz"
+version = "0.0.0"
+edition = "2021"
+publish = false
+license = "MIT"
+
+[package.metadata]
+cargo-fuzz = true
+
+# Fuzzing has its own lockfile and graph. No fuzz dependency enters the 25-package
+# native workspace or a normal node binary.
+[workspace]
+members = ["."]
+resolver = "2"
+
+[dependencies]
+libfuzzer-sys = "=0.4.10"
+trnm-protocol = { version = "=0.1.0", path = "../../trillionnium/crates/trnm-protocol" }
+trnm-crypto-primitives = { version = "=0.1.0", path = "../../trillionnium/crates/trnm-crypto-primitives" }
+
+[[bin]]
+name = "canonical_wire"
+path = "fuzz_targets/canonical_wire.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "work_certificate"
+path = "fuzz_targets/work_certificate.rs"
+test = false
+doc = false
+bench = false

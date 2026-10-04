@@ -551,7 +551,13 @@ fn mining_configuration(
     }
     let bootstrap = args.contains_key("--task-bootstrap");
     let files = ["--task-model", "--task-input"].map(|key| args.contains_key(key));
-    let material = if settings.task_profile() != "legacy-task-v1" {
+    let material = if args.contains_key("--consensus-maintenance") {
+        if bootstrap || files.iter().any(|present| *present) {
+            return Err("TASK_OPTIONS".into());
+        }
+        let (model, input, _, _) = settings.consensus_maintenance_material()?;
+        MiningMaterial::Registered { model, input }
+    } else if settings.task_profile() != "legacy-task-v1" {
         if bootstrap && files.iter().any(|p| *p) {
             return Err("TASK_OPTIONS".into());
         }
@@ -898,6 +904,7 @@ fn run() -> Result<Value> {
                 | "--authenticated-development-network"
                 | "--public-development-network"
                 | "--task-bootstrap"
+                | "--consensus-maintenance"
                 | "--mine"
                 | "--client-observations"
                 | "--reliable-submit"
@@ -931,8 +938,8 @@ fn run() -> Result<Value> {
         "pool-submit" => "--transactions --pool-policy",
         "pool-push" => "--peer --transactions --pool-context",
         "pool-status-remote" => "--peer",
-        "mine-loop" => "--miner --pool-policy --seconds --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input",
-        "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input",
+        "mine-loop" => "--miner --pool-policy --seconds --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --consensus-maintenance",
+        "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input --consensus-maintenance",
         "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
         "submit" => "--packet --peer",
         "push" => "--packet --peer --reliable-submit --submit-deadline-ms --submit-attempts --submit-call-cap --submit-parent-depth",
@@ -942,7 +949,7 @@ fn run() -> Result<Value> {
         "sync" => "--peer --tip --after --pages --evaluation-candidate --evaluation-round-blocks",
         "head" => "--peer",
         "history" => "--peer --tip --after",
-        "serve" => "--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --peers --peer-poll-ms --peer-pages --request-observation-output --request-observation-capacity",
+        "serve" => "--listen --seconds --mining-seconds --pool-policy --mine --miner --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --consensus-maintenance --peers --peer-poll-ms --peer-pages --request-observation-output --request-observation-capacity",
         _ => return Err("UNKNOWN_COMMAND".into()),
     };
     let authentication_options = match command.as_str() {
@@ -1174,6 +1181,7 @@ fn run() -> Result<Value> {
             "--max-transactions",
             "--max-transaction-bytes",
             "--task-bootstrap",
+            "--consensus-maintenance",
             "--task-model",
             "--task-input",
         ];
@@ -1490,12 +1498,18 @@ fn run() -> Result<Value> {
                 let files_present = ["--task-manifest", "--task-model", "--task-input"]
                     .map(|key| args.contains_key(key));
                 let bootstrap = args.contains_key("--task-bootstrap");
-                if matches!(
+                if args.contains_key("--consensus-maintenance") {
+                    if bootstrap || files_present.iter().any(|present| *present) {
+                        return Err("TASK_OPTIONS".into());
+                    }
+                    node.make_consensus_maintenance(parent, transactions, miner, timestamp, 4096)?
+                } else if matches!(
                     node.settings().task_profile(),
                     "signed-task-dev-v1"
                         | "signed-task-lifecycle-dev-v2"
                         | "signed-task-lifecycle-dev-v3"
                         | "signed-task-lifecycle-dev-v4"
+                        | "consensus-maintenance-continuity-dev-v1"
                         | "signed-checkpoint-tile-maintenance-dev-v1"
                 ) {
                     if bootstrap && files_present.iter().any(|present| *present) {
@@ -1507,6 +1521,7 @@ fn run() -> Result<Value> {
                             "signed-task-lifecycle-dev-v2"
                                 | "signed-task-lifecycle-dev-v3"
                                 | "signed-task-lifecycle-dev-v4"
+                                | "consensus-maintenance-continuity-dev-v1"
                                 | "signed-checkpoint-tile-maintenance-dev-v1"
                         ) {
                             node.settings()
@@ -1537,6 +1552,7 @@ fn run() -> Result<Value> {
                         "signed-task-lifecycle-dev-v2"
                             | "signed-task-lifecycle-dev-v3"
                             | "signed-task-lifecycle-dev-v4"
+                            | "consensus-maintenance-continuity-dev-v1"
                             | "signed-checkpoint-tile-maintenance-dev-v1"
                     );
                     let manifest = if lifecycle {

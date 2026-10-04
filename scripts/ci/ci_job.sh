@@ -11,6 +11,9 @@ case "${1:?required job}" in
     python3 scripts/ci/test_invariants_registry.py
     python3 scripts/ci/test_responsibility_evidence.py
     python3 scripts/ci/test_applicability.py
+    python3 scripts/ci/test_ci_contract.py
+    python3 scripts/ci/test_ci_execution.py
+    python3 scripts/ci/report_current_implementation.py --check
     python3 scripts/ci/test_work_cost_report.py
     python3 scripts/test_qualification_runtime.py
     ;;
@@ -18,6 +21,7 @@ case "${1:?required job}" in
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples
+    TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_vectors")" python3 formal/pon-nakamoto-v1/test_continuity.py -v
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
@@ -25,6 +29,7 @@ case "${1:?required job}" in
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
     cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
+    python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
     python3 scripts/test_llm_runtime_pilot.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_work_utility.py
@@ -57,9 +62,11 @@ case "${1:?required job}" in
     python3 scripts/ci/test_repository.py
     python3 formal/pon-nakamoto-v1/test_reference.py
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives fixed_hash_text -- --nocapture
+    python3 scripts/ci/run_fuzz_smoke.py
     ;;
   rust-baseline)
     cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+    python3 scripts/ci/run_supply_chain.py
     # The full workspace matrix includes both evaluation_sync_observation tests.
     # Run that target once in this matrix; a separate pre-run duplicated over ten
     # minutes of actual sync work and left the hosted 45-minute job incomplete.

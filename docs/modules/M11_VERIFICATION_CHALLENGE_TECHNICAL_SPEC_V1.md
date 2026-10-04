@@ -139,3 +139,7 @@ counterexamples above compare all arrival orders and withheld/expired evidence. 
 invariant applies to a fresh revision4 context; the registry's genesis revision remains
 the unchanged installed revision3 default. No new authority is obtained by choosing a
 profile or by registering a test selector.
+
+## Native full evidence replay in the explicit model profile
+
+[Model evidence v3](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) installs actual frozen tasks and four complete retained controls, recomputes candidate/parent/control scores in M06, and requires every signed reveal to match native score and digest. This finite statement is executable. Source attestations, hidden common control, general LLM behavior, prospective gain and public dispute adjudication remain distinct obligations.

@@ -117,8 +117,11 @@ def check(root=ROOT):
     require('self-hosted' not in text and 'contents: write' not in text,'privileged PR execution')
     require('persist-credentials: false' in text,'checkout credentials retained')
     require(not re.search(r'(?ms)^    env:\n(?:(?:^      [^\n]*\n)|(?:^\s*\n))*?^      [^\n]*\$\{\{\s*runner\.', text), 'runner context is unavailable in job-level env')
-    require(text.count('name: Set isolated Cargo paths after runner allocation') == 5, 'missing per-job runner-stage Cargo isolation')
-    require(text.count('\"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"') == 10, 'Cargo paths must use allocated runner and job identity')
+    # The five required head checks and separate prospective-merge matrix all
+    # receive isolated paths after allocation. Check each actual job, not a
+    # fixed count that would accidentally prohibit a merge-verification lane.
+    from check_ci_contract import validate as ci_validate
+    ci_validate(root)
     require('RUST_TEST_THREADS: "1"' in text,'fault-test harness isolation missing')
     for row in specs:
         prose=contained(root,row['technical_spec']).read_text()
@@ -130,6 +133,8 @@ def check(root=ROOT):
     applicability_validate(root)
     from check_invariants import validate as invariant_validate
     invariant_validate(root)
+    from report_current_implementation import validate as current_validate
+    current_validate(root)
     return {'result':'PASS','workspace_packages':len(names),'rust_files':source_count,'local_links':links,'runtime_implemented':False,'activation':False,'normal_dependency_edges':sum(map(len,normal_graph.values()))}
 if __name__=='__main__':
     try:
