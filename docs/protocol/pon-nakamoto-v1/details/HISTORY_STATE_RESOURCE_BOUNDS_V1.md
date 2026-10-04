@@ -59,6 +59,16 @@ statements. They retain exact before-byte checks, canonical before/after bytes,
 the same progress fences, single owner and original SQLite transaction boundary.
 This adds no persistent cache, schema migration, undo shortcut or reordered write.
 
+A warm M06 `CheckedExecutionParent` now compares every current State entry's canonical
+bytes with its opaque predecessor before sharing that predecessor's immutable map.
+This avoids a second complete parent-map allocation for that operation, while keeping
+all per-value canonical checks, protocol bounds and expected-root checks. The Node's
+actual KV read, committed-root validation, progress order and final tip/generation/slot
+checks are unchanged. Cold binding, complete successor encoding and history scans are
+also unchanged. The [derived commitment contract](DERIVED_STATE_COMMITMENT.md#sharing-complete-bytes-within-a-warm-parent-binding)
+defines error precedence, immutable lifetime, complete parity controls and the separate
+finite binding A/B observer; its logical retained-map counts do not measure RSS.
+
 Let N be state keys, H the traversed ancestry length, D changed keys and Q the
 number of distinct queried inclusion blocks. The current costs remain:
 

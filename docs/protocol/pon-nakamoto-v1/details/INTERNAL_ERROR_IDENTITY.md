@@ -75,6 +75,18 @@ requires the exact code, original operation/stage and existing finite limits.
 No new ingress owner, supervisor, implicit fallback or cross-profile admission
 adapter is introduced.
 
+The public V3 client's failed phase also carries `PublicClientStage`, rather than
+selecting retry, uncertain-submission reporting or elapsed-time accounting by a
+diagnostic string. `Construction`, `Challenge`, `SolutionSearch`,
+`SolutionBodyResponse` and `Complete` serialize to exactly the prior labels;
+`failed_stage: null` is unchanged. An unknown static diagnostic remains
+representable as `Unknown(label)`, but its text grants no native phase authority,
+including a label identical to `challenge`. The client constructs known variants
+at its actual phase transitions. Existing metrics are output-only (`Serialize`),
+so no old-record deserialization format is narrowed or newly accepted. This is a
+Rust field-type refinement; JSON observation fields, signed replies, retry limits
+and stage timing boundaries remain unchanged.
+
 ## Verification
 
 Native error tests preserve source types and exact displays, alter diagnostic
@@ -84,6 +96,14 @@ executes the actual rejection/event path for local SQLite/structure errors,
 remote and IO errors, missing ancestry and ancestry-budget exhaustion. The
 Submit recovery stage matrix refuses remote EOF claims, IO lookalikes, public
 EOF, deadlines and unavailable CPU accounting at every tested stage.
+
+The phase matrix covers all five native stages, `None`, an unknown future phase
+and unknown labels resembling the three post-construction phases. It checks exact
+retry/uncertainty decisions and preserves every serialized metrics field while
+charging only the actual failed phase. The retained real EOF-before-admission and
+lost-ACK tests check both the typed phase and original JSON label. A normal local
+signed-refusal regression confirms that EOF lookalikes, deadline and stale-context
+labels complete one authenticated call and never acquire local EOF retry identity.
 
 The retained real TCP `public_submit_recovery`, `pinned_peer_polling`,
 `protected_ingress`, `public_intake_v2` and `public_pool_v3` targets remain

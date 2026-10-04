@@ -20,6 +20,14 @@ ZERO_COMPARE_STEP = '''      - name: Check zero-matrix streams and exact source 
         if: always()
         run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-zero-locality-comparison.json" --suite zero-locality
 '''
+ONE_ZERO_RUN_STEP = '''      - name: Execute native one-zero rank-one locality costs
+        if: always()
+        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite one-zero-locality
+'''
+ONE_ZERO_COMPARE_STEP = '''      - name: Check one-zero rank-one streams and exact source identity
+        if: always()
+        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-one-zero-locality-comparison.json" --suite one-zero-locality
+'''
 CONTINUITY_BUILD = '    cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples\n'
 CONTINUITY_ORIGINAL = '    TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_vectors")" python3 formal/pon-nakamoto-v1/test_continuity.py -v\n'
 CONTINUITY_TRANSITIONS = '    TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v\n'
@@ -111,8 +119,8 @@ def validate(root: Path = ROOT) -> dict:
                     name + ' must execute its actual lane')
     costs = jobs['cross-arch-cost']
     require(not re.search(r'^    if:', costs, re.M), 'native architecture execution cannot be skipped')
-    require('    timeout-minutes: 60\n' in costs and '      fail-fast: false\n' in costs,
-            'architecture job must cover both bounded suites and retain both outcomes')
+    require('    timeout-minutes: 90\n' in costs and '      fail-fast: false\n' in costs,
+            'architecture job must cover three bounded suites and retain their outcomes')
     require('''        include:
           - arch: x64
             runner: ubuntu-24.04
@@ -126,6 +134,8 @@ def validate(root: Path = ROOT) -> dict:
             'architecture names are not a substitute for native cost execution')
     require(ZERO_RUN_STEP in costs and text.count(ZERO_RUN_STEP) == 1,
             'separate zero locality native execution must run once in each existing architecture job, including after reused failure')
+    require(ZERO_RUN_STEP + ONE_ZERO_RUN_STEP in costs and text.count(ONE_ZERO_RUN_STEP) == 1,
+            'one-zero locality must run once after the zero suite, including after either preceding suite failed')
     require('          name: cost-${{ matrix.arch }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}\n' in costs,
             'architecture artifacts must be bound to the same head and attempt')
     comparison = jobs['cross-arch-cost-consistency']
@@ -141,6 +151,8 @@ def validate(root: Path = ROOT) -> dict:
             'same-source cross-architecture streams must be checked from actual artifacts')
     require(ZERO_COMPARE_STEP in comparison and text.count(ZERO_COMPARE_STEP) == 1,
             'separate zero locality comparison must inspect actual current-run artifacts even after reused comparison failure')
+    require(ZERO_COMPARE_STEP + ONE_ZERO_COMPARE_STEP in comparison and text.count(ONE_ZERO_COMPARE_STEP) == 1,
+            'one-zero comparison must inspect its own current-run artifacts after the zero comparison even on earlier failure')
     merge = jobs['prospective-merge']
     require("    if: github.event_name == 'pull_request'\n" in merge, 'merge lane event boundary')
     require('      fail-fast: false\n' in merge, 'all merge lanes retain their outcomes')
@@ -168,6 +180,9 @@ def validate(root: Path = ROOT) -> dict:
     zero_negative = '    python3 scripts/ci/test_zero_locality_cost.py\n'
     require(zero_negative in dict(lane_pairs)['repository-truth'] and script.count(zero_negative) == 1,
             'zero locality evidence negative checks must execute in repository-truth')
+    one_zero_negative = '    python3 scripts/ci/test_one_zero_locality_cost.py\n'
+    require(one_zero_negative in dict(lane_pairs)['repository-truth'] and script.count(one_zero_negative) == 1,
+            'one-zero locality evidence negative checks must execute in repository-truth')
     require('    python3 scripts/run_public_v3_service_campaign.py --out ' in script,
             'source-bound mixed-service campaign and retained refusal checks missing')
     require(jobs['fuzz-smoke'].count('run: bash scripts/ci/install_ci_tools.sh fuzz') == 1 and

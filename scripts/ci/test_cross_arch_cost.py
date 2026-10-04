@@ -146,6 +146,15 @@ class RawCostContractTests(unittest.TestCase):
     def test_invocation_rotation_is_retained(self):
         self.rejected(lambda d: d['observations'][0].update(invocation_order=2))
 
+    def test_emitted_native_invocation_order_cannot_be_reordered(self):
+        self.rejected(lambda d: d['observations'].__setitem__(slice(0, 10),
+            list(reversed(d['observations'][:10]))))
+
+    def test_material_target_sample_order_cannot_be_reordered(self):
+        width = 2 * self.configuration['samples'] * 10
+        self.rejected(lambda d: d['observations'].__setitem__(slice(0, width * 2),
+            d['observations'][width:width * 2] + d['observations'][:width]))
+
     def test_verifier_order_is_actual_and_alternating(self):
         self.rejected(lambda d: d['observations'][0]['outcomes'][0].update(reference_verifier_first=False))
 

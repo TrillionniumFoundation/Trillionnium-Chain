@@ -18,7 +18,9 @@ use std::{
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_pon_node::{
     development_public, ingress,
-    ingress::public_v3::{self, PublicMetrics, PublicPolicy, PublicServer, Request},
+    ingress::public_v3::{
+        self, PublicClientStage, PublicMetrics, PublicPolicy, PublicServer, Request,
+    },
     public_submit::{submit_with_verified_parent_recovery, PinnedPublicClient, SubmitRecoveryPlan},
     Node, Packet, PoolLimits, Settings,
 };
@@ -452,7 +454,15 @@ fn actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts() {
         .collect();
     assert_eq!(submits.len(), 2);
     assert_eq!(submits[0].client_error.as_deref(), Some("FRAME_EOF"));
-    assert_eq!(submits[0].metrics.failed_stage, Some("challenge"));
+    assert_eq!(
+        submits[0].metrics.failed_stage,
+        Some(PublicClientStage::Challenge)
+    );
+    assert_eq!(
+        serde_json::to_value(&submits[0].metrics).unwrap()["failed_stage"],
+        "challenge"
+    );
+    assert!(submits[0].retryable_transport_eof);
     assert_eq!(
         submits[0].request_body_digest,
         submits[1].request_body_digest
@@ -490,7 +500,8 @@ fn actual_repeated_exact_eof_stops_after_three_identical_submits() {
     assert!(submits
         .iter()
         .all(|r| r.client_error.as_deref() == Some("FRAME_EOF")
-            && r.metrics.failed_stage == Some("challenge")
+            && r.metrics.failed_stage == Some(PublicClientStage::Challenge)
+            && r.retryable_transport_eof
             && r.request_body_digest == submits[0].request_body_digest));
     assert_eq!(outcome.attempts.len(), 6);
     assert!(outcome.submission_outcome_uncertain && !outcome.may_advance_dependency);
@@ -522,8 +533,13 @@ fn actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack(
     );
     assert_eq!(
         outcome.attempts[0].metrics.failed_stage,
-        Some("solution-body-response")
+        Some(PublicClientStage::SolutionBodyResponse)
     );
+    assert_eq!(
+        serde_json::to_value(&outcome.attempts[0].metrics).unwrap()["failed_stage"],
+        "solution-body-response"
+    );
+    assert!(outcome.attempts[0].retryable_transport_eof);
     assert_eq!(
         outcome
             .attempts
@@ -861,6 +877,48 @@ fn actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch() {
 }
 
 #[test]
+fn actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    let guest = identity(118);
+    for error in [
+        "FRAME_EOF",
+        "FRAME_EOF:challenge",
+        "PUBLIC_CLIENT_DEADLINE",
+        "SUBMIT_RECOVERY_STALE_HEAD",
+    ] {
+        let proxy = Proxy::start(
+            server.address,
+            Interruption::RefusalBeforeEverySubmit(error),
+        );
+        let outcome = submit_with_verified_parent_recovery(
+            &node,
+            client(proxy.address, &server, &guest),
+            &packets[0],
+            plan(),
+        );
+        assert_eq!(outcome.failure.as_deref(), Some(error));
+        assert_eq!(outcome.attempts.len(), 1);
+        let attempt = &outcome.attempts[0];
+        assert_eq!(attempt.operation, "submit");
+        assert_eq!(attempt.metrics.failed_stage, None);
+        assert_eq!(attempt.client_error, None);
+        assert!(!attempt.retryable_transport_eof);
+        assert_eq!(
+            attempt.authenticated_reply.as_ref().unwrap()["value"]["error"],
+            error,
+        );
+        assert!(!outcome.submission_outcome_uncertain);
+        assert!(!outcome.may_advance_dependency && outcome.acknowledged_packets.is_empty());
+        assert_eq!(
+            server.node.lock().unwrap().active().unwrap().0,
+            settings.genesis(),
+        );
+    }
+}
+
+#[test]
 fn actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership() {
     let dir = tempfile::tempdir().unwrap();
     let (node, packets, settings) = producer(&dir.path().join("producer"), 1);
@@ -1076,7 +1134,10 @@ fn actual_native_admission_without_response_at_deadline_is_uncertain_and_not_ret
     assert_eq!(outcome.attempts.len(), 1);
     let attempt = &outcome.attempts[0];
     assert_eq!(attempt.operation, "submit");
-    assert_eq!(attempt.metrics.failed_stage, Some("solution-body-response"));
+    assert_eq!(
+        attempt.metrics.failed_stage,
+        Some(PublicClientStage::SolutionBodyResponse)
+    );
     assert!(attempt.client_error.is_some());
     assert!(!attempt.retryable_transport_eof);
     assert!(attempt.authenticated_reply.is_none());

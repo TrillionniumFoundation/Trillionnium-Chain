@@ -10,7 +10,8 @@ from pathlib import Path
 
 from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRANSITIONS,
                                MODEL_OBSERVATION_BLOCK, RUST_ALL_TARGETS, RUST_DOCS,
-                               ZERO_RUN_STEP, ZERO_COMPARE_STEP)
+                               ZERO_RUN_STEP, ZERO_COMPARE_STEP, ONE_ZERO_RUN_STEP,
+                               ONE_ZERO_COMPARE_STEP)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
 
 
@@ -46,9 +47,11 @@ class CiContractTests(unittest.TestCase):
             with self.subTest(replacement=replacement):
                 self.rejected('.github/workflows/trnm-required-baseline.yml', ZERO_RUN_STEP, replacement)
 
-    def test_architecture_budget_covers_both_bounded_suites(self):
-        self.rejected('.github/workflows/trnm-required-baseline.yml',
-                      '    timeout-minutes: 60\n', '    timeout-minutes: 30\n')
+    def test_architecture_budget_covers_three_bounded_suites(self):
+        for minutes in [30, 60]:
+            with self.subTest(minutes=minutes):
+                self.rejected('.github/workflows/trnm-required-baseline.yml',
+                              '    timeout-minutes: 90\n', f'    timeout-minutes: {minutes}\n')
 
     def test_zero_comparison_cannot_be_removed_or_replaced_by_old_suite(self):
         for replacement in ['', ZERO_COMPARE_STEP.replace(' --suite zero-locality', ''),
@@ -69,6 +72,46 @@ class CiContractTests(unittest.TestCase):
         path = 'scripts/ci/ci_job.sh'
         command = '    python3 scripts/ci/test_zero_locality_cost.py\n'
         for replacement in ['', '    true # omitted zero checker tests\n', command + command]:
+            with self.subTest(replacement=replacement):
+                self.rejected(path, command, replacement)
+        original = (self.root / path).read_text()
+        changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+        self.rejected(path, original, changed)
+
+    def test_one_zero_native_execution_cannot_be_removed_skipped_or_replaced(self):
+        for replacement in ['', ONE_ZERO_RUN_STEP.replace('        if: always()\n', ''),
+                            ONE_ZERO_RUN_STEP.replace('run: python3', 'run: true # python3'),
+                            ONE_ZERO_RUN_STEP.replace(' --suite one-zero-locality', ' --suite zero-locality')]:
+            with self.subTest(replacement=replacement):
+                self.rejected('.github/workflows/trnm-required-baseline.yml', ONE_ZERO_RUN_STEP, replacement)
+
+    def test_one_zero_comparison_cannot_be_removed_skipped_or_relabelled(self):
+        for replacement in ['', ONE_ZERO_COMPARE_STEP.replace('        if: always()\n', ''),
+                            ONE_ZERO_COMPARE_STEP.replace('run: python3', 'run: true # python3'),
+                            ONE_ZERO_COMPARE_STEP.replace(' --suite one-zero-locality', ' --suite zero-locality')]:
+            with self.subTest(replacement=replacement):
+                self.rejected('.github/workflows/trnm-required-baseline.yml', ONE_ZERO_COMPARE_STEP, replacement)
+
+    def test_one_zero_suite_cannot_move_to_the_wrong_job(self):
+        path = '.github/workflows/trnm-required-baseline.yml'
+        original = (self.root / path).read_text()
+        for step, destination in [(ONE_ZERO_RUN_STEP, ONE_ZERO_COMPARE_STEP),
+                                  (ONE_ZERO_COMPARE_STEP, ONE_ZERO_RUN_STEP)]:
+            with self.subTest(step=step):
+                changed = original.replace(step, '').replace(destination, destination + step)
+                self.rejected(path, original, changed)
+
+    def test_one_zero_execution_and_comparison_keep_their_separate_sequential_steps(self):
+        for first, second in [(ZERO_RUN_STEP, ONE_ZERO_RUN_STEP),
+                              (ZERO_COMPARE_STEP, ONE_ZERO_COMPARE_STEP)]:
+            with self.subTest(step=second):
+                self.rejected('.github/workflows/trnm-required-baseline.yml', first + second, second + first)
+                self.rejected('.github/workflows/trnm-required-baseline.yml', second, second + second)
+
+    def test_one_zero_negative_checks_must_run_once_in_repository_truth(self):
+        path = 'scripts/ci/ci_job.sh'
+        command = '    python3 scripts/ci/test_one_zero_locality_cost.py\n'
+        for replacement in ['', '    true # omitted one-zero checker tests\n', command + command]:
             with self.subTest(replacement=replacement):
                 self.rejected(path, command, replacement)
         original = (self.root / path).read_text()

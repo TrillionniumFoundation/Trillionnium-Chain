@@ -103,6 +103,103 @@ Python scalar oracle can compare complete bytes and check nonzero unsupported
 controls outside any native timing run. Correct byte parity is not a hardness
 certificate or permission to keep mining an expired or withdrawn task.
 
+## Exactly one zero operand and a nonzero rank-one counterpart
+
+`pon_work::blocked_one_zero::BlockedOneZeroRankOnePreparedTask` is another separate
+complete-proof producer. It validates both complete canonical operands, requires
+exactly one zero operand, derives a factorization `u*v` of the other operand from
+its first nonzero field pivot, and checks all 4096 reconstructed cells. Both-zero,
+both-nonzero, and rank greater than one inputs return `None`; malformed lengths and
+field values remain errors. No caller-supplied factors, approximate rank, implicit
+generic fallback, current lease, or verification capability is accepted.
+
+The challenge matrices are unchanged: `A'=A+EL*ER` and `B'=B+FL*FR`. For each
+original inner prefix `K={0,...,8k-1}`, the two supported cases are:
+
+| Exact source material | Retained contracted factor | Complete original output prefix |
+|---|---|---|
+| `A=0`, `B=u*v` | `D_k=(ER[:,K]*u[K])*v+(ER[:,K]*FL[K,:])*FR` | `EL*D_k` |
+| `A=u*v`, `B=0` | `L_k=u*(v[K]*FL[K,:])+EL*(ER[:,K]*FL[K,:])` | `L_k*FR` |
+
+All operations are exact in the existing field. Each incremental middle update
+contains at most eight products plus its previous canonical value; each contracted
+factor cell contains nine products. Both bounds fit the existing reducer's
+documented `<2^70` input requirement. All eight original prefixes still produce
+every one of the 32,768 transcript words in the unchanged `bi,bj,bk,i,j` order.
+The complete PNW1 proof retains the exact original A/B bytes and zero product.
+Canonical proof bytes, task identity, challenge binding, ticket, target, ordinary
+and scalar verification, and native default producer selection are unchanged.
+
+| Per-challenge multiplication operation | Count |
+|---|---:|
+| Eight cumulative noise and rank-one middle updates, `64*(8*8+8)` | 4,608 |
+| All eight contracted factors, `8*64*8*9` | 36,864 |
+| Every original output prefix word, `32,768*8` | 262,144 |
+| Total for either direction | 303,616 |
+| Generic prepared transcript | 327,680 |
+
+The 7.34375% multiplication-count difference excludes noise derivation, hashing,
+canonical checks, pivot inversion, factor detection, byte construction, and memory
+costs. It is neither a measured speedup nor an adversarial work lower bound. The
+algorithm retains eight 64x8 contracted factors (16 KiB) and one 72-field middle
+state (288 bytes). The right-zero direction also transposes FR (2 KiB). Four noise
+arrays, two stored rank-one vectors, a 256-byte output tile, hash state, and complete
+proof buffers exist outside these bounds; these are not stack, heap, or RSS claims.
+
+`pon_one_zero_locality_cost` uses its own schema `pon-w1-one-zero-locality-v1`.
+Its two synthetic materials place the same exact nonzero matrix
+`M[i,j]=(i+1)*(j+3)` beside a zero operand:
+
+| Class | Actual field ranks `(A,B)` | Exact W1 task |
+|---|---|---|
+| `left-zero-rank-one` | `(0,1)` | `fde0e480d2cdc414c17eeb58909b0c349ac6a0af1572ceead65fa5227b64f027` |
+| `right-zero-rank-one` | `(1,0)` | `a311ab05c13b5472c437485ee693c7f98fbb69fe3b18869bf1f3706c3867cca9` |
+
+The example separately calculates actual field rank by ordinary-remainder Gaussian
+elimination outside producer timing. It compares `prepared-generic`,
+`structured-zero-product-reference`, and `blocked-one-zero-rank-one` under actual
+`cold-per-search` and `reused-one-setup` constructors. The original structured
+reference optimizes the zero product during setup and still computes its ordinary
+complete noisy transcript. Each measured blocked constructor performs its own
+complete canonical and factor validation, inversion, and proof-prefix construction;
+the separately calculated benchmark rank never substitutes for these checks.
+
+The numeric CLI bounds are the same as the zero-locality suite; there is no supplied
+material option. The two retained campaigns are:
+
+    target/release/examples/pon_one_zero_locality_cost --samples 4 --searches 4 --attempt-budget 64 --seed 0
+    target/release/examples/pon_one_zero_locality_cost --samples 2 --searches 4 --attempt-budget 8 --seed 1
+
+The challenge domain is `one-zero-locality-cost-v1`, and complete ticket/proof
+streams use `TRNM-PON-W1-ONE-ZERO-LOCALITY-*` domains. The winner commitment tag is
+`one-zero-locality-cost-winner-v1`. Both targets, every miss, exhausted search,
+actual setup invocation and full losing-proof commitment remain in the output.
+All six paths for one exact material/target/sample must have equal complete proof
+and ticket streams and equal winners before ordinary and scalar verifiers are
+timed separately. Invocation positions rotate by sample. Source, runner, binary,
+failed-process and elapsed-time receipts remain necessary; timings across the
+zero, reused, and one-zero schemas are not interchangeable. Only these two fixed
+materials are measured; this is not a distribution of checkpoint or user demand.
+
+`pon_one_zero_io` is a separate bounded correctness bridge. Its stdin is exactly
+32 challenge bytes followed by two canonical 16,384-byte operands. Select
+`generic`, `structured-zero-product-reference`, or `blocked-one-zero-rank-one`.
+Success returns exactly one 49,188-byte proof. The original reference operation
+supports exactly-one-zero materials regardless of the other operand's rank; the
+blocked operation supports only the exact nonzero rank-one counterpart. Unsupported
+requests return exit2 without proof bytes; no generic path is substituted. Static
+original Python scalar vectors, full Rust proof/ticket comparisons, late pivots,
+near-q values, zero coordinates, and caller mutation controls cover both directions.
+
+The signed [one-zero task regression](../../../../trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs)
+registers these non-bothzero materials under actual V4 and continuity profiles,
+rejects their use before parent registration and after source-byte mutation,
+compares the complete blocked proof with native and original scalar generation,
+admits ordinary packets, and checks durable reopen. Their explicit maintenance
+purpose retains zero useful-output credit. This is finite native conformance with
+disclosed development keys. It supplies no source-provenance, real-demand,
+permissionless admission, mining-cost, public-service, or useful-model acceptance.
+
 ## Verifier boundary
 
 `trnm-crypto-primitives/src/pon_work.rs` retains two complete arithmetic paths:
@@ -150,8 +247,10 @@ unchanged; the additional producers are directly callable comparison implementat
 Rank detection is over the exact field and checks every reconstructed matrix cell.
 It does not accept approximate rank, floating-point tolerance or an unverified supplied
 factorization. Setup timing includes structure detection, product construction and
-prefix allocation. The rank-one and product-only paths reuse the full prepared
-transcript kernel; only the zero-zero path changes the transcript multiplication order.
+prefix allocation. Within this original structured producer, the rank-one and
+product-only paths reuse the full prepared transcript kernel; only its zero-zero
+path changes transcript multiplication order. The separately named blocked
+one-zero producer above has its own narrower support and full-prefix algorithm.
 
 For A=B=0, let K_j be the first 8j inner coordinates and set
 

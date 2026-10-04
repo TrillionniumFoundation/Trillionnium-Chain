@@ -2,6 +2,7 @@
 //! separate test genesis with dormant accounts; it does not claim a generated
 //! 65,000-account historical chain or alter any installed genesis constructor.
 use super::*;
+use crate::ErrorCode;
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::continuity_v1;
 use trnm_protocol::qualified_work_task::lifecycle_v2::DemandRevocationV2;
@@ -83,6 +84,154 @@ fn capacity_settings(spare_keys: usize) -> (Settings, String) {
         ],
     );
     (settings, dormant)
+}
+
+fn capacity_report(node: &Node, view: &(Hash, u64, State), height: u64) -> Value {
+    let report = serde_json::to_value(node.capacity_observation().unwrap()).unwrap();
+    assert_eq!(report["schema"], "pon-continuity-capacity-observation-v1");
+    assert_eq!(report["observed_tip"], hex::encode(view.0));
+    assert_eq!(report["active_generation"], view.1);
+    assert_eq!(report["observed_height"], height);
+    assert_eq!(report["state_root"], hex::encode(root(&view.2).unwrap()));
+    assert_eq!(report["actual_keys"], view.2.len());
+    assert_eq!(report["maximum_keys"], continuity_v1::MAX_KEYS);
+    assert_eq!(report["next_block_admission_guaranteed"], false);
+    report
+}
+
+#[test]
+fn capacity_observation_distinguishes_reserved_and_retained_accounts() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+    let before = node.read_active().unwrap();
+    let initial = capacity_report(&node, &before, 0);
+    assert_eq!(initial["retained_account_keys"], 4);
+    assert_eq!(initial["credit_account_reserve"], 0);
+    assert_eq!(initial["archive_reserve"], 0);
+    assert_eq!(initial["reward_queue_reserve"], 20);
+    let original_required = initial["required_keys"].as_u64().unwrap();
+    let recipient = development_public(4).unwrap();
+    for height in 1..=2 {
+        let packet = node
+            .make_consensus_maintenance(
+                node.active().unwrap().0,
+                vec![],
+                recipient,
+                1 + height * 10,
+                4096,
+            )
+            .unwrap();
+        let id = node.admit(&packet, 100_000).unwrap();
+        node.activate(id).unwrap();
+        let report = capacity_report(&node, &node.read_active().unwrap(), height);
+        assert_eq!(report["retained_account_keys"], 4);
+        // Two future rewards to one missing recipient reserve exactly one key.
+        assert_eq!(report["credit_account_reserve"], 1);
+        assert_eq!(report["reward_queue_reserve"], 20 - height);
+        assert_eq!(report["required_keys"], original_required + 1);
+    }
+    let mut transfer = recipient.to_vec();
+    transfer.extend(1u64.to_le_bytes());
+    mine(&mut node, 3, vec![signed(&settings, 0, 1, 1, transfer)]);
+    let after = node.read_active().unwrap();
+    let report = capacity_report(&node, &after, 3);
+    assert_eq!(report["retained_account_keys"], 5);
+    assert_eq!(report["credit_account_reserve"], 0);
+    assert_eq!(report["reward_queue_reserve"], 17);
+    assert_eq!(report["required_keys"], original_required + 1);
+    assert_eq!(
+        report["unreserved_keys"],
+        continuity_v1::MAX_KEYS as u64 - original_required - 1
+    );
+    assert_eq!(
+        after.2[&format!("account:{}", hex::encode(recipient))]["balance"],
+        1
+    );
+    // This command's report is not inserted into legacy or signed peer Head stats.
+    assert!(node.stats().unwrap().get("capacity_observation").is_none());
+    assert!(node.stats().unwrap().get("required_keys").is_none());
+    drop(node);
+    let reopened = Node::open(dir.path(), settings, 1).unwrap();
+    assert_eq!(capacity_report(&reopened, &after, 3), report);
+}
+
+#[test]
+fn capacity_observation_rechecks_actual_bytes_cancellation_and_generation() {
+    let dir = tempfile::tempdir().unwrap();
+    let node = Node::open(dir.path(), settings(), 1).unwrap();
+    let before = node.read_active().unwrap();
+    let mut total = 0;
+    let expected = node
+        .capacity_observation_with_progress(&mut || {
+            total += 1;
+            Ok(())
+        })
+        .unwrap();
+    for cut in [1, 2, total] {
+        let mut calls = 0;
+        let error = node
+            .capacity_observation_with_progress(&mut || {
+                calls += 1;
+                if calls == cut {
+                    Err(Error::new(ErrorCode::PublicRequestCancelled))
+                } else {
+                    Ok(())
+                }
+            })
+            .unwrap_err();
+        assert!(error.is(ErrorCode::PublicRequestCancelled));
+        assert!(!error.requires_owner_stop());
+        assert_eq!(calls, cut);
+        assert_eq!(node.read_active().unwrap(), before);
+    }
+    let mut calls = 0;
+    let error = node
+        .capacity_observation_with_progress(&mut || {
+            calls += 1;
+            if calls == total {
+                node.db
+                    .execute("UPDATE active SET generation=?", [before.1 + 1])
+                    .unwrap();
+            }
+            Ok(())
+        })
+        .unwrap_err();
+    assert_eq!(error.to_string(), "STALE_VIEW");
+    assert!(!error.requires_owner_stop());
+    node.db
+        .execute("UPDATE active SET generation=?", [before.1])
+        .unwrap();
+    assert_eq!(node.capacity_observation().unwrap(), expected);
+
+    // A warm derived commitment must not hide tampered actual SQLite bytes.
+    let original = serde_json::to_vec(&before.2["model:current"]).unwrap();
+    for (bytes, code) in [
+        (b"null".as_slice(), "ROOT"),
+        (b" null".as_slice(), "STATE_BYTES"),
+    ] {
+        node.db
+            .execute("UPDATE kv SET value=? WHERE key='model:current'", [bytes])
+            .unwrap();
+        let error = node.capacity_observation().unwrap_err();
+        assert_eq!(error.to_string(), code);
+        assert!(error.requires_owner_stop());
+    }
+    node.db
+        .execute(
+            "UPDATE kv SET value=? WHERE key='model:current'",
+            [original],
+        )
+        .unwrap();
+    assert_eq!(node.read_active().unwrap(), before);
+    assert_eq!(node.capacity_observation().unwrap(), expected);
+
+    let legacy = tempfile::tempdir().unwrap();
+    let legacy = Node::open(legacy.path(), Settings::development(Some(1)).unwrap(), 1).unwrap();
+    assert_eq!(
+        legacy.capacity_observation().unwrap_err().to_string(),
+        "CONTINUITY_PROFILE"
+    );
 }
 
 #[test]
@@ -185,10 +334,19 @@ fn actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens() {
     let dir = tempfile::tempdir().unwrap();
     let (settings, dormant) = capacity_settings(0);
     let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+    let genesis_report = capacity_report(&node, &node.read_active().unwrap(), 0);
+    assert_eq!(genesis_report["actual_keys"], continuity_v1::MAX_KEYS - 20);
+    assert_eq!(genesis_report["reward_queue_reserve"], 20);
+    assert_eq!(genesis_report["unreserved_keys"], 0);
     for height in 1..=20 {
         mine(&mut node, height, vec![]);
     }
     let before = node.read_active().unwrap();
+    let full_report = capacity_report(&node, &before, 20);
+    assert_eq!(full_report["credit_account_reserve"], 0);
+    assert_eq!(full_report["archive_reserve"], 0);
+    assert_eq!(full_report["reward_queue_reserve"], 0);
+    assert_eq!(full_report["unreserved_keys"], 0);
     assert_eq!(before.2.len(), continuity_v1::MAX_KEYS);
     assert_eq!(
         continuity_v1::capacity(&before.2, 20, &settings.app)
@@ -220,6 +378,7 @@ fn actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens() {
         "STATE_CAPACITY"
     );
     assert_eq!(node.read_active().unwrap(), before);
+    assert_eq!(capacity_report(&node, &before, 20), full_report);
     assert_eq!(node.next_nonce(development_public(0).unwrap()).unwrap(), 1);
     assert_eq!(
         before.2[&dormant],
@@ -233,6 +392,12 @@ fn actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens() {
     let raw = signed(&settings, 0, 1, 1, transfer);
     mine(&mut restored, 21, vec![raw]);
     let after = restored.read_active().unwrap();
+    let continuing_report = capacity_report(&restored, &after, 21);
+    assert_eq!(continuing_report["unreserved_keys"], 0);
+    assert_eq!(
+        continuing_report["retained_account_keys"],
+        full_report["retained_account_keys"]
+    );
     assert_eq!(after.2.len(), continuity_v1::MAX_KEYS);
     assert_eq!(after.2[&dormant]["nonce"], 7);
     assert_eq!(
@@ -242,6 +407,7 @@ fn actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens() {
     drop(restored);
     let reopened = Node::open(dir.path(), settings, 2).unwrap();
     assert_eq!(reopened.read_active().unwrap(), after);
+    assert_eq!(capacity_report(&reopened, &after, 21), continuing_report);
     assert_eq!(
         reopened.next_nonce(development_public(0).unwrap()).unwrap(),
         2
@@ -331,6 +497,8 @@ fn actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes() {
         assert_eq!(after[&dormant]["nonce"], 7);
     }
     let refunded = node.read_active().unwrap();
+    let refunded_report = capacity_report(&node, &refunded, 22);
+    assert_eq!(refunded_report["unreserved_keys"], 0);
     assert_eq!(refunded.2[&quota_key]["remaining"], 0);
     assert_eq!(refunded.2[&quota_key]["status"], "expired");
     assert!(!refunded.2.contains_key(&recipient_key));
@@ -340,6 +508,12 @@ fn actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes() {
 
     let admitted = mine(&mut node, 23, vec![enter]);
     let entered = node.read_active().unwrap();
+    let entered_report = capacity_report(&node, &entered, 23);
+    assert_eq!(entered_report["unreserved_keys"], 0);
+    assert_eq!(
+        entered_report["retained_account_keys"].as_u64().unwrap(),
+        refunded_report["retained_account_keys"].as_u64().unwrap() + 1
+    );
     assert_eq!(entered.0, admitted);
     assert_eq!(entered.2.len(), continuity_v1::MAX_KEYS);
     assert!(!entered.2.contains_key(&quota_key));
@@ -361,6 +535,12 @@ fn actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes() {
     let fork24 = node.admit(&fork24, 100_000).unwrap();
     assert_eq!(node.activate(fork24).unwrap(), fork24);
     let detached = node.read_active().unwrap();
+    let detached_report = capacity_report(&node, &detached, 24);
+    assert_eq!(detached_report["unreserved_keys"], 1);
+    assert_eq!(
+        detached_report["retained_account_keys"],
+        refunded_report["retained_account_keys"]
+    );
     assert!(!detached.2.contains_key(&quota_key));
     assert!(!detached.2.contains_key(&recipient_key));
     assert_eq!(detached.2.len(), continuity_v1::MAX_KEYS - 1);
@@ -369,6 +549,7 @@ fn actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes() {
     drop(node);
     let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
     assert_eq!(node.read_active().unwrap(), detached);
+    assert_eq!(capacity_report(&node, &detached, 24), detached_report);
 
     let main24 = node
         .make_consensus_maintenance(admitted, vec![], owner, 241, 4096)
@@ -381,6 +562,12 @@ fn actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes() {
     let main25 = node.admit(&main25, 100_000).unwrap();
     assert_eq!(node.activate(main25).unwrap(), main25);
     let restored = node.read_active().unwrap();
+    let restored_report = capacity_report(&node, &restored, 25);
+    assert_eq!(restored_report["unreserved_keys"], 0);
+    assert_eq!(
+        restored_report["retained_account_keys"],
+        entered_report["retained_account_keys"]
+    );
     assert_eq!(restored.2.len(), continuity_v1::MAX_KEYS);
     assert!(!restored.2.contains_key(&quota_key));
     assert_eq!(restored.2[&recipient_key], entered.2[&recipient_key]);
@@ -389,6 +576,7 @@ fn actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes() {
     drop(node);
     let reopened = Node::open(dir.path(), settings, 1).unwrap();
     assert_eq!(reopened.read_active().unwrap(), restored);
+    assert_eq!(capacity_report(&reopened, &restored, 25), restored_report);
     assert_eq!(reopened.next_nonce(owner).unwrap(), 3);
     eprintln!(
         "capacity reentry: accepted_native_packets=27, rejected_growth=2, reorgs=2, reopens=3, synthetic_preallocated_genesis=true"

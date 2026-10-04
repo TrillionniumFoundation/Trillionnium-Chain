@@ -1,7 +1,8 @@
 //! Bounded honest-client recovery. No new admission or confirmation authority.
 use crate::{digest, ensure, ingress, Error, ErrorCode, Node, Packet, Result};
 use ingress::public_v3::{
-    call_public_protected_v3_with_deadline, PublicClientMetrics, PublicPolicy, PublicReply, Request,
+    call_public_protected_v3_with_deadline, PublicClientMetrics, PublicClientStage, PublicPolicy,
+    PublicReply, Request,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -140,8 +141,19 @@ fn retryable_eof(error: &Error, metrics: &PublicClientMetrics) -> bool {
         && error.kind() == crate::ErrorKind::Transport
         && matches!(
             metrics.failed_stage,
-            Some("challenge" | "solution-body-response")
+            Some(PublicClientStage::Challenge | PublicClientStage::SolutionBodyResponse)
         )
+}
+
+fn uncertain_failed_stage(metrics: &PublicClientMetrics) -> bool {
+    matches!(
+        metrics.failed_stage,
+        Some(
+            PublicClientStage::Challenge
+                | PublicClientStage::SolutionSearch
+                | PublicClientStage::SolutionBodyResponse
+        )
+    )
 }
 
 #[derive(Deserialize)]
@@ -246,13 +258,7 @@ impl Session<'_, '_> {
                 .is_some_and(|error| retryable_eof(error, &metrics)),
             metrics,
         };
-        if packet.is_some()
-            && reply.is_err()
-            && matches!(
-                record.metrics.failed_stage,
-                Some("challenge" | "solution-search" | "solution-body-response")
-            )
-        {
+        if packet.is_some() && reply.is_err() && uncertain_failed_stage(&record.metrics) {
             // A permanent client-side refusal must not claim that the remote
             // Node had no effect merely because its response was not accepted.
             self.outcome.submission_outcome_uncertain = true;
@@ -618,12 +624,29 @@ mod tests {
 
     #[test]
     fn retry_requires_local_frame_eof_at_one_of_the_existing_response_stages() {
-        for stage in [
-            None,
-            Some("construction"),
-            Some("challenge"),
-            Some("solution-search"),
-            Some("solution-body-response"),
+        for (stage, retryable, uncertain) in [
+            (None, false, false),
+            (Some(PublicClientStage::Construction), false, false),
+            (Some(PublicClientStage::Challenge), true, true),
+            (Some(PublicClientStage::SolutionSearch), false, true),
+            (Some(PublicClientStage::SolutionBodyResponse), true, true),
+            (Some(PublicClientStage::Complete), false, false),
+            (
+                Some(PublicClientStage::Unknown("future-stage")),
+                false,
+                false,
+            ),
+            (Some(PublicClientStage::Unknown("challenge")), false, false),
+            (
+                Some(PublicClientStage::Unknown("solution-search")),
+                false,
+                false,
+            ),
+            (
+                Some(PublicClientStage::Unknown("solution-body-response")),
+                false,
+                false,
+            ),
         ] {
             let metrics = PublicClientMetrics {
                 failed_stage: stage,
@@ -631,14 +654,23 @@ mod tests {
             };
             assert_eq!(
                 retryable_eof(&Error::from("FRAME_EOF"), &metrics),
-                matches!(stage, Some("challenge" | "solution-body-response"))
+                retryable,
+                "{stage:?}",
             );
+            assert_eq!(uncertain_failed_stage(&metrics), uncertain, "{stage:?}");
             for error in [
                 Error::remote("FRAME_EOF"),
+                Error::remote("OWNER_REPLACED"),
                 Error::from(std::io::Error::other("FRAME_EOF")),
                 Error::from("PUBLIC_EOF"),
                 Error::from("FRAME_EOF: peer claim"),
                 Error::from("FRAME_DEADLINE"),
+                Error::from("PUBLIC_CLIENT_DEADLINE"),
+                Error::from("PUBLIC_REQUEST_CANCELLED"),
+                Error::from("PEER_POLL_CANCELLED"),
+                Error::from("PUBLIC_COOKIE_CONTEXT"),
+                Error::from("SUBMIT_RECOVERY_STALE_HEAD"),
+                Error::from("SUBMIT_RECOVERY_STALE_BRANCH"),
                 Error::from("PUBLIC_MUTATION_CPU_UNAVAILABLE"),
             ] {
                 assert!(!retryable_eof(&error, &metrics), "{stage:?}: {error}");

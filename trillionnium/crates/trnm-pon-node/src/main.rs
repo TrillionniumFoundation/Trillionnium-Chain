@@ -932,7 +932,7 @@ fn run() -> Result<Value> {
         "genesis-prepare" => "--output",
         "genesis-sign" => "--deployment-template --role --signer-secret --output",
         "genesis-finalize" => "--deployment-template --source-approval --requester-approval --output",
-        "status" | "recover" | "pool-status" => "",
+        "status" | "recover" | "pool-status" | "capacity-observe" => "",
         "evaluation-observe" => "--candidate --ancestry-blocks",
         "evaluation-round-observe" => "--candidate --round-blocks",
         "pool-submit" => "--transactions --pool-policy",
@@ -1171,6 +1171,13 @@ fn run() -> Result<Value> {
                 .unwrap_or("linear-expert-dev-v1"),
         )?
     };
+    // This local observation has no peer request or signed response counterpart.
+    // Reject other profiles before opening or creating a store.
+    if command == "capacity-observe"
+        && settings.task_profile() != trnm_mvcc_fee::continuity_v1::PROFILE
+    {
+        return Err("CONTINUITY_PROFILE".into());
+    }
     if command == "serve" {
         let mining_options = [
             "--mining-seconds",
@@ -1408,6 +1415,7 @@ fn run() -> Result<Value> {
     )?;
     let value = match command.as_str() {
         "status" | "recover" => node.stats()?,
+        "capacity-observe" => serde_json::to_value(node.capacity_observation()?)?,
         "evaluation-observe" => {
             let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
             serde_json::to_value(node.evaluation_observation(candidate, clock, bound)?)?

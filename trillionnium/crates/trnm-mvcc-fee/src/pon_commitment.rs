@@ -1,7 +1,8 @@
 //! Pure derived commitment computation for the existing PoN executor.
 //!
-//! Each new binding encodes the complete actual State. Within one operation,
-//! CheckedExecutionParent can reuse those bytes while immutably borrowing State.
+//! Each new binding canonically checks the complete actual State. A matching
+//! opaque snapshot can share its bytes after that comparison. Within one
+//! operation, CheckedExecutionParent reuses those bytes while borrowing State.
 //! A snapshot is neither a state
 //! setter nor a transaction/admission verdict. The caller must still read actual
 //! KV, check its committed root and publish any staged snapshot only after its
@@ -160,6 +161,25 @@ fn encode(state: &State) -> Result<CanonicalValues> {
         return Err("LIMIT");
     }
     Ok(values)
+}
+/// Check the complete actual State before sharing an immutable canonical map.
+/// A mismatch cannot short-circuit later canonical errors or protocol bounds.
+/// At most one newly serialized value is live here; keys remain borrowed.
+fn matches_encoded(state: &State, expected: &CanonicalValues) -> Result<bool> {
+    let mut matches = state.len() == expected.len();
+    let mut within_limits = state.len() <= 65_536;
+    let mut previous = expected.iter();
+    for (key, value) in state {
+        let actual = pon_executor::canonical(value)?;
+        within_limits &= key.len() <= 160 && actual.len() <= 4096;
+        matches &= previous
+            .next()
+            .is_some_and(|(old_key, old_value)| key.as_bytes() == old_key && actual == *old_value);
+    }
+    if !within_limits {
+        return Err("LIMIT");
+    }
+    Ok(matches)
 }
 fn charges(values: &CanonicalValues) -> Result<Charges> {
     let mut payload = 0;
@@ -466,7 +486,7 @@ pub fn execute_checked_with_control<E: Send>(
 /// including maintenance, nonce/fee rules, subsidy, receipts and successor root.
 pub struct CheckedExecutionParent<'a> {
     state: &'a State,
-    actual: CanonicalValues,
+    actual: Arc<CanonicalValues>,
     predecessor: Option<CheckedCommitment>,
     limits: CacheLimits,
 }
@@ -478,17 +498,21 @@ impl<'a> CheckedExecutionParent<'a> {
         limits: CacheLimits,
     ) -> Result<Self> {
         limits.validate()?;
-        let actual = encode(actual_parent)?;
-        if let Some(snapshot) = predecessor {
-            if actual != *snapshot.values {
+        let actual = if let Some(snapshot) = predecessor {
+            if !matches_encoded(actual_parent, &snapshot.values)? {
                 return Err("COMMITMENT_PARENT");
             }
             if snapshot.root != expected_parent_root {
                 return Err("COMMITMENT_ROOT");
             }
-        } else if state_root(&actual).map_err(|_| "LIMIT")? != expected_parent_root {
-            return Err("COMMITMENT_ROOT");
-        }
+            Arc::clone(&snapshot.values)
+        } else {
+            let actual = encode(actual_parent)?;
+            if state_root(&actual).map_err(|_| "LIMIT")? != expected_parent_root {
+                return Err("COMMITMENT_ROOT");
+            }
+            Arc::new(actual)
+        };
         Ok(Self {
             state: actual_parent,
             actual,
@@ -667,6 +691,323 @@ mod tests {
             })
             .collect();
         (state, cfg, raws)
+    }
+
+    // The previous warm-binding algorithm is an allocation/timing control only.
+    // It separately encodes and retains every actual key/value before comparing.
+    fn copying_parent_reference<'a>(
+        state: &'a State,
+        expected_root: Hash,
+        snapshot: &CheckedCommitment,
+        limits: CacheLimits,
+    ) -> Result<CheckedExecutionParent<'a>> {
+        limits.validate()?;
+        let actual = encode(state)?;
+        if actual != *snapshot.values {
+            return Err("COMMITMENT_PARENT");
+        }
+        if snapshot.root != expected_root {
+            return Err("COMMITMENT_ROOT");
+        }
+        Ok(CheckedExecutionParent {
+            state,
+            actual: Arc::new(actual),
+            predecessor: Some(snapshot.clone()),
+            limits,
+        })
+    }
+
+    #[test]
+    fn warm_parent_binding_shares_only_after_complete_actual_comparison() {
+        let (state, cfg, raws) = preview_fixture();
+        let root = pon_executor::root(&state).unwrap();
+        let snapshot = checked_snapshot(&state, root, None, CacheLimits::default())
+            .unwrap()
+            .snapshot
+            .unwrap();
+        for limits in [
+            CacheLimits::default(),
+            CacheLimits {
+                max_keys: 0,
+                max_payload_bytes: 0,
+                max_workspace_charge_bytes: 0,
+            },
+        ] {
+            let parent =
+                CheckedExecutionParent::bind(&state, root, Some(&snapshot), limits).unwrap();
+            let copied = copying_parent_reference(&state, root, &snapshot, limits).unwrap();
+            assert!(Arc::ptr_eq(&parent.actual, &snapshot.values));
+            assert!(!Arc::ptr_eq(&copied.actual, &snapshot.values));
+            assert_eq!(parent.actual.as_ref(), copied.actual.as_ref());
+            for workers in [1, 4] {
+                let expected =
+                    pon_executor::execute(&state, &raws, 1, [3; 32], [4; 32], workers, &cfg)
+                        .unwrap();
+                let request = || ExecutionRequest {
+                    transactions: &raws,
+                    height: 1,
+                    miner: [3; 32],
+                    parent_id: [4; 32],
+                    workers,
+                };
+                let result = parent.execute(request(), &cfg).unwrap();
+                let reference = copied.execute(request(), &cfg).unwrap();
+                assert_eq!(result.output.state, expected.state);
+                assert_eq!(result.output.receipts, expected.receipts);
+                assert_eq!(result.output.root, expected.root);
+                assert_eq!(result.commitment.root, expected.root);
+                assert_eq!(
+                    result.commitment.changes.len(),
+                    reference.commitment.changes.len()
+                );
+                for (actual, expected) in result
+                    .commitment
+                    .changes
+                    .iter()
+                    .zip(&reference.commitment.changes)
+                {
+                    assert_eq!(actual.key, expected.key);
+                    assert_eq!(actual.before, expected.before);
+                    assert_eq!(actual.after, expected.after);
+                }
+                assert_eq!(
+                    result.commitment.observation,
+                    reference.commitment.observation
+                );
+                assert_eq!(parent.actual.as_ref(), &encode(&state).unwrap());
+                assert!(Arc::ptr_eq(&parent.actual, &snapshot.values));
+            }
+        }
+        for change in 0..3 {
+            let mut actual = state.clone();
+            match change {
+                0 => {
+                    actual.remove("model:current");
+                }
+                1 => {
+                    actual.insert("extra-key".into(), json!(0));
+                }
+                _ => {
+                    actual.insert("meta:issued".into(), json!(1));
+                }
+            }
+            assert!(matches!(
+                CheckedExecutionParent::bind(
+                    &actual,
+                    root,
+                    Some(&snapshot),
+                    CacheLimits::default()
+                ),
+                Err("COMMITMENT_PARENT")
+            ));
+        }
+        assert_eq!(snapshot.root(), root);
+        assert_eq!(snapshot.values.as_ref(), &encode(&state).unwrap());
+    }
+
+    #[test]
+    fn warm_parent_binding_preserves_late_canonical_limits_and_context_error_order() {
+        let (state, _, _) = preview_fixture();
+        let root = pon_executor::root(&state).unwrap();
+        let snapshot = checked_snapshot(&state, root, None, CacheLimits::default())
+            .unwrap()
+            .snapshot
+            .unwrap();
+        let check = |actual: &State, expected_root: Hash, limits, expected| {
+            let observed =
+                CheckedExecutionParent::bind(actual, expected_root, Some(&snapshot), limits).err();
+            let reference =
+                copying_parent_reference(actual, expected_root, &snapshot, limits).err();
+            assert_eq!(observed, Some(expected));
+            assert_eq!(observed, reference);
+        };
+        let limits = CacheLimits::default();
+        check(&state, [9; 32], limits, "COMMITMENT_ROOT");
+        let mut actual = state.clone();
+        actual.insert("a-first-mismatch".into(), json!(0));
+        check(&actual, [9; 32], limits, "COMMITMENT_PARENT");
+        actual.insert("a".repeat(161), json!(0));
+        check(&actual, [9; 32], limits, "LIMIT");
+        actual.insert("zz-late".into(), json!("非ASCII"));
+        check(&actual, [9; 32], limits, "NONCANONICAL");
+        actual.insert("zz-late".into(), json!(1.5));
+        check(&actual, [9; 32], limits, "RANGE");
+        check(
+            &actual,
+            [9; 32],
+            CacheLimits {
+                max_keys: MAX_CACHE_KEYS + 1,
+                ..limits
+            },
+            "COMMITMENT_CACHE_LIMIT",
+        );
+
+        let boundary = State::from([("k".repeat(160), json!("x".repeat(4094)))]);
+        let boundary_root = pon_executor::root(&boundary).unwrap();
+        let boundary_snapshot = checked_snapshot(&boundary, boundary_root, None, limits)
+            .unwrap()
+            .snapshot
+            .unwrap();
+        let bound = CheckedExecutionParent::bind(
+            &boundary,
+            boundary_root,
+            Some(&boundary_snapshot),
+            limits,
+        )
+        .unwrap();
+        assert!(Arc::ptr_eq(&bound.actual, &boundary_snapshot.values));
+        // A 4,097-byte canonical value fails after the complete canonical pass.
+        let mut oversized = boundary.clone();
+        oversized.insert("k".repeat(160), json!("x".repeat(4095)));
+        check(&oversized, [9; 32], limits, "LIMIT");
+        oversized.insert("zz-late".into(), json!("非ASCII"));
+        check(&oversized, [9; 32], limits, "NONCANONICAL");
+
+        // Distinguish the inclusive protocol key ceiling from unrelated-cache
+        // rejection without treating this generic shape as a reachable ledger.
+        let mut crowded: State = (0..65_536)
+            .map(|index| (format!("k{index:05}"), json!(0)))
+            .collect();
+        check(&crowded, [9; 32], limits, "COMMITMENT_PARENT");
+        crowded.insert("k65536".into(), json!(0));
+        check(&crowded, [9; 32], limits, "LIMIT");
+        crowded.insert("zz-late".into(), json!("非ASCII"));
+        check(&crowded, [9; 32], limits, "NONCANONICAL");
+        assert_eq!(snapshot.values.as_ref(), &encode(&state).unwrap());
+    }
+
+    #[test]
+    fn warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry() {
+        let (state, cfg, raws) = preview_fixture();
+        let root = pon_executor::root(&state).unwrap();
+        let snapshot = checked_snapshot(&state, root, None, CacheLimits::default())
+            .unwrap()
+            .snapshot
+            .unwrap();
+        let parent =
+            CheckedExecutionParent::bind(&state, root, Some(&snapshot), CacheLimits::default())
+                .unwrap();
+        let expected = pon_executor::execute(&state, &raws, 1, [3; 32], [4; 32], 1, &cfg).unwrap();
+        for point in [
+            ExecutionProgress::AfterCommitment,
+            ExecutionProgress::BeforeOutput,
+        ] {
+            let request = || ExecutionRequest {
+                transactions: &raws,
+                height: 1,
+                miner: [3; 32],
+                parent_id: [4; 32],
+                workers: 1,
+            };
+            let cancelled = parent.execute_with_progress(request(), &cfg, &|observed| {
+                if observed == point {
+                    Err("COMMITMENT_ROOT")
+                } else {
+                    Ok(())
+                }
+            });
+            assert!(matches!(
+                cancelled,
+                Err(ExecutionError::Cancelled("COMMITMENT_ROOT"))
+            ));
+            assert!(Arc::ptr_eq(&parent.actual, &snapshot.values));
+            assert_eq!(parent.actual.as_ref(), &encode(&state).unwrap());
+            assert_eq!(snapshot.root(), root);
+            let retry = parent.execute(request(), &cfg).unwrap();
+            assert_eq!(retry.output.state, expected.state);
+            assert_eq!(retry.output.receipts, expected.receipts);
+            assert_eq!(retry.output.root, expected.root);
+        }
+    }
+
+    #[test]
+    #[ignore = "explicit binding A/B timing; excludes execution, SQLite and Node locks"]
+    fn warm_parent_binding_component_timing() {
+        use std::time::Instant;
+        const BINDINGS_PER_SAMPLE: usize = 16;
+        for inert_keys in [64, 512, 4096] {
+            let (mut state, cfg, raws) = preview_fixture();
+            for index in 0..inert_keys {
+                state.insert(format!("inert:{index:05}"), json!("x".repeat(128)));
+            }
+            let root = pon_executor::root(&state).unwrap();
+            let snapshot = checked_snapshot(&state, root, None, CacheLimits::default())
+                .unwrap()
+                .snapshot
+                .unwrap();
+            let copied =
+                copying_parent_reference(&state, root, &snapshot, CacheLimits::default()).unwrap();
+            let shared =
+                CheckedExecutionParent::bind(&state, root, Some(&snapshot), CacheLimits::default())
+                    .unwrap();
+            assert!(!Arc::ptr_eq(&copied.actual, &snapshot.values));
+            assert!(Arc::ptr_eq(&shared.actual, &snapshot.values));
+            assert_eq!(copied.actual.as_ref(), shared.actual.as_ref());
+            let expected =
+                pon_executor::execute(&state, &raws, 1, [3; 32], [4; 32], 1, &cfg).unwrap();
+            for parent in [&copied, &shared] {
+                let result = parent
+                    .execute(
+                        ExecutionRequest {
+                            transactions: &raws,
+                            height: 1,
+                            miner: [3; 32],
+                            parent_id: [4; 32],
+                            workers: 1,
+                        },
+                        &cfg,
+                    )
+                    .unwrap();
+                assert_eq!(result.output.state, expected.state);
+                assert_eq!(result.output.receipts, expected.receipts);
+                assert_eq!(result.output.root, expected.root);
+            }
+            drop(copied);
+            drop(shared);
+            let mut samples: [Vec<u128>; 2] = Default::default();
+            for sample in 0usize..8 {
+                for offset in 0..2 {
+                    let arm = (sample + offset) % 2;
+                    let start = Instant::now();
+                    for _ in 0..BINDINGS_PER_SAMPLE {
+                        let bound = if arm == 0 {
+                            copying_parent_reference(
+                                &state,
+                                root,
+                                &snapshot,
+                                CacheLimits::default(),
+                            )
+                        } else {
+                            CheckedExecutionParent::bind(
+                                &state,
+                                root,
+                                Some(&snapshot),
+                                CacheLimits::default(),
+                            )
+                        }
+                        .unwrap();
+                        std::hint::black_box(&bound);
+                        // Destruction of this operation's binding is part of both clocks.
+                        drop(bound);
+                    }
+                    samples[arm].push(start.elapsed().as_nanos());
+                }
+            }
+            println!(
+                "{}",
+                json!({"schema":"warm-parent-binding-component-v1",
+                    "state_keys":state.len(),"canonical_payload_bytes":snapshot.payload_bytes(),
+                    "bindings_per_sample":BINDINGS_PER_SAMPLE,"samples_per_arm":8,
+                    "copying_reference_ns":samples[0],"checked_sharing_ns":samples[1],
+                    "order":"alternating paired arms; copying first on even sample",
+                    "shared_map_identity_checked":true,"complete_bytes_and_execution_parity":true,
+                    "new_retained_canonical_keys_per_binding":[state.len(),0],
+                    "new_retained_canonical_payload_bytes_per_binding":[snapshot.payload_bytes(),0],
+                    "retained_counts_scope":"logical additional complete map only; serialization temporaries remain",
+                    "scope":"warm parent binding plus its drop; excludes snapshot seeding, execution, SQLite, Node locks and concurrency",
+                    "physical_memory_bound":false,"public_network_ready":false})
+            );
+        }
     }
 
     #[test]

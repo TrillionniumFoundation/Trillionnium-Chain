@@ -97,3 +97,14 @@ their one workspace test execution and immediately run the independent Python
 comparison. Missing exact cases, source/run identities, native outputs or failed
 attempts are failures. Mathematical implementation agreement remains distinct from
 work hardness, independent operation and future model efficacy.
+
+## Three native work-cost contracts
+
+The existing head/merge and x64/ARM64 lanes retain separate reused, both-zero and
+one-zero/nonzero-rank-one schemas. Each complete raw stream, actual setup mode,
+source/binary identity and execution outcome must match its own contract. Strict
+success validation rejects failure-only fields even when empty, noninteger exit
+codes and reordered native invocation rows. It cannot transform an old successful
+artifact into execution of the new suite. See the [CI execution contract](../architecture/CI_EXECUTION_CONTRACT.md).
+Same-job90-minute limits account for all three bounded captures; thirteen jobs,
+actual fuzz, exact prospective merges and all external-acceptance boundaries remain.

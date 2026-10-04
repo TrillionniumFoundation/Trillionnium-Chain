@@ -206,3 +206,17 @@ as expected answers. The seeded continuity inputs do not claim signed reachabili
 and the composition oracle does not independently verify signatures, roster closure
 or ILF2 witnesses. The separate full-capacity Node fixture covers real quota expiry,
 new-account reentry, two heavier reorganizations and three cold reopens.
+
+## Checked parent sharing and local capacity observations
+
+`CheckedExecutionParent::bind` checks every canonical actual State value and the
+expected snapshot/root before sharing the opaque map. It avoids one additional
+complete parent map in the warm path; actual state scanning, cold roots, complete
+successor execution and all protocol bounds remain. The copying control and error
+order are specified by [derived commitment](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md).
+
+The Node's local `capacity-observe` reads actual KV/root and the one current
+revision12 capacity algorithm. Its generation/slot-bound report separates retained
+accounts from future obligations and never promises next-block admission. This is
+diagnostic ownership, with unchanged M06 capacity and reward semantics; see
+[continuity](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md).
