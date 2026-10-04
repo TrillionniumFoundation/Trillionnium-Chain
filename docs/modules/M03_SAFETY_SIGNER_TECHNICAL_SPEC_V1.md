@@ -122,3 +122,15 @@ orientations, cold/reused setup and complete winning/losing streams. See the
 [W1 implementation comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md).
 This diagnostic does not replace native mining selection or independently qualify
 task cost, proof hardness, actual checkpoint utility or hardware efficiency.
+
+## Fixed maintenance paired-product research
+
+The separate `PairedPreparedTask` computes the same complete W1 relation using
+canonical paired products and separately charged row/column factors. Its fixed
+maintenance experiment compares generic, classical, Strassen and paired strategies
+under cold/reused setup; complete-stream commitments, full winning proofs and every
+search outcome, including exhaustion, are retained. Losing proof arrays are not
+stored separately. [W1 comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md)
+defines the algebra, actual genesis material, independent Python byte relation and
+balanced sample order. The default producer/verifier and task qualification remain
+unchanged; lower multiplication counts are not measured runtime or a work lower bound.

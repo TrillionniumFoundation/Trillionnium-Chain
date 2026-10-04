@@ -44,6 +44,64 @@ It returns no partial confirmation batch. The final active
 tip/generation check, changed-header/trace rejection, full inclusion-body checks,
 future-ancestor rejection and heavier-branch reorganization tests remain required.
 
+## Ordinary native history pages
+
+The ordinary `history`/`history_with_progress` API and the native ingress History
+request still check every actual ancestor from their explicit `tip` down to
+`after`. They now use the separate
+[`history_page.rs`](../../../../trillionnium/crates/trnm-pon-node/src/store/history_page.rs)
+implementation. Each prepared recursive SELECT returns at most 64 complete
+child/parent record projections. This path reads the original record metadata;
+it does not add the header/trace checks of a confirmation clock scan, use the
+binary-lifting index, or reuse a prior ancestry verdict.
+
+The cursor's complete record is checked before the tip's complete record, as
+before. For each requested edge, the child's parent/hash/work/root shapes are
+checked first, then the parent's complete record and exact height increment.
+Parent failures keep their local stored-data identity. An absent caller locator
+remains `UNKNOWN_PARENT`; a known but unrelated cursor still becomes `CURSOR`.
+Recursion excludes `after`, although the last required child still reads that
+cursor's complete parent-record projection. Records below the cursor cannot
+introduce a new error. The explicit 64-row LIMIT also bounds a corrupt cycle's
+single query; actual per-edge height validation still rejects that cycle.
+
+Only the most recent `limit` IDs in the downward traversal are retained, in an
+operation-local deque. At most 16 Hashes, or 512 logical payload bytes, survive
+an iteration. At the cursor they are read in reverse order to produce the same
+earliest page. The whole H-ID temporary file and its 32H explicit bytes of path
+writes are removed. All H edges must finish successfully before any returned
+packet is decoded. Packet decoding, complete packet encoding for byte accounting,
+the 800,000-byte page cutoff and the first-packet exception retain their order.
+The current packet codec's 256 transactions of at most 2,048 bytes already bound
+one encoded packet below 800,000 bytes; the retained exception is not claimed to
+have a larger valid current-packet witness.
+
+Cancellation preserves the initial callback, the callback before traversal, each
+256-edge boundary, and the final callback with the total count. Each callback runs
+after the prior SQL statement has ended. A required parent at an edge is checked
+before the next callback, even if that parent is also the next batch's child.
+The explicit historical tip remains valid across a change of active generation;
+this read does not introduce a new active-tip fence or use the active State.
+Existing active-KV/root checks and tip/generation/physical-slot fences elsewhere
+are unchanged. No history result, State, derived snapshot or lock ownership is
+published by this operation.
+
+`history_page_read_counters` reports actual ancestry SELECT attempts, complete
+checked edges and the Node-lifetime high-water count of retained page IDs. The
+high water is not a per-call difference. Counters include work done before a
+failure or cancellation and reset when the Node opens. They are local Rust
+observations, absent from the wire schema. They exclude readiness and cursor
+queries, complete packet reads, SQLite page traffic and statement preparation.
+The 64-row projection and 16-ID deque do not establish an allocator/RSS bound:
+SQLite may materialize/sort a batch, and invalid stored metadata can require
+allocation before its existing shape rejection.
+
+For a successful H-edge request, ancestry SELECT executions change from 2H to
+ceil(H/64), and explicit temporary-path writes change from 32H bytes to zero.
+The read still visits all H edges and remains O(H). There is no constant-time
+history, bounded total history retention, new lock-splitting result, or implied
+64-fold latency improvement.
+
 ## State reads and durable writes
 
 Actual KV state is still read, canonically decoded and checked against the
@@ -76,6 +134,7 @@ number of distinct queried inclusion blocks. The current costs remain:
 | --- | --- | --- |
 | Actual state read/root | O(N) decoding plus the checked root implementation | Protocol maximum65,536 keys; callback every256 rows; no incremental authority cache. |
 | Full confirmation batch | Actual state check, ceil(H/64) header SELECTs, H checked headers and Q full inclusion bodies | At most256 confirmation queries per batch; complete clock scan remains O(H). |
+| Ordinary native History page | ceil(H/64) actual parent-record SELECTs, all H edge checks, then complete returned bodies | At most16 retained page IDs and no H-ID temporary file; time remains O(H), with the original256-edge callback positions. |
 | Public one-packet History | Bounded local binary-lifting lookups and one full packet | Existing1,024-statement budget; see [ancestry index](NATIVE_ANCESTRY_INDEX.md). |
 | Ordinary append | D changed KV writes, actual state/root validation | No full KV copy on the ordinary append path; it still scans actual state. |
 | Reorganization/recovery | Verified deltas, snapshots and exact roots | No fixed global branch/history/disk-size bound or constant-time recovery claim. |
@@ -134,3 +193,47 @@ compares the complete confirmation result. Existing future-ancestor, corrupt
 genesis, inclusion-body, actual heavier-reorg and no-partial-response tests remain.
 
 SQL semantics reference: [SQLite recursive CTE algorithm and explicit LIMIT](https://www.sqlite.org/lang_with.html).
+
+## Paired ordinary-page observation
+
+The regular `history_page_native_pages_keep_complete_bytes_cursor_cancellation_and_reopen`
+control constructs 257 actual mined, admitted and activated development blocks.
+Its first 17 blocks contain 16 signed transfers each. It compares every returned
+packet byte with the earlier complete `ready`/record-query/tempfile/packet
+algorithm, including wide-body cutoff, empty pages, 64/256-edge boundaries and
+short tails. It also checks required-parent corruption before a boundary callback,
+callback cancellation and retry, corruption below an excluded cursor, an actual
+fork and heavier-branch switch, unchanged State/slot during reads and reopen.
+The smaller `history_page_record_errors_keep_origin_and_validation_order` control
+checks full parent shapes, missing parents, cycles and caller-record error order.
+The old algorithm is compiled only into the test binary, never exposed as a
+production fallback or a second history API.
+
+The ignored `history_page_complete_call_cost` control uses the same independent
+whole-operation reference for five fixed cursor/height cases and eight alternating
+sample pairs per case. It builds 256..512 actual blocks in a new output directory.
+Its timer includes the complete history call, encoding each returned Packet into
+owned bytes, and releasing the Packet values. Framing, full-byte comparison,
+hashing, file output and release of the retained encoded bytes happen outside
+the timer. This scope is broader than a bare API-call timer and is identical for
+both arms. The control is the earlier algorithm in the current test binary with
+logical counters, not a separately compiled old binary. Source, binary and
+builder-claim bindings are emitted before the experiment. No process page cache
+is cleared, and no RSS, concurrent lock queue, network or public service claim is
+derived from it.
+
+Run explicitly from the exact clean source, keeping the entire output directory,
+stdout, stderr and process exit status:
+
+    TRNM_HISTORY_PAGE_COST_DIRECTORY=NEW_DIRECTORY TRNM_HISTORY_PAGE_COST_BLOCKS=512 cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::history_page::tests::history_page_complete_call_cost -- --exact --ignored --nocapture
+
+Every sample checks all output bytes, actual SQL/edge counters and source-defined
+path-spool absence against the reference. The first pair of each case exports
+complete frames for both arms. A frame contains ASCII `TRNMPAGE1`, a u32 little
+endian packet count, then a u32 little endian byte length and full original bytes
+for each packet. Later pairs retain complete equality checks and frame SHA-256;
+they are repeated observations of those fixed pages, not independent chains.
+The original SQLite namespace, complete actual State, full reference root and
+reopen check are retained. The observer writes a terminal success only after all
+samples and checks finish; a test panic, nonzero process exit or missing terminal
+result is failure and must remain visible.

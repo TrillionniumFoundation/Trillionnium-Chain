@@ -51,7 +51,23 @@ FALSE_FLAGS = ['fastest_adversary_qualified', 'work_hardness_accepted',
                'public_service_measured', 'input_provenance_verified', 'production_activation']
 TIMINGS = {'setup_elapsed_ns', 'search_elapsed_ns', 'total_elapsed_ns',
            'production_verifier_elapsed_ns', 'reference_verifier_elapsed_ns'}
-SUITES = ('reused', 'zero-locality', 'one-zero-locality')
+SUITES = ('reused', 'zero-locality', 'one-zero-locality', 'maintenance-paired')
+# These are command limits, not measured execution time or a completion promise.
+# Every capture has a five-second TERM grace before KILL, including identity and
+# build commands; retain that budget for all four independently captured suites.
+COST_IDENTITY_TIMEOUT_SECONDS = 30
+COST_BUILD_TIMEOUT_SECONDS = 900
+COST_CAMPAIGN_TIMEOUT_SECONDS = 300
+COST_TERMINATION_GRACE_SECONDS = 5
+COST_JOB_OVERHEAD_SECONDS = 27 * 60
+COST_JOB_TIMEOUT_MINUTES = 135
+
+
+def cost_job_budget_seconds() -> int:
+    captures = 3 + 1 + len(CAMPAIGNS)
+    return len(SUITES) * (3 * COST_IDENTITY_TIMEOUT_SECONDS + COST_BUILD_TIMEOUT_SECONDS +
+                         len(CAMPAIGNS) * COST_CAMPAIGN_TIMEOUT_SECONDS +
+                         captures * COST_TERMINATION_GRACE_SECONDS) + COST_JOB_OVERHEAD_SECONDS
 
 
 def require(condition: bool, message: str) -> None:
@@ -276,6 +292,18 @@ def suite_contract(suite: str = 'reused') -> dict:
     require(suite in SUITES, 'explicit native cost suite')
     common_inputs = ['rust-toolchain.toml', 'trillionnium/Cargo.lock',
                      'scripts/ci/run_cross_arch_cost.py', 'scripts/ci/check_cross_arch_cost.py']
+    if suite == 'maintenance-paired':
+        from check_maintenance_cost import validate_maintenance_report
+        return {'directory': 'cross-arch-maintenance-cost', 'example': 'pon_maintenance_cost',
+                'execution_schema': 'trnm-cross-arch-maintenance-cost-execution-v1',
+                'comparison_schema': 'trnm-cross-arch-maintenance-cost-comparison-v1',
+                'validate_raw_report': validate_maintenance_report,
+                'inputs': common_inputs + [
+                    'trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs',
+                    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+                    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs',
+                    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs',
+                    'scripts/ci/check_maintenance_cost.py']}
     if suite == 'reused':
         return {'directory': 'cross-arch-cost', 'example': 'pon_reused_cost',
                 'execution_schema': 'trnm-cross-arch-cost-execution-v1',
@@ -385,7 +413,8 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
     for observed, command, stem in zip(observations, commands, ['uname', 'rustc', 'cargo', 'build']):
         require(observed['command'] == command and observed['stdout'] == stem + '.stdout' and
                 observed['stderr'] == stem + '.stderr' and
-                observed['timeout_seconds'] == (900 if stem == 'build' else 30),
+                observed['timeout_seconds'] == (COST_BUILD_TIMEOUT_SECONDS if stem == 'build' else
+                                                COST_IDENTITY_TIMEOUT_SECONDS),
                 'actual identity/build commands and full stdout/stderr')
     require(all(o['stdout'] in files and o['stderr'] in files for o in observations),
             'stdout and stderr must be retained even when empty')
@@ -397,7 +426,8 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
                 'exact successful campaign cannot retain a hidden failure')
         require(row['configuration'] == configuration and row['result'] == 'PASS', 'same fixed campaign configuration')
         observed = row['observation']
-        require(observed == observations[index + 4] and observed['timeout_seconds'] == 300 and
+        require(observed == observations[index + 4] and
+                observed['timeout_seconds'] == COST_CAMPAIGN_TIMEOUT_SECONDS and
                 observed['stdout'] == f'campaign-{index}.stdout' and
                 observed['stderr'] == f'campaign-{index}.stderr', 'actual bounded campaign stdout/stderr')
         require(isinstance(observed['command'], list) and len(observed['command']) == 9 and

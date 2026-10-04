@@ -39,7 +39,7 @@ A zero product-entrypoint count does not mean that the native development CLI is
 ## Explicit current profile bindings
 
 Profiles are selected independently; a larger revision is not an automatic upgrade.
-Transport/local policy rows do not alter the consensus revision.
+Local transport, research and offline rows do not alter the consensus revision.
 
 | Profile | Consensus revision | Contract | Controlled entrypoint |
 |---|---:|---|---|
@@ -48,16 +48,18 @@ Transport/local policy rows do not alter the consensus revision.
 | lifecycle-v3 | 8 | [QUALIFIED_TASK_LIFECYCLE_V3](../../docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
 | lifecycle-v4 | 9 | [QUALIFIED_TASK_LIFECYCLE_V4](../../docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
 | checkpoint-tile-v1 | 10 | [CHECKPOINT_TILE_TASK_V1](../../docs/protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
-| local-pool-reconciliation | local/transport | [LOCAL_MEMPOOL_LIFECYCLE](../../docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md) | [Node::pool_reconcile](../../trillionnium/crates/trnm-pon-node/src/store/mempool.rs) |
-| protected-hello-handoff | local/transport | [ADMISSION_SECURITY](../../docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) | [try_handoff_hello](../../trillionnium/crates/trnm-pon-node/src/ingress.rs) |
+| local-pool-reconciliation | local/research | [LOCAL_MEMPOOL_LIFECYCLE](../../docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md) | [Node::pool_reconcile](../../trillionnium/crates/trnm-pon-node/src/store/mempool.rs) |
+| protected-hello-handoff | local/research | [ADMISSION_SECURITY](../../docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) | [try_handoff_hello](../../trillionnium/crates/trnm-pon-node/src/ingress.rs) |
 | integer-factor-v2 | 11 | [NATIVE_INTEGER_FACTOR_CANDIDATE_V2](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
-| public-intake-v3-r9 | local/transport | [PUBLIC_POOL_INTAKE_V3](../../docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md) | [serve_public_protected_v3_with_metrics](../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs) |
+| public-intake-v3-r9 | local/research | [PUBLIC_POOL_INTAKE_V3](../../docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md) | [serve_public_protected_v3_with_metrics](../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs) |
 | continuity-v1 | 12 | [CONTINUITY_V1](../../docs/protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
 | model-evidence-v3 | 13 | [NATIVE_MODEL_EVIDENCE_V3](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
 | model-composition-v4 | 14 | [NATIVE_MODEL_COMPOSITION_V4](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md) | [run](../../trillionnium/crates/trnm-pon-node/src/main.rs) |
-| w1-verifier-equivalence | local/transport | [W1_IMPLEMENTATION_COMPARISON](../../docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md) | [verify](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs) |
-| history-state-resource-bounds | local/transport | [HISTORY_STATE_RESOURCE_BOUNDS_V1](../../docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) | [Node::confirmations_with_progress](../../trillionnium/crates/trnm-pon-node/src/store.rs) |
-| internal-error-identity | local/transport | [INTERNAL_ERROR_IDENTITY](../../docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) | [Error::requires_owner_stop](../../trillionnium/crates/trnm-pon-node/src/error.rs) |
+| w1-verifier-equivalence | local/research | [W1_IMPLEMENTATION_COMPARISON](../../docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md) | [verify](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs) |
+| history-state-resource-bounds | local/research | [HISTORY_STATE_RESOURCE_BOUNDS_V1](../../docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) | [Node::confirmations_with_progress](../../trillionnium/crates/trnm-pon-node/src/store.rs) |
+| internal-error-identity | local/research | [INTERNAL_ERROR_IDENTITY](../../docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) | [Error::requires_owner_stop](../../trillionnium/crates/trnm-pon-node/src/error.rs) |
+| account-archive-research-v1 | local/research | [ACCOUNT_ARCHIVE_PROTOTYPE_V1](../../docs/protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md) | [AccountArchive::project_successor](../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs) |
+| model-window-history-v1 | local/research | [MODEL_OPERATIONS_ACCEPTANCE_V1](../../docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md) | [verify_window](../../formal/pon-nakamoto-v1/model_window_history.py) |
 
 ## Registered acceptance boundaries
 

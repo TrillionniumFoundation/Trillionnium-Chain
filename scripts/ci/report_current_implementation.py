@@ -63,11 +63,11 @@ def markdown(data: dict) -> str:
                      str(module['independent_accepted']).lower()]) + ' |')
     lines += ['', '## Explicit current profile bindings', '',
               'Profiles are selected independently; a larger revision is not an automatic upgrade. ',
-              'Transport/local policy rows do not alter the consensus revision.', '',
+              'Local transport, research and offline rows do not alter the consensus revision.', '',
               '| Profile | Consensus revision | Contract | Controlled entrypoint |', '|---|---:|---|---|']
     for profile in data['profiles']:
         document, entry = profile['document'], profile['entrypoint']
-        revision = str(profile['consensus_revision']) if profile['consensus_revision'] is not None else 'local/transport'
+        revision = str(profile['consensus_revision']) if profile['consensus_revision'] is not None else 'local/research'
         lines.append('| ' + ' | '.join([profile['id'], revision,
                      f'[{Path(document).stem}](../../{document})',
                      f"[{entry['symbol']}](../../{entry['path']})"]) + ' |')

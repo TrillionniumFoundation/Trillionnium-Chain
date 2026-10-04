@@ -11,7 +11,11 @@ from pathlib import Path
 from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRANSITIONS,
                                MODEL_OBSERVATION_BLOCK, RUST_ALL_TARGETS, RUST_DOCS,
                                ZERO_RUN_STEP, ZERO_COMPARE_STEP, ONE_ZERO_RUN_STEP,
-                               ONE_ZERO_COMPARE_STEP)
+                               ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
+                               MAINTENANCE_COMPARE_STEP, PAIRED_WORK_ORACLE, MODEL_WINDOW_ORACLE,
+                               NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE)
+from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
+                                   cost_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
 
 
@@ -47,11 +51,53 @@ class CiContractTests(unittest.TestCase):
             with self.subTest(replacement=replacement):
                 self.rejected('.github/workflows/trnm-required-baseline.yml', ZERO_RUN_STEP, replacement)
 
-    def test_architecture_budget_covers_three_bounded_suites(self):
-        for minutes in [30, 60]:
+    def test_architecture_budget_covers_four_bounded_suites_and_termination_margin(self):
+        self.assertEqual(cost_job_budget_seconds() - COST_JOB_OVERHEAD_SECONDS, 6480)
+        self.assertGreaterEqual(COST_JOB_TIMEOUT_MINUTES * 60, cost_job_budget_seconds())
+        for minutes in [30, 60, 90, 108, 120]:
             with self.subTest(minutes=minutes):
                 self.rejected('.github/workflows/trnm-required-baseline.yml',
-                              '    timeout-minutes: 90\n', f'    timeout-minutes: {minutes}\n')
+                              '    timeout-minutes: 135\n', f'    timeout-minutes: {minutes}\n')
+
+    def test_maintenance_native_execution_cannot_be_removed_skipped_or_substituted(self):
+        for replacement in ['', MAINTENANCE_RUN_STEP.replace('        if: always()\n', ''),
+                            MAINTENANCE_RUN_STEP.replace('run: python3', 'run: true # python3'),
+                            MAINTENANCE_RUN_STEP.replace(' --suite maintenance-paired', ' --suite one-zero-locality')]:
+            with self.subTest(replacement=replacement):
+                self.rejected('.github/workflows/trnm-required-baseline.yml', MAINTENANCE_RUN_STEP, replacement)
+
+    def test_maintenance_comparison_cannot_be_removed_skipped_or_substituted(self):
+        for replacement in ['', MAINTENANCE_COMPARE_STEP.replace('        if: always()\n', ''),
+                            MAINTENANCE_COMPARE_STEP.replace('run: python3', 'run: true # python3'),
+                            MAINTENANCE_COMPARE_STEP.replace(' --suite maintenance-paired', ' --suite one-zero-locality')]:
+            with self.subTest(replacement=replacement):
+                self.rejected('.github/workflows/trnm-required-baseline.yml', MAINTENANCE_COMPARE_STEP, replacement)
+
+    def test_maintenance_execution_and_comparison_preserve_sequential_failure_collection(self):
+        for first, second in [(ONE_ZERO_RUN_STEP, MAINTENANCE_RUN_STEP),
+                              (ONE_ZERO_COMPARE_STEP, MAINTENANCE_COMPARE_STEP)]:
+            with self.subTest(step=second):
+                self.rejected('.github/workflows/trnm-required-baseline.yml', first + second, second + first)
+                self.rejected('.github/workflows/trnm-required-baseline.yml', second, second + second)
+
+    def test_maintenance_suite_cannot_move_into_the_wrong_job(self):
+        path = '.github/workflows/trnm-required-baseline.yml'
+        original = (self.root / path).read_text()
+        for step, destination in [(MAINTENANCE_RUN_STEP, MAINTENANCE_COMPARE_STEP),
+                                  (MAINTENANCE_COMPARE_STEP, MAINTENANCE_RUN_STEP)]:
+            with self.subTest(step=step):
+                changed = original.replace(step, '').replace(destination, destination + step)
+                self.rejected(path, original, changed)
+
+    def test_maintenance_negative_checks_execute_once_in_repository_truth(self):
+        path = 'scripts/ci/ci_job.sh'
+        command = '    python3 scripts/ci/test_maintenance_cost.py\n'
+        for replacement in ['', '    true # omitted maintenance checks\n', command + command]:
+            with self.subTest(replacement=replacement):
+                self.rejected(path, command, replacement)
+        original = (self.root / path).read_text()
+        changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+        self.rejected(path, original, changed)
 
     def test_zero_comparison_cannot_be_removed_or_replaced_by_old_suite(self):
         for replacement in ['', ZERO_COMPARE_STEP.replace(' --suite zero-locality', ''),
@@ -144,6 +190,45 @@ class CiContractTests(unittest.TestCase):
         changed = original.replace(CONTINUITY_TRANSITIONS, '').replace('  fuzz-smoke)\n',
                                                                              '  fuzz-smoke)\n' + CONTINUITY_TRANSITIONS)
         self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_paired_work_oracle_cannot_be_removed_skipped_or_reuse_historical_output(self):
+        for replacement in ['', '    true # omitted paired work oracle\n',
+                            PAIRED_WORK_ORACLE.replace('realpath -e', 'printf %s'),
+                            PAIRED_WORK_ORACLE.replace('/paired-work"', '/old-paired-work"'),
+                            PAIRED_WORK_ORACLE + PAIRED_WORK_ORACLE]:
+            with self.subTest(replacement=replacement):
+                self.rejected('scripts/ci/ci_job.sh', PAIRED_WORK_ORACLE, replacement)
+
+    def test_paired_and_model_window_oracles_cannot_move_to_another_lane(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for command in [PAIRED_WORK_ORACLE, MODEL_WINDOW_ORACLE]:
+            changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+            with self.subTest(command=command):
+                self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_model_window_history_oracle_must_execute_once(self):
+        for replacement in ['', '    true # omitted model-window checks\n', MODEL_WINDOW_ORACLE * 2]:
+            with self.subTest(replacement=replacement):
+                self.rejected('scripts/ci/ci_job.sh', MODEL_WINDOW_ORACLE, replacement)
+
+    def test_archive_oracle_requires_release_build_and_both_actual_checks(self):
+        for replacement in ['', '    true # omitted native archive and oracle\n',
+                            ACCOUNT_ARCHIVE_ORACLE.splitlines(keepends=True)[0],
+                            ACCOUNT_ARCHIVE_ORACLE.splitlines(keepends=True)[1],
+                            ACCOUNT_ARCHIVE_ORACLE * 2]:
+            with self.subTest(replacement=replacement):
+                self.rejected('scripts/ci/ci_job.sh', ACCOUNT_ARCHIVE_ORACLE, replacement)
+        self.rejected('scripts/ci/ci_job.sh', NODE_EXAMPLE_BUILD, '')
+        self.rejected('scripts/ci/ci_job.sh', NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE,
+                      ACCOUNT_ARCHIVE_ORACLE + NODE_EXAMPLE_BUILD)
+
+    def test_archive_oracle_and_negative_checks_cannot_move_to_another_lane(self):
+        path = 'scripts/ci/ci_job.sh'
+        original = (self.root / path).read_text()
+        for command in [ACCOUNT_ARCHIVE_ORACLE, '    python3 scripts/ci/test_account_archive_conformance.py\n']:
+            changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+            with self.subTest(command=command):
+                self.rejected(path, original, changed)
 
     def test_both_model_oracles_cannot_be_removed_or_replaced_with_true(self):
         for filename in ['test_model_composition_oracle.py', 'test_model_composition.py']:

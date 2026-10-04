@@ -2,6 +2,7 @@
 pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
+mod history_page;
 pub mod mempool;
 mod operator_continuous_owner;
 mod operator_mining_owner;
@@ -10,6 +11,7 @@ use crate::{
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
 };
 use fs2::FileExt;
+pub use history_page::HistoryPageReadCounters;
 pub(crate) use operator_continuous_owner::PublicContinuousScope;
 pub use operator_continuous_owner::{
     ContinuousSearchRequest, OwnedContinuousLeaseResult, OwnedContinuousPoolResult,
@@ -408,6 +410,7 @@ pub struct Node {
     commitment_cache: RefCell<Option<ActiveCommitment>>,
     commitment_observation: RefCell<Option<CommitmentObservation>>,
     history_read_counters: Cell<HistoryReadCounters>,
+    history_page_read_counters: Cell<HistoryPageReadCounters>,
     owner_policy: Option<OwnerPolicy>,
     mining_owner: Option<operator_mining_owner::MiningOwner>,
     continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
@@ -886,6 +889,7 @@ impl Node {
             commitment_cache: RefCell::new(None),
             commitment_observation: RefCell::new(None),
             history_read_counters: Cell::new(HistoryReadCounters::default()),
+            history_page_read_counters: Cell::new(HistoryPageReadCounters::default()),
             owner_policy,
             mining_owner,
             continuous_owner,
@@ -3684,52 +3688,6 @@ impl Node {
             ancestry_checked: checked,
             distinct_bodies_checked: included.len(),
         })
-    }
-    pub fn history(&self, tip: Hash, after: Hash, limit: usize) -> Result<Vec<Packet>> {
-        self.history_with_progress(tip, after, limit, &mut |_| Ok(()))
-    }
-    pub fn history_with_progress(
-        &self,
-        tip: Hash,
-        after: Hash,
-        limit: usize,
-        progress: &mut dyn FnMut(u64) -> Result<()>,
-    ) -> Result<Vec<Packet>> {
-        progress(0)?;
-        self.ready()?;
-        ensure((1..=16).contains(&limit), "PAGE_LIMIT")?;
-        ensure(
-            self.record(after)?.height <= self.record(tip)?.height,
-            "CURSOR",
-        )?;
-        let mut spool = tempfile::tempfile()?;
-        let mut current = tip;
-        let mut count = 0u64;
-        while current != after {
-            if count.is_multiple_of(256) {
-                progress(count)?;
-            }
-            ensure(current != self.settings.genesis(), "CURSOR")?;
-            spool.write_all(&current)?;
-            count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
-            current = self.parent(current)?;
-        }
-        let mut packets = Vec::new();
-        let mut bytes = 0usize;
-        for i in (0..count).rev().take(limit) {
-            spool.seek(SeekFrom::Start(i.checked_mul(32).ok_or("ANCESTRY_LIMIT")?))?;
-            let mut id = [0; 32];
-            spool.read_exact(&mut id)?;
-            let packet = self.packet(id)?;
-            let n = packet.encode()?.len();
-            if bytes + n > 800_000 && !packets.is_empty() {
-                break;
-            }
-            bytes += n;
-            packets.push(packet);
-        }
-        progress(count)?;
-        Ok(packets)
     }
     /// Bounded public-read metadata. The state root is the admitted header's
     /// commitment, not a fresh scan or audit of the active key/value state.

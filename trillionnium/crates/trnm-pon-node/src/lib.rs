@@ -52,6 +52,9 @@ use trnm_protocol::qualified_work_task::{
     MATRIX_ARTIFACT_BYTES,
 };
 
+/// Explicit shadow account-archive research; never installed by Node lifecycle.
+pub mod account_archive_prototype;
+
 pub type Result<T> = std::result::Result<T, Error>;
 /// (model bytes, input bytes, derived A, derived B) for the public maintenance fixture.
 pub type BootstrapTaskMaterial = (Vec<u8>, Vec<u8>, Vec<u32>, Vec<u32>);

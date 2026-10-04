@@ -20,7 +20,7 @@ def profile_table(profiles: list[dict]) -> str:
     for row in profiles:
         config = row['configuration']
         configuration = (f"[{Path(config).name}](../../{config}), revision{row['consensus_revision']}"
-                         if config else 'Local/transport policy; no consensus revision')
+                         if config else 'Local/research boundary; no consensus revision')
         doc = row['document']
         entry = row['entrypoint']
         lines.append('| ' + ' | '.join([row['id'] + ' / ' + ', '.join(row['modules']),
@@ -55,7 +55,8 @@ def validate(root: Path = ROOT) -> dict:
             'lifecycle-v4', 'checkpoint-tile-v1', 'local-pool-reconciliation',
             'protected-hello-handoff', 'integer-factor-v2', 'public-intake-v3-r9',
             'continuity-v1', 'model-evidence-v3', 'w1-verifier-equivalence',
-            'history-state-resource-bounds', 'internal-error-identity', 'model-composition-v4'},
+            'history-state-resource-bounds', 'internal-error-identity', 'model-composition-v4',
+            'account-archive-research-v1', 'model-window-history-v1'},
             'applicability profile coverage')
     for profile in profiles:
         require(profile['modules'] and set(profile['modules']) <= set(maturity), 'profile modules')

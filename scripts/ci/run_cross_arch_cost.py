@@ -15,7 +15,9 @@ import time
 
 from ci_observation import ROOT, digest, receipt_root, source
 from check_cross_arch_cost import (ARCHITECTURES, CAMPAIGNS, SUITES, benchmark_arguments,
-                                   elf_machine, suite_contract)
+                                   elf_machine, suite_contract, COST_IDENTITY_TIMEOUT_SECONDS,
+                                   COST_BUILD_TIMEOUT_SECONDS, COST_CAMPAIGN_TIMEOUT_SECONDS,
+                                   COST_TERMINATION_GRACE_SECONDS)
 
 
 def capture(command: list[str], output: Path, stem: str, *, timeout: float,
@@ -38,7 +40,7 @@ def capture(command: list[str], output: Path, stem: str, *, timeout: float,
                 result['timed_out'] = True
                 os.killpg(process.pid, signal.SIGTERM)
                 try:
-                    process.wait(timeout=5)
+                    process.wait(timeout=COST_TERMINATION_GRACE_SECONDS)
                 except subprocess.TimeoutExpired:
                     os.killpg(process.pid, signal.SIGKILL)
                     process.wait()
@@ -73,7 +75,7 @@ def main() -> int:
     report['uname'] = dict(zip(['system', 'node', 'release', 'version', 'machine', 'processor'], platform.uname()))
     report['source_before'] = None
 
-    def checked(command: list[str], stem: str, timeout: int = 30) -> dict:
+    def checked(command: list[str], stem: str, timeout: int = COST_IDENTITY_TIMEOUT_SECONDS) -> dict:
         observed = capture(command, output, stem, timeout=timeout)
         observations.append(observed)
         if observed['exit_code'] != 0 or observed['timed_out']:
@@ -111,7 +113,7 @@ def main() -> int:
         shutil.copyfile('/proc/cpuinfo', output / 'cpuinfo.txt')
         checked(['cargo', '+1.95.0', 'build', '--locked', '--release', '--manifest-path',
                  'trillionnium/Cargo.toml', '--target', spec['target'], '-p',
-                 'trnm-crypto-primitives', '--example', example], 'build', 900)
+                 'trnm-crypto-primitives', '--example', example], 'build', COST_BUILD_TIMEOUT_SECONDS)
         binary = Path(os.environ['CARGO_TARGET_DIR']) / spec['target'] / 'release/examples' / example
         report['binary_elf_machine'] = elf_machine(binary)
         if report['binary_elf_machine'] != spec['elf_machine']:
@@ -121,7 +123,7 @@ def main() -> int:
         failed = False
         for index, campaign in enumerate(CAMPAIGNS):
             observed = capture([str(binary), *benchmark_arguments(campaign)], output,
-                               f'campaign-{index}', timeout=300)
+                               f'campaign-{index}', timeout=COST_CAMPAIGN_TIMEOUT_SECONDS)
             observations.append(observed)
             row = {'configuration': campaign, 'observation': observed, 'result': 'FAIL'}
             try:
