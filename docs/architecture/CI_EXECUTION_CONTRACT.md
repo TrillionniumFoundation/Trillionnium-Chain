@@ -295,19 +295,30 @@ scope and remaining external acceptance requirements.
 After its existing Node release example build, `protocol-contract` runs the pure
 `test_account_archive_oracle.py` checks and then
 `scripts/ci/run_account_archive_conformance.py`. The latter executes the actual
-`account_archive_vectors` program into a fresh `account-archive/native` directory,
-retaining its complete stdout/stderr, observation JSON, archive SQLite database,
-and native Node store. The example closes and checkpoints its database before the
-runner invokes the separate Python oracle with explicit JSON/database paths.
+`account_archive_vectors` program with a fresh `account-archive/native` output and
+a separate fresh sibling `account-archive/native-working` directory. The latter
+retains the original working archive, its SQLite sidecars and the native Node
+store. SQLite `VACUUM main INTO ?1` creates the standalone export; the export
+directory contains exactly `archive.sqlite`, `observation.json` and
+`finalization.json`. The snapshot receipt records the actual SQL operation,
+read-only export opening and DELETE journal mode, page counts, header, close and
+sidecar observations. The runner then invokes the separate Python oracle with
+explicit export JSON/database paths.
 Python does not execute native recovery again or use the native status label as
 the expected root; it independently recomputes the account/root/witness relation
 and reads the closed database. The runner verifies native JSON/database identity,
 the complete six-snapshot/thirteen-query/seventeen-operation small fixture, exact
-scope, and that every native output byte remains unchanged by the oracle.
+scope, and that every standalone export byte remains unchanged by the oracle.
+After its final source and executable checks, it enumerates all retained files
+and requires the complete three-file export map to match the original map before
+assigning success. A late export sidecar, missing file or changed hash is failure.
+Working-file maps before and after the oracle and at final retention remain
+separate observations; their changes are recorded without claiming working-file
+immutability or treating them as changes to the standalone oracle input.
 
 Both native generation and independent checking have a separate 300-second
 capture budget. Missing executable, earlier-source input, partial output, original
-file changes or an oracle failure remain failed observations with original output.
+export-file changes or an oracle failure remain failed observations with original output.
 The actual prebuilt executable, its before/after hashes, exact source guards and
 all retained-file hashes remain in the CI artifact. Pure receipt-shape fixtures
 exercise refusal only. This small conformance set establishes no large-account

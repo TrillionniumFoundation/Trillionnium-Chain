@@ -2,7 +2,7 @@
 //! Usage: account_archive_vectors NEW_OUTPUT_DIRECTORY
 #[path = "support/account_archive_artifact.rs"]
 mod account_archive_artifact;
-use account_archive_artifact::finish_archive_artifact;
+use account_archive_artifact::{create_working_archive_path, finish_archive_artifact};
 use rusqlite::{params, Connection};
 use serde_json::{json, Value};
 use std::{collections::BTreeMap, fs, path::Path};
@@ -96,7 +96,7 @@ fn main() {
     );
     let output = std::path::PathBuf::from(&args[1]);
     fs::create_dir(&output).expect("output directory must not already exist");
-    let path = output.join("archive.sqlite");
+    let path = create_working_archive_path(&output).unwrap();
     let settings = Settings::development_with_profiles(
         Some(1),
         "native-public-evaluation-dev-v1",
@@ -339,7 +339,12 @@ fn main() {
     }
     drop(db);
     // Actual native genesis and one admitted block, signed bytes and full State.
-    let mut node = Node::open(&output.join("native-node"), settings.clone(), 1).unwrap();
+    let mut node = Node::open(
+        &path.parent().unwrap().join("native-node"),
+        settings.clone(),
+        1,
+    )
+    .unwrap();
     let genesis = node.read_active().unwrap();
     let native_initial = archive
         .project_initial(&genesis.2, pon_executor::root(&genesis.2).unwrap())
@@ -434,7 +439,8 @@ fn main() {
         .unwrap();
     assert_eq!(checkpoint_rows, final_storage.checkpoint_rows);
     let finalization = finish_archive_artifact(control, &path, &output).unwrap();
-    let observed = json!({"schema":"pon-account-archive-native-observation-v1","context":context,"snapshots":snapshots,"operations":operations,"final_active":final_active,"final_storage":final_storage,"final_rows":final_rows,"database":path,"finalization":finalization,"reopened":true,"archive_used_for_native_execution":false,"protocol_capacity_changed":false,"public_data_availability_accepted":false});
+    let database = finalization.export_database.clone();
+    let observed = json!({"schema":"pon-account-archive-native-observation-v1","context":context,"snapshots":snapshots,"operations":operations,"final_active":final_active,"final_storage":final_storage,"final_rows":final_rows,"database":database,"working_database":path,"finalization":finalization,"reopened":true,"archive_used_for_native_execution":false,"protocol_capacity_changed":false,"public_data_availability_accepted":false});
     let bytes = serde_json::to_vec(&observed).unwrap();
     fs::write(output.join("observation.json"), &bytes).unwrap();
     println!("{}", String::from_utf8(bytes).unwrap());

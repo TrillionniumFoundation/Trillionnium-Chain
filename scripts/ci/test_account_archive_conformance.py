@@ -3,7 +3,8 @@
 import copy
 import unittest
 
-from run_account_archive_conformance import NATIVE_SCOPE, ORACLE_SCOPE, validate_reports
+from run_account_archive_conformance import (EXPORT_FILES, NATIVE_SCOPE, ORACLE_SCOPE,
+                                            validate_export_retention, validate_reports)
 
 
 def parser_fixture():
@@ -72,6 +73,34 @@ class ArchiveReceiptContractTests(unittest.TestCase):
                 changed['native_scope'][key] = value
                 with self.subTest(key=key, value=value), self.assertRaises(ValueError):
                     validate_reports(native, changed, '1' * 64, '2' * 64)
+
+    def test_final_export_rejects_late_sidecars_missing_bytes_or_changed_hashes(self):
+        initial = {name: str(index) * 64 for index, name in enumerate(sorted(EXPORT_FILES), 1)}
+        artifacts = {'native/' + name: value for name, value in initial.items()}
+        self.assertEqual(validate_export_retention(initial, artifacts), (initial, {}))
+        changes = [lambda value: value.update({'native/archive.sqlite-wal': '9' * 64}),
+                   lambda value: value.pop('native/finalization.json'),
+                   lambda value: value.update({'native/archive.sqlite': '9' * 64})]
+        for change in changes:
+            altered = dict(artifacts)
+            change(altered)
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                validate_export_retention(initial, altered)
+
+    def test_working_database_changes_are_retained_separately_from_export_identity(self):
+        initial = {name: '1' * 64 for name in EXPORT_FILES}
+        artifacts = {'native/' + name: value for name, value in initial.items()}
+        for working in [{'archive.sqlite': '2' * 64},
+                        {'archive.sqlite': '3' * 64, 'archive.sqlite-wal': '4' * 64}]:
+            combined = {**artifacts, **{'native-working/' + name: value for name, value in working.items()}}
+            exported, observed_working = validate_export_retention(initial, combined)
+            self.assertEqual(exported, initial)
+            self.assertEqual(observed_working, working)
+
+    def test_initial_export_cannot_define_a_sidecar_as_an_accepted_input(self):
+        initial = {name: '1' * 64 for name in [*EXPORT_FILES, 'archive.sqlite-wal']}
+        with self.assertRaises(ValueError):
+            validate_export_retention(initial, {'native/' + name: value for name, value in initial.items()})
 
 
 if __name__ == '__main__':

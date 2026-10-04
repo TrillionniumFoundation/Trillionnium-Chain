@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import sys
 
-from ci_observation import ROOT, digest, finish, receipt_root, source
+from ci_observation import ROOT, digest, receipt_root, source
 from check_cross_arch_cost import read_json, require
 from run_cross_arch_cost import capture
 
@@ -30,6 +30,60 @@ ORACLE_SCOPE = {'independent_root_and_proof_arithmetic': True,
                 'production_activation': False, 'large_account_space_verified': False}
 NATIVE_SCOPE = {'archive_used_for_native_execution': False, 'protocol_capacity_changed': False,
                 'public_data_availability_accepted': False, 'production_accepted': False}
+EXPORT_FILES = {'archive.sqlite', 'finalization.json', 'observation.json'}
+
+
+def directory_sha256(directory: Path) -> dict[str, str]:
+    return {str(path.relative_to(directory)): digest(path) for path in sorted(directory.rglob('*'))
+            if path.is_file()}
+
+
+def validate_export_retention(initial: dict, artifacts: dict) -> tuple[dict, dict]:
+    """The final retained export must match; working files have a separate scope."""
+    exported = {name.removeprefix('native/'): value for name, value in artifacts.items()
+                if name.startswith('native/')}
+    working = {name.removeprefix('native-working/'): value for name, value in artifacts.items()
+               if name.startswith('native-working/')}
+    require(type(initial) is dict and set(initial) == EXPORT_FILES and exported == initial,
+            'the complete three-file standalone export must stay unchanged through final retention')
+    return exported, working
+
+
+def finish_archive_receipt(output: Path, report: dict) -> None:
+    """Assign success only after source checks and the final complete file map."""
+    try:
+        report['source_after'] = source()
+        report['source'] = report['source_after']
+        report['input_sha256_after'] = {name: digest(ROOT / name) for name in INPUTS}
+        report['input_sha256'] = report['input_sha256_after']
+        report['source_changed'] = (report['source_before'] != report['source_after'] or
+            report.get('input_sha256_before') != report['input_sha256_after'])
+        if 'binary_path' in report:
+            report['binary_sha256_at_finish'] = digest(Path(report['binary_path']))
+        report['artifact_sha256'] = directory_sha256(output)
+        report['native_files_sha256_at_finish'] = {
+            name.removeprefix('native/'): value for name, value in report['artifact_sha256'].items()
+            if name.startswith('native/')}
+        report['working_files_sha256_at_finish'] = {
+            name.removeprefix('native-working/'): value for name, value in report['artifact_sha256'].items()
+            if name.startswith('native-working/')}
+        working_observations = [report.get('working_files_sha256_before_oracle'),
+            report.get('working_files_sha256_after_oracle'), report['working_files_sha256_at_finish']]
+        report['working_files_changed_during_observation'] = (
+            not all(value == working_observations[0] for value in working_observations)
+            if all(type(value) is dict for value in working_observations) else None)
+        if report.get('checks_completed_before_retention') is True and 'error' not in report:
+            require(report['source_changed'] is False, 'archive source changed during conformance')
+            validate_export_retention(report['native_files_sha256_before_oracle'], report['artifact_sha256'])
+            require(report['binary_sha256_at_finish'] == report['binary_sha256_before'],
+                    'archive executable changed before final retention completed')
+            report['result'] = 'PASS'
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError, subprocess.SubprocessError) as error:
+        report['result'] = 'FAIL'
+        report['final_retention_error'] = str(error)
+        print(str(error), file=sys.stderr)
+    (output / 'manifest.json').write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
+    print(json.dumps({'result': report['result'], 'receipt': str(output)}, sort_keys=True))
 
 
 def validate_reports(native: dict, oracle: dict, native_digest: str, database_digest: str) -> dict:
@@ -73,7 +127,7 @@ def main() -> int:
               'observations': [], 'source_before': None,
               'archive_used_for_native_execution': False, 'protocol_capacity_changed': False,
               'public_data_availability_accepted': False, 'large_account_space_verified': False,
-              'production_activation': False}
+              'production_activation': False, 'working_files_immutability_claimed': False}
 
     def checked(command, stem, timeout):
         observed = capture(command, output, stem, timeout=timeout)
@@ -91,44 +145,47 @@ def main() -> int:
         report['input_sha256_before'] = {name: digest(ROOT / name) for name in INPUTS}
         binary = (Path(os.environ['CARGO_TARGET_DIR']) / 'release/examples/account_archive_vectors').resolve(strict=True)
         require(binary.is_file() and os.access(binary, os.X_OK), 'the actual release archive example must be built first')
+        report['binary_path'] = str(binary)
         report['binary_sha256_before'] = digest(binary)
         shutil.copyfile(binary, output / 'account_archive_vectors')
         native_output = output / 'native'
+        working_output = output / 'native-working'
         checked([str(binary), str(native_output)], 'native', 300)
         native_path, database = native_output / 'observation.json', native_output / 'archive.sqlite'
         native = read_json(native_path)
         require(native.get('database') == str(database), 'native archive database path must bind this fresh run')
         require((output / 'native.stdout').read_bytes() == native_path.read_bytes() + b'\n',
                 'native stdout must retain the exact observation JSON written by this execution')
-        frozen = {str(path.relative_to(native_output)): digest(path) for path in sorted(native_output.rglob('*'))
-                  if path.is_file()}
+        frozen = directory_sha256(native_output)
+        require(set(frozen) == EXPORT_FILES, 'native must retain exactly the standalone database, observation and finalization')
+        finalization = read_json(native_output / 'finalization.json')
+        require(finalization == native.get('finalization') and
+                finalization.get('schema') == 'pon-account-archive-snapshot-finalization-v1' and
+                finalization.get('result') == 'PASS' and
+                finalization.get('source_database') == str(working_output / 'archive.sqlite') and
+                finalization.get('export_database') == str(database),
+                'the SQLite snapshot must bind this fresh working database and standalone export')
+        require(working_output.is_dir(), 'retain the separate original working directory')
+        report['working_directory'] = str(working_output)
+        report['working_files_sha256_before_oracle'] = directory_sha256(working_output)
         report['native_files_sha256_before_oracle'] = frozen
         checked([sys.executable, 'formal/pon-nakamoto-v1/account_archive_oracle.py',
                  '--native-json', str(native_path), '--database', str(database)], 'oracle', 300)
         oracle = read_json(output / 'oracle.stdout')
         report['independent_validation'] = validate_reports(native, oracle, digest(native_path), digest(database))
-        after = {str(path.relative_to(native_output)): digest(path) for path in sorted(native_output.rglob('*'))
-                 if path.is_file()}
+        after = directory_sha256(native_output)
         report['native_files_sha256_after_oracle'] = after
+        report['working_files_sha256_after_oracle'] = directory_sha256(working_output)
         require(after == frozen, 'the independent checker must leave every native output unchanged')
         report['binary_sha256_after'] = digest(binary)
         require(report['binary_sha256_before'] == report['binary_sha256_after'],
                 'measured native archive executable changed during conformance')
-        report['result'] = 'PASS'
+        report['checks_completed_before_retention'] = True
     except (OSError, ValueError, KeyError, TypeError, RuntimeError, subprocess.SubprocessError) as error:
         report['error'] = str(error)
         print(str(error), file=sys.stderr)
     finally:
-        try:
-            report['source_after'] = source()
-            report['input_sha256_after'] = {name: digest(ROOT / name) for name in INPUTS}
-        except (OSError, ValueError, KeyError, subprocess.SubprocessError) as error:
-            report['source_after'] = {'error': str(error)}
-        report['source_changed'] = (report['source_before'] != report['source_after'] or
-            report.get('input_sha256_before') != report.get('input_sha256_after'))
-        if report['source_changed']:
-            report['result'] = 'FAIL'
-        finish(output, report, INPUTS)
+        finish_archive_receipt(output, report)
     return 0 if report['result'] == 'PASS' else 1
 
 

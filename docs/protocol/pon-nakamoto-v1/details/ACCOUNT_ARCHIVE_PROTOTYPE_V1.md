@@ -225,8 +225,9 @@ old full-state capacity limit.
 The explicit release-only synthetic campaign creates65,537 accounts in the independent
 archive, beyond the old count of65,536 total ledger state keys. It retains its complete
 input collection,32 full proofs, one copy-on-write update and proof, immutable old
-root, active-generation observation, SQLite database, actual row/payload counts and
-page observations. Initial construction, checked queries, update and reopening are
+root, active-generation observation, working SQLite database, a separately exported
+SQLite snapshot, actual row/payload counts and page observations. Initial
+construction, checked queries, update and reopening are
 separate assertions. Its new output directory is mandatory; evidence is not erased
 by a temporary test directory after success.
 
@@ -241,28 +242,60 @@ cargo build --release --locked -p trnm-pon-node --example account_archive_vector
 target/release/examples/account_archive_vectors /tmp/new-account-archive-vectors
 ```
 
-Both output paths must be new. The small
+Both output paths and their sibling names ending in `-working` must be new. The small
 [native vector producer](../../../../trillionnium/crates/trnm-pon-node/examples/account_archive_vectors.rs)
 records synthetic and native-source snapshots separately, exports complete account
 sets, exact checkpoints, all queried proofs and their binary bytes, original signed
 native packet bytes, and complete SQL table snapshots before and after negative
-operations. Both exporters finish all archive-handle scopes before opening their
-final control connection. Their shared research-fixture helper records the actual
-`wal_checkpoint(TRUNCATE)` three-column result, explicit control-connection close
-result, SQLite version and physical WAL sizes before checkpoint, after checkpoint
-and after close in `finalization.json`. It writes this receipt before checking the
-handoff conditions, so a failure retains its actual values. Successful export
-requires the exact tuple `(0,0,0)`, successful explicit control close, and an absent
-or zero-byte WAL after checkpoint and after close. The same receipt object is
-included in `observation.json`; the independent checker still inspects the actual
-WAL and database. No file is manually removed or truncated, and no failed
-checkpoint is silently retried. Archive handles use their existing RAII scopes;
-only the control connection has an observed explicit close result. A native
-regression holds a real reader snapshot across a second connection's write,
-retains and rejects the resulting busy checkpoint, then verifies closure after
-that reader is released. These handoff checks do not claim power-loss durability.
-A separately
-implemented Python oracle reconstructs the uncompressed root relation from complete
+operations. Each exporter creates its working archive in a fresh sibling directory:
+an export directory named `native` uses `native-working/archive.sqlite`. The small
+producer's original Node database also lives under `native-working/native-node/`.
+All working files and sidecars remain separate retained originals. The independent
+consumer's export directory contains exactly `archive.sqlite`, `observation.json`
+and `finalization.json`.
+
+Both exporters finish all archive-handle scopes before opening their final source
+control connection. Their shared research-fixture helper verifies the actual main
+database path reported by SQLite, records its synchronous setting and source page
+geometry, and requires the actual `wal_checkpoint(TRUNCATE)` tuple `(0,0,0)`.
+While this source connection remains open, it executes `VACUUM main INTO ?1` with
+the fresh export filename as a bound parameter. SQLite creates a logically
+consistent snapshot. An existing target is rejected; there is no main-file copy,
+alternate export method or retry after a failed step.
+
+The source control connection is explicitly closed. Its WAL sizes before and after
+checkpoint and after close are observations; they do not establish that its
+sidecar paths will remain stable. The export's qualification is checked separately.
+An export reader opens with `SQLITE_OPEN_READ_ONLY`, requires journal mode `delete`,
+reads the target's page count and page size, and explicitly closes. The actual
+export header must have SQLite's magic and read/write versions `1/1`; its physical
+size must equal its own page geometry, and its `-wal`, `-shm` and `-journal` files
+must be absent. The exported page metrics in the large observation come from this
+target. Source page metrics remain separately named in the receipt because
+`VACUUM INTO` may compact the physical layout.
+
+The receipt schema is `pon-account-archive-snapshot-finalization-v1`. It records the
+method, source and export paths, actual source queries/checkpoint/close, export
+SQL/open/queries/close, header bytes and file observations. Steps that did not run
+are explicitly `NOT_ATTEMPTED`; actual errors remain errors. The helper writes the
+receipt before its final acceptance decision. A receipt write or sync error also
+fails and may leave a partial receipt. The same completed receipt object is
+included in `observation.json`, whose `database` names the exported snapshot and
+whose `working_database` names the original working archive. No original working
+file or failed partial export is cleaned up by the helper. Consumers must check
+the entire export file set and hashes through their own read-only validation;
+successful source close does not substitute for that check.
+
+Native regressions hold a real reader snapshot across a second connection's write
+and confirm that a busy checkpoint prevents export. Another regression directly
+exercises the shared `VACUUM INTO` step with committed data still in a nonempty WAL
+while the main-file bytes remain unchanged. It then verifies the accepted export,
+changes the source, and checks that the exported values and complete file bytes
+remain unchanged. These regression receipts live in temporary test directories;
+the exported large and small campaigns retain their artifacts in explicit output
+directories. None of these observations certifies power-loss durability.
+
+A separately implemented Python oracle reconstructs the uncompressed root relation from complete
 account inputs and checks observations; agreement is implementation evidence, not
 independent network service or future protocol acceptance.
 
