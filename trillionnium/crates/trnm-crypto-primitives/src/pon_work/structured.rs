@@ -321,7 +321,7 @@ fn inverse(value: u32) -> u32 {
     }
     result
 }
-fn rank_one(matrix: &[u32]) -> Option<(Vec<u32>, Vec<u32>)> {
+pub(super) fn rank_one(matrix: &[u32]) -> Option<(Vec<u32>, Vec<u32>)> {
     let pivot = matrix.iter().position(|value| *value != 0)?;
     let row = pivot / N;
     let column = pivot % N;

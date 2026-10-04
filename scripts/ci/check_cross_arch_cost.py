@@ -51,7 +51,7 @@ FALSE_FLAGS = ['fastest_adversary_qualified', 'work_hardness_accepted',
                'public_service_measured', 'input_provenance_verified', 'production_activation']
 TIMINGS = {'setup_elapsed_ns', 'search_elapsed_ns', 'total_elapsed_ns',
            'production_verifier_elapsed_ns', 'reference_verifier_elapsed_ns'}
-SUITES = ('reused', 'zero-locality')
+SUITES = ('reused', 'zero-locality', 'one-zero-locality')
 
 
 def require(condition: bool, message: str) -> None:
@@ -152,7 +152,11 @@ def validate_raw_report(data: dict, campaign: dict) -> dict:
     groups = defaultdict(list)
     material_identity = {}
     statuses = Counter()
-    for row in rows:
+    # The native program emits its seven fixed materials, then targets, samples,
+    # and each sequential invocation. Retain that observed order as well as the
+    # complete set: a rearranged JSON array is not the original native output.
+    material_order = list(MATERIALS)
+    for position, row in enumerate(rows):
         require(set(row) == {'class', 'input_source', 'task', 'rank_a', 'rank_b', 'target', 'sample',
                             'invocation_order', 'strategy', 'method', 'mode', 'proof_bytes',
                             'setup_observations_ns', 'setup_calls', 'setup_elapsed_ns', 'search_elapsed_ns',
@@ -160,6 +164,11 @@ def validate_raw_report(data: dict, campaign: dict) -> dict:
         key = (row['class'], row['target'], row['sample'])
         require(row['target'] in TARGETS and type(row['sample']) is int and
                 0 <= row['sample'] < campaign['samples'], 'case target/sample bounds')
+        require(row['class'] == material_order[position // (2 * campaign['samples'] * 10)] and
+                row['target'] == TARGETS[(position // (campaign['samples'] * 10)) % 2] and
+                row['sample'] == (position // 10) % campaign['samples'] and
+                row['invocation_order'] == position % 10,
+                'material, target, sample and invocation rows retain their native emitted order')
         hash_text(row['task'], 'task commitment')
         for rank in ['rank_a', 'rank_b']:
             require(natural(row[rank], 'finite field rank') <= 64, 'matrix rank upper bound')
@@ -275,6 +284,18 @@ def suite_contract(suite: str = 'reused') -> dict:
                 'inputs': common_inputs + [
                     'trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs',
                     'trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs']}
+    if suite == 'one-zero-locality':
+        from check_one_zero_locality_cost import validate_one_zero_report
+        return {'directory': 'cross-arch-one-zero-locality-cost', 'example': 'pon_one_zero_locality_cost',
+                'execution_schema': 'trnm-cross-arch-one-zero-locality-cost-execution-v1',
+                'comparison_schema': 'trnm-cross-arch-one-zero-locality-cost-comparison-v1',
+                'validate_raw_report': validate_one_zero_report,
+                'inputs': common_inputs + [
+                    'trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs',
+                    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+                    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs',
+                    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs',
+                    'scripts/ci/check_one_zero_locality_cost.py']}
     from check_zero_locality_cost import validate_zero_report
     return {'directory': 'cross-arch-zero-locality-cost', 'example': 'pon_zero_locality_cost',
             'execution_schema': 'trnm-cross-arch-zero-locality-cost-execution-v1',
@@ -297,15 +318,17 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
     report = read_json(directory / contract['directory'] / 'manifest.json')
     require(report['schema'] == contract['execution_schema'] and report['result'] == 'PASS',
             'actual successful native execution required for each architecture')
-    if suite == 'zero-locality':
-        require(set(report) == {'schema', 'result', 'execution_context', 'architecture',
-                'runner_label', 'observations', 'campaigns', 'build_profile', 'compiler_channel',
-                'target', 'public_network_ready', 'independent_hardware_qualified',
-                'resource_fairness_qualified', 'work_profile_qualified', 'production_activation',
-                'runner_context', 'uname', 'source_before', 'source_after', 'source_changed',
-                'build_environment_overrides', 'binary_elf_machine', 'binary_sha256_before',
-                'binary_sha256_after', 'input_sha256', 'artifact_sha256'},
-                'exact successful zero execution manifest cannot retain a hidden error')
+    # capture() only adds error/launch_error on a failed path. A null, empty or
+    # nonempty failure field is equally inconsistent with its success shape;
+    # never erase one while accepting an otherwise matching PASS label.
+    require(set(report) == {'schema', 'result', 'execution_context', 'architecture',
+            'runner_label', 'observations', 'campaigns', 'build_profile', 'compiler_channel',
+            'target', 'public_network_ready', 'independent_hardware_qualified',
+            'resource_fairness_qualified', 'work_profile_qualified', 'production_activation',
+            'runner_context', 'uname', 'source_before', 'source_after', 'source_changed',
+            'build_environment_overrides', 'binary_elf_machine', 'binary_sha256_before',
+            'binary_sha256_after', 'input_sha256', 'artifact_sha256'},
+            'exact successful execution manifest cannot retain a hidden error')
     require(report['execution_context'] == 'github-hosted', 'local preflight cannot replace hosted execution')
     arch = report['architecture']
     require(arch in ARCHITECTURES, 'native architecture inventory')
@@ -346,14 +369,13 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
     require((base / 'cpuinfo.txt').stat().st_size > 0 and spec['machine'] in (base / 'uname.stdout').read_text(),
             'actual CPU and uname output retained')
     observations = report['observations']
-    if suite == 'zero-locality':
-        require(isinstance(observations, list) and all(type(o) is dict and set(o) == {
-                'command', 'cwd', 'exit_code', 'timed_out', 'timeout_seconds', 'stdout',
-                'stderr', 'elapsed_ns'} and type(o['exit_code']) is int and o['exit_code'] == 0
-                and o['timed_out'] is False for o in observations),
-                'exact actual zero command success cannot conceal launch errors or boolean aliases')
-        for observed in observations:
-            natural(observed['elapsed_ns'], 'zero command elapsed time')
+    require(isinstance(observations, list) and all(type(o) is dict and set(o) == {
+            'command', 'cwd', 'exit_code', 'timed_out', 'timeout_seconds', 'stdout',
+            'stderr', 'elapsed_ns'} and type(o['exit_code']) is int and o['exit_code'] == 0
+            and o['timed_out'] is False for o in observations),
+            'exact actual command success cannot conceal launch errors or boolean aliases')
+    for observed in observations:
+        natural(observed['elapsed_ns'], 'command elapsed time')
     require(len(observations) == 6 and all(o['exit_code'] == 0 and not o['timed_out'] for o in observations),
             'actual identity, build and both campaign command statuses')
     commands = [['uname', '-a'], ['rustc', '+1.99.0', '-vV'], ['cargo', '+1.99.0', '--version'],
@@ -370,10 +392,9 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
     require(len(report['campaigns']) == len(CAMPAIGNS), 'both fixed finite campaigns must execute')
     data = []
     for index, (row, configuration) in enumerate(zip(report['campaigns'], CAMPAIGNS)):
-        if suite == 'zero-locality':
-            require(type(row) is dict and set(row) == {
-                    'configuration', 'observation', 'result', 'validated'},
-                    'exact successful zero campaign cannot retain a hidden failure')
+        require(type(row) is dict and set(row) == {
+                'configuration', 'observation', 'result', 'validated'},
+                'exact successful campaign cannot retain a hidden failure')
         require(row['configuration'] == configuration and row['result'] == 'PASS', 'same fixed campaign configuration')
         observed = row['observation']
         require(observed == observations[index + 4] and observed['timeout_seconds'] == 300 and

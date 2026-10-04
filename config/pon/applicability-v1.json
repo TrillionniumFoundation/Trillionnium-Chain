@@ -262,7 +262,11 @@
         "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs::combined_continuity_and_model_evidence_complete_native_lifecycle_and_cleanup",
         "trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes",
         "formal/pon-nakamoto-v1/test_continuity_transitions.py::NativeTransitions.test_real_native_context_state_root_receipt_capacity_and_rejection",
-        "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs::signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry"
+        "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs::signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry",
+        "trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::capacity_observation_distinguishes_reserved_and_retained_accounts",
+        "trillionnium/crates/trnm-pon-node/src/continuity_tests.rs::capacity_observation_rechecks_actual_bytes_cancellation_and_generation",
+        "trillionnium/crates/trnm-pon-node/tests/continuity_cli.rs::local_capacity_command_binds_the_checked_state_and_rejects_old_profiles_before_open",
+        "trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs::signed_one_zero_rank_one_work_uses_actual_parent_authority_in_both_directions"
       ],
       "evidence_class": "source-binding",
       "receipt": null
@@ -342,7 +346,10 @@
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::fast_and_scalar_verifiers_match_extreme_products_and_error_precedence",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs::tiled_complete_proofs_match_scalar_and_independent_python_extreme_vectors",
-        "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs::actual_constructor_calls_and_all_winners_match_in_both_modes"
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs::actual_constructor_calls_and_all_winners_match_in_both_modes",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs::complete_certificates_match_original_independent_python_scalar_vectors",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs::reassociated_trace_matches_every_scalar_prefix_under_extreme_noise_values",
+        "trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs::signed_one_zero_rank_one_work_uses_actual_parent_authority_in_both_directions"
       ],
       "evidence_class": "source-binding",
       "receipt": null
@@ -365,7 +372,10 @@
         "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_checks_one_history_and_one_shared_body",
         "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_active_state_rechecks_generation_before_publishing_a_derived_snapshot",
         "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_joined_history_projection_rejects_corrupt_genesis_record_shapes",
-        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_history_batches_cross_boundaries_cancel_and_recheck_actual_rows"
+        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_history_batches_cross_boundaries_cancel_and_recheck_actual_rows",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs::warm_parent_binding_shares_only_after_complete_actual_comparison",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs::warm_parent_binding_preserves_late_canonical_limits_and_context_error_order",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs::warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry"
       ],
       "evidence_class": "source-binding",
       "receipt": null
@@ -386,7 +396,9 @@
       },
       "tests": [
         "trillionnium/crates/trnm-pon-node/src/error.rs::display_changes_cannot_change_typed_retry_or_owner_stop_identity",
-        "trillionnium/crates/trnm-pon-node/src/error.rs::prefix_lookalikes_and_remote_failures_cannot_stop_local_owner"
+        "trillionnium/crates/trnm-pon-node/src/error.rs::prefix_lookalikes_and_remote_failures_cannot_stop_local_owner",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting",
+        "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs::actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity"
       ],
       "evidence_class": "source-binding",
       "receipt": null

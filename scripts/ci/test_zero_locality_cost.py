@@ -59,9 +59,11 @@ def zero_fixture(configuration: dict) -> dict:
     return data
 
 
-def artifact_fixture(directory: Path, arch: str) -> dict:
+def artifact_fixture(directory: Path, arch: str, *, suite: str = 'zero-locality', raw_fixture=None) -> dict:
     """Manufactured parser-only files with a header stub; nothing is executed."""
-    contract = suite_contract('zero-locality')
+    contract = suite_contract(suite)
+    if raw_fixture is None:
+        raw_fixture = zero_fixture if suite == 'zero-locality' else reused_fixture
     spec = ARCHITECTURES[arch]
     base = directory / contract['directory']
     base.mkdir(parents=True)
@@ -91,10 +93,10 @@ def artifact_fixture(directory: Path, arch: str) -> dict:
     (base / 'rustc.stdout').write_text(f'synthetic parser fixture\nrelease: 1.99.0\nhost: {spec["target"]}\n')
     campaigns = []
     for index, configuration in enumerate(CAMPAIGNS):
-        raw = zero_fixture(configuration)
+        raw = raw_fixture(configuration)
         (base / f'campaign-{index}.stdout').write_text(json.dumps(raw))
         campaigns.append({'configuration': configuration, 'observation': observations[index + 4],
-                          'result': 'PASS', 'validated': validate_zero_report(raw, configuration)})
+                          'result': 'PASS', 'validated': contract['validate_raw_report'](raw, configuration)})
     report = {'schema': contract['execution_schema'], 'result': 'PASS',
         'execution_context': 'github-hosted', 'architecture': arch,
         'runner_label': spec['runner'], 'target': spec['target'],
@@ -109,12 +111,12 @@ def artifact_fixture(directory: Path, arch: str) -> dict:
         'campaigns': campaigns, 'public_network_ready': False,
         'independent_hardware_qualified': False, 'resource_fairness_qualified': False,
         'work_profile_qualified': False, 'production_activation': False}
-    write_manifest(directory, report)
+    write_manifest(directory, report, suite=suite)
     return report
 
 
-def write_manifest(directory: Path, report: dict) -> None:
-    base = directory / suite_contract('zero-locality')['directory']
+def write_manifest(directory: Path, report: dict, *, suite: str = 'zero-locality') -> None:
+    base = directory / suite_contract(suite)['directory']
     report['artifact_sha256'] = {path.name: digest(path) for path in base.iterdir()
                                 if path.is_file() and path.name != 'manifest.json'}
     (base / 'manifest.json').write_text(json.dumps(report))
@@ -375,6 +377,55 @@ class ZeroArtifactContractTests(unittest.TestCase):
         self.assertIn('retained constructor error', (output / observed['stderr']).read_text())
         with self.assertRaises(ValueError):
             json.loads((output / observed['stdout']).read_text())
+
+
+class SharedExecutionReceiptContractTests(unittest.TestCase):
+    """Both historical schemas require an unambiguous real-success shape."""
+
+    def exercise(self, change=None):
+        for suite in ['reused', 'zero-locality']:
+            with self.subTest(suite=suite), tempfile.TemporaryDirectory(
+                    prefix='trnm-shared-cost-parser-only-') as temporary:
+                directory = Path(temporary)
+                report = artifact_fixture(directory, 'x64', suite=suite)
+                if change is None:
+                    actual, _ = validate_artifact(directory, 'a' * 40, suite=suite)
+                    self.assertEqual(actual['schema'], suite_contract(suite)['execution_schema'])
+                    continue
+                change(report)
+                write_manifest(directory, report, suite=suite)
+                with self.assertRaises((ValueError, KeyError, TypeError)):
+                    validate_artifact(directory, 'a' * 40, suite=suite)
+
+    def test_both_exact_historical_success_shapes_remain_valid(self):
+        self.exercise()
+
+    def test_manifest_failure_field_is_not_success_even_if_null_or_empty(self):
+        for error in [None, '', 'retained native failure']:
+            with self.subTest(error=error):
+                self.exercise(lambda report: report.update(error=error))
+
+    def test_campaign_failure_field_is_not_success_even_if_null_or_empty(self):
+        for error in [None, '', 'retained campaign failure']:
+            with self.subTest(error=error):
+                self.exercise(lambda report: report['campaigns'][0].update(error=error))
+
+    def test_launch_failure_field_is_not_success_even_if_null_or_empty(self):
+        for error in [None, '', 'retained launch failure']:
+            with self.subTest(error=error):
+                self.exercise(lambda report: report['observations'][4].update(launch_error=error))
+
+    def test_boolean_false_cannot_alias_integer_zero_exit(self):
+        self.exercise(lambda report: report['observations'][4].update(exit_code=False))
+
+    def test_integer_zero_cannot_alias_false_timeout(self):
+        self.exercise(lambda report: report['observations'][4].update(timed_out=0))
+
+    def test_negative_elapsed_clock_rejected(self):
+        self.exercise(lambda report: report['observations'][4].update(elapsed_ns=-1))
+
+    def test_boolean_elapsed_clock_rejected(self):
+        self.exercise(lambda report: report['observations'][4].update(elapsed_ns=False))
 
 
 if __name__ == '__main__':

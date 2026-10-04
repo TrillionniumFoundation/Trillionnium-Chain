@@ -263,3 +263,17 @@ owner-stop authority. The history growth example separately checks a complete
 reference root and records actual derived-cache methods/software charges after read
 and confirmation operations; these observations do not measure concurrent lock cost,
 process RSS or persistent authenticated state performance.
+
+## Local capacity and client recovery identities
+
+`capacity-observe` is a local CLI/Node observation with its own JSON schema. It
+retains ordinary Node open/recovery behavior, rejects incompatible task profiles
+before opening, checks actual committed KV/root and final generation/slot, and
+does not extend peer Head or signed responses. The [continuity contract](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md)
+defines every reported obligation and the remaining permanent-account boundary.
+
+Public V3 client phases use `PublicClientStage` for recovery and failed-phase
+accounting. The `failed_stage` JSON labels and null remain the same; unknown
+diagnostic labels never acquire native phase identity. This explicitly refines
+the public Rust field type and leaves signed wire messages and retry/deadline
+limits unchanged; see [internal errors](../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md).

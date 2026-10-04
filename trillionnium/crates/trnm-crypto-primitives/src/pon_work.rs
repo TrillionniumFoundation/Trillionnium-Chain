@@ -2,6 +2,7 @@
 //! Full-transcript work on challenge-encoded matrices; verification recomputes it.
 use sha2::{Digest, Sha256};
 
+pub mod blocked_one_zero;
 pub mod blocked_zero;
 pub mod structured;
 

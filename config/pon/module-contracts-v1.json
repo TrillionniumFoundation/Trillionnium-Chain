@@ -157,7 +157,11 @@
         "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
-        "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs"
+        "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_io.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs",
+        "trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -302,7 +306,10 @@
         "trillionnium/crates/trnm-mvcc-fee/examples/continuity_transition_vectors.rs",
         "formal/pon-nakamoto-v1/model_composition_oracle.py",
         "formal/pon-nakamoto-v1/test_model_composition.py",
-        "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4/oracle_observations.rs"
+        "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4/oracle_observations.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/capacity_observation.rs",
+        "trillionnium/crates/trnm-pon-node/tests/continuity_cli.rs"
       ],
       "test_classes": [
         "ExecutionTests",
@@ -701,7 +708,11 @@
         "trillionnium/crates/trnm-pon-node/src/main.rs",
         "trillionnium/crates/trnm-pon-node/src/error.rs",
         "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
-        "trillionnium/crates/trnm-pon-node/examples/history_state_cost.rs"
+        "trillionnium/crates/trnm-pon-node/examples/history_state_cost.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/capacity_observation.rs",
+        "trillionnium/crates/trnm-pon-node/src/public_submit.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -782,7 +793,9 @@
         "formal/pon-nakamoto-v1/test_interop.py",
         "scripts/ci/check_pon_evidence.py",
         "scripts/ci/check_zero_locality_cost.py",
-        "scripts/ci/test_zero_locality_cost.py"
+        "scripts/ci/test_zero_locality_cost.py",
+        "scripts/ci/check_one_zero_locality_cost.py",
+        "scripts/ci/test_one_zero_locality_cost.py"
       ],
       "test_classes": [
         "CodecTests",

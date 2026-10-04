@@ -77,17 +77,19 @@ Each architecture executes both fixed campaigns:
 | 1 | 2 | 4 | 8 | 1 |
 
 The release build has a 900-second subprocess budget; each campaign has a
-300-second budget. Each architecture job has a 60-minute cap, and the comparison
+300-second budget. Each architecture job has a 90-minute cap, and the comparison
 has a 10-minute cap. Matrix fail-fast is disabled. Both campaigns are attempted
 after a successful build even if the first campaign returns a failure. Timeout,
 nonzero status, malformed output and validation failures remain failed observations
 with their captured output. Artifact upload and final source checks run on failure.
-The architecture cap covers two suites, each with up to900 seconds of build,
-600 seconds of campaigns and90 seconds of identity commands, plus setup and
-source/artifact handling. The former30-minute cap cannot cover both suites' own
-bounded failure paths; retaining it would risk job cancellation before their final
-receipts and upload. Runner loss or platform-forced termination remains outside
-the subprocess capture guarantee.
+The architecture cap covers three suites, each with up to 900 seconds of build,
+600 seconds of campaigns and 90 seconds of identity commands: 79.5 minutes of
+command budgets, plus termination grace, setup and source/artifact handling.
+The former 60-minute cap cannot cover all three suites' bounded failure paths;
+retaining it would risk cancellation before their final receipts and upload.
+These caps are execution limits, not measured performance or a promised completion
+time. Runner loss or platform-forced termination remains outside the subprocess
+capture guarantee.
 
 The native schema is `pon-w1-reused-search-v1`. Its seven explicit diagnostic
 materials include rank-checked full-field matrices, the existing structured cases,
@@ -120,6 +122,19 @@ changed output or producer mismatch fails. A slower producer, reversed speed rat
 target-budget exhaustion or honestly unsupported optimization is not a failure.
 No expected speedup or mining-to-verification ratio is an acceptance condition.
 Both repository-truth lanes execute negative tests for these distinctions.
+
+All native artifact schemas require the exact successful capture shape. A
+manifest or campaign containing an `error` field, or a command containing a
+`launch_error` field, is refused even when that field is null or empty: the real
+runner emits those fields only on failed paths. Command exits must be integer
+zero, timeouts must be boolean false, and elapsed clocks must be nonnegative
+integers; Python's boolean/integer equality cannot supply execution evidence.
+The reused checker also retains the native material/target/sample/invocation
+array order documented by the producer, in addition to checking every paired
+grid position. These checks do not change any native schema, transform old
+receipts, or discard their original output. Parser fixtures exercise rejection
+only; independently replaying an old hosted artifact remains an observation of
+that old source and run.
 
 This is one hosted cost campaign within the existing CI authority. Its manifests
 and comparison result do not grant protocol, hardware or release acceptance.
@@ -156,6 +171,44 @@ comparison removes only clocks; it cannot discard exhausted or slower observatio
 There is no speed threshold, work qualification or permission to compare absolute
 timings against the different old harness schema. Original failed output remains
 retained even when the later separate suite executes successfully.
+
+### Separate one-zero/rank-one locality suite
+
+The same architecture jobs then invoke `--suite one-zero-locality`, including
+after either preceding suite failed. The comparison likewise runs in its own
+always-executed step and writes a separate result. The workflow still has thirteen
+jobs. This suite owns `pon_one_zero_locality_cost`, raw schema
+`pon-w1-one-zero-locality-v1`, artifact directory
+`cross-arch-one-zero-locality-cost` and separate execution/comparison schemas.
+The two preceding suites retain their original schemas and interpretation.
+
+Its complete grid contains two synthetic matrix pairs: one zero left matrix with
+rank-one right matrix, then the reverse. The nonzero matrix has entries
+`M[i,j] = (i+1)*(j+3)` for zero-based indices 0 through 63; both exact task digests and
+asymmetric ranks are independently encoded and bound by the Python checker.
+Both fixed campaigns run generic prepared, structural zero-product and blocked
+one-zero/rank-one full-transcript producers, each in cold and reused modes.
+There are 96 and 48 cohorts per architecture for campaigns 0 and 1, respectively,
+with four retained searches per cohort. The scope flag stays
+`one_zero_rank_one_structure_only: true`.
+
+The new challenge domain is `one-zero-locality-cost-v1`. The native program uses
+separate ticket/proof-stream and winner-commitment domains and retains complete
+proof/ticket stream equality across all six producer/mode positions. The checker
+binds the challenge stream, material order, exact method names, full-proof length,
+setup counts, every winner and exhaustion, both verifier timings/order and all
+timing sums. Unsupported rows cannot replace one of these required capable
+constructors. Raw/source/executable hashes and unchanged source identities are
+checked through the same strict successful receipt contract. The new negative
+suite runs once in both repository-truth lanes and tests schema substitutions,
+swapped zero sides, task/rank changes, missing searches, unrecorded setup, old
+challenge domains, output changes and cross-architecture stream disagreement.
+
+These are two fixed synthetic materials with unchanged W1 proof bytes. They do
+not qualify arbitrary one-sided-zero matrices, general low-rank tasks, model
+inputs, maintenance cost, fastest-adversary cost or hardness. No relative speed
+threshold is applied; slower and fully exhausted runs remain valid measured
+observations, and a native failure retains its own error and raw output.
 
 ## Independent native transition and model observations
 

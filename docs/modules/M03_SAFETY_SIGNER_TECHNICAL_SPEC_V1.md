@@ -110,3 +110,15 @@ attempt and actual setup. A signed native V4/continuity lifecycle regression che
 that real zero-material registration, proof verification, renewal, revocation,
 expiry and parent changes still require their ordinary checks. This diagnostic
 producer is not installed as the Node's default miner or a source of verified types.
+
+## Complete one-zero rank-one transcript experiment
+
+The separate `BlockedOneZeroRankOnePreparedTask` accepts exactly one zero operand
+and one complete canonical nonzero rank-one operand. It derives and checks the
+factors before retaining them, and emits all32,768 canonical transcript words in
+the original order. `pon_one_zero_io` supports independent complete49188-byte
+comparison; `pon_one_zero_locality_cost` owns a fresh raw-cost schema with both
+orientations, cold/reused setup and complete winning/losing streams. See the
+[W1 implementation comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md).
+This diagnostic does not replace native mining selection or independently qualify
+task cost, proof hardness, actual checkpoint utility or hardware efficiency.
