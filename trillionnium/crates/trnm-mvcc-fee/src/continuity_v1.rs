@@ -149,8 +149,42 @@ fn reserve_owner(state: &State, value: &Value, recipients: &mut BTreeSet<String>
 /// or decreases it: reward maturation consumes a recipient reservation, and each
 /// missing queue slot reserves the reward before the maturity queue is full.
 pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {
+    match capacity_with_progress(state, height, cfg, &mut || {
+        Ok::<(), std::convert::Infallible>(())
+    }) {
+        Ok(capacity) => Ok(capacity),
+        Err(CapacityScanError::State(error)) => Err(error),
+        Err(CapacityScanError::Progress(never)) => match never {},
+    }
+}
+
+/// Local scan cadence only; this is not a parameter hashed into the network.
+pub const CAPACITY_PROGRESS_ROWS: usize = 256;
+
+/// The owner must classify errors by origin, never by an observer's message.
+#[derive(Debug, PartialEq, Eq)]
+pub enum CapacityScanError<E> {
+    State(&'static str),
+    Progress(E),
+}
+
+impl<E> From<&'static str> for CapacityScanError<E> {
+    fn from(error: &'static str) -> Self {
+        Self::State(error)
+    }
+}
+
+/// Check at most 256 state rows between observations. Observer failures remain
+/// distinct from state violations even when their diagnostics have the same text.
+/// This is a local scheduling boundary, not a consensus rule or a time guarantee.
+pub fn capacity_with_progress<E>(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    progress: &mut dyn FnMut() -> std::result::Result<(), E>,
+) -> std::result::Result<Capacity, CapacityScanError<E>> {
     if !enabled(cfg) {
-        return Err("CONTINUITY_PROFILE");
+        return Err("CONTINUITY_PROFILE".into());
     }
     let maturity = cfg.params["reward_maturity_blocks"]
         .as_u64()
@@ -158,14 +192,17 @@ pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {
     let mut recipients = BTreeSet::new();
     let mut reward_heights = BTreeSet::new();
     let mut archives = 0usize;
-    for (key, value) in state {
+    for (index, (key, value)) in state.iter().enumerate() {
+        if index % CAPACITY_PROGRESS_ROWS == 0 {
+            progress().map_err(CapacityScanError::Progress)?;
+        }
         if key.starts_with("reward:") {
             let due = number(value, "maturity")?;
             if due <= height
                 || due > height.checked_add(maturity).ok_or("RANGE")?
                 || !reward_heights.insert(due)
             {
-                return Err("CONTINUITY_REWARD_QUEUE");
+                return Err("CONTINUITY_REWARD_QUEUE".into());
             }
             number(value, "amount")?;
             reserve_owner(state, value, &mut recipients)?;
@@ -189,7 +226,7 @@ pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {
     // heights; no gaps or extra maturity rows can manufacture reserve headroom.
     let expected_rewards = height.min(maturity) as usize;
     if reward_heights.len() != expected_rewards {
-        return Err("CONTINUITY_REWARD_QUEUE");
+        return Err("CONTINUITY_REWARD_QUEUE".into());
     }
     for offset in 0..expected_rewards {
         let due = height
@@ -197,7 +234,7 @@ pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {
             .and_then(|n| n.checked_sub(offset as u64))
             .ok_or("RANGE")?;
         if !reward_heights.contains(&due) {
-            return Err("CONTINUITY_REWARD_QUEUE");
+            return Err("CONTINUITY_REWARD_QUEUE".into());
         }
     }
     let queue_reserve = (maturity as usize)
@@ -209,6 +246,8 @@ pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {
         .and_then(|n| n.checked_add(archives))
         .and_then(|n| n.checked_add(queue_reserve))
         .ok_or("RANGE")?;
+    // A cancelled completed scan must not publish even a fully computed report.
+    progress().map_err(CapacityScanError::Progress)?;
     Ok(Capacity {
         actual_keys: state.len(),
         credit_account_reserve: recipients.len(),
@@ -228,4 +267,153 @@ pub fn check_state(state: &State, height: u64, cfg: &Config) -> Result<()> {
         return Err("STATE_CAPACITY");
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod progress_tests {
+    use super::*;
+
+    fn config() -> Config {
+        Config::installed_with_profiles("native-public-evaluation-dev-v1", PROFILE).unwrap()
+    }
+
+    // Deliberately seeded scan inputs, not signed states or a mined full chain.
+    fn rows(count: usize) -> State {
+        (0..count)
+            .map(|index| {
+                (
+                    format!("account:{index:064x}"),
+                    json!({"balance":0,"nonce":7}),
+                )
+            })
+            .collect()
+    }
+
+    #[test]
+    fn progress_cadence_and_complete_result_match_at_key_boundaries() {
+        let cfg = config();
+        for count in [0, 1, 255, 256, 257, 512, MAX_KEYS - 20, MAX_KEYS] {
+            let state = rows(count);
+            let expected = capacity(&state, 0, &cfg).unwrap();
+            let mut calls = 0;
+            let actual = capacity_with_progress(&state, 0, &cfg, &mut || {
+                calls += 1;
+                Ok::<(), ()>(())
+            })
+            .unwrap();
+            assert_eq!(actual, expected);
+            assert_eq!(actual.required_keys, count + 20);
+            assert_eq!(calls, count.div_ceil(CAPACITY_PROGRESS_ROWS) + 1);
+        }
+    }
+
+    #[test]
+    fn every_scan_cut_preserves_typed_cause_state_and_successful_retry() {
+        let cfg = config();
+        let state = rows(1025);
+        let original = state.clone();
+        let expected = capacity(&state, 0, &cfg).unwrap();
+        let checkpoints = state.len().div_ceil(CAPACITY_PROGRESS_ROWS) + 1;
+        for cut in 1..=checkpoints {
+            let mut calls = 0;
+            let result = capacity_with_progress(&state, 0, &cfg, &mut || {
+                calls += 1;
+                if calls == cut {
+                    // An identical error string must not become a state failure.
+                    Err((cut, String::from("CONTINUITY_STATE")))
+                } else {
+                    Ok(())
+                }
+            });
+            assert_eq!(
+                result,
+                Err(CapacityScanError::Progress((
+                    cut,
+                    String::from("CONTINUITY_STATE")
+                )))
+            );
+            assert_eq!(calls, cut);
+            assert_eq!(state, original);
+            assert_eq!(capacity(&state, 0, &cfg).unwrap(), expected);
+        }
+    }
+
+    #[test]
+    fn profile_and_state_failures_keep_their_original_precedence() {
+        let cfg = config();
+        let old = Config::installed_with_profiles(
+            "native-public-evaluation-dev-v1",
+            "signed-task-lifecycle-dev-v4",
+        )
+        .unwrap();
+        let mut calls = 0;
+        assert_eq!(
+            capacity_with_progress(&State::new(), 0, &old, &mut || {
+                calls += 1;
+                Err("cancelled")
+            }),
+            Err(CapacityScanError::State("CONTINUITY_PROFILE"))
+        );
+        assert_eq!(calls, 0);
+        // A missing reward queue fails before the final publication checkpoint.
+        assert_eq!(
+            capacity_with_progress(&State::new(), 1, &cfg, &mut || Err("cancelled")),
+            Err(CapacityScanError::State("CONTINUITY_REWARD_QUEUE"))
+        );
+        let mut state = rows(CAPACITY_PROGRESS_ROWS);
+        state.insert("quota:malformed".into(), json!({"remaining":1}));
+        let expected = capacity(&state, 0, &cfg).unwrap_err();
+        let mut checkpoints = 0;
+        assert_eq!(
+            capacity_with_progress(&state, 0, &cfg, &mut || {
+                checkpoints += 1;
+                Ok::<(), ()>(())
+            }),
+            Err(CapacityScanError::State(expected))
+        );
+        assert_eq!(checkpoints, 2);
+        let mut checkpoints = 0;
+        assert_eq!(
+            capacity_with_progress(&state, 0, &cfg, &mut || {
+                checkpoints += 1;
+                if checkpoints == 2 {
+                    Err("CONTINUITY_STATE")
+                } else {
+                    Ok(())
+                }
+            }),
+            Err(CapacityScanError::Progress("CONTINUITY_STATE"))
+        );
+    }
+
+    #[test]
+    fn progress_scan_preserves_cross_kind_recipient_and_archive_deduplication() {
+        let cfg = config();
+        let mut state = rows(513);
+        let shared = "ff".repeat(32);
+        let other = "ee".repeat(32);
+        state.insert(
+            "reward:seeded".into(),
+            json!({"owner":shared,"amount":0,"maturity":21}),
+        );
+        for prefix in ["task:", "release:"] {
+            state.insert(
+                format!("{prefix}seeded"),
+                json!({"owner":shared,"remaining":1}),
+            );
+        }
+        state.insert(
+            "quota:seeded".into(),
+            json!({"owner":other,"remaining":1}),
+        );
+        state.insert("contribution:seeded".into(), json!({}));
+        let expected = capacity(&state, 1, &cfg).unwrap();
+        let mut progress = || Ok::<(), ()>(());
+        let scanned = capacity_with_progress(&state, 1, &cfg, &mut progress).unwrap();
+        assert_eq!(scanned, expected);
+        assert_eq!(scanned.credit_account_reserve, 2);
+        assert_eq!(scanned.archive_reserve, 1);
+        assert_eq!(scanned.reward_queue_reserve, 19);
+        assert_eq!(scanned.required_keys, state.len() + 22);
+    }
 }
