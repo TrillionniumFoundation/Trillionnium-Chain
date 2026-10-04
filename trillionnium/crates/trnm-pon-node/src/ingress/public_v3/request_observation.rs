@@ -112,7 +112,7 @@ struct Inner {
 impl Inner {
     fn count(&self, counter: &AtomicU64) {
         if counter
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| n.checked_add(1))
+            .try_update(Ordering::Relaxed, Ordering::Relaxed, |n| n.checked_add(1))
             .is_err()
         {
             self.counter_overflow.store(true, Ordering::Release);

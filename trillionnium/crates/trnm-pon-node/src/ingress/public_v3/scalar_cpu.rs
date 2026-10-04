@@ -280,7 +280,7 @@ impl ScopedWorkerCpu {
     }
     pub(super) fn add(&self, cell: &AtomicU64, value: u64) {
         if cell
-            .fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
+            .try_update(Ordering::AcqRel, Ordering::Acquire, |old| {
                 old.checked_add(value)
             })
             .is_err()
