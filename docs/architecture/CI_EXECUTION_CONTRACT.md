@@ -14,6 +14,37 @@ after runner allocation. Source observations are retained on success and failure
 The source checker validates the workflow wiring, while the hosted lanes execute
 the actual tests. A source-check result cannot stand in for a lane outcome.
 
+## Tracked-byte source identity
+
+`verify_ci_source.py` checks the actual tracked worktree against the raw committed
+Git tree, including blob bytes, executable modes and symlink target bytes. It does
+not accept cached `git status` as evidence that a compiler read those bytes. Both
+head and prospective-merge jobs run this guard before and after their lane.
+
+The guard disables object replacement during object reads and rejects replacement
+refs, graft files, assume-unchanged and skip-worktree entries. It explicitly asks
+for all untracked entries even when local Git configuration suppresses their
+display. Every supported tracked blob is read through no-follow Unix directory
+and file descriptors, streamed with the committed length, and checked for path or
+file changes during hashing. A directory-symlink substitution or nonregular file
+is refused without reading an external tree or waiting on a FIFO. Submodules need
+a separate recursive source contract and are refused rather than skipped.
+
+The source receipt adds `tracked_worktree_verified`, `tracked_entries` and
+`tracked_bytes` to the existing observation schema. Fuzz and supply-chain receipts
+reuse the same predicate through `ci_observation.source`; a hidden source change
+is retained as `dirty-candidate` with a verification error, not `committed-clean`.
+The existing `test_ci_execution.py` entry point imports the raw-worktree regressions,
+so they run in both required repository-truth lanes. Real Git fixtures reproduce
+hidden index flags, suppressed untracked files, mode changes and replacement
+commits; a separate controlled status result proves the byte-hash path is necessary.
+
+These are Unix checkout snapshots, not continuous execution attestation. They do
+not certify ignored/generated output, tool binaries, symlink referents, dependencies
+or code modified and restored between guards. Existing isolated tool/output,
+lockfile, executable-hash and execution checks remain necessary. Protocol bytes,
+production flags, required check names and repository protections are unchanged.
+
 ## Mixed public-service execution
 
 `protocol-contract` runs the source-bound

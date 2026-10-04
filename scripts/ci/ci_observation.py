@@ -65,9 +65,23 @@ def checked(command: list[str], log: Path, observations: list[dict], **kwargs) -
 
 
 def source() -> dict:
-    git = lambda *args: subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip()
-    return {'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
-            'source_state': 'dirty-candidate' if git('status', '--porcelain') else 'committed-clean'}
+    # Reuse the exact worktree predicate used by the head/merge guards. Git's
+    # cached status alone can hide changed source; a receipt must not relabel it.
+    from verify_ci_source import verify
+    git = lambda *args: subprocess.check_output(
+        ['git', '--no-replace-objects', *args], cwd=ROOT, text=True).strip()
+    commit = git('rev-parse', 'HEAD')
+    result = {'commit': commit, 'tree': git('rev-parse', commit + '^{tree}'),
+              'source_state': 'dirty-candidate', 'tracked_worktree_verified': False}
+    try:
+        verified = verify('head', commit, root=ROOT)
+    except (OSError, ValueError, subprocess.CalledProcessError) as error:
+        result['source_verification_error'] = str(error)
+    else:
+        result.update(source_state='committed-clean', tracked_worktree_verified=True,
+                      tracked_entries=verified['tracked_entries'],
+                      tracked_bytes=verified['tracked_bytes'])
+    return result
 
 
 def digest(path: Path) -> str:
