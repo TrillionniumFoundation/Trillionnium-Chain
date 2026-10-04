@@ -1105,19 +1105,21 @@ fn dispatch_shared_with_execution_control(
     match request {
         Request::Submit { packet } => {
             let packet = hex_packet(&packet)?;
-            {
+            let owner_permit = {
                 let mut owner = lock_owner(node, progress)?;
                 let clock = now()?;
                 if let Some(id) = owner.check_admission_context(&packet, clock)? {
                     return submit_result(&mut owner, id, clock);
                 }
-            }
+                owner.begin_owner_work(&packet)?
+            };
             progress(0)?;
             let checked = verify(packet)?;
             // Cancellation after work must not turn into a durable admission.
             progress(0)?;
             let mut owner = lock_owner(node, progress)?;
             let clock = now()?;
+            let checked = owner.attach_owner_work(checked, owner_permit)?;
             let id = owner.admit_work_checked_with_control(checked, clock, control)?;
             submit_result(&mut owner, id, clock)
         }

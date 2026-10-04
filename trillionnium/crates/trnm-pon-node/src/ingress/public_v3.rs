@@ -8,21 +8,34 @@ use super::{
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
 mod request_observation;
+pub mod scalar_cpu;
 pub use request_observation::{
     ApplicationFrameBytes, ApplicationFramePhase, PublicRequestObservation,
     PublicRequestObservationSnapshot, PublicRequestObserver, MAX_REQUEST_OBSERVATION_RECORDS,
 };
 use request_observation::{ConnectionObservation, TaskObservation, ThreadCpuStamp};
+#[cfg(test)]
+use scalar_cpu::ScopedWorkerInterval;
+use scalar_cpu::{
+    LiveRequestCpu, PaidMutationCpuBudget, ScopedWorkerCpu, MUTATION_CPU_BURST_NS,
+    MUTATION_CPU_REFILL_NS_PER_SECOND, MUTATION_CPU_START_RESERVE_NS, MUTATION_CPU_WORKERS,
+};
+pub use scalar_cpu::{
+    ServiceMutationCpuCheckpoint, ServiceMutationCpuDomain, ServiceMutationCpuOperation,
+    ServiceMutationCpuSettlement,
+};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
+#[cfg(test)]
+use std::sync::atomic::AtomicU64;
 use std::{
-    cell::Cell,
-    collections::{BTreeMap, HashMap},
+    cell::{Cell, RefCell},
+    collections::BTreeMap,
     io::{Read, Write},
     net::{SocketAddr, TcpListener, TcpStream},
     sync::{
-        atomic::{AtomicBool, AtomicU64, Ordering},
+        atomic::{AtomicBool, Ordering},
         mpsc::{self, TryRecvError, TrySendError},
         Arc, Mutex,
     },
@@ -30,9 +43,7 @@ use std::{
     time::{Duration, Instant},
 };
 use trnm_crypto_primitives::verify_hex_strict;
-use trnm_mvcc_fee::pon_executor::{
-    ExecutionControl, ExecutionWorkerAccounting, ExecutionWorkerInterval,
-};
+use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionWorkerAccounting};
 use trnm_protocol::pon_wire::Hash;
 
 /// Fresh signed/wire successor. V2 remains a separate unchanged byte contract.
@@ -86,243 +97,12 @@ const CHALLENGES_PER_SECOND: u64 = 128;
 const CHALLENGE_BURST: u64 = 32;
 const READ_CHALLENGE_RESERVE: u64 = 8;
 const IO_QUANTUM: usize = 64 * 1024;
-// Local receiver policy, independent of the caller's ticket-search algorithm.
-const MUTATION_CPU_BURST_NS: u64 = 2_000_000_000;
-const MUTATION_CPU_REFILL_NS_PER_SECOND: u64 = 250_000_000;
-const MUTATION_CPU_START_RESERVE_NS: u64 = 100_000_000;
-const MUTATION_CPU_WORKERS: usize = 2;
-
-/// Volatile service-epoch accounting, never ledger or caller identity authority.
-struct PaidMutationCpuBudget {
-    credit_ns: i128,
-    updated: Instant,
-    in_flight: usize,
-    unavailable: bool,
-}
-impl PaidMutationCpuBudget {
-    fn new() -> Self {
-        Self {
-            credit_ns: i128::from(MUTATION_CPU_BURST_NS),
-            updated: Instant::now(),
-            in_flight: 0,
-            unavailable: false,
-        }
-    }
-    fn refill(&mut self, now: Instant) {
-        let elapsed = now.saturating_duration_since(self.updated).as_nanos();
-        self.updated = now;
-        let Some(credit) = elapsed
-            .checked_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))
-            .map(|n| n / 1_000_000_000)
-            .and_then(|n| i128::try_from(n).ok())
-            .and_then(|n| self.credit_ns.checked_add(n))
-        else {
-            self.unavailable = true;
-            return;
-        };
-        // Refill cannot mint a second burst on top of outstanding start reserves.
-        self.credit_ns = credit.min(self.credit_ceiling());
-    }
-    fn credit_ceiling(&self) -> i128 {
-        i128::from(MUTATION_CPU_BURST_NS)
-            - (self.in_flight as i128) * i128::from(MUTATION_CPU_START_RESERVE_NS)
-    }
-    fn reserve(&mut self, now: Instant) -> Result<()> {
-        self.refill(now);
-        ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
-        ensure(
-            self.in_flight < MUTATION_CPU_WORKERS
-                && self.credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS),
-            "PUBLIC_MUTATION_CPU_BUDGET",
-        )?;
-        self.credit_ns -= i128::from(MUTATION_CPU_START_RESERVE_NS);
-        self.in_flight += 1;
-        Ok(())
-    }
-    fn settle(&mut self, now: Instant, measured: Option<u64>) {
-        self.refill(now);
-        self.in_flight = self.in_flight.saturating_sub(1);
-        if let Some(measured) = measured {
-            match self
-                .credit_ns
-                .checked_add(i128::from(MUTATION_CPU_START_RESERVE_NS) - i128::from(measured))
-            {
-                Some(credit) => self.credit_ns = credit.min(self.credit_ceiling()),
-                None => self.unavailable = true,
-            }
-        } else {
-            // No fabricated zero or refund when actual accounting is unavailable.
-            self.unavailable = true;
-        }
-    }
-    /// Charge a known newly observed interval immediately. The start reserve
-    /// remains outstanding until settlement; it is not charged a second time.
-    fn charge_live(&mut self, now: Instant, measured: u64) -> Result<()> {
-        self.refill(now);
-        let Some(credit) = self.credit_ns.checked_sub(i128::from(measured)) else {
-            self.unavailable = true;
-            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
-        };
-        self.credit_ns = credit;
-        ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
-        ensure(self.credit_ns >= 0, "PUBLIC_MUTATION_CPU_BUDGET")
-    }
-}
-/// Only this request's live thread baselines. No State, packet, identity or
-/// progress authority is cached. Locks are released before any native work.
-struct LiveRequestCpu {
-    budget: Arc<Mutex<PaidMutationCpuBudget>>,
-    state: Mutex<LiveRequestCpuState>,
-    #[cfg(test)]
-    fail_next_sample: AtomicBool,
-}
-struct LiveRequestCpuState {
-    threads: HashMap<thread::ThreadId, ThreadCpuStamp>,
-    charged_ns: u64,
-    refused: bool,
-    unavailable: bool,
-}
-impl LiveRequestCpu {
-    fn new(budget: Arc<Mutex<PaidMutationCpuBudget>>, owner: ThreadCpuStamp) -> Self {
-        Self {
-            budget,
-            state: Mutex::new(LiveRequestCpuState {
-                threads: [(thread::current().id(), owner)].into_iter().collect(),
-                charged_ns: 0,
-                refused: false,
-                unavailable: false,
-            }),
-            #[cfg(test)]
-            fail_next_sample: AtomicBool::new(false),
-        }
-    }
-    fn unknown(&self) {
-        if let Ok(mut state) = self.state.lock() {
-            state.unavailable = true;
-        }
-        if let Ok(mut budget) = self.budget.lock() {
-            budget.unavailable = true;
-        }
-    }
-    fn register_worker(&self, stamp: Option<ThreadCpuStamp>) {
-        let Some(stamp) = stamp else {
-            self.unknown();
-            return;
-        };
-        let mut state = match self.state.lock() {
-            Ok(state) => state,
-            Err(error) => {
-                drop(error);
-                self.unknown();
-                return;
-            }
-        };
-        let id = thread::current().id();
-        if state.threads.contains_key(&id) {
-            drop(state);
-            self.unknown();
-            return;
-        }
-        state.threads.insert(id, stamp);
-    }
-    fn observe(&self, remove: bool, enforce: bool) -> Result<()> {
-        // All two-lock paths use request -> global. Neither is held across a
-        // Work replay, envelope, State/root calculation, join or SQL call.
-        let mut state = match self.state.lock() {
-            Ok(state) => state,
-            Err(error) => {
-                // A PoisonError owns the failed lock guard; release it before
-                // marking request/global accounting unavailable.
-                drop(error);
-                self.unknown();
-                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
-            }
-        };
-        let id = thread::current().id();
-        let measured = state
-            .threads
-            .get_mut(&id)
-            .and_then(ThreadCpuStamp::checkpoint);
-        #[cfg(test)]
-        let measured = if self.fail_next_sample.swap(false, Ordering::AcqRel) {
-            None
-        } else {
-            measured
-        };
-        if remove {
-            state.threads.remove(&id);
-        }
-        let Some(measured) = measured else {
-            drop(state);
-            self.unknown();
-            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
-        };
-        let Some(total) = state.charged_ns.checked_add(measured) else {
-            drop(state);
-            self.unknown();
-            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
-        };
-        state.charged_ns = total;
-        let result: Result<()> = (|| {
-            let mut budget = self
-                .budget
-                .lock()
-                .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
-            budget.charge_live(Instant::now(), measured)
-        })();
-        if let Err(error) = &result {
-            if error.to_string() == "PUBLIC_MUTATION_CPU_BUDGET" {
-                state.refused |= enforce;
-            } else {
-                state.unavailable = true;
-            }
-        }
-        let unavailable = state.unavailable;
-        let refused = state.refused;
-        drop(state);
-        if unavailable {
-            self.unknown();
-            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
-        }
-        // Final samples still charge after cancellation/debt. They never
-        // replace an already completed native outcome with a new refusal.
-        if enforce {
-            ensure(!refused, "PUBLIC_MUTATION_CPU_BUDGET")?;
-        }
-        Ok(())
-    }
-    fn checkpoint(&self) -> Result<()> {
-        self.observe(false, true)
-    }
-    fn finish_thread(&self) {
-        let _ = self.observe(true, false);
-    }
-    fn complete(&self) -> Option<u64> {
-        let state = match self.state.lock() {
-            Ok(state) => state,
-            Err(error) => {
-                drop(error);
-                self.unknown();
-                return None;
-            }
-        };
-        if state.unavailable || !state.threads.is_empty() {
-            drop(state);
-            self.unknown();
-            None
-        } else {
-            Some(state.charged_ns)
-        }
-    }
-    fn was_refused(&self) -> bool {
-        self.state.lock().is_ok_and(|state| state.refused)
-    }
-}
 #[derive(Default)]
 struct MutationCpuMeasurement {
     full_work_ns: Cell<Option<u64>>,
     unavailable: Cell<bool>,
     workers: ScopedWorkerCpu,
+    continuous_scope: RefCell<Option<crate::store::PublicContinuousScope>>,
 }
 impl MutationCpuMeasurement {
     fn for_permit(permit: Option<&PaidMutationCpuPermit>) -> Self {
@@ -334,121 +114,6 @@ impl MutationCpuMeasurement {
             },
             ..Self::default()
         }
-    }
-}
-/// Scalar, request-local intervals. No State/Output/observer schema changes.
-#[derive(Default)]
-struct ScopedWorkerCpu {
-    spawned: AtomicU64,
-    started: AtomicU64,
-    finished: AtomicU64,
-    known: AtomicU64,
-    total_ns: AtomicU64,
-    unavailable: AtomicBool,
-    budget: Option<Arc<Mutex<PaidMutationCpuBudget>>>,
-    live: Option<Arc<LiveRequestCpu>>,
-    #[cfg(test)]
-    fail_next_start: AtomicBool,
-    #[cfg(test)]
-    fail_next_finish: AtomicBool,
-}
-impl ScopedWorkerCpu {
-    fn checkpoint(&self) -> Result<()> {
-        self.live.as_ref().map_or(Ok(()), |live| live.checkpoint())
-    }
-    fn unknown(&self) {
-        self.unavailable.store(true, Ordering::Release);
-        if let Some(live) = &self.live {
-            live.unknown();
-        }
-        // A failed worker clock prevents another request start immediately;
-        // it does not replace this request's already completed native outcome.
-        if let Some(budget) = &self.budget {
-            if let Ok(mut budget) = budget.lock() {
-                budget.unavailable = true;
-            }
-        }
-    }
-    fn add(&self, cell: &AtomicU64, value: u64) {
-        if cell
-            .fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
-                old.checked_add(value)
-            })
-            .is_err()
-        {
-            self.unknown();
-        }
-    }
-    // The caller invokes this only after every actual scoped handle was joined.
-    fn complete(&self) -> Option<u64> {
-        let spawned = self.spawned.load(Ordering::Acquire);
-        let total = self.total_ns.load(Ordering::Acquire);
-        if self.unavailable.load(Ordering::Acquire)
-            || spawned != self.started.load(Ordering::Acquire)
-            || spawned != self.finished.load(Ordering::Acquire)
-            || spawned != self.known.load(Ordering::Acquire)
-            || (spawned == 0 && total != 0)
-        {
-            self.unknown();
-            None
-        } else {
-            Some(total)
-        }
-    }
-}
-struct ScopedWorkerInterval<'a> {
-    collector: &'a ScopedWorkerCpu,
-    stamp: Option<ThreadCpuStamp>,
-}
-impl ExecutionWorkerInterval for ScopedWorkerInterval<'_> {}
-impl Drop for ScopedWorkerInterval<'_> {
-    fn drop(&mut self) {
-        if let Some(live) = &self.collector.live {
-            live.finish_thread();
-        }
-        let measured = self.stamp.take().and_then(ThreadCpuStamp::finish);
-        #[cfg(test)]
-        let measured = if self
-            .collector
-            .fail_next_finish
-            .swap(false, Ordering::AcqRel)
-        {
-            None
-        } else {
-            measured
-        };
-        self.collector.add(&self.collector.finished, 1);
-        if let Some(cpu) = measured {
-            self.collector.add(&self.collector.total_ns, cpu);
-            self.collector.add(&self.collector.known, 1);
-        } else {
-            self.collector.unknown();
-        }
-    }
-}
-impl ExecutionWorkerAccounting for ScopedWorkerCpu {
-    fn worker_started(&self) -> Option<Box<dyn ExecutionWorkerInterval + '_>> {
-        let stamp = ThreadCpuStamp::start();
-        #[cfg(test)]
-        let stamp = if self.fail_next_start.swap(false, Ordering::AcqRel) {
-            None
-        } else {
-            stamp
-        };
-        self.add(&self.started, 1);
-        if let Some(live) = &self.live {
-            live.register_worker(stamp.clone());
-        }
-        if stamp.is_none() {
-            self.unknown();
-        }
-        Some(Box::new(ScopedWorkerInterval {
-            collector: self,
-            stamp,
-        }))
-    }
-    fn worker_spawn_succeeded(&self) {
-        self.add(&self.spawned, 1);
     }
 }
 struct PaidMutationCpuPermit {
@@ -538,9 +203,12 @@ impl PaidMutationCpuPermit {
             .zip(already_charged)
             .and_then(|(total, paid)| total.checked_sub(paid));
         let live_refused = self.live.was_refused();
-        if let Ok(mut budget) = self.budget.lock() {
+        let budget_settled = if let Ok(mut budget) = self.budget.lock() {
             budget.settle(Instant::now(), residual);
-        }
+            true
+        } else {
+            false
+        };
         self.settled = true;
         if let Ok(mut m) = metrics.lock() {
             m.mutation_cpu_clock_failures += u64::from(residual.is_none());
@@ -552,6 +220,24 @@ impl PaidMutationCpuPermit {
                     .mutation_dispatch_excluding_work_cpu_ns
                     .saturating_add(dispatch);
             }
+        }
+        if let Some(scope) = measurement.continuous_scope.borrow_mut().take() {
+            let actual = ServiceMutationCpuSettlement {
+                schema: "service-owner-scoped-thread-cpu-settlement-v1",
+                owner_cpu_ns: outer,
+                scoped_worker_cpu_ns: children,
+                total_cpu_ns: charged,
+                live_paid_cpu_ns: already_charged,
+                residual_cpu_ns: residual,
+                spawned_workers: measurement.workers.spawned.load(Ordering::Acquire),
+                started_workers: measurement.workers.started.load(Ordering::Acquire),
+                finished_workers: measurement.workers.finished.load(Ordering::Acquire),
+                known_workers: measurement.workers.known.load(Ordering::Acquire),
+                live_refused,
+                accounting_unavailable: residual.is_none() || !budget_settled,
+            };
+            // Journal failure latches future mutation. Native outcome/ACK remain factual.
+            let _persisted = scope.finish(&actual);
         }
         // The existing dispatch observer measures only its own actual thread.
         outer
@@ -899,6 +585,22 @@ impl PublicServer {
             #[cfg(test)]
             fail_next_live_cpu_finish: AtomicBool::new(false),
         })
+    }
+    /// The returned handle shares this exact service CPU epoch with a trusted
+    /// local owner. It is a meter, not task or packet admission authority.
+    pub fn mutation_cpu_domain(&self) -> ServiceMutationCpuDomain {
+        ServiceMutationCpuDomain::from_shared(self.mutation_cpu.clone())
+    }
+    /// Trusted same-operator service binds the Node's existing scalar domain,
+    /// including zero credit after clean cold reopen. No fresh burst is minted.
+    pub fn with_continuous_domain(
+        identity: DevelopmentIdentity,
+        policy: PublicPolicy,
+        domain: &ServiceMutationCpuDomain,
+    ) -> Result<Self> {
+        let mut server = Self::new(identity, policy)?;
+        server.mutation_cpu = domain.shared_budget();
+        Ok(server)
     }
     fn tick(&self) -> Result<u64> {
         u64::try_from(self.started.elapsed().as_millis()).map_err(|_| "PUBLIC_CLOCK".into())
@@ -1511,63 +1213,100 @@ fn public_dispatch(
         ensure(steps <= MAX_HISTORY_STEPS, "PUBLIC_HISTORY_STEPS")
     };
     match request {
-        Request::Submit { packet } => super::dispatch_shared_with_execution_control(
-            node,
-            NativeRequest::Submit { packet },
-            &mut progress,
-            |packet| {
-                // The context check may have waited for the only Node owner.
-                // An abandoned caller must not start a fresh full work replay.
-                task_alive(deadline, stop, cancelled)?;
-                if let Some(cpu) = live_cpu {
-                    cpu.checkpoint()?;
-                }
-                let cpu = (observation.is_some() || mutation_cpu.is_some())
-                    .then(ThreadCpuStamp::start)
-                    .flatten();
-                if let Some(charge) = mutation_cpu {
-                    if cpu.is_none() {
-                        charge.unavailable.set(true);
-                        charge.workers.unknown();
-                        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        Request::Submit { packet } => {
+            let continuous_progress = {
+                let owner = lock_owner(node, &mut progress)?;
+                if owner.is_continuous() {
+                    let measurement =
+                        mutation_cpu.ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
+                    let live = measurement
+                        .workers
+                        .live
+                        .as_ref()
+                        .ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
+                    let decoded = super::hex_packet(&packet)?;
+                    let scope = owner.begin_continuous_public_scope(
+                        &decoded,
+                        ServiceMutationCpuCheckpoint::from_actual_live(live.clone()),
+                    )?;
+                    let checkpoint = scope.as_ref().map(|scope| scope.checkpoint()).transpose()?;
+                    let has_scope = scope.is_some();
+                    *measurement.continuous_scope.borrow_mut() = scope;
+                    if has_scope {
+                        owner.check_continuous_public_packet_binding(&decoded)?;
                     }
+                    checkpoint
+                } else {
+                    None
                 }
-                let start = Instant::now();
-                metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
-                if let Some(record) = observation {
-                    record.work_started();
-                }
-                let result = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
+            };
+            super::dispatch_shared_with_execution_control(
+                node,
+                NativeRequest::Submit { packet },
+                &mut progress,
+                |packet| {
+                    // The context check may have waited for the only Node owner.
+                    // An abandoned caller must not start a fresh full work replay.
                     task_alive(deadline, stop, cancelled)?;
-                    live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
-                });
-                let cpu = cpu.and_then(ThreadCpuStamp::finish);
-                if let Some(charge) = mutation_cpu {
-                    charge.full_work_ns.set(cpu);
-                    charge.unavailable.set(cpu.is_none());
-                    if cpu.is_none() {
-                        charge.workers.unknown();
+                    if let Some(checkpoint) = &continuous_progress {
+                        checkpoint.check()?;
                     }
-                }
-                if let Some(record) = observation {
-                    record.work_finished(cpu, result.is_ok());
-                }
-                let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                m.work_ns = m.work_ns.saturating_add(elapsed_ns(start));
-                m.work_finished += 1;
-                if result.is_err() {
-                    m.work_failed += 1;
-                }
-                result
-            },
-            &ExecutionControl::new(
-                &|_| {
-                    task_alive(deadline, stop, cancelled)?;
-                    live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+                    if let Some(cpu) = live_cpu {
+                        cpu.checkpoint()?;
+                    }
+                    let cpu = (observation.is_some() || mutation_cpu.is_some())
+                        .then(ThreadCpuStamp::start)
+                        .flatten();
+                    if let Some(charge) = mutation_cpu {
+                        if cpu.is_none() {
+                            charge.unavailable.set(true);
+                            charge.workers.unknown();
+                            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                        }
+                    }
+                    let start = Instant::now();
+                    metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
+                    if let Some(record) = observation {
+                        record.work_started();
+                    }
+                    let result = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
+                        task_alive(deadline, stop, cancelled)?;
+                        if let Some(checkpoint) = &continuous_progress {
+                            checkpoint.check()?;
+                        }
+                        live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+                    });
+                    let cpu = cpu.and_then(ThreadCpuStamp::finish);
+                    if let Some(charge) = mutation_cpu {
+                        charge.full_work_ns.set(cpu);
+                        charge.unavailable.set(cpu.is_none());
+                        if cpu.is_none() {
+                            charge.workers.unknown();
+                        }
+                    }
+                    if let Some(record) = observation {
+                        record.work_finished(cpu, result.is_ok());
+                    }
+                    let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+                    m.work_ns = m.work_ns.saturating_add(elapsed_ns(start));
+                    m.work_finished += 1;
+                    if result.is_err() {
+                        m.work_failed += 1;
+                    }
+                    result
                 },
-                mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
-            ),
-        ),
+                &ExecutionControl::new(
+                    &|_| {
+                        task_alive(deadline, stop, cancelled)?;
+                        if let Some(checkpoint) = &continuous_progress {
+                            checkpoint.check()?;
+                        }
+                        live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+                    },
+                    mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
+                ),
+            )
+        }
         Request::Head => {
             let owner = lock_owner(node, &mut progress)?;
             owner.public_head_metadata()
@@ -1612,13 +1351,35 @@ fn public_dispatch(
         } => {
             progress(0)?;
             let mut owner = lock_owner(node, &mut progress)?;
-            let snapshot = owner.pool_status_snapshot()?;
-            ensure(pool_context == snapshot.context, "PUBLIC_POOL_CONTEXT")?;
             // The canonical body guard already capped the vector before serde allocation.
             let raws = transactions
                 .iter()
                 .map(|text| hex::decode(text).map_err(|_| "PUBLIC_POOL_RAW".into()))
                 .collect::<Result<Vec<_>>>()?;
+            let continuous_progress = if owner.is_continuous() {
+                let measurement =
+                    mutation_cpu.ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
+                let live = measurement
+                    .workers
+                    .live
+                    .as_ref()
+                    .ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
+                let scope = owner.begin_continuous_public_pool_scope(
+                    &raws,
+                    crate::digest(&pool_context)?,
+                    ServiceMutationCpuCheckpoint::from_actual_live(live.clone()),
+                )?;
+                let checkpoint = scope.as_ref().map(|scope| scope.checkpoint()).transpose()?;
+                *measurement.continuous_scope.borrow_mut() = scope;
+                if checkpoint.is_some() {
+                    owner.check_continuous_public_pool_binding()?;
+                }
+                checkpoint
+            } else {
+                None
+            };
+            let snapshot = owner.pool_status_snapshot()?;
+            ensure(pool_context == snapshot.context, "PUBLIC_POOL_CONTEXT")?;
             // Check again before starting the nonpreemptive mutable native stage.
             progress(0)?;
             let start = Instant::now();
@@ -1631,7 +1392,10 @@ fn public_dispatch(
                 &ExecutionControl::new(
                     &|_| {
                         task_alive(deadline, stop, cancelled)?;
-                        live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+                        live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)?;
+                        continuous_progress
+                            .as_ref()
+                            .map_or(Ok(()), |checkpoint| checkpoint.check())
                     },
                     mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
                 ),
@@ -1765,7 +1529,13 @@ fn serve_public_protected_v3_inner(
             )
         };
         let owner = lock_owner(&node, &mut progress)?;
-        owner.pool_status_snapshot()?; // Explicit operator enable is required; never enable from the guest listener.
+        ensure(
+            owner.continuous_domain_matches(&server.mutation_cpu_domain()),
+            "OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN",
+        )?;
+        if !owner.is_continuous() {
+            owner.pool_status_snapshot()?;
+        } // Never enable a pool from the guest listener.
         progress(0)?;
         owner.settings().clone()
     };
@@ -2796,6 +2566,45 @@ fn client_write(stream: &mut TcpStream, mut bytes: &[u8], deadline: Instant) -> 
         }
     }
     ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")
+}
+
+#[cfg(all(test, target_os = "linux"))]
+mod shared_cpu_domain_source_tests {
+    use super::*;
+    #[test]
+    fn public_server_meter_clone_and_original_dispatch_use_the_same_real_bucket() {
+        let identity = DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap();
+        let server = PublicServer::new(
+            identity,
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .unwrap();
+        let domain = server.mutation_cpu_domain();
+        assert!(domain.shares_domain_with(&server.mutation_cpu_domain()));
+        let barrier = std::sync::Barrier::new(2);
+        std::thread::scope(|scope| {
+            let worker = scope.spawn(|| {
+                let operation = domain.begin().unwrap();
+                barrier.wait();
+                barrier.wait();
+                operation.finish()
+            });
+            barrier.wait();
+            assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 1);
+            let metrics = Mutex::new(PublicMetrics::default());
+            let original = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
+            assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 2);
+            assert_eq!(
+                domain.begin().err().unwrap().to_string(),
+                "PUBLIC_MUTATION_CPU_BUDGET"
+            );
+            let measurement = MutationCpuMeasurement::for_permit(Some(&original));
+            original.finish(&measurement, &server, &metrics);
+            barrier.wait();
+            assert!(!worker.join().unwrap().accounting_unavailable);
+        });
+        assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 0);
+    }
 }
 
 #[cfg(test)]

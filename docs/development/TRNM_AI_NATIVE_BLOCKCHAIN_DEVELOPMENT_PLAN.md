@@ -853,3 +853,108 @@ These component results do not qualify the newly combined source, WAN/SLA,
 anonymous fairness, model efficacy, useful task demand, mining hardness or public
 readiness. General functional-copy attribution and independent evaluation/source
 budgets remain open; all six public acceptance gates remain false.
+
+
+The restricted-owner-node-v1 source candidate composes the existing packet Work,
+State and durable branch owner with a new protected operator grant domain. Two
+outside pinned roles authorize an exact full packet, actual parent, full lease,
+material catalog and registered task/class reservation. The private owner journal
+retains reservations and monotonically anchored views across failed Work, restart
+and branch reorganization; no automatic refund or migration exists. The CLI uses
+one protected opener for server, sync and local mutation, and legacy openers refuse
+required-policy stores. Pool preview/mining are explicitly held by this first core;
+normal Pool support must be restored by a separately reviewed typed operation scope.
+This paragraph describes unexecuted source: candidate compilation, tests, full new
+qualification and actual legitimate two-stage packet admission remain pending.
+CPU/DA/funding reservations are signed declarations, not per-operation measured CPU,
+proof of balances, source independence, model origin, task hardness or fair access.
+The existing request CPU owner remains responsible for its unchanged O+C sampler;
+all six public scientific gates remain false. This is an opt-in local service mode
+with fresh durable namespaces, not a new PNW1/PNX consensus version or permissionless
+reward qualification. Continuous miner/view-refresh integration remains pending.
+
+The restricted-owner-node-v2 Pool source successor starts from the Root-formatted
+v1 files pinned by the closed e5fc6a45 format receipt. It defines a separate
+POOL-GRANT1 domain for exact enable, reconcile and ordered ordinary-bundle commands,
+not a proof-task substitute. Each expensive operation reserves one outside-fixed
+operation before actual parent State reconstruction. Every old retained group
+requires its original durable admission reservation and a separately signed current
+retained-group permission; the full prefix still executes M05 and M06 from the
+same reconstructed original parent, with both original SQL generation fences.
+The r9 ExecutionControl worker accountant is preserved. CPU/DA/funding reservation
+amounts still describe operator declarations; no new actual CPU-class meter or
+balance proof is claimed. Fresh v2 namespace/journal/Work signing domain refuses v1
+stores, with no automatic migration or discarded journal history.
+
+A trusted typed refresh entry accepts only two externally fixed original keys,
+the same source/context namespace and a linked next latest view. It authenticates
+all new finite Pool grants and full six-file catalog before fsyncing the new journal
+anchor, then cancels old in-flight capabilities through an epoch fence. Stop/reopen
+uses the same protected CLI loader and monotonic journal. There is no anonymous
+reload RPC, startup list is not permanent authority, and neither old packet view
+nor new incoming bundle alone authorizes old prefix transactions. History/recovery
+reads keep the original complete checks; uncommitted reservations never refund.
+Mining-batch/validate/prune remain explicit purpose HOLD until independently
+specified exact grants are implemented. All source2 compilation, real new Node
+admission, Pool normal-load and scientific qualification are pending Root execution;
+original core1 tests cannot authorize this successor. Permissionless reward,
+source truth, physical costs, useful demand, hardness and fairness remain false.
+
+Pool source-only successor 4 retains the immutable successor 3. Restricted enable metadata uses the permission-captured parent/generation at its SQL fence; the existing unrestricted branch is unchanged. A new local SQL fence test definition covers intervening parent/generation changes. The real Work reservation test has a fixed eight-timestamp positive-nonce fixture and fails on exhaustion, preserving the original positive-nonce admission rule. These source fixes have no author Cargo, test, Native, Work/State, SQL, signing or network execution; new qualification remains pending.
+
+Pool compiler repair successor 6 retains the original failed Pool5 build receipt. Three new Pool identity hex decodes now explicitly map malformed input into the existing Node Error type; no global error conversion or validation rule changes. Root preflight precedes the edits. New full build, tests, Clippy and Native admission remain pending; prior core1 qualification does not qualify this successor.
+
+Pool compiler repair successor 7 retains both original failed build receipts. The new mempool error mapping now names crate::Error explicitly; the original Error type and all validation rules remain unchanged. Root preflight precedes the edits. New full build, tests, Clippy and Native admission remain pending; prior core1 qualification does not qualify this successor.
+
+Pool compiler repair successor 8 retains the original release-build PASS and test-compilation FAIL of successor 7. Two test-only imports name the existing PoolLimits type and PermissionsExt trait explicitly; no production or validation code changes. Root preflight precedes the edits. New full build, tests, Clippy and Native admission remain pending; prior core1 qualification does not qualify this successor.
+
+Shared CPU source candidate: original r9 scalar budget/live owner/scoped implementation moves into ingress/public_v3/scalar_cpu.rs with exact arithmetic inverse and unchanged Public dispatch settlement/tests/policy constants. PublicServer exposes an opaque same-Arc domain; new actual owner/scoped metering API is available for the separately guarded mining successor. Domain metering is not task permission. Six meaningful new test definitions are unexecuted; build/Native/public readiness remain pending Root. Original full CPU+worker accounting and residual-only settlement, unknown-clock refusal, exact resource constants and deep-stage nonpreemption remain unchanged. No frozen/Root worktree edits or dependency changes.
+
+Navigation: [shared CPU domain source scope](../protocol/pon-nakamoto-v1/details/RESTRICTED_MINING_CPU_DOMAIN_V1.md). Root alone executes any qualification; Pool7 failed test-import compile and Pool8 source-only repairs remain separately preserved.
+
+
+Shared CPU5 basis is now actually qualified and committed by Root: 315 passed,
+zero failed, 12 ignored, release build and strict Clippy, original source controls
+and inventory, commit fa77a4bec0af1a8a2412f6b73eea68782e1d9e22/tree
+dda23bbd7e8215a2ef53b9c31b0de230f49a2fc9. The earlier Pool/CPU compiler and
+inventory failures remain historical failures. That qualification applies to the
+3344-source basis, never to the following new mode3 candidate.
+
+Restricted finite mining mode3 is a source-only successor from those exact
+Root-formatted 18 owned files and the full 3344 map. It separates TaskView,
+StartupCatalog, unchanged ParentReconcile, Search, WinnerValidation and Activate
+from packet and Pool domains. Full material signatures, original task lease,
+positive finite nonce window, exact ordinary-byte allowlist/ordered digest and
+original-parent M06 remain mandatory. A complete Root-protected local controller
+keeps one actual Node and shared CPU epoch across linked signed next views. It
+retains every started proof including failed and cancelled-after-proof nonces.
+A held-directory fault sink survives initialization failure or unwind without
+changing original Native results. Unknown/faulted journal recovery is HOLD;
+claims survive crashes without automatic refund. Any failed persistence is an
+explicit error, not evidence of a durable fault marker.
+
+Mode3's 256 total journal claims and 32 finite controller steps support only a
+short bounded end-to-end experiment. Startup consumes two distinct claims and
+each successful Search/Validation/Activate chain consumes three more. This does
+not qualify the original 241-block/8193-input continuous normal campaign. No
+reset, rotation, erased claims or shortened workload may inherit that acceptance.
+Automatic Pool selection/status/prune, generic maintenance mining and anonymous
+continuous issuance are HOLD in mode3. The existing mode2 Pool implementation is
+unchanged. Signed CPU/material/DA/funding reservations remain operator
+declarations; actual CPU accounting enforces the original service domain, not
+physical class costs, verified balances, hard preemption or anonymous fairness.
+All new source/binary/Native/full-reference/SQL/network/scientific actual refs are
+pending Root execution. Only Root applies, formats, builds, signs and runs.
+
+Navigation: [finite mode3 interface and acceptance](../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_FINITE_MINING_MODE3.md).
+
+
+### Qualified retained-budget Mode4 limited scope and Mode5 successor
+
+The Mode4 commit 8abfd3457e59d965e95cfdd820ad3ee30b210121 / tree eb2de4bf6dedc60dcd72945d0d0eb8c440d9dc1c has actual Root qualification: 378 passed, zero failed, twelve ignored, all retained 27 Mode3 and 36 Mode4 definitions, strict Clippy, complete 3365-source equality and five successful CI jobs. The original 50 metadata negatives and navigation checks also passed. Qualification receipt ce320ffa4e502e0d3af359e1a4904af271300804087ad483f7f38d40ff4672f7 and commit binding 15c1da5b5353a5559469c84febed3084b79379e4881a690c6b1875ce51adbeca identify that exact limited source. Earlier fixture/lint failures remain historical evidence and do not inherit these results.
+
+The separate actual five-stage before-key/short Native experiment closed with receipt 831b4ae06af6557a0ce36c833cb4b815a57ef158cfcfbba6c168399eb9411c2c. It retained four actual nonce trials, one complete Work verification, two original M06 executions and both stores' complete typed SQL comparisons, including producer EOF and zero-credit cold reopen. This limited cycle does not qualify automatic PoolPush, changing leases, old serve--mine, the original 8193 campaign, full whole/104 or anonymous network readiness. Its operator declarations do not prove source truth, balances, class cost, usefulness or fairness.
+
+The fresh Mode5 SOURCE candidate extends that exact formatted basis with distinct Pool operation purposes, original admission and ordered-prefix witnesses, two-phase lease reconciliation, and explicit known SIGKILL process residual settlement before restart authorization. The new service remains externally authorized by the same operator. All task/class/global allocations and measured CPU remain append-only and non-refundable; original full Work, M06, wire, scalar CPU constants and SQL fences remain mandatory. The original 8193 inputs, queue/conflict/status behavior, depth six, height-ten owned kill/reopen, resource boundaries and complete three-store oracle are unchanged acceptance requirements. New compilation, keys, signatures, Node binary, original normal traffic, recovery, full-reference/SQL and whole/104 actual references are None/HOLD until Root's actual closure. There is no source-only PASS or acceptance inherited from Mode4.
+
+Navigation: [qualified Mode4 limited entry](../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE4.md); [Mode5 exact Pool, lease and recovery acceptance](../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE5.md).
