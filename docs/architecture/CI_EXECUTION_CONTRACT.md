@@ -52,7 +52,7 @@ production flags, required check names and repository protections are unchanged.
 ## Native x64 and ARM64 repeated-search costs
 
 The cost matrix actually builds and executes `pon_reused_cost` on
-`ubuntu-24.04` (x64) and `ubuntu-24.04-arm` (ARM64), using Rust 1.95.0, a locked
+`ubuntu-24.04` (x64) and `ubuntu-24.04-arm` (ARM64), using Rust 1.99.0, a locked
 release build and the native target triple. GitHub's
 [official hosted-runner reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
 lists both labels for public repositories; the labels were checked on 2026-10-04.

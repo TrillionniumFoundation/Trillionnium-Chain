@@ -63,7 +63,7 @@ def main() -> int:
               'execution_context': 'local-native-preflight' if args.local else 'github-hosted',
               'architecture': args.arch, 'runner_label': os.environ.get('TRNM_COST_RUNNER_LABEL'),
               'observations': observations, 'campaigns': [], 'build_profile': 'release',
-              'compiler_channel': '1.95.0', 'target': spec['target'],
+              'compiler_channel': '1.99.0', 'target': spec['target'],
               'public_network_ready': False, 'independent_hardware_qualified': False,
               'resource_fairness_qualified': False, 'work_profile_qualified': False,
               'production_activation': False}
@@ -103,13 +103,13 @@ def main() -> int:
         if overrides:
             raise ValueError('release compiler/target overrides would change the campaign build contract')
         checked(['uname', '-a'], 'uname')
-        checked(['rustc', '+1.95.0', '-vV'], 'rustc')
-        checked(['cargo', '+1.95.0', '--version'], 'cargo')
+        checked(['rustc', '+1.99.0', '-vV'], 'rustc')
+        checked(['cargo', '+1.99.0', '--version'], 'cargo')
         compiler = (output / 'rustc.stdout').read_text()
-        if '\nrelease: 1.95.0\n' not in compiler or '\nhost: ' + spec['target'] + '\n' not in compiler:
+        if '\nrelease: 1.99.0\n' not in compiler or '\nhost: ' + spec['target'] + '\n' not in compiler:
             raise ValueError('actual native rustc identity differs from the pinned target/compiler')
         shutil.copyfile('/proc/cpuinfo', output / 'cpuinfo.txt')
-        checked(['cargo', '+1.95.0', 'build', '--locked', '--release', '--manifest-path',
+        checked(['cargo', '+1.99.0', 'build', '--locked', '--release', '--manifest-path',
                  'trillionnium/Cargo.toml', '--target', spec['target'], '-p',
                  'trnm-crypto-primitives', '--example', example], 'build', 900)
         binary = Path(os.environ['CARGO_TARGET_DIR']) / spec['target'] / 'release/examples' / example

@@ -315,7 +315,7 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
             report['runner_context']['RUNNER_ARCH'] == spec['runner_arch'], 'actual native host architecture')
     require(all(isinstance(report['runner_context'][key], str) and report['runner_context'][key].isdigit()
                 for key in ['GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT']), 'actual hosted run/attempt identity')
-    require(report['compiler_channel'] == '1.95.0' and report['build_profile'] == 'release' and
+    require(report['compiler_channel'] == '1.99.0' and report['build_profile'] == 'release' and
             report['build_environment_overrides'] == {}, 'fixed native release compiler settings')
     before, after = report['source_before'], report['source_after']
     require(before == after and report['source_changed'] is False, 'source unchanged around actual execution')
@@ -341,7 +341,7 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
     require(report['binary_sha256_before'] == report['binary_sha256_after'] == files[example],
             'same measured executable before and after all campaigns')
     compiler = (base / 'rustc.stdout').read_text()
-    require('\nrelease: 1.95.0\n' in compiler and '\nhost: ' + spec['target'] + '\n' in compiler,
+    require('\nrelease: 1.99.0\n' in compiler and '\nhost: ' + spec['target'] + '\n' in compiler,
             'actual compiler release and native host retained')
     require((base / 'cpuinfo.txt').stat().st_size > 0 and spec['machine'] in (base / 'uname.stdout').read_text(),
             'actual CPU and uname output retained')
@@ -356,8 +356,8 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
             natural(observed['elapsed_ns'], 'zero command elapsed time')
     require(len(observations) == 6 and all(o['exit_code'] == 0 and not o['timed_out'] for o in observations),
             'actual identity, build and both campaign command statuses')
-    commands = [['uname', '-a'], ['rustc', '+1.95.0', '-vV'], ['cargo', '+1.95.0', '--version'],
-                ['cargo', '+1.95.0', 'build', '--locked', '--release', '--manifest-path',
+    commands = [['uname', '-a'], ['rustc', '+1.99.0', '-vV'], ['cargo', '+1.99.0', '--version'],
+                ['cargo', '+1.99.0', 'build', '--locked', '--release', '--manifest-path',
                  'trillionnium/Cargo.toml', '--target', spec['target'], '-p',
                  'trnm-crypto-primitives', '--example', example]]
     for observed, command, stem in zip(observations, commands, ['uname', 'rustc', 'cargo', 'build']):

@@ -120,7 +120,7 @@ def validate(root: Path = ROOT) -> dict:
             runner: ubuntu-24.04-arm
 ''' in costs, 'two explicit native hosted runner architectures required')
     require('      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}\n' in costs and
-            '        run: rustup toolchain install 1.95.0 --profile minimal\n' in costs,
+            '        run: rustup toolchain install 1.99.0 --profile minimal\n' in costs,
             'observed runner label and pinned native release compiler required')
     require('        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"\n' in costs,
             'architecture names are not a substitute for native cost execution')
