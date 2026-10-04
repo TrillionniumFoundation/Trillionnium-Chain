@@ -154,13 +154,13 @@ mod tests {
             for base in 0..RIGHT_MODULUS {
                 let plan = ColumnPlan::new(base as u32);
                 let mut expected = 0;
-                for length in 0..=N {
+                for (length, &weighted_prefix) in weighted.iter().enumerate() {
                     if length != 0 {
                         let k = length - 1;
                         expected += u64::from(row[k])
                             * ((base + RIGHT_ROW_STEP * k as u64) % RIGHT_MODULUS);
                     }
-                    assert_eq!(plan.dot(&prefix, weighted[length], length), expected);
+                    assert_eq!(plan.dot(&prefix, weighted_prefix, length), expected);
                 }
             }
         }

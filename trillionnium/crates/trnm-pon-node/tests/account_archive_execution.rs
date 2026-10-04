@@ -62,20 +62,22 @@ fn transfer_fee(settings: &Settings) -> u64 {
 }
 fn rows(path: &Path) -> Vec<String> {
     let db = Connection::open(path).unwrap();
-    db.prepare(
-        "SELECT 'meta:'||key||':'||hex(value) FROM archive_meta
+    let rows = db
+        .prepare(
+            "SELECT 'meta:'||key||':'||hex(value) FROM archive_meta
          UNION ALL SELECT 'node:'||hex(id)||':'||hex(data) FROM archive_nodes
          UNION ALL SELECT 'checkpoint:'||hex(id)||':'||hex(branch)||':'||hex(data)
                    FROM archive_checkpoints
          UNION ALL SELECT 'active:'||singleton||':'||hex(checkpoint)||':'||generation
                    FROM archive_active
          ORDER BY 1",
-    )
-    .unwrap()
-    .query_map([], |row| row.get(0))
-    .unwrap()
-    .map(|row| row.unwrap())
-    .collect()
+        )
+        .unwrap()
+        .query_map([], |row| row.get(0))
+        .unwrap()
+        .map(|row| row.unwrap())
+        .collect();
+    rows
 }
 struct Fixture {
     _dir: tempfile::TempDir,
