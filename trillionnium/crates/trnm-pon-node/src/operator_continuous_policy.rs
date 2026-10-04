@@ -20,8 +20,8 @@ use std::{
 };
 use trnm_crypto_primitives::verify_hex_strict;
 type Result<T> = std::result::Result<T, PolicyError>;
-pub const MODE: &str = "restricted-owner-node-v4";
-const VIEW_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-TASKVIEW1";
+pub const MODE: &str = "restricted-owner-node-v5";
+const VIEW_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-TASKVIEW2";
 const MAX_BYTES: usize = 65536;
 fn check(v: bool, e: PolicyError) -> Result<()> {
     if v {
@@ -53,6 +53,7 @@ fn put_text(out: &mut Vec<u8>, v: &str) {
 pub(crate) struct SearchBinding {
     pub operation: String,
     pub intent: SearchIntent,
+    pub pool_validation_operation: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -70,6 +71,9 @@ pub(crate) struct TaskView {
     pub issued_ns: u64,
     pub expires_ns: u64,
     pub revoked: bool,
+    pub pool_selections: Vec<crate::operator_continuous_pool::Selection>,
+    pub lease_edge: Option<crate::operator_continuous_lease::LeaseEdge>,
+    pub lease_transition_operation: Option<String>,
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -97,6 +101,20 @@ pub(crate) struct SignedAllocationInput {
 /// anonymous request discovers latest, keys, paths, budget or a view.
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct LeaseTransitionInput {
+    pub(crate) edge: crate::operator_continuous_lease::LeaseEdge,
+    pub(crate) permission: SignedAllocationInput,
+}
+/// Refresh refers to an already paid, fsynced, known-settled old-budget step.
+/// It cannot start a new CPU interval before an externally signed budget head.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct LeaseTransitionReference {
+    pub edge: crate::operator_continuous_lease::LeaseEdge,
+    pub operation: String,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Inputs {
     pub(crate) raw_view: Vec<u8>,
     pub(crate) view_authority: ViewAuthority,
@@ -107,11 +125,14 @@ pub struct Inputs {
     pub(crate) expected_uid: u32,
     pub(crate) expected_journal: Anchor,
     pub(crate) materials: Vec<MaterialInput>,
+    pub(crate) lease_transition: Option<LeaseTransitionReference>,
+    pub(crate) known_unclean_restart: Option<crate::operator_continuous_recovery::Input>,
 }
 pub(crate) struct VerifiedView {
     pub body: TaskView,
     pub digest: String,
     pub allocations: Vec<Arc<VerifiedAllocation>>,
+    pub pool_selections: Vec<crate::operator_continuous_pool::VerifiedSelection>,
 }
 fn message(v: &TaskView, role: u8) -> Result<Vec<u8>> {
     let raw = serde_json::to_vec(v).map_err(|_| PolicyError::Input)?;
@@ -139,7 +160,7 @@ pub(crate) fn authenticate(inputs: &Inputs, now: u64) -> Result<VerifiedView> {
     let v: ViewEnvelope = serde_json::from_slice(raw).map_err(|_| PolicyError::Input)?;
     let b = &v.body;
     check(
-        b.schema == "restricted-continuous-task-view-v1"
+        b.schema == "restricted-continuous-task-view-v2"
             && b.identity == e.identity
             && *b == e.expected
             && sha(raw) == e.envelope_sha256
@@ -216,7 +237,11 @@ pub(crate) fn authenticate(inputs: &Inputs, now: u64) -> Result<VerifiedView> {
         hex_id(&intent.miner, 32)?;
         hex_id(&intent.exact_transactions_sha256, 32)?;
         check(
-            intent.exact_group_ids.is_empty()
+            (s.pool_validation_operation.is_some() || intent.exact_group_ids.is_empty())
+                && intent.exact_group_ids.len() <= 256
+                && intent.exact_group_ids.iter().enumerate().all(|(i, h)| {
+                    hex_id(h, 32).is_ok() && !intent.exact_group_ids[..i].contains(h)
+                })
                 && intent.nonce_first > 0
                 && intent.nonce_count > 0
                 && intent.nonce_count <= 4096
@@ -230,6 +255,9 @@ pub(crate) fn authenticate(inputs: &Inputs, now: u64) -> Result<VerifiedView> {
                     .any(|old| old.operation == s.operation),
             PolicyError::NativeBinding,
         )?;
+        if let Some(operation) = &s.pool_validation_operation {
+            hex_id(operation, 32)?;
+        }
     }
     check(
         allocations
@@ -239,6 +267,61 @@ pub(crate) fn authenticate(inputs: &Inputs, now: u64) -> Result<VerifiedView> {
             == b.searches.len(),
         PolicyError::NativeBinding,
     )?;
+    check(b.pool_selections.len() <= 32, PolicyError::Capacity)?;
+    let mut pool_selections = Vec::new();
+    for (i, selected) in b.pool_selections.iter().enumerate() {
+        let permission = allocations
+            .iter()
+            .find(|a| a.claim().operation == selected.operation)
+            .ok_or(PolicyError::NativeBinding)?;
+        let verified =
+            crate::operator_continuous_pool::VerifiedSelection::authenticate(selected, permission)?;
+        check(
+            !b.pool_selections[..i]
+                .iter()
+                .any(|old| old.operation == selected.operation)
+                && selected.parent == b.actual_parent
+                && selected.generation == b.actual_generation,
+            PolicyError::NativeBinding,
+        )?;
+        pool_selections.push(verified);
+    }
+    check(
+        allocations
+            .iter()
+            .filter(|a| a.claim().purpose.starts_with("pool-"))
+            .count()
+            == pool_selections.len(),
+        PolicyError::NativeBinding,
+    )?;
+    check(
+        (b.sequence != 1 || b.lease_edge.is_none())
+            && b.lease_edge.is_some() == b.lease_transition_operation.is_some()
+            && b.lease_edge
+                == inputs
+                    .lease_transition
+                    .as_ref()
+                    .map(|edge| edge.edge.clone())
+            && b.lease_transition_operation.as_ref()
+                == inputs.lease_transition.as_ref().map(|edge| &edge.operation),
+        PolicyError::NativeBinding,
+    )?;
+    if let Some(edge) = &b.lease_edge {
+        edge.payload()?;
+        hex_id(
+            b.lease_transition_operation
+                .as_ref()
+                .ok_or(PolicyError::NativeBinding)?,
+            32,
+        )?;
+        check(
+            inputs.raw_budget.is_some()
+                && inputs.budget_authority.is_some()
+                && edge.actual_parent == b.actual_parent
+                && edge.actual_generation == b.actual_generation,
+            PolicyError::NativeBinding,
+        )?;
+    }
     verify_hex_strict(
         &b.identity.registry_key,
         &message(b, 1)?,
@@ -251,6 +334,7 @@ pub(crate) fn authenticate(inputs: &Inputs, now: u64) -> Result<VerifiedView> {
         body: v.body,
         digest: e.latest_digest.clone(),
         allocations,
+        pool_selections,
     })
 }
 impl VerifiedView {
@@ -278,7 +362,12 @@ impl VerifiedView {
     }
     pub fn next(&self, old: &Self) -> bool {
         self.body.identity == old.body.identity
-            && self.body.declared_binding == old.body.declared_binding
+            && match &self.body.lease_edge {
+                None => self.body.declared_binding == old.body.declared_binding,
+                Some(edge) => edge
+                    .check_declarations(&old.body.declared_binding, &self.body.declared_binding)
+                    .is_ok(),
+            }
             && self.body.sequence == old.body.sequence.checked_add(1).unwrap_or(0)
             && self.body.previous_digest.as_deref() == Some(old.digest.as_str())
     }
@@ -571,6 +660,17 @@ pub(crate) fn validate_protected_inputs(
     if let Some(authority) = &inputs.budget_authority {
         check(
             authority.identity == *identity && authority.expected.identity == *identity,
+            PolicyError::ExternalContext,
+        )?;
+    }
+    if let Some(recovery) = &inputs.known_unclean_restart {
+        check(
+            recovery.authority.identity == *identity
+                && recovery.authority.expected.identity == *identity
+                && recovery.authority.expected.actual_parent
+                    == inputs.view_authority.expected.actual_parent
+                && recovery.authority.expected.actual_generation
+                    == inputs.view_authority.expected.actual_generation,
             PolicyError::ExternalContext,
         )?;
     }

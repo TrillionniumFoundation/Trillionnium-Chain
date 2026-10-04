@@ -9,8 +9,10 @@ use crate::{
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
 };
 use fs2::FileExt;
-pub use operator_continuous_owner::ContinuousSearchRequest;
 pub(crate) use operator_continuous_owner::PublicContinuousScope;
+pub use operator_continuous_owner::{
+    ContinuousSearchRequest, OwnedContinuousLeaseResult, OwnedContinuousPoolResult,
+};
 pub use operator_mining_owner::{MiningEpochCancellation, OwnedMutationResult, OwnedSearchResult};
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension};
 use serde::Serialize;
@@ -380,33 +382,55 @@ pub(crate) struct OwnerPacketPermit {
     reservation: crate::operator_task_policy::Reservation,
 }
 pub(crate) struct OwnerPoolPermit {
-    policy: std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>,
-    unavailable: std::sync::Arc<std::sync::atomic::AtomicBool>,
-    epoch: std::sync::Arc<std::sync::atomic::AtomicU64>,
-    expected_epoch: u64,
     facts: crate::operator_task_policy::pool::PoolFacts,
-    reservation: crate::operator_task_policy::pool::PoolReservation,
+    authentication: OwnerPoolAuthentication,
+}
+enum OwnerPoolAuthentication {
+    Legacy {
+        policy: std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>,
+        unavailable: std::sync::Arc<std::sync::atomic::AtomicBool>,
+        epoch: std::sync::Arc<std::sync::atomic::AtomicU64>,
+        expected_epoch: u64,
+        reservation: crate::operator_task_policy::pool::PoolReservation,
+    },
+    Continuous(operator_continuous_owner::ContinuousPoolCheckpoint),
 }
 impl OwnerPoolPermit {
     fn progress(&self) -> Result<()> {
-        ensure(
-            !self.unavailable.load(std::sync::atomic::Ordering::Acquire),
-            "OWNER_TASK_UNAVAILABLE",
-        )?;
-        ensure(
-            self.epoch.load(std::sync::atomic::Ordering::Acquire) == self.expected_epoch,
-            "OWNER_TASK_VIEW_CHANGED",
-        )?;
-        self.policy
-            .check(
-                &self.facts,
-                crate::operator_task_policy::now_ns().map_err(owner_error)?,
-            )
-            .map_err(owner_error)
+        match &self.authentication {
+            OwnerPoolAuthentication::Legacy {
+                policy,
+                unavailable,
+                epoch,
+                expected_epoch,
+                ..
+            } => {
+                ensure(
+                    !unavailable.load(std::sync::atomic::Ordering::Acquire),
+                    "OWNER_TASK_UNAVAILABLE",
+                )?;
+                ensure(
+                    epoch.load(std::sync::atomic::Ordering::Acquire) == *expected_epoch,
+                    "OWNER_TASK_VIEW_CHANGED",
+                )?;
+                policy
+                    .check(
+                        &self.facts,
+                        crate::operator_task_policy::now_ns().map_err(owner_error)?,
+                    )
+                    .map_err(owner_error)
+            }
+            OwnerPoolAuthentication::Continuous(checkpoint) => checkpoint.check(),
+        }
     }
     fn check_prefix(&self, raws: &[Vec<u8>]) -> Result<()> {
         self.progress()?;
-        self.policy.check_prefix_commands(raws).map_err(owner_error)
+        match &self.authentication {
+            OwnerPoolAuthentication::Legacy { policy, .. } => {
+                policy.check_prefix_commands(raws).map_err(owner_error)
+            }
+            OwnerPoolAuthentication::Continuous(checkpoint) => checkpoint.check_prefix(raws),
+        }
     }
 }
 fn owner_marker_present(path: &Path) -> Result<bool> {
@@ -2107,9 +2131,12 @@ impl Node {
     }
     fn owner_pool_configured(&self) -> Result<()> {
         ensure(
-            self.mining_owner.is_none() && self.continuous_owner.is_none(),
+            self.mining_owner.is_none(),
             "OWNER_MINING_POOL_PURPOSE_PENDING",
         )?;
+        if self.continuous_owner.is_some() {
+            return self.continuous_pool_configured();
+        }
         if let Some(owner) = &self.owner_policy {
             ensure(
                 !owner.pool_policies.is_empty(),
@@ -2125,9 +2152,14 @@ impl Node {
         context: Hash,
     ) -> Result<Option<OwnerPoolPermit>> {
         ensure(
-            self.mining_owner.is_none() && self.continuous_owner.is_none(),
+            self.mining_owner.is_none(),
             "OWNER_MINING_POOL_PURPOSE_PENDING",
         )?;
+        if self.continuous_owner.is_some() {
+            return self
+                .begin_continuous_pool_command(command, raws, context)
+                .map(Some);
+        }
         let Some(owner) = &self.owner_policy else {
             return Ok(None);
         };
@@ -2201,31 +2233,64 @@ impl Node {
             )
             .map_err(owner_error)?;
         Ok(Some(OwnerPoolPermit {
-            policy,
-            unavailable: std::sync::Arc::clone(&owner.unavailable),
-            epoch: std::sync::Arc::clone(&owner.epoch),
-            expected_epoch: owner.epoch.load(std::sync::atomic::Ordering::Acquire),
             facts,
-            reservation,
+            authentication: OwnerPoolAuthentication::Legacy {
+                policy,
+                unavailable: std::sync::Arc::clone(&owner.unavailable),
+                epoch: std::sync::Arc::clone(&owner.epoch),
+                expected_epoch: owner.epoch.load(std::sync::atomic::Ordering::Acquire),
+                reservation,
+            },
         }))
     }
     fn recheck_owner_pool(&self, permit: Option<&OwnerPoolPermit>) -> Result<()> {
         ensure(
-            self.mining_owner.is_none() && self.continuous_owner.is_none(),
+            self.mining_owner.is_none(),
             "OWNER_MINING_POOL_PURPOSE_PENDING",
         )?;
+        if self.continuous_owner.is_some() {
+            let permit = permit.ok_or("OWNER_CONTINUOUS_POOL_PERMIT_REQUIRED")?;
+            ensure(
+                matches!(
+                    &permit.authentication,
+                    OwnerPoolAuthentication::Continuous(_)
+                ),
+                "OWNER_CONTINUOUS_POOL_PERMIT_REQUIRED",
+            )?;
+            permit.progress()?;
+            ensure(
+                self.active()?
+                    == (
+                        bytes32(
+                            hex::decode(&permit.facts.parent)
+                                .map_err(|_| "OWNER_POOL_PARENT_HEX")?,
+                        )?,
+                        permit.facts.generation,
+                    ),
+                "OWNER_POOL_PARENT_CHANGED",
+            )?;
+            return Ok(());
+        }
         ensure(
             self.owner_policy.is_some() == permit.is_some(),
             "OWNER_POOL_PERMIT_REQUIRED",
         )?;
         if let (Some(owner), Some(permit)) = (&self.owner_policy, permit) {
             permit.progress()?;
+            let OwnerPoolAuthentication::Legacy {
+                policy,
+                reservation,
+                ..
+            } = &permit.authentication
+            else {
+                return Err("OWNER_POOL_PERMIT_REQUIRED".into());
+            };
             owner
                 .journal
                 .borrow()
                 .recheck_pool(
-                    &permit.policy,
-                    &permit.reservation,
+                    policy,
+                    reservation,
                     &permit.facts,
                     crate::operator_task_policy::now_ns().map_err(owner_error)?,
                 )
@@ -2250,14 +2315,27 @@ impl Node {
         raws: &[Vec<u8>],
     ) -> Result<()> {
         self.recheck_owner_pool(permit)?;
+        if self.continuous_owner.is_some() {
+            let Some(OwnerPoolPermit {
+                authentication: OwnerPoolAuthentication::Continuous(checkpoint),
+                ..
+            }) = permit
+            else {
+                return Err("OWNER_CONTINUOUS_POOL_PERMIT_REQUIRED".into());
+            };
+            return checkpoint.check_retained(raws);
+        }
         if let (Some(owner), Some(permit)) = (&self.owner_policy, permit) {
             let payload =
                 crate::operator_task_policy::pool::pool_payload_sha256("submit-bundle", raws)
                     .map_err(owner_error)?;
+            let OwnerPoolAuthentication::Legacy { policy, .. } = &permit.authentication else {
+                return Err("OWNER_POOL_PERMIT_REQUIRED".into());
+            };
             owner
                 .journal
                 .borrow()
-                .prefix_group_authorized(&permit.policy, &payload)
+                .prefix_group_authorized(policy, &payload)
                 .map_err(owner_error)?;
         }
         Ok(())

@@ -6,9 +6,9 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use trnm_crypto_primitives::verify_hex_strict;
 type Result<T> = std::result::Result<T, PolicyError>;
-const DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-RECIPIENT1";
-const OP_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-OP1";
-const TASK_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-DECLARED-TASK1";
+const DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-RECIPIENT2";
+const OP_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-OP2";
+const TASK_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-DECLARED-TASK2";
 const MAX_BYTES: usize = 65536;
 fn check(ok: bool, e: PolicyError) -> Result<()> {
     if ok {
@@ -315,7 +315,7 @@ pub(crate) fn authenticate(raw: &[u8], e: &Authority, now: u64) -> Result<Verifi
     }
     let v: Envelope = serde_json::from_slice(raw).map_err(|_| PolicyError::Input)?;
     check(
-        v.body.schema == "restricted-continuous-recipient-allocation-v1"
+        v.body.schema == "restricted-continuous-recipient-allocation-v2"
             && v.body.identity == e.identity
             && v.body == e.expected
             && digest(raw) == e.expected_envelope_sha256

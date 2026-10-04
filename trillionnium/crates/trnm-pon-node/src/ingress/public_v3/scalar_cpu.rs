@@ -532,6 +532,15 @@ impl ServiceMutationCpuDomain {
             budget: Arc::new(Mutex::new(budget)),
         }
     }
+    pub(crate) fn from_known_unclean_continuous_restart(
+        _checkpoint: crate::operator_continuous_history::VerifiedKnownUncleanRestart,
+    ) -> Self {
+        let mut budget = PaidMutationCpuBudget::new();
+        budget.credit_ns = 0;
+        Self {
+            budget: Arc::new(Mutex::new(budget)),
+        }
+    }
 }
 impl ServiceMutationCpuCheckpoint {
     pub(crate) fn actual_live_paid_cpu_ns(&self) -> Result<u64> {

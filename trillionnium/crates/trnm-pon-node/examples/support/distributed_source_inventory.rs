@@ -2682,6 +2682,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/operator_continuous_policy.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2696,6 +2710,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/operator_continuous_pool.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_continuous_pool.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/operator_continuous_pool_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_continuous_pool_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/operator_continuous_recipient.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2707,6 +2735,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/operator_continuous_recipient_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/operator_continuous_recovery.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/operator_continuous_recovery.rs"
         )),
     ),
     (

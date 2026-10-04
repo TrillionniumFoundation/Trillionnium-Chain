@@ -3,13 +3,15 @@ use super::*;
 use crate::ingress::public_v3::{ServiceMutationCpuCheckpoint, ServiceMutationCpuDomain};
 use crate::{
     operator_continuous_cpu::{ContinuousCheckpoint, DurableOperation, ObservedOperation, Start},
-    operator_continuous_history as history, operator_continuous_policy as policy,
+    operator_continuous_history as history, operator_continuous_policy as policy, PoolBatch,
+    PoolLimits,
 };
 use policy::{Permit, VerifiedView};
 use std::sync::{
     atomic::{AtomicBool, AtomicU64, Ordering},
     Arc, Mutex,
 };
+use trnm_protocol::pon_wire::Envelope;
 fn continuous_error(e: crate::operator_task_policy::PolicyError) -> Error {
     Error::from(format!("OWNER_CONTINUOUS:{e:?}"))
 }
@@ -35,6 +37,7 @@ struct Active {
     tx: Option<String>,
     miner: Option<Hash>,
     height: Option<u64>,
+    pool: Option<Arc<crate::operator_continuous_pool::VerifiedSelection>>,
 }
 #[derive(Clone)]
 pub(crate) struct ContinuousScopeCheckpoint(Active);
@@ -45,6 +48,31 @@ impl ContinuousScopeCheckpoint {
             p.progress().map_err(continuous_error)?;
         }
         self.0.cpu.checkpoint()
+    }
+}
+#[derive(Clone)]
+pub(super) struct ContinuousPoolCheckpoint(Active);
+impl ContinuousPoolCheckpoint {
+    pub(super) fn check(&self) -> Result<()> {
+        ContinuousScopeCheckpoint(self.0.clone()).check()
+    }
+    pub(super) fn check_prefix(&self, raws: &[Vec<u8>]) -> Result<()> {
+        self.check()?;
+        self.0
+            .pool
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?
+            .check_prefix(raws)
+            .map_err(continuous_error)
+    }
+    pub(super) fn check_retained(&self, raws: &[Vec<u8>]) -> Result<()> {
+        self.check()?;
+        self.0
+            .pool
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?
+            .check_bound_group(raws)
+            .map_err(continuous_error)
     }
 }
 struct Reset(Arc<Mutex<Option<Active>>>);
@@ -88,6 +116,7 @@ struct Binding {
     tx: Option<String>,
     miner: Option<Hash>,
     height: Option<u64>,
+    pool: Option<Arc<crate::operator_continuous_pool::VerifiedSelection>>,
 }
 impl Binding {
     fn none() -> Self {
@@ -95,6 +124,7 @@ impl Binding {
             tx: None,
             miner: None,
             height: None,
+            pool: None,
         }
     }
     fn packet(packet: &Packet) -> Result<Self> {
@@ -105,6 +135,7 @@ impl Binding {
             ),
             miner: Some(packet.header.miner),
             height: Some(packet.header.height),
+            pool: None,
         })
     }
 }
@@ -135,6 +166,7 @@ impl ContinuousOwner {
             tx: b.tx,
             miner: b.miner,
             height: b.height,
+            pool: b.pool,
         });
         drop(active);
         Ok(Reset(self.active.clone()))
@@ -280,8 +312,64 @@ impl Node {
             &inputs.expected_journal,
         )
         .map_err(continuous_error)?;
+        if journal.pristine() {
+            ensure(
+                inputs.lease_transition.is_none(),
+                "OWNER_CONTINUOUS_LEASE_NOT_FRESH",
+            )?;
+        } else {
+            let old = journal.declared_binding().map_err(continuous_error)?;
+            if let Some(reference) = &inputs.lease_transition {
+                reference
+                    .edge
+                    .check_declarations(old, &view.body.declared_binding)
+                    .map_err(continuous_error)?;
+                journal
+                    .check_lease_witness(&reference.operation, &reference.edge)
+                    .map_err(continuous_error)?;
+                let budget = inputs
+                    .budget_authority
+                    .as_ref()
+                    .ok_or("OWNER_CONTINUOUS_LEASE_BUDGET_REQUIRED")?;
+                ensure(
+                    inputs.raw_budget.is_some()
+                        && budget.expected.delegation.declared_binding
+                            == view.body.declared_binding
+                        && budget.expected.delegation.registry2_declaration_digest
+                            == reference.edge.new_registry2_declaration_digest
+                        && budget.expected.delegation.context.actual_parent
+                            == reference.edge.actual_parent,
+                    "OWNER_CONTINUOUS_LEASE_NEW_DECLARATION",
+                )?;
+            } else {
+                ensure(
+                    *old == view.body.declared_binding,
+                    "OWNER_CONTINUOUS_EXPLICIT_LEASE_EDGE_REQUIRED",
+                )?;
+            }
+        }
+        let recovery = inputs
+            .known_unclean_restart
+            .as_ref()
+            .map(|input| {
+                crate::operator_continuous_recovery::authenticate(input, &view.body.identity, now)
+            })
+            .transpose()
+            .map_err(continuous_error)?;
         let cpu = if journal.pristine() {
+            ensure(recovery.is_none(), "OWNER_CONTINUOUS_RECOVERY_NOT_FRESH")?;
             ServiceMutationCpuDomain::standalone()
+        } else if let Some(verified) = &recovery {
+            ensure(
+                verified.body.actual_parent == view.body.actual_parent
+                    && verified.body.actual_generation == view.body.actual_generation,
+                "OWNER_CONTINUOUS_RECOVERY_ACTUAL_PAIR",
+            )?;
+            ServiceMutationCpuDomain::from_known_unclean_continuous_restart(
+                journal
+                    .issue_known_unclean_restart(verified)
+                    .map_err(continuous_error)?,
+            )
         } else {
             ServiceMutationCpuDomain::from_clean_continuous_restart(
                 journal.issue_clean_restart().map_err(continuous_error)?,
@@ -450,6 +538,10 @@ impl Node {
         Ok((node, model, input))
     }
     pub fn refresh_operator_continuous_view(&mut self, inputs: policy::Inputs) -> Result<()> {
+        ensure(
+            inputs.known_unclean_restart.is_none(),
+            "OWNER_CONTINUOUS_RECOVERY_STARTUP_ONLY",
+        )?;
         let owner = self
             .continuous_owner
             .as_ref()
@@ -483,6 +575,10 @@ impl Node {
             .catalog
             .recheck(&inputs, &next)
             .map_err(continuous_error)?;
+        // A changed lease refers to an already paid and known-settled old-budget
+        // operation with actual State/tag22 evidence. This read-only gate
+        // cannot invalidate the externally signed exact prior journal head.
+        self.check_continuous_lease_transition(&owner, &inputs, &next)?;
         let epoch = owner
             .epoch
             .load(Ordering::Acquire)
@@ -558,7 +654,7 @@ impl Node {
             .close_clean(hex::encode(p), g)
             .map_err(continuous_error)?;
         Ok(
-            serde_json::json!({"schema":"restricted-continuous-clean-checkpoint-v1","journal_head":journal.anchor(),"usage_digest":journal.usage_digest().map_err(continuous_error)?,"parent":hex::encode(p),"generation":g,"public_network_ready":false}),
+            serde_json::json!({"schema":"restricted-continuous-clean-checkpoint-v2","journal_head":journal.anchor(),"usage_digest":journal.usage_digest().map_err(continuous_error)?,"parent":hex::encode(p),"generation":g,"public_network_ready":false}),
         )
     }
     pub fn continuous_scope_receipt(&self, operation: &str) -> Result<serde_json::Value> {
@@ -701,7 +797,7 @@ impl Node {
                 .slot()?
                 .ok_or("OWNER_CONTINUOUS_SEARCH_PURPOSE_REQUIRED")?;
             ensure(
-                a.permit.allocation.claim().purpose == "search",
+                a.permit.allocation.claim().purpose == "search" || a.pool.is_some(),
                 "OWNER_CONTINUOUS_SEARCH_PURPOSE_REQUIRED",
             )?;
             ContinuousScopeCheckpoint(a).check()?;
@@ -714,6 +810,17 @@ impl Node {
                 .slot()?
                 .ok_or("OWNER_CONTINUOUS_NATIVE_PURPOSE_REQUIRED")?;
             let c = a.permit.allocation.claim();
+            if let Some(pool) = &a.pool {
+                ensure(
+                    c.parent == hex::encode(b.parent_id)
+                        && a.miner == Some(b.miner)
+                        && a.height == Some(b.height),
+                    "OWNER_CONTINUOUS_POOL_NATIVE_BINDING",
+                )?;
+                pool.check_prefix(b.transactions)
+                    .map_err(continuous_error)?;
+                return ContinuousScopeCheckpoint(a).check();
+            }
             ensure(
                 matches!(
                     c.purpose.as_str(),
@@ -980,15 +1087,15 @@ impl Node {
             .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?
             .clone();
         o.ready()?;
-        let intent = o
+        let search_binding = o
             .view
             .body
             .searches
             .iter()
             .find(|v| v.operation == operation_id)
             .ok_or("OWNER_CONTINUOUS_EXACT_SEARCH_REQUIRED")?
-            .intent
             .clone();
+        let intent = search_binding.intent;
         let payload = crate::operator_mining_policy::search_payload_sha256(&intent)
             .map_err(continuous_error)?;
         ensure(
@@ -998,6 +1105,20 @@ impl Node {
             "OWNER_CONTINUOUS_BATCH",
         )?;
         o.view.check_transactions(&raws).map_err(continuous_error)?;
+        if let Some(validation) = &search_binding.pool_validation_operation {
+            o.journal
+                .lock()
+                .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
+                .check_pool_search(
+                    validation,
+                    &o.view.body.actual_parent,
+                    o.view.body.actual_generation,
+                    &o.view.body.declared_binding,
+                    &intent.exact_transactions_sha256,
+                    &intent.exact_group_ids,
+                )
+                .map_err(continuous_error)?;
+        }
         o.journal
             .lock()
             .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
@@ -1030,6 +1151,7 @@ impl Node {
                 tx: Some(intent.exact_transactions_sha256.clone()),
                 miner: Some(miner),
                 height: Some(height),
+                pool: None,
             },
         )?;
         let progress = || {
@@ -1047,6 +1169,13 @@ impl Node {
         );
         let result = (|| -> Result<crate::mining::OwnedWindowTrace> {
             progress()?;
+            if search_binding.pool_validation_operation.is_some() {
+                let (_, limits) = self.continuous_pool_configuration()?;
+                ensure(
+                    self.continuous_pool_selected_raws(&limits, &intent.exact_group_ids)? == raws,
+                    "OWNER_CONTINUOUS_POOL_SEARCH_RAW_BINDING",
+                )?;
+            }
             self.continuous_task_binding(&permit, model, input)?;
             let prepared = self.prepare_registered_material_controlled(
                 parent,
@@ -1281,6 +1410,755 @@ impl Node {
             cpu: settled.actual,
             durable_result_preserved: true,
             accounting_fault_persistence_failed: settled.accounting_fault_persistence_failed,
+            public_network_ready: false,
+        })
+    }
+}
+
+/// Original Native queue outcome is separate from the final durable CPU record.
+/// A late accounting fault cannot retract an already committed group.
+#[derive(serde::Serialize)]
+pub struct OwnedContinuousPoolResult {
+    pub schema: &'static str,
+    pub operation_id: String,
+    pub native_result: Option<serde_json::Value>,
+    pub native_error: Option<String>,
+    pub cpu: crate::ingress::public_v3::ServiceMutationCpuSettlement,
+    pub accounting_record_persisted: bool,
+    pub accounting_fault_persistence_failed: bool,
+    pub durable_result_preserved: bool,
+    pub public_network_ready: bool,
+}
+
+#[derive(serde::Serialize)]
+pub struct OwnedContinuousLeaseResult {
+    pub schema: &'static str,
+    pub operation_id: String,
+    pub native_result: Option<serde_json::Value>,
+    pub native_error: Option<String>,
+    pub cpu: crate::ingress::public_v3::ServiceMutationCpuSettlement,
+    pub accounting_record_persisted: bool,
+    pub accounting_fault_persistence_failed: bool,
+    pub durable_result_preserved: bool,
+    pub public_network_ready: bool,
+}
+
+impl Node {
+    /// Protected Root metadata read, in SQL group ordinal/row position order.
+    /// It neither reconciles nor previews M06 and issues no operation permit.
+    /// Terminal groups are retained; outside cannot omit them from Selection.
+    pub fn continuous_pool_snapshot(&self) -> Result<serde_json::Value> {
+        let o = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
+        o.ready()?;
+        ensure(o.slot()?.is_none(), "OWNER_CONTINUOUS_SCOPE_BUSY")?;
+        let (parent, generation) = self.active()?;
+        let (context, limits) = self.continuous_pool_configuration()?;
+        let groups = self.continuous_pool_group_snapshot(&limits)?;
+        let mut rows = Vec::new();
+        let mut records = 0usize;
+        let mut bytes = 0usize;
+        let journal = o
+            .journal
+            .lock()
+            .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?;
+        for (ordinal, group) in groups.into_iter().enumerate() {
+            let admission = journal
+                .pool_admission(&hex::encode(group.id))
+                .map_err(continuous_error)?;
+            let raw_digest = crate::operator_mining_policy::transactions_sha256(&group.raws)
+                .map_err(continuous_error)?;
+            ensure(
+                admission.transactions_sha256 == raw_digest,
+                "OWNER_CONTINUOUS_POOL_SNAPSHOT_BINDING",
+            )?;
+            let row_bytes = group.raws.iter().try_fold(0usize, |sum, raw| {
+                sum.checked_add(raw.len())
+                    .ok_or("OWNER_CONTINUOUS_POOL_SNAPSHOT_BYTES")
+            })?;
+            records = records
+                .checked_add(group.raws.len())
+                .ok_or("OWNER_CONTINUOUS_POOL_SNAPSHOT_COUNT")?;
+            bytes = bytes
+                .checked_add(row_bytes)
+                .ok_or("OWNER_CONTINUOUS_POOL_SNAPSHOT_BYTES")?;
+            rows.push(
+                serde_json::json!({"ordinal":ordinal,"group":hex::encode(group.id),
+                "original_admission_operation":admission.operation,
+                "exact_transactions_sha256":raw_digest,
+                "ordered_raw_sha256":group.raws.iter().map(|raw|
+                    crate::operator_task_policy::digest_bytes(raw)).collect::<Vec<_>>(),
+                "state":group.state,"reason":group.reason,"raw_bytes":row_bytes,
+                "native_task":admission.native_task,"instance_class":admission.instance_class,
+                "admission_task_binding":admission.task_binding}),
+            );
+        }
+        let head = journal.anchor();
+        drop(journal);
+        ensure(
+            self.active()? == (parent, generation),
+            "OWNER_CONTINUOUS_POOL_SNAPSHOT_PAIR",
+        )?;
+        let result = serde_json::json!({"schema":"restricted-continuous-pool-snapshot-v1",
+            "identity":o.view.body.identity,"parent":hex::encode(parent),"generation":generation,
+            "pool_context":hex::encode(context),"limits":limits,
+            "limits_sha256":crate::operator_task_policy::digest_bytes(&serde_json::to_vec(&limits)?),
+            "retained_records":records,"retained_raw_bytes":bytes,"groups":rows,
+            "journal_head":head,"work_capability_issued":false,"classification_current":false,
+            "scope":"same-operator-read-only-retained-sql-and-fsynced-admission-facts"});
+        ensure(
+            serde_json::to_vec(&result)?.len() <= 262144,
+            "OWNER_CONTINUOUS_POOL_SNAPSHOT_LIMIT",
+        )?;
+        Ok(result)
+    }
+    pub fn continuous_process_cpu_snapshot(&self) -> Result<serde_json::Value> {
+        let o = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
+        o.ready()?;
+        ensure(o.slot()?.is_none(), "OWNER_CONTINUOUS_SCOPE_BUSY")?;
+        o.journal
+            .lock()
+            .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
+            .process_cpu_snapshot()
+            .map_err(continuous_error)
+    }
+    /// This gate is read-only: no CPU row or claim can be appended between the
+    /// externally signed prior journal and BudgetIncrease::increase.
+    fn check_continuous_lease_transition(
+        &self,
+        o: &ContinuousOwner,
+        inputs: &policy::Inputs,
+        next: &VerifiedView,
+    ) -> Result<()> {
+        let Some(reference) = &inputs.lease_transition else {
+            ensure(
+                next.body.declared_binding == o.view.body.declared_binding,
+                "OWNER_CONTINUOUS_EXPLICIT_LEASE_EDGE_REQUIRED",
+            )?;
+            return Ok(());
+        };
+        let edge = &reference.edge;
+        edge.check_declarations(&o.view.body.declared_binding, &next.body.declared_binding)
+            .map_err(continuous_error)?;
+        let (parent, generation) = self.active()?;
+        ensure(
+            edge.actual_parent == hex::encode(parent)
+                && edge.actual_generation == generation
+                && next.body.lease_transition_operation.as_deref()
+                    == Some(reference.operation.as_str()),
+            "OWNER_CONTINUOUS_LEASE_SETTLED_PAIR",
+        )?;
+        let budget = inputs
+            .budget_authority
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_LEASE_BUDGET_REQUIRED")?;
+        ensure(
+            inputs.raw_budget.is_some()
+                && budget.expected.delegation.declared_binding == next.body.declared_binding
+                && budget.expected.delegation.registry2_declaration_digest
+                    == edge.new_registry2_declaration_digest
+                && budget.expected.delegation.context.actual_parent == edge.actual_parent,
+            "OWNER_CONTINUOUS_LEASE_NEW_DECLARATION",
+        )?;
+        o.journal
+            .lock()
+            .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
+            .check_lease_witness(&reference.operation, edge)
+            .map_err(continuous_error)
+    }
+    /// A distinct old-budget operation. Outside must observe its actual
+    /// settled head BEFORE signing the next budget and TaskView. This is not a
+    /// packet admission, refund or new lease declaration by the Node.
+    pub fn reconcile_owned_continuous_lease(
+        &self,
+        input: policy::LeaseTransitionInput,
+    ) -> Result<OwnedContinuousLeaseResult> {
+        let o = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
+        o.ready()?;
+        ensure(o.slot()?.is_none(), "OWNER_CONTINUOUS_SCOPE_BUSY")?;
+        let now = crate::operator_task_policy::now_ns().map_err(continuous_error)?;
+        let edge = &input.edge;
+        let mut new_binding = o.view.body.declared_binding.clone();
+        let raw =
+            hex::decode(&edge.new_complete_lease).map_err(|_| "OWNER_CONTINUOUS_LEASE_HEX")?;
+        new_binding.task.lease_sha256 = crate::operator_task_policy::digest_bytes(&raw);
+        edge.check_declarations(&o.view.body.declared_binding, &new_binding)
+            .map_err(continuous_error)?;
+        ensure(
+            input.permission.authority.identity == o.view.body.identity
+                && input.permission.authority.expected.identity == o.view.body.identity,
+            "OWNER_CONTINUOUS_LEASE_OUTSIDE_IDENTITY",
+        )?;
+        let allocation = Arc::new(
+            crate::operator_continuous_recipient::authenticate(
+                &input.permission.raw,
+                &input.permission.authority,
+                now,
+            )
+            .map_err(continuous_error)?,
+        );
+        let (parent, generation) = self.active()?;
+        let c = allocation.claim();
+        ensure(
+            allocation.body().identity == o.view.body.identity
+                && allocation.body().declared_binding == o.view.body.declared_binding
+                && c.purpose == "lease-reconcile"
+                && c.payload == edge.payload().map_err(continuous_error)?
+                && c.parent == hex::encode(parent)
+                && c.generation == generation,
+            "OWNER_CONTINUOUS_LEASE_PERMISSION",
+        )?;
+        let operation_id = c.operation.clone();
+        o.journal
+            .lock()
+            .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
+            .reserve_allocation(&allocation)
+            .map_err(continuous_error)?;
+        let permit = Arc::new(Permit {
+            view: o.view.clone(),
+            allocation,
+            epoch: o.epoch.clone(),
+            expected_epoch: o.view_epoch,
+            unavailable: o.unavailable.clone(),
+        });
+        let operation = o.operation(&permit, None)?;
+        let checkpoint = operation.checkpoint_handle().map_err(continuous_error)?;
+        let _reset = o.enter(permit.clone(), None, checkpoint.clone(), Binding::none())?;
+        let actual = (|| -> Result<serde_json::Value> {
+            checkpoint.checkpoint()?;
+            let packet = self.packet(parent)?;
+            let task = crate::digest(&edge.native_task)?;
+            ensure(
+                packet.header.work_task == task,
+                "OWNER_CONTINUOUS_LEASE_PACKET_TASK",
+            )?;
+            let next_height = packet.header.height.checked_add(1).ok_or("HEIGHT")?;
+            let old = self
+                .lifecycle_task_lease(packet.header.parent, task, packet.header.height)?
+                .encode()
+                .map_err(|_| "OWNER_CONTINUOUS_LEASE")?;
+            checkpoint.checkpoint()?;
+            let new = self
+                .lifecycle_task_lease(parent, task, next_height)?
+                .encode()
+                .map_err(|_| "OWNER_CONTINUOUS_LEASE")?;
+            let mut found = 0u64;
+            for raw in &packet.transactions {
+                checkpoint.checkpoint()?;
+                let envelope =
+                    Envelope::decode(raw).map_err(|_| "OWNER_CONTINUOUS_LEASE_ENVELOPE")?;
+                if envelope.tag == 22 {
+                    let renewal=trnm_protocol::qualified_work_task::lifecycle_v3::AtomicRenewTaskV3::decode(&envelope.payload)
+                        .map_err(|_|"OWNER_CONTINUOUS_LEASE_RENEWAL")?;
+                    let encoded = renewal
+                        .lease
+                        .encode()
+                        .map_err(|_| "OWNER_CONTINUOUS_LEASE")?;
+                    if encoded == new {
+                        found = found.checked_add(1).ok_or("OWNER_CONTINUOUS_LEASE_COUNT")?;
+                    }
+                }
+            }
+            ensure(found == 1, "OWNER_CONTINUOUS_EXACT_RENEWAL_REQUIRED")?;
+            edge.check_actual(parent, generation, &old, &new, &packet.encode()?)
+                .map_err(continuous_error)?;
+            let manifest = self
+                .eligible_work_task(parent, task, next_height)?
+                .ok_or("OWNER_CONTINUOUS_COMPLETE_REGISTRATION_REQUIRED")?;
+            ensure(
+                manifest.purpose == TaskPurpose::Maintenance
+                    && hex::encode(manifest.model) == new_binding.task.native_model
+                    && hex::encode(manifest.input) == new_binding.task.native_input,
+                "OWNER_CONTINUOUS_LEASE_FULL_TASK",
+            )?;
+            permit.progress().map_err(continuous_error)?;
+            checkpoint.checkpoint()?;
+            let recorded = o
+                .journal
+                .lock()
+                .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
+                .record_lease_witness(operation_id.clone(), edge.clone())
+                .map_err(continuous_error);
+            if recorded.is_err() {
+                let _fault = o.sink.persist_unknown();
+            }
+            Ok(
+                serde_json::json!({"lease_witness_recorded":recorded.is_ok(),
+                "actual_parent":hex::encode(parent),"actual_generation":generation,
+                "actual_renewal_packet_sha256":edge.renewal_packet_sha256,
+                "work_capability_issued":false,"new_budget_installed":false}),
+            )
+        })();
+        let settled = operation.finish().map_err(continuous_error)?;
+        Ok(OwnedContinuousLeaseResult {
+            schema: "restricted-owner-continuous-lease-reconcile-result-v1",
+            operation_id,
+            native_result: actual.as_ref().ok().cloned(),
+            native_error: actual.err().map(|e| e.to_string()),
+            cpu: settled.actual,
+            accounting_record_persisted: settled.accounting_record_persisted,
+            accounting_fault_persistence_failed: settled.accounting_fault_persistence_failed,
+            durable_result_preserved: true,
+            public_network_ready: false,
+        })
+    }
+    fn record_continuous_pool_validation(
+        &self,
+        operation: &str,
+        batch: &PoolBatch,
+    ) -> Result<bool> {
+        let o = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
+        let body = history::PoolValidation {
+            operation: operation.to_owned(),
+            parent: hex::encode(batch.parent),
+            generation: batch.generation,
+            native_task: o.view.body.declared_binding.task.native_task.clone(),
+            instance_class: o.view.body.declared_binding.instance_class.clone(),
+            task_binding: crate::operator_continuous_recipient::declared_binding_digest(
+                &o.view.body.declared_binding,
+            )
+            .map_err(continuous_error)?,
+            pool_context: hex::encode(batch.context),
+            transactions_sha256: crate::operator_mining_policy::transactions_sha256(
+                &batch.transactions,
+            )
+            .map_err(continuous_error)?,
+            groups: batch.groups.iter().map(hex::encode).collect(),
+        };
+        let recorded = o
+            .journal
+            .lock()
+            .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
+            .record_pool_validation(body)
+            .map_err(continuous_error);
+        if recorded.is_err() {
+            let _fault = o.sink.persist_unknown();
+        }
+        Ok(recorded.is_ok())
+    }
+    /// The original public interval is the only debit. Exact whole new bundle
+    /// is selected cheaply before State/lease/M06 or a persistent claim.
+    pub(crate) fn begin_continuous_public_pool_scope(
+        &self,
+        raws: &[Vec<u8>],
+        context: Hash,
+        cpu: ServiceMutationCpuCheckpoint,
+    ) -> Result<Option<PublicContinuousScope>> {
+        let Some(o) = &self.continuous_owner else {
+            return Ok(None);
+        };
+        o.ready()?;
+        ensure(o.slot()?.is_none(), "OWNER_CONTINUOUS_SCOPE_BUSY")?;
+        let digest =
+            crate::operator_mining_policy::transactions_sha256(raws).map_err(continuous_error)?;
+        let matches: Vec<_> = o
+            .view
+            .pool_selections
+            .iter()
+            .filter(|s| {
+                s.body().purpose == crate::operator_continuous_pool::Purpose::SubmitBundle
+                    && s.body().exact_new_transactions_sha256 == digest
+                    && s.body().pool_context == hex::encode(context)
+            })
+            .collect();
+        ensure(
+            matches.len() == 1,
+            "OWNER_CONTINUOUS_EXACT_POOL_OPERATION_REQUIRED",
+        )?;
+        let selection = matches[0].clone();
+        let (parent, generation) = self.active()?;
+        selection
+            .check_actual_parent(parent, generation, context)
+            .map_err(continuous_error)?;
+        let payload = selection
+            .body()
+            .payload_sha256()
+            .map_err(continuous_error)?;
+        let permit = self.continuous_pair(o, "pool-submit-bundle", &payload)?;
+        let c = permit.allocation.claim();
+        let observed = ObservedOperation::begin(
+            o.journal.clone(),
+            Start {
+                scope: scope_id(&c.operation),
+                operation: c.operation.clone(),
+                linked_startup: None,
+                task: c.native_task.clone(),
+                class: c.instance_class.clone(),
+            },
+            cpu,
+            o.sink.clone(),
+        )
+        .map_err(continuous_error)?;
+        let (actual_context, limits) = self.continuous_pool_configuration()?;
+        ensure(actual_context == context, "OWNER_CONTINUOUS_POOL_CONTEXT")?;
+        let selection = self.continuous_bind_pool_selection(selection, &limits, raws)?;
+        let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
+        let reset = o.enter(
+            permit,
+            None,
+            observed.checkpoint_handle(),
+            Binding {
+                tx: None,
+                miner: Some(limits.preview_miner),
+                height: Some(height),
+                pool: Some(Arc::new(selection)),
+            },
+        )?;
+        Ok(Some(PublicContinuousScope {
+            observed: Some(observed),
+            _reset: reset,
+        }))
+    }
+    pub(crate) fn check_continuous_public_pool_binding(&self) -> Result<()> {
+        let Some(o) = &self.continuous_owner else {
+            return Ok(());
+        };
+        let active = o.slot()?.ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?;
+        let selected = active
+            .pool
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?;
+        let (_, limits) = self.continuous_pool_configuration()?;
+        self.continuous_pool_binding(&active.permit, selected, &limits)
+    }
+    pub(super) fn continuous_pool_configured(&self) -> Result<()> {
+        let owner = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
+        owner.ready()?;
+        let active = owner
+            .slot()?
+            .ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?;
+        ensure(
+            active.pool.is_some(),
+            "OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED",
+        )?;
+        ContinuousScopeCheckpoint(active).check()
+    }
+    /// Internal operations borrow the *already paid* private exact command.
+    /// They never discover a grant from an anonymous body or start another CPU scope.
+    pub(super) fn begin_continuous_pool_command(
+        &self,
+        command: &str,
+        raws: &[Vec<u8>],
+        context: Hash,
+    ) -> Result<OwnerPoolPermit> {
+        self.continuous_pool_configured()?;
+        let owner = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
+        let active = owner
+            .slot()?
+            .ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?;
+        let selected = active
+            .pool
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?;
+        selected
+            .check_internal_command(command, raws)
+            .map_err(continuous_error)?;
+        let (parent, generation) = self.active()?;
+        selected
+            .check_actual_parent(parent, generation, context)
+            .map_err(continuous_error)?;
+        let task = &active.permit.view.body.declared_binding.task;
+        let facts = crate::operator_task_policy::pool::PoolFacts {
+            parent: hex::encode(parent),
+            generation,
+            pool_context: hex::encode(context),
+            registered_task: task.native_task.clone(),
+            lease_sha256: task.lease_sha256.clone(),
+            command: command.to_owned(),
+            payload_sha256: selected.body().payload_sha256().map_err(continuous_error)?,
+        };
+        Ok(OwnerPoolPermit {
+            facts,
+            authentication: OwnerPoolAuthentication::Continuous(ContinuousPoolCheckpoint(active)),
+        })
+    }
+    pub(super) fn continuous_pool_validation_permit(&self) -> Result<Option<OwnerPoolPermit>> {
+        let Some(owner) = &self.continuous_owner else {
+            return Ok(None);
+        };
+        let active = owner
+            .slot()?
+            .ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?;
+        let selected = active
+            .pool
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?;
+        let (context, _) = self.continuous_pool_configuration()?;
+        selected
+            .check_actual_parent(self.active()?.0, self.active()?.1, context)
+            .map_err(continuous_error)?;
+        let task = &active.permit.view.body.declared_binding.task;
+        let facts = crate::operator_task_policy::pool::PoolFacts {
+            parent: selected.body().parent.clone(),
+            generation: selected.body().generation,
+            pool_context: hex::encode(context),
+            registered_task: task.native_task.clone(),
+            lease_sha256: task.lease_sha256.clone(),
+            command: selected.body().purpose.claim_purpose().to_owned(),
+            payload_sha256: selected.body().payload_sha256().map_err(continuous_error)?,
+        };
+        Ok(Some(OwnerPoolPermit {
+            facts,
+            authentication: OwnerPoolAuthentication::Continuous(ContinuousPoolCheckpoint(active)),
+        }))
+    }
+    fn continuous_selected_pool(
+        &self,
+        operation: &str,
+    ) -> Result<crate::operator_continuous_pool::VerifiedSelection> {
+        let owner = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
+        ensure(owner.slot()?.is_none(), "OWNER_CONTINUOUS_SCOPE_BUSY")?;
+        owner.ready()?;
+        owner
+            .view
+            .pool_selections
+            .iter()
+            .find(|s| s.body().operation == operation)
+            .cloned()
+            .ok_or_else(|| "OWNER_CONTINUOUS_EXACT_POOL_OPERATION_REQUIRED".into())
+    }
+    /// Actual SQL group bytes and the fsynced original admission operation are
+    /// both mandatory. The signed retained list must be complete, including
+    /// terminal groups; it cannot authorize just a chosen scratch subset.
+    fn continuous_bind_pool_selection(
+        &self,
+        mut selected: crate::operator_continuous_pool::VerifiedSelection,
+        limits: &PoolLimits,
+        new_raws: &[Vec<u8>],
+    ) -> Result<crate::operator_continuous_pool::VerifiedSelection> {
+        let owner = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
+        selected.bind_new(new_raws).map_err(continuous_error)?;
+        let groups = self.continuous_pool_actual_groups(limits)?;
+        for (group, raws) in &groups {
+            let record = {
+                let journal = owner
+                    .journal
+                    .lock()
+                    .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?;
+                journal
+                    .pool_admission(&hex::encode(group))
+                    .map_err(continuous_error)?
+                    .clone()
+            };
+            ensure(
+                record.native_task == selected.body().native_task
+                    && record.instance_class == owner.view.body.declared_binding.instance_class
+                    && record.transactions_sha256
+                        == crate::operator_mining_policy::transactions_sha256(raws)
+                            .map_err(continuous_error)?,
+                "OWNER_CONTINUOUS_RETAINED_TASK_CLASS",
+            )?;
+            selected
+                .bind_retained(*group, &record.operation, raws)
+                .map_err(continuous_error)?;
+        }
+        selected.all_retained_bound().map_err(continuous_error)?;
+        Ok(selected)
+    }
+    fn continuous_pool_binding(
+        &self,
+        permit: &Permit,
+        selected: &crate::operator_continuous_pool::VerifiedSelection,
+        limits: &PoolLimits,
+    ) -> Result<()> {
+        let (parent, generation) = self.active()?;
+        selected
+            .check_actual_parent(
+                parent,
+                generation,
+                crate::digest(&selected.body().pool_context)?,
+            )
+            .map_err(continuous_error)?;
+        ensure(
+            crate::operator_task_policy::digest_bytes(&serde_json::to_vec(limits)?)
+                == selected.body().limits_sha256,
+            "OWNER_CONTINUOUS_POOL_LIMITS",
+        )?;
+        let checkpoint = self
+            .continuous_progress_snapshot()?
+            .ok_or("OWNER_CONTINUOUS_SCOPE_REQUIRED")?;
+        let progress = || checkpoint.check();
+        let owner = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
+        let model = owner
+            .catalog
+            .read_role("model", 16384, &progress)
+            .map_err(continuous_error)?;
+        let input = owner
+            .catalog
+            .read_role("input", 16384, &progress)
+            .map_err(continuous_error)?;
+        self.continuous_task_binding(permit, &model, &input)
+    }
+    pub(super) fn record_continuous_pool_commit(&self, group: Hash, raws: &[Vec<u8>]) {
+        let Some(owner) = &self.continuous_owner else {
+            return;
+        };
+        let recorded = (|| -> Result<()> {
+            let active = owner
+                .slot()?
+                .ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?;
+            let selection = active
+                .pool
+                .as_ref()
+                .ok_or("OWNER_CONTINUOUS_POOL_PURPOSE_REQUIRED")?;
+            ensure(
+                selection.body().purpose == crate::operator_continuous_pool::Purpose::SubmitBundle,
+                "OWNER_CONTINUOUS_POOL_SUBMIT_PURPOSE",
+            )?;
+            selection.check_new_bundle(raws).map_err(continuous_error)?;
+            owner
+                .journal
+                .lock()
+                .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
+                .record_pool_admission(
+                    &active.permit.allocation.claim().operation,
+                    hex::encode(group),
+                    crate::operator_mining_policy::transactions_sha256(raws)
+                        .map_err(continuous_error)?,
+                )
+                .map_err(continuous_error)
+        })();
+        if recorded.is_err() {
+            let _fault = owner.sink.persist_unknown();
+        }
+    }
+    pub fn operate_owned_continuous_pool(
+        &mut self,
+        operation_id: &str,
+        command: crate::operator_continuous_pool::Command,
+    ) -> Result<OwnedContinuousPoolResult> {
+        use crate::operator_continuous_pool::{BatchInput, Command};
+        let o = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?
+            .clone();
+        let selection = self.continuous_selected_pool(operation_id)?;
+        command.check_selection(selection.body())?;
+        let new_raws = command.new_bundle()?;
+        let (context, limits) = match &command {
+            Command::Enable { limits } => {
+                let raw = serde_json::to_vec(limits)?;
+                (
+                    hash(
+                        b"native-local-queued-pnx1-v2",
+                        &[
+                            &self.settings.network(),
+                            &self.settings.parameters(),
+                            &self.settings.genesis(),
+                            &raw,
+                        ],
+                    ),
+                    (**limits).clone(),
+                )
+            }
+            _ => self.continuous_pool_configuration()?,
+        };
+        let (parent, generation) = self.active()?;
+        limits.validate()?;
+        selection
+            .check_actual_parent(parent, generation, context)
+            .map_err(continuous_error)?;
+        let payload = selection
+            .body()
+            .payload_sha256()
+            .map_err(continuous_error)?;
+        let permit =
+            self.continuous_pair(&o, selection.body().purpose.claim_purpose(), &payload)?;
+        ensure(
+            permit.allocation.claim().operation == operation_id,
+            "OWNER_CONTINUOUS_EXACT_OPERATION",
+        )?;
+        let operation = o.operation(&permit, None)?;
+        let checkpoint = operation.checkpoint_handle().map_err(continuous_error)?;
+        let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
+        // Bound SQL loading happens after the original CPU interval starts. No
+        // owner/global mutex is held during group decode, State or execution.
+        let selected = self.continuous_bind_pool_selection(selection, &limits, &new_raws)?;
+        let _reset = o.enter(
+            permit.clone(),
+            None,
+            checkpoint.clone(),
+            Binding {
+                tx: None,
+                miner: Some(limits.preview_miner),
+                height: Some(height),
+                pool: Some(Arc::new(selected.clone())),
+            },
+        )?;
+        let progress = |_| checkpoint.checkpoint();
+        let control = ExecutionControl::new(
+            &progress,
+            operation.worker_accounting().map_err(continuous_error)?,
+        );
+        let native = (|| -> Result<serde_json::Value> {
+            self.continuous_pool_binding(&permit, &selected, &limits)?;
+            Ok(match command {
+                Command::Enable { limits } => {
+                    serde_json::json!({"context":hex::encode(self.enable_local_mempool(*limits)?)})
+                }
+                Command::Reconcile {} => serde_json::to_value(self.pool_reconcile()?)?,
+                Command::SubmitBundle { .. } => {
+                    serde_json::to_value(self.pool_submit_bundle_with_control(new_raws, &control)?)?
+                }
+                Command::Status {} => serde_json::to_value(self.pool_status()?)?,
+                Command::MiningBatch {
+                    max_records,
+                    max_bytes,
+                } => serde_json::to_value(BatchInput::from_actual(self.pool_mining_batch(
+                    parent,
+                    generation,
+                    max_records as usize,
+                    max_bytes as usize,
+                )?))?,
+                Command::ValidateBatch { batch } => {
+                    let actual = batch.actual()?;
+                    let count = self.pool_validate_batch(&actual)?;
+                    let recorded = self.record_continuous_pool_validation(operation_id, &actual)?;
+                    serde_json::json!({"typed_gate_admissions":count,"batch_validated":true,"validation_recorded":recorded})
+                }
+                Command::Prune { group } => {
+                    self.pool_prune_terminal(crate::digest(&group)?)?;
+                    serde_json::json!({"pruned":group})
+                }
+            })
+        })();
+        let settled = operation.finish().map_err(continuous_error)?;
+        Ok(OwnedContinuousPoolResult {
+            schema: "restricted-owner-continuous-pool-result-v1",
+            operation_id: operation_id.to_owned(),
+            native_result: native.as_ref().ok().cloned(),
+            native_error: native.err().map(|e| e.to_string()),
+            cpu: settled.actual,
+            accounting_record_persisted: settled.accounting_record_persisted,
+            accounting_fault_persistence_failed: settled.accounting_fault_persistence_failed,
+            durable_result_preserved: true,
             public_network_ready: false,
         })
     }

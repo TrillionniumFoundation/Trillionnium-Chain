@@ -6,7 +6,7 @@ pub(crate) fn inputs() -> Inputs {
     let body = allocation("parent-reconcile");
     let (raw, authority) = signed_allocation(&body);
     let view = TaskView {
-        schema: "restricted-continuous-task-view-v1".into(),
+        schema: "restricted-continuous-task-view-v2".into(),
         identity: identity(),
         sequence: 1,
         previous_digest: None,
@@ -19,6 +19,9 @@ pub(crate) fn inputs() -> Inputs {
         issued_ns: 1,
         expires_ns: 2,
         revoked: false,
+        pool_selections: Vec::new(),
+        lease_edge: None,
+        lease_transition_operation: None,
     };
     let (raw_view, h) = signed(VIEW_DOMAIN, &view);
     let outside = ViewAuthority {
@@ -38,6 +41,8 @@ pub(crate) fn inputs() -> Inputs {
         expected_uid: rustix::process::geteuid().as_raw(),
         expected_journal: Anchor::empty(),
         materials: Vec::new(),
+        lease_transition: None,
+        known_unclean_restart: None,
     }
 }
 #[test]

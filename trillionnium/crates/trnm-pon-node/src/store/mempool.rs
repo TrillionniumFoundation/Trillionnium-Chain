@@ -31,7 +31,7 @@ pub struct PoolLimits {
     pub preview_miner: Hash,
 }
 impl PoolLimits {
-    fn validate(&self) -> Result<()> {
+    pub(super) fn validate(&self) -> Result<()> {
         ensure(
             (1..=256).contains(&self.max_records)
                 && (1..=524288).contains(&self.max_bytes)
@@ -136,6 +136,12 @@ struct Group {
     status: PoolState,
     reason: String,
     rows: Vec<Row>,
+}
+pub(super) struct ContinuousPoolGroupSnapshot {
+    pub id: Hash,
+    pub state: PoolState,
+    pub reason: String,
+    pub raws: Vec<Vec<u8>>,
 }
 /// Private immutable adapter: resources are derived from the existing command and
 /// byte fee, never a fabricated signed gas field or arbitrary-program cost claim.
@@ -293,6 +299,13 @@ fn validate_pending(
     node: &Node,
 ) -> Result<usize> {
     node.owner_preview_available()?;
+    let owner_permit = node.continuous_pool_validation_permit()?;
+    let progress = |_| {
+        owner_permit
+            .as_ref()
+            .map_or(Ok(()), |permit| permit.progress())
+    };
+    let control = ExecutionControl::new(&progress, &());
     PendingPreview {
         height,
         state,
@@ -302,8 +315,8 @@ fn validate_pending(
         node,
         checked: None,
         parent_observation: None,
-        control: &ExecutionControl::new(&|_| Ok(()), &()),
-        owner_permit: None,
+        control: &control,
+        owner_permit: owner_permit.as_ref(),
     }
     .validate(raws)
     .map_err(PoolPreviewError::into_error)
@@ -579,6 +592,63 @@ impl Node {
         );
         ensure(context == expected, "POOL_CONTEXT")?;
         Ok((bytes32(context)?, limits))
+    }
+    pub(super) fn continuous_pool_configuration(&self) -> Result<(Hash, PoolLimits)> {
+        self.pool_policy()
+    }
+    pub(super) fn continuous_pool_actual_groups(
+        &self,
+        limits: &PoolLimits,
+    ) -> Result<Vec<(Hash, Vec<Vec<u8>>)>> {
+        Ok(self
+            .pool_groups(limits)?
+            .into_iter()
+            .map(|g| (g.id, g.rows.into_iter().map(|r| r.raw).collect()))
+            .collect())
+    }
+    pub(super) fn continuous_pool_group_snapshot(
+        &self,
+        limits: &PoolLimits,
+    ) -> Result<Vec<ContinuousPoolGroupSnapshot>> {
+        Ok(self
+            .pool_groups(limits)?
+            .into_iter()
+            .map(|g| ContinuousPoolGroupSnapshot {
+                id: g.id,
+                state: g.status,
+                reason: g.reason,
+                raws: g.rows.into_iter().map(|r| r.raw).collect(),
+            })
+            .collect())
+    }
+    /// Read actual bounded SQL groups, not a retained successor State. Search
+    /// checks the exact chosen queued prefix again in its own paid scope.
+    pub(super) fn continuous_pool_selected_raws(
+        &self,
+        limits: &PoolLimits,
+        selected: &[String],
+    ) -> Result<Vec<Vec<u8>>> {
+        let groups = self.pool_groups(limits)?;
+        let queued: Vec<_> = groups
+            .iter()
+            .filter(|g| g.status == PoolState::Queued)
+            .collect();
+        ensure(
+            selected.len() <= queued.len(),
+            "OWNER_CONTINUOUS_POOL_SELECTED",
+        )?;
+        let chosen = &queued[..selected.len()];
+        ensure(
+            chosen
+                .iter()
+                .map(|g| hex::encode(g.id))
+                .eq(selected.iter().cloned()),
+            "OWNER_CONTINUOUS_POOL_SELECTED",
+        )?;
+        Ok(chosen
+            .iter()
+            .flat_map(|g| g.rows.iter().map(|row| row.raw.clone()))
+            .collect())
     }
     fn pool_gc_snapshot(&self) -> Result<PoolGcSummary> {
         let (groups, records, bytes, head): (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>) = self.db.query_row(
@@ -1122,6 +1192,7 @@ impl Node {
         }
         (control.progress)(ExecutionProgress::BeforeDurableCommit)?;
         tx.commit()?;
+        self.record_continuous_pool_commit(id, &raws);
         Ok(PoolReceipt{group:hex::encode(id),duplicate:false,state:PoolState::Queued,typed_gate_admissions:admitted,typed_gate_ready_metadata:admitted,scope:"M05 typed queue checks plus M06 local prefix preview, SQLite group commit and admission-triggered terminal cache eviction; no block execution, irreversible cache drop or confirmation authority"})
     }
     pub fn pool_mining_batch(
@@ -1230,6 +1301,12 @@ impl Node {
     pub fn pool_prune_terminal(&mut self, id: Hash) -> Result<()> {
         self.owner_preview_available()?;
         self.pool_reconcile()?;
+        let continuous = self.continuous_progress_snapshot()?;
+        let captured = if continuous.is_some() {
+            Some(self.active()?)
+        } else {
+            None
+        };
         let (_, limits) = self.pool_policy()?;
         let groups = self.pool_groups(&limits)?;
         let group = groups.iter().find(|g| g.id == id).ok_or("POOL_GROUP")?;
@@ -1244,10 +1321,19 @@ impl Node {
         let tx = self
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        if let Some((parent, generation)) = captured {
+            fence(&tx, parent, generation)?;
+        }
         for row in &group.rows {
+            if let Some(checkpoint) = &continuous {
+                checkpoint.check()?;
+            }
             tx.execute("INSERT INTO local_pool_removals(id,group_id,reason) VALUES(?,?,'explicit-terminal-prune')",params![row.digest.as_slice(),id.as_slice()])?;
         }
         tx.execute("DELETE FROM local_pool_groups WHERE id=?", [id.as_slice()])?;
+        if let Some(checkpoint) = &continuous {
+            checkpoint.check()?;
+        }
         tx.commit()?;
         Ok(())
     }

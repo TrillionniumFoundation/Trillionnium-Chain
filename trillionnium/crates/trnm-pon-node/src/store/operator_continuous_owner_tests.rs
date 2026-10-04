@@ -177,3 +177,32 @@ fn mode4_dropped_control_frame_persists_unknown_without_a_refund() {
     );
     assert!(node.begin_continuous_control_frame().is_err());
 }
+
+#[test]
+fn mode5_unknown_pool_bundle_is_refused_before_native_state_and_claim_without_borrowing_search() {
+    let (_root, _directory, mut node) = node();
+    let active = node.active().unwrap();
+    let before = node.continuous_journal_head().unwrap();
+    let domain = node.continuous_cpu_domain().unwrap();
+    let original = domain.begin().unwrap();
+    let error = node
+        .begin_continuous_public_pool_scope(&[vec![0; 159]], [1; 32], original.checkpoint_handle())
+        .err()
+        .unwrap()
+        .to_string();
+    assert!(error.contains("OWNER_CONTINUOUS_EXACT_POOL_OPERATION_REQUIRED"));
+    assert!(!error.contains("PARENT_MISSING"));
+    let actual = original.finish();
+    assert!(!actual.accounting_unavailable);
+    assert!(node
+        .operate_owned_continuous_pool(
+            &"ee".repeat(32),
+            crate::operator_continuous_pool::Command::Reconcile {}
+        )
+        .is_err());
+    assert!(node.continuous_pool_validation_permit().is_err());
+    assert_eq!(node.active().unwrap(), active);
+    assert_eq!(node.continuous_journal_head().unwrap(), before);
+    assert!(node.pool_reconcile().is_err());
+    assert!(node.continuous_pool_snapshot().is_err());
+}

@@ -8,8 +8,11 @@ pub mod operator_checkpoint_tile;
 pub mod operator_continuous_controller;
 mod operator_continuous_cpu;
 mod operator_continuous_history;
+mod operator_continuous_lease;
 pub mod operator_continuous_policy;
+pub mod operator_continuous_pool;
 mod operator_continuous_recipient;
+mod operator_continuous_recovery;
 pub mod operator_deployment;
 pub mod operator_mining_controller;
 pub mod operator_mining_policy;
@@ -29,7 +32,8 @@ pub use store::mempool::{
 };
 pub use store::{
     ConfirmationBatch, ContinuousSearchRequest, DerivedCommitmentStatus, MiningEpochCancellation,
-    Node, Observation, OwnedMutationResult, OwnedSearchResult,
+    Node, Observation, OwnedContinuousLeaseResult, OwnedContinuousPoolResult, OwnedMutationResult,
+    OwnedSearchResult,
 };
 use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};

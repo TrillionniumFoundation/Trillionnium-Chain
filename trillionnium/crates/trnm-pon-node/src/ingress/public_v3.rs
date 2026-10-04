@@ -1351,13 +1351,35 @@ fn public_dispatch(
         } => {
             progress(0)?;
             let mut owner = lock_owner(node, &mut progress)?;
-            let snapshot = owner.pool_status_snapshot()?;
-            ensure(pool_context == snapshot.context, "PUBLIC_POOL_CONTEXT")?;
             // The canonical body guard already capped the vector before serde allocation.
             let raws = transactions
                 .iter()
                 .map(|text| hex::decode(text).map_err(|_| "PUBLIC_POOL_RAW".into()))
                 .collect::<Result<Vec<_>>>()?;
+            let continuous_progress = if owner.is_continuous() {
+                let measurement =
+                    mutation_cpu.ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
+                let live = measurement
+                    .workers
+                    .live
+                    .as_ref()
+                    .ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
+                let scope = owner.begin_continuous_public_pool_scope(
+                    &raws,
+                    crate::digest(&pool_context)?,
+                    ServiceMutationCpuCheckpoint::from_actual_live(live.clone()),
+                )?;
+                let checkpoint = scope.as_ref().map(|scope| scope.checkpoint()).transpose()?;
+                *measurement.continuous_scope.borrow_mut() = scope;
+                if checkpoint.is_some() {
+                    owner.check_continuous_public_pool_binding()?;
+                }
+                checkpoint
+            } else {
+                None
+            };
+            let snapshot = owner.pool_status_snapshot()?;
+            ensure(pool_context == snapshot.context, "PUBLIC_POOL_CONTEXT")?;
             // Check again before starting the nonpreemptive mutable native stage.
             progress(0)?;
             let start = Instant::now();
@@ -1370,7 +1392,10 @@ fn public_dispatch(
                 &ExecutionControl::new(
                     &|_| {
                         task_alive(deadline, stop, cancelled)?;
-                        live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+                        live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)?;
+                        continuous_progress
+                            .as_ref()
+                            .map_or(Ok(()), |checkpoint| checkpoint.check())
                     },
                     mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
                 ),

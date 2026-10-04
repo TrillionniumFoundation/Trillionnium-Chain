@@ -80,3 +80,31 @@ fn mode4_launch_held_configuration_rejects_modes_symlinks_and_content_substituti
     };
     assert!(read_launch(&outside).is_err());
 }
+
+#[test]
+fn mode5_pool_lease_and_snapshot_frames_reject_unknown_fields_without_issuing_a_permit() {
+    for raw in [
+        r#"{"purpose":"read-pool-snapshot","permit":true}"#,
+        r#"{"purpose":"read-process-cpu-snapshot","credit":1}"#,
+        r#"{"purpose":"read-pool-snapshot","purpose":"read-pool-snapshot"}"#,
+        r#"{"purpose":"pool","operation_id":"a","command":{"command":"status","reuse":true}}"#,
+        r#"{"purpose":"lease-reconcile","inputs":{},"refund":true}"#,
+    ] {
+        assert!(serde_json::from_str::<Step>(raw).is_err());
+    }
+    assert!(matches!(
+        serde_json::from_str::<Step>(r#"{"purpose":"read-pool-snapshot"}"#).unwrap(),
+        Step::ReadPoolSnapshot {}
+    ));
+    assert!(matches!(
+        serde_json::from_str::<Step>(r#"{"purpose":"read-process-cpu-snapshot"}"#).unwrap(),
+        Step::ReadProcessCpuSnapshot {}
+    ));
+    assert!(matches!(
+        serde_json::from_str::<Step>(
+            r#"{"purpose":"pool","operation_id":"a","command":{"command":"status"}}"#
+        )
+        .unwrap(),
+        Step::Pool { .. }
+    ));
+}

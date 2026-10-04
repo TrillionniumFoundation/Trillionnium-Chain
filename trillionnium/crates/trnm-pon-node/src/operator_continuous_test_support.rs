@@ -10,7 +10,7 @@ pub(crate) fn identity() -> Identity {
     let r = signing_key_from_hex(&"11".repeat(32)).unwrap();
     let t = signing_key_from_hex(&"22".repeat(32)).unwrap();
     Identity {
-        schema: "restricted-continuous-identity-v1".into(),
+        schema: "restricted-continuous-identity-v2".into(),
         registry: "01".repeat(32),
         operator: "02".repeat(32),
         network: "03".repeat(32),
@@ -77,7 +77,7 @@ pub(crate) fn delegation(sequence: u64) -> RegistryDelegation {
     let h = || "11".repeat(32);
     let limits = usage();
     RegistryDelegation {
-        schema: "restricted-continuous-registry2-budget-delegation-v1".into(),
+        schema: "restricted-continuous-registry2-budget-delegation-v2".into(),
         registry2_admission_package_sha256: i.registry2_package.clone(),
         registry2_admission_receipt_sha256: h(),
         registry2_view_sequence: 1000,
@@ -100,7 +100,15 @@ pub(crate) fn delegation(sequence: u64) -> RegistryDelegation {
         declared_binding: binding(),
         allowed_purposes: vec![
             "activate".into(),
+            "lease-reconcile".into(),
             "parent-reconcile".into(),
+            "pool-enable".into(),
+            "pool-mining-batch".into(),
+            "pool-prune".into(),
+            "pool-reconcile".into(),
+            "pool-status".into(),
+            "pool-submit-bundle".into(),
+            "pool-validate-batch".into(),
             "receiver-activate".into(),
             "receiver-validation".into(),
             "search".into(),
@@ -191,7 +199,7 @@ pub(crate) fn allocation(purpose: &str) -> AllocationBody {
         None
     };
     AllocationBody {
-        schema: "restricted-continuous-recipient-allocation-v1".into(),
+        schema: "restricted-continuous-recipient-allocation-v2".into(),
         identity: identity(),
         allocator_sequence: 1,
         allocator_previous_digest: None,
@@ -206,7 +214,7 @@ pub(crate) fn allocation(purpose: &str) -> AllocationBody {
     }
 }
 pub(crate) fn signed_allocation(body: &AllocationBody) -> (Vec<u8>, Authority) {
-    let (raw, _) = signed(b"TRNM-RESTRICTED-CONTINUOUS-RECIPIENT1", body);
+    let (raw, _) = signed(b"TRNM-RESTRICTED-CONTINUOUS-RECIPIENT2", body);
     let authority = Authority {
         identity: identity(),
         expected: body.clone(),

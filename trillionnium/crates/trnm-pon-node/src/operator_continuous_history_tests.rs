@@ -5,7 +5,7 @@ use std::os::unix::fs::PermissionsExt;
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 fn signed(j: &Journal, sequence: u64, previous: Option<String>, revoked: bool) -> VerifiedBump {
     let body = BudgetIncrease {
-        schema: "restricted-continuous-budget-increase-v1".into(),
+        schema: "restricted-continuous-budget-increase-v2".into(),
         identity: identity(),
         sequence,
         previous_digest: previous,
@@ -310,4 +310,209 @@ pub(crate) fn claimed_journal() -> (tempfile::TempDir, Journal, Claim) {
     c.allocation.cpu_ns = 100_000_000;
     j.record_authenticated_claim(c.clone()).unwrap();
     (dir, j, c)
+}
+
+fn mode5_claim_for(purpose: &str, n: u64) -> Claim {
+    let mut c = claim(n);
+    c.purpose = purpose.into();
+    c.operation = crate::operator_continuous_recipient::operation_id(&identity(), &c).unwrap();
+    c
+}
+fn mode5_start(
+    j: &mut Journal,
+    c: Claim,
+    scope: &str,
+) -> crate::ingress::public_v3::ServiceMutationCpuOperation {
+    let operation = c.operation.clone();
+    j.record_authenticated_claim(c).unwrap();
+    let domain = crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+    let cpu = domain.begin().unwrap();
+    j.start_cpu(
+        scope.to_owned(),
+        operation,
+        "10".repeat(32),
+        "structured".into(),
+    )
+    .unwrap();
+    cpu
+}
+#[test]
+fn mode5_pool_admission_retains_original_operation_and_exact_ordered_digest_after_cold_open() {
+    let (dir, mut j) = journal();
+    let c = mode5_claim_for("pool-submit-bundle", 1);
+    let op = c.operation.clone();
+    let scope = "a1".repeat(32);
+    let cpu = mode5_start(&mut j, c, &scope);
+    let group = "a2".repeat(32);
+    let raw = "a3".repeat(32);
+    j.record_pool_admission(&op, group.clone(), raw.clone())
+        .unwrap();
+    assert_eq!(j.pool_admission(&group).unwrap().operation, op);
+    j.settle_cpu(scope, &cpu.finish()).unwrap();
+    let head = j.anchor();
+    let usage = j.usage_digest().unwrap();
+    drop(j);
+    let mut reopened = Journal::open(
+        dir.path(),
+        rustix::process::geteuid().as_raw(),
+        &identity(),
+        &head,
+    )
+    .unwrap();
+    assert_eq!(
+        reopened.pool_admission(&group).unwrap().transactions_sha256,
+        raw
+    );
+    assert_eq!(reopened.usage_digest().unwrap(), usage);
+    assert!(reopened
+        .record_pool_admission(&op, group, "a4".repeat(32))
+        .is_err());
+}
+#[test]
+fn mode5_pool_validation_requires_known_settlement_and_exact_task_parent_group_order_for_search() {
+    let (_dir, mut j) = journal();
+    let c = mode5_claim_for("pool-validate-batch", 1);
+    let operation = c.operation.clone();
+    let scope = "b1".repeat(32);
+    let cpu = mode5_start(&mut j, c.clone(), &scope);
+    let binding = crate::operator_continuous_test_support::binding();
+    let groups = vec!["b2".repeat(32), "b3".repeat(32)];
+    let raw = "b4".repeat(32);
+    j.record_pool_validation(PoolValidation {
+        operation: operation.clone(),
+        parent: c.parent.clone(),
+        generation: c.generation,
+        native_task: c.native_task,
+        instance_class: c.instance_class,
+        task_binding: c.task_binding,
+        pool_context: "b5".repeat(32),
+        transactions_sha256: raw.clone(),
+        groups: groups.clone(),
+    })
+    .unwrap();
+    assert!(j
+        .check_pool_search(&operation, &c.parent, 0, &binding, &raw, &groups)
+        .is_err());
+    j.settle_cpu(scope, &cpu.finish()).unwrap();
+    assert!(j
+        .check_pool_search(&operation, &c.parent, 0, &binding, &raw, &groups)
+        .is_ok());
+    assert!(j
+        .check_pool_search(&operation, &c.parent, 1, &binding, &raw, &groups)
+        .is_err());
+    assert!(j
+        .check_pool_search(&operation, &"b6".repeat(32), 0, &binding, &raw, &groups)
+        .is_err());
+    let mut wrong = binding.clone();
+    wrong.instance_class = "zero".into();
+    assert!(j
+        .check_pool_search(&operation, &c.parent, 0, &wrong, &raw, &groups)
+        .is_err());
+    let reverse = vec![groups[1].clone(), groups[0].clone()];
+    assert!(j
+        .check_pool_search(&operation, &c.parent, 0, &binding, &raw, &reverse)
+        .is_err());
+}
+#[test]
+fn mode5_lease_reconcile_witness_must_settle_before_a_new_budget_can_bind_its_actual_head() {
+    let (_dir, mut j) = journal();
+    let mut c = mode5_claim_for("lease-reconcile", 1);
+    let (_, _, mut edge) = crate::operator_continuous_lease::tests::fixture();
+    // Journal unit projection only: the separate original Node lease checker
+    // is mandatory before production can emit this witness.
+    edge.old_task_binding = c.task_binding.clone();
+    edge.actual_generation = c.generation;
+    c.payload = edge.payload().unwrap();
+    c.operation = crate::operator_continuous_recipient::operation_id(&identity(), &c).unwrap();
+    let operation = c.operation.clone();
+    let scope = "c1".repeat(32);
+    let before = signed(&j, 2, j.index.budget_digest.clone(), false);
+    let cpu = mode5_start(&mut j, c, &scope);
+    j.record_lease_witness(operation.clone(), edge.clone())
+        .unwrap();
+    assert!(j.check_lease_witness(&operation, &edge).is_err());
+    j.settle_cpu(scope, &cpu.finish()).unwrap();
+    assert!(j.check_lease_witness(&operation, &edge).is_ok());
+    let mut wrong = edge.clone();
+    wrong.actual_generation += 1;
+    assert!(j.check_lease_witness(&operation, &wrong).is_err());
+    assert_eq!(j.increase(&before), Err(PolicyError::ExternalContext));
+    let actual = signed(&j, 2, j.index.budget_digest.clone(), false);
+    j.increase(&actual).unwrap();
+    assert!(j.check_lease_witness(&operation, &edge).is_ok());
+}
+fn mode5_known_process(j: &mut Journal) -> crate::operator_continuous_recovery::Verified {
+    let scope = "d1".repeat(32);
+    let cpu = mode5_start(j, mode5_claim_for("startup-catalog", 1), &scope);
+    let actual = cpu.finish();
+    j.settle_cpu(scope.clone(), &actual).unwrap();
+    let mut v =
+        crate::operator_continuous_recovery::tests::verified(j.anchor(), j.usage_digest().unwrap());
+    v.body.process_start_scope = scope;
+    v.body.known_scope_total_cpu_ns = actual.total_cpu_ns.unwrap();
+    // A declared extra 7ns tests accounting arithmetic only. It is not real
+    // outside wait4 evidence and never grants production Native qualification.
+    v.body.residual_cpu_ns = 7;
+    v.body.closed_process_total_cpu_ns = v.body.known_scope_total_cpu_ns + 7;
+    v.digest = crate::operator_continuous_recovery::body_digest(&v.body).unwrap();
+    v
+}
+#[test]
+fn mode5_known_unclean_residual_is_once_durable_without_refund_or_a_clean_close() {
+    let (dir, mut j) = journal();
+    let v = mode5_known_process(&mut j);
+    let known = j.index.global.as_ref().unwrap().actual_cpu_ns;
+    assert!(j.issue_known_unclean_restart(&v).is_err());
+    j.record_known_unclean_process(&v).unwrap();
+    assert_eq!(j.index.global.as_ref().unwrap().actual_cpu_ns, known + 7);
+    assert_eq!(j.index.tasks[&"10".repeat(32)].actual_cpu_ns, known + 7);
+    assert_eq!(j.index.classes["structured"].actual_cpu_ns, known + 7);
+    assert!(!j.index.last_clean);
+    assert!(j.record_known_unclean_process(&v).is_err());
+    let head = j.anchor();
+    let usage = j.usage_digest().unwrap();
+    drop(j);
+    let mut j = Journal::open(
+        dir.path(),
+        rustix::process::geteuid().as_raw(),
+        &identity(),
+        &head,
+    )
+    .unwrap();
+    assert_eq!(j.usage_digest().unwrap(), usage);
+    let token = j.issue_known_unclean_restart(&v).unwrap();
+    assert!(j.issue_known_unclean_restart(&v).is_err());
+    let cpu =
+        crate::ingress::public_v3::ServiceMutationCpuDomain::from_known_unclean_continuous_restart(
+            token,
+        );
+    let receiver = cpu.clone();
+    assert!(receiver.shares_domain_with(&cpu));
+    assert!(cpu.begin().is_err());
+    assert!(cpu
+        .await_startup_credit(std::time::Instant::now() + std::time::Duration::from_millis(1))
+        .is_err());
+    cpu.await_startup_credit(std::time::Instant::now() + std::time::Duration::from_secs(9))
+        .unwrap();
+    assert!(!receiver.begin().unwrap().finish().accounting_unavailable);
+    assert_eq!(j.usage_digest().unwrap(), usage);
+}
+#[test]
+fn mode5_unclean_restart_wrong_prefix_unknown_pending_or_unstarted_claim_cannot_create_credit() {
+    let (_dir, mut j) = journal();
+    let v = mode5_known_process(&mut j);
+    let mut wrong = v.clone();
+    wrong.body.known_scope_total_cpu_ns += 1;
+    wrong.body.closed_process_total_cpu_ns += 1;
+    wrong.digest = crate::operator_continuous_recovery::body_digest(&wrong.body).unwrap();
+    assert!(j.record_known_unclean_process(&wrong).is_err());
+    assert!(j.issue_known_unclean_restart(&wrong).is_err());
+    j.record_authenticated_claim(claim(2)).unwrap();
+    let mut now = v.clone();
+    now.body.prior_journal = j.anchor();
+    now.body.exact_usage_digest = j.usage_digest().unwrap();
+    now.digest = crate::operator_continuous_recovery::body_digest(&now.body).unwrap();
+    assert!(j.record_known_unclean_process(&now).is_err());
+    j.mark_unknown().unwrap();
+    assert!(j.issue_known_unclean_restart(&now).is_err());
 }

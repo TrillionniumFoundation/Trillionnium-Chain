@@ -831,7 +831,11 @@ fn continuous_publish(value: &Value) -> Result<()> {
     out.flush()?;
     Ok(())
 }
-fn continuous_command(args: &BTreeMap<String, String>, started: Instant) -> Result<Value> {
+fn continuous_command(
+    args: &BTreeMap<String, String>,
+    started: Instant,
+    recovery: bool,
+) -> Result<Value> {
     use trnm_pon_node::operator_continuous_controller::{Controller, OutsideLaunch};
     const OPTIONS: [&str; 7] = [
         "--launch",
@@ -844,6 +848,19 @@ fn continuous_command(args: &BTreeMap<String, String>, started: Instant) -> Resu
     ];
     if args.len() != OPTIONS.len() || args.keys().any(|k| !OPTIONS.contains(&k.as_str())) {
         return Err("OWNER_CONTINUOUS_ARGUMENTS".into());
+    }
+    if recovery {
+        return trnm_pon_node::operator_continuous_controller::prepare_known_unclean_restart(
+            OutsideLaunch {
+                path: Path::new(need(args, "--launch")?),
+                sha256: need(args, "--launch-sha256")?,
+                registry_key: need(args, "--registry-key")?,
+                task_key: need(args, "--task-key")?,
+                source_commit: need(args, "--source-commit")?,
+                node_policy_source: need(args, "--policy-source")?,
+                registry2_package: need(args, "--registry2-package")?,
+            },
+        );
     }
     let mut controller = Controller::open_pinned(
         OutsideLaunch {
@@ -894,7 +911,10 @@ fn run() -> Result<Value> {
         }
     }
     if command == "operator-continuous" {
-        return continuous_command(&args, command_started);
+        return continuous_command(&args, command_started, false);
+    }
+    if command == "operator-continuous-recover" {
+        return continuous_command(&args, command_started, true);
     }
     if args.get("--development").map(String::as_str) != Some("true") {
         return Err(

@@ -26,7 +26,7 @@ pub(crate) const MAX_JOURNAL_BYTES: u64 = 192 * 1024 * 1024;
 const MAX_ROW_BYTES: u64 = 65536;
 const MAX_BUDGET_KEYS: usize = 256;
 const FAULT_HEADROOM_BYTES: u64 = 1024;
-const BUMP_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-BUDGET1";
+const BUMP_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-BUDGET2";
 fn check(ok: bool, error: PolicyError) -> Result<()> {
     if ok {
         Ok(())
@@ -105,7 +105,7 @@ pub(crate) struct Identity {
 impl Identity {
     pub(crate) fn validate(&self) -> Result<()> {
         check(
-            self.schema == "restricted-continuous-identity-v1",
+            self.schema == "restricted-continuous-identity-v2",
             PolicyError::Input,
         )?;
         for v in [
@@ -243,6 +243,11 @@ pub(crate) struct RegistryContext {
     pub actual_parent: String,
     pub scope: String,
 }
+fn same_registry_except_parent(old: &RegistryContext, new: &RegistryContext) -> bool {
+    let mut normalized = new.clone();
+    normalized.actual_parent = old.actual_parent.clone();
+    normalized == *old
+}
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct RegistryBudget {
@@ -284,7 +289,7 @@ pub(crate) struct RegistryDelegation {
 impl RegistryDelegation {
     fn validate(&self, identity: &Identity, body: &BudgetIncrease) -> Result<()> {
         check(
-            self.schema == "restricted-continuous-registry2-budget-delegation-v1",
+            self.schema == "restricted-continuous-registry2-budget-delegation-v2",
             PolicyError::Input,
         )?;
         for h in [
@@ -329,7 +334,7 @@ impl RegistryDelegation {
         crate::operator_continuous_recipient::declared_binding_digest(&self.declared_binding)?;
         check(
             !self.allowed_purposes.is_empty()
-                && self.allowed_purposes.len() <= 7
+                && self.allowed_purposes.len() <= 15
                 && self.allowed_purposes.windows(2).all(|p| p[0] < p[1])
                 && self.allowed_purposes.iter().all(|p| {
                     matches!(
@@ -341,6 +346,14 @@ impl RegistryDelegation {
                             | "activate"
                             | "receiver-validation"
                             | "receiver-activate"
+                            | "pool-enable"
+                            | "pool-reconcile"
+                            | "pool-submit-bundle"
+                            | "pool-status"
+                            | "pool-mining-batch"
+                            | "pool-validate-batch"
+                            | "pool-prune"
+                            | "lease-reconcile"
                     )
                 }),
             PolicyError::Input,
@@ -446,7 +459,7 @@ pub(crate) fn authenticate_bump(
     id(&outside.latest_digest)?;
     let e: BumpEnvelope = serde_json::from_slice(raw).map_err(|_| PolicyError::Input)?;
     check(
-        e.body.schema == "restricted-continuous-budget-increase-v1"
+        e.body.schema == "restricted-continuous-budget-increase-v2"
             && e.body == outside.expected
             && e.body.identity == outside.identity
             && digest(raw) == outside.envelope_sha256
@@ -531,6 +544,14 @@ impl Claim {
                     | "activate"
                     | "receiver-validation"
                     | "receiver-activate"
+                    | "pool-enable"
+                    | "pool-reconcile"
+                    | "pool-submit-bundle"
+                    | "pool-status"
+                    | "pool-mining-batch"
+                    | "pool-validate-batch"
+                    | "pool-prune"
+                    | "lease-reconcile"
             ) && self.global_allocation_sequence > 0
                 && self.allocation.cpu_ns > 0
                 && self.allocation.material_bytes > 0
@@ -541,6 +562,35 @@ impl Claim {
             PolicyError::Input,
         )
     }
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct PoolAdmission {
+    pub operation: String,
+    pub group: String,
+    pub transactions_sha256: String,
+    pub native_task: String,
+    pub instance_class: String,
+    pub task_binding: String,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct PoolValidation {
+    pub operation: String,
+    pub parent: String,
+    pub generation: u64,
+    pub native_task: String,
+    pub instance_class: String,
+    pub task_binding: String,
+    pub pool_context: String,
+    pub transactions_sha256: String,
+    pub groups: Vec<String>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct LeaseWitness {
+    pub operation: String,
+    pub edge: crate::operator_continuous_lease::LeaseEdge,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "kebab-case", deny_unknown_fields)]
@@ -558,6 +608,19 @@ enum Event {
         previous: Option<String>,
         parent: String,
         generation: u64,
+    },
+    PoolAdmission {
+        body: Box<PoolAdmission>,
+    },
+    PoolValidation {
+        body: Box<PoolValidation>,
+    },
+    LeaseWitness {
+        body: Box<LeaseWitness>,
+    },
+    KnownUncleanProcessSettled {
+        body: Box<crate::operator_continuous_recovery::RecoveryBody>,
+        digest: String,
     },
     SearchResult {
         operation: String,
@@ -655,6 +718,9 @@ struct Index {
     operation_scopes: HashMap<String, String>,
     pending_scopes: usize,
     results: HashMap<String, (Option<String>, String, u64)>,
+    pool_admissions: HashMap<String, PoolAdmission>,
+    pool_validations: HashMap<String, PoolValidation>,
+    lease_witnesses: HashMap<String, LeaseWitness>,
     tasks: HashMap<String, Usage>,
     classes: HashMap<String, Usage>,
     global: Option<Usage>,
@@ -667,6 +733,9 @@ struct Index {
     last_clean: bool,
     control_frames: u64,
     delegation: Option<RegistryDelegation>,
+    process_start_scope: Option<String>,
+    process_scope_cpu_ns: u64,
+    process_recovery: Option<(crate::operator_continuous_recovery::RecoveryBody, String)>,
 }
 // Only a small pending mutation is built. No full-index clone/full-history scan per operation.
 enum Update {
@@ -674,9 +743,19 @@ enum Update {
     Claim(Claim, Usage, Usage, Usage),
     View(u64, String),
     Result(String, Option<String>, String, u64),
+    PoolAdmission(Box<PoolAdmission>),
+    PoolValidation(Box<PoolValidation>),
+    LeaseWitness(Box<LeaseWitness>),
+    Recovered(
+        Box<crate::operator_continuous_recovery::RecoveryBody>,
+        String,
+        Usage,
+        Usage,
+        Usage,
+    ),
     Started(String, Scope),
     Linked(String, String),
-    Settled(String, Usage, Usage, Usage, ScopeTotals),
+    Settled(String, Usage, Usage, Usage, ScopeTotals, u64),
     Frame,
     Closed,
 }
@@ -729,13 +808,29 @@ impl Index {
                         .as_ref()
                         .ok_or(PolicyError::ExternalContext)?;
                     check(
-                        body.delegation.context == old_delegation.context
-                            && body.delegation.declared_binding == old_delegation.declared_binding
+                        ((body.delegation.declared_binding == old_delegation.declared_binding
+                            && body.delegation.context == old_delegation.context)
+                            || (body.delegation.declared_binding.task.lease_sha256
+                                != old_delegation.declared_binding.task.lease_sha256
+                                && same_registry_except_parent(
+                                    &old_delegation.context,
+                                    &body.delegation.context,
+                                )))
+                            && crate::operator_continuous_lease::same_except_lease(
+                                &old_delegation.declared_binding,
+                                &body.delegation.declared_binding,
+                            )
                             && body.delegation.global_allocator == old_delegation.global_allocator
                             && body.delegation.recipient_nodes == old_delegation.recipient_nodes
                             && body.delegation.allowed_purposes == old_delegation.allowed_purposes
-                            && body.delegation.registry2_declaration_digest
-                                == old_delegation.registry2_declaration_digest
+                            && ((body.delegation.declared_binding
+                                == old_delegation.declared_binding
+                                && body.delegation.registry2_declaration_digest
+                                    == old_delegation.registry2_declaration_digest)
+                                || (body.delegation.declared_binding.task.lease_sha256
+                                    != old_delegation.declared_binding.task.lease_sha256
+                                    && body.delegation.registry2_declaration_digest
+                                        != old_delegation.registry2_declaration_digest))
                             && body.delegation.registry2_operation
                                 != old_delegation.registry2_operation
                             && body.delegation.registry2_claim_sha256
@@ -863,6 +958,148 @@ impl Index {
                     PolicyError::ExternalContext,
                 )?;
                 Ok(Update::View(*sequence, h.clone()))
+            }
+            Event::PoolAdmission { body } => {
+                self.ready()?;
+                for h in [
+                    &body.operation,
+                    &body.group,
+                    &body.transactions_sha256,
+                    &body.native_task,
+                    &body.task_binding,
+                ] {
+                    id(h)?;
+                }
+                check(
+                    self.pool_admissions.len() < MAX_CLAIMS
+                        && !self.pool_admissions.contains_key(&body.group),
+                    PolicyError::Capacity,
+                )?;
+                let c = self
+                    .claims
+                    .get(&body.operation)
+                    .ok_or(PolicyError::NativeBinding)?;
+                let scope = self
+                    .operation_scopes
+                    .get(&body.operation)
+                    .and_then(|id| self.scopes.get(id))
+                    .ok_or(PolicyError::CpuUnknown)?;
+                check(
+                    c.purpose == "pool-submit-bundle"
+                        && c.native_task == body.native_task
+                        && c.instance_class == body.instance_class
+                        && c.task_binding == body.task_binding
+                        && scope.settlement.is_none(),
+                    PolicyError::NativeBinding,
+                )?;
+                Ok(Update::PoolAdmission(body.clone()))
+            }
+            Event::PoolValidation { body } => {
+                self.ready()?;
+                for h in [
+                    &body.operation,
+                    &body.parent,
+                    &body.native_task,
+                    &body.task_binding,
+                    &body.pool_context,
+                    &body.transactions_sha256,
+                ] {
+                    id(h)?;
+                }
+                check(
+                    body.groups.len() <= 256
+                        && self.pool_validations.len() < MAX_CLAIMS
+                        && !self.pool_validations.contains_key(&body.operation),
+                    PolicyError::Capacity,
+                )?;
+                for (i, h) in body.groups.iter().enumerate() {
+                    id(h)?;
+                    check(!body.groups[..i].contains(h), PolicyError::NativeBinding)?;
+                }
+                let c = self
+                    .claims
+                    .get(&body.operation)
+                    .ok_or(PolicyError::NativeBinding)?;
+                let scope = self
+                    .operation_scopes
+                    .get(&body.operation)
+                    .and_then(|s| self.scopes.get(s))
+                    .ok_or(PolicyError::CpuUnknown)?;
+                check(
+                    c.purpose == "pool-validate-batch"
+                        && c.parent == body.parent
+                        && c.generation == body.generation
+                        && c.native_task == body.native_task
+                        && c.instance_class == body.instance_class
+                        && c.task_binding == body.task_binding
+                        && scope.settlement.is_none(),
+                    PolicyError::NativeBinding,
+                )?;
+                Ok(Update::PoolValidation(body.clone()))
+            }
+            Event::LeaseWitness { body } => {
+                self.ready()?;
+                id(&body.operation)?;
+                let payload = body.edge.payload()?;
+                check(
+                    self.lease_witnesses.len() < MAX_CLAIMS
+                        && !self.lease_witnesses.contains_key(&body.operation),
+                    PolicyError::Capacity,
+                )?;
+                let c = self
+                    .claims
+                    .get(&body.operation)
+                    .ok_or(PolicyError::NativeBinding)?;
+                let scope = self
+                    .operation_scopes
+                    .get(&body.operation)
+                    .and_then(|s| self.scopes.get(s))
+                    .ok_or(PolicyError::CpuUnknown)?;
+                check(
+                    c.purpose == "lease-reconcile"
+                        && c.payload == payload
+                        && c.parent == body.edge.actual_parent
+                        && c.generation == body.edge.actual_generation
+                        && c.native_task == body.edge.native_task
+                        && c.task_binding == body.edge.old_task_binding
+                        && scope.settlement.is_none(),
+                    PolicyError::NativeBinding,
+                )?;
+                Ok(Update::LeaseWitness(body.clone()))
+            }
+            Event::KnownUncleanProcessSettled { body, digest: h } => {
+                self.ready()?;
+                body.validate()?;
+                check(
+                    body.identity == *identity
+                        && body.prior_journal == *anchor
+                        && body.exact_usage_digest == self.usage_digest()?
+                        && crate::operator_continuous_recovery::body_digest(body)? == *h
+                        && self.pending_scopes == 0
+                        && self.claims.len() == self.operation_scopes.len()
+                        && self.process_recovery.is_none()
+                        && self.process_start_scope.as_deref()
+                            == Some(body.process_start_scope.as_str())
+                        && self.process_scope_cpu_ns == body.known_scope_total_cpu_ns,
+                    PolicyError::CpuUnknown,
+                )?;
+                let start = self
+                    .scopes
+                    .get(&body.process_start_scope)
+                    .ok_or(PolicyError::CpuUnknown)?;
+                check(
+                    start.task == body.native_task && start.class == body.instance_class,
+                    PolicyError::NativeBinding,
+                )?;
+                let (g, t, k) = self.totals(&body.native_task, &body.instance_class);
+                // Retain the real measured residual even above ceilings.
+                Ok(Update::Recovered(
+                    body.clone(),
+                    h.clone(),
+                    g.cpu(body.residual_cpu_ns)?,
+                    t.cpu(body.residual_cpu_ns)?,
+                    k.cpu(body.residual_cpu_ns)?,
+                ))
             }
             Event::SearchResult {
                 operation,
@@ -996,6 +1233,9 @@ impl Index {
                         finished: *finished,
                         known: *known,
                     },
+                    self.process_scope_cpu_ns
+                        .checked_add(*total_cpu_ns)
+                        .ok_or(PolicyError::CpuUnknown)?,
                 ))
             }
             Event::ControlFrame { sha256 } => {
@@ -1033,11 +1273,35 @@ impl Index {
                 self.view_sequence = n;
                 self.view_digest = Some(h);
             }
+            Update::PoolAdmission(body) => {
+                self.pool_admissions.insert(body.group.clone(), *body);
+            }
+            Update::PoolValidation(body) => {
+                self.pool_validations.insert(body.operation.clone(), *body);
+            }
+            Update::LeaseWitness(body) => {
+                self.lease_witnesses.insert(body.operation.clone(), *body);
+            }
+            Update::Recovered(body, h, g, t, k) => {
+                self.tasks.insert(body.native_task.clone(), t);
+                self.classes.insert(body.instance_class.clone(), k);
+                self.global = Some(g);
+                self.process_recovery = Some((*body, h));
+            }
             Update::Result(op, p, parent, generation) => {
                 self.results.insert(op, (p, parent, generation));
             }
             Update::Started(scope, mut s) => {
                 s.started_record_sha256 = record_sha256.to_owned();
+                if self
+                    .claims
+                    .get(&s.operations[0])
+                    .is_some_and(|c| c.purpose == "startup-catalog")
+                {
+                    self.process_start_scope = Some(scope.clone());
+                    self.process_scope_cpu_ns = 0;
+                    self.process_recovery = None;
+                }
                 self.operation_scopes
                     .insert(s.operations[0].clone(), scope.clone());
                 self.pending_scopes += 1;
@@ -1049,12 +1313,13 @@ impl Index {
                     s.operations.push(op);
                 }
             }
-            Update::Settled(scope, g, t, k, mut totals) => {
+            Update::Settled(scope, g, t, k, mut totals, process_total) => {
                 totals.settled_record_sha256 = record_sha256.to_owned();
                 if let Some(s) = self.scopes.get_mut(&scope) {
                     self.tasks.insert(s.task.clone(), t);
                     self.classes.insert(s.class.clone(), k);
                     self.global = Some(g);
+                    self.process_scope_cpu_ns = process_total;
                     s.settlement = Some(totals);
                     self.pending_scopes -= 1;
                 }
@@ -1239,7 +1504,7 @@ impl Journal {
             )?;
             let r: Record = serde_json::from_slice(&raw).map_err(|_| PolicyError::Journal)?;
             check(
-                r.schema == "restricted-continuous-journal-row-v1"
+                r.schema == "restricted-continuous-journal-row-v2"
                     && r.sequence == anchor.sequence + 1
                     && r.previous == anchor.digest,
                 PolicyError::Journal,
@@ -1308,7 +1573,7 @@ impl Journal {
             .ok_or(PolicyError::Capacity)?;
         check(sequence <= MAX_ROWS as u64, PolicyError::Capacity)?;
         let record = Record {
-            schema: "restricted-continuous-journal-row-v1".into(),
+            schema: "restricted-continuous-journal-row-v2".into(),
             sequence,
             previous: self.anchor.digest.clone(),
             event,
@@ -1399,7 +1664,7 @@ impl Journal {
             .ok_or(PolicyError::NativeBinding)?;
         let t = s.settlement.as_ref().ok_or(PolicyError::CpuUnknown)?;
         Ok(ScopeReceipt {
-            schema: "restricted-continuous-closed-scope-receipt-v1".into(),
+            schema: "restricted-continuous-closed-scope-receipt-v2".into(),
             identity: self.identity.clone(),
             scope: scope.to_owned(),
             native_task: s.task.clone(),
@@ -1435,6 +1700,17 @@ impl Journal {
     }
     pub(crate) fn pristine(&self) -> bool {
         self.anchor.sequence == 0
+    }
+    pub(crate) fn declared_binding(
+        &self,
+    ) -> Result<&crate::operator_continuous_recipient::DeclaredBinding> {
+        self.ready()?;
+        Ok(&self
+            .index
+            .delegation
+            .as_ref()
+            .ok_or(PolicyError::ExternalContext)?
+            .declared_binding)
     }
     pub(crate) fn check_nonce_window(&self, first: u64, last: u64) -> Result<()> {
         self.ready()?;
@@ -1496,6 +1772,117 @@ impl Journal {
             parent,
             generation,
         })
+    }
+    /// Added only after the original SQLite group transaction committed. Any
+    /// append failure leaves the actual queue success intact and faults future
+    /// mutation; it never deletes SQL rows or refunds the reservation.
+    pub(crate) fn record_pool_admission(
+        &mut self,
+        operation: &str,
+        group: String,
+        transactions_sha256: String,
+    ) -> Result<()> {
+        let c = self.claim(operation)?.clone();
+        if let Some(old) = self.index.pool_admissions.get(&group) {
+            return check(
+                old.transactions_sha256 == transactions_sha256
+                    && old.native_task == c.native_task
+                    && old.instance_class == c.instance_class,
+                PolicyError::NativeBinding,
+            );
+        }
+        self.append(Event::PoolAdmission {
+            body: Box::new(PoolAdmission {
+                operation: operation.to_owned(),
+                group,
+                transactions_sha256,
+                native_task: c.native_task,
+                instance_class: c.instance_class,
+                task_binding: c.task_binding,
+            }),
+        })
+    }
+    pub(crate) fn pool_admission(&self, group: &str) -> Result<&PoolAdmission> {
+        self.ready()?;
+        self.index
+            .pool_admissions
+            .get(group)
+            .ok_or(PolicyError::NativeBinding)
+    }
+    pub(crate) fn record_pool_validation(&mut self, body: PoolValidation) -> Result<()> {
+        self.append(Event::PoolValidation {
+            body: Box::new(body),
+        })
+    }
+    pub(crate) fn record_lease_witness(
+        &mut self,
+        operation: String,
+        edge: crate::operator_continuous_lease::LeaseEdge,
+    ) -> Result<()> {
+        self.append(Event::LeaseWitness {
+            body: Box::new(LeaseWitness { operation, edge }),
+        })
+    }
+    /// Refresh does not append or predict an actual settlement. Outside signs
+    /// its new BudgetIncrease only after this immutable old-budget witness and
+    /// its whole original O+C interval have been durably settled.
+    pub(crate) fn check_lease_witness(
+        &self,
+        operation: &str,
+        edge: &crate::operator_continuous_lease::LeaseEdge,
+    ) -> Result<()> {
+        self.ready()?;
+        let witness = self
+            .index
+            .lease_witnesses
+            .get(operation)
+            .ok_or(PolicyError::NativeBinding)?;
+        let scope = self
+            .index
+            .operation_scopes
+            .get(operation)
+            .and_then(|s| self.index.scopes.get(s))
+            .ok_or(PolicyError::CpuUnknown)?;
+        check(
+            scope.settlement.is_some() && witness.edge == *edge,
+            PolicyError::NativeBinding,
+        )
+    }
+    /// This proves a previous *actual* exact batch preview and known settlement,
+    /// never a successor State. The next Search still runs original full M06.
+    pub(crate) fn check_pool_search(
+        &self,
+        operation: &str,
+        parent: &str,
+        generation: u64,
+        binding: &crate::operator_continuous_recipient::DeclaredBinding,
+        raw_digest: &str,
+        groups: &[String],
+    ) -> Result<()> {
+        self.ready()?;
+        let v = self
+            .index
+            .pool_validations
+            .get(operation)
+            .ok_or(PolicyError::NativeBinding)?;
+        let scope = self
+            .index
+            .operation_scopes
+            .get(operation)
+            .and_then(|s| self.index.scopes.get(s))
+            .ok_or(PolicyError::CpuUnknown)?;
+        check(
+            scope.settlement.is_some()
+                && v.parent == parent
+                && v.generation == generation
+                && v.native_task == binding.task.native_task
+                && v.instance_class == binding.instance_class
+                && v.task_binding
+                    == crate::operator_continuous_recipient::declared_binding_digest(binding)?
+                && v.transactions_sha256 == raw_digest
+                && v.groups == groups,
+            PolicyError::NativeBinding,
+        )
     }
     pub(crate) fn search_result(
         &mut self,
@@ -1631,6 +2018,62 @@ impl Journal {
         self.clean_restart_issued = true;
         Ok(VerifiedCleanRestart { _private: () })
     }
+    pub(crate) fn process_cpu_snapshot(&self) -> Result<serde_json::Value> {
+        self.ready()?;
+        let scope = self
+            .index
+            .process_start_scope
+            .as_ref()
+            .ok_or(PolicyError::CpuUnknown)?;
+        let started = self
+            .index
+            .scopes
+            .get(scope)
+            .ok_or(PolicyError::CpuUnknown)?;
+        Ok(
+            serde_json::json!({"schema":"restricted-continuous-process-cpu-snapshot-v1",
+            "identity":self.identity,"process_start_scope":scope,"native_task":started.task,
+            "instance_class":started.class,"known_scope_total_cpu_ns":self.index.process_scope_cpu_ns,
+            "pending_scopes":self.index.pending_scopes,"claims":self.index.claims.len(),
+            "started_operations":self.index.operation_scopes.len(),"journal_head":self.anchor,
+            "exact_usage_digest":self.usage_digest()?,"node_closed":false,
+            "closed_process_total_cpu_ns":serde_json::Value::Null}),
+        )
+    }
+    /// A distinct metadata action BEFORE outside signs the restart budget/view.
+    /// The old process wait4/CPU proof is externally fixed, not self-discovered.
+    pub(crate) fn record_known_unclean_process(
+        &mut self,
+        v: &crate::operator_continuous_recovery::Verified,
+    ) -> Result<()> {
+        self.append(Event::KnownUncleanProcessSettled {
+            body: Box::new(v.body.clone()),
+            digest: v.digest.clone(),
+        })
+    }
+    pub(crate) fn issue_known_unclean_restart(
+        &mut self,
+        v: &crate::operator_continuous_recovery::Verified,
+    ) -> Result<VerifiedKnownUncleanRestart> {
+        self.ready()?;
+        let recorded = self
+            .index
+            .process_recovery
+            .as_ref()
+            .ok_or(PolicyError::CpuUnknown)?;
+        check(
+            !self.clean_restart_issued
+                && self.index.pending_scopes == 0
+                && self.index.claims.len() == self.index.operation_scopes.len()
+                && recorded.0 == v.body
+                && recorded.1 == v.digest
+                && self.index.process_start_scope.as_deref()
+                    == Some(v.body.process_start_scope.as_str()),
+            PolicyError::CpuUnknown,
+        )?;
+        self.clean_restart_issued = true;
+        Ok(VerifiedKnownUncleanRestart { _private: () })
+    }
     pub(crate) fn mark_unknown(&mut self) -> Result<()> {
         let sink = FaultSink {
             path: self.path.clone(),
@@ -1644,6 +2087,10 @@ impl Journal {
 /// Only complete outside-pinned cold-open + known clean close can issue this token.
 /// It carries no balance and must be consumed by a zero-credit constructor.
 pub(crate) struct VerifiedCleanRestart {
+    _private: (),
+}
+/// Includes the durable, unique full-process residual settlement. No balance.
+pub(crate) struct VerifiedKnownUncleanRestart {
     _private: (),
 }
 /// Fixed for one exclusive Node owner scope, never holds a journal/SQL lock.
@@ -1685,7 +2132,7 @@ impl FaultSink {
             PolicyError::Journal,
         )?;
         let pinned = PathBuf::from(format!("/proc/self/fd/{}", self.directory.as_raw_fd()));
-        let raw=b"{\"schema\":\"restricted-continuous-accounting-fault-v1\",\"label\":\"CPU_OR_JOURNAL_UNKNOWN\"}";
+        let raw=b"{\"schema\":\"restricted-continuous-accounting-fault-v2\",\"label\":\"CPU_OR_JOURNAL_UNKNOWN\"}";
         let p = pinned.join("unavailable.json");
         if fs::symlink_metadata(&p).is_ok() {
             check(read_held(&p, self.uid)? == raw, PolicyError::Journal)?;

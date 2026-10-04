@@ -65,6 +65,13 @@ pub enum Step {
         operation_id: String,
         transactions: Vec<String>,
     },
+    Pool {
+        operation_id: String,
+        command: Box<crate::operator_continuous_pool::Command>,
+    },
+    LeaseReconcile {
+        inputs: Box<policy::LeaseTransitionInput>,
+    },
     WinnerValidation {
         packet: String,
         search_operation: String,
@@ -80,6 +87,8 @@ pub enum Step {
         operation_id: String,
     },
     ReadStatus {},
+    ReadPoolSnapshot {},
+    ReadProcessCpuSnapshot {},
     ReadHead {},
     ReadHistory {
         tip: String,
@@ -137,7 +146,7 @@ fn read_launch(outside: &OutsideLaunch<'_>) -> Result<Launch> {
     )?;
     let config: Launch = serde_json::from_slice(&raw)?;
     ensure(
-        config.schema == "restricted-owner-continuous-launch-v1"
+        config.schema == "restricted-owner-continuous-launch-v2"
             && config.source_commit == outside.source_commit
             && config.node_policy_source == outside.node_policy_source
             && config.registry2_package == outside.registry2_package
@@ -157,6 +166,70 @@ fn read_launch(outside: &OutsideLaunch<'_>) -> Result<Launch> {
     .map_err(|_| "OWNER_CONTINUOUS_PROTECTED_CONTEXT")?;
     Ok(config)
 }
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RecoveryLaunch {
+    schema: String,
+    source_commit: String,
+    node_policy_source: String,
+    registry2_package: String,
+    journal_path: PathBuf,
+    expected_uid: u32,
+    expected_journal: crate::operator_continuous_history::Anchor,
+    input: crate::operator_continuous_recovery::Input,
+}
+/// A separately guardian-closed, protected metadata action. It never opens a
+/// Node or creates a clean-close record. Outside fixes the original wait4 and
+/// full known-prefix proof before authorizing this actual residual settlement.
+pub fn prepare_known_unclean_restart(outside: OutsideLaunch<'_>) -> Result<Value> {
+    let raw = held_configuration(outside.path, MAX_FRAME_BYTES as u64)?;
+    ensure(
+        crate::operator_task_policy::digest_bytes(&raw) == outside.sha256,
+        "OWNER_CONTINUOUS_RECOVERY_LAUNCH_SHA",
+    )?;
+    let config: RecoveryLaunch = serde_json::from_slice(&raw)?;
+    let identity = &config.input.authority.identity;
+    ensure(
+        config.schema == "restricted-continuous-known-unclean-recovery-launch-v1"
+            && config.source_commit == outside.source_commit
+            && config.node_policy_source == outside.node_policy_source
+            && config.registry2_package == outside.registry2_package
+            && identity.registry_key == outside.registry_key
+            && identity.task_key == outside.task_key
+            && identity.source_commit == outside.source_commit
+            && identity.node_policy_source == outside.node_policy_source
+            && identity.registry2_package == outside.registry2_package
+            && config.expected_uid == rustix::process::geteuid().as_raw()
+            && config.journal_path.is_absolute(),
+        "OWNER_CONTINUOUS_RECOVERY_PROTECTED_CONTEXT",
+    )?;
+    let now =
+        crate::operator_task_policy::now_ns().map_err(|_| "OWNER_CONTINUOUS_RECOVERY_CLOCK")?;
+    let verified = crate::operator_continuous_recovery::authenticate(&config.input, identity, now)
+        .map_err(|_| "OWNER_CONTINUOUS_RECOVERY_AUTHORITY")?;
+    let mut journal = crate::operator_continuous_history::Journal::open(
+        &config.journal_path,
+        config.expected_uid,
+        identity,
+        &config.expected_journal,
+    )
+    .map_err(|_| "OWNER_CONTINUOUS_RECOVERY_FULL_PREFIX")?;
+    journal
+        .record_known_unclean_process(&verified)
+        .map_err(|_| "OWNER_CONTINUOUS_RECOVERY_SETTLEMENT")?;
+    Ok(
+        json!({"schema":"restricted-continuous-known-unclean-recovery-result-v1",
+        "closed_process_receipt_sha256":verified.body.closed_process_receipt_sha256,
+        "process_start_scope":verified.body.process_start_scope,
+        "known_scope_total_cpu_ns":verified.body.known_scope_total_cpu_ns,
+        "closed_process_total_cpu_ns":verified.body.closed_process_total_cpu_ns,
+        "residual_cpu_ns":verified.body.residual_cpu_ns,"journal_head":journal.anchor(),
+        "exact_usage_digest":journal.usage_digest().map_err(|_|"OWNER_CONTINUOUS_RECOVERY_USAGE")?,
+        "native_opened":false,"clean_close_created":false,"refund":false,"credit_granted_ns":0,
+        "public_network_ready":false}),
+    )
+}
+
 fn packet(value: &str) -> Result<Packet> {
     ensure(
         value.len() <= 2 * 1024 * 1024,
@@ -181,7 +254,7 @@ fn step_result(step: u32, native: Result<Value>, metadata: Completion) -> Value 
             Some(error.to_string().chars().take(256).collect::<String>()),
         ),
     };
-    json!({"schema":"restricted-owner-continuous-step-result-v1","step":step,"parent":metadata.parent,"generation":metadata.generation,"journal_head":metadata.journal_head,"control_frame_recorded":metadata.frame_recorded,"metadata_errors":metadata.errors,"result":result,"native_error":native_error,"public_network_ready":false,"anonymous_fairness":false,"task_source_authenticated":false,"funding_balance_verified":false,"economic_hardness":false,"hard_CPU_preemption":false})
+    json!({"schema":"restricted-owner-continuous-step-result-v2","step":step,"parent":metadata.parent,"generation":metadata.generation,"journal_head":metadata.journal_head,"control_frame_recorded":metadata.frame_recorded,"metadata_errors":metadata.errors,"result":result,"native_error":native_error,"public_network_ready":false,"anonymous_fairness":false,"task_source_authenticated":false,"funding_balance_verified":false,"economic_hardness":false,"hard_CPU_preemption":false})
 }
 pub struct Controller {
     node: Arc<Mutex<Node>>,
@@ -327,6 +400,15 @@ impl Controller {
                         .map(hex::encode);
                     json!({"search":found,"packet":packet})
                 }
+                Step::Pool {
+                    operation_id,
+                    command,
+                } => serde_json::to_value(
+                    node.operate_owned_continuous_pool(&operation_id, *command)?,
+                )?,
+                Step::LeaseReconcile { inputs } => {
+                    serde_json::to_value(node.reconcile_owned_continuous_lease(*inputs)?)?
+                }
                 Step::WinnerValidation {
                     packet: value,
                     search_operation,
@@ -349,6 +431,8 @@ impl Controller {
                     node.continuous_scope_receipt(&operation_id)?
                 }
                 Step::ReadStatus {} => node.stats()?,
+                Step::ReadPoolSnapshot {} => node.continuous_pool_snapshot()?,
+                Step::ReadProcessCpuSnapshot {} => node.continuous_process_cpu_snapshot()?,
                 Step::ReadHead {} => node.public_head_metadata()?,
                 Step::ReadHistory { tip, after } => {
                     let mut progress =
@@ -427,7 +511,7 @@ impl Controller {
             .close_continuous_checkpoint()?;
         self.closed = true;
         Ok(
-            json!({"schema":"restricted-owner-continuous-pipe-closed-v1","checkpoint":checkpoint,"receiver_metrics":metrics,"public_network_ready":false,"original8193_qualification":false}),
+            json!({"schema":"restricted-owner-continuous-pipe-closed-v2","checkpoint":checkpoint,"receiver_metrics":metrics,"public_network_ready":false,"original8193_qualification":false}),
         )
     }
 }
