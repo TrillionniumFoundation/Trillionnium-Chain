@@ -18,9 +18,40 @@ import subprocess
 import sys
 
 from ci_observation import ROOT, digest, receipt_root, source
-from check_cross_arch_cost import read_json, require
+from check_cross_arch_cost import require
 from run_cross_arch_cost import capture
 from run_account_archive_conformance import EXPORT_FILES, validate_export_retention
+
+
+MAX_JSON_BYTES = 32 * 1024 * 1024
+
+
+def read_json(path: Path):
+    """Read this fixture's bounded UTF-8 JSON without relaxing the cost reader."""
+    if path.is_symlink() or not path.is_file():
+        raise ValueError('account execution JSON: require a regular non-symlink file')
+    if path.stat().st_size > MAX_JSON_BYTES:
+        raise ValueError('account execution JSON: exceeds the 32 MiB byte limit')
+    with path.open('rb') as stream:
+        raw = stream.read(MAX_JSON_BYTES + 1)
+    if len(raw) > MAX_JSON_BYTES:
+        raise ValueError('account execution JSON: exceeds the 32 MiB byte limit')
+
+    def unique(pairs):
+        value = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError('account execution JSON: duplicate object key: ' + key)
+            value[key] = item
+        return value
+
+    def nonfinite(value):
+        raise ValueError('account execution JSON: nonfinite constant: ' + value)
+
+    try:
+        return json.loads(raw.decode('utf-8'), object_pairs_hook=unique, parse_constant=nonfinite)
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError('account execution JSON: invalid UTF-8 or JSON syntax') from error
 
 
 INPUTS = sorted(set([

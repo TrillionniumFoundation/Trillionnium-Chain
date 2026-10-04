@@ -64,6 +64,43 @@ def snapshot(database: Path):
 
 
 class AccountExecutionReceiptTests(unittest.TestCase):
+    def test_execution_json_reader_has_its_own_actual_32_mib_boundary(self):
+        self.assertEqual(execution.MAX_JSON_BYTES, 32 * 1024 * 1024)
+        with tempfile.TemporaryDirectory(prefix='trnm-execution-json-boundary-') as directory:
+            path = Path(directory) / 'synthetic.json'
+            for size in [16 * 1024 * 1024 + 1, execution.MAX_JSON_BYTES]:
+                with self.subTest(bytes=size):
+                    path.write_bytes(b'{}' + b' ' * (size - 2))
+                    self.assertEqual(path.stat().st_size, size)
+                    self.assertEqual(execution.read_json(path), {})
+            with path.open('ab') as stream:
+                stream.write(b' ')
+            self.assertEqual(path.stat().st_size, execution.MAX_JSON_BYTES + 1)
+            with self.assertRaisesRegex(ValueError, 'account execution JSON: exceeds the 32 MiB byte limit'):
+                execution.read_json(path)
+
+    def test_execution_json_reader_rejects_nonregular_ambiguous_and_nonfinite_inputs(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-execution-json-refusal-') as directory:
+            root = Path(directory)
+            path = root / 'synthetic.json'
+            for raw in [b'{"same":1,"same":2}', b'{"nested":{"same":1,"same":2}}',
+                        b'{"value":NaN}', b'{"value":Infinity}', b'{"value":-Infinity}',
+                        b'{} {}', b'\xff']:
+                with self.subTest(raw=raw):
+                    path.write_bytes(raw)
+                    with self.assertRaisesRegex(ValueError, 'account execution JSON:'):
+                        execution.read_json(path)
+            path.write_bytes(b'{"finite":1}')
+            for name, target in [('link', path), ('dangling', root / 'missing-target')]:
+                link = root / name
+                link.symlink_to(target)
+                with self.subTest(path=name), self.assertRaisesRegex(ValueError, 'regular non-symlink file'):
+                    execution.read_json(link)
+            for invalid in [root, root / 'missing-file']:
+                with self.subTest(path=invalid), self.assertRaisesRegex(ValueError, 'regular non-symlink file'):
+                    execution.read_json(invalid)
+            self.assertEqual(execution.read_json(path), {'finite': 1})
+
     def test_complete_fixture_identity_and_separate_json_scope(self):
         native, oracle = reports()
         checked = execution.validate_reports(native, oracle, '1' * 64)

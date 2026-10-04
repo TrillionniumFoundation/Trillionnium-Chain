@@ -389,6 +389,11 @@ archive and Node remain in the separate sibling `-working` directory. The origin
 `account_archive_vectors` schema and its `archive_used_for_native_execution=false`
 scope retain their original meaning.
 
+The account execution CI wrapper reads each UTF-8 JSON input with its own
+32 MiB byte limit. It rejects symlinks, duplicate object keys, nonfinite constants
+and malformed JSON. This delivery bound accommodates the complete signed fixture;
+it does not change the 16 MiB cost-observation reader or the native relation.
+
 [`account_execution_oracle.py`](../../../../formal/pon-nakamoto-v1/account_execution_oracle.py)
 derives the configured development genesis and independently executes the exact
 signed fixture relation for tags1–5,10 and11. It verifies main/consumer signatures,

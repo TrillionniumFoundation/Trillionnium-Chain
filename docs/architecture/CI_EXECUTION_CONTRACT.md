@@ -363,6 +363,10 @@ The existing full SQLite archive oracle remains a separate observation scope.
 The new wrapper's `trnm-account-execution-conformance-execution-v1` receipt keeps
 `oracle_reads_sqlite=false` and `sqlite_rows_independently_checked=false`. Native
 generation and JSON checking each have their own 300-second capture budget.
+This wrapper uses a separate 32 MiB byte limit for each UTF-8 JSON input, including
+the complete execution observation. It rejects symlinks, duplicate object keys,
+nonfinite constants and malformed JSON. The shared cost reader keeps its own
+16 MiB limit; neither limit changes the native execution or proof relation.
 The fresh `native` directory contains exactly `observation.json`, `archive.sqlite`
 and `finalization.json`, using the existing standalone snapshot helper; the source
 archive, original Node and their sidecars remain under `native-working`. The
