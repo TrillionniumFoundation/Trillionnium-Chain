@@ -143,3 +143,19 @@ profile or by registering a test selector.
 ## Native full evidence replay in the explicit model profile
 
 [Model evidence v3](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) installs actual frozen tasks and four complete retained controls, recomputes candidate/parent/control scores in M06, and requires every signed reveal to match native score and digest. This finite statement is executable. Source attestations, hidden common control, general LLM behavior, prospective gain and public dispute adjudication remain distinct obligations.
+
+## Native composition evaluation in revision14
+
+[Model composition V4](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md)
+reuses the complete integer inference kernel,25 public historical tasks and four
+frozen controls. It evaluates each full component and every exact leave-one-out
+model against the actual current full parent; caller-supplied allocation weights
+must match those measured gains. The two-generation fixture adopts a24/25 parent
+before evaluating the next25/25 bundle, so the second parent is an actual release.
+
+A component with zero standalone gain may participate only in this fresh profile
+when its exact omission reduces the bundle score. Exact-zero subset rejection closes
+the known cancelling-pair example; it does not establish coalition fairness, causal
+training effort or protection against general component splitting. The fixed corpus
+saturates at25/25 and supplies no next untouched evaluation window. Independent
+prospective usefulness and public model rewards remain unaccepted.

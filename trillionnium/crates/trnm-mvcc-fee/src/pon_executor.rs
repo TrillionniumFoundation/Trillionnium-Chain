@@ -367,12 +367,17 @@ impl Config {
                 serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
                     .map_err(|_| "CONFIG")?
             }
-            crate::integer_factor_candidate_v2::PROFILE | crate::model_evidence_v3::PROFILE => {
+            crate::integer_factor_candidate_v2::PROFILE
+            | crate::model_evidence_v3::PROFILE
+            | crate::model_composition_v4::PROFILE => {
                 require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
                 require(
                     task_profile == LEGACY_TASK_PROFILE
-                        || (model_profile == crate::model_evidence_v3::PROFILE
-                            && task_profile == "consensus-maintenance-continuity-dev-v1"),
+                        || (matches!(
+                            model_profile,
+                            crate::model_evidence_v3::PROFILE
+                                | crate::model_composition_v4::PROFILE
+                        ) && task_profile == "consensus-maintenance-continuity-dev-v1"),
                     "MODEL_PROFILE_TASK",
                 )?;
                 let factor_policy: Value = serde_json::from_str(include_str!(
@@ -413,8 +418,10 @@ impl Config {
                     require(factor_policy[key] == expected, "CONFIG")?;
                 }
                 params["consensus_revision"] = json!(if model_profile
-                    == crate::model_evidence_v3::PROFILE
+                    == crate::model_composition_v4::PROFILE
                 {
+                    crate::model_composition_v4::REVISION.max(field(&params, "consensus_revision")?)
+                } else if model_profile == crate::model_evidence_v3::PROFILE {
                     crate::model_evidence_v3::REVISION.max(field(&params, "consensus_revision")?)
                 } else {
                     11
@@ -432,6 +439,9 @@ impl Config {
                 .map_err(|_| "CONFIG")?;
                 if model_profile == crate::model_evidence_v3::PROFILE {
                     crate::model_evidence_v3::install(&mut params)?;
+                    model["native_admission_profile"] = json!(model_profile);
+                } else if model_profile == crate::model_composition_v4::PROFILE {
+                    crate::model_composition_v4::install(&mut params)?;
                     model["native_admission_profile"] = json!(model_profile);
                 }
                 model
@@ -458,7 +468,9 @@ impl Config {
         }
         if matches!(
             model_profile,
-            crate::integer_factor_candidate_v2::PROFILE | crate::model_evidence_v3::PROFILE
+            crate::integer_factor_candidate_v2::PROFILE
+                | crate::model_evidence_v3::PROFILE
+                | crate::model_composition_v4::PROFILE
         ) {
             for (key, expected) in [
                 ("schema", json!("integer-linear-factor-family-v2")),
@@ -508,7 +520,20 @@ impl Config {
             ],
         );
         let family = hash(b"family", &[&canonical(&model)?]);
-        let plan = if model_profile == crate::model_evidence_v3::PROFILE {
+        let plan = if model_profile == crate::model_composition_v4::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-model-composition-plan-v4",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                    &hash32(text(&params, "model_composition_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::model_evidence_v3::PROFILE {
             hash(
                 b"plan",
                 &[
@@ -1239,6 +1264,12 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             let supplied_root = p.h()?;
             let supplied_total = p.n()?;
             let count = p.byte()?;
+            if crate::model_composition_v4::enabled(cfg) {
+                require(
+                    (2..=crate::model_composition_v4::MAX_COMPONENTS).contains(&usize::from(count)),
+                    "MODEL_COMPOSITION_COUNT",
+                )?;
+            }
             let current = s.get("model:current").ok_or("STATE")?;
             require(current == json!(hex::encode(parent)), "STATE")?;
             let (bk, mut bundle) = s.object("contribution:", bundle_id)?;
@@ -1270,12 +1301,17 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                     let records = s.scan(&public_evaluation::record_prefix(cid));
                     let evaluation =
                         public_evaluation::hydrate(&o["public_evaluation"], cid, &records)?;
-                    public_evaluation::adoption_allowed(&evaluation, height)?;
+                    if crate::model_composition_v4::enabled(cfg) {
+                        crate::model_composition_v4::component_allowed(&evaluation, height)?;
+                    } else {
+                        public_evaluation::adoption_allowed(&evaluation, height)?;
+                    }
                 }
                 require(
                     text(&o, "status")? == "evaluated"
                         && o["parent"] == current
-                        && field(&o, "score")? == score
+                        && (crate::model_composition_v4::enabled(cfg)
+                            || field(&o, "score")? == score)
                         && score > 0,
                     "EVIDENCE",
                 )?;
@@ -1291,7 +1327,7 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                 allocation_root(leaves)? == supplied_root && total == supplied_total,
                 "ROOT",
             )?;
-            crate::model_evidence_v3::reserve_release(
+            let composition_record = crate::model_evidence_v3::reserve_release(
                 &mut s,
                 cfg,
                 bundle_id,
@@ -1323,7 +1359,11 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             let expiry = add(height, horizon)?;
             s.deadline_with_lifetime(cfg, expiry, height, horizon)?;
             s.debit(&sender, budget)?;
-            s.put(rk,json!({"owner":sender,"remaining":budget,"budget":budget,"total":total,"root":hex::encode(supplied_root),"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?,"bundle":hex::encode(bundle_id),"artifact":bundle["artifact"].clone(),"family":bundle["family"].clone(),"components_root":bundle["components_root"].clone(),"parent":hex::encode(parent),"leaf_count":count,"claims":{},"deadline":expiry,"status":"open"}));
+            let mut release_record = json!({"owner":sender,"remaining":budget,"budget":budget,"total":total,"root":hex::encode(supplied_root),"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?,"bundle":hex::encode(bundle_id),"artifact":bundle["artifact"].clone(),"family":bundle["family"].clone(),"components_root":bundle["components_root"].clone(),"parent":hex::encode(parent),"leaf_count":count,"claims":{},"deadline":expiry,"status":"open"});
+            if let Some(record) = composition_record {
+                release_record["model_composition_v4"] = record;
+            }
+            s.put(rk, release_record);
             for (k, o) in adopted {
                 s.put(k, o);
             }
@@ -1851,11 +1891,7 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         "LIMIT",
     )?;
     progress(ExecutionProgress::BeforeStateClone).map_err(ExecutionError::Cancelled)?;
-    if continuity_v1::enabled(cfg) {
-        continuity_v1::check_state(parent, height.checked_sub(1).ok_or("HEIGHT")?, cfg)?;
-    }
-    let mut state = parent.clone();
-    let mut receipts = mandatory(&mut state, height, cfg)?;
+    let (mut state, mut receipts) = prepare_block_state(parent, height, cfg)?;
     progress(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
     let mut fees = 0;
     let mut metrics = Metrics {
@@ -2009,17 +2045,10 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
     }
     metrics.state_transition_ns = transition_start.elapsed().as_nanos();
     progress(ExecutionProgress::BeforeReward).map_err(ExecutionError::Cancelled)?;
-    let halvings = (height / cfg.limit("subsidy_halving_interval")?).min(64);
-    let subsidy = cfg
-        .limit("block_subsidy_units")?
-        .checked_shr(halvings as u32)
-        .unwrap_or(0);
-    let reward = hash(b"reward", &[&parent_id, &height.to_le_bytes(), &miner]);
-    state.insert(format!("reward:{}",hex::encode(reward)),json!({"owner":hex::encode(miner),"amount":add(fees,subsidy)?,"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?}));
-    let issued = add(num(state.get("meta:issued").ok_or("STATE")?)?, subsidy)?;
-    state.insert("meta:issued".into(), json!(issued));
-    require(funds(&state)? == issued, "CONSERVATION")?;
-    continuity_v1::check_state(&state, height, cfg)?;
+    state.extend(block_reward_updates(
+        &state, height, miner, parent_id, fees, cfg,
+    )?);
+    check_completed_block_state(&state, height, cfg)?;
     let root_start = std::time::Instant::now();
     progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
     let root = commitment(parent, &state)?;
@@ -2032,6 +2061,227 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         root,
         metrics,
     })
+}
+
+/// One original block prologue. Prefix previews retain its pre-reward successor,
+/// never a completed block with a second maturity, expiry or subsidy transition.
+fn prepare_block_state(parent: &State, height: u64, cfg: &Config) -> Result<(State, Vec<Vec<u8>>)> {
+    if continuity_v1::enabled(cfg) {
+        continuity_v1::check_state(parent, height.checked_sub(1).ok_or("HEIGHT")?, cfg)?;
+    }
+    let mut state = parent.clone();
+    let receipts = mandatory(&mut state, height, cfg)?;
+    Ok((state, receipts))
+}
+
+/// All block epilogue writes are returned together so an operation-local prefix
+/// can remove exactly those writes before accepting another ordinary transaction.
+fn block_reward_updates(
+    state: &State,
+    height: u64,
+    miner: Hash,
+    parent_id: Hash,
+    fees: u64,
+    cfg: &Config,
+) -> Result<State> {
+    let halvings = (height / cfg.limit("subsidy_halving_interval")?).min(64);
+    let subsidy = cfg
+        .limit("block_subsidy_units")?
+        .checked_shr(halvings as u32)
+        .unwrap_or(0);
+    let reward = hash(b"reward", &[&parent_id, &height.to_le_bytes(), &miner]);
+    let reward = (
+        format!("reward:{}", hex::encode(reward)),
+        json!({"owner":hex::encode(miner),"amount":add(fees,subsidy)?,"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?}),
+    );
+    let issued = add(num(state.get("meta:issued").ok_or("STATE")?)?, subsidy)?;
+    Ok(State::from([reward, ("meta:issued".into(), json!(issued))]))
+}
+
+fn check_completed_block_state(state: &State, height: u64, cfg: &Config) -> Result<()> {
+    require(
+        funds(state)? == num(state.get("meta:issued").ok_or("STATE")?)?,
+        "CONSERVATION",
+    )?;
+    continuity_v1::check_state(state, height, cfg)
+}
+
+/// Exact fixed context for a series of prefixes of ONE candidate block.
+/// This is computation input only; no consensus, Pool or owner permission.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PrefixContext {
+    pub height: u64,
+    pub miner: Hash,
+    pub parent_id: Hash,
+}
+
+/// Private unfinalized prefix state. Only a checked original-parent binding can
+/// construct the public commitment wrapper. All authority stays with that caller.
+pub(crate) struct TransactionPrefix {
+    state: State,
+    receipts: Vec<Vec<u8>>,
+    fees: u64,
+    transactions: Vec<Vec<u8>>,
+    context: PrefixContext,
+    config: Config,
+}
+
+/// Changed-key rollback includes partial groups, finalizer writes and unwinding.
+/// It is scratch only and cannot undo any durable or external operation.
+struct PrefixRollback<'a> {
+    state: &'a mut State,
+    before: BTreeMap<String, Option<Value>>,
+    committed: bool,
+}
+impl PrefixRollback<'_> {
+    fn apply(&mut self, writes: State) {
+        for (key, value) in writes {
+            self.before
+                .entry(key.clone())
+                .or_insert_with(|| self.state.get(&key).cloned());
+            self.state.insert(key, value);
+        }
+    }
+    fn restore(&mut self, values: BTreeMap<String, Option<Value>>) {
+        for (key, value) in values {
+            if let Some(value) = value {
+                self.state.insert(key, value);
+            } else {
+                self.state.remove(&key);
+            }
+        }
+    }
+}
+impl Drop for PrefixRollback<'_> {
+    fn drop(&mut self) {
+        if !self.committed {
+            let before = std::mem::take(&mut self.before);
+            self.restore(before);
+        }
+    }
+}
+
+impl TransactionPrefix {
+    pub(crate) fn new<E: Send>(
+        parent: &State,
+        context: PrefixContext,
+        config: &Config,
+        control: &ExecutionControl<'_, E>,
+    ) -> ControlledResult<Self, E> {
+        (control.progress)(ExecutionProgress::BeforeStateClone)
+            .map_err(ExecutionError::Cancelled)?;
+        let (state, receipts) = prepare_block_state(parent, context.height, config)?;
+        (control.progress)(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
+        Ok(Self {
+            state,
+            receipts,
+            fees: 0,
+            transactions: Vec::new(),
+            context,
+            config: config.clone(),
+        })
+    }
+
+    pub(crate) fn len(&self) -> usize {
+        self.transactions.len()
+    }
+
+    /// The full byte prefix is compared on every call. Only its new suffix is
+    /// prepared/applied; rejection, cancellation or panic retains the last prefix.
+    /// Output metrics describe this suffix, while state/receipts describe the full
+    /// candidate. Full state/root construction remains required per accepted group.
+    pub(crate) fn execute_with_commitment_and_control<E: Send>(
+        &mut self,
+        transactions: &[Vec<u8>],
+        mut commitment: impl FnMut(&State) -> Result<Hash>,
+        control: &ExecutionControl<'_, E>,
+    ) -> ControlledResult<Output, E> {
+        require(
+            transactions.len() as u64 <= self.config.limit("max_transactions")?,
+            "LIMIT",
+        )?;
+        require(
+            transactions.starts_with(&self.transactions),
+            "PREFIX_BINDING",
+        )?;
+        let progress = control.progress;
+        let first = self.transactions.len();
+        let suffix = &transactions[first..];
+        let signatures = AtomicUsize::new(0);
+        let transition_start = std::time::Instant::now();
+        let mut prepared = Vec::with_capacity(suffix.len());
+        for (offset, raw) in suffix.iter().enumerate() {
+            let index = first + offset;
+            progress(ExecutionProgress::BeforePrepare { index })
+                .map_err(ExecutionError::Cancelled)?;
+            prepared.push(prepare(raw, self.context.height, &self.config, &signatures));
+            progress(ExecutionProgress::AfterPrepare { index })
+                .map_err(ExecutionError::Cancelled)?;
+        }
+        // Complete raw cloning/capacity growth before any scratch mutation. The
+        // final publish then only moves initialized Vecs into reserved capacity.
+        let mut appended_transactions = suffix.to_vec();
+        self.transactions.reserve(appended_transactions.len());
+        let mut staged = PrefixRollback {
+            state: &mut self.state,
+            before: BTreeMap::new(),
+            committed: false,
+        };
+        let mut fees = self.fees;
+        let mut receipts = self.receipts.clone();
+        for (offset, prepared) in prepared.into_iter().enumerate() {
+            let index = first + offset;
+            progress(ExecutionProgress::BeforeApply { index })
+                .map_err(ExecutionError::Cancelled)?;
+            let patch =
+                apply_prepared(staged.state, &prepared?, self.context.height, &self.config)?;
+            fees = add(fees, patch.fee)?;
+            receipts.push(patch.receipt);
+            staged.apply(patch.writes);
+            progress(ExecutionProgress::AfterApply { index }).map_err(ExecutionError::Cancelled)?;
+        }
+        let mut metrics = Metrics {
+            workers: 1,
+            committed_without_replay: suffix.len(),
+            peak_inflight: usize::from(!suffix.is_empty()),
+            signature_verifications: signatures.load(Ordering::Relaxed),
+            state_transition_ns: transition_start.elapsed().as_nanos(),
+            ..Metrics::default()
+        };
+        progress(ExecutionProgress::BeforeReward).map_err(ExecutionError::Cancelled)?;
+        let writes = block_reward_updates(
+            staged.state,
+            self.context.height,
+            self.context.miner,
+            self.context.parent_id,
+            fees,
+            &self.config,
+        )?;
+        let before_reward = writes
+            .keys()
+            .map(|key| (key.clone(), staged.state.get(key).cloned()))
+            .collect();
+        staged.apply(writes);
+        check_completed_block_state(staged.state, self.context.height, &self.config)?;
+        let root_start = std::time::Instant::now();
+        progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
+        let root = commitment(staged.state)?;
+        progress(ExecutionProgress::AfterCommitment).map_err(ExecutionError::Cancelled)?;
+        metrics.state_root_ns = root_start.elapsed().as_nanos();
+        progress(ExecutionProgress::BeforeOutput).map_err(ExecutionError::Cancelled)?;
+        let output = Output {
+            state: staged.state.clone(),
+            receipts: receipts.clone(),
+            root,
+            metrics,
+        };
+        staged.restore(before_reward);
+        staged.committed = true;
+        self.fees = fees;
+        self.receipts = receipts;
+        self.transactions.append(&mut appended_transactions);
+        Ok(output)
+    }
 }
 
 /// Compute cache only. The caller remains the sole authoritative ledger owner.

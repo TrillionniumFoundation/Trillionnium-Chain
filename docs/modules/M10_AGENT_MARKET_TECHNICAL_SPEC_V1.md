@@ -146,3 +146,21 @@ Historical v1/v3/v4 results are never repinned. The sole plan selects further wo
 ## Bounded empirical evidence and source budgets
 
 The explicit [native model evidence v3](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) binds candidate admission and release allocation to actual full integer inference and known-source budgets. A pre-adoption participant objection ends that candidate attempt without funding an indefinite escrow. Public historical-task memorizer successes are test fixtures; prospective usefulness remains separate.
+
+## Exact composition in the fresh revision14 profile
+
+The explicit [model composition V4](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md)
+uses the existing signed tag23/8/9 and ledger, with fresh profile, policy and evidence
+namespaces. At tag8, M06 loads the actual current full parent and2–4 complete
+components, verifies `bundle = parent + sum(component - parent)`, and rejects any
+subset of at least two components whose complete relative update is exactly zero.
+The bundle must beat the actual parent, all four frozen controls and every component;
+every allocation weight must equal its freshly evaluated positive leave-one-out gain.
+
+Tag23 alone does not certify composition. An unrelated candidate can consume intake
+quota yet fail release admission. Known-source caps use the actual floored payouts,
+with dust retained for the original deadline refund. The bounded composition receipt
+is embedded in the existing release row. Reorganization reverses that branch state;
+local irreversible operations retain their separate owner. Exact derivation does not
+prove training causality, general fair allocation or future usefulness. Revision13
+keeps its prior individual-component gate and namespaces.

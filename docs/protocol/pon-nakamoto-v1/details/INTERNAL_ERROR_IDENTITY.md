@@ -23,6 +23,13 @@ including formatted work, task and authenticated-store diagnostics, remain
 migrated. A new structural code must be registered explicitly rather than
 inheriting a shutdown policy through its spelling.
 
+The explicit revision14 composition refusals are also registered individually.
+Configuration/profile/current-parent mismatches are stale context; missing bundle
+gain, nonpositive marginal gain and exactly cancelling component subsets are policy
+refusals. Invalid count/order/range/slot/state/derivation/weight are protocol failures.
+None acquires local database-corruption or owner-stop authority, and these categories
+do not grant a generic retry. Earlier profile codes and their wire strings are retained.
+
 Remote business failures are marked `RemoteRefusal` at the existing validated
 reply boundary. A remote message can retain a known code for the narrowly
 permitted client response, but cannot become a local database/owner failure.

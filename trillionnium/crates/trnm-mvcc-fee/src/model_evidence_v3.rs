@@ -2,6 +2,7 @@
 //! This replays a fixed public retrospective dataset. It proves neither prospective
 //! benefit nor source independence, training provenance, demand, or mining hardness.
 use crate::integer_factor_candidate_v2::{self as factor, FactorState, IntegerModelV2};
+use crate::model_composition_v4 as composition;
 use crate::pon_executor::{canonical, Config, Result, State};
 use crate::public_evaluation;
 use serde::Deserialize;
@@ -193,7 +194,7 @@ fn control_model(control: &Control, family: Hash) -> Result<IntegerModelV2> {
     IntegerModelV2::from_coefficients(family, coefficients)
 }
 pub fn enabled(cfg: &Config) -> bool {
-    cfg.params["model_profile"] == PROFILE
+    cfg.params["model_profile"] == PROFILE || composition::enabled(cfg)
 }
 pub(crate) fn install(params: &mut Value) -> Result<()> {
     let policy = installed()?;
@@ -211,6 +212,9 @@ fn check_context(cfg: &Config) -> Result<&'static Installed> {
             && cfg.params["model_evidence_tasks_hash"] == hex::encode(p.tasks_hash),
         "MODEL_EVIDENCE_PROFILE",
     )?;
+    if composition::enabled(cfg) {
+        composition::check_context(cfg)?;
+    }
     Ok(p)
 }
 pub(crate) fn controls(cfg: &Config) -> Result<Vec<IntegerModelV2>> {
@@ -234,6 +238,27 @@ pub fn source_key(round: u64, source: Hash) -> String {
 }
 fn evidence_key(cid: Hash) -> String {
     format!("model-evidence-v3:{}", hex::encode(cid))
+}
+fn context_evidence_key(cfg: &Config, cid: Hash) -> String {
+    if composition::enabled(cfg) {
+        composition::evidence_key(cid)
+    } else {
+        evidence_key(cid)
+    }
+}
+fn context_source_key(cfg: &Config, round: u64, source: Hash) -> String {
+    if composition::enabled(cfg) {
+        composition::source_key(round, source)
+    } else {
+        source_key(round, source)
+    }
+}
+fn metadata_key(cfg: &Config) -> &'static str {
+    if composition::enabled(cfg) {
+        "model_evidence_v4"
+    } else {
+        "model_evidence_v3"
+    }
 }
 fn correct(model: &IntegerModelV2, tasks: &[Task]) -> Result<u64> {
     let coefficients = model.coefficients();
@@ -273,6 +298,9 @@ fn correct(model: &IntegerModelV2, tasks: &[Task]) -> Result<u64> {
     }
     Ok(count)
 }
+pub(crate) fn model_correct(cfg: &Config, model: &IntegerModelV2) -> Result<u64> {
+    correct(model, &check_context(cfg)?.tasks)
+}
 fn record(
     s: &mut impl FactorState,
     cfg: &Config,
@@ -302,7 +330,14 @@ fn record(
         .ok_or("MODEL_EVIDENCE_ARITHMETIC")?
         / count;
     let mut result = json!({"schema":"native-integer-model-evidence-record-v3","network":hex::encode(cfg.network),"parameters":hex::encode(cfg.parameters),"family":hex::encode(cfg.family),"plan":hex::encode(cfg.plan),"policy":hex::encode(policy.policy_hash),"tasks":hex::encode(policy.tasks_hash),"contribution":hex::encode(cid),"candidate":hex::encode(artifact),"parent":hex::encode(parent),"rows":count,"candidate_correct":candidate_correct,"parent_correct":parent_correct,"controls":control_records,"strongest_correct":strongest,"score":score,"scope":"exact-public-retrospective-integer-dataset-only","prospective_accepted":false,"independent_accepted":false,"public_reward_eligible":false});
-    let digest = hash(b"native-model-empirical-record-v3", &[&canonical(&result)?]);
+    let domain: &[u8] = if composition::enabled(cfg) {
+        result["schema"] = json!("native-integer-model-evidence-record-v4");
+        result["composition_policy"] = cfg.params["model_composition_policy_hash"].clone();
+        b"native-model-empirical-record-v4"
+    } else {
+        b"native-model-empirical-record-v3"
+    };
+    let digest = hash(domain, &[&canonical(&result)?]);
     result["digest"] = json!(hex::encode(digest));
     Ok(result)
 }
@@ -324,15 +359,25 @@ pub(crate) fn admit(
     }
     let admitted_source = source(cfg, vh(contribution, "owner")?)?;
     let round = n(contribution, "submission_round")?;
-    let key = source_key(round, admitted_source);
-    let mut quota = s.get(&key).unwrap_or_else(|| json!({"schema":"native-model-source-budget-v3","source":hex::encode(admitted_source),"round":round,"intakes":0,"reserved_units":0}));
+    let key = context_source_key(cfg, round, admitted_source);
+    let schema = if composition::enabled(cfg) {
+        "native-model-source-budget-v4"
+    } else {
+        "native-model-source-budget-v3"
+    };
+    let mut quota = s.get(&key).unwrap_or_else(|| json!({"schema":schema,"source":hex::encode(admitted_source),"round":round,"intakes":0,"reserved_units":0}));
     check(
         n(&quota, "intakes")? < MAX_INTAKES,
         "MODEL_EVIDENCE_SOURCE_LIMIT",
     )?;
     let result = record(s, cfg, cid, contribution)?;
+    let domain: &[u8] = if composition::enabled(cfg) {
+        b"native-model-source-root-work-v4"
+    } else {
+        b"native-model-source-root-work-v3"
+    };
     let root_work = hash(
-        b"native-model-source-root-work-v3",
+        domain,
         &[
             &cfg.network,
             &cfg.parameters,
@@ -340,14 +385,14 @@ pub(crate) fn admit(
             &admitted_source,
         ],
     );
-    contribution["model_evidence_v3"] = json!({"digest":result["digest"],"score":result["score"],"source":hex::encode(admitted_source),"root_work":hex::encode(root_work)});
+    contribution[metadata_key(cfg)] = json!({"digest":result["digest"],"score":result["score"],"source":hex::encode(admitted_source),"root_work":hex::encode(root_work)});
     check(
-        s.get(&evidence_key(cid)).is_none(),
+        s.get(&context_evidence_key(cfg, cid)).is_none(),
         "MODEL_EVIDENCE_DUPLICATE",
     )?;
     quota["intakes"] = json!(n(&quota, "intakes")? + 1);
     s.put(key, quota);
-    s.put(evidence_key(cid), result);
+    s.put(context_evidence_key(cfg, cid), result);
     Ok(())
 }
 pub(crate) fn check_reveal(
@@ -359,20 +404,28 @@ pub(crate) fn check_reveal(
         return Ok(());
     }
     check(
-        value.score == n(&contribution["model_evidence_v3"], "score")?
-            && value.evidence == vh(&contribution["model_evidence_v3"], "digest")?,
+        value.score == n(&contribution[metadata_key(cfg)], "score")?
+            && value.evidence == vh(&contribution[metadata_key(cfg)], "digest")?,
         "MODEL_EVIDENCE_REVEAL",
     )
 }
-fn adoption(s: &mut impl FactorState, cfg: &Config, cid: Hash, contribution: &Value) -> Result<()> {
+fn adoption(
+    s: &mut impl FactorState,
+    cfg: &Config,
+    cid: Hash,
+    contribution: &Value,
+    require_gain: bool,
+) -> Result<Value> {
     let actual = record(s, cfg, cid, contribution)?;
     check(
-        s.get(&evidence_key(cid)) == Some(actual.clone())
-            && actual["digest"] == contribution["model_evidence_v3"]["digest"]
+        s.get(&context_evidence_key(cfg, cid)) == Some(actual.clone())
+            && actual["digest"] == contribution[metadata_key(cfg)]["digest"]
             && actual["score"] == contribution["score"],
         "MODEL_EVIDENCE_BINDING",
     )?;
-    check(n(&actual, "score")? > 0, "MODEL_EVIDENCE_GAIN")?;
+    if require_gain {
+        check(n(&actual, "score")? > 0, "MODEL_EVIDENCE_GAIN")?;
+    }
     let rows = s.scan(&public_evaluation::record_prefix(cid));
     let evaluation = public_evaluation::hydrate(&contribution["public_evaluation"], cid, &rows)?;
     let start = n(&evaluation["plan"], "adoption_start")?;
@@ -382,7 +435,7 @@ fn adoption(s: &mut impl FactorState, cfg: &Config, cid: Hash, contribution: &Va
     for appeal in appeals.values() {
         check(n(appeal, "height")? >= start, "MODEL_EVIDENCE_REVIEW_HOLD")?;
     }
-    Ok(())
+    Ok(actual)
 }
 /// Reserve actual payout amounts once at release, across all known author aliases.
 /// Caps are per installed source and round, not per account, parent, or leaf nonce.
@@ -394,18 +447,44 @@ pub(crate) fn reserve_release(
     allocations: &[(Hash, Value, u64)],
     budget: u64,
     total: u64,
-) -> Result<()> {
+) -> Result<Option<Value>> {
     if !enabled(cfg) {
-        return Ok(());
+        return Ok(None);
     }
-    adoption(s, cfg, bundle_id, bundle)?;
+    let bundle_evidence = adoption(s, cfg, bundle_id, bundle, true)?;
     check(total > 0, "MODEL_EVIDENCE_GAIN")?;
+    let mut checked = Vec::with_capacity(allocations.len());
+    if composition::enabled(cfg) {
+        for (cid, contribution, weight) in allocations {
+            let evidence = adoption(s, cfg, *cid, contribution, false)?;
+            checked.push(composition::CheckedComponent {
+                id: *cid,
+                contribution,
+                weight: *weight,
+                evidence,
+            });
+        }
+    }
+    let composition_record = if composition::enabled(cfg) {
+        Some(composition::validate(
+            s,
+            cfg,
+            bundle_id,
+            bundle,
+            &bundle_evidence,
+            &checked,
+        )?)
+    } else {
+        None
+    };
     let mut additions = BTreeMap::<String, u64>::new();
     for (cid, contribution, score) in allocations {
-        adoption(s, cfg, *cid, contribution)?;
+        if !composition::enabled(cfg) {
+            adoption(s, cfg, *cid, contribution, true)?;
+        }
         let admitted_source = source(cfg, vh(contribution, "owner")?)?;
         check(
-            contribution["model_evidence_v3"]["source"] == hex::encode(admitted_source),
+            contribution[metadata_key(cfg)]["source"] == hex::encode(admitted_source),
             "MODEL_EVIDENCE_SOURCE",
         )?;
         let round = n(contribution, "submission_round")?;
@@ -416,7 +495,7 @@ pub(crate) fn reserve_release(
         let amount = u64::try_from(u128::from(budget) * u128::from(*score) / u128::from(total))
             .map_err(|_| "MODEL_EVIDENCE_ARITHMETIC")?;
         let entry = additions
-            .entry(source_key(round, admitted_source))
+            .entry(context_source_key(cfg, round, admitted_source))
             .or_default();
         *entry = entry
             .checked_add(amount)
@@ -434,19 +513,24 @@ pub(crate) fn reserve_release(
         quota["reserved_units"] = json!(reserved);
         s.put(key, quota);
     }
-    Ok(())
+    Ok(composition_record)
 }
 pub(crate) fn cleanup(state: &mut State, cfg: &Config, height: u64) -> Result<()> {
     if !enabled(cfg) {
         return Ok(());
     }
     let round = height / n(&cfg.params, "candidate_round_blocks")?;
+    let (source_prefix, evidence_prefix) = if composition::enabled(cfg) {
+        ("model-source-v4:", "model-evidence-v4:")
+    } else {
+        ("model-source-v3:", "model-evidence-v3:")
+    };
     let removed: Vec<_> = state
         .iter()
         .filter_map(|(key, value)| {
-            if key.starts_with("model-source-v3:") {
+            if key.starts_with(source_prefix) {
                 (value["round"] != round).then(|| key.clone())
-            } else if let Some(cid) = key.strip_prefix("model-evidence-v3:") {
+            } else if let Some(cid) = key.strip_prefix(evidence_prefix) {
                 (!state.contains_key(&format!("contribution:{cid}"))
                     && !state.contains_key(&format!("evaluation-archive:{cid}")))
                 .then(|| key.clone())

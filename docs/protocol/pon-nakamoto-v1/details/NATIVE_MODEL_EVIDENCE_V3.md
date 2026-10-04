@@ -94,6 +94,11 @@ valid membership and individually positive empirical scores do not establish
 complementary composition, causal attribution, or a fair division of rewards.
 Those properties require a separately specified composition and attribution rule.
 
+The explicitly selected [composition V4](NATIVE_MODEL_COMPOSITION_V4.md) successor
+adds exact bounded bundle derivation, comparison with each fresh component, and
+recomputed leave-one-out weights in a new context. These rules do not change this
+revision13 profile or establish general fairness or prospective quality.
+
 This proves the specified empirical integer computation. Labels, source rights,
 truthful provenance, independence, private held-out quality and future benefit do
 not follow. Public acceptance flags remain false. Distinct model parameters can

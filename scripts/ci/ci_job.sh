@@ -13,6 +13,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_applicability.py
     python3 scripts/ci/test_ci_contract.py
     python3 scripts/ci/test_ci_execution.py
+    python3 scripts/ci/test_cross_arch_cost.py
     python3 scripts/ci/report_current_implementation.py --check
     python3 scripts/ci/test_work_cost_report.py
     python3 scripts/test_qualification_runtime.py

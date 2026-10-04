@@ -37,10 +37,11 @@ Ready metadata is bound using an invocation-local bounded digest-to-original-raw
 index. Duplicate digests refuse before any replacement; each ready digest consumes
 one entry, its body must match every original byte, and successful draining leaves
 no unmatched entry. This removes repeated reverse scans and PNX1 decoding solely
-from this binding step. Full canonical/signature M05 checks and whole-prefix M06
-execution remain unchanged; there is no reusable signature or admission-verdict cache.
+from this binding step. Full canonical/signature M05 checks remain required. M06
+uses the operation-local suffix builder below for growing prefixes; no signature
+or admission verdict survives the owner operation.
 
-After typed checks, M06 executes the whole candidate prefix against one immutable
+After typed checks, M06 checks the complete candidate prefix against one immutable
 parent using the configured preview miner. This handles actual funds/fees, nonce
 sequences, funding dependencies, profile gates and control semantics. Success is a
 local execution preview; its proposed state, fees, nonce, subsidy and receipts are
@@ -53,14 +54,15 @@ Every pool owner invocation reads and root-checks the actual active parent.
 After the first successful typed check it binds that immutable State and its complete
 canonical bytes once, using `CheckedExecutionParent`. Rust's shared borrow prevents
 mutation of that State during the binding lifetime. Every subsequent group preview in
-that same invocation uses the same parent; it never uses a previous preview's
-successor. A submit invocation also reuses that checked original parent for its final
-pending-prefix preview after reconciliation; pool-only writes cannot change the owned
+that same invocation uses the same original parent. A submit invocation also reuses
+that checked original parent for its final pending-prefix preview after
+reconciliation; pool-only writes cannot change the owned
 parent State. Before new admission it rechecks namespace, parent ID, generation,
 height and recorded root. `POOL_PARENT_CHANGED` refuses an unexpected ID, generation
 or height change during that same owner call; a recorded-root mismatch refuses `ROOT`.
-The binding is dropped before the public owner call returns and is never persisted,
-published as an active commitment, or shared with another invocation. Cold reopen,
+The binding and all prefix scratch are dropped before the public owner call
+returns. They are never persisted, published as an active commitment, or shared
+with another invocation. Cold reopen,
 the next admission, mining-batch creation and batch validation still obtain and check
 their actual parent. Both existing parent/generation SQL fences remain mandatory
 before reconciliation publication and new admission commit.
@@ -73,15 +75,58 @@ The group order, typed checks and first-error classifications are unchanged, inc
 a blocked middle group followed by an independent valid group. Parent binding is lazy
 so a typed admission error still precedes parent execution preparation errors.
 
-This removes repeated canonical-parent preparation within reconciliation, not complete
-prefix execution. For N accepted single-member groups, the executor still processes
-N(N+1)/2 transaction positions; each preview starts full maintenance and applies final
-fees, subsidy, conservation, receipts and root rules. Reusing a staged successor as
-if it were an incremental prefix could change those rules and is deliberately avoided.
-The single Node owner still holds its lock and synchronous work is non-preemptible;
-this optimization is not a service-latency, concurrency or public throughput guarantee.
+### Same-block incremental M06 prefix
 
-The ignored `immutable_parent_preview_component_timing` test compares fresh parent
+`CheckedExecutionParent::into_prefix_with_control` consumes the complete checked
+original-parent binding into `CheckedTransactionPrefix`. Its fixed `PrefixContext`
+contains the original height, parent ID and preview miner; configuration is frozen
+for that operation. The existing `ExecutionSession` remains a complete-block
+session and is not reused here, because advancing it would run another block's
+mandatory actions and subsidy.
+
+The shared M06 `prepare_block_state` executes original mandatory expiry, maturity,
+model cleanup and parent continuity checks once. The builder retains that state
+before the current block's reward and subsidy. Every call compares every original
+accepted transaction byte with the beginning of the supplied full prefix, then runs
+the same M06 `prepare` and `apply_prepared` only for the newly appended suffix.
+Funding dependencies, signatures, nonce progression and all selected model/task
+rules use the accumulated state in canonical transaction order.
+
+For each candidate group, the shared complete-block epilogue computes total fees,
+exact reward identity/maturity, issued supply, conservation and continuity capacity.
+The original-parent commitment adapter still encodes the entire resulting State,
+checks all protocol/cache bounds and returns complete State, ordered receipts,
+root and original-parent deltas. These epilogue writes are then removed from the
+scratch state so the next group cannot spend the pending subsidy, repeat mandatory
+actions or reuse a completed block as its parent.
+
+Changed-key before-images retain the previous accepted prefix throughout suffix
+application, epilogue and commitment. A relation rejection, local cancellation or
+unwind restores all changes from the attempted group, including an earlier valid
+member of a later-invalid group. No failed group advances fees, receipts, raw
+prefix or nonces. Cancellation remains distinct from an application rejection:
+it ends the owner call and cannot be relabelled as a merely Blocked transaction.
+The Node still checks current restricted-owner permission against the complete
+prefix before this computation and preserves both original SQL fences.
+
+For N accepted single-member groups in one reconciliation, M06 prepares/applies
+N transaction positions instead of N(N+1)/2. A submit operation carries this same
+scratch across its reconciliation and final new-bundle check. Output metrics count
+the new M06 suffix only; output State, receipts and deltas cover the entire prefix.
+There are no spawned M06 workers on this serial Pool preview path, and actual
+caller CPU accounting still covers its complete work.
+
+This is not an end-to-end linear-time claim. M05 still rebuilds and verifies the
+complete prefix at every candidate group. Every result retains full State encoding,
+root/continuity/conservation checks and a complete output State; caller-defined
+cache limits still choose the complete-root fallback. Mining-batch selection and
+public mutable-batch validation still perform their own full checks after their
+required reconciliation. New operations reread actual State. SQLite, root building,
+deep ancestry and other native stages remain nonpreemptive; the single Node owner
+and service-latency/public-throughput acceptance are unchanged.
+
+The retained historical `immutable_parent_preview_component_timing` test compares
+fresh parent
 preparation per prefix with an operation-local binding on 16 signed prefixes and 4099
 state keys (4096 inert synthetic padding entries), checking every root. This state
 shape is a component fixture, not proof that native transactions generate that state.
@@ -183,6 +228,24 @@ infinite physical retention, source fairness or chain-external permission is inf
 
 ## Native tests and remaining scope
 
+`trnm-mvcc-fee/tests/incremental_prefix.rs` compares every signed growing prefix
+with a separate complete M06 invocation. Cases include cross-account funding,
+fees, one mandatory expiry, the full twenty-reward maturity queue, legacy and
+continuity profiles, changed prefix/actual-parent bytes, invalid partial groups,
+cancellation through output, unwind, and capacity rejection followed by a valid
+same-nonce append. It checks complete state, ordered receipts, root and actual
+suffix signature/apply counts, without claiming a native reachable maximum-state
+history from the component capacity fixture.
+
+`store::mempool::incremental_prefix_tests` observes actual M06 stage callbacks
+through native Pool reconciliation and submission. Six retained single-member
+groups plus one new group execute seven M06 transaction positions and one
+mandatory prologue. The resulting batch is mined and admitted through normal
+Work/M06, compared with the complete original-parent reference, and cold reopened.
+Its second control checks cancellation and invalid new suffix rollback before a
+successful same-nonce retry. These are exact source test definitions; their
+execution status belongs to the committed-source qualification receipt.
+
 `trnm-pon-node/tests/local_mempool.rs` exercises actual Node/M05/M06/SQLite behavior:
 queued funding across groups and sequential sender nonces, exact restart and policy
 mismatch, real signed fee/profile/expiry/conflict rejection, row/byte limits, failed
@@ -202,7 +265,8 @@ inserting a group. Restoring the original bytes permits ordinary admission again
 previews and a cold reopen preserve the exact active chain State. This checks that
 the shared binding cannot become an authority cache across calls.
 
-A finite baseline/candidate experiment measured36 successful submit operations in
+An earlier parent-binding baseline/candidate experiment measured36 successful
+submit operations in
 18 pairs, with three pairs per condition on a shared host. Each condition used
 1000 or8000 funded accounts (1008 or8024 actual State keys), and0,4 or12 retained
 groups of16 members. All228 complete original-parent State/root/ordered-receipt
@@ -216,7 +280,8 @@ statistical significance, tail latency or an endpoint SLA. Timers cover only the
 actual submit operation; setup, reference replay and complete closed SQL checks
 remain in the whole experiment. Its closed parent receipt SHA-256 is
 `33afd7bc7d105fcb14ae972c673080df0136a3911f648b691dd383f20a22c965`.
-This private experiment does not replace qualification of the combined source.
+That earlier experiment does not measure the incremental suffix implementation
+and does not replace qualification of the combined source.
 
 The exact raw index optimizes only ready-metadata binding. An explicitly invoked
 ignored unit selector compares that component on256 ordinary signed transfer raws

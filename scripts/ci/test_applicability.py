@@ -127,7 +127,11 @@ class ApplicabilityTests(unittest.TestCase):
         self.assertEqual(row['controlled_entrypoint']['symbol'], 'Node::pool_status')
         self.assertEqual(row['runtime_symbols'][0]['symbol'], 'Node::pool_reconcile')
         self.assertIsNone(row['ordinary_product_entrypoint'])
-        self.assertEqual(len(row['evidence_selectors']), 2)
+        self.assertEqual(set(row['evidence_selectors']), {
+            'trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::queued_facts_reopen_exact_raws_real_typed_gate_and_funding_nonce_dependencies',
+            'trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::retained_groups_restore_after_real_heavier_fork_and_terminal_prune_is_monotonic',
+            'trillionnium/crates/trnm-pon-node/src/store/mempool.rs::native_reconcile_and_submission_apply_each_retained_transaction_once_per_operation',
+        })
 
 
 if __name__ == '__main__':

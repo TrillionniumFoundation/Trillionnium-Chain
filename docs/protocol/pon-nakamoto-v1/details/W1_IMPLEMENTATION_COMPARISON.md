@@ -149,3 +149,134 @@ An observed faster verifier is an engineering result. Faster structured producer
 reduce the effective mining cost. Neither result closes algebraic shortcuts outside
 these implementations, preprocessing across challenges, accelerator/pool advantages,
 uniform independent lottery assumptions or hostile public ingress service obligations.
+
+## Actual setup reuse across distinct challenge searches
+
+`pon_reused_cost` is a separate experiment with schema `pon-w1-reused-search-v1`.
+The older examples and their schemas retain their meaning. Build before observing:
+
+    cargo build --locked --release -p trnm-crypto-primitives --example pon_reused_cost
+    target/release/examples/pon_reused_cost --samples 4 --searches 4 --attempt-budget 64 --seed 0
+    target/release/examples/pon_reused_cost --samples 2 --searches 4 --attempt-budget 8 --seed 1
+
+`--samples` and `--searches` accept 1..32, with defaults of 4; `--attempt-budget`
+accepts 1..4096, default 256; `--seed` is an unsigned 64-bit value, default 0.
+Optional `--model PATH --input PATH` adds the same strictly bounded canonical file
+format as the original comparison. Six existing material classes plus the exact
+continuity fixture are included by default. That seventh class is explicitly the
+public deterministic maintenance formula A[i]=(13i+17) mod257 and B[i]=(29i+31)
+mod263; its measured field ranks are 56/32. It is not authenticated user demand,
+a pretrained model, or a work-hardness qualification. Supplied material is an eighth
+case, not a replacement for an omitted fixture.
+
+Each input/target/sample is a cohort of distinctly challenged searches for the
+same exact task. Five producers are run in both modes:
+
+| Producer | `cold-per-search` | `reused-one-setup` |
+|---|---|---|
+| Scalar original | No prepared setup; full scalar proof for each attempt | Same scalar algorithm, no hidden cache |
+| Prepared generic | Construct a new `PreparedTask` for every search | Construct exactly one `PreparedTask`, then reuse it for all searches |
+| Prepared structured | Detect and prepare structure for every search | Detect and prepare once, then reuse the same instance |
+| Tiled classical | Construct a new tiled task for every search | Reuse one complete tiled task |
+| Tiled one-level Strassen | Construct a new tiled task for every search | Reuse one complete tiled task |
+
+The actual setup calls and their separate durations are retained. A supported cold
+prepared cohort has `searches` setup calls; a reused prepared cohort has one. Scalar
+has zero in both modes. An unsupported structured cohort retains the same attempted
+setup-call counts and reports every requested search as unsupported, without mining.
+There is no synthetic division of an unexecuted setup cost, hidden warmed cache, or
+free unreported constructor. Cohort `total_elapsed_ns` is the sum of actual setup
+and all attempted search durations. Dividing this by the number of requested
+supported searches gives the observed cohort amortization; it is not a claim about
+an unlimited number of future blocks or the optimal preprocessing strategy.
+
+The challenge stream is
+
+    H("reused-cost-v1", task, LE64(seed), LE64(sample), LE64(search_index), target, LE64(nonce)).
+
+Thus all producer/mode combinations see identical statements and nonce streams,
+while a new search changes its challenge even if its nonce restarts at zero.
+The ten producer/mode invocation positions rotate across samples. Every attempted
+proof contributes its complete bytes to a stream commitment, and every ticket
+contributes to the ticket stream commitment. Supported rows must agree on status,
+attempt count, both stream commitments, and exact winning challenge/proof bytes.
+The commitments compare losing-attempt streams without retaining unbounded arrays
+of 49,188-byte certificates; they are cryptographic commitments, not a claim that
+every losing byte array is retained in the report.
+
+Each search reports `winner`, `exhausted` or `unsupported`. Exhaustion retains the
+whole attempt budget, search duration and both streams, with null winner/verifier
+fields. It is never converted into a win or excluded from the cohort cost. Every
+winning certificate is checked by both `verify` and `verify_reference`, with
+alternating verifier order. Verification and cross-producer comparisons are outside
+generation timing. Challenge, ticket and full-proof stream hashing are common
+measured harness costs, not omitted overhead. Input construction and descriptive
+field-rank elimination remain outside the producer measurements.
+The older comparison hashes ticket streams but does not hash every complete
+attempted certificate into an additional stream. Consequently raw search times
+across these two schemas have different harness costs and are not a direct
+before/after measure of an arithmetic change.
+
+The report retains the complete row grid and each ordered outcome, explicit seed,
+targets, input identity and ranks, setup calls, timing order and proof extent.
+Times remain monotonic wall elapsed durations. Preserve actual failures, stderr,
+timeouts and exact source/compiler/binary identities in an external run receipt.
+Compare deterministic non-timing outcomes across architectures before summarizing
+costs; differences in wall time alone do not establish a portable speedup.
+
+## Complete tiled producer alternatives
+
+`pon_work::structured::{TileKernel, TiledPreparedTask}` provides two separately
+selected complete producer implementations. It does not replace the production
+miner's `PreparedTask`, either verifier, or any cancellation checkpoint. Construction
+validates exact field inputs and computes the actual cached product with the selected
+kernel. Each challenge expands all original noise, computes both dense noise
+matrices with that kernel, visits every original transcript tile, and emits exactly
+the same product, trace digest and PNW1 bytes. No returned byte buffer is a
+`VerifiedWork` capability.
+
+Both implementations use 8x8 blocks. `TileKernel::Classical` performs the ordinary
+eight-term dot products. `TileKernel::StrassenOneLevel` splits a block into four 4x4
+quadrants and computes the seven standard Strassen products, without recursing
+further. Signed i64 operand sums/differences and signed i128 accumulators preserve
+exact integer intermediates; no floating point or approximate arithmetic is used.
+Intermediates are bounded below 2^71. Recombination yields the exact nonnegative
+eight-term product below 8q^2 < 2^67 before the existing exact field reduction.
+The transcript accumulator is reduced at the same 8-coordinate boundaries.
+
+| Per-challenge multiplication schedule | Scalar products |
+|---|---:|
+| Two noise products plus all transcript tiles, classical | 640 * 512 = 327,680 |
+| Same complete work with one-level Strassen | 640 * 448 = 286,720 |
+
+The tiled fixed-product setup also executes the selected kernel and is timed;
+it is not credited with a cost-free precomputed product. Strassen introduces more
+signed additions, wider arithmetic, packing and local storage. The operation-count
+reduction is a property of this implemented arithmetic schedule, not a latency
+result, energy result, cheapest-producer bound or promise of improvement on either
+x64 or ARM64. Retain slower runs and use the ordinary prepared implementation as
+an additional baseline; a slower tiled implementation is still an observed result.
+
+Tests compare unreduced integer tile products, including signed-intermediate and
+maximal-field cases; complete certificates agree with the scalar producer and both
+verifiers. Fixed full-certificate SHA256 vectors for extreme-field and continuity
+inputs come from the independent Python oracle for challenges 00, 07 and ff repeated
+32 times. Reusing one task across changed and repeated challenges must not reuse a
+trace from a different challenge. The new cohort tests also exercise actual setup
+reuse, finite exhaustion and exact producer/mode agreement.
+
+`pon_tiled_io classical` and `pon_tiled_io strassen-one-level` are bounded offline
+bridges for an independent process to compare actual native certificate bytes.
+Stdin is exactly the 32-byte challenge followed by the two 4096-element canonical
+little-endian u32 matrices; stdout is the 49,188-byte PNW1 certificate. Extra or
+missing bytes, invalid fields and unknown operations fail explicitly. The bridge
+has no network, signing, chain or verification authority. Independent checks can
+write the scalar Python oracle's complete proof and compare the two byte arrays,
+while preserving the actual input/output files and executable/source identities.
+
+Cheap affine maintenance matvecs, lower rank, or a full-rank input classification
+do not independently qualify the complete transcript's hardness. Neither this
+producer experiment nor two hosted architectures resolve GPU/ASIC implementations,
+arbitrary preprocessing, all useful-input distributions, fastest adversaries or
+the full recomputation verifier's rejection cost. All existing qualification and
+activation flags remain false.

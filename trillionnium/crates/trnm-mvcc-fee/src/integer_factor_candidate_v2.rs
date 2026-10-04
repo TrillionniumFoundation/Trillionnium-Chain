@@ -197,7 +197,7 @@ pub(crate) fn load_model(
     ensure(model.id() == id, "FACTOR_MODEL_HASH")?;
     Ok(model)
 }
-fn parent(s: &mut impl FactorState, cfg: &Config) -> Result<(Hash, IntegerModelV2)> {
+pub(crate) fn parent(s: &mut impl FactorState, cfg: &Config) -> Result<(Hash, IntegerModelV2)> {
     let current = s
         .get("model:current")
         .and_then(|v| v.as_str().map(str::to_owned))

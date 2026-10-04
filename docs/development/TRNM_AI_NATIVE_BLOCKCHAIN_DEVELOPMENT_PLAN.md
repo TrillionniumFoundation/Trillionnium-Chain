@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 4).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 5).
 Effective: 2026-09-28; priority implementation revision: 2026-10-04. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -64,7 +64,9 @@ The current generated [implementation/profile view](../architecture/CURRENT_IMPL
 comes from the existing registries and is checked for drift. It is not another plan,
 a runtime test result or a declaration of independent acceptance. The package graph
 remains 25 packages and 39 responsibilities; explicit native development ownership now
-includes W1 verification and the bounded revision13 empirical scorer.
+includes W1 verification, operation-local incremental M06 prefixes, bounded history
+projection, and the explicit revision13 empirical scorer / revision14 composition
+successor. Package and procedure counts do not measure scientific acceptance.
 
 This revision preserves full header/challenge binding, parent-derived difficulty,
 required-work fork choice, complete proof verification before the private verified
@@ -75,23 +77,26 @@ scores do not change chainwork. Earlier failures and zero rewards remain retaine
 | Priority | Implemented development boundary | Required acceptance still separate |
 | --- | --- | --- |
 | P0 capacity | [Continuity revision12](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) reserves absent mandatory recipients, future archives and unfilled reward slots before admitting state growth. Existing funded accounts can continue at the actual65,536-key cap. | Fixed-cap storage still needs a longer-term growth/rent design; a new arbitrary account is not promised admission at saturation. |
-| P0 work cost | [W1 comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md) executes scalar, prepared and structural producers with identical ticket streams and counts setup, failed attempts and exhausted budgets. | Fastest-adversary cost, broad hardware comparison, equal-cost task qualification and hardness are not proven by these algorithms or a single-host measurement. |
+| P0 work cost | [W1 comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md) executes scalar, prepared, structural, tiled-classical and one-level Strassen producers, with real cold/reused setup and identical complete proof/ticket streams. | Arithmetic-operation savings and actual x64/ARM64 campaign consistency do not prove fastest-adversary cost, GPU/energy cost, equal-cost task qualification or hardness. |
 | P0 work availability | Revision12 commits a separate immutable maintenance material/identity, zero useful-output credit and an explicit Node/CLI choice; optional signed V4 tasks retain expiry/revocation. | Availability is not computational qualification. Owner-side grants/withdrawals still fence local operations. There is no fabricated indefinite lease or automatic fallback. |
 | P1 verification | Current W1 verifier uses transposition, exact modulus folding and tiled hash updates; explicit scalar reference, byte-equivalence and cancellation checks remain. | The verifier still replays the full transcript. A succinct new proof relationship requires a separate version, security argument and independent review. |
-| P1 state/history | [Resource bounds](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) combine ancestor metadata into one checked SELECT, reuse delta SQL statements and add cancellable actual-state reads and a native growth/reopen measurement example. | Full-state reads/root construction and full-history confirmation are still linear; global disk retention, incremental execution and reader/writer separation remain open. |
-| P1 model | [Model evidence revision13](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) recomputes integer inference and strongest-control gain, binds every reveal, enforces known-source intake/payout budgets and a finite pre-publication objection window. | The corpus is historical/public. Memorizer positives are tests, not future efficacy. Allocation membership does not establish bundle derivation, causal/complementary contribution or superiority over every fresh component. Hidden common control, general-model correctness and public evaluation governance remain unaccepted. |
+| P1 state/history | [Resource bounds](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) read at most64 ancestors per checked SELECT while retaining every per-link check. [Incremental M06 prefixes](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md#same-block-incremental-m06-prefix) apply accepted suffixes once per owner operation and retain complete state/receipts/root/delta outputs. | Full-state reads/root construction, full M05 prefix validation and full-history confirmation remain; global disk retention, persistent authenticated state increments and reader/writer separation remain open. |
+| P1 model | [Model evidence revision13](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) keeps its exact rules. The explicit [revision14 composition successor](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md) checks exact common-parent parameter sums, rejects exactly cancelling component subsets, and requires superiority over every included component plus positive leave-one-out allocation weights before release. | The corpus is historical/public and saturates at25/25. Exact parameter derivation and retrospective ablation do not prove training causality, future efficacy or Shapley fairness. Hidden common control, general-model correctness and public evaluation governance remain unaccepted. |
 | P1 public service | Existing V3 service/queue and protected transport tests remain actual bounded native campaigns; each mixed-service/restart report must keep errors, timeout outcomes and honest-service gaps. | Independent operators, WAN/partition campaigns and long-running public service targets require actual external operation. Local tests cannot set those flags. |
 | P2 errors | [Typed local errors](../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) separate stable local identity/cause from human text and authenticated remote refusal. | Formatted legacy diagnostics still explicitly remain Unclassified; new local structural errors must be registered and tested. |
-| P2 CI/docs | [Execution contract](../architecture/CI_EXECUTION_CONTRACT.md) adds actual coverage-guided fuzz, pinned/frozen dependency checks, exact prospective-merge lanes and generated current navigation. | The original five required head names remain. New merge lanes do not themselves change remote branch-protection rules, and CI is not independent protocol acceptance. |
+| P2 CI/docs | [Execution contract](../architecture/CI_EXECUTION_CONTRACT.md) retains actual coverage-guided fuzz, frozen dependency checks and exact prospective-merge lanes, and adds two native x64/ARM64 cost jobs plus actual-artifact consistency. | The original five required head names remain. Thirteen hosted jobs must actually execute on the final source; source wiring and a labelled local preflight cannot establish hosted results or independent protocol acceptance. |
 
 All incompatible consensus rules require fresh explicit profile/context selection.
-The old revision3/6/7/8/9/10/11 vectors and namespaces retain their meaning. The
+The old revision3/6/7/8/9/10/11/12/13 vectors and namespaces retain their meaning. The
 combined continuity-task12/model13 context has a separate native regression through
 306 actually mined/admitted heights, archive reservation conversion, native rewards,
 source/retention cleanup and cold reopens. Its source-bound execution remains a
 development conformance result, separate from the full-capacity fixture and external
-acceptance. Transaction tags,
-wire error codes and the branch SQLite schema do not change in these improvements.
+acceptance. Revision14 uses fresh configuration, model-evidence/source domains and
+an explicit composition record embedded in the existing bounded release. It is
+selected explicitly, can coexist with task12, and never silently upgrades model13.
+Transaction tags, wire error codes and the branch SQLite schema do not change in
+these improvements.
 
 For every delivered source, execute the existing complete Cargo graph/lock/fmt/test/
 Clippy gates, protocol bridges, negative repository/evidence checks and actual fuzz.
@@ -117,11 +122,13 @@ is promoted by implementation or by adding a diagnostic checker.
    service observations. Its thresholds are proposed screening policy, not
    preregistered scientific acceptance, consensus parameters or a hardness proof.
 3. **Conservative execution/resource improvements:** the [local pool contract](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md)
-   reuses one checked actual parent within a pool operation while preserving full
-   growing-prefix execution, nonce/signature checks and operation-boundary rereads.
+   reuses one checked actual parent within a pool operation and one mandatory
+   prologue, then executes only the newly accepted M06 suffix. Full M05 prefix
+   nonce/signature checks, complete output roots and operation-boundary rereads remain.
    [Derived commitment](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md)
-   changes retain complete-root authority and bounded fallback. These changes do
-   not claim incremental prefix execution, SQL isolation or measured endpoint TPS.
+   changes retain complete-root authority and bounded fallback. Incremental M06
+   execution does not establish SQL isolation, persistent-root authority or measured
+   endpoint TPS.
    The [sync evaluation fixture](../protocol/pon-nakamoto-v1/details/SYNC_EVALUATION_OBSERVATION_V1.md)
    now checks explicit64+64+64+49 page-budget resume over all241 retirement successors,
    with separate original120-second listeners and durable ancestry/cursor assertions.

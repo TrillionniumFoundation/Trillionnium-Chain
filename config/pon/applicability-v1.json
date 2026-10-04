@@ -145,7 +145,9 @@
         "symbol": "Node::pool_reconcile"
       },
       "tests": [
-        "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::retained_groups_restore_after_real_heavier_fork_and_terminal_prune_is_monotonic"
+        "trillionnium/crates/trnm-pon-node/tests/local_mempool.rs::retained_groups_restore_after_real_heavier_fork_and_terminal_prune_is_monotonic",
+        "trillionnium/crates/trnm-pon-node/src/store/mempool.rs::native_reconcile_and_submission_apply_each_retained_transaction_once_per_operation",
+        "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs::every_suffix_cancellation_and_unwind_restores_the_last_complete_prefix"
       ],
       "evidence_class": "source-binding",
       "receipt": null
@@ -287,6 +289,34 @@
       "receipt": null
     },
     {
+      "id": "model-composition-v4",
+      "modules": [
+        "M06",
+        "M10",
+        "M11",
+        "M15"
+      ],
+      "configuration": "config/pon/model-composition-v4.json",
+      "revision_pointer": "consensus_revision",
+      "consensus_revision": 14,
+      "document": "docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md",
+      "entrypoint": {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "symbol": "run"
+      },
+      "tests": [
+        "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs::exact_sum_and_ablation_count_a_nonzero_parent_once",
+        "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs::wide_sum_preserves_cancellation_but_checks_every_ablation_range",
+        "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs::a_rank_three_sum_has_no_rank_three_ilf2_witness_escape",
+        "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs::exact_zero_subset_is_refused_even_when_full_bundle_is_nonzero",
+        "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::native_composition_rewards_reorg_reopen_and_continuity_cleanup",
+        "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::two_native_generations_use_the_actual_nonzero_parent_once",
+        "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs::signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_weights"
+      ],
+      "evidence_class": "source-binding",
+      "receipt": null
+    },
+    {
       "id": "w1-verifier-equivalence",
       "modules": [
         "M01",
@@ -302,7 +332,9 @@
       },
       "tests": [
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::fast_and_scalar_verifiers_match_extreme_products_and_error_precedence",
-        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results"
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs::tiled_complete_proofs_match_scalar_and_independent_python_extreme_vectors",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs::actual_constructor_calls_and_all_winners_match_in_both_modes"
       ],
       "evidence_class": "source-binding",
       "receipt": null
@@ -324,7 +356,8 @@
       "tests": [
         "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_checks_one_history_and_one_shared_body",
         "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_active_state_rechecks_generation_before_publishing_a_derived_snapshot",
-        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_joined_history_projection_rejects_corrupt_genesis_record_shapes"
+        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_joined_history_projection_rejects_corrupt_genesis_record_shapes",
+        "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_history_batches_cross_boundaries_cancel_and_recheck_actual_rows"
       ],
       "evidence_class": "source-binding",
       "receipt": null

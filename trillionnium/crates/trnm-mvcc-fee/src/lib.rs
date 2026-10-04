@@ -57,5 +57,6 @@ pub mod pon_commitment;
 /// Fresh model profile with complete native parent and factor witnesses.
 pub mod integer_factor_candidate_v2;
 
+pub mod model_composition_v4;
 /// Native fixed-dataset evidence, known-source caps and bounded pre-adoption review.
 pub mod model_evidence_v3;

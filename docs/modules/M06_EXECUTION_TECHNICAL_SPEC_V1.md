@@ -171,3 +171,29 @@ Its material replay does not replace actual parent/source eligibility or native 
 ## Mandatory capacity and native model evidence
 
 [Continuity v1](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) checks mandatory future key liabilities in both accepted parent and successor state. [Model evidence v3](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) adds native frozen-task inference, strongest-control-positive scoring, exact reveal binding and known-source budgets. These are explicit new contexts under the existing executor and branch owner; earlier profile vectors and authority limits remain.
+
+## Incremental prefixes within one owner operation
+
+[Same-block prefix execution](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md#same-block-incremental-m06-prefix)
+uses CheckedTransactionPrefix, constructed from the checked immutable original
+parent and a fixed height/miner/parent-id/configuration. Mandatory actions run
+once. Every append compares the previously accepted raw prefix and prepares and
+applies only the new suffix. Each returned result still includes complete ordered
+receipts, finalized reward, conservation/capacity checks, full state/root and the
+original-parent-to-output delta. Changed-key scratch rollback includes rejection,
+cancellation and unwind; a previous completed block is never a new prefix parent.
+
+Node may move that builder from reconciliation to submission within the same
+operation. A new operation rereads actual KV and root. M05 and owner permissions
+still check complete prefixes, and every accepted group still pays full state
+encoding/root/output costs. This removes repeated M06 transaction execution,
+without granting persistent state authority or an end-to-end throughput bound.
+
+The explicit [model composition V4](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md)
+successor validates the full bundle as the exact sum of bounded common-parent
+component deltas, rejects exactly cancelling component subsets, requires
+superiority over each included component and computes
+positive leave-one-out weights before an existing funded release is admitted. Its
+fresh context and embedded release record preserve V3 semantics. Public fixed-task
+ablation does not establish training causality, future efficacy or fair universal
+attribution; a perfect25/25 parent saturates this finite development objective.

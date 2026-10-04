@@ -121,16 +121,21 @@ fn run() -> Result<()> {
                 let batch = node.confirmations(&queries[..count], clock)?;
                 let elapsed = started.elapsed().as_nanos();
                 let after = node.history_read_counters();
-                if batch.ancestry_checked != height || batch.distinct_bodies_checked != 1 {
+                if batch.ancestry_checked != height
+                    || batch.distinct_bodies_checked != 1
+                    || after.header_link_queries - before.header_link_queries != height.div_ceil(64)
+                    || after.header_trace_bytes - before.header_trace_bytes != height * 350
+                {
                     return Err("HISTORY_COST_OBSERVATION".into());
                 }
                 println!(
                     "{}",
                     json!({
-                        "schema":"pon-history-state-cost-read-v1","height":height,
+                        "schema":"pon-history-state-cost-read-v2","height":height,
                         "state_keys":state.len(),"queries":count,"active_generation":generation,
                         "actual_state_read_ns":read_ns,"confirmations_ns":elapsed,
                         "header_link_queries":after.header_link_queries-before.header_link_queries,
+                        "header_batch_limit":64,"header_links_checked":batch.ancestry_checked,
                         "header_trace_bytes":after.header_trace_bytes-before.header_trace_bytes,
                         "distinct_bodies_checked":batch.distinct_bodies_checked,
                         "confirmed":batch.observations.iter().filter(|o|o.confirmed).count(),

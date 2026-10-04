@@ -160,3 +160,14 @@ caused its empirical gain. The bundle and each allocation contribution must beat
 their parent and the frozen historical controls; the bundle need not beat every
 newly submitted component. Composition correctness, complementary benefit and causal
 reward attribution remain separate unaccepted properties.
+
+The explicitly selected [native composition V4](details/NATIVE_MODEL_COMPOSITION_V4.md)
+successor makes one bounded rule executable: tag8 must derive the exact full bundle
+from2–4 same-parent component deltas, beat parent/frozen controls/every component,
+and recompute positive leave-one-out gains as the committed allocation weights.
+A component can have zero standalone gain when its ablation gain is positive; only
+the full bundle is promoted. Payouts remain funded integer floors, source caps
+reserve their actual amounts, and rounding dust follows the existing deadline refund.
+This closes the specified native derivation/ablation-weight gap for representable
+integer bundles. It does not certify Shapley fairness, concealed-source independence,
+arbitrary model composition or future model benefit. V3 retains its original rules.

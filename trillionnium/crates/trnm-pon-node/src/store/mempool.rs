@@ -11,11 +11,11 @@ use trnm_mempool::{
     TypedAdmitOutcome,
 };
 use trnm_mvcc_fee::pon_commitment::{
-    CacheLimits, CheckedExecutionParent, CommitmentObservation, ExecutionRequest,
+    CacheLimits, CheckedExecutionParent, CheckedTransactionPrefix, CommitmentObservation,
 };
 use trnm_mvcc_fee::pon_executor::{
     self, Config, ExecutionControl, ExecutionError, ExecutionProgress, ExecutionWorkerAccounting,
-    State,
+    PrefixContext, State,
 };
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
@@ -314,6 +314,7 @@ fn validate_pending(
         limits,
         node,
         checked: None,
+        prefix: None,
         parent_observation: None,
         control: &control,
         owner_permit: owner_permit.as_ref(),
@@ -322,8 +323,8 @@ fn validate_pending(
     .map_err(PoolPreviewError::into_error)
 }
 
-/// This value never escapes one owner operation. No staged successor is reused
-/// as a parent: each full prefix starts from the same checked immutable State.
+/// This value never escapes one owner operation. A checked prefix retains only
+/// same-block pre-reward scratch; completed outputs never become a new parent.
 enum PoolPreviewError {
     Native(crate::Error),
     Cancelled(crate::Error),
@@ -358,6 +359,7 @@ struct PendingPreview<'state, 'operation> {
     limits: &'operation PoolLimits,
     node: &'operation Node,
     checked: Option<CheckedExecutionParent<'state>>,
+    prefix: Option<CheckedTransactionPrefix<'state>>,
     parent_observation: Option<CommitmentObservation>,
     control: &'operation ExecutionControl<'operation, crate::Error>,
     owner_permit: Option<&'operation super::OwnerPoolPermit>,
@@ -432,9 +434,9 @@ impl PendingPreview<'_, '_> {
             bindings.is_empty() && ready == raws.len(),
             "POOL_TYPED_BINDING",
         )?;
-        // Bind lazily, after the first successful typed gate, preserving typed error
-        // precedence. Subsequent prefixes borrow the same immutable actual parent.
-        if self.checked.is_none() {
+        // Bind lazily after the first successful typed gate. Prefixes retain one
+        // immutable actual-parent binding and one same-block unfinalized state.
+        if self.checked.is_none() && self.prefix.is_none() {
             let prior = node.cached_parent(parent)?;
             let checked =
                 node.checked_commitment(state, node.record(parent)?.root, prior.as_ref())?;
@@ -463,21 +465,31 @@ impl PendingPreview<'_, '_> {
         }
         // Preserve the existing diagnostic observation if execution itself fails.
         *node.commitment_observation.borrow_mut() = self.parent_observation.clone();
+        if self.prefix.is_none() {
+            self.prefix = Some(
+                self.checked
+                    .take()
+                    .ok_or("POOL_PARENT_BINDING")?
+                    .into_prefix_with_control(
+                        PrefixContext {
+                            height,
+                            miner: limits.preview_miner,
+                            parent_id: parent,
+                        },
+                        cfg,
+                        self.control,
+                    )
+                    .map_err(|error| match error {
+                        ExecutionError::Relation(error) => PoolPreviewError::Native(error.into()),
+                        ExecutionError::Cancelled(error) => PoolPreviewError::Cancelled(error),
+                    })?,
+            );
+        }
         let output = self
-            .checked
-            .as_ref()
+            .prefix
+            .as_mut()
             .ok_or("POOL_PARENT_BINDING")?
-            .execute_with_control(
-                ExecutionRequest {
-                    transactions: raws,
-                    height,
-                    miner: limits.preview_miner,
-                    parent_id: parent,
-                    workers: 1,
-                },
-                cfg,
-                self.control,
-            )
+            .execute_with_control(raws, self.control)
             .map_err(|error| match error {
                 ExecutionError::Relation(error) => PoolPreviewError::Native(error.into()),
                 ExecutionError::Cancelled(error) => PoolPreviewError::Cancelled(error),
@@ -499,6 +511,7 @@ struct PoolParent {
 
 struct PreviewBinding<'a> {
     checked: Option<CheckedExecutionParent<'a>>,
+    prefix: Option<CheckedTransactionPrefix<'a>>,
     observation: Option<CommitmentObservation>,
 }
 
@@ -836,6 +849,7 @@ impl Node {
             limits,
             node: self,
             checked: None,
+            prefix: None,
             parent_observation: None,
             control,
             owner_permit,
@@ -875,10 +889,12 @@ impl Node {
             };
             updates.push((group.id, status, reason));
         }
-        // The binding borrows only actual State. Release the Node borrow before
-        // the pool SQL transaction; no staged successor or admission is retained.
+        // Release the Node borrow before the pool SQL transaction. The same-call
+        // binding retains checked original State and unfinalized prefix scratch;
+        // it grants no SQL, transaction or admission authority.
         let binding = PreviewBinding {
             checked: preview.checked.take(),
+            prefix: preview.prefix.take(),
             observation: preview.parent_observation.take(),
         };
         drop(preview);
@@ -1151,6 +1167,7 @@ impl Node {
             limits: &limits,
             node: self,
             checked: binding.checked,
+            prefix: binding.prefix,
             parent_observation: binding.observation,
             control,
             owner_permit: owner_permit.as_ref(),
@@ -1345,6 +1362,175 @@ fn fence(db: &rusqlite::Transaction<'_>, parent: Hash, generation: u64) -> Resul
         |r| Ok((r.get(0)?, r.get(1)?)),
     )?;
     ensure(tip == parent && recorded == generation, "POOL_STALE_PARENT")
+}
+
+#[cfg(test)]
+mod incremental_prefix_tests {
+    use super::*;
+    use std::sync::Mutex;
+    use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+
+    fn transfer(node: &Node, nonce: u64, amount: u64) -> Vec<u8> {
+        let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])))
+            .unwrap();
+        let mut payload = crate::development_public(2).unwrap().to_vec();
+        payload.extend(amount.to_le_bytes());
+        let mut tx = Envelope {
+            network: node.settings.network(),
+            sender: crate::development_public(0).unwrap(),
+            nonce,
+            expiry: 2000,
+            fee_limit: 1_000_000,
+            tag: 1,
+            payload,
+            signature: [0; 64],
+        };
+        tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+            .unwrap()
+            .try_into()
+            .unwrap();
+        tx.encode().unwrap()
+    }
+
+    #[test]
+    fn native_reconcile_and_submission_apply_each_retained_transaction_once_per_operation() {
+        let temp = tempfile::tempdir().unwrap();
+        let settings = crate::Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(temp.path(), settings.clone(), 1).unwrap();
+        let miner = crate::development_public(3).unwrap();
+        node.enable_local_mempool(PoolLimits {
+            max_records: 32,
+            max_bytes: 65536,
+            max_group_members: 8,
+            critical_reserve: 0,
+            max_removals: 32,
+            preview_miner: miner,
+        })
+        .unwrap();
+        let original = node.read_active().unwrap();
+        let mut raws = Vec::new();
+        for nonce in 1..=6 {
+            let raw = transfer(&node, nonce, 1);
+            node.pool_submit_bundle(vec![raw.clone()]).unwrap();
+            raws.push(raw);
+        }
+        let stages = Mutex::new(Vec::new());
+        let progress = |point| {
+            stages.lock().unwrap().push(point);
+            Ok(())
+        };
+        let seventh = transfer(&node, 7, 1);
+        node.pool_submit_bundle_with_control(
+            vec![seventh.clone()],
+            &ExecutionControl::new(&progress, &()),
+        )
+        .unwrap();
+        raws.push(seventh);
+        let stages = stages.into_inner().unwrap();
+        assert_eq!(
+            stages
+                .iter()
+                .filter(|p| **p == ExecutionProgress::AfterMandatory)
+                .count(),
+            1
+        );
+        let applied: Vec<_> = stages
+            .iter()
+            .filter_map(|p| {
+                if let ExecutionProgress::AfterApply { index } = p {
+                    Some(*index)
+                } else {
+                    None
+                }
+            })
+            .collect();
+        assert_eq!(applied, (0..7).collect::<Vec<_>>());
+        assert_eq!(node.read_active().unwrap(), original);
+
+        let (parent, generation) = node.active().unwrap();
+        let batch = node
+            .pool_mining_batch(parent, generation, 32, 65536)
+            .unwrap();
+        assert_eq!(batch.transactions, raws);
+        let full =
+            pon_executor::execute(&original.2, &raws, 1, miner, parent, 1, &settings.app).unwrap();
+        let packet = node.make(parent, raws.clone(), miner, 11, 4096).unwrap();
+        assert_eq!(packet.header.state, full.root);
+        assert_eq!(
+            packet.header.receipts,
+            crate::sequence_root("receipts", &full.receipts)
+        );
+        let id = node.admit(&packet, 11).unwrap();
+        node.activate(id).unwrap();
+        assert_eq!(node.read_active().unwrap().2, full.state);
+        drop(node);
+        let mut reopened = Node::open(temp.path(), settings, 1).unwrap();
+        assert_eq!(reopened.read_active().unwrap().2, full.state);
+        assert!(reopened
+            .pool_reconcile()
+            .unwrap()
+            .groups
+            .iter()
+            .all(|g| g.state == PoolState::SequenceConsumed));
+    }
+
+    #[test]
+    fn cancelled_new_suffix_keeps_native_pool_and_nonce_available_for_retry() {
+        let temp = tempfile::tempdir().unwrap();
+        let mut node = Node::open(
+            temp.path(),
+            crate::Settings::development(Some(1)).unwrap(),
+            1,
+        )
+        .unwrap();
+        node.enable_local_mempool(PoolLimits {
+            max_records: 8,
+            max_bytes: 16384,
+            max_group_members: 8,
+            critical_reserve: 0,
+            max_removals: 8,
+            preview_miner: crate::development_public(3).unwrap(),
+        })
+        .unwrap();
+        for nonce in 1..=3 {
+            let raw = transfer(&node, nonce, 1);
+            node.pool_submit_bundle(vec![raw]).unwrap();
+        }
+        let original = node.read_active().unwrap();
+        let before = serde_json::to_value(node.pool_status_snapshot().unwrap()).unwrap();
+        let raw = transfer(&node, 4, 1);
+        let progress = |point| {
+            if point == (ExecutionProgress::AfterApply { index: 3 }) {
+                Err(crate::Error::from("CANCEL_NEW_SUFFIX"))
+            } else {
+                Ok(())
+            }
+        };
+        assert_eq!(
+            node.pool_submit_bundle_with_control(
+                vec![raw.clone()],
+                &ExecutionControl::new(&progress, &())
+            )
+            .unwrap_err()
+            .to_string(),
+            "CANCEL_NEW_SUFFIX"
+        );
+        assert_eq!(node.read_active().unwrap(), original);
+        assert_eq!(
+            serde_json::to_value(node.pool_status_snapshot().unwrap()).unwrap(),
+            before
+        );
+        let invalid = transfer(&node, 4, u64::MAX);
+        assert_eq!(
+            node.pool_submit_bundle(vec![invalid])
+                .unwrap_err()
+                .to_string(),
+            "FUNDS"
+        );
+        node.pool_submit_bundle(vec![raw]).unwrap();
+        assert_eq!(node.pool_status_snapshot().unwrap().retained_records, 4);
+        assert_eq!(node.read_active().unwrap(), original);
+    }
 }
 
 #[cfg(test)]

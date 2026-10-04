@@ -89,3 +89,16 @@ No historical receipt is relabelled as executing this source.
 ## Explicit continuity maintenance work
 
 [Continuity v1](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) adds a genesis-committed maintenance material and an explicit native mining choice. It grants zero useful-output credit, preserves full W1 verification and does not fabricate an external lease or override an owner withdrawal. The original profile remains unchanged.
+
+## Actual producer alternatives and task reuse
+
+The [W1 comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md)
+adds separate complete tiled-classical and one-level Strassen producers, including
+fixed-product setup, both noise products and every required transcript boundary.
+They are diagnostic alternatives; Node's selected miner and proof relationship
+remain unchanged. The repeated-search example executes cold-per-search and one
+actually reused setup with identical challenge streams and complete proof/ticket
+commitments. Exhaustion and unsupported cases remain observations. Its extra
+stream-hashing cost is explicit, so measurements from older harness schemas are
+not interchangeable. Fewer field multiplications do not establish a faster miner
+or a lower bound on the cheapest valid work.

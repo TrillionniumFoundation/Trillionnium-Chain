@@ -80,3 +80,11 @@ claims about which files existed in their original measured source tree.
 ## Executed CI and current navigation
 
 The [CI execution contract](../architecture/CI_EXECUTION_CONTRACT.md) pins real libFuzzer and dependency tools, retains failed receipts/corpora and verifies exact head or prospective-merge identities. The [current implementation table](../architecture/CURRENT_IMPLEMENTATION.md) is regenerated from existing authorities. Source checks still do not establish independent work hardness or model/public-service qualification.
+
+The same workflow adds two native release cost jobs on explicitly identified x64
+and ARM64 hosted runners and compares their actual retained artifacts. Complete
+challenge/proof/ticket streams, attempts, setup counts and source identities must
+agree; measured speeds need not. Missing/failed architectures remain failures.
+An explicitly labelled local preflight cannot satisfy the hosted comparison.
+Runner/compiler/ELF observations and artifact hashes are retained, without
+promoting physical independence, GPU coverage, resource fairness or work hardness.

@@ -559,6 +559,70 @@ impl<'a> CheckedExecutionParent<'a> {
             commitment: staged.ok_or("COMMITMENT_STAGED")?,
         })
     }
+
+    /// Consume this exact immutable parent binding into a one-block prefix
+    /// builder. The caller must discard it when its owner operation ends.
+    pub fn into_prefix_with_control<E: Send>(
+        self,
+        context: pon_executor::PrefixContext,
+        config: &Config,
+        control: &pon_executor::ExecutionControl<'_, E>,
+    ) -> ControlledResult<CheckedTransactionPrefix<'a>, E> {
+        let execution = pon_executor::TransactionPrefix::new(self.state, context, config, control)?;
+        Ok(CheckedTransactionPrefix {
+            parent: self,
+            execution,
+        })
+    }
+}
+
+/// Operation-local suffix execution of one fixed block. The unfinalized state
+/// cannot be extracted, replaced, persisted or used as an admitted parent. Each
+/// returned output commits the COMPLETE original-parent-to-prefix transition.
+/// M05/owner checks and current actual KV/root checks remain caller obligations.
+pub struct CheckedTransactionPrefix<'a> {
+    parent: CheckedExecutionParent<'a>,
+    execution: pon_executor::TransactionPrefix,
+}
+impl CheckedTransactionPrefix<'_> {
+    pub fn len(&self) -> usize {
+        self.execution.len()
+    }
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+    pub fn execute(&mut self, transactions: &[Vec<u8>]) -> Result<StagedOutput> {
+        pon_executor::relation_only(self.execute_with_control(
+            transactions,
+            &pon_executor::ExecutionControl::new(&pon_executor::no_cancellation, &()),
+        ))
+    }
+    pub fn execute_with_control<E: Send>(
+        &mut self,
+        transactions: &[Vec<u8>],
+        control: &pon_executor::ExecutionControl<'_, E>,
+    ) -> ControlledResult<StagedOutput, E> {
+        let mut staged = None;
+        let output = self.execution.execute_with_commitment_and_control(
+            transactions,
+            |after| {
+                let prepared = prepare_values(
+                    encode(after)?,
+                    self.parent.predecessor.as_ref(),
+                    Some(&self.parent.actual),
+                    self.parent.limits,
+                )?;
+                let root = prepared.root;
+                staged = Some(prepared);
+                Ok(root)
+            },
+            control,
+        )?;
+        Ok(StagedOutput {
+            output,
+            commitment: staged.ok_or("COMMITMENT_STAGED")?,
+        })
+    }
 }
 
 #[cfg(test)]

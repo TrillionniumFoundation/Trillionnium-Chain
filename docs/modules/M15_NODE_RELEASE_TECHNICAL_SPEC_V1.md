@@ -243,3 +243,15 @@ historical single-transfer timeout remains outside this resumed-fixture scope.
 ## Typed owner failures and explicit continuity
 
 [Typed error identity](../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) preserves display/wire text while separating stable local cause from signed remote refusal. [Continuity v1](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) adds an explicit maintenance choice under a fresh context; all local owner/revocation gates remain. Neither change authorizes a deployment.
+
+## Bounded history projection and same-operation prefix execution
+
+[History resource bounds](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md)
+use at most64 ancestry rows per SQL statement for complete clock and confirmation
+scans. Every header and recorded parent remains checked; cancellation runs between
+queries and the final active identity is rechecked. The scan remains linear in
+history, and evaluation observers retain their own explicit work/round boundaries.
+[Pool prefix execution](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md#same-block-incremental-m06-prefix)
+reuses one checked original parent and only same-block scratch within an operation.
+Neither optimization changes wire results, durable single-writer ownership,
+reorganization rules or permission for retained groups.

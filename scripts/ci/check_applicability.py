@@ -55,7 +55,7 @@ def validate(root: Path = ROOT) -> dict:
             'lifecycle-v4', 'checkpoint-tile-v1', 'local-pool-reconciliation',
             'protected-hello-handoff', 'integer-factor-v2', 'public-intake-v3-r9',
             'continuity-v1', 'model-evidence-v3', 'w1-verifier-equivalence',
-            'history-state-resource-bounds', 'internal-error-identity'},
+            'history-state-resource-bounds', 'internal-error-identity', 'model-composition-v4'},
             'applicability profile coverage')
     for profile in profiles:
         require(profile['modules'] and set(profile['modules']) <= set(maturity), 'profile modules')

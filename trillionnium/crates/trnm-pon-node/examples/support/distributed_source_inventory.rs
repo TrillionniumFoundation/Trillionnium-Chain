@@ -71,6 +71,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/model-composition-v4.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/model-composition-v4.json"
+        )),
+    ),
+    (
         "config/pon/model-evidence-v3.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -337,6 +344,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_tiled_io.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_tiled_io.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -348,6 +369,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs"
         )),
     ),
     (
@@ -2164,6 +2192,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2245,6 +2280,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-mvcc-fee/tests/continuity_v1.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs"
         )),
     ),
     (
@@ -3064,6 +3106,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs"
         )),
     ),
     (

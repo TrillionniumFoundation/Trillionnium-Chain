@@ -306,6 +306,37 @@ struct StoredHeaderLink {
     record: Record,
     parent_work: Work,
 }
+struct HeaderProjection {
+    parent: Option<Vec<u8>>,
+    height: u64,
+    work: Vec<u8>,
+    root: Vec<u8>,
+    prefix: Option<Vec<u8>>,
+    trace: Option<Vec<u8>>,
+    length: Option<usize>,
+    parent_height: Option<u64>,
+    parent_work: Option<Vec<u8>>,
+    parent_parent: Option<Vec<u8>>,
+    parent_root: Option<Vec<u8>>,
+}
+impl HeaderProjection {
+    fn read(row: &rusqlite::Row<'_>) -> rusqlite::Result<Self> {
+        Ok(Self {
+            parent: row.get(0)?,
+            height: row.get(1)?,
+            work: row.get(2)?,
+            root: row.get(3)?,
+            prefix: row.get(4)?,
+            trace: row.get(5)?,
+            length: row.get(6)?,
+            parent_height: row.get(7)?,
+            parent_work: row.get(8)?,
+            parent_parent: row.get(9)?,
+            parent_root: row.get(10)?,
+        })
+    }
+}
+const HISTORY_HEADER_BATCH: u64 = 64;
 
 /// Local SQL projection counters, not a work, state or confirmation certificate.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -1727,45 +1758,28 @@ impl Node {
     /// Reuses only a prepared SQL statement, never a previous clock or ancestry verdict.
     /// The JOIN checks the parent in the same SQLite statement as the bounded header.
     fn stored_header_link(&self, id: Hash) -> Result<StoredHeaderLink> {
-        struct Projection {
-            parent: Option<Vec<u8>>,
-            height: u64,
-            work: Vec<u8>,
-            root: Vec<u8>,
-            prefix: Option<Vec<u8>>,
-            trace: Option<Vec<u8>>,
-            length: Option<usize>,
-            parent_height: Option<u64>,
-            parent_work: Option<Vec<u8>>,
-            parent_parent: Option<Vec<u8>>,
-            parent_root: Option<Vec<u8>>,
-        }
         let mut statement = self.db.prepare_cached(
             "SELECT b.parent,b.height,b.chainwork,b.state_root,substr(b.packet,1,?),
              substr(b.packet,-32),length(b.packet),p.height,p.chainwork,p.parent,p.state_root
              FROM blocks b LEFT JOIN blocks p ON p.id=b.parent WHERE b.id=?",
         )?;
+        self.count_header_query();
+        let projection = statement
+            .query_row(params![HEADER_BYTES, id.as_slice()], HeaderProjection::read)
+            .optional()?
+            .ok_or("UNKNOWN_PARENT")?;
+        self.check_header_projection(id, projection)
+    }
+    fn count_header_query(&self) {
         let mut counters = self.history_read_counters.get();
         counters.header_link_queries = counters.header_link_queries.saturating_add(1);
         self.history_read_counters.set(counters);
-        let projection = statement
-            .query_row(params![HEADER_BYTES, id.as_slice()], |r| {
-                Ok(Projection {
-                    parent: r.get(0)?,
-                    height: r.get(1)?,
-                    work: r.get(2)?,
-                    root: r.get(3)?,
-                    prefix: r.get(4)?,
-                    trace: r.get(5)?,
-                    length: r.get(6)?,
-                    parent_height: r.get(7)?,
-                    parent_work: r.get(8)?,
-                    parent_parent: r.get(9)?,
-                    parent_root: r.get(10)?,
-                })
-            })
-            .optional()?
-            .ok_or("UNKNOWN_PARENT")?;
+    }
+    fn check_header_projection(
+        &self,
+        id: Hash,
+        projection: HeaderProjection,
+    ) -> Result<StoredHeaderLink> {
         let row = Record {
             parent: projection.parent.map(bytes32).transpose()?,
             height: projection.height,
@@ -1779,6 +1793,7 @@ impl Node {
         )?;
         let prefix = projection.prefix.ok_or("GENESIS_HAS_NO_PACKET")?;
         let trace = projection.trace.ok_or("GENESIS_HAS_NO_PACKET")?;
+        let mut counters = self.history_read_counters.get();
         counters.header_trace_bytes = counters
             .header_trace_bytes
             .saturating_add((prefix.len() + trace.len()) as u64);
@@ -1811,6 +1826,59 @@ impl Node {
             record: row,
             parent_work,
         })
+    }
+    /// A bounded read of actual rows, with the same ordered per-link checks as a
+    /// single projection. No successful verdict or ancestry list survives the call.
+    /// LIMIT bounds even corrupt cycles; ORDER BY makes validation order explicit.
+    fn visit_header_batch(
+        &self,
+        start: Hash,
+        visit: &mut impl FnMut(Hash, StoredHeaderLink) -> Result<()>,
+    ) -> Result<(Hash, u64)> {
+        if start == self.settings.genesis() {
+            return Ok((start, 0));
+        }
+        let mut statement = self.db.prepare_cached(
+            "WITH RECURSIVE ancestry(id,parent,ordinal) AS (
+                 SELECT id,parent,0 FROM blocks WHERE id=?1 AND id!=?2
+                 UNION ALL
+                 SELECT b.id,b.parent,a.ordinal+1
+                 FROM ancestry a JOIN blocks b ON b.id=a.parent
+                 WHERE b.id!=?2 LIMIT ?3
+             )
+             SELECT b.parent,b.height,b.chainwork,b.state_root,substr(b.packet,1,?4),
+                 substr(b.packet,-32),length(b.packet),p.height,p.chainwork,p.parent,
+                 p.state_root,b.id,a.ordinal
+             FROM ancestry a JOIN blocks b ON b.id=a.id
+             LEFT JOIN blocks p ON p.id=b.parent ORDER BY a.ordinal",
+        )?;
+        self.count_header_query();
+        let mut rows = statement.query(params![
+            start.as_slice(),
+            self.settings.genesis().as_slice(),
+            HISTORY_HEADER_BATCH,
+            HEADER_BYTES,
+        ])?;
+        let mut current = start;
+        let mut checked = 0_u64;
+        while let Some(row) = rows.next()? {
+            let id = bytes32(row.get(11)?)?;
+            ensure(
+                checked < HISTORY_HEADER_BATCH
+                    && row.get::<_, u64>(12)? == checked
+                    && id == current,
+                "ANCESTRY_HEIGHT",
+            )?;
+            let link = self.check_header_projection(id, HeaderProjection::read(row)?)?;
+            current = link.header.parent;
+            visit(id, link)?;
+            checked = checked.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
+        }
+        ensure(
+            checked == HISTORY_HEADER_BATCH || current == self.settings.genesis(),
+            "UNKNOWN_PARENT",
+        )?;
+        Ok((current, checked))
     }
     /// Reads only the committed header and trace of an already admitted local block.
     /// This does not verify new work or replace inclusion-body validation.
@@ -3437,9 +3505,9 @@ impl Node {
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         let mut current = tip;
         while current != self.settings.genesis() {
-            let header = self.stored_header(current)?;
-            ensure(header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
-            current = header.parent;
+            (current, _) = self.visit_header_batch(current, &mut |_, link| {
+                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")
+            })?;
         }
         Ok(())
     }
@@ -3507,16 +3575,16 @@ impl Node {
         let mut checked = 0u64;
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         while current != self.settings.genesis() {
-            if checked.is_multiple_of(256) {
-                progress(checked)?;
-            }
-            if included.contains_key(&current) {
-                found.insert(current);
-            }
-            let header = self.stored_header(current)?;
-            ensure(header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
-            current = header.parent;
-            checked = checked.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
+            // The prior query has ended before cancellation or caller code runs.
+            progress(checked)?;
+            let (parent, count) = self.visit_header_batch(current, &mut |id, link| {
+                if included.contains_key(&id) {
+                    found.insert(id);
+                }
+                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")
+            })?;
+            current = parent;
+            checked = checked.checked_add(count).ok_or("ANCESTRY_LIMIT")?;
         }
         let depth_required = self.settings.limit("confirmation_depth")?;
         let multiplier = self.settings.limit("confirmation_work_multiplier")?;
