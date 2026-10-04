@@ -136,7 +136,10 @@ mod progress_tests {
             .unwrap(),
             expected
         );
-        let chunks = before.2.len().div_ceil(continuity_v1::CAPACITY_PROGRESS_ROWS);
+        let chunks = before
+            .2
+            .len()
+            .div_ceil(continuity_v1::CAPACITY_PROGRESS_ROWS);
         // Read, pre-scan, each liability chunk, scan completion, account chunks,
         // and final view fence. Removing scan progress must fail this regression.
         assert_eq!(total, read_calls + 2 * chunks + 3);

@@ -113,13 +113,25 @@ establish signature, nonce, funding, task, model, work, value-size or other admi
 conditions. Capacity observation performs no mining and issues no admission token.
 
 The read path verifies actual canonical SQLite KV bytes and their committed root,
-then performs the capacity scan and counts existing account keys. KV reading and
-account counting check cancellation at most256 rows apart. The existing full root
-and capacity arithmetic remain bounded nonpreemptive stages; this is not an O(1)
-query or a wall-clock service bound. Before returning, the observer rechecks the
+then performs the capacity scan and counts existing account keys. KV reading, the
+separate liability scan and account counting check cancellation at most256 rows
+apart. `capacity_with_progress` also checks once before publishing a completed scan.
+The original `capacity` API delegates to this same algorithm with an infallible
+callback; profile rules, capacity arithmetic and original state-error precedence
+are unchanged. Its admission/read-validation callers still do not supply progress.
+Existing full-root construction and SQLite operations remain nonpreemptive; this
+is not an O(1) query or a wall-clock service bound. Before returning, the observer rechecks the
 active tip, generation and physical slot. Cancellation, corrupt state or a changed
 view returns an error without a partial report. A returned report can become stale
 immediately after return, and grants no authority over a later branch generation.
+
+`CapacityScanError::State` identifies a failed state invariant;
+`CapacityScanError::Progress(E)` owns the exact callback failure. Only the former
+is converted to local integrity failure after this observer's checked state read.
+The latter is returned without changing its kind, code, message or source. A
+callback carrying `CONTINUITY_STATE`, a capacity refusal or an authenticated remote
+lookalike cannot acquire authority to stop the local store merely from its text.
+A cancelled scan returns no capacity result, including at the final checkpoint.
 
 ### Remaining permanent-account boundary and upgrade acceptance
 
@@ -288,6 +300,25 @@ that built example. Repository-wide tests, strict Clippy, formatting, source int
 and Markdown checks remain required on the integrated exact commit.
 Run `test_continuity_transitions.py -v` with
 `TRNM_CONTINUITY_TRANSITIONS_BINARY` naming the separately built transition example.
+
+### Cancellable scan regression contract
+
+Four M06 unit regressions in the implementation's `progress_tests` module cover
+0/1/255/256/257/512/65,516/65,536 rows, every scan cancellation cut, retry without
+state changes, original invalid-profile/queue/state precedence, zero rewards and
+cross-kind recipient/archive reservations. These scan-only seeded inputs are not
+claims of signed reachability. Two Node regressions in `capacity_observation.rs`
+check the added scan checkpoints through the actual SQLite-backed observer, retain
+callback failure provenance and reject a generation change during the scan.
+
+```bash
+cargo test --locked -p trnm-mvcc-fee --lib continuity_v1::progress_tests
+cargo test --locked -p trnm-pon-node --lib capacity_observation::progress_tests
+```
+
+These commands and source tests define the required execution; their presence does
+not declare a pass. Exact-head and prospective-merge outcomes must be read from the
+corresponding workflow. Earlier observations below retain their original scope.
 
 ### Development observations
 

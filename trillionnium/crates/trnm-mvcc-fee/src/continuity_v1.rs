@@ -402,10 +402,7 @@ mod progress_tests {
                 json!({"owner":shared,"remaining":1}),
             );
         }
-        state.insert(
-            "quota:seeded".into(),
-            json!({"owner":other,"remaining":1}),
-        );
+        state.insert("quota:seeded".into(), json!({"owner":other,"remaining":1}));
         state.insert("contribution:seeded".into(), json!({}));
         let expected = capacity(&state, 1, &cfg).unwrap();
         let mut progress = || Ok::<(), ()>(());
