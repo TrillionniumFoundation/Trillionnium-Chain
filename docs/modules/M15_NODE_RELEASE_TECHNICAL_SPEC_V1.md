@@ -277,3 +277,18 @@ accounting. The `failed_stage` JSON labels and null remain the same; unknown
 diagnostic labels never acquire native phase identity. This explicitly refines
 the public Rust field type and leaves signed wire messages and retry/deadline
 limits unchanged; see [internal errors](../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md).
+
+## Research account storage and bounded History pages
+
+`account_archive_prototype` owns a separate SQLite namespace and explicit caller
+context; it is not opened or consulted by ordinary Node startup, admission,
+activation or recovery. Complete before/after State projections, real signed
+Node transitions and synthetic large-space fixtures are distinguished in
+[its contract](../protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md).
+
+Ordinary History page service retains its existing input, output, wire, errors
+and cancellation order while using bounded actual-record batches and at most16
+Hash candidates. The full H-edge path remains verified. Native whole-call timing
+and exported complete packet frames are specified in
+[resource bounds](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md).
+The Hash payload counter is not an RSS or physical SQL allocation measurement.

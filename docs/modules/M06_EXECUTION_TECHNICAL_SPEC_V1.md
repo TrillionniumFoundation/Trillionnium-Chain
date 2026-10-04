@@ -220,3 +220,15 @@ revision12 capacity algorithm. Its generation/slot-bound report separates retain
 accounts from future obligations and never promises next-block admission. This is
 diagnostic ownership, with unchanged M06 capacity and reward semantics; see
 [continuity](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md).
+
+## Shadow account-archive research boundary
+
+[Account archive prototype](../protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md)
+projects complete actual State into a separate, fresh-domain SQLite COW account
+archive. Immutable branches retain balance and nonce, and missing records refuse
+as unavailable data rather than proving absence. Checked views require complete
+root/branch-bound membership or nonmembership proofs before account lookup. They
+are never fed to current M06 as a partial State. Production capacity, full-state
+commitments, reward accounting and canonical execution remain unchanged. A large
+synthetic archive and actual signed Node projections have separate observation
+contracts; neither declares unbounded new-account admission or independent DA.

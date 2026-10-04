@@ -54,7 +54,7 @@ The in-module `warm_parent_binding_*` controls check actual Arc identity alongsi
 complete canonical bytes, State/root/receipt/delta parity with the original executor
 and a separately copying warm-binding control. They also check changed actual keys
 and values, late canonical failures, exact limits, wrong roots, cancelled staged roots
-and successful retry. The existing corrupt-tree fallback remains required. The ignored
+and successful retry. The existing corrupt-tree fallback remains required.
 The copying control mirrors the earlier algorithm but uses the current parent type,
 including one additional `Arc::new` wrapper allocation; it is not an old binary. The
 `warm_parent_binding_component_timing` control alternates eight copying/sharing sample
@@ -163,8 +163,12 @@ the database merely because those identifiers still match. Actual changed, delet
 new keys must be included in the full difference. The resulting root must match the
 existing committed block record.
 
-A transaction-pool preview executes every complete candidate prefix with the actual
-parent and original miner/configuration. Neither a successful preview nor an abandoned
+A transaction-pool preview applies all state-dependent M05 gates to every complete
+candidate prefix with the actual parent and original miner/configuration. Within
+one immutable parent operation, successful main-signature facts and the accepted M06
+prefix can be reused; M06 executes only the newly appended suffix after one mandatory
+prologue. [The pool contract](LOCAL_MEMPOOL_LIFECYCLE.md#same-block-incremental-m06-prefix)
+defines the private reuse boundary and complete-output equivalence. Neither a successful preview nor an abandoned
 mining attempt publishes its speculative successor as the durable cache. Task-output
 accounting retains all eligibility/material/window/product checks: when it changes no
 state, the caller can reuse this execution's completed root; when it writes state, the
@@ -189,7 +193,8 @@ The native implementation is in
 [`store/mempool.rs`](../../../../trillionnium/crates/trnm-pon-node/src/store/mempool.rs).
 `read_active` checks complete actual slot values and publishes only that committed
 context. `execute_derived` validates an admitted parent's expected root before running
-M06; pool previews keep their existing admission gate and complete-prefix execution.
+M06; pool previews keep complete-prefix M05 admission with operation-local incremental
+M06 execution and the original complete output/root checks.
 `state_at` carries one temporary tree from a checked historical snapshot and checks
 each actual delta application. Mining derives a successor for its header; admission
 independently executes and compares that header's root and ordered receipts. Direct

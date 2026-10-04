@@ -54,7 +54,7 @@ jobs:
   cross-arch-cost:
     name: cross-arch-cost (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 90
+    timeout-minutes: 135
     strategy:
       fail-fast: false
       matrix:
@@ -91,6 +91,9 @@ jobs:
       - name: Execute native one-zero rank-one locality costs
         if: always()
         run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite one-zero-locality
+      - name: Execute native fixed maintenance paired-product costs
+        if: always()
+        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite maintenance-paired
       - name: Verify source remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
@@ -131,6 +134,9 @@ jobs:
       - name: Check one-zero rank-one streams and exact source identity
         if: always()
         run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-one-zero-locality-comparison.json" --suite one-zero-locality
+      - name: Check fixed maintenance streams and exact source identity
+        if: always()
+        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-maintenance-comparison.json" --suite maintenance-paired
       - name: Verify source remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"

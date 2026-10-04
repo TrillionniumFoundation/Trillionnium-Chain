@@ -166,3 +166,14 @@ actual signed lifecycle's full empirical/composition records. It recomputes expe
 scores and digests from model bytes and frozen tasks; reported native score fields
 cannot supply the answer. This conformance layer leaves signatures, roster closure,
 ILF2 witness validity and future-task custody as separately scoped premises.
+
+## Bounded reported-window continuity
+
+The optional [model window history](../protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md#explicit-continuation-across-reported-evaluation-windows)
+requires externally fixed previous-history and new-window digests. Ordered rows
+rebuild prior task/probe prompts and contacted source groups; new evaluation must
+pass current V1 record validation and historical exclusions. Complete valid negative-gate
+records consume their window, and preregistration reserves enough bytes for the
+mandatory completed row. Candidate changes are allowed within a fixed owner and
+governance context. This pure sidecar does not authenticate historical execution,
+secret custody, real time or unreported exposure, and grants no native reward.

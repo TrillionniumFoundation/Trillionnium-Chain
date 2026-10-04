@@ -93,6 +93,83 @@ source overlap, repeated operations, role aliases, material corruption, short
 retention, Boolean numeric aliases and invented acceptance flags reject. These
 results are executable contract evidence, not trained-model improvements.
 
+## Explicit continuation across reported evaluation windows
+
+[`model_window_history.py`](../../../../formal/pon-nakamoto-v1/model_window_history.py)
+adds an optional offline continuation contract with fresh
+`pon-model-window-history-v1`, `pon-model-window-preregistration-v1` and
+`pon-model-window-assessment-v1` schemas. Existing V1 packages and parsers keep
+their meaning. The new entrypoints are `empty_history`, `freeze_history`,
+`freeze_window` and `verify_window`; no Node, signed transaction, native release,
+reward or production activation uses this sidecar.
+
+The caller fixes a series, owner and governance context, the complete previous
+history digest and the new window preregistration digest outside the submitted
+package. Window ordinal and previous-entry digest bind the complete ordered
+entry chain to that context. The current operation preregistration and run-plan
+identities are bound again. Owner/governance changes require an explicitly new
+context; a candidate model may change within an existing context. A caller that
+accepts a submitter-selected older history or new series has not preserved this
+continuity obligation. Self-computing a matching hash is not external pinning.
+
+History validation reconstructs all contacted sets from its retained entries.
+Current evaluation task IDs and prompt digests cannot appear in any earlier
+calibration/evaluation task; current evaluation prompts also cannot match earlier
+probe prompts. Current evaluation source groups cannot appear in any earlier
+declared training, calibration or evaluation groups. Renaming a task and source
+group does not remove an identical prompt from this check. Training-group hashes
+describe reported contact, not proof that their contents were public or used.
+
+Later training, calibration and probes may intentionally reuse earlier material,
+provided the current future-evaluation partition passes all current V1 and
+cross-window exclusions. Common target strings such as `yes` or `no` are not a
+global exclusion set: the same valid answer in a new task is allowed. Semantic
+paraphrases, altered preprocessing, hidden source aliases and undeclared training
+exposure still require actual independent task custody and review.
+
+`verify_window` first verifies the complete current V1 operation record, including
+its full supplied costs, probes, consumers and retention obligations. It then
+appends the current plan/receipt identities, observed interval, reported gate
+outcome and contacted-set projection to a new history value. A valid record with
+zero gain, unknown GPU cost or another false reported gate still consumes the
+window. A malformed record or a hard run-budget violation raises without returning
+a new history. Previously released but malformed, aborted or hidden windows need
+an external exposure ledger; the sidecar does not infer their missing data or
+claim that its submitted history is complete.
+
+The sidecar is finite: at most64 retained windows, 131072 total task/probe/training
+entries, 16MiB canonical history and 4096 bytes for a window preregistration.
+Before admitting a window, `freeze_window` reserves the complete serialized append:
+all contacted fields are already known, receipt/head digests have fixed width,
+the latest permitted observation is `closes_at`, and `false` is the longer Boolean
+encoding. This temporary byte-size envelope is neither returned nor retained as
+an observation. The actual completed append is fully validated again. Thus an
+already-near-limit history cannot admit work whose mandatory result record will
+not fit. Exhaustion rejects explicitly; it never prunes earlier exposures or
+silently starts a fresh series.
+
+Only supplied-history shape, hash linkage and the current complete record are
+checked. The result keeps `historical_execution_verified`,
+`hidden_windows_excluded`, `physical_custody_verified`, `prospective_accepted`,
+`independent_accepted`, `public_reward_eligible` and `production_activation` false.
+Reported chronology cannot authenticate wall time, and history summaries alone
+cannot prove that earlier operations were actually executed or verified. Trusted
+pin advancement, storage, concurrency/CAS and publication are caller obligations;
+these pure functions do not mutate an external head or contact an operator.
+
+```bash
+python3 formal/pon-nakamoto-v1/test_model_window_history.py
+```
+
+The synthetic tests cover three linked windows, task/group relabelling, prior
+probe and training exposure, valid reuse for later training/calibration, ordinary
+shared target outputs, owner/context changes, external-anchor rollback, omitted
+or reordered entries, negative-gate consumption and malformed-record nonmutation.
+They also check canonical JSON, strict numeric/Boolean types, bounded histories,
+pre-registration byte responsibility and a late false-gate result at the exact
+reserved byte limit. These are record-contract tests, not new model training or
+future-task efficacy observations.
+
 ## Required independent inputs remain blocked
 
 Even when every reported gate passes, every assessment returns all seven external

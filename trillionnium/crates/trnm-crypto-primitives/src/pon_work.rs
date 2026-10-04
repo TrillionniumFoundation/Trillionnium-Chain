@@ -4,6 +4,7 @@ use sha2::{Digest, Sha256};
 
 pub mod blocked_one_zero;
 pub mod blocked_zero;
+pub mod paired_product;
 pub mod structured;
 
 pub const PROFILE: &str = "pon-matmul-transcript-64-v1";

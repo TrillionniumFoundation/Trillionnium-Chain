@@ -7,6 +7,9 @@ import re
 from pathlib import Path
 import tomllib
 
+from check_cross_arch_cost import (COST_JOB_TIMEOUT_MINUTES, COST_JOB_OVERHEAD_SECONDS,
+                                   cost_job_budget_seconds)
+
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = '.github/workflows/trnm-required-baseline.yml'
 CHECKOUT = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262'
@@ -28,9 +31,22 @@ ONE_ZERO_COMPARE_STEP = '''      - name: Check one-zero rank-one streams and exa
         if: always()
         run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-one-zero-locality-comparison.json" --suite one-zero-locality
 '''
+MAINTENANCE_RUN_STEP = '''      - name: Execute native fixed maintenance paired-product costs
+        if: always()
+        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite maintenance-paired
+'''
+MAINTENANCE_COMPARE_STEP = '''      - name: Check fixed maintenance streams and exact source identity
+        if: always()
+        run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-maintenance-comparison.json" --suite maintenance-paired
+'''
 CONTINUITY_BUILD = '    cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples\n'
 CONTINUITY_ORIGINAL = '    TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_vectors")" python3 formal/pon-nakamoto-v1/test_continuity.py -v\n'
 CONTINUITY_TRANSITIONS = '    TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v\n'
+PAIRED_WORK_ORACLE = '    TRNM_PAIRED_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io")" TRNM_PAIRED_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work" python3 formal/pon-nakamoto-v1/test_paired_work.py -v\n'
+MODEL_WINDOW_ORACLE = '    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v\n'
+NODE_EXAMPLE_BUILD = '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples\n'
+ACCOUNT_ARCHIVE_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v\n'
+                          '    python3 scripts/ci/run_account_archive_conformance.py\n')
 RUST_ALL_TARGETS = 'cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features'
 RUST_DOCS = '    cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features\n'
 RUST_CLIPPY = '    cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings\n'
@@ -62,10 +78,17 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
     lanes = dict(pairs)
     require(len(pairs) == len(lanes) and set(lanes) == required, 'exact five executable lane selectors')
-    continuity = CONTINUITY_BUILD + CONTINUITY_ORIGINAL + CONTINUITY_TRANSITIONS
+    continuity = CONTINUITY_BUILD + CONTINUITY_ORIGINAL + CONTINUITY_TRANSITIONS + PAIRED_WORK_ORACLE
     require(continuity in lanes['protocol-contract'] and script.count(CONTINUITY_ORIGINAL) == 1
             and script.count(CONTINUITY_TRANSITIONS) == 1,
-            'both native continuity oracles must execute in protocol-contract immediately after their release build')
+            'continuity and paired-work oracles must execute in protocol-contract after their actual release build')
+    require(script.count(PAIRED_WORK_ORACLE) == 1,
+            'one native paired-work byte comparison must retain its fresh current-lane output')
+    require(MODEL_WINDOW_ORACLE in lanes['protocol-contract'] and script.count(MODEL_WINDOW_ORACLE) == 1,
+            'model-window history arithmetic and frozen evidence checks must execute once in protocol-contract')
+    require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE in lanes['protocol-contract'] and
+            script.count(ACCOUNT_ARCHIVE_ORACLE) == 1,
+            'native archive vectors and the independent read-only oracle must execute after their actual release build')
     expected = ('    cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\n'
                 '    python3 scripts/ci/run_supply_chain.py\n' + MODEL_OBSERVATION_BLOCK + RUST_DOCS + RUST_CLIPPY)
     require(code_lines(lanes['rust-baseline']) == code_lines(expected),
@@ -119,8 +142,12 @@ def validate(root: Path = ROOT) -> dict:
                     name + ' must execute its actual lane')
     costs = jobs['cross-arch-cost']
     require(not re.search(r'^    if:', costs, re.M), 'native architecture execution cannot be skipped')
-    require('    timeout-minutes: 90\n' in costs and '      fail-fast: false\n' in costs,
-            'architecture job must cover three bounded suites and retain their outcomes')
+    require(f'    timeout-minutes: {COST_JOB_TIMEOUT_MINUTES}\n' in costs and
+            '      fail-fast: false\n' in costs,
+            'architecture job must cover four bounded suites and retain their outcomes')
+    require(COST_JOB_OVERHEAD_SECONDS >= 27 * 60 and
+            COST_JOB_TIMEOUT_MINUTES * 60 >= cost_job_budget_seconds(),
+            'all four actual capture budgets, termination grace and setup/source/artifact margin must fit')
     require('''        include:
           - arch: x64
             runner: ubuntu-24.04
@@ -136,6 +163,8 @@ def validate(root: Path = ROOT) -> dict:
             'separate zero locality native execution must run once in each existing architecture job, including after reused failure')
     require(ZERO_RUN_STEP + ONE_ZERO_RUN_STEP in costs and text.count(ONE_ZERO_RUN_STEP) == 1,
             'one-zero locality must run once after the zero suite, including after either preceding suite failed')
+    require(ONE_ZERO_RUN_STEP + MAINTENANCE_RUN_STEP in costs and text.count(MAINTENANCE_RUN_STEP) == 1,
+            'fixed maintenance must execute once after the three retained suites including their failure paths')
     require('          name: cost-${{ matrix.arch }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}\n' in costs,
             'architecture artifacts must be bound to the same head and attempt')
     comparison = jobs['cross-arch-cost-consistency']
@@ -153,6 +182,9 @@ def validate(root: Path = ROOT) -> dict:
             'separate zero locality comparison must inspect actual current-run artifacts even after reused comparison failure')
     require(ZERO_COMPARE_STEP + ONE_ZERO_COMPARE_STEP in comparison and text.count(ONE_ZERO_COMPARE_STEP) == 1,
             'one-zero comparison must inspect its own current-run artifacts after the zero comparison even on earlier failure')
+    require(ONE_ZERO_COMPARE_STEP + MAINTENANCE_COMPARE_STEP in comparison and
+            text.count(MAINTENANCE_COMPARE_STEP) == 1,
+            'fixed maintenance comparison must inspect its separate current-run artifacts after earlier failure')
     merge = jobs['prospective-merge']
     require("    if: github.event_name == 'pull_request'\n" in merge, 'merge lane event boundary')
     require('      fail-fast: false\n' in merge, 'all merge lanes retain their outcomes')
@@ -183,6 +215,13 @@ def validate(root: Path = ROOT) -> dict:
     one_zero_negative = '    python3 scripts/ci/test_one_zero_locality_cost.py\n'
     require(one_zero_negative in dict(lane_pairs)['repository-truth'] and script.count(one_zero_negative) == 1,
             'one-zero locality evidence negative checks must execute in repository-truth')
+    maintenance_negative = '    python3 scripts/ci/test_maintenance_cost.py\n'
+    require(maintenance_negative in dict(lane_pairs)['repository-truth'] and
+            script.count(maintenance_negative) == 1,
+            'fixed maintenance evidence negative checks must execute once in repository-truth')
+    archive_negative = '    python3 scripts/ci/test_account_archive_conformance.py\n'
+    require(archive_negative in dict(lane_pairs)['repository-truth'] and script.count(archive_negative) == 1,
+            'archive native/oracle receipt negatives must execute once in repository-truth')
     require('    python3 scripts/run_public_v3_service_campaign.py --out ' in script,
             'source-bound mixed-service campaign and retained refusal checks missing')
     require(jobs['fuzz-smoke'].count('run: bash scripts/ci/install_ci_tools.sh fuzz') == 1 and

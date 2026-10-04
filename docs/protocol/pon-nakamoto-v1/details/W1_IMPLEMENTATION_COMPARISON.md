@@ -200,6 +200,207 @@ purpose retains zero useful-output credit. This is finite native conformance wit
 disclosed development keys. It supplies no source-provenance, real-demand,
 permissionless admission, mining-cost, public-service, or useful-model acceptance.
 
+## Fixed genesis maintenance and complete paired-product research
+
+The separate
+[`PairedPreparedTask`](../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs)
+implements another complete W1 producer. It accepts both complete canonical
+operands and computes their actual fixed product during construction. The native
+`PreparedTask`, ordinary and scalar verifiers, proof grammar, task/challenge/ticket
+domains, target, fork weight and profile activation remain unchanged. Returned
+proof bytes and mathematical caches carry no current-parent admission capability.
+
+### Exact arithmetic and transcript
+
+For every consecutive pair of inner coordinates the field identity is
+
+```text
+x0*y0 + x1*y1 = (x0+y1)*(x1+y0) - x0*x1 - y0*y1  (mod q).
+```
+
+Each cross sum is formed in `u64` and canonicalized with one conditional subtraction
+of q before multiplying. For one original eight-coordinate block, row and column
+factors each sum four products and are separately reduced to `[0,q)`. Given the
+previous canonical prefix `prior`, the emitted increment is computed as
+
+```text
+reduce(prior + 2q - row_factor - column_factor
+       + sum of the four canonical cross products).
+```
+
+The unsigned value is nonnegative and less than `4q^2 + 3q < 2^67`. The constructor's
+full 64-coordinate product has 32 cross products per dot and is below `2^69`.
+Both fit the existing reducer's `<2^70` precondition. Full canonical input checks,
+near-q sum wrapping and factor cancellation are necessary; no floating point,
+approximate rank or caller-supplied product/factors are used.
+
+All four challenge-noise arrays are expanded with the existing rejection sampler.
+Both complete noise matrix products use the paired identity, then the unchanged
+`A'=A+EL*ER`, `B'=B+FL*FR` are formed. Row and column factors for every eight-coordinate
+block come from these actual challenge-specific operands and are recomputed on each
+call. Every original `bi,bj,bk,i,j` cell is emitted: 512 tiles, 32,768 prefix words and
+the same complete trace hash. The proof still contains 49,188 canonical bytes,
+including the original operands and actual fixed product; it contains the trace
+digest, not an array of all transcript words.
+
+| Scalar multiplication schedule | Ordinary prepared | Paired product |
+|---|---:|---:|
+| Actual fixed product during each constructor | 262,144 | 135,168 |
+| Both noise products, including paired factors | 65,536 | 33,792 |
+| Every transcript prefix, including paired factors | 262,144 | 135,168 |
+| Per challenge total | 327,680 | 168,960 |
+
+The 48.4375% multiplication-count reduction is not a speed measurement. The paired
+path adds canonical cross sums, factor construction and storage, and different
+arithmetic and memory behavior. Hashing, allocation, validation, product serialization
+and cancellation calls exist outside that scalar-product count. A slower result on
+either architecture remains a result; it does not license dropping an arm or changing
+the advertised denominator.
+
+`prove_with_progress` checks cooperative cancellation before replay, at every noise
+hash, each noise-product output row, each transcript-factor row, each transcript
+tile, and immediately before assembling the final proof. A refusal returns no proof
+and retains no challenge-dependent state. The last checkpoint precedes the bounded
+prefix clone and digest append. This is not instantaneous wall-clock cancellation;
+the constructor and bounded work between checkpoints are not preempted. Native
+mining cancellation and either verifier's observation sequence are unchanged.
+
+### Frozen material, admission and preprocessing scope
+
+[`pon_maintenance_cost`](../../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs)
+uses only the explicit genesis policy's fixed material:
+
+```text
+A[i] = (13*i + 17) mod 257
+B[i] = (29*i + 31) mod 263
+task = c982eea0545c228d0bf48d6d06e623020b4031f2ba79da56cc6bdccde2c63496
+```
+
+Its source classification is `genesis-policy-public-deterministic-fixture` under
+`consensus-maintenance-continuity-dev-v1`. Independent ordinary-remainder field
+elimination inside the example observes ranks 56/32 before the producer timers.
+Those classifications never replace constructor validation or computation. It
+accepts no supplied-material option, zero-task substitute, invented source signature,
+infinite lease, checkpoint claim or real-user demand classification.
+
+The separate
+[`maintenance_paired_conformance`](../../../../trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs)
+regression obtains the operands from actual `Settings::consensus_maintenance_material`,
+checks their policy formula/task identity, compares complete scalar/native/paired
+proofs for three real parent-bound blocks, admits and activates those ordinary
+packets, and reopens the store after each block. The same mathematical object survives
+the reopens and regenerates changed and repeated challenges exactly. Changed source
+bytes and legacy-profile maintenance selection remain rejected. Useful-output credit
+remains zero. This is finite native conformance, not external work qualification.
+
+The mathematical cache retains only exact A/B and their product/proof prefix; all
+challenge noise, factors and transcript are local to one call. It can be reused for
+the same fixed task, but it cannot certify any actual selected parent's maintenance
+record or current profile. The production Node still constructs its ordinary
+`PreparedTask` per candidate. This experiment does not install a cross-parent cache
+or allow a refused leased task to switch to maintenance.
+
+### Cost contract
+
+The new schema is `pon-w1-maintenance-paired-v1`. It compares `prepared-generic`,
+`tiled-classical`, `tiled-strassen-one-level`, and `paired-product`, each under actual
+`cold-per-search` and `reused-one-setup` constructors. Structured zero/identity/rank-one
+methods do not support these exact nonzero maintenance operands and are not silently
+substituted. All three older cost suites retain their existing schemas and input grids.
+
+The fixed hosted campaigns, after building the exact committed source, are:
+
+```text
+pon_maintenance_cost --samples 4 --searches 4 --attempt-budget 64 --seed 0
+pon_maintenance_cost --samples 2 --searches 4 --attempt-budget 8 --seed 1
+```
+
+Each uses both unchanged diagnostic targets `7f` followed by 31 `ff` bytes and `07`
+followed by 31 `ff` bytes. Each search changes its diagnostic challenge using
+
+```text
+H("maintenance-paired-cost-v1", task, LE64(seed), LE64(sample),
+  LE64(search_index), target, LE64(nonce)).
+```
+
+This harness hashes diagnostic challenge inputs; it does not time a Node's actual
+header preparation or selected-parent admission. Cold mode invokes the actual
+constructor for each search; reused mode invokes it once for the complete cohort.
+Both include all fixed-product preparation, canonical checks, and prefix construction
+performed inside that constructor. No prepared product or setup fraction is supplied
+for free. Every nonce attempt, including every target miss and exhausted search,
+remains in the measured search and complete proof/ticket stream commitments.
+Winner-only division is defined only with a nonzero actual winner count, and its
+numerator includes all setup and search durations from the selected cohort.
+
+The eight strategy/mode positions are balanced in adjacent samples: sample `2k`
+uses invocation `(k+offset) mod 8`, and sample `2k+1` uses `(k+7-offset) mod 8`.
+Thus each complete pair places every arm at average position 3.5, including both
+fixed campaigns. A caller choosing an odd sample count leaves one unmatched sample.
+This schedule alone does not eliminate thermal, cache, scheduler or architecture
+confounders and does not establish statistical significance.
+
+All eight paths must agree on every search status, attempt count, complete attempted
+proof and ticket commitments, and exact winning challenge/proof bytes. Both original
+scalar and ordinary verifiers then check each actual winner, with their costs reported
+separately after all generation arms. Losing proofs are fully hashed but are not all
+retained as raw arrays. Their stream domains are respectively
+`TRNM-PON-W1-MAINTENANCE-PAIRED-PROOF-STREAM1\0` and
+`TRNM-PON-W1-MAINTENANCE-PAIRED-TICKET-STREAM1\0`; the winner commitment tag is
+`maintenance-paired-cost-winner-v1`.
+
+Material construction, descriptive task/rank checks, cross-strategy comparisons,
+post-generation verification, output formatting and final prepared-object destruction
+remain outside setup/search timers. Retain source/compiler/binary/runner receipts,
+all failures and stderr, real setup-call counts and finite exhaustion. Monotonic wall
+time is not CPU accounting, energy, RSS, native admission or public-service cost.
+
+[`pon_paired_io`](../../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs)
+is a bounded no-argument complete-proof bridge. Stdin must be exactly 32 challenge
+bytes followed by the two canonical 16,384-byte operands. Success emits one complete
+49,188-byte proof; missing/extra bytes, noncanonical fields or extra CLI arguments
+fail with exit 2 and no proof. It permits independent Python scalar comparison of
+complete bytes for maintenance and canonical arithmetic controls, without using a
+timing ratio as a correctness assertion.
+
+The retained
+[`test_paired_work.py`](../../../../formal/pon-nakamoto-v1/test_paired_work.py)
+compares the bridge against the existing scalar `work_oracle.py`, without deriving
+expected values from paired arithmetic. It makes 16 complete-proof byte comparisons:
+four challenge patterns each on the fixed maintenance material and three canonical
+arithmetic controls (near-q, hash-dense and left-zero). The controls do not assert
+source provenance, rank, current task admission or useful demand. Six bounded
+length/field/argument rejection cases require exit 2 and empty stdout. Every case
+retains its exact input, Python expected proof where applicable, native stdout and
+stderr, command, exit and hashes. A missing binary fails rather than skips. The whole
+suite requires `TRNM_PAIRED_WORK_OUTPUT` to name a fresh retained directory, writes
+the before/after source and binary identities, and cannot report PASS with fewer
+than all 22 invocations. The actual runner's build receipt is still required to bind
+the binary to the inspected source. This is independence of arithmetic implementation
+within the project, not an independent institution's review.
+
+### Remaining fixed-material and lowest-cost questions
+
+This paired identity is input-general. Measuring it on the exact maintenance task
+does not close the task's more specialized preprocessing question. In particular,
+the fixed A has `A[i,k]=(a_i+d_k) mod257`, where
+`a_i=(13*64*i+17) mod257` and `d_k=13*k mod257`. For any original prefix K,
+
+```text
+sum(K, A[i,k]*v[k]) = a_i*sum(K,v[k]) + sum(K,d_k*v[k])
+                     - 257*sum(k in K where d_k >= 257-a_i, v[k])  (mod q).
+```
+
+The analogous identity holds for B modulo 263. Sorting and prefix sums can make a
+fixed-matrix vector product cheap; all challenge-dependent work and every original
+transcript prefix still need a complete algorithm. Simply caching `A[:,K]*B[K,:]`
+and evaluating two rank-eight output corrections doubles the output dot dimension
+from eight to sixteen in that decomposition, so rank 56/32 or a cheap matvec alone
+does not establish a faster complete proof. No optimized periodic-prefix producer,
+GPU/ASIC strategy, unlimited preprocessing bound, real useful-input distribution or
+hardness lower bound is supplied by this experiment. All existing acceptance and
+activation flags remain false.
+
 ## Verifier boundary
 
 `trnm-crypto-primitives/src/pon_work.rs` retains two complete arithmetic paths:
