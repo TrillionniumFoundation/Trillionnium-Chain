@@ -613,7 +613,7 @@ impl Fixture {
         let id = self.node.admit(&packet, 100_000).unwrap();
         let after = self.node.state_at(id).unwrap();
         assert_eq!(after, checked.output.state);
-        if self.state_witness_blocks.is_some() {
+        if let Some(state_witness_blocks) = self.state_witness_blocks.as_mut() {
             let input = account_archive_execution::prepare_state_witness(
                 &self.settings,
                 &self.archive,
@@ -645,7 +645,7 @@ impl Fixture {
             assert_eq!(complete.execution.observation, checked.observation);
             assert_eq!(self.node.state_at(parent).unwrap(), before);
             assert_eq!(rows(&self.archive_path), before_rows);
-            self.state_witness_blocks.as_mut().unwrap().push(json!({
+            state_witness_blocks.push(json!({
                 "label":label,"id":id,"state_witness":input,
                 "observation":complete.state_observation,"parent_unchanged":true,
                 "archive_unchanged":true,"checked_execution_matches_native_output":true

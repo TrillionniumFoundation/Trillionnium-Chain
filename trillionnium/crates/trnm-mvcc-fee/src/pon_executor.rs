@@ -27,6 +27,8 @@ pub type Result<T> = std::result::Result<T, &'static str>;
 /// callback itself conveys no proof, signature, parent or admission authority.
 /// Aggregate balance scans and complete state commitments still use full State.
 pub type AccountPointAccess<'a> = dyn Fn(&str) -> Result<()> + Sync + 'a;
+/// Borrowed research check of the actual complete mandatory transition.
+pub type MandatoryStateCheck<'a> = dyn Fn(&State, &State, &[Vec<u8>]) -> Result<()> + Sync + 'a;
 /// Research-only input for the complete mandatory non-account partition. The
 /// caller must authenticate these rows before entry. M06 additionally checks the
 /// exact complete partition against its full parent reference, then executes the
@@ -34,7 +36,7 @@ pub type AccountPointAccess<'a> = dyn Fn(&str) -> Result<()> + Sync + 'a;
 /// check prevents any transaction or output from following that prologue.
 pub struct MandatoryStateInput<'a> {
     pub non_accounts: &'a State,
-    pub completed: &'a (dyn Fn(&State, &State, &[Vec<u8>]) -> Result<()> + Sync),
+    pub completed: &'a MandatoryStateCheck<'a>,
 }
 /// Caller-local observation only; no ledger byte or execution authority.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

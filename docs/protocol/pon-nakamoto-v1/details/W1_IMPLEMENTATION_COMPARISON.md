@@ -489,7 +489,9 @@ header preparation or selected-parent admission. Cold mode invokes the actual
 constructor for each search; reused mode invokes it once for the complete cohort.
 Both include all fixed-product preparation, canonical checks, and prefix construction
 performed inside that constructor. No prepared product or setup fraction is supplied
-for free. Every nonce attempt, including every target miss and exhausted search,
+for free. The cost harness also boxes the large retained prefix producer inside
+that same measured preparation call, so its allocation remains in setup cost.
+Every nonce attempt, including every target miss and exhausted search,
 remains in the measured search and complete proof/ticket stream commitments.
 Winner-only division is defined only with a nonzero actual winner count, and its
 numerator includes all setup and search durations from the selected cohort.

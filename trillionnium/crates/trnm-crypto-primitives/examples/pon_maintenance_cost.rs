@@ -172,7 +172,7 @@ enum Producer {
     Paired(PairedPreparedTask),
     Periodic(MaintenancePeriodicPreparedTask),
     IntegerPaired(MaintenanceIntegerPairedPreparedTask),
-    Prefix(MaintenancePrefixPreparedTask),
+    Prefix(Box<MaintenancePrefixPreparedTask>),
 }
 impl Producer {
     fn method(&self) -> &'static str {
@@ -225,9 +225,11 @@ fn prepare(material: &Material, strategy: Strategy) -> Result<Producer, WorkErro
             MaintenanceIntegerPairedPreparedTask::new(&material.a, &material.b)?
                 .ok_or(WorkError::Task)?,
         )),
-        Strategy::Prefix => Ok(Producer::Prefix(
+        // The large retained column plan is boxed inside this measured prepare
+        // call; allocation is charged to the same cold/reused setup observation.
+        Strategy::Prefix => Ok(Producer::Prefix(Box::new(
             MaintenancePrefixPreparedTask::new(&material.a, &material.b)?.ok_or(WorkError::Task)?,
-        )),
+        ))),
     }
 }
 

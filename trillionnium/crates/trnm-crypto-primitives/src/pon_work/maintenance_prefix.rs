@@ -381,13 +381,13 @@ mod tests {
             for base in 0..263 {
                 let plan = ColumnPlan::new(base);
                 let mut expected = 0;
-                for length in 0..=N {
+                for (length, &weighted_prefix) in weighted.iter().enumerate() {
                     if length != 0 {
                         let k = length - 1;
                         expected +=
                             u64::from(values[k]) * ((u64::from(base) + 15 * k as u64) % 263);
                     }
-                    assert_eq!(plan.dot(&sums, weighted[length], length), expected);
+                    assert_eq!(plan.dot(&sums, weighted_prefix, length), expected);
                     assert!(expected <= 64 * 262 * (Q as u64 - 1));
                 }
             }
