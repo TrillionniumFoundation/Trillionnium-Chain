@@ -48,6 +48,7 @@ NODE_EXAMPLE_BUILD = '    cargo build --offline --locked --release --manifest-pa
 ACCOUNT_ARCHIVE_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v\n'
                           '    python3 scripts/ci/run_account_archive_conformance.py\n')
 ACCOUNT_EXECUTION_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v\n'
+                            '    python3 formal/pon-nakamoto-v1/test_state_witness_oracle.py -v\n'
                             '    python3 scripts/ci/run_account_execution_conformance.py\n')
 RUST_ALL_TARGETS = 'cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features'
 RUST_DOCS = '    cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features\n'
@@ -93,7 +94,7 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
             'native archive vectors and the independent read-only oracle must execute after their actual release build')
     require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE + ACCOUNT_EXECUTION_ORACLE in lanes['protocol-contract'] and
             script.count(ACCOUNT_EXECUTION_ORACLE) == 1,
-            'native account execution and its independent JSON oracle must execute once after the actual Node release build')
+            'native account execution, complete state witness and independent JSON oracles must execute once after the actual Node release build')
     expected = ('    cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\n'
                 '    python3 scripts/ci/run_supply_chain.py\n' + MODEL_OBSERVATION_BLOCK + RUST_DOCS + RUST_CLIPPY)
     require(code_lines(lanes['rust-baseline']) == code_lines(expected),

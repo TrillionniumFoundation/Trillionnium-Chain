@@ -21,6 +21,12 @@ use trnm_mvcc_fee::{
 };
 use trnm_protocol::pon_wire::Hash;
 
+pub mod state_witness;
+use state_witness::{
+    BoundState, StateExecutionObservation, StatePhase, StateTransition, StateWitness,
+    StateWitnessError, StateWitnessProgress,
+};
+
 pub const SCHEMA: &str = "pon-checked-account-execution-v1";
 const ACCESS_REFUSED: &str = "CHECKED_ACCOUNT_ACCESS";
 
@@ -40,6 +46,7 @@ pub enum CheckedExecutionError {
     Observation,
     Cancelled,
     Archive(ArchiveError),
+    StateWitness(StateWitnessError),
     Relation(&'static str),
 }
 impl std::fmt::Display for CheckedExecutionError {
@@ -118,10 +125,35 @@ pub struct CheckedExecutionOutput {
     pub observation: ExecutionObservation,
 }
 
+/// Explicit research inputs; neither serialized claim is a parent authority.
+#[derive(Clone, Copy)]
+pub struct StateExecutionInput<'a> {
+    pub accounts: &'a [Witness],
+    pub state: &'a StateWitness,
+}
+#[derive(Debug)]
+pub struct StateWitnessExecutionOutput {
+    pub execution: CheckedExecutionOutput,
+    pub state_observation: StateExecutionObservation,
+}
+struct StateControl<'a> {
+    witness: &'a StateWitness,
+    progress: &'a (dyn Fn(StateWitnessProgress) -> Result<()> + Sync),
+}
+struct ExecutionEvidence<'a> {
+    accounts: &'a [Witness],
+    state: Option<StateControl<'a>>,
+}
+struct InternalOutput {
+    execution: CheckedExecutionOutput,
+    state: Option<StateExecutionObservation>,
+}
+
 #[derive(Default)]
 struct AccessObservation {
     used: BTreeSet<Hash>,
     failure: Option<CheckedExecutionError>,
+    mandatory: Option<StateTransition>,
 }
 
 fn capacity(
@@ -171,6 +203,111 @@ pub fn execute_with_progress(
     witnesses: &[Witness],
     progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
 ) -> Result<CheckedExecutionOutput> {
+    Ok(execute_inner(
+        settings,
+        archive,
+        parent_checkpoint,
+        parent_state,
+        block,
+        ExecutionEvidence {
+            accounts: witnesses,
+            state: None,
+        },
+        progress,
+    )?
+    .execution)
+}
+
+/// Construct input claims from one checked complete native parent. The returned
+/// serializable value is deliberately rechecked on every execution; it is not an
+/// admission capability or a way to promote caller-selected aggregate totals.
+pub fn prepare_state_witness(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+) -> Result<StateWitness> {
+    let checkpoint = archive.checkpoint(parent_checkpoint)?;
+    let context = Context {
+        network: settings.network(),
+        parameters: settings.parameters(),
+        genesis: settings.genesis(),
+    };
+    CheckedAccounts::verify(context, &checkpoint, &[], &[])?;
+    if checkpoint.source_state_root()
+        != Some(pon_executor::root(parent_state).map_err(CheckedExecutionError::Relation)?)
+    {
+        return Err(CheckedExecutionError::SourceRoot);
+    }
+    let parent_accounts = accounts(parent_state)?;
+    if checkpoint.account_count() != parent_accounts.len() as u64
+        || checkpoint.account_root() != account_root(&parent_accounts)?
+    {
+        return Err(CheckedExecutionError::AccountSource);
+    }
+    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)
+}
+
+pub fn execute_with_state_witness(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    input: StateExecutionInput<'_>,
+) -> Result<StateWitnessExecutionOutput> {
+    execute_with_state_witness_and_progress(
+        settings,
+        archive,
+        parent_checkpoint,
+        parent_state,
+        block,
+        input,
+        &|_| Ok(()),
+    )
+}
+
+pub fn execute_with_state_witness_and_progress(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    input: StateExecutionInput<'_>,
+    progress: &(impl Fn(StateWitnessProgress) -> Result<()> + Sync),
+) -> Result<StateWitnessExecutionOutput> {
+    progress(StateWitnessProgress::BeforeBinding)?;
+    let result = execute_inner(
+        settings,
+        archive,
+        parent_checkpoint,
+        parent_state,
+        block,
+        ExecutionEvidence {
+            accounts: input.accounts,
+            state: Some(StateControl {
+                witness: input.state,
+                progress,
+            }),
+        },
+        &|point| progress(StateWitnessProgress::Execution(point)),
+    )?;
+    Ok(StateWitnessExecutionOutput {
+        execution: result.execution,
+        state_observation: result.state.ok_or(StateWitnessError::Observation)?,
+    })
+}
+
+fn execute_inner(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    evidence: ExecutionEvidence<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
+) -> Result<InternalOutput> {
+    let witnesses = evidence.accounts;
     if witnesses.len() > MAX_VIEW_ACCOUNTS {
         return Err(CheckedExecutionError::Budget);
     }
@@ -214,6 +351,21 @@ pub fn execute_with_progress(
             return Err(CheckedExecutionError::WitnessSource { owner });
         }
     }
+    let state_bound = evidence
+        .state
+        .as_ref()
+        .map(|control| {
+            let bound = BoundState::bind(
+                settings,
+                &checkpoint,
+                parent_state,
+                &parent_accounts,
+                control.witness,
+            )?;
+            (control.progress)(StateWitnessProgress::AfterBinding)?;
+            Ok::<_, CheckedExecutionError>(bound)
+        })
+        .transpose()?;
     let accesses = Mutex::new(AccessObservation::default());
     let executed = {
         let gate = |who: &str| -> pon_executor::Result<()> {
@@ -244,19 +396,64 @@ pub fn execute_with_progress(
                 }
             }
         };
-        pon_executor::execute_with_account_point_access(
-            parent_state,
-            pon_executor::BlockExecution {
-                transactions: block.transactions,
-                height: block.height,
-                miner: block.miner,
-                parent_id: block.parent_id,
-                workers: 1,
-            },
-            &settings.app,
-            &gate,
-            progress,
-        )
+        let execution = pon_executor::BlockExecution {
+            transactions: block.transactions,
+            height: block.height,
+            miner: block.miner,
+            parent_id: block.parent_id,
+            workers: 1,
+        };
+        if let (Some(bound), Some(control)) = (state_bound.as_ref(), evidence.state.as_ref()) {
+            let completed = |before: &State, after: &State, receipts: &[Vec<u8>]| {
+                let verified = (|| {
+                    (control.progress)(StateWitnessProgress::BeforeMandatoryVerification)?;
+                    bound.check_parent(before)?;
+                    let result = bound.transition(
+                        after,
+                        witnesses,
+                        receipts,
+                        StatePhase::Mandatory,
+                        control.progress,
+                    )?;
+                    (control.progress)(StateWitnessProgress::AfterMandatoryVerification)?;
+                    Ok::<_, CheckedExecutionError>(result)
+                })();
+                let mut observed = accesses.lock().map_err(|_| ACCESS_REFUSED)?;
+                match verified {
+                    Ok(result) if observed.mandatory.is_none() => {
+                        observed.mandatory = Some(result);
+                        Ok(())
+                    }
+                    Ok(_) => {
+                        observed.failure = Some(StateWitnessError::Mandatory.into());
+                        Err(ACCESS_REFUSED)
+                    }
+                    Err(error) => {
+                        observed.failure = Some(error);
+                        Err(ACCESS_REFUSED)
+                    }
+                }
+            };
+            pon_executor::execute_with_authenticated_state_input(
+                parent_state,
+                execution,
+                &settings.app,
+                &gate,
+                &pon_executor::MandatoryStateInput {
+                    non_accounts: &bound.non_accounts,
+                    completed: &completed,
+                },
+                progress,
+            )
+        } else {
+            pon_executor::execute_with_account_point_access(
+                parent_state,
+                execution,
+                &settings.app,
+                &gate,
+                progress,
+            )
+        }
     };
     let accesses = accesses
         .into_inner()
@@ -324,8 +521,47 @@ pub fn execute_with_progress(
         consensus_admission: false,
         archive_mutated: false,
     };
-    Ok(CheckedExecutionOutput {
-        output,
-        observation,
+    let state = if let (Some(bound), Some(control)) = (state_bound, evidence.state) {
+        (control.progress)(StateWitnessProgress::BeforeSuccessorVerification)?;
+        let successor = bound.transition(
+            &output.state,
+            witnesses,
+            &output.receipts,
+            StatePhase::Successor,
+            control.progress,
+        )?;
+        if successor.commitment.state_root != output.root {
+            return Err(StateWitnessError::Commitment.into());
+        }
+        (control.progress)(StateWitnessProgress::AfterSuccessorVerification)?;
+        let observed = StateExecutionObservation {
+            schema: state_witness::EXECUTION_SCHEMA,
+            parent_checkpoint,
+            parent_id: block.parent_id,
+            height: block.height,
+            miner: block.miner,
+            parent: bound.parent,
+            mandatory: accesses.mandatory.ok_or(StateWitnessError::Mandatory)?,
+            successor,
+            non_account_witness_count: bound.non_accounts.len(),
+            non_account_witness_bytes: bound.witness_bytes,
+            complete_non_account_partition: true,
+            account_roots_from_merged_proofs: true,
+            full_state_reference_checked: true,
+            complete_state_required: true,
+            consensus_admission: false,
+            archive_mutated: false,
+        };
+        (control.progress)(StateWitnessProgress::BeforeOutput)?;
+        Some(observed)
+    } else {
+        None
+    };
+    Ok(InternalOutput {
+        execution: CheckedExecutionOutput {
+            output,
+            observation,
+        },
+        state,
     })
 }

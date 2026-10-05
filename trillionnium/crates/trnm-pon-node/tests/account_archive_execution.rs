@@ -4,6 +4,7 @@
 use rusqlite::Connection;
 use serde_json::json;
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::{
     continuity_v1,
@@ -11,7 +12,9 @@ use trnm_mvcc_fee::{
 };
 use trnm_pon_node::{
     account_archive_execution::{
-        self, BlockInput, CheckedExecutionError as E, CheckedExecutionOutput,
+        self,
+        state_witness::{StateWitnessError as S, StateWitnessProgress as P},
+        BlockInput, CheckedExecutionError as E, CheckedExecutionOutput, StateExecutionInput,
     },
     account_archive_prototype::{
         AccountArchive, ArchiveError, Checkpoint, Context, Limits, Witness,
@@ -532,5 +535,272 @@ fn checked_accounts_gate_real_legacy_expiry_refund_without_continuity_or_transac
     assert_eq!(
         after.output.receipts,
         vec![serde_json::to_vec(&json!({"expiry":task_key})).unwrap()]
+    );
+}
+
+#[test]
+fn authenticated_state_preserves_signed_same_block_overlay_and_both_proof_phases() {
+    let mut f = Fixture::new();
+    let fee = transfer_fee(&f.settings);
+    let transactions = vec![
+        transfer(&f.settings, 0, 1, 10, 10_000),
+        transfer(&f.settings, 10, 1, 1, 10_000 - fee),
+        transfer(&f.settings, 0, 2, 0, 1),
+    ];
+    let original = f.node.read_active().unwrap();
+    let original_rows = rows(&f.archive_path);
+    let witness = account_archive_execution::prepare_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &original.2,
+    )
+    .unwrap();
+    // Unique proof order is deliberately independent of canonical changed-owner
+    // order, just as the original v1 account input contract permits.
+    let proofs = f.witnesses(&[10, 1, 0]);
+    let checked = account_archive_execution::execute_with_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &original.2,
+        BlockInput {
+            transactions: &transactions,
+            height: 1,
+            miner: public(0),
+            parent_id: original.0,
+        },
+        StateExecutionInput {
+            accounts: &proofs,
+            state: &witness,
+        },
+    )
+    .unwrap();
+    let legacy = f.execute(&transactions, 0, &proofs).unwrap();
+    assert_eq!(checked.execution.output.state, legacy.output.state);
+    assert_eq!(checked.execution.output.root, legacy.output.root);
+    assert_eq!(checked.execution.output.receipts, legacy.output.receipts);
+    assert_eq!(checked.execution.observation, legacy.observation);
+    let observed = &checked.state_observation;
+    assert_eq!(observed.parent.account_count, 4);
+    assert_eq!(observed.mandatory.commitment.account_count, 4);
+    assert!(observed.mandatory.account_changes.is_empty());
+    assert_eq!(observed.successor.commitment.account_count, 5);
+    assert_eq!(observed.successor.account_changes.len(), 3);
+    assert_eq!(observed.successor.commitment.state_root, legacy.output.root);
+    assert_eq!(
+        observed.successor.commitment.account_balance
+            + observed.successor.commitment.escrow_balance
+            + observed.successor.commitment.reward_balance,
+        observed.successor.commitment.issued
+    );
+    let created = observed
+        .successor
+        .account_changes
+        .iter()
+        .find(|change| change.owner == public(10))
+        .unwrap();
+    assert_eq!(created.before, None);
+    assert_eq!(created.after.balance, 0);
+    assert_eq!(created.after.nonce, 1);
+    assert_eq!(f.node.read_active().unwrap(), original);
+    assert_eq!(rows(&f.archive_path), original_rows);
+    let admitted = f.accept(transactions, 0, &[0, 1, 10]);
+    assert_eq!(checked.execution.output.state, admitted.output.state);
+    assert_eq!(
+        observed.successor.commitment.account_root,
+        f.checkpoint.account_root()
+    );
+}
+
+#[test]
+fn authenticated_state_rejects_partition_claims_and_late_cancellation_without_publication() {
+    let f = Fixture::new();
+    let original = f.node.read_active().unwrap();
+    let original_rows = rows(&f.archive_path);
+    let transactions = vec![transfer(&f.settings, 0, 1, 1, 1)];
+    let proofs = f.witnesses(&[0, 1]);
+    let witness = account_archive_execution::prepare_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &original.2,
+    )
+    .unwrap();
+    let block = BlockInput {
+        transactions: &transactions,
+        height: 1,
+        miner: public(0),
+        parent_id: original.0,
+    };
+    let mut omitted = witness.clone();
+    omitted
+        .non_accounts
+        .retain(|row| row.key != continuity_v1::MAINTENANCE_KEY);
+    let mut duplicate = witness.clone();
+    duplicate
+        .non_accounts
+        .insert(0, duplicate.non_accounts[0].clone());
+    let mut wrong_claim = witness.clone();
+    wrong_claim.commitment.account_balance -= 1;
+    let mut wrong_context = witness.clone();
+    wrong_context.parent_id[0] ^= 1;
+    for (invalid, expected) in [
+        (omitted, S::Partition),
+        (duplicate, S::CanonicalOrder),
+        (wrong_claim, S::Commitment),
+        (wrong_context, S::Context),
+    ] {
+        assert_eq!(
+            account_archive_execution::execute_with_state_witness(
+                &f.settings,
+                &f.archive,
+                f.checkpoint.id(),
+                &original.2,
+                block,
+                StateExecutionInput {
+                    accounts: &proofs,
+                    state: &invalid
+                },
+            )
+            .unwrap_err(),
+            E::StateWitness(expected)
+        );
+    }
+    for stop in [
+        P::BeforeMandatoryVerification,
+        P::AfterMandatoryVerification,
+        P::BeforeSuccessorVerification,
+        P::AfterSuccessorVerification,
+        P::BeforeOutput,
+    ] {
+        let phases = Mutex::new(Vec::new());
+        assert_eq!(
+            account_archive_execution::execute_with_state_witness_and_progress(
+                &f.settings,
+                &f.archive,
+                f.checkpoint.id(),
+                &original.2,
+                block,
+                StateExecutionInput {
+                    accounts: &proofs,
+                    state: &witness
+                },
+                &|point| {
+                    phases.lock().unwrap().push(point);
+                    if point == stop {
+                        Err(E::Cancelled)
+                    } else {
+                        Ok(())
+                    }
+                },
+            )
+            .unwrap_err(),
+            E::Cancelled
+        );
+        let phases = phases.into_inner().unwrap();
+        assert_eq!(phases.last(), Some(&stop));
+        if matches!(
+            stop,
+            P::BeforeMandatoryVerification | P::AfterMandatoryVerification
+        ) {
+            assert!(!phases.iter().any(|point| matches!(
+                point,
+                P::Execution(ExecutionProgress::BeforePrepare { .. })
+            )));
+        }
+        assert_eq!(f.node.read_active().unwrap(), original);
+        assert_eq!(rows(&f.archive_path), original_rows);
+    }
+}
+
+#[test]
+fn authenticated_state_checks_real_expiry_and_maturity_before_signed_spend() {
+    let mut f = Fixture::with_settings(Settings::development(Some(1)).unwrap());
+    let budget = 1000u64;
+    let deadline = 21u64;
+    let nonce = 1u64;
+    let task = hash(
+        b"task-instance-v3",
+        &[
+            &f.settings.network(),
+            &f.settings.parameters(),
+            &public(0),
+            &nonce.to_le_bytes(),
+            &public(2),
+            &budget.to_le_bytes(),
+            &deadline.to_le_bytes(),
+        ],
+    );
+    let mut payload = task.to_vec();
+    payload.extend(public(2));
+    payload.extend(budget.to_le_bytes());
+    payload.extend(deadline.to_le_bytes());
+    let reserve = signed(&f.settings, 0, nonce, 2, payload);
+    f.accept(vec![reserve], 70, &[0]);
+    for _height in 2..=20 {
+        f.accept(vec![], 0, &[]);
+    }
+    let original = f.node.read_active().unwrap();
+    let witness = account_archive_execution::prepare_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &original.2,
+    )
+    .unwrap();
+    let proofs = f.witnesses(&[0, 1, 70]);
+    let transactions = vec![transfer(&f.settings, 70, 1, 1, 1)];
+    let checked = account_archive_execution::execute_with_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &original.2,
+        BlockInput {
+            transactions: &transactions,
+            height: 21,
+            miner: public(0),
+            parent_id: original.0,
+        },
+        StateExecutionInput {
+            accounts: &proofs,
+            state: &witness,
+        },
+    )
+    .unwrap();
+    let observed = &checked.state_observation;
+    assert_eq!(observed.mandatory.commitment.issued, observed.parent.issued);
+    assert_eq!(observed.parent.escrow_balance, budget);
+    assert_eq!(observed.mandatory.commitment.escrow_balance, 0);
+    assert_eq!(
+        observed.mandatory.commitment.account_count,
+        observed.parent.account_count + 1
+    );
+    assert_eq!(
+        observed.mandatory.receipts,
+        vec![serde_json::to_vec(&json!({"expiry":format!("task:{}",hex::encode(task))})).unwrap()]
+    );
+    let mature = observed
+        .mandatory
+        .account_changes
+        .iter()
+        .find(|change| change.owner == public(70))
+        .unwrap();
+    assert_eq!(mature.before, None);
+    assert_eq!(mature.after.nonce, 0);
+    let spent = observed
+        .successor
+        .account_changes
+        .iter()
+        .find(|change| change.owner == public(70))
+        .unwrap();
+    assert_eq!(spent.before, None);
+    assert_eq!(spent.after.nonce, 1);
+    assert!(mature.after.balance > spent.after.balance);
+    let admitted = f.accept(transactions, 0, &[0, 1, 70]);
+    assert_eq!(checked.execution.output.state, admitted.output.state);
+    assert_eq!(
+        observed.successor.commitment.account_root,
+        f.checkpoint.account_root()
     );
 }

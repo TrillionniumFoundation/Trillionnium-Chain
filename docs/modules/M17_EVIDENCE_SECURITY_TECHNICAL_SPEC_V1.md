@@ -102,9 +102,11 @@ work hardness, independent operation and future model efficacy.
 
 The existing head/merge and x64/ARM64 lanes retain separate reused, both-zero,
 one-zero/nonzero-rank-one and fixed-genesis-maintenance cost contracts. The fourth
-suite's current preprocessing-v2 schema compares five complete producers, including
-exact periodic fixed-product setup, under ten balanced cold/reused positions.
-Explicit historical v1 comparison retains the original four-strategy meaning.
+suite's current v3 schema compares seven complete producers, including exact raw
+integer-pair and challenge-dependent periodic-prefix paths using a shared fixed
+product constructor and separately charged setup, across fourteen balanced
+cold/reused positions. Explicit historical v1/v2
+comparisons retain their original four/five-strategy meanings.
 Each complete raw stream, actual setup mode,
 source/binary identity and execution outcome must match its own contract. Strict
 success validation rejects failure-only fields even when empty, noninteger exit
@@ -113,9 +115,11 @@ artifact into execution of the new suite. See the [CI execution contract](../arc
 Same-job135-minute limits account for all four bounded captures; thirteen jobs,
 actual fuzz, exact prospective merges and all external-acceptance boundaries remain.
 
-The paired/periodic bridge's v2 report requires 20 full-proof comparisons and
-18 explicit refusals against the independent scalar Python relation. These are
-required invocation counts, not a declaration of a new executed result.
+The paired/periodic bridge's v3 report requires 28 full-proof comparisons and
+42 explicit refusals against the independent scalar Python relation, across the
+same four named Python tests. Its 70 invocations include both new maintenance
+selectors; historical v1/v2 retain their 22/38-invocation scopes. These are required
+invocation counts, not a declaration of a new executed result.
 The account-archive oracle independently
 reconstructs full sparse roots, strict witnesses and retained SQL records; actual
 native lifecycle effects still require their own observations. Offline model
@@ -133,3 +137,13 @@ packets, 20 signed transactions, two reorganization records, three reopen record
 and 29 negative cases belong to this campaign; the earlier archive projection, synthetic
 large archive and their receipts retain their original scopes. See the
 [account archive execution contract](../protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md#signed-checked-execution-campaign).
+
+The authenticated-state companion uses a separate commitment and observation
+schema. Its independent JSON comparison derives aggregate funds/counts, complete
+non-account commitments, shared account-proof updates and the actual mandatory
+prologue from the supported signed fixture. Native commitment fields are outputs
+to compare, not expected answers. Full retained non-account bytes and full-State
+reference execution remain required; neither a correctly hashed unknown namespace
+nor this fixture establishes every gated model transition. This evidence remains
+separate from SQLite inspection, work/fork-choice verification, durable publication
+and public witness availability.

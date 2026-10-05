@@ -5,6 +5,7 @@ use sha2::{Digest, Sha256};
 use std::{env, error::Error, ffi::OsString, fmt::Write, hint::black_box, time::Instant};
 use trnm_crypto_primitives::pon_work::{
     maintenance_periodic::MaintenancePeriodicPreparedTask,
+    maintenance_prefix::{MaintenanceIntegerPairedPreparedTask, MaintenancePrefixPreparedTask},
     paired_product::PairedPreparedTask,
     structured::{TileKernel, TiledPreparedTask},
     *,
@@ -125,14 +126,18 @@ enum Strategy {
     Strassen,
     Paired,
     Periodic,
+    IntegerPaired,
+    Prefix,
 }
 impl Strategy {
-    const ALL: [Self; 5] = [
+    const ALL: [Self; 7] = [
         Self::Generic,
         Self::Classical,
         Self::Strassen,
         Self::Paired,
         Self::Periodic,
+        Self::IntegerPaired,
+        Self::Prefix,
     ];
     fn name(self) -> &'static str {
         match self {
@@ -141,6 +146,8 @@ impl Strategy {
             Self::Strassen => "tiled-strassen-one-level",
             Self::Paired => "paired-product",
             Self::Periodic => "maintenance-periodic-setup",
+            Self::IntegerPaired => "maintenance-integer-paired",
+            Self::Prefix => "maintenance-periodic-prefix",
         }
     }
 }
@@ -164,6 +171,8 @@ enum Producer {
     Tiled(TiledPreparedTask),
     Paired(PairedPreparedTask),
     Periodic(MaintenancePeriodicPreparedTask),
+    IntegerPaired(MaintenanceIntegerPairedPreparedTask),
+    Prefix(MaintenancePrefixPreparedTask),
 }
 impl Producer {
     fn method(&self) -> &'static str {
@@ -172,6 +181,8 @@ impl Producer {
             Self::Tiled(task) => task.method(),
             Self::Paired(task) => task.method(),
             Self::Periodic(task) => task.method(),
+            Self::IntegerPaired(task) => task.method(),
+            Self::Prefix(task) => task.method(),
         }
     }
     fn prove(&self, challenge: Hash) -> Result<Vec<u8>, WorkError> {
@@ -180,6 +191,8 @@ impl Producer {
             Self::Tiled(task) => task.prove(challenge),
             Self::Paired(task) => task.prove(challenge),
             Self::Periodic(task) => task.prove(challenge),
+            Self::IntegerPaired(task) => task.prove(challenge),
+            Self::Prefix(task) => task.prove(challenge),
         }
     }
 }
@@ -207,6 +220,13 @@ fn prepare(material: &Material, strategy: Strategy) -> Result<Producer, WorkErro
         Strategy::Periodic => Ok(Producer::Periodic(
             MaintenancePeriodicPreparedTask::new(&material.a, &material.b)?
                 .ok_or(WorkError::Task)?,
+        )),
+        Strategy::IntegerPaired => Ok(Producer::IntegerPaired(
+            MaintenanceIntegerPairedPreparedTask::new(&material.a, &material.b)?
+                .ok_or(WorkError::Task)?,
+        )),
+        Strategy::Prefix => Ok(Producer::Prefix(
+            MaintenancePrefixPreparedTask::new(&material.a, &material.b)?.ok_or(WorkError::Task)?,
         )),
     }
 }
@@ -439,7 +459,7 @@ fn targets() -> [Hash; 2] {
 }
 
 // Adjacent samples execute the same rotated sequence forwards and backwards.
-// Every arm has mean position 4.5 in each complete pair, including the fixed
+// Every arm has mean position 6.5 in each complete pair, including the fixed
 // two/four-sample campaigns. This is no control of all cache or thermal effects.
 fn invocation(sample: u64, offset: usize) -> usize {
     let direction = if sample.is_multiple_of(2) {
@@ -453,7 +473,7 @@ fn invocation(sample: u64, offset: usize) -> usize {
 fn run() -> Result<(), Box<dyn Error>> {
     let options = Options::parse(env::args_os().skip(1))?;
     let targets = targets();
-    print!("{{\"schema\":\"pon-w1-maintenance-preprocessing-v2\",\"genesis_maintenance_material_only\":true,\"task_profile\":\"consensus-maintenance-continuity-dev-v1\",\"targets\":[\"{}\",\"{}\"],\"seed\":{},\"samples_per_case_target\":{},\"searches_per_cohort\":{},\"attempt_budget\":{},\"timing\":\"monotonic-wall-elapsed-nanoseconds-not-cpu-accounting\",\"timing_scope\":{{\"actual_setup_per_mode\":true,\"all_attempts_including_target_misses\":true,\"challenge_ticket_and_full_proof_stream_hashing_in_search\":true,\"material_generation_rank_checks_and_cross_strategy_comparison_timed\":false,\"verifier_timing_after_generation\":true}},\"observations\":[", hex::encode(targets[0]), hex::encode(targets[1]), options.seed, options.samples, options.searches, options.attempts);
+    print!("{{\"schema\":\"pon-w1-maintenance-prefix-v3\",\"genesis_maintenance_material_only\":true,\"task_profile\":\"consensus-maintenance-continuity-dev-v1\",\"targets\":[\"{}\",\"{}\"],\"seed\":{},\"samples_per_case_target\":{},\"searches_per_cohort\":{},\"attempt_budget\":{},\"timing\":\"monotonic-wall-elapsed-nanoseconds-not-cpu-accounting\",\"timing_scope\":{{\"actual_setup_per_mode\":true,\"all_attempts_including_target_misses\":true,\"challenge_ticket_and_full_proof_stream_hashing_in_search\":true,\"material_generation_rank_checks_and_cross_strategy_comparison_timed\":false,\"verifier_timing_after_generation\":true}},\"observations\":[", hex::encode(targets[0]), hex::encode(targets[1]), options.seed, options.samples, options.searches, options.attempts);
     let mut first = true;
     for material in [Material::maintenance()] {
         let task = task_id(&material.a, &material.b).map_err(work_error)?;
@@ -492,7 +512,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 for row in &observations {
                     assert_same_outcomes(baseline, row);
                 }
-                // Verify only after all ten generation runs complete. Both verifier
+                // Verify only after all fourteen generation runs complete. Both verifier
                 // costs and output formatting remain outside setup/search timing.
                 for (order, row) in observations.iter().enumerate() {
                     let json =

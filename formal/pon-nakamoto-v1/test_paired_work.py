@@ -32,6 +32,8 @@ SOURCE_PATHS = [
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs',
@@ -85,8 +87,8 @@ class PairedWorkOracleTests(unittest.TestCase):
         unchanged = after == cls.before
         (cls.output / 'identity-after.json').write_text(json.dumps(after, indent=2, sort_keys=True) + '\n')
         report = {
-            'schema': 'pon-w1-paired-maintenance-python-native-v2',
-            'result': 'PASS' if unchanged and len(cls.observations) == 38
+            'schema': 'pon-w1-paired-maintenance-python-native-v3',
+            'result': 'PASS' if unchanged and len(cls.observations) == 70
                       and all(row['result'] == 'PASS' for row in cls.observations) else 'FAIL',
             'source_and_binary_unchanged': unchanged,
             'source_before': cls.before, 'source_after': after,
@@ -181,6 +183,10 @@ class PairedWorkOracleTests(unittest.TestCase):
         self.compare_material('genesis-maintenance-periodic', a, b,
                               'genesis-policy-material-native-parent-admission-tested-separately',
                               arguments=('maintenance-periodic',))
+        for selector in ['maintenance-integer-paired', 'maintenance-prefix']:
+            self.compare_material('genesis-' + selector, a, b,
+                                  'genesis-policy-material-native-parent-admission-tested-separately',
+                                  arguments=(selector,))
 
     def test_field_controls_cover_wraparound_dense_and_zero_without_admission_claims(self):
         q, cells = work_oracle.Q, work_oracle.CELLS
@@ -212,28 +218,29 @@ class PairedWorkOracleTests(unittest.TestCase):
         a, b = maintenance()
         challenge = bytes(32)
         exact = challenge + work_oracle.field_bytes(a) + work_oracle.field_bytes(b)
-        arguments = ('maintenance-periodic',)
-        for name, operand, position in [('left-first', 0, 0), ('left-last', 0, 4095),
-                                        ('right-first', 1, 0), ('right-last', 1, 4095)]:
-            left, right = a[:], b[:]
-            [left, right][operand][position] ^= 1
-            data = challenge + work_oracle.field_bytes(left) + work_oracle.field_bytes(right)
-            self.case('periodic-unsupported-' + name, data, arguments=arguments,
-                      source_class='canonical-nonmaintenance-control', error='UNSUPPORTED')
-        for name, left, right in [('both-zero', [0] * 4096, [0] * 4096), ('swapped', b, a)]:
-            data = challenge + work_oracle.field_bytes(left) + work_oracle.field_bytes(right)
-            self.case('periodic-unsupported-' + name, data, arguments=arguments,
-                      source_class='canonical-nonmaintenance-control', error='UNSUPPORTED')
-        for name, data in [('empty', b''), ('short', exact[:-1]), ('extra-byte', exact + b'\0')]:
-            self.case('periodic-' + name, data, arguments=arguments,
-                      source_class='malformed-bridge-input', error='LENGTH')
-        for name, offset in [('first-field-q', 32), ('last-field-q', len(exact) - 4)]:
-            value = bytearray(exact)
-            value[offset:offset + 4] = work_oracle.Q.to_bytes(4, 'little')
-            self.case('periodic-' + name, bytes(value), arguments=arguments,
-                      source_class='noncanonical-bridge-input', error='WORK')
-        self.case('periodic-extra-argument', exact, arguments=(*arguments, 'extra'),
-                  source_class='unrecognized-bridge-operation', error='OPERATION')
+        for selector in ['maintenance-periodic', 'maintenance-integer-paired', 'maintenance-prefix']:
+            arguments = (selector,)
+            for name, operand, position in [('left-first', 0, 0), ('left-last', 0, 4095),
+                                            ('right-first', 1, 0), ('right-last', 1, 4095)]:
+                left, right = a[:], b[:]
+                [left, right][operand][position] ^= 1
+                data = challenge + work_oracle.field_bytes(left) + work_oracle.field_bytes(right)
+                self.case(selector + '-unsupported-' + name, data, arguments=arguments,
+                          source_class='canonical-nonmaintenance-control', error='UNSUPPORTED')
+            for name, left, right in [('both-zero', [0] * 4096, [0] * 4096), ('swapped', b, a)]:
+                data = challenge + work_oracle.field_bytes(left) + work_oracle.field_bytes(right)
+                self.case(selector + '-unsupported-' + name, data, arguments=arguments,
+                          source_class='canonical-nonmaintenance-control', error='UNSUPPORTED')
+            for name, data in [('empty', b''), ('short', exact[:-1]), ('extra-byte', exact + b'\0')]:
+                self.case(selector + '-' + name, data, arguments=arguments,
+                          source_class='malformed-bridge-input', error='LENGTH')
+            for name, offset in [('first-field-q', 32), ('last-field-q', len(exact) - 4)]:
+                value = bytearray(exact)
+                value[offset:offset + 4] = work_oracle.Q.to_bytes(4, 'little')
+                self.case(selector + '-' + name, bytes(value), arguments=arguments,
+                          source_class='noncanonical-bridge-input', error='WORK')
+            self.case(selector + '-extra-argument', exact, arguments=(*arguments, 'extra'),
+                      source_class='unrecognized-bridge-operation', error='OPERATION')
 
 
 if __name__ == '__main__':

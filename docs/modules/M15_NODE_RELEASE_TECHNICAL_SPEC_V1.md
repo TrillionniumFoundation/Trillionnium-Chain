@@ -286,6 +286,13 @@ activation or recovery. Complete before/after State projections, real signed
 Node transitions and synthetic large-space fixtures are distinguished in
 [its contract](../protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md).
 
+The same explicit research module exposes full-parent state-witness construction
+and checked execution under fresh observation/commitment domains. This combines
+account proofs with all non-account rows for actual mandatory execution and checks
+prologue/final roots and aggregate funds against full State. It adds no startup
+option, admission shortcut, archive activation or new stored Node root. Existing
+Settings, branch selection and durable single-writer boundaries remain required.
+
 Ordinary History page service retains its existing input, output, wire, errors
 and cancellation order while using bounded actual-record batches and at most16
 Hash candidates. The full H-edge path remains verified. Native whole-call timing

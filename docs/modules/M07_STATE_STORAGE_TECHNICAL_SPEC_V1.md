@@ -85,3 +85,12 @@ No historical receipt is relabelled as executing this source.
 ## Actual-state cancellation and statement reuse
 
 The [history/state resource contract](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) preserves the actual KV/root check and adds cancellation every256 rows, a final tip/generation/slot check and reused delta statements. The SQLite schema and atomic transaction boundary remain unchanged. Complete root construction and retained history still have their stated growth costs.
+
+The [authenticated account/state research companion](../protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md#authenticated-complete-state-companion)
+computes a separate full-parent-bound commitment and checks proof-derived prologue
+and successor aggregates. It never stores that commitment as the Node state root,
+publishes an archive branch or changes this module's schema or atomic boundary.
+The existing branch owner and complete native State root remain authoritative.
+Integrating persistent authenticated updates still requires explicit root/profile
+selection, migration/recovery rules, complete obligation discovery and retained
+witness-data responsibility.

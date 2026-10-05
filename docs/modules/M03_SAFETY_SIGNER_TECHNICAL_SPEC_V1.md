@@ -143,3 +143,17 @@ belong to its setup call. Every challenge delegates to the ordinary complete
 contains exact material and product bytes, without parent, lease or admission
 authority. Its source-defined equivalence and rejection checks do not establish
 runtime savings, a cheapest-producer bound or a new mining selection.
+
+The separate `MaintenanceIntegerPairedPreparedTask` and
+`MaintenancePrefixPreparedTask` share that exact fixed-product constructor. The first
+uses exact raw integer-pair dots; the second derives challenge-dependent periodic
+prefixes while retaining every W1 transcript word, tile-order hashing and proof
+byte. The prefix producer additionally constructs a64-column plan inside its
+charged setup call. Complete setup and per-challenge search costs are reported
+separately; shared fixed-product code does not imply identical setup costs.
+The v3 maintenance cost suite keeps all
+seven producers in fourteen balanced cold/reused positions and preserves v1/v2
+observations under their original contracts. Neither new method has an established
+general-multiplication-count advantage over the other; actual timings, including
+slower and exhausted observations, must decide the measured comparison. No default
+Node selector, work relation or acceptance flag changes.

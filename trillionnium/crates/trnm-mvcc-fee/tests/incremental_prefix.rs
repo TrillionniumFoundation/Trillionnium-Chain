@@ -1,5 +1,6 @@
 //! Same-block suffix execution against independent complete M06 executions.
 use serde_json::json;
+use std::sync::Mutex;
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::{
     continuity_v1,
@@ -162,6 +163,168 @@ fn incremental_signed_prefixes_keep_one_prologue_complete_rewards_receipts_and_r
         assert_eq!(repeated.output.metrics.committed_without_replay, 0);
         assert_eq!(parent, original);
     }
+}
+
+fn mandatory_partition_fixture(cfg: &Config) -> State {
+    let mut parent = initial(cfg);
+    parent.insert("meta:issued".into(), json!(100_001_507));
+    parent.insert(
+        "task:due".into(),
+        json!({"owner":hex::encode(public(1)),"remaining":1000,"deadline":300,"status":"open"}),
+    );
+    parent.insert(
+        "quota:future".into(),
+        json!({"owner":hex::encode(public(2)),"remaining":7,"deadline":301,"status":"open"}),
+    );
+    parent.insert(
+        "reward:mature".into(),
+        json!({"owner":hex::encode(public(3)),"amount":500,"maturity":300}),
+    );
+    parent.insert(
+        "release:retired".into(),
+        json!({"owner":hex::encode(public(0)),"remaining":0,"deadline":10}),
+    );
+    parent.insert("contribution:retired".into(), json!({"parent":"other"}));
+    parent.insert(
+        "evaluation-archive:retired".into(),
+        json!({"public_evaluation":{"closed":{"closed_height":1}}}),
+    );
+    parent.insert("artifact:old".into(), serde_json::Value::Null);
+    parent.insert("retained:unknown".into(), serde_json::Value::Null);
+    parent
+}
+
+#[test]
+fn authenticated_mandatory_partition_executes_full_cleanup_refunds_and_maturity() {
+    let cfg = Config::installed().unwrap();
+    let parent = mandatory_partition_fixture(&cfg);
+    let partition = parent
+        .iter()
+        .filter(|(key, _)| !key.starts_with("account:"))
+        .map(|(key, value)| (key.clone(), value.clone()))
+        .collect();
+    let transactions = vec![transfer(&cfg, 0, 1, 1, 1)];
+    let seen = Mutex::new(0usize);
+    let completed = |before: &State, after: &State, receipts: &[Vec<u8>]| {
+        assert_eq!(before, &parent);
+        for removed in [
+            "contribution:retired",
+            "evaluation-archive:retired",
+            "release:retired",
+            "artifact:old",
+            "reward:mature",
+        ] {
+            assert!(!after.contains_key(removed));
+        }
+        assert_eq!(after["retained:unknown"], serde_json::Value::Null);
+        assert_eq!(after["task:due"]["remaining"], 0);
+        assert_eq!(after["quota:future"]["remaining"], 7);
+        assert_eq!(
+            after[&format!("account:{}", hex::encode(public(1)))]["balance"],
+            50_001_000
+        );
+        assert_eq!(
+            after[&format!("account:{}", hex::encode(public(3)))],
+            json!({"balance":500,"nonce":0})
+        );
+        assert_eq!(
+            receipts,
+            &[serde_json::to_vec(&json!({"expiry":"task:due"})).unwrap()]
+        );
+        *seen.lock().unwrap() += 1;
+        Ok(())
+    };
+    let output = pon_executor::execute_with_authenticated_state_input(
+        &parent,
+        pon_executor::BlockExecution {
+            transactions: &transactions,
+            height: 300,
+            miner: public(0),
+            parent_id: [9; 32],
+            workers: 1,
+        },
+        &cfg,
+        &|_| Ok(()),
+        &pon_executor::MandatoryStateInput {
+            non_accounts: &partition,
+            completed: &completed,
+        },
+        &|_| Ok::<_, &'static str>(()),
+    )
+    .unwrap();
+    let reference =
+        pon_executor::execute(&parent, &transactions, 300, public(0), [9; 32], 1, &cfg).unwrap();
+    assert_eq!(output.state, reference.state);
+    assert_eq!(output.root, reference.root);
+    assert_eq!(output.receipts, reference.receipts);
+    assert_eq!(seen.into_inner().unwrap(), 1);
+    assert_eq!(parent, mandatory_partition_fixture(&cfg));
+}
+
+#[test]
+fn authenticated_mandatory_refusal_prevents_transaction_preparation_and_missing_rows_refuse() {
+    let cfg = Config::installed().unwrap();
+    let parent = mandatory_partition_fixture(&cfg);
+    let partition: State = parent
+        .iter()
+        .filter(|(key, _)| !key.starts_with("account:"))
+        .map(|(key, value)| (key.clone(), value.clone()))
+        .collect();
+    let transactions = vec![transfer(&cfg, 0, 1, 1, 1)];
+    let phases = Mutex::new(Vec::new());
+    let result = pon_executor::execute_with_authenticated_state_input(
+        &parent,
+        pon_executor::BlockExecution {
+            transactions: &transactions,
+            height: 300,
+            miner: public(0),
+            parent_id: [9; 32],
+            workers: 1,
+        },
+        &cfg,
+        &|_| Ok(()),
+        &pon_executor::MandatoryStateInput {
+            non_accounts: &partition,
+            completed: &|_, _, _| Err("EXPECTED_MANDATORY_REFUSAL"),
+        },
+        &|point| {
+            phases.lock().unwrap().push(point);
+            Ok::<_, &'static str>(())
+        },
+    );
+    assert!(matches!(
+        result,
+        Err(ExecutionError::Relation("EXPECTED_MANDATORY_REFUSAL"))
+    ));
+    assert!(!phases
+        .into_inner()
+        .unwrap()
+        .iter()
+        .any(|point| matches!(point, ExecutionProgress::BeforePrepare { .. })));
+    let mut omitted = partition;
+    omitted.remove("retained:unknown");
+    let result = pon_executor::execute_with_authenticated_state_input(
+        &parent,
+        pon_executor::BlockExecution {
+            transactions: &transactions,
+            height: 300,
+            miner: public(0),
+            parent_id: [9; 32],
+            workers: 1,
+        },
+        &cfg,
+        &|_| Ok(()),
+        &pon_executor::MandatoryStateInput {
+            non_accounts: &omitted,
+            completed: &|_, _, _| panic!("incomplete input reached prologue"),
+        },
+        &|_| Ok::<_, &'static str>(()),
+    );
+    assert!(matches!(
+        result,
+        Err(ExecutionError::Relation("MANDATORY_STATE_PARTITION"))
+    ));
+    assert_eq!(parent, mandatory_partition_fixture(&cfg));
 }
 
 #[test]

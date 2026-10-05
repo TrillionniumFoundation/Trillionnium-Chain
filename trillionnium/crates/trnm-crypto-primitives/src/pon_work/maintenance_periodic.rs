@@ -11,14 +11,14 @@ const RIGHT_ROW_STEP: u64 = 15; // 29 * 64 mod 263.
 const MAX_PRODUCT: u64 = N as u64 * 256 * 262;
 
 #[derive(Clone, Copy)]
-struct ColumnPlan {
+pub(super) struct ColumnPlan {
     base: u64,
     thresholds: [usize; 4],
     count: usize,
 }
 
 impl ColumnPlan {
-    fn new(base: u32) -> Self {
+    pub(super) fn new(base: u32) -> Self {
         let base = u64::from(base);
         debug_assert!(base < RIGHT_MODULUS);
         let count = ((base + RIGHT_ROW_STEP * (N as u64 - 1)) / RIGHT_MODULUS) as usize;
@@ -36,7 +36,7 @@ impl ColumnPlan {
 
     // B[k,j] = base + 15*k - 263*sum_l 1{k >= threshold_l}.
     // The expression is an exact nonnegative integer, before field reduction.
-    fn dot(self, prefix: &[u64; N + 1], weighted: u64, length: usize) -> u64 {
+    pub(super) fn dot(self, prefix: &[u64; N + 1], weighted: u64, length: usize) -> u64 {
         let correction: u64 = self.thresholds[..self.count]
             .iter()
             .filter(|&&threshold| threshold < length)
@@ -50,7 +50,7 @@ impl ColumnPlan {
 /// canonical material returns None; malformed operands retain Length/Field errors.
 /// No arbitrary supplied product or factor can enter this constructor.
 pub struct MaintenancePeriodicPreparedTask {
-    inner: PreparedTask,
+    pub(super) inner: PreparedTask,
 }
 
 impl MaintenancePeriodicPreparedTask {

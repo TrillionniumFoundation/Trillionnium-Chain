@@ -251,6 +251,14 @@
             {
               "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
               "symbol": "MaintenancePeriodicPreparedTask::prove"
+            },
+            {
+              "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+              "symbol": "MaintenanceIntegerPairedPreparedTask::prove"
+            },
+            {
+              "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+              "symbol": "MaintenancePrefixPreparedTask::prove"
             }
           ],
           "controlled_entrypoint": {
@@ -258,7 +266,7 @@
             "symbol": "run"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback. Separate seven-producer maintenance diagnostics compare raw integer-pair and periodic-prefix complete transcripts, sharing fixed-product construction while charging each actual setup; no default producer or work relation changes.",
           "persistence_owner": {
             "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
             "symbol": "Node::open"
@@ -279,7 +287,13 @@
             "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs::periodic_integer_product_and_all_wrap_prefixes_match_direct_sums",
             "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs::exact_maintenance_constructor_rejects_other_material_without_fallback",
             "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs::maintenance_setup_preserves_full_proofs_tickets_and_reject_paths",
-            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs::shared_prepared_cancellation_stops_before_proof_and_cache_reuse_is_exact"
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs::shared_prepared_cancellation_stops_before_proof_and_cache_reuse_is_exact",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs::unreduced_integer_pairs_cover_extremes_and_nonnegative_subtraction",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::periodic_challenge_prefix_bounds_cover_all_intercepts_and_lengths",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::periodic_factorization_matches_every_prefix_word_with_extreme_noise",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::both_maintenance_prefix_constructors_reject_unsupported_and_malformed_inputs",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::periodic_and_integer_paired_complete_proofs_match_scalar_and_verifier_errors",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::both_prefix_generators_cancel_at_real_boundaries_and_reuse_no_challenge_state"
           ],
           "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
         },
@@ -565,6 +579,26 @@
             {
               "path": "formal/pon-nakamoto-v1/account_execution_oracle.py",
               "symbol": "transition"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+              "symbol": "prepare_state_witness"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+              "symbol": "execute_with_state_witness_and_progress"
+            },
+            {
+              "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+              "symbol": "execute_with_authenticated_state_input"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/state_witness_oracle.py",
+              "symbol": "derive_commitment"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/state_witness_oracle.py",
+              "symbol": "account_delta_updates"
             }
           ],
           "controlled_entrypoint": {
@@ -572,7 +606,7 @@
             "symbol": "Node::admit"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native Node executes actual parent state through M06 and owns durable admission; independent Python comparisons cover complete seeded continuity transitions and actual native revision14 model observations, with explicit signature/roster/witness premises. Warm immutable-parent bindings share snapshot bytes only after a complete ordered canonical comparison of actual State; cold roots and full successor execution remain. Explicit serial archive research execution binds immutable Settings and complete parent roots/accounts, requires exact used proof coverage at semantic account point access, and retains full State for ordinary M06 scans, funds, capacity and roots. Its observations grant no Node admission or archive publication.",
+          "backend": "Native Node executes actual parent state through M06 and owns durable admission; independent Python comparisons cover complete seeded continuity transitions and actual native revision14 model observations, with explicit signature/roster/witness premises. Warm immutable-parent bindings share snapshot bytes only after a complete ordered canonical comparison of actual State; cold roots and full successor execution remain. Explicit serial archive research execution binds immutable Settings and complete parent roots/accounts, requires exact used proof coverage at semantic account point access, and retains full State for ordinary M06 scans, funds, capacity and roots. Its observations grant no Node admission or archive publication. A separate authenticated-state companion binds complete non-account input and anchored funds/counts, combines original-parent account proofs for mandatory and final changes, and compares against full State rebuilding. The complete partition and reference remain required; the32-proof research cap is not a consensus limit.",
           "persistence_owner": {
             "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
             "symbol": "Node::open"
@@ -610,7 +644,20 @@
             "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::checked_accounts_gate_real_legacy_expiry_refund_without_continuity_or_transaction_masking",
             "formal/pon-nakamoto-v1/test_account_execution_oracle.py::AccountExecutionOracle.test_created_account_spends_in_same_block_and_present_zero_is_not_absence",
             "formal/pon-nakamoto-v1/test_account_execution_oracle.py::AccountExecutionOracle.test_reward_maturity_precedes_spend_and_requires_parent_absence_witness",
-            "formal/pon-nakamoto-v1/test_account_execution_oracle.py::AccountExecutionOracle.test_unsupported_transaction_and_namespace_fail_closed"
+            "formal/pon-nakamoto-v1/test_account_execution_oracle.py::AccountExecutionOracle.test_unsupported_transaction_and_namespace_fail_closed",
+            "formal/pon-nakamoto-v1/test_state_witness_oracle.py::StateWitnessOracle.test_combined_parent_paths_match_independent_full_sparse_reconstruction",
+            "formal/pon-nakamoto-v1/test_state_witness_oracle.py::StateWitnessOracle.test_full_ordered_delta_retains_null_creation_deletion_and_changed_value",
+            "formal/pon-nakamoto-v1/test_state_witness_oracle.py::CompleteStatePartition.test_every_non_account_row_is_required_even_when_no_money_or_due_action",
+            "formal/pon-nakamoto-v1/test_state_witness_oracle.py::CompleteStatePartition.test_self_consistent_forged_aggregate_digest_is_not_an_authenticated_parent",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs::merged_original_proofs_preserve_shared_paths_absence_and_input_permutations",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs::authenticated_deltas_preserve_maximum_funds_and_present_null_records",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs::authenticated_changes_refuse_hidden_writes_deletion_and_nonce_rewind",
+            "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::authenticated_state_preserves_signed_same_block_overlay_and_both_proof_phases",
+            "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::authenticated_state_rejects_partition_claims_and_late_cancellation_without_publication",
+            "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::authenticated_state_checks_real_expiry_and_maturity_before_signed_spend",
+            "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs::authenticated_mandatory_partition_executes_full_cleanup_refunds_and_maturity",
+            "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs::authenticated_mandatory_refusal_prevents_transaction_preparation_and_missing_rows_refuse",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs::authenticated_binding_rejects_self_consistent_forged_totals_and_partition_omission"
           ],
           "remaining": "Derived commitments remain disposable computations, not authority or native paged persistence. Ordinary product integration, public service qualification and physical power-loss acceptance remain open."
         },
@@ -1590,6 +1637,14 @@
             {
               "path": "formal/pon-nakamoto-v1/account_execution_oracle.py",
               "symbol": "check_positive_observation"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/state_witness_oracle.py",
+              "symbol": "check_positive_companion"
+            },
+            {
+              "path": "scripts/ci/run_account_execution_conformance.py",
+              "symbol": "validate_state_witness_reports"
             }
           ],
           "controlled_entrypoint": {
@@ -1597,7 +1652,7 @@
             "symbol": "validate"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Read-only immutable receipt/source validation for four separate reused, both-zero, one-zero-rank-one and fixed-genesis-maintenance cost suites; current maintenance preprocessing-v2 compares five full producers with charged setup and balanced ten-position order, while explicit historical v1 retains its four-strategy meaning. Preserve full streams, negative outcomes and exact head/merge identity. A separate signed account-execution JSON oracle derives the supported application transitions and complete roots/proofs; its wrapper checks snapshot delivery bytes without claiming independent SQLite replay, work verification or fork choice.",
+          "backend": "Read-only immutable receipt/source validation for four separate reused, both-zero, one-zero-rank-one and fixed-genesis-maintenance cost suites; current maintenance prefix-v3 compares seven full producers with charged actual setup and balanced fourteen-position order, while explicit historical v1/v2 retain their four/five-strategy meanings. Preserve full streams, negative outcomes and exact head/merge identity. A separate signed account-execution JSON oracle derives the supported application transitions and complete roots/proofs; its wrapper checks snapshot delivery bytes without claiming independent SQLite replay, work verification or fork choice. The separately versioned state-witness companion independently derives complete partition commitments, anchored aggregate deltas and original-parent combined account-proof roots for mandatory and final states. It retains the original signed-fixture application scope and no SQLite, W1, fork-choice, production capacity or witness-availability authority.",
           "persistence_owner": null,
           "evidence_selectors": [
             "scripts/ci/test_cross_arch_cost.py::ArtifactComparisonTests.test_cross_architecture_stream_difference_rejected",
@@ -1612,7 +1667,13 @@
             "scripts/ci/test_maintenance_cost.py::MaintenanceRawContractTests.test_all_native_schemas_and_maintenance_versions_reject_cross_substitution",
             "scripts/ci/test_maintenance_cost.py::MaintenanceRawContractTests.test_paired_forward_reverse_order_balances_every_strategy_mode_position",
             "scripts/ci/test_run_account_execution_conformance.py::AccountExecutionReceiptTests.test_complete_fixture_identity_and_separate_json_scope",
-            "scripts/ci/test_run_account_execution_conformance.py::AccountExecutionReceiptTests.test_scopes_reject_promotion_and_integer_boolean_aliases"
+            "scripts/ci/test_run_account_execution_conformance.py::AccountExecutionReceiptTests.test_scopes_reject_promotion_and_integer_boolean_aliases",
+            "scripts/ci/test_maintenance_cost.py::MaintenanceRawContractTests.test_historical_v2_retains_five_strategies_and_cannot_be_promoted_to_v3",
+            "scripts/ci/test_maintenance_cost.py::MaintenanceRawContractTests.test_prefix_and_direct_integer_competitor_cannot_disappear_or_share_method",
+            "formal/pon-nakamoto-v1/test_state_witness_oracle.py::StateWitnessOracle.test_combined_parent_paths_match_independent_full_sparse_reconstruction",
+            "formal/pon-nakamoto-v1/test_state_witness_oracle.py::StateWitnessOracle.test_full_ordered_delta_retains_null_creation_deletion_and_changed_value",
+            "formal/pon-nakamoto-v1/test_state_witness_oracle.py::CompleteStatePartition.test_every_non_account_row_is_required_even_when_no_money_or_due_action",
+            "formal/pon-nakamoto-v1/test_state_witness_oracle.py::CompleteStatePartition.test_self_consistent_forged_aggregate_digest_is_not_an_authenticated_parent"
           ],
           "remaining": "Does not execute old tests again, confer scientific independence or grant deployment authority."
         }

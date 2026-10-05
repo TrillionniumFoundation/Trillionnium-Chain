@@ -1,7 +1,10 @@
 //! Exact public genesis maintenance with an independent complete producer.
 //! This checks native admission, not demand, work hardness or a mining scheduler.
 use trnm_crypto_primitives::pon_work::{
-    self, maintenance_periodic::MaintenancePeriodicPreparedTask, paired_product::PairedPreparedTask,
+    self,
+    maintenance_periodic::MaintenancePeriodicPreparedTask,
+    maintenance_prefix::{MaintenanceIntegerPairedPreparedTask, MaintenancePrefixPreparedTask},
+    paired_product::PairedPreparedTask,
 };
 use trnm_mvcc_fee::continuity_v1;
 use trnm_pon_node::{development_public, Node, Settings};
@@ -30,6 +33,10 @@ fn paired_genesis_maintenance_preserves_actual_parent_admission_and_reopen() {
     let periodic = MaintenancePeriodicPreparedTask::new(&a, &b)
         .unwrap()
         .unwrap();
+    let integer_paired = MaintenanceIntegerPairedPreparedTask::new(&a, &b)
+        .unwrap()
+        .unwrap();
+    let prefix = MaintenancePrefixPreparedTask::new(&a, &b).unwrap().unwrap();
     let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
     let mut challenges = Vec::new();
     for height in 1..=3 {
@@ -46,7 +53,9 @@ fn paired_genesis_maintenance_preserves_actual_parent_admission_and_reopen() {
         let challenge = packet.header.challenge();
         assert!(!challenges.contains(&challenge));
         challenges.push(challenge);
-        let proof = periodic.prove(challenge).unwrap();
+        let proof = prefix.prove(challenge).unwrap();
+        assert_eq!(proof, integer_paired.prove(challenge).unwrap());
+        assert_eq!(proof, periodic.prove(challenge).unwrap());
         assert_eq!(proof, paired.prove(challenge).unwrap());
         assert_eq!(proof, packet.proof);
         assert_eq!(proof, pon_work::prove(challenge, &a, &b).unwrap());

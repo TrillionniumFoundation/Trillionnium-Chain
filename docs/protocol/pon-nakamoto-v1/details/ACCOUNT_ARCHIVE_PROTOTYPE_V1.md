@@ -225,6 +225,123 @@ must separately perform ordinary Node validation/admission and any archive
 projection/activation. Failure or cancellation returns no completed observation,
 and neither the supplied parent nor archive is mutated by this computation.
 
+### Authenticated complete-state companion
+
+The separate `account_archive_execution::state_witness` research relation tests the
+missing aggregate and mandatory-action commitments. It preserves the original
+`pon-checked-account-execution-v1` observation, account witness bytes, account-tree
+hashes and SQLite namespace. Its own schemas are
+`pon-authenticated-state-commitment-v1` and
+`pon-authenticated-state-execution-v1`, with a fresh
+`checked-state-commitment-v1` digest domain. No ordinary Node constructor, header
+field or installed context selects this digest as a ledger state root.
+
+`prepare_state_witness` constructs serializable input claims from a checked complete
+parent. `execute_with_state_witness` and
+`execute_with_state_witness_and_progress` recheck those claims on every call and
+take `StateExecutionInput { accounts, state }` alongside the original complete
+parent and block input. They return the original checked execution output plus
+the separate state observation. The M06
+`execute_with_authenticated_state_input` hook does not authenticate a caller by
+itself: the Node wrapper binds the evidence, while M06 also checks the complete
+supplied non-account partition against its parent before using it.
+
+The complete native parent remains the authority used to construct a private
+anchor. The anchor binds Settings context, actual parent/checkpoint/height, native
+State root, account root/count/balance total, and the complete non-account
+partition with its count, escrow/reward funds and issued amount. Point membership
+proofs alone cannot establish those aggregate values. A caller-supplied digest or
+JSON observation cannot construct the private anchor or replace its full-parent
+checks.
+
+The digest uses the framing in section 2, with the following parts in this exact
+order. Every count and amount is a checked u64 encoded little-endian; overflow is
+an error, not a modular balance operation.
+
+| Part | Meaning |
+| --- | --- |
+| network, parameters, genesis | The three 32-byte Settings context identities |
+| state_root | The unchanged complete native State root |
+| account_root | The unchanged archive sparse-account root |
+| account_count, account_balance | Complete retained account count and balance sum |
+| non_account_root | The ordinary native root algorithm applied to the complete non-account map |
+| non_account_count | Number of rows in that complete map |
+| escrow_balance | Sum of `remaining` over `task:`, `quota:` and `release:` rows |
+| reward_balance | Sum of `amount` over `reward:` rows |
+| issued | The exact u64 `meta:issued` value |
+
+The constructor requires
+`account_balance + escrow_balance + reward_balance == issued`, using checked
+addition. This is the current native funds partition, not a generic interpretation
+of every future namespace. The commitment schema and all recorded fields must
+equal the full-parent reconstruction. The accompanying `StateWitness` separately
+binds `parent_checkpoint`, `parent_id` and `parent_height`; those branch identities
+are checked against the retained checkpoint and containing operation. They are
+not additional parts of the state-commitment digest. An equal State on two branches
+does not make one branch's witness an authority for the other.
+
+The companion requires all non-account rows in canonical order, including retained
+rows in namespaces that the current block does not modify. It compares their exact
+partition commitment, count and funds against the anchor before using those rows
+as actual execution input. A missing task, quota, release, reward or other row must
+not disappear merely because a producer omitted it from the witness. Unknown
+non-account namespaces remain committed bytes; committing them does not establish
+application semantics for an unsupported command or model-cleanup profile.
+
+Original-parent account proofs are combined before deriving each changed account
+root. Shared sparse-tree paths must agree, every changed account needs its checked
+old presence/value, and unchanged subtrees remain bound by the same parent root.
+An inserted account increases count from proved absence. A retained account keeps
+its identity and nonce when balance becomes zero. Deletion and nonce decrease on
+one parent-child transition remain invalid. Balance/count deltas update the
+anchored aggregates rather than summing only the presented membership proofs.
+Every original path is checked and merged before any leaf update, so later
+overlapping changes cannot restore an earlier sibling root. Changed accounts are
+ordered by owner bytes. All removed balances are subtracted from the anchored
+sum before changed balances are added, avoiding a transient overflow caused only
+by account ordering. Both the prologue and final change lists are relative to the
+original parent; the final list is not a delta from the prologue.
+
+The actual M06 mandatory prologue is an explicit comparison boundary. Its complete
+non-account input and resulting account changes are checked before transaction
+execution continues; the final ordered result is checked separately. The companion
+compares the proof-derived account root and aggregates with full State rebuilding
+at those boundaries. Missing account access, omitted non-account obligations,
+mismatching shared paths or altered delta values cannot obtain a completed result.
+The original executor still owns fees, subsidy, conservation, capacity, transaction
+order and the complete native output root.
+
+The observation records parent, mandatory and successor commitments, the exact
+account and non-account changes, receipts, supplied non-account row count and its
+compact JSON byte length. Non-account changes distinguish an absent record from
+a present JSON-null value: an absent side is `null`, while a present-null side is
+`{"value": null}`. The mandatory phase preserves the parent's issued amount;
+the ordinary final M06 subsidy and conservation rules remain in force. Required
+scope flags are `complete_non_account_partition=true`,
+`account_roots_from_merged_proofs=true`, `full_state_reference_checked=true`,
+`complete_state_required=true`, `consensus_admission=false` and
+`archive_mutated=false`. These booleans describe a successfully checked observation,
+not capabilities that a decoded caller can mint.
+
+This is a complete-partition research witness, not a bounded partial-State backend.
+The non-account input, anchor construction and full reference rebuilding still
+scale with State. The existing 32-account proof cap remains an additional research
+restriction: valid blocks needing more distinct future reservation owners can
+exceed it. That cap cannot silently become a new consensus validity rule. The
+module grants no Node admission, archive mutation, durable state-root publication,
+proof availability or chain-liveness guarantee.
+
+The explicit non-account list is limited to 65,536 rows, while native canonical
+key/value and total-State limits still apply. Its reported JSON length does not
+bound allocation, SQLite pages, process RSS or network service. Cooperative checks
+surround binding, mandatory-result checking, successor checking and output, and run
+between original account proofs and account updates. Full scans, individual hashes,
+serialization, signatures and native deep stages remain nonpreemptive.
+`BeforeMandatoryVerification` and `AfterMandatoryVerification` name the checking of an already executed
+native prologue, before any transaction follows it; they do not add callbacks
+inside each due action. `BeforeSuccessorVerification` and
+`AfterSuccessorVerification` similarly bracket the final result checks.
+
 ## 6. Atomicity, branch selection and availability
 
 Each seed or successor records its nodes and checkpoint in one SQLite immediate
@@ -428,6 +545,63 @@ The output directory and sibling `-working` directory must both be new. As with
 the other examples, these commands require the actual built source and retained
 execution identities; listing them declares no passing campaign.
 
+### Authenticated-state companion campaign
+
+The same vector producer accepts an explicit companion destination:
+
+```bash
+trillionnium/target/release/examples/account_execution_vectors \
+  /tmp/new-account-execution-vectors \
+  --state-witness /tmp/new-state-witness-vectors
+python3 formal/pon-nakamoto-v1/state_witness_oracle.py \
+  --native-json /tmp/new-account-execution-vectors/observation.json \
+  --state-witness-json /tmp/new-state-witness-vectors/observation.json
+```
+
+The native destination and its working sibling must be new as above; the companion
+destination must also be new. Omitting the option retains the original native
+observation schema and exact three-file export. The companion destination contains
+exactly `observation.json`, under `pon-state-witness-native-observation-v1`. It binds
+the completed original native JSON bytes by SHA-256, its schema and exact context;
+it does not add a fourth file inside the standalone SQLite export.
+
+The required companion covers the same 43 block labels, with each supplied
+`StateWitness` and its `StateExecutionObservation`, plus 22 native state-witness
+refusal/cancellation cases. Each positive block checks two transitions, the actual
+mandatory prologue and final successor, both relative to the original parent.
+These are 86 checked state transitions on 43 existing block inputs, not 86 admitted
+blocks or a second independent account-growth workload. The original 20 signed
+transactions and 29 application-negative cases retain their separate denominators.
+
+The [companion oracle](../../../../formal/pon-nakamoto-v1/state_witness_oracle.py)
+independently derives the complete supported signed application fixture before
+comparing the supplied commitments. It reconstructs all funds/count components,
+complete non-account roots, mandatory receipts and original-parent account and
+non-account deltas. Its sparse-path merger verifies the account witnesses and
+derives updated roots/counts/balances, then compares them with its own complete
+account-root reconstruction. A self-consistent forged aggregate digest is not an
+authenticated parent. Missing, reordered or injected partition rows, altered
+before-values, inconsistent shared paths and present-null/absence substitutions
+are rejected by the separately defined relation.
+
+Its `pon-state-witness-oracle-observation-v1` report requires 43 blocks, 86 state
+transitions and 43 complete partition checks, and separately records the 29 source
+application negatives and 22 companion negatives. The pure tests in
+[`test_state_witness_oracle.py`](../../../../formal/pon-nakamoto-v1/test_state_witness_oracle.py)
+exercise proof merging, aggregate arithmetic, partition completeness and companion
+binding before native comparison. A test definition or required count is not an
+execution receipt.
+
+The existing CI wrapper has a separate v2 receipt for this expanded invocation.
+It retains the original three-file native map and the one-file companion map,
+checks the cross-file digest and complete file inventories, and requires all bytes
+to remain unchanged through the original and companion JSON oracles and final
+retention. Each input keeps the32 MiB JSON reader bound. Earlier v1 wrapper receipts
+and their failures remain historical; neither version's source binding promotes
+the other to executed evidence. Both oracles remain JSON-only for this fixture:
+no SQLite inspection, new W1/difficulty/fork-choice validation, native recovery
+rerun, generic model-cleanup semantics or public availability is established.
+
 ## 8. Required work before a new capacity protocol
 
 The experiment supports further architecture work only within its observed scope.
@@ -437,10 +611,14 @@ protocol contract covering at least the following:
 1. **Complete execution relation.** M06 currently scans balances, obligations and
    other state, constructs a complete root, and verifies aggregate funds. An account
    witness alone does not implement these scans or authenticate aggregate sums.
-   The research wrapper above checks actual semantic point access with full-State
-   execution retained. A replacement backend still needs authenticated aggregate
-   accounting, complete block access and shared-proof rules, persistent updates,
-   all mandatory transitions and executable equivalence against the full relation.
+   The original research wrapper checks actual semantic point access. The separate
+   companion now binds aggregate accounting and merges original-parent proofs at
+   mandatory and final execution boundaries, retaining a complete non-account
+   partition and full-State reference. A replacement backend must carry those
+   commitments through persistent updates, replace the full-partition input with
+   complete bounded discovery where appropriate, cover all mandatory accesses,
+   and preserve executable equivalence against the full relation. The research
+   proof limit cannot exclude otherwise valid forced obligations in a new profile.
 2. **Availability responsibility at admission.** Account creation, new miners,
    funded refunds and archives must identify who retains and serves the required
    bytes, who pays, how missing providers are replaced, and how already accepted
@@ -460,6 +638,7 @@ protocol contract covering at least the following:
    interruption and storage failures. The synthetic archive and its callback rollback
    tests do not replace these observations.
 
-The prototype therefore advances the permanent-account design with executable
-retention, bounded query authentication and explicit failures, while keeping current
-ledger capacity, work qualification and production acceptance unchanged.
+The prototype advances the permanent-account design with retention, checked point
+access and a full-parent-bound aggregate/mandatory relation, while keeping current
+ledger capacity, work qualification and production acceptance unchanged. Its full
+reference and complete non-account input remain explicit implementation costs.

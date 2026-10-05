@@ -27,6 +27,15 @@ pub type Result<T> = std::result::Result<T, &'static str>;
 /// callback itself conveys no proof, signature, parent or admission authority.
 /// Aggregate balance scans and complete state commitments still use full State.
 pub type AccountPointAccess<'a> = dyn Fn(&str) -> Result<()> + Sync + 'a;
+/// Research-only input for the complete mandatory non-account partition. The
+/// caller must authenticate these rows before entry. M06 additionally checks the
+/// exact complete partition against its full parent reference, then executes the
+/// actual mandatory relation using these supplied rows. A rejecting completion
+/// check prevents any transaction or output from following that prologue.
+pub struct MandatoryStateInput<'a> {
+    pub non_accounts: &'a State,
+    pub completed: &'a (dyn Fn(&State, &State, &[Vec<u8>]) -> Result<()> + Sync),
+}
 /// Caller-local observation only; no ledger byte or execution authority.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExecutionProgress {
@@ -1894,6 +1903,29 @@ pub fn execute_with_account_point_access<E: Send>(
         |_, next| root(next),
         &ExecutionControl::new(progress, &()),
         Some(account_access),
+        None,
+    )
+}
+/// Explicit research relation using authenticated account point access and a
+/// complete non-account partition. It retains the ordinary full-State funds,
+/// capacity and root reference; this is not partial-State or admission authority.
+pub fn execute_with_authenticated_state_input<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    account_access: &AccountPointAccess<'_>,
+    mandatory_input: &MandatoryStateInput<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
+    execute_with_commitment_control_and_account_access(
+        parent,
+        block,
+        cfg,
+        |_, next| root(next),
+        &ExecutionControl::new(progress, &()),
+        Some(account_access),
+        Some(mandatory_input),
     )
 }
 /// Ordinary caller-supplied facts, not prepared execution or admission authority.
@@ -1941,7 +1973,7 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
     control: &ExecutionControl<'_, E>,
 ) -> ControlledResult<Output, E> {
     execute_with_commitment_control_and_account_access(
-        parent, block, cfg, commitment, control, None,
+        parent, block, cfg, commitment, control, None, None,
     )
 }
 fn execute_with_commitment_control_and_account_access<E: Send>(
@@ -1951,6 +1983,7 @@ fn execute_with_commitment_control_and_account_access<E: Send>(
     mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
     control: &ExecutionControl<'_, E>,
     account_access: Option<&AccountPointAccess<'_>>,
+    mandatory_input: Option<&MandatoryStateInput<'_>>,
 ) -> ControlledResult<Output, E> {
     let progress = control.progress;
     let BlockExecution {
@@ -1967,7 +2000,7 @@ fn execute_with_commitment_control_and_account_access<E: Send>(
     )?;
     progress(ExecutionProgress::BeforeStateClone).map_err(ExecutionError::Cancelled)?;
     let (mut state, mut receipts) =
-        prepare_block_state_with_account_access(parent, height, cfg, account_access)?;
+        prepare_block_state_with_inputs(parent, height, cfg, account_access, mandatory_input)?;
     progress(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
     let mut fees = 0;
     let mut metrics = Metrics {
@@ -2153,6 +2186,28 @@ fn prepare_block_state_with_account_access(
     cfg: &Config,
     account_access: Option<&AccountPointAccess<'_>>,
 ) -> Result<(State, Vec<Vec<u8>>)> {
+    prepare_block_state_with_inputs(parent, height, cfg, account_access, None)
+}
+fn prepare_block_state_with_inputs(
+    parent: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+    mandatory_input: Option<&MandatoryStateInput<'_>>,
+) -> Result<(State, Vec<Vec<u8>>)> {
+    if let Some(input) = mandatory_input {
+        require(
+            !input
+                .non_accounts
+                .keys()
+                .any(|key| key.starts_with("account:"))
+                && parent
+                    .iter()
+                    .filter(|(key, _)| !key.starts_with("account:"))
+                    .eq(input.non_accounts.iter()),
+            "MANDATORY_STATE_PARTITION",
+        )?;
+    }
     if continuity_v1::enabled(cfg) {
         continuity_v1::check_state_with_account_access(
             parent,
@@ -2161,8 +2216,21 @@ fn prepare_block_state_with_account_access(
             account_access,
         )?;
     }
-    let mut state = parent.clone();
+    let mut state = if let Some(input) = mandatory_input {
+        let mut complete: State = parent
+            .iter()
+            .filter(|(key, _)| key.starts_with("account:"))
+            .map(|(key, value)| (key.clone(), value.clone()))
+            .collect();
+        complete.extend(input.non_accounts.clone());
+        complete
+    } else {
+        parent.clone()
+    };
     let receipts = mandatory(&mut state, height, cfg, account_access)?;
+    if let Some(input) = mandatory_input {
+        (input.completed)(parent, &state, &receipts)?;
+    }
     Ok((state, receipts))
 }
 

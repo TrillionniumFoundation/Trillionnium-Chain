@@ -4,7 +4,9 @@ use sha2::{Digest, Sha256};
 
 pub mod blocked_one_zero;
 pub mod blocked_zero;
+mod integer_paired;
 pub mod maintenance_periodic;
+pub mod maintenance_prefix;
 pub mod paired_product;
 pub mod structured;
 

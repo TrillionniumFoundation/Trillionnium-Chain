@@ -230,13 +230,15 @@ class CiContractTests(unittest.TestCase):
             with self.subTest(command=command):
                 self.rejected(path, original, changed)
 
-    def test_account_execution_oracle_requires_release_build_and_both_actual_checks(self):
+    def test_account_execution_oracles_require_release_build_and_all_actual_checks(self):
         for replacement in ['', '    true # omitted account execution and oracle\n',
-                            ACCOUNT_EXECUTION_ORACLE.splitlines(keepends=True)[0],
-                            ACCOUNT_EXECUTION_ORACLE.splitlines(keepends=True)[1],
+                            *ACCOUNT_EXECUTION_ORACLE.splitlines(keepends=True),
                             ACCOUNT_EXECUTION_ORACLE * 2]:
             with self.subTest(replacement=replacement):
                 self.rejected('scripts/ci/ci_job.sh', ACCOUNT_EXECUTION_ORACLE, replacement)
+        for command in ACCOUNT_EXECUTION_ORACLE.splitlines(keepends=True):
+            with self.subTest(missing=command):
+                self.rejected('scripts/ci/ci_job.sh', command, '')
         self.rejected('scripts/ci/ci_job.sh', NODE_EXAMPLE_BUILD, '')
         self.rejected('scripts/ci/ci_job.sh', ACCOUNT_ARCHIVE_ORACLE + ACCOUNT_EXECUTION_ORACLE,
                       ACCOUNT_EXECUTION_ORACLE + ACCOUNT_ARCHIVE_ORACLE)

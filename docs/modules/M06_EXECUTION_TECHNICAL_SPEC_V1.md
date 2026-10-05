@@ -248,3 +248,15 @@ Default execution entrypoints, production capacity, full-state commitments and
 consensus selection remain unchanged. A large synthetic archive, signed Node
 projection and proof-gated complete-State execution have separate observation
 contracts; none declares unbounded new-account admission or independent DA.
+
+The separate [authenticated complete-state companion](../protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md#authenticated-complete-state-companion)
+binds account root/count/balance and a complete ordered non-account partition with
+its aggregate funds to the checked full parent. Those non-account rows are actual
+mandatory-execution input, so an omitted due obligation cannot become an absent
+one. Combined original-parent account proofs derive the mandatory-prologue and
+final changed-account roots and aggregate deltas; both are compared with complete
+State rebuilding. The complete native M06 relation and its existing errors remain
+the execution authority. The new commitment/observation domains grant no ordinary
+Node admission, durable root or bounded partial-State execution. Full non-account
+input and reference scans remain, and the32-account research proof limit is not
+a new consensus limit.

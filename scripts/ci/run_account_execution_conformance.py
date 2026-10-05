@@ -59,6 +59,8 @@ INPUTS = sorted(set([
     'formal/pon-nakamoto-v1/requirements.txt',
     'formal/pon-nakamoto-v1/account_execution_oracle.py',
     'formal/pon-nakamoto-v1/test_account_execution_oracle.py',
+    'formal/pon-nakamoto-v1/state_witness_oracle.py',
+    'formal/pon-nakamoto-v1/test_state_witness_oracle.py',
     'formal/pon-nakamoto-v1/account_archive_oracle.py',
     'formal/pon-nakamoto-v1/strict_signature.py',
     'scripts/ci/run_account_execution_conformance.py',
@@ -106,6 +108,42 @@ NEGATIVE_LABELS = [
     'recredited-nonce-replay', 'fee-limit', 'insufficient-funds', 'consumer-signature',
     'resource-id', 'canonical-nonce-before-later-signature', 'cancel-before-output',
 ]
+STATE_WITNESS_EXPORT_FILES = {'observation.json'}
+STATE_WITNESS_NEGATIVE_LABELS = [
+    'witness-parent-checkpoint', 'witness-parent-id', 'witness-parent-height',
+    'commitment-id', 'commitment-account-count', 'commitment-account-balance',
+    'commitment-issued', 'commitment-context', 'missing-future-reward',
+    'missing-future-task', 'missing-cleanup-task', 'missing-maintenance',
+    'changed-non-account-value', 'duplicate-non-account', 'reordered-non-accounts',
+    'injected-account-row', 'extra-non-account', 'cancel-before-mandatory',
+    'cancel-after-mandatory', 'cancel-before-successor', 'cancel-after-successor',
+    'cancel-before-output',
+]
+STATE_WITNESS_NATIVE_SCOPE = {
+    'complete_state_required': True,
+    'complete_non_account_disclosure': True,
+    'account_root_updates_from_original_proofs': True,
+    'research_only': True,
+    'consensus_admission_by_research_wrapper': False,
+    'production_backend_changed': False,
+    'public_data_availability_accepted': False,
+    'production_activation': False,
+}
+STATE_WITNESS_ORACLE_SCOPE = {
+    'independent_genesis_and_signed_application_replay': True,
+    'complete_state_partition_roots_and_aggregates': True,
+    'mandatory_and_final_changes_independently_derived': True,
+    'post_account_root_derived_from_original_parent_proofs': True,
+    'complete_non_account_disclosure_required': True,
+    'native_consensus_admission_reexecuted': False,
+    'sqlite_database_opened': False,
+    'work_relation_reverified': False,
+    'fork_choice_reverified': False,
+    'storage_recovery_reexecuted': False,
+    'partial_state_backend_accepted': False,
+    'public_data_availability_accepted': False,
+    'production_activation': False,
+}
 
 
 def directory_sha256(directory: Path, *, exact: set[str] | None = None) -> dict[str, str]:
@@ -253,6 +291,57 @@ def validate_reports(native: dict, oracle: dict, native_digest: str) -> dict:
             'complete_archive_rows_from_observation_checked': True, 'sqlite_rows_independently_checked': False}
 
 
+def validate_state_witness_reports(native: dict, companion: dict, oracle: dict,
+                                   native_digest: str, companion_digest: str) -> dict:
+    """Bind the fresh JSON-only relation to the exact same signed native fixture."""
+    require(type(companion) is dict and companion.get('schema') == 'pon-state-witness-native-observation-v1'
+            and companion.get('result') == 'PASS'
+            and companion.get('source_native_schema') == 'pon-account-execution-native-observation-v1'
+            and not set(companion).intersection({'error', 'errors', 'failure', 'exception', 'timeout'})
+            and companion.get('native_json_sha256') == native_digest,
+            'complete state-witness companion must bind the exact original native JSON')
+    require(type(oracle) is dict and oracle.get('schema') == 'pon-state-witness-oracle-observation-v1'
+            and oracle.get('result') == 'PASS' and 'error' not in oracle
+            and oracle.get('native_schema') == companion['schema']
+            and oracle.get('native_json_sha256') == native_digest
+            and oracle.get('state_witness_json_sha256') == companion_digest,
+            'actual state-witness oracle must bind both original observation files')
+    for value, expected in [(companion.get('scope'), STATE_WITNESS_NATIVE_SCOPE),
+                            (oracle.get('native_scope'), STATE_WITNESS_NATIVE_SCOPE),
+                            (oracle.get('scope'), STATE_WITNESS_ORACLE_SCOPE)]:
+        require(type(value) is dict and value == expected and all(type(flag) is bool for flag in value.values()),
+                'state-witness evidence must retain its exact full-State JSON-only research scope')
+    require(companion.get('context') == native.get('context'), 'companion and signed fixture contexts must match')
+    require(oracle.get('genesis_checked') is True, 'complete state-witness relation requires independent genesis')
+    counts = {'blocks_checked': 43, 'state_transitions_checked': 86,
+              'signed_transaction_envelopes_checked': 20,
+              'source_application_negative_observations_checked': 29,
+              'complete_non_account_partitions_checked': 43,
+              'negative_observations_checked': len(STATE_WITNESS_NEGATIVE_LABELS)}
+    for name, expected in counts.items():
+        require(type(oracle.get(name)) is int and oracle[name] == expected,
+                'actual independent state-witness fixture count: ' + name)
+    for rows, labels in [(companion.get('blocks'), BLOCK_LABELS),
+                          (oracle.get('block_observations'), BLOCK_LABELS),
+                          (companion.get('negative_cases'), STATE_WITNESS_NEGATIVE_LABELS),
+                          (oracle.get('negative_observations'), STATE_WITNESS_NEGATIVE_LABELS)]:
+        require(type(rows) is list and all(type(row) is dict for row in rows)
+                and [row.get('label') for row in rows] == labels,
+                'complete ordered state-witness positive and negative observation sets required')
+    require(type(native.get('blocks')) is list and len(native['blocks']) == len(BLOCK_LABELS),
+            'complete source native signed block set required')
+    for block, row, checked in zip(native['blocks'], companion['blocks'], oracle['block_observations']):
+        identity = block.get('id')
+        require(type(identity) is list and len(identity) == 32
+                and all(type(value) is int and 0 <= value <= 255 for value in identity),
+                'actual signed block identity bytes required')
+        require(row.get('id') == identity and checked.get('id') == bytes(identity).hex(),
+                'companion and independent roots must bind the actual signed block identity')
+    return {**counts, 'genesis_checked': True, 'native_scope': dict(STATE_WITNESS_NATIVE_SCOPE),
+            'scope': dict(STATE_WITNESS_ORACLE_SCOPE), 'sqlite_rows_independently_checked': False,
+            'state_witness_json_sha256': companion_digest, 'native_json_sha256': native_digest}
+
+
 def finish_execution_receipt(output: Path, report: dict) -> None:
     """Success is assigned after final source, executable and complete export checks."""
     report['result'] = 'FAIL'
@@ -272,6 +361,9 @@ def finish_execution_receipt(output: Path, report: dict) -> None:
         report['working_files_sha256_at_finish'] = {
             name.removeprefix('native-working/'): value for name, value in report['artifact_sha256'].items()
             if name.startswith('native-working/')}
+        report['state_witness_files_sha256_at_finish'] = {
+            name.removeprefix('state-witness/'): value for name, value in report['artifact_sha256'].items()
+            if name.startswith('state-witness/')}
         working = [report.get('working_files_sha256_before_oracle'),
                    report.get('working_files_sha256_after_oracle'), report['working_files_sha256_at_finish']]
         report['working_files_changed_during_observation'] = (
@@ -283,6 +375,11 @@ def finish_execution_receipt(output: Path, report: dict) -> None:
             exported, _ = validate_export_retention(report['native_files_sha256_before_oracle'], report['artifact_sha256'])
             require(actual_export == exported == report['native_files_sha256_after_oracle'],
                     'complete execution export changed before final retention')
+            companion = directory_sha256(output / 'state-witness', exact=STATE_WITNESS_EXPORT_FILES)
+            require(companion == report['state_witness_files_sha256_before_oracle']
+                    == report['state_witness_files_sha256_after_oracle']
+                    == report['state_witness_files_sha256_at_finish'],
+                    'complete state-witness companion changed before final retention')
             require(report['binary_sha256_at_finish'] == report['binary_sha256_before'] ==
                     report['binary_sha256_after'] == digest(output / 'account_execution_vectors'),
                     'same actual execution binary must remain retained at final completion')
@@ -297,9 +394,11 @@ def finish_execution_receipt(output: Path, report: dict) -> None:
 
 def main() -> int:
     output = receipt_root('account-execution').resolve(strict=True)
-    report = {'schema': 'trnm-account-execution-conformance-execution-v1', 'result': 'FAIL',
+    report = {'schema': 'trnm-account-execution-conformance-execution-v2', 'result': 'FAIL',
               'observations': [], 'source_before': None, 'native_scope': dict(NATIVE_SCOPE),
               'oracle_scope': dict(ORACLE_SCOPE), 'working_files_immutability_claimed': False,
+              'state_witness_native_scope': dict(STATE_WITNESS_NATIVE_SCOPE),
+              'state_witness_oracle_scope': dict(STATE_WITNESS_ORACLE_SCOPE),
               'oracle_reads_sqlite': False, 'sqlite_rows_independently_checked': False,
               'production_activation': False}
 
@@ -328,7 +427,8 @@ def main() -> int:
         report['binary_sha256_before'] = digest(binary)
         shutil.copyfile(binary, output / 'account_execution_vectors')
         native_output, working_output = output / 'native', output / 'native-working'
-        checked([str(binary), str(native_output)], 'native', 300)
+        companion_output = output / 'state-witness'
+        checked([str(binary), str(native_output), '--state-witness', str(companion_output)], 'native', 300)
         native_path, database = native_output / 'observation.json', native_output / 'archive.sqlite'
         native = read_json(native_path)
         require(native.get('database') == str(database) and
@@ -337,6 +437,9 @@ def main() -> int:
         require((output / 'native.stdout').read_bytes() == native_path.read_bytes() + b'\n',
                 'native stdout must equal the complete observation JSON written by this execution')
         frozen = directory_sha256(native_output, exact=EXPORT_FILES)
+        companion_frozen = directory_sha256(companion_output, exact=STATE_WITNESS_EXPORT_FILES)
+        companion_path = companion_output / 'observation.json'
+        companion = read_json(companion_path)
         finalization = read_json(native_output / 'finalization.json')
         require(finalization == native.get('finalization'), 'complete native/snapshot finalization identity')
         report['snapshot_delivery'] = validate_snapshot_finalization(finalization, database,
@@ -347,14 +450,25 @@ def main() -> int:
                 any(name.startswith('native-node/') for name in report['working_files_sha256_before_oracle']),
                 'retain the actual source archive and native Node working files')
         report['native_files_sha256_before_oracle'] = frozen
+        report['state_witness_files_sha256_before_oracle'] = companion_frozen
         checked([sys.executable, 'formal/pon-nakamoto-v1/account_execution_oracle.py',
                  '--native-json', str(native_path)], 'oracle', 300)
         oracle = read_json(output / 'oracle.stdout')
         report['independent_validation'] = validate_reports(native, oracle, digest(native_path))
+        checked([sys.executable, 'formal/pon-nakamoto-v1/state_witness_oracle.py',
+                 '--native-json', str(native_path), '--state-witness-json', str(companion_path)],
+                'state-witness-oracle', 300)
+        state_oracle = read_json(output / 'state-witness-oracle.stdout')
+        report['state_witness_independent_validation'] = validate_state_witness_reports(
+            native, companion, state_oracle, digest(native_path), digest(companion_path))
         report['native_files_sha256_after_oracle'] = directory_sha256(native_output, exact=EXPORT_FILES)
         report['working_files_sha256_after_oracle'] = directory_sha256(working_output)
+        report['state_witness_files_sha256_after_oracle'] = directory_sha256(
+            companion_output, exact=STATE_WITNESS_EXPORT_FILES)
         require(report['native_files_sha256_after_oracle'] == frozen,
                 'independent JSON checker must leave all original export files unchanged')
+        require(report['state_witness_files_sha256_after_oracle'] == companion_frozen,
+                'independent JSON checker must leave the complete state-witness companion unchanged')
         report['binary_sha256_after'] = digest(binary)
         require(report['binary_sha256_after'] == report['binary_sha256_before'],
                 'actual execution binary changed during conformance')

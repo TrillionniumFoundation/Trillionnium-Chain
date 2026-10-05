@@ -2,9 +2,12 @@
 //! The complete State remains authoritative. This is a disposable research fixture.
 #[path = "support/account_archive_artifact.rs"]
 mod account_archive_artifact;
+#[path = "support/state_witness_artifact.rs"]
+mod state_witness_artifact;
 use account_archive_artifact::{create_working_archive_path, finish_archive_artifact};
 use rusqlite::Connection;
 use serde_json::{json, Value};
+use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -205,6 +208,7 @@ struct Fixture {
     blocks: Vec<Value>,
     reopens: Vec<Value>,
     reorganizations: usize,
+    state_witness_blocks: Option<Vec<Value>>,
 }
 
 #[derive(Clone)]
@@ -609,6 +613,44 @@ impl Fixture {
         let id = self.node.admit(&packet, 100_000).unwrap();
         let after = self.node.state_at(id).unwrap();
         assert_eq!(after, checked.output.state);
+        if self.state_witness_blocks.is_some() {
+            let input = account_archive_execution::prepare_state_witness(
+                &self.settings,
+                &self.archive,
+                parent_checkpoint.id(),
+                &before,
+            )
+            .unwrap();
+            let before_rows = rows(&self.archive_path);
+            let complete = account_archive_execution::execute_with_state_witness(
+                &self.settings,
+                &self.archive,
+                parent_checkpoint.id(),
+                &before,
+                BlockInput {
+                    transactions: &transactions,
+                    height,
+                    miner,
+                    parent_id: parent,
+                },
+                account_archive_execution::StateExecutionInput {
+                    accounts: &witnesses,
+                    state: &input,
+                },
+            )
+            .unwrap();
+            assert_eq!(complete.execution.output.state, after);
+            assert_eq!(complete.execution.output.root, checked.output.root);
+            assert_eq!(complete.execution.output.receipts, checked.output.receipts);
+            assert_eq!(complete.execution.observation, checked.observation);
+            assert_eq!(self.node.state_at(parent).unwrap(), before);
+            assert_eq!(rows(&self.archive_path), before_rows);
+            self.state_witness_blocks.as_mut().unwrap().push(json!({
+                "label":label,"id":id,"state_witness":input,
+                "observation":complete.state_observation,"parent_unchanged":true,
+                "archive_unchanged":true,"checked_execution_matches_native_output":true
+            }));
+        }
         let successor = self
             .archive
             .project_successor(
@@ -669,12 +711,17 @@ impl Fixture {
 
 fn main() {
     let args: Vec<_> = std::env::args_os().collect();
-    assert_eq!(
-        args.len(),
-        2,
-        "usage: account_execution_vectors NEW_OUTPUT_DIRECTORY"
-    );
+    assert!(args.len() == 2 || args.len() == 4,
+        "usage: account_execution_vectors NEW_OUTPUT_DIRECTORY [--state-witness NEW_COMPANION_DIRECTORY]");
     let output = PathBuf::from(&args[1]);
+    let companion = if args.len() == 4 {
+        assert_eq!(args[2], "--state-witness");
+        let path = PathBuf::from(&args[3]);
+        fs::create_dir(&path).expect("companion directory must not already exist");
+        Some(path)
+    } else {
+        None
+    };
     fs::create_dir(&output).expect("output directory must not already exist");
     let archive_path = create_working_archive_path(&output).unwrap();
     let node_path = archive_path.parent().unwrap().join("native-node");
@@ -707,6 +754,7 @@ fn main() {
         blocks: Vec::new(),
         reopens: Vec::new(),
         reorganizations: 0,
+        state_witness_blocks: companion.as_ref().map(|_| Vec::new()),
     };
     let spend10 = transfer(&settings, 10, 1, 2, 37);
     let spend11 = transfer(&settings, 11, 1, 2, 19);
@@ -853,6 +901,9 @@ fn main() {
         .sum();
     assert_eq!(signed_transactions, 20);
     let negative_cases = fixture.rejection_cases();
+    let state_witness_negatives = companion
+        .as_ref()
+        .map(|_| state_witness_artifact::negative_cases(&mut fixture));
     let final_state = fixture.node.read_active().unwrap();
     let final_active = fixture.archive.active().unwrap();
     let final_storage = fixture.archive.observation().unwrap();
@@ -875,5 +926,23 @@ fn main() {
         "production_backend_changed":false,"protocol_capacity_changed":false,"public_data_availability_accepted":false,"production_activation":false}});
     let bytes = serde_json::to_vec(&observed).unwrap();
     fs::write(output.join("observation.json"), &bytes).unwrap();
+    if let Some(path) = companion {
+        let data = json!({
+            "schema":"pon-state-witness-native-observation-v1","result":"PASS",
+            "source_native_schema":"pon-account-execution-native-observation-v1",
+            "native_json_sha256":hex::encode(Sha256::digest(&bytes)),"context":context,
+            "blocks":fixture.state_witness_blocks.unwrap(),
+            "negative_cases":state_witness_negatives.unwrap(),
+            "scope":{"complete_state_required":true,"complete_non_account_disclosure":true,
+                "account_root_updates_from_original_proofs":true,"research_only":true,
+                "consensus_admission_by_research_wrapper":false,"production_backend_changed":false,
+                "public_data_availability_accepted":false,"production_activation":false}
+        });
+        fs::write(
+            path.join("observation.json"),
+            serde_json::to_vec(&data).unwrap(),
+        )
+        .unwrap();
+    }
     println!("{}", String::from_utf8(bytes).unwrap());
 }

@@ -33,6 +33,31 @@ def reports():
     return native, oracle
 
 
+def state_witness_reports():
+    native, _ = reports()
+    native['context'] = {'synthetic': 'context-identity-only'}
+    for index, block in enumerate(native['blocks']):
+        block['id'] = [index] * 32
+    companion = {'schema': 'pon-state-witness-native-observation-v1', 'result': 'PASS',
+        'source_native_schema': 'pon-account-execution-native-observation-v1',
+        'native_json_sha256': '1' * 64, 'context': native['context'],
+        'blocks': copy.deepcopy(native['blocks']),
+        'negative_cases': [{'label': label} for label in execution.STATE_WITNESS_NEGATIVE_LABELS],
+        'scope': dict(execution.STATE_WITNESS_NATIVE_SCOPE)}
+    oracle = {'schema': 'pon-state-witness-oracle-observation-v1', 'result': 'PASS',
+        'native_schema': companion['schema'], 'native_json_sha256': '1' * 64,
+        'state_witness_json_sha256': '2' * 64, 'genesis_checked': True,
+        'blocks_checked': 43, 'state_transitions_checked': 86,
+        'signed_transaction_envelopes_checked': 20, 'source_application_negative_observations_checked': 29,
+        'complete_non_account_partitions_checked': 43, 'negative_observations_checked': 22,
+        'block_observations': [{'label': block['label'], 'id': bytes(block['id']).hex()}
+                                for block in native['blocks']],
+        'negative_observations': [{'label': label} for label in execution.STATE_WITNESS_NEGATIVE_LABELS],
+        'native_scope': dict(execution.STATE_WITNESS_NATIVE_SCOPE),
+        'scope': dict(execution.STATE_WITNESS_ORACLE_SCOPE)}
+    return native, companion, oracle
+
+
 def snapshot(database: Path):
     # This is an intentionally synthetic header fixture, not a SQLite database
     # correctness test. The delivery checker reads raw bytes and never opens SQL.
@@ -64,6 +89,52 @@ def snapshot(database: Path):
 
 
 class AccountExecutionReceiptTests(unittest.TestCase):
+    def test_companion_receipt_binds_both_files_all_blocks_and_distinct_json_scope(self):
+        native, companion, oracle = state_witness_reports()
+        checked = execution.validate_state_witness_reports(native, companion, oracle, '1' * 64, '2' * 64)
+        self.assertEqual(checked['blocks_checked'], 43)
+        self.assertEqual(checked['state_transitions_checked'], 86)
+        self.assertEqual(checked['negative_observations_checked'], 22)
+        self.assertFalse(checked['scope']['sqlite_database_opened'])
+        self.assertFalse(checked['scope']['partial_state_backend_accepted'])
+
+    def test_companion_counts_source_identity_order_and_hidden_failures_are_rejected(self):
+        native, companion, oracle = state_witness_reports()
+        changes = [lambda value: value.update(native_json_sha256='3' * 64),
+                   lambda value: value.update(error=None),
+                   lambda value: value['blocks'].reverse(),
+                   lambda value: value['blocks'][0].update(id=[255] * 32),
+                   lambda value: value['negative_cases'].pop(),
+                   lambda value: value.update(context={})]
+        for change in changes:
+            altered = copy.deepcopy(companion)
+            change(altered)
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                execution.validate_state_witness_reports(native, altered, oracle, '1' * 64, '2' * 64)
+        for fields in [{'state_witness_json_sha256': '3' * 64}, {'native_json_sha256': '3' * 64},
+                       {'blocks_checked': True}, {'state_transitions_checked': 85},
+                       {'complete_non_account_partitions_checked': 42}, {'negative_observations_checked': 21},
+                       {'signed_transaction_envelopes_checked': 19}, {'source_application_negative_observations_checked': 28},
+                       {'genesis_checked': 1}, {'negative_observations': []}, {'error': None}, {'result': 'FAIL'}]:
+            altered = copy.deepcopy(oracle)
+            altered.update(fields)
+            with self.subTest(fields=fields), self.assertRaises(ValueError):
+                execution.validate_state_witness_reports(native, companion, altered, '1' * 64, '2' * 64)
+
+    def test_companion_receipt_rejects_scope_promotions_and_boolean_integer_aliases(self):
+        native, companion, oracle = state_witness_reports()
+        for section in ('scope', 'native_scope'):
+            for key, value in oracle[section].items():
+                for replacement in (not value, int(value)):
+                    altered = copy.deepcopy(oracle)
+                    altered[section][key] = replacement
+                    with self.subTest(section=section, key=key), self.assertRaises(ValueError):
+                        execution.validate_state_witness_reports(native, companion, altered, '1' * 64, '2' * 64)
+        altered = copy.deepcopy(companion)
+        altered['scope']['complete_state_required'] = 1
+        with self.assertRaises(ValueError):
+            execution.validate_state_witness_reports(native, altered, oracle, '1' * 64, '2' * 64)
+
     def test_execution_json_reader_has_its_own_actual_32_mib_boundary(self):
         self.assertEqual(execution.MAX_JSON_BYTES, 32 * 1024 * 1024)
         with tempfile.TemporaryDirectory(prefix='trnm-execution-json-boundary-') as directory:
@@ -236,6 +307,10 @@ class AccountExecutionReceiptTests(unittest.TestCase):
         native.mkdir()
         for name in execution.EXPORT_FILES:
             (native / name).write_bytes(b'synthetic-final-retention-only')
+        companion = output / 'state-witness'
+        companion.mkdir()
+        (companion / 'observation.json').write_bytes(b'synthetic-companion-retention-only')
+        companion_hashes = execution.directory_sha256(companion, exact=execution.STATE_WITNESS_EXPORT_FILES)
         working = output / 'native-working'
         working.mkdir()
         (working / 'archive.sqlite').write_bytes(b'synthetic-working-original')
@@ -247,6 +322,8 @@ class AccountExecutionReceiptTests(unittest.TestCase):
                   'binary_sha256_after': execution.digest(original),
                   'native_files_sha256_before_oracle': exported,
                   'native_files_sha256_after_oracle': dict(exported),
+                  'state_witness_files_sha256_before_oracle': companion_hashes,
+                  'state_witness_files_sha256_after_oracle': dict(companion_hashes),
                   'working_files_sha256_before_oracle': execution.directory_sha256(working),
                   'working_files_sha256_after_oracle': execution.directory_sha256(working),
                   'checks_completed_before_retention': True}
@@ -270,7 +347,8 @@ class AccountExecutionReceiptTests(unittest.TestCase):
             self.assertEqual(retained['native_files_sha256_at_finish'], report['native_files_sha256_before_oracle'])
 
     def test_late_export_or_binary_changes_cannot_keep_a_successful_result(self):
-        for kind in ['extra-directory', 'late-sidecar', 'changed-export', 'binary', 'copied-binary', 'source']:
+        for kind in ['extra-directory', 'late-sidecar', 'changed-export', 'binary', 'copied-binary', 'source',
+                     'changed-companion', 'missing-companion', 'extra-companion']:
             with self.subTest(kind=kind), tempfile.TemporaryDirectory(prefix='trnm-execution-late-controls-') as directory:
                 root = Path(directory)
                 output, report, source = self.finish_fixture(root)
@@ -284,6 +362,12 @@ class AccountExecutionReceiptTests(unittest.TestCase):
                     Path(report['binary_path']).write_bytes(b'changed-binary')
                 elif kind == 'copied-binary':
                     (output / 'account_execution_vectors').write_bytes(b'changed-copy')
+                elif kind == 'changed-companion':
+                    (output / 'state-witness/observation.json').write_bytes(b'changed-companion')
+                elif kind == 'missing-companion':
+                    (output / 'state-witness/observation.json').unlink()
+                elif kind == 'extra-companion':
+                    (output / 'state-witness/extra').write_bytes(b'new')
                 else:
                     (root / 'pin.txt').write_bytes(b'changed-source')
                 retained = self.finish(root, output, report, source)
