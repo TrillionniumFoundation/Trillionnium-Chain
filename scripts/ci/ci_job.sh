@@ -15,6 +15,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_ci_execution.py
     python3 scripts/ci/test_cross_arch_cost.py
     python3 scripts/ci/test_zero_locality_cost.py
+    python3 scripts/ci/test_zero_paired_cost.py
     python3 scripts/ci/test_one_zero_locality_cost.py
     python3 scripts/ci/test_maintenance_cost.py
     python3 scripts/ci/test_work_rejection_report.py
