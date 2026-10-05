@@ -13,7 +13,6 @@ use crate::{consensus, ensure, sequence_root, Error, Packet, Result, Settings};
 use rusqlite::{params, Connection, OptionalExtension};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::BTreeSet;
 use trnm_mvcc_fee::pon_executor::{root, State};
 use trnm_protocol::pon_wire::{hash, Hash};
 
@@ -174,12 +173,44 @@ fn delta_root(rows: &[Delta]) -> Result<Hash> {
     ))
 }
 fn difference(before: &State, after: &State) -> Result<Vec<Delta>> {
-    let mut keys: BTreeSet<_> = before.keys().collect();
-    keys.extend(after.keys());
+    // Walk the two existing sorted maps without a third full-key tree or a
+    // repeated lookup per key. Still encode EVERY value, before then after:
+    // Value equality is not a substitute for canonical byte equality (signed
+    // floating zero, integer/float representations, present null and absence).
+    let mut left = before.iter();
+    let mut right = after.iter();
+    let mut a = left.next();
+    let mut b = right.next();
     let mut rows = Vec::new();
-    for key in keys {
-        let prior = before.get(key).map(canonical).transpose()?;
-        let next = after.get(key).map(canonical).transpose()?;
+    loop {
+        let (key, prior, next) = match (a, b) {
+            (Some((ka, va)), Some((kb, vb))) => match ka.cmp(kb) {
+                std::cmp::Ordering::Less => {
+                    a = left.next();
+                    (ka, Some(va), None)
+                }
+                std::cmp::Ordering::Equal => {
+                    a = left.next();
+                    b = right.next();
+                    (ka, Some(va), Some(vb))
+                }
+                std::cmp::Ordering::Greater => {
+                    b = right.next();
+                    (kb, None, Some(vb))
+                }
+            },
+            (Some((key, value)), None) => {
+                a = left.next();
+                (key, Some(value), None)
+            }
+            (None, Some((key, value))) => {
+                b = right.next();
+                (key, None, Some(value))
+            }
+            (None, None) => break,
+        };
+        let prior = prior.map(canonical).transpose()?;
+        let next = next.map(canonical).transpose()?;
         if prior != next {
             rows.push((key.clone(), prior, next));
         }
@@ -396,4 +427,109 @@ pub(crate) fn publish(
     save(db, &mut record)?;
     verify_state(db, settings, block, after, progress)?;
     verify_history(db, settings, block, progress)
+}
+
+#[cfg(test)]
+mod difference_tests {
+    use super::*;
+    use serde_json::json;
+    use std::collections::BTreeSet;
+
+    // Retain the original algorithm, including independent key union, lookups
+    // and byte encoding. This reference shares no traversal with production.
+    fn reference(before: &State, after: &State) -> Result<Vec<Delta>> {
+        let mut keys: BTreeSet<_> = before.keys().collect();
+        keys.extend(after.keys());
+        let mut rows = Vec::new();
+        for key in keys {
+            let prior = before.get(key).map(canonical).transpose()?;
+            let next = after.get(key).map(canonical).transpose()?;
+            if prior != next {
+                rows.push((key.clone(), prior, next));
+            }
+        }
+        Ok(rows)
+    }
+
+    fn compare(before: &State, after: &State) {
+        let initial = (canonical(before).unwrap(), canonical(after).unwrap());
+        for (source, target) in [(before, after), (after, before)] {
+            let expected = reference(source, target).unwrap();
+            let actual = difference(source, target).unwrap();
+            assert_eq!(actual, expected);
+            assert_eq!(canonical(&actual).unwrap(), canonical(&expected).unwrap());
+            assert_eq!(delta_root(&actual).unwrap(), delta_root(&expected).unwrap());
+        }
+        assert_eq!(initial, (canonical(before).unwrap(), canonical(after).unwrap()));
+    }
+
+    #[test]
+    fn sorted_difference_preserves_null_absence_signed_zero_and_numeric_bytes() {
+        let values = [
+            Value::Null,
+            json!(false),
+            json!(0),
+            json!(0.0),
+            json!(-0.0),
+            json!(u64::MAX),
+            json!([null, false, 0, -0.0]),
+            json!({"nested": ["", "\u{0000}", "λ"]}),
+        ];
+        let keys = ["", "a", "a\0", "z", "λ", "\u{ffff}", "😀"];
+        for key in keys {
+            for source in &values {
+                let before = State::from([(key.to_string(), source.clone())]);
+                compare(&before, &State::new());
+                for target in &values {
+                    compare(&before, &State::from([(key.to_string(), target.clone())]));
+                }
+            }
+        }
+        let minus = State::from([("zero".into(), json!(-0.0))]);
+        let plus = State::from([("zero".into(), json!(0.0))]);
+        let rows = difference(&minus, &plus).unwrap();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].1.as_deref(), Some(b"-0.0".as_slice()));
+        assert_eq!(rows[0].2.as_deref(), Some(b"0.0".as_slice()));
+        compare(&State::new(), &State::new());
+    }
+
+    #[test]
+    fn sorted_difference_matches_independent_union_for_interleaved_branch_edits() {
+        for seed in 0..64u64 {
+            let mut before = State::new();
+            let mut after = State::new();
+            for index in 0..32u64 {
+                let key = format!("key-{index:02}");
+                if (index + seed) % 3 != 0 {
+                    before.insert(key.clone(), json!([index, seed, null]));
+                }
+                if (index * 7 + seed) % 5 != 0 {
+                    after.insert(key, json!([index, seed + index % 2, null]));
+                }
+            }
+            compare(&before, &after);
+            compare(&before, &before);
+        }
+    }
+
+    #[test]
+    fn sorted_difference_full_key_walk_keeps_late_changes_and_original_state() {
+        // Traversal boundary, not ledger admission or a public capacity claim.
+        let before: State = (0..65_536u64)
+            .map(|i| (format!("key-{i:05}"), json!(i)))
+            .collect();
+        let mut after = before.clone();
+        after.insert("key-00000".into(), Value::Null);
+        after.remove("key-32768");
+        after.insert("key-65535".into(), json!(-0.0));
+        after.insert("!first".into(), json!(false));
+        after.insert("λ-last".into(), json!([]));
+        let rows = difference(&before, &after).unwrap();
+        assert_eq!(rows.len(), 5);
+        assert_eq!(rows.first().unwrap().0, "!first");
+        assert_eq!(rows.last().unwrap().0, "λ-last");
+        compare(&before, &after);
+        compare(&before, &before);
+    }
 }
