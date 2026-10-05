@@ -18,7 +18,10 @@ fn retained_winner_accepts_at_its_exact_ticket() {
 fn target_predecessor_and_wrong_task_reject_before_replay() {
     for (control, expected) in [(1, WorkError::Target), (2, WorkError::Task)] {
         let observation = checks::check_structured(&[control]);
-        assert_eq!(observation.verdict, Err(VerificationError::Relation(expected)));
+        assert_eq!(
+            observation.verdict,
+            Err(VerificationError::Relation(expected))
+        );
         assert!(observation.points.is_empty());
     }
 }

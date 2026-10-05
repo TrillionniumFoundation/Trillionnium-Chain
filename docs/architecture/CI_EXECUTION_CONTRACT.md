@@ -43,6 +43,29 @@ The additional budget is an execution allowance, not a runtime improvement or
 evidence that the complete suite passes. Full-State checks and transactional
 readbacks still incur real work; endpoint performance needs separate measurement.
 
+## Required native tests must actually execute
+
+The two release controls are filtered, ignored libtest tests. A successful Cargo
+exit alone is insufficient: an exact filter that no longer matches runs zero tests
+successfully, and omitting `--ignored` can successfully leave the selected test
+ignored. After each existing Cargo/`tee` pipeline,
+[`check_required_native_test.py`](../../scripts/ci/check_required_native_test.py)
+requires one invocation, the exact test identity and a completed summary with one
+pass and zero failures, ignored tests or measurements. It rejects missing, repeated,
+reordered or wrong-test summaries. No extra native execution or compiler invocation
+is added, and the existing test commands, deadlines, assertions and key limit stay
+unchanged. Parsing streams the existing log rather than loading it into memory.
+
+The checker accepts the pinned Rust pretty-format `--nocapture` output, including
+progress on the test announcement or final `ok` line. It is not a defense against
+malicious test code forging stdout. `pipefail` still owns actual process failure;
+fresh-log guards and before/after source checks still own the corresponding existing
+boundaries. A valid transcript does not independently establish state correctness,
+full-capacity completion on another SHA, or public-network acceptance. Regression
+fixtures run through the existing `test_ci_execution.py` entry point; shell controls
+retain failed output and reject zero-test or ignored-test success without starting
+the next release control.
+
 ## Tracked-byte source identity
 
 `verify_ci_source.py` checks the actual tracked worktree against the raw committed

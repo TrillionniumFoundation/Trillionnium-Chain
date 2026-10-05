@@ -1257,3 +1257,22 @@ producer experiment nor two hosted architectures resolve GPU/ASIC implementation
 arbitrary preprocessing, all useful-input distributions, fastest adversaries or
 the full recomputation verifier's rejection cost. All existing qualification and
 activation flags remain false.
+
+## Canonical task-byte reuse in current verification
+
+After the unchanged fixed-length/version/target checks and little-endian decoding,
+the production and limb kernels validate claimed C, A and B in the original order.
+They hash the exact canonical A/B slices already present in the proof rather than
+allocating two16-KiB re-encodings. The scalar reference deliberately retains
+`task_id(a,b)` and its independent field re-encoding. No task result is cached and
+no producer-supplied identity is trusted. Field, Task, ticket, Transcript, Product
+and cancellation order remain unchanged; the private verified-work type still
+requires the entire successful relation.
+
+A native asymmetric-byte regression covers first/middle/last noncanonical elements
+in each matrix, swapped A/B slices and complete successful products. Existing
+three-kernel semantic and raw fuzz paths continue to exercise the parser, late
+rejection and progress boundaries. Two removed temporary buffers are an allocation
+improvement, not a claimed wall-time speedup, verifier complexity reduction, cheaper
+valid proof relation or evidence of mining hardness. Exact-source cost observations
+must still include setup, misses, exhaustion and the strongest retained producers.

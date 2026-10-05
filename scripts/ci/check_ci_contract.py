@@ -121,11 +121,13 @@ NATIVE_RELEASE_BLOCK = '''    (
       test ! -e "$trnm_native_receipt_root/native-capacity-release.log"
       test ! -L "$trnm_native_receipt_root/native-capacity-release.log"
       cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-capacity-release.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_native_receipt_root/native-capacity-release.log" --test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover
       test ! -e "$trnm_native_receipt_root/native-account-verification-cost"
       test ! -L "$trnm_native_receipt_root/native-account-verification-cost"
       test ! -e "$trnm_native_receipt_root/native-account-verification-cost.log"
       test ! -L "$trnm_native_receipt_root/native-account-verification-cost.log"
       TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY="$trnm_native_receipt_root/native-account-verification-cost" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-account-verification-cost.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_native_receipt_root/native-account-verification-cost.log" --test account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost
     )
 '''
 

@@ -460,6 +460,19 @@ class CiContractTests(unittest.TestCase):
         self.rejected(path, NATIVE_RELEASE_BLOCK, swapped)
         self.rejected(path, NATIVE_RELEASE_BLOCK, NATIVE_RELEASE_BLOCK * 2)
 
+    def test_release_test_execution_checks_cannot_be_removed_relabelled_or_reordered(self):
+        checks = [line for line in NATIVE_RELEASE_BLOCK.splitlines(keepends=True)
+                  if 'python3 scripts/ci/check_required_native_test.py ' in line]
+        self.assertEqual(len(checks), 2)
+        for line in checks:
+            for replacement in ['', line.replace('python3 ', 'true # python3 '), line * 2,
+                                line.replace(' --test account_archive_prototype::', ' --test other::'),
+                                line.replace('/native-', '/previous-native-')]:
+                with self.subTest(line=line, replacement=replacement):
+                    self.rejected('scripts/ci/ci_job.sh', line, replacement)
+            previous = NATIVE_RELEASE_BLOCK.split(line)[0].splitlines(keepends=True)[-1]
+            self.rejected('scripts/ci/ci_job.sh', previous + line, line + previous)
+
     def test_release_control_paths_cannot_reuse_or_overwrite_prior_observations(self):
         for line in NATIVE_RELEASE_BLOCK.splitlines(keepends=True):
             if 'test ! -e ' in line or 'test ! -L ' in line:
@@ -478,7 +491,8 @@ cargo() {
     *native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover*)
       printf '%s\\n' 'synthetic capacity stdout'
       printf '%s\\n' 'synthetic capacity stderr' >&2
-      if test "$TRNM_TEST_FAILURE" = capacity; then return 7; fi ;;
+      if test "$TRNM_TEST_FAILURE" = capacity; then return 7; fi
+      printf '%s\\n' 'running 1 test' 'test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover ... ok' 'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s' ;;
     *native_complete_account_verification_cost*)
       test "$TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY" = "$TRNM_CI_RECEIPT_DIR/native-account-verification-cost"
       printf '%s\\n' 'synthetic account stdout'
@@ -488,7 +502,7 @@ cargo() {
   esac
 }
 '''
-                result = subprocess.run(['bash', '-c', harness + NATIVE_RELEASE_BLOCK],
+                result = subprocess.run(['bash', '-c', harness + NATIVE_RELEASE_BLOCK], cwd=self.root,
                                         env={'PATH': '/usr/bin:/bin', 'TRNM_CI_RECEIPT_DIR': str(root),
                                              'TRNM_TEST_FAILURE': failed_case},
                                         capture_output=True, text=True, timeout=10)
@@ -501,6 +515,59 @@ cargo() {
                 else:
                     self.assertIn('synthetic account stdout', account.read_text())
                     self.assertIn('synthetic account stderr', account.read_text())
+
+    def test_release_pipeline_rejects_successful_zero_ignored_wrong_or_incomplete_runs(self):
+        # Synthetic libtest transcripts test the real shell/checker integration,
+        # not the native capacity or account algorithms.
+        harness = r'''set -euo pipefail
+cargo() {
+  case "$*" in
+    *native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover*)
+      stage=capacity
+      name=account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover ;;
+    *native_complete_account_verification_cost*)
+      stage=account
+      name=account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost ;;
+    *) return 97 ;;
+  esac
+  printf '%s\n' "$stage" >> "$TRNM_TEST_CALLS"
+  mode=pass
+  if test "$stage" = "$TRNM_TEST_STAGE"; then mode="$TRNM_TEST_MODE"; fi
+  if test "$mode" = zero; then
+    printf '%s\n' 'running 0 tests' 'test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s'
+    return 0
+  fi
+  if test "$mode" = wrong; then name=wrong::test; fi
+  printf '%s\n' 'running 1 test'
+  printf 'test %s ... ok\n' "$name"
+  if test "$mode" = incomplete; then return 0; fi
+  if test "$mode" = ignored; then
+    printf '%s\n' 'test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 9 filtered out; finished in 0.00s'
+  else
+    printf '%s\n' 'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s'
+  fi
+  if test "$mode" = nonzero; then return 23; fi
+  return 0
+}
+'''
+        with tempfile.TemporaryDirectory(prefix='trnm-release-outcomes-') as temporary:
+            for stage in ['capacity', 'account']:
+                for mode in ['pass', 'zero', 'ignored', 'wrong', 'incomplete', 'nonzero']:
+                    with self.subTest(stage=stage, mode=mode):
+                        output = Path(temporary) / f'{stage} {mode}'
+                        calls = Path(temporary) / f'{stage}-{mode}.calls'
+                        result = subprocess.run(['bash', '-c', harness + NATIVE_RELEASE_BLOCK],
+                            cwd=self.root, env={'PATH': '/usr/bin:/bin',
+                                'TRNM_CI_RECEIPT_DIR': str(output), 'TRNM_TEST_CALLS': str(calls),
+                                'TRNM_TEST_STAGE': stage, 'TRNM_TEST_MODE': mode},
+                            capture_output=True, text=True, timeout=10)
+                        expected = 0 if mode == 'pass' else 23 if mode == 'nonzero' else 1
+                        self.assertEqual(result.returncode, expected, result.stderr)
+                        expected_calls = ['capacity'] if stage == 'capacity' and mode != 'pass' else ['capacity', 'account']
+                        self.assertEqual(calls.read_text().splitlines(), expected_calls)
+                        self.assertTrue((output / 'native-capacity-release.log').is_file())
+                        self.assertEqual((output / 'native-account-verification-cost.log').exists(),
+                                         len(expected_calls) == 2)
 
     def test_model_observation_block_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()

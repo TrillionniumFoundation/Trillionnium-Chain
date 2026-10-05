@@ -113,10 +113,8 @@ fn complete_scan_preserves_shared_zero_reward_and_archive_reservations() {
     state.insert("contribution:missing".into(), json!({}));
     state.insert("contribution:retained".into(), json!({}));
     state.insert("evaluation-archive:retained".into(), json!({}));
-    let actual = continuity_v1::capacity_with_progress(&state, 1, &cfg, &mut || {
-        Ok::<(), ()>(())
-    })
-    .unwrap();
+    let actual =
+        continuity_v1::capacity_with_progress(&state, 1, &cfg, &mut || Ok::<(), ()>(())).unwrap();
     assert_eq!(actual, continuity_v1::capacity(&state, 1, &cfg).unwrap());
     assert_eq!(actual.credit_account_reserve, 1);
     assert_eq!(actual.archive_reserve, 1);
