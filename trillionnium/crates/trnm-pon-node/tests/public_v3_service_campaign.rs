@@ -477,7 +477,10 @@ fn public_v3_mixed_calls_reopen_with_complete_failure_denominators() {
         serde_json::to_vec_pretty(&from_zero).unwrap(),
     )
     .unwrap();
-    println!("from-zero shared-budget: {}", from_zero["finite_target_met"]);
+    println!(
+        "from-zero shared-budget: {}",
+        from_zero["finite_target_met"]
+    );
     assert_eq!(
         report["finite_target_met"], true,
         "see retained reference-derived request and phase outcomes"

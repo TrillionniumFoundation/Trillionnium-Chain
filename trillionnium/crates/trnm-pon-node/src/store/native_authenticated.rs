@@ -460,7 +460,10 @@ mod difference_tests {
             assert_eq!(canonical(&actual).unwrap(), canonical(&expected).unwrap());
             assert_eq!(delta_root(&actual).unwrap(), delta_root(&expected).unwrap());
         }
-        assert_eq!(initial, (canonical(before).unwrap(), canonical(after).unwrap()));
+        assert_eq!(
+            initial,
+            (canonical(before).unwrap(), canonical(after).unwrap())
+        );
     }
 
     #[test]
