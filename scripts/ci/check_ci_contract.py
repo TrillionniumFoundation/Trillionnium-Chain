@@ -115,6 +115,7 @@ MODEL_OBSERVATION_BLOCK = '''    (
       python3 formal/pon-nakamoto-v1/obligation_range_oracle.py "$TRNM_OBLIGATION_RANGE_VECTORS" --output "$trnm_model_receipt_root/obligation-range/oracle.json"
     )
 '''
+FROM_ZERO_WORK = '    python3 scripts/ci/work_from_zero.py --binary "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" --arch x64 --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/work-from-zero"\n'
 NATIVE_RELEASE_BLOCK = '''    (
       trnm_native_receipt_root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
       mkdir -p "$trnm_native_receipt_root"
@@ -147,6 +148,9 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     require(continuity in lanes['protocol-contract'] and script.count(CONTINUITY_ORIGINAL) == 1
             and script.count(CONTINUITY_TRANSITIONS) == 1,
             'continuity and paired-work oracles must execute in protocol-contract after their actual release build')
+    require(ZERO_WORK_ORACLE + FROM_ZERO_WORK in lanes['protocol-contract']
+            and script.count(FROM_ZERO_WORK) == 1,
+            'from-zero negative construction and all three kernels execute after the actual release build')
     require(script.count(PAIRED_WORK_ORACLE) == 1,
             'one native paired-work byte comparison must retain its fresh current-lane output')
     require(script.count(ZERO_WORK_ORACLE) == 1,
@@ -160,10 +164,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
             script.count(ACCOUNT_EXECUTION_ORACLE) == 1,
             'native account execution, complete state witness and independent JSON oracles must execute once after the actual Node release build')
     expected = ('    cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\n'
-                '    python3 scripts/ci/run_supply_chain.py\n' + MODEL_OBSERVATION_BLOCK +
-                NATIVE_RELEASE_BLOCK + RUST_DOCS + RUST_CLIPPY)
+                '    python3 scripts/ci/run_supply_chain.py\n' + '    cargo fetch --locked --manifest-path trillionnium/Cargo.toml\n' +
+                NATIVE_RELEASE_BLOCK + MODEL_OBSERVATION_BLOCK + RUST_DOCS + RUST_CLIPPY)
     require(code_lines(lanes['rust-baseline']) == code_lines(expected),
-            'one actual workspace test must collect fresh native observations, check every independent reader, explicitly execute both release controls, then run docs/Clippy outside exports')
+            'fetch locked inputs, execute both mandatory release controls before the one full workspace observation suite, then check every independent reader and docs/Clippy outside exports')
     require(script.count(RUST_ALL_TARGETS) == 1, 'the full workspace observation suite must execute exactly once')
     for selector in ['TRNM_MODEL_COMPOSITION_VECTORS', 'TRNM_MODEL_COMPOSITION_RUN_ID',
                      'TRNM_OBLIGATION_RANGE_VECTORS', 'TRNM_ZERO_PAIRED_PREFIX_OUTPUT']:
