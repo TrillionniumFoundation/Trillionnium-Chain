@@ -66,6 +66,36 @@ fixtures run through the existing `test_ci_execution.py` entry point; shell cont
 retain failed output and reject zero-test or ignored-test success without starting
 the next release control.
 
+The current lane executes the two existing release controls before its complete
+workspace/export-reader block, following formatting, dependency audit and one
+locked fetch. This order exposes a mandatory capacity failure before the long
+debug matrix. It does not reduce the fixture, repeat the release controls, omit
+any workspace reader, or change the 180-minute job limit. The source contract and
+negative controls require this order and preserve both execution guards.
+
+The completed upstream run
+[37310821903](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/37310821903)
+provides a separate, immutable observation: candidate
+`4413027b2d57624f8db118d8fae2f1a4720b26d3` and prospective merge
+`47a380801ff1d07a23931535a5867b3ad573e2f8` both tested tree
+`7bc97a903bdba76e599bfb1c53a3cc88981ad647`. Their named full-capacity release
+controls completed with one pass and no failures or ignored tests, in 6,783.21 and
+6,792.55 seconds respectively. Each log reports 24 admitted native packets, two
+signed transactions, one rejected growth attempt, 65,536 full keys, one quota
+refund, one recipient re-entry, interruption at `detach:0`, and two cold reopens.
+The genesis is explicitly synthetic and preallocated: this does not demonstrate
+an organic history growing from the installed small genesis to the key limit.
+
+The head artifact is `11355087942`, ZIP SHA-256
+`93704787a17413acb8b830c6dc1a6222b90d316b109b6711ba66714e116666c6`;
+the merge artifact is `11355586587`, ZIP SHA-256
+`789c5ee0ef5c83d9b27deb9f70e9ed4f33bd0082d463bc2e0b48bbb2ea6855f0`.
+Those complete ZIP digests, both source receipts and both named libtest logs were
+rechecked. Their complete-account comparison tests also each passed in 1.88
+seconds. The large fixture's roughly 113-minute cost is retained, not presented
+as a service latency or performance qualification. Neither upstream run executes
+later source changes or grants current-head, work-hardness or public acceptance.
+
 ## Tracked-byte source identity
 
 `verify_ci_source.py` checks the actual tracked worktree against the raw committed
@@ -565,8 +595,9 @@ commands, then independently recomputes all four groups in Python. The protocol
 lane builds the release `pon_zero_io` bridge and runs `test_zero_work.py` using
 `TRNM_ZERO_WORK` and a fresh `TRNM_ZERO_WORK_OUTPUT`, requiring all88 native calls.
 
-After all workspace/export readers, every head and merge Rust lane explicitly
-runs two exact ignored tests with `--offline --locked --release`, one after the
+After formatting, dependency audit and a locked fetch, and before the complete
+workspace/export-reader block, every head and merge Rust lane explicitly runs
+two exact ignored tests with `--offline --locked --release`, one after the
 other against the same release library graph. The first is the authenticated
 65,536-key continuation/refund/new-entry/pending-reorganization fixture; the second
 compares original/current complete account-check primitives. Their ordinary debug
@@ -601,6 +632,70 @@ error/progress outcomes fail comparison; faster or slower measured clocks do not
 Incremental construction from an existing valid proof and construction including
 its preceding honest work keep separate denominators. Neither ratio is a public
 service measurement, an optimum over all malformed proofs or a work-hardness proof.
+
+## Bounded from-zero transcript-rejection construction
+
+The existing offline `pon_work_io` example now has an explicitly separate negative
+input constructor and three diagnostic verifier modes. Ordinary `prove` and
+`verify` keep their original exact input lengths and byte outputs. No new network
+entrypoint, proof version, consensus profile or default verifier is introduced.
+
+`forge-transcript` accepts exactly challenge (32 bytes), expected task (32), target
+(32), canonical A and B (32,768), and a little-endian 64-bit attempt budget. Its
+32,872-byte frame is rejected unless the budget is in `1..=4096` and the actual
+canonical matrices match the supplied task. It constructs `PNW1`, those matrices,
+an invented zero product, and a candidate false transcript digest. For nonce `n`,
+the trace is the existing domain-separated work hash with tag
+`from-zero-fake-trace-v1` over the challenge and little-endian nonce. The normal
+ticket relation is then checked against the exact target. Construction stops at
+the first passing ticket, or retains the entire exhausted budget without a proof.
+A passing ticket is only a prefilter candidate, never verified work.
+
+The constructor calls no prover, prepared-task constructor or transcript evaluator.
+Its setup timer includes frame decoding, matrix validation, task computation and
+proof-prefix allocation. Its search timer includes every attempted trace/ticket
+and the retained attempt-vector writes; total native construction also covers the
+final trace copy. JSON serialization and process IO are outside these clocks.
+Caller material generation and enclosing process wall time are therefore retained
+separately by `scripts/ci/work_from_zero.py`, not labelled native kernel time.
+
+`diagnose-production`, `diagnose-reference` and `diagnose-limb` each accept the
+ordinary 49,284-byte verification frame and call the corresponding actual verifier.
+They report its exact result category and elapsed kernel time. These diagnostic
+processes returning zero means a diagnostic was emitted, not that the proof was
+accepted. The collector requires the actual `Transcript` refusal; `Accepted`,
+`Product`, another refusal, malformed output or a process failure fails this
+experiment instead of being relabelled to fit its hypothesis.
+
+The fixed experiment uses dense, zero, rank-one and sparse synthetic materials;
+`7f` and `07` followed by 31 `ff` bytes are the two comparison targets. Nine
+samples run for each material/target. A separate one-attempt near-zero target
+provides a finite exhaustion control, not a zero-target early-rejection shortcut.
+The full grid has 108 construction cohorts. Every emitted nonce, digest, ticket,
+first-hit decision and complete candidate proof is independently reconstructed in
+Python. Every selected candidate then runs through all three native kernels in
+rotated sample order and the independent Python W1 oracle's complete replay.
+The collector is wired after the existing release build and zero-work comparison
+in both `protocol-contract` lanes. Its current CI invocation is x64; the retained
+older two-architecture cost suites remain separate and unchanged.
+
+A fresh output directory retains original request/stdout/stderr bytes, process
+status and timeouts, source and binary hashes before and after, ELF architecture,
+all cohorts and exact integer-ratio summaries. Exhausted cohorts contribute their
+full construction costs and no invented verifier calls. A zero-success group or
+zero construction denominator yields an unknown ratio, not zero or infinity.
+The denominator excludes separately reported caller material generation and
+process overhead, so it is neither end-to-end attacker time nor network cost.
+Source snapshots and an ELF digest alone do not attest the binary's build; the
+collector keeps that limitation explicit and the hosted build remains necessary.
+
+This cold negative constructor is not a Product-forgery optimum, a cheapest legal
+miner, a reused-preprocessing bound, or a hardness proof. The earlier charged
+honest-winner mutation experiment remains authoritative for its own distinct
+samples. No relative-speed threshold promotes an acceptance flag. The Python
+negative controls test pairing, malformed output and accounting only; native
+execution and independent scalar replay require their own actual source-bound
+run. Public hostile-service behavior remains outside this offline experiment.
 
 ## Actual fuzz execution
 

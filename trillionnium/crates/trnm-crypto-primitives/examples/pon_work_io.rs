@@ -78,7 +78,10 @@ fn forge_transcript(input: &[u8]) -> Result<Vec<u8>, &'static str> {
     let mut attempts = Vec::new();
     let mut chosen = None;
     for nonce in 0..limit {
-        let trace = hash(b"from-zero-fake-trace-v1", &[&challenge, &nonce.to_le_bytes()]);
+        let trace = hash(
+            b"from-zero-fake-trace-v1",
+            &[&challenge, &nonce.to_le_bytes()],
+        );
         let ticket = hash(b"ticket", &[&challenge, &trace]);
         let selected = target != [0; 32] && ticket <= target;
         attempts.push((nonce, trace, ticket, selected));
@@ -176,7 +179,10 @@ mod tests {
         let challenge = [23; 32];
         let mut proof = b"PNW1".to_vec();
         proof.resize(PROOF_BYTES, 0);
-        let trace = hash(b"from-zero-fake-trace-v1", &[&challenge, &0u64.to_le_bytes()]);
+        let trace = hash(
+            b"from-zero-fake-trace-v1",
+            &[&challenge, &0u64.to_le_bytes()],
+        );
         proof[PROOF_BYTES - 32..].copy_from_slice(&trace);
         let mut input = challenge.to_vec();
         input.extend(task);
