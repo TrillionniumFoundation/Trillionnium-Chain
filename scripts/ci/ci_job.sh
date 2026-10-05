@@ -19,6 +19,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_one_zero_locality_cost.py
     python3 scripts/ci/test_maintenance_cost.py
     python3 scripts/ci/test_work_rejection_report.py
+    python3 scripts/ci/test_work_from_zero.py
     python3 scripts/ci/test_account_archive_conformance.py
     python3 scripts/ci/test_run_account_execution_conformance.py
     python3 scripts/ci/report_current_implementation.py --check
@@ -33,6 +34,7 @@ case "${1:?required job}" in
     TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v
     TRNM_PAIRED_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io")" TRNM_PAIRED_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work" python3 formal/pon-nakamoto-v1/test_paired_work.py -v
     TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" TRNM_ZERO_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work" python3 formal/pon-nakamoto-v1/test_zero_work.py -v
+    python3 scripts/ci/work_from_zero.py --binary "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" --arch x64 --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/work-from-zero"
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
@@ -84,6 +86,22 @@ case "${1:?required job}" in
   rust-baseline)
     cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
     python3 scripts/ci/run_supply_chain.py
+    # Execute the existing mandatory release boundary before the long debug matrix.
+    cargo fetch --locked --manifest-path trillionnium/Cargo.toml
+    (
+      trnm_native_receipt_root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
+      mkdir -p "$trnm_native_receipt_root"
+      test ! -e "$trnm_native_receipt_root/native-capacity-release.log"
+      test ! -L "$trnm_native_receipt_root/native-capacity-release.log"
+      cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-capacity-release.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_native_receipt_root/native-capacity-release.log" --test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover
+      test ! -e "$trnm_native_receipt_root/native-account-verification-cost"
+      test ! -L "$trnm_native_receipt_root/native-account-verification-cost"
+      test ! -e "$trnm_native_receipt_root/native-account-verification-cost.log"
+      test ! -L "$trnm_native_receipt_root/native-account-verification-cost.log"
+      TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY="$trnm_native_receipt_root/native-account-verification-cost" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-account-verification-cost.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_native_receipt_root/native-account-verification-cost.log" --test account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost
+    )
     # The full workspace matrix includes both evaluation_sync_observation tests.
     # Run that target once in this matrix; a separate pre-run duplicated over ten
     # minutes of actual sync work and left the hosted 45-minute job incomplete.
@@ -132,20 +150,6 @@ case "${1:?required job}" in
       python3 formal/pon-nakamoto-v1/account_multiproof_oracle.py "$TRNM_ACCOUNT_MULTIPROOF_VECTORS" --output "$trnm_model_receipt_root/account-multiproof/oracle.json"
       python3 formal/pon-nakamoto-v1/test_obligation_range_oracle.py -v
       python3 formal/pon-nakamoto-v1/obligation_range_oracle.py "$TRNM_OBLIGATION_RANGE_VECTORS" --output "$trnm_model_receipt_root/obligation-range/oracle.json"
-    )
-    (
-      trnm_native_receipt_root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
-      mkdir -p "$trnm_native_receipt_root"
-      test ! -e "$trnm_native_receipt_root/native-capacity-release.log"
-      test ! -L "$trnm_native_receipt_root/native-capacity-release.log"
-      cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-capacity-release.log"
-      python3 scripts/ci/check_required_native_test.py "$trnm_native_receipt_root/native-capacity-release.log" --test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover
-      test ! -e "$trnm_native_receipt_root/native-account-verification-cost"
-      test ! -L "$trnm_native_receipt_root/native-account-verification-cost"
-      test ! -e "$trnm_native_receipt_root/native-account-verification-cost.log"
-      test ! -L "$trnm_native_receipt_root/native-account-verification-cost.log"
-      TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY="$trnm_native_receipt_root/native-account-verification-cost" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-account-verification-cost.log"
-      python3 scripts/ci/check_required_native_test.py "$trnm_native_receipt_root/native-account-verification-cost.log" --test account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost
     )
     cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features
     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings

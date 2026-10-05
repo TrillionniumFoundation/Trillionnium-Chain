@@ -15,7 +15,7 @@ from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRAN
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
-                               NATIVE_RELEASE_BLOCK,
+                               NATIVE_RELEASE_BLOCK, FROM_ZERO_WORK,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
@@ -576,8 +576,24 @@ cargo() {
         self.rejected('scripts/ci/ci_job.sh', original, changed)
 
     def test_model_oracles_must_precede_documentation_tests(self):
-        self.rejected('scripts/ci/ci_job.sh', MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK + RUST_DOCS,
-                      RUST_DOCS + MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK)
+        self.rejected('scripts/ci/ci_job.sh', MODEL_OBSERVATION_BLOCK + RUST_DOCS,
+                      RUST_DOCS + MODEL_OBSERVATION_BLOCK)
+
+    def test_capacity_release_must_precede_the_full_debug_matrix(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        changed = original.replace(NATIVE_RELEASE_BLOCK, '').replace(
+            MODEL_OBSERVATION_BLOCK, MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK)
+        self.rejected('scripts/ci/ci_job.sh', original, changed)
+        self.rejected('scripts/ci/ci_job.sh',
+                      '    cargo fetch --locked --manifest-path trillionnium/Cargo.toml\n' + NATIVE_RELEASE_BLOCK,
+                      NATIVE_RELEASE_BLOCK)
+
+    def test_from_zero_diagnostic_cannot_be_dropped_or_relabelled(self):
+        for replacement in ['', FROM_ZERO_WORK * 2,
+                            FROM_ZERO_WORK.replace('pon_work_io', 'pon_zero_io'),
+                            FROM_ZERO_WORK.replace('--arch x64', '--arch arm64'),
+                            FROM_ZERO_WORK.replace('/work-from-zero"', '/prior-work-from-zero"')]:
+            self.rejected('scripts/ci/ci_job.sh', FROM_ZERO_WORK, replacement)
 
     def test_model_exports_cannot_leak_into_doc_or_clippy_commands(self):
         self.rejected('scripts/ci/ci_job.sh', '    )\n' + RUST_DOCS, RUST_DOCS + '    )\n')
