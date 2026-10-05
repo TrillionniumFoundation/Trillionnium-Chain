@@ -96,7 +96,10 @@ fn check_statement(
     let reference = observe(1, challenge, task, target, bytes, cancellation);
     for kernel in [0, 2] {
         let actual = observe(kernel, challenge, task, target, bytes, cancellation);
-        assert_eq!(actual, reference, "verdict, exact output or progress differs");
+        assert_eq!(
+            actual, reference,
+            "verdict, exact output or progress differs"
+        );
     }
     reference
 }

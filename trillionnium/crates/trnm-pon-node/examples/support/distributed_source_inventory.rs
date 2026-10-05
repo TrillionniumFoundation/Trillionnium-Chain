@@ -2381,6 +2381,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/tests/capacity_progress.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/tests/capacity_progress.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/tests/checkpoint_tile_material_v1.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3361,6 +3368,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/continuity_authenticated.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/continuity_cli.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3617,6 +3631,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/task_output_root_parity.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/work_fuzz_semantics.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/work_fuzz_semantics.rs"
         )),
     ),
     (

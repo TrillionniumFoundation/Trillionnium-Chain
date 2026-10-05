@@ -322,3 +322,16 @@ The first CLI regression run exposed an incorrect test assertion against the est
 outer JSON envelope: the command succeeded, while the test read `state` instead of
 `result.state`. The assertion was corrected to the actual public contract and reran
 successfully; no CLI envelope or existing command behavior was changed to hide it.
+
+### Native authenticated revocation and interrupted recovery regression
+
+`trnm-pon-node/tests/continuity_authenticated.rs` starts from the installed genesis,
+revokes the only optional signed task, admits 24 real maintenance packets and checks
+the resulting state against the ordinary backend. It follows an initially absent
+reward recipient through height21 maturity and a signed spend, then interrupts the
+authenticated backend at `detach:0` while selecting a heavier branch. Three cold
+reopens check task revocation, zero useful-output credit, retained old branch state,
+account nonce rollback and the completed active generation. No optional lease is
+renewed or silently substituted. The capacity-observation cancellation check retains
+its typed nonfatal origin. This is an installed-genesis integration regression, not
+the separate full65,536-key fixture or a permanent-account growth solution.

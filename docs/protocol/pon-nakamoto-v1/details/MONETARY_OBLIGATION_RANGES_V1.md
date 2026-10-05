@@ -185,3 +185,26 @@ Execution evidence belongs to the exact tested source, command and artifact.
 This document does not establish hosted CI completion, sustained proof serving,
 physical data retention, a worst-case time/RAM bound, independent operators,
 public availability or production activation.
+
+## Nonempty native quota and release lifecycle regressions
+
+The existing `trnm-pon-node/tests/account_obligation_ranges.rs` fixture now selects
+either ordinary or native authenticated Node storage while retaining its independent
+complete-State M06 comparison and separate account archive. Original exported task
+vectors and their schema are unchanged. Additional ordinary Cargo tests execute:
+
+- Eighteen real signed quota reservations after native funding. Six blocks per
+  backend cover sixteen first-height refunds, two following-height refunds, actual
+  cleanup and a subsequent signed recipient spend. Omitting a future positive quota
+  or a retained zero-balance quota is rejected without changing either store.
+- A native attested development evaluation, funded release at height56 and mature
+  allocation claim at height76. Seventy-seven blocks per backend compare exact
+  packets and state. Both the funded future release and the paid zero release must
+  remain in the complete monetary interval; missing rows cannot fall back to the
+  checked complete State. The release deadline is not shortened by this test.
+
+Each backend runs actual signatures, work, packet admission, state transitions and
+archive projection; no task/quota/release row is injected into a native snapshot.
+These fixtures do not establish a full-capacity run, release-deadline expiry, public
+model efficacy, independent evaluator custody or prospective gain. The independent
+Python task export remains narrower than the added Rust quota/release observations.

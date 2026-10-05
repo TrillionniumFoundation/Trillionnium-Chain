@@ -459,7 +459,25 @@ fn verify_with_kernel<E>(
     let (a, tail) = matrices.split_at(CELLS);
     let (b, claimed) = tail.split_at(CELLS);
     validate(claimed)?;
-    let actual_task = task_id(a, b)?;
+    let actual_task = match kernel {
+        // Retain the scalar reference's independent field re-encoding.
+        VerificationKernel::ScalarReference => task_id(a, b)?,
+        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => {
+            validate(a)?;
+            validate(b)?;
+            // The fixed grammar above decoded these exact little-endian words.
+            // Reuse the original canonical field bytes only after all three
+            // matrices passed the same validation order. This is a hash input,
+            // not a cached task verdict, and removes two 16-KiB byte buffers.
+            hash(
+                b"task",
+                &[
+                    &bytes[4..4 + CELLS * 4],
+                    &bytes[4 + CELLS * 4..4 + CELLS * 8],
+                ],
+            )
+        }
+    };
     if actual_task != expected_task {
         return Err(WorkError::Task.into());
     }
@@ -833,6 +851,75 @@ mod tests {
         result: Result<VerifiedWork, WorkError>,
     ) -> Result<(Hash, Hash, Hash, Vec<u32>), WorkError> {
         result.map(|work| (work.challenge(), work.task(), work.ticket(), work.product))
+    }
+
+    #[test]
+    fn canonical_task_byte_reuse_preserves_asymmetric_inputs_and_field_precedence() {
+        let a: Vec<_> = (0..CELLS)
+            .map(|i| ((i * 65_537 + 258) as u128 % Q) as u32)
+            .collect();
+        let b: Vec<_> = (0..CELLS)
+            .map(|i| (Q - 1 - (i % 257) as u128) as u32)
+            .collect();
+        let task = task_id(&a, &b).unwrap();
+        let challenge = [42; 32];
+        let proof = prove(challenge, &a, &b).unwrap();
+        assert_eq!(
+            hash(
+                b"task",
+                &[
+                    &proof[4..4 + CELLS * 4],
+                    &proof[4 + CELLS * 4..4 + CELLS * 8]
+                ]
+            ),
+            task
+        );
+        for start in [4, 4 + CELLS * 4, 4 + CELLS * 8] {
+            for index in [0, CELLS / 2, CELLS - 1] {
+                let mut invalid = proof.clone();
+                let offset = start + 4 * index;
+                invalid[offset..offset + 4].copy_from_slice(&(Q as u32).to_le_bytes());
+                for kernel in [
+                    VerificationKernel::ScalarReference,
+                    VerificationKernel::Transposed,
+                    VerificationKernel::LimbTranscript,
+                ] {
+                    let mut calls = 0;
+                    let result = verify_with_kernel(
+                        challenge,
+                        [0; 32],
+                        [255; 32],
+                        &invalid,
+                        &mut |_| {
+                            calls += 1;
+                            Ok::<(), usize>(())
+                        },
+                        kernel,
+                    );
+                    assert_eq!(
+                        result.unwrap_err(),
+                        VerificationError::Relation(WorkError::Field)
+                    );
+                    assert_eq!(calls, 0);
+                }
+            }
+        }
+        let mut reordered = proof.clone();
+        reordered[4..4 + CELLS * 4].copy_from_slice(&proof[4 + CELLS * 4..4 + CELLS * 8]);
+        reordered[4 + CELLS * 4..4 + CELLS * 8].copy_from_slice(&proof[4..4 + CELLS * 4]);
+        assert_eq!(
+            verify(challenge, task, [255; 32], &reordered).unwrap_err(),
+            WorkError::Task
+        );
+        let reference = checked_value(verify_reference(challenge, task, [255; 32], &proof));
+        assert_eq!(
+            checked_value(verify(challenge, task, [255; 32], &proof)),
+            reference
+        );
+        assert_eq!(
+            checked_value(verify_limb(challenge, task, [255; 32], &proof)),
+            reference
+        );
     }
 
     #[test]
