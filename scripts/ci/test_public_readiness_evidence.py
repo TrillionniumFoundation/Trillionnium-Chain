@@ -424,6 +424,35 @@ class DurableStoreTests(unittest.TestCase):
                              (self.H('native-branch-schema-v1',ddl.encode()),))
         with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
 
+    def test_authenticated_domain_cannot_relabel_legacy_tables(self):
+        ddl,_ = check.native_durable_schema(check.ROOT)
+        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+            database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                             (self.H('native-authenticated-branch-schema-v1',ddl.encode()),))
+        with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+
+    def test_authenticated_tables_are_out_of_scope_even_with_resealed_metadata(self):
+        ddl,domain = check.native_durable_schema(check.ROOT)
+        extension = ('CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\n'
+                     'CREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);\n')
+        original = self.H(domain,ddl.encode())
+        for schema in (original,self.H(domain,(ddl+extension).encode()),
+                       self.H('native-authenticated-branch-schema-v1',(ddl+extension).encode())):
+            with self.subTest(schema=schema.hex()):
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.executescript(extension)
+                    database.execute('INSERT INTO archive_nodes VALUES(?,?)',(bytes(32),b'unverified node'))
+                    database.execute('INSERT INTO native_state_commitments VALUES(?,?)',(bytes(32),b'unverified commitment'))
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.execute('DROP TABLE archive_nodes')
+                    database.execute('DROP TABLE native_state_commitments')
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                self.verify()
+
     def test_resealed_wrong_half_link_is_not_accepted_as_derived_structure(self):
         block,previous,height = self.blocks[1]
         with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
@@ -460,25 +489,169 @@ class DurableStoreTests(unittest.TestCase):
                     database.commit(); database.close()
         self.verify()
 
-    def test_schema_extraction_is_explicit_versioned_and_unknown_composition_fails_closed(self):
-        root = self.folder/'source-fixture'
-        store = root/'trillionnium/crates/trnm-pon-node/src/store.rs';store.parent.mkdir(parents=True)
+class NativeDurableSchemaTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.root = Path(self.temporary.name)
+        self.store = self.root/'trillionnium/crates/trnm-pon-node/src/store.rs'
+        self.store.parent.mkdir(parents=True)
+        self.index = self.store.with_name('ancestry_index.rs')
+        self.current = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/store.rs').read_text()
+        self.current_index = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/ancestry_index.rs').read_text()
+
+    def tearDown(self): self.temporary.cleanup()
+
+    def extract(self, source, index=None):
+        self.store.write_text(source)
+        self.index.write_text(self.current_index if index is None else index)
+        return check.native_durable_schema(self.root)
+
+    def replace_once(self, source, before, after):
+        self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+        return source.replace(before,after,1)
+
+    def test_historical_literal_v1_and_inline_composed_v2_stay_supported(self):
         ddl = 'CREATE TABLE exact(key BLOB);'
-        legacy = 'const DDL : &str = "'+ddl+'";fn open(){let id=hash(b"native-branch-schema-v1", &[ DDL.as_bytes() ]);}'
-        store.write_text(legacy)
-        self.assertEqual(check.native_durable_schema(root),(ddl,'native-branch-schema-v1'))
-        for mutated in (legacy.replace('native-branch-schema-v1','native-branch-schema-unknown'),
-                        legacy+legacy,legacy.replace('const DDL','const OTHER')):
-            store.write_text(mutated)
-            with self.assertRaises(ValueError): check.native_durable_schema(root)
-        current = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/store.rs').read_text()
-        index = store.with_name('ancestry_index.rs')
-        index.write_text((check.ROOT/'trillionnium/crates/trnm-pon-node/src/ancestry_index.rs').read_text())
-        store.write_text(current)
-        self.assertEqual(check.native_durable_schema(root),check.native_durable_schema(check.ROOT))
-        store.write_text(current.replace('format!("{}{}", BASE_DDL, crate::ancestry_index::DDL)',
-                                        'format!("{}", BASE_DDL)'))
-        with self.assertRaisesRegex(ValueError,'durable V2 schema composition'): check.native_durable_schema(root)
+        v1 = 'const DDL : &str = "'+ddl+'";fn open(){let id=hash(b"native-branch-schema-v1", &[ DDL.as_bytes() ]);}'
+        index_ddl = 'CREATE TABLE jumps(key BLOB);'
+        index = 'const DDL: &str = "'+index_ddl+'";'
+        v2 = ('const BASE_DDL: &str = "'+ddl+'";'
+              'fn ddl() -> String { format!("{}{}", BASE_DDL, crate::ancestry_index::DDL) }'
+              'fn open(){ let ddl = ddl(); let id = hash(b"native-branch-schema-v2", &[ddl.as_bytes()]); }')
+        self.assertEqual(self.extract(v1),(ddl,'native-branch-schema-v1'))
+        self.assertEqual(self.extract(v2,index),(ddl+index_ddl,'native-branch-schema-v2'))
+        # Mentioning the new type in non-code must not select its parser branch.
+        noncode = '\n// StateBackend\nconst NOTE: &str = r#"StateBackend"#;\n'
+        self.assertEqual(self.extract(v2+noncode,index),(ddl+index_ddl,'native-branch-schema-v2'))
+        for label,source in [('v1-wrong-domain',v1.replace('native-branch-schema-v1','native-branch-schema-v2')),
+                             ('v1-auth-domain',v1.replace('native-branch-schema-v1','native-authenticated-branch-schema-v1')),
+                             ('v1-duplicate',v1+v1),('v1-missing-literal',v1.replace('const DDL','const OTHER')),
+                             ('v2-wrong-domain',v2.replace('native-branch-schema-v2','native-branch-schema-v1')),
+                             ('v2-auth-domain',v2.replace('native-branch-schema-v2','native-authenticated-branch-schema-v1')),
+                             ('v2-unknown-domain',v2.replace('native-branch-schema-v2','native-branch-schema-unknown')),
+                             ('v2-incomplete',v2.replace('format!("{}{}", BASE_DDL, crate::ancestry_index::DDL)','format!("{}", BASE_DDL)')),
+                             ('v2-reversed',v2.replace('BASE_DDL, crate::ancestry_index::DDL','crate::ancestry_index::DDL, BASE_DDL'))]:
+            with self.subTest(label=label),self.assertRaises(ValueError): self.extract(source,index)
+        for source,domain in [(v1,'native-branch-schema-v1'),(v2,'native-branch-schema-v2')]:
+            broken = source.replace(domain,'native-branch-schema-unknown')
+            for decoy in ['\n// '+source+'\n','\nconst NOTE: &str = '+json.dumps(source)+';\n',
+                          '\nconst NOTE: &str = r##"'+source+'"##;\n']:
+                with self.subTest(domain=domain,decoy=decoy),self.assertRaises(ValueError):
+                    self.extract(broken+decoy,index)
+
+    def test_current_backend_returns_the_exact_preserved_legacy_bytes(self):
+        sys.path.insert(0,str(check.ROOT/'formal/pon-nakamoto-v1'))
+        from contract_wire import H
+        ddl,domain = self.extract(self.current)
+        self.assertEqual(domain,'native-branch-schema-v2')
+        # Pinned to the independently recomputed pre-backend V2 bytes, not to
+        # another call through this extractor or to a resealed fixture.
+        self.assertEqual(len(ddl.encode()),4775)
+        self.assertEqual(H(domain,ddl.encode()).hex(),
+                         '8c2627fa0b06e51742e7e6d40662c61d4b4727e810abc02b24634a8a817dc0e0')
+        self.assertNotRegex(ddl,r'archive_nodes|native_state_commitments')
+        changed = self.replace_once(self.current,'format!("{}{}", BASE_DDL, crate::ancestry_index::DDL)',
+                                    'format!("{}", BASE_DDL)')
+        with self.assertRaisesRegex(ValueError,'durable V2 schema composition'): self.extract(changed)
+
+    def test_backend_domains_and_composition_fail_closed(self):
+        legacy = 'b"native-branch-schema-v2"'
+        authenticated = 'b"native-authenticated-branch-schema-v1"'
+        auth_arm = 'Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),'
+        mutations = [
+            ('legacy-v1',legacy,'b"native-branch-schema-v1"'),
+            ('legacy-auth',legacy,authenticated),('auth-legacy',authenticated,legacy),
+            ('legacy-unknown',legacy,'b"native-branch-schema-unknown"'),
+            ('auth-unknown',authenticated,'b"native-authenticated-branch-schema-unknown"'),
+            ('literal-space',legacy,'b"native-branch- schema-v2"'),
+            ('legacy-extension','Self::Legacy => ddl(),','Self::Legacy => format!("{}{}", ddl(), native_authenticated::DDL),'),
+            ('auth-omitted',auth_arm,'Self::AuthenticatedV1 => ddl(),'),
+            ('auth-reversed',auth_arm,'Self::AuthenticatedV1 => format!("{}{}", native_authenticated::DDL, ddl()),'),
+            ('auth-format',auth_arm,'Self::AuthenticatedV1 => format!("{}", ddl(), native_authenticated::DDL),'),
+            ('unselected-hash','hash(domain, &[self.ddl().as_bytes()])','hash(domain, &[ddl().as_bytes()])'),
+            ('extra-hash-input','hash(domain, &[self.ddl().as_bytes()])','hash(domain, &[self.ddl().as_bytes(), b"extra"])'),
+            ('shadowed-domain','hash(domain, &[self.ddl().as_bytes()])','let domain = b"other"; hash(domain, &[self.ddl().as_bytes()])'),
+            ('extra-variant','enum StateBackend {\n    Legacy,\n    AuthenticatedV1,','enum StateBackend {\n    Legacy,\n    AuthenticatedV1,\n    Other,'),
+            ('wildcard',auth_arm,'_ => format!("{}{}", ddl(), native_authenticated::DDL),'),
+            ('wrong-impl-owner','impl StateBackend {','impl StateBackend for Other {'),
+        ]
+        for label,before,after in mutations:
+            with self.subTest(label=label),self.assertRaises(ValueError):
+                self.extract(self.replace_once(self.current,before,after))
+        backend = self.current[self.current.index('impl StateBackend {'):self.current.index('\nstruct NativeOwners {')]
+        with self.assertRaisesRegex(ValueError,'durable source body StateBackend'):
+            self.extract(self.current+'\n'+backend)
+
+    def test_actual_opener_and_selected_schema_bindings_cannot_be_replaced(self):
+        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.schema_id();'
+        mutations = [
+            ('default-open','Self::open_with_fault(path, settings, workers, None)',
+             'Self::open_with_authenticated_state_and_fault(path, settings, workers, None)'),
+            ('fault-open','Self::open_inner(path, settings, workers, hook, None, None, None)',
+             'Self::open_with_authenticated_state_and_fault(path, settings, workers, hook)'),
+            ('legacy-selected','StateBackend::Legacy,\n        )\n    }\n    fn open_selected',
+             'StateBackend::AuthenticatedV1,\n        )\n    }\n    fn open_selected'),
+            ('auth-selected','StateBackend::AuthenticatedV1,\n        )\n    }\n    /// Explicit local operator policy',
+             'StateBackend::Legacy,\n        )\n    }\n    /// Explicit local operator policy'),
+            ('ddl-unselected','let ddl = state_backend.ddl();','let ddl = ddl();'),
+            ('schema-unselected','let schema_id = state_backend.schema_id();','let schema_id = StateBackend::Legacy.schema_id();'),
+            ('nested-pair',pair,'if false { '+pair+' }'),
+        ]
+        for label,before,after in mutations:
+            with self.subTest(label=label),self.assertRaisesRegex(ValueError,'durable backend (?:opener|selected schema)'):
+                self.extract(self.replace_once(self.current,before,after))
+        rebound = [
+            'let state_backend = StateBackend::AuthenticatedV1;',
+            'let ddl = StateBackend::AuthenticatedV1.ddl();',
+            'let mut ddl = StateBackend::AuthenticatedV1.ddl();',
+            'let ddl: String = StateBackend::AuthenticatedV1.ddl();',
+            'let schema_id: Hash = StateBackend::AuthenticatedV1.schema_id();',
+            'let (ddl, schema_id) = (StateBackend::AuthenticatedV1.ddl(), StateBackend::AuthenticatedV1.schema_id());',
+            'let (state_backend, _) = (StateBackend::AuthenticatedV1, ());',
+            'state_backend = StateBackend::AuthenticatedV1;',
+            'ddl = StateBackend::AuthenticatedV1.ddl();',
+            'schema_id = StateBackend::AuthenticatedV1.schema_id();',
+            'schema_id[0] = 0;',
+        ]
+        for statement in rebound:
+            with self.subTest(statement=statement),self.assertRaisesRegex(ValueError,'durable backend selected schema rebound'):
+                self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+
+    def test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping(self):
+        backend = self.current[self.current.index('impl StateBackend {'):self.current.index('\nstruct NativeOwners {')]
+        bad = self.replace_once(self.current,'b"native-branch-schema-v2"','b"native-branch-schema-unknown"')
+        decoys = ['\n'+''.join('// '+line+'\n' for line in backend.splitlines()),
+                  '\n/* outer /* nested */ '+backend+' */\n',
+                  '\nconst DECOY: &str = '+json.dumps(backend)+';\n',
+                  '\nconst DECOY: &str = r###"'+backend+'"###;\n',
+                  '\nmod historical { '+backend+' }\n',
+                  '\nignored!('+backend+');\n','\nignored!['+backend+'];\n']
+        expected = self.extract(self.current)
+        for decoy in decoys:
+            with self.subTest(decoy=decoy):
+                self.assertEqual(self.extract(self.current+decoy),expected)
+                with self.assertRaisesRegex(ValueError,'durable backend domain Legacy'): self.extract(bad+decoy)
+        inline = '\nfn historical(ddl: String) -> Hash { hash(b"native-branch-schema-v2", &[ddl.as_bytes()]) }\n'
+        for broken in (bad,self.replace_once(self.current,'Self::Legacy => ddl(),','Self::Legacy => native_authenticated::DDL.to_string(),')):
+            with self.subTest(broken=broken[-80:]),self.assertRaisesRegex(ValueError,'durable backend'):
+                self.extract(broken+inline)
+
+    def test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables(self):
+        literal = 'const DDL: &str = "CREATE TABLE exact(key BLOB);";'
+        opener = 'fn open() { hash(b"native-branch-schema-v1", &[DDL.as_bytes()]); }'
+        for decoy in ['mod historical { '+literal+' }','ignored!('+literal+');','ignored!['+literal+'];']:
+            with self.subTest(decoy=decoy),self.assertRaisesRegex(ValueError,'durable schema literal DDL'):
+                self.extract(decoy+'\nuse other::DDL;\n'+opener)
+        for name in ['archive_nodes','native_state_commitments','ArChIvE_NoDeS']:
+            extension = 'CREATE TABLE '+name+'(id BLOB PRIMARY KEY,data BLOB NOT NULL);'
+            sources = [
+                (literal.replace('CREATE TABLE exact',extension+'CREATE TABLE exact')+opener,None),
+                (self.replace_once(self.current,'CREATE TABLE metadata',extension+'CREATE TABLE metadata'),None),
+                (self.current,self.replace_once(self.current_index,'CREATE TABLE ancestry_jump',extension+'CREATE TABLE ancestry_jump')),
+            ]
+            for source,index in sources:
+                with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
+                    self.extract(source,index)
 
 
 if __name__ == '__main__': unittest.main(verbosity=2)

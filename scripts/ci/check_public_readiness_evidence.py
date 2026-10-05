@@ -13,6 +13,7 @@ import subprocess
 import sys
 from pathlib import Path
 from unittest.mock import patch
+from report_module_evidence import rust_code, rust_group_end
 
 ROOT = Path(__file__).resolve().parents[2]
 FLAGS = ('public_network_ready', 'production_activation', 'independent_accepted',
@@ -205,26 +206,133 @@ def decode_packet(raw):
 
 
 def native_durable_schema(root):
-    """Only the explicitly implemented literal V1 or composed V2 source contract.
+    """Extract the legacy evidence schema from one explicitly supported contract.
 
-    This is not a Rust evaluator. Unknown composition/literal syntax fails closed;
-    source binding is independently enforced by the evidence checker.
+    Historical literal V1, inline composed V2 and the explicitly selected V2
+    backend are supported. Authenticated storage is a different evidence scope;
+    recognizing its selection must never append its tables to this legacy result.
+    This is not a Rust evaluator. Unknown bodies/literals fail closed. The shared
+    Rust lexical mask excludes comment/string decoys without changing literals
+    whose exact bytes are checked separately below.
     """
     source = safe(root,'trillionnium/crates/trnm-pon-node/src/store.rs').read_text()
+    def direct(code, position):
+        prefix = code[:position]
+        return all(prefix.count(left) == prefix.count(right) for left,right in ('{}','()','[]'))
+    def bodies(text, kind, name):
+        code = rust_code(text)
+        found = []
+        for match in re.finditer(r'\b'+kind+r'\s+'+re.escape(name)+r'\b',code):
+            # Only direct items of this source/owner, not nested modules, macros
+            # or local declarations that happen to have the same spelling.
+            if not direct(code,match.start()):
+                continue
+            require(re.match(r'\s*'+(r'\(' if kind == 'fn' else r'\{'),code[match.end():]),
+                    'durable source header '+name)
+            start = code.find('{',match.end())
+            require(start >= 0, 'durable source body '+name)
+            end = rust_group_end(code,start)
+            require(end is not None, 'durable source body '+name)
+            found.append(text[start+1:end-1])
+        return found
+    def body(text, kind, name):
+        found = bodies(text,kind,name)
+        require(len(found) == 1, 'durable source body '+name)
+        return found[0]
+    def layout(actual, expected, message):
+        # String payloads are not compared by whitespace normalization. Each
+        # schema-affecting literal is also checked, byte for byte, with value().
+        normalize = lambda text: re.sub(r'\s+','',rust_code(text))
+        require(normalize(actual) == normalize(expected),message)
+    def value(text, prefix):
+        matches = list(re.finditer(prefix,rust_code(text)))
+        require(len(matches) == 1, 'durable schema literal prefix')
+        literal = re.match(r'\s*"([^"\\]*)"',text[matches[0].end():],re.S)
+        require(literal is not None, 'durable schema string literal')
+        return literal[1]
     def literal(text, name):
-        matches = re.findall(r'\bconst\s+'+name+r'\s*:\s*&str\s*=\s*"([^"\\]*)"\s*;',text,re.S)
+        code = rust_code(text)
+        matches = [match for match in re.finditer(r'\bconst\s+'+name+r'\s*:\s*&str\s*=',code)
+                   if direct(code,match.start())]
         require(len(matches) == 1, 'durable schema literal '+name)
-        return matches[0]
-    if re.search(r'\bconst\s+BASE_DDL\b',source):
+        parsed = re.match(r'\s*"([^"\\]*)"\s*;',text[matches[0].end():],re.S)
+        require(parsed is not None, 'durable schema literal '+name)
+        return parsed[1]
+    def legacy(ddl, domain):
+        # Source binding does not authorize widening this evidence contract.
+        # These tables have their own full-state/commitment/node verification.
+        require(not re.search(r'\b(?:archive_nodes|native_state_commitments)\b',ddl,re.I),
+                'authenticated tables in legacy durable schema')
+        return ddl,domain
+    code = rust_code(source)
+    if re.search(r'\bconst\s+BASE_DDL\b',code):
         base = literal(source,'BASE_DDL')
-        require(re.search(r'fn\s+ddl\s*\(\s*\)\s*->\s*String\s*\{\s*format!\(\s*"\{\}\{\}"\s*,\s*BASE_DDL\s*,\s*crate::ancestry_index::DDL\s*\)\s*\}',source), 'durable V2 schema composition')
-        require(re.search(r'hash\(\s*b"native-branch-schema-v2"\s*,\s*&\[\s*ddl\.as_bytes\(\)\s*\]\s*\)',source), 'durable V2 schema domain')
-        require(not re.search(r'\bconst\s+DDL\b',source), 'ambiguous durable schema')
+        composed = body(source,'fn','ddl')
+        layout(composed,'format!("{}{}", BASE_DDL, crate::ancestry_index::DDL)', 'durable V2 schema composition')
+        require(value(composed,r'\bformat!\s*\(') == '{}{}', 'durable V2 schema composition')
+        require(not re.search(r'\bconst\s+DDL\b',code), 'ambiguous durable schema')
+        if re.search(r'\bStateBackend\b',code):
+            # Select this branch first. A bad current mapping cannot fall back
+            # to a historical inline hash elsewhere in the same source file.
+            layout(body(source,'enum','StateBackend'),'Legacy, AuthenticatedV1,', 'durable backend variants')
+            implementation = body(source,'impl','StateBackend')
+            layout(implementation, '''
+                fn ddl(self) -> String {
+                    match self {
+                        Self::Legacy => ddl(),
+                        Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
+                    }
+                }
+                fn schema_id(self) -> Hash {
+                    let domain: &[u8] = match self {
+                        Self::Legacy => b"native-branch-schema-v2",
+                        Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
+                    };
+                    hash(domain, &[self.ddl().as_bytes()])
+                }
+            ''', 'durable backend composition/domain')
+            backend_ddl = body(implementation,'fn','ddl')
+            domain = body(implementation,'fn','schema_id')
+            require(value(backend_ddl,r'\bformat!\s*\(') == '{}{}', 'durable backend composition')
+            for variant, expected in [('Legacy','native-branch-schema-v2'),
+                                      ('AuthenticatedV1','native-authenticated-branch-schema-v1')]:
+                require(value(domain,r'\bSelf::'+variant+r'\s*=>\s*b') == expected,
+                        'durable backend domain '+variant)
+            node = body(source,'impl','Node')
+            selections = {
+                'open':'Self::open_with_fault(path, settings, workers, None)',
+                'open_with_fault':'''ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+                    Self::open_inner(path, settings, workers, hook, None, None, None)''',
+                'open_inner':'''Self::open_selected(path, settings, workers, hook,
+                    NativeOwners { policy: owner_policy, mining: mining_owner, continuous: continuous_owner, },
+                    StateBackend::Legacy,)''',
+                'open_with_authenticated_state':'''Self::open_with_authenticated_state_and_fault(path, settings, workers, None)''',
+                'open_with_authenticated_state_and_fault':'''ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+                    Self::open_selected(path, settings, workers, hook,
+                        NativeOwners { policy: None, mining: None, continuous: None, }, StateBackend::AuthenticatedV1,)''',
+            }
+            for name, expected in selections.items():
+                layout(body(node,'fn',name),expected,'durable backend opener '+name)
+            selected = rust_code(body(node,'fn','open_selected'))
+            bindings = list(re.finditer(r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.schema_id\(\)\s*;',selected))
+            require(len(bindings) == 1 and direct(selected,bindings[0].start()),
+                    'durable backend selected schema')
+            remaining = selected[:bindings[0].start()]+selected[bindings[0].end():]
+            names = r'\b(?:state_backend|ddl|schema_id)\b'
+            require(not re.search(r'\blet\s+[^;=]*'+names+r'[^;=]*=',remaining)
+                    and not re.search(names+r'\s*(?:\[[^\]]*\]\s*)?[+*/%&|^\-]?=(?!=)',remaining),
+                    'durable backend selected schema rebound')
+        else:
+            matches = [match for match in re.finditer(r'\bhash\(\s*b"native-branch-schema-v2"\s*,\s*&\[\s*ddl\.as_bytes\(\)\s*\]\s*\)',source)
+                       if code[match.start():match.start()+4] == 'hash']
+            require(len(matches) == 1, 'durable V2 schema domain')
         index = safe(root,'trillionnium/crates/trnm-pon-node/src/ancestry_index.rs').read_text()
-        return base+literal(index,'DDL'), 'native-branch-schema-v2'
+        return legacy(base+literal(index,'DDL'), 'native-branch-schema-v2')
     ddl = literal(source,'DDL')
-    require(re.search(r'hash\(\s*b"native-branch-schema-v1"\s*,\s*&\[\s*DDL\.as_bytes\(\)\s*\]\s*\)',source), 'durable V1 schema domain')
-    return ddl, 'native-branch-schema-v1'
+    matches = [match for match in re.finditer(r'\bhash\(\s*b"native-branch-schema-v1"\s*,\s*&\[\s*DDL\.as_bytes\(\)\s*\]\s*\)',source)
+               if code[match.start():match.start()+4] == 'hash']
+    require(len(matches) == 1 and not re.search(r'\bStateBackend\b',code), 'durable V1 schema domain')
+    return legacy(ddl, 'native-branch-schema-v1')
 
 
 def validate_native_ancestry(database, summary, rows, H):

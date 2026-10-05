@@ -51,7 +51,7 @@ REJECTION_RUN_STEP = '''      - name: Execute native legal and late-rejection ve
 '''
 REJECTION_COMPARE_STEP = '''      - name: Check actual rejection stages and paired native architectures
         if: always()
-        run: python3 scripts/pon_work_rejection_report.py --compare "$RUNNER_TEMP/cost-inputs/cost-x64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" "$RUNNER_TEMP/cost-inputs/cost-arm64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --expected-run "$GITHUB_RUN_ID" --expected-attempt "$GITHUB_RUN_ATTEMPT" --out "$TRNM_CI_RECEIPT_DIR/work-rejection-comparison"
+        run: python3 scripts/pon_work_rejection_report.py --compare "$RUNNER_TEMP/cost-inputs/cost-x64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" "$RUNNER_TEMP/cost-inputs/cost-arm64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --expected-run "$GITHUB_RUN_ID" --expected-attempt "$GITHUB_RUN_ATTEMPT" --out "$RUNNER_TEMP/ci-observations/work-rejection-comparison"
 '''
 CONTINUITY_BUILD = '    cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples\n'
 CONTINUITY_ORIGINAL = '    TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_vectors")" python3 formal/pon-nakamoto-v1/test_continuity.py -v\n'
@@ -232,6 +232,11 @@ def validate(root: Path = ROOT) -> dict:
             text.count(REJECTION_COMPARE_STEP) == 1,
             'actual rejection comparison must bind both native architectures to this head/run/attempt even on earlier failure')
     merge = jobs['prospective-merge']
+    require(re.findall(r'^    timeout-minutes: (.+)$', jobs['rust-baseline'], re.M) == ['90'],
+            'the complete head Rust suite requires its explicit 90-minute job budget')
+    require(re.findall(r'^    timeout-minutes: (.+)$', merge, re.M) ==
+            ["${{ matrix.lane == 'rust-baseline' && 90 || 45 }}"],
+            'the merge Rust suite requires the same 90-minute budget; other merge lanes retain 45 minutes')
     require("    if: github.event_name == 'pull_request'\n" in merge, 'merge lane event boundary')
     require('      fail-fast: false\n' in merge, 'all merge lanes retain their outcomes')
     lanes = re.search(r'^        lane: \[([^\]]+)\]$', merge, re.M)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import shutil
+import subprocess
 import tempfile
 import tomllib
 import unittest
@@ -61,6 +62,22 @@ class CiContractTests(unittest.TestCase):
                 self.rejected('.github/workflows/trnm-required-baseline.yml',
                               '    timeout-minutes: 155\n', f'    timeout-minutes: {minutes}\n')
 
+    def test_complete_rust_budget_must_be_present_once_in_head(self):
+        path = '.github/workflows/trnm-required-baseline.yml'
+        original = '    timeout-minutes: 90\n'
+        for replacement in ['', '    timeout-minutes: 45\n', original + original]:
+            with self.subTest(replacement=replacement):
+                self.rejected(path, original, replacement)
+
+    def test_merge_rust_budget_must_match_head_without_expanding_other_lanes(self):
+        path = '.github/workflows/trnm-required-baseline.yml'
+        original = "    timeout-minutes: ${{ matrix.lane == 'rust-baseline' && 90 || 45 }}\n"
+        for replacement in ['', '    timeout-minutes: 45\n', '    timeout-minutes: 90\n',
+                            original.replace('==', '!='), original.replace('90 || 45', '45 || 90'),
+                            original.replace("'rust-baseline'", "'protocol-contract'"), original + original]:
+            with self.subTest(replacement=replacement):
+                self.rejected(path, original, replacement)
+
     def test_rejection_run_and_comparison_require_actual_ordered_bound_execution(self):
         path = '.github/workflows/trnm-required-baseline.yml'
         for previous, step in [(MAINTENANCE_RUN_STEP, REJECTION_RUN_STEP),
@@ -82,6 +99,34 @@ class CiContractTests(unittest.TestCase):
         original = (self.root / path).read_text()
         changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
         self.rejected(path, original, changed)
+
+    def test_rejection_comparison_output_uses_actual_job_environment(self):
+        workflow = (self.root / '.github/workflows/trnm-required-baseline.yml').read_text()
+        job = workflow.split('  cross-arch-cost-consistency:\n', 1)[1].split('\n  prospective-merge:', 1)[0]
+        commands = [line.strip().removeprefix('run: ') for line in job.splitlines()
+                    if line.strip().startswith('run: python3 scripts/pon_work_rejection_report.py --compare ')]
+        self.assertEqual(len(commands), 1)
+        runner = str(self.root.parent / 'actual runner temp')
+        # This job gets RUNNER_TEMP from Actions; it does not initialize the
+        # cost-runner-only TRNM_CI_RECEIPT_DIR. Execute real shell expansion of
+        # the checked-in command without launching a collector or writing files.
+        env = {'PATH': '/usr/bin:/bin', 'RUNNER_TEMP': runner,
+               'TRNM_EXPECTED_SOURCE_SHA': 'a' * 40, 'GITHUB_RUN_ID': '1',
+               'GITHUB_RUN_ATTEMPT': '1'}
+        def expand(command):
+            return subprocess.run(['bash', '-u', '-c', 'set -- ' + command + '; printf "%s\\n" "$@"'],
+                                  env=env, capture_output=True, text=True, timeout=10)
+        actual = expand(commands[0])
+        self.assertEqual(actual.returncode, 0, actual.stderr)
+        arguments = actual.stdout.splitlines()
+        self.assertEqual(arguments.count('--out'), 1)
+        self.assertEqual(arguments[arguments.index('--out') + 1],
+                         str(Path(runner) / 'ci-observations/work-rejection-comparison'))
+        self.assertIn('path: ${{ runner.temp }}/ci-observations/', job)
+        broken = expand(commands[0].replace('$RUNNER_TEMP/ci-observations/work-rejection-comparison',
+                                           '$TRNM_CI_RECEIPT_DIR/work-rejection-comparison'))
+        self.assertNotEqual(broken.returncode, 0)
+        self.assertIn('TRNM_CI_RECEIPT_DIR', broken.stderr)
 
     def test_maintenance_native_execution_cannot_be_removed_skipped_or_substituted(self):
         for replacement in ['', MAINTENANCE_RUN_STEP.replace('        if: always()\n', ''),

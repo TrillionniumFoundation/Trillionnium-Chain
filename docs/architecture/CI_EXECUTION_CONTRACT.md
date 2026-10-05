@@ -18,6 +18,19 @@ The same workflow also runs two exact-head `cross-arch-cost` jobs and one
 `cross-arch-cost-consistency` job. These three jobs do not rename, replace or add
 branch-protection requirements to the original five head and five merge checks.
 
+The full `rust-baseline` job has a 90-minute budget on both the exact head and the
+prospective merge. The merge matrix grants that budget only to its Rust lane;
+the other merge lanes retain 45 minutes. This adjustment follows the two actual
+Rust cancellations at the former 45-minute limit in
+[run 37269962242](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/37269962242).
+Their retained logs reached the model-composition integration suite without an
+earlier assertion failure, but neither cancellation constitutes a completed test
+run. The complete workspace tests, independent native-export comparisons,
+documentation tests, strict Clippy and failure propagation remain required.
+The additional budget is an execution allowance, not a runtime improvement or
+evidence that the complete suite passes. Full-State checks and transactional
+readbacks still incur real work; endpoint performance needs separate measurement.
+
 ## Tracked-byte source identity
 
 `verify_ci_source.py` checks the actual tracked worktree against the raw committed

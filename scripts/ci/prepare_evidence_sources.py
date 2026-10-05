@@ -13,7 +13,10 @@ OPTIONAL_PACKAGES=('pon-contract-authority-v1','pon-client-confirmation-v1',
                    'pon-native-session-v1','pon-native-node-v1','pon-closed-round-v1',
                    'pon-public-readiness-v1')
 COST_PACKAGES=('pon-contract-authority-v1','pon-native-session-v1',
-               'pon-native-node-v1','pon-closed-round-v1')
+               'pon-native-node-v1','pon-closed-round-v1','pon-four-priority-audit-v1')
+HISTORICAL_COST_MANIFESTS={
+    'pon-four-priority-audit-v1':'pon-four-priority-audit-local-observations-v1',
+}
 
 def identity(value):
     if not isinstance(value,str) or re.fullmatch('[0-9a-f]{40}',value)is None:
@@ -26,6 +29,7 @@ def declarations(root, *, source=None):
     paths=['evidence/'+name+'/'+file for name in BASE_PACKAGES+OPTIONAL_PACKAGES
            for file in ('manifest.json','qualification.json')]
     paths += ['evidence/'+name+'/work-cost/execution.json' for name in COST_PACKAGES]
+    paths += ['evidence/'+name+'/manifest.json' for name in HISTORICAL_COST_MANIFESTS]
     objects={}
     if source is not None:
         source=identity(source)
@@ -59,6 +63,21 @@ def declarations(root, *, source=None):
         commit=identity(data['implementation_commit']);tree=identity(data['implementation_tree'])
         if commit in values and values[commit]!=tree:raise ValueError('conflicting source tree')
         values[commit]=tree
+    # These fixed historical declarations use measured_source_*, not the
+    # implementation_* identity of a runtime qualification. Never discover them
+    # by scanning arbitrary JSON or promote them to current-source evidence.
+    historical_cost_sources={}
+    for name,schema in HISTORICAL_COST_MANIFESTS.items():
+        data=read('evidence/'+name+'/manifest.json')
+        if data is None:continue
+        if not isinstance(data,dict) or data.get('schema')!=schema:
+            raise ValueError('invalid historical cost manifest schema')
+        if not {'measured_source_commit','measured_source_tree'}<=data.keys():
+            raise ValueError('incomplete historical cost source pair')
+        commit,tree=identity(data['measured_source_commit']),identity(data['measured_source_tree'])
+        if commit in values and values[commit]!=tree:raise ValueError('conflicting source tree')
+        values[commit]=tree
+        historical_cost_sources[name]=(commit,tree)
     # Corpus snapshots are separately declared by these packages' root qualification.
     # Do not infer sources from arbitrary JSON, nested failed runs, or branch names.
     for name in manifests:
@@ -75,9 +94,13 @@ def declarations(root, *, source=None):
     for package in COST_PACKAGES:
         data=read('evidence/'+package+'/work-cost/execution.json')
         if data is None:continue
-        if data.get('schema') != 'pon-native-cost-execution-v1':
+        if not isinstance(data,dict) or data.get('schema') != 'pon-native-cost-execution-v1':
             raise ValueError('invalid cost execution schema')
+        if not {'source_commit','source_tree'}<=data.keys():
+            raise ValueError('incomplete cost source pair')
         commit, tree = identity(data['source_commit']), identity(data['source_tree'])
+        if package in historical_cost_sources and historical_cost_sources[package]!=(commit,tree):
+            raise ValueError('conflicting historical cost source pair')
         if commit in values and values[commit] != tree:
             raise ValueError('conflicting source tree')
         values[commit] = tree
