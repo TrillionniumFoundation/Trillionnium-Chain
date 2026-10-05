@@ -353,7 +353,12 @@
         "trillionnium/crates/trnm-pon-node/tests/one_zero_task_preparation_lifecycle.rs::signed_one_zero_rank_one_work_uses_actual_parent_authority_in_both_directions",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs::paired_complete_proofs_match_scalar_on_maintenance_and_extreme_materials",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs::paired_cancellation_discards_complete_or_partial_work_and_reuse_stays_exact",
-        "trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs::paired_genesis_maintenance_preserves_actual_parent_admission_and_reopen"
+        "trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs::paired_genesis_maintenance_preserves_actual_parent_admission_and_reopen",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs::periodic_integer_product_and_all_wrap_prefixes_match_direct_sums",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs::exact_maintenance_constructor_rejects_other_material_without_fallback",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs::maintenance_setup_preserves_full_proofs_tickets_and_reject_paths",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs::shared_prepared_cancellation_stops_before_proof_and_cache_reuse_is_exact",
+        "formal/pon-nakamoto-v1/test_paired_work.py::PairedWorkOracleTests.test_periodic_selector_rejects_nonmaintenance_and_malformed_inputs"
       ],
       "evidence_class": "source-binding",
       "receipt": null
@@ -428,7 +433,15 @@
         "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs::compressed_nonmembership_and_bounded_views_never_erase_a_nonce",
         "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs::cancellation_rolls_back_nodes_checkpoints_and_active_publication_before_reopen",
         "trillionnium/crates/trnm-pon-node/tests/account_archive_projection.rs::signed_growth_zero_balance_nonce_reentry_heavier_forks_and_reopen_preserve_exact_accounts",
-        "formal/pon-nakamoto-v1/test_account_archive_oracle.py::AccountArchiveOracleTests.test_zero_balance_nonzero_nonce_remains_a_committed_member"
+        "formal/pon-nakamoto-v1/test_account_archive_oracle.py::AccountArchiveOracleTests.test_zero_balance_nonzero_nonce_remains_a_committed_member",
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::checked_accounts_execute_same_block_creation_spend_and_self_transfer_against_native_node",
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::checked_accounts_preserve_canonical_errors_source_binding_and_exact_witness_coverage",
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::checked_accounts_gate_new_miner_future_reservation_and_late_cancellation_without_publication",
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::checked_accounts_apply_reward_maturity_before_next_nonce_spend_and_refuse_old_branch_proof",
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::checked_accounts_gate_real_legacy_expiry_refund_without_continuity_or_transaction_masking",
+        "formal/pon-nakamoto-v1/test_account_execution_oracle.py::AccountExecutionOracle.test_created_account_spends_in_same_block_and_present_zero_is_not_absence",
+        "formal/pon-nakamoto-v1/test_account_execution_oracle.py::AccountExecutionOracle.test_reward_maturity_precedes_spend_and_requires_parent_absence_witness",
+        "formal/pon-nakamoto-v1/test_account_execution_oracle.py::AccountExecutionOracle.test_unsupported_transaction_and_namespace_fail_closed"
       ],
       "evidence_class": "source-binding",
       "receipt": null

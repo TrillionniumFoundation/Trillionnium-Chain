@@ -287,23 +287,35 @@ def validate_raw_report(data: dict, campaign: dict) -> dict:
             'deterministic_projection_sha256': projection_digest(data)}
 
 
-def suite_contract(suite: str = 'reused') -> dict:
+def suite_contract(suite: str = 'reused', *, maintenance_version: int = 2) -> dict:
     """Separate raw schemas and artifact namespaces; no normalization between them."""
     require(suite in SUITES, 'explicit native cost suite')
     common_inputs = ['rust-toolchain.toml', 'trillionnium/Cargo.lock',
                      'scripts/ci/run_cross_arch_cost.py', 'scripts/ci/check_cross_arch_cost.py']
     if suite == 'maintenance-paired':
-        from check_maintenance_cost import validate_maintenance_report
+        from check_maintenance_cost import validate_maintenance_v1_report, validate_maintenance_v2_report
+        require(type(maintenance_version) is int and maintenance_version in (1, 2),
+                'explicit historical/current maintenance artifact schema')
+        additional_inputs = [] if maintenance_version == 1 else [
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs',
+            'trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs',
+            'trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs',
+            'trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs',
+            'formal/pon-nakamoto-v1/work_oracle.py',
+            'formal/pon-nakamoto-v1/contract_wire.py',
+            'formal/pon-nakamoto-v1/test_paired_work.py',
+        ]
         return {'directory': 'cross-arch-maintenance-cost', 'example': 'pon_maintenance_cost',
-                'execution_schema': 'trnm-cross-arch-maintenance-cost-execution-v1',
-                'comparison_schema': 'trnm-cross-arch-maintenance-cost-comparison-v1',
-                'validate_raw_report': validate_maintenance_report,
+                'execution_schema': f'trnm-cross-arch-maintenance-cost-execution-v{maintenance_version}',
+                'comparison_schema': f'trnm-cross-arch-maintenance-cost-comparison-v{maintenance_version}',
+                'validate_raw_report': (validate_maintenance_v1_report if maintenance_version == 1 else
+                                        validate_maintenance_v2_report),
                 'inputs': common_inputs + [
                     'trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs',
                     'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
                     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs',
                     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs',
-                    'scripts/ci/check_maintenance_cost.py']}
+                    'scripts/ci/check_maintenance_cost.py'] + additional_inputs}
     if suite == 'reused':
         return {'directory': 'cross-arch-cost', 'example': 'pon_reused_cost',
                 'execution_schema': 'trnm-cross-arch-cost-execution-v1',
@@ -337,8 +349,9 @@ def suite_contract(suite: str = 'reused') -> dict:
                 'scripts/ci/check_zero_locality_cost.py']}
 
 
-def validate_artifact(directory: Path, expected_source: str, *, suite: str = 'reused') -> tuple[dict, list[dict]]:
-    contract = suite_contract(suite)
+def validate_artifact(directory: Path, expected_source: str, *, suite: str = 'reused',
+                      maintenance_version: int = 2) -> tuple[dict, list[dict]]:
+    contract = suite_contract(suite, maintenance_version=maintenance_version)
     example = contract['example']
     validate_raw = contract['validate_raw_report']
     require(directory.is_dir() and not directory.is_symlink(), 'artifact directory cannot be substituted')
@@ -439,12 +452,14 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
     return report, data
 
 
-def compare_artifacts(root: Path, expected_source: str, *, suite: str = 'reused') -> dict:
-    contract = suite_contract(suite)
+def compare_artifacts(root: Path, expected_source: str, *, suite: str = 'reused',
+                      maintenance_version: int = 2) -> dict:
+    contract = suite_contract(suite, maintenance_version=maintenance_version)
     directories = sorted(p for p in root.iterdir() if p.is_dir())
     require(len(directories) == 2, 'exactly two current-run architecture artifacts required')
     loaded = [(validate_artifact(path, expected_source) if suite == 'reused' else
-               validate_artifact(path, expected_source, suite=suite)) for path in directories]
+               validate_artifact(path, expected_source, suite=suite,
+                                 maintenance_version=maintenance_version)) for path in directories]
     require({r['architecture'] for r, _ in loaded} == set(ARCHITECTURES), 'both architectures must actually execute')
     left, right = loaded
     for key in ['source_before', 'source_after', 'input_sha256']:
@@ -470,14 +485,17 @@ def main() -> int:
     parser.add_argument('--expected-source', required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--suite', choices=SUITES, default='reused')
+    parser.add_argument('--maintenance-version', type=int, choices=(1, 2), default=2,
+                        help='explicit historical v1 or current v2 maintenance artifact parsing')
     args = parser.parse_args()
-    result = {'schema': suite_contract(args.suite)['comparison_schema'], 'result': 'FAIL',
+    result = {'schema': suite_contract(args.suite, maintenance_version=args.maintenance_version)['comparison_schema'], 'result': 'FAIL',
               'source': args.expected_source, 'speed_threshold_applied': False}
     try:
         current = source()
         require(current['commit'] == args.expected_source and current['source_state'] == 'committed-clean',
                 'comparison code must be the exact clean candidate')
-        result = compare_artifacts(args.artifacts, args.expected_source, suite=args.suite)
+        result = compare_artifacts(args.artifacts, args.expected_source, suite=args.suite,
+                                   maintenance_version=args.maintenance_version)
         require(result['tree'] == current['tree'], 'observation tree equals the comparison code tree')
     except (OSError, ValueError, KeyError, TypeError, IndexError) as error:
         result['result'] = 'FAIL'

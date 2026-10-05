@@ -111,7 +111,7 @@ adversary lower bound, public admission fairness or independent work qualificati
 
 ## Native development continuation and remaining scope
 
-PreparedTask is now a valid producer-side fixed-task optimization, not a new work relation or verified capability. Original full verification remains unchanged. Paired cost measurements distinguish setup, search, narrower targets, slower samples and the still-open invalid-proof admission problem.
+PreparedTask is now a valid producer-side fixed-task optimization, not a new work relation or verified capability. The original full verification relation remains unchanged. Paired cost measurements distinguish setup, search, narrower targets, slower samples and the still-open invalid-proof admission problem.
 
 The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,

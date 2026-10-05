@@ -23,6 +23,10 @@ pub const QUALIFIED_DEMANDS: u64 = 16;
 
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
+/// Optional computation-input gate for semantic account point accesses. The
+/// callback itself conveys no proof, signature, parent or admission authority.
+/// Aggregate balance scans and complete state commitments still use full State.
+pub type AccountPointAccess<'a> = dyn Fn(&str) -> Result<()> + Sync + 'a;
 /// Caller-local observation only; no ledger byte or execution authority.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExecutionProgress {
@@ -715,14 +719,16 @@ struct Patch {
 }
 struct View<'a> {
     base: &'a State,
+    account_access: Option<&'a AccountPointAccess<'a>>,
     writes: BTreeMap<String, Value>,
     reads: BTreeMap<String, Option<Value>>,
     scans: BTreeMap<String, State>,
 }
 impl<'a> View<'a> {
-    fn new(base: &'a State) -> Self {
+    fn new(base: &'a State, account_access: Option<&'a AccountPointAccess<'a>>) -> Self {
         Self {
             base,
+            account_access,
             writes: BTreeMap::new(),
             reads: BTreeMap::new(),
             scans: BTreeMap::new(),
@@ -757,18 +763,22 @@ impl<'a> View<'a> {
         );
         rows
     }
-    fn account(&mut self, who: &str) -> Value {
-        self.get(&format!("account:{who}"))
-            .unwrap_or_else(|| json!({"balance":0,"nonce":0}))
+    fn account(&mut self, who: &str) -> Result<Value> {
+        if let Some(access) = self.account_access {
+            access(who)?;
+        }
+        Ok(self
+            .get(&format!("account:{who}"))
+            .unwrap_or_else(|| json!({"balance":0,"nonce":0})))
     }
     fn credit(&mut self, who: &str, amount: u64) -> Result<()> {
-        let mut a = self.account(who);
+        let mut a = self.account(who)?;
         a["balance"] = json!(add(field(&a, "balance")?, amount)?);
         self.put(format!("account:{who}"), a);
         Ok(())
     }
     fn debit(&mut self, who: &str, amount: u64) -> Result<()> {
-        let mut a = self.account(who);
+        let mut a = self.account(who)?;
         let b = field(&a, "balance")?;
         require(amount > 0 && b >= amount, "FUNDS")?;
         a["balance"] = json!(b - amount);
@@ -996,10 +1006,19 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
     })
 }
 fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) -> Result<Patch> {
+    apply_prepared_with_account_access(base, prepared, height, cfg, None)
+}
+fn apply_prepared_with_account_access(
+    base: &State,
+    prepared: &Prepared,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<Patch> {
     let tx = &prepared.envelope;
     let sender = prepared.sender.clone();
-    let mut s = View::new(base);
-    let acct = s.account(&sender);
+    let mut s = View::new(base, account_access);
+    let acct = s.account(&sender)?;
     require(tx.nonce == add(field(&acct, "nonce")?, 1)?, "NONCE")?;
     let fee = add(
         cfg.fees[tx.tag as usize],
@@ -1606,7 +1625,7 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
         _ => return Err("VERSION"),
     }
     require(p.pos == p.bytes.len(), "LENGTH")?;
-    let mut a = s.account(&sender);
+    let mut a = s.account(&sender)?;
     a["nonce"] = json!(tx.nonce);
     s.put(format!("account:{sender}"), a);
     let receipt = canonical(
@@ -1637,7 +1656,15 @@ fn funds(state: &State) -> Result<u64> {
     }
     Ok(total)
 }
-fn credit_state(state: &mut State, who: &str, amount: u64) -> Result<()> {
+fn credit_state(
+    state: &mut State,
+    who: &str,
+    amount: u64,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<()> {
+    if let Some(access) = account_access {
+        access(who)?;
+    }
     let key = format!("account:{who}");
     let mut account = state
         .get(&key)
@@ -1647,7 +1674,12 @@ fn credit_state(state: &mut State, who: &str, amount: u64) -> Result<()> {
     state.insert(key, account);
     Ok(())
 }
-fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>>> {
+fn mandatory(
+    state: &mut State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<Vec<Vec<u8>>> {
     let current = state
         .get("model:current")
         .and_then(Value::as_str)
@@ -1775,7 +1807,12 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
         .take(cfg.limit("mandatory_expiry_per_block")? as usize)
     {
         let mut v = state.get(&k).cloned().ok_or("STATE")?;
-        credit_state(state, text(&v, "owner")?, field(&v, "remaining")?)?;
+        credit_state(
+            state,
+            text(&v, "owner")?,
+            field(&v, "remaining")?,
+            account_access,
+        )?;
         v["remaining"] = json!(0);
         v["status"] = json!("expired");
         state.insert(k.clone(), v);
@@ -1789,7 +1826,12 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
     for (k, maturity) in mature {
         if maturity <= height {
             let reward = state.remove(&k).ok_or("STATE")?;
-            credit_state(state, text(&reward, "owner")?, field(&reward, "amount")?)?;
+            credit_state(
+                state,
+                text(&reward, "owner")?,
+                field(&reward, "amount")?,
+                account_access,
+            )?;
         }
     }
     crate::integer_factor_candidate_v2::cleanup(state, height, cfg)?;
@@ -1839,6 +1881,27 @@ pub fn execute_with_control<E: Send>(
 ) -> ControlledResult<Output, E> {
     execute_with_commitment_and_control(parent, block, cfg, |_, next| root(next), control)
 }
+/// Explicit serial research consumer of semantic account point-access evidence.
+/// This function still requires a complete State and performs its ordinary funds,
+/// prefix, capacity and root checks. It neither authenticates the callback nor
+/// grants permission to substitute a partial State or bypass Node admission.
+pub fn execute_with_account_point_access<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    account_access: &AccountPointAccess<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
+    execute_with_commitment_control_and_account_access(
+        parent,
+        block,
+        cfg,
+        |_, next| root(next),
+        &ExecutionControl::new(progress, &()),
+        Some(account_access),
+    )
+}
 /// Ordinary caller-supplied facts, not prepared execution or admission authority.
 pub struct BlockExecution<'a> {
     pub transactions: &'a [Vec<u8>],
@@ -1880,8 +1943,20 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
     parent: &State,
     block: BlockExecution<'_>,
     cfg: &Config,
+    commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    control: &ExecutionControl<'_, E>,
+) -> ControlledResult<Output, E> {
+    execute_with_commitment_control_and_account_access(
+        parent, block, cfg, commitment, control, None,
+    )
+}
+fn execute_with_commitment_control_and_account_access<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
     mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
     control: &ExecutionControl<'_, E>,
+    account_access: Option<&AccountPointAccess<'_>>,
 ) -> ControlledResult<Output, E> {
     let progress = control.progress;
     let BlockExecution {
@@ -1897,7 +1972,8 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         "LIMIT",
     )?;
     progress(ExecutionProgress::BeforeStateClone).map_err(ExecutionError::Cancelled)?;
-    let (mut state, mut receipts) = prepare_block_state(parent, height, cfg)?;
+    let (mut state, mut receipts) =
+        prepare_block_state_with_account_access(parent, height, cfg, account_access)?;
     progress(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
     let mut fees = 0;
     let mut metrics = Metrics {
@@ -1930,12 +2006,9 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         let patch = if serial_state || range_command {
             None
         } else {
-            Some(
-                prepared
-                    .as_ref()
-                    .map_err(|e| *e)
-                    .and_then(|tx| apply_prepared(&state, tx, height, cfg)),
-            )
+            Some(prepared.as_ref().map_err(|e| *e).and_then(|tx| {
+                apply_prepared_with_account_access(&state, tx, height, cfg, account_access)
+            }))
         };
         Ok(Predicted { prepared, patch })
     };
@@ -2029,7 +2102,7 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         let prepared = result.prepared?;
         let patch = if serial_state || result.patch.is_none() {
             metrics.committed_without_replay += 1;
-            apply_prepared(&state, &prepared, height, cfg)?
+            apply_prepared_with_account_access(&state, &prepared, height, cfg, account_access)?
         } else {
             metrics.speculative += 1;
             match result.patch.ok_or("WORKER_RESULT")? {
@@ -2040,7 +2113,13 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
                 _ => {
                     metrics.reexecuted += 1;
                     // Exactly one canonical state replay, no duplicate main-signature work.
-                    apply_prepared(&state, &prepared, height, cfg)?
+                    apply_prepared_with_account_access(
+                        &state,
+                        &prepared,
+                        height,
+                        cfg,
+                        account_access,
+                    )?
                 }
             }
         };
@@ -2054,7 +2133,7 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
     state.extend(block_reward_updates(
         &state, height, miner, parent_id, fees, cfg,
     )?);
-    check_completed_block_state(&state, height, cfg)?;
+    check_completed_block_state_with_account_access(&state, height, cfg, account_access)?;
     let root_start = std::time::Instant::now();
     progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
     let root = commitment(parent, &state)?;
@@ -2072,11 +2151,24 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
 /// One original block prologue. Prefix previews retain its pre-reward successor,
 /// never a completed block with a second maturity, expiry or subsidy transition.
 fn prepare_block_state(parent: &State, height: u64, cfg: &Config) -> Result<(State, Vec<Vec<u8>>)> {
+    prepare_block_state_with_account_access(parent, height, cfg, None)
+}
+fn prepare_block_state_with_account_access(
+    parent: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<(State, Vec<Vec<u8>>)> {
     if continuity_v1::enabled(cfg) {
-        continuity_v1::check_state(parent, height.checked_sub(1).ok_or("HEIGHT")?, cfg)?;
+        continuity_v1::check_state_with_account_access(
+            parent,
+            height.checked_sub(1).ok_or("HEIGHT")?,
+            cfg,
+            account_access,
+        )?;
     }
     let mut state = parent.clone();
-    let receipts = mandatory(&mut state, height, cfg)?;
+    let receipts = mandatory(&mut state, height, cfg, account_access)?;
     Ok((state, receipts))
 }
 
@@ -2105,11 +2197,19 @@ fn block_reward_updates(
 }
 
 fn check_completed_block_state(state: &State, height: u64, cfg: &Config) -> Result<()> {
+    check_completed_block_state_with_account_access(state, height, cfg, None)
+}
+fn check_completed_block_state_with_account_access(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<()> {
     require(
         funds(state)? == num(state.get("meta:issued").ok_or("STATE")?)?,
         "CONSERVATION",
     )?;
-    continuity_v1::check_state(state, height, cfg)
+    continuity_v1::check_state_with_account_access(state, height, cfg, account_access)
 }
 
 /// Exact fixed context for a series of prefixes of ONE candidate block.

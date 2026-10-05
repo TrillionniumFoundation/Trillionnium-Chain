@@ -13,7 +13,7 @@ from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRAN
                                ZERO_RUN_STEP, ZERO_COMPARE_STEP, ONE_ZERO_RUN_STEP,
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, PAIRED_WORK_ORACLE, MODEL_WINDOW_ORACLE,
-                               NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE)
+                               NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -228,6 +228,29 @@ class CiContractTests(unittest.TestCase):
         for command in [ACCOUNT_ARCHIVE_ORACLE, '    python3 scripts/ci/test_account_archive_conformance.py\n']:
             changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
             with self.subTest(command=command):
+                self.rejected(path, original, changed)
+
+    def test_account_execution_oracle_requires_release_build_and_both_actual_checks(self):
+        for replacement in ['', '    true # omitted account execution and oracle\n',
+                            ACCOUNT_EXECUTION_ORACLE.splitlines(keepends=True)[0],
+                            ACCOUNT_EXECUTION_ORACLE.splitlines(keepends=True)[1],
+                            ACCOUNT_EXECUTION_ORACLE * 2]:
+            with self.subTest(replacement=replacement):
+                self.rejected('scripts/ci/ci_job.sh', ACCOUNT_EXECUTION_ORACLE, replacement)
+        self.rejected('scripts/ci/ci_job.sh', NODE_EXAMPLE_BUILD, '')
+        self.rejected('scripts/ci/ci_job.sh', ACCOUNT_ARCHIVE_ORACLE + ACCOUNT_EXECUTION_ORACLE,
+                      ACCOUNT_EXECUTION_ORACLE + ACCOUNT_ARCHIVE_ORACLE)
+
+    def test_account_execution_and_receipt_controls_cannot_move_or_duplicate(self):
+        path = 'scripts/ci/ci_job.sh'
+        original = (self.root / path).read_text()
+        command = '    python3 scripts/ci/test_run_account_execution_conformance.py\n'
+        for replacement in ['', '    true # omitted execution receipt checks\n', command + command]:
+            with self.subTest(replacement=replacement):
+                self.rejected(path, command, replacement)
+        for moved in [ACCOUNT_EXECUTION_ORACLE, command]:
+            changed = original.replace(moved, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + moved)
+            with self.subTest(command=moved):
                 self.rejected(path, original, changed)
 
     def test_both_model_oracles_cannot_be_removed_or_replaced_with_true(self):

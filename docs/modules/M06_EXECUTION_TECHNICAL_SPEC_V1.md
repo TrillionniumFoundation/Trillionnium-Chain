@@ -228,7 +228,23 @@ projects complete actual State into a separate, fresh-domain SQLite COW account
 archive. Immutable branches retain balance and nonce, and missing records refuse
 as unavailable data rather than proving absence. Checked views require complete
 root/branch-bound membership or nonmembership proofs before account lookup. They
-are never fed to current M06 as a partial State. Production capacity, full-state
-commitments, reward accounting and canonical execution remain unchanged. A large
-synthetic archive and actual signed Node projections have separate observation
-contracts; neither declares unbounded new-account admission or independent DA.
+are never fed to current M06 as a partial State.
+
+The explicit `account_archive_execution::execute_with_progress` research wrapper
+binds immutable Settings, the original parent checkpoint, complete State and account
+roots/counts, and at most32 proofs before calling the actual M06 relation with one
+worker. Every semantic account point read must have its original-parent witness;
+current ordered values still come from full State and the transaction write overlay.
+Enabled continuity rules also gate their mandatory-recipient existence reads.
+Missing or unused witnesses refuse, as do account changes without a checked access,
+deletion and parent-child nonce decrease. The shared M06 callback hook authenticates
+no callback by itself; the research wrapper owns those checks.
+
+Full aggregate account/non-account scans, funds, fees, subsidy, conservation,
+capacity and complete successor roots remain. The returned native Output and
+`pon-checked-account-execution-v1` observation do not admit a block or publish an
+archive successor; ordinary Node admission and archive activation stay separate.
+Default execution entrypoints, production capacity, full-state commitments and
+consensus selection remain unchanged. A large synthetic archive, signed Node
+projection and proof-gated complete-State execution have separate observation
+contracts; none declares unbounded new-account admission or independent DA.

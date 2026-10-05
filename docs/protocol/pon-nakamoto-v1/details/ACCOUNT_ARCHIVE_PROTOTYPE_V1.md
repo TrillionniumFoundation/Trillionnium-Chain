@@ -4,10 +4,13 @@ This technical contract is subordinate to the
 [sole development plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 It describes an explicit research sidecar in
 [account_archive_prototype.rs](../../../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs).
-No Node constructor, production store, M05/M06 execution, mining path, fork-choice
-rule, transaction format or installed profile selects it. The existing full-state
-root and the [revision12 capacity invariant](CONTINUITY_V1.md) remain authoritative.
-No current ledger limit is enlarged by this module.
+No default Node constructor, production store, M05/M06 path, mining path,
+fork-choice rule, transaction format or installed profile selects it. The explicit
+[research execution wrapper](../../../../trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs)
+can require archive proofs at semantic account point accesses while retaining the
+complete native State and ordinary M06 relation. It does not execute from a partial
+State. The existing full-state root and the [revision12 capacity invariant](CONTINUITY_V1.md)
+remain authoritative. No current ledger limit is enlarged by these modules.
 
 ## 1. Architectural decision being tested
 
@@ -137,7 +140,8 @@ The two input classes stay explicit:
 
 Both complete State-root construction and projection reconstruction remain O(N)
 scans; initial canonicalization, input collection and sorting include nonpreemptive
-stages. This module does not turn the current executor into a witness-based executor.
+stages. The explicit research execution below does not replace these complete
+inputs, scans or roots with a partial-State executor.
 The supplied complete account collection and the writer's input memory also remain
 separate from the32-account checked read view.
 
@@ -165,6 +169,61 @@ before the private checked map is constructed. A missing requested witness retur
 queries from this type convey no transaction signature, funds or admission authority.
 An old branch witness remains usable as a historical observation against its own
 checkpoint, but rejects when presented as evidence for a newly selected checkpoint.
+
+### Complete-State research execution
+
+`account_archive_execution::execute` and `execute_with_progress` take immutable
+`Settings`, an archive, one parent checkpoint id, the complete native parent State,
+`BlockInput { transactions, height, miner, parent_id }`, and at most32 witnesses.
+The wrapper derives the application configuration from Settings and fixes one
+execution worker. It has no caller-supplied Config, worker override, activation
+request or work-proof capability. The research limit is an additional bound for
+this API, not a new ledger or transaction limit.
+
+Before execution it checks the checkpoint's branch against `parent_id`, exact
+successor height, complete parent State root, complete account projection/root and
+account count. `CheckedAccounts::verify` binds every supplied proof to the exact
+Settings context and checkpoint. Duplicate owners or invalid proofs refuse. Each
+proven original value, including genuine absence, must equal that owner's value
+in the independently reconstructed complete parent account map.
+
+The shared M06 implementation then invokes a point-access gate before its semantic
+account lookup. This includes transaction debits/credits, mandatory maturity and
+expiry credits, and the recipient-existence reads required by the selected
+continuity rules. Legacy contexts do not acquire revision12 reservation rules from
+this wrapper. A missing witness is `MissingWitness`, even when the complete State
+has an answer; no full-State fallback fills that missing proof. A valid parent-root
+nonmembership proof permits the ordinary relation to create an account where that
+relation allows it. It never permits erasing an existing nonce.
+
+Witnesses authenticate the original parent. Current ordered values still come
+from the complete State and the transaction write overlay, so an earlier credit
+or transaction in the same block can legitimately change the next read. The gate
+records each used owner. A successful computation rejects unused supplied proofs,
+any account deletion or nonce decrease on that parent-child transition, and any
+changed account that never passed the gate. Thus the final sorted requested and
+used owner sets match. Non-account scans, aggregate balances/obligations, fees,
+subsidy, conservation, capacity and complete successor roots remain ordinary
+complete-State operations. The API does not authenticate aggregate sums using only
+account point proofs or avoid the complete parent/successor scans.
+
+The public M06 `execute_with_account_point_access` is only a serial callback hook.
+It does not itself authenticate callbacks or create a checked archive capability;
+the Node research wrapper supplies the checks above. Default M06 entrypoints pass
+no research gate and keep their existing execution and worker behavior.
+
+The returned `CheckedExecutionOutput` contains the actual M06 Output and a
+`pon-checked-account-execution-v1` observation. That observation records context,
+parent/checkpoint/height, complete State and account roots/counts, requested/used
+owners and optional continuity capacity observations. Its flags require
+`workers=1`, `complete_state_required=true`, `aggregate_account_scans_are_full=true`,
+`consensus_admission=false` and `archive_mutated=false`. Serialization does not
+construct authority. A historical checkpoint may support a replay of its own
+parent; the wrapper does not certify that parent as the Node's current selected
+head, verify its work, choose a fork or publish an archive successor. The caller
+must separately perform ordinary Node validation/admission and any archive
+projection/activation. Failure or cancellation returns no completed observation,
+and neither the supplied parent nor archive is mutated by this computation.
 
 ## 6. Atomicity, branch selection and availability
 
@@ -299,6 +358,76 @@ A separately implemented Python oracle reconstructs the uncompressed root relati
 account inputs and checks observations; agreement is implementation evidence, not
 independent network service or future protocol acceptance.
 
+### Signed checked-execution campaign
+
+The separate [checked-execution regressions](../../../../trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs)
+exercise same-block creation/spend and self-transfer, original-parent proof coverage,
+canonical transaction errors, complete source/branch/context binding, new-miner
+reservation, reward maturity before a nonce-bearing spend, cancellation without
+publication and old-branch witness rejection. A legacy-profile expiry-refund test
+isolates the mandatory credit gate without continuity reservation checks or a
+transaction account read masking it. These are source-defined tests; the exact
+native command and its result remain separate evidence.
+
+[`account_execution_vectors`](../../../../trillionnium/crates/trnm-pon-node/examples/account_execution_vectors.rs)
+defines a distinct signed campaign under the continuity Settings. Its required
+sequence is43 admitted native packets with20 signed transactions, two branch
+reorganizations, three Node/archive reopens and29 original negative cases. These
+counts are not the earlier43-packet/132-transfer projection fixture. For each
+positive case it compares proof-gated serial M06 output with ordinary four-worker
+execution and an actually mined/admitted packet, then separately projects and
+selects the observed archive branch. Native before/after assertions retain the
+unchanged parent and archive on failure. The research wrapper itself never performs
+that admission, projection or activation.
+
+The new `pon-account-execution-native-observation-v1` JSON retains the original
+signed transactions and packet bytes, complete parent/successor States, exact
+checkpoint/proof sets, native M06 receipts/roots/access observations, rejection
+inputs/results, and branch/reopen observations. Its standalone archive snapshot
+uses the same helper and exact three-file export described above; its working
+archive and Node remain in the separate sibling `-working` directory. The original
+`account_archive_vectors` schema and its `archive_used_for_native_execution=false`
+scope retain their original meaning.
+
+The account execution CI wrapper reads each UTF-8 JSON input with its own
+32 MiB byte limit. It rejects symlinks, duplicate object keys, nonfinite constants
+and malformed JSON. This delivery bound accommodates the complete signed fixture;
+it does not change the 16 MiB cost-observation reader or the native relation.
+
+[`account_execution_oracle.py`](../../../../formal/pon-nakamoto-v1/account_execution_oracle.py)
+derives the configured development genesis and independently executes the exact
+signed fixture relation for tags1–5,10 and11. It verifies main/consumer signatures,
+ordered fees, task settlement/cancellation, quota use, expiry and reward maturity,
+full State/account roots, proof coverage and the reported negative cases against
+its own transition computation. Observed successor States and native deltas are
+comparison outputs, not its transition inputs. Unsupported transaction tags fail
+closed. Pure regressions cover the independent rules before any native comparison.
+
+The oracle consumes only the emitted JSON and reports
+`pon-account-execution-oracle-observation-v1`. It does not open the SQLite snapshot,
+independently inspect its rows, rerun native recovery, verify W1/difficulty or
+establish fork choice. Its branch/reopen checks compare the recorded states and
+identities under the specified fixture sequence. The CI wrapper separately checks
+the native snapshot receipt, physical header/page geometry, absence of sidecars,
+complete export-file inventory and unchanged hashes. Complete native transitions,
+JSON arithmetic agreement and consistent snapshot delivery have distinct scopes;
+none establishes production capacity expansion or independent public availability.
+
+From the repository root, using the default Cargo target directory:
+
+```bash
+cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test account_archive_execution
+cargo build --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example account_execution_vectors
+trillionnium/target/release/examples/account_execution_vectors /tmp/new-account-execution-vectors
+python3 formal/pon-nakamoto-v1/account_execution_oracle.py \
+  --native-json /tmp/new-account-execution-vectors/observation.json
+```
+
+If `CARGO_TARGET_DIR` is explicitly set, use the actual built executable there.
+The output directory and sibling `-working` directory must both be new. As with
+the other examples, these commands require the actual built source and retained
+execution identities; listing them declares no passing campaign.
+
 ## 8. Required work before a new capacity protocol
 
 The experiment supports further architecture work only within its observed scope.
@@ -308,8 +437,10 @@ protocol contract covering at least the following:
 1. **Complete execution relation.** M06 currently scans balances, obligations and
    other state, constructs a complete root, and verifies aggregate funds. An account
    witness alone does not implement these scans or authenticate aggregate sums.
-   Exact block access sets, shared proof accounting, aggregate checks and all
-   mandatory transitions require their own design and executable equivalence tests.
+   The research wrapper above checks actual semantic point access with full-State
+   execution retained. A replacement backend still needs authenticated aggregate
+   accounting, complete block access and shared-proof rules, persistent updates,
+   all mandatory transitions and executable equivalence against the full relation.
 2. **Availability responsibility at admission.** Account creation, new miners,
    funded refunds and archives must identify who retains and serves the required
    bytes, who pays, how missing providers are replaced, and how already accepted

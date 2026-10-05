@@ -215,16 +215,21 @@ inputs, maintenance cost, fastest-adversary cost or hardness. No relative speed
 threshold is applied; slower and fully exhausted runs remain valid measured
 observations, and a native failure retains its own error and raw output.
 
-### Separate fixed maintenance paired-product suite
+### Fixed maintenance producer and preparation suite
 
 The same architecture jobs finally execute `--suite maintenance-paired` in a
 separate always-executed step; the comparison job checks its own retained artifact
 after the earlier comparisons even when one has failed. There are still thirteen
-jobs for a PR event. This fourth suite owns `pon_maintenance_cost`, raw schema
-`pon-w1-maintenance-paired-v1`, artifact directory `cross-arch-maintenance-cost`,
-and separate `trnm-cross-arch-maintenance-cost-execution-v1` and
-`trnm-cross-arch-maintenance-cost-comparison-v1` schemas. The preceding three raw
+jobs for a PR event. This fourth suite owns `pon_maintenance_cost`, current raw
+schema `pon-w1-maintenance-preprocessing-v2`, artifact directory
+`cross-arch-maintenance-cost`, and separate
+`trnm-cross-arch-maintenance-cost-execution-v2` and
+`trnm-cross-arch-maintenance-cost-comparison-v2` schemas. The preceding three raw
 schemas and challenge streams remain separate and cannot be substituted.
+Historical four-strategy `pon-w1-maintenance-paired-v1` artifacts retain their
+original execution/comparison-v1 identities. Read-only artifact comparison can
+select them explicitly with `--maintenance-version 1`; the current runner and
+default comparator select version2 and cannot accept a v1 artifact as that run.
 
 This experiment uses the fixed public genesis-policy material of
 `consensus-maintenance-continuity-dev-v1`: flattened matrix entries are
@@ -238,34 +243,41 @@ Python separately encodes those matrices and independently computes their ranks,
 which deterministic bytes were studied; they do not establish task utility,
 resource fairness, an independent input provider or a lowest possible cost.
 
-Both fixed campaigns run generic prepared, tiled classical, one-level Strassen
-and paired-product full-trajectory producers in both cold and reused modes. There
-are 64 and 32 cohorts respectively, each retaining four searches, for 96 cohorts
-and 384 executed searches per architecture. Adjacent samples use the same rotated
-sequence forwards and backwards: with emitted offset `0..7`, the selected arm is
-`(sample // 2 + (offset if sample is even else 7-offset)) % 8`. Thus each arm's
-positions sum to seven in every complete sample pair, including the two/four-sample
+Both fixed campaigns run generic prepared, tiled classical, one-level Strassen,
+paired-product and `maintenance-periodic-setup` complete producers in both cold
+and reused modes. The periodic constructor checks both exact policy operands and
+computes their actual fixed product with row-prefix and sawtooth suffix sums;
+its per-challenge work is the ordinary complete transcript. All validation, plan,
+sum, product and proof-prefix construction inside each setup call is timed.
+The campaigns require 80 and 40 cohorts respectively, each retaining four searches,
+for 120 cohorts and 480 searches per architecture. Adjacent samples use the same rotated
+sequence forwards and backwards: with emitted offset `0..9`, the selected arm is
+`(sample // 2 + (offset if sample is even else 9-offset)) % 10`. Thus each arm's
+positions sum to nine in every complete sample pair, including the two/four-sample
 campaigns. This balances mean invocation position before measurement; it does not
 isolate CPU scheduling, caches, thermal effects or supply independent random tasks.
 
 The challenge tag is `maintenance-paired-cost-v1`; the native program also has
-separate complete ticket/proof-stream and winner-commitment domains. Every target
+separate complete ticket/proof-stream and winner-commitment domains. These retain
+their original v1 bytes to preserve the identity of the deterministic searches;
+the expanded strategy grid still requires the explicit v2 experiment schema. Every target
 miss, exhausted budget, constructor call and full proof stream is retained. The
-new checker requires the exact task/profile, all eight invocation positions,
+current checker requires the exact task/profile, all ten invocation positions,
 complete 49,188-byte certificate length, identical attempted streams across all
-four producers and both modes, the full deterministic winning challenge, both
+five producers and both modes, the full deterministic winning challenge, both
 post-generation verifier timings and all setup/search sums. Unsupported is not a
-successful result for one of these four required constructors. It preserves the
+successful result for one of these five required constructors. It preserves the
 same strict source, native ELF, command, failure and original-file hash contracts.
 
 `test_maintenance_cost.py` runs once in both repository-truth lanes. Its synthetic
-parser fixtures exercise all four schema substitutions, old challenge domains,
+parser fixtures exercise cross-suite substitution and explicit v1/v2 identities,
+wrong challenge domains,
 material/rank/profile changes, reordered or missing searches, omitted preparation,
 fabricated exhausted winners, hidden command failures, stale attempts, original
 file changes and cross-architecture stream disagreement. The tests separately
 verify balanced sample-pair positions and the fixed material's bytes and ranks.
 Fixture clocks and ELF header stubs are not measured evidence. A slower
-paired-product arm or an all-exhausted campaign remains a valid finite observation;
+producer arm or an all-exhausted campaign remains a valid finite observation;
 no speed threshold or mining-to-verification ratio grants acceptance.
 
 ## Independent native transition and model observations
@@ -278,9 +290,13 @@ binary or a full required row is a failure, not a skip or an imported historical
 
 The same release build also supplies `pon_paired_io` to `test_paired_work.py`.
 The existing independent Python W1 oracle constructs complete expected proofs;
-the test compares all 49,188 bytes against actual native output for sixteen
-canonical input/challenge cases and checks six malformed length, field or argument
-rejections. Four successful cases use the fixed genesis-maintenance material.
+the test compares all 49,188 bytes against actual native output for 20
+canonical input/challenge cases and checks 18 length, field, argument or
+unsupported-material rejections. Eight successful cases use the fixed
+genesis-maintenance material: four through the ordinary paired selector and four
+through the explicit `maintenance-periodic` selector. Its successor report schema
+is `pon-w1-paired-maintenance-python-native-v2`; all 38 native invocations and their
+original observations are required. Earlier 22-invocation receipts remain historical.
 Each invocation retains its actual input, Python proof where applicable, original
 native stdout/stderr and status under a fresh current-lane `paired-work` directory.
 Missing binary/output selectors fail explicitly. This comparison is separate from
@@ -325,6 +341,44 @@ exercise refusal only. This small conformance set establishes no large-account
 acceptance, consensus-capacity change or public data availability. The separate
 65,537-account research fixture and its independent replay, when run, retain their
 own source-bound observations and are not inferred from these CI results.
+
+The same `protocol-contract` lane then runs the pure
+`test_account_execution_oracle.py -v` suite and
+`scripts/ci/run_account_execution_conformance.py`. The existing Node release build
+supplies `account_execution_vectors`; no second workspace test execution or new
+job is introduced. Its separate `account-execution` artifact requires the complete
+43-packet/20-signed-transaction fixture, two native reorganizations, three reopens
+and 29 original negative cases. The research wrapper requires full State and one
+worker with exact parent-proof account-access coverage; it grants no ordinary
+Node admission or archive publication capability.
+
+The native observation schema is `pon-account-execution-native-observation-v1`;
+the independent JSON report is `pon-account-execution-oracle-observation-v1`.
+Python derives the exact genesis and the supported tag1–5/10/11 signed application
+transitions, full State/account roots and witness coverage, then compares the
+native States, receipts, errors and recorded branch/reopen identities. It does
+not reexecute W1, difficulty, fork choice, native recovery or SQLite operations.
+The existing full SQLite archive oracle remains a separate observation scope.
+
+The new wrapper's `trnm-account-execution-conformance-execution-v1` receipt keeps
+`oracle_reads_sqlite=false` and `sqlite_rows_independently_checked=false`. Native
+generation and JSON checking each have their own 300-second capture budget.
+This wrapper uses a separate 32 MiB byte limit for each UTF-8 JSON input, including
+the complete execution observation. It rejects symlinks, duplicate object keys,
+nonfinite constants and malformed JSON. The shared cost reader keeps its own
+16 MiB limit; neither limit changes the native execution or proof relation.
+The fresh `native` directory contains exactly `observation.json`, `archive.sqlite`
+and `finalization.json`, using the existing standalone snapshot helper; the source
+archive, original Node and their sidecars remain under `native-working`. The
+wrapper checks the actual export header/page geometry and complete receipt without
+opening SQL, and requires every export byte and the exact file inventory to remain
+unchanged through final retention. Working-file maps remain separate observations.
+All actual native sources/configurations, Python imports and wrapper inputs,
+source guards, executable identity, Python dependency identity, commands and
+failures are retained. Success is assigned only after final source, binary and
+export checks. `test_run_account_execution_conformance.py` executes receipt-shape
+and raw-file refusal fixtures in both repository-truth lanes; these synthetic
+checks are never labelled native account execution evidence.
 
 `rust-baseline` creates a fresh exclusive `model-composition` directory under its
 current receipt and a unique run identifier in a subshell. Its existing single full

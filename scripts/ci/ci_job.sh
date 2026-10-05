@@ -18,6 +18,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_one_zero_locality_cost.py
     python3 scripts/ci/test_maintenance_cost.py
     python3 scripts/ci/test_account_archive_conformance.py
+    python3 scripts/ci/test_run_account_execution_conformance.py
     python3 scripts/ci/report_current_implementation.py --check
     python3 scripts/ci/test_work_cost_report.py
     python3 scripts/test_qualification_runtime.py
@@ -36,6 +37,8 @@ case "${1:?required job}" in
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
     python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v
     python3 scripts/ci/run_account_archive_conformance.py
+    python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v
+    python3 scripts/ci/run_account_execution_conformance.py
     cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"

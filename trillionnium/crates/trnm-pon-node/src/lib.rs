@@ -52,6 +52,8 @@ use trnm_protocol::qualified_work_task::{
     MATRIX_ARTIFACT_BYTES,
 };
 
+/// Explicit research point-access proof gating over a complete native State.
+pub mod account_archive_execution;
 /// Explicit shadow account-archive research; never installed by Node lifecycle.
 pub mod account_archive_prototype;
 

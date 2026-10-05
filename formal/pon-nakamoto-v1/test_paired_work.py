@@ -1,4 +1,4 @@
-"""Complete native paired-producer bytes against the existing scalar Python relation.
+"""Complete native paired/maintenance bytes against the existing scalar Python relation.
 
 Fixed genesis maintenance is the sole policy material here. Near-q, hash-dense,
 and one-zero inputs are canonical arithmetic controls, not current-parent task
@@ -31,11 +31,13 @@ SOURCE_PATHS = [
     'formal/pon-nakamoto-v1/test_paired_work.py',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs',
     'trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs',
     'trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs',
+    'trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs',
     'trillionnium/Cargo.lock',
 ]
 
@@ -83,8 +85,8 @@ class PairedWorkOracleTests(unittest.TestCase):
         unchanged = after == cls.before
         (cls.output / 'identity-after.json').write_text(json.dumps(after, indent=2, sort_keys=True) + '\n')
         report = {
-            'schema': 'pon-w1-paired-python-native-v1',
-            'result': 'PASS' if unchanged and len(cls.observations) == 22
+            'schema': 'pon-w1-paired-maintenance-python-native-v2',
+            'result': 'PASS' if unchanged and len(cls.observations) == 38
                       and all(row['result'] == 'PASS' for row in cls.observations) else 'FAIL',
             'source_and_binary_unchanged': unchanged,
             'source_before': cls.before, 'source_after': after,
@@ -158,7 +160,7 @@ class PairedWorkOracleTests(unittest.TestCase):
         self.observations.append(record)
         self.assertEqual(record['result'], 'PASS', f'{name}: inspect retained {path}')
 
-    def compare_material(self, name, a, b, source_class):
+    def compare_material(self, name, a, b, source_class, *, arguments=()):
         task = work_oracle.task_id(a, b)
         challenges = [bytes(32), bytes([7]) * 32, bytes([255]) * 32,
                       H('paired-bridge-challenge-v1', task)]
@@ -167,7 +169,8 @@ class PairedWorkOracleTests(unittest.TestCase):
                 expected = work_oracle.prove(challenge, a, b)
                 self.assertEqual(len(expected), 49188)
                 data = challenge + work_oracle.field_bytes(a) + work_oracle.field_bytes(b)
-                self.case(f'{name}-{index}', data, source_class=source_class, expected=expected)
+                self.case(f'{name}-{index}', data, source_class=source_class, expected=expected,
+                          arguments=arguments)
 
     def test_fixed_genesis_maintenance_full_bytes_match_the_scalar_relation(self):
         a, b = maintenance()
@@ -175,6 +178,9 @@ class PairedWorkOracleTests(unittest.TestCase):
                          'c982eea0545c228d0bf48d6d06e623020b4031f2ba79da56cc6bdccde2c63496')
         self.compare_material('genesis-maintenance', a, b,
                               'genesis-policy-material-native-parent-admission-tested-separately')
+        self.compare_material('genesis-maintenance-periodic', a, b,
+                              'genesis-policy-material-native-parent-admission-tested-separately',
+                              arguments=('maintenance-periodic',))
 
     def test_field_controls_cover_wraparound_dense_and_zero_without_admission_claims(self):
         q, cells = work_oracle.Q, work_oracle.CELLS
@@ -200,6 +206,33 @@ class PairedWorkOracleTests(unittest.TestCase):
             with self.subTest(case=name):
                 self.case(name, bytes(value), source_class='noncanonical-bridge-input', error='WORK')
         self.case('extra-argument', data, arguments=('unexpected',),
+                  source_class='unrecognized-bridge-operation', error='OPERATION')
+
+    def test_periodic_selector_rejects_nonmaintenance_and_malformed_inputs(self):
+        a, b = maintenance()
+        challenge = bytes(32)
+        exact = challenge + work_oracle.field_bytes(a) + work_oracle.field_bytes(b)
+        arguments = ('maintenance-periodic',)
+        for name, operand, position in [('left-first', 0, 0), ('left-last', 0, 4095),
+                                        ('right-first', 1, 0), ('right-last', 1, 4095)]:
+            left, right = a[:], b[:]
+            [left, right][operand][position] ^= 1
+            data = challenge + work_oracle.field_bytes(left) + work_oracle.field_bytes(right)
+            self.case('periodic-unsupported-' + name, data, arguments=arguments,
+                      source_class='canonical-nonmaintenance-control', error='UNSUPPORTED')
+        for name, left, right in [('both-zero', [0] * 4096, [0] * 4096), ('swapped', b, a)]:
+            data = challenge + work_oracle.field_bytes(left) + work_oracle.field_bytes(right)
+            self.case('periodic-unsupported-' + name, data, arguments=arguments,
+                      source_class='canonical-nonmaintenance-control', error='UNSUPPORTED')
+        for name, data in [('empty', b''), ('short', exact[:-1]), ('extra-byte', exact + b'\0')]:
+            self.case('periodic-' + name, data, arguments=arguments,
+                      source_class='malformed-bridge-input', error='LENGTH')
+        for name, offset in [('first-field-q', 32), ('last-field-q', len(exact) - 4)]:
+            value = bytearray(exact)
+            value[offset:offset + 4] = work_oracle.Q.to_bytes(4, 'little')
+            self.case('periodic-' + name, bytes(value), arguments=arguments,
+                      source_class='noncanonical-bridge-input', error='WORK')
+        self.case('periodic-extra-argument', exact, arguments=(*arguments, 'extra'),
                   source_class='unrecognized-bridge-operation', error='OPERATION')
 
 
