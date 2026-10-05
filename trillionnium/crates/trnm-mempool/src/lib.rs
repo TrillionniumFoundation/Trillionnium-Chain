@@ -674,10 +674,8 @@ impl LaneAdmissionGate {
             // In restored-state edge cases, degrade gracefully instead of panicking.
             if let Some(id) = self.normal.pop_ready() {
                 (id, false)
-            } else if let Some(id) = self.critical.pop_ready() {
-                (id, true)
             } else {
-                return None;
+                (self.critical.pop_ready()?, true)
             }
         } else if let Some(id) = self.critical.pop_ready() {
             (id, true)

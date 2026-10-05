@@ -75,9 +75,9 @@ def artifact_fixture(directory: Path, arch: str, *, suite: str = 'zero-locality'
     (base / example).write_bytes(b'\x7fELF\x02\x01' + b'\0' * 12 +
         spec['elf_machine'].to_bytes(2, 'little') + b'SYNTHETIC PARSER FIXTURE; NEVER EXECUTED')
     (base / 'cpuinfo.txt').write_text('synthetic parser fixture; not hardware evidence\n')
-    commands = [(['uname', '-a'], 'uname', 30), (['rustc', '+1.95.0', '-vV'], 'rustc', 30),
-        (['cargo', '+1.95.0', '--version'], 'cargo', 30),
-        (['cargo', '+1.95.0', 'build', '--locked', '--release', '--manifest-path',
+    commands = [(['uname', '-a'], 'uname', 30), (['rustc', '+1.99.0', '-vV'], 'rustc', 30),
+        (['cargo', '+1.99.0', '--version'], 'cargo', 30),
+        (['cargo', '+1.99.0', 'build', '--locked', '--release', '--manifest-path',
           'trillionnium/Cargo.toml', '--target', spec['target'], '-p',
           'trnm-crypto-primitives', '--example', example], 'build', 900)]
     commands.extend(([f'/synthetic/parser-fixture/{example}', *benchmark_arguments(c)],
@@ -90,7 +90,7 @@ def artifact_fixture(directory: Path, arch: str, *, suite: str = 'zero-locality'
         (base / (stem + '.stdout')).write_text('synthetic parser fixture\n')
         (base / (stem + '.stderr')).write_bytes(b'')
     (base / 'uname.stdout').write_text('synthetic parser fixture ' + spec['machine'] + '\n')
-    (base / 'rustc.stdout').write_text(f'synthetic parser fixture\nrelease: 1.95.0\nhost: {spec["target"]}\n')
+    (base / 'rustc.stdout').write_text(f'synthetic parser fixture\nrelease: 1.99.0\nhost: {spec["target"]}\n')
     campaigns = []
     for index, configuration in enumerate(CAMPAIGNS):
         raw = raw_fixture(configuration)
@@ -102,7 +102,7 @@ def artifact_fixture(directory: Path, arch: str, *, suite: str = 'zero-locality'
         'runner_label': spec['runner'], 'target': spec['target'],
         'runner_context': {'GITHUB_RUN_ID': '123', 'GITHUB_RUN_ATTEMPT': '1',
                            'RUNNER_ARCH': spec['runner_arch']},
-        'uname': {'system': 'Linux', 'machine': spec['machine']}, 'compiler_channel': '1.95.0',
+        'uname': {'system': 'Linux', 'machine': spec['machine']}, 'compiler_channel': '1.99.0',
         'build_profile': 'release', 'build_environment_overrides': {},
         'source_before': source, 'source_after': copy.deepcopy(source), 'source_changed': False,
         'input_sha256': {path: '4' * 64 for path in contract['inputs']},
@@ -255,6 +255,31 @@ class ZeroArtifactContractTests(unittest.TestCase):
         self.assertEqual(result['schema'], 'trnm-cross-arch-zero-locality-cost-comparison-v1')
         self.assertEqual([row['rows'] for row in result['campaigns']], [48, 24])
         self.assertFalse(result['speed_threshold_applied'])
+
+    def test_prior_compiler_channel_cannot_satisfy_current_contract(self):
+        self.rejected(lambda report: report.update(compiler_channel='1.95.0'))
+
+    def test_prior_compiler_identity_cannot_be_relabelled(self):
+        base = self.root / 'arm64' / suite_contract('zero-locality')['directory']
+        path = base / 'rustc.stdout'
+        path.write_text(path.read_text().replace('release: 1.99.0', 'release: 1.95.0'))
+        write_manifest(self.root / 'arm64', self.records['arm64'])
+        with self.assertRaisesRegex(ValueError, 'actual compiler release'):
+            self.check()
+
+    def test_prior_compiler_commands_cannot_be_relabelled(self):
+        report = self.records['arm64']
+        for index in (1, 2, 3):
+            with self.subTest(command=index):
+                original = report['observations'][index]['command'][:]
+                report['observations'][index]['command'][1] = '+1.95.0'
+                try:
+                    write_manifest(self.root / 'arm64', report)
+                    with self.assertRaises(ValueError):
+                        self.check()
+                finally:
+                    report['observations'][index]['command'] = original
+                    write_manifest(self.root / 'arm64', report)
 
     def test_failed_native_status_cannot_pass(self):
         self.rejected(lambda report: report.update(result='FAIL'))

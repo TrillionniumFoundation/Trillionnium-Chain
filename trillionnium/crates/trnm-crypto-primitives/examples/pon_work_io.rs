@@ -22,7 +22,10 @@ fn run() -> Result<(), &'static str> {
     let challenge = h(&input[..32])?;
     let output = if mode == "prove" {
         let elements: Vec<u32> = input[32..]
-            .chunks_exact(4)
+            .as_chunks::<4>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
             .map(|b| u32::from_le_bytes(b.try_into().expect("four-byte chunk")))
             .collect();
         prove(challenge, &elements[..CELLS], &elements[CELLS..]).map_err(|_| "WORK")?

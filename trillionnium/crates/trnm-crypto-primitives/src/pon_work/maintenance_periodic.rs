@@ -72,7 +72,7 @@ impl MaintenancePeriodicPreparedTask {
         // product execute inside each constructor and therefore its setup timer.
         let plans: [ColumnPlan; N] = std::array::from_fn(|column| ColumnPlan::new(b[column]));
         let mut product = Vec::with_capacity(CELLS);
-        for row in a.chunks_exact(N) {
+        for row in a.as_chunks::<N>().0.iter().map(|chunk| chunk.as_slice()) {
             let mut prefix = [0; N + 1];
             let mut weighted = 0;
             for (index, &value) in row.iter().enumerate() {

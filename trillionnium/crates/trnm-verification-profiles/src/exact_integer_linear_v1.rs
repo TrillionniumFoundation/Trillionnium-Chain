@@ -326,7 +326,13 @@ impl<'a> Parser<'a> {
             .get(self.position..end)
             .ok_or(IntegerLinearErrorV1::Length)?;
         let mut digest = [0; 32];
-        for (i, pair) in value.chunks_exact(2).enumerate() {
+        for (i, pair) in value
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
+            .enumerate()
+        {
             fn digit(c: u8) -> Result<u8> {
                 match c {
                     b'0'..=b'9' => Ok(c - b'0'),

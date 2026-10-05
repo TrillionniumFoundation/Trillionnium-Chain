@@ -82,7 +82,7 @@ jobs:
           printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
           printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Install pinned native release compiler
-        run: rustup toolchain install 1.95.0 --profile minimal
+        run: rustup toolchain install 1.99.0 --profile minimal
       - name: Execute native release setup and repeated-search costs
         run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"
       - name: Execute native zero-matrix locality costs
@@ -170,7 +170,7 @@ jobs:
           printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Install pinned compiler and tools in isolated hosted runner
         run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup toolchain install 1.99.0 --profile minimal --component rustfmt --component clippy
       - name: Install isolated conformance-only Python environment
         run: |
           python3 -m venv "$RUNNER_TEMP/pon-contract-env"
@@ -211,7 +211,7 @@ jobs:
           printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Install pinned compiler and tools in isolated hosted runner
         run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup toolchain install 1.99.0 --profile minimal --component rustfmt --component clippy
       - name: Install pinned coverage-guided fuzz tools
         run: bash scripts/ci/install_ci_tools.sh fuzz
       - name: Run actual fuzz-smoke checks
@@ -249,7 +249,7 @@ jobs:
           printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Install pinned compiler and tools in isolated hosted runner
         run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup toolchain install 1.99.0 --profile minimal --component rustfmt --component clippy
       - name: Install pinned dependency auditor
         run: bash scripts/ci/install_ci_tools.sh supply-chain
       - name: Run actual rust-baseline checks
@@ -334,7 +334,7 @@ jobs:
           printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Install pinned compiler and tools in isolated hosted runner
         if: matrix.lane == 'protocol-contract' || matrix.lane == 'fuzz-smoke' || matrix.lane == 'rust-baseline'
-        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+        run: rustup toolchain install 1.99.0 --profile minimal --component rustfmt --component clippy
       - name: Install isolated conformance and evidence Python environment
         if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract'
         run: |

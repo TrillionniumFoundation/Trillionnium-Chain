@@ -3522,6 +3522,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-protocol/tests/constant_chunk_slice_equivalence.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/constant_chunk_slice_equivalence.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v2.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

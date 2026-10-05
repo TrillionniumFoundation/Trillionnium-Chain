@@ -70,7 +70,13 @@ fn inverse(mut power: u32) -> u32 {
     result
 }
 fn rank(matrix: &[u32]) -> usize {
-    let mut rows: Vec<_> = matrix.chunks_exact(N).map(<[u32]>::to_vec).collect();
+    let mut rows: Vec<_> = matrix
+        .as_chunks::<N>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
+        .map(<[u32]>::to_vec)
+        .collect();
     let mut rank = 0;
     for column in 0..N {
         let Some(pivot) = (rank..N).find(|row| rows[*row][column] != 0) else {
@@ -102,7 +108,10 @@ fn full_rank(label: u8) -> Vec<u32> {
                 b"comparison-material",
                 &[&[label], &generation.to_le_bytes(), &counter.to_le_bytes()],
             )
-            .chunks_exact(4)
+            .as_chunks::<4>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
             {
                 let value = u32::from_le_bytes(bytes.try_into().unwrap());
                 if u128::from(value) < Q {
@@ -133,7 +142,10 @@ fn decode_material(path: &PathBuf) -> Result<Vec<u32>, Box<dyn Error>> {
         return Err("material must contain exactly 16384 bytes".into());
     }
     let values: Vec<_> = bytes
-        .chunks_exact(4)
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
         .map(|b| u32::from_le_bytes(b.try_into().unwrap()))
         .collect();
     task_id(&values, &values).map_err(|_| "noncanonical matrix material")?;

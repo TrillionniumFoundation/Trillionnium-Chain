@@ -180,7 +180,10 @@ fn factor(values: &[u32]) -> u32 {
     debug_assert!(values.len() <= N && values.len().is_multiple_of(2));
     producer_reduce(
         values
-            .chunks_exact(2)
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|chunk| chunk.as_slice())
             .map(|pair| u128::from(pair[0]) * u128::from(pair[1]))
             .sum(),
     )
@@ -194,7 +197,13 @@ fn factor(values: &[u32]) -> u32 {
 fn paired_dot(a: &[u32], bt: &[u32], row_factor: u32, column_factor: u32, prior: u32) -> u32 {
     debug_assert_eq!(a.len(), bt.len());
     let mut sum = u128::from(prior) + 2 * Q - u128::from(row_factor) - u128::from(column_factor);
-    for (x, y) in a.chunks_exact(2).zip(bt.chunks_exact(2)) {
+    for (x, y) in a
+        .as_chunks::<2>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
+        .zip(bt.as_chunks::<2>().0.iter().map(|chunk| chunk.as_slice()))
+    {
         sum += u128::from(add(x[0], y[1])) * u128::from(add(x[1], y[0]));
     }
     producer_reduce(sum)

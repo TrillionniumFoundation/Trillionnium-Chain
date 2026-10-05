@@ -27,7 +27,10 @@ fn run() -> Result<(), &'static str> {
     }
     let challenge: Hash = input[..32].try_into().map_err(|_| "LENGTH")?;
     let elements: Vec<_> = input[32..]
-        .chunks_exact(4)
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
         .map(|bytes| u32::from_le_bytes(bytes.try_into().expect("four-byte chunk")))
         .collect();
     let proof = if periodic {

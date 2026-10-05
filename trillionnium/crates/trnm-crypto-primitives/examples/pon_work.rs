@@ -42,7 +42,10 @@ fn run(line: &str) -> Result<String, String> {
                 return Err("input length".into());
             }
             let values: Vec<u32> = data
-                .chunks_exact(4)
+                .as_chunks::<4>()
+                .0
+                .iter()
+                .map(|chunk| chunk.as_slice())
                 .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
                 .collect();
             let proof = prove(fixed(challenge)?, &values[..CELLS], &values[CELLS..])

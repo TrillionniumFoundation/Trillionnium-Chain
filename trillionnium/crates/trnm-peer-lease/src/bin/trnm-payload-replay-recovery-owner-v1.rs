@@ -143,7 +143,14 @@ fn parse_hex32(value: &str, name: &str) -> Result<[u8; 32], String> {
         ));
     }
     let mut output = [0u8; 32];
-    for (index, pair) in value.as_bytes().chunks_exact(2).enumerate() {
+    for (index, pair) in value
+        .as_bytes()
+        .as_chunks::<2>()
+        .0
+        .iter()
+        .map(|chunk| chunk.as_slice())
+        .enumerate()
+    {
         output[index] = (decode_nibble(pair[0], name)? << 4) | decode_nibble(pair[1], name)?;
     }
     Ok(output)
