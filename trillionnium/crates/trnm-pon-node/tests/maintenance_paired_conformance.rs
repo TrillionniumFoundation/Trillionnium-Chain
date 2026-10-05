@@ -2,6 +2,7 @@
 //! This checks native admission, not demand, work hardness or a mining scheduler.
 use trnm_crypto_primitives::pon_work::{
     self,
+    maintenance_limb::MaintenanceLimbPreparedTask,
     maintenance_periodic::MaintenancePeriodicPreparedTask,
     maintenance_prefix::{MaintenanceIntegerPairedPreparedTask, MaintenancePrefixPreparedTask},
     paired_product::PairedPreparedTask,
@@ -37,6 +38,7 @@ fn paired_genesis_maintenance_preserves_actual_parent_admission_and_reopen() {
         .unwrap()
         .unwrap();
     let prefix = MaintenancePrefixPreparedTask::new(&a, &b).unwrap().unwrap();
+    let limb = MaintenanceLimbPreparedTask::new(&a, &b).unwrap().unwrap();
     let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
     let mut challenges = Vec::new();
     for height in 1..=3 {
@@ -53,7 +55,8 @@ fn paired_genesis_maintenance_preserves_actual_parent_admission_and_reopen() {
         let challenge = packet.header.challenge();
         assert!(!challenges.contains(&challenge));
         challenges.push(challenge);
-        let proof = prefix.prove(challenge).unwrap();
+        let proof = limb.prove(challenge).unwrap();
+        assert_eq!(proof, prefix.prove(challenge).unwrap());
         assert_eq!(proof, integer_paired.prove(challenge).unwrap());
         assert_eq!(proof, periodic.prove(challenge).unwrap());
         assert_eq!(proof, paired.prove(challenge).unwrap());
@@ -77,6 +80,10 @@ fn paired_genesis_maintenance_preserves_actual_parent_admission_and_reopen() {
         node = Node::open(dir.path(), settings.clone(), 1).unwrap();
         assert_eq!(node.read_active().unwrap(), before);
     }
+    assert_eq!(
+        limb.prove(challenges[0]).unwrap(),
+        paired.prove(challenges[0]).unwrap()
+    );
     assert_eq!(
         periodic.prove(challenges[0]).unwrap(),
         paired.prove(challenges[0]).unwrap()

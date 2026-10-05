@@ -11,7 +11,8 @@ from pathlib import Path
 
 from ci_observation import ROOT, checked, digest, finish, receipt_root, tool_root, tool_versions
 
-TARGETS = {'canonical_wire': 2049, 'work_certificate': 49189}
+TARGETS = {'canonical_wire': 2049, 'work_certificate': 49189, 'authenticated_state': 512}
+STATE_SEEDS = 'tests/fuzz/seeds/authenticated_state'
 
 
 def counters(text: str, seed_count: int) -> dict:
@@ -66,8 +67,15 @@ def main() -> int:
             corpus.mkdir(parents=True)
             artifacts.mkdir(parents=True)
             vectors = ROOT / 'formal/pon-nakamoto-v1/vectors'
-            seeds = ([vectors / 'header.bin', *sorted(vectors.glob('tx-*.bin'))]
-                     if target == 'canonical_wire' else [vectors / 'work.bin'])
+            if target == 'canonical_wire':
+                seeds = [vectors / 'header.bin', *sorted(vectors.glob('tx-*.bin'))]
+            elif target == 'work_certificate':
+                seeds = [vectors / 'work.bin']
+            else:
+                seeds = sorted(path for path in (ROOT / STATE_SEEDS).iterdir() if path.is_file())
+                if not seeds or any(path.is_symlink() or path.stat().st_size > TARGETS[target]
+                                    for path in seeds):
+                    raise ValueError('missing or invalid authenticated-state corpus')
             for seed in seeds:
                 shutil.copyfile(seed, corpus / seed.name)
             report['targets'][target] = {'seed_sha256': {p.name: digest(p) for p in seeds},
@@ -91,6 +99,8 @@ def main() -> int:
     finally:
         finish(output, report, ['tests/fuzz/Cargo.toml', 'tests/fuzz/Cargo.lock',
                               'scripts/ci/tool-versions.env', 'scripts/ci/run_fuzz_smoke.py',
+                              *[str(path.relative_to(ROOT)) for path in sorted((ROOT / STATE_SEEDS).glob('*'))
+                                if path.is_file()],
                               *['tests/fuzz/fuzz_targets/' + name + '.rs' for name in TARGETS]])
     return 0 if report['result'] == 'PASS' else 1
 

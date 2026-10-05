@@ -129,6 +129,40 @@ class AccountExecutionOracle(unittest.TestCase):
         self.assertEqual(self.account(result['state'], 10), dict(balance=500, nonce=0))
         self.assertIn(list(oracle.development_public(10)), result['used_owners'])
 
+    def test_complete_query_exceeds_point_query_bound_and_checks_later_batch(self):
+        owners = (0, *range(1000, 1040))
+        checkpoint, requested, witnesses = self.make_checked(owners=owners)
+        transactions = [transfer(self.context, 0, index + 1, recipient, 1)
+                        for index, recipient in enumerate(owners[1:])]
+        checked = oracle.checked_witnesses(self.context, checkpoint, self.state,
+            self.context.genesis, 0, requested, witnesses, len(transactions))
+        result = self.run_block(transactions, checked=checked)
+        self.assertEqual(len(result['used_owners']), 41)
+        self.assertEqual(archive.MAX_VIEW_ACCOUNTS, 32)
+        self.assertEqual(self.account(result['state'], 1039), dict(balance=1, nonce=0))
+        omitted = {owner: value for owner, value in checked.items()
+                   if owner != oracle.development_public(1039)}
+        with self.assertRaisesRegex(oracle.RelationError, '^MISSING_WITNESS:'):
+            self.run_block(transactions, checked=omitted)
+        damaged = copy.deepcopy(witnesses)
+        damaged[32]['siblings'][200][0] ^= 1
+        with self.assertRaisesRegex(ValueError, '^ARCHIVE_ROOT$'):
+            oracle.checked_witnesses(self.context, checkpoint, self.state,
+                self.context.genesis, 0, requested, damaged, len(transactions))
+        duplicate = witnesses + [copy.deepcopy(witnesses[0])]
+        with self.assertRaisesRegex(oracle.RelationError, '^INVALID_WITNESS$'):
+            oracle.checked_witnesses(self.context, checkpoint, self.state,
+                self.context.genesis, 0, requested + [requested[0]], duplicate, len(transactions))
+
+    def test_execution_witness_budget_checks_real_installed_counts(self):
+        self.assertEqual(oracle.execution_witness_budget(65536, 256), 66049)
+        self.assertEqual(oracle.execution_witness_budget(0, 0), 1)
+        for keys, transactions in [(65537, 0), (0, 257), (-1, 0), (0, -1),
+                                   (True, 0), (0, False), (1 << 64, 0)]:
+            with self.subTest(keys=keys, transactions=transactions), self.assertRaisesRegex(
+                    oracle.RelationError, '^WITNESS_BUDGET$'):
+                oracle.execution_witness_budget(keys, transactions)
+
     def test_missing_witness_for_proved_absence_is_not_default_zero(self):
         checkpoint, requested, witnesses = self.make_checked(owners=(0,))
         checked = oracle.checked_witnesses(self.context, checkpoint, self.state,

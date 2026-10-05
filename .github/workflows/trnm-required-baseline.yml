@@ -252,6 +252,11 @@ jobs:
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
       - name: Install pinned dependency auditor
         run: bash scripts/ci/install_ci_tools.sh supply-chain
+      - name: Install isolated signed-state oracle Python environment
+        run: |
+          python3 -m venv "$RUNNER_TEMP/pon-state-env"
+          "$RUNNER_TEMP/pon-state-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+          echo "$RUNNER_TEMP/pon-state-env/bin" >> "$GITHUB_PATH"
       - name: Run actual rust-baseline checks
         run: bash scripts/ci/ci_job.sh rust-baseline
       - name: Verify source remained unchanged
@@ -336,7 +341,7 @@ jobs:
         if: matrix.lane == 'protocol-contract' || matrix.lane == 'fuzz-smoke' || matrix.lane == 'rust-baseline'
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
       - name: Install isolated conformance and evidence Python environment
-        if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract'
+        if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract' || matrix.lane == 'rust-baseline'
         run: |
           python3 -m venv "$RUNNER_TEMP/pon-merge-env"
           "$RUNNER_TEMP/pon-merge-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt

@@ -18,6 +18,10 @@ resolver = "2"
 libfuzzer-sys = "=0.4.10"
 trnm-protocol = { version = "=0.1.0", path = "../../trillionnium/crates/trnm-protocol" }
 trnm-crypto-primitives = { version = "=0.1.0", path = "../../trillionnium/crates/trnm-crypto-primitives" }
+trnm-pon-node = { version = "=0.1.0", path = "../../trillionnium/crates/trnm-pon-node" }
+trnm-mvcc-fee = { version = "=0.1.0", path = "../../trillionnium/crates/trnm-mvcc-fee" }
+serde_json = "=1.0.149"
+hex = "=0.4.3"
 
 [[bin]]
 name = "canonical_wire"
@@ -29,6 +33,13 @@ bench = false
 [[bin]]
 name = "work_certificate"
 path = "fuzz_targets/work_certificate.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "authenticated_state"
+path = "fuzz_targets/authenticated_state.rs"
 test = false
 doc = false
 bench = false

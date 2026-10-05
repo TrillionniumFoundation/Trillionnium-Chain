@@ -95,3 +95,15 @@ No historical receipt is relabelled as executing this source.
 ## Joined full-history projection
 
 The [history/state resource contract](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) reduces a full-confirmation ancestor step to one checked joined metadata query. Full observed-clock ancestry, inclusion-body roots, membership, cancellation and final generation checks remain. This does not cache an old clock verdict or claim constant-time confirmation/recovery.
+
+## Explicit authenticated-state archive
+
+The [durable research archive](../protocol/pon-nakamoto-v1/details/AUTHENTICATED_STATE_ARCHIVE_V1.md)
+uses its own namespace and explicit caller operation. It imports actual native genesis,
+reexecutes an admitted block through complete authenticated-state inputs and checks
+full state/receipts before atomically publishing checkpoint, delta and optional selection.
+CAS generations do not rewind when selecting an older branch. Missing data, altered
+records, stale selection, quota exhaustion and cancellation refuse without partial
+publication. Reads and reopen reconstruct complete states and compare actual native
+branch data. This separate reference-backed store adds no ordinary startup selection,
+installed state root, public proof service, pruning or rollback of local operation facts.

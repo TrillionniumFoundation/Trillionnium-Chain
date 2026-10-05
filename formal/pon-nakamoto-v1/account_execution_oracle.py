@@ -36,6 +36,8 @@ EVALUATION = 'native-public-evaluation-dev-v1'
 PROFILE = 'consensus-maintenance-continuity-dev-v1'
 MODEL = 'linear-expert-dev-v1'
 SUPPORTED_TAGS = (1, 2, 3, 4, 5, 10, 11)
+MAX_EXECUTION_TRANSACTIONS = 256
+MAX_EXECUTION_ACCOUNTS = 65536 + 2 * MAX_EXECUTION_TRANSACTIONS + 1
 U64_MAX = (1 << 64) - 1
 ZERO = bytes(32)
 HASH_FIELDS = ('network', 'parameters', 'parent', 'target', 'miner',
@@ -594,7 +596,20 @@ def transition(parent, transactions, height, miner, parent_id, context, checked=
                 fees=fees, subsidy=subsidy, capacity_before=before, capacity_after=after)
 
 
-def checked_witnesses(context, checkpoint, parent, parent_id, height, requested, witnesses):
+def execution_witness_budget(parent_keys, transactions):
+    """One original recipient per parent row, two transaction owners and the miner.
+
+    This bounds the complete execution query. The archive's independent point
+    query API retains its original 32-owner bound.
+    """
+    require(type(parent_keys) is int and 0 <= parent_keys <= 65536
+            and type(transactions) is int and 0 <= transactions <= MAX_EXECUTION_TRANSACTIONS,
+            'WITNESS_BUDGET')
+    return parent_keys + 2 * transactions + 1
+
+
+def checked_witnesses(context, checkpoint, parent, parent_id, height, requested, witnesses,
+                      transactions=0):
     """Bind the checkpoint to the full parent before interpreting any account proof."""
     equal(checkpoint['context'], context.as_json(), 'CHECKPOINT_CONTEXT')
     require(hash_value(checkpoint['branch']) == hash_value(parent_id)
@@ -609,7 +624,8 @@ def checked_witnesses(context, checkpoint, parent, parent_id, height, requested,
             'CHECKPOINT_ACCOUNT_ROOT')
     archive.checkpoint_record(checkpoint)
     require(type(requested) is list and type(witnesses) is list
-            and len(requested) == len(witnesses) <= archive.MAX_VIEW_ACCOUNTS, 'WITNESS_BUDGET')
+            and len(requested) == len(witnesses)
+            <= execution_witness_budget(len(parent), transactions), 'WITNESS_BUDGET')
     owners = [hash_value(owner) for owner in requested]
     require(len(set(owners)) == len(owners), 'INVALID_WITNESS')
     result = {}
@@ -810,7 +826,7 @@ def check_positive_observation(observation):
         transactions = fixture_transactions(context, height, parent) if label.startswith('main-') else []
         equal(block['transactions_hex'], [raw.hex() for raw in transactions], 'FIXTURE_SIGNED_TRANSACTION_BYTES')
         checked = checked_witnesses(context, parent_checkpoint, parent, parent_id, height-1,
-                                   block['requested'], block['witnesses'])
+                                   block['requested'], block['witnesses'], len(transactions))
         owners = [hash_value(owner) for owner in block['requested']]
         require(owners == sorted(owners), 'NATIVE_REQUESTED_ORDER')
         equal(block['witnesses_hex'], [archive.encode_witness(witness).hex()
@@ -1081,8 +1097,11 @@ def negative_inputs(observation, context, states, checkpoints, labels):
 
 def derive_checked_outcome(case, context, checkpoints):
     """Independent checked-input and application relation, returning a typed observation."""
-    if len(case['witnesses']) > archive.MAX_VIEW_ACCOUNTS:
+    if len(case['witnesses']) > execution_witness_budget(
+            len(case['parent_state']), len(case['transactions_hex'])):
         return dict(kind='checked', code='Budget')
+    if any(len(witness['siblings']) != archive.TREE_BITS for witness in case['witnesses']):
+        return dict(kind='archive', code='InvalidWitness')
     by_id = {hash_value(checkpoint['id']): checkpoint for checkpoint in checkpoints.values()}
     checkpoint = by_id.get(hash_value(case['parent_checkpoint_id']))
     if checkpoint is None:
@@ -1097,7 +1116,7 @@ def derive_checked_outcome(case, context, checkpoints):
         return dict(kind='checked', code='Context')
     try:
         checked = checked_witnesses(context, checkpoint, case['parent_state'], case['parent'],
-            case['height']-1, case['requested'], case['witnesses'])
+            case['height']-1, case['requested'], case['witnesses'], len(case['transactions_hex']))
     except ValueError:
         return dict(kind='archive', code='InvalidWitness')
     before = canonical(case['parent_state'])
@@ -1124,14 +1143,16 @@ def derive_checked_outcome(case, context, checkpoints):
 def expected_negative_progress(case):
     """Serial public progress contract, separately checked from monetary arithmetic."""
     label = case['label']
-    if label == 'witness-budget':
+    if label in {'witness-budget', 'malformed-witness'}:
         return []
     result = ['BeforeParentBinding']
-    binding = {'duplicate-witness', 'forged-account-value', 'forged-account-absence',
-               'witness-from-old-branch', 'forged-witness-root', 'malformed-witness',
-               'wrong-parent', 'wrong-height', 'wrong-context', 'wrong-source-state-root',
-               'wrong-nonaccount-source-state-root', 'missing-checkpoint'}
-    if label in binding:
+    source_binding = {'wrong-parent', 'wrong-height', 'wrong-context', 'wrong-source-state-root',
+                      'wrong-nonaccount-source-state-root', 'missing-checkpoint'}
+    if label in source_binding:
+        return result
+    result += ['BeforeParentBinding'] * ((len(case['witnesses']) + 31) // 32)
+    if label in {'duplicate-witness', 'forged-account-value', 'forged-account-absence',
+                 'witness-from-old-branch', 'forged-witness-root'}:
         return result
     result.append('BeforeStateClone')
     if label in {'missing-future-reward-recipient', 'missing-expiry-recipient',

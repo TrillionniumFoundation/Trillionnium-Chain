@@ -18,7 +18,7 @@ IO error and cannot acquire the local frame-EOF retry identity.
 
 Known codes cover the decisions migrated below and selected protocol,
 capacity, cancellation, context and identity failures. Other legacy strings,
-including formatted work, task and authenticated-store diagnostics, remain
+including formatted work, task and some authenticated-ingress diagnostics, remain
 `Unclassified`; this is not a claim that every Node error producer has been
 migrated. A new structural code must be registered explicitly rather than
 inheriting a shutdown policy through its spelling.
@@ -39,6 +39,31 @@ frame conflicts. No recovery/shutdown decision parses those prefixes. Progress
 callbacks, visitor errors, cancellation, clock deferral and reorganization fault hooks
 are deliberately outside these provenance conversions. Complete untrusted operations
 must never be wrapped merely because they can also access the store.
+
+The authenticated replay/outbox store also retains the transport boundary's typed
+admission and exact-payload verification causes. `peer_admission_source` and
+`peer_frame_source` preserve the original `AUTH_REPLAY:`, `AUTH_OUTBOX:`,
+`AUTH_FRAME:` and `AUTH_OUTBOX_FRAME:` text; their categories come from
+`PeerAdmissionErrorV0`, independently of its human description. A conflicting frame
+or acknowledgement is an identity conflict, a pending frame is capacity, and a stale
+nonce/token is stale context. Exact payload rejection is protocol invalid. None of
+these input boundaries grants owner-stop authority or a new retry policy.
+
+After the store has selected an acknowledged local audit row, an invalid completed
+response/retirement shape is `LocalStructure` with the unchanged
+`AUTH_REPLAY_AUDIT` diagnostic. A conditional replay/outbox transition affecting the
+wrong number of rows is similarly local because recovery and acknowledgement have
+already verified its exact pending frame. Both the completed audit update and replay
+frontier update must affect exactly one row before the same transaction commits; a
+failed second update rolls back the first. The inbound replay/audit reservation and
+outbound reservation likewise each require an exact one-row write before reporting
+`Execute` or returning the durable wire. A failed local write rolls back the whole
+reservation, including an already written replay row. By contrast, a missing caller
+session keeps
+`AUTH_REPLAY_STATE`/`AUTH_OUTBOX_STATE` as stale context, and an actually retired reply
+keeps `AUTH_REPLAY_RETIRED` as stale context. The same `AUTH_OUTBOX_STATE` text thus has
+different origin at a failed caller lookup and a failed retained transition. Neither
+the raw code nor a peer's structural-looking text establishes retained origin.
 
 The explicit revision14 composition refusals are also registered individually.
 Configuration/profile/current-parent mismatches are stale context; missing bundle
@@ -116,3 +141,19 @@ repair the exact rows before checking successful recovery and cold reopen. They
 compare the same diagnostic on an incoming peer response, preserve cancellations
 and clock deferral, and verify the concrete nested source type. These are bounded
 local integrity tests; they do not declare every legacy formatted error migrated.
+
+The replay transition regressions mutate completed audit response/retirement shape,
+force a validated conditional update to affect no row with a temporary test-owned
+SQLite trigger, and check rollback, exact repair and cold reopen. Real request and
+outbox calls retain pending wire/frame state across conflicting payload, pending-frame
+and acknowledgement refusals. Natural response retirement remains nonfatal. Source
+tests preserve the concrete transport enum/wrapper, change diagnostic prose and
+exercise structural lookalikes without changing the typed origin. These checks cover
+the selected store boundaries; they do not add an ingress shutdown policy or certify
+all legacy authenticated call sites.
+
+Reservation tests separately suppress each fresh insertion and existing-session
+UPSERT, compare the entire prior replay/outbox state and row counts after rollback,
+then remove the test trigger and exercise successful reservation, acknowledgement
+and cold reopen. The write invariant checks use SQLite's affected-row result and
+add no query, schema, signed domain or extra persistence layer.

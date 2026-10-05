@@ -94,9 +94,15 @@ case "${1:?required job}" in
       export TRNM_MODEL_COMPOSITION_RUN_ID="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
       test -n "$TRNM_MODEL_COMPOSITION_RUN_ID"
       printf 'model-composition directory=%s run_id=%s\n' "$TRNM_MODEL_COMPOSITION_VECTORS" "$TRNM_MODEL_COMPOSITION_RUN_ID"
+      export TRNM_AUTHENTICATED_STATE_VECTORS="$trnm_model_receipt_root/authenticated-state/native.json"
+      test ! -e "$trnm_model_receipt_root/authenticated-state"
+      test ! -L "$trnm_model_receipt_root/authenticated-state"
+      mkdir "$trnm_model_receipt_root/authenticated-state"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v
+      python3 formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py -v
+      python3 formal/pon-nakamoto-v1/authenticated_state_archive_oracle.py "$TRNM_AUTHENTICATED_STATE_VECTORS" "$trnm_model_receipt_root/authenticated-state/native.sqlite" --output "$trnm_model_receipt_root/authenticated-state/oracle.json"
     )
     cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features
     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings

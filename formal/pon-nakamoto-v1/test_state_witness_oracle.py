@@ -42,6 +42,25 @@ class StateWitnessOracle(unittest.TestCase):
         self.assertEqual(result['count'], len(next_accounts))
         self.assertEqual(result['balance'], sum(value.balance for value in next_accounts.values()))
 
+    def test_complete_execution_frontier_over_32_keeps_all_proofs_and_nonce_values(self):
+        self.owners = [application.development_public(index) for index in range(50)]
+        self.accounts = {owner: archive.Account(1000 + index, index)
+                         for index, owner in enumerate(self.owners[:40])}
+        self.parent = {'account:' + owner.hex(): value.as_json()
+                       for owner, value in self.accounts.items()}
+        after = {owner: archive.Account(value.balance - 1, value.nonce + 1)
+                 for owner, value in self.accounts.items()}
+        after[self.owners[49]] = archive.Account(40, 0)
+        result = self.update(after, self.owners)
+        self.assertEqual(result['root'], archive.full_sparse(after)[0])
+        self.assertEqual(result['count'], 41)
+        self.assertEqual(result['balance'], sum(value.balance for value in self.accounts.values()))
+        self.assertEqual(archive.MAX_VIEW_ACCOUNTS, 32)
+        def later_invalid(witnesses, _changes):
+            witnesses[39]['siblings'][255][0] ^= 1
+        with self.assertRaisesRegex(ValueError, '^ARCHIVE_ROOT$'):
+            self.update(after, self.owners, mutate=later_invalid)
+
     def test_unchanged_reads_preserve_root_and_aggregate_without_fabricated_changes(self):
         result = self.update(self.accounts)
         self.assertEqual(result['root'], archive.full_sparse(self.accounts)[0])

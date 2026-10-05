@@ -221,16 +221,17 @@ The same architecture jobs finally execute `--suite maintenance-paired` in a
 separate always-executed step; the comparison job checks its own retained artifact
 after the earlier comparisons even when one has failed. There are still thirteen
 jobs for a PR event. This fourth suite owns `pon_maintenance_cost`, current raw
-schema `pon-w1-maintenance-prefix-v3`, artifact directory
+schema `pon-w1-maintenance-limb-v4`, artifact directory
 `cross-arch-maintenance-cost`, and separate
-`trnm-cross-arch-maintenance-cost-execution-v3` and
-`trnm-cross-arch-maintenance-cost-comparison-v3` schemas. The preceding three raw
+`trnm-cross-arch-maintenance-cost-execution-v4` and
+`trnm-cross-arch-maintenance-cost-comparison-v4` schemas. The preceding three raw
 schemas and challenge streams remain separate and cannot be substituted.
-Historical four-strategy `pon-w1-maintenance-paired-v1` and five-strategy
-`pon-w1-maintenance-preprocessing-v2` artifacts retain their original
-execution/comparison-v1/v2 identities. Read-only artifact comparison can select
-those explicitly with `--maintenance-version 1` or `2`; the current runner and
-default comparator select version3 and cannot accept an earlier artifact as that run.
+Historical four-strategy `pon-w1-maintenance-paired-v1`, five-strategy
+`pon-w1-maintenance-preprocessing-v2` and seven-strategy
+`pon-w1-maintenance-prefix-v3` artifacts retain their original
+execution/comparison-v1/v2/v3 identities. Read-only artifact comparison can select
+those explicitly with `--maintenance-version 1`, `2` or `3`; the current runner and
+default comparator select version4 and cannot accept an earlier artifact as that run.
 
 This experiment uses the fixed public genesis-policy material of
 `consensus-maintenance-continuity-dev-v1`: flattened matrix entries are
@@ -245,8 +246,8 @@ which deterministic bytes were studied; they do not establish task utility,
 resource fairness, an independent input provider or a lowest possible cost.
 
 Both fixed campaigns run generic prepared, tiled classical, one-level Strassen,
-paired-product, `maintenance-periodic-setup`, `maintenance-integer-paired` and
-`maintenance-periodic-prefix` complete producers in both cold and reused modes.
+paired-product, `maintenance-periodic-setup`, `maintenance-integer-paired`,
+`maintenance-periodic-prefix` and `maintenance-split-limb` complete producers in both cold and reused modes.
 The periodic constructor checks both exact policy operands and computes their
 actual fixed product with row-prefix and sawtooth suffix sums. The setup-only
 producer retains ordinary per-challenge replay. The two new paths share that fixed
@@ -254,29 +255,32 @@ product constructor, use exact raw integer-pair arithmetic, and separately time
 all their actual setup; the prefix path also builds its64-column periodic plan.
 Every path emits the same complete transcript and certificate. All validation,
 plans, sums, product and proof-prefix construction inside each setup call is timed.
-The campaigns require112 and56 cohorts respectively, each retaining four searches,
-for168 cohorts and672 requested-search records per architecture. Adjacent samples
-use the same rotated sequence forwards and backwards: with emitted offset `0..13`,
+The split-limb arm retains every multiplication and canonical prefix while using
+bounded low/high32-bit sums for modular accumulation. Its actual preparation and
+all failed attempts remain timed. The campaigns require128 and64 cohorts
+respectively, each retaining four searches, for192 cohorts and768 requested-search
+records per architecture. Adjacent samples
+use the same rotated sequence forwards and backwards: with emitted offset `0..15`,
 the selected arm is
-`(sample // 2 + (offset if sample is even else 13-offset)) % 14`. Thus each arm's
-positions sum to13 in every complete sample pair, including the two/four-sample
+`(sample // 2 + (offset if sample is even else 15-offset)) % 16`. Thus each arm's
+positions sum to15 in every complete sample pair, including the two/four-sample
 campaigns. This balances mean invocation position before measurement; it does not
 isolate CPU scheduling, caches, thermal effects or supply independent random tasks.
 
 The challenge tag is `maintenance-paired-cost-v1`; the native program also has
 separate complete ticket/proof-stream and winner-commitment domains. These retain
 their original v1 bytes to preserve the identity of the deterministic searches;
-the expanded strategy grid requires the explicit v3 experiment schema. Every target
+the expanded strategy grid requires the explicit v4 experiment schema. Every target
 miss, exhausted budget, constructor call and full proof stream is retained. The
-current checker requires the exact task/profile, all fourteen invocation positions,
+current checker requires the exact task/profile, all sixteen invocation positions,
 complete 49,188-byte certificate length, identical attempted streams across all
-seven producers and both modes, the full deterministic winning challenge, both
+eight producers and both modes, the full deterministic winning challenge, both
 post-generation verifier timings and all setup/search sums. Unsupported is not a
-successful result for one of these seven required constructors. It preserves the
+successful result for one of these eight required constructors. It preserves the
 same strict source, native ELF, command, failure and original-file hash contracts.
 
 `test_maintenance_cost.py` runs once in both repository-truth lanes. Its synthetic
-parser fixtures exercise cross-suite substitution and explicit v1/v2/v3 identities,
+parser fixtures exercise cross-suite substitution and explicit v1/v2/v3/v4 identities,
 wrong challenge domains,
 material/rank/profile changes, reordered or missing searches, omitted preparation,
 fabricated exhausted winners, hidden command failures, stale attempts, original
@@ -437,13 +441,36 @@ bytes and both closed owner stores across the local server/owner restart. The sa
 command runs in the head and prospective-merge lanes. The finite development target
 does not qualify independent public operators, WAN service or resource fairness.
 
+## Independent authenticated-state SQLite observation
+
+The existing `rust-baseline` workspace test run exports a fresh
+`authenticated-state/native.json` and standalone `native.sqlite` through
+`TRNM_AUTHENTICATED_STATE_VECTORS`. The same shell block then runs the new oracle
+unit controls and `authenticated_state_archive_oracle.py` on those exact outputs.
+It independently reconstructs complete persisted states from canonical deltas,
+checks sparse roots, aggregates, checkpoint identities and monotone selection,
+and compares independently replayed signed fixture transactions with actual Node
+state. An omitted native export, failed test, malformed SQLite state or mismatch
+fails the lane. This adds no duplicate native fixture run to `protocol-contract`.
+The head and prospective-merge lanes each produce their own observations and
+install the pinned Python dependencies into an isolated environment before the
+signed-state oracle runs.
+The oracle does not reexecute work verification, physical crash recovery or WAN
+data availability, and finite agreement does not qualify a production backend.
+
 ## Actual fuzz execution
 
-`fuzz-smoke` retains its negative/regression tests and additionally runs the two
+`fuzz-smoke` retains its negative/regression tests and additionally runs the three
 [libFuzzer targets](../../tests/fuzz/README.md) with pinned cargo-fuzz, a dated nightly,
 ASan, real mutation feedback, fixed duration and retained raw outputs. Its independent
 lockfile is checked against every shared dependency version in the normal workspace.
-The routine CI budget is finite and does not establish exhaustive parser or work security.
+The authenticated-state target uses bounded synthetic complete states, actual
+expiry/maturity execution, original-parent proofs and an independent bottom-up
+root/aggregate relation. It mutates complete partitions, checked account proofs,
+rehashed false commitment claims, parent identities, AAW1 bytes and cancellation.
+This target does not claim signed-transaction, persistent-SQLite or every-profile
+coverage. The routine CI budget is finite and does not establish exhaustive parser,
+state or work security.
 The runner records sanitizer environment overrides and executable hashes. A local
 container that blocks LeakSanitizer's process inspection must report that failed
 attempt. An explicitly separate local run using `ASAN_OPTIONS=detect_leaks=0` tests

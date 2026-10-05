@@ -287,15 +287,15 @@ def validate_raw_report(data: dict, campaign: dict) -> dict:
             'deterministic_projection_sha256': projection_digest(data)}
 
 
-def suite_contract(suite: str = 'reused', *, maintenance_version: int = 3) -> dict:
+def suite_contract(suite: str = 'reused', *, maintenance_version: int = 4) -> dict:
     """Separate raw schemas and artifact namespaces; no normalization between them."""
     require(suite in SUITES, 'explicit native cost suite')
     common_inputs = ['rust-toolchain.toml', 'trillionnium/Cargo.lock',
                      'scripts/ci/run_cross_arch_cost.py', 'scripts/ci/check_cross_arch_cost.py']
     if suite == 'maintenance-paired':
         from check_maintenance_cost import (validate_maintenance_v1_report, validate_maintenance_v2_report,
-                                            validate_maintenance_v3_report)
-        require(type(maintenance_version) is int and maintenance_version in (1, 2, 3),
+                                            validate_maintenance_v3_report, validate_maintenance_v4_report)
+        require(type(maintenance_version) is int and maintenance_version in (1, 2, 3, 4),
                 'explicit historical/current maintenance artifact schema')
         additional_inputs = [] if maintenance_version == 1 else [
             'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs',
@@ -306,17 +306,22 @@ def suite_contract(suite: str = 'reused', *, maintenance_version: int = 3) -> di
             'formal/pon-nakamoto-v1/contract_wire.py',
             'formal/pon-nakamoto-v1/test_paired_work.py',
         ]
-        if maintenance_version == 3:
+        if maintenance_version >= 3:
             additional_inputs += [
                 'trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs',
                 'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs',
+            ]
+        if maintenance_version >= 4:
+            additional_inputs += [
+                'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs',
             ]
         return {'directory': 'cross-arch-maintenance-cost', 'example': 'pon_maintenance_cost',
                 'execution_schema': f'trnm-cross-arch-maintenance-cost-execution-v{maintenance_version}',
                 'comparison_schema': f'trnm-cross-arch-maintenance-cost-comparison-v{maintenance_version}',
                 'validate_raw_report': {1: validate_maintenance_v1_report,
                                        2: validate_maintenance_v2_report,
-                                       3: validate_maintenance_v3_report}[maintenance_version],
+                                       3: validate_maintenance_v3_report,
+                                       4: validate_maintenance_v4_report}[maintenance_version],
                 'inputs': common_inputs + [
                     'trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs',
                     'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
@@ -357,7 +362,7 @@ def suite_contract(suite: str = 'reused', *, maintenance_version: int = 3) -> di
 
 
 def validate_artifact(directory: Path, expected_source: str, *, suite: str = 'reused',
-                      maintenance_version: int = 3) -> tuple[dict, list[dict]]:
+                      maintenance_version: int = 4) -> tuple[dict, list[dict]]:
     contract = suite_contract(suite, maintenance_version=maintenance_version)
     example = contract['example']
     validate_raw = contract['validate_raw_report']
@@ -460,7 +465,7 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
 
 
 def compare_artifacts(root: Path, expected_source: str, *, suite: str = 'reused',
-                      maintenance_version: int = 3) -> dict:
+                      maintenance_version: int = 4) -> dict:
     contract = suite_contract(suite, maintenance_version=maintenance_version)
     directories = sorted(p for p in root.iterdir() if p.is_dir())
     require(len(directories) == 2, 'exactly two current-run architecture artifacts required')
@@ -492,8 +497,8 @@ def main() -> int:
     parser.add_argument('--expected-source', required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--suite', choices=SUITES, default='reused')
-    parser.add_argument('--maintenance-version', type=int, choices=(1, 2, 3), default=3,
-                        help='explicit historical v1/v2 or current v3 maintenance artifact parsing')
+    parser.add_argument('--maintenance-version', type=int, choices=(1, 2, 3, 4), default=4,
+                        help='explicit historical v1/v2/v3 or current v4 maintenance artifact parsing')
     args = parser.parse_args()
     result = {'schema': suite_contract(args.suite, maintenance_version=args.maintenance_version)['comparison_schema'], 'result': 'FAIL',
               'source': args.expected_source, 'speed_threshold_applied': False}

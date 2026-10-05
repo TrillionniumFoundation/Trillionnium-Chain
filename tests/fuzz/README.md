@@ -1,6 +1,6 @@
 # Bounded coverage-guided development fuzzing
 
-This independent Cargo workspace instruments the actual protocol and work libraries
+This independent Cargo workspace instruments the actual protocol, work and explicit research state libraries
 with LLVM libFuzzer and AddressSanitizer. Its lockfile preserves the versions shared
 with the ordinary native workspace; the repository checker rejects silent dependency
 drift. Fuzz tooling is not a dependency of the 25-package normal workspace.
@@ -26,6 +26,15 @@ requires a new receipt directory; a prior corpus or failed log is never overwrit
   canonical rejection categories. It binds the expected task to supplied matrices
   where possible so mutations can reach transcript/product verification. This
   is a differential regression, not a proof that the work primitive is hard.
+
+- `authenticated_state` constructs bounded synthetic complete states and in-memory
+  account archives from mutation descriptors. A separate bottom-up sparse-root
+  implementation and hand-applied expiry/maturity/reward rules check full native
+  execution, all three commitment phases, balances, retained nonces and present-null
+  rows. Mutations also exercise rehashed false aggregates, missing/duplicate/altered
+  proofs, omitted or reordered partitions, changed parent bytes, strict AAW1 bytes
+  and cancellation. It does not mine blocks, validate signed transactions, reopen
+  persistent databases or establish coverage of every application transaction kind.
 
 The runner copies retained vectors into a separate mutable corpus, records their
 hashes, and preserves generated inputs, crash artifacts, sanitizer logs and final

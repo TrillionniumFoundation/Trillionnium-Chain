@@ -16,16 +16,19 @@ TASK_PROFILE = 'consensus-maintenance-continuity-dev-v1'
 V1_SCHEMA = 'pon-w1-maintenance-paired-v1'
 V2_SCHEMA = 'pon-w1-maintenance-preprocessing-v2'
 V3_SCHEMA = 'pon-w1-maintenance-prefix-v3'
+V4_SCHEMA = 'pon-w1-maintenance-limb-v4'
 V1_STRATEGIES = ['prepared-generic', 'tiled-classical', 'tiled-strassen-one-level', 'paired-product']
 V2_STRATEGIES = V1_STRATEGIES + ['maintenance-periodic-setup']
-STRATEGIES = V2_STRATEGIES + ['maintenance-integer-paired', 'maintenance-periodic-prefix']
+V3_STRATEGIES = V2_STRATEGIES + ['maintenance-integer-paired', 'maintenance-periodic-prefix']
+STRATEGIES = V3_STRATEGIES + ['maintenance-split-limb']
 METHODS = {'prepared-generic': 'generic-product-and-transcript',
            'tiled-classical': 'tiled-classical-full-transcript',
            'tiled-strassen-one-level': 'tiled-strassen-one-level-full-transcript',
            'paired-product': 'paired-field-products-full-prefix-transcript',
            'maintenance-periodic-setup': 'maintenance-periodic-setup-full-transcript',
            'maintenance-integer-paired': 'maintenance-integer-paired-full-transcript',
-           'maintenance-periodic-prefix': 'maintenance-periodic-prefix-integer-paired-full-transcript'}
+           'maintenance-periodic-prefix': 'maintenance-periodic-prefix-integer-paired-full-transcript',
+           'maintenance-split-limb': 'maintenance-split-limb-full-transcript'}
 
 
 def winning_challenge(task: str, seed: int, sample: int, search_index: int,
@@ -43,14 +46,15 @@ def validate_maintenance_report(data: dict, campaign: dict, *, version: int | No
         'schema', 'genesis_maintenance_material_only', 'task_profile', 'timing', 'timing_scope',
         'targets', 'seed', 'samples_per_case_target', 'searches_per_cohort', 'attempt_budget',
         'observations', *FALSE_FLAGS}, 'exact fixed-maintenance native fields')
-    schemas = {1: V1_SCHEMA, 2: V2_SCHEMA, 3: V3_SCHEMA}
+    schemas = {1: V1_SCHEMA, 2: V2_SCHEMA, 3: V3_SCHEMA, 4: V4_SCHEMA}
     require(version is None or type(version) is int and version in schemas,
             'explicit historical or current maintenance version')
     require(data['schema'] in schemas.values() and
             (version is None or data['schema'] == schemas[version]) and
             data['genesis_maintenance_material_only'] is True and data['task_profile'] == TASK_PROFILE,
             'fixed genesis policy material and profile cannot become general work qualification')
-    strategies = {V1_SCHEMA: V1_STRATEGIES, V2_SCHEMA: V2_STRATEGIES, V3_SCHEMA: STRATEGIES}[data['schema']]
+    strategies = {V1_SCHEMA: V1_STRATEGIES, V2_SCHEMA: V2_STRATEGIES,
+                  V3_SCHEMA: V3_STRATEGIES, V4_SCHEMA: STRATEGIES}[data['schema']]
     arms = len(strategies) * len(MODES)
     require(data['timing'] == 'monotonic-wall-elapsed-nanoseconds-not-cpu-accounting',
             'maintenance experiment clock scope')
@@ -165,5 +169,10 @@ def validate_maintenance_v2_report(data: dict, campaign: dict) -> dict:
 
 
 def validate_maintenance_v3_report(data: dict, campaign: dict) -> dict:
-    """Current seven-strategy prefix experiment cannot substitute a v1/v2 grid."""
+    """Historical seven-strategy prefix experiment keeps its original grid."""
     return validate_maintenance_report(data, campaign, version=3)
+
+
+def validate_maintenance_v4_report(data: dict, campaign: dict) -> dict:
+    """Eight complete producers; an earlier grid cannot become split-limb evidence."""
+    return validate_maintenance_report(data, campaign, version=4)

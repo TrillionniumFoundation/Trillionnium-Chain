@@ -102,11 +102,10 @@ work hardness, independent operation and future model efficacy.
 
 The existing head/merge and x64/ARM64 lanes retain separate reused, both-zero,
 one-zero/nonzero-rank-one and fixed-genesis-maintenance cost contracts. The fourth
-suite's current v3 schema compares seven complete producers, including exact raw
-integer-pair and challenge-dependent periodic-prefix paths using a shared fixed
-product constructor and separately charged setup, across fourteen balanced
-cold/reused positions. Explicit historical v1/v2
-comparisons retain their original four/five-strategy meanings.
+suite's current v4 schema compares eight complete producers, including a new
+carry-bounded split-limb implementation, using actual charged setup across sixteen
+balanced cold/reused positions. Explicit historical v1/v2/v3 comparisons retain
+their original four/five/seven-strategy meanings.
 Each complete raw stream, actual setup mode,
 source/binary identity and execution outcome must match its own contract. Strict
 success validation rejects failure-only fields even when empty, noninteger exit
@@ -115,10 +114,10 @@ artifact into execution of the new suite. See the [CI execution contract](../arc
 Same-job135-minute limits account for all four bounded captures; thirteen jobs,
 actual fuzz, exact prospective merges and all external-acceptance boundaries remain.
 
-The paired/periodic bridge's v3 report requires 28 full-proof comparisons and
-42 explicit refusals against the independent scalar Python relation, across the
-same four named Python tests. Its 70 invocations include both new maintenance
-selectors; historical v1/v2 retain their 22/38-invocation scopes. These are required
+The paired/periodic/limb bridge's v4 report requires32 full-proof comparisons and
+54 explicit refusals against the independent scalar Python relation, across the
+same four named Python tests. Its86 invocations include the split-limb maintenance
+selector; historical v1/v2/v3 retain their22/38/70-invocation scopes. These are required
 invocation counts, not a declaration of a new executed result.
 The account-archive oracle independently
 reconstructs full sparse roots, strict witnesses and retained SQL records; actual

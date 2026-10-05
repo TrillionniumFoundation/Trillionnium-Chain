@@ -34,6 +34,7 @@ SOURCE_PATHS = [
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs',
@@ -87,8 +88,8 @@ class PairedWorkOracleTests(unittest.TestCase):
         unchanged = after == cls.before
         (cls.output / 'identity-after.json').write_text(json.dumps(after, indent=2, sort_keys=True) + '\n')
         report = {
-            'schema': 'pon-w1-paired-maintenance-python-native-v3',
-            'result': 'PASS' if unchanged and len(cls.observations) == 70
+            'schema': 'pon-w1-paired-maintenance-python-native-v4',
+            'result': 'PASS' if unchanged and len(cls.observations) == 86
                       and all(row['result'] == 'PASS' for row in cls.observations) else 'FAIL',
             'source_and_binary_unchanged': unchanged,
             'source_before': cls.before, 'source_after': after,
@@ -183,7 +184,7 @@ class PairedWorkOracleTests(unittest.TestCase):
         self.compare_material('genesis-maintenance-periodic', a, b,
                               'genesis-policy-material-native-parent-admission-tested-separately',
                               arguments=('maintenance-periodic',))
-        for selector in ['maintenance-integer-paired', 'maintenance-prefix']:
+        for selector in ['maintenance-integer-paired', 'maintenance-prefix', 'maintenance-limb']:
             self.compare_material('genesis-' + selector, a, b,
                                   'genesis-policy-material-native-parent-admission-tested-separately',
                                   arguments=(selector,))
@@ -218,7 +219,8 @@ class PairedWorkOracleTests(unittest.TestCase):
         a, b = maintenance()
         challenge = bytes(32)
         exact = challenge + work_oracle.field_bytes(a) + work_oracle.field_bytes(b)
-        for selector in ['maintenance-periodic', 'maintenance-integer-paired', 'maintenance-prefix']:
+        for selector in ['maintenance-periodic', 'maintenance-integer-paired', 'maintenance-prefix',
+                         'maintenance-limb']:
             arguments = (selector,)
             for name, operand, position in [('left-first', 0, 0), ('left-last', 0, 4095),
                                             ('right-first', 1, 0), ('right-last', 1, 4095)]:

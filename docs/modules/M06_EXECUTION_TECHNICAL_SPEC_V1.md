@@ -232,7 +232,7 @@ are never fed to current M06 as a partial State.
 
 The explicit `account_archive_execution::execute_with_progress` research wrapper
 binds immutable Settings, the original parent checkpoint, complete State and account
-roots/counts, and at most32 proofs before calling the actual M06 relation with one
+roots/counts, and a complete execution-specific proof bound before calling M06 with one
 worker. Every semantic account point read must have its original-parent witness;
 current ordered values still come from full State and the transaction write overlay.
 Enabled continuity rules also gate their mandatory-recipient existence reads.
@@ -258,5 +258,11 @@ final changed-account roots and aggregate deltas; both are compared with complet
 State rebuilding. The complete native M06 relation and its existing errors remain
 the execution authority. The new commitment/observation domains grant no ordinary
 Node admission, durable root or bounded partial-State execution. Full non-account
-input and reference scans remain, and the32-account research proof limit is not
-a new consensus limit.
+input and reference scans remain. Whole-block account witnesses are bounded by
+checked parent keys plus twice the actual transaction count plus one miner, using
+the current transaction-access contract; the standalone point-query limit remains32.
+A sorted proof frontier combines changed paths with O(P) auxiliary references and
+a depth256 stack, while the full proof bytes remain O(256P). The separate
+[durable archive](../protocol/pon-nakamoto-v1/details/AUTHENTICATED_STATE_ARCHIVE_V1.md)
+reexecutes actual admitted Node transitions before its own atomic publication;
+installed Node state and consensus selection remain separate.

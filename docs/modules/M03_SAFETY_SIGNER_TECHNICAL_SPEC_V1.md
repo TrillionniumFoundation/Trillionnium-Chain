@@ -151,9 +151,11 @@ prefixes while retaining every W1 transcript word, tile-order hashing and proof
 byte. The prefix producer additionally constructs a64-column plan inside its
 charged setup call. Complete setup and per-challenge search costs are reported
 separately; shared fixed-product code does not imply identical setup costs.
-The v3 maintenance cost suite keeps all
-seven producers in fourteen balanced cold/reused positions and preserves v1/v2
-observations under their original contracts. Neither new method has an established
+The v4 maintenance cost suite adds `MaintenanceLimbPreparedTask`, retaining all
+eight producers in sixteen balanced cold/reused positions. Exact low/high32-bit
+product sums use bounded u64 accumulators before reduction modulo2^32-5, retaining
+every multiplication and canonical transcript word. Historical v1/v2/v3 observations
+retain their original contracts. Neither new method has an established
 general-multiplication-count advantage over the other; actual timings, including
 slower and exhausted observations, must decide the measured comparison. No default
 Node selector, work relation or acceptance flag changes.

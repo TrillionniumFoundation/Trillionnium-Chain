@@ -171,7 +171,8 @@
         "formal/pon-nakamoto-v1/test_paired_work.py",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
-        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs"
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -333,7 +334,11 @@
         "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
         "formal/pon-nakamoto-v1/state_witness_oracle.py",
         "formal/pon-nakamoto-v1/test_state_witness_oracle.py",
-        "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs"
+        "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligations.rs",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/authenticated_state.rs",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs"
       ],
       "test_classes": [
         "ExecutionTests",
@@ -377,7 +382,10 @@
       "source_refs": [
         "formal/pon-nakamoto-v1/ledger.py",
         "trillionnium/crates/trnm-pon-node/src/store.rs",
-        "trillionnium/crates/trnm-pon-node/examples/history_state_cost.rs"
+        "trillionnium/crates/trnm-pon-node/examples/history_state_cost.rs",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/authenticated_state.rs",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -417,7 +425,10 @@
         "formal/pon-nakamoto-v1/ledger.py",
         "trillionnium/crates/trnm-pon-node/src/store.rs",
         "trillionnium/crates/trnm-pon-node/src/store/evaluation_observation.rs",
-        "trillionnium/crates/trnm-pon-node/src/store/evaluation_round_observation.rs"
+        "trillionnium/crates/trnm-pon-node/src/store/evaluation_round_observation.rs",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/authenticated_state.rs",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -749,7 +760,10 @@
         "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
         "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs",
         "trillionnium/crates/trnm-pon-node/examples/account_execution_vectors.rs",
-        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs"
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/authenticated_state.rs",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs"
       ],
       "test_classes": [
         "DiskReorgTests"
@@ -847,7 +861,10 @@
         "formal/pon-nakamoto-v1/state_witness_oracle.py",
         "formal/pon-nakamoto-v1/test_state_witness_oracle.py",
         "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs",
-        "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs"
+        "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs",
+        "formal/pon-nakamoto-v1/authenticated_state_archive_oracle.py",
+        "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py",
+        "tests/fuzz/fuzz_targets/authenticated_state.rs"
       ],
       "test_classes": [
         "CodecTests",

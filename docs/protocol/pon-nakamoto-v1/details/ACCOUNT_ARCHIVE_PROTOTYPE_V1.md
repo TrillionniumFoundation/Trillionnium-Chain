@@ -174,11 +174,20 @@ checkpoint, but rejects when presented as evidence for a newly selected checkpoi
 
 `account_archive_execution::execute` and `execute_with_progress` take immutable
 `Settings`, an archive, one parent checkpoint id, the complete native parent State,
-`BlockInput { transactions, height, miner, parent_id }`, and at most32 witnesses.
+`BlockInput { transactions, height, miner, parent_id }`, and the complete required witnesses
+within the execution-specific bound described below.
 The wrapper derives the application configuration from Settings and fixes one
 execution worker. It has no caller-supplied Config, worker override, activation
-request or work-proof capability. The research limit is an additional bound for
-this API, not a new ledger or transaction limit.
+request or work-proof capability. The separate point-query interface retains its32-account bound; execution verifies
+proofs in bounded slices and does not impose that fixed query cap on a whole block.
+For the current M06 transaction tags1..23, each original parent record can require at
+most one mandatory recipient, each transaction accesses at most two identities, and
+the block can reserve one miner. The conservative checked bound is therefore
+`parent_state_keys + 2 * transactions.len() + 1`, at most66,049 under the existing
+65,536-key and256-transaction limits. New transaction kinds must revisit this bound.
+A complete-State discovery pass records actual ordered semantic account accesses;
+its result does not replace independently checked original-parent proofs. Neither
+the discovery pass nor a larger proof set changes a Node consensus limit.
 
 Before execution it checks the checkpoint's branch against `parent_id`, exact
 successor height, complete parent State root, complete account projection/root and
@@ -295,8 +304,11 @@ An inserted account increases count from proved absence. A retained account keep
 its identity and nonce when balance becomes zero. Deletion and nonce decrease on
 one parent-child transition remain invalid. Balance/count deltas update the
 anchored aggregates rather than summing only the presented membership proofs.
-Every original path is checked and merged before any leaf update, so later
-overlapping changes cannot restore an earlier sibling root. Changed accounts are
+Every original path is checked before leaf updates. A recursively partitioned,
+path-sorted frontier combines changed subtrees and checked unchanged siblings, so
+later overlapping changes cannot restore an earlier sibling root. Its auxiliary
+frontier holds O(P) proof references and a depth256 stack for P supplied proofs;
+the full expanded proofs themselves still use O(256P) sibling hashes. Changed accounts are
 ordered by owner bytes. All removed balances are subtracted from the anchored
 sum before changed balances are added, avoiding a transient overflow caused only
 by account ordering. Both the prologue and final change lists are relative to the
@@ -325,11 +337,13 @@ not capabilities that a decoded caller can mint.
 
 This is a complete-partition research witness, not a bounded partial-State backend.
 The non-account input, anchor construction and full reference rebuilding still
-scale with State. The existing 32-account proof cap remains an additional research
-restriction: valid blocks needing more distinct future reservation owners can
-exceed it. That cap cannot silently become a new consensus validity rule. The
-module grants no Node admission, archive mutation, durable state-root publication,
-proof availability or chain-liveness guarantee.
+scale with State. Execution uses the checked complete bound above; the standalone
+archive query limit remains32. Missing, duplicate, unused or altered proofs still
+refuse. The module itself grants no Node admission or archive mutation. Its checked
+relation is also used by the separate [durable authenticated-state archive](AUTHENTICATED_STATE_ARCHIVE_V1.md),
+which anchors actual admitted Node packets before publishing its own versioned
+checkpoint and delta in one SQLite transaction. That sidecar does not install a
+new Node root or establish proof availability or chain-liveness qualification.
 
 The explicit non-account list is limited to 65,536 rows, while native canonical
 key/value and total-State limits still apply. Its reported JSON length does not

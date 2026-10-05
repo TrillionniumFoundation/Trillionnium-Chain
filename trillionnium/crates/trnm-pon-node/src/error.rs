@@ -132,6 +132,22 @@ error_codes! {
     AncestryIndexSeal => ("ANCESTRY_INDEX_SEAL", LocalStructure),
     AncestryIndexStructure => ("ANCESTRY_INDEX_STRUCTURE", LocalStructure),
     AncestryIndexUnknownBlock => ("ANCESTRY_INDEX_UNKNOWN_BLOCK", StaleContext),
+    AuthSessionCollision => ("AUTH_SESSION_COLLISION", IdentityConflict),
+    AuthOutboxSessionCollision => ("AUTH_OUTBOX_SESSION_COLLISION", IdentityConflict),
+    AuthReplayContext => ("AUTH_REPLAY_CONTEXT", StaleContext),
+    AuthOutboxContext => ("AUTH_OUTBOX_CONTEXT", StaleContext),
+    AuthReplayState => ("AUTH_REPLAY_STATE", StaleContext),
+    AuthOutboxState => ("AUTH_OUTBOX_STATE", StaleContext),
+    AuthReplayRetired => ("AUTH_REPLAY_RETIRED", StaleContext),
+    AuthOutboxOverflow => ("AUTH_OUTBOX_OVERFLOW", Capacity),
+    AuthConflictingReplay => ("AUTH_CONFLICTING_REPLAY", IdentityConflict),
+    AuthResponseConflict => ("AUTH_RESPONSE_CONFLICT", IdentityConflict),
+    AuthOutboxConflict => ("AUTH_OUTBOX_CONFLICT", IdentityConflict),
+    AuthPayload => ("AUTH_PAYLOAD", ProtocolInvalid),
+    AuthResponse => ("AUTH_RESPONSE", ProtocolInvalid),
+    AuthOutboxWire => ("AUTH_OUTBOX_WIRE", ProtocolInvalid),
+    AuthReplayGap => ("AUTH_REPLAY_GAP", ProtocolInvalid),
+    AuthReplayAudit => ("AUTH_REPLAY_AUDIT", ProtocolInvalid),
     RemoteTerminal => ("REMOTE_TERMINAL", RemoteRefusal),
     RemoteRetryable => ("REMOTE_RETRYABLE", RemoteRefusal),
 }
@@ -195,9 +211,54 @@ impl Error {
         prefix: &'static str,
         source: impl error::Error + Send + Sync + 'static,
     ) -> Self {
+        Self::prefixed_source(ErrorKind::LocalStructure, prefix, source)
+    }
+    /// Admission/ACK identity comes from the transport boundary's enum, never
+    /// its human description. A caller-supplied frame cannot establish that a
+    /// local journal is damaged; retained reconstruction has a separate origin.
+    pub(crate) fn peer_admission_source(
+        prefix: &'static str,
+        source: trnm_transport::PeerAdmissionErrorV0,
+    ) -> Self {
+        Self::prefixed_source(Self::peer_admission_kind(source), prefix, source)
+    }
+    /// Used by the store's exact payload verifier, whose Source error describes
+    /// caller frame/payload bytes. This boundary cannot grant owner-stop authority.
+    pub(crate) fn peer_frame_source(
+        prefix: &'static str,
+        source: trnm_transport::PeerFrameVerificationErrorV0<Self>,
+    ) -> Self {
+        let kind = match &source {
+            trnm_transport::PeerFrameVerificationErrorV0::Boundary(error) => {
+                Self::peer_admission_kind(*error)
+            }
+            trnm_transport::PeerFrameVerificationErrorV0::Source(_) => ErrorKind::ProtocolInvalid,
+        };
+        Self::prefixed_source(kind, prefix, source)
+    }
+    fn peer_admission_kind(source: trnm_transport::PeerAdmissionErrorV0) -> ErrorKind {
+        use trnm_transport::PeerAdmissionErrorV0 as Peer;
+        match source {
+            Peer::ZeroDigest
+            | Peer::InvalidSession
+            | Peer::InvalidFrame
+            | Peer::InvalidRecoveryState
+            | Peer::NonContiguousNonce => ErrorKind::ProtocolInvalid,
+            Peer::WrongSession | Peer::ConflictingReplay | Peer::UnexpectedAcknowledgement => {
+                ErrorKind::IdentityConflict
+            }
+            Peer::StaleNonce | Peer::StaleToken => ErrorKind::StaleContext,
+            Peer::ReplayOverflow | Peer::PendingFrame => ErrorKind::Capacity,
+        }
+    }
+    fn prefixed_source(
+        kind: ErrorKind,
+        prefix: &'static str,
+        source: impl error::Error + Send + Sync + 'static,
+    ) -> Self {
         Self {
             code: None,
-            kind: ErrorKind::LocalStructure,
+            kind,
             message: format!("{prefix}:{source}"),
             source: Some(Box::new(source)),
         }
@@ -328,6 +389,62 @@ mod tests {
         assert!(!Error::remote(expected).requires_owner_stop());
         stored.message = "changed local replay diagnostic".into();
         assert!(stored.requires_owner_stop());
+    }
+
+    #[test]
+    fn replay_boundary_identity_and_retained_origin_do_not_depend_on_source_words() {
+        use trnm_transport::{PeerAdmissionErrorV0 as Peer, PeerFrameVerificationErrorV0};
+
+        let cause = Peer::InvalidRecoveryState;
+        let mut input = Error::peer_admission_source("AUTH_REPLAY", cause);
+        let mut retained = Error::local_replay_source("AUTH_REPLAY", cause);
+        assert_eq!(input.to_string(), retained.to_string());
+        assert_eq!(input.kind(), ErrorKind::ProtocolInvalid);
+        assert!(!input.requires_owner_stop());
+        assert!(retained.requires_owner_stop());
+        for error in [&input, &retained] {
+            assert_eq!(error.code(), None);
+            assert_eq!(error.source().unwrap().downcast_ref::<Peer>(), Some(&cause));
+            assert!(!Error::from(error.to_string()).requires_owner_stop());
+            assert!(!Error::remote(error.to_string()).requires_owner_stop());
+        }
+        input.message = "OWNER_REPLACED".into();
+        retained.message = "an incoming frame would normally be retried".into();
+        assert!(!input.requires_owner_stop());
+        assert!(retained.requires_owner_stop());
+
+        let mut pending = Error::peer_frame_source(
+            "AUTH_FRAME",
+            PeerFrameVerificationErrorV0::Boundary(Peer::PendingFrame),
+        );
+        assert_eq!(pending.kind(), ErrorKind::Capacity);
+        pending.message = "STORAGE: peer chose structural-looking prose".into();
+        assert!(!pending.requires_owner_stop());
+        assert_eq!(pending.kind(), ErrorKind::Capacity);
+        let lookalike = Error::peer_frame_source(
+            "AUTH_FRAME",
+            PeerFrameVerificationErrorV0::Source(Error::from("OWNER_REPLACED")),
+        );
+        assert_eq!(
+            lookalike.to_string(),
+            "AUTH_FRAME:peer frame source rejected: OWNER_REPLACED"
+        );
+        assert_eq!(lookalike.kind(), ErrorKind::ProtocolInvalid);
+        assert!(!lookalike.requires_owner_stop());
+
+        for code in [
+            ErrorCode::AuthReplayAudit,
+            ErrorCode::AuthReplayState,
+            ErrorCode::AuthOutboxState,
+        ] {
+            let mut stored = Error::new(code).local_integrity();
+            assert!(stored.requires_owner_stop());
+            assert!(!Error::remote(stored.to_string()).requires_owner_stop());
+            assert!(!Error::from(stored.to_string()).requires_owner_stop());
+            stored.message = "changed retained journal invariant text".into();
+            assert!(stored.is(code));
+            assert!(stored.requires_owner_stop());
+        }
     }
 
     #[test]

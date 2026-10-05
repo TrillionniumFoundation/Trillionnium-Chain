@@ -364,7 +364,11 @@
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::periodic_factorization_matches_every_prefix_word_with_extreme_noise",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::both_maintenance_prefix_constructors_reject_unsupported_and_malformed_inputs",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::periodic_and_integer_paired_complete_proofs_match_scalar_and_verifier_errors",
-        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::both_prefix_generators_cancel_at_real_boundaries_and_reuse_no_challenge_state"
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::both_prefix_generators_cancel_at_real_boundaries_and_reuse_no_challenge_state",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs::split_limb_extremes_and_field_carries_match_independent_remainder",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs::every_prefix_word_matches_independent_scalar_at_maximum_and_mixed_fields",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs::exact_material_full_proofs_tickets_and_ordered_rejections_remain_equal",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs::original_observation_order_and_cancelled_call_isolation_are_preserved"
       ],
       "evidence_class": "source-binding",
       "receipt": null
@@ -415,7 +419,10 @@
         "trillionnium/crates/trnm-pon-node/src/error.rs::display_changes_cannot_change_typed_retry_or_owner_stop_identity",
         "trillionnium/crates/trnm-pon-node/src/error.rs::prefix_lookalikes_and_remote_failures_cannot_stop_local_owner",
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting",
-        "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs::actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity"
+        "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs::actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+        "trillionnium/crates/trnm-pon-node/src/store.rs::retained_completed_reply_shape_stops_and_exact_repair_restores_cached_replay",
+        "trillionnium/crates/trnm-pon-node/src/store.rs::missing_caller_state_and_retired_replies_remain_nonfatal_stale_context",
+        "trillionnium/crates/trnm-pon-node/src/store.rs::journal_transition_row_loss_is_local_and_rollback_preserves_exact_pending_frame"
       ],
       "evidence_class": "source-binding",
       "receipt": null
@@ -425,7 +432,9 @@
       "modules": [
         "M06",
         "M15",
-        "M17"
+        "M17",
+        "M07",
+        "M08"
       ],
       "configuration": null,
       "revision_pointer": null,
@@ -460,7 +469,23 @@
         "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::authenticated_state_checks_real_expiry_and_maturity_before_signed_spend",
         "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs::authenticated_mandatory_partition_executes_full_cleanup_refunds_and_maturity",
         "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs::authenticated_mandatory_refusal_prevents_transaction_preparation_and_missing_rows_refuse",
-        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs::authenticated_binding_rejects_self_consistent_forged_totals_and_partition_omission"
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs::authenticated_binding_rejects_self_consistent_forged_totals_and_partition_omission",
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::authenticated_state_discovers_more_than_32_real_mandatory_recipients_and_preserves_native_order",
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::witness_discovery_includes_settlement_provider_from_parent_record",
+        "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::witness_discovery_preserves_invalid_transaction_order_and_requires_available_archive_bytes",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligations.rs::installed_maximum_and_overflow_counts_have_finite_witness_budgets",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_import_binds_actual_genesis_and_fresh_namespace",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_publication_rolls_back_cancellation_sql_failure_and_quotas",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_signed_native_branches_reopen_and_monotonic_selection",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_rejects_missing_tampered_and_forged_stored_sources",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_source_and_witness_refusals_publish_no_rows",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_delta_encoding_preserves_present_null_and_exact_before",
+        "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py::AuthenticatedStateArchiveOracle.test_complete_reconstruction_roots_aggregates_and_read_only_bytes",
+        "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py::AuthenticatedStateArchiveOracle.test_account_nonce_and_existence_do_not_rewind",
+        "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py::AuthenticatedStateArchiveOracle.test_rehashed_false_aggregate_is_recomputed_from_actual_rows",
+        "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py::AuthenticatedStateArchiveOracle.test_missing_ordinal_and_orphan_rows_are_refused",
+        "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py::AuthenticatedStateArchiveOracle.test_extra_active_row_and_unreadable_successor_history_are_refused",
+        "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_abrupt_exit_before_commit_recovers_original_selection"
       ],
       "evidence_class": "source-binding",
       "receipt": null

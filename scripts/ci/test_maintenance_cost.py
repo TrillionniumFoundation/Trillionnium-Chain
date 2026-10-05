@@ -14,9 +14,9 @@ from check_cross_arch_cost import (CAMPAIGNS, FALSE_FLAGS, MODES, TARGETS, TIMIN
     compare_artifacts, deterministic_projection, suite_contract, validate_raw_report,
     winning_challenge as reused_challenge)
 from check_maintenance_cost import (MATERIAL_CLASS, MATERIAL_SOURCE, MATERIAL_TASK, TASK_PROFILE,
-    METHODS, STRATEGIES, V1_SCHEMA, V2_SCHEMA, V3_SCHEMA, V1_STRATEGIES, V2_STRATEGIES,
+    METHODS, STRATEGIES, V1_SCHEMA, V2_SCHEMA, V3_SCHEMA, V4_SCHEMA, V1_STRATEGIES, V2_STRATEGIES, V3_STRATEGIES,
     validate_maintenance_report, validate_maintenance_v1_report, validate_maintenance_v2_report,
-    validate_maintenance_v3_report, winning_challenge)
+    validate_maintenance_v3_report, validate_maintenance_v4_report, winning_challenge)
 from check_one_zero_locality_cost import (validate_one_zero_report,
                                         winning_challenge as one_zero_challenge)
 from check_zero_locality_cost import validate_zero_report, winning_challenge as zero_challenge
@@ -25,11 +25,11 @@ from test_one_zero_locality_cost import one_zero_fixture
 from test_zero_locality_cost import artifact_fixture, write_manifest, zero_fixture
 
 
-def maintenance_fixture(configuration: dict, *, version: int = 3) -> dict:
+def maintenance_fixture(configuration: dict, *, version: int = 4) -> dict:
     """Synthetic parser data only, with no proof generation or executable evidence."""
-    strategies = {1: V1_STRATEGIES, 2: V2_STRATEGIES, 3: STRATEGIES}[version]
+    strategies = {1: V1_STRATEGIES, 2: V2_STRATEGIES, 3: V3_STRATEGIES, 4: STRATEGIES}[version]
     arms = len(strategies) * len(MODES)
-    data = {'schema': {1: V1_SCHEMA, 2: V2_SCHEMA, 3: V3_SCHEMA}[version], 'genesis_maintenance_material_only': True,
+    data = {'schema': {1: V1_SCHEMA, 2: V2_SCHEMA, 3: V3_SCHEMA, 4: V4_SCHEMA}[version], 'genesis_maintenance_material_only': True,
             'task_profile': TASK_PROFILE, 'targets': TARGETS, 'seed': configuration['seed'],
             'samples_per_case_target': configuration['samples'],
             'searches_per_cohort': configuration['searches'], 'attempt_budget': configuration['attempt_budget'],
@@ -76,11 +76,11 @@ class MaintenanceRawContractTests(unittest.TestCase):
         with self.assertRaises((ValueError, KeyError, TypeError)):
             validate_maintenance_report(changed, self.configuration)
 
-    def test_complete_seven_strategy_grid_keeps_winners_and_exhaustions(self):
+    def test_complete_eight_strategy_grid_keeps_winners_and_exhaustions(self):
         first = validate_maintenance_report(self.data, self.configuration)
         second = validate_maintenance_report(maintenance_fixture(CAMPAIGNS[1]), CAMPAIGNS[1])
-        self.assertEqual((first['rows'], first['outcomes']), (112, 448))
-        self.assertEqual((second['rows'], second['outcomes']), (56, 224))
+        self.assertEqual((first['rows'], first['outcomes']), (128, 512))
+        self.assertEqual((second['rows'], second['outcomes']), (64, 256))
         self.assertEqual(set(first['statuses']), {'winner', 'exhausted'})
 
     def test_historical_v1_keeps_four_strategies_and_cannot_be_promoted_to_v2(self):
@@ -110,6 +110,29 @@ class MaintenanceRawContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_maintenance_report(historical, self.configuration)
         self.rejected(lambda data: data.update(schema=V2_SCHEMA))
+
+    def test_historical_v3_and_current_v4_cannot_relabel_their_strategy_grid(self):
+        historical = maintenance_fixture(self.configuration, version=3)
+        result = validate_maintenance_v3_report(historical, self.configuration)
+        self.assertEqual((result['rows'], result['outcomes']), (112, 448))
+        self.assertEqual({row['strategy'] for row in historical['observations']}, set(V3_STRATEGIES))
+        with self.assertRaises(ValueError):
+            validate_maintenance_v4_report(historical, self.configuration)
+        with self.assertRaises(ValueError):
+            validate_maintenance_v3_report(self.data, self.configuration)
+        historical['schema'] = V4_SCHEMA
+        with self.assertRaises(ValueError):
+            validate_maintenance_report(historical, self.configuration)
+        self.rejected(lambda data: data.update(schema=V3_SCHEMA))
+
+    def test_split_limb_cannot_reuse_another_method_omit_setup_or_change_stream(self):
+        for fields in [{'method': METHODS['maintenance-periodic-setup']},
+                       {'setup_calls': 0}, {'proof_bytes': 32}]:
+            with self.subTest(fields=fields):
+                self.rejected(lambda data: data['observations'][14].update(fields))
+        self.rejected(lambda data: data['observations'][14]['outcomes'][0].update(
+            proof_stream_commitment='9' * 64))
+        self.rejected(lambda data: data['observations'].__delitem__(14))
 
     def test_fixed_genesis_material_bytes_and_ranks_are_independently_derived(self):
         # Derive the published finite matrices and task framing here, without the
@@ -155,7 +178,7 @@ class MaintenanceRawContractTests(unittest.TestCase):
                             positions = [row['invocation_order'] for row in pair if
                                          row['strategy'] == strategy and row['mode'] == mode]
                             self.assertEqual(len(positions), 2)
-                            self.assertEqual(sum(positions), 13)
+                            self.assertEqual(sum(positions), 15)
 
     def test_all_native_schemas_and_maintenance_versions_reject_cross_substitution(self):
         cases = [(validate_raw_report, reused_fixture(self.configuration)),
@@ -163,7 +186,8 @@ class MaintenanceRawContractTests(unittest.TestCase):
                  (validate_one_zero_report, one_zero_fixture(self.configuration)),
                  (validate_maintenance_v1_report, maintenance_fixture(self.configuration, version=1)),
                  (validate_maintenance_v2_report, maintenance_fixture(self.configuration, version=2)),
-                 (validate_maintenance_v3_report, self.data)]
+                 (validate_maintenance_v3_report, maintenance_fixture(self.configuration, version=3)),
+                 (validate_maintenance_v4_report, self.data)]
         for index, (validator, _) in enumerate(cases):
             for other, (_, data) in enumerate(cases):
                 if index != other:
@@ -251,7 +275,7 @@ class MaintenanceRawContractTests(unittest.TestCase):
                               'reference_verifier_elapsed_ns', 'reference_verifier_first']:
                     outcome[field] = None
         slower = slow_clocks(self.data)
-        self.assertEqual(validate_maintenance_report(slower, self.configuration)['statuses'], {'exhausted': 448})
+        self.assertEqual(validate_maintenance_report(slower, self.configuration)['statuses'], {'exhausted': 512})
         self.assertEqual(deterministic_projection(slower), deterministic_projection(self.data))
 
 
@@ -277,8 +301,8 @@ class MaintenanceArtifactContractTests(unittest.TestCase):
 
     def test_maintenance_has_separate_exact_commands_sources_schema_and_counts(self):
         report = self.check()
-        self.assertEqual(report['schema'], 'trnm-cross-arch-maintenance-cost-comparison-v3')
-        self.assertEqual([row['rows'] for row in report['campaigns']], [112, 56])
+        self.assertEqual(report['schema'], 'trnm-cross-arch-maintenance-cost-comparison-v4')
+        self.assertEqual([row['rows'] for row in report['campaigns']], [128, 64])
         self.assertFalse(report['speed_threshold_applied'])
         self.assertFalse(report['work_hardness_accepted'])
 
@@ -338,6 +362,24 @@ class MaintenanceArtifactContractTests(unittest.TestCase):
         self.assertEqual(new - old, {
             'trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs',
             'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs'})
+
+    def test_explicit_historical_v3_artifacts_retain_seven_producers_and_original_sources(self):
+        historical = self.root / 'historical-v3'
+        original_contract = suite_contract
+        with patch('test_zero_locality_cost.suite_contract',
+                   side_effect=lambda suite: original_contract(suite, maintenance_version=3)):
+            for arch in ['x64', 'arm64']:
+                artifact_fixture(historical / arch, arch, suite=self.suite,
+                                 raw_fixture=lambda campaign: maintenance_fixture(campaign, version=3))
+        result = compare_artifacts(historical, 'a' * 40, suite=self.suite, maintenance_version=3)
+        self.assertEqual(result['schema'], 'trnm-cross-arch-maintenance-cost-comparison-v3')
+        self.assertEqual([row['rows'] for row in result['campaigns']], [112, 56])
+        with self.assertRaises(ValueError):
+            compare_artifacts(historical, 'a' * 40, suite=self.suite)
+        old = set(suite_contract(self.suite, maintenance_version=3)['inputs'])
+        new = set(suite_contract(self.suite, maintenance_version=4)['inputs'])
+        self.assertEqual(new - old, {
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs'})
 
     def test_missing_campaign_or_stale_attempt_cannot_complete_pair(self):
         self.rejected(lambda report: report['runner_context'].update(GITHUB_RUN_ATTEMPT='2'))

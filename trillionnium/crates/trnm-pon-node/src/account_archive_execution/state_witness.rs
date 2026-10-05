@@ -8,10 +8,9 @@
 //! paths, and preserves nonce and existence. The complete non-account partition
 //! is still supplied and scanned: no efficient range proof or partial-State
 //! backend is claimed. Complete State remains the independent comparison path.
+use super::obligations::MAX_EXECUTION_ACCOUNTS;
 use super::{CheckedExecutionError, Result};
-use crate::account_archive_prototype::{
-    accounts, Account, Checkpoint, Context, Witness, MAX_VIEW_ACCOUNTS,
-};
+use crate::account_archive_prototype::{accounts, Account, Checkpoint, Context, Witness};
 use crate::Settings;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -65,6 +64,7 @@ pub enum StateWitnessProgress {
     BeforeOutput,
     AccountProof { phase: StatePhase, index: usize },
     AccountUpdate { phase: StatePhase, index: usize },
+    AccountMerge { phase: StatePhase, index: usize },
 }
 
 /// Untrusted observation/input claims. Only the private BoundState below can
@@ -272,6 +272,27 @@ pub(super) fn prepare(
             .map(|(key, value)| StateRow { key, value })
             .collect(),
     })
+}
+
+/// Rebuild claims from complete actual bytes for the separate durable research
+/// sidecar. This is not a public authority constructor or a partial-State root.
+pub(crate) fn commitment_from_complete_state(
+    settings: &Settings,
+    state: &State,
+) -> Result<StateCommitment> {
+    let account_values = accounts(state)?;
+    commitment(
+        Context {
+            network: settings.network(),
+            parameters: settings.parameters(),
+            genesis: settings.genesis(),
+        },
+        relation(pon_executor::root(state))?,
+        crate::account_archive_prototype::account_root(&account_values)?,
+        account_values.len() as u64,
+        total(account_values.values().map(|value| value.balance))?,
+        &non_accounts(state),
+    )
 }
 
 /// Opaque operation-local source, never constructed from a digest claim alone.
@@ -500,32 +521,61 @@ fn account_leaf(owner: Hash, account: Account) -> Hash {
 fn account_branch(left: Hash, right: Hash) -> Hash {
     hash(b"account-archive-branch-v1", &[&left, &right])
 }
-fn prefix(mut path: Hash, depth: usize) -> Hash {
-    if depth < 256 {
-        let byte = depth / 8;
-        let bits = depth % 8;
-        path[byte] &= if bits == 0 { 0 } else { 0xff << (8 - bits) };
-        path[byte + 1..].fill(0);
+struct ChangedPath<'a> {
+    path: Hash,
+    original: &'a Witness,
+    change: &'a AccountChange,
+    index: usize,
+}
+
+/// Combine only changed paths, in hash-path order. Each unchanged sibling is
+/// taken from an independently root-checked ORIGINAL proof; each changed sibling
+/// is recursively recomputed. A single path uses at most 256 hashes between
+/// cancellation boundaries. No sparse map with 512 entries per proof is built:
+/// original validation retains owner/path sets and witness references; updates
+/// retain one reference record per change plus a depth-256 recursion stack.
+fn changed_subtree(
+    paths: &[ChangedPath<'_>],
+    depth: usize,
+    phase: StatePhase,
+    progress: &(impl Fn(StateWitnessProgress) -> Result<()> + Sync + ?Sized),
+) -> Result<Hash> {
+    let first = paths.first().ok_or(StateWitnessError::ProofUpdate)?;
+    if paths.len() == 1 {
+        progress(StateWitnessProgress::AccountMerge {
+            phase,
+            index: first.index,
+        })?;
+        let mut digest = account_leaf(first.change.owner, first.change.after);
+        for d in (depth..256).rev() {
+            digest = if first.path[d / 8] & (0x80 >> (d % 8)) != 0 {
+                account_branch(first.original.siblings[d], digest)
+            } else {
+                account_branch(digest, first.original.siblings[d])
+            };
+        }
+        return Ok(digest);
     }
-    path
-}
-fn sibling(path: Hash, depth: usize) -> Hash {
-    let mut value = prefix(path, depth + 1);
-    value[depth / 8] ^= 0x80 >> (depth % 8);
-    value
-}
-type Nodes = BTreeMap<(usize, Hash), Hash>;
-fn put_original(nodes: &mut Nodes, depth: usize, path: Hash, value: Hash) -> Result<()> {
-    if nodes
-        .insert((depth, prefix(path, depth)), value)
-        .is_some_and(|old| old != value)
-    {
+    if depth >= 256 {
         return Err(StateWitnessError::ProofUpdate.into());
     }
-    Ok(())
+    let split = paths.partition_point(|path| path.path[depth / 8] & (0x80 >> (depth % 8)) == 0);
+    let (left_paths, right_paths) = paths.split_at(split);
+    let left = if left_paths.is_empty() {
+        first.original.siblings[depth]
+    } else {
+        changed_subtree(left_paths, depth + 1, phase, progress)?
+    };
+    let right = if right_paths.is_empty() {
+        first.original.siblings[depth]
+    } else {
+        changed_subtree(right_paths, depth + 1, phase, progress)?
+    };
+    Ok(account_branch(left, right))
 }
-/// All original witnesses are merged before any leaf changes. Independently
-/// applying each original sibling path would discard earlier overlapping changes.
+
+/// Every original proof is verified before any leaf changes. Updated sibling
+/// subtrees are merged rather than overwritten by another original proof path.
 fn merged_account_root(
     expected: Hash,
     witnesses: &[Witness],
@@ -533,17 +583,16 @@ fn merged_account_root(
     phase: StatePhase,
     progress: &(impl Fn(StateWitnessProgress) -> Result<()> + Sync + ?Sized),
 ) -> Result<Hash> {
-    if witnesses.len() > MAX_VIEW_ACCOUNTS || changes.len() > witnesses.len() {
+    if witnesses.len() > MAX_EXECUTION_ACCOUNTS || changes.len() > witnesses.len() {
         return Err(CheckedExecutionError::Budget);
     }
-    let mut nodes = Nodes::new();
     let mut originals = BTreeMap::new();
     let mut paths = BTreeSet::new();
     for (index, witness) in witnesses.iter().enumerate() {
         progress(StateWitnessProgress::AccountProof { phase, index })?;
         let path = account_path(witness.owner);
         if witness.siblings.len() != 256
-            || originals.insert(witness.owner, witness.account).is_some()
+            || originals.insert(witness.owner, witness).is_some()
             || !paths.insert(path)
         {
             return Err(StateWitnessError::ProofUpdate.into());
@@ -552,31 +601,26 @@ fn merged_account_root(
             || hash(b"account-archive-empty-v1", &[]),
             |account| account_leaf(witness.owner, account),
         );
-        put_original(&mut nodes, 256, path, digest)?;
         for depth in (0..256).rev() {
-            put_original(
-                &mut nodes,
-                depth + 1,
-                sibling(path, depth),
-                witness.siblings[depth],
-            )?;
             digest = if path[depth / 8] & (0x80 >> (depth % 8)) != 0 {
                 account_branch(witness.siblings[depth], digest)
             } else {
                 account_branch(digest, witness.siblings[depth])
             };
-            put_original(&mut nodes, depth, path, digest)?;
         }
         if digest != expected {
             return Err(StateWitnessError::ProofUpdate.into());
         }
     }
-    let mut affected = BTreeSet::new();
+    let mut changed = Vec::with_capacity(changes.len());
     let mut previous = None;
     for (index, change) in changes.iter().enumerate() {
         progress(StateWitnessProgress::AccountUpdate { phase, index })?;
+        let original = originals
+            .get(&change.owner)
+            .ok_or(StateWitnessError::ProofUpdate)?;
         if previous.is_some_and(|owner| owner >= change.owner)
-            || originals.get(&change.owner) != Some(&change.before)
+            || original.account != change.before
             || change.before == Some(change.after)
             || change
                 .before
@@ -585,29 +629,18 @@ fn merged_account_root(
             return Err(StateWitnessError::ProofUpdate.into());
         }
         previous = Some(change.owner);
-        let path = account_path(change.owner);
-        nodes.insert((256, path), account_leaf(change.owner, change.after));
-        for depth in 0..256 {
-            affected.insert((depth, prefix(path, depth)));
-        }
+        changed.push(ChangedPath {
+            path: account_path(change.owner),
+            original,
+            change,
+            index,
+        });
     }
     if changes.is_empty() {
         return Ok(expected);
     }
-    for &(depth, path) in affected.iter().rev() {
-        let left = nodes
-            .get(&(depth + 1, prefix(path, depth + 1)))
-            .ok_or(StateWitnessError::ProofUpdate)?;
-        let right = nodes
-            .get(&(depth + 1, sibling(path, depth)))
-            .ok_or(StateWitnessError::ProofUpdate)?;
-        let digest = account_branch(*left, *right);
-        nodes.insert((depth, path), digest);
-    }
-    nodes
-        .get(&(0, [0; 32]))
-        .copied()
-        .ok_or_else(|| StateWitnessError::ProofUpdate.into())
+    changed.sort_unstable_by_key(|change| change.path);
+    changed_subtree(&changed, 0, phase, progress)
 }
 
 #[cfg(test)]

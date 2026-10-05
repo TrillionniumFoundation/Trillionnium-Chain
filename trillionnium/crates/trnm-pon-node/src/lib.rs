@@ -56,6 +56,8 @@ use trnm_protocol::qualified_work_task::{
 pub mod account_archive_execution;
 /// Explicit shadow account-archive research; never installed by Node lifecycle.
 pub mod account_archive_prototype;
+/// Explicit durable authenticated-state research; never installed by Node lifecycle.
+pub mod authenticated_state_archive;
 
 pub type Result<T> = std::result::Result<T, Error>;
 /// (model bytes, input bytes, derived A, derived B) for the public maintenance fixture.

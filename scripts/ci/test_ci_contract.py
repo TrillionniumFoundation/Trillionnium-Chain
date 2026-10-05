@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRANSITIONS,
-                               MODEL_OBSERVATION_BLOCK, RUST_ALL_TARGETS, RUST_DOCS,
+                               MODEL_OBSERVATION_BLOCK, RUST_ALL_TARGETS, RUST_DOCS, SIGNED_STATE_PYTHON,
                                ZERO_RUN_STEP, ZERO_COMPARE_STEP, ONE_ZERO_RUN_STEP,
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, PAIRED_WORK_ORACLE, MODEL_WINDOW_ORACLE,
@@ -268,6 +268,27 @@ class CiContractTests(unittest.TestCase):
                         '      export TRNM_MODEL_COMPOSITION_RUN_ID="$(python3 -c \'import secrets; print(secrets.token_hex(32))\')"\n']:
             with self.subTest(command=command):
                 self.rejected('scripts/ci/ci_job.sh', command, '')
+
+    def test_signed_state_oracle_requires_fresh_native_outputs_and_actual_checks(self):
+        for command in [
+                '      export TRNM_AUTHENTICATED_STATE_VECTORS="$trnm_model_receipt_root/authenticated-state/native.json"\n',
+                '      test ! -e "$trnm_model_receipt_root/authenticated-state"\n',
+                '      test ! -L "$trnm_model_receipt_root/authenticated-state"\n',
+                '      python3 formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py -v\n',
+                '      python3 formal/pon-nakamoto-v1/authenticated_state_archive_oracle.py "$TRNM_AUTHENTICATED_STATE_VECTORS" "$trnm_model_receipt_root/authenticated-state/native.sqlite" --output "$trnm_model_receipt_root/authenticated-state/oracle.json"\n']:
+            for replacement in ['', '      true # omitted signed-state observation\n']:
+                with self.subTest(command=command, replacement=replacement):
+                    self.rejected('scripts/ci/ci_job.sh', command, replacement)
+
+    def test_signed_state_oracle_dependencies_are_installed_in_both_rust_lanes(self):
+        workflow = '.github/workflows/trnm-required-baseline.yml'
+        for replacement in ['', SIGNED_STATE_PYTHON.replace('--only-binary=:all:', '--no-deps'),
+                            SIGNED_STATE_PYTHON.replace('          echo "$RUNNER_TEMP/pon-state-env/bin" >> "$GITHUB_PATH"\n', '')]:
+            with self.subTest(replacement=replacement):
+                self.rejected(workflow, SIGNED_STATE_PYTHON, replacement)
+        self.rejected(workflow,
+                      "if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract' || matrix.lane == 'rust-baseline'",
+                      "if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract'")
 
     def test_model_observation_block_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()

@@ -15,6 +15,12 @@ WORKFLOW = '.github/workflows/trnm-required-baseline.yml'
 CHECKOUT = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262'
 UPLOAD = 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02'
 DOWNLOAD = 'actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0'
+SIGNED_STATE_PYTHON = '''      - name: Install isolated signed-state oracle Python environment
+        run: |
+          python3 -m venv "$RUNNER_TEMP/pon-state-env"
+          "$RUNNER_TEMP/pon-state-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+          echo "$RUNNER_TEMP/pon-state-env/bin" >> "$GITHUB_PATH"
+'''
 ZERO_RUN_STEP = '''      - name: Execute native zero-matrix locality costs
         if: always()
         run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite zero-locality
@@ -63,9 +69,15 @@ MODEL_OBSERVATION_BLOCK = '''    (
       export TRNM_MODEL_COMPOSITION_RUN_ID="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
       test -n "$TRNM_MODEL_COMPOSITION_RUN_ID"
       printf 'model-composition directory=%s run_id=%s\\n' "$TRNM_MODEL_COMPOSITION_VECTORS" "$TRNM_MODEL_COMPOSITION_RUN_ID"
+      export TRNM_AUTHENTICATED_STATE_VECTORS="$trnm_model_receipt_root/authenticated-state/native.json"
+      test ! -e "$trnm_model_receipt_root/authenticated-state"
+      test ! -L "$trnm_model_receipt_root/authenticated-state"
+      mkdir "$trnm_model_receipt_root/authenticated-state"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v
+      python3 formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py -v
+      python3 formal/pon-nakamoto-v1/authenticated_state_archive_oracle.py "$TRNM_AUTHENTICATED_STATE_VECTORS" "$trnm_model_receipt_root/authenticated-state/native.sqlite" --output "$trnm_model_receipt_root/authenticated-state/oracle.json"
     )
 '''
 
@@ -210,6 +222,9 @@ def validate(root: Path = ROOT) -> dict:
     check_independent_conformance(script, set(required))
     require('    python3 scripts/ci/run_fuzz_smoke.py\n' in script,
             'instrumented fuzz execution missing')
+    require(SIGNED_STATE_PYTHON in jobs['rust-baseline'] and
+            "if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract' || matrix.lane == 'rust-baseline'" in merge,
+            'both Rust lanes require the pinned isolated signed-state oracle dependencies')
     require('    python3 scripts/ci/run_supply_chain.py\n' in script,
             'locked dependency checks missing')
     require('    python3 scripts/ci/test_cross_arch_cost.py\n' in script,

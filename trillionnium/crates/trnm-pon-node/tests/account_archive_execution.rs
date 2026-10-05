@@ -4,7 +4,10 @@
 use rusqlite::Connection;
 use serde_json::json;
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
+use std::sync::{
+    atomic::{AtomicUsize, Ordering},
+    Mutex,
+};
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::{
     continuity_v1,
@@ -13,7 +16,8 @@ use trnm_mvcc_fee::{
 use trnm_pon_node::{
     account_archive_execution::{
         self,
-        state_witness::{StateWitnessError as S, StateWitnessProgress as P},
+        obligations::{self, WitnessBudget, WitnessDiscoveryProgress as D},
+        state_witness::{StatePhase, StateWitnessError as S, StateWitnessProgress as P},
         BlockInput, CheckedExecutionError as E, CheckedExecutionOutput, StateExecutionInput,
     },
     account_archive_prototype::{
@@ -361,7 +365,8 @@ fn checked_accounts_preserve_canonical_errors_source_binding_and_exact_witness_c
         f.execute(&txs, 0, &duplicated).unwrap_err(),
         E::Archive(ArchiveError::InvalidWitness)
     );
-    let owners: Vec<_> = (0..33).collect();
+    let budget = WitnessBudget::for_block(&f.settings, parent.2.len(), txs.len()).unwrap();
+    let owners: Vec<_> = (0..=budget.maximum_accounts as u64).collect();
     assert_eq!(
         f.execute(&txs, 0, &f.witnesses(&owners)).unwrap_err(),
         E::Budget
@@ -802,5 +807,407 @@ fn authenticated_state_checks_real_expiry_and_maturity_before_signed_spend() {
     assert_eq!(
         observed.successor.commitment.account_root,
         f.checkpoint.account_root()
+    );
+}
+
+#[test]
+fn authenticated_state_discovers_more_than_32_real_mandatory_recipients_and_preserves_native_order()
+{
+    let mut f = Fixture::new();
+    let owners: Vec<_> = std::iter::once(0).chain(100..140).collect();
+    // Forty independently signed owners, forty genuine pending obligations, and
+    // three legal deadline buckets (the installed expiry limit remains sixteen).
+    // No injected account/escrow state or enlarged installed limits are used.
+    let funding: Vec<_> = (100..140)
+        .map(|owner| transfer(&f.settings, 0, owner - 99, owner, 5_000))
+        .collect();
+    let genesis = f.node.read_active().unwrap();
+    let discovered_funding = obligations::prepare(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &genesis.2,
+        BlockInput {
+            transactions: &funding,
+            height: 1,
+            miner: public(0),
+            parent_id: genesis.0,
+        },
+    )
+    .unwrap();
+    assert_eq!(discovered_funding.accounts.len(), 41);
+    assert_eq!(discovered_funding.observation.transaction_owners.len(), 41);
+    let funding_state = account_archive_execution::prepare_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &genesis.2,
+    )
+    .unwrap();
+    let checked_funding = account_archive_execution::execute_with_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &genesis.2,
+        BlockInput {
+            transactions: &funding,
+            height: 1,
+            miner: public(0),
+            parent_id: genesis.0,
+        },
+        StateExecutionInput {
+            accounts: &discovered_funding.accounts,
+            state: &funding_state,
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        checked_funding
+            .state_observation
+            .successor
+            .account_changes
+            .len(),
+        41
+    );
+    assert_eq!(
+        f.accept(funding, 0, &owners).output.state,
+        checked_funding.execution.output.state
+    );
+
+    let reservations: Vec<_> = (100..140)
+        .map(|owner| {
+            let nonce = 1u64;
+            let budget = 1_000u64;
+            let deadline = 3 + (owner - 100) / 16;
+            let task = hash(
+                b"task-instance-v3",
+                &[
+                    &f.settings.network(),
+                    &f.settings.parameters(),
+                    &public(owner),
+                    &nonce.to_le_bytes(),
+                    &public(2),
+                    &budget.to_le_bytes(),
+                    &deadline.to_le_bytes(),
+                ],
+            );
+            let mut payload = task.to_vec();
+            payload.extend(public(2));
+            payload.extend(budget.to_le_bytes());
+            payload.extend(deadline.to_le_bytes());
+            signed(&f.settings, owner, nonce, 2, payload)
+        })
+        .collect();
+    f.accept(reservations, 0, &owners);
+    let parent = f.node.read_active().unwrap();
+    let original_rows = rows(&f.archive_path);
+    let block = BlockInput {
+        transactions: &[],
+        height: 3,
+        miner: public(0),
+        parent_id: parent.0,
+    };
+    let discovered =
+        obligations::prepare(&f.settings, &f.archive, f.checkpoint.id(), &parent.2, block).unwrap();
+    assert_eq!(discovered.accounts.len(), 41);
+    assert_eq!(discovered.observation.mandatory_owners.len(), 41);
+    assert!(discovered.observation.transaction_owners.is_empty());
+    assert_eq!(discovered.observation.successor_owners.len(), 25);
+    assert_eq!(
+        discovered.observation.encoded_witness_bytes,
+        discovered
+            .accounts
+            .iter()
+            .map(|proof| proof.encode().unwrap().len())
+            .sum::<usize>(),
+    );
+    assert!(discovered.observation.recheck_required);
+    assert!(!discovered.observation.consensus_admission);
+    let state = account_archive_execution::prepare_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &parent.2,
+    )
+    .unwrap();
+    let checked = account_archive_execution::execute_with_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &parent.2,
+        block,
+        StateExecutionInput {
+            accounts: &discovered.accounts,
+            state: &state,
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        checked.state_observation.mandatory.account_changes.len(),
+        16
+    );
+    assert_eq!(checked.state_observation.mandatory.receipts.len(), 16);
+    assert_eq!(
+        checked
+            .state_observation
+            .mandatory
+            .commitment
+            .escrow_balance,
+        24_000
+    );
+    assert_eq!(
+        checked.execution.output.root,
+        discovered.observation.successor_state_root
+    );
+    assert_eq!(
+        checked.execution.observation.used_owners,
+        discovered.observation.requested_owners
+    );
+    // The future recipient is needed by the original capacity scan even though
+    // it receives no credit at this height. Neither discovery nor full State can
+    // repair a caller's later omission from the independently checked input.
+    for owner in [100, 139] {
+        let omitted: Vec<_> = discovered
+            .accounts
+            .iter()
+            .filter(|proof| proof.owner != public(owner))
+            .cloned()
+            .collect();
+        assert_eq!(
+            account_archive_execution::execute_with_state_witness(
+                &f.settings,
+                &f.archive,
+                f.checkpoint.id(),
+                &parent.2,
+                block,
+                StateExecutionInput {
+                    accounts: &omitted,
+                    state: &state
+                },
+            )
+            .unwrap_err(),
+            E::MissingWitness {
+                owner: public(owner)
+            },
+        );
+    }
+    let mut damaged = discovered.accounts.clone();
+    damaged[33].siblings[200][0] ^= 1;
+    let boundaries = AtomicUsize::new(0);
+    assert_eq!(
+        account_archive_execution::execute_with_progress(
+            &f.settings,
+            &f.archive,
+            f.checkpoint.id(),
+            &parent.2,
+            block,
+            &damaged,
+            &|point| {
+                if point == ExecutionProgress::BeforeParentBinding
+                    && boundaries.fetch_add(1, Ordering::SeqCst) == 2
+                {
+                    Err(E::Cancelled)
+                } else {
+                    Ok(())
+                }
+            },
+        )
+        .unwrap_err(),
+        E::Cancelled,
+    );
+    assert_eq!(
+        f.execute(&[], 0, &damaged).unwrap_err(),
+        E::Archive(ArchiveError::InvalidWitness)
+    );
+    let mut duplicate_across_batches = discovered.accounts.clone();
+    duplicate_across_batches[32] = duplicate_across_batches[0].clone();
+    assert_eq!(
+        f.execute(&[], 0, &duplicate_across_batches).unwrap_err(),
+        E::Archive(ArchiveError::InvalidWitness)
+    );
+    let mut omitted_obligation = state.clone();
+    let index = omitted_obligation
+        .non_accounts
+        .iter()
+        .position(|row| row.key.starts_with("task:") && row.value["deadline"] == 5)
+        .unwrap();
+    omitted_obligation.non_accounts.remove(index);
+    assert_eq!(
+        account_archive_execution::execute_with_state_witness(
+            &f.settings,
+            &f.archive,
+            f.checkpoint.id(),
+            &parent.2,
+            block,
+            StateExecutionInput {
+                accounts: &discovered.accounts,
+                state: &omitted_obligation
+            },
+        )
+        .unwrap_err(),
+        E::StateWitness(S::Partition),
+    );
+    for stop in [
+        D::AccountAccess { owner: public(139) },
+        D::Witness { index: 32 },
+        D::BeforeOutput,
+    ] {
+        assert_eq!(
+            obligations::prepare_with_progress(
+                &f.settings,
+                &f.archive,
+                f.checkpoint.id(),
+                &parent.2,
+                block,
+                &|point| if point == stop {
+                    Err(E::Cancelled)
+                } else {
+                    Ok(())
+                },
+            )
+            .unwrap_err(),
+            E::Cancelled,
+        );
+    }
+    let stop = P::AccountMerge {
+        phase: StatePhase::Mandatory,
+        index: 7,
+    };
+    assert_eq!(
+        account_archive_execution::execute_with_state_witness_and_progress(
+            &f.settings,
+            &f.archive,
+            f.checkpoint.id(),
+            &parent.2,
+            block,
+            StateExecutionInput {
+                accounts: &discovered.accounts,
+                state: &state
+            },
+            &|point| if point == stop {
+                Err(E::Cancelled)
+            } else {
+                Ok(())
+            },
+        )
+        .unwrap_err(),
+        E::Cancelled,
+    );
+    assert_eq!(f.node.read_active().unwrap(), parent);
+    assert_eq!(rows(&f.archive_path), original_rows);
+    assert_eq!(
+        f.accept(vec![], 0, &owners).output.state,
+        checked.execution.output.state
+    );
+}
+
+#[test]
+fn witness_discovery_preserves_invalid_transaction_order_and_requires_available_archive_bytes() {
+    let f = Fixture::new();
+    let parent = f.node.read_active().unwrap();
+    let txs = vec![
+        transfer(&f.settings, 0, 2, 1, 1),
+        transfer(&f.settings, 2, 1, 3, 1),
+    ];
+    let block = BlockInput {
+        transactions: &txs,
+        height: 1,
+        miner: public(0),
+        parent_id: parent.0,
+    };
+    assert_eq!(
+        obligations::prepare(&f.settings, &f.archive, f.checkpoint.id(), &parent.2, block)
+            .unwrap_err(),
+        E::Relation("NONCE"),
+    );
+    let valid = vec![transfer(&f.settings, 0, 1, 10, 1)];
+    let original_node = f.node.read_active().unwrap();
+    // Actual archived node loss cannot turn a missing witness into default zero
+    // during discovery. This disposable archive is deliberately corrupted.
+    let db = Connection::open(&f.archive_path).unwrap();
+    db.execute("DELETE FROM archive_nodes", []).unwrap();
+    assert!(matches!(
+        obligations::prepare(
+            &f.settings,
+            &f.archive,
+            f.checkpoint.id(),
+            &parent.2,
+            BlockInput {
+                transactions: &valid,
+                ..block
+            },
+        ),
+        Err(E::Archive(ArchiveError::DataUnavailable)),
+    ));
+    assert_eq!(f.node.read_active().unwrap(), original_node);
+}
+
+#[test]
+fn witness_discovery_includes_settlement_provider_from_parent_record() {
+    let mut f = Fixture::new();
+    let nonce = 2u64;
+    let budget = 1_000u64;
+    let deadline = 5u64;
+    let task = hash(
+        b"task-instance-v3",
+        &[
+            &f.settings.network(),
+            &f.settings.parameters(),
+            &public(0),
+            &nonce.to_le_bytes(),
+            &public(70),
+            &budget.to_le_bytes(),
+            &deadline.to_le_bytes(),
+        ],
+    );
+    let mut reserve = task.to_vec();
+    reserve.extend(public(70));
+    reserve.extend(budget.to_le_bytes());
+    reserve.extend(deadline.to_le_bytes());
+    f.accept(
+        vec![
+            transfer(&f.settings, 0, 1, 70, 5_000),
+            signed(&f.settings, 0, nonce, 2, reserve),
+        ],
+        0,
+        &[0, 70],
+    );
+    let mut output = task.to_vec();
+    output.extend([7; 32]);
+    f.accept(
+        vec![signed(&f.settings, 70, 1, 4, output.clone())],
+        0,
+        &[0, 70],
+    );
+    let settlement = vec![signed(&f.settings, 0, 3, 5, output)];
+    let parent = f.node.read_active().unwrap();
+    let prepared = obligations::prepare(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &parent.2,
+        BlockInput {
+            transactions: &settlement,
+            height: 3,
+            miner: public(0),
+            parent_id: parent.0,
+        },
+    )
+    .unwrap();
+    let mut expected = vec![public(0), public(70)];
+    expected.sort_unstable();
+    assert_eq!(prepared.observation.transaction_owners, expected);
+    assert_eq!(
+        f.execute(&settlement, 0, &f.witnesses(&[0])).unwrap_err(),
+        E::MissingWitness { owner: public(70) }
+    );
+    let checked = f.execute(&settlement, 0, &prepared.accounts).unwrap();
+    assert_eq!(
+        checked.output.root,
+        prepared.observation.successor_state_root
+    );
+    assert_eq!(
+        f.accept(settlement, 0, &[0, 70]).output.state,
+        checked.output.state
     );
 }

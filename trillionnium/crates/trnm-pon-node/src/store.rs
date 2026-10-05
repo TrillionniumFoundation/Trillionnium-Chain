@@ -1,4 +1,5 @@
 //! M07/M08 native branch persistence and recovery using the existing M06 executor.
+pub(crate) mod authenticated_state;
 pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
@@ -1107,7 +1108,7 @@ impl Node {
         )?;
         let state = self.authenticated_outbox_state(session)?.unwrap_or(
             PeerReplayStateV0::new(session, 0, None)
-                .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?,
+                .map_err(|error| Error::peer_admission_source("AUTH_OUTBOX", error))?,
         );
         CandidateP2pAdmissionV0::recover_verified(state, &mut OutboxRecovery { db: &self.db })
             .map_err(|error| Error::local_replay_source("AUTH_OUTBOX_RECOVERY", error))?;
@@ -1149,17 +1150,17 @@ impl Node {
         )?;
         let state = self.authenticated_outbox_state(session)?.unwrap_or(
             PeerReplayStateV0::new(session, 0, None)
-                .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?,
+                .map_err(|error| Error::peer_admission_source("AUTH_OUTBOX", error))?,
         );
         let mut admission =
             CandidateP2pAdmissionV0::recover_verified(state, &mut OutboxRecovery { db: &self.db })
                 .map_err(|error| Error::local_replay_source("AUTH_OUTBOX_RECOVERY", error))?;
         let verified = admission
             .verify_frame(frame, &mut ExactFrameSource { payload })
-            .map_err(|error| Error::from(format!("AUTH_OUTBOX_FRAME:{error}")))?;
+            .map_err(|error| Error::peer_frame_source("AUTH_OUTBOX_FRAME", error))?;
         admission
             .admit_verified(verified)
-            .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?;
+            .map_err(|error| Error::peer_admission_source("AUTH_OUTBOX", error))?;
         if state.pending().is_some() {
             let stored: Vec<u8> = self.db.query_row(
                 "SELECT pending_wire FROM peer_outbox WHERE session_id=?",
@@ -1172,7 +1173,7 @@ impl Node {
         let tx = self
             .db
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
-        tx.execute(
+        let changed = tx.execute(
             "INSERT INTO peer_outbox(session_id,chain_id,protocol_digest,peer_id,profile_digest,generation,highest_ack,pending_nonce,pending_digest,pending_bytes,pending_payload,pending_wire,pending_wire_digest) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(session_id) DO UPDATE SET pending_nonce=excluded.pending_nonce,pending_digest=excluded.pending_digest,pending_bytes=excluded.pending_bytes,pending_payload=excluded.pending_payload,pending_wire=excluded.pending_wire,pending_wire_digest=excluded.pending_wire_digest",
             params![
                 session.session_id().bytes().as_slice(),
@@ -1190,6 +1191,7 @@ impl Node {
                 hash(b"native-authenticated-wire-v1", &[wire]).as_slice(),
             ],
         )?;
+        ensure(changed == 1, "AUTH_OUTBOX_STATE").map_err(Error::local_integrity)?;
         tx.commit()?;
         Ok(wire.to_vec())
     }
@@ -1209,7 +1211,7 @@ impl Node {
                 .map_err(|error| Error::local_replay_source("AUTH_OUTBOX_RECOVERY", error))?;
         let next = admission
             .acknowledge(frame)
-            .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?;
+            .map_err(|error| Error::peer_admission_source("AUTH_OUTBOX", error))?;
         let tx = self
             .db
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
@@ -1222,7 +1224,7 @@ impl Node {
                 frame.payload_digest().bytes().as_slice(),
             ],
         )?;
-        ensure(changed == 1, "AUTH_OUTBOX_STATE")?;
+        ensure(changed == 1, "AUTH_OUTBOX_STATE").map_err(Error::local_integrity)?;
         tx.commit()?;
         Ok(())
     }
@@ -1246,7 +1248,7 @@ impl Node {
         let existing = self.authenticated_replay_state(session)?;
         let state = existing.unwrap_or(
             PeerReplayStateV0::new(session, 0, None)
-                .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?,
+                .map_err(|e| Error::peer_admission_source("AUTH_REPLAY", e))?,
         );
         CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
             .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
@@ -1260,7 +1262,8 @@ impl Node {
                     |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
                 )
                 .optional()?;
-            let (digest, status, response) = audit.ok_or("AUTH_REPLAY_GAP")?;
+            let (digest, status, response) =
+                audit.ok_or_else(|| Error::from("AUTH_REPLAY_GAP").local_integrity())?;
             ensure(
                 bytes32(digest)? == frame.payload_digest().bytes(),
                 "AUTH_CONFLICTING_REPLAY",
@@ -1268,7 +1271,7 @@ impl Node {
             return match (status, response) {
                 (1, Some(bytes)) => Ok(AuthenticatedReplayDecision::Cached(bytes)),
                 (2, None) => Err("AUTH_REPLAY_RETIRED".into()),
-                _ => Err("AUTH_REPLAY_AUDIT".into()),
+                _ => Err(Error::from("AUTH_REPLAY_AUDIT").local_integrity()),
             };
         }
         let mut admission =
@@ -1276,17 +1279,17 @@ impl Node {
                 .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         let verified = admission
             .verify_frame(frame, &mut ExactFrameSource { payload })
-            .map_err(|e| Error::from(format!("AUTH_FRAME:{e}")))?;
+            .map_err(|e| Error::peer_frame_source("AUTH_FRAME", e))?;
         admission
             .admit_verified(verified)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+            .map_err(|e| Error::peer_admission_source("AUTH_REPLAY", e))?;
         if state.pending().is_some() {
             return Ok(AuthenticatedReplayDecision::Execute);
         }
         let tx = self
             .db
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
-        tx.execute(
+        let changed = tx.execute(
             "INSERT INTO peer_replay(session_id,chain_id,protocol_digest,peer_id,profile_digest,generation,highest_ack,pending_nonce,pending_digest,pending_bytes) VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(session_id) DO UPDATE SET pending_nonce=excluded.pending_nonce,pending_digest=excluded.pending_digest,pending_bytes=excluded.pending_bytes",
             params![
                 session_id.as_slice(),
@@ -1301,7 +1304,8 @@ impl Node {
                 frame.payload_bytes() as u64,
             ],
         )?;
-        tx.execute(
+        ensure(changed == 1, "AUTH_REPLAY_STATE").map_err(Error::local_integrity)?;
+        let changed = tx.execute(
             "INSERT INTO peer_request_audit(session_id,nonce,payload_digest,payload,response_digest,response,status) VALUES(?,?,?,?,NULL,NULL,0)",
             params![
                 session_id.as_slice(),
@@ -1310,6 +1314,7 @@ impl Node {
                 payload,
             ],
         )?;
+        ensure(changed == 1, "AUTH_REPLAY_AUDIT").map_err(Error::local_integrity)?;
         tx.commit()?;
         Ok(AuthenticatedReplayDecision::Execute)
     }
@@ -1339,7 +1344,8 @@ impl Node {
                     |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
                 )
                 .optional()?;
-            let (digest, status, retained) = audit.ok_or("AUTH_REPLAY_GAP")?;
+            let (digest, status, retained) =
+                audit.ok_or_else(|| Error::from("AUTH_REPLAY_GAP").local_integrity())?;
             ensure(
                 bytes32(digest)? == response_digest,
                 "AUTH_RESPONSE_CONFLICT",
@@ -1356,7 +1362,7 @@ impl Node {
                 .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         let next = admission
             .acknowledge(frame)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+            .map_err(|e| Error::peer_admission_source("AUTH_REPLAY", e))?;
         let tx = self
             .db
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
@@ -1370,11 +1376,12 @@ impl Node {
                 frame.payload_digest().bytes().as_slice(),
             ],
         )?;
-        ensure(changed == 1, "AUTH_REPLAY_AUDIT")?;
-        tx.execute(
+        ensure(changed == 1, "AUTH_REPLAY_AUDIT").map_err(Error::local_integrity)?;
+        let changed = tx.execute(
             "UPDATE peer_replay SET highest_ack=?,pending_nonce=NULL,pending_digest=NULL,pending_bytes=NULL WHERE session_id=?",
             params![next.highest_acknowledged_nonce(), session.as_slice()],
         )?;
+        ensure(changed == 1, "AUTH_REPLAY_STATE").map_err(Error::local_integrity)?;
         let retire = next
             .highest_acknowledged_nonce()
             .saturating_sub(AUTH_RESPONSE_RETENTION);
@@ -3796,6 +3803,389 @@ mod error_boundary_tests {
         assert_eq!(error.to_string(), message);
         assert_eq!(error.kind(), ErrorKind::LocalStructure);
         assert!(error.requires_owner_stop());
+    }
+
+    fn replay_frame(settings: &Settings, nonce: u64, payload: &[u8]) -> AuthenticatedPeerFrameV0 {
+        let session = PeerSessionIdentityV0::new(
+            IoDigest32V0::new(settings.genesis()).unwrap(),
+            IoDigest32V0::new(settings.parameters()).unwrap(),
+            IoDigest32V0::new([71; 32]).unwrap(),
+            IoDigest32V0::new([72; 32]).unwrap(),
+            IoDigest32V0::new(crate::authenticated_profile_digest()).unwrap(),
+            1,
+        )
+        .unwrap();
+        AuthenticatedPeerFrameV0::new(
+            session,
+            nonce,
+            IoDigest32V0::new(crate::authenticated_payload_digest(payload)).unwrap(),
+            payload.len(),
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn retained_completed_reply_shape_stops_and_exact_repair_restores_cached_replay() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let payload = b"completed journal request";
+        let response = b"completed journal response";
+        let frame = replay_frame(&settings, 1, payload);
+        node.begin_authenticated_request(frame, payload).unwrap();
+        node.finish_authenticated_request(frame, response).unwrap();
+        let counts = node.authenticated_replay_counts().unwrap();
+
+        for (status, damaged_response) in [(1_u64, None), (2_u64, Some(response.as_slice()))] {
+            node.db
+                .execute(
+                    "UPDATE peer_request_audit SET status=?,response=? WHERE session_id=? AND nonce=1",
+                    params![status, damaged_response, frame.session().session_id().bytes().as_slice()],
+                )
+                .unwrap();
+            let error = node
+                .begin_authenticated_request(frame, payload)
+                .unwrap_err();
+            assert!(error.is(ErrorCode::AuthReplayAudit));
+            assert!(!Error::remote(error.to_string()).requires_owner_stop());
+            assert!(!Error::from(error.to_string()).requires_owner_stop());
+            local(error, "AUTH_REPLAY_AUDIT");
+            assert_eq!(node.authenticated_replay_counts().unwrap(), counts);
+        }
+        node.db
+            .execute(
+                "UPDATE peer_request_audit SET status=1,response=? WHERE session_id=? AND nonce=1",
+                params![
+                    response.as_slice(),
+                    frame.session().session_id().bytes().as_slice()
+                ],
+            )
+            .unwrap();
+        node.validate_authenticated_replay().unwrap();
+        drop(node);
+        let mut reopened = Node::open(directory.path(), settings, 1).unwrap();
+        assert!(matches!(
+            reopened.begin_authenticated_request(frame, payload).unwrap(),
+            AuthenticatedReplayDecision::Cached(bytes) if bytes == response
+        ));
+        assert_eq!(reopened.authenticated_replay_counts().unwrap(), counts);
+    }
+
+    #[test]
+    fn incoming_replay_payload_pending_and_ack_failures_keep_transport_enum_identity() {
+        use trnm_transport::{PeerAdmissionErrorV0 as Peer, PeerFrameVerificationErrorV0};
+
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let payload = b"real payload";
+        let frame = replay_frame(&settings, 1, payload);
+        let error = node
+            .begin_authenticated_request(frame, b"bad payload")
+            .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            "AUTH_FRAME:peer frame source rejected: AUTH_PAYLOAD"
+        );
+        assert_eq!(error.kind(), ErrorKind::ProtocolInvalid);
+        assert!(!error.requires_owner_stop());
+        assert!(matches!(
+            error.source().unwrap().downcast_ref::<PeerFrameVerificationErrorV0<Error>>(),
+            Some(PeerFrameVerificationErrorV0::Source(source)) if source.is(ErrorCode::AuthPayload)
+        ));
+        assert_eq!(node.authenticated_replay_counts().unwrap(), (0, 0, 0));
+        node.begin_authenticated_request(frame, payload).unwrap();
+        let counts = node.authenticated_replay_counts().unwrap();
+        let conflict = replay_frame(&settings, 1, b"new payload");
+        let successor = replay_frame(&settings, 2, payload);
+        for (candidate, bytes, cause, kind) in [
+            (
+                conflict,
+                b"new payload".as_slice(),
+                Peer::ConflictingReplay,
+                ErrorKind::IdentityConflict,
+            ),
+            (
+                successor,
+                payload.as_slice(),
+                Peer::PendingFrame,
+                ErrorKind::Capacity,
+            ),
+        ] {
+            let error = node
+                .begin_authenticated_request(candidate, bytes)
+                .unwrap_err();
+            assert_eq!(
+                error.to_string(),
+                format!("AUTH_FRAME:peer frame boundary failed: {cause}")
+            );
+            assert_eq!(error.kind(), kind);
+            assert!(!error.requires_owner_stop());
+            assert!(matches!(
+                error.source().unwrap().downcast_ref::<PeerFrameVerificationErrorV0<Error>>(),
+                Some(PeerFrameVerificationErrorV0::Boundary(source)) if *source == cause
+            ));
+            assert_eq!(node.authenticated_replay_counts().unwrap(), counts);
+        }
+        let error = node
+            .finish_authenticated_request(conflict, b"reply")
+            .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            format!("AUTH_REPLAY:{}", Peer::UnexpectedAcknowledgement)
+        );
+        assert_eq!(error.kind(), ErrorKind::IdentityConflict);
+        assert_eq!(
+            error.source().unwrap().downcast_ref::<Peer>(),
+            Some(&Peer::UnexpectedAcknowledgement)
+        );
+        assert!(!error.requires_owner_stop());
+        assert_eq!(
+            node.authenticated_replay_state(frame.session())
+                .unwrap()
+                .unwrap()
+                .pending(),
+            Some(frame)
+        );
+        node.finish_authenticated_request(frame, b"reply").unwrap();
+
+        node.reserve_authenticated_outbound(frame, payload, b"retained wire")
+            .unwrap();
+        let error = node
+            .reserve_authenticated_outbound(conflict, b"new payload", b"other wire")
+            .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            format!(
+                "AUTH_OUTBOX_FRAME:peer frame boundary failed: {}",
+                Peer::ConflictingReplay
+            )
+        );
+        assert_eq!(error.kind(), ErrorKind::IdentityConflict);
+        assert!(!error.requires_owner_stop());
+        assert!(matches!(
+            error
+                .source()
+                .unwrap()
+                .downcast_ref::<PeerFrameVerificationErrorV0<Error>>(),
+            Some(PeerFrameVerificationErrorV0::Boundary(
+                Peer::ConflictingReplay
+            ))
+        ));
+        let error = node.finish_authenticated_outbound(conflict).unwrap_err();
+        assert_eq!(error.kind(), ErrorKind::IdentityConflict);
+        assert_eq!(
+            error.source().unwrap().downcast_ref::<Peer>(),
+            Some(&Peer::UnexpectedAcknowledgement)
+        );
+        assert!(!error.requires_owner_stop());
+        assert_eq!(
+            node.authenticated_outbound_reservation(frame.session())
+                .unwrap(),
+            (1, Some(b"retained wire".to_vec()))
+        );
+        node.finish_authenticated_outbound(frame).unwrap();
+        assert_eq!(
+            node.authenticated_outbound_reservation(frame.session())
+                .unwrap(),
+            (2, None)
+        );
+    }
+
+    #[test]
+    fn missing_caller_state_and_retired_replies_remain_nonfatal_stale_context() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let payload = b"bounded replay payload";
+        let first = replay_frame(&settings, 1, payload);
+        for (error, code) in [
+            (
+                node.finish_authenticated_request(first, b"reply")
+                    .unwrap_err(),
+                ErrorCode::AuthReplayState,
+            ),
+            (
+                node.finish_authenticated_outbound(first).unwrap_err(),
+                ErrorCode::AuthOutboxState,
+            ),
+        ] {
+            assert!(error.is(code));
+            assert_eq!(error.to_string(), code.as_str());
+            assert_eq!(error.kind(), ErrorKind::StaleContext);
+            assert!(!error.requires_owner_stop());
+        }
+        for nonce in 1..=AUTH_RESPONSE_RETENTION + 1 {
+            let frame = replay_frame(&settings, nonce, payload);
+            node.begin_authenticated_request(frame, payload).unwrap();
+            node.finish_authenticated_request(frame, b"reply").unwrap();
+        }
+        let error = node
+            .begin_authenticated_request(first, payload)
+            .unwrap_err();
+        assert!(error.is(ErrorCode::AuthReplayRetired));
+        assert_eq!(error.to_string(), "AUTH_REPLAY_RETIRED");
+        assert_eq!(error.kind(), ErrorKind::StaleContext);
+        assert!(!error.requires_owner_stop());
+        node.validate_authenticated_replay().unwrap();
+        drop(node);
+        let mut reopened = Node::open(directory.path(), settings, 1).unwrap();
+        assert!(reopened
+            .begin_authenticated_request(first, payload)
+            .unwrap_err()
+            .is(ErrorCode::AuthReplayRetired));
+    }
+
+    #[test]
+    fn reservation_writes_cannot_report_success_without_complete_durable_state() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let payload = b"reservation payload";
+        for nonce in 1..=2 {
+            let frame = replay_frame(&settings, nonce, payload);
+            let prior = node.authenticated_replay_state(frame.session()).unwrap();
+            let counts = node.authenticated_replay_counts().unwrap();
+            let replay_write = if nonce == 1 { "INSERT" } else { "UPDATE" };
+            for (table, operation, code) in [
+                ("peer_replay", replay_write, ErrorCode::AuthReplayState),
+                ("peer_request_audit", "INSERT", ErrorCode::AuthReplayAudit),
+            ] {
+                node.db.execute_batch(&format!(
+                    "CREATE TEMP TRIGGER omit_replay_reservation BEFORE {operation} ON {table} BEGIN SELECT RAISE(IGNORE); END;"
+                )).unwrap();
+                let error = node
+                    .begin_authenticated_request(frame, payload)
+                    .unwrap_err();
+                assert!(error.is(code));
+                local(error, code.as_str());
+                assert_eq!(node.authenticated_replay_counts().unwrap(), counts);
+                assert_eq!(
+                    node.authenticated_replay_state(frame.session()).unwrap(),
+                    prior
+                );
+                node.db
+                    .execute_batch("DROP TRIGGER omit_replay_reservation;")
+                    .unwrap();
+            }
+            node.begin_authenticated_request(frame, payload).unwrap();
+            node.finish_authenticated_request(frame, b"reply").unwrap();
+
+            let prior = node.authenticated_outbox_state(frame.session()).unwrap();
+            let counts = node.authenticated_outbox_counts().unwrap();
+            node.db.execute_batch(&format!(
+                "CREATE TEMP TRIGGER omit_outbox_reservation BEFORE {replay_write} ON peer_outbox BEGIN SELECT RAISE(IGNORE); END;"
+            )).unwrap();
+            let error = node
+                .reserve_authenticated_outbound(frame, payload, b"retained wire")
+                .unwrap_err();
+            assert!(error.is(ErrorCode::AuthOutboxState));
+            local(error, "AUTH_OUTBOX_STATE");
+            assert_eq!(node.authenticated_outbox_counts().unwrap(), counts);
+            assert_eq!(
+                node.authenticated_outbox_state(frame.session()).unwrap(),
+                prior
+            );
+            node.db
+                .execute_batch("DROP TRIGGER omit_outbox_reservation;")
+                .unwrap();
+            node.reserve_authenticated_outbound(frame, payload, b"retained wire")
+                .unwrap();
+            node.finish_authenticated_outbound(frame).unwrap();
+        }
+        drop(node);
+        let mut reopened = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let frame = replay_frame(&settings, 2, payload);
+        assert!(matches!(
+            reopened.begin_authenticated_request(frame, payload).unwrap(),
+            AuthenticatedReplayDecision::Cached(bytes) if bytes == b"reply"
+        ));
+        assert_eq!(reopened.authenticated_replay_counts().unwrap(), (1, 0, 2));
+        assert_eq!(
+            reopened
+                .authenticated_outbound_reservation(frame.session())
+                .unwrap(),
+            (3, None)
+        );
+    }
+
+    #[test]
+    fn journal_transition_row_loss_is_local_and_rollback_preserves_exact_pending_frame() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let payload = b"pending payload";
+        let frame = replay_frame(&settings, 1, payload);
+        node.begin_authenticated_request(frame, payload).unwrap();
+        // A test-owned SQLite trigger forces the already-validated conditional
+        // transition to affect no row. The failed transaction must roll back.
+        node.db.execute_batch("CREATE TEMP TRIGGER omit_replay_ack BEFORE UPDATE ON peer_request_audit BEGIN SELECT RAISE(IGNORE); END;").unwrap();
+        let error = node
+            .finish_authenticated_request(frame, b"reply")
+            .unwrap_err();
+        assert!(error.is(ErrorCode::AuthReplayAudit));
+        local(error, "AUTH_REPLAY_AUDIT");
+        assert_eq!(
+            node.authenticated_replay_state(frame.session())
+                .unwrap()
+                .unwrap()
+                .pending(),
+            Some(frame)
+        );
+        node.db
+            .execute_batch("DROP TRIGGER omit_replay_ack;")
+            .unwrap();
+        node.db.execute_batch("CREATE TEMP TRIGGER omit_replay_frontier BEFORE UPDATE ON peer_replay BEGIN SELECT RAISE(IGNORE); END;").unwrap();
+        let error = node
+            .finish_authenticated_request(frame, b"reply")
+            .unwrap_err();
+        assert!(error.is(ErrorCode::AuthReplayState));
+        local(error, "AUTH_REPLAY_STATE");
+        let status: u64 = node
+            .db
+            .query_row(
+                "SELECT status FROM peer_request_audit WHERE session_id=? AND nonce=1",
+                [frame.session().session_id().bytes().as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(status, 0, "the first acknowledgement update must roll back");
+        assert_eq!(
+            node.authenticated_replay_state(frame.session())
+                .unwrap()
+                .unwrap()
+                .pending(),
+            Some(frame)
+        );
+        node.db
+            .execute_batch("DROP TRIGGER omit_replay_frontier;")
+            .unwrap();
+        node.finish_authenticated_request(frame, b"reply").unwrap();
+
+        node.reserve_authenticated_outbound(frame, payload, b"retained wire")
+            .unwrap();
+        node.db.execute_batch("CREATE TEMP TRIGGER omit_outbox_ack BEFORE UPDATE ON peer_outbox BEGIN SELECT RAISE(IGNORE); END;").unwrap();
+        let error = node.finish_authenticated_outbound(frame).unwrap_err();
+        assert!(error.is(ErrorCode::AuthOutboxState));
+        local(error, "AUTH_OUTBOX_STATE");
+        assert_eq!(
+            node.authenticated_outbound_reservation(frame.session())
+                .unwrap(),
+            (1, Some(b"retained wire".to_vec()))
+        );
+        node.db
+            .execute_batch("DROP TRIGGER omit_outbox_ack;")
+            .unwrap();
+        node.finish_authenticated_outbound(frame).unwrap();
+        drop(node);
+        let reopened = Node::open(directory.path(), settings, 1).unwrap();
+        assert_eq!(
+            reopened
+                .authenticated_outbound_reservation(frame.session())
+                .unwrap(),
+            (2, None)
+        );
+        assert_eq!(reopened.authenticated_replay_counts().unwrap(), (1, 0, 1));
     }
 
     #[test]

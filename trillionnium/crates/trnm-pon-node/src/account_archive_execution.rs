@@ -8,12 +8,12 @@
 //! operations. This is not a partial-State backend, a new consensus profile, an
 //! archive publication operation, or a Node proof/admission capability.
 use crate::account_archive_prototype::{
-    account_root, accounts, AccountArchive, ArchiveError, CheckedAccounts, Context, Witness,
-    MAX_VIEW_ACCOUNTS,
+    account_root, accounts, Account, AccountArchive, ArchiveError, CheckedAccounts, Checkpoint,
+    Context, Witness,
 };
 use crate::Settings;
 use serde::Serialize;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Mutex;
 use trnm_mvcc_fee::{
     continuity_v1,
@@ -21,7 +21,9 @@ use trnm_mvcc_fee::{
 };
 use trnm_protocol::pon_wire::Hash;
 
+pub mod obligations;
 pub mod state_witness;
+use obligations::{ExecutionAccounts, WitnessBudget};
 use state_witness::{
     BoundState, StateExecutionObservation, StatePhase, StateTransition, StateWitness,
     StateWitnessError, StateWitnessProgress,
@@ -227,6 +229,17 @@ pub fn prepare_state_witness(
     parent_checkpoint: Hash,
     parent_state: &State,
 ) -> Result<StateWitness> {
+    let (checkpoint, parent_accounts) =
+        check_parent_source(settings, archive, parent_checkpoint, parent_state)?;
+    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)
+}
+
+fn check_parent_source(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+) -> Result<(Checkpoint, BTreeMap<Hash, Account>)> {
     let checkpoint = archive.checkpoint(parent_checkpoint)?;
     let context = Context {
         network: settings.network(),
@@ -245,7 +258,7 @@ pub fn prepare_state_witness(
     {
         return Err(CheckedExecutionError::AccountSource);
     }
-    state_witness::prepare(settings, &checkpoint, parent_state, &parent_accounts)
+    Ok((checkpoint, parent_accounts))
 }
 
 pub fn execute_with_state_witness(
@@ -308,9 +321,8 @@ fn execute_inner(
     progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
 ) -> Result<InternalOutput> {
     let witnesses = evidence.accounts;
-    if witnesses.len() > MAX_VIEW_ACCOUNTS {
-        return Err(CheckedExecutionError::Budget);
-    }
+    let budget = WitnessBudget::for_block(settings, parent_state.len(), block.transactions.len())?;
+    budget.check(witnesses)?;
     progress(ExecutionProgress::BeforeParentBinding)?;
     let checkpoint = archive.checkpoint(parent_checkpoint)?;
     let context = Context {
@@ -337,13 +349,11 @@ fn execute_inner(
     }
     let mut requested: Vec<_> = witnesses.iter().map(|witness| witness.owner).collect();
     requested.sort_unstable();
-    let checked =
-        CheckedAccounts::verify(context, &checkpoint, &requested, witnesses).map_err(|error| {
-            match error {
-                ArchiveError::Context => CheckedExecutionError::Context,
-                error => CheckedExecutionError::Archive(error),
-            }
-        })?;
+    let checked = ExecutionAccounts::verify(context, &checkpoint, witnesses, &|| {
+        // Repeated boundaries preserve the original callback signature while
+        // making each bounded verification batch cooperatively cancellable.
+        progress(ExecutionProgress::BeforeParentBinding)
+    })?;
     // Compare only with ORIGINAL parent values. Mandatory credits and earlier
     // transactions may legitimately change the current ordered value afterward.
     for &owner in &requested {

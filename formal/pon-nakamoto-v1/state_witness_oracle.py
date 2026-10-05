@@ -88,7 +88,7 @@ def account_delta_updates(expected_checkpoint, expected_root, parent_count, pare
     archive.owner_bytes(expected_root)
     uint(parent_count)
     uint(parent_balance)
-    require(type(witnesses) is list and len(witnesses) <= archive.MAX_VIEW_ACCOUNTS,
+    require(type(witnesses) is list and len(witnesses) <= application.MAX_EXECUTION_ACCOUNTS,
             'STATE_WITNESS_BUDGET')
     require(type(changes) is list, 'STATE_WITNESS_CHANGES')
     proofs, proof_paths = {}, set()
@@ -526,6 +526,7 @@ def negative_progress(case, block, expected):
     No callback here promises preemption inside that earlier native scan.
     """
     progress = ['BeforeBinding', 'Execution(BeforeParentBinding)']
+    progress += ['Execution(BeforeParentBinding)'] * ((len(block['witnesses']) + 31) // 32)
     stop = case['cancel_at']
     if stop is None:
         return progress
@@ -542,6 +543,9 @@ def negative_progress(case, block, expected):
         point(f'AccountProof {{ phase: Mandatory, index: {index} }}')
     for index in range(len(expected['mandatory']['account_changes'])):
         point(f'AccountUpdate {{ phase: Mandatory, index: {index} }}')
+    for index, _ in sorted(enumerate(expected['mandatory']['account_changes']),
+                           key=lambda pair: archive.key_path(archive.hash_bytes(pair[1]['owner']))):
+        point(f'AccountMerge {{ phase: Mandatory, index: {index} }}')
     if point('AfterMandatoryVerification'):
         return progress
     point('Execution(AfterMandatory)')
@@ -559,6 +563,9 @@ def negative_progress(case, block, expected):
         point(f'AccountProof {{ phase: Successor, index: {index} }}')
     for index in range(len(expected['successor']['account_changes'])):
         point(f'AccountUpdate {{ phase: Successor, index: {index} }}')
+    for index, _ in sorted(enumerate(expected['successor']['account_changes']),
+                           key=lambda pair: archive.key_path(archive.hash_bytes(pair[1]['owner']))):
+        point(f'AccountMerge {{ phase: Successor, index: {index} }}')
     if point('AfterSuccessorVerification'):
         return progress
     require(point('BeforeOutput'), 'STATE_WITNESS_NEGATIVE_CANCELLATION_POINT')

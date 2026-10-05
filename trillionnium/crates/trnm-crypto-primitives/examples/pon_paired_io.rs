@@ -2,6 +2,7 @@
 //! It has no network, signing, parent-admission or verification authority.
 use std::io::{self, Read, Write};
 use trnm_crypto_primitives::pon_work::{
+    maintenance_limb::MaintenanceLimbPreparedTask,
     maintenance_periodic::MaintenancePeriodicPreparedTask,
     maintenance_prefix::{MaintenanceIntegerPairedPreparedTask, MaintenancePrefixPreparedTask},
     paired_product::PairedPreparedTask,
@@ -15,6 +16,7 @@ fn run() -> Result<(), &'static str> {
         Some(value) if value == "maintenance-periodic" => 1,
         Some(value) if value == "maintenance-integer-paired" => 2,
         Some(value) if value == "maintenance-prefix" => 3,
+        Some(value) if value == "maintenance-limb" => 4,
         Some(_) => return Err("OPERATION"),
     };
     if arguments.next().is_some() {
@@ -46,6 +48,11 @@ fn run() -> Result<(), &'static str> {
             .prove(challenge)
             .map_err(|_| "WORK")?,
         3 => MaintenancePrefixPreparedTask::new(&elements[..CELLS], &elements[CELLS..])
+            .map_err(|_| "WORK")?
+            .ok_or("UNSUPPORTED")?
+            .prove(challenge)
+            .map_err(|_| "WORK")?,
+        4 => MaintenanceLimbPreparedTask::new(&elements[..CELLS], &elements[CELLS..])
             .map_err(|_| "WORK")?
             .ok_or("UNSUPPORTED")?
             .prove(challenge)

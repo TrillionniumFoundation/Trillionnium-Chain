@@ -259,6 +259,10 @@
             {
               "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
               "symbol": "MaintenancePrefixPreparedTask::prove"
+            },
+            {
+              "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+              "symbol": "MaintenanceLimbPreparedTask::prove"
             }
           ],
           "controlled_entrypoint": {
@@ -293,7 +297,11 @@
             "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::periodic_factorization_matches_every_prefix_word_with_extreme_noise",
             "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::both_maintenance_prefix_constructors_reject_unsupported_and_malformed_inputs",
             "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::periodic_and_integer_paired_complete_proofs_match_scalar_and_verifier_errors",
-            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::both_prefix_generators_cancel_at_real_boundaries_and_reuse_no_challenge_state"
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs::both_prefix_generators_cancel_at_real_boundaries_and_reuse_no_challenge_state",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs::split_limb_extremes_and_field_carries_match_independent_remainder",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs::every_prefix_word_matches_independent_scalar_at_maximum_and_mixed_fields",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs::exact_material_full_proofs_tickets_and_ordered_rejections_remain_equal",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs::original_observation_order_and_cancelled_call_isolation_are_preserved"
           ],
           "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
         },
@@ -599,6 +607,10 @@
             {
               "path": "formal/pon-nakamoto-v1/state_witness_oracle.py",
               "symbol": "account_delta_updates"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligations.rs",
+              "symbol": "prepare"
             }
           ],
           "controlled_entrypoint": {
@@ -606,7 +618,7 @@
             "symbol": "Node::admit"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native Node executes actual parent state through M06 and owns durable admission; independent Python comparisons cover complete seeded continuity transitions and actual native revision14 model observations, with explicit signature/roster/witness premises. Warm immutable-parent bindings share snapshot bytes only after a complete ordered canonical comparison of actual State; cold roots and full successor execution remain. Explicit serial archive research execution binds immutable Settings and complete parent roots/accounts, requires exact used proof coverage at semantic account point access, and retains full State for ordinary M06 scans, funds, capacity and roots. Its observations grant no Node admission or archive publication. A separate authenticated-state companion binds complete non-account input and anchored funds/counts, combines original-parent account proofs for mandatory and final changes, and compares against full State rebuilding. The complete partition and reference remain required; the32-proof research cap is not a consensus limit.",
+          "backend": "Native Node executes actual parent state through M06 and owns durable admission; independent Python comparisons cover complete seeded continuity transitions and actual native revision14 model observations, with explicit signature/roster/witness premises. Warm immutable-parent bindings share snapshot bytes only after a complete ordered canonical comparison of actual State; cold roots and full successor execution remain. Explicit serial archive research execution binds immutable Settings and complete parent roots/accounts, requires exact used proof coverage at semantic account point access, and retains full State for ordinary M06 scans, funds, capacity and roots. Its observations grant no Node admission or archive publication. A separate authenticated-state companion binds complete non-account input and anchored funds/counts, combines original-parent account proofs for mandatory and final changes, and compares against full State rebuilding. The complete partition and reference remain required; whole-block witnesses use a checked parent/transaction bound while the separate public point-query limit stays32. A sorted frontier avoids storing all sparse nodes for each original proof; expanded proofs and full scans remain.",
           "persistence_owner": {
             "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
             "symbol": "Node::open"
@@ -657,7 +669,11 @@
             "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::authenticated_state_checks_real_expiry_and_maturity_before_signed_spend",
             "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs::authenticated_mandatory_partition_executes_full_cleanup_refunds_and_maturity",
             "trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs::authenticated_mandatory_refusal_prevents_transaction_preparation_and_missing_rows_refuse",
-            "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs::authenticated_binding_rejects_self_consistent_forged_totals_and_partition_omission"
+            "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs::authenticated_binding_rejects_self_consistent_forged_totals_and_partition_omission",
+            "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::authenticated_state_discovers_more_than_32_real_mandatory_recipients_and_preserves_native_order",
+            "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::witness_discovery_includes_settlement_provider_from_parent_record",
+            "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs::witness_discovery_preserves_invalid_transaction_order_and_requires_available_archive_bytes",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligations.rs::installed_maximum_and_overflow_counts_have_finite_witness_budgets"
           ],
           "remaining": "Derived commitments remain disposable computations, not authority or native paged persistence. Ordinary product integration, public service qualification and physical power-loss acceptance remain open."
         },
@@ -684,6 +700,10 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
               "symbol": "AccountArchive::project_successor"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs",
+              "symbol": "AuthenticatedStateArchive::publish"
             }
           ],
           "controlled_entrypoint": {
@@ -691,7 +711,7 @@
             "symbol": "Node::admit"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native Node derives complete ordered before/after changes and commits branch data through its SQLite owner; separate reference oracle remains available. Separate account-archive research projection binds complete before/after State and immutable shadow branch roots; its bounded checked account views are never used as partial input to production M06.",
+          "backend": "Native Node derives complete ordered before/after changes and commits branch data through its SQLite owner; separate reference oracle remains available. Separate account-archive research projection binds complete before/after State and immutable shadow branch roots; its bounded checked account views are never used as partial input to production M06. A fresh authenticated-state research namespace reexecutes actual admitted Node transitions, atomically stores immutable checkpoint/deltas and generation-checked selection, and reconstructs complete states on read/reopen; installed Node storage and local operation history remain separate.",
           "persistence_owner": {
             "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
             "symbol": "Node::open"
@@ -705,7 +725,14 @@
             "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs::compressed_nonmembership_and_bounded_views_never_erase_a_nonce",
             "trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs::cancellation_rolls_back_nodes_checkpoints_and_active_publication_before_reopen",
             "trillionnium/crates/trnm-pon-node/tests/account_archive_projection.rs::signed_growth_zero_balance_nonce_reentry_heavier_forks_and_reopen_preserve_exact_accounts",
-            "formal/pon-nakamoto-v1/test_account_archive_oracle.py::AccountArchiveOracleTests.test_zero_balance_nonzero_nonce_remains_a_committed_member"
+            "formal/pon-nakamoto-v1/test_account_archive_oracle.py::AccountArchiveOracleTests.test_zero_balance_nonzero_nonce_remains_a_committed_member",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_import_binds_actual_genesis_and_fresh_namespace",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_publication_rolls_back_cancellation_sql_failure_and_quotas",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_signed_native_branches_reopen_and_monotonic_selection",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_rejects_missing_tampered_and_forged_stored_sources",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_source_and_witness_refusals_publish_no_rows",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_delta_encoding_preserves_present_null_and_exact_before",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_abrupt_exit_before_commit_recovers_original_selection"
           ],
           "remaining": "Native development branch persistence is distinct from reusable local MVCC stores. Derived caches do not grant authority; physical power-loss, external effects and ordinary product integration remain unqualified."
         }
@@ -735,6 +762,10 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
               "symbol": "Node::read_active_with_progress"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs",
+              "symbol": "AuthenticatedStateArchive::open"
             }
           ],
           "controlled_entrypoint": {
@@ -751,7 +782,8 @@
             "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_every_initialization_cut_recovers_only_our_exact_intent",
             "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_injected_trigger_rejects_before_writable_open",
             "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_initialization_process_cuts_recover_only_the_owned_context",
-            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_active_state_rechecks_generation_before_publishing_a_derived_snapshot"
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_active_state_rechecks_generation_before_publishing_a_derived_snapshot",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_import_binds_actual_genesis_and_fresh_namespace"
           ],
           "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
         },
@@ -766,6 +798,10 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
               "symbol": "Node::admit"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs",
+              "symbol": "AuthenticatedStateArchive::publish"
             }
           ],
           "controlled_entrypoint": {
@@ -773,7 +809,7 @@
             "symbol": "run"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback. A fresh authenticated-state research namespace reexecutes actual admitted Node transitions, atomically stores immutable checkpoint/deltas and generation-checked selection, and reconstructs complete states on read/reopen; installed Node storage and local operation history remain separate.",
           "persistence_owner": {
             "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
             "symbol": "Node::open"
@@ -781,7 +817,10 @@
           "evidence_selectors": [
             "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_root_substitution_rejects_before_persistence",
             "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_admitted_before_activation_is_selected_on_restart",
-            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_malformed_work_and_changed_duplicate_never_mutate_state"
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_malformed_work_and_changed_duplicate_never_mutate_state",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_publication_rolls_back_cancellation_sql_failure_and_quotas",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_signed_native_branches_reopen_and_monotonic_selection",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_abrupt_exit_before_commit_recovers_original_selection"
           ],
           "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
         }
@@ -849,6 +888,10 @@
             {
               "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
               "symbol": "Node::visit_header_batch"
+            },
+            {
+              "path": "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs",
+              "symbol": "AuthenticatedStateArchive::activate"
             }
           ],
           "controlled_entrypoint": {
@@ -856,7 +899,7 @@
             "symbol": "run"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback.",
+          "backend": "Native development CLI and Rust branch SQLite owner with existing M00/M01/M06; separate Python conformance oracle. No Python runtime fallback. A fresh authenticated-state research namespace reexecutes actual admitted Node transitions, atomically stores immutable checkpoint/deltas and generation-checked selection, and reconstructs complete states on read/reopen; installed Node storage and local operation history remain separate.",
           "persistence_owner": {
             "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
             "symbol": "Node::open"
@@ -866,7 +909,9 @@
             "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_admitted_before_activation_is_selected_on_restart",
             "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_every_reorg_process_cut_and_admission_gap_recovers_once",
             "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_native_batch_checks_one_history_and_one_shared_body",
-            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_history_batches_cross_boundaries_cancel_and_recheck_actual_rows"
+            "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_history_batches_cross_boundaries_cancel_and_recheck_actual_rows",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_signed_native_branches_reopen_and_monotonic_selection",
+            "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs::authenticated_archive_rejects_missing_tampered_and_forged_stored_sources"
           ],
           "remaining": "Open public P2P, production mining/mempool lifecycle, incremental durable state, physical power-loss, ordinary Hepta resource/effect integration and independent work acceptance remain unqualified. Native confirmation remains full-history and local-observation scoped."
         }
@@ -1480,7 +1525,10 @@
             "trillionnium/crates/trnm-pon-node/src/main.rs::test_authentication_configuration_uses_the_opened_file_identity",
             "trillionnium/crates/trnm-pon-node/tests/native_node.rs::test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
             "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting",
-            "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs::actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity"
+            "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs::actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+            "trillionnium/crates/trnm-pon-node/src/store.rs::retained_completed_reply_shape_stops_and_exact_repair_restores_cached_replay",
+            "trillionnium/crates/trnm-pon-node/src/store.rs::missing_caller_state_and_retired_replies_remain_nonfatal_stale_context",
+            "trillionnium/crates/trnm-pon-node/src/store.rs::journal_transition_row_loss_is_local_and_rollback_preserves_exact_pending_frame"
           ],
           "remaining": "This closes exact retry for the private development request path, not target-side physical exactly-once, confidential transport, public routing or production custody."
         },
@@ -1645,6 +1693,10 @@
             {
               "path": "scripts/ci/run_account_execution_conformance.py",
               "symbol": "validate_state_witness_reports"
+            },
+            {
+              "path": "formal/pon-nakamoto-v1/authenticated_state_archive_oracle.py",
+              "symbol": "inspect_sqlite"
             }
           ],
           "controlled_entrypoint": {
@@ -1652,7 +1704,7 @@
             "symbol": "validate"
           },
           "ordinary_product_entrypoint": null,
-          "backend": "Read-only immutable receipt/source validation for four separate reused, both-zero, one-zero-rank-one and fixed-genesis-maintenance cost suites; current maintenance prefix-v3 compares seven full producers with charged actual setup and balanced fourteen-position order, while explicit historical v1/v2 retain their four/five-strategy meanings. Preserve full streams, negative outcomes and exact head/merge identity. A separate signed account-execution JSON oracle derives the supported application transitions and complete roots/proofs; its wrapper checks snapshot delivery bytes without claiming independent SQLite replay, work verification or fork choice. The separately versioned state-witness companion independently derives complete partition commitments, anchored aggregate deltas and original-parent combined account-proof roots for mandatory and final states. It retains the original signed-fixture application scope and no SQLite, W1, fork-choice, production capacity or witness-availability authority.",
+          "backend": "Read-only immutable receipt/source validation for four separate reused, both-zero, one-zero-rank-one and fixed-genesis-maintenance cost suites; current maintenance limb-v4 compares eight full producers with charged actual setup and balanced sixteen-position order, while explicit historical v1/v2/v3 retain their four/five/seven-strategy meanings. Preserve full streams, negative outcomes and exact head/merge identity. A separate signed account-execution JSON oracle derives the supported application transitions and complete roots/proofs; its wrapper checks snapshot delivery bytes without claiming independent SQLite replay, work verification or fork choice. The separately versioned state-witness companion independently derives complete partition commitments, anchored aggregate deltas and original-parent combined account-proof roots for mandatory and final states. It retains the original signed-fixture application scope and no SQLite, W1, fork-choice, production capacity or witness-availability authority. A separate read-only SQLite oracle checks the new authenticated-state namespace against independently replayed signed fixture states, full roots/aggregates and exact delta/selection records; finite state fuzzing uses a separate bottom-up root relation.",
           "persistence_owner": null,
           "evidence_selectors": [
             "scripts/ci/test_cross_arch_cost.py::ArtifactComparisonTests.test_cross_architecture_stream_difference_rejected",
@@ -1673,7 +1725,12 @@
             "formal/pon-nakamoto-v1/test_state_witness_oracle.py::StateWitnessOracle.test_combined_parent_paths_match_independent_full_sparse_reconstruction",
             "formal/pon-nakamoto-v1/test_state_witness_oracle.py::StateWitnessOracle.test_full_ordered_delta_retains_null_creation_deletion_and_changed_value",
             "formal/pon-nakamoto-v1/test_state_witness_oracle.py::CompleteStatePartition.test_every_non_account_row_is_required_even_when_no_money_or_due_action",
-            "formal/pon-nakamoto-v1/test_state_witness_oracle.py::CompleteStatePartition.test_self_consistent_forged_aggregate_digest_is_not_an_authenticated_parent"
+            "formal/pon-nakamoto-v1/test_state_witness_oracle.py::CompleteStatePartition.test_self_consistent_forged_aggregate_digest_is_not_an_authenticated_parent",
+            "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py::AuthenticatedStateArchiveOracle.test_complete_reconstruction_roots_aggregates_and_read_only_bytes",
+            "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py::AuthenticatedStateArchiveOracle.test_account_nonce_and_existence_do_not_rewind",
+            "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py::AuthenticatedStateArchiveOracle.test_rehashed_false_aggregate_is_recomputed_from_actual_rows",
+            "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py::AuthenticatedStateArchiveOracle.test_missing_ordinal_and_orphan_rows_are_refused",
+            "formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py::AuthenticatedStateArchiveOracle.test_extra_active_row_and_unreadable_successor_history_are_refused"
           ],
           "remaining": "Does not execute old tests again, confer scientific independence or grant deployment authority."
         }

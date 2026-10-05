@@ -94,3 +94,15 @@ The existing branch owner and complete native State root remain authoritative.
 Integrating persistent authenticated updates still requires explicit root/profile
 selection, migration/recovery rules, complete obligation discovery and retained
 witness-data responsibility.
+
+## Explicit authenticated-state archive
+
+The [durable research archive](../protocol/pon-nakamoto-v1/details/AUTHENTICATED_STATE_ARCHIVE_V1.md)
+uses its own namespace and explicit caller operation. It imports actual native genesis,
+reexecutes an admitted block through complete authenticated-state inputs and checks
+full state/receipts before atomically publishing checkpoint, delta and optional selection.
+CAS generations do not rewind when selecting an older branch. Missing data, altered
+records, stale selection, quota exhaustion and cancellation refuse without partial
+publication. Reads and reopen reconstruct complete states and compare actual native
+branch data. This separate reference-backed store adds no ordinary startup selection,
+installed state root, public proof service, pruning or rollback of local operation facts.
