@@ -1,7 +1,7 @@
 name: temporary-native-workspace
 on:
   push:
-    branches: [fix/pon-w1-from-zero-cost-20261005]
+    branches: [dev/chain-exact-source-20261005]
 permissions:
   contents: read
 jobs:
@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: adb9a386e109cdd80942020a4fc479a9b52730bc
+          ref: 69d5ab9e3f20e926a8f56f150d6ef60ed9e32f08
           fetch-depth: 1
           persist-credentials: false
       - name: Export only the exact repository snapshot objects
@@ -20,7 +20,7 @@ jobs:
           set -euo pipefail
           out="$RUNNER_TEMP/trnm-exact-source"
           mkdir -p "$out"
-          test "$(git rev-parse HEAD)" = adb9a386e109cdd80942020a4fc479a9b52730bc
+          test "$(git rev-parse HEAD)" = 69d5ab9e3f20e926a8f56f150d6ef60ed9e32f08
           test "$(git rev-list --count HEAD)" = 1
           git rev-parse HEAD > "$out/source-sha.txt"
           git rev-parse HEAD^{tree} > "$out/source-tree.txt"
@@ -31,7 +31,7 @@ jobs:
       - name: Retain source objects, not configuration or credentials
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: exact-source-adb9a386e109cdd80942020a4fc479a9b52730bc
+          name: exact-source-69d5ab9e3f20e926a8f56f150d6ef60ed9e32f08
           path: ${{ runner.temp }}/trnm-exact-source/
           if-no-files-found: error
           compression-level: 0
