@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import copy
+import contextlib
 import hashlib
+import io
 import json
 from pathlib import Path
 import sys
@@ -13,7 +15,8 @@ from unittest.mock import patch
 
 from check_cross_arch_cost import (CAMPAIGNS, FALSE_FLAGS, MATERIALS, METHODS, MODES,
     STRATEGIES, STRUCTURED_METHODS, TARGETS, TIMING_SCOPE, compare_artifacts,
-    deterministic_projection, read_json, validate_artifact, validate_files, validate_raw_report, winning_challenge)
+    deterministic_projection, read_json, suite_contract, validate_artifact, validate_files,
+    validate_raw_report, winning_challenge)
 from run_cross_arch_cost import capture, elf_machine
 
 
@@ -218,6 +221,132 @@ class ArtifactComparisonTests(unittest.TestCase):
         (self.root / 'third').mkdir()
         with self.assertRaises(ValueError):
             self.compare()
+
+
+class ZeroVersionSelectionTests(unittest.TestCase):
+    """Version selection never upgrades a historical report or erases its inputs."""
+
+    def test_historical_v1_input_inventory_is_exactly_preserved(self):
+        expected = [
+            'rust-toolchain.toml', 'trillionnium/Cargo.lock',
+            'scripts/ci/run_cross_arch_cost.py', 'scripts/ci/check_cross_arch_cost.py',
+            'trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs',
+            'scripts/ci/check_zero_locality_cost.py',
+        ]
+        contract = suite_contract('zero-locality', zero_version=1)
+        self.assertEqual(contract['inputs'], expected)
+        self.assertEqual(contract['execution_schema'], 'trnm-cross-arch-zero-locality-cost-execution-v1')
+        self.assertEqual(contract['comparison_schema'], 'trnm-cross-arch-zero-locality-cost-comparison-v1')
+
+    def test_current_v2_requires_all_new_implementation_and_independent_reader_inputs(self):
+        historical = suite_contract('zero-locality', zero_version=1)
+        current = suite_contract('zero-locality')
+        self.assertEqual(current, suite_contract('zero-locality', zero_version=2))
+        self.assertEqual(current['directory'], historical['directory'])
+        self.assertEqual(current['example'], historical['example'])
+        self.assertEqual(current['inputs'], historical['inputs'] + [
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs',
+            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs',
+            'trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs',
+            'formal/pon-nakamoto-v1/test_zero_work.py',
+            'formal/pon-nakamoto-v1/work_oracle.py',
+            'formal/pon-nakamoto-v1/contract_wire.py',
+            'trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs',
+        ])
+        self.assertEqual(current['execution_schema'], 'trnm-cross-arch-zero-locality-cost-execution-v2')
+        self.assertEqual(current['comparison_schema'], 'trnm-cross-arch-zero-locality-cost-comparison-v2')
+
+    def test_raw_version_is_selected_explicitly_and_never_detected_from_input(self):
+        from test_zero_locality_cost import zero_fixture
+        for selected in (1, 2):
+            parser = suite_contract('zero-locality', zero_version=selected)['validate_raw_report']
+            for actual in (1, 2):
+                with self.subTest(selected=selected, actual=actual):
+                    raw = zero_fixture(CAMPAIGNS[0], version=actual)
+                    if selected == actual:
+                        self.assertEqual(parser(raw, CAMPAIGNS[0])['rows'], 48 if selected == 1 else 80)
+                    else:
+                        with self.assertRaises(ValueError):
+                            parser(raw, CAMPAIGNS[0])
+
+    def test_noninteger_and_unknown_zero_versions_are_refused(self):
+        for version in (True, False, 0, 3, '1', 1.0, None):
+            with self.subTest(version=version), self.assertRaises(ValueError):
+                suite_contract('zero-locality', zero_version=version)
+
+    def test_comparison_cli_passes_exact_selection_through_full_artifact_validation(self):
+        import check_cross_arch_cost
+        from test_zero_locality_cost import artifact_fixture
+        with tempfile.TemporaryDirectory(prefix='trnm-zero-version-cli-') as folder:
+            root = Path(folder)
+            for actual in (1, 2):
+                artifacts = root / f'v{actual}'
+                for arch in ('x64', 'arm64'):
+                    artifact_fixture(artifacts / arch, arch, zero_version=actual)
+                for selected in (None, 1, 2):
+                    output = root / f'actual-{actual}-selected-{selected}.json'
+                    arguments = ['check_cross_arch_cost.py', '--suite', 'zero-locality',
+                                 '--artifacts', str(artifacts), '--expected-source', 'a' * 40,
+                                 '--output', str(output)]
+                    if selected is not None:
+                        arguments += ['--zero-version', str(selected)]
+                    expected_version = 2 if selected is None else selected
+                    with self.subTest(actual=actual, selected=selected), \
+                            patch.object(sys, 'argv', arguments), \
+                            patch('check_cross_arch_cost.source', return_value={
+                                'commit': 'a' * 40, 'tree': 'b' * 40, 'source_state': 'committed-clean'}), \
+                            contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                        status = check_cross_arch_cost.main()
+                    report = read_json(output)
+                    self.assertEqual(report['schema'], f'trnm-cross-arch-zero-locality-cost-comparison-v{expected_version}')
+                    self.assertEqual(status, 0 if actual == expected_version else 1)
+                    self.assertEqual(report['result'], 'PASS' if actual == expected_version else 'FAIL')
+                    if actual != expected_version:
+                        self.assertIn('actual successful native execution required', report['error'])
+
+    def test_runner_selects_schema_before_dirty_source_refusal_without_executing_commands(self):
+        import run_cross_arch_cost
+        with tempfile.TemporaryDirectory(prefix='trnm-zero-runner-selection-') as folder:
+            for selected in (None, 1, 2):
+                output = Path(folder) / f'selected-{selected}'
+                output.mkdir()
+                arguments = ['run_cross_arch_cost.py', '--arch', 'x64', '--suite', 'zero-locality', '--local']
+                if selected is not None:
+                    arguments += ['--zero-version', str(selected)]
+                with self.subTest(selected=selected), patch.object(sys, 'argv', arguments), \
+                        patch('run_cross_arch_cost.receipt_root', return_value=output), \
+                        patch('run_cross_arch_cost.source', return_value={'source_state': 'dirty-fixture'}), \
+                        patch('run_cross_arch_cost.capture') as execute, \
+                        contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                    self.assertEqual(run_cross_arch_cost.main(), 1)
+                    execute.assert_not_called()
+                version = 2 if selected is None else selected
+                report = read_json(output / 'manifest.json')
+                self.assertEqual(report['schema'], f'trnm-cross-arch-zero-locality-cost-execution-v{version}')
+                self.assertEqual(report['result'], 'FAIL')
+                self.assertIn('committed source', report['error'])
+                self.assertEqual(set(report['input_sha256']), set(suite_contract('zero-locality', zero_version=version)['inputs']))
+
+    def test_both_clis_reject_unsupported_selectors_before_source_or_command_work(self):
+        import check_cross_arch_cost
+        import run_cross_arch_cost
+        for module, required in [
+            (check_cross_arch_cost, ['--artifacts', 'unused', '--expected-source', 'a' * 40, '--output', 'unused']),
+            (run_cross_arch_cost, ['--arch', 'x64']),
+        ]:
+            for version in ('0', '3', 'true'):
+                with self.subTest(module=module.__name__, version=version), \
+                        patch.object(sys, 'argv', [module.__name__, '--suite', 'zero-locality',
+                                                 '--zero-version', version, *required]), \
+                        patch.object(module, 'source') as read_source, \
+                        contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as caught:
+                    module.main()
+                self.assertEqual(caught.exception.code, 2)
+                read_source.assert_not_called()
 
 
 class NativeObservationTests(unittest.TestCase):

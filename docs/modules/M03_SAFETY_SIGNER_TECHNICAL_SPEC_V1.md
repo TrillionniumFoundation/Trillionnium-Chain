@@ -104,9 +104,11 @@ not interchangeable. Fewer field multiplications do not establish a faster miner
 or a lower bound on the cheapest valid work.
 
 The separate strict-zero producer keeps only small prefix factors and one current
-tile while emitting the same complete proof. Its dedicated locality cost schema
-compares all three zero-capable implementations, including every failed target
-attempt and actual setup. A signed native V4/continuity lifecycle regression checks
+tile while emitting the same complete proof. Its historical locality cost schema
+`pon-w1-zero-locality-v1` compares three zero-capable implementations, including
+every failed target attempt and actual setup. The current five-producer v2 relation
+is separately identified in the Round 10 source-binding section below. A signed
+native V4/continuity lifecycle regression checks
 that real zero-material registration, proof verification, renewal, revocation,
 expiry and parent changes still require their ordinary checks. This diagnostic
 producer is not installed as the Node's default miner or a source of verified types.
@@ -159,3 +161,21 @@ retain their original contracts. Neither new method has an established
 general-multiplication-count advantage over the other; actual timings, including
 slower and exhausted observations, must decide the measured comparison. No default
 Node selector, work relation or acceptance flag changes.
+
+
+## 本轮来源绑定（Round 10）
+
+当前 `pon-w1-zero-locality-v2` 明确比较五种完整生成者的 cold／reused 路径；历史 v1
+保留三种生成者的原始输入网格与实际观测，不能改名或重封摘要后充作 v2 执行。
+本轮双零材料生成者的准备对象只保存确定材料与证明前缀；每个 challenge 重新生成
+噪声与全部 transcript，不保存可绕过后续检查的父分支、租约或签发权限。具体关系见
+[W1 实现比较](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md)，
+签名任务的续租、撤销和到期仍按实际当前父分支判断，见
+[签名任务生命周期 V4](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md)。
+
+该生成对象不是本模块的外部效果 entry token。`M03.RevokeEntryLinearization` 的
+本地 revoke／entry 线性化与已持久化操作事实继续独立成立，分支重组不回退这些事实。
+以下 actual-parent lifecycle selector 只登记源码与测试定义，不新增 invariant、
+不代替外部效果撤销或独立验收，`independent_accepted=false`。
+
+- `trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs::signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry`.

@@ -401,6 +401,49 @@ fn local_execution_error(error: ExecutionError<Error>) -> Error {
     }
 }
 
+/// Cancellation stages for the complete checked native account proof query.
+/// Individual State commitment/hash primitives remain bounded single stages.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum NativeAccountProofProgress {
+    BeforeRead,
+    StateReplay,
+    StateVerification,
+    Proof(crate::account_archive_prototype::multiproof::MultiproofProgress),
+    BeforeOutput,
+}
+
+enum NativeAccountProofFailure {
+    Archive(crate::account_archive_prototype::ArchiveError),
+    Control(Error),
+}
+impl From<crate::account_archive_prototype::ArchiveError> for NativeAccountProofFailure {
+    fn from(error: crate::account_archive_prototype::ArchiveError) -> Self {
+        Self::Archive(error)
+    }
+}
+impl NativeAccountProofFailure {
+    fn into_error(self) -> Error {
+        use crate::account_archive_prototype::ArchiveError;
+        match self {
+            Self::Control(error) => error,
+            Self::Archive(error) => {
+                let is_local = matches!(
+                    error,
+                    ArchiveError::DataUnavailable
+                        | ArchiveError::CorruptRecord
+                        | ArchiveError::Storage(_)
+                );
+                let error = Error::from(format!("NATIVE_ACCOUNT_PROOF:{error:?}"));
+                if is_local {
+                    error.local_integrity()
+                } else {
+                    error
+                }
+            }
+        }
+    }
+}
+
 /// One private native namespace; no reference subprocess or remote state setter exists.
 pub struct Node {
     db: Connection,
@@ -1033,15 +1076,49 @@ impl Node {
         crate::account_archive_prototype::multiproof::Multiproof,
         crate::account_archive_prototype::multiproof::ConstructionObservation,
     )> {
+        self.authenticated_account_multiproof_with_progress(block, owners, &|_| Ok(()))
+    }
+    /// Reject oversized/duplicate requests before storage access, then retain a
+    /// single read transaction through full-State replay and proof construction.
+    /// Cancellation returns the caller's original error and releases the snapshot.
+    pub fn authenticated_account_multiproof_with_progress(
+        &self,
+        block: Hash,
+        owners: &[Hash],
+        progress: &(impl Fn(NativeAccountProofProgress) -> Result<()> + ?Sized),
+    ) -> Result<(
+        crate::account_archive_prototype::Checkpoint,
+        crate::account_archive_prototype::multiproof::Multiproof,
+        crate::account_archive_prototype::multiproof::ConstructionObservation,
+    )> {
+        use crate::account_archive_prototype::{multiproof, ArchiveError};
         ensure(
             self.state_backend == StateBackend::AuthenticatedV1,
             "NATIVE_STATE_BACKEND_REQUIRED",
         )?;
+        if owners.len() > multiproof::MAX_ACCOUNTS {
+            return Err(NativeAccountProofFailure::Archive(ArchiveError::Budget).into_error());
+        }
+        if owners
+            .iter()
+            .collect::<std::collections::BTreeSet<_>>()
+            .len()
+            != owners.len()
+        {
+            return Err(
+                NativeAccountProofFailure::Archive(ArchiveError::InvalidWitness).into_error(),
+            );
+        }
+        progress(NativeAccountProofProgress::BeforeRead)?;
         self.namespace()?;
         let tx = self.db.unchecked_transaction()?;
         self.storage_context()?;
-        let state = self.state_at(block)?;
-        native_authenticated::verify_state(&tx, &self.settings, block, &state, &mut || Ok(()))?;
+        let state = self.state_at_with_progress(block, &mut || {
+            progress(NativeAccountProofProgress::StateReplay)
+        })?;
+        native_authenticated::verify_state(&tx, &self.settings, block, &state, &mut || {
+            progress(NativeAccountProofProgress::StateVerification)
+        })?;
         let record = native_authenticated::load(&tx, block)?;
         let context = crate::account_archive_prototype::Context {
             network: self.settings.network(),
@@ -1057,26 +1134,12 @@ impl Node {
             &record.accounts,
         )?;
         let (proof, observation) =
-            crate::account_archive_prototype::multiproof::from_native_database(
-                &tx,
-                &checkpoint,
-                owners,
-            )
-            .map_err(|error| {
-                use crate::account_archive_prototype::ArchiveError;
-                let is_local = matches!(
-                    error,
-                    ArchiveError::DataUnavailable
-                        | ArchiveError::CorruptRecord
-                        | ArchiveError::Storage(_)
-                );
-                let error = Error::from(format!("NATIVE_ACCOUNT_PROOF:{error:?}"));
-                if is_local {
-                    error.local_integrity()
-                } else {
-                    error
-                }
-            })?;
+            multiproof::from_native_database(&tx, &checkpoint, owners, &|point| {
+                progress(NativeAccountProofProgress::Proof(point))
+                    .map_err(NativeAccountProofFailure::Control)
+            })
+            .map_err(NativeAccountProofFailure::into_error)?;
+        progress(NativeAccountProofProgress::BeforeOutput)?;
         tx.commit()?;
         Ok((checkpoint, proof, observation))
     }
@@ -1667,6 +1730,8 @@ impl Node {
         let slot = self.slot()?;
         let state = self.slot_state(slot)?;
         self.check_persisted_state(selected.0, &state, &mut || Ok(()))?;
+        crate::ancestry_index::validate_tip(&self.db, self.ancestry_context(), selected.0)
+            .map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
             native_authenticated::verify_history(
                 &self.db,
@@ -2198,13 +2263,22 @@ impl Node {
         Ok(rows.collect::<std::result::Result<Vec<_>, _>>()?)
     }
     pub fn state_at(&self, tip: Hash) -> Result<State> {
+        self.state_at_with_progress(tip, &mut || Ok(()))
+    }
+    fn state_at_with_progress(
+        &self,
+        tip: Hash,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<State> {
+        progress()?;
         if tip == self.active()?.0 {
-            return Ok(self.read_active()?.2);
+            return Ok(self.read_active_with_progress(progress)?.2);
         }
         let mut path = tempfile::tempfile()?;
         let mut count = 0u64;
         let mut cur = tip;
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
+            progress()?;
             let row = self.record(cur)?;
             if let Some(bytes) = self
                 .db
@@ -2228,7 +2302,7 @@ impl Node {
                         &self.settings,
                         cur,
                         &state,
-                        &mut || Ok(()),
+                        progress,
                     )?;
                 }
                 break (state, commitment);
@@ -2238,10 +2312,14 @@ impl Node {
             cur = self.parent(cur)?;
         };
         for i in (0..count).rev() {
+            progress()?;
             path.seek(SeekFrom::Start(i.checked_mul(32).ok_or("ANCESTRY_LIMIT")?))?;
             let mut id = [0; 32];
             path.read_exact(&mut id)?;
-            for (key, before, after) in self.delta_rows(id)? {
+            for (index, (key, before, after)) in self.delta_rows(id)?.into_iter().enumerate() {
+                if index.is_multiple_of(256) {
+                    progress()?;
+                }
                 ensure(
                     state.get(&key).map(canonical).transpose()? == before,
                     "UNDO_ROOT",
@@ -2263,15 +2341,10 @@ impl Node {
             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
             if self.state_backend == StateBackend::AuthenticatedV1 {
-                native_authenticated::verify_state(
-                    &self.db,
-                    &self.settings,
-                    id,
-                    &state,
-                    &mut || Ok(()),
-                )?;
+                native_authenticated::verify_state(&self.db, &self.settings, id, &state, progress)?;
             }
         }
+        progress()?;
         Ok(state)
     }
     fn recent(&self, mut parent: Hash) -> Result<Vec<(u64, Hash)>> {
@@ -3008,7 +3081,7 @@ impl Node {
             "STORAGE_WRITE",
         )
         .map_err(Error::local_integrity)?;
-        crate::ancestry_index::insert(&tx, index_context, id)?;
+        let inserted_ancestry = crate::ancestry_index::insert(&tx, index_context, id)?;
         let mut expected_deltas = Vec::new();
         {
             let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
@@ -3060,6 +3133,8 @@ impl Node {
             "STORAGE_WRITE",
         )
         .map_err(Error::local_integrity)?;
+        crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
+            .map_err(Error::local_integrity)?;
         self.check_active_before_commit()?;
         progress(ExecutionProgress::BeforeDurableCommit)?;
         tx.commit()?;
@@ -5396,3 +5471,11 @@ mod continuity_tests;
 #[cfg(test)]
 #[path = "native_authenticated_tests.rs"]
 mod native_authenticated_tests;
+
+#[cfg(test)]
+#[path = "native_ancestry_commit_tests.rs"]
+mod native_ancestry_commit_tests;
+
+#[cfg(test)]
+#[path = "native_account_query_tests.rs"]
+mod native_account_query_tests;

@@ -4,7 +4,8 @@
 use sha2::{Digest, Sha256};
 use std::{env, error::Error, ffi::OsString, fmt::Write, hint::black_box, time::Instant};
 use trnm_crypto_primitives::pon_work::{
-    blocked_zero::BlockedZeroPreparedTask, structured::StructuredPreparedTask, *,
+    blocked_zero::BlockedZeroPreparedTask, blocked_zero_paired::BlockedZeroPairedPreparedTask,
+    paired_product::PairedPreparedTask, structured::StructuredPreparedTask, *,
 };
 
 const TICKET_STREAM_DOMAIN: &[u8] = b"TRNM-PON-W1-ZERO-LOCALITY-TICKET-STREAM1\0";
@@ -82,15 +83,38 @@ enum Strategy {
     Generic,
     Reference,
     Blocked,
+    Paired,
+    BlockedPaired,
 }
 impl Strategy {
-    const ALL: [Self; 3] = [Self::Generic, Self::Reference, Self::Blocked];
+    const ALL: [Self; 5] = [
+        Self::Generic,
+        Self::Reference,
+        Self::Blocked,
+        Self::Paired,
+        Self::BlockedPaired,
+    ];
     fn name(self) -> &'static str {
         match self {
             Self::Generic => "prepared-generic",
             Self::Reference => "structured-zero-reference",
             Self::Blocked => "blocked-zero",
+            Self::Paired => "paired-product",
+            Self::BlockedPaired => "blocked-zero-integer-paired",
         }
+    }
+}
+const ARMS: usize = Strategy::ALL.len() * 2;
+
+// Adjacent samples place every strategy/mode at mean position 4.5. An odd
+// sample count leaves an unmatched sample; this does not eliminate noise or
+// architecture effects and applies only to the explicit version-2 grid.
+fn invocation(sample: u64, position: usize) -> usize {
+    let pair = sample as usize / 2;
+    if sample.is_multiple_of(2) {
+        (pair + position) % ARMS
+    } else {
+        (pair + ARMS - 1 - position) % ARMS
     }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -111,6 +135,8 @@ enum Producer {
     Generic(PreparedTask),
     Reference(StructuredPreparedTask),
     Blocked(BlockedZeroPreparedTask),
+    Paired(PairedPreparedTask),
+    BlockedPaired(BlockedZeroPairedPreparedTask),
 }
 impl Producer {
     fn method(&self) -> &'static str {
@@ -118,6 +144,8 @@ impl Producer {
             Self::Generic(_) => "generic-product-and-transcript",
             Self::Reference(task) => task.method(),
             Self::Blocked(task) => task.method(),
+            Self::Paired(task) => task.method(),
+            Self::BlockedPaired(task) => task.method(),
         }
     }
     fn prove(&self, challenge: Hash) -> Result<Vec<u8>, WorkError> {
@@ -125,6 +153,8 @@ impl Producer {
             Self::Generic(task) => task.prove(challenge),
             Self::Reference(task) => task.prove(challenge),
             Self::Blocked(task) => task.prove(challenge),
+            Self::Paired(task) => task.prove(challenge),
+            Self::BlockedPaired(task) => task.prove(challenge),
         }
     }
 }
@@ -142,6 +172,13 @@ fn prepare(material: &Material, strategy: Strategy) -> Result<Producer, WorkErro
             .ok_or(WorkError::Field),
         Strategy::Blocked => BlockedZeroPreparedTask::new(&material.a, &material.b)?
             .map(Producer::Blocked)
+            .ok_or(WorkError::Field),
+        Strategy::Paired => Ok(Producer::Paired(PairedPreparedTask::new(
+            &material.a,
+            &material.b,
+        )?)),
+        Strategy::BlockedPaired => BlockedZeroPairedPreparedTask::new(&material.a, &material.b)?
+            .map(Producer::BlockedPaired)
             .ok_or(WorkError::Field),
     }
 }
@@ -378,7 +415,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     let material = Material::zero();
     let task = task_id(&material.a, &material.b).map_err(work_error)?;
     let targets = targets();
-    print!("{{\"schema\":\"pon-w1-zero-locality-v1\",\"zero_structure_only\":true,\"targets\":[\"{}\",\"{}\"],\"seed\":{},\"samples_per_case_target\":{},\"searches_per_cohort\":{},\"attempt_budget\":{},\"timing\":\"monotonic-wall-elapsed-nanoseconds-not-cpu-accounting\",\"timing_scope\":{{\"actual_setup_per_mode\":true,\"all_attempts_including_target_misses\":true,\"challenge_ticket_and_full_proof_stream_hashing_in_search\":true,\"material_generation_rank_checks_and_cross_strategy_comparison_timed\":false,\"verifier_timing_after_generation\":true}},\"observations\":[", hex::encode(targets[0]), hex::encode(targets[1]), options.seed, options.samples, options.searches, options.attempts);
+    print!("{{\"schema\":\"pon-w1-zero-locality-v2\",\"zero_structure_only\":true,\"targets\":[\"{}\",\"{}\"],\"seed\":{},\"samples_per_case_target\":{},\"searches_per_cohort\":{},\"attempt_budget\":{},\"timing\":\"monotonic-wall-elapsed-nanoseconds-not-cpu-accounting\",\"timing_scope\":{{\"actual_setup_per_mode\":true,\"all_attempts_including_target_misses\":true,\"challenge_ticket_and_full_proof_stream_hashing_in_search\":true,\"material_generation_rank_checks_and_cross_strategy_comparison_timed\":false,\"verifier_timing_after_generation\":true}},\"observations\":[", hex::encode(targets[0]), hex::encode(targets[1]), options.seed, options.samples, options.searches, options.attempts);
     let mut first = true;
     for target in targets {
         for sample in 0..options.samples {
@@ -390,11 +427,11 @@ fn run() -> Result<(), Box<dyn Error>> {
                 searches: options.searches,
                 budget: options.attempts,
             };
-            let mut observations = Vec::with_capacity(6);
-            for offset in 0..6 {
-                let invocation = (sample as usize + offset) % 6;
-                let strategy = Strategy::ALL[invocation / 2];
-                let mode = if invocation.is_multiple_of(2) {
+            let mut observations = Vec::with_capacity(ARMS);
+            for offset in 0..ARMS {
+                let selected = invocation(sample, offset);
+                let strategy = Strategy::ALL[selected / 2];
+                let mode = if selected.is_multiple_of(2) {
                     Mode::Cold
                 } else {
                     Mode::Reused
@@ -408,7 +445,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             for row in &observations {
                 assert_same_outcomes(baseline, row);
             }
-            // Verify only after all six generation runs complete. Both verifier
+            // Verify only after all ten generation runs complete. Both verifier
             // costs and output formatting remain outside setup/search timing.
             for (order, row) in observations.iter().enumerate() {
                 let json =
@@ -448,7 +485,7 @@ mod tests {
     }
 
     #[test]
-    fn actual_constructors_and_exact_winners_match_across_all_six_paths() {
+    fn actual_constructors_and_exact_winners_match_across_all_ten_paths() {
         let material = Material::zero();
         let plan = plan(&material);
         let baseline = observe(&material, plan, Strategy::Generic, Mode::Cold).unwrap();
@@ -585,6 +622,28 @@ mod tests {
         proofs.update((PROOF_BYTES as u64).to_le_bytes());
         proofs.update(proof);
         assert_eq!(observed.proof_stream, <Hash>::from(proofs.finalize()));
+    }
+
+    #[test]
+    fn adjacent_sample_pairs_balance_all_ten_actual_invocation_positions() {
+        assert_eq!(ARMS, 10);
+        for pair in 0..16 {
+            let mut position_sum = [0; ARMS];
+            let mut count = [0; ARMS];
+            for sample in [pair * 2, pair * 2 + 1] {
+                let mut seen = [false; ARMS];
+                for position in 0..ARMS {
+                    let arm = invocation(sample, position);
+                    assert!(!seen[arm]);
+                    seen[arm] = true;
+                    position_sum[arm] += position;
+                    count[arm] += 1;
+                }
+                assert!(seen.into_iter().all(|value| value));
+            }
+            assert_eq!(count, [2; ARMS]);
+            assert_eq!(position_sum, [ARMS - 1; ARMS]);
+        }
     }
 
     #[test]

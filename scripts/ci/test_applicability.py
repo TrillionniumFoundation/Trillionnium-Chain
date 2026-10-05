@@ -151,7 +151,8 @@ class ApplicabilityTests(unittest.TestCase):
         selectors = set(row['evidence_selectors'])
         for path, count in [
             ('formal/pon-nakamoto-v1/test_account_multiproof_oracle.py', 28),
-            ('formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py', 23),
+            ('formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py', 28),
+            ('formal/pon-nakamoto-v1/test_obligation_range_oracle.py', 13),
             ('scripts/ci/test_work_rejection_report.py', 75),
         ]:
             tree = ast.parse((self.root / path).read_text())
@@ -164,6 +165,8 @@ class ApplicabilityTests(unittest.TestCase):
         for path, symbol in [
             ('formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py', 'compare_migration'),
             ('formal/pon-nakamoto-v1/account_multiproof_oracle.py', 'root_for_updates'),
+            ('formal/pon-nakamoto-v1/obligation_range_oracle.py', 'check_observation'),
+            ('formal/pon-nakamoto-v1/obligation_range_oracle.py', 'native_negative_controls'),
             ('scripts/pon_work_rejection_report.py', 'verify'),
         ]:
             self.assertIn({'path': path, 'symbol': symbol}, row['runtime_symbols'])

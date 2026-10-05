@@ -165,6 +165,15 @@ fn capacity_with_account_access(
     cfg: &Config,
     account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
 ) -> Result<Capacity> {
+    capacity_with_sources(state, height, cfg, account_access, None)
+}
+fn capacity_with_sources(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+    monetary: Option<&State>,
+) -> Result<Capacity> {
     if !enabled(cfg) {
         return Err("CONTINUITY_PROFILE");
     }
@@ -174,7 +183,7 @@ fn capacity_with_account_access(
     let mut recipients = BTreeSet::new();
     let mut reward_heights = BTreeSet::new();
     let mut archives = 0usize;
-    for (key, value) in state {
+    for (key, value) in monetary.unwrap_or(state) {
         if key.starts_with("reward:") {
             let due = number(value, "maturity")?;
             if due <= height
@@ -193,6 +202,18 @@ fn capacity_with_account_access(
                 reserve_owner(state, value, &mut recipients, account_access)?;
             }
         } else if crate::public_evaluation::enabled(cfg) && key.starts_with("contribution:") {
+            let candidate = key
+                .strip_prefix("contribution:")
+                .ok_or("CONTINUITY_STATE")?;
+            if !state.contains_key(&format!("evaluation-archive:{candidate}")) {
+                archives = archives.checked_add(1).ok_or("RANGE")?;
+            }
+        }
+    }
+    if monetary.is_some() && crate::public_evaluation::enabled(cfg) {
+        // Monetary certificates do not authenticate this separate cleanup /
+        // future-archive relation. Its complete State reference remains explicit.
+        for key in state.keys().filter(|key| key.starts_with("contribution:")) {
             let candidate = key
                 .strip_prefix("contribution:")
                 .ok_or("CONTINUITY_STATE")?;
@@ -244,11 +265,21 @@ pub(crate) fn check_state_with_account_access(
     cfg: &Config,
     account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
 ) -> Result<()> {
+    check_state_with_account_access_and_monetary(state, height, cfg, account_access, None)
+}
+pub(crate) fn check_state_with_account_access_and_monetary(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+    monetary: Option<&State>,
+) -> Result<()> {
     if !enabled(cfg) {
         return Ok(());
     }
     check_maintenance(state, maintenance_task()?, cfg)?;
-    if capacity_with_account_access(state, height, cfg, account_access)?.required_keys > MAX_KEYS {
+    if capacity_with_sources(state, height, cfg, account_access, monetary)?.required_keys > MAX_KEYS
+    {
         return Err("STATE_CAPACITY");
     }
     Ok(())

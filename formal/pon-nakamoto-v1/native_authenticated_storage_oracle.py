@@ -4,8 +4,10 @@ This finite oracle starts at the development genesis, replays the actual ordered
 SQLite deltas, and independently reexecutes supported signed application packets.
 Full State, account/non-account roots, conservation, record identities, retained
 Patricia bytes and active/staged KV values are comparison outputs, never inputs
-to the arithmetic. Migration additionally compares every old SQL cell by type
-and value, including sqlite_sequence; only metadata.schema may change.
+to the arithmetic. Every retained ancestry jump and both of its component seals
+are derived from the complete parent graph, including inactive branches.
+Migration additionally compares every old SQL cell by type and value, including
+sqlite_sequence; only metadata.schema may change.
 
 The CLI supports the revision-12 maintenance/public-evaluation-storage2 fixture
 and application tags 1--5, 10, 11. It rejects other profiles instead of silently
@@ -47,6 +49,8 @@ MAX_BYTES = 64 * 1024 * 1024
 MAX_DATABASE_BYTES = 512 * 1024 * 1024
 MAX_STATE_KEYS = 65536
 SQL_I64_MAX = (1 << 63) - 1
+ANCESTRY_LEVELS = 63
+ANCESTRY_DOMAIN = b'native-derived-ancestry-row-v1'
 
 
 def require(condition, code):
@@ -385,6 +389,63 @@ def follow_steps(current, rows, blocks):
     return current
 
 
+def check_ancestry(actual_rows, blocks, context):
+    """Derive the complete jump table from independently checked block parents.
+
+    Direct parent walks select every expected ancestor. Stored jumps, claimed
+    heights and component seals never select the path or seed an expected hash.
+    This finite full-graph check deliberately differs from the native bounded
+    lazy lookup. Blocks have already passed packet/height/chainwork checks.
+    """
+    expected = {}
+    for identity, block in sorted(blocks.items(), key=lambda item: (item[1]['height'], item[0])):
+        height, parent = block['height'], block['parent']
+        path, cursor = [], identity
+        # The independent packet pass established a unique height-zero anchor
+        # and strictly decreasing heights; retain a bound at this helper too.
+        require(height < len(blocks) and uint(height, SQL_I64_MAX) == height,
+                'ANCESTRY_PARENT_DEPTH')
+        for remaining in range(height, 0, -1):
+            require(cursor in blocks and blocks[cursor]['height'] == remaining,
+                    'ANCESTRY_PARENT_DEPTH')
+            cursor = blocks[cursor]['parent']
+            require(cursor in blocks, 'ANCESTRY_PARENT')
+            path.append(cursor)
+        require(cursor == context.genesis and blocks[cursor]['height'] == 0,
+                'ANCESTRY_GENESIS')
+        for level in range(height.bit_length()):
+            ancestor = path[(1 << level) - 1]
+            ancestor_height = height - (1 << level)
+            require(blocks[ancestor]['height'] == ancestor_height, 'ANCESTRY_PARENT_DEPTH')
+            if level == 0:
+                left = right = bytes(32)
+            else:
+                half = path[(1 << (level - 1)) - 1]
+                left = expected[identity, level - 1][-1]
+                right = expected[half, level - 1][-1]
+            seal = archive.digest(ANCESTRY_DOMAIN, context.network, context.parameters,
+                context.genesis, identity, parent, height.to_bytes(8, 'little'), bytes([level]),
+                ancestor, ancestor_height.to_bytes(8, 'little'), left, right)
+            expected[identity, level] = (identity, level, ancestor, ancestor_height,
+                                          left, right, seal)
+    actual = {}
+    for row in actual_rows:
+        require(type(row) in (tuple, list) and len(row) == 7, 'ANCESTRY_ROW')
+        identity, level, ancestor, ancestor_height, left, right, seal = row
+        for value in (identity, ancestor, left, right, seal):
+            blob(value, 32)
+        uint(level, ANCESTRY_LEVELS - 1)
+        uint(ancestor_height, SQL_I64_MAX)
+        require((identity, level) not in actual, 'ANCESTRY_DUPLICATE')
+        actual[identity, level] = tuple(row)
+    require(set(actual) == set(expected), 'ANCESTRY_ROW_SET')
+    for key, row in expected.items():
+        require(actual[key] == row, 'ANCESTRY_CONTENT')
+    return dict(rows=len(expected), blocks=len(blocks),
+                max_level=max((level for _, level in expected), default=None),
+                complete_parent_graph_reconstructed=True)
+
+
 def inspect_sqlite(path, context_json, initial, *, authenticated=True, replay_context=None):
     """Low-level reader accepts explicit anchors; the CLI derives its own anchors."""
     context = context_value(context_json)
@@ -497,6 +558,7 @@ def inspect_sqlite(path, context_json, initial, *, authenticated=True, replay_co
         observations.append(dict(block=list(identity), height=height, state=commitment,
                                  account_node=account_root['node'], delta_count=len(rows)))
     require(len(states) == len(blocks), 'UNRECONSTRUCTED_BLOCK')
+    ancestry = check_ancestry(tables['ancestry_jump'], blocks, context)
     active, pending = check_active(tables, states, blocks, deltas, context.genesis)
     if authenticated:
         actual_nodes = dict(tables['archive_nodes'])
@@ -508,10 +570,11 @@ def inspect_sqlite(path, context_json, initial, *, authenticated=True, replay_co
     require(contract['source_sha256'] == schema_contract()['source_sha256'], 'DDL_SOURCE_MUTATED')
     return dict(database_sha256=before, tables=tables, states=states, records=records,
         active=active, pending_reorganization=pending, observations=observations,
-        signed_transaction_count=signed_count, schema_contract=contract,
+        signed_transaction_count=signed_count, schema_contract=contract, ancestry=ancestry,
         counts=dict(blocks=len(blocks), deltas=len(tables['deltas']), snapshots=len(snapshots),
             state_commitments=len(records), account_nodes=len(tables.get('archive_nodes', [])),
-            derived_state_bytes=derived_bytes, retained_tables=len(tables)))
+            ancestry_rows=ancestry['rows'], derived_state_bytes=derived_bytes,
+            retained_tables=len(tables)))
 
 
 def typed_cell(value):
@@ -639,12 +702,13 @@ def check_observation(native_path, database_path, migration_source=None):
         pending_reorganization=target['pending_reorganization'],
         signed_transaction_count=target['signed_transaction_count'],
         blocks=target['observations'], preserved_tables=preserved,
-        compact_query=query_report,
+        compact_query=query_report, ancestry=target['ancestry'],
         schema_source_sha256=target['schema_contract']['source_sha256'],
         native_reported_scope=native.get('scope'),
         scope=dict(read_only_actual_sqlite=True, independent_genesis=True,
             supported_signed_application_replayed=True, complete_state_and_partition_roots=True,
             all_commitment_identities_and_account_nodes_checked=True,
+            all_retained_ancestry_rows_independently_reconstructed=True,
             active_and_pending_reorg_kv_reconstructed=True,
             all_migration_preserved_cells_compared=source is not None,
             maintenance_revision_12_profile_only=True,

@@ -22,6 +22,7 @@ use trnm_mvcc_fee::{
 };
 use trnm_protocol::pon_wire::Hash;
 
+pub mod obligation_ranges;
 pub mod obligations;
 pub mod state_witness;
 use obligations::{ExecutionAccounts, WitnessBudget};
@@ -50,6 +51,7 @@ pub enum CheckedExecutionError {
     Cancelled,
     Archive(ArchiveError),
     StateWitness(StateWitnessError),
+    ObligationRange(obligation_ranges::RangeError),
     Relation(&'static str),
 }
 impl std::fmt::Display for CheckedExecutionError {
@@ -149,8 +151,22 @@ pub struct CompactStateWitnessExecutionOutput {
     pub execution: StateWitnessExecutionOutput,
     pub account_proof: MultiproofObservation,
 }
+/// The explicit monetary relation needs AAM1 plus complete monetary ranges.
+/// Other non-account rules still receive the complete immutable parent State
+/// as their reference. No full-partition witness is required from this caller.
+#[derive(Clone, Copy)]
+pub struct MonetaryStateExecutionInput<'a> {
+    pub accounts: &'a Multiproof,
+    pub monetary: &'a obligation_ranges::RangeProof,
+}
+#[derive(Debug)]
+pub struct MonetaryStateWitnessExecutionOutput {
+    pub execution: CompactStateWitnessExecutionOutput,
+    pub monetary_obligations: obligation_ranges::RangeObservation,
+}
 struct StateControl<'a> {
     witness: &'a StateWitness,
+    monetary: Option<&'a obligation_ranges::RangeProof>,
     progress: &'a (dyn Fn(StateWitnessProgress) -> Result<()> + Sync),
 }
 struct ExecutionEvidence<'a> {
@@ -161,6 +177,7 @@ struct InternalOutput {
     execution: CheckedExecutionOutput,
     state: Option<StateExecutionObservation>,
     compact: Option<MultiproofObservation>,
+    monetary: Option<obligation_ranges::RangeObservation>,
 }
 #[derive(Clone, Copy)]
 enum AccountEvidence<'a> {
@@ -349,6 +366,7 @@ pub fn execute_with_state_witness_and_progress(
             accounts: AccountEvidence::Expanded(input.accounts),
             state: Some(StateControl {
                 witness: input.state,
+                monetary: None,
                 progress,
             }),
         },
@@ -402,6 +420,7 @@ pub fn execute_with_compact_state_witness_and_progress(
             accounts: AccountEvidence::Compact(input.accounts),
             state: Some(StateControl {
                 witness: input.state,
+                monetary: None,
                 progress,
             }),
         },
@@ -413,6 +432,74 @@ pub fn execute_with_compact_state_witness_and_progress(
             state_observation: result.state.ok_or(StateWitnessError::Observation)?,
         },
         account_proof: result.compact.ok_or(StateWitnessError::Observation)?,
+    })
+}
+
+/// A separate research relation: a private anchor is checked from the complete
+/// parent; complete monetary range proofs then supply M06's actual original
+/// monetary enumeration. Other cleanup and complete successor checks retain the
+/// full reference, and all ordinary account accesses still require AAM1 proof.
+pub fn execute_with_monetary_state_witness(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    input: MonetaryStateExecutionInput<'_>,
+) -> Result<MonetaryStateWitnessExecutionOutput> {
+    execute_with_monetary_state_witness_and_progress(
+        settings,
+        archive,
+        parent_checkpoint,
+        parent_state,
+        block,
+        input,
+        &|_| Ok(()),
+    )
+}
+pub fn execute_with_monetary_state_witness_and_progress(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    input: MonetaryStateExecutionInput<'_>,
+    progress: &(impl Fn(StateWitnessProgress) -> Result<()> + Sync),
+) -> Result<MonetaryStateWitnessExecutionOutput> {
+    // Reject raw dimensions before any native-parent root/index construction.
+    obligation_ranges::check_bounds(input.monetary)?;
+    WitnessBudget::for_block(settings, parent_state.len(), block.transactions.len())?
+        .check_compact(input.accounts)?;
+    progress(StateWitnessProgress::BeforeBinding)?;
+    // Explicit complete-State reference for the non-monetary rules. This local
+    // construction never supplies missing monetary proof rows: verify_bound
+    // rejects their omission before the first M06 transition.
+    let state = prepare_state_witness(settings, archive, parent_checkpoint, parent_state)?;
+    let result = execute_inner(
+        settings,
+        archive,
+        parent_checkpoint,
+        parent_state,
+        block,
+        ExecutionEvidence {
+            accounts: AccountEvidence::Compact(input.accounts),
+            state: Some(StateControl {
+                witness: &state,
+                monetary: Some(input.monetary),
+                progress,
+            }),
+        },
+        &|point| progress(StateWitnessProgress::Execution(point)),
+    )?;
+    Ok(MonetaryStateWitnessExecutionOutput {
+        execution: CompactStateWitnessExecutionOutput {
+            execution: StateWitnessExecutionOutput {
+                execution: result.execution,
+                state_observation: result.state.ok_or(StateWitnessError::Observation)?,
+            },
+            account_proof: result.compact.ok_or(StateWitnessError::Observation)?,
+        },
+        monetary_obligations: result.monetary.ok_or(StateWitnessError::Observation)?,
     })
 }
 
@@ -502,6 +589,19 @@ fn execute_inner(
             Ok::<_, CheckedExecutionError>(bound)
         })
         .transpose()?;
+    let monetary_bound = evidence
+        .state
+        .as_ref()
+        .and_then(|control| control.monetary)
+        .map(|proof| {
+            let state = state_bound.as_ref().ok_or(StateWitnessError::Observation)?;
+            let control = evidence
+                .state
+                .as_ref()
+                .ok_or(StateWitnessError::Observation)?;
+            obligation_ranges::verify_bound(&checkpoint, state, proof, control.progress)
+        })
+        .transpose()?;
     let accesses = Mutex::new(AccessObservation::default());
     let executed = {
         let gate = |who: &str| -> pon_executor::Result<()> {
@@ -570,17 +670,32 @@ fn execute_inner(
                     }
                 }
             };
-            pon_executor::execute_with_authenticated_state_input(
-                parent_state,
-                execution,
-                &settings.app,
-                &gate,
-                &pon_executor::MandatoryStateInput {
-                    non_accounts: &bound.non_accounts,
-                    completed: &completed,
-                },
-                progress,
-            )
+            let mandatory = pon_executor::MandatoryStateInput {
+                non_accounts: &bound.non_accounts,
+                completed: &completed,
+            };
+            if let Some(ranges) = &monetary_bound {
+                pon_executor::execute_with_authenticated_obligation_input(
+                    parent_state,
+                    execution,
+                    &settings.app,
+                    &gate,
+                    &mandatory,
+                    &pon_executor::MonetaryObligationInput {
+                        rows: &ranges.monetary,
+                    },
+                    progress,
+                )
+            } else {
+                pon_executor::execute_with_authenticated_state_input(
+                    parent_state,
+                    execution,
+                    &settings.app,
+                    &gate,
+                    &mandatory,
+                    progress,
+                )
+            }
         } else {
             pon_executor::execute_with_account_point_access(
                 parent_state,
@@ -703,5 +818,6 @@ fn execute_inner(
             CheckedAccountEvidence::Compact(checked) => Some(checked.observation().clone()),
             CheckedAccountEvidence::Expanded { .. } => None,
         },
+        monetary: monetary_bound.map(|bound| bound.observation),
     })
 }

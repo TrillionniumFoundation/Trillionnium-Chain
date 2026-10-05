@@ -101,6 +101,7 @@ class StorageFixture(unittest.TestCase):
                     for row in state_witness.ordered_deltas(self.states[parent], state)]
         db.execute('INSERT INTO blocks VALUES(?,?,?,?,?,?)', (identity, parent, height,
             chainwork.to_bytes(64, 'big'), packet, state_witness.state_root(state)))
+        self.insert_ancestry(db, identity, parent, height)
         db.executemany('INSERT INTO deltas VALUES(?,?,?,?)', [(identity, *row) for row in rows])
         details = archive.full_sparse_details(archive.accounts_from_state(state))
         db.executemany('INSERT OR IGNORE INTO archive_nodes VALUES(?,?)', details['records'].items())
@@ -119,6 +120,31 @@ class StorageFixture(unittest.TestCase):
         self.states[identity] = copy.deepcopy(state)
         self.records[identity] = record
         return identity
+
+    def ancestry_seal(self, row, parent, height):
+        identity, level, ancestor, ancestor_height, left, right, _seal = row
+        return archive.digest(b'native-derived-ancestry-row-v1', self.context.network,
+            self.context.parameters, self.context.genesis, identity, parent,
+            height.to_bytes(8, 'little'), bytes([level]), ancestor,
+            ancestor_height.to_bytes(8, 'little'), left, right)
+
+    def insert_ancestry(self, db, identity, parent, height):
+        # Synthetic fixtures use binary composition of existing SQL jumps.
+        # The reader instead walks complete parent paths without consulting them.
+        for level in range(height.bit_length()):
+            if level == 0:
+                ancestor, ancestor_height = parent, height - 1
+                left = right = bytes(32)
+            else:
+                midpoint, left = db.execute(
+                    'SELECT ancestor,seal FROM ancestry_jump WHERE block=? AND level=?',
+                    (identity, level - 1)).fetchone()
+                ancestor, ancestor_height, right = db.execute(
+                    'SELECT ancestor,ancestor_height,seal FROM ancestry_jump WHERE block=? AND level=?',
+                    (midpoint, level - 1)).fetchone()
+            row = (identity, level, ancestor, ancestor_height, left, right, bytes(32))
+            db.execute('INSERT INTO ancestry_jump VALUES(?,?,?,?,?,?,?)',
+                       (*row[:-1], self.ancestry_seal(row, parent, height)))
 
     def inspect(self, path=None, authenticated=True):
         return oracle.inspect_sqlite(path or self.path, self.context_json, self.initial,
@@ -139,6 +165,8 @@ class NativeAuthenticatedStorageOracle(StorageFixture):
         self.assertEqual(result['counts']['blocks'], 3)
         self.assertEqual(result['counts']['state_commitments'], 3)
         self.assertEqual(result['counts']['snapshots'], 2)
+        self.assertEqual(result['ancestry'], dict(rows=2, blocks=3, max_level=0,
+                          complete_parent_graph_reconstructed=True))
         self.assertEqual(result['active'], dict(tip=list(self.b), generation=2, state_slot=2))
         self.assertFalse(result['pending_reorganization'])
         self.assertEqual(result['signed_transaction_count'], 0)
@@ -265,6 +293,89 @@ class NativeAuthenticatedStorageOracle(StorageFixture):
         with self.assertRaisesRegex(ValueError, 'CHAINWORK_ARITHMETIC$'):
             self.inspect()
 
+    def test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks(self):
+        with sqlite3.connect(self.path) as db:
+            tip = self.a
+            for height in range(2, 10):
+                state = copy.deepcopy(self.states[tip])
+                state['retained:branch-height'] = height
+                tip = self.add_block(db, state, tip, target=bytes([127]) + bytes([255]) * 31)
+            other = self.b
+            for height in range(2, 6):
+                state = copy.deepcopy(self.states[other])
+                state['retained:branch-height'] = height
+                other = self.add_block(db, state, other, target=bytes([63]) + bytes([255]) * 31)
+        result = self.inspect()
+        self.assertEqual(result['ancestry'], dict(rows=36, blocks=15, max_level=3,
+                          complete_parent_graph_reconstructed=True))
+        # Active remains the original b, while the damaged row is on a deep
+        # inactive branch. Looking only at active-tip jumps would miss it.
+        self.assertEqual(result['active']['tip'], list(self.b))
+        with sqlite3.connect(self.path) as db:
+            db.execute('UPDATE ancestry_jump SET seal=? WHERE block=? AND level=3',
+                       (bytes(32), tip))
+        with self.assertRaisesRegex(ValueError, 'ANCESTRY_CONTENT$'):
+            self.inspect()
+
+    def test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused(self):
+        with sqlite3.connect(self.path) as db:
+            original = db.execute('SELECT * FROM ancestry_jump WHERE block=?', (self.a,)).fetchone()
+            db.execute('DELETE FROM ancestry_jump WHERE block=?', (self.a,))
+        with self.assertRaisesRegex(ValueError, 'ANCESTRY_ROW_SET$'):
+            self.inspect()
+        with sqlite3.connect(self.path) as db:
+            db.execute('INSERT INTO ancestry_jump VALUES(?,?,?,?,?,?,?)', original)
+        for identity, level in ((self.genesis, 0), (self.a, 1), (bytes([117] * 32), 0)):
+            with self.subTest(identity=identity.hex(), level=level):
+                with sqlite3.connect(self.path) as db:
+                    db.execute('INSERT INTO ancestry_jump VALUES(?,?,?,?,?,?,?)',
+                        (identity, level, self.genesis, 0, bytes(32), bytes(32), bytes(32)))
+                with self.assertRaisesRegex(ValueError, 'ANCESTRY_ROW_SET$'):
+                    self.inspect()
+                with sqlite3.connect(self.path) as db:
+                    db.execute('DELETE FROM ancestry_jump WHERE block=? AND level=?', (identity, level))
+
+    def test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed(self):
+        with sqlite3.connect(self.path) as db:
+            state = copy.deepcopy(self.states[self.a])
+            state['retained:height'] = 2
+            middle = self.add_block(db, state, self.a, target=bytes([127]) + bytes([255]) * 31)
+            state['retained:height'] = 3
+            tip = self.add_block(db, state, middle, target=bytes([127]) + bytes([255]) * 31)
+            original = db.execute('SELECT * FROM ancestry_jump WHERE block=? AND level=1',
+                                  (tip,)).fetchone()
+        self.inspect()
+        changes = [dict(index=2, value=self.b), dict(index=3, value=0),
+                   dict(index=4, value=bytes([118] * 32)), dict(index=5, value=bytes([119] * 32))]
+        for changed in changes:
+            with self.subTest(column=changed['index']):
+                row = list(original)
+                row[changed['index']] = changed['value']
+                row[-1] = self.ancestry_seal(row, middle, 3)
+                with sqlite3.connect(self.path) as db:
+                    db.execute('UPDATE ancestry_jump SET ancestor=?,ancestor_height=?,left_seal=?,right_seal=?,seal=? '
+                               'WHERE block=? AND level=?', (*row[2:], row[0], row[1]))
+                with self.assertRaisesRegex(ValueError, 'ANCESTRY_CONTENT$'):
+                    self.inspect()
+        with sqlite3.connect(self.path) as db:
+            db.execute('UPDATE ancestry_jump SET ancestor=?,ancestor_height=?,left_seal=?,right_seal=?,seal=? '
+                       'WHERE block=? AND level=?', (*original[2:], original[0], original[1]))
+        self.inspect()
+
+    def test_ancestry_rows_require_exact_types_and_unique_keys(self):
+        with sqlite3.connect(self.path) as db:
+            rows = db.execute('SELECT * FROM ancestry_jump ORDER BY block,level').fetchall()
+            blocks = {identity: dict(parent=parent, height=height) for identity, parent, height in
+                      db.execute('SELECT id,parent,height FROM blocks')}
+        oracle.check_ancestry(rows, blocks, self.context)
+        with self.assertRaisesRegex(ValueError, 'ANCESTRY_DUPLICATE$'):
+            oracle.check_ancestry([*rows, rows[0]], blocks, self.context)
+        for column, value in ((0, 'not a blob'), (1, False), (1, 63), (3, 0.0), (6, bytes(31))):
+            changed = list(rows[0])
+            changed[column] = value
+            with self.subTest(column=column, value=value), self.assertRaises(ValueError):
+                oracle.check_ancestry([tuple(changed), *rows[1:]], blocks, self.context)
+
     def test_event_generations_cannot_skip_or_rewind(self):
         with sqlite3.connect(self.path) as db:
             db.execute('DELETE FROM events WHERE generation=1')
@@ -353,6 +464,19 @@ class MigrationPreservationOracle(StorageFixture):
         del target['tables']['peer_outbox']
         with self.assertRaisesRegex(ValueError, 'MIGRATION_TABLES$'):
             oracle.compare_migration(source, target)
+
+    def test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality(self):
+        source_path = self.make_source()
+        for path in (source_path, self.path):
+            with sqlite3.connect(path) as db:
+                db.execute('UPDATE ancestry_jump SET seal=? WHERE block=? AND level=0',
+                           (bytes(32), self.a))
+        with sqlite3.connect(source_path) as source, sqlite3.connect(self.path) as target:
+            self.assertEqual(source.execute('SELECT * FROM ancestry_jump ORDER BY block,level').fetchall(),
+                             target.execute('SELECT * FROM ancestry_jump ORDER BY block,level').fetchall())
+        for path, authenticated in ((source_path, False), (self.path, True)):
+            with self.subTest(authenticated=authenticated), self.assertRaisesRegex(ValueError, 'ANCESTRY_CONTENT$'):
+                self.inspect(path, authenticated=authenticated)
 
     def test_typed_hash_distinguishes_zero_sign_integer_float_blob_and_text(self):
         rows = [(None,), (0,), (0.0,), (-0.0,), ('0',), (b'0',), (1 << 62,)]

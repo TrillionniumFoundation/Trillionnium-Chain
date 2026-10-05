@@ -38,6 +38,28 @@ pub struct MandatoryStateInput<'a> {
     pub non_accounts: &'a State,
     pub completed: &'a MandatoryStateCheck<'a>,
 }
+/// Complete monetary namespaces consumed by the explicit range-witness path.
+/// The semantic set is shared with its range producer/verifier. Future and
+/// zero-valued records are included; a due-only list is never sufficient.
+pub const MONETARY_OBLIGATION_PREFIXES: [&str; 4] = ["quota:", "release:", "reward:", "task:"];
+pub fn is_monetary_obligation(key: &str) -> bool {
+    MONETARY_OBLIGATION_PREFIXES
+        .iter()
+        .any(|prefix| key.starts_with(prefix))
+}
+/// Untrusted computation input; M06 checks its exact projection against the
+/// complete parent before using these supplied rows for monetary discovery.
+/// The Node research owner additionally verifies its authenticated range proof.
+/// Other cleanup rules and the final complete successor remain unchanged.
+pub struct MonetaryObligationInput<'a> {
+    pub rows: &'a State,
+}
+#[derive(Default)]
+struct StateInputs<'a> {
+    accounts: Option<&'a AccountPointAccess<'a>>,
+    mandatory: Option<&'a MandatoryStateInput<'a>>,
+    monetary: Option<&'a MonetaryObligationInput<'a>>,
+}
 /// Caller-local observation only; no ledger byte or execution authority.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExecutionProgress {
@@ -1684,6 +1706,7 @@ fn mandatory(
     height: u64,
     cfg: &Config,
     account_access: Option<&AccountPointAccess<'_>>,
+    monetary_input: Option<&MonetaryObligationInput<'_>>,
 ) -> Result<Vec<Vec<u8>>> {
     let current = state
         .get("model:current")
@@ -1797,7 +1820,10 @@ fn mandatory(
         state.remove(&k);
     }
     let mut due = Vec::new();
-    for (k, v) in state.iter() {
+    // Positive escrow records survive the preceding cleanup unchanged. Range
+    // inputs enumerate every original monetary record, including future rows;
+    // zero/retired rows are naturally ineligible under the ordinary predicates.
+    for (k, v) in monetary_input.map_or(&*state, |input| input.rows) {
         if (k.starts_with("task:") || k.starts_with("quota:") || k.starts_with("release:"))
             && field(v, "remaining")? > 0
             && field(v, "deadline")? <= height
@@ -1823,7 +1849,8 @@ fn mandatory(
         state.insert(k.clone(), v);
         receipts.push(canonical(&json!({"expiry":k}))?);
     }
-    let mature = state
+    let mature = monetary_input
+        .map_or(&*state, |input| input.rows)
         .iter()
         .filter(|(k, _)| k.starts_with("reward:"))
         .map(|(k, v)| Ok((k.clone(), field(v, "maturity")?)))
@@ -1898,14 +1925,16 @@ pub fn execute_with_account_point_access<E: Send>(
     progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
 ) -> ControlledResult<Output, E> {
     require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
-    execute_with_commitment_control_and_account_access(
+    execute_with_state_inputs(
         parent,
         block,
         cfg,
         |_, next| root(next),
         &ExecutionControl::new(progress, &()),
-        Some(account_access),
-        None,
+        StateInputs {
+            accounts: Some(account_access),
+            ..StateInputs::default()
+        },
     )
 }
 /// Explicit research relation using authenticated account point access and a
@@ -1920,14 +1949,44 @@ pub fn execute_with_authenticated_state_input<E: Send>(
     progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
 ) -> ControlledResult<Output, E> {
     require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
-    execute_with_commitment_control_and_account_access(
+    execute_with_state_inputs(
         parent,
         block,
         cfg,
         |_, next| root(next),
         &ExecutionControl::new(progress, &()),
-        Some(account_access),
-        Some(mandatory_input),
+        StateInputs {
+            accounts: Some(account_access),
+            mandatory: Some(mandatory_input),
+            monetary: None,
+        },
+    )
+}
+/// Explicit full-reference M06 relation whose mandatory monetary enumeration
+/// and original capacity scan consume authenticated namespace-range rows.
+/// Account access, other non-account rules, every transaction, the new reward
+/// and final successor capacity/conservation checks retain their ordinary rules.
+pub fn execute_with_authenticated_obligation_input<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    account_access: &AccountPointAccess<'_>,
+    mandatory_input: &MandatoryStateInput<'_>,
+    monetary_input: &MonetaryObligationInput<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
+    execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        |_, next| root(next),
+        &ExecutionControl::new(progress, &()),
+        StateInputs {
+            accounts: Some(account_access),
+            mandatory: Some(mandatory_input),
+            monetary: Some(monetary_input),
+        },
     )
 }
 /// Ordinary caller-supplied facts, not prepared execution or admission authority.
@@ -1974,19 +2033,28 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
     commitment: impl FnMut(&State, &State) -> Result<Hash>,
     control: &ExecutionControl<'_, E>,
 ) -> ControlledResult<Output, E> {
-    execute_with_commitment_control_and_account_access(
-        parent, block, cfg, commitment, control, None, None,
+    execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        commitment,
+        control,
+        StateInputs::default(),
     )
 }
-fn execute_with_commitment_control_and_account_access<E: Send>(
+fn execute_with_state_inputs<E: Send>(
     parent: &State,
     block: BlockExecution<'_>,
     cfg: &Config,
     mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
     control: &ExecutionControl<'_, E>,
-    account_access: Option<&AccountPointAccess<'_>>,
-    mandatory_input: Option<&MandatoryStateInput<'_>>,
+    inputs: StateInputs<'_>,
 ) -> ControlledResult<Output, E> {
+    let StateInputs {
+        accounts: account_access,
+        mandatory: mandatory_input,
+        monetary: monetary_input,
+    } = inputs;
     let progress = control.progress;
     let BlockExecution {
         transactions,
@@ -2001,8 +2069,14 @@ fn execute_with_commitment_control_and_account_access<E: Send>(
         "LIMIT",
     )?;
     progress(ExecutionProgress::BeforeStateClone).map_err(ExecutionError::Cancelled)?;
-    let (mut state, mut receipts) =
-        prepare_block_state_with_inputs(parent, height, cfg, account_access, mandatory_input)?;
+    let (mut state, mut receipts) = prepare_block_state_with_inputs(
+        parent,
+        height,
+        cfg,
+        account_access,
+        mandatory_input,
+        monetary_input,
+    )?;
     progress(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
     let mut fees = 0;
     let mut metrics = Metrics {
@@ -2188,7 +2262,7 @@ fn prepare_block_state_with_account_access(
     cfg: &Config,
     account_access: Option<&AccountPointAccess<'_>>,
 ) -> Result<(State, Vec<Vec<u8>>)> {
-    prepare_block_state_with_inputs(parent, height, cfg, account_access, None)
+    prepare_block_state_with_inputs(parent, height, cfg, account_access, None, None)
 }
 fn prepare_block_state_with_inputs(
     parent: &State,
@@ -2196,7 +2270,17 @@ fn prepare_block_state_with_inputs(
     cfg: &Config,
     account_access: Option<&AccountPointAccess<'_>>,
     mandatory_input: Option<&MandatoryStateInput<'_>>,
+    monetary_input: Option<&MonetaryObligationInput<'_>>,
 ) -> Result<(State, Vec<Vec<u8>>)> {
+    if let Some(input) = monetary_input {
+        require(
+            parent
+                .iter()
+                .filter(|(key, _)| is_monetary_obligation(key))
+                .eq(input.rows.iter()),
+            "MONETARY_OBLIGATION_PARTITION",
+        )?;
+    }
     if let Some(input) = mandatory_input {
         require(
             !input
@@ -2211,11 +2295,12 @@ fn prepare_block_state_with_inputs(
         )?;
     }
     if continuity_v1::enabled(cfg) {
-        continuity_v1::check_state_with_account_access(
+        continuity_v1::check_state_with_account_access_and_monetary(
             parent,
             height.checked_sub(1).ok_or("HEIGHT")?,
             cfg,
             account_access,
+            monetary_input.map(|input| input.rows),
         )?;
     }
     let mut state = if let Some(input) = mandatory_input {
@@ -2229,7 +2314,7 @@ fn prepare_block_state_with_inputs(
     } else {
         parent.clone()
     };
-    let receipts = mandatory(&mut state, height, cfg, account_access)?;
+    let receipts = mandatory(&mut state, height, cfg, account_access, monetary_input)?;
     if let Some(input) = mandatory_input {
         (input.completed)(parent, &state, &receipts)?;
     }

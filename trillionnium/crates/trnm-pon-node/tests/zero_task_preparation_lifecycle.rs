@@ -1,7 +1,10 @@
 //! Legal signed zero material remains separate from reusable mathematical preparation.
 //! All actors use disclosed development keys; no source or hardness qualification.
 use trnm_crypto_primitives::{
-    pon_work::{self, blocked_zero::BlockedZeroPreparedTask},
+    pon_work::{
+        self, blocked_zero::BlockedZeroPreparedTask,
+        blocked_zero_paired::BlockedZeroPairedPreparedTask,
+    },
     qualified_work_task::{
         derive_matrices, lifecycle_v2::verify_lifecycle_admission, AdmissionError,
         DevelopmentTaskAdmission, TaskMaterial,
@@ -183,6 +186,9 @@ fn signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry() 
         let cached = BlockedZeroPreparedTask::new(&zero.2, &zero.3)
             .unwrap()
             .unwrap();
+        let paired = BlockedZeroPairedPreparedTask::new(&zero.2, &zero.3)
+            .unwrap()
+            .unwrap();
         let mut lease = boot.lease.clone();
         lease.slot = 1;
         lease.generation = 2;
@@ -217,7 +223,11 @@ fn signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry() 
             blocked,
             pon_work::prove(challenge, &zero.2, &zero.3).unwrap()
         );
-        use_zero.proof = blocked;
+        let paired_proof = paired.prove(challenge).unwrap();
+        assert_eq!(paired_proof, blocked);
+        // Admit the complete proof actually returned by the new producer. The
+        // current parent, source, lease and ordinary verification remain required.
+        use_zero.proof = paired_proof;
         let used = activate(&mut node, &use_zero);
         assert_eq!(
             node.state_at(used).unwrap()[&slot_key(1).unwrap()]["output_count"],
@@ -260,11 +270,14 @@ fn signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry() 
         let mut changed = zero.clone();
         changed.0[0] = 1;
         reject(&node, renewed, &new_permit, &changed, "TASK_MATERIAL");
-        let fourth = make(&node, renewed, vec![], &new_permit, &zero).unwrap();
+        let mut fourth = make(&node, renewed, vec![], &new_permit, &zero).unwrap();
         assert_eq!(
             cached.prove(fourth.header.challenge()).unwrap(),
             fourth.proof
         );
+        let renewed_paired = paired.prove(fourth.header.challenge()).unwrap();
+        assert_eq!(renewed_paired, fourth.proof);
+        fourth.proof = renewed_paired;
         let live = activate(&mut node, &fourth);
         assert_eq!(
             node.state_at(live).unwrap()[&slot_key(1).unwrap()]["output_count"],
@@ -292,6 +305,7 @@ fn signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry() 
         // A complete valid relation still exists after revocation. It conveys no
         // lease or branch-state authority and cannot authorize another candidate.
         let proof = cached.prove([7; 32]).unwrap();
+        assert_eq!(paired.prove([7; 32]).unwrap(), proof);
         pon_work::verify([7; 32], zero_task, [255; 32], &proof).unwrap();
         permit(&renewed_statement, &successor, &zero, 6);
         explicit_maintenance(
@@ -303,11 +317,14 @@ fn signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry() 
 
         let mut fork = live;
         for _ in 5..=6 {
-            let packet = make(&node, fork, vec![], &new_permit, &zero).unwrap();
+            let mut packet = make(&node, fork, vec![], &new_permit, &zero).unwrap();
             assert_eq!(
                 cached.prove(packet.header.challenge()).unwrap(),
                 packet.proof
             );
+            let fork_paired = paired.prove(packet.header.challenge()).unwrap();
+            assert_eq!(fork_paired, packet.proof);
+            packet.proof = fork_paired;
             fork = node.admit(&packet, CLOCK).unwrap();
         }
         reject(&node, fork, &new_permit, &zero, "TASK");

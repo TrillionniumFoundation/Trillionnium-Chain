@@ -37,8 +37,8 @@ pub use store::mempool::{
 };
 pub use store::{
     ConfirmationBatch, ContinuousSearchRequest, DerivedCommitmentStatus, MiningEpochCancellation,
-    Node, Observation, OwnedContinuousLeaseResult, OwnedContinuousPoolResult, OwnedMutationResult,
-    OwnedSearchResult,
+    NativeAccountProofProgress, Node, Observation, OwnedContinuousLeaseResult,
+    OwnedContinuousPoolResult, OwnedMutationResult, OwnedSearchResult,
 };
 use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};

@@ -123,6 +123,74 @@ fn account(key: &str, bytes: &[u8]) -> Result<(Hash, Account)> {
         .ok_or_else(|| Error::from("NATIVE_ACCOUNT_ROW").local_integrity())
 }
 
+/// Merge sorted changed leaves into the compressed parent tree. Every persisted
+/// node belongs to the completed successor: intermediate per-account roots are
+/// never written. Unchanged subtrees and all prior versions remain untouched.
+fn apply_batch(
+    db: &Connection,
+    existing: Option<Node>,
+    updates: &[Node],
+    empty: &[Hash; 257],
+    progress: &mut dyn FnMut() -> Result<()>,
+) -> Result<Option<Node>> {
+    progress()?;
+    let Some(first) = updates.first() else {
+        return Ok(existing);
+    };
+    let last = updates.last().ok_or("NATIVE_ACCOUNT_DELTA")?;
+    let changed_depth = super::common(&first.path, &last.path);
+    let depth = existing.as_ref().map_or(changed_depth, |node| {
+        changed_depth
+            .min(node.depth)
+            .min(super::common(&node.path, &first.path))
+    });
+    if depth == 256 {
+        crate::ensure(updates.len() == 1, "NATIVE_ACCOUNT_DELTA")
+            .map_err(Error::local_integrity)?;
+        // The original-parent lookup already checked identity and nonce. Keep
+        // this structural guard so the merge cannot replace another owner.
+        if let Some(node) = existing {
+            crate::ensure(
+                matches!((node.kind, first.kind), (Kind::Leaf(old, _), Kind::Leaf(new, _)) if old == new),
+                "NATIVE_ACCOUNT_COLLISION",
+            )
+            .map_err(Error::local_integrity)?;
+        }
+        super::save_node(db, first).map_err(storage)?;
+        return Ok(Some(first.clone()));
+    }
+    let split = updates.partition_point(|node| !super::bit(&node.path, depth));
+    let (left_updates, right_updates) = updates.split_at(split);
+    let (left, right) = match existing {
+        None => (None, None),
+        Some(node) if depth < node.depth => {
+            if super::bit(&node.path, depth) {
+                (None, Some(node))
+            } else {
+                (Some(node), None)
+            }
+        }
+        Some(node) => {
+            crate::ensure(
+                depth == node.depth && matches!(node.kind, Kind::Fork { .. }),
+                "NATIVE_ACCOUNT_GRAPH",
+            )
+            .map_err(Error::local_integrity)?;
+            (
+                Some(super::child(db, &node, false, empty).map_err(storage)?),
+                Some(super::child(db, &node, true, empty).map_err(storage)?),
+            )
+        }
+    };
+    let left = apply_batch(db, left, left_updates, empty, progress)?
+        .ok_or_else(|| Error::from("NATIVE_ACCOUNT_GRAPH").local_integrity())?;
+    let right = apply_batch(db, right, right_updates, empty, progress)?
+        .ok_or_else(|| Error::from("NATIVE_ACCOUNT_GRAPH").local_integrity())?;
+    let next = Node::fork(depth, &left, &right, empty).map_err(storage)?;
+    super::save_node(db, &next).map_err(storage)?;
+    Ok(Some(next))
+}
+
 /// Apply actual ordered native deltas. Accounts retain both nonce and existence;
 /// an absent persisted child is never interpreted as a never-created account.
 pub(crate) fn apply(
@@ -133,7 +201,7 @@ pub(crate) fn apply(
 ) -> Result<Root> {
     let empty = super::empty_hashes();
     let original = load_root(db, parent, &empty)?;
-    let mut root = original.clone();
+    let mut updates = Vec::new();
     let mut count = parent.count;
     // Canonical key order can visit a credit before its matching debit. Keep a
     // signed wide delta accumulator so an intermediate order cannot reject a
@@ -165,21 +233,29 @@ pub(crate) fn apply(
             .checked_sub(i128::from(prior.map_or(0, |prior| prior.balance)))
             .and_then(|value| value.checked_add(i128::from(next.balance)))
             .ok_or("NATIVE_ACCOUNT_BALANCE")?;
-        let leaf = Node::account(owner, next);
-        super::save_node(db, &leaf).map_err(storage)?;
-        root = Some(controlled(progress, |checkpoint| {
-            super::insert(db, root.as_ref(), leaf, &empty, checkpoint)
-        })?);
+        updates.push(Node::account(owner, next));
     }
     crate::ensure(count <= 65_536, "NATIVE_ACCOUNT_COUNT").map_err(Error::local_integrity)?;
+    let balance = u64::try_from(balance)
+        .map_err(|_| Error::from("NATIVE_ACCOUNT_BALANCE").local_integrity())?;
+    updates.sort_unstable_by_key(|node| node.path);
+    crate::ensure(
+        updates.windows(2).all(|pair| pair[0].path != pair[1].path),
+        "NATIVE_ACCOUNT_DELTA",
+    )
+    .map_err(Error::local_integrity)?;
+    let root = apply_batch(db, original, &updates, &empty, progress)?;
     Ok(Root {
         node: root.as_ref().map(|node| node.id),
         digest: root.as_ref().map_or(empty[0], |node| node.lift(0, &empty)),
         count,
-        balance: u64::try_from(balance)
-            .map_err(|_| Error::from("NATIVE_ACCOUNT_BALANCE").local_integrity())?,
+        balance,
     })
 }
+
+#[cfg(test)]
+#[path = "native_store_batch_tests.rs"]
+mod batch_tests;
 
 /// Read every required node and leaf, including unchanged subtrees, and compare
 /// their real bytes with the independently checked complete native State.

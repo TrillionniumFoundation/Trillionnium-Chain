@@ -1,7 +1,8 @@
 //! Bounded offline complete-proof bridge. No mining or verification authority.
 use std::io::{self, Read, Write};
 use trnm_crypto_primitives::pon_work::{
-    blocked_zero::BlockedZeroPreparedTask, structured::StructuredPreparedTask, *,
+    blocked_zero::BlockedZeroPreparedTask, blocked_zero_paired::BlockedZeroPairedPreparedTask,
+    paired_product::PairedPreparedTask, structured::StructuredPreparedTask, *,
 };
 
 #[derive(Clone, Copy, Debug)]
@@ -9,6 +10,8 @@ enum Operation {
     Generic,
     Reference,
     Blocked,
+    Paired,
+    BlockedPaired,
 }
 impl Operation {
     fn parse(value: &str) -> Result<Self, &'static str> {
@@ -16,6 +19,8 @@ impl Operation {
             "generic" => Ok(Self::Generic),
             "structured-zero-reference" => Ok(Self::Reference),
             "blocked-zero" => Ok(Self::Blocked),
+            "paired-product" => Ok(Self::Paired),
+            "blocked-zero-integer-paired" => Ok(Self::BlockedPaired),
             _ => Err("OPERATION"),
         }
     }
@@ -53,6 +58,14 @@ fn produce(operation: Operation, input: &[u8]) -> Result<Vec<u8>, &'static str> 
             .ok_or("UNSUPPORTED")?
             .prove(challenge)
             .map_err(|_| "WORK"),
+        Operation::Paired => PairedPreparedTask::new(a, b)
+            .and_then(|task| task.prove(challenge))
+            .map_err(|_| "WORK"),
+        Operation::BlockedPaired => BlockedZeroPairedPreparedTask::new(a, b)
+            .map_err(|_| "WORK")?
+            .ok_or("UNSUPPORTED")?
+            .prove(challenge)
+            .map_err(|_| "WORK"),
     }
 }
 
@@ -85,13 +98,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn all_three_zero_operations_return_the_same_complete_certificate() {
+    fn all_five_zero_operations_return_the_same_complete_certificate() {
         let mut input = vec![0; 32 + 2 * CELLS * 4];
         input[..32].fill(7);
         let reference = produce(Operation::Generic, &input).unwrap();
         assert_eq!(reference.len(), PROOF_BYTES);
         assert_eq!(produce(Operation::Reference, &input).unwrap(), reference);
         assert_eq!(produce(Operation::Blocked, &input).unwrap(), reference);
+        assert_eq!(produce(Operation::Paired, &input).unwrap(), reference);
+        assert_eq!(
+            produce(Operation::BlockedPaired, &input).unwrap(),
+            reference
+        );
     }
 
     #[test]
@@ -99,7 +117,13 @@ mod tests {
         let input = vec![0; 32 + 2 * CELLS * 4];
         let mut extra = input.clone();
         extra.push(0);
-        for operation in [Operation::Generic, Operation::Reference, Operation::Blocked] {
+        for operation in [
+            Operation::Generic,
+            Operation::Reference,
+            Operation::Blocked,
+            Operation::Paired,
+            Operation::BlockedPaired,
+        ] {
             assert_eq!(produce(operation, &[]), Err("LENGTH"));
             assert_eq!(produce(operation, &input[..input.len() - 1]), Err("LENGTH"));
             assert_eq!(produce(operation, &extra), Err("LENGTH"));
@@ -110,8 +134,13 @@ mod tests {
         let mut nonzero = input;
         nonzero[32] = 1;
         assert!(produce(Operation::Generic, &nonzero).is_ok());
+        assert!(produce(Operation::Paired, &nonzero).is_ok());
         assert_eq!(produce(Operation::Reference, &nonzero), Err("UNSUPPORTED"));
         assert_eq!(produce(Operation::Blocked, &nonzero), Err("UNSUPPORTED"));
+        assert_eq!(
+            produce(Operation::BlockedPaired, &nonzero),
+            Err("UNSUPPORTED")
+        );
         assert!(Operation::parse("scalar").is_err());
         assert!(Operation::parse("").is_err());
     }

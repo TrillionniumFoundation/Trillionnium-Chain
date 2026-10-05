@@ -135,3 +135,38 @@ generation, event rows and reorganization state after the final write. A suppres
 write or a final write that damages the intended state cannot return a successful
 publication. These checks add complete-state readback cost; no overall latency
 improvement is inferred from the incremental account-node representation.
+
+
+## 本轮来源绑定（Round 10）
+
+本节补充 `M07.OwnedInitialization` 的原生后端来源绑定。
+[原生认证存储](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+按路径合并本次账户更新，在同一 owner 事务内保存最终子树。成功返回时，本次新增的
+`archive_nodes` payload 均属于最终 successor；旧版本和侧分支继续保留。该承诺不覆盖
+SQLite 物理页／WAL 大小或累计历史上界。取消和 SQL 拒绝可能发生在事务内部分写入之后，
+由 owner 回滚；原始 parent 值、nonce 单调性及禁止账户删除的约束保持不变。
+
+[原生 ancestry 索引](../protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md)
+的实际行在相关提交和恢复边界检查。独立 storage reader 从完整保留图的 parent walk
+重建所有期望 jump 和 seal，包含 inactive forks；迁移两边相同的损坏不能仅凭 cell
+相等通过。完整 State 校验和读取成本仍见
+[状态与历史资源边界](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md)。
+
+完整 65,536-key 原生容量测试在普通 debug suite 中明确 ignored，必须以实际
+`--release --exact --ignored` 专项执行建立证据；忽略记录及此处来源登记均不是通过。
+以下绑定不授予物理断电保障、全历史保留资格或独立验收，`independent_accepted=false`。
+
+对应完整回归 selector：
+
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::batched_paths_match_serial_versions_and_keep_every_insert_reachable`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::batched_paths_cancel_and_sql_refusal_roll_back_partial_writes_and_reopen`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::batched_paths_keep_original_parent_nonce_and_no_deletion_checks`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover`.
+- `trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::real_signed_packets_reject_omitted_and_late_modified_ancestry_before_commit`.
+- `trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::restart_checks_exact_active_tip_row_set_including_genesis`.
+- `trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::activation_final_events_cannot_commit_missing_or_extra_active_ancestry`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality`.

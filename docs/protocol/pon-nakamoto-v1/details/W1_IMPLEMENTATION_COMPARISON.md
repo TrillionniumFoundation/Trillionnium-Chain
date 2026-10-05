@@ -67,31 +67,34 @@ immediately. It avoids materializing the old eight full 64x64 output prefixes
 stack/heap/process memory: noise vectors, a 2 KiB FR transpose, a 256-byte output
 tile, hashing state and the complete proof buffer also exist.
 
-Both zero algorithms perform 299,008 scalar multiplications per challenge and hash
-every one of the original 32,768 prefix words. This change targets intermediate
+The original structured and blocked-zero algorithms perform 299,008 scalar
+multiplications per challenge and hash every one of the original 32,768 prefix
+words. This change targets intermediate
 storage and locality; no multiplication-count speedup is asserted. It cannot be
 selected for the nonzero continuity maintenance matrices, and does not improve
 their work qualification. Previous slower zero and Strassen observations remain
 historical evidence, even if a later implementation performs differently.
 
-The separate `pon_zero_locality_cost` example uses schema
+The original three-producer version of the separate `pon_zero_locality_cost`
+example uses schema
 `pon-w1-zero-locality-v1`. It measures only the exact zero material under three
 strategies: `prepared-generic`, `structured-zero-reference`, and `blocked-zero`.
 Every strategy runs cold-per-search and reused-one-setup with real constructors;
 there is no unsupported task substitution or hidden warmed cache. CLI bounds and
 defaults match the numeric options of `pon_reused_cost`, but this example does
-not accept caller-supplied material. For example, after the actual source is built:
+not accept caller-supplied material. The same numeric campaigns below remain in
+the current source; the five-producer v2 section specifies their current grid:
 
     target/release/examples/pon_zero_locality_cost --samples 4 --searches 4 --attempt-budget 64 --seed 0
     target/release/examples/pon_zero_locality_cost --samples 2 --searches 4 --attempt-budget 8 --seed 1
 
 Its challenge domain is `zero-locality-cost-v1`; full proof and ticket streams use
-separate `TRNM-PON-W1-ZERO-LOCALITY-*` hash domains. The six producer/mode positions
+separate `TRNM-PON-W1-ZERO-LOCALITY-*` hash domains. In v1 the six producer/mode positions
 rotate by sample. Every target miss, exhausted search, actual setup duration and
 winner is retained. Ordinary and scalar verifier costs are measured separately
 after all six generation runs; exact winning bytes and complete attempted-proof
 commitments must agree. Source/compiler/binary/runner receipts and failed process
-outputs remain necessary outside the example. Do not interpret this new schema
+outputs remain necessary outside the example. Do not interpret this zero-only schema
 using the old seven-material checker, or divide timings across schemas.
 
 `pon_zero_io` is the bounded complete-proof correctness bridge: select `generic`,
@@ -102,6 +105,163 @@ operands instead of selecting another structured method. The existing independen
 Python scalar oracle can compare complete bytes and check nonzero unsupported
 controls outside any native timing run. Correct byte parity is not a hardness
 certificate or permission to keep mining an expired or withdrawn task.
+
+### Integer-paired zero prefixes and the explicit five-producer comparison
+
+The separate
+[`BlockedZeroPairedPreparedTask`](../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs)
+combines exact zero-input reassociation with the existing private
+[`integer_paired`](../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs)
+kernel. Its constructor checks both complete canonical operands before requiring
+every entry to be zero. Malformed material retains `Length`/`Field`; other
+canonical material returns `None`. It accepts no supplied product, factors,
+noise, lease, source statement or current-parent capability. The fixed zero
+product and full proof prefix are constructed inside each actual setup call.
+The previous producers, default native selection and all verifiers retain their
+existing behavior.
+
+For each original inner prefix `K_k={0,...,8k-1}`, the zero material gives
+`A'=EL*ER` and `B'=FL*FR`. The complete original output prefix is computed as
+
+```text
+S_k = ER[:,K_k] * FL[K_k,:],
+L_k = EL * S_k,
+C'_k = L_k * FR.
+```
+
+S is updated by the next eight inner coordinates, then reduced to its canonical
+field value. Each canonical S prefix is retained in transposed form. The current
+output row tile's L prefixes are computed once and reused across column tiles;
+each original output word is immediately serialized and hashed in unchanged
+`bi,bj,bk,i,j` order. All four noise arrays are expanded from the actual challenge,
+all 512 original transcript tiles and 32,768 words remain, and the complete proof
+contains the same original zero A/B, zero product and trace digest in 49,188 bytes.
+Task identity, challenge binding, ticket, target and required work are unchanged.
+
+The kernel uses the exact integer identity
+`(x0+y1)*(x1+y0)-x0*x1-y0*y1 = x0*y0+x1*y1`. It widens before either pair sum,
+accumulates all cross products with a canonical prior, subtracts both unreduced
+row/column factors, then reduces once. For eight coordinates the pre-subtraction
+sum is below `16*(q-1)^2+(q-1)<2^68`; the nonnegative value after subtraction is
+below `8*(q-1)^2+(q-1)<2^67`, within the existing reducer's `<2^70` contract.
+All operands and factors are freshly obtained from this challenge. EL row factors
+are reused across k, S column factors across output rows, and FR column factors
+across all output prefixes. No challenge-dependent cache survives a call.
+
+| General field/integer scalar-product operations per challenge | Count |
+|---|---:|
+| Eight S updates, including ER/FL input factors, `8*(64*4+16*4)` | 2,560 |
+| All L prefixes, including EL/S factors, `8*64*8*4+64*4+8*8*4` | 16,896 |
+| Every output prefix, including L/FR factors, `8*64*64*4+8*64*4+64*4` | 133,376 |
+| Complete integer-paired zero schedule | 152,832 |
+| Existing general paired schedule, including its factors | 168,960 |
+| Existing blocked zero schedule | 299,008 |
+| Existing general prepared schedule | 327,680 |
+
+This operation count treats one product of field representatives or one widened
+integer cross product as one scalar-product operation. A paired cross product can
+multiply two 33-bit sums, while an ordinary field-representative product has two
+32-bit inputs. They need not have equal instruction, latency or energy costs.
+The 9.54545% count reduction against general paired generation excludes additions,
+reduction, noise hashing, transcript hashing, allocation, proof construction and
+setup. It is not a measured speedup or a cheapest-producer bound. In particular,
+the retained blocked-zero producer remains a direct measured competitor; comparison
+only against a slower general implementation cannot establish an improvement.
+
+The eight S matrices occupy 2 KiB and the current row tile's eight L matrices
+another 2 KiB. S column factors, EL row factors, FR column factors and the current
+L row factors each occupy another 1 KiB. There is also a 2 KiB FR transpose, four
+noise arrays totaling 8 KiB, bounded middle/output buffers, hashing state and the
+complete proof prefix/output. These are sizes of mathematical arrays, not a total
+stack, heap, allocation-peak or RSS measurement. No 4 KiB total-memory claim follows.
+
+The new progress API checks before replay, every noise hash, each middle block,
+each outer-factor row, each L row-tile/prefix calculation, every original transcript
+tile and final proof assembly. Cancellation returns no proof and drops all local
+challenge state. Construction, bounded transposes/allocations and work between
+callbacks remain nonpreemptive. This algorithm-specific sequence does not promise
+the observation order or wall-time response of a different producer.
+
+The current
+[`pon_zero_locality_cost`](../../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs)
+emits `pon-w1-zero-locality-v2` for exactly five producers:
+`prepared-generic`, `structured-zero-reference`, `blocked-zero`, `paired-product`,
+and `blocked-zero-integer-paired`. Every producer executes both actual
+`cold-per-search` and `reused-one-setup` construction. The general paired producer
+is a direct control for the arithmetic kernel, while the old zero producers
+remain controls for reassociation and locality. No unsupported task is replaced
+with a fallback or nonzero maintenance material.
+
+The ten producer/mode positions are balanced in adjacent samples: sample `2k`
+uses `(k+offset) mod10`, and sample `2k+1` uses `(k+9-offset) mod10`. Each complete
+pair gives every arm mean position 4.5; an odd sample count retains an unmatched
+sample. This schedule alone does not remove thermal, cache or scheduling effects.
+The unchanged campaigns above request 80/40 cohorts and 320/160 search records per
+architecture. All ten paths for an exact task/target/sample must have equal search
+statuses, attempt counts, complete attempted-proof and ticket stream commitments,
+and exact winning challenge/proof bytes. Every target miss and exhausted search
+remains in elapsed search cost. Actual setup calls and their complete durations
+remain charged according to mode; winner-only division is undefined at zero wins.
+Both original scalar and ordinary verifier costs are measured separately after
+all ten generation paths. Material construction, comparisons, output formatting
+and final prepared-object destruction remain outside the setup/search timers.
+
+Historical `pon-w1-zero-locality-v1` retains exactly three producers, six positions
+and its original `(sample+offset) mod6` rotation. The existing
+`validate_zero_report` entry point and explicit `validate_zero_v1_report` continue
+to require that exact history. Current `validate_zero_v2_report` requires the five
+producers and new order. The collector/comparator selects history only with
+`--zero-version 1`; default/current `--zero-version 2` uses execution/comparison
+schemas `trnm-cross-arch-zero-locality-cost-execution-v2` and
+`trnm-cross-arch-zero-locality-cost-comparison-v2` in the same zero-suite artifact
+directory. V1 retains its original source-input set; resealing an old artifact with
+new candidate or reader files does not turn it into v2 evidence. Challenge, proof
+stream, ticket stream and winner domains retain their original v1 identities so
+the deterministic searches remain identifiable; neither schema normalization nor
+cross-version timing division is permitted.
+
+The bounded `pon_zero_io` bridge retains its original three operations and adds
+explicit `paired-product` and `blocked-zero-integer-paired` selectors. Generic and
+general paired operations support their actual canonical nonzero controls; all
+three zero-only operations reject nonzero material with empty proof output.
+The independent
+[`test_zero_work.py`](../../../../formal/pon-nakamoto-v1/test_zero_work.py)
+uses the original scalar `work_oracle.py`, not paired or reassociated arithmetic.
+Its complete bridge contract requires 88 actual native invocations: 20 full-byte
+zero comparisons across five producers and four challenges, eight full-byte
+general/nonzero controls, and 60 explicit length, field, argument or unsupported
+rejections. It retains every input, expected proof, native stdout/stderr, exit,
+ticket and source/binary identity; an absent binary fails rather than skips.
+Its schema is `pon-w1-zero-paired-python-native-v1`.
+
+Native controls compare every prefix word with the original full E/F construction
+and scalar inner loops on maximum, mixed near-q/zero, zero-outer and hash-derived
+noise arrays. `TRNM_ZERO_PAIRED_PREFIX_OUTPUT` names a fresh raw export directory.
+The independent Python `--verify-prefix-export ... --output ...` reader checks
+the exact four declared input recipes, then replays all 32,768 words per case
+through original scalar E/F and transcript arithmetic. It retains separate Python
+prefix bytes under `pon-w1-zero-paired-prefix-python-v1`. These synthetic noise
+controls are arithmetic observations, not W1 proofs with supplied alternate noise.
+Other native controls cover full scalar/generic/old-zero/paired proof and ticket
+equality, changed/repeated challenges, caller-input mutation, explicit unsupported
+material, actual tile order and cancellation at selected first/middle/last points.
+They do not claim separate cancellation of every callback position.
+
+The signed zero-task lifecycle regression now supplies actual complete proofs from
+the new producer to ordinary packet admission under both V4 and continuity,
+including use after renewal and on a fork. Parent registration, signed material,
+revocation, expiry, zero useful-output credit and cold recovery keep their existing
+checks. Reusable mathematical preparation still conveys no current admission.
+
+These are task-specific algorithm and validation contracts. Component execution
+records must remain bound to their actual inspected source; they do not certify a
+later integration. Any latency or lowest-observed-cost conclusion requires the
+final exact-source x64/ARM64 campaigns, with final head and prospective-merge
+qualification and all slow, failed or exhausted observations retained. This zero
+specialization does not apply to the nonzero genesis continuity material or prove
+the frequency or provenance of real zero tasks. It does not establish W1 hardness,
+minimum complete-proof work, unlimited-preprocessing resistance, public-service
+acceptance or activation; all existing qualification flags remain false.
 
 ## Exactly one zero operand and a nonzero rank-one counterpart
 

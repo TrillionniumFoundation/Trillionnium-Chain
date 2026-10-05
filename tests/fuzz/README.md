@@ -37,6 +37,11 @@ requires a new receipt directory; a prior corpus or failed log is never overwrit
   bytes and cancellation. The compact branch directly constructs and executes
   AAM1 proofs, compares all three commitment phases with the separate full-state
   relation, and checks that no expanded individual witnesses were allocated.
+  The monetary-range branch anchors an actual complete parent and exercises all
+  four prefixes, including future and zero-valued obligations. Sixteen retained
+  mutation descriptors cover valid inputs, omission, rank/key/value/order,
+  frontier/content/context, JSON encoding and cancellation. Successful range
+  execution must equal the complete reference State and monetary projection.
   It does not mine blocks, validate signed transactions, reopen
   persistent databases or establish coverage of every application transaction kind.
 

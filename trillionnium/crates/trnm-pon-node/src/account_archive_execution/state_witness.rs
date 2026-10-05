@@ -66,9 +66,22 @@ pub enum StateWitnessProgress {
     BeforeSuccessorVerification,
     AfterSuccessorVerification,
     BeforeOutput,
-    AccountProof { phase: StatePhase, index: usize },
-    AccountUpdate { phase: StatePhase, index: usize },
-    AccountMerge { phase: StatePhase, index: usize },
+    AccountProof {
+        phase: StatePhase,
+        index: usize,
+    },
+    AccountUpdate {
+        phase: StatePhase,
+        index: usize,
+    },
+    AccountMerge {
+        phase: StatePhase,
+        index: usize,
+    },
+    /// Only the separately selected monetary range relation emits this event.
+    ObligationRange {
+        index: usize,
+    },
 }
 
 /// Untrusted observation/input claims. Only the private BoundState below can

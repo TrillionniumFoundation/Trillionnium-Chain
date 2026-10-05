@@ -286,3 +286,42 @@ writer transaction under a fresh explicitly selected schema. Its commitments use
 the complete final State after M06 and qualified task output accounting; the
 independent full-State comparison therefore includes records created after ordinary
 application execution. This does not replace the complete input relation above.
+
+
+## 本轮来源绑定（Round 10）
+
+本节补充 `M06.TwelveCommandEquivalence` 的显式研究入口绑定。
+[货币义务完整范围关系](../protocol/pon-nakamoto-v1/details/MONETARY_OBLIGATION_RANGES_V1.md)
+从已检查的完整 parent 建立独立有序非账户索引，认证 quota、release、reward、task
+四个完整前缀范围及相邻边界。未来与零金额记录也必须披露，合法的子集 membership
+不能代替完整范围。`execute_with_monetary_state_witness` 只在私有 checked 范围建立后
+把这些行用于父状态货币义务发现；其他非账户规则、successor capacity 与完整 State
+参照继续执行，默认 Node admission 仍使用完整状态路径。
+
+原生 fixture 定义了 21 个块、37 笔签名交易、16 加 2 笔到期退款，以及原本不存在的
+奖励接收者在成熟块内消费的路径；独立 reader 从安装 genesis 和签名应用交易重建
+parent、AAM1、完整范围、两个执行阶段和 packet 应用承诺。该 reader 不重新证明 W1
+或 fork choice。精确 JSON 字节计数针对完整 parent 已接受的 canonical Value 值域，
+UTF-8 支持涉及顶层 State key。测试定义与实际执行分别记录；以下 selector 不授予
+partial-State、数据可用性或独立验收，`independent_accepted=false`。
+
+对应完整回归 selector：
+
+- `trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs::complete_ranges_cover_empty_edges_shared_neighbors_and_retained_unknown_namespaces`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs::valid_subset_membership_cannot_omit_due_future_zero_or_neighbor_rows`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs::range_frontier_is_maximal_and_extra_authenticated_rows_are_refused`.
+- `trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs::monetary_ranges_execute_signed_expiry_future_capacity_and_reward_maturity_against_native_node`.
+- `trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs::monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_full_sorted_source_includes_future_and_zero_amount_rows`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_empty_partition_and_single_edge_rows_are_canonical`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_empty_ranges_share_nearest_boundaries_once`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_lexical_endpoints_unicode_keys_and_arbitrary_suffixes`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_any_due_future_or_zero_obligation`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_immediate_boundary`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_extra_non_boundary_leaf_is_noncanonical`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_split_hidden_subtree_is_valid_membership_but_noncanonical_frontier`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_parent_and_count_roots_require_exact_external_anchor`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_order_duplicates_rank_and_value_types_are_not_coerced`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_frontier_zero_overlap_duplicate_reorder_and_digest_changes_fail`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_exact_json_shape_dimensions_and_byte_bounds`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order`.

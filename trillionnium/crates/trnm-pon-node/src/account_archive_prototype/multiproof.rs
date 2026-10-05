@@ -687,12 +687,13 @@ impl AccountArchive {
 /// Crate-only adapter for the explicitly selected native authenticated backend.
 /// Its caller must derive the opaque checkpoint from checked native block/state
 /// and durable account nodes. No serialized report or raw root is accepted here.
-pub(crate) fn from_native_database(
+pub(crate) fn from_native_database<E: From<ArchiveError>>(
     db: &Connection,
     checkpoint: &Checkpoint,
     requested: &[Hash],
-) -> Result<(Multiproof, ConstructionObservation)> {
-    from_database_with_progress(db, checkpoint, requested, &|_| Ok::<_, ArchiveError>(()))
+    progress: &(impl Fn(MultiproofProgress) -> std::result::Result<(), E> + ?Sized),
+) -> std::result::Result<(Multiproof, ConstructionObservation), E> {
+    from_database_with_progress(db, checkpoint, requested, progress)
 }
 
 fn from_database_with_progress<E: From<ArchiveError>>(

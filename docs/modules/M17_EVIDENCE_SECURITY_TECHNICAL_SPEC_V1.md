@@ -159,3 +159,43 @@ from the actual signed funding/reservation/expiry fixture and a separate full-sp
 Python reconstruction. These comparisons extend the one workspace execution in
 both Rust lanes. They grant no physical durability, external ownership independence,
 partial-State backend or production acceptance.
+
+
+## 本轮来源绑定（Round 10）
+
+本节补充 `M17.HistoricalEvidence` 的本轮来源绑定。
+[W1 实现比较](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md)
+的 zero-locality v2 对五种完整生成者保留 setup、cold／reused 模式、全部失败尝试和
+相同完整证明流；历史 v1 只能通过明确历史选择读取，不得仅改 schema、重封摘要或
+补入新 source 就冒充当前观测。
+
+[原生认证存储](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+reader 从全部保留 parent 图独立重建 ancestry，迁移两边一致的损坏仍须拒绝。
+[货币义务范围 reader](../protocol/pon-nakamoto-v1/details/MONETARY_OBLIGATION_RANGES_V1.md)
+从完整 parent 推导四范围、相邻边界、maximal frontier 和 canonical 字节计数；
+它比较真实 native export，不以 export 自带 root、count 或 State 作为期望答案。
+
+按[CI 执行契约](../architecture/CI_EXECUTION_CONTRACT.md)，head 与精确 prospective
+merge 的实际执行须分别绑定源码、命令、原始产物和失败分母。普通 debug suite 中
+ignored 的完整容量与 native account cost 测试必须另有实际 release 执行日志，源代码
+selector 存在不能替代执行。下列仅为 source-binding，不授予独立 W1、公开数据供给、
+物理成本或未来模型效果验收，`independent_accepted=false`。
+
+对应完整回归 selector：
+
+- `scripts/ci/test_zero_locality_cost.py::ZeroV2RawContractTests.test_all_five_complete_producers_and_modes_are_required`.
+- `scripts/ci/test_zero_locality_cost.py::ZeroV2RawContractTests.test_historical_and_current_grids_cannot_be_relabelled`.
+- `scripts/ci/test_zero_locality_cost.py::ZeroV2RawContractTests.test_v1_grid_cannot_become_current_by_changing_only_schema`.
+- `scripts/ci/test_zero_locality_cost.py::ZeroV2RawContractTests.test_candidate_setup_and_failed_attempt_costs_cannot_be_dropped`.
+- `scripts/ci/test_zero_locality_cost.py::ZeroV2RawContractTests.test_candidate_complete_stream_disagreement_cannot_pass`.
+- `scripts/ci/test_zero_locality_cost.py::ZeroArtifactContractTests.test_missing_new_candidate_source_or_scalar_bridge_rejected`.
+- `scripts/ci/test_zero_locality_cost.py::ZeroArtifactContractTests.test_exact_v1_artifacts_require_explicit_historical_selection`.
+- `scripts/ci/test_zero_locality_cost.py::ZeroArtifactContractTests.test_historical_source_identity_cannot_include_new_candidate_even_when_resealed`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_any_due_future_or_zero_obligation`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_immediate_boundary`.
+- `formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order`.

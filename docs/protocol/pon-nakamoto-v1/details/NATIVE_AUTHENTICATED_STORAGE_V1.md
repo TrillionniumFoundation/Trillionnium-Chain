@@ -92,8 +92,8 @@ backend that same transaction performs the following additional work:
    before/after state difference. A omitted row cannot be hidden by a full
    snapshot of the child.
 3. For each changed account, authenticate its old leaf against the original
-   parent root, retain its existence and nonce, and copy only its changed
-   Patricia path. A missing child node is a data error, not an absent account.
+   parent root and retain its existence and nonce. Sort all changes by hash path,
+   merge their compressed subtrees and save each final changed path once. A missing child node is a data error, not an absent account.
 4. Derive account count and balance from those changes. A wide signed
    accumulator prevents a credit-before-debit key order from overflowing a
    valid final `u64` total. Account deletion or decreasing nonce is rejected.
@@ -109,10 +109,12 @@ reference calculation nor the stored record alone is accepted in place of the
 other. The complete record is created from the actual Node execution, not from
 a deserialized observation supplied by an archive caller.
 
-Block, delta, snapshot and authenticated-record writes check their affected row
-counts. Content-addressed duplicate node writes also compare existing actual
+Block, ancestry, delta, snapshot and authenticated-record writes check their affected
+row counts. Content-addressed duplicate node writes also compare existing actual
 bytes. Before COMMIT, both backends reread the exact deltas and packet, reconstruct
-the stored parent and child states, and check the active state. A cancelled or
+the stored parent and child states, and check the active state. The newly inserted
+ancestry row set must exactly match its private operation-local expected rows after
+all subsequent writes; each row and its visible halves remain checked. A cancelled or
 failed transaction retains no subset of its new block, account paths or record.
 The final cancellation fence precedes commit; there is no later cancellation
 that retroactively changes a committed block into failure.
@@ -146,6 +148,9 @@ cursor, and final publication checks the active selection, events, completed
 journal row and state after all writes and trigger effects. A suppressed delta,
 an event trigger deleting KV, or an event trigger rewinding the active pointer
 causes rollback instead of a successful unreadable head or a post-commit error.
+The final active-tip ancestry levels, seals, visible half links and exact row count
+are checked in that same commit fence. A late event that deletes jump rows or adds
+a spurious level therefore cannot publish a successful unreadable selection.
 
 Reorganization remains resumable through its original several transactions.
 Failure during its final publication preserves the already committed pending
@@ -169,6 +174,18 @@ is a binding for this native point query; it makes no assertion that a separate
 AccountArchive checkpoint or archive ancestry was persisted. A caller cannot
 replace the node root or account values through a report argument. The API
 requires the explicit authenticated backend and has no silent legacy fallback.
+
+`authenticated_account_multiproof_with_progress` preserves that relation while
+exposing cancellation before the read snapshot, throughout historical State replay
+and retained-node verification, during actual trie reads and proof hashing, and
+before output. The original method delegates with a no-op callback. Oversized
+requests (more than66,049 owners) and duplicate owners reject before opening a
+transaction or reading State; the explicit-backend refusal retains precedence.
+The existing `NATIVE_ACCOUNT_PROOF:Budget` and `InvalidWitness` diagnostics remain.
+Cancellation returns the caller's original typed error and drops the read
+transaction without returning a partial proof. A missing/corrupt actual node still
+carries local-integrity provenance. Individual commitment and canonical-JSON
+primitives remain bounded single stages; these callbacks do not preempt each hash.
 
 This query already shares the actual native state source with compact proof
 construction. It still performs a full-state verification before serving the
@@ -294,6 +311,52 @@ Source tests and this document do not
 claim current hosted-head or prospective-merge success; those results must be
 bound to the exact delivered commit.
 
+## Batched paths and equivalent account-check primitives
+
+The account delta adapter checks every changed leaf against the original parent,
+then recursively merges sorted updates. It retains all old nodes and branch roots;
+there is no garbage collector or history rewrite. Every node newly inserted by a
+successful batch is reachable from its final account root. For `A > 0` final
+accounts this limits new nodes to at most `2A-1` and their encoded payload to
+`49A + 163(A-1)` bytes. At `A=65,536` that payload bound is13,893,469 bytes.
+This excludes SQL keys, indexes, pages, WAL and all prior versions; it is neither
+a total storage bound nor a measured allocation/latency result. Empty account
+states insert no nodes. The test-only serial algorithm remains an independent
+root, account and complete proof-byte reference for multiple retained branches.
+
+The shared node primitives reuse prepared SELECT/INSERT statements while actually
+executing every required row operation. A full account scan borrows each JSON
+`Value` during deserialization, preserving accepted objects and exact two-element
+arrays and the existing arbitrary-precision dispatch. Leaf decoding retains the
+actual content hash, exact49-byte grammar and all field checks, then constructs
+the same fields without allocating and hashing the identical encoding again.
+Fork shape, child-path checks, cancellation and complete tree comparison remain.
+
+`native_complete_account_verification_cost` is an explicit release-only ignored
+observation which CI executes separately. It compares the original primitives
+with the current complete account-tree check for actual retained states, in
+alternating paired order, and retains every sample. A cached statement's SQLite
+`Run` counter describes executions of that particular statement; it is not a
+count of total statement preparations, physical reads or omitted work in the
+reference arm. The clock excludes full State commitment, whole Node admission,
+historical reconstruction and lock queueing. No speed threshold grants acceptance.
+
+The separate release-only full-capacity native fixture uses65,515 preallocated
+account/fixed keys, twenty reward reservations and a real signed quota. It must
+reach the actual65,536-key limit through twenty real packets, reject premature
+new-account entry, execute refund/maturity, admit cleanup-dependent entry and
+recover a pending heavier-branch reorganization through two cold reopens. It
+contains24 admitted packets and two signed transactions. No smaller limit,
+artificial intermediate snapshot or fabricated height substitutes for this gate.
+The ordinary debug ignore is explicit: both exact head and merge Rust lanes run
+this test with `--release --exact --ignored`, retaining its actual result. The
+small exported storage fixtures' independent reader does not independently
+replay this larger capacity fixture.
+
+The [monetary range relation](MONETARY_OBLIGATION_RANGES_V1.md) is an additional
+explicit execution experiment over a checked full parent. It does not replace
+this backend's native complete-State or non-account checks.
+
 ## Costs and remaining work
 
 Incremental account persistence reduces which account nodes are newly written.
@@ -304,8 +367,10 @@ subsequent measurements. Persistent versions, all retained blocks, SQLite pages,
 indexes and WAL have no newly established physical global bound here.
 
 Further work must price and assign future state, obligation, storage and proof
-service responsibility at admission, provide complete compact obligation/range
-proofs, measure growth and tail latency, and define physical retention/recovery.
+service responsibility at admission, make complete obligation proofs continuously
+available, measure growth and tail latency, and define physical retention/recovery.
+Historical `state_at` can repeat the complete-state/account O(N) portions at each
+of H replayed heights; retained snapshots do not establish a global recovery bound.
 Partial-state execution or a changed consensus root requires its own explicit
 version, migration and complete conformance evidence. This backend leaves those
 requirements visible while making authenticated state part of the actual native

@@ -29,7 +29,10 @@ metadata projection also verifies its context, recorded root/parent/height and
 block identifier using the packet's final trace.
 
 A native accepted block insert, all of its jump rows, state deltas and snapshot
-changes share one SQLite transaction. An index write error rolls everything back;
+changes share one SQLite transaction. Each index INSERT must affect exactly one row. After all admission writes, a private
+operation-local expected row set is compared against the final actual rows and
+their visible half links. The exact row count also refuses additional levels.
+An index write or final-readback error rolls everything back;
 it cannot consume a sender nonce or leave a partially indexed admitted block.
 The existing exclusive Node owner, path/inode checks, WAL and durability rules
 apply; there is no additional long-lived secret or sidecar.
@@ -60,7 +63,12 @@ header projection is the fixed native header length. The native packet decoder
 and identifier/parent/height are checked again after the bounded body load.
 
 Reopen checks every eligible level of the active tip, including each row's visible
-half links, within1024 SQL statements. This is not a global audit of every retained
+half links, and then its exact row count, within1024 SQL statements. Genesis
+requires zero rows. The original missing/seal/structure error order precedes the
+extra-row count check. Activation and resumable publication perform that same
+active-tip check after final event writes while their transaction can still roll
+back. Admission's expected-row validation needs at most936 SQL statements; the
+active-tip check needs at most938, including metadata and row count. This is not a global audit of every retained
 branch. Unvisited rows are checked when used for lookup or deriving a new admitted
 block. Missing rows, altered seals, wrong local header metadata and visible
 half-link inconsistencies fail closed without repair or deletion of evidence.
@@ -104,3 +112,21 @@ cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml 
   actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal \
   -- --exact --ignored --nocapture --test-threads=1
 ```
+
+## Independent retained-index observation
+
+The existing native storage Python reader reconstructs every retained block's
+expected jumps by following the actual parent relation. Stored jump destinations
+and seals are not used to choose the expected path. It derives all ancestor
+heights, half seals and final seals, then compares the exact full table, including
+inactive forks, genesis and extra/orphan rows. Migration source and destination
+are independently reconstructed before their cells are compared. This offline
+reader is broader than the bounded live-tip check; it is not a background runtime
+audit or a proof that a malicious storage owner cannot rewrite its inputs.
+
+Actual native fault regressions cover ignored first/last index INSERTs, later
+delta deletion/corruption/extra levels, and final-event damage during fast append,
+forced staged append and real heavier-branch reorganization. They compare retained
+rows, selected State, nonce, retry and cold recovery in both native backends.
+Fault injection is into a locally owned test database; these cases do not claim
+that an ordinary remote packet can install SQL triggers.

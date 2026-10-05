@@ -51,7 +51,7 @@
           "id": "M01.VerifyWork",
           "inputs": "challenge32, expectedTask32, target32, certificate[49188]",
           "output": "non-public native VerifiedWork",
-          "algorithm": "Check length/magic/field bounds; recompute TaskId; apply cheap ticket filter; replay challenge-noised tiled transcript and exact decoded product; return no verified type on any mismatch. The explicit scalar reference, production optimized verifier and limb diagnostic preserve complete result bytes, rejection precedence and cancellation observations; the selected production verifier is unchanged.",
+          "algorithm": "Check length/magic/field bounds; recompute TaskId; apply cheap ticket filter; replay challenge-noised tiled transcript and exact decoded product; return no verified type on any mismatch. The explicit scalar reference, production optimized verifier and limb diagnostic preserve complete result bytes, rejection precedence and cancellation observations; the selected production verifier is unchanged. The explicit zero-material integer-paired producer preserves all original scalar prefix words, complete certificate bytes and ticket binding; unsupported or malformed material rejects without generic fallback. This producer does not change the installed verifier or work relation.",
           "commit": "No authoritative store; cache key must include complete context.",
           "errors": "LENGTH, VERSION, TASK, FIELD, TARGET, TRANSCRIPT, PRODUCT",
           "limits": "n64,r8,q4294967291,u128; fixed49188 bytes"
@@ -78,11 +78,19 @@
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs",
         "scripts/pon_work_rejection_report.py",
-        "scripts/ci/test_work_rejection_report.py"
+        "scripts/ci/test_work_rejection_report.py",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
+        "formal/pon-nakamoto-v1/test_zero_work.py",
+        "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+        "scripts/ci/check_zero_locality_cost.py",
+        "scripts/ci/test_zero_locality_cost.py"
       ],
       "test_classes": [
         "InteropTests",
-        "ExecutionTests"
+        "ExecutionTests",
+        "ZeroWorkOracleTests"
       ],
       "native_packages": [
         "trnm-crypto-primitives",
@@ -141,7 +149,7 @@
           "id": "M03.RunWorkAttempt",
           "inputs": "frozen header,parent generation, task matrices, attempt budget",
           "output": "exact proof or explicit stale/cancelled attempt",
-          "algorithm": "Freeze all header bytes before work; evaluate full challenge transcript; retry a different nonce with a new computation; cap local reference attempts4096. Parent changes do not relabel an old transcript. Durable mining-attempt recovery is a native integration obligation, not implemented by the CLI. Separate bounded rejection-cost experiments keep every proof/search attempt, separate cancellation probes from timed verification, and charge complete repeated setup/search/generation costs for the three explicit verification kernels. They do not change the mining loop or certify the fastest adversary.",
+          "algorithm": "Freeze all header bytes before work; evaluate full challenge transcript; retry a different nonce with a new computation; cap local reference attempts4096. Parent changes do not relabel an old transcript. Durable mining-attempt recovery is a native integration obligation, not implemented by the CLI. Separate bounded rejection-cost experiments keep every proof/search attempt, separate cancellation probes from timed verification, and charge complete repeated setup/search/generation costs for the three explicit verification kernels. They do not change the mining loop or certify the fastest adversary. The explicit A=B=0 integer-paired candidate includes constructor and unsuccessful attempt costs, and keeps historical three-strategy v1 reports separate from the five-strategy v2 comparison. Prepared zero material never substitutes actual-parent renewal, revocation or expiry authority.",
           "commit": "Reference mining is in-memory; no claim of durable miner. External publication uses exact idempotent BlockId.",
           "errors": "WORK_BUDGET, REORG_IN_PROGRESS, FIELD",
           "limits": "49188-byte result, bounded matrix sizes; no hidden success fallback"
@@ -180,10 +188,16 @@
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs",
         "scripts/pon_work_rejection_report.py",
-        "scripts/ci/test_work_rejection_report.py"
+        "scripts/ci/test_work_rejection_report.py",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+        "formal/pon-nakamoto-v1/test_zero_work.py",
+        "scripts/ci/check_zero_locality_cost.py",
+        "scripts/ci/test_zero_locality_cost.py"
       ],
       "test_classes": [
-        "DiskReorgTests"
+        "DiskReorgTests",
+        "ZeroWorkOracleTests"
       ],
       "native_packages": [
         "trnm-checkpoint-store",
@@ -297,10 +311,10 @@
           "id": "M06.ExecuteCandidate",
           "inputs": "parent map, ordered signed txs,height,miner,parentId",
           "output": "next map, ordered receipts, state root",
-          "algorithm": "Run deterministic due expiry and maturity before txs; execute the closed command set enabled by the exact context; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition. Explicit AAW1/AAM1 research execution gates actual semantic account accesses and applies proof-derived mandatory/final account roots while retaining complete non-account inputs and the independent full State reference. The optional native authenticated backend binds the actual resulting StateCommitment and changed paths to the admitted block; it does not replace full-State execution.",
+          "algorithm": "Run deterministic due expiry and maturity before txs; execute the closed command set enabled by the exact context; transfer exact fees, stage subsidy; verify global conservation and size bounds. Remote calls, floats and evaluator programs never run inside state transition. Explicit AAW1/AAM1 research execution gates actual semantic account accesses and applies proof-derived mandatory/final account roots while retaining complete non-account inputs and the independent full State reference. The optional native authenticated backend binds the actual resulting StateCommitment and changed paths to the admitted block; it does not replace full-State execution. An explicit monetary-range path authenticates every quota:/release:/reward:/task: row, including future and zero-valued obligations, with immediate ordered boundaries and canonical shared frontier against a private full-parent anchor. M06 independently checks the exact parent projection and consumes those verified rows for mandatory monetary discovery and original capacity; other non-account rules and default admission retain the complete State reference.",
           "commit": "Return complete state/delta intent; caller M07 owns persistence.",
           "errors": "EVIDENCE, AUTHORITY, STATE, FUNDS, CONSERVATION, LIMIT",
-          "limits": "expiry16,task256,tx256,statekeys65536"
+          "limits": "expiry16,task256,tx256,statekeys65536 Monetary ranges are a separate research input with full-parent checking, not a compact substitute for complete State validation or a new consensus activation."
         },
         {
           "id": "M06.DeriveBranchDelta",
@@ -358,7 +372,16 @@
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof.rs",
         "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
         "formal/pon-nakamoto-v1/account_multiproof_oracle.py",
-        "formal/pon-nakamoto-v1/test_account_multiproof_oracle.py"
+        "formal/pon-nakamoto-v1/test_account_multiproof_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+        "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+        "formal/pon-nakamoto-v1/obligation_range_oracle.py",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs"
       ],
       "test_classes": [
         "ExecutionTests",
@@ -369,7 +392,8 @@
         "NativeAuthenticatedStorageOracle",
         "MigrationPreservationOracle",
         "SignedApplicationControls",
-        "AccountMultiproofOracleTests"
+        "AccountMultiproofOracleTests",
+        "MonetaryRangeOracle"
       ],
       "native_packages": [
         "trnm-executor",
@@ -397,10 +421,10 @@
           "id": "M07.StageBranch",
           "inputs": "fully verified block and before/after map",
           "output": "Atomic native block and exact deltas, plus actual StateCommitment/account-node writes when authenticated-v1 is selected.",
-          "algorithm": "BEGIN IMMEDIATE, insert immutable block and exact changed-key deltas; for authenticated-v1 also publish the actual parent-bound StateCommitment and copy-on-write account nodes. Recheck complete stored authority after final mutation opportunities, then COMMIT. Failures/cancellation roll back all components; no independently published shadow root substitutes for the native transaction.",
+          "algorithm": "BEGIN IMMEDIATE, insert immutable block and exact changed-key deltas; for authenticated-v1 also publish the actual parent-bound StateCommitment and copy-on-write account nodes. Recheck complete stored authority after final mutation opportunities, then COMMIT. Failures/cancellation roll back all components; no independently published shadow root substitutes for the native transaction. Account deltas are checked against the original parent and batched in hash-path order so newly persisted payload nodes belong to the final successor tree; retained versions remain unchanged. Before commit the owner checks the complete expected new ancestry row set and both visible half-seals after all writes, including trigger effects.",
           "commit": "Block, exact deltas, optional scheduled snapshot and selected authenticated record/account paths commit together; active pointer/events retain their separate atomic M08 publication.",
           "errors": "ROOT, LIMIT, DUPLICATE",
-          "limits": "proof49188;block1MiB;512-bit storedwork"
+          "limits": "proof49188;block1MiB;512-bit storedwork Final-tree payload retention does not bound physical SQLite/WAL bytes or total retained history. The ignored 65,536-key native capacity regression has an explicit release --exact --ignored CI selector; registration alone is not execution evidence."
         }
       ],
       "source_refs": [
@@ -417,7 +441,13 @@
         "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs",
         "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
         "formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py",
-        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py"
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "scripts/ci/ci_job.sh"
       ],
       "test_classes": [
         "DiskReorgTests",
@@ -450,7 +480,7 @@
           "id": "M08.RecoverAndPublish",
           "inputs": "Native Node::resume_intent or separate Ledger._recover_intent reads the persisted singleton old/new tips, generation, ordered steps, cursor and status; optional crash-cut callback.",
           "output": "No pending/done intent: active tip unchanged. Successful recovery: target tip with coherent generation, root and one ordered remove/add event set",
-          "algorithm": "Native Node::resume_intent and the separate Ledger._recover_intent oracle require the actual old tip/generation, verify detach/attach and each before-image, and advance each step with its cursor atomically. Final publication checks complete staged state and, for authenticated-v1, its retained commitment and account nodes, then commits active tip/generation/slot, events, done status and retirement together. Recovery still selects strictly heavier verified indexed history. Fresh migration copies a pending intent/stage/cursor and all local replay/outbox/pool history unchanged; only opening the completed destination resumes that intent, without external operation dispatch.",
+          "algorithm": "Native Node::resume_intent and the separate Ledger._recover_intent oracle require the actual old tip/generation, verify detach/attach and each before-image, and advance each step with its cursor atomically. Final publication checks complete staged state and, for authenticated-v1, its retained commitment and account nodes, then commits active tip/generation/slot, events, done status and retirement together. Recovery still selects strictly heavier verified indexed history. Fresh migration copies a pending intent/stage/cursor and all local replay/outbox/pool history unchanged; only opening the completed destination resumes that intent, without external operation dispatch. Active-tip ancestry rows are checked as an exact set on reopen and after final publication writes. The separate SQLite reader reconstructs all retained jump rows and seals from parent/height/work, including inactive branches; migration table equality cannot replace this structural check.",
           "commit": "Every delta step and cursor commit together; final active tuple, ordered events, done flag and old-slot deletion have a separate single commit. Independent EffectJournal is never part of undo.",
           "errors": "GENERATION for stale active tuple; SCHEMA for invalid step kind; UNDO_ROOT for before-image mismatch; ROOT before publication; UNKNOWN_PARENT or propagated SQLite/OSError. Do not label any failure as an executed remote effect.",
           "limits": "Resume the committed cursor after interruption; done/no intent is idempotent and creates no repeated events. Root/generation corruption retains the intent and fences admission instead of clearing it. Complete staged State/root verification is still required; bounded history costs and physical power-loss qualification remain open."
@@ -471,7 +501,13 @@
         "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs",
         "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
         "formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py",
-        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py"
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "scripts/ci/ci_job.sh"
       ],
       "test_classes": [
         "DiskReorgTests",
@@ -761,7 +797,7 @@
           "id": "M15.StartExecutableSpecPeer",
           "inputs": "private ledger directory,exact development context and optional allowlisted authentication profile",
           "output": "recovered bounded native endpoint or failure",
-          "algorithm": "Acquire the exclusive store owner, verify parameters, recover reorg plus replay/outbox state, then bind. Plain service is loopback-only; a non-loopback development bind requires the explicit authenticated flag, a descriptor-checked private key, an exact peer roster and a positive session generation. Store commands may explicitly select --state-backend authenticated-v1; omission retains legacy-v2. Invalid backend/scope and external owner-journal combinations reject before opening. Backend selection changes the local namespace only, never a consensus revision or activation flag.",
+          "algorithm": "Acquire the exclusive store owner, verify parameters, recover reorg plus replay/outbox state, then bind. Plain service is loopback-only; a non-loopback development bind requires the explicit authenticated flag, a descriptor-checked private key, an exact peer roster and a positive session generation. Store commands may explicitly select --state-backend authenticated-v1; omission retains legacy-v2. Invalid backend/scope and external owner-journal combinations reject before opening. Backend selection changes the local namespace only, never a consensus revision or activation flag. Authenticated account queries reject invalid dimensions before snapshot/state reads, preserve cancellation identity and exact retry bytes, and read actual stored nodes within rollback-protected snapshots. Prepared SQL statements cache statements, not previously accepted account data.",
           "commit": "One Node owns branch state, inbound replay and outbound exact-wire state. No admission occurs before all recovery checks finish.",
           "errors": "WRITER_BUSY, STORAGE_CONTEXT, AUTH_SECRET_FILE, AUTH_ROSTER, AUTH_RECOVERY, NETWORK",
           "limits": "fresh current schema only;three workers;5-second frame and10-second request budgets;no unattended production service"
@@ -817,13 +853,24 @@
         "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs",
         "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
         "formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py",
-        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py"
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+        "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+        "formal/pon-nakamoto-v1/obligation_range_oracle.py",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "scripts/ci/ci_job.sh"
       ],
       "test_classes": [
         "DiskReorgTests",
         "NativeAuthenticatedStorageOracle",
         "MigrationPreservationOracle",
-        "SignedApplicationControls"
+        "SignedApplicationControls",
+        "MonetaryRangeOracle"
       ],
       "native_packages": [
         "trnm-release-bundle",
@@ -890,7 +937,7 @@
           "id": "M17.QualifyExecutedCampaign",
           "inputs": "exactsource/configdigests,rawtimings,outcomes,environment",
           "output": "scoped pass/failure report",
-          "algorithm": "Keep work cost, invalid-proof amplification, disk/process crashes, local network, actual learning and reward evidence separate. Source bindings include three-kernel rejection accounting, complete AAM1 execution/proof reconstruction and independent native SQLite/migration replay with exact typed preservation. Keep failed observations and source-mismatch outcomes; source validation does not execute these campaigns, prove fastest-adversary hardness, confer independent acceptance or activate deployment.",
+          "algorithm": "Keep work cost, invalid-proof amplification, disk/process crashes, local network, actual learning and reward evidence separate. Source bindings include three-kernel rejection accounting, complete AAM1 execution/proof reconstruction and independent native SQLite/migration replay with exact typed preservation. Keep failed observations and source-mismatch outcomes; source validation does not execute these campaigns, prove fastest-adversary hardness, confer independent acceptance or activate deployment. Additional source bindings cover independently reconstructed retained ancestry, complete monetary ranges and actual signed M06 observations, original-grammar native account primitive controls, final-tree batch retention, and zero-material scalar full-byte comparisons. The explicitly ignored release capacity and account-verification-cost selectors require their own execution logs; primitive timing is not whole-Node throughput.",
           "commit": "Immutable evidence artifact manifest; cannot enableproduction.",
           "errors": "EVIDENCE, CONTEXT, MISSING_CAMPAIGN",
           "limits": "no all-green fabricated row; no throughput extrapolation"
@@ -940,7 +987,22 @@
         "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
         "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligations.rs",
         "formal/pon-nakamoto-v1/account_multiproof_oracle.py",
-        "formal/pon-nakamoto-v1/test_account_multiproof_oracle.py"
+        "formal/pon-nakamoto-v1/test_account_multiproof_oracle.py",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
+        "formal/pon-nakamoto-v1/test_zero_work.py",
+        "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+        "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+        "formal/pon-nakamoto-v1/obligation_range_oracle.py",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "scripts/ci/ci_job.sh"
       ],
       "test_classes": [
         "CodecTests",
@@ -952,7 +1014,9 @@
         "NativeAuthenticatedStorageOracle",
         "MigrationPreservationOracle",
         "SignedApplicationControls",
-        "AccountMultiproofOracleTests"
+        "AccountMultiproofOracleTests",
+        "ZeroWorkOracleTests",
+        "MonetaryRangeOracle"
       ],
       "native_packages": [
         "trnm-bench",

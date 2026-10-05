@@ -10,8 +10,12 @@ use std::{
 use trnm_mvcc_fee::pon_executor::{Config, State, LEGACY_TASK_PROFILE};
 use trnm_pon_node::{
     account_archive_execution::{
-        self as execution, obligations, state_witness::StateCommitment, BlockInput,
-        CheckedExecutionError, CompactStateExecutionInput, StateExecutionInput,
+        self as execution,
+        obligation_ranges::{self, RangeProof},
+        obligations,
+        state_witness::{StateCommitment, StateWitnessProgress},
+        BlockInput, CheckedExecutionError, CompactStateExecutionInput, MonetaryStateExecutionInput,
+        StateExecutionInput,
     },
     account_archive_prototype::{
         multiproof::Multiproof, Account, AccountArchive, Context, Limits, Witness,
@@ -114,7 +118,8 @@ fn check_commitment(c: &StateCommitment, state: &State, context: Context) {
             );
         } else {
             non_accounts.insert(key.clone(), value.clone());
-            if key.starts_with("task:") {
+            if key.starts_with("task:") || key.starts_with("quota:") || key.starts_with("release:")
+            {
                 escrow += value["remaining"].as_u64().unwrap();
             }
             if key.starts_with("reward:") {
@@ -201,6 +206,21 @@ fuzz_target!(|bytes: &[u8]| {
         issued += amount;
         parent.insert(format!("reward:fuzz{index}"), json!({"owner":hex::encode(owners[(index + 2) % owners.len()]),"amount":amount,"maturity":1 + u64::from(byte(index + 9) & 1)}));
     }
+    if byte(15) & 2 != 0 {
+        // The new arm includes future and zero monetary responsibility, plus
+        // hidden retained subtrees. Earlier AAW1/AAM1 seed grammars are intact.
+        let amount = u64::from(byte(14)) + 1;
+        issued += 2 * amount;
+        parent.insert(
+            "quota:zero".into(),
+            json!({"owner":task_owner,"remaining":0,"deadline":7,"status":"active"}),
+        );
+        parent.insert("release:future".into(), json!({"owner":hex::encode(owners[4]),"remaining":amount,"deadline":9,"status":"active"}));
+        parent.insert("task:future".into(), json!({"owner":hex::encode(owners[5]),"remaining":amount,"deadline":9,"status":"active"}));
+        for index in 0..usize::from(byte(1) % 16) {
+            parent.insert(format!("retained:range-{index:02}"), json!(byte(index + 2)));
+        }
+    }
     parent.insert("meta:issued".into(), json!(issued));
     let original = parent.clone();
     let mut archive =
@@ -270,6 +290,148 @@ fuzz_target!(|bytes: &[u8]| {
         &successor,
         context,
     );
+
+    if byte(15) & 2 != 0 {
+        let compact =
+            obligations::prepare_compact(&settings, &archive, checkpoint.id(), &parent, block)
+                .unwrap();
+        let mut proof =
+            obligation_ranges::prepare(&settings, &archive, checkpoint.id(), &parent).unwrap();
+        let expected: State = parent
+            .iter()
+            .filter(|(key, _)| {
+                key.starts_with("task:")
+                    || key.starts_with("quota:")
+                    || key.starts_with("release:")
+                    || key.starts_with("reward:")
+            })
+            .map(|(key, value)| (key.clone(), value.clone()))
+            .collect();
+        let check = |proof: &RangeProof,
+                     result: &execution::MonetaryStateWitnessExecutionOutput| {
+            let actual: State = proof
+                .rows
+                .iter()
+                .filter(|row| {
+                    row.key.starts_with("task:")
+                        || row.key.starts_with("quota:")
+                        || row.key.starts_with("release:")
+                        || row.key.starts_with("reward:")
+                })
+                .map(|row| (row.key.clone(), row.value.clone()))
+                .collect();
+            assert_eq!(actual, expected);
+            assert_eq!(result.monetary_obligations.monetary_rows, expected.len());
+            let result = &result.execution.execution;
+            assert_eq!(result.execution.output.state, successor);
+            check_commitment(&result.state_observation.parent, &parent, context);
+            check_commitment(
+                &result.state_observation.mandatory.commitment,
+                &mandatory,
+                context,
+            );
+            check_commitment(
+                &result.state_observation.successor.commitment,
+                &successor,
+                context,
+            );
+        };
+        let result = execution::execute_with_monetary_state_witness(
+            &settings,
+            &archive,
+            checkpoint.id(),
+            &parent,
+            block,
+            MonetaryStateExecutionInput {
+                accounts: &compact.accounts,
+                monetary: &proof,
+            },
+        )
+        .unwrap();
+        check(&proof, &result);
+        let mutation = usize::from(byte(0).wrapping_sub(b'0')) % 16;
+        let mut cancel = None;
+        let mut require_refusal = true;
+        match mutation {
+            0 => return,
+            1 => proof.parent_id[0] ^= 1,
+            2 => {
+                proof.rows.remove(usize::from(byte(1)) % proof.rows.len());
+            }
+            3 => proof.rows.reverse(),
+            4 => proof.rows[0].rank ^= 1,
+            5 => proof.rows.push(proof.rows[0].clone()),
+            6 => proof.rows[0].key.push('x'),
+            7 => proof.rows[0].value = json!("tampered"),
+            8 => {
+                if let Some(frontier) = proof.frontier.first_mut() {
+                    frontier.digest[0] ^= 1;
+                } else {
+                    proof.index_root[0] ^= 1;
+                }
+            }
+            9 => proof.non_account_count += 1,
+            10 => proof.state_commitment[0] ^= 1,
+            11 => {
+                let mut encoded = serde_json::to_vec(&proof).unwrap();
+                let index = (usize::from(byte(1)) * 257 + usize::from(byte(2))) % encoded.len();
+                encoded[index] ^= 1;
+                let Ok(decoded) = serde_json::from_slice(&encoded) else {
+                    return;
+                };
+                proof = decoded;
+                require_refusal = false;
+            }
+            12 => cancel = Some(usize::from(byte(1)) % 4),
+            13 => proof.parent_checkpoint[0] ^= 1,
+            14 => {
+                if proof.frontier.len() > 1 {
+                    proof.frontier.swap(0, 1);
+                } else if let Some(frontier) = proof.frontier.first_mut() {
+                    frontier.count += 1;
+                } else {
+                    proof.index_root[0] ^= 1;
+                }
+            }
+            _ => {
+                let Ok(decoded) = serde_json::from_slice(bytes) else {
+                    return;
+                };
+                proof = decoded;
+                require_refusal = false;
+            }
+        }
+        let calls = AtomicUsize::new(0);
+        let result = execution::execute_with_monetary_state_witness_and_progress(
+            &settings,
+            &archive,
+            checkpoint.id(),
+            &parent,
+            block,
+            MonetaryStateExecutionInput {
+                accounts: &compact.accounts,
+                monetary: &proof,
+            },
+            &|point| {
+                if matches!(point, StateWitnessProgress::ObligationRange { .. })
+                    && cancel == Some(calls.fetch_add(1, Ordering::Relaxed))
+                {
+                    Err(CheckedExecutionError::Cancelled)
+                } else {
+                    Ok(())
+                }
+            },
+        );
+        if require_refusal {
+            assert!(result.is_err());
+        }
+        if let Ok(result) = result {
+            check(&proof, &result);
+        }
+        assert_eq!(archive.checkpoint(checkpoint.id()).unwrap(), checkpoint);
+        assert_eq!(parent, original);
+        return;
+    }
 
     let mode = usize::from(byte(0).wrapping_sub(b'0')) % 11;
     if byte(15) & 1 != 0 {

@@ -17,6 +17,8 @@ use trnm_mvcc_fee::pon_executor::{self, State};
 use trnm_protocol::pon_wire::{hash, Hash};
 
 pub mod multiproof;
+#[cfg(test)]
+mod native_primitive_tests;
 pub(crate) mod native_store;
 
 pub const SCHEMA: &str = "pon-account-archive-prototype-v1";
@@ -25,6 +27,7 @@ pub const WITNESS_SIBLINGS: usize = 256;
 pub const MAX_WITNESS_BYTES: usize = 4 + 32 + 32 + 1 + 16 + 256 * 32;
 pub const MAX_PROJECTION_CHANGES: usize = 4096;
 const MAX_NODE_BYTES: usize = 163;
+const NODE_SELECT: &str = "SELECT substr(data,1,164) FROM archive_nodes WHERE id=?";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ArchiveError {
@@ -331,13 +334,23 @@ impl Node {
         }
         let mut r = Reader(bytes);
         let result = match r.take::<1>()?[0] {
-            0 => Self::account(
-                r.take()?,
-                Account {
+            0 => {
+                let owner = r.take()?;
+                let value = Account {
                     balance: u64::from_le_bytes(r.take()?),
                     nonce: u64::from_le_bytes(r.take()?),
-                },
-            ),
+                };
+                // The exact stored bytes already passed the content hash above.
+                // Fixed-width decoding plus the final no-trailing-bytes check
+                // gives the same canonical leaf without encoding/hash work twice.
+                Self {
+                    id,
+                    path: path(owner),
+                    depth: 256,
+                    digest: leaf(owner, value),
+                    kind: Kind::Leaf(owner, value),
+                }
+            }
             1 => {
                 let depth = u16::from_le_bytes(r.take()?) as usize;
                 if depth >= 256 {
@@ -856,8 +869,7 @@ pub(crate) fn accounts(state: &State) -> Result<BTreeMap<Hash, Account>> {
         }
         let mut address = [0; 32];
         hex::decode_to_slice(owner, &mut address).map_err(|_| ArchiveError::InvalidState)?;
-        let account: Account =
-            serde_json::from_value(value.clone()).map_err(|_| ArchiveError::InvalidState)?;
+        let account = Account::deserialize(value).map_err(|_| ArchiveError::InvalidState)?;
         if out.insert(address, account).is_some() {
             return Err(ArchiveError::InvalidState);
         }
@@ -910,16 +922,15 @@ fn make_checkpoint(
 }
 fn save_node(db: &Connection, node: &Node) -> Result<()> {
     let bytes = node.encode();
-    let changed = db.execute(
-        "INSERT INTO archive_nodes(id,data) VALUES(?,?) ON CONFLICT(id) DO NOTHING",
-        params![node.id.as_slice(), &bytes],
-    )?;
+    let changed = db
+        .prepare_cached(
+            "INSERT INTO archive_nodes(id,data) VALUES(?,?) ON CONFLICT(id) DO NOTHING",
+        )?
+        .execute(params![node.id.as_slice(), &bytes])?;
     if changed == 0 {
-        let existing: Vec<u8> = db.query_row(
-            "SELECT substr(data,1,164) FROM archive_nodes WHERE id=?",
-            [node.id.as_slice()],
-            |r| r.get(0),
-        )?;
+        let existing: Vec<u8> = db
+            .prepare_cached(NODE_SELECT)?
+            .query_row([node.id.as_slice()], |r| r.get(0))?;
         if existing != bytes {
             return Err(ArchiveError::CorruptRecord);
         }
@@ -928,11 +939,8 @@ fn save_node(db: &Connection, node: &Node) -> Result<()> {
 }
 fn load_node(db: &Connection, id: Hash) -> Result<Node> {
     let bytes: Option<Vec<u8>> = db
-        .query_row(
-            "SELECT substr(data,1,164) FROM archive_nodes WHERE id=?",
-            [id.as_slice()],
-            |r| r.get(0),
-        )
+        .prepare_cached(NODE_SELECT)?
+        .query_row([id.as_slice()], |r| r.get(0))
         .optional()?;
     Node::decode(id, &bytes.ok_or(ArchiveError::DataUnavailable)?)
 }

@@ -53,10 +53,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--arch', choices=sorted(ARCHITECTURES), required=True)
     parser.add_argument('--suite', choices=SUITES, default='reused')
+    parser.add_argument('--zero-version', type=int, choices=(1, 2), default=2,
+                        help='explicit zero-locality execution schema; raw output must match this version')
     parser.add_argument('--local', action='store_true',
                         help='explicit local native preflight; cannot satisfy hosted artifact comparison')
     args = parser.parse_args()
-    contract = suite_contract(args.suite)
+    contract = suite_contract(args.suite, zero_version=args.zero_version)
     example = contract['example']
     output = receipt_root(contract['directory'])
     spec = ARCHITECTURES[args.arch]

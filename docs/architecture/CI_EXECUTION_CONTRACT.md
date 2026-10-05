@@ -176,23 +176,34 @@ names is not the local execution interface.
 
 ### Separate zero-material locality suite
 
-The same two architecture jobs also invoke `run_cross_arch_cost.py` with
-`--suite zero-locality`. It builds and executes the separate `pon_zero_locality_cost`
-example under `pon-w1-zero-locality-v1`, retaining its own raw files and manifest.
-The same comparison job checks that suite separately. The old seven-material
-reused-search schema, artifact and comparison keep their original interpretation;
-the workflow still has thirteen jobs. Both fixed campaigns above run for the exact
-zero task, with three producers and two real setup modes. All six producer/mode
-positions are present at each target/sample, with starting order rotated by sample.
+The same two architecture jobs invoke `run_cross_arch_cost.py` with
+`--suite zero-locality --zero-version 2`. It builds and executes the separate
+`pon_zero_locality_cost` example under `pon-w1-zero-locality-v2`, retaining its
+own raw files and version2 execution/comparison manifests. The comparison job
+explicitly selects version2 too. The workflow still has thirteen jobs.
 
-The dedicated zero checker binds its independent challenge/stream domains, exact
-strategy/mode grid, canonical zero task, every search outcome and setup call, timing
-sums, winning challenge/proof commitments and complete attempted streams. Unsupported
-rows cannot replace one of these three zero-capable producers. Cross-architecture
-comparison removes only clocks; it cannot discard exhausted or slower observations.
-There is no speed threshold, work qualification or permission to compare absolute
-timings against the different old harness schema. Original failed output remains
-retained even when the later separate suite executes successfully.
+Both fixed campaigns run for exactly zero material with five complete producers:
+prepared generic, structured zero reference, blocked zero, general paired product
+and blocked zero integer-paired. Each uses both actual cold-per-search and reused
+setup. All ten producer/mode positions occur for each target/sample; adjacent
+samples execute forward/reversed order, rotating the pair's start by sample pair.
+All five complete proof/ticket streams must match, including failed attempts and
+exhausted searches. The new candidate is compared to the previous blocked-zero
+and general paired alternatives, not only to the generic producer.
+
+The dedicated checker binds the canonical task, complete grid, every search
+outcome/setup call, clocks, winning proof/challenge commitments and attempted
+streams. The original zero-v1 challenge and stream domains remain unchanged.
+Historical `--zero-version 1` strictly preserves its three producers, six positions,
+old rotation and original nine source inputs. Current v2 requires seventeen exact
+inputs including the new producer and independent/native controls. A historical
+raw schema cannot be silently relabeled as current execution. The separate
+seven-material reused-search schema retains its own meaning.
+
+Cross-architecture comparison removes only clocks; it cannot discard exhausted
+or slower observations. No speed threshold, work qualification or permission to
+combine timings from different source/schema campaigns is granted. Original
+failed output remains retained when a later separate suite succeeds.
 
 ### Separate one-zero/rank-one locality suite
 
@@ -484,7 +495,9 @@ fixture creates `native.json` and `native.sqlite`; the migration fixture additio
 retains `source.sqlite` before opening/recovering the destination. Both directories
 must be absent before the tests. The separate Python
 `native_authenticated_storage_oracle.py` reconstructs states and account nodes
-from actual SQL bytes and checks roots, commitments and aggregates. Migration mode
+from actual SQL bytes and checks roots, commitments and aggregates. It independently
+follows every retained parent chain to reconstruct the complete ancestry jump table,
+including inactive forks and exact missing/extra-row rejection. Migration mode
 also compares retained source/destination tables by SQL value and type, including
 local replay/outbox/pool and sequence state. Missing exports or mismatches fail the
 same lane; a report assembled from caller-supplied commitment claims is insufficient.
@@ -498,6 +511,37 @@ parser controls. Both new oracle unit suites and each actual exported comparison
 run immediately after the workspace tests in the head and prospective-merge lanes.
 The exact command contract rejects omission, substitution, duplicate execution or
 loss of the migration source comparison. This adds no second native fixture run.
+
+### Monetary ranges, raw zero prefixes and explicit release state gates
+
+The same workspace execution receives a fresh `TRNM_OBLIGATION_RANGE_VECTORS`
+path. The21-block/37-signed-transaction fixture exports complete original parents,
+AAM1, range proofs, actual mandatory/final states and admitted packets. The existing
+lane then runs the independent proof tests and `obligation_range_oracle.py` over
+that export. Its three default export-derived negatives must reject false byte
+counts, absence-to-zero substitution and a source-valid membership subset hiding
+a future task. Full-parent dependence and other non-account reference rules remain
+explicit; these checks do not certify partial-state execution or proof availability.
+
+`TRNM_ZERO_PAIRED_PREFIX_OUTPUT` is set only around workspace tests. Its destination
+must not exist; the one designated crypto test creates it and retains four raw
+noise/scalar/native prefix groups. CI unsets the variable before further Cargo
+commands, then independently recomputes all four groups in Python. The protocol
+lane builds the release `pon_zero_io` bridge and runs `test_zero_work.py` using
+`TRNM_ZERO_WORK` and a fresh `TRNM_ZERO_WORK_OUTPUT`, requiring all88 native calls.
+
+After all workspace/export readers, every head and merge Rust lane explicitly
+runs two exact ignored tests with `--offline --locked --release`, one after the
+other against the same release library graph. The first is the authenticated
+65,536-key continuation/refund/new-entry/pending-reorganization fixture; the second
+compares original/current complete account-check primitives. Their ordinary debug
+ignore is not an execution result. `native-capacity-release.log` and
+`native-account-verification-cost.log` retain stdout/stderr through a pipefail
+pipeline; a failed Cargo process cannot become success merely because `tee` wrote
+a log. The latter also saves every paired raw sample, state, record and SQLite
+under `native-account-verification-cost/`. No whole-Node speedup follows from its
+account-check clock. Original workspace, documentation tests, strict Clippy and
+the90-minute Rust lane budget remain required.
 
 ## Actual legal and late-rejection costs
 
@@ -539,7 +583,11 @@ The compact branch constructs and executes the actual AAM1 relation, compares al
 three commitments with independent bottom-up full-State reconstruction, and asserts
 that construction allocated no expanded individual witnesses. Retained compact
 seeds reach valid, aggregate, account, missing, duplicate, cancellation and codec
-paths before guided mutation.
+paths before guided mutation. The monetary-range branch adds sixteen retained
+mutation descriptors covering valid four-prefix input, missing future/zero rows,
+rank/key/value/order/frontier/context, JSON codec and cancellation. Checked full
+parents anchor the actual range execution; successful results must match the
+complete reference monetary projection and resulting State.
 This target does not claim signed-transaction, persistent-SQLite or every-profile
 coverage. The routine CI budget is finite and does not establish exhaustive parser,
 state or work security.

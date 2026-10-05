@@ -338,3 +338,33 @@ for publication, migration and refusal rules. Complete-State work, non-account
 scans, global physical storage responsibility, external owner migration and public
 proof availability remain separate constraints; the option grants no release or
 production activation.
+
+
+## 本轮来源绑定（Round 10）
+
+本节补充 `M15.ExplicitBackend` 的实际接口来源绑定。
+[原生认证存储](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+的账户查询先检查请求维度，再读取 snapshot／重放状态；取消贯穿原生状态准备和
+AAM1 构造，并保留实际取消错误。回调改变已观察存储时须拒绝和回滚相关事务，成功
+重试仍与真实节点字节绑定，不从缓存中的旧成功结果推断权限。
+
+借用账户解码、缓存 SQL statement 与单次 leaf 解码保留完整原始 grammar、实际行读回、
+错误和 progress 检查。组件成本测试 `native_complete_account_verification_cost` 在普通
+debug suite 中 ignored，必须以实际 `--release --exact --ignored` 执行记录其范围；
+完整容量专项具有相同的实际 release 执行要求。组件观测不等于整 Node 验块、锁等待、
+磁盘或公开 proof 服务成本，剩余边界见
+[状态与历史资源边界](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md)。
+
+以下仅为实际函数和测试定义绑定；后端显式选择、迁移、普通产品入口与验收继续分离，
+不写入当前 CI 通过或部署资格，`independent_accepted=false`。
+
+对应完整回归 selector：
+
+- `trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_dimensions_precede_any_snapshot_or_state_read`.
+- `trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_cancellation_preserves_error_snapshot_and_exact_retry_bytes`.
+- `trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_reads_real_nodes_and_rolls_back_callback_mutations`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_leaf_decoder_preserves_complete_original_grammar`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_borrowed_accounts_preserve_arrays_numbers_and_field_failures`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_cached_node_statements_read_actual_rows_and_trigger_effects`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_complete_account_checks_keep_branch_bytes_errors_and_progress`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_complete_account_verification_cost`.

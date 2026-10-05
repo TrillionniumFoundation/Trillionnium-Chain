@@ -298,7 +298,8 @@ def validate_raw_report(data: dict, campaign: dict) -> dict:
             'deterministic_projection_sha256': projection_digest(data)}
 
 
-def suite_contract(suite: str = 'reused', *, maintenance_version: int = 4) -> dict:
+def suite_contract(suite: str = 'reused', *, maintenance_version: int = 4,
+                   zero_version: int = 2) -> dict:
     """Separate raw schemas and artifact namespaces; no normalization between them."""
     require(suite in SUITES, 'explicit native cost suite')
     common_inputs = ['rust-toolchain.toml', 'trillionnium/Cargo.lock',
@@ -359,22 +360,34 @@ def suite_contract(suite: str = 'reused', *, maintenance_version: int = 4) -> di
                     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs',
                     'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs',
                     'scripts/ci/check_one_zero_locality_cost.py']}
-    from check_zero_locality_cost import validate_zero_report
+    from check_zero_locality_cost import validate_zero_v1_report, validate_zero_v2_report
+    require(type(zero_version) is int and zero_version in (1, 2),
+            'explicit historical/current zero-locality artifact schema')
+    additional_inputs = [] if zero_version == 1 else [
+        'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs',
+        'trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs',
+        'trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs',
+        'trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs',
+        'formal/pon-nakamoto-v1/test_zero_work.py',
+        'formal/pon-nakamoto-v1/work_oracle.py',
+        'formal/pon-nakamoto-v1/contract_wire.py',
+        'trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs',
+    ]
     return {'directory': 'cross-arch-zero-locality-cost', 'example': 'pon_zero_locality_cost',
-            'execution_schema': 'trnm-cross-arch-zero-locality-cost-execution-v1',
-            'comparison_schema': 'trnm-cross-arch-zero-locality-cost-comparison-v1',
-            'validate_raw_report': validate_zero_report,
+            'execution_schema': f'trnm-cross-arch-zero-locality-cost-execution-v{zero_version}',
+            'comparison_schema': f'trnm-cross-arch-zero-locality-cost-comparison-v{zero_version}',
+            'validate_raw_report': {1: validate_zero_v1_report, 2: validate_zero_v2_report}[zero_version],
             'inputs': common_inputs + [
                 'trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs',
                 'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
                 'trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs',
                 'trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs',
-                'scripts/ci/check_zero_locality_cost.py']}
+                'scripts/ci/check_zero_locality_cost.py'] + additional_inputs}
 
 
 def validate_artifact(directory: Path, expected_source: str, *, suite: str = 'reused',
-                      maintenance_version: int = 4) -> tuple[dict, list[dict]]:
-    contract = suite_contract(suite, maintenance_version=maintenance_version)
+                      maintenance_version: int = 4, zero_version: int = 2) -> tuple[dict, list[dict]]:
+    contract = suite_contract(suite, maintenance_version=maintenance_version, zero_version=zero_version)
     example = contract['example']
     validate_raw = contract['validate_raw_report']
     require(directory.is_dir() and not directory.is_symlink(), 'artifact directory cannot be substituted')
@@ -476,13 +489,14 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
 
 
 def compare_artifacts(root: Path, expected_source: str, *, suite: str = 'reused',
-                      maintenance_version: int = 4) -> dict:
-    contract = suite_contract(suite, maintenance_version=maintenance_version)
+                      maintenance_version: int = 4, zero_version: int = 2) -> dict:
+    contract = suite_contract(suite, maintenance_version=maintenance_version, zero_version=zero_version)
     directories = sorted(p for p in root.iterdir() if p.is_dir())
     require(len(directories) == 2, 'exactly two current-run architecture artifacts required')
     loaded = [(validate_artifact(path, expected_source) if suite == 'reused' else
                validate_artifact(path, expected_source, suite=suite,
-                                 maintenance_version=maintenance_version)) for path in directories]
+                                 maintenance_version=maintenance_version,
+                                 zero_version=zero_version)) for path in directories]
     require({r['architecture'] for r, _ in loaded} == set(ARCHITECTURES), 'both architectures must actually execute')
     left, right = loaded
     for key in ['source_before', 'source_after', 'input_sha256']:
@@ -510,15 +524,18 @@ def main() -> int:
     parser.add_argument('--suite', choices=SUITES, default='reused')
     parser.add_argument('--maintenance-version', type=int, choices=(1, 2, 3, 4), default=4,
                         help='explicit historical v1/v2/v3 or current v4 maintenance artifact parsing')
+    parser.add_argument('--zero-version', type=int, choices=(1, 2), default=2,
+                        help='explicit historical v1 or current v2 zero-locality artifact parsing')
     args = parser.parse_args()
-    result = {'schema': suite_contract(args.suite, maintenance_version=args.maintenance_version)['comparison_schema'], 'result': 'FAIL',
+    result = {'schema': suite_contract(args.suite, maintenance_version=args.maintenance_version,
+                                      zero_version=args.zero_version)['comparison_schema'], 'result': 'FAIL',
               'source': args.expected_source, 'speed_threshold_applied': False}
     try:
         current = source()
         require(current['commit'] == args.expected_source and current['source_state'] == 'committed-clean',
                 'comparison code must be the exact clean candidate')
         result = compare_artifacts(args.artifacts, args.expected_source, suite=args.suite,
-                                   maintenance_version=args.maintenance_version)
+                                   maintenance_version=args.maintenance_version, zero_version=args.zero_version)
         require(result['tree'] == current['tree'], 'observation tree equals the comparison code tree')
     except (OSError, ValueError, KeyError, TypeError, IndexError) as error:
         result['result'] = 'FAIL'

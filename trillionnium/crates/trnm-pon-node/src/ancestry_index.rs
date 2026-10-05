@@ -24,7 +24,7 @@ struct Metadata {
     parent: Option<Hash>,
     height: u64,
 }
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 struct Row {
     block: Hash,
     level: u8,
@@ -33,6 +33,12 @@ struct Row {
     left_seal: Hash,
     right_seal: Hash,
     seal: Hash,
+}
+/// Expected bytes are operation-local and can only be made by the checked
+/// insertion below. Later writes in the same transaction must preserve them.
+pub(crate) struct Inserted {
+    block: Hash,
+    rows: Vec<Row>,
 }
 struct Budget<'a> {
     used: u64,
@@ -188,7 +194,7 @@ fn checked(
 }
 /// Must execute in the same transaction as the already verified block INSERT.
 /// This does not admit a block or create consensus authority from a SQL row.
-pub(crate) fn insert(db: &Connection, ctx: Context, block: Hash) -> Result<()> {
+pub(crate) fn insert(db: &Connection, ctx: Context, block: Hash) -> Result<Inserted> {
     let mut progress = |_| Ok(());
     let mut budget = Budget {
         used: 0,
@@ -212,6 +218,10 @@ pub(crate) fn insert(db: &Connection, ctx: Context, block: Hash) -> Result<()> {
         right_seal: [0; 32],
         seal: [0; 32],
     };
+    let mut inserted = Inserted {
+        block,
+        rows: Vec::new(),
+    };
     for level in 0..LEVELS {
         if (1_u64 << level) > origin.height {
             break;
@@ -227,7 +237,7 @@ pub(crate) fn insert(db: &Connection, ctx: Context, block: Hash) -> Result<()> {
         }
         row.seal = seal(ctx, &row, origin);
         budget.charge()?;
-        db.execute(
+        let written = db.execute(
             "INSERT INTO ancestry_jump VALUES(?,?,?,?,?,?,?)",
             params![
                 block.as_slice(),
@@ -239,8 +249,43 @@ pub(crate) fn insert(db: &Connection, ctx: Context, block: Hash) -> Result<()> {
                 row.seal.as_slice()
             ],
         )?;
+        ensure(written == 1, "STORAGE_WRITE").map_err(Error::local_integrity)?;
+        inserted.rows.push(row);
+    }
+    Ok(inserted)
+}
+
+/// Read back the entire new block's exact row set after all transaction writes.
+/// The visible two-half checks also remain live; this is bounded by 63 levels,
+/// and does not purport to audit every retained block on every admission.
+pub(crate) fn verify_inserted(db: &Connection, ctx: Context, inserted: &Inserted) -> Result<()> {
+    let mut progress = |_| Ok(());
+    let mut budget = Budget {
+        used: 0,
+        maximum: READ_SQL_BUDGET,
+        progress: &mut progress,
+    };
+    exact_row_count(db, inserted.block, inserted.rows.len(), &mut budget)?;
+    for expected in &inserted.rows {
+        let actual = checked(db, ctx, inserted.block, expected.level, &mut budget)?;
+        ensure(actual == *expected, "ANCESTRY_INDEX_STRUCTURE")?;
     }
     Ok(())
+}
+
+fn exact_row_count(
+    db: &Connection,
+    block: Hash,
+    expected: usize,
+    budget: &mut Budget<'_>,
+) -> Result<()> {
+    budget.charge()?;
+    let count: usize = db.query_row(
+        "SELECT COUNT(*) FROM ancestry_jump WHERE block=?",
+        [block.as_slice()],
+        |row| row.get(0),
+    )?;
+    ensure(count == expected, "ANCESTRY_INDEX_STRUCTURE")
 }
 #[derive(Debug)]
 pub(crate) struct Lookup {
@@ -324,7 +369,14 @@ pub(crate) fn validate_tip(db: &Connection, ctx: Context, tip: Hash) -> Result<(
         }
         checked(db, ctx, tip, level, &mut budget)?;
     }
-    Ok(())
+    // Preserve the original missing/seal/structure error precedence, then
+    // reject any additional level (including every row attached to genesis).
+    exact_row_count(
+        db,
+        tip,
+        (u64::BITS - origin.height.leading_zeros()) as usize,
+        &mut budget,
+    )
 }
 
 #[cfg(test)]

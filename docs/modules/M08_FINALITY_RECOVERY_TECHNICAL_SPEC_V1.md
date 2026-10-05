@@ -131,3 +131,30 @@ the fence is removed only after a fresh SQLite read and final file/table checks.
 Pending reorganization state is copied before target recovery, so the later explicit
 target open completes that existing cursor once. Source retention, external-owner
 refusal and real subprocess-exit tests are specified in the native backend contract.
+
+
+## 本轮来源绑定（Round 10）
+
+本节补充 `M08.ReorgAtomicView` 的当前来源绑定。
+[原生 ancestry 索引](../protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md)
+检查最终活动 tip 的精确行集合，包括 genesis 的空集合要求；最后 events 写入破坏或
+增加 ancestry 时，本次发布不能提交成功。先前合法的 pending 重组事务保留原有恢复
+含义。[原生认证后端](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+继续在同一 writer 事务内发布状态和认证材料，独立 reader 则从完整保留 parent 图重算
+各分支 ancestry，防止迁移源与目标共享损坏而仅凭相等获得通过。
+
+完整容量 fixture 定义强制退款、清理后新账户进入及 pending 重组恢复。该测试在普通
+debug suite 中 ignored，必须由实际 `--release --exact --ignored` 执行及其精确源码
+日志建立结果。下列来源绑定不证明物理断电、远端补偿、公共网络最终性或独立验收，
+也不允许回退本地不可逆事实，`independent_accepted=false`。
+
+对应完整回归 selector：
+
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover`.
+- `trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::activation_final_events_cannot_commit_missing_or_extra_active_ancestry`.
+- `trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::restart_checks_exact_active_tip_row_set_including_genesis`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys`.
+- `formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality`.

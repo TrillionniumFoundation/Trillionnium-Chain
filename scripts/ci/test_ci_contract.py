@@ -14,7 +14,8 @@ from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRAN
                                ZERO_RUN_STEP, ZERO_COMPARE_STEP, ONE_ZERO_RUN_STEP,
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
-                               PAIRED_WORK_ORACLE, MODEL_WINDOW_ORACLE,
+                               PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
+                               NATIVE_RELEASE_BLOCK,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
@@ -52,6 +53,14 @@ class CiContractTests(unittest.TestCase):
                             ZERO_RUN_STEP.replace('run: python3', 'run: true # python3')]:
             with self.subTest(replacement=replacement):
                 self.rejected('.github/workflows/trnm-required-baseline.yml', ZERO_RUN_STEP, replacement)
+
+    def test_zero_native_execution_and_comparison_require_explicit_current_version(self):
+        for command in [ZERO_RUN_STEP, ZERO_COMPARE_STEP]:
+            for selector in ['', ' --zero-version 1', ' --zero-version 3',
+                             ' --zero-version 2 --zero-version 1']:
+                with self.subTest(command=command, selector=selector):
+                    self.rejected('.github/workflows/trnm-required-baseline.yml', command,
+                                  command.replace(' --zero-version 2', selector))
 
     def test_architecture_budget_covers_generation_rejection_and_termination_margin(self):
         self.assertEqual(rejection_job_budget_seconds(), 1195)
@@ -285,6 +294,23 @@ class CiContractTests(unittest.TestCase):
             with self.subTest(replacement=replacement):
                 self.rejected('scripts/ci/ci_job.sh', PAIRED_WORK_ORACLE, replacement)
 
+    def test_zero_work_oracle_requires_current_release_binary_fresh_output_and_full_execution(self):
+        for replacement in ['', '    true # omitted zero native/scalar byte comparison\n',
+                            ZERO_WORK_ORACLE.replace('realpath -e', 'printf %s'),
+                            ZERO_WORK_ORACLE.replace('TRNM_ZERO_WORK=', 'TRNM_PAIRED_WORK='),
+                            ZERO_WORK_ORACLE.replace('TRNM_ZERO_WORK_OUTPUT=', 'OMITTED_OUTPUT='),
+                            ZERO_WORK_ORACLE.replace('/zero-work"', '/prior-zero-work"'),
+                            ZERO_WORK_ORACLE.replace('pon_zero_io', 'pon_paired_io'),
+                            ZERO_WORK_ORACLE * 2]:
+            with self.subTest(replacement=replacement):
+                self.rejected('scripts/ci/ci_job.sh', ZERO_WORK_ORACLE, replacement)
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        changed = original.replace(ZERO_WORK_ORACLE, '').replace('  fuzz-smoke)\n',
+                                                                  '  fuzz-smoke)\n' + ZERO_WORK_ORACLE)
+        self.rejected('scripts/ci/ci_job.sh', original, changed)
+        self.rejected('scripts/ci/ci_job.sh', PAIRED_WORK_ORACLE + ZERO_WORK_ORACLE,
+                      ZERO_WORK_ORACLE + PAIRED_WORK_ORACLE)
+
     def test_paired_and_model_window_oracles_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()
         for command in [PAIRED_WORK_ORACLE, MODEL_WINDOW_ORACLE]:
@@ -376,6 +402,104 @@ class CiContractTests(unittest.TestCase):
                       "if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract' || matrix.lane == 'rust-baseline'",
                       "if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract'")
 
+    def test_obligation_export_and_both_reader_controls_are_mandatory_and_fresh(self):
+        path = 'scripts/ci/ci_job.sh'
+        lines = [
+            '      export TRNM_OBLIGATION_RANGE_VECTORS="$trnm_model_receipt_root/obligation-range/native.json"\n',
+            '      test ! -e "$trnm_model_receipt_root/obligation-range"\n',
+            '      test ! -L "$trnm_model_receipt_root/obligation-range"\n',
+            '      mkdir "$trnm_model_receipt_root/obligation-range"\n',
+            '      python3 formal/pon-nakamoto-v1/test_obligation_range_oracle.py -v\n',
+            '      python3 formal/pon-nakamoto-v1/obligation_range_oracle.py "$TRNM_OBLIGATION_RANGE_VECTORS" --output "$trnm_model_receipt_root/obligation-range/oracle.json"\n',
+        ]
+        for line in lines:
+            for replacement in ['', '      true # omitted obligation range gate\n', line * 2]:
+                with self.subTest(line=line, replacement=replacement):
+                    self.rejected(path, line, replacement)
+        self.rejected(path, lines[0], lines[0].replace('TRNM_OBLIGATION_RANGE_VECTORS=', 'WRONG_VECTORS='))
+        self.rejected(path, lines[-1], lines[-1].replace('"$TRNM_OBLIGATION_RANGE_VECTORS"', '"/old/native.json"'))
+
+    def test_zero_prefix_export_is_unique_to_workspace_then_independently_recomputed(self):
+        path = 'scripts/ci/ci_job.sh'
+        lines = [
+            '      export TRNM_ZERO_PAIRED_PREFIX_OUTPUT="$trnm_model_receipt_root/zero-paired-prefix"\n',
+            '      test ! -e "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"\n',
+            '      test ! -L "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"\n',
+            '      unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT\n',
+            '      python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"\n',
+        ]
+        for line in lines:
+            for replacement in ['', '      true # omitted zero prefix gate\n', line * 2]:
+                with self.subTest(line=line, replacement=replacement):
+                    self.rejected(path, line, replacement)
+        self.rejected(path, lines[0], lines[0].replace('TRNM_ZERO_PAIRED_PREFIX_OUTPUT=', 'WRONG_OUTPUT='))
+        self.rejected(path, lines[2], lines[2] + '      mkdir "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"\n')
+        self.rejected(path, lines[-1], lines[-1].replace('/zero-paired-prefix"', '/old-prefix"'))
+        self.rejected(path, lines[-1], lines[-1].replace('/zero-paired-prefix-python"', '/zero-paired-prefix"'))
+
+    def test_full_capacity_and_account_verification_execute_exact_release_tests_sequentially(self):
+        path = 'scripts/ci/ci_job.sh'
+        commands = [line + '\n' for line in NATIVE_RELEASE_BLOCK.splitlines() if ' cargo test ' in line]
+        self.assertEqual(len(commands), 2)
+        for line in commands:
+            for replacement in ['', line.replace('cargo test ', 'true # cargo test '),
+                                line.replace(' --release ', ' '), line.replace(' --exact ', ' '),
+                                line.replace(' --ignored ', ' '), line.replace('--test-threads=1', '--test-threads=4'),
+                                line.replace('2>&1 | tee ', '2>&1 || tee '), line * 2]:
+                with self.subTest(line=line, replacement=replacement):
+                    self.rejected(path, line, replacement)
+        self.rejected(path, commands[0], commands[0].replace(
+            'native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover',
+            'native_authenticated_signed_growth_branches_reopen_and_compact_queries'))
+        self.rejected(path, commands[1], commands[1].replace('TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY=', 'WRONG_OUTPUT='))
+        self.rejected(path, commands[1], commands[1].replace('/native-account-verification-cost"', '/old-cost"'))
+        swapped = NATIVE_RELEASE_BLOCK.replace(commands[0], 'RELEASE_CONTROL_PLACEHOLDER\n')
+        swapped = swapped.replace(commands[1], commands[0]).replace('RELEASE_CONTROL_PLACEHOLDER\n', commands[1])
+        self.rejected(path, NATIVE_RELEASE_BLOCK, swapped)
+        self.rejected(path, NATIVE_RELEASE_BLOCK, NATIVE_RELEASE_BLOCK * 2)
+
+    def test_release_control_paths_cannot_reuse_or_overwrite_prior_observations(self):
+        for line in NATIVE_RELEASE_BLOCK.splitlines(keepends=True):
+            if 'test ! -e ' in line or 'test ! -L ' in line:
+                with self.subTest(line=line):
+                    self.rejected('scripts/ci/ci_job.sh', line, '')
+
+    def test_release_control_pipeline_keeps_actual_shell_failure_and_output(self):
+        # Exercise the exact shell block using an explicitly synthetic failing
+        # cargo function. This checks pipeline failure retention, not a Rust run.
+        with tempfile.TemporaryDirectory(prefix='trnm-release-pipeline-') as temporary:
+            for failed_case in ['capacity', 'account']:
+                root = Path(temporary) / ('receipt with spaces ' + failed_case)
+                harness = '''set -euo pipefail
+cargo() {
+  case "$*" in
+    *native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover*)
+      printf '%s\\n' 'synthetic capacity stdout'
+      printf '%s\\n' 'synthetic capacity stderr' >&2
+      if test "$TRNM_TEST_FAILURE" = capacity; then return 7; fi ;;
+    *native_complete_account_verification_cost*)
+      test "$TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY" = "$TRNM_CI_RECEIPT_DIR/native-account-verification-cost"
+      printf '%s\\n' 'synthetic account stdout'
+      printf '%s\\n' 'synthetic account stderr' >&2
+      return 9 ;;
+    *) return 97 ;;
+  esac
+}
+'''
+                result = subprocess.run(['bash', '-c', harness + NATIVE_RELEASE_BLOCK],
+                                        env={'PATH': '/usr/bin:/bin', 'TRNM_CI_RECEIPT_DIR': str(root),
+                                             'TRNM_TEST_FAILURE': failed_case},
+                                        capture_output=True, text=True, timeout=10)
+                self.assertEqual(result.returncode, 7 if failed_case == 'capacity' else 9, result.stderr)
+                self.assertIn('synthetic capacity stdout', (root / 'native-capacity-release.log').read_text())
+                self.assertIn('synthetic capacity stderr', (root / 'native-capacity-release.log').read_text())
+                account = root / 'native-account-verification-cost.log'
+                if failed_case == 'capacity':
+                    self.assertFalse(account.exists())
+                else:
+                    self.assertIn('synthetic account stdout', account.read_text())
+                    self.assertIn('synthetic account stderr', account.read_text())
+
     def test_model_observation_block_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()
         changed = original.replace(MODEL_OBSERVATION_BLOCK, '').replace('  fuzz-smoke)\n',
@@ -383,8 +507,8 @@ class CiContractTests(unittest.TestCase):
         self.rejected('scripts/ci/ci_job.sh', original, changed)
 
     def test_model_oracles_must_precede_documentation_tests(self):
-        self.rejected('scripts/ci/ci_job.sh', MODEL_OBSERVATION_BLOCK + RUST_DOCS,
-                      RUST_DOCS + MODEL_OBSERVATION_BLOCK)
+        self.rejected('scripts/ci/ci_job.sh', MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK + RUST_DOCS,
+                      RUST_DOCS + MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK)
 
     def test_model_exports_cannot_leak_into_doc_or_clippy_commands(self):
         self.rejected('scripts/ci/ci_job.sh', '    )\n' + RUST_DOCS, RUST_DOCS + '    )\n')
