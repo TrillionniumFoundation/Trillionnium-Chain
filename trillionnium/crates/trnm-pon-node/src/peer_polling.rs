@@ -8,7 +8,7 @@ use crate::{
         DevelopmentIdentity, Page,
     },
     store::WorkCheckedPacket,
-    Error, Node, Packet, Result, Settings,
+    Error, ErrorCode, Node, Packet, Result, Settings,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -261,16 +261,6 @@ fn lock<'a>(
         }
     }
 }
-fn structural(error: &Error) -> bool {
-    let s = error.to_string();
-    s == "OWNER_POISONED"
-        || s == "NAMESPACE_CHANGED"
-        || s == "DATABASE_REPLACED"
-        || s == "OWNER_REPLACED"
-        || s == "REORG_IN_PROGRESS"
-        || s.starts_with("STORAGE")
-        || (s.starts_with("ANCESTRY_INDEX_") && s != "ANCESTRY_INDEX_UNKNOWN_BLOCK")
-}
 fn page(
     settings: &Settings,
     value: Value,
@@ -432,7 +422,7 @@ impl Engine {
     where
         F: FnMut(&PeerPollingEvent) -> Result<()>,
     {
-        let fatal = structural(&error);
+        let fatal = error.requires_owner_stop();
         let retained = failure(&error.to_string());
         self.states[index].failures += 1;
         self.states[index].last_error = Some(retained.clone());
@@ -507,14 +497,14 @@ impl Engine {
                 .and_then(Value::as_str)
                 .unwrap_or("PEER_BUSINESS_REFUSAL");
             let fallback = stage == "history"
-                && error == "CURSOR"
+                && ErrorCode::parse(error) == Some(ErrorCode::Cursor)
                 && self.states[index].pages == 0
                 && !self.states[index].initial_fallback_used
                 && self.states[index].cursor != settings.genesis();
             self.reject(
                 index,
                 stage,
-                format!("PEER_REFUSAL:{error}").into(),
+                Error::remote(format!("PEER_REFUSAL:{error}")),
                 nanos(started),
                 cost,
                 observe,
@@ -592,7 +582,12 @@ impl Engine {
                 let owner = lock(node, end, stop)?;
                 match owner.parent_height(locator) {
                     Ok(_) => true,
-                    Err(error) if error.to_string() == "UNKNOWN_PARENT" => false,
+                    Err(error)
+                        if error.is(ErrorCode::UnknownParent)
+                            && error.kind() == crate::ErrorKind::StaleContext =>
+                    {
+                        false
+                    }
                     Err(error) => return Err(error),
                 }
             };
@@ -803,7 +798,7 @@ where
             }
             cycles += 1;
             match engine.cycle(&poll_context, &mut rpc, &mut observe) {
-                Err(error) if error.to_string() == "PEER_POLL_CANCELLED" => break,
+                Err(error) if error.is(ErrorCode::PeerPollCancelled) => break,
                 other => other?,
             }
             next = Instant::now() + Duration::from_millis(cfg.poll_interval_ms);
@@ -1290,6 +1285,126 @@ mod tests {
         assert_eq!(indices, vec![0, 1, 0]);
         assert_eq!(engine.states[0].failures, 2);
         assert_eq!(engine.states[1].failures, 1);
+    }
+    #[test]
+    fn actual_retained_header_fault_stops_poll_cycle_while_same_peer_diagnostic_retries() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut owner = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let block = append(&mut owner, settings.genesis(), 11, 0);
+        let id = block.id().unwrap();
+        let raw = block.encode().unwrap();
+        let mut damaged = raw.clone();
+        damaged[0] ^= 0xff;
+        let node = Mutex::new(owner);
+        let cfg = config(&settings);
+        let stop = AtomicBool::new(false);
+        let ctx = context(&node, &cfg, &settings, &stop);
+
+        let mut peer_page = page_value(&settings, id, settings.genesis(), Some(&block));
+        peer_page["packets"][0] = hex::encode(&damaged).into();
+        let mut incoming = Engine::new(&cfg, &settings);
+        incoming.states[0].target = Some(id);
+        for _ in 0..2 {
+            incoming
+                .cycle(
+                    &ctx,
+                    &mut |_, _| Ok(reply(true, peer_page.clone())),
+                    &mut |_| Ok(()),
+                )
+                .unwrap();
+        }
+        assert_eq!(incoming.calls, 2);
+        assert_eq!(incoming.states[0].failures, 2);
+        assert_eq!(incoming.states[0].cursor, settings.genesis());
+        assert_eq!(
+            incoming.states[0].last_error.as_ref().unwrap().message,
+            "HEADER_CODEC"
+        );
+        assert_eq!(incoming.verified, 0);
+        for message in [
+            "HEADER_CODEC",
+            "UNKNOWN_PARENT",
+            "AUTH_RECOVERY:peer recovery source rejected: AUTH_PENDING_AUDIT",
+        ] {
+            incoming
+                .cycle(
+                    &ctx,
+                    &mut |_, _| Ok(reply(false, serde_json::json!({"error":message}))),
+                    &mut |_| Ok(()),
+                )
+                .unwrap();
+        }
+        assert_eq!(incoming.calls, 5);
+        assert_eq!(incoming.states[0].cursor, settings.genesis());
+
+        // Mutate only this test's already-admitted local row; no network listener
+        // or public-service stress campaign is used for this provenance regression.
+        let db = rusqlite::Connection::open(directory.path().join("native.sqlite")).unwrap();
+        db.execute(
+            "UPDATE blocks SET packet=? WHERE id=?",
+            rusqlite::params![damaged, id.as_slice()],
+        )
+        .unwrap();
+        let mut retained = Engine::new(&cfg, &settings);
+        let error = retained
+            .cycle(
+                &ctx,
+                &mut |_, _| Ok(reply(true, serde_json::json!({"tip":hex::encode(id)}))),
+                &mut |_| Ok(()),
+            )
+            .unwrap_err();
+        assert!(error.is(ErrorCode::HeaderCodec));
+        assert_eq!(error.kind(), crate::ErrorKind::LocalStructure);
+        assert!(error.requires_owner_stop());
+        assert_eq!(error.to_string(), "HEADER_CODEC");
+        assert_eq!(retained.calls, 1);
+        assert_eq!(retained.states[0].failures, 1);
+        assert_eq!(retained.states[0].completed, 0);
+        assert_eq!(retained.states[0].cursor, settings.genesis());
+        db.execute(
+            "UPDATE blocks SET packet=? WHERE id=?",
+            rusqlite::params![raw, id.as_slice()],
+        )
+        .unwrap();
+        node.lock()
+            .unwrap()
+            .check_observed_history(id, 1000)
+            .unwrap();
+    }
+
+    #[test]
+    fn typed_local_structure_stops_but_remote_and_transport_failures_retain_cursor() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let cfg = config(&settings);
+        let mut engine = Engine::new(&cfg, &settings);
+        let cursor = [19; 32];
+        engine.states[0].cursor = cursor;
+        for (error, fatal) in [
+            (Error::from("STORAGE_PACKET"), true),
+            (Error::from(rusqlite::Error::InvalidQuery), true),
+            (Error::remote("STORAGE_PACKET"), false),
+            (Error::from("ANCESTRY_INDEX_REMOTE_FAILURE"), false),
+            (Error::from(std::io::Error::other("STORAGE_PACKET")), false),
+            (Error::from("ANCESTRY_INDEX_UNKNOWN_BLOCK"), false),
+            (Error::from("ANCESTRY_INDEX_BUDGET"), true),
+        ] {
+            let display = error.to_string();
+            let mut events = 0;
+            let result = engine.reject(0, "history", error, 10, None, &mut |event| {
+                events += 1;
+                assert_eq!(event.kind, "failure_cursor_retained");
+                assert_eq!(event.cursor, hex::encode(cursor));
+                Ok(())
+            });
+            assert_eq!(result.is_err(), fatal, "{display}");
+            if let Err(error) = result {
+                assert_eq!(error.to_string(), display);
+            }
+            assert_eq!(events, 1);
+            assert_eq!(engine.states[0].cursor, cursor);
+        }
+        assert_eq!(engine.states[0].failures, 7);
     }
     #[test]
     fn normal_zero_progress_runtime_does_not_stop_service_and_observer_error_does() {

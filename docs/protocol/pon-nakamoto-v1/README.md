@@ -9,6 +9,12 @@ Atomic task renewal: [lifecycle V3](details/QUALIFIED_TASK_LIFECYCLE_V3.md).
 Queued signed overlap: [lifecycle V4](details/QUALIFIED_TASK_LIFECYCLE_V4.md).
 Versioned public transport: [public intake v2](details/PUBLIC_INTAKE_V2.md).
 Pinned tool dependency review: [dependency security](details/DEPENDENCY_SECURITY.md).
+Current implementation inventory: [generated view](../../architecture/CURRENT_IMPLEMENTATION.md).
+Capacity and explicit maintenance: [continuity v1](details/CONTINUITY_V1.md).
+Exact verifier/producer comparison: [W1 implementations](details/W1_IMPLEMENTATION_COMPARISON.md).
+Native model admission: [model evidence v3](details/NATIVE_MODEL_EVIDENCE_V3.md) and the explicit [composition v4 successor](details/NATIVE_MODEL_COMPOSITION_V4.md).
+State/history resource costs: [bounded operations](details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md).
+Stable local failure identity: [typed errors](details/INTERNAL_ERROR_IDENTITY.md).
 
 ## Architectural decision
 

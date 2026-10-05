@@ -29,6 +29,41 @@ parent bytes and its expected root. The adapter does not cache execution results
 signatures, fee decisions, nonce checks, conflicts or partially accepted prefixes.
 Serial and parallel execution retain the existing canonical replay and receipt order.
 
+### Sharing complete bytes within a warm parent binding
+
+`CheckedExecutionParent::bind` visits every actual State entry in key order, applies
+the original canonical JSON rules to every value, and compares every key/value with
+the optional opaque predecessor. A detected byte or key-count mismatch does not skip
+later canonical validation. Canonical errors still precede protocol `LIMIT`, which
+precedes `COMMITMENT_PARENT`, which precedes `COMMITMENT_ROOT`; invalid cache ceilings
+are rejected before binding work as before. Exact 65,536 keys, 160-byte keys and
+4,096-byte canonical values retain their inclusive bounds.
+
+Only after complete equality and the expected-root comparison does the warm binding
+share the predecessor's immutable canonical-map Arc. It retains the same immutable
+borrow of the actual State. It creates no second complete canonical map and copies no
+State keys for that binding; it still serializes every actual value, with at most one
+newly serialized value live in the comparison. This remains O(N) work and is not an
+allocator, RSS, CPU deadline or faster-state-read claim. A cold binding still creates
+the complete canonical map and computes the original full root. Successor encoding,
+full differences, checked tree application, budget fallback and durable publication
+are unchanged. Conservative workspace charges remain unchanged even when this one
+operation shares its parent map.
+
+The in-module `warm_parent_binding_*` controls check actual Arc identity alongside
+complete canonical bytes, State/root/receipt/delta parity with the original executor
+and a separately copying warm-binding control. They also check changed actual keys
+and values, late canonical failures, exact limits, wrong roots, cancelled staged roots
+and successful retry. The existing corrupt-tree fallback remains required.
+The copying control mirrors the earlier algorithm but uses the current parent type,
+including one additional `Arc::new` wrapper allocation; it is not an old binary. The
+`warm_parent_binding_component_timing` control alternates eight copying/sharing sample
+pairs at three State sizes, with 16 complete binds and drops per sample. Its logical
+additional retained-map counts exclude per-value serialization temporaries; they are
+not allocator measurements. Root/execution parity and snapshot seeding occur outside
+the binding clocks. The observation does not replace Node actual-KV, stale-generation,
+cancelled-publication or reorganization tests.
+
 ## Resource selection and errors
 
 The default retained-cache limits are 65,536 keys and 8 MiB of canonical key/value
@@ -128,8 +163,12 @@ the database merely because those identifiers still match. Actual changed, delet
 new keys must be included in the full difference. The resulting root must match the
 existing committed block record.
 
-A transaction-pool preview executes every complete candidate prefix with the actual
-parent and original miner/configuration. Neither a successful preview nor an abandoned
+A transaction-pool preview applies all state-dependent M05 gates to every complete
+candidate prefix with the actual parent and original miner/configuration. Within
+one immutable parent operation, successful main-signature facts and the accepted M06
+prefix can be reused; M06 executes only the newly appended suffix after one mandatory
+prologue. [The pool contract](LOCAL_MEMPOOL_LIFECYCLE.md#same-block-incremental-m06-prefix)
+defines the private reuse boundary and complete-output equivalence. Neither a successful preview nor an abandoned
 mining attempt publishes its speculative successor as the durable cache. Task-output
 accounting retains all eligibility/material/window/product checks: when it changes no
 state, the caller can reuse this execution's completed root; when it writes state, the
@@ -154,7 +193,8 @@ The native implementation is in
 [`store/mempool.rs`](../../../../trillionnium/crates/trnm-pon-node/src/store/mempool.rs).
 `read_active` checks complete actual slot values and publishes only that committed
 context. `execute_derived` validates an admitted parent's expected root before running
-M06; pool previews keep their existing admission gate and complete-prefix execution.
+M06; pool previews keep complete-prefix M05 admission with operation-local incremental
+M06 execution and the original complete output/root checks.
 `state_at` carries one temporary tree from a checked historical snapshot and checks
 each actual delta application. Mining derives a successor for its header; admission
 independently executes and compares that header's root and ordered receipts. Direct

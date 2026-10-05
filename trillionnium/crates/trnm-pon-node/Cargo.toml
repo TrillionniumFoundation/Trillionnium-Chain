@@ -13,17 +13,17 @@ production_activation = false
 consensus_authority = false
 
 [dependencies]
-trnm-protocol = { path = "../trnm-protocol" }
-trnm-crypto-primitives = { path = "../trnm-crypto-primitives" }
-trnm-mvcc-fee = { path = "../trnm-mvcc-fee" }
-trnm-transport = { path = "../trnm-transport" }
-trnm-mempool = { path = "../trnm-mempool" }
+trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
+trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
+trnm-mvcc-fee = { version = "=0.1.0", path = "../trnm-mvcc-fee" }
+trnm-transport = { version = "=0.1.0", path = "../trnm-transport" }
+trnm-mempool = { version = "=0.1.0", path = "../trnm-mempool" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 hex = "0.4"
 fs2 = "0.4"
 libc = "0.2"
-rustix = { version = "1.1.4", features = ["process", "time"] }
+rustix = { version = "1.1.4", features = ["fs", "process", "time"] }
 sha2 = "0.10"
 rusqlite = { version = "0.32", features = ["bundled"] }
 

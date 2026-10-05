@@ -36,7 +36,7 @@ authors = ["Trillionnium Contributors"]
 [workspace.metadata.trnm]
 lane = "chain-protocol"
 development_target = "pon-nakamoto-v1"
-implementation_status = "portable-foundation-only"
+implementation_status = "native-development-profiles-not-publicly-qualified"
 production_consensus_activation = false
 
 [profile.test.package.curve25519-dalek]

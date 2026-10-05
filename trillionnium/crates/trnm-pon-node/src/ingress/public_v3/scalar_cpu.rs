@@ -198,7 +198,7 @@ impl LiveRequestCpu {
             budget.charge_live(Instant::now(), measured)
         })();
         if let Err(error) = &result {
-            if error.to_string() == "PUBLIC_MUTATION_CPU_BUDGET" {
+            if error.is(crate::ErrorCode::PublicMutationCpuBudget) {
                 state.refused |= enforce;
             } else {
                 state.unavailable = true;

@@ -11,6 +11,16 @@ case "${1:?required job}" in
     python3 scripts/ci/test_invariants_registry.py
     python3 scripts/ci/test_responsibility_evidence.py
     python3 scripts/ci/test_applicability.py
+    python3 scripts/ci/test_ci_contract.py
+    python3 scripts/ci/test_ci_execution.py
+    python3 scripts/ci/test_cross_arch_cost.py
+    python3 scripts/ci/test_zero_locality_cost.py
+    python3 scripts/ci/test_one_zero_locality_cost.py
+    python3 scripts/ci/test_maintenance_cost.py
+    python3 scripts/ci/test_work_rejection_report.py
+    python3 scripts/ci/test_account_archive_conformance.py
+    python3 scripts/ci/test_run_account_execution_conformance.py
+    python3 scripts/ci/report_current_implementation.py --check
     python3 scripts/ci/test_work_cost_report.py
     python3 scripts/test_qualification_runtime.py
     ;;
@@ -18,19 +28,30 @@ case "${1:?required job}" in
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples
+    TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_vectors")" python3 formal/pon-nakamoto-v1/test_continuity.py -v
+    TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v
+    TRNM_PAIRED_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io")" TRNM_PAIRED_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work" python3 formal/pon-nakamoto-v1/test_paired_work.py -v
+    TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" TRNM_ZERO_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work" python3 formal/pon-nakamoto-v1/test_zero_work.py -v
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
     cargo fetch --locked --manifest-path trillionnium/Cargo.toml
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
+    python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v
+    python3 scripts/ci/run_account_archive_conformance.py
+    python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v
+    python3 formal/pon-nakamoto-v1/test_state_witness_oracle.py -v
+    python3 scripts/ci/run_account_execution_conformance.py
     cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
+    python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
     python3 scripts/test_llm_runtime_pilot.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_work_utility.py
     python3 formal/pon-nakamoto-v1/test_public_evaluation_lifecycle.py
     python3 formal/pon-nakamoto-v1/test_llm_adapter_contract.py
     python3 formal/pon-nakamoto-v1/test_model_acceptance.py
+    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v
     "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuous_pipeline" "${RUNNER_TEMP:-/tmp}/trnm-pipeline-smoke-$$" 2 4 0 growth protected
     python3 formal/pon-nakamoto-v1/test_evaluation_round.py
     python3 formal/pon-nakamoto-v1/test_evaluation.py
@@ -57,13 +78,72 @@ case "${1:?required job}" in
     python3 scripts/ci/test_repository.py
     python3 formal/pon-nakamoto-v1/test_reference.py
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives fixed_hash_text -- --nocapture
+    python3 scripts/ci/run_fuzz_smoke.py
     ;;
   rust-baseline)
     cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+    python3 scripts/ci/run_supply_chain.py
     # The full workspace matrix includes both evaluation_sync_observation tests.
     # Run that target once in this matrix; a separate pre-run duplicated over ten
     # minutes of actual sync work and left the hosted 45-minute job incomplete.
-    cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
+    (
+      trnm_model_receipt_root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
+      mkdir -p "$trnm_model_receipt_root"
+      export TRNM_MODEL_COMPOSITION_VECTORS="$trnm_model_receipt_root/model-composition"
+      test ! -e "$TRNM_MODEL_COMPOSITION_VECTORS"
+      test ! -L "$TRNM_MODEL_COMPOSITION_VECTORS"
+      mkdir "$TRNM_MODEL_COMPOSITION_VECTORS"
+      export TRNM_MODEL_COMPOSITION_RUN_ID="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+      test -n "$TRNM_MODEL_COMPOSITION_RUN_ID"
+      printf 'model-composition directory=%s run_id=%s\n' "$TRNM_MODEL_COMPOSITION_VECTORS" "$TRNM_MODEL_COMPOSITION_RUN_ID"
+      export TRNM_AUTHENTICATED_STATE_VECTORS="$trnm_model_receipt_root/authenticated-state/native.json"
+      test ! -e "$trnm_model_receipt_root/authenticated-state"
+      test ! -L "$trnm_model_receipt_root/authenticated-state"
+      mkdir "$trnm_model_receipt_root/authenticated-state"
+      export TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR="$trnm_model_receipt_root/native-authenticated-state"
+      test ! -e "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR"
+      test ! -L "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR"
+      export TRNM_AUTHENTICATED_MIGRATION_EXPORT="$trnm_model_receipt_root/authenticated-migration"
+      test ! -e "$TRNM_AUTHENTICATED_MIGRATION_EXPORT"
+      test ! -L "$TRNM_AUTHENTICATED_MIGRATION_EXPORT"
+      export TRNM_ACCOUNT_MULTIPROOF_VECTORS="$trnm_model_receipt_root/account-multiproof/native.json"
+      test ! -e "$trnm_model_receipt_root/account-multiproof"
+      test ! -L "$trnm_model_receipt_root/account-multiproof"
+      mkdir "$trnm_model_receipt_root/account-multiproof"
+      export TRNM_OBLIGATION_RANGE_VECTORS="$trnm_model_receipt_root/obligation-range/native.json"
+      test ! -e "$trnm_model_receipt_root/obligation-range"
+      test ! -L "$trnm_model_receipt_root/obligation-range"
+      mkdir "$trnm_model_receipt_root/obligation-range"
+      export TRNM_ZERO_PAIRED_PREFIX_OUTPUT="$trnm_model_receipt_root/zero-paired-prefix"
+      test ! -e "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
+      test ! -L "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
+      unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
+      python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
+      python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
+      python3 formal/pon-nakamoto-v1/test_model_composition.py -v
+      python3 formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py -v
+      python3 formal/pon-nakamoto-v1/authenticated_state_archive_oracle.py "$TRNM_AUTHENTICATED_STATE_VECTORS" "$trnm_model_receipt_root/authenticated-state/native.sqlite" --output "$trnm_model_receipt_root/authenticated-state/oracle.json"
+      python3 formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py -v
+      python3 formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/native.json" "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/native.sqlite" --output "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/oracle.json"
+      python3 formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/native.json" "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/native.sqlite" --migration-source "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/source.sqlite" --output "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/oracle.json"
+      python3 formal/pon-nakamoto-v1/test_account_multiproof_oracle.py -v
+      python3 formal/pon-nakamoto-v1/account_multiproof_oracle.py "$TRNM_ACCOUNT_MULTIPROOF_VECTORS" --output "$trnm_model_receipt_root/account-multiproof/oracle.json"
+      python3 formal/pon-nakamoto-v1/test_obligation_range_oracle.py -v
+      python3 formal/pon-nakamoto-v1/obligation_range_oracle.py "$TRNM_OBLIGATION_RANGE_VECTORS" --output "$trnm_model_receipt_root/obligation-range/oracle.json"
+    )
+    (
+      trnm_native_receipt_root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
+      mkdir -p "$trnm_native_receipt_root"
+      test ! -e "$trnm_native_receipt_root/native-capacity-release.log"
+      test ! -L "$trnm_native_receipt_root/native-capacity-release.log"
+      cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-capacity-release.log"
+      test ! -e "$trnm_native_receipt_root/native-account-verification-cost"
+      test ! -L "$trnm_native_receipt_root/native-account-verification-cost"
+      test ! -e "$trnm_native_receipt_root/native-account-verification-cost.log"
+      test ! -L "$trnm_native_receipt_root/native-account-verification-cost.log"
+      TRNM_NATIVE_ACCOUNT_VERIFY_COST_DIRECTORY="$trnm_native_receipt_root/native-account-verification-cost" cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_native_receipt_root/native-account-verification-cost.log"
+    )
     cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features
     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings
     ;;

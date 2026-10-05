@@ -1,7 +1,8 @@
 //! Bounded honest-client recovery. No new admission or confirmation authority.
-use crate::{digest, ensure, ingress, Node, Packet, Result};
+use crate::{digest, ensure, ingress, Error, ErrorCode, Node, Packet, Result};
 use ingress::public_v3::{
-    call_public_protected_v3_with_deadline, PublicClientMetrics, PublicPolicy, PublicReply, Request,
+    call_public_protected_v3_with_deadline, PublicClientMetrics, PublicClientStage, PublicPolicy,
+    PublicReply, Request,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -135,12 +136,24 @@ fn ns(duration: Duration) -> u64 {
     duration.as_nanos().min(u64::MAX as u128) as u64
 }
 
-fn retryable_eof(error: &str, metrics: &PublicClientMetrics) -> bool {
-    error == "FRAME_EOF"
+fn retryable_eof(error: &Error, metrics: &PublicClientMetrics) -> bool {
+    error.is(ErrorCode::FrameEof)
+        && error.kind() == crate::ErrorKind::Transport
         && matches!(
             metrics.failed_stage,
-            Some("challenge" | "solution-body-response")
+            Some(PublicClientStage::Challenge | PublicClientStage::SolutionBodyResponse)
         )
+}
+
+fn uncertain_failed_stage(metrics: &PublicClientMetrics) -> bool {
+    matches!(
+        metrics.failed_stage,
+        Some(
+            PublicClientStage::Challenge
+                | PublicClientStage::SolutionSearch
+                | PublicClientStage::SolutionBodyResponse
+        )
+    )
 }
 
 #[derive(Deserialize)]
@@ -242,16 +255,10 @@ impl Session<'_, '_> {
             retryable_transport_eof: reply
                 .as_ref()
                 .err()
-                .is_some_and(|error| retryable_eof(&error.to_string(), &metrics)),
+                .is_some_and(|error| retryable_eof(error, &metrics)),
             metrics,
         };
-        if packet.is_some()
-            && reply.is_err()
-            && matches!(
-                record.metrics.failed_stage,
-                Some("challenge" | "solution-search" | "solution-body-response")
-            )
-        {
+        if packet.is_some() && reply.is_err() && uncertain_failed_stage(&record.metrics) {
             // A permanent client-side refusal must not claim that the remote
             // Node had no effect merely because its response was not accepted.
             self.outcome.submission_outcome_uncertain = true;
@@ -275,9 +282,9 @@ impl Session<'_, '_> {
             let record = self.outcome.attempts.last();
             match result {
                 Ok(reply) if reply.ok => return Ok(reply),
-                Ok(reply) => return Err(remote_error(&reply)?.into()),
+                Ok(reply) => return Err(remote_error(&reply)?),
                 Err(error)
-                    if record.is_some_and(|r| retryable_eof(&error.to_string(), &r.metrics))
+                    if record.is_some_and(|r| retryable_eof(&error, &r.metrics))
                         && attempt + 1 < self.plan.max_submit_attempts =>
                 {
                     self.pause()?;
@@ -468,9 +475,9 @@ impl Session<'_, '_> {
                 }
                 Ok(reply) => {
                     let error = remote_error(&reply)?;
-                    if error == "UNKNOWN_PARENT" && allow_parent_repair {
+                    if error.is(ErrorCode::UnknownParent) && allow_parent_repair {
                         self.restore_parent(packet.header.parent)?;
-                    } else if error == "PUBLIC_MUTATION_CPU_BUDGET" {
+                    } else if error.is(ErrorCode::PublicMutationCpuBudget) {
                         // This signed Submit refusal remains in attempts. An
                         // earlier admission may already have placed the exact
                         // retained packet on the current remote active branch;
@@ -482,7 +489,7 @@ impl Session<'_, '_> {
                         // consumes the original per-packet/call/epoch limits.
                         self.pause_after_cpu_budget(id)?;
                     } else {
-                        return Err(error.into());
+                        return Err(error);
                     }
                 }
                 Err(error) => {
@@ -490,7 +497,7 @@ impl Session<'_, '_> {
                         .outcome
                         .attempts
                         .last()
-                        .is_some_and(|r| retryable_eof(&error.to_string(), &r.metrics));
+                        .is_some_and(|r| retryable_eof(&error, &r.metrics));
                     if !retryable {
                         return Err(error);
                     }
@@ -507,12 +514,13 @@ impl Session<'_, '_> {
     }
 }
 
-fn remote_error(reply: &PublicReply) -> Result<&str> {
+fn remote_error(reply: &PublicReply) -> Result<Error> {
     reply
         .value
         .get("error")
         .and_then(Value::as_str)
         .filter(|error| !error.is_empty() && error.len() <= 256)
+        .map(Error::remote)
         .ok_or_else(|| "SUBMIT_RECOVERY_REMOTE_ERROR".into())
 }
 
@@ -608,4 +616,65 @@ pub fn submit_with_verified_parent_recovery(
     }
     outcome.total_elapsed_ns = ns(plan.started.elapsed());
     outcome
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn retry_requires_local_frame_eof_at_one_of_the_existing_response_stages() {
+        for (stage, retryable, uncertain) in [
+            (None, false, false),
+            (Some(PublicClientStage::Construction), false, false),
+            (Some(PublicClientStage::Challenge), true, true),
+            (Some(PublicClientStage::SolutionSearch), false, true),
+            (Some(PublicClientStage::SolutionBodyResponse), true, true),
+            (Some(PublicClientStage::Complete), false, false),
+            (
+                Some(PublicClientStage::Unknown("future-stage")),
+                false,
+                false,
+            ),
+            (Some(PublicClientStage::Unknown("challenge")), false, false),
+            (
+                Some(PublicClientStage::Unknown("solution-search")),
+                false,
+                false,
+            ),
+            (
+                Some(PublicClientStage::Unknown("solution-body-response")),
+                false,
+                false,
+            ),
+        ] {
+            let metrics = PublicClientMetrics {
+                failed_stage: stage,
+                ..PublicClientMetrics::default()
+            };
+            assert_eq!(
+                retryable_eof(&Error::from("FRAME_EOF"), &metrics),
+                retryable,
+                "{stage:?}",
+            );
+            assert_eq!(uncertain_failed_stage(&metrics), uncertain, "{stage:?}");
+            for error in [
+                Error::remote("FRAME_EOF"),
+                Error::remote("OWNER_REPLACED"),
+                Error::from(std::io::Error::other("FRAME_EOF")),
+                Error::from("PUBLIC_EOF"),
+                Error::from("FRAME_EOF: peer claim"),
+                Error::from("FRAME_DEADLINE"),
+                Error::from("PUBLIC_CLIENT_DEADLINE"),
+                Error::from("PUBLIC_REQUEST_CANCELLED"),
+                Error::from("PEER_POLL_CANCELLED"),
+                Error::from("PUBLIC_COOKIE_CONTEXT"),
+                Error::from("SUBMIT_RECOVERY_STALE_HEAD"),
+                Error::from("SUBMIT_RECOVERY_STALE_BRANCH"),
+                Error::from("PUBLIC_MUTATION_CPU_UNAVAILABLE"),
+            ] {
+                assert!(!retryable_eof(&error, &metrics), "{stage:?}: {error}");
+            }
+        }
+    }
 }

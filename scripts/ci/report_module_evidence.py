@@ -59,29 +59,100 @@ def check_symbol(root: Path, ref: dict[str, str]) -> None:
         require(symbol in python_symbols(text), 'missing Python owner ' + str(ref))
     elif path.suffix == '.rs':
         # This is a source binding check, not a Rust semantic analyzer or a test pass.
+        text = rust_code(text)
         parts = symbol.split('::')
         if len(parts) == 2:
-            require(re.search(r'\bimpl\s+' + re.escape(parts[0]) + r'\s*\{', text),
-                    'missing Rust implementation owner ' + symbol)
-            text = text[re.search(r'\bimpl\s+' + re.escape(parts[0]) + r'\s*\{', text).end():]
-            depth, end = 1, 0
-            # Remove quoted string/comment contents before finding the impl's closing brace.
-            cleaned = re.sub(r'//[^\n]*|"(?:\\.|[^"\\])*"', '', text)
-            for end, char in enumerate(cleaned):
-                depth += (char == '{') - (char == '}')
-                if not depth:
-                    break
-            text = cleaned[:end]
-        require(re.search(r'\bfn\s+' + re.escape(parts[-1]) + r'\s*[(<]', text),
-                'missing Rust callable ' + symbol)
+            bodies = list(rust_impl_bodies(text, parts[0]))
+            require(bodies, 'missing Rust implementation owner ' + symbol)
+            require(any(rust_direct_method(body, parts[1]) for body in bodies),
+                    'missing Rust callable ' + symbol)
+        else:
+            require(re.search(r'\bfn\s+' + re.escape(parts[-1]) + r'\s*[(<]', text),
+                    'missing Rust callable ' + symbol)
     else:
         raise ValueError('unsupported callable source ' + ref['path'])
+
+
+def rust_group_end(code: str, start: int) -> int | None:
+    """End of a balanced generic/header group; ignore arrows and const-block operators."""
+    pairs = {'<': '>', '(': ')', '[': ']', '{': '}'}
+    stack = [pairs[code[start]]]
+    for index in range(start + 1, len(code)):
+        char = code[index]
+        if char in '<>' and ('}' in stack or code[index - 1] == '-'):
+            continue
+        if char in pairs:
+            stack.append(pairs[char])
+        elif char in '>)]}':
+            if char != stack[-1]:
+                return None
+            stack.pop()
+            if not stack:
+                return index + 1
+    return None
+
+
+def rust_impl_bodies(code: str, owner: str):
+    """Find this exact inherent owner, including generic declarations and arguments."""
+    for match in re.finditer(r'\bimpl\b\s*', code):
+        index = match.end()
+        if index < len(code) and code[index] == '<':
+            index = rust_group_end(code, index)
+            if index is None:
+                continue
+        index += len(code[index:]) - len(code[index:].lstrip())
+        named = re.match(re.escape(owner) + r'(?!\w)', code[index:])
+        if named is None:
+            continue
+        index += named.end()
+        index += len(code[index:]) - len(code[index:].lstrip())
+        if index < len(code) and code[index] == '<':
+            index = rust_group_end(code, index)
+            if index is None:
+                continue
+            index += len(code[index:]) - len(code[index:].lstrip())
+        where = re.match(r'where\b', code[index:])
+        if where:
+            index += where.end()
+            while index < len(code) and code[index] not in '{;}':
+                if code[index] in '<([':
+                    end = rust_group_end(code, index)
+                    if end is None:
+                        break
+                    index = end
+                else:
+                    index += 1
+        # In particular, `impl Trait for Owner` cannot become an inherent owner.
+        if index >= len(code) or code[index] != '{':
+            continue
+        depth = 1
+        for end in range(index + 1, len(code)):
+            depth += (code[end] == '{') - (code[end] == '}')
+            if depth == 0:
+                yield code[index + 1:end]
+                break
+
+
+def rust_direct_method(body: str, method: str) -> bool:
+    """A nested local function or another nested impl is not this owner's method."""
+    depth = 0
+    pattern = r'[{}()\[\]]|\bfn\s+' + re.escape(method) + r'\s*(?=[(<])'
+    for match in re.finditer(pattern, body):
+        token = match[0]
+        if token in '{([':
+            depth += 1
+        elif token in '})]':
+            depth -= 1
+        elif depth == 0:
+            return True
+    return False
 
 
 def rust_code(text: str) -> str:
     """Mask comments/string literals, preserving layout for source-only test binding."""
     out = list(text)
     raw_start = re.compile(r'(?:br|r)(#*)"')
+    char_start = re.compile(r"'(?:\\(?:u\{[0-9a-fA-F_]+\}|x[0-9a-fA-F]{2}|.)|[^'\\\n])'")
     i = 0
     while i < len(text):
         start = i
@@ -104,6 +175,9 @@ def rust_code(text: str) -> str:
             terminator = '"' + raw[1]
             end = text.find(terminator, raw.end())
             i = len(text) if end < 0 else end + len(terminator)
+        elif text[i] == "'" and (character := char_start.match(text, i)):
+            # Lifetimes ('a, '_) have no closing quote and are left as code.
+            i = character.end()
         elif text[i] == '"':
             i += 1
             while i < len(text):

@@ -42,7 +42,8 @@ guarantee, an SLA, a fastest-producer bound, or a combined physical-memory bound
 ## Recovery and dependency readiness
 
 Every call is recorded, including every transport failure and authenticated
-business refusal. Exact `FRAME_EOF` observed in `challenge` or
+business refusal. Decisions use [typed internal error identities](INTERNAL_ERROR_IDENTITY.md)
+at the existing local or authenticated remote boundary. Exact local `FRAME_EOF` observed in `challenge` or
 `solution-body-response` permits a bounded transport retry. A generic CLI exit2, IO string,
 external timeout, signature/context failure, clock deferral, or unknown error
 does not. Retrying retains the original complete packet bytes; transport cookies

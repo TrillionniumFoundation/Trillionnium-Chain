@@ -239,20 +239,15 @@ impl Node {
                 (blocks.len() as u64) < max_ancestry_blocks,
                 "EVALUATION_OBSERVATION_LIMIT",
             )?;
-            let record = self.record(current_block)?;
-            let header = self.stored_header(current_block)?;
+            let link = self.stored_header_link(current_block)?;
+            let record = link.record;
+            let header = link.header;
             ensure(header.timestamp as u128 <= time_bound, "TIME_DEFERRED")?;
-            let parent = record.parent.ok_or("UNKNOWN_PARENT")?;
-            let parent_record = self.record(parent)?;
-            ensure(
-                parent_record.height.checked_add(1) == Some(record.height)
-                    && header.parent == parent,
-                "ANCESTRY_HEIGHT",
-            )?;
+            let parent = header.parent;
             ensure(
                 record.work
-                    == parent_record
-                        .work
+                    == link
+                        .parent_work
                         .checked_add(consensus::required_work(header.target)?)?,
                 "CHAINWORK",
             )?;

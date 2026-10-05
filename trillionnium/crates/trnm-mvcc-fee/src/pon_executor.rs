@@ -3,6 +3,7 @@
 //! reads are validated in canonical order. Conflict or speculative rejection is
 //! re-executed ONCE against that order's current state, never an unbounded retry loop.
 use crate::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
+use crate::continuity_v1::{self, PROFILE as CONTINUITY_TASK_PROFILE};
 use crate::public_evaluation;
 use crate::qualified_task_lifecycle;
 use serde_json::{json, Value};
@@ -22,6 +23,43 @@ pub const QUALIFIED_DEMANDS: u64 = 16;
 
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
+/// Optional computation-input gate for semantic account point accesses. The
+/// callback itself conveys no proof, signature, parent or admission authority.
+/// Aggregate balance scans and complete state commitments still use full State.
+pub type AccountPointAccess<'a> = dyn Fn(&str) -> Result<()> + Sync + 'a;
+/// Borrowed research check of the actual complete mandatory transition.
+pub type MandatoryStateCheck<'a> = dyn Fn(&State, &State, &[Vec<u8>]) -> Result<()> + Sync + 'a;
+/// Research-only input for the complete mandatory non-account partition. The
+/// caller must authenticate these rows before entry. M06 additionally checks the
+/// exact complete partition against its full parent reference, then executes the
+/// actual mandatory relation using these supplied rows. A rejecting completion
+/// check prevents any transaction or output from following that prologue.
+pub struct MandatoryStateInput<'a> {
+    pub non_accounts: &'a State,
+    pub completed: &'a MandatoryStateCheck<'a>,
+}
+/// Complete monetary namespaces consumed by the explicit range-witness path.
+/// The semantic set is shared with its range producer/verifier. Future and
+/// zero-valued records are included; a due-only list is never sufficient.
+pub const MONETARY_OBLIGATION_PREFIXES: [&str; 4] = ["quota:", "release:", "reward:", "task:"];
+pub fn is_monetary_obligation(key: &str) -> bool {
+    MONETARY_OBLIGATION_PREFIXES
+        .iter()
+        .any(|prefix| key.starts_with(prefix))
+}
+/// Untrusted computation input; M06 checks its exact projection against the
+/// complete parent before using these supplied rows for monetary discovery.
+/// The Node research owner additionally verifies its authenticated range proof.
+/// Other cleanup rules and the final complete successor remain unchanged.
+pub struct MonetaryObligationInput<'a> {
+    pub rows: &'a State,
+}
+#[derive(Default)]
+struct StateInputs<'a> {
+    accounts: Option<&'a AccountPointAccess<'a>>,
+    mandatory: Option<&'a MandatoryStateInput<'a>>,
+    monetary: Option<&'a MonetaryObligationInput<'a>>,
+}
 /// Caller-local observation only; no ledger byte or execution authority.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExecutionProgress {
@@ -350,6 +388,7 @@ impl Config {
                     &[&canonical(&registry)?]
                 )));
             }
+            CONTINUITY_TASK_PROFILE => continuity_v1::configure(&mut params, policy)?,
             CHECKPOINT_TASK_PROFILE => return Err("CHECKPOINT_POLICY_REQUIRED"),
             _ => return Err("WORK_TASK_PROFILE"),
         }
@@ -365,9 +404,19 @@ impl Config {
                 serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
                     .map_err(|_| "CONFIG")?
             }
-            crate::integer_factor_candidate_v2::PROFILE => {
+            crate::integer_factor_candidate_v2::PROFILE
+            | crate::model_evidence_v3::PROFILE
+            | crate::model_composition_v4::PROFILE => {
                 require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
-                require(task_profile == LEGACY_TASK_PROFILE, "MODEL_PROFILE_TASK")?;
+                require(
+                    task_profile == LEGACY_TASK_PROFILE
+                        || (matches!(
+                            model_profile,
+                            crate::model_evidence_v3::PROFILE
+                                | crate::model_composition_v4::PROFILE
+                        ) && task_profile == "consensus-maintenance-continuity-dev-v1"),
+                    "MODEL_PROFILE_TASK",
+                )?;
                 let factor_policy: Value = serde_json::from_str(include_str!(
                     "../../../../config/pon/integer-factor-candidate-v2.json"
                 ))
@@ -405,7 +454,15 @@ impl Config {
                 ] {
                     require(factor_policy[key] == expected, "CONFIG")?;
                 }
-                params["consensus_revision"] = json!(11);
+                params["consensus_revision"] = json!(if model_profile
+                    == crate::model_composition_v4::PROFILE
+                {
+                    crate::model_composition_v4::REVISION.max(field(&params, "consensus_revision")?)
+                } else if model_profile == crate::model_evidence_v3::PROFILE {
+                    crate::model_evidence_v3::REVISION.max(field(&params, "consensus_revision")?)
+                } else {
+                    11
+                });
                 params["model_profile"] = json!(model_profile);
                 params["chain_label"] =
                     json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
@@ -413,10 +470,18 @@ impl Config {
                     b"integer-factor-candidate-policy-v2",
                     &[&canonical(&factor_policy)?]
                 )));
-                serde_json::from_str(include_str!(
+                let mut model: Value = serde_json::from_str(include_str!(
                     "../../../../config/pon/model-family-integer-factor-v2.json"
                 ))
-                .map_err(|_| "CONFIG")?
+                .map_err(|_| "CONFIG")?;
+                if model_profile == crate::model_evidence_v3::PROFILE {
+                    crate::model_evidence_v3::install(&mut params)?;
+                    model["native_admission_profile"] = json!(model_profile);
+                } else if model_profile == crate::model_composition_v4::PROFILE {
+                    crate::model_composition_v4::install(&mut params)?;
+                    model["native_admission_profile"] = json!(model_profile);
+                }
+                model
             }
             "smollm2-135m-cpu-dev-v1" => {
                 require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
@@ -438,7 +503,12 @@ impl Config {
             )?;
             params["max_artifact_bytes"] = json!(maximum);
         }
-        if model_profile == crate::integer_factor_candidate_v2::PROFILE {
+        if matches!(
+            model_profile,
+            crate::integer_factor_candidate_v2::PROFILE
+                | crate::model_evidence_v3::PROFILE
+                | crate::model_composition_v4::PROFILE
+        ) {
             for (key, expected) in [
                 ("schema", json!("integer-linear-factor-family-v2")),
                 ("version", json!(2)),
@@ -487,7 +557,32 @@ impl Config {
             ],
         );
         let family = hash(b"family", &[&canonical(&model)?]);
-        let plan = if model_profile == crate::integer_factor_candidate_v2::PROFILE {
+        let plan = if model_profile == crate::model_composition_v4::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-model-composition-plan-v4",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                    &hash32(text(&params, "model_composition_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::model_evidence_v3::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-model-evidence-plan-v3",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::integer_factor_candidate_v2::PROFILE {
             hash(
                 b"plan",
                 &[
@@ -657,14 +752,16 @@ struct Patch {
 }
 struct View<'a> {
     base: &'a State,
+    account_access: Option<&'a AccountPointAccess<'a>>,
     writes: BTreeMap<String, Value>,
     reads: BTreeMap<String, Option<Value>>,
     scans: BTreeMap<String, State>,
 }
 impl<'a> View<'a> {
-    fn new(base: &'a State) -> Self {
+    fn new(base: &'a State, account_access: Option<&'a AccountPointAccess<'a>>) -> Self {
         Self {
             base,
+            account_access,
             writes: BTreeMap::new(),
             reads: BTreeMap::new(),
             scans: BTreeMap::new(),
@@ -699,18 +796,22 @@ impl<'a> View<'a> {
         );
         rows
     }
-    fn account(&mut self, who: &str) -> Value {
-        self.get(&format!("account:{who}"))
-            .unwrap_or_else(|| json!({"balance":0,"nonce":0}))
+    fn account(&mut self, who: &str) -> Result<Value> {
+        if let Some(access) = self.account_access {
+            access(who)?;
+        }
+        Ok(self
+            .get(&format!("account:{who}"))
+            .unwrap_or_else(|| json!({"balance":0,"nonce":0})))
     }
     fn credit(&mut self, who: &str, amount: u64) -> Result<()> {
-        let mut a = self.account(who);
+        let mut a = self.account(who)?;
         a["balance"] = json!(add(field(&a, "balance")?, amount)?);
         self.put(format!("account:{who}"), a);
         Ok(())
     }
     fn debit(&mut self, who: &str, amount: u64) -> Result<()> {
-        let mut a = self.account(who);
+        let mut a = self.account(who)?;
         let b = field(&a, "balance")?;
         require(amount > 0 && b >= amount, "FUNDS")?;
         a["balance"] = json!(b - amount);
@@ -884,7 +985,10 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
         tx.tag != 22
             || matches!(
                 cfg.task_profile(),
-                ATOMIC_TASK_PROFILE | OVERLAP_TASK_PROFILE | CHECKPOINT_TASK_PROFILE
+                ATOMIC_TASK_PROFILE
+                    | OVERLAP_TASK_PROFILE
+                    | CHECKPOINT_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
             ),
         "WORK_TASK_PROFILE",
     )?;
@@ -929,10 +1033,19 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
     })
 }
 fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) -> Result<Patch> {
+    apply_prepared_with_account_access(base, prepared, height, cfg, None)
+}
+fn apply_prepared_with_account_access(
+    base: &State,
+    prepared: &Prepared,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<Patch> {
     let tx = &prepared.envelope;
     let sender = prepared.sender.clone();
-    let mut s = View::new(base);
-    let acct = s.account(&sender);
+    let mut s = View::new(base, account_access);
+    let acct = s.account(&sender)?;
     require(tx.nonce == add(field(&acct, "nonce")?, 1)?, "NONCE")?;
     let fee = add(
         cfg.fees[tx.tag as usize],
@@ -1047,6 +1160,12 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             require(s.get(&key).is_none(), "DUPLICATE")?;
             let mut contribution = crate::integer_factor_candidate_v2::admit(
                 &mut s, cfg, tx.sender, height, &witness,
+            )?;
+            crate::model_evidence_v3::admit(
+                &mut s,
+                cfg,
+                witness.contribution_id,
+                &mut contribution,
             )?;
             let excluded = public_evaluation::excluded(&s.scan("evaluation-disqualified:"));
             contribution["public_evaluation"] = public_evaluation::freeze(
@@ -1197,6 +1316,12 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             let supplied_root = p.h()?;
             let supplied_total = p.n()?;
             let count = p.byte()?;
+            if crate::model_composition_v4::enabled(cfg) {
+                require(
+                    (2..=crate::model_composition_v4::MAX_COMPONENTS).contains(&usize::from(count)),
+                    "MODEL_COMPOSITION_COUNT",
+                )?;
+            }
             let current = s.get("model:current").ok_or("STATE")?;
             require(current == json!(hex::encode(parent)), "STATE")?;
             let (bk, mut bundle) = s.object("contribution:", bundle_id)?;
@@ -1218,6 +1343,7 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             )?;
             let mut leaves = Vec::new();
             let mut adopted = Vec::new();
+            let mut evidence_allocations = Vec::new();
             let mut total = 0_u64;
             for _ in 0..count {
                 let cid = p.h()?;
@@ -1227,23 +1353,40 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                     let records = s.scan(&public_evaluation::record_prefix(cid));
                     let evaluation =
                         public_evaluation::hydrate(&o["public_evaluation"], cid, &records)?;
-                    public_evaluation::adoption_allowed(&evaluation, height)?;
+                    if crate::model_composition_v4::enabled(cfg) {
+                        crate::model_composition_v4::component_allowed(&evaluation, height)?;
+                    } else {
+                        public_evaluation::adoption_allowed(&evaluation, height)?;
+                    }
                 }
                 require(
                     text(&o, "status")? == "evaluated"
                         && o["parent"] == current
-                        && field(&o, "score")? == score
+                        && (crate::model_composition_v4::enabled(cfg)
+                            || field(&o, "score")? == score)
                         && score > 0,
                     "EVIDENCE",
                 )?;
                 leaves.push(allocation_leaf(cid, hash32(text(&o, "owner")?)?, score));
                 total = add(total, score)?;
+                if crate::model_evidence_v3::enabled(cfg) {
+                    evidence_allocations.push((cid, o.clone(), score));
+                }
                 o["status"] = json!("adopted");
                 adopted.push((k, o));
             }
             require(
                 allocation_root(leaves)? == supplied_root && total == supplied_total,
                 "ROOT",
+            )?;
+            let composition_record = crate::model_evidence_v3::reserve_release(
+                &mut s,
+                cfg,
+                bundle_id,
+                &bundle,
+                &evidence_allocations,
+                budget,
+                total,
             )?;
             require(
                 release
@@ -1268,7 +1411,11 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             let expiry = add(height, horizon)?;
             s.deadline_with_lifetime(cfg, expiry, height, horizon)?;
             s.debit(&sender, budget)?;
-            s.put(rk,json!({"owner":sender,"remaining":budget,"budget":budget,"total":total,"root":hex::encode(supplied_root),"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?,"bundle":hex::encode(bundle_id),"artifact":bundle["artifact"].clone(),"family":bundle["family"].clone(),"components_root":bundle["components_root"].clone(),"parent":hex::encode(parent),"leaf_count":count,"claims":{},"deadline":expiry,"status":"open"}));
+            let mut release_record = json!({"owner":sender,"remaining":budget,"budget":budget,"total":total,"root":hex::encode(supplied_root),"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?,"bundle":hex::encode(bundle_id),"artifact":bundle["artifact"].clone(),"family":bundle["family"].clone(),"components_root":bundle["components_root"].clone(),"parent":hex::encode(parent),"leaf_count":count,"claims":{},"deadline":expiry,"status":"open"});
+            if let Some(record) = composition_record {
+                release_record["model_composition_v4"] = record;
+            }
+            s.put(rk, release_record);
             for (k, o) in adopted {
                 s.put(k, o);
             }
@@ -1458,7 +1605,12 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                         score: p.n()?,
                         salt: p.h()?,
                     };
-                    public_evaluation::reveal(evaluation, value, height)?;
+                    crate::model_evidence_v3::check_reveal(cfg, &contribution, &value)?;
+                    public_evaluation::reveal(
+                        &mut contribution["public_evaluation"],
+                        value,
+                        height,
+                    )?;
                 }
                 16 => {
                     let first = p.blob()?;
@@ -1500,7 +1652,7 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
         _ => return Err("VERSION"),
     }
     require(p.pos == p.bytes.len(), "LENGTH")?;
-    let mut a = s.account(&sender);
+    let mut a = s.account(&sender)?;
     a["nonce"] = json!(tx.nonce);
     s.put(format!("account:{sender}"), a);
     let receipt = canonical(
@@ -1531,7 +1683,15 @@ fn funds(state: &State) -> Result<u64> {
     }
     Ok(total)
 }
-fn credit_state(state: &mut State, who: &str, amount: u64) -> Result<()> {
+fn credit_state(
+    state: &mut State,
+    who: &str,
+    amount: u64,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<()> {
+    if let Some(access) = account_access {
+        access(who)?;
+    }
     let key = format!("account:{who}");
     let mut account = state
         .get(&key)
@@ -1541,7 +1701,13 @@ fn credit_state(state: &mut State, who: &str, amount: u64) -> Result<()> {
     state.insert(key, account);
     Ok(())
 }
-fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>>> {
+fn mandatory(
+    state: &mut State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+    monetary_input: Option<&MonetaryObligationInput<'_>>,
+) -> Result<Vec<Vec<u8>>> {
     let current = state
         .get("model:current")
         .and_then(Value::as_str)
@@ -1654,7 +1820,10 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
         state.remove(&k);
     }
     let mut due = Vec::new();
-    for (k, v) in state.iter() {
+    // Positive escrow records survive the preceding cleanup unchanged. Range
+    // inputs enumerate every original monetary record, including future rows;
+    // zero/retired rows are naturally ineligible under the ordinary predicates.
+    for (k, v) in monetary_input.map_or(&*state, |input| input.rows) {
         if (k.starts_with("task:") || k.starts_with("quota:") || k.starts_with("release:"))
             && field(v, "remaining")? > 0
             && field(v, "deadline")? <= height
@@ -1669,13 +1838,19 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
         .take(cfg.limit("mandatory_expiry_per_block")? as usize)
     {
         let mut v = state.get(&k).cloned().ok_or("STATE")?;
-        credit_state(state, text(&v, "owner")?, field(&v, "remaining")?)?;
+        credit_state(
+            state,
+            text(&v, "owner")?,
+            field(&v, "remaining")?,
+            account_access,
+        )?;
         v["remaining"] = json!(0);
         v["status"] = json!("expired");
         state.insert(k.clone(), v);
         receipts.push(canonical(&json!({"expiry":k}))?);
     }
-    let mature = state
+    let mature = monetary_input
+        .map_or(&*state, |input| input.rows)
         .iter()
         .filter(|(k, _)| k.starts_with("reward:"))
         .map(|(k, v)| Ok((k.clone(), field(v, "maturity")?)))
@@ -1683,10 +1858,16 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
     for (k, maturity) in mature {
         if maturity <= height {
             let reward = state.remove(&k).ok_or("STATE")?;
-            credit_state(state, text(&reward, "owner")?, field(&reward, "amount")?)?;
+            credit_state(
+                state,
+                text(&reward, "owner")?,
+                field(&reward, "amount")?,
+                account_access,
+            )?;
         }
     }
     crate::integer_factor_candidate_v2::cleanup(state, height, cfg)?;
+    crate::model_evidence_v3::cleanup(state, cfg, height)?;
     Ok(receipts)
 }
 
@@ -1732,6 +1913,82 @@ pub fn execute_with_control<E: Send>(
 ) -> ControlledResult<Output, E> {
     execute_with_commitment_and_control(parent, block, cfg, |_, next| root(next), control)
 }
+/// Explicit serial research consumer of semantic account point-access evidence.
+/// This function still requires a complete State and performs its ordinary funds,
+/// prefix, capacity and root checks. It neither authenticates the callback nor
+/// grants permission to substitute a partial State or bypass Node admission.
+pub fn execute_with_account_point_access<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    account_access: &AccountPointAccess<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
+    execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        |_, next| root(next),
+        &ExecutionControl::new(progress, &()),
+        StateInputs {
+            accounts: Some(account_access),
+            ..StateInputs::default()
+        },
+    )
+}
+/// Explicit research relation using authenticated account point access and a
+/// complete non-account partition. It retains the ordinary full-State funds,
+/// capacity and root reference; this is not partial-State or admission authority.
+pub fn execute_with_authenticated_state_input<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    account_access: &AccountPointAccess<'_>,
+    mandatory_input: &MandatoryStateInput<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
+    execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        |_, next| root(next),
+        &ExecutionControl::new(progress, &()),
+        StateInputs {
+            accounts: Some(account_access),
+            mandatory: Some(mandatory_input),
+            monetary: None,
+        },
+    )
+}
+/// Explicit full-reference M06 relation whose mandatory monetary enumeration
+/// and original capacity scan consume authenticated namespace-range rows.
+/// Account access, other non-account rules, every transaction, the new reward
+/// and final successor capacity/conservation checks retain their ordinary rules.
+pub fn execute_with_authenticated_obligation_input<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    account_access: &AccountPointAccess<'_>,
+    mandatory_input: &MandatoryStateInput<'_>,
+    monetary_input: &MonetaryObligationInput<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
+    execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        |_, next| root(next),
+        &ExecutionControl::new(progress, &()),
+        StateInputs {
+            accounts: Some(account_access),
+            mandatory: Some(mandatory_input),
+            monetary: Some(monetary_input),
+        },
+    )
+}
 /// Ordinary caller-supplied facts, not prepared execution or admission authority.
 pub struct BlockExecution<'a> {
     pub transactions: &'a [Vec<u8>],
@@ -1773,9 +2030,31 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
     parent: &State,
     block: BlockExecution<'_>,
     cfg: &Config,
-    mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    commitment: impl FnMut(&State, &State) -> Result<Hash>,
     control: &ExecutionControl<'_, E>,
 ) -> ControlledResult<Output, E> {
+    execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        commitment,
+        control,
+        StateInputs::default(),
+    )
+}
+fn execute_with_state_inputs<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    control: &ExecutionControl<'_, E>,
+    inputs: StateInputs<'_>,
+) -> ControlledResult<Output, E> {
+    let StateInputs {
+        accounts: account_access,
+        mandatory: mandatory_input,
+        monetary: monetary_input,
+    } = inputs;
     let progress = control.progress;
     let BlockExecution {
         transactions,
@@ -1790,8 +2069,14 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         "LIMIT",
     )?;
     progress(ExecutionProgress::BeforeStateClone).map_err(ExecutionError::Cancelled)?;
-    let mut state = parent.clone();
-    let mut receipts = mandatory(&mut state, height, cfg)?;
+    let (mut state, mut receipts) = prepare_block_state_with_inputs(
+        parent,
+        height,
+        cfg,
+        account_access,
+        mandatory_input,
+        monetary_input,
+    )?;
     progress(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
     let mut fees = 0;
     let mut metrics = Metrics {
@@ -1824,12 +2109,9 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         let patch = if serial_state || range_command {
             None
         } else {
-            Some(
-                prepared
-                    .as_ref()
-                    .map_err(|e| *e)
-                    .and_then(|tx| apply_prepared(&state, tx, height, cfg)),
-            )
+            Some(prepared.as_ref().map_err(|e| *e).and_then(|tx| {
+                apply_prepared_with_account_access(&state, tx, height, cfg, account_access)
+            }))
         };
         Ok(Predicted { prepared, patch })
     };
@@ -1923,7 +2205,7 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         let prepared = result.prepared?;
         let patch = if serial_state || result.patch.is_none() {
             metrics.committed_without_replay += 1;
-            apply_prepared(&state, &prepared, height, cfg)?
+            apply_prepared_with_account_access(&state, &prepared, height, cfg, account_access)?
         } else {
             metrics.speculative += 1;
             match result.patch.ok_or("WORKER_RESULT")? {
@@ -1934,7 +2216,13 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
                 _ => {
                     metrics.reexecuted += 1;
                     // Exactly one canonical state replay, no duplicate main-signature work.
-                    apply_prepared(&state, &prepared, height, cfg)?
+                    apply_prepared_with_account_access(
+                        &state,
+                        &prepared,
+                        height,
+                        cfg,
+                        account_access,
+                    )?
                 }
             }
         };
@@ -1945,16 +2233,10 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
     }
     metrics.state_transition_ns = transition_start.elapsed().as_nanos();
     progress(ExecutionProgress::BeforeReward).map_err(ExecutionError::Cancelled)?;
-    let halvings = (height / cfg.limit("subsidy_halving_interval")?).min(64);
-    let subsidy = cfg
-        .limit("block_subsidy_units")?
-        .checked_shr(halvings as u32)
-        .unwrap_or(0);
-    let reward = hash(b"reward", &[&parent_id, &height.to_le_bytes(), &miner]);
-    state.insert(format!("reward:{}",hex::encode(reward)),json!({"owner":hex::encode(miner),"amount":add(fees,subsidy)?,"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?}));
-    let issued = add(num(state.get("meta:issued").ok_or("STATE")?)?, subsidy)?;
-    state.insert("meta:issued".into(), json!(issued));
-    require(funds(&state)? == issued, "CONSERVATION")?;
+    state.extend(block_reward_updates(
+        &state, height, miner, parent_id, fees, cfg,
+    )?);
+    check_completed_block_state_with_account_access(&state, height, cfg, account_access)?;
     let root_start = std::time::Instant::now();
     progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
     let root = commitment(parent, &state)?;
@@ -1967,6 +2249,294 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         root,
         metrics,
     })
+}
+
+/// One original block prologue. Prefix previews retain its pre-reward successor,
+/// never a completed block with a second maturity, expiry or subsidy transition.
+fn prepare_block_state(parent: &State, height: u64, cfg: &Config) -> Result<(State, Vec<Vec<u8>>)> {
+    prepare_block_state_with_account_access(parent, height, cfg, None)
+}
+fn prepare_block_state_with_account_access(
+    parent: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<(State, Vec<Vec<u8>>)> {
+    prepare_block_state_with_inputs(parent, height, cfg, account_access, None, None)
+}
+fn prepare_block_state_with_inputs(
+    parent: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+    mandatory_input: Option<&MandatoryStateInput<'_>>,
+    monetary_input: Option<&MonetaryObligationInput<'_>>,
+) -> Result<(State, Vec<Vec<u8>>)> {
+    if let Some(input) = monetary_input {
+        require(
+            parent
+                .iter()
+                .filter(|(key, _)| is_monetary_obligation(key))
+                .eq(input.rows.iter()),
+            "MONETARY_OBLIGATION_PARTITION",
+        )?;
+    }
+    if let Some(input) = mandatory_input {
+        require(
+            !input
+                .non_accounts
+                .keys()
+                .any(|key| key.starts_with("account:"))
+                && parent
+                    .iter()
+                    .filter(|(key, _)| !key.starts_with("account:"))
+                    .eq(input.non_accounts.iter()),
+            "MANDATORY_STATE_PARTITION",
+        )?;
+    }
+    if continuity_v1::enabled(cfg) {
+        continuity_v1::check_state_with_account_access_and_monetary(
+            parent,
+            height.checked_sub(1).ok_or("HEIGHT")?,
+            cfg,
+            account_access,
+            monetary_input.map(|input| input.rows),
+        )?;
+    }
+    let mut state = if let Some(input) = mandatory_input {
+        let mut complete: State = parent
+            .iter()
+            .filter(|(key, _)| key.starts_with("account:"))
+            .map(|(key, value)| (key.clone(), value.clone()))
+            .collect();
+        complete.extend(input.non_accounts.clone());
+        complete
+    } else {
+        parent.clone()
+    };
+    let receipts = mandatory(&mut state, height, cfg, account_access, monetary_input)?;
+    if let Some(input) = mandatory_input {
+        (input.completed)(parent, &state, &receipts)?;
+    }
+    Ok((state, receipts))
+}
+
+/// All block epilogue writes are returned together so an operation-local prefix
+/// can remove exactly those writes before accepting another ordinary transaction.
+fn block_reward_updates(
+    state: &State,
+    height: u64,
+    miner: Hash,
+    parent_id: Hash,
+    fees: u64,
+    cfg: &Config,
+) -> Result<State> {
+    let halvings = (height / cfg.limit("subsidy_halving_interval")?).min(64);
+    let subsidy = cfg
+        .limit("block_subsidy_units")?
+        .checked_shr(halvings as u32)
+        .unwrap_or(0);
+    let reward = hash(b"reward", &[&parent_id, &height.to_le_bytes(), &miner]);
+    let reward = (
+        format!("reward:{}", hex::encode(reward)),
+        json!({"owner":hex::encode(miner),"amount":add(fees,subsidy)?,"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?}),
+    );
+    let issued = add(num(state.get("meta:issued").ok_or("STATE")?)?, subsidy)?;
+    Ok(State::from([reward, ("meta:issued".into(), json!(issued))]))
+}
+
+fn check_completed_block_state(state: &State, height: u64, cfg: &Config) -> Result<()> {
+    check_completed_block_state_with_account_access(state, height, cfg, None)
+}
+fn check_completed_block_state_with_account_access(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<()> {
+    require(
+        funds(state)? == num(state.get("meta:issued").ok_or("STATE")?)?,
+        "CONSERVATION",
+    )?;
+    continuity_v1::check_state_with_account_access(state, height, cfg, account_access)
+}
+
+/// Exact fixed context for a series of prefixes of ONE candidate block.
+/// This is computation input only; no consensus, Pool or owner permission.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PrefixContext {
+    pub height: u64,
+    pub miner: Hash,
+    pub parent_id: Hash,
+}
+
+/// Private unfinalized prefix state. Only a checked original-parent binding can
+/// construct the public commitment wrapper. All authority stays with that caller.
+pub(crate) struct TransactionPrefix {
+    state: State,
+    receipts: Vec<Vec<u8>>,
+    fees: u64,
+    transactions: Vec<Vec<u8>>,
+    context: PrefixContext,
+    config: Config,
+}
+
+/// Changed-key rollback includes partial groups, finalizer writes and unwinding.
+/// It is scratch only and cannot undo any durable or external operation.
+struct PrefixRollback<'a> {
+    state: &'a mut State,
+    before: BTreeMap<String, Option<Value>>,
+    committed: bool,
+}
+impl PrefixRollback<'_> {
+    fn apply(&mut self, writes: State) {
+        for (key, value) in writes {
+            self.before
+                .entry(key.clone())
+                .or_insert_with(|| self.state.get(&key).cloned());
+            self.state.insert(key, value);
+        }
+    }
+    fn restore(&mut self, values: BTreeMap<String, Option<Value>>) {
+        for (key, value) in values {
+            if let Some(value) = value {
+                self.state.insert(key, value);
+            } else {
+                self.state.remove(&key);
+            }
+        }
+    }
+}
+impl Drop for PrefixRollback<'_> {
+    fn drop(&mut self) {
+        if !self.committed {
+            let before = std::mem::take(&mut self.before);
+            self.restore(before);
+        }
+    }
+}
+
+impl TransactionPrefix {
+    pub(crate) fn new<E: Send>(
+        parent: &State,
+        context: PrefixContext,
+        config: &Config,
+        control: &ExecutionControl<'_, E>,
+    ) -> ControlledResult<Self, E> {
+        (control.progress)(ExecutionProgress::BeforeStateClone)
+            .map_err(ExecutionError::Cancelled)?;
+        let (state, receipts) = prepare_block_state(parent, context.height, config)?;
+        (control.progress)(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
+        Ok(Self {
+            state,
+            receipts,
+            fees: 0,
+            transactions: Vec::new(),
+            context,
+            config: config.clone(),
+        })
+    }
+
+    pub(crate) fn len(&self) -> usize {
+        self.transactions.len()
+    }
+
+    /// The full byte prefix is compared on every call. Only its new suffix is
+    /// prepared/applied; rejection, cancellation or panic retains the last prefix.
+    /// Output metrics describe this suffix, while state/receipts describe the full
+    /// candidate. Full state/root construction remains required per accepted group.
+    pub(crate) fn execute_with_commitment_and_control<E: Send>(
+        &mut self,
+        transactions: &[Vec<u8>],
+        mut commitment: impl FnMut(&State) -> Result<Hash>,
+        control: &ExecutionControl<'_, E>,
+    ) -> ControlledResult<Output, E> {
+        require(
+            transactions.len() as u64 <= self.config.limit("max_transactions")?,
+            "LIMIT",
+        )?;
+        require(
+            transactions.starts_with(&self.transactions),
+            "PREFIX_BINDING",
+        )?;
+        let progress = control.progress;
+        let first = self.transactions.len();
+        let suffix = &transactions[first..];
+        let signatures = AtomicUsize::new(0);
+        let transition_start = std::time::Instant::now();
+        let mut prepared = Vec::with_capacity(suffix.len());
+        for (offset, raw) in suffix.iter().enumerate() {
+            let index = first + offset;
+            progress(ExecutionProgress::BeforePrepare { index })
+                .map_err(ExecutionError::Cancelled)?;
+            prepared.push(prepare(raw, self.context.height, &self.config, &signatures));
+            progress(ExecutionProgress::AfterPrepare { index })
+                .map_err(ExecutionError::Cancelled)?;
+        }
+        // Complete raw cloning/capacity growth before any scratch mutation. The
+        // final publish then only moves initialized Vecs into reserved capacity.
+        let mut appended_transactions = suffix.to_vec();
+        self.transactions.reserve(appended_transactions.len());
+        let mut staged = PrefixRollback {
+            state: &mut self.state,
+            before: BTreeMap::new(),
+            committed: false,
+        };
+        let mut fees = self.fees;
+        let mut receipts = self.receipts.clone();
+        for (offset, prepared) in prepared.into_iter().enumerate() {
+            let index = first + offset;
+            progress(ExecutionProgress::BeforeApply { index })
+                .map_err(ExecutionError::Cancelled)?;
+            let patch =
+                apply_prepared(staged.state, &prepared?, self.context.height, &self.config)?;
+            fees = add(fees, patch.fee)?;
+            receipts.push(patch.receipt);
+            staged.apply(patch.writes);
+            progress(ExecutionProgress::AfterApply { index }).map_err(ExecutionError::Cancelled)?;
+        }
+        let mut metrics = Metrics {
+            workers: 1,
+            committed_without_replay: suffix.len(),
+            peak_inflight: usize::from(!suffix.is_empty()),
+            signature_verifications: signatures.load(Ordering::Relaxed),
+            state_transition_ns: transition_start.elapsed().as_nanos(),
+            ..Metrics::default()
+        };
+        progress(ExecutionProgress::BeforeReward).map_err(ExecutionError::Cancelled)?;
+        let writes = block_reward_updates(
+            staged.state,
+            self.context.height,
+            self.context.miner,
+            self.context.parent_id,
+            fees,
+            &self.config,
+        )?;
+        let before_reward = writes
+            .keys()
+            .map(|key| (key.clone(), staged.state.get(key).cloned()))
+            .collect();
+        staged.apply(writes);
+        check_completed_block_state(staged.state, self.context.height, &self.config)?;
+        let root_start = std::time::Instant::now();
+        progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
+        let root = commitment(staged.state)?;
+        progress(ExecutionProgress::AfterCommitment).map_err(ExecutionError::Cancelled)?;
+        metrics.state_root_ns = root_start.elapsed().as_nanos();
+        progress(ExecutionProgress::BeforeOutput).map_err(ExecutionError::Cancelled)?;
+        let output = Output {
+            state: staged.state.clone(),
+            receipts: receipts.clone(),
+            root,
+            metrics,
+        };
+        staged.restore(before_reward);
+        staged.committed = true;
+        self.fees = fees;
+        self.receipts = receipts;
+        self.transactions.append(&mut appended_transactions);
+        Ok(output)
+    }
 }
 
 /// Compute cache only. The caller remains the sole authoritative ledger owner.

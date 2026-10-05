@@ -1033,7 +1033,7 @@ fn serve_public_protected_v2_with_owner(
                                     server.tick()?,
                                 ) {
                                     let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                                    if e.to_string() == "PUBLIC_TICKET_REPLAY" {
+                                    if e.is(crate::ErrorCode::PublicTicketReplay) {
                                         m.replay_refusals += 1;
                                     } else {
                                         m.spent_capacity_refusals += 1;

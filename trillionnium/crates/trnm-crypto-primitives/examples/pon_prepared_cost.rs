@@ -68,7 +68,10 @@ fn main() {
                 assert_eq!(original.1, optimized.1);
                 assert_eq!(original.2, optimized.2);
                 let start = Instant::now();
-                black_box(verify(original.2, task, target, &optimized.1).unwrap());
+                // This historical schema deliberately retains its named original
+                // scalar-verifier baseline. Current production-verifier costs are
+                // reported separately by pon_producer_comparison.
+                black_box(verify_reference(original.2, task, target, &optimized.1).unwrap());
                 let verification = start.elapsed().as_nanos();
                 if !first {
                     print!(",");

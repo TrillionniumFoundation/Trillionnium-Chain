@@ -12,7 +12,7 @@ use trnm_pon_node::{
     development_public,
     ingress::{
         self,
-        public_v3::{self, PublicMetrics, PublicPolicy, PublicServer, Request},
+        public_v3::{self, PublicClientStage, PublicMetrics, PublicPolicy, PublicServer, Request},
         DevelopmentIdentity,
     },
     Node, PoolLimits, Settings,
@@ -91,7 +91,11 @@ fn refusal_retains_partial_challenge_cost_without_body_or_ticket_claim() {
         PublicPolicy::development(),
     );
     assert!(reply.is_err());
-    assert_eq!(cost.failed_stage, Some("challenge"));
+    assert_eq!(cost.failed_stage, Some(PublicClientStage::Challenge));
+    assert_eq!(
+        serde_json::to_value(&cost).unwrap()["failed_stage"],
+        "challenge"
+    );
     assert!(cost.construction_ns > 0);
     assert!(cost.challenge_ns > 0);
     assert!(cost.total_elapsed_ns >= cost.challenge_ns);

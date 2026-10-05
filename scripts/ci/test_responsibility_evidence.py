@@ -148,6 +148,70 @@ class ExactObservationTests(unittest.TestCase):
         self.assertFalse(observed_selector('trillionnium/crates/x/src/lib.rs::test_example', [self.record()]))
 
 
+class RustImplementationOwnerTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix='pon-rust-owner-')
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.path = self.root / 'owner.rs'
+
+    def bind(self, text, symbol='Owner::run'):
+        self.path.write_text(text)
+        check_symbol(self.root, {'path': 'owner.rs', 'symbol': symbol})
+
+    def test_anonymous_lifetime_inherent_owner(self):
+        self.bind("impl Owner<'_> { pub fn run(&mut self) {} }")
+
+    def test_declared_lifetime_and_nested_type_arguments(self):
+        self.bind("impl<'a, T> Owner<'a, Vec<Option<T>>> { pub fn run(&self) {} }")
+
+    def test_generic_owner_where_bound_and_function_arrow(self):
+        self.bind("impl<T: Fn() -> Vec<u8>> Owner<T> where T: Fn() -> Vec<u8> { fn run(&self) {} }")
+
+    def test_later_inherent_block_can_own_method(self):
+        self.bind("impl Owner<'_> { fn other(&self) {} } impl Owner<'_> { fn run(&self) {} }")
+
+    def test_comments_and_char_literals_cannot_end_the_owning_body(self):
+        self.bind("impl Owner<'_> { fn other(&self) { let a = '}'; let b = '\\u{7b}'; /* } /* { */ */ } fn run(&self) {} }")
+
+    def test_comment_and_string_impls_do_not_bind(self):
+        for text in ["// impl Owner<'_> { fn run() {} }", "/* impl Owner<T> { fn run() {} } */",
+                     'const S: &str = "impl Owner<T> { fn run() {} }";',
+                     'const S: &str = r###"impl Owner<T> { fn run() {} }"###;']:
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                self.bind(text)
+
+    def test_method_lookalikes_in_comments_and_strings_do_not_bind(self):
+        for content in ['// fn run() {}\n', '/* fn run() {} */',
+                        'const S: &str = "fn run() {}";', 'const S: &str = r#"fn run() {}"#;']:
+            with self.subTest(content=content), self.assertRaises(ValueError):
+                self.bind("impl Owner<'_> { " + content + ' }')
+
+    def test_wrong_owner_and_generic_argument_lookalikes_do_not_bind(self):
+        for text in ["impl WrongOwner<'_> { fn run() {} }", 'impl Wrapper<Owner> { fn run() {} }',
+                     'impl<Owner> Wrapper<Owner> { fn run() {} }', 'impl OwnerExtra { fn run() {} }']:
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                self.bind(text)
+
+    def test_trait_implementation_is_not_an_inherent_owner(self):
+        for text in ['impl<T> SomeTrait for Owner<T> { fn run() {} }',
+                     'impl Owner for Other { fn run() {} }']:
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                self.bind(text)
+
+    def test_other_body_or_free_function_cannot_fill_missing_method(self):
+        for text in ["impl Owner<'_> {} impl Other { fn run() {} }", "impl Owner<'_> {} fn run() {}",
+                     "impl Owner<'_> { fn outer() { fn run() {} } }",
+                     "impl Owner<'_> { fn outer() { impl Other { fn run() {} } } }"]:
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                self.bind(text)
+
+    def test_unbalanced_generic_or_impl_cannot_capture_later_function(self):
+        for text in ['impl Owner<Vec<T> { fn run() {} }', "impl Owner<'_> { fn run() {}"]:
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                self.bind(text)
+
+
 class SourceApplicabilityTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='pon-evidence-source-')

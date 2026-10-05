@@ -1,7 +1,7 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 3).
-Effective: 2026-09-28; applicability clarification: 2026-09-29. Status: selected development direction; no runtime activation.
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 13).
+Effective: 2026-09-28; priority implementation revision: 2026-10-05 (Asia/Shanghai). Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
 Assessed legacy baseline: `c552c31c6d3c5ac47522a124e02c6b8bca4e23f2`, tree
@@ -45,8 +45,9 @@ No machine flag is promoted. The current implementation projection is:
     public_testnet_ready = false
     release_ready = false
 
-New PoN implementation, work-profile qualification, cryptographic security, public-model
-efficacy and activation are also false. Source work and documentation may proceed now;
+The registry keeps full runtime acceptance, work-profile qualification, cryptographic
+security, public-model efficacy and activation unaccepted. This does not deny the native
+development code and controlled entrypoints below. Source work and documentation may proceed now;
 release requires their own real evidence, not completion of the retired PoCO roadmap.
 
 ### Current native development contracts
@@ -57,7 +58,84 @@ separate current source bindings from local execution, historical receipts, host
 checks, prospective-merge checks and external acceptance. This plan records no current
 PR pass: derive exact candidate/base/merge identities and retrieve their actual CI results.
 
-#### Current four-priority development scope
+#### Priority implementation revision: capacity, work, model evidence and engineering
+
+The current generated [implementation/profile view](../architecture/CURRENT_IMPLEMENTATION.md)
+comes from the existing registries and is checked for drift. It is not another plan,
+a runtime test result or a declaration of independent acceptance. The package graph
+remains 25 packages and 39 responsibilities; explicit native development ownership now
+includes W1 verification, operation-local M05 signature facts and incremental M06
+prefixes, bounded history projection, and the explicit revision13 empirical scorer /
+revision14 composition successor with an independent arithmetic/state comparison.
+Package and procedure counts do not measure scientific acceptance.
+
+This revision preserves full header/challenge binding, parent-derived difficulty,
+required-work fork choice, complete proof verification before the private verified
+work type, ordered application execution, the single durable writer and the separation
+between reorganizable branch state and irreversible local operation facts. Model
+scores do not change chainwork. Earlier failures and zero rewards remain retained.
+
+| Priority | Implemented development boundary | Required acceptance still separate |
+| --- | --- | --- |
+| P0 capacity | [Continuity revision12](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) reserves absent mandatory recipients, future archives and unfilled reward slots before admitting state growth. Actual65,536-key fixtures cover continuation and cleanup-dependent entry through reorganization/reopen. The [account archive](../protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md) now constructs canonical AAM1 multiproofs directly from persistent Patricia nodes and uses them for actual complete-state mandatory/successor execution. Its signed41-account fixture reduces339,357 expanded bytes to2,251 compact bytes, independently replayed from full State. A fresh [native authenticated backend](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md) now writes account COW nodes and exact final state commitments in the actual Node transaction; explicit source-preserving migration replays every retained branch and preserves local facts. | Default consensus/root and65,536-key limit retain their meanings. Full non-account input, witness discovery, full State reconstruction and pre-COMMIT readback remain. Compact encoding is not a whole-block time or RAM bound. The separate [complete monetary range relation](../protocol/pon-nakamoto-v1/details/MONETARY_OBLIGATION_RANGES_V1.md) authenticates all task/quota/release/reward rows, including future and zero liabilities, before their actual M06 discovery. It retains a checked complete parent and other non-account reference rules. Public proof availability, disk/version ownership and growth pricing remain open. |
+| P0 work cost | [W1 comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md) retains four complete producer experiments, including eight fixed-maintenance producers and the explicit five-producer zero-locality v2 with charged setup and balanced order. The new zero integer-paired candidate computes all original prefixes with152,832 integer/field multiplications per challenge; its33-bit paired products require actual timing against the previous blocked-zero and general paired implementations. A separate native late-rejection diagnostic now measures real Accepted/Transcript/Product outcomes on the same winning proof across production, scalar and limb kernels; four task classes, two targets and nine samples retain full acquisition and failed-search costs. Existing-proof mutation costs and progress probes have separate denominators. | Finite same-source x64/ARM64 observations do not prove cheapest-adversary cost, energy cost, task equivalence or hardness. The diagnostic uses general PreparedTask acquisition and does not claim the cheapest Product forgery. Unlimited preprocessing, other legal structures and physical hardware remain explicit research assumptions. |
+| P0 work availability | Revision12 commits a separate immutable maintenance material/identity, zero useful-output credit and an explicit Node/CLI choice; optional signed V4 tasks retain expiry/revocation. | Availability is not computational qualification. Owner-side grants/withdrawals still fence local operations. There is no fabricated indefinite lease or automatic fallback. |
+| P1 verification | Current production W1 verification retains transposition, exact modulus folding and tiled hash updates. An explicit limb research verifier shares the same grammar, checks, error order and cancellation points while replacing transcript dot-product accumulation; the independent scalar reference remains. Actual late-rejection observations and three-kernel equivalence/fuzz checks cover the changed path. | All458,752 field scalar products and complete transcript replay remain. No timing winner is declared by source code. A succinct new proof relationship requires a separate version, security argument and independent review. |
+| P1 state/history | [Resource bounds](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md) retain checked ancestor batches and bounded History pages; [pool prefixes](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md#same-block-incremental-m06-prefix) reuse operation-local M05 facts and successful M06 suffixes. The explicit native backend now merges changed account paths before writing each final subtree; intermediate uncommitted roots no longer leave permanent nodes. Borrowed account decoding, cached SQL statements and one-pass leaf decoding preserve complete checks. Both storage modes verify affected rows and final actual state/events/cursor and ancestry before COMMIT, including late activation writes. Native proof queries reject invalid dimensions before storage and support cancellation through state replay and actual proof construction. Explicit migration uses a pending-fenced atomic no-replace target publication and final disk readback. | Full-state reads/root construction, non-account scans, historical confirmation and mandatory retained-node verification remain. Extra commit readbacks have real cost. Physical global retention, bounded complete-state reconstruction and reader/writer separation remain open. |
+| P1 model | [Model evidence revision13](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) keeps its exact rules. The explicit [revision14 composition successor](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md) checks exact common-parent sums, exact cancellation, strongest-component superiority and positive leave-one-out weights. Independent Python arithmetic, lineage, complete stored-record and payout comparisons use actual native observations from the existing lifecycle tests. The explicit [offline window-history contract](../protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md#explicit-continuation-across-reported-evaluation-windows) binds a fixed prior-history anchor, rejects reuse of previously contacted evaluation prompts/groups, retains negative gates and reserves completed-record capacity. | Reported window continuity does not prove historical execution, hidden-window completeness, trusted pin storage or real future-task custody. The corpus is historical/public and saturates at25/25. Independent implementation agreement, exact derivation and retrospective ablation do not prove training causality, future efficacy or Shapley fairness. Hidden common control, general-model correctness and public evaluation governance remain unaccepted. |
+| P1 public service | Existing V3 service/queue and protected transport tests remain actual bounded native campaigns; each mixed-service/restart report must keep errors, timeout outcomes and honest-service gaps. | Independent operators, WAN/partition campaigns and long-running public service targets require actual external operation. Local tests cannot set those flags. |
+| P2 errors | [Typed local errors](../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) separate local identity/cause and actual retained-data provenance from human text and authenticated remote refusal. Real retained header/KV/reorg/replay failures stop the owner while peer lookalikes, cancellation and clock deferral retain their original behavior. Public-client recovery and failed-phase accounting use typed local stages while retaining exact JSON labels. Completed local replay rows missing retained responses and failed conditional journal writes now carry local-structure origin; caller frame/ACK refusals retain typed nonfatal causes. | Remaining formatted legacy diagnostics still explicitly remain Unclassified; each added origin boundary requires concrete native tests. |
+| P2 CI/docs | [Execution contract](../architecture/CI_EXECUTION_CONTRACT.md) retains the five required head names and exact prospective-merge lanes. Existing workspace runs export actual native SQLite, source/target migration, signed AAM1, complete obligation ranges and raw zero-prefix fixtures for independent readers. The storage reader reconstructs every retained ancestry row from parent walks. Each Rust lane explicitly runs the authenticated65,536-key capacity fixture and paired complete-account verification observation in release; their ignored markers in ordinary debug tests cannot substitute for these required executions. Coverage-guided targets include actual compact/range execution and three W1 kernels. The same two cost jobs and comparison retain four producer suites plus the separate legal/late-rejection suite, bound to one source/run/attempt and real architecture. | Hosted jobs must actually execute on the final source. Local preflight, source wiring, finite fuzz and artifact consistency do not establish independent operators, worst-case complexity, security acceptance or production qualification. |
+
+The account archive and model-window history are explicit research/offline boundaries in the
+applicability registry, not new active consensus revisions. The archive preserves every
+account nonce and fails on unavailable data. Its original checked execution wrapper requires
+the complete State and authenticates original-parent point access before ordinary ordered
+account reads; an omitted proof cannot use the complete State as a fallback. The separate
+authenticated-state companion binds complete account and non-account commitments plus
+funds/count aggregates to a checked full parent. It reconstructs mandatory execution from
+the complete authenticated non-account partition, merges original-parent account proofs
+for prologue and final changes, and compares the result with a full rebuild. This is an
+explicit reference-backed research relation, not a partial-State production backend.
+The non-account witness and full reference still scale with State. Execution derives a
+complete conservative account-access bound from parent keys, actual transactions and miner;
+the original standalone point-query API retains its32-account limit. The new AAM1 relation
+uses one canonical nonempty shared frontier and verifies exact account presence/nonce before
+reusing changed paths; zero-query proofs grant zero account accesses. Its conservative full
+encoding bound is7,561,821 bytes, separate from its actual small signed fixture measurements.
+The original durable research archive remains independently selected. The new native backend
+has an explicit startup choice and source-preserving migration under a fresh stored schema.
+Migration keeps every old local-fact table, pending reorganization and source directory;
+external owner modes require their own migration relation. Witness availability, disk/version
+ownership, proof availability, growth pricing and the ledger capacity limit remain separate work.
+The explicit monetary range companion builds a new operation-local ordered index from the
+checked complete parent; it proves complete prefix intervals, not just valid membership.
+Future and zero obligations remain disclosed before M06 uses those rows for expiry, reward
+maturity and parent capacity responsibility. Other rules and successor capacity retain
+complete-State checks, so this is not a partial-State or constant-cost execution claim.
+
+All incompatible consensus rules require fresh explicit profile/context selection.
+The old revision3/6/7/8/9/10/11/12/13 vectors and namespaces retain their meaning. The
+combined continuity-task12/model13 context has a separate native regression through
+306 actually mined/admitted heights, archive reservation conversion, native rewards,
+source/retention cleanup and cold reopens. Its source-bound execution remains a
+development conformance result, separate from the full-capacity fixture and external
+acceptance. Revision14 uses fresh configuration, model-evidence/source domains and
+an explicit composition record embedded in the existing bounded release. It is
+selected explicitly, can coexist with task12, and never silently upgrades model13.
+Transaction tags, wire error codes and the default branch SQLite schema retain their
+meaning. The explicitly selected authenticated backend has a fresh schema identity;
+its opener rejects the old namespace and the old opener rejects the new one. Migration
+never converts an existing directory in place or silently grants external owner authority.
+
+For every delivered source, execute the existing complete Cargo graph/lock/fmt/test/
+Clippy gates, protocol bridges, negative repository/evidence checks and actual fuzz.
+Measure release binaries only after freezing source and without concurrent builds;
+retain exact commands, toolchain, binary hashes, inputs, failures and environment.
+A hosted head check and a prospective merge check must name their own exact commits.
+Neither results from this prose nor from the generated navigation table.
+
+#### Retained four-priority development scope
 
 These changes continue this plan and its existing module owners; no acceptance axis
 is promoted by implementation or by adding a diagnostic checker.
@@ -66,7 +144,7 @@ is promoted by implementation or by adding a diagnostic checker.
    module documents, actual source owners, controlled entrypoints and test selectors.
    M05 explicit reconciliation and M06 native execution/deltas are mapped to the Node
    owner; the39 responsibilities also bind revision11 factor admission and public V3
-   resource-r3 to their exact source/tests, without granting execution evidence.
+   resource-r9 to their exact source/tests, without granting execution evidence.
    Historical receipts and exact current delivery checks remain separate.
 2. **Work security diagnostics:** the [proposed local diagnostic profile](../../config/pon/work-security-acceptance-v1.json)
    and [work report contract](../protocol/pon-nakamoto-v1/details/WORK_PROFILE.md)
@@ -74,11 +152,14 @@ is promoted by implementation or by adding a diagnostic checker.
    service observations. Its thresholds are proposed screening policy, not
    preregistered scientific acceptance, consensus parameters or a hardness proof.
 3. **Conservative execution/resource improvements:** the [local pool contract](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md)
-   reuses one checked actual parent within a pool operation while preserving full
-   growing-prefix execution, nonce/signature checks and operation-boundary rereads.
+   reuses one checked actual parent within a pool operation and one mandatory
+   prologue, then executes only the newly accepted M06 suffix. Successful M05 main
+   signatures can be reused only within that immutable operation; every full-prefix
+   state-dependent gate, complete output root and operation-boundary reread remains.
    [Derived commitment](../protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md)
-   changes retain complete-root authority and bounded fallback. These changes do
-   not claim incremental prefix execution, SQL isolation or measured endpoint TPS.
+   changes retain complete-root authority and bounded fallback. Incremental M06
+   execution does not establish SQL isolation, persistent-root authority or measured
+   endpoint TPS.
    The [sync evaluation fixture](../protocol/pon-nakamoto-v1/details/SYNC_EVALUATION_OBSERVATION_V1.md)
    now checks explicit64+64+64+49 page-budget resume over all241 retirement successors,
    with separate original120-second listeners and durable ancestry/cursor assertions.
@@ -398,7 +479,7 @@ selectors actually ran. Neither mechanism supplies independent scientific author
 
 | Priority / workstream | Actual implemented boundary | Concrete next acceptance requirement |
 |---|---|---|
-| P0 work and public admission | Exact experimental transcript and full scalar verification; a mismatching final digest skips product corrections after the complete transcript replay, while matching digests still require exact product verification; native PreparedTask removes avoidable repeated product work; paired valid-producer costs and bounded development ingress retain open hostile-proof/Sybil qualification | Implement/reproduce adversarial shortcuts and same-target costs; join ordinary public ingress and demonstrate honest service under stated sustained attack. No queue count grants work hardness. |
+| P0 work and public admission | Exact experimental transcript and complete production transcript verification with an explicit scalar reference; a mismatching final digest skips product corrections after the complete transcript replay, while matching digests still require exact product verification; native PreparedTask removes avoidable repeated product work; paired valid-producer costs and bounded development ingress retain open hostile-proof/Sybil qualification | Implement/reproduce adversarial shortcuts and same-target costs; join ordinary public ingress and demonstrate honest service under stated sustained attack. No queue count grants work hardness. |
 | P0 one native node | Native development CLI owns work/target decisions, branch persistence/reorg, receiver sync/confirmation an allowlisted signed private-development ingress with durable inbound replay/client outbox, and explicit public-development-v2 resource-ticket intake with bounded Head/History and no durable guest authority; original M00/M01/M06 are reused | The explicitly enabled [local queued owner](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md) provides bounded durable groups, typed M05 checks/M06 preview and branch/restart reconciliation; its explicit wall-clock miner, fresh V4 signed-overlap renewal, paid V3 transaction intake and operator-pinned peer following share one native owner; qualify measured sustained operation, open public discovery/gossip plus confidentiality, interruptible native work and ordinary Hepta/resource/effect integration. Both transport profiles remain development candidates; public-v2 resource bounds and local conformance do not grant public-service or complete product acceptance. |
 | P1 long-lived state and confirmation | Native branch/delta/checkpoint persistence, receiver verification and exact signed-request replay/outbox state coexist with the independent reference oracle; root maps/history scans still incur full-size costs | Persistent incremental authenticated roots and real WAN/open-peer integration; the controlled receiver is full-verifying, not succinct or globally fresh. Verify deep history without treating private authentication, transport budgets or retention as finality. |
 | P1 independent model value | E3 seals actual parent/candidate/strong controls/calibration/partitions; explicit revision11 factor admission loads the complete current parent and rejects exact same-context BA copies; no-gain remains zero adoption and reward | Authorized new tasks, independent source/evaluation/withdrawal owners, untouched future windows and budget-matched strong controls. Retrospective splits or configured identities do not satisfy independence. |

@@ -85,3 +85,97 @@ The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
 the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
 No historical receipt is relabelled as executing this source.
+
+## Explicit continuity maintenance work
+
+[Continuity v1](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) adds a genesis-committed maintenance material and an explicit native mining choice. It grants zero useful-output credit, preserves full W1 verification and does not fabricate an external lease or override an owner withdrawal. The original profile remains unchanged.
+
+## Actual producer alternatives and task reuse
+
+The [W1 comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md)
+adds separate complete tiled-classical and one-level Strassen producers, including
+fixed-product setup, both noise products and every required transcript boundary.
+They are diagnostic alternatives; Node's selected miner and proof relationship
+remain unchanged. The repeated-search example executes cold-per-search and one
+actually reused setup with identical challenge streams and complete proof/ticket
+commitments. Exhaustion and unsupported cases remain observations. Its extra
+stream-hashing cost is explicit, so measurements from older harness schemas are
+not interchangeable. Fewer field multiplications do not establish a faster miner
+or a lower bound on the cheapest valid work.
+
+The separate strict-zero producer keeps only small prefix factors and one current
+tile while emitting the same complete proof. Its historical locality cost schema
+`pon-w1-zero-locality-v1` compares three zero-capable implementations, including
+every failed target attempt and actual setup. The current five-producer v2 relation
+is separately identified in the Round 10 source-binding section below. A signed
+native V4/continuity lifecycle regression checks
+that real zero-material registration, proof verification, renewal, revocation,
+expiry and parent changes still require their ordinary checks. This diagnostic
+producer is not installed as the Node's default miner or a source of verified types.
+
+## Complete one-zero rank-one transcript experiment
+
+The separate `BlockedOneZeroRankOnePreparedTask` accepts exactly one zero operand
+and one complete canonical nonzero rank-one operand. It derives and checks the
+factors before retaining them, and emits all32,768 canonical transcript words in
+the original order. `pon_one_zero_io` supports independent complete49188-byte
+comparison; `pon_one_zero_locality_cost` owns a fresh raw-cost schema with both
+orientations, cold/reused setup and complete winning/losing streams. See the
+[W1 implementation comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md).
+This diagnostic does not replace native mining selection or independently qualify
+task cost, proof hardness, actual checkpoint utility or hardware efficiency.
+
+## Fixed maintenance producer research
+
+The separate `PairedPreparedTask` computes the same complete W1 relation using
+canonical paired products and separately charged row/column factors. Its fixed
+maintenance experiment compares generic, classical, Strassen and paired strategies
+under cold/reused setup; complete-stream commitments, full winning proofs and every
+search outcome, including exhaustion, are retained. Losing proof arrays are not
+stored separately. [W1 comparison](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md)
+defines the algebra, actual genesis material, independent Python byte relation and
+balanced sample order. The default producer/verifier and task qualification remain
+unchanged; lower multiplication counts are not measured runtime or a work lower bound.
+
+The separate `MaintenancePeriodicPreparedTask` accepts only both exact public
+maintenance operands and computes their fixed product with integer row-prefix and
+sawtooth suffix sums. Actual checks, plans, sums, product and proof-prefix construction
+belong to its setup call. Every challenge delegates to the ordinary complete
+`PreparedTask` transcript and its cancellation checkpoints. The retained object
+contains exact material and product bytes, without parent, lease or admission
+authority. Its source-defined equivalence and rejection checks do not establish
+runtime savings, a cheapest-producer bound or a new mining selection.
+
+The separate `MaintenanceIntegerPairedPreparedTask` and
+`MaintenancePrefixPreparedTask` share that exact fixed-product constructor. The first
+uses exact raw integer-pair dots; the second derives challenge-dependent periodic
+prefixes while retaining every W1 transcript word, tile-order hashing and proof
+byte. The prefix producer additionally constructs a64-column plan inside its
+charged setup call. Complete setup and per-challenge search costs are reported
+separately; shared fixed-product code does not imply identical setup costs.
+The v4 maintenance cost suite adds `MaintenanceLimbPreparedTask`, retaining all
+eight producers in sixteen balanced cold/reused positions. Exact low/high32-bit
+product sums use bounded u64 accumulators before reduction modulo2^32-5, retaining
+every multiplication and canonical transcript word. Historical v1/v2/v3 observations
+retain their original contracts. Neither new method has an established
+general-multiplication-count advantage over the other; actual timings, including
+slower and exhausted observations, must decide the measured comparison. No default
+Node selector, work relation or acceptance flag changes.
+
+
+## 本轮来源绑定（Round 10）
+
+当前 `pon-w1-zero-locality-v2` 明确比较五种完整生成者的 cold／reused 路径；历史 v1
+保留三种生成者的原始输入网格与实际观测，不能改名或重封摘要后充作 v2 执行。
+本轮双零材料生成者的准备对象只保存确定材料与证明前缀；每个 challenge 重新生成
+噪声与全部 transcript，不保存可绕过后续检查的父分支、租约或签发权限。具体关系见
+[W1 实现比较](../protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md)，
+签名任务的续租、撤销和到期仍按实际当前父分支判断，见
+[签名任务生命周期 V4](../protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md)。
+
+该生成对象不是本模块的外部效果 entry token。`M03.RevokeEntryLinearization` 的
+本地 revoke／entry 线性化与已持久化操作事实继续独立成立，分支重组不回退这些事实。
+以下 actual-parent lifecycle selector 只登记源码与测试定义，不新增 invariant、
+不代替外部效果撤销或独立验收，`independent_accepted=false`。
+
+- `trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs::signed_zero_preparation_never_replaces_parent_renewal_revocation_or_expiry`.

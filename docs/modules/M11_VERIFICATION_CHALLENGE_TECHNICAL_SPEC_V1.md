@@ -139,3 +139,41 @@ counterexamples above compare all arrival orders and withheld/expired evidence. 
 invariant applies to a fresh revision4 context; the registry's genesis revision remains
 the unchanged installed revision3 default. No new authority is obtained by choosing a
 profile or by registering a test selector.
+
+## Native full evidence replay in the explicit model profile
+
+[Model evidence v3](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) installs actual frozen tasks and four complete retained controls, recomputes candidate/parent/control scores in M06, and requires every signed reveal to match native score and digest. This finite statement is executable. Source attestations, hidden common control, general LLM behavior, prospective gain and public dispute adjudication remain distinct obligations.
+
+## Native composition evaluation in revision14
+
+[Model composition V4](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md)
+reuses the complete integer inference kernel,25 public historical tasks and four
+frozen controls. It evaluates each full component and every exact leave-one-out
+model against the actual current full parent; caller-supplied allocation weights
+must match those measured gains. The two-generation fixture adopts a24/25 parent
+before evaluating the next25/25 bundle, so the second parent is an actual release.
+
+A component with zero standalone gain may participate only in this fresh profile
+when its exact omission reduces the bundle score. Exact-zero subset rejection closes
+the known cancelling-pair example; it does not establish coalition fairness, causal
+training effort or protection against general component splitting. The fixed corpus
+saturates at25/25 and supplies no next untouched evaluation window. Independent
+prospective usefulness and public model rewards remain unaccepted.
+
+A separate Python integer implementation now compares all42 named native codec,
+composition, inference, tie, range and exactly cancelling subset observations, and the
+actual signed lifecycle's full empirical/composition records. It recomputes expected
+scores and digests from model bytes and frozen tasks; reported native score fields
+cannot supply the answer. This conformance layer leaves signatures, roster closure,
+ILF2 witness validity and future-task custody as separately scoped premises.
+
+## Bounded reported-window continuity
+
+The optional [model window history](../protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md#explicit-continuation-across-reported-evaluation-windows)
+requires externally fixed previous-history and new-window digests. Ordered rows
+rebuild prior task/probe prompts and contacted source groups; new evaluation must
+pass current V1 record validation and historical exclusions. Complete valid negative-gate
+records consume their window, and preregistration reserves enough bytes for the
+mandatory completed row. Candidate changes are allowed within a fixed owner and
+governance context. This pure sidecar does not authenticate historical execution,
+secret custody, real time or unreported exposure, and grants no native reward.

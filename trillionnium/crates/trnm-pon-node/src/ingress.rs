@@ -2,7 +2,7 @@
 use crate::{
     authenticated_payload_digest, authenticated_profile_digest, digest, ensure,
     store::{AuthenticatedReplayDecision, WorkCheckedPacket},
-    Error, Node, Packet, Result, Settings,
+    Error, ErrorCode, Node, Packet, Result, Settings,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -1363,7 +1363,7 @@ fn serve_inner(
                     ) {
                         Ok(request) => request,
                         Err(error) => {
-                            let reserved_refusal = error.to_string() == RESERVED_READ_ONLY_BUSY;
+                            let reserved_refusal = error.is(ErrorCode::ReservedReadOnlyBusy);
                             let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
                             if reserved_refusal {
                                 counts.admission_reserved_read_only_refusals += 1;
@@ -1768,15 +1768,7 @@ fn call_authenticated_inner(
         .get("error")
         .and_then(Value::as_str)
         .unwrap_or("AUTH_REMOTE_ERROR");
-    Err(format!(
-        "{}:{error}",
-        if terminal {
-            "REMOTE_TERMINAL"
-        } else {
-            "REMOTE_RETRYABLE"
-        }
-    )
-    .into())
+    Err(Error::authenticated_remote(terminal, error))
 }
 
 fn outbound_authenticated_request(
@@ -1933,15 +1925,7 @@ fn call_authenticated_durable_inner(
         .get("error")
         .and_then(Value::as_str)
         .unwrap_or("AUTH_REMOTE_ERROR");
-    Err(format!(
-        "{}:{error}",
-        if terminal {
-            "REMOTE_TERMINAL"
-        } else {
-            "REMOTE_RETRYABLE"
-        }
-    )
-    .into())
+    Err(Error::authenticated_remote(terminal, error))
 }
 
 pub fn receive_page(
@@ -3127,7 +3111,7 @@ mod tests {
         let value = loop {
             match call_authenticated_durable(&mut client_node, address, &Request::Head, &client) {
                 Ok(value) => break value,
-                Err(error) if error.to_string().starts_with("REMOTE_RETRYABLE:") => {
+                Err(error) if error.is(ErrorCode::RemoteRetryable) => {
                     thread::sleep(Duration::from_millis(10));
                 }
                 Err(error) => panic!("unexpected retry error: {error}"),

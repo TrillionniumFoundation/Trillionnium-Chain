@@ -239,3 +239,132 @@ cursor/ancestry checks, with an original120-second listener owned and joined by 
 phase. It preserves all241 real successor blocks and the final archive refusal,
 without certifying uninterrupted241-block delivery within one listener lease. The
 historical single-transfer timeout remains outside this resumed-fixture scope.
+
+## Typed owner failures and explicit continuity
+
+[Typed error identity](../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) preserves display/wire text while separating stable local cause from signed remote refusal. [Continuity v1](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md) adds an explicit maintenance choice under a fresh context; all local owner/revocation gates remain. Neither change authorizes a deployment.
+
+## Bounded history projection and same-operation prefix execution
+
+[History resource bounds](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md)
+use at most64 ancestry rows per SQL statement for complete clock and confirmation
+scans. Every header and recorded parent remains checked; cancellation runs between
+queries and the final active identity is rechecked. The scan remains linear in
+history, and evaluation observers retain their own explicit work/round boundaries.
+[Pool prefix execution](../protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md#same-block-incremental-m06-prefix)
+reuses one checked original parent and only same-block scratch within an operation.
+Neither optimization changes wire results, durable single-writer ownership,
+reorganization rules or permission for retained groups.
+
+Retained local header/KV/reorg/replay integrity failures now preserve their concrete
+local origin and typed source through polling and recovery. Matching remote text,
+ordinary unknown locators, callback cancellation and clock deferral cannot acquire
+owner-stop authority. The history growth example separately checks a complete
+reference root and records actual derived-cache methods/software charges after read
+and confirmation operations; these observations do not measure concurrent lock cost,
+process RSS or persistent authenticated state performance.
+
+## Local capacity and client recovery identities
+
+`capacity-observe` is a local CLI/Node observation with its own JSON schema. It
+retains ordinary Node open/recovery behavior, rejects incompatible task profiles
+before opening, checks actual committed KV/root and final generation/slot, and
+does not extend peer Head or signed responses. The [continuity contract](../protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md)
+defines every reported obligation and the remaining permanent-account boundary.
+
+Public V3 client phases use `PublicClientStage` for recovery and failed-phase
+accounting. The `failed_stage` JSON labels and null remain the same; unknown
+diagnostic labels never acquire native phase identity. This explicitly refines
+the public Rust field type and leaves signed wire messages and retry/deadline
+limits unchanged; see [internal errors](../protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md).
+
+## Research account storage and bounded History pages
+
+`account_archive_prototype` owns a separate SQLite namespace and explicit caller
+context; it is not opened or consulted by ordinary Node startup, admission,
+activation or recovery. Complete before/after State projections, real signed
+Node transitions and synthetic large-space fixtures are distinguished in
+[its contract](../protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md).
+
+The same explicit research module exposes full-parent state-witness construction
+and checked execution under fresh observation/commitment domains. This combines
+account proofs with all non-account rows for actual mandatory execution and checks
+prologue/final roots and aggregate funds against full State. It adds no startup
+option, admission shortcut, archive activation or new stored Node root. Existing
+Settings, branch selection and durable single-writer boundaries remain required.
+
+Ordinary History page service retains its existing input, output, wire, errors
+and cancellation order while using bounded actual-record batches and at most16
+Hash candidates. The full H-edge path remains verified. Native whole-call timing
+and exported complete packet frames are specified in
+[resource bounds](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md).
+The Hash payload counter is not an RSS or physical SQL allocation measurement.
+
+## Explicit authenticated-state archive
+
+The [durable research archive](../protocol/pon-nakamoto-v1/details/AUTHENTICATED_STATE_ARCHIVE_V1.md)
+uses its own namespace and explicit caller operation. It imports actual native genesis,
+reexecutes an admitted block through complete authenticated-state inputs and checks
+full state/receipts before atomically publishing checkpoint, delta and optional selection.
+CAS generations do not rewind when selecting an older branch. Missing data, altered
+records, stale selection, quota exhaustion and cancellation refuse without partial
+publication. Reads and reopen reconstruct complete states and compare actual native
+branch data. This separate reference-backed store adds no ordinary startup selection,
+installed state root, public proof service, pruning or rollback of local operation facts.
+
+## Explicit native authenticated storage selection
+
+Actual local Node commands accept `--state-backend authenticated-v1` for the fresh
+`native-authenticated-branch-schema-v1` implementation. No option, or explicit
+`legacy-v2`, selects the original backend. Wrong schema selection fails before
+database mutation. Unknown choices and options on unrelated commands fail before
+opening a store; external owner configuration combined with the new backend is
+explicitly unsupported and fails before loading that configuration.
+
+The selected backend participates in real status/recovery, mining, submission,
+confirmation, pool, sync and serving paths. It stores authenticated account nodes
+with native branch data in one transaction and exposes a checked AAM1 account query
+from that same database. The CLI test mines a real maintenance block, cold reopens
+the new namespace and binds capacity observations to its exact active state.
+
+`Node::migrate_to_authenticated_state` is a separate explicit local API on an
+already owned legacy Node. It preserves the source and all retained local facts,
+validates inactive branches and pending reorganization, and publishes only a fully
+checked fresh target. It is not an implicit startup conversion. The original
+account/archive research APIs keep their separate namespaces and meanings.
+
+See [native authenticated storage](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+for publication, migration and refusal rules. Complete-State work, non-account
+scans, global physical storage responsibility, external owner migration and public
+proof availability remain separate constraints; the option grants no release or
+production activation.
+
+
+## 本轮来源绑定（Round 10）
+
+本节补充 `M15.ExplicitBackend` 的实际接口来源绑定。
+[原生认证存储](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+的账户查询先检查请求维度，再读取 snapshot／重放状态；取消贯穿原生状态准备和
+AAM1 构造，并保留实际取消错误。回调改变已观察存储时须拒绝和回滚相关事务，成功
+重试仍与真实节点字节绑定，不从缓存中的旧成功结果推断权限。
+
+借用账户解码、缓存 SQL statement 与单次 leaf 解码保留完整原始 grammar、实际行读回、
+错误和 progress 检查。组件成本测试 `native_complete_account_verification_cost` 在普通
+debug suite 中 ignored，必须以实际 `--release --exact --ignored` 执行记录其范围；
+完整容量专项具有相同的实际 release 执行要求。组件观测不等于整 Node 验块、锁等待、
+磁盘或公开 proof 服务成本，剩余边界见
+[状态与历史资源边界](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md)。
+
+以下仅为实际函数和测试定义绑定；后端显式选择、迁移、普通产品入口与验收继续分离，
+不写入当前 CI 通过或部署资格，`independent_accepted=false`。
+
+对应完整回归 selector：
+
+- `trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_dimensions_precede_any_snapshot_or_state_read`.
+- `trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_cancellation_preserves_error_snapshot_and_exact_retry_bytes`.
+- `trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_reads_real_nodes_and_rolls_back_callback_mutations`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_leaf_decoder_preserves_complete_original_grammar`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_borrowed_accounts_preserve_arrays_numbers_and_field_failures`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_cached_node_statements_read_actual_rows_and_trigger_effects`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_complete_account_checks_keep_branch_bytes_errors_and_progress`.
+- `trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_complete_account_verification_cost`.

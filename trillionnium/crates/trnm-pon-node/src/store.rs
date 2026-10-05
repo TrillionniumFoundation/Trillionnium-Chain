@@ -1,7 +1,12 @@
 //! M07/M08 native branch persistence and recovery using the existing M06 executor.
+pub mod authenticated_migration;
+pub(crate) mod authenticated_state;
+pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
+mod history_page;
 pub mod mempool;
+pub(crate) mod native_authenticated;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 use crate::{
@@ -9,6 +14,7 @@ use crate::{
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
 };
 use fs2::FileExt;
+pub use history_page::HistoryPageReadCounters;
 pub(crate) use operator_continuous_owner::PublicContinuousScope;
 pub use operator_continuous_owner::{
     ContinuousSearchRequest, OwnedContinuousLeaseResult, OwnedContinuousPoolResult,
@@ -19,7 +25,7 @@ use serde::Serialize;
 use serde_json::Value;
 use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
 use std::{
-    cell::RefCell,
+    cell::{Cell, RefCell},
     collections::BTreeMap,
     fs::{self, File, OpenOptions},
     io::{Read, Seek, SeekFrom, Write},
@@ -31,6 +37,7 @@ use trnm_crypto_primitives::qualified_work_task::{
     derive_matrices, verify_development_statement, DevelopmentTaskAdmission, TaskMaterial,
 };
 use trnm_mvcc_fee::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
+use trnm_mvcc_fee::continuity_v1::{self, PROFILE as CONTINUITY_TASK_PROFILE};
 use trnm_mvcc_fee::pon_commitment::{
     self, CacheLimits, CheckedCommitment, CommitmentObservation, ExecutionRequest,
     PreparedCommitment,
@@ -80,7 +87,8 @@ fn bytes64(bytes: Vec<u8>) -> Result<[u8; 64]> {
 fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
     Ok(serde_json::to_vec(value)?)
 }
-type Delta = (String, Option<Vec<u8>>, Option<Vec<u8>>);
+pub(crate) type Delta = (String, Option<Vec<u8>>, Option<Vec<u8>>);
+type ReorgRow = (Vec<u8>, Vec<u8>, u64, u64, u64);
 type Hook<'a> = dyn FnMut(&str) -> Result<()> + 'a;
 type ReplayRow = (
     Vec<u8>,
@@ -100,13 +108,14 @@ const AUTH_RESPONSE_RETENTION: u64 = 16;
 /// search; the successor is separately checked by M06 and consume_output.
 pub(crate) enum ParentTaskEligibility {
     Legacy,
+    ConsensusMaintenance,
     Signed(Box<QualifiedWorkTask>),
     Lifecycle(Box<qualified_task_lifecycle::EligibleLifecycleTask>),
 }
 impl ParentTaskEligibility {
     fn manifest(&self) -> Option<&QualifiedWorkTask> {
         match self {
-            Self::Legacy => None,
+            Self::Legacy | Self::ConsensusMaintenance => None,
             Self::Signed(manifest) => Some(manifest),
             Self::Lifecycle(eligible) => Some(eligible.manifest()),
         }
@@ -299,6 +308,50 @@ struct Record {
     work: Work,
     root: Hash,
 }
+struct StoredHeaderLink {
+    header: Header,
+    record: Record,
+    parent_work: Work,
+}
+struct HeaderProjection {
+    parent: Option<Vec<u8>>,
+    height: u64,
+    work: Vec<u8>,
+    root: Vec<u8>,
+    prefix: Option<Vec<u8>>,
+    trace: Option<Vec<u8>>,
+    length: Option<usize>,
+    parent_height: Option<u64>,
+    parent_work: Option<Vec<u8>>,
+    parent_parent: Option<Vec<u8>>,
+    parent_root: Option<Vec<u8>>,
+}
+impl HeaderProjection {
+    fn read(row: &rusqlite::Row<'_>) -> rusqlite::Result<Self> {
+        Ok(Self {
+            parent: row.get(0)?,
+            height: row.get(1)?,
+            work: row.get(2)?,
+            root: row.get(3)?,
+            prefix: row.get(4)?,
+            trace: row.get(5)?,
+            length: row.get(6)?,
+            parent_height: row.get(7)?,
+            parent_work: row.get(8)?,
+            parent_parent: row.get(9)?,
+            parent_root: row.get(10)?,
+        })
+    }
+}
+const HISTORY_HEADER_BATCH: u64 = 64;
+
+/// Local SQL projection counters, not a work, state or confirmation certificate.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct HistoryReadCounters {
+    pub header_link_queries: u64,
+    /// Header and trace bytes returned to Rust; excludes SQLite page reads.
+    pub header_trace_bytes: u64,
+}
 /// Owns the exact packet whose work was actually verified. Not state or clock authority.
 /// Private fields prevent replacing the header/body/proof after verification.
 pub(crate) struct WorkCheckedPacket {
@@ -348,6 +401,49 @@ fn local_execution_error(error: ExecutionError<Error>) -> Error {
     }
 }
 
+/// Cancellation stages for the complete checked native account proof query.
+/// Individual State commitment/hash primitives remain bounded single stages.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum NativeAccountProofProgress {
+    BeforeRead,
+    StateReplay,
+    StateVerification,
+    Proof(crate::account_archive_prototype::multiproof::MultiproofProgress),
+    BeforeOutput,
+}
+
+enum NativeAccountProofFailure {
+    Archive(crate::account_archive_prototype::ArchiveError),
+    Control(Error),
+}
+impl From<crate::account_archive_prototype::ArchiveError> for NativeAccountProofFailure {
+    fn from(error: crate::account_archive_prototype::ArchiveError) -> Self {
+        Self::Archive(error)
+    }
+}
+impl NativeAccountProofFailure {
+    fn into_error(self) -> Error {
+        use crate::account_archive_prototype::ArchiveError;
+        match self {
+            Self::Control(error) => error,
+            Self::Archive(error) => {
+                let is_local = matches!(
+                    error,
+                    ArchiveError::DataUnavailable
+                        | ArchiveError::CorruptRecord
+                        | ArchiveError::Storage(_)
+                );
+                let error = Error::from(format!("NATIVE_ACCOUNT_PROOF:{error:?}"));
+                if is_local {
+                    error.local_integrity()
+                } else {
+                    error
+                }
+            }
+        }
+    }
+}
+
 /// One private native namespace; no reference subprocess or remote state setter exists.
 pub struct Node {
     db: Connection,
@@ -357,12 +453,40 @@ pub struct Node {
     database_id: (u64, u64),
     settings: Settings,
     workers: usize,
+    state_backend: StateBackend,
     // One derived snapshot only; State always comes from actual KV/snapshot/deltas.
     commitment_cache: RefCell<Option<ActiveCommitment>>,
     commitment_observation: RefCell<Option<CommitmentObservation>>,
+    history_read_counters: Cell<HistoryReadCounters>,
+    history_page_read_counters: Cell<HistoryPageReadCounters>,
     owner_policy: Option<OwnerPolicy>,
     mining_owner: Option<operator_mining_owner::MiningOwner>,
     continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum StateBackend {
+    Legacy,
+    AuthenticatedV1,
+}
+impl StateBackend {
+    fn ddl(self) -> String {
+        match self {
+            Self::Legacy => ddl(),
+            Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
+        }
+    }
+    fn schema_id(self) -> Hash {
+        let domain: &[u8] = match self {
+            Self::Legacy => b"native-branch-schema-v2",
+            Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
+        };
+        hash(domain, &[self.ddl().as_bytes()])
+    }
+}
+struct NativeOwners {
+    policy: Option<OwnerPolicy>,
+    mining: Option<operator_mining_owner::MiningOwner>,
+    continuous: Option<operator_continuous_owner::ContinuousOwner>,
 }
 struct OwnerPolicy {
     pool_policies: Vec<std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>>,
@@ -435,6 +559,13 @@ impl OwnerPoolPermit {
 }
 fn owner_marker_present(path: &Path) -> Result<bool> {
     match fs::symlink_metadata(path.join("owner-task-policy.required")) {
+        Ok(_) => Ok(true),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
+        Err(error) => Err(error.into()),
+    }
+}
+fn authenticated_migration_pending(path: &Path) -> Result<bool> {
+    match fs::symlink_metadata(path.join("authenticated-migration.pending")) {
         Ok(_) => Ok(true),
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
         Err(error) => Err(error.into()),
@@ -516,6 +647,36 @@ impl Node {
         // The legacy opener is never a fallback for a required-policy namespace.
         ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
         Self::open_inner(path, settings, workers, hook, None, None, None)
+    }
+    /// Explicit fresh storage namespace. Consensus profiles and header root bytes
+    /// are unchanged; complete native state and authenticated account nodes are
+    /// now mandatory components of the same persistent Node transaction.
+    pub fn open_with_authenticated_state(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+    ) -> Result<Self> {
+        Self::open_with_authenticated_state_and_fault(path, settings, workers, None)
+    }
+    pub fn open_with_authenticated_state_and_fault(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        hook: Option<&mut Hook<'_>>,
+    ) -> Result<Self> {
+        ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+        Self::open_selected(
+            path,
+            settings,
+            workers,
+            hook,
+            NativeOwners {
+                policy: None,
+                mining: None,
+                continuous: None,
+            },
+            StateBackend::AuthenticatedV1,
+        )
     }
     /// Explicit local operator policy; neither permissionless nor consensus authority.
     /// Inputs must be supplied from protected operator configuration, not a Request.
@@ -632,11 +793,41 @@ impl Node {
         path: &Path,
         settings: Settings,
         workers: usize,
-        mut hook: Option<&mut Hook<'_>>,
+        hook: Option<&mut Hook<'_>>,
         owner_policy: Option<OwnerPolicy>,
         mining_owner: Option<operator_mining_owner::MiningOwner>,
         continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
     ) -> Result<Self> {
+        Self::open_selected(
+            path,
+            settings,
+            workers,
+            hook,
+            NativeOwners {
+                policy: owner_policy,
+                mining: mining_owner,
+                continuous: continuous_owner,
+            },
+            StateBackend::Legacy,
+        )
+    }
+    fn open_selected(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        mut hook: Option<&mut Hook<'_>>,
+        owners: NativeOwners,
+        state_backend: StateBackend,
+    ) -> Result<Self> {
+        ensure(
+            !authenticated_migration_pending(path)?,
+            "NATIVE_STATE_MIGRATION_PENDING",
+        )?;
+        let NativeOwners {
+            policy: owner_policy,
+            mining: mining_owner,
+            continuous: continuous_owner,
+        } = owners;
         ensure(
             usize::from(owner_policy.is_some())
                 + usize::from(mining_owner.is_some())
@@ -684,8 +875,8 @@ impl Node {
         owner
             .try_lock_exclusive()
             .map_err(|_| Error::from("WRITER_BUSY"))?;
-        let ddl = ddl();
-        let schema_id = hash(b"native-branch-schema-v2", &[ddl.as_bytes()]);
+        let ddl = state_backend.ddl();
+        let schema_id = state_backend.schema_id();
         let expected = canonical(
             &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
         )?;
@@ -819,6 +1010,9 @@ impl Node {
                 "INSERT INTO snapshots VALUES(?,?)",
                 params![settings.genesis.as_slice(), canonical(&settings.initial)?],
             )?;
+            if state_backend == StateBackend::AuthenticatedV1 {
+                native_authenticated::seed(&tx, &settings)?;
+            }
             cut(&mut hook, "init-before-commit")?;
             tx.commit()?;
             cut(&mut hook, "init-committed")?;
@@ -835,13 +1029,24 @@ impl Node {
             database_id: (dm.dev(), dm.ino()),
             settings,
             workers,
+            state_backend,
             commitment_cache: RefCell::new(None),
             commitment_observation: RefCell::new(None),
+            history_read_counters: Cell::new(HistoryReadCounters::default()),
+            history_page_read_counters: Cell::new(HistoryPageReadCounters::default()),
             owner_policy,
             mining_owner,
             continuous_owner,
         };
         node.read_active()?;
+        if node.state_backend == StateBackend::AuthenticatedV1 {
+            native_authenticated::verify_history(
+                &node.db,
+                &node.settings,
+                node.active()?.0,
+                &mut || Ok(()),
+            )?;
+        }
         node.validate_authenticated_replay()?;
         node.validate_authenticated_outbox()?;
         node.recover()?;
@@ -859,19 +1064,98 @@ impl Node {
     pub fn settings(&self) -> &Settings {
         &self.settings
     }
+    /// Export a compact point proof from the actual integrated native tree in
+    /// one SQLite read snapshot. Supplied reports cannot choose its root or
+    /// account bytes. The complete State is still checked before this query.
+    pub fn authenticated_account_multiproof(
+        &self,
+        block: Hash,
+        owners: &[Hash],
+    ) -> Result<(
+        crate::account_archive_prototype::Checkpoint,
+        crate::account_archive_prototype::multiproof::Multiproof,
+        crate::account_archive_prototype::multiproof::ConstructionObservation,
+    )> {
+        self.authenticated_account_multiproof_with_progress(block, owners, &|_| Ok(()))
+    }
+    /// Reject oversized/duplicate requests before storage access, then retain a
+    /// single read transaction through full-State replay and proof construction.
+    /// Cancellation returns the caller's original error and releases the snapshot.
+    pub fn authenticated_account_multiproof_with_progress(
+        &self,
+        block: Hash,
+        owners: &[Hash],
+        progress: &(impl Fn(NativeAccountProofProgress) -> Result<()> + ?Sized),
+    ) -> Result<(
+        crate::account_archive_prototype::Checkpoint,
+        crate::account_archive_prototype::multiproof::Multiproof,
+        crate::account_archive_prototype::multiproof::ConstructionObservation,
+    )> {
+        use crate::account_archive_prototype::{multiproof, ArchiveError};
+        ensure(
+            self.state_backend == StateBackend::AuthenticatedV1,
+            "NATIVE_STATE_BACKEND_REQUIRED",
+        )?;
+        if owners.len() > multiproof::MAX_ACCOUNTS {
+            return Err(NativeAccountProofFailure::Archive(ArchiveError::Budget).into_error());
+        }
+        if owners
+            .iter()
+            .collect::<std::collections::BTreeSet<_>>()
+            .len()
+            != owners.len()
+        {
+            return Err(
+                NativeAccountProofFailure::Archive(ArchiveError::InvalidWitness).into_error(),
+            );
+        }
+        progress(NativeAccountProofProgress::BeforeRead)?;
+        self.namespace()?;
+        let tx = self.db.unchecked_transaction()?;
+        self.storage_context()?;
+        let state = self.state_at_with_progress(block, &mut || {
+            progress(NativeAccountProofProgress::StateReplay)
+        })?;
+        native_authenticated::verify_state(&tx, &self.settings, block, &state, &mut || {
+            progress(NativeAccountProofProgress::StateVerification)
+        })?;
+        let record = native_authenticated::load(&tx, block)?;
+        let context = crate::account_archive_prototype::Context {
+            network: self.settings.network(),
+            parameters: self.settings.parameters(),
+            genesis: self.settings.genesis(),
+        };
+        let checkpoint = crate::account_archive_prototype::native_store::query_checkpoint(
+            &tx,
+            context,
+            block,
+            record.height,
+            record.state.state_root,
+            &record.accounts,
+        )?;
+        let (proof, observation) =
+            multiproof::from_native_database(&tx, &checkpoint, owners, &|point| {
+                progress(NativeAccountProofProgress::Proof(point))
+                    .map_err(NativeAccountProofFailure::Control)
+            })
+            .map_err(NativeAccountProofFailure::into_error)?;
+        progress(NativeAccountProofProgress::BeforeOutput)?;
+        tx.commit()?;
+        Ok((checkpoint, proof, observation))
+    }
     fn decode_replay_row(row: ReplayRow) -> Result<PeerReplayStateV0> {
         let chain = IoDigest32V0::new(bytes32(row.0)?)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+            .map_err(|e| Error::local_replay_source("AUTH_REPLAY", e))?;
         let protocol = IoDigest32V0::new(bytes32(row.1)?)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+            .map_err(|e| Error::local_replay_source("AUTH_REPLAY", e))?;
         let peer = IoDigest32V0::new(bytes32(row.2)?)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+            .map_err(|e| Error::local_replay_source("AUTH_REPLAY", e))?;
         let session_id = IoDigest32V0::new(bytes32(row.3)?)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+            .map_err(|e| Error::local_replay_source("AUTH_REPLAY", e))?;
         let profile = IoDigest32V0::new(bytes32(row.4)?)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+            .map_err(|e| Error::local_replay_source("AUTH_REPLAY", e))?;
         let session = PeerSessionIdentityV0::new(chain, protocol, peer, session_id, profile, row.5)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+            .map_err(|e| Error::local_replay_source("AUTH_REPLAY", e))?;
         let pending = match (row.7, row.8, row.9) {
             (None, None, None) => None,
             (Some(nonce), Some(digest), Some(bytes)) => Some(
@@ -879,15 +1163,16 @@ impl Node {
                     session,
                     nonce,
                     IoDigest32V0::new(bytes32(digest)?)
-                        .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?,
-                    usize::try_from(bytes).map_err(|_| Error::from("AUTH_REPLAY_SIZE"))?,
+                        .map_err(|e| Error::local_replay_source("AUTH_REPLAY", e))?,
+                    usize::try_from(bytes)
+                        .map_err(|_| Error::from("AUTH_REPLAY_SIZE").local_integrity())?,
                 )
-                .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?,
+                .map_err(|e| Error::local_replay_source("AUTH_REPLAY", e))?,
             ),
-            _ => return Err("AUTH_PENDING_AUDIT".into()),
+            _ => return Err(Error::from("AUTH_PENDING_AUDIT").local_integrity()),
         };
         PeerReplayStateV0::new(session, row.6, pending)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))
+            .map_err(|e| Error::local_replay_source("AUTH_REPLAY", e))
     }
 
     fn authenticated_replay_state(
@@ -956,9 +1241,10 @@ impl Node {
                     && state.session().profile_digest().bytes()
                         == crate::authenticated_profile_digest(),
                 "AUTH_REPLAY_CONTEXT",
-            )?;
+            )
+            .map_err(Error::local_integrity)?;
             CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
-                .map_err(|e| Error::from(format!("AUTH_RECOVERY:{e}")))?;
+                .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         }
         Ok(())
     }
@@ -1032,9 +1318,10 @@ impl Node {
                     && state.session().profile_digest().bytes()
                         == crate::authenticated_profile_digest(),
                 "AUTH_OUTBOX_CONTEXT",
-            )?;
+            )
+            .map_err(Error::local_integrity)?;
             CandidateP2pAdmissionV0::recover_verified(state, &mut OutboxRecovery { db: &self.db })
-                .map_err(|error| Error::from(format!("AUTH_OUTBOX_RECOVERY:{error}")))?;
+                .map_err(|error| Error::local_replay_source("AUTH_OUTBOX_RECOVERY", error))?;
         }
         Ok(())
     }
@@ -1051,10 +1338,10 @@ impl Node {
         )?;
         let state = self.authenticated_outbox_state(session)?.unwrap_or(
             PeerReplayStateV0::new(session, 0, None)
-                .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?,
+                .map_err(|error| Error::peer_admission_source("AUTH_OUTBOX", error))?,
         );
         CandidateP2pAdmissionV0::recover_verified(state, &mut OutboxRecovery { db: &self.db })
-            .map_err(|error| Error::from(format!("AUTH_OUTBOX_RECOVERY:{error}")))?;
+            .map_err(|error| Error::local_replay_source("AUTH_OUTBOX_RECOVERY", error))?;
         if let Some(frame) = state.pending() {
             let wire: Vec<u8> = self.db.query_row(
                 "SELECT pending_wire FROM peer_outbox WHERE session_id=?",
@@ -1093,17 +1380,17 @@ impl Node {
         )?;
         let state = self.authenticated_outbox_state(session)?.unwrap_or(
             PeerReplayStateV0::new(session, 0, None)
-                .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?,
+                .map_err(|error| Error::peer_admission_source("AUTH_OUTBOX", error))?,
         );
         let mut admission =
             CandidateP2pAdmissionV0::recover_verified(state, &mut OutboxRecovery { db: &self.db })
-                .map_err(|error| Error::from(format!("AUTH_OUTBOX_RECOVERY:{error}")))?;
+                .map_err(|error| Error::local_replay_source("AUTH_OUTBOX_RECOVERY", error))?;
         let verified = admission
             .verify_frame(frame, &mut ExactFrameSource { payload })
-            .map_err(|error| Error::from(format!("AUTH_OUTBOX_FRAME:{error}")))?;
+            .map_err(|error| Error::peer_frame_source("AUTH_OUTBOX_FRAME", error))?;
         admission
             .admit_verified(verified)
-            .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?;
+            .map_err(|error| Error::peer_admission_source("AUTH_OUTBOX", error))?;
         if state.pending().is_some() {
             let stored: Vec<u8> = self.db.query_row(
                 "SELECT pending_wire FROM peer_outbox WHERE session_id=?",
@@ -1116,7 +1403,7 @@ impl Node {
         let tx = self
             .db
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
-        tx.execute(
+        let changed = tx.execute(
             "INSERT INTO peer_outbox(session_id,chain_id,protocol_digest,peer_id,profile_digest,generation,highest_ack,pending_nonce,pending_digest,pending_bytes,pending_payload,pending_wire,pending_wire_digest) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(session_id) DO UPDATE SET pending_nonce=excluded.pending_nonce,pending_digest=excluded.pending_digest,pending_bytes=excluded.pending_bytes,pending_payload=excluded.pending_payload,pending_wire=excluded.pending_wire,pending_wire_digest=excluded.pending_wire_digest",
             params![
                 session.session_id().bytes().as_slice(),
@@ -1134,6 +1421,7 @@ impl Node {
                 hash(b"native-authenticated-wire-v1", &[wire]).as_slice(),
             ],
         )?;
+        ensure(changed == 1, "AUTH_OUTBOX_STATE").map_err(Error::local_integrity)?;
         tx.commit()?;
         Ok(wire.to_vec())
     }
@@ -1150,10 +1438,10 @@ impl Node {
         }
         let mut admission =
             CandidateP2pAdmissionV0::recover_verified(state, &mut OutboxRecovery { db: &self.db })
-                .map_err(|error| Error::from(format!("AUTH_OUTBOX_RECOVERY:{error}")))?;
+                .map_err(|error| Error::local_replay_source("AUTH_OUTBOX_RECOVERY", error))?;
         let next = admission
             .acknowledge(frame)
-            .map_err(|error| Error::from(format!("AUTH_OUTBOX:{error}")))?;
+            .map_err(|error| Error::peer_admission_source("AUTH_OUTBOX", error))?;
         let tx = self
             .db
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
@@ -1166,7 +1454,7 @@ impl Node {
                 frame.payload_digest().bytes().as_slice(),
             ],
         )?;
-        ensure(changed == 1, "AUTH_OUTBOX_STATE")?;
+        ensure(changed == 1, "AUTH_OUTBOX_STATE").map_err(Error::local_integrity)?;
         tx.commit()?;
         Ok(())
     }
@@ -1190,10 +1478,10 @@ impl Node {
         let existing = self.authenticated_replay_state(session)?;
         let state = existing.unwrap_or(
             PeerReplayStateV0::new(session, 0, None)
-                .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?,
+                .map_err(|e| Error::peer_admission_source("AUTH_REPLAY", e))?,
         );
         CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
-            .map_err(|e| Error::from(format!("AUTH_RECOVERY:{e}")))?;
+            .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         let session_id = session.session_id().bytes();
         if frame.replay_nonce() <= state.highest_acknowledged_nonce() {
             let audit: Option<(Vec<u8>, u64, Option<Vec<u8>>)> = self
@@ -1204,7 +1492,8 @@ impl Node {
                     |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
                 )
                 .optional()?;
-            let (digest, status, response) = audit.ok_or("AUTH_REPLAY_GAP")?;
+            let (digest, status, response) =
+                audit.ok_or_else(|| Error::from("AUTH_REPLAY_GAP").local_integrity())?;
             ensure(
                 bytes32(digest)? == frame.payload_digest().bytes(),
                 "AUTH_CONFLICTING_REPLAY",
@@ -1212,25 +1501,25 @@ impl Node {
             return match (status, response) {
                 (1, Some(bytes)) => Ok(AuthenticatedReplayDecision::Cached(bytes)),
                 (2, None) => Err("AUTH_REPLAY_RETIRED".into()),
-                _ => Err("AUTH_REPLAY_AUDIT".into()),
+                _ => Err(Error::from("AUTH_REPLAY_AUDIT").local_integrity()),
             };
         }
         let mut admission =
             CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
-                .map_err(|e| Error::from(format!("AUTH_RECOVERY:{e}")))?;
+                .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         let verified = admission
             .verify_frame(frame, &mut ExactFrameSource { payload })
-            .map_err(|e| Error::from(format!("AUTH_FRAME:{e}")))?;
+            .map_err(|e| Error::peer_frame_source("AUTH_FRAME", e))?;
         admission
             .admit_verified(verified)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+            .map_err(|e| Error::peer_admission_source("AUTH_REPLAY", e))?;
         if state.pending().is_some() {
             return Ok(AuthenticatedReplayDecision::Execute);
         }
         let tx = self
             .db
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
-        tx.execute(
+        let changed = tx.execute(
             "INSERT INTO peer_replay(session_id,chain_id,protocol_digest,peer_id,profile_digest,generation,highest_ack,pending_nonce,pending_digest,pending_bytes) VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(session_id) DO UPDATE SET pending_nonce=excluded.pending_nonce,pending_digest=excluded.pending_digest,pending_bytes=excluded.pending_bytes",
             params![
                 session_id.as_slice(),
@@ -1245,7 +1534,8 @@ impl Node {
                 frame.payload_bytes() as u64,
             ],
         )?;
-        tx.execute(
+        ensure(changed == 1, "AUTH_REPLAY_STATE").map_err(Error::local_integrity)?;
+        let changed = tx.execute(
             "INSERT INTO peer_request_audit(session_id,nonce,payload_digest,payload,response_digest,response,status) VALUES(?,?,?,?,NULL,NULL,0)",
             params![
                 session_id.as_slice(),
@@ -1254,6 +1544,7 @@ impl Node {
                 payload,
             ],
         )?;
+        ensure(changed == 1, "AUTH_REPLAY_AUDIT").map_err(Error::local_integrity)?;
         tx.commit()?;
         Ok(AuthenticatedReplayDecision::Execute)
     }
@@ -1271,7 +1562,7 @@ impl Node {
             .authenticated_replay_state(frame.session())?
             .ok_or("AUTH_REPLAY_STATE")?;
         CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
-            .map_err(|e| Error::from(format!("AUTH_RECOVERY:{e}")))?;
+            .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         let session = frame.session().session_id().bytes();
         let response_digest = hash(b"native-authenticated-response-v1", &[response]);
         if state.highest_acknowledged_nonce() >= frame.replay_nonce() {
@@ -1283,7 +1574,8 @@ impl Node {
                     |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
                 )
                 .optional()?;
-            let (digest, status, retained) = audit.ok_or("AUTH_REPLAY_GAP")?;
+            let (digest, status, retained) =
+                audit.ok_or_else(|| Error::from("AUTH_REPLAY_GAP").local_integrity())?;
             ensure(
                 bytes32(digest)? == response_digest,
                 "AUTH_RESPONSE_CONFLICT",
@@ -1297,10 +1589,10 @@ impl Node {
         }
         let mut admission =
             CandidateP2pAdmissionV0::recover_verified(state, &mut ReplayRecovery { db: &self.db })
-                .map_err(|e| Error::from(format!("AUTH_RECOVERY:{e}")))?;
+                .map_err(|e| Error::local_replay_source("AUTH_RECOVERY", e))?;
         let next = admission
             .acknowledge(frame)
-            .map_err(|e| Error::from(format!("AUTH_REPLAY:{e}")))?;
+            .map_err(|e| Error::peer_admission_source("AUTH_REPLAY", e))?;
         let tx = self
             .db
             .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
@@ -1314,11 +1606,12 @@ impl Node {
                 frame.payload_digest().bytes().as_slice(),
             ],
         )?;
-        ensure(changed == 1, "AUTH_REPLAY_AUDIT")?;
-        tx.execute(
+        ensure(changed == 1, "AUTH_REPLAY_AUDIT").map_err(Error::local_integrity)?;
+        let changed = tx.execute(
             "UPDATE peer_replay SET highest_ack=?,pending_nonce=NULL,pending_digest=NULL,pending_bytes=NULL WHERE session_id=?",
             params![next.highest_acknowledged_nonce(), session.as_slice()],
         )?;
+        ensure(changed == 1, "AUTH_REPLAY_STATE").map_err(Error::local_integrity)?;
         let retire = next
             .highest_acknowledged_nonce()
             .saturating_sub(AUTH_RESPONSE_RETENTION);
@@ -1360,6 +1653,10 @@ impl Node {
         ))
     }
     fn namespace(&self) -> Result<()> {
+        ensure(
+            !authenticated_migration_pending(&self.directory)?,
+            "NATIVE_STATE_MIGRATION_PENDING",
+        )?;
         let meta = fs::symlink_metadata(&self.directory)?;
         ensure(
             meta.is_dir() && (meta.dev(), meta.ino()) == self.directory_id,
@@ -1384,6 +1681,70 @@ impl Node {
             (actual.dev(), actual.ino()) == (held.dev(), held.ino()),
             "OWNER_REPLACED",
         )
+    }
+    fn storage_context(&self) -> Result<()> {
+        for (key, expected) in [
+            ("schema", self.state_backend.schema_id()),
+            ("parameters", self.settings.parameters()),
+            ("genesis", self.settings.genesis()),
+        ] {
+            let actual: Option<Vec<u8>> = self
+                .db
+                .query_row("SELECT value FROM metadata WHERE key=?", [key], |row| {
+                    row.get(0)
+                })
+                .optional()?;
+            ensure(
+                actual.as_deref() == Some(expected.as_slice()),
+                "STORAGE_CONTEXT",
+            )
+            .map_err(Error::local_integrity)?;
+        }
+        Ok(())
+    }
+    fn check_persisted_state(
+        &self,
+        id: Hash,
+        state: &State,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
+        let record = self.record(id).map_err(Error::local_integrity)?;
+        continuity_v1::check_state(state, record.height, &self.settings.app)
+            .map_err(|error| Error::from(error).local_integrity())?;
+        ensure(root(state)? == record.root, "ROOT").map_err(Error::local_integrity)?;
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            native_authenticated::verify_state(&self.db, &self.settings, id, state, progress)?;
+        }
+        Ok(())
+    }
+    /// Check actual data after the last transactional write. A post-COMMIT
+    /// observation cannot repair a suppressed write or a trigger-corrupted slot.
+    fn check_active_before_commit(&self) -> Result<()> {
+        self.namespace()?;
+        self.storage_context()?;
+        let count: u64 = self
+            .db
+            .query_row("SELECT COUNT(*) FROM active", [], |row| row.get(0))?;
+        ensure(count == 1, "GENERATION").map_err(Error::local_integrity)?;
+        let selected = self.active()?;
+        let slot = self.slot()?;
+        let state = self.slot_state(slot)?;
+        self.check_persisted_state(selected.0, &state, &mut || Ok(()))?;
+        crate::ancestry_index::validate_tip(&self.db, self.ancestry_context(), selected.0)
+            .map_err(Error::local_integrity)?;
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            native_authenticated::verify_history(
+                &self.db,
+                &self.settings,
+                selected.0,
+                &mut || Ok(()),
+            )?;
+        }
+        ensure(
+            self.active()? == selected && self.slot()? == slot,
+            "GENERATION",
+        )
+        .map_err(Error::local_integrity)
     }
     fn record(&self, id: Hash) -> Result<Record> {
         let row = self
@@ -1439,6 +1800,14 @@ impl Node {
             })?)
     }
     fn slot_state(&self, slot: u64) -> Result<State> {
+        self.slot_state_with_progress(slot, &mut || Ok(()))
+    }
+    fn slot_state_with_progress(
+        &self,
+        slot: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<State> {
+        progress()?;
         let mut stmt = self
             .db
             .prepare("SELECT key,value FROM kv WHERE slot=? ORDER BY key")?;
@@ -1446,12 +1815,17 @@ impl Node {
             Ok((r.get::<_, String>(0)?, r.get::<_, Vec<u8>>(1)?))
         })?;
         let mut state = State::new();
-        for row in values {
+        for (index, row) in values.enumerate() {
+            if index.is_multiple_of(256) {
+                progress()?;
+            }
             let (key, bytes) = row?;
-            let value: Value = serde_json::from_slice(&bytes)?;
-            ensure(canonical(&value)? == bytes, "STATE_BYTES")?;
+            let value: Value = serde_json::from_slice(&bytes)
+                .map_err(|error| Error::from(error).local_integrity())?;
+            ensure(canonical(&value)? == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
             state.insert(key, value);
         }
+        progress()?;
         Ok(state)
     }
     fn invalidate_commitment(&self) {
@@ -1484,9 +1858,9 @@ impl Node {
             }
             Err("COMMITMENT_ROOT") => {
                 self.invalidate_commitment();
-                Err("ROOT".into())
+                Err(Error::from("ROOT").local_integrity())
             }
-            Err(error) => Err(error.into()),
+            Err(error) => Err(Error::from(error).local_integrity()),
         }
     }
     fn cached_parent(&self, parent: Hash) -> Result<Option<CheckedCommitment>> {
@@ -1645,12 +2019,40 @@ impl Node {
         Ok(prepared)
     }
     pub fn read_active(&self) -> Result<(Hash, u64, State)> {
+        self.read_active_with_progress(&mut || Ok(()))
+    }
+    /// Rechecks actual KV bytes and root, with cancellation at most 256 rows apart.
+    /// Root arithmetic is still bounded by the state limit and checked as one stage.
+    pub fn read_active_with_progress(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<(Hash, u64, State)> {
+        progress()?;
         self.namespace()?;
         let (tip, generation) = self.active()?;
         let slot = self.slot()?;
-        let state = self.slot_state(slot)?;
+        let state = self.slot_state_with_progress(slot, progress)?;
+        continuity_v1::check_state(
+            &state,
+            self.record(tip).map_err(Error::local_integrity)?.height,
+            &self.settings.app,
+        )
+        .map_err(|error| Error::from(error).local_integrity())?;
         let prior = self.cached_parent(tip)?;
-        let prepared = self.checked_commitment(&state, self.record(tip)?.root, prior.as_ref())?;
+        progress()?;
+        let prepared = self.checked_commitment(
+            &state,
+            self.record(tip).map_err(Error::local_integrity)?.root,
+            prior.as_ref(),
+        )?;
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            native_authenticated::verify_state(&self.db, &self.settings, tip, &state, progress)?;
+        }
+        progress()?;
+        ensure(
+            self.active()? == (tip, generation) && self.slot()? == slot,
+            "STALE_VIEW",
+        )?;
         self.publish_commitment(tip, generation, slot, prepared);
         Ok((tip, generation, state))
     }
@@ -1669,7 +2071,15 @@ impl Node {
             [id.as_slice()],
             |r| r.get(0),
         )?;
-        let packet = Packet::decode(&raw.ok_or("GENESIS_HAS_NO_PACKET")?)?;
+        let raw = raw.ok_or_else(|| {
+            let error = Error::from("GENESIS_HAS_NO_PACKET");
+            if id == self.settings.genesis() {
+                error
+            } else {
+                error.local_integrity()
+            }
+        })?;
+        let packet = Packet::decode(&raw).map_err(Error::local_integrity)?;
         ensure(
             packet.id()? == id
                 && Some(packet.header.parent) == row.parent
@@ -1679,45 +2089,173 @@ impl Node {
         )?;
         Ok(packet)
     }
+    /// Reuses only a prepared SQL statement, never a previous clock or ancestry verdict.
+    /// The JOIN checks the parent in the same SQLite statement as the bounded header.
+    fn stored_header_link(&self, id: Hash) -> Result<StoredHeaderLink> {
+        let mut statement = self.db.prepare_cached(
+            "SELECT b.parent,b.height,b.chainwork,b.state_root,substr(b.packet,1,?),
+             substr(b.packet,-32),length(b.packet),p.height,p.chainwork,p.parent,p.state_root
+             FROM blocks b LEFT JOIN blocks p ON p.id=b.parent WHERE b.id=?",
+        )?;
+        self.count_header_query();
+        let projection = statement
+            .query_row(params![HEADER_BYTES, id.as_slice()], HeaderProjection::read)
+            .optional()?
+            .ok_or("UNKNOWN_PARENT")?;
+        self.check_header_projection(id, projection)
+    }
+    fn count_header_query(&self) {
+        let mut counters = self.history_read_counters.get();
+        counters.header_link_queries = counters.header_link_queries.saturating_add(1);
+        self.history_read_counters.set(counters);
+    }
+    fn check_header_projection(
+        &self,
+        id: Hash,
+        projection: HeaderProjection,
+    ) -> Result<StoredHeaderLink> {
+        // A projection exists only after the SQL owner found the requested row.
+        // All failures below describe retained local data, not a new peer packet.
+        (|| {
+            let row = Record {
+                parent: projection.parent.map(bytes32).transpose()?,
+                height: projection.height,
+                work: Work::from_bytes(bytes64(projection.work)?),
+                root: bytes32(projection.root)?,
+            };
+            ensure(
+                (HEADER_BYTES + 2 + pon_work::PROOF_BYTES..=1_048_576)
+                    .contains(&projection.length.ok_or("GENESIS_HAS_NO_PACKET")?),
+                "PACKET_LIMIT",
+            )?;
+            let prefix = projection.prefix.ok_or("GENESIS_HAS_NO_PACKET")?;
+            let trace = projection.trace.ok_or("GENESIS_HAS_NO_PACKET")?;
+            let mut counters = self.history_read_counters.get();
+            counters.header_trace_bytes = counters
+                .header_trace_bytes
+                .saturating_add((prefix.len() + trace.len()) as u64);
+            self.history_read_counters.set(counters);
+            let header = Header::decode(&prefix).map_err(|_| Error::from("HEADER_CODEC"))?;
+            let trace = bytes32(trace)?;
+            ensure(
+                header.block_id(trace) == id
+                    && Some(header.parent) == row.parent
+                    && header.height == row.height
+                    && header.state == row.root,
+                "STORAGE_PACKET",
+            )?;
+            ensure(
+                projection
+                    .parent_height
+                    .ok_or("UNKNOWN_PARENT")?
+                    .checked_add(1)
+                    == Some(row.height),
+                "ANCESTRY_HEIGHT",
+            )?;
+            let parent_work =
+                Work::from_bytes(bytes64(projection.parent_work.ok_or("UNKNOWN_PARENT")?)?);
+            // Preserve the complete parent-record shape checks, including at genesis
+            // where the ancestry loop stops without reading another header.
+            let _ = projection.parent_parent.map(bytes32).transpose()?;
+            let _ = bytes32(projection.parent_root.ok_or("UNKNOWN_PARENT")?)?;
+            Ok(StoredHeaderLink {
+                header,
+                record: row,
+                parent_work,
+            })
+        })()
+        .map_err(Error::local_integrity)
+    }
+    /// A bounded read of actual rows, with the same ordered per-link checks as a
+    /// single projection. No successful verdict or ancestry list survives the call.
+    /// LIMIT bounds even corrupt cycles; ORDER BY makes validation order explicit.
+    fn visit_header_batch(
+        &self,
+        start: Hash,
+        visit: &mut impl FnMut(Hash, StoredHeaderLink) -> Result<()>,
+    ) -> Result<(Hash, u64)> {
+        if start == self.settings.genesis() {
+            return Ok((start, 0));
+        }
+        let mut statement = self.db.prepare_cached(
+            "WITH RECURSIVE ancestry(id,parent,ordinal) AS (
+                 SELECT id,parent,0 FROM blocks WHERE id=?1 AND id!=?2
+                 UNION ALL
+                 SELECT b.id,b.parent,a.ordinal+1
+                 FROM ancestry a JOIN blocks b ON b.id=a.parent
+                 WHERE b.id!=?2 LIMIT ?3
+             )
+             SELECT b.parent,b.height,b.chainwork,b.state_root,substr(b.packet,1,?4),
+                 substr(b.packet,-32),length(b.packet),p.height,p.chainwork,p.parent,
+                 p.state_root,b.id,a.ordinal
+             FROM ancestry a JOIN blocks b ON b.id=a.id
+             LEFT JOIN blocks p ON p.id=b.parent ORDER BY a.ordinal",
+        )?;
+        self.count_header_query();
+        let mut rows = statement.query(params![
+            start.as_slice(),
+            self.settings.genesis().as_slice(),
+            HISTORY_HEADER_BATCH,
+            HEADER_BYTES,
+        ])?;
+        let mut current = start;
+        let mut checked = 0_u64;
+        while let Some(row) = rows.next()? {
+            let id = bytes32(row.get(11)?)?;
+            ensure(
+                checked < HISTORY_HEADER_BATCH
+                    && row.get::<_, u64>(12)? == checked
+                    && id == current,
+                "ANCESTRY_HEIGHT",
+            )
+            .map_err(Error::local_integrity)?;
+            let link = self.check_header_projection(id, HeaderProjection::read(row)?)?;
+            current = link.header.parent;
+            visit(id, link)?;
+            checked = checked.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
+        }
+        let complete = ensure(
+            checked == HISTORY_HEADER_BATCH || current == self.settings.genesis(),
+            "UNKNOWN_PARENT",
+        );
+        // An absent caller locator is stale context. Once a retained row was
+        // observed, a missing internal ancestor is a local integrity failure.
+        if checked == 0 {
+            complete?;
+        } else {
+            complete.map_err(Error::local_integrity)?;
+        }
+        Ok((current, checked))
+    }
     /// Reads only the committed header and trace of an already admitted local block.
     /// This does not verify new work or replace inclusion-body validation.
     fn stored_header(&self, id: Hash) -> Result<Header> {
-        let row = self.record(id)?;
-        let (prefix, trace, length): (Option<Vec<u8>>, Option<Vec<u8>>, Option<usize>) = self
-            .db
-            .query_row(
-            "SELECT substr(packet,1,?),substr(packet,-32),length(packet) FROM blocks WHERE id=?",
-            params![HEADER_BYTES, id.as_slice()],
-            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
-        )?;
-        ensure(
-            (HEADER_BYTES + 2 + pon_work::PROOF_BYTES..=1_048_576)
-                .contains(&length.ok_or("GENESIS_HAS_NO_PACKET")?),
-            "PACKET_LIMIT",
-        )?;
-        let header = Header::decode(&prefix.ok_or("GENESIS_HAS_NO_PACKET")?)
-            .map_err(|_| Error::from("HEADER_CODEC"))?;
-        let trace = bytes32(trace.ok_or("GENESIS_HAS_NO_PACKET")?)?;
-        ensure(
-            header.block_id(trace) == id
-                && Some(header.parent) == row.parent
-                && header.height == row.height
-                && header.state == row.root,
-            "STORAGE_PACKET",
-        )?;
-        Ok(header)
+        Ok(self.stored_header_link(id)?.header)
+    }
+    pub fn history_read_counters(&self) -> HistoryReadCounters {
+        self.history_read_counters.get()
     }
 
     fn parent(&self, id: Hash) -> Result<Hash> {
         let row = self.record(id)?;
-        let parent = row.parent.ok_or("UNKNOWN_PARENT")?;
+        let parent = row
+            .parent
+            .ok_or_else(|| Error::from("UNKNOWN_PARENT").local_integrity())?;
         ensure(
-            self.record(parent)?.height.checked_add(1) == Some(row.height),
+            self.record(parent)
+                .map_err(Error::local_integrity)?
+                .height
+                .checked_add(1)
+                == Some(row.height),
             "ANCESTRY_HEIGHT",
-        )?;
+        )
+        .map_err(Error::local_integrity)?;
         Ok(parent)
     }
     fn delta_rows(&self, id: Hash) -> Result<Vec<Delta>> {
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            return native_authenticated::deltas(&self.db, id);
+        }
         let mut stmt = self
             .db
             .prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
@@ -1725,13 +2263,22 @@ impl Node {
         Ok(rows.collect::<std::result::Result<Vec<_>, _>>()?)
     }
     pub fn state_at(&self, tip: Hash) -> Result<State> {
+        self.state_at_with_progress(tip, &mut || Ok(()))
+    }
+    fn state_at_with_progress(
+        &self,
+        tip: Hash,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<State> {
+        progress()?;
         if tip == self.active()?.0 {
-            return Ok(self.read_active()?.2);
+            return Ok(self.read_active_with_progress(progress)?.2);
         }
         let mut path = tempfile::tempfile()?;
         let mut count = 0u64;
         let mut cur = tip;
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
+            progress()?;
             let row = self.record(cur)?;
             if let Some(bytes) = self
                 .db
@@ -1742,8 +2289,22 @@ impl Node {
                 )
                 .optional()?
             {
-                let state: State = serde_json::from_slice(&bytes)?;
+                let state: State = serde_json::from_slice(&bytes)
+                    .map_err(|error| Error::from(error).local_integrity())?;
+                ensure(canonical(&state)? == bytes, "STATE_BYTES")
+                    .map_err(Error::local_integrity)?;
+                continuity_v1::check_state(&state, row.height, &self.settings.app)
+                    .map_err(|error| Error::from(error).local_integrity())?;
                 let commitment = self.checked_commitment(&state, row.root, None)?.snapshot;
+                if self.state_backend == StateBackend::AuthenticatedV1 {
+                    native_authenticated::verify_state(
+                        &self.db,
+                        &self.settings,
+                        cur,
+                        &state,
+                        progress,
+                    )?;
+                }
                 break (state, commitment);
             }
             path.write_all(&cur)?;
@@ -1751,16 +2312,25 @@ impl Node {
             cur = self.parent(cur)?;
         };
         for i in (0..count).rev() {
+            progress()?;
             path.seek(SeekFrom::Start(i.checked_mul(32).ok_or("ANCESTRY_LIMIT")?))?;
             let mut id = [0; 32];
             path.read_exact(&mut id)?;
-            for (key, before, after) in self.delta_rows(id)? {
+            for (index, (key, before, after)) in self.delta_rows(id)?.into_iter().enumerate() {
+                if index.is_multiple_of(256) {
+                    progress()?;
+                }
                 ensure(
                     state.get(&key).map(canonical).transpose()? == before,
                     "UNDO_ROOT",
-                )?;
+                )
+                .map_err(Error::local_integrity)?;
                 if let Some(bytes) = after {
-                    state.insert(key, serde_json::from_slice(&bytes)?);
+                    state.insert(
+                        key,
+                        serde_json::from_slice(&bytes)
+                            .map_err(|error| Error::from(error).local_integrity())?,
+                    );
                 } else {
                     state.remove(&key);
                 }
@@ -1768,7 +2338,13 @@ impl Node {
             commitment = self
                 .checked_commitment(&state, self.record(id)?.root, commitment.as_ref())?
                 .snapshot;
+            continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
+                .map_err(|error| Error::from(error).local_integrity())?;
+            if self.state_backend == StateBackend::AuthenticatedV1 {
+                native_authenticated::verify_state(&self.db, &self.settings, id, &state, progress)?;
+            }
         }
+        progress()?;
         Ok(state)
     }
     fn recent(&self, mut parent: Hash) -> Result<Vec<(u64, Hash)>> {
@@ -2486,39 +3062,80 @@ impl Node {
         keys.extend(output.state.keys());
         let index_context = self.ancestry_context();
         progress(ExecutionProgress::BeforePersistence)?;
-        let tx = self
-            .db
-            .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
-        tx.execute(
-            "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
-            params![
-                id.as_slice(),
-                h.parent.as_slice(),
-                h.height,
-                work.bytes().as_slice(),
-                bytes,
-                h.state.as_slice()
-            ],
+        let tx = rusqlite::Transaction::new_unchecked(
+            &self.db,
+            rusqlite::TransactionBehavior::Immediate,
         )?;
-        crate::ancestry_index::insert(&tx, index_context, id)?;
-        for (index, key) in keys.into_iter().enumerate() {
-            progress(ExecutionProgress::PersistenceDelta { index })?;
-            let before = prior.get(key).map(canonical).transpose()?;
-            let after = output.state.get(key).map(canonical).transpose()?;
-            if before != after {
-                tx.execute(
-                    "INSERT INTO deltas VALUES(?,?,?,?)",
-                    params![id.as_slice(), key, before, after],
-                )?;
+        ensure(
+            tx.execute(
+                "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
+                params![
+                    id.as_slice(),
+                    h.parent.as_slice(),
+                    h.height,
+                    work.bytes().as_slice(),
+                    &bytes,
+                    h.state.as_slice()
+                ],
+            )? == 1,
+            "STORAGE_WRITE",
+        )
+        .map_err(Error::local_integrity)?;
+        let inserted_ancestry = crate::ancestry_index::insert(&tx, index_context, id)?;
+        let mut expected_deltas = Vec::new();
+        {
+            let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
+            for (index, key) in keys.into_iter().enumerate() {
+                progress(ExecutionProgress::PersistenceDelta { index })?;
+                let before = prior.get(key).map(canonical).transpose()?;
+                let after = output.state.get(key).map(canonical).transpose()?;
+                if before != after {
+                    ensure(
+                        insert.execute(params![id.as_slice(), key, &before, &after])? == 1,
+                        "STORAGE_WRITE",
+                    )
+                    .map_err(Error::local_integrity)?;
+                    expected_deltas.push((key.clone(), before, after));
+                }
             }
         }
         if h.height.is_multiple_of(128) {
-            tx.execute(
-                "INSERT INTO snapshots VALUES(?,?)",
-                params![id.as_slice(), canonical(&output.state)?],
-            )?;
+            ensure(
+                tx.execute(
+                    "INSERT INTO snapshots VALUES(?,?)",
+                    params![id.as_slice(), canonical(&output.state)?],
+                )? == 1,
+                "STORAGE_WRITE",
+            )
+            .map_err(Error::local_integrity)?;
             tx.execute("DELETE FROM snapshots WHERE block!=? AND block NOT IN (SELECT snapshots.block FROM snapshots JOIN blocks ON blocks.id=snapshots.block ORDER BY blocks.height DESC,blocks.id LIMIT 64)",[self.settings.genesis.as_slice()])?;
         }
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            native_authenticated::publish(
+                &tx,
+                &self.settings,
+                h.parent,
+                id,
+                &prior,
+                &output.state,
+                &mut || progress(ExecutionProgress::BeforeDurableCommit),
+            )?;
+        }
+        // Re-read after every write/trigger, while rollback can still remove the
+        // whole block. A snapshot cannot conceal an omitted canonical delta.
+        ensure(
+            self.delta_rows(id)? == expected_deltas && self.packet(id)?.encode()? == bytes,
+            "STORAGE_WRITE",
+        )
+        .map_err(Error::local_integrity)?;
+        ensure(
+            self.state_at(h.parent)? == prior && self.state_at(id)? == output.state,
+            "STORAGE_WRITE",
+        )
+        .map_err(Error::local_integrity)?;
+        crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
+            .map_err(Error::local_integrity)?;
+        self.check_active_before_commit()?;
         progress(ExecutionProgress::BeforeDurableCommit)?;
         tx.commit()?;
         // No cancellation fence after commit: the native durable fact stays true.
@@ -2537,6 +3154,23 @@ impl Node {
             "EXPLICIT_TASK_REQUIRED",
         )?;
         let (a, b) = maintenance();
+        self.make_from_matrices(parent, transactions, miner, timestamp, max_attempts, &a, &b)
+    }
+    /// Explicit genesis-maintenance choice; never substitutes for rejected signed
+    /// work. Admission and proof verification still use the original Node owner.
+    pub fn make_consensus_maintenance(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        max_attempts: u64,
+    ) -> Result<Packet> {
+        ensure(
+            continuity_v1::enabled(&self.settings.app),
+            "CONTINUITY_PROFILE",
+        )?;
+        let (a, b) = continuity_v1::maintenance_matrices();
         self.make_from_matrices(parent, transactions, miner, timestamp, max_attempts, &a, &b)
     }
     pub fn parent_height(&self, parent: Hash) -> Result<u64> {
@@ -2599,6 +3233,7 @@ impl Node {
                     | LIFECYCLE_TASK_PROFILE
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -2640,6 +3275,7 @@ impl Node {
                     | LIFECYCLE_TASK_PROFILE
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -2703,6 +3339,7 @@ impl Node {
                     | LIFECYCLE_TASK_PROFILE
                     | ATOMIC_TASK_PROFILE
                     | OVERLAP_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
                     | CHECKPOINT_TASK_PROFILE
             ),
             "WORK_TASK_PROFILE",
@@ -2763,11 +3400,17 @@ impl Node {
         task: Hash,
         height: u64,
     ) -> Result<ParentTaskEligibility> {
+        if continuity_v1::enabled(&self.settings.app) && task == continuity_v1::maintenance_task()?
+        {
+            continuity_v1::check_maintenance(state, task, &self.settings.app)?;
+            return Ok(ParentTaskEligibility::ConsensusMaintenance);
+        }
         if matches!(
             self.settings.task_profile(),
             LIFECYCLE_TASK_PROFILE
                 | ATOMIC_TASK_PROFILE
                 | OVERLAP_TASK_PROFILE
+                | CONTINUITY_TASK_PROFILE
                 | CHECKPOINT_TASK_PROFILE
         ) {
             let eligible =
@@ -2879,7 +3522,7 @@ impl Node {
         )
     }
     #[allow(clippy::too_many_arguments)]
-    fn prepare_from_checked_parent(
+    pub(crate) fn prepare_from_checked_parent(
         &self,
         parent: Hash,
         transactions: Vec<Vec<u8>>,
@@ -2932,7 +3575,7 @@ impl Node {
         })
     }
     #[allow(clippy::too_many_arguments)]
-    fn prepare_from_checked_parent_controlled(
+    pub(crate) fn prepare_from_checked_parent_controlled(
         &self,
         parent: Hash,
         transactions: Vec<Vec<u8>>,
@@ -3012,7 +3655,9 @@ impl Node {
                 )?)
             }
             ParentTaskEligibility::Signed(manifest) => record_task_output(state, manifest, product),
-            ParentTaskEligibility::Legacy => Ok(false),
+            ParentTaskEligibility::Legacy | ParentTaskEligibility::ConsensusMaintenance => {
+                Ok(false)
+            }
         }
     }
     pub fn mine(
@@ -3038,35 +3683,41 @@ impl Node {
             rusqlite::TransactionBehavior::Immediate,
         )?;
         let result = run()?;
+        self.check_active_before_commit()?;
         self.continuous_scope_checkpoint()?;
         self.mining_scope_checkpoint()?;
         tx.commit()?;
         Ok(result)
     }
     fn apply_delta(&self, id: Hash, slot: u64, detach: bool) -> Result<()> {
+        let mut read = self
+            .db
+            .prepare_cached("SELECT value FROM kv WHERE slot=? AND key=?")?;
+        let mut write = self
+            .db
+            .prepare_cached("INSERT OR REPLACE INTO kv VALUES(?,?,?)")?;
+        let mut delete = self
+            .db
+            .prepare_cached("DELETE FROM kv WHERE slot=? AND key=?")?;
         for (key, before, after) in self.delta_rows(id)? {
             let (expected, new) = if detach {
                 (after, before)
             } else {
                 (before, after)
             };
-            let actual: Option<Vec<u8>> = self
-                .db
-                .query_row(
-                    "SELECT value FROM kv WHERE slot=? AND key=?",
-                    params![slot, &key],
-                    |r| r.get(0),
-                )
+            let actual: Option<Vec<u8>> = read
+                .query_row(params![slot, &key], |r| r.get(0))
                 .optional()?;
-            ensure(actual == expected, "UNDO_ROOT")?;
+            ensure(actual == expected, "UNDO_ROOT").map_err(Error::local_integrity)?;
             if let Some(value) = new {
-                self.db.execute(
-                    "INSERT OR REPLACE INTO kv VALUES(?,?,?)",
-                    params![slot, key, value],
-                )?;
+                ensure(
+                    write.execute(params![slot, key, value])? == 1,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
             } else {
-                self.db
-                    .execute("DELETE FROM kv WHERE slot=? AND key=?", params![slot, key])?;
+                ensure(delete.execute(params![slot, key])? == 1, "STORAGE_WRITE")
+                    .map_err(Error::local_integrity)?;
             }
         }
         Ok(())
@@ -3097,25 +3748,43 @@ impl Node {
             let mut staged = None;
             self.atomic(|| {
                 self.apply_delta(target, slot, false)?;
+                let state = self.slot_state(slot)?;
+                continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
+                    .map_err(|error| Error::from(error).local_integrity())?;
                 staged = Some(self.checked_commitment(
-                    &self.slot_state(slot)?,
+                    &state,
                     self.record(target)?.root,
                     prior.as_ref(),
                 )?);
-                self.db.execute(
-                    "UPDATE active SET tip=?,generation=? WHERE singleton=1",
-                    params![target.as_slice(), next],
-                )?;
-                self.db.execute(
-                    "INSERT INTO events VALUES(?,0,1,?)",
-                    params![next, target.as_slice()],
-                )?;
+                ensure(
+                    self.db.execute(
+                        "UPDATE active SET tip=?,generation=? WHERE singleton=1",
+                        params![target.as_slice(), next],
+                    )? == 1,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
+                ensure(
+                    self.db.execute(
+                        "INSERT INTO events VALUES(?,0,1,?)",
+                        params![next, target.as_slice()],
+                    )? == 1,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
+                ensure(
+                    self.active()? == (target, next) && self.slot()? == slot,
+                    "GENERATION",
+                )
+                .map_err(Error::local_integrity)?;
+                self.check_events(next, &[(0, 1, target)])?;
                 Ok(())
             })?;
             ensure(
                 self.active()? == (target, next) && self.slot()? == slot,
                 "GENERATION",
-            )?;
+            )
+            .map_err(Error::local_integrity)?;
             self.publish_commitment(target, next, slot, staged.ok_or("ROOT")?);
             return Ok(target);
         }
@@ -3159,6 +3828,13 @@ impl Node {
                 "INSERT OR REPLACE INTO reorg VALUES(1,?,?,?,0,0)",
                 params![old.as_slice(), target.as_slice(), next],
             )?;
+            ensure(
+                self.active()? == (old, g) && self.check_steps(old, target, 0)? == count as u64,
+                "REORG_STEPS",
+            )
+            .map_err(Error::local_integrity)?;
+            self.check_reorg_row(old, target, next, 0, 0)?;
+            self.check_persisted_state(old, &self.slot_state(next)?, &mut || Ok(()))?;
             Ok(())
         })?;
         cut(&mut hook, "intent")?;
@@ -3181,23 +3857,67 @@ impl Node {
         for row in rows {
             let (ordinal, kind, bytes) = row?;
             let id = bytes32(bytes)?;
-            ensure(ordinal == count, "REORG_STEPS")?;
+            ensure(ordinal == count, "REORG_STEPS").map_err(Error::local_integrity)?;
             match kind {
                 0 => {
-                    ensure(!attaching && id == current, "REORG_STEPS")?;
+                    ensure(!attaching && id == current, "REORG_STEPS")
+                        .map_err(Error::local_integrity)?;
                     current = self.parent(id)?;
                 }
                 1 => {
                     attaching = true;
-                    ensure(self.parent(id)? == current, "REORG_STEPS")?;
+                    ensure(self.parent(id)? == current, "REORG_STEPS")
+                        .map_err(Error::local_integrity)?;
                     current = id;
                 }
-                _ => return Err("REORG_STEPS".into()),
+                _ => return Err(Error::from("REORG_STEPS").local_integrity()),
             }
             count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
         }
-        ensure(current == target && cursor <= count, "REORG_STEPS")?;
+        ensure(current == target && cursor <= count, "REORG_STEPS")
+            .map_err(Error::local_integrity)?;
         Ok(count)
+    }
+    fn check_reorg_row(
+        &self,
+        old: Hash,
+        target: Hash,
+        generation: u64,
+        cursor: u64,
+        done: u64,
+    ) -> Result<()> {
+        let rows: Vec<ReorgRow> = self
+            .db
+            .prepare("SELECT old_tip,new_tip,generation,cursor,done FROM reorg ORDER BY singleton")?
+            .query_map([], |row| {
+                Ok((
+                    row.get(0)?,
+                    row.get(1)?,
+                    row.get(2)?,
+                    row.get(3)?,
+                    row.get(4)?,
+                ))
+            })?
+            .collect::<std::result::Result<_, _>>()?;
+        ensure(
+            rows == vec![(old.to_vec(), target.to_vec(), generation, cursor, done)],
+            "REORG_STEPS",
+        )
+        .map_err(Error::local_integrity)
+    }
+    fn check_events(&self, generation: u64, expected: &[(u64, u64, Hash)]) -> Result<()> {
+        let rows: Vec<(u64, u64, Vec<u8>)> = self
+            .db
+            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?
+            .query_map([generation], |row| {
+                Ok((row.get(0)?, row.get(1)?, row.get(2)?))
+            })?
+            .collect::<std::result::Result<_, _>>()?;
+        let expected: Vec<_> = expected
+            .iter()
+            .map(|(ordinal, kind, id)| (*ordinal, *kind, id.to_vec()))
+            .collect();
+        ensure(rows == expected, "REORG_EVENTS").map_err(Error::local_integrity)
     }
     fn resume_intent(&mut self, hook: &mut Option<&mut Hook<'_>>) -> Result<Hash> {
         let row = self
@@ -3219,15 +3939,18 @@ impl Node {
         let Some((old, target, g, position, done)) = row else {
             return Ok(self.active()?.0);
         };
-        ensure(done <= 1, "REORG_STEPS")?;
+        ensure(done <= 1, "REORG_STEPS").map_err(Error::local_integrity)?;
         if done == 1 {
             return Ok(self.active()?.0);
         }
         self.invalidate_commitment();
         let old = bytes32(old)?;
         let target = bytes32(target)?;
-        ensure(g > 0 && self.active()? == (old, g - 1), "GENERATION")?;
-        let count = self.check_steps(old, target, position)?;
+        ensure(g > 0 && self.active()? == (old, g - 1), "GENERATION")
+            .map_err(Error::local_integrity)?;
+        let count = self
+            .check_steps(old, target, position)
+            .map_err(Error::local_integrity)?;
         for index in position..count {
             let (kind, bytes) = self.db.query_row(
                 "SELECT kind,block FROM steps WHERE ordinal=?",
@@ -3237,8 +3960,16 @@ impl Node {
             let id = bytes32(bytes)?;
             self.atomic(|| {
                 self.apply_delta(id, g, kind == 0)?;
-                self.db
-                    .execute("UPDATE reorg SET cursor=? WHERE singleton=1", [index + 1])?;
+                ensure(
+                    self.db
+                        .execute("UPDATE reorg SET cursor=? WHERE singleton=1", [index + 1])?
+                        == 1,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
+                self.check_reorg_row(old, target, g, index + 1, 0)?;
+                let resulting = if kind == 0 { self.parent(id)? } else { id };
+                self.check_persisted_state(resulting, &self.slot_state(g)?, &mut || Ok(()))?;
                 Ok(())
             })?;
             cut(
@@ -3246,23 +3977,60 @@ impl Node {
                 &format!("{}:{index}", if kind == 0 { "detach" } else { "attach" }),
             )?;
         }
-        ensure(
-            root(&self.slot_state(g)?)? == self.record(target)?.root,
-            "ROOT",
-        )?;
+        let state = self.slot_state(g)?;
+        continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
+            .map_err(|error| Error::from(error).local_integrity())?;
+        ensure(root(&state)? == self.record(target)?.root, "ROOT")
+            .map_err(Error::local_integrity)?;
         cut(hook, "before-publish")?;
         self.atomic(|| {
-            self.db.execute(
-                "UPDATE active SET tip=?,generation=?,state_slot=? WHERE singleton=1",
-                params![target.as_slice(), g, g],
-            )?;
-            self.db.execute(
-                "INSERT INTO events SELECT ?,ordinal,kind,block FROM steps ORDER BY ordinal",
-                [g],
-            )?;
-            self.db
-                .execute("UPDATE reorg SET done=1 WHERE singleton=1", [])?;
+            let expected: Vec<(u64, u64, Hash)> = self
+                .db
+                .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?
+                .query_map([], |row| {
+                    Ok((
+                        row.get::<_, u64>(0)?,
+                        row.get::<_, u64>(1)?,
+                        row.get::<_, Vec<u8>>(2)?,
+                    ))
+                })?
+                .map(|row| {
+                    let (ordinal, kind, id) = row?;
+                    Ok((ordinal, kind, bytes32(id)?))
+                })
+                .collect::<Result<_>>()?;
+            ensure(
+                self.db.execute(
+                    "UPDATE active SET tip=?,generation=?,state_slot=? WHERE singleton=1",
+                    params![target.as_slice(), g, g],
+                )? == 1,
+                "STORAGE_WRITE",
+            )
+            .map_err(Error::local_integrity)?;
+            ensure(
+                self.db.execute(
+                    "INSERT INTO events SELECT ?,ordinal,kind,block FROM steps ORDER BY ordinal",
+                    [g],
+                )? == expected.len(),
+                "STORAGE_WRITE",
+            )
+            .map_err(Error::local_integrity)?;
+            ensure(
+                self.db
+                    .execute("UPDATE reorg SET done=1 WHERE singleton=1", [])?
+                    == 1,
+                "STORAGE_WRITE",
+            )
+            .map_err(Error::local_integrity)?;
             self.db.execute("DELETE FROM kv WHERE slot!=?", [g])?;
+            ensure(
+                self.active()? == (target, g) && self.slot()? == g,
+                "GENERATION",
+            )
+            .map_err(Error::local_integrity)?;
+            self.check_reorg_row(old, target, g, count, 1)?;
+            self.check_events(g, &expected)?;
+            self.check_persisted_state(target, &self.slot_state(g)?, &mut || Ok(()))?;
             Ok(())
         })?;
         cut(hook, "published")?;
@@ -3289,11 +4057,9 @@ impl Node {
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         let mut current = tip;
         while current != self.settings.genesis() {
-            ensure(
-                self.stored_header(current)?.timestamp as u128 <= bound,
-                "TIME_DEFERRED",
-            )?;
-            current = self.parent(current)?;
+            (current, _) = self.visit_header_batch(current, &mut |_, link| {
+                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")
+            })?;
         }
         Ok(())
     }
@@ -3335,7 +4101,7 @@ impl Node {
         ensure(unique.len() == queries.len(), "DUPLICATE_QUERY")?;
         progress(0)?;
         self.ready()?;
-        let (tip, generation, _) = self.read_active()?;
+        let (tip, generation, _) = self.read_active_with_progress(&mut || progress(0))?;
         let mut included = BTreeMap::new();
         for (transaction, block) in queries {
             if !included.contains_key(block) {
@@ -3361,18 +4127,16 @@ impl Node {
         let mut checked = 0u64;
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         while current != self.settings.genesis() {
-            if checked.is_multiple_of(256) {
-                progress(checked)?;
-            }
-            if included.contains_key(&current) {
-                found.insert(current);
-            }
-            ensure(
-                self.stored_header(current)?.timestamp as u128 <= bound,
-                "TIME_DEFERRED",
-            )?;
-            current = self.parent(current)?;
-            checked = checked.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
+            // The prior query has ended before cancellation or caller code runs.
+            progress(checked)?;
+            let (parent, count) = self.visit_header_batch(current, &mut |id, link| {
+                if included.contains_key(&id) {
+                    found.insert(id);
+                }
+                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")
+            })?;
+            current = parent;
+            checked = checked.checked_add(count).ok_or("ANCESTRY_LIMIT")?;
         }
         let depth_required = self.settings.limit("confirmation_depth")?;
         let multiplier = self.settings.limit("confirmation_work_multiplier")?;
@@ -3416,52 +4180,6 @@ impl Node {
             ancestry_checked: checked,
             distinct_bodies_checked: included.len(),
         })
-    }
-    pub fn history(&self, tip: Hash, after: Hash, limit: usize) -> Result<Vec<Packet>> {
-        self.history_with_progress(tip, after, limit, &mut |_| Ok(()))
-    }
-    pub fn history_with_progress(
-        &self,
-        tip: Hash,
-        after: Hash,
-        limit: usize,
-        progress: &mut dyn FnMut(u64) -> Result<()>,
-    ) -> Result<Vec<Packet>> {
-        progress(0)?;
-        self.ready()?;
-        ensure((1..=16).contains(&limit), "PAGE_LIMIT")?;
-        ensure(
-            self.record(after)?.height <= self.record(tip)?.height,
-            "CURSOR",
-        )?;
-        let mut spool = tempfile::tempfile()?;
-        let mut current = tip;
-        let mut count = 0u64;
-        while current != after {
-            if count.is_multiple_of(256) {
-                progress(count)?;
-            }
-            ensure(current != self.settings.genesis(), "CURSOR")?;
-            spool.write_all(&current)?;
-            count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
-            current = self.parent(current)?;
-        }
-        let mut packets = Vec::new();
-        let mut bytes = 0usize;
-        for i in (0..count).rev().take(limit) {
-            spool.seek(SeekFrom::Start(i.checked_mul(32).ok_or("ANCESTRY_LIMIT")?))?;
-            let mut id = [0; 32];
-            spool.read_exact(&mut id)?;
-            let packet = self.packet(id)?;
-            let n = packet.encode()?.len();
-            if bytes + n > 800_000 && !packets.is_empty() {
-                break;
-            }
-            bytes += n;
-            packets.push(packet);
-        }
-        progress(count)?;
-        Ok(packets)
     }
     /// Bounded public-read metadata. The state root is the admitted header's
     /// commitment, not a fresh scan or audit of the active key/value state.
@@ -3514,14 +4232,15 @@ impl Node {
         ensure(
             length.is_some_and(|n| n > 0 && n <= maximum),
             "PUBLIC_HISTORY_BYTES",
-        )?;
+        )
+        .map_err(Error::local_integrity)?;
         progress(lookup.sql_lookups + 2)?;
         let raw: Vec<u8> = self.db.query_row(
             "SELECT packet FROM blocks WHERE id=? AND length(packet)<=?",
             params![id.as_slice(), maximum],
             |r| r.get(0),
         )?;
-        let packet = Packet::decode(&raw)?;
+        let packet = Packet::decode(&raw).map_err(Error::local_integrity)?;
         ensure(
             packet.id()? == id
                 && packet.header.parent == after
@@ -3546,6 +4265,859 @@ impl Node {
         Ok(
             serde_json::json!({"network":hex::encode(self.settings.network()),"parameters":hex::encode(self.settings.parameters()),"genesis":hex::encode(self.settings.genesis()),"tip":hex::encode(tip),"height":row.height,"chainwork_hex":hex::encode(row.work.bytes()),"state_root":hex::encode(root(&state)?),"generation":g,"state_keys":state.len(),"stored_blocks":blocks,"events":events,"authenticated_sessions":authenticated_sessions,"authenticated_pending":authenticated_pending,"authenticated_audit_rows":authenticated_audit_rows,"authenticated_outbox_sessions":authenticated_outbox_sessions,"authenticated_outbox_pending":authenticated_outbox_pending,"production_activation":false}),
         )
+    }
+}
+
+#[cfg(test)]
+mod error_boundary_tests {
+    use super::*;
+    use crate::{ErrorCode, ErrorKind};
+    use std::error::Error as _;
+
+    fn packet(node: &Node, parent: Hash, timestamp: u64, miner: u64) -> Packet {
+        node.make(
+            parent,
+            vec![],
+            development_public(miner).unwrap(),
+            timestamp,
+            4096,
+        )
+        .unwrap()
+    }
+    fn local(error: Error, message: &str) {
+        assert_eq!(error.to_string(), message);
+        assert_eq!(error.kind(), ErrorKind::LocalStructure);
+        assert!(error.requires_owner_stop());
+    }
+
+    fn replay_frame(settings: &Settings, nonce: u64, payload: &[u8]) -> AuthenticatedPeerFrameV0 {
+        let session = PeerSessionIdentityV0::new(
+            IoDigest32V0::new(settings.genesis()).unwrap(),
+            IoDigest32V0::new(settings.parameters()).unwrap(),
+            IoDigest32V0::new([71; 32]).unwrap(),
+            IoDigest32V0::new([72; 32]).unwrap(),
+            IoDigest32V0::new(crate::authenticated_profile_digest()).unwrap(),
+            1,
+        )
+        .unwrap();
+        AuthenticatedPeerFrameV0::new(
+            session,
+            nonce,
+            IoDigest32V0::new(crate::authenticated_payload_digest(payload)).unwrap(),
+            payload.len(),
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn retained_completed_reply_shape_stops_and_exact_repair_restores_cached_replay() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let payload = b"completed journal request";
+        let response = b"completed journal response";
+        let frame = replay_frame(&settings, 1, payload);
+        node.begin_authenticated_request(frame, payload).unwrap();
+        node.finish_authenticated_request(frame, response).unwrap();
+        let counts = node.authenticated_replay_counts().unwrap();
+
+        for (status, damaged_response) in [(1_u64, None), (2_u64, Some(response.as_slice()))] {
+            node.db
+                .execute(
+                    "UPDATE peer_request_audit SET status=?,response=? WHERE session_id=? AND nonce=1",
+                    params![status, damaged_response, frame.session().session_id().bytes().as_slice()],
+                )
+                .unwrap();
+            let error = node
+                .begin_authenticated_request(frame, payload)
+                .unwrap_err();
+            assert!(error.is(ErrorCode::AuthReplayAudit));
+            assert!(!Error::remote(error.to_string()).requires_owner_stop());
+            assert!(!Error::from(error.to_string()).requires_owner_stop());
+            local(error, "AUTH_REPLAY_AUDIT");
+            assert_eq!(node.authenticated_replay_counts().unwrap(), counts);
+        }
+        node.db
+            .execute(
+                "UPDATE peer_request_audit SET status=1,response=? WHERE session_id=? AND nonce=1",
+                params![
+                    response.as_slice(),
+                    frame.session().session_id().bytes().as_slice()
+                ],
+            )
+            .unwrap();
+        node.validate_authenticated_replay().unwrap();
+        drop(node);
+        let mut reopened = Node::open(directory.path(), settings, 1).unwrap();
+        assert!(matches!(
+            reopened.begin_authenticated_request(frame, payload).unwrap(),
+            AuthenticatedReplayDecision::Cached(bytes) if bytes == response
+        ));
+        assert_eq!(reopened.authenticated_replay_counts().unwrap(), counts);
+    }
+
+    #[test]
+    fn incoming_replay_payload_pending_and_ack_failures_keep_transport_enum_identity() {
+        use trnm_transport::{PeerAdmissionErrorV0 as Peer, PeerFrameVerificationErrorV0};
+
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let payload = b"real payload";
+        let frame = replay_frame(&settings, 1, payload);
+        let error = node
+            .begin_authenticated_request(frame, b"bad payload")
+            .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            "AUTH_FRAME:peer frame source rejected: AUTH_PAYLOAD"
+        );
+        assert_eq!(error.kind(), ErrorKind::ProtocolInvalid);
+        assert!(!error.requires_owner_stop());
+        assert!(matches!(
+            error.source().unwrap().downcast_ref::<PeerFrameVerificationErrorV0<Error>>(),
+            Some(PeerFrameVerificationErrorV0::Source(source)) if source.is(ErrorCode::AuthPayload)
+        ));
+        assert_eq!(node.authenticated_replay_counts().unwrap(), (0, 0, 0));
+        node.begin_authenticated_request(frame, payload).unwrap();
+        let counts = node.authenticated_replay_counts().unwrap();
+        let conflict = replay_frame(&settings, 1, b"new payload");
+        let successor = replay_frame(&settings, 2, payload);
+        for (candidate, bytes, cause, kind) in [
+            (
+                conflict,
+                b"new payload".as_slice(),
+                Peer::ConflictingReplay,
+                ErrorKind::IdentityConflict,
+            ),
+            (
+                successor,
+                payload.as_slice(),
+                Peer::PendingFrame,
+                ErrorKind::Capacity,
+            ),
+        ] {
+            let error = node
+                .begin_authenticated_request(candidate, bytes)
+                .unwrap_err();
+            assert_eq!(
+                error.to_string(),
+                format!("AUTH_FRAME:peer frame boundary failed: {cause}")
+            );
+            assert_eq!(error.kind(), kind);
+            assert!(!error.requires_owner_stop());
+            assert!(matches!(
+                error.source().unwrap().downcast_ref::<PeerFrameVerificationErrorV0<Error>>(),
+                Some(PeerFrameVerificationErrorV0::Boundary(source)) if *source == cause
+            ));
+            assert_eq!(node.authenticated_replay_counts().unwrap(), counts);
+        }
+        let error = node
+            .finish_authenticated_request(conflict, b"reply")
+            .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            format!("AUTH_REPLAY:{}", Peer::UnexpectedAcknowledgement)
+        );
+        assert_eq!(error.kind(), ErrorKind::IdentityConflict);
+        assert_eq!(
+            error.source().unwrap().downcast_ref::<Peer>(),
+            Some(&Peer::UnexpectedAcknowledgement)
+        );
+        assert!(!error.requires_owner_stop());
+        assert_eq!(
+            node.authenticated_replay_state(frame.session())
+                .unwrap()
+                .unwrap()
+                .pending(),
+            Some(frame)
+        );
+        node.finish_authenticated_request(frame, b"reply").unwrap();
+
+        node.reserve_authenticated_outbound(frame, payload, b"retained wire")
+            .unwrap();
+        let error = node
+            .reserve_authenticated_outbound(conflict, b"new payload", b"other wire")
+            .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            format!(
+                "AUTH_OUTBOX_FRAME:peer frame boundary failed: {}",
+                Peer::ConflictingReplay
+            )
+        );
+        assert_eq!(error.kind(), ErrorKind::IdentityConflict);
+        assert!(!error.requires_owner_stop());
+        assert!(matches!(
+            error
+                .source()
+                .unwrap()
+                .downcast_ref::<PeerFrameVerificationErrorV0<Error>>(),
+            Some(PeerFrameVerificationErrorV0::Boundary(
+                Peer::ConflictingReplay
+            ))
+        ));
+        let error = node.finish_authenticated_outbound(conflict).unwrap_err();
+        assert_eq!(error.kind(), ErrorKind::IdentityConflict);
+        assert_eq!(
+            error.source().unwrap().downcast_ref::<Peer>(),
+            Some(&Peer::UnexpectedAcknowledgement)
+        );
+        assert!(!error.requires_owner_stop());
+        assert_eq!(
+            node.authenticated_outbound_reservation(frame.session())
+                .unwrap(),
+            (1, Some(b"retained wire".to_vec()))
+        );
+        node.finish_authenticated_outbound(frame).unwrap();
+        assert_eq!(
+            node.authenticated_outbound_reservation(frame.session())
+                .unwrap(),
+            (2, None)
+        );
+    }
+
+    #[test]
+    fn missing_caller_state_and_retired_replies_remain_nonfatal_stale_context() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let payload = b"bounded replay payload";
+        let first = replay_frame(&settings, 1, payload);
+        for (error, code) in [
+            (
+                node.finish_authenticated_request(first, b"reply")
+                    .unwrap_err(),
+                ErrorCode::AuthReplayState,
+            ),
+            (
+                node.finish_authenticated_outbound(first).unwrap_err(),
+                ErrorCode::AuthOutboxState,
+            ),
+        ] {
+            assert!(error.is(code));
+            assert_eq!(error.to_string(), code.as_str());
+            assert_eq!(error.kind(), ErrorKind::StaleContext);
+            assert!(!error.requires_owner_stop());
+        }
+        for nonce in 1..=AUTH_RESPONSE_RETENTION + 1 {
+            let frame = replay_frame(&settings, nonce, payload);
+            node.begin_authenticated_request(frame, payload).unwrap();
+            node.finish_authenticated_request(frame, b"reply").unwrap();
+        }
+        let error = node
+            .begin_authenticated_request(first, payload)
+            .unwrap_err();
+        assert!(error.is(ErrorCode::AuthReplayRetired));
+        assert_eq!(error.to_string(), "AUTH_REPLAY_RETIRED");
+        assert_eq!(error.kind(), ErrorKind::StaleContext);
+        assert!(!error.requires_owner_stop());
+        node.validate_authenticated_replay().unwrap();
+        drop(node);
+        let mut reopened = Node::open(directory.path(), settings, 1).unwrap();
+        assert!(reopened
+            .begin_authenticated_request(first, payload)
+            .unwrap_err()
+            .is(ErrorCode::AuthReplayRetired));
+    }
+
+    #[test]
+    fn reservation_writes_cannot_report_success_without_complete_durable_state() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let payload = b"reservation payload";
+        for nonce in 1..=2 {
+            let frame = replay_frame(&settings, nonce, payload);
+            let prior = node.authenticated_replay_state(frame.session()).unwrap();
+            let counts = node.authenticated_replay_counts().unwrap();
+            let replay_write = if nonce == 1 { "INSERT" } else { "UPDATE" };
+            for (table, operation, code) in [
+                ("peer_replay", replay_write, ErrorCode::AuthReplayState),
+                ("peer_request_audit", "INSERT", ErrorCode::AuthReplayAudit),
+            ] {
+                node.db.execute_batch(&format!(
+                    "CREATE TEMP TRIGGER omit_replay_reservation BEFORE {operation} ON {table} BEGIN SELECT RAISE(IGNORE); END;"
+                )).unwrap();
+                let error = node
+                    .begin_authenticated_request(frame, payload)
+                    .unwrap_err();
+                assert!(error.is(code));
+                local(error, code.as_str());
+                assert_eq!(node.authenticated_replay_counts().unwrap(), counts);
+                assert_eq!(
+                    node.authenticated_replay_state(frame.session()).unwrap(),
+                    prior
+                );
+                node.db
+                    .execute_batch("DROP TRIGGER omit_replay_reservation;")
+                    .unwrap();
+            }
+            node.begin_authenticated_request(frame, payload).unwrap();
+            node.finish_authenticated_request(frame, b"reply").unwrap();
+
+            let prior = node.authenticated_outbox_state(frame.session()).unwrap();
+            let counts = node.authenticated_outbox_counts().unwrap();
+            node.db.execute_batch(&format!(
+                "CREATE TEMP TRIGGER omit_outbox_reservation BEFORE {replay_write} ON peer_outbox BEGIN SELECT RAISE(IGNORE); END;"
+            )).unwrap();
+            let error = node
+                .reserve_authenticated_outbound(frame, payload, b"retained wire")
+                .unwrap_err();
+            assert!(error.is(ErrorCode::AuthOutboxState));
+            local(error, "AUTH_OUTBOX_STATE");
+            assert_eq!(node.authenticated_outbox_counts().unwrap(), counts);
+            assert_eq!(
+                node.authenticated_outbox_state(frame.session()).unwrap(),
+                prior
+            );
+            node.db
+                .execute_batch("DROP TRIGGER omit_outbox_reservation;")
+                .unwrap();
+            node.reserve_authenticated_outbound(frame, payload, b"retained wire")
+                .unwrap();
+            node.finish_authenticated_outbound(frame).unwrap();
+        }
+        drop(node);
+        let mut reopened = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let frame = replay_frame(&settings, 2, payload);
+        assert!(matches!(
+            reopened.begin_authenticated_request(frame, payload).unwrap(),
+            AuthenticatedReplayDecision::Cached(bytes) if bytes == b"reply"
+        ));
+        assert_eq!(reopened.authenticated_replay_counts().unwrap(), (1, 0, 2));
+        assert_eq!(
+            reopened
+                .authenticated_outbound_reservation(frame.session())
+                .unwrap(),
+            (3, None)
+        );
+    }
+
+    #[test]
+    fn journal_transition_row_loss_is_local_and_rollback_preserves_exact_pending_frame() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let payload = b"pending payload";
+        let frame = replay_frame(&settings, 1, payload);
+        node.begin_authenticated_request(frame, payload).unwrap();
+        // A test-owned SQLite trigger forces the already-validated conditional
+        // transition to affect no row. The failed transaction must roll back.
+        node.db.execute_batch("CREATE TEMP TRIGGER omit_replay_ack BEFORE UPDATE ON peer_request_audit BEGIN SELECT RAISE(IGNORE); END;").unwrap();
+        let error = node
+            .finish_authenticated_request(frame, b"reply")
+            .unwrap_err();
+        assert!(error.is(ErrorCode::AuthReplayAudit));
+        local(error, "AUTH_REPLAY_AUDIT");
+        assert_eq!(
+            node.authenticated_replay_state(frame.session())
+                .unwrap()
+                .unwrap()
+                .pending(),
+            Some(frame)
+        );
+        node.db
+            .execute_batch("DROP TRIGGER omit_replay_ack;")
+            .unwrap();
+        node.db.execute_batch("CREATE TEMP TRIGGER omit_replay_frontier BEFORE UPDATE ON peer_replay BEGIN SELECT RAISE(IGNORE); END;").unwrap();
+        let error = node
+            .finish_authenticated_request(frame, b"reply")
+            .unwrap_err();
+        assert!(error.is(ErrorCode::AuthReplayState));
+        local(error, "AUTH_REPLAY_STATE");
+        let status: u64 = node
+            .db
+            .query_row(
+                "SELECT status FROM peer_request_audit WHERE session_id=? AND nonce=1",
+                [frame.session().session_id().bytes().as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(status, 0, "the first acknowledgement update must roll back");
+        assert_eq!(
+            node.authenticated_replay_state(frame.session())
+                .unwrap()
+                .unwrap()
+                .pending(),
+            Some(frame)
+        );
+        node.db
+            .execute_batch("DROP TRIGGER omit_replay_frontier;")
+            .unwrap();
+        node.finish_authenticated_request(frame, b"reply").unwrap();
+
+        node.reserve_authenticated_outbound(frame, payload, b"retained wire")
+            .unwrap();
+        node.db.execute_batch("CREATE TEMP TRIGGER omit_outbox_ack BEFORE UPDATE ON peer_outbox BEGIN SELECT RAISE(IGNORE); END;").unwrap();
+        let error = node.finish_authenticated_outbound(frame).unwrap_err();
+        assert!(error.is(ErrorCode::AuthOutboxState));
+        local(error, "AUTH_OUTBOX_STATE");
+        assert_eq!(
+            node.authenticated_outbound_reservation(frame.session())
+                .unwrap(),
+            (1, Some(b"retained wire".to_vec()))
+        );
+        node.db
+            .execute_batch("DROP TRIGGER omit_outbox_ack;")
+            .unwrap();
+        node.finish_authenticated_outbound(frame).unwrap();
+        drop(node);
+        let reopened = Node::open(directory.path(), settings, 1).unwrap();
+        assert_eq!(
+            reopened
+                .authenticated_outbound_reservation(frame.session())
+                .unwrap(),
+            (2, None)
+        );
+        assert_eq!(reopened.authenticated_replay_counts().unwrap(), (1, 0, 1));
+    }
+
+    #[test]
+    fn retained_header_corruption_and_unknown_caller_locator_have_different_origins() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let block = packet(&node, settings.genesis(), 11, 0);
+        let id = node.admit(&block, 1000).unwrap();
+        node.activate_observed(id, 1000).unwrap();
+        let original = block.encode().unwrap();
+        let mut damaged = original.clone();
+        damaged[0] ^= 0xff;
+
+        let incoming = Packet::decode(&damaged).unwrap_err();
+        assert!(incoming.is(ErrorCode::HeaderCodec));
+        assert_eq!(incoming.kind(), ErrorKind::ProtocolInvalid);
+        assert!(!incoming.requires_owner_stop());
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                params![damaged, id.as_slice()],
+            )
+            .unwrap();
+        local(node.packet(id).unwrap_err(), "HEADER_CODEC");
+        local(
+            node.check_observed_history(id, 1000).unwrap_err(),
+            "HEADER_CODEC",
+        );
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                params![original, id.as_slice()],
+            )
+            .unwrap();
+
+        let absent = node.check_observed_history([93; 32], 1000).unwrap_err();
+        assert!(absent.is(ErrorCode::UnknownParent));
+        assert_eq!(absent.kind(), ErrorKind::StaleContext);
+        assert!(!absent.requires_owner_stop());
+        assert!(!node
+            .packet(settings.genesis())
+            .unwrap_err()
+            .requires_owner_stop());
+        let genesis = node.record(settings.genesis()).unwrap();
+        node.db
+            .execute(
+                "UPDATE blocks SET height=9 WHERE id=?",
+                [settings.genesis().as_slice()],
+            )
+            .unwrap();
+        local(
+            node.check_observed_history(id, 1000).unwrap_err(),
+            "ANCESTRY_HEIGHT",
+        );
+        // Normal mutations cannot remove a referenced ancestor. Simulate damaged
+        // retained storage only in this temporary database, then restore both the
+        // exact row and its enforced foreign-key contract before reopening.
+        node.db.execute_batch("PRAGMA foreign_keys=OFF").unwrap();
+        node.db
+            .execute(
+                "DELETE FROM blocks WHERE id=?",
+                [settings.genesis().as_slice()],
+            )
+            .unwrap();
+        let missing = node.check_observed_history(id, 1000).unwrap_err();
+        assert!(missing.is(ErrorCode::UnknownParent));
+        local(missing, "UNKNOWN_PARENT");
+        node.db
+            .execute(
+                "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
+                params![
+                    settings.genesis().as_slice(),
+                    Option::<Vec<u8>>::None,
+                    genesis.height,
+                    genesis.work.bytes().as_slice(),
+                    Option::<Vec<u8>>::None,
+                    genesis.root.as_slice(),
+                ],
+            )
+            .unwrap();
+        node.db.execute_batch("PRAGMA foreign_keys=ON").unwrap();
+        let violations: u64 = node
+            .db
+            .query_row("SELECT COUNT(*) FROM pragma_foreign_key_check", [], |row| {
+                row.get(0)
+            })
+            .unwrap();
+        assert_eq!(violations, 0);
+        node.check_observed_history(id, 1000).unwrap();
+        let before = node.read_active().unwrap();
+        drop(node);
+        assert_eq!(
+            Node::open(directory.path(), settings, 1)
+                .unwrap()
+                .read_active()
+                .unwrap(),
+            before
+        );
+    }
+
+    #[test]
+    fn persisted_state_bytes_and_root_are_local_but_progress_errors_keep_their_identity() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let before = node.read_active().unwrap();
+        let slot = node.slot().unwrap();
+        let (key, bytes): (String, Vec<u8>) = node
+            .db
+            .query_row(
+                "SELECT key,value FROM kv WHERE slot=? ORDER BY key LIMIT 1",
+                [slot],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        let mut noncanonical = bytes.clone();
+        noncanonical.push(b' ');
+        node.db
+            .execute(
+                "UPDATE kv SET value=? WHERE slot=? AND key=?",
+                params![noncanonical, slot, key],
+            )
+            .unwrap();
+        local(node.read_active().unwrap_err(), "STATE_BYTES");
+
+        node.db
+            .execute(
+                "UPDATE kv SET value=? WHERE slot=? AND key=?",
+                params![b"[".as_slice(), slot, key],
+            )
+            .unwrap();
+        let error = node.read_active().unwrap_err();
+        let source = serde_json::from_slice::<Value>(b"[").unwrap_err();
+        assert_eq!(error.to_string(), format!("JSON: {source}"));
+        assert!(error.source().unwrap().is::<serde_json::Error>());
+        assert!(error.requires_owner_stop());
+
+        node.db
+            .execute(
+                "UPDATE kv SET value=? WHERE slot=? AND key=?",
+                params![b"null".as_slice(), slot, key],
+            )
+            .unwrap();
+        local(node.read_active().unwrap_err(), "ROOT");
+        node.db
+            .execute(
+                "UPDATE kv SET value=? WHERE slot=? AND key=?",
+                params![bytes, slot, key],
+            )
+            .unwrap();
+        for code in [
+            ErrorCode::PublicRequestCancelled,
+            ErrorCode::PublicMutationCpuBudget,
+            ErrorCode::UnknownParent,
+        ] {
+            let mut calls = 0;
+            let error = node
+                .read_active_with_progress(&mut || {
+                    calls += 1;
+                    if calls == 2 {
+                        Err(Error::new(code))
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert!(error.is(code));
+            assert!(!error.requires_owner_stop());
+            assert_eq!(calls, 2);
+        }
+        assert_eq!(node.read_active().unwrap(), before);
+    }
+
+    #[test]
+    fn retained_history_cancellation_and_clock_deferral_never_become_storage_failure() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let timestamp = settings.limit("future_skew_seconds").unwrap() + 100;
+        let block = packet(&node, settings.genesis(), timestamp, 0);
+        let id = node.admit(&block, timestamp).unwrap();
+        for code in [
+            ErrorCode::PublicRequestCancelled,
+            ErrorCode::PublicMutationCpuBudget,
+            ErrorCode::UnknownParent,
+        ] {
+            let mut visited = 0;
+            let error = node
+                .visit_header_batch(id, &mut |_, _| {
+                    visited += 1;
+                    Err(Error::new(code))
+                })
+                .unwrap_err();
+            assert!(error.is(code));
+            assert!(!error.requires_owner_stop());
+            assert_eq!(visited, 1);
+        }
+        let error = node.check_observed_history(id, 0).unwrap_err();
+        assert!(error.is(ErrorCode::TimeDeferred));
+        assert_eq!(error.kind(), ErrorKind::StaleContext);
+        assert!(!error.requires_owner_stop());
+        node.check_observed_history(id, timestamp).unwrap();
+    }
+
+    #[test]
+    fn durable_reorg_faults_stop_and_exact_repair_resumes_without_losing_hook_cancellation() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let left = packet(&node, settings.genesis(), 11, 0);
+        let left_id = node.admit(&left, 1000).unwrap();
+        node.activate_observed(left_id, 1000).unwrap();
+        let right = packet(&node, settings.genesis(), 12, 1);
+        let right_id = node.admit(&right, 1000).unwrap();
+        let target = packet(&node, right_id, 22, 1);
+        let target_id = node.admit(&target, 1000).unwrap();
+        let expected = node.state_at(target_id).unwrap();
+        let original_active = node.active().unwrap();
+        let mut at_intent = 0;
+        let error = node
+            .activate_with_fault(
+                target_id,
+                Some(&mut |point| {
+                    if point == "intent" {
+                        at_intent += 1;
+                        Err(Error::new(ErrorCode::PublicRequestCancelled))
+                    } else {
+                        Ok(())
+                    }
+                }),
+            )
+            .unwrap_err();
+        assert!(error.is(ErrorCode::PublicRequestCancelled));
+        assert!(!error.requires_owner_stop());
+        assert_eq!(at_intent, 1);
+        assert_eq!(node.active().unwrap(), original_active);
+
+        let kind: u64 = node
+            .db
+            .query_row("SELECT kind FROM steps WHERE ordinal=0", [], |row| {
+                row.get(0)
+            })
+            .unwrap();
+        node.db
+            .execute("UPDATE steps SET kind=9 WHERE ordinal=0", [])
+            .unwrap();
+        local(node.recover().unwrap_err(), "REORG_STEPS");
+        node.db
+            .execute("UPDATE steps SET kind=? WHERE ordinal=0", [kind])
+            .unwrap();
+        let generation: u64 = node
+            .db
+            .query_row(
+                "SELECT generation FROM reorg WHERE singleton=1",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        node.db
+            .execute(
+                "UPDATE reorg SET generation=? WHERE singleton=1",
+                [generation + 1],
+            )
+            .unwrap();
+        local(node.recover().unwrap_err(), "GENERATION");
+        node.db
+            .execute(
+                "UPDATE reorg SET generation=? WHERE singleton=1",
+                [generation],
+            )
+            .unwrap();
+
+        let (key, prior): (String, Option<Vec<u8>>) = node
+            .db
+            .query_row(
+                "SELECT key,before FROM deltas WHERE block=? ORDER BY key LIMIT 1",
+                [right_id.as_slice()],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        node.db
+            .execute(
+                "UPDATE deltas SET before=? WHERE block=? AND key=?",
+                params![b"false".as_slice(), right_id.as_slice(), key],
+            )
+            .unwrap();
+        local(node.recover().unwrap_err(), "UNDO_ROOT");
+        assert_eq!(node.active().unwrap(), original_active);
+        node.db
+            .execute(
+                "UPDATE deltas SET before=? WHERE block=? AND key=?",
+                params![prior, right_id.as_slice(), key],
+            )
+            .unwrap();
+        assert_eq!(node.recover().unwrap(), target_id);
+        assert_eq!(node.read_active().unwrap().2, expected);
+        drop(node);
+        let reopened = Node::open(directory.path(), settings, 1).unwrap();
+        assert_eq!(reopened.active().unwrap().0, target_id);
+        assert_eq!(reopened.read_active().unwrap().2, expected);
+    }
+
+    #[test]
+    fn actual_replay_and_outbox_recovery_preserve_typed_local_sources() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        // Exercise the durable replay owner's typed input. Authentication of
+        // signed wire frames remains covered by the existing ingress tests.
+        let session = PeerSessionIdentityV0::new(
+            IoDigest32V0::new(settings.genesis()).unwrap(),
+            IoDigest32V0::new(settings.parameters()).unwrap(),
+            IoDigest32V0::new([71; 32]).unwrap(),
+            IoDigest32V0::new([72; 32]).unwrap(),
+            IoDigest32V0::new(crate::authenticated_profile_digest()).unwrap(),
+            1,
+        )
+        .unwrap();
+        let payload = b"actual replay component payload";
+        let frame = AuthenticatedPeerFrameV0::new(
+            session,
+            1,
+            IoDigest32V0::new(crate::authenticated_payload_digest(payload)).unwrap(),
+            payload.len(),
+        )
+        .unwrap();
+        assert!(matches!(
+            node.begin_authenticated_request(frame, payload).unwrap(),
+            AuthenticatedReplayDecision::Execute
+        ));
+        node.db
+            .execute(
+                "UPDATE peer_replay SET chain_id=? WHERE session_id=?",
+                params![
+                    [0_u8; 32].as_slice(),
+                    session.session_id().bytes().as_slice()
+                ],
+            )
+            .unwrap();
+        let error = node
+            .begin_authenticated_request(frame, payload)
+            .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            "AUTH_REPLAY:peer identity digest may not be zero"
+        );
+        assert!(error
+            .source()
+            .unwrap()
+            .is::<trnm_transport::PeerAdmissionErrorV0>());
+        assert!(error.requires_owner_stop());
+        assert!(!Error::remote(error.to_string()).requires_owner_stop());
+        node.db
+            .execute(
+                "UPDATE peer_replay SET chain_id=? WHERE session_id=?",
+                params![
+                    settings.genesis().as_slice(),
+                    session.session_id().bytes().as_slice()
+                ],
+            )
+            .unwrap();
+
+        node.db
+            .execute(
+                "UPDATE peer_request_audit SET payload=? WHERE session_id=?",
+                params![
+                    b"damaged".as_slice(),
+                    session.session_id().bytes().as_slice()
+                ],
+            )
+            .unwrap();
+        let error = node
+            .begin_authenticated_request(frame, payload)
+            .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            "AUTH_RECOVERY:peer recovery source rejected: AUTH_PENDING_AUDIT"
+        );
+        assert!(error
+            .source()
+            .unwrap()
+            .is::<trnm_transport::PeerRecoveryErrorV0<Error>>());
+        assert!(error.requires_owner_stop());
+        node.db
+            .execute(
+                "UPDATE peer_request_audit SET payload=? WHERE session_id=?",
+                params![payload.as_slice(), session.session_id().bytes().as_slice()],
+            )
+            .unwrap();
+        let conflicting =
+            AuthenticatedPeerFrameV0::new(session, 1, IoDigest32V0::new([81; 32]).unwrap(), 7)
+                .unwrap();
+        let refusal = node
+            .begin_authenticated_request(conflicting, b"changed")
+            .unwrap_err();
+        assert_eq!(
+            refusal.to_string(),
+            "AUTH_FRAME:peer frame boundary failed: pending peer frame replay changed its payload"
+        );
+        assert!(!refusal.requires_owner_stop());
+        node.finish_authenticated_request(frame, b"actual retained response")
+            .unwrap();
+
+        node.reserve_authenticated_outbound(frame, payload, b"retained outbound wire")
+            .unwrap();
+        node.db
+            .execute(
+                "UPDATE peer_outbox SET pending_payload=? WHERE session_id=?",
+                params![
+                    b"damaged".as_slice(),
+                    session.session_id().bytes().as_slice()
+                ],
+            )
+            .unwrap();
+        let error = node
+            .authenticated_outbound_reservation(session)
+            .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            "AUTH_OUTBOX_RECOVERY:peer recovery source rejected: AUTH_OUTBOX_PENDING"
+        );
+        assert!(error
+            .source()
+            .unwrap()
+            .is::<trnm_transport::PeerRecoveryErrorV0<Error>>());
+        assert!(error.requires_owner_stop());
+        node.db
+            .execute(
+                "UPDATE peer_outbox SET pending_payload=? WHERE session_id=?",
+                params![payload.as_slice(), session.session_id().bytes().as_slice()],
+            )
+            .unwrap();
+        drop(node);
+        let mut reopened = Node::open(directory.path(), settings, 1).unwrap();
+        assert!(matches!(
+            reopened
+                .begin_authenticated_request(frame, payload)
+                .unwrap(),
+            AuthenticatedReplayDecision::Cached(_)
+        ));
+        assert_eq!(
+            reopened
+                .authenticated_outbound_reservation(session)
+                .unwrap(),
+            (1, Some(b"retained outbound wire".to_vec()))
+        );
     }
 }
 
@@ -3891,3 +5463,19 @@ mod native_ancestry_tests {
 #[cfg(test)]
 #[path = "operator_task_store_tests.rs"]
 mod operator_task_store_tests;
+
+#[cfg(test)]
+#[path = "continuity_tests.rs"]
+mod continuity_tests;
+
+#[cfg(test)]
+#[path = "native_authenticated_tests.rs"]
+mod native_authenticated_tests;
+
+#[cfg(test)]
+#[path = "native_ancestry_commit_tests.rs"]
+mod native_ancestry_commit_tests;
+
+#[cfg(test)]
+#[path = "native_account_query_tests.rs"]
+mod native_account_query_tests;

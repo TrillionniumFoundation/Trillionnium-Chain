@@ -31,14 +31,17 @@
       "module": "M01",
       "id": "VerificationAuthority",
       "claim": "Bad signatures reject the whole block without mutating parent state; altered work output or context never yields verified work. Both verification languages reject small-order public keys/R, noncanonical points and scalars outside the group-order bound.",
-      "scope": "Actual strict native signatures and unchanged experimental transcript verification.",
+      "scope": "Actual strict native signatures and unchanged experimental transcript verification. Explicit zero-material generation is checked against the original Python scalar relation; generation equivalence does not prove adversarial cost hardness.",
       "atomic": "A private verified envelope binds bytes and installed genesis before state patches. Canonical replay reuses only this main-signature fact; quota-consumer signatures are checked against actual state. Only full transcript verification creates work authority.",
       "cuts": [
         "Bad signature at every worker count",
         "Changed transcript, product and challenge",
         "Small-order sender with R identity and zero scalar",
         "Noncanonical point or S plus group order",
-        "Weak quota consumer identity"
+        "Weak quota consumer identity",
+        "Complete zero-material transcript and every extreme prefix word",
+        "Cancellation at actual generator checkpoints",
+        "Unsupported nonzero or malformed zero-only input"
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_bad_signature_rejects_entire_block_without_parent_mutation",
@@ -50,7 +53,16 @@
         "formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_rfc8032_known_vector",
         "formal/pon-nakamoto-v1/test_strict_signature.py::StrictSignatureTests.test_all_declared_order_eight_points_reject",
         "formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_bad_field_and_task_reject_before_state_replay_or_full_verification",
-        "formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_forged_passing_ticket_does_not_become_verified_work"
+        "formal/pon-nakamoto-v1/test_work_precheck.py::WorkPrecheckTests.test_forged_passing_ticket_does_not_become_verified_work",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs::complete_canonical_zero_detection_never_substitutes_another_material",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs::full_proof_and_ticket_match_scalar_generic_zero_and_paired_across_reuse",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs::every_extreme_prefix_word_matches_the_original_scalar_relation",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs::actual_checkpoint_order_cancels_without_retaining_challenge_state",
+        "formal/pon-nakamoto-v1/test_zero_work.py::ZeroWorkOracleTests.test_all_five_complete_zero_producers_match_original_python_bytes",
+        "formal/pon-nakamoto-v1/test_zero_work.py::ZeroWorkOracleTests.test_general_controls_are_actually_supported_by_generic_and_paired",
+        "formal/pon-nakamoto-v1/test_zero_work.py::ZeroWorkOracleTests.test_zero_only_operations_refuse_complete_canonical_nonzero_material",
+        "formal/pon-nakamoto-v1/test_zero_work.py::ZeroWorkOracleTests.test_all_operations_check_complete_extent_canonical_fields_and_arguments",
+        "formal/pon-nakamoto-v1/test_zero_work.py::ZeroWorkOracleTests.test_missing_and_unknown_operations_are_errors_with_empty_stdout"
       ],
       "source": [
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
@@ -59,7 +71,14 @@
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs",
         "formal/pon-nakamoto-v1/strict_signature.py",
         "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
-        "formal/pon-nakamoto-v1/work_oracle.py"
+        "formal/pon-nakamoto-v1/work_oracle.py",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
+        "formal/pon-nakamoto-v1/test_zero_work.py",
+        "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+        "scripts/ci/check_zero_locality_cost.py",
+        "scripts/ci/test_zero_locality_cost.py"
       ],
       "limit": "49188-byte work certificate; failed proof still requires substantial computation.",
       "threat": "Cheap forgery amplification, structured-input shortcuts, hardware advantage and weak-key disagreement.",
@@ -166,8 +185,8 @@
     {
       "module": "M06",
       "id": "TwelveCommandEquivalence",
-      "claim": "All twelve commands produce identical state, receipts, fees and root at one, two, four and eight workers. Each main envelope is verified once even on state conflict, and the whole block starts at most the selected worker count.",
-      "scope": "Native implementation inside existing trnm-mvcc-fee and separately coded Python reference.",
+      "claim": "All twelve commands produce identical state, receipts, fees and root at one, two, four and eight workers. Each main envelope is verified once even on state conflict, and the whole block starts at most the selected worker count. The explicit monetary-range input preserves complete mandatory and successor State while refusing authentic membership subsets that omit any due, future, zero-valued or immediate boundary row.",
+      "scope": "Native implementation inside existing trnm-mvcc-fee and separately coded Python reference. The separately selected range/AAM1 research path is compared to actual signed native admissions and independently replayed complete State; default admission continues using full State.",
       "atomic": "Mandatory transitions, one bounded group of signature/point-operation workers, canonical range transitions and patch validation, at most one state replay, then conservation/root. Worker failures reject without publishing any parent mutation.",
       "cuts": [
         "Tasks, cancel, receipt and accept",
@@ -177,7 +196,11 @@
         "Preceding transfer funds a later sender",
         "Later signature fails while earlier nonce is invalid",
         "Shared range deadline capacity is exhausted",
-        "Changed bytes with a previous signature"
+        "Changed bytes with a previous signature",
+        "Same-root membership proof omits due/future/zero obligation or boundary",
+        "Nonmaximal shared frontier or extra authenticated row",
+        "Real expiry refunds and absent reward recipient maturity followed by signed spend",
+        "Raw M06 projection omission before transaction preparation"
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_all_twelve_tags_match_for_1_2_4_8_workers",
@@ -190,50 +213,97 @@
         "formal/pon-nakamoto-v1/test_native_session.py::NativeSessionTests.test_all_twelve_tags_run_in_1_2_4_8_worker_persistent_sessions",
         "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_boolean_before_value_does_not_alias_integer_zero",
         "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_lost_reply_discards_advanced_cache_and_retries_same_input",
-        "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_exact_predecessor_memo_does_not_skip_returned_root_verification"
+        "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_exact_predecessor_memo_does_not_skip_returned_root_verification",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs::complete_ranges_cover_empty_edges_shared_neighbors_and_retained_unknown_namespaces",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs::valid_subset_membership_cannot_omit_due_future_zero_or_neighbor_rows",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs::range_frontier_is_maximal_and_extra_authenticated_rows_are_refused",
+        "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs::monetary_ranges_execute_signed_expiry_future_capacity_and_reward_maturity_against_native_node",
+        "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs::monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_full_sorted_source_includes_future_and_zero_amount_rows",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_empty_partition_and_single_edge_rows_are_canonical",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_empty_ranges_share_nearest_boundaries_once",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_lexical_endpoints_unicode_keys_and_arbitrary_suffixes",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_any_due_future_or_zero_obligation",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_immediate_boundary",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_extra_non_boundary_leaf_is_noncanonical",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_split_hidden_subtree_is_valid_membership_but_noncanonical_frontier",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_parent_and_count_roots_require_exact_external_anchor",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_order_duplicates_rank_and_value_types_are_not_coerced",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_frontier_zero_overlap_duplicate_reorder_and_digest_changes_fail",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_exact_json_shape_dimensions_and_byte_bounds",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order"
       ],
       "source": [
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
         "formal/pon-nakamoto-v1/native_execution.py",
         "formal/pon-nakamoto-v1/ledger.py",
         "formal/pon-nakamoto-v1/native_session.py",
-        "trillionnium/crates/trnm-protocol/src/pon_state.rs"
+        "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+        "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+        "formal/pon-nakamoto-v1/obligation_range_oracle.py",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs",
+        "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs"
       ],
       "limit": "256 envelopes; at most1/2/4/8 created workers per block; one main signature check per valid envelope; range capacity commands commit canonically; at most one state replay per other transaction. No per-worker full-state clone.",
       "threat": "Incorrect conflict sets, receipt order changes, unbounded retries and successful fallback masking missing implementation.",
-      "remaining": "A native application engine is not a complete native consensus/persistence/Hepta host."
+      "remaining": "Complete parent State remains an explicit reference for anchor binding and all other non-account rules; no compact global State replacement, production activation or public availability acceptance is inferred."
     },
     {
       "module": "M07",
       "id": "OwnedInitialization",
-      "claim": "Every owned initialization crash cut can recover; foreign incomplete databases and injected schema objects reject without writable mutation.",
-      "scope": "Fresh revision3 SQLite namespace, not an in-place historical database upgrade.",
+      "claim": "Every owned initialization crash cut can recover; foreign incomplete databases and injected schema objects reject without writable mutation. Owned authenticated writes preserve retained versions, persist final successor payload nodes only, and refuse suppressed or late-corrupted ancestry before commit; exact active-tip ancestry is rechecked on reopen.",
+      "scope": "Fresh legacy-v2 or explicitly selected authenticated-v1 SQLite namespaces; initialization, native branch admission and checked restart, not an in-place historical database upgrade.",
       "atomic": "Fsync exact initialization intent, create schema plus genesis in one transaction, remove marker after commit; compare exact schema projection on reopen.",
       "cuts": [
         "Intent persisted",
         "Schema staged",
         "Before initialization commit",
         "After commit before marker removal",
-        "Unexpected trigger and unmarked empty database"
+        "Unexpected trigger and unmarked empty database",
+        "Partial account writes followed by cancellation or SQL refusal",
+        "Suppressed or late modified ancestry insert/delete and extra levels",
+        "Full 65,536-key authenticated state, refund, recipient reentry and pending reorg restart"
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_every_initialization_cut_recovers_only_our_exact_intent",
         "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_unmarked_empty_database_is_not_reinitialized",
         "formal/pon-nakamoto-v1/test_invariants.py::InitializationTests.test_injected_trigger_rejects_before_writable_open",
-        "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_append_retains_one_physical_state_slot"
+        "formal/pon-nakamoto-v1/test_invariants.py::RestartForkTests.test_append_retains_one_physical_state_slot",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::batched_paths_match_serial_versions_and_keep_every_insert_reachable",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::batched_paths_cancel_and_sql_refusal_roll_back_partial_writes_and_reopen",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::batched_paths_keep_original_parent_nonce_and_no_deletion_checks",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::real_signed_packets_reject_omitted_and_late_modified_ancestry_before_commit",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::restart_checks_exact_active_tip_row_set_including_genesis",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::activation_final_events_cannot_commit_missing_or_extra_active_ancestry",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality"
       ],
       "source": [
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+        "formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py",
+        "scripts/ci/ci_job.sh"
       ],
       "limit": "Ordinary append writes only changed keys; one physical state slot, separate logical generation.",
       "threat": "Initialization gaps, trigger/schema substitution, disk full, path replacement and unbounded full-state copies.",
-      "remaining": "Full descriptor/sidecar fencing, incremental authenticated native state tree and physical power-loss tests remain pending."
+      "remaining": "All retained historical payload remains stored. Physical SQLite/WAL retention, bounded total history and physical power-loss qualification remain open; the ignored full-capacity selector requires explicit release execution."
     },
     {
       "module": "M08",
       "id": "ReorgAtomicView",
       "claim": "All eight reorg process-crash cuts recover the same root and one event set while irreversible local records survive.",
-      "scope": "Reference disk SQLite; process crash is not physical power-loss evidence.",
+      "scope": "Reference disk SQLite plus explicit native authenticated/full-capacity and ancestry controls; process crash is not physical power-loss evidence.",
       "atomic": "Each delta and cursor commit together; final active slot, logical generation, events and old-slot retirement publish atomically.",
       "cuts": [
         "Intent",
@@ -241,13 +311,31 @@
         "Three attaches",
         "Before publish",
         "After publish",
-        "Repeated recovery"
+        "Repeated recovery",
+        "Final event trigger removes or adds active ancestry",
+        "Full-capacity pending detach followed by cold recovery",
+        "Retained inactive branch has resealed incorrect ancestry"
       ],
       "tests": [
-        "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly"
+        "formal/pon-nakamoto-v1/test_contracts.py::DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::activation_final_events_cannot_commit_missing_or_extra_active_ancestry",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs::restart_checks_exact_active_tip_row_set_including_genesis",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality"
       ],
       "source": [
-        "formal/pon-nakamoto-v1/ledger.py"
+        "formal/pon-nakamoto-v1/ledger.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/native_ancestry_commit_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py",
+        "scripts/ci/ci_job.sh"
       ],
       "limit": "Ordinary append avoids full copies; real forks use a staging slot; readers retain SQLite transaction snapshots.",
       "threat": "Mixed generations, wrong undo values, duplicated notifications and erasing external effects.",
@@ -449,7 +537,7 @@
       "module": "M15",
       "id": "ExplicitBackend",
       "claim": "A host selecting native execution either uses that binary or fails; it does not silently substitute a reference success path.",
-      "scope": "Existing ledger with explicit native application bridge; not a complete native public host.",
+      "scope": "Existing ledger with explicit native application bridge; not a complete native public host. The explicitly selected authenticated storage backend retains real-row queries and grammar/error/cancellation equivalence; account-verification component timing is separate from complete Node costs.",
       "atomic": "Backend choice before execution; bounded subprocess response; independently recompute returned root.",
       "cuts": [
         "Missing or inaccessible binary",
@@ -457,7 +545,10 @@
         "Restart with persisted higher-work tip",
         "Stderr fills before stdin is consumed",
         "Stdout exceeds32MiB configured boundary",
-        "Child times out while holding pipes"
+        "Child times out while holding pipes",
+        "Invalid account-query dimensions before snapshot or full-state access",
+        "Cancellation and callback mutation during actual-node query",
+        "Changed leaf bytes behind a cached prepared statement"
       ],
       "tests": [
         "formal/pon-nakamoto-v1/test_native_execution.py::NativeExecutionTests.test_missing_native_binary_is_not_reference_fallback",
@@ -467,13 +558,26 @@
         "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_stdout_flood_is_killed_and_reaped",
         "formal/pon-nakamoto-v1/test_bounded_process.py::BoundedProcessTests.test_timeout_reaps_own_child",
         "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_multiple_selected_backends_reject_before_starting_cache",
-        "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_changed_selected_binary_cannot_reuse_previous_success"
+        "formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_changed_selected_binary_cannot_reuse_previous_success",
+        "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_dimensions_precede_any_snapshot_or_state_read",
+        "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_cancellation_preserves_error_snapshot_and_exact_retry_bytes",
+        "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs::native_account_query_reads_real_nodes_and_rolls_back_callback_mutations",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_leaf_decoder_preserves_complete_original_grammar",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_borrowed_accounts_preserve_arrays_numbers_and_field_failures",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_cached_node_statements_read_actual_rows_and_trigger_effects",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_complete_account_checks_keep_branch_bytes_errors_and_progress",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs::native_complete_account_verification_cost"
       ],
       "source": [
         "formal/pon-nakamoto-v1/native_execution.py",
         "formal/pon-nakamoto-v1/ledger.py",
         "formal/pon-nakamoto-v1/bounded_process.py",
-        "formal/pon-nakamoto-v1/native_session.py"
+        "formal/pon-nakamoto-v1/native_session.py",
+        "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+        "scripts/ci/ci_job.sh"
       ],
       "limit": "16MiB bridge input,32MiB stdout,64KiB stderr,30-second deadline; both pipes drained while writing; only the owned child session is terminated.",
       "threat": "Fallback masking missing modules, startup before recovery, task starvation and authority conflation.",
@@ -517,20 +621,50 @@
       "module": "M17",
       "id": "HistoricalEvidence",
       "claim": "Old reports remain tied to their measured source; newer source is never called tested by rehashing an old pass.",
-      "scope": "Immutable evidence/pon-v1 plus separate current-source receipts.",
+      "scope": "Immutable evidence/pon-v1 plus separate current-source receipts. Current independent source readers recompute semantics and structure; listing ignored release selectors or replaying old native exports does not establish new native execution.",
       "atomic": "Verify original artifacts and measured ancestor bytes; report current-source match separately from historical consistency.",
       "cuts": [
         "Stale digest",
         "Dropped failure",
         "Hidden strongest control",
-        "Forged independent or future acceptance"
+        "Forged independent or future acceptance",
+        "Historical three-strategy source relabelled as current five-strategy zero comparison",
+        "Equal migration cells contain the same structural ancestry corruption",
+        "Self-consistent monetary membership omits a future obligation while preserving its root"
       ],
       "tests": [
         "scripts/ci/test_pon_evidence.py::EvidenceRejectionTests.test_source_digest_cannot_be_stale",
-        "scripts/ci/test_pon_evidence.py::EvidenceRejectionTests.test_future_window_claim_rejected_even_after_rehash"
+        "scripts/ci/test_pon_evidence.py::EvidenceRejectionTests.test_future_window_claim_rejected_even_after_rehash",
+        "scripts/ci/test_zero_locality_cost.py::ZeroV2RawContractTests.test_all_five_complete_producers_and_modes_are_required",
+        "scripts/ci/test_zero_locality_cost.py::ZeroV2RawContractTests.test_historical_and_current_grids_cannot_be_relabelled",
+        "scripts/ci/test_zero_locality_cost.py::ZeroV2RawContractTests.test_v1_grid_cannot_become_current_by_changing_only_schema",
+        "scripts/ci/test_zero_locality_cost.py::ZeroV2RawContractTests.test_candidate_setup_and_failed_attempt_costs_cannot_be_dropped",
+        "scripts/ci/test_zero_locality_cost.py::ZeroV2RawContractTests.test_candidate_complete_stream_disagreement_cannot_pass",
+        "scripts/ci/test_zero_locality_cost.py::ZeroArtifactContractTests.test_missing_new_candidate_source_or_scalar_bridge_rejected",
+        "scripts/ci/test_zero_locality_cost.py::ZeroArtifactContractTests.test_exact_v1_artifacts_require_explicit_historical_selection",
+        "scripts/ci/test_zero_locality_cost.py::ZeroArtifactContractTests.test_historical_source_identity_cannot_include_new_candidate_even_when_resealed",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_all_retained_ancestry_rows_are_reconstructed_across_inactive_forks",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_missing_extra_genesis_and_unknown_rows_are_refused",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_resealed_wrong_ancestor_height_and_component_seals_are_recomputed",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::NativeAuthenticatedStorageOracle.test_ancestry_rows_require_exact_types_and_unique_keys",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py::MigrationPreservationOracle.test_identically_corrupt_migration_ancestry_is_not_qualified_by_cell_equality",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_any_due_future_or_zero_obligation",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_authentic_subset_cannot_omit_immediate_boundary",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py::MonetaryRangeOracle.test_serde_struct_bytes_are_canonical_independent_of_json_map_input_order"
       ],
       "source": [
-        "scripts/ci/check_pon_evidence.py"
+        "scripts/ci/check_pon_evidence.py",
+        "scripts/ci/check_zero_locality_cost.py",
+        "scripts/ci/test_zero_locality_cost.py",
+        "formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py",
+        "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/obligation_ranges.rs",
+        "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+        "formal/pon-nakamoto-v1/obligation_range_oracle.py",
+        "formal/pon-nakamoto-v1/test_obligation_range_oracle.py",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+        "scripts/ci/ci_job.sh"
       ],
       "limit": "Binding validation is read-only and does not execute tests or award deployment authority.",
       "threat": "Heading/class-count theatre, stale measurements, omitted failures and same-operator processes called independent.",

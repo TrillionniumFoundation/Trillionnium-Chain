@@ -93,7 +93,23 @@ The exact continuation is specified in [native execution](../protocol/pon-nakamo
 
 ## Native development continuation and remaining scope
 
-Native history export spools ancestry to disk and emits bounded full packets; native sync recomputes admission and retains valid interrupted prefixes. Native snapshots/delta replay do not impose a height finality threshold. Export and complete ancestry confirmation retain history-sized work. Current public one-packet page location uses the [derived ancestry index](../protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md) with a1024-step budget; each received packet still undergoes full native admission.
+Ordinary native History export now traverses actual parent records in batches of at
+most 64 and retains at most 16 candidate hashes in memory, removing its full-path
+temporary spool. Every ancestor is still checked before packet bodies are loaded;
+complete packet bytes, error origin, cancellation and reopen behavior remain part
+of the [native resource contract](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md).
+The implementation is [store/history_page.rs](../../trillionnium/crates/trnm-pon-node/src/store/history_page.rs).
+Export and complete ancestry confirmation retain history-sized work. Native sync
+recomputes admission and retains valid interrupted prefixes; snapshots/delta replay
+do not impose a height finality threshold. The separately selected public one-packet
+page location uses the [derived ancestry index](../protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md)
+with a 1024-step budget; each received packet still undergoes full native admission.
+
+Whole-call comparisons use the current binary's retained reference algorithm,
+complete packet frames and actual SQLite fixtures. The bounded hash counter does
+not measure RSS, physical SQL reads or all internal allocation. The complete
+512-block experiment has its own execution receipt and does not inherit a result
+from these source bindings.
 
 The current callable mappings remain in `config/pon/module-maturity-v1.json`.
 Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,

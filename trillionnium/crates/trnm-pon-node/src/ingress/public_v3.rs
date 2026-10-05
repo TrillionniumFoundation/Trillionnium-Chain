@@ -1960,7 +1960,7 @@ fn serve_public_protected_v3_inner(
                                     server.tick()?,
                                 ) {
                                     let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                                    if e.to_string() == "PUBLIC_TICKET_REPLAY" {
+                                    if e.is(crate::ErrorCode::PublicTicketReplay) {
                                         m.replay_refusals += 1;
                                     } else {
                                         m.spent_capacity_refusals += 1;
@@ -2286,6 +2286,40 @@ pub struct PublicReply {
     pub public_network_ready: bool,
     pub identity_authority: bool,
 }
+/// Client-local phase identity. Serialized observations retain their existing
+/// string labels; a label is never parsed back into retry or accounting authority.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[non_exhaustive]
+pub enum PublicClientStage {
+    Construction,
+    Challenge,
+    SolutionSearch,
+    SolutionBodyResponse,
+    Complete,
+    /// Preserve an otherwise unknown diagnostic label without recognizing it as
+    /// a native phase, even when its text resembles a registered phase name.
+    Unknown(&'static str),
+}
+impl PublicClientStage {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Construction => "construction",
+            Self::Challenge => "challenge",
+            Self::SolutionSearch => "solution-search",
+            Self::SolutionBodyResponse => "solution-body-response",
+            Self::Complete => "complete",
+            Self::Unknown(label) => label,
+        }
+    }
+}
+impl Serialize for PublicClientStage {
+    fn serialize<S: serde::Serializer>(
+        &self,
+        serializer: S,
+    ) -> std::result::Result<S::Ok, S::Error> {
+        serializer.serialize_str(self.as_str())
+    }
+}
 /// Every read is charged too. The caller must pin server/context/policy; no fallback.
 /// Client-local observations, including failed calls; not admission or cost authority.
 #[derive(Default, Debug, Serialize)]
@@ -2297,7 +2331,19 @@ pub struct PublicClientMetrics {
     pub solution_found: bool,
     pub solution_body_response_ns: u64,
     pub total_elapsed_ns: u64,
-    pub failed_stage: Option<&'static str>,
+    pub failed_stage: Option<PublicClientStage>,
+}
+impl PublicClientMetrics {
+    fn record_failure(&mut self, stage: PublicClientStage, elapsed_ns: u64) {
+        self.failed_stage = Some(stage);
+        match stage {
+            PublicClientStage::Construction => self.construction_ns = elapsed_ns,
+            PublicClientStage::Challenge => self.challenge_ns = elapsed_ns,
+            PublicClientStage::SolutionSearch => self.solution_search_ns = elapsed_ns,
+            PublicClientStage::SolutionBodyResponse => self.solution_body_response_ns = elapsed_ns,
+            PublicClientStage::Complete | PublicClientStage::Unknown(_) => {}
+        }
+    }
 }
 /// Wire and signed profile are identical to the ordinary client. The observation
 /// reports elapsed stage time, never an adversarial cost bound or server CPU time.
@@ -2345,7 +2391,7 @@ pub fn call_public_protected_v3_with_deadline(
 ) -> (Result<PublicReply>, PublicClientMetrics) {
     let call_start = Instant::now();
     let mut phase_start = call_start;
-    let mut phase = "construction";
+    let mut phase = PublicClientStage::Construction;
     let mut metrics = PublicClientMetrics::default();
     let result = (|| -> Result<PublicReply> {
         if let Some(deadline) = outer_deadline {
@@ -2364,7 +2410,7 @@ pub fn call_public_protected_v3_with_deadline(
         };
         Hello::parse(&hello.encode())?;
         metrics.construction_ns = elapsed_ns(phase_start);
-        phase = "challenge";
+        phase = PublicClientStage::Challenge;
         phase_start = Instant::now();
         let original_deadline = Instant::now() + Duration::from_millis(OVERALL_MS);
         let total_deadline = outer_deadline
@@ -2403,7 +2449,7 @@ pub fn call_public_protected_v3_with_deadline(
             policy.id(),
         )?;
         metrics.challenge_ns = elapsed_ns(phase_start);
-        phase = "solution-search";
+        phase = PublicClientStage::SolutionSearch;
         phase_start = Instant::now();
         let started = Instant::now();
         let id = cookie.id()?;
@@ -2428,7 +2474,7 @@ pub fn call_public_protected_v3_with_deadline(
         let solve_elapsed_ns = elapsed_ns(started);
         metrics.solution_search_ns = elapsed_ns(phase_start);
         metrics.solution_found = true;
-        phase = "solution-body-response";
+        phase = PublicClientStage::SolutionBodyResponse;
         phase_start = Instant::now();
         let mut solution = b"PPS3".to_vec();
         solution.extend(id);
@@ -2483,7 +2529,7 @@ pub fn call_public_protected_v3_with_deadline(
             ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
         }
         metrics.solution_body_response_ns = elapsed_ns(phase_start);
-        phase = "complete";
+        phase = PublicClientStage::Complete;
         Ok(PublicReply {
             ok: r.ok,
             value: r.value,
@@ -2495,15 +2541,7 @@ pub fn call_public_protected_v3_with_deadline(
         })
     })();
     if result.is_err() {
-        metrics.failed_stage = Some(phase);
-        let ns = elapsed_ns(phase_start);
-        match phase {
-            "construction" => metrics.construction_ns = ns,
-            "challenge" => metrics.challenge_ns = ns,
-            "solution-search" => metrics.solution_search_ns = ns,
-            "solution-body-response" => metrics.solution_body_response_ns = ns,
-            _ => {}
-        }
+        metrics.record_failure(phase, elapsed_ns(phase_start));
     }
     metrics.total_elapsed_ns = elapsed_ns(call_start);
     (result, metrics)
@@ -2610,6 +2648,87 @@ mod shared_cpu_domain_source_tests {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting() {
+        let initial = || PublicClientMetrics {
+            construction_ns: 11,
+            challenge_ns: 12,
+            solution_search_ns: 13,
+            solution_trials: 17,
+            solution_found: true,
+            solution_body_response_ns: 14,
+            total_elapsed_ns: 19,
+            failed_stage: None,
+        };
+        let mut expected = json!({
+            "construction_ns": 11,
+            "challenge_ns": 12,
+            "solution_search_ns": 13,
+            "solution_trials": 17,
+            "solution_found": true,
+            "solution_body_response_ns": 14,
+            "total_elapsed_ns": 19,
+            "failed_stage": null,
+        });
+        assert_eq!(serde_json::to_value(initial()).unwrap(), expected);
+        for (stage, label, changed_field) in [
+            (
+                PublicClientStage::Construction,
+                "construction",
+                Some("construction_ns"),
+            ),
+            (
+                PublicClientStage::Challenge,
+                "challenge",
+                Some("challenge_ns"),
+            ),
+            (
+                PublicClientStage::SolutionSearch,
+                "solution-search",
+                Some("solution_search_ns"),
+            ),
+            (
+                PublicClientStage::SolutionBodyResponse,
+                "solution-body-response",
+                Some("solution_body_response_ns"),
+            ),
+            (PublicClientStage::Complete, "complete", None),
+            (
+                PublicClientStage::Unknown("future-stage"),
+                "future-stage",
+                None,
+            ),
+            (PublicClientStage::Unknown("challenge"), "challenge", None),
+            (
+                PublicClientStage::Unknown("solution-search"),
+                "solution-search",
+                None,
+            ),
+            (
+                PublicClientStage::Unknown("solution-body-response"),
+                "solution-body-response",
+                None,
+            ),
+        ] {
+            let mut metrics = initial();
+            metrics.record_failure(stage, 97);
+            assert_eq!(metrics.failed_stage, Some(stage));
+            assert_eq!(stage.as_str(), label);
+            assert_eq!(serde_json::to_value(stage).unwrap(), json!(label));
+            expected["failed_stage"] = json!(label);
+            if let Some(field) = changed_field {
+                expected[field] = json!(97);
+            }
+            assert_eq!(
+                serde_json::to_value(&metrics).unwrap(),
+                expected,
+                "{stage:?}"
+            );
+            expected = serde_json::to_value(initial()).unwrap();
+        }
+    }
+
     fn identity(n: u8) -> DevelopmentIdentity {
         DevelopmentIdentity::from_secret_hex(&hex::encode([n; 32])).unwrap()
     }
