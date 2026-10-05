@@ -73,16 +73,18 @@ class CiContractTests(unittest.TestCase):
 
     def test_complete_rust_budget_must_be_present_once_in_head(self):
         path = '.github/workflows/trnm-required-baseline.yml'
-        original = '    timeout-minutes: 90\n'
-        for replacement in ['', '    timeout-minutes: 45\n', original + original]:
+        original = '    timeout-minutes: 180\n'
+        for replacement in ['', '    timeout-minutes: 45\n', '    timeout-minutes: 90\n',
+                            original + original]:
             with self.subTest(replacement=replacement):
                 self.rejected(path, original, replacement)
 
     def test_merge_rust_budget_must_match_head_without_expanding_other_lanes(self):
         path = '.github/workflows/trnm-required-baseline.yml'
-        original = "    timeout-minutes: ${{ matrix.lane == 'rust-baseline' && 90 || 45 }}\n"
-        for replacement in ['', '    timeout-minutes: 45\n', '    timeout-minutes: 90\n',
-                            original.replace('==', '!='), original.replace('90 || 45', '45 || 90'),
+        original = "    timeout-minutes: ${{ matrix.lane == 'rust-baseline' && 180 || 45 }}\n"
+        for replacement in ['', '    timeout-minutes: 45\n', '    timeout-minutes: 180\n',
+                            original.replace('180 || 45', '90 || 45'),
+                            original.replace('==', '!='), original.replace('180 || 45', '45 || 180'),
                             original.replace("'rust-baseline'", "'protocol-contract'"), original + original]:
             with self.subTest(replacement=replacement):
                 self.rejected(path, original, replacement)

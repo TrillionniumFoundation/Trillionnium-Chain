@@ -263,11 +263,11 @@ def validate(root: Path = ROOT) -> dict:
             text.count(REJECTION_COMPARE_STEP) == 1,
             'actual rejection comparison must bind both native architectures to this head/run/attempt even on earlier failure')
     merge = jobs['prospective-merge']
-    require(re.findall(r'^    timeout-minutes: (.+)$', jobs['rust-baseline'], re.M) == ['90'],
-            'the complete head Rust suite requires its explicit 90-minute job budget')
+    require(re.findall(r'^    timeout-minutes: (.+)$', jobs['rust-baseline'], re.M) == ['180'],
+            'the complete head Rust suite requires its explicit 180-minute job budget')
     require(re.findall(r'^    timeout-minutes: (.+)$', merge, re.M) ==
-            ["${{ matrix.lane == 'rust-baseline' && 90 || 45 }}"],
-            'the merge Rust suite requires the same 90-minute budget; other merge lanes retain 45 minutes')
+            ["${{ matrix.lane == 'rust-baseline' && 180 || 45 }}"],
+            'the merge Rust suite requires the same 180-minute budget; other merge lanes retain 45 minutes')
     require("    if: github.event_name == 'pull_request'\n" in merge, 'merge lane event boundary')
     require('      fail-fast: false\n' in merge, 'all merge lanes retain their outcomes')
     lanes = re.search(r'^        lane: \[([^\]]+)\]$', merge, re.M)

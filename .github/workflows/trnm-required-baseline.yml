@@ -236,7 +236,7 @@ jobs:
   rust-baseline:
     name: rust-baseline
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 180
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -318,7 +318,7 @@ jobs:
     name: prospective-merge (${{ matrix.lane }})
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
-    timeout-minutes: ${{ matrix.lane == 'rust-baseline' && 90 || 45 }}
+    timeout-minutes: ${{ matrix.lane == 'rust-baseline' && 180 || 45 }}
     strategy:
       fail-fast: false
       matrix:

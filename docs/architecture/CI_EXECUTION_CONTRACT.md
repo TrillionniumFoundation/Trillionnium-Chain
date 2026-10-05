@@ -18,15 +18,27 @@ The same workflow also runs two exact-head `cross-arch-cost` jobs and one
 `cross-arch-cost-consistency` job. These three jobs do not rename, replace or add
 branch-protection requirements to the original five head and five merge checks.
 
-The full `rust-baseline` job has a 90-minute budget on both the exact head and the
+The full `rust-baseline` job has a 180-minute budget on both the exact head and the
 prospective merge. The merge matrix grants that budget only to its Rust lane;
-the other merge lanes retain 45 minutes. This adjustment follows the two actual
+the other merge lanes retain 45 minutes. The earlier 90-minute budget followed two actual
 Rust cancellations at the former 45-minute limit in
 [run 37269962242](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/37269962242).
 Their retained logs reached the model-composition integration suite without an
 earlier assertion failure, but neither cancellation constitutes a completed test
 run. The complete workspace tests, independent native-export comparisons,
 documentation tests, strict Clippy and failure propagation remain required.
+Round10 adds separate release executions of the real 65,536-key native fixture
+and complete-account verification comparison. The initial local capacity run at
+`9aabaf9451e83ed471a89cbfb49a2e1b77a869b7` initialized 65,515 keys in 69.11 seconds
+and reached actual heights 1 and 2 at 199.56 and 322.23 seconds. If those two
+per-block rates persisted, the first 20 heights alone would take about 42–45
+minutes; this conditional extrapolation is neither a completed result nor a
+bound. It excludes later maturity/cleanup, fork admission, fault recovery,
+two cold reopens and account-cost sampling. The preceding completed
+[round9 run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/37274972720)
+took about 59.1/51.5 minutes for its entire head/merge Rust jobs. The new
+180-minute allowance keeps all those checks and the new release gates; it does
+not alter any test deadline, fixture size, height or assertion.
 The additional budget is an execution allowance, not a runtime improvement or
 evidence that the complete suite passes. Full-State checks and transactional
 readbacks still incur real work; endpoint performance needs separate measurement.
@@ -541,7 +553,7 @@ pipeline; a failed Cargo process cannot become success merely because `tee` wrot
 a log. The latter also saves every paired raw sample, state, record and SQLite
 under `native-account-verification-cost/`. No whole-Node speedup follows from its
 account-check clock. Original workspace, documentation tests, strict Clippy and
-the90-minute Rust lane budget remain required.
+the180-minute Rust lane budget remain required.
 
 ## Actual legal and late-rejection costs
 
