@@ -60,6 +60,7 @@ Local transport, research and offline rows do not alter the consensus revision.
 | internal-error-identity | local/research | [INTERNAL_ERROR_IDENTITY](../../docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md) | [Error::requires_owner_stop](../../trillionnium/crates/trnm-pon-node/src/error.rs) |
 | account-archive-research-v1 | local/research | [ACCOUNT_ARCHIVE_PROTOTYPE_V1](../../docs/protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md) | [AccountArchive::project_successor](../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs) |
 | model-window-history-v1 | local/research | [MODEL_OPERATIONS_ACCEPTANCE_V1](../../docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md) | [verify_window](../../formal/pon-nakamoto-v1/model_window_history.py) |
+| native-authenticated-storage-v1 | local/research | [NATIVE_AUTHENTICATED_STORAGE_V1](../../docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md) | [Node::open_with_authenticated_state](../../trillionnium/crates/trnm-pon-node/src/store.rs) |
 
 ## Registered acceptance boundaries
 

@@ -18,7 +18,8 @@ use trnm_pon_node::{
         self,
         obligations::{self, WitnessBudget, WitnessDiscoveryProgress as D},
         state_witness::{StatePhase, StateWitnessError as S, StateWitnessProgress as P},
-        BlockInput, CheckedExecutionError as E, CheckedExecutionOutput, StateExecutionInput,
+        BlockInput, CheckedExecutionError as E, CheckedExecutionOutput, CompactStateExecutionInput,
+        StateExecutionInput,
     },
     account_archive_prototype::{
         AccountArchive, ArchiveError, Checkpoint, Context, Limits, Witness,
@@ -814,6 +815,12 @@ fn authenticated_state_checks_real_expiry_and_maturity_before_signed_spend() {
 fn authenticated_state_discovers_more_than_32_real_mandatory_recipients_and_preserves_native_order()
 {
     let mut f = Fixture::new();
+    let export_path = std::env::var_os("TRNM_ACCOUNT_MULTIPROOF_VECTORS").map(PathBuf::from);
+    if let Some(path) = &export_path {
+        assert!(!path.exists(), "fresh multiproof vector path required");
+    }
+    let genesis_checkpoint = f.checkpoint.clone();
+    let mut exported = Vec::new();
     let owners: Vec<_> = std::iter::once(0).chain(100..140).collect();
     // Forty independently signed owners, forty genuine pending obligations, and
     // three legal deadline buckets (the installed expiry limit remains sixteen).
@@ -869,10 +876,23 @@ fn authenticated_state_discovers_more_than_32_real_mandatory_recipients_and_pres
             .len(),
         41
     );
+    if export_path.is_some() {
+        exported.push(compact_native_export_step(&f, &funding, 0, "funding"));
+    }
     assert_eq!(
         f.accept(funding, 0, &owners).output.state,
         checked_funding.execution.output.state
     );
+    if let Some(row) = exported.last_mut() {
+        row["admitted_id"] = json!(f.checkpoint.branch());
+        row["packet_hex"] = json!(hex::encode(
+            f.node
+                .packet(f.checkpoint.branch())
+                .unwrap()
+                .encode()
+                .unwrap()
+        ));
+    }
 
     let reservations: Vec<_> = (100..140)
         .map(|owner| {
@@ -898,7 +918,25 @@ fn authenticated_state_discovers_more_than_32_real_mandatory_recipients_and_pres
             signed(&f.settings, owner, nonce, 2, payload)
         })
         .collect();
+    if export_path.is_some() {
+        exported.push(compact_native_export_step(
+            &f,
+            &reservations,
+            0,
+            "reservations",
+        ));
+    }
     f.accept(reservations, 0, &owners);
+    if let Some(row) = exported.last_mut() {
+        row["admitted_id"] = json!(f.checkpoint.branch());
+        row["packet_hex"] = json!(hex::encode(
+            f.node
+                .packet(f.checkpoint.branch())
+                .unwrap()
+                .encode()
+                .unwrap()
+        ));
+    }
     let parent = f.node.read_active().unwrap();
     let original_rows = rows(&f.archive_path);
     let block = BlockInput {
@@ -963,6 +1001,116 @@ fn authenticated_state_discovers_more_than_32_real_mandatory_recipients_and_pres
         checked.execution.observation.used_owners,
         discovered.observation.requested_owners
     );
+    let compact =
+        obligations::prepare_compact(&f.settings, &f.archive, f.checkpoint.id(), &parent.2, block)
+            .unwrap();
+    assert_eq!(compact.accounts.accounts.len(), 41);
+    assert_eq!(compact.construction.expanded_witnesses_allocated, 0);
+    assert_eq!(
+        compact.observation.requested_owners,
+        discovered.observation.requested_owners
+    );
+    assert_eq!(
+        compact.observation.mandatory_owners,
+        discovered.observation.mandatory_owners
+    );
+    assert_eq!(
+        compact.observation.successor_owners,
+        discovered.observation.successor_owners
+    );
+    assert!(
+        compact.observation.encoded_witness_bytes * 50
+            < discovered.observation.encoded_witness_bytes
+    );
+    let compact_bytes = compact.accounts.encode().unwrap();
+    let compact_accounts =
+        trnm_pon_node::account_archive_prototype::multiproof::Multiproof::decode(&compact_bytes)
+            .unwrap();
+    let compact_checked = account_archive_execution::execute_with_compact_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &parent.2,
+        block,
+        CompactStateExecutionInput {
+            accounts: &compact_accounts,
+            state: &state,
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        compact_checked.execution.execution.output.state,
+        checked.execution.output.state
+    );
+    assert_eq!(
+        compact_checked.execution.execution.output.receipts,
+        checked.execution.output.receipts
+    );
+    assert_eq!(
+        compact_checked.execution.execution.observation,
+        checked.execution.observation
+    );
+    assert_eq!(
+        compact_checked.execution.state_observation,
+        checked.state_observation
+    );
+    assert_eq!(
+        compact_checked.account_proof.encoded_bytes,
+        compact_bytes.len()
+    );
+    // A valid smaller multiproof still cannot hide a future reservation owner.
+    let fewer: Vec<_> = compact
+        .observation
+        .requested_owners
+        .iter()
+        .copied()
+        .filter(|owner| *owner != public(139))
+        .collect();
+    let omitted_compact = f.archive.multiproof(f.checkpoint.id(), &fewer).unwrap().0;
+    assert_eq!(
+        account_archive_execution::execute_with_compact_state_witness(
+            &f.settings,
+            &f.archive,
+            f.checkpoint.id(),
+            &parent.2,
+            block,
+            CompactStateExecutionInput {
+                accounts: &omitted_compact,
+                state: &state
+            },
+        )
+        .unwrap_err(),
+        E::MissingWitness { owner: public(139) },
+    );
+    for stop in [
+        P::AccountUpdate {
+            phase: StatePhase::Mandatory,
+            index: 0,
+        },
+        P::BeforeSuccessorVerification,
+        P::BeforeOutput,
+    ] {
+        assert_eq!(
+            account_archive_execution::execute_with_compact_state_witness_and_progress(
+                &f.settings,
+                &f.archive,
+                f.checkpoint.id(),
+                &parent.2,
+                block,
+                CompactStateExecutionInput {
+                    accounts: &compact_accounts,
+                    state: &state
+                },
+                &|point| if point == stop {
+                    Err(E::Cancelled)
+                } else {
+                    Ok(())
+                },
+            )
+            .unwrap_err(),
+            E::Cancelled
+        );
+    }
     // The future recipient is needed by the original capacity scan even though
     // it receives no credit at this height. Neither discovery nor full State can
     // repair a caller's later omission from the independently checked input.
@@ -1095,9 +1243,326 @@ fn authenticated_state_discovers_more_than_32_real_mandatory_recipients_and_pres
     );
     assert_eq!(f.node.read_active().unwrap(), parent);
     assert_eq!(rows(&f.archive_path), original_rows);
+    if export_path.is_some() {
+        exported.push(compact_native_export_step(&f, &[], 0, "expiry"));
+    }
     assert_eq!(
         f.accept(vec![], 0, &owners).output.state,
         checked.execution.output.state
+    );
+    if let Some(row) = exported.last_mut() {
+        row["admitted_id"] = json!(f.checkpoint.branch());
+        row["packet_hex"] = json!(hex::encode(
+            f.node
+                .packet(f.checkpoint.branch())
+                .unwrap()
+                .encode()
+                .unwrap()
+        ));
+    }
+    if let Some(path) = export_path {
+        let observation = json!({
+            "schema": "pon-account-multiproof-native-observation-v1",
+            "context": {
+                "network": f.settings.network(),
+                "parameters": f.settings.parameters(),
+                "genesis": f.settings.genesis(),
+            },
+            "genesis_state": genesis.2,
+            "genesis_checkpoint": genesis_checkpoint,
+            "blocks": exported,
+            "scope": {
+                "actual_signed_node_admission": true,
+                "direct_archive_collection": true,
+                "complete_state_reference_required": true,
+                "public_availability_accepted": false,
+                "production_activation": false,
+            },
+        });
+        std::fs::write(path, serde_json::to_vec_pretty(&observation).unwrap()).unwrap();
+    }
+}
+
+fn compact_native_export_step(
+    f: &Fixture,
+    txs: &[Vec<u8>],
+    miner: u64,
+    label: &str,
+) -> serde_json::Value {
+    let parent = f.node.state_at(f.checkpoint.branch()).unwrap();
+    let block = BlockInput {
+        transactions: txs,
+        height: f.checkpoint.height() + 1,
+        miner: public(miner),
+        parent_id: f.checkpoint.branch(),
+    };
+    let prepared =
+        obligations::prepare_compact(&f.settings, &f.archive, f.checkpoint.id(), &parent, block)
+            .unwrap();
+    let state = account_archive_execution::prepare_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &parent,
+    )
+    .unwrap();
+    let checked = account_archive_execution::execute_with_compact_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &parent,
+        block,
+        CompactStateExecutionInput {
+            accounts: &prepared.accounts,
+            state: &state,
+        },
+    )
+    .unwrap();
+    // Preserve the actual raw M06 mandatory callback State independently of the
+    // compact transition's reported deltas; the Python oracle checks both.
+    let partition = parent
+        .iter()
+        .filter(|(key, _)| !key.starts_with("account:"))
+        .map(|(key, value)| (key.clone(), value.clone()))
+        .collect();
+    // This public M06 reference has its own installed configuration. Reproduce
+    // the fixture's explicit genesis selection and verify the exact parameter
+    // digest before it can produce an artifact comparison.
+    let mut app =
+        Config::installed_with_profiles("native-public-evaluation-dev-v1", continuity_v1::PROFILE)
+            .unwrap();
+    app.params["genesis_timestamp"] = json!(1);
+    let chain_label = format!(
+        "trnm-pon-task-lifecycle-wall-devnet-{}-native-public-evaluation-dev-v1-1-evaluation-storage{}",
+        app.params["consensus_revision"].as_u64().unwrap(),
+        trnm_mvcc_fee::public_evaluation::STORAGE_REVISION,
+    );
+    app.params["chain_label"] = json!(chain_label);
+    app.network = hash(b"network", &[chain_label.as_bytes()]);
+    let wire: serde_json::Value =
+        serde_json::from_str(include_str!("../../../../config/pon/ledger-v1.json")).unwrap();
+    let work: serde_json::Value =
+        serde_json::from_str(include_str!("../../../../config/pon/work-profile-v1.json")).unwrap();
+    app.parameters = hash(
+        b"parameters",
+        &[
+            &serde_json::to_vec(&app.params).unwrap(),
+            &serde_json::to_vec(&wire).unwrap(),
+            &serde_json::to_vec(&work).unwrap(),
+            &serde_json::to_vec(&app.model_registry).unwrap(),
+        ],
+    );
+    assert_eq!(app.network, f.settings.network());
+    assert_eq!(app.parameters, f.settings.parameters());
+    let mandatory = Mutex::new(None);
+    let reference = pon_executor::execute_with_authenticated_state_input(
+        &parent,
+        pon_executor::BlockExecution {
+            transactions: txs,
+            height: block.height,
+            miner: block.miner,
+            parent_id: block.parent_id,
+            workers: 1,
+        },
+        &app,
+        &|_| Ok(()),
+        &pon_executor::MandatoryStateInput {
+            non_accounts: &partition,
+            completed: &|_, after, _| {
+                let mut retained = mandatory.lock().unwrap();
+                assert!(retained.is_none());
+                *retained = Some(after.clone());
+                Ok(())
+            },
+        },
+        &|_| Ok::<_, E>(()),
+    )
+    .unwrap();
+    assert_eq!(reference.state, checked.execution.execution.output.state);
+    assert_eq!(
+        reference.receipts,
+        checked.execution.execution.output.receipts
+    );
+    // Extra kernel executions record actual branch-hash counters and compare
+    // their roots with the successful complete M06 phases. These are diagnostic
+    // replay counts, never whole-execution timings or allocation measurements.
+    let query = trnm_pon_node::account_archive_prototype::multiproof::CheckedMultiproof::verify(
+        Context {
+            network: f.settings.network(),
+            parameters: f.settings.parameters(),
+            genesis: f.settings.genesis(),
+        },
+        &f.checkpoint,
+        &prepared.accounts,
+    )
+    .unwrap();
+    let update_observation = |phase: &account_archive_execution::state_witness::StateTransition| {
+        let updates: Vec<_> = phase
+            .account_changes
+            .iter()
+            .map(
+                |change| trnm_pon_node::account_archive_prototype::ResearchUpdate {
+                    owner: change.owner,
+                    before: change.before,
+                    after: change.after,
+                },
+            )
+            .collect();
+        let (root, observation) = query
+            .root_for_updates(&updates, &|_| Ok::<_, ArchiveError>(()))
+            .unwrap();
+        assert_eq!(root, phase.commitment.account_root);
+        observation
+    };
+    let mandatory_update_observation =
+        update_observation(&checked.execution.state_observation.mandatory);
+    let successor_update_observation =
+        update_observation(&checked.execution.state_observation.successor);
+    json!({
+        "label": label,
+        "height": block.height,
+        "parent": block.parent_id,
+        "miner": block.miner,
+        "transactions_hex": txs.iter().map(hex::encode).collect::<Vec<_>>(),
+        "parent_state": parent,
+        "parent_checkpoint": f.checkpoint,
+        "requested": prepared.observation.requested_owners,
+        "proof_hex": hex::encode(prepared.accounts.encode().unwrap()),
+        "proof": prepared.accounts,
+        "construction": prepared.construction,
+        "mandatory_state": mandatory.into_inner().unwrap().unwrap(),
+        "mandatory_updates": checked.execution.state_observation.mandatory.account_changes,
+        "mandatory_account_root": checked.execution.state_observation.mandatory.commitment.account_root,
+        "mandatory_update_observation": mandatory_update_observation,
+        "successor_state": reference.state,
+        "successor_updates": checked.execution.state_observation.successor.account_changes,
+        "successor_account_root": checked.execution.state_observation.successor.commitment.account_root,
+        "successor_update_observation": successor_update_observation,
+    })
+}
+
+#[test]
+fn compact_authenticated_execution_binds_signed_overlay_aggregates_and_cancellation() {
+    let mut f = Fixture::new();
+    let parent = f.node.read_active().unwrap();
+    let original_rows = rows(&f.archive_path);
+    let txs = vec![
+        transfer(&f.settings, 0, 1, 100, 100_000),
+        transfer(&f.settings, 100, 1, 101, 10_000),
+        transfer(&f.settings, 101, 1, 101, 1),
+    ];
+    let block = BlockInput {
+        transactions: &txs,
+        height: 1,
+        miner: public(0),
+        parent_id: parent.0,
+    };
+    let prepared =
+        obligations::prepare_compact(&f.settings, &f.archive, f.checkpoint.id(), &parent.2, block)
+            .unwrap();
+    let state = account_archive_execution::prepare_state_witness(
+        &f.settings,
+        &f.archive,
+        f.checkpoint.id(),
+        &parent.2,
+    )
+    .unwrap();
+    let execute = |proof: &_, state: &_| {
+        account_archive_execution::execute_with_compact_state_witness(
+            &f.settings,
+            &f.archive,
+            f.checkpoint.id(),
+            &parent.2,
+            block,
+            CompactStateExecutionInput {
+                accounts: proof,
+                state,
+            },
+        )
+    };
+    let checked = execute(&prepared.accounts, &state).unwrap();
+    assert_eq!(checked.account_proof.accounts, 3);
+    assert_eq!(
+        checked
+            .execution
+            .state_observation
+            .successor
+            .commitment
+            .account_count,
+        checked.execution.state_observation.parent.account_count + 2
+    );
+    let mut extra = prepared.observation.requested_owners.clone();
+    extra.push(public(999));
+    let extra = f.archive.multiproof(f.checkpoint.id(), &extra).unwrap().0;
+    assert_eq!(
+        execute(&extra, &state).unwrap_err(),
+        E::UnusedWitness {
+            owners: vec![public(999)]
+        }
+    );
+    for field in 0..4 {
+        let mut wrong = state.clone();
+        match field {
+            0 => wrong.commitment.account_count += 1,
+            1 => wrong.commitment.account_balance -= 1,
+            2 => wrong.commitment.account_root[0] ^= 1,
+            _ => wrong.commitment.id[0] ^= 1,
+        }
+        assert_eq!(
+            execute(&prepared.accounts, &wrong).unwrap_err(),
+            E::StateWitness(S::Commitment)
+        );
+    }
+    let mut wrong_partition = state.clone();
+    wrong_partition.non_accounts.pop();
+    assert_eq!(
+        execute(&prepared.accounts, &wrong_partition).unwrap_err(),
+        E::StateWitness(S::Partition)
+    );
+    let mut wrong_leaf = prepared.accounts.clone();
+    let present = wrong_leaf
+        .accounts
+        .iter_mut()
+        .find(|account| account.account.is_some())
+        .unwrap();
+    present.account.as_mut().unwrap().nonce += 1;
+    assert_eq!(
+        execute(&wrong_leaf, &state).unwrap_err(),
+        E::Archive(ArchiveError::InvalidWitness)
+    );
+    let seen = AtomicUsize::new(0);
+    assert_eq!(
+        account_archive_execution::execute_with_compact_state_witness_and_progress(
+            &f.settings,
+            &f.archive,
+            f.checkpoint.id(),
+            &parent.2,
+            block,
+            CompactStateExecutionInput {
+                accounts: &prepared.accounts,
+                state: &state
+            },
+            &|point| if point == P::Execution(ExecutionProgress::BeforeParentBinding)
+                && seen.fetch_add(1, Ordering::SeqCst) == 3
+            {
+                Err(E::Cancelled)
+            } else {
+                Ok(())
+            },
+        )
+        .unwrap_err(),
+        E::Cancelled
+    );
+    assert_eq!(f.node.read_active().unwrap(), parent);
+    assert_eq!(rows(&f.archive_path), original_rows);
+    let native = f.accept(txs, 0, &[0, 100, 101]);
+    assert_eq!(
+        native.output.state,
+        checked.execution.execution.output.state
+    );
+    assert_eq!(
+        native.output.receipts,
+        checked.execution.execution.output.receipts
     );
 }
 

@@ -4,8 +4,12 @@ This technical contract is subordinate to the
 [sole development plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 It describes an explicit research sidecar in
 [account_archive_prototype.rs](../../../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs).
-No default Node constructor, production store, M05/M06 path, mining path,
-fork-choice rule, transaction format or installed profile selects it. The explicit
+The `AccountArchive` connection remains a separate sidecar. Its compressed account
+tree primitives are also reused by the explicitly selected
+[native authenticated backend](NATIVE_AUTHENTICATED_STORAGE_V1.md), within the
+Node's own SQLite transaction and independently checked native-State context.
+That integration does not install the sidecar database or change the ledger's
+State-root algorithm, transaction format, mining relation or fork-choice rule. The explicit
 [research execution wrapper](../../../../trillionnium/crates/trnm-pon-node/src/account_archive_execution.rs)
 can require archive proofs at semantic account point accesses while retaining the
 complete native State and ordinary M06 relation. It does not execute from a partial
@@ -24,8 +28,9 @@ It separates three quantities that the current complete in-memory State combines
 
 1. **Authenticated retained account space:** every created account remains represented
    by its complete address, balance and nonce in an immutable account root.
-2. **An operation's checked account view:** at most32 requested membership or
-   nonmembership proofs are accepted together. Dropping this view discards only a
+2. **An operation's checked account view:** the original point-query API accepts
+   at most32 membership or nonmembership proofs together. The distinct AAM1 format
+   below uses the complete block's checked bound. Dropping either view discards only a
    disposable local copy; it does not delete a committed account.
 3. **Persistent availability and history:** SQLite retains the node bytes and old
    branch roots that produce the proofs. This storage grows and has explicit local
@@ -170,6 +175,97 @@ queries from this type convey no transaction signature, funds or admission autho
 An old branch witness remains usable as a historical observation against its own
 checkpoint, but rejects when presented as evidence for a newly selected checkpoint.
 
+### AAM1 compact multiproofs
+
+The separate [`multiproof` module](../../../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof.rs)
+defines `Multiproof`, the opaque `CheckedMultiproof`, and the observation schema
+`pon-account-multiproof-v1`. It preserves every AAW1 byte, the original32-account
+`CheckedAccounts` contract, account-tree hash domain and checkpoint identity.
+There is no conversion of old AAW1 bytes into a new interpretation.
+
+An AAM1 proof contains each requested leaf once and only the nonempty sibling
+subtrees at the boundary of those queried paths. Empty siblings and unary paths
+are implicit in the fixed sparse-tree relation. The exact binary layout is:
+
+| Part | Encoding and requirement |
+| --- | --- |
+| Header | `AAM1`, checkpoint id32, account count u32le, frontier count u32le;44 bytes |
+| Queried account | owner32, presence byte0 or1, then balance and nonce u64le only when present;33 or49 bytes |
+| Frontier node | depth u16le, prefix32, subtree digest32;66 bytes |
+
+Queried accounts are strictly increasing by `H("account-archive-key-v1", [owner])`,
+not by owner bytes. Equal paths, including duplicate owners, reject. Frontier
+nodes are strictly increasing by prefix bytes. Their depth is in1..256; every
+prefix bit after that depth is zero. A frontier digest must differ from the
+fixed empty hash at its declared depth.
+
+Every frontier node must occupy an exact unqueried sibling slot of the query
+trie. Equivalently, the maximum common-prefix length between its canonical prefix
+and all queried paths is exactly `depth-1`. Sorted predecessor/successor queries
+determine that maximum. This rule rejects a node containing a queried leaf, an
+unused node, overlapping or nested nodes, same-prefix nodes at different depths,
+and a subdivision of an already excluded sibling. Explicit empty nodes reject.
+Omitting a nonempty required sibling or changing its digest cannot reconstruct
+the expected account root. The decoder bounds both counts and the minimum
+remaining payload before allocation, and rejects truncation, noncanonical flags,
+wrong magic and trailing bytes. Decoding grants no checked authority.
+
+`CheckedMultiproof::verify` binds the exact Settings context and checkpoint and
+reconstructs the original account root before returning checked values. It merges
+the queried leaves and boundary subtrees into an immutable compressed tree with
+at most `2 * (queried_accounts + frontier_nodes) - 1` nodes for nonempty input.
+`root_for_updates` accepts strict owner-ordered, original-parent updates. It checks
+the original presence/value, rejects duplicates, unchanged deltas and nonce
+rollback, and retains present accounts when their balance reaches zero. Account
+deletion is not an update operation. Only changed leaf edges and their ancestors
+are rehashed; unchanged edges reuse checked hashes. Each invocation starts from
+the immutable original tree, so the mandatory phase cannot change the base used
+by the final phase.
+
+**An empty query has zero access authority.** It must still match context and
+checkpoint and contain zero frontier nodes. It does not reconstruct or prove a
+nonempty account tree from no supplied data. Its only accepted update is an empty
+update, which returns the separately supplied checkpoint root. A nonempty update,
+foreign context or foreign checkpoint rejects. Complete-State execution separately
+checks the native parent and rejects any subsequent account access without a
+proof; an empty query cannot bypass those checks.
+
+`AccountArchive::multiproof` and `multiproof_with_progress` collect this proof by
+walking compressed stored nodes directly. They never first construct P expanded
+256-sibling AAW1 proofs. Missing required archive rows remain `DataUnavailable`.
+An excluded subtree uses its authenticated parent edge without fetching unrelated
+descendants. `ConstructionObservation.archive_point_reads` counts actual
+`archive_nodes` reads, excluding checkpoint/context lookups. Its zero
+`expanded_witnesses_allocated` describes this construction path; it is not a claim
+of zero allocations or measured process memory.
+
+The explicit native backend also exposes
+`Node::authenticated_account_multiproof(block, owners)`. It checks the actual native
+block/State, durable commitment and stored account nodes before deriving an opaque
+account checkpoint and querying the same `native.sqlite` connection. The internal
+`from_native_database` adapter accepts that checkpoint, not a caller's root or
+serialized report. A second sidecar database is not required for this readonly
+query. The returned proof remains untrusted until verified, and query verification
+does not itself authorize a transaction or select a fork.
+
+The format caps accounts at66,049 and frontier nodes at65,536. Execution applies
+the tighter actual-parent bound `parent_state_keys + 2 * transactions.len() + 1`,
+and limits frontier nodes by parent keys. Verification also requires the frontier
+count not to exceed the checkpoint's account count. That count is anchored by the
+complete native parent in execution and by checked durable native state in the
+Node adapter; it is not a caller-provided budget extension. `WitnessBudget::compact`
+reports a distinct AAM1 bound and checks the original budget fields. Historical
+`WitnessBudget.maximum_encoded_bytes` still means expanded AAW1 bytes.
+
+The conservative AAM1 binary maximum under the installed bounds is
+
+`44 + 49 * 66,049 + 66 * 65,536 = 7,561,821 bytes`, about7.21 MiB.
+
+The previous expanded maximum is546,687,573 bytes, about521.36 MiB. These are
+encoding bounds, not measured peak-memory, JSON, SQLite, network-service or
+worst-case latency bounds. The two maxima are conservative and do not claim that
+every maximum-size combination is realized by a legal native state.
+
 ### Complete-State research execution
 
 `account_archive_execution::execute` and `execute_with_progress` take immutable
@@ -313,6 +409,21 @@ ordered by owner bytes. All removed balances are subtracted from the anchored
 sum before changed balances are added, avoiding a transient overflow caused only
 by account ordering. Both the prologue and final change lists are relative to the
 original parent; the final list is not a delta from the prologue.
+
+Those expanded-path details describe the retained AAW1 implementation. The
+`execute_with_compact_state_witness` and
+`execute_with_compact_state_witness_and_progress` entrypoints instead take
+`CompactStateExecutionInput { accounts: &Multiproof, state: &StateWitness }`.
+`obligations::prepare_compact` and its progress variant first run the same actual
+semantic discovery as AAW1 and then collect the direct compact proof. Execution
+verifies AAM1 once, uses the checked values at the actual M06 account gate, and
+uses that same immutable compact tree for mandatory and final root updates.
+There is no re-expansion into256 siblings and no repeated original-proof
+verification at each phase. The complete parent comparison, unused/missing access
+rejection, full non-account partition, checked aggregate arithmetic and independent
+full-State reconstruction at both phases remain required. The original execution
+and state-observation schemas preserve their relation; the compact output adds
+its separate account-proof observation.
 
 The actual M06 mandatory prologue is an explicit comparison boundary. Its complete
 non-account input and resulting account changes are checked before transaction
@@ -615,6 +726,74 @@ and their failures remain historical; neither version's source binding promotes
 the other to executed evidence. Both oracles remain JSON-only for this fixture:
 no SQLite inspection, new W1/difficulty/fork-choice validation, native recovery
 rerun, generic model-cleanup semantics or public availability is established.
+
+### Compact signed obligation campaign
+
+The existing native test
+`authenticated_state_discovers_more_than_32_real_mandatory_recipients_and_preserves_native_order`
+now also exercises direct AAM1 discovery and actual proof-gated complete M06
+execution. Its three admitted blocks fund40 new owners, create40 independently
+signed task reservations with16/16/8 deadline buckets, and execute an empty
+successor. There are80 signed transactions in total. The last block requires41
+account queries, performs16 refunds and retains24 future escrows. Omitting a
+future recipient from an otherwise valid compact proof still rejects. The test
+compares complete State, receipts, used owners and both state-commitment phases
+with the expanded path and the actually admitted ordinary Node result.
+
+The following exact values belong to that fixture's current inputs:
+
+| Block | Queried accounts | Nonempty frontier nodes | Expanded AAW1 bytes | AAM1 bytes | Stored-node point reads | Retained checked nodes |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Funding |41 |3 |338,717 |1,611 |7 |87 |
+| Reservations |41 |3 |339,357 |2,251 |84 |87 |
+| Expiry |41 |3 |339,357 |2,251 |84 |87 |
+
+Each compact verification performs10,285 sparse branch hashes, excluding fixed
+empty-table construction and key/leaf hashing. The expiry update kernel changes16
+accounts and29 compressed forks and performs4,033 branch hashes in each phase.
+Funding has zero mandatory account changes and41 final changes; reservations has
+zero mandatory account changes and40 final changes. Unchanged mandatory phases
+perform zero update branch hashes. Native update-counter observations come from
+explicit additional executions of the same checked update kernel and compare its
+root with the successful M06 phase root. They are component replay counts, not
+complete block timings or allocation measurements. Full-State reconstruction,
+non-account scans, signature work, proof preparation and storage work retain their
+separate costs.
+
+An explicit fresh file path retains the complete native observation:
+
+```bash
+TRNM_ACCOUNT_MULTIPROOF_VECTORS=/tmp/new-account-multiproof-native.json \
+  cargo test --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-pon-node --test account_archive_execution \
+  authenticated_state_discovers_more_than_32_real_mandatory_recipients_and_preserves_native_order \
+  -- --exact --nocapture
+python3 formal/pon-nakamoto-v1/account_multiproof_oracle.py \
+  /tmp/new-account-multiproof-native.json \
+  --output /tmp/new-account-multiproof-oracle.json
+```
+
+`pon-account-multiproof-native-observation-v1` includes the complete genesis,
+parent/mandatory/successor States, signed transactions, actually admitted packet
+bytes, raw AAM1 bytes, canonical proof fields, ordered updates and construction
+and update counters. The [independent Python oracle](../../../../formal/pon-nakamoto-v1/account_multiproof_oracle.py)
+derives the genesis, replays the80 signed transactions, checks packet commitments
+and constructs the uncompressed sparse tree level by level. It independently
+derives the exact query boundary, AAM1 bytes, original-parent updates, full roots
+and operation counters. It checks3 proofs,123 queried presence/value observations
+and6 mandatory/final roots. It does not reexecute native W1 admission, fork choice,
+backend migration or a public proof-serving service.
+
+The [native compact tests](../../../../trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs)
+cover exact old/new encoding behavior, canonical boundary negatives, missing
+archive records, shared updates, absent versus present-zero leaves, zero-query
+semantics, nonce checks and cancellation. Additional complete-execution negatives
+alter root/count/balance claims and remove non-account obligations. The
+[Python tests](../../../../formal/pon-nakamoto-v1/test_account_multiproof_oracle.py)
+use a separate bottom-up algorithm and reject independently mutated native
+observations; those mutations are labeled oracle controls, not native executions.
+Actual test, Clippy and fuzz results require their exact-source run receipts.
+Fuzz source and corpus additions alone do not establish a hosted AAM1 fuzz run.
 
 ## 8. Required work before a new capacity protocol
 

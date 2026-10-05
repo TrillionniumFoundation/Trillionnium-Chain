@@ -494,7 +494,9 @@ tiles and both end points. Each refusal returns no proof; changed and repeated
 challenges after refusal are checked against a fresh ordinary proof. This finite
 test selection does not claim that every callback position was separately
 cancelled. Setup, bounded transposes/allocations and work between observations
-remain nonpreemptive. Neither verifier nor native producer selection changes.
+remain nonpreemptive. Default verification and native producer selection do not
+change. The explicit verifier comparison below reuses only this bounded dot-product
+arithmetic, without importing the maintenance task constructor or its eligibility rule.
 
 Arithmetic controls compare ordinary `u128` remainder with maximum, zero, mixed
 and 1,024 hash-derived eight-coordinate inputs and canonical prior values. Two
@@ -645,15 +647,20 @@ All existing acceptance and activation flags remain false.
 
 ## Verifier boundary
 
-`trnm-crypto-primitives/src/pon_work.rs` retains two complete arithmetic paths:
+[`pon_work.rs`](../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs)
+retains the independent scalar reference and the default transposed verifier, plus
+an explicit transcript-arithmetic research comparison:
 
 | Entry | Arithmetic and transcript | Use |
 |---|---|---|
 | `verify` / `verify_with_progress` | Transposed right operands, exact reduction for q=2^32-5, 256-byte tile hash updates | Ordinary native W1 verification |
 | `verify_reference` / `verify_reference_with_progress` | Original row-major scalar products, u128 remainder, per-cell hash updates | Explicit reference and differential verification |
+| `verify_limb` / `verify_limb_with_progress` | The same transposed replay and corrections; each eight-product transcript accumulation uses bounded `u64` low/high sums | Explicit research comparison; never selected by the default entry |
 | `evaluate` / `prove` | Original complete scalar generation | Reference producer |
 
-Both verifier paths perform the same grammar and task checks before replay. They emit
+All three verifier paths share the existing admission procedure; the arithmetic
+choice does not create another verifier framework. They perform the same grammar
+and task checks before replay and emit
 the same ordered `VerificationProgress` observations: before replay, each noise hash,
 each multiplication row, each transcript tile, before product reconstruction and before
 constructing `VerifiedWork`. Cancellation discards all intermediate state. No decoded
@@ -666,10 +673,176 @@ if the implementation takes less time. Full recomputation remains full recomputa
 
 The original Rust scalar arithmetic and Python oracle provide independent arithmetic
 implementations within the same development authorship. Their agreement is not an
-external security assessment. Extreme-field/product/grammar cases compare both Rust
+external security assessment. Extreme-field/product/grammar cases compare all three Rust
 paths; a complete success records equal observation sequences, and representative cuts
 through every noise/matrix/tile/product stage compare cancelled outcomes. Existing
 wire, task, challenge and Python byte-parity tests remain applicable.
+
+The limb comparison changes only the eight-product accumulation inside each
+`bi,bj,bk` transcript tile. It retains the noise products, transpositions, tile order,
+per-cell little-endian words, hash updates and product corrections. The compile-time
+arithmetic choice leaves every observation in its original position. The shared
+bounded arithmetic applies to any canonical W1 operands; it does not rely on
+maintenance material structure. Its proof is the `L<9B`, `H<8B`, `S<49B`,
+`F<B+240<2q` argument above, with `B=2^32`. The scalar path still uses independent
+`u128` remainder and row-major arithmetic.
+
+The complete verifier still performs **458,752 scalar multiplications**: 65,536
+for the two noise products, 262,144 for the full transcript, and 131,072 for the four
+product-correction multiplications. Only the accumulation method of the middle
+262,144 products changes. This is separate from the prepared producer's 327,680
+per-challenge multiplication count. There is no multiplication-count reduction or
+new claim that the work is irreducible. The measured winner between kernels remains
+an empirical question; adding this entry does not switch the default verifier.
+
+## Explicit late-rejection cost diagnostic
+
+[`pon_rejection_cost`](../../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs)
+emits the separate `pon-work-rejection-cost-v1` schema. It supplements the existing
+producer comparisons and preserves `pon-structured-cost-v3` unchanged. The new
+experiment records the actual `WorkError` enum returned by each timed invocation;
+an `is_err()` boolean or an inference from source order is not a rejection label.
+
+### Inputs, acquisition and two mutation costs
+
+The fixed corpus contains four task classes (`dense`, `zero`, `rank-one`, `sparse`),
+two targets (`7f` followed by 31 `ff` bytes, and `07` followed by 31 `ff` bytes),
+and nine deterministic samples per class/target. These are **72 producer flows**.
+The challenge stream is domain-separated by class, target, sample and nonce.
+The native attempt budget is 4,096 per honest search and per fake-trace search.
+Every target miss remains in the raw stream with its challenge, trace, ticket,
+complete-proof SHA-256 and separately measured phase costs. An exhausted flow
+retains its complete budget and elapsed costs and supplies no fictitious winner.
+
+Each flow actually creates its material, computes its task identity and calls the
+generic `PreparedTask::new` once. The raw setup record charges all three phases,
+including fixed-product computation and proof-prefix preparation. This generic
+producer is an explicit acquisition method, not the cheapest of the eight
+maintenance producers or a minimum adversarial cost. The original four producer
+suites continue to examine alternative preparation and generation algorithms.
+
+For every honest challenge attempt, the diagnostic records challenge construction,
+complete proof generation/serialization and ticket checking separately. Its enclosing
+search-wall timer also includes the full-proof audit hashes, record allocation and
+loop overhead. The difference remains an explicit nonnegative diagnostic-overhead
+field. Consequently the enclosing timer is not pure CPU arithmetic or energy cost.
+The report never subtracts that overhead and then calls the remainder complete
+search cost.
+
+After acquiring a genuine winner at the selected target, the diagnostic constructs:
+
+| Case | Actual input construction | Expected complete verifier result |
+| --- | --- | --- |
+| Legal | The original complete winner | `Accepted`, including the exact returned product |
+| Transcript | Clone the winner; search a separately domain-separated fake trace whose ticket passes the same target; replace only the final digest | `WorkError::Transcript`; product corrections are not entered |
+| Product, last cell | Clone the winner; replace only the last claimed product cell by `(c+1) mod q`; retain the original task, challenge, trace and ticket | `WorkError::Product`, after all four correction multiplications |
+
+The product mutation uses a canonical increment, including `q-1 -> 0`; XOR is not
+a general substitute because it can create an out-of-field value. Its byte offset
+is `PROOF_BYTES-36 = 49,152`. The true trace and ticket are retained, so this
+mutation performs no new ticket search. Selecting the last logical product cell
+does not prove a worst-case machine comparison path: the compiler controls the
+implementation of slice equality, and other malformed inputs remain possible.
+
+Clone, byte mutation, fake-trace candidate generation and ticket search are reported
+separately. Mutation construction also retains its enclosing timer and recording
+overhead. There are two explicitly different cost denominators:
+
+\[
+C_{\mathrm{first}}=C_{\mathrm{material}}+C_{\mathrm{task}}+
+C_{\mathrm{prepared}}+C_{\mathrm{honest\ search}}+C_{\mathrm{mutation}},
+\qquad C_{\mathrm{existing\ proof}}=C_{\mathrm{mutation}}.
+\]
+
+The second denominator assumes an already acquired complete honest winner. It is
+not a from-zero forgery cost, a measured repeated-submission campaign, or a claim
+that a trace can be reused for another challenge, parent or lease. The summary
+charges all actual acquisition and mutation costs in each class/target group,
+including honest or fake search exhaustion. `matched_construction_total_ns`
+separately identifies the subset that produced measured rejection inputs; the
+complete `construction_total_ns` denominator also retains exhausted searches.
+
+### Timed calls and actual rejection boundaries
+
+Each available proof case is timed with all three kernels. Within a complete
+class/target group, a cyclic nine-arm schedule places every case/kernel pair in
+each invocation position exactly once. The **648 possible timed verifications**
+share the 72 producer flows; they are not 648 independent generation samples.
+Search exhaustion leaves explicit missing verification arms, so such a group does
+not receive the complete-balanced-group label.
+
+Every timed call finishes before the diagnostic maps its actual returned enum to
+a label. Only after all timed arms finish does it run separate progress probes on
+the same complete proof bytes. The probes return their actual result and record a
+canonical sequence hash, event count, per-label noise counts, matrix-row count and
+entry markers. Probe execution is outside the timed-verification denominator.
+
+A legal sequence contains every noise hash, both noise-product row sequences,
+all 512 transcript tiles, `BeforeProduct`, correction-row sequences of lengths
+64, 64, 8 and 64, then `BeforeVerifiedWork`. A product rejection must equal the
+legal sequence without its last marker. A transcript rejection must equal the
+prefix ending immediately before `BeforeProduct`. Noise rejection sampling can
+require additional hashes; the checker derives those counts from the actual
+challenge rather than assuming a universal total event count. Native tests also
+preserve cancellation at product-stage boundaries as `Cancelled(E)`, distinct
+from a relation error.
+
+### Collection, independent checking and hosted comparison
+
+[`pon_work_rejection_report.py`](../../../../scripts/pon_work_rejection_report.py)
+has separate execution, retained-verification, raw-summary and cross-architecture
+modes. A local collection requires clean committed source and a fresh directory:
+
+```bash
+python3 scripts/pon_work_rejection_report.py --run --local --out /tmp/trnm-rejection-v1
+python3 scripts/pon_work_rejection_report.py --verify /tmp/trnm-rejection-v1
+```
+
+Build and measure only after freezing source and with no competing build or cost
+campaign. Without `--local`, collection requires the actual GitHub runner context.
+It derives architecture from native Linux `uname`, checks fixed Rust/Cargo 1.95.0
+host identity, explicitly builds for that same target and checks the resulting
+ELF machine. Source bytes before/after, complete measured inputs, original binary
+hashes, CPU description, runner context and every command/stdout/stderr remain
+in the receipt. A launch failure, timeout, output-cap refusal or source/binary
+change produces a retained failure, never a successful measurement.
+
+The collector captures three identity commands, one build and one native process.
+Their limits are respectively 30, 30, 30, 900 and 180 seconds, with a five-second
+termination grace for each capture: **1,195 seconds** in the existing CI budget.
+The [CI execution contract](../../../architecture/CI_EXECUTION_CONTRACT.md) owns
+the whole-job budget and actual head/merge scope. Local execution cannot stand in
+for a hosted job result.
+
+The checker independently computes all four material/task/product prefixes,
+every challenge and ticket, every attempted complete-proof digest, both mutations,
+and the expected full progress sequence. It separately replays the full winning
+transcript for every honest winner with the existing scalar Python oracle. Failed
+proof transcripts are not all independently replayed; their complete bytes and
+ticket decisions are checked. This distinction remains explicit in the summary.
+The checker recomputes all accounting and does not treat a stored summary as
+authority. `--historical` verifies retained earlier inputs without relabeling them
+as current-source measurements.
+
+The existing x64 and ARM64 cost jobs append this diagnostic after the four
+producer suites. Their comparison uses `--compare X64_DIR ARM64_DIR --out DIR`
+together with exact `--expected-source`, `--expected-run` and `--expected-attempt`.
+Both artifacts must come from that actual hosted run and source, on distinct
+native architectures. All deterministic task/proof/ticket/search, actual error,
+progress and invocation-order streams must agree; measured clocks stay separate
+by architecture. A local artifact, cross-compiled executable or environment-only
+architecture label cannot satisfy that comparison.
+
+The development check for this implementation ran **75 Python accounting and
+receipt tests**, **55 crypto-library tests**, and **three new native diagnostic
+tests**, plus strict Clippy. These are local development results before final
+source freezing. The Python test fixtures deliberately substitute synthetic
+durations and a synthetic winner oracle while testing accounting/identity
+counterexamples; they are not cost observations. Actual collection performs the
+independent complete winning-transcript replays described above. No formal timing
+result or speed winner is asserted by this source revision; final-source local
+and hosted runs must retain their own actual results. All hardness, fastest
+adversary, worst-case rejection, public-service and activation flags remain false.
 
 ## Concrete structured producers
 
@@ -778,9 +951,13 @@ and competing processes require a separate exact-source execution receipt.
 ## Existing observations stay historical
 
 `pon_prepared_cost` retains its 64-row schema and explicitly invokes `verify_reference`;
-its `original_verifier_ns` remains a scalar baseline. `pon_adversarial_cost` measures the
-ordinary verifier, including invalid transcript rejection. The existing cost reporter
-does not consume this new comparison schema. Its reference-verifier denominator must
+its `original_verifier_ns` remains a scalar baseline. `pon_adversarial_cost` measures
+ordinary-verifier rejection after replacing the trace and searching a fake passing
+ticket. Its original raw program asserts only `is_err()`; the `Transcript` stage
+is inferred from that source construction and verifier order, not an error enum
+recorded by the old schema. Those observations do not acquire a `Product` label
+or the new diagnostic's acquisition accounting. The existing cost reporter
+does not consume the new comparison schemas. Its reference-verifier denominator must
 not be presented as a production-verifier measurement after this implementation change.
 Historical receipts, measured source hashes, slower samples and failed gates are not
 rewritten. A current comparison requires new executions on the final committed source.

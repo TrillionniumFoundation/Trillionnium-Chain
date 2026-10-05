@@ -77,20 +77,24 @@ Each architecture executes both fixed campaigns:
 | 1 | 2 | 4 | 8 | 1 |
 
 The release build has a 900-second subprocess budget; each campaign has a
-300-second budget. Each architecture job has a 135-minute cap, and the comparison
+300-second budget. Each architecture job has a 155-minute cap, and the comparison
 has a 10-minute cap. Matrix fail-fast is disabled. Both campaigns are attempted
 after a successful build even if the first campaign returns a failure. Timeout,
 nonzero status, malformed output and validation failures remain failed observations
 with their captured output. Artifact upload and final source checks run on failure.
-The architecture cap covers four separate suites. Each has up to 900 seconds of
+The architecture cap covers four separate generation suites. Each has up to 900 seconds of
 build, 600 seconds of campaigns and 90 seconds of identity commands. Each of those
 six commands also receives five seconds of termination grace. The complete bounded
 capture allowance is therefore `4 * (900 + 600 + 90 + 6 * 5) = 6480` seconds, or
-108 minutes. The remaining 27 minutes are reserved for checkout, compiler setup,
-source guards, raw-file hashing/copying and artifact handling. The runner and
+108 minutes. The separately versioned legal/late-rejection experiment adds three
+30-second identity captures, one 900-second build, one 180-second native run and
+five 5-second termination grace periods: 1,195 seconds. A further 27 minutes are
+reserved for checkout, compiler setup, source guards, raw-file hashing/copying and
+artifact handling. The complete budget is 9,295 seconds within the 9,300-second
+job cap. The runner and
 artifact checker share explicit capture-budget constants; the CI contract checks
 their sum against the workflow cap and its overhead allowance. A former 90-minute
-cap cannot cover all four suites' bounded failure paths and is rejected. The
+cap cannot cover the bounded failure paths and is rejected. The
 27-minute margin is an engineering allowance, not a bound on external downloads.
 These caps are execution limits, not measured performance or a promised completion
 time. Runner loss or platform-forced termination remains outside the subprocess
@@ -217,7 +221,7 @@ observations, and a native failure retains its own error and raw output.
 
 ### Fixed maintenance producer and preparation suite
 
-The same architecture jobs finally execute `--suite maintenance-paired` in a
+The same architecture jobs execute `--suite maintenance-paired` after the first three suites in a
 separate always-executed step; the comparison job checks its own retained artifact
 after the earlier comparisons even when one has failed. There are still thirteen
 jobs for a PR event. This fourth suite owns `pon_maintenance_cost`, current raw
@@ -458,16 +462,71 @@ signed-state oracle runs.
 The oracle does not reexecute work verification, physical crash recovery or WAN
 data availability, and finite agreement does not qualify a production backend.
 
+### Actual native backend, migration and compact proof observations
+
+That same single workspace execution also receives fresh native-backend and
+migration export directories through `TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR`
+and `TRNM_AUTHENTICATED_MIGRATION_EXPORT`. A designated real native lifecycle
+fixture creates `native.json` and `native.sqlite`; the migration fixture additionally
+retains `source.sqlite` before opening/recovering the destination. Both directories
+must be absent before the tests. The separate Python
+`native_authenticated_storage_oracle.py` reconstructs states and account nodes
+from actual SQL bytes and checks roots, commitments and aggregates. Migration mode
+also compares retained source/destination tables by SQL value and type, including
+local replay/outbox/pool and sequence state. Missing exports or mismatches fail the
+same lane; a report assembled from caller-supplied commitment claims is insufficient.
+
+`TRNM_ACCOUNT_MULTIPROOF_VECTORS` identifies the fresh
+`account-multiproof/native.json` emitted by the actual signed obligation fixture.
+`account_multiproof_oracle.py` independently replays the supported signed transitions,
+builds the full sparse reference and checks AAM1 encoding, coverage and update roots.
+The three actual transitions and their proof bytes remain separate from synthetic
+parser controls. Both new oracle unit suites and each actual exported comparison
+run immediately after the workspace tests in the head and prospective-merge lanes.
+The exact command contract rejects omission, substitution, duplicate execution or
+loss of the migration source comparison. This adds no second native fixture run.
+
+## Actual legal and late-rejection costs
+
+The existing two architecture jobs run `scripts/pon_work_rejection_report.py --run`
+after the four retained generation suites, even when an earlier suite failed. Its
+`pon-work-rejection-cost-v1` raw contract is separate from the historical v3 cost
+diagnostic and records actual relation errors rather than inferring a stage from
+`is_err`. The fixed grid uses four task classes, two target values and nine seeds.
+Every flow retains its own setup, all preparation/search attempts and winner or
+exhaustion. Nine ordered timed arms compare valid, Transcript-refused and
+Product-refused proofs through production, scalar-reference and explicit limb
+verification. Untimed progress probes follow the timed arms. Repeated verification
+arms do not create additional independent generation samples.
+
+The new collector verifies actual native uname/rustc/ELF identities, pins compiler
+1.95.0, keeps source and binary digests before/after, and captures subprocess
+outputs on failure. Hosted mode requires actual runner context; `--local` is a
+distinct local observation. The existing comparison job retrieves both artifacts
+and supplies the exact expected head, run and attempt to `--compare`. Missing or
+relabeled architectures, changed deterministic streams and mismatched actual
+error/progress outcomes fail comparison; faster or slower measured clocks do not.
+Incremental construction from an existing valid proof and construction including
+its preceding honest work keep separate denominators. Neither ratio is a public
+service measurement, an optimum over all malformed proofs or a work-hardness proof.
+
 ## Actual fuzz execution
 
 `fuzz-smoke` retains its negative/regression tests and additionally runs the three
 [libFuzzer targets](../../tests/fuzz/README.md) with pinned cargo-fuzz, a dated nightly,
 ASan, real mutation feedback, fixed duration and retained raw outputs. Its independent
 lockfile is checked against every shared dependency version in the normal workspace.
+The work-certificate target compares production, independent scalar and explicit
+limb verifier results, complete verified values and exact error categories.
 The authenticated-state target uses bounded synthetic complete states, actual
 expiry/maturity execution, original-parent proofs and an independent bottom-up
 root/aggregate relation. It mutates complete partitions, checked account proofs,
-rehashed false commitment claims, parent identities, AAW1 bytes and cancellation.
+rehashed false commitment claims, parent identities, AAW1/AAM1 bytes and cancellation.
+The compact branch constructs and executes the actual AAM1 relation, compares all
+three commitments with independent bottom-up full-State reconstruction, and asserts
+that construction allocated no expanded individual witnesses. Retained compact
+seeds reach valid, aggregate, account, missing, duplicate, cancellation and codec
+paths before guided mutation.
 This target does not claim signed-transaction, persistent-SQLite or every-profile
 coverage. The routine CI budget is finite and does not establish exhaustive parser,
 state or work security.

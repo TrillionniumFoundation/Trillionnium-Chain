@@ -1,8 +1,10 @@
 //! Explicit research sidecar for retained account bytes and bounded read witnesses.
 //!
-//! This is never installed by Node or used as a partial State by M05/M06, mining,
-//! fork choice or admission. The separate research account execution wrapper may
-//! gate semantic account accesses while retaining the complete native State.
+//! The AccountArchive connection remains a separate sidecar and is never used
+//! as a partial State by M05/M06, mining, fork choice or admission. Its shared
+//! Patricia primitives are also used by the explicitly selected native_store
+//! backend in the Node's own transaction. The separate checked execution wrapper
+//! gates semantic account accesses while retaining the complete native State.
 //! A checked projection binds supplied complete State bytes; it does not establish
 //! that the supplied transition was signed or admitted. Accounts are not deleted.
 //! Only a verified nonmembership witness can represent a never-created account.
@@ -13,6 +15,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 use trnm_mvcc_fee::pon_executor::{self, State};
 use trnm_protocol::pon_wire::{hash, Hash};
+
+pub mod multiproof;
+pub(crate) mod native_store;
 
 pub const SCHEMA: &str = "pon-account-archive-prototype-v1";
 pub const MAX_VIEW_ACCOUNTS: usize = 32;

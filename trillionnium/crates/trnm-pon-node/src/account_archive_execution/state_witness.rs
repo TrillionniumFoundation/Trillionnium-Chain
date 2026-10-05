@@ -10,7 +10,11 @@
 //! backend is claimed. Complete State remains the independent comparison path.
 use super::obligations::MAX_EXECUTION_ACCOUNTS;
 use super::{CheckedExecutionError, Result};
-use crate::account_archive_prototype::{accounts, Account, Checkpoint, Context, Witness};
+use crate::account_archive_prototype::{
+    accounts,
+    multiproof::{CheckedMultiproof, MultiproofProgress},
+    Account, Checkpoint, Context, ResearchUpdate, Witness,
+};
 use crate::Settings;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -274,8 +278,9 @@ pub(super) fn prepare(
     })
 }
 
-/// Rebuild claims from complete actual bytes for the separate durable research
-/// sidecar. This is not a public authority constructor or a partial-State root.
+/// Rebuild claims from complete actual bytes for the durable research sidecar
+/// and the explicit native authenticated backend's independent full reference.
+/// This is not a public authority constructor or a partial-State root.
 pub(crate) fn commitment_from_complete_state(
     settings: &Settings,
     state: &State,
@@ -302,6 +307,10 @@ pub(super) struct BoundState<'a> {
     pub witness_bytes: usize,
     parent_state: &'a State,
     parent_accounts: &'a BTreeMap<Hash, Account>,
+}
+enum OriginalAccounts<'a> {
+    Expanded(&'a [Witness]),
+    Compact(&'a CheckedMultiproof),
 }
 impl<'a> BoundState<'a> {
     pub fn bind(
@@ -390,6 +399,40 @@ impl<'a> BoundState<'a> {
         phase: StatePhase,
         progress: &(impl Fn(StateWitnessProgress) -> Result<()> + Sync + ?Sized),
     ) -> Result<StateTransition> {
+        self.transition_accounts(
+            state,
+            OriginalAccounts::Expanded(witnesses),
+            receipts,
+            phase,
+            progress,
+        )
+    }
+
+    pub fn transition_compact(
+        &self,
+        state: &State,
+        accounts: &CheckedMultiproof,
+        receipts: &[Vec<u8>],
+        phase: StatePhase,
+        progress: &(impl Fn(StateWitnessProgress) -> Result<()> + Sync + ?Sized),
+    ) -> Result<StateTransition> {
+        self.transition_accounts(
+            state,
+            OriginalAccounts::Compact(accounts),
+            receipts,
+            phase,
+            progress,
+        )
+    }
+
+    fn transition_accounts(
+        &self,
+        state: &State,
+        proofs: OriginalAccounts<'_>,
+        receipts: &[Vec<u8>],
+        phase: StatePhase,
+        progress: &(impl Fn(StateWitnessProgress) -> Result<()> + Sync + ?Sized),
+    ) -> Result<StateTransition> {
         let after_accounts = accounts(state)?;
         for (owner, before) in self.parent_accounts {
             if after_accounts
@@ -399,10 +442,13 @@ impl<'a> BoundState<'a> {
                 return Err(StateWitnessError::AccountDelta.into());
             }
         }
-        let original: BTreeMap<_, _> = witnesses
-            .iter()
-            .map(|witness| (witness.owner, witness.account))
-            .collect();
+        let original: BTreeMap<_, _> = match &proofs {
+            OriginalAccounts::Expanded(witnesses) => witnesses
+                .iter()
+                .map(|witness| (witness.owner, witness.account))
+                .collect(),
+            OriginalAccounts::Compact(checked) => checked.values().collect(),
+        };
         let mut changes = Vec::new();
         for (&owner, &after) in &after_accounts {
             let before = self.parent_accounts.get(&owner).copied();
@@ -441,13 +487,36 @@ impl<'a> BoundState<'a> {
                     .count() as u64,
             )
             .ok_or(StateWitnessError::Aggregate)?;
-        let account_root = merged_account_root(
-            self.parent.account_root,
-            witnesses,
-            &changes,
-            phase,
-            progress,
-        )?;
+        let account_root = match proofs {
+            OriginalAccounts::Expanded(witnesses) => merged_account_root(
+                self.parent.account_root,
+                witnesses,
+                &changes,
+                phase,
+                progress,
+            )?,
+            OriginalAccounts::Compact(checked) => {
+                let updates: Vec<_> = changes
+                    .iter()
+                    .map(|change| ResearchUpdate {
+                        owner: change.owner,
+                        before: change.before,
+                        after: change.after,
+                    })
+                    .collect();
+                checked
+                    .root_for_updates(&updates, &|point| match point {
+                        MultiproofProgress::Update { index } => {
+                            progress(StateWitnessProgress::AccountUpdate { phase, index })
+                        }
+                        MultiproofProgress::Hash { index } => {
+                            progress(StateWitnessProgress::AccountMerge { phase, index })
+                        }
+                        _ => Ok(()),
+                    })?
+                    .0
+            }
+        };
         // These complete rebuilds are an independent reference; none supplies
         // the proof-derived root/count/sum that is returned above.
         if account_root != crate::account_archive_prototype::account_root(&after_accounts)?

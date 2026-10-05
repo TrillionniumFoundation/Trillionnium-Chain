@@ -21,7 +21,8 @@ requires a new receipt directory; a prior corpus or failed log is never overwrit
 - `canonical_wire` sends mutated complete inputs to the real Header, Envelope,
   QualifiedWorkTask and SignedQualifiedWorkTask decoders. Every accepted object
   must encode to the exact original bytes, including canonical length and ordering.
-- `work_certificate` compares the optimized and independent scalar work verifiers
+- `work_certificate` compares the production, independent scalar and explicit
+  limb work verifiers
   on mutated certificates, including successful product/identity equality and
   canonical rejection categories. It binds the expected task to supplied matrices
   where possible so mutations can reach transcript/product verification. This
@@ -32,8 +33,11 @@ requires a new receipt directory; a prior corpus or failed log is never overwrit
   implementation and hand-applied expiry/maturity/reward rules check full native
   execution, all three commitment phases, balances, retained nonces and present-null
   rows. Mutations also exercise rehashed false aggregates, missing/duplicate/altered
-  proofs, omitted or reordered partitions, changed parent bytes, strict AAW1 bytes
-  and cancellation. It does not mine blocks, validate signed transactions, reopen
+  proofs, omitted or reordered partitions, changed parent bytes, strict AAW1/AAM1
+  bytes and cancellation. The compact branch directly constructs and executes
+  AAM1 proofs, compares all three commitment phases with the separate full-state
+  relation, and checks that no expanded individual witnesses were allocated.
+  It does not mine blocks, validate signed transactions, reopen
   persistent databases or establish coverage of every application transaction kind.
 
 The runner copies retained vectors into a separate mutable corpus, records their

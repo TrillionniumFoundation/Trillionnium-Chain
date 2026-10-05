@@ -60,14 +60,25 @@ COST_BUILD_TIMEOUT_SECONDS = 900
 COST_CAMPAIGN_TIMEOUT_SECONDS = 300
 COST_TERMINATION_GRACE_SECONDS = 5
 COST_JOB_OVERHEAD_SECONDS = 27 * 60
-COST_JOB_TIMEOUT_MINUTES = 135
+COST_JOB_TIMEOUT_MINUTES = 155
+# The separate rejection experiment retains its own raw relation and collector.
+# Share only command limits here so the hosted job includes every actual capture.
+REJECTION_IDENTITY_TIMEOUT_SECONDS = 30
+REJECTION_BUILD_TIMEOUT_SECONDS = 900
+REJECTION_CAMPAIGN_TIMEOUT_SECONDS = 180
+REJECTION_TERMINATION_GRACE_SECONDS = 5
+
+
+def rejection_job_budget_seconds() -> int:
+    return (3 * REJECTION_IDENTITY_TIMEOUT_SECONDS + REJECTION_BUILD_TIMEOUT_SECONDS +
+            REJECTION_CAMPAIGN_TIMEOUT_SECONDS + 5 * REJECTION_TERMINATION_GRACE_SECONDS)
 
 
 def cost_job_budget_seconds() -> int:
     captures = 3 + 1 + len(CAMPAIGNS)
     return len(SUITES) * (3 * COST_IDENTITY_TIMEOUT_SECONDS + COST_BUILD_TIMEOUT_SECONDS +
                          len(CAMPAIGNS) * COST_CAMPAIGN_TIMEOUT_SECONDS +
-                         captures * COST_TERMINATION_GRACE_SECONDS) + COST_JOB_OVERHEAD_SECONDS
+                         captures * COST_TERMINATION_GRACE_SECONDS) + COST_JOB_OVERHEAD_SECONDS + rejection_job_budget_seconds()
 
 
 def require(condition: bool, message: str) -> None:

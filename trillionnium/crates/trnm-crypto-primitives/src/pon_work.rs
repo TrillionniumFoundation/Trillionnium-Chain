@@ -357,6 +357,41 @@ pub fn verify_with_progress<E>(
     )
 }
 
+/// Explicit arithmetic research comparison; the default verifier is unchanged.
+/// Replays the identical relation and observation sequence, replacing only each
+/// eight-product transcript accumulation with exact bounded u64 limb sums.
+pub fn verify_limb(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+) -> Result<VerifiedWork, WorkError> {
+    relation_only(verify_limb_with_progress(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        &mut no_cancellation,
+    ))
+}
+
+pub fn verify_limb_with_progress<E>(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<VerifiedWork, VerificationError<E>> {
+    verify_with_kernel(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        progress,
+        VerificationKernel::LimbTranscript,
+    )
+}
+
 /// Retained scalar verifier for differential checks and explicitly named cost baselines.
 /// This follows the same admission grammar but uses the original u128 remainder,
 /// row-major multiplication and per-cell transcript updates for the full relation.
@@ -396,6 +431,7 @@ pub fn verify_reference_with_progress<E>(
 enum VerificationKernel {
     ScalarReference,
     Transposed,
+    LimbTranscript,
 }
 
 fn verify_with_kernel<E>(
@@ -439,7 +475,10 @@ fn verify_with_kernel<E>(
             evaluate_transcript_with_progress(challenge, a, b, progress)?
         }
         VerificationKernel::Transposed => {
-            evaluate_transposed_with_progress(challenge, a, b, progress)?
+            evaluate_transposed_with_progress::<false, E>(challenge, a, b, progress)?
+        }
+        VerificationKernel::LimbTranscript => {
+            evaluate_transposed_with_progress::<true, E>(challenge, a, b, progress)?
         }
     };
     // PNW1 submits only a final digest: every transcript update is still replayed.
@@ -449,7 +488,9 @@ fn verify_with_kernel<E>(
     }
     let product = match kernel {
         VerificationKernel::ScalarReference => finish_product_with_progress(a, evaluated, progress),
-        VerificationKernel::Transposed => finish_transposed_with_progress(a, evaluated, progress),
+        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => {
+            finish_transposed_with_progress(a, evaluated, progress)
+        }
     }
     .map_err(VerificationError::Cancelled)?;
     if product != claimed {
@@ -515,7 +556,7 @@ fn transposed_mul_with_progress<E>(
 // Exact full replay. Transposition and batched hashing change neither transcript
 // order nor the original noise/row/tile observation sequence. Nothing is trusted
 // from the producer, a prior task, the claimed product or an earlier callback.
-fn evaluate_transposed_with_progress<E>(
+fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
     challenge: Hash,
     a: &[u32],
     b: &[u32],
@@ -565,12 +606,22 @@ fn evaluate_transposed_with_progress<E>(
                 for i in 0..R {
                     for j in 0..R {
                         let pos = i * R + j;
-                        let mut sum = u128::from(cells[pos]);
-                        for k in bk * R..(bk + 1) * R {
-                            sum += u128::from(ap[(bi * R + i) * N + k])
-                                * u128::from(bt[(bj * R + j) * N + k]);
-                        }
-                        cells[pos] = producer_reduce(sum);
+                        cells[pos] = if LIMB_TRANSCRIPT {
+                            let left = (bi * R + i) * N + bk * R;
+                            let right = (bj * R + j) * N + bk * R;
+                            maintenance_limb::dot8(
+                                &ap[left..left + R],
+                                &bt[right..right + R],
+                                cells[pos],
+                            )
+                        } else {
+                            let mut sum = u128::from(cells[pos]);
+                            for k in bk * R..(bk + 1) * R {
+                                sum += u128::from(ap[(bi * R + i) * N + k])
+                                    * u128::from(bt[(bj * R + j) * N + k]);
+                            }
+                            producer_reduce(sum)
+                        };
                         bytes[pos * 4..pos * 4 + 4].copy_from_slice(&cells[pos].to_le_bytes());
                     }
                 }
@@ -823,6 +874,10 @@ mod tests {
         cases.push((challenge, [0; 32], [0; 32], wrong_magic));
         for (c, t, target, bytes) in cases {
             assert_eq!(
+                checked_value(verify_limb(c, t, target, &bytes)),
+                checked_value(verify_reference(c, t, target, &bytes))
+            );
+            assert_eq!(
                 checked_value(verify(c, t, target, &bytes)),
                 checked_value(verify_reference(c, t, target, &bytes))
             );
@@ -850,6 +905,14 @@ mod tests {
             .unwrap();
         assert_eq!(fast_points, scalar_points);
         assert_eq!(fast.product(), scalar.product());
+        let mut limb_points = Vec::new();
+        let limb = verify_limb_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+            limb_points.push(point);
+            Ok::<(), usize>(())
+        })
+        .unwrap();
+        assert_eq!(limb_points, scalar_points);
+        assert_eq!(limb.product(), scalar.product());
         let cuts: Vec<_> = scalar_points
             .iter()
             .enumerate()
@@ -898,6 +961,20 @@ mod tests {
             assert_eq!(observed, cut + 1);
             assert_eq!(fast_error, VerificationError::Cancelled(cut));
             assert_eq!(fast_error, scalar_error);
+            observed = 0;
+            let limb_error =
+                verify_limb_with_progress(challenge, task, [255; 32], &proof, &mut |_| {
+                    let current = observed;
+                    observed += 1;
+                    if current == cut {
+                        Err(cut)
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert_eq!(observed, cut + 1);
+            assert_eq!(limb_error, scalar_error);
         }
     }
     #[test]

@@ -53,7 +53,9 @@ These exact functions contain executable assertions. The registry only checks bi
 
 Initialization gaps, trigger/schema substitution, disk full, path replacement and unbounded full-state copies.
 
-Full descriptor/sidecar fencing, incremental authenticated native persistent state and physical power-loss tests remain pending.
+Full descriptor/sidecar fencing and physical power-loss qualification remain pending.
+The explicit authenticated native storage namespace below adds persistent account
+updates while retaining complete native State verification.
 
 ## Current source and verification
 
@@ -91,9 +93,9 @@ computes a separate full-parent-bound commitment and checks proof-derived prolog
 and successor aggregates. It never stores that commitment as the Node state root,
 publishes an archive branch or changes this module's schema or atomic boundary.
 The existing branch owner and complete native State root remain authoritative.
-Integrating persistent authenticated updates still requires explicit root/profile
-selection, migration/recovery rules, complete obligation discovery and retained
-witness-data responsibility.
+The separately selected native backend below supplies persistent account updates
+and migration/recovery rules. Complete compact non-account obligations, retained
+witness-data responsibility and growth pricing remain separate requirements.
 
 ## Explicit authenticated-state archive
 
@@ -106,3 +108,30 @@ records, stale selection, quota exhaustion and cancellation refuse without parti
 publication. Reads and reopen reconstruct complete states and compare actual native
 branch data. This separate reference-backed store adds no ordinary startup selection,
 installed state root, public proof service, pruning or rollback of local operation facts.
+
+## Explicit native authenticated storage and migration
+
+[Native authenticated storage v1](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+is selected through `Node::open_with_authenticated_state` in a fresh storage
+namespace. It keeps copy-on-write account nodes and complete state commitments in
+the same `native.sqlite` transaction as admitted blocks and canonical deltas.
+Genesis seeds the account tree; later actual account deltas update persistent roots
+and sums, which are independently compared with the complete native State.
+Active reads, historical reads, reorganization and recovery require the retained
+authentication material; unavailable data does not use the legacy backend.
+The ordinary opener, original DDL and consensus header root bytes retain their meaning.
+
+Explicit migration holds a consistent source transaction and preserves the original
+namespace. It copies every retained ordinary table, including local monotone facts,
+and validates native branch execution before publishing a fresh destination. A
+pending marker prevents either opener from accepting an incomplete destination.
+External owner-journal modes require their own migration authority and are refused.
+Logical equality, cancellation and process-loss tests do not establish physical
+power-loss behavior or a general deployed-data migration service.
+
+Both native storage modes now check actual block/delta/snapshot writes and the
+persisted selected state before COMMIT. Selection also checks its expected
+generation, event rows and reorganization state after the final write. A suppressed
+write or a final write that damages the intended state cannot return a successful
+publication. These checks add complete-state readback cost; no overall latency
+improvement is inferred from the incremental account-node representation.

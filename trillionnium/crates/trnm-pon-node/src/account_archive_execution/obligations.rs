@@ -5,6 +5,7 @@
 //! remains untrusted witness material and must be checked again by execution.
 use super::{check_parent_source, BlockInput, CheckedExecutionError, Result, ACCESS_REFUSED};
 use crate::account_archive_prototype::{
+    multiproof::{self, ConstructionObservation, Multiproof, MultiproofProgress},
     Account, AccountArchive, ArchiveError, CheckedAccounts, Checkpoint, Context, Witness,
     MAX_VIEW_ACCOUNTS, MAX_WITNESS_BYTES, WITNESS_SIBLINGS,
 };
@@ -39,6 +40,12 @@ pub struct WitnessBudget {
     pub parent_keys: usize,
     pub transactions: usize,
     pub maximum_accounts: usize,
+    pub maximum_encoded_bytes: usize,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+pub struct CompactWitnessBudget {
+    pub maximum_accounts: usize,
+    pub maximum_frontier_nodes: usize,
     pub maximum_encoded_bytes: usize,
 }
 impl WitnessBudget {
@@ -93,6 +100,28 @@ impl WitnessBudget {
             return Err(CheckedExecutionError::Budget);
         }
         Ok(bytes)
+    }
+
+    pub(super) fn check_compact(&self, proof: &Multiproof) -> Result<usize> {
+        if proof.accounts.len() > self.maximum_accounts || proof.frontier.len() > self.parent_keys {
+            return Err(CheckedExecutionError::Budget);
+        }
+        Ok(proof.encoded_len()?)
+    }
+
+    /// AAM1 has its own encoding bound. The older public `maximum_encoded_bytes`
+    /// continues to mean expanded AAW1 bytes in historical observations.
+    pub fn compact(&self) -> Result<CompactWitnessBudget> {
+        if *self != Self::from_counts(self.parent_keys, self.transactions)? {
+            return Err(CheckedExecutionError::Budget);
+        }
+        Ok(CompactWitnessBudget {
+            maximum_accounts: self.maximum_accounts,
+            maximum_frontier_nodes: self.parent_keys,
+            maximum_encoded_bytes: multiproof::HEADER_BYTES
+                + multiproof::MAX_ACCOUNT_BYTES * self.maximum_accounts
+                + multiproof::FRONTIER_BYTES * self.parent_keys,
+        })
     }
 }
 
@@ -181,6 +210,14 @@ pub struct PreparedAccountWitnesses {
     pub observation: WitnessDiscoveryObservation,
 }
 
+#[derive(Debug)]
+pub struct PreparedCompactAccountWitnesses {
+    pub accounts: Multiproof,
+    pub observation: WitnessDiscoveryObservation,
+    pub construction: ConstructionObservation,
+    pub compact_budget: CompactWitnessBudget,
+}
+
 #[derive(Default)]
 enum Phase {
     #[default]
@@ -226,6 +263,96 @@ pub fn prepare_with_progress(
     block: BlockInput<'_>,
     progress: &(impl Fn(WitnessDiscoveryProgress) -> Result<()> + Sync),
 ) -> Result<PreparedAccountWitnesses> {
+    let mut observation = discover_with_progress(
+        settings,
+        archive,
+        parent_checkpoint,
+        parent_state,
+        block,
+        progress,
+    )?;
+    let mut accounts = Vec::with_capacity(observation.requested_owners.len());
+    for (index, &owner) in observation.requested_owners.iter().enumerate() {
+        progress(WitnessDiscoveryProgress::Witness { index })?;
+        accounts.push(archive.witness(parent_checkpoint, owner)?.0);
+    }
+    observation.encoded_witness_bytes = observation.budget.check(&accounts)?;
+    progress(WitnessDiscoveryProgress::BeforeOutput)?;
+    Ok(PreparedAccountWitnesses {
+        accounts,
+        observation,
+    })
+}
+
+pub fn prepare_compact(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+) -> Result<PreparedCompactAccountWitnesses> {
+    prepare_compact_with_progress(
+        settings,
+        archive,
+        parent_checkpoint,
+        parent_state,
+        block,
+        &|_| Ok(()),
+    )
+}
+
+/// The same actual semantic discovery as AAW1, followed by direct compact-trie
+/// collection. The old preparation API and its wire-size observation are intact.
+pub fn prepare_compact_with_progress(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    progress: &(impl Fn(WitnessDiscoveryProgress) -> Result<()> + Sync),
+) -> Result<PreparedCompactAccountWitnesses> {
+    let mut observation = discover_with_progress(
+        settings,
+        archive,
+        parent_checkpoint,
+        parent_state,
+        block,
+        progress,
+    )?;
+    let (accounts, construction) = archive.multiproof_with_progress(
+        parent_checkpoint,
+        &observation.requested_owners,
+        &|point| {
+            let index = match point {
+                MultiproofProgress::Account { index }
+                | MultiproofProgress::Frontier { index }
+                | MultiproofProgress::Hash { index }
+                | MultiproofProgress::Update { index }
+                | MultiproofProgress::ArchiveRead { index } => index,
+                MultiproofProgress::BeforeVerification | MultiproofProgress::BeforeOutput => 0,
+            };
+            progress(WitnessDiscoveryProgress::Witness { index })
+        },
+    )?;
+    observation.schema = "pon-execution-account-multiproof-discovery-v1";
+    observation.encoded_witness_bytes = observation.budget.check_compact(&accounts)?;
+    progress(WitnessDiscoveryProgress::BeforeOutput)?;
+    Ok(PreparedCompactAccountWitnesses {
+        accounts,
+        compact_budget: observation.budget.compact()?,
+        observation,
+        construction,
+    })
+}
+
+fn discover_with_progress(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    progress: &(impl Fn(WitnessDiscoveryProgress) -> Result<()> + Sync),
+) -> Result<WitnessDiscoveryObservation> {
     let budget = WitnessBudget::for_block(settings, parent_state.len(), block.transactions.len())?;
     progress(WitnessDiscoveryProgress::BeforeBinding)?;
     let (checkpoint, _) = check_parent_source(settings, archive, parent_checkpoint, parent_state)?;
@@ -305,32 +432,23 @@ pub fn prepare_with_progress(
         Err(ExecutionError::Relation(error)) => return Err(CheckedExecutionError::Relation(error)),
         Err(ExecutionError::Cancelled(error)) => return Err(error),
     };
-    let mut accounts = Vec::with_capacity(found.owners.len());
-    for (index, &owner) in found.owners.iter().enumerate() {
-        progress(WitnessDiscoveryProgress::Witness { index })?;
-        accounts.push(archive.witness(parent_checkpoint, owner)?.0);
-    }
-    let encoded_witness_bytes = budget.check(&accounts)?;
-    progress(WitnessDiscoveryProgress::BeforeOutput)?;
-    Ok(PreparedAccountWitnesses {
-        accounts,
-        observation: WitnessDiscoveryObservation {
-            schema: SCHEMA,
-            parent_checkpoint,
-            parent_id: block.parent_id,
-            height: block.height,
-            successor_state_root: output.root,
-            budget,
-            mandatory_owners: found.mandatory.into_iter().collect(),
-            transaction_owners: found.transactions.into_iter().collect(),
-            successor_owners: found.successor.into_iter().collect(),
-            requested_owners: found.owners.into_iter().collect(),
-            encoded_witness_bytes,
-            complete_native_execution: true,
-            recheck_required: true,
-            consensus_admission: false,
-            archive_mutated: false,
-        },
+    Ok(WitnessDiscoveryObservation {
+        schema: SCHEMA,
+        parent_checkpoint,
+        parent_id: block.parent_id,
+        height: block.height,
+        successor_state_root: output.root,
+        budget,
+        mandatory_owners: found.mandatory.into_iter().collect(),
+        transaction_owners: found.transactions.into_iter().collect(),
+        successor_owners: found.successor.into_iter().collect(),
+        requested_owners: found.owners.into_iter().collect(),
+        // Filled only after the selected encoding has actually been built.
+        encoded_witness_bytes: 0,
+        complete_native_execution: true,
+        recheck_required: true,
+        consensus_admission: false,
+        archive_mutated: false,
     })
 }
 
@@ -344,6 +462,13 @@ mod tests {
         let bound = WitnessBudget::for_block(&settings, 65_536, 256).unwrap();
         assert_eq!(bound.maximum_accounts, 66_049);
         assert_eq!(bound.maximum_encoded_bytes, 66_049 * MAX_WITNESS_BYTES);
+        assert_eq!(
+            bound.compact().unwrap().maximum_encoded_bytes,
+            multiproof::MAX_ENCODED_BYTES
+        );
+        let mut forged = bound;
+        forged.maximum_accounts = usize::MAX;
+        assert_eq!(forged.compact(), Err(CheckedExecutionError::Budget));
         for (keys, transactions) in [(65_537, 0), (0, 257), (usize::MAX, 0), (0, usize::MAX)] {
             assert_eq!(
                 WitnessBudget::for_block(&settings, keys, transactions),

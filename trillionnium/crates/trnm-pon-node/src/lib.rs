@@ -23,6 +23,9 @@ pub mod public_submit;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
+pub use store::authenticated_migration::{
+    AuthenticatedMigrationProgress, AuthenticatedMigrationReceipt, PreservedTable,
+};
 pub use store::capacity_observation::CapacityObservation;
 pub use store::evaluation_observation::{EvaluationAnchor, EvaluationObservation, EvaluationPhase};
 pub use store::evaluation_round_observation::{

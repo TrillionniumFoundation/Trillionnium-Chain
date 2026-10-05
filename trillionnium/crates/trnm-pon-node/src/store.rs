@@ -1,10 +1,12 @@
 //! M07/M08 native branch persistence and recovery using the existing M06 executor.
+pub mod authenticated_migration;
 pub(crate) mod authenticated_state;
 pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
 mod history_page;
 pub mod mempool;
+pub(crate) mod native_authenticated;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 use crate::{
@@ -85,7 +87,8 @@ fn bytes64(bytes: Vec<u8>) -> Result<[u8; 64]> {
 fn canonical<T: Serialize>(value: &T) -> Result<Vec<u8>> {
     Ok(serde_json::to_vec(value)?)
 }
-type Delta = (String, Option<Vec<u8>>, Option<Vec<u8>>);
+pub(crate) type Delta = (String, Option<Vec<u8>>, Option<Vec<u8>>);
+type ReorgRow = (Vec<u8>, Vec<u8>, u64, u64, u64);
 type Hook<'a> = dyn FnMut(&str) -> Result<()> + 'a;
 type ReplayRow = (
     Vec<u8>,
@@ -407,6 +410,7 @@ pub struct Node {
     database_id: (u64, u64),
     settings: Settings,
     workers: usize,
+    state_backend: StateBackend,
     // One derived snapshot only; State always comes from actual KV/snapshot/deltas.
     commitment_cache: RefCell<Option<ActiveCommitment>>,
     commitment_observation: RefCell<Option<CommitmentObservation>>,
@@ -415,6 +419,31 @@ pub struct Node {
     owner_policy: Option<OwnerPolicy>,
     mining_owner: Option<operator_mining_owner::MiningOwner>,
     continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum StateBackend {
+    Legacy,
+    AuthenticatedV1,
+}
+impl StateBackend {
+    fn ddl(self) -> String {
+        match self {
+            Self::Legacy => ddl(),
+            Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
+        }
+    }
+    fn schema_id(self) -> Hash {
+        let domain: &[u8] = match self {
+            Self::Legacy => b"native-branch-schema-v2",
+            Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
+        };
+        hash(domain, &[self.ddl().as_bytes()])
+    }
+}
+struct NativeOwners {
+    policy: Option<OwnerPolicy>,
+    mining: Option<operator_mining_owner::MiningOwner>,
+    continuous: Option<operator_continuous_owner::ContinuousOwner>,
 }
 struct OwnerPolicy {
     pool_policies: Vec<std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>>,
@@ -487,6 +516,13 @@ impl OwnerPoolPermit {
 }
 fn owner_marker_present(path: &Path) -> Result<bool> {
     match fs::symlink_metadata(path.join("owner-task-policy.required")) {
+        Ok(_) => Ok(true),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
+        Err(error) => Err(error.into()),
+    }
+}
+fn authenticated_migration_pending(path: &Path) -> Result<bool> {
+    match fs::symlink_metadata(path.join("authenticated-migration.pending")) {
         Ok(_) => Ok(true),
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
         Err(error) => Err(error.into()),
@@ -568,6 +604,36 @@ impl Node {
         // The legacy opener is never a fallback for a required-policy namespace.
         ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
         Self::open_inner(path, settings, workers, hook, None, None, None)
+    }
+    /// Explicit fresh storage namespace. Consensus profiles and header root bytes
+    /// are unchanged; complete native state and authenticated account nodes are
+    /// now mandatory components of the same persistent Node transaction.
+    pub fn open_with_authenticated_state(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+    ) -> Result<Self> {
+        Self::open_with_authenticated_state_and_fault(path, settings, workers, None)
+    }
+    pub fn open_with_authenticated_state_and_fault(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        hook: Option<&mut Hook<'_>>,
+    ) -> Result<Self> {
+        ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+        Self::open_selected(
+            path,
+            settings,
+            workers,
+            hook,
+            NativeOwners {
+                policy: None,
+                mining: None,
+                continuous: None,
+            },
+            StateBackend::AuthenticatedV1,
+        )
     }
     /// Explicit local operator policy; neither permissionless nor consensus authority.
     /// Inputs must be supplied from protected operator configuration, not a Request.
@@ -684,11 +750,41 @@ impl Node {
         path: &Path,
         settings: Settings,
         workers: usize,
-        mut hook: Option<&mut Hook<'_>>,
+        hook: Option<&mut Hook<'_>>,
         owner_policy: Option<OwnerPolicy>,
         mining_owner: Option<operator_mining_owner::MiningOwner>,
         continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
     ) -> Result<Self> {
+        Self::open_selected(
+            path,
+            settings,
+            workers,
+            hook,
+            NativeOwners {
+                policy: owner_policy,
+                mining: mining_owner,
+                continuous: continuous_owner,
+            },
+            StateBackend::Legacy,
+        )
+    }
+    fn open_selected(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        mut hook: Option<&mut Hook<'_>>,
+        owners: NativeOwners,
+        state_backend: StateBackend,
+    ) -> Result<Self> {
+        ensure(
+            !authenticated_migration_pending(path)?,
+            "NATIVE_STATE_MIGRATION_PENDING",
+        )?;
+        let NativeOwners {
+            policy: owner_policy,
+            mining: mining_owner,
+            continuous: continuous_owner,
+        } = owners;
         ensure(
             usize::from(owner_policy.is_some())
                 + usize::from(mining_owner.is_some())
@@ -736,8 +832,8 @@ impl Node {
         owner
             .try_lock_exclusive()
             .map_err(|_| Error::from("WRITER_BUSY"))?;
-        let ddl = ddl();
-        let schema_id = hash(b"native-branch-schema-v2", &[ddl.as_bytes()]);
+        let ddl = state_backend.ddl();
+        let schema_id = state_backend.schema_id();
         let expected = canonical(
             &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
         )?;
@@ -871,6 +967,9 @@ impl Node {
                 "INSERT INTO snapshots VALUES(?,?)",
                 params![settings.genesis.as_slice(), canonical(&settings.initial)?],
             )?;
+            if state_backend == StateBackend::AuthenticatedV1 {
+                native_authenticated::seed(&tx, &settings)?;
+            }
             cut(&mut hook, "init-before-commit")?;
             tx.commit()?;
             cut(&mut hook, "init-committed")?;
@@ -887,6 +986,7 @@ impl Node {
             database_id: (dm.dev(), dm.ino()),
             settings,
             workers,
+            state_backend,
             commitment_cache: RefCell::new(None),
             commitment_observation: RefCell::new(None),
             history_read_counters: Cell::new(HistoryReadCounters::default()),
@@ -896,6 +996,14 @@ impl Node {
             continuous_owner,
         };
         node.read_active()?;
+        if node.state_backend == StateBackend::AuthenticatedV1 {
+            native_authenticated::verify_history(
+                &node.db,
+                &node.settings,
+                node.active()?.0,
+                &mut || Ok(()),
+            )?;
+        }
         node.validate_authenticated_replay()?;
         node.validate_authenticated_outbox()?;
         node.recover()?;
@@ -912,6 +1020,65 @@ impl Node {
     }
     pub fn settings(&self) -> &Settings {
         &self.settings
+    }
+    /// Export a compact point proof from the actual integrated native tree in
+    /// one SQLite read snapshot. Supplied reports cannot choose its root or
+    /// account bytes. The complete State is still checked before this query.
+    pub fn authenticated_account_multiproof(
+        &self,
+        block: Hash,
+        owners: &[Hash],
+    ) -> Result<(
+        crate::account_archive_prototype::Checkpoint,
+        crate::account_archive_prototype::multiproof::Multiproof,
+        crate::account_archive_prototype::multiproof::ConstructionObservation,
+    )> {
+        ensure(
+            self.state_backend == StateBackend::AuthenticatedV1,
+            "NATIVE_STATE_BACKEND_REQUIRED",
+        )?;
+        self.namespace()?;
+        let tx = self.db.unchecked_transaction()?;
+        self.storage_context()?;
+        let state = self.state_at(block)?;
+        native_authenticated::verify_state(&tx, &self.settings, block, &state, &mut || Ok(()))?;
+        let record = native_authenticated::load(&tx, block)?;
+        let context = crate::account_archive_prototype::Context {
+            network: self.settings.network(),
+            parameters: self.settings.parameters(),
+            genesis: self.settings.genesis(),
+        };
+        let checkpoint = crate::account_archive_prototype::native_store::query_checkpoint(
+            &tx,
+            context,
+            block,
+            record.height,
+            record.state.state_root,
+            &record.accounts,
+        )?;
+        let (proof, observation) =
+            crate::account_archive_prototype::multiproof::from_native_database(
+                &tx,
+                &checkpoint,
+                owners,
+            )
+            .map_err(|error| {
+                use crate::account_archive_prototype::ArchiveError;
+                let is_local = matches!(
+                    error,
+                    ArchiveError::DataUnavailable
+                        | ArchiveError::CorruptRecord
+                        | ArchiveError::Storage(_)
+                );
+                let error = Error::from(format!("NATIVE_ACCOUNT_PROOF:{error:?}"));
+                if is_local {
+                    error.local_integrity()
+                } else {
+                    error
+                }
+            })?;
+        tx.commit()?;
+        Ok((checkpoint, proof, observation))
     }
     fn decode_replay_row(row: ReplayRow) -> Result<PeerReplayStateV0> {
         let chain = IoDigest32V0::new(bytes32(row.0)?)
@@ -1423,6 +1590,10 @@ impl Node {
         ))
     }
     fn namespace(&self) -> Result<()> {
+        ensure(
+            !authenticated_migration_pending(&self.directory)?,
+            "NATIVE_STATE_MIGRATION_PENDING",
+        )?;
         let meta = fs::symlink_metadata(&self.directory)?;
         ensure(
             meta.is_dir() && (meta.dev(), meta.ino()) == self.directory_id,
@@ -1447,6 +1618,68 @@ impl Node {
             (actual.dev(), actual.ino()) == (held.dev(), held.ino()),
             "OWNER_REPLACED",
         )
+    }
+    fn storage_context(&self) -> Result<()> {
+        for (key, expected) in [
+            ("schema", self.state_backend.schema_id()),
+            ("parameters", self.settings.parameters()),
+            ("genesis", self.settings.genesis()),
+        ] {
+            let actual: Option<Vec<u8>> = self
+                .db
+                .query_row("SELECT value FROM metadata WHERE key=?", [key], |row| {
+                    row.get(0)
+                })
+                .optional()?;
+            ensure(
+                actual.as_deref() == Some(expected.as_slice()),
+                "STORAGE_CONTEXT",
+            )
+            .map_err(Error::local_integrity)?;
+        }
+        Ok(())
+    }
+    fn check_persisted_state(
+        &self,
+        id: Hash,
+        state: &State,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
+        let record = self.record(id).map_err(Error::local_integrity)?;
+        continuity_v1::check_state(state, record.height, &self.settings.app)
+            .map_err(|error| Error::from(error).local_integrity())?;
+        ensure(root(state)? == record.root, "ROOT").map_err(Error::local_integrity)?;
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            native_authenticated::verify_state(&self.db, &self.settings, id, state, progress)?;
+        }
+        Ok(())
+    }
+    /// Check actual data after the last transactional write. A post-COMMIT
+    /// observation cannot repair a suppressed write or a trigger-corrupted slot.
+    fn check_active_before_commit(&self) -> Result<()> {
+        self.namespace()?;
+        self.storage_context()?;
+        let count: u64 = self
+            .db
+            .query_row("SELECT COUNT(*) FROM active", [], |row| row.get(0))?;
+        ensure(count == 1, "GENERATION").map_err(Error::local_integrity)?;
+        let selected = self.active()?;
+        let slot = self.slot()?;
+        let state = self.slot_state(slot)?;
+        self.check_persisted_state(selected.0, &state, &mut || Ok(()))?;
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            native_authenticated::verify_history(
+                &self.db,
+                &self.settings,
+                selected.0,
+                &mut || Ok(()),
+            )?;
+        }
+        ensure(
+            self.active()? == selected && self.slot()? == slot,
+            "GENERATION",
+        )
+        .map_err(Error::local_integrity)
     }
     fn record(&self, id: Hash) -> Result<Record> {
         let row = self
@@ -1747,6 +1980,9 @@ impl Node {
             self.record(tip).map_err(Error::local_integrity)?.root,
             prior.as_ref(),
         )?;
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            native_authenticated::verify_state(&self.db, &self.settings, tip, &state, progress)?;
+        }
         progress()?;
         ensure(
             self.active()? == (tip, generation) && self.slot()? == slot,
@@ -1952,6 +2188,9 @@ impl Node {
         Ok(parent)
     }
     fn delta_rows(&self, id: Hash) -> Result<Vec<Delta>> {
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            return native_authenticated::deltas(&self.db, id);
+        }
         let mut stmt = self
             .db
             .prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
@@ -1978,9 +2217,20 @@ impl Node {
             {
                 let state: State = serde_json::from_slice(&bytes)
                     .map_err(|error| Error::from(error).local_integrity())?;
+                ensure(canonical(&state)? == bytes, "STATE_BYTES")
+                    .map_err(Error::local_integrity)?;
                 continuity_v1::check_state(&state, row.height, &self.settings.app)
                     .map_err(|error| Error::from(error).local_integrity())?;
                 let commitment = self.checked_commitment(&state, row.root, None)?.snapshot;
+                if self.state_backend == StateBackend::AuthenticatedV1 {
+                    native_authenticated::verify_state(
+                        &self.db,
+                        &self.settings,
+                        cur,
+                        &state,
+                        &mut || Ok(()),
+                    )?;
+                }
                 break (state, commitment);
             }
             path.write_all(&cur)?;
@@ -2012,6 +2262,15 @@ impl Node {
                 .snapshot;
             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
+            if self.state_backend == StateBackend::AuthenticatedV1 {
+                native_authenticated::verify_state(
+                    &self.db,
+                    &self.settings,
+                    id,
+                    &state,
+                    &mut || Ok(()),
+                )?;
+            }
         }
         Ok(state)
     }
@@ -2730,21 +2989,27 @@ impl Node {
         keys.extend(output.state.keys());
         let index_context = self.ancestry_context();
         progress(ExecutionProgress::BeforePersistence)?;
-        let tx = self
-            .db
-            .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
-        tx.execute(
-            "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
-            params![
-                id.as_slice(),
-                h.parent.as_slice(),
-                h.height,
-                work.bytes().as_slice(),
-                bytes,
-                h.state.as_slice()
-            ],
+        let tx = rusqlite::Transaction::new_unchecked(
+            &self.db,
+            rusqlite::TransactionBehavior::Immediate,
         )?;
+        ensure(
+            tx.execute(
+                "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
+                params![
+                    id.as_slice(),
+                    h.parent.as_slice(),
+                    h.height,
+                    work.bytes().as_slice(),
+                    &bytes,
+                    h.state.as_slice()
+                ],
+            )? == 1,
+            "STORAGE_WRITE",
+        )
+        .map_err(Error::local_integrity)?;
         crate::ancestry_index::insert(&tx, index_context, id)?;
+        let mut expected_deltas = Vec::new();
         {
             let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
             for (index, key) in keys.into_iter().enumerate() {
@@ -2752,17 +3017,50 @@ impl Node {
                 let before = prior.get(key).map(canonical).transpose()?;
                 let after = output.state.get(key).map(canonical).transpose()?;
                 if before != after {
-                    insert.execute(params![id.as_slice(), key, before, after])?;
+                    ensure(
+                        insert.execute(params![id.as_slice(), key, &before, &after])? == 1,
+                        "STORAGE_WRITE",
+                    )
+                    .map_err(Error::local_integrity)?;
+                    expected_deltas.push((key.clone(), before, after));
                 }
             }
         }
         if h.height.is_multiple_of(128) {
-            tx.execute(
-                "INSERT INTO snapshots VALUES(?,?)",
-                params![id.as_slice(), canonical(&output.state)?],
-            )?;
+            ensure(
+                tx.execute(
+                    "INSERT INTO snapshots VALUES(?,?)",
+                    params![id.as_slice(), canonical(&output.state)?],
+                )? == 1,
+                "STORAGE_WRITE",
+            )
+            .map_err(Error::local_integrity)?;
             tx.execute("DELETE FROM snapshots WHERE block!=? AND block NOT IN (SELECT snapshots.block FROM snapshots JOIN blocks ON blocks.id=snapshots.block ORDER BY blocks.height DESC,blocks.id LIMIT 64)",[self.settings.genesis.as_slice()])?;
         }
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            native_authenticated::publish(
+                &tx,
+                &self.settings,
+                h.parent,
+                id,
+                &prior,
+                &output.state,
+                &mut || progress(ExecutionProgress::BeforeDurableCommit),
+            )?;
+        }
+        // Re-read after every write/trigger, while rollback can still remove the
+        // whole block. A snapshot cannot conceal an omitted canonical delta.
+        ensure(
+            self.delta_rows(id)? == expected_deltas && self.packet(id)?.encode()? == bytes,
+            "STORAGE_WRITE",
+        )
+        .map_err(Error::local_integrity)?;
+        ensure(
+            self.state_at(h.parent)? == prior && self.state_at(id)? == output.state,
+            "STORAGE_WRITE",
+        )
+        .map_err(Error::local_integrity)?;
+        self.check_active_before_commit()?;
         progress(ExecutionProgress::BeforeDurableCommit)?;
         tx.commit()?;
         // No cancellation fence after commit: the native durable fact stays true.
@@ -3310,6 +3608,7 @@ impl Node {
             rusqlite::TransactionBehavior::Immediate,
         )?;
         let result = run()?;
+        self.check_active_before_commit()?;
         self.continuous_scope_checkpoint()?;
         self.mining_scope_checkpoint()?;
         tx.commit()?;
@@ -3336,9 +3635,14 @@ impl Node {
                 .optional()?;
             ensure(actual == expected, "UNDO_ROOT").map_err(Error::local_integrity)?;
             if let Some(value) = new {
-                write.execute(params![slot, key, value])?;
+                ensure(
+                    write.execute(params![slot, key, value])? == 1,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
             } else {
-                delete.execute(params![slot, key])?;
+                ensure(delete.execute(params![slot, key])? == 1, "STORAGE_WRITE")
+                    .map_err(Error::local_integrity)?;
             }
         }
         Ok(())
@@ -3377,14 +3681,28 @@ impl Node {
                     self.record(target)?.root,
                     prior.as_ref(),
                 )?);
-                self.db.execute(
-                    "UPDATE active SET tip=?,generation=? WHERE singleton=1",
-                    params![target.as_slice(), next],
-                )?;
-                self.db.execute(
-                    "INSERT INTO events VALUES(?,0,1,?)",
-                    params![next, target.as_slice()],
-                )?;
+                ensure(
+                    self.db.execute(
+                        "UPDATE active SET tip=?,generation=? WHERE singleton=1",
+                        params![target.as_slice(), next],
+                    )? == 1,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
+                ensure(
+                    self.db.execute(
+                        "INSERT INTO events VALUES(?,0,1,?)",
+                        params![next, target.as_slice()],
+                    )? == 1,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
+                ensure(
+                    self.active()? == (target, next) && self.slot()? == slot,
+                    "GENERATION",
+                )
+                .map_err(Error::local_integrity)?;
+                self.check_events(next, &[(0, 1, target)])?;
                 Ok(())
             })?;
             ensure(
@@ -3435,6 +3753,13 @@ impl Node {
                 "INSERT OR REPLACE INTO reorg VALUES(1,?,?,?,0,0)",
                 params![old.as_slice(), target.as_slice(), next],
             )?;
+            ensure(
+                self.active()? == (old, g) && self.check_steps(old, target, 0)? == count as u64,
+                "REORG_STEPS",
+            )
+            .map_err(Error::local_integrity)?;
+            self.check_reorg_row(old, target, next, 0, 0)?;
+            self.check_persisted_state(old, &self.slot_state(next)?, &mut || Ok(()))?;
             Ok(())
         })?;
         cut(&mut hook, "intent")?;
@@ -3478,6 +3803,47 @@ impl Node {
             .map_err(Error::local_integrity)?;
         Ok(count)
     }
+    fn check_reorg_row(
+        &self,
+        old: Hash,
+        target: Hash,
+        generation: u64,
+        cursor: u64,
+        done: u64,
+    ) -> Result<()> {
+        let rows: Vec<ReorgRow> = self
+            .db
+            .prepare("SELECT old_tip,new_tip,generation,cursor,done FROM reorg ORDER BY singleton")?
+            .query_map([], |row| {
+                Ok((
+                    row.get(0)?,
+                    row.get(1)?,
+                    row.get(2)?,
+                    row.get(3)?,
+                    row.get(4)?,
+                ))
+            })?
+            .collect::<std::result::Result<_, _>>()?;
+        ensure(
+            rows == vec![(old.to_vec(), target.to_vec(), generation, cursor, done)],
+            "REORG_STEPS",
+        )
+        .map_err(Error::local_integrity)
+    }
+    fn check_events(&self, generation: u64, expected: &[(u64, u64, Hash)]) -> Result<()> {
+        let rows: Vec<(u64, u64, Vec<u8>)> = self
+            .db
+            .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?
+            .query_map([generation], |row| {
+                Ok((row.get(0)?, row.get(1)?, row.get(2)?))
+            })?
+            .collect::<std::result::Result<_, _>>()?;
+        let expected: Vec<_> = expected
+            .iter()
+            .map(|(ordinal, kind, id)| (*ordinal, *kind, id.to_vec()))
+            .collect();
+        ensure(rows == expected, "REORG_EVENTS").map_err(Error::local_integrity)
+    }
     fn resume_intent(&mut self, hook: &mut Option<&mut Hook<'_>>) -> Result<Hash> {
         let row = self
             .db
@@ -3519,8 +3885,16 @@ impl Node {
             let id = bytes32(bytes)?;
             self.atomic(|| {
                 self.apply_delta(id, g, kind == 0)?;
-                self.db
-                    .execute("UPDATE reorg SET cursor=? WHERE singleton=1", [index + 1])?;
+                ensure(
+                    self.db
+                        .execute("UPDATE reorg SET cursor=? WHERE singleton=1", [index + 1])?
+                        == 1,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
+                self.check_reorg_row(old, target, g, index + 1, 0)?;
+                let resulting = if kind == 0 { self.parent(id)? } else { id };
+                self.check_persisted_state(resulting, &self.slot_state(g)?, &mut || Ok(()))?;
                 Ok(())
             })?;
             cut(
@@ -3535,17 +3909,53 @@ impl Node {
             .map_err(Error::local_integrity)?;
         cut(hook, "before-publish")?;
         self.atomic(|| {
-            self.db.execute(
-                "UPDATE active SET tip=?,generation=?,state_slot=? WHERE singleton=1",
-                params![target.as_slice(), g, g],
-            )?;
-            self.db.execute(
-                "INSERT INTO events SELECT ?,ordinal,kind,block FROM steps ORDER BY ordinal",
-                [g],
-            )?;
-            self.db
-                .execute("UPDATE reorg SET done=1 WHERE singleton=1", [])?;
+            let expected: Vec<(u64, u64, Hash)> = self
+                .db
+                .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?
+                .query_map([], |row| {
+                    Ok((
+                        row.get::<_, u64>(0)?,
+                        row.get::<_, u64>(1)?,
+                        row.get::<_, Vec<u8>>(2)?,
+                    ))
+                })?
+                .map(|row| {
+                    let (ordinal, kind, id) = row?;
+                    Ok((ordinal, kind, bytes32(id)?))
+                })
+                .collect::<Result<_>>()?;
+            ensure(
+                self.db.execute(
+                    "UPDATE active SET tip=?,generation=?,state_slot=? WHERE singleton=1",
+                    params![target.as_slice(), g, g],
+                )? == 1,
+                "STORAGE_WRITE",
+            )
+            .map_err(Error::local_integrity)?;
+            ensure(
+                self.db.execute(
+                    "INSERT INTO events SELECT ?,ordinal,kind,block FROM steps ORDER BY ordinal",
+                    [g],
+                )? == expected.len(),
+                "STORAGE_WRITE",
+            )
+            .map_err(Error::local_integrity)?;
+            ensure(
+                self.db
+                    .execute("UPDATE reorg SET done=1 WHERE singleton=1", [])?
+                    == 1,
+                "STORAGE_WRITE",
+            )
+            .map_err(Error::local_integrity)?;
             self.db.execute("DELETE FROM kv WHERE slot!=?", [g])?;
+            ensure(
+                self.active()? == (target, g) && self.slot()? == g,
+                "GENERATION",
+            )
+            .map_err(Error::local_integrity)?;
+            self.check_reorg_row(old, target, g, count, 1)?;
+            self.check_events(g, &expected)?;
+            self.check_persisted_state(target, &self.slot_state(g)?, &mut || Ok(()))?;
             Ok(())
         })?;
         cut(hook, "published")?;
@@ -4982,3 +5392,7 @@ mod operator_task_store_tests;
 #[cfg(test)]
 #[path = "continuity_tests.rs"]
 mod continuity_tests;
+
+#[cfg(test)]
+#[path = "native_authenticated_tests.rs"]
+mod native_authenticated_tests;

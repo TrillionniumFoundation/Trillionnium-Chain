@@ -11,9 +11,11 @@ use trnm_mvcc_fee::pon_executor::{Config, State, LEGACY_TASK_PROFILE};
 use trnm_pon_node::{
     account_archive_execution::{
         self as execution, obligations, state_witness::StateCommitment, BlockInput,
-        CheckedExecutionError, StateExecutionInput,
+        CheckedExecutionError, CompactStateExecutionInput, StateExecutionInput,
     },
-    account_archive_prototype::{AccountArchive, Context, Limits, Witness},
+    account_archive_prototype::{
+        multiproof::Multiproof, Account, AccountArchive, Context, Limits, Witness,
+    },
     Settings,
 };
 use trnm_protocol::pon_wire::{hash, Hash};
@@ -270,6 +272,101 @@ fuzz_target!(|bytes: &[u8]| {
     );
 
     let mode = usize::from(byte(0).wrapping_sub(b'0')) % 11;
+    if byte(15) & 1 != 0 {
+        let mut compact =
+            obligations::prepare_compact(&settings, &archive, checkpoint.id(), &parent, block)
+                .unwrap();
+        let result = execution::execute_with_compact_state_witness(
+            &settings,
+            &archive,
+            checkpoint.id(),
+            &parent,
+            block,
+            CompactStateExecutionInput {
+                accounts: &compact.accounts,
+                state: &witness,
+            },
+        )
+        .unwrap();
+        assert_eq!(result.execution.execution.output.state, successor);
+        check_commitment(&result.execution.state_observation.parent, &parent, context);
+        check_commitment(
+            &result.execution.state_observation.mandatory.commitment,
+            &mandatory,
+            context,
+        );
+        check_commitment(
+            &result.execution.state_observation.successor.commitment,
+            &successor,
+            context,
+        );
+        assert_eq!(compact.construction.expanded_witnesses_allocated, 0);
+        let mut cancel_at = None;
+        match mode {
+            0 => return,
+            1 => {
+                witness.commitment.account_balance += 1;
+                witness.commitment.id = commitment_id(&witness.commitment);
+            }
+            2 => {
+                witness
+                    .non_accounts
+                    .remove(usize::from(byte(1)) % witness.non_accounts.len());
+            }
+            3 => witness.non_accounts.reverse(),
+            4 => {
+                let account = &mut compact.accounts.accounts[0].account;
+                *account = Some(Account {
+                    balance: account.map_or(0, |a| a.balance),
+                    nonce: account.map_or(1, |a| a.nonce + 1),
+                });
+            }
+            5 => {
+                compact.accounts.accounts.remove(0);
+            }
+            6 => compact
+                .accounts
+                .accounts
+                .push(compact.accounts.accounts[0].clone()),
+            7 => {
+                parent.insert("retained:unknown".into(), json!("altered"));
+            }
+            8 => cancel_at = Some(usize::from(byte(1)) % 4),
+            9 => {
+                let mut encoded = compact.accounts.encode().unwrap();
+                let index = (usize::from(byte(1)) * 31 + usize::from(byte(2))) % encoded.len();
+                encoded[index] ^= 1;
+                let Ok(decoded) = Multiproof::decode(&encoded) else {
+                    return;
+                };
+                assert_eq!(decoded.encode().unwrap(), encoded);
+                compact.accounts = decoded;
+            }
+            _ => witness.parent_id[0] ^= 1,
+        }
+        let calls = AtomicUsize::new(0);
+        let result = execution::execute_with_compact_state_witness_and_progress(
+            &settings,
+            &archive,
+            checkpoint.id(),
+            &parent,
+            block,
+            CompactStateExecutionInput {
+                accounts: &compact.accounts,
+                state: &witness,
+            },
+            &|_| {
+                if cancel_at == Some(calls.fetch_add(1, Ordering::Relaxed)) {
+                    Err(CheckedExecutionError::Cancelled)
+                } else {
+                    Ok(())
+                }
+            },
+        );
+        assert!(result.is_err());
+        assert_eq!(archive.checkpoint(checkpoint.id()).unwrap(), checkpoint);
+        return;
+    }
     let mut cancel_at = None;
     match mode {
         0 => return,

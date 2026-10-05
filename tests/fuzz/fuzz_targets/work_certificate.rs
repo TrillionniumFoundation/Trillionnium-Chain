@@ -22,14 +22,22 @@ fuzz_target!(|bytes: &[u8]| {
     };
     let optimized = pon_work::verify(header.challenge(), task, [255; 32], bytes);
     let reference = pon_work::verify_reference(header.challenge(), task, [255; 32], bytes);
-    match (optimized, reference) {
-        (Ok(actual), Ok(expected)) => {
+    let limb = pon_work::verify_limb(header.challenge(), task, [255; 32], bytes);
+    match (optimized, reference, limb) {
+        (Ok(actual), Ok(expected), Ok(research)) => {
             assert_eq!(actual.challenge(), expected.challenge());
             assert_eq!(actual.task(), expected.task());
             assert_eq!(actual.ticket(), expected.ticket());
             assert_eq!(actual.product(), expected.product());
+            assert_eq!(research.challenge(), expected.challenge());
+            assert_eq!(research.task(), expected.task());
+            assert_eq!(research.ticket(), expected.ticket());
+            assert_eq!(research.product(), expected.product());
         }
-        (Err(actual), Err(expected)) => assert_eq!(actual, expected),
+        (Err(actual), Err(expected), Err(research)) => {
+            assert_eq!(actual, expected);
+            assert_eq!(research, expected);
+        }
         _ => panic!("independent work kernels disagree on an untrusted certificate"),
     }
 });

@@ -8,8 +8,9 @@
 //! operations. This is not a partial-State backend, a new consensus profile, an
 //! archive publication operation, or a Node proof/admission capability.
 use crate::account_archive_prototype::{
-    account_root, accounts, Account, AccountArchive, ArchiveError, CheckedAccounts, Checkpoint,
-    Context, Witness,
+    account_root, accounts,
+    multiproof::{CheckedMultiproof, Multiproof, MultiproofObservation},
+    Account, AccountArchive, ArchiveError, CheckedAccounts, Checkpoint, Context, Witness,
 };
 use crate::Settings;
 use serde::Serialize;
@@ -138,17 +139,65 @@ pub struct StateWitnessExecutionOutput {
     pub execution: CheckedExecutionOutput,
     pub state_observation: StateExecutionObservation,
 }
+#[derive(Clone, Copy)]
+pub struct CompactStateExecutionInput<'a> {
+    pub accounts: &'a Multiproof,
+    pub state: &'a StateWitness,
+}
+#[derive(Debug)]
+pub struct CompactStateWitnessExecutionOutput {
+    pub execution: StateWitnessExecutionOutput,
+    pub account_proof: MultiproofObservation,
+}
 struct StateControl<'a> {
     witness: &'a StateWitness,
     progress: &'a (dyn Fn(StateWitnessProgress) -> Result<()> + Sync),
 }
 struct ExecutionEvidence<'a> {
-    accounts: &'a [Witness],
+    accounts: AccountEvidence<'a>,
     state: Option<StateControl<'a>>,
 }
 struct InternalOutput {
     execution: CheckedExecutionOutput,
     state: Option<StateExecutionObservation>,
+    compact: Option<MultiproofObservation>,
+}
+#[derive(Clone, Copy)]
+enum AccountEvidence<'a> {
+    Expanded(&'a [Witness]),
+    Compact(&'a Multiproof),
+}
+enum CheckedAccountEvidence<'a> {
+    Expanded {
+        checked: ExecutionAccounts,
+        witnesses: &'a [Witness],
+    },
+    Compact(CheckedMultiproof),
+}
+impl CheckedAccountEvidence<'_> {
+    fn account(&self, owner: Hash) -> std::result::Result<Option<Account>, ArchiveError> {
+        match self {
+            Self::Expanded { checked, .. } => checked.account(owner),
+            Self::Compact(checked) => checked.account(owner),
+        }
+    }
+    fn transition(
+        &self,
+        bound: &BoundState<'_>,
+        state: &State,
+        receipts: &[Vec<u8>],
+        phase: StatePhase,
+        progress: &(impl Fn(StateWitnessProgress) -> Result<()> + Sync + ?Sized),
+    ) -> Result<StateTransition> {
+        match self {
+            Self::Expanded { witnesses, .. } => {
+                bound.transition(state, witnesses, receipts, phase, progress)
+            }
+            Self::Compact(checked) => {
+                bound.transition_compact(state, checked, receipts, phase, progress)
+            }
+        }
+    }
 }
 
 #[derive(Default)]
@@ -212,7 +261,7 @@ pub fn execute_with_progress(
         parent_state,
         block,
         ExecutionEvidence {
-            accounts: witnesses,
+            accounts: AccountEvidence::Expanded(witnesses),
             state: None,
         },
         progress,
@@ -297,7 +346,7 @@ pub fn execute_with_state_witness_and_progress(
         parent_state,
         block,
         ExecutionEvidence {
-            accounts: input.accounts,
+            accounts: AccountEvidence::Expanded(input.accounts),
             state: Some(StateControl {
                 witness: input.state,
                 progress,
@@ -311,6 +360,62 @@ pub fn execute_with_state_witness_and_progress(
     })
 }
 
+pub fn execute_with_compact_state_witness(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    input: CompactStateExecutionInput<'_>,
+) -> Result<CompactStateWitnessExecutionOutput> {
+    execute_with_compact_state_witness_and_progress(
+        settings,
+        archive,
+        parent_checkpoint,
+        parent_state,
+        block,
+        input,
+        &|_| Ok(()),
+    )
+}
+
+/// Actual complete M06 execution using AAM1 for the semantic account gate and
+/// both mandatory/final proof-derived roots. The immutable parent is still the
+/// independent full-State reference. No expanded AAW1 witnesses are constructed.
+pub fn execute_with_compact_state_witness_and_progress(
+    settings: &Settings,
+    archive: &AccountArchive,
+    parent_checkpoint: Hash,
+    parent_state: &State,
+    block: BlockInput<'_>,
+    input: CompactStateExecutionInput<'_>,
+    progress: &(impl Fn(StateWitnessProgress) -> Result<()> + Sync),
+) -> Result<CompactStateWitnessExecutionOutput> {
+    progress(StateWitnessProgress::BeforeBinding)?;
+    let result = execute_inner(
+        settings,
+        archive,
+        parent_checkpoint,
+        parent_state,
+        block,
+        ExecutionEvidence {
+            accounts: AccountEvidence::Compact(input.accounts),
+            state: Some(StateControl {
+                witness: input.state,
+                progress,
+            }),
+        },
+        &|point| progress(StateWitnessProgress::Execution(point)),
+    )?;
+    Ok(CompactStateWitnessExecutionOutput {
+        execution: StateWitnessExecutionOutput {
+            execution: result.execution,
+            state_observation: result.state.ok_or(StateWitnessError::Observation)?,
+        },
+        account_proof: result.compact.ok_or(StateWitnessError::Observation)?,
+    })
+}
+
 fn execute_inner(
     settings: &Settings,
     archive: &AccountArchive,
@@ -320,9 +425,15 @@ fn execute_inner(
     evidence: ExecutionEvidence<'_>,
     progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
 ) -> Result<InternalOutput> {
-    let witnesses = evidence.accounts;
     let budget = WitnessBudget::for_block(settings, parent_state.len(), block.transactions.len())?;
-    budget.check(witnesses)?;
+    match evidence.accounts {
+        AccountEvidence::Expanded(witnesses) => {
+            budget.check(witnesses)?;
+        }
+        AccountEvidence::Compact(proof) => {
+            budget.check_compact(proof)?;
+        }
+    }
     progress(ExecutionProgress::BeforeParentBinding)?;
     let checkpoint = archive.checkpoint(parent_checkpoint)?;
     let context = Context {
@@ -347,13 +458,28 @@ fn execute_inner(
     {
         return Err(CheckedExecutionError::AccountSource);
     }
-    let mut requested: Vec<_> = witnesses.iter().map(|witness| witness.owner).collect();
+    let mut requested: Vec<_> = match evidence.accounts {
+        AccountEvidence::Expanded(witnesses) => {
+            witnesses.iter().map(|witness| witness.owner).collect()
+        }
+        AccountEvidence::Compact(proof) => {
+            proof.accounts.iter().map(|account| account.owner).collect()
+        }
+    };
     requested.sort_unstable();
-    let checked = ExecutionAccounts::verify(context, &checkpoint, witnesses, &|| {
-        // Repeated boundaries preserve the original callback signature while
-        // making each bounded verification batch cooperatively cancellable.
-        progress(ExecutionProgress::BeforeParentBinding)
-    })?;
+    let checked = match evidence.accounts {
+        AccountEvidence::Expanded(witnesses) => CheckedAccountEvidence::Expanded {
+            checked: ExecutionAccounts::verify(context, &checkpoint, witnesses, &|| {
+                progress(ExecutionProgress::BeforeParentBinding)
+            })?,
+            witnesses,
+        },
+        AccountEvidence::Compact(proof) => CheckedAccountEvidence::Compact(
+            CheckedMultiproof::verify_with_progress(context, &checkpoint, proof, &|_| {
+                progress(ExecutionProgress::BeforeParentBinding)
+            })?,
+        ),
+    };
     // Compare only with ORIGINAL parent values. Mandatory credits and earlier
     // transactions may legitimately change the current ordered value afterward.
     for &owner in &requested {
@@ -418,9 +544,9 @@ fn execute_inner(
                 let verified = (|| {
                     (control.progress)(StateWitnessProgress::BeforeMandatoryVerification)?;
                     bound.check_parent(before)?;
-                    let result = bound.transition(
+                    let result = checked.transition(
+                        bound,
                         after,
-                        witnesses,
                         receipts,
                         StatePhase::Mandatory,
                         control.progress,
@@ -533,9 +659,9 @@ fn execute_inner(
     };
     let state = if let (Some(bound), Some(control)) = (state_bound, evidence.state) {
         (control.progress)(StateWitnessProgress::BeforeSuccessorVerification)?;
-        let successor = bound.transition(
+        let successor = checked.transition(
+            &bound,
             &output.state,
-            witnesses,
             &output.receipts,
             StatePhase::Successor,
             control.progress,
@@ -573,5 +699,9 @@ fn execute_inner(
             observation,
         },
         state,
+        compact: match checked {
+            CheckedAccountEvidence::Compact(checked) => Some(checked.observation().clone()),
+            CheckedAccountEvidence::Expanded { .. } => None,
+        },
     })
 }

@@ -45,6 +45,14 @@ MAINTENANCE_COMPARE_STEP = '''      - name: Check fixed maintenance streams and 
         if: always()
         run: python3 scripts/ci/check_cross_arch_cost.py --artifacts "$RUNNER_TEMP/cost-inputs" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/cross-arch-maintenance-comparison.json" --suite maintenance-paired
 '''
+REJECTION_RUN_STEP = '''      - name: Execute native legal and late-rejection verifier costs
+        if: always()
+        run: python3 scripts/pon_work_rejection_report.py --run --out "$TRNM_CI_RECEIPT_DIR/work-rejection"
+'''
+REJECTION_COMPARE_STEP = '''      - name: Check actual rejection stages and paired native architectures
+        if: always()
+        run: python3 scripts/pon_work_rejection_report.py --compare "$RUNNER_TEMP/cost-inputs/cost-x64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" "$RUNNER_TEMP/cost-inputs/cost-arm64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --expected-run "$GITHUB_RUN_ID" --expected-attempt "$GITHUB_RUN_ATTEMPT" --out "$TRNM_CI_RECEIPT_DIR/work-rejection-comparison"
+'''
 CONTINUITY_BUILD = '    cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples\n'
 CONTINUITY_ORIGINAL = '    TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_vectors")" python3 formal/pon-nakamoto-v1/test_continuity.py -v\n'
 CONTINUITY_TRANSITIONS = '    TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v\n'
@@ -73,11 +81,26 @@ MODEL_OBSERVATION_BLOCK = '''    (
       test ! -e "$trnm_model_receipt_root/authenticated-state"
       test ! -L "$trnm_model_receipt_root/authenticated-state"
       mkdir "$trnm_model_receipt_root/authenticated-state"
+      export TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR="$trnm_model_receipt_root/native-authenticated-state"
+      test ! -e "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR"
+      test ! -L "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR"
+      export TRNM_AUTHENTICATED_MIGRATION_EXPORT="$trnm_model_receipt_root/authenticated-migration"
+      test ! -e "$TRNM_AUTHENTICATED_MIGRATION_EXPORT"
+      test ! -L "$TRNM_AUTHENTICATED_MIGRATION_EXPORT"
+      export TRNM_ACCOUNT_MULTIPROOF_VECTORS="$trnm_model_receipt_root/account-multiproof/native.json"
+      test ! -e "$trnm_model_receipt_root/account-multiproof"
+      test ! -L "$trnm_model_receipt_root/account-multiproof"
+      mkdir "$trnm_model_receipt_root/account-multiproof"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v
       python3 formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py -v
       python3 formal/pon-nakamoto-v1/authenticated_state_archive_oracle.py "$TRNM_AUTHENTICATED_STATE_VECTORS" "$trnm_model_receipt_root/authenticated-state/native.sqlite" --output "$trnm_model_receipt_root/authenticated-state/oracle.json"
+      python3 formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py -v
+      python3 formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/native.json" "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/native.sqlite" --output "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/oracle.json"
+      python3 formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/native.json" "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/native.sqlite" --migration-source "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/source.sqlite" --output "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/oracle.json"
+      python3 formal/pon-nakamoto-v1/test_account_multiproof_oracle.py -v
+      python3 formal/pon-nakamoto-v1/account_multiproof_oracle.py "$TRNM_ACCOUNT_MULTIPROOF_VECTORS" --output "$trnm_model_receipt_root/account-multiproof/oracle.json"
     )
 '''
 
@@ -162,10 +185,10 @@ def validate(root: Path = ROOT) -> dict:
     require(not re.search(r'^    if:', costs, re.M), 'native architecture execution cannot be skipped')
     require(f'    timeout-minutes: {COST_JOB_TIMEOUT_MINUTES}\n' in costs and
             '      fail-fast: false\n' in costs,
-            'architecture job must cover four bounded suites and retain their outcomes')
+            'architecture job must cover four generation suites and the separate rejection experiment')
     require(COST_JOB_OVERHEAD_SECONDS >= 27 * 60 and
             COST_JOB_TIMEOUT_MINUTES * 60 >= cost_job_budget_seconds(),
-            'all four actual capture budgets, termination grace and setup/source/artifact margin must fit')
+            'all generation/rejection capture budgets, termination grace and setup/source/artifact margin must fit')
     require('''        include:
           - arch: x64
             runner: ubuntu-24.04
@@ -183,6 +206,8 @@ def validate(root: Path = ROOT) -> dict:
             'one-zero locality must run once after the zero suite, including after either preceding suite failed')
     require(ONE_ZERO_RUN_STEP + MAINTENANCE_RUN_STEP in costs and text.count(MAINTENANCE_RUN_STEP) == 1,
             'fixed maintenance must execute once after the three retained suites including their failure paths')
+    require(MAINTENANCE_RUN_STEP + REJECTION_RUN_STEP in costs and text.count(REJECTION_RUN_STEP) == 1,
+            'actual legal/Transcript/Product measurements must execute after retained generation suites even on failure')
     require('          name: cost-${{ matrix.arch }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}\n' in costs,
             'architecture artifacts must be bound to the same head and attempt')
     comparison = jobs['cross-arch-cost-consistency']
@@ -203,6 +228,9 @@ def validate(root: Path = ROOT) -> dict:
     require(ONE_ZERO_COMPARE_STEP + MAINTENANCE_COMPARE_STEP in comparison and
             text.count(MAINTENANCE_COMPARE_STEP) == 1,
             'fixed maintenance comparison must inspect its separate current-run artifacts after earlier failure')
+    require(MAINTENANCE_COMPARE_STEP + REJECTION_COMPARE_STEP in comparison and
+            text.count(REJECTION_COMPARE_STEP) == 1,
+            'actual rejection comparison must bind both native architectures to this head/run/attempt even on earlier failure')
     merge = jobs['prospective-merge']
     require("    if: github.event_name == 'pull_request'\n" in merge, 'merge lane event boundary')
     require('      fail-fast: false\n' in merge, 'all merge lanes retain their outcomes')
@@ -240,6 +268,10 @@ def validate(root: Path = ROOT) -> dict:
     require(maintenance_negative in dict(lane_pairs)['repository-truth'] and
             script.count(maintenance_negative) == 1,
             'fixed maintenance evidence negative checks must execute once in repository-truth')
+    rejection_negative = '    python3 scripts/ci/test_work_rejection_report.py\n'
+    require(rejection_negative in dict(lane_pairs)['repository-truth'] and
+            script.count(rejection_negative) == 1,
+            'actual rejection cost evidence negatives must execute once in repository-truth')
     archive_negative = '    python3 scripts/ci/test_account_archive_conformance.py\n'
     require(archive_negative in dict(lane_pairs)['repository-truth'] and script.count(archive_negative) == 1,
             'archive native/oracle receipt negatives must execute once in repository-truth')

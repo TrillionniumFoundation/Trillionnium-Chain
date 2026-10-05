@@ -12,10 +12,11 @@ from check_ci_contract import (ROOT, validate, CONTINUITY_BUILD, CONTINUITY_TRAN
                                MODEL_OBSERVATION_BLOCK, RUST_ALL_TARGETS, RUST_DOCS, SIGNED_STATE_PYTHON,
                                ZERO_RUN_STEP, ZERO_COMPARE_STEP, ONE_ZERO_RUN_STEP,
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
-                               MAINTENANCE_COMPARE_STEP, PAIRED_WORK_ORACLE, MODEL_WINDOW_ORACLE,
+                               MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
+                               PAIRED_WORK_ORACLE, MODEL_WINDOW_ORACLE,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
-                                   cost_job_budget_seconds)
+                                   cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
 
 
@@ -51,13 +52,36 @@ class CiContractTests(unittest.TestCase):
             with self.subTest(replacement=replacement):
                 self.rejected('.github/workflows/trnm-required-baseline.yml', ZERO_RUN_STEP, replacement)
 
-    def test_architecture_budget_covers_four_bounded_suites_and_termination_margin(self):
-        self.assertEqual(cost_job_budget_seconds() - COST_JOB_OVERHEAD_SECONDS, 6480)
+    def test_architecture_budget_covers_generation_rejection_and_termination_margin(self):
+        self.assertEqual(rejection_job_budget_seconds(), 1195)
+        self.assertEqual(cost_job_budget_seconds() - COST_JOB_OVERHEAD_SECONDS, 6480 + 1195)
         self.assertGreaterEqual(COST_JOB_TIMEOUT_MINUTES * 60, cost_job_budget_seconds())
-        for minutes in [30, 60, 90, 108, 120]:
+        for minutes in [30, 60, 90, 108, 120, 135, 150]:
             with self.subTest(minutes=minutes):
                 self.rejected('.github/workflows/trnm-required-baseline.yml',
-                              '    timeout-minutes: 135\n', f'    timeout-minutes: {minutes}\n')
+                              '    timeout-minutes: 155\n', f'    timeout-minutes: {minutes}\n')
+
+    def test_rejection_run_and_comparison_require_actual_ordered_bound_execution(self):
+        path = '.github/workflows/trnm-required-baseline.yml'
+        for previous, step in [(MAINTENANCE_RUN_STEP, REJECTION_RUN_STEP),
+                               (MAINTENANCE_COMPARE_STEP, REJECTION_COMPARE_STEP)]:
+            for replacement in ['', step.replace('        if: always()\n', ''),
+                                step.replace('run: python3', 'run: true # python3'), step + step]:
+                with self.subTest(step=step, replacement=replacement):
+                    self.rejected(path, step, replacement)
+            self.rejected(path, previous + step, step + previous)
+        for option in ['--expected-source "$TRNM_EXPECTED_SOURCE_SHA"',
+                       '--expected-run "$GITHUB_RUN_ID"', '--expected-attempt "$GITHUB_RUN_ATTEMPT"']:
+            self.rejected(path, REJECTION_COMPARE_STEP, REJECTION_COMPARE_STEP.replace(' ' + option, ''))
+
+    def test_rejection_parser_negatives_execute_once_in_repository_truth(self):
+        path = 'scripts/ci/ci_job.sh'
+        command = '    python3 scripts/ci/test_work_rejection_report.py\n'
+        for replacement in ['', '    true # omitted rejection checks\n', command + command]:
+            self.rejected(path, command, replacement)
+        original = (self.root / path).read_text()
+        changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+        self.rejected(path, original, changed)
 
     def test_maintenance_native_execution_cannot_be_removed_skipped_or_substituted(self):
         for replacement in ['', MAINTENANCE_RUN_STEP.replace('        if: always()\n', ''),
@@ -169,6 +193,23 @@ class CiContractTests(unittest.TestCase):
 
     def test_config_file_is_not_dependency_execution(self):
         self.rejected('scripts/ci/ci_job.sh', '    python3 scripts/ci/run_supply_chain.py\n', '')
+
+    def test_native_storage_migration_and_multiproof_oracles_follow_actual_workspace(self):
+        path = 'scripts/ci/ci_job.sh'
+        text = (self.root / path).read_text()
+        lines = [line + '\n' for line in text.splitlines()
+                 if line.startswith('      python3 formal/pon-nakamoto-v1/') and
+                 any(name in line for name in ['native_authenticated_storage_oracle.py',
+                                               'account_multiproof_oracle.py'])]
+        self.assertEqual(len(lines), 5)
+        for line in lines:
+            for replacement in ['', line.replace('python3 ', 'true # python3 '), line + line]:
+                with self.subTest(line=line, replacement=replacement):
+                    self.rejected(path, line, replacement)
+        for selector in ['TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR',
+                         'TRNM_AUTHENTICATED_MIGRATION_EXPORT', 'TRNM_ACCOUNT_MULTIPROOF_VECTORS']:
+            self.rejected(path, 'export ' + selector + '=', 'export OMITTED_' + selector + '=')
+        self.rejected(path, '--migration-source "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/source.sqlite" ', '')
 
     def test_public_campaign_must_execute_and_preserve_its_report(self):
         self.rejected('scripts/ci/ci_job.sh',

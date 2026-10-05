@@ -98,7 +98,7 @@ comparison. Missing exact cases, source/run identities, native outputs or failed
 attempts are failures. Mathematical implementation agreement remains distinct from
 work hardness, independent operation and future model efficacy.
 
-## Four native work-cost contracts
+## Native generation and rejection cost contracts
 
 The existing head/merge and x64/ARM64 lanes retain separate reused, both-zero,
 one-zero/nonzero-rank-one and fixed-genesis-maintenance cost contracts. The fourth
@@ -111,7 +111,11 @@ source/binary identity and execution outcome must match its own contract. Strict
 success validation rejects failure-only fields even when empty, noninteger exit
 codes and reordered native invocation rows. It cannot transform an old successful
 artifact into execution of the new suite. See the [CI execution contract](../architecture/CI_EXECUTION_CONTRACT.md).
-Same-job135-minute limits account for all four bounded captures; thirteen jobs,
+The separately versioned legal/Transcript/Product experiment records actual errors,
+complete setup/search history and nine balanced proof/kernel verification arms.
+Its paired native comparison binds the same head/run/attempt and does not merge its
+denominators with the earlier generation experiments. Same-job155-minute limits
+include all four generation suites and the separate rejection captures; thirteen jobs,
 actual fuzz, exact prospective merges and all external-acceptance boundaries remain.
 
 The paired/periodic/limb bridge's v4 report requires32 full-proof comparisons and
@@ -146,3 +150,12 @@ reference execution remain required; neither a correctly hashed unknown namespac
 nor this fixture establishes every gated model transition. This evidence remains
 separate from SQLite inspection, work/fork-choice verification, durable publication
 and public witness availability.
+
+The explicit native authenticated backend now has its own actual SQLite export and
+independent full-state/account-node comparison. A separate migration export keeps
+both source and destination databases, with exact type/value comparisons for local
+replay/outbox/pool, events and sequence rows. AAM1 compact proof observations come
+from the actual signed funding/reservation/expiry fixture and a separate full-sparse
+Python reconstruction. These comparisons extend the one workspace execution in
+both Rust lanes. They grant no physical durability, external ownership independence,
+partial-State backend or production acceptance.

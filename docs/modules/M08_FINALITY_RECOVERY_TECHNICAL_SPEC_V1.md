@@ -107,3 +107,27 @@ records, stale selection, quota exhaustion and cancellation refuse without parti
 publication. Reads and reopen reconstruct complete states and compare actual native
 branch data. This separate reference-backed store adds no ordinary startup selection,
 installed state root, public proof service, pruning or rollback of local operation facts.
+
+## Native authenticated branch publication and migration
+
+The [explicit native backend](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+places persistent account nodes and exact branch state commitments inside the same
+SQLite owner transaction as actual block data. Active selection and each staged
+reorganization step check the required authentication material. Missing records
+refuse; full State reconstruction and comparison remain required on recovery.
+
+Both old and explicitly selected new backends now read back the real final writes
+before COMMIT. Admission checks affected row counts, exact deltas, retained packets
+and parent/child states. Fast activation checks expected tip, generation, slot and
+events; staged reorganization also checks cursor, staged State and final done marker.
+A last-event trigger that deletes KV or rewinds the active pointer rolls back the
+current transaction. Earlier valid staged transactions retain their original
+recoverable meaning. Tests remove the fault and exercise continued recovery.
+
+Explicit migration holds the source writer and a write-excluding read snapshot,
+replays every retained branch and preserves all old local-fact tables. It first
+publishes a pending-fenced fresh target with atomic no-replace directory rename;
+the fence is removed only after a fresh SQLite read and final file/table checks.
+Pending reorganization state is copied before target recovery, so the later explicit
+target open completes that existing cursor once. Source retention, external-owner
+refusal and real subprocess-exit tests are specified in the native backend contract.

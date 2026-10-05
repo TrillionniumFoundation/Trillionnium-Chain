@@ -262,7 +262,27 @@ input and reference scans remain. Whole-block account witnesses are bounded by
 checked parent keys plus twice the actual transaction count plus one miner, using
 the current transaction-access contract; the standalone point-query limit remains32.
 A sorted proof frontier combines changed paths with O(P) auxiliary references and
-a depth256 stack, while the full proof bytes remain O(256P). The separate
+a depth256 stack, while the original AAW1 proof bytes remain O(256P). The separate
 [durable archive](../protocol/pon-nakamoto-v1/details/AUTHENTICATED_STATE_ARCHIVE_V1.md)
 reexecutes actual admitted Node transitions before its own atomic publication;
 installed Node state and consensus selection remain separate.
+
+The explicit AAM1 companion now constructs a canonical shared account frontier
+directly from persistent Patricia nodes. `prepare_compact` and
+`execute_with_compact_state_witness` bind the same complete parent, non-account
+partition, actual obligation set and transaction/miner access bound. They never
+expand one 256-sibling witness per queried account. Canonical decoding rejects
+duplicate, overlapping, non-maximal, empty or unnecessary boundary nodes. Original
+parent accounts and changed paths are checked once and reused for mandatory and
+successor updates; all ordinary M06 gates and complete reference comparisons remain.
+The actual three-block signed fixture uses41 queried accounts and80 transactions;
+independent Python application replay checks exact AAM1 bytes and both phase roots.
+The measured1,611/2,251-byte encodings and conservative7,561,821-byte global bound
+are proof-size observations, not full execution latency or proof-availability claims.
+
+The [native authenticated storage backend](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+now installs authenticated account nodes and state records in the actual Node
+writer transaction under a fresh explicitly selected schema. Its commitments use
+the complete final State after M06 and qualified task output accounting; the
+independent full-State comparison therefore includes records created after ordinary
+application execution. This does not replace the complete input relation above.

@@ -311,3 +311,30 @@ records, stale selection, quota exhaustion and cancellation refuse without parti
 publication. Reads and reopen reconstruct complete states and compare actual native
 branch data. This separate reference-backed store adds no ordinary startup selection,
 installed state root, public proof service, pruning or rollback of local operation facts.
+
+## Explicit native authenticated storage selection
+
+Actual local Node commands accept `--state-backend authenticated-v1` for the fresh
+`native-authenticated-branch-schema-v1` implementation. No option, or explicit
+`legacy-v2`, selects the original backend. Wrong schema selection fails before
+database mutation. Unknown choices and options on unrelated commands fail before
+opening a store; external owner configuration combined with the new backend is
+explicitly unsupported and fails before loading that configuration.
+
+The selected backend participates in real status/recovery, mining, submission,
+confirmation, pool, sync and serving paths. It stores authenticated account nodes
+with native branch data in one transaction and exposes a checked AAM1 account query
+from that same database. The CLI test mines a real maintenance block, cold reopens
+the new namespace and binds capacity observations to its exact active state.
+
+`Node::migrate_to_authenticated_state` is a separate explicit local API on an
+already owned legacy Node. It preserves the source and all retained local facts,
+validates inactive branches and pending reorganization, and publishes only a fully
+checked fresh target. It is not an implicit startup conversion. The original
+account/archive research APIs keep their separate namespaces and meanings.
+
+See [native authenticated storage](../protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md)
+for publication, migration and refusal rules. Complete-State work, non-account
+scans, global physical storage responsibility, external owner migration and public
+proof availability remain separate constraints; the option grants no release or
+production activation.

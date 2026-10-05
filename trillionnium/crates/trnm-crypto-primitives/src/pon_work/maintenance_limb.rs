@@ -1,6 +1,7 @@
 //! Separate complete maintenance producer using bounded split-limb accumulation.
 //! The number of scalar products and the complete W1 relation are unchanged.
-//! This arithmetic experiment is not selected by the native producer or verifier.
+//! This arithmetic experiment is not selected by the native producer or default verifier.
+//! Its bounded dot product is shared with the explicit verifier research comparison.
 use super::{
     expand_with_progress, maintenance_periodic::MaintenancePeriodicPreparedTask, Hash,
     PreparedGenerationError, PreparedGenerationProgress, PreparedTask, VerificationError,
@@ -13,7 +14,7 @@ use sha2::{Digest, Sha256};
 // Hence folded<2^32+240<2q: one conditional subtraction suffices. Every
 // product and accumulator fits u64. No overflowing or wrapping sum is used.
 #[inline]
-fn dot8(left: &[u32], right: &[u32], prior: u32) -> u32 {
+pub(super) fn dot8(left: &[u32], right: &[u32], prior: u32) -> u32 {
     debug_assert_eq!(left.len(), R);
     debug_assert_eq!(right.len(), R);
     let mut low = u64::from(prior);

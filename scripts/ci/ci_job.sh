@@ -17,6 +17,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_zero_locality_cost.py
     python3 scripts/ci/test_one_zero_locality_cost.py
     python3 scripts/ci/test_maintenance_cost.py
+    python3 scripts/ci/test_work_rejection_report.py
     python3 scripts/ci/test_account_archive_conformance.py
     python3 scripts/ci/test_run_account_execution_conformance.py
     python3 scripts/ci/report_current_implementation.py --check
@@ -98,11 +99,26 @@ case "${1:?required job}" in
       test ! -e "$trnm_model_receipt_root/authenticated-state"
       test ! -L "$trnm_model_receipt_root/authenticated-state"
       mkdir "$trnm_model_receipt_root/authenticated-state"
+      export TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR="$trnm_model_receipt_root/native-authenticated-state"
+      test ! -e "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR"
+      test ! -L "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR"
+      export TRNM_AUTHENTICATED_MIGRATION_EXPORT="$trnm_model_receipt_root/authenticated-migration"
+      test ! -e "$TRNM_AUTHENTICATED_MIGRATION_EXPORT"
+      test ! -L "$TRNM_AUTHENTICATED_MIGRATION_EXPORT"
+      export TRNM_ACCOUNT_MULTIPROOF_VECTORS="$trnm_model_receipt_root/account-multiproof/native.json"
+      test ! -e "$trnm_model_receipt_root/account-multiproof"
+      test ! -L "$trnm_model_receipt_root/account-multiproof"
+      mkdir "$trnm_model_receipt_root/account-multiproof"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v
       python3 formal/pon-nakamoto-v1/test_authenticated_state_archive_oracle.py -v
       python3 formal/pon-nakamoto-v1/authenticated_state_archive_oracle.py "$TRNM_AUTHENTICATED_STATE_VECTORS" "$trnm_model_receipt_root/authenticated-state/native.sqlite" --output "$trnm_model_receipt_root/authenticated-state/oracle.json"
+      python3 formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py -v
+      python3 formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/native.json" "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/native.sqlite" --output "$TRNM_NATIVE_AUTHENTICATED_STATE_EXPORT_DIR/oracle.json"
+      python3 formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/native.json" "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/native.sqlite" --migration-source "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/source.sqlite" --output "$TRNM_AUTHENTICATED_MIGRATION_EXPORT/oracle.json"
+      python3 formal/pon-nakamoto-v1/test_account_multiproof_oracle.py -v
+      python3 formal/pon-nakamoto-v1/account_multiproof_oracle.py "$TRNM_ACCOUNT_MULTIPROOF_VECTORS" --output "$trnm_model_receipt_root/account-multiproof/oracle.json"
     )
     cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --doc --all-features
     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings

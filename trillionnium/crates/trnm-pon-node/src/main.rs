@@ -172,11 +172,59 @@ fn open_operator_node(
     settings: Settings,
     workers: usize,
     inputs: Option<trnm_pon_node::operator_task_policy::RestrictedNodeInputs>,
+    authenticated_state: bool,
 ) -> Result<Node> {
-    match inputs {
-        Some(inputs) => Node::open_with_operator_task_policy(path, settings, workers, inputs),
-        None => Node::open(path, settings, workers),
+    match (inputs, authenticated_state) {
+        (Some(_), true) => Err("NATIVE_STATE_BACKEND_EXTERNAL_OWNER".into()),
+        (Some(inputs), false) => {
+            Node::open_with_operator_task_policy(path, settings, workers, inputs)
+        }
+        (None, true) => Node::open_with_authenticated_state(path, settings, workers),
+        (None, false) => Node::open(path, settings, workers),
     }
+}
+
+/// Select an actual local-store implementation before reading outside owner
+/// configuration or opening a namespace. An unrelated command cannot ignore it.
+fn authenticated_state_backend(command: &str, args: &BTreeMap<String, String>) -> Result<bool> {
+    let Some(choice) = args.get("--state-backend") else {
+        return Ok(false);
+    };
+    let authenticated = match choice.as_str() {
+        "legacy-v2" => false,
+        "authenticated-v1" => true,
+        _ => return Err("NATIVE_STATE_BACKEND".into()),
+    };
+    if !matches!(
+        command,
+        "status"
+            | "recover"
+            | "pool-status"
+            | "capacity-observe"
+            | "evaluation-observe"
+            | "evaluation-round-observe"
+            | "pool-submit"
+            | "mine-loop"
+            | "mine"
+            | "make"
+            | "submit"
+            | "export"
+            | "confirm"
+            | "confirm-batch"
+            | "sync"
+            | "serve"
+    ) {
+        return Err("NATIVE_STATE_BACKEND_COMMAND".into());
+    }
+    if authenticated
+        && (args.contains_key("--operator-task-mode")
+            || OWNER_CONFIG_OPTIONS
+                .iter()
+                .any(|key| args.contains_key(*key)))
+    {
+        return Err("NATIVE_STATE_BACKEND_EXTERNAL_OWNER".into());
+    }
+    Ok(authenticated)
 }
 
 const MAX_REQUEST_OBSERVATION_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -968,13 +1016,14 @@ fn run() -> Result<Value> {
         _ => "",
     };
     let allowed = format!(
-        "--development --store --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile --actor-profile --deployment-spec --deployment-bootstrap --deployment-model --deployment-input --deployment-checkpoint --deployment-activation --operator-task-mode --operator-task-config --operator-task-config-sha256 --operator-task-source-commit --operator-task-policy-source-sha256 --operator-task-registry2-package {authentication_options} {admission_options} {extra}"
+        "--development --store --state-backend --genesis-time --workers --logical-now --evaluation-policy --task-profile --model-profile --actor-profile --deployment-spec --deployment-bootstrap --deployment-model --deployment-input --deployment-checkpoint --deployment-activation --operator-task-mode --operator-task-config --operator-task-config-sha256 --operator-task-source-commit --operator-task-policy-source-sha256 --operator-task-registry2-package {authentication_options} {admission_options} {extra}"
     );
     for key in args.keys() {
         if !allowed.split_whitespace().any(|k| k == key) {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
         }
     }
+    let authenticated_state = authenticated_state_backend(&command, &args)?;
     // Fixed outside authority is authenticated before any model/material loader.
     let owner_task_config = operator_task_inputs(&args)?;
     if owner_task_config.is_some()
@@ -1354,6 +1403,7 @@ fn run() -> Result<Value> {
                 settings,
                 number(&args, "--workers", 1)? as usize,
                 owner_task_config,
+                authenticated_state,
             )?;
             let outcome = submit_with_verified_parent_recovery(
                 &owner,
@@ -1383,6 +1433,7 @@ fn run() -> Result<Value> {
                 settings.clone(),
                 number(&args, "--workers", 1)? as usize,
                 owner_task_config,
+                authenticated_state,
             )?;
             let response = if protected {
                 ingress::call_authenticated_durable_protected(
@@ -1412,6 +1463,7 @@ fn run() -> Result<Value> {
         settings,
         number(&args, "--workers", 1)? as usize,
         owner_task_config,
+        authenticated_state,
     )?;
     let value = match command.as_str() {
         "status" | "recover" => node.stats()?,

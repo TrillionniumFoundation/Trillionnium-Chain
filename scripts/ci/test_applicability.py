@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Counterexamples to stale profiles and promoted navigation/CI evidence."""
+import ast
 import json
 import shutil
 import tempfile
 import unittest
 from pathlib import Path
-from check_applicability import ROOT, REGISTRY, validate, markdown
+from check_applicability import (
+    ROOT, REGISTRY, NATIVE_STORAGE_ENTRY, NATIVE_STORAGE_PROFILE, NATIVE_STORAGE_TESTS,
+    validate, markdown, profile_table,
+)
 from report_module_evidence import check_test_selector
 
 
@@ -73,6 +77,97 @@ class ApplicabilityTests(unittest.TestCase):
 
     def test_local_policy_cannot_claim_consensus_revision(self):
         self.reject(lambda d: d['profiles'][-1].update(consensus_revision=10))
+
+    def reject_native_profile_with_current_table(self, change, message):
+        """Regenerating navigation must not conceal a changed storage contract."""
+        registry = self.root / REGISTRY
+        authority = self.root / 'docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md'
+        original_registry, original_authority = registry.read_bytes(), authority.read_bytes()
+        try:
+            data = json.loads(original_registry)
+            profile = next(p for p in data['profiles'] if p['id'] == NATIVE_STORAGE_PROFILE)
+            change(profile, data)
+            registry.write_text(json.dumps(data))
+            start, end = '<!-- applicability-table:start -->', '<!-- applicability-table:end -->'
+            before, rest = original_authority.decode().split(start, 1)
+            _, after = rest.split(end, 1)
+            authority.write_text(before + start + '\n' + profile_table(data['profiles']) +
+                                 '\n' + end + after)
+            with self.assertRaisesRegex(ValueError, message):
+                validate(self.root)
+        finally:
+            registry.write_bytes(original_registry)
+            authority.write_bytes(original_authority)
+
+    def test_native_authenticated_profile_is_explicit_local_source_navigation(self):
+        result = validate(self.root)
+        self.assertEqual(len(result['profiles']), 18)
+        profile = next(p for p in result['profiles'] if p['id'] == NATIVE_STORAGE_PROFILE)
+        self.assertEqual(profile['entrypoint'], NATIVE_STORAGE_ENTRY)
+        for field in ('configuration', 'revision_pointer', 'consensus_revision', 'receipt'):
+            self.assertIsNone(profile[field])
+        self.assertEqual(profile['evidence_class'], 'source-binding')
+        for path, symbols in NATIVE_STORAGE_TESTS.items():
+            self.assertTrue({path + '::' + symbol for symbol in symbols} <= set(profile['tests']))
+        self.assertFalse(result['acceptance_granted'])
+        self.assertFalse(result['tests_executed_by_this_checker'])
+
+    def test_native_profile_cannot_reuse_existing_consensus_configuration(self):
+        def change(profile, data):
+            configured = next(p for p in data['profiles'] if p['configuration'] is not None)
+            for field in ('configuration', 'revision_pointer', 'consensus_revision'):
+                profile[field] = configured[field]
+        self.reject_native_profile_with_current_table(change, 'storage is local')
+
+    def test_native_profile_cannot_substitute_valid_legacy_opener(self):
+        self.reject_native_profile_with_current_table(
+            lambda p, _: p['entrypoint'].update(symbol='Node::open'), 'explicit opener')
+
+    def test_native_profile_requires_cli_migration_and_independent_storage_controls(self):
+        for path in NATIVE_STORAGE_TESTS:
+            with self.subTest(path=path):
+                self.reject_native_profile_with_current_table(
+                    lambda p, _, path=path: p.update(
+                        tests=[s for s in p['tests'] if not s.startswith(path + '::')]),
+                    'control selector coverage')
+
+    def test_native_profile_cannot_substitute_standalone_archive_document(self):
+        self.reject_native_profile_with_current_table(
+            lambda p, _: p.update(document=
+                'docs/protocol/pon-nakamoto-v1/details/AUTHENTICATED_STATE_ARCHIVE_V1.md'),
+            'contract identity')
+
+    def test_native_profile_retains_storage_recovery_and_evidence_owners(self):
+        self.reject_native_profile_with_current_table(
+            lambda p, _: p['modules'].remove('M08'), 'responsibility coverage')
+
+    def test_duplicate_profile_controls_do_not_count_as_additional_coverage(self):
+        self.reject_native_profile_with_current_table(
+            lambda p, _: p['tests'].append(p['tests'][0]), 'duplicate profile test')
+
+    def test_compact_rejection_and_storage_python_controls_bind_every_real_test(self):
+        rows = validate(self.root)['procedures']
+        row = next(r for r in rows if r['operation'] == 'M17.QualifyExecutedCampaign')
+        selectors = set(row['evidence_selectors'])
+        for path, count in [
+            ('formal/pon-nakamoto-v1/test_account_multiproof_oracle.py', 28),
+            ('formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py', 23),
+            ('scripts/ci/test_work_rejection_report.py', 75),
+        ]:
+            tree = ast.parse((self.root / path).read_text())
+            expected = {path + '::' + cls.name + '.' + method.name
+                        for cls in tree.body if isinstance(cls, ast.ClassDef)
+                        for method in cls.body if isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef))
+                        and method.name.startswith('test_')}
+            self.assertEqual(len(expected), count, path)
+            self.assertTrue(expected <= selectors, path)
+        for path, symbol in [
+            ('formal/pon-nakamoto-v1/native_authenticated_storage_oracle.py', 'compare_migration'),
+            ('formal/pon-nakamoto-v1/account_multiproof_oracle.py', 'root_for_updates'),
+            ('scripts/pon_work_rejection_report.py', 'verify'),
+        ]:
+            self.assertIn({'path': path, 'symbol': symbol}, row['runtime_symbols'])
+        self.assertIsNone(row['ordinary_product_entrypoint'])
 
     def test_factor_and_public_queue_bind_real_tests_without_execution(self):
         result = validate(self.root)
