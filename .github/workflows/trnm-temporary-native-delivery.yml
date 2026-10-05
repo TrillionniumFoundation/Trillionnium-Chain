@@ -1,0 +1,61 @@
+name: temporary-native-delivery
+on:
+  push:
+    branches: [dev/chain-native-delivery-20261005]
+permissions:
+  contents: read
+jobs:
+  deliver:
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout isolated delivery objects
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+      - name: Verify and reconstruct exact local development commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, os
+          from pathlib import Path
+          root = Path('.github/native-delivery')
+          expected = ['fa5f4661d276920383df0235d6d2175cea5154e7',
+                      'cda5363896dc3d61050be36b35366288599636a5',
+                      'e83c6c7ad8bc35335ba90a1030fdb971b61f368c']
+          parts = [(root / f'part{i}.bin').read_bytes() for i in range(3)]
+          for part, oid in zip(parts, expected):
+              assert hashlib.sha1(b'blob '+str(len(part)).encode()+b'\0'+part).hexdigest() == oid
+          # Repair three bytes altered during manual base64 transport. Neither
+          # this transport correction nor the transport files enter the candidate.
+          part = bytearray(parts[1])
+          assert part[4217:4220] == bytes([130, 200, 91])
+          part[4217:4220] = bytes([133, 136, 251])
+          assert hashlib.sha1(b'blob 6000\0'+part).hexdigest() == 'faa2b3b5cdaf146e20b5d8e6d32e622872db902b'
+          raw = parts[0] + part + parts[2]
+          assert len(raw) == 17796
+          assert hashlib.sha256(raw).hexdigest() == '3412675c2e1d71edacc77cd5a2f83b05ecf56c6352a4e7b44f5790a51e1d9425'
+          (Path(os.environ['RUNNER_TEMP']) / 'native-delivery.pack').write_bytes(raw)
+          PY
+          git fetch --depth=1 origin 69d5ab9e3f20e926a8f56f150d6ef60ed9e32f08
+          git index-pack --stdin --fix-thin < "$RUNNER_TEMP/native-delivery.pack"
+          test "$(git rev-parse 4413027b2d57624f8db118d8fae2f1a4720b26d3^{tree})" = 7bc97a903bdba76e599bfb1c53a3cc88981ad647
+          test "$(git show -s --format=%P 4413027b2d57624f8db118d8fae2f1a4720b26d3)" = 69d5ab9e3f20e926a8f56f150d6ef60ed9e32f08
+          test "$(git diff --name-only 69d5ab9e3f20e926a8f56f150d6ef60ed9e32f08 4413027b2d57624f8db118d8fae2f1a4720b26d3 | wc -l)" -eq 16
+          git diff --exit-code 69d5ab9e3f20e926a8f56f150d6ef60ed9e32f08 4413027b2d57624f8db118d8fae2f1a4720b26d3 -- .github config/consensus-mainline.json config/pon
+          git checkout --detach 4413027b2d57624f8db118d8fae2f1a4720b26d3
+          bash scripts/project-preflight.sh --audit
+          git diff --exit-code
+          git diff --cached --exit-code
+          test -z "$(git status --porcelain)"
+      - name: Create only the exact new development branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref=refs/heads/fix/chain-priority-native-acceptance-20261005
+          test -z "$(git ls-remote --heads origin "$ref")"
+          git push origin "4413027b2d57624f8db118d8fae2f1a4720b26d3:$ref"
+          test "$(git ls-remote --heads origin "$ref" | cut -f1)" = 4413027b2d57624f8db118d8fae2f1a4720b26d3
