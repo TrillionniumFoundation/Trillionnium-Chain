@@ -157,18 +157,36 @@ fn phase(
     producer: &mut Node,
     records: Arc<Mutex<Vec<Value>>>,
     epoch: Instant,
+    from_zero: bool,
+    path: &Path,
 ) -> (Node, Value) {
     let settings = node.settings().clone();
     let context = node.pool_status_snapshot().unwrap().context;
     assert_eq!(node.active().unwrap().0, producer.active().unwrap().0);
-    let (forged_packet, false_transcript_fixture) = false_transcript(producer, number);
+    let (forged_packet, false_transcript_fixture) = if from_zero {
+        let (packet, observation) = from_zero_fixture(producer, number);
+        // Retain all misses, including complete exhaustion, before a failing gate.
+        fs::write(
+            path.join(format!("from-zero-search-{number}.json")),
+            serde_json::to_vec_pretty(&observation).unwrap(),
+        )
+        .unwrap();
+        (
+            packet.expect("retained from-zero search exhausted"),
+            observation,
+        )
+    } else {
+        false_transcript(producer, number)
+    };
     let owner = Arc::new(Mutex::new(node));
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let address = listener.local_addr().unwrap();
     let stop = Arc::new(AtomicBool::new(false));
     let (shared, signal) = (owner.clone(), stop.clone());
+    let observer = public_v3::PublicRequestObserver::new(256).unwrap();
+    let capture = observer.clone();
     let worker = thread::spawn(move || {
-        public_v3::serve_public_protected_v3(
+        public_v3::serve_public_protected_v3_with_request_observer(
             listener,
             shared,
             Duration::from_secs(30),
@@ -178,6 +196,8 @@ fn phase(
                 PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
             )
             .unwrap(),
+            Arc::new(Mutex::new(public_v3::PublicMetrics::default())),
+            capture,
         )
         .unwrap()
     });
@@ -231,6 +251,7 @@ fn phase(
     let workers = [spawn(0), spawn(1), spawn(2), spawn(3)];
     barrier.wait();
     let mut mutations_ok = true;
+    let mut producer_costs = Vec::new();
     for offset in 0..2 {
         let nonce = number * 2 + offset + 1;
         let tx = transfer(&settings, nonce);
@@ -243,6 +264,7 @@ fn phase(
                 transactions: vec![hex::encode(&tx)],
             },
         );
+        let producer_started = Instant::now();
         let packet = producer
             .mine(
                 vec![tx],
@@ -250,6 +272,7 @@ fn phase(
                 ingress::now().unwrap(),
             )
             .unwrap();
+        producer_costs.push(json!({"height":packet.header.height,"header":hex::encode(packet.header.encode()),"nonce":packet.header.nonce,"whole_mine_ns":ns(producer_started),"scope":"actual Node.mine including preparation, every search miss, local admission and activation; not isolated W1 or an optimal producer"}));
         mutations_ok &= client.call(
             "honest_mutation",
             73,
@@ -259,6 +282,11 @@ fn phase(
         );
         mutations_ok &= client.call("honest_mutation", 73, Request::Head);
     }
+    fs::write(
+        path.join(format!("producer-costs-{number}.json")),
+        serde_json::to_vec_pretty(&producer_costs).unwrap(),
+    )
+    .unwrap();
     for thread in workers {
         thread.join().unwrap();
     }
@@ -278,6 +306,14 @@ fn phase(
     let ended_ns = ns(epoch);
     stop.store(true, Ordering::Release);
     let metrics = worker.join().unwrap();
+    let observations = observer.snapshot();
+    // Save the original observations, including incomplete/unknown ones, first.
+    fs::write(
+        path.join(format!("server-observation-{number}.json")),
+        serde_json::to_vec_pretty(&observations).unwrap(),
+    )
+    .unwrap();
+    let capture_ok = check_from_zero_observations(&observations, &metrics);
     let node = Arc::try_unwrap(owner).ok().unwrap().into_inner().unwrap();
     let owner_state = snapshot(&node);
     let producer_state = snapshot(producer);
@@ -307,12 +343,22 @@ fn phase(
             r["status"] == "refused" && r["response"]["value"]["error"] == "WORK:Transcript"
         })
         .count();
+    let mixed_overlap = rows.iter().any(|probe| {
+        probe["phase"] == number
+            && probe["lane"] == "honest_probe"
+            && false_rows.iter().any(|load| {
+                probe["started_ns"].as_u64().unwrap() < load["ended_ns"].as_u64().unwrap()
+                    && load["started_ns"].as_u64().unwrap() < probe["ended_ns"].as_u64().unwrap()
+            })
+    });
     let false_transcript_load_refused = false_rows.iter().all(|r| r["status"] != "ok");
     let full_work_observed = false_transcript_rejections > 0
         && metrics.work_started >= 2 + false_transcript_rejections as u64
         && metrics.work_failed >= false_transcript_rejections as u64
         && metrics.work_finished == metrics.work_started;
     let pass = mutations_ok
+        && mixed_overlap
+        && capture_ok
         && probe_successes > 0
         && max_gap <= MAX_GAP_NS
         && injected_fault_refused
@@ -326,7 +372,7 @@ fn phase(
         json!({"phase":number,"started_ns":started_ns,"ended_ns":ended_ns,"honest_probe_successes":probe_successes,"honest_probe_max_gap_ns":max_gap,"mutations_ok":mutations_ok,"injected_fault_refused":injected_fault_refused,"invalid_paid_requests_refused":all_invalid_refused,"false_transcript_load_refused":false_transcript_load_refused,"false_transcript_rejections":false_transcript_rejections,"full_work_observed":full_work_observed,"false_transcript_fixture":false_transcript_fixture,"byte_equal_producer_state":byte_equal_state,"owner":owner_state,"producer":producer_state,"server_metrics":metrics,"finite_target_met":pass}),
     )
 }
-fn campaign(path: &Path) -> Value {
+fn campaign(path: &Path, from_zero: bool) -> Value {
     let settings = Settings::development(Some(ingress::now().unwrap() - 100)).unwrap();
     let receiver = path.join("receiver");
     let mut node = Node::open(&receiver, settings.clone(), 2).unwrap();
@@ -342,14 +388,30 @@ fn campaign(path: &Path) -> Value {
     let mut producer = Node::open(&path.join("producer"), settings.clone(), 2).unwrap();
     let epoch = Instant::now();
     let records = Arc::new(Mutex::new(Vec::new()));
-    let (node, first) = phase(0, node, &mut producer, records.clone(), epoch);
+    let (node, first) = phase(
+        0,
+        node,
+        &mut producer,
+        records.clone(),
+        epoch,
+        from_zero,
+        path,
+    );
     let before = snapshot(&node);
     drop(node);
     let reopened = Node::open(&receiver, settings.clone(), 2).unwrap();
     let after = snapshot(&reopened);
     let restart_equal =
         before["tip"] == after["tip"] && before["state_root"] == after["state_root"];
-    let (node, second) = phase(1, reopened, &mut producer, records.clone(), epoch);
+    let (node, second) = phase(
+        1,
+        reopened,
+        &mut producer,
+        records.clone(),
+        epoch,
+        from_zero,
+        path,
+    );
     drop(node);
     drop(producer);
     let mut attempts = Arc::try_unwrap(records).ok().unwrap().into_inner().unwrap();
@@ -374,7 +436,12 @@ fn campaign(path: &Path) -> Value {
         && max_gap_including_restart <= MAX_GAP_NS
         && first["finite_target_met"] == true
         && second["finite_target_met"] == true;
-    json!({"schema":"public-v3-local-mixed-service-v2","transport_profile":public_v3::PROFILE,"policy_id":hex::encode(PublicPolicy::new(8,Duration::from_secs(2)).unwrap().id()),"bits":8,"ttl_ms":2000,"network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis()),"genesis_time":settings.genesis_time(),"call_deadline_ms":MAX_CALL_MS,"phase_count":2,"probes_per_phase":PROBES,"paid_attempts_per_phase":ATTACKS,"unpaid_attempts_per_phase":ATTACKS,"false_transcript_attempts_per_phase":FALSE_TRANSCRIPTS,"honest_probe_gap_target_ns":MAX_GAP_NS,"honest_probe_max_gap_including_restart_ns":max_gap_including_restart,"gap_rule":"phase boundaries and consecutive successful honest Head completions; includes failed attempts and idle scheduling; finite observation only","scope":"one process, local TCP, public development identities; paid false-transcript W1 and malformed-packet load with unpaid prefixes; not a public fairness or fastest-attacker bound","restart":{"kind":"same-process-owner-and-server-restart","before":before,"after":after,"same_active_state":restart_equal},"phases":[first,second],"attempts":attempts,"finite_target_met":met,"public_network_ready":false,"independent_accepted":false,"resource_fairness_qualified":false,"work_profile_qualified":false,"physical_power_loss":false,"production_activation":false})
+    let mut report = json!({"schema":"public-v3-local-mixed-service-v2","transport_profile":public_v3::PROFILE,"policy_id":hex::encode(PublicPolicy::new(8,Duration::from_secs(2)).unwrap().id()),"bits":8,"ttl_ms":2000,"network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis()),"genesis_time":settings.genesis_time(),"call_deadline_ms":MAX_CALL_MS,"phase_count":2,"probes_per_phase":PROBES,"paid_attempts_per_phase":ATTACKS,"unpaid_attempts_per_phase":ATTACKS,"false_transcript_attempts_per_phase":FALSE_TRANSCRIPTS,"honest_probe_gap_target_ns":MAX_GAP_NS,"honest_probe_max_gap_including_restart_ns":max_gap_including_restart,"gap_rule":"phase boundaries and consecutive successful honest Head completions; includes failed attempts and idle scheduling; finite observation only","scope":"one process, local TCP, public development identities; paid false-transcript W1 and malformed-packet load with unpaid prefixes; not a public fairness or fastest-attacker bound","restart":{"kind":"same-process-owner-and-server-restart","before":before,"after":after,"same_active_state":restart_equal},"phases":[first,second],"attempts":attempts,"finite_target_met":met,"public_network_ready":false,"independent_accepted":false,"resource_fairness_qualified":false,"work_profile_qualified":false,"physical_power_loss":false,"production_activation":false});
+    if from_zero {
+        report["schema"] = json!("public-v3-local-from-zero-service-v1");
+        report["scope"] = json!("one process, local TCP, fresh untrusted W1 bytes without proof acquisition; shared existing service budget with honest calls; no WAN or hardness qualification");
+    }
+    report
 }
 #[test]
 fn public_v3_mixed_calls_reopen_with_complete_failure_denominators() {
@@ -386,7 +453,13 @@ fn public_v3_mixed_calls_reopen_with_complete_failure_denominators() {
     } else {
         temporary.path().to_path_buf()
     };
-    let report = campaign(&path);
+    let controls = from_zero_search_controls();
+    fs::write(
+        path.join("from-zero-search-controls.json"),
+        serde_json::to_vec_pretty(&controls).unwrap(),
+    )
+    .unwrap();
+    let report = campaign(&path, false);
     fs::write(
         path.join("report.json"),
         serde_json::to_vec_pretty(&report).unwrap(),
@@ -396,8 +469,182 @@ fn public_v3_mixed_calls_reopen_with_complete_failure_denominators() {
         "{}",
         json!({"schema":report["schema"],"attempts":report["attempts"].as_array().unwrap().len(),"finite_target_met":report["finite_target_met"],"public_network_ready":false})
     );
+    let from_zero_path = path.join("from-zero");
+    fs::create_dir(&from_zero_path).unwrap();
+    let from_zero = campaign(&from_zero_path, true);
+    fs::write(
+        from_zero_path.join("report.json"),
+        serde_json::to_vec_pretty(&from_zero).unwrap(),
+    )
+    .unwrap();
+    println!(
+        "from-zero shared-budget: {}",
+        from_zero["finite_target_met"]
+    );
     assert_eq!(
         report["finite_target_met"], true,
-        "see retained request and phase outcomes"
+        "see retained reference-derived request and phase outcomes"
     );
+    assert_eq!(
+        from_zero["finite_target_met"], true,
+        "see retained from-zero request, CPU and phase outcomes"
+    );
+}
+
+// This constructor has no producer, product cache or valid-proof input. The
+// candidate roots and zero C are untrusted claims, not execution predictions.
+fn from_zero_search(
+    header: &trnm_protocol::pon_wire::Header,
+    prefix: &[u8],
+    budget: u64,
+) -> (Option<String>, Value) {
+    let started = Instant::now();
+    assert!(budget <= 4096);
+    assert_eq!(prefix.len(), pon_work::PROOF_BYTES - 32);
+    let challenge = header.challenge();
+    let mut trials = Vec::new();
+    let mut winner = None;
+    for nonce in 0..budget {
+        let trace = hash(
+            b"public-v3-from-zero-trace-v1",
+            &[&challenge, &nonce.to_le_bytes()],
+        );
+        let ticket = hash(b"ticket", &[&challenge, &trace]);
+        let accepted = ticket <= header.target;
+        trials.push(json!({"nonce":nonce,"trace":hex::encode(trace),"ticket":hex::encode(ticket),"ticket_accepted":accepted}));
+        if accepted {
+            winner = Some(trace);
+            break;
+        }
+    }
+    let search_ns = ns(started);
+    let encode_start = Instant::now();
+    let packet = winner.map(|trace| {
+        let mut proof = prefix.to_vec();
+        proof.extend_from_slice(&trace);
+        let packet = trnm_pon_node::Packet {
+            header: header.clone(),
+            transactions: vec![],
+            proof,
+        };
+        hex::encode(packet.encode().unwrap())
+    });
+    let encoding_ns = ns(encode_start);
+    let total_ns = ns(started);
+    let observation = json!({"header":hex::encode(header.encode()),"prefix":hex::encode(prefix),"attempt_budget":budget,"trials":trials,"packet":packet,"status":if winner.is_some(){"ticket-pass"}else{"exhausted"},"search_ns":search_ns,"encoding_ns":encoding_ns,"total_ns":total_ns,"valid_proofs_acquired":0,"prepared_tasks_created":0,"scope":"untrusted bytes and hash-only search; not a valid proof or a cheapest-adversary bound"});
+    (packet, observation)
+}
+
+fn from_zero_fixture(producer: &Node, phase: u64) -> (Option<String>, Value) {
+    let started = Instant::now();
+    let parent = producer.active().unwrap().0;
+    let settings = producer.settings();
+    let (a, b) = trnm_pon_node::maintenance();
+    let header = trnm_protocol::pon_wire::Header {
+        network: settings.network(),
+        parameters: settings.parameters(),
+        parent,
+        height: producer.parent_height(parent).unwrap() + 1,
+        timestamp: settings.genesis_time() + phase * 2 + 2,
+        target: producer.expected_target(parent).unwrap(),
+        miner: development_public(0).unwrap(),
+        transactions: trnm_pon_node::sequence_root("transactions", &[]),
+        state: [0; 32],
+        receipts: trnm_pon_node::sequence_root("receipts", &[]),
+        work_task: pon_work::task_id(&a, &b).unwrap(),
+        nonce: 0,
+    };
+    let mut prefix = Vec::with_capacity(pon_work::PROOF_BYTES - 32);
+    prefix.extend_from_slice(b"PNW1");
+    for matrix in [&a, &b] {
+        for value in matrix {
+            prefix.extend_from_slice(&value.to_le_bytes());
+        }
+    }
+    prefix.resize(pon_work::PROOF_BYTES - 32, 0);
+    let preparation_ns = ns(started);
+    let (packet, mut observation) = from_zero_search(&header, &prefix, 4096);
+    observation["preparation_ns"] = json!(preparation_ns);
+    observation["construction_total_ns"] = json!(ns(started));
+    (packet, observation)
+}
+
+fn check_from_zero_observations(
+    observations: &public_v3::PublicRequestObservationSnapshot,
+    metrics: &public_v3::PublicMetrics,
+) -> bool {
+    // The observer is finite and already used by the production test surface.
+    // Keep unknown clocks as None; never turn them into zero-cost evidence.
+    observations.records_not_retained == 0
+        && observations.measurement_failures == 0
+        && !observations.counter_overflow
+        && observations.accepted_connections_seen == observations.records.len() as u64
+        && observations.records.iter().all(|row| {
+            row.complete
+                && row.physical_network_bytes.is_none()
+                && (!row.full_work_started
+                    || (row.full_work_accepted.is_some()
+                        && (!cfg!(target_os = "linux")
+                            || row.full_work_thread_cpu_ns.is_some_and(|ns| ns > 0))))
+        })
+        && observations
+            .records
+            .iter()
+            .filter(|row| row.full_work_started)
+            .count() as u64
+            == metrics.work_started
+        && observations
+            .records
+            .iter()
+            .filter(|row| row.full_work_accepted == Some(false))
+            .count() as u64
+            == metrics.work_failed
+        && observations
+            .records
+            .iter()
+            .filter(|row| row.full_work_accepted == Some(true))
+            .count()
+            == 2
+}
+
+fn from_zero_search_controls() -> Value {
+    let (a, b) = trnm_pon_node::maintenance();
+    let mut prefix = b"PNW1".to_vec();
+    for matrix in [&a, &b] {
+        for value in matrix {
+            prefix.extend_from_slice(&value.to_le_bytes());
+        }
+    }
+    prefix.resize(pon_work::PROOF_BYTES - 32, 0);
+    let mut target = [0; 32];
+    target[31] = 1;
+    let header = trnm_protocol::pon_wire::Header {
+        network: [1; 32],
+        parameters: [2; 32],
+        parent: [3; 32],
+        height: 1,
+        timestamp: 1_800_000_000,
+        target,
+        miner: [4; 32],
+        transactions: trnm_pon_node::sequence_root("transactions", &[]),
+        state: [0; 32],
+        receipts: trnm_pon_node::sequence_root("receipts", &[]),
+        work_task: pon_work::task_id(&a, &b).unwrap(),
+        nonce: 0,
+    };
+    let (none, empty) = from_zero_search(&header, &prefix, 0);
+    assert!(none.is_none());
+    assert_eq!(empty["trials"].as_array().unwrap().len(), 0);
+    assert_eq!(empty["status"], "exhausted");
+    let (none, misses) = from_zero_search(&header, &prefix, 4);
+    assert!(none.is_none());
+    assert_eq!(misses["trials"].as_array().unwrap().len(), 4);
+    assert_eq!(misses["status"], "exhausted");
+    assert!(misses["trials"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .all(|trial| trial["ticket_accepted"] == false));
+    assert_eq!(misses["prefix"], hex::encode(&prefix));
+    json!({"scope":"search accounting controls, not admitted service packets","zero_budget":empty,"zero_success":misses})
 }
