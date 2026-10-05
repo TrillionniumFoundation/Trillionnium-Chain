@@ -22,11 +22,19 @@ requires a new receipt directory; a prior corpus or failed log is never overwrit
   QualifiedWorkTask and SignedQualifiedWorkTask decoders. Every accepted object
   must encode to the exact original bytes, including canonical length and ordering.
 - `work_certificate` compares the production, independent scalar and explicit
-  limb work verifiers
-  on mutated certificates, including successful product/identity equality and
-  canonical rejection categories. It binds the expected task to supplied matrices
-  where possible so mutations can reach transcript/product verification. This
-  is a differential regression, not a proof that the work primitive is hard.
+  limb work verifiers on raw mutated certificates. It still binds the expected
+  task to supplied matrices where possible. Every input also supplies at most
+  four control bytes to a separate mutation of the retained valid certificate:
+  exact-ticket acceptance, predecessor-target rejection, task/challenge mismatch,
+  canonical-field product mutation, transcript mutation, arbitrary checkpoint
+  cancellation and cancellation immediately before constructing `VerifiedWork`.
+  This second arm reaches late rejection without discovering a new transcript
+  preimage; it never replaces raw decoding or performs producer work. All three
+  kernels must agree on the complete progress sequence, typed cancellation index,
+  relation error and successful challenge/task/ticket/product. The shared helper
+  is also exercised by `trnm-pon-node/tests/work_fuzz_semantics.rs` in the ordinary
+  native test lane and is included in the fuzz source receipt. Fixed regressions
+  do not establish mutation execution, and finite fuzzing does not prove hardness.
 
 - `authenticated_state` constructs bounded synthetic complete states and in-memory
   account archives from mutation descriptors. A separate bottom-up sparse-root

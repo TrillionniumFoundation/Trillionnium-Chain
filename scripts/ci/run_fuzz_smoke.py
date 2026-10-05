@@ -99,6 +99,7 @@ def main() -> int:
     finally:
         finish(output, report, ['tests/fuzz/Cargo.toml', 'tests/fuzz/Cargo.lock',
                               'scripts/ci/tool-versions.env', 'scripts/ci/run_fuzz_smoke.py',
+                              'tests/fuzz/fuzz_targets/support/work_certificate.rs',
                               *[str(path.relative_to(ROOT)) for path in sorted((ROOT / STATE_SEEDS).glob('*'))
                                 if path.is_file()],
                               *['tests/fuzz/fuzz_targets/' + name + '.rs' for name in TARGETS]])

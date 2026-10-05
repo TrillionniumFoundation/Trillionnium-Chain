@@ -167,6 +167,36 @@ fn capacity_with_account_access(
 ) -> Result<Capacity> {
     capacity_with_sources(state, height, cfg, account_access, None)
 }
+/// Maximum inspected rows between capacity-scan cancellation checks. This is
+/// a row bound, not a wall-clock bound for state loading or root construction.
+pub const CAPACITY_PROGRESS_INTERVAL: usize = 256;
+
+/// A cancelled observation says nothing about the validity of its input state.
+/// In particular, a caller's cancellation payload never acquires local storage
+/// corruption authority by sharing the text of a state error.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CapacityScanError<E> {
+    State(&'static str),
+    Cancelled(E),
+}
+impl<E> From<&'static str> for CapacityScanError<E> {
+    fn from(error: &'static str) -> Self {
+        Self::State(error)
+    }
+}
+
+/// The same complete liability calculation as `capacity`, with operation-local
+/// progress checks before each batch and before publishing a complete result.
+/// No partial capacity, resumable token or validation authority is returned.
+pub fn capacity_with_progress<E>(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    progress: &mut dyn FnMut() -> std::result::Result<(), E>,
+) -> std::result::Result<Capacity, CapacityScanError<E>> {
+    scan_capacity_with_sources(state, height, cfg, None, None, progress)
+}
+
 fn capacity_with_sources(
     state: &State,
     height: u64,
@@ -174,23 +204,43 @@ fn capacity_with_sources(
     account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
     monetary: Option<&State>,
 ) -> Result<Capacity> {
+    let mut progress = || Ok::<(), std::convert::Infallible>(());
+    match scan_capacity_with_sources(state, height, cfg, account_access, monetary, &mut progress) {
+        Ok(capacity) => Ok(capacity),
+        Err(CapacityScanError::State(error)) => Err(error),
+        Err(CapacityScanError::Cancelled(impossible)) => match impossible {},
+    }
+}
+
+fn scan_capacity_with_sources<E>(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+    monetary: Option<&State>,
+    progress: &mut dyn FnMut() -> std::result::Result<(), E>,
+) -> std::result::Result<Capacity, CapacityScanError<E>> {
     if !enabled(cfg) {
-        return Err("CONTINUITY_PROFILE");
+        return Err("CONTINUITY_PROFILE".into());
     }
     let maturity = cfg.params["reward_maturity_blocks"]
         .as_u64()
         .ok_or("CONFIG")?;
+    let evaluation_enabled = crate::public_evaluation::enabled(cfg);
     let mut recipients = BTreeSet::new();
     let mut reward_heights = BTreeSet::new();
     let mut archives = 0usize;
-    for (key, value) in monetary.unwrap_or(state) {
+    for (index, (key, value)) in monetary.unwrap_or(state).iter().enumerate() {
+        if index % CAPACITY_PROGRESS_INTERVAL == 0 {
+            progress().map_err(CapacityScanError::Cancelled)?;
+        }
         if key.starts_with("reward:") {
             let due = number(value, "maturity")?;
             if due <= height
                 || due > height.checked_add(maturity).ok_or("RANGE")?
                 || !reward_heights.insert(due)
             {
-                return Err("CONTINUITY_REWARD_QUEUE");
+                return Err("CONTINUITY_REWARD_QUEUE".into());
             }
             number(value, "amount")?;
             reserve_owner(state, value, &mut recipients, account_access)?;
@@ -201,7 +251,7 @@ fn capacity_with_sources(
             if number(value, "remaining")? > 0 {
                 reserve_owner(state, value, &mut recipients, account_access)?;
             }
-        } else if crate::public_evaluation::enabled(cfg) && key.starts_with("contribution:") {
+        } else if evaluation_enabled && key.starts_with("contribution:") {
             let candidate = key
                 .strip_prefix("contribution:")
                 .ok_or("CONTINUITY_STATE")?;
@@ -210,10 +260,16 @@ fn capacity_with_sources(
             }
         }
     }
-    if monetary.is_some() && crate::public_evaluation::enabled(cfg) {
+    if monetary.is_some() && evaluation_enabled {
         // Monetary certificates do not authenticate this separate cleanup /
         // future-archive relation. Its complete State reference remains explicit.
-        for key in state.keys().filter(|key| key.starts_with("contribution:")) {
+        for (index, key) in state.keys().enumerate() {
+            if index % CAPACITY_PROGRESS_INTERVAL == 0 {
+                progress().map_err(CapacityScanError::Cancelled)?;
+            }
+            if !key.starts_with("contribution:") {
+                continue;
+            }
             let candidate = key
                 .strip_prefix("contribution:")
                 .ok_or("CONTINUITY_STATE")?;
@@ -226,7 +282,7 @@ fn capacity_with_sources(
     // heights; no gaps or extra maturity rows can manufacture reserve headroom.
     let expected_rewards = height.min(maturity) as usize;
     if reward_heights.len() != expected_rewards {
-        return Err("CONTINUITY_REWARD_QUEUE");
+        return Err("CONTINUITY_REWARD_QUEUE".into());
     }
     for offset in 0..expected_rewards {
         let due = height
@@ -234,7 +290,7 @@ fn capacity_with_sources(
             .and_then(|n| n.checked_sub(offset as u64))
             .ok_or("RANGE")?;
         if !reward_heights.contains(&due) {
-            return Err("CONTINUITY_REWARD_QUEUE");
+            return Err("CONTINUITY_REWARD_QUEUE".into());
         }
     }
     let queue_reserve = (maturity as usize)
@@ -246,6 +302,7 @@ fn capacity_with_sources(
         .and_then(|n| n.checked_add(archives))
         .and_then(|n| n.checked_add(queue_reserve))
         .ok_or("RANGE")?;
+    progress().map_err(CapacityScanError::Cancelled)?;
     Ok(Capacity {
         actual_keys: state.len(),
         credit_account_reserve: recipients.len(),
