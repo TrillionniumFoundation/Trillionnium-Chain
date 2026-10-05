@@ -7,36 +7,32 @@ permissions:
 jobs:
   export:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ github.sha }}
+          ref: adb9a386e109cdd80942020a4fc479a9b52730bc
+          fetch-depth: 1
           persist-credentials: false
-      - name: Install exact isolated compiler
-        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Retain source and checksum-checked dependency inputs
+      - name: Export only the exact repository snapshot objects
         shell: bash
         run: |
           set -euo pipefail
-          out="$RUNNER_TEMP/trnm-native-workspace"
+          out="$RUNNER_TEMP/trnm-exact-source"
           mkdir -p "$out"
+          test "$(git rev-parse HEAD)" = adb9a386e109cdd80942020a4fc479a9b52730bc
+          test "$(git rev-list --count HEAD)" = 1
           git rev-parse HEAD > "$out/source-sha.txt"
           git rev-parse HEAD^{tree} > "$out/source-tree.txt"
-          rustc +1.95.0 -Vv > "$out/rustc.txt"
-          cargo +1.95.0 vendor --locked --versioned-dirs --manifest-path trillionnium/Cargo.toml "$RUNNER_TEMP/trnm-vendor" > "$out/vendor-config.toml"
-          tar -C "$RUNNER_TEMP" -czf "$out/vendor.tar.gz" trnm-vendor
-          tar --exclude=.git --exclude=evidence --exclude=target -czf "$out/source.tar.gz" .
-          toolchain="$(rustup run 1.95.0 rustc --print sysroot)"
-          tar -C "$toolchain" -czf "$out/toolchain.tar.gz" bin lib libexec
-          (cd "$out" && sha256sum ./*.tar.gz > SHA256SUMS)
+          git rev-list --objects HEAD | cut -d' ' -f1 | git pack-objects --stdout > "$out/source.pack"
+          (cd "$out" && sha256sum source.pack > SHA256SUMS)
           git diff --exit-code
           git diff --cached --exit-code
-      - name: Retain isolated inputs, not a test-pass claim
+      - name: Retain source objects, not configuration or credentials
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: native-workspace-${{ github.sha }}
-          path: ${{ runner.temp }}/trnm-native-workspace/
+          name: exact-source-adb9a386e109cdd80942020a4fc479a9b52730bc
+          path: ${{ runner.temp }}/trnm-exact-source/
           if-no-files-found: error
           compression-level: 0
           retention-days: 3
