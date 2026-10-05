@@ -452,13 +452,33 @@ fn verify_with_kernel<E>(
     if target == [0; 32] {
         return Err(WorkError::Target.into());
     }
-    let matrices: Vec<u32> = bytes[4..4 + 3 * CELLS * 4]
+    // Only A and B are arithmetic inputs. Keep the scalar reference's original
+    // three-matrix decoding; production and limb compare C directly with its
+    // fixed-width wire bytes after the entire original relation has succeeded.
+    let decoded_cells = match kernel {
+        VerificationKernel::ScalarReference => 3 * CELLS,
+        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => 2 * CELLS,
+    };
+    let matrices: Vec<u32> = bytes[4..4 + decoded_cells * 4]
         .chunks_exact(4)
         .map(|p| u32::from_le_bytes([p[0], p[1], p[2], p[3]]))
         .collect();
     let (a, tail) = matrices.split_at(CELLS);
     let (b, claimed) = tail.split_at(CELLS);
-    validate(claimed)?;
+    let claimed_bytes = &bytes[4 + 2 * CELLS * 4..4 + 3 * CELLS * 4];
+    match kernel {
+        VerificationKernel::ScalarReference => validate(claimed)?,
+        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => {
+            // C's field check still precedes A/B, task, ticket and callbacks.
+            // No unaligned cast, host-endian assumption or reduced field value.
+            if claimed_bytes
+                .chunks_exact(4)
+                .any(|p| u128::from(u32::from_le_bytes([p[0], p[1], p[2], p[3]])) >= Q)
+            {
+                return Err(WorkError::Field.into());
+            }
+        }
+    }
     let actual_task = match kernel {
         // Retain the scalar reference's independent field re-encoding.
         VerificationKernel::ScalarReference => task_id(a, b)?,
@@ -512,7 +532,14 @@ fn verify_with_kernel<E>(
         }
     }
     .map_err(VerificationError::Cancelled)?;
-    if product != claimed {
+    let matches_claim = match kernel {
+        VerificationKernel::ScalarReference => product == claimed,
+        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => product
+            .iter()
+            .flat_map(|word| word.to_le_bytes())
+            .eq(claimed_bytes.iter().copied()),
+    };
+    if !matches_claim {
         return Err(WorkError::Product.into());
     }
     progress(VerificationProgress::BeforeVerifiedWork).map_err(VerificationError::Cancelled)?;
@@ -851,6 +878,187 @@ mod tests {
         result: Result<VerifiedWork, WorkError>,
     ) -> Result<(Hash, Hash, Hash, Vec<u32>), WorkError> {
         result.map(|work| (work.challenge(), work.task(), work.ticket(), work.product))
+    }
+
+    #[test]
+    fn borrowed_product_bytes_reject_first_middle_last_and_noncanonical_cells() {
+        let (a, b) = matrices();
+        let challenge = [61; 32];
+        let task = task_id(&a, &b).unwrap();
+        let proof = prove(challenge, &a, &b).unwrap();
+        let kernels = [
+            VerificationKernel::ScalarReference,
+            VerificationKernel::Transposed,
+            VerificationKernel::LimbTranscript,
+        ];
+        for cell in [0, CELLS / 2, CELLS - 1] {
+            let offset = 4 + 2 * CELLS * 4 + cell * 4;
+            let old = u32::from_le_bytes(proof[offset..offset + 4].try_into().unwrap());
+            for (value, expected) in [
+                (((u128::from(old) + 1) % Q) as u32, WorkError::Product),
+                (Q as u32, WorkError::Field),
+                (u32::MAX, WorkError::Field),
+            ] {
+                let mut changed = proof.clone();
+                changed[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
+                let mut reference_points = None;
+                for kernel in kernels {
+                    let mut points = Vec::new();
+                    PRODUCT_RECONSTRUCTIONS.with(|count| count.set(0));
+                    let result = verify_with_kernel(
+                        challenge,
+                        task,
+                        [255; 32],
+                        &changed,
+                        &mut |point| {
+                            points.push(point);
+                            Ok::<(), &str>(())
+                        },
+                        kernel,
+                    );
+                    assert_eq!(result.unwrap_err(), VerificationError::Relation(expected));
+                    PRODUCT_RECONSTRUCTIONS.with(|count| {
+                        assert_eq!(count.get(), usize::from(expected == WorkError::Product));
+                    });
+                    if let Some(reference) = &reference_points {
+                        assert_eq!(&points, reference);
+                    } else {
+                        reference_points = Some(points);
+                    }
+                }
+            }
+        }
+        let expected = checked_value(verify_reference(challenge, task, [255; 32], &proof));
+        assert_eq!(
+            checked_value(verify(challenge, task, [255; 32], &proof)),
+            expected
+        );
+        assert_eq!(
+            checked_value(verify_limb(challenge, task, [255; 32], &proof)),
+            expected
+        );
+    }
+
+    #[test]
+    fn borrowed_product_bytes_keep_rejection_before_cancellation_and_retry() {
+        let (a, b) = matrices();
+        let challenge = [62; 32];
+        let task = task_id(&a, &b).unwrap();
+        let proof = prove(challenge, &a, &b).unwrap();
+        let mut invalid = proof.clone();
+        invalid[4 + 3 * CELLS * 4 - 4..4 + 3 * CELLS * 4]
+            .copy_from_slice(&(Q as u32).to_le_bytes());
+        for kernel in [
+            VerificationKernel::ScalarReference,
+            VerificationKernel::Transposed,
+            VerificationKernel::LimbTranscript,
+        ] {
+            let mut calls = 0;
+            let result = verify_with_kernel(
+                challenge,
+                [0; 32],
+                [255; 32],
+                &invalid,
+                &mut |_| {
+                    calls += 1;
+                    Err("cancel")
+                },
+                kernel,
+            );
+            assert_eq!(
+                result.unwrap_err(),
+                VerificationError::Relation(WorkError::Field)
+            );
+            assert_eq!(calls, 0);
+            let result = verify_with_kernel(
+                challenge,
+                task,
+                [255; 32],
+                &proof,
+                &mut |point| {
+                    if point == VerificationProgress::BeforeVerifiedWork {
+                        Err("final cancellation")
+                    } else {
+                        Ok(())
+                    }
+                },
+                kernel,
+            );
+            assert_eq!(
+                result.unwrap_err(),
+                VerificationError::Cancelled("final cancellation")
+            );
+            let retried = verify_with_kernel(
+                challenge,
+                task,
+                [255; 32],
+                &proof,
+                &mut no_cancellation,
+                kernel,
+            )
+            .unwrap();
+            assert_eq!(retried.product(), mul(&a, &b, N, N, N));
+        }
+    }
+
+    #[test]
+    fn untrusted_trace_ticket_search_needs_no_producer_and_never_gains_verified_work() {
+        // This is a relation/admission control, not a timing or network-load
+        // measurement. Neither a prepared producer nor a valid proof is used.
+        let (a, b) = matrices();
+        let task = task_id(&a, &b).unwrap();
+        let challenge = [63; 32];
+        let mut target = [255; 32];
+        target[0] = 7;
+        let mut proof = b"PNW1".to_vec();
+        proof.extend(field_bytes(&a));
+        proof.extend(field_bytes(&b));
+        proof.resize(PROOF_BYTES, 0); // arbitrary canonical C, then a claimed trace
+        let mut selected = None;
+        for trace_nonce in 0u64..4096 {
+            let trace = hash(b"untrusted-trace-control-v1", &[&trace_nonce.to_le_bytes()]);
+            let ticket = hash(b"ticket", &[&challenge, &trace]);
+            if ticket <= target {
+                selected = Some((trace_nonce, trace, ticket));
+                break;
+            }
+        }
+        let (trace_nonce, trace, ticket) = selected.expect("deterministic bounded control");
+        // Recheck every target miss instead of concealing the search prefix.
+        for nonce in 0..trace_nonce {
+            let missed = hash(b"untrusted-trace-control-v1", &[&nonce.to_le_bytes()]);
+            assert!(hash(b"ticket", &[&challenge, &missed]) > target);
+        }
+        assert!(ticket <= target);
+        proof[PROOF_BYTES - 32..].copy_from_slice(&trace);
+        for kernel in [
+            VerificationKernel::ScalarReference,
+            VerificationKernel::Transposed,
+            VerificationKernel::LimbTranscript,
+        ] {
+            PRODUCT_RECONSTRUCTIONS.with(|count| count.set(0));
+            let mut tiles = 0;
+            let result = verify_with_kernel(
+                challenge,
+                task,
+                target,
+                &proof,
+                &mut |point| {
+                    if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                        tiles += 1;
+                    }
+                    assert_ne!(point, VerificationProgress::BeforeVerifiedWork);
+                    Ok::<(), &str>(())
+                },
+                kernel,
+            );
+            assert_eq!(
+                result.unwrap_err(),
+                VerificationError::Relation(WorkError::Transcript)
+            );
+            assert_eq!(tiles, (N / R).pow(3));
+            PRODUCT_RECONSTRUCTIONS.with(|count| assert_eq!(count.get(), 0));
+        }
     }
 
     #[test]
