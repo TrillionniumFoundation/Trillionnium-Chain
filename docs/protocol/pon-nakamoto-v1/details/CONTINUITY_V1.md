@@ -113,13 +113,33 @@ establish signature, nonce, funding, task, model, work, value-size or other admi
 conditions. Capacity observation performs no mining and issues no admission token.
 
 The read path verifies actual canonical SQLite KV bytes and their committed root,
-then performs the capacity scan and counts existing account keys. KV reading and
-account counting check cancellation at most256 rows apart. The existing full root
-and capacity arithmetic remain bounded nonpreemptive stages; this is not an O(1)
-query or a wall-clock service bound. Before returning, the observer rechecks the
-active tip, generation and physical slot. Cancellation, corrupt state or a changed
-view returns an error without a partial report. A returned report can become stale
-immediately after return, and grants no authority over a later branch generation.
+then performs the capacity scan and counts existing account keys. KV reading, the
+observer's explicit liability scan and account counting check cancellation at most
+256 inspected rows apart. The existing root/reconstruction and default readiness
+validation stages remain nonpreemptive; this is not an O(1) query or an end-to-end
+wall-clock service bound. Before returning, the observer rechecks the active tip,
+generation and physical slot. Cancellation, corrupt state or a changed view returns
+an error without a partial report. A returned report can become stale immediately
+after return, and grants no authority over a later branch generation.
+
+The observer calls `continuity_v1::capacity_with_progress`, whose shared scan core
+also serves the unchanged `capacity` and admission interfaces. Progress is checked
+before each batch and before returning the complete calculation. A secondary scan
+inspects all rows before filtering contribution keys, so unrelated keys cannot hide
+an unbounded gap between scan callbacks. The scan remains linear in supplied rows
+and retains its complete recipient set; it is not a persistent incremental index.
+
+`CapacityScanError::State` and `CapacityScanError::Cancelled` carry distinct origins.
+Only a state failure from the already checked local active state gains local-integrity
+authority at the Node boundary. A callback's error retains its original identity,
+source, diagnostic and stop policy even when its text resembles a storage or capacity
+failure. Cancellation returns neither a partial observation nor a resumable token.
+The [scan regressions](../../../../trillionnium/crates/trnm-mvcc-fee/tests/capacity_progress.rs)
+cover batch/full-key boundaries, every selected interruption cut, shared zero-reward
+and archive reservations, unchanged state, malformed rows and old-profile rejection.
+Node-local tests separately exercise error-origin and source preservation. These are
+test definitions, not execution receipts; the exact committed source still requires
+native tests, Clippy, formatting and the retained full-chain boundary/recovery suites.
 
 ### Remaining permanent-account boundary and upgrade acceptance
 
