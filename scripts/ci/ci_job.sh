@@ -38,6 +38,7 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_invariants.py
     cargo fetch --locked --manifest-path trillionnium/Cargo.toml
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
+    python3 scripts/ci/run_from_zero_service.py
     python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v
     python3 scripts/ci/run_account_archive_conformance.py
     python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v
@@ -118,6 +119,7 @@ case "${1:?required job}" in
       export TRNM_ZERO_PAIRED_PREFIX_OUTPUT="$trnm_model_receipt_root/zero-paired-prefix"
       test ! -e "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
       test ! -L "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
+      export TRNM_PUBLIC_V3_FROM_ZERO_DIR="$trnm_model_receipt_root/public-v3-from-zero"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
       unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
