@@ -1720,6 +1720,13 @@ impl Node {
     /// Check actual data after the last transactional write. A post-COMMIT
     /// observation cannot repair a suppressed write or a trigger-corrupted slot.
     fn check_active_before_commit(&self) -> Result<()> {
+        self.check_active_before_commit_with_progress(&mut || Ok(()))
+    }
+    fn check_active_before_commit_with_progress(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
+        progress()?;
         self.namespace()?;
         self.storage_context()?;
         let count: u64 = self
@@ -1728,17 +1735,12 @@ impl Node {
         ensure(count == 1, "GENERATION").map_err(Error::local_integrity)?;
         let selected = self.active()?;
         let slot = self.slot()?;
-        let state = self.slot_state(slot)?;
-        self.check_persisted_state(selected.0, &state, &mut || Ok(()))?;
+        let state = self.slot_state_with_progress(slot, progress)?;
+        self.check_persisted_state(selected.0, &state, progress)?;
         crate::ancestry_index::validate_tip(&self.db, self.ancestry_context(), selected.0)
             .map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_history(
-                &self.db,
-                &self.settings,
-                selected.0,
-                &mut || Ok(()),
-            )?;
+            native_authenticated::verify_history(&self.db, &self.settings, selected.0, progress)?;
         }
         ensure(
             self.active()? == selected && self.slot()? == slot,
@@ -2256,11 +2258,30 @@ impl Node {
         if self.state_backend == StateBackend::AuthenticatedV1 {
             return native_authenticated::deltas(&self.db, id);
         }
+        self.delta_rows_with_progress(id, &mut || Ok(()))
+    }
+    fn delta_rows_with_progress(
+        &self,
+        id: Hash,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Vec<Delta>> {
+        if self.state_backend == StateBackend::AuthenticatedV1 {
+            return native_authenticated::deltas_with_progress(&self.db, id, progress);
+        }
+        progress()?;
         let mut stmt = self
             .db
             .prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
         let rows = stmt.query_map([id.as_slice()], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?;
-        Ok(rows.collect::<std::result::Result<Vec<_>, _>>()?)
+        let mut out = Vec::new();
+        for row in rows {
+            out.push(row?);
+            if out.len().is_multiple_of(256) {
+                progress()?;
+            }
+        }
+        progress()?;
+        Ok(out)
     }
     pub fn state_at(&self, tip: Hash) -> Result<State> {
         self.state_at_with_progress(tip, &mut || Ok(()))
@@ -2316,7 +2337,11 @@ impl Node {
             path.seek(SeekFrom::Start(i.checked_mul(32).ok_or("ANCESTRY_LIMIT")?))?;
             let mut id = [0; 32];
             path.read_exact(&mut id)?;
-            for (index, (key, before, after)) in self.delta_rows(id)?.into_iter().enumerate() {
+            for (index, (key, before, after)) in self
+                .delta_rows_with_progress(id, progress)?
+                .into_iter()
+                .enumerate()
+            {
                 if index.is_multiple_of(256) {
                     progress()?;
                 }
@@ -2389,13 +2414,22 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
     ) -> Result<Option<Hash>> {
-        self.check_admission_context_for_permit(packet, observed_now, None)
+        self.check_admission_context_with_progress(packet, observed_now, &mut || Ok(()))
+    }
+    pub(crate) fn check_admission_context_with_progress(
+        &self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Option<Hash>> {
+        self.check_admission_context_for_permit(packet, observed_now, None, progress)
     }
     fn check_admission_context_for_permit(
         &self,
         packet: &Packet,
         observed_now: u64,
         reserved: Option<&OwnerPacketPermit>,
+        progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<Option<Hash>> {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
@@ -2466,7 +2500,9 @@ impl Node {
             "ROOT",
         )?;
         // Signed task context/expiry/parent registration reject before full work replay.
-        if let Some(manifest) = self.eligible_work_task(h.parent, h.work_task, h.height)? {
+        if let Some(manifest) =
+            self.eligible_work_task_with_progress(h.parent, h.work_task, h.height, progress)?
+        {
             // The fixed recipe's actual model and input artifacts are precisely the
             // proof's A/B bytes. An untrusted miner can bypass every local builder;
             // the validator must bind these commitments before transcript replay.
@@ -2969,9 +3005,12 @@ impl Node {
             work: verified_work,
             owner_permit,
         } = checked;
-        if let Some(id) =
-            self.check_admission_context_for_permit(&packet, observed_now, owner_permit.as_ref())?
-        {
+        if let Some(id) = self.check_admission_context_for_permit(
+            &packet,
+            observed_now,
+            owner_permit.as_ref(),
+            &mut || (control.progress)(ExecutionProgress::BeforeParentBinding),
+        )? {
             return Ok(id);
         }
         ensure(
@@ -3023,7 +3062,9 @@ impl Node {
         let h = &packet.header;
         let id = packet.id()?;
         let parent = self.record(h.parent)?;
-        let prior = self.state_at(h.parent)?;
+        let prior = self.state_at_with_progress(h.parent, &mut || {
+            progress(ExecutionProgress::BeforeParentBinding)
+        })?;
         let registered_task = self.eligible_work_task_from_state(&prior, h.work_task, h.height)?;
         let executed = self.execute_derived_core(
             &prior,
@@ -3124,18 +3165,28 @@ impl Node {
         // Re-read after every write/trigger, while rollback can still remove the
         // whole block. A snapshot cannot conceal an omitted canonical delta.
         ensure(
-            self.delta_rows(id)? == expected_deltas && self.packet(id)?.encode()? == bytes,
+            self.delta_rows_with_progress(id, &mut || {
+                progress(ExecutionProgress::BeforeDurableCommit)
+            })? == expected_deltas
+                && self.packet(id)?.encode()? == bytes,
             "STORAGE_WRITE",
         )
         .map_err(Error::local_integrity)?;
         ensure(
-            self.state_at(h.parent)? == prior && self.state_at(id)? == output.state,
+            self.state_at_with_progress(h.parent, &mut || {
+                progress(ExecutionProgress::BeforeDurableCommit)
+            })? == prior
+                && self.state_at_with_progress(id, &mut || {
+                    progress(ExecutionProgress::BeforeDurableCommit)
+                })? == output.state,
             "STORAGE_WRITE",
         )
         .map_err(Error::local_integrity)?;
         crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
             .map_err(Error::local_integrity)?;
-        self.check_active_before_commit()?;
+        self.check_active_before_commit_with_progress(&mut || {
+            progress(ExecutionProgress::BeforeDurableCommit)
+        })?;
         progress(ExecutionProgress::BeforeDurableCommit)?;
         tx.commit()?;
         // No cancellation fence after commit: the native durable fact stays true.
@@ -3389,8 +3440,21 @@ impl Node {
         task: Hash,
         height: u64,
     ) -> Result<Option<QualifiedWorkTask>> {
+        self.eligible_work_task_with_progress(parent, task, height, &mut || Ok(()))
+    }
+    fn eligible_work_task_with_progress(
+        &self,
+        parent: Hash,
+        task: Hash,
+        height: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Option<QualifiedWorkTask>> {
         Ok(self
-            .eligible_work_task_from_state(&self.state_at(parent)?, task, height)?
+            .eligible_work_task_from_state(
+                &self.state_at_with_progress(parent, progress)?,
+                task,
+                height,
+            )?
             .manifest()
             .cloned())
     }

@@ -89,6 +89,77 @@ class ModelWindowHistoryTests(unittest.TestCase):
         self.history = self.one['history']
         self.second = model_fixture(2)
 
+    def large_history(self):
+        # Retained synthetic exposure summaries, not evidence of past training.
+        # The original domain accepts this below its declared 16 MiB ceiling.
+        history = copy.deepcopy(self.history)
+        row = history['entries'][0]
+        row['tasks'] = sorted((dict(id=identity('large-id:' + str(i)),
+            prompt=identity('large-prompt:' + str(i)), group=identity('large-group:' + str(i)),
+            partition='evaluation' if i % 2 else 'calibration') for i in range(10000)),
+            key=lambda task: task['id'])
+        history['head'] = window._identity(window.ENTRY_DOMAIN, row)
+        return history
+
+    def test_history_above_generic_manifest_limit_can_extend_without_changing_policy(self):
+        from llm_adapter_contract import MAX_MANIFEST_BYTES, decode
+        history = self.large_history()
+        raw, hid = window.freeze_history(history)
+        self.assertGreater(len(raw), MAX_MANIFEST_BYTES)
+        self.assertLess(len(raw), window.MAX_HISTORY_BYTES)
+        # The general decoder keeps the original manifest policy.
+        with self.assertRaisesRegex(ValueError, 'LLM_MANIFEST_LIMIT'):
+            decode(raw, hid, window._history, window.HISTORY_DOMAIN)
+        self.assertEqual(window._decode_history(raw, hid), history)
+        saved = canonical(history)
+        rebuild(self.second, gain=False)
+        result = complete(self.second, history)
+        self.assertEqual(canonical(history), saved)
+        self.assertTrue(result['window_consumed'])
+        self.assertFalse(result['history']['entries'][-1]['reported_gates_passed'])
+        self.assertEqual(len(result['history']['entries']), 2)
+        for field in ('historical_execution_verified', 'hidden_windows_excluded',
+                      'physical_custody_verified', 'prospective_accepted',
+                      'independent_accepted', 'public_reward_eligible', 'production_activation'):
+            self.assertIs(result[field], False)
+        third = model_fixture(3)
+        self.evaluation(third)['prompt_sha256'] = self.evaluation(self.second)['prompt_sha256']
+        rebuild(third)
+        with self.assertRaisesRegex(ValueError, 'WINDOW_REUSED_PROMPT'):
+            bind(third, result['history'])
+
+    def test_large_history_still_checks_pin_canonical_form_and_complete_linkage(self):
+        from contract_wire import H
+        raw, hid = window.freeze_history(self.large_history())
+        with self.assertRaisesRegex(ValueError, 'LLM_MANIFEST_IDENTITY'):
+            window._decode_history(raw, identity('wrong-pin'))
+        noncanonical = raw + b'\n'
+        with self.assertRaisesRegex(ValueError, 'LLM_MANIFEST_CANONICAL'):
+            window._decode_history(noncanonical, H(window.HISTORY_DOMAIN, noncanonical).hex())
+        broken = self.large_history()
+        broken['entries'][0]['tasks'].pop()
+        encoded = canonical(broken)
+        with self.assertRaisesRegex(ValueError, 'WINDOW_HISTORY_HEAD'):
+            window._decode_history(encoded, H(window.HISTORY_DOMAIN, encoded).hex())
+        duplicate = b'{"head":"' + b'f'*64 + b'",' + raw[1:]
+        with self.assertRaisesRegex(ValueError, 'duplicate JSON key'):
+            window._decode_history(duplicate, H(window.HISTORY_DOMAIN, duplicate).hex())
+        self.assertEqual(window.freeze_history(window._decode_history(raw, hid))[1], hid)
+
+    def test_history_size_limit_precedes_hash_or_json_and_invalid_byte_policies_reject(self):
+        from llm_adapter_contract import decode
+        over = b' ' * (window.MAX_HISTORY_BYTES + 1)
+        with self.assertRaisesRegex(ValueError, 'WINDOW_HISTORY_BYTE_BOUND'):
+            window._decode_history(over, identity('not-a-pin'))
+        raw, hid = window.freeze_history(self.history)
+        for bound in (False, True, 0, -1, 2.5, None):
+            with self.subTest(bound=bound), self.assertRaisesRegex(ValueError, 'LLM_MANIFEST_LIMIT'):
+                decode(raw, hid, window._history, window.HISTORY_DOMAIN, max_bytes=bound)
+        self.assertEqual(decode(raw, hid, window._history, window.HISTORY_DOMAIN,
+                                max_bytes=len(raw)), self.history)
+        with self.assertRaisesRegex(ValueError, 'LLM_MANIFEST_LIMIT'):
+            decode(raw, hid, window._history, window.HISTORY_DOMAIN, max_bytes=len(raw)-1)
+
     def evaluation(self, data):
         return next(t for t in data['plan']['tasks'] if t['partition'] == 'evaluation')
 

@@ -188,3 +188,22 @@ Those external verifiers are not implemented by a permissive Boolean or bypass.
 `prospective_accepted`, `independent_accepted`, `public_reward_eligible` and
 `production_activation` are always false. Positive real future gain remains
 unobserved and must not be inferred from this package's synthetic test pass.
+
+### History byte-policy consistency
+
+The history decoder now applies the history owner's existing16MiB bound through
+both its outer input check and the shared identity/canonical decoder. Previously
+the shared decoder's ordinary2MiB manifest default also applied to history, so a
+valid history between2MiB and16MiB could be frozen but not consumed by the next
+window. Ordinary target contracts, run plans and model-operation manifests retain
+their existing2MiB default. The override is a fixed schema-owner call argument,
+not a size supplied in submitted JSON or a new permission.
+
+Every history still requires its externally pinned digest, exact canonical JSON,
+complete ordered entry links, contacted-set reconstruction, byte/item/window
+limits and mandatory append reservation. Larger history cannot bypass overlap,
+negative-window consumption or external-acceptance boundaries. Regression fixtures
+freeze and continue an actual2.5MiB synthetic history, reject altered pins and
+noncanonical/link-corrupt records, and verify both the unchanged ordinary2MiB
+limit and the original16MiB history ceiling. These are supplied-record tests, not
+training, real future observations or an authenticated exposure ledger.

@@ -693,3 +693,23 @@ existing driver tests use explicitly simulated compilers and report fixtures;
 their passing counts are separate from actual native execution. Exact-source
 builds, native assertions and original full head/prospective-merge tests remain
 required. Local source checks or a transport workflow do not waive those gates.
+
+
+## Retained whole-workspace stdout
+
+The existing Rust baseline retains the complete combined stdout/stderr of its
+unchanged full workspace/all-target/all-feature command as `workspace-tests.log`
+in the existing receipt directory. Fresh regular-path checks precede the command;
+`set -euo pipefail` preserves both Cargo and output-sink failure. The exact same
+capture runs on the existing prospective merge lane. All independent readers,
+the two mandatory release controls, documentation tests and strict Clippy remain
+in their original sequence. No new job, retry, timeout, permission or successful
+fallback is introduced.
+
+The log makes exact test names, failures and ignored outcomes available as raw
+artifact bytes beside the source identity; it is not stdout authentication or
+an independent work/state oracle. Existing negative CI controls also execute the
+capture's real shell pipeline with explicitly synthetic Cargo output, requiring
+failure propagation, retained output and stale-path refusal. Those shell tests
+are not native Rust execution evidence. Initial head/merge failures and their
+original artifacts retain their source identities.

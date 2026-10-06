@@ -490,3 +490,32 @@ qualifies public fairness, cheapest-adversary cost, strongest honest production,
 independent WAN, ordinary Hepta export, future model benefit, physical power loss
 or production activation. Honest build CPU is calling-thread only; total honest
 worker CPU and client-confirmed transaction throughput remain null.
+
+### Current parent and pre-commit cancellation coverage
+
+The existing shared Submit dispatcher now routes the same original request stop
+and execution/CPU callback into admission-context parent reconstruction, before
+starting W1 verification. Cancellation there cannot be interpreted as invalid
+work or stored corruption and returns no verified packet. After full verification,
+controlled native admission repeats all state-dependent checks under the original
+owner and observes the same callback during parent acquisition and complete
+pre-commit delta, parent/child-state and active-state readback. No separate
+service budget, queue, admission profile or grant is added.
+
+The final checks still execute in the existing single-writer transaction; a
+pre-commit cancellation rolls back uncommitted block/delta/account records. After
+successful COMMIT, the original activation/response path remains authoritative;
+there is no new cancellation that retroactively turns durable success into failure.
+Ordinary no-control callers retain no-op wrappers. Individual signatures, JSON
+encodings, complete roots and SQLite calls remain nonpreemptive, so this is more
+cooperative coverage, not a hard latency or CPU bound. External owner preparation,
+activation and whole-host scheduling retain their separately documented limits.
+
+The original exact three `public_v3_from_zero` tests, finite report, sustained
+arrival windows and all r9 resource numbers remain unchanged. A fresh campaign
+on changed source must retain its actual outcomes; the old non-depletion result
+cannot be promoted to saturation fairness merely because callbacks were added.
+The shared-dispatch regression
+`context_cancellation_precedes_work_verifier_and_preserves_public_retry`
+checks that an interrupted parent context calls no full-work verifier, writes no
+block and permits a later complete ordinary retry.
