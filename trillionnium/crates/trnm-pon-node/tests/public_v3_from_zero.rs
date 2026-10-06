@@ -17,10 +17,10 @@ use trnm_pon_node::{
     development_public,
     ingress::{
         self,
-        public_v3::{self, PublicPolicy, PublicServer, Request},
+        public_v3::{self, PublicMetrics, PublicPolicy, PublicRequestObserver, PublicServer, Request},
         DevelopmentIdentity,
     },
-    maintenance, sequence_root, Node, Packet, Settings,
+    maintenance, sequence_root, Node, Packet, PoolLimits, Settings,
 };
 use trnm_protocol::pon_wire::{hash, Hash, Header};
 
@@ -272,13 +272,18 @@ fn phase(
     let address = listener.local_addr().unwrap();
     let stop = Arc::new(AtomicBool::new(false));
     let (shared, signal) = (owner.clone(), stop.clone());
+    let observer = PublicRequestObserver::new(128).unwrap();
+    let capture = observer.clone();
+    let counters = Arc::new(Mutex::new(PublicMetrics::default()));
     let worker = thread::spawn(move || {
-        match public_v3::serve_public_protected_v3(
+        match public_v3::serve_public_protected_v3_with_request_observer(
             listener,
             shared,
             Duration::from_secs(30),
             signal,
             server,
+            counters,
+            capture,
         ) {
             Ok(metrics) => json!({"metrics": metrics, "error": null}),
             Err(error) => json!({"metrics": null, "error": error.to_string()}),
@@ -355,6 +360,11 @@ fn phase(
         .and_then(|(preparation, worker)| preparation.checked_add(worker));
     let read_rows = reads.join().unwrap();
     let service_outcome = service.finish();
+    let observation = observer.snapshot();
+    let capture_complete = observation.records_not_retained == 0
+        && observation.measurement_failures == 0
+        && !observation.counter_overflow
+        && observation.records.iter().all(|row| row.complete);
     let node = Arc::try_unwrap(owner).ok().unwrap().into_inner().unwrap();
     let actual = node.read_active().unwrap();
     let expected = producer.read_active().unwrap();
@@ -422,6 +432,7 @@ fn phase(
         && complete_denominators
         && construction_cpu_known
         && client_cpu_known
+        && capture_complete
         && honest_call.as_ref().is_some_and(returned_on_time)
         && state_equal
         && cpu_known
@@ -448,6 +459,7 @@ fn phase(
         "late_transcript_rejections": late_rejections, "honest_read_successes": read_successes,
         "no_attack_accepted": no_attack_accepted, "cpu_measurements_known": cpu_known,
         "all_started_work_finished": work_complete, "full_native_state_equal": state_equal,
+        "receiver_request_observations": observation, "capture_complete": capture_complete,
         "service": service_outcome, "finite_target_met": passed,
     });
     (node, report)
@@ -465,7 +477,18 @@ fn from_zero_service_shares_cpu_with_honest_work_and_reopened_owner() {
     };
     let settings = Settings::development(Some(ingress::now().unwrap() - 100)).unwrap();
     let receiver = path.join("receiver");
-    let node = Node::open(&receiver, settings.clone(), 2).unwrap();
+    let mut node = Node::open(&receiver, settings.clone(), 2).unwrap();
+    // V3 serving requires an explicitly enabled durable pool; serving must not
+    // grant that authority implicitly. The same configuration survives reopen.
+    node.enable_local_mempool(PoolLimits {
+        max_records: 8,
+        max_bytes: 32768,
+        max_group_members: 4,
+        critical_reserve: 0,
+        max_removals: 16,
+        preview_miner: development_public(3).unwrap(),
+    })
+    .unwrap();
     let context_start = Instant::now();
     let target = node.expected_target(settings.genesis()).unwrap();
     let public_context_read_wall_ns = ns(context_start);
@@ -487,13 +510,13 @@ fn from_zero_service_shares_cpu_with_honest_work_and_reopened_owner() {
     let passed =
         reopen_equal && first["finite_target_met"] == true && second["finite_target_met"] == true;
     let report = json!({
-        "schema": "public-v3-local-from-zero-service-v2", "network": hex::encode(settings.network()),
+        "schema": "public-v3-local-from-zero-service-v3", "network": hex::encode(settings.network()),
         "parameters": hex::encode(settings.parameters()), "genesis": hex::encode(settings.genesis()),
         "target": hex::encode(target), "policy_id": hex::encode(policy().id()),
         "public_context_read_wall_ns": public_context_read_wall_ns,
         "phases": [first, second], "reopen_wall_ns": reopen_wall_ns, "reopen_state_equal": reopen_equal,
         "cpu_domain_retained_across_owner_reopen": true,
-        "scope": "finite local TCP; from-zero preparation and calling-thread client CPU, with real shared receiver CPU; zero claimed C; default honest producer; same-process owner reopen; no aggregate honest CPU or global speedup/energy ratio",
+        "scope": "finite local TCP; from-zero preparation and calling-thread client CPU, with actual per-request nested receiver CPU; zero claimed C; default honest producer; same-process owner reopen; no aggregate honest CPU or global speedup/energy ratio",
         "budget_depletion_demonstrated": false,
         "all_requested_reads_required_on_time": true,
         "public_network_ready": false, "independent_accepted": false,
