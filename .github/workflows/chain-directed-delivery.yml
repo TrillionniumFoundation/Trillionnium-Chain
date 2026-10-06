@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      BASE: 8ee6e5b399cd9f0e46d189b67a3ef2c40715a153
-      CANDIDATE: eee8db836b98cb5b9ca7c657cc94f23018555854
-      TREE: ae717c68b67661be63ed369958e1b9b379dc0200
-      DESTINATION: fix/chain-sustained-owner-convergence-20261006
+      BASE: eee8db836b98cb5b9ca7c657cc94f23018555854
+      CANDIDATE: 97e00fcff9b2ad2d67ed7c3c12997f28c0531eb5
+      TREE: 5574536445b433452b2e8dd6438f2b4908558613
+      DESTINATION: fix/chain-owned-validation-20261007
     steps:
       - name: Checkout exact reviewed base without retained credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -31,7 +31,7 @@ jobs:
           test -z "$(git status --porcelain)"
           bash scripts/project-preflight.sh --audit
           mkdir "$RUNNER_TEMP/reviewed-source"
-          for sha in 3ac750c753f68c4dd63448bd3c7e587b4acb502e cbc8b8d610a89de4e10e5081c5e26af0cc26f317 87fb5c4ac6c5fe32980c98c3d5d7055f31633ee5 67df9462b0b4aae84599d36ceab0a10378bac670 edb45cad80a02b3172a901f9ac6f94722d94af21 5a36a67c6a944129a59b38c4b3d3fac22c004fc6 dc37bfa1bd865dd032c859b83299a2fe27614c81; do
+          for sha in 04acbbf3d2290a23a520f4b2f3e0c972cb89f364 314a08a7244b7cf252172ecd3e8dd12b6956fea6 c235b2b39096833180cf5db796b056d733beed52 56b25de21f2a5dbf98410432c905adc91ae8e12c 5038a1acee4257c2dd62791a6c1e4df9f9498351; do
             curl --fail --silent --show-error --max-time 30 --max-filesize 262144 \
               -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
               "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/$sha" \
@@ -53,53 +53,48 @@ jobs:
                   raise SystemExit('reviewed blob bytes mismatch')
               (root / expected).write_bytes(raw)
           PY
-      - name: Reconstruct exactly the two locally tested commits
+      - name: Reconstruct exactly the frozen continuation
         shell: bash
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$BASE"
           git checkout -b "$DESTINATION" "$BASE"
-          for sha in 3ac750c753f68c4dd63448bd3c7e587b4acb502e cbc8b8d610a89de4e10e5081c5e26af0cc26f317 87fb5c4ac6c5fe32980c98c3d5d7055f31633ee5 67df9462b0b4aae84599d36ceab0a10378bac670 edb45cad80a02b3172a901f9ac6f94722d94af21; do
+          for sha in 04acbbf3d2290a23a520f4b2f3e0c972cb89f364 314a08a7244b7cf252172ecd3e8dd12b6956fea6 c235b2b39096833180cf5db796b056d733beed52 56b25de21f2a5dbf98410432c905adc91ae8e12c; do
             git apply --index --check --whitespace=error-all "$RUNNER_TEMP/reviewed-source/$sha"
             git apply --index --whitespace=error-all "$RUNNER_TEMP/reviewed-source/$sha"
           done
-          test "$(git write-tree)" = f1f97304b424e562b3c4ce56be1fac9ebd7187ed
-          python3 - <<'PY'
-          import json, os, pathlib, subprocess
-          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'reviewed-source'
-          commits = json.loads((root / 'dc37bfa1bd865dd032c859b83299a2fe27614c81').read_text())
-          expected = '943277fb32ba5f6ce0c66546da3cad81b27edf77'
-          actual = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'],
-                                           input=commits[expected].encode()).decode().strip()
-          if actual != expected:
-              raise SystemExit('initial tested commit mismatch')
-          PY
-          patch="$RUNNER_TEMP/reviewed-source/5a36a67c6a944129a59b38c4b3d3fac22c004fc6"
-          git apply --index --check --whitespace=error-all "$patch"
-          git apply --index --whitespace=error-all "$patch"
           test "$(git write-tree)" = "$TREE"
           python3 - <<'PY'
-          import json, os, pathlib, subprocess
+          import os, pathlib, subprocess
           expected_paths = {
               'docs/architecture/CI_EXECUTION_CONTRACT.md',
+              'docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md',
+              'docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md',
+              'docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md',
               'docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md',
-              'scripts/ci/run_from_zero_native.py',
-              'scripts/ci/test_run_from_zero_native.py',
-              'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
-              'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs',
-              'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs',
-              'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs',
+              'formal/pon-nakamoto-v1/llm_adapter_contract.py',
+              'formal/pon-nakamoto-v1/model_window_history.py',
+              'formal/pon-nakamoto-v1/test_model_window_history.py',
+              'scripts/ci/check_ci_contract.py',
+              'scripts/ci/ci_job.sh',
+              'scripts/ci/test_ci_contract.py',
+              'trillionnium/crates/trnm-pon-node/src/ingress.rs',
+              'trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs',
+              'trillionnium/crates/trnm-pon-node/src/store.rs',
+              'trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs',
           }
           actual_paths = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
           if actual_paths != expected_paths:
               raise SystemExit('unexpected source paths')
           root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'reviewed-source'
-          commits = json.loads((root / 'dc37bfa1bd865dd032c859b83299a2fe27614c81').read_text())
+          raw = (root / '5038a1acee4257c2dd62791a6c1e4df9f9498351').read_bytes()
           expected = os.environ['CANDIDATE']
-          actual = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'],
-                                           input=commits[expected].encode()).decode().strip()
+          actual = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'], input=raw).decode().strip()
           if actual != expected:
-              raise SystemExit('final tested commit mismatch')
+              raise SystemExit('frozen commit mismatch')
+          header = raw.split(b'\n\n', 1)[0].decode().splitlines()
+          if header[:2] != ['tree ' + os.environ['TREE'], 'parent ' + os.environ['BASE']]:
+              raise SystemExit('frozen tree/parent mismatch')
           PY
           git diff --cached --check
           bash scripts/project-preflight.sh --staged
