@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
-      SOURCE_SHA: 210c13be9cc5f7210377ee68b4dbc052a36b0c87
+      SOURCE_SHA: 8ee6e5b399cd9f0e46d189b67a3ef2c40715a153
     steps:
       - name: Checkout exact public source without persisted credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -31,7 +31,7 @@ jobs:
       - name: Upload exact source transport
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: chain-source-210c13be
+          name: chain-source-8ee6e5b
           path: ${{ runner.temp }}/source-export/
           if-no-files-found: error
           retention-days: 7
