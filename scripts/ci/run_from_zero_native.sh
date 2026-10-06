@@ -7,6 +7,9 @@ test ! -e "$root"
 test ! -L "$root"
 mkdir -p "$(dirname "$root")"
 mkdir "$root"
+# Only tracked public build inputs; never credentials, runtime state or host files.
+git archive --format=tar.gz HEAD trillionnium scripts config docs formal/pon-nakamoto-v1 > "$root/source.tar.gz"
+rustfmt --edition 2021 --emit stdout trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs > "$root/formatted.rs"
 cargo test --locked --release --manifest-path trillionnium/Cargo.toml \
   -p trnm-pon-node --test public_v3_from_zero --no-run --message-format=json \
   > "$root/build.jsonl" 2> "$root/build.stderr"
@@ -37,6 +40,7 @@ identity = {
     'sha256': hashlib.sha256(target.read_bytes()).hexdigest(),
     'source_sha256': hashlib.sha256(Path(
         'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs').read_bytes()).hexdigest(),
+    'source_archive_sha256': hashlib.sha256((root / 'source.tar.gz').read_bytes()).hexdigest(),
     'compiled_only': True,
 }
 (root / 'build.json').write_text(json.dumps(identity, indent=2) + '\n')
