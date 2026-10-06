@@ -21,7 +21,7 @@ use trnm_pon_node::{
         public_v3::{self, PublicPolicy, PublicServer, Request},
         DevelopmentIdentity,
     },
-    maintenance, sequence_root, Node, Packet, Settings,
+    maintenance, sequence_root, Node, Packet, PoolLimits, Settings,
 };
 use trnm_protocol::pon_wire::{hash, Hash, Header};
 
@@ -112,7 +112,10 @@ fn search_from_zero(header: Header, a: &[u32], b: &[u32], budget: u64) -> Search
     let search = Instant::now();
     let search_cpu = ThreadCpuStamp::start();
     for nonce in 0..budget {
-        let trace = hash(b"public-v3-from-zero-v1", &[&challenge, &nonce.to_le_bytes()]);
+        let trace = hash(
+            b"public-v3-from-zero-v1",
+            &[&challenge, &nonce.to_le_bytes()],
+        );
         let ticket = hash(b"ticket", &[&challenge, &trace]);
         let hit = header.target != [0; 32] && ticket <= header.target;
         attempts.push(json!({
@@ -154,7 +157,10 @@ fn search_from_zero(header: Header, a: &[u32], b: &[u32], budget: u64) -> Search
         "phase_intervals_nested_in_total": true,
         "scope": "task validation, proof allocation, every trial with its record, header/packet encoding; excludes final observation object and report file serialization; no matrix evaluation or valid proof acquisition",
     });
-    Search { packet, observation }
+    Search {
+        packet,
+        observation,
+    }
 }
 
 fn genesis_header(settings: &Settings, target: Hash, nonce: u64, task: Hash) -> Header {
@@ -306,11 +312,7 @@ fn phase(
             let submission_start = Instant::now();
             let wire = search.observation["packet"].as_str().map(str::to_owned);
             let call = if let Some(packet) = wire {
-                Some(attack_client.call(
-                    "from_zero",
-                    100 + index as u8,
-                    Request::Submit { packet },
-                ))
+                Some(attack_client.call("from_zero", 100 + index as u8, Request::Submit { packet }))
             } else {
                 None // Exhaustion is retained, never converted into a submitted proof.
             };
@@ -366,8 +368,7 @@ fn phase(
     let actual = node.read_active().unwrap();
     let expected = producer.read_active().unwrap();
     let state_equal = actual.0 == expected.0 && actual.2 == expected.2;
-    let returned_on_time =
-        |r: &Value| r["status"] == "ok" && r["returned_after_deadline"] == false;
+    let returned_on_time = |r: &Value| r["status"] == "ok" && r["returned_after_deadline"] == false;
     let read_successes = read_rows.iter().filter(|r| returned_on_time(r)).count();
     let no_attack_accepted = attack_rows
         .iter()
@@ -383,7 +384,9 @@ fn phase(
     // These are measurements from the existing one shared service domain, not
     // estimated operation counts or invented zero measurements on clock failure.
     let cpu_known = metrics["mutation_cpu_clock_failures"] == 0
-        && metrics["mutation_full_work_cpu_ns"].as_u64().is_some_and(|n| n > 0)
+        && metrics["mutation_full_work_cpu_ns"]
+            .as_u64()
+            .is_some_and(|n| n > 0)
         && metrics["mutation_cpu_charged_ns"]
             .as_u64()
             .zip(metrics["mutation_full_work_cpu_ns"].as_u64())
@@ -410,8 +413,7 @@ fn phase(
     let construction_cpu_known = attacker_preparation_and_worker_cpu_ns.is_some()
         && attack_rows.iter().all(|row| {
             row["construction"]["attacker_cpu_ns"].as_u64().is_some()
-                && (row["call"].is_null()
-                    || row["call"]["client_thread_cpu_ns"].as_u64().is_some())
+                && (row["call"].is_null() || row["call"]["client_thread_cpu_ns"].as_u64().is_some())
         });
     let client_cpu_known = read_rows
         .iter()
@@ -434,30 +436,33 @@ fn phase(
         && state_equal
         && cpu_known
         && work_complete;
-    (node, json!({
-        "phase": number, "construction_count": ATTACKS,
-        "complete_phase_wall_ns": ns(complete_phase_start),
-        "all_preparation_wall_ns": all_preparation_wall_ns,
-        "all_preparation_thread_cpu_ns": all_preparation_thread_cpu_ns,
-        "attacker_worker_cpu_ns": attacker_worker_cpu_ns,
-        "attacker_preparation_and_worker_cpu_ns": attacker_preparation_and_worker_cpu_ns,
-        "attacker_total_scope": "two disjoint preparation/worker intervals; includes inner trial/call diagnostics; excludes parent thread spawn/join, public context acquisition and final report file output",
-        "constructed_hits": constructed_hits, "exhausted_searches": exhausted_searches,
-        "submitted_attacks": submitted_attacks, "complete_denominators": complete_denominators,
-        "attacker_and_client_cpu_known": construction_cpu_known && client_cpu_known,
-        "all_preparation_cpu_includes_construction_subintervals": true,
-        "from_zero": attack_rows, "honest_reads": read_rows,
-        "honest_submit": honest_call, "honest_build_error": honest_build_error,
-        "honest_build_wall_ns": honest_build_wall_ns,
-        "honest_build_coordinator_cpu_ns": honest_build_coordinator_cpu_ns,
-        "honest_build_aggregate_cpu_ns": null,
-        "honest_worker_cpu_measured_by_this_clock": false,
-        "honest_producer_scope": "unchanged default native producer; not claimed cheapest",
-        "late_transcript_rejections": late_rejections, "honest_read_successes": read_successes,
-        "no_attack_accepted": no_attack_accepted, "cpu_measurements_known": cpu_known,
-        "all_started_work_finished": work_complete, "full_native_state_equal": state_equal,
-        "service": service_outcome, "finite_target_met": passed,
-    }))
+    (
+        node,
+        json!({
+            "phase": number, "construction_count": ATTACKS,
+            "complete_phase_wall_ns": ns(complete_phase_start),
+            "all_preparation_wall_ns": all_preparation_wall_ns,
+            "all_preparation_thread_cpu_ns": all_preparation_thread_cpu_ns,
+            "attacker_worker_cpu_ns": attacker_worker_cpu_ns,
+            "attacker_preparation_and_worker_cpu_ns": attacker_preparation_and_worker_cpu_ns,
+            "attacker_total_scope": "two disjoint preparation/worker intervals; includes inner trial/call diagnostics; excludes parent thread spawn/join, public context acquisition and final report file output",
+            "constructed_hits": constructed_hits, "exhausted_searches": exhausted_searches,
+            "submitted_attacks": submitted_attacks, "complete_denominators": complete_denominators,
+            "attacker_and_client_cpu_known": construction_cpu_known && client_cpu_known,
+            "all_preparation_cpu_includes_construction_subintervals": true,
+            "from_zero": attack_rows, "honest_reads": read_rows,
+            "honest_submit": honest_call, "honest_build_error": honest_build_error,
+            "honest_build_wall_ns": honest_build_wall_ns,
+            "honest_build_coordinator_cpu_ns": honest_build_coordinator_cpu_ns,
+            "honest_build_aggregate_cpu_ns": null,
+            "honest_worker_cpu_measured_by_this_clock": false,
+            "honest_producer_scope": "unchanged default native producer; not claimed cheapest",
+            "late_transcript_rejections": late_rejections, "honest_read_successes": read_successes,
+            "no_attack_accepted": no_attack_accepted, "cpu_measurements_known": cpu_known,
+            "all_started_work_finished": work_complete, "full_native_state_equal": state_equal,
+            "service": service_outcome, "finite_target_met": passed,
+        }),
+    )
 }
 
 #[test]
@@ -472,7 +477,16 @@ fn from_zero_service_shares_cpu_with_honest_work_and_reopened_owner() {
     };
     let settings = Settings::development(Some(ingress::now().unwrap() - 100)).unwrap();
     let receiver = path.join("receiver");
-    let node = Node::open(&receiver, settings.clone(), 2).unwrap();
+    let mut node = Node::open(&receiver, settings.clone(), 2).unwrap();
+    node.enable_local_mempool(PoolLimits {
+        max_records: 16,
+        max_bytes: 32768,
+        max_group_members: 4,
+        critical_reserve: 0,
+        max_removals: 64,
+        preview_miner: development_public(0).unwrap(),
+    })
+    .unwrap();
     let context_start = Instant::now();
     let target = node.expected_target(settings.genesis()).unwrap();
     let public_context_read_wall_ns = ns(context_start);
