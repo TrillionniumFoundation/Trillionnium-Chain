@@ -1,17 +1,22 @@
 #!/usr/bin/env bash
-# Called by the existing protocol-contract lane, for both head and merge trees.
-# Retain the newly compiled executable and every individual execution result.
+# Use the existing consolidated native target and timeout owner, not a second suite.
 set -euo pipefail
-root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
+parent="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
+export TRNM_CI_RECEIPT_DIR="$parent"
+root="$parent/from-zero-native"
 test ! -e "$root"
 test ! -L "$root"
-mkdir -p "$(dirname "$root")"
+mkdir -p "$parent"
 mkdir "$root"
-# Only tracked public build inputs; never credentials, runtime state or host files.
+# These runner checks move with the native invocation into the existing protocol lane.
+python3 scripts/ci/test_run_from_zero_service.py > "$root/owner-tests.log" 2>&1
+python3 scripts/ci/test_check_from_zero_service.py > "$root/accounting-tests.log" 2>&1
+# Only committed public inputs; never credentials, runtime state or host files.
 git archive --format=tar.gz HEAD trillionnium scripts config docs formal/pon-nakamoto-v1 > "$root/source.tar.gz"
-rustfmt --edition 2021 --emit stdout trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs > "$root/formatted.rs"
-cargo test --locked --release --manifest-path trillionnium/Cargo.toml \
-  -p trnm-pon-node --test public_v3_from_zero --no-run --message-format=json \
+rustfmt --edition 2021 --check trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs > "$root/format.log" 2>&1
+cargo fetch --locked --manifest-path trillionnium/Cargo.toml > "$root/fetch.log" 2>&1
+cargo test --offline --locked --release --manifest-path trillionnium/Cargo.toml \
+  -p trnm-pon-node --test maintenance_paired_conformance --no-run --message-format=json \
   > "$root/build.jsonl" 2> "$root/build.stderr"
 python3 - "$root" <<'PY'
 import hashlib
@@ -24,13 +29,12 @@ root = Path(sys.argv[1])
 rows = [json.loads(line) for line in (root / 'build.jsonl').read_text().splitlines()]
 executables = [row['executable'] for row in rows
                if row.get('reason') == 'compiler-artifact'
-               and row['target']['name'] == 'public_v3_from_zero'
+               and row['target']['name'] == 'maintenance_paired_conformance'
                and row.get('executable') and row['profile']['test']]
 if len(executables) != 1:
     raise SystemExit('expected exactly one freshly compiled integration test')
-original = Path(executables[0])
-target = root / 'public_v3_from_zero'
-shutil.copyfile(original, target)
+target = root / 'maintenance_paired_conformance'
+shutil.copyfile(executables[0], target)
 target.chmod(0o755)
 identity = {
     'schema': 'from-zero-native-build-v1',
@@ -39,25 +43,13 @@ identity = {
     'rustc': subprocess.check_output(['rustc', '-Vv'], text=True),
     'sha256': hashlib.sha256(target.read_bytes()).hexdigest(),
     'source_sha256': hashlib.sha256(Path(
-        'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs').read_bytes()).hexdigest(),
+        'trillionnium/crates/trnm-pon-node/tests/maintenance_paired_conformance.rs').read_bytes()).hexdigest(),
     'source_archive_sha256': hashlib.sha256((root / 'source.tar.gz').read_bytes()).hexdigest(),
     'compiled_only': True,
 }
 (root / 'build.json').write_text(json.dumps(identity, indent=2) + '\n')
 PY
-failed=0
-for name in \
-  caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct \
-  from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection \
-  from_zero_service_shares_cpu_with_honest_work_and_reopened_owner
-do
-  if TRNM_PUBLIC_V3_FROM_ZERO_DIR="$root/service" \
-    "$root/public_v3_from_zero" "$name" --exact --nocapture --test-threads=1 \
-    2>&1 | tee "$root/$name.log"; then
-    python3 scripts/ci/check_required_native_test.py "$root/$name.log" \
-      --test "$name" > "$root/$name.execution.json" || failed=1
-  else
-    failed=1
-  fi
-done
-exit "$failed"
+# The existing owner preserves failures, exact names, original 600s deadlines,
+# owned process-group cleanup and source/log/native-report identity checks.
+python3 scripts/ci/run_from_zero_service.py
+python3 scripts/ci/check_from_zero_service.py "$parent/from-zero-service/native/report.json" > "$root/accounting.json"
