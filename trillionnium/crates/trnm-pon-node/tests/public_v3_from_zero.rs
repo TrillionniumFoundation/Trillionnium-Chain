@@ -15,14 +15,17 @@ use std::{
     time::{Duration, Instant},
 };
 use trnm_crypto_primitives::pon_work;
+use trnm_mvcc_fee::continuity_v1;
 use trnm_pon_node::{
     development_public,
     ingress::{
         self,
-        public_v3::{self, PublicMetrics, PublicPolicy, PublicRequestObserver, PublicServer, Request},
+        public_v3::{
+            self, PublicMetrics, PublicPolicy, PublicRequestObserver, PublicServer, Request,
+        },
         DevelopmentIdentity,
     },
-    maintenance, sequence_root, Node, Packet, Settings,
+    maintenance, sequence_root, Node, Packet, PoolLimits, Settings,
 };
 use trnm_protocol::pon_wire::{hash, Hash, Header};
 
@@ -69,7 +72,10 @@ fn search_from_zero(header: Header, a: &[u32], b: &[u32], budget: u64) -> Search
     let mut winner = None;
     let search = Instant::now();
     for nonce in 0..budget {
-        let trace = hash(b"public-v3-from-zero-v1", &[&challenge, &nonce.to_le_bytes()]);
+        let trace = hash(
+            b"public-v3-from-zero-v1",
+            &[&challenge, &nonce.to_le_bytes()],
+        );
         let ticket = hash(b"ticket", &[&challenge, &trace]);
         let hit = header.target != [0; 32] && ticket <= header.target;
         attempts.push(json!({
@@ -105,7 +111,10 @@ fn search_from_zero(header: Header, a: &[u32], b: &[u32], budget: u64) -> Search
         "preparation_resources": preparation_resources,
         "scope": "includes validation, allocation, every hash trial and packet encoding; thread CPU is measured separately; no matrix evaluation or proof acquisition",
     });
-    Search { packet, observation }
+    Search {
+        packet,
+        observation,
+    }
 }
 
 fn genesis_header(settings: &Settings, target: Hash, nonce: u64, task: Hash) -> Header {
@@ -204,7 +213,7 @@ fn phase(
     let settings = node.settings().clone();
     let build_start = Instant::now();
     let preparation_span = Span::start();
-    let (a, b) = maintenance();
+    let (_, _, a, b) = settings.consensus_maintenance_material().unwrap();
     let task = pon_work::task_id(&a, &b).unwrap();
     let mut searches = Vec::new();
     for index in 0..ATTACKS {
@@ -260,11 +269,7 @@ fn phase(
             let submission_start = Instant::now();
             let wire = search.observation["packet"].as_str().map(str::to_owned);
             let call = if let Some(packet) = wire {
-                Some(attack_client.call(
-                    "from_zero",
-                    100 + index as u8,
-                    Request::Submit { packet },
-                ))
+                Some(attack_client.call("from_zero", 100 + index as u8, Request::Submit { packet }))
             } else {
                 None // Exhaustion is retained, never converted into a submitted proof.
             };
@@ -283,11 +288,19 @@ fn phase(
     barrier.wait();
     let honest_start = Instant::now();
     let honest_build_span = Span::start();
-    let honest = producer.mine(
-        vec![],
-        settings.genesis_time() + 2 + number,
-        ingress::now().unwrap(),
-    );
+    let honest = producer
+        .make_consensus_maintenance(
+            producer.active().unwrap().0,
+            vec![],
+            development_public(0).unwrap(),
+            settings.genesis_time() + 2 + number,
+            SEARCH_BUDGET,
+        )
+        .and_then(|packet| {
+            let id = producer.admit(&packet, ingress::now()?)?;
+            producer.activate(id)?;
+            Ok(packet)
+        });
     let honest_build_wall_ns = ns(honest_start);
     let honest_build_resources = honest_build_span.finish();
     let (honest_call, honest_build_error) = match honest {
@@ -338,7 +351,9 @@ fn phase(
     // These are measurements from the existing one shared service domain, not
     // estimated operation counts or invented zero measurements on clock failure.
     let cpu_known = metrics["mutation_cpu_clock_failures"] == 0
-        && metrics["mutation_full_work_cpu_ns"].as_u64().is_some_and(|n| n > 0)
+        && metrics["mutation_full_work_cpu_ns"]
+            .as_u64()
+            .is_some_and(|n| n > 0)
         && metrics["mutation_cpu_charged_ns"]
             .as_u64()
             .zip(metrics["mutation_full_work_cpu_ns"].as_u64())
@@ -378,7 +393,7 @@ fn phase(
         "from_zero": attack_rows, "honest_reads": read_rows,
         "honest_submit": honest_call, "honest_build_error": honest_build_error,
         "honest_build_wall_ns": honest_build_wall_ns,
-        "honest_producer_scope": "unchanged default native producer; not claimed cheapest",
+        "honest_producer_scope": "existing native consensus-maintenance constructor; not claimed cheapest",
         "late_transcript_rejections": late_rejections, "honest_read_successes": read_successes,
         "no_attack_accepted": no_attack_accepted, "cpu_measurements_known": cpu_known,
         "all_started_work_finished": work_complete, "full_native_state_equal": state_equal,
@@ -397,9 +412,23 @@ fn from_zero_service_shares_cpu_with_honest_work_and_reopened_owner() {
     } else {
         temporary.path().to_path_buf()
     };
-    let settings = Settings::development(Some(ingress::now().unwrap() - 100)).unwrap();
+    let settings = Settings::development_with_profiles(
+        Some(ingress::now().unwrap() - 100),
+        "native-public-evaluation-dev-v1",
+        continuity_v1::PROFILE,
+    )
+    .unwrap();
     let receiver = path.join("receiver");
-    let node = Node::open(&receiver, settings.clone(), 2).unwrap();
+    let mut node = Node::open(&receiver, settings.clone(), 2).unwrap();
+    node.enable_local_mempool(PoolLimits {
+        max_records: 8,
+        max_bytes: 32768,
+        max_group_members: 4,
+        critical_reserve: 0,
+        max_removals: 16,
+        preview_miner: development_public(0).unwrap(),
+    })
+    .unwrap();
     let context_start = Instant::now();
     let context_span = Span::start();
     let target = node.expected_target(settings.genesis()).unwrap();
@@ -425,6 +454,7 @@ fn from_zero_service_shares_cpu_with_honest_work_and_reopened_owner() {
     let (node, second) = phase(1, reopened, &mut producer, server, target, epoch);
     // Do not let comparison time refill the budget between the two service phases.
     // All eight cold/reused arms run only after both services have joined.
+    let (_, _, a, b) = settings.consensus_maintenance_material().unwrap();
     let mut roster = Roster::new();
     let mut comparisons = Vec::new();
     for (index, phase) in [&first, &second].into_iter().enumerate() {
@@ -433,7 +463,7 @@ fn from_zero_service_shares_cpu_with_honest_work_and_reopened_owner() {
             .and_then(|wire| hex::decode(wire).ok())
             .and_then(|bytes| Packet::decode(&bytes).ok());
         comparisons.push(match packet {
-            Some(packet) => roster.compare(&packet, index as u64),
+            Some(packet) => roster.compare(&packet, index as u64, &a, &b),
             None => json!({"all_equal": false, "error": "NO_NATIVE_PACKET", "rows": []}),
         });
     }
@@ -450,7 +480,7 @@ fn from_zero_service_shares_cpu_with_honest_work_and_reopened_owner() {
         "producer_comparisons": comparisons,
         "phases": [first, second], "reopen_resources": reopen_resources, "reopen_wall_ns": reopen_wall_ns, "reopen_state_equal": reopen_equal,
         "cpu_domain_retained_across_owner_reopen": true,
-        "scope": "finite local TCP; full from-zero hash trials and real shared receiver CPU; zero claimed C; untrusted state/receipt roots; eight matched cold/reused W1 producers outside concurrent service; default native service sender; no global speedup or energy ratio",
+        "scope": "finite local TCP; full from-zero hash trials and real shared receiver CPU; zero claimed C; untrusted state/receipt roots; eight matched cold/reused W1 producers outside concurrent service; explicit existing consensus-maintenance service sender; no global speedup or energy ratio",
         "public_network_ready": false, "independent_accepted": false,
         "work_profile_qualified": false, "resource_fairness_qualified": false,
         "physical_power_loss": false, "production_activation": false, "finite_target_met": passed,

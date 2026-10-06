@@ -38,12 +38,12 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_invariants.py
     cargo fetch --locked --manifest-path trillionnium/Cargo.toml
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
-    python3 scripts/ci/run_from_zero_service.py
     python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v
     python3 scripts/ci/run_account_archive_conformance.py
     python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_state_witness_oracle.py -v
     python3 scripts/ci/run_account_execution_conformance.py
+    python3 scripts/ci/run_from_zero_service.py
     cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
@@ -119,7 +119,6 @@ case "${1:?required job}" in
       export TRNM_ZERO_PAIRED_PREFIX_OUTPUT="$trnm_model_receipt_root/zero-paired-prefix"
       test ! -e "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
       test ! -L "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
-      export TRNM_PUBLIC_V3_FROM_ZERO_DIR="$trnm_model_receipt_root/public-v3-from-zero"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
       unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"

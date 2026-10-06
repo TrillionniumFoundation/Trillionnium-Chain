@@ -10,7 +10,7 @@ use trnm_crypto_primitives::pon_work::{
     structured::{TileKernel, TiledPreparedTask},
     PreparedTask, WorkError,
 };
-use trnm_pon_node::{maintenance, Packet};
+use trnm_pon_node::Packet;
 use trnm_protocol::pon_wire::{hash, Hash};
 
 fn cpu_now() -> Option<u64> {
@@ -123,12 +123,11 @@ impl Roster {
             task: None,
         }
     }
-    pub fn compare(&mut self, packet: &Packet, phase: u64) -> Value {
+    pub fn compare(&mut self, packet: &Packet, phase: u64, a: &[u32], b: &[u32]) -> Value {
         let complete = Span::start();
-        let (a, b) = maintenance();
-        let task = trnm_crypto_primitives::pon_work::task_id(&a, &b).unwrap();
+        let task = trnm_crypto_primitives::pon_work::task_id(a, b).unwrap();
         // Do not reuse a prepared task on a different material or hide oversized
-        // searches. The tested default native producer searches nonce 0..4096.
+        // searches. The selected native constructor searches nonce 0..4096.
         if packet.header.work_task != task
             || self.task.is_some_and(|original| original != task)
             || packet.header.nonce >= 4096
@@ -152,7 +151,7 @@ impl Roster {
                 let setup = Span::start();
                 let setup_calls = usize::from(!reused || self.reused[index].is_none());
                 let prepared = if setup_calls == 1 {
-                    prepare(index, &a, &b).map(Some)
+                    prepare(index, a, b).map(Some)
                 } else {
                     Ok(None)
                 };
