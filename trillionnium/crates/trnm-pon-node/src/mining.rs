@@ -892,7 +892,6 @@ where
     Ok(report)
 }
 
-
 #[cfg(test)]
 mod cooperative_search_tests {
     use super::*;
@@ -955,8 +954,12 @@ mod cooperative_search_tests {
         assert_eq!(packet.transactions, reference.transactions);
         assert_eq!(completed, header.nonce + 1);
         let work = pon_work::verify(
-            header.challenge(), header.work_task, header.target, &packet.proof,
-        ).unwrap();
+            header.challenge(),
+            header.work_task,
+            header.target,
+            &packet.proof,
+        )
+        .unwrap();
         assert_eq!(work.task(), header.work_task);
     }
 
@@ -964,24 +967,43 @@ mod cooperative_search_tests {
     fn cooperative_search_discards_partial_proof_at_each_stage() {
         for cut in [
             Point::BeforeReplay,
-            Point::Noise { label: 0, counter: 0 },
-            Point::Noise { label: 3, counter: 63 },
+            Point::Noise {
+                label: 0,
+                counter: 0,
+            },
+            Point::Noise {
+                label: 3,
+                counter: 63,
+            },
             Point::NoiseRow { operand: 0, row: 0 },
-            Point::NoiseRow { operand: 1, row: 63 },
-            Point::TranscriptTile { row: 0, column: 0, inner: 0 },
-            Point::TranscriptTile { row: 7, column: 7, inner: 7 },
+            Point::NoiseRow {
+                operand: 1,
+                row: 63,
+            },
+            Point::TranscriptTile {
+                row: 0,
+                column: 0,
+                inner: 0,
+            },
+            Point::TranscriptTile {
+                row: 7,
+                column: 7,
+                inner: 7,
+            },
             Point::BeforeProof,
         ] {
             let mut reached = false;
-            let result = candidate([255; 32]).search_with_progress(1, |point| {
-                assert!(!reached, "callback continued after cancellation");
-                if point == cut {
-                    reached = true;
-                    Err(())
-                } else {
-                    Ok(())
-                }
-            }).unwrap();
+            let result = candidate([255; 32])
+                .search_with_progress(1, |point| {
+                    assert!(!reached, "callback continued after cancellation");
+                    if point == cut {
+                        reached = true;
+                        Err(())
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap();
             assert!(reached, "checkpoint was not exercised: {cut:?}");
             assert!(matches!(result, SearchOutcome::Stopped(0)));
         }
@@ -991,18 +1013,23 @@ mod cooperative_search_tests {
     fn cooperative_search_checks_atomic_stop_and_actual_expired_deadline() {
         let stopped = AtomicBool::new(true);
         assert!(matches!(
-            candidate([255; 32]).search_cooperative(1, &stopped, None).unwrap(),
+            candidate([255; 32])
+                .search_cooperative(1, &stopped, None)
+                .unwrap(),
             SearchOutcome::Stopped(0)
         ));
         let running = AtomicBool::new(false);
         assert!(matches!(
             candidate([255; 32])
-                .search_cooperative(1, &running, Some(Instant::now())).unwrap(),
+                .search_cooperative(1, &running, Some(Instant::now()))
+                .unwrap(),
             SearchOutcome::Stopped(0)
         ));
         // A cancelled search leaves no process-global cancellation state.
         assert!(matches!(
-            candidate([255; 32]).search_cooperative(1, &running, None).unwrap(),
+            candidate([255; 32])
+                .search_cooperative(1, &running, None)
+                .unwrap(),
             SearchOutcome::Found(_)
         ));
     }
@@ -1039,15 +1066,17 @@ mod cooperative_search_tests {
         }
         let trial = selected.expect("finite template control found no first miss");
         let mut starts = 0;
-        let result = trial.search_with_progress(2, |point| {
-            if point == Point::BeforeReplay {
-                starts += 1;
-                if starts == 2 {
-                    return Err(());
+        let result = trial
+            .search_with_progress(2, |point| {
+                if point == Point::BeforeReplay {
+                    starts += 1;
+                    if starts == 2 {
+                        return Err(());
+                    }
                 }
-            }
-            Ok(())
-        }).unwrap();
+                Ok(())
+            })
+            .unwrap();
         assert_eq!(starts, 2);
         assert!(matches!(result, SearchOutcome::Stopped(1)));
     }

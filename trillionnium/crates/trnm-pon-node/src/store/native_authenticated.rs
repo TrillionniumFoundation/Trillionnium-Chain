@@ -238,9 +238,9 @@ fn matches_difference(
     let mut position = 0usize;
     let mut equal = true;
     visit_difference(before, after, progress, |key, prior, next| {
-        equal &= rows.get(position).is_some_and(|row| {
-            row.0 == key && row.1 == prior && row.2 == next
-        });
+        equal &= rows
+            .get(position)
+            .is_some_and(|row| row.0 == key && row.1 == prior && row.2 == next);
         position += 1;
     })?;
     // Do not short-circuit on a mismatch: all canonical values and the final
@@ -575,7 +575,6 @@ mod difference_tests {
     }
 }
 
-
 #[cfg(test)]
 mod difference_stream_tests {
     use super::*;
@@ -583,7 +582,9 @@ mod difference_stream_tests {
 
     fn states(n: usize) -> (State, State) {
         let before: State = (0..n).map(|i| (format!("key-{i:06}"), json!(i))).collect();
-        let after: State = (0..n).map(|i| (format!("key-{i:06}"), json!([i, null]))).collect();
+        let after: State = (0..n)
+            .map(|i| (format!("key-{i:06}"), json!([i, null])))
+            .collect();
         (before, after)
     }
 
@@ -621,13 +622,15 @@ mod difference_stream_tests {
                 assert!(matches_difference(&before, target, &rows, &mut || {
                     calls += 1;
                     Ok(())
-                }).unwrap());
+                })
+                .unwrap());
                 assert_eq!(calls, 2 + n / 256);
                 let mut calls = 0;
                 let result = matches_difference(&before, target, &[], &mut || {
                     calls += 1;
                     Ok(())
-                }).unwrap();
+                })
+                .unwrap();
                 assert_eq!(result, rows.is_empty());
                 assert_eq!(calls, 2 + n / 256);
             }
@@ -638,7 +641,11 @@ mod difference_stream_tests {
     fn stream_match_cancellation_returns_no_result_and_keeps_inputs_retryable() {
         let (before, after) = states(513);
         let rows = difference(&before, &after).unwrap();
-        let original = (canonical(&before).unwrap(), canonical(&after).unwrap(), rows.clone());
+        let original = (
+            canonical(&before).unwrap(),
+            canonical(&after).unwrap(),
+            rows.clone(),
+        );
         for cut in 0..4 {
             let mut calls = 0;
             let result = matches_difference(&before, &after, &rows, &mut || {
@@ -662,7 +669,11 @@ mod difference_stream_tests {
         let mut calls = 0;
         let result = matches_difference(&before, &after, &[], &mut || {
             calls += 1;
-            if calls == 4 { Err("FINAL_CANCELLED".into()) } else { Ok(()) }
+            if calls == 4 {
+                Err("FINAL_CANCELLED".into())
+            } else {
+                Ok(())
+            }
         });
         assert_eq!(result.err().unwrap().to_string(), "FINAL_CANCELLED");
     }
