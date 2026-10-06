@@ -35,7 +35,7 @@ jobs:
           test "$(git rev-parse HEAD^{tree})" = "$PRODUCT_TREE"
           git status --porcelain > "$out/status-before.txt"
           test ! -s "$out/status-before.txt"
-          python3 scripts/ci/source_guard.py before --output "$out/source-before.json"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$PRODUCT_SHA" --output "$out/source-before.json"
           bash scripts/project-preflight.sh --audit | tee "$out/preflight.stdout"
           printf 'CANDIDATE_SHA=%s\nCANDIDATE_TREE=%s\n' "$PRODUCT_SHA" "$PRODUCT_TREE" > "$out/source.txt"
       - name: Install same fixed compiler and formatter
@@ -107,7 +107,7 @@ jobs:
           raise SystemExit(0 if passed else 1)
           PY
           then :; else failed=1; fi
-          if python3 scripts/ci/source_guard.py after --output "$out/source-after.json" --baseline "$out/source-before.json"; then :; else failed=1; fi
+          if python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$PRODUCT_SHA" --output "$out/source-after.json"; then :; else failed=1; fi
           test "$(git rev-parse HEAD)" = "$PRODUCT_SHA" || failed=1
           test "$(git rev-parse HEAD^{tree})" = "$PRODUCT_TREE" || failed=1
           git status --porcelain > "$out/status-after.txt"
