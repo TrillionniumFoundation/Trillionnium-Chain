@@ -167,10 +167,76 @@ pub(crate) fn deltas(db: &Connection, id: Hash) -> Result<Vec<Delta>> {
 }
 
 fn delta_root(rows: &[Delta]) -> Result<Hash> {
-    Ok(sequence_root(
-        "native-authenticated-deltas-v1",
-        &rows.iter().map(canonical).collect::<Result<Vec<_>>>()?,
-    ))
+    delta_root_with_progress(rows, &mut || Ok(()))
+}
+
+/// The original indexed, duplicate-last sequence root, computed one encoded row
+/// at a time. This is operation-local hashing, never a stored validity cache.
+/// An occupied frontier slot at level k is a complete 2^k-leaf left subtree.
+fn delta_root_with_progress(
+    rows: &[Delta],
+    progress: &mut dyn FnMut() -> Result<()>,
+) -> Result<Hash> {
+    progress()?;
+    let mut frontier: Vec<Option<Hash>> = Vec::new();
+    for (index, row) in rows.iter().enumerate() {
+        let encoded = canonical(row)?;
+        let mut node = hash(
+            b"native-authenticated-deltas-v1-leaf",
+            &[&(index as u64).to_le_bytes(), &encoded],
+        );
+        // Do not retain every canonical row while constructing the Merkle tree.
+        drop(encoded);
+        let mut level = 0;
+        loop {
+            if level == frontier.len() {
+                frontier.push(Some(node));
+                break;
+            }
+            match frontier[level].take() {
+                Some(left) => {
+                    node = hash(b"native-authenticated-deltas-v1-node", &[&left, &node]);
+                    level += 1;
+                }
+                None => {
+                    frontier[level] = Some(node);
+                    break;
+                }
+            }
+        }
+        if (index + 1).is_multiple_of(256) {
+            progress()?;
+        }
+    }
+    // Fold the suffix from low to high. Only the rightmost partial subtree is
+    // duplicated to the next occupied level; padding leaves to a power of two
+    // instead would change the original root for some non-power-of-two counts.
+    let mut suffix: Option<(Hash, usize)> = None;
+    for (level, left) in frontier.into_iter().enumerate() {
+        let Some(left) = left else {
+            continue;
+        };
+        suffix = Some(match suffix {
+            None => (left, level),
+            Some((mut right, mut right_level)) => {
+                while right_level < level {
+                    right = hash(b"native-authenticated-deltas-v1-node", &[&right, &right]);
+                    right_level += 1;
+                }
+                (
+                    hash(b"native-authenticated-deltas-v1-node", &[&left, &right]),
+                    level + 1,
+                )
+            }
+        });
+    }
+    let root = suffix.map_or_else(
+        || hash(b"native-authenticated-deltas-v1-empty", &[]),
+        |(root, _)| root,
+    );
+    // A fully computed root still cannot escape an operation cancelled here.
+    progress()?;
+    Ok(root)
 }
 // Operation-local traversal: no persistent verdict or extra full-delta copy.
 fn visit_difference(
@@ -300,7 +366,12 @@ pub(crate) fn load(db: &Connection, id: Hash) -> Result<Record> {
     })())
 }
 
-fn verify_record(db: &Connection, settings: &Settings, record: &Record) -> Result<()> {
+fn verify_record(
+    db: &Connection,
+    settings: &Settings,
+    record: &Record,
+    progress: &mut dyn FnMut() -> Result<()>,
+) -> Result<()> {
     let native = native_block(db, settings, record.block)?;
     let rows = deltas(db, record.block)?;
     local(ensure(
@@ -312,7 +383,7 @@ fn verify_record(db: &Connection, settings: &Settings, record: &Record) -> Resul
             && record.state.genesis == settings.genesis()
             && record.state.state_root == native.root
             && record.delta_count == rows.len() as u64
-            && record.delta_root == delta_root(&rows)?,
+            && record.delta_root == delta_root_with_progress(&rows, progress)?,
         "NATIVE_STATE_BINDING",
     ))?;
     match record.parent {
@@ -342,7 +413,7 @@ pub(crate) fn verify_state(
 ) -> Result<()> {
     progress()?;
     let record = load(db, block)?;
-    verify_record(db, settings, &record)?;
+    verify_record(db, settings, &record, progress)?;
     local(ensure(
         record.state == complete(settings, state)?,
         "NATIVE_STATE_ROOT",
@@ -364,7 +435,7 @@ pub(crate) fn verify_history(
     loop {
         progress()?;
         let record = load(db, current)?;
-        verify_record(db, settings, &record)?;
+        verify_record(db, settings, &record, progress)?;
         local(ensure(
             expected_height.is_none_or(|height| record.height == height),
             "NATIVE_STATE_HISTORY",
@@ -459,7 +530,7 @@ pub(crate) fn publish(
         state,
         accounts,
         delta_count: rows.len() as u64,
-        delta_root: delta_root(&rows)?,
+        delta_root: delta_root_with_progress(&rows, progress)?,
     };
     save(db, &mut record)?;
     verify_state(db, settings, block, after, progress)?;
@@ -698,6 +769,178 @@ mod difference_stream_tests {
             fabricated_absence[0].1 = None;
             fabricated_absence[0].2 = None;
             assert!(!matches_difference(left, right, &fabricated_absence, &mut || Ok(())).unwrap());
+        }
+    }
+}
+
+#[cfg(test)]
+mod delta_root_stream_tests {
+    use super::*;
+
+    // The existing general sequence_root retains its independent all-leaves
+    // implementation. Do not use the streaming routine to derive expectations.
+    fn reference(rows: &[Delta]) -> Hash {
+        let encoded = rows
+            .iter()
+            .map(canonical)
+            .collect::<Result<Vec<_>>>()
+            .unwrap();
+        sequence_root("native-authenticated-deltas-v1", &encoded)
+    }
+
+    fn rows(count: usize) -> Vec<Delta> {
+        (0..count)
+            .map(|i| {
+                (
+                    format!("key-{i:06}"),
+                    Some((i as u64).to_le_bytes().to_vec()),
+                    Some(vec![(i % 251) as u8]),
+                )
+            })
+            .collect()
+    }
+
+    #[test]
+    fn streaming_delta_root_matches_every_small_padding_shape() {
+        let rows = rows(1025);
+        for count in 0..=129 {
+            assert_eq!(
+                delta_root(&rows[..count]).unwrap(),
+                reference(&rows[..count])
+            );
+        }
+        for count in [255, 256, 257, 511, 512, 513, 1023, 1024, 1025] {
+            assert_eq!(
+                delta_root(&rows[..count]).unwrap(),
+                reference(&rows[..count])
+            );
+        }
+    }
+
+    #[test]
+    fn streaming_delta_root_keeps_order_bytes_and_absence_distinct() {
+        let original = rows(513);
+        let expected = reference(&original);
+        assert_eq!(delta_root(&original).unwrap(), expected);
+        for index in [0, 256, 512] {
+            let mut changed = original.clone();
+            changed[index].0.push('!');
+            assert_ne!(delta_root(&changed).unwrap(), expected);
+            assert_eq!(delta_root(&changed).unwrap(), reference(&changed));
+            let mut missing = original.clone();
+            missing.remove(index);
+            assert_ne!(delta_root(&missing).unwrap(), expected);
+            assert_eq!(delta_root(&missing).unwrap(), reference(&missing));
+        }
+        let mut reordered = original.clone();
+        reordered.swap(0, 512);
+        assert_ne!(delta_root(&reordered).unwrap(), expected);
+        assert_eq!(delta_root(&reordered).unwrap(), reference(&reordered));
+        let mut extended = original.clone();
+        extended.push(original.last().unwrap().clone());
+        assert_ne!(delta_root(&extended).unwrap(), expected);
+        assert_eq!(delta_root(&extended).unwrap(), reference(&extended));
+        let options = [
+            None,
+            Some(Vec::new()),
+            Some(b"null".to_vec()),
+            Some(b"-0.0".to_vec()),
+            Some(b"0.0".to_vec()),
+            Some(vec![255; 4096]),
+        ];
+        let mut roots = Vec::new();
+        for before in &options {
+            for after in &options {
+                let row = vec![("λ\u{0000}😀".to_owned(), before.clone(), after.clone())];
+                let actual = delta_root(&row).unwrap();
+                assert_eq!(actual, reference(&row));
+                assert!(!roots.contains(&actual));
+                roots.push(actual);
+            }
+        }
+        assert_eq!(original, rows(513));
+    }
+
+    #[test]
+    fn streaming_delta_root_checks_empty_batch_and_final_cancellation() {
+        for count in [0, 1, 255, 256, 257, 512, 513] {
+            let rows = rows(count);
+            let original = rows.clone();
+            let expected = reference(&rows);
+            let checkpoints = 2 + count / 256;
+            let mut calls = 0;
+            let actual = delta_root_with_progress(&rows, &mut || {
+                calls += 1;
+                Ok(())
+            })
+            .unwrap();
+            assert_eq!(actual, expected);
+            assert_eq!(calls, checkpoints);
+            for cut in 0..checkpoints {
+                let mut calls = 0;
+                let result = delta_root_with_progress(&rows, &mut || {
+                    let current = calls;
+                    calls += 1;
+                    if current == cut {
+                        Err("DELTA_ROOT_CANCELLED".into())
+                    } else {
+                        Ok(())
+                    }
+                });
+                assert_eq!(result.unwrap_err().to_string(), "DELTA_ROOT_CANCELLED");
+                assert_eq!(calls, cut + 1);
+                assert_eq!(rows, original);
+                assert_eq!(delta_root(&rows).unwrap(), expected);
+            }
+        }
+    }
+
+    #[test]
+    fn streaming_delta_root_matches_full_delta_boundary_without_state_admission_claim() {
+        // 131072 is the retained-delta read bound, not a new ledger key limit,
+        // organic account growth, physical memory observation or throughput test.
+        let rows = rows(131_072);
+        for count in [65_535, 65_536, 65_537, 131_071, 131_072] {
+            let mut calls = 0;
+            let actual = delta_root_with_progress(&rows[..count], &mut || {
+                calls += 1;
+                Ok(())
+            })
+            .unwrap();
+            assert_eq!(actual, reference(&rows[..count]));
+            assert_eq!(calls, 2 + count / 256);
+        }
+    }
+
+    #[test]
+    fn streaming_delta_root_matches_independent_python_vectors() {
+        let rows = rows(11);
+        let vectors = [
+            (
+                0,
+                "0442a6d63fa68366d6d02b3bfa078c969ab5be9a7560f25007b59023304f857e",
+            ),
+            (
+                1,
+                "15d5f9cb3988fe9bf9f7113d5fe81fdc10892ed60c2597a824acad42125a4048",
+            ),
+            (
+                3,
+                "b742441bf83f119eda56090faefd99301d84337b90a01aac80818daf9c979f20",
+            ),
+            (
+                6,
+                "a93b3e405ebd597cb81544d7ea6f9422a82fe4c92acc5a6a177664e21b0792b7",
+            ),
+            (
+                11,
+                "9f97caa00f34e9988ec322937d7d5264b6a47cfdf2ef2f64716a09b4634603b2",
+            ),
+        ];
+        for (count, expected) in vectors {
+            let root = delta_root(&rows[..count]).unwrap();
+            assert_eq!(hex::encode(root), expected);
+            assert_eq!(root, reference(&rows[..count]));
         }
     }
 }
