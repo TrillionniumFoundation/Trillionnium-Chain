@@ -3,7 +3,7 @@ on:
   push:
     branches: [fix/chain-owner-hotpath-delivery-20261006]
 permissions:
-  contents: write
+  contents: read
 jobs:
   prepare-and-test:
     runs-on: ubuntu-24.04
@@ -14,88 +14,102 @@ jobs:
       RUST_TEST_THREADS: "1"
       CARGO_TERM_COLOR: never
       PYTHONDONTWRITEBYTECODE: "1"
+      PRODUCT_SHA: babd9c6ef2065bfd824fc7602fc0a3a7a6dc4b51
+      PRODUCT_TREE: eb356503abaf099bc69b3cec280669c3165867ea
     steps:
-      - name: Read isolated delivery inputs
+      - name: Read exact product source without delivery files
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          ref: babd9c6ef2065bfd824fc7602fc0a3a7a6dc4b51
           fetch-depth: 0
-      - name: Reconstruct checked patch and exact product base
+          persist-credentials: false
+      - name: Retain exact source and original project boundary
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/owner-hotpath-evidence"
-          cat .delivery/owner-hotpath/part0 .delivery/owner-hotpath/part1 .delivery/owner-hotpath/part2 > "$RUNNER_TEMP/owner-hotpath.py.gz"
-          echo "90c7d0fe7839fbcd583f0b7c4463e583f29a1dd43e3c76bcb92eb416d2895d4f  $RUNNER_TEMP/owner-hotpath.py.gz" | sha256sum --check
-          gzip -dc "$RUNNER_TEMP/owner-hotpath.py.gz" > "$RUNNER_TEMP/owner-hotpath.py"
-          echo "a6cf31fa38a0cc717a923f1e4de4b99f7a9c40188c4f763f5acd2fec09713fbc  $RUNNER_TEMP/owner-hotpath.py" | sha256sum --check
-          test -z "$(git ls-remote --heads origin refs/heads/fix/chain-owner-hotpath-20261006)"
-          git switch -c fix/chain-owner-hotpath-20261006 a580aaf8df5664e1981545c155366802efb8b5cb
-          bash scripts/project-preflight.sh --audit
-          bash scripts/project-preflight.sh --dev
-          python3 "$RUNNER_TEMP/owner-hotpath.py" | tee "$RUNNER_TEMP/owner-hotpath-evidence/unformatted-source.txt"
+          out="$RUNNER_TEMP/owner-hotpath-evidence"
+          mkdir "$out"
+          printf 'INCOMPLETE\n' > "$out/result.txt"
+          git switch -c fix/chain-owner-hotpath-observation-local "$PRODUCT_SHA"
+          test "$(git rev-parse HEAD)" = "$PRODUCT_SHA"
+          test "$(git rev-parse HEAD^{tree})" = "$PRODUCT_TREE"
+          git status --porcelain > "$out/status-before.txt"
+          test ! -s "$out/status-before.txt"
+          python3 scripts/ci/source_guard.py before --output "$out/source-before.json"
+          bash scripts/project-preflight.sh --audit | tee "$out/preflight.stdout"
+          printf 'CANDIDATE_SHA=%s\nCANDIDATE_TREE=%s\n' "$PRODUCT_SHA" "$PRODUCT_TREE" > "$out/source.txt"
       - name: Install same fixed compiler and formatter
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-      - name: Format changed files and freeze product commit
-        shell: bash
-        run: |
-          set -euo pipefail
-          rustup run 1.95.0 rustfmt --edition 2021 trillionnium/crates/trnm-pon-node/src/mining.rs trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
-          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
-          python3 - <<'PY'
-          import subprocess
-          expected = {
-            'trillionnium/crates/trnm-pon-node/src/mining.rs',
-            'trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs',
-            'docs/protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md',
-            'docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md',
-          }
-          actual = set(subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines())
-          if actual != expected:
-              raise SystemExit(f'unexpected product change set: {actual!r}')
-          if subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], text=True):
-              raise SystemExit('unexpected untracked files')
-          PY
-          git diff --check
-          git add trillionnium/crates/trnm-pon-node/src/mining.rs trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs docs/protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md
-          bash scripts/project-preflight.sh --staged
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -s -m 'refactor(pon): cancel native search cooperatively and stream authenticated delta comparison' -m 'Continue exact a580aaf8 under existing owners. Preserve complete W1 relation, first-winner bytes, native re-entry, full State/history checks and final transaction fences. Remove one complete duplicate delta allocation, observe cancellation on all union keys, and preserve original independent controls. Add nine native regression tests. No consensus, cap, permissions, default producer or activation change. Focused native execution and exact-head/prospective-merge qualification are separate observations.'
-          sha=$(git rev-parse HEAD)
-          tree=$(git rev-parse HEAD^{tree})
-          printf 'CANDIDATE_SHA=%s\nCANDIDATE_TREE=%s\n' "$sha" "$tree" | tee "$RUNNER_TEMP/owner-hotpath-evidence/source.txt"
-          echo "CANDIDATE_SHA=$sha" >> "$GITHUB_ENV"
-          git diff a580aaf8df5664e1981545c155366802efb8b5cb HEAD > "$RUNNER_TEMP/owner-hotpath-evidence/product.patch"
-          rustc +1.95.0 --version --verbose | tee "$RUNNER_TEMP/owner-hotpath-evidence/compiler.txt"
-          git status --porcelain > "$RUNNER_TEMP/owner-hotpath-evidence/status-before.txt"
-          test ! -s "$RUNNER_TEMP/owner-hotpath-evidence/status-before.txt"
-          origin=$(git remote get-url origin)
-          printf 'refs/heads/fix/chain-owner-hotpath-20261006 %s refs/heads/fix/chain-owner-hotpath-20261006 0000000000000000000000000000000000000000\n' "$sha" | bash scripts/project-preflight.sh --push origin "$origin"
-          git push origin HEAD:refs/heads/fix/chain-owner-hotpath-20261006
-      - name: Execute focused native and original owner regressions
+      - name: Execute exact native controls and strict lint with retained failures
         shell: bash
         run: |
           set -uo pipefail
           out="$RUNNER_TEMP/owner-hotpath-evidence"
+          rustc +1.95.0 --version --verbose > "$out/compiler.txt"
           failed=0
           run_checked() {
             local label="$1"; shift
             printf '%q ' "$@" > "$out/$label.command"
             printf '\n' >> "$out/$label.command"
-            "$@" > "$out/$label.stdout" 2> "$out/$label.stderr"
-            local rc=$?
+            local rc=0
+            if "$@" > "$out/$label.stdout" 2> "$out/$label.stderr"; then
+              rc=0
+            else
+              rc=$?
+              failed=1
+            fi
             printf '%s\n' "$rc" > "$out/$label.exit"
             cat "$out/$label.stdout" "$out/$label.stderr"
-            if [ "$rc" -ne 0 ]; then failed=1; fi
           }
+          run_checked fmt cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
           run_checked mining-new cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib cooperative_search_tests -- --nocapture
           run_checked delta-new cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib difference_stream_tests -- --nocapture
           run_checked delta-original cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib difference_tests -- --nocapture
           run_checked pool-owner cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pool_mining -- --nocapture
-          run_checked from-zero cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_from_zero -- --nocapture
+          run_checked from-zero env TRNM_PUBLIC_V3_FROM_ZERO_DIR="$out/native" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_from_zero -- --nocapture
           run_checked clippy cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings
           run_checked repository python3 scripts/ci/check_repository.py
-          test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA" || failed=1
+          export OBSERVATION_DIR="$out"
+          if python3 - <<'PY'
+          import hashlib, json, os, pathlib, re, subprocess
+          root = pathlib.Path(os.environ['OBSERVATION_DIR'])
+          expected = {
+              'mining-new': (5, 'mining::cooperative_search_tests::'),
+              'delta-new': (4, 'store::native_authenticated::difference_stream_tests::'),
+              'delta-original': (3, 'store::native_authenticated::difference_tests::'),
+              'pool-owner': (8, ''),
+              'from-zero': (3, ''),
+          }
+          outcomes = {}
+          for label, (count, prefix) in expected.items():
+              text = (root / (label + '.stdout')).read_text()
+              names = re.findall(r'^test ([A-Za-z0-9_:]+) \.\.\. ok$', text, re.M)
+              if label == 'from-zero':
+                  names = re.findall(r'^test ([A-Za-z0-9_:]+) \.\.\. (?:ok|\{[^\n]*\}\nok)$', text, re.M)
+              summaries = re.findall(r'^test result: ok\. (\d+) passed; 0 failed; 0 ignored;', text, re.M)
+              passed = ((root / (label + '.exit')).read_text().strip() == '0'
+                        and summaries == [str(count)] and len(names) == count
+                        and len(set(names)) == count and all(n.startswith(prefix) for n in names))
+              outcomes[label] = {'passed': passed, 'executed_names': names, 'required_count': count}
+          report = json.loads((root / 'native/report.json').read_text())
+          native = report.get('finite_target_met') is True and report.get('public_network_ready') is False
+          passed = native and all(row['passed'] for row in outcomes.values())
+          receipt = {'schema': 'isolated-owner-hotpath-observation-v1',
+                     'commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+                     'tree': subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip(),
+                     'run_id': os.environ['GITHUB_RUN_ID'], 'tests': outcomes,
+                     'native_finite_target_met': native, 'named_execution_passed': passed,
+                     'production_activation': False, 'independent_acceptance': False,
+                     'files': {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
+                               for p in sorted(root.rglob('*')) if p.is_file() and p.name != 'result.txt'}}
+          (root / 'named-execution.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          print(json.dumps({'named_execution_passed': passed, 'tests': outcomes}))
+          raise SystemExit(0 if passed else 1)
+          PY
+          then :; else failed=1; fi
+          if python3 scripts/ci/source_guard.py after --output "$out/source-after.json" --baseline "$out/source-before.json"; then :; else failed=1; fi
+          test "$(git rev-parse HEAD)" = "$PRODUCT_SHA" || failed=1
+          test "$(git rev-parse HEAD^{tree})" = "$PRODUCT_TREE" || failed=1
           git status --porcelain > "$out/status-after.txt"
           test ! -s "$out/status-after.txt" || failed=1
           printf 'FOCUSED_FAILURE=%s\n' "$failed" | tee "$out/result.txt"
