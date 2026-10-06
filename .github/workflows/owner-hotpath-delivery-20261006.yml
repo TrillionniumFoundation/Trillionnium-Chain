@@ -1,0 +1,110 @@
+name: owner-hotpath-delivery-20261006
+on:
+  push:
+    branches: [fix/chain-owner-hotpath-delivery-20261006]
+permissions:
+  contents: write
+jobs:
+  prepare-and-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      CARGO_TERM_COLOR: never
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Read isolated delivery inputs
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+      - name: Reconstruct checked patch and exact product base
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/owner-hotpath-evidence"
+          cat .delivery/owner-hotpath/part0 .delivery/owner-hotpath/part1 .delivery/owner-hotpath/part2 > "$RUNNER_TEMP/owner-hotpath.py.gz"
+          echo "90c7d0fe7839fbcd583f0b7c4463e583f29a1dd43e3c76bcb92eb416d2895d4f  $RUNNER_TEMP/owner-hotpath.py.gz" | sha256sum --check
+          gzip -dc "$RUNNER_TEMP/owner-hotpath.py.gz" > "$RUNNER_TEMP/owner-hotpath.py"
+          echo "a6cf31fa38a0cc717a923f1e4de4b99f7a9c40188c4f763f5acd2fec09713fbc  $RUNNER_TEMP/owner-hotpath.py" | sha256sum --check
+          test -z "$(git ls-remote --heads origin refs/heads/fix/chain-owner-hotpath-20261006)"
+          git switch -c fix/chain-owner-hotpath-20261006 a580aaf8df5664e1981545c155366802efb8b5cb
+          bash scripts/project-preflight.sh --audit
+          bash scripts/project-preflight.sh --dev
+          python3 "$RUNNER_TEMP/owner-hotpath.py" | tee "$RUNNER_TEMP/owner-hotpath-evidence/unformatted-source.txt"
+      - name: Install same fixed compiler and formatter
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Format changed files and freeze product commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup run 1.95.0 rustfmt --edition 2021 trillionnium/crates/trnm-pon-node/src/mining.rs trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          python3 - <<'PY'
+          import subprocess
+          expected = {
+            'trillionnium/crates/trnm-pon-node/src/mining.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs',
+            'docs/protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md',
+            'docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md',
+          }
+          actual = set(subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines())
+          if actual != expected:
+              raise SystemExit(f'unexpected product change set: {actual!r}')
+          if subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], text=True):
+              raise SystemExit('unexpected untracked files')
+          PY
+          git diff --check
+          git add trillionnium/crates/trnm-pon-node/src/mining.rs trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs docs/protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md
+          bash scripts/project-preflight.sh --staged
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -s -m 'refactor(pon): cancel native search cooperatively and stream authenticated delta comparison' -m 'Continue exact a580aaf8 under existing owners. Preserve complete W1 relation, first-winner bytes, native re-entry, full State/history checks and final transaction fences. Remove one complete duplicate delta allocation, observe cancellation on all union keys, and preserve original independent controls. Add nine native regression tests. No consensus, cap, permissions, default producer or activation change. Focused native execution and exact-head/prospective-merge qualification are separate observations.'
+          sha=$(git rev-parse HEAD)
+          tree=$(git rev-parse HEAD^{tree})
+          printf 'CANDIDATE_SHA=%s\nCANDIDATE_TREE=%s\n' "$sha" "$tree" | tee "$RUNNER_TEMP/owner-hotpath-evidence/source.txt"
+          echo "CANDIDATE_SHA=$sha" >> "$GITHUB_ENV"
+          git diff a580aaf8df5664e1981545c155366802efb8b5cb HEAD > "$RUNNER_TEMP/owner-hotpath-evidence/product.patch"
+          rustc +1.95.0 --version --verbose | tee "$RUNNER_TEMP/owner-hotpath-evidence/compiler.txt"
+          git status --porcelain > "$RUNNER_TEMP/owner-hotpath-evidence/status-before.txt"
+          test ! -s "$RUNNER_TEMP/owner-hotpath-evidence/status-before.txt"
+          origin=$(git remote get-url origin)
+          printf 'refs/heads/fix/chain-owner-hotpath-20261006 %s refs/heads/fix/chain-owner-hotpath-20261006 0000000000000000000000000000000000000000\n' "$sha" | bash scripts/project-preflight.sh --push origin "$origin"
+          git push origin HEAD:refs/heads/fix/chain-owner-hotpath-20261006
+      - name: Execute focused native and original owner regressions
+        shell: bash
+        run: |
+          set -uo pipefail
+          out="$RUNNER_TEMP/owner-hotpath-evidence"
+          failed=0
+          run_checked() {
+            local label="$1"; shift
+            printf '%q ' "$@" > "$out/$label.command"
+            printf '\n' >> "$out/$label.command"
+            "$@" > "$out/$label.stdout" 2> "$out/$label.stderr"
+            local rc=$?
+            printf '%s\n' "$rc" > "$out/$label.exit"
+            cat "$out/$label.stdout" "$out/$label.stderr"
+            if [ "$rc" -ne 0 ]; then failed=1; fi
+          }
+          run_checked mining-new cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib cooperative_search_tests -- --nocapture
+          run_checked delta-new cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib difference_stream_tests -- --nocapture
+          run_checked delta-original cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib difference_tests -- --nocapture
+          run_checked pool-owner cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pool_mining -- --nocapture
+          run_checked from-zero cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_from_zero -- --nocapture
+          run_checked clippy cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings
+          run_checked repository python3 scripts/ci/check_repository.py
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA" || failed=1
+          git status --porcelain > "$out/status-after.txt"
+          test ! -s "$out/status-after.txt" || failed=1
+          printf 'FOCUSED_FAILURE=%s\n' "$failed" | tee "$out/result.txt"
+          exit "$failed"
+      - name: Retain every success, failure and source identity
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owner-hotpath-delivery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/owner-hotpath-evidence/
+          if-no-files-found: error
+          retention-days: 30
