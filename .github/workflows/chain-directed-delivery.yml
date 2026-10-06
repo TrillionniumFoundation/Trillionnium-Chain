@@ -1,0 +1,91 @@
+name: chain-directed-delivery
+on:
+  push:
+    branches: [dev/chain-directed-delivery-20261006]
+permissions:
+  contents: write
+jobs:
+  deliver:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      BASE: 210c13be9cc5f7210377ee68b4dbc052a36b0c87
+      CANDIDATE: a580aaf8df5664e1981545c155366802efb8b5cb
+      TREE: a7f314d08acd1285d5107c4271f6c80b70eb0123
+      DESTINATION: fix/chain-directed-owner-convergence-20261006
+    steps:
+      - name: Checkout exact reviewed base without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.BASE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reconstruct only the three reviewed source changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$BASE"
+          test -z "$(git status --porcelain)"
+          git fetch --no-tags origin 73bf973aa527672d86940a087405da947cea1e65
+          path=trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
+          test "$(git rev-parse "HEAD:$path")" = 037df50077cd27a223d78baff180861d713834a1
+          test "$(git rev-parse "73bf973aa527672d86940a087405da947cea1e65:$path")" = c663844f91fdf5a33aa2fcb7927c0d92ed6226db
+          git show "73bf973aa527672d86940a087405da947cea1e65:$path" > "$path"
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('.github/workflows/trnm-required-baseline.yml')
+          s = p.read_text()
+          before = '      - name: Install pinned native release compiler\n        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt\n'
+          after = '      - name: Install pinned native release compiler\n        run: rustup toolchain install 1.95.0 --profile minimal\n      - name: Install matching native formatter\n        run: rustup component add --toolchain 1.95.0 rustfmt\n'
+          if s.count(before) != 1:
+              raise SystemExit('unexpected compiler preimage')
+          p.write_text(s.replace(before, after))
+          PY
+          python3 scripts/refresh_distributed_source_inventory.py
+          test "$(git hash-object .github/workflows/trnm-required-baseline.yml)" = 9dc1e81ee3f6dedfe0bb2aa042df6b6b27dbaf01
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs)" = 5117a995abcf011126cfa9864d93c4cb98566b98
+          git add .github/workflows/trnm-required-baseline.yml trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs "$path"
+          git diff --cached --check
+          test "$(git write-tree)" = "$TREE"
+          cat > "$RUNNER_TEMP/reviewed-commit" <<'COMMIT'
+          tree a7f314d08acd1285d5107c4271f6c80b70eb0123
+          parent 210c13be9cc5f7210377ee68b4dbc052a36b0c87
+          author Franksudoman <sunfocapital@gmail.com> 1791282499 +0000
+          committer Franksudoman <sunfocapital@gmail.com> 1791282499 +0000
+
+          fix(pon): converge real CI prerequisites and canonical state difference
+
+          Continue 210c13be and preserve PR #221 controls. Restore the exact pinned compiler installation and install its matching formatter explicitly. Refresh the generated inventory to include the existing from-zero native test. Integrate the inspected PR #215 native_authenticated blob c663844f verbatim, retaining all three independent differential regressions and every state/history/commit fence. No public or production acceptance is granted; source-bound execution follows this frozen commit.
+
+          Signed-off-by: Franksudoman <sunfocapital@gmail.com>
+          COMMIT
+          test "$(git hash-object -t commit -w "$RUNNER_TEMP/reviewed-commit")" = "$CANDIDATE"
+          git checkout -b "$DESTINATION" "$CANDIDATE"
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/check_ci_contract.py
+      - name: Original push guard and normal continuation push only
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
+          test "$(git rev-parse HEAD^{tree})" = "$TREE"
+          test -z "$(git status --porcelain)"
+          observed="$(git ls-remote origin "refs/heads/$DESTINATION" | cut -f1)"
+          test "$observed" = "$BASE"
+          printf 'refs/heads/%s %s refs/heads/%s %s\n' "$DESTINATION" "$CANDIDATE" "$DESTINATION" "$BASE" | bash scripts/project-preflight.sh --push origin https://github.com/TrillionniumFoundation/Trillionnium-Chain.git
+          cat > "$RUNNER_TEMP/delivery-askpass" <<'ASKPASS'
+          #!/usr/bin/env bash
+          case "$1" in
+            *Username*) printf '%s\n' x-access-token ;;
+            *Password*) printf '%s\n' "$GH_TOKEN" ;;
+            *) exit 1 ;;
+          esac
+          ASKPASS
+          chmod 700 "$RUNNER_TEMP/delivery-askpass"
+          trap 'rm -f "$RUNNER_TEMP/delivery-askpass"' EXIT
+          GIT_ASKPASS="$RUNNER_TEMP/delivery-askpass" GIT_TERMINAL_PROMPT=0 git -c credential.helper= push origin "HEAD:refs/heads/$DESTINATION"
+          test "$(git ls-remote origin "refs/heads/$DESTINATION" | cut -f1)" = "$CANDIDATE"
