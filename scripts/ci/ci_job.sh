@@ -21,6 +21,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_work_rejection_report.py
     python3 scripts/ci/test_account_archive_conformance.py
     python3 scripts/ci/test_run_account_execution_conformance.py
+    python3 scripts/ci/test_run_from_zero_service.py
     python3 scripts/ci/report_current_implementation.py --check
     python3 scripts/ci/test_work_cost_report.py
     python3 scripts/test_qualification_runtime.py
