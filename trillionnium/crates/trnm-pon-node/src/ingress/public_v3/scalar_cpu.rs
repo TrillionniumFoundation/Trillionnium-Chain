@@ -36,7 +36,13 @@ impl PaidMutationCpuBudget {
         }
     }
     pub(super) fn refill(&mut self, now: Instant) {
-        let elapsed = now.saturating_duration_since(self.updated).as_nanos();
+        // A timestamp sampled before another holder acquired this shared
+        // budget may be stale. Do not move the refill watermark backwards:
+        // otherwise the next sample can credit an already observed interval.
+        let Some(elapsed) = now.checked_duration_since(self.updated) else {
+            return;
+        };
+        let elapsed = elapsed.as_nanos();
         self.updated = now;
         let Some(credit) = elapsed
             .checked_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))
@@ -67,8 +73,14 @@ impl PaidMutationCpuBudget {
         Ok(())
     }
     pub(super) fn settle(&mut self, now: Instant, measured: Option<u64>) {
+        // Only an outstanding start reservation can be returned. An extra
+        // settlement is accounting uncertainty, not another free reserve.
+        if self.in_flight == 0 || self.in_flight > MUTATION_CPU_WORKERS {
+            self.unavailable = true;
+            return;
+        }
         self.refill(now);
-        self.in_flight = self.in_flight.saturating_sub(1);
+        self.in_flight -= 1;
         if let Some(measured) = measured {
             match self
                 .credit_ns
@@ -458,7 +470,9 @@ impl ServiceMutationCpuOperation {
             .and_then(|(total, paid)| total.checked_sub(paid));
         let budget_settled = if let Ok(mut budget) = self.budget.lock() {
             budget.settle(Instant::now(), residual);
-            true
+            // Another request can poison this shared epoch after our final
+            // sample. Holding the lock is not evidence of known accounting.
+            !budget.unavailable
         } else {
             false
         };

@@ -11,6 +11,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -44,9 +45,115 @@ def select_binary(lines: list[str]) -> Path:
         row = json_load(line)
         if row.get('reason') == 'compiler-artifact' and row.get('target', {}).get('name') == TARGET:
             if row.get('profile', {}).get('test') is True and row.get('executable'):
-                paths.append(Path(row['executable']).resolve())
+                path = Path(row['executable'])
+                require(not path.is_symlink(), 'REGULAR_BINARY_REQUIRED')
+                paths.append(path.resolve())
     require(len(paths) == 1, 'EXACT_NEW_NATIVE_TEST_BINARY_REQUIRED')
     return paths[0]
+
+
+# Bounded report consistency, not a second W1/state oracle or public qualification.
+# The native source fixes two phases with eight constructions and eight probes.
+REPORT_LIMIT = 32 * 1024 * 1024
+
+
+def validate_service_report(path: Path) -> dict:
+    require(path.is_file() and not path.is_symlink(), 'NATIVE_SERVICE_REPORT_REQUIRED')
+    with path.open('rb') as stream:
+        raw = stream.read(REPORT_LIMIT + 1)
+    require(len(raw) <= REPORT_LIMIT, 'NATIVE_SERVICE_REPORT_LIMIT')
+    doc = json_load(raw)
+    require(isinstance(doc, dict) and doc.get('schema') == 'public-v3-local-from-zero-service-v2',
+            'NATIVE_SERVICE_REPORT_SCHEMA')
+    for key in ('network', 'parameters', 'genesis', 'target', 'policy_id'):
+        require(isinstance(doc.get(key), str) and re.fullmatch('[0-9a-f]{64}', doc[key]) is not None,
+                'NATIVE_SERVICE_CONTEXT')
+    for key in ('reopen_state_equal', 'cpu_domain_retained_across_owner_reopen',
+                'all_requested_reads_required_on_time', 'finite_target_met'):
+        require(doc.get(key) is True, 'NATIVE_SERVICE_TARGET')
+    for key in ('budget_depletion_demonstrated', 'public_network_ready', 'independent_accepted',
+                'work_profile_qualified', 'resource_fairness_qualified',
+                'physical_power_loss', 'production_activation'):
+        require(doc.get(key) is False, 'NATIVE_SERVICE_SCOPE_PROMOTION')
+    phases = doc.get('phases')
+    require(isinstance(phases, list) and len(phases) == 2, 'NATIVE_SERVICE_PHASES')
+
+    def number(value):
+        require(type(value) is int and 0 <= value < 1 << 64, 'NATIVE_SERVICE_NUMBER')
+        return value
+
+    for index, phase in enumerate(phases):
+        require(isinstance(phase, dict) and type(phase.get('phase')) is int
+                and phase['phase'] == index, 'NATIVE_SERVICE_PHASES')
+        for key in ('complete_denominators', 'attacker_and_client_cpu_known',
+                    'no_attack_accepted', 'cpu_measurements_known',
+                    'all_started_work_finished', 'full_native_state_equal', 'finite_target_met'):
+            require(phase.get(key) is True, 'NATIVE_SERVICE_PHASE_TARGET')
+        attacks, reads = phase.get('from_zero'), phase.get('honest_reads')
+        require(isinstance(attacks, list) and isinstance(reads, list)
+                and len(attacks) == len(reads) == number(phase.get('construction_count')) == 8,
+                'NATIVE_SERVICE_DENOMINATORS')
+        hits = exhausted = submitted = late = 0
+        for row in attacks:
+            require(isinstance(row, dict) and isinstance(row.get('construction'), dict),
+                    'NATIVE_SERVICE_CONSTRUCTION')
+            status = row['construction'].get('status')
+            require(status in ('target_hit_unverified', 'exhausted'), 'NATIVE_SERVICE_CONSTRUCTION')
+            number(row['construction'].get('attacker_cpu_ns'))
+            require('call' in row, 'NATIVE_SERVICE_CONSTRUCTION')
+            call = row['call']
+            if status == 'exhausted':
+                exhausted += 1
+                require(call is None, 'NATIVE_SERVICE_EXHAUSTION_DISPATCH')
+            else:
+                hits += 1
+                require(isinstance(call, dict) and call.get('status') != 'ok',
+                        'NATIVE_SERVICE_ATTACK_ACCEPTED')
+                number(call.get('client_thread_cpu_ns'))
+                submitted += 1
+                if call.get('status') == 'refused':
+                    response = call.get('response')
+                    require(isinstance(response, dict) and isinstance(response.get('value'), dict),
+                            'NATIVE_SERVICE_RESPONSE')
+                    late += response['value'].get('error') == 'WORK:Transcript'
+        require((hits, exhausted, submitted, late) == tuple(number(phase.get(key)) for key in (
+            'constructed_hits', 'exhausted_searches', 'submitted_attacks', 'late_transcript_rejections'))
+                and late > 0, 'NATIVE_SERVICE_DENOMINATORS')
+        for call in [*reads, phase.get('honest_submit')]:
+            require(isinstance(call, dict) and call.get('status') == 'ok'
+                    and call.get('returned_after_deadline') is False, 'NATIVE_SERVICE_HONEST_GAP')
+            number(call.get('client_thread_cpu_ns'))
+        require(number(phase.get('honest_read_successes')) == 8
+                and phase.get('honest_build_error', 'missing') is None, 'NATIVE_SERVICE_HONEST_GAP')
+        preparation = number(phase.get('all_preparation_thread_cpu_ns'))
+        worker = number(phase.get('attacker_worker_cpu_ns'))
+        require(number(phase.get('attacker_preparation_and_worker_cpu_ns')) == preparation + worker,
+                'NATIVE_SERVICE_CPU_SUM')
+        require('honest_build_aggregate_cpu_ns' in phase and phase['honest_build_aggregate_cpu_ns'] is None
+                and phase.get('honest_worker_cpu_measured_by_this_clock') is False,
+                'NATIVE_SERVICE_SCOPE_PROMOTION')
+        service = phase.get('service')
+        require(isinstance(service, dict) and service.get('error', 'missing') is None
+                and isinstance(service.get('metrics'), dict), 'NATIVE_SERVICE_OUTCOME')
+        metrics = service['metrics']
+        started = number(metrics.get('work_started'))
+        require(started > late and number(metrics.get('work_finished')) == started
+                and number(metrics.get('work_failed')) >= late, 'NATIVE_SERVICE_UNJOINED_WORK')
+        work_cpu = number(metrics.get('mutation_full_work_cpu_ns'))
+        require(number(metrics.get('mutation_cpu_clock_failures')) == 0 and work_cpu > 0
+                and number(metrics.get('mutation_cpu_charged_ns')) >= work_cpu,
+                'NATIVE_SERVICE_CPU_SUM')
+    return {'sha256': digest(raw), 'schema': doc['schema'], 'phases': len(phases),
+            'scope': 'retained finite native report consistency; no independent work or state oracle'}
+
+
+def save_manifest(out: Path, result: dict) -> None:
+    temporary = out / 'manifest.json.next'
+    with temporary.open('x', encoding='utf-8') as stream:
+        stream.write(json.dumps(result, indent=2) + '\n')
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, out / 'manifest.json')
 
 
 def run(out: Path) -> dict:
@@ -58,23 +165,28 @@ def run(out: Path) -> dict:
               'source_after': None, 'source_recompiled': False, 'all_named_tests_passed': False,
               'format_passed': False, 'runs': [], 'failures': [],
               'independent_wan_accepted': False, 'work_hardness_accepted': False,
-              'production_activation': False}
+              'production_activation': False, 'passed': False, 'execution_finished': False,
+              'service_report': None}
     previous_output = os.environ.get('TRNM_PUBLIC_V3_FROM_ZERO_DIR')
+    previous_cwd = Path.cwd()
+    save_manifest(out, result)  # An interrupted launch retains an incomplete, non-passing receipt.
     try:
         os.chdir(ROOT)
         os.environ['TRNM_PUBLIC_V3_FROM_ZERO_DIR'] = str(out / 'native')
-        result['rustc'] = subprocess.check_output(['rustc', '-Vv'], text=True)
-        result['cargo'] = subprocess.check_output(['cargo', '-V'], text=True).strip()
+        result['rustc'] = subprocess.check_output(['rustc', '-Vv'], text=True, timeout=30)
+        result['cargo'] = subprocess.check_output(['cargo', '-V'], text=True, timeout=30).strip()
         result['build_env'] = {key: os.environ.get(key) for key in (
             'CARGO_BUILD_JOBS', 'CARGO_TARGET_DIR', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS')}
         # A copy gives a reproducible formatting repair without changing checkout.
         shutil.copyfile(ROOT / SOURCE, out / 'formatted.rs')
         result['format_copy'] = run_child(
             ['rustfmt', '--edition', '2021', str(out / 'formatted.rs')], out / 'format-copy', 60)
+        require(result['format_copy']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
         result['format'] = run_child(
             ['cargo', 'fmt', '--manifest-path', 'trillionnium/Cargo.toml', '--all', '--', '--check'],
             out / 'format-check', 60)
         result['format_passed'] = result['format']['exit_code'] == 0 and not result['format']['timed_out']
+        require(result['format']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
         command = ['cargo', 'test', '--locked', '--release', '--manifest-path',
                    'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--test', TARGET,
                    '--no-run', '--message-format=json']
@@ -88,7 +200,9 @@ def run(out: Path) -> dict:
         for name in TESTS:
             folder = out / name
             observed = run_child([str(binary), name, '--exact', '--nocapture', '--test-threads=1'], folder, 90)
-            row = {'name': name, 'process': observed, 'passed': False}
+            row = {'name': name, 'process': observed, 'passed': False,
+                   'stdout_sha256': digest((folder / 'stdout').read_bytes()),
+                   'stderr_sha256': digest((folder / 'stderr').read_bytes())}
             result['runs'].append(row)
             try:
                 require(observed['exit_code'] == 0 and not observed['timed_out'], 'NATIVE_TEST_FAILED')
@@ -98,11 +212,14 @@ def run(out: Path) -> dict:
                 row['failure'] = str(error)
                 result['failures'].append(name + ': ' + str(error))
             print(json.dumps(row, sort_keys=True), flush=True)
+            require(observed['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
         result['binary_sha256_after'] = digest(binary.read_bytes())
         require(result['binary_sha256_before'] == result['binary_sha256_after']
                 == digest((out / TARGET).read_bytes()), 'NATIVE_BINARY_CHANGED')
         result['all_named_tests_passed'] = len(result['runs']) == len(TESTS) and all(r['passed'] for r in result['runs'])
-    except (OSError, ValueError, subprocess.SubprocessError) as error:
+        result['service_report'] = validate_service_report(out / 'native/report.json')
+        result['execution_finished'] = True
+    except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
         result['failures'].append(str(error))
     finally:
         if previous_output is None:
@@ -111,14 +228,28 @@ def run(out: Path) -> dict:
             os.environ['TRNM_PUBLIC_V3_FROM_ZERO_DIR'] = previous_output
         try:
             result['source_after'] = source_identity()
-        except (OSError, ValueError, subprocess.SubprocessError) as error:
+        except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
             result['failures'].append(str(error))
+        try:
+            for row in result['runs']:
+                for channel in ('stdout', 'stderr'):
+                    require(digest((out / row['name'] / channel).read_bytes()) == row[channel + '_sha256'],
+                            'NATIVE_LOG_CHANGED')
+            if result['service_report'] is not None:
+                require(digest((out / 'native/report.json').read_bytes()) == result['service_report']['sha256'],
+                        'NATIVE_SERVICE_REPORT_CHANGED')
+            result['files'] = {p.relative_to(out).as_posix(): digest(p.read_bytes())
+                               for p in sorted(out.rglob('*'))
+                               if p.is_file() and p != out / 'manifest.json'}
+        except (OSError, ValueError) as error:
+            result['failures'].append(str(error))
+        finally:
+            os.chdir(previous_cwd)
         result['passed'] = (result['source_before'] == result['source_after']
                             and result['source_recompiled'] and result['format_passed']
-                            and result['all_named_tests_passed'] and not result['failures'])
-        result['files'] = {p.relative_to(out).as_posix(): digest(p.read_bytes())
-                           for p in sorted(out.rglob('*')) if p.is_file()}
-        (out / 'manifest.json').write_text(json.dumps(result, indent=2) + '\n')
+                            and result['all_named_tests_passed'] and result['execution_finished']
+                            and result['service_report'] is not None and not result['failures'])
+        save_manifest(out, result)
     return result
 
 
