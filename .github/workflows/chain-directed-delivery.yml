@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      BASE: 210c13be9cc5f7210377ee68b4dbc052a36b0c87
-      CANDIDATE: a580aaf8df5664e1981545c155366802efb8b5cb
-      TREE: a7f314d08acd1285d5107c4271f6c80b70eb0123
-      DESTINATION: fix/chain-directed-owner-convergence-20261006
+      BASE: 8ee6e5b399cd9f0e46d189b67a3ef2c40715a153
+      CANDIDATE: eee8db836b98cb5b9ca7c657cc94f23018555854
+      TREE: ae717c68b67661be63ed369958e1b9b379dc0200
+      DESTINATION: fix/chain-sustained-owner-convergence-20261006
     steps:
       - name: Checkout exact reviewed base without retained credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -21,50 +21,93 @@ jobs:
           ref: ${{ env.BASE }}
           fetch-depth: 0
           persist-credentials: false
-      - name: Reconstruct only the three reviewed source changes
+      - name: Retrieve fixed reviewed patch blobs from this repository
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$BASE"
           test -z "$(git status --porcelain)"
-          git fetch --no-tags origin 73bf973aa527672d86940a087405da947cea1e65
-          path=trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs
-          test "$(git rev-parse "HEAD:$path")" = 037df50077cd27a223d78baff180861d713834a1
-          test "$(git rev-parse "73bf973aa527672d86940a087405da947cea1e65:$path")" = c663844f91fdf5a33aa2fcb7927c0d92ed6226db
-          git show "73bf973aa527672d86940a087405da947cea1e65:$path" > "$path"
+          bash scripts/project-preflight.sh --audit
+          mkdir "$RUNNER_TEMP/reviewed-source"
+          for sha in 3ac750c753f68c4dd63448bd3c7e587b4acb502e cbc8b8d610a89de4e10e5081c5e26af0cc26f317 87fb5c4ac6c5fe32980c98c3d5d7055f31633ee5 67df9462b0b4aae84599d36ceab0a10378bac670 edb45cad80a02b3172a901f9ac6f94722d94af21 5a36a67c6a944129a59b38c4b3d3fac22c004fc6 dc37bfa1bd865dd032c859b83299a2fe27614c81; do
+            curl --fail --silent --show-error --max-time 30 --max-filesize 262144 \
+              -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+              "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/$sha" \
+              > "$RUNNER_TEMP/reviewed-source/$sha.json"
+          done
           python3 - <<'PY'
-          from pathlib import Path
-          p = Path('.github/workflows/trnm-required-baseline.yml')
-          s = p.read_text()
-          before = '      - name: Install pinned native release compiler\n        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt\n'
-          after = '      - name: Install pinned native release compiler\n        run: rustup toolchain install 1.95.0 --profile minimal\n      - name: Install matching native formatter\n        run: rustup component add --toolchain 1.95.0 rustfmt\n'
-          if s.count(before) != 1:
-              raise SystemExit('unexpected compiler preimage')
-          p.write_text(s.replace(before, after))
+          import base64, json, os, pathlib, subprocess
+          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'reviewed-source'
+          for path in sorted(root.glob('*.json')):
+              expected = path.stem
+              doc = json.loads(path.read_text())
+              if doc['encoding'] != 'base64' or doc['sha'] != expected:
+                  raise SystemExit('blob identity/encoding mismatch')
+              raw = base64.b64decode(doc['content'])
+              if len(raw) != doc['size'] or len(raw) > 100000:
+                  raise SystemExit('reviewed blob size mismatch')
+              actual = subprocess.check_output(['git', 'hash-object', '--stdin'], input=raw).decode().strip()
+              if actual != expected:
+                  raise SystemExit('reviewed blob bytes mismatch')
+              (root / expected).write_bytes(raw)
           PY
-          python3 scripts/refresh_distributed_source_inventory.py
-          test "$(git hash-object .github/workflows/trnm-required-baseline.yml)" = 9dc1e81ee3f6dedfe0bb2aa042df6b6b27dbaf01
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs)" = 5117a995abcf011126cfa9864d93c4cb98566b98
-          git add .github/workflows/trnm-required-baseline.yml trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs "$path"
-          git diff --cached --check
+      - name: Reconstruct exactly the two locally tested commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$BASE"
+          git checkout -b "$DESTINATION" "$BASE"
+          for sha in 3ac750c753f68c4dd63448bd3c7e587b4acb502e cbc8b8d610a89de4e10e5081c5e26af0cc26f317 87fb5c4ac6c5fe32980c98c3d5d7055f31633ee5 67df9462b0b4aae84599d36ceab0a10378bac670 edb45cad80a02b3172a901f9ac6f94722d94af21; do
+            git apply --index --check --whitespace=error-all "$RUNNER_TEMP/reviewed-source/$sha"
+            git apply --index --whitespace=error-all "$RUNNER_TEMP/reviewed-source/$sha"
+          done
+          test "$(git write-tree)" = f1f97304b424e562b3c4ce56be1fac9ebd7187ed
+          python3 - <<'PY'
+          import json, os, pathlib, subprocess
+          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'reviewed-source'
+          commits = json.loads((root / 'dc37bfa1bd865dd032c859b83299a2fe27614c81').read_text())
+          expected = '943277fb32ba5f6ce0c66546da3cad81b27edf77'
+          actual = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'],
+                                           input=commits[expected].encode()).decode().strip()
+          if actual != expected:
+              raise SystemExit('initial tested commit mismatch')
+          PY
+          patch="$RUNNER_TEMP/reviewed-source/5a36a67c6a944129a59b38c4b3d3fac22c004fc6"
+          git apply --index --check --whitespace=error-all "$patch"
+          git apply --index --whitespace=error-all "$patch"
           test "$(git write-tree)" = "$TREE"
-          cat > "$RUNNER_TEMP/reviewed-commit" <<'COMMIT'
-          tree a7f314d08acd1285d5107c4271f6c80b70eb0123
-          parent 210c13be9cc5f7210377ee68b4dbc052a36b0c87
-          author Franksudoman <sunfocapital@gmail.com> 1791282499 +0000
-          committer Franksudoman <sunfocapital@gmail.com> 1791282499 +0000
-
-          fix(pon): converge real CI prerequisites and canonical state difference
-
-          Continue 210c13be and preserve PR #221 controls. Restore the exact pinned compiler installation and install its matching formatter explicitly. Refresh the generated inventory to include the existing from-zero native test. Integrate the inspected PR #215 native_authenticated blob c663844f verbatim, retaining all three independent differential regressions and every state/history/commit fence. No public or production acceptance is granted; source-bound execution follows this frozen commit.
-
-          Signed-off-by: Franksudoman <sunfocapital@gmail.com>
-          COMMIT
-          test "$(git hash-object -t commit -w "$RUNNER_TEMP/reviewed-commit")" = "$CANDIDATE"
-          git checkout -b "$DESTINATION" "$CANDIDATE"
+          python3 - <<'PY'
+          import json, os, pathlib, subprocess
+          expected_paths = {
+              'docs/architecture/CI_EXECUTION_CONTRACT.md',
+              'docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md',
+              'scripts/ci/run_from_zero_native.py',
+              'scripts/ci/test_run_from_zero_native.py',
+              'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
+              'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs',
+              'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs',
+              'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs',
+          }
+          actual_paths = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+          if actual_paths != expected_paths:
+              raise SystemExit('unexpected source paths')
+          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'reviewed-source'
+          commits = json.loads((root / 'dc37bfa1bd865dd032c859b83299a2fe27614c81').read_text())
+          expected = os.environ['CANDIDATE']
+          actual = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'],
+                                           input=commits[expected].encode()).decode().strip()
+          if actual != expected:
+              raise SystemExit('final tested commit mismatch')
+          PY
+          git diff --cached --check
+          bash scripts/project-preflight.sh --staged
+          git update-ref "refs/heads/$DESTINATION" "$CANDIDATE" "$BASE"
           test -z "$(git status --porcelain)"
           bash scripts/project-preflight.sh --audit
           python3 scripts/ci/check_ci_contract.py
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$CANDIDATE"
       - name: Original push guard and normal continuation push only
         shell: bash
         env:
