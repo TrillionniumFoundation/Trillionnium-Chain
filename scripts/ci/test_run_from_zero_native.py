@@ -63,7 +63,7 @@ def simulated_sustained_report():
                   in_flight=0, accounting_unavailable=False, burst_ns=2_000_000_000,
                   refill_ns_per_second=250_000_000, start_reserve_ns=100_000_000, worker_limit=2)
     call = dict(status='ok', client_thread_cpu_ns=1, started_ns=10, ended_ns=20,
-                returned_after_deadline=False)
+                elapsed_wall_ns=10, deadline_ms=2000, returned_after_deadline=False)
     phases = []
     for index in range(2):
         constructions = [dict(status='target_hit_unverified', attacker_cpu_ns=1, attempt_budget=4096,
@@ -352,7 +352,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertIn('NATIVE_SERVICE_DENOMINATORS', result['failures'])
 
     def test_honest_deadline_failure_cannot_hide_behind_summary(self):
-        result, _ = self.exercise(report_edit=lambda doc: doc['phases'][1]['honest_reads'][0].update(returned_after_deadline=True))
+        result, _ = self.exercise(report_edit=lambda doc: doc['phases'][1]['honest_reads'][0].update(returned_after_deadline=True, elapsed_wall_ns=2_000_000_001))
         self.assertFalse(result['passed'])
         self.assertIn('NATIVE_SERVICE_HONEST_GAP', result['failures'])
 
@@ -480,7 +480,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.sustained_refusal(edit, 'SUSTAINED_EXHAUSTED_DISPATCH')
 
     def test_sustained_honest_deadline_and_missing_reads_refused(self):
-        self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(returned_after_deadline=True), 'SUSTAINED_HONEST_GAP')
+        self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(returned_after_deadline=True, elapsed_wall_ns=2_000_000_001), 'SUSTAINED_HONEST_GAP')
         self.sustained_refusal(lambda d: d['phases'][0].update(honest_reads=[]), 'SUSTAINED_HONEST_COUNT')
 
     def test_sustained_double_ack_is_not_two_honest_blocks(self):
@@ -524,6 +524,30 @@ class ExecutionBoundaryTests(unittest.TestCase):
             path.write_text('{"schema":1,"schema":2}')
             with self.assertRaisesRegex(ValueError, 'DUPLICATE_JSON_KEY'):
                 driver.validate_sustained_report(path)
+
+
+
+    def test_sustained_valid_exhaustion_is_retained_without_fabricated_connection(self):
+        def edit(d):
+            d['phases'][0]['construction'][15].update(status='exhausted', winner_nonce=None, packet=None,
+                attempts=[dict(nonce=i, target_hit=False) for i in range(4096)])
+            d['phases'][0]['attacks'][0]['calls'].append({'status': 'not_submitted_exhausted', 'packet_index': 15})
+        result, _ = self.exercise(sustained_edit=edit)
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['sustained_report']['phases'][0]['attacks'], 4)
+        self.assertEqual(result['sustained_report']['phases'][0]['connections'], 7)
+
+    def test_sustained_valid_packet_cannot_be_relabelled_as_exhausted(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0]['calls'].append(
+            {'status': 'not_submitted_exhausted', 'packet_index': 0}), 'SUSTAINED_EXHAUSTED_DISPATCH')
+
+    def test_sustained_deadline_boolean_must_match_actual_elapsed_interval(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(
+            elapsed_wall_ns=2_000_000_001), 'SUSTAINED_CALL_TIME')
+        self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(
+            deadline_ms=3000), 'SUSTAINED_CALL_TIME')
+        self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(
+            elapsed_wall_ns=0), 'SUSTAINED_CALL_TIME')
 
 
 if __name__ == '__main__':

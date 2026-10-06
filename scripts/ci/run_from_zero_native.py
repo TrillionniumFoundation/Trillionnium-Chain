@@ -186,6 +186,10 @@ def validate_sustained_report(path: Path) -> dict:
         start, end = number(value.get('started_ns')), number(value.get('ended_ns'))
         require(start <= end and type(value.get('returned_after_deadline')) is bool,
                 'SUSTAINED_CALL')
+        elapsed = number(value.get('elapsed_wall_ns'))
+        require(number(value.get('deadline_ms')) == 2000 and elapsed >= end - start
+                and value['returned_after_deadline'] == (elapsed > 2_000_000_000),
+                'SUSTAINED_CALL_TIME')
         return value['status'] == 'ok' and value['returned_after_deadline'] is False
 
     for key in ('network', 'parameters', 'genesis', 'policy_id'):
@@ -243,14 +247,27 @@ def validate_sustained_report(path: Path) -> dict:
             require(isinstance(calls, list) and 0 < len(calls) < 768
                     and worker.get('attempt_cap_reached') is False, 'SUSTAINED_CAP')
             worker_cpu += number(worker.get('calling_thread_cpu_ns'))
-            attack_count += len(calls)
             for row in calls:
+                require(isinstance(row, dict), 'SUSTAINED_CALL')
+                packet_index = number(row.get('packet_index'))
+                require(packet_index < 16, 'SUSTAINED_CONSTRUCTION')
+                if row.get('status') == 'not_submitted_exhausted':
+                    require(set(row) == {'status', 'packet_index'}
+                            and constructions[packet_index]['status'] == 'exhausted',
+                            'SUSTAINED_EXHAUSTED_DISPATCH')
+                    # This attempt consumed construction/worker CPU but opened
+                    # no connection. Keep it without inventing client timing.
+                    continue
                 call(row)
                 require(row['status'] != 'ok', 'SUSTAINED_ATTACK_ACCEPTED')
-                packet_index = number(row.get('packet_index'))
-                require(packet_index < 16 and constructions[packet_index]['status'] == 'target_hit_unverified',
+                require(constructions[packet_index]['status'] == 'target_hit_unverified',
                         'SUSTAINED_EXHAUSTED_DISPATCH')
-                late += (row.get('response') or {}).get('value', {}).get('error') == 'WORK:Transcript'
+                attack_count += 1
+                response = row.get('response')
+                if response is not None:
+                    require(isinstance(response, dict) and isinstance(response.get('value'), dict),
+                            'SUSTAINED_CALL')
+                    late += response['value'].get('error') == 'WORK:Transcript'
         require(late > 0, 'SUSTAINED_NO_LATE_REJECTION')
         require(number(phase.get('attacker_preparation_plus_workers_cpu_ns'))
                 == number(phase.get('preparation_cpu_ns')) + worker_cpu, 'SUSTAINED_CPU_SUM')
