@@ -72,12 +72,12 @@ impl PaidMutationCpuBudget {
         self.in_flight += 1;
         Ok(())
     }
-    pub(super) fn settle(&mut self, now: Instant, measured: Option<u64>) {
+    pub(super) fn settle(&mut self, now: Instant, measured: Option<u64>) -> bool {
         // Only an outstanding start reservation can be returned. An extra
         // settlement is accounting uncertainty, not another free reserve.
         if self.in_flight == 0 || self.in_flight > MUTATION_CPU_WORKERS {
             self.unavailable = true;
-            return;
+            return false;
         }
         self.refill(now);
         self.in_flight -= 1;
@@ -93,6 +93,7 @@ impl PaidMutationCpuBudget {
             // No fabricated zero or refund when actual accounting is unavailable.
             self.unavailable = true;
         }
+        !self.unavailable
     }
     /// Charge a known newly observed interval immediately. The start reserve
     /// remains outstanding until settlement; it is not charged a second time.
@@ -469,10 +470,9 @@ impl ServiceMutationCpuOperation {
             .zip(already_charged)
             .and_then(|(total, paid)| total.checked_sub(paid));
         let budget_settled = if let Ok(mut budget) = self.budget.lock() {
-            budget.settle(Instant::now(), residual);
-            // Another request can poison this shared epoch after our final
-            // sample. Holding the lock is not evidence of known accounting.
-            !budget.unavailable
+            // Share the same result as public dispatch, including a failed
+            // reservation return with otherwise known thread samples.
+            budget.settle(Instant::now(), residual)
         } else {
             false
         };
@@ -606,5 +606,39 @@ impl ServiceMutationCpuDomain {
                     .min(std::time::Duration::from_millis(50)),
             );
         }
+    }
+}
+
+/// Read-only local meter observation. This never refills or reserves credit,
+/// authenticates a remote claim, or grants permission to start an operation.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct ServiceMutationCpuObservation {
+    pub schema: &'static str,
+    pub stored_credit_ns: i128,
+    pub in_flight: usize,
+    pub accounting_unavailable: bool,
+    pub burst_ns: u64,
+    pub refill_ns_per_second: u64,
+    pub start_reserve_ns: u64,
+    pub worker_limit: usize,
+}
+impl ServiceMutationCpuDomain {
+    /// Observe the stored watermark balance without advancing its time or
+    /// modifying the shared epoch. A later reserve always rechecks everything.
+    pub fn observe(&self) -> Result<ServiceMutationCpuObservation> {
+        let budget = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        Ok(ServiceMutationCpuObservation {
+            schema: "public-v3-local-stored-cpu-budget-v1",
+            stored_credit_ns: budget.credit_ns,
+            in_flight: budget.in_flight,
+            accounting_unavailable: budget.unavailable,
+            burst_ns: MUTATION_CPU_BURST_NS,
+            refill_ns_per_second: MUTATION_CPU_REFILL_NS_PER_SECOND,
+            start_reserve_ns: MUTATION_CPU_START_RESERVE_NS,
+            worker_limit: MUTATION_CPU_WORKERS,
+        })
     }
 }

@@ -263,3 +263,47 @@ fn finish_reports_shared_settlement_uncertainty_without_erasing_known_cpu() {
         "PUBLIC_MUTATION_CPU_UNAVAILABLE"
     );
 }
+
+#[test]
+fn observing_budget_never_refills_or_returns_an_outstanding_reserve() {
+    let domain = ServiceMutationCpuDomain::standalone();
+    let old_watermark = {
+        let mut budget = domain.budget.lock().unwrap();
+        budget.credit_ns = -123;
+        budget.in_flight = 1;
+        budget.updated -= std::time::Duration::from_secs(10);
+        budget.updated
+    };
+    let first = domain.observe().unwrap();
+    for _ in 0..32 {
+        assert_eq!(domain.clone().observe().unwrap(), first);
+    }
+    assert_eq!(first.stored_credit_ns, -123);
+    assert_eq!(first.in_flight, 1);
+    assert_eq!(domain.budget.lock().unwrap().updated, old_watermark);
+    assert!(!first.accounting_unavailable);
+    domain.budget.lock().unwrap().unavailable = true;
+    let unknown = domain.observe().unwrap();
+    assert!(unknown.accounting_unavailable);
+    assert_eq!(unknown.stored_credit_ns, -123);
+    assert_eq!(unknown.in_flight, 1);
+}
+
+#[test]
+fn settlement_result_distinguishes_known_debt_unknown_sample_and_unowned_return() {
+    for measured in [Some(0), Some(MUTATION_CPU_BURST_NS + 1), None] {
+        let mut budget = PaidMutationCpuBudget::new();
+        let now = budget.updated;
+        budget.reserve(now).unwrap();
+        assert_eq!(budget.settle(now, measured), measured.is_some());
+        assert_eq!(budget.in_flight, 0);
+        if measured == Some(MUTATION_CPU_BURST_NS + 1) {
+            assert_eq!(budget.credit_ns, -1);
+            assert!(!budget.unavailable);
+        }
+        let credit = budget.credit_ns;
+        assert!(!budget.settle(now, Some(0)));
+        assert_eq!(budget.credit_ns, credit);
+        assert!(budget.unavailable);
+    }
+}
