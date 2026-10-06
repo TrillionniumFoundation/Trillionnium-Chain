@@ -237,3 +237,32 @@ The original SQLite namespace, complete actual State, full reference root and
 reopen check are retained. The observer writes a terminal success only after all
 samples and checks finish; a test panic, nonzero process exit or missing terminal
 result is failure and must remain visible.
+
+
+## Streaming authenticated delta comparison continuation
+
+The explicitly selected authenticated backend no longer constructs a second
+complete `Vec<Delta>` only to compare it with the actual retained delta rows.
+`matches_difference` visits both existing ordered State maps, canonically encodes
+every value in the original before/after order, and compares each actual change
+with the next retained row. It detects missing, extra, reordered and altered rows.
+No Value-equality shortcut replaces byte comparison; absent data, null and signed
+zero retain their original distinctions.
+
+The operation checks its existing progress callback before traversal, after every
+256 visited union keys (including unchanged keys), and after the final key. A
+mismatch does not bypass remaining canonical checks or the final cancellation
+fence. Cancellation is propagated before the caller labels an actual completed
+mismatch as local integrity failure; no partial result authorizes publication.
+Only the current key's temporary encoded values are retained by this comparison.
+The stored delta vector, actual full State, root construction, account checks,
+final transaction fences and full retained-history verification remain unchanged.
+This reduces one duplicate allocation and adds cancellation opportunities; it does
+not establish a whole-operation RSS/time bound, incremental-history complexity,
+permanent-account growth, or a new authenticated consensus root.
+
+The original independent union reference and all its native differential controls
+remain. `store::native_authenticated::difference_stream_tests` additionally exercise
+omissions/substitution/order, all-equal and mismatching full traversals, 65,536-key
+mechanics, cancellation at every cut and successful retry without input mutation.
+Those finite mechanics are not signed ledger-growth or public availability evidence.
