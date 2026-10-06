@@ -780,7 +780,11 @@ mod delta_root_stream_tests {
     // The existing general sequence_root retains its independent all-leaves
     // implementation. Do not use the streaming routine to derive expectations.
     fn reference(rows: &[Delta]) -> Hash {
-        let encoded = rows.iter().map(canonical).collect::<Result<Vec<_>>>().unwrap();
+        let encoded = rows
+            .iter()
+            .map(canonical)
+            .collect::<Result<Vec<_>>>()
+            .unwrap();
         sequence_root("native-authenticated-deltas-v1", &encoded)
     }
 
@@ -800,10 +804,16 @@ mod delta_root_stream_tests {
     fn streaming_delta_root_matches_every_small_padding_shape() {
         let rows = rows(1025);
         for count in 0..=129 {
-            assert_eq!(delta_root(&rows[..count]).unwrap(), reference(&rows[..count]));
+            assert_eq!(
+                delta_root(&rows[..count]).unwrap(),
+                reference(&rows[..count])
+            );
         }
         for count in [255, 256, 257, 511, 512, 513, 1023, 1024, 1025] {
-            assert_eq!(delta_root(&rows[..count]).unwrap(), reference(&rows[..count]));
+            assert_eq!(
+                delta_root(&rows[..count]).unwrap(),
+                reference(&rows[..count])
+            );
         }
     }
 
