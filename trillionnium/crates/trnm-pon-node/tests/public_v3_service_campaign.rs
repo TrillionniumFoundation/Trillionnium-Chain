@@ -18,7 +18,9 @@ use trnm_pon_node::{
     development_public,
     ingress::{
         self,
-        public_v3::{self, PublicMetrics, PublicPolicy, PublicRequestObserver, PublicServer, Request},
+        public_v3::{
+            self, PublicMetrics, PublicPolicy, PublicRequestObserver, PublicServer, Request,
+        },
         DevelopmentIdentity,
     },
     Node, PoolLimits, Settings,
