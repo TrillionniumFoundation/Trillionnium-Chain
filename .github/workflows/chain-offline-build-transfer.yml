@@ -1,0 +1,60 @@
+name: chain-offline-build-transfer
+on:
+  push:
+    branches: [work/chain-offline-build-transfer-20261006]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: babd9c6ef2065bfd824fc7602fc0a3a7a6dc4b51
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source and development boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = babd9c6ef2065bfd824fc7602fc0a3a7a6dc4b51
+          test -z "$(git status --porcelain)"
+          bash scripts/project-preflight.sh --audit
+          printf 'CARGO_HOME=%s/offline-cargo\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'OUT=%s/offline-transfer\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Install the existing pinned compiler and fetch locked sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          cargo +1.95.0 fetch --locked --manifest-path trillionnium/Cargo.toml
+      - name: Export only source, compiler and dependency-source directories
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$OUT" "$CARGO_HOME/registry" "$CARGO_HOME/git"
+          test -z "$(git status --porcelain)"
+          git bundle create "$OUT/source.bundle" HEAD
+          git bundle verify "$OUT/source.bundle"
+          toolchain="$(rustup toolchain list | awk '$1 ~ /^1[.]95[.]0-x86_64-unknown-linux-gnu$/ {print $1}')"
+          test "$toolchain" = 1.95.0-x86_64-unknown-linux-gnu
+          tar -C "$HOME/.rustup/toolchains" -czf "$OUT/toolchain.tar.gz" "$toolchain"
+          tar -C "$CARGO_HOME" -czf "$OUT/dependency-sources.tar.gz" registry git
+          {
+            printf 'source_commit='; git rev-parse HEAD
+            printf 'source_tree='; git rev-parse 'HEAD^{tree}'
+            printf 'workflow_commit=%s\nrun_id=%s\nattempt=%s\n' "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT"
+            rustc +1.95.0 -Vv
+            cargo +1.95.0 -V
+          } > "$OUT/source-and-toolchain.txt"
+          (cd "$OUT" && sha256sum source.bundle toolchain.tar.gz dependency-sources.tar.gz source-and-toolchain.txt > SHA256SUMS)
+          test -z "$(git status --porcelain)"
+      - name: Retain transferable bytes, not qualification claims
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: offline-native-workspace-${{ github.run_id }}
+          path: ${{ runner.temp }}/offline-transfer/
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
