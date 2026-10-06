@@ -172,7 +172,15 @@ fn delta_root(rows: &[Delta]) -> Result<Hash> {
         &rows.iter().map(canonical).collect::<Result<Vec<_>>>()?,
     ))
 }
-fn difference(before: &State, after: &State) -> Result<Vec<Delta>> {
+// Operation-local traversal: no persistent verdict or extra full-delta copy.
+fn visit_difference(
+    before: &State,
+    after: &State,
+    progress: &mut dyn FnMut() -> Result<()>,
+    mut visit: impl FnMut(&str, Option<Vec<u8>>, Option<Vec<u8>>),
+) -> Result<()> {
+    progress()?;
+    let mut inspected = 0usize;
     // Walk the two existing sorted maps without a third full-key tree or a
     // repeated lookup per key. Still encode EVERY value, before then after:
     // Value equality is not a substitute for canonical byte equality (signed
@@ -181,7 +189,6 @@ fn difference(before: &State, after: &State) -> Result<Vec<Delta>> {
     let mut right = after.iter();
     let mut a = left.next();
     let mut b = right.next();
-    let mut rows = Vec::new();
     loop {
         let (key, prior, next) = match (a, b) {
             (Some((ka, va)), Some((kb, vb))) => match ka.cmp(kb) {
@@ -212,9 +219,41 @@ fn difference(before: &State, after: &State) -> Result<Vec<Delta>> {
         let prior = prior.map(canonical).transpose()?;
         let next = next.map(canonical).transpose()?;
         if prior != next {
-            rows.push((key.clone(), prior, next));
+            visit(key, prior, next);
+        }
+        inspected += 1;
+        if inspected.is_multiple_of(256) {
+            progress()?;
         }
     }
+    progress()
+}
+
+fn matches_difference(
+    before: &State,
+    after: &State,
+    rows: &[Delta],
+    progress: &mut dyn FnMut() -> Result<()>,
+) -> Result<bool> {
+    let mut position = 0usize;
+    let mut equal = true;
+    visit_difference(before, after, progress, |key, prior, next| {
+        equal &= rows
+            .get(position)
+            .is_some_and(|row| row.0 == key && row.1 == prior && row.2 == next);
+        position += 1;
+    })?;
+    // Do not short-circuit on a mismatch: all canonical values and the final
+    // cancellation fence must be checked, as when materializing the old list.
+    Ok(equal && position == rows.len())
+}
+
+#[cfg(test)]
+fn difference(before: &State, after: &State) -> Result<Vec<Delta>> {
+    let mut rows = Vec::new();
+    visit_difference(before, after, &mut || Ok(()), |key, prior, next| {
+        rows.push((key.to_owned(), prior, next));
+    })?;
     Ok(rows)
 }
 
@@ -399,10 +438,8 @@ pub(crate) fn publish(
         "NATIVE_STATE_PARENT",
     ))?;
     let rows = deltas(db, block)?;
-    local(ensure(
-        rows == difference(before, after)?,
-        "NATIVE_STATE_DELTA",
-    ))?;
+    let matches = matches_difference(before, after, &rows, progress)?;
+    local(ensure(matches, "NATIVE_STATE_DELTA"))?;
     let accounts = native_store::apply(db, &parent_record.accounts, &rows, progress)?;
     let state = complete(settings, after)?;
     local(ensure(
@@ -456,6 +493,7 @@ mod difference_tests {
         for (source, target) in [(before, after), (after, before)] {
             let expected = reference(source, target).unwrap();
             let actual = difference(source, target).unwrap();
+            assert!(matches_difference(source, target, &expected, &mut || Ok(())).unwrap());
             assert_eq!(actual, expected);
             assert_eq!(canonical(&actual).unwrap(), canonical(&expected).unwrap());
             assert_eq!(delta_root(&actual).unwrap(), delta_root(&expected).unwrap());
@@ -534,5 +572,132 @@ mod difference_tests {
         assert_eq!(rows.last().unwrap().0, "λ-last");
         compare(&before, &after);
         compare(&before, &before);
+    }
+}
+
+#[cfg(test)]
+mod difference_stream_tests {
+    use super::*;
+    use serde_json::json;
+
+    fn states(n: usize) -> (State, State) {
+        let before: State = (0..n).map(|i| (format!("key-{i:06}"), json!(i))).collect();
+        let after: State = (0..n)
+            .map(|i| (format!("key-{i:06}"), json!([i, null])))
+            .collect();
+        (before, after)
+    }
+
+    #[test]
+    fn stream_match_refuses_missing_extra_reordered_and_changed_rows() {
+        let (before, after) = states(513);
+        let rows = difference(&before, &after).unwrap();
+        assert!(matches_difference(&before, &after, &rows, &mut || Ok(())).unwrap());
+        for position in [0, 256, 512] {
+            let mut missing = rows.clone();
+            missing.remove(position);
+            assert!(!matches_difference(&before, &after, &missing, &mut || Ok(())).unwrap());
+            let mut changed = rows.clone();
+            changed[position].2 = Some(b"null".to_vec());
+            assert!(!matches_difference(&before, &after, &changed, &mut || Ok(())).unwrap());
+            let mut wrong_key = rows.clone();
+            wrong_key[position].0.push('!');
+            assert!(!matches_difference(&before, &after, &wrong_key, &mut || Ok(())).unwrap());
+        }
+        let mut extra = rows.clone();
+        extra.push(rows[0].clone());
+        assert!(!matches_difference(&before, &after, &extra, &mut || Ok(())).unwrap());
+        let mut swapped = rows;
+        swapped.swap(0, 512);
+        assert!(!matches_difference(&before, &after, &swapped, &mut || Ok(())).unwrap());
+    }
+
+    #[test]
+    fn stream_match_visits_equal_keys_and_complete_mismatch_before_result() {
+        for n in [0, 1, 255, 256, 257, 512, 65_536] {
+            let (before, after) = states(n);
+            for target in [&before, &after] {
+                let rows = difference(&before, target).unwrap();
+                let mut calls = 0;
+                assert!(matches_difference(&before, target, &rows, &mut || {
+                    calls += 1;
+                    Ok(())
+                })
+                .unwrap());
+                assert_eq!(calls, 2 + n / 256);
+                let mut calls = 0;
+                let result = matches_difference(&before, target, &[], &mut || {
+                    calls += 1;
+                    Ok(())
+                })
+                .unwrap();
+                assert_eq!(result, rows.is_empty());
+                assert_eq!(calls, 2 + n / 256);
+            }
+        }
+    }
+
+    #[test]
+    fn stream_match_cancellation_returns_no_result_and_keeps_inputs_retryable() {
+        let (before, after) = states(513);
+        let rows = difference(&before, &after).unwrap();
+        let original = (
+            canonical(&before).unwrap(),
+            canonical(&after).unwrap(),
+            rows.clone(),
+        );
+        for cut in 0..4 {
+            let mut calls = 0;
+            let result = matches_difference(&before, &after, &rows, &mut || {
+                let current = calls;
+                calls += 1;
+                if current == cut {
+                    Err("STREAM_TEST_CANCELLED".into())
+                } else {
+                    Ok(())
+                }
+            });
+            assert_eq!(result.err().unwrap().to_string(), "STREAM_TEST_CANCELLED");
+            assert_eq!(calls, cut + 1);
+            assert_eq!(original.0, canonical(&before).unwrap());
+            assert_eq!(original.1, canonical(&after).unwrap());
+            assert_eq!(original.2, rows);
+            assert!(matches_difference(&before, &after, &rows, &mut || Ok(())).unwrap());
+        }
+        // Even after an observed mismatch, final cancellation cannot become an
+        // ordinary false result (which publish would label storage corruption).
+        let mut calls = 0;
+        let result = matches_difference(&before, &after, &[], &mut || {
+            calls += 1;
+            if calls == 4 {
+                Err("FINAL_CANCELLED".into())
+            } else {
+                Ok(())
+            }
+        });
+        assert_eq!(result.err().unwrap().to_string(), "FINAL_CANCELLED");
+    }
+
+    #[test]
+    fn stream_match_uses_original_byte_rules_for_null_absence_and_signed_zero() {
+        let before = State::from([
+            ("a".into(), Value::Null),
+            ("b".into(), json!(-0.0)),
+            ("d".into(), json!({"x": [1, "λ"]})),
+        ]);
+        let after = State::from([
+            ("b".into(), json!(0.0)),
+            ("c".into(), Value::Null),
+            ("d".into(), json!({"x": [1, "λ"]})),
+        ]);
+        for (left, right) in [(&before, &after), (&after, &before)] {
+            let rows = difference(left, right).unwrap();
+            assert_eq!(rows.len(), 3);
+            assert!(matches_difference(left, right, &rows, &mut || Ok(())).unwrap());
+            let mut fabricated_absence = rows.clone();
+            fabricated_absence[0].1 = None;
+            fabricated_absence[0].2 = None;
+            assert!(!matches_difference(left, right, &fabricated_absence, &mut || Ok(())).unwrap());
+        }
     }
 }
