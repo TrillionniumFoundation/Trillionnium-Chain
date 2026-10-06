@@ -536,6 +536,7 @@ fn from_zero_service_shares_cpu_with_honest_work_and_reopened_owner() {
         passed,
         "see retained from-zero trials, request failures and service CPU observations"
     );
+    sustained_observation(&path);
 }
 
 #[test]
@@ -664,4 +665,372 @@ fn caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct() {
         };
         assert_eq!(reversed.finish(), None);
     }
+}
+
+// Additional mandatory observation in the existing exact-named service test.
+// Original finite v2 report and all its assertions remain unchanged.
+const PRESSURE_MS: u64 = 4_000;
+const PRESSURE_WORKERS: usize = 4;
+const PRESSURE_CALLS_PER_WORKER: usize = 768;
+
+fn compact_pressure_call(mut row: Value, packet_index: Option<usize>) -> Value {
+    // Full immutable packets are retained once in the construction table. Do
+    // not retain another 98-KiB hex string for every retransmitted false proof.
+    let request = row.as_object_mut().unwrap().remove("request").unwrap();
+    let bytes = serde_json::to_vec(&request).unwrap();
+    row["recorded_request_digest"] = json!(hex::encode(hash(
+        b"pressure-recorded-request-v1",
+        &[&bytes]
+    )));
+    row["recorded_request_bytes"] = json!(bytes.len());
+    row["packet_index"] = json!(packet_index);
+    row
+}
+
+fn sustained_phase(
+    number: u64,
+    node: Node,
+    producer: &mut Node,
+    server: PublicServer,
+    epoch: Instant,
+) -> (Node, Value) {
+    let settings = node.settings().clone();
+    let target = node.expected_target(settings.genesis()).unwrap();
+    let domain = server.mutation_cpu_domain();
+    let initial_budget = domain.observe().unwrap();
+    let (a, b) = maintenance();
+    let task = pon_work::task_id(&a, &b).unwrap();
+    let prep_wall = Instant::now();
+    let prep_cpu = ThreadCpuStamp::start();
+    let searches: Vec<_> = (0..16)
+        .map(|i| {
+            search_from_zero(
+                genesis_header(&settings, target, 50_000 + number * 16 + i, task),
+                &a,
+                &b,
+                SEARCH_BUDGET,
+            )
+        })
+        .collect();
+    let preparation_cpu_ns = cpu_elapsed(prep_cpu);
+    let preparation_wall_ns = ns(prep_wall);
+    let construction: Vec<_> = searches.iter().map(|s| s.observation.clone()).collect();
+    let packets: Arc<Vec<Option<String>>> = Arc::new(
+        searches
+            .iter()
+            .map(|s| s.observation["packet"].as_str().map(str::to_owned))
+            .collect(),
+    );
+    // Diagnostic verifications are not attacker preparation and precede the
+    // service window. A valid proof was never acquired to build these inputs.
+    let diagnostic_start = Instant::now();
+    for search in &searches {
+        if let Some(packet) = &search.packet {
+            for verify in [
+                pon_work::verify,
+                pon_work::verify_reference,
+                pon_work::verify_limb,
+            ] {
+                assert_eq!(
+                    verify(packet.header.challenge(), task, target, &packet.proof).unwrap_err(),
+                    pon_work::WorkError::Transcript
+                );
+            }
+        }
+    }
+    let diagnostic_wall_ns = ns(diagnostic_start);
+    let build_start = Instant::now();
+    let build_cpu = ThreadCpuStamp::start();
+    let honest_packet = producer
+        .mine(
+            vec![],
+            settings.genesis_time() + 10 * (number + 1),
+            ingress::now().unwrap(),
+        )
+        .unwrap();
+    let honest_build_calling_thread_cpu_ns = cpu_elapsed(build_cpu);
+    let honest_build_wall_ns = ns(build_start);
+    let honest_wire = hex::encode(honest_packet.encode().unwrap());
+    let expected_id = honest_packet.id().unwrap();
+
+    let owner = Arc::new(Mutex::new(node));
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    let metrics = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));
+    let observer = public_v3::PublicRequestObserver::new(4096).unwrap();
+    let (shared, signal, metric_owner, capture) = (
+        owner.clone(),
+        stop.clone(),
+        metrics.clone(),
+        observer.clone(),
+    );
+    let service = RunningService {
+        stop,
+        worker: Some(thread::spawn(move || {
+            match public_v3::serve_public_protected_v3_with_request_observer(
+                listener,
+                shared,
+                Duration::from_secs(30),
+                signal,
+                server,
+                metric_owner,
+                capture,
+            ) {
+                Ok(metrics) => json!({"metrics": metrics, "error": null}),
+                Err(error) => json!({"metrics": null, "error": error.to_string()}),
+            }
+        })),
+    };
+    let client = Client {
+        address,
+        settings: settings.clone(),
+        epoch,
+    };
+    let barrier = Arc::new(Barrier::new(PRESSURE_WORKERS + 2));
+    // One common wall window. Request construction, negotiation, backpressure,
+    // ticket search and failures all consume it; no retry renews that window.
+    let window_start = Instant::now();
+    let window_end = window_start + Duration::from_millis(PRESSURE_MS);
+    let mut attacks = Vec::new();
+    for worker in 0..PRESSURE_WORKERS {
+        let (client, barrier, packets) = (client.clone(), barrier.clone(), packets.clone());
+        attacks.push(thread::spawn(move || {
+            barrier.wait();
+            let cpu = ThreadCpuStamp::start();
+            let started_ns = ns(epoch);
+            let mut rows = Vec::new();
+            for attempt in 0..PRESSURE_CALLS_PER_WORKER {
+                if Instant::now() >= window_end {
+                    break;
+                }
+                let index = (attempt * PRESSURE_WORKERS + worker) % packets.len();
+                if let Some(packet) = &packets[index] {
+                    let who = 80 + ((attempt + worker * 37) % 150) as u8;
+                    let call = client.call(
+                        "sustained_from_zero",
+                        who,
+                        Request::Submit {
+                            packet: packet.clone(),
+                        },
+                    );
+                    rows.push(compact_pressure_call(call, Some(index)));
+                } else {
+                    rows.push(json!({"status": "not_submitted_exhausted", "packet_index": index}));
+                }
+            }
+            let cpu_ns = cpu_elapsed(cpu);
+            json!({"worker": worker, "started_ns": started_ns, "ended_ns": ns(epoch),
+                "calling_thread_cpu_ns": cpu_ns, "attempt_cap": PRESSURE_CALLS_PER_WORKER,
+                "attempt_cap_reached": rows.len() == PRESSURE_CALLS_PER_WORKER,
+                "calls": rows})
+        }));
+    }
+    let (read_client, read_barrier) = (client.clone(), barrier.clone());
+    let reads = thread::spawn(move || {
+        read_barrier.wait();
+        let cpu = ThreadCpuStamp::start();
+        let mut rows = Vec::new();
+        while Instant::now() < window_end && rows.len() < 256 {
+            rows.push(compact_pressure_call(
+                read_client.call("sustained_honest_read", 72, Request::Head),
+                None,
+            ));
+            thread::sleep(
+                Duration::from_millis(40).min(window_end.saturating_duration_since(Instant::now())),
+            );
+        }
+        (rows, cpu_elapsed(cpu))
+    });
+    barrier.wait();
+    let mut submissions = Vec::new();
+    let mut budget_samples = Vec::new();
+    // Retain every refusal of the SAME real packet. Once acknowledged, no
+    // duplicate acknowledgement is counted as another successful native block.
+    while Instant::now() < window_end && budget_samples.len() < 256 {
+        budget_samples
+            .push(json!({"elapsed_ns": ns(window_start), "meter": domain.observe().unwrap()}));
+        if submissions.len() < 16 && !submissions.iter().any(|r: &Value| r["status"] == "ok") {
+            submissions.push(compact_pressure_call(
+                client.call(
+                    "sustained_honest_submit",
+                    73,
+                    Request::Submit {
+                        packet: honest_wire.clone(),
+                    },
+                ),
+                None,
+            ));
+        }
+        thread::sleep(
+            Duration::from_millis(40).min(window_end.saturating_duration_since(Instant::now())),
+        );
+    }
+    let attack_rows: Vec<_> = attacks.into_iter().map(|h| h.join().unwrap()).collect();
+    let (read_rows, reader_cpu_ns) = reads.join().unwrap();
+    let traffic_wall_ns = ns(window_start);
+    let budget_at_traffic_end = domain.observe().unwrap();
+    let after_pressure = client.call("post_pressure_head", 72, Request::Head);
+    let service_outcome = service.finish();
+    let captured = observer.snapshot();
+    let node = Arc::try_unwrap(owner).ok().unwrap().into_inner().unwrap();
+    let actual = node.read_active().unwrap();
+    let expected = producer.read_active().unwrap();
+    let no_attack_accepted = attack_rows.iter().all(|w| {
+        w["calls"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|r| r["status"] != "ok")
+    });
+    let reads_on_time = read_rows
+        .iter()
+        .filter(|r| r["status"] == "ok" && r["returned_after_deadline"] == false)
+        .count();
+    let honest_admitted =
+        actual.0 == expected_id && actual.0 == expected.0 && actual.2 == expected.2;
+    let honest_ack_on_time = submissions
+        .iter()
+        .any(|r| r["status"] == "ok" && r["returned_after_deadline"] == false);
+    let observations_complete = captured.records_not_retained == 0
+        && captured.measurement_failures == 0
+        && !captured.counter_overflow
+        && captured.records.iter().all(|r| r.complete);
+    let m = &service_outcome["metrics"];
+    let charged = m["mutation_cpu_charged_ns"].as_u64();
+    let work = m["mutation_full_work_cpu_ns"].as_u64();
+    let rest = m["mutation_dispatch_excluding_work_cpu_ns"].as_u64();
+    let accounting_closed = charged
+        .zip(work.zip(rest))
+        .is_some_and(|(all, (w, r))| w.checked_add(r) == Some(all))
+        && m["mutation_cpu_clock_failures"] == 0
+        && m["mutation_cpu_in_flight_after_shutdown"] == 0
+        && m["mutation_cpu_unavailable_after_shutdown"] == false
+        && m["work_started"] == m["work_finished"];
+    let below_start_reserve_observed = budget_samples.iter().any(|r| {
+        r["meter"]["stored_credit_ns"]
+            .as_i64()
+            .is_some_and(|v| v < 100_000_000)
+    });
+    let observed_debt = budget_samples.iter().any(|r| {
+        r["meter"]["stored_credit_ns"]
+            .as_i64()
+            .is_some_and(|v| v < 0)
+    });
+    let attack_cpu = attack_rows.iter().try_fold(0u64, |n, r| {
+        n.checked_add(r["calling_thread_cpu_ns"].as_u64()?)
+    });
+    let attacker_cpu_ns = preparation_cpu_ns
+        .zip(attack_cpu)
+        .and_then(|(p, w)| p.checked_add(w));
+    let caps_not_reached = attack_rows
+        .iter()
+        .all(|r| r["attempt_cap_reached"] == false);
+    let service_target_met = !read_rows.is_empty()
+        && reads_on_time == read_rows.len()
+        && honest_ack_on_time
+        && honest_admitted
+        && after_pressure["status"] == "ok";
+    let invariant_target_met = no_attack_accepted
+        && observations_complete
+        && accounting_closed
+        && attacker_cpu_ns.is_some()
+        && service_outcome["error"].is_null();
+    (
+        node,
+        json!({
+            "phase": number, "target": hex::encode(target), "initial_meter": initial_budget,
+            "construction": construction, "preparation_cpu_ns": preparation_cpu_ns,
+            "preparation_wall_ns": preparation_wall_ns, "diagnostic_verification_wall_ns": diagnostic_wall_ns,
+            "honest_packet": hex::encode(honest_packet.encode().unwrap()),
+            "honest_build_wall_ns": honest_build_wall_ns,
+            "honest_build_calling_thread_cpu_ns": honest_build_calling_thread_cpu_ns,
+            "honest_build_aggregate_cpu_ns": null,
+            "requested_window_ns": PRESSURE_MS * 1_000_000, "traffic_and_join_wall_ns": traffic_wall_ns,
+            "attacks": attack_rows, "attacker_preparation_plus_workers_cpu_ns": attacker_cpu_ns,
+            "attacker_cpu_scope": "disjoint preparation plus joined client threads; excludes parent setup/join, diagnostic verifiers, server, energy and final report encoding",
+            "honest_reads": read_rows, "reader_cpu_ns": reader_cpu_ns, "reads_on_time": reads_on_time,
+            "honest_submissions": submissions, "post_pressure_head": after_pressure,
+            "meter_samples": budget_samples, "meter_at_traffic_end": budget_at_traffic_end,
+            "stored_credit_below_start_reserve_observed": below_start_reserve_observed,
+            "negative_stored_credit_observed": observed_debt,
+            "attempt_caps_not_reached": caps_not_reached, "observations": captured,
+            "service": service_outcome, "no_attack_accepted": no_attack_accepted,
+            "accounting_closed": accounting_closed, "full_native_state_equal": honest_admitted,
+            "service_target_met": service_target_met, "invariant_target_met": invariant_target_met,
+            "client_confirmed_transactions": null, "strongest_honest_producer_used": false,
+            "public_network_ready": false, "resource_fairness_qualified": false,
+            "work_profile_qualified": false, "production_activation": false,
+        }),
+    )
+}
+
+fn sustained_observation(path: &std::path::Path) {
+    let path = path.join("sustained");
+    fs::create_dir(&path).unwrap();
+    // Fixed material context is identical on both architectures. Concurrency,
+    // attempted counts, outcomes and timing remain observations, not equal streams.
+    let settings = Settings::development(Some(1_750_000_000)).unwrap();
+    let receiver = path.join("receiver");
+    let mut node = Node::open(&receiver, settings.clone(), 1).unwrap();
+    node.enable_local_mempool(PoolLimits {
+        max_records: 16,
+        max_bytes: 32768,
+        max_group_members: 4,
+        critical_reserve: 0,
+        max_removals: 64,
+        preview_miner: development_public(0).unwrap(),
+    })
+    .unwrap();
+    let mut producer = Node::open(&path.join("producer"), settings.clone(), 1).unwrap();
+    let server = PublicServer::new(identity(71), policy()).unwrap();
+    let domain = server.mutation_cpu_domain();
+    let epoch = Instant::now();
+    let (node, first) = sustained_phase(0, node, &mut producer, server, epoch);
+    let before = node.read_active().unwrap();
+    let meter_before = domain.observe().unwrap();
+    drop(node);
+    let reopen_start = Instant::now();
+    let node = Node::open(&receiver, settings.clone(), 1).unwrap();
+    let reopen_equal = before == node.read_active().unwrap();
+    let server = PublicServer::with_continuous_domain(identity(71), policy(), &domain).unwrap();
+    let meter_after = server.mutation_cpu_domain().observe().unwrap();
+    let same_meter =
+        meter_before == meter_after && domain.shares_domain_with(&server.mutation_cpu_domain());
+    let reopen_wall_ns = ns(reopen_start);
+    let (node, second) = sustained_phase(1, node, &mut producer, server, epoch);
+    let passed = reopen_equal
+        && same_meter
+        && first["invariant_target_met"] == true
+        && second["invariant_target_met"] == true
+        && first["service_target_met"] == true
+        && second["service_target_met"] == true
+        && first["attempt_caps_not_reached"] == true
+        && second["attempt_caps_not_reached"] == true;
+    let report = json!({"schema": "public-v3-sustained-local-from-zero-v1",
+        "network": hex::encode(settings.network()), "parameters": hex::encode(settings.parameters()),
+        "genesis": hex::encode(settings.genesis()), "policy_id": hex::encode(policy().id()),
+        "phases": [first, second], "reopen_state_equal": reopen_equal,
+        "same_stored_cpu_meter_across_reopen": same_meter,
+        "meter_before_reopen": meter_before, "meter_after_reopen": meter_after,
+        "reopen_wall_ns": reopen_wall_ns,
+        "finite_service_target_met": passed, "independent_accepted": false,
+        "physical_power_loss": false, "ordinary_hepta_entry": false,
+        "public_network_ready": false, "resource_fairness_qualified": false,
+        "work_profile_qualified": false, "production_activation": false});
+    fs::write(
+        path.join("report.json"),
+        serde_json::to_vec_pretty(&report).unwrap(),
+    )
+    .unwrap();
+    drop(node);
+    drop(producer);
+    println!(
+        "{}",
+        json!({"schema": report["schema"], "finite_service_target_met": passed})
+    );
+    assert!(
+        passed,
+        "see sustained/report.json; failed attempts and non-depletion are retained"
+    );
 }

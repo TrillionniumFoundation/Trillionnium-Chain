@@ -57,6 +57,53 @@ def simulated_service_report():
                 'physical_power_loss', 'production_activation')}, 'phases': phases}
 
 
+def simulated_sustained_report():
+    """Explicitly synthetic driver inputs, never native execution evidence."""
+    policy = dict(schema='public-v3-local-stored-cpu-budget-v1', stored_credit_ns=2_000_000_000,
+                  in_flight=0, accounting_unavailable=False, burst_ns=2_000_000_000,
+                  refill_ns_per_second=250_000_000, start_reserve_ns=100_000_000, worker_limit=2)
+    call = dict(status='ok', client_thread_cpu_ns=1, started_ns=10, ended_ns=20,
+                returned_after_deadline=False)
+    phases = []
+    for index in range(2):
+        constructions = [dict(status='target_hit_unverified', attacker_cpu_ns=1, attempt_budget=4096,
+            attempts=[dict(nonce=0, target_hit=True)], winner_nonce=0, packet='00') for _ in range(16)]
+        workers = [dict(worker=i, attempt_cap=768, attempt_cap_reached=False, calling_thread_cpu_ns=2,
+            calls=[dict(call, status='refused', packet_index=i,
+                        response={'value': {'error': 'WORK:Transcript'}})]) for i in range(4)]
+        records = [dict(connection_id=i+1, complete=True, connection_closed=True,
+                        observation_failed=False, task_created=True, task_closed=True) for i in range(7)]
+        phases.append(dict(phase=index, target='7f'+'ff'*31, construction=constructions, attacks=workers,
+            requested_window_ns=4_000_000_000, traffic_and_join_wall_ns=4_000_000_001,
+            preparation_cpu_ns=16, attacker_preparation_plus_workers_cpu_ns=24,
+            preparation_wall_ns=20, diagnostic_verification_wall_ns=30, reader_cpu_ns=1,
+            honest_build_wall_ns=40, honest_build_calling_thread_cpu_ns=20,
+            honest_build_aggregate_cpu_ns=None, client_confirmed_transactions=None,
+            honest_reads=[call.copy()], reads_on_time=1, honest_submissions=[call.copy()],
+            post_pressure_head=call.copy(), initial_meter=policy.copy(), meter_at_traffic_end=policy.copy(),
+            meter_samples=[{'elapsed_ns': 1, 'meter': policy.copy()}],
+            stored_credit_below_start_reserve_observed=False, negative_stored_credit_observed=False,
+            attempt_caps_not_reached=True, no_attack_accepted=True, accounting_closed=True,
+            full_native_state_equal=True, service_target_met=True, invariant_target_met=True,
+            public_network_ready=False, resource_fairness_qualified=False, work_profile_qualified=False,
+            production_activation=False, strongest_honest_producer_used=False,
+            service={'error': None, 'metrics': dict(mutation_cpu_charged_ns=20, mutation_full_work_cpu_ns=10,
+                mutation_dispatch_excluding_work_cpu_ns=10, mutation_cpu_clock_failures=0,
+                mutation_cpu_in_flight_after_shutdown=0, mutation_cpu_unavailable_after_shutdown=False,
+                work_started=5, work_finished=5, work_failed=4, mutation_cpu_refusals=0, accepted_connections=7)},
+            observations=dict(records=records, accepted_connections_seen=7, capacity=4096,
+                records_not_retained=0, measurement_failures=0, counter_overflow=False,
+                cpu_intervals_are_nested_not_additive=True, observation_has_consensus_authority=False,
+                cpu_includes_reactor_authentication_or_response_signing=False)))
+    return dict(schema='public-v3-sustained-local-from-zero-v1', simulated_control=True,
+        network='a'*64, parameters='b'*64, genesis='c'*64, policy_id='d'*64,
+        phases=phases, reopen_state_equal=True, same_stored_cpu_meter_across_reopen=True,
+        meter_before_reopen=policy.copy(), meter_after_reopen=policy.copy(),
+        reopen_wall_ns=10, finite_service_target_met=True, independent_accepted=False,
+        physical_power_loss=False, ordinary_hepta_entry=False, public_network_ready=False,
+        resource_fairness_qualified=False, work_profile_qualified=False, production_activation=False)
+
+
 class BinarySelectionTests(unittest.TestCase):
     def test_exact_artifact_selected(self):
         p = Path('/tmp/exact-build-test')
@@ -122,7 +169,8 @@ class BinarySelectionTests(unittest.TestCase):
 class ExecutionBoundaryTests(unittest.TestCase):
     def exercise(self, *, fail=None, zero=None, ignored=None, timeout=None,
                  format_exit=0, build_exit=0, source_drift=False, binary_drift=False,
-                 missing_report=False, report_edit=None, log_drift=False, report_drift=False):
+                 missing_report=False, report_edit=None, log_drift=False, report_drift=False,
+                 missing_sustained=False, sustained_edit=None, sustained_drift=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'source'; root.mkdir()
             test_source = root / driver.SOURCE
@@ -163,6 +211,12 @@ class ExecutionBoundaryTests(unittest.TestCase):
                         if report_edit is not None:
                             report_edit(report)
                         (native / 'report.json').write_text(json.dumps(report))
+                    if not missing_sustained:
+                        sustained = out / 'native/sustained'; sustained.mkdir(parents=True, exist_ok=True)
+                        report = simulated_sustained_report()
+                        if sustained_edit is not None:
+                            sustained_edit(report)
+                        (sustained / 'report.json').write_text(json.dumps(report))
                     if log_drift:
                         (out / driver.TESTS[0] / 'stdout').write_text('changed after validation')
                 (folder / 'stdout').write_text(text)
@@ -176,6 +230,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 if current is after and report_drift:
                     report_path = out / 'native/report.json'
                     report_path.write_bytes(report_path.read_bytes() + b' ')
+                if current is after and sustained_drift:
+                    path = out / 'native/sustained/report.json'
+                    path.write_bytes(path.read_bytes() + b' ')
                 return current
             try:
                 with patch.object(driver, 'ROOT', root), \
@@ -369,6 +426,104 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 result, _ = self.exercise(report_edit=edit)
                 self.assertFalse(result['passed'])
                 self.assertIn(error, result['failures'])
+
+
+    def test_sustained_report_is_mandatory_even_with_three_native_names(self):
+        result, _ = self.exercise(missing_sustained=True)
+        self.assertFalse(result['passed'])
+        self.assertIn('SUSTAINED_REPORT_REQUIRED', result['failures'])
+
+    def test_sustained_finite_non_depletion_remains_a_valid_observation(self):
+        result, _ = self.exercise()
+        self.assertTrue(result['passed'])
+        self.assertEqual([p['attacks'] for p in result['sustained_report']['phases']], [4, 4])
+        self.assertEqual([p['mutation_cpu_refusals'] for p in result['sustained_report']['phases']], [0, 0])
+        self.assertEqual(result['files']['native/sustained/report.json'], result['sustained_report']['sha256'])
+
+    def test_sustained_report_change_after_validation_refused(self):
+        result, _ = self.exercise(sustained_drift=True)
+        self.assertFalse(result['passed'])
+        self.assertIn('SUSTAINED_REPORT_CHANGED', result['failures'])
+
+    def sustained_refusal(self, edit, code):
+        result, _ = self.exercise(sustained_edit=edit)
+        self.assertFalse(result['passed'])
+        self.assertIn(code, result['failures'])
+
+    def test_sustained_missing_or_duplicate_phase_refused(self):
+        self.sustained_refusal(lambda d: d['phases'].pop(), 'SUSTAINED_PHASES')
+        self.sustained_refusal(lambda d: d['phases'][1].update(phase=0), 'SUSTAINED_PHASES')
+
+    def test_sustained_shortened_window_refused(self):
+        self.sustained_refusal(lambda d: d['phases'][0].update(requested_window_ns=1), 'SUSTAINED_WINDOW')
+        self.sustained_refusal(lambda d: d['phases'][0].update(traffic_and_join_wall_ns=1), 'SUSTAINED_WINDOW')
+
+    def test_sustained_missing_worker_and_attempt_cap_refused(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['attacks'].pop(), 'SUSTAINED_WORKERS')
+        self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0].update(attempt_cap_reached=True), 'SUSTAINED_CAP')
+
+    def test_sustained_accepted_attack_and_early_only_refusals_rejected(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0]['calls'][0].update(status='ok'), 'SUSTAINED_ATTACK_ACCEPTED')
+        def early(d):
+            for w in d['phases'][0]['attacks']:
+                w['calls'][0]['response']['value']['error'] = 'PUBLIC_MUTATION_CPU_BUDGET'
+        self.sustained_refusal(early, 'SUSTAINED_NO_LATE_REJECTION')
+
+    def test_sustained_omitted_search_miss_and_false_winner_refused(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['construction'][0]['attempts'][0].update(nonce=1), 'SUSTAINED_SEARCH')
+        self.sustained_refusal(lambda d: d['phases'][0]['construction'][0].update(winner_nonce=1), 'SUSTAINED_SEARCH')
+
+    def test_sustained_exhaustion_cannot_dispatch(self):
+        def edit(d):
+            d['phases'][0]['construction'][0].update(status='exhausted', winner_nonce=None, packet=None,
+                attempts=[dict(nonce=i, target_hit=False) for i in range(4096)])
+        self.sustained_refusal(edit, 'SUSTAINED_EXHAUSTED_DISPATCH')
+
+    def test_sustained_honest_deadline_and_missing_reads_refused(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(returned_after_deadline=True), 'SUSTAINED_HONEST_GAP')
+        self.sustained_refusal(lambda d: d['phases'][0].update(honest_reads=[]), 'SUSTAINED_HONEST_COUNT')
+
+    def test_sustained_double_ack_is_not_two_honest_blocks(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['honest_submissions'].append(d['phases'][0]['honest_submissions'][0].copy()), 'SUSTAINED_HONEST_GAP')
+
+    def test_sustained_unknown_and_double_counted_cpu_refused(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0].update(calling_thread_cpu_ns=None), 'SUSTAINED_NUMBER')
+        self.sustained_refusal(lambda d: d['phases'][0].update(attacker_preparation_plus_workers_cpu_ns=25), 'SUSTAINED_CPU_SUM')
+        self.sustained_refusal(lambda d: d['phases'][0]['service']['metrics'].update(mutation_cpu_charged_ns=30), 'SUSTAINED_CPU_SUM')
+
+    def test_sustained_unjoined_work_and_unknown_settlement_refused(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['service']['metrics'].update(work_finished=4), 'SUSTAINED_UNJOINED_WORK')
+        self.sustained_refusal(lambda d: d['phases'][0]['service']['metrics'].update(mutation_cpu_unavailable_after_shutdown=True), 'SUSTAINED_CPU_SUM')
+
+    def test_sustained_missing_duplicate_or_incomplete_observer_refused(self):
+        self.sustained_refusal(lambda d: d['phases'][0]['observations']['records'].pop(), 'SUSTAINED_CAPTURE')
+        self.sustained_refusal(lambda d: d['phases'][0]['observations']['records'][1].update(connection_id=1), 'SUSTAINED_CAPTURE')
+        self.sustained_refusal(lambda d: d['phases'][0]['observations']['records'][0].update(complete=False), 'SUSTAINED_TARGET')
+
+    def test_sustained_scope_promotion_and_boolean_number_refused(self):
+        self.sustained_refusal(lambda d: d.update(ordinary_hepta_entry=True), 'SUSTAINED_SCOPE')
+        self.sustained_refusal(lambda d: d['phases'][0].update(client_confirmed_transactions=0), 'SUSTAINED_SCOPE')
+        self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0].update(calling_thread_cpu_ns=True), 'SUSTAINED_NUMBER')
+
+    def test_sustained_fabricated_depletion_and_changed_budget_refused(self):
+        self.sustained_refusal(lambda d: d['phases'][0].update(negative_stored_credit_observed=True), 'SUSTAINED_DEPLETION_CLAIM')
+        self.sustained_refusal(lambda d: d['phases'][0]['meter_samples'][0]['meter'].update(start_reserve_ns=1), 'SUSTAINED_POLICY_CHANGED')
+
+    def test_sustained_reopen_must_preserve_actual_meter_not_only_boolean(self):
+        self.sustained_refusal(lambda d: d['meter_before_reopen'].update(stored_credit_ns=10), 'SUSTAINED_REOPEN')
+        self.sustained_refusal(lambda d: d['phases'][1]['initial_meter'].update(in_flight=1), 'SUSTAINED_REOPEN')
+
+    def test_sustained_report_reader_rejects_oversize_symlink_and_bad_json(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'; path.write_bytes(b'x' * 65)
+            with patch.object(driver, 'REPORT_LIMIT', 64), self.assertRaisesRegex(ValueError, 'SUSTAINED_REPORT_LIMIT'):
+                driver.validate_sustained_report(path)
+            link = Path(directory) / 'link'; link.symlink_to(path)
+            with self.assertRaisesRegex(ValueError, 'SUSTAINED_REPORT_REQUIRED'):
+                driver.validate_sustained_report(link)
+            path.write_text('{"schema":1,"schema":2}')
+            with self.assertRaisesRegex(ValueError, 'DUPLICATE_JSON_KEY'):
+                driver.validate_sustained_report(path)
 
 
 if __name__ == '__main__':

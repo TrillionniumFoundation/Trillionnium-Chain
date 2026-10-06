@@ -669,3 +669,27 @@ Primary references: [cargo-deny command options](https://embarkstudios.github.io
 the existing source, maturity, applicability and consensus registries. It is checked
 for exact regeneration and has no independent status fields. Update the original
 owner registry and regenerate the view; do not add a second progress ledger.
+
+## Retaining the additional sustained from-zero campaign
+
+The existing `run_from_zero_native.py` build and three exact-name executions
+remain in the same protocol and architecture jobs. Its v2 execution manifest
+additionally requires `native/sustained/report.json`, while retaining the original
+`native/report.json` contract. Historical v1 receipts are not relabelled or
+modified. No job, timeout, matrix, original command or required check is removed.
+
+Before reporting success the driver recomputes the new report's two arrival
+windows, four sender inventories, all honest outcomes/deadlines, construction
+miss/exhaustion shape, disjoint preparation-plus-worker CPU, receiver accounting,
+complete connection capture and exact pre/post-reopen meter. It independently
+recomputes sampled debt/non-depletion flags; an observation does not become a
+fairness qualification. It rehashes both consumed reports before final manifest
+publication. Missing/tampered reports, invented throughput/authority, unknown CPU
+and omitted failures cannot be rescued by a green libtest line.
+
+These checks are bounded retained-record consistency, not authentication of
+stdout, a third work/state oracle or evidence of independent operation. The
+existing driver tests use explicitly simulated compilers and report fixtures;
+their passing counts are separate from actual native execution. Exact-source
+builds, native assertions and original full head/prospective-merge tests remain
+required. Local source checks or a transport workflow do not waive those gates.

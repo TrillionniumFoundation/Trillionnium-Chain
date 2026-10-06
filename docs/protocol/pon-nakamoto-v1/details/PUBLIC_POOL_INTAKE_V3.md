@@ -438,3 +438,55 @@ For each phase's20 honest Submit opportunities, observed maximum/p95 elapsed
 latencies in milliseconds were baseline47.16/36.27, cached139.07/41.06, and
 distinct-fork31.71/30.94. These include observer scheduling/waits, are not CPU
 measurements or TPS, and provide no p99 estimate (fewer than100 samples).
+
+## Shared settlement result and sustained local observation
+
+The existing paid-dispatch and continuous-operation owners now consume the same
+Boolean result from `PaidMutationCpuBudget::settle`. A successful mutex lock and
+a known final thread sample do not prove that an outstanding reservation was
+returned correctly or that the shared epoch remains available. A missing or
+impossible reservation marks accounting unavailable, cannot mint credit, and is
+reported by the public-dispatch clock-failure counter even when measured CPU is
+known. Known CPU remains charged; an already completed native result or signed
+reply is not rewritten. Known negative credit and unknown accounting remain
+separate states. Resource r9, wire/profile identity and every resource constant
+are unchanged.
+
+`ServiceMutationCpuDomain::observe` is a read-only local API. It returns stored
+credit, outstanding reservations, accounting availability and the existing
+policy constants. It neither refills credit nor advances the time watermark;
+reading it cannot return a reservation or authorize dispatch. Its result has no
+remote or consensus authority. A poisoned mutex returns an error instead of a
+fabricated zero balance. This volatile domain can be shared across same-process
+Node reopen; a process restart still requires the existing owner arrangements.
+
+The existing `public_v3_from_zero` service test retains its original two-phase
+finite report, all eight reads per phase, CPU-clock tests and complete-state
+checks. It additionally runs two four-second **arrival windows** on separate
+native receiver/producer stores. Four joined senders rotate sixteen independently
+constructed false-trace packets and transport identities. One honest reader
+runs concurrently; an actual ordinary native block is submitted with its
+original request deadline. Every failed attempt is retained. Outstanding calls
+are joined after each arrival window; `traffic_and_join_wall_ns` includes that
+drain, not just the requested four seconds. No request is restarted with a fresh
+campaign window. Finite attempt and observer caps remain explicit failure gates.
+
+The new `public-v3-sustained-local-from-zero-v1` report records every construction
+trial/exhaustion, separate diagnostic verifier time, client/receiver CPU scopes,
+raw requests or their retained packet reference, every observer connection and
+actual stored-credit samples. Complete native state is compared, the Node is
+closed/reopened, and the same shared CPU domain and its exact stored meter are
+retained. The original queue, public tickets, CPU burst/refill/reserve and all
+request deadlines are unchanged. The fixed genesis makes material context
+reproducible, but actual scheduling and request streams differ across runs.
+
+Sampled credit below the start reserve, sampled negative credit and CPU-budget
+refusal counts are distinct observations. A run that never depletes its budget
+remains a non-depletion result even when it records many late transcript
+rejections. Passing requires all attempted honest reads on time, one on-time
+honest submission per phase, complete accounting/capture and identical native
+state. It does not require or invent a saturation result. The report never
+qualifies public fairness, cheapest-adversary cost, strongest honest production,
+independent WAN, ordinary Hepta export, future model benefit, physical power loss
+or production activation. Honest build CPU is calling-thread only; total honest
+worker CPU and client-confirmed transaction throughput remain null.

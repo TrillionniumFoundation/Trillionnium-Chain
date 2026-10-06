@@ -204,14 +204,13 @@ impl PaidMutationCpuPermit {
             .and_then(|(total, paid)| total.checked_sub(paid));
         let live_refused = self.live.was_refused();
         let budget_settled = if let Ok(mut budget) = self.budget.lock() {
-            budget.settle(Instant::now(), residual);
-            true
+            budget.settle(Instant::now(), residual)
         } else {
             false
         };
         self.settled = true;
         if let Ok(mut m) = metrics.lock() {
-            m.mutation_cpu_clock_failures += u64::from(residual.is_none());
+            m.mutation_cpu_clock_failures += u64::from(residual.is_none() || !budget_settled);
             m.mutation_cpu_refusals += u64::from(live_refused);
             if let (Some(total), Some(dispatch)) = (residual.and(charged), remainder) {
                 m.mutation_cpu_charged_ns = m.mutation_cpu_charged_ns.saturating_add(total);
@@ -5870,5 +5869,53 @@ mod tests {
             m.peak_paid_body_bytes,
             serde_json::to_vec(&Request::Head).unwrap().len() * 3
         );
+    }
+}
+
+#[cfg(all(test, target_os = "linux"))]
+mod paid_settlement_consistency_tests {
+    use super::*;
+
+    fn server() -> PublicServer {
+        PublicServer::new(
+            DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap(),
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn paid_dispatch_known_sample_cannot_hide_failed_reservation_return() {
+        let server = server();
+        let metrics = Mutex::new(PublicMetrics::default());
+        let permit = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
+        let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
+        // Actual local corruption at the reservation boundary; not a forged
+        // remote proof. Keep known CPU and the already completed Native fact.
+        server.mutation_cpu.lock().unwrap().in_flight = 0;
+        assert!(permit.finish(&measurement, &server, &metrics).is_some());
+        let observed = metrics.lock().unwrap();
+        assert_eq!(observed.mutation_cpu_clock_failures, 1);
+        assert!(observed.mutation_cpu_charged_ns > 0);
+        assert!(!server.mutation_cpu_domain().accounting_available());
+    }
+
+    #[test]
+    fn paid_dispatch_known_settlement_keeps_original_cpu_decomposition() {
+        let server = server();
+        let metrics = Mutex::new(PublicMetrics::default());
+        let permit = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
+        let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
+        assert!(permit.finish(&measurement, &server, &metrics).is_some());
+        let observed = metrics.lock().unwrap();
+        assert_eq!(observed.mutation_cpu_clock_failures, 0);
+        assert_eq!(observed.mutation_cpu_reservations, 1);
+        assert_eq!(observed.mutation_cpu_in_flight_after_shutdown, 0);
+        assert_eq!(
+            observed.mutation_cpu_charged_ns,
+            observed.mutation_full_work_cpu_ns + observed.mutation_dispatch_excluding_work_cpu_ns
+        );
+        assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 0);
+        assert!(server.mutation_cpu_domain().accounting_available());
     }
 }
