@@ -26,6 +26,7 @@ case "${1:?required job}" in
     python3 scripts/test_qualification_runtime.py
     ;;
   protocol-contract)
+    bash scripts/ci/run_from_zero_native.sh
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples
