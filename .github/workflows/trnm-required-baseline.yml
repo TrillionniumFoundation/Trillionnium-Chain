@@ -82,7 +82,7 @@ jobs:
           printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
           printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Install pinned native release compiler
-        run: rustup toolchain install 1.95.0 --profile minimal
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt
       - name: Execute native release setup and repeated-search costs
         run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"
       - name: Execute native zero-matrix locality costs
@@ -97,6 +97,9 @@ jobs:
       - name: Execute native legal and late-rejection verifier costs
         if: always()
         run: python3 scripts/pon_work_rejection_report.py --run --out "$TRNM_CI_RECEIPT_DIR/work-rejection"
+      - name: Execute exact native from-zero service controls
+        if: always()
+        run: python3 scripts/ci/run_from_zero_native.py --out "$TRNM_CI_RECEIPT_DIR/from-zero-native"
       - name: Verify source remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"

@@ -223,4 +223,7 @@ class ChildOwnershipTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    # Keep the existing repository lane entry; imported controls simulate the
+    # source-build driver and never claim that a Rust process ran.
+    from test_run_from_zero_native import BinarySelectionTests, ExecutionBoundaryTests
     unittest.main(verbosity=2)
