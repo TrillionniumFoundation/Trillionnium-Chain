@@ -14,7 +14,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 TESTS = (
-    "resource_cost::cpu_span_cannot_cross_threads_or_turn_unknown_into_zero",
+    "cpu_span_cannot_cross_threads_or_turn_unknown_into_zero",
     "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
     "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
 )
@@ -32,7 +32,7 @@ def main() -> int:
         command = [
             "cargo", "test", "--offline", "--locked", "--release",
             "--manifest-path", str(ROOT / "trillionnium/Cargo.toml"),
-            "-p", "trnm-pon-node", "--test", "public_v3_from_zero", name,
+            "-p", "trnm-pon-node", "--test", "maintenance_paired_conformance", name,
             "--", "--exact", "--nocapture", "--test-threads=1",
         ]
         log = output / f"{index:02d}.log"
