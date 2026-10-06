@@ -13,6 +13,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_applicability.py
     python3 scripts/ci/test_ci_contract.py
     python3 scripts/ci/test_ci_execution.py
+    python3 scripts/ci/test_replay_pinned_native.py
     python3 scripts/ci/test_cross_arch_cost.py
     python3 scripts/ci/test_zero_locality_cost.py
     python3 scripts/ci/test_zero_paired_cost.py
@@ -26,6 +27,7 @@ case "${1:?required job}" in
     python3 scripts/test_qualification_runtime.py
     ;;
   protocol-contract)
+    python3 scripts/ci/run_from_zero_conformance.py
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples
