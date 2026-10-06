@@ -82,7 +82,9 @@ jobs:
           printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
           printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Install pinned native release compiler
-        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Install matching native formatter
+        run: rustup component add --toolchain 1.95.0 rustfmt
       - name: Execute native release setup and repeated-search costs
         run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"
       - name: Execute native zero-matrix locality costs
