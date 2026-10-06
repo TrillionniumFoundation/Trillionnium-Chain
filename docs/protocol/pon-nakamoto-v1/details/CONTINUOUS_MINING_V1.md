@@ -55,8 +55,8 @@ before its requested runtime or block limit; neither is an indefinite liveness c
    actual arithmetic work. This creates no block or pool-consumption certificate.
    Check stop/deadline after preparation before starting proof search.
 5. Release the Node/SQLite lock before proof search. Check stop/deadline before
-   each nonce attempt. A single transcript calculation is not preemptible; search
-   does not hold a lock that prevents public status or new pool submission.
+   each nonce attempt and at existing producer noise/row/tile checkpoints.
+   Search does not hold a lock that prevents public status or new pool submission.
 6. On a winning proof, reacquire the owner cooperatively and check the remaining
    budget, actual parent/generation and exact retained batch. A changed active
    branch discards the candidate as `stale-search`, without storing/activating it.
@@ -65,8 +65,8 @@ before its requested runtime or block limit; neither is an indefinite liveness c
    applies the existing branch policy using the actual wall clock. Reconcile the
    local pool against that actual branch, release the owner and emit diagnostics.
 
-State preparation, a single transcript, native admission, activation and SQLite
-commit remain nonpreemptive. A requested duration cannot interrupt those operations
+State preparation, final proof assembly, native admission, activation and SQLite
+commit retain nonpreemptive stages; transcript search now cooperates at checkpoints. A requested duration cannot interrupt those operations
 and is not a strict deadline. Long state preparation/commit and public workers
 still share the single write owner. Public saturation, processing fairness, signed
 transaction authority, fork validity and confirmation policy are separate issues.
@@ -194,3 +194,28 @@ operator or genuine task/model acceptance.
 then exercises paid Head/History and a fresh full-native follower, checks complete state,
 sender nonce and installed confirmation, and verifies natural service shutdown. Invalid,
 unused and non-V3 `--mining-seconds` choices reject before a namespace is created.
+
+
+## Cooperative proof search continuation
+
+The ordinary `search_cooperative` path now uses the existing
+`PreparedTask::prove_with_progress` relation. It observes the original stop flag
+and absolute monotonic deadline before replay, during bounded noise expansion,
+at each noise row and transcript tile, and before proof assembly. Cancellation
+returns `search-stopped` with no Packet and never becomes a work-invalidity claim.
+The separate externally owned nonce-window observation path retains its complete
+trial/receipt semantics and is unchanged.
+
+Existing `work_trials` / `observed_work_trials` count complete proof trials only.
+A stopped search can consume one additional unfinished attempt, whose time remains
+inside `search_ns` and `make_ns`; these fields are not an aggregate CPU bill or a
+refund authorization. No incomplete proof is counted as a completed lottery trial.
+Proof assembly after the final checkpoint, preparation, native admission/activation,
+SQLite and observation sinks still have nonpreemptive sections. This is cooperative
+cancellation, not hard preemption, a speed claim or hostile-service acceptance.
+
+Native `mining::cooperative_search_tests` compare complete first-winner bytes with
+the original producer and full verifier, cancel at all producer stages, check actual
+stop/deadline behavior, preserve completed misses, and reject invalid budgets before
+entry. The existing Node/pool and service tests remain required; these mechanics
+fixtures neither admit their synthetic header nor replace native product tests.

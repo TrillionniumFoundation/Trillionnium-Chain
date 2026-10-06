@@ -311,11 +311,10 @@ fn phase(
         for (index, search) in searches.into_iter().enumerate() {
             let submission_start = Instant::now();
             let wire = search.observation["packet"].as_str().map(str::to_owned);
-            let call = if let Some(packet) = wire {
-                Some(attack_client.call("from_zero", 100 + index as u8, Request::Submit { packet }))
-            } else {
-                None // Exhaustion is retained, never converted into a submitted proof.
-            };
+            // Exhaustion remains None and never starts a submitted proof.
+            let call = wire.map(|packet| {
+                attack_client.call("from_zero", 100 + index as u8, Request::Submit { packet })
+            });
             records.push(json!({"construction": search.observation, "call": call,
                 "submission_total_wall_ns": ns(submission_start)}));
         }

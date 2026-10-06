@@ -133,24 +133,49 @@ impl PreparedCandidate {
         Ok(trace)
     }
     fn search_cooperative(
-        mut self,
+        self,
         attempts: u64,
         stop: &AtomicBool,
         end: Option<Instant>,
     ) -> Result<SearchOutcome> {
-        ensure((1..=4096).contains(&attempts), "WORK_BUDGET")?;
-        for nonce in 0..attempts {
+        self.search_with_progress(attempts, |_| {
             if stop.load(Ordering::Acquire)
                 || end.is_some_and(|deadline| Instant::now() >= deadline)
             {
-                return Ok(SearchOutcome::Stopped(nonce));
+                Err(())
+            } else {
+                Ok(())
             }
+        })
+    }
+
+    // Use the producer's existing checkpoints, not a second work relation or
+    // proof cache. The callback runs outside the Node/SQLite owner. Cancellation
+    // yields no Packet; ordinary native admission and re-entry fences remain.
+    fn search_with_progress(
+        mut self,
+        attempts: u64,
+        mut progress: impl FnMut(
+            trnm_crypto_primitives::pon_work::PreparedGenerationProgress,
+        ) -> std::result::Result<(), ()>,
+    ) -> Result<SearchOutcome> {
+        use trnm_crypto_primitives::pon_work::PreparedGenerationError;
+        ensure((1..=4096).contains(&attempts), "WORK_BUDGET")?;
+        for nonce in 0..attempts {
             self.header.nonce = nonce;
             let challenge = self.header.challenge();
-            let proof = self
-                .prepared
-                .prove(challenge)
-                .map_err(|e| format!("WORK:{e:?}"))?;
+            let proof = match self.prepared.prove_with_progress(challenge, &mut progress) {
+                Ok(proof) => proof,
+                Err(PreparedGenerationError::Relation(error)) => {
+                    return Err(format!("WORK:{error:?}").into());
+                }
+                Err(PreparedGenerationError::Cancelled(())) => {
+                    // This field has always counted COMPLETE proof trials.
+                    // Search elapsed time still includes the abandoned partial
+                    // attempt. Do not invent a completed trial or refund work.
+                    return Ok(SearchOutcome::Stopped(nonce));
+                }
+            };
             if hash(b"ticket", &[&challenge, &proof[proof.len() - 32..]]) <= self.header.target {
                 return Ok(SearchOutcome::Found(Box::new(Packet {
                     header: self.header,
@@ -501,8 +526,8 @@ fn pause_until(deadline: Instant, end: Instant, stop: &AtomicBool) {
 }
 
 /// Shares the existing exclusive Node owner with ingress. Stop/runtime are checked
-/// before search and admission; ongoing proof construction or SQLite commit cannot be
-/// preempted. Each real activated packet remains in the native durable store.
+/// before search and admission, and at bounded producer checkpoints. SQLite and
+/// deep native stages still cannot be preempted. Each real activated packet remains in the native durable store.
 pub fn run_pool_mining<F>(
     node: Arc<Mutex<Node>>,
     config: MiningConfig,
@@ -865,4 +890,194 @@ where
     };
     report.actual_elapsed_ns = started.elapsed().as_nanos();
     Ok(report)
+}
+
+#[cfg(test)]
+mod cooperative_search_tests {
+    use super::*;
+    use trnm_crypto_primitives::pon_work::{self, PreparedGenerationProgress as Point};
+
+    // Search mechanics only. This template does not claim ledger admission.
+    fn candidate(target: Hash) -> PreparedCandidate {
+        let a: Vec<u32> = (0..4096).map(|i| (i % 19) as u32).collect();
+        let b: Vec<u32> = (0..4096).map(|i| (i % 23) as u32).collect();
+        PreparedCandidate {
+            header: Header {
+                network: [1; 32],
+                parameters: [2; 32],
+                parent: [3; 32],
+                height: 1,
+                timestamp: 10,
+                target,
+                miner: [4; 32],
+                transactions: [5; 32],
+                state: [6; 32],
+                receipts: [7; 32],
+                work_task: pon_work::task_id(&a, &b).unwrap(),
+                nonce: 0,
+            },
+            transactions: vec![vec![9, 8, 7]],
+            prepared: pon_work::PreparedTask::new(&a, &b).unwrap(),
+        }
+    }
+
+    #[test]
+    fn cooperative_search_matches_complete_first_winner_and_full_verifier() {
+        let mut target = [255; 32];
+        target[0] = 127;
+        let mut reference = candidate(target);
+        let mut expected = None;
+        for nonce in 0..4096 {
+            reference.header.nonce = nonce;
+            let c = reference.header.challenge();
+            let proof = reference.prepared.prove(c).unwrap();
+            if hash(b"ticket", &[&c, &proof[proof.len() - 32..]]) <= target {
+                expected = Some((reference.header.clone(), proof));
+                break;
+            }
+        }
+        let (header, proof) = expected.expect("finite reference search found no winner");
+        let mut completed = 0u64;
+        let result = candidate(target)
+            .search_with_progress(4096, |point| {
+                if point == Point::BeforeProof {
+                    completed += 1;
+                }
+                Ok(())
+            })
+            .unwrap();
+        let SearchOutcome::Found(packet) = result else {
+            panic!("cooperative search disagreed with the complete reference");
+        };
+        assert_eq!(packet.header, header);
+        assert_eq!(packet.proof, proof);
+        assert_eq!(packet.transactions, reference.transactions);
+        assert_eq!(completed, header.nonce + 1);
+        let work = pon_work::verify(
+            header.challenge(),
+            header.work_task,
+            header.target,
+            &packet.proof,
+        )
+        .unwrap();
+        assert_eq!(work.task(), header.work_task);
+    }
+
+    #[test]
+    fn cooperative_search_discards_partial_proof_at_each_stage() {
+        for cut in [
+            Point::BeforeReplay,
+            Point::Noise {
+                label: 0,
+                counter: 0,
+            },
+            Point::Noise {
+                label: 3,
+                counter: 63,
+            },
+            Point::NoiseRow { operand: 0, row: 0 },
+            Point::NoiseRow {
+                operand: 1,
+                row: 63,
+            },
+            Point::TranscriptTile {
+                row: 0,
+                column: 0,
+                inner: 0,
+            },
+            Point::TranscriptTile {
+                row: 7,
+                column: 7,
+                inner: 7,
+            },
+            Point::BeforeProof,
+        ] {
+            let mut reached = false;
+            let result = candidate([255; 32])
+                .search_with_progress(1, |point| {
+                    assert!(!reached, "callback continued after cancellation");
+                    if point == cut {
+                        reached = true;
+                        Err(())
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap();
+            assert!(reached, "checkpoint was not exercised: {cut:?}");
+            assert!(matches!(result, SearchOutcome::Stopped(0)));
+        }
+    }
+
+    #[test]
+    fn cooperative_search_checks_atomic_stop_and_actual_expired_deadline() {
+        let stopped = AtomicBool::new(true);
+        assert!(matches!(
+            candidate([255; 32])
+                .search_cooperative(1, &stopped, None)
+                .unwrap(),
+            SearchOutcome::Stopped(0)
+        ));
+        let running = AtomicBool::new(false);
+        assert!(matches!(
+            candidate([255; 32])
+                .search_cooperative(1, &running, Some(Instant::now()))
+                .unwrap(),
+            SearchOutcome::Stopped(0)
+        ));
+        // A cancelled search leaves no process-global cancellation state.
+        assert!(matches!(
+            candidate([255; 32])
+                .search_cooperative(1, &running, None)
+                .unwrap(),
+            SearchOutcome::Found(_)
+        ));
+    }
+
+    #[test]
+    fn cooperative_search_invalid_budget_never_enters_producer() {
+        for attempts in [0, 4097, u64::MAX] {
+            let mut called = false;
+            let result = candidate([255; 32]).search_with_progress(attempts, |_| {
+                called = true;
+                Ok(())
+            });
+            assert!(!called);
+            assert_eq!(result.err().unwrap().to_string(), "WORK_BUDGET");
+        }
+    }
+
+    #[test]
+    fn cooperative_search_keeps_complete_misses_when_next_attempt_is_cancelled() {
+        // Select a deterministic template whose first legal complete proof is a
+        // miss. Header changes are followed by full work; no stale proof is used.
+        let mut target = [255; 32];
+        target[0] = 7;
+        let mut selected = None;
+        for timestamp in 10..74 {
+            let mut trial = candidate(target);
+            trial.header.timestamp = timestamp;
+            let challenge = trial.header.challenge();
+            let proof = trial.prepared.prove(challenge).unwrap();
+            if hash(b"ticket", &[&challenge, &proof[proof.len() - 32..]]) > target {
+                selected = Some(trial);
+                break;
+            }
+        }
+        let trial = selected.expect("finite template control found no first miss");
+        let mut starts = 0;
+        let result = trial
+            .search_with_progress(2, |point| {
+                if point == Point::BeforeReplay {
+                    starts += 1;
+                    if starts == 2 {
+                        return Err(());
+                    }
+                }
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(starts, 2);
+        assert!(matches!(result, SearchOutcome::Stopped(1)));
+    }
 }
