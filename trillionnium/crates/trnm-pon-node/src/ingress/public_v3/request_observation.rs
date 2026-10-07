@@ -92,8 +92,22 @@ impl PublicRequestObservation {
     }
 }
 
+// The socket reactor and the execution worker write disjoint observations.
+// Sharing one try_lock made a normal frame/worker overlap look like lost data.
+// Neither side may block the other to produce optional diagnostic evidence.
+#[derive(Clone, Copy, Default)]
+struct TaskProgress {
+    full_work_started: bool,
+    full_work_accepted: Option<bool>,
+    full_work_thread_cpu_ns: Option<u64>,
+    dispatch_started: bool,
+    dispatch_accepted: Option<bool>,
+    dispatch_thread_cpu_ns: Option<u64>,
+}
+
 struct Cell {
     row: Mutex<PublicRequestObservation>,
+    task: Mutex<TaskProgress>,
     failed: AtomicBool,
     connection_closed: AtomicBool,
     task_created: AtomicBool,
@@ -163,6 +177,20 @@ impl PublicRequestObserver {
             for cell in rows.iter() {
                 if let Ok(row) = cell.row.lock() {
                     let mut value = row.clone();
+                    match cell.task.lock() {
+                        Ok(task) => {
+                            value.full_work_started = task.full_work_started;
+                            value.full_work_accepted = task.full_work_accepted;
+                            value.full_work_thread_cpu_ns = task.full_work_thread_cpu_ns;
+                            value.dispatch_started = task.dispatch_started;
+                            value.dispatch_accepted = task.dispatch_accepted;
+                            value.dispatch_thread_cpu_ns = task.dispatch_thread_cpu_ns;
+                        }
+                        Err(_) => {
+                            cell.failed.store(true, Ordering::Release);
+                            self.0.count(&self.0.failures);
+                        }
+                    }
                     value.connection_closed = cell.connection_closed.load(Ordering::Acquire);
                     value.task_created = cell.task_created.load(Ordering::Acquire);
                     value.task_closed = cell.task_closed.load(Ordering::Acquire);
@@ -209,6 +237,7 @@ impl PublicRequestObserver {
             if rows.len() < self.0.capacity {
                 let cell = Arc::new(Cell {
                     row: Mutex::new(PublicRequestObservation::new()),
+                    task: Mutex::new(TaskProgress::default()),
                     failed: AtomicBool::new(false),
                     connection_closed: AtomicBool::new(false),
                     task_created: AtomicBool::new(false),
@@ -233,6 +262,15 @@ struct Handle {
     inner: Arc<Inner>,
 }
 impl Handle {
+    fn update_task(&self, change: impl FnOnce(&mut TaskProgress)) {
+        match self.cell.task.try_lock() {
+            Ok(mut task) => change(&mut task),
+            Err(_) => {
+                self.cell.failed.store(true, Ordering::Release);
+                self.inner.count(&self.inner.failures);
+            }
+        }
+    }
     fn update(&self, change: impl FnOnce(&mut PublicRequestObservation) -> bool) {
         let success = self
             .cell
@@ -309,29 +347,25 @@ impl Drop for ConnectionObservation {
 pub(super) struct TaskObservation(Handle);
 impl TaskObservation {
     pub(super) fn dispatch_started(&self) {
-        self.0.update(|r| {
+        self.0.update_task(|r| {
             r.dispatch_started = true;
-            true
         });
     }
     pub(super) fn dispatch_finished(&self, cpu: Option<u64>, accepted: bool) {
-        self.0.update(|r| {
+        self.0.update_task(|r| {
             r.dispatch_thread_cpu_ns = cpu;
             r.dispatch_accepted = Some(accepted);
-            true
         });
     }
     pub(super) fn work_started(&self) {
-        self.0.update(|r| {
+        self.0.update_task(|r| {
             r.full_work_started = true;
-            true
         });
     }
     pub(super) fn work_finished(&self, cpu: Option<u64>, accepted: bool) {
-        self.0.update(|r| {
+        self.0.update_task(|r| {
             r.full_work_thread_cpu_ns = cpu;
             r.full_work_accepted = Some(accepted);
-            true
         });
     }
 }
@@ -392,6 +426,77 @@ fn thread_cpu_ns() -> Option<u64> {
 mod tests {
     use super::*;
     use std::sync::Barrier;
+
+    #[test]
+    fn connection_observation_does_not_wait_for_independent_task_progress() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let guard = connection.cell.task.lock().unwrap();
+        thread::scope(|scope| {
+            scope
+                .spawn(|| {
+                    connection.identity(31);
+                    connection.frame(4, 19, 0, true);
+                    connection.frame(5, 0, 37, true);
+                    connection.terminal("complete");
+                })
+                .join()
+                .unwrap();
+        });
+        drop(guard);
+        task.work_started();
+        task.work_finished(Some(7), true);
+        drop(task);
+        drop(connection);
+        let snapshot = observer.snapshot();
+        let row = &snapshot.records[0];
+        assert_eq!(snapshot.measurement_failures, 0);
+        assert!(row.complete && row.response_frame_complete);
+        assert_eq!(row.application_bytes_read, Some(19));
+        assert_eq!(row.application_bytes_written, Some(37));
+        assert_eq!(row.full_work_thread_cpu_ns, Some(7));
+    }
+
+    #[test]
+    fn task_contention_still_records_unknown_without_blocking_release() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let guard = connection.cell.task.lock().unwrap();
+        task.work_started(); // Same-writer contention remains an explicit failure.
+        drop(guard);
+        drop(task);
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.measurement_failures, 1);
+        assert!(snapshot.records[0].connection_closed && snapshot.records[0].task_closed);
+        assert!(snapshot.records[0].observation_failed);
+        assert!(!snapshot.records[0].complete);
+        assert_eq!(snapshot.records[0].full_work_thread_cpu_ns, None);
+    }
+
+    #[test]
+    fn independent_task_observation_survives_connection_frame_update() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let guard = connection.cell.row.lock().unwrap();
+        let worker = thread::spawn(move || {
+            task.work_started();
+            task.work_finished(Some(17), false);
+            task.dispatch_started();
+            task.dispatch_finished(Some(23), false);
+        });
+        worker.join().unwrap();
+        drop(guard);
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.measurement_failures, 0);
+        assert!(snapshot.records[0].complete);
+        assert_eq!(snapshot.records[0].full_work_thread_cpu_ns, Some(17));
+        assert_eq!(snapshot.records[0].dispatch_thread_cpu_ns, Some(23));
+    }
 
     #[test]
     fn connection_and_task_close_on_different_threads_complete_once_without_aliasing() {

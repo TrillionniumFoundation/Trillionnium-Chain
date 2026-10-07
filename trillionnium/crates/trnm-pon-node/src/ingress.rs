@@ -1108,7 +1108,14 @@ fn dispatch_shared_with_execution_control(
             let owner_permit = {
                 let mut owner = lock_owner(node, progress)?;
                 let clock = now()?;
-                if let Some(id) = owner.check_admission_context(&packet, clock)? {
+                if let Some(id) =
+                    owner.check_admission_context_with_progress(&packet, clock, &mut || {
+                        progress(0)?;
+                        (control.progress)(
+                            trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeParentBinding,
+                        )
+                    })?
+                {
                     return submit_result(&mut owner, id, clock);
                 }
                 owner.begin_owner_work(&packet)?
@@ -2460,6 +2467,59 @@ mod tests {
             )
             .unwrap();
         (dir, Mutex::new(node), packet)
+    }
+
+    #[test]
+    fn context_cancellation_precedes_work_verifier_and_preserves_public_retry() {
+        use trnm_mvcc_fee::pon_executor::ExecutionProgress;
+        let (dir, node, packet) = pending_packet();
+        let before = node.lock().unwrap().read_active().unwrap();
+        let checked = AtomicBool::new(false);
+        let observed = std::sync::atomic::AtomicUsize::new(0);
+        let error = dispatch_shared_with_execution_progress(
+            &node,
+            Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            },
+            &mut |_| Ok(()),
+            |packet| {
+                checked.store(true, Ordering::SeqCst);
+                WorkCheckedPacket::verify(packet)
+            },
+            &|point| {
+                if point == ExecutionProgress::BeforeParentBinding {
+                    observed.fetch_add(1, Ordering::SeqCst);
+                    Err(Error::new(crate::ErrorCode::FrameDeadline))
+                } else {
+                    Ok(())
+                }
+            },
+        )
+        .unwrap_err();
+        assert!(error.is(crate::ErrorCode::FrameDeadline));
+        assert!(!error.requires_owner_stop());
+        assert_eq!(observed.load(Ordering::SeqCst), 1);
+        assert!(!checked.load(Ordering::SeqCst));
+        assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+        let sql = rusqlite::Connection::open(dir.path().join("native.sqlite")).unwrap();
+        let count: u64 = sql
+            .query_row(
+                "SELECT COUNT(*) FROM blocks WHERE id=?",
+                [packet.id().unwrap().as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(count, 0);
+        let reply = dispatch_shared_with(
+            &node,
+            Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            },
+            &mut |_| Ok(()),
+            WorkCheckedPacket::verify,
+        )
+        .unwrap();
+        assert_eq!(reply["block"], hex::encode(packet.id().unwrap()));
     }
 
     #[test]

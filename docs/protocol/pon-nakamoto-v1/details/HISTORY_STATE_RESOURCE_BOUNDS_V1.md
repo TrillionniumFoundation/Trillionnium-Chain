@@ -266,3 +266,21 @@ remain. `store::native_authenticated::difference_stream_tests` additionally exer
 omissions/substitution/order, all-equal and mismatching full traversals, 65,536-key
 mechanics, cancellation at every cut and successful retry without input mutation.
 Those finite mechanics are not signed ledger-growth or public availability evidence.
+
+### Controlled Submit uses the existing readers
+
+The ordinary public shared Submit path now threads its original cancellation
+and execution/CPU observations through the actual parent-state acquisition before
+work verification. Controlled native admission also uses those readers on re-entry
+and during its complete pre-COMMIT delta/state/active-state fences. Both legacy
+and authenticated delta materialization check progress every256 rows before
+returning a complete list. Authenticated retained-record hashing can stream those
+same checked rows without retaining a full list merely to verify its root.
+
+No full-state check, retained ancestor or final transaction fence is skipped.
+All required State and ancestry costs in the table above remain, as do the
+nonpreemptive root/SQL primitives and the original post-COMMIT result semantics.
+A caller cancelled during a read receives its original error rather than a
+partially published snapshot or a local-integrity classification. New callbacks
+are not a claim that independent hostile WAN service or permanent account growth
+has been accepted.

@@ -148,7 +148,7 @@ def empty_history(series, owner, governance):
 
 def _decode_history(raw, expected):
     require(type(raw) is bytes and len(raw) <= MAX_HISTORY_BYTES, 'WINDOW_HISTORY_BYTE_BOUND')
-    return decode(raw, expected, _history, HISTORY_DOMAIN)
+    return decode(raw, expected, _history, HISTORY_DOMAIN, max_bytes=MAX_HISTORY_BYTES)
 
 
 def _projection(prereg, plan):

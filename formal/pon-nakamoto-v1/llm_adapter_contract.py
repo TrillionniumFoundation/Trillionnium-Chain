@@ -60,8 +60,11 @@ def freeze(value, validate, domain):
     return raw, H(domain, raw).hex()
 
 
-def decode(raw, expected_digest, validate, domain):
-    require(type(raw) is bytes and len(raw) <= MAX_MANIFEST_BYTES, 'LLM_MANIFEST_LIMIT')
+def decode(raw, expected_digest, validate, domain, *, max_bytes=MAX_MANIFEST_BYTES):
+    # The schema owner supplies its fixed byte policy; submitted JSON cannot
+    # widen it. Ordinary manifests retain their exact original 2 MiB default.
+    require(type(max_bytes) is int and max_bytes > 0 and
+            type(raw) is bytes and len(raw) <= max_bytes, 'LLM_MANIFEST_LIMIT')
     require(H(domain, raw).hex() == digest(expected_digest), 'LLM_MANIFEST_IDENTITY')
     try:
         value = json.loads(raw, object_pairs_hook=unique)

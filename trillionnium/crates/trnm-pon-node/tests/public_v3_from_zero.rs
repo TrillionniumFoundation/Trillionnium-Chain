@@ -467,9 +467,17 @@ fn phase(
 #[test]
 fn from_zero_service_shares_cpu_with_honest_work_and_reopened_owner() {
     let temporary = tempfile::tempdir().unwrap();
-    let path = if let Some(path) = std::env::var_os("TRNM_PUBLIC_V3_FROM_ZERO_DIR") {
-        let path = std::path::PathBuf::from(path);
-        fs::create_dir(&path).unwrap();
+    let output = std::env::var_os("TRNM_PUBLIC_V3_FROM_ZERO_DIR")
+        .map(std::path::PathBuf::from)
+        .or_else(|| {
+            // The full workspace lane does not use the standalone driver.
+            // Keep its actual failure reports inside the existing upload root,
+            // rather than deleting them with a temporary directory on unwind.
+            std::env::var_os("TRNM_CI_RECEIPT_DIR")
+                .map(|root| std::path::PathBuf::from(root).join("public-v3-from-zero-suite"))
+        });
+    let path = if let Some(path) = output {
+        fs::create_dir(&path).unwrap(); // Never overwrite an earlier observation.
         path
     } else {
         temporary.path().to_path_buf()
@@ -1027,7 +1035,18 @@ fn sustained_observation(path: &std::path::Path) {
     drop(producer);
     println!(
         "{}",
-        json!({"schema": report["schema"], "finite_service_target_met": passed})
+        json!({"schema": report["schema"], "finite_service_target_met": passed,
+            "report_path": path.join("report.json"),
+            "phases": report["phases"].as_array().unwrap().iter().map(|phase| json!({
+                "phase": phase["phase"], "service_target_met": phase["service_target_met"],
+                "invariant_target_met": phase["invariant_target_met"],
+                "accounting_closed": phase["accounting_closed"],
+                "full_native_state_equal": phase["full_native_state_equal"],
+                "reads_on_time": phase["reads_on_time"],
+                "requested_reads": phase["honest_reads"].as_array().unwrap().len(),
+                "measurement_failures": phase["observations"]["measurement_failures"],
+                "records_not_retained": phase["observations"]["records_not_retained"]
+            })).collect::<Vec<_>>()})
     );
     assert!(
         passed,

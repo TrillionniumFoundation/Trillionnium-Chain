@@ -75,7 +75,7 @@ fn complete(settings: &Settings, state: &State) -> Result<StateCommitment> {
 fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<NativeBlock> {
     local((|| {
         let (parent, height, work, packet, state): StoredBlockRow = db.query_row(
-            "SELECT parent,height,chainwork,packet,state_root FROM blocks WHERE id=?",
+            "SELECT parent,height,chainwork,CASE WHEN typeof(packet)='blob' THEN substr(packet,1,1048577) ELSE packet END AS packet,state_root FROM blocks WHERE id=?",
             [id.as_slice()],
             |row| {
                 Ok((
@@ -140,30 +140,92 @@ fn native_block(db: &Connection, settings: &Settings, id: Hash) -> Result<Native
     })())
 }
 
-pub(crate) fn deltas(db: &Connection, id: Hash) -> Result<Vec<Delta>> {
-    local((|| {
-        let mut statement =
-            db.prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
-        let rows = statement.query_map([id.as_slice()], |row| {
-            Ok((row.get(0)?, row.get(1)?, row.get(2)?))
-        })?;
-        let mut out: Vec<Delta> = Vec::new();
-        for row in rows {
-            let row: Delta = row?;
+// Match the existing state-root grammar: 160 key bytes and 4096 canonical
+// value bytes. SQL projects at most one extra byte, so corrupt retained rows
+// cannot allocate their entire payload in Rust before the limit is checked.
+// CASE preserves SQLite types: a TEXT "before" is still not a BLOB.
+const DELTA_ROWS_SQL: &str = "SELECT
+ CASE WHEN typeof(key)='text' THEN CAST(substr(CAST(key AS BLOB),1,161) AS TEXT) ELSE key END AS key,
+ CASE WHEN typeof(before)='blob' THEN substr(before,1,4097) ELSE before END AS before,
+ CASE WHEN typeof(after)='blob' THEN substr(after,1,4097) ELSE after END AS after,
+ length(CAST(key AS BLOB)),length(CAST(before AS BLOB)),length(CAST(after AS BLOB))
+ FROM deltas WHERE block=? ORDER BY deltas.key";
+
+// Read each actual retained row once. Stored-data errors carry local origin;
+// caller cancellation is propagated unchanged and never returns a partial list.
+fn visit_deltas(
+    db: &Connection,
+    id: Hash,
+    progress: &mut dyn FnMut() -> Result<()>,
+    mut visit: impl FnMut(Delta) -> Result<()>,
+) -> Result<usize> {
+    progress()?;
+    let mut statement = local(db.prepare(DELTA_ROWS_SQL).map_err(Error::from))?;
+    let mut rows = local(statement.query([id.as_slice()]).map_err(Error::from))?;
+    let mut previous: Option<String> = None;
+    let mut count = 0usize;
+    while let Some(row) = local(rows.next().map_err(Error::from))? {
+        let row: Delta = local((|| {
+            for (column, bound) in [(3, 160), (4, 4096), (5, 4096)] {
+                let length: Option<i64> = row.get(column)?;
+                ensure(
+                    length.is_none_or(|n| (0..=bound).contains(&n)),
+                    "NATIVE_STATE_DELTA_LIMIT",
+                )?;
+            }
+            let row: Delta = (row.get(0)?, row.get(1)?, row.get(2)?);
             ensure(
-                out.last().is_none_or(|prior| prior.0 < row.0)
+                previous.as_ref().is_none_or(|key| key < &row.0)
                     && row.1 != row.2
-                    && out.len() < 131_072,
+                    && count < 131_072,
                 "NATIVE_STATE_DELTA",
             )?;
             for bytes in [&row.1, &row.2].into_iter().flatten() {
                 let value: Value = serde_json::from_slice(bytes)?;
                 ensure(canonical(&value)? == *bytes, "NATIVE_STATE_DELTA_BYTES")?;
             }
-            out.push(row);
+            Ok(row)
+        })())?;
+        previous = Some(row.0.clone());
+        visit(row)?;
+        count += 1;
+        if count.is_multiple_of(256) {
+            progress()?;
         }
-        Ok(out)
-    })())
+    }
+    progress()?;
+    Ok(count)
+}
+
+pub(crate) fn deltas(db: &Connection, id: Hash) -> Result<Vec<Delta>> {
+    deltas_with_progress(db, id, &mut || Ok(()))
+}
+
+pub(super) fn deltas_with_progress(
+    db: &Connection,
+    id: Hash,
+    progress: &mut dyn FnMut() -> Result<()>,
+) -> Result<Vec<Delta>> {
+    let mut out = Vec::new();
+    visit_deltas(db, id, progress, |row| {
+        out.push(row);
+        Ok(())
+    })?;
+    Ok(out)
+}
+
+// Verification needs the commitment and count, not a second complete payload
+// list. Account updates still use the actual full deltas through the owner API.
+fn stored_delta_root(
+    db: &Connection,
+    id: Hash,
+    progress: &mut dyn FnMut() -> Result<()>,
+) -> Result<(usize, Hash)> {
+    let mut tree = DeltaRootBuilder::default();
+    let count = visit_deltas(db, id, progress, |row| tree.push(&row))?;
+    let root = tree.finish();
+    progress()?;
+    Ok((count, root))
 }
 
 fn delta_root(rows: &[Delta]) -> Result<Hash> {
@@ -178,65 +240,81 @@ fn delta_root_with_progress(
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<Hash> {
     progress()?;
-    let mut frontier: Vec<Option<Hash>> = Vec::new();
+    let mut tree = DeltaRootBuilder::default();
     for (index, row) in rows.iter().enumerate() {
+        tree.push(row)?;
+        if (index + 1).is_multiple_of(256) {
+            progress()?;
+        }
+    }
+    let root = tree.finish();
+    progress()?;
+    Ok(root)
+}
+
+/// Only untrusted intermediate hashes for this call; no cached validity fact.
+#[derive(Default)]
+struct DeltaRootBuilder {
+    frontier: Vec<Option<Hash>>,
+    count: usize,
+}
+impl DeltaRootBuilder {
+    fn push(&mut self, row: &Delta) -> Result<()> {
         let encoded = canonical(row)?;
         let mut node = hash(
             b"native-authenticated-deltas-v1-leaf",
-            &[&(index as u64).to_le_bytes(), &encoded],
+            &[&(self.count as u64).to_le_bytes(), &encoded],
         );
         // Do not retain every canonical row while constructing the Merkle tree.
         drop(encoded);
         let mut level = 0;
         loop {
-            if level == frontier.len() {
-                frontier.push(Some(node));
+            if level == self.frontier.len() {
+                self.frontier.push(Some(node));
                 break;
             }
-            match frontier[level].take() {
+            match self.frontier[level].take() {
                 Some(left) => {
                     node = hash(b"native-authenticated-deltas-v1-node", &[&left, &node]);
                     level += 1;
                 }
                 None => {
-                    frontier[level] = Some(node);
+                    self.frontier[level] = Some(node);
                     break;
                 }
             }
         }
-        if (index + 1).is_multiple_of(256) {
-            progress()?;
-        }
+        self.count += 1;
+        Ok(())
     }
-    // Fold the suffix from low to high. Only the rightmost partial subtree is
-    // duplicated to the next occupied level; padding leaves to a power of two
-    // instead would change the original root for some non-power-of-two counts.
-    let mut suffix: Option<(Hash, usize)> = None;
-    for (level, left) in frontier.into_iter().enumerate() {
-        let Some(left) = left else {
-            continue;
-        };
-        suffix = Some(match suffix {
-            None => (left, level),
-            Some((mut right, mut right_level)) => {
-                while right_level < level {
-                    right = hash(b"native-authenticated-deltas-v1-node", &[&right, &right]);
-                    right_level += 1;
+    fn finish(self) -> Hash {
+        // Fold the suffix from low to high. Only the rightmost partial subtree is
+        // duplicated to the next occupied level; padding leaves to a power of two
+        // instead would change the original root for some non-power-of-two counts.
+        let mut suffix: Option<(Hash, usize)> = None;
+        for (level, left) in self.frontier.into_iter().enumerate() {
+            let Some(left) = left else {
+                continue;
+            };
+            suffix = Some(match suffix {
+                None => (left, level),
+                Some((mut right, mut right_level)) => {
+                    while right_level < level {
+                        right = hash(b"native-authenticated-deltas-v1-node", &[&right, &right]);
+                        right_level += 1;
+                    }
+                    (
+                        hash(b"native-authenticated-deltas-v1-node", &[&left, &right]),
+                        level + 1,
+                    )
                 }
-                (
-                    hash(b"native-authenticated-deltas-v1-node", &[&left, &right]),
-                    level + 1,
-                )
-            }
-        });
+            });
+        }
+        suffix.map_or_else(
+            || hash(b"native-authenticated-deltas-v1-empty", &[]),
+            |(root, _)| root,
+        )
     }
-    let root = suffix.map_or_else(
-        || hash(b"native-authenticated-deltas-v1-empty", &[]),
-        |(root, _)| root,
-    );
-    // A fully computed root still cannot escape an operation cancelled here.
-    progress()?;
-    Ok(root)
 }
 // Operation-local traversal: no persistent verdict or extra full-delta copy.
 fn visit_difference(
@@ -373,7 +451,7 @@ fn verify_record(
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<()> {
     let native = native_block(db, settings, record.block)?;
-    let rows = deltas(db, record.block)?;
+    let (delta_count, delta_root) = stored_delta_root(db, record.block, progress)?;
     local(ensure(
         record.parent == native.parent
             && record.height == native.height
@@ -382,15 +460,15 @@ fn verify_record(
             && record.state.parameters == settings.parameters()
             && record.state.genesis == settings.genesis()
             && record.state.state_root == native.root
-            && record.delta_count == rows.len() as u64
-            && record.delta_root == delta_root_with_progress(&rows, progress)?,
+            && record.delta_count == delta_count as u64
+            && record.delta_root == delta_root,
         "NATIVE_STATE_BINDING",
     ))?;
     match record.parent {
         None => local(ensure(
             record.block == settings.genesis()
                 && record.parent_commitment.is_none()
-                && rows.is_empty(),
+                && delta_count == 0,
             "NATIVE_STATE_GENESIS",
         )),
         Some(parent) => {
@@ -508,7 +586,7 @@ pub(crate) fn publish(
         native.parent == Some(parent) && parent_record.height.checked_add(1) == Some(native.height),
         "NATIVE_STATE_PARENT",
     ))?;
-    let rows = deltas(db, block)?;
+    let rows = deltas_with_progress(db, block, progress)?;
     let matches = matches_difference(before, after, &rows, progress)?;
     local(ensure(matches, "NATIVE_STATE_DELTA"))?;
     let accounts = native_store::apply(db, &parent_record.accounts, &rows, progress)?;
@@ -942,5 +1020,407 @@ mod delta_root_stream_tests {
             assert_eq!(hex::encode(root), expected);
             assert_eq!(root, reference(&rows[..count]));
         }
+    }
+}
+
+#[cfg(test)]
+mod stored_delta_stream_tests {
+    use super::*;
+    use crate::ErrorCode;
+
+    fn database(count: usize, width: usize) -> Connection {
+        let db = Connection::open_in_memory().unwrap();
+        db.execute_batch(super::super::BASE_DDL).unwrap();
+        db.execute_batch("BEGIN").unwrap();
+        let mut insert = db
+            .prepare("INSERT INTO deltas(block,key,before,after) VALUES(?,?,?,?)")
+            .unwrap();
+        for i in 0..count {
+            let before = canonical(&format!("{}a", "x".repeat(width))).unwrap();
+            let after = canonical(&format!("{}b", "x".repeat(width))).unwrap();
+            insert
+                .execute(params![
+                    [7u8; 32].as_slice(),
+                    format!("key-{i:06}"),
+                    before,
+                    after
+                ])
+                .unwrap();
+        }
+        drop(insert);
+        db.execute_batch("COMMIT").unwrap();
+        db
+    }
+
+    // Original full-list reader and original all-leaves root algorithm remain
+    // independent of the streamed reader/builder, including invalid-data order.
+    fn reference(db: &Connection) -> Result<(usize, Hash)> {
+        local((|| {
+            let mut statement =
+                db.prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
+            let rows = statement.query_map([[7u8; 32].as_slice()], |row| {
+                Ok((row.get(0)?, row.get(1)?, row.get(2)?))
+            })?;
+            let mut out: Vec<Delta> = Vec::new();
+            for row in rows {
+                let row: Delta = row?;
+                ensure(
+                    out.last().is_none_or(|prior| prior.0 < row.0)
+                        && row.1 != row.2
+                        && out.len() < 131_072,
+                    "NATIVE_STATE_DELTA",
+                )?;
+                for bytes in [&row.1, &row.2].into_iter().flatten() {
+                    let value: Value = serde_json::from_slice(bytes)?;
+                    ensure(canonical(&value)? == *bytes, "NATIVE_STATE_DELTA_BYTES")?;
+                }
+                out.push(row);
+            }
+            let encoded = out.iter().map(canonical).collect::<Result<Vec<_>>>()?;
+            Ok((
+                out.len(),
+                sequence_root("native-authenticated-deltas-v1", &encoded),
+            ))
+        })())
+    }
+
+    #[test]
+    fn stored_root_stream_matches_all_original_padding_shapes_and_rows() {
+        for count in [0, 1, 3, 6, 11, 255, 256, 257, 513, 1025] {
+            let db = database(count, 12);
+            let expected = reference(&db).unwrap();
+            assert_eq!(
+                stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+                expected
+            );
+            let rows = deltas(&db, [7; 32]).unwrap();
+            assert_eq!(rows.len(), count);
+            assert_eq!(delta_root(&rows).unwrap(), expected.1);
+        }
+    }
+
+    #[test]
+    fn stored_root_stream_preserves_corrupt_row_error_identity_and_order() {
+        let attacks = [
+            "UPDATE deltas SET after=before WHERE key='key-000256'",
+            "UPDATE deltas SET before=X'2030' WHERE key='key-000256'",
+            "UPDATE deltas SET before=X'7b' WHERE key='key-000256'",
+            "UPDATE deltas SET after='not-a-blob' WHERE key='key-000256'",
+            "UPDATE deltas SET before=NULL,after=NULL WHERE key='key-000256'",
+        ];
+        for sql in attacks {
+            let db = database(513, 12);
+            db.execute_batch(sql).unwrap();
+            let expected = reference(&db).unwrap_err();
+            let actual = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap_err();
+            assert_eq!(actual.to_string(), expected.to_string());
+            assert_eq!(actual.kind(), expected.kind());
+            assert_eq!(actual.requires_owner_stop(), expected.requires_owner_stop());
+        }
+    }
+
+    #[test]
+    fn stored_root_stream_cancellation_returns_no_result_and_keeps_original_error() {
+        for count in [0, 1, 255, 256, 257, 513] {
+            let db = database(count, 8);
+            let before = reference(&db).unwrap();
+            let mut calls = 0;
+            let actual = stored_delta_root(&db, [7; 32], &mut || {
+                calls += 1;
+                Ok(())
+            })
+            .unwrap();
+            assert_eq!(actual, before);
+            assert_eq!(calls, 3 + count / 256);
+            for cut in 0..calls {
+                let mut observed = 0;
+                let result = stored_delta_root(&db, [7; 32], &mut || {
+                    let current = observed;
+                    observed += 1;
+                    if current == cut {
+                        Err("FRAME_DEADLINE".into())
+                    } else {
+                        Ok(())
+                    }
+                });
+                let error = result.unwrap_err();
+                assert!(error.is(ErrorCode::FrameDeadline));
+                assert!(!error.requires_owner_stop());
+                assert_eq!(observed, cut + 1);
+                assert_eq!(reference(&db).unwrap(), before);
+                assert_eq!(
+                    stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+                    before
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn stored_delta_list_cancellation_does_not_return_a_prefix() {
+        let db = database(513, 8);
+        let expected = deltas(&db, [7; 32]).unwrap();
+        for cut in 0..4 {
+            let mut calls = 0;
+            let result = deltas_with_progress(&db, [7; 32], &mut || {
+                let current = calls;
+                calls += 1;
+                if current == cut {
+                    Err("FRAME_DEADLINE".into())
+                } else {
+                    Ok(())
+                }
+            });
+            assert!(result.unwrap_err().is(ErrorCode::FrameDeadline));
+            assert_eq!(calls, cut + 1);
+            assert_eq!(deltas(&db, [7; 32]).unwrap(), expected);
+        }
+    }
+
+    #[test]
+    fn stored_root_stream_preserves_full_delta_read_limit_and_rejects_next_row() {
+        // Actual SQLite rows at the existing mechanism bound, not native ledger
+        // admission, organic account growth, or permanent storage qualification.
+        let db = database(131_072, 0);
+        let expected = reference(&db).unwrap();
+        let mut calls = 0;
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || {
+                calls += 1;
+                Ok(())
+            })
+            .unwrap(),
+            expected
+        );
+        assert_eq!(calls, 515);
+        db.execute(
+            "INSERT INTO deltas VALUES(?,?,?,?)",
+            params![
+                [7u8; 32].as_slice(),
+                "last",
+                b"0".as_slice(),
+                b"1".as_slice()
+            ],
+        )
+        .unwrap();
+        let expected = reference(&db).unwrap_err();
+        let error = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap_err();
+        assert_eq!(error.to_string(), expected.to_string());
+        assert!(error.requires_owner_stop());
+    }
+
+    #[test]
+    fn stored_rows_bound_bytes_before_decode_and_keep_unicode_nul_and_sql_types() {
+        let db = database(1, 4093); // exactly 4096 bytes including JSON quotes.
+        db.execute("UPDATE deltas SET key=?", ["λ".repeat(80)])
+            .unwrap();
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            reference(&db).unwrap()
+        );
+        db.execute(
+            "UPDATE deltas SET key=?",
+            [format!("{}\0z", "x".repeat(159))],
+        )
+        .unwrap();
+        let error = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap_err();
+        assert_eq!(error.to_string(), "NATIVE_STATE_DELTA_LIMIT");
+        assert!(error.requires_owner_stop());
+        db.execute(
+            "UPDATE deltas SET key='key-000000',before=?",
+            [vec![b'x'; 1024 * 1024]],
+        )
+        .unwrap();
+        // Inspect the actual bounded SQL projection; full SQLite page traffic
+        // and allocator/RSS accounting are outside this Rust-payload assertion.
+        let (returned, original): (usize, usize) = db
+            .prepare(DELTA_ROWS_SQL)
+            .unwrap()
+            .query_row([[7u8; 32].as_slice()], |row| {
+                let raw: Vec<u8> = row.get(1)?;
+                Ok((raw.len(), row.get(4)?))
+            })
+            .unwrap();
+        assert_eq!((returned, original), (4097, 1024 * 1024));
+        let error = stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap_err();
+        assert_eq!(error.to_string(), "NATIVE_STATE_DELTA_LIMIT");
+        db.execute(
+            "UPDATE deltas SET before=NULL,after=?",
+            [b"null".as_slice()],
+        )
+        .unwrap();
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(())).unwrap(),
+            reference(&db).unwrap()
+        );
+        db.execute("UPDATE deltas SET before=?", [b"null".as_slice()])
+            .unwrap();
+        assert_eq!(
+            stored_delta_root(&db, [7; 32], &mut || Ok(()))
+                .unwrap_err()
+                .to_string(),
+            "NATIVE_STATE_DELTA"
+        );
+    }
+
+    fn baseline_226_root_with_progress(
+        rows: &[Delta],
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Hash> {
+        progress()?;
+        let mut frontier: Vec<Option<Hash>> = Vec::new();
+        for (index, row) in rows.iter().enumerate() {
+            let encoded = canonical(row)?;
+            let mut node = hash(
+                b"native-authenticated-deltas-v1-leaf",
+                &[&(index as u64).to_le_bytes(), &encoded],
+            );
+            // Do not retain every canonical row while constructing the Merkle tree.
+            drop(encoded);
+            let mut level = 0;
+            loop {
+                if level == frontier.len() {
+                    frontier.push(Some(node));
+                    break;
+                }
+                match frontier[level].take() {
+                    Some(left) => {
+                        node = hash(b"native-authenticated-deltas-v1-node", &[&left, &node]);
+                        level += 1;
+                    }
+                    None => {
+                        frontier[level] = Some(node);
+                        break;
+                    }
+                }
+            }
+            if (index + 1).is_multiple_of(256) {
+                progress()?;
+            }
+        }
+        // Fold the suffix from low to high. Only the rightmost partial subtree is
+        // duplicated to the next occupied level; padding leaves to a power of two
+        // instead would change the original root for some non-power-of-two counts.
+        let mut suffix: Option<(Hash, usize)> = None;
+        for (level, left) in frontier.into_iter().enumerate() {
+            let Some(left) = left else {
+                continue;
+            };
+            suffix = Some(match suffix {
+                None => (left, level),
+                Some((mut right, mut right_level)) => {
+                    while right_level < level {
+                        right = hash(b"native-authenticated-deltas-v1-node", &[&right, &right]);
+                        right_level += 1;
+                    }
+                    (
+                        hash(b"native-authenticated-deltas-v1-node", &[&left, &right]),
+                        level + 1,
+                    )
+                }
+            });
+        }
+        let root = suffix.map_or_else(
+            || hash(b"native-authenticated-deltas-v1-empty", &[]),
+            |(root, _)| root,
+        );
+        // A fully computed root still cannot escape an operation cancelled here.
+        progress()?;
+        Ok(root)
+    }
+
+    fn baseline_226_cost(db: &Connection) -> Result<(usize, Hash)> {
+        local((|| {
+            let mut statement =
+                db.prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
+            let rows = statement.query_map([[7u8; 32].as_slice()], |row| {
+                Ok((row.get(0)?, row.get(1)?, row.get(2)?))
+            })?;
+            let mut out: Vec<Delta> = Vec::new();
+            for row in rows {
+                let row: Delta = row?;
+                ensure(
+                    out.last().is_none_or(|prior| prior.0 < row.0)
+                        && row.1 != row.2
+                        && out.len() < 131_072,
+                    "NATIVE_STATE_DELTA",
+                )?;
+                for bytes in [&row.1, &row.2].into_iter().flatten() {
+                    let value: Value = serde_json::from_slice(bytes)?;
+                    ensure(canonical(&value)? == *bytes, "NATIVE_STATE_DELTA_BYTES")?;
+                }
+                out.push(row);
+            }
+            Ok((
+                out.len(),
+                baseline_226_root_with_progress(&out, &mut || Ok(()))?,
+            ))
+        })())
+    }
+
+    #[test]
+    #[ignore = "explicit release-only retained-delta cost observation; not a throughput gate"]
+    fn retained_delta_stream_cost_preserves_all_paired_observations() {
+        use std::io::Write;
+        let path = std::env::var_os("TRNM_RETAINED_DELTA_COST_PATH")
+            .expect("explicit create-new output path is required");
+        let mut output = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(path)
+            .unwrap();
+        writeln!(output, "{}", serde_json::json!({
+            "schema": "pon-native-retained-delta-cost-v1",
+            "scope": "actual in-memory SQLite ordered read, canonical validation and complete delta root; not Node/state/history/physical I/O/RSS/TPS",
+            "comparison": "exact eee8db8 full-list reader and streaming root versus current bounded streamed reader/root",
+            "synthetic_sqlite_rows": true, "speed_threshold": null,
+            "production_activation": false
+        })).unwrap();
+        for (case, (count, width)) in [(256, 64), (4096, 64), (4096, 4093), (16384, 64)]
+            .into_iter()
+            .enumerate()
+        {
+            let db = database(count, width);
+            let expected = reference(&db).unwrap();
+            for pair in 0..4 {
+                for arm in if pair % 2 == 0 {
+                    ["baseline226", "streamed"]
+                } else {
+                    ["streamed", "baseline226"]
+                } {
+                    let start = std::time::Instant::now();
+                    let result = if arm == "baseline226" {
+                        baseline_226_cost(&db)
+                    } else {
+                        stored_delta_root(&db, [7; 32], &mut || Ok(()))
+                    };
+                    let elapsed = start.elapsed().as_nanos();
+                    // Retain the raw failure or mismatching result before asserting.
+                    writeln!(
+                        output,
+                        "{}",
+                        serde_json::json!({
+                            "case": case, "rows": count, "payload_width": width,
+                            "pair": pair, "arm": arm, "wall_ns": elapsed.to_string(),
+                            "root": result.as_ref().ok().map(|(_, root)| hex::encode(root)),
+                            "count": result.as_ref().ok().map(|(count, _)| count),
+                            "error": result.as_ref().err().map(ToString::to_string),
+                            "equal": result.as_ref().is_ok_and(|actual| *actual == expected),
+                        })
+                    )
+                    .unwrap();
+                    output.flush().unwrap();
+                    assert_eq!(result.unwrap(), expected);
+                }
+            }
+        }
+        writeln!(
+            output,
+            "{}",
+            serde_json::json!({"completed": true, "pairs": 16,
+            "observations": 32, "scope": "no timing threshold or performance qualification"})
+        )
+        .unwrap();
+        output.sync_all().unwrap();
     }
 }

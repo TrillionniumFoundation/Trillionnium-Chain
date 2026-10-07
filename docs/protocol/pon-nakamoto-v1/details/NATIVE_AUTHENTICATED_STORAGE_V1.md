@@ -375,3 +375,53 @@ Partial-state execution or a changed consensus root requires its own explicit
 version, migration and complete conformance evidence. This backend leaves those
 requirements visible while making authenticated state part of the actual native
 store lifecycle.
+
+## Streaming retained-delta validation and bounded reads
+
+The integrated record verifier now hashes the actual ordered SQLite delta rows
+one at a time, using the same indexed, duplicate-last sequence root as before.
+It does not retain a complete second delta list, every canonical row encoding,
+or all leaf hashes merely to check a retained record. The operation-local Merkle
+frontier preserves the original leaf/node/empty domains, row indices, ordering
+and odd-level padding. The general `sequence_root` remains an independent test
+reference. Full lists are still retained where state replay and changed-account
+publication need their actual values; those paths share the same checked reader.
+
+The query projects at most161 UTF-8 key bytes and4097 bytes per present old/new
+value, with independently read original byte lengths. Actual bounds remain the
+existing160-byte key and4096-byte canonical value limits. Length checks include
+embedded NUL and multi-byte text. SQL type errors remain errors; NULL, present
+`null` and present empty bytes are not conflated. A corrupt oversized blob is
+rejected before a full Rust payload allocation or JSON decode. The record's
+packet projection similarly fetches at most the existing packet byte bound plus
+one before its ordinary decoder. These are returned-payload limits, not bounds
+on SQLite pages, physical I/O, allocator RSS or every other Node query.
+
+The retained row bound remains131072; the next row refuses. The reader observes
+the existing cancellation callback at entry, every256 checked rows and completion.
+The final root has another return fence. Cancellation yields neither a partial
+root nor a prefix list, preserves its original error identity, and is not changed
+into retained-storage corruption. State replay, authenticated record verification
+and publication use those same operation-local callbacks. Ordinary wrappers use
+a no-op callback and retain their original complete results.
+
+Controlled admission now also observes its original execution callback during
+parent-state acquisition and final delta/parent/child/active-state readback before
+COMMIT. Actual SQL writes remain under the same single native transaction; a
+cancelled readback rolls back that transaction. Complete state/account roots,
+required history and final ancestry checks are not removed or replaced by a
+cached validity verdict. No post-COMMIT cancellation changes durable success.
+Individual canonical encodings, complete root calculations and SQL statements
+remain nonpreemptive, and every required ancestor is still checked. This changes
+neither the65536-key consensus limit nor full-State/history asymptotic costs.
+
+The existing `native_authenticated` tests compare the streamed reader with an
+independent copy of the original ordered reader and general sequence root,
+including131072 actual SQLite delta rows, malformed values, type/range faults,
+UTF-8/NUL limits, all callback cuts and retries. The real Node controls
+`controlled_parent_reconstruction_preserves_cancellation_and_complete_retry` and
+`controlled_final_readback_cancels_inside_transaction_without_corruption_or_partial_rows`
+create a256-transfer block through ordinary signed admission and compare every
+logical SQLite table after cancellation, valid retry and cold reopen in both
+backends. These fixtures do not constitute permanent-account growth beyond the
+old ledger cap, physical power-loss acceptance, or public throughput measurement.

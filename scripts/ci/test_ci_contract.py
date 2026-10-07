@@ -439,6 +439,48 @@ class CiContractTests(unittest.TestCase):
         self.rejected(path, lines[-1], lines[-1].replace('/zero-paired-prefix"', '/old-prefix"'))
         self.rejected(path, lines[-1], lines[-1].replace('/zero-paired-prefix-python"', '/zero-paired-prefix"'))
 
+    def test_workspace_stdout_capture_is_mandatory_fresh_and_failure_preserving(self):
+        lines = [line + '\n' for line in MODEL_OBSERVATION_BLOCK.splitlines()
+                 if 'workspace-tests.log' in line]
+        self.assertEqual(len(lines), 3)
+        for line in lines:
+            for replacement in ['', line * 2, line.replace('workspace-tests.log', 'old-workspace.log')]:
+                with self.subTest(line=line, replacement=replacement):
+                    self.rejected('scripts/ci/ci_job.sh', line, replacement)
+        self.rejected('scripts/ci/ci_job.sh', lines[-1], lines[-1].replace('2>&1 | tee ', '2>&1 || tee '))
+
+    def test_workspace_capture_executes_real_shell_and_retains_failure_output(self):
+        # Actual shell processes with an explicitly synthetic cargo command,
+        # not a native Rust or complete-workspace execution claim.
+        block = '\n'.join(line for line in MODEL_OBSERVATION_BLOCK.splitlines()
+                          if 'workspace-tests.log' in line) + '\n'
+        with tempfile.TemporaryDirectory(prefix='workspace-capture-') as directory:
+            root = Path(directory) / 'receipt with spaces'
+            root.mkdir()
+            env = {'PATH': '/usr/bin:/bin', 'TRNM_TEST_RECEIPT': str(root)}
+            prelude = 'set -euo pipefail\ntrnm_model_receipt_root="$TRNM_TEST_RECEIPT"\n'
+            failed = subprocess.run(['bash', '-c', prelude +
+                "cargo() { printf '%s\n' 'synthetic stdout'; printf '%s\n' 'synthetic stderr' >&2; return 7; }\n" +
+                block + 'touch "$TRNM_TEST_RECEIPT/incorrect-success"\n'], env=env,
+                capture_output=True, text=True, timeout=10)
+            self.assertEqual(failed.returncode, 7, failed.stderr)
+            log = root / 'workspace-tests.log'
+            self.assertIn('synthetic stdout', log.read_text())
+            self.assertIn('synthetic stderr', log.read_text())
+            self.assertFalse((root / 'incorrect-success').exists())
+            before = log.read_bytes()
+            stale = subprocess.run(['bash', '-c', prelude +
+                'cargo() { touch "$TRNM_TEST_RECEIPT/incorrect-start"; }\n' + block],
+                env=env, capture_output=True, text=True, timeout=10)
+            self.assertNotEqual(stale.returncode, 0)
+            self.assertEqual(log.read_bytes(), before)
+            self.assertFalse((root / 'incorrect-start').exists())
+            log.unlink()
+            sink_failure = subprocess.run(['bash', '-c', prelude +
+                'cargo() { return 0; }\ntee() { return 9; }\n' + block],
+                env=env, capture_output=True, text=True, timeout=10)
+            self.assertEqual(sink_failure.returncode, 9)
+
     def test_full_capacity_and_account_verification_execute_exact_release_tests_sequentially(self):
         path = 'scripts/ci/ci_job.sh'
         commands = [line + '\n' for line in NATIVE_RELEASE_BLOCK.splitlines() if ' cargo test ' in line]
@@ -585,9 +627,9 @@ cargo() {
                       '    )\n    export TRNM_MODEL_COMPOSITION_VECTORS=/old/data\n' + RUST_DOCS)
 
     def test_workspace_test_cannot_be_replaced_skipped_or_duplicated(self):
-        self.rejected('scripts/ci/ci_job.sh', '      ' + RUST_ALL_TARGETS + '\n', '      true\n')
-        self.rejected('scripts/ci/ci_job.sh', '      ' + RUST_ALL_TARGETS + '\n',
-                      '      if false; then\n      ' + RUST_ALL_TARGETS + '\n      fi\n')
+        command = '      ' + RUST_ALL_TARGETS + ' 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"\n'
+        self.rejected('scripts/ci/ci_job.sh', command, '      true\n')
+        self.rejected('scripts/ci/ci_job.sh', command, '      if false; then\n' + command + '      fi\n')
         self.rejected('scripts/ci/ci_job.sh', RUST_DOCS, '    ' + RUST_ALL_TARGETS + '\n' + RUST_DOCS)
 
     def test_merge_lane_cannot_test_head_instead(self):

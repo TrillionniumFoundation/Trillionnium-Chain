@@ -99,7 +99,9 @@ MODEL_OBSERVATION_BLOCK = '''    (
       export TRNM_ZERO_PAIRED_PREFIX_OUTPUT="$trnm_model_receipt_root/zero-paired-prefix"
       test ! -e "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
       test ! -L "$TRNM_ZERO_PAIRED_PREFIX_OUTPUT"
-      cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features
+      test ! -e "$trnm_model_receipt_root/workspace-tests.log"
+      test ! -L "$trnm_model_receipt_root/workspace-tests.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
       unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v

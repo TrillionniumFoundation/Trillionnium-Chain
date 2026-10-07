@@ -590,3 +590,149 @@ fn native_authenticated_signed_qualified_output_is_in_final_commitment() {
     let node = Node::open_with_authenticated_state(dir.path(), settings, 1).unwrap();
     assert_eq!(node.read_active().unwrap(), final_state);
 }
+
+// Actual signed state growth through ordinary admission, not synthetic KV seeding.
+fn parent_with_full_transaction_block(node: &mut Node) -> Hash {
+    let txs = (1..=256)
+        .map(|nonce| transfer(&node.settings, nonce, 100 + nonce))
+        .collect();
+    let packet = make(node, node.settings.genesis(), txs);
+    let id = node.admit(&packet, 100_000).unwrap();
+    node.activate(id).unwrap();
+    assert!(node.read_active().unwrap().2.len() > 256);
+    id
+}
+
+#[test]
+fn controlled_parent_reconstruction_preserves_cancellation_and_complete_retry() {
+    for backend in [StateBackend::Legacy, StateBackend::AuthenticatedV1] {
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = open(dir.path(), backend);
+        let parent = parent_with_full_transaction_block(&mut node);
+        let packet = make(&node, parent, vec![transfer(&node.settings, 257, 500)]);
+        let before = logical_rows(&node.db);
+        let mut total = 0;
+        assert_eq!(
+            node.check_admission_context_with_progress(&packet, 100_000, &mut || {
+                total += 1;
+                Ok(())
+            })
+            .unwrap(),
+            None
+        );
+        assert!(
+            total > 4,
+            "actual multi-row state must reach internal checkpoints"
+        );
+        for cut in [0, total / 2, total - 1] {
+            let mut calls = 0;
+            let error = node
+                .check_admission_context_with_progress(&packet, 100_000, &mut || {
+                    let current = calls;
+                    calls += 1;
+                    if current == cut {
+                        Err(Error::new(crate::ErrorCode::FrameDeadline))
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert!(error.is(crate::ErrorCode::FrameDeadline));
+            assert!(!error.requires_owner_stop());
+            assert_eq!(calls, cut + 1);
+            assert_eq!(logical_rows(&node.db), before);
+            assert_eq!(
+                node.check_admission_context(&packet, 100_000).unwrap(),
+                None
+            );
+        }
+        // A context error still precedes parent observations and cannot be hidden by cancellation.
+        let mut wrong_network = packet.clone();
+        wrong_network.header.network = [99; 32];
+        let mut calls = 0;
+        assert_eq!(
+            node.check_admission_context_with_progress(&wrong_network, 100_000, &mut || {
+                calls += 1;
+                Err("MUST_NOT_RUN".into())
+            })
+            .unwrap_err()
+            .to_string(),
+            "NETWORK"
+        );
+        assert_eq!(calls, 0);
+        let id = node.admit(&packet, 100_000).unwrap();
+        node.activate(id).unwrap();
+        let after = node.read_active().unwrap();
+        drop(node);
+        let reopened = open(dir.path(), backend);
+        assert_eq!(reopened.read_active().unwrap(), after);
+    }
+}
+
+#[test]
+fn controlled_final_readback_cancels_inside_transaction_without_corruption_or_partial_rows() {
+    for backend in [StateBackend::Legacy, StateBackend::AuthenticatedV1] {
+        let dir = tempfile::tempdir().unwrap();
+        let mut reference = open(&dir.path().join("reference"), backend);
+        let mut node = open(&dir.path().join("candidate"), backend);
+        let parent = parent_with_full_transaction_block(&mut reference);
+        node.admit(&reference.packet(parent).unwrap(), 100_000)
+            .unwrap();
+        node.activate(parent).unwrap();
+        let packet = make(
+            &reference,
+            parent,
+            vec![transfer(&reference.settings, 257, 500)],
+        );
+        let before = logical_rows(&node.db);
+        let commit_calls = AtomicUsize::new(0);
+        let id = reference
+            .admit_work_checked_with_progress(
+                WorkCheckedPacket::verify(packet.clone()).unwrap(),
+                100_000,
+                &|point| {
+                    if point == ExecutionProgress::BeforeDurableCommit {
+                        commit_calls.fetch_add(1, Ordering::SeqCst);
+                    }
+                    Ok(())
+                },
+            )
+            .unwrap();
+        let total = commit_calls.load(Ordering::SeqCst);
+        assert!(
+            total > 4,
+            "final checked state/row reads must observe cancellation internally"
+        );
+        for cut in [0, total / 2, total - 1] {
+            let calls = AtomicUsize::new(0);
+            let error = node
+                .admit_work_checked_with_progress(
+                    WorkCheckedPacket::verify(packet.clone()).unwrap(),
+                    100_000,
+                    &|point| {
+                        if point == ExecutionProgress::BeforeDurableCommit
+                            && calls.fetch_add(1, Ordering::SeqCst) == cut
+                        {
+                            Err(Error::new(crate::ErrorCode::FrameDeadline))
+                        } else {
+                            Ok(())
+                        }
+                    },
+                )
+                .unwrap_err();
+            assert!(error.is(crate::ErrorCode::FrameDeadline));
+            assert!(!error.requires_owner_stop());
+            assert_eq!(calls.load(Ordering::SeqCst), cut + 1);
+            assert_eq!(logical_rows(&node.db), before);
+            assert!(node.packet(id).is_err());
+        }
+        assert_eq!(node.admit(&packet, 100_000).unwrap(), id);
+        reference.activate(id).unwrap();
+        node.activate(id).unwrap();
+        assert_eq!(logical_rows(&node.db), logical_rows(&reference.db));
+        let after = node.read_active().unwrap();
+        drop(node);
+        let reopened = open(&dir.path().join("candidate"), backend);
+        assert_eq!(reopened.read_active().unwrap(), after);
+    }
+}
