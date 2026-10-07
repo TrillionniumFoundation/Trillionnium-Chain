@@ -11,7 +11,7 @@
 use super::obligations::MAX_EXECUTION_ACCOUNTS;
 use super::{CheckedExecutionError, Result};
 use crate::account_archive_prototype::{
-    accounts,
+    accounts, AccountAggregateObservation,
     multiproof::{CheckedMultiproof, MultiproofProgress},
     Account, Checkpoint, Context, ResearchUpdate, Witness,
 };
@@ -24,6 +24,9 @@ use trnm_protocol::pon_wire::{hash, Hash};
 
 pub const COMMITMENT_SCHEMA: &str = "pon-authenticated-state-commitment-v1";
 pub const EXECUTION_SCHEMA: &str = "pon-authenticated-state-execution-v1";
+pub const GROWTH_COMMITMENT_SCHEMA_V2: &str = "pon-permanent-account-growth-commitment-v2";
+pub const MAX_PERMANENT_ACCOUNTS_V2: u64 = 1_000_000;
+pub const MAX_WORKING_KEYS_V2: usize = 65_536;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StateWitnessError {
@@ -124,6 +127,99 @@ impl StateCommitment {
             ],
         )
     }
+}
+
+/// Research-only successor relation that separates permanent account history
+/// from the bounded non-account working partition. It is not installed in any
+/// header parameters, genesis, native admission or signature domain.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GrowthStateCommitmentV2 {
+    pub schema: String,
+    pub network: Hash,
+    pub parameters: Hash,
+    pub genesis: Hash,
+    pub permanent_account_root: Hash,
+    pub permanent_account_count: u64,
+    pub permanent_account_balance: u64,
+    pub maximum_permanent_accounts: u64,
+    pub working_root: Hash,
+    pub working_count: u64,
+    pub maximum_working_keys: u64,
+    pub escrow_balance: u64,
+    pub reward_balance: u64,
+    pub issued: u64,
+    pub id: Hash,
+}
+impl GrowthStateCommitmentV2 {
+    fn digest(&self) -> Hash {
+        hash(
+            b"permanent-account-growth-commitment-v2",
+            &[
+                &self.network,
+                &self.parameters,
+                &self.genesis,
+                &self.permanent_account_root,
+                &self.permanent_account_count.to_le_bytes(),
+                &self.permanent_account_balance.to_le_bytes(),
+                &self.maximum_permanent_accounts.to_le_bytes(),
+                &self.working_root,
+                &self.working_count.to_le_bytes(),
+                &self.maximum_working_keys.to_le_bytes(),
+                &self.escrow_balance.to_le_bytes(),
+                &self.reward_balance.to_le_bytes(),
+                &self.issued.to_le_bytes(),
+            ],
+        )
+    }
+}
+
+/// Bind a verified permanent-account archive aggregate to a complete bounded
+/// non-account partition. The archive observation is constructed from actual
+/// authenticated bytes; raw caller count/balance claims cannot call this path.
+pub fn growth_commitment_v2(
+    settings: &Settings,
+    accounts: &AccountAggregateObservation,
+    working: &State,
+) -> Result<GrowthStateCommitmentV2> {
+    if accounts.account_count() > MAX_PERMANENT_ACCOUNTS_V2
+        || working.len() > MAX_WORKING_KEYS_V2
+        || working.keys().any(|key| key.starts_with("account:"))
+    {
+        return Err(CheckedExecutionError::Budget);
+    }
+    let (escrow_balance, reward_balance, issued) = components(working)?;
+    if total(
+        [
+            accounts.account_balance(),
+            escrow_balance,
+            reward_balance,
+        ]
+        .into_iter(),
+    )? != issued
+    {
+        return Err(StateWitnessError::Conservation.into());
+    }
+    let working_root = relation(pon_executor::root(working))?;
+    let mut out = GrowthStateCommitmentV2 {
+        schema: GROWTH_COMMITMENT_SCHEMA_V2.into(),
+        network: settings.network(),
+        parameters: settings.parameters(),
+        genesis: settings.genesis(),
+        permanent_account_root: accounts.account_root(),
+        permanent_account_count: accounts.account_count(),
+        permanent_account_balance: accounts.account_balance(),
+        maximum_permanent_accounts: MAX_PERMANENT_ACCOUNTS_V2,
+        working_root,
+        working_count: working.len() as u64,
+        maximum_working_keys: MAX_WORKING_KEYS_V2 as u64,
+        escrow_balance,
+        reward_balance,
+        issued,
+        id: [0; 32],
+    };
+    out.id = out.digest();
+    Ok(out)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
