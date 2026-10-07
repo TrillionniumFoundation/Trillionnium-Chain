@@ -333,6 +333,48 @@ fn authenticated_migration_preserves_signed_branches_and_irreversible_local_fact
     assert!(!plan.migration_executed);
     assert!(!plan.consensus_activation);
 
+    let reserved_target = fixture.dir.path().join("growth-reserved");
+    let reservation = migrated
+        .reserve_growth_profile_storage_v2(
+            &binding,
+            "authenticated-growth-v2/migrated",
+            &reserved_target,
+            1024 * 1024,
+        )
+        .unwrap();
+    assert!(reservation.target_storage_reserved);
+    assert!(reservation.complete_source_state_checked);
+    assert!(reservation.physically_reserved_bytes >= reservation.requested_bytes);
+    assert!(!reservation.capacity_sufficiency_qualified);
+    assert!(!reservation.migration_executed);
+    assert!(!reservation.consensus_activation);
+    assert_eq!(
+        fs::metadata(reserved_target.join("growth-storage-reservation.bin"))
+            .unwrap()
+            .len(),
+        1024 * 1024
+    );
+    assert!(!reserved_target.join("native.sqlite").exists());
+    assert!(migrated
+        .reserve_growth_profile_storage_v2(
+            &binding,
+            "authenticated-growth-v2/migrated",
+            &reserved_target,
+            1024 * 1024,
+        )
+        .is_err());
+
+    let refused_target = fixture.dir.path().join("growth-refused");
+    assert!(migrated
+        .reserve_growth_profile_storage_v2(
+            &binding,
+            "authenticated-growth-v2/wrong",
+            &refused_target,
+            1024 * 1024,
+        )
+        .is_err());
+    assert!(!refused_target.exists());
+
     let mut forged_binding = binding.clone();
     forged_binding.candidate_parameters[0] ^= 1;
     assert!(migrated
