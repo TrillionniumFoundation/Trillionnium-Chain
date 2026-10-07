@@ -1411,8 +1411,7 @@ mod growth_v2_tests {
             StateWitnessError::Commitment.into()
         );
         assert_eq!(
-            growth_profile_binding_v2(&settings, &committed, "authenticated-growth-v2")
-                .unwrap(),
+            growth_profile_binding_v2(&settings, &committed, "authenticated-growth-v2").unwrap(),
             profile
         );
         assert_ne!(
@@ -1428,8 +1427,7 @@ mod growth_v2_tests {
         let mut forged = committed.clone();
         forged.id[0] ^= 1;
         assert_eq!(
-            growth_profile_binding_v2(&settings, &forged, "authenticated-growth-v2")
-                .unwrap_err(),
+            growth_profile_binding_v2(&settings, &forged, "authenticated-growth-v2").unwrap_err(),
             StateWitnessError::Commitment.into()
         );
 
