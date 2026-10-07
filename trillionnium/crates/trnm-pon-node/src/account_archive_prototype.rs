@@ -540,6 +540,7 @@ pub struct StorageObservation {
 /// fields prevent caller-supplied deserialization from becoming authority.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub struct AccountAggregateObservation {
+    context: Context,
     checkpoint: Hash,
     account_root: Hash,
     account_count: u64,
@@ -547,6 +548,9 @@ pub struct AccountAggregateObservation {
     node_rows_read: u64,
 }
 impl AccountAggregateObservation {
+    pub fn context(&self) -> Context {
+        self.context
+    }
     pub fn checkpoint(&self) -> Hash {
         self.checkpoint
     }
@@ -701,6 +705,7 @@ impl AccountArchive {
             return Err(ArchiveError::CorruptRecord);
         }
         Ok(AccountAggregateObservation {
+            context: checkpoint.context,
             checkpoint: checkpoint.id,
             account_root: checkpoint.account_root,
             account_count,
