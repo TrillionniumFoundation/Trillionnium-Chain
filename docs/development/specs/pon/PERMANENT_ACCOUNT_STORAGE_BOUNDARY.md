@@ -183,3 +183,24 @@ The next activation increment must therefore use this relation from an explicitl
 new profile and migration namespace, then satisfy the native acceptance and
 availability campaigns above. An archive-only or synthetic relation still cannot
 be reported as closure of permanent-account growth.
+
+## Candidate profile identity after the v2 relation
+
+The executable v2 relation is still not a native ledger profile.  Before any migration
+or signed admission can select it, the implementation must have a distinct parameter,
+genesis and storage identity.  The current research owner now exposes
+`growth_profile_binding_v2` for that anti-aliasing step.
+
+The binding consumes an already verified `GrowthStateCommitmentV2`, the exact source
+development context and a bounded non-traversing storage namespace.  It derives a fresh
+candidate parameter digest, candidate genesis digest and namespace digest.  Changing the
+namespace changes the complete binding; a forged commitment id, cross-context relation or
+path-like alias such as `..` is refused.
+
+This value has **no activation authority**.  It does not mutate `Settings`, does not
+change the legacy header `state_root`, does not open/migrate a database and does not
+permit a 65,537th native ledger key.  The remaining activation work is therefore concrete:
+install the new commitment in a separately versioned profile, migrate one actual source
+Node into its own namespace, execute signed transactions across the old cap with complete
+mandatory witnesses/ranges, reserve real storage and demonstrate full-disk/provider-loss/
+process-loss/cold-recovery behavior.
