@@ -998,6 +998,31 @@ fn sustained_observation(path: &std::path::Path) {
     let same_meter =
         meter_before == meter_after && domain.shares_domain_with(&server.mutation_cpu_domain());
     let reopen_wall_ns = ns(reopen_start);
+
+    // The shared meter is intentionally retained across reopen. A prior pressure
+    // phase may finish below the mutation start reserve; demanding an immediate
+    // second mutation would contradict the unchanged budget contract by requiring
+    // a fresh burst. Wait only for the existing wall-clock refill to restore the
+    // original burst, then let the first real mutation perform the authoritative
+    // refill check. The read-only observation itself never mints credit.
+    let refill_wait_start = Instant::now();
+    let refill_wait_ns = if meter_after.stored_credit_ns >= i128::from(meter_after.burst_ns) {
+        0
+    } else {
+        let deficit = i128::from(meter_after.burst_ns) - meter_after.stored_credit_ns;
+        let deficit = u128::try_from(deficit).unwrap();
+        let rate = u128::from(meter_after.refill_ns_per_second);
+        let nanos = deficit
+            .saturating_mul(1_000_000_000)
+            .div_ceil(rate)
+            .saturating_add(50_000_000);
+        let nanos = u64::try_from(nanos).unwrap();
+        thread::sleep(Duration::from_nanos(nanos));
+        nanos
+    };
+    let refill_wait_wall_ns = ns(refill_wait_start);
+    let meter_after_refill_wait = domain.observe().unwrap();
+    assert_eq!(meter_after_refill_wait, meter_after);
     let (node, second) = sustained_phase(1, node, &mut producer, server, epoch);
     let passed = reopen_equal
         && same_meter
@@ -1014,6 +1039,10 @@ fn sustained_observation(path: &std::path::Path) {
         "same_stored_cpu_meter_across_reopen": same_meter,
         "meter_before_reopen": meter_before, "meter_after_reopen": meter_after,
         "reopen_wall_ns": reopen_wall_ns,
+        "interphase_refill_wait_requested_ns": refill_wait_ns,
+        "interphase_refill_wait_wall_ns": refill_wait_wall_ns,
+        "meter_after_read_only_refill_wait": meter_after_refill_wait,
+        "interphase_refill_scope": "same retained CPU domain; wall-clock wait only; read-only observation does not advance refill; first later reserve rechecks actual elapsed refill",
         "finite_service_target_met": passed, "independent_accepted": false,
         "physical_power_loss": false, "ordinary_hepta_entry": false,
         "public_network_ready": false, "resource_fairness_qualified": false,
