@@ -190,8 +190,11 @@ existing separate worker and permits and do not debit this account.
 Linux uses the existing checked thread clock. Unsupported/unavailable clocks,
 invalid subtraction and poisoned accounting refuse future mutations with
 `PUBLIC_MUTATION_CPU_UNAVAILABLE`; insufficient credit or the two in-flight
-limit returns `PUBLIC_MUTATION_CPU_BUDGET`. Start refusal occurs after the original paid protocol and canonical body/queue
-checks but before native dispatch or full proof verification. Revision r9 also
+limit returns `PUBLIC_MUTATION_CPU_BUDGET` from the scalar reservation primitive.
+The public worker now retains the dequeued task's order while waiting for
+recoverable shortage, as specified below. Start refusal occurs after the original
+paid protocol and canonical body/queue checks but before native dispatch or full
+proof verification. Revision r9 also
 observes exhaustion during the request at the existing cooperative checkpoints. No new queue, worker, Node owner, State
 cache or durable caller row is added. Key rotation cannot reset the account.
 Restart begins a new explicit volatile service epoch; this is not a host-global
@@ -270,6 +273,59 @@ signed native admission, post-success clock failure, read availability under
 controlled debt, rotated callers, debt/refill arithmetic and missing clocks.
 Fresh runtime evidence is required for any new source or resource digest;
 historical r4 loopback and Tailnet results retain their original scope.
+
+## Recoverable CPU shortage at the existing dequeue boundary
+
+The public mutation worker holds its existing receiver/dequeue-order lock until
+it acquires the original CPU start reservation or the original task becomes
+ineligible. This prevents the other mutation worker from repeatedly taking later
+queued tasks while the head is waiting for refill. No new queue, waiter registry,
+worker, identity priority, CPU bucket or reservation is added. Already running
+workers can settle, and the reactor and the separate read queue remain independent.
+The dequeue lock is released **before** native dispatch and never covers a Node
+lock, proof execution, M06 preview, worker join or SQLite transaction.
+
+A short polling iteration checks the same cancellation/stop flags and the earlier
+of the task deadline and service end. It briefly locks the original scalar
+account, applies its original elapsed-time refill and releases the account before
+sleeping for at most one millisecond. Polling does not count another reservation
+or rejection. When a start is possible, the original acquire/stamp/reserve and
+single settlement path is used. Cancellation is rechecked before that acquire.
+There is no new TTL, fresh start credit or refund. Expiry while waiting cannot
+close another worker's outstanding reservation. Unknown accounting is not a
+recoverable shortage. With no live reservation and insufficient possible refill
+before the original deadline, the original immediate budget refusal is retained.
+A concurrent trusted non-public owner can still win the final reservation race;
+its real refusal is not hidden or converted into an unowned permit.
+
+Waiting is pre-dispatch scheduling. Its wall time remains in the client's original
+operation interval, but scheduling/poll CPU is outside the existing O+C mutation
+execution account, like reactor and response work. It must not be reported as
+zero CPU or silently added twice to nested worker observations. This change does
+not establish a complete process/energy cost, anonymous fairness before a task
+has obtained its queue position, or a bound on indivisible native operations.
+
+### Retained failure and regression scope
+
+On PR227 head `5a2549eef8e74f0dcfc2f88181e84a7aeab49a8f`, run
+`37562991474` / head Rust job `112604284070` failed the sustained service
+assertion. Artifact `11459232018` (ZIP SHA256
+`0b4e81e029cfbb04aa3ba7ff619be7b426d999a57cf898848de840ae91fd7fde`)
+retains the complete report: both phases closed their actual accounting and
+capture invariants, but all sixteen second-phase attempts of the honest block
+returned `PUBLIC_MUTATION_CPU_BUDGET`. The report records 235 and 327 CPU
+refusals in the two phases. This is an observed admission-budget starvation case,
+not evidence that a fake work proof was accepted. The new wait does not replace
+or weaken the original finite/sustained assertions, four attack workers, traffic
+windows, request deadlines, byte/queue/CPU limits or complete-state comparison.
+
+Six local reserve/wait regressions cover actual monotonic refill, impossible
+refill, cancellation, original expiry, shared unknown state and preservation of
+a different live reservation. Their controlled credit edits are mechanism tests,
+not attack-cost measurements. The existing actual TCP from-zero test is the
+separate traffic experiment; debug and release observations must retain their
+own binary/source/profile identities. Neither a finite successful pressure run
+nor an admission-budget shortfall changes production/public qualification flags.
 
 ## Closed operations
 
