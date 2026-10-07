@@ -687,9 +687,7 @@ impl AccountArchive {
             }
             match node.kind {
                 Kind::Leaf(_, account) => {
-                    account_count = account_count
-                        .checked_add(1)
-                        .ok_or(ArchiveError::Budget)?;
+                    account_count = account_count.checked_add(1).ok_or(ArchiveError::Budget)?;
                     account_balance = account_balance
                         .checked_add(account.balance)
                         .ok_or(ArchiveError::InvalidState)?;
