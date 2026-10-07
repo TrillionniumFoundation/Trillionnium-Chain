@@ -424,13 +424,13 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
 
     for source in ["file", "stdin"] {
         let mut command = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"));
-        command.args(["packet-status", "--development", "--store"]).arg(&store);
+        command
+            .args(["packet-status", "--development", "--store"])
+            .arg(&store);
         if source == "file" {
             command.args(["--packet"]).arg(&packet_path);
         } else {
-            command
-                .arg("--packet-stdin")
-                .stdin(Stdio::piped());
+            command.arg("--packet-stdin").stdin(Stdio::piped());
         }
         let mut child = command
             .stdout(Stdio::piped())
