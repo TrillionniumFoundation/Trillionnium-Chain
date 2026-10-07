@@ -7,7 +7,7 @@ use std::sync::{
 use std::thread::{self, ThreadId};
 use trnm_protocol::pon_wire::Hash;
 
-pub const MAX_REQUEST_OBSERVATION_RECORDS: usize = 4096;
+pub const MAX_REQUEST_OBSERVATION_RECORDS: usize = 16_384;
 
 #[derive(Clone, Copy, Debug, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -538,6 +538,7 @@ mod tests {
     #[test]
     fn bounded_records_and_saturating_counter_overflow_remain_explicit() {
         assert!(PublicRequestObserver::new(0).is_err());
+        assert!(PublicRequestObserver::new(MAX_REQUEST_OBSERVATION_RECORDS).is_ok());
         assert!(PublicRequestObserver::new(MAX_REQUEST_OBSERVATION_RECORDS + 1).is_err());
         let observer = PublicRequestObserver::new(2).unwrap();
         drop(observer.connection().unwrap());

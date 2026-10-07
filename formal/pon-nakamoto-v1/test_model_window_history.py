@@ -3,6 +3,9 @@ import copy
 import unittest
 from unittest.mock import patch
 
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+
 import model_window_history as window
 from contract_wire import H, canonical
 from llm_adapter_contract import freeze, validate_run_plan, evaluate_run_record, CONTROL_IDS
@@ -728,6 +731,32 @@ class ProspectiveGenerationLineageTests(unittest.TestCase):
         return window.verify_prospective_consumer_benefit(
             raw, pin, rows, receipts)
 
+    def signed_benefit(self, history, data):
+        rows, receipts = self.benefit(history, data)
+        attestations = []
+        for index, receipt in enumerate(receipts, 1):
+            consumer = Ed25519PrivateKey.from_private_bytes(bytes([10 + index]) * 32)
+            controller = Ed25519PrivateKey.from_private_bytes(bytes([20 + index]) * 32)
+            consumer_public = consumer.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
+            controller_public = controller.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
+            receipt['consumer'] = H(window.CONSUMER_KEY_DOMAIN, consumer_public).hex()
+            receipt['controller'] = H(window.CONTROLLER_KEY_DOMAIN, controller_public).hex()
+            rows[index - 1]['consumer_receipt'] = H(
+                window.CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(receipt)).hex()
+            message = H(window.CONSUMER_BENEFIT_ATTESTATION_DOMAIN, canonical(receipt))
+            attestations.append(dict(
+                ordinal=index,
+                consumer_public_key=consumer_public.hex(),
+                controller_public_key=controller_public.hex(),
+                consumer_signature=consumer.sign(message).hex(),
+                controller_signature=controller.sign(message).hex()))
+        return rows, receipts, attestations
+
+    def verify_signed_benefit(self, history, rows, receipts, attestations):
+        raw, pin = window.freeze_exposure_history(history)
+        return window.verify_signed_prospective_consumer_benefit(
+            raw, pin, rows, receipts, attestations)
+
     def test_three_adopted_generations_form_exact_predecessor_chain_without_acceptance_upgrade(self):
         history, data = self.three()
         result = self.verify(history, self.rows(history, data))
@@ -816,6 +845,43 @@ class ProspectiveGenerationLineageTests(unittest.TestCase):
             window.CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(receipts[0])).hex()
         with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_ADOPTED_GAIN'):
             self.verify_benefit(gain_history, rows, receipts)
+
+    def test_external_consumer_and_controller_signatures_bind_exact_receipts_without_acceptance_upgrade(self):
+        history, data = self.three()
+        rows, receipts, attestations = self.signed_benefit(history, data)
+        result = self.verify_signed_benefit(history, rows, receipts, attestations)
+        self.assertTrue(result['external_receipt_signatures_verified'])
+        self.assertTrue(result['disjoint_consumer_controller_keys_verified'])
+        self.assertEqual(len(result['signed_receipt_attestations']), 3)
+        for field in ('actual_model_installation_verified',
+                      'independent_controller_verified', 'new_consumer_benefit_verified',
+                      'prospective_accepted', 'independent_accepted',
+                      'public_reward_eligible', 'production_activation'):
+            self.assertIs(result[field], False)
+
+    def test_external_receipt_signature_key_alias_tamper_and_relabel_fail_closed(self):
+        history, data = self.three()
+        rows, receipts, attestations = self.signed_benefit(history, data)
+
+        changed = copy.deepcopy(attestations)
+        changed[1]['consumer_public_key'] = changed[0]['consumer_public_key']
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_KEY_ALIAS'):
+            self.verify_signed_benefit(history, rows, receipts, changed)
+
+        changed = copy.deepcopy(attestations)
+        signature = bytearray.fromhex(changed[2]['controller_signature'])
+        signature[-1] ^= 1
+        changed[2]['controller_signature'] = bytes(signature).hex()
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_CONTROLLER_SIGNATURE'):
+            self.verify_signed_benefit(history, rows, receipts, changed)
+
+        changed_receipts = copy.deepcopy(receipts)
+        changed_receipts[0]['consumer'] = identity('self-relabelled-consumer')
+        changed_rows = copy.deepcopy(rows)
+        changed_rows[0]['consumer_receipt'] = H(
+            window.CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(changed_receipts[0])).hex()
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_CONSUMER_KEY_BINDING'):
+            self.verify_signed_benefit(history, changed_rows, changed_receipts, attestations)
 
     def test_consumer_receipts_require_fresh_future_identity_and_exact_pin(self):
         history, data = self.three()

@@ -5,17 +5,19 @@ use super::{
     bytes32, canonical, native_authenticated, plain, schema, sync_dir, Delta, Node, StateBackend,
 };
 use crate::account_archive_execution::state_witness::{
-    growth_commitment_from_complete_state_v2, verify_growth_profile_binding_v2,
-    GrowthProfileBindingV2,
+    growth_commitment_from_complete_state_v2, growth_profile_binding_v2,
+    verify_growth_profile_binding_v2, GrowthProfileBindingV2,
 };
 use crate::{consensus, ensure, sequence_root, Error, Result};
 use fs2::FileExt;
 use rusqlite::{params_from_iter, types::Value as SqlValue, Connection, Transaction};
-use serde::Serialize;
+use rustix::fs::{fallocate, FallocateFlags};
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
 use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Write};
+use std::os::fd::AsFd;
 use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
 use std::path::Path;
 use trnm_crypto_primitives::pon_work;
@@ -26,6 +28,10 @@ use trnm_protocol::pon_wire::Hash;
 pub(crate) const PENDING: &str = "authenticated-migration.pending";
 const RECEIPT: &str = "authenticated-migration.json";
 const PROFILE: &str = "native-authenticated-local-migration-v1";
+const GROWTH_RESERVATION_FILE: &str = "growth-storage-reservation.bin";
+const GROWTH_RESERVATION_RECEIPT: &str = "growth-storage-reservation.json";
+const MIN_GROWTH_RESERVATION_BYTES: u64 = 1024 * 1024;
+const MAX_GROWTH_RESERVATION_BYTES: u64 = 8 * 1024 * 1024 * 1024;
 
 /// Cancellation is checked before any target publication and within proof,
 /// execution, SQL-copy and authenticated-node work. No callback follows publish.
@@ -93,6 +99,27 @@ pub struct GrowthMigrationPlanV2 {
     pub consensus_activation: bool,
 }
 
+/// Physical local-development storage reservation for an already verified
+/// growth candidate. This proves only that the requested bytes were allocated
+/// for this exact binding at this instant; it is not a proof that the amount is
+/// sufficient for the maximum profile, durable remote availability, migration,
+/// or consensus activation.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GrowthStorageReservationV2 {
+    pub schema: String,
+    pub profile_binding: String,
+    pub storage_namespace: String,
+    pub target: String,
+    pub requested_bytes: u64,
+    pub physically_reserved_bytes: u64,
+    pub complete_source_state_checked: bool,
+    pub target_storage_reserved: bool,
+    pub capacity_sufficiency_qualified: bool,
+    pub migration_executed: bool,
+    pub consensus_activation: bool,
+}
+
 impl Node {
     /// Bind the current actual authenticated Node state to a retained candidate
     /// growth-profile identity. The full source-state scan is intentional here:
@@ -133,6 +160,192 @@ impl Node {
             migration_executed: false,
             consensus_activation: false,
         })
+    }
+
+    /// Reserve actual local filesystem blocks for the exact retained candidate.
+    /// The target must be absent under an existing canonical parent. Any failure
+    /// after target creation removes the new target rather than publishing a
+    /// partial reservation.
+    pub fn reserve_growth_profile_storage_v2(
+        &self,
+        binding: &GrowthProfileBindingV2,
+        storage_namespace: &str,
+        target: &Path,
+        requested_bytes: u64,
+    ) -> Result<GrowthStorageReservationV2> {
+        ensure(
+            (MIN_GROWTH_RESERVATION_BYTES..=MAX_GROWTH_RESERVATION_BYTES)
+                .contains(&requested_bytes),
+            "GROWTH_STORAGE_RESERVATION_BYTES",
+        )?;
+        let plan = self.prepare_growth_profile_migration_v2(binding)?;
+        let (tip, generation, state) = self.read_active()?;
+        ensure(
+            plan.source_tip == hex::encode(tip) && plan.source_generation == generation,
+            "GROWTH_STORAGE_STALE_SOURCE",
+        )?;
+        let commitment = growth_commitment_from_complete_state_v2(&self.settings, &state)
+            .map_err(|error| Error::from(format!("GROWTH_STORAGE_RELATION:{error:?}")))?;
+        let expected = growth_profile_binding_v2(&self.settings, &commitment, storage_namespace)
+            .map_err(|error| Error::from(format!("GROWTH_STORAGE_NAMESPACE:{error:?}")))?;
+        ensure(&expected == binding, "GROWTH_STORAGE_BINDING")?;
+        ensure(
+            target.is_absolute() && !target.exists(),
+            "GROWTH_STORAGE_TARGET",
+        )?;
+        let target_text = target.to_str().ok_or("GROWTH_STORAGE_TARGET")?.to_owned();
+        let parent = target.parent().ok_or("GROWTH_STORAGE_TARGET")?;
+        ensure(
+            parent.canonicalize()? == parent && parent.is_dir(),
+            "GROWTH_STORAGE_TARGET",
+        )?;
+
+        fs::create_dir(target)?;
+        let result = (|| {
+            fs::set_permissions(target, fs::Permissions::from_mode(0o700))?;
+            let reservation_path = target.join(GROWTH_RESERVATION_FILE);
+            let reservation = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .create_new(true)
+                .mode(0o600)
+                .open(&reservation_path)?;
+            fallocate(
+                reservation.as_fd(),
+                FallocateFlags::empty(),
+                0,
+                requested_bytes,
+            )
+            .map_err(|error| Error::from(format!("GROWTH_STORAGE_FALLOCATE:{error}")))?;
+            reservation.sync_all()?;
+            let metadata = reservation.metadata()?;
+            let physically_reserved_bytes = metadata
+                .blocks()
+                .checked_mul(512)
+                .ok_or("GROWTH_STORAGE_RESERVATION_BYTES")?;
+            ensure(
+                metadata.len() == requested_bytes && physically_reserved_bytes >= requested_bytes,
+                "GROWTH_STORAGE_RESERVATION",
+            )?;
+            ensure(
+                self.active()? == (tip, generation),
+                "GROWTH_STORAGE_STALE_SOURCE",
+            )?;
+            let receipt = GrowthStorageReservationV2 {
+                schema: "pon-permanent-account-growth-storage-reservation-v2".into(),
+                profile_binding: plan.profile_binding.clone(),
+                storage_namespace: plan.storage_namespace.clone(),
+                target: target_text.clone(),
+                requested_bytes,
+                physically_reserved_bytes,
+                complete_source_state_checked: plan.complete_source_state_checked,
+                target_storage_reserved: true,
+                capacity_sufficiency_qualified: false,
+                migration_executed: false,
+                consensus_activation: false,
+            };
+            let receipt_path = target.join(GROWTH_RESERVATION_RECEIPT);
+            let mut receipt_file = OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .mode(0o600)
+                .open(&receipt_path)?;
+            receipt_file.write_all(&serde_json::to_vec_pretty(&receipt)?)?;
+            receipt_file.sync_all()?;
+            sync_dir(target)?;
+            let retained: GrowthStorageReservationV2 =
+                serde_json::from_slice(&fs::read(&receipt_path)?)?;
+            ensure(retained == receipt, "GROWTH_STORAGE_RECEIPT")?;
+            Ok(receipt)
+        })();
+        if result.is_err() {
+            let _ = fs::remove_dir_all(target);
+            let _ = sync_dir(parent);
+        }
+        result
+    }
+
+    /// Revalidate a retained physical reservation after a cold owner reopen.
+    /// This consumes no bytes and grants no migration or activation authority.
+    pub fn verify_growth_profile_storage_reservation_v2(
+        &self,
+        binding: &GrowthProfileBindingV2,
+        storage_namespace: &str,
+        target: &Path,
+    ) -> Result<GrowthStorageReservationV2> {
+        let plan = self.prepare_growth_profile_migration_v2(binding)?;
+        let (tip, generation, _) = self.read_active()?;
+        ensure(
+            plan.source_tip == hex::encode(tip) && plan.source_generation == generation,
+            "GROWTH_STORAGE_STALE_SOURCE",
+        )?;
+        let state = self.read_active()?.2;
+        let commitment = growth_commitment_from_complete_state_v2(&self.settings, &state)
+            .map_err(|error| Error::from(format!("GROWTH_STORAGE_RELATION:{error:?}")))?;
+        let expected = growth_profile_binding_v2(&self.settings, &commitment, storage_namespace)
+            .map_err(|error| Error::from(format!("GROWTH_STORAGE_NAMESPACE:{error:?}")))?;
+        ensure(&expected == binding, "GROWTH_STORAGE_BINDING")?;
+        ensure(
+            target.is_absolute() && target.canonicalize()? == target && target.is_dir(),
+            "GROWTH_STORAGE_TARGET",
+        )?;
+        let target_meta = fs::symlink_metadata(target)?;
+        ensure(
+            target_meta.file_type().is_dir()
+                && target_meta.nlink() >= 1
+                && target_meta.permissions().mode() & 0o777 == 0o700,
+            "GROWTH_STORAGE_TARGET",
+        )?;
+        let reservation_path = target.join(GROWTH_RESERVATION_FILE);
+        let receipt_path = target.join(GROWTH_RESERVATION_RECEIPT);
+        ensure(
+            reservation_path.canonicalize()? == reservation_path
+                && receipt_path.canonicalize()? == receipt_path,
+            "GROWTH_STORAGE_TARGET",
+        )?;
+        let reservation_meta = fs::symlink_metadata(&reservation_path)?;
+        let receipt_meta = fs::symlink_metadata(&receipt_path)?;
+        ensure(
+            reservation_meta.file_type().is_file()
+                && reservation_meta.nlink() == 1
+                && reservation_meta.permissions().mode() & 0o777 == 0o600
+                && receipt_meta.file_type().is_file()
+                && receipt_meta.nlink() == 1
+                && receipt_meta.permissions().mode() & 0o777 == 0o600,
+            "GROWTH_STORAGE_TARGET",
+        )?;
+        let receipt_bytes = fs::read(&receipt_path)?;
+        let receipt: GrowthStorageReservationV2 = serde_json::from_slice(&receipt_bytes)?;
+        ensure(
+            serde_json::to_vec_pretty(&receipt)? == receipt_bytes
+                && receipt.schema == "pon-permanent-account-growth-storage-reservation-v2"
+                && receipt.profile_binding == plan.profile_binding
+                && receipt.storage_namespace == plan.storage_namespace
+                && receipt.target == target.to_str().ok_or("GROWTH_STORAGE_TARGET")?
+                && receipt.complete_source_state_checked
+                && receipt.target_storage_reserved
+                && !receipt.capacity_sufficiency_qualified
+                && !receipt.migration_executed
+                && !receipt.consensus_activation
+                && (MIN_GROWTH_RESERVATION_BYTES..=MAX_GROWTH_RESERVATION_BYTES)
+                    .contains(&receipt.requested_bytes),
+            "GROWTH_STORAGE_RECEIPT",
+        )?;
+        let physical = reservation_meta
+            .blocks()
+            .checked_mul(512)
+            .ok_or("GROWTH_STORAGE_RESERVATION_BYTES")?;
+        ensure(
+            reservation_meta.len() == receipt.requested_bytes
+                && physical >= receipt.requested_bytes
+                && physical == receipt.physically_reserved_bytes,
+            "GROWTH_STORAGE_RESERVATION",
+        )?;
+        ensure(
+            self.active()? == (tip, generation),
+            "GROWTH_STORAGE_STALE_SOURCE",
+        )?;
+        Ok(receipt)
     }
 
     /// Copy a fully checked legacy local-development store into a fresh explicit
