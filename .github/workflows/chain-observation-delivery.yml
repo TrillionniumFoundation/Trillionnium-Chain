@@ -1,0 +1,92 @@
+name: chain-observation-delivery
+on:
+  push:
+    branches: [dev/chain-observation-delivery-20261007]
+permissions:
+  contents: write
+jobs:
+  deliver:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout the exact existing candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 97e00fcff9b2ad2d67ed7c3c12997f28c0531eb5
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reconstruct exact reviewed bytes and non-forced branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          import urllib.request
+          repository = 'TrillionniumFoundation/Trillionnium-Chain'
+          base = '97e00fcff9b2ad2d67ed7c3c12997f28c0531eb5'
+          base_tree = '5574536445b433452b2e8dd6438f2b4908558613'
+          target = '5a2549eef8e74f0dcfc2f88181e84a7aeab49a8f'
+          target_tree = '86a1fa2cdb0e952d5752a796c58190a41bc6d9be'
+          branch = 'fix/chain-observation-convergence-20261007'
+          paths = {
+              'docs/protocol/pon-nakamoto-v1/details/PUBLIC_REQUEST_RESOURCE_OBSERVATION.md',
+              'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs',
+              'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs',
+          }
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          def blob(sha):
+              request = urllib.request.Request(
+                  f'https://api.github.com/repos/{repository}/git/blobs/{sha}',
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                           'Accept': 'application/vnd.github+json'})
+              with urllib.request.urlopen(request, timeout=30) as stream:
+                  payload = json.load(stream)
+              assert payload['sha'] == sha and payload['encoding'] == 'base64'
+              raw = base64.b64decode(payload['content'])
+              assert hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest() == sha
+              return raw
+          assert git('rev-parse', 'HEAD') == base
+          assert git('rev-parse', 'HEAD^{tree}') == base_tree
+          assert not git('status', '--porcelain')
+          subprocess.run(['git', 'switch', '-c', branch], check=True)
+          subprocess.run(['bash', 'scripts/project-preflight.sh'], check=True)
+          patch = blob('4c34e61221c6c115945ae0ad0627e8e13de00207')
+          commit = blob('b782c0b52a4d4525fe6c53e8d2afbba61a5e57f1')
+          assert hashlib.sha1(b'commit ' + str(len(commit)).encode() + b'\0' + commit).hexdigest() == target
+          assert commit.split(b'\n\n', 1)[0].splitlines()[:2] == [
+              ('tree ' + target_tree).encode(), ('parent ' + base).encode()]
+          subprocess.run(['git', 'apply', '--check', '--index', '-'], input=patch, check=True)
+          subprocess.run(['git', 'apply', '--index', '-'], input=patch, check=True)
+          assert set(git('diff', '--cached', '--name-only').splitlines()) == paths
+          subprocess.run(['git', 'diff', '--cached', '--check'], check=True)
+          subprocess.run(['bash', 'scripts/project-preflight.sh', '--staged'], check=True)
+          assert git('write-tree') == target_tree
+          actual = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'], input=commit).decode().strip()
+          assert actual == target
+          subprocess.run(['git', 'update-ref', 'refs/heads/' + branch, target, base], check=True)
+          assert not git('status', '--porcelain')
+          subprocess.run(['bash', 'scripts/project-preflight.sh', '--audit'], check=True)
+          subprocess.run(['bash', 'scripts/project-preflight.sh', '--push'], check=True)
+          token = os.environ['GH_TOKEN']
+          auth = 'AUTHORIZATION: basic ' + base64.b64encode(('x-access-token:' + token).encode()).decode()
+          os.environ.update(GIT_CONFIG_COUNT='1',
+                            GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
+                            GIT_CONFIG_VALUE_0=auth, GIT_TERMINAL_PROMPT='0')
+          ref = 'refs/heads/' + branch
+          prior = git('ls-remote', '--heads', 'origin', ref)
+          assert not prior or prior.split()[0] == target, 'refuse to replace another branch head'
+          subprocess.run(['git', 'push', 'origin', 'HEAD:' + ref], check=True)
+          assert git('ls-remote', '--heads', 'origin', ref).split()[0] == target
+          print(json.dumps({'result': 'DELIVERED', 'base': base, 'commit': target,
+                            'tree': target_tree, 'branch': branch, 'paths': sorted(paths),
+                            'tests_executed_by_transport': False,
+                            'merged': False, 'production_activation': False}))
+          PY
