@@ -535,6 +535,34 @@ pub struct StorageObservation {
     pub node_payload_bytes: u64,
     pub checkpoint_rows: u64,
 }
+
+/// Verified aggregate of one retained permanent-account checkpoint. Private
+/// fields prevent caller-supplied deserialization from becoming authority.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+pub struct AccountAggregateObservation {
+    checkpoint: Hash,
+    account_root: Hash,
+    account_count: u64,
+    account_balance: u64,
+    node_rows_read: u64,
+}
+impl AccountAggregateObservation {
+    pub fn checkpoint(&self) -> Hash {
+        self.checkpoint
+    }
+    pub fn account_root(&self) -> Hash {
+        self.account_root
+    }
+    pub fn account_count(&self) -> u64 {
+        self.account_count
+    }
+    pub fn account_balance(&self) -> u64 {
+        self.account_balance
+    }
+    pub fn node_rows_read(&self) -> u64 {
+        self.node_rows_read
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub struct ResearchUpdate {
     pub owner: Hash,
@@ -628,6 +656,57 @@ impl AccountArchive {
     }
     pub fn observation(&self) -> Result<StorageObservation> {
         observation(&self.db)
+    }
+
+    /// Recompute count and balance from every authenticated leaf reachable from
+    /// one retained checkpoint. This is a storage/commitment observation only;
+    /// it does not authorize execution, chain selection or ledger growth.
+    pub fn aggregate_observation(
+        &self,
+        checkpoint_id: Hash,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<AccountAggregateObservation> {
+        let checkpoint = self.checkpoint(checkpoint_id)?;
+        if checkpoint.account_count > self.limits.max_accounts {
+            return Err(ArchiveError::Budget);
+        }
+        let mut stack = checked_root(&self.db, &checkpoint, &self.empty)?
+            .into_iter()
+            .collect::<Vec<_>>();
+        let mut seen = BTreeSet::new();
+        let mut account_count = 0u64;
+        let mut account_balance = 0u64;
+        while let Some(node) = stack.pop() {
+            progress()?;
+            if !seen.insert(node.id) || seen.len() as u64 > self.limits.max_node_rows {
+                return Err(ArchiveError::CorruptRecord);
+            }
+            match node.kind {
+                Kind::Leaf(_, account) => {
+                    account_count = account_count
+                        .checked_add(1)
+                        .ok_or(ArchiveError::Budget)?;
+                    account_balance = account_balance
+                        .checked_add(account.balance)
+                        .ok_or(ArchiveError::InvalidState)?;
+                }
+                Kind::Fork { .. } => {
+                    stack.push(child(&self.db, &node, true, &self.empty)?);
+                    stack.push(child(&self.db, &node, false, &self.empty)?);
+                }
+            }
+        }
+        progress()?;
+        if account_count != checkpoint.account_count {
+            return Err(ArchiveError::CorruptRecord);
+        }
+        Ok(AccountAggregateObservation {
+            checkpoint: checkpoint.id,
+            account_root: checkpoint.account_root,
+            account_count,
+            account_balance,
+            node_rows_read: seen.len() as u64,
+        })
     }
     /// Records supplied complete initial bytes after the existing full-root check.
     /// The caller, not this sidecar, establishes native genesis/admission provenance.
