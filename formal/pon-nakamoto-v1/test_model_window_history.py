@@ -809,12 +809,13 @@ class ProspectiveGenerationLineageTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_NO_UPDATE'):
             self.verify_benefit(history, rows_gain, gained)
 
-        rows, receipts = self.benefit(history, data)
+        gain_history, gain_data = self.three()
+        rows, receipts = self.benefit(gain_history, gain_data)
         receipts[0]['candidate_score'] = receipts[0]['baseline_score']
         rows[0]['consumer_receipt'] = H(
             window.CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(receipts[0])).hex()
         with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_ADOPTED_GAIN'):
-            self.verify_benefit(history, rows, receipts)
+            self.verify_benefit(gain_history, rows, receipts)
 
     def test_consumer_receipts_require_fresh_future_identity_and_exact_pin(self):
         history, data = self.three()
