@@ -68,11 +68,11 @@ def simulated_sustained_report():
     for index in range(2):
         constructions = [dict(status='target_hit_unverified', attacker_cpu_ns=1, attempt_budget=4096,
             attempts=[dict(nonce=0, target_hit=True)], winner_nonce=0, packet='00') for _ in range(16)]
-        workers = [dict(worker=i, attempt_cap=768, attempt_cap_reached=False, calling_thread_cpu_ns=2,
+        workers = [dict(worker=i, attempt_cap=1024, attempt_cap_reached=False, calling_thread_cpu_ns=2,
             calls=[dict(call, status='refused', packet_index=i,
-                        response={'value': {'error': 'WORK:Transcript'}})]) for i in range(4)]
+                        response={'value': {'error': 'WORK:Transcript'}})]) for i in range(16)]
         records = [dict(connection_id=i+1, complete=True, connection_closed=True,
-                        observation_failed=False, task_created=True, task_closed=True) for i in range(7)]
+                        observation_failed=False, task_created=True, task_closed=True) for i in range(19)]
         phases.append(dict(phase=index, target='7f'+'ff'*31, construction=constructions, attacks=workers,
             requested_window_ns=4_000_000_000, traffic_and_join_wall_ns=4_000_000_001,
             preparation_cpu_ns=16, attacker_preparation_plus_workers_cpu_ns=24,
@@ -90,8 +90,8 @@ def simulated_sustained_report():
             service={'error': None, 'metrics': dict(mutation_cpu_charged_ns=20, mutation_full_work_cpu_ns=10,
                 mutation_dispatch_excluding_work_cpu_ns=10, mutation_cpu_clock_failures=0,
                 mutation_cpu_in_flight_after_shutdown=0, mutation_cpu_unavailable_after_shutdown=False,
-                work_started=5, work_finished=5, work_failed=4, mutation_cpu_refusals=0, accepted_connections=7)},
-            observations=dict(records=records, accepted_connections_seen=7, capacity=4096,
+                work_started=17, work_finished=17, work_failed=16, mutation_cpu_refusals=0, accepted_connections=19)},
+            observations=dict(records=records, accepted_connections_seen=19, capacity=16384,
                 records_not_retained=0, measurement_failures=0, counter_overflow=False,
                 cpu_intervals_are_nested_not_additive=True, observation_has_consensus_authority=False,
                 cpu_includes_reactor_authentication_or_response_signing=False)))
@@ -436,7 +436,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
     def test_sustained_finite_non_depletion_remains_a_valid_observation(self):
         result, _ = self.exercise()
         self.assertTrue(result['passed'])
-        self.assertEqual([p['attacks'] for p in result['sustained_report']['phases']], [4, 4])
+        self.assertEqual([p['attacks'] for p in result['sustained_report']['phases']], [16, 16])
         self.assertEqual([p['mutation_cpu_refusals'] for p in result['sustained_report']['phases']], [0, 0])
         self.assertEqual(result['files']['native/sustained/report.json'], result['sustained_report']['sha256'])
 
@@ -534,8 +534,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
             d['phases'][0]['attacks'][0]['calls'].append({'status': 'not_submitted_exhausted', 'packet_index': 15})
         result, _ = self.exercise(sustained_edit=edit)
         self.assertTrue(result['passed'])
-        self.assertEqual(result['sustained_report']['phases'][0]['attacks'], 4)
-        self.assertEqual(result['sustained_report']['phases'][0]['connections'], 7)
+        self.assertEqual(result['sustained_report']['phases'][0]['attacks'], 16)
+        self.assertEqual(result['sustained_report']['phases'][0]['connections'], 19)
 
     def test_sustained_valid_packet_cannot_be_relabelled_as_exhausted(self):
         self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0]['calls'].append(
