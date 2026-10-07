@@ -9,7 +9,13 @@ import os
 import sys
 from unittest.mock import patch
 from pathlib import Path
-from experiments.verify_model_acceptance import (ingest, bounded_file, load_json,\n    _bounded_file_at, _pinned_package)
+from experiments.verify_model_acceptance import (
+    _bounded_file_at,
+    _pinned_package,
+    bounded_file,
+    ingest,
+    load_json,
+)
 from model_acceptance import *
 from test_llm_adapter_contract import fixture_contract, fixture_plan, fixture_record, identity as tid
 from llm_adapter_contract import freeze_target_contract, freeze_run_plan
