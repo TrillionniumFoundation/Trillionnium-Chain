@@ -678,8 +678,8 @@ fn caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct() {
 // Additional mandatory observation in the existing exact-named service test.
 // Original finite v2 report and all its assertions remain unchanged.
 const PRESSURE_MS: u64 = 4_000;
-const PRESSURE_WORKERS: usize = 4;
-const PRESSURE_CALLS_PER_WORKER: usize = 768;
+const PRESSURE_WORKERS: usize = 16;
+const PRESSURE_CALLS_PER_WORKER: usize = 1_024;
 
 fn compact_pressure_call(mut row: Value, packet_index: Option<usize>) -> Value {
     // Full immutable packets are retained once in the construction table. Do
@@ -766,7 +766,7 @@ fn sustained_phase(
     let address = listener.local_addr().unwrap();
     let stop = Arc::new(AtomicBool::new(false));
     let metrics = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));
-    let observer = public_v3::PublicRequestObserver::new(4096).unwrap();
+    let observer = public_v3::PublicRequestObserver::new(16_384).unwrap();
     let (shared, signal, metric_owner, capture) = (
         owner.clone(),
         stop.clone(),
@@ -925,6 +925,9 @@ fn sustained_phase(
             .as_i64()
             .is_some_and(|v| v < 0)
     });
+    let mutation_cpu_refusals = m["mutation_cpu_refusals"].as_u64().unwrap_or(0);
+    let budget_depletion_observed =
+        below_start_reserve_observed || observed_debt || mutation_cpu_refusals > 0;
     let attack_cpu = attack_rows.iter().try_fold(0u64, |n, r| {
         n.checked_add(r["calling_thread_cpu_ns"].as_u64()?)
     });
@@ -962,6 +965,8 @@ fn sustained_phase(
             "meter_samples": budget_samples, "meter_at_traffic_end": budget_at_traffic_end,
             "stored_credit_below_start_reserve_observed": below_start_reserve_observed,
             "negative_stored_credit_observed": observed_debt,
+            "mutation_cpu_refusals": mutation_cpu_refusals,
+            "budget_depletion_observed": budget_depletion_observed,
             "attempt_caps_not_reached": caps_not_reached, "observations": captured,
             "service": service_outcome, "no_attack_accepted": no_attack_accepted,
             "accounting_closed": accounting_closed, "full_native_state_equal": honest_admitted,
@@ -1022,6 +1027,8 @@ fn sustained_observation(path: &std::path::Path) {
         "same_stored_cpu_meter_across_reopen": same_meter,
         "meter_before_reopen": meter_before, "meter_after_reopen": meter_after,
         "reopen_wall_ns": reopen_wall_ns,
+        "budget_depletion_demonstrated": first["budget_depletion_observed"] == true
+            || second["budget_depletion_observed"] == true,
         "finite_service_target_met": passed, "independent_accepted": false,
         "physical_power_loss": false, "ordinary_hepta_entry": false,
         "public_network_ready": false, "resource_fairness_qualified": false,
