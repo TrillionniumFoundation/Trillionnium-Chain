@@ -308,6 +308,38 @@ fn ascend(
     }
     Ok(current)
 }
+/// Bounded local observation that `candidate` is on `tip`'s retained
+/// ancestry. This is not finality or a global inclusion proof. It validates the
+/// same sealed binary-lifting rows used by history paging and returns false for
+/// a well-formed retained fork rather than converting that fork into an error.
+pub(crate) fn contains(
+    db: &Connection,
+    ctx: Context,
+    tip: Hash,
+    candidate: Hash,
+    maximum_sql: u64,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+) -> Result<bool> {
+    ensure(
+        (2..=READ_SQL_BUDGET).contains(&maximum_sql),
+        "ANCESTRY_INDEX_BUDGET",
+    )?;
+    let mut budget = Budget {
+        used: 0,
+        maximum: maximum_sql,
+        progress,
+    };
+    let tip_metadata = metadata(db, ctx, tip, &mut budget)?;
+    let candidate_metadata = metadata(db, ctx, candidate, &mut budget)?;
+    let Some(difference) = tip_metadata.height.checked_sub(candidate_metadata.height) else {
+        return Ok(false);
+    };
+    if difference == 0 {
+        return Ok(tip == candidate);
+    }
+    Ok(ascend(db, ctx, tip, difference, &mut budget)? == candidate)
+}
+
 /// Index integrity is local, not an independent proof of the entire path.
 /// Leaves two SQL slots for the caller's length check and packet-body load.
 pub(crate) fn next(
@@ -470,6 +502,10 @@ mod tests {
         assert_eq!(observed.last(), Some(&lookup.sql_lookups));
         let lookup = next(&db, ctx, fork2, ids[32], READ_SQL_BUDGET, &mut |_| Ok(())).unwrap();
         assert_eq!(lookup.next, Some(fork1));
+        assert!(contains(&db, ctx, ids[65], ids[32], READ_SQL_BUDGET, &mut |_| Ok(())).unwrap());
+        assert!(contains(&db, ctx, ids[65], ids[65], READ_SQL_BUDGET, &mut |_| Ok(())).unwrap());
+        assert!(!contains(&db, ctx, ids[32], ids[65], READ_SQL_BUDGET, &mut |_| Ok(())).unwrap());
+        assert!(!contains(&db, ctx, ids[65], fork1, READ_SQL_BUDGET, &mut |_| Ok(())).unwrap());
         assert_eq!(
             next(&db, ctx, ids[65], fork1, READ_SQL_BUDGET, &mut |_| Ok(()))
                 .unwrap_err()

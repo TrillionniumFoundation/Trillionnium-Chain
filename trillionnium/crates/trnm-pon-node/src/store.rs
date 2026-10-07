@@ -4355,20 +4355,37 @@ impl Node {
             )
             .optional()?;
         let (tip, generation) = self.active()?;
-        let stored_exact = match stored {
-            None => false,
+        let active_tip_height = self.record(tip)?.height;
+        let (stored_exact, block_height, active_chain_member, active_depth) = match stored {
+            None => (false, None, false, None),
             Some(raw) => {
                 ensure(raw == expected, "DUPLICATE_CONTENT")?;
                 let retained = self.packet(id)?;
                 ensure(retained.encode()? == expected, "STORAGE_PACKET")?;
-                true
+                let block_height = self.record(id)?.height;
+                let active_chain_member = crate::ancestry_index::contains(
+                    &self.db,
+                    self.ancestry_context(),
+                    tip,
+                    id,
+                    crate::ancestry_index::READ_SQL_BUDGET,
+                    &mut |_| Ok(()),
+                )?;
+                let active_depth = active_chain_member
+                    .then(|| active_tip_height.checked_sub(block_height))
+                    .flatten();
+                (true, Some(block_height), active_chain_member, active_depth)
             }
         };
         Ok(serde_json::json!({
-            "schema":"pon-native-exact-packet-observation-v1",
+            "schema":"pon-native-exact-packet-observation-v2",
             "block":hex::encode(id),
             "stored_exact":stored_exact,
+            "block_height":block_height,
             "active_tip":hex::encode(tip),
+            "active_tip_height":active_tip_height,
+            "active_chain_member":active_chain_member,
+            "active_depth":active_depth,
             "generation":generation,
             "local_target_only":true,
             "global_absence_authority":false,

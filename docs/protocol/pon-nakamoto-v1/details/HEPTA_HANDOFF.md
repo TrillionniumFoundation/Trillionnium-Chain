@@ -120,13 +120,22 @@ its payload digest is Hepta SHA-256 of the exact transmitted bytes. A chain bloc
 transaction or authenticated-session identity uses a different domain. None may
 be obtained by casting one digest into another.
 
-The existing pending projection retains the effect key inputs and payload digest,
-not the original wire bytes or a complete chain recovery locator. The PoN adapter
-therefore needs an exact recovery binding retained through the existing operation
-owner before provider contact: chain context, original transaction/group/packet
-identity, exact payload identity, intended publication semantics and current
-artifact/evaluation/withdrawal references. It cannot reconstruct this binding
-from the digest alone or add a parallel PoN journal to hide the missing mapping.
+The upstream boundary has since advanced through Hepta PR1430/PR1431. The existing
+TaskFlow effect-attempt owner now persists the exact provider-effect key and exact
+wire payload before provider contact, and the reconciliation adapter seam receives
+those durable bytes. That closes the earlier information-loss prerequisite without
+adding a PoN journal. Legacy attempt rows still carry no exact bytes and must remain
+Unknown/Indeterminate for any adapter that needs packet identity.
+
+On the chain side, `packet-status` accepts exactly one bounded packet source (file
+or stdin), so the Hepta owner can hand off its already durable bytes without creating
+another mutable packet file. The read-only observation reports exact durable storage
+separately from current active-chain membership and active depth. A packet retained
+after a heavier reorganization therefore remains `stored_exact=true` while
+`active_chain_member=false`. The same command works with the explicit authenticated
+local state backend. These are local observations only: absence is not global
+NotDispatched, active membership is not confirmation/finality, and neither creates
+local final-use authority.
 
 In particular, chain mempool acceptance, durable publication, current branch
 membership and probabilistic confirmation are distinct observations. A local

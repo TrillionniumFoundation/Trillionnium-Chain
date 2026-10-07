@@ -40,6 +40,30 @@ fn read(path: &str, limit: u64) -> Result<Vec<u8>> {
     }
     Ok(bytes)
 }
+
+/// Read one exact packet either from the existing file seam or from bounded
+/// stdin. The stdin path exists so an external owner can hand off already
+/// durable bytes without creating another mutable packet file or operation
+/// ledger. Exactly one source is required.
+fn packet_input(args: &BTreeMap<String, String>) -> Result<Vec<u8>> {
+    let path = args.get("--packet");
+    let stdin = args.get("--packet-stdin").map(String::as_str) == Some("true");
+    if path.is_some() == stdin {
+        return Err("PACKET_INPUT_EXACTLY_ONE".into());
+    }
+    if let Some(path) = path {
+        return read(path, 1_048_576);
+    }
+    let mut bytes = Vec::new();
+    std::io::stdin()
+        .lock()
+        .take(1_048_577)
+        .read_to_end(&mut bytes)?;
+    if bytes.len() > 1_048_576 {
+        return Err("INPUT_LIMIT".into());
+    }
+    Ok(bytes)
+}
 fn read_owned_configuration(
     path: &str,
     limit: u64,
@@ -208,6 +232,7 @@ fn authenticated_state_backend(command: &str, args: &BTreeMap<String, String>) -
             | "mine"
             | "make"
             | "submit"
+            | "packet-status"
             | "export"
             | "confirm"
             | "confirm-batch"
@@ -956,6 +981,7 @@ fn run() -> Result<Value> {
                 | "--mine"
                 | "--client-observations"
                 | "--reliable-submit"
+                | "--packet-stdin"
         ) {
             "true".into()
         } else {
@@ -989,9 +1015,9 @@ fn run() -> Result<Value> {
         "mine-loop" => "--miner --pool-policy --seconds --blocks --pace-ms --search-attempts --max-transactions --max-transaction-bytes --task-bootstrap --task-model --task-input --consensus-maintenance",
         "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input --consensus-maintenance",
         "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
-        "submit" => "--packet --peer",
-        "packet-status" => "--packet",
-        "push" => "--packet --peer --reliable-submit --submit-deadline-ms --submit-attempts --submit-call-cap --submit-parent-depth",
+        "submit" => "--packet --packet-stdin --peer",
+        "packet-status" => "--packet --packet-stdin",
+        "push" => "--packet --packet-stdin --peer --reliable-submit --submit-deadline-ms --submit-attempts --submit-call-cap --submit-parent-depth",
         "export" => "--block --output",
         "confirm" => "--transaction --block",
         "confirm-batch" => "--queries",
@@ -1376,7 +1402,7 @@ fn run() -> Result<Value> {
         );
     }
     if command == "push" {
-        let packet = Packet::decode(&read(need(&args, "--packet")?, 1_048_576)?)?;
+        let packet = Packet::decode(&packet_input(&args)?)?;
         let address = need(&args, "--peer")?
             .parse()
             .map_err(|_| Error::from("PEER_ADDRESS"))?;
@@ -1476,7 +1502,7 @@ fn run() -> Result<Value> {
     let value = match command.as_str() {
         "status" | "recover" => node.stats()?,
         "packet-status" => {
-            let packet = Packet::decode(&read(need(&args, "--packet")?, 1_048_576)?)?;
+            let packet = Packet::decode(&packet_input(&args)?)?;
             node.exact_packet_observation(&packet)?
         }
         "capacity-observe" => serde_json::to_value(node.capacity_observation()?)?,
@@ -1538,7 +1564,7 @@ fn run() -> Result<Value> {
             );
         }
         "submit" => {
-            let packet = Packet::decode(&read(need(&args, "--packet")?, 1_048_576)?)?;
+            let packet = Packet::decode(&packet_input(&args)?)?;
             let id = node.admit(&packet, clock)?;
             node.activate_observed(id, clock)?;
             json!({"block":hex::encode(id),"state":node.stats()?})
