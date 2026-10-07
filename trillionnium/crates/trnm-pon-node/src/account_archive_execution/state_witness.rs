@@ -11,9 +11,9 @@
 use super::obligations::MAX_EXECUTION_ACCOUNTS;
 use super::{CheckedExecutionError, Result};
 use crate::account_archive_prototype::{
-    accounts, AccountAggregateObservation,
+    accounts,
     multiproof::{CheckedMultiproof, MultiproofProgress},
-    Account, Checkpoint, Context, ResearchUpdate, Witness,
+    Account, AccountAggregateObservation, Checkpoint, Context, ResearchUpdate, Witness,
 };
 use crate::Settings;
 use serde::{Deserialize, Serialize};
@@ -196,15 +196,7 @@ pub fn growth_commitment_v2(
         return Err(CheckedExecutionError::Budget);
     }
     let (escrow_balance, reward_balance, issued) = components(working)?;
-    if total(
-        [
-            accounts.account_balance(),
-            escrow_balance,
-            reward_balance,
-        ]
-        .into_iter(),
-    )? != issued
-    {
+    if total([accounts.account_balance(), escrow_balance, reward_balance].into_iter())? != issued {
         return Err(StateWitnessError::Conservation.into());
     }
     let working_root = relation(pon_executor::root(working))?;
@@ -1148,8 +1140,6 @@ mod tests {
         }
     }
 }
-
-
 #[cfg(test)]
 mod growth_v2_tests {
     use super::*;
@@ -1213,7 +1203,10 @@ mod growth_v2_tests {
         assert_eq!(committed.permanent_account_count, 4);
         assert_eq!(committed.permanent_account_balance, 6);
         assert_eq!(committed.working_count, 1);
-        assert_eq!(committed.maximum_permanent_accounts, MAX_PERMANENT_ACCOUNTS_V2);
+        assert_eq!(
+            committed.maximum_permanent_accounts,
+            MAX_PERMANENT_ACCOUNTS_V2
+        );
         assert_eq!(committed.maximum_working_keys, MAX_WORKING_KEYS_V2 as u64);
         assert_ne!(committed.id, [0; 32]);
 
