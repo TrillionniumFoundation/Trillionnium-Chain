@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      BASE: bd4be15a668495523703c3825bd8f1646ee4720a
-      CANDIDATE: be8600b2ab0a62ff702ccf9dbb90540d19d86bee
-      TREE: cab98305ae0e408f8ffee4ec16d5b018ebbbd133
-      DESTINATION: fix/chain-six-line-continuation-20261007
+      BASE: be8600b2ab0a62ff702ccf9dbb90540d19d86bee
+      CANDIDATE: 54a03abfb36c0fa65ba113e1160717dbb55550de
+      TREE: 3f5ef938376189bccb93ef19e003db4b6ad25ff7
+      DESTINATION: fix/chain-owner-boundaries-20261007
     steps:
       - name: Checkout exact reviewed base without retained credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -31,7 +31,7 @@ jobs:
           test -z "$(git status --porcelain)"
           bash scripts/project-preflight.sh --audit
           mkdir "$RUNNER_TEMP/reviewed-source"
-          for sha in ac2a409bdec0465f522ff46d9201f93afafee525 052407d241c1a5617d4d4493f56dc992a42720f2 40c862a83a612e2d839c1a8b6e69df743b476a08 79df3c462d910ffeab86ba25456275b431629a8f bc866141ad82fb39fa887d93e2d0b8e247242eb7; do
+          for sha in 7c25de0bc805c54950804730e37d59f87bc0d766 5d211fab4c28c4dbe89c8be7c90fbbf8c2b1d11f 646762dc271f7e68a692c12ce357180800f41404 935411dc5a8bc2b36fd587f7173af54b6670eaa5; do
             curl --fail --silent --show-error --max-time 30 --max-filesize 262144 \
               -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
               "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/$sha" \
@@ -59,7 +59,7 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$BASE"
           git checkout -b "$DESTINATION" "$BASE"
-          for sha in ac2a409bdec0465f522ff46d9201f93afafee525 052407d241c1a5617d4d4493f56dc992a42720f2 40c862a83a612e2d839c1a8b6e69df743b476a08 79df3c462d910ffeab86ba25456275b431629a8f; do
+          for sha in 7c25de0bc805c54950804730e37d59f87bc0d766 5d211fab4c28c4dbe89c8be7c90fbbf8c2b1d11f 646762dc271f7e68a692c12ce357180800f41404; do
             git apply --index --check --whitespace=error-all "$RUNNER_TEMP/reviewed-source/$sha"
             git apply --index --whitespace=error-all "$RUNNER_TEMP/reviewed-source/$sha"
           done
@@ -69,17 +69,15 @@ jobs:
           expected_paths = {
               'docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md',
               'docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md',
-              'docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md',
-              'formal/pon-nakamoto-v1/model_window_history.py',
-              'formal/pon-nakamoto-v1/test_model_window_history.py',
-              'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
-              'trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs',
+              'docs/protocol/pon-nakamoto-v1/details/HEPTA_HANDOFF.md',
+              'trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs',
+              'trillionnium/crates/trnm-pon-node/src/store.rs',
           }
           actual_paths = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
           if actual_paths != expected_paths:
               raise SystemExit('unexpected source paths')
           root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'reviewed-source'
-          raw = (root / 'bc866141ad82fb39fa887d93e2d0b8e247242eb7').read_bytes()
+          raw = (root / '935411dc5a8bc2b36fd587f7173af54b6670eaa5').read_bytes()
           expected = os.environ['CANDIDATE']
           actual = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'], input=raw).decode().strip()
           if actual != expected:
