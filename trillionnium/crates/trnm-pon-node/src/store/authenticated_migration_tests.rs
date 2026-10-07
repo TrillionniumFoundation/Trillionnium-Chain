@@ -355,6 +355,16 @@ fn authenticated_migration_preserves_signed_branches_and_irreversible_local_fact
         1024 * 1024
     );
     assert!(!reserved_target.join("native.sqlite").exists());
+    assert_eq!(
+        migrated
+            .verify_growth_profile_storage_reservation_v2(
+                &binding,
+                "authenticated-growth-v2/migrated",
+                &reserved_target,
+            )
+            .unwrap(),
+        reservation
+    );
     assert!(migrated
         .reserve_growth_profile_storage_v2(
             &binding,
@@ -374,6 +384,21 @@ fn authenticated_migration_preserves_signed_branches_and_irreversible_local_fact
         )
         .is_err());
     assert!(!refused_target.exists());
+
+    // A new owner instance must revalidate the exact physical reservation and
+    // current source/profile binding rather than trusting the returned value.
+    drop(migrated);
+    let migrated = Node::open_with_authenticated_state(&target, settings(), 2).unwrap();
+    assert_eq!(
+        migrated
+            .verify_growth_profile_storage_reservation_v2(
+                &binding,
+                "authenticated-growth-v2/migrated",
+                &reserved_target,
+            )
+            .unwrap(),
+        reservation
+    );
 
     let mut forged_binding = binding.clone();
     forged_binding.candidate_parameters[0] ^= 1;
