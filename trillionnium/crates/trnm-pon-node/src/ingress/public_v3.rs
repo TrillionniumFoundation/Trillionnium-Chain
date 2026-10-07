@@ -123,6 +123,50 @@ struct PaidMutationCpuPermit {
     settled: bool,
 }
 impl PaidMutationCpuPermit {
+    /// Keep this task's position in the existing mutation queue while waiting
+    /// for the original shared epoch to refill. The caller holds only the
+    /// dequeue-order lock, never the Node, CPU account, socket reactor or read
+    /// queue. No new queue, reservation, caller preference or deadline is made.
+    fn acquire_before(
+        server: &PublicServer,
+        metrics: &Mutex<PublicMetrics>,
+        deadline: Instant,
+        stop: &AtomicBool,
+        cancelled: &AtomicBool,
+    ) -> Result<Self> {
+        loop {
+            task_alive(deadline, stop, cancelled)?;
+            let now = Instant::now();
+            let retry = {
+                let mut budget = server
+                    .mutation_cpu
+                    .lock()
+                    .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+                budget.refill(now);
+                let shortage = i128::from(MUTATION_CPU_START_RESERVE_NS)
+                    .saturating_sub(budget.credit_ns)
+                    .max(0);
+                let remaining = deadline.saturating_duration_since(now).as_nanos();
+                let possible_refill = remaining
+                    .saturating_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))
+                    / 1_000_000_000;
+                !budget.unavailable
+                    && (budget.in_flight >= MUTATION_CPU_WORKERS || shortage > 0)
+                    // With no live reservation to return, an impossible refill
+                    // should retain the original immediate budget refusal.
+                    && (budget.in_flight > 0 || shortage as u128 <= possible_refill)
+            };
+            if !retry {
+                // Use the original clock, reserve, counters and settlement.
+                // A concurrent non-public owner may still consume the credit;
+                // that is a real refusal, not an unowned reservation or retry.
+                task_alive(deadline, stop, cancelled)?;
+                return Self::acquire(server, metrics);
+            }
+            thread::sleep(Duration::from_millis(1).min(deadline.saturating_duration_since(now)));
+        }
+    }
+
     fn acquire(server: &PublicServer, metrics: &Mutex<PublicMetrics>) -> Result<Self> {
         let stamp = ThreadCpuStamp::start();
         #[cfg(test)]
@@ -1572,7 +1616,11 @@ fn serve_public_protected_v3_inner(
             let settings = &settings;
             workers.push(scope.spawn(move || -> Result<()> {
                 loop {
-                    let task = queue.lock().map_err(|_| "PUBLIC_QUEUE")?.try_recv();
+                    // Retain FIFO admission order while an already-dequeued
+                    // task awaits CPU. Release before any native dispatch. The
+                    // separate read queue and active workers remain independent.
+                    let mut dequeue_order = Some(queue.lock().map_err(|_| "PUBLIC_QUEUE")?);
+                    let task = dequeue_order.as_ref().unwrap().try_recv();
                     match task {
                         Ok(task) => {
                             metrics.lock().map_err(|_| "PUBLIC_METRICS")?.tasks_dequeued += 1;
@@ -1597,10 +1645,18 @@ fn serve_public_protected_v3_inner(
                             let (permit, outcome) = match permit {
                                 Ok(permit) => {
                                     let cpu_permit = if mutating_operation(task.cookie.op) {
-                                        PaidMutationCpuPermit::acquire(server, &metrics).map(Some)
+                                        PaidMutationCpuPermit::acquire_before(
+                                            server,
+                                            &metrics,
+                                            task.deadline.min(end),
+                                            &stop,
+                                            &task.cancelled,
+                                        )
+                                        .map(Some)
                                     } else {
                                         Ok(None)
                                     };
+                                    drop(dequeue_order.take());
                                     let outcome = match cpu_permit {
                                         Err(e) => Err(e),
                                         Ok(cpu_permit) => {
@@ -1705,6 +1761,7 @@ fn serve_public_protected_v3_inner(
                             }
                         }
                         Err(TryRecvError::Empty) => {
+                            drop(dequeue_order);
                             if stop.load(Ordering::Acquire) || Instant::now() >= end {
                                 return Ok(());
                             }
@@ -5917,5 +5974,200 @@ mod paid_settlement_consistency_tests {
         );
         assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 0);
         assert!(server.mutation_cpu_domain().accounting_available());
+    }
+}
+
+#[cfg(test)]
+mod cpu_start_wait_tests {
+    use super::*;
+
+    fn server() -> PublicServer {
+        PublicServer::new(
+            DevelopmentIdentity::from_secret_hex(&hex::encode([91; 32])).unwrap(),
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn queued_cpu_start_uses_real_refill_and_the_original_single_reservation() {
+        let server = server();
+        let metrics = Mutex::new(PublicMetrics::default());
+        let started = {
+            let mut budget = server.mutation_cpu.lock().unwrap();
+            budget.credit_ns = i128::from(MUTATION_CPU_START_RESERVE_NS) - 10_000_000;
+            budget.updated = Instant::now();
+            budget.updated
+        };
+        let permit = PaidMutationCpuPermit::acquire_before(
+            &server,
+            &metrics,
+            started + Duration::from_secs(1),
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+        )
+        .unwrap();
+        assert!(started.elapsed() >= Duration::from_millis(35));
+        assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 1);
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_reservations, 1);
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_refusals, 0);
+        permit.finish(&MutationCpuMeasurement::default(), &server, &metrics);
+        let budget = server.mutation_cpu.lock().unwrap();
+        assert_eq!(budget.in_flight, 0);
+        assert!(!budget.unavailable);
+        assert!(budget.credit_ns < i128::from(MUTATION_CPU_BURST_NS));
+    }
+
+    #[test]
+    fn impossible_refill_retains_one_budget_refusal_without_start_or_refund() {
+        let server = server();
+        let metrics = Mutex::new(PublicMetrics::default());
+        {
+            let mut budget = server.mutation_cpu.lock().unwrap();
+            budget.credit_ns = -10_000_000_000;
+            budget.updated = Instant::now();
+        }
+        let error = PaidMutationCpuPermit::acquire_before(
+            &server,
+            &metrics,
+            Instant::now() + Duration::from_millis(50),
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+        )
+        .err()
+        .unwrap();
+        assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+        let budget = server.mutation_cpu.lock().unwrap();
+        assert_eq!(budget.in_flight, 0);
+        assert!(budget.credit_ns < 0);
+        assert!(!budget.unavailable);
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_reservations, 0);
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_refusals, 1);
+    }
+
+    #[test]
+    fn cancellation_during_refill_wait_never_returns_or_refunds_a_permit() {
+        let server = server();
+        let metrics = Mutex::new(PublicMetrics::default());
+        {
+            let mut budget = server.mutation_cpu.lock().unwrap();
+            budget.credit_ns = 0;
+            budget.updated = Instant::now();
+        }
+        let cancelled = AtomicBool::new(false);
+        let stop = AtomicBool::new(false);
+        let error = thread::scope(|scope| {
+            scope.spawn(|| {
+                thread::sleep(Duration::from_millis(15));
+                cancelled.store(true, Ordering::Release);
+            });
+            PaidMutationCpuPermit::acquire_before(
+                &server,
+                &metrics,
+                Instant::now() + Duration::from_secs(1),
+                &stop,
+                &cancelled,
+            )
+            .err()
+            .unwrap()
+        });
+        assert_eq!(error.to_string(), "PUBLIC_REQUEST_CANCELLED");
+        let budget = server.mutation_cpu.lock().unwrap();
+        assert_eq!(budget.in_flight, 0);
+        assert!(!budget.unavailable);
+        assert!(budget.credit_ns < i128::from(MUTATION_CPU_START_RESERVE_NS));
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_reservations, 0);
+    }
+
+    #[test]
+    fn unavailable_and_expired_cpu_wait_never_start_native_dispatch() {
+        let server = server();
+        let metrics = Mutex::new(PublicMetrics::default());
+        server.mutation_cpu.lock().unwrap().unavailable = true;
+        let failed = PaidMutationCpuPermit::acquire_before(
+            &server,
+            &metrics,
+            Instant::now() + Duration::from_secs(1),
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+        )
+        .err()
+        .unwrap();
+        assert_eq!(failed.to_string(), "PUBLIC_MUTATION_CPU_UNAVAILABLE");
+        let deadline = Instant::now();
+        let expected =
+            task_alive(deadline, &AtomicBool::new(false), &AtomicBool::new(false)).unwrap_err();
+        let failed = PaidMutationCpuPermit::acquire_before(
+            &server,
+            &metrics,
+            deadline,
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+        )
+        .err()
+        .unwrap();
+        assert_eq!(failed.to_string(), expected.to_string());
+        assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 0);
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_reservations, 0);
+    }
+
+    #[test]
+    fn expiry_while_waiting_does_not_close_another_actual_reservation() {
+        let server = server();
+        let metrics = Mutex::new(PublicMetrics::default());
+        let running = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
+        {
+            let mut budget = server.mutation_cpu.lock().unwrap();
+            budget.credit_ns = 0; // Controlled debt, not a traffic-cost claim.
+            budget.updated = Instant::now();
+        }
+        let error = PaidMutationCpuPermit::acquire_before(
+            &server,
+            &metrics,
+            Instant::now() + Duration::from_millis(20),
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+        )
+        .err()
+        .unwrap();
+        assert_eq!(error.to_string(), "PUBLIC_REQUEST_DEADLINE");
+        assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 1);
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_reservations, 1);
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_refusals, 0);
+        running.finish(&MutationCpuMeasurement::default(), &server, &metrics);
+        let budget = server.mutation_cpu.lock().unwrap();
+        assert_eq!(budget.in_flight, 0);
+        assert!(!budget.unavailable);
+    }
+
+    #[test]
+    fn shared_clock_uncertainty_during_wait_is_not_retried_until_deadline() {
+        let server = server();
+        let metrics = Mutex::new(PublicMetrics::default());
+        {
+            let mut budget = server.mutation_cpu.lock().unwrap();
+            budget.credit_ns = 0;
+            budget.updated = Instant::now();
+        }
+        let error = thread::scope(|scope| {
+            scope.spawn(|| {
+                thread::sleep(Duration::from_millis(15));
+                server.mutation_cpu.lock().unwrap().unavailable = true;
+            });
+            PaidMutationCpuPermit::acquire_before(
+                &server,
+                &metrics,
+                Instant::now() + Duration::from_secs(1),
+                &AtomicBool::new(false),
+                &AtomicBool::new(false),
+            )
+            .err()
+            .unwrap()
+        });
+        assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_UNAVAILABLE");
+        let budget = server.mutation_cpu.lock().unwrap();
+        assert!(budget.unavailable);
+        assert_eq!(budget.in_flight, 0);
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_reservations, 0);
     }
 }
