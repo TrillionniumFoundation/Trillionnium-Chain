@@ -941,9 +941,9 @@ fn continuous_command(
 fn run() -> Result<Value> {
     let command_started = Instant::now();
     let mut raw = std::env::args().skip(1);
-    let command = raw
-        .next()
-        .ok_or("command: status|mine|submit|packet-status|export|confirm|sync|serve|push|head|history")?;
+    let command = raw.next().ok_or(
+        "command: status|mine|submit|packet-status|export|confirm|sync|serve|push|head|history",
+    )?;
     let mut args = BTreeMap::new();
     while let Some(key) = raw.next() {
         let value = if matches!(
@@ -1459,7 +1459,9 @@ fn run() -> Result<Value> {
         };
     }
     if command == "packet-status"
-        && !Path::new(need(&args, "--store")?).join("native.sqlite").is_file()
+        && !Path::new(need(&args, "--store")?)
+            .join("native.sqlite")
+            .is_file()
     {
         return Err("PACKET_STATUS_EXISTING_STORE_REQUIRED".into());
     }
