@@ -1810,18 +1810,37 @@ impl Node {
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<State> {
         progress()?;
-        let mut stmt = self
-            .db
-            .prepare("SELECT key,value FROM kv WHERE slot=? ORDER BY key")?;
-        let values = stmt.query_map([slot], |r| {
-            Ok((r.get::<_, String>(0)?, r.get::<_, Vec<u8>>(1)?))
-        })?;
+        // Validate stored dimensions before copying a cell into Rust. SQL types
+        // are retained: TEXT is not a value BLOB, and a BLOB is not a key TEXT.
+        let mut stmt = self.db.prepare(
+            "SELECT CASE WHEN typeof(key)='text' THEN CAST(substr(CAST(key AS BLOB),1,161) AS TEXT) ELSE key END,
+             CASE WHEN typeof(value)='blob' THEN substr(value,1,4097) ELSE value END,
+             length(CAST(key AS BLOB)),length(CAST(value AS BLOB))
+             FROM kv WHERE slot=? ORDER BY kv.key",
+        ).map_err(|error| Error::from(error).local_integrity())?;
+        let mut rows = stmt
+            .query([slot])
+            .map_err(|error| Error::from(error).local_integrity())?;
         let mut state = State::new();
-        for (index, row) in values.enumerate() {
-            if index.is_multiple_of(256) {
+        while let Some(row) = rows
+            .next()
+            .map_err(|error| Error::from(error).local_integrity())?
+        {
+            if state.len().is_multiple_of(256) {
                 progress()?;
             }
-            let (key, bytes) = row?;
+            let (key, bytes): (String, Vec<u8>) = (|| -> Result<_> {
+                let key_len: i64 = row.get(2)?;
+                let value_len: i64 = row.get(3)?;
+                ensure(
+                    state.len() < 65_536
+                        && (0..=160).contains(&key_len)
+                        && (0..=4096).contains(&value_len),
+                    "STATE_BYTES",
+                )?;
+                Ok((row.get(0)?, row.get(1)?))
+            })()
+            .map_err(Error::local_integrity)?;
             let value: Value = serde_json::from_slice(&bytes)
                 .map_err(|error| Error::from(error).local_integrity())?;
             ensure(canonical(&value)? == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
@@ -5543,3 +5562,156 @@ mod native_ancestry_commit_tests;
 #[cfg(test)]
 #[path = "native_account_query_tests.rs"]
 mod native_account_query_tests;
+
+#[cfg(test)]
+mod bounded_active_state_tests {
+    use super::*;
+    use crate::ErrorKind;
+
+    fn open(path: &Path, authenticated: bool) -> Node {
+        let settings = Settings::development(Some(1)).unwrap();
+        if authenticated {
+            Node::open_with_authenticated_state(path, settings, 1).unwrap()
+        } else {
+            Node::open(path, settings, 1).unwrap()
+        }
+    }
+
+    fn assert_local(error: Error) {
+        assert_eq!(error.kind(), ErrorKind::LocalStructure);
+        assert!(error.requires_owner_stop());
+    }
+
+    #[test]
+    fn live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair() {
+        for authenticated in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let node = open(directory.path(), authenticated);
+            let original = node.read_active().unwrap();
+            let slot = node.slot().unwrap();
+            // These are deliberately corrupt SQLite rows, not valid admission.
+            for statement in [
+                "INSERT INTO kv VALUES(?,'!extent',zeroblob(16777216))",
+                "INSERT INTO kv VALUES(?,printf('%0161d',0),X'30')",
+                "INSERT INTO kv VALUES(?,X'616263',X'30')",
+                "INSERT INTO kv VALUES(?,'!text','null')",
+                "INSERT INTO kv VALUES(?,'!integer',1)",
+                "INSERT INTO kv VALUES(?,'!trailing',X'3020')",
+            ] {
+                node.db.execute_batch("SAVEPOINT corrupt_cell").unwrap();
+                node.db.execute(statement, [slot]).unwrap();
+                assert_local(node.read_active().unwrap_err());
+                node.db
+                    .execute_batch("ROLLBACK TO corrupt_cell; RELEASE corrupt_cell")
+                    .unwrap();
+                assert_eq!(node.read_active().unwrap(), original);
+            }
+            drop(node);
+            assert_eq!(
+                open(directory.path(), authenticated).read_active().unwrap(),
+                original
+            );
+        }
+    }
+
+    #[test]
+    fn live_state_reads_exact_wire_edges_without_normalizing_sql_types() {
+        let directory = tempfile::tempdir().unwrap();
+        let node = open(directory.path(), false);
+        let original = node.read_active().unwrap();
+        let slot = node.slot().unwrap();
+        node.db.execute_batch("SAVEPOINT edge_cells").unwrap();
+        let key = "k".repeat(160);
+        let value = Value::String("a".repeat(4094));
+        node.db
+            .execute(
+                "INSERT INTO kv VALUES(?,?,?)",
+                params![slot, &key, canonical(&value).unwrap()],
+            )
+            .unwrap();
+        // Decode bound only: raw SQL does not give this state a committed root.
+        assert_eq!(node.slot_state(slot).unwrap().get(&key), Some(&value));
+        assert_local(node.read_active().unwrap_err());
+        node.db
+            .execute(
+                "UPDATE kv SET value=? WHERE key=?",
+                params![canonical(&Value::String("a".repeat(4095))).unwrap(), &key],
+            )
+            .unwrap();
+        let error = node.slot_state(slot).unwrap_err();
+        assert_eq!(error.to_string(), "STATE_BYTES");
+        assert_local(error);
+        node.db
+            .execute("DELETE FROM kv WHERE key=?", [&key])
+            .unwrap();
+        // SQL length(TEXT) counts characters; the wire bound counts UTF-8 bytes.
+        node.db
+            .execute(
+                "INSERT INTO kv VALUES(?,?,?)",
+                params![slot, "λ".repeat(81), b"0".as_slice()],
+            )
+            .unwrap();
+        let error = node.slot_state(slot).unwrap_err();
+        assert_eq!(error.to_string(), "STATE_BYTES");
+        assert_local(error);
+        node.db
+            .execute_batch("ROLLBACK TO edge_cells; RELEASE edge_cells")
+            .unwrap();
+        assert_eq!(node.read_active().unwrap(), original);
+    }
+
+    #[test]
+    fn live_state_count_bound_and_cancellation_return_no_partial_state() {
+        let directory = tempfile::tempdir().unwrap();
+        let node = open(directory.path(), false);
+        let original = node.read_active().unwrap();
+        let slot = node.slot().unwrap();
+        node.db.execute_batch("SAVEPOINT count_cells").unwrap();
+        node.db
+            .execute("DELETE FROM kv WHERE slot=?", [slot])
+            .unwrap();
+        node.db
+            .execute(
+                "WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i+1 FROM n WHERE i<65535)
+             INSERT INTO kv SELECT ?,printf('key-%05d',i),X'30' FROM n",
+                [slot],
+            )
+            .unwrap();
+        // Mechanism boundary, not 65536 admitted accounts or an increased cap.
+        let mut calls = 0;
+        let state = node
+            .slot_state_with_progress(slot, &mut || {
+                calls += 1;
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(state.len(), 65_536);
+        assert_eq!(calls, 258); // start, 256 row-boundaries, final.
+        for cut in [1, 2, 129, 258] {
+            let mut seen = 0;
+            let error = node
+                .slot_state_with_progress(slot, &mut || {
+                    seen += 1;
+                    if seen == cut {
+                        Err(Error::new(crate::ErrorCode::PublicRequestCancelled))
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert_eq!(seen, cut);
+            assert_eq!(error.kind(), ErrorKind::Cancelled);
+            assert!(!error.requires_owner_stop());
+        }
+        node.db
+            .execute("INSERT INTO kv VALUES(?,'zz-extra',X'30')", [slot])
+            .unwrap();
+        let error = node.slot_state(slot).unwrap_err();
+        assert_eq!(error.to_string(), "STATE_BYTES");
+        assert_local(error);
+        node.db
+            .execute_batch("ROLLBACK TO count_cells; RELEASE count_cells")
+            .unwrap();
+        assert_eq!(node.read_active().unwrap(), original);
+    }
+}

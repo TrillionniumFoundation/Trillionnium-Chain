@@ -317,3 +317,63 @@ failure. An owned-value Drop probe verifies that the previous encoding is no
 longer retained when the next item is produced. M06 tests retain original error
 precedence and actual original canonical encodings. These are mechanism checks,
 not public storage or model-service qualification.
+
+
+## Bounded cache encoding on the actual State path
+
+`pon_commitment::derive_snapshot`, native `checked_snapshot`, and the existing
+M06 staged-execution/prefix closures no longer unconditionally retain another
+complete canonical successor map before choosing a full-root fallback. The
+encoder retains entries only while the selected key/payload/workspace budget
+can still fit. Once even the current-state lower bound exceeds that budget, it
+drops the accumulated map and continues checking every canonical value and the
+original wire dimensions. Later malformed values retain the old error precedence;
+an invalid cache option is still reported only after valid State encoding.
+
+The fallback reuses the complete streaming M06 root. When actual parent bytes
+are present, two sorted passes compare that retained parent directly against
+one successor encoding at a time: first exact delta count/bytes, then the required
+public changes after the full root finishes. The old charge formula, fallback
+priority, complete change order/bytes, snapshot-absence result and final root
+comparison are unchanged. The original full-map algorithm remains a differential
+reference, and the selected limits remain 65,536 keys, 8 MiB canonical payload
+and 512 MiB logical workspace. These limits select a cache, not ledger validity.
+
+This closes a gap left by optimizing only `pon_executor::root`: an ordinary Node
+snapshot check could previously build the whole canonical map *before* finding
+that the cache would be refused. It does not remove the complete input State,
+the already retained parent bytes of `CheckedExecutionParent`, public deltas,
+the fixed-size root hash vector, retained-history checks, or nonpreemptive
+canonical/root primitives. A cache that fits still retains its canonical map.
+Software charges describe the original conservative selection model, not measured
+live allocation after a map was discarded.
+
+Four native differential tests cover exact budget edges, full-map charge parity,
+branch changes and removals, explicit parent/prior combinations, and late errors.
+An explicitly selected release comparison runs the retained old and new fallback
+in separate fresh processes. Its process RSS includes fixture and test harness;
+it is not a whole-Node or endpoint throughput measurement.
+
+## Bounded copies from live KV
+
+Both native storage modes use the same active-slot reader. Its SQL projection
+preserves invalid SQLite types for refusal, bounds correctly typed key/value
+prefixes to161/4097 bytes, and exposes the original byte lengths. Before constructing
+an owned Rust key/value, the cursor rejects more than 65,536 rows, keys over
+160 UTF-8 bytes and values over4096 bytes. The value must still be a BLOB and the
+key TEXT; a CAST does not legitimize another stored type. JSON decoding,
+canonical-byte equality, full state/root/account verification and final active
+generation checks remain. The extra byte in each projection is only a refusal
+sentinel, not a new accepted wire limit.
+
+Initial, each256-row and final cancellation retain the caller's exact typed
+error. Stored dimensional/type/canonical failures are local-integrity errors,
+not remote-consensus-invalidity or cancellation. No partial State or derived
+snapshot is returned. SQLite may still perform internal page reads and sorting;
+these copy bounds do not make its internals preemptive or bound process RSS.
+
+Native tests deliberately corrupt and repair real SQLite rows, exercise both
+storage modes and reopen, preserve exact byte/type edges, and check the65,536
+row decoder boundary. They do not admit extra accounts or simulate a network
+attack. In particular, a successful internal row decoder is not a committed
+state: a well-formed but uncommitted extra row still fails the actual root check.

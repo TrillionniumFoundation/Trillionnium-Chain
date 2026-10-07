@@ -162,6 +162,208 @@ fn encode(state: &State) -> Result<CanonicalValues> {
     }
     Ok(values)
 }
+/// Retain encodings only while the selected cache can still fit. A rejected
+/// cache is not a rejected State: finish the entire canonical pass and enforce
+/// the original wire bounds before reporting limits or choosing the full root.
+/// The logical charge uses the actual temporary encoder capacity, as before.
+fn encode_for_cache(
+    state: &State,
+    limits: CacheLimits,
+) -> Result<(Option<CanonicalValues>, Charges)> {
+    let count = state.len();
+    let nodes = count.saturating_mul(2).saturating_sub(1);
+    let mut retained = (count <= limits.max_keys && count <= 65_536).then(BTreeMap::new);
+    let mut payload = 0usize;
+    let mut capacities = 0usize;
+    let mut within_wire = count <= 65_536;
+    for (key, value) in state {
+        let encoded = pon_executor::canonical(value)?;
+        within_wire &= key.len() <= 160 && encoded.len() <= 4096;
+        // Saturation only chooses to discard a cache. No saturated charge is
+        // returned: valid wire input has a finite bound and is recomputed below.
+        payload = payload
+            .saturating_add(key.len())
+            .saturating_add(encoded.len());
+        capacities = capacities
+            .saturating_add(key.len())
+            .saturating_add(encoded.capacity());
+        let map = capacities.saturating_add(count.saturating_mul(MAP_ENTRY_CHARGE));
+        let tree = capacities
+            .saturating_add(nodes.saturating_mul(COMPRESSED_NODE_CHARGE))
+            .saturating_add(EMPTY_TABLE_CHARGE);
+        let minimum_workspace = map
+            .saturating_add(tree)
+            .saturating_mul(3)
+            .saturating_add(payload.saturating_mul(2));
+        if !within_wire
+            || payload > limits.max_payload_bytes
+            || minimum_workspace > limits.max_workspace_charge_bytes
+        {
+            retained = None;
+        }
+        if let Some(values) = &mut retained {
+            values.insert(key.as_bytes().to_vec(), encoded);
+        }
+    }
+    if !within_wire {
+        return Err("LIMIT");
+    }
+    // Bounds above imply these charges fit even on a 32-bit host. Keep checked
+    // arithmetic rather than making the cache-discard saturation authoritative.
+    let current = Charges {
+        payload,
+        map: add(capacities, mul(count, MAP_ENTRY_CHARGE)?)?,
+        tree: add(
+            add(capacities, mul(nodes, COMPRESSED_NODE_CHARGE)?)?,
+            EMPTY_TABLE_CHARGE,
+        )?,
+        nodes,
+    };
+    Ok((retained, current))
+}
+
+/// Compare the actual successor directly with the already retained parent.
+/// At most one successor encoding is live; no second full successor map exists.
+fn visit_state_differences(
+    before: &CanonicalValues,
+    after: &State,
+    mut visit: impl FnMut(&[u8], Option<&Vec<u8>>, Option<&Vec<u8>>) -> Result<()>,
+) -> Result<()> {
+    let mut old = before.iter().peekable();
+    for (key, value) in after {
+        let key = key.as_bytes();
+        while old
+            .peek()
+            .is_some_and(|(previous, _)| previous.as_slice() < key)
+        {
+            let (previous, value) = old.next().ok_or("COMMITMENT_CHARGE")?;
+            visit(previous, Some(value), None)?;
+        }
+        let encoded = pon_executor::canonical(value)?;
+        if old
+            .peek()
+            .is_some_and(|(previous, _)| previous.as_slice() == key)
+        {
+            let (_, previous) = old.next().ok_or("COMMITMENT_CHARGE")?;
+            if previous != &encoded {
+                visit(key, Some(previous), Some(&encoded))?;
+            }
+        } else {
+            visit(key, None, Some(&encoded))?;
+        }
+    }
+    for (key, value) in old {
+        visit(key, Some(value), None)?;
+    }
+    Ok(())
+}
+
+fn workspace_charge(current: Charges, preceding: Charges, changed: usize) -> Result<usize> {
+    let maximum = Charges {
+        payload: current.payload.max(preceding.payload),
+        map: current.map.max(preceding.map),
+        tree: current.tree.max(preceding.tree),
+        nodes: current.nodes.max(preceding.nodes),
+    };
+    add(
+        mul(add(maximum.map, maximum.tree)?, 3)?,
+        add(mul(maximum.payload, 2)?, mul(changed, CHANGE_ENTRY_CHARGE)?)?,
+    )
+}
+
+fn fallback_reason(
+    keys: usize,
+    current: Charges,
+    workspace: usize,
+    has_prior: bool,
+    changed: usize,
+    limits: CacheLimits,
+) -> Option<FullRootReason> {
+    if keys > limits.max_keys {
+        Some(FullRootReason::KeyBudget)
+    } else if current.payload > limits.max_payload_bytes {
+        Some(FullRootReason::PayloadBudget)
+    } else if workspace > limits.max_workspace_charge_bytes {
+        Some(FullRootReason::WorkspaceBudget)
+    } else if has_prior && changed > MAX_CACHE_KEYS {
+        Some(FullRootReason::DeltaBudget)
+    } else {
+        None
+    }
+}
+
+/// Actual-State entry used both by native snapshot checks and M06 prefix staging.
+/// Cache refusal drops accumulated encodings before full-root temporaries and
+/// before public changes. A prior retained snapshot remains untouched.
+fn prepare_state(
+    state: &State,
+    prior: Option<&CheckedCommitment>,
+    actual_before: Option<&CanonicalValues>,
+    limits: CacheLimits,
+) -> Result<PreparedCommitment> {
+    let (values, current) = encode_for_cache(state, limits)?;
+    limits.validate()?;
+    if let Some(values) = values {
+        return prepare_values(values, prior, actual_before, limits);
+    }
+    let before = actual_before.or_else(|| prior.map(|p| p.values.as_ref()));
+    let mut difference = DifferencePlan::default();
+    if let Some(before) = before {
+        visit_state_differences(before, state, |key, old, new| {
+            difference.count = add(difference.count, 1)?;
+            difference.payload = add(
+                difference.payload,
+                add(
+                    key.len(),
+                    add(old.map_or(0, Vec::len), new.map_or(0, Vec::len))?,
+                )?,
+            )?;
+            Ok(())
+        })?;
+    }
+    let preceding = before.map(charges).transpose()?.unwrap_or(current);
+    let workspace = workspace_charge(current, preceding, difference.count)?;
+    let reason = fallback_reason(
+        state.len(),
+        current,
+        workspace,
+        prior.is_some(),
+        difference.count,
+        limits,
+    )
+    .ok_or("COMMITMENT_CHARGE")?;
+    mark_stage("budget-selected");
+    let root = pon_executor::root(state)?;
+    mark_stage("full-root-completed");
+    mark_stage("changes-allocation");
+    let mut changes = Vec::with_capacity(difference.count);
+    if let Some(before) = before {
+        visit_state_differences(before, state, |key, old, new| {
+            changes.push(Change {
+                key: key.to_vec(),
+                before: old.cloned(),
+                after: new.cloned(),
+            });
+            Ok(())
+        })?;
+    }
+    debug_assert_eq!(changes.len(), difference.count);
+    Ok(PreparedCommitment {
+        root,
+        snapshot: None,
+        changes,
+        observation: CommitmentObservation {
+            method: CommitmentMethod::FullRoot(reason),
+            actual_keys: state.len(),
+            actual_payload_bytes: current.payload,
+            changed_keys: difference.count,
+            changed_payload_bytes: difference.payload,
+            compressed_nodes: None,
+            workspace_charge_bytes: workspace,
+        },
+    })
+}
+
 /// Check the complete actual State before sharing an immutable canonical map.
 /// A mismatch cannot short-circuit later canonical errors or protocol bounds.
 /// At most one newly serialized value is live here; keys remain borrowed.
@@ -311,35 +513,15 @@ fn prepare_values(
         .transpose()?
         .unwrap_or_default();
     let preceding = before.map(charges).transpose()?.unwrap_or(current);
-    let maximum = Charges {
-        payload: current.payload.max(preceding.payload),
-        map: current.map.max(preceding.map),
-        tree: current.tree.max(preceding.tree),
-        nodes: current.nodes.max(preceding.nodes),
-    };
-    // At most old base, previous staged and newly built path roots while apply
-    // replaces an Arc. Full successor maps/diffs are encoded/checked on every call.
-    let workspace = add(
-        mul(add(maximum.map, maximum.tree)?, 3)?,
-        add(
-            mul(maximum.payload, 2)?,
-            mul(difference_plan.count, CHANGE_ENTRY_CHARGE)?,
-        )?,
-    )?;
-    let reason = if values.len() > limits.max_keys {
-        Some(FullRootReason::KeyBudget)
-    } else if current.payload > limits.max_payload_bytes {
-        Some(FullRootReason::PayloadBudget)
-    } else if workspace > limits.max_workspace_charge_bytes {
-        Some(FullRootReason::WorkspaceBudget)
-    } else if prior.is_some() && difference_plan.count > MAX_CACHE_KEYS {
-        // StateTree::apply bounds its complete batch to the protocol key limit.
-        // A valid successor can differ by more keys (removals plus insertions).
-        // This known limit is checked before cloning its mandatory public delta.
-        Some(FullRootReason::DeltaBudget)
-    } else {
-        None
-    };
+    let workspace = workspace_charge(current, preceding, difference_plan.count)?;
+    let reason = fallback_reason(
+        values.len(),
+        current,
+        workspace,
+        prior.is_some(),
+        difference_plan.count,
+        limits,
+    );
     mark_stage("budget-selected");
     let mut observation = CommitmentObservation {
         method: CommitmentMethod::RebuiltTree,
@@ -425,7 +607,7 @@ pub fn derive_snapshot(
     prior: Option<&CheckedCommitment>,
     limits: CacheLimits,
 ) -> Result<PreparedCommitment> {
-    prepare_values(encode(actual_state)?, prior, None, limits)
+    prepare_state(actual_state, prior, None, limits)
 }
 /// Pure full-rule execution. Never advances or mutates the supplied snapshot.
 /// A canonical byte/root mismatch is rejected before transaction execution;
@@ -566,8 +748,8 @@ impl<'a> CheckedExecutionParent<'a> {
             },
             config,
             |_, after| {
-                let prepared = prepare_values(
-                    encode(after)?,
+                let prepared = prepare_state(
+                    after,
                     self.predecessor.as_ref(),
                     Some(&self.actual),
                     self.limits,
@@ -630,8 +812,8 @@ impl CheckedTransactionPrefix<'_> {
         let output = self.execution.execute_with_commitment_and_control(
             transactions,
             |after| {
-                let prepared = prepare_values(
-                    encode(after)?,
+                let prepared = prepare_state(
+                    after,
                     self.parent.predecessor.as_ref(),
                     Some(&self.parent.actual),
                     self.parent.limits,
@@ -1744,6 +1926,216 @@ mod tests {
             )
             .unwrap_err(),
             "COMMITMENT_ROOT"
+        );
+    }
+}
+
+#[cfg(test)]
+mod bounded_encoding_tests {
+    use super::*;
+    use serde_json::json;
+
+    fn full_map_reference(
+        state: &State,
+        prior: Option<&CheckedCommitment>,
+        before: Option<&CanonicalValues>,
+        limits: CacheLimits,
+    ) -> PreparedCommitment {
+        prepare_values(encode(state).unwrap(), prior, before, limits).unwrap()
+    }
+    fn equal(actual: &PreparedCommitment, expected: &PreparedCommitment) {
+        assert_eq!(actual.root, expected.root);
+        assert_eq!(actual.observation, expected.observation);
+        let changes = |value: &PreparedCommitment| {
+            value
+                .changes
+                .iter()
+                .map(|c| (c.key.clone(), c.before.clone(), c.after.clone()))
+                .collect::<Vec<_>>()
+        };
+        // Compare independently owned tuples, including missing versus empty bytes.
+        assert_eq!(changes(actual), changes(expected));
+        assert_eq!(actual.snapshot.is_some(), expected.snapshot.is_some());
+        if let (Some(a), Some(b)) = (&actual.snapshot, &expected.snapshot) {
+            assert_eq!(a.root, b.root);
+            assert_eq!(a.values, b.values);
+        }
+    }
+
+    #[test]
+    fn bounded_encoder_discards_full_payload_map_but_keeps_exact_old_charges() {
+        let state: State = (0..513)
+            .map(|i| (format!("k{i:05}"), json!("x".repeat(4094))))
+            .collect();
+        let original = encode(&state).unwrap();
+        let reference = charges(&original).unwrap();
+        for limits in [
+            CacheLimits {
+                max_keys: 512,
+                ..CacheLimits::default()
+            },
+            CacheLimits {
+                max_payload_bytes: reference.payload - 1,
+                ..CacheLimits::default()
+            },
+            CacheLimits {
+                max_workspace_charge_bytes: 1,
+                ..CacheLimits::default()
+            },
+            CacheLimits::default(),
+        ] {
+            let (retained, actual) = encode_for_cache(&state, limits).unwrap();
+            assert_eq!(
+                (actual.payload, actual.map, actual.tree, actual.nodes),
+                (
+                    reference.payload,
+                    reference.map,
+                    reference.tree,
+                    reference.nodes
+                )
+            );
+            assert_eq!(
+                retained.is_some(),
+                limits.max_keys == MAX_CACHE_KEYS
+                    && limits.max_payload_bytes == MAX_CACHE_PAYLOAD_BYTES
+                    && limits.max_workspace_charge_bytes == MAX_WORKSPACE_CHARGE_BYTES
+            );
+            if let Some(retained) = retained {
+                assert_eq!(retained, original);
+            }
+            equal(
+                &prepare_state(&state, None, None, limits).unwrap(),
+                &full_map_reference(&state, None, None, limits),
+            );
+        }
+    }
+
+    #[test]
+    fn bounded_fallback_matches_old_full_map_for_forks_removals_and_every_budget() {
+        let before = State::from([
+            ("a".into(), json!(null)),
+            ("c".into(), json!([1, 2, 3])),
+            ("e".into(), json!("value")),
+            ("z".into(), json!(0)),
+        ]);
+        let seed = derive_snapshot(&before, None, CacheLimits::default()).unwrap();
+        let encoded_before = encode(&before).unwrap();
+        for after in [
+            State::new(),
+            before.clone(),
+            State::from([
+                ("a".into(), json!("")),
+                ("b".into(), json!(null)),
+                ("c".into(), json!([1, 3, 2])),
+                ("λ".into(), json!(false)),
+            ]),
+        ] {
+            for prior in [None, seed.snapshot.as_ref()] {
+                for actual_before in [None, Some(&encoded_before)] {
+                    for limits in [
+                        CacheLimits::default(),
+                        CacheLimits {
+                            max_keys: 0,
+                            ..CacheLimits::default()
+                        },
+                        CacheLimits {
+                            max_payload_bytes: 0,
+                            ..CacheLimits::default()
+                        },
+                        CacheLimits {
+                            max_workspace_charge_bytes: 0,
+                            ..CacheLimits::default()
+                        },
+                    ] {
+                        equal(
+                            &prepare_state(&after, prior, actual_before, limits).unwrap(),
+                            &full_map_reference(&after, prior, actual_before, limits),
+                        );
+                    }
+                }
+            }
+        }
+        assert_eq!(seed.snapshot.unwrap().values.as_ref(), &encoded_before);
+    }
+
+    #[test]
+    fn discarded_cache_never_hides_late_canonical_or_wire_errors_or_invalid_limits() {
+        let limits = CacheLimits {
+            max_keys: 0,
+            max_payload_bytes: 0,
+            max_workspace_charge_bytes: 0,
+        };
+        let mut state = State::from([("a".repeat(161), json!("x".repeat(4095)))]);
+        state.insert("z".repeat(162), json!("非ASCII"));
+        assert_eq!(
+            prepare_state(&state, None, None, limits).unwrap_err(),
+            "NONCANONICAL"
+        );
+        state.insert("z".repeat(162), json!(0));
+        assert_eq!(
+            prepare_state(&state, None, None, limits).unwrap_err(),
+            "LIMIT"
+        );
+        let invalid = CacheLimits {
+            max_keys: MAX_CACHE_KEYS + 1,
+            ..CacheLimits::default()
+        };
+        assert_eq!(
+            prepare_state(&state, None, None, invalid).unwrap_err(),
+            "LIMIT"
+        );
+        assert_eq!(
+            prepare_state(&State::new(), None, None, invalid).unwrap_err(),
+            "COMMITMENT_CACHE_LIMIT"
+        );
+    }
+
+    #[test]
+    fn payload_and_workspace_exact_edges_preserve_old_selection_and_root() {
+        let state = State::from([("a".into(), json!("x".repeat(4094)))]);
+        let encoded = encode(&state).unwrap();
+        let current = charges(&encoded).unwrap();
+        let workspace = workspace_charge(current, current, 0).unwrap();
+        for payload in [current.payload - 1, current.payload, current.payload + 1] {
+            for bound in [workspace - 1, workspace, workspace + 1] {
+                let limits = CacheLimits {
+                    max_payload_bytes: payload,
+                    max_workspace_charge_bytes: bound,
+                    ..CacheLimits::default()
+                };
+                equal(
+                    &prepare_state(&state, None, None, limits).unwrap(),
+                    &full_map_reference(&state, None, None, limits),
+                );
+            }
+        }
+    }
+
+    #[test]
+    #[ignore = "explicit whole-test process RSS comparison; no Node or throughput qualification"]
+    fn actual_state_fallback_encoding_cost() {
+        let arm = std::env::var("TRNM_STATE_FALLBACK_ARM").unwrap();
+        assert!(matches!(arm.as_str(), "old" | "new"));
+        let state: State = (0..16384)
+            .map(|i| (format!("k{i:05}"), json!("x".repeat(4094))))
+            .collect();
+        let start = std::time::Instant::now();
+        let output = if arm == "old" {
+            full_map_reference(&state, None, None, CacheLimits::default())
+        } else {
+            derive_snapshot(&state, None, CacheLimits::default()).unwrap()
+        };
+        let elapsed = start.elapsed().as_nanos();
+        assert!(output.snapshot.is_none());
+        assert_eq!(
+            output.observation.method,
+            CommitmentMethod::FullRoot(FullRootReason::PayloadBudget)
+        );
+        println!(
+            "{}",
+            json!({"schema":"bounded-state-cache-fallback-cost-v1","arm":arm,"keys":state.len(),
+            "root":hex::encode(output.root),"root_wall_ns":elapsed,"actual_payload_bytes":output.observation.actual_payload_bytes,
+            "workspace_charge_bytes":output.observation.workspace_charge_bytes,"node_execution":false,"production_activation":false})
         );
     }
 }

@@ -95,3 +95,38 @@ reference and task identities. This implements their boundary but does not insta
 Agentd PoN destination. The repository owner has authorized development, not fabricated
 past task records or independent evaluator identities. Normal integration must preserve
 these distinctions while mapping the existing typed publication and operation APIs.
+
+
+## Current compiled effect boundary and required recovery locator
+
+A later upstream inspection fixes the ordinary product path at Hepta main
+`78fdb0cf8537e3a84fc6e0a849707559c80881e8`, with the pending revocation-owner
+correction in `a48b99ec46995f70f50c173c9ab358d603c6d115` (PR1429).
+The compiled effect host is `AgentdAutomationEffectHost` in
+`codex-rs/hepta-agentd/src/automation_effect_host.rs`, not the historical
+unconnected `AgentdOperationsHost` file discussed above. This is a source
+inspection, not a successful Hepta build or ordinary PoN integration claim.
+
+The host currently selects a pinned HTTP provider contract, preserves TaskFlow's
+durable effect-attempt owner, and delegates final-use revocation/nonce authority
+to `FinalUseAuthority`. Its provider key is derived from provider scope/run/step;
+its payload digest is Hepta SHA-256 of the exact transmitted bytes. A chain block,
+transaction or authenticated-session identity uses a different domain. None may
+be obtained by casting one digest into another.
+
+The existing pending projection retains the effect key inputs and payload digest,
+not the original wire bytes or a complete chain recovery locator. The PoN adapter
+therefore needs an exact recovery binding retained through the existing operation
+owner before provider contact: chain context, original transaction/group/packet
+identity, exact payload identity, intended publication semantics and current
+artifact/evaluation/withdrawal references. It cannot reconstruct this binding
+from the digest alone or add a parallel PoN journal to hide the missing mapping.
+
+In particular, chain mempool acceptance, durable publication, current branch
+membership and probabilistic confirmation are distinct observations. A local
+TaskFlow terminal receipt cannot be erased after a chain reorganization, and a
+missing chain lookup cannot become proof of NotDispatched. Before local adoption,
+the existing selection/final-use owner must recheck its actual current generation
+and withdrawal head. Simply pointing the existing HTTP config at a native TCP
+port, accepting a claimed recovery digest, or replaying a new operation identity
+would not implement this boundary. No such fallback is installed here.
