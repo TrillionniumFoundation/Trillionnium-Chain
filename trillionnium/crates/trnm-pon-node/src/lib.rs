@@ -24,7 +24,8 @@ mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
 pub use store::authenticated_migration::{
-    AuthenticatedMigrationProgress, AuthenticatedMigrationReceipt, PreservedTable,
+    AuthenticatedMigrationProgress, AuthenticatedMigrationReceipt, GrowthMigrationPlanV2,
+    GrowthStorageReservationV2, PreservedTable,
 };
 pub use store::capacity_observation::CapacityObservation;
 pub use store::evaluation_observation::{EvaluationAnchor, EvaluationObservation, EvaluationPhase};
