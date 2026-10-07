@@ -85,10 +85,9 @@ def _bounded_file_at(root, name, limit):
         try:
             before = os.fstat(descriptor)
             require(
-                stat.S_ISREG(before.st_mode)
-                and before.st_nlink == 1
-                and before.st_size <= limit,
+                stat.S_ISREG(before.st_mode) and before.st_nlink == 1,
                 'ACCEPTANCE_INPUT_PATH')
+            require(before.st_size <= limit, 'ACCEPTANCE_INPUT_LIMIT')
             raw = bytearray()
             while len(raw) <= limit:
                 chunk = os.read(descriptor, min(65536, limit + 1 - len(raw)))
