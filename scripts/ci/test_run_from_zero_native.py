@@ -75,7 +75,7 @@ def simulated_sustained_report():
                         observation_failed=False, task_created=True, task_closed=True) for i in range(19)]
         phases.append(dict(phase=index, target='7f'+'ff'*31, construction=constructions, attacks=workers,
             requested_window_ns=4_000_000_000, traffic_and_join_wall_ns=4_000_000_001,
-            preparation_cpu_ns=16, attacker_preparation_plus_workers_cpu_ns=24,
+            preparation_cpu_ns=16, attacker_preparation_plus_workers_cpu_ns=48,
             preparation_wall_ns=20, diagnostic_verification_wall_ns=30, reader_cpu_ns=1,
             honest_build_wall_ns=40, honest_build_calling_thread_cpu_ns=20,
             honest_build_aggregate_cpu_ns=None, client_confirmed_transactions=None,
@@ -531,11 +531,14 @@ class ExecutionBoundaryTests(unittest.TestCase):
         def edit(d):
             d['phases'][0]['construction'][15].update(status='exhausted', winner_nonce=None, packet=None,
                 attempts=[dict(nonce=i, target_hit=False) for i in range(4096)])
-            d['phases'][0]['attacks'][0]['calls'].append({'status': 'not_submitted_exhausted', 'packet_index': 15})
+            d['phases'][0]['attacks'][15]['calls'][0] = {'status': 'not_submitted_exhausted', 'packet_index': 15}
+            d['phases'][0]['observations']['records'].pop()
+            d['phases'][0]['observations']['accepted_connections_seen'] = 18
+            d['phases'][0]['service']['metrics']['accepted_connections'] = 18
         result, _ = self.exercise(sustained_edit=edit)
         self.assertTrue(result['passed'])
-        self.assertEqual(result['sustained_report']['phases'][0]['attacks'], 16)
-        self.assertEqual(result['sustained_report']['phases'][0]['connections'], 19)
+        self.assertEqual(result['sustained_report']['phases'][0]['attacks'], 15)
+        self.assertEqual(result['sustained_report']['phases'][0]['connections'], 18)
 
     def test_sustained_valid_packet_cannot_be_relabelled_as_exhausted(self):
         self.sustained_refusal(lambda d: d['phases'][0]['attacks'][0]['calls'].append(
