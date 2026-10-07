@@ -527,3 +527,95 @@ def verify_prospective_generation_chain(history_raw, expected_history, generatio
     raw = canonical(value)
     return dict(value, id=H('model-prospective-lineage-v1', raw).hex())
 
+
+CONSUMER_BENEFIT_SCHEMA = 'pon-model-consumer-benefit-chain-v1'
+CONSUMER_BENEFIT_SCOPE = 'post-window-structural-benefit-no-independent-acceptance'
+CONSUMER_BENEFIT_RECEIPT_DOMAIN = 'model-consumer-benefit-receipt-v1'
+
+
+def verify_prospective_consumer_benefit(history_raw, expected_history, generations, receipts):
+    """Verify post-window consumer-use and decision relations for three generations.
+
+    The receipt identities are pinned by the lineage rows and each use happens only
+    after its exposure window completed. Adopted candidates must improve the declared
+    integer loss relative to the predecessor; no_update candidates must not. Consumer,
+    controller, task and input identities are pairwise fresh across the three rows.
+
+    These are caller-supplied immutable relations, not proof of physical installation,
+    independent controller custody or externally witnessed consumer benefit. Therefore
+    the production/independent acceptance flags remain false.
+    """
+    lineage = verify_prospective_generation_chain(
+        history_raw, expected_history, generations)
+    history = _decode_exposure_history(history_raw, expected_history)
+    rows = history['entries'][-3:]
+    require(type(receipts) is list and len(receipts) == 3,
+            'CONSUMER_BENEFIT_RECEIPT_COUNT')
+
+    retained = []
+    seen = {name: set() for name in ('consumer', 'controller', 'task', 'input')}
+    for ordinal, (generation, row, receipt) in enumerate(
+            zip(lineage['generations'], rows, receipts), 1):
+        closed(receipt,
+               'ordinal consumer controller task input predecessor_model candidate_model '
+               'adopted_model baseline_output candidate_output metric baseline_score '
+               'candidate_score used_at',
+               'CONSUMER_BENEFIT_FIELDS')
+        integer(receipt['ordinal'], 1, 3, 'CONSUMER_BENEFIT_ORDINAL')
+        require(receipt['ordinal'] == ordinal, 'CONSUMER_BENEFIT_ORDINAL')
+        for field in ('consumer', 'controller', 'task', 'input',
+                      'predecessor_model', 'candidate_model', 'adopted_model',
+                      'baseline_output', 'candidate_output'):
+            digest(receipt[field])
+        require(receipt['metric'] == 'integer-loss-lower-is-better-v1',
+                'CONSUMER_BENEFIT_METRIC')
+        integer(receipt['baseline_score'], 0, (1 << 63) - 1,
+                'CONSUMER_BENEFIT_SCORE')
+        integer(receipt['candidate_score'], 0, (1 << 63) - 1,
+                'CONSUMER_BENEFIT_SCORE')
+        integer(receipt['used_at'], 1, MAX_TIME, 'CONSUMER_BENEFIT_TIME')
+        require(row['observed_at'] is not None and receipt['used_at'] > row['observed_at'],
+                'CONSUMER_BENEFIT_FUTURE_USE')
+        require(receipt['predecessor_model'] == generation['predecessor_model'] and
+                receipt['candidate_model'] == generation['candidate_model'] and
+                receipt['adopted_model'] == generation['adopted_model'],
+                'CONSUMER_BENEFIT_MODEL_BINDING')
+        receipt_id = H(CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(receipt)).hex()
+        require(receipt_id == generation['consumer_receipt'],
+                'CONSUMER_BENEFIT_RECEIPT_BINDING')
+        for field in seen:
+            require(receipt[field] not in seen[field],
+                    'CONSUMER_BENEFIT_FRESH_' + field.upper())
+            seen[field].add(receipt[field])
+
+        improved = receipt['candidate_score'] < receipt['baseline_score']
+        if generation['decision'] == 'adopted':
+            require(improved and
+                    receipt['candidate_output'] != receipt['baseline_output'],
+                    'CONSUMER_BENEFIT_ADOPTED_GAIN')
+        else:
+            require(not improved and
+                    receipt['adopted_model'] == receipt['predecessor_model'],
+                    'CONSUMER_BENEFIT_NO_UPDATE')
+
+        retained.append(dict(receipt, receipt=receipt_id, improved=improved,
+                             decision=generation['decision']))
+
+    value = dict(
+        schema=CONSUMER_BENEFIT_SCHEMA,
+        scope=CONSUMER_BENEFIT_SCOPE,
+        lineage=lineage['id'],
+        receipts=retained,
+        structural_consumer_benefit_verified=True,
+        future_use_after_window_verified=True,
+        distinct_consumer_relations_verified=True,
+        actual_model_installation_verified=False,
+        independent_controller_verified=False,
+        new_consumer_benefit_verified=False,
+        prospective_accepted=False,
+        independent_accepted=False,
+        public_reward_eligible=False,
+        production_activation=False)
+    raw = canonical(value)
+    return dict(value, id=H('model-consumer-benefit-chain-v1', raw).hex())
+
