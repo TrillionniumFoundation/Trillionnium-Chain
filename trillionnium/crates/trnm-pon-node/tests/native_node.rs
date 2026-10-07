@@ -375,6 +375,82 @@ fn test_native_cli_replays_the_existing_signed_vector_without_a_reference_backen
     assert_eq!(open(&store).stats().unwrap()["height"], 1);
 }
 #[test]
+fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creating_store() {
+    let temp = tempfile::tempdir().unwrap();
+    let packet_path = temp.path().join("input.packet");
+    let packet = golden();
+    fs::write(&packet_path, packet.encode().unwrap()).unwrap();
+    let store = temp.path().join("store");
+
+    let missing = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+        .args(["packet-status", "--development", "--store"])
+        .arg(&store)
+        .args(["--packet"])
+        .arg(&packet_path)
+        .output()
+        .unwrap();
+    assert!(!missing.status.success());
+    assert!(!store.join("native.sqlite").exists());
+
+    let submit = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+        .args(["submit", "--development", "--store"])
+        .arg(&store)
+        .args(["--logical-now", &CLOCK.to_string(), "--packet"])
+        .arg(&packet_path)
+        .output()
+        .unwrap();
+    assert!(
+        submit.status.success(),
+        "{}",
+        String::from_utf8_lossy(&submit.stderr)
+    );
+    let before = open(&store).stats().unwrap();
+
+    for _ in 0..2 {
+        let observed = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+            .args(["packet-status", "--development", "--store"])
+            .arg(&store)
+            .args(["--packet"])
+            .arg(&packet_path)
+            .output()
+            .unwrap();
+        assert!(
+            observed.status.success(),
+            "{}",
+            String::from_utf8_lossy(&observed.stderr)
+        );
+        let value: Value = serde_json::from_slice(&observed.stdout).unwrap();
+        assert_eq!(
+            value["result"]["schema"],
+            "pon-native-exact-packet-observation-v1"
+        );
+        assert_eq!(value["result"]["stored_exact"], true);
+        assert_eq!(value["result"]["block"], hex::encode(packet.id().unwrap()));
+        assert_eq!(value["result"]["global_absence_authority"], false);
+        assert_eq!(value["result"]["confirmation_authority"], false);
+        assert_eq!(value["result"]["execution_authority"], false);
+    }
+    assert_eq!(open(&store).stats().unwrap(), before);
+
+    let mut absent = packet.clone();
+    *absent.proof.last_mut().unwrap() ^= 1;
+    let absent_path = temp.path().join("absent.packet");
+    fs::write(&absent_path, absent.encode().unwrap()).unwrap();
+    let observed = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+        .args(["packet-status", "--development", "--store"])
+        .arg(&store)
+        .args(["--packet"])
+        .arg(&absent_path)
+        .output()
+        .unwrap();
+    assert!(observed.status.success());
+    let value: Value = serde_json::from_slice(&observed.stdout).unwrap();
+    assert_eq!(value["result"]["stored_exact"], false);
+    assert_eq!(value["result"]["global_absence_authority"], false);
+    assert_eq!(open(&store).stats().unwrap(), before);
+}
+
+#[test]
 fn test_existing_output_path_cannot_publish_a_new_cli_block() {
     let temp = tempfile::tempdir().unwrap();
     let output = temp.path().join("owned.data");
