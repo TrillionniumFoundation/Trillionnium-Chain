@@ -12,6 +12,7 @@ from contract_wire import H, canonical
 from llm_adapter_contract import closed, decode, digest, integer, require
 from model_acceptance import (DOMAIN as PREREG_DOMAIN, freeze_preregistration,
                               validate_preregistration, verify_acceptance)
+from strict_signature import verify as verify_signature
 
 HISTORY_DOMAIN = 'model-operations-window-history-v1'
 WINDOW_DOMAIN = 'model-operations-window-preregistration-v1'
@@ -619,3 +620,98 @@ def verify_prospective_consumer_benefit(history_raw, expected_history, generatio
     raw = canonical(value)
     return dict(value, id=H('model-consumer-benefit-chain-v1', raw).hex())
 
+
+
+SIGNED_CONSUMER_BENEFIT_SCHEMA = 'pon-model-signed-consumer-benefit-chain-v2'
+SIGNED_CONSUMER_BENEFIT_SCOPE = 'dual-key-post-window-benefit-no-independent-acceptance'
+SIGNED_CONSUMER_DOMAIN = 'model-consumer-benefit-consumer-key-v1'
+SIGNED_CONTROLLER_DOMAIN = 'model-consumer-benefit-controller-key-v1'
+SIGNED_ATTESTATION_DOMAIN = b'model-consumer-benefit-attestation-v1\0'
+
+
+def _strict_hex_bytes(value, size, label):
+    require(type(value) is str and len(value) == size * 2 and
+            value == value.lower(), label)
+    try:
+        raw = bytes.fromhex(value)
+    except ValueError as error:
+        raise ValueError(label) from error
+    require(len(raw) == size, label)
+    return raw
+
+
+def verify_signed_prospective_consumer_benefit(
+        history_raw, expected_history, generations, attestations):
+    """Add two-key cryptographic custody to the existing structural benefit chain.
+
+    Each attestation contains the exact receipt already pinned by the generation,
+    plus distinct consumer/controller Ed25519 public keys and signatures over the
+    same canonical receipt. Key-derived identities must equal the receipt's
+    consumer/controller identities.
+
+    This proves possession of two distinct signing keys and exact statement
+    agreement. It does not establish organizational independence, hidden-window
+    exclusion, physical model installation, or externally witnessed benefit.
+    """
+    require(type(attestations) is list and len(attestations) == 3,
+            'SIGNED_CONSUMER_ATTESTATION_COUNT')
+    receipts = []
+    retained = []
+    seen_keys = set()
+    for ordinal, attestation in enumerate(attestations, 1):
+        closed(attestation,
+               'receipt consumer_public_key controller_public_key '
+               'consumer_signature controller_signature',
+               'SIGNED_CONSUMER_ATTESTATION_FIELDS')
+        receipt = attestation['receipt']
+        require(type(receipt) is dict, 'SIGNED_CONSUMER_RECEIPT')
+        consumer_public = _strict_hex_bytes(
+            attestation['consumer_public_key'], 32, 'SIGNED_CONSUMER_PUBLIC_KEY')
+        controller_public = _strict_hex_bytes(
+            attestation['controller_public_key'], 32, 'SIGNED_CONTROLLER_PUBLIC_KEY')
+        consumer_signature = _strict_hex_bytes(
+            attestation['consumer_signature'], 64, 'SIGNED_CONSUMER_SIGNATURE')
+        controller_signature = _strict_hex_bytes(
+            attestation['controller_signature'], 64, 'SIGNED_CONTROLLER_SIGNATURE')
+        require(consumer_public != controller_public, 'SIGNED_CONSUMER_DISTINCT_KEYS')
+        require(consumer_public not in seen_keys and controller_public not in seen_keys,
+                'SIGNED_CONSUMER_FRESH_KEYS')
+        seen_keys.update((consumer_public, controller_public))
+        require(
+            receipt.get('consumer') ==
+            H(SIGNED_CONSUMER_DOMAIN, consumer_public).hex(),
+            'SIGNED_CONSUMER_IDENTITY')
+        require(
+            receipt.get('controller') ==
+            H(SIGNED_CONTROLLER_DOMAIN, controller_public).hex(),
+            'SIGNED_CONTROLLER_IDENTITY')
+        message = SIGNED_ATTESTATION_DOMAIN + canonical(receipt)
+        verify_signature(consumer_public, consumer_signature, message)
+        verify_signature(controller_public, controller_signature, message)
+        receipts.append(receipt)
+        retained.append(dict(
+            ordinal=ordinal,
+            receipt=H(CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(receipt)).hex(),
+            consumer_public_key=attestation['consumer_public_key'],
+            controller_public_key=attestation['controller_public_key']))
+
+    structural = verify_prospective_consumer_benefit(
+        history_raw, expected_history, generations, receipts)
+    value = dict(
+        schema=SIGNED_CONSUMER_BENEFIT_SCHEMA,
+        scope=SIGNED_CONSUMER_BENEFIT_SCOPE,
+        structural=structural['id'],
+        attestations=retained,
+        consumer_signature_verified=True,
+        controller_signature_verified=True,
+        distinct_control_keys_verified=True,
+        structural_consumer_benefit_verified=True,
+        future_use_after_window_verified=True,
+        independent_controller_verified=False,
+        new_consumer_benefit_verified=False,
+        prospective_accepted=False,
+        independent_accepted=False,
+        public_reward_eligible=False,
+        production_activation=False)
+    return dict(value, id=H(
+        'model-signed-consumer-benefit-chain-v2', canonical(value)).hex())
