@@ -145,3 +145,27 @@ the existing selection/final-use owner must recheck its actual current generatio
 and withdrawal head. Simply pointing the existing HTTP config at a native TCP
 port, accepting a claimed recovery digest, or replaying a new operation identity
 would not implement this boundary. No such fallback is installed here.
+
+## Current stacked Agentd PoN adapter and branch-state observation
+
+The cross-repository development stack has now advanced beyond the earlier prerequisite
+inspection.  Hepta PR1432 installs a concrete `trillionnium-pon-local-v1` adapter in the
+compiled `AgentdAutomationEffectHost`.  It keeps the existing TaskFlow attempt owner and
+`FinalUseAuthority`, hash-pins the selected local Chain binary, requires an existing
+canonical Node namespace, passes the already-durable exact effect bytes to `submit`, and
+uses those same bytes for `packet-status` reconciliation.  It does not add a second
+operation journal.
+
+The follow-on Hepta PR1433 carries the Chain v2 packet observation separately from the
+terminal local effect fact.  A previously completed effect may therefore be reported with
+`stored_exact=true` and `active_chain_member=false` after a heavier reorganization.
+The terminal TaskFlow fact is not rewound and local absence still cannot authorize blind
+redispatch.  Chain unavailability removes only the optional current observation, not the
+already durable local receipt.
+
+This closes the ordinary local **submit + lost-ACK reconciliation + current branch
+observation** seam.  It still does not turn local active depth into probabilistic
+confirmation/finality and does not authorize model adoption.  A release/selection/final-use
+owner must independently recheck the current artifact/withdrawal/generation authority and
+whatever explicit confirmation policy it requires before adopting a model.  That remaining
+owner decision must not be encoded by changing the provider-effect receipt.

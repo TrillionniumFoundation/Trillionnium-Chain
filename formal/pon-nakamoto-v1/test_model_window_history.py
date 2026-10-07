@@ -646,5 +646,107 @@ class ModelExposureAdmissionTests(unittest.TestCase):
             self.finish(self.first, forged)
 
 
+class ProspectiveGenerationLineageTests(unittest.TestCase):
+    """Synthetic identity chain only; no model installation or benefit evidence."""
+
+    def setUp(self):
+        first = model_fixture(1)
+        legacy = initial_history(first)
+        raw, pin = window.freeze_history(legacy)
+        self.initial = window.upgrade_exposure_history(raw, pin)
+
+    def complete(self, data, history):
+        raw, pin = window.freeze_exposure_history(history)
+        pending = window.admit_exposure_window(raw, pin, data['raw'], data['aid'],
+                                               data['plan'], data['pid'])
+        pending_raw, pending_pin = window.freeze_exposure_history(pending['history'])
+        return window.finish_exposure_window(
+            pending_raw, pending_pin, pending['window'],
+            data['raw'], data['aid'], data['plan'], data['pid'],
+            data['record'], data['receipt'], data['material'])
+
+    def three(self, gains=(True, True, True)):
+        history = self.initial
+        data = []
+        for number, gain in enumerate(gains, 1):
+            item = model_fixture(number)
+            item['plan']['candidate'] = identity('prospective-candidate:' + str(number))
+            rebuild(item, gain=gain)
+            history = self.complete(item, history)['history']
+            data.append(item)
+        return history, data
+
+    def rows(self, history, data, decisions=('adopted', 'adopted', 'adopted')):
+        predecessor = identity('prospective-installed-parent')
+        rows = []
+        for retained, item, decision in zip(history['entries'][-3:], data, decisions):
+            candidate = item['plan']['candidate']
+            adopted = candidate if decision == 'adopted' else predecessor
+            rows.append(dict(
+                window=window._identity(window.EXPOSURE_WINDOW_DOMAIN, retained['window']),
+                run_plan=item['pid'],
+                predecessor_model=predecessor,
+                candidate_model=candidate,
+                adopted_model=adopted,
+                decision=decision,
+                consumer_receipt=identity('consumer:' + str(len(rows) + 1))))
+            predecessor = adopted
+        return rows
+
+    def verify(self, history, rows):
+        raw, pin = window.freeze_exposure_history(history)
+        return window.verify_prospective_generation_chain(raw, pin, rows)
+
+    def test_three_adopted_generations_form_exact_predecessor_chain_without_acceptance_upgrade(self):
+        history, data = self.three()
+        result = self.verify(history, self.rows(history, data))
+        self.assertTrue(result['lineage_verified'])
+        self.assertTrue(result['exposure_consumption_verified'])
+        self.assertTrue(result['candidate_identity_externally_pinned'])
+        self.assertEqual(len(result['generations']), 3)
+        for left, right in zip(result['generations'], result['generations'][1:]):
+            self.assertEqual(left['adopted_model'], right['predecessor_model'])
+        for field in ('actual_model_installation_verified', 'new_consumer_benefit_verified',
+                      'hidden_windows_excluded', 'physical_custody_verified',
+                      'prospective_accepted', 'independent_accepted',
+                      'public_reward_eligible', 'production_activation'):
+            self.assertIs(result[field], False)
+
+    def test_no_update_preserves_predecessor_and_next_generation_must_continue_from_it(self):
+        history, data = self.three((True, False, True))
+        rows = self.rows(history, data, ('adopted', 'no_update', 'adopted'))
+        result = self.verify(history, rows)
+        self.assertEqual(result['generations'][1]['adopted_model'],
+                         result['generations'][1]['predecessor_model'])
+        self.assertEqual(result['generations'][1]['adopted_model'],
+                         result['generations'][2]['predecessor_model'])
+        broken = copy.deepcopy(rows)
+        broken[2]['predecessor_model'] = identity('wrong-predecessor')
+        with self.assertRaisesRegex(ValueError, 'PROSPECTIVE_PREDECESSOR'):
+            self.verify(history, broken)
+
+    def test_failed_reported_gate_cannot_be_relabelled_as_adopted_model(self):
+        history, data = self.three((True, False, True))
+        rows = self.rows(history, data)
+        with self.assertRaisesRegex(ValueError, 'PROSPECTIVE_ADOPTION_GATE'):
+            self.verify(history, rows)
+
+    def test_window_run_plan_and_decision_shapes_are_exact(self):
+        history, data = self.three()
+        rows = self.rows(history, data)
+        changed = copy.deepcopy(rows)
+        changed[1]['run_plan'] = identity('other-plan')
+        with self.assertRaisesRegex(ValueError, 'PROSPECTIVE_WINDOW_BINDING'):
+            self.verify(history, changed)
+        changed = copy.deepcopy(rows)
+        changed[0]['decision'] = 'rollback'
+        with self.assertRaisesRegex(ValueError, 'PROSPECTIVE_DECISION'):
+            self.verify(history, changed)
+        changed = copy.deepcopy(rows)
+        changed[0]['extra'] = True
+        with self.assertRaisesRegex(ValueError, 'PROSPECTIVE_GENERATION_FIELDS'):
+            self.verify(history, changed)
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

@@ -25,6 +25,8 @@ use trnm_protocol::pon_wire::{hash, Hash};
 pub const COMMITMENT_SCHEMA: &str = "pon-authenticated-state-commitment-v1";
 pub const EXECUTION_SCHEMA: &str = "pon-authenticated-state-execution-v1";
 pub const GROWTH_COMMITMENT_SCHEMA_V2: &str = "pon-permanent-account-growth-commitment-v2";
+pub const GROWTH_PROFILE_BINDING_SCHEMA_V2: &str = "pon-permanent-account-growth-profile-binding-v2";
+pub const GROWTH_PROFILE_ID_V2: &str = "permanent-account-growth-v2-candidate";
 pub const MAX_PERMANENT_ACCOUNTS_V2: u64 = 1_000_000;
 pub const MAX_WORKING_KEYS_V2: usize = 65_536;
 
@@ -215,6 +217,110 @@ pub fn growth_commitment_v2(
         escrow_balance,
         reward_balance,
         issued,
+        id: [0; 32],
+    };
+    out.id = out.digest();
+    Ok(out)
+}
+
+/// Candidate-only identity for a future profile that would install the v2
+/// permanent-account relation.  Constructing this value never changes Settings,
+/// a header state root, native admission, a database namespace or activation.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GrowthProfileBindingV2 {
+    pub schema: String,
+    pub profile: String,
+    pub source_network: Hash,
+    pub source_parameters: Hash,
+    pub source_genesis: Hash,
+    pub source_commitment: Hash,
+    pub candidate_parameters: Hash,
+    pub candidate_genesis: Hash,
+    pub storage_namespace: Hash,
+    pub id: Hash,
+}
+impl GrowthProfileBindingV2 {
+    fn digest(&self) -> Hash {
+        hash(
+            b"permanent-account-growth-profile-binding-v2",
+            &[
+                self.profile.as_bytes(),
+                &self.source_network,
+                &self.source_parameters,
+                &self.source_genesis,
+                &self.source_commitment,
+                &self.candidate_parameters,
+                &self.candidate_genesis,
+                &self.storage_namespace,
+            ],
+        )
+    }
+}
+
+/// Derive a fresh candidate parameter/genesis/storage identity from an already
+/// verified v2 state relation.  This is an anti-aliasing prerequisite for a
+/// later migration/activation implementation, not that implementation itself.
+pub fn growth_profile_binding_v2(
+    settings: &Settings,
+    commitment: &GrowthStateCommitmentV2,
+    storage_namespace: &str,
+) -> Result<GrowthProfileBindingV2> {
+    if commitment.schema != GROWTH_COMMITMENT_SCHEMA_V2
+        || commitment.network != settings.network()
+        || commitment.parameters != settings.parameters()
+        || commitment.genesis != settings.genesis()
+        || commitment.id != commitment.digest()
+        || commitment.maximum_permanent_accounts != MAX_PERMANENT_ACCOUNTS_V2
+        || commitment.maximum_working_keys != MAX_WORKING_KEYS_V2 as u64
+    {
+        return Err(StateWitnessError::Commitment.into());
+    }
+    if storage_namespace.is_empty()
+        || storage_namespace.len() > 128
+        || storage_namespace.starts_with('/')
+        || storage_namespace
+            .split('/')
+            .any(|component| component.is_empty() || matches!(component, "." | ".."))
+        || !storage_namespace
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || b"._-/".contains(&byte))
+    {
+        return Err(StateWitnessError::Context.into());
+    }
+    let namespace = hash(
+        b"permanent-account-growth-storage-namespace-v2",
+        &[storage_namespace.as_bytes()],
+    );
+    let candidate_parameters = hash(
+        b"permanent-account-growth-parameters-v2",
+        &[
+            &settings.parameters(),
+            &commitment.id,
+            &MAX_PERMANENT_ACCOUNTS_V2.to_le_bytes(),
+            &(MAX_WORKING_KEYS_V2 as u64).to_le_bytes(),
+            &namespace,
+        ],
+    );
+    let candidate_genesis = hash(
+        b"permanent-account-growth-genesis-v2",
+        &[
+            &settings.genesis(),
+            &candidate_parameters,
+            &commitment.id,
+            &namespace,
+        ],
+    );
+    let mut out = GrowthProfileBindingV2 {
+        schema: GROWTH_PROFILE_BINDING_SCHEMA_V2.into(),
+        profile: GROWTH_PROFILE_ID_V2.into(),
+        source_network: settings.network(),
+        source_parameters: settings.parameters(),
+        source_genesis: settings.genesis(),
+        source_commitment: commitment.id,
+        candidate_parameters,
+        candidate_genesis,
+        storage_namespace: namespace,
         id: [0; 32],
     };
     out.id = out.digest();
@@ -1209,6 +1315,38 @@ mod growth_v2_tests {
         );
         assert_eq!(committed.maximum_working_keys, MAX_WORKING_KEYS_V2 as u64);
         assert_ne!(committed.id, [0; 32]);
+
+        let profile =
+            growth_profile_binding_v2(&settings, &committed, "authenticated-growth-v2").unwrap();
+        assert_eq!(profile.schema, GROWTH_PROFILE_BINDING_SCHEMA_V2);
+        assert_eq!(profile.profile, GROWTH_PROFILE_ID_V2);
+        assert_eq!(profile.source_commitment, committed.id);
+        assert_ne!(profile.candidate_parameters, settings.parameters());
+        assert_ne!(profile.candidate_genesis, settings.genesis());
+        assert_ne!(profile.storage_namespace, [0; 32]);
+        assert_ne!(profile.id, [0; 32]);
+        assert_eq!(
+            growth_profile_binding_v2(&settings, &committed, "authenticated-growth-v2")
+                .unwrap(),
+            profile
+        );
+        assert_ne!(
+            growth_profile_binding_v2(&settings, &committed, "authenticated-growth-v2-alt")
+                .unwrap()
+                .id,
+            profile.id
+        );
+        assert_eq!(
+            growth_profile_binding_v2(&settings, &committed, "../escape").unwrap_err(),
+            StateWitnessError::Context.into()
+        );
+        let mut forged = committed.clone();
+        forged.id[0] ^= 1;
+        assert_eq!(
+            growth_profile_binding_v2(&settings, &forged, "authenticated-growth-v2")
+                .unwrap_err(),
+            StateWitnessError::Commitment.into()
+        );
 
         let wrong_settings = Settings::development(Some(2)).unwrap();
         assert_eq!(
