@@ -189,7 +189,10 @@ impl Node {
         let expected = growth_profile_binding_v2(&self.settings, &commitment, storage_namespace)
             .map_err(|error| Error::from(format!("GROWTH_STORAGE_NAMESPACE:{error:?}")))?;
         ensure(&expected == binding, "GROWTH_STORAGE_BINDING")?;
-        ensure(target.is_absolute() && !target.exists(), "GROWTH_STORAGE_TARGET")?;
+        ensure(
+            target.is_absolute() && !target.exists(),
+            "GROWTH_STORAGE_TARGET",
+        )?;
         let target_text = target.to_str().ok_or("GROWTH_STORAGE_TARGET")?.to_owned();
         let parent = target.parent().ok_or("GROWTH_STORAGE_TARGET")?;
         ensure(
@@ -221,8 +224,7 @@ impl Node {
                 .checked_mul(512)
                 .ok_or("GROWTH_STORAGE_RESERVATION_BYTES")?;
             ensure(
-                metadata.len() == requested_bytes
-                    && physically_reserved_bytes >= requested_bytes,
+                metadata.len() == requested_bytes && physically_reserved_bytes >= requested_bytes,
                 "GROWTH_STORAGE_RESERVATION",
             )?;
             ensure(
