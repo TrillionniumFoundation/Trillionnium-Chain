@@ -473,6 +473,11 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
         );
         assert_eq!(value["result"]["active_chain_member"], true);
         assert_eq!(value["result"]["active_depth"], 0);
+        assert_eq!(value["result"]["active_membership_sql_budget"], 1024);
+        let lookups = value["result"]["active_membership_sql_lookups"]
+            .as_u64()
+            .expect("bounded active ancestry lookup");
+        assert!((2..=1024).contains(&lookups));
         assert_eq!(value["result"]["global_absence_authority"], false);
         assert_eq!(value["result"]["confirmation_authority"], false);
         assert_eq!(value["result"]["finality_authority"], false);
@@ -513,6 +518,11 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
         128
     );
     assert_eq!(value["result"]["active_tip_height"], 2);
+    assert_eq!(value["result"]["active_membership_sql_budget"], 1024);
+    let lookups = value["result"]["active_membership_sql_lookups"]
+        .as_u64()
+        .expect("bounded retained-fork ancestry lookup");
+    assert!((2..=1024).contains(&lookups));
 
     let mut absent = packet.clone();
     *absent.proof.last_mut().unwrap() ^= 1;
@@ -531,6 +541,8 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
     assert!(value["result"]["block_chainwork_hex"].is_null());
     assert_eq!(value["result"]["active_chain_member"], false);
     assert!(value["result"]["active_work_depth_hex"].is_null());
+    assert!(value["result"]["active_membership_sql_lookups"].is_null());
+    assert_eq!(value["result"]["active_membership_sql_budget"], 1024);
     assert_eq!(value["result"]["global_absence_authority"], false);
 
     // The read-only command must also work with the explicitly selected
@@ -599,6 +611,12 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
         value["result"]["active_work_depth_hex"],
         Value::String("0".repeat(128))
     );
+    assert_eq!(value["result"]["active_membership_sql_budget"], 1024);
+    assert!((2..=1024).contains(
+        &value["result"]["active_membership_sql_lookups"]
+            .as_u64()
+            .expect("bounded authenticated ancestry lookup")
+    ));
 }
 
 #[test]
