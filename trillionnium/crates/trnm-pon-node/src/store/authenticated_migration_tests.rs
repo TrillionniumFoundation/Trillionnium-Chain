@@ -301,7 +301,7 @@ fn authenticated_migration_preserves_signed_branches_and_irreversible_local_fact
     );
     drop(copied);
     assert!(Node::open(&target, settings(), 2).is_err());
-    let mut migrated = Node::open_with_authenticated_state(&target, settings(), 2).unwrap();
+    let migrated = Node::open_with_authenticated_state(&target, settings(), 2).unwrap();
     assert_eq!(migrated.read_active().unwrap(), active);
 
     let source_state = migrated.read_active().unwrap().2;
@@ -388,7 +388,7 @@ fn authenticated_migration_preserves_signed_branches_and_irreversible_local_fact
     // A new owner instance must revalidate the exact physical reservation and
     // current source/profile binding rather than trusting the returned value.
     drop(migrated);
-    let migrated = Node::open_with_authenticated_state(&target, settings(), 2).unwrap();
+    let mut migrated = Node::open_with_authenticated_state(&target, settings(), 2).unwrap();
     assert_eq!(
         migrated
             .verify_growth_profile_storage_reservation_v2(

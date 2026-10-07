@@ -202,6 +202,7 @@ impl PaidMutationCpuPermit {
         }
     }
 
+    #[cfg(test)]
     fn acquire(server: &PublicServer, metrics: &Mutex<PublicMetrics>) -> Result<Self> {
         let stamp = ThreadCpuStamp::start();
         #[cfg(test)]
