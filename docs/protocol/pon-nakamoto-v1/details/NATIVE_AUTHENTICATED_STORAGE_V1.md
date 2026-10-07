@@ -425,3 +425,20 @@ create a256-transfer block through ordinary signed admission and compare every
 logical SQLite table after cancellation, valid retry and cold reopen in both
 backends. These fixtures do not constitute permanent-account growth beyond the
 old ledger cap, physical power-loss acceptance, or public throughput measurement.
+
+
+## Growth reservation readback boundary
+
+`store/growth_reservation_io.rs` is an operation-local reader within the existing
+migration owner, not another storage backend. It opens receipt/reservation files
+relative to one checked directory descriptor, refuses links, nonregular files and
+unexpected permissions, and checks actual descriptor metadata before reading.
+The receipt has a64KiB ceiling both before and during the read; concurrent length
+or metadata changes and substituted named objects refuse. Canonical JSON, exact
+candidate/source binding and physical allocation checks remain in the same owner.
+Initial publication also syncs the parent directory before acknowledging readback.
+A failure retains its uncertain destination and requires exact reconciliation;
+recursive path-based cleanup no longer risks deleting a replacement directory.
+No subsequent caller may interpret an absent/successful local reservation as a
+complete native growth migration, capacity-sufficiency proof or activation grant.
+This is not a physical power-loss or filesystem-snapshot-isolation claim.

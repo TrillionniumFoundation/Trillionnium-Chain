@@ -546,6 +546,24 @@ def verify_prospective_consumer_benefit(history_raw, expected_history, generatio
     independent controller custody or externally witnessed consumer benefit. Therefore
     the production/independent acceptance flags remain false.
     """
+    return _verify_consumer_relation(history_raw, expected_history, generations, receipts, 'v1')
+
+
+def verify_prospective_consumer_decisions_v2(history_raw, expected_history, generations, receipts):
+    """Explicit reported-decision successor; improvement is not adoption authority.
+
+    Owner decision evidence and reasons are bound by the externally pinned receipt
+    identity. This pure verifier neither authenticates that owner nor installs a
+    model; use the signed counterpart for receipt-key possession, not independence.
+    Historical v1 receipt shapes, signatures and no-gain rules remain unchanged.
+    """
+    return _verify_consumer_relation(history_raw, expected_history, generations, receipts, 'v2')
+
+
+def _verify_consumer_relation(history_raw, expected_history, generations, receipts, version):
+    require(version in ('v1', 'v2'), 'CONSUMER_DECISION_VERSION')
+    receipt_domain = ('model-consumer-benefit-receipt-v1' if version == 'v1'
+                      else 'model-consumer-decision-receipt-v2')
     lineage = verify_prospective_generation_chain(
         history_raw, expected_history, generations)
     history = _decode_exposure_history(history_raw, expected_history)
@@ -560,7 +578,7 @@ def verify_prospective_consumer_benefit(history_raw, expected_history, generatio
         closed(receipt,
                'ordinal consumer controller task input predecessor_model candidate_model '
                'adopted_model baseline_output candidate_output metric baseline_score '
-               'candidate_score used_at',
+               'candidate_score used_at' + (' decision_reason owner_decision' if version == 'v2' else ''),
                'CONSUMER_BENEFIT_FIELDS')
         integer(receipt['ordinal'], 1, 3, 'CONSUMER_BENEFIT_ORDINAL')
         require(receipt['ordinal'] == ordinal, 'CONSUMER_BENEFIT_ORDINAL')
@@ -581,7 +599,7 @@ def verify_prospective_consumer_benefit(history_raw, expected_history, generatio
                 receipt['candidate_model'] == generation['candidate_model'] and
                 receipt['adopted_model'] == generation['adopted_model'],
                 'CONSUMER_BENEFIT_MODEL_BINDING')
-        receipt_id = H(CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(receipt)).hex()
+        receipt_id = H(receipt_domain, canonical(receipt)).hex()
         require(receipt_id == generation['consumer_receipt'],
                 'CONSUMER_BENEFIT_RECEIPT_BINDING')
         for field in seen:
@@ -590,12 +608,22 @@ def verify_prospective_consumer_benefit(history_raw, expected_history, generatio
             seen[field].add(receipt[field])
 
         improved = receipt['candidate_score'] < receipt['baseline_score']
+        if version == 'v2':
+            digest(receipt['owner_decision'])
+            reason = receipt['decision_reason']
+            require(type(reason) is str and reason in (
+                'adopted_gain', 'no_gain', 'safety_hold', 'consent_withdrawn',
+                'resource_unavailable', 'selection_fenced'), 'CONSUMER_DECISION_REASON')
+            require((reason == 'adopted_gain') == (generation['decision'] == 'adopted'),
+                    'CONSUMER_DECISION_BINDING')
+            if reason == 'no_gain':
+                require(not improved, 'CONSUMER_DECISION_NO_GAIN')
         if generation['decision'] == 'adopted':
             require(improved and
                     receipt['candidate_output'] != receipt['baseline_output'],
                     'CONSUMER_BENEFIT_ADOPTED_GAIN')
         else:
-            require(not improved and
+            require((version == 'v2' or not improved) and
                     receipt['adopted_model'] == receipt['predecessor_model'],
                     'CONSUMER_BENEFIT_NO_UPDATE')
 
@@ -603,7 +631,7 @@ def verify_prospective_consumer_benefit(history_raw, expected_history, generatio
                              decision=generation['decision']))
 
     value = dict(
-        schema=CONSUMER_BENEFIT_SCHEMA,
+        schema=(CONSUMER_BENEFIT_SCHEMA if version == 'v1' else 'pon-model-consumer-decision-chain-v2'),
         scope=CONSUMER_BENEFIT_SCOPE,
         lineage=lineage['id'],
         receipts=retained,
@@ -618,7 +646,8 @@ def verify_prospective_consumer_benefit(history_raw, expected_history, generatio
         public_reward_eligible=False,
         production_activation=False)
     raw = canonical(value)
-    return dict(value, id=H('model-consumer-benefit-chain-v1', raw).hex())
+    return dict(value, id=H('model-consumer-benefit-chain-v1' if version == 'v1'
+                            else 'model-consumer-decision-chain-v2', raw).hex())
 
 
 CONSUMER_BENEFIT_ATTESTATION_DOMAIN = 'model-consumer-benefit-attestation-v1'
@@ -651,8 +680,29 @@ def verify_signed_prospective_consumer_benefit(
     Consequently none of the independent/prospective/reward/activation flags are
     upgraded here.
     """
-    structural = verify_prospective_consumer_benefit(
-        history_raw, expected_history, generations, receipts)
+    return _verify_signed_consumer_relation(
+        history_raw, expected_history, generations, receipts, attestations, 'v1')
+
+
+def verify_signed_prospective_consumer_decisions_v2(
+        history_raw, expected_history, generations, receipts, attestations):
+    """Verify both existing consumer/controller keys under fresh V2 receipt bytes.
+
+    No installation, owner role, revocation, independent custody or benefit fact is
+    manufactured. Score improvement alone cannot override a retained owner hold.
+    """
+    return _verify_signed_consumer_relation(
+        history_raw, expected_history, generations, receipts, attestations, 'v2')
+
+
+def _verify_signed_consumer_relation(
+        history_raw, expected_history, generations, receipts, attestations, version):
+    structural = _verify_consumer_relation(
+        history_raw, expected_history, generations, receipts, version)
+    attestation_domain = (CONSUMER_BENEFIT_ATTESTATION_DOMAIN if version == 'v1'
+                          else 'model-consumer-decision-attestation-v2')
+    receipt_domain = (CONSUMER_BENEFIT_RECEIPT_DOMAIN if version == 'v1'
+                      else 'model-consumer-decision-receipt-v2')
     require(type(attestations) is list and len(attestations) == 3,
             'CONSUMER_BENEFIT_ATTESTATION_COUNT')
     seen_keys = set()
@@ -680,7 +730,7 @@ def verify_signed_prospective_consumer_benefit(
                 'CONSUMER_BENEFIT_CONSUMER_KEY_BINDING')
         require(receipt['controller'] == H(CONTROLLER_KEY_DOMAIN, controller_key).hex(),
                 'CONSUMER_BENEFIT_CONTROLLER_KEY_BINDING')
-        message = H(CONSUMER_BENEFIT_ATTESTATION_DOMAIN, canonical(receipt))
+        message = H(attestation_domain, canonical(receipt))
         try:
             verify_signature(consumer_key, consumer_signature, message)
         except ValueError as failure:
@@ -693,7 +743,7 @@ def verify_signed_prospective_consumer_benefit(
             ordinal=ordinal,
             consumer_key_digest=H(CONSUMER_KEY_DOMAIN, consumer_key).hex(),
             controller_key_digest=H(CONTROLLER_KEY_DOMAIN, controller_key).hex(),
-            receipt=H(CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(receipt)).hex()))
+            receipt=H(receipt_domain, canonical(receipt)).hex()))
 
     value = dict(structural)
     value.pop('id')
@@ -707,5 +757,6 @@ def verify_signed_prospective_consumer_benefit(
         independent_accepted=False,
         public_reward_eligible=False,
         production_activation=False)
-    return dict(value, id=H('model-consumer-benefit-signed-chain-v1', canonical(value)).hex())
+    return dict(value, id=H('model-consumer-benefit-signed-chain-v1' if version == 'v1'
+                            else 'model-consumer-decision-signed-chain-v2', canonical(value)).hex())
 

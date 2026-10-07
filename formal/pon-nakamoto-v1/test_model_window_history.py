@@ -807,6 +807,66 @@ class ProspectiveGenerationLineageTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'PROSPECTIVE_GENERATION_FIELDS'):
             self.verify(history, changed)
 
+    def test_explicit_v2_hold_retains_improved_candidate_without_reinterpreting_v1(self):
+        history, data = self.three()
+        rows, receipts = self.benefit(history, data, ('adopted', 'no_update', 'adopted'))
+        receipts[1]['candidate_score'] = 90
+        for index, receipt in enumerate(receipts):
+            receipt['decision_reason'] = 'safety_hold' if index == 1 else 'adopted_gain'
+            receipt['owner_decision'] = identity('owner-decision:' + str(index))
+            rows[index]['consumer_receipt'] = H(
+                'model-consumer-decision-receipt-v2', canonical(receipt)).hex()
+        raw, pin = window.freeze_exposure_history(history)
+        result = window.verify_prospective_consumer_decisions_v2(raw, pin, rows, receipts)
+        self.assertTrue(result['receipts'][1]['improved'])
+        self.assertEqual(result['receipts'][1]['decision'], 'no_update')
+        self.assertEqual(rows[2]['predecessor_model'], rows[1]['predecessor_model'])
+        self.assertFalse(result['actual_model_installation_verified'])
+        self.assertFalse(result['production_activation'])
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_FIELDS'):
+            window.verify_prospective_consumer_benefit(raw, pin, rows, receipts)
+        changed = copy.deepcopy(receipts)
+        changed[1]['decision_reason'] = 'no_gain'
+        changed_rows = copy.deepcopy(rows)
+        changed_rows[1]['consumer_receipt'] = H(
+            'model-consumer-decision-receipt-v2', canonical(changed[1])).hex()
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_DECISION_NO_GAIN'):
+            window.verify_prospective_consumer_decisions_v2(raw, pin, changed_rows, changed)
+        changed[1]['decision_reason'] = 'adopted_gain'
+        changed_rows[1]['consumer_receipt'] = H(
+            'model-consumer-decision-receipt-v2', canonical(changed[1])).hex()
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_DECISION_BINDING'):
+            window.verify_prospective_consumer_decisions_v2(raw, pin, changed_rows, changed)
+        changed = copy.deepcopy(receipts)
+        changed[1]['owner_decision'] = identity('substituted-owner-decision')
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_RECEIPT_BINDING'):
+            window.verify_prospective_consumer_decisions_v2(raw, pin, rows, changed)
+
+    def test_explicit_v2_signatures_bind_hold_reason_and_reject_v1_domain_replay(self):
+        history, data = self.three()
+        rows, receipts, attestations = self.signed_benefit(history, data)
+        for index, receipt in enumerate(receipts, 1):
+            receipt['decision_reason'] = 'adopted_gain'
+            receipt['owner_decision'] = identity('signed-owner-decision:' + str(index))
+            rows[index - 1]['consumer_receipt'] = H(
+                'model-consumer-decision-receipt-v2', canonical(receipt)).hex()
+        raw, pin = window.freeze_exposure_history(history)
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_CONSUMER_SIGNATURE'):
+            window.verify_signed_prospective_consumer_decisions_v2(
+                raw, pin, rows, receipts, attestations)
+        for index, (receipt, attestation) in enumerate(zip(receipts, attestations), 1):
+            consumer = Ed25519PrivateKey.from_private_bytes(bytes([10 + index]) * 32)
+            controller = Ed25519PrivateKey.from_private_bytes(bytes([20 + index]) * 32)
+            message = H('model-consumer-decision-attestation-v2', canonical(receipt))
+            attestation['consumer_signature'] = consumer.sign(message).hex()
+            attestation['controller_signature'] = controller.sign(message).hex()
+        result = window.verify_signed_prospective_consumer_decisions_v2(
+            raw, pin, rows, receipts, attestations)
+        self.assertTrue(result['external_receipt_signatures_verified'])
+        self.assertFalse(result['actual_model_installation_verified'])
+        self.assertFalse(result['independent_controller_verified'])
+        self.assertFalse(result['public_reward_eligible'])
+
     def test_post_window_consumer_gain_relation_is_exact_but_not_external_acceptance(self):
         history, data = self.three()
         rows, receipts = self.benefit(history, data)

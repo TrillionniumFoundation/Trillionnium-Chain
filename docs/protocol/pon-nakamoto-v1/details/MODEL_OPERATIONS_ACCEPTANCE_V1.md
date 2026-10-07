@@ -269,3 +269,26 @@ freeze and continue an actual2.5MiB synthetic history, reject altered pins and
 noncanonical/link-corrupt records, and verify both the unchanged ordinary2MiB
 limit and the original16MiB history ceiling. These are supplied-record tests, not
 training, real future observations or an authenticated exposure ledger.
+
+
+## Explicit consumer-decision V2
+
+The existing `model_window_history.py` now offers
+`verify_prospective_consumer_decisions_v2` and its signed counterpart
+`verify_signed_prospective_consumer_decisions_v2`. Their fresh receipt and
+attestation domains are `model-consumer-decision-receipt-v2` and
+`model-consumer-decision-attestation-v2`. Existing V1 functions retain their exact
+receipt grammar, domains and no-gain rule. V2 adds `decision_reason` and an
+`owner_decision` digest to the complete externally pinned consumer receipt.
+Allowed reasons are `adopted_gain`, `no_gain`, `safety_hold`, `consent_withdrawn`,
+`resource_unavailable` and `selection_fenced`. An adopted candidate still requires
+a strict declared gain and a different output. A no-update retains the actually
+adopted predecessor even when the new metric improves; `no_gain` cannot be used to
+misreport an improvement. Both signatures bind the entire new receipt and reason.
+Old-domain signatures, reason substitution and owner-evidence substitution reject.
+
+The digest binds supplied owner evidence; it does not authenticate an owner's role,
+current withdrawal, real execution, real installation or independent control.
+The record remains read-only/offline and all independent, prospective, public-reward
+and production acceptance flags remain false. Actual owner integration remains the
+same ordinary Hepta obligation, not a second evaluator or decision journal.
