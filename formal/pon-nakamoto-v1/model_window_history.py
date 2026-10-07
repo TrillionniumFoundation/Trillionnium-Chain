@@ -237,3 +237,213 @@ def verify_window(window_raw, expected_window, history_raw, expected_history,
                 hidden_windows_excluded=False, physical_custody_verified=False,
                 prospective_accepted=False, independent_accepted=False,
                 public_reward_eligible=False, production_activation=False)
+
+
+# Explicit successor: disclosure consumes exposure BEFORE an outcome is known.
+# The existing evaluation owner must durably compare-and-set the returned pin
+# before releasing prompts. These pure functions are not a second journal.
+EXPOSURE_HISTORY_DOMAIN = 'model-operations-exposure-history-v2'
+EXPOSURE_ANCHOR_DOMAIN = 'model-operations-exposure-anchor-v2'
+EXPOSURE_ENTRY_DOMAIN = 'model-operations-exposure-entry-v2'
+EXPOSURE_WINDOW_DOMAIN = 'model-operations-exposure-window-v2'
+EXPOSURE_SCOPE = 'reported-disclosure-continuity-no-independent-acceptance'
+
+
+def _exposure_window(value):
+    closed(value, 'schema scope context ordinal previous preregistration run_plan',
+           'EXPOSURE_WINDOW_FIELDS')
+    require(value['schema'] == 'pon-model-exposure-window-v2' and
+            value['scope'] == EXPOSURE_SCOPE, 'EXPOSURE_WINDOW_SCOPE')
+    for name in ('context', 'previous', 'preregistration', 'run_plan'):
+        digest(value[name])
+    integer(value['ordinal'], 1, MAX_WINDOWS, 'WINDOW_ORDINAL')
+
+
+def _exposure_history(value):
+    closed(value, 'schema scope prior_history head entries', 'EXPOSURE_HISTORY_FIELDS')
+    require(value['schema'] == 'pon-model-exposure-history-v2' and
+            value['scope'] == EXPOSURE_SCOPE, 'EXPOSURE_HISTORY_SCOPE')
+    # Preserve the complete old history, including all unsuccessful windows.
+    # Conversion never relabels old completions as previously registered starts.
+    prior = value['prior_history']
+    seen, last_observed, items = _history(prior)
+    context = _context(prior['context'])
+    previous = _identity(EXPOSURE_ANCHOR_DOMAIN, prior)
+    digest(value['head'])
+    entries = value['entries']
+    require(type(entries) is list and len(prior['entries']) + len(entries) <= MAX_WINDOWS,
+            'WINDOW_HISTORY_BOUND')
+    for index, row in enumerate(entries):
+        closed(row, 'window status receipt registered_at observed_at closes_at '
+               'reported_gates_passed tasks probe_prompts training_groups', 'EXPOSURE_ENTRY_FIELDS')
+        _exposure_window(row['window'])
+        require(row['window']['context'] == context and
+                row['window']['ordinal'] == len(prior['entries']) + index + 1 and
+                row['window']['previous'] == previous, 'WINDOW_HISTORY_LINK')
+        integer(row['registered_at'], 1, MAX_TIME, 'WINDOW_TIME')
+        integer(row['closes_at'], 1, MAX_TIME, 'WINDOW_TIME')
+        require(last_observed < row['registered_at'] < row['closes_at'], 'WINDOW_CHRONOLOGY')
+        require(type(row['status']) is str and row['status'] in ('pending', 'completed', 'aborted'),
+                'EXPOSURE_STATUS')
+        if row['status'] == 'pending':
+            require(index + 1 == len(entries) and row['receipt'] is None and
+                    row['observed_at'] is None and row['reported_gates_passed'] is None,
+                    'EXPOSURE_PENDING')
+        else:
+            digest(row['receipt'])
+            integer(row['observed_at'], 1, MAX_TIME, 'WINDOW_TIME')
+            require(row['registered_at'] < row['observed_at'], 'WINDOW_CHRONOLOGY')
+            if row['status'] == 'completed':
+                require(row['observed_at'] <= row['closes_at'] and
+                        type(row['reported_gates_passed']) is bool, 'EXPOSURE_COMPLETION')
+            else:
+                # A delayed failure still consumes its window. No successful
+                # model assessment or retrospective positive gate is fabricated.
+                require(row['reported_gates_passed'] is False, 'EXPOSURE_ABORT')
+            last_observed = row['observed_at']
+        for name in ('tasks', 'probe_prompts', 'training_groups'):
+            require(type(row[name]) is list, 'WINDOW_EXPOSURE_TYPE')
+            items += len(row[name])
+        require(items <= MAX_ITEMS, 'WINDOW_HISTORY_ITEM_BOUND')
+        _check_exposure(row['tasks'], row['probe_prompts'], row['training_groups'], seen)
+        _consume(row['tasks'], row['probe_prompts'], row['training_groups'], seen)
+        previous = _identity(EXPOSURE_ENTRY_DOMAIN, row)
+    require(value['head'] == previous, 'WINDOW_HISTORY_HEAD')
+    return seen, last_observed, items
+
+
+def freeze_exposure_history(value):
+    _exposure_history(value)
+    raw = canonical(value)
+    require(len(raw) <= MAX_HISTORY_BYTES, 'WINDOW_HISTORY_BYTE_BOUND')
+    return raw, H(EXPOSURE_HISTORY_DOMAIN, raw).hex()
+
+
+def _decode_exposure_history(raw, expected):
+    require(type(raw) is bytes and len(raw) <= MAX_HISTORY_BYTES, 'WINDOW_HISTORY_BYTE_BOUND')
+    return decode(raw, expected, _exposure_history, EXPOSURE_HISTORY_DOMAIN,
+                  max_bytes=MAX_HISTORY_BYTES)
+
+
+def upgrade_exposure_history(history_raw, expected_history):
+    """Explicitly wrap a pinned v1 history, without rewriting any old record.
+
+    The returned v2 identity needs its own owner-side durable CAS. No evaluator
+    has been started and no historical disclosure claim has been upgraded.
+    """
+    prior = _decode_history(history_raw, expected_history)
+    value = dict(schema='pon-model-exposure-history-v2', scope=EXPOSURE_SCOPE,
+                 prior_history=prior, head=_identity(EXPOSURE_ANCHOR_DOMAIN, prior), entries=[])
+    freeze_exposure_history(value)
+    return value
+
+
+def _exposure_result(history, previous, window_id, assessment=None):
+    _, next_identity = freeze_exposure_history(history)
+    return dict(schema='pon-model-exposure-transition-v2', scope=EXPOSURE_SCOPE,
+                window=window_id, previous_history=previous, next_history=next_identity,
+                history=history, assessment=assessment, window_consumed=True,
+                owner_persistence_required=True, historical_execution_verified=False,
+                hidden_windows_excluded=False, physical_custody_verified=False,
+                prospective_accepted=False, independent_accepted=False,
+                public_reward_eligible=False, production_activation=False)
+
+
+def admit_exposure_window(history_raw, expected_history, preregistration_raw,
+                          expected_preregistration, plan, expected_plan):
+    """Consume all declared exposure, reserving both possible terminal records.
+
+    Persist the returned history and pin before any prompt/probe is disclosed.
+    A pending window blocks another admission; abort/finish keeps its exposure.
+    This operation never runs a model, sends data, or grants permission to do so.
+    """
+    history = _decode_exposure_history(history_raw, expected_history)
+    entries = history['entries']
+    require(not entries or entries[-1]['status'] != 'pending', 'EXPOSURE_ALREADY_PENDING')
+    require(len(history['prior_history']['entries']) + len(entries) < MAX_WINDOWS,
+            'WINDOW_HISTORY_BOUND')
+    prereg = decode(preregistration_raw, expected_preregistration, validate_preregistration, PREREG_DOMAIN)
+    require(freeze_preregistration(prereg, plan, expected_plan)[0] == preregistration_raw,
+            'WINDOW_OPERATION_PREREGISTRATION')
+    context = history['prior_history']['context']
+    require(prereg['owner'] == context['owner'] and prereg['governance'] == context['governance'],
+            'WINDOW_OWNER_CONTEXT')
+    seen, observed, items = _exposure_history(history)
+    require(prereg['registered_at'] > observed, 'WINDOW_CHRONOLOGY')
+    tasks, probes, training = _projection(prereg, plan)
+    require(items + len(tasks) + len(probes) + len(training) <= MAX_ITEMS,
+            'WINDOW_HISTORY_ITEM_BOUND')
+    _check_exposure(tasks, probes, training, seen)
+    declaration = dict(schema='pon-model-exposure-window-v2', scope=EXPOSURE_SCOPE,
+        context=_context(context), ordinal=len(history['prior_history']['entries']) + len(entries) + 1,
+        previous=history['head'], preregistration=expected_preregistration, run_plan=expected_plan)
+    _exposure_window(declaration)
+    require(len(canonical(declaration)) <= MAX_WINDOW_BYTES, 'WINDOW_PREREGISTRATION_BYTE_BOUND')
+    row = dict(window=declaration, status='pending', receipt=None,
+               registered_at=prereg['registered_at'], observed_at=None,
+               closes_at=prereg['closes_at'], reported_gates_passed=None,
+               tasks=tasks, probe_prompts=probes, training_groups=training)
+    # Reserve canonical serialized space now, rather than discovering at abort
+    # or completion that the already-exposed window cannot be retained. Abort
+    # may happen after closes_at, so its envelope uses the largest valid time.
+    for status, latest in [('completed', prereg['closes_at']), ('aborted', MAX_TIME)]:
+        terminal = dict(row, status=status, receipt='f' * 64,
+                        observed_at=latest, reported_gates_passed=False)
+        envelope = dict(history, entries=[*entries, terminal],
+                        head=_identity(EXPOSURE_ENTRY_DOMAIN, terminal))
+        freeze_exposure_history(envelope)
+    entries.append(row)
+    history['head'] = _identity(EXPOSURE_ENTRY_DOMAIN, row)
+    return _exposure_result(history, expected_history, _identity(EXPOSURE_WINDOW_DOMAIN, declaration))
+
+
+def _pending_exposure(history_raw, expected_history, expected_window):
+    history = _decode_exposure_history(history_raw, expected_history)
+    digest(expected_window)
+    require(history['entries'] and history['entries'][-1]['status'] == 'pending',
+            'EXPOSURE_NOT_PENDING')
+    row = history['entries'][-1]
+    require(_identity(EXPOSURE_WINDOW_DOMAIN, row['window']) == expected_window,
+            'EXPOSURE_WINDOW_IDENTITY')
+    return history, row
+
+
+def finish_exposure_window(history_raw, expected_history, expected_window,
+                           preregistration_raw, expected_preregistration, plan, expected_plan,
+                           record, receipt, material):
+    """Settle only the exact pinned pending window using full v1 verification.
+
+    Invalid or incomplete results leave the caller's pending bytes intact. They
+    can be aborted explicitly, but cannot erase exposure or start a fresh retry.
+    """
+    history, row = _pending_exposure(history_raw, expected_history, expected_window)
+    require(row['window']['preregistration'] == expected_preregistration and
+            row['window']['run_plan'] == expected_plan, 'EXPOSURE_RESULT_BINDING')
+    prereg = decode(preregistration_raw, expected_preregistration, validate_preregistration, PREREG_DOMAIN)
+    require(freeze_preregistration(prereg, plan, expected_plan)[0] == preregistration_raw,
+            'WINDOW_OPERATION_PREREGISTRATION')
+    context = history['prior_history']['context']
+    require(prereg['owner'] == context['owner'] and prereg['governance'] == context['governance'],
+            'WINDOW_OWNER_CONTEXT')
+    tasks, probes, training = _projection(prereg, plan)
+    require((row['tasks'], row['probe_prompts'], row['training_groups']) == (tasks, probes, training)
+            and row['registered_at'] == prereg['registered_at']
+            and row['closes_at'] == prereg['closes_at'], 'EXPOSURE_RESULT_BINDING')
+    assessment = verify_acceptance(preregistration_raw, expected_preregistration, plan,
+                                   expected_plan, record, receipt, material)
+    row.update(status='completed', receipt=assessment['receipt'],
+               observed_at=receipt['observed_at'], reported_gates_passed=assessment['reported_gates_passed'])
+    history['head'] = _identity(EXPOSURE_ENTRY_DOMAIN, row)
+    return _exposure_result(history, expected_history, expected_window, assessment)
+
+
+def abort_exposure_window(history_raw, expected_history, expected_window, observed_at, failure_digest):
+    """Record failed/unknown execution without certifying its cause or refunding exposure."""
+    history, row = _pending_exposure(history_raw, expected_history, expected_window)
+    digest(failure_digest)
+    integer(observed_at, 1, MAX_TIME, 'WINDOW_TIME')
+    require(observed_at > row['registered_at'], 'WINDOW_CHRONOLOGY')
+    row.update(status='aborted', receipt=failure_digest, observed_at=observed_at,
+               reported_gates_passed=False)
+    history['head'] = _identity(EXPOSURE_ENTRY_DOMAIN, row)
+    return _exposure_result(history, expected_history, expected_window)
