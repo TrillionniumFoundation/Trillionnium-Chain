@@ -74,7 +74,6 @@ jobs:
           subprocess.run(['git', 'update-ref', 'refs/heads/' + branch, target, base], check=True)
           assert not git('status', '--porcelain')
           subprocess.run(['bash', 'scripts/project-preflight.sh', '--audit'], check=True)
-          subprocess.run(['bash', 'scripts/project-preflight.sh', '--push'], check=True)
           token = os.environ['GH_TOKEN']
           auth = 'AUTHORIZATION: basic ' + base64.b64encode(('x-access-token:' + token).encode()).decode()
           os.environ.update(GIT_CONFIG_COUNT='1',
@@ -83,6 +82,11 @@ jobs:
           ref = 'refs/heads/' + branch
           prior = git('ls-remote', '--heads', 'origin', ref)
           assert not prior or prior.split()[0] == target, 'refuse to replace another branch head'
+          old = prior.split()[0] if prior else '0' * 40
+          update = f'{ref} {target} {ref} {old}\n'
+          subprocess.run(['bash', 'scripts/project-preflight.sh', '--push', 'origin',
+                          'https://github.com/' + repository], input=update,
+                         text=True, check=True)
           subprocess.run(['git', 'push', 'origin', 'HEAD:' + ref], check=True)
           assert git('ls-remote', '--heads', 'origin', ref).split()[0] == target
           print(json.dumps({'result': 'DELIVERED', 'base': base, 'commit': target,
