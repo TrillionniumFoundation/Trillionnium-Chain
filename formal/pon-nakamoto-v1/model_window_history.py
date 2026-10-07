@@ -12,6 +12,7 @@ from contract_wire import H, canonical
 from llm_adapter_contract import closed, decode, digest, integer, require
 from model_acceptance import (DOMAIN as PREREG_DOMAIN, freeze_preregistration,
                               validate_preregistration, verify_acceptance)
+from strict_signature import verify as verify_signature
 
 HISTORY_DOMAIN = 'model-operations-window-history-v1'
 WINDOW_DOMAIN = 'model-operations-window-preregistration-v1'
@@ -618,4 +619,93 @@ def verify_prospective_consumer_benefit(history_raw, expected_history, generatio
         production_activation=False)
     raw = canonical(value)
     return dict(value, id=H('model-consumer-benefit-chain-v1', raw).hex())
+
+
+CONSUMER_BENEFIT_ATTESTATION_DOMAIN = 'model-consumer-benefit-attestation-v1'
+CONSUMER_KEY_DOMAIN = 'model-consumer-benefit-consumer-key-v1'
+CONTROLLER_KEY_DOMAIN = 'model-consumer-benefit-controller-key-v1'
+
+
+def _hex_bytes(value, size, error):
+    require(type(value) is str and len(value) == size * 2 and
+            value == value.lower(), error)
+    try:
+        raw = bytes.fromhex(value)
+    except ValueError as failure:
+        raise ValueError(error) from failure
+    require(len(raw) == size, error)
+    return raw
+
+
+def verify_signed_prospective_consumer_benefit(
+        history_raw, expected_history, generations, receipts, attestations):
+    """Verify external key control over each already-validated consumer receipt.
+
+    Public keys are supplied by the caller and are bound to the consumer/controller
+    identities carried by the structural receipt.  Consumer and controller keys are
+    disjoint across all three generations, and both signatures cover the exact same
+    immutable receipt bytes under one domain-separated digest.
+
+    This proves possession of the pinned keys, not independent administration,
+    physical model installation, hidden-window exclusion or genuine product use.
+    Consequently none of the independent/prospective/reward/activation flags are
+    upgraded here.
+    """
+    structural = verify_prospective_consumer_benefit(
+        history_raw, expected_history, generations, receipts)
+    require(type(attestations) is list and len(attestations) == 3,
+            'CONSUMER_BENEFIT_ATTESTATION_COUNT')
+    seen_keys = set()
+    retained = []
+    for ordinal, (receipt, attestation) in enumerate(zip(receipts, attestations), 1):
+        closed(attestation,
+               'ordinal consumer_public_key controller_public_key consumer_signature '
+               'controller_signature',
+               'CONSUMER_BENEFIT_ATTESTATION_FIELDS')
+        integer(attestation['ordinal'], 1, 3, 'CONSUMER_BENEFIT_ATTESTATION_ORDINAL')
+        require(attestation['ordinal'] == ordinal,
+                'CONSUMER_BENEFIT_ATTESTATION_ORDINAL')
+        consumer_key = _hex_bytes(attestation['consumer_public_key'], 32,
+                                  'CONSUMER_BENEFIT_CONSUMER_KEY')
+        controller_key = _hex_bytes(attestation['controller_public_key'], 32,
+                                    'CONSUMER_BENEFIT_CONTROLLER_KEY')
+        consumer_signature = _hex_bytes(attestation['consumer_signature'], 64,
+                                        'CONSUMER_BENEFIT_CONSUMER_SIGNATURE')
+        controller_signature = _hex_bytes(attestation['controller_signature'], 64,
+                                          'CONSUMER_BENEFIT_CONTROLLER_SIGNATURE')
+        require(consumer_key != controller_key and consumer_key not in seen_keys and
+                controller_key not in seen_keys, 'CONSUMER_BENEFIT_KEY_ALIAS')
+        seen_keys.update((consumer_key, controller_key))
+        require(receipt['consumer'] == H(CONSUMER_KEY_DOMAIN, consumer_key).hex(),
+                'CONSUMER_BENEFIT_CONSUMER_KEY_BINDING')
+        require(receipt['controller'] == H(CONTROLLER_KEY_DOMAIN, controller_key).hex(),
+                'CONSUMER_BENEFIT_CONTROLLER_KEY_BINDING')
+        message = H(CONSUMER_BENEFIT_ATTESTATION_DOMAIN, canonical(receipt))
+        try:
+            verify_signature(consumer_key, consumer_signature, message)
+        except ValueError as failure:
+            raise ValueError('CONSUMER_BENEFIT_CONSUMER_SIGNATURE') from failure
+        try:
+            verify_signature(controller_key, controller_signature, message)
+        except ValueError as failure:
+            raise ValueError('CONSUMER_BENEFIT_CONTROLLER_SIGNATURE') from failure
+        retained.append(dict(
+            ordinal=ordinal,
+            consumer_key_digest=H(CONSUMER_KEY_DOMAIN, consumer_key).hex(),
+            controller_key_digest=H(CONTROLLER_KEY_DOMAIN, controller_key).hex(),
+            receipt=H(CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(receipt)).hex()))
+
+    value = dict(structural)
+    value.pop('id')
+    value.update(
+        signed_receipt_attestations=retained,
+        external_receipt_signatures_verified=True,
+        disjoint_consumer_controller_keys_verified=True,
+        independent_controller_verified=False,
+        new_consumer_benefit_verified=False,
+        prospective_accepted=False,
+        independent_accepted=False,
+        public_reward_eligible=False,
+        production_activation=False)
+    return dict(value, id=H('model-consumer-benefit-signed-chain-v1', canonical(value)).hex())
 
