@@ -109,8 +109,10 @@ impl Node {
         self.namespace()?;
         self.ready()?;
         let (tip, generation, state) = self.read_active()?;
-        let commitment = growth_commitment_from_complete_state_v2(&self.settings, &state)?;
-        verify_growth_profile_binding_v2(&self.settings, &commitment, binding)?;
+        let commitment = growth_commitment_from_complete_state_v2(&self.settings, &state)
+            .map_err(|error| Error::from(format!("GROWTH_MIGRATION_RELATION:{error:?}")))?;
+        verify_growth_profile_binding_v2(&self.settings, &commitment, binding)
+            .map_err(|error| Error::from(format!("GROWTH_MIGRATION_BINDING:{error:?}")))?;
         let state_root = root(&state)?;
         ensure(
             self.record(tip)?.root == state_root && self.active()? == (tip, generation),
