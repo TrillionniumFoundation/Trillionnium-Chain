@@ -25,8 +25,14 @@ marks the observation failed and increases `measurement_failures`. Counters
 saturate and expose `counter_overflow`; they do not wrap. Capture failures and
 missing records do not become transport or ledger rejection conditions.
 
-Connection and task handles share only the measurement cell. Each handle marks
-its own closure once on Drop, including failed, abandoned and pending-enqueue
+Connection and task handles share only the measurement cell, with separate
+nonblocking locks for connection/frame fields and worker progress. Their ordinary
+cross-thread overlap must not count as lost measurement: the socket reactor owns
+the first set of fields and the execution worker owns the second. Snapshot joins
+the two projections into the unchanged public record shape. Contention with a
+live snapshot, same-writer contention, poisoning and arithmetic failures remain
+explicit failures; this is not a promise of lossless live capture. Each handle
+marks its own closure once on Drop, including failed, abandoned and pending-enqueue
 paths. A row is complete only after the connection and any created task have
 closed, with no capture failure. This does not mean the request succeeded or
 that every frame completed. Live snapshots may be incomplete and their capture
@@ -91,7 +97,10 @@ caps, quantum, permits, absolute deadlines and phase rejection order remain.
 
 `src/ingress/public_v3/request_observation.rs` unit controls cover cross-thread
 connection/task closure, bounded omission, counter/byte overflow, nonblocking
-capture failure, nested thread clocks and cross-thread/null failure. Actual
+capture failure, nested thread clocks and cross-thread/null failure. Deterministic
+overlap controls hold one writer's actual lock while the other thread updates its
+independent fields; both directions retain complete data without blocking. A
+same-task lock conflict still reports incomplete evidence rather than success. Actual
 socket controls in `src/ingress/public_v3.rs` compare independently received
 signed-frame lengths, partial EOF, quantum writes and retained partial bytes
 after a real write error. `tests/public_v3_request_accounting.rs` verifies real
@@ -104,3 +113,21 @@ new candidate bytes and binary. They do not inherit earlier clean-source or
 network measurements. A finite loopback component result is not WAN/hostile
 service, anonymity/fairness under saturation, independent operation, useful
 model output, production activation, economic hardness or public readiness.
+
+## Retention in the existing full-workspace lane
+
+The `public_v3_from_zero` service test retains its original explicit
+`TRNM_PUBLIC_V3_FROM_ZERO_DIR` selection. Without that selection, an existing
+`TRNM_CI_RECEIPT_DIR` places its full finite and sustained reports under
+`public-v3-from-zero-suite` in the already uploaded receipt directory. Without
+either variable the local temporary-directory behavior is unchanged. Output
+creation is exclusive: a previous observation is not overwritten. The compact
+stdout summary includes the sustained per-phase service, accounting, capture and
+state predicates; the complete report is written before the final assertion.
+
+PR226's head Rust run37499136426 failed the sustained predicate but its artifact
+11432895109 did not retain that temporary report. Passing local repetitions cannot
+identify which missing predicate failed, and the independently reproduced
+cross-writer capture defect is not asserted to be that run's proven root cause.
+No service assertion, traffic window, queue, ticket, CPU budget or deadline is
+relaxed by the retention change.
