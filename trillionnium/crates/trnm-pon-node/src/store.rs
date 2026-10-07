@@ -4355,37 +4355,69 @@ impl Node {
             )
             .optional()?;
         let (tip, generation) = self.active()?;
-        let active_tip_height = self.record(tip)?.height;
-        let (stored_exact, block_height, active_chain_member, active_depth) = match stored {
-            None => (false, None, false, None),
+        let active_tip_record = self.record(tip)?;
+        let active_tip_height = active_tip_record.height;
+        let active_tip_chainwork_hex = hex::encode(active_tip_record.work.bytes());
+        let (
+            stored_exact,
+            block_height,
+            block_chainwork_hex,
+            active_chain_member,
+            active_depth,
+            active_work_depth_hex,
+            active_membership_sql_lookups,
+        ) = match stored {
+            None => (false, None, None, false, None, None, None),
             Some(raw) => {
                 ensure(raw == expected, "DUPLICATE_CONTENT")?;
                 let retained = self.packet(id)?;
                 ensure(retained.encode()? == expected, "STORAGE_PACKET")?;
-                let block_height = self.record(id)?.height;
+                let block_record = self.record(id)?;
+                let block_height = block_record.height;
+                let mut active_membership_sql_lookups = 0_u64;
                 let active_chain_member = crate::ancestry_index::contains(
                     &self.db,
                     self.ancestry_context(),
                     tip,
                     id,
                     crate::ancestry_index::READ_SQL_BUDGET,
-                    &mut |_| Ok(()),
+                    &mut |used| {
+                        active_membership_sql_lookups = used;
+                        Ok(())
+                    },
                 )?;
                 let active_depth = active_chain_member
                     .then(|| active_tip_height.checked_sub(block_height))
                     .flatten();
-                (true, Some(block_height), active_chain_member, active_depth)
+                let active_work_depth_hex = active_chain_member
+                    .then(|| active_tip_record.work.checked_sub(block_record.work))
+                    .transpose()?
+                    .map(|work| hex::encode(work.bytes()));
+                (
+                    true,
+                    Some(block_height),
+                    Some(hex::encode(block_record.work.bytes())),
+                    active_chain_member,
+                    active_depth,
+                    active_work_depth_hex,
+                    Some(active_membership_sql_lookups),
+                )
             }
         };
         Ok(serde_json::json!({
-            "schema":"pon-native-exact-packet-observation-v2",
+            "schema":"pon-native-exact-packet-observation-v3",
             "block":hex::encode(id),
             "stored_exact":stored_exact,
             "block_height":block_height,
+            "block_chainwork_hex":block_chainwork_hex,
             "active_tip":hex::encode(tip),
             "active_tip_height":active_tip_height,
+            "active_tip_chainwork_hex":active_tip_chainwork_hex,
             "active_chain_member":active_chain_member,
             "active_depth":active_depth,
+            "active_work_depth_hex":active_work_depth_hex,
+            "active_membership_sql_lookups":active_membership_sql_lookups,
+            "active_membership_sql_budget":crate::ancestry_index::READ_SQL_BUDGET,
             "generation":generation,
             "local_target_only":true,
             "global_absence_authority":false,

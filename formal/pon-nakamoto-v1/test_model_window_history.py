@@ -697,6 +697,37 @@ class ProspectiveGenerationLineageTests(unittest.TestCase):
         raw, pin = window.freeze_exposure_history(history)
         return window.verify_prospective_generation_chain(raw, pin, rows)
 
+    def benefit(self, history, data, decisions=('adopted', 'adopted', 'adopted')):
+        rows = self.rows(history, data, decisions)
+        receipts = []
+        for index, (generation, retained) in enumerate(
+                zip(rows, history['entries'][-3:]), 1):
+            adopted = generation['decision'] == 'adopted'
+            receipt = dict(
+                ordinal=index,
+                consumer=identity('future-consumer:' + str(index)),
+                controller=identity('future-controller:' + str(index)),
+                task=identity('future-consumer-task:' + str(index)),
+                input=identity('future-consumer-input:' + str(index)),
+                predecessor_model=generation['predecessor_model'],
+                candidate_model=generation['candidate_model'],
+                adopted_model=generation['adopted_model'],
+                baseline_output=identity('baseline-output:' + str(index)),
+                candidate_output=identity('candidate-output:' + str(index)),
+                metric='integer-loss-lower-is-better-v1',
+                baseline_score=100,
+                candidate_score=90 if adopted else 100,
+                used_at=retained['observed_at'] + 1)
+            generation['consumer_receipt'] = H(
+                window.CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(receipt)).hex()
+            receipts.append(receipt)
+        return rows, receipts
+
+    def verify_benefit(self, history, rows, receipts):
+        raw, pin = window.freeze_exposure_history(history)
+        return window.verify_prospective_consumer_benefit(
+            raw, pin, rows, receipts)
+
     def test_three_adopted_generations_form_exact_predecessor_chain_without_acceptance_upgrade(self):
         history, data = self.three()
         result = self.verify(history, self.rows(history, data))
@@ -746,6 +777,70 @@ class ProspectiveGenerationLineageTests(unittest.TestCase):
         changed[0]['extra'] = True
         with self.assertRaisesRegex(ValueError, 'PROSPECTIVE_GENERATION_FIELDS'):
             self.verify(history, changed)
+
+    def test_post_window_consumer_gain_relation_is_exact_but_not_external_acceptance(self):
+        history, data = self.three()
+        rows, receipts = self.benefit(history, data)
+        result = self.verify_benefit(history, rows, receipts)
+        self.assertTrue(result['structural_consumer_benefit_verified'])
+        self.assertTrue(result['future_use_after_window_verified'])
+        self.assertTrue(result['distinct_consumer_relations_verified'])
+        self.assertEqual([row['improved'] for row in result['receipts']],
+                         [True, True, True])
+        for field in ('actual_model_installation_verified',
+                      'independent_controller_verified',
+                      'new_consumer_benefit_verified', 'prospective_accepted',
+                      'independent_accepted', 'public_reward_eligible',
+                      'production_activation'):
+            self.assertIs(result[field], False)
+
+    def test_no_update_requires_no_structural_gain_and_adoption_requires_gain(self):
+        history, data = self.three((True, False, True))
+        rows, receipts = self.benefit(
+            history, data, ('adopted', 'no_update', 'adopted'))
+        result = self.verify_benefit(history, rows, receipts)
+        self.assertFalse(result['receipts'][1]['improved'])
+
+        gained = copy.deepcopy(receipts)
+        gained[1]['candidate_score'] = 90
+        rows_gain = copy.deepcopy(rows)
+        rows_gain[1]['consumer_receipt'] = H(
+            window.CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(gained[1])).hex()
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_NO_UPDATE'):
+            self.verify_benefit(history, rows_gain, gained)
+
+        gain_history, gain_data = self.three()
+        rows, receipts = self.benefit(gain_history, gain_data)
+        receipts[0]['candidate_score'] = receipts[0]['baseline_score']
+        rows[0]['consumer_receipt'] = H(
+            window.CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(receipts[0])).hex()
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_ADOPTED_GAIN'):
+            self.verify_benefit(gain_history, rows, receipts)
+
+    def test_consumer_receipts_require_fresh_future_identity_and_exact_pin(self):
+        history, data = self.three()
+        rows, receipts = self.benefit(history, data)
+
+        reused = copy.deepcopy(receipts)
+        reused[1]['consumer'] = reused[0]['consumer']
+        rows_reused = copy.deepcopy(rows)
+        rows_reused[1]['consumer_receipt'] = H(
+            window.CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(reused[1])).hex()
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_FRESH_CONSUMER'):
+            self.verify_benefit(history, rows_reused, reused)
+
+        early = copy.deepcopy(receipts)
+        early[0]['used_at'] = history['entries'][-3]['observed_at']
+        rows_early = copy.deepcopy(rows)
+        rows_early[0]['consumer_receipt'] = H(
+            window.CONSUMER_BENEFIT_RECEIPT_DOMAIN, canonical(early[0])).hex()
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_FUTURE_USE'):
+            self.verify_benefit(history, rows_early, early)
+
+        tampered = copy.deepcopy(receipts)
+        tampered[2]['candidate_output'] = identity('tampered-output')
+        with self.assertRaisesRegex(ValueError, 'CONSUMER_BENEFIT_RECEIPT_BINDING'):
+            self.verify_benefit(history, rows, tampered)
 
 
 if __name__ == '__main__':

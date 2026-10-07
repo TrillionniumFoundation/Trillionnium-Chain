@@ -488,6 +488,91 @@ def validate_artifact(directory: Path, expected_source: str, *, suite: str = 're
     return report, data
 
 
+def implemented_strategy_envelope(loaded: list[tuple[dict, list[dict]]]) -> dict:
+    """Summarize the fastest actually executed strategy in the retained finite grid.
+
+    This consumes only reports that already passed validate_artifact, so every
+    candidate in the envelope used the same deterministic ticket/proof stream.
+    It is an observation over this implementation inventory and hosted machines,
+    never a global lower bound or a work-hardness result.
+    """
+    by_architecture = {}
+    for report, campaigns in loaded:
+        architecture = report['architecture']
+        winners = {}
+        for campaign_index, raw in enumerate(campaigns):
+            groups = defaultdict(list)
+            for row in raw['observations']:
+                if row['method'] != 'unsupported':
+                    groups[(row['class'], row['target'], row['sample'])].append(row)
+            require(len(groups) == 7 * 2 * CAMPAIGNS[campaign_index]['samples'],
+                    'complete supported producer cohort inventory')
+            for (material, target, sample), rows in groups.items():
+                winner = min(
+                    rows,
+                    key=lambda row: (
+                        row['total_elapsed_ns'],
+                        row['setup_elapsed_ns'],
+                        row['search_elapsed_ns'],
+                        row['strategy'],
+                        row['mode'],
+                    ),
+                )
+                key = (campaign_index, material, target, sample)
+                winners[key] = {
+                    'strategy': winner['strategy'],
+                    'method': winner['method'],
+                    'mode': winner['mode'],
+                    'setup_elapsed_ns': winner['setup_elapsed_ns'],
+                    'search_elapsed_ns': winner['search_elapsed_ns'],
+                    'total_elapsed_ns': winner['total_elapsed_ns'],
+                    'attempts': sum(outcome['attempts'] for outcome in winner['outcomes']),
+                }
+        by_architecture[architecture] = winners
+
+    require(set(by_architecture) == set(ARCHITECTURES),
+            'implemented strategy envelope requires both current architectures')
+    keys = set(next(iter(by_architecture.values())))
+    require(keys and all(set(rows) == keys for rows in by_architecture.values()),
+            'implemented strategy envelope requires identical finite cohorts')
+
+    cohorts = []
+    for campaign_index, material, target, sample in sorted(keys):
+        per_architecture = {
+            architecture: by_architecture[architecture][
+                (campaign_index, material, target, sample)
+            ]
+            for architecture in sorted(ARCHITECTURES)
+        }
+        minimum = min(row['total_elapsed_ns'] for row in per_architecture.values())
+        cohorts.append({
+            'campaign_index': campaign_index,
+            'material': material,
+            'target': target,
+            'sample': sample,
+            'per_architecture': per_architecture,
+            'observed_minimum_total_elapsed_ns': minimum,
+            'observed_fastest_architectures': sorted(
+                architecture
+                for architecture, row in per_architecture.items()
+                if row['total_elapsed_ns'] == minimum
+            ),
+        })
+    return {
+        'schema': 'trnm-implemented-producer-envelope-v1',
+        'scope': 'finite-current-source-hosted-observation-only',
+        'strategy_inventory': list(STRATEGIES),
+        'mode_inventory': list(MODES),
+        'cohorts': cohorts,
+        'all_supported_streams_equal': True,
+        'speed_threshold_applied': False,
+        'global_cheapest_producer_qualified': False,
+        'independent_hardware_qualified': False,
+        'work_hardness_accepted': False,
+        'production_activation': False,
+    }
+
+
 def compare_artifacts(root: Path, expected_source: str, *, suite: str = 'reused',
                       maintenance_version: int = 4, zero_version: int = 2) -> dict:
     contract = suite_contract(suite, maintenance_version=maintenance_version, zero_version=zero_version)
@@ -507,13 +592,17 @@ def compare_artifacts(root: Path, expected_source: str, *, suite: str = 'reused'
     for index in range(len(CAMPAIGNS)):
         require(deterministic_projection(left[1][index]) == deterministic_projection(right[1][index]),
                 'same material/target/sample/search/proof streams across architectures')
-    return {'schema': contract['comparison_schema'], 'result': 'PASS', 'source': expected_source,
-            'tree': left[0]['source_before']['tree'], 'architectures': sorted(ARCHITECTURES),
-            'campaigns': [contract['validate_raw_report'](raw, configuration)
-                          for raw, configuration in zip(left[1], CAMPAIGNS)],
-            'manifest_sha256': {path.name: digest(path / contract['directory'] / 'manifest.json') for path in directories},
-            'speed_threshold_applied': False, 'independent_hardware_qualified': False,
-            'resource_fairness_qualified': False, 'work_hardness_accepted': False, 'production_activation': False}
+    result = {'schema': contract['comparison_schema'], 'result': 'PASS', 'source': expected_source,
+              'tree': left[0]['source_before']['tree'], 'architectures': sorted(ARCHITECTURES),
+              'campaigns': [contract['validate_raw_report'](raw, configuration)
+                            for raw, configuration in zip(left[1], CAMPAIGNS)],
+              'manifest_sha256': {path.name: digest(path / contract['directory'] / 'manifest.json') for path in directories},
+              'speed_threshold_applied': False, 'independent_hardware_qualified': False,
+              'resource_fairness_qualified': False, 'work_hardness_accepted': False,
+              'production_activation': False}
+    if suite == 'reused':
+        result['implemented_strategy_envelope'] = implemented_strategy_envelope(loaded)
+    return result
 
 
 def main() -> int:

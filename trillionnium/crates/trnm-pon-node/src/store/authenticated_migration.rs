@@ -4,6 +4,10 @@
 use super::{
     bytes32, canonical, native_authenticated, plain, schema, sync_dir, Delta, Node, StateBackend,
 };
+use crate::account_archive_execution::state_witness::{
+    growth_commitment_from_complete_state_v2, verify_growth_profile_binding_v2,
+    GrowthProfileBindingV2,
+};
 use crate::{consensus, ensure, sequence_root, Error, Result};
 use fs2::FileExt;
 use rusqlite::{params_from_iter, types::Value as SqlValue, Connection, Transaction};
@@ -69,7 +73,68 @@ pub struct AuthenticatedMigrationReceipt {
     pub external_owner_operations_executed: u64,
 }
 
+/// Read-only handoff from an actual authenticated source Node into the already
+/// defined candidate growth profile. It binds source state/tip/generation but
+/// neither creates a target namespace nor reserves storage or activates consensus.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct GrowthMigrationPlanV2 {
+    pub schema: &'static str,
+    pub source_tip: String,
+    pub source_generation: u64,
+    pub source_state_root: String,
+    pub source_commitment: String,
+    pub profile_binding: String,
+    pub candidate_parameters: String,
+    pub candidate_genesis: String,
+    pub storage_namespace: String,
+    pub complete_source_state_checked: bool,
+    pub target_storage_reserved: bool,
+    pub migration_executed: bool,
+    pub consensus_activation: bool,
+}
+
 impl Node {
+    /// Bind the current actual authenticated Node state to a retained candidate
+    /// growth-profile identity. The full source-state scan is intentional here:
+    /// migration must prove source equivalence before a future bounded profile
+    /// can replace the complete-state hot path.
+    pub fn prepare_growth_profile_migration_v2(
+        &self,
+        binding: &GrowthProfileBindingV2,
+    ) -> Result<GrowthMigrationPlanV2> {
+        ensure(
+            matches!(self.state_backend, StateBackend::AuthenticatedV1),
+            "GROWTH_MIGRATION_SOURCE_PROFILE",
+        )?;
+        self.namespace()?;
+        self.ready()?;
+        let (tip, generation, state) = self.read_active()?;
+        let commitment = growth_commitment_from_complete_state_v2(&self.settings, &state)
+            .map_err(|error| Error::from(format!("GROWTH_MIGRATION_RELATION:{error:?}")))?;
+        verify_growth_profile_binding_v2(&self.settings, &commitment, binding)
+            .map_err(|error| Error::from(format!("GROWTH_MIGRATION_BINDING:{error:?}")))?;
+        let state_root = root(&state)?;
+        ensure(
+            self.record(tip)?.root == state_root && self.active()? == (tip, generation),
+            "GROWTH_MIGRATION_STALE_SOURCE",
+        )?;
+        Ok(GrowthMigrationPlanV2 {
+            schema: "pon-permanent-account-growth-migration-plan-v2",
+            source_tip: hex::encode(tip),
+            source_generation: generation,
+            source_state_root: hex::encode(state_root),
+            source_commitment: hex::encode(commitment.id),
+            profile_binding: hex::encode(binding.id),
+            candidate_parameters: hex::encode(binding.candidate_parameters),
+            candidate_genesis: hex::encode(binding.candidate_genesis),
+            storage_namespace: hex::encode(binding.storage_namespace),
+            complete_source_state_checked: true,
+            target_storage_reserved: false,
+            migration_executed: false,
+            consensus_activation: false,
+        })
+    }
+
     /// Copy a fully checked legacy local-development store into a fresh explicit
     /// authenticated namespace. Source files and irreversible journals remain.
     pub fn migrate_to_authenticated_state(

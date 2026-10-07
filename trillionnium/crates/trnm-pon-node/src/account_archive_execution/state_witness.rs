@@ -25,7 +25,8 @@ use trnm_protocol::pon_wire::{hash, Hash};
 pub const COMMITMENT_SCHEMA: &str = "pon-authenticated-state-commitment-v1";
 pub const EXECUTION_SCHEMA: &str = "pon-authenticated-state-execution-v1";
 pub const GROWTH_COMMITMENT_SCHEMA_V2: &str = "pon-permanent-account-growth-commitment-v2";
-pub const GROWTH_PROFILE_BINDING_SCHEMA_V2: &str = "pon-permanent-account-growth-profile-binding-v2";
+pub const GROWTH_PROFILE_BINDING_SCHEMA_V2: &str =
+    "pon-permanent-account-growth-profile-binding-v2";
 pub const GROWTH_PROFILE_ID_V2: &str = "permanent-account-growth-v2-candidate";
 pub const MAX_PERMANENT_ACCOUNTS_V2: u64 = 1_000_000;
 pub const MAX_WORKING_KEYS_V2: usize = 65_536;
@@ -223,6 +224,47 @@ pub fn growth_commitment_v2(
     Ok(out)
 }
 
+/// Migration/reference conversion from the actual complete source State. This is
+/// intentionally O(State): it is a one-shot source-binding fence, not the future
+/// bounded validator hot path. It must agree byte-for-byte with the archive-based
+/// v2 relation for the same logical state.
+pub(crate) fn growth_commitment_from_complete_state_v2(
+    settings: &Settings,
+    state: &State,
+) -> Result<GrowthStateCommitmentV2> {
+    let account_values = accounts(state)?;
+    let working = non_accounts(state);
+    if account_values.len() as u64 > MAX_PERMANENT_ACCOUNTS_V2
+        || working.len() > MAX_WORKING_KEYS_V2
+    {
+        return Err(CheckedExecutionError::Budget);
+    }
+    let account_balance = total(account_values.values().map(|account| account.balance))?;
+    let (escrow_balance, reward_balance, issued) = components(&working)?;
+    if total([account_balance, escrow_balance, reward_balance].into_iter())? != issued {
+        return Err(StateWitnessError::Conservation.into());
+    }
+    let mut out = GrowthStateCommitmentV2 {
+        schema: GROWTH_COMMITMENT_SCHEMA_V2.into(),
+        network: settings.network(),
+        parameters: settings.parameters(),
+        genesis: settings.genesis(),
+        permanent_account_root: crate::account_archive_prototype::account_root(&account_values)?,
+        permanent_account_count: account_values.len() as u64,
+        permanent_account_balance: account_balance,
+        maximum_permanent_accounts: MAX_PERMANENT_ACCOUNTS_V2,
+        working_root: relation(pon_executor::root(&working))?,
+        working_count: working.len() as u64,
+        maximum_working_keys: MAX_WORKING_KEYS_V2 as u64,
+        escrow_balance,
+        reward_balance,
+        issued,
+        id: [0; 32],
+    };
+    out.id = out.digest();
+    Ok(out)
+}
+
 /// Candidate-only identity for a future profile that would install the v2
 /// permanent-account relation.  Constructing this value never changes Settings,
 /// a header state root, native admission, a database namespace or activation.
@@ -261,10 +303,10 @@ impl GrowthProfileBindingV2 {
 /// Derive a fresh candidate parameter/genesis/storage identity from an already
 /// verified v2 state relation.  This is an anti-aliasing prerequisite for a
 /// later migration/activation implementation, not that implementation itself.
-pub fn growth_profile_binding_v2(
+fn growth_profile_binding_from_namespace_v2(
     settings: &Settings,
     commitment: &GrowthStateCommitmentV2,
-    storage_namespace: &str,
+    namespace: Hash,
 ) -> Result<GrowthProfileBindingV2> {
     if commitment.schema != GROWTH_COMMITMENT_SCHEMA_V2
         || commitment.network != settings.network()
@@ -273,25 +315,10 @@ pub fn growth_profile_binding_v2(
         || commitment.id != commitment.digest()
         || commitment.maximum_permanent_accounts != MAX_PERMANENT_ACCOUNTS_V2
         || commitment.maximum_working_keys != MAX_WORKING_KEYS_V2 as u64
+        || namespace == [0; 32]
     {
         return Err(StateWitnessError::Commitment.into());
     }
-    if storage_namespace.is_empty()
-        || storage_namespace.len() > 128
-        || storage_namespace.starts_with('/')
-        || storage_namespace
-            .split('/')
-            .any(|component| component.is_empty() || matches!(component, "." | ".."))
-        || !storage_namespace
-            .bytes()
-            .all(|byte| byte.is_ascii_alphanumeric() || b"._-/".contains(&byte))
-    {
-        return Err(StateWitnessError::Context.into());
-    }
-    let namespace = hash(
-        b"permanent-account-growth-storage-namespace-v2",
-        &[storage_namespace.as_bytes()],
-    );
     let candidate_parameters = hash(
         b"permanent-account-growth-parameters-v2",
         &[
@@ -325,6 +352,46 @@ pub fn growth_profile_binding_v2(
     };
     out.id = out.digest();
     Ok(out)
+}
+
+pub fn growth_profile_binding_v2(
+    settings: &Settings,
+    commitment: &GrowthStateCommitmentV2,
+    storage_namespace: &str,
+) -> Result<GrowthProfileBindingV2> {
+    if storage_namespace.is_empty()
+        || storage_namespace.len() > 128
+        || storage_namespace.starts_with('/')
+        || storage_namespace
+            .split('/')
+            .any(|component| component.is_empty() || matches!(component, "." | ".."))
+        || !storage_namespace
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || b"._-/".contains(&byte))
+    {
+        return Err(StateWitnessError::Context.into());
+    }
+    let namespace = hash(
+        b"permanent-account-growth-storage-namespace-v2",
+        &[storage_namespace.as_bytes()],
+    );
+    growth_profile_binding_from_namespace_v2(settings, commitment, namespace)
+}
+
+/// Recheck a retained candidate binding before a migration owner consumes it.
+/// This verifies every derived field from the exact source commitment and the
+/// already-bound namespace digest; it does not grant activation.
+pub(crate) fn verify_growth_profile_binding_v2(
+    settings: &Settings,
+    commitment: &GrowthStateCommitmentV2,
+    binding: &GrowthProfileBindingV2,
+) -> Result<()> {
+    let expected =
+        growth_profile_binding_from_namespace_v2(settings, commitment, binding.storage_namespace)?;
+    if binding != &expected {
+        return Err(StateWitnessError::Commitment.into());
+    }
+    Ok(())
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -1305,6 +1372,17 @@ mod growth_v2_tests {
 
         let working = State::from([("meta:issued".into(), json!(6))]);
         let committed = growth_commitment_v2(&settings, &aggregate, &working).unwrap();
+        let mut complete = working.clone();
+        for (owner, account) in &values {
+            complete.insert(
+                format!("account:{}", hex::encode(owner)),
+                json!({"balance":account.balance,"nonce":account.nonce}),
+            );
+        }
+        assert_eq!(
+            growth_commitment_from_complete_state_v2(&settings, &complete).unwrap(),
+            committed
+        );
         assert_eq!(committed.schema, GROWTH_COMMITMENT_SCHEMA_V2);
         assert_eq!(committed.permanent_account_count, 4);
         assert_eq!(committed.permanent_account_balance, 6);
@@ -1325,9 +1403,15 @@ mod growth_v2_tests {
         assert_ne!(profile.candidate_genesis, settings.genesis());
         assert_ne!(profile.storage_namespace, [0; 32]);
         assert_ne!(profile.id, [0; 32]);
+        verify_growth_profile_binding_v2(&settings, &committed, &profile).unwrap();
+        let mut forged_profile = profile.clone();
+        forged_profile.candidate_genesis[0] ^= 1;
         assert_eq!(
-            growth_profile_binding_v2(&settings, &committed, "authenticated-growth-v2")
-                .unwrap(),
+            verify_growth_profile_binding_v2(&settings, &committed, &forged_profile).unwrap_err(),
+            StateWitnessError::Commitment.into()
+        );
+        assert_eq!(
+            growth_profile_binding_v2(&settings, &committed, "authenticated-growth-v2").unwrap(),
             profile
         );
         assert_ne!(
@@ -1343,8 +1427,7 @@ mod growth_v2_tests {
         let mut forged = committed.clone();
         forged.id[0] ^= 1;
         assert_eq!(
-            growth_profile_binding_v2(&settings, &forged, "authenticated-growth-v2")
-                .unwrap_err(),
+            growth_profile_binding_v2(&settings, &forged, "authenticated-growth-v2").unwrap_err(),
             StateWitnessError::Commitment.into()
         );
 

@@ -156,16 +156,21 @@ canonical Node namespace, passes the already-durable exact effect bytes to `subm
 uses those same bytes for `packet-status` reconciliation.  It does not add a second
 operation journal.
 
-The follow-on Hepta PR1433 carries the Chain v2 packet observation separately from the
-terminal local effect fact.  A previously completed effect may therefore be reported with
-`stored_exact=true` and `active_chain_member=false` after a heavier reorganization.
-The terminal TaskFlow fact is not rewound and local absence still cannot authorize blind
-redispatch.  Chain unavailability removes only the optional current observation, not the
-already durable local receipt.
+The follow-on Hepta PR1433 carries the Chain packet observation separately from the
+terminal local effect fact.  This continuation advances that observation to v3 and adds the
+exact 512-bit cumulative chainwork of the retained block and active tip plus their checked
+difference when the retained block is on the active ancestry.  A previously completed effect
+may therefore be reported with `stored_exact=true` and `active_chain_member=false` after a
+heavier reorganization, while an active member carries both height depth and cumulative-work
+depth.  The terminal TaskFlow fact is not rewound and local absence still cannot authorize
+blind redispatch.  Chain unavailability removes only the optional current observation, not
+the already durable local receipt.
 
 This closes the ordinary local **submit + lost-ACK reconciliation + current branch
-observation** seam.  It still does not turn local active depth into probabilistic
-confirmation/finality and does not authorize model adoption.  A release/selection/final-use
-owner must independently recheck the current artifact/withdrawal/generation authority and
-whatever explicit confirmation policy it requires before adopting a model.  That remaining
-owner decision must not be encoded by changing the provider-effect receipt.
+observation** seam with a Nakamoto-relevant work-distance fact rather than height alone.  The
+work distance is still only a local current-chain observation: it is not a probabilistic
+confirmation/finality certificate and does not authorize model adoption.  A
+release/selection/final-use owner must independently recheck the current
+artifact/withdrawal/generation authority and an explicit confirmation policy before adopting
+a model.  That remaining owner decision must not be encoded by changing the provider-effect
+receipt or by treating a raw work delta as a final-use capability.
