@@ -161,9 +161,25 @@ evaluation, challenge, and reward admission rules remain in force.
 
 ## Current delivery boundary
 
-PR #221 supplies the previously unexecuted from-zero service source and an exact
-source-build/named-test driver in existing CI lanes. It does not implement or
-activate the growth revision described here, change the 65,536-key rule, or
-supply a permanent storage-service commitment. This document fixes the required
-implementation boundary so subsequent work cannot report an archive-only or
-synthetic result as closure of permanent-account growth.
+The current stacked growth increment now adds two research-only pieces without
+changing the installed profile:
+
+1. `AccountArchive::aggregate_observation` recomputes permanent-account root,
+   count and balance from every authenticated retained leaf and binds the archive
+   network/parameters/genesis context. Raw aggregate claims are not accepted.
+2. `GrowthStateCommitmentV2` binds that verified permanent-account aggregate to
+   the complete bounded non-account working partition, explicit finite account
+   and working-key ceilings, and checked monetary conservation under a new hash
+   domain.
+
+The ordinary regression checks context, partition and conservation. A separate
+release-only test constructs 65,537 retained permanent accounts and the v2
+relation while keeping the working partition bounded. That test is deliberately
+not native ledger admission: it does not install new header parameters, migrate
+an existing Node, submit signed transactions above the old cap, reserve a real
+storage service, or change the old 65,536-key profile.
+
+The next activation increment must therefore use this relation from an explicitly
+new profile and migration namespace, then satisfy the native acceptance and
+availability campaigns above. An archive-only or synthetic relation still cannot
+be reported as closure of permanent-account growth.
