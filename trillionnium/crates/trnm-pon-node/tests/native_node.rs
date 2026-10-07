@@ -2,7 +2,7 @@
 use serde_json::Value;
 use std::{
     fs,
-    io::{BufRead, BufReader, Read},
+    io::{BufRead, BufReader, Read, Write},
     os::unix::fs::PermissionsExt,
     path::Path,
     process::{Command, Stdio},
@@ -379,7 +379,8 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
     let temp = tempfile::tempdir().unwrap();
     let packet_path = temp.path().join("input.packet");
     let packet = golden();
-    fs::write(&packet_path, packet.encode().unwrap()).unwrap();
+    let packet_bytes = packet.encode().unwrap();
+    fs::write(&packet_path, &packet_bytes).unwrap();
     let store = temp.path().join("store");
 
     let missing = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
@@ -390,6 +391,21 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
         .output()
         .unwrap();
     assert!(!missing.status.success());
+    assert!(!store.join("native.sqlite").exists());
+
+    let both = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+        .args([
+            "packet-status",
+            "--development",
+            "--packet-stdin",
+            "--store",
+        ])
+        .arg(&store)
+        .args(["--packet"])
+        .arg(&packet_path)
+        .output()
+        .unwrap();
+    assert!(!both.status.success());
     assert!(!store.join("native.sqlite").exists());
 
     let submit = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
@@ -406,14 +422,30 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
     );
     let before = open(&store).stats().unwrap();
 
-    for _ in 0..2 {
-        let observed = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
-            .args(["packet-status", "--development", "--store"])
-            .arg(&store)
-            .args(["--packet"])
-            .arg(&packet_path)
-            .output()
+    for source in ["file", "stdin"] {
+        let mut command = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"));
+        command.args(["packet-status", "--development", "--store"]).arg(&store);
+        if source == "file" {
+            command.args(["--packet"]).arg(&packet_path);
+        } else {
+            command
+                .arg("--packet-stdin")
+                .stdin(Stdio::piped());
+        }
+        let mut child = command
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
             .unwrap();
+        if source == "stdin" {
+            child
+                .stdin
+                .take()
+                .unwrap()
+                .write_all(&packet_bytes)
+                .unwrap();
+        }
+        let observed = child.wait_with_output().unwrap();
         assert!(
             observed.status.success(),
             "{}",
@@ -422,15 +454,44 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
         let value: Value = serde_json::from_slice(&observed.stdout).unwrap();
         assert_eq!(
             value["result"]["schema"],
-            "pon-native-exact-packet-observation-v1"
+            "pon-native-exact-packet-observation-v2"
         );
         assert_eq!(value["result"]["stored_exact"], true);
         assert_eq!(value["result"]["block"], hex::encode(packet.id().unwrap()));
+        assert_eq!(value["result"]["block_height"], 1);
+        assert_eq!(value["result"]["active_chain_member"], true);
+        assert_eq!(value["result"]["active_depth"], 0);
         assert_eq!(value["result"]["global_absence_authority"], false);
         assert_eq!(value["result"]["confirmation_authority"], false);
+        assert_eq!(value["result"]["finality_authority"], false);
         assert_eq!(value["result"]["execution_authority"], false);
     }
     assert_eq!(open(&store).stats().unwrap(), before);
+
+    // A heavier retained branch can remove the exact packet from the active
+    // ancestry without deleting the durable packet itself. Reconciliation must
+    // distinguish those facts instead of rewriting either one.
+    let mut owner = open(&store);
+    let genesis = owner.settings().genesis();
+    let fork1 = extend(&mut owner, genesis, 1_800_000_010, 7, false);
+    let fork1_id = fork1.id().unwrap();
+    let fork2 = extend(&mut owner, fork1_id, 1_800_000_020, 7, false);
+    let fork2_id = fork2.id().unwrap();
+    owner.activate_observed(fork2_id, CLOCK).unwrap();
+    drop(owner);
+    let reorged = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+        .args(["packet-status", "--development", "--store"])
+        .arg(&store)
+        .args(["--packet"])
+        .arg(&packet_path)
+        .output()
+        .unwrap();
+    assert!(reorged.status.success());
+    let value: Value = serde_json::from_slice(&reorged.stdout).unwrap();
+    assert_eq!(value["result"]["stored_exact"], true);
+    assert_eq!(value["result"]["active_chain_member"], false);
+    assert!(value["result"]["active_depth"].is_null());
+    assert_eq!(value["result"]["active_tip_height"], 2);
 
     let mut absent = packet.clone();
     *absent.proof.last_mut().unwrap() ^= 1;
@@ -446,8 +507,71 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
     assert!(observed.status.success());
     let value: Value = serde_json::from_slice(&observed.stdout).unwrap();
     assert_eq!(value["result"]["stored_exact"], false);
+    assert_eq!(value["result"]["active_chain_member"], false);
     assert_eq!(value["result"]["global_absence_authority"], false);
-    assert_eq!(open(&store).stats().unwrap(), before);
+
+    // The read-only command must also work with the explicitly selected
+    // authenticated local state backend; it still creates no extra authority.
+    let authenticated = temp.path().join("authenticated");
+    let mut submit = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"));
+    submit
+        .args([
+            "submit",
+            "--development",
+            "--state-backend",
+            "authenticated-v1",
+            "--logical-now",
+            &CLOCK.to_string(),
+            "--store",
+        ])
+        .arg(&authenticated)
+        .arg("--packet-stdin")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
+    let mut child = submit.spawn().unwrap();
+    child
+        .stdin
+        .take()
+        .unwrap()
+        .write_all(&packet_bytes)
+        .unwrap();
+    let submitted = child.wait_with_output().unwrap();
+    assert!(
+        submitted.status.success(),
+        "{}",
+        String::from_utf8_lossy(&submitted.stderr)
+    );
+    let mut status = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"));
+    status
+        .args([
+            "packet-status",
+            "--development",
+            "--state-backend",
+            "authenticated-v1",
+            "--store",
+        ])
+        .arg(&authenticated)
+        .arg("--packet-stdin")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
+    let mut child = status.spawn().unwrap();
+    child
+        .stdin
+        .take()
+        .unwrap()
+        .write_all(&packet_bytes)
+        .unwrap();
+    let observed = child.wait_with_output().unwrap();
+    assert!(
+        observed.status.success(),
+        "{}",
+        String::from_utf8_lossy(&observed.stderr)
+    );
+    let value: Value = serde_json::from_slice(&observed.stdout).unwrap();
+    assert_eq!(value["result"]["stored_exact"], true);
+    assert_eq!(value["result"]["active_chain_member"], true);
 }
 
 #[test]
