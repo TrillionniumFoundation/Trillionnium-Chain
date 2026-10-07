@@ -182,6 +182,13 @@ pub fn growth_commitment_v2(
     accounts: &AccountAggregateObservation,
     working: &State,
 ) -> Result<GrowthStateCommitmentV2> {
+    let context = accounts.context();
+    if context.network != settings.network()
+        || context.parameters != settings.parameters()
+        || context.genesis != settings.genesis()
+    {
+        return Err(StateWitnessError::Context.into());
+    }
     if accounts.account_count() > MAX_PERMANENT_ACCOUNTS_V2
         || working.len() > MAX_WORKING_KEYS_V2
         || working.keys().any(|key| key.starts_with("account:"))
