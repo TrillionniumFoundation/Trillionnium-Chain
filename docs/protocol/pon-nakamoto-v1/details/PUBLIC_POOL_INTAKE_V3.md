@@ -547,6 +547,26 @@ independent WAN, ordinary Hepta export, future model benefit, physical power los
 or production activation. Honest build CPU is calling-thread only; total honest
 worker CPU and client-confirmed transaction throughput remain null.
 
+### Atomic FIFO CPU start reservation
+
+A dequeued mutating task now performs the final shared-account refill decision
+and acquisition of its existing `MUTATION_CPU_START_RESERVE_NS` under the same
+CPU-budget mutex. Previously the waiter could observe enough refilled credit,
+drop the account lock, and then lose that exact credit to another active
+mutation worker before `acquire` relocked the account. Under sustained invalid
+work this could repeatedly turn the oldest already-dequeued honest submission
+into `PUBLIC_MUTATION_CPU_BUDGET` even though the original refill interval
+made its start reserve available.
+
+The corrected linearization retains the existing dequeue-order lock until this
+single reservation is owned, and still releases both locks before native work.
+It adds no queue, worker, caller preference, refill, burst, reserve, retry
+budget, refreshed deadline or authority. Impossible refill, unavailable CPU
+accounting, cancellation and the original absolute deadline remain failures.
+Settlement and complete W1/M06 validation are unchanged. The exact-head and
+prospective-merge sustained campaigns must retain their actual results; this
+implementation change is not itself a saturation-fairness qualification.
+
 ### Current parent and pre-commit cancellation coverage
 
 The existing shared Submit dispatcher now routes the same original request stop
