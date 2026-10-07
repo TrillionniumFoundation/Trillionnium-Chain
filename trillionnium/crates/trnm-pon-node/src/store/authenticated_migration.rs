@@ -265,6 +265,89 @@ impl Node {
         result
     }
 
+    /// Revalidate a retained physical reservation after a cold owner reopen.
+    /// This consumes no bytes and grants no migration or activation authority.
+    pub fn verify_growth_profile_storage_reservation_v2(
+        &self,
+        binding: &GrowthProfileBindingV2,
+        storage_namespace: &str,
+        target: &Path,
+    ) -> Result<GrowthStorageReservationV2> {
+        let plan = self.prepare_growth_profile_migration_v2(binding)?;
+        let (tip, generation, _) = self.read_active()?;
+        ensure(
+            plan.source_tip == hex::encode(tip) && plan.source_generation == generation,
+            "GROWTH_STORAGE_STALE_SOURCE",
+        )?;
+        let state = self.read_active()?.2;
+        let commitment = growth_commitment_from_complete_state_v2(&self.settings, &state)
+            .map_err(|error| Error::from(format!("GROWTH_STORAGE_RELATION:{error:?}")))?;
+        let expected = growth_profile_binding_v2(&self.settings, &commitment, storage_namespace)
+            .map_err(|error| Error::from(format!("GROWTH_STORAGE_NAMESPACE:{error:?}")))?;
+        ensure(&expected == binding, "GROWTH_STORAGE_BINDING")?;
+        ensure(
+            target.is_absolute() && target.canonicalize()? == target && target.is_dir(),
+            "GROWTH_STORAGE_TARGET",
+        )?;
+        let target_meta = fs::symlink_metadata(target)?;
+        ensure(
+            target_meta.file_type().is_dir()
+                && target_meta.nlink() >= 1
+                && target_meta.permissions().mode() & 0o777 == 0o700,
+            "GROWTH_STORAGE_TARGET",
+        )?;
+        let reservation_path = target.join(GROWTH_RESERVATION_FILE);
+        let receipt_path = target.join(GROWTH_RESERVATION_RECEIPT);
+        ensure(
+            reservation_path.canonicalize()? == reservation_path
+                && receipt_path.canonicalize()? == receipt_path,
+            "GROWTH_STORAGE_TARGET",
+        )?;
+        let reservation_meta = fs::symlink_metadata(&reservation_path)?;
+        let receipt_meta = fs::symlink_metadata(&receipt_path)?;
+        ensure(
+            reservation_meta.file_type().is_file()
+                && reservation_meta.nlink() == 1
+                && reservation_meta.permissions().mode() & 0o777 == 0o600
+                && receipt_meta.file_type().is_file()
+                && receipt_meta.nlink() == 1
+                && receipt_meta.permissions().mode() & 0o777 == 0o600,
+            "GROWTH_STORAGE_TARGET",
+        )?;
+        let receipt_bytes = fs::read(&receipt_path)?;
+        let receipt: GrowthStorageReservationV2 = serde_json::from_slice(&receipt_bytes)?;
+        ensure(
+            serde_json::to_vec_pretty(&receipt)? == receipt_bytes
+                && receipt.schema == "pon-permanent-account-growth-storage-reservation-v2"
+                && receipt.profile_binding == plan.profile_binding
+                && receipt.storage_namespace == plan.storage_namespace
+                && receipt.target == target.to_str().ok_or("GROWTH_STORAGE_TARGET")?
+                && receipt.complete_source_state_checked
+                && receipt.target_storage_reserved
+                && !receipt.capacity_sufficiency_qualified
+                && !receipt.migration_executed
+                && !receipt.consensus_activation
+                && (MIN_GROWTH_RESERVATION_BYTES..=MAX_GROWTH_RESERVATION_BYTES)
+                    .contains(&receipt.requested_bytes),
+            "GROWTH_STORAGE_RECEIPT",
+        )?;
+        let physical = reservation_meta
+            .blocks()
+            .checked_mul(512)
+            .ok_or("GROWTH_STORAGE_RESERVATION_BYTES")?;
+        ensure(
+            reservation_meta.len() == receipt.requested_bytes
+                && physical >= receipt.requested_bytes
+                && physical == receipt.physically_reserved_bytes,
+            "GROWTH_STORAGE_RESERVATION",
+        )?;
+        ensure(
+            self.active()? == (tip, generation),
+            "GROWTH_STORAGE_STALE_SOURCE",
+        )?;
+        Ok(receipt)
+    }
+
     /// Copy a fully checked legacy local-development store into a fresh explicit
     /// authenticated namespace. Source files and irreversible journals remain.
     pub fn migrate_to_authenticated_state(
