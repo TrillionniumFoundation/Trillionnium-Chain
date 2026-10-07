@@ -137,33 +137,68 @@ impl PaidMutationCpuPermit {
         loop {
             task_alive(deadline, stop, cancelled)?;
             let now = Instant::now();
-            let retry = {
-                let mut budget = server
-                    .mutation_cpu
-                    .lock()
-                    .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
-                budget.refill(now);
-                let shortage = i128::from(MUTATION_CPU_START_RESERVE_NS)
-                    .saturating_sub(budget.credit_ns)
-                    .max(0);
-                let remaining = deadline.saturating_duration_since(now).as_nanos();
-                let possible_refill = remaining
-                    .saturating_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))
-                    / 1_000_000_000;
-                !budget.unavailable
-                    && (budget.in_flight >= MUTATION_CPU_WORKERS || shortage > 0)
-                    // With no live reservation to return, an impossible refill
-                    // should retain the original immediate budget refusal.
-                    && (budget.in_flight > 0 || shortage as u128 <= possible_refill)
-            };
-            if !retry {
-                // Use the original clock, reserve, counters and settlement.
-                // A concurrent non-public owner may still consume the credit;
-                // that is a real refusal, not an unowned reservation or retry.
-                task_alive(deadline, stop, cancelled)?;
-                return Self::acquire(server, metrics);
+            let mut budget = server
+                .mutation_cpu
+                .lock()
+                .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+            budget.refill(now);
+            let shortage = i128::from(MUTATION_CPU_START_RESERVE_NS)
+                .saturating_sub(budget.credit_ns)
+                .max(0);
+            let remaining = deadline.saturating_duration_since(now).as_nanos();
+            let possible_refill = remaining
+                .saturating_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))
+                / 1_000_000_000;
+            let retry = !budget.unavailable
+                && (budget.in_flight >= MUTATION_CPU_WORKERS || shortage > 0)
+                // With no live reservation to return, an impossible refill
+                // should retain the original immediate budget refusal.
+                && (budget.in_flight > 0 || shortage as u128 <= possible_refill);
+            if retry {
+                drop(budget);
+                thread::sleep(
+                    Duration::from_millis(1).min(deadline.saturating_duration_since(now)),
+                );
+                continue;
             }
-            thread::sleep(Duration::from_millis(1).min(deadline.saturating_duration_since(now)));
+
+            // Linearize readiness and ownership of the just-refilled start
+            // reserve under one shared-account lock. Otherwise another active
+            // mutation worker can consume that credit after this FIFO task
+            // decides it is ready but before Self::acquire locks the account.
+            // The lock is released before any native verification/dispatch.
+            task_alive(deadline, stop, cancelled)?;
+            let stamp = ThreadCpuStamp::start();
+            #[cfg(test)]
+            let stamp = if server.fail_next_cpu_start.swap(false, Ordering::AcqRel) {
+                None
+            } else {
+                stamp
+            };
+            if stamp.is_none() {
+                budget.unavailable = true;
+            }
+            let result = budget.reserve(now);
+            drop(budget);
+            if let Ok(mut m) = metrics.lock() {
+                if result.is_err() {
+                    m.mutation_cpu_refusals += 1;
+                    m.mutation_cpu_clock_failures += u64::from(stamp.is_none());
+                } else {
+                    m.mutation_cpu_reservations += 1;
+                }
+            }
+            result?;
+            let owner = stamp
+                .as_ref()
+                .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+                .clone();
+            return Ok(Self {
+                budget: server.mutation_cpu.clone(),
+                stamp,
+                live: Arc::new(LiveRequestCpu::new(server.mutation_cpu.clone(), owner)),
+                settled: false,
+            });
         }
     }
 
