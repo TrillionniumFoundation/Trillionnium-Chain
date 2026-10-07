@@ -12,7 +12,7 @@ jobs:
       - name: Checkout the exact existing candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: 97e00fcff9b2ad2d67ed7c3c12997f28c0531eb5
+          ref: 5a2549eef8e74f0dcfc2f88181e84a7aeab49a8f
           fetch-depth: 0
           persist-credentials: false
       - name: Reconstruct exact reviewed bytes and non-forced branch
@@ -30,15 +30,14 @@ jobs:
           import subprocess
           import urllib.request
           repository = 'TrillionniumFoundation/Trillionnium-Chain'
-          base = '97e00fcff9b2ad2d67ed7c3c12997f28c0531eb5'
-          base_tree = '5574536445b433452b2e8dd6438f2b4908558613'
-          target = '5a2549eef8e74f0dcfc2f88181e84a7aeab49a8f'
-          target_tree = '86a1fa2cdb0e952d5752a796c58190a41bc6d9be'
-          branch = 'fix/chain-observation-convergence-20261007'
+          base = '5a2549eef8e74f0dcfc2f88181e84a7aeab49a8f'
+          base_tree = '86a1fa2cdb0e952d5752a796c58190a41bc6d9be'
+          target = 'bd4be15a668495523703c3825bd8f1646ee4720a'
+          target_tree = '67cf93b91eb441ed8b80ee74acca561ba6bccd4f'
+          branch = 'fix/chain-cpu-start-fifo-20261007'
           paths = {
-              'docs/protocol/pon-nakamoto-v1/details/PUBLIC_REQUEST_RESOURCE_OBSERVATION.md',
-              'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs',
-              'trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs',
+              'docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md',
+              'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
           }
           def git(*args):
               return subprocess.check_output(['git', *args], text=True).strip()
@@ -58,8 +57,8 @@ jobs:
           assert not git('status', '--porcelain')
           subprocess.run(['git', 'switch', '-c', branch], check=True)
           subprocess.run(['bash', 'scripts/project-preflight.sh'], check=True)
-          patch = blob('4c34e61221c6c115945ae0ad0627e8e13de00207')
-          commit = blob('b782c0b52a4d4525fe6c53e8d2afbba61a5e57f1')
+          patch = blob('23599e7c53cc0d3abd67346c18d1f1734275ba15')
+          commit = blob('935a6d5a6fa67af1f6f949ca1bb7c6874daeee51')
           assert hashlib.sha1(b'commit ' + str(len(commit)).encode() + b'\0' + commit).hexdigest() == target
           assert commit.split(b'\n\n', 1)[0].splitlines()[:2] == [
               ('tree ' + target_tree).encode(), ('parent ' + base).encode()]
