@@ -5,10 +5,17 @@ import unittest
 import tempfile
 import contextlib
 import io
+import os
 import sys
 from unittest.mock import patch
 from pathlib import Path
-from experiments.verify_model_acceptance import ingest, bounded_file, load_json
+from experiments.verify_model_acceptance import (
+    _bounded_file_at,
+    _pinned_package,
+    bounded_file,
+    ingest,
+    load_json,
+)
 from model_acceptance import *
 from test_llm_adapter_contract import fixture_contract, fixture_plan, fixture_record, identity as tid
 from llm_adapter_contract import freeze_target_contract, freeze_run_plan
@@ -205,6 +212,53 @@ class ModelAcceptanceTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'INPUT_LIMIT'):bounded_file(root,'large',4)
         for raw in (b'{"x":1,"x":2}', b'{"x":NaN}', b'{"x":Infinity}'):
             with self.assertRaises(ValueError):load_json(raw)
+
+    @unittest.skipUnless(os.name == 'posix', 'descriptor pinning is POSIX-only and fails closed elsewhere')
+    def test_descriptor_pinning_rejects_symlink_hardlink_and_intermediate_aliases(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root/'real').write_bytes(b'owner-bytes')
+            (root/'file-link').symlink_to(root/'real')
+            with self.assertRaisesRegex(ValueError, 'INPUT_PATH'):
+                bounded_file(root, 'file-link', 100)
+
+            nested = root/'nested'
+            nested.mkdir()
+            (nested/'value').write_bytes(b'nested-owner')
+            (root/'dir-link').symlink_to(nested, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, 'INPUT_PATH'):
+                bounded_file(root, 'dir-link/value', 100)
+
+            os.link(root/'real', root/'hard')
+            with self.assertRaisesRegex(ValueError, 'INPUT_PATH'):
+                bounded_file(root, 'hard', 100)
+
+    @unittest.skipUnless(os.name == 'posix', 'descriptor pinning is POSIX-only and fails closed elsewhere')
+    def test_open_package_descriptor_survives_visible_directory_replacement(self):
+        with tempfile.TemporaryDirectory() as folder:
+            parent = Path(folder)
+            root = parent/'package'
+            root.mkdir()
+            (root/'value').write_bytes(b'owner-bytes')
+            with _pinned_package(root) as descriptor:
+                retained = parent/'retained'
+                root.rename(retained)
+                root.mkdir()
+                (root/'value').write_bytes(b'substituted-bytes')
+                self.assertEqual(_bounded_file_at(descriptor, 'value', 100), b'owner-bytes')
+            self.assertEqual((root/'value').read_bytes(), b'substituted-bytes')
+
+    @unittest.skipUnless(os.name == 'posix', 'descriptor pinning is POSIX-only and fails closed elsewhere')
+    def test_symlink_package_root_is_rejected_before_any_input_read(self):
+        with tempfile.TemporaryDirectory() as folder:
+            parent = Path(folder)
+            actual = parent/'actual'
+            actual.mkdir()
+            (actual/'value').write_bytes(b'owner')
+            alias = parent/'alias'
+            alias.symlink_to(actual, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, 'INPUT_PATH'):
+                bounded_file(alias, 'value', 100)
 
     def test_acceptance_claim_extra_field_and_bool_threshold_reject(self):
         self.receipt['independent_accepted']=True
