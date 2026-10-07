@@ -7,89 +7,150 @@ permissions:
 jobs:
   deliver:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
+    env:
+      CARGO_INCREMENTAL: 0
+      CARGO_BUILD_JOBS: 2
+      RUST_TEST_THREADS: 1
+      PYTHONDONTWRITEBYTECODE: 1
+      PRODUCT_BASE: e87f92fd66d9025944c57ed04c9e85653cfef864
+      PRODUCT_BRANCH: fix/chain-bound-source-lineage-20261007
     steps:
-      - name: Checkout the exact existing candidate
+      - name: Checkout exact existing candidate without credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: 5a2549eef8e74f0dcfc2f88181e84a7aeab49a8f
+          ref: ${{ env.PRODUCT_BASE }}
           fetch-depth: 0
           persist-credentials: false
-      - name: Reconstruct exact reviewed bytes and non-forced branch
+      - name: Retain and verify exact repair transport
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/repair-evidence"
+          printf 'TRNM_CI_RECEIPT_DIR=%s/repair-evidence\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          python3 - <<'PY'
+          import base64, hashlib, json, os, subprocess, urllib.request
+          from pathlib import Path
+          assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip() == os.environ['PRODUCT_BASE']
+          assert subprocess.check_output(['git','rev-parse','HEAD^{tree}'],text=True).strip() == '0147df6b8171b380f06d74d7ddf8e2182047dfd5'
+          assert not subprocess.check_output(['git','status','--porcelain'],text=True).strip()
+          sha='54032756c656bea0544d0247f60b25365122cf58'
+          request=urllib.request.Request('https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/'+sha,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+          with urllib.request.urlopen(request,timeout=30) as response: value=json.load(response)
+          assert value['sha']==sha and value['encoding']=='base64'
+          raw=base64.b64decode(value['content'])
+          assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==sha
+          (Path(os.environ['RUNNER_TEMP'])/'repair.py').write_bytes(raw)
+          compile(raw,'repair.py','exec')
+          PY
+          git switch -c "$PRODUCT_BRANCH"
+          bash scripts/project-preflight.sh
+      - name: Install pinned test tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          python3 -m venv "$RUNNER_TEMP/repair-python"
+          "$RUNNER_TEMP/repair-python/bin/pip" install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+          echo "$RUNNER_TEMP/repair-python/bin" >> "$GITHUB_PATH"
+      - name: Execute new regressions against the original implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$RUNNER_TEMP/repair.py" regressions
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          root=Path(os.environ['TRNM_CI_RECEIPT_DIR'])
+          commands=[
+            ('growth-red',['cargo','test','--locked','--release','--manifest-path','trillionnium/Cargo.toml','-p','trnm-pon-node','--lib','growth_v2_profile_rejects_resealed','--','--nocapture'],b'called `Result::unwrap_err()` on an `Ok` value'),
+            ('snapshot-red',['cargo','test','--locked','--release','--manifest-path','trillionnium/Cargo.toml','-p','trnm-pon-node','--test','account_archive_prototype','aggregate_observation_uses_one_snapshot','--','--nocapture'],b'test result: FAILED'),
+            ('lineage-red',['python3','formal/pon-nakamoto-v1/test_model_window_history.py','ProspectiveGenerationLineageTests'],b'ValueError not raised'),
+          ]
+          for name,command,marker in commands:
+            with (root/(name+'.log')).open('wb') as output: result=subprocess.run(command,stdout=output,stderr=subprocess.STDOUT)
+            raw=(root/(name+'.log')).read_bytes()
+            print(raw[-5000:].decode(errors='replace'))
+            assert result.returncode != 0 and marker in raw, name+' did not reproduce its intended regression'
+            (root/(name+'.json')).write_text(json.dumps({'command':command,'exit':result.returncode,'expected_regression_reproduced':True}))
+          PY
+      - name: Repair existing owners and freeze candidate source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$RUNNER_TEMP/repair.py" repair
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          python3 - <<'PY'
+          import subprocess
+          expected={
+            'trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs',
+            'trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs',
+            'trillionnium/crates/trnm-pon-node/tests/account_archive_prototype.rs',
+            'formal/pon-nakamoto-v1/model_window_history.py',
+            'formal/pon-nakamoto-v1/test_model_window_history.py',
+            'docs/development/specs/pon/PERMANENT_ACCOUNT_STORAGE_BOUNDARY.md',
+            'docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md'}
+          actual=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
+          assert actual==expected,(actual,expected)
+          subprocess.run(['git','add',*sorted(expected)],check=True)
+          PY
+          git diff --cached --check
+          bash scripts/project-preflight.sh --staged
+          git config user.name 'Trillionnium CI'
+          git config user.email 'trillionnium-ci@users.noreply.github.com'
+          git commit -m 'fix(pon): bind growth and three-generation lineage to original source evidence' -m 'Recompute the v2 relation from verified archive aggregates and the actual working partition; read archive aggregates from one SQLite snapshot. Require original model plans and complete retained receipts, current-backbone continuity and the existing owner predecessor. Keep all v1 exposure, consensus, capacity and activation semantics. Preserve explicit red regressions and test the frozen candidate before non-forced delivery.'
+          git show -s --format='%H%n%T%n%P' HEAD | tee "$TRNM_CI_RECEIPT_DIR/source.txt"
+          git diff "$PRODUCT_BASE" HEAD --binary > "$TRNM_CI_RECEIPT_DIR/product.patch"
+          test -z "$(git status --porcelain)"
+          echo "TRNM_EXPECTED_SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      - name: Execute actual frozen-source checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$TRNM_CI_RECEIPT_DIR/source-before.json"
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          python3 formal/pon-nakamoto-v1/test_model_window_history.py 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/lineage-green.log"
+          cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib growth_v2_tests -- --include-ignored --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/growth-green.log"
+          cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test account_archive_prototype 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/archive-green.log"
+          cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::public_v3 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/ingress-green.log"
+          python3 scripts/ci/run_from_zero_native.py --out "$TRNM_CI_RECEIPT_DIR/from-zero"
+          python3 scripts/ci/check_repository.py
+          cargo clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/clippy.log"
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$TRNM_CI_RECEIPT_DIR/source-after.json"
+          test -z "$(git status --porcelain)"
+      - name: Non-forced delivery of tested source only
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import base64
-          import hashlib
-          import json
-          import os
+          import base64, json, os, subprocess
           from pathlib import Path
-          import subprocess
-          import urllib.request
-          repository = 'TrillionniumFoundation/Trillionnium-Chain'
-          base = '5a2549eef8e74f0dcfc2f88181e84a7aeab49a8f'
-          base_tree = '86a1fa2cdb0e952d5752a796c58190a41bc6d9be'
-          target = 'bd4be15a668495523703c3825bd8f1646ee4720a'
-          target_tree = '67cf93b91eb441ed8b80ee74acca561ba6bccd4f'
-          branch = 'fix/chain-cpu-start-fifo-20261007'
-          paths = {
-              'docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md',
-              'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
-          }
-          def git(*args):
-              return subprocess.check_output(['git', *args], text=True).strip()
-          def blob(sha):
-              request = urllib.request.Request(
-                  f'https://api.github.com/repos/{repository}/git/blobs/{sha}',
-                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
-                           'Accept': 'application/vnd.github+json'})
-              with urllib.request.urlopen(request, timeout=30) as stream:
-                  payload = json.load(stream)
-              assert payload['sha'] == sha and payload['encoding'] == 'base64'
-              raw = base64.b64decode(payload['content'])
-              assert hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest() == sha
-              return raw
-          assert git('rev-parse', 'HEAD') == base
-          assert git('rev-parse', 'HEAD^{tree}') == base_tree
-          assert not git('status', '--porcelain')
-          subprocess.run(['git', 'switch', '-c', branch], check=True)
-          subprocess.run(['bash', 'scripts/project-preflight.sh'], check=True)
-          patch = blob('23599e7c53cc0d3abd67346c18d1f1734275ba15')
-          commit = blob('935a6d5a6fa67af1f6f949ca1bb7c6874daeee51')
-          assert hashlib.sha1(b'commit ' + str(len(commit)).encode() + b'\0' + commit).hexdigest() == target
-          assert commit.split(b'\n\n', 1)[0].splitlines()[:2] == [
-              ('tree ' + target_tree).encode(), ('parent ' + base).encode()]
-          subprocess.run(['git', 'apply', '--check', '--index', '-'], input=patch, check=True)
-          subprocess.run(['git', 'apply', '--index', '-'], input=patch, check=True)
-          assert set(git('diff', '--cached', '--name-only').splitlines()) == paths
-          subprocess.run(['git', 'diff', '--cached', '--check'], check=True)
-          subprocess.run(['bash', 'scripts/project-preflight.sh', '--staged'], check=True)
-          assert git('write-tree') == target_tree
-          actual = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'], input=commit).decode().strip()
-          assert actual == target
-          subprocess.run(['git', 'update-ref', 'refs/heads/' + branch, target, base], check=True)
-          assert not git('status', '--porcelain')
-          subprocess.run(['bash', 'scripts/project-preflight.sh', '--audit'], check=True)
-          token = os.environ['GH_TOKEN']
-          auth = 'AUTHORIZATION: basic ' + base64.b64encode(('x-access-token:' + token).encode()).decode()
-          os.environ.update(GIT_CONFIG_COUNT='1',
-                            GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
-                            GIT_CONFIG_VALUE_0=auth, GIT_TERMINAL_PROMPT='0')
-          ref = 'refs/heads/' + branch
-          prior = git('ls-remote', '--heads', 'origin', ref)
-          assert not prior or prior.split()[0] == target, 'refuse to replace another branch head'
-          old = prior.split()[0] if prior else '0' * 40
-          update = f'{ref} {target} {ref} {old}\n'
-          subprocess.run(['bash', 'scripts/project-preflight.sh', '--push', 'origin',
-                          'https://github.com/' + repository], input=update,
-                         text=True, check=True)
-          subprocess.run(['git', 'push', 'origin', 'HEAD:' + ref], check=True)
-          assert git('ls-remote', '--heads', 'origin', ref).split()[0] == target
-          print(json.dumps({'result': 'DELIVERED', 'base': base, 'commit': target,
-                            'tree': target_tree, 'branch': branch, 'paths': sorted(paths),
-                            'tests_executed_by_transport': False,
-                            'merged': False, 'production_activation': False}))
+          def git(*args): return subprocess.check_output(['git',*args],text=True).strip()
+          sha=git('rev-parse','HEAD'); assert sha==os.environ['TRNM_EXPECTED_SOURCE_SHA']
+          assert not git('status','--porcelain')
+          auth=base64.b64encode(('x-access-token:'+os.environ['GH_TOKEN']).encode()).decode()
+          os.environ.update(GIT_CONFIG_COUNT='1',GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',GIT_CONFIG_VALUE_0='AUTHORIZATION: basic '+auth,GIT_TERMINAL_PROMPT='0')
+          ref='refs/heads/'+os.environ['PRODUCT_BRANCH']
+          prior=git('ls-remote','--heads','origin',ref)
+          assert not prior or prior.split()[0]==sha,'refuse another remote head'
+          old=prior.split()[0] if prior else '0'*40
+          subprocess.run(['bash','scripts/project-preflight.sh','--push','origin','https://github.com/TrillionniumFoundation/Trillionnium-Chain'],input=f'{ref} {sha} {ref} {old}\n',text=True,check=True)
+          subprocess.run(['git','push','origin','HEAD:'+ref],check=True)
+          assert git('ls-remote','--heads','origin',ref).split()[0]==sha
+          result={'result':'DELIVERED','base':os.environ['PRODUCT_BASE'],'commit':sha,'tree':git('rev-parse','HEAD^{tree}'),'branch':os.environ['PRODUCT_BRANCH'],'merged':False,'full_required_ci_passed':False,'production_activation':False}
+          (Path(os.environ['TRNM_CI_RECEIPT_DIR'])/'delivery.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result))
           PY
+      - name: Retain successes and failures without rewriting observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: chain-bound-source-repair-${{ github.run_id }}
+          path: ${{ runner.temp }}/repair-evidence/
+          if-no-files-found: error
+          retention-days: 30
