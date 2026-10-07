@@ -4332,6 +4332,53 @@ impl Node {
         )?;
         Ok(vec![packet])
     }
+    /// Observe whether this exact packet is durably present in this already-open
+    /// Node namespace. This never admits, activates, verifies work again, or creates
+    /// an operation identity. Absence is only a local observation and cannot prove
+    /// that another peer did not receive the packet.
+    pub fn exact_packet_observation(&self, packet: &Packet) -> Result<Value> {
+        self.ready()?;
+        self.namespace()?;
+        ensure(
+            packet.header.network == self.settings.network()
+                && packet.header.parameters == self.settings.parameters(),
+            "NETWORK",
+        )?;
+        let id = packet.id()?;
+        let expected = packet.encode()?;
+        let stored: Option<Vec<u8>> = self
+            .db
+            .query_row(
+                "SELECT packet FROM blocks WHERE id=?",
+                [id.as_slice()],
+                |row| row.get(0),
+            )
+            .optional()?;
+        let (tip, generation) = self.active()?;
+        let stored_exact = match stored {
+            None => false,
+            Some(raw) => {
+                ensure(raw == expected, "DUPLICATE_CONTENT")?;
+                let retained = self.packet(id)?;
+                ensure(retained.encode()? == expected, "STORAGE_PACKET")?;
+                true
+            }
+        };
+        Ok(serde_json::json!({
+            "schema":"pon-native-exact-packet-observation-v1",
+            "block":hex::encode(id),
+            "stored_exact":stored_exact,
+            "active_tip":hex::encode(tip),
+            "generation":generation,
+            "local_target_only":true,
+            "global_absence_authority":false,
+            "confirmation_authority":false,
+            "finality_authority":false,
+            "execution_authority":false,
+            "production_activation":false
+        }))
+    }
+
     pub fn stats(&self) -> Result<Value> {
         let (tip, g, state) = self.read_active()?;
         let row = self.record(tip)?;

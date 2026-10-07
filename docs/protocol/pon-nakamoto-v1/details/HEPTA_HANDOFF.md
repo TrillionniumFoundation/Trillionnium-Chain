@@ -15,7 +15,13 @@ consume these owners; it must not construct a second artifact registry or traine
    identities, real outcome scope, and independently validated role claims.
 3. kernel.operations owns durable submit intent/outbox, attempt identity and lost-ACK
    reconciliation. The chain adapter submits a contribution and observes current chain
-   inclusion/confirmation without turning it into a local final-use token.
+   inclusion/confirmation without turning it into a local final-use token. The native
+   `packet-status` command is a read-only reconciliation primitive over an already
+   existing Node namespace: it decodes the caller-retained exact packet, recomputes its
+   BlockId, and reports whether identical bytes are durably stored. It never submits,
+   replays work, activates a branch or creates a second operation ledger. A local
+   not-found observation is not proof of global non-execution and therefore cannot
+   authorize blind resubmission.
 4. Consumer checks exact release/family/bytes, current local selection and generation,
    reserves real inference resources, then records model/request/input/output receipt.
 5. Reorg withdraws branch entitlement, not already executed local history. Query original

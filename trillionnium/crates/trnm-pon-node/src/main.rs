@@ -943,7 +943,7 @@ fn run() -> Result<Value> {
     let mut raw = std::env::args().skip(1);
     let command = raw
         .next()
-        .ok_or("command: status|mine|submit|export|confirm|sync|serve|push|head|history")?;
+        .ok_or("command: status|mine|submit|packet-status|export|confirm|sync|serve|push|head|history")?;
     let mut args = BTreeMap::new();
     while let Some(key) = raw.next() {
         let value = if matches!(
@@ -990,6 +990,7 @@ fn run() -> Result<Value> {
         "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input --consensus-maintenance",
         "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
         "submit" => "--packet --peer",
+        "packet-status" => "--packet",
         "push" => "--packet --peer --reliable-submit --submit-deadline-ms --submit-attempts --submit-call-cap --submit-parent-depth",
         "export" => "--block --output",
         "confirm" => "--transaction --block",
@@ -1457,6 +1458,11 @@ fn run() -> Result<Value> {
             ingress::call(address, &request)
         };
     }
+    if command == "packet-status"
+        && !Path::new(need(&args, "--store")?).join("native.sqlite").is_file()
+    {
+        return Err("PACKET_STATUS_EXISTING_STORE_REQUIRED".into());
+    }
     let clock = number(&args, "--logical-now", ingress::now()?)?;
     let mut node = open_operator_node(
         Path::new(need(&args, "--store")?),
@@ -1467,6 +1473,10 @@ fn run() -> Result<Value> {
     )?;
     let value = match command.as_str() {
         "status" | "recover" => node.stats()?,
+        "packet-status" => {
+            let packet = Packet::decode(&read(need(&args, "--packet")?, 1_048_576)?)?;
+            node.exact_packet_observation(&packet)?
+        }
         "capacity-observe" => serde_json::to_value(node.capacity_observation()?)?,
         "evaluation-observe" => {
             let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
