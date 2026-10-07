@@ -15,8 +15,8 @@ from unittest.mock import patch
 
 from check_cross_arch_cost import (CAMPAIGNS, FALSE_FLAGS, MATERIALS, METHODS, MODES,
     STRATEGIES, STRUCTURED_METHODS, TARGETS, TIMING_SCOPE, compare_artifacts,
-    deterministic_projection, read_json, suite_contract, validate_artifact, validate_files,
-    validate_raw_report, winning_challenge)
+    deterministic_projection, implemented_strategy_envelope, read_json, suite_contract,
+    validate_artifact, validate_files, validate_raw_report, winning_challenge)
 from run_cross_arch_cost import capture, elf_machine
 
 
@@ -192,9 +192,41 @@ class ArtifactComparisonTests(unittest.TestCase):
         with patch('check_cross_arch_cost.validate_artifact', side_effect=lambda p, _: self.records[p.name]):
             return compare_artifacts(self.root, 'a'*40)
 
+    def test_default_fixture_exposes_fastest_implemented_strategy_without_qualification(self):
+        result = self.compare()
+        envelope = result['implemented_strategy_envelope']
+        self.assertEqual(envelope['schema'], 'trnm-implemented-producer-envelope-v1')
+        self.assertEqual(len(envelope['cohorts']),
+                         sum(7 * 2 * campaign['samples'] for campaign in CAMPAIGNS))
+        self.assertEqual(envelope['strategy_inventory'], STRATEGIES)
+        self.assertEqual(envelope['mode_inventory'], MODES)
+        self.assertTrue(envelope['all_supported_streams_equal'])
+        for cohort in envelope['cohorts']:
+            self.assertEqual(set(cohort['per_architecture']), {'x64', 'arm64'})
+            for winner in cohort['per_architecture'].values():
+                self.assertEqual(winner['strategy'], 'scalar-original')
+                self.assertEqual(winner['mode'], 'cold-per-search')
+        for flag in ('speed_threshold_applied', 'global_cheapest_producer_qualified',
+                     'independent_hardware_qualified', 'work_hardness_accepted',
+                     'production_activation'):
+            self.assertIs(envelope[flag], False)
+
     def test_two_architectures_with_different_speeds_preserve_same_streams(self):
         self.records['arm64'] = (self.records['arm64'][0], [slow_clocks(r) for r in self.raw])
-        self.assertFalse(self.compare()['speed_threshold_applied'])
+        result = self.compare()
+        self.assertFalse(result['speed_threshold_applied'])
+        self.assertTrue(all(
+            cohort['observed_fastest_architectures'] == ['x64']
+            for cohort in result['implemented_strategy_envelope']['cohorts']
+        ))
+
+    def test_observed_envelope_never_upgrades_global_cheapest_or_hardness(self):
+        loaded = [self.records['x64'], self.records['arm64']]
+        envelope = implemented_strategy_envelope(loaded)
+        self.assertFalse(envelope['global_cheapest_producer_qualified'])
+        self.assertFalse(envelope['work_hardness_accepted'])
+        self.assertFalse(envelope['independent_hardware_qualified'])
+        self.assertFalse(envelope['production_activation'])
 
     def test_two_x64_runs_cannot_stand_in_for_arm64(self):
         self.records['arm64'][0]['architecture'] = 'x64'
