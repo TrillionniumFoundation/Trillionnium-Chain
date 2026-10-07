@@ -238,13 +238,13 @@ def validate_sustained_report(path: Path) -> dict:
                 require(len(attempts) == 4096 and item.get('winner_nonce', 'missing') is None
                         and item.get('packet', 'missing') is None, 'SUSTAINED_SEARCH')
         workers = phase.get('attacks')
-        require(isinstance(workers, list) and len(workers) == 4, 'SUSTAINED_WORKERS')
+        require(isinstance(workers, list) and len(workers) == 16, 'SUSTAINED_WORKERS')
         worker_cpu, attack_count, late = 0, 0, 0
         for ordinal, worker in enumerate(workers):
             require(isinstance(worker, dict) and number(worker.get('worker')) == ordinal
-                    and number(worker.get('attempt_cap')) == 768, 'SUSTAINED_WORKERS')
+                    and number(worker.get('attempt_cap')) == 1024, 'SUSTAINED_WORKERS')
             calls = worker.get('calls')
-            require(isinstance(calls, list) and 0 < len(calls) < 768
+            require(isinstance(calls, list) and 0 < len(calls) < 1024
                     and worker.get('attempt_cap_reached') is False, 'SUSTAINED_CAP')
             worker_cpu += number(worker.get('calling_thread_cpu_ns'))
             for row in calls:
@@ -306,7 +306,7 @@ def validate_sustained_report(path: Path) -> dict:
               ('counter_overflow', 'observation_has_consensus_authority',
                'cpu_includes_reactor_authentication_or_response_signing'))
         records = captured.get('records')
-        require(isinstance(records, list) and len(records) <= number(captured.get('capacity')) == 4096
+        require(isinstance(records, list) and len(records) <= number(captured.get('capacity')) == 16384
                 and number(captured.get('records_not_retained')) == 0
                 and number(captured.get('measurement_failures')) == 0, 'SUSTAINED_CAPTURE')
         connections = attack_count + len(reads) + len(submits) + 1
