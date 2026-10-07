@@ -7,7 +7,7 @@ use std::sync::{
 use std::thread::{self, ThreadId};
 use trnm_protocol::pon_wire::Hash;
 
-pub const MAX_REQUEST_OBSERVATION_RECORDS: usize = 4096;
+pub const MAX_REQUEST_OBSERVATION_RECORDS: usize = 16_384;
 
 #[derive(Clone, Copy, Debug, Serialize)]
 #[serde(rename_all = "snake_case")]
