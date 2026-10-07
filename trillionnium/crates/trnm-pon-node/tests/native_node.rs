@@ -454,11 +454,23 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
         let value: Value = serde_json::from_slice(&observed.stdout).unwrap();
         assert_eq!(
             value["result"]["schema"],
-            "pon-native-exact-packet-observation-v2"
+            "pon-native-exact-packet-observation-v3"
         );
         assert_eq!(value["result"]["stored_exact"], true);
         assert_eq!(value["result"]["block"], hex::encode(packet.id().unwrap()));
         assert_eq!(value["result"]["block_height"], 1);
+        let block_work = value["result"]["block_chainwork_hex"]
+            .as_str()
+            .expect("stored block work");
+        let tip_work = value["result"]["active_tip_chainwork_hex"]
+            .as_str()
+            .expect("active tip work");
+        assert_eq!(block_work.len(), 128);
+        assert_eq!(tip_work, block_work);
+        assert_eq!(
+            value["result"]["active_work_depth_hex"],
+            Value::String("0".repeat(128))
+        );
         assert_eq!(value["result"]["active_chain_member"], true);
         assert_eq!(value["result"]["active_depth"], 0);
         assert_eq!(value["result"]["global_absence_authority"], false);
@@ -491,6 +503,15 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
     assert_eq!(value["result"]["stored_exact"], true);
     assert_eq!(value["result"]["active_chain_member"], false);
     assert!(value["result"]["active_depth"].is_null());
+    assert!(value["result"]["active_work_depth_hex"].is_null());
+    assert_eq!(value["result"]["block_chainwork_hex"].as_str().unwrap().len(), 128);
+    assert_eq!(
+        value["result"]["active_tip_chainwork_hex"]
+            .as_str()
+            .unwrap()
+            .len(),
+        128
+    );
     assert_eq!(value["result"]["active_tip_height"], 2);
 
     let mut absent = packet.clone();
@@ -507,7 +528,9 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
     assert!(observed.status.success());
     let value: Value = serde_json::from_slice(&observed.stdout).unwrap();
     assert_eq!(value["result"]["stored_exact"], false);
+    assert!(value["result"]["block_chainwork_hex"].is_null());
     assert_eq!(value["result"]["active_chain_member"], false);
+    assert!(value["result"]["active_work_depth_hex"].is_null());
     assert_eq!(value["result"]["global_absence_authority"], false);
 
     // The read-only command must also work with the explicitly selected
@@ -572,6 +595,10 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
     let value: Value = serde_json::from_slice(&observed.stdout).unwrap();
     assert_eq!(value["result"]["stored_exact"], true);
     assert_eq!(value["result"]["active_chain_member"], true);
+    assert_eq!(
+        value["result"]["active_work_depth_hex"],
+        Value::String("0".repeat(128))
+    );
 }
 
 #[test]
