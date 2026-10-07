@@ -13,7 +13,7 @@ use super::{CheckedExecutionError, Result};
 use crate::account_archive_prototype::{
     accounts,
     multiproof::{CheckedMultiproof, MultiproofProgress},
-    Account, Checkpoint, Context, ResearchUpdate, Witness,
+    Account, AccountAggregateObservation, Checkpoint, Context, ResearchUpdate, Witness,
 };
 use crate::Settings;
 use serde::{Deserialize, Serialize};
@@ -24,6 +24,9 @@ use trnm_protocol::pon_wire::{hash, Hash};
 
 pub const COMMITMENT_SCHEMA: &str = "pon-authenticated-state-commitment-v1";
 pub const EXECUTION_SCHEMA: &str = "pon-authenticated-state-execution-v1";
+pub const GROWTH_COMMITMENT_SCHEMA_V2: &str = "pon-permanent-account-growth-commitment-v2";
+pub const MAX_PERMANENT_ACCOUNTS_V2: u64 = 1_000_000;
+pub const MAX_WORKING_KEYS_V2: usize = 65_536;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StateWitnessError {
@@ -124,6 +127,98 @@ impl StateCommitment {
             ],
         )
     }
+}
+
+/// Research-only successor relation that separates permanent account history
+/// from the bounded non-account working partition. It is not installed in any
+/// header parameters, genesis, native admission or signature domain.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GrowthStateCommitmentV2 {
+    pub schema: String,
+    pub network: Hash,
+    pub parameters: Hash,
+    pub genesis: Hash,
+    pub permanent_account_root: Hash,
+    pub permanent_account_count: u64,
+    pub permanent_account_balance: u64,
+    pub maximum_permanent_accounts: u64,
+    pub working_root: Hash,
+    pub working_count: u64,
+    pub maximum_working_keys: u64,
+    pub escrow_balance: u64,
+    pub reward_balance: u64,
+    pub issued: u64,
+    pub id: Hash,
+}
+impl GrowthStateCommitmentV2 {
+    fn digest(&self) -> Hash {
+        hash(
+            b"permanent-account-growth-commitment-v2",
+            &[
+                &self.network,
+                &self.parameters,
+                &self.genesis,
+                &self.permanent_account_root,
+                &self.permanent_account_count.to_le_bytes(),
+                &self.permanent_account_balance.to_le_bytes(),
+                &self.maximum_permanent_accounts.to_le_bytes(),
+                &self.working_root,
+                &self.working_count.to_le_bytes(),
+                &self.maximum_working_keys.to_le_bytes(),
+                &self.escrow_balance.to_le_bytes(),
+                &self.reward_balance.to_le_bytes(),
+                &self.issued.to_le_bytes(),
+            ],
+        )
+    }
+}
+
+/// Bind a verified permanent-account archive aggregate to a complete bounded
+/// non-account partition. The archive observation is constructed from actual
+/// authenticated bytes; raw caller count/balance claims cannot call this path.
+pub fn growth_commitment_v2(
+    settings: &Settings,
+    accounts: &AccountAggregateObservation,
+    working: &State,
+) -> Result<GrowthStateCommitmentV2> {
+    let context = accounts.context();
+    if context.network != settings.network()
+        || context.parameters != settings.parameters()
+        || context.genesis != settings.genesis()
+    {
+        return Err(StateWitnessError::Context.into());
+    }
+    if accounts.account_count() > MAX_PERMANENT_ACCOUNTS_V2
+        || working.len() > MAX_WORKING_KEYS_V2
+        || working.keys().any(|key| key.starts_with("account:"))
+    {
+        return Err(CheckedExecutionError::Budget);
+    }
+    let (escrow_balance, reward_balance, issued) = components(working)?;
+    if total([accounts.account_balance(), escrow_balance, reward_balance].into_iter())? != issued {
+        return Err(StateWitnessError::Conservation.into());
+    }
+    let working_root = relation(pon_executor::root(working))?;
+    let mut out = GrowthStateCommitmentV2 {
+        schema: GROWTH_COMMITMENT_SCHEMA_V2.into(),
+        network: settings.network(),
+        parameters: settings.parameters(),
+        genesis: settings.genesis(),
+        permanent_account_root: accounts.account_root(),
+        permanent_account_count: accounts.account_count(),
+        permanent_account_balance: accounts.account_balance(),
+        maximum_permanent_accounts: MAX_PERMANENT_ACCOUNTS_V2,
+        working_root,
+        working_count: working.len() as u64,
+        maximum_working_keys: MAX_WORKING_KEYS_V2 as u64,
+        escrow_balance,
+        reward_balance,
+        issued,
+        id: [0; 32],
+    };
+    out.id = out.digest();
+    Ok(out)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -1043,5 +1138,131 @@ mod tests {
                 ))
             ));
         }
+    }
+}
+#[cfg(test)]
+mod growth_v2_tests {
+    use super::*;
+    use crate::account_archive_prototype::{AccountArchive, Context, Limits};
+    use serde_json::json;
+    use std::collections::BTreeMap;
+
+    fn owner(number: u64) -> Hash {
+        let mut out = [0; 32];
+        out[..8].copy_from_slice(&number.to_le_bytes());
+        out
+    }
+
+    fn archive_context(settings: &Settings) -> Context {
+        Context {
+            network: settings.network(),
+            parameters: settings.parameters(),
+            genesis: settings.genesis(),
+        }
+    }
+
+    fn permanent_accounts(count: u64) -> BTreeMap<Hash, Account> {
+        (0..count)
+            .map(|number| {
+                (
+                    owner(number),
+                    Account {
+                        balance: number,
+                        nonce: number % 17,
+                    },
+                )
+            })
+            .collect()
+    }
+
+    #[test]
+    fn growth_v2_binds_archive_context_bounds_and_monetary_conservation() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut archive = AccountArchive::open(
+            &directory.path().join("accounts.sqlite"),
+            archive_context(&settings),
+            Limits::default(),
+        )
+        .unwrap();
+        let values = permanent_accounts(4);
+        let checkpoint = archive
+            .seed_research_accounts([9; 32], &values, &mut || Ok(()))
+            .unwrap();
+        let aggregate = archive
+            .aggregate_observation(checkpoint.id(), &mut || Ok(()))
+            .unwrap();
+        assert_eq!(aggregate.account_count(), 4);
+        assert_eq!(aggregate.account_balance(), 6);
+        assert_eq!(aggregate.account_root(), checkpoint.account_root());
+        assert_eq!(aggregate.node_rows_read(), 7);
+
+        let working = State::from([("meta:issued".into(), json!(6))]);
+        let committed = growth_commitment_v2(&settings, &aggregate, &working).unwrap();
+        assert_eq!(committed.schema, GROWTH_COMMITMENT_SCHEMA_V2);
+        assert_eq!(committed.permanent_account_count, 4);
+        assert_eq!(committed.permanent_account_balance, 6);
+        assert_eq!(committed.working_count, 1);
+        assert_eq!(
+            committed.maximum_permanent_accounts,
+            MAX_PERMANENT_ACCOUNTS_V2
+        );
+        assert_eq!(committed.maximum_working_keys, MAX_WORKING_KEYS_V2 as u64);
+        assert_ne!(committed.id, [0; 32]);
+
+        let wrong_settings = Settings::development(Some(2)).unwrap();
+        assert_eq!(
+            growth_commitment_v2(&wrong_settings, &aggregate, &working).unwrap_err(),
+            StateWitnessError::Context.into()
+        );
+        let account_in_working = State::from([
+            ("meta:issued".into(), json!(6)),
+            (
+                format!("account:{}", hex::encode(owner(0))),
+                json!({"balance":0,"nonce":0}),
+            ),
+        ]);
+        assert_eq!(
+            growth_commitment_v2(&settings, &aggregate, &account_in_working).unwrap_err(),
+            CheckedExecutionError::Budget
+        );
+        let unconserved = State::from([("meta:issued".into(), json!(7))]);
+        assert_eq!(
+            growth_commitment_v2(&settings, &aggregate, &unconserved).unwrap_err(),
+            StateWitnessError::Conservation.into()
+        );
+    }
+
+    #[test]
+    #[ignore = "explicit release-only 65,537 permanent-account growth relation; not native admission"]
+    fn growth_v2_crosses_legacy_total_key_cap_without_changing_old_profile() {
+        if cfg!(debug_assertions) {
+            panic!("run the 65,537-account relation with --release");
+        }
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut archive = AccountArchive::open(
+            &directory.path().join("accounts.sqlite"),
+            archive_context(&settings),
+            Limits::default(),
+        )
+        .unwrap();
+        let values = permanent_accounts(65_537);
+        let checkpoint = archive
+            .seed_research_accounts([10; 32], &values, &mut || Ok(()))
+            .unwrap();
+        let aggregate = archive
+            .aggregate_observation(checkpoint.id(), &mut || Ok(()))
+            .unwrap();
+        let balance = values
+            .values()
+            .try_fold(0u64, |sum, account| sum.checked_add(account.balance))
+            .unwrap();
+        let working = State::from([("meta:issued".into(), json!(balance))]);
+        let committed = growth_commitment_v2(&settings, &aggregate, &working).unwrap();
+        assert_eq!(committed.permanent_account_count, 65_537);
+        assert_eq!(committed.permanent_account_balance, balance);
+        assert_eq!(committed.working_count, 1);
+        assert_eq!(committed.maximum_working_keys, 65_536);
     }
 }
