@@ -107,7 +107,7 @@ pub struct GrowthMigrationPlanV2 {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct GrowthStorageReservationV2 {
-    pub schema: &'static str,
+    pub schema: String,
     pub profile_binding: String,
     pub storage_namespace: String,
     pub target: String,
@@ -179,13 +179,18 @@ impl Node {
             "GROWTH_STORAGE_RESERVATION_BYTES",
         )?;
         let plan = self.prepare_growth_profile_migration_v2(binding)?;
-        let (_, _, state) = self.read_active()?;
+        let (tip, generation, state) = self.read_active()?;
+        ensure(
+            plan.source_tip == hex::encode(tip) && plan.source_generation == generation,
+            "GROWTH_STORAGE_STALE_SOURCE",
+        )?;
         let commitment = growth_commitment_from_complete_state_v2(&self.settings, &state)
             .map_err(|error| Error::from(format!("GROWTH_STORAGE_RELATION:{error:?}")))?;
         let expected = growth_profile_binding_v2(&self.settings, &commitment, storage_namespace)
             .map_err(|error| Error::from(format!("GROWTH_STORAGE_NAMESPACE:{error:?}")))?;
         ensure(&expected == binding, "GROWTH_STORAGE_BINDING")?;
         ensure(target.is_absolute() && !target.exists(), "GROWTH_STORAGE_TARGET")?;
+        let target_text = target.to_str().ok_or("GROWTH_STORAGE_TARGET")?.to_owned();
         let parent = target.parent().ok_or("GROWTH_STORAGE_TARGET")?;
         ensure(
             parent.canonicalize()? == parent && parent.is_dir(),
@@ -193,8 +198,8 @@ impl Node {
         )?;
 
         fs::create_dir(target)?;
-        fs::set_permissions(target, fs::Permissions::from_mode(0o700))?;
         let result = (|| {
+            fs::set_permissions(target, fs::Permissions::from_mode(0o700))?;
             let reservation_path = target.join(GROWTH_RESERVATION_FILE);
             let reservation = OpenOptions::new()
                 .read(true)
@@ -220,11 +225,15 @@ impl Node {
                     && physically_reserved_bytes >= requested_bytes,
                 "GROWTH_STORAGE_RESERVATION",
             )?;
+            ensure(
+                self.active()? == (tip, generation),
+                "GROWTH_STORAGE_STALE_SOURCE",
+            )?;
             let receipt = GrowthStorageReservationV2 {
-                schema: "pon-permanent-account-growth-storage-reservation-v2",
+                schema: "pon-permanent-account-growth-storage-reservation-v2".into(),
                 profile_binding: plan.profile_binding.clone(),
                 storage_namespace: plan.storage_namespace.clone(),
-                target: target.to_string_lossy().into_owned(),
+                target: target_text.clone(),
                 requested_bytes,
                 physically_reserved_bytes,
                 complete_source_state_checked: plan.complete_source_state_checked,
