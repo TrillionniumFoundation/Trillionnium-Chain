@@ -447,3 +447,83 @@ def abort_exposure_window(history_raw, expected_history, expected_window, observ
                reported_gates_passed=False)
     history['head'] = _identity(EXPOSURE_ENTRY_DOMAIN, row)
     return _exposure_result(history, expected_history, expected_window)
+
+# Three-generation adoption-chain contract.  This validates only retained
+# identities and chronology around already-consumed exposure windows.  It does
+# not assert that a model was physically installed, independently controlled,
+# useful to a consumer, or production-qualified.
+PROSPECTIVE_LINEAGE_SCHEMA = 'pon-model-prospective-lineage-v1'
+PROSPECTIVE_LINEAGE_SCOPE = 'three-generation-adoption-chain-no-benefit-acceptance'
+
+
+def verify_prospective_generation_chain(history_raw, expected_history, generations):
+    """Bind three completed exposure windows into one predecessor/adoption chain.
+
+    Each candidate identity is externally pinned to the matching run-plan
+    identity.  An adopted decision requires that window's reported gates to pass
+    and makes the candidate the successor.  A no_update decision retains the
+    predecessor.  The next row must name the prior adopted model exactly.
+
+    This is an executable lineage/decision contract only.  It deliberately
+    leaves prospective/independent/consumer-benefit/production acceptance false.
+    """
+    history = _decode_exposure_history(history_raw, expected_history)
+    require(type(generations) is list and len(generations) == 3,
+            'PROSPECTIVE_GENERATION_COUNT')
+    require(len(history['entries']) >= 3, 'PROSPECTIVE_HISTORY_COUNT')
+    rows = history['entries'][-3:]
+    require(all(row['status'] == 'completed' for row in rows),
+            'PROSPECTIVE_COMPLETED_WINDOWS')
+
+    previous_adopted = None
+    retained = []
+    for ordinal, (row, generation) in enumerate(zip(rows, generations), 1):
+        closed(generation,
+               'window run_plan predecessor_model candidate_model adopted_model decision '
+               'consumer_receipt',
+               'PROSPECTIVE_GENERATION_FIELDS')
+        for field in ('window', 'run_plan', 'predecessor_model', 'candidate_model',
+                      'adopted_model', 'consumer_receipt'):
+            digest(generation[field])
+        require(generation['window'] == _identity(EXPOSURE_WINDOW_DOMAIN, row['window']) and
+                generation['run_plan'] == row['window']['run_plan'],
+                'PROSPECTIVE_WINDOW_BINDING')
+        require(generation['decision'] in ('adopted', 'no_update'),
+                'PROSPECTIVE_DECISION')
+        if previous_adopted is not None:
+            require(generation['predecessor_model'] == previous_adopted,
+                    'PROSPECTIVE_PREDECESSOR')
+        if generation['decision'] == 'adopted':
+            require(row['reported_gates_passed'] is True,
+                    'PROSPECTIVE_ADOPTION_GATE')
+            require(generation['candidate_model'] != generation['predecessor_model'] and
+                    generation['adopted_model'] == generation['candidate_model'],
+                    'PROSPECTIVE_ADOPTION_IDENTITY')
+        else:
+            require(generation['adopted_model'] == generation['predecessor_model'],
+                    'PROSPECTIVE_NO_UPDATE_IDENTITY')
+        retained.append(dict(
+            ordinal=ordinal,
+            window=generation['window'],
+            run_plan=generation['run_plan'],
+            predecessor_model=generation['predecessor_model'],
+            candidate_model=generation['candidate_model'],
+            adopted_model=generation['adopted_model'],
+            decision=generation['decision'],
+            consumer_receipt=generation['consumer_receipt'],
+            reported_gates_passed=row['reported_gates_passed']))
+        previous_adopted = generation['adopted_model']
+
+    value = dict(schema=PROSPECTIVE_LINEAGE_SCHEMA, scope=PROSPECTIVE_LINEAGE_SCOPE,
+                 history=expected_history, generations=retained,
+                 lineage_verified=True, exposure_consumption_verified=True,
+                 candidate_identity_externally_pinned=True,
+                 actual_model_installation_verified=False,
+                 new_consumer_benefit_verified=False,
+                 hidden_windows_excluded=False,
+                 physical_custody_verified=False,
+                 prospective_accepted=False, independent_accepted=False,
+                 public_reward_eligible=False, production_activation=False)
+    raw = canonical(value)
+    return dict(value, id=H('model-prospective-lineage-v1', raw).hex())
+
