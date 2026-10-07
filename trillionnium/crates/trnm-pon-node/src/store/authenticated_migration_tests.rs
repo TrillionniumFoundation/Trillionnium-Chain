@@ -303,6 +303,50 @@ fn authenticated_migration_preserves_signed_branches_and_irreversible_local_fact
     assert!(Node::open(&target, settings(), 2).is_err());
     let mut migrated = Node::open_with_authenticated_state(&target, settings(), 2).unwrap();
     assert_eq!(migrated.read_active().unwrap(), active);
+
+    let source_state = migrated.read_active().unwrap().2;
+    let growth =
+        crate::account_archive_execution::state_witness::growth_commitment_from_complete_state_v2(
+            migrated.settings(),
+            &source_state,
+        )
+        .unwrap();
+    let binding = crate::account_archive_execution::state_witness::growth_profile_binding_v2(
+        migrated.settings(),
+        &growth,
+        "authenticated-growth-v2/migrated",
+    )
+    .unwrap();
+    let plan = migrated
+        .prepare_growth_profile_migration_v2(&binding)
+        .unwrap();
+    assert_eq!(
+        plan.schema,
+        "pon-permanent-account-growth-migration-plan-v2"
+    );
+    assert_eq!(plan.source_tip, hex::encode(active.0));
+    assert_eq!(plan.source_generation, active.1);
+    assert_eq!(plan.source_commitment, hex::encode(growth.id));
+    assert_eq!(plan.profile_binding, hex::encode(binding.id));
+    assert!(plan.complete_source_state_checked);
+    assert!(!plan.target_storage_reserved);
+    assert!(!plan.migration_executed);
+    assert!(!plan.consensus_activation);
+
+    let mut forged_binding = binding.clone();
+    forged_binding.candidate_parameters[0] ^= 1;
+    assert!(migrated
+        .prepare_growth_profile_migration_v2(&forged_binding)
+        .is_err());
+    assert_eq!(
+        fixture
+            .node
+            .prepare_growth_profile_migration_v2(&binding)
+            .unwrap_err()
+            .to_string(),
+        "GROWTH_MIGRATION_SOURCE_PROFILE"
+    );
+
     fixture.assert_replay(&mut migrated);
     let source_pool = serde_json::to_value(fixture.node.pool_status_snapshot().unwrap()).unwrap();
     assert_eq!(
