@@ -278,6 +278,10 @@ pub fn growth_profile_binding_v2(
     }
     if storage_namespace.is_empty()
         || storage_namespace.len() > 128
+        || storage_namespace.starts_with('/')
+        || storage_namespace
+            .split('/')
+            .any(|component| component.is_empty() || matches!(component, "." | ".."))
         || !storage_namespace
             .bytes()
             .all(|byte| byte.is_ascii_alphanumeric() || b"._-/".contains(&byte))
