@@ -1,0 +1,163 @@
+name: chain-sixline-native-evidence-20261007
+
+on:
+  push:
+    branches:
+      - evidence/chain-sixline-native-20261007
+
+permissions:
+  contents: read
+
+env:
+  SOURCE_SHA: e87f92fd66d9025944c57ed04c9e85653cfef864
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
+  CARGO_TERM_COLOR: never
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  model-and-growth:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact product source
+        run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          git diff --exit-code
+          git diff --cached --exit-code
+      - name: Install pinned Rust
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+      - name: Install model contract Python environment
+        run: |
+          python3 -m venv "$RUNNER_TEMP/model-env"
+          "$RUNNER_TEMP/model-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+          echo "$RUNNER_TEMP/model-env/bin" >> "$GITHUB_PATH"
+      - name: Execute model input and three-generation contracts
+        run: |
+          mkdir -p "$RUNNER_TEMP/evidence"
+          set -o pipefail
+          python3 formal/pon-nakamoto-v1/test_model_acceptance.py -v 2>&1 | tee "$RUNNER_TEMP/evidence/model-acceptance.log"
+          python3 formal/pon-nakamoto-v1/test_model_window_history.py -v 2>&1 | tee "$RUNNER_TEMP/evidence/model-window-history.log"
+      - name: Execute 65537-account growth relation
+        run: |
+          set -o pipefail
+          cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_execution::state_witness::growth_v2_tests::growth_v2_crosses_legacy_total_key_cap_without_changing_old_profile -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/evidence/growth-65537.log"
+      - name: Recheck source
+        if: always()
+        run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          git diff --exit-code
+          git diff --cached --exit-code
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: model-growth-${{ env.SOURCE_SHA }}
+          path: ${{ runner.temp }}/evidence/
+          if-no-files-found: warn
+          retention-days: 30
+
+  sustained-service:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          mkdir -p "$RUNNER_TEMP/evidence"
+      - name: Execute existing sustained protected socket campaign
+        run: |
+          set -o pipefail
+          cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test protected_ingress sustained_protected_socket_cost_campaign -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/evidence/sustained-protected.log"
+      - name: Recheck source
+        if: always()
+        run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          git diff --exit-code
+          git diff --cached --exit-code
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: sustained-service-${{ env.SOURCE_SHA }}
+          path: ${{ runner.temp }}/evidence/
+          if-no-files-found: warn
+          retention-days: 30
+
+  long-history-sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          mkdir -p "$RUNNER_TEMP/evidence" "$RUNNER_TEMP/history-cost"
+      - name: Execute retained long native sync
+        run: |
+          set -o pipefail
+          cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test ancestry_long_sync actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/evidence/ancestry-long-sync.log"
+      - name: Execute retained history page cost observation
+        env:
+          TRNM_HISTORY_PAGE_COST_DIRECTORY: ${{ runner.temp }}/history-cost
+        run: |
+          set -o pipefail
+          cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::history_page::tests::history_page_complete_call_cost -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/evidence/history-page-cost.log"
+          cp -a "$RUNNER_TEMP/history-cost/." "$RUNNER_TEMP/evidence/history-cost/" || true
+      - name: Recheck source
+        if: always()
+        run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          git diff --exit-code
+          git diff --cached --exit-code
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: long-history-${{ env.SOURCE_SHA }}
+          path: ${{ runner.temp }}/evidence/
+          if-no-files-found: warn
+          retention-days: 30
+
+  full-capacity-recovery:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          mkdir -p "$RUNNER_TEMP/evidence"
+      - name: Execute full-capacity authenticated recovery gate
+        run: |
+          set -o pipefail
+          cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$RUNNER_TEMP/evidence/full-capacity-recovery.log"
+      - name: Recheck source
+        if: always()
+        run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          git diff --exit-code
+          git diff --cached --exit-code
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: full-capacity-${{ env.SOURCE_SHA }}
+          path: ${{ runner.temp }}/evidence/
+          if-no-files-found: warn
+          retention-days: 30
