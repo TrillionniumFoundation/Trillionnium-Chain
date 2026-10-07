@@ -509,7 +509,13 @@ fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creatin
     assert_eq!(value["result"]["active_chain_member"], false);
     assert!(value["result"]["active_depth"].is_null());
     assert!(value["result"]["active_work_depth_hex"].is_null());
-    assert_eq!(value["result"]["block_chainwork_hex"].as_str().unwrap().len(), 128);
+    assert_eq!(
+        value["result"]["block_chainwork_hex"]
+            .as_str()
+            .unwrap()
+            .len(),
+        128
+    );
     assert_eq!(
         value["result"]["active_tip_chainwork_hex"]
             .as_str()

@@ -25,7 +25,8 @@ use trnm_protocol::pon_wire::{hash, Hash};
 pub const COMMITMENT_SCHEMA: &str = "pon-authenticated-state-commitment-v1";
 pub const EXECUTION_SCHEMA: &str = "pon-authenticated-state-execution-v1";
 pub const GROWTH_COMMITMENT_SCHEMA_V2: &str = "pon-permanent-account-growth-commitment-v2";
-pub const GROWTH_PROFILE_BINDING_SCHEMA_V2: &str =\n    "pon-permanent-account-growth-profile-binding-v2";
+pub const GROWTH_PROFILE_BINDING_SCHEMA_V2: &str =
+    "pon-permanent-account-growth-profile-binding-v2";
 pub const GROWTH_PROFILE_ID_V2: &str = "permanent-account-growth-v2-candidate";
 pub const MAX_PERMANENT_ACCOUNTS_V2: u64 = 1_000_000;
 pub const MAX_WORKING_KEYS_V2: usize = 65_536;
