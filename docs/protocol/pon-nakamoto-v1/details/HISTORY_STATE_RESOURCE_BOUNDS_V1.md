@@ -284,3 +284,36 @@ A caller cancelled during a read receives its original error rather than a
 partially published snapshot or a local-integrity classification. New callbacks
 are not a claim that independent hostile WAN service or permanent account growth
 has been accepted.
+
+## Complete-state root encoding without a second payload map
+
+The existing M06 `pon_executor::root` now feeds canonical encodings directly to
+`pon_wire::state_root_from_entries`. It no longer builds a second complete
+`BTreeMap<Vec<u8>, Vec<u8>>` containing cloned keys and every encoded value before
+hashing. Every value's original canonical grammar is still checked in full,
+in sorted State order, before the total wire count or per-row byte bounds can
+reject. This keeps a late noncanonical value ahead of an earlier oversized key
+or the 65536-key limit, as in the original complete-map algorithm.
+
+After that complete grammar pass, one value is encoded, hashed with its borrowed
+key, and dropped before the next value is requested. The wire root still retains
+all fixed-size key-path and leaf hashes, sorts them by key-path, rejects collisions
+and constructs the entire original 256-level sparse tree. The original empty,
+key, leaf and node hash domains and all root bytes are unchanged. Empty values
+remain distinct from missing leaves. Iterator errors return no partial root.
+
+For N keys the hash-vector payload is still 64N bytes, before Vec capacity and
+allocator overhead, plus one temporary encoding. The separately owned input
+State is still complete. This removes the extra whole encoded-payload map; it is
+not O(log N) total memory, a new sparse-state admission rule, account growth past
+the old cap or a measured endpoint throughput result. Root construction and
+sorting remain nonpreemptive between the existing surrounding callbacks. Full
+account, retained-history, canonical-value and final transactional checks remain.
+
+Native regressions compare against the retained independent pre-refactor sparse
+algorithm, both entry orders, branch edits, missing and present empty records,
+exact and excessive byte/count bounds, duplicate keys and injected iterator
+failure. An owned-value Drop probe verifies that the previous encoding is no
+longer retained when the next item is produced. M06 tests retain original error
+precedence and actual original canonical encodings. These are mechanism checks,
+not public storage or model-service qualification.

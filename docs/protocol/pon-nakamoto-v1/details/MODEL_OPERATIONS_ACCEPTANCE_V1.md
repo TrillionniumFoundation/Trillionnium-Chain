@@ -170,6 +170,68 @@ pre-registration byte responsibility and a late false-gate result at the exact
 reserved byte limit. These are record-contract tests, not new model training or
 future-task efficacy observations.
 
+## Explicit pre-disclosure exposure continuation V2
+
+The same `model_window_history.py` now also provides an explicit V2 transition
+relation for a declared window whose outcome is not yet known. This addresses a
+specific V1 limitation: a malformed, interrupted or aborted evaluation must not
+become an unused future window merely because `verify_acceptance` did not return
+an assessment. Existing V1 schemas, digests and entrypoints are unchanged.
+
+`upgrade_exposure_history` verifies an externally pinned V1 history and embeds it
+unchanged in a `pon-model-exposure-history-v2` value. V2 has fresh history, anchor,
+window and entry hash domains. The old completed records remain old completed
+records: conversion does not invent earlier pre-disclosure custody or execution.
+The combined old and new histories share the original 64-window, 131072-item and
+16MiB bounds, and both histories contribute to the contacted-set exclusions.
+
+The same evaluation owner must implement this ordering:
+
+1. Verify its current external history pin and call `admit_exposure_window` with
+   the exact owner-pinned operation preregistration and run plan.
+2. Durably compare-and-set the returned pending history and pin in that owner's
+   existing store, before disclosing any declared prompt, probe or task material.
+3. Execute only under the separately acquired local permissions and budgets.
+4. Call `finish_exposure_window` for a complete original V1 assessment, or
+   `abort_exposure_window` with a pinned failure-observation digest. Persist the
+   resulting terminal transition against the same pending history identity.
+
+These are pure transition functions, not an installed evaluator, another journal,
+a file-store implementation or a new permission. Every result explicitly has
+`owner_persistence_required=true`. Calling a function without the preceding and
+following owner-side durable CAS does not establish real disclosure continuity.
+An owner receiving an uncertain persistence result must reconcile that exact
+operation before disclosing data; it must not mint a second series or retry pin.
+No ordinary Hepta taskflow or native Chain reward currently invokes these functions.
+
+Admission consumes all declared task IDs, prompt hashes, source groups, probes
+and training-group hashes before any model result is accepted. Exactly one pending
+window may be last in the history; another admission cannot pass it. Admission
+reserves the complete serialized space for either terminal state, including an
+abort at the largest permitted timestamp. A completed result uses full original
+V1 verification, including owner/governance, preregistration and plan binding,
+probe results, costs, retention and consumer observations. Zero gain and false
+reported gates still complete and consume the window. A malformed result leaves
+the pending input intact. Explicit abort permanently retains the exposure without
+fabricating a successful model assessment or certifying the failure's cause.
+An abort after the original closing time is still retained and cannot rewind time.
+
+Terminal windows cannot be finished or aborted again, and an older history pin
+cannot be used to settle a newer pending value. Later evaluation excludes all
+prior pending/aborted/completed contacts, including renamed tasks with identical
+prompts and prior calibration/training/probe material. Retrying an exposed task is
+not forbidden as ordinary training or calibration, but cannot be presented as a
+new unexposed evaluation task. Hidden disclosures and semantic aliases remain
+outside what supplied digest records can establish.
+
+The synthetic regressions cover admission without invoking the evaluator,
+incomplete results, delayed aborts, pending exclusion, exact terminal settlement,
+old-pin and foreign-owner substitution, retained V1 history, new hash domains,
+byte/item/window bounds and reservation for both terminal outcomes. They include
+an aborted, a zero-gain and a positive reported window in one ordered history.
+No actual model was trained or adopted by those fixtures. All external acceptance,
+reward, custody, independence and production flags remain false.
+
 ## Required independent inputs remain blocked
 
 Even when every reported gate passes, every assessment returns all seven external

@@ -11,7 +11,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use trnm_crypto_primitives::qualified_work_task::{verify_development_statement, AdmissionContext};
 use trnm_crypto_primitives::verify_hex_strict;
-use trnm_protocol::pon_wire::{hash, state_root, Envelope, Hash};
+use trnm_protocol::pon_wire::{hash, state_root_from_entries, Envelope, Hash, StateRootInputError};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PROFILE;
@@ -166,36 +166,52 @@ fn hash32(s: &str) -> Result<Hash> {
     hex::decode_to_slice(s, &mut h).map_err(|_| "NONCANONICAL")?;
     Ok(h)
 }
-pub(crate) fn canonical(v: &Value) -> Result<Vec<u8>> {
-    fn visit(v: &Value) -> Result<()> {
-        match v {
-            Value::Null | Value::Bool(_) => Ok(()),
-            Value::Number(n) => require(n.is_u64() || n.is_i64(), "RANGE"),
-            Value::String(s) => require(s.is_ascii(), "NONCANONICAL"),
-            Value::Array(xs) => {
-                for x in xs {
-                    visit(x)?;
-                }
-                Ok(())
+fn validate_canonical(v: &Value) -> Result<()> {
+    match v {
+        Value::Null | Value::Bool(_) => Ok(()),
+        Value::Number(n) => require(n.is_u64() || n.is_i64(), "RANGE"),
+        Value::String(s) => require(s.is_ascii(), "NONCANONICAL"),
+        Value::Array(xs) => {
+            for x in xs {
+                validate_canonical(x)?;
             }
-            Value::Object(m) => {
-                for (k, v) in m {
-                    require(k.is_ascii(), "NONCANONICAL")?;
-                    visit(v)?;
-                }
-                Ok(())
+            Ok(())
+        }
+        Value::Object(m) => {
+            for (k, v) in m {
+                require(k.is_ascii(), "NONCANONICAL")?;
+                validate_canonical(v)?;
             }
+            Ok(())
         }
     }
-    visit(v)?;
+}
+
+pub(crate) fn canonical(v: &Value) -> Result<Vec<u8>> {
+    validate_canonical(v)?;
     serde_json::to_vec(v).map_err(|_| "NONCANONICAL")
 }
+
 pub fn root(state: &State) -> Result<Hash> {
-    let mut bytes = BTreeMap::new();
-    for (k, v) in state {
-        bytes.insert(k.as_bytes().to_vec(), canonical(v)?);
+    // Preserve the original complete grammar/error pass before wire limits.
+    // A late noncanonical value must not be hidden by an earlier oversized key
+    // or by the fixed state count cap. No encoded values are retained here.
+    for value in state.values() {
+        validate_canonical(value)?;
     }
-    state_root(&bytes).map_err(|_| "LIMIT")
+    // The original wire root checks total count before per-row limits.
+    if state.len() > 65_536 {
+        return Err("LIMIT");
+    }
+    state_root_from_entries(state.iter().map(|(key, value)| {
+        serde_json::to_vec(value)
+            .map(|bytes| (key.as_bytes(), bytes))
+            .map_err(|_| "NONCANONICAL")
+    }))
+    .map_err(|error| match error {
+        StateRootInputError::Input(error) => error,
+        StateRootInputError::Wire(_) => "LIMIT",
+    })
 }
 
 #[derive(Clone)]
@@ -2729,5 +2745,106 @@ mod session_tests {
             "SESSION_SEQUENCE"
         );
         assert_eq!(session.state(), &state);
+    }
+}
+
+#[cfg(test)]
+mod streaming_root_tests {
+    use super::*;
+    use trnm_protocol::pon_wire::state_root;
+
+    fn original(state: &State) -> Result<Hash> {
+        let mut bytes = BTreeMap::new();
+        for (key, value) in state {
+            bytes.insert(key.as_bytes().to_vec(), canonical(value)?);
+        }
+        state_root(&bytes).map_err(|_| "LIMIT")
+    }
+
+    #[test]
+    fn streamed_m06_root_keeps_complete_canonical_value_errors_before_wire_limits() {
+        for bad in [json!(0.5), json!(-0.0), json!("λ"), json!({"bad": ["λ"]})] {
+            let values = State::from([("a".repeat(161), json!(0)), ("z".into(), bad)]);
+            assert_eq!(root(&values), original(&values));
+            assert_ne!(root(&values), Err("LIMIT"));
+        }
+        let mut over: State = (0..65_537)
+            .map(|i| (format!("k-{i:06}"), Value::Null))
+            .collect();
+        assert_eq!(root(&over), Err("LIMIT"));
+        over.insert("zz-last".into(), json!(false));
+        assert_eq!(root(&over), original(&over));
+        over.insert("zz-last".into(), json!(["λ"]));
+        assert_eq!(root(&over), original(&over));
+        assert_eq!(root(&over), Err("NONCANONICAL"));
+    }
+
+    #[test]
+    fn streamed_m06_root_matches_original_values_removals_and_branch_edits() {
+        let initial: State = (0..257)
+            .map(|i| {
+                (
+                    format!("key-{i:04}"),
+                    json!({"nonce": i, "array": [null, false, "ascii"], "negative": -1}),
+                )
+            })
+            .collect();
+        let frozen = initial.clone();
+        for count in [0, 1, 16, 31, 129, 257] {
+            let mut state: State = initial
+                .iter()
+                .take(count)
+                .map(|(k, v)| (k.clone(), v.clone()))
+                .collect();
+            assert_eq!(root(&state), original(&state));
+            state.insert("key-0000".into(), Value::Null);
+            state.remove("key-0015");
+            state.insert("first".into(), json!(u64::MAX));
+            assert_eq!(root(&state), original(&state));
+        }
+        assert_eq!(initial, frozen);
+        for size in [4094, 4095] {
+            let state = State::from([("payload".into(), json!("x".repeat(size)))]);
+            assert_eq!(root(&state), original(&state));
+        }
+    }
+
+    #[test]
+    #[ignore = "explicit paired complete-root cost; synthetic values, not native ledger growth"]
+    fn complete_root_encoding_cost() {
+        // One selected implementation per process keeps the measured RSS from
+        // inheriting the other implementation's peak. The caller must compare
+        // complete roots, source/binary identity and all failures across runs.
+        let implementation = std::env::var("TRNM_ROOT_ENCODING_IMPLEMENTATION")
+            .expect("select original or streamed explicitly");
+        assert!(matches!(implementation.as_str(), "original" | "streamed"));
+        let state: State = (0..16_384)
+            .map(|i| (format!("root-cost-{i:05}"), json!("x".repeat(4094))))
+            .collect();
+        let start = std::time::Instant::now();
+        let result = if implementation == "original" {
+            original(std::hint::black_box(&state))
+        } else {
+            root(std::hint::black_box(&state))
+        };
+        let elapsed_ns = start.elapsed().as_nanos();
+        // Equality between the two implementations is checked by the separate
+        // paired caller and the non-ignored independent reference regressions.
+        // This output cannot attest process RSS, source or whole-Node capacity.
+        let digest = result.expect("complete root must actually finish");
+        println!(
+            "{}",
+            json!({
+                "schema": "pon-complete-root-encoding-cost-v1",
+                "implementation": implementation,
+                "state_keys": state.len(),
+                "value_encoding_bytes": 4096,
+                "root": hex::encode(digest),
+                "root_wall_ns": elapsed_ns,
+                "native_ledger_admission": false,
+                "end_to_end_throughput": false,
+                "production_activation": false
+            })
+        );
     }
 }

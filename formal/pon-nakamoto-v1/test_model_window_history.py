@@ -397,5 +397,254 @@ class ModelWindowHistoryTests(unittest.TestCase):
             window.verify_window(**args)
 
 
+class ModelExposureAdmissionTests(unittest.TestCase):
+    """Synthetic owner inputs, not model execution, custody or independence."""
+    def setUp(self):
+        self.first = model_fixture(1)
+        self.legacy = initial_history(self.first)
+        raw, pin = window.freeze_history(self.legacy)
+        self.initial = window.upgrade_exposure_history(raw, pin)
+
+    def admit(self, data, history):
+        raw, pin = window.freeze_exposure_history(history)
+        return window.admit_exposure_window(raw, pin, data['raw'], data['aid'],
+                                             data['plan'], data['pid'])
+
+    def pending_args(self, result):
+        raw, pin = window.freeze_exposure_history(result['history'])
+        self.assertEqual(pin, result['next_history'])
+        return dict(history_raw=raw, expected_history=pin, expected_window=result['window'])
+
+    def finish(self, data, result):
+        return window.finish_exposure_window(**self.pending_args(result),
+            preregistration_raw=data['raw'], expected_preregistration=data['aid'],
+            plan=data['plan'], expected_plan=data['pid'], record=data['record'],
+            receipt=data['receipt'], material=data['material'])
+
+    def abort(self, result, observed_at=None):
+        return window.abort_exposure_window(**self.pending_args(result),
+            observed_at=self.first['receipt']['observed_at'] if observed_at is None else observed_at,
+            failure_digest=identity('retained-failed-process-observation'))
+
+    def test_admission_consumes_before_any_evaluator_or_complete_result(self):
+        original = canonical(self.initial)
+        with patch.object(window, 'verify_acceptance', side_effect=AssertionError('must not run')):
+            start = self.admit(self.first, self.initial)
+        row = start['history']['entries'][-1]
+        self.assertEqual(row['status'], 'pending')
+        self.assertIsNone(row['receipt'])
+        self.assertIsNone(row['reported_gates_passed'])
+        self.assertIsNone(start['assessment'])
+        self.assertTrue(start['window_consumed'])
+        self.assertTrue(start['owner_persistence_required'])
+        self.assertEqual(canonical(self.initial), original)
+        for flag in ('historical_execution_verified', 'hidden_windows_excluded',
+                     'physical_custody_verified', 'prospective_accepted',
+                     'independent_accepted', 'public_reward_eligible', 'production_activation'):
+            self.assertIs(start[flag], False)
+
+    def test_pending_blocks_even_an_unrelated_next_window(self):
+        pending = self.admit(self.first, self.initial)
+        for data in (self.first, model_fixture(2)):
+            with self.assertRaisesRegex(ValueError, 'EXPOSURE_ALREADY_PENDING'):
+                self.admit(data, pending['history'])
+
+    def test_invalid_result_does_not_erase_the_original_pending_exposure(self):
+        pending = self.admit(self.first, self.initial)
+        saved = canonical(pending['history'])
+        invalid = copy.deepcopy(self.first)
+        invalid['record']['schema'] = 'not-a-run'
+        with self.assertRaises(ValueError):
+            self.finish(invalid, pending)
+        self.assertEqual(canonical(pending['history']), saved)
+        with self.assertRaisesRegex(ValueError, 'EXPOSURE_ALREADY_PENDING'):
+            self.admit(model_fixture(2), pending['history'])
+        self.assertEqual(self.abort(pending)['history']['entries'][-1]['status'], 'aborted')
+
+    def test_aborted_window_prevents_task_prompt_and_group_relabelling(self):
+        done = self.abort(self.admit(self.first, self.initial))
+        first = next(t for t in self.first['plan']['tasks'] if t['partition'] == 'evaluation')
+        for field, error in [('id', 'WINDOW_REUSED_TASK'), ('prompt_sha256', 'WINDOW_REUSED_PROMPT'),
+                             ('source_group', 'WINDOW_REUSED_GROUP')]:
+            data = model_fixture(2)
+            task = next(t for t in data['plan']['tasks'] if t['partition'] == 'evaluation')
+            task[field] = first[field]
+            rebuild(data)
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, error):
+                self.admit(data, done['history'])
+        self.assertEqual(self.admit(model_fixture(2), done['history'])['history']['entries'][-1]['status'],
+                         'pending')
+
+    def test_abort_retains_probe_and_training_exposures(self):
+        done = self.abort(self.admit(self.first, self.initial))
+        for field, value, error in [
+            ('prompt_sha256', self.first['prereg']['probes'][0]['prompt'], 'WINDOW_REUSED_PROMPT'),
+            ('source_group', self.first['prereg']['training_groups'][0], 'WINDOW_REUSED_GROUP')]:
+            data = model_fixture(2)
+            task = next(t for t in data['plan']['tasks'] if t['partition'] == 'evaluation')
+            task[field] = value
+            rebuild(data)
+            with self.assertRaisesRegex(ValueError, error):
+                self.admit(data, done['history'])
+
+    def test_three_linked_windows_keep_abort_zero_gain_and_verified_outcome(self):
+        first = self.abort(self.admit(self.first, self.initial))
+        second_data = model_fixture(2)
+        rebuild(second_data, gain=False)
+        second = self.finish(second_data, self.admit(second_data, first['history']))
+        third_data = model_fixture(3)
+        third = self.finish(third_data, self.admit(third_data, second['history']))
+        rows = third['history']['entries']
+        self.assertEqual([row['status'] for row in rows], ['aborted', 'completed', 'completed'])
+        self.assertEqual([row['reported_gates_passed'] for row in rows], [False, False, True])
+        self.assertFalse(third['prospective_accepted'])
+        self.assertFalse(third['production_activation'])
+        self.assertEqual(rows[0], first['history']['entries'][0])
+        self.assertEqual(rows[1], second['history']['entries'][1])
+        self.assertEqual([r['window']['ordinal'] for r in rows], [1, 2, 3])
+
+    def test_completed_and_aborted_windows_cannot_be_resettled_or_resurrected(self):
+        pending = self.admit(self.first, self.initial)
+        for done in (self.abort(pending), self.finish(self.first, pending)):
+            with self.assertRaisesRegex(ValueError, 'EXPOSURE_NOT_PENDING'):
+                self.abort(done)
+            with self.assertRaisesRegex(ValueError, 'EXPOSURE_NOT_PENDING'):
+                self.finish(self.first, done)
+            args = self.pending_args(pending)
+            args['history_raw'] = self.pending_args(done)['history_raw']
+            with self.assertRaisesRegex(ValueError, 'MANIFEST_IDENTITY'):
+                window.abort_exposure_window(**args, observed_at=1000,
+                    failure_digest=identity('failed'))
+
+    def test_settlement_binds_original_window_plan_and_preregistration(self):
+        pending = self.admit(self.first, self.initial)
+        with self.assertRaisesRegex(ValueError, 'EXPOSURE_RESULT_BINDING'):
+            self.finish(model_fixture(2), pending)
+        args = self.pending_args(pending)
+        args['expected_window'] = identity('different-window')
+        with self.assertRaisesRegex(ValueError, 'EXPOSURE_WINDOW_IDENTITY'):
+            window.abort_exposure_window(**args, observed_at=1000, failure_digest=identity('failed'))
+        changed = copy.deepcopy(self.first)
+        changed['plan']['owner_record'] = identity('changed-plan')
+        with self.assertRaises(ValueError):
+            self.finish(changed, pending)
+
+    def test_late_abort_stays_consumed_and_never_fabricates_a_model_result(self):
+        pending = self.admit(self.first, self.initial)
+        time = self.first['prereg']['closes_at'] + 5
+        done = self.abort(pending, time)
+        self.assertEqual(done['history']['entries'][-1]['observed_at'], time)
+        self.assertIsNone(done['assessment'])
+        for invalid in [0, self.first['prereg']['registered_at'], True, window.MAX_TIME + 1]:
+            with self.subTest(time=invalid), self.assertRaises(ValueError):
+                self.abort(pending, invalid)
+        data = model_fixture(2)
+        # No historical time rewind after a late failure.
+        done = self.abort(pending, window.MAX_TIME)
+        with self.assertRaisesRegex(ValueError, 'WINDOW_CHRONOLOGY'):
+            self.admit(data, done['history'])
+
+    def test_upgrade_preserves_complete_legacy_bytes_and_all_exposures(self):
+        legacy = complete(self.first, self.legacy)['history']
+        raw, pin = window.freeze_history(legacy)
+        upgraded = window.upgrade_exposure_history(raw, pin)
+        self.assertEqual(canonical(upgraded['prior_history']), raw)
+        second = model_fixture(2)
+        started = self.admit(second, upgraded)
+        self.assertEqual(started['history']['entries'][0]['window']['ordinal'], 2)
+        second['plan']['tasks'][0]['prompt_sha256'] = self.first['plan']['tasks'][0]['prompt_sha256']
+        second['plan']['tasks'][0]['partition'] = 'evaluation'
+        # Check legacy exclusion through the retained sets, without claiming
+        # original v1 completed records were v2 pre-disclosure registrations.
+        seen, _, _ = window._exposure_history(upgraded)
+        self.assertIn(self.first['plan']['tasks'][0]['prompt_sha256'], seen['prompts'])
+        with self.assertRaisesRegex(ValueError, 'MANIFEST_IDENTITY'):
+            window.upgrade_exposure_history(raw, identity('old-anchor'))
+
+    def test_old_and_new_parsers_and_domains_do_not_silently_upgrade(self):
+        raw, pin = window.freeze_exposure_history(self.initial)
+        with self.assertRaises(ValueError):
+            window._decode_history(raw, H(window.HISTORY_DOMAIN, raw).hex())
+        legacy, _ = window.freeze_history(self.legacy)
+        with self.assertRaises(ValueError):
+            window._decode_exposure_history(legacy, H(window.EXPOSURE_HISTORY_DOMAIN, legacy).hex())
+        with self.assertRaisesRegex(ValueError, 'MANIFEST_IDENTITY'):
+            window._decode_exposure_history(raw, H(window.HISTORY_DOMAIN, raw).hex())
+        self.assertEqual(window._decode_exposure_history(raw, pin), self.initial)
+
+    def test_tampered_head_order_status_and_noncanonical_bytes_refuse(self):
+        pending = self.admit(self.first, self.initial)
+        for field, value in [('head', identity('bad-head')), ('status', 'completed'),
+                             ('receipt', identity('premature-result')), ('reported_gates_passed', True)]:
+            changed = copy.deepcopy(pending['history'])
+            if field == 'head':
+                changed[field] = value
+            else:
+                changed['entries'][-1][field] = value
+                changed['head'] = window._identity(window.EXPOSURE_ENTRY_DOMAIN, changed['entries'][-1])
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                window.freeze_exposure_history(changed)
+        raw, _ = window.freeze_exposure_history(pending['history'])
+        for noncanonical in (raw + b'\n', b'{"head":"' + b'f'*64 + b'",' + raw[1:]):
+            with self.assertRaises(ValueError):
+                window._decode_exposure_history(noncanonical,
+                    H(window.EXPOSURE_HISTORY_DOMAIN, noncanonical).hex())
+
+    def test_both_terminal_shapes_are_reserved_before_disclosure(self):
+        started = self.admit(self.first, self.initial)
+        pending_bytes = len(canonical(started['history']))
+        terminal = copy.deepcopy(started['history'])
+        row = terminal['entries'][-1]
+        row.update(status='aborted', receipt='f'*64, observed_at=window.MAX_TIME,
+                   reported_gates_passed=False)
+        terminal['head'] = window._identity(window.EXPOSURE_ENTRY_DOMAIN, row)
+        terminal_bytes = len(window.freeze_exposure_history(terminal)[0])
+        self.assertGreater(terminal_bytes, pending_bytes)
+        with patch.object(window, 'MAX_HISTORY_BYTES', terminal_bytes - 1):
+            with self.assertRaisesRegex(ValueError, 'WINDOW_HISTORY_BYTE_BOUND'):
+                self.admit(self.first, self.initial)
+        with patch.object(window, 'MAX_HISTORY_BYTES', terminal_bytes):
+            pending = self.admit(self.first, self.initial)
+            self.abort(pending, window.MAX_TIME)
+
+    def test_item_and_window_capacity_are_reserved_before_admission(self):
+        with patch.object(window, 'MAX_WINDOWS', 0):
+            with self.assertRaisesRegex(ValueError, 'WINDOW_HISTORY_BOUND'):
+                self.admit(self.first, self.initial)
+        with patch.object(window, 'MAX_ITEMS', 1):
+            with self.assertRaisesRegex(ValueError, 'WINDOW_HISTORY_ITEM_BOUND'):
+                self.admit(self.first, self.initial)
+
+    def test_wrong_owner_plan_and_cross_context_cannot_register_exposure(self):
+        wrong = copy.deepcopy(self.initial)
+        wrong['prior_history']['context']['owner'] = identity('foreign-owner')
+        wrong['prior_history']['head'] = window._context(wrong['prior_history']['context'])
+        wrong['head'] = window._identity(window.EXPOSURE_ANCHOR_DOMAIN, wrong['prior_history'])
+        with self.assertRaisesRegex(ValueError, 'WINDOW_OWNER_CONTEXT'):
+            self.admit(self.first, wrong)
+        changed = copy.deepcopy(self.first)
+        changed['pid'] = identity('not-the-plan')
+        with self.assertRaises(ValueError):
+            self.admit(changed, self.initial)
+
+
+    def test_finish_rechecks_owner_even_for_a_resealed_foreign_history(self):
+        pending = self.admit(self.first, self.initial)
+        forged = copy.deepcopy(pending)
+        prior = forged['history']['prior_history']
+        prior['context']['owner'] = identity('foreign-durable-owner')
+        prior['head'] = window._context(prior['context'])
+        row = forged['history']['entries'][-1]
+        row['window']['context'] = window._context(prior['context'])
+        row['window']['previous'] = window._identity(window.EXPOSURE_ANCHOR_DOMAIN, prior)
+        forged['history']['head'] = window._identity(window.EXPOSURE_ENTRY_DOMAIN, row)
+        forged['window'] = window._identity(window.EXPOSURE_WINDOW_DOMAIN, row['window'])
+        forged['next_history'] = window.freeze_exposure_history(forged['history'])[1]
+        # Even a caller pinning this self-consistent foreign shape cannot bind
+        # the current receipt to the wrong existing series authority.
+        with self.assertRaisesRegex(ValueError, 'WINDOW_OWNER_CONTEXT'):
+            self.finish(self.first, forged)
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
