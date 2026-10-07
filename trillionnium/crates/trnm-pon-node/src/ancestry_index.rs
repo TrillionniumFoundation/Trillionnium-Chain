@@ -502,42 +502,10 @@ mod tests {
         assert_eq!(observed.last(), Some(&lookup.sql_lookups));
         let lookup = next(&db, ctx, fork2, ids[32], READ_SQL_BUDGET, &mut |_| Ok(())).unwrap();
         assert_eq!(lookup.next, Some(fork1));
-        assert!(contains(
-            &db,
-            ctx,
-            ids[65],
-            ids[32],
-            READ_SQL_BUDGET,
-            &mut |_| Ok(())
-        )
-        .unwrap());
-        assert!(contains(
-            &db,
-            ctx,
-            ids[65],
-            ids[65],
-            READ_SQL_BUDGET,
-            &mut |_| Ok(())
-        )
-        .unwrap());
-        assert!(!contains(
-            &db,
-            ctx,
-            ids[32],
-            ids[65],
-            READ_SQL_BUDGET,
-            &mut |_| Ok(())
-        )
-        .unwrap());
-        assert!(!contains(
-            &db,
-            ctx,
-            ids[65],
-            fork1,
-            READ_SQL_BUDGET,
-            &mut |_| Ok(())
-        )
-        .unwrap());
+        assert!(contains(&db, ctx, ids[65], ids[32], READ_SQL_BUDGET, &mut |_| Ok(())).unwrap());
+        assert!(contains(&db, ctx, ids[65], ids[65], READ_SQL_BUDGET, &mut |_| Ok(())).unwrap());
+        assert!(!contains(&db, ctx, ids[32], ids[65], READ_SQL_BUDGET, &mut |_| Ok(())).unwrap());
+        assert!(!contains(&db, ctx, ids[65], fork1, READ_SQL_BUDGET, &mut |_| Ok(())).unwrap());
         assert_eq!(
             next(&db, ctx, ids[65], fork1, READ_SQL_BUDGET, &mut |_| Ok(()))
                 .unwrap_err()
