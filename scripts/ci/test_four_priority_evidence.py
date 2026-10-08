@@ -154,6 +154,24 @@ class FourPriorityEvidenceTests(unittest.TestCase):
         self.change('manifest.json', lambda m: m.update(work_hardness_accepted=0))
         self.rejects()
 
+    def test_historical_cost_report_exactly_rederives_with_current_math(self):
+        work = self.folder / 'work-cost'
+        raw = check.load(work / 'native-work.json')
+        paired = check.load(work / 'paired/prepared-cost.json')
+        expected = check.load(work / 'diagnostic.json')
+        self.assertEqual(check.historical_cost_diagnostic(raw, paired), expected)
+        # Do not allow the historical projection to erase a numerical result.
+        changed = dict(expected)
+        changed['costs'] = [dict(row) for row in expected['costs']]
+        changed['costs'][0]['invalid_cost_gate'] = True
+        self.assertNotEqual(check.historical_cost_diagnostic(raw, paired), changed)
+
+    def test_historical_cost_report_rejects_added_warning_even_after_rehash(self):
+        self.change('work-cost/diagnostic.json',
+                    lambda m: m['limitations'].append(check.NEW_JOINT_WARNING))
+        self.rehash()
+        self.rejects()
+
     def test_diagnostic_relabel_with_recomputed_hashes(self):
         self.change('work-cost/diagnostic.json', lambda m: m.update(local_observation_gate='pass'))
         self.rehash()
