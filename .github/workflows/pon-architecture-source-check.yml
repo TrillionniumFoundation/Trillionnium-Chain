@@ -1,0 +1,51 @@
+name: PoN paired architecture source check
+on:
+  push:
+    branches: [ci/pon-architecture-source-check-20261008]
+permissions:
+  contents: read
+jobs:
+  exact-inputs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact Chain source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 376676974c537064b65b5507cbee2e2c7de00c91
+          path: chain
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Check out exact Hepta source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/hepta-private-ci
+          ref: eceaa3697cc873142b73121e9e3fb868c4772357
+          path: hepta
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Record actual preflight and immutable source archives
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p retained
+          test "$(git -C chain rev-parse HEAD)" = 376676974c537064b65b5507cbee2e2c7de00c91 || exit 1
+          test "$(git -C hepta rev-parse HEAD)" = eceaa3697cc873142b73121e9e3fb868c4772357 || exit 1
+          (cd chain && bash scripts/project-preflight.sh --audit) > retained/chain-preflight.log 2>&1
+          preflight=$?
+          printf '%s\n' "$preflight" > retained/chain-preflight.exit
+          git -C chain archive --format=tar.gz HEAD > retained/chain.tar.gz
+          git -C hepta archive --format=tar.gz HEAD > retained/hepta.tar.gz
+          git -C chain rev-parse HEAD HEAD^{tree} > retained/chain-identity.txt
+          git -C hepta rev-parse HEAD HEAD^{tree} > retained/hepta-identity.txt
+          (cd retained && sha256sum chain.tar.gz hepta.tar.gz > SHA256SUMS)
+          printf 'This run retains source bytes and a real preflight outcome only. It grants no native tests, public service, work hardness, independent operation or activation.\n' > retained/SCOPE.txt
+          exit "$preflight"
+      - name: Retain exact inputs even when preflight fails
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-paired-architecture-inputs
+          path: retained/
+          if-no-files-found: error
+          retention-days: 7
