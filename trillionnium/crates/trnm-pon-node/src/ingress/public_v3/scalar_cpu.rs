@@ -116,8 +116,10 @@ impl PaidMutationCpuBudget {
     /// first purchased quantum. Beyond it the original conservative shared-credit
     /// gate applies. No request can borrow another request's quantum, reset its
     /// cumulative counter, admit another start in debt, or forgive unknown CPU.
-    /// Raw stored credit can be negative while these reservations are outstanding;
-    /// settlement still yields initial credit + refill - actual measured CPU.
+    /// Raw stored credit can be negative while reservations remain outstanding,
+    /// but adding back those reservations must still leave a nonnegative shared
+    /// balance. A real global deficit cannot be waived by an unused local quantum.
+    /// Settlement still yields initial credit + refill - actual measured CPU.
     fn charge_request_live(
         &mut self,
         now: Instant,
@@ -131,10 +133,12 @@ impl PaidMutationCpuBudget {
             self.unavailable = true;
             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
         }
+        let reserved_ns = (self.in_flight as i128) * i128::from(MUTATION_CPU_START_RESERVE_NS);
         match self.charge_live(now, measured) {
             Err(error)
                 if error.is(crate::ErrorCode::PublicMutationCpuBudget)
-                    && request_total_ns <= MUTATION_CPU_START_RESERVE_NS =>
+                    && request_total_ns <= MUTATION_CPU_START_RESERVE_NS
+                    && self.credit_ns >= -reserved_ns =>
             {
                 Ok(())
             }
@@ -768,5 +772,24 @@ mod request_owned_reserve_tests {
         budget.reserve(now).unwrap();
         assert!(budget.charge_request_live(now, 2, 1).is_err());
         assert!(budget.unavailable);
+        // An unused local quantum cannot hide a global deficit from another
+        // real operation or from the original controlled exhaustion schedules.
+        for owners in [1_u64, 2] {
+            for debt in [1_i128, 1_000_000_000] {
+                let reserve = MUTATION_CPU_START_RESERVE_NS;
+                let (mut budget, now) = budget_with_credit(owners * reserve);
+                for _ in 0..owners {
+                    budget.reserve(now).unwrap();
+                }
+                budget.credit_ns = -i128::from(owners * reserve) - debt;
+                let error = budget.charge_request_live(now, 1, 1).unwrap_err();
+                assert!(error.is(crate::ErrorCode::PublicMutationCpuBudget));
+                for _ in 0..owners {
+                    assert!(budget.settle(now, Some(0)));
+                }
+                assert_eq!(budget.credit_ns, -debt - 1);
+                assert!(budget.reserve(now).is_err());
+            }
+        }
     }
 }
