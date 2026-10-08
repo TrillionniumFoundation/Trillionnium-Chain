@@ -20,6 +20,22 @@ fn same_object(left: &Metadata, right: &Metadata) -> bool {
     left.dev() == right.dev() && left.ino() == right.ino()
 }
 
+fn same_checked_file(left: &Metadata, right: &Metadata) -> bool {
+    same_object(left, right)
+        && left.is_file()
+        && right.is_file()
+        && left.nlink() == 1
+        && right.nlink() == 1
+        && left.permissions().mode() & 0o777 == 0o600
+        && right.permissions().mode() & 0o777 == 0o600
+        && left.len() == right.len()
+        && left.blocks() == right.blocks()
+        && left.mtime() == right.mtime()
+        && left.mtime_nsec() == right.mtime_nsec()
+        && left.ctime() == right.ctime()
+        && left.ctime_nsec() == right.ctime_nsec()
+}
+
 fn checked_file(directory: &File, name: &str) -> Result<File> {
     let file = File::from(
         openat(
@@ -41,6 +57,15 @@ fn checked_file(directory: &File, name: &str) -> Result<File> {
 }
 
 pub(super) fn read(target: &Path) -> Result<Readback> {
+    read_with_path_readback(target, || Ok(()))
+}
+
+// Private operation boundary for deterministic fault schedules. The production
+// entry supplies no effect, authority or caller-controlled hook.
+fn read_with_path_readback(
+    target: &Path,
+    before_path_readback: impl FnOnce() -> Result<()>,
+) -> Result<Readback> {
     ensure(
         target.is_absolute() && target.canonicalize()? == target,
         "GROWTH_STORAGE_TARGET",
@@ -73,16 +98,14 @@ pub(super) fn read(target: &Path) -> Result<Readback> {
     ensure(
         bytes.len() as u64 == before.len()
             && bytes.len() as u64 <= MAX_RECEIPT_BYTES
-            && after.len() == before.len()
-            && after.mtime() == before.mtime()
-            && after.mtime_nsec() == before.mtime_nsec()
-            && after.ctime() == before.ctime()
-            && after.ctime_nsec() == before.ctime_nsec(),
+            && same_checked_file(&before, &after),
         "GROWTH_STORAGE_RECEIPT_CHANGED",
     )?;
     let reservation_meta = reservation.metadata()?;
+    before_path_readback()?;
     // Both payloads came from the same held directory. Path substitution cannot
     // turn those observations into a receipt for a different currently named target.
+    // Recheck policy as well as inode: a late chmod/hardlink must not retain credit.
     let named_directory = fs::symlink_metadata(target)?;
     let named_reservation = fs::symlink_metadata(target.join(RESERVATION))?;
     let named_receipt = fs::symlink_metadata(target.join(RECEIPT))?;
@@ -90,10 +113,8 @@ pub(super) fn read(target: &Path) -> Result<Readback> {
         same_object(&directory_meta, &named_directory)
             && named_directory.is_dir()
             && named_directory.permissions().mode() & 0o777 == 0o700
-            && same_object(&reservation_meta, &named_reservation)
-            && named_reservation.is_file()
-            && same_object(&after, &named_receipt)
-            && named_receipt.is_file(),
+            && same_checked_file(&reservation_meta, &named_reservation)
+            && same_checked_file(&after, &named_receipt),
         "GROWTH_STORAGE_TARGET_CHANGED",
     )?;
     Ok(Readback {
@@ -149,5 +170,55 @@ mod tests {
         assert!(read(&target).is_err());
         fs::set_permissions(&receipt, fs::Permissions::from_mode(0o600)).unwrap();
         assert_eq!(read(&target).unwrap().bytes, b"{}");
+    }
+
+    fn fresh_target(target: &Path) {
+        fs::create_dir(target).unwrap();
+        fs::set_permissions(target, fs::Permissions::from_mode(0o700)).unwrap();
+        for name in [RESERVATION, RECEIPT] {
+            let path = target.join(name);
+            fs::write(&path, b"{}").unwrap();
+            fs::set_permissions(path, fs::Permissions::from_mode(0o600)).unwrap();
+        }
+    }
+
+    #[test]
+    fn late_path_policy_and_object_changes_cannot_pass_readback() {
+        for case in 0..6 {
+            let temp = tempfile::tempdir().unwrap();
+            let parent = temp.path().canonicalize().unwrap();
+            let target = parent.join("target");
+            fresh_target(&target);
+            assert!(read(&target).is_ok());
+            let result = read_with_path_readback(&target, || {
+                match case {
+                    0 => fs::set_permissions(
+                        target.join(RECEIPT),
+                        fs::Permissions::from_mode(0o644),
+                    )?,
+                    1 => fs::set_permissions(
+                        target.join(RESERVATION),
+                        fs::Permissions::from_mode(0o644),
+                    )?,
+                    2 => fs::hard_link(target.join(RESERVATION), target.join("alias"))?,
+                    3 => {
+                        fs::rename(target.join(RECEIPT), target.join("original"))?;
+                        fs::write(target.join(RECEIPT), b"{}")?;
+                        fs::set_permissions(
+                            target.join(RECEIPT),
+                            fs::Permissions::from_mode(0o600),
+                        )?;
+                    }
+                    4 => {
+                        fs::rename(&target, parent.join("original"))?;
+                        fresh_target(&target);
+                    }
+                    5 => fs::hard_link(target.join(RECEIPT), target.join("alias"))?,
+                    _ => unreachable!(),
+                }
+                Ok(())
+            });
+            assert!(result.is_err(), "late substitution case {case} was accepted");
+        }
     }
 }
