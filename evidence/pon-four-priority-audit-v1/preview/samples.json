@@ -1,0 +1,50 @@
+{
+  "cold_fresh_check_each_prefix_ns": [
+    3320207462,
+    3327584061,
+    3353367252,
+    3332327443,
+    3336529720,
+    3336202661,
+    3345730548,
+    3332480051
+  ],
+  "cold_operation_bound_ns": [
+    244425362,
+    244288835,
+    255345261,
+    259480662,
+    246725018,
+    249881580,
+    247782228,
+    240473332
+  ],
+  "order": "four rotating arms",
+  "physical_memory_bound": false,
+  "prefixes": 16,
+  "public_network_ready": false,
+  "samples_per_arm": 8,
+  "schema": "immutable-parent-preview-component-v1",
+  "scope": "complete signed M06 prefixes and commitments; excludes M05, SQLite, Node lock wait and concurrency",
+  "state_keys": 4099,
+  "warm_fresh_check_each_prefix_ns": [
+    80228671,
+    82086898,
+    81534581,
+    82679676,
+    83427160,
+    81302053,
+    83639154,
+    83694568
+  ],
+  "warm_operation_bound_ns": [
+    47696805,
+    42979811,
+    45029710,
+    42839187,
+    47919952,
+    43852535,
+    46811633,
+    45017763
+  ]
+}
