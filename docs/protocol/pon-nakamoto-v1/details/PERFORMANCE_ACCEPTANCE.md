@@ -254,6 +254,18 @@ drop and late success. No honest failures are allowed; nearest-rank p99 must be 
 The attack must include >=100 offered requests, no accepted forged work, <=60 CPU-seconds
 INCLUDING setup, and <=64MiB encoded traffic. These finite single-host screening budgets
 are not preregistered/deployment acceptance or a sustained public adversary capacity claim.
+The local service checker additionally refuses independently long but disjoint
+honest/attacker offer spans. It requires their offered-time ranges to overlap by
+at least half the configured minimum offer span, and requires co-offered traffic
+in at least `max(1, floor(minimum_offer_span / (minimum_window / 10)) - 1)`
+common time buckets (integer nanosecond division; bucket width at least 1ns).
+The existing sixty-second and forty-nine-second screening values yield six-second
+buckets and seven required joint buckets. These checks defeat delayed separate
+campaigns and endpoint-only bursts in supplied ledgers; they do not authenticate
+the ledger, establish CPU saturation, police false timestamps or imply public
+admission security. Both raw populations, their failures and their independent
+costs must still be retained.
+
 This service gate checks only input-contract consistency: budget maxima and minimum
 request counts cannot establish attack saturation, adversarial mix or sufficient hostile
 intensity. An externally reviewed registered arrival/mix plan and observed execution
