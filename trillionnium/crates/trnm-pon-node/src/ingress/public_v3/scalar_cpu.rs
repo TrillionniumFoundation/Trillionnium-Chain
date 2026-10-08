@@ -107,6 +107,40 @@ impl PaidMutationCpuBudget {
         ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         ensure(self.credit_ns >= 0, "PUBLIC_MUTATION_CPU_BUDGET")
     }
+
+    /// Only LiveRequestCpu supplies this checked cumulative owner + worker CPU.
+    /// reserve() already deducted this request's entire start quantum. Requiring
+    /// nonnegative free credit again on its first live sample makes that paid
+    /// quantum unusable near depletion: start, abort, refund, repeat forever.
+    /// Keep every debit and the original final refund; permit only this request's
+    /// first purchased quantum. Beyond it the original conservative shared-credit
+    /// gate applies. No request can borrow another request's quantum, reset its
+    /// cumulative counter, admit another start in debt, or forgive unknown CPU.
+    /// Raw stored credit can be negative while these reservations are outstanding;
+    /// settlement still yields initial credit + refill - actual measured CPU.
+    fn charge_request_live(
+        &mut self,
+        now: Instant,
+        measured: u64,
+        request_total_ns: u64,
+    ) -> Result<()> {
+        if self.in_flight == 0
+            || self.in_flight > MUTATION_CPU_WORKERS
+            || request_total_ns < measured
+        {
+            self.unavailable = true;
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+        match self.charge_live(now, measured) {
+            Err(error)
+                if error.is(crate::ErrorCode::PublicMutationCpuBudget)
+                    && request_total_ns <= MUTATION_CPU_START_RESERVE_NS =>
+            {
+                Ok(())
+            }
+            result => result,
+        }
+    }
 }
 /// Only this request's live thread baselines. No State, packet, identity or
 /// progress authority is cached. Locks are released before any native work.
@@ -208,7 +242,7 @@ impl LiveRequestCpu {
                 .budget
                 .lock()
                 .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
-            budget.charge_live(Instant::now(), measured)
+            budget.charge_request_live(Instant::now(), measured, total)
         })();
         if let Err(error) = &result {
             if error.is(crate::ErrorCode::PublicMutationCpuBudget) {
@@ -640,5 +674,91 @@ impl ServiceMutationCpuDomain {
             start_reserve_ns: MUTATION_CPU_START_RESERVE_NS,
             worker_limit: MUTATION_CPU_WORKERS,
         })
+    }
+}
+
+#[cfg(test)]
+mod request_owned_reserve_tests {
+    use super::*;
+
+    fn budget_with_credit(credit: u64) -> (PaidMutationCpuBudget, Instant) {
+        let mut budget = PaidMutationCpuBudget::new();
+        budget.credit_ns = i128::from(credit);
+        let now = budget.updated;
+        (budget, now)
+    }
+
+    #[test]
+    fn purchased_start_quantum_is_spendable_without_a_second_free_reserve() {
+        let (mut budget, now) = budget_with_credit(MUTATION_CPU_START_RESERVE_NS);
+        budget.reserve(now).unwrap();
+        assert_eq!(budget.credit_ns, 0);
+        budget.charge_request_live(now, 1_000_000, 1_000_000).unwrap();
+        assert_eq!(budget.credit_ns, -1_000_000);
+        assert!(budget.reserve(now).is_err());
+        assert!(budget.settle(now, Some(250_000)));
+        assert_eq!(budget.credit_ns, 98_750_000);
+        assert_eq!(budget.in_flight, 0);
+    }
+
+    #[test]
+    fn both_owned_quanta_are_separate_and_one_extra_nanosecond_remains_debt() {
+        let reserve = MUTATION_CPU_START_RESERVE_NS;
+        let (mut budget, now) = budget_with_credit(2 * reserve);
+        budget.reserve(now).unwrap();
+        budget.reserve(now).unwrap();
+        budget.charge_request_live(now, reserve, reserve).unwrap();
+        budget.charge_request_live(now, reserve, reserve).unwrap();
+        let error = budget.charge_request_live(now, 1, reserve + 1).unwrap_err();
+        assert!(error.is(crate::ErrorCode::PublicMutationCpuBudget));
+        assert!(budget.settle(now, Some(0)));
+        assert!(budget.settle(now, Some(0)));
+        assert_eq!(budget.credit_ns, -1);
+        assert_eq!(budget.in_flight, 0);
+        assert!(budget.reserve(now).is_err());
+    }
+
+    #[test]
+    fn finite_interleavings_conserve_live_and_residual_cpu_without_refill() {
+        let reserve = MUTATION_CPU_START_RESERVE_NS;
+        for first in [0, 1, reserve / 2, reserve - 1, reserve] {
+            for second in [0, 1, reserve / 2, reserve - 1, reserve] {
+                for reverse in [false, true] {
+                    let (mut budget, now) = budget_with_credit(2 * reserve);
+                    budget.reserve(now).unwrap();
+                    budget.reserve(now).unwrap();
+                    let order = if reverse { [second, first] } else { [first, second] };
+                    for total in order {
+                        let prefix = total / 2;
+                        budget.charge_request_live(now, prefix, prefix).unwrap();
+                        budget.charge_request_live(now, total - prefix, total).unwrap();
+                    }
+                    assert!(budget.settle(now, Some(7)));
+                    assert!(budget.settle(now, Some(11)));
+                    assert_eq!(
+                        budget.credit_ns,
+                        i128::from(2 * reserve) - i128::from(first) - i128::from(second) - 18
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn a_live_quantum_cannot_forgive_unknown_or_manufacture_an_unowned_start() {
+        let (mut budget, now) = budget_with_credit(MUTATION_CPU_START_RESERVE_NS);
+        assert!(budget.charge_request_live(now, 1, 1).is_err());
+        assert!(budget.unavailable);
+        let (mut budget, now) = budget_with_credit(MUTATION_CPU_START_RESERVE_NS);
+        budget.reserve(now).unwrap();
+        budget.unavailable = true;
+        let error = budget.charge_request_live(now, 1, 1).unwrap_err();
+        assert!(error.is(crate::ErrorCode::PublicMutationCpuUnavailable));
+        assert!(!budget.settle(now, None));
+        assert!(budget.reserve(now).is_err());
+        let (mut budget, now) = budget_with_credit(MUTATION_CPU_START_RESERVE_NS);
+        budget.reserve(now).unwrap();
+        assert!(budget.charge_request_live(now, 2, 1).is_err());
+        assert!(budget.unavailable);
     }
 }
