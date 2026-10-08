@@ -64,6 +64,27 @@ def tracked_package(root, folder):
         require(blob == safe(folder, name).read_bytes(), 'Git index differs from retained bytes: ' + name)
 
 
+# The recorded four-priority artifact predates the joint-arrival diagnostic
+# wording. Its source bytes and derived numerical/security gates are immutable.
+# Remove ONLY the later non-executing warning when checking this one historical
+# report; current-source work/security acceptance retains the stronger warning
+# and joint-offer screening. No historical input is re-labelled as current.
+NEW_JOINT_WARNING = (
+    'joint offer spans/buckets are local timing checks, not authenticated arrival or attack saturation'
+)
+
+
+def historical_cost_diagnostic(raw, paired):
+    result = cost.acceptance(raw, paired, '7' + 'f' * 63)
+    require(result['service']['status'] == 'unmeasured' and
+            result['local_observation_gate'] == 'not-accepted',
+            'historical diagnostic must not claim service')
+    require(result['limitations'].count(NEW_JOINT_WARNING) == 1,
+            'historical diagnostic projection requires one exact new warning')
+    result['limitations'].remove(NEW_JOINT_WARNING)
+    return result
+
+
 def artifacts(folder):
     require(members(folder) == EXPECTED, 'missing/extra package file')
     top = load(folder / 'manifest.json')
@@ -125,7 +146,7 @@ def artifacts(folder):
     groups = cost.prepared_samples(paired)
     require(len(groups) == 8 and all(len(rows) == 8 for rows in groups.values()), 'paired group counts')
     diagnostic = load(work / 'diagnostic.json')
-    require(diagnostic == cost.acceptance(raw, paired, '7' + 'f' * 63), 'diagnostic derivation')
+    require(diagnostic == historical_cost_diagnostic(raw, paired), 'diagnostic derivation')
     require(diagnostic['local_observation_gate'] == 'not-accepted' and
             diagnostic['service']['status'] == 'unmeasured', 'diagnostic acceptance')
     require(type(top['expected_diagnostic_exit']) is int and top['expected_diagnostic_exit'] == 2 and
