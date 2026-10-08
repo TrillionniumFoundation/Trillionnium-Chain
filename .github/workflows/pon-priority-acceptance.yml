@@ -61,8 +61,9 @@ jobs:
         runner: [ubuntu-24.04, ubuntu-24.04-arm]
         source: [head, prospective-merge]
         # Keep the original full-capacity work separate from short service/model
-        # regressions. Every architecture/source still executes both campaigns.
-        campaign: [service-model, state]
+        # regressions and the original long-history experiment. All three run
+        # separately for each architecture/source; none replaces another gate.
+        campaign: [service-model, state, history]
     env:
       EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
       EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
@@ -187,6 +188,57 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test "$target" "$selector" -- --exact --show-output 2>&1 | tee "$log"
             python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
           done
+      - name: Build the original long-history test separately from measurement
+        id: history_build
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'history' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test ancestry_long_sync --no-run --message-format=json > "$TRNM_CI_RECEIPT_DIR/history-build.jsonl" 2> "$TRNM_CI_RECEIPT_DIR/history-build.stderr"
+          python3 - <<'PYBUILD'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['TRNM_CI_RECEIPT_DIR'])
+          rows = [json.loads(line) for line in (root / 'history-build.jsonl').read_text().splitlines()]
+          paths = [row['executable'] for row in rows
+                   if row.get('reason') == 'compiler-artifact'
+                   and row.get('target', {}).get('name') == 'ancestry_long_sync'
+                   and row.get('profile', {}).get('test') is True and row.get('executable')]
+          assert len(paths) == 1 and Path(paths[0]).is_absolute() and Path(paths[0]).is_file()
+          (root / 'history-executable.txt').write_text(paths[0] + '\n')
+          PYBUILD
+      - name: Execute 4105 real work blocks and paid public full sync
+        if: ${{ !cancelled() && steps.history_build.outcome == 'success' && matrix.campaign == 'history' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_INDEX_EVIDENCE_DIRECTORY="$TRNM_CI_RECEIPT_DIR/long-history"
+          binary="$(cat "$TRNM_CI_RECEIPT_DIR/history-executable.txt")"
+          sha256sum "$binary" > "$TRNM_CI_RECEIPT_DIR/history-binary.sha256"
+          selector=actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal
+          set +e
+          /usr/bin/time -v -o "$TRNM_CI_RECEIPT_DIR/history-resources.txt" "$binary" "$selector" --exact --ignored --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/history.log"
+          codes=("${PIPESTATUS[@]}")
+          set -e
+          printf 'native_exit=%s\nlog_exit=%s\n' "${codes[0]}" "${codes[1]}" > "$TRNM_CI_RECEIPT_DIR/history-exit.txt"
+          test "${codes[0]}" -eq 0 && test "${codes[1]}" -eq 0
+          sha256sum -c "$TRNM_CI_RECEIPT_DIR/history-binary.sha256"
+          python3 scripts/ci/check_required_native_test.py "$TRNM_CI_RECEIPT_DIR/history.log" --test "$selector"
+          python3 - <<'PYHISTORY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['TRNM_CI_RECEIPT_DIR'])
+          report = json.loads((root / 'long-history/summary.json').read_text())
+          assert report['schema'] == 'native-ancestry-long-sync-observation-v1'
+          assert report['passed'] is True and report['blocks'] == report['confirmed_packets'] == 4105
+          assert report['renewals'] == 4 and report['corrupt_active_index_reopen_refused'] is True
+          for key in ('public_network_ready', 'hardness_accepted', 'independent_accepted', 'production_activation'):
+              assert report[key] is False
+          assert (root / 'history-resources.txt').stat().st_size > 0
+          print(json.dumps({'scope': 'native logical-time loopback history; compilation excluded from process time/RSS',
+                            'summary': report, 'wan_tps': None, 'confirmation_latency_slo': None,
+                            'physical_power_loss_accepted': False, 'independent_operators_accepted': False}))
+          PYHISTORY
       - name: Reverify exact unchanged source
         if: always()
         shell: bash
