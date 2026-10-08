@@ -474,8 +474,8 @@ mod actual_depletion {
         let (shared, signal) = (owner.clone(), stop.clone());
         let service = RunningService {
             stop,
-            worker: Some(thread::spawn(move || {
-                match public_v3::serve_public_protected_v3(
+            worker: Some(thread::spawn(
+                move || match public_v3::serve_public_protected_v3(
                     listener,
                     shared,
                     Duration::from_secs(90),
@@ -484,8 +484,8 @@ mod actual_depletion {
                 ) {
                     Ok(metrics) => json!({"metrics": metrics, "error": null}),
                     Err(error) => json!({"metrics": null, "error": error.to_string()}),
-                }
-            })),
+                },
+            )),
         };
         let epoch = Instant::now();
         let deadline = epoch + Duration::from_secs(60);
@@ -539,7 +539,8 @@ mod actual_depletion {
         drop(node);
         let reopened = Node::open(&receiver_path, settings.clone(), 1).unwrap();
         let reopened_equal = before == reopened.read_active().unwrap();
-        let resumed = PublicServer::with_continuous_domain(identity(71), policy(), &domain).unwrap();
+        let resumed =
+            PublicServer::with_continuous_domain(identity(71), policy(), &domain).unwrap();
         let same_epoch = domain.shares_domain_with(&resumed.mutation_cpu_domain())
             && before_meter == resumed.mutation_cpu_domain().observe().unwrap();
         let passed = rounds.len() == ROUNDS
