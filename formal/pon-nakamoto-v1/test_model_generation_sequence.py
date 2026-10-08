@@ -109,12 +109,22 @@ class GenerationSequenceTests(unittest.TestCase):
 
     def test_rehashed_plan_substitution_and_missing_plan_refuse(self):
         case = self.case()
-        case['run_plans'][1]['owner_record'] = identity('substituted-plan')
+        plan = case['run_plans'][1]
+        plan['source_registration']['owner_record'] = identity('substituted-plan')
+        # Remain inside the admitted plan grammar so this reaches identity binding.
+        _, changed_plan = fixtures.freeze(
+            plan, fixtures.validate_run_plan, 'target-decoder-evaluation-run-plan-v1')
+        self.assertNotEqual(changed_plan, case['generations'][1]['run_plan'])
+        self.assertTrue(self.verify(case, legacy=True)['external_receipt_signatures_verified'])
         with self.assertRaisesRegex(ValueError, 'GENERATION_SEQUENCE_PLAN_BINDING'):
             self.verify(case)
         case['run_plans'].pop()
         with self.assertRaisesRegex(ValueError, 'GENERATION_SEQUENCE_PLAN_COUNT'):
             self.verify(case)
+        malformed = self.case()
+        malformed['run_plans'][1]['owner_record'] = identity('unknown-top-level-field')
+        with self.assertRaisesRegex(ValueError, 'LLM_RUN_PLAN_FIELDS'):
+            self.verify(malformed)
 
     def test_no_gain_and_positive_gain_owner_hold_remain_valid_no_update(self):
         decisions = ('adopted', 'no_update', 'adopted')
