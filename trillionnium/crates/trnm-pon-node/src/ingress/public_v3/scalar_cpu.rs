@@ -693,7 +693,9 @@ mod request_owned_reserve_tests {
         let (mut budget, now) = budget_with_credit(MUTATION_CPU_START_RESERVE_NS);
         budget.reserve(now).unwrap();
         assert_eq!(budget.credit_ns, 0);
-        budget.charge_request_live(now, 1_000_000, 1_000_000).unwrap();
+        budget
+            .charge_request_live(now, 1_000_000, 1_000_000)
+            .unwrap();
         assert_eq!(budget.credit_ns, -1_000_000);
         assert!(budget.reserve(now).is_err());
         assert!(budget.settle(now, Some(250_000)));
@@ -727,11 +729,17 @@ mod request_owned_reserve_tests {
                     let (mut budget, now) = budget_with_credit(2 * reserve);
                     budget.reserve(now).unwrap();
                     budget.reserve(now).unwrap();
-                    let order = if reverse { [second, first] } else { [first, second] };
+                    let order = if reverse {
+                        [second, first]
+                    } else {
+                        [first, second]
+                    };
                     for total in order {
                         let prefix = total / 2;
                         budget.charge_request_live(now, prefix, prefix).unwrap();
-                        budget.charge_request_live(now, total - prefix, total).unwrap();
+                        budget
+                            .charge_request_live(now, total - prefix, total)
+                            .unwrap();
                     }
                     assert!(budget.settle(now, Some(7)));
                     assert!(budget.settle(now, Some(11)));
