@@ -97,6 +97,24 @@ jobs:
       - name: Execute original release from-zero controls
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
         run: python3 scripts/ci/run_from_zero_native.py --out "$TRNM_CI_RECEIPT_DIR/from-zero-native"
+      - name: Execute actual CLI observation boundaries and retain every child result
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PUBLIC_REQUEST_OBSERVATION_CLI_EVIDENCE_DIR="$TRNM_CI_RECEIPT_DIR/observation-cli"
+          mkdir -p "$PUBLIC_REQUEST_OBSERVATION_CLI_EVIDENCE_DIR"
+          for selector in \
+            actual_opt_in_capture_and_default_output_keep_the_same_public_context \
+            retention_loss_is_explicit_and_pre_join_kill_does_not_publish_completion \
+            option_and_create_new_nofollow_refusals_precede_node_open \
+            configured_capacity_crosses_previous_limit_and_keeps_exact_current_maximum \
+            post_join_output_failure_preserves_service_facts_and_native_store \
+            joined_miner_failure_still_exports_facts_before_error_propagation; do
+            log="$TRNM_CI_RECEIPT_DIR/observation-$selector.log"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_observation_cli "$selector" -- --exact --show-output 2>&1 | tee "$log"
+            python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
+          done
       - name: Execute isolated original debug pressure regression
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
         shell: bash
@@ -146,6 +164,20 @@ jobs:
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/migration.log"
           grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/migration.log"
+      - name: Execute actual obligation ranges and native reorganization regressions
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'state' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for entry in \
+            account_obligation_ranges:monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission \
+            native_node:test_every_reorg_process_cut_and_admission_gap_recovers_once \
+            native_node:test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry; do
+            IFS=: read -r target selector <<< "$entry"
+            log="$TRNM_CI_RECEIPT_DIR/state-$selector.log"
+            cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test "$target" "$selector" -- --exact --show-output 2>&1 | tee "$log"
+            python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
+          done
       - name: Reverify exact unchanged source
         if: always()
         shell: bash

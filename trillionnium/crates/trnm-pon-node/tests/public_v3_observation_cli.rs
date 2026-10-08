@@ -376,6 +376,8 @@ fn retention_loss_is_explicit_and_pre_join_kill_does_not_publish_completion() {
 #[test]
 fn option_and_create_new_nofollow_refusals_precede_node_open() {
     let f = Fixture::new("refusals");
+    let maximum = ingress::public_v3::MAX_REQUEST_OBSERVATION_RECORDS;
+    let too_many = maximum.checked_add(1).unwrap().to_string();
     let cases: &[(&str, &[&str], &str)] = &[
         (
             "capacity-alone",
@@ -406,7 +408,7 @@ fn option_and_create_new_nofollow_refusals_precede_node_open() {
                 ingress::public_v3::PROFILE,
                 "--public-development-network",
                 "--request-observation-capacity",
-                "4097",
+                &too_many,
             ],
             "PUBLIC_OBSERVATION_CAPACITY",
         ),
@@ -446,7 +448,12 @@ fn option_and_create_new_nofollow_refusals_precede_node_open() {
         }
         let out = run(c, &f.root, label);
         assert_eq!(out.status.code(), Some(2));
-        assert!(String::from_utf8_lossy(&out.stderr).contains(expected));
+        assert!(
+            String::from_utf8_lossy(&out.stderr).contains(expected),
+            "{label}: expected {expected}; stdout={} stderr={}",
+            String::from_utf8_lossy(&out.stdout),
+            String::from_utf8_lossy(&out.stderr)
+        );
         assert!(!f.root.join(format!("{label}.store")).exists());
         assert!(!output.exists());
     }
@@ -478,6 +485,34 @@ fn option_and_create_new_nofollow_refusals_precede_node_open() {
         fs::read(f.root.join("existing")).unwrap(),
         b"original bytes"
     );
+}
+
+#[test]
+fn configured_capacity_crosses_previous_limit_and_keeps_exact_current_maximum() {
+    let f = Fixture::new("capacity-boundary");
+    let maximum = ingress::public_v3::MAX_REQUEST_OBSERVATION_RECORDS as u64;
+    // Freeze the current local retention policy independently of its consumer.
+    // This exercises configured capacities, not 16,384 live requests or an SLA.
+    assert_eq!(maximum, 16_384);
+    for (label, capacity) in [("previous-plus-one", 4_097), ("maximum", maximum)] {
+        let mut service = f.service(label, true, Some(capacity), false);
+        assert_success(&f.head(&service, &format!("{label}-head")));
+        assert_success(&service.finish());
+        let v = f.observation(label);
+        assert_eq!(v["snapshot"]["capacity"], capacity);
+        assert_eq!(v["snapshot"]["accepted_connections_seen"], 1);
+        assert_eq!(v["snapshot"]["records"].as_array().unwrap().len(), 1);
+        assert_eq!(v["snapshot"]["records_not_retained"], 0);
+        assert_eq!(v["completion"]["capture_coverage_complete"], true);
+        assert_eq!(v["completion"]["all_scoped_workers_joined"], true);
+        assert_eq!(v["public_network_ready"], false);
+        assert_eq!(v["production_activation"], false);
+        let output = f.root.join(format!("{label}.json"));
+        assert!(fs::metadata(output).unwrap().len() <= 16 * 1024 * 1024);
+        let store = f.root.join(format!("{label}.store"));
+        let node = Node::open(&store, f.settings.clone(), 1).unwrap();
+        assert_eq!(node.active().unwrap().0, f.settings.genesis());
+    }
 }
 
 #[test]
