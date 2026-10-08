@@ -246,7 +246,18 @@ impl LiveRequestCpu {
                 .budget
                 .lock()
                 .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
-            budget.charge_request_live(Instant::now(), measured, total)
+            // A final sample is still useful evidence when the shared
+            // reservation disappeared before settlement.  Preserve that
+            // request-local sample and latch the shared account unavailable;
+            // `finish` will report the known CPU with an uncertain refund.
+            // Checkpoints remain fail-closed because they cannot continue
+            // without an owned reservation.
+            if remove && (budget.in_flight == 0 || budget.in_flight > MUTATION_CPU_WORKERS) {
+                budget.unavailable = true;
+                Ok(())
+            } else {
+                budget.charge_request_live(Instant::now(), measured, total)
+            }
         })();
         if let Err(error) = &result {
             if error.is(crate::ErrorCode::PublicMutationCpuBudget) {
