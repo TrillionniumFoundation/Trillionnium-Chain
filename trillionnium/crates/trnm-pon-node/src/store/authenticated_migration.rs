@@ -33,6 +33,9 @@ const GROWTH_RESERVATION_RECEIPT: &str = "growth-storage-reservation.json";
 const MIN_GROWTH_RESERVATION_BYTES: u64 = 1024 * 1024;
 const MAX_GROWTH_RESERVATION_BYTES: u64 = 8 * 1024 * 1024 * 1024;
 
+#[path = "growth_reservation_io.rs"]
+mod growth_reservation_io;
+
 /// Cancellation is checked before any target publication and within proof,
 /// execution, SQL-copy and authenticated-node work. No callback follows publish.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -164,8 +167,8 @@ impl Node {
 
     /// Reserve actual local filesystem blocks for the exact retained candidate.
     /// The target must be absent under an existing canonical parent. Any failure
-    /// after target creation removes the new target rather than publishing a
-    /// partial reservation.
+    /// after target creation retains the uncertain target for exact readback;
+    /// it never recursively deletes a path that may have been replaced.
     pub fn reserve_growth_profile_storage_v2(
         &self,
         binding: &GrowthProfileBindingV2,
@@ -250,16 +253,30 @@ impl Node {
                 .create_new(true)
                 .mode(0o600)
                 .open(&receipt_path)?;
-            receipt_file.write_all(&serde_json::to_vec_pretty(&receipt)?)?;
+            let receipt_bytes = serde_json::to_vec_pretty(&receipt)?;
+            ensure(
+                receipt_bytes.len() as u64 <= growth_reservation_io::MAX_RECEIPT_BYTES,
+                "GROWTH_STORAGE_RECEIPT_LIMIT",
+            )?;
+            receipt_file.write_all(&receipt_bytes)?;
             receipt_file.sync_all()?;
             sync_dir(target)?;
-            let retained: GrowthStorageReservationV2 =
-                serde_json::from_slice(&fs::read(&receipt_path)?)?;
-            ensure(retained == receipt, "GROWTH_STORAGE_RECEIPT")?;
+            sync_dir(parent)?;
+            let readback = growth_reservation_io::read(target)?;
+            let retained: GrowthStorageReservationV2 = serde_json::from_slice(&readback.bytes)?;
+            ensure(
+                readback.bytes == receipt_bytes
+                    && retained == receipt
+                    && readback.reservation.len() == requested_bytes
+                    && readback.reservation.blocks().checked_mul(512)
+                        == Some(physically_reserved_bytes),
+                "GROWTH_STORAGE_RECEIPT",
+            )?;
             Ok(receipt)
         })();
         if result.is_err() {
-            let _ = fs::remove_dir_all(target);
+            // The operation may have allocated bytes or persisted its receipt.
+            // Preserve that exact uncertainty and never delete by a mutable path.
             let _ = sync_dir(parent);
         }
         result
@@ -285,36 +302,9 @@ impl Node {
         let expected = growth_profile_binding_v2(&self.settings, &commitment, storage_namespace)
             .map_err(|error| Error::from(format!("GROWTH_STORAGE_NAMESPACE:{error:?}")))?;
         ensure(&expected == binding, "GROWTH_STORAGE_BINDING")?;
-        ensure(
-            target.is_absolute() && target.canonicalize()? == target && target.is_dir(),
-            "GROWTH_STORAGE_TARGET",
-        )?;
-        let target_meta = fs::symlink_metadata(target)?;
-        ensure(
-            target_meta.file_type().is_dir()
-                && target_meta.nlink() >= 1
-                && target_meta.permissions().mode() & 0o777 == 0o700,
-            "GROWTH_STORAGE_TARGET",
-        )?;
-        let reservation_path = target.join(GROWTH_RESERVATION_FILE);
-        let receipt_path = target.join(GROWTH_RESERVATION_RECEIPT);
-        ensure(
-            reservation_path.canonicalize()? == reservation_path
-                && receipt_path.canonicalize()? == receipt_path,
-            "GROWTH_STORAGE_TARGET",
-        )?;
-        let reservation_meta = fs::symlink_metadata(&reservation_path)?;
-        let receipt_meta = fs::symlink_metadata(&receipt_path)?;
-        ensure(
-            reservation_meta.file_type().is_file()
-                && reservation_meta.nlink() == 1
-                && reservation_meta.permissions().mode() & 0o777 == 0o600
-                && receipt_meta.file_type().is_file()
-                && receipt_meta.nlink() == 1
-                && receipt_meta.permissions().mode() & 0o777 == 0o600,
-            "GROWTH_STORAGE_TARGET",
-        )?;
-        let receipt_bytes = fs::read(&receipt_path)?;
+        let readback = growth_reservation_io::read(target)?;
+        let reservation_meta = readback.reservation;
+        let receipt_bytes = readback.bytes;
         let receipt: GrowthStorageReservationV2 = serde_json::from_slice(&receipt_bytes)?;
         ensure(
             serde_json::to_vec_pretty(&receipt)? == receipt_bytes

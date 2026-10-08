@@ -1039,3 +1039,53 @@ The separate actual five-stage before-key/short Native experiment closed with re
 The fresh Mode5 SOURCE candidate extends that exact formatted basis with distinct Pool operation purposes, original admission and ordered-prefix witnesses, two-phase lease reconciliation, and explicit known SIGKILL process residual settlement before restart authorization. The new service remains externally authorized by the same operator. All task/class/global allocations and measured CPU remain append-only and non-refundable; original full Work, M06, wire, scalar CPU constants and SQL fences remain mandatory. The original 8193 inputs, queue/conflict/status behavior, depth six, height-ten owned kill/reopen, resource boundaries and complete three-store oracle are unchanged acceptance requirements. New compilation, keys, signatures, Node binary, original normal traffic, recovery, full-reference/SQL and whole/104 actual references are None/HOLD until Root's actual closure. There is no source-only PASS or acceptance inherited from Mode4.
 
 Navigation: [qualified Mode4 limited entry](../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE4.md); [Mode5 exact Pool, lease and recovery acceptance](../protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE5.md).
+
+
+## Directed architecture boundary continuation — 2026-10-08
+
+This continues the same PN0–PN6 sequence and existing owners; it is not a
+parallel plan, new supervisor, trainer, journal, registry or deployment.
+
+The Hepta continuation joins the existing bounded process exchange to current
+height/work/effect-bound observations. Its next sealed-image increment uses
+existing provider byte-identity primitives and the same final-use/TaskFlow host.
+An executable-byte identity is not data-export, installation or effect authority.
+The chain's observed generation and Hepta's final-use generation are different
+namespaces and must never be compared by integer equality. Downstream adoption
+still requires the independently current local withdrawal/selection/resource
+checks, not just a retained successful chain observation.
+
+The native growth reservation owner now reads bounded receipt bytes through a
+held target directory and checked nonblocking/no-follow file descriptors. It
+checks actual opened file identities and rereads the current pathname identities
+before returning. A successful initial reservation syncs the parent directory as
+well as files and the target. A failed reservation retains the uncertain target
+for exact reconciliation; it never recursively deletes a potentially substituted
+path. The new readback bound is64KiB and is not a new ledger capacity. This does
+not implement native execution beyond65,536 total keys or grant sufficient storage
+for the1,000,000-account research relation. That actual growth transition remains
+an explicit new profile/genesis/store implementation and replay obligation.
+
+The existing model-window owner gains an explicitly selected V2 consumer-decision
+relation: score improvement and adoption authority are separate. A candidate may
+improve the declared metric while remaining unadopted for a signed safety,
+consent, resource or selection hold. Fresh receipt/attestation/result domains bind
+the typed reason and exact owner-decision evidence identity. V1 shapes and domains
+remain unchanged. These are supplied-record/signature contracts; the ordinary
+Hepta installation/consumption path has not been executed by those fixtures.
+
+| Upgrade subject | Existing authoritative boundary | Insufficient evidence |
+|---|---|---|
+| Model parameter bytes | Current artifact, evaluation, selection, withdrawal, final-use and resource owners | Better score, chain inclusion or a publication receipt alone |
+| Neuron topology or executable code | Existing runtime/release and capability owners, compatibility and recovery validation | A parameter-adoption grant or model vote |
+| Consensus rule, verifier or state root | Explicit protocol release, new activation context and applicable migration/replay | Model quality, claimed compute or local code replacement |
+
+Exact source tests and independent operation remain distinct. The retained x64/ARM
+cost jobs use same-target valid, false-transcript and late-product inputs and retain
+setup/search/failure denominators. An additional local replay of their exact x64
+binary remains a binary replay, not a fresh build, CPU/energy measurement, public
+service qualification or independent operator campaign. Sustained service evidence
+with no observed budget depletion cannot be promoted to saturation acceptance.
+WAN partition/heal, full disk, unavailable materials, cold recovery, physical loss
+and long-run client-confirmed tail latency require actual scoped observations.
+No new document, reader pass or signature changes any production/release flag.
