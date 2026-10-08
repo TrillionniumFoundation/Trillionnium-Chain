@@ -218,7 +218,10 @@ mod tests {
                 }
                 Ok(())
             });
-            assert!(result.is_err(), "late substitution case {case} was accepted");
+            assert!(
+                result.is_err(),
+                "late substitution case {case} was accepted"
+            );
         }
     }
 }
