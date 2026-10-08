@@ -26,14 +26,35 @@ fn same_checked_file(left: &Metadata, right: &Metadata) -> bool {
         && right.is_file()
         && left.nlink() == 1
         && right.nlink() == 1
-        && left.permissions().mode() & 0o777 == 0o600
-        && right.permissions().mode() & 0o777 == 0o600
+        && left.permissions().mode() & 0o7777 == 0o600
+        && right.permissions().mode() & 0o7777 == 0o600
         && left.len() == right.len()
         && left.blocks() == right.blocks()
         && left.mtime() == right.mtime()
         && left.mtime_nsec() == right.mtime_nsec()
         && left.ctime() == right.ctime()
         && left.ctime_nsec() == right.ctime_nsec()
+}
+
+fn checked_directory(target: &Path) -> Result<File> {
+    ensure(
+        target.is_absolute() && target.canonicalize()? == target,
+        "GROWTH_STORAGE_TARGET",
+    )?;
+    let directory = File::from(
+        open(
+            target,
+            OFlags::RDONLY | OFlags::DIRECTORY | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+            Mode::empty(),
+        )
+        .map_err(|e| Error::from(format!("GROWTH_STORAGE_OPEN:{e}")))?,
+    );
+    let metadata = directory.metadata()?;
+    ensure(
+        metadata.is_dir() && metadata.permissions().mode() & 0o7777 == 0o700,
+        "GROWTH_STORAGE_TARGET",
+    )?;
+    Ok(directory)
 }
 
 fn checked_file(directory: &File, name: &str) -> Result<File> {
@@ -50,7 +71,7 @@ fn checked_file(directory: &File, name: &str) -> Result<File> {
     ensure(
         metadata.is_file()
             && metadata.nlink() == 1
-            && metadata.permissions().mode() & 0o777 == 0o600,
+            && metadata.permissions().mode() & 0o7777 == 0o600,
         "GROWTH_STORAGE_TARGET",
     )?;
     Ok(file)
@@ -66,23 +87,8 @@ fn read_with_path_readback(
     target: &Path,
     before_path_readback: impl FnOnce() -> Result<()>,
 ) -> Result<Readback> {
-    ensure(
-        target.is_absolute() && target.canonicalize()? == target,
-        "GROWTH_STORAGE_TARGET",
-    )?;
-    let directory = File::from(
-        open(
-            target,
-            OFlags::RDONLY | OFlags::DIRECTORY | OFlags::NOFOLLOW | OFlags::CLOEXEC,
-            Mode::empty(),
-        )
-        .map_err(|e| Error::from(format!("GROWTH_STORAGE_OPEN:{e}")))?,
-    );
+    let directory = checked_directory(target)?;
     let directory_meta = directory.metadata()?;
-    ensure(
-        directory_meta.is_dir() && directory_meta.permissions().mode() & 0o777 == 0o700,
-        "GROWTH_STORAGE_TARGET",
-    )?;
     let reservation = checked_file(&directory, RESERVATION)?;
     let receipt = checked_file(&directory, RECEIPT)?;
     let before = receipt.metadata()?;
@@ -103,16 +109,20 @@ fn read_with_path_readback(
     )?;
     let reservation_meta = reservation.metadata()?;
     before_path_readback()?;
-    // Both payloads came from the same held directory. Path substitution cannot
-    // turn those observations into a receipt for a different currently named target.
-    // Recheck policy as well as inode: a late chmod/hardlink must not retain credit.
-    let named_directory = fs::symlink_metadata(target)?;
-    let named_reservation = fs::symlink_metadata(target.join(RESERVATION))?;
-    let named_receipt = fs::symlink_metadata(target.join(RECEIPT))?;
+    // Reopen one checked directory and resolve both final files relative to it.
+    // Equal leaf inodes do not excuse a replaced ancestor symlink or special
+    // permission bits. This is an observation fence, not a future pathname lease.
+    let named_directory = checked_directory(target)?;
+    let named_directory_meta = named_directory.metadata()?;
+    let named_reservation = checked_file(&named_directory, RESERVATION)?.metadata()?;
+    let named_receipt = checked_file(&named_directory, RECEIPT)?.metadata()?;
+    let final_directory = fs::symlink_metadata(target)?;
     ensure(
-        same_object(&directory_meta, &named_directory)
-            && named_directory.is_dir()
-            && named_directory.permissions().mode() & 0o777 == 0o700
+        same_object(&directory_meta, &named_directory_meta)
+            && same_object(&named_directory_meta, &final_directory)
+            && final_directory.is_dir()
+            && final_directory.permissions().mode() & 0o7777 == 0o700
+            && target.canonicalize()? == target
             && same_checked_file(&reservation_meta, &named_reservation)
             && same_checked_file(&after, &named_receipt),
         "GROWTH_STORAGE_TARGET_CHANGED",
@@ -192,10 +202,9 @@ mod tests {
             assert!(read(&target).is_ok());
             let result = read_with_path_readback(&target, || {
                 match case {
-                    0 => fs::set_permissions(
-                        target.join(RECEIPT),
-                        fs::Permissions::from_mode(0o644),
-                    )?,
+                    0 => {
+                        fs::set_permissions(target.join(RECEIPT), fs::Permissions::from_mode(0o644))?
+                    }
                     1 => fs::set_permissions(
                         target.join(RESERVATION),
                         fs::Permissions::from_mode(0o644),
@@ -218,10 +227,52 @@ mod tests {
                 }
                 Ok(())
             });
-            assert!(
-                result.is_err(),
-                "late substitution case {case} was accepted"
-            );
+            assert!(result.is_err(), "late substitution case {case} was accepted");
+        }
+    }
+
+    #[test]
+    fn late_ancestor_symlink_cannot_preserve_path_acceptance() {
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path().canonicalize().unwrap();
+        let parent = root.join("parent");
+        fs::create_dir(&parent).unwrap();
+        let target = parent.join("target");
+        fresh_target(&target);
+        assert!(read(&target).is_ok());
+        let result = read_with_path_readback(&target, || {
+            let moved = root.join("moved");
+            fs::rename(&parent, &moved)?;
+            symlink(&moved, &parent)?;
+            Ok(())
+        });
+        assert!(result.is_err());
+        assert_eq!(read(&root.join("moved/target")).unwrap().bytes, b"{}");
+    }
+
+    #[test]
+    fn special_permission_bits_refuse_at_open_and_final_readback() {
+        for name in [None, Some(RESERVATION), Some(RECEIPT)] {
+            for special in [0o1000, 0o2000, 0o4000] {
+                let temp = tempfile::tempdir().unwrap();
+                let target = temp.path().canonicalize().unwrap().join("target");
+                fresh_target(&target);
+                let path = name.map_or_else(|| target.clone(), |name| target.join(name));
+                let allowed = if name.is_some() { 0o600 } else { 0o700 };
+                assert!(read(&target).is_ok());
+                let result = read_with_path_readback(&target, || {
+                    fs::set_permissions(&path, fs::Permissions::from_mode(allowed | special))?;
+                    Ok(())
+                });
+                assert_eq!(
+                    fs::metadata(&path).unwrap().permissions().mode() & 0o7777,
+                    allowed | special
+                );
+                assert!(result.is_err());
+                assert!(read(&target).is_err());
+                fs::set_permissions(&path, fs::Permissions::from_mode(allowed)).unwrap();
+                assert_eq!(read(&target).unwrap().bytes, b"{}");
+            }
         }
     }
 }
