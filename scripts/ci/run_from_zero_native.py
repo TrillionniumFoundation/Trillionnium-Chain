@@ -434,6 +434,10 @@ def run(out: Path) -> dict:
             result['failures'].append(str(error))
         finally:
             os.chdir(previous_cwd)
+        # A failed format check is a named gate failure even when every
+        # native test ran successfully. Keep the actual build/test receipts.
+        if result.get('format') is not None and not result['format_passed']:
+            result['failures'].append('NATIVE_FORMAT_CHECK_FAILED')
         result['passed'] = (result['source_before'] == result['source_after']
                             and result['source_recompiled'] and result['format_passed']
                             and result['all_named_tests_passed'] and result['execution_finished']
