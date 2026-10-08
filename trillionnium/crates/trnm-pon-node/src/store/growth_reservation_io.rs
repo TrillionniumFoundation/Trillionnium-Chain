@@ -163,7 +163,7 @@ mod tests {
         assert!(read(&target).is_err());
         fs::remove_file(&receipt).unwrap();
         rustix::fs::mknodat(
-            &File::open(target).unwrap(),
+            File::open(&target).unwrap(),
             RECEIPT,
             rustix::fs::FileType::Fifo,
             Mode::RUSR | Mode::WUSR,
