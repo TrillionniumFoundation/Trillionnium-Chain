@@ -309,10 +309,24 @@ def service_acceptance(raw: dict[str, Any] | None, target: str, policy: dict[str
     spans = {kind: (max(r['offered_ns'] for r in raw[kind]) - min(r['offered_ns'] for r in raw[kind]))
              if raw[kind] else 0 for kind in ('honest', 'attacker')}
     wire = sum(r['encoded_bytes'] for r in raw['attacker'])
+    # Separate population spans cannot establish concurrent offered load: two
+    # disjoint 49-second campaigns can satisfy each span inside a long window.
+    # These are source-bound LOCAL screening checks, not attack saturation proof.
+    offers = {kind: sorted(row['offered_ns'] for row in raw[kind])
+              for kind in ('honest', 'attacker')}
+    shared_offer_span = (max(0, min(offers['honest'][-1], offers['attacker'][-1])
+                             - max(offers['honest'][0], offers['attacker'][0]))
+                         if offers['honest'] and offers['attacker'] else 0)
+    bucket_width = max(1, policy['minimum_window_ns'] // 10)
+    shared_buckets = ({time // bucket_width for time in offers['honest']}
+                      & {time // bucket_width for time in offers['attacker']})
+    minimum_shared_buckets = max(1, policy['minimum_offer_span_ns'] // bucket_width - 1)
     checks = {
         'minimum_window': window >= policy['minimum_window_ns'],
         'honest_offer_span': spans['honest'] >= policy['minimum_offer_span_ns'],
         'attacker_offer_span': spans['attacker'] >= policy['minimum_offer_span_ns'],
+        'shared_offer_interval': shared_offer_span >= policy['minimum_offer_span_ns'] // 2,
+        'shared_offer_buckets': len(shared_buckets) >= minimum_shared_buckets,
         'honest_offered_denominator': len(latency) >= policy['minimum_honest_offered'],
         'honest_failure_limit': failures <= policy['maximum_honest_failures'],
         'honest_p99_deadline': p99 is not None and p99 <= policy['honest_p99_deadline_ns'],
@@ -327,6 +341,8 @@ def service_acceptance(raw: dict[str, Any] | None, target: str, policy: dict[str
             'honest_failures': failures, 'honest_p99_ns': p99,
             'attacker_offered': len(raw['attacker']), 'attacker_construction_cpu_ns': cpu,
             'attacker_setup_cpu_ns': setup, 'offer_span_ns': spans,
+            'shared_offer_span_ns': shared_offer_span, 'shared_offer_buckets': len(shared_buckets),
+            'shared_bucket_width_ns': bucket_width, 'minimum_shared_buckets': minimum_shared_buckets,
             'attacker_encoded_bytes': wire,
             'defender_rejection_cpu_ns': sum(r['rejection_cpu_ns'] for r in raw['attacker']),
             'window_ns': window, 'scope': 'input-contract consistency only; supplied local ledger is not independently authenticated',
@@ -390,6 +406,7 @@ def acceptance(raw: dict[str, Any], prepared: dict[str, Any], expected_target: s
                            'prefix preparation is a conservative measured honest proof cost, not cheapest attack setup',
                            'fastest supplied mean is not a lower bound on adversarial algorithms or hardware',
                            'bounded successful samples do not measure exhausted searches or a public arrival process',
+                           'joint offer spans/buckets are local timing checks, not authenticated arrival or attack saturation',
                            'service budget maxima do not establish adversarial saturation or sufficient attack intensity'],
             'baseline_summary': baseline, **{flag: False for flag in FALSE_FLAGS}}
 

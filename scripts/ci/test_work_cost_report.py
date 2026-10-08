@@ -312,6 +312,51 @@ class WorkSecurityAcceptanceTests(unittest.TestCase):
             row['offered_ns'] = 0
         self.assertFalse(self.service_result()['checks']['attacker_offer_span'])
 
+    def test_disjoint_49_second_campaigns_do_not_qualify_concurrent_service(self):
+        # Both populations individually meet the historic offer-span rule, but
+        # the attacker starts only after the honest service population has gone.
+        self.service['window_ns'] = 120_000_000_000
+        for row in self.service['attacker']:
+            row['offered_ns'] += 60_000_000_000
+            row['finished_ns'] += 60_000_000_000
+        result = self.service_result()
+        self.assertTrue(result['checks']['honest_offer_span'])
+        self.assertTrue(result['checks']['attacker_offer_span'])
+        self.assertFalse(result['checks']['shared_offer_interval'])
+        self.assertFalse(result['checks']['shared_offer_buckets'])
+        self.assertEqual(result['shared_offer_span_ns'], 0)
+        self.assertEqual(result['status'], 'fail')
+
+    def test_sparse_endpoint_bursts_cannot_fake_sustained_shared_offers(self):
+        for kind in ('honest', 'attacker'):
+            for row in self.service[kind]:
+                row['offered_ns'] = 0 if row['id'] < 50 else 49_500_000_000
+                row['finished_ns'] = row['offered_ns'] + 10
+        result = self.service_result()
+        self.assertTrue(result['checks']['honest_offer_span'])
+        self.assertTrue(result['checks']['attacker_offer_span'])
+        self.assertTrue(result['checks']['shared_offer_interval'])
+        self.assertFalse(result['checks']['shared_offer_buckets'])
+        self.assertEqual(result['shared_offer_buckets'], 2)
+        self.assertEqual(result['status'], 'fail')
+
+    def test_partially_overlapping_population_fails_bucket_density(self):
+        self.service['window_ns'] = 80_000_000_000
+        for row in self.service['attacker']:
+            row['offered_ns'] += 20_000_000_000
+            row['finished_ns'] += 20_000_000_000
+        result = self.service_result()
+        self.assertTrue(result['checks']['shared_offer_interval'])
+        self.assertFalse(result['checks']['shared_offer_buckets'])
+        self.assertEqual(result['status'], 'fail')
+
+    def test_aligned_actual_offer_schedule_satisfies_local_timing_checks(self):
+        result = self.service_result()
+        self.assertTrue(result['checks']['shared_offer_interval'])
+        self.assertTrue(result['checks']['shared_offer_buckets'])
+        self.assertGreaterEqual(result['shared_offer_buckets'], result['minimum_shared_buckets'])
+        self.assertEqual(result['status'], 'pass')
+
     def test_empty_attack_is_not_attack_acceptance(self):
         self.service['attacker'] = []
         self.assertFalse(self.service_result()['checks']['attacker_offered_denominator'])
