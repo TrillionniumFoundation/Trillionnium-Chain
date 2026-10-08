@@ -375,6 +375,73 @@ fn test_native_cli_replays_the_existing_signed_vector_without_a_reference_backen
     assert_eq!(open(&store).stats().unwrap()["height"], 1);
 }
 #[test]
+fn test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry() {
+    let temp = tempfile::tempdir().unwrap();
+    let mut node = open(temp.path());
+    let included = golden();
+    let included_id = node.admit(&included, CLOCK).unwrap();
+    node.activate(included_id).unwrap();
+    let child = extend(&mut node, included_id, 1_800_000_020, 8, true);
+    let tip = child.id().unwrap();
+
+    // Consume exactly the read-only observation exposed to Hepta; a non-tip
+    // accepted block must agree in height, work, tip and physical branch state.
+    let active = node.exact_packet_observation(&included).unwrap();
+    assert_eq!(active["schema"], "pon-native-exact-packet-observation-v3");
+    assert_eq!(active["stored_exact"], true);
+    assert_eq!(active["active_chain_member"], true);
+    assert_eq!(active["block"], hex::encode(included_id));
+    assert_eq!(active["active_tip"], hex::encode(tip));
+    let block_height = active["block_height"].as_u64().unwrap();
+    let tip_height = active["active_tip_height"].as_u64().unwrap();
+    assert_eq!(
+        active["active_depth"].as_u64(),
+        tip_height.checked_sub(block_height)
+    );
+    assert_eq!(active["active_depth"], 1);
+
+    let decode_work = |name: &str| {
+        let bytes = hex::decode(active[name].as_str().unwrap()).unwrap();
+        assert_eq!(bytes.len(), 64);
+        let mut wide = [0_u8; 64];
+        wide.copy_from_slice(&bytes);
+        trnm_pon_node::consensus::Work::from_bytes(wide)
+    };
+    let block_work = decode_work("block_chainwork_hex");
+    let tip_work = decode_work("active_tip_chainwork_hex");
+    let expected_delta = tip_work.checked_sub(block_work).unwrap();
+    assert!(tip_work > block_work);
+    assert_eq!(
+        active["active_work_depth_hex"],
+        hex::encode(expected_delta.bytes())
+    );
+    assert_eq!(active["global_absence_authority"], false);
+    assert_eq!(active["confirmation_authority"], false);
+    assert_eq!(active["finality_authority"], false);
+    assert_eq!(active["execution_authority"], false);
+
+    // A heavier alternate branch must preserve the retained packet and its
+    // irreversibility while revoking only current active-chain membership.
+    let genesis = node.settings().genesis();
+    let mut fork = genesis;
+    for i in 1..=3 {
+        fork = extend(&mut node, fork, 1_800_000_000 + i * 10, 9, false)
+            .id()
+            .unwrap();
+    }
+    node.activate_observed(fork, CLOCK).unwrap();
+    let reorged = node.exact_packet_observation(&included).unwrap();
+    assert_eq!(reorged["stored_exact"], true);
+    assert_eq!(reorged["block"], hex::encode(included_id));
+    assert_eq!(reorged["active_tip"], hex::encode(fork));
+    assert_eq!(reorged["active_chain_member"], false);
+    assert!(reorged["active_depth"].is_null());
+    assert!(reorged["active_work_depth_hex"].is_null());
+    assert_eq!(reorged["confirmation_authority"], false);
+    assert_eq!(reorged["execution_authority"], false);
+}
+
+#[test]
 fn test_packet_status_observes_exact_durable_packet_without_replaying_or_creating_store() {
     let temp = tempfile::tempdir().unwrap();
     let packet_path = temp.path().join("input.packet");
