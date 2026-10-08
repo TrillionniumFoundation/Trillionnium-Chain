@@ -108,6 +108,26 @@ impl PaidMutationCpuBudget {
         ensure(self.credit_ns >= 0, "PUBLIC_MUTATION_CPU_BUDGET")
     }
 
+    /// A final thread sample grants no permission to continue work. If the
+    /// reservation count was lost, retain its known debit while fencing all new
+    /// starts under this same lock. Do not refill, repair the count or refund a
+    /// missing reservation. The final settlement still reports unavailable.
+    /// Unknown measurements/accounting and arithmetic overflow remain unknown.
+    fn record_final_live(&mut self, now: Instant, measured: u64) -> Result<()> {
+        if !self.unavailable
+            && (self.in_flight == 0 || self.in_flight > MUTATION_CPU_WORKERS)
+        {
+            self.unavailable = true;
+            let credit = self
+                .credit_ns
+                .checked_sub(i128::from(measured))
+                .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+            self.credit_ns = credit;
+            return Ok(());
+        }
+        self.charge_live(now, measured)
+    }
+
     /// Only LiveRequestCpu supplies this checked cumulative owner + worker CPU.
     /// reserve() already deducted this request's entire start quantum. Requiring
     /// nonnegative free credit again on its first live sample makes that paid
@@ -246,7 +266,11 @@ impl LiveRequestCpu {
                 .budget
                 .lock()
                 .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
-            budget.charge_request_live(Instant::now(), measured, total)
+            if enforce {
+                budget.charge_request_live(Instant::now(), measured, total)
+            } else {
+                budget.record_final_live(Instant::now(), measured)
+            }
         })();
         if let Err(error) = &result {
             if error.is(crate::ErrorCode::PublicMutationCpuBudget) {
@@ -545,6 +569,10 @@ impl Drop for ServiceMutationCpuOperation {
 #[cfg(all(test, target_os = "linux"))]
 #[path = "scalar_cpu_tests.rs"]
 mod tests;
+
+#[cfg(all(test, target_os = "linux"))]
+#[path = "scalar_cpu_final_samples_tests.rs"]
+mod final_samples_tests;
 
 /// Same actual operation's live sampler, with no new budget or worker scope.
 /// A worker can sample only after its original RAII accounting registration.
