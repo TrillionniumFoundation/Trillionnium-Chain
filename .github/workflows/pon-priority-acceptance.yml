@@ -157,6 +157,36 @@ jobs:
           grep -E '^test ingress::public_v3::scalar_cpu::final_samples_tests::.* \.\.\. ok$' "$TRNM_CI_RECEIPT_DIR/resource-controls.log" > "$TRNM_CI_RECEIPT_DIR/final-sample-selectors.log"
           test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/final-sample-selectors.log")" -eq 4
           grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/resource-controls.log"
+      - name: Require actual shared CPU depletion and native public recovery
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_PUBLIC_V3_DEPLETION_DIR="$TRNM_CI_RECEIPT_DIR/actual-cpu-depletion"
+          selector=actual_depletion::actual_replay_depletion_public_recovery_and_same_epoch_reopen
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_request_accounting "$selector" -- --exact --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/actual-cpu-depletion.log"
+          python3 scripts/ci/check_required_native_test.py "$TRNM_CI_RECEIPT_DIR/actual-cpu-depletion.log" --test "$selector"
+          python3 - <<'PYDEPLETION'
+          import json, os
+          from pathlib import Path
+          path = Path(os.environ['TRNM_PUBLIC_V3_DEPLETION_DIR']) / 'report.json'
+          assert path.stat().st_size <= 4 * 1024 * 1024
+          report = json.loads(path.read_text())
+          assert report['schema'] == 'public-v3-actual-local-replay-depletion-v1'
+          assert report['passed'] is True and len(report['rounds']) == 3
+          for row in report['rounds']:
+              assert row['local_pressure']['depletion_observed'] is True
+              assert row['local_pressure']['cap_reached'] is False
+              for key in ('honest_acknowledged', 'submit_on_time', 'head_on_time', 'active_packet_equal'):
+                  assert row[key] is True
+          for key in ('full_native_state_equal', 'reopen_state_equal', 'same_cpu_epoch_across_reopen'):
+              assert report[key] is True
+          for key in ('public_hostile_saturation_qualified', 'work_profile_qualified',
+                      'resource_fairness_qualified', 'independent_accepted',
+                      'physical_power_loss', 'production_activation'):
+              assert report[key] is False
+          print(json.dumps({'scope': report['scope'], 'rounds': 3, 'passed': True}))
+          PYDEPLETION
       - name: Execute real native model lifecycle and adverse decisions
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
         shell: bash
