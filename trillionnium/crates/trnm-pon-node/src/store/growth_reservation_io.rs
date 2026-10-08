@@ -202,9 +202,10 @@ mod tests {
             assert!(read(&target).is_ok());
             let result = read_with_path_readback(&target, || {
                 match case {
-                    0 => {
-                        fs::set_permissions(target.join(RECEIPT), fs::Permissions::from_mode(0o644))?
-                    }
+                    0 => fs::set_permissions(
+                        target.join(RECEIPT),
+                        fs::Permissions::from_mode(0o644),
+                    )?,
                     1 => fs::set_permissions(
                         target.join(RESERVATION),
                         fs::Permissions::from_mode(0o644),
