@@ -1,7 +1,6 @@
 name: PoN priority acceptance
 on:
   pull_request:
-  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
@@ -15,7 +14,6 @@ env:
   PYTHONDONTWRITEBYTECODE: "1"
 jobs:
   retained-pressure-failure:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -54,7 +52,6 @@ jobs:
               print(text)
           PY
   native-priorities:
-    if: github.event_name == 'pull_request'
     name: native priorities (${{ matrix.runner }}, ${{ matrix.source }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 100
@@ -100,21 +97,35 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          export TRNM_FROM_ZERO_EVIDENCE_DIR="$TRNM_CI_RECEIPT_DIR/debug-from-zero"
+          export TRNM_PON_FROM_ZERO_OUTPUT="$TRNM_CI_RECEIPT_DIR/debug-from-zero"
           cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_from_zero from_zero_service_shares_cpu_with_honest_work_and_reopened_owner -- --exact --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/debug-pressure.log"
+          grep -Fx 'test from_zero_service_shares_cpu_with_honest_work_and_reopened_owner ... ok' "$TRNM_CI_RECEIPT_DIR/debug-pressure.log"
+          test -s "$TRNM_PON_FROM_ZERO_OUTPUT/sustained/report.json"
+      - name: Execute original public service cancellation and actual CPU accounting controls
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib 'ingress::public_v3::' -- --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/resource-controls.log"
+          grep -E '^test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::.* \.\.\. ok$' "$TRNM_CI_RECEIPT_DIR/resource-controls.log" > "$TRNM_CI_RECEIPT_DIR/reserve-selectors.log"
+          test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/reserve-selectors.log")" -eq 4
+          grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/resource-controls.log"
       - name: Execute real native model lifecycle and adverse decisions
         if: always()
         shell: bash
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test model_evidence_v3 --test model_composition_v4 -- --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/model-regressions.log"
+          test "$(grep -Ec '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/model-regressions.log")" -eq 2
       - name: Execute original native full-capacity and source-preserving migration tests
         if: always()
         shell: bash
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover -- --ignored --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/capacity.log"
+          grep -E '^test .*native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover \.\.\. ok$' "$TRNM_CI_RECEIPT_DIR/capacity.log"
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --nocapture 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/migration.log"
+          grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/migration.log"
       - name: Reverify exact unchanged source
         if: always()
         shell: bash
